@@ -1,0 +1,5 @@
+args:
+    owner o string # Username of the repo's owner.
+    limit l int? # Max results to fetch.
+    // OR
+    limit l int = 20 # Max results to fetch.
