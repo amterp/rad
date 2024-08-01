@@ -22,8 +22,9 @@ fileHeaderContents        -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                -> .*
 fhLongDescription         -> ( .* NEWLINE )+
 statement                 -> assignment
-assignment                -> argBlock
+assignment                -> argBlock // todo maybe this should not be an assignment, but a once-off at the start
                              | jsonFieldAssignment
+                             | ifStmt
 argBlock                  -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt              -> argDeclaration
                              | argBlockConstraint
@@ -42,19 +43,36 @@ argBlockConstraint        -> argStringRegexConstraint
                              | argOneWayReq
                              | argMutualExcl
 argStringRegexConstraint  -> IDENTIFIER ( "," IDENTIFIER )* "regex" REGEX
-argIntRangeConstraint     -> IDENTIFIER COMPARISON INT
+argIntRangeConstraint     -> IDENTIFIER COMPARATORS INT
 argOneWayReq              -> IDENTIFIER "requires" IDENTIFIER
 argMutualExcl             -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
 jsonFieldAssignment       -> IDENTIFIER "=" "json" BRACKETS? ( "." jsonFieldPathElement )*
 jsonFieldPathElement      -> jsonFieldPathKey BRACKETS?
 jsonFieldPathKey          -> ( escapedKeyChar | .* -- \ . [ )*
 escapedKeyChar            -> '\' .*
-primary                   -> STRING | INT | BOOL
+ifStmt                    -> "if" expression COLON NEWLINE ( INDENT statement NEWLINE )* ( elseIf | else )?
+elseIf                    -> "else" ifStmt
+else                      -> "else" COLON NEWLINE ( INDENT statement NEWLINE )* // prob not correct, I think dangling stmts are a risk
+expression                -> logic_or
+logic_or                  -> logic_and ( "or" logic_and )*
+logic_and                 -> equality ( "and" equality )*
+equality                  -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
+comparison                -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
+unary                     -> ( "!" | "-" ) unary
+                             | primary
+primary                   -> STRING | INT | BOOL | NULL | "(" expression ")" | IDENTIFIER
 STRING                    -> '"' .* '"' // with escaping of quotes using \
 INT                       -> [0-9]+
 BOOL                      -> "true" | "false"
 REGEX                     -> a regex
-COMPARISON                -> ">" | ">=" | "==" | "<" | "<="
+COMPARATORS               -> GT | GTE | EQUAL | LT | LTE
+GT                        -> ">"
+GTE                       -> ">="
+LT                        -> "<"
+LTE                       -> "<="
+EQUAL                     -> "=="
+NOT_EQUAL                 -> "!="
+NULL                      -> "null"
 ```
 
 TODO:
