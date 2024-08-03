@@ -22,6 +22,8 @@ fileHeaderContents         -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                 -> .*
 fhLongDescription          -> ( .* NEWLINE )+
 statement                  -> assignment
+                              | rad
+                              | forStmt // todo
 assignment                 -> argBlock // todo maybe this should not be an assignment, but a once-off at the start
                               | jsonFieldAssignment
                               | ifStmt
@@ -65,6 +67,21 @@ choiceFromResource         -> "from" RESOURCE "on" IDENTIFIER
 choiceResourceAssignment   -> IDENTIFIER "=" "resource" "choice" choiceBlock
 RESOURCE                   -> STRING
 primaryAssignment          -> IDENTIFIER "=" primary
+rad                        -> "rad" IDENTIFIER? COLON NEWLINE radBody
+radBody                    -> INDENT IDENTIFIER ( "," IDENTIFIER )* NEWLINE ( INDENT radBodyStmt NEWLINE)*
+radBodyStmt                -> radSortStmt
+                              | radModifierStmt
+                              | radTableFormatStmt
+                              | radFieldFormatBlock
+radSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
+radModifierStmt            -> "uniq" | "quiet"
+radTableFormatStmt         -> "table" ( "default" | "markdown" | "fancy" ) 
+radFieldFormatBlock        -> IDENTIFIER COLON NEWLINE ( INDENT radFieldFormatStmt NEWLINE )+
+radFieldFormatStmt         -> radFieldFormatTruncateStmt
+                              | radFieldFormatColorStmt
+radFieldFormatTruncateStmt -> "truncate" INT
+radFieldFormatColorStmt    -> "color" COLOR REGEX?
+SORT                       -> "asc" | "desc"
 
 expression                 -> logic_or // functions should probably fit somewhere into this structure
 logic_or                   -> logic_and ( "or" logic_and )*
@@ -87,6 +104,7 @@ LTE                        -> "<="
 EQUAL                      -> "=="
 NOT_EQUAL                  -> "!="
 NULL                       -> "null"
+COLOR                      -> "red" | "green" | "blue" | "yellow" | "orange" // etc etc, whatever CLIs usually support
 ```
 
 TODO:
