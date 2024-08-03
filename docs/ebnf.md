@@ -23,7 +23,7 @@ fhOneLiner                 -> .*
 fhLongDescription          -> ( .* NEWLINE )+
 statement                  -> assignment
                               | rad
-                              | forStmt // todo
+                              | forStmt
 assignment                 -> argBlock // todo maybe this should not be an assignment, but a once-off at the start
                               | jsonFieldAssignment
                               | ifStmt
@@ -82,6 +82,7 @@ radFieldFormatStmt         -> radFieldFormatTruncateStmt
 radFieldFormatTruncateStmt -> "truncate" INT
 radFieldFormatColorStmt    -> "color" COLOR REGEX?
 SORT                       -> "asc" | "desc"
+forStmt                    -> "for" IDENTIFIER "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
 expression                 -> logic_or // functions should probably fit somewhere into this structure
 logic_or                   -> logic_and ( "or" logic_and )*
