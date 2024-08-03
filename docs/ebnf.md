@@ -27,6 +27,7 @@ assignment                -> argBlock // todo maybe this should not be an assign
                              | ifStmt
                              | choiceAssignment
                              | choiceResourceAssignment
+                             | primaryAssignment
 argBlock                  -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt              -> argDeclaration
                              | argBlockConstraint
@@ -63,8 +64,9 @@ choiceOptionTags          -> "|" basic ( "," basic )*
 choiceFromResource        -> "from" RESOURCE "on" IDENTIFIER
 choiceResourceAssignment  -> IDENTIFIER "=" "resource" "choice" choiceBlock
 RESOURCE                  -> STRING
+primaryAssignment         -> IDENTIFIER "=" primary
 
-expression                -> logic_or
+expression                -> logic_or // functions should probably fit somewhere into this structure
 logic_or                  -> logic_and ( "or" logic_and )*
 logic_and                 -> equality ( "and" equality )*
 equality                  -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
