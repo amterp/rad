@@ -47,7 +47,7 @@ argBlockConstraint         -> argStringRegexConstraint
                               | argIntRangeConstraint
                               | argOneWayReq
                               | argMutualExcl
-argStringRegexConstraint   -> IDENTIFIER ( "," IDENTIFIER )* "regex" REGEX
+argStringRegexConstraint   -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
 argIntRangeConstraint      -> IDENTIFIER COMPARATORS INT
 argOneWayReq               -> IDENTIFIER "requires" IDENTIFIER
 argMutualExcl              -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
@@ -74,12 +74,12 @@ radBodyStmt                -> radSortStmt
                               | radTableFormatStmt
                               | radFieldFormatBlock
 radSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
-radModifierStmt            -> "uniq" | "quiet"
+radModifierStmt            -> "uniq" | "quiet" | ( "limit" primary )
 radTableFormatStmt         -> "table" ( "default" | "markdown" | "fancy" ) 
 radFieldFormatBlock        -> IDENTIFIER COLON NEWLINE ( INDENT radFieldFormatStmt NEWLINE )+
-radFieldFormatStmt         -> radFieldFormatTruncateStmt
+radFieldFormatStmt         -> radFieldFormatMaxWidthStmt
                               | radFieldFormatColorStmt
-radFieldFormatTruncateStmt -> "truncate" INT
+radFieldFormatMaxWidthStmt -> "max_width" INT
 radFieldFormatColorStmt    -> "color" COLOR REGEX?
 SORT                       -> "asc" | "desc"
 forStmt                    -> "for" IDENTIFIER "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
@@ -112,3 +112,5 @@ TODO:
 
 - print statement, functions
 - headerStmt
+- max width for the whole table
+- displaying not as a table, but as pure printed lines? and other things

@@ -1,0 +1,70 @@
+"""
+Queries information about different Star Wars topics, particularly people, planets, and starships.
+
+This example isn't super great, I don't think a big use case is wanting to hit 3 disparate endpoints from one script,
+so it does some eh things with if statements. Just an example tho.
+example: @script people
+    Returns a list of people and their heights.
+example: @script planets
+    Returns a list of planets and their populations.
+"""
+
+args:
+    topic t string # The topic to query about.
+    limit int = 50 # The max number of rows to query and display.
+
+    // topic regex (people)|(planets)|(starship)
+
+baseUrl = "https://swapi.dev/api/"
+
+// the choice block here is not a great demo, given the if statement further down
+endpoint = choice topic:
+    "people" | "folks", "people", "heights"
+    "planets" | "planets", "populations"
+    "starships" | "starships", "passengers"
+
+url = baseUrl + endpoint
+
+if endpoint == "people":
+
+    Name = json.results[].name
+    Height = json.results[].height
+
+    rad url:
+        Name, Height
+        sort Height desc, Name
+        table markdown
+        limit limit
+        Name:
+            max_width 16
+            color yellow
+
+else if endpoint == "planets":
+
+    Name = json.results[].name
+    Population = json.results[].population
+
+    rad url:
+        Name, Population
+        sort Population desc, Name
+        table markdown
+        limit limit
+        Name:
+            max_width 16
+            color red
+
+else:
+    // starships
+
+    Name = json.results[].name
+    Passengers = json.results[].passengers
+    Cost = json.results[].cost_in_credits
+
+    rad url:
+        Name, Passengers, Cost
+        sort Passengers desc, Cost, Name
+        table markdown
+        limit limit
+        Name:
+            max_width 16
+            color green
