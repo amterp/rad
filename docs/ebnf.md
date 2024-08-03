@@ -25,6 +25,8 @@ statement                 -> assignment
 assignment                -> argBlock // todo maybe this should not be an assignment, but a once-off at the start
                              | jsonFieldAssignment
                              | ifStmt
+                             | choiceAssignment
+                             | choiceResourceAssignment
 argBlock                  -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt              -> argDeclaration
                              | argBlockConstraint
@@ -53,6 +55,15 @@ escapedKeyChar            -> '\' .*
 ifStmt                    -> "if" expression COLON NEWLINE ( INDENT statement NEWLINE )* ( elseIf | else )?
 elseIf                    -> "else" ifStmt
 else                      -> "else" COLON NEWLINE ( INDENT statement NEWLINE )* // prob not correct, I think dangling stmts are a risk
+choiceAssignment          -> IDENTIFIER ( "," IDENTIFIER )* "=" "choice" discriminator? ( choiceBlock | choiceFromResource )
+discriminator             -> IDENTIFIER
+choiceBlock               -> COLON NEWLINE ( INDENT choiceOption NEWLINE )+
+choiceOption              -> primary ( "," primary )* choiceOptionTags?
+choiceOptionTags          -> "|" basic ( "," basic )*  
+choiceFromResource        -> "from" RESOURCE "on" IDENTIFIER
+choiceResourceAssignment  -> IDENTIFIER "=" "resource" "choice" choiceBlock
+RESOURCE                  -> STRING
+
 expression                -> logic_or
 logic_or                  -> logic_and ( "or" logic_and )*
 logic_and                 -> equality ( "and" equality )*
@@ -60,7 +71,8 @@ equality                  -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
 comparison                -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
 unary                     -> ( "!" | "-" ) unary
                              | primary
-primary                   -> STRING | INT | BOOL | NULL | "(" expression ")" | IDENTIFIER
+primary                   -> basic | NULL | "(" expression ")" | IDENTIFIER
+basic                     -> STRING | INT | BOOL
 STRING                    -> '"' .* '"' // with escaping of quotes using \
 INT                       -> [0-9]+
 BOOL                      -> "true" | "false"
