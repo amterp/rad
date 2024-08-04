@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"rad/core/lexer"
-
 	"github.com/spf13/cobra"
+	"os"
+	"rad/core"
 )
 
 var rootCmd = &cobra.Command{
@@ -19,7 +18,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		script := args[0]
 		source := readSource(&script)
-		_ = lexer.NewLexer(source)
+		_ = core.NewLexer(source)
 	},
 }
 
