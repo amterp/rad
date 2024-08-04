@@ -16,9 +16,15 @@ var rootCmd = &cobra.Command{
 		UnknownFlags: true,
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		script := args[0]
-		source := readSource(&script)
-		_ = core.NewLexer(source)
+		scriptPath := args[0]
+		source := readSource(scriptPath)
+		l := core.NewLexer(source)
+		l.Lex()
+		fmt.Println()
+		for _, token := range l.Tokens {
+			fmt.Println(token)
+			fmt.Println()
+		}
 	},
 }
 
@@ -29,14 +35,13 @@ func Execute() {
 	}
 }
 
-func readSource(script *string) *string {
-	source, err := os.ReadFile(*script)
+func readSource(scriptPath string) string {
+	source, err := os.ReadFile(scriptPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not read script '%s': %v\n", *script, err)
+		fmt.Fprintf(os.Stderr, "Could not read script '%s': %v\n", scriptPath, err)
 		os.Exit(1)
 	}
-	sourceStr := string(source)
-	return &sourceStr
+	return string(source)
 }
 
 func init() {

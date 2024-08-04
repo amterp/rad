@@ -1,0 +1,15 @@
+"""
+Simple example script.
+"""
+
+args:
+    backend string # Which backend to query.
+
+// Errors = json.statuses[].num_errors
+
+url = choice region:
+    "backend-us" us
+    "backend-eu" eu
+
+rad url:
+    Errors

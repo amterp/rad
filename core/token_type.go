@@ -20,15 +20,15 @@ const (
 	EXCLAMATION TokenType = "EXCLAMATION"
 	NULL        TokenType = "NULL"
 	AT          TokenType = "AT" // @
+	LESS        TokenType = "LESS"
+	GREATER     TokenType = "GREATER"
 
 	// Two-character tokens
 
 	BRACKETS      TokenType = "BRACKETS"
 	EQUAL_EQUAL   TokenType = "EQUAL_EQUAL"
 	NOT_EQUAL     TokenType = "NOT_EQUAL"
-	LESS          TokenType = "LESS"
 	LESS_EQUAL    TokenType = "LESS_EQUAL"
-	GREATER       TokenType = "GREATER"
 	GREATER_EQUAL TokenType = "GREATER_EQUAL"
 
 	// Three-character tokens
@@ -45,7 +45,7 @@ const (
 	ARG_COMMENT       TokenType = "ARG_COMMENT"
 	JSON_PATH_ELEMENT TokenType = "JSON_PATH_ELEMENT"
 
-	// Keywords
+	// Keywords TODO might not need these, we might treat them as identifiers in lexer, then check in parser
 
 	FOR      TokenType = "FOR"
 	IN       TokenType = "IN"

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Rad" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="2rad" />
+    <working_directory value="$PROJECT_DIR$" />
+    <parameters value="./examples/simple1.rad" />
+    <kind value="PACKAGE" />
+    <package value="rad" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/main.go" />
+    <method v="2" />
+  </configuration>
+</component>
