@@ -34,7 +34,7 @@ argBlock                   -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE
 argBlockStmt               -> argDeclaration
                               | argBlockConstraint
 INDENT                     -> "  " | "   " | "    " | "\t"
-argDeclaration             -> IDENTIFIER FLAG? ARG_TYPE argOptional? ARG_COMMENT
+argDeclaration             -> IDENTIFIER STRING? FLAG? ARG_TYPE argOptional? ARG_COMMENT
 IDENTIFIER                 -> [A-Za-z_][A-Za-z0-9_]+ // probably overly restrictive
 FLAG                       -> [A-Za-z0-9_]  // probably overly restrictive
 ARG_TYPE                   -> ( ( "string" | "int" ) BRACKETS? ) | bool
@@ -92,7 +92,7 @@ comparison                 -> unary ( ( GT | GTE | LT | LTE ) unary )* // here i
 unary                      -> ( "!" | "-" ) unary
                               | primary
 primary                    -> basic | NULL | "(" expression ")" | IDENTIFIER
-basic                      -> STRING | INT | BOOL
+basic                      -> STRING | INT | BOOL // 'ANY' might need to be one? or just string in such cases?
 STRING                     -> '"' .* '"' // with escaping of quotes using \
 INT                        -> [0-9]+
 BOOL                       -> "true" | "false"
@@ -114,3 +114,4 @@ TODO:
 - headerStmt
 - max width for the whole table
 - displaying not as a table, but as pure printed lines? and other things
+- consider while loop? clear use cases not immediately clear but in theory allows for big step up in capability

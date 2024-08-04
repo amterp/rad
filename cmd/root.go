@@ -1,28 +1,28 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"rad/core/lexer"
 
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "rad",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Request And Display (RAD)",
+	Long:  `Request And Display (RAD): A tool for making HTTP requests, extracting details, and displaying the result.`,
+	Args:  cobra.MinimumNArgs(1), // todo 0 maybe should just display help w/out error?
+	FParseErrWhitelist: cobra.FParseErrWhitelist{
+		UnknownFlags: true,
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		script := args[0]
+		source := readSource(&script)
+		_ = lexer.NewLexer(source)
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -30,14 +30,18 @@ func Execute() {
 	}
 }
 
+func readSource(script *string) *string {
+	source, err := os.ReadFile(*script)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not read script '%s': %v\n", *script, err)
+		os.Exit(1)
+	}
+	sourceStr := string(source)
+	return &sourceStr
+}
+
 func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rad.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

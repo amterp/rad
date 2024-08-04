@@ -12,6 +12,7 @@ example: @script planets
 args:
     topic t string # The topic to query about.
     limit int = 50 # The max number of rows to query and display.
+    input_regex "regex" r string # Blah
 
     // topic regex (people)|(planets)|(starship)
 
