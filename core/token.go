@@ -62,6 +62,12 @@ type IndentToken struct {
 	NumTabs   int
 }
 
+type JsonPathElementToken struct {
+	BaseToken
+	Literal string
+	IsArray bool
+}
+
 func NewToken(
 	tokenType TokenType,
 	lexeme string,
@@ -175,5 +181,27 @@ func NewIndentToken(
 		},
 		NumSpaces: numSpaces,
 		NumTabs:   numTabs,
+	}
+}
+
+func NewJsonPathElementToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	jsonPathElement string,
+	isArray bool) Token {
+
+	return &JsonPathElementToken{
+		BaseToken: BaseToken{
+			Type:          tokenType,
+			Lexeme:        lexeme,
+			CharStart:     charStart,
+			Line:          line,
+			CharLineStart: charLineStart,
+		},
+		Literal: jsonPathElement,
+		IsArray: isArray,
 	}
 }

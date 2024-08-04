@@ -188,7 +188,7 @@ func (l *Lexer) matchString(expected string) bool {
 	return true
 }
 
-func (l *Lexer) peekMatch(toCheck string) bool {
+func (l *Lexer) peekEquals(toCheck string) bool {
 	for i, c := range toCheck {
 		if l.next+i >= len(l.source) || rune(l.source[l.next+i]) != c {
 			return false
@@ -202,6 +202,14 @@ func (l *Lexer) peek() rune {
 		return 0
 	}
 	return rune(l.source[l.next])
+}
+
+func (l *Lexer) consume(expected rune, tokenType TokenType, errorMessage string) {
+	if !l.match(expected) {
+		l.error(errorMessage)
+	}
+	l.addToken(tokenType)
+	l.start = l.next
 }
 
 func isAlpha(c rune) bool {
@@ -233,14 +241,23 @@ func (l *Lexer) lexInt() {
 }
 
 func (l *Lexer) lexIdentifier() {
-	for isAlpha(l.peek()) {
+	nextChar := l.peek()
+	for isAlpha(nextChar) || isDigit(nextChar) || nextChar == '_' {
 		l.advance()
+		nextChar = l.peek()
 	}
 	l.addToken(IDENTIFIER)
 }
 
 func (l *Lexer) lexJsonPath() {
-	panic("not implemented")
+	isArray := l.matchString("[]")
+	l.addJsonPathElementToken("json", isArray)
+
+	for l.peek() != '\n' && !l.isAtEnd() {
+		l.start = l.next
+		l.consume('.', DOT, "Expected '.' to preface next json path element")
+		l.lexJsonPathElement()
+	}
 }
 
 func (l *Lexer) lexArgComment() {
@@ -284,6 +301,24 @@ func (l *Lexer) lexTabIndent() {
 	l.addIndentToken(0, numTabs)
 }
 
+func (l *Lexer) lexJsonPathElement() {
+	value := ""
+	escaping := false
+	for ((l.peek() != '.' && l.peek() != '[') || escaping) && l.peek() != '\n' && !l.isAtEnd() {
+		if l.peek() == '\\' {
+			escaping = true
+			l.advance()
+		} else {
+			if escaping {
+				escaping = false
+			}
+			value = value + string(l.advance())
+		}
+	}
+	includesBrackets := l.matchString("[]")
+	l.addJsonPathElementToken(value, includesBrackets)
+}
+
 func (l *Lexer) addToken(tokenType TokenType) {
 	lexeme := l.source[l.start:l.next]
 	token := NewToken(tokenType, lexeme, l.start, l.lineIndex, l.lineCharIndex)
@@ -311,6 +346,12 @@ func (l *Lexer) addArgCommentLiteralToken(comment *string) {
 func (l *Lexer) addIndentToken(numSpaces int, numTabs int) {
 	lexeme := l.source[l.start:l.next]
 	token := NewIndentToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, numSpaces, numTabs)
+	l.Tokens = append(l.Tokens, token)
+}
+
+func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
+	lexeme := l.source[l.start:l.next]
+	token := NewJsonPathElementToken(JSON_PATH_ELEMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, jsonPathElement, isArray)
 	l.Tokens = append(l.Tokens, token)
 }
 
