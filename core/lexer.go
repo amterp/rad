@@ -11,7 +11,7 @@ type Lexer struct {
 	start         int // index of start of the current lexeme (0 indexed)
 	next          int // index of next character to be read (0 indexed)
 	lineIndex     int // current line number (1 indexed)
-	nextLineIndex int // character number in the current line (1 indexed)
+	lineCharIndex int // character number in the current line (1 indexed)
 	Tokens        []Token
 }
 
@@ -21,7 +21,7 @@ func NewLexer(source string) *Lexer {
 		start:         0,
 		next:          0,
 		lineIndex:     1,
-		nextLineIndex: 0,
+		lineCharIndex: 0,
 		Tokens:        []Token{},
 	}
 }
@@ -31,7 +31,7 @@ func (l *Lexer) Lex() []Token {
 		l.scanToken()
 	}
 
-	l.Tokens = append(l.Tokens, NewToken(EOF, "", l.next, l.lineIndex, l.nextLineIndex))
+	l.Tokens = append(l.Tokens, NewToken(EOF, "", l.next, l.lineIndex, l.lineCharIndex))
 	return l.Tokens
 }
 
@@ -94,7 +94,7 @@ func (l *Lexer) scanToken() {
 					l.error("Expected newline after triple quote")
 				} else {
 					l.lineIndex++
-					l.nextLineIndex = 0
+					l.lineCharIndex = 0
 					l.lexFileHeader()
 				}
 			} else {
@@ -116,8 +116,20 @@ func (l *Lexer) scanToken() {
 		} else {
 			l.error("Unexpected /")
 		}
-	case ' ', '\t', '\r':
-		// todo handle indentations!
+	case ' ':
+		if l.lineCharIndex == 1 {
+			if l.match(' ') {
+				l.lexSpaceIndent()
+			} else if l.match('\t') {
+				l.error("Mixing spaces and tabs for indentation is not allowed")
+			}
+		}
+		// else ignore
+	case '\t':
+		if l.lineCharIndex == 1 {
+			l.lexTabIndent()
+		}
+		// else ignore
 	default:
 		if isDigit(c) {
 			l.lexInt()
@@ -127,16 +139,15 @@ func (l *Lexer) scanToken() {
 			l.error("Unexpected character")
 		}
 	}
-
 }
 
 func (l *Lexer) advance() rune {
 	r := rune(l.source[l.next])
 	if r == '\n' {
 		l.lineIndex++
-		l.nextLineIndex = 0
+		l.lineCharIndex = 0
 	} else {
-		l.nextLineIndex++
+		l.lineCharIndex++
 	}
 	l.next++
 	return r
@@ -156,9 +167,9 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 		if nextRune == r {
 			if nextRune == '\n' {
 				l.lineIndex++
-				l.nextLineIndex = 0
+				l.lineCharIndex = 0
 			} else {
-				l.nextLineIndex++
+				l.lineCharIndex++
 			}
 			l.next++
 			return true
@@ -251,31 +262,59 @@ func (l *Lexer) lexFileHeader() {
 	l.addStringLiteralToken(&value) // todo should this be its own literal type?
 }
 
+func (l *Lexer) lexSpaceIndent() {
+	numSpaces := 2
+	for l.match(' ') {
+		numSpaces++
+	}
+	if l.match('\t') {
+		l.error("Mixing spaces and tabs for indentation is not allowed")
+	}
+	l.addIndentToken(numSpaces, 0)
+}
+
+func (l *Lexer) lexTabIndent() {
+	numTabs := 1
+	for l.match('\t') {
+		numTabs++
+	}
+	if l.match(' ') {
+		l.error("Mixing spaces and tabs for indentation is not allowed")
+	}
+	l.addIndentToken(0, numTabs)
+}
+
 func (l *Lexer) addToken(tokenType TokenType) {
 	lexeme := l.source[l.start:l.next]
-	token := NewToken(tokenType, lexeme, l.start, l.lineIndex, l.nextLineIndex)
+	token := NewToken(tokenType, lexeme, l.start, l.lineIndex, l.lineCharIndex)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addStringLiteralToken(literal *string) {
 	lexeme := l.source[l.start:l.next]
-	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.nextLineIndex, literal)
+	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addIntLiteralToken(literal int) {
 	lexeme := l.source[l.start:l.next]
-	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.nextLineIndex, &literal)
+	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addArgCommentLiteralToken(comment *string) {
 	lexeme := l.source[l.start:l.next]
-	token := NewArgCommentLiteralToken(ARG_COMMENT, lexeme, l.start, l.lineIndex, l.nextLineIndex, comment)
+	token := NewArgCommentToken(ARG_COMMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, comment)
+	l.Tokens = append(l.Tokens, token)
+}
+
+func (l *Lexer) addIndentToken(numSpaces int, numTabs int) {
+	lexeme := l.source[l.start:l.next]
+	token := NewIndentToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, numSpaces, numTabs)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
-	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, l.nextLineIndex, lexeme, message))
+	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, l.lineCharIndex, lexeme, message))
 }

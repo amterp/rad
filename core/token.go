@@ -51,12 +51,23 @@ type BoolLiteralToken struct {
 	Literal *bool
 }
 
-type ArgCommentLiteralToken struct {
+type ArgCommentToken struct {
 	BaseToken
 	Literal *string
 }
 
-func NewToken(tokenType TokenType, lexeme string, charStart int, line int, charLineStart int) Token {
+type IndentToken struct {
+	BaseToken
+	NumSpaces int
+	NumTabs   int
+}
+
+func NewToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int) Token {
 	return &BaseToken{
 		Type:          tokenType,
 		Lexeme:        lexeme,
@@ -66,7 +77,13 @@ func NewToken(tokenType TokenType, lexeme string, charStart int, line int, charL
 	}
 }
 
-func NewStringLiteralToken(tokenType TokenType, lexeme string, charStart int, line int, charLineStart int, literal *string) Token {
+func NewStringLiteralToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	literal *string) Token {
 	return &StringLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -79,7 +96,14 @@ func NewStringLiteralToken(tokenType TokenType, lexeme string, charStart int, li
 	}
 }
 
-func NewIntLiteralToken(tokenType TokenType, lexeme string, charStart int, line int, charLineStart int, literal *int) Token {
+func NewIntLiteralToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	literal *int) Token {
+
 	return &IntLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -92,7 +116,14 @@ func NewIntLiteralToken(tokenType TokenType, lexeme string, charStart int, line 
 	}
 }
 
-func NewBoolLiteralToken(tokenType TokenType, lexeme string, charStart int, line int, charLineStart int, literal *bool) Token {
+func NewBoolLiteralToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	literal *bool) Token {
+
 	return &BoolLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -105,8 +136,15 @@ func NewBoolLiteralToken(tokenType TokenType, lexeme string, charStart int, line
 	}
 }
 
-func NewArgCommentLiteralToken(tokenType TokenType, lexeme string, charStart int, line int, charLineStart int, comment *string) Token {
-	return &ArgCommentLiteralToken{
+func NewArgCommentToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	comment *string) Token {
+
+	return &ArgCommentToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
 			Lexeme:        lexeme,
@@ -115,5 +153,27 @@ func NewArgCommentLiteralToken(tokenType TokenType, lexeme string, charStart int
 			CharLineStart: charLineStart,
 		},
 		Literal: comment,
+	}
+}
+
+func NewIndentToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	numSpaces int,
+	numTabs int) Token {
+
+	return &IndentToken{
+		BaseToken: BaseToken{
+			Type:          tokenType,
+			Lexeme:        lexeme,
+			CharStart:     charStart,
+			Line:          line,
+			CharLineStart: charLineStart,
+		},
+		NumSpaces: numSpaces,
+		NumTabs:   numTabs,
 	}
 }
