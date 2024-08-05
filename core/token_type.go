@@ -42,6 +42,7 @@ const (
 	IDENTIFIER        TokenType = "IDENTIFIER"
 	STRING_LITERAL    TokenType = "STRING_LITERAL"
 	INT_LITERAL       TokenType = "INT_LITERAL"
+	BOOL_LITERAL      TokenType = "BOOL_LITERAL"
 	ARG_COMMENT       TokenType = "ARG_COMMENT"
 	JSON_PATH_ELEMENT TokenType = "JSON_PATH_ELEMENT"
 

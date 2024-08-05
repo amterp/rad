@@ -20,10 +20,11 @@ var rootCmd = &cobra.Command{
 		source := readSource(scriptPath)
 		l := core.NewLexer(source)
 		l.Lex()
-		fmt.Println()
-		for _, token := range l.Tokens {
-			fmt.Println(token)
-			fmt.Println()
+
+		p := core.NewParser(l.Tokens)
+		statements := p.Parse()
+		for _, stmt := range statements {
+			fmt.Printf("%v\n", stmt)
 		}
 	},
 }

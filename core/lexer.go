@@ -246,6 +246,7 @@ func (l *Lexer) lexIdentifier() {
 		l.advance()
 		nextChar = l.peek()
 	}
+	// todo boolean literals
 	l.addToken(IDENTIFIER)
 }
 
