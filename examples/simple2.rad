@@ -1,3 +1,14 @@
+"""
+A very simple example.
+
+
+A simple script to work through all
+the things that Rad's interpreter
+needs to be able to do.
+
+Long part can be two paragraphs, even!
+"""
+
 a = 1
 b = "hi"
 c = true

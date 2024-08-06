@@ -31,9 +31,6 @@ const (
 	LESS_EQUAL    TokenType = "LESS_EQUAL"
 	GREATER_EQUAL TokenType = "GREATER_EQUAL"
 
-	// Three-character tokens
-	TRIPLE_QUOTE TokenType = "TRIPLE_QUOTE"
-
 	// N-character tokens
 	INDENT TokenType = "INDENT" // todo remains to be seen that this is correct...
 
@@ -43,6 +40,7 @@ const (
 	STRING_LITERAL    TokenType = "STRING_LITERAL"
 	INT_LITERAL       TokenType = "INT_LITERAL"
 	BOOL_LITERAL      TokenType = "BOOL_LITERAL"
+	FILE_HEADER       TokenType = "FILE_HEADER"
 	ARG_COMMENT       TokenType = "ARG_COMMENT"
 	JSON_PATH_ELEMENT TokenType = "JSON_PATH_ELEMENT"
 

@@ -93,8 +93,6 @@ func (l *Lexer) scanToken() {
 				if !l.match('\n') {
 					l.error("Expected newline after triple quote")
 				} else {
-					l.lineIndex++
-					l.lineCharIndex = 0
 					l.lexFileHeader()
 				}
 			} else {
@@ -166,6 +164,8 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 	for _, r := range expected {
 		if nextRune == r {
 			if nextRune == '\n' {
+				// todo: this results in bad errors for multiline tokens
+				//  should only do this *after* the token is emitted
 				l.lineIndex++
 				l.lineCharIndex = 0
 			} else {
@@ -204,12 +204,18 @@ func (l *Lexer) peek() rune {
 	return rune(l.source[l.next])
 }
 
-func (l *Lexer) consume(expected rune, tokenType TokenType, errorMessage string) {
+func (l *Lexer) expectAndEmit(expected rune, tokenType TokenType, errorMessage string) {
 	if !l.match(expected) {
 		l.error(errorMessage)
 	}
 	l.addToken(tokenType)
 	l.start = l.next
+}
+
+func (l *Lexer) expectNoEmit(expected rune, errorMessage string) {
+	if !l.match(expected) {
+		l.error(errorMessage)
+	}
 }
 
 func isAlpha(c rune) bool {
@@ -256,7 +262,7 @@ func (l *Lexer) lexJsonPath() {
 
 	for l.peek() != '\n' && !l.isAtEnd() {
 		l.start = l.next
-		l.consume('.', DOT, "Expected '.' to preface next json path element")
+		l.expectAndEmit('.', DOT, "Expected '.' to preface next json path element")
 		l.lexJsonPathElement()
 	}
 }
@@ -271,13 +277,36 @@ func (l *Lexer) lexArgComment() {
 }
 
 func (l *Lexer) lexFileHeader() {
-	value := ""
-	for !l.matchString("\n\"\"\"") {
-		value = value + string(l.advance())
+	oneLiner := ""
+
+	for !l.match('\n') {
+		oneLiner = oneLiner + string(l.advance())
 	}
-	l.advance()
-	l.advance()
-	l.addStringLiteralToken(&value) // todo should this be its own literal type?
+
+	if oneLiner == "" {
+		l.error("One-line description must not be empty")
+	}
+
+	if l.matchString("\"\"\"") {
+		l.addFileHeaderToken(&oneLiner, nil)
+		return
+	}
+
+	l.expectNoEmit('\n', "Blank line must separate one-line description from multi-line description")
+	for l.match('\n') {
+		// skip blank lines
+	}
+
+	rest := ""
+	for !l.matchString("\n\"\"\"") {
+		rest = rest + string(l.advance())
+	}
+
+	if rest == "" {
+		l.addFileHeaderToken(&oneLiner, nil)
+	} else {
+		l.addFileHeaderToken(&oneLiner, &rest)
+	}
 }
 
 func (l *Lexer) lexSpaceIndent() {
@@ -338,6 +367,12 @@ func (l *Lexer) addIntLiteralToken(literal int) {
 	l.Tokens = append(l.Tokens, token)
 }
 
+func (l *Lexer) addFileHeaderToken(oneLiner *string, rest *string) {
+	lexeme := l.source[l.start:l.next]
+	token := NewFileHeaderToken(FILE_HEADER, lexeme, l.start, l.lineIndex, l.lineCharIndex, *oneLiner, rest)
+	l.Tokens = append(l.Tokens, token)
+}
+
 func (l *Lexer) addArgCommentLiteralToken(comment *string) {
 	lexeme := l.source[l.start:l.next]
 	token := NewArgCommentToken(ARG_COMMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, comment)
@@ -358,5 +393,6 @@ func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
 
 func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
+	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, l.lineCharIndex, lexeme, message))
 }

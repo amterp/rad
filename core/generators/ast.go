@@ -26,6 +26,7 @@ func main() {
 	defineAst(outputDir, "Stmt", "", []string{
 		"Expression         : Expr expression",
 		"PrimaryAssign      : Token name, Expr initializer",
+		"FileHeader         : Token FileHeaderToken",
 		"Empty              :",
 	})
 }

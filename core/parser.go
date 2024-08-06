@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const UNREACHABLE = "unreachable"
 
@@ -30,6 +33,14 @@ func (p *Parser) Parse() []Stmt {
 func (p *Parser) statement() Stmt {
 	if p.match(NEWLINE) {
 		return &Empty{}
+	}
+
+	if p.match(FILE_HEADER) {
+		if p.next != 1 {
+			// it was not the first thing in the file
+			p.error("File header must be the first thing in the file")
+		}
+		return &FileHeader{FileHeaderToken: p.previous()}
 	}
 
 	return p.assignment()
@@ -78,8 +89,10 @@ func (p *Parser) consume(tokenType TokenType, errorMessageIfNotMatch string) Tok
 
 func (p *Parser) error(message string) {
 	currentToken := p.tokens[p.next]
+	lexeme := currentToken.GetLexeme()
+	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s",
-		currentToken.GetLine(), currentToken.GetCharLineStart(), currentToken.GetLexeme(), message))
+		currentToken.GetLine(), currentToken.GetCharLineStart(), lexeme, message))
 }
 
 func (p *Parser) assignment() Stmt {

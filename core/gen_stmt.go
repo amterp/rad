@@ -12,6 +12,7 @@ type Stmt interface {
 type StmtVisitor interface {
 	VisitExpressionStmt(*Expression)
 	VisitPrimaryAssignStmt(*PrimaryAssign)
+	VisitFileHeaderStmt(*FileHeader)
 	VisitEmptyStmt(*Empty)
 }
 type Expression struct {
@@ -40,6 +41,19 @@ func (e *PrimaryAssign) String() string {
 	parts = append(parts, fmt.Sprintf("name: %v", e.name))
 	parts = append(parts, fmt.Sprintf("initializer: %v", e.initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
+}
+
+type FileHeader struct {
+	FileHeaderToken Token
+}
+
+func (e *FileHeader) Accept(visitor StmtVisitor) {
+	visitor.VisitFileHeaderStmt(e)
+}
+func (e *FileHeader) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("FileHeaderToken: %v", e.FileHeaderToken))
+	return fmt.Sprintf("FileHeader(%s)", strings.Join(parts, ", "))
 }
 
 type Empty struct {

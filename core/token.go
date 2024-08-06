@@ -51,6 +51,12 @@ type BoolLiteralToken struct {
 	Literal *bool
 }
 
+type FilerHeaderToken struct {
+	BaseToken
+	OneLiner string
+	Rest     *string
+}
+
 type ArgCommentToken struct {
 	BaseToken
 	Literal *string
@@ -139,6 +145,28 @@ func NewBoolLiteralToken(
 			CharLineStart: charLineStart,
 		},
 		Literal: literal,
+	}
+}
+
+func NewFileHeaderToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	oneLiner string,
+	rest *string) Token {
+
+	return &FilerHeaderToken{
+		BaseToken: BaseToken{
+			Type:          tokenType,
+			Lexeme:        lexeme,
+			CharStart:     charStart,
+			Line:          line,
+			CharLineStart: charLineStart,
+		},
+		OneLiner: oneLiner,
+		Rest:     rest,
 	}
 }
 
