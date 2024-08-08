@@ -7,28 +7,39 @@ import (
 )
 
 type Lexer struct {
-	source        string
-	start         int // index of start of the current lexeme (0 indexed)
-	next          int // index of next character to be read (0 indexed)
-	lineIndex     int // current line number (1 indexed)
-	lineCharIndex int // character number in the current line (1 indexed)
-	Tokens        []Token
+	source                 string
+	start                  int   // index of start of the current lexeme (0 indexed)
+	next                   int   // index of next character to be read (0 indexed)
+	lineIndex              int   // current line number (1 indexed)
+	lineCharIndex          int   // character number in the current line (1 indexed)
+	indentStack            []int // stack of indents to, to emit indent/dedent tokens
+	userUsingSpacesForTabs *bool // nil until we see the first case of a space indent
+	Tokens                 []Token
 }
 
 func NewLexer(source string) *Lexer {
 	return &Lexer{
-		source:        source,
-		start:         0,
-		next:          0,
-		lineIndex:     1,
-		lineCharIndex: 0,
-		Tokens:        []Token{},
+		source:                 source,
+		start:                  0,
+		next:                   0,
+		lineIndex:              1,
+		lineCharIndex:          0,
+		indentStack:            []int{0},
+		userUsingSpacesForTabs: nil,
+		Tokens:                 []Token{},
 	}
 }
 
 func (l *Lexer) Lex() []Token {
 	for !l.isAtEnd() {
 		l.scanToken()
+	}
+
+	// emit dedent tokens for any remaining indents
+	for i := len(l.indentStack) - 1; i > 0; i-- {
+		lexeme := l.source[l.next:l.next]
+		token := NewToken(DEDENT, lexeme, l.next, l.lineIndex, l.lineCharIndex)
+		l.Tokens = append(l.Tokens, token)
 	}
 
 	l.Tokens = append(l.Tokens, NewToken(EOF, "", l.next, l.lineIndex, l.lineCharIndex))
@@ -42,6 +53,23 @@ func (l *Lexer) isAtEnd() bool {
 func (l *Lexer) scanToken() {
 	l.start = l.next
 	c := l.advance()
+
+	if l.lineCharIndex == 1 {
+		if l.userUsingSpacesForTabs != nil {
+			if *l.userUsingSpacesForTabs {
+				l.lexSpaceIndent()
+			} else {
+				l.lexTabIndent()
+			}
+		} else {
+			if c == ' ' {
+				l.lexSpaceIndent()
+			} else if c == '\t' {
+				l.lexTabIndent()
+			}
+		}
+	}
+
 	switch c {
 	case '(':
 		l.addToken(LEFT_PAREN)
@@ -114,20 +142,8 @@ func (l *Lexer) scanToken() {
 		} else {
 			l.error("Unexpected /")
 		}
-	case ' ':
-		if l.lineCharIndex == 1 {
-			if l.match(' ') {
-				l.lexSpaceIndent()
-			} else if l.match('\t') {
-				l.error("Mixing spaces and tabs for indentation is not allowed")
-			}
-		}
-		// else ignore
-	case '\t':
-		if l.lineCharIndex == 1 {
-			l.lexTabIndent()
-		}
-		// else ignore
+	case ' ', '\t':
+		// ignore whitespace if not at start of line
 	default:
 		if isDigit(c) {
 			l.lexInt()
@@ -216,6 +232,10 @@ func (l *Lexer) expectNoEmit(expected rune, errorMessage string) {
 	if !l.match(expected) {
 		l.error(errorMessage)
 	}
+}
+
+func (l *Lexer) rewind(num int) {
+	l.next -= num
 }
 
 func isAlpha(c rune) bool {
@@ -310,25 +330,35 @@ func (l *Lexer) lexFileHeader() {
 }
 
 func (l *Lexer) lexSpaceIndent() {
-	numSpaces := 2
+	l.rewind(1)
+	numSpaces := 0
 	for l.match(' ') {
 		numSpaces++
 	}
 	if l.match('\t') {
 		l.error("Mixing spaces and tabs for indentation is not allowed")
 	}
-	l.addIndentToken(numSpaces, 0)
+	if l.match('\n') {
+		// ignore blank lines
+		return
+	}
+	l.emitIndentTokens(numSpaces, true)
 }
 
 func (l *Lexer) lexTabIndent() {
-	numTabs := 1
+	l.rewind(1)
+	numTabs := 0
 	for l.match('\t') {
 		numTabs++
 	}
 	if l.match(' ') {
 		l.error("Mixing spaces and tabs for indentation is not allowed")
 	}
-	l.addIndentToken(0, numTabs)
+	if l.match('\n') {
+		// ignore blank lines
+		return
+	}
+	l.emitIndentTokens(numTabs, false)
 }
 
 func (l *Lexer) lexJsonPathElement() {
@@ -379,10 +409,40 @@ func (l *Lexer) addArgCommentLiteralToken(comment *string) {
 	l.Tokens = append(l.Tokens, token)
 }
 
-func (l *Lexer) addIndentToken(numSpaces int, numTabs int) {
-	lexeme := l.source[l.start:l.next]
-	token := NewIndentToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, numSpaces, numTabs)
-	l.Tokens = append(l.Tokens, token)
+func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
+	if l.userUsingSpacesForTabs == nil {
+		l.userUsingSpacesForTabs = &isSpaces
+	}
+
+	if *l.userUsingSpacesForTabs != isSpaces {
+		l.error("Mixing spaces and tabs for indentation is not allowed")
+	}
+
+	if numWhitespaces == l.indentStack[len(l.indentStack)-1] {
+		// no change
+		return
+	}
+
+	if numWhitespaces > l.indentStack[len(l.indentStack)-1] {
+		l.indentStack = append(l.indentStack, numWhitespaces)
+		lexeme := l.source[l.start:l.next]
+		token := NewToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
+		l.Tokens = append(l.Tokens, token)
+		return
+	}
+
+	for numWhitespaces < l.indentStack[len(l.indentStack)-1] {
+		l.indentStack = l.indentStack[:len(l.indentStack)-1]
+		lexeme := l.source[l.start:l.next]
+		token := NewToken(DEDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
+		l.Tokens = append(l.Tokens, token)
+	}
+
+	expectedIndentationLevel := l.indentStack[len(l.indentStack)-1]
+	if numWhitespaces != expectedIndentationLevel {
+		l.error(fmt.Sprintf("Inconsistent indentation levels. Expected %d spaces/tabs, got %d",
+			expectedIndentationLevel, numWhitespaces))
+	}
 }
 
 func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {

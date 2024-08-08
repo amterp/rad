@@ -62,12 +62,6 @@ type ArgCommentToken struct {
 	Literal *string
 }
 
-type IndentToken struct {
-	BaseToken
-	NumSpaces int
-	NumTabs   int
-}
-
 type JsonPathElementToken struct {
 	BaseToken
 	Literal string
@@ -187,28 +181,6 @@ func NewArgCommentToken(
 			CharLineStart: charLineStart,
 		},
 		Literal: comment,
-	}
-}
-
-func NewIndentToken(
-	tokenType TokenType,
-	lexeme string,
-	charStart int,
-	line int,
-	charLineStart int,
-	numSpaces int,
-	numTabs int) Token {
-
-	return &IndentToken{
-		BaseToken: BaseToken{
-			Type:          tokenType,
-			Lexeme:        lexeme,
-			CharStart:     charStart,
-			Line:          line,
-			CharLineStart: charLineStart,
-		},
-		NumSpaces: numSpaces,
-		NumTabs:   numTabs,
 	}
 }
 

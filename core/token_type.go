@@ -32,7 +32,8 @@ const (
 	GREATER_EQUAL TokenType = "GREATER_EQUAL"
 
 	// N-character tokens
-	INDENT TokenType = "INDENT" // todo remains to be seen that this is correct...
+	INDENT TokenType = "INDENT"
+	DEDENT TokenType = "DEDENT"
 
 	// Literals
 
