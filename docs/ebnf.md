@@ -24,8 +24,8 @@ fhLongDescription          -> ( .* NEWLINE )+
 statement                  -> assignment
                               | rad
                               | forStmt
-assignment                 -> jsonFieldAssignment
                               | ifStmt
+assignment                 -> jsonFieldAssignment
                               | choiceAssignment
                               | choiceResourceAssignment
                               | primaryAssignment

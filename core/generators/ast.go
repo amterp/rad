@@ -29,6 +29,7 @@ func main() {
 		"FileHeader         : Token fileHeaderToken",
 		"Empty              :",
 		"ArgBlock           : Token argsKeyword, []ArgStmt argStmts",
+		"JsonPathAssign     : Token identifier, []JsonPathElement elements",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

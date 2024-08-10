@@ -118,7 +118,6 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 	}
 }
 
-// argDeclaration             -> IDENTIFIER STRING? FLAG? ARG_TYPE argOptional? ARG_COMMENT
 // argBlockConstraint         -> argStringRegexConstraint
 //
 //	| argIntRangeConstraint
@@ -201,25 +200,53 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 }
 
 func (p *Parser) statement() Stmt {
+	// todo rad block
+
+	// todo for stmt
+
+	// todo if stmt
+
 	return p.assignment()
 }
 
 func (p *Parser) assignment() Stmt {
-	var names []Token
-	names = append(names, p.identifier())
+	var identifiers []Token
+	identifiers = append(identifiers, p.identifier())
 
 	for !p.match(EQUAL) {
 		p.consume(COMMA, "Expected ',' between identifiers")
-		names = append(names, p.identifier())
+		identifiers = append(identifiers, p.identifier())
 	}
 
-	if len(names) > 1 {
-		p.error("Multiple assignments not YET supported")
+	if len(identifiers) > 1 {
+		panic(NOT_IMPLEMENTED)
 	}
 
-	name := names[0]
+	identifier := identifiers[0]
 
-	return p.primaryAssignment(name)
+	if p.peekType(JSON_PATH_ELEMENT) {
+		return p.jsonPathAssignment(identifier)
+	} else {
+		return p.primaryAssignment(identifier)
+	}
+}
+
+func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
+	element := p.consume(JSON_PATH_ELEMENT, "Expected root json path element")
+	var brackets Token
+	if isArray := p.match(BRACKETS); isArray {
+		brackets = p.previous()
+	}
+	elements := []JsonPathElement{{token: element, arrayToken: &brackets}}
+	for !p.match(NEWLINE) {
+		p.consume(DOT, "Expected '.' to separate json field elements")
+		element = p.consume(JSON_PATH_ELEMENT, "Expected json path element after '.'")
+		if p.match(BRACKETS) {
+			brackets = p.previous()
+		}
+		elements = append(elements, JsonPathElement{token: element, arrayToken: &brackets})
+	}
+	return &JsonPathAssign{identifier: identifier, elements: elements}
 }
 
 func (p *Parser) primaryAssignment(name Token) Stmt {

@@ -12,3 +12,13 @@ type RslType struct {
 	Token Token
 	Type  RslTypeEnum
 }
+
+type JsonPath struct {
+	identifier Token
+	elements   []JsonPathElement
+}
+
+type JsonPathElement struct {
+	token      Token
+	arrayToken *Token
+}

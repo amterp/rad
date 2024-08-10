@@ -16,3 +16,6 @@ args:
 a = 1
 b = "hi"
 c = true
+
+Name = json[].commit.author.name
+Date = json[].commit.author.date

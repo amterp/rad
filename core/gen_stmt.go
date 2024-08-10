@@ -15,6 +15,7 @@ type StmtVisitor interface {
 	VisitFileHeaderStmt(*FileHeader)
 	VisitEmptyStmt(*Empty)
 	VisitArgBlockStmt(*ArgBlock)
+	VisitJsonPathAssignStmt(*JsonPathAssign)
 }
 type Expression struct {
 	expression Expr
@@ -80,4 +81,19 @@ func (e *ArgBlock) String() string {
 	parts = append(parts, fmt.Sprintf("argsKeyword: %v", e.argsKeyword))
 	parts = append(parts, fmt.Sprintf("argStmts: %v", e.argStmts))
 	return fmt.Sprintf("ArgBlock(%s)", strings.Join(parts, ", "))
+}
+
+type JsonPathAssign struct {
+	identifier Token
+	elements   []JsonPathElement
+}
+
+func (e *JsonPathAssign) Accept(visitor StmtVisitor) {
+	visitor.VisitJsonPathAssignStmt(e)
+}
+func (e *JsonPathAssign) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("identifier: %v", e.identifier))
+	parts = append(parts, fmt.Sprintf("elements: %v", e.elements))
+	return fmt.Sprintf("JsonPathAssign(%s)", strings.Join(parts, ", "))
 }
