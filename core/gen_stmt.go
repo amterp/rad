@@ -14,6 +14,7 @@ type StmtVisitor interface {
 	VisitPrimaryAssignStmt(*PrimaryAssign)
 	VisitFileHeaderStmt(*FileHeader)
 	VisitEmptyStmt(*Empty)
+	VisitArgBlockStmt(*ArgBlock)
 }
 type Expression struct {
 	expression Expr
@@ -44,7 +45,7 @@ func (e *PrimaryAssign) String() string {
 }
 
 type FileHeader struct {
-	FileHeaderToken Token
+	fileHeaderToken Token
 }
 
 func (e *FileHeader) Accept(visitor StmtVisitor) {
@@ -52,7 +53,7 @@ func (e *FileHeader) Accept(visitor StmtVisitor) {
 }
 func (e *FileHeader) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("FileHeaderToken: %v", e.FileHeaderToken))
+	parts = append(parts, fmt.Sprintf("fileHeaderToken: %v", e.fileHeaderToken))
 	return fmt.Sprintf("FileHeader(%s)", strings.Join(parts, ", "))
 }
 
@@ -64,4 +65,19 @@ func (e *Empty) Accept(visitor StmtVisitor) {
 }
 func (e *Empty) String() string {
 	return "Empty()"
+}
+
+type ArgBlock struct {
+	argsKeyword Token
+	argStmts    []ArgStmt
+}
+
+func (e *ArgBlock) Accept(visitor StmtVisitor) {
+	visitor.VisitArgBlockStmt(e)
+}
+func (e *ArgBlock) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("argsKeyword: %v", e.argsKeyword))
+	parts = append(parts, fmt.Sprintf("argStmts: %v", e.argStmts))
+	return fmt.Sprintf("ArgBlock(%s)", strings.Join(parts, ", "))
 }

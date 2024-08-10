@@ -6,6 +6,7 @@ import (
 )
 
 const UNREACHABLE = "unreachable"
+const NOT_IMPLEMENTED = "not implemented"
 
 type Parser struct {
 	tokens []Token
@@ -21,29 +22,20 @@ func NewParser(tokens []Token) *Parser {
 
 func (p *Parser) Parse() []Stmt {
 	var statements []Stmt
+
+	p.consumeNewlines()
+	p.fileHeaderIfPresent(&statements)
+	p.consumeNewlines()
+	p.argBlockIfPresent(&statements)
+
 	for !p.isAtEnd() {
 		s := p.statement()
+		p.consumeNewlines()
 		if _, ok := s.(*Empty); !ok {
 			statements = append(statements, s)
 		}
 	}
 	return statements
-}
-
-func (p *Parser) statement() Stmt {
-	if p.match(NEWLINE) {
-		return &Empty{}
-	}
-
-	if p.match(FILE_HEADER) {
-		if p.next != 1 {
-			// it was not the first thing in the file
-			p.error("File header must be the first thing in the file")
-		}
-		return &FileHeader{FileHeaderToken: p.previous()}
-	}
-
-	return p.assignment()
 }
 
 func (p *Parser) isAtEnd() bool {
@@ -56,6 +48,10 @@ func (p *Parser) peekType(tokenType TokenType) bool {
 
 func (p *Parser) peek() Token {
 	return p.tokens[p.next]
+}
+
+func (p *Parser) peekTwoAhead() Token {
+	return p.tokens[p.next+1]
 }
 
 func (p *Parser) match(tokenTypes ...TokenType) bool {
@@ -93,6 +89,119 @@ func (p *Parser) error(message string) {
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s",
 		currentToken.GetLine(), currentToken.GetCharLineStart(), lexeme, message))
+}
+
+func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
+	if p.match(FILE_HEADER) {
+		*statements = append(*statements, &FileHeader{fileHeaderToken: p.previous()})
+	}
+}
+
+func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
+	if p.matchKeyword(ARGS, GLOBAL_KEYWORDS) {
+		argsKeyword := p.previous()
+		p.consume(COLON, "Expected ':' after 'args'")
+		p.consumeNewlines()
+
+		if !p.match(INDENT) {
+			return
+		}
+
+		p.consumeNewlines()
+		argsBlock := ArgBlock{argsKeyword: argsKeyword, argStmts: []ArgStmt{}}
+		for !p.match(DEDENT) {
+			s := p.argStatement()
+			argsBlock.argStmts = append(argsBlock.argStmts, s)
+			p.consumeNewlines()
+		}
+		*statements = append(*statements, &argsBlock)
+	}
+}
+
+// argDeclaration             -> IDENTIFIER STRING? FLAG? ARG_TYPE argOptional? ARG_COMMENT
+// argBlockConstraint         -> argStringRegexConstraint
+//
+//	| argIntRangeConstraint
+//	| argOneWayReq
+//	| argMutualExcl
+//
+// argStringRegexConstraint   -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
+// argIntRangeConstraint      -> IDENTIFIER COMPARATORS INT
+// argOneWayReq               -> IDENTIFIER "requires" IDENTIFIER
+// argMutualExcl              -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
+func (p *Parser) argStatement() ArgStmt {
+	if p.matchKeyword(ONE_OF, ARGS_BLOCK_KEYWORDS) {
+		panic(NOT_IMPLEMENTED)
+	}
+
+	identifier := p.consume(IDENTIFIER, "Expected identifier or keyword")
+
+	if p.peekType(STRING_LITERAL) ||
+		p.peekType(IDENTIFIER) ||
+		p.peekType(STRING) ||
+		p.peekType(INT) ||
+		p.peekType(BOOL) {
+
+		return p.argDeclaration(identifier)
+	}
+
+	if p.matchKeyword(REQUIRES, ARGS_BLOCK_KEYWORDS) {
+		panic(NOT_IMPLEMENTED)
+	}
+
+	// todo rest
+	panic(NOT_IMPLEMENTED)
+}
+
+func (p *Parser) argDeclaration(identifier Token) ArgStmt {
+	var stringLiteral Token
+	if p.match(STRING_LITERAL) {
+		stringLiteral = p.previous()
+	}
+
+	var flag Token
+	if p.peekTwoAhead().GetType() == IDENTIFIER {
+		flag = p.consume(IDENTIFIER, "Expected flag")
+	}
+
+	var argType Token
+	var rslTypeEnum RslTypeEnum
+	if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
+		argType = p.previous()
+		rslTypeEnum = RslString
+	} else if p.matchKeyword(INT, ARGS_BLOCK_KEYWORDS) {
+		argType = p.previous()
+		rslTypeEnum = RslInt
+	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
+		argType = p.previous()
+		rslTypeEnum = RslBool
+	} else {
+		p.error("Expected arg type")
+	}
+
+	isOptional := false
+	var defaultInit Expr
+	if p.match(QUESTION) {
+		isOptional = true
+	} else if p.match(EQUAL) {
+		defaultInit = p.expr()
+	}
+
+	argComment := p.consume(ARG_COMMENT, "Expected arg comment").(*ArgCommentToken)
+
+	return &ArgDeclaration{
+		identifier:  identifier,
+		rename:      &stringLiteral,
+		flag:        &flag,
+		argType:     RslType{Token: argType, Type: rslTypeEnum},
+		isOptional:  isOptional,
+		defaultInit: &defaultInit,
+		comment:     *argComment,
+	}
+}
+
+func (p *Parser) statement() Stmt {
+	return p.assignment()
 }
 
 func (p *Parser) assignment() Stmt {
@@ -147,4 +256,24 @@ func (p *Parser) identifier() Token {
 	}
 	p.error("Expected identifier")
 	panic(UNREACHABLE)
+}
+
+func (p *Parser) consumeNewlines() {
+	for p.match(NEWLINE) {
+		// throw away
+	}
+}
+
+func (p *Parser) matchKeyword(tokenType TokenType, keywords map[string]TokenType) bool {
+	next := p.peek()
+	if next.GetType() != IDENTIFIER {
+		return false
+	}
+	if keyword, ok := keywords[next.GetLexeme()]; ok {
+		if keyword == tokenType {
+			p.advance()
+			return true
+		}
+	}
+	return false
 }

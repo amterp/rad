@@ -16,16 +16,15 @@ Syntax Legend:
 - `.* -- & $` : any char except '&' or '$'
 
 ```
-program                    -> fileHeader? statement* EOF
-fileHeader                 -> '"""' fileHeaderContents '"""'
+program                    -> fileHeader? argBlock? statement* EOF
+fileHeader                 -> '"""' ( NEWLINE fileHeaderContents NEWLINE )? '"""'
 fileHeaderContents         -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                 -> .*
 fhLongDescription          -> ( .* NEWLINE )+
 statement                  -> assignment
                               | rad
                               | forStmt
-assignment                 -> argBlock // todo maybe this should not be an assignment, but a once-off at the start
-                              | jsonFieldAssignment
+assignment                 -> jsonFieldAssignment
                               | ifStmt
                               | choiceAssignment
                               | choiceResourceAssignment

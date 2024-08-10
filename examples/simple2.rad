@@ -9,6 +9,10 @@ needs to be able to do.
 Long part can be two paragraphs, even!
 """
 
+args:
+    repo string # Repo!
+    limit int = 20 # Limit!
+
 a = 1
 b = "hi"
 c = true

@@ -26,8 +26,14 @@ func main() {
 	defineAst(outputDir, "Stmt", "", []string{
 		"Expression         : Expr expression",
 		"PrimaryAssign      : Token name, Expr initializer",
-		"FileHeader         : Token FileHeaderToken",
+		"FileHeader         : Token fileHeaderToken",
 		"Empty              :",
+		"ArgBlock           : Token argsKeyword, []ArgStmt argStmts",
+	})
+
+	defineAst(outputDir, "ArgStmt", "", []string{
+		"ArgDeclaration     : Token identifier, *Token rename, *Token flag, RslType argType, " +
+			"bool isOptional, *Expr defaultInit, ArgCommentToken comment",
 	})
 }
 

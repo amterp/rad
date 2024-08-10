@@ -272,8 +272,16 @@ func (l *Lexer) lexIdentifier() {
 		l.advance()
 		nextChar = l.peek()
 	}
-	// todo boolean literals
-	l.addToken(IDENTIFIER)
+
+	text := l.source[l.start:l.next]
+
+	if text == "true" {
+		l.addBoolLiteralToken(true)
+	} else if text == "false" {
+		l.addBoolLiteralToken(false)
+	} else {
+		l.addToken(IDENTIFIER)
+	}
 }
 
 func (l *Lexer) lexJsonPath() {
@@ -394,6 +402,12 @@ func (l *Lexer) addStringLiteralToken(literal *string) {
 func (l *Lexer) addIntLiteralToken(literal int) {
 	lexeme := l.source[l.start:l.next]
 	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
+	l.Tokens = append(l.Tokens, token)
+}
+
+func (l *Lexer) addBoolLiteralToken(literal bool) {
+	lexeme := l.source[l.start:l.next]
+	token := NewBoolLiteralToken(BOOL_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
 	l.Tokens = append(l.Tokens, token)
 }
 

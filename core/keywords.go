@@ -1,6 +1,6 @@
 package core
 
-var GENERAL_KEYWORDS = map[string]TokenType{
+var GLOBAL_KEYWORDS = map[string]TokenType{
 	"for":      FOR,
 	"in":       IN,
 	"args":     ARGS,
@@ -39,7 +39,7 @@ var RAD_BLOCK_KEYWORDS = map[string]TokenType{
 	"markdown":  MARKDOWN,
 }
 
-var ALL_KEYWORDS = mergeMaps(GENERAL_KEYWORDS, ARGS_BLOCK_KEYWORDS, RAD_BLOCK_KEYWORDS)
+var ALL_KEYWORDS = mergeMaps(GLOBAL_KEYWORDS, ARGS_BLOCK_KEYWORDS, RAD_BLOCK_KEYWORDS)
 
 func mergeMaps(maps ...map[string]TokenType) map[string]TokenType {
 	result := make(map[string]TokenType)
