@@ -4,7 +4,9 @@ type RslTypeEnum int
 
 const (
 	RslString RslTypeEnum = iota
+	RslStringArray
 	RslInt
+	RslIntArray
 	RslBool
 )
 

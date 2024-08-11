@@ -5,9 +5,6 @@ import (
 	"strings"
 )
 
-const UNREACHABLE = "unreachable"
-const NOT_IMPLEMENTED = "not implemented"
-
 type Parser struct {
 	tokens []Token
 	next   int
@@ -81,6 +78,13 @@ func (p *Parser) consume(tokenType TokenType, errorMessageIfNotMatch string) Tok
 	}
 	p.error(errorMessageIfNotMatch)
 	panic("unreachable")
+}
+
+func (p *Parser) tryConsume(tokenType TokenType) (Token, bool) {
+	if p.peekType(tokenType) {
+		return p.advance(), true
+	}
+	return nil, false
 }
 
 func (p *Parser) error(message string) {
@@ -167,10 +171,18 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	var rslTypeEnum RslTypeEnum
 	if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		rslTypeEnum = RslString
+		if p.match(BRACKETS) {
+			rslTypeEnum = RslStringArray
+		} else {
+			rslTypeEnum = RslString
+		}
 	} else if p.matchKeyword(INT, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		rslTypeEnum = RslInt
+		if p.match(BRACKETS) {
+			rslTypeEnum = RslIntArray
+		} else {
+			rslTypeEnum = RslInt
+		}
 	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		rslTypeEnum = RslBool
