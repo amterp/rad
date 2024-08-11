@@ -200,13 +200,51 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 }
 
 func (p *Parser) statement() Stmt {
-	// todo rad block
+	if p.matchKeyword(RAD, GLOBAL_KEYWORDS) {
+		return p.radBlock()
+	}
 
 	// todo for stmt
 
 	// todo if stmt
 
 	return p.assignment()
+}
+
+func (p *Parser) radBlock() *RadBlock {
+	radToken := p.previous()
+	var urlToken Expr
+	if !p.peekType(COLON) {
+		urlToken = p.expr()
+	}
+	p.consume(COLON, "Expecting ':' to start rad block")
+	p.consumeNewlines()
+	if !p.match(INDENT) {
+		p.error("Expecting indented contents in rad block")
+	}
+	p.consumeNewlines()
+	identifiers := []Token{}
+	identifiers = append(identifiers, p.identifier())
+	for !p.match(NEWLINE) {
+		p.consume(COMMA, "Expected ',' between identifiers")
+		identifiers = append(identifiers, p.identifier())
+	}
+	var radStatements []RadStmt
+	radStatements = append(radStatements, &Fields{identifiers: identifiers})
+	for !p.match(DEDENT) {
+		p.consumeNewlines()
+		radStatements = append(radStatements, p.radStatement())
+	}
+	return &RadBlock{radKeyword: radToken, url: &urlToken, radStmts: radStatements}
+}
+
+func (p *Parser) radStatement() RadStmt {
+	// todo sort
+	// todo modifier
+	// todo table fmt
+	// todo field fmt
+	// todo filtering?
+	panic(NOT_IMPLEMENTED)
 }
 
 func (p *Parser) assignment() Stmt {
@@ -285,6 +323,7 @@ func (p *Parser) identifier() Token {
 	panic(UNREACHABLE)
 }
 
+// todo putting this everywhere isn't ideal... another way to handle insignificant newlines?
 func (p *Parser) consumeNewlines() {
 	for p.match(NEWLINE) {
 		// throw away

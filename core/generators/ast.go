@@ -29,12 +29,17 @@ func main() {
 		"FileHeader         : Token fileHeaderToken",
 		"Empty              :",
 		"ArgBlock           : Token argsKeyword, []ArgStmt argStmts",
+		"RadBlock           : Token radKeyword, *Expr url, []RadStmt radStmts",
 		"JsonPathAssign     : Token identifier, []JsonPathElement elements",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
 		"ArgDeclaration     : Token identifier, *Token rename, *Token flag, RslType argType, " +
 			"bool isOptional, *Expr defaultInit, ArgCommentToken comment",
+	})
+
+	defineAst(outputDir, "RadStmt", "", []string{
+		"Fields     : []Token identifiers",
 	})
 }
 

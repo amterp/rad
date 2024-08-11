@@ -15,6 +15,7 @@ type StmtVisitor interface {
 	VisitFileHeaderStmt(*FileHeader)
 	VisitEmptyStmt(*Empty)
 	VisitArgBlockStmt(*ArgBlock)
+	VisitRadBlockStmt(*RadBlock)
 	VisitJsonPathAssignStmt(*JsonPathAssign)
 }
 type Expression struct {
@@ -81,6 +82,23 @@ func (e *ArgBlock) String() string {
 	parts = append(parts, fmt.Sprintf("argsKeyword: %v", e.argsKeyword))
 	parts = append(parts, fmt.Sprintf("argStmts: %v", e.argStmts))
 	return fmt.Sprintf("ArgBlock(%s)", strings.Join(parts, ", "))
+}
+
+type RadBlock struct {
+	radKeyword Token
+	url        *Expr
+	radStmts   []RadStmt
+}
+
+func (e *RadBlock) Accept(visitor StmtVisitor) {
+	visitor.VisitRadBlockStmt(e)
+}
+func (e *RadBlock) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("radKeyword: %v", e.radKeyword))
+	parts = append(parts, fmt.Sprintf("url: %v", e.url))
+	parts = append(parts, fmt.Sprintf("radStmts: %v", e.radStmts))
+	return fmt.Sprintf("RadBlock(%s)", strings.Join(parts, ", "))
 }
 
 type JsonPathAssign struct {
