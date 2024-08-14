@@ -1,32 +1,29 @@
 # Rad - Request And Display
 
-A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. It simplifies the process of writing, managing, and sharing API query scripts.
+A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. Simplifies the process of writing, managing, and sharing API query scripts.
 
 ## What problem does this solve?
 
-- Many backends expose a JSON / REST API.
-- Many of these contain useful information that people would like to query and view, often ad hoc.
-- It'd therefore be useful to have easy, quick-to-use CLI scripts that fetch and display this information.
-- You can write these scripts/queries using various existing tools, but they each have their downsides. See [Alternatives](#alternatives).
-- What we want is a flexible, easy, and *efficient* way to express:
-  1. What kind of query we want to run, including parameterization
-  2. What information we want to *extract* from the response
-  3. How we want to view this data, or display it to user
+Many backend services expose JSON/REST APIs containing valuable information that users often need to query and view ad hoc (e.g. DevOps).
+While various tools exist for this purpose, they often come with drawbacks such as complex syntax, steep learning curves, or the need for extensive setup.
+What's needed is a flexible, easy, and efficient way to:
+
+1. Define and parameterize queries
+2. Extract specific information from API responses
+3. Display the data in a user-friendly format
 
 ## How does Rad solve it?
 
 - Rad comes with a domain-specific language called RSL (Rad Scripting Language).
-- RSL is purpose-built for this problem: to efficiently express the queries, what data to extract, and define how it should be displayed.
-- `rad` is a command-line tool for managing and running these scripts.
-- When invoked on a script, `rad` will interpret the script, validate and pass user-supplied args to the script, and execute it.
-  - The script tells `rad` what arguments it expects.
-- `rad` helps the user manage their scripts, enabling them to build up an organized repertoire of RSL queries, available right at their fingertips.
+- RSL is purpose-built for this problem: to efficiently express what to query, the data to extract, and how to display it.
+- `rad` is a command-line tool which runs these scripts, handling argument parsing, query execution, and result display + formatting.
+- `rad` also helps the user manage their scripts, enabling them to build up an organized repertoire of RSL queries, available right at their fingertips.
 
 ## Minimal Example
 
 ```
 args:
-    repo string # The repo to query. Format: user/project
+    repo string    # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
     
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
@@ -65,7 +62,7 @@ Time                   Author                 SHA
 
 ## Alternatives
 
-- **bash**
+- **Bash**
   - Bash, using a combination of `curl`, `jq`, and/or `column`, is an excellent choice.
   - Without Rad, Bash is what I'd be using, as I did before creating Rad.
   - But, as much as I like this toolset, Bash is (in my opinion) not syntactically friendly and simple things can be deceivingly laborious to do.
@@ -83,10 +80,10 @@ Time                   Author                 SHA
 
 - Rad (and its accompanying language RSL) allows you to be *efficient* in writing your scripts. What does this mean?
 - The syntax is designed so that *every* line gets you closer to your goal of querying and displaying JSON.
-- *Every* line is doing heavy lifting; it's dense with meaning. Equivalent code might be several lines in other languages, each line barely getting you closer towards your goal.
-- Think of it like this: for every line of RSL you write, Rad saves you from writing multiple lines in another language. That saved work has been shifted into the design and building of Rad, and what Rad is doing behind-the-scenes with the scripts you write.
+- *Every* line is doing heavy lifting; it's dense with meaning.
+- Think of it like this: for every line of RSL you write, Rad saves you from writing several equivalent lines in another language. That saved work has been shifted away from you and into the design and building of Rad, and what Rad is doing behind-the-scenes with the scripts you write.
 - It allows you to, in fewer (and simpler) lines, express your intent much more directly.
-- It does all this while staying simple and easy to learn. You can be writing great scripts within minutes of getting started.
+- It does all this while staying simple and easy to learn. You can be writing great scripts within the first hour of getting started.
 
 ### Easily shareable
 
