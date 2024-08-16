@@ -32,6 +32,7 @@ statement                   -> assignment
 assignment                  -> jsonFieldAssignment
                                | switchAssignment
                                | switchResourceAssignment // todo, should split into separate 'resource' interpreter?
+                               | compoundAssignment
                                | primaryAssignment
 argBlock                    -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt                -> argDeclaration
@@ -69,6 +70,14 @@ switchOnResource            -> "on" RESOURCE IDENTIFIER
 switchResourceAssignment    -> IDENTIFIER "=" "resource" "switch" COLON NEWLINE ( INDENT switchResourceCase NEWLINE )*
 switchResourceCase          -> "case" primary ( "," primary )* COLON primary ( "," primary )*
 RESOURCE                    -> STRING
+compoundAssignment          -> addCompoundAssignemnt
+                               | minusCompoundAssignemnt
+                               | multiplyCompoundAssignemnt
+                               | divideCompoundAssignemnt
+addCompoundAssignment       -> IDENTIFIER "+=" IDENTIFIER
+minusCompoundAssignment     -> IDENTIFIER "-=" IDENTIFIER
+multiplyCompoundAssignment  -> IDENTIFIER "*=" IDENTIFIER
+divideCompoundAssignment    -> IDENTIFIER "/=" IDENTIFIER
 primaryAssignment           -> IDENTIFIER "=" expression
 radBlock                    -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radStmt NEWLINE )*
 radStmt                     -> radIfStmt
@@ -116,13 +125,16 @@ forStmt                     -> "for" IDENTIFIER ( forStmtIndex | forStmtNoIndex 
 forStmtIndex                -> IDENTIFIER forStmtNoIndex
 forStmtNoIndex              -> "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
-expression                  -> logic_or // functions should probably fit somewhere into this structure
+expression                  -> logic_or
 logic_or                    -> logic_and ( "or" logic_and )*
 logic_and                   -> equality ( "and" equality )*
 equality                    -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
-comparison                  -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
+comparison                  -> term ( ( GT | GTE | LT | LTE ) term )*
+term                        -> factor ( ( "-" | "+" ) factor )*
+factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
-                               | primary
+                               | primaryExpr
+primaryExpr                 -> "(" expression ")" | primary 
 primary                     -> literal | NULL | arrayAccess | functionCall | IDENTIFIER
 literal                     -> STRING | NUMBER | BOOL // 'ANY' might need to be one? or just string in such cases?
 arrayAccess                 -> IDENTIFIER "[" expression "]"
