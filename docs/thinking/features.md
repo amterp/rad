@@ -145,7 +145,7 @@ Distilled down:
     - yes, needs a little more thinking through, but doesn't need action -- functions already planned
 - switch expression
     - ! yes, action, I think we should replace choice blocks with this
-    - FIRST think about interpolation matching!
+    - ! FIRST think about interpolation matching!
 - if stmt in rad block
     - ! yes, action, want to ensure ebnf reflects this before implementing either
 - fields keyword in rad block
@@ -170,3 +170,67 @@ Distilled down:
   - ! yes, but also support for other types e.g. strings, ints, floats.
 - multiplication (implicitly, division)
   - ! yes, i thought i didn't need it, but on reflection, it'd be so frustrating to not be able to do this randomly
+
+## 2024-08-16
+
+```
+args:
+    city string? # The city to check the weather for.
+    country string? # The country to check the weather for.
+    
+    at_least 1: city, country
+
+baseUrl = "https://appleweather.com/api/weather"
+    
+queryParam = switch:
+    case: "city={city}"
+    case: "country={country}"
+    
+url = "{baseUrl}?{queryParam}"
+
+rad url:
+    ...
+```
+
+- `at_least` / `at_most` / `exactly` syntax
+- switch stmts without discriminator
+
+---
+
+- What about choice resource replacements? Old:
+
+```
+// urls.radr
+fruitUrls = resource choice:
+  "https://apple.com" a
+  "https://banana.com" b
+...
+args:
+  fruit string
+
+url = choice fruit from "urls" on fruitUrls
+```
+
+- New? :
+
+```
+// urls.radr
+urls = resource switch:
+  case "a": "https://apple.com"
+  case "b": "https://banana.com"
+...
+args:
+  fruit string
+
+url = switch fruit on "urls" fruitUrls
+```
+
+---
+
+- multi switch expressions
+
+```
+fruit, url = switch inputFruit:
+    case "apple, "a": "apple", "https://apple.com" 
+    case "banana", "b": "banana", "https://banana.com" 
+```

@@ -25,9 +25,11 @@ statement                  -> assignment
                               | rad
                               | forStmt
                               | ifStmt
+                              | switchStmt
+                              | exprStmt
 assignment                 -> jsonFieldAssignment
-                              | choiceAssignment
-                              | choiceResourceAssignment
+                              | switchAssignment
+                              | switchResourceAssignment // todo, should split into separate 'resource' interpreter?
                               | primaryAssignment
 argBlock                   -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt               -> argDeclaration
@@ -57,15 +59,15 @@ escapedKeyChar             -> '\' .*
 ifStmt                     -> "if" expression COLON NEWLINE ( INDENT statement NEWLINE )* ( elseIf | else )?
 elseIf                     -> "else" ifStmt
 else                       -> "else" COLON NEWLINE ( INDENT statement NEWLINE )* // prob not correct, I think dangling stmts are a risk
-choiceAssignment           -> IDENTIFIER ( "," IDENTIFIER )* "=" "choice" discriminator? ( choiceBlock | choiceFromResource )
+switchAssignment           -> IDENTIFIER ( "," IDENTIFIER )* "=" "switch" discriminator? ( switchBlock | switchOnResource )
 discriminator              -> IDENTIFIER
-choiceBlock                -> COLON NEWLINE ( INDENT choiceOption NEWLINE )+
-choiceOption               -> primary ( "," primary )* choiceOptionTags?
-choiceOptionTags           -> "|" basic ( "," basic )*  
-choiceFromResource         -> "from" RESOURCE "on" IDENTIFIER
-choiceResourceAssignment   -> IDENTIFIER "=" "resource" "choice" choiceBlock
+switchBlock                -> COLON NEWLINE ( INDENT switchCase NEWLINE )+
+switchCase                 -> "case" primary ( "," primary )* COLON NEWLINE ( INDENT statement NEWLINE )*
+switchOnResource           -> "on" RESOURCE IDENTIFIER
+switchResourceAssignment   -> IDENTIFIER "=" "resource" "switch" COLON NEWLINE ( INDENT switchResourceCase NEWLINE )*
+switchResourceCase         -> "case" primary ( "," primary )* COLON primary ( "," primary )*
 RESOURCE                   -> STRING
-primaryAssignment          -> IDENTIFIER "=" primary
+primaryAssignment          -> IDENTIFIER "=" primaryExpr
 rad                        -> "rad" IDENTIFIER? COLON NEWLINE radBody
 radBody                    -> INDENT IDENTIFIER ( "," IDENTIFIER )* NEWLINE ( INDENT radBodyStmt NEWLINE)*
 radBodyStmt                -> radSortStmt
@@ -73,7 +75,7 @@ radBodyStmt                -> radSortStmt
                               | radTableFormatStmt
                               | radFieldFormatBlock
 radSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
-radModifierStmt            -> "uniq" | "quiet" | ( "limit" primary )
+radModifierStmt            -> "uniq" | "quiet" | ( "limit" primaryExpr )
 radTableFormatStmt         -> "table" ( "default" | "markdown" | "fancy" ) 
 radFieldFormatBlock        -> IDENTIFIER COLON NEWLINE ( INDENT radFieldFormatStmt NEWLINE )+
 radFieldFormatStmt         -> radFieldFormatMaxWidthStmt
@@ -90,8 +92,12 @@ equality                   -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
 comparison                 -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
 unary                      -> ( "!" | "-" ) unary
                               | primary
-primary                    -> basic | NULL | "(" expression ")" | IDENTIFIER
-basic                      -> STRING | INT | BOOL // 'ANY' might need to be one? or just string in such cases?
+primaryExpr                -> primary | "(" expression ")"
+primary                    -> literal | NULL | IDENTIFIER
+literal                    -> STRING | INT | BOOL // 'ANY' might need to be one? or just string in such cases?
+switchStmt                 -> "switch" discriminator switchBlock
+exprStmt                   -> expression ( "," expression )*
+
 STRING                     -> '"' .* '"' // with escaping of quotes using \
 INT                        -> [0-9]+
 BOOL                       -> "true" | "false"
