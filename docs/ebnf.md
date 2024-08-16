@@ -68,12 +68,13 @@ switchResourceAssignment   -> IDENTIFIER "=" "resource" "switch" COLON NEWLINE (
 switchResourceCase         -> "case" primary ( "," primary )* COLON primary ( "," primary )*
 RESOURCE                   -> STRING
 primaryAssignment          -> IDENTIFIER "=" primaryExpr
-rad                        -> "rad" IDENTIFIER? COLON NEWLINE radBody
-radBody                    -> INDENT IDENTIFIER ( "," IDENTIFIER )* NEWLINE ( INDENT radBodyStmt NEWLINE)*
-radBodyStmt                -> radSortStmt
+rad                        -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radBodyStmt NEWLINE )*
+radBodyStmt                -> radFieldsStmt
+                              | radSortStmt
                               | radModifierStmt
                               | radTableFormatStmt
                               | radFieldFormatBlock
+radFieldsStmt              -> "fields" IDENTIFIER ( "," IDENTIFIER )*
 radSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
 radModifierStmt            -> "uniq" | "quiet" | ( "limit" primaryExpr )
 radTableFormatStmt         -> "table" ( "default" | "markdown" | "fancy" ) 
