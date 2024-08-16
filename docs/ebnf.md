@@ -22,7 +22,9 @@ fileHeaderContents         -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                 -> .*
 fhLongDescription          -> ( .* NEWLINE )+
 statement                  -> assignment
-                              | rad
+                              | radBlock
+                              | queryBlock
+                              | tblBlock
                               | forStmt
                               | ifStmt
                               | switchStmt
@@ -67,27 +69,49 @@ switchOnResource           -> "on" RESOURCE IDENTIFIER
 switchResourceAssignment   -> IDENTIFIER "=" "resource" "switch" COLON NEWLINE ( INDENT switchResourceCase NEWLINE )*
 switchResourceCase         -> "case" primary ( "," primary )* COLON primary ( "," primary )*
 RESOURCE                   -> STRING
-primaryAssignment          -> IDENTIFIER "=" primaryExpr
-rad                        -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radStmt NEWLINE )*
+primaryAssignment          -> IDENTIFIER "=" expression
+radBlock                   -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radStmt NEWLINE )*
 radStmt                    -> radIfStmt
-                              | radFieldsStmt
-                              | radSortStmt
+                              | queryFieldsStmt
+                              | queryHeaderStmt
+                              | tblSortStmt
                               | radModifierStmt
-                              | radTableFormatStmt
-                              | radFieldFormatBlock
+                              | tblStyleStmt
+                              | tblFieldFormatBlock
 radIfStmt                  -> "if" expression COLON NEWLINE ( INDENT radStmt NEWLINE )* ( radElseIf | radElse )?
 radElseIf                  -> "else" radIfStmt
 radElse                    -> "else" COLON NEWLINE ( INDENT radStmt NEWLINE )*
-radFieldsStmt              -> "fields" IDENTIFIER ( "," IDENTIFIER )*
-radSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
-radModifierStmt            -> "uniq" | "quiet" | ( "limit" primaryExpr )
-radTableFormatStmt         -> "table" ( "default" | "markdown" | "fancy" ) 
-radFieldFormatBlock        -> IDENTIFIER COLON NEWLINE ( INDENT radFieldFormatStmt NEWLINE )+
-radFieldFormatStmt         -> radFieldFormatMaxWidthStmt
-                              | radFieldFormatColorStmt
-radFieldFormatMaxWidthStmt -> "max_width" INT
-radFieldFormatColorStmt    -> "color" COLOR REGEX?
+queryFieldsStmt            -> "fields" IDENTIFIER ( "," IDENTIFIER )*
+queryHeaderStmt            -> "header" expression
+queryModifierStmt          -> "quiet"
+tblModifierStmt            -> "uniq" | ( "limit expression )
+tblSortStmt                -> "sort" IDENTIFIER SORT? ( "," IDENTIFIER SORT? )*
+radModifierStmt            -> queryModifierStmt | tblModifierStmt
+tblStyleStmt               -> "style" ( "default" | "markdown" | "fancy" ) 
+tblFieldFormatBlock        -> IDENTIFIER ( "," IDENTIFIER )* COLON NEWLINE ( INDENT tblFieldFormatStmt NEWLINE )+
+tblFieldFormatStmt         -> tblFormatMaxWidthStmt
+                              | tblFormatColorStmt
+tblFormatMaxWidthStmt      -> "max_width" INT
+tblFormatColorStmt         -> "color" COLOR REGEX?
 SORT                       -> "asc" | "desc"
+queryBlock                 -> "query" IDENTIFIER COLON NEWLINE ( INDENT queryStmt NEWLINE )*
+queryStmt                  -> queryFieldsStmt
+                              | queryHeaderStmt
+                              | queryModifierStmt
+                              | queryIfStmt
+queryIfStmt                -> "if" expression COLON NEWLINE ( INDENT queryStmt NEWLINE )* ( queryElseIf | queryElse )?
+queryElseIf                -> "else" queryIfStmt
+queryElse                  -> "else" COLON NEWLINE ( INDENT queryStmt NEWLINE )*
+tblBlock                   -> "table" COLON NEWLINE ( INDENT tblStmt NEWLINE )*
+tblStmt                    -> tblFieldsStmt
+                              | tblModifierStmt
+                              | tblSortStmt
+                              | tblStyleStmt
+                              | tblFieldFormatBlock
+                              | tblIfStmt
+tblIfStmt                  -> "if" expression COLON NEWLINE ( INDENT tblStmt NEWLINE )* ( tblElseIf | tblElse )?
+tblElseIf                  -> "else" tblIfStmt
+tblElse                    -> "else" COLON NEWLINE ( INDENT tblStmt NEWLINE )*
 forStmt                    -> "for" IDENTIFIER "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
 expression                 -> logic_or // functions should probably fit somewhere into this structure
@@ -97,7 +121,6 @@ equality                   -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
 comparison                 -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
 unary                      -> ( "!" | "-" ) unary
                               | primary
-primaryExpr                -> primary | "(" expression ")"
 primary                    -> literal | NULL | IDENTIFIER
 literal                    -> STRING | NUMBER | BOOL // 'ANY' might need to be one? or just string in such cases?
 switchStmt                 -> "switch" discriminator switchBlock
@@ -124,6 +147,6 @@ TODO:
 
 - print statement, functions
 - headerStmt
-- max width for the whole table
-- displaying not as a table, but as pure printed lines? and other things
+- max width for the whole tbl
+- displaying not as a tbl, but as pure printed lines? and other things
 - consider while loop? clear use cases not immediately clear but in theory allows for big step up in capability
