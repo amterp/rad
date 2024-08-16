@@ -112,7 +112,9 @@ tblStmt                    -> tblFieldsStmt
 tblIfStmt                  -> "if" expression COLON NEWLINE ( INDENT tblStmt NEWLINE )* ( tblElseIf | tblElse )?
 tblElseIf                  -> "else" tblIfStmt
 tblElse                    -> "else" COLON NEWLINE ( INDENT tblStmt NEWLINE )*
-forStmt                    -> "for" IDENTIFIER "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
+forStmt                    -> "for" IDENTIFIER ( forStmtIndex | forStmtNoIndex )
+forStmtIndex               -> IDENTIFIER forStmtNoIndex
+forStmtNoIndex             -> "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
 expression                 -> logic_or // functions should probably fit somewhere into this structure
 logic_or                   -> logic_and ( "or" logic_and )*
