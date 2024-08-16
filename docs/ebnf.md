@@ -33,19 +33,22 @@ assignment                  -> jsonFieldAssignment
                                | switchAssignment
                                | switchResourceAssignment // todo, should split into separate 'resource' interpreter?
                                | compoundAssignment
+                               | arrayAssignment
                                | primaryAssignment
 argBlock                    -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt                -> argDeclaration
                                | argBlockConstraint
 INDENT                      -> "  " | "   " | "    " | "\t"
-argDeclaration              -> IDENTIFIER STRING? FLAG? ARG_TYPE argOptional? ARG_COMMENT
+argDeclaration              -> IDENTIFIER STRING? FLAG? anyType argOptional? ARG_COMMENT
 IDENTIFIER                  -> [A-Za-z_][A-Za-z0-9_]+ // probably overly restrictive
 FLAG                        -> [A-Za-z0-9_]  // probably overly restrictive
-ARG_TYPE                    -> ( ( "string" | "int" ) BRACKETS? ) | bool
+anyType                     -> primitiveType BRACKETS?
+arrayType                   -> primitiveType BRACKETS
+primitiveType               -> "string" | "int" | "float" | "bool"
 BRACKETS                    -> "[]"
 argOptional                 -> argOptionalNoDefault | argOptionalDefault
 argOptionalNoDefault        -> "?"
-argOptionalDefault          -> "=" primary
+argOptionalDefault          -> "=" literalOrArray
 ARG_COMMENT                 -> "#" .*
 argBlockConstraint          -> argStringRegexConstraint
                                | argNumberRangeConstraint
@@ -65,10 +68,10 @@ else                        -> "else" COLON NEWLINE ( INDENT statement NEWLINE )
 switchAssignment            -> IDENTIFIER ( "," IDENTIFIER )* "=" "switch" discriminator? ( switchBlock | switchOnResource )
 discriminator               -> IDENTIFIER
 switchBlock                 -> COLON NEWLINE ( INDENT switchCase NEWLINE )+
-switchCase                  -> "case" primary ( "," primary )* COLON NEWLINE ( INDENT statement NEWLINE )*
+switchCase                  -> "case" literal ( "," literal )* COLON NEWLINE ( INDENT statement NEWLINE )*
 switchOnResource            -> "on" RESOURCE IDENTIFIER
 switchResourceAssignment    -> IDENTIFIER "=" "resource" "switch" COLON NEWLINE ( INDENT switchResourceCase NEWLINE )*
-switchResourceCase          -> "case" primary ( "," primary )* COLON primary ( "," primary )*
+switchResourceCase          -> "case" literal ( "," literal )* COLON expression ( "," expression )*
 RESOURCE                    -> STRING
 compoundAssignment          -> addCompoundAssignemnt
                                | minusCompoundAssignemnt
@@ -78,7 +81,9 @@ addCompoundAssignment       -> IDENTIFIER "+=" IDENTIFIER
 minusCompoundAssignment     -> IDENTIFIER "-=" IDENTIFIER
 multiplyCompoundAssignment  -> IDENTIFIER "*=" IDENTIFIER
 divideCompoundAssignment    -> IDENTIFIER "/=" IDENTIFIER
-primaryAssignment           -> IDENTIFIER "=" expression
+arrayAssignment             -> IDENTIFIER arrayType "=" arrayExpr
+arrayExpr                   -> "[" ( expression ( "," expression )* )? "]"
+primaryAssignment           -> IDENTIFIER primitiveType? "=" expression
 radBlock                    -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radStmt NEWLINE )*
 radStmt                     -> radIfStmt
                                | queryFieldsStmt
@@ -135,8 +140,10 @@ factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
                                | primaryExpr
 primaryExpr                 -> "(" expression ")" | primary 
-primary                     -> literal | NULL | arrayAccess | functionCall | IDENTIFIER
-literal                     -> STRING | NUMBER | BOOL // 'ANY' might need to be one? or just string in such cases?
+primary                     -> literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
+literalOrArray              -> literal | arrayLiteral
+literal                     -> STRING | NUMBER | BOOL | NULL
+arrayLiteral                -> "[" ( literal ( "," literal )* )? "]"
 arrayAccess                 -> IDENTIFIER "[" expression "]"
 functionCall                -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
 switchStmt                  -> "switch" discriminator switchBlock
