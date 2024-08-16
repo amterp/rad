@@ -45,11 +45,11 @@ argOptionalNoDefault       -> "?"
 argOptionalDefault         -> "=" primary
 ARG_COMMENT                -> "#" .*
 argBlockConstraint         -> argStringRegexConstraint
-                              | argIntRangeConstraint
+                              | argNumberRangeConstraint
                               | argOneWayReq
                               | argMutualExcl
 argStringRegexConstraint   -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
-argIntRangeConstraint      -> IDENTIFIER COMPARATORS INT
+argNumberRangeConstraint   -> IDENTIFIER COMPARATORS NUMBER
 argOneWayReq               -> IDENTIFIER "requires" IDENTIFIER
 argMutualExcl              -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
 jsonFieldAssignment        -> IDENTIFIER "=" "json" BRACKETS? ( "." jsonFieldPathElement )*
@@ -94,12 +94,14 @@ unary                      -> ( "!" | "-" ) unary
                               | primary
 primaryExpr                -> primary | "(" expression ")"
 primary                    -> literal | NULL | IDENTIFIER
-literal                    -> STRING | INT | BOOL // 'ANY' might need to be one? or just string in such cases?
+literal                    -> STRING | NUMBER | BOOL // 'ANY' might need to be one? or just string in such cases?
 switchStmt                 -> "switch" discriminator switchBlock
 exprStmt                   -> expression ( "," expression )*
 
 STRING                     -> '"' .* '"' // with escaping of quotes using \
+NUMBER                     -> INT | FLOAT
 INT                        -> [0-9]+
+FLOAT                      -> [0-9]+.[0-9]+
 BOOL                       -> "true" | "false"
 REGEX                      -> a regex
 COMPARATORS                -> GT | GTE | EQUAL | LT | LTE
