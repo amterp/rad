@@ -123,8 +123,9 @@ equality                   -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
 comparison                 -> unary ( ( GT | GTE | LT | LTE ) unary )* // here is where I *could* allow arithmetic, but choose not to (yet?)
 unary                      -> ( "!" | "-" ) unary
                               | primary
-primary                    -> literal | NULL | IDENTIFIER
+primary                    -> literal | NULL | IDENTIFIER | arrayAccess
 literal                    -> STRING | NUMBER | BOOL // 'ANY' might need to be one? or just string in such cases?
+arrayAccess                -> IDENTIFIER "[" expression "]"
 switchStmt                 -> "switch" discriminator switchBlock
 exprStmt                   -> expression ( "," expression )*
 
