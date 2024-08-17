@@ -53,11 +53,11 @@ ARG_COMMENT                 -> "#" .*
 argBlockConstraint          -> argStringRegexConstraint
                                | argNumberRangeConstraint
                                | argOneWayReq
-                               | argMutualExcl
+                               | argsSpecifiedConstraint
 argStringRegexConstraint    -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
 argNumberRangeConstraint    -> IDENTIFIER COMPARATORS NUMBER
 argOneWayReq                -> IDENTIFIER "requires" IDENTIFIER
-argMutualExcl               -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
+argsSpecifiedConstraint     -> ( "at_least" | "exactly" | "at_most" ) INT IDENTIFIER ( "," IDENTIFIER )+
 jsonFieldAssignment         -> IDENTIFIER "=" "json" BRACKETS? ( "." jsonFieldPathElement )*
 jsonFieldPathElement        -> jsonFieldPathKey BRACKETS?
 jsonFieldPathKey            -> ( escapedKeyChar | .* -- \ . [ )*
