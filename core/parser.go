@@ -183,6 +183,13 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 		} else {
 			rslTypeEnum = RslInt
 		}
+	} else if p.matchKeyword(FLOAT, ARGS_BLOCK_KEYWORDS) {
+		argType = p.previous()
+		if p.match(BRACKETS) {
+			rslTypeEnum = RslFloatArray
+		} else {
+			rslTypeEnum = RslFloat
+		}
 	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		rslTypeEnum = RslBool
@@ -313,6 +320,10 @@ func (p *Parser) expr() Expr {
 
 	if p.match(INT_LITERAL) {
 		return &IntLiteral{value: p.previous()}
+	}
+
+	if p.match(FLOAT_LITERAL) {
+		return &FloatLiteral{value: p.previous()}
 	}
 
 	if p.match(BOOL_LITERAL) { // todo need to emit bool literal tokens

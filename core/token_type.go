@@ -40,17 +40,18 @@ const (
 	IDENTIFIER        TokenType = "IDENTIFIER"
 	STRING_LITERAL    TokenType = "STRING_LITERAL"
 	INT_LITERAL       TokenType = "INT_LITERAL"
+	FLOAT_LITERAL     TokenType = "FLOAT_LITERAL"
 	BOOL_LITERAL      TokenType = "BOOL_LITERAL"
 	FILE_HEADER       TokenType = "FILE_HEADER"
 	ARG_COMMENT       TokenType = "ARG_COMMENT"
 	JSON_PATH_ELEMENT TokenType = "JSON_PATH_ELEMENT"
 
-	// Keywords TODO might not need these, we might treat them as identifiers in lexer, then check in parser
+	// Keywords
 
 	FOR      TokenType = "FOR"
 	IN       TokenType = "IN"
 	ARGS     TokenType = "ARGS"
-	CHOICE   TokenType = "CHOICE"
+	SWITCH   TokenType = "SWITCH"
 	FROM     TokenType = "FROM"
 	ON       TokenType = "ON"
 	RAD      TokenType = "RAD" // todo continue to rethink this being the keyword
@@ -64,6 +65,7 @@ const (
 	// only in args block
 	STRING   TokenType = "STRING"
 	INT      TokenType = "INT"
+	FLOAT    TokenType = "FLOAT"
 	BOOL     TokenType = "BOOL"
 	REQUIRES TokenType = "REQUIRES"
 	ONE_OF   TokenType = "ONE_OF"

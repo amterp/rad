@@ -4,7 +4,7 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"for":      FOR,
 	"in":       IN,
 	"args":     ARGS,
-	"choice":   CHOICE,
+	"switch":   SWITCH,
 	"from":     FROM,
 	"on":       ON,
 	"rad":      RAD,
@@ -19,6 +19,7 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 var ARGS_BLOCK_KEYWORDS = map[string]TokenType{
 	"string":   STRING,
 	"int":      INT,
+	"float":    FLOAT,
 	"bool":     BOOL,
 	"requires": REQUIRES,
 	"one_of":   ONE_OF,

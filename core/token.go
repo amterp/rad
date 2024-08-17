@@ -46,6 +46,11 @@ type IntLiteralToken struct {
 	Literal *int
 }
 
+type FloatLiteralToken struct {
+	BaseToken
+	Literal *float64
+}
+
 type BoolLiteralToken struct {
 	BaseToken
 	Literal *bool
@@ -111,6 +116,26 @@ func NewIntLiteralToken(
 	literal *int) Token {
 
 	return &IntLiteralToken{
+		BaseToken: BaseToken{
+			Type:          tokenType,
+			Lexeme:        lexeme,
+			CharStart:     charStart,
+			Line:          line,
+			CharLineStart: charLineStart,
+		},
+		Literal: literal,
+	}
+}
+
+func NewFloatLiteralToken(
+	tokenType TokenType,
+	lexeme string,
+	charStart int,
+	line int,
+	charLineStart int,
+	literal *float64) Token {
+
+	return &FloatLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
 			Lexeme:        lexeme,

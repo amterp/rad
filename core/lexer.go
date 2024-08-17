@@ -146,7 +146,7 @@ func (l *Lexer) scanToken() {
 		// ignore whitespace if not at start of line
 	default:
 		if isDigit(c) {
-			l.lexInt()
+			l.lexNumber()
 		} else if isAlpha(c) {
 			l.lexIdentifier()
 		} else {
@@ -254,16 +254,34 @@ func (l *Lexer) lexStringLiteral() {
 	l.addStringLiteralToken(&value)
 }
 
-func (l *Lexer) lexInt() {
+func (l *Lexer) lexNumber() {
 	for isDigit(l.peek()) {
 		l.advance()
 	}
-	lexeme := l.source[l.start:l.next]
-	literal, err := strconv.Atoi(lexeme)
-	if err != nil {
-		l.error("Invalid integer")
+
+	isFloat := l.match('.')
+	if isFloat {
+		for isDigit(l.peek()) {
+			l.advance()
+		}
 	}
-	l.addIntLiteralToken(literal)
+
+	lexeme := l.source[l.start:l.next]
+
+	if isFloat {
+		literal, err := strconv.ParseFloat(lexeme, 64)
+		if err != nil {
+			l.error("Invalid float")
+		}
+		l.addFloatLiteralToken(literal)
+	} else {
+		// int
+		literal, err := strconv.Atoi(lexeme)
+		if err != nil {
+			l.error("Invalid integer")
+		}
+		l.addIntLiteralToken(literal)
+	}
 }
 
 func (l *Lexer) lexIdentifier() {
@@ -402,6 +420,12 @@ func (l *Lexer) addStringLiteralToken(literal *string) {
 func (l *Lexer) addIntLiteralToken(literal int) {
 	lexeme := l.source[l.start:l.next]
 	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
+	l.Tokens = append(l.Tokens, token)
+}
+
+func (l *Lexer) addFloatLiteralToken(literal float64) {
+	lexeme := l.source[l.start:l.next]
+	token := NewFloatLiteralToken(FLOAT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
 	l.Tokens = append(l.Tokens, token)
 }
 

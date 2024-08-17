@@ -12,6 +12,7 @@ type Expr interface {
 type ExprVisitor interface {
 	VisitStringLiteralExpr(*StringLiteral) interface{}
 	VisitIntLiteralExpr(*IntLiteral) interface{}
+	VisitFloatLiteralExpr(*FloatLiteral) interface{}
 	VisitBoolLiteralExpr(*BoolLiteral) interface{}
 	VisitVariableExpr(*Variable) interface{}
 }
@@ -39,6 +40,19 @@ func (e *IntLiteral) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("value: %v", e.value))
 	return fmt.Sprintf("IntLiteral(%s)", strings.Join(parts, ", "))
+}
+
+type FloatLiteral struct {
+	value Token
+}
+
+func (e *FloatLiteral) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitFloatLiteralExpr(e)
+}
+func (e *FloatLiteral) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("value: %v", e.value))
+	return fmt.Sprintf("FloatLiteral(%s)", strings.Join(parts, ", "))
 }
 
 type BoolLiteral struct {

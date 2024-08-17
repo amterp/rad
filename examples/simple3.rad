@@ -1,0 +1,4 @@
+args:
+    num float # a number
+
+a = 1.02

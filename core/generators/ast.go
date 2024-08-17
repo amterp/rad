@@ -19,6 +19,7 @@ func main() {
 	defineAst(outputDir, "Expr", "interface{}", []string{
 		"StringLiteral   : Token value",
 		"IntLiteral      : Token value",
+		"FloatLiteral    : Token value",
 		"BoolLiteral     : Token value",
 		"Variable		 : Token name",
 	})

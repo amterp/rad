@@ -7,6 +7,8 @@ const (
 	RslStringArray
 	RslInt
 	RslIntArray
+	RslFloat
+	RslFloatArray
 	RslBool
 )
 
