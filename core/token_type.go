@@ -72,6 +72,7 @@ const (
 	REGEX    TokenType = "REGEX" // todo this is pretty sad to not make available for users as flag
 
 	// only in rad block
+	FIELDS    TokenType = "FIELDS"
 	SORT      TokenType = "SORT"
 	ASC       TokenType = "ASC"
 	DESC      TokenType = "DESC"

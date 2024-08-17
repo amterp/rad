@@ -84,7 +84,7 @@ divideCompoundAssignment    -> IDENTIFIER "/=" IDENTIFIER
 arrayAssignment             -> IDENTIFIER arrayType "=" arrayExpr
 arrayExpr                   -> "[" ( expression ( "," expression )* )? "]"
 primaryAssignment           -> IDENTIFIER primitiveType? "=" expression
-radBlock                    -> "rad" IDENTIFIER? COLON NEWLINE ( INDENT radStmt NEWLINE )*
+radBlock                    -> "rad" IDENTIFIER COLON NEWLINE ( INDENT radStmt NEWLINE )*
 radStmt                     -> radIfStmt
                                | queryFieldsStmt
                                | queryHeaderStmt

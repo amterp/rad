@@ -27,6 +27,7 @@ var ARGS_BLOCK_KEYWORDS = map[string]TokenType{
 }
 
 var RAD_BLOCK_KEYWORDS = map[string]TokenType{
+	"fields":    FIELDS,
 	"sort":      SORT,
 	"asc":       ASC,
 	"desc":      DESC,

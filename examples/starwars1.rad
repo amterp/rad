@@ -19,10 +19,10 @@ args:
 baseUrl = "https://swapi.dev/api/"
 
 // the choice block here is not a great demo, given the if statement further down
-endpoint = choice topic:
-    "people" | "folks", "people", "heights"
-    "planets" | "planets", "populations"
-    "starships" | "starships", "passengers"
+endpoint = switch topic:
+    case "folks", "people", "heights": "people"
+    case "planets", "populations": "planets"
+    case "starships", "passengers": "starships"
 
 url = baseUrl + endpoint
 

@@ -232,38 +232,58 @@ func (p *Parser) statement() Stmt {
 
 func (p *Parser) radBlock() *RadBlock {
 	radToken := p.previous()
-	var urlToken Expr
-	if !p.peekType(COLON) {
-		urlToken = p.expr()
-	}
+	urlToken := p.expr()
 	p.consume(COLON, "Expecting ':' to start rad block")
 	p.consumeNewlines()
 	if !p.match(INDENT) {
 		p.error("Expecting indented contents in rad block")
 	}
 	p.consumeNewlines()
-	identifiers := []Token{}
-	identifiers = append(identifiers, p.identifier())
-	for !p.match(NEWLINE) {
-		p.consume(COMMA, "Expected ',' between identifiers")
-		identifiers = append(identifiers, p.identifier())
-	}
 	var radStatements []RadStmt
-	radStatements = append(radStatements, &Fields{identifiers: identifiers})
 	for !p.match(DEDENT) {
 		p.consumeNewlines()
 		radStatements = append(radStatements, p.radStatement())
 	}
-	return &RadBlock{radKeyword: radToken, url: &urlToken, radStmts: radStatements}
+	radBlock := &RadBlock{radKeyword: radToken, url: &urlToken, radStmts: radStatements}
+	p.validateRadBlock(radBlock)
+	return radBlock
 }
 
 func (p *Parser) radStatement() RadStmt {
+	if p.matchKeyword(FIELDS, RAD_BLOCK_KEYWORDS) {
+		return p.radFieldsStatement()
+	}
 	// todo sort
 	// todo modifier
 	// todo table fmt
 	// todo field fmt
 	// todo filtering?
 	panic(NOT_IMPLEMENTED)
+}
+
+func (p *Parser) validateRadBlock(radBlock *RadBlock) {
+	hasFieldsStmt := false
+	for _, stmt := range radBlock.radStmts {
+		if _, ok := stmt.(*Fields); ok {
+			if hasFieldsStmt {
+				p.error("Only one 'fields' statement is allowed in a rad block")
+			}
+			hasFieldsStmt = true
+		}
+	}
+	if !hasFieldsStmt {
+		p.error("A rad block must contain a 'fields' statement")
+	}
+}
+
+func (p *Parser) radFieldsStatement() RadStmt {
+	var identifiers []Token
+	identifiers = append(identifiers, p.identifier())
+	for !p.match(NEWLINE) {
+		p.consume(COMMA, "Expected ',' between identifiers")
+		identifiers = append(identifiers, p.identifier())
+	}
+	return &Fields{identifiers: identifiers}
 }
 
 func (p *Parser) assignment() Stmt {

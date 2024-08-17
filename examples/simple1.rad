@@ -7,7 +7,7 @@ args:
 
 Errors = json.statuses[].num_errors
 
-url = choice region:
+url = switch region:
     "backend-us" us
     "backend-eu" eu
 
