@@ -4,4 +4,4 @@ args:
 a = 1.02
 
 rad block:
-    fields Name
+    fields Name, Age
