@@ -75,6 +75,10 @@ func (l *Lexer) scanToken() {
 		l.addToken(LEFT_PAREN)
 	case ')':
 		l.addToken(RIGHT_PAREN)
+	case '[':
+		l.addToken(LEFT_BRACKET)
+	case ']':
+		l.addToken(RIGHT_BRACKET)
 	case ',':
 		l.addToken(COMMA)
 	case ':':

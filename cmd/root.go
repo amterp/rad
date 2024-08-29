@@ -46,11 +46,33 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 		fmt.Printf("%v\n", stmt)
 	}
 
-	// todo
-	//scriptArgs := extractArgs()
+	scriptArgs := extractArgs(statements)
 	//scriptCmd := createCmd(scriptArgs)
 	//cmd.AddCommand(scriptCmd)
 	subCommandInitialized = true
+}
+
+func extractArgs(statements []core.Stmt) []core.ScriptArg {
+	var args []core.ScriptArg
+
+	argBlockIfFound, ok := lo.Find(statements, func(stmt core.Stmt) bool {
+		_, ok := stmt.(*core.ArgBlock)
+		return ok
+	})
+
+	if !ok {
+		return args
+	}
+
+	argBlock := argBlockIfFound.(*core.ArgBlock)
+	for _, argStmt := range argBlock.ArgStmts {
+		argDecl, ok := argStmt.(*core.ArgDeclaration)
+		if ok {
+
+		}
+	}
+
+	return argBlockIfFound
 }
 
 func createCmd(args []core.ScriptArg) *cobra.Command {

@@ -1,17 +1,17 @@
 package core
 
 type Env struct {
-	vars map[string]RuntimeLiteral
-	//args       map[string]ArgValue
+	Vars map[string]RuntimeLiteral
+	Args map[string]ScriptArg
 	//jsonFields map[string]*JsonField
-	enclosing *Env
+	Enclosing *Env
 }
 
 func NewEnv() *Env {
 	return &Env{
-		vars: make(map[string]RuntimeLiteral),
-		//args:       make(map[string]ArgValue),
+		Vars: make(map[string]RuntimeLiteral),
+		Args: make(map[string]ScriptArg),
 		//jsonFields: make(map[string]*JsonField),
-		enclosing: nil,
+		Enclosing: nil,
 	}
 }

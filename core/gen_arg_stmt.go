@@ -10,29 +10,29 @@ type ArgStmt interface {
 	Accept(visitor ArgStmtVisitor)
 }
 type ArgStmtVisitor interface {
-	VisitArgDeclarationArgStmt(*ArgDeclaration)
+	VisitArgDeclarationArgStmt(ArgDeclaration)
 }
 type ArgDeclaration struct {
-	identifier  Token
-	rename      *Token
-	flag        *Token
-	argType     RslType
-	isOptional  bool
-	defaultInit *Expr
-	comment     ArgCommentToken
+	Identifier Token
+	Rename     *Token
+	Flag       *Token
+	ArgType    RslType
+	IsOptional bool
+	Default    *LiteralOrArray
+	Comment    ArgCommentToken
 }
 
-func (e *ArgDeclaration) Accept(visitor ArgStmtVisitor) {
+func (e ArgDeclaration) Accept(visitor ArgStmtVisitor) {
 	visitor.VisitArgDeclarationArgStmt(e)
 }
-func (e *ArgDeclaration) String() string {
+func (e ArgDeclaration) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("identifier: %v", e.identifier))
-	parts = append(parts, fmt.Sprintf("rename: %v", e.rename))
-	parts = append(parts, fmt.Sprintf("flag: %v", e.flag))
-	parts = append(parts, fmt.Sprintf("argType: %v", e.argType))
-	parts = append(parts, fmt.Sprintf("isOptional: %v", e.isOptional))
-	parts = append(parts, fmt.Sprintf("defaultInit: %v", e.defaultInit))
-	parts = append(parts, fmt.Sprintf("comment: %v", e.comment))
+	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Rename: %v", e.Rename))
+	parts = append(parts, fmt.Sprintf("Flag: %v", e.Flag))
+	parts = append(parts, fmt.Sprintf("ArgType: %v", e.ArgType))
+	parts = append(parts, fmt.Sprintf("IsOptional: %v", e.IsOptional))
+	parts = append(parts, fmt.Sprintf("Default: %v", e.Default))
+	parts = append(parts, fmt.Sprintf("Comment: %v", e.Comment))
 	return fmt.Sprintf("ArgDeclaration(%s)", strings.Join(parts, ", "))
 }

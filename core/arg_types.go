@@ -1,5 +1,7 @@
 package core
 
+import "rad/core/interpreters"
+
 type ScriptArg struct {
 	Name        string
 	Flag        *string
@@ -12,4 +14,14 @@ type ScriptArg struct {
 	DefaultInt         *int
 	DefaultIntArray    *[]int
 	DefaultBool        *bool
+}
+
+func FromArgDecl(i *interpreters.LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
+	return &ScriptArg{
+		Name:        argDecl.Identifier.GetLexeme(),
+		Flag:        nil,
+		Type:        argDecl.ArgType.Type,
+		Description: nil,
+		IsOptional:  argDecl.IsOptional,
+	}
 }

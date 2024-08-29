@@ -6,22 +6,24 @@ type TokenType string
 const (
 	// Single-character tokens
 
-	LEFT_PAREN  TokenType = "LEFT_PAREN"
-	RIGHT_PAREN TokenType = "RIGHT_PAREN"
-	COMMA       TokenType = "COMMA"
-	COLON       TokenType = "COLON"
-	NEWLINE     TokenType = "NEWLINE"
-	EQUAL       TokenType = "EQUAL"
-	DOT         TokenType = "DOT"
-	PIPE        TokenType = "PIPE"     // |
-	QUESTION    TokenType = "QUESTION" // ?
-	MINUS       TokenType = "MINUS"
-	PLUS        TokenType = "PLUS"
-	EXCLAMATION TokenType = "EXCLAMATION"
-	NULL        TokenType = "NULL"
-	AT          TokenType = "AT" // @
-	LESS        TokenType = "LESS"
-	GREATER     TokenType = "GREATER"
+	LEFT_PAREN    TokenType = "LEFT_PAREN"
+	RIGHT_PAREN   TokenType = "RIGHT_PAREN"
+	LEFT_BRACKET  TokenType = "LEFT_BRACKET"
+	RIGHT_BRACKET TokenType = "RIGHT_BRACKET"
+	COMMA         TokenType = "COMMA"
+	COLON         TokenType = "COLON"
+	NEWLINE       TokenType = "NEWLINE"
+	EQUAL         TokenType = "EQUAL"
+	DOT           TokenType = "DOT"
+	PIPE          TokenType = "PIPE"     // |
+	QUESTION      TokenType = "QUESTION" // ?
+	MINUS         TokenType = "MINUS"
+	PLUS          TokenType = "PLUS"
+	EXCLAMATION   TokenType = "EXCLAMATION"
+	NULL          TokenType = "NULL"
+	AT            TokenType = "AT" // @
+	LESS          TokenType = "LESS"
+	GREATER       TokenType = "GREATER"
 
 	// Two-character tokens
 
@@ -62,14 +64,14 @@ const (
 	ELSE     TokenType = "ELSE"
 	RESOURCE TokenType = "RESOURCE"
 
-	// only in args block
+	// only in Args block
 	STRING   TokenType = "STRING"
 	INT      TokenType = "INT"
 	FLOAT    TokenType = "FLOAT"
 	BOOL     TokenType = "BOOL"
 	REQUIRES TokenType = "REQUIRES"
 	ONE_OF   TokenType = "ONE_OF"
-	REGEX    TokenType = "REGEX" // todo this is pretty sad to not make available for users as flag
+	REGEX    TokenType = "REGEX" // todo this is pretty sad to not make available for users as Flag
 
 	// only in rad block
 	FIELDS    TokenType = "FIELDS"

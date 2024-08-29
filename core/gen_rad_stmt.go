@@ -10,17 +10,17 @@ type RadStmt interface {
 	Accept(visitor RadStmtVisitor)
 }
 type RadStmtVisitor interface {
-	VisitFieldsRadStmt(*Fields)
+	VisitFieldsRadStmt(Fields)
 }
 type Fields struct {
-	identifiers []Token
+	Identifiers []Token
 }
 
-func (e *Fields) Accept(visitor RadStmtVisitor) {
+func (e Fields) Accept(visitor RadStmtVisitor) {
 	visitor.VisitFieldsRadStmt(e)
 }
-func (e *Fields) String() string {
+func (e Fields) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("identifiers: %v", e.identifiers))
+	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
 	return fmt.Sprintf("Fields(%s)", strings.Join(parts, ", "))
 }

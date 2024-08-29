@@ -10,108 +10,108 @@ type Stmt interface {
 	Accept(visitor StmtVisitor)
 }
 type StmtVisitor interface {
-	VisitExpressionStmt(*Expression)
-	VisitPrimaryAssignStmt(*PrimaryAssign)
-	VisitFileHeaderStmt(*FileHeader)
-	VisitEmptyStmt(*Empty)
-	VisitArgBlockStmt(*ArgBlock)
-	VisitRadBlockStmt(*RadBlock)
-	VisitJsonPathAssignStmt(*JsonPathAssign)
+	VisitEmptyStmt(Empty)
+	VisitExprStmtStmt(ExprStmt)
+	VisitPrimaryAssignStmt(PrimaryAssign)
+	VisitFileHeaderStmt(FileHeader)
+	VisitArgBlockStmt(ArgBlock)
+	VisitRadBlockStmt(RadBlock)
+	VisitJsonPathAssignStmt(JsonPathAssign)
 }
-type Expression struct {
-	expression Expr
+type Empty struct {
 }
 
-func (e *Expression) Accept(visitor StmtVisitor) {
-	visitor.VisitExpressionStmt(e)
+func (e Empty) Accept(visitor StmtVisitor) {
+	visitor.VisitEmptyStmt(e)
 }
-func (e *Expression) String() string {
+func (e Empty) String() string {
+	return "Empty()"
+}
+
+type ExprStmt struct {
+	Expression Expr
+}
+
+func (e ExprStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitExprStmtStmt(e)
+}
+func (e ExprStmt) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("expression: %v", e.expression))
-	return fmt.Sprintf("Expression(%s)", strings.Join(parts, ", "))
+	parts = append(parts, fmt.Sprintf("Expression: %v", e.Expression))
+	return fmt.Sprintf("ExprStmt(%s)", strings.Join(parts, ", "))
 }
 
 type PrimaryAssign struct {
-	name        Token
-	initializer Expr
+	Name        Token
+	Initializer Expr
 }
 
-func (e *PrimaryAssign) Accept(visitor StmtVisitor) {
+func (e PrimaryAssign) Accept(visitor StmtVisitor) {
 	visitor.VisitPrimaryAssignStmt(e)
 }
-func (e *PrimaryAssign) String() string {
+func (e PrimaryAssign) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("name: %v", e.name))
-	parts = append(parts, fmt.Sprintf("initializer: %v", e.initializer))
+	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
+	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
 }
 
 type FileHeader struct {
-	fileHeaderToken Token
+	FileHeaderToken Token
 }
 
-func (e *FileHeader) Accept(visitor StmtVisitor) {
+func (e FileHeader) Accept(visitor StmtVisitor) {
 	visitor.VisitFileHeaderStmt(e)
 }
-func (e *FileHeader) String() string {
+func (e FileHeader) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("fileHeaderToken: %v", e.fileHeaderToken))
+	parts = append(parts, fmt.Sprintf("FileHeaderToken: %v", e.FileHeaderToken))
 	return fmt.Sprintf("FileHeader(%s)", strings.Join(parts, ", "))
 }
 
-type Empty struct {
-}
-
-func (e *Empty) Accept(visitor StmtVisitor) {
-	visitor.VisitEmptyStmt(e)
-}
-func (e *Empty) String() string {
-	return "Empty()"
-}
-
 type ArgBlock struct {
-	argsKeyword Token
-	argStmts    []ArgStmt
+	ArgsKeyword Token
+	ArgStmts    []ArgStmt
 }
 
-func (e *ArgBlock) Accept(visitor StmtVisitor) {
+func (e ArgBlock) Accept(visitor StmtVisitor) {
 	visitor.VisitArgBlockStmt(e)
 }
-func (e *ArgBlock) String() string {
+func (e ArgBlock) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("argsKeyword: %v", e.argsKeyword))
-	parts = append(parts, fmt.Sprintf("argStmts: %v", e.argStmts))
+	parts = append(parts, fmt.Sprintf("ArgsKeyword: %v", e.ArgsKeyword))
+	parts = append(parts, fmt.Sprintf("ArgStmts: %v", e.ArgStmts))
 	return fmt.Sprintf("ArgBlock(%s)", strings.Join(parts, ", "))
 }
 
 type RadBlock struct {
-	radKeyword Token
-	url        *Expr
-	radStmts   []RadStmt
+	RadKeyword Token
+	Url        *Expr
+	RadStmts   []RadStmt
 }
 
-func (e *RadBlock) Accept(visitor StmtVisitor) {
+func (e RadBlock) Accept(visitor StmtVisitor) {
 	visitor.VisitRadBlockStmt(e)
 }
-func (e *RadBlock) String() string {
+func (e RadBlock) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("radKeyword: %v", e.radKeyword))
-	parts = append(parts, fmt.Sprintf("url: %v", e.url))
-	parts = append(parts, fmt.Sprintf("radStmts: %v", e.radStmts))
+	parts = append(parts, fmt.Sprintf("RadKeyword: %v", e.RadKeyword))
+	parts = append(parts, fmt.Sprintf("Url: %v", e.Url))
+	parts = append(parts, fmt.Sprintf("RadStmts: %v", e.RadStmts))
 	return fmt.Sprintf("RadBlock(%s)", strings.Join(parts, ", "))
 }
 
 type JsonPathAssign struct {
-	identifier Token
-	elements   []JsonPathElement
+	Identifier Token
+	Elements   []JsonPathElement
 }
 
-func (e *JsonPathAssign) Accept(visitor StmtVisitor) {
+func (e JsonPathAssign) Accept(visitor StmtVisitor) {
 	visitor.VisitJsonPathAssignStmt(e)
 }
-func (e *JsonPathAssign) String() string {
+func (e JsonPathAssign) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("identifier: %v", e.identifier))
-	parts = append(parts, fmt.Sprintf("elements: %v", e.elements))
+	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Elements: %v", e.Elements))
 	return fmt.Sprintf("JsonPathAssign(%s)", strings.Join(parts, ", "))
 }

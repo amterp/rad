@@ -104,7 +104,7 @@ func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
 func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 	if p.matchKeyword(ARGS, GLOBAL_KEYWORDS) {
 		argsKeyword := p.previous()
-		p.consume(COLON, "Expected ':' after 'args'")
+		p.consume(COLON, "Expected ':' after 'Args'")
 		p.consumeNewlines()
 
 		if !p.match(INDENT) {
@@ -112,10 +112,10 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 		}
 
 		p.consumeNewlines()
-		argsBlock := ArgBlock{argsKeyword: argsKeyword, argStmts: []ArgStmt{}}
+		argsBlock := ArgBlock{argsKeyword: argsKeyword, ArgStmts: []ArgStmt{}}
 		for !p.match(DEDENT) {
 			s := p.argStatement()
-			argsBlock.argStmts = append(argsBlock.argStmts, s)
+			argsBlock.ArgStmts = append(argsBlock.ArgStmts, s)
 			p.consumeNewlines()
 		}
 		*statements = append(*statements, &argsBlock)
@@ -137,7 +137,7 @@ func (p *Parser) argStatement() ArgStmt {
 		panic(NOT_IMPLEMENTED)
 	}
 
-	identifier := p.consume(IDENTIFIER, "Expected identifier or keyword")
+	identifier := p.consume(IDENTIFIER, "Expected Identifier or keyword")
 
 	if p.peekType(STRING_LITERAL) ||
 		p.peekType(IDENTIFIER) ||
@@ -164,7 +164,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 
 	var flag Token
 	if p.peekTwoAhead().GetType() == IDENTIFIER {
-		flag = p.consume(IDENTIFIER, "Expected flag")
+		flag = p.consume(IDENTIFIER, "Expected Flag")
 	}
 
 	var argType Token
@@ -198,23 +198,23 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	}
 
 	isOptional := false
-	var defaultInit Expr
+	var defaultLiteral *LiteralOrArray
 	if p.match(QUESTION) {
 		isOptional = true
 	} else if p.match(EQUAL) {
-		defaultInit = p.expr()
+		defaultLiteral = p.literalOrArray(rslTypeEnum)
 	}
 
-	argComment := p.consume(ARG_COMMENT, "Expected arg comment").(*ArgCommentToken)
+	argComment := p.consume(ARG_COMMENT, "Expected arg Comment").(*ArgCommentToken)
 
 	return &ArgDeclaration{
-		identifier:  identifier,
-		rename:      &stringLiteral,
-		flag:        &flag,
-		argType:     RslType{Token: argType, Type: rslTypeEnum},
-		isOptional:  isOptional,
-		defaultInit: &defaultInit,
-		comment:     *argComment,
+		Identifier: identifier,
+		Rename:     &stringLiteral,
+		Flag:       &flag,
+		ArgType:    RslType{Token: argType, Type: rslTypeEnum},
+		IsOptional: isOptional,
+		Default:    defaultLiteral,
+		Comment:    *argComment,
 	}
 }
 
@@ -334,35 +334,144 @@ func (p *Parser) primaryAssignment(name Token) Stmt {
 }
 
 func (p *Parser) expr() Expr {
+	p.literalOrArray()
+
+	if p.match(IDENTIFIER) {
+		return &Variable{Name: p.previous()}
+	}
+
+	p.error("Expected Identifier or string")
+	panic(UNREACHABLE)
+}
+
+func (p *Parser) literalOrArray(expectedType RslTypeEnum) LiteralOrArray {
+	literal, ok := p.literal(&expectedType)
+	if ok {
+		return &LiteralOrArrayHolder{LiteralVal: &literal}
+	}
+
+	array := p.arrayLiteral(expectedType)
+	return &LiteralOrArrayHolder{ArrayVal: &array}
+}
+
+func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
 	if p.match(STRING_LITERAL) {
-		return &StringLiteral{value: p.previous()}
+		if expectedType != nil && *expectedType != RslString {
+			p.error("Expected string literal")
+		}
+		return &StringLiteral{Value: p.previous()}, true
 	}
 
 	if p.match(INT_LITERAL) {
-		return &IntLiteral{value: p.previous()}
+		if expectedType != nil && *expectedType != RslInt {
+			p.error("Expected int literal")
+		}
+		return &IntLiteral{Value: p.previous()}, true
 	}
 
 	if p.match(FLOAT_LITERAL) {
-		return &FloatLiteral{value: p.previous()}
+		if expectedType != nil && *expectedType != RslFloat {
+			p.error("Expected float literal")
+		}
+		return &FloatLiteral{Value: p.previous()}, true
 	}
 
-	if p.match(BOOL_LITERAL) { // todo need to emit bool literal tokens
-		return &BoolLiteral{value: p.previous()}
+	// todo need to emit bool literal tokens
+	if p.match(BOOL_LITERAL) {
+		if expectedType != nil && *expectedType != RslBool {
+			p.error("Expected bool literal")
+		}
+		return &BoolLiteral{Value: p.previous()}, true
 	}
 
-	if p.match(IDENTIFIER) {
-		return &Variable{name: p.previous()}
-	}
+	return nil, false
+}
 
-	p.error("Expected identifier or string")
-	panic(UNREACHABLE)
+func (p *Parser) arrayLiteral(expectedType RslTypeEnum) ArrayLiteral {
+	switch expectedType {
+	case RslString:
+		return p.stringArrayLiteral()
+	case RslInt:
+		return p.intArrayLiteral()
+	case RslFloat:
+		return p.floatArrayLiteral()
+	case RslBool:
+		return p.boolArrayLiteral()
+	default:
+		p.error(fmt.Sprintf("Unknown array of type %v", expectedType))
+		panic(UNREACHABLE)
+	}
+}
+
+func (p *Parser) stringArrayLiteral() ArrayLiteral {
+	var values []StringLiteral
+	expectedType := RslString
+	for !p.match(RIGHT_BRACKET) {
+		literal, ok := p.literal(&expectedType)
+		if !ok {
+			p.error("Expected literal in array")
+		}
+		values = append(values, literal.(StringLiteral))
+		if !p.match(RIGHT_BRACKET) {
+			p.consume(COMMA, "Expected ',' between array elements")
+		}
+	}
+	return StringArrayLiteral{Values: values}
+}
+
+func (p *Parser) intArrayLiteral() ArrayLiteral {
+	var values []IntLiteral
+	expectedType := RslInt
+	for !p.match(RIGHT_BRACKET) {
+		literal, ok := p.literal(&expectedType)
+		if !ok {
+			p.error("Expected literal in array")
+		}
+		values = append(values, literal.(IntLiteral))
+		if !p.match(RIGHT_BRACKET) {
+			p.consume(COMMA, "Expected ',' between array elements")
+		}
+	}
+	return IntArrayLiteral{Values: values}
+}
+
+func (p *Parser) floatArrayLiteral() ArrayLiteral {
+	var values []FloatLiteral
+	expectedType := RslFloat
+	for !p.match(RIGHT_BRACKET) {
+		literal, ok := p.literal(&expectedType)
+		if !ok {
+			p.error("Expected literal in array")
+		}
+		values = append(values, literal.(FloatLiteral))
+		if !p.match(RIGHT_BRACKET) {
+			p.consume(COMMA, "Expected ',' between array elements")
+		}
+	}
+	return FloatArrayLiteral{Values: values}
+}
+
+func (p *Parser) boolArrayLiteral() ArrayLiteral {
+	var values []BoolLiteral
+	expectedType := RslBool
+	for !p.match(RIGHT_BRACKET) {
+		literal, ok := p.literal(&expectedType)
+		if !ok {
+			p.error("Expected literal in array")
+		}
+		values = append(values, literal.(BoolLiteral))
+		if !p.match(RIGHT_BRACKET) {
+			p.consume(COMMA, "Expected ',' between array elements")
+		}
+	}
+	return BoolArrayLiteral{Values: values}
 }
 
 func (p *Parser) identifier() Token {
 	if p.match(IDENTIFIER) {
 		return p.previous()
 	}
-	p.error("Expected identifier")
+	p.error("Expected Identifier")
 	panic(UNREACHABLE)
 }
 

@@ -16,7 +16,8 @@ Syntax Legend:
 - `.* -- & $` : any char except '&' or '$'
 
 ```
-program                     -> fileHeader? argBlock? statement* EOF
+program                     -> shebang? fileHeader? argBlock? statement* EOF
+shebang                     -> "#!" .* NEWLINE
 fileHeader                  -> '"""' ( NEWLINE fileHeaderContents NEWLINE )? '"""'
 fileHeaderContents          -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                  -> .*
@@ -34,7 +35,7 @@ assignment                  -> jsonFieldAssignment
                                | switchResourceAssignment // todo, should split into separate 'resource' interpreter?
                                | compoundAssignment
                                | arrayAssignment
-                               | primaryAssignment
+                               | expressionAssignment
 argBlock                    -> "args" COLON NEWLINE ( INDENT argBlockStmt NEWLINE )*
 argBlockStmt                -> argDeclaration
                                | argBlockConstraint
@@ -83,7 +84,7 @@ multiplyCompoundAssignment  -> IDENTIFIER "*=" IDENTIFIER
 divideCompoundAssignment    -> IDENTIFIER "/=" IDENTIFIER
 arrayAssignment             -> IDENTIFIER arrayType "=" arrayExpr
 arrayExpr                   -> "[" ( expression ( "," expression )* )? "]"
-primaryAssignment           -> IDENTIFIER primitiveType? "=" expression
+expressionAssignment        -> IDENTIFIER primitiveType? "=" expression
 radBlock                    -> "rad" IDENTIFIER COLON NEWLINE ( INDENT radStmt NEWLINE )*
 radStmt                     -> radIfStmt
                                | queryFieldsStmt
@@ -138,9 +139,8 @@ comparison                  -> term ( ( GT | GTE | LT | LTE ) term )*
 term                        -> factor ( ( "-" | "+" ) factor )*
 factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
-                               | primaryExpr
-primaryExpr                 -> "(" expression ")" | primary 
-primary                     -> literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
+                               | primary
+primary                     -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
 literalOrArray              -> literal | arrayLiteral
 literal                     -> STRING | NUMBER | BOOL | NULL
 arrayLiteral                -> "[" ( literal ( "," literal )* )? "]"

@@ -16,31 +16,52 @@ type TypeInfo struct {
 func main() {
 	outputDir := "./core"
 
+	defineAst(outputDir, "Literal", "interface{}", []string{
+		"StringLiteral   : Token Value",
+		"IntLiteral      : Token Value",
+		"FloatLiteral    : Token Value",
+		"BoolLiteral     : Token Value",
+		"NullLiteral     : Token Value",
+	})
+
+	defineAst(outputDir, "ArrayLiteral", "interface{}", []string{
+		"StringArrayLiteral   : []StringLiteral Values",
+		"IntArrayLiteral      : []IntLiteral Values",
+		"FloatArrayLiteral    : []FloatLiteral Values",
+		"BoolArrayLiteral     : []BoolLiteral Values",
+	})
+
+	defineAst(outputDir, "LiteralOrArray", "interface{}", []string{
+		"LoaLiteral   : Literal Value",
+		"LoaArray     : ArrayLiteral Value",
+	})
+
 	defineAst(outputDir, "Expr", "interface{}", []string{
-		"StringLiteral   : Token value",
-		"IntLiteral      : Token value",
-		"FloatLiteral    : Token value",
-		"BoolLiteral     : Token value",
-		"Variable		 : Token name",
+		"LiteralExpr     : Literal Value",
+		"ExprLoa	     : LiteralOrArray Value",
+		"ArrayExpr	     : []Expr Values",
+		"ArrayAccess     : Expr Array, Expr Index",
+		"FunctionCall    : Token Function", // todo add args
+		"Variable		 : Token Name",
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
-		"Expression         : Expr expression",
-		"PrimaryAssign      : Token name, Expr initializer",
-		"FileHeader         : Token fileHeaderToken",
 		"Empty              :",
-		"ArgBlock           : Token argsKeyword, []ArgStmt argStmts",
-		"RadBlock           : Token radKeyword, *Expr url, []RadStmt radStmts",
-		"JsonPathAssign     : Token identifier, []JsonPathElement elements",
+		"ExprStmt           : Expr Expression",
+		"PrimaryAssign      : Token Name, Expr Initializer",
+		"FileHeader         : Token FileHeaderToken",
+		"ArgBlock           : Token ArgsKeyword, []ArgStmt ArgStmts",
+		"RadBlock           : Token RadKeyword, *Expr Url, []RadStmt RadStmts",
+		"JsonPathAssign     : Token Identifier, []JsonPathElement Elements",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
-		"ArgDeclaration     : Token identifier, *Token rename, *Token flag, RslType argType, " +
-			"bool isOptional, *Expr defaultInit, ArgCommentToken comment",
+		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslType ArgType, " +
+			"bool IsOptional, *LiteralOrArray Default, ArgCommentToken Comment",
 	})
 
 	defineAst(outputDir, "RadStmt", "", []string{
-		"Fields     : []Token identifiers",
+		"Fields     : []Token Identifiers",
 	})
 }
 
@@ -106,7 +127,7 @@ type {{.BaseName}} interface {
 }
 type {{.BaseName}}Visitor interface {
 {{- range .Types }}
-    Visit{{.ClassName}}{{$.BaseName}}(*{{.ClassName}}){{if $.ReturnType}} {{$.ReturnType}}{{end}}
+    Visit{{.ClassName}}{{$.BaseName}}({{.ClassName}}){{if $.ReturnType}} {{$.ReturnType}}{{end}}
 {{- end }}
 }
 {{- range .Types }}
@@ -119,10 +140,10 @@ type {{.ClassName}} struct {
 {{- end }}
 {{- end }}
 }
-func (e *{{.ClassName}}) Accept(visitor {{$.BaseName}}Visitor){{if $.ReturnType}} {{$.ReturnType}}{{end}} {
+func (e {{.ClassName}}) Accept(visitor {{$.BaseName}}Visitor){{if $.ReturnType}} {{$.ReturnType}}{{end}} {
     {{if $.ReturnType}}return {{end}}visitor.Visit{{.ClassName}}{{$.BaseName}}(e)
 }
-func (e *{{.ClassName}}) String() string {
+func (e {{.ClassName}}) String() string {
 {{- if .Fields }}
     var parts []string
 {{- $fields := split .Fields ", " }}
