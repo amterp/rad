@@ -8,7 +8,7 @@ import (
 
 type CobraArg struct {
 	Arg   core.ScriptArg
-	value interface{}
+	value interface{} // should be a pointer *
 }
 
 func (c *CobraArg) IsString() bool {
@@ -25,6 +25,14 @@ func (c *CobraArg) IsInt() bool {
 
 func (c *CobraArg) IsIntArray() bool {
 	return c.Arg.Type == core.RslIntArray
+}
+
+func (c *CobraArg) IsFloat() bool {
+	return c.Arg.Type == core.RslFloat
+}
+
+func (c *CobraArg) IsFloatArray() bool {
+	return c.Arg.Type == core.RslFloatArray
 }
 
 func (c *CobraArg) IsBool() bool {
@@ -65,6 +73,14 @@ func (c *CobraArg) GetIntArray() []int {
 	return *c.value.(*[]int)
 }
 
+func (c *CobraArg) GetFloat() float64 {
+	return *c.value.(*float64)
+}
+
+func (c *CobraArg) GetFloatArray() []float64 {
+	return *c.value.(*[]float64)
+}
+
 func (c *CobraArg) GetBool() bool {
 	return *c.value.(*bool)
 }
@@ -84,19 +100,37 @@ func (c *CobraArg) SetValue(arg string) {
 		if err != nil {
 			panic("AHH! NOT INT!")
 		}
-		c.value = parsed
+		c.value = &parsed
 	case core.RslIntArray:
 		// split on arg commas
 		split := strings.Split(arg, ",")
 		ints := make([]int, len(split))
-		for i, s := range split {
-			parsed, err := strconv.Atoi(s)
+		for i, v := range split {
+			parsed, err := strconv.Atoi(v)
 			if err != nil {
 				panic("AHH! NOT INT!")
 			}
 			ints[i] = parsed
 		}
 		c.value = &ints
+	case core.RslFloat:
+		parsed, err := strconv.ParseFloat(arg, 64)
+		if err != nil {
+			panic("AHH! NOT FLOAT!")
+		}
+		c.value = &parsed
+	case core.RslFloatArray:
+		// split on arg commas
+		split := strings.Split(arg, ",")
+		floats := make([]float64, len(split))
+		for i, v := range split {
+			parsed, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				panic("AHH! NOT FLOAT!")
+			}
+			floats[i] = parsed
+		}
+		c.value = &floats
 	case core.RslBool:
 		arg = strings.ToLower(arg)
 		if arg == "true" || arg == "1" {

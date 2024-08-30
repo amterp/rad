@@ -24,13 +24,14 @@ func (p *Parser) Parse() []Stmt {
 	p.fileHeaderIfPresent(&statements)
 	p.consumeNewlines()
 	p.argBlockIfPresent(&statements)
+	p.consumeNewlines()
 
 	for !p.isAtEnd() {
 		s := p.statement()
-		p.consumeNewlines()
 		if _, ok := s.(*Empty); !ok {
 			statements = append(statements, s)
 		}
+		p.consumeNewlines()
 	}
 	return statements
 }
@@ -51,7 +52,7 @@ func (p *Parser) peekTwoAhead() Token {
 	return p.tokens[p.next+1]
 }
 
-func (p *Parser) match(tokenTypes ...TokenType) bool {
+func (p *Parser) matchAny(tokenTypes ...TokenType) bool {
 	for _, t := range tokenTypes {
 		if p.peekType(t) {
 			p.advance()
@@ -66,6 +67,10 @@ func (p *Parser) advance() Token {
 		p.next++
 	}
 	return p.previous()
+}
+
+func (p *Parser) rewind() {
+	p.next--
 }
 
 func (p *Parser) previous() Token {
@@ -96,8 +101,8 @@ func (p *Parser) error(message string) {
 }
 
 func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
-	if p.match(FILE_HEADER) {
-		*statements = append(*statements, &FileHeader{fileHeaderToken: p.previous()})
+	if p.matchAny(FILE_HEADER) {
+		*statements = append(*statements, &FileHeader{FileHeaderToken: p.previous()})
 	}
 }
 
@@ -107,13 +112,13 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 		p.consume(COLON, "Expected ':' after 'Args'")
 		p.consumeNewlines()
 
-		if !p.match(INDENT) {
+		if !p.matchAny(INDENT) {
 			return
 		}
 
 		p.consumeNewlines()
-		argsBlock := ArgBlock{argsKeyword: argsKeyword, ArgStmts: []ArgStmt{}}
-		for !p.match(DEDENT) {
+		argsBlock := ArgBlock{ArgsKeyword: argsKeyword, ArgStmts: []ArgStmt{}}
+		for !p.matchAny(DEDENT) {
 			s := p.argStatement()
 			argsBlock.ArgStmts = append(argsBlock.ArgStmts, s)
 			p.consumeNewlines()
@@ -158,7 +163,7 @@ func (p *Parser) argStatement() ArgStmt {
 
 func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	var stringLiteral Token
-	if p.match(STRING_LITERAL) {
+	if p.matchAny(STRING_LITERAL) {
 		stringLiteral = p.previous()
 	}
 
@@ -171,21 +176,21 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	var rslTypeEnum RslTypeEnum
 	if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		if p.match(BRACKETS) {
+		if p.matchAny(BRACKETS) {
 			rslTypeEnum = RslStringArray
 		} else {
 			rslTypeEnum = RslString
 		}
 	} else if p.matchKeyword(INT, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		if p.match(BRACKETS) {
+		if p.matchAny(BRACKETS) {
 			rslTypeEnum = RslIntArray
 		} else {
 			rslTypeEnum = RslInt
 		}
 	} else if p.matchKeyword(FLOAT, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		if p.match(BRACKETS) {
+		if p.matchAny(BRACKETS) {
 			rslTypeEnum = RslFloatArray
 		} else {
 			rslTypeEnum = RslFloat
@@ -198,11 +203,16 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	}
 
 	isOptional := false
-	var defaultLiteral *LiteralOrArray
-	if p.match(QUESTION) {
+	var defaultLiteral LiteralOrArray
+	if p.matchAny(QUESTION) {
 		isOptional = true
-	} else if p.match(EQUAL) {
-		defaultLiteral = p.literalOrArray(rslTypeEnum)
+	} else if p.matchAny(EQUAL) {
+		defaultLiteralIfPresent, ok := p.literalOrArray(&rslTypeEnum)
+		if !ok {
+			p.error("Expected default value")
+		} else {
+			defaultLiteral = defaultLiteralIfPresent
+		}
 	}
 
 	argComment := p.consume(ARG_COMMENT, "Expected arg Comment").(*ArgCommentToken)
@@ -213,7 +223,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 		Flag:       &flag,
 		ArgType:    RslType{Token: argType, Type: rslTypeEnum},
 		IsOptional: isOptional,
-		Default:    defaultLiteral,
+		Default:    &defaultLiteral,
 		Comment:    *argComment,
 	}
 }
@@ -235,16 +245,16 @@ func (p *Parser) radBlock() *RadBlock {
 	urlToken := p.expr()
 	p.consume(COLON, "Expecting ':' to start rad block")
 	p.consumeNewlines()
-	if !p.match(INDENT) {
+	if !p.matchAny(INDENT) {
 		p.error("Expecting indented contents in rad block")
 	}
 	p.consumeNewlines()
 	var radStatements []RadStmt
-	for !p.match(DEDENT) {
+	for !p.matchAny(DEDENT) {
 		p.consumeNewlines()
 		radStatements = append(radStatements, p.radStatement())
 	}
-	radBlock := &RadBlock{radKeyword: radToken, url: &urlToken, radStmts: radStatements}
+	radBlock := &RadBlock{RadKeyword: radToken, Url: &urlToken, RadStmts: radStatements}
 	p.validateRadBlock(radBlock)
 	return radBlock
 }
@@ -263,7 +273,7 @@ func (p *Parser) radStatement() RadStmt {
 
 func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 	hasFieldsStmt := false
-	for _, stmt := range radBlock.radStmts {
+	for _, stmt := range radBlock.RadStmts {
 		if _, ok := stmt.(*Fields); ok {
 			if hasFieldsStmt {
 				p.error("Only one 'fields' statement is allowed in a rad block")
@@ -279,18 +289,18 @@ func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 func (p *Parser) radFieldsStatement() RadStmt {
 	var identifiers []Token
 	identifiers = append(identifiers, p.identifier())
-	for !p.match(NEWLINE) {
+	for !p.matchAny(NEWLINE) {
 		p.consume(COMMA, "Expected ',' between identifiers")
 		identifiers = append(identifiers, p.identifier())
 	}
-	return &Fields{identifiers: identifiers}
+	return &Fields{Identifiers: identifiers}
 }
 
 func (p *Parser) assignment() Stmt {
 	var identifiers []Token
 	identifiers = append(identifiers, p.identifier())
 
-	for !p.match(EQUAL) {
+	for !p.matchAny(EQUAL) {
 		p.consume(COMMA, "Expected ',' between identifiers")
 		identifiers = append(identifiers, p.identifier())
 	}
@@ -311,65 +321,200 @@ func (p *Parser) assignment() Stmt {
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
 	element := p.consume(JSON_PATH_ELEMENT, "Expected root json path element")
 	var brackets Token
-	if isArray := p.match(BRACKETS); isArray {
+	if isArray := p.matchAny(BRACKETS); isArray {
 		brackets = p.previous()
 	}
 	elements := []JsonPathElement{{token: element, arrayToken: &brackets}}
-	for !p.match(NEWLINE) {
+	for !p.matchAny(NEWLINE) {
 		p.consume(DOT, "Expected '.' to separate json field elements")
 		element = p.consume(JSON_PATH_ELEMENT, "Expected json path element after '.'")
-		if p.match(BRACKETS) {
+		if p.matchAny(BRACKETS) {
 			brackets = p.previous()
 		}
 		elements = append(elements, JsonPathElement{token: element, arrayToken: &brackets})
 	}
-	return &JsonPathAssign{identifier: identifier, elements: elements}
+	return &JsonPathAssign{Identifier: identifier, Elements: elements}
 }
 
 func (p *Parser) primaryAssignment(name Token) Stmt {
 	initializer := p.expr()
-	// note to self: i think i would need to update a map here that tracks variable names and types, if
-	// i wanted to do 'static' type checking
-	return &PrimaryAssign{name: name, initializer: initializer}
+	return &PrimaryAssign{Name: name, Initializer: initializer}
 }
 
 func (p *Parser) expr() Expr {
-	p.literalOrArray()
+	return p.or()
+}
 
-	if p.match(IDENTIFIER) {
-		return &Variable{Name: p.previous()}
+func (p *Parser) or() Expr {
+	expr := p.and()
+
+	for p.matchKeyword(OR, ALL_KEYWORDS) {
+		operator := p.previous()
+		right := p.and()
+		expr = &Logical{Left: expr, Operator: operator, Right: right}
 	}
 
-	p.error("Expected Identifier or string")
+	return expr
+}
+
+func (p *Parser) and() Expr {
+	expr := p.equality()
+
+	for p.matchKeyword(AND, ALL_KEYWORDS) {
+		operator := p.previous()
+		right := p.equality()
+		expr = &Logical{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) equality() Expr {
+	expr := p.comparison()
+
+	for p.matchAny(NOT_EQUAL, EQUAL) {
+		operator := p.previous()
+		right := p.comparison()
+		expr = &Binary{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) comparison() Expr {
+	expr := p.term()
+
+	for p.matchAny(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL) {
+		operator := p.previous()
+		right := p.term()
+		expr = &Binary{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) term() Expr {
+	expr := p.factor()
+
+	for p.matchAny(MINUS, PLUS) {
+		operator := p.previous()
+		right := p.factor()
+		expr = &Binary{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) factor() Expr {
+	expr := p.unary()
+
+	for p.matchAny(SLASH, STAR) {
+		operator := p.previous()
+		right := p.unary()
+		expr = &Binary{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) unary() Expr {
+	if p.matchAny(EXCLAMATION, MINUS) {
+		operator := p.previous()
+		right := p.unary()
+		return &Unary{Operator: operator, Right: right}
+	}
+
+	return p.primary()
+}
+
+func (p *Parser) primary() Expr {
+	if p.matchAny(LEFT_PAREN) {
+		expr := p.expr()
+		p.consume(RIGHT_PAREN, "Expected ')' after expression")
+		return &Grouping{Value: expr}
+	}
+
+	if loa, ok := p.literalOrArray(nil); ok {
+		return &ExprLoa{Value: loa}
+	}
+
+	if arrayExpr, ok := p.arrayExpr(); ok {
+		return arrayExpr
+	}
+
+	if p.matchAny(IDENTIFIER) {
+		identifier := p.previous()
+		if p.matchAny(LEFT_BRACKET) {
+			array := p.expr()
+			p.consume(RIGHT_BRACKET, "Expected ']' after array expression")
+			return &ArrayAccess{Array: identifier, Index: array}
+		}
+		if p.peekType(LEFT_PAREN) {
+			p.rewind()
+			return p.functionCall()
+		}
+		return &Variable{Name: identifier}
+	}
+
+	p.error("Expected expression")
 	panic(UNREACHABLE)
 }
 
-func (p *Parser) literalOrArray(expectedType RslTypeEnum) LiteralOrArray {
-	literal, ok := p.literal(&expectedType)
-	if ok {
-		return &LiteralOrArrayHolder{LiteralVal: &literal}
+func (p *Parser) functionCall() Expr {
+	function := p.consume(IDENTIFIER, "Expected function name")
+	p.consume(LEFT_PAREN, "Expected '(' after function name")
+	// todo handle args
+	p.consume(RIGHT_PAREN, "Expected ')' after function call")
+	return &FunctionCall{Function: function}
+}
+
+func (p *Parser) arrayExpr() (Expr, bool) {
+	if !p.matchAny(LEFT_BRACKET) {
+		return nil, false
 	}
 
-	array := p.arrayLiteral(expectedType)
-	return &LiteralOrArrayHolder{ArrayVal: &array}
+	if p.matchAny(RIGHT_BRACKET) {
+		return &ArrayExpr{Values: []Expr{}}, true
+	}
+
+	values := []Expr{p.expr()}
+	for !p.matchAny(RIGHT_BRACKET) {
+		p.consume(COMMA, "Expected ',' between array elements")
+		values = append(values, p.expr())
+	}
+
+	return &ArrayExpr{Values: values}, true
+}
+
+func (p *Parser) literalOrArray(expectedType *RslTypeEnum) (LiteralOrArray, bool) {
+	if literal, ok := p.literal(expectedType); ok {
+		return &LoaLiteral{Value: literal}, true
+	}
+
+	arrayLiteral, ok := p.arrayLiteral(expectedType)
+	if ok {
+		return &LoaArray{Value: arrayLiteral}, true
+	}
+
+	return nil, false
 }
 
 func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
-	if p.match(STRING_LITERAL) {
+	if p.matchAny(STRING_LITERAL) {
 		if expectedType != nil && *expectedType != RslString {
 			p.error("Expected string literal")
 		}
 		return &StringLiteral{Value: p.previous()}, true
 	}
 
-	if p.match(INT_LITERAL) {
+	if p.matchAny(INT_LITERAL) {
 		if expectedType != nil && *expectedType != RslInt {
 			p.error("Expected int literal")
 		}
 		return &IntLiteral{Value: p.previous()}, true
 	}
 
-	if p.match(FLOAT_LITERAL) {
+	if p.matchAny(FLOAT_LITERAL) {
 		if expectedType != nil && *expectedType != RslFloat {
 			p.error("Expected float literal")
 		}
@@ -377,7 +522,7 @@ func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
 	}
 
 	// todo need to emit bool literal tokens
-	if p.match(BOOL_LITERAL) {
+	if p.matchAny(BOOL_LITERAL) {
 		if expectedType != nil && *expectedType != RslBool {
 			p.error("Expected bool literal")
 		}
@@ -387,32 +532,49 @@ func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
 	return nil, false
 }
 
-func (p *Parser) arrayLiteral(expectedType RslTypeEnum) ArrayLiteral {
-	switch expectedType {
-	case RslString:
-		return p.stringArrayLiteral()
-	case RslInt:
-		return p.intArrayLiteral()
-	case RslFloat:
-		return p.floatArrayLiteral()
-	case RslBool:
-		return p.boolArrayLiteral()
-	default:
-		p.error(fmt.Sprintf("Unknown array of type %v", expectedType))
-		panic(UNREACHABLE)
+func (p *Parser) arrayLiteral(expectedType *RslTypeEnum) (ArrayLiteral, bool) {
+	if !p.matchAny(LEFT_BRACKET) {
+		return nil, false
 	}
+
+	if p.matchAny(RIGHT_BRACKET) {
+		return &EmptyArrayLiteral{}, true
+	}
+
+	if literal, ok := p.literal(expectedType); ok {
+		switch literal.(type) {
+		case StringLiteral:
+			stringArray := p.stringArrayLiteral().(StringArrayLiteral)
+			stringArray.Values = append([]StringLiteral{literal.(StringLiteral)}, stringArray.Values...)
+			return stringArray, true
+		case IntLiteral:
+			intArray := p.intArrayLiteral().(IntArrayLiteral)
+			intArray.Values = append([]IntLiteral{literal.(IntLiteral)}, intArray.Values...)
+			return intArray, true
+		case FloatLiteral:
+			floatArray := p.floatArrayLiteral().(FloatArrayLiteral)
+			floatArray.Values = append([]FloatLiteral{literal.(FloatLiteral)}, floatArray.Values...)
+			return floatArray, true
+		case BoolLiteral: // todo technically not part of the arg_types.go handling
+			boolArray := p.boolArrayLiteral().(BoolArrayLiteral)
+			boolArray.Values = append([]BoolLiteral{literal.(BoolLiteral)}, boolArray.Values...)
+			return boolArray, true
+		}
+	}
+
+	return nil, false
 }
 
 func (p *Parser) stringArrayLiteral() ArrayLiteral {
 	var values []StringLiteral
 	expectedType := RslString
-	for !p.match(RIGHT_BRACKET) {
+	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
 			p.error("Expected literal in array")
 		}
 		values = append(values, literal.(StringLiteral))
-		if !p.match(RIGHT_BRACKET) {
+		if !p.matchAny(RIGHT_BRACKET) {
 			p.consume(COMMA, "Expected ',' between array elements")
 		}
 	}
@@ -422,13 +584,13 @@ func (p *Parser) stringArrayLiteral() ArrayLiteral {
 func (p *Parser) intArrayLiteral() ArrayLiteral {
 	var values []IntLiteral
 	expectedType := RslInt
-	for !p.match(RIGHT_BRACKET) {
+	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
 			p.error("Expected literal in array")
 		}
 		values = append(values, literal.(IntLiteral))
-		if !p.match(RIGHT_BRACKET) {
+		if !p.matchAny(RIGHT_BRACKET) {
 			p.consume(COMMA, "Expected ',' between array elements")
 		}
 	}
@@ -438,13 +600,13 @@ func (p *Parser) intArrayLiteral() ArrayLiteral {
 func (p *Parser) floatArrayLiteral() ArrayLiteral {
 	var values []FloatLiteral
 	expectedType := RslFloat
-	for !p.match(RIGHT_BRACKET) {
+	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
 			p.error("Expected literal in array")
 		}
 		values = append(values, literal.(FloatLiteral))
-		if !p.match(RIGHT_BRACKET) {
+		if !p.matchAny(RIGHT_BRACKET) {
 			p.consume(COMMA, "Expected ',' between array elements")
 		}
 	}
@@ -454,13 +616,13 @@ func (p *Parser) floatArrayLiteral() ArrayLiteral {
 func (p *Parser) boolArrayLiteral() ArrayLiteral {
 	var values []BoolLiteral
 	expectedType := RslBool
-	for !p.match(RIGHT_BRACKET) {
+	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
 			p.error("Expected literal in array")
 		}
 		values = append(values, literal.(BoolLiteral))
-		if !p.match(RIGHT_BRACKET) {
+		if !p.matchAny(RIGHT_BRACKET) {
 			p.consume(COMMA, "Expected ',' between array elements")
 		}
 	}
@@ -468,7 +630,7 @@ func (p *Parser) boolArrayLiteral() ArrayLiteral {
 }
 
 func (p *Parser) identifier() Token {
-	if p.match(IDENTIFIER) {
+	if p.matchAny(IDENTIFIER) {
 		return p.previous()
 	}
 	p.error("Expected Identifier")
@@ -477,7 +639,7 @@ func (p *Parser) identifier() Token {
 
 // todo putting this everywhere isn't ideal... another way to handle insignificant newlines?
 func (p *Parser) consumeNewlines() {
-	for p.match(NEWLINE) {
+	for p.matchAny(NEWLINE) {
 		// throw away
 	}
 }

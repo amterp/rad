@@ -10,26 +10,16 @@ type Expr interface {
 	Accept(visitor ExprVisitor) interface{}
 }
 type ExprVisitor interface {
-	VisitLiteralExprExpr(LiteralExpr) interface{}
 	VisitExprLoaExpr(ExprLoa) interface{}
 	VisitArrayExprExpr(ArrayExpr) interface{}
 	VisitArrayAccessExpr(ArrayAccess) interface{}
 	VisitFunctionCallExpr(FunctionCall) interface{}
 	VisitVariableExpr(Variable) interface{}
+	VisitBinaryExpr(Binary) interface{}
+	VisitLogicalExpr(Logical) interface{}
+	VisitGroupingExpr(Grouping) interface{}
+	VisitUnaryExpr(Unary) interface{}
 }
-type LiteralExpr struct {
-	Value Literal
-}
-
-func (e LiteralExpr) Accept(visitor ExprVisitor) interface{} {
-	return visitor.VisitLiteralExprExpr(e)
-}
-func (e LiteralExpr) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
-	return fmt.Sprintf("LiteralExpr(%s)", strings.Join(parts, ", "))
-}
-
 type ExprLoa struct {
 	Value LiteralOrArray
 }
@@ -57,7 +47,7 @@ func (e ArrayExpr) String() string {
 }
 
 type ArrayAccess struct {
-	Array Expr
+	Array Token
 	Index Expr
 }
 
@@ -95,4 +85,66 @@ func (e Variable) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
 	return fmt.Sprintf("Variable(%s)", strings.Join(parts, ", "))
+}
+
+type Binary struct {
+	Left     Expr
+	Operator Token
+	Right    Expr
+}
+
+func (e Binary) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitBinaryExpr(e)
+}
+func (e Binary) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Left: %v", e.Left))
+	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
+	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
+	return fmt.Sprintf("Binary(%s)", strings.Join(parts, ", "))
+}
+
+type Logical struct {
+	Left     Expr
+	Operator Token
+	Right    Expr
+}
+
+func (e Logical) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitLogicalExpr(e)
+}
+func (e Logical) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Left: %v", e.Left))
+	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
+	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
+	return fmt.Sprintf("Logical(%s)", strings.Join(parts, ", "))
+}
+
+type Grouping struct {
+	Value Expr
+}
+
+func (e Grouping) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitGroupingExpr(e)
+}
+func (e Grouping) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
+	return fmt.Sprintf("Grouping(%s)", strings.Join(parts, ", "))
+}
+
+type Unary struct {
+	Operator Token
+	Right    Expr
+}
+
+func (e Unary) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitUnaryExpr(e)
+}
+func (e Unary) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
+	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
+	return fmt.Sprintf("Unary(%s)", strings.Join(parts, ", "))
 }

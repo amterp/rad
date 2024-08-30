@@ -3,7 +3,7 @@ package core
 var GLOBAL_KEYWORDS = map[string]TokenType{
 	"for":      FOR,
 	"in":       IN,
-	"Args":     ARGS,
+	"args":     ARGS,
 	"switch":   SWITCH,
 	"from":     FROM,
 	"on":       ON,

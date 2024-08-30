@@ -144,8 +144,10 @@ func (l *Lexer) scanToken() {
 				l.advance()
 			}
 		} else {
-			l.error("Unexpected /")
+			l.addToken(SLASH)
 		}
+	case '*':
+		l.addToken(STAR)
 	case ' ', '\t':
 		// ignore whitespace if not at start of line
 	default:

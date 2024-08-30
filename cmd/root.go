@@ -47,8 +47,8 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 	}
 
 	scriptArgs := extractArgs(statements)
-	//scriptCmd := createCmd(scriptArgs)
-	//cmd.AddCommand(scriptCmd)
+	scriptCmd := createCmd(scriptPath, scriptArgs)
+	cmd.AddCommand(scriptCmd)
 	subCommandInitialized = true
 }
 
@@ -68,23 +68,23 @@ func extractArgs(statements []core.Stmt) []core.ScriptArg {
 	for _, argStmt := range argBlock.ArgStmts {
 		argDecl, ok := argStmt.(*core.ArgDeclaration)
 		if ok {
-
+			literalInterpreter := core.NewLiteralInterpreter()
+			arg := core.FromArgDecl(literalInterpreter, argDecl)
+			args = append(args, *arg)
 		}
 	}
 
-	return argBlockIfFound
+	return args
 }
 
-func createCmd(args []core.ScriptArg) *cobra.Command {
-	scriptName := "sdssym"
-	useString := generateUseString(scriptName, args)
+func createCmd(scriptPath string, args []core.ScriptArg) *cobra.Command {
+	useString := generateUseString(scriptPath, args)
 	var cobraArgs []*CobraArg
 	scriptCmd := &cobra.Command{
 		Use:   useString,
 		Short: "short description", // todo use file header's short description
 		Long:  generateLongDescription(),
 		Run: func(cmd *cobra.Command, args []string) {
-
 			// fill in positional args, and
 			// error if required args are missing
 			posArgsIndex := 0
@@ -112,6 +112,8 @@ func createCmd(args []core.ScriptArg) *cobra.Command {
 				errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 			}
 
+			// todo instantiate interpreter and run script
+
 			fmt.Println("Flags:")
 			for _, arg := range cobraArgs {
 				switch {
@@ -119,6 +121,10 @@ func createCmd(args []core.ScriptArg) *cobra.Command {
 					fmt.Printf("%s: %s\n", arg.Arg.Name, arg.GetString())
 				case arg.IsStringArray():
 					fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetStringArray())
+				case arg.IsFloat():
+					fmt.Printf("%s: %f\n", arg.Arg.Name, arg.GetFloat())
+				case arg.IsFloatArray():
+					fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetFloatArray())
 				case arg.IsInt():
 					fmt.Printf("%s: %d\n", arg.Arg.Name, arg.GetInt())
 				case arg.IsIntArray():
@@ -148,6 +154,10 @@ func createCmd(args []core.ScriptArg) *cobra.Command {
 			cobraArgValue = scriptCmd.Flags().IntP(name, flag, 0, description)
 		case core.RslIntArray:
 			cobraArgValue = scriptCmd.Flags().IntSliceP(name, flag, []int{}, description)
+		case core.RslFloat:
+			cobraArgValue = scriptCmd.Flags().Float64P(name, flag, 0.0, description)
+		case core.RslFloatArray:
+			cobraArgValue = scriptCmd.Flags().Float64SliceP(name, flag, []float64{}, description)
 		case core.RslBool:
 			cobraArgValue = scriptCmd.Flags().BoolP(name, flag, false, description)
 		default:
@@ -159,8 +169,8 @@ func createCmd(args []core.ScriptArg) *cobra.Command {
 	return scriptCmd
 }
 
-func generateUseString(scriptName string, args []core.ScriptArg) string {
-	useString := scriptName
+func generateUseString(scriptPath string, args []core.ScriptArg) string {
+	useString := scriptPath // todo should probably grab basename? maybe not
 	for _, arg := range args {
 		if arg.IsOptional {
 			useString += fmt.Sprintf(" [%s]", arg.Name)

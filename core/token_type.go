@@ -24,6 +24,8 @@ const (
 	AT            TokenType = "AT" // @
 	LESS          TokenType = "LESS"
 	GREATER       TokenType = "GREATER"
+	SLASH         TokenType = "SLASH" // /
+	STAR          TokenType = "STAR"  // *
 
 	// Two-character tokens
 

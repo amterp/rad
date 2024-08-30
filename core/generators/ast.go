@@ -16,6 +16,7 @@ type TypeInfo struct {
 func main() {
 	outputDir := "./core"
 
+	// literal -> STRING | NUMBER | BOOL | NULL
 	defineAst(outputDir, "Literal", "interface{}", []string{
 		"StringLiteral   : Token Value",
 		"IntLiteral      : Token Value",
@@ -24,25 +25,42 @@ func main() {
 		"NullLiteral     : Token Value",
 	})
 
+	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"
 	defineAst(outputDir, "ArrayLiteral", "interface{}", []string{
 		"StringArrayLiteral   : []StringLiteral Values",
 		"IntArrayLiteral      : []IntLiteral Values",
 		"FloatArrayLiteral    : []FloatLiteral Values",
 		"BoolArrayLiteral     : []BoolLiteral Values",
+		"EmptyArrayLiteral	  :",
 	})
 
+	// literalOrArray -> literal | arrayLiteral
 	defineAst(outputDir, "LiteralOrArray", "interface{}", []string{
 		"LoaLiteral   : Literal Value",
 		"LoaArray     : ArrayLiteral Value",
 	})
 
+	// expression     -> logic_or
+	// logic_or       -> logic_and ( "or" logic_and )*
+	// logic_and      -> equality ( "and" equality )*
+	// equality       -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
+	// comparison     -> term ( ( GT | GTE | LT | LTE ) term )*
+	// term           -> factor ( ( "-" | "+" ) factor )*
+	// factor         -> unary ( ( "/" | "*" ) unary )*
+	// unary          -> ( "!" | "-" ) unary | primary
+	// primary        -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
+	// arrayAccess    -> IDENTIFIER "[" expression "]"
+	// functionCall   -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
 	defineAst(outputDir, "Expr", "interface{}", []string{
-		"LiteralExpr     : Literal Value",
-		"ExprLoa	     : LiteralOrArray Value",
-		"ArrayExpr	     : []Expr Values",
-		"ArrayAccess     : Expr Array, Expr Index",
+		"ExprLoa         : LiteralOrArray Value",
+		"ArrayExpr       : []Expr Values",
+		"ArrayAccess     : Token Array, Expr Index",
 		"FunctionCall    : Token Function", // todo add args
-		"Variable		 : Token Name",
+		"Variable        : Token Name",
+		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
+		"Logical         : Expr Left, Token Operator, Expr Right", // and, or
+		"Grouping        : Expr Value",                            // ( expr )
+		"Unary           : Token Operator, Expr Right",            // !, -
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{

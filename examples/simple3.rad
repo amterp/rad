@@ -1,7 +1,6 @@
 args:
-    num float # a number
+    name string # a name
+    num float = 1.00 # a number≠
 
-a = 1.02
-
-rad block:
-    fields Name, Age
+//a = 1
+//b = "hi"
