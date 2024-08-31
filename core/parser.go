@@ -44,6 +44,18 @@ func (p *Parser) peekType(tokenType TokenType) bool {
 	return p.peek().GetType() == tokenType
 }
 
+func (p *Parser) peekTypeSeries(tokenType ...TokenType) bool {
+	for i, t := range tokenType {
+		token := p.advance()
+		if token.GetType() != t {
+			p.next -= i + 1
+			return false
+		}
+	}
+	p.next -= len(tokenType)
+	return true
+}
+
 func (p *Parser) peek() Token {
 	return p.tokens[p.next]
 }
@@ -109,7 +121,7 @@ func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
 func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 	if p.matchKeyword(ARGS, GLOBAL_KEYWORDS) {
 		argsKeyword := p.previous()
-		p.consume(COLON, "Expected ':' after 'Args'")
+		p.consume(COLON, "Expected ':' after 'args'")
 		p.consumeNewlines()
 
 		if !p.matchAny(INDENT) {
@@ -127,16 +139,16 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 	}
 }
 
-// argBlockConstraint         -> argStringRegexConstraint
+// argBlockConstraint       -> argStringRegexConstraint
 //
 //	| argIntRangeConstraint
 //	| argOneWayReq
 //	| argMutualExcl
 //
-// argStringRegexConstraint   -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
-// argIntRangeConstraint      -> IDENTIFIER COMPARATORS INT
-// argOneWayReq               -> IDENTIFIER "requires" IDENTIFIER
-// argMutualExcl              -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
+// argStringRegexConstraint -> IDENTIFIER ( "," IDENTIFIER )* "not"? "regex" REGEX
+// argIntRangeConstraint    -> IDENTIFIER COMPARATORS INT
+// argOneWayReq             -> IDENTIFIER "requires" IDENTIFIER
+// argMutualExcl            -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
 func (p *Parser) argStatement() ArgStmt {
 	if p.matchKeyword(ONE_OF, ARGS_BLOCK_KEYWORDS) {
 		panic(NOT_IMPLEMENTED)
@@ -233,9 +245,13 @@ func (p *Parser) statement() Stmt {
 		return p.radBlock()
 	}
 
+	// todo all keywords
 	// todo for stmt
-
 	// todo if stmt
+
+	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
+		return p.functionCallStmt()
+	}
 
 	return p.assignment()
 }
@@ -294,6 +310,11 @@ func (p *Parser) radFieldsStatement() RadStmt {
 		identifiers = append(identifiers, p.identifier())
 	}
 	return &Fields{Identifiers: identifiers}
+}
+
+func (p *Parser) functionCallStmt() Stmt {
+	functionCall := p.functionCall()
+	return &ExprStmt{Expression: functionCall}
 }
 
 func (p *Parser) assignment() Stmt {
@@ -463,9 +484,15 @@ func (p *Parser) primary() Expr {
 func (p *Parser) functionCall() Expr {
 	function := p.consume(IDENTIFIER, "Expected function name")
 	p.consume(LEFT_PAREN, "Expected '(' after function name")
-	// todo handle args
-	p.consume(RIGHT_PAREN, "Expected ')' after function call")
-	return &FunctionCall{Function: function}
+	var args []Expr
+	if !p.matchAny(RIGHT_PAREN) {
+		args = append(args, p.expr())
+		for !p.matchAny(RIGHT_PAREN) {
+			p.consume(COMMA, "Expected ',' between function arguments")
+			args = append(args, p.expr())
+		}
+	}
+	return &FunctionCall{Function: function, Args: args}
 }
 
 func (p *Parser) arrayExpr() (Expr, bool) {

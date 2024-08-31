@@ -57,9 +57,7 @@ func (l *Lexer) scanToken() {
 	if l.lineCharIndex == 1 {
 		if l.userUsingSpacesForTabs != nil {
 			if *l.userUsingSpacesForTabs {
-				if c == ' ' {
-					l.rewind(1)
-				}
+				l.rewind(1)
 				l.lexSpaceIndent()
 			} else {
 				l.lexTabIndent()

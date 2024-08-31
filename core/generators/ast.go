@@ -55,7 +55,7 @@ func main() {
 		"ExprLoa         : LiteralOrArray Value",
 		"ArrayExpr       : []Expr Values",
 		"ArrayAccess     : Token Array, Expr Index",
-		"FunctionCall    : Token Function", // todo add args
+		"FunctionCall    : Token Function, []Expr Args", // todo named args
 		"Variable        : Token Name",
 		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
 		"Logical         : Expr Left, Token Operator, Expr Right", // and, or

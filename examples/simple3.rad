@@ -1,7 +1,13 @@
 #!/usr/bin/env rad
+"""
+Description here.
+"""
 args:
     name string # a name
     num float = 1.00 # a number
 
-//a = 1
-//b = "hi"
+a = 1
+b = "hi"
+
+print(a, b, 2 + 2)
+print()
