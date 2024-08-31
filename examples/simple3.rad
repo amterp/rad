@@ -1,6 +1,7 @@
+#!/usr/bin/env rad
 args:
     name string # a name
-    num float = 1.00 # a number≠
+    num float = 1.00 # a number
 
 //a = 1
 //b = "hi"

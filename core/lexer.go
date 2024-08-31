@@ -11,7 +11,7 @@ type Lexer struct {
 	start                  int   // index of start of the current lexeme (0 indexed)
 	next                   int   // index of next character to be read (0 indexed)
 	lineIndex              int   // current line number (1 indexed)
-	lineCharIndex          int   // character number in the current line (1 indexed)
+	lineCharIndex          int   // index of latest parsed char in the current line (1 indexed)
 	indentStack            []int // stack of indents to, to emit indent/dedent tokens
 	userUsingSpacesForTabs *bool // nil until we see the first case of a space indent
 	Tokens                 []Token
@@ -57,12 +57,16 @@ func (l *Lexer) scanToken() {
 	if l.lineCharIndex == 1 {
 		if l.userUsingSpacesForTabs != nil {
 			if *l.userUsingSpacesForTabs {
+				if c == ' ' {
+					l.rewind(1)
+				}
 				l.lexSpaceIndent()
 			} else {
 				l.lexTabIndent()
 			}
 		} else {
 			if c == ' ' {
+				l.rewind(1)
 				l.lexSpaceIndent()
 			} else if c == '\t' {
 				l.lexTabIndent()
@@ -118,7 +122,11 @@ func (l *Lexer) scanToken() {
 	case '@':
 		l.addToken(AT)
 	case '#':
-		l.lexArgComment()
+		if l.match('!') && l.lineCharIndex == 2 {
+			l.lexShebang()
+		} else {
+			l.lexArgComment()
+		}
 	case '"':
 		if l.match('"') {
 			if l.match('"') {
@@ -188,6 +196,7 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 			if nextRune == '\n' {
 				// todo: this results in bad errors for multiline tokens
 				//  should only do this *after* the token is emitted
+				//  issue is that lineindex is incremented before the token is emitted
 				l.lineIndex++
 				l.lineCharIndex = 0
 			} else {
@@ -319,6 +328,18 @@ func (l *Lexer) lexJsonPath() {
 	}
 }
 
+func (l *Lexer) lexShebang() {
+	// "#!" already matched at start of line
+
+	if l.lineIndex != 1 {
+		l.error("Shebangs are only allowed on the first line")
+	}
+
+	for l.peek() != '\n' && !l.isAtEnd() {
+		l.advance()
+	}
+}
+
 func (l *Lexer) lexArgComment() {
 	for l.peek() != '\n' && !l.isAtEnd() {
 		l.advance()
@@ -362,7 +383,6 @@ func (l *Lexer) lexFileHeader() {
 }
 
 func (l *Lexer) lexSpaceIndent() {
-	l.rewind(1)
 	numSpaces := 0
 	for l.match(' ') {
 		numSpaces++
@@ -498,5 +518,6 @@ func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
 func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
-	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, l.lineCharIndex, lexeme, message))
+	lineStart := l.lineCharIndex - (l.next - l.start - 1)
+	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, lineStart, lexeme, message))
 }
