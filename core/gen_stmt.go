@@ -71,7 +71,7 @@ func (e FileHeader) String() string {
 
 type ArgBlock struct {
 	ArgsKeyword Token
-	ArgStmts    []ArgStmt
+	Stmts       []ArgStmt
 }
 
 func (e ArgBlock) Accept(visitor StmtVisitor) {
@@ -80,7 +80,7 @@ func (e ArgBlock) Accept(visitor StmtVisitor) {
 func (e ArgBlock) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("ArgsKeyword: %v", e.ArgsKeyword))
-	parts = append(parts, fmt.Sprintf("ArgStmts: %v", e.ArgStmts))
+	parts = append(parts, fmt.Sprintf("Stmts: %v", e.Stmts))
 	return fmt.Sprintf("ArgBlock(%s)", strings.Join(parts, ", "))
 }
 

@@ -31,7 +31,7 @@ func main() {
 		"IntArrayLiteral      : []IntLiteral Values",
 		"FloatArrayLiteral    : []FloatLiteral Values",
 		"BoolArrayLiteral     : []BoolLiteral Values",
-		"EmptyArrayLiteral	  :",
+		"UnknownArrayLiteral  : int Size",
 	})
 
 	// literalOrArray -> literal | arrayLiteral
@@ -60,7 +60,7 @@ func main() {
 		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
 		"Logical         : Expr Left, Token Operator, Expr Right", // and, or
 		"Grouping        : Expr Value",                            // ( expr )
-		"Unary           : Token Operator, Expr Right",            // !, -
+		"Unary           : Token Operator, Expr Right",            // !, -, +
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
@@ -68,7 +68,7 @@ func main() {
 		"ExprStmt           : Expr Expression",
 		"PrimaryAssign      : Token Name, Expr Initializer",
 		"FileHeader         : Token FileHeaderToken",
-		"ArgBlock           : Token ArgsKeyword, []ArgStmt ArgStmts",
+		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, *Expr Url, []RadStmt RadStmts",
 		"JsonPathAssign     : Token Identifier, []JsonPathElement Elements",
 	})

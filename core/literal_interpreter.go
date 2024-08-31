@@ -1,9 +1,13 @@
 package core
 
-type LiteralInterpreter struct{}
+type LiteralInterpreter struct {
+	i *MainInterpreter
+}
 
-func NewLiteralInterpreter() *LiteralInterpreter {
-	return &LiteralInterpreter{}
+func NewLiteralInterpreter(i *MainInterpreter) *LiteralInterpreter {
+	return &LiteralInterpreter{
+		i: i,
+	}
 }
 
 func (l LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
@@ -27,38 +31,38 @@ func (l LiteralInterpreter) VisitNullLiteralLiteral(NullLiteral) interface{} {
 }
 
 func (l LiteralInterpreter) VisitStringArrayLiteralArrayLiteral(literal StringArrayLiteral) interface{} {
-	var values []string
+	var values []*string
 	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(string))
+		values = append(values, v.Accept(l).(*string))
 	}
 	return values
 }
 
 func (l LiteralInterpreter) VisitIntArrayLiteralArrayLiteral(literal IntArrayLiteral) interface{} {
-	var values []int
+	var values []*int
 	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(int))
+		values = append(values, v.Accept(l).(*int))
 	}
 	return values
 }
 
 func (l LiteralInterpreter) VisitFloatArrayLiteralArrayLiteral(literal FloatArrayLiteral) interface{} {
-	var values []float64
+	var values []*float64
 	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(float64))
+		values = append(values, v.Accept(l).(*float64))
 	}
 	return values
 }
 
 func (l LiteralInterpreter) VisitBoolArrayLiteralArrayLiteral(literal BoolArrayLiteral) interface{} {
-	var values []bool
+	var values []*bool
 	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(bool))
+		values = append(values, v.Accept(l).(*bool))
 	}
 	return values
 }
 
-func (l LiteralInterpreter) VisitEmptyArrayLiteralArrayLiteral(literal EmptyArrayLiteral) interface{} {
+func (l LiteralInterpreter) VisitUnknownArrayLiteralArrayLiteral(UnknownArrayLiteral) interface{} {
 	return []interface{}{}
 }
 

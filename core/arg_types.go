@@ -3,11 +3,12 @@ package core
 import "fmt"
 
 type ScriptArg struct {
-	Name        string
-	Flag        *string
-	Type        RslTypeEnum
-	Description *string
-	IsOptional  bool
+	Name             string
+	DeclarationToken Token
+	Flag             *string
+	Type             RslTypeEnum
+	Description      *string
+	IsOptional       bool
 	// first check the Type and IsOptional, then get the value
 	DefaultString      *string
 	DefaultStringArray *[]string
@@ -35,11 +36,12 @@ func FromArgDecl(i *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	}
 
 	scriptArg := &ScriptArg{
-		Name:        name,
-		Flag:        flag,
-		Type:        argDecl.ArgType.Type,
-		Description: argDecl.Comment.Literal,
-		IsOptional:  argDecl.IsOptional,
+		Name:             name,
+		DeclarationToken: argDecl.Identifier,
+		Flag:             flag,
+		Type:             argDecl.ArgType.Type,
+		Description:      argDecl.Comment.Literal,
+		IsOptional:       argDecl.IsOptional,
 	}
 
 	defaultVal := argDecl.Default

@@ -41,13 +41,13 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 	l.Lex()
 
 	p := core.NewParser(l.Tokens)
-	statements := p.Parse()
-	for _, stmt := range statements {
+	instructions := p.Parse()
+	for _, stmt := range instructions {
 		fmt.Printf("%v\n", stmt)
 	}
 
-	scriptArgs := extractArgs(statements)
-	scriptCmd := createCmd(scriptPath, scriptArgs)
+	scriptArgs := extractArgs(instructions)
+	scriptCmd := createCmd(scriptPath, scriptArgs, instructions)
 	cmd.AddCommand(scriptCmd)
 	subCommandInitialized = true
 }
@@ -65,10 +65,10 @@ func extractArgs(statements []core.Stmt) []core.ScriptArg {
 	}
 
 	argBlock := argBlockIfFound.(*core.ArgBlock)
-	for _, argStmt := range argBlock.ArgStmts {
+	for _, argStmt := range argBlock.Stmts {
 		argDecl, ok := argStmt.(*core.ArgDeclaration)
 		if ok {
-			literalInterpreter := core.NewLiteralInterpreter()
+			literalInterpreter := core.NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
 			arg := core.FromArgDecl(literalInterpreter, argDecl)
 			args = append(args, *arg)
 		}
@@ -77,7 +77,7 @@ func extractArgs(statements []core.Stmt) []core.ScriptArg {
 	return args
 }
 
-func createCmd(scriptPath string, args []core.ScriptArg) *cobra.Command {
+func createCmd(scriptPath string, args []core.ScriptArg, instructions []core.Stmt) *cobra.Command {
 	useString := generateUseString(scriptPath, args)
 	var cobraArgs []*CobraArg
 	scriptCmd := &cobra.Command{
@@ -112,27 +112,9 @@ func createCmd(scriptPath string, args []core.ScriptArg) *cobra.Command {
 				errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 			}
 
-			// todo instantiate interpreter and run script
-
-			fmt.Println("Flags:")
-			for _, arg := range cobraArgs {
-				switch {
-				case arg.IsString():
-					fmt.Printf("%s: %s\n", arg.Arg.Name, arg.GetString())
-				case arg.IsStringArray():
-					fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetStringArray())
-				case arg.IsFloat():
-					fmt.Printf("%s: %f\n", arg.Arg.Name, arg.GetFloat())
-				case arg.IsFloatArray():
-					fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetFloatArray())
-				case arg.IsInt():
-					fmt.Printf("%s: %d\n", arg.Arg.Name, arg.GetInt())
-				case arg.IsIntArray():
-					fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetIntArray())
-				case arg.IsBool():
-					fmt.Printf("%s: %t\n", arg.Arg.Name, arg.GetBool())
-				}
-			}
+			interpreter := core.NewInterpreter(instructions)
+			interpreter.InitArgs(cobraArgs)
+			interpreter.Run()
 		},
 	}
 	for _, arg := range args {
@@ -167,6 +149,29 @@ func createCmd(scriptPath string, args []core.ScriptArg) *cobra.Command {
 		cobraArgs = append(cobraArgs, &CobraArg{Arg: arg, value: cobraArgValue})
 	}
 	return scriptCmd
+}
+
+func printFlags(cobraArgs []*CobraArg) {
+	// todo remove, just for debugging
+	fmt.Println("Flags:")
+	for _, arg := range cobraArgs {
+		switch {
+		case arg.IsString():
+			fmt.Printf("%s: %s\n", arg.Arg.Name, arg.GetString())
+		case arg.IsStringArray():
+			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetStringArray())
+		case arg.IsFloat():
+			fmt.Printf("%s: %f\n", arg.Arg.Name, arg.GetFloat())
+		case arg.IsFloatArray():
+			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetFloatArray())
+		case arg.IsInt():
+			fmt.Printf("%s: %d\n", arg.Arg.Name, arg.GetInt())
+		case arg.IsIntArray():
+			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetIntArray())
+		case arg.IsBool():
+			fmt.Printf("%s: %t\n", arg.Arg.Name, arg.GetBool())
+		}
+	}
 }
 
 func generateUseString(scriptPath string, args []core.ScriptArg) string {

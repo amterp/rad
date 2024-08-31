@@ -129,10 +129,10 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 		}
 
 		p.consumeNewlines()
-		argsBlock := ArgBlock{ArgsKeyword: argsKeyword, ArgStmts: []ArgStmt{}}
+		argsBlock := ArgBlock{ArgsKeyword: argsKeyword, Stmts: []ArgStmt{}}
 		for !p.matchAny(DEDENT) {
 			s := p.argStatement()
-			argsBlock.ArgStmts = append(argsBlock.ArgStmts, s)
+			argsBlock.Stmts = append(argsBlock.Stmts, s)
 			p.consumeNewlines()
 		}
 		*statements = append(*statements, &argsBlock)
@@ -439,7 +439,7 @@ func (p *Parser) factor() Expr {
 }
 
 func (p *Parser) unary() Expr {
-	if p.matchAny(EXCLAMATION, MINUS) {
+	if p.matchAny(NOT, MINUS, PLUS) {
 		operator := p.previous()
 		right := p.unary()
 		return &Unary{Operator: operator, Right: right}
@@ -565,7 +565,7 @@ func (p *Parser) arrayLiteral(expectedType *RslTypeEnum) (ArrayLiteral, bool) {
 	}
 
 	if p.matchAny(RIGHT_BRACKET) {
-		return &EmptyArrayLiteral{}, true
+		return &UnknownArrayLiteral{}, true
 	}
 
 	if literal, ok := p.literal(expectedType); ok {

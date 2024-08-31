@@ -1,13 +1,20 @@
 package core
 
 type ArgBlockInterpreter struct {
-	main *MainInterpreter
+	i *MainInterpreter
 }
 
-func NewArgBlockInterpreter(m *MainInterpreter) *ArgBlockInterpreter {
-	return &ArgBlockInterpreter{m}
+func NewArgBlockInterpreter(i *MainInterpreter) *ArgBlockInterpreter {
+	return &ArgBlockInterpreter{i}
 }
 
-func (i ArgBlockInterpreter) VisitArgDeclarationArgStmt(declaration ArgDeclaration) {
-	// todo activate the the arg in the arg block, ready for execution
+func (a ArgBlockInterpreter) VisitArgDeclarationArgStmt(declaration ArgDeclaration) {
+	// arg declarations already initialized in env, nothing to do on visit here, just pass
+}
+
+func (a ArgBlockInterpreter) Run(block ArgBlock) {
+	for _, stmt := range block.Stmts {
+		stmt.Accept(a)
+	}
+	// todo would need to build up some 'state' and then 'execute' including constraints, etc
 }

@@ -57,32 +57,32 @@ func (c *CobraArg) SetDefaultIfPresent() {
 	}
 }
 
-func (c *CobraArg) GetString() string {
-	return *c.value.(*string)
+func (c *CobraArg) GetString() *string {
+	return c.value.(*string)
 }
 
-func (c *CobraArg) GetStringArray() []string {
-	return *c.value.(*[]string)
+func (c *CobraArg) GetStringArray() *[]string {
+	return c.value.(*[]string)
 }
 
-func (c *CobraArg) GetInt() int {
-	return *c.value.(*int)
+func (c *CobraArg) GetInt() *int {
+	return c.value.(*int)
 }
 
-func (c *CobraArg) GetIntArray() []int {
-	return *c.value.(*[]int)
+func (c *CobraArg) GetIntArray() *[]int {
+	return c.value.(*[]int)
 }
 
-func (c *CobraArg) GetFloat() float64 {
-	return *c.value.(*float64)
+func (c *CobraArg) GetFloat() *float64 {
+	return c.value.(*float64)
 }
 
-func (c *CobraArg) GetFloatArray() []float64 {
-	return *c.value.(*[]float64)
+func (c *CobraArg) GetFloatArray() *[]float64 {
+	return c.value.(*[]float64)
 }
 
-func (c *CobraArg) GetBool() bool {
-	return *c.value.(*bool)
+func (c *CobraArg) GetBool() *bool {
+	return c.value.(*bool)
 }
 
 // todo handle panics better
