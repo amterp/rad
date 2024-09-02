@@ -314,7 +314,7 @@ func (p *Parser) radFieldsStatement() RadStmt {
 
 func (p *Parser) functionCallStmt() Stmt {
 	functionCall := p.functionCall()
-	return &ExprStmt{Expression: functionCall}
+	return &FunctionStmt{Call: functionCall}
 }
 
 func (p *Parser) assignment() Stmt {
@@ -481,7 +481,7 @@ func (p *Parser) primary() Expr {
 	panic(UNREACHABLE)
 }
 
-func (p *Parser) functionCall() Expr {
+func (p *Parser) functionCall() FunctionCall {
 	function := p.consume(IDENTIFIER, "Expected function name")
 	p.consume(LEFT_PAREN, "Expected '(' after function name")
 	var args []Expr
@@ -492,7 +492,7 @@ func (p *Parser) functionCall() Expr {
 			args = append(args, p.expr())
 		}
 	}
-	return &FunctionCall{Function: function, Args: args}
+	return FunctionCall{Function: function, Args: args}
 }
 
 func (p *Parser) arrayExpr() (Expr, bool) {

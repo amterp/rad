@@ -76,11 +76,16 @@ func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
 		val := v.Accept(i)
 		values = append(values, val)
 	}
-	RunRslFunction(i, call.Function, values)
-	// todo need to think about this -- some functions e.g. `print` don't return anything.
-	//  somehow make the parser catch issues like this?
-	return nil
+	return RunRslNonVoidFunction(i, call.Function, values)
+}
 
+func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
+	var values []interface{}
+	for _, v := range functionStmt.Call.Args {
+		val := v.Accept(i)
+		values = append(values, val)
+	}
+	RunRslFunction(i, functionStmt.Call.Function, values)
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {
@@ -94,8 +99,18 @@ func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
-	//TODO implement me
-	panic("implement me")
+	left := logical.Left.Accept(i).(*bool)
+	right := logical.Right.Accept(i).(*bool)
+
+	switch logical.Operator.GetType() {
+	case AND:
+		return ToPtr(*left && *right)
+	case OR:
+		return ToPtr(*left || *right)
+	default:
+		i.error(logical.Operator, "Bug! Non-and/or logical operator should've not passed the parser")
+		panic(UNREACHABLE)
+	}
 }
 
 func (i *MainInterpreter) VisitGroupingExpr(grouping Grouping) interface{} {

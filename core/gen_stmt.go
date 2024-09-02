@@ -12,6 +12,7 @@ type Stmt interface {
 type StmtVisitor interface {
 	VisitEmptyStmt(Empty)
 	VisitExprStmtStmt(ExprStmt)
+	VisitFunctionStmtStmt(FunctionStmt)
 	VisitPrimaryAssignStmt(PrimaryAssign)
 	VisitFileHeaderStmt(FileHeader)
 	VisitArgBlockStmt(ArgBlock)
@@ -39,6 +40,19 @@ func (e ExprStmt) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Expression: %v", e.Expression))
 	return fmt.Sprintf("ExprStmt(%s)", strings.Join(parts, ", "))
+}
+
+type FunctionStmt struct {
+	Call FunctionCall
+}
+
+func (e FunctionStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitFunctionStmtStmt(e)
+}
+func (e FunctionStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Call: %v", e.Call))
+	return fmt.Sprintf("FunctionStmt(%s)", strings.Join(parts, ", "))
 }
 
 type PrimaryAssign struct {
