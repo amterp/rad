@@ -16,13 +16,12 @@ type TypeInfo struct {
 func main() {
 	outputDir := "./core"
 
-	// literal -> STRING | NUMBER | BOOL | NULL
+	// literal -> STRING | NUMBER | BOOL
 	defineAst(outputDir, "Literal", "interface{}", []string{
 		"StringLiteral   : Token Value",
 		"IntLiteral      : Token Value",
 		"FloatLiteral    : Token Value",
 		"BoolLiteral     : Token Value",
-		"NullLiteral     : Token Value",
 	})
 
 	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"
@@ -31,7 +30,7 @@ func main() {
 		"IntArrayLiteral      : []IntLiteral Values",
 		"FloatArrayLiteral    : []FloatLiteral Values",
 		"BoolArrayLiteral     : []BoolLiteral Values",
-		"UnknownArrayLiteral  : int Size",
+		"UnknownArrayLiteral  : int Size", // todo replace with EmptyArrayLiteral
 	})
 
 	// literalOrArray -> literal | arrayLiteral

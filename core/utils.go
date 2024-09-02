@@ -15,7 +15,3 @@ func NotNil[T comparable](val *T, nilProvider func() T) bool {
 
 	return true
 }
-
-func ToPtr[T any](val T) *T {
-	return &val
-}

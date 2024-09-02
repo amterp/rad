@@ -142,7 +142,7 @@ unary                       -> ( "!" | "-" ) unary
                                | primary
 primary                     -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
 literalOrArray              -> literal | arrayLiteral
-literal                     -> STRING | NUMBER | BOOL | NULL
+literal                     -> STRING | NUMBER | BOOL
 arrayLiteral                -> "[" ( literal ( "," literal )* )? "]"
 arrayAccess                 -> IDENTIFIER "[" expression "]"
 functionCall                -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
@@ -162,7 +162,6 @@ LT                          -> "<"
 LTE                         -> "<="
 EQUAL                       -> "=="
 NOT_EQUAL                   -> "!="
-NULL                        -> "null"
 COLOR                       -> "red" | "green" | "blue" | "yellow" | "orange" // etc etc, whatever CLIs usually support
 ```
 

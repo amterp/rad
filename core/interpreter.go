@@ -39,7 +39,7 @@ func (i *MainInterpreter) VisitExprLoaExpr(loa ExprLoa) interface{} {
 }
 
 func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
-	var values []interface{} // e.g. []*string
+	var values []interface{} // e.g. []string
 	for _, v := range expr.Values {
 		val := v.Accept(i)
 		values = append(values, val)
@@ -54,16 +54,13 @@ func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
 	switch literal.Type {
 	case RslStringArray:
 		arr := literal.GetStringArray()
-		val := (*arr)[*index.(*int)]
-		return &val
+		return arr[index.(int)]
 	case RslIntArray:
 		arr := literal.GetIntArray()
-		val := (*arr)[*index.(*int)]
-		return &val
+		return arr[index.(int)]
 	case RslFloatArray:
 		arr := literal.GetFloatArray()
-		val := (*arr)[*index.(*int)]
-		return &val
+		return arr[index.(int)]
 	default:
 		i.error(access.Array, "Bug! Should've failed earlier")
 		panic(UNREACHABLE)
@@ -99,14 +96,14 @@ func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
-	left := logical.Left.Accept(i).(*bool)
-	right := logical.Right.Accept(i).(*bool)
+	left := logical.Left.Accept(i).(bool)
+	right := logical.Right.Accept(i).(bool)
 
 	switch logical.Operator.GetType() {
 	case AND:
-		return ToPtr(*left && *right)
+		return left && right
 	case OR:
-		return ToPtr(*left || *right)
+		return left || right
 	default:
 		i.error(logical.Operator, "Bug! Non-and/or logical operator should've not passed the parser")
 		panic(UNREACHABLE)
@@ -125,7 +122,7 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 	if ok {
 		switch unary.Operator.GetType() {
 		case NOT:
-			return ToPtr(!valBool)
+			return !valBool
 		default:
 			i.error(unary.Operator, "Invalid logical operator, only 'not' is allowed")
 		}
@@ -143,12 +140,12 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 
 	valInt, ok := value.(int)
 	if ok {
-		return ToPtr(valInt * multiplier)
+		return valInt * multiplier
 	}
 
 	valFloat, ok := value.(float64)
 	if ok {
-		return ToPtr(valFloat * float64(multiplier))
+		return valFloat * float64(multiplier)
 	}
 
 	i.error(unary.Operator, "Invalid unary operands, only bool, float, or int is allowed")

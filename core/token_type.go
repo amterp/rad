@@ -20,7 +20,6 @@ const (
 	MINUS         TokenType = "MINUS"
 	PLUS          TokenType = "PLUS"
 	EXCLAMATION   TokenType = "EXCLAMATION"
-	NULL          TokenType = "NULL"
 	AT            TokenType = "AT" // @
 	LESS          TokenType = "LESS"
 	GREATER       TokenType = "GREATER"

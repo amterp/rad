@@ -134,8 +134,7 @@ func (l *Lexer) scanToken() {
 					l.lexFileHeader()
 				}
 			} else {
-				literal := ""
-				l.addStringLiteralToken(&literal)
+				l.addStringLiteralToken("")
 			}
 		} else {
 			l.lexStringLiteral()
@@ -264,7 +263,7 @@ func (l *Lexer) lexStringLiteral() {
 	for !l.match('"') && !l.isAtEnd() {
 		value = value + string(l.advance())
 	}
-	l.addStringLiteralToken(&value)
+	l.addStringLiteralToken(value)
 }
 
 func (l *Lexer) lexNumber() {
@@ -435,7 +434,7 @@ func (l *Lexer) addToken(tokenType TokenType) {
 	l.Tokens = append(l.Tokens, token)
 }
 
-func (l *Lexer) addStringLiteralToken(literal *string) {
+func (l *Lexer) addStringLiteralToken(literal string) {
 	lexeme := l.source[l.start:l.next]
 	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
@@ -443,19 +442,19 @@ func (l *Lexer) addStringLiteralToken(literal *string) {
 
 func (l *Lexer) addIntLiteralToken(literal int) {
 	lexeme := l.source[l.start:l.next]
-	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
+	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addFloatLiteralToken(literal float64) {
 	lexeme := l.source[l.start:l.next]
-	token := NewFloatLiteralToken(FLOAT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
+	token := NewFloatLiteralToken(FLOAT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addBoolLiteralToken(literal bool) {
 	lexeme := l.source[l.start:l.next]
-	token := NewBoolLiteralToken(BOOL_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, &literal)
+	token := NewBoolLiteralToken(BOOL_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 

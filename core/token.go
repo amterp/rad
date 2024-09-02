@@ -38,22 +38,22 @@ func (b *BaseToken) GetCharLineStart() int {
 
 type StringLiteralToken struct {
 	BaseToken
-	Literal *string
+	Literal string
 }
 
 type IntLiteralToken struct {
 	BaseToken
-	Literal *int
+	Literal int
 }
 
 type FloatLiteralToken struct {
 	BaseToken
-	Literal *float64
+	Literal float64
 }
 
 type BoolLiteralToken struct {
 	BaseToken
-	Literal *bool
+	Literal bool
 }
 
 type FilerHeaderToken struct {
@@ -94,7 +94,7 @@ func NewStringLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal *string) Token {
+	literal string) Token {
 	return &StringLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -113,7 +113,7 @@ func NewIntLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal *int) Token {
+	literal int) Token {
 
 	return &IntLiteralToken{
 		BaseToken: BaseToken{
@@ -133,7 +133,7 @@ func NewFloatLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal *float64) Token {
+	literal float64) Token {
 
 	return &FloatLiteralToken{
 		BaseToken: BaseToken{
@@ -153,7 +153,7 @@ func NewBoolLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal *bool) Token {
+	literal bool) Token {
 
 	return &BoolLiteralToken{
 		BaseToken: BaseToken{
