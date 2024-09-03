@@ -3,11 +3,20 @@
 Description here.
 """
 args:
-    name string # a name
+    firstName string # a first name
+    lastName string # a last name
     num float = 1.00 # a number
 
-a = 1
+a = 1.00
 b = "hi"
 
 print(a, b, 2 + 2)
-print()
+
+c = b + " there"
+print(c)
+
+//d int[] = [1, 2]
+//print(d)
+
+fullName = firstName + " " + lastName
+print("Hi there", fullName)

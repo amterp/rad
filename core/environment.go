@@ -2,26 +2,25 @@ package core
 
 import (
 	"fmt"
-	"rad/cmd"
 )
 
 type Env struct {
-	i    *MainInterpreter
-	Vars map[string]RuntimeLiteral
-	//jsonFields map[string]*JsonField
-	Enclosing *Env
+	i          *MainInterpreter
+	Vars       map[string]RuntimeLiteral
+	jsonFields map[string]JsonFieldVar
+	Enclosing  *Env
 }
 
 func NewEnv(i *MainInterpreter) *Env {
 	return &Env{
-		i:    i,
-		Vars: make(map[string]RuntimeLiteral),
-		//jsonFields: make(map[string]*JsonField),
-		Enclosing: nil,
+		i:          i,
+		Vars:       make(map[string]RuntimeLiteral),
+		jsonFields: make(map[string]JsonFieldVar),
+		Enclosing:  nil,
 	}
 }
 
-func (e *Env) InitArg(arg cmd.CobraArg) {
+func (e *Env) InitArg(arg CobraArg) {
 	argType := arg.Arg.Type
 	switch argType {
 	case RslString:
@@ -75,6 +74,10 @@ func (e *Env) Get(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLit
 		e.i.error(varNameToken, fmt.Sprintf("Undefined variable referenced: %v", varName))
 	}
 
+	if len(acceptableTypes) == 0 {
+		return val
+	}
+
 	for _, acceptableType := range acceptableTypes {
 		if val.Type == acceptableType {
 			return val
@@ -82,4 +85,13 @@ func (e *Env) Get(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLit
 	}
 	e.i.error(varNameToken, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
 	panic(UNREACHABLE)
+}
+
+func (e *Env) AssignJsonField(name Token, path JsonPath) {
+	e.jsonFields[name.GetLexeme()] = JsonFieldVar{
+		Name: name,
+		Path: path,
+		env:  e,
+	}
+	e.Set(name, []string{})
 }

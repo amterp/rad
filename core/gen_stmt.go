@@ -100,8 +100,8 @@ func (e ArgBlock) String() string {
 
 type RadBlock struct {
 	RadKeyword Token
-	Url        *Expr
-	RadStmts   []RadStmt
+	Url        Expr
+	Stmts      []RadStmt
 }
 
 func (e RadBlock) Accept(visitor StmtVisitor) {
@@ -111,13 +111,13 @@ func (e RadBlock) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("RadKeyword: %v", e.RadKeyword))
 	parts = append(parts, fmt.Sprintf("Url: %v", e.Url))
-	parts = append(parts, fmt.Sprintf("RadStmts: %v", e.RadStmts))
+	parts = append(parts, fmt.Sprintf("Stmts: %v", e.Stmts))
 	return fmt.Sprintf("RadBlock(%s)", strings.Join(parts, ", "))
 }
 
 type JsonPathAssign struct {
 	Identifier Token
-	Elements   []JsonPathElement
+	Path       JsonPath
 }
 
 func (e JsonPathAssign) Accept(visitor StmtVisitor) {
@@ -126,6 +126,6 @@ func (e JsonPathAssign) Accept(visitor StmtVisitor) {
 func (e JsonPathAssign) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
-	parts = append(parts, fmt.Sprintf("Elements: %v", e.Elements))
+	parts = append(parts, fmt.Sprintf("Path: %v", e.Path))
 	return fmt.Sprintf("JsonPathAssign(%s)", strings.Join(parts, ", "))
 }

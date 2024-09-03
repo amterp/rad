@@ -50,19 +50,26 @@ func FromArgDecl(i *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		literal := (*defaultVal).Accept(i)
 		switch scriptArg.Type {
 		case RslString:
-			scriptArg.DefaultString = literal.(*string)
+			val := literal.(string)
+			scriptArg.DefaultString = &val
 		case RslStringArray:
-			scriptArg.DefaultStringArray = literal.(*[]string)
+			val := literal.([]string)
+			scriptArg.DefaultStringArray = &val
 		case RslInt:
-			scriptArg.DefaultInt = literal.(*int)
+			val := literal.(int)
+			scriptArg.DefaultInt = &val
 		case RslIntArray:
-			scriptArg.DefaultIntArray = literal.(*[]int)
+			val := literal.([]int)
+			scriptArg.DefaultIntArray = &val
 		case RslFloat:
-			scriptArg.DefaultFloat = literal.(*float64)
+			val := literal.(float64)
+			scriptArg.DefaultFloat = &val
 		case RslFloatArray:
-			scriptArg.DefaultFloatArray = literal.(*[]float64)
+			val := literal.([]float64)
+			scriptArg.DefaultFloatArray = &val
 		case RslBool:
-			scriptArg.DefaultBool = literal.(*bool)
+			val := literal.(bool)
+			scriptArg.DefaultBool = &val
 		default:
 			// todo improve
 			panic(fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))

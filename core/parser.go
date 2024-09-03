@@ -219,6 +219,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 	if p.matchAny(QUESTION) {
 		isOptional = true
 	} else if p.matchAny(EQUAL) {
+		isOptional = true
 		defaultLiteralIfPresent, ok := p.literalOrArray(&rslTypeEnum)
 		if !ok {
 			p.error("Expected default value")
@@ -270,7 +271,7 @@ func (p *Parser) radBlock() *RadBlock {
 		p.consumeNewlines()
 		radStatements = append(radStatements, p.radStatement())
 	}
-	radBlock := &RadBlock{RadKeyword: radToken, Url: &urlToken, RadStmts: radStatements}
+	radBlock := &RadBlock{RadKeyword: radToken, Url: urlToken, Stmts: radStatements}
 	p.validateRadBlock(radBlock)
 	return radBlock
 }
@@ -289,7 +290,7 @@ func (p *Parser) radStatement() RadStmt {
 
 func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 	hasFieldsStmt := false
-	for _, stmt := range radBlock.RadStmts {
+	for _, stmt := range radBlock.Stmts {
 		if _, ok := stmt.(*Fields); ok {
 			if hasFieldsStmt {
 				p.error("Only one 'fields' statement is allowed in a rad block")
@@ -331,6 +332,8 @@ func (p *Parser) assignment() Stmt {
 	}
 
 	identifier := identifiers[0]
+	// todo implement
+	//  arrayAssignment -> IDENTIFIER arrayType "=" arrayExpr
 
 	if p.peekType(JSON_PATH_ELEMENT) {
 		return p.jsonPathAssignment(identifier)
@@ -354,7 +357,7 @@ func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
 		}
 		elements = append(elements, JsonPathElement{token: element, arrayToken: &brackets})
 	}
-	return &JsonPathAssign{Identifier: identifier, Elements: elements}
+	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{elements: elements}}
 }
 
 func (p *Parser) primaryAssignment(name Token) Stmt {

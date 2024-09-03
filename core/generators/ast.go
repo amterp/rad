@@ -69,8 +69,8 @@ func main() {
 		"PrimaryAssign      : Token Name, Expr Initializer",
 		"FileHeader         : Token FileHeaderToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
-		"RadBlock           : Token RadKeyword, *Expr Url, []RadStmt RadStmts",
-		"JsonPathAssign     : Token Identifier, []JsonPathElement Elements",
+		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
+		"JsonPathAssign     : Token Identifier, JsonPath Path",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

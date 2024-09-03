@@ -1,7 +1,7 @@
 package main
 
-import "rad/cmd"
+import "rad/core"
 
 func main() {
-	cmd.Execute()
+	core.Execute()
 }

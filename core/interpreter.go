@@ -2,13 +2,13 @@ package core
 
 import (
 	"fmt"
-	"rad/cmd"
 )
 
 type MainInterpreter struct {
 	env        *Env
 	literalI   *LiteralInterpreter
 	argBlockI  *ArgBlockInterpreter
+	radBlockI  *RadBlockInterpreter
 	statements []Stmt
 }
 
@@ -18,11 +18,12 @@ func NewInterpreter(statements []Stmt) *MainInterpreter {
 	}
 	i.literalI = NewLiteralInterpreter(i)
 	i.argBlockI = NewArgBlockInterpreter(i)
+	i.radBlockI = NewRadBlockInterpreter(i)
 	i.env = NewEnv(i)
 	return i
 }
 
-func (i *MainInterpreter) InitArgs(args []*cmd.CobraArg) {
+func (i *MainInterpreter) InitArgs(args []*CobraArg) {
 	for _, arg := range args {
 		i.env.InitArg(*arg)
 	}
@@ -86,13 +87,7 @@ func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
-	//TODO implement me
-	panic("implement me")
+	return i.env.Get(variable.Name).value
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
@@ -111,8 +106,7 @@ func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
 }
 
 func (i *MainInterpreter) VisitGroupingExpr(grouping Grouping) interface{} {
-	//TODO implement me
-	panic("implement me")
+	return grouping.Value.Accept(i)
 }
 
 func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
@@ -153,8 +147,7 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 }
 
 func (i *MainInterpreter) VisitExpressionStmt(expression Expr) {
-	//TODO implement me
-	panic(NOT_IMPLEMENTED)
+	expression.Accept(i)
 }
 
 func (i *MainInterpreter) VisitPrimaryAssignStmt(assign PrimaryAssign) {
@@ -168,9 +161,8 @@ func (i *MainInterpreter) VisitFileHeaderStmt(header FileHeader) {
 	// and processed separately before script runs
 }
 
-func (i *MainInterpreter) VisitEmptyStmt(empty Empty) {
-	//TODO implement me
-	panic(NOT_IMPLEMENTED)
+func (i *MainInterpreter) VisitEmptyStmt(Empty) {
+	// nothing to do
 }
 
 func (i *MainInterpreter) VisitArgBlockStmt(block ArgBlock) {
@@ -178,18 +170,15 @@ func (i *MainInterpreter) VisitArgBlockStmt(block ArgBlock) {
 }
 
 func (i *MainInterpreter) VisitRadBlockStmt(block RadBlock) {
-	//TODO implement me
-	panic(NOT_IMPLEMENTED)
+	i.radBlockI.Run(block)
 }
 
 func (i *MainInterpreter) VisitJsonPathAssignStmt(assign JsonPathAssign) {
-	//TODO implement me
-	panic(NOT_IMPLEMENTED)
+	i.env.AssignJsonField(assign.Identifier, assign.Path)
 }
 
 func (i *MainInterpreter) VisitExprStmtStmt(stmt ExprStmt) {
-	//TODO implement me
-	panic("implement me")
+	stmt.Expression.Accept(i)
 }
 
 func (i *MainInterpreter) error(token Token, message string) {

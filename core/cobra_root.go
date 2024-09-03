@@ -1,11 +1,10 @@
-package cmd
+package core
 
 import (
 	"fmt"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"os"
-	"rad/core"
 )
 
 var (
@@ -37,10 +36,10 @@ var rootCmd = &cobra.Command{
 func addScriptSubCommand(cmd *cobra.Command, args []string) {
 	scriptPath := args[0]
 	source := readSource(scriptPath)
-	l := core.NewLexer(source)
+	l := NewLexer(source)
 	l.Lex()
 
-	p := core.NewParser(l.Tokens)
+	p := NewParser(l.Tokens)
 	instructions := p.Parse()
 	for _, stmt := range instructions {
 		fmt.Printf("%v\n", stmt)
@@ -52,11 +51,11 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 	subCommandInitialized = true
 }
 
-func extractArgs(statements []core.Stmt) []core.ScriptArg {
-	var args []core.ScriptArg
+func extractArgs(statements []Stmt) []ScriptArg {
+	var args []ScriptArg
 
-	argBlockIfFound, ok := lo.Find(statements, func(stmt core.Stmt) bool {
-		_, ok := stmt.(*core.ArgBlock)
+	argBlockIfFound, ok := lo.Find(statements, func(stmt Stmt) bool {
+		_, ok := stmt.(*ArgBlock)
 		return ok
 	})
 
@@ -64,12 +63,12 @@ func extractArgs(statements []core.Stmt) []core.ScriptArg {
 		return args
 	}
 
-	argBlock := argBlockIfFound.(*core.ArgBlock)
+	argBlock := argBlockIfFound.(*ArgBlock)
 	for _, argStmt := range argBlock.Stmts {
-		argDecl, ok := argStmt.(*core.ArgDeclaration)
+		argDecl, ok := argStmt.(*ArgDeclaration)
 		if ok {
-			literalInterpreter := core.NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
-			arg := core.FromArgDecl(literalInterpreter, argDecl)
+			literalInterpreter := NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
+			arg := FromArgDecl(literalInterpreter, argDecl)
 			args = append(args, *arg)
 		}
 	}
@@ -77,7 +76,7 @@ func extractArgs(statements []core.Stmt) []core.ScriptArg {
 	return args
 }
 
-func createCmd(scriptPath string, args []core.ScriptArg, instructions []core.Stmt) *cobra.Command {
+func createCmd(scriptPath string, args []ScriptArg, instructions []Stmt) *cobra.Command {
 	useString := generateUseString(scriptPath, args)
 	var cobraArgs []*CobraArg
 	scriptCmd := &cobra.Command{
@@ -112,7 +111,7 @@ func createCmd(scriptPath string, args []core.ScriptArg, instructions []core.Stm
 				errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 			}
 
-			interpreter := core.NewInterpreter(instructions)
+			interpreter := NewInterpreter(instructions)
 			interpreter.InitArgs(cobraArgs)
 			interpreter.Run()
 		},
@@ -128,19 +127,19 @@ func createCmd(scriptPath string, args []core.ScriptArg, instructions []core.Stm
 
 		var cobraArgValue interface{}
 		switch argType {
-		case core.RslString:
+		case RslString:
 			cobraArgValue = scriptCmd.Flags().StringP(name, flag, "", description)
-		case core.RslStringArray:
+		case RslStringArray:
 			cobraArgValue = scriptCmd.Flags().StringSliceP(name, flag, []string{}, description)
-		case core.RslInt:
+		case RslInt:
 			cobraArgValue = scriptCmd.Flags().IntP(name, flag, 0, description)
-		case core.RslIntArray:
+		case RslIntArray:
 			cobraArgValue = scriptCmd.Flags().IntSliceP(name, flag, []int{}, description)
-		case core.RslFloat:
+		case RslFloat:
 			cobraArgValue = scriptCmd.Flags().Float64P(name, flag, 0.0, description)
-		case core.RslFloatArray:
+		case RslFloatArray:
 			cobraArgValue = scriptCmd.Flags().Float64SliceP(name, flag, []float64{}, description)
-		case core.RslBool:
+		case RslBool:
 			cobraArgValue = scriptCmd.Flags().BoolP(name, flag, false, description)
 		default:
 			// todo better error handling
@@ -174,7 +173,7 @@ func printFlags(cobraArgs []*CobraArg) {
 	}
 }
 
-func generateUseString(scriptPath string, args []core.ScriptArg) string {
+func generateUseString(scriptPath string, args []ScriptArg) string {
 	useString := scriptPath // todo should probably grab basename? maybe not
 	for _, arg := range args {
 		if arg.IsOptional {

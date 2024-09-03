@@ -2,6 +2,9 @@ package core
 
 import "fmt"
 
+// todo
+//  toStringArray(array), toString(non-string)
+
 // RunRslNonVoidFunction returns pointers to values e.g. *string
 func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interface{}) interface{} {
 	functionName := function.GetLexeme()
@@ -24,9 +27,14 @@ func RunRslFunction(i *MainInterpreter, function Token, values []interface{}) {
 }
 
 func runPrint(i *MainInterpreter, values []interface{}) {
+	if len(values) == 0 {
+		fmt.Println()
+		return
+	}
+
 	output := ""
 	for _, v := range values {
-		output += fmt.Sprintf("%v", v) // todo is %v right?
+		output += ToPrintable(v) + " "
 	}
 	output = output[:len(output)-1] // remove last space
 	fmt.Println(output)

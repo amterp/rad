@@ -2,7 +2,7 @@ package core
 
 type RuntimeLiteral struct {
 	Type  RslTypeEnum
-	value interface{} // pointer e.g. *string (allows nil)
+	value interface{} // not a pointer, e.g. just 'string'
 }
 
 func NewRuntimeString(val string) RuntimeLiteral {
@@ -60,3 +60,11 @@ func (l *RuntimeLiteral) GetFloatArray() []float64 {
 func (l *RuntimeLiteral) GetBool() bool {
 	return l.value.(bool)
 }
+
+type JsonFieldVar struct {
+	Name Token
+	Path JsonPath
+	env  *Env
+}
+
+// todo func which updates the jsonfield's value, using env
