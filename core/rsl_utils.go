@@ -3,22 +3,40 @@ package core
 import "strconv"
 
 func ToPrintable(val interface{}) string {
-	switch val.(type) {
+	switch v := val.(type) {
 	case int:
-		return strconv.Itoa(val.(int))
+		return strconv.Itoa(v)
 	case float64:
-		return strconv.FormatFloat(val.(float64), 'f', -1, 64)
+		return strconv.FormatFloat(v, 'f', -1, 64)
 	case string:
-		return val.(string)
+		return v
 	case bool:
-		return strconv.FormatBool(val.(bool))
-	case []int, []float64, []string:
+		return strconv.FormatBool(v)
+	case []int:
 		out := "["
-		for i, v := range val.([]interface{}) {
+		for i, elem := range v {
 			if i > 0 {
 				out += ", "
 			}
-			out += ToPrintable(v)
+			out += ToPrintable(elem)
+		}
+		return out + "]"
+	case []float64:
+		out := "["
+		for i, elem := range v {
+			if i > 0 {
+				out += ", "
+			}
+			out += ToPrintable(elem)
+		}
+		return out + "]"
+	case []string:
+		out := "["
+		for i, elem := range v {
+			if i > 0 {
+				out += ", "
+			}
+			out += ToPrintable(elem)
 		}
 		return out + "]"
 	default:

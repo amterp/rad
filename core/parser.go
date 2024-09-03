@@ -268,8 +268,8 @@ func (p *Parser) radBlock() *RadBlock {
 	p.consumeNewlines()
 	var radStatements []RadStmt
 	for !p.matchAny(DEDENT) {
-		p.consumeNewlines()
 		radStatements = append(radStatements, p.radStatement())
+		p.consumeNewlines()
 	}
 	radBlock := &RadBlock{RadKeyword: radToken, Url: urlToken, Stmts: radStatements}
 	p.validateRadBlock(radBlock)

@@ -29,3 +29,7 @@ url = "https://api.github.com/repos/torvalds/linux/commits?per_page=2"
 
 rad url:
     fields Date, Name, Email
+
+print(Name)
+joined = Name + "Alex :O"
+print(joined)
