@@ -20,3 +20,12 @@ print(c)
 
 fullName = firstName + " " + lastName
 print("Hi there", fullName)
+
+Name = json[].commit.author.name
+Email = json[].commit.author.email
+Date = json[].commit.author.date
+
+url = "https://api.github.com/repos/torvalds/linux/commits?per_page=2"
+
+rad url:
+    fields Date, Name, Email

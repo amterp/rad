@@ -3,8 +3,11 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
+	"github.com/samber/lo"
 	"io"
 	"net/http"
+	"os"
 )
 
 type RadBlockInterpreter struct {
@@ -24,7 +27,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 	default:
 		r.i.error(block.RadKeyword, "URL must be a string")
 	}
-	r.invocation = &RadInvocation{url: url.(string)}
+	r.invocation = &RadInvocation{ri: &r, url: url.(string)}
 	for _, stmt := range block.Stmts {
 		stmt.Accept(r)
 	}
@@ -39,6 +42,7 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 // == RadInvocation ==
 
 type RadInvocation struct {
+	ri     *RadBlockInterpreter
 	url    string
 	fields Fields
 }
@@ -65,5 +69,43 @@ func (r *RadInvocation) execute() {
 	if err := json.Unmarshal(body, &data); err != nil {
 		panic(fmt.Sprintf("Error unmarshalling JSON: %v", err))
 	}
-	fmt.Printf("Response: %v\n", data)
+
+	jsonFields := lo.Map(r.fields.Identifiers, func(field Token, _ int) JsonFieldVar {
+		return r.ri.i.env.GetJsonField(field)
+	})
+	trie := CreateTrie(jsonFields)
+	TraverseTrie(data, trie)
+
+	columns := lo.Map(jsonFields, func(field JsonFieldVar, _ int) []string {
+		return r.ri.i.env.Get(field.Name).GetStringArray()
+	})
+
+	tbl := tablewriter.NewWriter(os.Stdout)
+
+	headers := lo.Map(jsonFields, func(field JsonFieldVar, _ int) string {
+		return field.Name.GetLexeme()
+	})
+
+	tbl.SetHeader(headers)
+	for i := range columns[0] {
+		row := lo.Map(columns, func(column []string, _ int) string {
+			return column[i]
+		})
+		tbl.Append(row)
+	}
+
+	// default formatting
+	tbl.SetAutoWrapText(false)
+	tbl.SetAutoFormatHeaders(true)
+	tbl.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	tbl.SetAlignment(tablewriter.ALIGN_LEFT)
+	tbl.SetCenterSeparator("")
+	tbl.SetColumnSeparator("")
+	tbl.SetRowSeparator("")
+	tbl.SetHeaderLine(false)
+	tbl.SetBorder(false)
+	tbl.SetTablePadding("\t") // pad with tabs
+	tbl.SetNoWhiteSpace(true)
+
+	tbl.Render()
 }
