@@ -1,0 +1,14 @@
+#!/usr/bin/env rad
+"""
+Description here.
+"""
+args:
+    names string[] # some names
+
+print(names)
+
+name = names[1]
+print(name)
+
+fullName = "{} Peterson"
+print(fullName)
