@@ -7,7 +7,7 @@ import (
 
 type CobraArg struct {
 	Arg   ScriptArg
-	value interface{} // should not be a pointer, e.g. string
+	value interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
 }
 
 func (c *CobraArg) IsString() bool {
@@ -40,54 +40,54 @@ func (c *CobraArg) IsBool() bool {
 
 func (c *CobraArg) SetDefaultIfPresent() {
 	if c.Arg.DefaultString != nil {
-		c.value = *c.Arg.DefaultString
+		c.value = c.Arg.DefaultString
 	}
 	if c.Arg.DefaultStringArray != nil {
-		c.value = *c.Arg.DefaultStringArray
+		c.value = c.Arg.DefaultStringArray
 	}
 	if c.Arg.DefaultInt != nil {
-		c.value = *c.Arg.DefaultInt
+		c.value = c.Arg.DefaultInt
 	}
 	if c.Arg.DefaultIntArray != nil {
-		c.value = *c.Arg.DefaultIntArray
+		c.value = c.Arg.DefaultIntArray
 	}
 	if c.Arg.DefaultFloat != nil {
-		c.value = *c.Arg.DefaultFloat
+		c.value = c.Arg.DefaultFloat
 	}
 	if c.Arg.DefaultFloatArray != nil {
-		c.value = *c.Arg.DefaultFloatArray
+		c.value = c.Arg.DefaultFloatArray
 	}
 	if c.Arg.DefaultBool != nil {
-		c.value = *c.Arg.DefaultBool
+		c.value = c.Arg.DefaultBool
 	}
 }
 
 func (c *CobraArg) GetString() string {
-	return c.value.(string)
+	return *c.value.(*string)
 }
 
 func (c *CobraArg) GetStringArray() []string {
-	return c.value.([]string)
+	return *c.value.(*[]string)
 }
 
 func (c *CobraArg) GetInt() int {
-	return c.value.(int)
+	return *c.value.(*int)
 }
 
 func (c *CobraArg) GetIntArray() []int {
-	return c.value.([]int)
+	return *c.value.(*[]int)
 }
 
 func (c *CobraArg) GetFloat() float64 {
-	return c.value.(float64)
+	return *c.value.(*float64)
 }
 
 func (c *CobraArg) GetFloatArray() []float64 {
-	return c.value.([]float64)
+	return *c.value.(*[]float64)
 }
 
 func (c *CobraArg) GetBool() bool {
-	return c.value.(bool)
+	return *c.value.(*bool)
 }
 
 // todo handle panics better
@@ -95,17 +95,17 @@ func (c *CobraArg) SetValue(arg string) {
 	// do proper casting
 	switch c.Arg.Type {
 	case RslString:
-		c.value = arg
+		c.value = &arg
 	case RslStringArray:
 		// split on arg commas
 		split := strings.Split(arg, ",")
-		c.value = split
+		c.value = &split
 	case RslInt:
 		parsed, err := strconv.Atoi(arg)
 		if err != nil {
 			panic("AHH! NOT INT!")
 		}
-		c.value = parsed
+		c.value = &parsed
 	case RslIntArray:
 		// split on arg commas
 		split := strings.Split(arg, ",")
@@ -117,13 +117,13 @@ func (c *CobraArg) SetValue(arg string) {
 			}
 			ints[i] = parsed
 		}
-		c.value = ints
+		c.value = &ints
 	case RslFloat:
 		parsed, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
 			panic("AHH! NOT FLOAT!")
 		}
-		c.value = parsed
+		c.value = &parsed
 	case RslFloatArray:
 		// split on arg commas
 		split := strings.Split(arg, ",")
@@ -135,13 +135,15 @@ func (c *CobraArg) SetValue(arg string) {
 			}
 			floats[i] = parsed
 		}
-		c.value = floats
+		c.value = &floats
 	case RslBool:
 		arg = strings.ToLower(arg)
 		if arg == "true" || arg == "1" {
-			c.value = true
+			val := true
+			c.value = &val
 		} else if arg == "false" || arg == "0" {
-			c.value = false
+			val := false
+			c.value = &val
 		} else {
 			panic("AHH! NOT BOOL!")
 		}

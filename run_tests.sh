@@ -5,6 +5,9 @@ invocations=(
     "test1.rad samber/lo"
     "test2.rad alice bobson"
     "test3.rad tomnomnom/gron"
+    "test3.rad --repo tomnomnom/gron"
+    "test3.rad --repo tomnomnom/gron --limit 10"
+    "test3.rad --limit 10 --repo tomnomnom/gron"
     "test4.rad alice,bob,charlie"
 )
 
@@ -23,9 +26,9 @@ do
 
     # Check if the command succeeded (exit status 0) or failed (non-zero exit status)
     if [ $exit_status -eq 0 ]; then
-        echo "Success"
+        echo -e "\033[1;32mSuccess\033[0m"
     else
-        echo "Failed"
+        echo -e "\033[1;31mFailed\033[0m"
         any_failed=true
     fi
 done
