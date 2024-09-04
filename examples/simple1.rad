@@ -8,8 +8,8 @@ args:
 Errors = json.statuses[].num_errors
 
 url = switch region:
-    "backend-us" us
-    "backend-eu" eu
+    case "us": "backend-us"
+    case "eu": "backend-eu"
 
 rad url:
     Errors

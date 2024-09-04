@@ -2,7 +2,7 @@
   <configuration default="false" name="Rad" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="2rad" />
     <working_directory value="$PROJECT_DIR$" />
-    <parameters value="./examples/simple3.rad alex terp" />
+    <parameters value="./examples/simple4.rad samber/lo" />
     <kind value="PACKAGE" />
     <package value="rad" />
     <directory value="$PROJECT_DIR$" />

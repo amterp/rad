@@ -67,24 +67,12 @@ func (e *Env) Set(varNameToken Token, value interface{}) {
 	}
 }
 
-func (e *Env) Get(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
-	varName := varNameToken.GetLexeme()
-	val, ok := e.Vars[varName]
-	if !ok {
-		e.i.error(varNameToken, fmt.Sprintf("Undefined variable referenced: %v", varName))
-	}
+func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+	return e.get(varNameToken.GetLexeme(), varNameToken, acceptableTypes...)
+}
 
-	if len(acceptableTypes) == 0 {
-		return val
-	}
-
-	for _, acceptableType := range acceptableTypes {
-		if val.Type == acceptableType {
-			return val
-		}
-	}
-	e.i.error(varNameToken, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
-	panic(UNREACHABLE)
+func (e *Env) GetByName(varName string, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+	return e.get(varName, nil, acceptableTypes...)
 }
 
 func (e *Env) AssignJsonField(name Token, path JsonPath) {
@@ -102,4 +90,23 @@ func (e *Env) GetJsonField(name Token) JsonFieldVar {
 		e.i.error(name, fmt.Sprintf("Undefined json field referenced: %v", name.GetLexeme()))
 	}
 	return field
+}
+
+func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+	val, ok := e.Vars[varName]
+	if !ok {
+		e.i.error(varNameToken, fmt.Sprintf("Undefined variable referenced: %v", varName))
+	}
+
+	if len(acceptableTypes) == 0 {
+		return val
+	}
+
+	for _, acceptableType := range acceptableTypes {
+		if val.Type == acceptableType {
+			return val
+		}
+	}
+	e.i.error(varNameToken, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
+	panic(UNREACHABLE)
 }

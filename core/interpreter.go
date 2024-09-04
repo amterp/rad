@@ -49,7 +49,7 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 }
 
 func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
-	literal := i.env.Get(access.Array, RslStringArray, RslIntArray, RslFloatArray)
+	literal := i.env.GetByToken(access.Array, RslStringArray, RslIntArray, RslFloatArray)
 	index := access.Index.Accept(i)
 
 	switch literal.Type {
@@ -87,7 +87,7 @@ func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {
-	return i.env.Get(variable.Name).value
+	return i.env.GetByToken(variable.Name).value
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {

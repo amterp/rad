@@ -11,7 +11,9 @@ func NewLiteralInterpreter(i *MainInterpreter) *LiteralInterpreter {
 }
 
 func (l LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
-	return literal.Value.(*StringLiteralToken).Literal
+	stringLiteral := literal.Value.(*StringLiteralToken).Literal
+	stringLiteral = performStringInterpolation(stringLiteral, l.i.env)
+	return stringLiteral
 }
 
 func (l LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
