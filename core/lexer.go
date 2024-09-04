@@ -103,6 +103,8 @@ func (l *Lexer) scanToken() {
 		} else {
 			l.addToken(EXCLAMATION)
 		}
+	case '?':
+		l.addToken(QUESTION)
 	case '<':
 		if l.match('=') {
 			l.addToken(LESS_EQUAL)

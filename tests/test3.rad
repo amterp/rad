@@ -5,6 +5,7 @@ Description here.
 args:
     repo string # The repo, owner/project
     limit int = 5 # The max num of results to return
+    optional string? # A optional string
 
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 print(url)
