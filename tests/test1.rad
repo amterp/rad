@@ -23,4 +23,4 @@ Date = json[].commit.author.date
 url = "https://api.github.com/repos/{repo}/commits?per_page=2"
 
 rad url:
-    Name, Date
+    fields Name, Date
