@@ -104,6 +104,7 @@ func (p *Parser) tryConsume(tokenType TokenType) (Token, bool) {
 	return nil, false
 }
 
+// todo this func is susceptible to pointing at an uninformative token
 func (p *Parser) error(message string) {
 	currentToken := p.tokens[p.next]
 	lexeme := currentToken.GetLexeme()
@@ -228,6 +229,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 		}
 	}
 
+	// todo arg comments should be optional!
 	argComment := p.consume(ARG_COMMENT, "Expected arg Comment").(*ArgCommentToken)
 
 	return &ArgDeclaration{
@@ -328,6 +330,7 @@ func (p *Parser) assignment() Stmt {
 	}
 
 	if len(identifiers) > 1 {
+		// TODO
 		panic(NOT_IMPLEMENTED)
 	}
 
@@ -337,6 +340,9 @@ func (p *Parser) assignment() Stmt {
 
 	if p.peekType(JSON_PATH_ELEMENT) {
 		return p.jsonPathAssignment(identifier)
+	} else if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
+		block := p.switchBlock(identifiers)
+		return &SwitchAssignment{Identifiers: identifiers, Block: block}
 	} else {
 		return p.primaryAssignment(identifier)
 	}
@@ -358,6 +364,83 @@ func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
 		elements = append(elements, JsonPathElement{token: element, arrayToken: &brackets})
 	}
 	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{elements: elements}}
+}
+
+func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {
+	switchToken := p.previous()
+	var discriminator Token
+	if !p.matchAny(COLON) {
+		discriminator = p.consume(IDENTIFIER, "Expected discriminator or colon after switch")
+		p.consume(COLON, "Expected ':' after switch discriminator")
+	} else if len(identifiers) == 0 {
+		// this is a switch block without assignment
+		p.error("Switch assignments must have a discriminator")
+	}
+
+	p.consumeNewlinesMin(1)
+	p.consume(INDENT, "Expected indented block after switch")
+
+	var stmts []SwitchStmt
+	for !p.matchAny(DEDENT) {
+		stmts = append(stmts, p.switchStmt(discriminator != nil, len(identifiers)))
+		p.consumeNewlines()
+	}
+	return SwitchBlock{SwitchToken: switchToken, Discriminator: &discriminator, Stmts: stmts}
+}
+
+func (p *Parser) switchStmt(hasDiscriminator bool, expectedNumReturnValues int) SwitchStmt {
+	if p.matchKeyword(CASE, SWITCH_BLOCK_KEYWORDS) {
+		return p.caseStmt(hasDiscriminator, expectedNumReturnValues)
+	}
+
+	if p.matchKeyword(DEFAULT, SWITCH_BLOCK_KEYWORDS) {
+		return p.switchDefaultStmt(expectedNumReturnValues)
+	}
+
+	p.error("Expected 'case' or 'default' in switch block")
+	panic(UNREACHABLE)
+}
+
+func (p *Parser) caseStmt(hasDiscriminator bool, expectedNumReturnValues int) SwitchStmt {
+	var keys []StringLiteral
+	if hasDiscriminator {
+		keys = append(keys, p.stringLiteral())
+		for !p.matchAny(COLON) {
+			p.consume(COMMA, "Expected ',' between case keys")
+			keys = append(keys, p.stringLiteral())
+		}
+	} else {
+		p.consume(COLON, "Expected ':' after 'case' when no discriminator")
+	}
+
+	var values []Expr
+	values = append(values, p.expr())
+	for !p.matchAny(NEWLINE) {
+		p.consume(COMMA, "Expected ',' between case values")
+		values = append(values, p.expr())
+	}
+
+	if len(values) != expectedNumReturnValues {
+		p.error(fmt.Sprintf("Expected %d return values, got %d", expectedNumReturnValues, len(values)))
+	}
+
+	return &SwitchCase{CaseKeyword: p.previous(), Keys: keys, Values: values}
+}
+
+func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
+	p.consume(COLON, "Expected ':' after 'default'")
+	var values []Expr
+	values = append(values, p.expr())
+	for !p.matchAny(NEWLINE) {
+		p.consume(COMMA, "Expected ',' between default values")
+		values = append(values, p.expr())
+	}
+
+	if len(values) != expectedNumReturnValues {
+		p.error(fmt.Sprintf("Expected %d return values, got %d", expectedNumReturnValues, len(values)))
+	}
+
+	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
 func (p *Parser) primaryAssignment(name Token) Stmt {
@@ -530,36 +613,56 @@ func (p *Parser) literalOrArray(expectedType *RslTypeEnum) (LiteralOrArray, bool
 }
 
 func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
-	if p.matchAny(STRING_LITERAL) {
+	if p.peekType(STRING_LITERAL) {
 		if expectedType != nil && *expectedType != RslString {
 			p.error("Expected string literal")
 		}
-		return &StringLiteral{Value: p.previous()}, true
+		return p.stringLiteral(), true
 	}
 
-	if p.matchAny(INT_LITERAL) {
+	if p.peekType(INT_LITERAL) {
 		if expectedType != nil && *expectedType != RslInt {
 			p.error("Expected int literal")
 		}
-		return &IntLiteral{Value: p.previous()}, true
+		return p.intLiteral(), true
 	}
 
-	if p.matchAny(FLOAT_LITERAL) {
+	if p.peekType(FLOAT_LITERAL) {
 		if expectedType != nil && *expectedType != RslFloat {
 			p.error("Expected float literal")
 		}
-		return &FloatLiteral{Value: p.previous()}, true
+		return p.floatLiteral(), true
 	}
 
 	// todo need to emit bool literal tokens
-	if p.matchAny(BOOL_LITERAL) {
+	if p.peekType(BOOL_LITERAL) {
 		if expectedType != nil && *expectedType != RslBool {
 			p.error("Expected bool literal")
 		}
-		return &BoolLiteral{Value: p.previous()}, true
+		return p.boolLiteral(), true
 	}
 
 	return nil, false
+}
+
+func (p *Parser) stringLiteral() StringLiteral {
+	literal := p.consume(STRING_LITERAL, "Expected string literal").(*StringLiteralToken)
+	return StringLiteral{Value: *literal}
+}
+
+func (p *Parser) intLiteral() IntLiteral {
+	literal := p.consume(INT_LITERAL, "Expected int literal").(*IntLiteralToken)
+	return IntLiteral{Value: *literal}
+}
+
+func (p *Parser) floatLiteral() FloatLiteral {
+	literal := p.consume(FLOAT_LITERAL, "Expected float literal").(*FloatLiteralToken)
+	return FloatLiteral{Value: *literal}
+}
+
+func (p *Parser) boolLiteral() BoolLiteral {
+	literal := p.consume(BOOL_LITERAL, "Expected bool literal").(*BoolLiteralToken)
+	return BoolLiteral{Value: *literal}
 }
 
 func (p *Parser) arrayLiteral(expectedType *RslTypeEnum) (ArrayLiteral, bool) {
@@ -669,8 +772,17 @@ func (p *Parser) identifier() Token {
 
 // todo putting this everywhere isn't ideal... another way to handle insignificant newlines?
 func (p *Parser) consumeNewlines() {
-	for p.matchAny(NEWLINE) {
+	p.consumeNewlinesMin(0)
+}
+
+func (p *Parser) consumeNewlinesMin(min int) {
+	matched := 0
+	for !p.isAtEnd() && p.matchAny(NEWLINE) {
 		// throw away
+		matched++
+	}
+	if matched < min && !p.isAtEnd() {
+		p.error("Expected newline")
 	}
 }
 

@@ -5,6 +5,27 @@ type RuntimeLiteral struct {
 	value interface{} // not a pointer, e.g. just 'string'
 }
 
+func NewRuntimeLiteral(val interface{}) RuntimeLiteral {
+	switch val.(type) {
+	case string:
+		return NewRuntimeString(val.(string))
+	case []string:
+		return NewRuntimeStringArray(val.([]string))
+	case int:
+		return NewRuntimeInt(val.(int))
+	case []int:
+		return NewRuntimeIntArray(val.([]int))
+	case float64:
+		return NewRuntimeFloat(val.(float64))
+	case []float64:
+		return NewRuntimeFloatArray(val.([]float64))
+	case bool:
+		return NewRuntimeBool(val.(bool))
+	default:
+		panic("unknown type")
+	}
+}
+
 func NewRuntimeString(val string) RuntimeLiteral {
 	return RuntimeLiteral{Type: RslString, value: val}
 }

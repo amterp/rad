@@ -1,0 +1,7 @@
+args:
+    base string = "gh" # base
+
+finalBase, title = switch base:
+    case "github", "gh": "api.github", "Github"
+    case "gitlab": "gitlab", "Gitlab"
+print(title, finalBase)

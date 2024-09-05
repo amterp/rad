@@ -6,8 +6,9 @@ import (
 )
 
 type CobraArg struct {
-	Arg   ScriptArg
-	value interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
+	Arg    ScriptArg
+	value  interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
+	IsNull bool
 }
 
 func (c *CobraArg) IsString() bool {
@@ -38,27 +39,23 @@ func (c *CobraArg) IsBool() bool {
 	return c.Arg.Type == RslBool
 }
 
-func (c *CobraArg) SetDefaultIfPresent() {
+func (c *CobraArg) InitializeOptional() {
 	if c.Arg.DefaultString != nil {
 		c.value = c.Arg.DefaultString
-	}
-	if c.Arg.DefaultStringArray != nil {
+	} else if c.Arg.DefaultStringArray != nil {
 		c.value = c.Arg.DefaultStringArray
-	}
-	if c.Arg.DefaultInt != nil {
+	} else if c.Arg.DefaultInt != nil {
 		c.value = c.Arg.DefaultInt
-	}
-	if c.Arg.DefaultIntArray != nil {
+	} else if c.Arg.DefaultIntArray != nil {
 		c.value = c.Arg.DefaultIntArray
-	}
-	if c.Arg.DefaultFloat != nil {
+	} else if c.Arg.DefaultFloat != nil {
 		c.value = c.Arg.DefaultFloat
-	}
-	if c.Arg.DefaultFloatArray != nil {
+	} else if c.Arg.DefaultFloatArray != nil {
 		c.value = c.Arg.DefaultFloatArray
-	}
-	if c.Arg.DefaultBool != nil {
+	} else if c.Arg.DefaultBool != nil {
 		c.value = c.Arg.DefaultBool
+	} else {
+		c.IsNull = true
 	}
 }
 

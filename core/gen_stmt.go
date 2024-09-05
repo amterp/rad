@@ -18,6 +18,8 @@ type StmtVisitor interface {
 	VisitArgBlockStmt(ArgBlock)
 	VisitRadBlockStmt(RadBlock)
 	VisitJsonPathAssignStmt(JsonPathAssign)
+	VisitSwitchBlockStmtStmt(SwitchBlockStmt)
+	VisitSwitchAssignmentStmt(SwitchAssignment)
 }
 type Empty struct {
 }
@@ -128,4 +130,32 @@ func (e JsonPathAssign) String() string {
 	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
 	parts = append(parts, fmt.Sprintf("Path: %v", e.Path))
 	return fmt.Sprintf("JsonPathAssign(%s)", strings.Join(parts, ", "))
+}
+
+type SwitchBlockStmt struct {
+	Block SwitchBlock
+}
+
+func (e SwitchBlockStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitSwitchBlockStmtStmt(e)
+}
+func (e SwitchBlockStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
+	return fmt.Sprintf("SwitchBlockStmt(%s)", strings.Join(parts, ", "))
+}
+
+type SwitchAssignment struct {
+	Identifiers []Token
+	Block       SwitchBlock
+}
+
+func (e SwitchAssignment) Accept(visitor StmtVisitor) {
+	visitor.VisitSwitchAssignmentStmt(e)
+}
+func (e SwitchAssignment) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
+	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
 }

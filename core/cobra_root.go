@@ -41,9 +41,9 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 
 	p := NewParser(l.Tokens)
 	instructions := p.Parse()
-	for _, stmt := range instructions {
-		fmt.Printf("%v\n", stmt)
-	}
+	//for _, stmt := range instructions {
+	//	fmt.Printf("%v\n", stmt)
+	//}
 
 	scriptArgs := extractArgs(instructions)
 	scriptCmd := createCmd(scriptPath, scriptArgs, instructions)
@@ -99,7 +99,7 @@ func createCmd(scriptPath string, args []ScriptArg, instructions []Stmt) *cobra.
 					} else if cobraArg.Arg.IsOptional {
 						// there's no positional arg to fill it, but that's okay because it's optional, so continue
 						// but first, fill in the optional's default value if it exists
-						cobraArg.SetDefaultIfPresent()
+						cobraArg.InitializeOptional()
 						continue
 					} else {
 						errorExit(cmd, fmt.Sprintf("Missing required argument: %s", argName))

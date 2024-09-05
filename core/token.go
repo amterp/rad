@@ -16,23 +16,23 @@ type BaseToken struct {
 	CharLineStart int // from the start of the line, 1 indexed
 }
 
-func (b *BaseToken) GetType() TokenType {
+func (b BaseToken) GetType() TokenType {
 	return b.Type
 }
 
-func (b *BaseToken) GetLexeme() string {
+func (b BaseToken) GetLexeme() string {
 	return b.Lexeme
 }
 
-func (b *BaseToken) GetCharStart() int {
+func (b BaseToken) GetCharStart() int {
 	return b.CharStart
 }
 
-func (b *BaseToken) GetLine() int {
+func (b BaseToken) GetLine() int {
 	return b.Line
 }
 
-func (b *BaseToken) GetCharLineStart() int {
+func (b BaseToken) GetCharLineStart() int {
 	return b.CharLineStart
 }
 

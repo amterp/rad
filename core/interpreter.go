@@ -6,9 +6,10 @@ import (
 
 type MainInterpreter struct {
 	env        *Env
-	literalI   *LiteralInterpreter
+	LiteralI   *LiteralInterpreter
 	argBlockI  *ArgBlockInterpreter
 	radBlockI  *RadBlockInterpreter
+	switchI    *SwitchInterpreter
 	statements []Stmt
 }
 
@@ -16,9 +17,10 @@ func NewInterpreter(statements []Stmt) *MainInterpreter {
 	i := &MainInterpreter{
 		statements: statements,
 	}
-	i.literalI = NewLiteralInterpreter(i)
+	i.LiteralI = NewLiteralInterpreter(i)
 	i.argBlockI = NewArgBlockInterpreter(i)
 	i.radBlockI = NewRadBlockInterpreter(i)
+	i.switchI = NewSwitchInterpreter(i)
 	i.env = NewEnv(i)
 	return i
 }
@@ -36,7 +38,7 @@ func (i *MainInterpreter) Run() {
 }
 
 func (i *MainInterpreter) VisitExprLoaExpr(loa ExprLoa) interface{} {
-	return loa.Value.Accept(i.literalI)
+	return loa.Value.Accept(i.LiteralI)
 }
 
 func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
@@ -179,6 +181,14 @@ func (i *MainInterpreter) VisitJsonPathAssignStmt(assign JsonPathAssign) {
 
 func (i *MainInterpreter) VisitExprStmtStmt(stmt ExprStmt) {
 	stmt.Expression.Accept(i)
+}
+
+func (i *MainInterpreter) VisitSwitchBlockStmtStmt(block SwitchBlockStmt) {
+	i.switchI.RunBlock(block.Block)
+}
+
+func (i *MainInterpreter) VisitSwitchAssignmentStmt(assignment SwitchAssignment) {
+	i.switchI.RunAssignment(assignment)
 }
 
 func (i *MainInterpreter) error(token Token, message string) {

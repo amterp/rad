@@ -55,6 +55,7 @@ const (
 	IN       TokenType = "IN"
 	ARGS     TokenType = "ARGS"
 	SWITCH   TokenType = "SWITCH"
+	CASE     TokenType = "CASE"
 	FROM     TokenType = "FROM"
 	ON       TokenType = "ON"
 	RAD      TokenType = "RAD" // todo continue to rethink this being the keyword

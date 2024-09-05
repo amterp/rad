@@ -12,7 +12,7 @@ import (
 
 type RadBlockInterpreter struct {
 	i          *MainInterpreter
-	invocation *RadInvocation
+	invocation *radInvocation
 }
 
 func NewRadBlockInterpreter(i *MainInterpreter) *RadBlockInterpreter {
@@ -27,7 +27,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 	default:
 		r.i.error(block.RadKeyword, "URL must be a string")
 	}
-	r.invocation = &RadInvocation{ri: &r, url: url.(string)}
+	r.invocation = &radInvocation{ri: &r, url: url.(string)}
 	for _, stmt := range block.Stmts {
 		stmt.Accept(r)
 	}
@@ -39,15 +39,15 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 	r.invocation.fields = fields
 }
 
-// == RadInvocation ==
+// == radInvocation ==
 
-type RadInvocation struct {
+type radInvocation struct {
 	ri     *RadBlockInterpreter
 	url    string
 	fields Fields
 }
 
-func (r *RadInvocation) execute() {
+func (r *radInvocation) execute() {
 	fmt.Printf("Querying URL: %s\n", r.url)
 	resp, err := http.Get(r.url)
 	if err != nil {

@@ -18,10 +18,10 @@ func main() {
 
 	// literal -> STRING | NUMBER | BOOL
 	defineAst(outputDir, "Literal", "interface{}", []string{
-		"StringLiteral   : Token Value",
-		"IntLiteral      : Token Value",
-		"FloatLiteral    : Token Value",
-		"BoolLiteral     : Token Value",
+		"StringLiteral   : StringLiteralToken Value",
+		"IntLiteral      : IntLiteralToken Value",
+		"FloatLiteral    : FloatLiteralToken Value",
+		"BoolLiteral     : BoolLiteralToken Value",
 	})
 
 	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"
@@ -71,6 +71,8 @@ func main() {
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
+		"SwitchBlockStmt    : SwitchBlock Block",
+		"SwitchAssignment   : []Token Identifiers, SwitchBlock Block",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
@@ -80,6 +82,15 @@ func main() {
 
 	defineAst(outputDir, "RadStmt", "", []string{
 		"Fields     : []Token Identifiers",
+	})
+
+	defineAst(outputDir, "RlaReturning", "[]RuntimeLiteral", []string{
+		"SwitchBlock  : Token SwitchToken, *Token Discriminator, []SwitchStmt Stmts",
+	})
+
+	defineAst(outputDir, "SwitchStmt", "", []string{
+		"SwitchCase     : Token CaseKeyword, []StringLiteral Keys, []Expr Values",
+		"SwitchDefault  : Token DefaultKeyword, []Expr Values",
 	})
 }
 

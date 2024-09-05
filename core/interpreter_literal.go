@@ -1,31 +1,35 @@
 package core
 
 type LiteralInterpreter struct {
-	i *MainInterpreter
+	i                 *MainInterpreter
+	ShouldInterpolate bool
 }
 
 func NewLiteralInterpreter(i *MainInterpreter) *LiteralInterpreter {
 	return &LiteralInterpreter{
-		i: i,
+		i:                 i,
+		ShouldInterpolate: true,
 	}
 }
 
 func (l LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
-	stringLiteral := literal.Value.(*StringLiteralToken).Literal
-	stringLiteral = performStringInterpolation(stringLiteral, l.i.env)
+	stringLiteral := literal.Value.Literal
+	if l.ShouldInterpolate && l.i != nil {
+		return performStringInterpolation(stringLiteral, l.i.env)
+	}
 	return stringLiteral
 }
 
 func (l LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
-	return literal.Value.(*IntLiteralToken).Literal
+	return literal.Value.Literal
 }
 
 func (l LiteralInterpreter) VisitFloatLiteralLiteral(literal FloatLiteral) interface{} {
-	return literal.Value.(*FloatLiteralToken).Literal
+	return literal.Value.Literal
 }
 
 func (l LiteralInterpreter) VisitBoolLiteralLiteral(literal BoolLiteral) interface{} {
-	return literal.Value.(*BoolLiteralToken).Literal
+	return literal.Value.Literal
 }
 
 func (l LiteralInterpreter) VisitStringArrayLiteralArrayLiteral(literal StringArrayLiteral) interface{} {

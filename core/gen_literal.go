@@ -16,7 +16,7 @@ type LiteralVisitor interface {
 	VisitBoolLiteralLiteral(BoolLiteral) interface{}
 }
 type StringLiteral struct {
-	Value Token
+	Value StringLiteralToken
 }
 
 func (e StringLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -29,7 +29,7 @@ func (e StringLiteral) String() string {
 }
 
 type IntLiteral struct {
-	Value Token
+	Value IntLiteralToken
 }
 
 func (e IntLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -42,7 +42,7 @@ func (e IntLiteral) String() string {
 }
 
 type FloatLiteral struct {
-	Value Token
+	Value FloatLiteralToken
 }
 
 func (e FloatLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -55,7 +55,7 @@ func (e FloatLiteral) String() string {
 }
 
 type BoolLiteral struct {
-	Value Token
+	Value BoolLiteralToken
 }
 
 func (e BoolLiteral) Accept(visitor LiteralVisitor) interface{} {

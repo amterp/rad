@@ -21,6 +21,10 @@ func NewEnv(i *MainInterpreter) *Env {
 }
 
 func (e *Env) InitArg(arg CobraArg) {
+	if arg.IsNull {
+		return
+	}
+
 	argType := arg.Arg.Type
 	switch argType {
 	case RslString:
@@ -65,6 +69,11 @@ func (e *Env) Set(varNameToken Token, value interface{}) {
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: %v = %v", varName, value))
 	}
+}
+
+func (e *Env) Exists(name string) bool {
+	_, ok := e.Vars[name]
+	return ok
 }
 
 func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
