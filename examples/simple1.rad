@@ -1,15 +1,8 @@
+#!/usr/bin/env rad
 """
-Simple example script.
+Description here.
 """
-
 args:
-    backend string # Which backend to query.
+    base string = "github" # Gitlab or github (gitlab won't work in this script woops)
 
-Errors = json.statuses[].num_errors
-
-url = switch region:
-    case "us": "backend-us"
-    case "eu": "backend-eu"
-
-rad url:
-    Errors
+a, b = 1, 2

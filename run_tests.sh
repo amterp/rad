@@ -10,6 +10,7 @@ invocations=(
     "test3.rad --limit 10 --repo tomnomnom/gron"
     "test4.rad alice,bob,charlie"
     "test5.rad --repo samber/lo"
+    "test6.rad"
 )
 
 go build main.go || exit 1

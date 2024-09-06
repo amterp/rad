@@ -330,8 +330,12 @@ func (p *Parser) assignment() Stmt {
 	}
 
 	if len(identifiers) > 1 {
-		// TODO
-		panic(NOT_IMPLEMENTED)
+		if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
+			block := p.switchBlock(identifiers)
+			return &SwitchAssignment{Identifiers: identifiers, Block: block}
+		} else {
+			p.error("Multiple assignments are only allowed for switch blocks")
+		}
 	}
 
 	identifier := identifiers[0]
@@ -339,10 +343,11 @@ func (p *Parser) assignment() Stmt {
 	//  arrayAssignment -> IDENTIFIER arrayType "=" arrayExpr
 
 	if p.peekType(JSON_PATH_ELEMENT) {
+		if len(identifiers) > 1 {
+			p.error("Json path assignment must have only one identifier")
+		}
+		identifier := identifiers[0]
 		return p.jsonPathAssignment(identifier)
-	} else if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
-		block := p.switchBlock(identifiers)
-		return &SwitchAssignment{Identifiers: identifiers, Block: block}
 	} else {
 		return p.primaryAssignment(identifier)
 	}
@@ -443,9 +448,9 @@ func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
 	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
-func (p *Parser) primaryAssignment(name Token) Stmt {
+func (p *Parser) primaryAssignment(identifier Token) Stmt {
 	initializer := p.expr()
-	return &PrimaryAssign{Name: name, Initializer: initializer}
+	return &PrimaryAssign{Name: identifier, Initializer: initializer}
 }
 
 func (p *Parser) expr() Expr {
