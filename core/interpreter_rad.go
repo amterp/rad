@@ -49,6 +49,8 @@ type radInvocation struct {
 
 func (r *radInvocation) execute() {
 	fmt.Printf("Querying URL: %s\n", r.url)
+	// todo encode url correctly, below doesn't work
+	//  url = "http://url/?names=%{name}%" << the % needs to get encoded, for example
 	resp, err := http.Get(r.url)
 	if err != nil {
 		panic(fmt.Sprintf("Error on HTTP request: %v", err))
@@ -94,8 +96,9 @@ func (r *radInvocation) execute() {
 		tbl.Append(row)
 	}
 
+	// todo ensure failed requests get nicely printed
 	// default formatting
-	tbl.SetAutoWrapText(false)
+	tbl.SetAutoWrapText(false) // todo not sure this works? it seems to wrap...
 	tbl.SetAutoFormatHeaders(true)
 	tbl.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 	tbl.SetAlignment(tablewriter.ALIGN_LEFT)
