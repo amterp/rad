@@ -9,7 +9,8 @@ import "fmt"
 func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interface{}) interface{} {
 	functionName := function.GetLexeme()
 	switch functionName {
-	// todo add functions here
+	case "len":
+		return runLen(i, function, values)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
@@ -38,4 +39,23 @@ func runPrint(i *MainInterpreter, values []interface{}) {
 	}
 	output = output[:len(output)-1] // remove last space
 	fmt.Println(output)
+}
+
+func runLen(i *MainInterpreter, function Token, values []interface{}) interface{} {
+	if len(values) != 1 {
+		i.error(function, "len() takes exactly one argument")
+	}
+	switch v := values[0].(type) {
+	case string:
+		return len(v)
+	case []string:
+		return len(v)
+	case []int:
+		return len(v)
+	case []float64:
+		return len(v)
+	default:
+		i.error(function, "len() takes a string or array")
+		panic(UNREACHABLE)
+	}
 }
