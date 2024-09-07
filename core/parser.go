@@ -221,9 +221,12 @@ func (p *Parser) statement() Stmt {
 		return p.radBlock()
 	}
 
+	if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
+		return p.ifStmt()
+	}
+
 	// todo all keywords
 	// todo for stmt
-	// todo if stmt
 
 	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
 		return p.functionCallStmt()
@@ -286,6 +289,44 @@ func (p *Parser) radFieldsStatement() RadStmt {
 		identifiers = append(identifiers, p.identifier())
 	}
 	return &Fields{Identifiers: identifiers}
+}
+
+func (p *Parser) ifStmt() IfStmt {
+	var cases []IfCase
+	cases = append(cases, p.ifCase())
+	var elseBlock *Block
+	for p.peekKeyword(ELSE, GLOBAL_KEYWORDS) {
+		p.consumeKeyword(ELSE, GLOBAL_KEYWORDS)
+		if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
+			cases = append(cases, p.ifCase())
+		} else {
+			p.consume(COLON, "Expected ':' after 'else'")
+			p.consumeNewlines()
+			p.consume(INDENT, "Expected indented block after else")
+			block := p.block()
+			elseBlock = &block
+		}
+	}
+	return IfStmt{Cases: cases, ElseBlock: elseBlock}
+}
+
+func (p *Parser) ifCase() IfCase {
+	ifToken := p.consumeKeyword(IF, GLOBAL_KEYWORDS)
+	condition := p.expr()
+	p.consume(COLON, "Expected ':' after if condition")
+	p.consumeNewlines()
+	p.consume(INDENT, "Expected indented block after if condition")
+	block := p.block()
+	return IfCase{IfToken: ifToken, Condition: condition, Body: block}
+}
+
+func (p *Parser) block() Block {
+	var stmts []Stmt
+	for !p.matchAny(DEDENT) {
+		stmts = append(stmts, p.statement())
+		p.consumeNewlines()
+	}
+	return Block{Stmts: stmts}
 }
 
 func (p *Parser) functionCallStmt() Stmt {
@@ -845,6 +886,22 @@ func (p *Parser) matchKeyword(tokenType TokenType, keywords map[string]TokenType
 			p.advance()
 			return true
 		}
+	}
+	return false
+}
+
+func (p *Parser) consumeKeyword(tokenType TokenType, keywords map[string]TokenType) Token {
+	if !p.matchKeyword(tokenType, keywords) {
+		p.error(fmt.Sprintf("Expected keyword %s", tokenType))
+		panic(UNREACHABLE)
+	}
+	return p.previous()
+}
+
+func (p *Parser) peekKeyword(expectedKeyword TokenType, keywords map[string]TokenType) bool {
+	if p.matchKeyword(expectedKeyword, keywords) {
+		p.rewind()
+		return true
 	}
 	return false
 }

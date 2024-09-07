@@ -20,6 +20,9 @@ type StmtVisitor interface {
 	VisitJsonPathAssignStmt(JsonPathAssign)
 	VisitSwitchBlockStmtStmt(SwitchBlockStmt)
 	VisitSwitchAssignmentStmt(SwitchAssignment)
+	VisitBlockStmt(Block)
+	VisitIfStmtStmt(IfStmt)
+	VisitIfCaseStmt(IfCase)
 }
 type Empty struct {
 }
@@ -162,4 +165,49 @@ func (e SwitchAssignment) String() string {
 	parts = append(parts, fmt.Sprintf("VarTypes: %v", e.VarTypes))
 	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
 	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
+}
+
+type Block struct {
+	Stmts []Stmt
+}
+
+func (e Block) Accept(visitor StmtVisitor) {
+	visitor.VisitBlockStmt(e)
+}
+func (e Block) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Stmts: %v", e.Stmts))
+	return fmt.Sprintf("Block(%s)", strings.Join(parts, ", "))
+}
+
+type IfStmt struct {
+	Cases     []IfCase
+	ElseBlock *Block
+}
+
+func (e IfStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitIfStmtStmt(e)
+}
+func (e IfStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Cases: %v", e.Cases))
+	parts = append(parts, fmt.Sprintf("ElseBlock: %v", e.ElseBlock))
+	return fmt.Sprintf("IfStmt(%s)", strings.Join(parts, ", "))
+}
+
+type IfCase struct {
+	IfToken   Token
+	Condition Expr
+	Body      Block
+}
+
+func (e IfCase) Accept(visitor StmtVisitor) {
+	visitor.VisitIfCaseStmt(e)
+}
+func (e IfCase) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("IfToken: %v", e.IfToken))
+	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
+	parts = append(parts, fmt.Sprintf("Body: %v", e.Body))
+	return fmt.Sprintf("IfCase(%s)", strings.Join(parts, ", "))
 }

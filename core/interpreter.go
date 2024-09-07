@@ -196,6 +196,38 @@ func (i *MainInterpreter) VisitSwitchAssignmentStmt(assignment SwitchAssignment)
 	i.switchI.RunAssignment(assignment)
 }
 
+func (i *MainInterpreter) VisitBlockStmt(block Block) {
+	for _, stmt := range block.Stmts {
+		stmt.Accept(i)
+	}
+}
+
+func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
+	cases := stmt.Cases
+	for _, c := range cases {
+		conditionResult := c.Condition.Accept(i)
+		bval, ok := conditionResult.(bool)
+		if !ok {
+			i.error(c.IfToken, "If condition must resolve to a bool")
+		}
+		if bval {
+			for _, s := range c.Body.Stmts {
+				s.Accept(i)
+			}
+			return
+		}
+	}
+	if stmt.ElseBlock != nil {
+		for _, s := range stmt.ElseBlock.Stmts {
+			s.Accept(i)
+		}
+	}
+}
+
+func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
+	panic("Bug! IfCase should not be visited directly")
+}
+
 func (i *MainInterpreter) error(token Token, message string) {
 	if token == nil {
 		panic(message) // todo not good

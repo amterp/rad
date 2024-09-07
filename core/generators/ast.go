@@ -75,6 +75,9 @@ func main() {
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt    : SwitchBlock Block",
 		"SwitchAssignment   : []Token Identifiers, []*RslType VarTypes, SwitchBlock Block",
+		"Block			    : []Stmt Stmts",
+		"IfStmt             : []IfCase Cases, *Block ElseBlock",
+		"IfCase             : Token IfToken, Expr Condition, Block Body",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
