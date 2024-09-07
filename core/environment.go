@@ -20,6 +20,15 @@ func NewEnv(i *MainInterpreter) *Env {
 	}
 }
 
+func (e *Env) NewChildEnv() Env {
+	return Env{
+		i:          e.i,
+		Vars:       make(map[string]RuntimeLiteral),
+		jsonFields: make(map[string]JsonFieldVar),
+		Enclosing:  e,
+	}
+}
+
 func (e *Env) InitArg(arg CobraArg) {
 	if arg.IsNull {
 		return
@@ -142,16 +151,16 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 }
 
 func (e *Env) Exists(name string) bool {
-	_, ok := e.Vars[name]
+	_, ok := e.get(name, nil)
 	return ok
 }
 
 func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
-	return e.get(varNameToken.GetLexeme(), varNameToken, acceptableTypes...)
+	return e.getOrError(varNameToken.GetLexeme(), varNameToken, acceptableTypes...)
 }
 
 func (e *Env) GetByName(varName string, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
-	return e.get(varName, nil, acceptableTypes...)
+	return e.getOrError(varName, nil, acceptableTypes...)
 }
 
 func (e *Env) AssignJsonField(name Token, path JsonPath) {
@@ -171,19 +180,30 @@ func (e *Env) GetJsonField(name Token) JsonFieldVar {
 	return field
 }
 
-func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
-	val, ok := e.Vars[varName]
+func (e *Env) getOrError(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+	val, ok := e.get(varName, varNameToken, acceptableTypes...)
 	if !ok {
 		e.i.error(varNameToken, fmt.Sprintf("Undefined variable referenced: %v", varName))
 	}
+	return val
+}
+
+func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) (RuntimeLiteral, bool) {
+	val, ok := e.Vars[varName]
+	if !ok {
+		if e.Enclosing != nil {
+			return e.Enclosing.get(varName, varNameToken, acceptableTypes...)
+		}
+		return RuntimeLiteral{}, false
+	}
 
 	if len(acceptableTypes) == 0 {
-		return val
+		return val, true
 	}
 
 	for _, acceptableType := range acceptableTypes {
 		if val.Type == acceptableType {
-			return val
+			return val, true
 		}
 	}
 	e.i.error(varNameToken, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))

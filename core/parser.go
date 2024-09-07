@@ -225,6 +225,10 @@ func (p *Parser) statement() Stmt {
 		return p.ifStmt()
 	}
 
+	if p.peekKeyword(FOR, GLOBAL_KEYWORDS) {
+		return p.forStmt()
+	}
+
 	// todo all keywords
 	// todo for stmt
 
@@ -327,6 +331,23 @@ func (p *Parser) block() Block {
 		p.consumeNewlines()
 	}
 	return Block{Stmts: stmts}
+}
+
+func (p *Parser) forStmt() ForStmt {
+	forToken := p.consumeKeyword(FOR, GLOBAL_KEYWORDS)
+	identifier1 := p.consume(IDENTIFIER, "Expected identifier after 'for'")
+	var identifier2 *Token
+	if p.matchAny(COMMA) {
+		i := p.consume(IDENTIFIER, "Expected identifier after ','")
+		identifier2 = &i
+	}
+	p.consumeKeyword(IN, GLOBAL_KEYWORDS)
+	rangeExpr := p.expr()
+	p.consume(COLON, "Expected ':' after range expression")
+	p.consumeNewlines()
+	p.consume(INDENT, "Expected indented block after for")
+	block := p.block()
+	return ForStmt{ForToken: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Body: block}
 }
 
 func (p *Parser) functionCallStmt() Stmt {

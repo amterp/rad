@@ -128,7 +128,7 @@ tblIfStmt                   -> "if" expression COLON NEWLINE ( INDENT tblStmt NE
 tblElseIf                   -> "else" tblIfStmt
 tblElse                     -> "else" COLON NEWLINE ( INDENT tblStmt NEWLINE )*
 forStmt                     -> "for" IDENTIFIER ( forStmtIndex | forStmtNoIndex )
-forStmtIndex                -> IDENTIFIER forStmtNoIndex
+forStmtIndex                -> "," IDENTIFIER forStmtNoIndex
 forStmtNoIndex              -> "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
 expression                  -> logic_or

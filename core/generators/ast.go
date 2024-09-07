@@ -78,6 +78,7 @@ func main() {
 		"Block			    : []Stmt Stmts",
 		"IfStmt             : []IfCase Cases, *Block ElseBlock",
 		"IfCase             : Token IfToken, Expr Condition, Block Body",
+		"ForStmt			: Token ForToken, Token Identifier1, *Token Identifier2, Expr Range, Block Body",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

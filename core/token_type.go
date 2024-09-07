@@ -52,6 +52,8 @@ const (
 	// Keywords
 
 	FOR      TokenType = "FOR"
+	BREAK    TokenType = "BREAK"
+	CONTINUE TokenType = "CONTINUE"
 	IN       TokenType = "IN"
 	ARGS     TokenType = "ARGS"
 	SWITCH   TokenType = "SWITCH"

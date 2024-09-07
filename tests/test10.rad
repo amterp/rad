@@ -1,0 +1,11 @@
+a int[] = [1, 2, 3]
+
+for i, v in a:
+    print(i, v)
+
+for v in a:
+    print(v)
+
+if true:
+    asd = "yes"
+    print(asd)

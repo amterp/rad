@@ -197,9 +197,11 @@ func (i *MainInterpreter) VisitSwitchAssignmentStmt(assignment SwitchAssignment)
 }
 
 func (i *MainInterpreter) VisitBlockStmt(block Block) {
-	for _, stmt := range block.Stmts {
-		stmt.Accept(i)
-	}
+	i.runWithChildEnv(func() {
+		for _, stmt := range block.Stmts {
+			stmt.Accept(i)
+		}
+	})
 }
 
 func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
@@ -211,21 +213,74 @@ func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
 			i.error(c.IfToken, "If condition must resolve to a bool")
 		}
 		if bval {
-			for _, s := range c.Body.Stmts {
-				s.Accept(i)
-			}
+			c.Body.Accept(i)
 			return
 		}
 	}
 	if stmt.ElseBlock != nil {
-		for _, s := range stmt.ElseBlock.Stmts {
-			s.Accept(i)
-		}
+		stmt.ElseBlock.Accept(i)
 	}
 }
 
 func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
 	panic("Bug! IfCase should not be visited directly")
+}
+
+func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
+	rangeValue := stmt.Range.Accept(i)
+	var valIdentifier Token
+	var idxIdentifier *Token
+	if stmt.Identifier2 != nil {
+		idxIdentifier = &stmt.Identifier1
+		valIdentifier = *stmt.Identifier2
+	} else {
+		valIdentifier = stmt.Identifier1
+	}
+
+	// very duplicated :( but generic non-duped doesn't look super simple?
+	switch rangeValue.(type) {
+	case []string:
+		arr := rangeValue.([]string)
+		for idx, val := range arr {
+			i.runWithChildEnv(func() {
+				i.env.SetAndImplyType(valIdentifier, val)
+				if idxIdentifier != nil {
+					i.env.SetAndImplyType(*idxIdentifier, idx)
+				}
+				for _, s := range stmt.Body.Stmts {
+					s.Accept(i)
+				}
+			})
+		}
+	case []int:
+		arr := rangeValue.([]int)
+		for idx, val := range arr {
+			i.runWithChildEnv(func() {
+				i.env.SetAndImplyType(valIdentifier, val)
+				if idxIdentifier != nil {
+					i.env.SetAndImplyType(*idxIdentifier, idx)
+				}
+				for _, s := range stmt.Body.Stmts {
+					s.Accept(i)
+				}
+			})
+		}
+	case []float64:
+		arr := rangeValue.([]float64)
+		for idx, val := range arr {
+			i.runWithChildEnv(func() {
+				i.env.SetAndImplyType(valIdentifier, val)
+				if idxIdentifier != nil {
+					i.env.SetAndImplyType(*idxIdentifier, idx)
+				}
+				for _, s := range stmt.Body.Stmts {
+					s.Accept(i)
+				}
+			})
+		}
+	default:
+		i.error(stmt.ForToken, "For loop range must be an array")
+	}
 }
 
 func (i *MainInterpreter) error(token Token, message string) {
@@ -235,4 +290,12 @@ func (i *MainInterpreter) error(token Token, message string) {
 		panic(fmt.Sprintf("Error at L%d/%d on '%s': %s",
 			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), message))
 	}
+}
+
+func (i *MainInterpreter) runWithChildEnv(runnable func()) {
+	originalEnv := i.env
+	env := originalEnv.NewChildEnv()
+	i.env = &env
+	runnable()
+	i.env = originalEnv
 }

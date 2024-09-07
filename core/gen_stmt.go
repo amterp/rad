@@ -23,6 +23,7 @@ type StmtVisitor interface {
 	VisitBlockStmt(Block)
 	VisitIfStmtStmt(IfStmt)
 	VisitIfCaseStmt(IfCase)
+	VisitForStmtStmt(ForStmt)
 }
 type Empty struct {
 }
@@ -210,4 +211,25 @@ func (e IfCase) String() string {
 	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
 	parts = append(parts, fmt.Sprintf("Body: %v", e.Body))
 	return fmt.Sprintf("IfCase(%s)", strings.Join(parts, ", "))
+}
+
+type ForStmt struct {
+	ForToken    Token
+	Identifier1 Token
+	Identifier2 *Token
+	Range       Expr
+	Body        Block
+}
+
+func (e ForStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitForStmtStmt(e)
+}
+func (e ForStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("ForToken: %v", e.ForToken))
+	parts = append(parts, fmt.Sprintf("Identifier1: %v", e.Identifier1))
+	parts = append(parts, fmt.Sprintf("Identifier2: %v", e.Identifier2))
+	parts = append(parts, fmt.Sprintf("Range: %v", e.Range))
+	parts = append(parts, fmt.Sprintf("Body: %v", e.Body))
+	return fmt.Sprintf("ForStmt(%s)", strings.Join(parts, ", "))
 }
