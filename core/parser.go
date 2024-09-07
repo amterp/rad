@@ -534,7 +534,7 @@ func (p *Parser) and() Expr {
 func (p *Parser) equality() Expr {
 	expr := p.comparison()
 
-	for p.matchAny(NOT_EQUAL, EQUAL) {
+	for p.matchAny(NOT_EQUAL, EQUAL_EQUAL) {
 		operator := p.previous()
 		right := p.comparison()
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
