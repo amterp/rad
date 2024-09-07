@@ -24,6 +24,8 @@ type StmtVisitor interface {
 	VisitIfStmtStmt(IfStmt)
 	VisitIfCaseStmt(IfCase)
 	VisitForStmtStmt(ForStmt)
+	VisitBreakStmtStmt(BreakStmt)
+	VisitContinueStmtStmt(ContinueStmt)
 }
 type Empty struct {
 }
@@ -232,4 +234,30 @@ func (e ForStmt) String() string {
 	parts = append(parts, fmt.Sprintf("Range: %v", e.Range))
 	parts = append(parts, fmt.Sprintf("Body: %v", e.Body))
 	return fmt.Sprintf("ForStmt(%s)", strings.Join(parts, ", "))
+}
+
+type BreakStmt struct {
+	BreakToken Token
+}
+
+func (e BreakStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitBreakStmtStmt(e)
+}
+func (e BreakStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("BreakToken: %v", e.BreakToken))
+	return fmt.Sprintf("BreakStmt(%s)", strings.Join(parts, ", "))
+}
+
+type ContinueStmt struct {
+	ContinueToken Token
+}
+
+func (e ContinueStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitContinueStmtStmt(e)
+}
+func (e ContinueStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("ContinueToken: %v", e.ContinueToken))
+	return fmt.Sprintf("ContinueStmt(%s)", strings.Join(parts, ", "))
 }

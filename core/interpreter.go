@@ -11,6 +11,9 @@ type MainInterpreter struct {
 	radBlockI  *RadBlockInterpreter
 	switchI    *SwitchInterpreter
 	statements []Stmt
+
+	breaking   bool
+	continuing bool
 }
 
 func NewInterpreter(statements []Stmt) *MainInterpreter {
@@ -200,6 +203,12 @@ func (i *MainInterpreter) VisitBlockStmt(block Block) {
 	i.runWithChildEnv(func() {
 		for _, stmt := range block.Stmts {
 			stmt.Accept(i)
+			if i.breaking {
+				break
+			}
+			if i.continuing {
+				break
+			}
 		}
 	})
 }
@@ -241,46 +250,72 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	switch rangeValue.(type) {
 	case []string:
 		arr := rangeValue.([]string)
-		for idx, val := range arr {
-			i.runWithChildEnv(func() {
+		i.runWithChildEnv(func() {
+			for idx, val := range arr {
 				i.env.SetAndImplyType(valIdentifier, val)
 				if idxIdentifier != nil {
 					i.env.SetAndImplyType(*idxIdentifier, idx)
 				}
-				for _, s := range stmt.Body.Stmts {
-					s.Accept(i)
+				stmt.Body.Accept(i)
+				if i.breaking {
+					i.breaking = false
+					break
 				}
-			})
-		}
+				if i.continuing {
+					i.continuing = false
+					continue
+				}
+			}
+		})
 	case []int:
 		arr := rangeValue.([]int)
-		for idx, val := range arr {
-			i.runWithChildEnv(func() {
+		i.runWithChildEnv(func() {
+			for idx, val := range arr {
 				i.env.SetAndImplyType(valIdentifier, val)
 				if idxIdentifier != nil {
 					i.env.SetAndImplyType(*idxIdentifier, idx)
 				}
-				for _, s := range stmt.Body.Stmts {
-					s.Accept(i)
+				stmt.Body.Accept(i)
+				if i.breaking {
+					i.breaking = false
+					break
 				}
-			})
-		}
+				if i.continuing {
+					i.continuing = false
+					continue
+				}
+			}
+		})
 	case []float64:
 		arr := rangeValue.([]float64)
-		for idx, val := range arr {
-			i.runWithChildEnv(func() {
+		i.runWithChildEnv(func() {
+			for idx, val := range arr {
 				i.env.SetAndImplyType(valIdentifier, val)
 				if idxIdentifier != nil {
 					i.env.SetAndImplyType(*idxIdentifier, idx)
 				}
-				for _, s := range stmt.Body.Stmts {
-					s.Accept(i)
+				stmt.Body.Accept(i)
+				if i.breaking {
+					i.breaking = false
+					break
 				}
-			})
-		}
+				if i.continuing {
+					i.continuing = false
+					continue
+				}
+			}
+		})
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
 	}
+}
+
+func (i *MainInterpreter) VisitBreakStmtStmt(stmt BreakStmt) {
+	i.breaking = true
+}
+
+func (i *MainInterpreter) VisitContinueStmtStmt(stmt ContinueStmt) {
+	i.continuing = true
 }
 
 func (i *MainInterpreter) error(token Token, message string) {

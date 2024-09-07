@@ -6,8 +6,9 @@ import (
 )
 
 type Parser struct {
-	tokens []Token
-	next   int
+	tokens              []Token
+	next                int
+	nestedForBlockLevel int
 }
 
 func NewParser(tokens []Token) *Parser {
@@ -229,8 +230,21 @@ func (p *Parser) statement() Stmt {
 		return p.forStmt()
 	}
 
+	if p.peekKeyword(BREAK, GLOBAL_KEYWORDS) {
+		if p.nestedForBlockLevel == 0 {
+			p.error("Break statement must be inside a for loop")
+		}
+		return &BreakStmt{BreakToken: p.consumeKeyword(BREAK, GLOBAL_KEYWORDS)}
+	}
+
+	if p.peekKeyword(CONTINUE, GLOBAL_KEYWORDS) {
+		if p.nestedForBlockLevel == 0 {
+			p.error("Continue statement must be inside a for loop")
+		}
+		return &ContinueStmt{ContinueToken: p.consumeKeyword(CONTINUE, GLOBAL_KEYWORDS)}
+	}
+
 	// todo all keywords
-	// todo for stmt
 
 	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
 		return p.functionCallStmt()
@@ -346,7 +360,9 @@ func (p *Parser) forStmt() ForStmt {
 	p.consume(COLON, "Expected ':' after range expression")
 	p.consumeNewlines()
 	p.consume(INDENT, "Expected indented block after for")
+	p.nestedForBlockLevel += 1
 	block := p.block()
+	p.nestedForBlockLevel -= 1
 	return ForStmt{ForToken: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Body: block}
 }
 

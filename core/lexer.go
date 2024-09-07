@@ -148,6 +148,8 @@ func (l *Lexer) scanToken() {
 	case 'j':
 		if l.matchString("son") {
 			l.lexJsonPath()
+		} else {
+			l.lexIdentifier()
 		}
 	case '/':
 		if l.match('/') {
