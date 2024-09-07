@@ -30,6 +30,14 @@ func (r *RslTypeEnum) NonArrayType() *RslTypeEnum {
 	return &output
 }
 
+func (r *RslTypeEnum) IsArray() bool {
+	if r == nil {
+		return false
+	}
+
+	return *r == RslStringArray || *r == RslIntArray || *r == RslFloatArray
+}
+
 type RslType struct {
 	Token Token
 	Type  RslTypeEnum

@@ -68,14 +68,13 @@ func main() {
 		"Empty              :",
 		"ExprStmt           : Expr Expression",
 		"FunctionStmt       : FunctionCall Call",
-		"PrimaryAssign      : Token Name, Expr Initializer",
-		"ArrayAssign        : Token Name, RslType ArrayType, Expr Initializer",
+		"PrimaryAssign      : Token Name, *RslType VarType, Expr Initializer",
 		"FileHeader         : Token FileHeaderToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt    : SwitchBlock Block",
-		"SwitchAssignment   : []Token Identifiers, SwitchBlock Block",
+		"SwitchAssignment   : []Token Identifiers, []*RslType VarTypes, SwitchBlock Block",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

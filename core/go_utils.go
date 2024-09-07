@@ -15,3 +15,13 @@ func NotNil[T comparable](val *T, nilProvider func() T) bool {
 
 	return true
 }
+
+func AllNils[T comparable](vals []*T) bool {
+	for _, val := range vals {
+		if val != nil {
+			return false
+		}
+	}
+
+	return true
+}

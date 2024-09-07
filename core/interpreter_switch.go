@@ -41,7 +41,12 @@ func (s SwitchInterpreter) RunAssignment(assignment SwitchAssignment) {
 	identifiers := assignment.Identifiers
 
 	for i, output := range outputs {
-		s.i.env.SetAndImplyType(identifiers[i], output.value)
+		varType := assignment.VarTypes[i]
+		if varType != nil {
+			s.i.env.SetAndExpectType(identifiers[i], &varType.Type, output.value)
+		} else {
+			s.i.env.SetAndImplyType(identifiers[i], output.value)
+		}
 	}
 }
 

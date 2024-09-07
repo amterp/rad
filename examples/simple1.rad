@@ -1,0 +1,26 @@
+#!/usr/bin/env rad
+"""
+Description here.
+"""
+args:
+    base string = "github" # Gitlab or github (gitlab won't work in this script woops)
+
+    repo string? # repo
+    owner string? # owner
+    project string? # project
+    limit int = 10 # limit
+
+finalBase = switch base:
+    case "github": "api.github"
+    case "gitlab": "not supported D:"
+print("1", finalBase)
+
+finalBase = switch base:
+    case "github", "gh": "api.github"
+    case "gitlab", "gl": "not supported D:"
+print("2", finalBase)
+
+url = switch:
+    case: "https://{finalBase}.com/repos/{repo}/commits?per_page={limit}"
+    case: "https://{finalBase}.com/repos/{owner}/{project}/commits?per_page={limit}"
+print(url)

@@ -295,42 +295,49 @@ func (p *Parser) functionCallStmt() Stmt {
 
 func (p *Parser) assignment() Stmt {
 	var identifiers []Token
+	var rslTypes []*RslType
 	identifiers = append(identifiers, p.identifier())
-
-	if p.peekTypeSeries(IDENTIFIER, BRACKETS) {
-		// must be an array e.g. `a int[]`
-		rslType := p.rslType()
-		p.consume(EQUAL, "Expected '=' after array type")
-		initializer := p.expr()
-		return &ArrayAssign{Name: identifiers[0], ArrayType: rslType, Initializer: initializer}
-	}
-
 	for !p.matchAny(EQUAL) {
+		if p.peekType(IDENTIFIER) {
+			// try to interpret as a type
+			r := p.rslType()
+			rslTypes = append(rslTypes, &r)
+
+			if p.matchAny(EQUAL) {
+				break
+			}
+		} else {
+			rslTypes = append(rslTypes, nil)
+		}
+
 		p.consume(COMMA, "Expected ',' between identifiers")
 		identifiers = append(identifiers, p.identifier())
 	}
+	rslTypes = append(rslTypes, nil) // for the last identifier
 
-	if len(identifiers) > 1 {
-		if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
-			block := p.switchBlock(identifiers)
-			return &SwitchAssignment{Identifiers: identifiers, Block: block}
-		} else {
-			p.error("Multiple assignments are only allowed for switch blocks")
-		}
+	// finished matching left side of equal sign, now parse right side
+
+	if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
+		block := p.switchBlock(identifiers)
+		return &SwitchAssignment{Identifiers: identifiers, VarTypes: rslTypes, Block: block}
+	} else if len(identifiers) > 1 {
+		p.error("Multiple assignments are only allowed for switch blocks")
 	}
 
 	identifier := identifiers[0]
-	// todo implement
-	//  arrayAssignment -> IDENTIFIER arrayType "=" arrayExpr
 
 	if p.peekType(JSON_PATH_ELEMENT) {
 		if len(identifiers) > 1 {
 			p.error("Json path assignment must have only one identifier")
 		}
+		if !AllNils(rslTypes) {
+			// todo perhaps a bit surprising to users?
+			p.error("Json path assignment cannot have an explicit type")
+		}
 		identifier := identifiers[0]
 		return p.jsonPathAssignment(identifier)
 	} else {
-		return p.primaryAssignment(identifier)
+		return p.primaryAssignment(identifier, rslTypes[0])
 	}
 }
 
@@ -429,9 +436,9 @@ func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
 	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
-func (p *Parser) primaryAssignment(identifier Token) Stmt {
+func (p *Parser) primaryAssignment(identifier Token, expectedType *RslType) Stmt {
 	initializer := p.expr()
-	return &PrimaryAssign{Name: identifier, Initializer: initializer}
+	return &PrimaryAssign{Name: identifier, VarType: expectedType, Initializer: initializer}
 }
 
 func (p *Parser) expr() Expr {

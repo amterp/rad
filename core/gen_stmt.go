@@ -14,7 +14,6 @@ type StmtVisitor interface {
 	VisitExprStmtStmt(ExprStmt)
 	VisitFunctionStmtStmt(FunctionStmt)
 	VisitPrimaryAssignStmt(PrimaryAssign)
-	VisitArrayAssignStmt(ArrayAssign)
 	VisitFileHeaderStmt(FileHeader)
 	VisitArgBlockStmt(ArgBlock)
 	VisitRadBlockStmt(RadBlock)
@@ -60,6 +59,7 @@ func (e FunctionStmt) String() string {
 
 type PrimaryAssign struct {
 	Name        Token
+	VarType     *RslType
 	Initializer Expr
 }
 
@@ -69,25 +69,9 @@ func (e PrimaryAssign) Accept(visitor StmtVisitor) {
 func (e PrimaryAssign) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
+	parts = append(parts, fmt.Sprintf("VarType: %v", e.VarType))
 	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
-}
-
-type ArrayAssign struct {
-	Name        Token
-	ArrayType   RslType
-	Initializer Expr
-}
-
-func (e ArrayAssign) Accept(visitor StmtVisitor) {
-	visitor.VisitArrayAssignStmt(e)
-}
-func (e ArrayAssign) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
-	parts = append(parts, fmt.Sprintf("ArrayType: %v", e.ArrayType))
-	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
-	return fmt.Sprintf("ArrayAssign(%s)", strings.Join(parts, ", "))
 }
 
 type FileHeader struct {
@@ -165,6 +149,7 @@ func (e SwitchBlockStmt) String() string {
 
 type SwitchAssignment struct {
 	Identifiers []Token
+	VarTypes    []*RslType
 	Block       SwitchBlock
 }
 
@@ -174,6 +159,7 @@ func (e SwitchAssignment) Accept(visitor StmtVisitor) {
 func (e SwitchAssignment) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("VarTypes: %v", e.VarTypes))
 	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
 	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
 }

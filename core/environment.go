@@ -67,7 +67,7 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	case bool:
 		e.Vars[varName] = NewRuntimeBool(value.(bool))
 	default:
-		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: %v = %v", varName, value))
+		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
 }
 
@@ -80,7 +80,7 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 		case RslString:
 			val, ok := value.(string)
 			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string: %v", varName))
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string: %v", value))
 			} else {
 				e.Vars[varName] = NewRuntimeString(val)
 			}
@@ -88,12 +88,16 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
 				e.Vars[varName] = NewRuntimeStringArray([]string{})
 			} else {
-				e.Vars[varName] = NewRuntimeStringArray(value.([]string))
+				val, ok := value.([]string)
+				if !ok {
+					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string array: %v", value))
+				}
+				e.Vars[varName] = NewRuntimeStringArray(val)
 			}
 		case RslInt:
 			val, ok := value.(int)
 			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", varName))
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", value))
 			} else {
 				e.Vars[varName] = NewRuntimeInt(val)
 			}
@@ -101,12 +105,16 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
 				e.Vars[varName] = NewRuntimeIntArray([]int{})
 			} else {
-				e.Vars[varName] = NewRuntimeIntArray(value.([]int))
+				val, ok := value.([]int)
+				if !ok {
+					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int array: %v", value))
+				}
+				e.Vars[varName] = NewRuntimeIntArray(val)
 			}
 		case RslFloat:
 			val, ok := value.(float64)
 			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float: %v", varName))
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float: %v", value))
 			} else {
 				e.Vars[varName] = NewRuntimeFloat(val)
 			}
@@ -114,12 +122,16 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
 				e.Vars[varName] = NewRuntimeFloatArray([]float64{})
 			} else {
-				e.Vars[varName] = NewRuntimeFloatArray(value.([]float64))
+				val, ok := value.([]float64)
+				if !ok {
+					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float array: %v", value))
+				}
+				e.Vars[varName] = NewRuntimeFloatArray(val)
 			}
 		case RslBool:
 			val, ok := value.(bool)
 			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool: %v", varName))
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool: %v", value))
 			} else {
 				e.Vars[varName] = NewRuntimeBool(val)
 			}
