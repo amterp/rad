@@ -14,7 +14,7 @@ type ArrayLiteralVisitor interface {
 	VisitIntArrayLiteralArrayLiteral(IntArrayLiteral) interface{}
 	VisitFloatArrayLiteralArrayLiteral(FloatArrayLiteral) interface{}
 	VisitBoolArrayLiteralArrayLiteral(BoolArrayLiteral) interface{}
-	VisitUnknownArrayLiteralArrayLiteral(UnknownArrayLiteral) interface{}
+	VisitEmptyArrayLiteralArrayLiteral(EmptyArrayLiteral) interface{}
 }
 type StringArrayLiteral struct {
 	Values []StringLiteral
@@ -68,15 +68,12 @@ func (e BoolArrayLiteral) String() string {
 	return fmt.Sprintf("BoolArrayLiteral(%s)", strings.Join(parts, ", "))
 }
 
-type UnknownArrayLiteral struct {
-	Size int
+type EmptyArrayLiteral struct {
 }
 
-func (e UnknownArrayLiteral) Accept(visitor ArrayLiteralVisitor) interface{} {
-	return visitor.VisitUnknownArrayLiteralArrayLiteral(e)
+func (e EmptyArrayLiteral) Accept(visitor ArrayLiteralVisitor) interface{} {
+	return visitor.VisitEmptyArrayLiteralArrayLiteral(e)
 }
-func (e UnknownArrayLiteral) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("Size: %v", e.Size))
-	return fmt.Sprintf("UnknownArrayLiteral(%s)", strings.Join(parts, ", "))
+func (e EmptyArrayLiteral) String() string {
+	return "EmptyArrayLiteral()"
 }

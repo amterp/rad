@@ -91,5 +91,5 @@ type JsonFieldVar struct {
 func (j *JsonFieldVar) AddMatch(match string) {
 	existing := j.env.GetByToken(j.Name, RslStringArray).value.([]string)
 	existing = append(existing, match)
-	j.env.Set(j.Name, existing)
+	j.env.SetAndImplyType(j.Name, existing)
 }

@@ -154,7 +154,16 @@ func (i *MainInterpreter) VisitExpressionStmt(expression Expr) {
 
 func (i *MainInterpreter) VisitPrimaryAssignStmt(assign PrimaryAssign) {
 	value := assign.Initializer.Accept(i)
-	i.env.Set(assign.Name, value)
+	i.env.SetAndImplyType(assign.Name, value)
+}
+
+func (i *MainInterpreter) VisitArrayAssignStmt(assign ArrayAssign) {
+	value := assign.Initializer.Accept(i)
+	expectedType := assign.ArrayType.Type
+	if expectedType != RslStringArray && expectedType != RslIntArray && expectedType != RslFloatArray {
+		i.error(assign.ArrayType.Token, "Invalid array type")
+	}
+	i.env.SetAndExpectType(assign.Name, &expectedType, value)
 }
 
 func (i *MainInterpreter) VisitFileHeaderStmt(header FileHeader) {

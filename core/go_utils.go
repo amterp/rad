@@ -1,6 +1,6 @@
 package core
 
-const UNREACHABLE = "unreachable"
+const UNREACHABLE = "Bug! This should be unreachable"
 const NOT_IMPLEMENTED = "not implemented"
 
 // this is the best way I can think of to do the 'typed nil' check...

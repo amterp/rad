@@ -14,6 +14,7 @@ type StmtVisitor interface {
 	VisitExprStmtStmt(ExprStmt)
 	VisitFunctionStmtStmt(FunctionStmt)
 	VisitPrimaryAssignStmt(PrimaryAssign)
+	VisitArrayAssignStmt(ArrayAssign)
 	VisitFileHeaderStmt(FileHeader)
 	VisitArgBlockStmt(ArgBlock)
 	VisitRadBlockStmt(RadBlock)
@@ -70,6 +71,23 @@ func (e PrimaryAssign) String() string {
 	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
 	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
+}
+
+type ArrayAssign struct {
+	Name        Token
+	ArrayType   RslType
+	Initializer Expr
+}
+
+func (e ArrayAssign) Accept(visitor StmtVisitor) {
+	visitor.VisitArrayAssignStmt(e)
+}
+func (e ArrayAssign) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
+	parts = append(parts, fmt.Sprintf("ArrayType: %v", e.ArrayType))
+	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
+	return fmt.Sprintf("ArrayAssign(%s)", strings.Join(parts, ", "))
 }
 
 type FileHeader struct {

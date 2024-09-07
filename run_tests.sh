@@ -11,6 +11,7 @@ invocations=(
     "test4.rad alice,bob,charlie"
     "test5.rad --repo samber/lo"
     "test6.rad"
+    "test7.rad --arr11=2.1,2.2"
 )
 
 go build main.go || exit 1

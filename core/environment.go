@@ -46,8 +46,8 @@ func (e *Env) InitArg(arg CobraArg) {
 	}
 }
 
-// Set 'value' expected to not be a pointer, should be e.g. string
-func (e *Env) Set(varNameToken Token, value interface{}) {
+// SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
+func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
 
 	varName := varNameToken.GetLexeme()
@@ -71,6 +71,64 @@ func (e *Env) Set(varNameToken Token, value interface{}) {
 	}
 }
 
+// SetAndExpectType 'value' expected to not be a pointer, should be e.g. string
+func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, value interface{}) {
+	varName := varNameToken.GetLexeme()
+	if expectedType != nil {
+		expectedTypeVal := *expectedType
+		switch expectedTypeVal {
+		case RslString:
+			val, ok := value.(string)
+			if !ok {
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string: %v", varName))
+			} else {
+				e.Vars[varName] = NewRuntimeString(val)
+			}
+		case RslStringArray:
+			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
+				e.Vars[varName] = NewRuntimeStringArray([]string{})
+			} else {
+				e.Vars[varName] = NewRuntimeStringArray(value.([]string))
+			}
+		case RslInt:
+			val, ok := value.(int)
+			if !ok {
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", varName))
+			} else {
+				e.Vars[varName] = NewRuntimeInt(val)
+			}
+		case RslIntArray:
+			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
+				e.Vars[varName] = NewRuntimeIntArray([]int{})
+			} else {
+				e.Vars[varName] = NewRuntimeIntArray(value.([]int))
+			}
+		case RslFloat:
+			val, ok := value.(float64)
+			if !ok {
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float: %v", varName))
+			} else {
+				e.Vars[varName] = NewRuntimeFloat(val)
+			}
+		case RslFloatArray:
+			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
+				e.Vars[varName] = NewRuntimeFloatArray([]float64{})
+			} else {
+				e.Vars[varName] = NewRuntimeFloatArray(value.([]float64))
+			}
+		case RslBool:
+			val, ok := value.(bool)
+			if !ok {
+				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool: %v", varName))
+			} else {
+				e.Vars[varName] = NewRuntimeBool(val)
+			}
+		default:
+			e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: %v = %v", varName, value))
+		}
+	}
+}
+
 func (e *Env) Exists(name string) bool {
 	_, ok := e.Vars[name]
 	return ok
@@ -90,7 +148,7 @@ func (e *Env) AssignJsonField(name Token, path JsonPath) {
 		Path: path,
 		env:  e,
 	}
-	e.Set(name, []string{})
+	e.SetAndImplyType(name, []string{})
 }
 
 func (e *Env) GetJsonField(name Token) JsonFieldVar {

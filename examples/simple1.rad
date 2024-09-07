@@ -1,8 +1,0 @@
-#!/usr/bin/env rad
-"""
-Description here.
-"""
-args:
-    base string = "github" # Gitlab or github (gitlab won't work in this script woops)
-
-a, b = 1, 2

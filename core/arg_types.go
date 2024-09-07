@@ -56,20 +56,35 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 			val := literal.(string)
 			scriptArg.DefaultString = &val
 		case RslStringArray:
-			val := literal.([]string)
-			scriptArg.DefaultStringArray = &val
+			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
+				var val []string
+				scriptArg.DefaultStringArray = &val
+			} else {
+				val := literal.([]string)
+				scriptArg.DefaultStringArray = &val
+			}
 		case RslInt:
 			val := literal.(int)
 			scriptArg.DefaultInt = &val
 		case RslIntArray:
-			val := literal.([]int)
-			scriptArg.DefaultIntArray = &val
+			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
+				var val []int
+				scriptArg.DefaultIntArray = &val
+			} else {
+				val := literal.([]int)
+				scriptArg.DefaultIntArray = &val
+			}
 		case RslFloat:
 			val := literal.(float64)
 			scriptArg.DefaultFloat = &val
 		case RslFloatArray:
-			val := literal.([]float64)
-			scriptArg.DefaultFloatArray = &val
+			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
+				var val []float64
+				scriptArg.DefaultFloatArray = &val
+			} else {
+				val := literal.([]float64)
+				scriptArg.DefaultFloatArray = &val
+			}
 		case RslBool:
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val

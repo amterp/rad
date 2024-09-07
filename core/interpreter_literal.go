@@ -64,7 +64,7 @@ func (l LiteralInterpreter) VisitBoolArrayLiteralArrayLiteral(literal BoolArrayL
 	return values
 }
 
-func (l LiteralInterpreter) VisitUnknownArrayLiteralArrayLiteral(UnknownArrayLiteral) interface{} {
+func (l LiteralInterpreter) VisitEmptyArrayLiteralArrayLiteral(EmptyArrayLiteral) interface{} {
 	return []interface{}{}
 }
 

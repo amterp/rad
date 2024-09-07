@@ -12,6 +12,24 @@ const (
 	RslBool
 )
 
+func (r *RslTypeEnum) NonArrayType() *RslTypeEnum {
+	if r == nil {
+		return nil
+	}
+
+	var output RslTypeEnum
+	if *r == RslStringArray {
+		output = RslString
+	}
+	if *r == RslIntArray {
+		output = RslInt
+	}
+	if *r == RslFloatArray {
+		output = RslFloat
+	}
+	return &output
+}
+
 type RslType struct {
 	Token Token
 	Type  RslTypeEnum

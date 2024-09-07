@@ -13,6 +13,8 @@ type TypeInfo struct {
 	Fields    string
 }
 
+// todo thought on debuggability: ensure *everything* has a Token of some sort, so that we can always point to the source
+
 func main() {
 	outputDir := "./core"
 
@@ -30,7 +32,7 @@ func main() {
 		"IntArrayLiteral      : []IntLiteral Values",
 		"FloatArrayLiteral    : []FloatLiteral Values",
 		"BoolArrayLiteral     : []BoolLiteral Values",
-		"UnknownArrayLiteral  : int Size", // todo replace with EmptyArrayLiteral
+		"EmptyArrayLiteral    : ",
 	})
 
 	// literalOrArray -> literal | arrayLiteral
@@ -67,6 +69,7 @@ func main() {
 		"ExprStmt           : Expr Expression",
 		"FunctionStmt       : FunctionCall Call",
 		"PrimaryAssign      : Token Name, Expr Initializer",
+		"ArrayAssign        : Token Name, RslType ArrayType, Expr Initializer",
 		"FileHeader         : Token FileHeaderToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
