@@ -20,7 +20,7 @@ type ScriptArg struct {
 	DefaultBool        *bool
 }
 
-func FromArgDecl(i *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
+func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	var name string
 	rename := argDecl.Rename
 	if NotNil(rename, func() Token { return nil }) {
@@ -33,6 +33,9 @@ func FromArgDecl(i *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	flagToken := argDecl.Flag
 	if NotNil(flagToken, func() Token { return nil }) {
 		lexeme := (*flagToken).GetLexeme()
+		if len(lexeme) != 1 {
+			l.i.error(*flagToken, fmt.Sprintf("Flag %q must be a single character", lexeme))
+		}
 		flag = &lexeme
 	}
 
@@ -47,7 +50,7 @@ func FromArgDecl(i *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 
 	defaultVal := argDecl.Default
 	if NotNil(defaultVal, func() LiteralOrArray { return nil }) {
-		literal := (*defaultVal).Accept(i)
+		literal := (*defaultVal).Accept(l)
 		switch scriptArg.Type {
 		case RslString:
 			val := literal.(string)
