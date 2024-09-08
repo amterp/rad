@@ -101,6 +101,10 @@ func createCmd(scriptPath string, args []ScriptArg, instructions []Stmt) *cobra.
 						// but first, fill in the optional's default value if it exists
 						cobraArg.InitializeOptional()
 						continue
+					} else if cobraArg.IsBool() {
+						// all bools are implicitly optional and default false, unless explicitly defaulted to true
+						// this branch implies it was not defaulted to true
+						cobraArg.SetValue("false")
 					} else {
 						errorExit(cmd, fmt.Sprintf("Missing required argument: %s", argName))
 					}

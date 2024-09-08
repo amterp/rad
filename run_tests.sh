@@ -19,6 +19,7 @@ invocations=(
     "test12.rad"
     "test13.rad"
     "test14.rad"
+    "test15.rad"
 )
 
 go build main.go || exit 1
