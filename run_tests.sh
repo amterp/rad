@@ -23,6 +23,7 @@ invocations=(
     "./main ./tests/test16.rad"
     "./main ./tests/test17.rad"
     "./tests/test18.sh --name alice"
+    "./main ./tests/test19.rad --help"
 )
 
 go build main.go || exit 1

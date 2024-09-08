@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+	"github.com/spf13/cobra"
 	"strconv"
 	"strings"
 )
@@ -145,4 +147,65 @@ func (c *CobraArg) SetValue(arg string) {
 			panic("AHH! NOT BOOL!")
 		}
 	}
+}
+
+func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
+	name, argType, flag, description := arg.Name, arg.Type, "", ""
+	if arg.Flag != nil {
+		flag = *arg.Flag
+	}
+	if arg.Description != nil {
+		description = *arg.Description
+	}
+
+	var cobraArgValue interface{}
+	switch argType {
+	case RslString:
+		defVal := ""
+		if arg.DefaultString != nil {
+			defVal = *arg.DefaultString
+		}
+		cobraArgValue = cmd.Flags().StringP(name, flag, defVal, description)
+	case RslStringArray:
+		var defVal []string
+		if arg.DefaultStringArray != nil {
+			defVal = *arg.DefaultStringArray
+		}
+		cobraArgValue = cmd.Flags().StringSliceP(name, flag, defVal, description)
+	case RslInt:
+		defVal := 0
+		if arg.DefaultInt != nil {
+			defVal = *arg.DefaultInt
+		}
+		cobraArgValue = cmd.Flags().IntP(name, flag, defVal, description)
+	case RslIntArray:
+		var defVal []int
+		if arg.DefaultIntArray != nil {
+			defVal = *arg.DefaultIntArray
+		}
+		cobraArgValue = cmd.Flags().IntSliceP(name, flag, defVal, description)
+	case RslFloat:
+		defVal := 0.0
+		if arg.DefaultFloat != nil {
+			defVal = *arg.DefaultFloat
+		}
+		cobraArgValue = cmd.Flags().Float64P(name, flag, defVal, description)
+	case RslFloatArray:
+		var defVal []float64
+		if arg.DefaultFloatArray != nil {
+			defVal = *arg.DefaultFloatArray
+		}
+		cobraArgValue = cmd.Flags().Float64SliceP(name, flag, defVal, description)
+	case RslBool:
+		defVal := false
+		if arg.DefaultBool != nil {
+			defVal = *arg.DefaultBool
+		}
+		cobraArgValue = cmd.Flags().BoolP(name, flag, defVal, description)
+	default:
+		// todo better error handling
+		panic(fmt.Sprintf("Unknown arg type: %v", argType))
+	}
+	cobraArg := CobraArg{Arg: arg, value: cobraArgValue}
+	return cobraArg
 }

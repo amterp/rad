@@ -116,36 +116,8 @@ func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetad
 	}
 
 	for _, arg := range scriptMetadata.Args {
-		name, argType, flag, description := arg.Name, arg.Type, "", ""
-		if arg.Flag != nil {
-			flag = *arg.Flag
-		}
-		if arg.Description != nil {
-			description = *arg.Description
-		}
-
-		// todo defaults should be put here, so cobra can display
-		var cobraArgValue interface{}
-		switch argType {
-		case RslString:
-			cobraArgValue = cmd.Flags().StringP(name, flag, "", description)
-		case RslStringArray:
-			cobraArgValue = cmd.Flags().StringSliceP(name, flag, []string{}, description)
-		case RslInt:
-			cobraArgValue = cmd.Flags().IntP(name, flag, 0, description)
-		case RslIntArray:
-			cobraArgValue = cmd.Flags().IntSliceP(name, flag, []int{}, description)
-		case RslFloat:
-			cobraArgValue = cmd.Flags().Float64P(name, flag, 0.0, description)
-		case RslFloatArray:
-			cobraArgValue = cmd.Flags().Float64SliceP(name, flag, []float64{}, description)
-		case RslBool:
-			cobraArgValue = cmd.Flags().BoolP(name, flag, false, description)
-		default:
-			// todo better error handling
-			panic(fmt.Sprintf("Unknown arg type: %v", argType))
-		}
-		cobraArgs = append(cobraArgs, &CobraArg{Arg: arg, value: cobraArgValue})
+		cobraArg := CreateCobraArg(cmd, arg)
+		cobraArgs = append(cobraArgs, &cobraArg)
 	}
 }
 
