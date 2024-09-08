@@ -2,18 +2,31 @@
 
 A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. Simplifies the process of writing, managing, and sharing API query scripts.
 
-## Status
+## Installation
 
-**Rad is still in early development!** I've made it public because it's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
+### macOS
+
+```shell
+brew tap AlexanderTerp/rad
+brew install rad
+```
+
+Other than building from source, Rad is not available for other platforms/package managers (yet).
+
+## Status 📊
+
+⚠️ **Rad is still in early development!** ⚠️
+
+I've made Rad public because it's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
 
 Below is a quick glimpse of major items that've been implemented and are missing.
 
-### What's Implemented
+### What's Implemented ✅ 
 
 - Lexer/parser/interpreter running from end-to-end.
 - Large parts of the language.
 
-### What's Missing
+### What's Missing 🚧
 
 - Many more language features
 - Polished syntax error feedback
@@ -21,7 +34,7 @@ Below is a quick glimpse of major items that've been implemented and are missing
 - Good docs
 - Visual Code extension for script devs
 
-## What problem does this solve?
+## What problem does this solve? 🎯
 
 Many backend services expose JSON/REST APIs containing valuable information that users often need to query and view ad hoc (e.g. DevOps).
 While various tools exist for this purpose, they often come with drawbacks such as complex syntax, steep learning curves, or the need for extensive setup.
@@ -31,13 +44,13 @@ What's needed is a flexible, easy, and efficient way to:
 2. Extract specific information from API responses
 3. Display the data in a user-friendly format
 
-## How does Rad solve it?
+## How does Rad solve it? 🛠️
 
 - Rad comes with a domain-specific language called RSL (Rad Scripting Language).
 - RSL is purpose-built for this problem: to efficiently express what to query, the data to extract, and how to display it.
 - `rad` is a command-line tool which runs these scripts, handling argument parsing, query execution, and result display + formatting.
 
-## Minimal Example
+## Minimal Example 🌟
 
 ```
 args:
@@ -77,7 +90,7 @@ Time                   Author                 SHA
   - `rad commits.rad --limit <limit> --repo <repo>`
   - `rad commits.rad <repo> --limit <limit>`
 
-## Alternatives
+## Alternatives 📚
 
 - **Bash**
   - Bash, using a combination of `curl`, `jq`, and/or `column`, is an excellent choice.
@@ -91,7 +104,7 @@ Time                   Author                 SHA
 - **HTTPie**
   - This eases some of the difficulties with using `curl` and `jq` in Bash, but does not help with the rest, e.g. arg parsing, more complex bash logic, etc.
 
-## Why Rad?
+## Why Rad? 🚀
 
 ### Rad Scripting Language (RSL)
 
@@ -112,7 +125,7 @@ Time                   Author                 SHA
 - The declaration of args themselves also provides useful information that Rad leverages to generate helpful usage strings for your scripts, such as types or constraints, to make them user-friendly.
 - RSL's syntax is designed to be self-explanatory and readable to anyone. No arcane use of symbols or inscrutable keywords.
 
-## Why *not* Rad?
+## Why *not* Rad? ⚠️
 
 - Rad aims to make writing 95% of your scripts better and easier. However, the last 5% may involve bespoke, complex logic, better suited for general-purpose programming languages such as Python or Bash.
 - You can get quite far with Rad, as RSL provides utilities for the most common things devs would want, but it will inevitably be lacking something that a more general-purpose programming language would offer.
