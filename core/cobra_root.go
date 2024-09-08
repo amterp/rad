@@ -137,25 +137,25 @@ func errorExit(cmd *cobra.Command, message string) {
 }
 
 func init() {
-	// this is a little crazy, bear with me!
-	// we use a hack required to allow help flags intended for subcommands to correctly
-	// apply to the subcommand. We need to create & register the subcommand with
-	// cobra before *cobra* is able to properly understand that the help flag is
-	// intended for the subcommand.
+	// this is a bit hacky, but bear with me!
+	// we intercept the very first call to help, it implies that the user has set the help flag
+	// however, we won't yet have read the RSL script if it was also provided, so we may first
+	// try to read that, register the args, etc, that's relevant to help, and then re-run the help
+	// command, so that it can print help for the script
 	rootCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
 		// immediately reset the help func, as we only want this hacked
 		// version to run once
 		rootCmd.SetHelpFunc(nil)
 
-		// try to detect if help has been called on a subcommand
+		// try to detect if help has been called on either a script or with --STDIN flag
 		if len(args) >= 2 {
 			if lo.Some(args[1:], []string{"-h", "--help"}) && !stdinFlag {
-				// it has, and with a rsl file source, so let's add the subcommand and re-run the root again
+				// it has, and with a rsl file source, so let's modify the rootCmd and re-run the root again
 				scriptPath := args[0]
 				rslSourceCode := readSource(scriptPath)
 				extractMetadataAndModifyCmd(rootCmd, scriptPath, rslSourceCode)
 			} else if stdinFlag {
-				// it has, and with reading rsl from stdin, so let's add the subcommand and re-run the root again
+				// it has, and with reading rsl from stdin, so let's modify the rootCmd and re-run the root again
 				source, err := io.ReadAll(os.Stdin)
 				if err == nil {
 					extractMetadataAndModifyCmd(rootCmd, "", string(source))
@@ -165,9 +165,13 @@ func init() {
 			}
 		}
 
-		// does not look like we are trying to get help on a subcommand,
-		// so just print the root/normal help
 		rootCmd.Help()
+
+		if bashFlag && stdinFlag {
+			// if both these flags are set, we're likely being invoked from within a bash script, so let's
+			// output an exit 0 for bash to eval and exit, so it doesn't continue
+			fmt.Println("exit 0")
+		}
 	})
 
 	// global flags
@@ -175,6 +179,7 @@ func init() {
 	// todo these flags should be hidden (probably) when --help called on script
 	rootCmd.PersistentFlags().BoolVar(&bashFlag, "BASH", false, "Outputs bash exports of variables, so they can be eval'd")
 	rootCmd.PersistentFlags().BoolVar(&stdinFlag, "STDIN", false, "Reads RSL script from stdin")
+	rootCmd.SetOut(os.Stderr)
 }
 
 func Execute() {
