@@ -39,12 +39,17 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		flag = &lexeme
 	}
 
+	var comment *string
+	if argDecl.Comment != nil {
+		comment = argDecl.Comment.Literal
+	}
+
 	scriptArg := &ScriptArg{
 		Name:             name,
 		DeclarationToken: argDecl.Identifier,
 		Flag:             flag,
 		Type:             argDecl.ArgType.Type,
-		Description:      argDecl.Comment.Literal,
+		Description:      comment,
 		IsOptional:       argDecl.IsOptional,
 	}
 

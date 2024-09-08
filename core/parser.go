@@ -203,8 +203,10 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 		}
 	}
 
-	// todo arg comments should be optional!
-	argComment := p.consume(ARG_COMMENT, "Expected arg Comment").(*ArgCommentToken)
+	var argComment *ArgCommentToken
+	if p.matchAny(ARG_COMMENT) {
+		argComment = p.previous().(*ArgCommentToken)
+	}
 
 	return &ArgDeclaration{
 		Identifier: identifier,
@@ -213,7 +215,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 		ArgType:    rslType,
 		IsOptional: isOptional,
 		Default:    &defaultLiteral,
-		Comment:    *argComment,
+		Comment:    argComment,
 	}
 }
 

@@ -19,7 +19,7 @@ type ArgDeclaration struct {
 	ArgType    RslType
 	IsOptional bool
 	Default    *LiteralOrArray
-	Comment    ArgCommentToken
+	Comment    *ArgCommentToken
 }
 
 func (e ArgDeclaration) Accept(visitor ArgStmtVisitor) {

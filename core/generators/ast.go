@@ -85,7 +85,7 @@ func main() {
 
 	defineAst(outputDir, "ArgStmt", "", []string{
 		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslType ArgType, " +
-			"bool IsOptional, *LiteralOrArray Default, ArgCommentToken Comment",
+			"bool IsOptional, *LiteralOrArray Default, *ArgCommentToken Comment",
 	})
 
 	defineAst(outputDir, "RadStmt", "", []string{
