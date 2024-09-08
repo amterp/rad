@@ -1,6 +1,25 @@
-# Rad - Request And Display
+# 🤙 Rad - Request And Display
 
 A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. Simplifies the process of writing, managing, and sharing API query scripts.
+
+## Status
+
+**Rad is still in early development!** I've made it public because it's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
+
+Below is a quick glimpse of major items that've been implemented and are missing.
+
+### What's Implemented
+
+- Lexer/parser/interpreter running from end-to-end.
+- Large parts of the language.
+
+### What's Missing
+
+- Many more language features
+- Polished syntax error feedback
+- `rad` script management features
+- Good docs
+- Visual Code extension for script devs
 
 ## What problem does this solve?
 
@@ -17,7 +36,6 @@ What's needed is a flexible, easy, and efficient way to:
 - Rad comes with a domain-specific language called RSL (Rad Scripting Language).
 - RSL is purpose-built for this problem: to efficiently express what to query, the data to extract, and how to display it.
 - `rad` is a command-line tool which runs these scripts, handling argument parsing, query execution, and result display + formatting.
-- `rad` also helps the user manage their scripts, enabling them to build up an organized repertoire of RSL queries, available right at their fingertips.
 
 ## Minimal Example
 
@@ -33,8 +51,7 @@ Author = json[].commit.author.name
 SHA = json[].sha
 
 rad url:
-    Time, Author, SHA
-    sort Time desc, Author, SHA
+    fields Time, Author, SHA
 ```
 
 Example invocation (let's call the script `commits.rad`):
@@ -52,19 +69,19 @@ Time                   Author                 SHA
   - The `#` comments are read by Rad and used to generate helpful docs / usage strings for the script.
 2. It uses string interpolation to resolve the url we will query, based on the supplied args.
 3. It defines the fields to extract from the JSON response.
-4. It executes the query, extracting the specified fields, and displays the resulting data as a table, sorted first by time (descending), then author, then SHA (both ascending).
+4. It executes the query, extracting the specified fields, and displays the resulting data as a table.
 - We keep this example somewhat minimal - there are RSL features we could use to improve this, but it's kept simple here.
 - Some alternative valid invocations for this example:
-  - `rad commits <repo>`
-  - `rad commits --repo <repo> --limit <limit>`
-  - `rad commits --limit <limit> --repo <repo>`
-  - `rad commits <repo> --limit <limit>`
+  - `rad commits.rad <repo>`
+  - `rad commits.rad --repo <repo> --limit <limit>`
+  - `rad commits.rad --limit <limit> --repo <repo>`
+  - `rad commits.rad <repo> --limit <limit>`
 
 ## Alternatives
 
 - **Bash**
   - Bash, using a combination of `curl`, `jq`, and/or `column`, is an excellent choice.
-  - Without Rad, Bash is what I'd be using, as I did before creating Rad.
+  - Bash is the primary tool I'd use, outside of Rad.
   - But, as much as I like this toolset, Bash is (in my opinion) not syntactically friendly and simple things can be deceivingly laborious to do.
     - Crucially, arg parsing is decent for simple cases, but more complex ones quickly get unwieldy. For the sorts of scripts Rad targets, that's important.
   - There's also a bit of a learning curve. Bash can be intimidating to devs that haven't used it a lot, as can `jq` syntax.
@@ -88,10 +105,6 @@ Time                   Author                 SHA
 ### Easily shareable
 
 - Everything you need to write JSON query scripts is built into Rad and RSL. You don't need to download dependencies, and if a Rad script runs on your machine, you can be confident it will run on others' machines too.
-
-### Script management
-
-- Rad as a CLI tools allows for management of your scripts, making them quick and easy to search, access, and use.
 
 ### Encourages self-documenting scripts
 
