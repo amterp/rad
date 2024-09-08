@@ -81,7 +81,7 @@ func (e PrimaryAssign) String() string {
 }
 
 type FileHeader struct {
-	FileHeaderToken Token
+	FhToken FilerHeaderToken
 }
 
 func (e FileHeader) Accept(visitor StmtVisitor) {
@@ -89,7 +89,7 @@ func (e FileHeader) Accept(visitor StmtVisitor) {
 }
 func (e FileHeader) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("FileHeaderToken: %v", e.FileHeaderToken))
+	parts = append(parts, fmt.Sprintf("FhToken: %v", e.FhToken))
 	return fmt.Sprintf("FileHeader(%s)", strings.Join(parts, ", "))
 }
 

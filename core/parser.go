@@ -116,7 +116,9 @@ func (p *Parser) error(message string) {
 
 func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
 	if p.matchAny(FILE_HEADER) {
-		*statements = append(*statements, &FileHeader{FileHeaderToken: p.previous()})
+		previous := p.previous()
+		fh := previous.(*FilerHeaderToken)
+		*statements = append(*statements, &FileHeader{FhToken: *fh})
 	}
 }
 

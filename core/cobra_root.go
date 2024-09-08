@@ -45,44 +45,19 @@ func addScriptSubCommand(cmd *cobra.Command, args []string) {
 	//	fmt.Printf("%v\n", stmt)
 	//}
 
-	scriptArgs := extractArgs(instructions)
-	scriptCmd := createCmd(scriptPath, scriptArgs, instructions)
+	scriptMetadata := ExtractMetadata(instructions)
+	scriptCmd := createCmd(scriptPath, scriptMetadata, instructions)
 	cmd.AddCommand(scriptCmd)
 	subCommandInitialized = true
 }
 
-func extractArgs(statements []Stmt) []ScriptArg {
-	var args []ScriptArg
-
-	argBlockIfFound, ok := lo.Find(statements, func(stmt Stmt) bool {
-		_, ok := stmt.(*ArgBlock)
-		return ok
-	})
-
-	if !ok {
-		return args
-	}
-
-	argBlock := argBlockIfFound.(*ArgBlock)
-	for _, argStmt := range argBlock.Stmts {
-		argDecl, ok := argStmt.(*ArgDeclaration)
-		if ok {
-			literalInterpreter := NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
-			arg := FromArgDecl(literalInterpreter, argDecl)
-			args = append(args, *arg)
-		}
-	}
-
-	return args
-}
-
-func createCmd(scriptPath string, args []ScriptArg, instructions []Stmt) *cobra.Command {
-	useString := generateUseString(scriptPath, args)
+func createCmd(scriptPath string, scriptMetadata ScriptMetadata, instructions []Stmt) *cobra.Command {
+	useString := generateUseString(scriptPath, scriptMetadata.Args)
 	var cobraArgs []*CobraArg
 	scriptCmd := &cobra.Command{
 		Use:   useString,
-		Short: "short description", // todo use file header's short description
-		Long:  generateLongDescription(),
+		Short: shortDescription(scriptMetadata),
+		Long:  longDescription(scriptMetadata),
 		Run: func(cmd *cobra.Command, args []string) {
 			// fill in positional args, and
 			// error if required args are missing
@@ -120,7 +95,7 @@ func createCmd(scriptPath string, args []ScriptArg, instructions []Stmt) *cobra.
 			interpreter.Run()
 		},
 	}
-	for _, arg := range args {
+	for _, arg := range scriptMetadata.Args {
 		name, argType, flag, description := arg.Name, arg.Type, "", ""
 		if arg.Flag != nil {
 			flag = *arg.Flag
@@ -189,9 +164,22 @@ func generateUseString(scriptPath string, args []ScriptArg) string {
 	return useString
 }
 
-func generateLongDescription() string {
-	// todo use file header's long description
-	return "loooooong description"
+func shortDescription(metadata ScriptMetadata) string {
+	description := metadata.OneLineDescription
+	if description != nil {
+		return *description
+	} else {
+		return ""
+	}
+}
+
+func longDescription(metadata ScriptMetadata) string {
+	description := metadata.BlockDescription
+	if description != nil {
+		return *description
+	} else {
+		return ""
+	}
 }
 
 func readSource(scriptPath string) string {

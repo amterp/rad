@@ -69,7 +69,7 @@ func main() {
 		"ExprStmt           : Expr Expression",
 		"FunctionStmt       : FunctionCall Call",
 		"PrimaryAssign      : Token Name, *RslType VarType, Expr Initializer",
-		"FileHeader         : Token FileHeaderToken",
+		"FileHeader         : FilerHeaderToken FhToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
