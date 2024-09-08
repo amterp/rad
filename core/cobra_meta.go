@@ -1,11 +1,45 @@
 package core
 
-import "github.com/samber/lo"
+import (
+	"fmt"
+	"github.com/samber/lo"
+	"strings"
+)
 
 type ScriptMetadata struct {
 	Args               []ScriptArg
 	OneLineDescription *string
 	BlockDescription   *string
+}
+
+func GenerateUseString(scriptPath string, args []ScriptArg) string {
+	useString := scriptPath // todo should probably grab basename? maybe not
+	for _, arg := range args {
+		if arg.IsOptional {
+			useString += fmt.Sprintf(" [%s]", arg.Name)
+		} else {
+			useString += fmt.Sprintf(" <%s>", arg.Name)
+		}
+	}
+	return strings.Trim(useString, " ")
+}
+
+func ShortDescription(metadata ScriptMetadata) string {
+	description := metadata.OneLineDescription
+	if description != nil {
+		return *description
+	} else {
+		return ""
+	}
+}
+
+func LongDescription(metadata ScriptMetadata) string {
+	description := metadata.BlockDescription
+	if description != nil {
+		return *description
+	} else {
+		return ""
+	}
 }
 
 func ExtractMetadata(statements []Stmt) ScriptMetadata {

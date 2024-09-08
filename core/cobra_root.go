@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
+	"io"
 	"os"
 )
 
 var (
-	subCommandInitialized bool
+	rootModified bool
+	bashFlag     bool
+	stdinFlag    bool
 )
 
 var rootCmd = &cobra.Command{
@@ -19,82 +22,98 @@ var rootCmd = &cobra.Command{
 		UnknownFlags: true,
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
+		scriptPath := ""
+		var rslSourceCode string
+		if stdinFlag {
+			source, err := io.ReadAll(os.Stdin)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
+				os.Exit(1)
+			}
+			rslSourceCode = string(source)
+		} else if len(args) == 0 {
 			cmd.Help()
 			return
+		} else {
+			scriptPath = args[0]
+			rslSourceCode = readSource(scriptPath)
 		}
 
-		if subCommandInitialized {
+		if rootModified {
 			return
 		}
 
-		addScriptSubCommand(cmd, args)
+		extractMetadataAndModifyCmd(cmd, scriptPath, rslSourceCode)
 		cmd.Execute()
 	},
 }
 
-func addScriptSubCommand(cmd *cobra.Command, args []string) {
-	scriptPath := args[0]
-	source := readSource(scriptPath)
-	l := NewLexer(source)
+func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourcePath string, rslSourceCode string) {
+	l := NewLexer(rslSourceCode)
 	l.Lex()
 
 	p := NewParser(l.Tokens)
 	instructions := p.Parse()
-	//for _, stmt := range instructions {
-	//	fmt.Printf("%v\n", stmt)
-	//}
 
 	scriptMetadata := ExtractMetadata(instructions)
-	scriptCmd := createCmd(scriptPath, scriptMetadata, instructions)
-	cmd.AddCommand(scriptCmd)
-	subCommandInitialized = true
+	modifyCmd(cmd, rslSourcePath, scriptMetadata, instructions)
+	rootModified = true
 }
 
-func createCmd(scriptPath string, scriptMetadata ScriptMetadata, instructions []Stmt) *cobra.Command {
-	useString := generateUseString(scriptPath, scriptMetadata.Args)
+func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetadata, instructions []Stmt) {
+	useString := GenerateUseString(scriptPath, scriptMetadata.Args)
 	var cobraArgs []*CobraArg
-	scriptCmd := &cobra.Command{
-		Use:   useString,
-		Short: shortDescription(scriptMetadata),
-		Long:  longDescription(scriptMetadata),
-		Run: func(cmd *cobra.Command, args []string) {
-			// fill in positional args, and
-			// error if required args are missing
-			posArgsIndex := 0
-			for _, cobraArg := range cobraArgs {
-				argName := cobraArg.Arg.Name
-				cobraFlag := cmd.Flags().Lookup(argName)
-				if !cobraFlag.Changed {
-					// flag has not been explicitly set by the user
-					if posArgsIndex < len(args) {
-						// there's a positional arg to fill it
-						cobraArg.SetValue(args[posArgsIndex])
-						posArgsIndex++
-					} else if cobraArg.Arg.IsOptional {
-						// there's no positional arg to fill it, but that's okay because it's optional, so continue
-						// but first, fill in the optional's default value if it exists
-						cobraArg.InitializeOptional()
-						continue
-					} else if cobraArg.IsBool() {
-						// all bools are implicitly optional and default false, unless explicitly defaulted to true
-						// this branch implies it was not defaulted to true
-						cobraArg.SetValue("false")
-					} else {
-						errorExit(cmd, fmt.Sprintf("Missing required argument: %s", argName))
-					}
+	cmd.Use = useString
+	cmd.Short = ShortDescription(scriptMetadata)
+	cmd.Long = LongDescription(scriptMetadata)
+	cmd.Run = func(cmd *cobra.Command, args []string) {
+		// fill in positional args, and
+		// error if required args are missing
+		posArgsIndex := 1
+		if stdinFlag {
+			posArgsIndex = 0
+		}
+		for _, cobraArg := range cobraArgs {
+			argName := cobraArg.Arg.Name
+			cobraFlag := cmd.Flags().Lookup(argName)
+			if !cobraFlag.Changed {
+				// flag has not been explicitly set by the user
+				if posArgsIndex < len(args) {
+					// there's a positional arg to fill it
+					cobraArg.SetValue(args[posArgsIndex])
+					posArgsIndex++
+				} else if cobraArg.Arg.IsOptional {
+					// there's no positional arg to fill it, but that's okay because it's optional, so continue
+					// but first, fill in the optional's default value if it exists
+					cobraArg.InitializeOptional()
+					continue
+				} else if cobraArg.IsBool() {
+					// all bools are implicitly optional and default false, unless explicitly defaulted to true
+					// this branch implies it was not defaulted to true
+					cobraArg.SetValue("false")
+				} else {
+					errorExit(cmd, fmt.Sprintf("Missing required argument: %s", argName))
 				}
 			}
-			// error if not all positional args were used
-			if posArgsIndex < len(args) {
-				errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
-			}
+		}
+		// error if not all positional args were used
+		if posArgsIndex < len(args) {
+			errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
+		}
 
-			interpreter := NewInterpreter(instructions)
-			interpreter.InitArgs(cobraArgs)
-			interpreter.Run()
-		},
+		interpreter := NewInterpreter(instructions)
+		interpreter.InitArgs(cobraArgs)
+		interpreter.Run()
+
+		if bashFlag {
+			env := interpreter.env
+			for varName, val := range env.Vars {
+				// todo handle different types specifically
+				fmt.Printf("export %s=\"%v\"\n", varName, val.value)
+			}
+		}
 	}
+
 	for _, arg := range scriptMetadata.Args {
 		name, argType, flag, description := arg.Name, arg.Type, "", ""
 		if arg.Flag != nil {
@@ -104,81 +123,28 @@ func createCmd(scriptPath string, scriptMetadata ScriptMetadata, instructions []
 			description = *arg.Description
 		}
 
+		// todo defaults should be put here, so cobra can display
 		var cobraArgValue interface{}
 		switch argType {
 		case RslString:
-			cobraArgValue = scriptCmd.Flags().StringP(name, flag, "", description)
+			cobraArgValue = cmd.Flags().StringP(name, flag, "", description)
 		case RslStringArray:
-			cobraArgValue = scriptCmd.Flags().StringSliceP(name, flag, []string{}, description)
+			cobraArgValue = cmd.Flags().StringSliceP(name, flag, []string{}, description)
 		case RslInt:
-			cobraArgValue = scriptCmd.Flags().IntP(name, flag, 0, description)
+			cobraArgValue = cmd.Flags().IntP(name, flag, 0, description)
 		case RslIntArray:
-			cobraArgValue = scriptCmd.Flags().IntSliceP(name, flag, []int{}, description)
+			cobraArgValue = cmd.Flags().IntSliceP(name, flag, []int{}, description)
 		case RslFloat:
-			cobraArgValue = scriptCmd.Flags().Float64P(name, flag, 0.0, description)
+			cobraArgValue = cmd.Flags().Float64P(name, flag, 0.0, description)
 		case RslFloatArray:
-			cobraArgValue = scriptCmd.Flags().Float64SliceP(name, flag, []float64{}, description)
+			cobraArgValue = cmd.Flags().Float64SliceP(name, flag, []float64{}, description)
 		case RslBool:
-			cobraArgValue = scriptCmd.Flags().BoolP(name, flag, false, description)
+			cobraArgValue = cmd.Flags().BoolP(name, flag, false, description)
 		default:
 			// todo better error handling
 			panic(fmt.Sprintf("Unknown arg type: %v", argType))
 		}
 		cobraArgs = append(cobraArgs, &CobraArg{Arg: arg, value: cobraArgValue})
-	}
-	return scriptCmd
-}
-
-func printFlags(cobraArgs []*CobraArg) {
-	// todo remove, just for debugging
-	fmt.Println("Flags:")
-	for _, arg := range cobraArgs {
-		switch {
-		case arg.IsString():
-			fmt.Printf("%s: %s\n", arg.Arg.Name, arg.GetString())
-		case arg.IsStringArray():
-			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetStringArray())
-		case arg.IsFloat():
-			fmt.Printf("%s: %f\n", arg.Arg.Name, arg.GetFloat())
-		case arg.IsFloatArray():
-			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetFloatArray())
-		case arg.IsInt():
-			fmt.Printf("%s: %d\n", arg.Arg.Name, arg.GetInt())
-		case arg.IsIntArray():
-			fmt.Printf("%s: %v\n", arg.Arg.Name, arg.GetIntArray())
-		case arg.IsBool():
-			fmt.Printf("%s: %t\n", arg.Arg.Name, arg.GetBool())
-		}
-	}
-}
-
-func generateUseString(scriptPath string, args []ScriptArg) string {
-	useString := scriptPath // todo should probably grab basename? maybe not
-	for _, arg := range args {
-		if arg.IsOptional {
-			useString += fmt.Sprintf(" [%s]", arg.Name)
-		} else {
-			useString += fmt.Sprintf(" <%s>", arg.Name)
-		}
-	}
-	return useString
-}
-
-func shortDescription(metadata ScriptMetadata) string {
-	description := metadata.OneLineDescription
-	if description != nil {
-		return *description
-	} else {
-		return ""
-	}
-}
-
-func longDescription(metadata ScriptMetadata) string {
-	description := metadata.BlockDescription
-	if description != nil {
-		return *description
-	} else {
-		return ""
 	}
 }
 
@@ -210,11 +176,19 @@ func init() {
 
 		// try to detect if help has been called on a subcommand
 		if len(args) >= 2 {
-			if lo.Some(args[1:], []string{"-h", "--help"}) {
-				// it has! so let's add the subcommand and re-run the root again
-				addScriptSubCommand(rootCmd, args)
-				rootCmd.Execute()
-				return
+			if lo.Some(args[1:], []string{"-h", "--help"}) && !stdinFlag {
+				// it has, and with a rsl file source, so let's add the subcommand and re-run the root again
+				scriptPath := args[0]
+				rslSourceCode := readSource(scriptPath)
+				extractMetadataAndModifyCmd(rootCmd, scriptPath, rslSourceCode)
+			} else if stdinFlag {
+				// it has, and with reading rsl from stdin, so let's add the subcommand and re-run the root again
+				source, err := io.ReadAll(os.Stdin)
+				if err == nil {
+					extractMetadataAndModifyCmd(rootCmd, "", string(source))
+				} else {
+					fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
+				}
 			}
 		}
 
@@ -222,6 +196,12 @@ func init() {
 		// so just print the root/normal help
 		rootCmd.Help()
 	})
+
+	// global flags
+	// todo think more about bash vs. shell
+	// todo these flags should be hidden (probably) when --help called on script
+	rootCmd.PersistentFlags().BoolVar(&bashFlag, "BASH", false, "Outputs bash exports of variables, so they can be eval'd")
+	rootCmd.PersistentFlags().BoolVar(&stdinFlag, "STDIN", false, "Reads RSL script from stdin")
 }
 
 func Execute() {

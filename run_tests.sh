@@ -2,26 +2,27 @@
 
 # Define the list of invocations
 invocations=(
-    "test1.rad samber/lo"
-    "test2.rad alice bobson"
-    "test3.rad tomnomnom/gron"
-    "test3.rad --repo tomnomnom/gron"
-    "test3.rad --repo tomnomnom/gron --limit 10"
-    "test3.rad --limit 10 --repo tomnomnom/gron"
-    "test4.rad alice,bob,charlie"
-    "test5.rad --repo samber/lo"
-    "test6.rad"
-    "test7.rad --arr11=2.1,2.2"
-    "test8.rad"
-    "test9.rad"
-    "test10.rad"
-    "test11.rad"
-    "test12.rad"
-    "test13.rad"
-    "test14.rad"
-    "test15.rad"
-    "test16.rad"
-    "test17.rad"
+    "./main ./tests/test1.rad samber/lo"
+    "./main ./tests/test2.rad alice bobson"
+    "./main ./tests/test3.rad tomnomnom/gron"
+    "./main ./tests/test3.rad --repo tomnomnom/gron"
+    "./main ./tests/test3.rad --repo tomnomnom/gron --limit 10"
+    "./main ./tests/test3.rad --limit 10 --repo tomnomnom/gron"
+    "./main ./tests/test4.rad alice,bob,charlie"
+    "./main ./tests/test5.rad --repo samber/lo"
+    "./main ./tests/test6.rad"
+    "./main ./tests/test7.rad --arr11=2.1,2.2"
+    "./main ./tests/test8.rad"
+    "./main ./tests/test9.rad"
+    "./main ./tests/test10.rad"
+    "./main ./tests/test11.rad"
+    "./main ./tests/test12.rad"
+    "./main ./tests/test13.rad"
+    "./main ./tests/test14.rad"
+    "./main ./tests/test15.rad"
+    "./main ./tests/test16.rad"
+    "./main ./tests/test17.rad"
+    "./tests/test18.sh --name alice"
 )
 
 go build main.go || exit 1
@@ -30,11 +31,10 @@ go build main.go || exit 1
 any_failed=false
 for invocation in "${invocations[@]}"
 do
-    cmd="./main ./tests/$invocation"
-    echo -n "$cmd - "
+    echo -n "$invocation - "
 
     # Run 'go run main.go' with the invocation and capture the exit status
-    eval "$cmd" > /dev/null 2>&1
+    eval "$invocation" > /dev/null 2>&1
     exit_status=$?
 
     # Check if the command succeeded (exit status 0) or failed (non-zero exit status)
