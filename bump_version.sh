@@ -8,7 +8,7 @@ args:
     new_version string # The new version to bump to
     push p bool # Whether or not a push should also be performed"
 
-eval "$(rad --STDIN --BASH $* <<< "$rsl")" || exit 1
+eval "$(rad --STDIN --BASH "$@" <<< "$rsl")" || exit 1
 
 # Update Version in ./core/cobra_root.go
 sed -i '' "s/Version: \".*\"/Version: \"$new_version\"/" ./core/cobra_root.go || exit 1
