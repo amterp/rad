@@ -29,6 +29,7 @@ invocations=(
     "./main ./tests/replace_function.rad"
     "./main ./tests/join_function.rad"
     "./main ./tests/upper_lower_functions.rad"
+    "./main ./tests/modify_var_in_block.rad"
 )
 
 go build main.go || exit 1

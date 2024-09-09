@@ -1,0 +1,19 @@
+name = "alice"
+
+arr = [1]
+
+print(name)
+
+for a in arr:
+    name = "bob"
+    print(name)
+
+print(name) // should print bob
+
+b = true
+
+if b:
+    name = "charlie"
+    print(name)
+
+print(name) // should print charlie

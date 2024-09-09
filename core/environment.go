@@ -60,6 +60,14 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
 
 	varName := varNameToken.GetLexeme()
+
+	if e.Enclosing != nil {
+		_, ok := e.Enclosing.get(varName, varNameToken)
+		if ok {
+			e.Enclosing.SetAndImplyType(varNameToken, value)
+		}
+	}
+
 	switch value.(type) {
 	case string:
 		e.Vars[varName] = NewRuntimeString(value.(string))
@@ -83,6 +91,14 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 // SetAndExpectType 'value' expected to not be a pointer, should be e.g. string
 func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, value interface{}) {
 	varName := varNameToken.GetLexeme()
+
+	if e.Enclosing != nil {
+		_, ok := e.Enclosing.get(varName, varNameToken)
+		if ok {
+			e.Enclosing.SetAndExpectType(varNameToken, expectedType, value)
+		}
+	}
+
 	if expectedType != nil {
 		expectedTypeVal := *expectedType
 		switch expectedTypeVal {
