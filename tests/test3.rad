@@ -1,7 +1,7 @@
 #!/usr/bin/env rad
-"""
+---
 Description here.
-"""
+---
 args:
     repo string # The repo, owner/project
     limit int = 5 # The max num of results to return

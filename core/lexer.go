@@ -122,7 +122,15 @@ func (l *Lexer) scanToken() {
 	case '+':
 		l.addToken(PLUS)
 	case '-':
-		l.addToken(MINUS)
+		if l.matchString("--") {
+			if !l.match('\n') {
+				l.error("Expected newline after triple quote")
+			} else {
+				l.lexFileHeader()
+			}
+		} else {
+			l.addToken(MINUS)
+		}
 	case '@':
 		l.addToken(AT)
 	case '#':
@@ -132,19 +140,7 @@ func (l *Lexer) scanToken() {
 			l.lexArgComment()
 		}
 	case '"':
-		if l.match('"') {
-			if l.match('"') {
-				if !l.match('\n') {
-					l.error("Expected newline after triple quote")
-				} else {
-					l.lexFileHeader()
-				}
-			} else {
-				l.addStringLiteralToken("")
-			}
-		} else {
-			l.lexStringLiteral('"')
-		}
+		l.lexStringLiteral('"')
 	case '\'':
 		l.lexStringLiteral('\'')
 	case 'j':
@@ -370,7 +366,7 @@ func (l *Lexer) lexFileHeader() {
 		l.error("One-line description must not be empty")
 	}
 
-	if l.matchString("\"\"\"") {
+	if l.matchString("---") {
 		l.addFileHeaderToken(&oneLiner, nil)
 		return
 	}
@@ -381,7 +377,7 @@ func (l *Lexer) lexFileHeader() {
 	}
 
 	rest := ""
-	for !l.matchString("\n\"\"\"") {
+	for !l.matchString("\n---") {
 		rest = rest + string(l.advance())
 	}
 

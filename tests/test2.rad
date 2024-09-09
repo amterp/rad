@@ -1,7 +1,7 @@
 #!/usr/bin/env rad
-"""
+---
 Description here.
-"""
+---
 args:
     firstName string # a first name
     lastName string # a last name

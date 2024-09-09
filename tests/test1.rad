@@ -1,4 +1,4 @@
-"""
+---
 A very simple example.
 
 
@@ -7,7 +7,7 @@ the things that Rad's interpreter
 needs to be able to do.
 
 Long part can be two paragraphs, even!
-"""
+---
 
 args:
     repo string # Repo!

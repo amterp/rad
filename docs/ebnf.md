@@ -18,7 +18,7 @@ Syntax Legend:
 ```
 program                     -> shebang? fileHeader? argBlock? statement* EOF
 shebang                     -> "#!" .* NEWLINE
-fileHeader                  -> '"""' ( NEWLINE fileHeaderContents NEWLINE )? '"""'
+fileHeader                  -> '---' ( NEWLINE fileHeaderContents NEWLINE )? '---'
 fileHeaderContents          -> fhOneLiner ( NEWLINE NEWLINE fhLongDescription )?
 fhOneLiner                  -> .*
 fhLongDescription           -> ( .* NEWLINE )+
