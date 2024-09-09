@@ -424,19 +424,19 @@ func (p *Parser) assignment() Stmt {
 }
 
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
-	element := p.consume(JSON_PATH_ELEMENT, "Expected root json path element")
+	element := p.consume(JSON_PATH_ELEMENT, "Expected root json path element").(*JsonPathElementToken)
 	var brackets Token
 	if isArray := p.matchAny(BRACKETS); isArray {
 		brackets = p.previous()
 	}
-	elements := []JsonPathElement{{token: element, arrayToken: &brackets}}
+	elements := []JsonPathElement{{token: *element, arrayToken: &brackets}}
 	for !p.matchAny(NEWLINE) {
 		p.consume(DOT, "Expected '.' to separate json field elements")
-		element = p.consume(JSON_PATH_ELEMENT, "Expected json path element after '.'")
+		element = p.consume(JSON_PATH_ELEMENT, "Expected json path element after '.'").(*JsonPathElementToken)
 		if p.matchAny(BRACKETS) {
 			brackets = p.previous()
 		}
-		elements = append(elements, JsonPathElement{token: element, arrayToken: &brackets})
+		elements = append(elements, JsonPathElement{token: *element, arrayToken: &brackets})
 	}
 	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{elements: elements}}
 }

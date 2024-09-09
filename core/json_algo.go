@@ -38,20 +38,20 @@ func (t *Trie) Insert(field JsonFieldVar) {
 
 	currentNode := t.root
 	if currentNode == nil {
-		currentNode = NewNode(elements[0].token.GetLexeme(), elements[0].arrayToken != nil)
+		currentNode = NewNode(elements[0].token.Literal, elements[0].arrayToken != nil)
 		t.root = currentNode
 	} else {
-		fieldRootMatchesTrieRoot := currentNode.key == elements[0].token.GetLexeme() &&
+		fieldRootMatchesTrieRoot := currentNode.key == elements[0].token.Literal &&
 			currentNode.isArray == (elements[0].arrayToken != nil)
 		if !fieldRootMatchesTrieRoot {
 			root := fmt.Sprintf("%s%s", currentNode.key, lo.Ternary(currentNode.isArray, "[]", ""))
-			input := fmt.Sprintf("%s%s", elements[0].token.GetLexeme(), lo.Ternary(elements[0].arrayToken != nil, "[]", ""))
+			input := fmt.Sprintf("%s%s", elements[0].token.Literal, lo.Ternary(elements[0].arrayToken != nil, "[]", ""))
 			panic(fmt.Sprintf("Field root '%s' does not match trie root '%s'", root, input))
 		}
 	}
 
 	for _, element := range elements[1:] {
-		key := element.token.GetLexeme()
+		key := element.token.Literal
 		isArray := element.arrayToken != nil
 
 		node, ok := currentNode.children[key]

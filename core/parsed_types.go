@@ -48,6 +48,6 @@ type JsonPath struct {
 }
 
 type JsonPathElement struct {
-	token      Token
+	token      JsonPathElementToken
 	arrayToken *Token
 }
