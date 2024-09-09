@@ -27,6 +27,10 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 		return runReplace(i, function, values)
 	case "join":
 		return runJoin(i, function, values)
+	case "upper":
+		return strings.ToUpper(ToPrintable(values[0]))
+	case "lower":
+		return strings.ToLower(ToPrintable(values[0]))
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
