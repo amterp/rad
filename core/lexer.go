@@ -143,8 +143,10 @@ func (l *Lexer) scanToken() {
 				l.addStringLiteralToken("")
 			}
 		} else {
-			l.lexStringLiteral()
+			l.lexStringLiteral('"')
 		}
+	case '\'':
+		l.lexStringLiteral('\'')
 	case 'j':
 		if l.matchString("son") {
 			l.lexJsonPath()
@@ -266,9 +268,12 @@ func isDigit(c rune) bool {
 	return c >= '0' && c <= '9'
 }
 
-func (l *Lexer) lexStringLiteral() {
+func (l *Lexer) lexStringLiteral(endChar rune) {
 	value := ""
-	for !l.match('"') && !l.isAtEnd() {
+	for !l.match(endChar) {
+		if l.isAtEnd() {
+			l.error("Unterminated string")
+		}
 		value = value + string(l.advance())
 	}
 	l.addStringLiteralToken(value)

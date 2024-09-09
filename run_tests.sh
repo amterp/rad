@@ -31,6 +31,7 @@ invocations=(
     "./main ./tests/upper_lower_functions.rad"
     "./main ./tests/modify_var_in_block.rad"
     "./main ./tests/later_json_array.rad"
+    "./main ./tests/single_quote_strings.rad"
 )
 
 go build main.go || exit 1
