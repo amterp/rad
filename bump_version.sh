@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 rsl="\
-\"\"\"
+---
 Bumps the version in rad, creates a commit, tags it, and optionally pushes it
-\"\"\"
+---
 args:
     new_version string # The new version to bump to
     push p bool # Whether or not a push should also be performed"
