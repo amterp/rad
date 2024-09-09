@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // todo
 //  toStringArray(array), toString(non-string)
@@ -11,6 +14,14 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 	switch functionName {
 	case "len":
 		return runLen(i, function, values)
+	case "today_date":
+		return time.Now().Format("2006-01-02")
+	case "today_year":
+		return time.Now().Year()
+	case "today_month":
+		return int(time.Now().Month())
+	case "today_day":
+		return time.Now().Day()
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
