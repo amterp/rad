@@ -1,0 +1,14 @@
+old = "Hi, Charlie Brown"
+print(old)
+new = replace(old, "Charlie (.*)", "Charlie $1!")
+print(new)
+
+old2 = "I really like sandwiches and soup and pizza."
+print(old2)
+new2 = replace(old2, "(\\w+) (.)nd", "big $1 $2ND")
+print(new2)
+
+print(replace("Name: abc", "a(b)c", "$1o$1"))
+
+num = 1
+print(replace("We are number 2!", 2, 1))

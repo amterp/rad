@@ -22,6 +22,8 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 		return int(time.Now().Month())
 	case "today_day":
 		return time.Now().Day()
+	case "replace":
+		return runReplace(i, function, values)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
@@ -69,4 +71,16 @@ func runLen(i *MainInterpreter, function Token, values []interface{}) interface{
 		i.error(function, "len() takes a string or array")
 		panic(UNREACHABLE)
 	}
+}
+
+func runReplace(i *MainInterpreter, function Token, values []interface{}) interface{} {
+	if len(values) != 3 {
+		i.error(function, "replace() takes exactly three arguments")
+	}
+
+	subject := ToPrintable(values[0])
+	oldRegex := ToPrintable(values[1])
+	newRegex := ToPrintable(values[2])
+
+	return Replace(i, function, subject, oldRegex, newRegex)
 }
