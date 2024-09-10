@@ -1,0 +1,4 @@
+args:
+    one "two" 2 bool
+
+print(one)

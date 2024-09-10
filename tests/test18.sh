@@ -1,12 +1,12 @@
 rsl="\
 ---
-Demo of --BASH flag
+Demo of --SHELL flag
 ---
 args:
   name string # Name of the person
   age int = 30 # Age of the person"
 
-eval "$(./main --STDIN --BASH "$@" <<< "$rsl")"
+eval "$(./main --SHELL --STDIN "$0" "$@" <<< "$rsl")"
 
 echo "Name: $name"
 echo "Age: $age"

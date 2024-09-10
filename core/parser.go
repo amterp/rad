@@ -185,7 +185,11 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 
 	var flag Token
 	if p.peekTwoAhead().GetType() == IDENTIFIER {
-		flag = p.consume(IDENTIFIER, "Expected Flag")
+		if p.peekType(IDENTIFIER) {
+			flag = p.consume(IDENTIFIER, "Expected Flag")
+		} else if p.peekType(INT_LITERAL) {
+			flag = p.consume(INT_LITERAL, "Expected Flag")
+		}
 	}
 
 	rslType := p.rslType()

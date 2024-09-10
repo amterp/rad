@@ -4,6 +4,7 @@ import "fmt"
 
 type ScriptArg struct {
 	Name             string
+	ApiName          string
 	DeclarationToken Token
 	Flag             *string
 	Type             RslTypeEnum
@@ -21,12 +22,11 @@ type ScriptArg struct {
 }
 
 func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
-	var name string
+	name := argDecl.Identifier.GetLexeme()
+	apiName := name
 	rename := argDecl.Rename
 	if NotNil(rename, func() Token { return nil }) {
-		name = (*rename).GetLexeme()
-	} else {
-		name = argDecl.Identifier.GetLexeme()
+		apiName = (*rename).(*StringLiteralToken).Literal
 	}
 
 	var flag *string
@@ -46,6 +46,7 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 
 	scriptArg := &ScriptArg{
 		Name:             name,
+		ApiName:          apiName,
 		DeclarationToken: argDecl.Identifier,
 		Flag:             flag,
 		Type:             argDecl.ArgType.Type,

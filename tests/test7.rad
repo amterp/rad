@@ -6,7 +6,7 @@ args:
     arr float[] = [] #
     arr2 float[] = [1.1] #
     arr3 float[] = [1.1, 1.2] #
-    arr11 float[] #
+    arr11 "woof" float[] #
 
 arr4 int[] = []
 arr5 int[] = [1]

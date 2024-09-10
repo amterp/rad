@@ -82,7 +82,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 		var missingArgs []string
 		shouldPrintHelp := true
 		for _, cobraArg := range cobraArgs {
-			argName := cobraArg.Arg.Name
+			argName := cobraArg.Arg.ApiName
 			cobraFlag := cmd.Flags().Lookup(argName)
 			if !cobraFlag.Changed {
 				// flag has not been explicitly set by the user

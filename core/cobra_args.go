@@ -150,7 +150,7 @@ func (c *CobraArg) SetValue(arg string) {
 }
 
 func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
-	name, argType, flag, description := arg.Name, arg.Type, "", ""
+	name, argType, flag, description := arg.ApiName, arg.Type, "", ""
 	if arg.Flag != nil {
 		flag = *arg.Flag
 	}
