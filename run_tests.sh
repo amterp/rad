@@ -32,6 +32,7 @@ invocations=(
     "./main ./tests/modify_var_in_block.rad"
     "./main ./tests/later_json_array.rad"
     "./main ./tests/single_quote_strings.rad"
+    "./main ./tests/not_condition.rad"
 )
 
 go build main.go || exit 1

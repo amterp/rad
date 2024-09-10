@@ -63,7 +63,6 @@ const (
 	RAD      TokenType = "RAD" // todo continue to rethink this being the keyword
 	OR       TokenType = "OR"
 	AND      TokenType = "AND"
-	NOT      TokenType = "NOT"
 	IF       TokenType = "IF"
 	ELSE     TokenType = "ELSE"
 	RESOURCE TokenType = "RESOURCE"

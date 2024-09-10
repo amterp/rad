@@ -1,0 +1,6 @@
+a = false
+
+if !a:
+    print("it works!")
+else:
+    print("it does NOT work")

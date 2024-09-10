@@ -120,7 +120,7 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 	valBool, ok := value.(bool)
 	if ok {
 		switch unary.Operator.GetType() {
-		case NOT:
+		case EXCLAMATION:
 			return !valBool
 		default:
 			i.error(unary.Operator, "Invalid logical operator, only 'not' is allowed")

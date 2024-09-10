@@ -600,7 +600,7 @@ func (p *Parser) factor() Expr {
 }
 
 func (p *Parser) unary() Expr {
-	if p.matchAny(NOT, MINUS, PLUS) {
+	if p.matchAny(EXCLAMATION, MINUS, PLUS) {
 		operator := p.previous()
 		right := p.unary()
 		return &Unary{Operator: operator, Right: right}

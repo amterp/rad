@@ -12,7 +12,6 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"rad":      RAD,
 	"or":       OR,
 	"and":      AND,
-	"not":      NOT,
 	"if":       IF,
 	"else":     ELSE,
 	"resource": RESOURCE,

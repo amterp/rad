@@ -48,7 +48,7 @@ type radInvocation struct {
 }
 
 func (r *radInvocation) execute() {
-	fmt.Printf("Querying URL: %s\n", r.url)
+	fmt.Printf("Querying url: %s\n", r.url)
 	// todo encode url correctly, below doesn't work
 	//  url = "http://url/?names=%{name}%" << the % needs to get encoded, for example
 	resp, err := http.Get(r.url)
