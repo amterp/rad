@@ -12,8 +12,8 @@ type ScriptMetadata struct {
 	BlockDescription   *string
 }
 
-func GenerateUseString(scriptPath string, args []ScriptArg) string {
-	useString := scriptPath // todo should probably grab basename? maybe not
+func GenerateUseString(scriptName string, args []ScriptArg) string {
+	useString := scriptName
 	for _, arg := range args {
 		if arg.IsOptional {
 			useString += fmt.Sprintf(" [%s]", arg.Name)

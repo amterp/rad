@@ -102,7 +102,7 @@ func (c *CobraArg) SetValue(arg string) {
 	case RslInt:
 		parsed, err := strconv.Atoi(arg)
 		if err != nil {
-			panic("AHH! NOT INT!")
+			panic("AHH! NOT INT: " + arg)
 		}
 		c.value = &parsed
 	case RslIntArray:
@@ -112,7 +112,7 @@ func (c *CobraArg) SetValue(arg string) {
 		for i, v := range split {
 			parsed, err := strconv.Atoi(v)
 			if err != nil {
-				panic("AHH! NOT INT!")
+				panic("AHH! NOT INT: " + arg)
 			}
 			ints[i] = parsed
 		}
@@ -120,7 +120,7 @@ func (c *CobraArg) SetValue(arg string) {
 	case RslFloat:
 		parsed, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
-			panic("AHH! NOT FLOAT!")
+			panic("AHH! NOT FLOAT: " + arg)
 		}
 		c.value = &parsed
 	case RslFloatArray:
@@ -130,7 +130,7 @@ func (c *CobraArg) SetValue(arg string) {
 		for i, v := range split {
 			parsed, err := strconv.ParseFloat(v, 64)
 			if err != nil {
-				panic("AHH! NOT FLOAT!")
+				panic("AHH! NOT FLOAT: " + arg)
 			}
 			floats[i] = parsed
 		}
@@ -144,7 +144,7 @@ func (c *CobraArg) SetValue(arg string) {
 			val := false
 			c.value = &val
 		} else {
-			panic("AHH! NOT BOOL!")
+			panic("AHH! NOT BOOL: " + arg)
 		}
 	}
 }

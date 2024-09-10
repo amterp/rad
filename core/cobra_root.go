@@ -6,12 +6,13 @@ import (
 	"github.com/spf13/cobra"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 var (
-	rootModified bool
-	bashFlag     bool
-	stdinFlag    bool
+	rootModified    bool
+	shellFlag       bool
+	stdinScriptName string
 )
 
 var rootCmd = &cobra.Command{
@@ -23,9 +24,11 @@ var rootCmd = &cobra.Command{
 		UnknownFlags: true,
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		scriptPath := ""
+		var scriptName string
 		var rslSourceCode string
-		if stdinFlag {
+		if stdinScriptName != "" {
+			// we're in stdin mode
+			scriptName = filepath.Base(stdinScriptName)
 			source, err := io.ReadAll(os.Stdin)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
@@ -36,7 +39,8 @@ var rootCmd = &cobra.Command{
 			cmd.Help()
 			return
 		} else {
-			scriptPath = args[0]
+			scriptPath := args[0]
+			scriptName = filepath.Base(scriptPath)
 			rslSourceCode = readSource(scriptPath)
 		}
 
@@ -44,12 +48,12 @@ var rootCmd = &cobra.Command{
 			return
 		}
 
-		extractMetadataAndModifyCmd(cmd, scriptPath, rslSourceCode)
+		extractMetadataAndModifyCmd(cmd, scriptName, rslSourceCode)
 		cmd.Execute()
 	},
 }
 
-func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourcePath string, rslSourceCode string) {
+func extractMetadataAndModifyCmd(cmd *cobra.Command, scriptName string, rslSourceCode string) {
 	l := NewLexer(rslSourceCode)
 	l.Lex()
 
@@ -57,12 +61,12 @@ func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourcePath string, rslSo
 	instructions := p.Parse()
 
 	scriptMetadata := ExtractMetadata(instructions)
-	modifyCmd(cmd, rslSourcePath, scriptMetadata, instructions)
+	modifyCmd(cmd, scriptName, scriptMetadata, instructions)
 	rootModified = true
 }
 
-func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetadata, instructions []Stmt) {
-	useString := GenerateUseString(scriptPath, scriptMetadata.Args)
+func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetadata, instructions []Stmt) {
+	useString := GenerateUseString(scriptName, scriptMetadata.Args)
 	var cobraArgs []*CobraArg
 	cmd.Use = useString
 	cmd.Short = ShortDescription(scriptMetadata)
@@ -70,10 +74,13 @@ func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetad
 	cmd.Run = func(cmd *cobra.Command, args []string) {
 		// fill in positional args, and
 		// error if required args are missing
-		posArgsIndex := 1
-		if stdinFlag {
-			posArgsIndex = 0
+		posArgsIndex := 0
+		if stdinScriptName == "" {
+			// We're invoked on an actual string path, which will be the first arg. Ignore.
+			posArgsIndex = 1
 		}
+		var missingArgs []string
+		shouldPrintHelp := true
 		for _, cobraArg := range cobraArgs {
 			argName := cobraArg.Arg.Name
 			cobraFlag := cmd.Flags().Lookup(argName)
@@ -83,20 +90,35 @@ func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetad
 					// there's a positional arg to fill it
 					cobraArg.SetValue(args[posArgsIndex])
 					posArgsIndex++
+					shouldPrintHelp = false
 				} else if cobraArg.Arg.IsOptional {
 					// there's no positional arg to fill it, but that's okay because it's optional, so continue
 					// but first, fill in the optional's default value if it exists
 					cobraArg.InitializeOptional()
+					shouldPrintHelp = false
 					continue
 				} else if cobraArg.IsBool() {
 					// all bools are implicitly optional and default false, unless explicitly defaulted to true
 					// this branch implies it was not defaulted to true
 					cobraArg.SetValue("false")
+					shouldPrintHelp = false
 				} else {
-					errorExit(cmd, fmt.Sprintf("Missing required argument: %s", argName))
+					missingArgs = append(missingArgs, argName)
 				}
+			} else {
+				shouldPrintHelp = false
 			}
 		}
+
+		if shouldPrintHelp {
+			cmd.Help()
+			return
+		}
+
+		if len(missingArgs) > 0 {
+			errorExit(cmd, fmt.Sprintf("Missing required arguments: %s", missingArgs))
+		}
+
 		// error if not all positional args were used
 		if posArgsIndex < len(args) {
 			errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
@@ -106,7 +128,7 @@ func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetad
 		interpreter.InitArgs(cobraArgs)
 		interpreter.Run()
 
-		if bashFlag {
+		if shellFlag {
 			env := interpreter.env
 			for varName, val := range env.Vars {
 				// todo handle different types specifically
@@ -119,6 +141,12 @@ func modifyCmd(cmd *cobra.Command, scriptPath string, scriptMetadata ScriptMetad
 		cobraArg := CreateCobraArg(cmd, arg)
 		cobraArgs = append(cobraArgs, &cobraArg)
 	}
+
+	// hide global flags, that distract from the particular script
+	cmd.Flags().MarkHidden("version")
+	cmd.Flags().MarkHidden("help")
+	cmd.PersistentFlags().MarkHidden("SHELL")
+	cmd.PersistentFlags().MarkHidden("STDIN")
 }
 
 func readSource(scriptPath string) string {
@@ -131,8 +159,11 @@ func readSource(scriptPath string) string {
 }
 
 func errorExit(cmd *cobra.Command, message string) {
-	fmt.Println(message)
+	fmt.Fprintln(os.Stderr, message)
 	cmd.Usage()
+	if shellFlag {
+		fmt.Println("exit 1")
+	}
 	os.Exit(1)
 }
 
@@ -149,16 +180,16 @@ func init() {
 
 		// try to detect if help has been called on either a script or with --STDIN flag
 		if len(args) >= 2 {
-			if lo.Some(args[1:], []string{"-h", "--help"}) && !stdinFlag {
+			if lo.Some(args[1:], []string{"-h", "--help"}) && stdinScriptName == "" {
 				// it has, and with a rsl file source, so let's modify the rootCmd and re-run the root again
 				scriptPath := args[0]
 				rslSourceCode := readSource(scriptPath)
-				extractMetadataAndModifyCmd(rootCmd, scriptPath, rslSourceCode)
-			} else if stdinFlag {
+				extractMetadataAndModifyCmd(rootCmd, filepath.Base(scriptPath), rslSourceCode)
+			} else if stdinScriptName != "" {
 				// it has, and with reading rsl from stdin, so let's modify the rootCmd and re-run the root again
 				source, err := io.ReadAll(os.Stdin)
 				if err == nil {
-					extractMetadataAndModifyCmd(rootCmd, "", string(source))
+					extractMetadataAndModifyCmd(rootCmd, filepath.Base(stdinScriptName), string(source))
 				} else {
 					fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
 				}
@@ -167,7 +198,7 @@ func init() {
 
 		rootCmd.Help()
 
-		if bashFlag && stdinFlag {
+		if shellFlag && stdinScriptName != "" {
 			// if both these flags are set, we're likely being invoked from within a bash script, so let's
 			// output an exit 0 for bash to eval and exit, so it doesn't continue
 			fmt.Println("exit 0")
@@ -177,8 +208,8 @@ func init() {
 	// global flags
 	// todo think more about bash vs. shell
 	// todo these flags should be hidden (probably) when --help called on script
-	rootCmd.PersistentFlags().BoolVar(&bashFlag, "BASH", false, "Outputs bash exports of variables, so they can be eval'd")
-	rootCmd.PersistentFlags().BoolVar(&stdinFlag, "STDIN", false, "Reads RSL script from stdin")
+	rootCmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
+	rootCmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
 	rootCmd.SetOut(os.Stderr)
 }
 

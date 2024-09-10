@@ -33,6 +33,7 @@ invocations=(
     "./main ./tests/later_json_array.rad"
     "./main ./tests/single_quote_strings.rad"
     "./main ./tests/not_condition.rad"
+    "./tests/bash_missing_required_arg.sh"
 )
 
 go build main.go || exit 1
