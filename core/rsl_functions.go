@@ -28,6 +28,21 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 		return strings.ToUpper(ToPrintable(values[0]))
 	case "lower":
 		return strings.ToLower(ToPrintable(values[0]))
+	case "starts_with":
+		if len(values) != 2 {
+			i.error(function, "starts_with() takes exactly two arguments")
+		}
+		return strings.HasPrefix(ToPrintable(values[0]), ToPrintable(values[1]))
+	case "ends_with":
+		if len(values) != 2 {
+			i.error(function, "ends_with() takes exactly two arguments")
+		}
+		return strings.HasSuffix(ToPrintable(values[0]), ToPrintable(values[1]))
+	case "contains":
+		if len(values) != 2 {
+			i.error(function, "contains() takes exactly two arguments")
+		}
+		return strings.Contains(ToPrintable(values[0]), ToPrintable(values[1]))
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)

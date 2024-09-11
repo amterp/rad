@@ -37,6 +37,7 @@ invocations=(
     "./main ./tests/num_shorthand_flag.rad"
     "./main ./tests/debug.rad"
     "./main ./tests/test20.rad"
+    "./main ./tests/starts_ends_contains.rad"
 )
 
 go build main.go || exit 1
