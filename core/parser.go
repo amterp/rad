@@ -161,7 +161,7 @@ func (p *Parser) argStatement() ArgStmt {
 	if p.peekType(STRING_LITERAL) ||
 		p.peekType(IDENTIFIER) ||
 		p.peekType(STRING) ||
-		p.peekType(INT) ||
+		p.peekType(INT_LITERAL) ||
 		p.peekType(BOOL) {
 
 		return p.argDeclaration(identifier)

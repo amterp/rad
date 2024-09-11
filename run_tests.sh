@@ -36,6 +36,7 @@ invocations=(
     "./tests/bash_missing_required_arg.sh"
     "./main ./tests/num_shorthand_flag.rad"
     "./main ./tests/debug.rad"
+    "./main ./tests/test20.rad"
 )
 
 go build main.go || exit 1
