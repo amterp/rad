@@ -39,23 +39,36 @@ func RunRslFunction(i *MainInterpreter, function Token, values []interface{}) {
 	switch functionName {
 	case "print": // todo would be nice to make this a reference to a var that GoLand can find
 		runPrint(i, values)
+	case "debug":
+		runDebug(i, values)
 	default:
 		RunRslNonVoidFunction(i, function, values)
 	}
 }
 
 func runPrint(i *MainInterpreter, values []interface{}) {
-	if len(values) == 0 {
-		i.printer.Print("\n")
-		return
-	}
+	output := resolveOutputString(values)
+	i.printer.Print(output)
+}
 
+func runDebug(i *MainInterpreter, values []interface{}) {
+	output := resolveOutputString(values)
+	i.printer.ScriptDebug(output)
+}
+
+func resolveOutputString(values []interface{}) string {
 	output := ""
-	for _, v := range values {
-		output += ToPrintable(v) + " "
+
+	if len(values) == 0 {
+		output = "\n"
+	} else {
+		for _, v := range values {
+			output += ToPrintable(v) + " "
+		}
+		output = output[:len(output)-1] // remove last space
+		output = output + "\n"
 	}
-	output = output[:len(output)-1] // remove last space
-	i.printer.Print(output + "\n")
+	return output
 }
 
 func runLen(i *MainInterpreter, function Token, values []interface{}) interface{} {

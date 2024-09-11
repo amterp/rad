@@ -1,0 +1,2 @@
+print('i am print!')
+debug('i am debug!')

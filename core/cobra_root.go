@@ -85,7 +85,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 			posArgsIndex = 1
 		}
 		var missingArgs []string
-		shouldPrintHelp := true
+		shouldPrintHelp := cobraArgs != nil
 		for _, cobraArg := range cobraArgs {
 			argName := cobraArg.Arg.ApiName
 			cobraFlag := cmd.Flags().Lookup(argName)
