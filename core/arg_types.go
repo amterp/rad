@@ -95,8 +95,7 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val
 		default:
-			// todo improve
-			panic(fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))
+			l.i.error(scriptArg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))
 		}
 	}
 

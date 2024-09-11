@@ -40,6 +40,7 @@ func ToPrintable(val interface{}) string {
 		}
 		return out + "]"
 	default:
+		// todo user printer
 		panic("Unknown type")
 	}
 }

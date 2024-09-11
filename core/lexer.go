@@ -7,6 +7,7 @@ import (
 )
 
 type Lexer struct {
+	printer                Printer
 	source                 string
 	start                  int   // index of start of the current lexeme (0 indexed)
 	next                   int   // index of next character to be read (0 indexed)
@@ -17,8 +18,9 @@ type Lexer struct {
 	Tokens                 []Token
 }
 
-func NewLexer(source string) *Lexer {
+func NewLexer(printer Printer, source string) *Lexer {
 	return &Lexer{
+		printer:                printer,
 		source:                 source,
 		start:                  0,
 		next:                   0,
@@ -525,5 +527,5 @@ func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	lineStart := l.lineCharIndex - (l.next - l.start - 1)
-	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s", l.lineIndex, lineStart, lexeme, message))
+	l.printer.LexerErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
 }

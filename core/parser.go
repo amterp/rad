@@ -2,19 +2,20 @@ package core
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Parser struct {
+	printer             Printer
 	tokens              []Token
 	next                int
 	nestedForBlockLevel int
 }
 
-func NewParser(tokens []Token) *Parser {
+func NewParser(printer Printer, tokens []Token) *Parser {
 	return &Parser{
-		tokens: tokens,
-		next:   0,
+		printer: printer,
+		tokens:  tokens,
+		next:    0,
 	}
 }
 
@@ -95,7 +96,7 @@ func (p *Parser) consume(tokenType TokenType, errorMessageIfNotMatch string) Tok
 		return p.advance()
 	}
 	p.error(errorMessageIfNotMatch)
-	panic("unreachable")
+	panic(UNREACHABLE)
 }
 
 func (p *Parser) tryConsume(tokenType TokenType) (Token, bool) {
@@ -108,10 +109,7 @@ func (p *Parser) tryConsume(tokenType TokenType) (Token, bool) {
 // todo this func is susceptible to pointing at an uninformative token
 func (p *Parser) error(message string) {
 	currentToken := p.tokens[p.next]
-	lexeme := currentToken.GetLexeme()
-	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
-	panic(fmt.Sprintf("Error at L%d/%d on '%s': %s",
-		currentToken.GetLine(), currentToken.GetCharLineStart(), lexeme, message))
+	p.printer.TokenErrorExit(currentToken, message+"\n")
 }
 
 func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {

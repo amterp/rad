@@ -22,6 +22,7 @@ func NewRuntimeLiteral(val interface{}) RuntimeLiteral {
 	case bool:
 		return NewRuntimeBool(val.(bool))
 	default:
+		// todo via printer
 		panic("unknown type")
 	}
 }

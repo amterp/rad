@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-// todo
-//  toStringArray(array), toString(non-string)
-
 // RunRslNonVoidFunction returns pointers to values e.g. *string
 func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interface{}) interface{} {
 	functionName := function.GetLexeme()
@@ -49,7 +46,7 @@ func RunRslFunction(i *MainInterpreter, function Token, values []interface{}) {
 
 func runPrint(i *MainInterpreter, values []interface{}) {
 	if len(values) == 0 {
-		fmt.Println()
+		i.printer.Print("\n")
 		return
 	}
 
@@ -58,7 +55,7 @@ func runPrint(i *MainInterpreter, values []interface{}) {
 		output += ToPrintable(v) + " "
 	}
 	output = output[:len(output)-1] // remove last space
-	fmt.Println(output)
+	i.printer.Print(output + "\n")
 }
 
 func runLen(i *MainInterpreter, function Token, values []interface{}) interface{} {

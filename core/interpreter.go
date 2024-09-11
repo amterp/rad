@@ -1,10 +1,7 @@
 package core
 
-import (
-	"fmt"
-)
-
 type MainInterpreter struct {
+	printer    Printer
 	env        *Env
 	LiteralI   *LiteralInterpreter
 	argBlockI  *ArgBlockInterpreter
@@ -16,8 +13,9 @@ type MainInterpreter struct {
 	continuing bool
 }
 
-func NewInterpreter(statements []Stmt) *MainInterpreter {
+func NewInterpreter(printer Printer, statements []Stmt) *MainInterpreter {
 	i := &MainInterpreter{
+		printer:    printer,
 		statements: statements,
 	}
 	i.LiteralI = NewLiteralInterpreter(i)
@@ -232,7 +230,7 @@ func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
 }
 
 func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
-	panic("Bug! IfCase should not be visited directly")
+	i.printer.RadErrorExit("Bug! IfCase should not be visited directly\n")
 }
 
 func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
@@ -319,12 +317,7 @@ func (i *MainInterpreter) VisitContinueStmtStmt(stmt ContinueStmt) {
 }
 
 func (i *MainInterpreter) error(token Token, message string) {
-	if token == nil {
-		panic(message) // todo not good
-	} else {
-		panic(fmt.Sprintf("Error at L%d/%d on '%s': %s",
-			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), message))
-	}
+	i.printer.TokenErrorExit(token, message+"\n")
 }
 
 func (i *MainInterpreter) runWithChildEnv(runnable func()) {

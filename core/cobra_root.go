@@ -12,7 +12,11 @@ import (
 var (
 	rootModified    bool
 	shellFlag       bool
+	quietFlag       bool
+	debugFlag       bool
+	radDebugFlag    bool
 	stdinScriptName string
+	printer         Printer
 )
 
 var rootCmd = &cobra.Command{
@@ -24,6 +28,8 @@ var rootCmd = &cobra.Command{
 		UnknownFlags: true,
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		printer = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+
 		var scriptName string
 		var rslSourceCode string
 		if stdinScriptName != "" {
@@ -31,8 +37,7 @@ var rootCmd = &cobra.Command{
 			scriptName = filepath.Base(stdinScriptName)
 			source, err := io.ReadAll(os.Stdin)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
-				os.Exit(1)
+				printer.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
 			}
 			rslSourceCode = string(source)
 		} else if len(args) == 0 {
@@ -54,10 +59,10 @@ var rootCmd = &cobra.Command{
 }
 
 func extractMetadataAndModifyCmd(cmd *cobra.Command, scriptName string, rslSourceCode string) {
-	l := NewLexer(rslSourceCode)
+	l := NewLexer(printer, rslSourceCode)
 	l.Lex()
 
-	p := NewParser(l.Tokens)
+	p := NewParser(printer, l.Tokens)
 	instructions := p.Parse()
 
 	scriptMetadata := ExtractMetadata(instructions)
@@ -116,15 +121,15 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 		}
 
 		if len(missingArgs) > 0 {
-			errorExit(cmd, fmt.Sprintf("Missing required arguments: %s", missingArgs))
+			printer.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s\n", missingArgs))
 		}
 
 		// error if not all positional args were used
 		if posArgsIndex < len(args) {
-			errorExit(cmd, fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
+			printer.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v\n", args[posArgsIndex:]))
 		}
 
-		interpreter := NewInterpreter(instructions)
+		interpreter := NewInterpreter(printer, instructions)
 		interpreter.InitArgs(cobraArgs)
 		interpreter.Run()
 
@@ -132,13 +137,13 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 			env := interpreter.env
 			for varName, val := range env.Vars {
 				// todo handle different types specifically
-				fmt.Printf("export %s=\"%v\"\n", varName, val.value)
+				printer.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val.value))
 			}
 		}
 	}
 
 	for _, arg := range scriptMetadata.Args {
-		cobraArg := CreateCobraArg(cmd, arg)
+		cobraArg := CreateCobraArg(printer, cmd, arg)
 		cobraArgs = append(cobraArgs, &cobraArg)
 	}
 
@@ -147,24 +152,18 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 	cmd.Flags().MarkHidden("help")
 	cmd.PersistentFlags().MarkHidden("SHELL")
 	cmd.PersistentFlags().MarkHidden("STDIN")
+	cmd.PersistentFlags().MarkHidden("QUIET")
+	cmd.PersistentFlags().MarkHidden("DEBUG")
+	cmd.PersistentFlags().MarkHidden("RAD-DEBUG")
 }
 
 func readSource(scriptPath string) string {
 	source, err := os.ReadFile(scriptPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not read script '%s': %v\n", scriptPath, err)
+		printer.RadErrorExit(fmt.Sprintf("Could not read script '%s': %v\n", scriptPath, err))
 		os.Exit(1)
 	}
 	return string(source)
-}
-
-func errorExit(cmd *cobra.Command, message string) {
-	fmt.Fprintln(os.Stderr, message)
-	cmd.Usage()
-	if shellFlag {
-		fmt.Println("exit 1")
-	}
-	os.Exit(1)
 }
 
 func init() {
@@ -191,7 +190,7 @@ func init() {
 				if err == nil {
 					extractMetadataAndModifyCmd(rootCmd, filepath.Base(stdinScriptName), string(source))
 				} else {
-					fmt.Fprintf(os.Stderr, "Could not read from stdin: %v\n", err)
+					printer.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
 				}
 			}
 		}
@@ -201,7 +200,7 @@ func init() {
 		if shellFlag && stdinScriptName != "" {
 			// if both these flags are set, we're likely being invoked from within a bash script, so let's
 			// output an exit 0 for bash to eval and exit, so it doesn't continue
-			fmt.Println("exit 0")
+			printer.PrintForShellEval("exit 0")
 		}
 	})
 
@@ -210,6 +209,9 @@ func init() {
 	// todo these flags should be hidden (probably) when --help called on script
 	rootCmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
 	rootCmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
+	rootCmd.PersistentFlags().BoolVar(&quietFlag, "QUIET", false, "Suppresses some output.")
+	rootCmd.PersistentFlags().BoolVar(&debugFlag, "DEBUG", false, "Enables debug output. Intended for RSL script developers.")
+	rootCmd.PersistentFlags().BoolVar(&radDebugFlag, "RAD-DEBUG", false, "Enables Rad debug output. Intended for Rad developers.")
 	rootCmd.SetOut(os.Stderr)
 }
 

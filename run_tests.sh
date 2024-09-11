@@ -11,7 +11,7 @@ invocations=(
     "./main ./tests/test4.rad alice,bob,charlie"
     "./main ./tests/test5.rad --repo samber/lo"
     "./main ./tests/test6.rad"
-    "./main ./tests/test7.rad --arr11=2.1,2.2"
+    "./main ./tests/test7.rad --woof=2.1,2.2"
     "./main ./tests/test8.rad"
     "./main ./tests/test9.rad"
     "./main ./tests/test10.rad"

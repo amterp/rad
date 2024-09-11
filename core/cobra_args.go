@@ -8,9 +8,10 @@ import (
 )
 
 type CobraArg struct {
-	Arg    ScriptArg
-	value  interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
-	IsNull bool
+	printer Printer
+	Arg     ScriptArg
+	value   interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
+	IsNull  bool
 }
 
 func (c *CobraArg) IsString() bool {
@@ -89,7 +90,6 @@ func (c *CobraArg) GetBool() bool {
 	return *c.value.(*bool)
 }
 
-// todo handle panics better
 func (c *CobraArg) SetValue(arg string) {
 	// do proper casting
 	switch c.Arg.Type {
@@ -102,7 +102,7 @@ func (c *CobraArg) SetValue(arg string) {
 	case RslInt:
 		parsed, err := strconv.Atoi(arg)
 		if err != nil {
-			panic("AHH! NOT INT: " + arg)
+			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 		}
 		c.value = &parsed
 	case RslIntArray:
@@ -112,7 +112,7 @@ func (c *CobraArg) SetValue(arg string) {
 		for i, v := range split {
 			parsed, err := strconv.Atoi(v)
 			if err != nil {
-				panic("AHH! NOT INT: " + arg)
+				c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 			}
 			ints[i] = parsed
 		}
@@ -120,7 +120,7 @@ func (c *CobraArg) SetValue(arg string) {
 	case RslFloat:
 		parsed, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
-			panic("AHH! NOT FLOAT: " + arg)
+			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
 		}
 		c.value = &parsed
 	case RslFloatArray:
@@ -130,7 +130,7 @@ func (c *CobraArg) SetValue(arg string) {
 		for i, v := range split {
 			parsed, err := strconv.ParseFloat(v, 64)
 			if err != nil {
-				panic("AHH! NOT FLOAT: " + arg)
+				c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
 			}
 			floats[i] = parsed
 		}
@@ -144,12 +144,12 @@ func (c *CobraArg) SetValue(arg string) {
 			val := false
 			c.value = &val
 		} else {
-			panic("AHH! NOT BOOL: " + arg)
+			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
 		}
 	}
 }
 
-func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
+func CreateCobraArg(printer Printer, cmd *cobra.Command, arg ScriptArg) CobraArg {
 	name, argType, flag, description := arg.ApiName, arg.Type, "", ""
 	if arg.Flag != nil {
 		flag = *arg.Flag
@@ -203,8 +203,7 @@ func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
 		}
 		cobraArgValue = cmd.Flags().BoolP(name, flag, defVal, description)
 	default:
-		// todo better error handling
-		panic(fmt.Sprintf("Unknown arg type: %v", argType))
+		printer.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
 	}
 	cobraArg := CobraArg{Arg: arg, value: cobraArgValue}
 	return cobraArg

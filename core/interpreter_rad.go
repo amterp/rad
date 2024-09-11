@@ -7,7 +7,6 @@ import (
 	"github.com/samber/lo"
 	"io"
 	"net/http"
-	"os"
 )
 
 type RadBlockInterpreter struct {
@@ -27,7 +26,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 	default:
 		r.i.error(block.RadKeyword, "URL must be a string")
 	}
-	r.invocation = &radInvocation{ri: &r, url: url.(string)}
+	r.invocation = &radInvocation{ri: &r, block: block, url: url.(string)}
 	for _, stmt := range block.Stmts {
 		stmt.Accept(r)
 	}
@@ -43,46 +42,47 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 
 type radInvocation struct {
 	ri     *RadBlockInterpreter
+	block  RadBlock
 	url    string
 	fields Fields
 }
 
 func (r *radInvocation) execute() {
-	fmt.Printf("Querying url: %s\n", r.url)
+	r.ri.i.printer.Print(fmt.Sprintf("Querying url: %s\n", r.url))
 	// todo encode url correctly, below doesn't work
 	//  url = "http://url/?names=%{name}%" << the % needs to get encoded, for example
 	resp, err := http.Get(r.url)
 	if err != nil {
-		panic(fmt.Sprintf("Error on HTTP request: %v", err))
+		r.error(fmt.Sprintf("Error on HTTP request: %v", err))
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic(fmt.Sprintf("Error reading HTTP body: %v. Body: %v", err, body))
+		r.error(fmt.Sprintf("Error reading HTTP body: %v. Body: %v", err, body))
 	}
 
 	isValidJson := json.Valid(body)
 	if !isValidJson {
-		panic(fmt.Sprintf("Received invalid JSON in response (truncated max 50 chars): [%s]", body[:50]))
+		r.error(fmt.Sprintf("Received invalid JSON in response (truncated max 50 chars): [%s]", body[:50]))
 	}
 
 	var data interface{}
 	if err := json.Unmarshal(body, &data); err != nil {
-		panic(fmt.Sprintf("Error unmarshalling JSON: %v", err))
+		r.error(fmt.Sprintf("Error unmarshalling JSON: %v", err))
 	}
 
 	jsonFields := lo.Map(r.fields.Identifiers, func(field Token, _ int) JsonFieldVar {
 		return r.ri.i.env.GetJsonField(field)
 	})
-	trie := CreateTrie(jsonFields)
-	TraverseTrie(data, trie)
+	trie := CreateTrie(r.ri.i.printer, r.block.RadKeyword, jsonFields)
+	trie.TraverseTrie(data)
 
 	columns := lo.Map(jsonFields, func(field JsonFieldVar, _ int) []string {
 		return r.ri.i.env.GetByToken(field.Name).GetStringArray()
 	})
 
-	tbl := tablewriter.NewWriter(os.Stdout)
+	tbl := tablewriter.NewWriter(r.ri.i.printer.GetStdWriter())
 
 	headers := lo.Map(jsonFields, func(field JsonFieldVar, _ int) string {
 		return field.Name.GetLexeme()
@@ -111,4 +111,8 @@ func (r *radInvocation) execute() {
 	tbl.SetNoWhiteSpace(true)
 
 	tbl.Render()
+}
+
+func (r *radInvocation) error(msg string) {
+	r.ri.i.error(r.block.RadKeyword, msg)
 }
