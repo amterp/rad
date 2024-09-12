@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"github.com/samber/lo"
 	"io"
 	"net/http"
@@ -82,7 +81,7 @@ func (r *radInvocation) execute() {
 		return r.ri.i.env.GetByToken(field.Name).GetStringArray()
 	})
 
-	tbl := tablewriter.NewWriter(r.ri.i.printer.GetStdWriter())
+	tbl := NewTblWriter(r.ri.i.printer)
 
 	headers := lo.Map(jsonFields, func(field JsonFieldVar, _ int) string {
 		return field.Name.GetLexeme()
@@ -97,19 +96,6 @@ func (r *radInvocation) execute() {
 	}
 
 	// todo ensure failed requests get nicely printed
-	// default formatting
-	tbl.SetAutoWrapText(false) // todo not sure this works? it seems to wrap...
-	tbl.SetAutoFormatHeaders(true)
-	tbl.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	tbl.SetAlignment(tablewriter.ALIGN_LEFT)
-	tbl.SetCenterSeparator("")
-	tbl.SetColumnSeparator("")
-	tbl.SetRowSeparator("")
-	tbl.SetHeaderLine(false)
-	tbl.SetBorder(false)
-	tbl.SetTablePadding("\t") // pad with tabs
-	tbl.SetNoWhiteSpace(true)
-
 	tbl.Render()
 }
 

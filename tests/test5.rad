@@ -10,10 +10,10 @@ args:
 
     base string = "github" # Gitlab or github (gitlab won't work in this script woops)
 
-    limit int = 5 # The max num of results to return
+    limit l int = 5 # The max num of results to return
 
 Name = json[].commit.author.name
-Email = json[].commit.author.email
+Email = json[].commit.message
 Date = json[].commit.author.date
 
 finalBase = switch base:
