@@ -1,0 +1,9 @@
+a = "alice"
+print(starts_with(a, "al"))
+print(starts_with(a, "ce"))
+
+print(ends_with(a, "al"))
+print(ends_with(a, "ce"))
+
+print(contains(a, "lic"))
+print(contains(a, "bob"))

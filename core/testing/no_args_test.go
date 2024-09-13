@@ -25,3 +25,15 @@ func TestDebugWithDebugFlag(t *testing.T) {
 	expected := "one\nDEBUG: two\nDEBUG: three\n"
 	assertOnly(t, stdOutBuffer, expected)
 }
+
+func TestStartsEndsContains(t *testing.T) {
+	setupAndRun(t, "./test_rads/starts_ends_contains.rad")
+	expected := `true
+false
+false
+true
+true
+false
+`
+	assertOnly(t, stdOutBuffer, expected)
+}
