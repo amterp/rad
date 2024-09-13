@@ -55,8 +55,11 @@ type Printer interface {
 //
 // isScriptDebug will enable script debug messages
 // isRadDebug will enable rad debug messages, and include stack traces for errors
-func NewPrinter(cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
+func NewPrinter(radIo RadIo, cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
 	return &stdPrinter{
+		stdIn:         radIo.StdIn,
+		stdOut:        radIo.StdOut,
+		stdErr:        radIo.StdErr,
 		cmd:           cmd,
 		isShellMode:   isShellMode,
 		isQuiet:       isQuiet,
@@ -66,6 +69,9 @@ func NewPrinter(cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebu
 }
 
 type stdPrinter struct {
+	stdIn         io.Reader
+	stdOut        io.Writer
+	stdErr        io.Writer
 	cmd           *cobra.Command
 	isShellMode   bool
 	isQuiet       bool
@@ -75,13 +81,13 @@ type stdPrinter struct {
 
 func (p *stdPrinter) ScriptDebug(msg string) {
 	if p.isScriptDebug {
-		fmt.Fprintf(os.Stderr, "DEBUG: %s", msg)
+		fmt.Fprintf(p.stdErr, "DEBUG: %s", msg)
 	}
 }
 
 func (p *stdPrinter) RadDebug(msg string) {
 	if p.isRadDebug {
-		fmt.Fprintf(os.Stderr, "RAD DEBUG: %s", msg)
+		fmt.Fprintf(p.stdErr, "RAD DEBUG: %s", msg)
 	}
 }
 
@@ -89,19 +95,19 @@ func (p *stdPrinter) Print(msg string) {
 	if p.isQuiet {
 		return
 	} else if p.isShellMode {
-		fmt.Fprintf(os.Stderr, msg)
+		fmt.Fprintf(p.stdErr, msg)
 	} else {
-		fmt.Fprintf(os.Stdout, msg)
+		fmt.Fprintf(p.stdOut, msg)
 	}
 }
 
 func (p *stdPrinter) PrintForShellEval(msg string) {
-	fmt.Fprintf(os.Stdout, "%s", msg)
+	fmt.Fprintf(p.stdOut, "%s", msg)
 }
 
 func (p *stdPrinter) LexerErrorExit(msg string) {
 	if !p.isQuiet || p.isScriptDebug {
-		fmt.Fprintf(os.Stderr, msg)
+		fmt.Fprintf(p.stdErr, msg)
 	}
 	p.printShellExitIfEnabled()
 }
@@ -109,11 +115,11 @@ func (p *stdPrinter) LexerErrorExit(msg string) {
 func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
 	if !p.isQuiet || p.isScriptDebug {
 		if token == nil {
-			fmt.Fprintf(os.Stderr, msg)
+			fmt.Fprintf(p.stdErr, msg)
 		} else {
 			lexeme := token.GetLexeme()
 			lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
-			fmt.Fprintf(os.Stderr, "RslError at L%d/%d on '%s': %s",
+			fmt.Fprintf(p.stdErr, "RslError at L%d/%d on '%s': %s",
 				token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
 		}
 	}
@@ -122,24 +128,24 @@ func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
 }
 
 func (p *stdPrinter) RadErrorExit(msg string) {
-	fmt.Fprintf(os.Stderr, msg)
+	fmt.Fprintf(p.stdErr, msg)
 	p.printShellExitIfEnabled()
 	p.exit()
 }
 
 func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 	if token == nil {
-		fmt.Fprintf(os.Stderr, msg)
+		fmt.Fprintf(p.stdErr, msg)
 	} else {
 		lexeme := token.GetLexeme()
 		lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
-		fmt.Fprintf(os.Stderr, "RadError at L%d/%d on '%s': %s",
+		fmt.Fprintf(p.stdErr, "RadError at L%d/%d on '%s': %s",
 			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
 	}
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
-	fmt.Fprintf(os.Stderr, msg)
+	fmt.Fprintf(p.stdErr, msg)
 	p.cmd.Usage()
 	p.printShellExitIfEnabled()
 	p.exit()
@@ -150,9 +156,9 @@ func (p *stdPrinter) GetStdWriter() io.Writer {
 		return NullWriter{}
 	}
 	if p.isShellMode {
-		return os.Stderr
+		return p.stdErr
 	}
-	return os.Stdout
+	return p.stdOut
 }
 
 func (p *stdPrinter) printShellExitIfEnabled() {

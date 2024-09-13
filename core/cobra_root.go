@@ -16,46 +16,56 @@ var (
 	debugFlag       bool
 	radDebugFlag    bool
 	stdinScriptName string
+	radIo           RadIo
 	printer         Printer
 )
 
-var rootCmd = &cobra.Command{
-	Use:     "",
-	Short:   "Request And Display (RAD)",
-	Long:    `Request And Display (RAD): A tool for making HTTP requests, extracting details, and displaying the result.`,
-	Version: "0.2.3",
-	FParseErrWhitelist: cobra.FParseErrWhitelist{
-		UnknownFlags: true,
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		printer = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+var rootCmd = NewRootCmd(RadIo{
+	StdIn:  os.Stdin,
+	StdOut: os.Stdout,
+	StdErr: os.Stderr,
+})
 
-		var scriptName string
-		var rslSourceCode string
-		if stdinScriptName != "" {
-			// we're in stdin mode
-			scriptName = filepath.Base(stdinScriptName)
-			source, err := io.ReadAll(os.Stdin)
-			if err != nil {
-				printer.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
+func NewRootCmd(_radIo RadIo) *cobra.Command {
+	radIo = _radIo
+	return &cobra.Command{
+		Use:     "",
+		Short:   "Request And Display (RAD)",
+		Long:    `Request And Display (RAD): A tool for making HTTP requests, extracting details, and displaying the result.`,
+		Version: "0.2.3",
+		FParseErrWhitelist: cobra.FParseErrWhitelist{
+			UnknownFlags: true,
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			printer = NewPrinter(radIo, cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+
+			var scriptName string
+			var rslSourceCode string
+			if stdinScriptName != "" {
+				// we're in stdin mode
+				scriptName = filepath.Base(stdinScriptName)
+				source, err := io.ReadAll(radIo.StdIn)
+				if err != nil {
+					printer.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
+				}
+				rslSourceCode = string(source)
+			} else if len(args) == 0 {
+				cmd.Help()
+				return
+			} else {
+				scriptPath := args[0]
+				scriptName = filepath.Base(scriptPath)
+				rslSourceCode = readSource(scriptPath)
 			}
-			rslSourceCode = string(source)
-		} else if len(args) == 0 {
-			cmd.Help()
-			return
-		} else {
-			scriptPath := args[0]
-			scriptName = filepath.Base(scriptPath)
-			rslSourceCode = readSource(scriptPath)
-		}
 
-		if rootModified {
-			return
-		}
+			if rootModified {
+				return
+			}
 
-		extractMetadataAndModifyCmd(cmd, scriptName, rslSourceCode)
-		cmd.Execute()
-	},
+			extractMetadataAndModifyCmd(cmd, scriptName, rslSourceCode)
+			cmd.Execute()
+		},
+	}
 }
 
 func extractMetadataAndModifyCmd(cmd *cobra.Command, scriptName string, rslSourceCode string) {
@@ -187,7 +197,7 @@ func init() {
 				extractMetadataAndModifyCmd(rootCmd, filepath.Base(scriptPath), rslSourceCode)
 			} else if stdinScriptName != "" {
 				// it has, and with reading rsl from stdin, so let's modify the rootCmd and re-run the root again
-				source, err := io.ReadAll(os.Stdin)
+				source, err := io.ReadAll(radIo.StdIn)
 				if err == nil {
 					extractMetadataAndModifyCmd(rootCmd, filepath.Base(stdinScriptName), string(source))
 				} else {
