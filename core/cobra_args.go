@@ -205,6 +205,6 @@ func CreateCobraArg(printer Printer, cmd *cobra.Command, arg ScriptArg) CobraArg
 	default:
 		printer.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
 	}
-	cobraArg := CobraArg{Arg: arg, value: cobraArgValue}
+	cobraArg := CobraArg{printer: printer, Arg: arg, value: cobraArgValue}
 	return cobraArg
 }

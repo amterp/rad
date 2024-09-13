@@ -76,6 +76,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 	cmd.Use = useString
 	cmd.Short = ShortDescription(scriptMetadata)
 	cmd.Long = LongDescription(scriptMetadata)
+	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{} // re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 	cmd.Run = func(cmd *cobra.Command, args []string) {
 		// fill in positional args, and
 		// error if required args are missing
