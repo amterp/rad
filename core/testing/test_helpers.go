@@ -3,6 +3,7 @@ package testing
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"rad/core"
 	"testing"
 )
@@ -20,12 +21,25 @@ var (
 
 func setupAndRun(t *testing.T, args ...string) {
 	t.Helper()
+
+	// reset for each test
+	stdInBuffer.Reset()
+	stdOutBuffer.Reset()
+	stdErrBuffer.Reset()
+
+	//originalArgs := os.Args
+	os.Args = append([]string{os.Args[0]}, args...)
+	//defer func() {
+	//	os.Args = originalArgs
+	//}()
+
 	rootCmd := core.NewRootCmd(testRadIo)
+	core.InitCmd(rootCmd)
 
 	rootCmd.SetOut(stdOutBuffer)
 	rootCmd.SetErr(stdErrBuffer)
 
-	rootCmd.SetArgs(args)
+	//rootCmd.SetArgs(args)
 
 	err := rootCmd.Execute()
 	assert.NoError(t, err, "Command should execute without error")

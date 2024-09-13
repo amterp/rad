@@ -81,13 +81,21 @@ type stdPrinter struct {
 
 func (p *stdPrinter) ScriptDebug(msg string) {
 	if p.isScriptDebug {
-		fmt.Fprintf(p.stdErr, "DEBUG: %s", msg)
+		if p.isShellMode {
+			fmt.Fprintf(p.stdErr, "DEBUG: %s", msg)
+		} else {
+			fmt.Fprintf(p.stdOut, "DEBUG: %s", msg)
+		}
 	}
 }
 
 func (p *stdPrinter) RadDebug(msg string) {
 	if p.isRadDebug {
-		fmt.Fprintf(p.stdErr, "RAD DEBUG: %s", msg)
+		if p.isShellMode {
+			fmt.Fprintf(p.stdErr, "RAD DEBUG: %s", msg)
+		} else {
+			fmt.Fprintf(p.stdOut, "RAD DEBUG: %s", msg)
+		}
 	}
 }
 

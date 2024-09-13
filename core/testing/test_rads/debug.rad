@@ -1,0 +1,3 @@
+print("one")
+debug("two")
+debug("three")

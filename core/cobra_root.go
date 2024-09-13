@@ -20,14 +20,9 @@ var (
 	printer         Printer
 )
 
-var rootCmd = NewRootCmd(RadIo{
-	StdIn:  os.Stdin,
-	StdOut: os.Stdout,
-	StdErr: os.Stderr,
-})
-
 func NewRootCmd(_radIo RadIo) *cobra.Command {
 	radIo = _radIo
+	rootModified = false
 	return &cobra.Command{
 		Use:     "",
 		Short:   "Request And Display (RAD)",
@@ -177,36 +172,36 @@ func readSource(scriptPath string) string {
 	return string(source)
 }
 
-func init() {
+func InitCmd(cmd *cobra.Command) {
 	// this is a bit hacky, but bear with me!
 	// we intercept the very first call to help, it implies that the user has set the help flag
 	// however, we won't yet have read the RSL script if it was also provided, so we may first
 	// try to read that, register the args, etc, that's relevant to help, and then re-run the help
 	// command, so that it can print help for the script
-	rootCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+	cmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
 		// immediately reset the help func, as we only want this hacked
 		// version to run once
-		rootCmd.SetHelpFunc(nil)
+		cmd.SetHelpFunc(nil)
 
 		// try to detect if help has been called on either a script or with --STDIN flag
 		if len(args) >= 2 {
 			if lo.Some(args[1:], []string{"-h", "--help"}) && stdinScriptName == "" {
-				// it has, and with a rsl file source, so let's modify the rootCmd and re-run the root again
+				// it has, and with a rsl file source, so let's modify the cmd and re-run the root again
 				scriptPath := args[0]
 				rslSourceCode := readSource(scriptPath)
-				extractMetadataAndModifyCmd(rootCmd, filepath.Base(scriptPath), rslSourceCode)
+				extractMetadataAndModifyCmd(cmd, filepath.Base(scriptPath), rslSourceCode)
 			} else if stdinScriptName != "" {
-				// it has, and with reading rsl from stdin, so let's modify the rootCmd and re-run the root again
+				// it has, and with reading rsl from stdin, so let's modify the cmd and re-run the root again
 				source, err := io.ReadAll(radIo.StdIn)
 				if err == nil {
-					extractMetadataAndModifyCmd(rootCmd, filepath.Base(stdinScriptName), string(source))
+					extractMetadataAndModifyCmd(cmd, filepath.Base(stdinScriptName), string(source))
 				} else {
 					printer.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
 				}
 			}
 		}
 
-		rootCmd.Help()
+		cmd.Help()
 
 		if shellFlag && stdinScriptName != "" {
 			// if both these flags are set, we're likely being invoked from within a bash script, so let's
@@ -218,15 +213,21 @@ func init() {
 	// global flags
 	// todo think more about bash vs. shell
 	// todo these flags should be hidden (probably) when --help called on script
-	rootCmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
-	rootCmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
-	rootCmd.PersistentFlags().BoolVar(&quietFlag, "QUIET", false, "Suppresses some output.")
-	rootCmd.PersistentFlags().BoolVar(&debugFlag, "DEBUG", false, "Enables debug output. Intended for RSL script developers.")
-	rootCmd.PersistentFlags().BoolVar(&radDebugFlag, "RAD-DEBUG", false, "Enables Rad debug output. Intended for Rad developers.")
-	rootCmd.SetOut(os.Stderr)
+	cmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
+	cmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
+	cmd.PersistentFlags().BoolVar(&quietFlag, "QUIET", false, "Suppresses some output.")
+	cmd.PersistentFlags().BoolVar(&debugFlag, "DEBUG", false, "Enables debug output. Intended for RSL script developers.")
+	cmd.PersistentFlags().BoolVar(&radDebugFlag, "RAD-DEBUG", false, "Enables Rad debug output. Intended for Rad developers.")
+	cmd.SetOut(radIo.StdOut)
 }
 
 func Execute() {
+	rootCmd := NewRootCmd(RadIo{
+		StdIn:  os.Stdin,
+		StdOut: os.Stdout,
+		StdErr: os.Stderr,
+	})
+	InitCmd(rootCmd)
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
