@@ -59,6 +59,7 @@ do
         echo -e "\033[1;31mFailed\033[0m"
         any_failed=true
     fi
+    sleep 0.2
 done
 
 if [ "$any_failed" = true ]; then

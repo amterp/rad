@@ -1,7 +1,6 @@
 package core
 
 type MainInterpreter struct {
-	printer    Printer
 	env        *Env
 	LiteralI   *LiteralInterpreter
 	argBlockI  *ArgBlockInterpreter
@@ -13,9 +12,8 @@ type MainInterpreter struct {
 	continuing bool
 }
 
-func NewInterpreter(printer Printer, statements []Stmt) *MainInterpreter {
+func NewInterpreter(statements []Stmt) *MainInterpreter {
 	i := &MainInterpreter{
-		printer:    printer,
 		statements: statements,
 	}
 	i.LiteralI = NewLiteralInterpreter(i)
@@ -230,7 +228,7 @@ func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
 }
 
 func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
-	i.printer.RadErrorExit("Bug! IfCase should not be visited directly\n")
+	RP.RadErrorExit("Bug! IfCase should not be visited directly\n")
 }
 
 func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
@@ -317,7 +315,7 @@ func (i *MainInterpreter) VisitContinueStmtStmt(stmt ContinueStmt) {
 }
 
 func (i *MainInterpreter) error(token Token, message string) {
-	i.printer.TokenErrorExit(token, message+"\n")
+	RP.TokenErrorExit(token, message+"\n")
 }
 
 func (i *MainInterpreter) runWithChildEnv(runnable func()) {

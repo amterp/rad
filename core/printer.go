@@ -55,11 +55,11 @@ type Printer interface {
 //
 // isScriptDebug will enable script debug messages
 // isRadDebug will enable rad debug messages, and include stack traces for errors
-func NewPrinter(radIo RadIo, cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
+func NewPrinter(cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
 	return &stdPrinter{
-		stdIn:         radIo.StdIn,
-		stdOut:        radIo.StdOut,
-		stdErr:        radIo.StdErr,
+		stdIn:         RIo.StdIn,
+		stdOut:        RIo.StdOut,
+		stdErr:        RIo.StdErr,
 		cmd:           cmd,
 		isShellMode:   isShellMode,
 		isQuiet:       isQuiet,

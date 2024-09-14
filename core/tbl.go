@@ -19,7 +19,6 @@ var (
 )
 
 type TblWriter struct {
-	printer    Printer
 	writer     io.Writer
 	tbl        *tablewriter.Table
 	headers    []string
@@ -27,10 +26,9 @@ type TblWriter struct {
 	numColumns int
 }
 
-func NewTblWriter(printer Printer) *TblWriter {
-	stdWriter := printer.GetStdWriter()
+func NewTblWriter() *TblWriter {
+	stdWriter := RP.GetStdWriter()
 	return &TblWriter{
-		printer:    printer,
 		writer:     stdWriter,
 		tbl:        tablewriter.NewWriter(stdWriter),
 		numColumns: 0,
@@ -52,7 +50,7 @@ func (w *TblWriter) Append(row []string) {
 func (w *TblWriter) Render() {
 	termWidth, _, err := term.GetSize(int(os.Stdout.Fd())) // todo how does this work when embedded in bash?
 	if err != nil {
-		w.printer.RadErrorExit(fmt.Sprintf("Error getting terminal width: %v\n", err))
+		RP.RadErrorExit(fmt.Sprintf("Error getting terminal width: %v\n", err))
 	}
 
 	// resolve how many chars each column needs to fully display its contents
@@ -81,7 +79,7 @@ func (w *TblWriter) Render() {
 	// doesn't get counted by term.GetSize
 	widthNeeded += 3
 
-	w.printer.RadDebug(fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths))
+	RP.RadDebug(fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths))
 	if widthNeeded > termWidth {
 		// we're over our size limit, as determined by the width of the terminal.
 		// 1. determined the total amount of chars we need to cut down
@@ -104,7 +102,7 @@ func (w *TblWriter) Render() {
 		for i, chars := range charsToRemove {
 			colWidths[i] -= chars
 		}
-		w.printer.RadDebug(fmt.Sprintf(
+		RP.RadDebug(fmt.Sprintf(
 			"CharsToReduce: %d, EachColEntitldChars: %d, CharsOverEntitl: %v, TotCharsOverEntitl: %d, PropOfOver: %v, CharsToRm: %v, ColWidthsAfter: %v\n",
 			charsToReduce, eachColumnEntitledChars, charsOverEntitlement, totalCharsOverEntitlement, proportionOfOver, charsToRemove, colWidths))
 	}

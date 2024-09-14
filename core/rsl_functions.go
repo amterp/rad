@@ -53,22 +53,22 @@ func RunRslFunction(i *MainInterpreter, function Token, values []interface{}) {
 	functionName := function.GetLexeme()
 	switch functionName {
 	case "print": // todo would be nice to make this a reference to a var that GoLand can find
-		runPrint(i, values)
+		runPrint(values)
 	case "debug":
-		runDebug(i, values)
+		runDebug(values)
 	default:
 		RunRslNonVoidFunction(i, function, values)
 	}
 }
 
-func runPrint(i *MainInterpreter, values []interface{}) {
+func runPrint(values []interface{}) {
 	output := resolveOutputString(values)
-	i.printer.Print(output)
+	RP.Print(output)
 }
 
-func runDebug(i *MainInterpreter, values []interface{}) {
+func runDebug(values []interface{}) {
 	output := resolveOutputString(values)
-	i.printer.ScriptDebug(output)
+	RP.ScriptDebug(output)
 }
 
 func resolveOutputString(values []interface{}) string {

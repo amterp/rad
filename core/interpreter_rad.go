@@ -47,7 +47,7 @@ type radInvocation struct {
 }
 
 func (r *radInvocation) execute() {
-	r.ri.i.printer.Print(fmt.Sprintf("Querying url: %s\n", r.url))
+	RP.Print(fmt.Sprintf("Querying url: %s\n", r.url))
 	// todo encode url correctly, below doesn't work
 	//  url = "http://url/?names=%{name}%" << the % needs to get encoded, for example
 	resp, err := http.Get(r.url)
@@ -74,14 +74,14 @@ func (r *radInvocation) execute() {
 	jsonFields := lo.Map(r.fields.Identifiers, func(field Token, _ int) JsonFieldVar {
 		return r.ri.i.env.GetJsonField(field)
 	})
-	trie := CreateTrie(r.ri.i.printer, r.block.RadKeyword, jsonFields)
+	trie := CreateTrie(r.block.RadKeyword, jsonFields)
 	trie.TraverseTrie(data)
 
 	columns := lo.Map(jsonFields, func(field JsonFieldVar, _ int) []string {
 		return r.ri.i.env.GetByToken(field.Name).GetStringArray()
 	})
 
-	tbl := NewTblWriter(r.ri.i.printer)
+	tbl := NewTblWriter()
 
 	headers := lo.Map(jsonFields, func(field JsonFieldVar, _ int) string {
 		return field.Name.GetLexeme()
