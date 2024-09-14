@@ -48,9 +48,10 @@ func (w *TblWriter) Append(row []string) {
 }
 
 func (w *TblWriter) Render() {
-	termWidth, _, err := term.GetSize(int(os.Stdout.Fd())) // todo how does this work when embedded in bash?
+	termWidth, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
-		RP.RadErrorExit(fmt.Sprintf("Error getting terminal width: %v\n", err))
+		RP.RadDebug(fmt.Sprintf("Error getting terminal width, setting to 9999: %v\n", err))
+		termWidth = 9999
 	}
 
 	// resolve how many chars each column needs to fully display its contents
