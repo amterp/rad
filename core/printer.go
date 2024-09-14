@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
-	"os"
 	"strings"
 )
 
@@ -179,7 +178,7 @@ func (p *stdPrinter) exit() {
 	if p.isRadDebug {
 		panic("Stacktrace because --RAD-DEBUG is enabled")
 	} else {
-		os.Exit(1)
+		RExit(1)
 	}
 }
 

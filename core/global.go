@@ -1,6 +1,7 @@
 package core
 
 var (
-	RP  Printer
-	RIo RadIo
+	RP    Printer
+	RIo   RadIo
+	RExit func(int)
 )

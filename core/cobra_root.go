@@ -18,9 +18,28 @@ var (
 	stdinScriptName string
 )
 
-func NewRootCmd(_radIo RadIo) *cobra.Command {
-	RIo = _radIo
+type CmdInput struct {
+	RIo   *RadIo
+	RExit *func(int)
+}
+
+func NewRootCmd(cmdInput CmdInput) *cobra.Command {
+	if cmdInput.RIo == nil {
+		RIo = RadIo{
+			StdIn:  os.Stdin,
+			StdOut: os.Stdout,
+			StdErr: os.Stderr,
+		}
+	} else {
+		RIo = *cmdInput.RIo
+	}
+	if cmdInput.RExit == nil {
+		RExit = os.Exit
+	} else {
+		RExit = *cmdInput.RExit
+	}
 	rootModified = false
+
 	return &cobra.Command{
 		Use:     "",
 		Short:   "Request And Display (RAD)",
@@ -165,7 +184,7 @@ func readSource(scriptPath string) string {
 	source, err := os.ReadFile(scriptPath)
 	if err != nil {
 		RP.RadErrorExit(fmt.Sprintf("Could not read script '%s': %v\n", scriptPath, err))
-		os.Exit(1)
+		RExit(1)
 	}
 	return string(source)
 }
@@ -220,14 +239,10 @@ func InitCmd(cmd *cobra.Command) {
 }
 
 func Execute() {
-	rootCmd := NewRootCmd(RadIo{
-		StdIn:  os.Stdin,
-		StdOut: os.Stdout,
-		StdErr: os.Stderr,
-	})
+	rootCmd := NewRootCmd(CmdInput{})
 	InitCmd(rootCmd)
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		RExit(1)
 	}
 }
