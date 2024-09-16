@@ -6,6 +6,7 @@ import (
 	"github.com/samber/lo"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 type RadBlockInterpreter struct {
@@ -47,10 +48,9 @@ type radInvocation struct {
 }
 
 func (r *radInvocation) execute() {
-	RP.Print(fmt.Sprintf("Querying url: %s\n", r.url))
-	// todo encode url correctly, below doesn't work
-	//  url = "http://url/?names=%{name}%" << the % needs to get encoded, for example
-	resp, err := http.Get(r.url)
+	urlToQuery := r.encodeUrl(r.url)
+	RP.Print(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+	resp, err := http.Get(urlToQuery)
 	if err != nil {
 		r.error(fmt.Sprintf("Error on HTTP request: %v", err))
 	}
@@ -97,6 +97,15 @@ func (r *radInvocation) execute() {
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
+}
+
+// todo test this more, might need additional query param encoding
+func (r *radInvocation) encodeUrl(rawUrl string) string {
+	parsedUrl, err := url.Parse(rawUrl)
+	if err != nil {
+		r.error(fmt.Sprintf("Error parsing URL: %v", err))
+	}
+	return parsedUrl.String()
 }
 
 func (r *radInvocation) error(msg string) {

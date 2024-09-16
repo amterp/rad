@@ -102,19 +102,19 @@ func (p *stdPrinter) Print(msg string) {
 	if p.isQuiet {
 		return
 	} else if p.isShellMode {
-		fmt.Fprintf(p.stdErr, msg)
+		fmt.Fprint(p.stdErr, msg)
 	} else {
-		fmt.Fprintf(p.stdOut, msg)
+		fmt.Fprint(p.stdOut, msg)
 	}
 }
 
 func (p *stdPrinter) PrintForShellEval(msg string) {
-	fmt.Fprintf(p.stdOut, "%s", msg)
+	fmt.Fprint(p.stdOut, msg)
 }
 
 func (p *stdPrinter) LexerErrorExit(msg string) {
 	if !p.isQuiet || p.isScriptDebug {
-		fmt.Fprintf(p.stdErr, msg)
+		fmt.Fprint(p.stdErr, msg)
 	}
 	p.printShellExitIfEnabled()
 }
@@ -122,7 +122,7 @@ func (p *stdPrinter) LexerErrorExit(msg string) {
 func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
 	if !p.isQuiet || p.isScriptDebug {
 		if token == nil {
-			fmt.Fprintf(p.stdErr, msg)
+			fmt.Fprint(p.stdErr, msg)
 		} else {
 			lexeme := token.GetLexeme()
 			lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
@@ -135,14 +135,14 @@ func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
 }
 
 func (p *stdPrinter) RadErrorExit(msg string) {
-	fmt.Fprintf(p.stdErr, msg)
+	fmt.Fprint(p.stdErr, msg)
 	p.printShellExitIfEnabled()
 	p.exit()
 }
 
 func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 	if token == nil {
-		fmt.Fprintf(p.stdErr, msg)
+		fmt.Fprint(p.stdErr, msg)
 	} else {
 		lexeme := token.GetLexeme()
 		lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
@@ -152,7 +152,7 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
-	fmt.Fprintf(p.stdErr, msg)
+	fmt.Fprint(p.stdErr, msg)
 	p.cmd.Usage()
 	p.printShellExitIfEnabled()
 	p.exit()

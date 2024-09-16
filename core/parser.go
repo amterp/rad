@@ -269,7 +269,7 @@ func (p *Parser) radBlock() *RadBlock {
 	}
 	p.consumeNewlines()
 	var radStatements []RadStmt
-	for !p.matchAny(DEDENT) {
+	for !p.matchAny(DEDENT, EOF) {
 		radStatements = append(radStatements, p.radStatement())
 		p.consumeNewlines()
 	}
@@ -308,7 +308,7 @@ func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 func (p *Parser) radFieldsStatement() RadStmt {
 	var identifiers []Token
 	identifiers = append(identifiers, p.identifier())
-	for !p.matchAny(NEWLINE) {
+	for !p.matchAny(NEWLINE, DEDENT, EOF) {
 		p.consume(COMMA, "Expected ',' between identifiers")
 		identifiers = append(identifiers, p.identifier())
 	}
