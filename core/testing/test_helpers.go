@@ -40,7 +40,13 @@ func newTestCmdInput() core.CmdInput {
 	}
 }
 
-func setupAndRun(t *testing.T, args ...string) {
+func setupAndRunCode(t *testing.T, rsl string) {
+	t.Helper()
+	stdInBuffer.WriteString(rsl)
+	setupAndRunArgs(t, "--STDIN", "test")
+}
+
+func setupAndRunArgs(t *testing.T, args ...string) {
 	t.Helper()
 	rootCmd := setupCmd(t, args...)
 	defer func() {
@@ -55,10 +61,6 @@ func setupAndRun(t *testing.T, args ...string) {
 
 func setupCmd(t *testing.T, args ...string) *cobra.Command {
 	t.Helper()
-	stdInBuffer.Reset()
-	stdOutBuffer.Reset()
-	stdErrBuffer.Reset()
-	errorOrExit = ErrorOrExit{}
 
 	os.Args = append([]string{os.Args[0]}, args...)
 
@@ -68,6 +70,13 @@ func setupCmd(t *testing.T, args ...string) *cobra.Command {
 	rootCmd.SetOut(stdOutBuffer)
 	rootCmd.SetErr(stdErrBuffer)
 	return rootCmd
+}
+
+func resetTestState() {
+	stdInBuffer.Reset()
+	stdOutBuffer.Reset()
+	stdErrBuffer.Reset()
+	errorOrExit = ErrorOrExit{}
 }
 
 func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {

@@ -33,6 +33,10 @@ const (
 	NOT_EQUAL     TokenType = "NOT_EQUAL"
 	LESS_EQUAL    TokenType = "LESS_EQUAL"
 	GREATER_EQUAL TokenType = "GREATER_EQUAL"
+	PLUS_EQUAL    TokenType = "PLUS_EQUAL"
+	MINUS_EQUAL   TokenType = "MINUS_EQUAL"
+	STAR_EQUAL    TokenType = "STAR_EQUAL"
+	SLASH_EQUAL   TokenType = "SLASH_EQUAL"
 
 	// N-character tokens
 	INDENT TokenType = "INDENT"

@@ -381,6 +381,11 @@ func (p *Parser) assignment() Stmt {
 	var identifiers []Token
 	var rslTypes []*RslType
 	identifiers = append(identifiers, p.identifier())
+
+	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL) {
+		return p.compoundAssignment(identifiers[0], p.previous())
+	}
+
 	for !p.matchAny(EQUAL) {
 		if p.peekType(IDENTIFIER) {
 			// try to interpret as a type
@@ -422,6 +427,23 @@ func (p *Parser) assignment() Stmt {
 		return p.jsonPathAssignment(identifier)
 	} else {
 		return p.primaryAssignment(identifier, rslTypes[0])
+	}
+}
+
+func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
+	expr := p.expr()
+	switch operator.GetType() {
+	case PLUS_EQUAL:
+		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
+	case MINUS_EQUAL:
+		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
+	case STAR_EQUAL:
+		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
+	case SLASH_EQUAL:
+		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
+	default:
+		p.error("Invalid compound assignment operator")
+		panic(UNREACHABLE)
 	}
 }
 

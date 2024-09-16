@@ -14,6 +14,7 @@ type StmtVisitor interface {
 	VisitExprStmtStmt(ExprStmt)
 	VisitFunctionStmtStmt(FunctionStmt)
 	VisitPrimaryAssignStmt(PrimaryAssign)
+	VisitCompoundAssignStmt(CompoundAssign)
 	VisitFileHeaderStmt(FileHeader)
 	VisitArgBlockStmt(ArgBlock)
 	VisitRadBlockStmt(RadBlock)
@@ -78,6 +79,23 @@ func (e PrimaryAssign) String() string {
 	parts = append(parts, fmt.Sprintf("VarType: %v", e.VarType))
 	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
+}
+
+type CompoundAssign struct {
+	Name     Token
+	Operator Token
+	Value    Expr
+}
+
+func (e CompoundAssign) Accept(visitor StmtVisitor) {
+	visitor.VisitCompoundAssignStmt(e)
+}
+func (e CompoundAssign) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
+	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
+	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
+	return fmt.Sprintf("CompoundAssign(%s)", strings.Join(parts, ", "))
 }
 
 type FileHeader struct {

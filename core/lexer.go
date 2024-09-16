@@ -122,7 +122,11 @@ func (l *Lexer) scanToken() {
 	case '|':
 		l.addToken(PIPE)
 	case '+':
-		l.addToken(PLUS)
+		if l.match('=') {
+			l.addToken(PLUS_EQUAL)
+		} else {
+			l.addToken(PLUS)
+		}
 	case '-':
 		if l.matchString("--") {
 			if !l.match('\n') {
@@ -130,6 +134,8 @@ func (l *Lexer) scanToken() {
 			} else {
 				l.lexFileHeader()
 			}
+		} else if l.match('=') {
+			l.addToken(MINUS_EQUAL)
 		} else {
 			l.addToken(MINUS)
 		}
@@ -156,11 +162,17 @@ func (l *Lexer) scanToken() {
 			for l.peek() != '\n' && !l.isAtEnd() {
 				l.advance()
 			}
+		} else if l.match('=') {
+			l.addToken(SLASH_EQUAL)
 		} else {
 			l.addToken(SLASH)
 		}
 	case '*':
-		l.addToken(STAR)
+		if l.match('=') {
+			l.addToken(STAR_EQUAL)
+		} else {
+			l.addToken(STAR)
+		}
 	case ' ', '\t':
 		// ignore whitespace if not at start of line
 	default:
