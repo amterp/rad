@@ -1,12 +1,8 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/samber/lo"
-	"io"
-	"net/http"
-	"net/url"
 )
 
 type RadBlockInterpreter struct {
@@ -48,27 +44,9 @@ type radInvocation struct {
 }
 
 func (r *radInvocation) execute() {
-	urlToQuery := r.encodeUrl(r.url)
-	RP.Print(fmt.Sprintf("Querying url: %s\n", urlToQuery))
-	resp, err := http.Get(urlToQuery)
+	data, err := RReq.RequestJson(r.url)
 	if err != nil {
-		r.error(fmt.Sprintf("Error on HTTP request: %v", err))
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		r.error(fmt.Sprintf("Error reading HTTP body: %v. Body: %v", err, body))
-	}
-
-	isValidJson := json.Valid(body)
-	if !isValidJson {
-		r.error(fmt.Sprintf("Received invalid JSON in response (truncated max 50 chars): [%s]", body[:50]))
-	}
-
-	var data interface{}
-	if err := json.Unmarshal(body, &data); err != nil {
-		r.error(fmt.Sprintf("Error unmarshalling JSON: %v", err))
+		r.error(fmt.Sprintf("Error requesting JSON: %v", err))
 	}
 
 	jsonFields := lo.Map(r.fields.Identifiers, func(field Token, _ int) JsonFieldVar {
@@ -97,15 +75,6 @@ func (r *radInvocation) execute() {
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
-}
-
-// todo test this more, might need additional query param encoding
-func (r *radInvocation) encodeUrl(rawUrl string) string {
-	parsedUrl, err := url.Parse(rawUrl)
-	if err != nil {
-		r.error(fmt.Sprintf("Error parsing URL: %v", err))
-	}
-	return parsedUrl.String()
 }
 
 func (r *radInvocation) error(msg string) {

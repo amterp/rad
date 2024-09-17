@@ -21,6 +21,7 @@ var (
 type CmdInput struct {
 	RIo   *RadIo
 	RExit *func(int)
+	RReq  *Requester
 }
 
 func NewRootCmd(cmdInput CmdInput) *cobra.Command {
@@ -37,6 +38,11 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		RExit = os.Exit
 	} else {
 		RExit = *cmdInput.RExit
+	}
+	if cmdInput.RReq == nil {
+		RReq = &RealRequester{}
+	} else {
+		RReq = *cmdInput.RReq
 	}
 	rootModified = false
 
