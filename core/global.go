@@ -4,5 +4,5 @@ var (
 	RP    Printer
 	RIo   RadIo
 	RExit func(int)
-	RReq  Requester
+	RReq  *Requester
 )

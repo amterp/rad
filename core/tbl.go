@@ -116,7 +116,7 @@ func (w *TblWriter) Render() {
 		for _, row := range rows {
 			lines := strings.Split(row[i], "\n")
 			for j, line := range lines {
-				if len(line) > colWidth {
+				if len(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
 					if isUtf8 {
 						lines[j] = line[:colWidth-1]

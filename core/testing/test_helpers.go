@@ -40,10 +40,11 @@ func newTestCmdInput() core.CmdInput {
 	}
 }
 
-func setupAndRunCode(t *testing.T, rsl string) {
+func setupAndRunCode(t *testing.T, rsl string, args ...string) {
 	t.Helper()
 	stdInBuffer.WriteString(rsl)
-	setupAndRunArgs(t, "--STDIN", "test")
+	args = append([]string{"--STDIN", "test"}, args...)
+	setupAndRunArgs(t, args...)
 }
 
 func setupAndRunArgs(t *testing.T, args ...string) {

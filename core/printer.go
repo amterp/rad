@@ -24,9 +24,9 @@ type Printer interface {
 	// For output that will be evaluated by the shell, used by --SHELL.
 	PrintForShellEval(msg string)
 
-	// For the lexer to print errors.
+	// For errors related to running the RSL script, with no token available for context.
 	// Exits.
-	LexerErrorExit(msg string)
+	ErrorExit(msg string)
 
 	// For the parser and interpreter to print errors, with a token.
 	// Exits.
@@ -112,7 +112,7 @@ func (p *stdPrinter) PrintForShellEval(msg string) {
 	fmt.Fprint(p.stdOut, msg)
 }
 
-func (p *stdPrinter) LexerErrorExit(msg string) {
+func (p *stdPrinter) ErrorExit(msg string) {
 	if !p.isQuiet || p.isScriptDebug {
 		fmt.Fprint(p.stdErr, msg)
 	}

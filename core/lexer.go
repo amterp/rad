@@ -539,5 +539,5 @@ func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	lineStart := l.lineCharIndex - (l.next - l.start - 1)
-	l.printer.LexerErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
+	l.printer.ErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
 }

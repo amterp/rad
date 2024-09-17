@@ -6,16 +6,30 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"regexp"
 )
 
-type Requester interface {
-	RequestJson(url string) (interface{}, error)
+type Requester struct {
+	jsonPathsByMockedUrlRegex map[string]string
 }
 
-type RealRequester struct {
+func NewRequester() *Requester {
+	return &Requester{
+		jsonPathsByMockedUrlRegex: make(map[string]string),
+	}
 }
 
-func (r RealRequester) RequestJson(url string) (interface{}, error) {
+func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
+	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
+}
+
+func (r *Requester) RequestJson(url string) (interface{}, error) {
+	mockJson, ok := r.resolveMockedJson(url)
+	if ok {
+		return mockJson, nil
+	}
+
 	urlToQuery, err := encodeUrl(url)
 	if err != nil {
 		return nil, err
@@ -53,4 +67,38 @@ func encodeUrl(rawUrl string) (string, error) {
 		return "", fmt.Errorf("error parsing URL %v: %w", rawUrl, err)
 	}
 	return parsedUrl.String(), nil
+}
+
+func (r *Requester) resolveMockedJson(url string) (interface{}, bool) {
+	for urlRegex, jsonPath := range r.jsonPathsByMockedUrlRegex {
+		re, err := regexp.Compile(urlRegex)
+		if err != nil {
+			RP.ErrorExit(fmt.Sprintf("Failed to compile mock response regex %q: %v\n", urlRegex, err))
+		}
+
+		if re.MatchString(url) {
+			RP.Print(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
+			data := r.loadMockedResponse(jsonPath)
+			return data, true
+		} else {
+			RP.RadDebug(fmt.Sprintf("No match for url %q against regex %q\n", url, urlRegex))
+		}
+	}
+	return nil, false
+}
+
+func (r *Requester) loadMockedResponse(path string) interface{} {
+	file, err := os.Open(path)
+	if err != nil {
+		RP.ErrorExit(fmt.Sprintf("Error opening file %s: %v\n", path, err))
+	}
+	defer file.Close()
+
+	var data interface{}
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&data); err != nil {
+		RP.ErrorExit(fmt.Sprintf("Error decoding JSON from file %s: %v\n", path, err))
+	}
+
+	return data
 }

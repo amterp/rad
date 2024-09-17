@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"io"
 	"os"
 	"path/filepath"
@@ -16,6 +17,7 @@ var (
 	debugFlag       bool
 	radDebugFlag    bool
 	stdinScriptName string
+	mockResponses   MockResponseSlice
 )
 
 type CmdInput struct {
@@ -40,9 +42,9 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		RExit = *cmdInput.RExit
 	}
 	if cmdInput.RReq == nil {
-		RReq = &RealRequester{}
+		RReq = NewRequester()
 	} else {
-		RReq = *cmdInput.RReq
+		RReq = cmdInput.RReq
 	}
 	rootModified = false
 
@@ -54,8 +56,22 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		FParseErrWhitelist: cobra.FParseErrWhitelist{
 			UnknownFlags: true,
 		},
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			if !rootModified {
+				RP = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+				RP.RadDebug(fmt.Sprintf("Args passed: %v\n", args))
+				if radDebugFlag {
+					cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+						RP.RadDebug(fmt.Sprintf("Flag %s: %v\n", flag.Name, flag.Value))
+					})
+				}
+			}
+		},
 		Run: func(cmd *cobra.Command, args []string) {
-			RP = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+			for _, mockResponse := range mockResponses {
+				RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
+				RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q\n", mockResponse.Pattern, mockResponse.FilePath))
+			}
 
 			var scriptName string
 			var rslSourceCode string
@@ -184,6 +200,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 	cmd.PersistentFlags().MarkHidden("QUIET")
 	cmd.PersistentFlags().MarkHidden("DEBUG")
 	cmd.PersistentFlags().MarkHidden("RAD-DEBUG")
+	cmd.PersistentFlags().MarkHidden("MOCK-RESPONSE")
 }
 
 func readSource(scriptPath string) string {
@@ -235,12 +252,13 @@ func InitCmd(cmd *cobra.Command) {
 
 	// global flags
 	// todo think more about bash vs. shell
-	// todo these flags should be hidden (probably) when --help called on script
 	cmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
 	cmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
 	cmd.PersistentFlags().BoolVar(&quietFlag, "QUIET", false, "Suppresses some output.")
 	cmd.PersistentFlags().BoolVar(&debugFlag, "DEBUG", false, "Enables debug output. Intended for RSL script developers.")
 	cmd.PersistentFlags().BoolVar(&radDebugFlag, "RAD-DEBUG", false, "Enables Rad debug output. Intended for Rad developers.")
+	// todo help prints as `--MOCK-RESPONSE mockResponse` which is not ideal
+	cmd.PersistentFlags().Var(&mockResponses, "MOCK-RESPONSE", "Add mock response for json requests (pattern:filePath)")
 	cmd.SetOut(RIo.StdErr)
 }
 
