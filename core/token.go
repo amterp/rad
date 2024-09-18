@@ -70,6 +70,7 @@ type ArgCommentToken struct {
 type JsonPathElementToken struct {
 	BaseToken
 	Literal string
+	// Whether the path element token is tied to an array
 	IsArray bool
 }
 
@@ -78,7 +79,8 @@ func NewToken(
 	lexeme string,
 	charStart int,
 	line int,
-	charLineStart int) Token {
+	charLineStart int,
+) Token {
 	return &BaseToken{
 		Type:          tokenType,
 		Lexeme:        lexeme,
@@ -94,7 +96,8 @@ func NewStringLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal string) Token {
+	literal string,
+) Token {
 	return &StringLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -113,8 +116,8 @@ func NewIntLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal int) Token {
-
+	literal int,
+) Token {
 	return &IntLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -133,8 +136,8 @@ func NewFloatLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal float64) Token {
-
+	literal float64,
+) Token {
 	return &FloatLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -153,8 +156,8 @@ func NewBoolLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal bool) Token {
-
+	literal bool,
+) Token {
 	return &BoolLiteralToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -174,8 +177,8 @@ func NewFileHeaderToken(
 	line int,
 	charLineStart int,
 	oneLiner string,
-	rest *string) Token {
-
+	rest *string,
+) Token {
 	return &FilerHeaderToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -195,8 +198,8 @@ func NewArgCommentToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	comment *string) Token {
-
+	comment *string,
+) Token {
 	return &ArgCommentToken{
 		BaseToken: BaseToken{
 			Type:          tokenType,
@@ -210,17 +213,16 @@ func NewArgCommentToken(
 }
 
 func NewJsonPathElementToken(
-	tokenType TokenType,
 	lexeme string,
 	charStart int,
 	line int,
 	charLineStart int,
 	jsonPathElement string,
-	isArray bool) Token {
-
+	isArray bool,
+) Token {
 	return &JsonPathElementToken{
 		BaseToken: BaseToken{
-			Type:          tokenType,
+			Type:          JSON_PATH_ELEMENT,
 			Lexeme:        lexeme,
 			CharStart:     charStart,
 			Line:          line,

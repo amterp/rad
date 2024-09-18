@@ -1,0 +1,28 @@
+{
+  "York": {
+    "England": [
+      {
+        "name": "Alice",
+        "age": 30
+      },
+      {
+        "name": "Bob",
+        "age": 40
+      }
+    ],
+    "Australia": [
+      {
+        "name": "Charlotte",
+        "age": 35
+      },
+      {
+        "name": "David",
+        "age": 25
+      },
+      {
+        "name": "Eve",
+        "age": 20
+      }
+    ]
+  }
+}

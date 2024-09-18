@@ -531,7 +531,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 
 func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
 	lexeme := l.source[l.start:l.next]
-	token := NewJsonPathElementToken(JSON_PATH_ELEMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, jsonPathElement, isArray)
+	token := NewJsonPathElementToken(lexeme, l.start, l.lineIndex, l.lineCharIndex, jsonPathElement, isArray)
 	l.Tokens = append(l.Tokens, token)
 }
 

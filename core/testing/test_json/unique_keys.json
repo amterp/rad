@@ -1,0 +1,13 @@
+{
+  "len": 2,
+  "results": {
+    "Alice": {
+      "age": 30,
+      "hometown": "New York"
+    },
+    "Bob": {
+      "age": 40,
+      "hometown": "Los Angeles"
+    }
+  }
+}

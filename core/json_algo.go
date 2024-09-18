@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/samber/lo"
 )
 
 func CreateTrie(radToken Token, jsonFields []JsonFieldVar) *Trie {
@@ -17,6 +16,7 @@ type Node struct {
 	radToken Token
 	key      string
 	isArray  bool
+	// json variables which terminate at this node, and therefore need to capture the data at this level
 	fields   []JsonFieldVar
 	children map[string]*Node
 }
@@ -48,27 +48,15 @@ func (t *Trie) Insert(field JsonFieldVar) {
 	if currentNode == nil {
 		currentNode = NewNode(t.radToken, elements[0].token.Literal, elements[0].token.IsArray)
 		t.root = currentNode
-	} else {
-		fieldRootMatchesTrieRoot := currentNode.key == elements[0].token.Literal &&
-			currentNode.isArray == elements[0].token.IsArray
-		if !fieldRootMatchesTrieRoot {
-			root := fmt.Sprintf("%s%s", currentNode.key, lo.Ternary(currentNode.isArray, "[]", ""))
-			input := fmt.Sprintf("%s%s", elements[0].token.Literal, lo.Ternary(elements[0].token.IsArray, "[]", ""))
-			RP.TokenErrorExit(t.radToken, fmt.Sprintf("Field root '%s' does not match trie root '%s'\n", root, input))
-		}
 	}
 
 	for _, element := range elements[1:] {
 		key := element.token.Literal
 		isArray := element.token.IsArray
 
-		node, ok := currentNode.children[key]
+		_, ok := currentNode.children[key]
 		if !ok {
 			currentNode.AddChild(NewNode(t.radToken, key, isArray))
-		} else {
-			if node.isArray != isArray {
-				RP.TokenErrorExit(t.radToken, fmt.Sprintf("Field '%s' isArray value does not match existing trie isArray value\n", key))
-			}
 		}
 
 		currentNode = currentNode.children[key]
@@ -80,12 +68,13 @@ func (t *Trie) Insert(field JsonFieldVar) {
 // ---
 
 func (t *Trie) TraverseTrie(data interface{}) {
-	traverse(data, t.root)
+	t.traverse(data, t.root, nil)
 }
 
-func traverse(data interface{}, node *Node) {
-	for _, field := range node.fields {
-		field.AddMatch(fmt.Sprintf("%v", data)) // todo is this the best way?
+func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interface{}) captureStats {
+	capStats := captureStats{
+		captures: 0,
+		wasLeaf:  false,
 	}
 
 	if node.isArray {
@@ -95,33 +84,37 @@ func traverse(data interface{}, node *Node) {
 			//RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected array for array node '%v': %v\n", node, data))
 		} else {
 			for _, dataChild := range dataArray {
-				traverse(dataChild, node)
+				capStats = capStats.add(t.traverse(dataChild, node, nil))
 			}
-			return
+			t.capture(data, node, keyToCaptureInstead, capStats.captures)
+			return capStats
 		}
 	}
 
 	switch data.(type) {
-	case string:
-	case int:
-	case float32:
-	case float64:
-	case bool:
-	case nil:
+	case string, int, float32, float64, bool, nil:
+		// leaf
 		if len(node.children) == 0 {
-			return
+			capStats = captureStats{1, true}
+		} else {
+			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit leaf in data, unexpected for non-leaf node '%v': %v\n", node, data))
 		}
-		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit leaf in data, unexpected for non-leaf node '%v': %v\n", node, data))
 	case []interface{}:
 		if len(node.children) == 0 {
-			return
+			capStats = captureStats{1, true}
+		} else {
+			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
 		}
-		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
 	case map[string]interface{}:
 		dataMap := data.(map[string]interface{})
 		for childKey, child := range node.children {
-			if value, ok := dataMap[childKey]; ok {
-				traverse(value, child)
+			if childKey == "*" {
+				// wildcard match, traverse all children
+				for key, dataChild := range dataMap {
+					capStats = capStats.add(t.traverse(dataChild, child, key))
+				}
+			} else if value, ok := dataMap[childKey]; ok {
+				capStats = capStats.add(t.traverse(value, child, nil))
 			} else {
 				RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected key '%s' but was not present\n", childKey))
 			}
@@ -129,4 +122,40 @@ func traverse(data interface{}, node *Node) {
 	default:
 		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected map for non-array node '%v': %v\n", node, data))
 	}
+
+	t.capture(data, node, keyToCaptureInstead, capStats.captures)
+	return capStats
+}
+
+func (t *Trie) capture(data interface{}, node *Node, keyToCaptureInstead interface{}, captures int) {
+	for i := 0; i < captures; i++ {
+		if keyToCaptureInstead == nil && node.key != "*" {
+			for _, field := range node.fields {
+				field.AddMatch(fmt.Sprintf("%v", data)) // todo is this the best way?
+			}
+		} else if keyToCaptureInstead != nil {
+			for _, field := range node.fields {
+				field.AddMatch(fmt.Sprintf("%v", keyToCaptureInstead))
+			}
+		}
+	}
+}
+
+type captureStats struct {
+	// aka rows
+	captures int
+	wasLeaf  bool
+}
+
+func (c captureStats) add(other captureStats) captureStats {
+	wasLeaf := false
+	if other.wasLeaf {
+		wasLeaf = true
+	}
+	if wasLeaf {
+		c.captures = 1
+	} else {
+		c.captures += other.captures
+	}
+	return c
 }
