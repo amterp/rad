@@ -46,21 +46,21 @@ func (t *Trie) Insert(field JsonFieldVar) {
 
 	currentNode := t.root
 	if currentNode == nil {
-		currentNode = NewNode(t.radToken, elements[0].token.Literal, elements[0].arrayToken != nil)
+		currentNode = NewNode(t.radToken, elements[0].token.Literal, elements[0].token.IsArray)
 		t.root = currentNode
 	} else {
 		fieldRootMatchesTrieRoot := currentNode.key == elements[0].token.Literal &&
-			currentNode.isArray == (elements[0].arrayToken != nil)
+			currentNode.isArray == elements[0].token.IsArray
 		if !fieldRootMatchesTrieRoot {
 			root := fmt.Sprintf("%s%s", currentNode.key, lo.Ternary(currentNode.isArray, "[]", ""))
-			input := fmt.Sprintf("%s%s", elements[0].token.Literal, lo.Ternary(elements[0].arrayToken != nil, "[]", ""))
+			input := fmt.Sprintf("%s%s", elements[0].token.Literal, lo.Ternary(elements[0].token.IsArray, "[]", ""))
 			RP.TokenErrorExit(t.radToken, fmt.Sprintf("Field root '%s' does not match trie root '%s'\n", root, input))
 		}
 	}
 
 	for _, element := range elements[1:] {
 		key := element.token.Literal
-		isArray := element.arrayToken != nil
+		isArray := element.token.IsArray
 
 		node, ok := currentNode.children[key]
 		if !ok {
@@ -89,9 +89,11 @@ func traverse(data interface{}, node *Node) {
 	}
 
 	if node.isArray {
-		switch data.(type) { // todo switch to if statement?
-		case []interface{}:
-			dataArray := data.([]interface{})
+		dataArray, ok := data.([]interface{})
+		if !ok {
+			// todo feels like we should error here, but in practice does not work, investigate
+			//RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected array for array node '%v': %v\n", node, data))
+		} else {
 			for _, dataChild := range dataArray {
 				traverse(dataChild, node)
 			}
@@ -108,11 +110,13 @@ func traverse(data interface{}, node *Node) {
 	case nil:
 		if len(node.children) == 0 {
 			return
-		} else {
-			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit leaf in data, unexpected for non-leaf node '%v': %v\n", node, data))
 		}
+		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit leaf in data, unexpected for non-leaf node '%v': %v\n", node, data))
 	case []interface{}:
-		panic(fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
+		if len(node.children) == 0 {
+			return
+		}
+		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
 	case map[string]interface{}:
 		dataMap := data.(map[string]interface{})
 		for childKey, child := range node.children {

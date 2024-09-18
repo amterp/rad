@@ -24,3 +24,24 @@ ID  NAME
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestJsonNonRootArrayExtraction(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+Id = json.id
+Names = json.names
+
+rad url:
+    fields Id, Names
+`
+
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/not_root_array.json")
+	expected := `Mocking response for url (matched ".*"): https://google.com
+ID  NAMES               
+1   [Alice Bob Charlie]  
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
