@@ -7,6 +7,7 @@ import (
 	"golang.org/x/term"
 	"io"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -18,11 +19,17 @@ var (
 	isUtf8 = terminalIsUtf8()
 )
 
+type ColumnSort struct {
+	ColIdx int
+	Dir    SortDir
+}
+
 type TblWriter struct {
 	writer     io.Writer
 	tbl        *tablewriter.Table
 	headers    []string
 	rows       [][]string
+	sorting    []ColumnSort
 	numColumns int
 }
 
@@ -47,7 +54,14 @@ func (w *TblWriter) Append(row []string) {
 	}
 }
 
+func (w *TblWriter) SetSorting(sorting []ColumnSort) {
+	w.sorting = sorting
+}
+
 func (w *TblWriter) Render() {
+	w.sortRows()
+
+	// todo this should almost definitely be mocked out for tests
 	termWidth, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
 		RP.RadDebug(fmt.Sprintf("Error getting terminal width, setting to 9999: %v\n", err))
@@ -149,6 +163,29 @@ func (w *TblWriter) Render() {
 	}
 
 	w.tbl.Render()
+}
+
+func (w *TblWriter) sortRows() {
+	if len(w.sorting) == 0 {
+		return
+	}
+
+	sort.Slice(w.rows, func(i, j int) bool {
+		for _, colSort := range w.sorting {
+			colIdx := colSort.ColIdx
+			if w.rows[i][colIdx] == w.rows[j][colIdx] {
+				// If equal, continue to the next sorting column for tie-breaker
+				continue
+			}
+
+			if colSort.Dir == Asc {
+				return w.rows[i][colIdx] < w.rows[j][colIdx]
+			} else {
+				return w.rows[i][colIdx] > w.rows[j][colIdx]
+			}
+		}
+		return false
+	})
 }
 
 func terminalIsUtf8() bool {

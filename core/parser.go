@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/samber/lo"
 )
 
 type Parser struct {
@@ -282,7 +283,11 @@ func (p *Parser) radStatement() RadStmt {
 	if p.matchKeyword(FIELDS, RAD_BLOCK_KEYWORDS) {
 		return p.radFieldsStatement()
 	}
-	// todo sort
+
+	if p.matchKeyword(SORT, RAD_BLOCK_KEYWORDS) {
+		return p.radSortStatement()
+	}
+
 	// todo modifier
 	// todo table fmt
 	// todo field fmt
@@ -292,8 +297,11 @@ func (p *Parser) radStatement() RadStmt {
 
 func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 	hasFieldsStmt := false
-	for _, stmt := range radBlock.Stmts {
+	for i, stmt := range radBlock.Stmts {
 		if _, ok := stmt.(*Fields); ok {
+			if i != 0 {
+				p.error("Fields statement must be the first statement in a rad block")
+			}
 			if hasFieldsStmt {
 				p.error("Only one 'fields' statement is allowed in a rad block")
 			}
@@ -313,6 +321,43 @@ func (p *Parser) radFieldsStatement() RadStmt {
 		identifiers = append(identifiers, p.identifier())
 	}
 	return &Fields{Identifiers: identifiers}
+}
+
+func (p *Parser) radSortStatement() RadStmt {
+	sortToken := p.previous()
+	asc := Asc
+	desc := Desc
+
+	if p.matchAny(NEWLINE) {
+		return &Sort{SortToken: sortToken, Identifiers: []Token{}, Directions: []SortDir{}, GeneralSort: &asc}
+	}
+
+	nextMatchesAsc := p.matchKeyword(ASC, RAD_BLOCK_KEYWORDS)
+	nextMatchesDesc := p.matchKeyword(DESC, RAD_BLOCK_KEYWORDS)
+	if nextMatchesAsc || nextMatchesDesc {
+		p.consume(NEWLINE, "Expected newline after general sort direction")
+		dir := lo.Ternary(nextMatchesAsc, asc, desc)
+		return &Sort{SortToken: sortToken, Identifiers: []Token{}, Directions: []SortDir{}, GeneralSort: &dir}
+	}
+
+	var identifiers []Token
+	var directions []SortDir
+
+	for !p.matchAny(NEWLINE, DEDENT, EOF) {
+		identifiers = append(identifiers, p.identifier())
+		nextMatchesAsc = p.matchKeyword(ASC, RAD_BLOCK_KEYWORDS)
+		nextMatchesDesc = p.matchKeyword(DESC, RAD_BLOCK_KEYWORDS)
+		if nextMatchesAsc || nextMatchesDesc {
+			dir := lo.Ternary(nextMatchesAsc, asc, desc)
+			directions = append(directions, dir)
+		} else {
+			directions = append(directions, asc)
+		}
+		if !p.matchAny(NEWLINE) {
+			p.consume(COMMA, "Expected ',' between sort fields")
+		}
+	}
+	return &Sort{SortToken: sortToken, Identifiers: identifiers, Directions: directions, GeneralSort: nil}
 }
 
 func (p *Parser) ifStmt() IfStmt {

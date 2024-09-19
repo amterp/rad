@@ -90,7 +90,8 @@ func main() {
 	})
 
 	defineAst(outputDir, "RadStmt", "", []string{
-		"Fields     : []Token Identifiers",
+		"Fields     : []Token Identifiers", // todo actually become 'shared' stmt?
+		"Sort	    : Token SortToken, []Token Identifiers, []SortDir Directions, *SortDir GeneralSort", // todo become 'display' cmd?
 	})
 
 	defineAst(outputDir, "RlaReturning", "[]RuntimeLiteral", []string{

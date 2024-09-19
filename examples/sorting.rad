@@ -1,0 +1,25 @@
+url = ""
+
+Name = json[].name
+Age = json[].age
+Address = json[].address
+
+
+// Order of capture, locked in
+rad url:
+    fields Name, Age, Address
+
+// Everything ascending -- nah
+rad url:
+    fields Name asc, Age asc, Address asc
+
+// Everything ascending -- sure
+rad url:
+    fields Name, Age, Address
+    sort asc
+
+// Sort first by desc age, then asc Name, Address
+rad url:
+    fields Name, Age, Address
+    sort Age desc, Name, Address
+

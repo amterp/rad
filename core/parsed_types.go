@@ -51,3 +51,10 @@ type JsonPathElement struct {
 	token      JsonPathElementToken
 	arrayToken *Token
 }
+
+type SortDir int
+
+const (
+	Asc SortDir = iota
+	Desc
+)

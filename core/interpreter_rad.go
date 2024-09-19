@@ -34,13 +34,38 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 	r.invocation.fields = fields
 }
 
+func (r RadBlockInterpreter) VisitSortRadStmt(sort Sort) {
+	if sort.GeneralSort != nil {
+		// depend on the fact that field stmt must be the first thing in the block, and so already visited
+		for i, _ := range r.invocation.fields.Identifiers {
+			r.invocation.sorting = append(r.invocation.sorting, ColumnSort{ColIdx: i, Dir: *sort.GeneralSort})
+		}
+		return
+	}
+
+	fieldToIdx := make(map[string]int)
+	for i, identifier := range r.invocation.fields.Identifiers {
+		fieldToIdx[identifier.GetLexeme()] = i
+	}
+
+	for i, identifier := range sort.Identifiers {
+		dir := sort.Directions[i]
+		if idx, ok := fieldToIdx[identifier.GetLexeme()]; !ok {
+			r.i.error(r.invocation.block.RadKeyword, fmt.Sprintf("Sort field '%s' not found in fields", identifier.GetLexeme()))
+		} else {
+			r.invocation.sorting = append(r.invocation.sorting, ColumnSort{ColIdx: idx, Dir: dir})
+		}
+	}
+}
+
 // == radInvocation ==
 
 type radInvocation struct {
-	ri     *RadBlockInterpreter
-	block  RadBlock
-	url    string
-	fields Fields
+	ri      *RadBlockInterpreter
+	block   RadBlock
+	url     string
+	fields  Fields
+	sorting []ColumnSort
 }
 
 func (r *radInvocation) execute() {
@@ -72,6 +97,8 @@ func (r *radInvocation) execute() {
 		})
 		tbl.Append(row)
 	}
+
+	tbl.SetSorting(r.sorting)
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
