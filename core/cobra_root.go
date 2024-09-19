@@ -52,7 +52,7 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		Use:     "",
 		Short:   "Request And Display (RAD)",
 		Long:    `Request And Display (RAD): A tool for making HTTP requests, extracting details, and displaying the result.`,
-		Version: "0.2.6",
+		Version: "0.2.7",
 		FParseErrWhitelist: cobra.FParseErrWhitelist{
 			UnknownFlags: true,
 		},
