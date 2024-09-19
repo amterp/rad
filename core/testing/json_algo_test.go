@@ -15,14 +15,15 @@ rad url:
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/not_root_array.json")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-ID  NAMES               
-1   [Alice Bob Charlie]  
+ID  NAMES                 
+1   [Alice, Bob, Charlie]  
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
 
+// todo flaky due to nondeterministic table ordering
 func TestKeyExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
@@ -71,6 +72,7 @@ David      25   Paris
 	resetTestState()
 }
 
+// todo flaky due to nondeterministic table ordering
 func TestNestedWildcardExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"

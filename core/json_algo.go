@@ -131,11 +131,11 @@ func (t *Trie) capture(data interface{}, node *Node, keyToCaptureInstead interfa
 	for i := 0; i < captures; i++ {
 		if keyToCaptureInstead == nil && node.key != "*" {
 			for _, field := range node.fields {
-				field.AddMatch(fmt.Sprintf("%v", data)) // todo is this the best way?
+				field.AddMatch(ToPrintable(data))
 			}
 		} else if keyToCaptureInstead != nil {
 			for _, field := range node.fields {
-				field.AddMatch(fmt.Sprintf("%v", keyToCaptureInstead))
+				field.AddMatch(ToPrintable(keyToCaptureInstead))
 			}
 		}
 	}

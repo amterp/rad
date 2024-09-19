@@ -1,6 +1,9 @@
 package core
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 func ToPrintable(val interface{}) string {
 	switch v := val.(type) {
@@ -39,8 +42,17 @@ func ToPrintable(val interface{}) string {
 			out += ToPrintable(elem)
 		}
 		return out + "]"
+	case []interface{}:
+		out := "["
+		for i, elem := range v {
+			if i > 0 {
+				out += ", "
+			}
+			out += ToPrintable(elem)
+		}
+		return out + "]"
 	default:
-		// todo user printer
-		panic("Unknown type")
+		RP.RadErrorExit(fmt.Sprintf("unknown type: %T", val))
+		panic(UNREACHABLE)
 	}
 }

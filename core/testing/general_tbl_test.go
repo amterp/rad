@@ -1,0 +1,29 @@
+package testing
+
+import "testing"
+
+const (
+	setupGenTblRsl = `
+url = "https://google.com"
+
+shortint = json[].shortint
+longint = json[].longint
+shortfloat = json[].shortfloat
+longfloat = json[].longfloat
+`
+)
+
+func Test(t *testing.T) {
+	rsl := setupGenTblRsl + `
+rad url:
+    fields shortint, longint, shortfloat, longfloat
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/numbers.json")
+	expected := `Mocking response for url (matched ".*"): https://google.com
+SHORTINT  LONGINT              SHORTFLOAT  LONGFLOAT          
+1         1234567899987654400  1.12        1234.5678999876543  
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

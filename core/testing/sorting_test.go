@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 const (
-	setupRsl = `
+	setupSortingRsl = `
 url = "https://google.com"
 
 name = json[].name
@@ -13,7 +13,7 @@ city = json[].city
 )
 
 func TestNoSorting(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
 `
@@ -31,7 +31,7 @@ Bob      25   Los Angeles
 }
 
 func TestGeneralAscNoToken(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort
@@ -50,7 +50,7 @@ Charlie  30   Paris
 }
 
 func TestGeneralAscWithToken(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort asc
@@ -69,7 +69,7 @@ Charlie  30   Paris
 }
 
 func TestGeneralDesc(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort desc
@@ -88,7 +88,7 @@ Alice    30   New York
 }
 
 func TestExplicitAsc(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort name asc, age asc, city asc
@@ -107,7 +107,7 @@ Charlie  30   Paris
 }
 
 func TestDescTiebreak(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort name asc, age desc, city
@@ -126,7 +126,7 @@ Charlie  30   Paris
 }
 
 func TestMix(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort age, city desc
@@ -145,7 +145,7 @@ Bob      40   London
 }
 
 func TestLeavesInExtractionOrderIfNoTiebreaker(t *testing.T) {
-	rsl := setupRsl + `
+	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort age asc
