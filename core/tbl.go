@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"github.com/olekukonko/tablewriter"
+	"github.com/amterp/go-tbl"
 	"github.com/samber/lo"
 	"golang.org/x/term"
 	"io"
@@ -26,7 +26,7 @@ type ColumnSort struct {
 
 type TblWriter struct {
 	writer     io.Writer
-	tbl        *tablewriter.Table
+	tbl        *tblwriter.Table
 	headers    []string
 	rows       [][]string
 	sorting    []ColumnSort
@@ -37,7 +37,7 @@ func NewTblWriter() *TblWriter {
 	stdWriter := RP.GetStdWriter()
 	return &TblWriter{
 		writer:     stdWriter,
-		tbl:        tablewriter.NewWriter(stdWriter),
+		tbl:        tblwriter.NewWriter(stdWriter),
 		numColumns: 0,
 	}
 }
@@ -147,8 +147,8 @@ func (w *TblWriter) Render() {
 
 	w.tbl.SetAutoWrapText(false)
 	w.tbl.SetAutoFormatHeaders(true)
-	w.tbl.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	w.tbl.SetAlignment(tablewriter.ALIGN_LEFT)
+	w.tbl.SetHeaderAlignment(tblwriter.ALIGN_LEFT)
+	w.tbl.SetAlignment(tblwriter.ALIGN_LEFT)
 	w.tbl.SetCenterSeparator("")
 	w.tbl.SetColumnSeparator("")
 	w.tbl.SetRowSeparator("")
