@@ -11,4 +11,4 @@ jobs:
         with:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           formula: rad
-          tap: AlexanderTerp/rad
+          tap: amterp/rad

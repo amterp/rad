@@ -7,7 +7,7 @@ A powerful command-line tool and domain-specific language for effortlessly query
 ### macOS
 
 ```shell
-brew tap AlexanderTerp/rad
+brew tap amterp/rad
 brew install rad
 ```
 
