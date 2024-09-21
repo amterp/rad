@@ -25,7 +25,6 @@ invocations=(
     "./tests/test18.sh --name alice"
     "./tests/test18.sh --help"
     "./main ./tests/test19.rad --help"
-    "./main ./tests/date_functions.rad"
     "./main ./tests/replace_function.rad"
     "./main ./tests/join_function.rad"
     "./main ./tests/upper_lower_functions.rad"

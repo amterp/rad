@@ -14,32 +14,8 @@ var (
 	rootModified bool
 )
 
-type CmdInput struct {
-	RIo   *RadIo
-	RExit *func(int)
-	RReq  *Requester
-}
-
 func NewRootCmd(cmdInput CmdInput) *cobra.Command {
-	if cmdInput.RIo == nil {
-		RIo = RadIo{
-			StdIn:  os.Stdin,
-			StdOut: os.Stdout,
-			StdErr: os.Stderr,
-		}
-	} else {
-		RIo = *cmdInput.RIo
-	}
-	if cmdInput.RExit == nil {
-		RExit = os.Exit
-	} else {
-		RExit = *cmdInput.RExit
-	}
-	if cmdInput.RReq == nil {
-		RReq = NewRequester()
-	} else {
-		RReq = cmdInput.RReq
-	}
+	setGlobals(cmdInput)
 	rootModified = false
 
 	return &cobra.Command{

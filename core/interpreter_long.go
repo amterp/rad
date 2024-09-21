@@ -33,55 +33,55 @@ func (i *MainInterpreter) VisitCompoundAssignStmt(assign CompoundAssign) {
 
 func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorToken Token, operatorType TokenType) interface{} {
 	switch left.(type) {
-	case int:
+	case int64:
 		switch right.(type) {
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return left.(int) + right.(int)
+				return left.(int64) + right.(int64)
 			case MINUS:
-				return left.(int) - right.(int)
+				return left.(int64) - right.(int64)
 			case STAR:
-				return left.(int) * right.(int)
+				return left.(int64) * right.(int64)
 			case SLASH:
-				return left.(int) / right.(int)
+				return left.(int64) / right.(int64)
 			case GREATER:
-				return left.(int) > right.(int)
+				return left.(int64) > right.(int64)
 			case GREATER_EQUAL:
-				return left.(int) >= right.(int)
+				return left.(int64) >= right.(int64)
 			case LESS:
-				return left.(int) < right.(int)
+				return left.(int64) < right.(int64)
 			case LESS_EQUAL:
-				return left.(int) <= right.(int)
+				return left.(int64) <= right.(int64)
 			case EQUAL_EQUAL:
-				return left.(int) == right.(int)
+				return left.(int64) == right.(int64)
 			case NOT_EQUAL:
-				return left.(int) != right.(int)
+				return left.(int64) != right.(int64)
 			default:
 				i.error(operatorToken, "Invalid binary operator for int, int")
 			}
 		case float64:
 			switch operatorType {
 			case PLUS:
-				return float64(left.(int)) + right.(float64)
+				return float64(left.(int64)) + right.(float64)
 			case MINUS:
-				return float64(left.(int)) - right.(float64)
+				return float64(left.(int64)) - right.(float64)
 			case STAR:
-				return float64(left.(int)) * right.(float64)
+				return float64(left.(int64)) * right.(float64)
 			case SLASH:
-				return float64(left.(int)) / right.(float64)
+				return float64(left.(int64)) / right.(float64)
 			case GREATER:
-				return float64(left.(int)) > right.(float64)
+				return float64(left.(int64)) > right.(float64)
 			case GREATER_EQUAL:
-				return float64(left.(int)) >= right.(float64)
+				return float64(left.(int64)) >= right.(float64)
 			case LESS:
-				return float64(left.(int)) < right.(float64)
+				return float64(left.(int64)) < right.(float64)
 			case LESS_EQUAL:
-				return float64(left.(int)) <= right.(float64)
+				return float64(left.(int64)) <= right.(float64)
 			case EQUAL_EQUAL:
-				return float64(left.(int)) == right.(float64)
+				return float64(left.(int64)) == right.(float64)
 			case NOT_EQUAL:
-				return float64(left.(int)) != right.(float64)
+				return float64(left.(int64)) != right.(float64)
 			default:
 				i.error(operatorToken, "Invalid binary operator for int, float")
 			}
@@ -90,28 +90,28 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 		}
 	case float64:
 		switch right.(type) {
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return left.(float64) + float64(right.(int))
+				return left.(float64) + float64(right.(int64))
 			case MINUS:
-				return left.(float64) - float64(right.(int))
+				return left.(float64) - float64(right.(int64))
 			case STAR:
-				return left.(float64) * float64(right.(int))
+				return left.(float64) * float64(right.(int64))
 			case SLASH:
-				return left.(float64) / float64(right.(int))
+				return left.(float64) / float64(right.(int64))
 			case GREATER:
-				return left.(float64) > float64(right.(int))
+				return left.(float64) > float64(right.(int64))
 			case GREATER_EQUAL:
-				return left.(float64) >= float64(right.(int))
+				return left.(float64) >= float64(right.(int64))
 			case LESS:
-				return left.(float64) < float64(right.(int))
+				return left.(float64) < float64(right.(int64))
 			case LESS_EQUAL:
-				return left.(float64) <= float64(right.(int))
+				return left.(float64) <= float64(right.(int64))
 			case EQUAL_EQUAL:
-				return left.(float64) == float64(right.(int))
+				return left.(float64) == float64(right.(int64))
 			case NOT_EQUAL:
-				return left.(float64) != float64(right.(int))
+				return left.(float64) != float64(right.(int64))
 			default:
 				i.error(operatorToken, "Invalid binary operator for int, int")
 			}
@@ -156,10 +156,10 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, string")
 			}
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return left.(string) + fmt.Sprintf("%v", right.(int))
+				return left.(string) + fmt.Sprintf("%v", right.(int64))
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, int")
 			}
@@ -196,10 +196,10 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for string[], string")
 			}
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return append(left.([]string), fmt.Sprintf("%v", right.(int)))
+				return append(left.([]string), fmt.Sprintf("%v", right.(int64)))
 			default:
 				i.error(operatorToken, "Invalid binary operator for string[], int")
 			}
@@ -217,46 +217,46 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for string[], bool")
 			}
-		case []int:
+		case []int64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: string[], int[]"))
 		case []float64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: string[], float[]"))
 		default:
 			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
 		}
-	case []int:
+	case []int64:
 		switch right.(type) {
 		case []string:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: int[], string[]"))
 		case string:
 			switch operatorType {
 			case PLUS:
-				parsed, err := strconv.Atoi(right.(string))
+				parsed, err := strconv.ParseInt(right.(string), 10, 64)
 				if err != nil {
 					i.error(operatorToken, fmt.Sprintf("Cannot convert string to int: %v", right))
 				}
-				return append(left.([]int), parsed)
+				return append(left.([]int64), parsed)
 			default:
 				i.error(operatorToken, "Invalid binary operator for int[], string")
 			}
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return append(left.([]int), right.(int))
+				return append(left.([]int64), right.(int64))
 			default:
 				i.error(operatorToken, "Invalid binary operator for int[], int")
 			}
 		case float64:
 			switch operatorType {
 			case PLUS:
-				return append(left.([]int), int(right.(float64)))
+				return append(left.([]int64), int64(right.(float64)))
 			default:
 				i.error(operatorToken, "Invalid binary operator for int[], float")
 			}
-		case []int:
+		case []int64:
 			switch operatorType {
 			case PLUS:
-				return append(left.([]int), right.([]int)...)
+				return append(left.([]int64), right.([]int64)...)
 			default:
 				i.error(operatorToken, "Invalid binary operator for int[], int[]")
 			}
@@ -280,10 +280,10 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for float[], string")
 			}
-		case int:
+		case int64:
 			switch operatorType {
 			case PLUS:
-				return append(left.([]float64), float64(right.(int)))
+				return append(left.([]float64), float64(right.(int64)))
 			default:
 				i.error(operatorToken, "Invalid binary operator for float[], int")
 			}
@@ -294,7 +294,7 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for float[], float")
 			}
-		case []int:
+		case []int64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: float[], int[]"))
 		case []float64:
 			switch operatorType {

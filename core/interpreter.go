@@ -56,13 +56,13 @@ func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
 	switch literal.Type {
 	case RslStringArray:
 		arr := literal.GetStringArray()
-		return arr[index.(int)]
+		return arr[index.(int64)]
 	case RslIntArray:
 		arr := literal.GetIntArray()
-		return arr[index.(int)]
+		return arr[index.(int64)]
 	case RslFloatArray:
 		arr := literal.GetFloatArray()
-		return arr[index.(int)]
+		return arr[index.(int64)]
 	default:
 		i.error(access.Array, "Bug! Should've failed earlier")
 		panic(UNREACHABLE)
@@ -123,7 +123,7 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 		}
 	}
 
-	var multiplier int
+	var multiplier int64
 	switch unary.Operator.GetType() {
 	case MINUS:
 		multiplier = -1
@@ -133,7 +133,7 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 		i.error(unary.Operator, "Invalid number unary operation, only + and - are allowed")
 	}
 
-	valInt, ok := value.(int)
+	valInt, ok := value.(int64)
 	if ok {
 		return valInt * multiplier
 	}
@@ -263,8 +263,8 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 				}
 			}
 		})
-	case []int:
-		arr := rangeValue.([]int)
+	case []int64:
+		arr := rangeValue.([]int64)
 		i.runWithChildEnv(func() {
 			for idx, val := range arr {
 				i.env.SetAndImplyType(valIdentifier, val)

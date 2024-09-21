@@ -70,12 +70,12 @@ func (c *CobraArg) GetStringArray() []string {
 	return *c.value.(*[]string)
 }
 
-func (c *CobraArg) GetInt() int {
-	return *c.value.(*int)
+func (c *CobraArg) GetInt() int64 {
+	return *c.value.(*int64)
 }
 
-func (c *CobraArg) GetIntArray() []int {
-	return *c.value.(*[]int)
+func (c *CobraArg) GetIntArray() []int64 {
+	return *c.value.(*[]int64)
 }
 
 func (c *CobraArg) GetFloat() float64 {
@@ -108,9 +108,9 @@ func (c *CobraArg) SetValue(arg string) {
 	case RslIntArray:
 		// split on arg commas
 		split := strings.Split(arg, ",")
-		ints := make([]int, len(split))
+		ints := make([]int64, len(split))
 		for i, v := range split {
-			parsed, err := strconv.Atoi(v)
+			parsed, err := strconv.ParseInt(v, 10, 64)
 			if err != nil {
 				c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 			}
@@ -173,17 +173,17 @@ func CreateCobraArg(printer Printer, cmd *cobra.Command, arg ScriptArg) CobraArg
 		}
 		cobraArgValue = cmd.Flags().StringSliceP(name, flag, defVal, description)
 	case RslInt:
-		defVal := 0
+		defVal := int64(0)
 		if arg.DefaultInt != nil {
 			defVal = *arg.DefaultInt
 		}
-		cobraArgValue = cmd.Flags().IntP(name, flag, defVal, description)
+		cobraArgValue = cmd.Flags().Int64P(name, flag, defVal, description)
 	case RslIntArray:
-		var defVal []int
+		var defVal []int64
 		if arg.DefaultIntArray != nil {
 			defVal = *arg.DefaultIntArray
 		}
-		cobraArgValue = cmd.Flags().IntSliceP(name, flag, defVal, description)
+		cobraArgValue = cmd.Flags().Int64SliceP(name, flag, defVal, description)
 	case RslFloat:
 		defVal := 0.0
 		if arg.DefaultFloat != nil {

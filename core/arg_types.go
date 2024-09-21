@@ -14,8 +14,8 @@ type ScriptArg struct {
 	// todo I think just make these non-pointers, and have a separate flag to indicate the arg is set
 	DefaultString      *string
 	DefaultStringArray *[]string
-	DefaultInt         *int
-	DefaultIntArray    *[]int
+	DefaultInt         *int64
+	DefaultIntArray    *[]int64
 	DefaultFloat       *float64
 	DefaultFloatArray  *[]float64
 	DefaultBool        *bool
@@ -70,14 +70,14 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				scriptArg.DefaultStringArray = &val
 			}
 		case RslInt:
-			val := literal.(int)
+			val := literal.(int64)
 			scriptArg.DefaultInt = &val
 		case RslIntArray:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
-				var val []int
+				var val []int64
 				scriptArg.DefaultIntArray = &val
 			} else {
-				val := literal.([]int)
+				val := literal.([]int64)
 				scriptArg.DefaultIntArray = &val
 			}
 		case RslFloat:

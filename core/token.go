@@ -43,7 +43,7 @@ type StringLiteralToken struct {
 
 type IntLiteralToken struct {
 	BaseToken
-	Literal int
+	Literal int64
 }
 
 type FloatLiteralToken struct {
@@ -116,7 +116,7 @@ func NewIntLiteralToken(
 	charStart int,
 	line int,
 	charLineStart int,
-	literal int,
+	literal int64,
 ) Token {
 	return &IntLiteralToken{
 		BaseToken: BaseToken{

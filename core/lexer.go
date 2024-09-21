@@ -311,7 +311,7 @@ func (l *Lexer) lexNumber() {
 		l.addFloatLiteralToken(literal)
 	} else {
 		// int
-		literal, err := strconv.Atoi(lexeme)
+		literal, err := strconv.ParseInt(lexeme, 10, 64)
 		if err != nil {
 			l.error("Invalid integer")
 		}
@@ -463,7 +463,7 @@ func (l *Lexer) addStringLiteralToken(literal string) {
 	l.Tokens = append(l.Tokens, token)
 }
 
-func (l *Lexer) addIntLiteralToken(literal int) {
+func (l *Lexer) addIntLiteralToken(literal int64) {
 	lexeme := l.source[l.start:l.next]
 	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)

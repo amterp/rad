@@ -73,10 +73,10 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 		e.Vars[varName] = NewRuntimeString(value.(string))
 	case []string:
 		e.Vars[varName] = NewRuntimeStringArray(value.([]string))
-	case int:
-		e.Vars[varName] = NewRuntimeInt(value.(int))
-	case []int:
-		e.Vars[varName] = NewRuntimeIntArray(value.([]int))
+	case int64:
+		e.Vars[varName] = NewRuntimeInt(value.(int64))
+	case []int64:
+		e.Vars[varName] = NewRuntimeIntArray(value.([]int64))
 	case float64:
 		e.Vars[varName] = NewRuntimeFloat(value.(float64))
 	case []float64:
@@ -120,7 +120,7 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 				e.Vars[varName] = NewRuntimeStringArray(val)
 			}
 		case RslInt:
-			val, ok := value.(int)
+			val, ok := value.(int64)
 			if !ok {
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", value))
 			} else {
@@ -128,9 +128,9 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			}
 		case RslIntArray:
 			if _, isEmptyArray := value.([]interface{}); isEmptyArray {
-				e.Vars[varName] = NewRuntimeIntArray([]int{})
+				e.Vars[varName] = NewRuntimeIntArray([]int64{})
 			} else {
-				val, ok := value.([]int)
+				val, ok := value.([]int64)
 				if !ok {
 					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int array: %v", value))
 				}

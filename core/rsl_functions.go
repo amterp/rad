@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"strings"
-	"time"
 )
 
 // RunRslNonVoidFunction returns pointers to values e.g. *string
@@ -12,14 +11,14 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 	switch functionName {
 	case "len":
 		return runLen(i, function, values)
-	case "today_date":
-		return time.Now().Format("2006-01-02")
+	case "today_date": // todo is this name good? current_date? date?
+		return RClock.Now().Format("2006-01-02")
 	case "today_year":
-		return time.Now().Year()
+		return int64(RClock.Now().Year())
 	case "today_month":
-		return int(time.Now().Month())
+		return int64(RClock.Now().Month())
 	case "today_day":
-		return time.Now().Day()
+		return int64(RClock.Now().Day())
 	case "replace":
 		return runReplace(i, function, values)
 	case "join":
@@ -86,19 +85,19 @@ func resolveOutputString(values []interface{}) string {
 	return output
 }
 
-func runLen(i *MainInterpreter, function Token, values []interface{}) interface{} {
+func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 	if len(values) != 1 {
 		i.error(function, "len() takes exactly one argument")
 	}
 	switch v := values[0].(type) {
 	case string:
-		return len(v)
+		return int64(len(v))
 	case []string:
-		return len(v)
-	case []int:
-		return len(v)
+		return int64(len(v))
+	case []int64:
+		return int64(len(v))
 	case []float64:
-		return len(v)
+		return int64(len(v))
 	default:
 		i.error(function, "len() takes a string or array")
 		panic(UNREACHABLE)
@@ -135,8 +134,8 @@ func runJoin(i *MainInterpreter, function Token, values []interface{}) interface
 	switch values[0].(type) {
 	case []string:
 		arr = values[0].([]string)
-	case []int:
-		ints := values[0].([]int)
+	case []int64:
+		ints := values[0].([]int64)
 		for _, v := range ints {
 			arr = append(arr, ToPrintable(v))
 		}

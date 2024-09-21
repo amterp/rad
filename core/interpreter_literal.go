@@ -41,9 +41,9 @@ func (l LiteralInterpreter) VisitStringArrayLiteralArrayLiteral(literal StringAr
 }
 
 func (l LiteralInterpreter) VisitIntArrayLiteralArrayLiteral(literal IntArrayLiteral) interface{} {
-	var values []int
+	var values []int64
 	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(int))
+		values = append(values, v.Accept(l).(int64))
 	}
 	return values
 }

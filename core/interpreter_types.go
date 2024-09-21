@@ -11,10 +11,10 @@ func NewRuntimeLiteral(val interface{}) RuntimeLiteral {
 		return NewRuntimeString(val.(string))
 	case []string:
 		return NewRuntimeStringArray(val.([]string))
-	case int:
-		return NewRuntimeInt(val.(int))
-	case []int:
-		return NewRuntimeIntArray(val.([]int))
+	case int64:
+		return NewRuntimeInt(val.(int64))
+	case []int64:
+		return NewRuntimeIntArray(val.([]int64))
 	case float64:
 		return NewRuntimeFloat(val.(float64))
 	case []float64:
@@ -35,11 +35,11 @@ func NewRuntimeStringArray(val []string) RuntimeLiteral {
 	return RuntimeLiteral{Type: RslStringArray, value: val}
 }
 
-func NewRuntimeInt(val int) RuntimeLiteral {
+func NewRuntimeInt(val int64) RuntimeLiteral {
 	return RuntimeLiteral{Type: RslInt, value: val}
 }
 
-func NewRuntimeIntArray(val []int) RuntimeLiteral {
+func NewRuntimeIntArray(val []int64) RuntimeLiteral {
 	return RuntimeLiteral{Type: RslIntArray, value: val}
 }
 
@@ -63,12 +63,12 @@ func (l RuntimeLiteral) GetStringArray() []string {
 	return l.value.([]string)
 }
 
-func (l RuntimeLiteral) GetInt() int {
-	return l.value.(int)
+func (l RuntimeLiteral) GetInt() int64 {
+	return l.value.(int64)
 }
 
-func (l RuntimeLiteral) GetIntArray() []int {
-	return l.value.([]int)
+func (l RuntimeLiteral) GetIntArray() []int64 {
+	return l.value.([]int64)
 }
 
 func (l RuntimeLiteral) GetFloat() float64 {

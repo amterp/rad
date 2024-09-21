@@ -8,6 +8,7 @@ import (
 	"os"
 	"rad/core"
 	"testing"
+	"time"
 )
 
 var (
@@ -36,7 +37,8 @@ func newTestCmdInput() core.CmdInput {
 			StdOut: stdOutBuffer,
 			StdErr: stdErrBuffer,
 		},
-		RExit: &testExitFunc,
+		RExit:  &testExitFunc,
+		RClock: core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
 	}
 }
 
