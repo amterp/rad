@@ -19,6 +19,18 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 		return int64(RClock.Now().Month())
 	case "today_day":
 		return int64(RClock.Now().Day())
+	case "today_hour":
+		return int64(RClock.Now().Hour())
+	case "today_minute":
+		return int64(RClock.Now().Minute())
+	case "today_second":
+		return int64(RClock.Now().Second())
+	case "epoch_seconds":
+		return RClock.Now().Unix()
+	case "epoch_millis":
+		return RClock.Now().UnixMilli()
+	case "epoch_nanos":
+		return RClock.Now().UnixNano()
 	case "replace":
 		return runReplace(i, function, values)
 	case "join":

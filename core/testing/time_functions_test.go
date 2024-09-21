@@ -61,3 +61,108 @@ print(a + 100)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestHour(t *testing.T) {
+	rsl := `
+a = today_hour()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `14
+114
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMinute(t *testing.T) {
+	rsl := `
+a = today_minute()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `15
+115
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestSecond(t *testing.T) {
+	rsl := `
+a = today_second()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `16
+116
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestNanos(t *testing.T) {
+	rsl := `
+a = today_nano()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `123123123
+123123223
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestEpochSeconds(t *testing.T) {
+	rsl := `
+a = epoch_seconds()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `1576246516
+1576246616
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestEpochMillis(t *testing.T) {
+	rsl := `
+a = epoch_millis()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `1576246516123
+1576246516223
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestEpochNanos(t *testing.T) {
+	rsl := `
+a = epoch_nanos()
+print(a)
+print(a + 100)
+`
+	setupAndRunCode(t, rsl)
+	expected := `1576246516123123123
+1576246516123123223
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
