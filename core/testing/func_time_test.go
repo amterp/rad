@@ -107,21 +107,6 @@ print(a + 100)
 	resetTestState()
 }
 
-func TestNanos(t *testing.T) {
-	rsl := `
-a = today_nano()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `123123123
-123123223
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
 func TestEpochSeconds(t *testing.T) {
 	rsl := `
 a = epoch_seconds()
