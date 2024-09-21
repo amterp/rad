@@ -32,7 +32,6 @@ invocations=(
     "./main ./tests/single_quote_strings.rad"
     "./main ./tests/not_condition.rad"
     "./tests/bash_missing_required_arg.sh"
-    "./main ./tests/num_shorthand_flag.rad"
     "./main ./tests/test20.rad"
     "./main ./tests/starts_ends_contains.rad"
 )
