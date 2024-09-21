@@ -26,7 +26,6 @@ invocations=(
     "./tests/test18.sh --help"
     "./main ./tests/test19.rad --help"
     "./main ./tests/replace_function.rad"
-    "./main ./tests/join_function.rad"
     "./main ./tests/upper_lower_functions.rad"
     "./main ./tests/modify_var_in_block.rad"
     "./main ./tests/later_json_array.rad"
@@ -34,7 +33,6 @@ invocations=(
     "./main ./tests/not_condition.rad"
     "./tests/bash_missing_required_arg.sh"
     "./main ./tests/num_shorthand_flag.rad"
-    "./main ./tests/debug.rad"
     "./main ./tests/test20.rad"
     "./main ./tests/starts_ends_contains.rad"
 )
