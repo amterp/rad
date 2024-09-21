@@ -11,13 +11,7 @@ import (
 )
 
 var (
-	rootModified    bool
-	shellFlag       bool
-	quietFlag       bool
-	debugFlag       bool
-	radDebugFlag    bool
-	stdinScriptName string
-	mockResponses   MockResponseSlice
+	rootModified bool
 )
 
 type CmdInput struct {
@@ -193,14 +187,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 	}
 
 	// hide global flags, that distract from the particular script
-	cmd.Flags().MarkHidden("version")
-	cmd.Flags().MarkHidden("help")
-	cmd.PersistentFlags().MarkHidden("SHELL")
-	cmd.PersistentFlags().MarkHidden("STDIN")
-	cmd.PersistentFlags().MarkHidden("QUIET")
-	cmd.PersistentFlags().MarkHidden("DEBUG")
-	cmd.PersistentFlags().MarkHidden("RAD-DEBUG")
-	cmd.PersistentFlags().MarkHidden("MOCK-RESPONSE")
+	hideGlobalFlags(cmd)
 }
 
 func readSource(scriptPath string) string {
@@ -250,15 +237,7 @@ func InitCmd(cmd *cobra.Command) {
 		}
 	})
 
-	// global flags
-	// todo think more about bash vs. shell
-	cmd.PersistentFlags().BoolVar(&shellFlag, "SHELL", false, "Outputs shell/bash exports of variables, so they can be eval'd")
-	cmd.PersistentFlags().StringVar(&stdinScriptName, "STDIN", "", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name', usually $0")
-	cmd.PersistentFlags().BoolVar(&quietFlag, "QUIET", false, "Suppresses some output.")
-	cmd.PersistentFlags().BoolVar(&debugFlag, "DEBUG", false, "Enables debug output. Intended for RSL script developers.")
-	cmd.PersistentFlags().BoolVar(&radDebugFlag, "RAD-DEBUG", false, "Enables Rad debug output. Intended for Rad developers.")
-	// todo help prints as `--MOCK-RESPONSE mockResponse` which is not ideal
-	cmd.PersistentFlags().Var(&mockResponses, "MOCK-RESPONSE", "Add mock response for json requests (pattern:filePath)")
+	defineGlobalFlags(cmd)
 	cmd.SetOut(RIo.StdErr)
 }
 

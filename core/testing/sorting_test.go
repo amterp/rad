@@ -17,9 +17,9 @@ func TestNoSorting(t *testing.T) {
 rad url:
     fields name, age, city
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
 Alice    30   New York     
@@ -36,9 +36,9 @@ rad url:
     fields name, age, city
     sort
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
@@ -55,9 +55,9 @@ rad url:
     fields name, age, city
     sort asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
@@ -74,9 +74,9 @@ rad url:
     fields name, age, city
     sort desc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
 Bob      25   Los Angeles  
@@ -93,9 +93,9 @@ rad url:
     fields name, age, city
     sort name asc, age asc, city asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
@@ -112,9 +112,9 @@ rad url:
     fields name, age, city
     sort name asc, age desc, city
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Alice    30   New York     
 Bob      40   London       
 Bob      25   Los Angeles  
@@ -131,9 +131,9 @@ rad url:
     fields name, age, city
     sort age, city desc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 Alice    30   New York     
@@ -150,9 +150,9 @@ rad url:
     fields name, age, city
     sort age asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/people.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
-NAME     AGE  CITY        
+name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 Alice    30   New York     

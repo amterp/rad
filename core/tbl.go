@@ -145,19 +145,25 @@ func (w *TblWriter) Render() {
 		}
 	}
 
-	w.tbl.SetAutoWrapText(false)
-	w.tbl.SetAutoFormatHeaders(true)
+	w.tbl.SetAutoFormatHeaders(false)
 	w.tbl.SetHeaderAlignment(tblwriter.ALIGN_LEFT)
 	w.tbl.SetAlignment(tblwriter.ALIGN_LEFT)
 	w.tbl.SetCenterSeparator("")
 	w.tbl.SetColumnSeparator("")
 	w.tbl.SetRowSeparator("")
 	w.tbl.SetHeaderLine(false)
-	w.tbl.SetBorder(false)
+	w.tbl.EnableBorder(false)
 	w.tbl.SetTablePadding(padding)
 	w.tbl.SetNoWhiteSpace(true)
 
 	w.tbl.SetHeader(w.headers)
+	var colors []tblwriter.Color
+	for _, _ = range w.headers {
+		colors = append(colors, tblwriter.Yellow)
+	}
+	w.tbl.SetHeaderColors(colors...)
+	w.tbl.ToggleColor(!noColorFlag)
+
 	for _, row := range rows {
 		w.tbl.Append(row)
 	}
