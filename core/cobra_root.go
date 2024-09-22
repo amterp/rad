@@ -27,8 +27,10 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 			UnknownFlags: true,
 		},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if !rootModified {
+			if RP == nil {
 				RP = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+			}
+			if !rootModified {
 				RP.RadDebug(fmt.Sprintf("Args passed: %v\n", args))
 				if radDebugFlag {
 					cmd.Flags().VisitAll(func(flag *pflag.Flag) {
@@ -185,6 +187,10 @@ func InitCmd(cmd *cobra.Command) {
 		// immediately reset the help func, as we only want this hacked
 		// version to run once
 		cmd.SetHelpFunc(nil)
+
+		if RP == nil {
+			RP = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
+		}
 
 		// try to detect if help has been called on either a script or with --STDIN flag
 		if len(args) >= 2 {

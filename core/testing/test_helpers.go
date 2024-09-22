@@ -80,6 +80,7 @@ func resetTestState() {
 	stdOutBuffer.Reset()
 	stdErrBuffer.Reset()
 	errorOrExit = ErrorOrExit{}
+	core.ResetGlobals()
 }
 
 func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {

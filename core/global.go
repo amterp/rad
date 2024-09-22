@@ -17,6 +17,15 @@ type CmdInput struct {
 	RClock Clock
 }
 
+// primarily for tests
+func ResetGlobals() {
+	RP = nil
+	RIo = RadIo{}
+	RExit = nil
+	RReq = nil
+	RClock = nil
+}
+
 func setGlobals(cmdInput CmdInput) {
 	if cmdInput.RIo == nil {
 		RIo = RadIo{
