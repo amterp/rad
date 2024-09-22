@@ -3,9 +3,12 @@
 rsl="\
 ---
 Bumps the version in rad, creates a commit, tags it, and optionally pushes it
+
+Bumps the version in rad, creates a commit, tags it, and optionally pushes it
+This will trigger a GitHub action to create a homebrew-rad PR with the new version
 ---
 args:
-    new_version string # The new version to bump to
+    new_version string # The new release version to bump to
     push p bool # Whether or not a push should also be performed"
 
 new_version=
@@ -22,7 +25,6 @@ git commit -m "Bump version to $new_version"
 git tag -a "$new_version" -m "Bump version to $new_version" || exit 1
 
 if [ "$push" = true ]; then
-    echo "Pushing..."
     ./push.sh || exit 1
 else
     echo "Tagged, not pushing..."
