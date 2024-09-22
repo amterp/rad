@@ -89,11 +89,11 @@ rad url:
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/nested_wildcard.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 city  country    name       age 
-York  England    Alice      30   
-York  England    Bob        40   
 York  Australia  Charlotte  35   
 York  Australia  David      25   
 York  Australia  Eve        20   
+York  England    Alice      30   
+York  England    Bob        40   
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
