@@ -93,8 +93,7 @@ func TestCompoundSubtractFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a -= 2`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdErrBuffer, "RslError at L2/4 on '-=': Invalid binary operator for int[], int\n")
-	assertExitCode(t, 1)
+	assertError(t, 1, "RslError at L2/4 on '-=': Invalid binary operator for int[], int\n")
 	resetTestState()
 }
 
@@ -102,8 +101,7 @@ func TestCompoundDivideFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a /= 2`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdErrBuffer, "RslError at L2/4 on '/=': Invalid binary operator for int[], int\n")
-	assertExitCode(t, 1)
+	assertError(t, 1, "RslError at L2/4 on '/=': Invalid binary operator for int[], int\n")
 	resetTestState()
 }
 
@@ -111,7 +109,6 @@ func TestCompoundMultiplyFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a *= 2`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdErrBuffer, "RslError at L2/4 on '*=': Invalid binary operator for int[], int\n")
-	assertExitCode(t, 1)
+	assertError(t, 1, "RslError at L2/4 on '*=': Invalid binary operator for int[], int\n")
 	resetTestState()
 }

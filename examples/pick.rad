@@ -1,0 +1,7 @@
+args:
+    filter string = ""
+
+options = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+
+print(pick(options))
+print(pick(options, filter))

@@ -54,6 +54,8 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 			i.error(function, "contains() takes exactly two arguments")
 		}
 		return strings.Contains(ToPrintable(values[0]), ToPrintable(values[1]))
+	case "pick":
+		return runPick(i, function, values)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)

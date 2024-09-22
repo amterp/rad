@@ -42,15 +42,41 @@ func newTestCmdInput() core.CmdInput {
 	}
 }
 
+type TestParams struct {
+	rsl        string
+	stdinInput string // todo not implemented
+	args       []string
+}
+
+func NewTestParams(rsl string, args ...string) *TestParams {
+	return &TestParams{
+		rsl:  rsl,
+		args: args,
+	}
+}
+
+func (tp *TestParams) StdinInput(stdinInput string) *TestParams {
+	tp.stdinInput = stdinInput
+	return tp
+}
+
 func setupAndRunCode(t *testing.T, rsl string, args ...string) {
-	t.Helper()
-	stdInBuffer.WriteString(rsl)
-	args = append([]string{"--STDIN", "test"}, args...)
-	setupAndRunArgs(t, args...)
+	setupAndRun(t, NewTestParams(rsl, args...))
 }
 
 func setupAndRunArgs(t *testing.T, args ...string) {
 	t.Helper()
+	setupAndRun(t, NewTestParams("", args...))
+}
+
+func setupAndRun(t *testing.T, tp *TestParams) {
+	t.Helper()
+
+	args := tp.args
+	if tp.rsl != "" {
+		stdInBuffer.WriteString(tp.rsl)
+		args = append([]string{"--STDIN", "test"}, tp.args...)
+	}
 	rootCmd := setupCmd(t, args...)
 	defer func() {
 		if r := recover(); r != nil {
@@ -99,6 +125,12 @@ func assertAllElseEmpty(t *testing.T) {
 	t.Helper()
 	assert.Empty(t, stdOutBuffer.String(), "Expected no output on stdout")
 	assert.Empty(t, stdErrBuffer.String(), "Expected no output on stderr")
+}
+
+func assertError(t *testing.T, expectedCode int, expectedMsg string) {
+	t.Helper()
+	assertOnlyOutput(t, stdErrBuffer, expectedMsg)
+	assertExitCode(t, expectedCode)
 }
 
 func assertExitCode(t *testing.T, code int) {
