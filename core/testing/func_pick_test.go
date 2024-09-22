@@ -2,6 +2,8 @@ package testing
 
 import "testing"
 
+// todo need to mock out huh so that we can write tests that actually filter down further when prompted
+
 func TestPickNoFilterOneOption(t *testing.T) {
 	rsl := `
 opts = ["Hamburger"]
@@ -60,5 +62,3 @@ pick(opts, "asdasdasd")
 	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 5 options to 0 with filter: \"asdasdasd\"\n")
 	resetTestState()
 }
-
-// todo need to mock out huh so that we can write tests that actually filter down further when prompted

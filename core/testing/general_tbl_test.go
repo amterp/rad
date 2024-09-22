@@ -13,7 +13,7 @@ longfloat = json[].longfloat
 `
 )
 
-func Test(t *testing.T) {
+func TestVariousTypeLengths(t *testing.T) {
 	rsl := setupGenTblRsl + `
 rad url:
     fields shortint, longint, shortfloat, longfloat

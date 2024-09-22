@@ -56,6 +56,8 @@ func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interfac
 		return strings.Contains(ToPrintable(values[0]), ToPrintable(values[1]))
 	case "pick":
 		return runPick(i, function, values)
+	case "pick_kv":
+		return runPickKv(i, function, values)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
