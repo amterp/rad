@@ -65,8 +65,8 @@ func (e FunctionStmt) String() string {
 }
 
 type PrimaryAssign struct {
-	Name        Token
-	VarType     *RslType
+	Identifiers []Token
+	VarTypes    []*RslType
 	Initializer Expr
 }
 
@@ -75,8 +75,8 @@ func (e PrimaryAssign) Accept(visitor StmtVisitor) {
 }
 func (e PrimaryAssign) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("Name: %v", e.Name))
-	parts = append(parts, fmt.Sprintf("VarType: %v", e.VarType))
+	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("VarTypes: %v", e.VarTypes))
 	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
 }

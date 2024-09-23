@@ -1,8 +1,5 @@
 package core
 
-const UNREACHABLE = "Bug! This should be unreachable"
-const NOT_IMPLEMENTED = "not implemented"
-
 // this is the best way I can think of to do the 'typed nil' check...
 func NotNil[T comparable](val *T, nilProvider func() T) bool {
 	if val == nil {

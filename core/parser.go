@@ -5,6 +5,10 @@ import (
 	"github.com/samber/lo"
 )
 
+const (
+	onlyOneReturnValueAllowed = "Binary operators are only allowed in expressions with one return value"
+)
+
 type Parser struct {
 	printer             Printer
 	tokens              []Token
@@ -262,7 +266,7 @@ func (p *Parser) statement() Stmt {
 
 func (p *Parser) radBlock() *RadBlock {
 	radToken := p.previous()
-	urlToken := p.expr()
+	urlToken := p.expr(1)
 	p.consume(COLON, "Expecting ':' to start rad block")
 	p.consumeNewlines()
 	if !p.matchAny(INDENT) {
@@ -381,7 +385,7 @@ func (p *Parser) ifStmt() IfStmt {
 
 func (p *Parser) ifCase() IfCase {
 	ifToken := p.consumeKeyword(IF, GLOBAL_KEYWORDS)
-	condition := p.expr()
+	condition := p.expr(1)
 	p.consume(COLON, "Expected ':' after if condition")
 	p.consumeNewlines()
 	p.consume(INDENT, "Expected indented block after if condition")
@@ -407,7 +411,7 @@ func (p *Parser) forStmt() ForStmt {
 		identifier2 = &i
 	}
 	p.consumeKeyword(IN, GLOBAL_KEYWORDS)
-	rangeExpr := p.expr()
+	rangeExpr := p.expr(1)
 	p.consume(COLON, "Expected ':' after range expression")
 	p.consumeNewlines()
 	p.consume(INDENT, "Expected indented block after for")
@@ -418,7 +422,7 @@ func (p *Parser) forStmt() ForStmt {
 }
 
 func (p *Parser) functionCallStmt() Stmt {
-	functionCall := p.functionCall()
+	functionCall := p.functionCall(NO_NUM_RETURN_VALUES_CONSTRAINT)
 	return &FunctionStmt{Call: functionCall}
 }
 
@@ -454,29 +458,22 @@ func (p *Parser) assignment() Stmt {
 	if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
 		block := p.switchBlock(identifiers)
 		return &SwitchAssignment{Identifiers: identifiers, VarTypes: rslTypes, Block: block}
-	} else if len(identifiers) > 1 {
-		p.error("Multiple assignments are only allowed for switch blocks")
 	}
 
-	identifier := identifiers[0]
-
-	if p.peekType(JSON_PATH_ELEMENT) {
-		if len(identifiers) > 1 {
-			p.error("Json path assignment must have only one identifier")
-		}
+	if len(identifiers) == 1 && p.peekType(JSON_PATH_ELEMENT) {
 		if !AllNils(rslTypes) {
 			// todo perhaps a bit surprising to users?
 			p.error("Json path assignment cannot have an explicit type")
 		}
 		identifier := identifiers[0]
 		return p.jsonPathAssignment(identifier)
-	} else {
-		return p.primaryAssignment(identifier, rslTypes[0])
 	}
+
+	return p.primaryAssignment(identifiers, rslTypes)
 }
 
 func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
-	expr := p.expr()
+	expr := p.expr(1)
 	switch operator.GetType() {
 	case PLUS_EQUAL:
 		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
@@ -558,13 +555,14 @@ func (p *Parser) caseStmt(hasDiscriminator bool, expectedNumReturnValues int) Sw
 	}
 
 	var values []Expr
-	values = append(values, p.expr())
+	values = append(values, p.expr(expectedNumReturnValues))
 	for !p.matchAny(NEWLINE) {
 		p.consume(COMMA, "Expected ',' between case values")
-		values = append(values, p.expr())
+		values = append(values, p.expr(expectedNumReturnValues))
 	}
 
 	if len(values) != expectedNumReturnValues {
+		// todo technically redundant due to expr taking expectedNumReturnValues?
 		p.error(fmt.Sprintf("Expected %d return values, got %d", expectedNumReturnValues, len(values)))
 	}
 
@@ -574,113 +572,132 @@ func (p *Parser) caseStmt(hasDiscriminator bool, expectedNumReturnValues int) Sw
 func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
 	p.consume(COLON, "Expected ':' after 'default'")
 	var values []Expr
-	values = append(values, p.expr())
+	values = append(values, p.expr(expectedNumReturnValues))
 	for !p.matchAny(NEWLINE) {
 		p.consume(COMMA, "Expected ',' between default values")
-		values = append(values, p.expr())
+		values = append(values, p.expr(expectedNumReturnValues))
 	}
 
 	if len(values) != expectedNumReturnValues {
+		// todo technically redundant due to expr taking expectedNumReturnValues?
 		p.error(fmt.Sprintf("Expected %d return values, got %d", expectedNumReturnValues, len(values)))
 	}
 
 	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
-func (p *Parser) primaryAssignment(identifier Token, expectedType *RslType) Stmt {
-	initializer := p.expr()
-	return &PrimaryAssign{Name: identifier, VarType: expectedType, Initializer: initializer}
+func (p *Parser) primaryAssignment(identifiers []Token, expectedType []*RslType) Stmt {
+	initializer := p.expr(len(identifiers))
+	return &PrimaryAssign{Identifiers: identifiers, VarTypes: expectedType, Initializer: initializer}
 }
 
-func (p *Parser) expr() Expr {
-	return p.or()
+func (p *Parser) expr(numExpectedReturnValues int) Expr {
+	return p.or(numExpectedReturnValues)
 }
 
-func (p *Parser) or() Expr {
-	expr := p.and()
+func (p *Parser) or(numExpectedReturnValues int) Expr {
+	expr := p.and(numExpectedReturnValues)
 
 	for p.matchKeyword(OR, ALL_KEYWORDS) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.and()
+		right := p.and(1)
 		expr = &Logical{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) and() Expr {
-	expr := p.equality()
+func (p *Parser) and(numExpectedReturnValues int) Expr {
+	expr := p.equality(numExpectedReturnValues)
 
 	for p.matchKeyword(AND, ALL_KEYWORDS) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.equality()
+		right := p.equality(1)
 		expr = &Logical{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) equality() Expr {
-	expr := p.comparison()
+func (p *Parser) equality(numExpectedReturnValues int) Expr {
+	expr := p.comparison(numExpectedReturnValues)
 
 	for p.matchAny(NOT_EQUAL, EQUAL_EQUAL) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.comparison()
+		right := p.comparison(1)
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) comparison() Expr {
-	expr := p.term()
+func (p *Parser) comparison(numExpectedReturnValues int) Expr {
+	expr := p.term(numExpectedReturnValues)
 
 	for p.matchAny(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.term()
+		right := p.term(1)
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) term() Expr {
-	expr := p.factor()
+func (p *Parser) term(numExpectedReturnValues int) Expr {
+	expr := p.factor(numExpectedReturnValues)
 
 	for p.matchAny(MINUS, PLUS) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.factor()
+		right := p.factor(1)
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) factor() Expr {
-	expr := p.unary()
+func (p *Parser) factor(numExpectedReturnValues int) Expr {
+	expr := p.unary(numExpectedReturnValues)
 
 	for p.matchAny(SLASH, STAR) {
+		if numExpectedReturnValues != 1 {
+			p.error(onlyOneReturnValueAllowed)
+		}
 		operator := p.previous()
-		right := p.unary()
+		right := p.unary(1)
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
 	}
 
 	return expr
 }
 
-func (p *Parser) unary() Expr {
+func (p *Parser) unary(numExpectedReturnValues int) Expr {
 	if p.matchAny(EXCLAMATION, MINUS, PLUS) {
 		operator := p.previous()
-		right := p.unary()
+		right := p.unary(1)
 		return &Unary{Operator: operator, Right: right}
 	}
 
-	return p.primary()
+	return p.primary(numExpectedReturnValues)
 }
 
-func (p *Parser) primary() Expr {
+func (p *Parser) primary(numExpectedReturnValues int) Expr {
 	if p.matchAny(LEFT_PAREN) {
-		expr := p.expr()
+		expr := p.expr(1)
 		p.consume(RIGHT_PAREN, "Expected ')' after expression")
 		return &Grouping{Value: expr}
 	}
@@ -696,13 +713,13 @@ func (p *Parser) primary() Expr {
 	if p.matchAny(IDENTIFIER) {
 		identifier := p.previous()
 		if p.matchAny(LEFT_BRACKET) {
-			array := p.expr()
+			array := p.expr(1)
 			p.consume(RIGHT_BRACKET, "Expected ']' after array expression")
 			return &ArrayAccess{Array: identifier, Index: array}
 		}
 		if p.peekType(LEFT_PAREN) {
 			p.rewind()
-			return p.functionCall()
+			return p.functionCall(numExpectedReturnValues)
 		}
 		return &Variable{Name: identifier}
 	}
@@ -711,18 +728,18 @@ func (p *Parser) primary() Expr {
 	panic(UNREACHABLE)
 }
 
-func (p *Parser) functionCall() FunctionCall {
+func (p *Parser) functionCall(numExpectedReturnValues int) FunctionCall {
 	function := p.consume(IDENTIFIER, "Expected function name")
 	p.consume(LEFT_PAREN, "Expected '(' after function name")
 	var args []Expr
 	if !p.matchAny(RIGHT_PAREN) {
-		args = append(args, p.expr())
+		args = append(args, p.expr(1))
 		for !p.matchAny(RIGHT_PAREN) {
 			p.consume(COMMA, "Expected ',' between function arguments")
-			args = append(args, p.expr())
+			args = append(args, p.expr(1))
 		}
 	}
-	return FunctionCall{Function: function, Args: args}
+	return FunctionCall{Function: function, Args: args, NumExpectedReturnValues: numExpectedReturnValues}
 }
 
 func (p *Parser) arrayExpr() (Expr, bool) {
@@ -734,10 +751,10 @@ func (p *Parser) arrayExpr() (Expr, bool) {
 		return &ArrayExpr{Values: []Expr{}}, true
 	}
 
-	values := []Expr{p.expr()}
+	values := []Expr{p.expr(1)}
 	for !p.matchAny(RIGHT_BRACKET) {
 		p.consume(COMMA, "Expected ',' between array elements")
-		values = append(values, p.expr())
+		values = append(values, p.expr(1))
 	}
 
 	return &ArrayExpr{Values: values}, true

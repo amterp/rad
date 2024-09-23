@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type MainInterpreter struct {
 	env        *Env
 	LiteralI   *LiteralInterpreter
@@ -70,12 +72,12 @@ func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
 }
 
 func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
-	var values []interface{}
+	var args []interface{}
 	for _, v := range call.Args {
 		val := v.Accept(i)
-		values = append(values, val)
+		args = append(args, val)
 	}
-	return RunRslNonVoidFunction(i, call.Function, values)
+	return RunRslNonVoidFunction(i, call.Function, call.NumExpectedReturnValues, args)
 }
 
 func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
@@ -153,11 +155,30 @@ func (i *MainInterpreter) VisitExpressionStmt(expression Expr) {
 
 func (i *MainInterpreter) VisitPrimaryAssignStmt(assign PrimaryAssign) {
 	value := assign.Initializer.Accept(i)
-	if assign.VarType != nil {
-		varType := &(*assign.VarType).Type
-		i.env.SetAndExpectType(assign.Name, varType, value)
-	} else {
-		i.env.SetAndImplyType(assign.Name, value)
+
+	if len(assign.Identifiers) == 1 {
+		value = []interface{}{value}
+	}
+
+	switch values := value.(type) {
+	case []interface{}:
+		handleMultiAssignment(i, values, assign.Identifiers, assign.VarTypes) // todo does this handle all arrays?
+	default:
+		i.error(assign.Identifiers[0], "Expected multiple values, got one")
+	}
+}
+
+func handleMultiAssignment[T any](i *MainInterpreter, values []T, identifiers []Token, varTypes []*RslType) {
+	if len(values) != len(identifiers) {
+		i.error(identifiers[0], fmt.Sprintf("Expected %d values, got %d", len(identifiers), len(values)))
+	}
+	for idx, val := range values {
+		if varTypes[idx] != nil {
+			varType := &(*varTypes[idx]).Type
+			i.env.SetAndExpectType(identifiers[idx], varType, val)
+		} else {
+			i.env.SetAndImplyType(identifiers[idx], val)
+		}
 	}
 }
 

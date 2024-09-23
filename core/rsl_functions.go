@@ -6,73 +6,103 @@ import (
 )
 
 // RunRslNonVoidFunction returns pointers to values e.g. *string
-func RunRslNonVoidFunction(i *MainInterpreter, function Token, values []interface{}) interface{} {
+func RunRslNonVoidFunction(
+	i *MainInterpreter,
+	function Token,
+	numExpectedReturnValues int,
+	args []interface{},
+) interface{} {
 	functionName := function.GetLexeme()
+
+	if numExpectedReturnValues == NO_NUM_RETURN_VALUES_CONSTRAINT || numExpectedReturnValues == 1 {
+
+	}
+
 	switch functionName {
 	case "len":
-		return runLen(i, function, values)
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runLen(i, function, args)
 	case "today_date": // todo is this name good? current_date? date?
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return RClock.Now().Format("2006-01-02")
 	case "today_year":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Year())
 	case "today_month":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Month())
 	case "today_day":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Day())
 	case "today_hour":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Hour())
 	case "today_minute":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Minute())
 	case "today_second":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return int64(RClock.Now().Second())
 	case "epoch_seconds":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return RClock.Now().Unix()
 	case "epoch_millis":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return RClock.Now().UnixMilli()
 	case "epoch_nanos":
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return RClock.Now().UnixNano()
 	case "replace":
-		return runReplace(i, function, values)
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runReplace(i, function, args)
 	case "join":
-		return runJoin(i, function, values)
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runJoin(i, function, args)
 	case "upper":
-		return strings.ToUpper(ToPrintable(values[0]))
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return strings.ToUpper(ToPrintable(args[0]))
 	case "lower":
-		return strings.ToLower(ToPrintable(values[0]))
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return strings.ToLower(ToPrintable(args[0]))
 	case "starts_with":
-		if len(values) != 2 {
+		if len(args) != 2 {
 			i.error(function, "starts_with() takes exactly two arguments")
 		}
-		return strings.HasPrefix(ToPrintable(values[0]), ToPrintable(values[1]))
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return strings.HasPrefix(ToPrintable(args[0]), ToPrintable(args[1]))
 	case "ends_with":
-		if len(values) != 2 {
+		if len(args) != 2 {
 			i.error(function, "ends_with() takes exactly two arguments")
 		}
-		return strings.HasSuffix(ToPrintable(values[0]), ToPrintable(values[1]))
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return strings.HasSuffix(ToPrintable(args[0]), ToPrintable(args[1]))
 	case "contains":
-		if len(values) != 2 {
+		if len(args) != 2 {
 			i.error(function, "contains() takes exactly two arguments")
 		}
-		return strings.Contains(ToPrintable(values[0]), ToPrintable(values[1]))
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return strings.Contains(ToPrintable(args[0]), ToPrintable(args[1]))
 	case "pick":
-		return runPick(i, function, values)
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runPick(i, function, args)
 	case "pick_kv":
-		return runPickKv(i, function, values)
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runPickKv(i, function, args)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
 	}
 }
 
-func RunRslFunction(i *MainInterpreter, function Token, values []interface{}) {
+func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
 	functionName := function.GetLexeme()
 	switch functionName {
 	case "print": // todo would be nice to make this a reference to a var that GoLand can find
-		runPrint(values)
+		runPrint(args)
 	case "debug":
-		runDebug(values)
+		runDebug(args)
 	default:
-		RunRslNonVoidFunction(i, function, values)
+		RunRslNonVoidFunction(i, function, NO_NUM_RETURN_VALUES_CONSTRAINT, args)
 	}
 }
 
@@ -167,4 +197,17 @@ func runJoin(i *MainInterpreter, function Token, values []interface{}) interface
 	separator := ToPrintable(values[1])
 
 	return prefix + strings.Join(arr, separator) + suffix
+}
+
+func assertExpectedNumReturnValues(
+	i *MainInterpreter,
+	function Token,
+	funcName string,
+	numExpectedReturnValues int,
+	actualNumReturnValues int,
+) {
+	if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && numExpectedReturnValues != actualNumReturnValues {
+		i.error(function, fmt.Sprintf("%v() returns %v return values, but %v are expected",
+			funcName, actualNumReturnValues, numExpectedReturnValues))
+	}
 }

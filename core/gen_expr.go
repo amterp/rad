@@ -62,8 +62,9 @@ func (e ArrayAccess) String() string {
 }
 
 type FunctionCall struct {
-	Function Token
-	Args     []Expr
+	Function                Token
+	Args                    []Expr
+	NumExpectedReturnValues int
 }
 
 func (e FunctionCall) Accept(visitor ExprVisitor) interface{} {
@@ -73,6 +74,7 @@ func (e FunctionCall) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Function: %v", e.Function))
 	parts = append(parts, fmt.Sprintf("Args: %v", e.Args))
+	parts = append(parts, fmt.Sprintf("NumExpectedReturnValues: %v", e.NumExpectedReturnValues))
 	return fmt.Sprintf("FunctionCall(%s)", strings.Join(parts, ", "))
 }
 

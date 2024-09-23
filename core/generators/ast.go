@@ -56,7 +56,7 @@ func main() {
 		"ExprLoa         : LiteralOrArray Value",
 		"ArrayExpr       : []Expr Values",
 		"ArrayAccess     : Token Array, Expr Index",
-		"FunctionCall    : Token Function, []Expr Args", // todo named args
+		"FunctionCall    : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
 		"Variable        : Token Name",
 		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
 		"Logical         : Expr Left, Token Operator, Expr Right", // and, or
@@ -68,7 +68,7 @@ func main() {
 		"Empty              :",
 		"ExprStmt           : Expr Expression",
 		"FunctionStmt       : FunctionCall Call",
-		"PrimaryAssign      : Token Name, *RslType VarType, Expr Initializer",
+		"PrimaryAssign      : []Token Identifiers, []*RslType VarTypes, Expr Initializer", // allow []Expr?
 		"CompoundAssign     : Token Name, Token Operator, Expr Value",
 		"FileHeader         : FilerHeaderToken FhToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
