@@ -18,7 +18,7 @@ func TestVariousTypeLengths(t *testing.T) {
 rad url:
     fields shortint, longint, shortfloat, longfloat
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/numbers.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/numbers.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 shortint  longint              shortfloat  longfloat          
 1         1234567899987654400  1.12        1234.5678999876543  

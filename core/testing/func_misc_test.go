@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestStartsEndsContains(t *testing.T) {
-	setupAndRunArgs(t, "./test_rads/starts_ends_contains.rad")
+	setupAndRunArgs(t, "./rads/starts_ends_contains.rad")
 	expected := `true
 false
 false

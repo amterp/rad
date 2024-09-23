@@ -1,0 +1,12 @@
+{
+  "options": [
+    {
+      "match": ["alice"],
+      "return": ["Alice", 25]
+    },
+    {
+      "match": ["bob", "robert"],
+      "return": ["Bob", 35]
+    }
+  ]
+}

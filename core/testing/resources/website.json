@@ -1,0 +1,12 @@
+{
+  "options": [
+    {
+      "return": ["gitlab.com"],
+      "match": ["gl"]
+    },
+    {
+      "return": ["github.com"],
+      "match": ["gh"]
+    }
+  ]
+}

@@ -13,7 +13,7 @@ rad url:
     fields Id, Names
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/not_root_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/not_root_array.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 Id  Names                 
 1   [Alice, Bob, Charlie]  
@@ -36,7 +36,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 Name   Age  Hometown    
 Alice  30   New York     
@@ -59,7 +59,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/unique_keys_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys_array.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 Name       Age  Hometown 
 Alice      30   London    
@@ -86,7 +86,7 @@ rad url:
     fields city, country, name, age
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./test_json/nested_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/nested_wildcard.json", "--NO-COLOR")
 	expected := `Mocking response for url (matched ".*"): https://google.com
 city  country    name       age 
 York  Australia  Charlotte  35   
