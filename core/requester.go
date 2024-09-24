@@ -81,7 +81,7 @@ func (r *Requester) resolveMockedJson(url string) (interface{}, bool) {
 			data := r.loadMockedResponse(jsonPath)
 			return data, true
 		} else {
-			RP.RadDebug(fmt.Sprintf("No match for url %q against regex %q\n", url, urlRegex))
+			RP.RadDebug(fmt.Sprintf("No match for url %q against regex %q", url, urlRegex))
 		}
 	}
 	return nil, false

@@ -1,0 +1,6 @@
+args:
+    filter string
+
+name, age = pick_with_resource("../resources/people.json", filter)
+print(name)
+print(age * 10)

@@ -1,13 +1,19 @@
 package core
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 var (
-	RP     Printer
-	RIo    RadIo
-	RExit  func(int)
-	RReq   *Requester
-	RClock Clock
+	RP         Printer
+	RIo        RadIo
+	RExit      func(int)
+	RReq       *Requester
+	RClock     Clock
+	ScriptPath string
+	ScriptDir  string
+	ScriptName string
 )
 
 type CmdInput struct {
@@ -15,6 +21,12 @@ type CmdInput struct {
 	RExit  *func(int)
 	RReq   *Requester
 	RClock Clock
+}
+
+func SetScriptPath(path string) {
+	ScriptPath = path
+	ScriptDir = filepath.Dir(path)
+	ScriptName = filepath.Base(path)
 }
 
 // primarily for tests

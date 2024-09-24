@@ -112,3 +112,13 @@ func TestMultiValueDifferentTypesPickWithResourceRobert(t *testing.T) {
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestResourcePathIsRelativeToScript(t *testing.T) {
+	setupAndRunArgs(t, "./rads/people_resource.rad", "bob")
+	expected := `Bob
+350
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

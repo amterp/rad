@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type PickResource struct {
@@ -26,7 +27,8 @@ type PickResourceOptionSerde struct {
 }
 
 func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numExpectedReturnValues int) PickResource {
-	file, err := os.Open(jsonPath)
+	finalPath := resolveFinalPath(jsonPath)
+	file, err := os.Open(finalPath)
 	if err != nil {
 		i.error(function, fmt.Sprintf("Error opening file: %s", err))
 	}
@@ -61,4 +63,14 @@ func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numEx
 	return PickResource{
 		Opts: opts,
 	}
+}
+
+func resolveFinalPath(pathFromRslScript string) string {
+	if filepath.IsAbs(pathFromRslScript) {
+		return pathFromRslScript
+	}
+
+	finalPath := filepath.Clean(filepath.Join(ScriptDir, pathFromRslScript))
+	RP.RadDebug(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRslScript, finalPath))
+	return finalPath
 }

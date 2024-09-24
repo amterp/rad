@@ -9,7 +9,6 @@ import (
 
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps Cobra-handled help/parsing errors.
-// All the methods do not print a newline -- include that in your message if desired. todo might be a bad decision
 type Printer interface {
 	// For RSL writers to debug their scripts. They input their debug logs with debug(). Enabled with --DEBUG.
 	ScriptDebug(msg string)
@@ -95,9 +94,9 @@ func (p *stdPrinter) ScriptDebug(msg string) {
 func (p *stdPrinter) RadDebug(msg string) {
 	if p.isRadDebug {
 		if p.isShellMode {
-			fmt.Fprintf(p.stdErr, "RAD DEBUG: %s", msg)
+			fmt.Fprintf(p.stdErr, "RAD DEBUG: %s\n", msg)
 		} else {
-			fmt.Fprintf(p.stdOut, "RAD DEBUG: %s", msg)
+			fmt.Fprintf(p.stdOut, "RAD DEBUG: %s\n", msg)
 		}
 	}
 }

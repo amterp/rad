@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/pflag"
 	"io"
 	"os"
-	"path/filepath"
 )
 
 var (
@@ -31,10 +30,10 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 				RP = NewPrinter(cmd, shellFlag, quietFlag, debugFlag, radDebugFlag)
 			}
 			if !rootModified {
-				RP.RadDebug(fmt.Sprintf("Args passed: %v\n", args))
+				RP.RadDebug(fmt.Sprintf("Args passed: %v", args))
 				if radDebugFlag {
 					cmd.Flags().VisitAll(func(flag *pflag.Flag) {
-						RP.RadDebug(fmt.Sprintf("Flag %s: %v\n", flag.Name, flag.Value))
+						RP.RadDebug(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
 					})
 				}
 			}
@@ -42,14 +41,13 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			for _, mockResponse := range mockResponses {
 				RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
-				RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q\n", mockResponse.Pattern, mockResponse.FilePath))
+				RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
 			}
 
-			var scriptName string
 			var rslSourceCode string
 			if stdinScriptName != "" {
 				// we're in stdin mode
-				scriptName = filepath.Base(stdinScriptName)
+				SetScriptPath(stdinScriptName)
 				source, err := io.ReadAll(RIo.StdIn)
 				if err != nil {
 					RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
@@ -59,22 +57,21 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 				cmd.Help()
 				return
 			} else {
-				scriptPath := args[0]
-				scriptName = filepath.Base(scriptPath)
-				rslSourceCode = readSource(scriptPath)
+				SetScriptPath(args[0])
+				rslSourceCode = readSource(ScriptPath)
 			}
 
 			if rootModified {
 				return
 			}
 
-			extractMetadataAndModifyCmd(cmd, scriptName, rslSourceCode)
+			extractMetadataAndModifyCmd(cmd, rslSourceCode)
 			cmd.Execute()
 		},
 	}
 }
 
-func extractMetadataAndModifyCmd(cmd *cobra.Command, scriptName string, rslSourceCode string) {
+func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourceCode string) {
 	l := NewLexer(RP, rslSourceCode)
 	l.Lex()
 
@@ -82,7 +79,7 @@ func extractMetadataAndModifyCmd(cmd *cobra.Command, scriptName string, rslSourc
 	instructions := p.Parse()
 
 	scriptMetadata := ExtractMetadata(instructions)
-	modifyCmd(cmd, scriptName, scriptMetadata, instructions)
+	modifyCmd(cmd, ScriptName, scriptMetadata, instructions)
 	rootModified = true
 }
 
@@ -196,14 +193,14 @@ func InitCmd(cmd *cobra.Command) {
 		if len(args) >= 2 {
 			if lo.Some(args[1:], []string{"-h", "--help"}) && stdinScriptName == "" {
 				// it has, and with a rsl file source, so let's modify the cmd and re-run the root again
-				scriptPath := args[0]
-				rslSourceCode := readSource(scriptPath)
-				extractMetadataAndModifyCmd(cmd, filepath.Base(scriptPath), rslSourceCode)
+				SetScriptPath(stdinScriptName)
+				rslSourceCode := readSource(ScriptPath)
+				extractMetadataAndModifyCmd(cmd, rslSourceCode)
 			} else if stdinScriptName != "" {
 				// it has, and with reading rsl from stdin, so let's modify the cmd and re-run the root again
 				source, err := io.ReadAll(RIo.StdIn)
 				if err == nil {
-					extractMetadataAndModifyCmd(cmd, filepath.Base(stdinScriptName), string(source))
+					extractMetadataAndModifyCmd(cmd, string(source))
 				} else {
 					RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
 				}
