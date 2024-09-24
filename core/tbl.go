@@ -151,6 +151,7 @@ func (w *TblWriter) Render() {
 	w.tbl.SetCenterSeparator("")
 	w.tbl.SetColumnSeparator("")
 	w.tbl.SetRowSeparator("")
+	w.tbl.SetAutoWrapText(false)
 	w.tbl.SetHeaderLine(false)
 	w.tbl.EnableBorder(false)
 	w.tbl.SetTablePadding(padding)
