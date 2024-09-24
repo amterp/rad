@@ -191,7 +191,10 @@ func (e *Env) AssignJsonField(name Token, path JsonPath) {
 func (e *Env) GetJsonField(name Token) JsonFieldVar {
 	field, ok := e.jsonFields[name.GetLexeme()]
 	if !ok {
-		e.i.error(name, fmt.Sprintf("Undefined json field referenced: %v", name.GetLexeme()))
+		if e.Enclosing != nil {
+			return e.Enclosing.GetJsonField(name)
+		}
+		e.i.error(name, fmt.Sprintf("Undefined json field referenced: %v", name))
 	}
 	return field
 }

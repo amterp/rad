@@ -21,6 +21,10 @@ type Printer interface {
 	// For regular output to the script user
 	Print(msg string)
 
+	// For secondary output to the user from Rad, usually to give some feedback, for example querying a URL.
+	// Goes to stderr.
+	RadInfo(msg string)
+
 	// For output that will be evaluated by the shell, used by --SHELL.
 	PrintForShellEval(msg string)
 
@@ -106,6 +110,13 @@ func (p *stdPrinter) Print(msg string) {
 	} else {
 		fmt.Fprint(p.stdOut, msg)
 	}
+}
+
+func (p *stdPrinter) RadInfo(msg string) {
+	if p.isQuiet {
+		return
+	}
+	fmt.Fprint(p.stdErr, msg)
 }
 
 func (p *stdPrinter) PrintForShellEval(msg string) {

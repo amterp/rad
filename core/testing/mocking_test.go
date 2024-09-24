@@ -15,12 +15,12 @@ rad url:
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/id_name.json", "--NO-COLOR")
 	// todo notice strange trailing whitespace in table below, would be good to trim probably
-	expected := `Mocking response for url (matched ".*"): https://google.com
-Id  Name  
+	expected := `Id  Name  
 1   Alice  
 2   Bob    
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }

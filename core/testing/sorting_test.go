@@ -18,14 +18,14 @@ rad url:
     fields name, age, city
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
 Alice    30   New York     
 Bob      25   Los Angeles  
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -37,14 +37,14 @@ rad url:
     sort
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -56,14 +56,14 @@ rad url:
     sort asc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -75,14 +75,14 @@ rad url:
     sort desc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
 Bob      25   Los Angeles  
 Alice    30   New York     
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -94,14 +94,14 @@ rad url:
     sort name asc, age asc, city asc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -113,14 +113,14 @@ rad url:
     sort name asc, age desc, city
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Alice    30   New York     
 Bob      40   London       
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -132,14 +132,14 @@ rad url:
     sort age, city desc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 Alice    30   New York     
 Bob      40   London       
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -151,14 +151,14 @@ rad url:
     sort age asc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/people.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-name     age  city        
+	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 Alice    30   New York     
 Bob      40   London       
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }

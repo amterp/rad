@@ -35,7 +35,7 @@ func (r *Requester) RequestJson(url string) (interface{}, error) {
 		return nil, err
 	}
 
-	RP.Print(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
 
 	resp, err := http.Get(urlToQuery)
 	if err != nil {
@@ -77,7 +77,7 @@ func (r *Requester) resolveMockedJson(url string) (interface{}, bool) {
 		}
 
 		if re.MatchString(url) {
-			RP.Print(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
+			RP.RadInfo(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
 			data := r.loadMockedResponse(jsonPath)
 			return data, true
 		} else {

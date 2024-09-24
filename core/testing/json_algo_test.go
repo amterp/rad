@@ -14,11 +14,11 @@ rad url:
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/not_root_array.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-Id  Names                 
+	expected := `Id  Names                 
 1   [Alice, Bob, Charlie]  
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -37,12 +37,12 @@ rad url:
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-Name   Age  Hometown    
+	expected := `Name   Age  Hometown    
 Alice  30   New York     
 Bob    40   Los Angeles  
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -60,14 +60,14 @@ rad url:
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys_array.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-Name       Age  Hometown 
+	expected := `Name       Age  Hometown 
 Alice      30   London    
 Bob        40   London    
 Charlotte  35   Paris     
 David      25   Paris     
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -87,15 +87,15 @@ rad url:
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/nested_wildcard.json", "--NO-COLOR")
-	expected := `Mocking response for url (matched ".*"): https://google.com
-city  country    name       age 
+	expected := `city  country    name       age 
 York  Australia  Charlotte  35   
 York  Australia  David      25   
 York  Australia  Eve        20   
 York  England    Alice      30   
 York  England    Bob        40   
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExpected(t, stdOutBuffer, expected)
+	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
