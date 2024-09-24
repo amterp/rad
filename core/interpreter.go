@@ -271,7 +271,7 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 			for idx, val := range arr {
 				i.env.SetAndImplyType(valIdentifier, val)
 				if idxIdentifier != nil {
-					i.env.SetAndImplyType(*idxIdentifier, idx)
+					i.env.SetAndImplyType(*idxIdentifier, int64(idx))
 				}
 				stmt.Body.Accept(i)
 				if i.breaking {
