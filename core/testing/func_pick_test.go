@@ -10,9 +10,7 @@ opts = ["Hamburger"]
 print(pick(opts))
 `
 	setupAndRunCode(t, rsl)
-	expected := `Hamburger
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -23,9 +21,7 @@ opts = ["Hamburger"]
 print(pick(opts, "burg"))
 `
 	setupAndRunCode(t, rsl)
-	expected := `Hamburger
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -36,9 +32,7 @@ opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 print(pick(opts, "Hamb"))
 `
 	setupAndRunCode(t, rsl)
-	expected := `Hamburger
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -49,7 +43,7 @@ opts string[] = []
 pick(opts)
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 0 options to 0 with filter: \"\"\n")
+	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 0 options to 0 with filters: []\n")
 	resetTestState()
 }
 
@@ -59,6 +53,18 @@ opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 pick(opts, "asdasdasd")
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 5 options to 0 with filter: \"asdasdasd\"\n")
+	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 5 options to 0 with filters: [asdasdasd]\n")
+	resetTestState()
+}
+
+func TestPickWorksWithMultipleTokens(t *testing.T) {
+	rsl := `
+filter = ["Ham", "ger"]
+opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+print(pick(opts, filter))
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
+	assertNoErrors(t)
 	resetTestState()
 }

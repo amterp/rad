@@ -53,3 +53,17 @@ pick_kv(keys, values)
 	assertError(t, 1, "RslError at L4/7 on 'pick_kv': pick_kv() requires keys and values to be the same length, got 1 keys and 2 values\n")
 	resetTestState()
 }
+
+func TestPickKvWorksWithMultipleTokens(t *testing.T) {
+	rsl := `
+keys = ["Beef", "Chicken", "Fish"]
+values = ["Hamburger", "Chicken Burger", "Fishwich"]
+print(pick_kv(keys, values, ["Be", "ef"]))
+`
+	setupAndRunCode(t, rsl)
+	expected := `Hamburger
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

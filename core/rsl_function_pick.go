@@ -12,17 +12,19 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 		i.error(function, "pick() takes at least one argument")
 	}
 
-	var stringFilter string
+	filters := make([]string, 0)
 	switch numArgs {
 	case 1:
-		stringFilter = ""
+		// no filters, leave it empty
 	case 2:
 		filter := values[1]
 		switch filter.(type) {
 		case string, int64, float64, bool:
-			stringFilter = ToPrintable(filter)
+			filters = append(filters, ToPrintable(filter))
+		case []string:
+			filters = filter.([]string)
 		default:
-			i.error(function, "pick() does not allow arrays as filters")
+			i.error(function, "pick() does not allow non-string arrays as filters")
 		}
 	default:
 		i.error(function, fmt.Sprintf("pick() takes at most two arguments, got %v", numArgs))
@@ -31,23 +33,30 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 	switch options := values[0].(type) {
 	case []string:
 		// todo prompt should be a named/optional arg when we support that, i.e. pick(options, prompt="foo")
-		return pickString(i, function, "", stringFilter, options)
+		return pickString(i, function, "", filters, options)
 	default:
 		i.error(function, "pick() takes a string array as the first argument")
 		panic(UNREACHABLE)
 	}
 }
 
-func pickString(i *MainInterpreter, function Token, prompt string, filter string, options []string) string {
+func pickString(i *MainInterpreter, function Token, prompt string, filters []string, options []string) string {
 	var filteredOptions []huh.Option[string]
 	for _, option := range options {
-		if fuzzy.MatchFold(filter, option) {
+		failedAFilter := false
+		for _, filter := range filters {
+			if !fuzzy.MatchFold(filter, option) {
+				failedAFilter = true
+				break
+			}
+		}
+		if !failedAFilter {
 			filteredOptions = append(filteredOptions, huh.NewOption(option, option))
 		}
 	}
 
 	if len(filteredOptions) == 0 {
-		i.error(function, fmt.Sprintf("Filtered %d options to 0 with filter: %q", len(options), filter))
+		i.error(function, fmt.Sprintf("Filtered %d options to 0 with filters: %v", len(options), filters))
 	}
 
 	if len(filteredOptions) == 1 {
