@@ -9,5 +9,5 @@ const (
 // function names
 const (
 	// todo add others
-	PICK_WITH_RESOURCE = "pick_with_resource"
+	PICK_FROM_RESOURCE = "pick_from_resource"
 )

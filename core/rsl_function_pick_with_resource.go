@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func runPickWithResource(
+func runPickFromResource(
 	i *MainInterpreter,
 	function Token,
 	args []interface{},
@@ -12,11 +12,11 @@ func runPickWithResource(
 ) interface{} {
 	numArgs := len(args)
 	if numArgs < 1 {
-		i.error(function, fmt.Sprintf("%s() takes at least one argument", PICK_WITH_RESOURCE))
+		i.error(function, fmt.Sprintf("%s() takes at least one argument", PICK_FROM_RESOURCE))
 	}
 
 	if numArgs > 2 {
-		i.error(function, fmt.Sprintf("%s() takes at most two arguments, got %v", PICK_WITH_RESOURCE, numArgs))
+		i.error(function, fmt.Sprintf("%s() takes at most two arguments, got %v", PICK_FROM_RESOURCE, numArgs))
 	}
 
 	var stringFilter string
@@ -29,19 +29,19 @@ func runPickWithResource(
 		case string, int64, float64, bool:
 			stringFilter = ToPrintable(filter)
 		default:
-			i.error(function, fmt.Sprintf("%s() does not allow arrays as filters", PICK_WITH_RESOURCE))
+			i.error(function, fmt.Sprintf("%s() does not allow arrays as filters", PICK_FROM_RESOURCE))
 		}
 	}
 
 	jsonResourcePath, ok := args[0].(string)
 	if !ok {
-		i.error(function, fmt.Sprintf("%s() takes a string as the first argument", PICK_WITH_RESOURCE))
+		i.error(function, fmt.Sprintf("%s() takes a string as the first argument", PICK_FROM_RESOURCE))
 	}
 	resource := LoadPickResource(i, function, jsonResourcePath, numExpectedReturnValues)
-	return pickWithResource(i, function, stringFilter, resource)
+	return pickFromResource(i, function, stringFilter, resource)
 }
 
-func pickWithResource(i *MainInterpreter, function Token, filter string, resource PickResource) interface{} {
+func pickFromResource(i *MainInterpreter, function Token, filter string, resource PickResource) interface{} {
 	var matchedOptions []PickResourceOpt
 	for _, opt := range resource.Opts {
 		for _, match := range opt.Match {

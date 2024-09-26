@@ -7,25 +7,25 @@ const (
 args:
     filter string
 
-url = pick_with_resource("./resources/website.json", filter)
+url = pick_from_resource("./resources/website.json", filter)
 print(url)`
 	websitesRsl = `
 args:
     filter string
 
-url, title = pick_with_resource("./resources/websites.json", filter)
+url, title = pick_from_resource("./resources/websites.json", filter)
 print(url)
 print(title)`
 	peopleRsl = `
 args:
     filter string
 
-name, age = pick_with_resource("./resources/people.json", filter)
+name, age = pick_from_resource("./resources/people.json", filter)
 print(name)
 print(age * 10)`
 )
 
-func TestSingleValueSameTypesPickWithResourceGh(t *testing.T) {
+func TestSingleValueSameTypesPickFromResourceGh(t *testing.T) {
 	setupAndRunCode(t, websiteRsl, "gh")
 	expected := `github.com
 `
@@ -34,7 +34,7 @@ func TestSingleValueSameTypesPickWithResourceGh(t *testing.T) {
 	resetTestState()
 }
 
-func TestSingleValueSameTypesPickWithResourceGl(t *testing.T) {
+func TestSingleValueSameTypesPickFromResourceGl(t *testing.T) {
 	setupAndRunCode(t, websiteRsl, "gl")
 	expected := `gitlab.com
 `
@@ -43,7 +43,7 @@ func TestSingleValueSameTypesPickWithResourceGl(t *testing.T) {
 	resetTestState()
 }
 
-func TestMultiValueSameTypesPickWithResourceGh(t *testing.T) {
+func TestMultiValueSameTypesPickFromResourceGh(t *testing.T) {
 	setupAndRunCode(t, websitesRsl, "gh")
 	expected := `github.com
 GitHub
@@ -53,7 +53,7 @@ GitHub
 	resetTestState()
 }
 
-func TestMultiValueSameTypesPickWithResourceHub(t *testing.T) {
+func TestMultiValueSameTypesPickFromResourceHub(t *testing.T) {
 	setupAndRunCode(t, websitesRsl, "hub")
 	expected := `github.com
 GitHub
@@ -63,7 +63,7 @@ GitHub
 	resetTestState()
 }
 
-func TestMultiValueSameTypesPickWithResourceGl(t *testing.T) {
+func TestMultiValueSameTypesPickFromResourceGl(t *testing.T) {
 	setupAndRunCode(t, websitesRsl, "gl")
 	expected := `gitlab.com
 GitLab
@@ -73,7 +73,7 @@ GitLab
 	resetTestState()
 }
 
-func TestMultiValueSameTypesPickWithResourceLab(t *testing.T) {
+func TestMultiValueSameTypesPickFromResourceLab(t *testing.T) {
 	setupAndRunCode(t, websitesRsl, "lab")
 	expected := `gitlab.com
 GitLab
@@ -83,7 +83,7 @@ GitLab
 	resetTestState()
 }
 
-func TestMultiValueDifferentTypesPickWithResourceAlice(t *testing.T) {
+func TestMultiValueDifferentTypesPickFromResourceAlice(t *testing.T) {
 	setupAndRunCode(t, peopleRsl, "alice")
 	expected := `Alice
 250
@@ -93,7 +93,7 @@ func TestMultiValueDifferentTypesPickWithResourceAlice(t *testing.T) {
 	resetTestState()
 }
 
-func TestMultiValueDifferentTypesPickWithResourceBob(t *testing.T) {
+func TestMultiValueDifferentTypesPickFromResourceBob(t *testing.T) {
 	setupAndRunCode(t, peopleRsl, "bob")
 	expected := `Bob
 350
@@ -103,7 +103,7 @@ func TestMultiValueDifferentTypesPickWithResourceBob(t *testing.T) {
 	resetTestState()
 }
 
-func TestMultiValueDifferentTypesPickWithResourceRobert(t *testing.T) {
+func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
 	setupAndRunCode(t, peopleRsl, "robert")
 	expected := `Bob
 350

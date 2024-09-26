@@ -88,8 +88,8 @@ func RunRslNonVoidFunction(
 	case "pick_kv":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return runPickKv(i, function, args)
-	case "pick_with_resource":
-		return runPickWithResource(i, function, args, numExpectedReturnValues)
+	case "pick_from_resource":
+		return runPickFromResource(i, function, args, numExpectedReturnValues)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
