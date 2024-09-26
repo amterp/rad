@@ -24,8 +24,8 @@ Bob      40   London
 Alice    30   New York     
 Bob      25   Los Angeles  
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -43,8 +43,8 @@ Bob      25   Los Angeles
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -62,8 +62,8 @@ Bob      25   Los Angeles
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -81,8 +81,8 @@ Bob      40   London
 Bob      25   Los Angeles  
 Alice    30   New York     
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -100,8 +100,8 @@ Bob      25   Los Angeles
 Bob      40   London       
 Charlie  30   Paris        
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -119,8 +119,8 @@ Bob      40   London
 Bob      25   Los Angeles  
 Charlie  30   Paris        
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -138,8 +138,8 @@ Charlie  30   Paris
 Alice    30   New York     
 Bob      40   London       
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -157,8 +157,8 @@ Charlie  30   Paris
 Alice    30   New York     
 Bob      40   London       
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }

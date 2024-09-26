@@ -95,11 +95,10 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 		// error if required args are missing
 		posArgsIndex := 0
 		if stdinScriptName == "" {
-			// We're invoked on an actual string path, which will be the first arg. Ignore.
-			posArgsIndex = 1
+			// We're invoked on an actual string path, which will be the first arg. Cut it out.
+			args = args[1:]
 		}
 		var missingArgs []string
-		shouldPrintHelp := cobraArgs != nil
 		for _, cobraArg := range cobraArgs {
 			argName := cobraArg.Arg.ApiName
 			cobraFlag := cmd.Flags().Lookup(argName)
@@ -109,27 +108,22 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 					// there's a positional arg to fill it
 					cobraArg.SetValue(args[posArgsIndex])
 					posArgsIndex++
-					shouldPrintHelp = false
 				} else if cobraArg.Arg.IsOptional {
 					// there's no positional arg to fill it, but that's okay because it's optional, so continue
 					// but first, fill in the optional's default value if it exists
 					cobraArg.InitializeOptional()
-					shouldPrintHelp = false
 					continue
 				} else if cobraArg.IsBool() {
 					// all bools are implicitly optional and default false, unless explicitly defaulted to true
 					// this branch implies it was not defaulted to true
 					cobraArg.SetValue("false")
-					shouldPrintHelp = false
 				} else {
 					missingArgs = append(missingArgs, argName)
 				}
-			} else {
-				shouldPrintHelp = false
 			}
 		}
 
-		if shouldPrintHelp {
+		if len(missingArgs) > 0 && len(args) == 0 {
 			cmd.Help()
 			return
 		}

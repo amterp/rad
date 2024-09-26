@@ -52,8 +52,8 @@ if true:
 		fields id, name
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/id_name.json", "--NO-COLOR")
-	assertExpected(t, stdOutBuffer, "id  name  \n1   Alice  \n2   Bob    \n")
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): url\n")
+	assertOutput(t, stdOutBuffer, "id  name  \n1   Alice  \n2   Bob    \n")
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): url\n")
 	assertNoErrors(t)
 	resetTestState()
 }

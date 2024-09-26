@@ -110,11 +110,11 @@ func resetTestState() {
 }
 
 func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {
-	assertExpected(t, buffer, expected)
+	assertOutput(t, buffer, expected)
 	assertAllElseEmpty(t)
 }
 
-func assertExpected(t *testing.T, buffer *bytes.Buffer, expected string) {
+func assertOutput(t *testing.T, buffer *bytes.Buffer, expected string) {
 	t.Helper()
 	actual := buffer.String()
 	assert.Equal(t, expected, actual, "Output should match expected value")

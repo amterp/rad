@@ -17,8 +17,8 @@ rad url:
 	expected := `Id  Names                 
 1   [Alice, Bob, Charlie]  
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -41,8 +41,8 @@ rad url:
 Alice  30   New York     
 Bob    40   Los Angeles  
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -66,8 +66,8 @@ Bob        40   London
 Charlotte  35   Paris     
 David      25   Paris     
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -94,8 +94,8 @@ York  Australia  Eve        20
 York  England    Alice      30   
 York  England    Bob        40   
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }

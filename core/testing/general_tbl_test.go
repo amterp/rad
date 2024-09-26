@@ -22,8 +22,8 @@ rad url:
 	expected := `shortint  longint              shortfloat  longfloat          
 1         1234567899987654400  1.12        1234.5678999876543  
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }

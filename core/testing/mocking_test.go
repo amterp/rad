@@ -19,8 +19,8 @@ rad url:
 1   Alice  
 2   Bob    
 `
-	assertExpected(t, stdOutBuffer, expected)
-	assertExpected(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
 }
