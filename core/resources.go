@@ -13,8 +13,8 @@ type PickResource struct {
 }
 
 type PickResourceOpt struct {
-	Match  []string
-	Return []interface{}
+	Keys   []string
+	Values []interface{}
 }
 
 type PickResourceSerde struct {
@@ -22,8 +22,8 @@ type PickResourceSerde struct {
 }
 
 type PickResourceOptionSerde struct {
-	Match  []string      `json:"match"`
-	Return []interface{} `json:"return"`
+	Keys   []string      `json:"keys"`
+	Values []interface{} `json:"values"`
 }
 
 func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numExpectedReturnValues int) PickResource {
@@ -42,22 +42,22 @@ func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numEx
 
 	var opts []PickResourceOpt
 	for _, option := range resource.Options {
-		if len(option.Match) == 0 {
-			i.error(function, "pick resource options must have at least one match value")
+		if len(option.Keys) == 0 {
+			i.error(function, "pick resource options must have at least one key")
 		}
 
-		if len(option.Return) == 0 {
-			i.error(function, "pick resource options must have at least one return value")
+		if len(option.Values) == 0 {
+			i.error(function, "pick resource options must have at least one value")
 		}
 
-		if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && len(option.Return) != numExpectedReturnValues {
-			i.error(function, fmt.Sprintf("Expected %d return values from resource option: %q", numExpectedReturnValues, option.Return))
+		if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && len(option.Values) != numExpectedReturnValues {
+			i.error(function, fmt.Sprintf("Expected %d return values from resource option: %q", numExpectedReturnValues, option.Values))
 		}
 
 		opts = append(opts, PickResourceOpt{
 			// todo we should probably do some type checking e.g. only array of primitives
-			Match:  option.Match,
-			Return: option.Return,
+			Keys:   option.Keys,
+			Values: option.Values,
 		})
 	}
 	return PickResource{

@@ -44,8 +44,8 @@ func runPickFromResource(
 func pickFromResource(i *MainInterpreter, function Token, filter string, resource PickResource) interface{} {
 	var matchedOptions []PickResourceOpt
 	for _, opt := range resource.Opts {
-		for _, match := range opt.Match {
-			if match == filter {
+		for _, key := range opt.Keys {
+			if key == filter {
 				matchedOptions = append(matchedOptions, opt)
 				break
 			}
@@ -62,7 +62,7 @@ func pickFromResource(i *MainInterpreter, function Token, filter string, resourc
 		i.error(function, fmt.Sprintf("Filtered %d options to more than 1 with filter: %q", len(resource.Opts), filter))
 	}
 
-	returnValues := matchedOptions[0].Return
+	returnValues := matchedOptions[0].Values
 	if len(returnValues) == 1 {
 		return returnValues[0]
 	}

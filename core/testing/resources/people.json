@@ -1,12 +1,12 @@
 {
   "options": [
     {
-      "match": ["alice"],
-      "return": ["Alice", 25]
+      "keys": ["alice"],
+      "values": ["Alice", 25]
     },
     {
-      "match": ["bob", "robert"],
-      "return": ["Bob", 35]
+      "keys": ["bob", "robert"],
+      "values": ["Bob", 35]
     }
   ]
 }
