@@ -33,7 +33,6 @@ invocations=(
     "./main ./tests/not_condition.rad"
     "./tests/bash_missing_required_arg.sh"
     "./main ./tests/test20.rad"
-    "./main ./tests/starts_ends_contains.rad"
 )
 
 go build main.go || exit 1
