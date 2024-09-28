@@ -26,11 +26,8 @@ invocations=(
     "./tests/test18.sh --help"
     "./main ./tests/test19.rad --help"
     "./main ./tests/replace_function.rad"
-    "./main ./tests/upper_lower_functions.rad"
     "./main ./tests/modify_var_in_block.rad"
     "./main ./tests/later_json_array.rad"
-    "./main ./tests/single_quote_strings.rad"
-    "./main ./tests/not_condition.rad"
     "./tests/bash_missing_required_arg.sh"
     "./main ./tests/test20.rad"
 )

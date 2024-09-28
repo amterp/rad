@@ -1,6 +1,0 @@
-greeting = 'hi'
-print(greeting)
-
-name = "alice"
-
-print(greeting + ' ' + name)

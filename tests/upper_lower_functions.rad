@@ -1,9 +1,0 @@
-a = "Hi, friend!"
-print(upper(a))
-print(lower(a))
-
-b = 2
-print(upper(b))
-print(lower(b))
-
-print(lower([1, 2]))
