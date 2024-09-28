@@ -17,7 +17,7 @@ func GenerateUseString(scriptName string, args []ScriptArg) string {
 	for _, arg := range args {
 		if arg.IsOptional {
 			useString += fmt.Sprintf(" [%s]", arg.ApiName)
-		} else if arg.Type == RslBool {
+		} else if arg.Type == RslBoolT {
 			useString += fmt.Sprintf(" [--%s]", arg.ApiName)
 		} else {
 			useString += fmt.Sprintf(" <%s>", arg.ApiName)

@@ -28,31 +28,31 @@ func NewRuntimeLiteral(val interface{}) RuntimeLiteral {
 }
 
 func NewRuntimeString(val string) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslString, value: val}
+	return RuntimeLiteral{Type: RslStringT, value: val}
 }
 
 func NewRuntimeStringArray(val []string) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslStringArray, value: val}
+	return RuntimeLiteral{Type: RslStringArrayT, value: val}
 }
 
 func NewRuntimeInt(val int64) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslInt, value: val}
+	return RuntimeLiteral{Type: RslIntT, value: val}
 }
 
 func NewRuntimeIntArray(val []int64) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslIntArray, value: val}
+	return RuntimeLiteral{Type: RslIntArrayT, value: val}
 }
 
 func NewRuntimeFloat(val float64) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslFloat, value: val}
+	return RuntimeLiteral{Type: RslFloatT, value: val}
 }
 
 func NewRuntimeFloatArray(val []float64) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslFloatArray, value: val}
+	return RuntimeLiteral{Type: RslFloatArrayT, value: val}
 }
 
 func NewRuntimeBool(val bool) RuntimeLiteral {
-	return RuntimeLiteral{Type: RslBool, value: val}
+	return RuntimeLiteral{Type: RslBoolT, value: val}
 }
 
 func (l RuntimeLiteral) GetString() string {
@@ -90,7 +90,7 @@ type JsonFieldVar struct {
 }
 
 func (j *JsonFieldVar) AddMatch(match string) {
-	existing := j.env.GetByToken(j.Name, RslStringArray).value.([]string)
+	existing := j.env.GetByToken(j.Name, RslStringArrayT).value.([]string)
 	existing = append(existing, match)
 	j.env.SetAndImplyType(j.Name, existing)
 }

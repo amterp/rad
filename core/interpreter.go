@@ -52,17 +52,17 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 }
 
 func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
-	literal := i.env.GetByToken(access.Array, RslStringArray, RslIntArray, RslFloatArray)
+	literal := i.env.GetByToken(access.Array, RslStringArrayT, RslIntArrayT, RslFloatArrayT)
 	index := access.Index.Accept(i)
 
 	switch literal.Type {
-	case RslStringArray:
+	case RslStringArrayT:
 		arr := literal.GetStringArray()
 		return arr[index.(int64)]
-	case RslIntArray:
+	case RslIntArrayT:
 		arr := literal.GetIntArray()
 		return arr[index.(int64)]
-	case RslFloatArray:
+	case RslFloatArrayT:
 		arr := literal.GetFloatArray()
 		return arr[index.(int64)]
 	default:

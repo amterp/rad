@@ -775,21 +775,21 @@ func (p *Parser) literalOrArray(expectedType *RslTypeEnum) (LiteralOrArray, bool
 
 func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
 	if p.peekType(STRING_LITERAL) {
-		if expectedType != nil && *expectedType != RslString {
+		if expectedType != nil && *expectedType != RslStringT {
 			p.error("Expected string literal")
 		}
 		return p.stringLiteral(), true
 	}
 
 	if p.peekType(INT_LITERAL) {
-		if expectedType != nil && *expectedType != RslInt {
+		if expectedType != nil && *expectedType != RslIntT {
 			p.error("Expected int literal")
 		}
 		return p.intLiteral(), true
 	}
 
 	if p.peekType(FLOAT_LITERAL) {
-		if expectedType != nil && *expectedType != RslFloat {
+		if expectedType != nil && *expectedType != RslFloatT {
 			p.error("Expected float literal")
 		}
 		return p.floatLiteral(), true
@@ -797,7 +797,7 @@ func (p *Parser) literal(expectedType *RslTypeEnum) (Literal, bool) {
 
 	// todo need to emit bool literal tokens
 	if p.peekType(BOOL_LITERAL) {
-		if expectedType != nil && *expectedType != RslBool {
+		if expectedType != nil && *expectedType != RslBoolT {
 			p.error("Expected bool literal")
 		}
 		return p.boolLiteral(), true
@@ -866,7 +866,7 @@ func (p *Parser) stringArrayLiteral() StringArrayLiteral {
 	p.consume(LEFT_BRACKET, "Expected '[' to start array")
 
 	var values []StringLiteral
-	expectedType := RslString
+	expectedType := RslStringT
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
@@ -888,7 +888,7 @@ func (p *Parser) intArrayLiteral() IntArrayLiteral {
 	p.consume(LEFT_BRACKET, "Expected '[' to start array")
 
 	var values []IntLiteral
-	expectedType := RslInt
+	expectedType := RslIntT
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
@@ -910,7 +910,7 @@ func (p *Parser) floatArrayLiteral() FloatArrayLiteral {
 	p.consume(LEFT_BRACKET, "Expected '[' to start array")
 
 	var values []FloatLiteral
-	expectedType := RslFloat
+	expectedType := RslFloatT
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
@@ -932,7 +932,7 @@ func (p *Parser) boolArrayLiteral() BoolArrayLiteral {
 	p.consume(LEFT_BRACKET, "Expected '[' to start array")
 
 	var values []BoolLiteral
-	expectedType := RslBool
+	expectedType := RslBoolT
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
@@ -952,27 +952,27 @@ func (p *Parser) rslType() RslType {
 	if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
-			rslTypeEnum = RslStringArray
+			rslTypeEnum = RslStringArrayT
 		} else {
-			rslTypeEnum = RslString
+			rslTypeEnum = RslStringT
 		}
 	} else if p.matchKeyword(INT, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
-			rslTypeEnum = RslIntArray
+			rslTypeEnum = RslIntArrayT
 		} else {
-			rslTypeEnum = RslInt
+			rslTypeEnum = RslIntT
 		}
 	} else if p.matchKeyword(FLOAT, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
-			rslTypeEnum = RslFloatArray
+			rslTypeEnum = RslFloatArrayT
 		} else {
-			rslTypeEnum = RslFloat
+			rslTypeEnum = RslFloatT
 		}
 	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		rslTypeEnum = RslBool
+		rslTypeEnum = RslBoolT
 	} else {
 		p.error("Expected arg type")
 	}

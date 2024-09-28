@@ -15,31 +15,31 @@ type CobraArg struct {
 }
 
 func (c *CobraArg) IsString() bool {
-	return c.Arg.Type == RslString
+	return c.Arg.Type == RslStringT
 }
 
 func (c *CobraArg) IsStringArray() bool {
-	return c.Arg.Type == RslStringArray
+	return c.Arg.Type == RslStringArrayT
 }
 
 func (c *CobraArg) IsInt() bool {
-	return c.Arg.Type == RslInt
+	return c.Arg.Type == RslIntT
 }
 
 func (c *CobraArg) IsIntArray() bool {
-	return c.Arg.Type == RslIntArray
+	return c.Arg.Type == RslIntArrayT
 }
 
 func (c *CobraArg) IsFloat() bool {
-	return c.Arg.Type == RslFloat
+	return c.Arg.Type == RslFloatT
 }
 
 func (c *CobraArg) IsFloatArray() bool {
-	return c.Arg.Type == RslFloatArray
+	return c.Arg.Type == RslFloatArrayT
 }
 
 func (c *CobraArg) IsBool() bool {
-	return c.Arg.Type == RslBool
+	return c.Arg.Type == RslBoolT
 }
 
 func (c *CobraArg) InitializeOptional() {
@@ -93,19 +93,19 @@ func (c *CobraArg) GetBool() bool {
 func (c *CobraArg) SetValue(arg string) {
 	// do proper casting
 	switch c.Arg.Type {
-	case RslString:
+	case RslStringT:
 		c.value = &arg
-	case RslStringArray:
+	case RslStringArrayT:
 		// split on arg commas
 		split := strings.Split(arg, ",")
 		c.value = &split
-	case RslInt:
+	case RslIntT:
 		parsed, err := strconv.Atoi(arg)
 		if err != nil {
 			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 		}
 		c.value = &parsed
-	case RslIntArray:
+	case RslIntArrayT:
 		// split on arg commas
 		split := strings.Split(arg, ",")
 		ints := make([]int64, len(split))
@@ -117,13 +117,13 @@ func (c *CobraArg) SetValue(arg string) {
 			ints[i] = parsed
 		}
 		c.value = &ints
-	case RslFloat:
+	case RslFloatT:
 		parsed, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
 			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
 		}
 		c.value = &parsed
-	case RslFloatArray:
+	case RslFloatArrayT:
 		// split on arg commas
 		split := strings.Split(arg, ",")
 		floats := make([]float64, len(split))
@@ -135,7 +135,7 @@ func (c *CobraArg) SetValue(arg string) {
 			floats[i] = parsed
 		}
 		c.value = &floats
-	case RslBool:
+	case RslBoolT:
 		arg = strings.ToLower(arg)
 		if arg == "true" || arg == "1" {
 			val := true
@@ -160,43 +160,43 @@ func CreateCobraArg(printer Printer, cmd *cobra.Command, arg ScriptArg) CobraArg
 
 	var cobraArgValue interface{}
 	switch argType {
-	case RslString:
+	case RslStringT:
 		defVal := ""
 		if arg.DefaultString != nil {
 			defVal = *arg.DefaultString
 		}
 		cobraArgValue = cmd.Flags().StringP(name, flag, defVal, description)
-	case RslStringArray:
+	case RslStringArrayT:
 		var defVal []string
 		if arg.DefaultStringArray != nil {
 			defVal = *arg.DefaultStringArray
 		}
 		cobraArgValue = cmd.Flags().StringSliceP(name, flag, defVal, description)
-	case RslInt:
+	case RslIntT:
 		defVal := int64(0)
 		if arg.DefaultInt != nil {
 			defVal = *arg.DefaultInt
 		}
 		cobraArgValue = cmd.Flags().Int64P(name, flag, defVal, description)
-	case RslIntArray:
+	case RslIntArrayT:
 		var defVal []int64
 		if arg.DefaultIntArray != nil {
 			defVal = *arg.DefaultIntArray
 		}
 		cobraArgValue = cmd.Flags().Int64SliceP(name, flag, defVal, description)
-	case RslFloat:
+	case RslFloatT:
 		defVal := 0.0
 		if arg.DefaultFloat != nil {
 			defVal = *arg.DefaultFloat
 		}
 		cobraArgValue = cmd.Flags().Float64P(name, flag, defVal, description)
-	case RslFloatArray:
+	case RslFloatArrayT:
 		var defVal []float64
 		if arg.DefaultFloatArray != nil {
 			defVal = *arg.DefaultFloatArray
 		}
 		cobraArgValue = cmd.Flags().Float64SliceP(name, flag, defVal, description)
-	case RslBool:
+	case RslBoolT:
 		defVal := false
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool

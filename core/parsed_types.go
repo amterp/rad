@@ -3,13 +3,13 @@ package core
 type RslTypeEnum int
 
 const (
-	RslString RslTypeEnum = iota
-	RslStringArray
-	RslInt
-	RslIntArray
-	RslFloat
-	RslFloatArray
-	RslBool
+	RslStringT RslTypeEnum = iota
+	RslStringArrayT
+	RslIntT
+	RslIntArrayT
+	RslFloatT
+	RslFloatArrayT
+	RslBoolT
 )
 
 func (r *RslTypeEnum) NonArrayType() *RslTypeEnum {
@@ -18,14 +18,14 @@ func (r *RslTypeEnum) NonArrayType() *RslTypeEnum {
 	}
 
 	var output RslTypeEnum
-	if *r == RslStringArray {
-		output = RslString
+	if *r == RslStringArrayT {
+		output = RslStringT
 	}
-	if *r == RslIntArray {
-		output = RslInt
+	if *r == RslIntArrayT {
+		output = RslIntT
 	}
-	if *r == RslFloatArray {
-		output = RslFloat
+	if *r == RslFloatArrayT {
+		output = RslFloatT
 	}
 	return &output
 }
@@ -35,7 +35,7 @@ func (r *RslTypeEnum) IsArray() bool {
 		return false
 	}
 
-	return *r == RslStringArray || *r == RslIntArray || *r == RslFloatArray
+	return *r == RslStringArrayT || *r == RslIntArrayT || *r == RslFloatArrayT
 }
 
 type RslType struct {

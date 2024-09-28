@@ -58,10 +58,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	if NotNil(defaultVal, func() LiteralOrArray { return nil }) {
 		literal := (*defaultVal).Accept(l)
 		switch scriptArg.Type {
-		case RslString:
+		case RslStringT:
 			val := literal.(string)
 			scriptArg.DefaultString = &val
-		case RslStringArray:
+		case RslStringArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []string
 				scriptArg.DefaultStringArray = &val
@@ -69,10 +69,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]string)
 				scriptArg.DefaultStringArray = &val
 			}
-		case RslInt:
+		case RslIntT:
 			val := literal.(int64)
 			scriptArg.DefaultInt = &val
-		case RslIntArray:
+		case RslIntArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []int64
 				scriptArg.DefaultIntArray = &val
@@ -80,10 +80,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]int64)
 				scriptArg.DefaultIntArray = &val
 			}
-		case RslFloat:
+		case RslFloatT:
 			val := literal.(float64)
 			scriptArg.DefaultFloat = &val
-		case RslFloatArray:
+		case RslFloatArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []float64
 				scriptArg.DefaultFloatArray = &val
@@ -91,7 +91,7 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]float64)
 				scriptArg.DefaultFloatArray = &val
 			}
-		case RslBool:
+		case RslBoolT:
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val
 		default:
