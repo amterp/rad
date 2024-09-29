@@ -42,6 +42,15 @@ func ToPrintable(val interface{}) string {
 			out += ToPrintable(elem)
 		}
 		return out + "]"
+	case []bool:
+		out := "["
+		for i, elem := range v {
+			if i > 0 {
+				out += ", "
+			}
+			out += ToPrintable(elem)
+		}
+		return out + "]"
 	case []interface{}:
 		out := "["
 		for i, elem := range v {

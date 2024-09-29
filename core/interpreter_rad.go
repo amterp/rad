@@ -81,7 +81,7 @@ func (r *radInvocation) execute() {
 	trie.TraverseTrie(data)
 
 	columns := lo.Map(jsonFields, func(field JsonFieldVar, _ int) []string {
-		return r.ri.i.env.GetByToken(field.Name).GetStringArray()
+		return ToStringArray(r.ri.i.env.GetByToken(field.Name).GetMixedArray())
 	})
 
 	tbl := NewTblWriter()

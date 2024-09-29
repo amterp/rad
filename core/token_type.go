@@ -76,6 +76,7 @@ const (
 	INT      TokenType = "INT"
 	FLOAT    TokenType = "FLOAT"
 	BOOL     TokenType = "BOOL"
+	ARRAY    TokenType = "ARRAY"
 	REQUIRES TokenType = "REQUIRES"
 	ONE_OF   TokenType = "ONE_OF"
 	REGEX    TokenType = "REGEX" // todo this is pretty sad to not make available for users as Flag

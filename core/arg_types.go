@@ -19,6 +19,7 @@ type ScriptArg struct {
 	DefaultFloat       *float64
 	DefaultFloatArray  *[]float64
 	DefaultBool        *bool
+	DefaultBoolArray   *[]bool
 }
 
 func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
@@ -94,6 +95,14 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		case RslBoolT:
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val
+		case RslBoolArrayT:
+			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
+				var val []bool
+				scriptArg.DefaultBoolArray = &val
+			} else {
+				val := literal.([]bool)
+				scriptArg.DefaultBoolArray = &val
+			}
 		default:
 			l.i.error(scriptArg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))
 		}

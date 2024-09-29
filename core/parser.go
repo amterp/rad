@@ -181,21 +181,26 @@ func (p *Parser) argStatement() ArgStmt {
 }
 
 func (p *Parser) argDeclaration(identifier Token) ArgStmt {
-	var stringLiteral Token
+	var renameLiteral Token
 	if p.matchAny(STRING_LITERAL) {
-		stringLiteral = p.previous()
+		renameLiteral = p.previous()
 	}
 
 	var flag Token
 	if p.peekTwoAhead().GetType() == IDENTIFIER {
 		if p.peekType(IDENTIFIER) {
+			// non-int flag
 			flag = p.consume(IDENTIFIER, "Expected Flag")
 		} else if p.peekType(INT_LITERAL) {
+			// int flag
 			flag = p.consume(INT_LITERAL, "Expected Flag")
 		}
 	}
 
 	rslType := p.rslType()
+	if rslType.Type == RslArrayT {
+		p.error("Mixed-type arrays are not allowed in arg declaration")
+	}
 
 	isOptional := false
 	var defaultLiteral LiteralOrArray
@@ -219,7 +224,7 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 
 	return &ArgDeclaration{
 		Identifier: identifier,
-		Rename:     &stringLiteral,
+		Rename:     &renameLiteral,
 		Flag:       &flag,
 		ArgType:    rslType,
 		IsOptional: isOptional,
@@ -834,26 +839,23 @@ func (p *Parser) arrayLiteral(expectedType *RslTypeEnum) (ArrayLiteral, bool) {
 	if !p.matchAny(LEFT_BRACKET) {
 		return nil, false
 	}
+	p.rewind() // rewind the left bracket
 
-	nonArrayExpectedType := expectedType.NonArrayType()
-	literal, ok := p.literal(nonArrayExpectedType)
-	if !ok {
-		return nil, false
+	if expectedType == nil || *expectedType == RslArrayT {
+		return p.mixedArrayLiteral(), true
 	}
-	p.rewind() // rewind to the literal token
-	p.rewind() // rewind to the '[' token
 
-	switch literal.(type) {
-	case StringLiteral:
+	switch *expectedType {
+	case RslStringArrayT:
 		return p.stringArrayLiteral(), true
-	case IntLiteral:
+	case RslIntArrayT:
 		return p.intArrayLiteral(), true
-	case FloatLiteral:
+	case RslFloatArrayT:
 		return p.floatArrayLiteral(), true
-	case BoolLiteral: // todo technically not part of the arg_types.go handling
+	case RslBoolArrayT:
 		return p.boolArrayLiteral(), true
 	default:
-		p.error(fmt.Sprintf("Unexpected literal type: %T", literal))
+		p.error("Invalid array type")
 		panic(UNREACHABLE)
 	}
 }
@@ -870,7 +872,7 @@ func (p *Parser) stringArrayLiteral() StringArrayLiteral {
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
-			p.error("Expected literal in array")
+			p.error("Expected string literal in array")
 		}
 		values = append(values, literal.(StringLiteral))
 		if !p.peekType(RIGHT_BRACKET) {
@@ -892,7 +894,7 @@ func (p *Parser) intArrayLiteral() IntArrayLiteral {
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
-			p.error("Expected literal in array")
+			p.error("Expected int literal in array")
 		}
 		values = append(values, literal.(IntLiteral))
 		if !p.peekType(RIGHT_BRACKET) {
@@ -914,7 +916,7 @@ func (p *Parser) floatArrayLiteral() FloatArrayLiteral {
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
-			p.error("Expected literal in array")
+			p.error("Expected float literal in array")
 		}
 		values = append(values, literal.(FloatLiteral))
 		if !p.peekType(RIGHT_BRACKET) {
@@ -936,7 +938,7 @@ func (p *Parser) boolArrayLiteral() BoolArrayLiteral {
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literal(&expectedType)
 		if !ok {
-			p.error("Expected literal in array")
+			p.error("Expected bool literal in array")
 		}
 		values = append(values, literal.(BoolLiteral))
 		if !p.peekType(RIGHT_BRACKET) {
@@ -946,10 +948,38 @@ func (p *Parser) boolArrayLiteral() BoolArrayLiteral {
 	return BoolArrayLiteral{Values: values}
 }
 
+func (p *Parser) mixedArrayLiteral() MixedArrayLiteral {
+	if p.matchAny(BRACKETS) {
+		return MixedArrayLiteral{Values: []LiteralOrArray{}}
+	}
+
+	p.consume(LEFT_BRACKET, "Expected '[' to start array")
+
+	var values []LiteralOrArray
+	for !p.matchAny(RIGHT_BRACKET) {
+		literal, ok := p.literalOrArray(nil)
+		if !ok {
+			p.error("Expected literalOrArray in mixed array")
+		}
+		values = append(values, literal)
+		if !p.peekType(RIGHT_BRACKET) {
+			p.consume(COMMA, "Expected ',' between array elements")
+		}
+	}
+	return MixedArrayLiteral{Values: values}
+}
+
 func (p *Parser) rslType() RslType {
 	var argType Token
 	var rslTypeEnum RslTypeEnum
-	if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
+	if p.matchKeyword(ARRAY, ARGS_BLOCK_KEYWORDS) { // todo technically this is used for typing in non-arg contexts too
+		argType = p.previous()
+		if p.matchAny(BRACKETS) {
+			p.error("Brackets cannot follow 'array' type, just use 'array'.")
+		} else {
+			rslTypeEnum = RslArrayT
+		}
+	} else if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			rslTypeEnum = RslStringArrayT
@@ -972,7 +1002,11 @@ func (p *Parser) rslType() RslType {
 		}
 	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
 		argType = p.previous()
-		rslTypeEnum = RslBoolT
+		if p.matchAny(BRACKETS) {
+			rslTypeEnum = RslBoolArrayT
+		} else {
+			rslTypeEnum = RslBoolT
+		}
 	} else {
 		p.error("Expected arg type")
 	}

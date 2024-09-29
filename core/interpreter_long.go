@@ -86,7 +86,7 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 				i.error(operatorToken, "Invalid binary operator for int, float")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case float64:
 		switch right.(type) {
@@ -141,7 +141,7 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 				i.error(operatorToken, "Invalid binary operator for int, float64")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case string:
 		switch right.(type) {
@@ -177,6 +177,8 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, bool")
 			}
+		default:
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case bool:
 		i.error(operatorToken, fmt.Sprintf("Invalid binary operator for bool: %v", right))
@@ -217,12 +219,20 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for string[], bool")
 			}
+		case []interface{}:
+			arr, ok := AsStringArray(right.([]interface{}))
+			if !ok {
+				i.error(operatorToken, "Cannot join two arrays of different types: string[], mixed array")
+			}
+			return append(left.([]string), arr...)
 		case []int64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: string[], int[]"))
 		case []float64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: string[], float[]"))
+		case []bool:
+			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: string[], bool[]"))
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case []int64:
 		switch right.(type) {
@@ -253,6 +263,12 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for int[], float")
 			}
+		case []interface{}:
+			arr, ok := AsIntArray(right.([]interface{}))
+			if !ok {
+				i.error(operatorToken, "Cannot join two arrays of different types: int[], mixed array")
+			}
+			return append(left.([]int64), arr...)
 		case []int64:
 			switch operatorType {
 			case PLUS:
@@ -262,8 +278,10 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			}
 		case []float64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: int[], float[]"))
+		case []bool:
+			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: int[], bool[]"))
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case []float64:
 		switch right.(type) {
@@ -294,6 +312,12 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for float[], float")
 			}
+		case []interface{}:
+			arr, ok := AsFloatArray(right.([]interface{}))
+			if !ok {
+				i.error(operatorToken, "Cannot join two arrays of different types: float[], mixed array")
+			}
+			return append(left.([]float64), arr...)
 		case []int64:
 			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: float[], int[]"))
 		case []float64:
@@ -303,8 +327,79 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 			default:
 				i.error(operatorToken, "Invalid binary operator for float[], float[]")
 			}
+		case []bool:
+			i.error(operatorToken, fmt.Sprintf("Cannot join two arrays of different types: float[], bool[]"))
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operands: %v %v", left, right))
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+		}
+	case []bool:
+		i.error(operatorToken, "bool[] operations not yet supported") // todo support bool[]
+	case []interface{}:
+		switch right.(type) {
+		case []string:
+			switch operatorType {
+			case PLUS:
+				array, _ := AsMixedArray(right.([]string))
+				return append(left.([]interface{}), array...)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, string[]")
+			}
+		case string:
+			switch operatorType {
+			case PLUS:
+				return append(left.([]interface{}), right)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, string")
+			}
+		case int64:
+			switch operatorType {
+			case PLUS:
+				return append(left.([]interface{}), right)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, int")
+			}
+		case float64:
+			switch operatorType {
+			case PLUS:
+				return append(left.([]interface{}), right)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, float")
+			}
+		case bool:
+			switch operatorType {
+			case PLUS:
+				return append(left.([]interface{}), right)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, bool")
+			}
+		case []interface{}:
+			return append(left.([]interface{}), right.([]interface{})...)
+		case []int64:
+			switch operatorType {
+			case PLUS:
+				array, _ := AsMixedArray(right.([]int64))
+				return append(left.([]interface{}), array...)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, int[]")
+			}
+		case []float64:
+			switch operatorType {
+			case PLUS:
+				array, _ := AsMixedArray(right.([]float64))
+				return append(left.([]interface{}), array...)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, float[]")
+			}
+		case []bool:
+			switch operatorType {
+			case PLUS:
+				array, _ := AsMixedArray(right.([]bool))
+				return append(left.([]interface{}), array...)
+			default:
+				i.error(operatorToken, "Invalid binary operator for mixed array, bool[]")
+			}
+		default:
+			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	}
 	panic(UNREACHABLE)

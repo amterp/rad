@@ -64,6 +64,14 @@ func (l LiteralInterpreter) VisitBoolArrayLiteralArrayLiteral(literal BoolArrayL
 	return values
 }
 
+func (l LiteralInterpreter) VisitMixedArrayLiteralArrayLiteral(literal MixedArrayLiteral) interface{} {
+	var values []interface{}
+	for _, v := range literal.Values {
+		values = append(values, v.Accept(l))
+	}
+	return values
+}
+
 func (l LiteralInterpreter) VisitEmptyArrayLiteralArrayLiteral(EmptyArrayLiteral) interface{} {
 	return []interface{}{}
 }

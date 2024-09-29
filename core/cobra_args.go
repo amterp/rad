@@ -57,6 +57,8 @@ func (c *CobraArg) InitializeOptional() {
 		c.value = c.Arg.DefaultFloatArray
 	} else if c.Arg.DefaultBool != nil {
 		c.value = c.Arg.DefaultBool
+	} else if c.Arg.DefaultBoolArray != nil {
+		c.value = c.Arg.DefaultBoolArray
 	} else {
 		c.IsNull = true
 	}
@@ -84,6 +86,14 @@ func (c *CobraArg) GetFloat() float64 {
 
 func (c *CobraArg) GetFloatArray() []float64 {
 	return *c.value.(*[]float64)
+}
+
+func (c *CobraArg) GetBoolArray() []bool {
+	return *c.value.(*[]bool)
+}
+
+func (c *CobraArg) GetMixedArray() []interface{} {
+	return *c.value.(*[]interface{})
 }
 
 func (c *CobraArg) GetBool() bool {
@@ -146,6 +156,20 @@ func (c *CobraArg) SetValue(arg string) {
 		} else {
 			c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
 		}
+	case RslBoolArrayT:
+		// split on arg commas
+		split := strings.Split(arg, ",")
+		bools := make([]bool, len(split))
+		for i, v := range split {
+			v = strings.ToLower(v)
+			if v == "true" || v == "1" {
+				bools[i] = true
+			} else if v == "false" || v == "0" {
+				bools[i] = false
+			} else {
+				c.printer.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+			}
+		}
 	}
 }
 
@@ -202,6 +226,12 @@ func CreateCobraArg(printer Printer, cmd *cobra.Command, arg ScriptArg) CobraArg
 			defVal = *arg.DefaultBool
 		}
 		cobraArgValue = cmd.Flags().BoolP(name, flag, defVal, description)
+	case RslBoolArrayT:
+		var defVal []bool
+		if arg.DefaultBoolArray != nil {
+			defVal = *arg.DefaultBoolArray
+		}
+		cobraArgValue = cmd.Flags().BoolSliceP(name, flag, defVal, description)
 	default:
 		printer.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
 	}

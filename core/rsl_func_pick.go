@@ -23,6 +23,12 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 			filters = append(filters, ToPrintable(filter))
 		case []string:
 			filters = filter.([]string)
+		case []interface{}:
+			strings, ok := AsStringArray(filter.([]interface{}))
+			if !ok {
+				i.error(function, "pick() does not allow non-string arrays as filters")
+			}
+			filters = strings
 		default:
 			i.error(function, "pick() does not allow non-string arrays as filters")
 		}
@@ -34,6 +40,12 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 	case []string:
 		// todo prompt should be a named/optional arg when we support that, i.e. pick(options, prompt="foo")
 		return pickString(i, function, "", filters, options)
+	case []interface{}:
+		array, ok := AsStringArray(options)
+		if !ok {
+			i.error(function, "pick() does not allow non-string arrays as options")
+		}
+		return pickString(i, function, "", filters, array)
 	default:
 		i.error(function, "pick() takes a string array as the first argument")
 		panic(UNREACHABLE)

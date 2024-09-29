@@ -32,7 +32,8 @@ func main() {
 		"IntArrayLiteral      : []IntLiteral Values",
 		"FloatArrayLiteral    : []FloatLiteral Values",
 		"BoolArrayLiteral     : []BoolLiteral Values",
-		"EmptyArrayLiteral    : ",
+		"MixedArrayLiteral    : []LiteralOrArray Values",
+		"EmptyArrayLiteral    : ", // todo remove and replace with empty MixedArrayLiteral?
 	})
 
 	// literalOrArray -> literal | arrayLiteral
@@ -85,7 +86,7 @@ func main() {
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
-		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslType ArgType, " +
+		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslType ArgType, " + // todo rename 'Rename'?
 			"bool IsOptional, *LiteralOrArray Default, *ArgCommentToken Comment",
 	})
 

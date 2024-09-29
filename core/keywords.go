@@ -22,6 +22,7 @@ var ARGS_BLOCK_KEYWORDS = map[string]TokenType{
 	"int":      INT,
 	"float":    FLOAT,
 	"bool":     BOOL,
+	"array":    ARRAY,
 	"requires": REQUIRES,
 	"one_of":   ONE_OF,
 	"regex":    REGEX,

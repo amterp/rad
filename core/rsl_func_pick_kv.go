@@ -28,15 +28,24 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 			filters = append(filters, ToPrintable(filter))
 		case []string:
 			filters = filter.([]string)
+		case []interface{}:
+			strings, ok := AsStringArray(filter.([]interface{}))
+			if !ok {
+				i.error(function, "pick() does not allow non-string arrays as filters")
+			}
+			filters = strings
 		default:
 			i.error(function, "pick_kv() does not allow non-string arrays as filters")
 		}
 	}
 
+	var keys []string
 	keys, ok := args[0].([]string)
 	if !ok {
-		i.error(function, "pick_kv() takes a string array as the first argument")
-		panic(UNREACHABLE)
+		if keys, ok = AsStringArray(args[0].([]interface{})); !ok {
+			i.error(function, "pick_kv() takes a string array as the first argument")
+			panic(UNREACHABLE)
+		}
 	}
 
 	if len(keys) == 0 {
@@ -49,6 +58,8 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 	case []int64:
 		return pickKv(i, function, "", filters, keys, values)
 	case []float64:
+		return pickKv(i, function, "", filters, keys, values)
+	case []interface{}:
 		return pickKv(i, function, "", filters, keys, values)
 	default:
 		i.error(function, "pick_kv() takes an array as the second argument")

@@ -52,18 +52,24 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 }
 
 func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
-	literal := i.env.GetByToken(access.Array, RslStringArrayT, RslIntArrayT, RslFloatArrayT)
+	literal := i.env.GetByToken(access.Array, RslStringArrayTT, RslIntArrayTT, RslFloatArrayTT, RslBoolArrayTT, RslArrayT)
 	index := access.Index.Accept(i)
 
 	switch literal.Type {
-	case RslStringArrayT:
+	case RslStringArrayTT:
 		arr := literal.GetStringArray()
 		return arr[index.(int64)]
-	case RslIntArrayT:
+	case RslIntArrayTT:
 		arr := literal.GetIntArray()
 		return arr[index.(int64)]
-	case RslFloatArrayT:
+	case RslFloatArrayTT:
 		arr := literal.GetFloatArray()
+		return arr[index.(int64)]
+	case RslBoolArrayTT:
+		arr := literal.GetBoolArray()
+		return arr[index.(int64)]
+	case RslArrayT:
+		arr := literal.GetMixedArray()
 		return arr[index.(int64)]
 	default:
 		i.error(access.Array, "Bug! Should've failed earlier")
@@ -263,67 +269,44 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 		valIdentifier = stmt.Identifier1
 	}
 
-	// very duplicated :( but generic non-duped doesn't look super simple?
 	switch rangeValue.(type) {
 	case []string:
 		arr := rangeValue.([]string)
-		i.runWithChildEnv(func() {
-			for idx, val := range arr {
-				i.env.SetAndImplyType(valIdentifier, val)
-				if idxIdentifier != nil {
-					i.env.SetAndImplyType(*idxIdentifier, int64(idx))
-				}
-				stmt.Body.Accept(i)
-				if i.breaking {
-					i.breaking = false
-					break
-				}
-				if i.continuing {
-					i.continuing = false
-					continue
-				}
-			}
-		})
+		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
 	case []int64:
 		arr := rangeValue.([]int64)
-		i.runWithChildEnv(func() {
-			for idx, val := range arr {
-				i.env.SetAndImplyType(valIdentifier, val)
-				if idxIdentifier != nil {
-					i.env.SetAndImplyType(*idxIdentifier, idx)
-				}
-				stmt.Body.Accept(i)
-				if i.breaking {
-					i.breaking = false
-					break
-				}
-				if i.continuing {
-					i.continuing = false
-					continue
-				}
-			}
-		})
+		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
 	case []float64:
 		arr := rangeValue.([]float64)
-		i.runWithChildEnv(func() {
-			for idx, val := range arr {
-				i.env.SetAndImplyType(valIdentifier, val)
-				if idxIdentifier != nil {
-					i.env.SetAndImplyType(*idxIdentifier, idx)
-				}
-				stmt.Body.Accept(i)
-				if i.breaking {
-					i.breaking = false
-					break
-				}
-				if i.continuing {
-					i.continuing = false
-					continue
-				}
-			}
-		})
+		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
+	case []bool:
+		arr := rangeValue.([]bool)
+		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
+	case []interface{}:
+		arr := rangeValue.([]interface{})
+		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
+	}
+}
+
+func runForLoop[T any](i *MainInterpreter, stmt ForStmt, arr []T, idxIdentifier *Token, valIdentifier Token) func() {
+	return func() {
+		for idx, val := range arr {
+			i.env.SetAndImplyType(valIdentifier, val)
+			if idxIdentifier != nil {
+				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
+			}
+			stmt.Body.Accept(i)
+			if i.breaking {
+				i.breaking = false
+				break
+			}
+			if i.continuing {
+				i.continuing = false
+				continue
+			}
+		}
 	}
 }
 
