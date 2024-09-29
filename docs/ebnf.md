@@ -141,10 +141,10 @@ factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
                                | primary
 primary                     -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
+arrayAccess                 -> primary "[" expression "]"
 literalOrArray              -> literal | arrayLiteral
 literal                     -> STRING | NUMBER | BOOL
 arrayLiteral                -> "[" ( literal ( "," literal )* )? "]"
-arrayAccess                 -> IDENTIFIER "[" expression "]"
 functionCall                -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
 switchStmt                  -> "switch" discriminator switchBlock
 exprStmt                    -> expression ( "," expression )*

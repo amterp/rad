@@ -701,36 +701,37 @@ func (p *Parser) unary(numExpectedReturnValues int) Expr {
 }
 
 func (p *Parser) primary(numExpectedReturnValues int) Expr {
+	var expr Expr
+
 	if p.matchAny(LEFT_PAREN) {
-		expr := p.expr(1)
+		expr = p.expr(1)
 		p.consume(RIGHT_PAREN, "Expected ')' after expression")
-		return &Grouping{Value: expr}
-	}
-
-	if loa, ok := p.literalOrArray(nil); ok {
-		return &ExprLoa{Value: loa}
-	}
-
-	if arrayExpr, ok := p.arrayExpr(); ok {
-		return arrayExpr
-	}
-
-	if p.matchAny(IDENTIFIER) {
+		expr = &Grouping{Value: expr}
+	} else if loa, ok := p.literalOrArray(nil); ok {
+		expr = &ExprLoa{Value: loa}
+	} else if arrayExpr, ok := p.arrayExpr(); ok {
+		expr = arrayExpr
+	} else if p.matchAny(IDENTIFIER) {
 		identifier := p.previous()
-		if p.matchAny(LEFT_BRACKET) {
-			array := p.expr(1)
-			p.consume(RIGHT_BRACKET, "Expected ']' after array expression")
-			return &ArrayAccess{Array: identifier, Index: array}
-		}
+		// ( after an identifier -> function call
 		if p.peekType(LEFT_PAREN) {
 			p.rewind()
-			return p.functionCall(numExpectedReturnValues)
+			expr = p.functionCall(numExpectedReturnValues)
+		} else {
+			expr = &Variable{Name: identifier}
 		}
-		return &Variable{Name: identifier}
+	} else {
+		p.error("Expected expression")
 	}
 
-	p.error("Expected expression")
-	panic(UNREACHABLE)
+	for p.peekType(LEFT_BRACKET) {
+		openBracket := p.advance()
+		index := p.expr(1)
+		p.consume(RIGHT_BRACKET, "Expected ']' after index expression")
+		expr = &ArrayAccess{Array: expr, Index: index, OpenBracketToken: openBracket}
+	}
+
+	return expr
 }
 
 func (p *Parser) functionCall(numExpectedReturnValues int) FunctionCall {

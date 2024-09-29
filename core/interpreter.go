@@ -52,27 +52,22 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 }
 
 func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
-	literal := i.env.GetByToken(access.Array, RslStringArrayTT, RslIntArrayTT, RslFloatArrayTT, RslBoolArrayTT, RslArrayT)
+	array := access.Array.Accept(i)
 	index := access.Index.Accept(i)
 
-	switch literal.Type {
-	case RslStringArrayTT:
-		arr := literal.GetStringArray()
-		return arr[index.(int64)]
-	case RslIntArrayTT:
-		arr := literal.GetIntArray()
-		return arr[index.(int64)]
-	case RslFloatArrayTT:
-		arr := literal.GetFloatArray()
-		return arr[index.(int64)]
-	case RslBoolArrayTT:
-		arr := literal.GetBoolArray()
-		return arr[index.(int64)]
-	case RslArrayT:
-		arr := literal.GetMixedArray()
-		return arr[index.(int64)]
+	switch coerced := array.(type) {
+	case []string:
+		return coerced[index.(int64)]
+	case []int64:
+		return coerced[index.(int64)]
+	case []float64:
+		return coerced[index.(int64)]
+	case []bool:
+		return coerced[index.(int64)]
+	case []interface{}:
+		return coerced[index.(int64)]
 	default:
-		i.error(access.Array, "Bug! Should've failed earlier")
+		i.error(access.OpenBracketToken, "Bug! Should've failed earlier")
 		panic(UNREACHABLE)
 	}
 }

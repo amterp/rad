@@ -47,8 +47,9 @@ func (e ArrayExpr) String() string {
 }
 
 type ArrayAccess struct {
-	Array Token
-	Index Expr
+	Array            Expr
+	Index            Expr
+	OpenBracketToken Token
 }
 
 func (e ArrayAccess) Accept(visitor ExprVisitor) interface{} {
@@ -58,6 +59,7 @@ func (e ArrayAccess) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Array: %v", e.Array))
 	parts = append(parts, fmt.Sprintf("Index: %v", e.Index))
+	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
 	return fmt.Sprintf("ArrayAccess(%s)", strings.Join(parts, ", "))
 }
 

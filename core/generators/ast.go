@@ -56,7 +56,7 @@ func main() {
 	defineAst(outputDir, "Expr", "interface{}", []string{
 		"ExprLoa         : LiteralOrArray Value",
 		"ArrayExpr       : []Expr Values",
-		"ArrayAccess     : Token Array, Expr Index",
+		"ArrayAccess     : Expr Array, Expr Index, Token OpenBracketToken",
 		"FunctionCall    : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
 		"Variable        : Token Name",
 		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
