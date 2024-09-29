@@ -285,9 +285,36 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	}
 }
 
-func runForLoop[T any](i *MainInterpreter, stmt ForStmt, arr []T, idxIdentifier *Token, valIdentifier Token) func() {
+func (i *MainInterpreter) VisitListComprehensionExpr(comp ListComprehension) interface{} {
+	rangeVals := comp.Range.Accept(i)
+	var valIdent Token
+	var idxIdent *Token
+	if comp.Identifier2 != nil {
+		idxIdent = &comp.Identifier1
+		valIdent = *comp.Identifier2
+	} else {
+		valIdent = comp.Identifier1
+	}
+	switch coerced := rangeVals.(type) {
+	case []string:
+		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
+	case []int64:
+		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
+	case []float64:
+		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
+	case []bool:
+		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
+	case []interface{}:
+		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
+	default:
+		i.error(comp.For, "List comprehension range must be an array")
+		panic(UNREACHABLE)
+	}
+}
+
+func runForLoop[T any](i *MainInterpreter, stmt ForStmt, rangeArr []T, idxIdentifier *Token, valIdentifier Token) func() {
 	return func() {
-		for idx, val := range arr {
+		for idx, val := range rangeArr {
 			i.env.SetAndImplyType(valIdentifier, val)
 			if idxIdentifier != nil {
 				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
@@ -302,6 +329,38 @@ func runForLoop[T any](i *MainInterpreter, stmt ForStmt, arr []T, idxIdentifier 
 				continue
 			}
 		}
+	}
+}
+
+func runListComprehensionLoop[T any](
+	i *MainInterpreter,
+	forToken Token,
+	rangeArr []T,
+	idxIdentifier *Token,
+	valIdentifier Token,
+	expression Expr,
+	condition *Expr,
+) func() interface{} {
+	return func() interface{} {
+		var output []interface{}
+		for idx, val := range rangeArr {
+			i.env.SetAndImplyType(valIdentifier, val)
+			if idxIdentifier != nil {
+				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
+			}
+			if condition != nil {
+				conditionResult := (*condition).Accept(i)
+				bval, ok := conditionResult.(bool)
+				if !ok {
+					i.error(forToken, "List comprehension condition must resolve to a bool")
+				}
+				if !bval {
+					continue
+				}
+			}
+			output = append(output, expression.Accept(i))
+		}
+		return output
 	}
 }
 
@@ -323,4 +382,13 @@ func (i *MainInterpreter) runWithChildEnv(runnable func()) {
 	i.env = &env
 	runnable()
 	i.env = originalEnv
+}
+
+func (i *MainInterpreter) computeWithChildEnv(computable func() interface{}) interface{} {
+	originalEnv := i.env
+	env := originalEnv.NewChildEnv()
+	i.env = &env
+	result := computable()
+	i.env = originalEnv
+	return result
 }

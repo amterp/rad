@@ -707,8 +707,8 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 		expr = p.expr(1)
 		p.consume(RIGHT_PAREN, "Expected ')' after expression")
 		expr = &Grouping{Value: expr}
-	} else if loa, ok := p.literalOrArray(nil); ok {
-		expr = &ExprLoa{Value: loa}
+	} else if literal, ok := p.literal(nil); ok {
+		return &ExprLoa{Value: &LoaLiteral{Value: literal}}
 	} else if arrayExpr, ok := p.arrayExpr(); ok {
 		expr = arrayExpr
 	} else if p.matchAny(IDENTIFIER) {
@@ -749,21 +749,52 @@ func (p *Parser) functionCall(numExpectedReturnValues int) FunctionCall {
 }
 
 func (p *Parser) arrayExpr() (Expr, bool) {
+	if p.matchAny(BRACKETS) {
+		return &ArrayExpr{Values: []Expr{}}, true
+	}
+
 	if !p.matchAny(LEFT_BRACKET) {
 		return nil, false
 	}
 
 	if p.matchAny(RIGHT_BRACKET) {
+		// technically redundant as it should be one BRACKETS token, but w/e
 		return &ArrayExpr{Values: []Expr{}}, true
 	}
 
-	values := []Expr{p.expr(1)}
+	expr := p.expr(1)
+	if p.peekKeyword(FOR, GLOBAL_KEYWORDS) {
+		return p.listComprehension(expr)
+	}
+
+	values := []Expr{expr}
 	for !p.matchAny(RIGHT_BRACKET) {
 		p.consume(COMMA, "Expected ',' between array elements")
 		values = append(values, p.expr(1))
 	}
 
 	return &ArrayExpr{Values: values}, true
+}
+
+func (p *Parser) listComprehension(expr Expr) (Expr, bool) {
+	forToken := p.consumeKeyword(FOR, GLOBAL_KEYWORDS)
+	identifier1 := p.consume(IDENTIFIER, "Expected identifier after 'for'")
+	var identifier2 *Token
+	if p.matchAny(COMMA) {
+		i := p.consume(IDENTIFIER, "Expected identifier after ','")
+		identifier2 = &i
+	}
+	p.consumeKeyword(IN, GLOBAL_KEYWORDS)
+	rangeExpr := p.expr(1)
+
+	if p.matchKeyword(IF, GLOBAL_KEYWORDS) {
+		condition := p.expr(1)
+		p.consume(RIGHT_BRACKET, "Expected ']' after list comprehension")
+		return &ListComprehension{Expression: expr, For: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Condition: &condition}, true
+	}
+
+	p.consume(RIGHT_BRACKET, "Expected ']' after list comprehension")
+	return &ListComprehension{Expression: expr, For: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Condition: nil}, true
 }
 
 func (p *Parser) literalOrArray(expectedType *RslTypeEnum) (LiteralOrArray, bool) {

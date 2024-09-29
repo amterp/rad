@@ -19,6 +19,7 @@ type ExprVisitor interface {
 	VisitLogicalExpr(Logical) interface{}
 	VisitGroupingExpr(Grouping) interface{}
 	VisitUnaryExpr(Unary) interface{}
+	VisitListComprehensionExpr(ListComprehension) interface{}
 }
 type ExprLoa struct {
 	Value LiteralOrArray
@@ -153,4 +154,27 @@ func (e Unary) String() string {
 	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
 	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
 	return fmt.Sprintf("Unary(%s)", strings.Join(parts, ", "))
+}
+
+type ListComprehension struct {
+	Expression  Expr
+	For         Token
+	Identifier1 Token
+	Identifier2 *Token
+	Range       Expr
+	Condition   *Expr
+}
+
+func (e ListComprehension) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitListComprehensionExpr(e)
+}
+func (e ListComprehension) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Expression: %v", e.Expression))
+	parts = append(parts, fmt.Sprintf("For: %v", e.For))
+	parts = append(parts, fmt.Sprintf("Identifier1: %v", e.Identifier1))
+	parts = append(parts, fmt.Sprintf("Identifier2: %v", e.Identifier2))
+	parts = append(parts, fmt.Sprintf("Range: %v", e.Range))
+	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
+	return fmt.Sprintf("ListComprehension(%s)", strings.Join(parts, ", "))
 }

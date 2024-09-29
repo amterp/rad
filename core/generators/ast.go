@@ -54,15 +54,16 @@ func main() {
 	// arrayAccess    -> IDENTIFIER "[" expression "]"
 	// functionCall   -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
 	defineAst(outputDir, "Expr", "interface{}", []string{
-		"ExprLoa         : LiteralOrArray Value",
-		"ArrayExpr       : []Expr Values",
-		"ArrayAccess     : Expr Array, Expr Index, Token OpenBracketToken",
-		"FunctionCall    : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
-		"Variable        : Token Name",
-		"Binary          : Expr Left, Token Operator, Expr Right", // +, -, *, /
-		"Logical         : Expr Left, Token Operator, Expr Right", // and, or
-		"Grouping        : Expr Value",                            // ( expr )
-		"Unary           : Token Operator, Expr Right",            // !, -, +
+		"ExprLoa           : LiteralOrArray Value",
+		"ArrayExpr         : []Expr Values",
+		"ArrayAccess       : Expr Array, Expr Index, Token OpenBracketToken",
+		"FunctionCall      : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
+		"Variable          : Token Name",
+		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /
+		"Logical           : Expr Left, Token Operator, Expr Right", // and, or
+		"Grouping          : Expr Value",                            // ( expr )
+		"Unary             : Token Operator, Expr Right",            // !, -, +
+		"ListComprehension : Expr Expression, Token For, Token Identifier1, *Token Identifier2, Expr Range, *Expr Condition",
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
