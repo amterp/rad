@@ -109,7 +109,7 @@ type JsonFieldVar struct {
 	env  *Env
 }
 
-func (j *JsonFieldVar) AddMatch(match string) {
+func (j *JsonFieldVar) AddMatch(match interface{}) {
 	existing := j.env.GetByToken(j.Name, RslArrayT).value.([]interface{})
 	existing = append(existing, match)
 	j.env.SetAndImplyType(j.Name, existing)

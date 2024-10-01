@@ -128,7 +128,8 @@ func (e ArgBlock) String() string {
 
 type RadBlock struct {
 	RadKeyword Token
-	Url        Expr
+	RadType    RadBlockType
+	Source     *Expr
 	Stmts      []RadStmt
 }
 
@@ -138,7 +139,8 @@ func (e RadBlock) Accept(visitor StmtVisitor) {
 func (e RadBlock) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("RadKeyword: %v", e.RadKeyword))
-	parts = append(parts, fmt.Sprintf("Url: %v", e.Url))
+	parts = append(parts, fmt.Sprintf("RadType: %v", e.RadType))
+	parts = append(parts, fmt.Sprintf("Source: %v", e.Source))
 	parts = append(parts, fmt.Sprintf("Stmts: %v", e.Stmts))
 	return fmt.Sprintf("RadBlock(%s)", strings.Join(parts, ", "))
 }

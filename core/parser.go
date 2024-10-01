@@ -235,7 +235,15 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 
 func (p *Parser) statement() Stmt {
 	if p.matchKeyword(RAD, GLOBAL_KEYWORDS) {
-		return p.radBlock()
+		return p.radBlock(Rad)
+	}
+
+	if p.matchKeyword(REQUEST, GLOBAL_KEYWORDS) {
+		return p.radBlock(Request)
+	}
+
+	if p.matchKeyword(DISPLAY, GLOBAL_KEYWORDS) {
+		return p.radBlock(Display)
 	}
 
 	if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
@@ -269,31 +277,49 @@ func (p *Parser) statement() Stmt {
 	return p.assignment()
 }
 
-func (p *Parser) radBlock() *RadBlock {
+func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 	radToken := p.previous()
-	urlToken := p.expr(1)
-	p.consume(COLON, "Expecting ':' to start rad block")
+
+	var srcToken *Expr
+	if radType == Request || radType == Rad {
+		if p.peekType(COLON) {
+			p.error(fmt.Sprintf("Expecting url or other source for %s block", radType))
+		}
+		expr := p.expr(1)
+		srcToken = &expr
+	}
+
+	if radType == Display {
+		p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q", radType))
+	} else {
+		p.consume(COLON, fmt.Sprintf("Expecting ':' to start %s block", radType))
+	}
+
 	p.consumeNewlines()
 	if !p.matchAny(INDENT) {
-		p.error("Expecting indented contents in rad block")
+		p.error(fmt.Sprintf("Expecting indented contents in %s block", radType))
 	}
 	p.consumeNewlines()
 	var radStatements []RadStmt
 	for !p.matchAny(DEDENT, EOF) {
-		radStatements = append(radStatements, p.radStatement())
+		radStatements = append(radStatements, p.radStatement(radType))
 		p.consumeNewlines()
 	}
-	radBlock := &RadBlock{RadKeyword: radToken, Url: urlToken, Stmts: radStatements}
+	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcToken, Stmts: radStatements}
 	p.validateRadBlock(radBlock)
 	return radBlock
 }
 
-func (p *Parser) radStatement() RadStmt {
+func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 	if p.matchKeyword(FIELDS, RAD_BLOCK_KEYWORDS) {
 		return p.radFieldsStatement()
 	}
 
 	if p.matchKeyword(SORT, RAD_BLOCK_KEYWORDS) {
+		if radType == Request {
+			// note: maybe we allow this if we add explicit 'display' statements into request blocks?
+			p.error("Sort statement is not allowed in a request block")
+		}
 		return p.radSortStatement()
 	}
 
@@ -309,16 +335,16 @@ func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 	for i, stmt := range radBlock.Stmts {
 		if _, ok := stmt.(*Fields); ok {
 			if i != 0 {
-				p.error("Fields statement must be the first statement in a rad block")
+				p.error(fmt.Sprintf("Fields statement must be the first statement in a %s block", radBlock.RadType))
 			}
 			if hasFieldsStmt {
-				p.error("Only one 'fields' statement is allowed in a rad block")
+				p.error(fmt.Sprintf("Only one 'fields' statement is allowed in a %s block", radBlock.RadType))
 			}
 			hasFieldsStmt = true
 		}
 	}
 	if !hasFieldsStmt {
-		p.error("A rad block must contain a 'fields' statement")
+		p.error(fmt.Sprintf("A %s block must contain a 'fields' statement", radBlock.RadType))
 	}
 }
 

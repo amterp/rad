@@ -74,7 +74,7 @@ func main() {
 		"CompoundAssign     : Token Name, Token Operator, Expr Value",
 		"FileHeader         : FilerHeaderToken FhToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
-		"RadBlock           : Token RadKeyword, Expr Url, []RadStmt Stmts",
+		"RadBlock           : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt    : SwitchBlock Block",
 		"SwitchAssignment   : []Token Identifiers, []*RslType VarTypes, SwitchBlock Block",

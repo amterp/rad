@@ -10,6 +10,8 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"from":     FROM,
 	"on":       ON,
 	"rad":      RAD,
+	"request":  REQUEST,
+	"display":  DISPLAY,
 	"or":       OR,
 	"and":      AND,
 	"if":       IF,

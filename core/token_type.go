@@ -65,6 +65,8 @@ const (
 	FROM     TokenType = "FROM"
 	ON       TokenType = "ON"
 	RAD      TokenType = "RAD" // todo continue to rethink this being the keyword
+	REQUEST  TokenType = "REQUEST"
+	DISPLAY  TokenType = "DISPLAY"
 	OR       TokenType = "OR"
 	AND      TokenType = "AND"
 	IF       TokenType = "IF"

@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/samber/lo"
+	"github.com/scylladb/go-set/strset"
 )
 
 type RadBlockInterpreter struct {
@@ -15,17 +16,28 @@ func NewRadBlockInterpreter(i *MainInterpreter) *RadBlockInterpreter {
 }
 
 func (r RadBlockInterpreter) Run(block RadBlock) {
-	url := block.Url.Accept(r.i)
-	switch url.(type) {
-	case string:
-		break
-	default:
-		r.i.error(block.RadKeyword, "URL must be a string")
+	var url *string
+	if block.Source != nil {
+		src := (*block.Source).Accept(r.i) // todo might be a json blob, in the future
+		switch coerced := src.(type) {
+		case string:
+			url = &coerced
+		default:
+			r.i.error(block.RadKeyword, "URL must be a string")
+		}
 	}
-	r.invocation = &radInvocation{ri: &r, block: block, url: url.(string)}
+	r.invocation = &radInvocation{ri: &r, block: block, url: url, fieldsToNotPrint: strset.New()}
+
 	for _, stmt := range block.Stmts {
 		stmt.Accept(r)
 	}
+
+	if block.RadType == Request {
+		for _, field := range r.invocation.fields.Identifiers {
+			r.invocation.fieldsToNotPrint.Add(field.GetLexeme())
+		}
+	}
+
 	r.invocation.execute()
 	r.invocation = nil
 }
@@ -61,34 +73,50 @@ func (r RadBlockInterpreter) VisitSortRadStmt(sort Sort) {
 // == radInvocation ==
 
 type radInvocation struct {
-	ri      *RadBlockInterpreter
-	block   RadBlock
-	url     string
-	fields  Fields
-	sorting []ColumnSort
+	ri               *RadBlockInterpreter
+	block            RadBlock
+	url              *string
+	fields           Fields
+	fieldsToNotPrint *strset.Set
+	sorting          []ColumnSort
 }
 
 func (r *radInvocation) execute() {
-	data, err := RReq.RequestJson(r.url)
-	if err != nil {
-		r.error(fmt.Sprintf("Error requesting JSON: %v", err))
+	fields := r.fields.Identifiers
+
+	if r.url != nil {
+		jsonFields := lo.Map(fields, func(field Token, _ int) JsonFieldVar {
+			return r.ri.i.env.GetJsonField(field)
+		})
+
+		data, err := RReq.RequestJson(*r.url)
+		if err != nil {
+			r.error(fmt.Sprintf("Error requesting JSON: %v", err))
+		}
+
+		trie := CreateTrie(r.block.RadKeyword, jsonFields)
+		trie.TraverseTrie(data)
 	}
 
-	jsonFields := lo.Map(r.fields.Identifiers, func(field Token, _ int) JsonFieldVar {
-		return r.ri.i.env.GetJsonField(field)
+	headers := lo.FilterMap(fields, func(field Token, _ int) (string, bool) {
+		if r.fieldsToNotPrint.Has(field.GetLexeme()) {
+			return "", false
+		}
+		return field.GetLexeme(), true
 	})
-	trie := CreateTrie(r.block.RadKeyword, jsonFields)
-	trie.TraverseTrie(data)
 
-	columns := lo.Map(jsonFields, func(field JsonFieldVar, _ int) []string {
-		return ToStringArray(r.ri.i.env.GetByToken(field.Name).GetMixedArray())
+	if len(headers) == 0 {
+		return
+	}
+
+	columns := lo.FilterMap(fields, func(field Token, _ int) ([]string, bool) {
+		if r.fieldsToNotPrint.Has(field.GetLexeme()) {
+			return nil, false
+		}
+		return ToStringArray(r.ri.i.env.GetByToken(field).GetMixedArray()), true
 	})
 
 	tbl := NewTblWriter()
-
-	headers := lo.Map(jsonFields, func(field JsonFieldVar, _ int) string {
-		return field.Name.GetLexeme()
-	})
 
 	tbl.SetHeader(headers)
 	for i := range columns[0] {
