@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -13,10 +14,6 @@ func RunRslNonVoidFunction(
 	args []interface{},
 ) interface{} {
 	functionName := function.GetLexeme()
-
-	if numExpectedReturnValues == NO_NUM_RETURN_VALUES_CONSTRAINT || numExpectedReturnValues == 1 {
-
-	}
 
 	switch functionName {
 	case "len":
@@ -103,6 +100,20 @@ func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
 		runPrint(args)
 	case "debug":
 		runDebug(args)
+	case "exit":
+		if len(args) == 0 {
+			os.Exit(0)
+		} else if len(args) == 1 {
+			arg := args[0]
+			switch coerced := arg.(type) {
+			case int64:
+				os.Exit(int(coerced))
+			default:
+				i.error(function, "exit() takes an integer argument")
+			}
+		} else {
+			i.error(function, "exit() takes zero or one argument")
+		}
 	default:
 		RunRslNonVoidFunction(i, function, NO_NUM_RETURN_VALUES_CONSTRAINT, args)
 	}

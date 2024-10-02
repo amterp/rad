@@ -10,7 +10,7 @@ import (
 type CobraArg struct {
 	printer Printer
 	Arg     ScriptArg
-	value   interface{} //should be a pointer, e.g. *string . This is to allow cobra to set the value
+	value   interface{} // should be a pointer, e.g. *string . This is to allow cobra to set the value
 	IsNull  bool
 }
 
