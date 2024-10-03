@@ -23,7 +23,6 @@ rad url:
 	resetTestState()
 }
 
-// todo flaky due to nondeterministic table ordering
 func TestKeyExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
@@ -72,7 +71,6 @@ David      25   Paris
 	resetTestState()
 }
 
-// todo flaky due to nondeterministic table ordering
 func TestNestedWildcardExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
@@ -93,6 +91,50 @@ York  Australia  David      25
 York  Australia  Eve        20   
 York  England    Alice      30   
 York  England    Bob        40   
+`
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestWildcardListCapture(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+names = json.*
+ids = json.*.ids
+
+request url:
+    fields names, ids
+print(names)
+print(ids)
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/array_wildcard.json", "--NO-COLOR")
+	expected := `[Alice, Bob, Charlie]
+[[1, 2, 3], [4, 5, 6, 7, 8], [9, 10]]
+`
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestWildcardListObjectCapture(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+names = json.*
+ids = json.*.ids[].id
+
+request url:
+    fields names, ids
+print(names)
+print(ids)
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/array_objects.json", "--NO-COLOR")
+	expected := `[Alice, Alice, Alice, Bob, Charlie, Charlie]
+[1, 2, 3, 4, 5, 6]
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
