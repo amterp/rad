@@ -1,0 +1,53 @@
+{
+  "buildings": {
+    "CENTER_A_B1": {
+      "issues": [
+        {
+          "type": "MISSING_MATERIAL",
+          "followup": "PROCEED_AS_USUAL",
+          "details": "Material is missing: BRICK TYPE A (30582742)",
+          "consequence": "The system will proceed as usual, skipping the missing material.",
+          "suggestedFix": "Did you order and verify the delivery of this material? Has it been replaced in the construction plan? Does the building blueprint need updating?",
+          "runId": "e3b9a620-8827-145c-b20f-23dcd142ce08"
+        },
+        {
+          "type": "INCORRECT_MATERIAL",
+          "followup": "HALT_AND_REVIEW",
+          "details": "Incorrect material supplied: WOOD PLANK C (50893412)",
+          "consequence": "Construction will halt until the material issue is reviewed and corrected.",
+          "suggestedFix": "Check the latest delivery notes to ensure the correct material was ordered. Contact the supplier if necessary. Does the construction plan need adjustment?",
+          "runId": "a9b2f1c0-4428-765d-c30e-78bcf146de47"
+        }
+      ]
+    },
+    "CENTER_A_B2": {
+      "issues": [
+        {
+          "type": "MISSING_MATERIAL",
+          "followup": "PROCEED_AS_USUAL",
+          "details": "Material is missing: STEEL BEAM D (70845127)",
+          "consequence": "The system will proceed as usual, skipping the missing material.",
+          "suggestedFix": "Ensure you have confirmed the supply of this material. Is there an alternative material that could be used instead?",
+          "runId": "f6c7b320-54b2-371d-c30f-18ddc146e845"
+        },
+        {
+          "type": "DELIVERY_DELAY",
+          "followup": "MONITOR_PROGRESS",
+          "details": "Delivery delay: CEMENT MIXER (98765231)",
+          "consequence": "Construction will proceed but progress will be impacted until the material arrives.",
+          "suggestedFix": "Check with the logistics provider for updated delivery details. Adjust construction milestones as needed.",
+          "runId": "b2f9e850-912b-983d-c10f-23cd2145ef09"
+        },
+        {
+          "type": "MISSING_MATERIAL",
+          "followup": "PROCEED_AS_USUAL",
+          "details": "Material is missing: BRICK TYPE A (30582742)",
+          "consequence": "The system will proceed as usual, skipping the missing material.",
+          "suggestedFix": "Did you order and verify the delivery of this material? Has it been replaced in the construction plan? Does the building blueprint need updating?",
+          "runId": "c5f2e180-9912-093d-b25a-45ecf149c045"
+        }
+      ]
+    }
+  },
+  "timestamp": 1829046552896
+}

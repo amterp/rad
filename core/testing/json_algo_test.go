@@ -141,3 +141,19 @@ print(ids)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestListOfObjectCapture(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+Building = json.buildings.*
+issues = json.buildings.*.issues
+request url:
+    fields Building, issues
+print([len(x) for x in issues])
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/issues.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, "[2, 3]\n")
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
