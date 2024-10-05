@@ -157,3 +157,20 @@ print([len(x) for x in issues])
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestCaptureRootArray(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+ids = json
+
+request url:
+    fields ids
+print(ids)
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/root_prim_array.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, "[[1, 2, 3]]\n")
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
