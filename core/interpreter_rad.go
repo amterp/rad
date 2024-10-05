@@ -52,15 +52,13 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 	r.invocation.fields = fields
 }
 
-func (r RadBlockInterpreter) VisitTruncateRadStmt(truncate Truncate) {
-	field := truncate.Field
-	value := truncate.Value.Accept(r.i)
-	switch coerced := value.(type) {
-	case int64:
-		r.invocation.colToTruncate[field.GetLexeme()] = coerced
-	default:
-		r.i.error(truncate.TruncToken, fmt.Sprintf("%q truncate value must be an integer, got: %v (%T)",
-			field.GetLexeme(), value, value))
+func (r RadBlockInterpreter) VisitFieldModsRadStmt(mods FieldMods) {
+	modVisitor := fieldModVisitor{
+		identifiers: mods.Identifiers,
+		invocation:  r.invocation,
+	}
+	for _, mod := range mods.Mods {
+		mod.Accept(modVisitor)
 	}
 }
 
@@ -185,4 +183,18 @@ func executeRequestPassthrough(r *radInvocation) {
 
 func (r *radInvocation) error(msg string) {
 	r.ri.i.error(r.block.RadKeyword, msg)
+}
+
+// == fieldModVisitor ==
+
+type fieldModVisitor struct {
+	identifiers []Token
+	invocation  *radInvocation
+}
+
+func (f fieldModVisitor) VisitTruncateRadFieldModStmt(truncate Truncate) {
+	truncLen := truncate.Value.Accept(f.invocation.ri.i)
+	for _, identifier := range f.identifiers {
+		f.invocation.colToTruncate[identifier.GetLexeme()] = truncLen.(int64)
+	}
 }

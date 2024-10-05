@@ -325,15 +325,30 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 		return p.radSortStatement()
 	}
 
-	if p.matchKeyword(TRUNCATE, RAD_BLOCK_KEYWORDS) {
-		return p.truncateStatement()
+	identifiers := p.commaSeparatedIdentifiers()
+	p.consume(COLON, "Expected ':' to begin field modifier block")
+	p.consumeNewlines()
+	p.consume(INDENT, "Expected indented block after colon")
+
+	var mods []RadFieldModStmt
+	for !p.matchAny(DEDENT, EOF) {
+		p.consumeNewlines()
+		if p.matchKeyword(TRUNCATE, RAD_BLOCK_KEYWORDS) {
+			mods = append(mods, p.truncStmt())
+		}
+		// todo other field mod stmts
 	}
+	return &FieldMods{Identifiers: identifiers, Mods: mods}
 
 	// todo modifier
 	// todo table fmt
 	// todo field fmt
 	// todo filtering?
-	panic(NOT_IMPLEMENTED)
+}
+
+func (p *Parser) truncStmt() RadFieldModStmt {
+	truncateToken := p.previous()
+	return &Truncate{TruncToken: truncateToken, Value: p.expr(1)}
 }
 
 func (p *Parser) validateRadBlock(radBlock *RadBlock) {
@@ -352,8 +367,8 @@ func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 		case *Sort:
 			stmtsRequiringFields = append(stmtsRequiringFields, stmt.SortToken.GetLexeme())
 			reorderedStmts = append(reorderedStmts, stmt)
-		case *Truncate:
-			stmtsRequiringFields = append(stmtsRequiringFields, stmt.TruncToken.GetLexeme())
+		case *FieldMods:
+			stmtsRequiringFields = append(stmtsRequiringFields, "field modifiers")
 			reorderedStmts = append(reorderedStmts, stmt)
 		default:
 			p.error(fmt.Sprintf("Bug! Unhandled statement type in rad block: %v", stmt))
@@ -412,9 +427,13 @@ func (p *Parser) radSortStatement() RadStmt {
 	return &Sort{SortToken: sortToken, Identifiers: identifiers, Directions: directions, GeneralSort: nil}
 }
 
-func (p *Parser) truncateStatement() RadStmt {
-	truncateToken := p.previous()
-	return &Truncate{TruncToken: truncateToken, Field: p.identifier(), Value: p.expr(1)}
+func (p *Parser) commaSeparatedIdentifiers() []Token {
+	var identifiers []Token
+	identifiers = append(identifiers, p.identifier())
+	for p.matchAny(COMMA) {
+		identifiers = append(identifiers, p.identifier())
+	}
+	return identifiers
 }
 
 func (p *Parser) ifStmt() IfStmt {

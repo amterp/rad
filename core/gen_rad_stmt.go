@@ -12,7 +12,7 @@ type RadStmt interface {
 type RadStmtVisitor interface {
 	VisitFieldsRadStmt(Fields)
 	VisitSortRadStmt(Sort)
-	VisitTruncateRadStmt(Truncate)
+	VisitFieldModsRadStmt(FieldMods)
 }
 type Fields struct {
 	Identifiers []Token
@@ -46,19 +46,17 @@ func (e Sort) String() string {
 	return fmt.Sprintf("Sort(%s)", strings.Join(parts, ", "))
 }
 
-type Truncate struct {
-	TruncToken Token
-	Field      Token
-	Value      Expr
+type FieldMods struct {
+	Identifiers []Token
+	Mods        []RadFieldModStmt
 }
 
-func (e Truncate) Accept(visitor RadStmtVisitor) {
-	visitor.VisitTruncateRadStmt(e)
+func (e FieldMods) Accept(visitor RadStmtVisitor) {
+	visitor.VisitFieldModsRadStmt(e)
 }
-func (e Truncate) String() string {
+func (e FieldMods) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("TruncToken: %v", e.TruncToken))
-	parts = append(parts, fmt.Sprintf("Field: %v", e.Field))
-	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
-	return fmt.Sprintf("Truncate(%s)", strings.Join(parts, ", "))
+	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("Mods: %v", e.Mods))
+	return fmt.Sprintf("FieldMods(%s)", strings.Join(parts, ", "))
 }
