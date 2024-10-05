@@ -84,6 +84,12 @@ type radInvocation struct {
 func (r *radInvocation) execute() {
 	fields := r.fields.Identifiers
 
+	if fields == nil {
+		// todo instead of just printing, return as string and let user decide what to do with it?
+		executeRequestPassthrough(r)
+		return
+	}
+
 	if r.url != nil {
 		jsonFields := lo.Map(fields, func(field Token, _ int) JsonFieldVar {
 			return r.ri.i.env.GetJsonField(field)
@@ -130,6 +136,31 @@ func (r *radInvocation) execute() {
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
+}
+
+// When no fields are specified, we'll simply perform the request and print the output.
+func executeRequestPassthrough(r *radInvocation) {
+	url := r.url
+	if url == nil {
+		r.error("Bug! URL should've been validated earlier to be present for passthrough rad block")
+		panic(UNREACHABLE)
+	}
+
+	// execute request, don't expect responses, just print out the response body
+	data, err := RReq.Request(*url)
+	if err != nil {
+		r.error(fmt.Sprintf("Error requesting: %v", err))
+	}
+
+	// todo weird to even allow this. if we allow returning the data in the future, maybe it'll make sense. and we
+	//  would allow just the request block version?
+	if r.block.RadType != Request {
+		if len(data) == 0 || data[len(data)-1] != '\n' {
+			RP.Print(data + "\n")
+		} else {
+			RP.Print(data)
+		}
+	}
 }
 
 func (r *radInvocation) error(msg string) {

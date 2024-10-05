@@ -10,11 +10,11 @@ import (
 func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface{} {
 	numArgs := len(args)
 	if numArgs < 2 {
-		i.error(function, "pick_kv() takes at least two arguments")
+		i.error(function, PICK_KV+"() takes at least two arguments")
 	}
 
 	if numArgs > 3 {
-		i.error(function, fmt.Sprintf("pick_kv() takes at most three arguments, got %v", numArgs))
+		i.error(function, fmt.Sprintf("%s() takes at most three arguments, got %v", PICK_KV, numArgs))
 	}
 
 	filters := make([]string, 0)
@@ -31,11 +31,11 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 		case []interface{}:
 			strings, ok := AsStringArray(filter.([]interface{}))
 			if !ok {
-				i.error(function, "pick() does not allow non-string arrays as filters")
+				i.error(function, PICK_KV+"() does not allow non-string arrays as filters")
 			}
 			filters = strings
 		default:
-			i.error(function, "pick_kv() does not allow non-string arrays as filters")
+			i.error(function, PICK_KV+"() does not allow non-string arrays as filters")
 		}
 	}
 
@@ -43,13 +43,13 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 	keys, ok := args[0].([]string)
 	if !ok {
 		if keys, ok = AsStringArray(args[0].([]interface{})); !ok {
-			i.error(function, "pick_kv() takes a string array as the first argument")
+			i.error(function, PICK_KV+"() takes a string array as the first argument")
 			panic(UNREACHABLE)
 		}
 	}
 
 	if len(keys) == 0 {
-		i.error(function, "pick_kv() requires keys and values to have at least one element")
+		i.error(function, PICK_KV+"() requires keys and values to have at least one element")
 	}
 
 	switch values := args[1].(type) {
@@ -62,14 +62,15 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 	case []interface{}:
 		return pickKv(i, function, "", filters, keys, values)
 	default:
-		i.error(function, "pick_kv() takes an array as the second argument")
+		i.error(function, PICK_KV+"() takes an array as the second argument")
 		panic(UNREACHABLE)
 	}
 }
 
 func pickKv[T comparable](i *MainInterpreter, function Token, prompt string, filters []string, keys []string, values []T) T {
 	if len(keys) != len(values) {
-		i.error(function, fmt.Sprintf("pick_kv() requires keys and values to be the same length, got %d keys and %d values", len(keys), len(values)))
+		i.error(function, fmt.Sprintf("%s() requires keys and values to be the same length, got %d keys and %d values",
+			PICK_KV, len(keys), len(values)))
 	}
 
 	filteredKeyValues := make(map[string]T)
@@ -105,7 +106,7 @@ func pickKv[T comparable](i *MainInterpreter, function Token, prompt string, fil
 		Run()
 
 	if err != nil {
-		i.error(function, fmt.Sprintf("Error running pick_kv: %v", err))
+		i.error(function, fmt.Sprintf("Error running %s: %v", PICK_KV, err))
 	}
 
 	return result

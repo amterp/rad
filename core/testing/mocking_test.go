@@ -13,7 +13,7 @@ rad url:
     fields Id, Name
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/id_name.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
 	// todo notice strange trailing whitespace in table below, would be good to trim probably
 	expected := `Id  Name  
 1   Alice  

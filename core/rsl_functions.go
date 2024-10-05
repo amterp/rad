@@ -82,10 +82,10 @@ func RunRslNonVoidFunction(
 	case "pick":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return runPick(i, function, args)
-	case "pick_kv":
+	case PICK_KV:
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		return runPickKv(i, function, args)
-	case "pick_from_resource":
+	case PICK_FROM_RESOURCE:
 		return runPickFromResource(i, function, args, numExpectedReturnValues)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))

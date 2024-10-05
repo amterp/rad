@@ -10,4 +10,5 @@ const (
 const (
 	// todo add others
 	PICK_FROM_RESOURCE = "pick_from_resource"
+	PICK_KV            = "pick_kv"
 )

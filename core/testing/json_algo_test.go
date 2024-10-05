@@ -13,7 +13,7 @@ rad url:
     fields Id, Names
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/not_root_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/not_root_array.json", "--NO-COLOR")
 	expected := `Id  Names                 
 1   [Alice, Bob, Charlie]  
 `
@@ -35,7 +35,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
 	expected := `Name   Age  Hometown    
 Alice  30   New York     
 Bob    40   Los Angeles  
@@ -58,7 +58,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/unique_keys_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys_array.json", "--NO-COLOR")
 	expected := `Name       Age  Hometown 
 Alice      30   London    
 Bob        40   London    
@@ -84,7 +84,7 @@ rad url:
     fields city, country, name, age
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/nested_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/nested_wildcard.json", "--NO-COLOR")
 	expected := `city  country    name       age 
 York  Australia  Charlotte  35   
 York  Australia  David      25   
@@ -110,7 +110,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/array_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_wildcard.json", "--NO-COLOR")
 	expected := `[Alice, Bob, Charlie]
 [[1, 2, 3], [4, 5, 6, 7, 8], [9, 10]]
 `
@@ -132,7 +132,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/array_objects.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_objects.json", "--NO-COLOR")
 	expected := `[Alice, Alice, Alice, Bob, Charlie, Charlie]
 [1, 2, 3, 4, 5, 6]
 `
@@ -151,7 +151,7 @@ request url:
     fields Building, issues
 print([len(x) for x in issues])
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/issues.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/issues.json", "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "[2, 3]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -168,7 +168,7 @@ request url:
     fields ids
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./json/root_prim_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/root_prim_array.json", "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "[[1, 2, 3]]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)

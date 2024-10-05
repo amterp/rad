@@ -283,28 +283,30 @@ func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 	var srcToken *Expr
 	if radType == Request || radType == Rad {
 		if p.peekType(COLON) {
-			p.error(fmt.Sprintf("Expecting url or other source for %s block", radType))
+			p.error(fmt.Sprintf("Expecting url or other source for %v statement", radType))
 		}
 		expr := p.expr(1)
 		srcToken = &expr
-	}
-
-	if radType == Display {
-		p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q", radType))
 	} else {
-		p.consume(COLON, fmt.Sprintf("Expecting ':' to start %s block", radType))
+		p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q, preceding indented block", radType))
 	}
 
-	p.consumeNewlines()
-	if !p.matchAny(INDENT) {
-		p.error(fmt.Sprintf("Expecting indented contents in %s block", radType))
-	}
-	p.consumeNewlines()
 	var radStatements []RadStmt
-	for !p.matchAny(DEDENT, EOF) {
-		radStatements = append(radStatements, p.radStatement(radType))
+	if p.peekType(COLON) || p.nextNonNewLineTokenIs(INDENT) { // todo i think this breaks if there's a newline between the colon and indent
+		if radType != Display {
+			p.consume(COLON, fmt.Sprintf("Expecting ':' to precede indented %v block", radType))
+		}
 		p.consumeNewlines()
+		if !p.matchAny(INDENT) {
+			p.error(fmt.Sprintf("Expecting indented contents in %s block", radType))
+		}
+		p.consumeNewlines()
+		for !p.matchAny(DEDENT, EOF) {
+			radStatements = append(radStatements, p.radStatement(radType))
+			p.consumeNewlines()
+		}
 	}
+
 	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcToken, Stmts: radStatements}
 	p.validateRadBlock(radBlock)
 	return radBlock
@@ -331,20 +333,26 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 }
 
 func (p *Parser) validateRadBlock(radBlock *RadBlock) {
+	var reorderedStmts []RadStmt
 	hasFieldsStmt := false
-	for i, stmt := range radBlock.Stmts {
-		if _, ok := stmt.(*Fields); ok {
-			if i != 0 {
-				p.error(fmt.Sprintf("Fields statement must be the first statement in a %s block", radBlock.RadType))
-			}
+	var stmtsRequiringFields []string
+	for _, stmt := range radBlock.Stmts {
+		switch stmt := stmt.(type) {
+		case *Fields:
 			if hasFieldsStmt {
 				p.error(fmt.Sprintf("Only one 'fields' statement is allowed in a %s block", radBlock.RadType))
 			}
 			hasFieldsStmt = true
+			// move field statement to the front, so it gets processed first later
+			reorderedStmts = append([]RadStmt{stmt}, reorderedStmts...)
+		case *Sort:
+			stmtsRequiringFields = append(stmtsRequiringFields, stmt.SortToken.GetLexeme())
+			reorderedStmts = append(reorderedStmts, stmt)
 		}
 	}
-	if !hasFieldsStmt {
-		p.error(fmt.Sprintf("A %s block must contain a 'fields' statement", radBlock.RadType))
+	if len(stmtsRequiringFields) > 0 && !hasFieldsStmt {
+		p.error(fmt.Sprintf("Missing 'fields' statement required by %v statements: %v",
+			radBlock.RadType, stmtsRequiringFields))
 	}
 }
 
@@ -1123,4 +1131,11 @@ func (p *Parser) peekKeyword(expectedKeyword TokenType, keywords map[string]Toke
 		return true
 	}
 	return false
+}
+
+func (p *Parser) nextNonNewLineTokenIs(expected TokenType) bool {
+	for !p.isAtEnd() && p.matchAny(NEWLINE) {
+		// throw away
+	}
+	return p.peekType(expected)
 }

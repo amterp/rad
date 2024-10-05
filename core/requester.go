@@ -24,37 +24,47 @@ func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
 
-func (r *Requester) RequestJson(url string) (interface{}, error) {
-	mockJson, ok := r.resolveMockedJson(url)
+func (r *Requester) Request(url string) (string, error) {
+	mockJson, ok := r.resolveMockedResponse(url)
 	if ok {
 		return mockJson, nil
 	}
 
 	urlToQuery, err := encodeUrl(url)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
 
 	resp, err := http.Get(urlToQuery)
 	if err != nil {
-		return nil, fmt.Errorf("error making HTTP request: %w", err)
+		return "", fmt.Errorf("error making HTTP request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error reading HTTP body (%v): %w", body, err)
+		return "", fmt.Errorf("error reading HTTP body (%v): %w", body, err)
 	}
 
-	isValidJson := json.Valid(body)
+	return string(body), nil
+}
+
+func (r *Requester) RequestJson(url string) (interface{}, error) {
+	body, err := r.Request(url)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes := []byte(body)
+	isValidJson := json.Valid(bodyBytes)
 	if !isValidJson {
 		return nil, fmt.Errorf("received invalid JSON in response (truncated max 50 chars): [%s]", body[:50])
 	}
 
 	var data interface{}
-	if err := json.Unmarshal(body, &data); err != nil {
+	if err := json.Unmarshal(bodyBytes, &data); err != nil {
 		return nil, fmt.Errorf("error unmarshalling JSON: %w", err)
 	}
 	return data, nil
@@ -69,7 +79,7 @@ func encodeUrl(rawUrl string) (string, error) {
 	return parsedUrl.String(), nil
 }
 
-func (r *Requester) resolveMockedJson(url string) (interface{}, bool) {
+func (r *Requester) resolveMockedResponse(url string) (string, bool) {
 	for urlRegex, jsonPath := range r.jsonPathsByMockedUrlRegex {
 		re, err := regexp.Compile(urlRegex)
 		if err != nil {
@@ -84,21 +94,19 @@ func (r *Requester) resolveMockedJson(url string) (interface{}, bool) {
 			RP.RadDebug(fmt.Sprintf("No match for url %q against regex %q", url, urlRegex))
 		}
 	}
-	return nil, false
+	return "", false
 }
 
-func (r *Requester) loadMockedResponse(path string) interface{} {
+func (r *Requester) loadMockedResponse(path string) string {
 	file, err := os.Open(path)
 	if err != nil {
 		RP.ErrorExit(fmt.Sprintf("Error opening file %s: %v\n", path, err))
 	}
 	defer file.Close()
 
-	var data interface{}
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&data); err != nil {
-		RP.ErrorExit(fmt.Sprintf("Error decoding JSON from file %s: %v\n", path, err))
+	data, err := io.ReadAll(file)
+	if err != nil {
+		RP.ErrorExit(fmt.Sprintf("Error reading file %s: %v\n", path, err))
 	}
-
-	return data
+	return string(data)
 }
