@@ -25,12 +25,13 @@ type ColumnSort struct {
 }
 
 type TblWriter struct {
-	writer     io.Writer
-	tbl        *tblwriter.Table
-	headers    []string
-	rows       [][]string
-	sorting    []ColumnSort
-	numColumns int
+	writer        io.Writer
+	tbl           *tblwriter.Table
+	headers       []string
+	rows          [][]string
+	sorting       []ColumnSort
+	colToTruncate map[string]int64
+	numColumns    int
 }
 
 func NewTblWriter() *TblWriter {
@@ -58,6 +59,16 @@ func (w *TblWriter) SetSorting(sorting []ColumnSort) {
 	w.sorting = sorting
 }
 
+func (w *TblWriter) SetTruncation(headers []string, truncate map[string]int64) {
+	for colName, _ := range truncate {
+		if !lo.Contains(headers, colName) {
+			RP.RadErrorExit(fmt.Sprintf("Column to truncate '%s' is not a valid header\n", colName))
+		}
+	}
+
+	w.colToTruncate = truncate
+}
+
 func (w *TblWriter) Render() {
 	w.sortRows()
 
@@ -81,6 +92,14 @@ func (w *TblWriter) Render() {
 					colWidths[i] = len(line)
 				}
 			}
+		}
+	}
+
+	// apply truncation for terminal fitting algo, to immediately treat truncated columns as their specified length
+	for colName, truncateLen := range w.colToTruncate {
+		colIdx := lo.IndexOf(w.headers, colName)
+		if colIdx != -1 {
+			colWidths[colIdx] = int(truncateLen)
 		}
 	}
 

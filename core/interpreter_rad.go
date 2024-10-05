@@ -26,7 +26,13 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 			r.i.error(block.RadKeyword, "URL must be a string")
 		}
 	}
-	r.invocation = &radInvocation{ri: &r, block: block, url: url, fieldsToNotPrint: strset.New()}
+	r.invocation = &radInvocation{
+		ri:               &r,
+		block:            block,
+		url:              url,
+		fieldsToNotPrint: strset.New(),
+		colToTruncate:    make(map[string]int64),
+	}
 
 	for _, stmt := range block.Stmts {
 		stmt.Accept(r)
@@ -44,6 +50,18 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 
 func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 	r.invocation.fields = fields
+}
+
+func (r RadBlockInterpreter) VisitTruncateRadStmt(truncate Truncate) {
+	field := truncate.Field
+	value := truncate.Value.Accept(r.i)
+	switch coerced := value.(type) {
+	case int64:
+		r.invocation.colToTruncate[field.GetLexeme()] = coerced
+	default:
+		r.i.error(truncate.TruncToken, fmt.Sprintf("%q truncate value must be an integer, got: %v (%T)",
+			field.GetLexeme(), value, value))
+	}
 }
 
 func (r RadBlockInterpreter) VisitSortRadStmt(sort Sort) {
@@ -79,6 +97,7 @@ type radInvocation struct {
 	fields           Fields
 	fieldsToNotPrint *strset.Set
 	sorting          []ColumnSort
+	colToTruncate    map[string]int64
 }
 
 func (r *radInvocation) execute() {
@@ -133,6 +152,7 @@ func (r *radInvocation) execute() {
 	}
 
 	tbl.SetSorting(r.sorting)
+	tbl.SetTruncation(headers, r.colToTruncate)
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()

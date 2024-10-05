@@ -325,6 +325,10 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 		return p.radSortStatement()
 	}
 
+	if p.matchKeyword(TRUNCATE, RAD_BLOCK_KEYWORDS) {
+		return p.truncateStatement()
+	}
+
 	// todo modifier
 	// todo table fmt
 	// todo field fmt
@@ -348,6 +352,11 @@ func (p *Parser) validateRadBlock(radBlock *RadBlock) {
 		case *Sort:
 			stmtsRequiringFields = append(stmtsRequiringFields, stmt.SortToken.GetLexeme())
 			reorderedStmts = append(reorderedStmts, stmt)
+		case *Truncate:
+			stmtsRequiringFields = append(stmtsRequiringFields, stmt.TruncToken.GetLexeme())
+			reorderedStmts = append(reorderedStmts, stmt)
+		default:
+			p.error(fmt.Sprintf("Bug! Unhandled statement type in rad block: %v", stmt))
 		}
 	}
 	if len(stmtsRequiringFields) > 0 && !hasFieldsStmt {
@@ -401,6 +410,11 @@ func (p *Parser) radSortStatement() RadStmt {
 		}
 	}
 	return &Sort{SortToken: sortToken, Identifiers: identifiers, Directions: directions, GeneralSort: nil}
+}
+
+func (p *Parser) truncateStatement() RadStmt {
+	truncateToken := p.previous()
+	return &Truncate{TruncToken: truncateToken, Field: p.identifier(), Value: p.expr(1)}
 }
 
 func (p *Parser) ifStmt() IfStmt {
