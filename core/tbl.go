@@ -31,6 +31,7 @@ type TblWriter struct {
 	rows          [][]string
 	sorting       []ColumnSort
 	colToTruncate map[string]int64
+	colToColor    map[string]radColorMod
 	numColumns    int
 }
 
@@ -59,14 +60,24 @@ func (w *TblWriter) SetSorting(sorting []ColumnSort) {
 	w.sorting = sorting
 }
 
-func (w *TblWriter) SetTruncation(headers []string, truncate map[string]int64) {
-	for colName, _ := range truncate {
+func (w *TblWriter) SetTruncation(headers []string, colToTruncate map[string]int64) {
+	for colName, _ := range colToTruncate {
 		if !lo.Contains(headers, colName) {
 			RP.RadErrorExit(fmt.Sprintf("Column to truncate '%s' is not a valid header\n", colName))
 		}
 	}
 
-	w.colToTruncate = truncate
+	w.colToTruncate = colToTruncate
+}
+
+func (w *TblWriter) SetColumnColoring(headers []string, colToColor map[string]radColorMod) {
+	for colName, _ := range colToColor {
+		if !lo.Contains(headers, colName) {
+			RP.RadErrorExit(fmt.Sprintf("Column to color '%s' is not a valid header\n", colName))
+		}
+	}
+
+	w.colToColor = colToColor
 }
 
 func (w *TblWriter) Render() {
@@ -183,6 +194,16 @@ func (w *TblWriter) Render() {
 	}
 	w.tbl.SetHeaderColors(colors...)
 	w.tbl.ToggleColor(!noColorFlag)
+
+	if len(w.colToColor) > 0 {
+		columnModByIdx := make(map[int]tblwriter.ColumnMod)
+		for i, header := range w.headers {
+			if colorMod, ok := w.colToColor[header]; ok {
+				columnModByIdx[i] = tblwriter.NewColumnMod(colorMod.regex, colorMod.color)
+			}
+		}
+		w.tbl.SetColumnMods(columnModByIdx)
+	}
 
 	for _, row := range rows {
 		w.tbl.Append(row)

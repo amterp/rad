@@ -3,8 +3,10 @@ module rad
 go 1.22
 
 require (
-	github.com/amterp/go-tbl v0.5.0
+	github.com/amterp/go-tbl v0.6.0
 	github.com/charmbracelet/huh v0.6.0
+	github.com/fatih/color v1.17.0
+	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/samber/lo v1.47.0
 	github.com/scylladb/go-set v1.0.2
 	github.com/spf13/cobra v1.8.1
@@ -26,9 +28,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-	github.com/fatih/color v1.17.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/lithammer/fuzzysearch v1.1.8 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
