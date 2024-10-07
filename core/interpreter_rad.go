@@ -34,7 +34,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 		url:              url,
 		fieldsToNotPrint: strset.New(),
 		colToTruncate:    make(map[string]int64),
-		colToColor:       make(map[string]radColorMod),
+		colToColor:       make(map[string][]radColorMod),
 	}
 
 	for _, stmt := range block.Stmts {
@@ -99,7 +99,7 @@ type radInvocation struct {
 	fieldsToNotPrint *strset.Set
 	sorting          []ColumnSort
 	colToTruncate    map[string]int64
-	colToColor       map[string]radColorMod
+	colToColor       map[string][]radColorMod
 }
 
 type radColorMod struct {
@@ -231,7 +231,10 @@ func (f fieldModVisitor) VisitColorRadFieldModStmt(color Color) {
 				f.invocation.ri.i.error(color.ColorToken, fmt.Sprintf("Error compiling regex pattern: %s", err))
 			}
 			for _, identifier := range f.identifiers {
-				f.invocation.colToColor[identifier.GetLexeme()] = radColorMod{color: coercedColor, regex: regex}
+				identifierLexeme := identifier.GetLexeme()
+				mods := f.invocation.colToColor[identifierLexeme]
+				mods = append(mods, radColorMod{color: coercedColor, regex: regex})
+				f.invocation.colToColor[identifierLexeme] = mods
 			}
 		}
 	default:

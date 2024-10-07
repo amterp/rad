@@ -31,7 +31,7 @@ type TblWriter struct {
 	rows          [][]string
 	sorting       []ColumnSort
 	colToTruncate map[string]int64
-	colToColor    map[string]radColorMod
+	colToColors   map[string][]radColorMod
 	numColumns    int
 }
 
@@ -70,14 +70,14 @@ func (w *TblWriter) SetTruncation(headers []string, colToTruncate map[string]int
 	w.colToTruncate = colToTruncate
 }
 
-func (w *TblWriter) SetColumnColoring(headers []string, colToColor map[string]radColorMod) {
-	for colName, _ := range colToColor {
+func (w *TblWriter) SetColumnColoring(headers []string, colToColors map[string][]radColorMod) {
+	for colName, _ := range colToColors {
 		if !lo.Contains(headers, colName) {
 			RP.RadErrorExit(fmt.Sprintf("Column to color '%s' is not a valid header\n", colName))
 		}
 	}
 
-	w.colToColor = colToColor
+	w.colToColors = colToColors
 }
 
 func (w *TblWriter) Render() {
@@ -195,11 +195,15 @@ func (w *TblWriter) Render() {
 	w.tbl.SetHeaderColors(colors...)
 	w.tbl.ToggleColor(!noColorFlag)
 
-	if len(w.colToColor) > 0 {
+	if len(w.colToColors) > 0 {
 		columnModByIdx := make(map[int]tblwriter.ColumnMod)
 		for i, header := range w.headers {
-			if colorMod, ok := w.colToColor[header]; ok {
-				columnModByIdx[i] = tblwriter.NewColumnMod(colorMod.regex, colorMod.color)
+			if colColors, ok := w.colToColors[header]; ok {
+				var colColorMods []tblwriter.ColumnColorMod
+				for _, colorMod := range colColors {
+					colColorMods = append(colColorMods, tblwriter.NewColumnColorMod(colorMod.regex, colorMod.color))
+				}
+				columnModByIdx[i] = tblwriter.NewColumnMod(colColorMods)
 			}
 		}
 		w.tbl.SetColumnMods(columnModByIdx)

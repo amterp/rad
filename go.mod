@@ -3,7 +3,7 @@ module rad
 go 1.22
 
 require (
-	github.com/amterp/go-tbl v0.6.0
+	github.com/amterp/go-tbl v0.7.0
 	github.com/charmbracelet/huh v0.6.0
 	github.com/fatih/color v1.17.0
 	github.com/lithammer/fuzzysearch v1.1.8
