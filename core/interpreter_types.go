@@ -104,13 +104,19 @@ func (l RuntimeLiteral) GetMixedArray() []interface{} {
 }
 
 type JsonFieldVar struct {
-	Name Token
-	Path JsonPath
-	env  *Env
+	Name    Token
+	Path    JsonPath
+	IsArray bool
+	env     *Env
 }
 
 func (j *JsonFieldVar) AddMatch(match interface{}) {
-	existing := j.env.GetByToken(j.Name, RslArrayT).value.([]interface{})
-	existing = append(existing, match)
-	j.env.SetAndImplyType(j.Name, existing)
+	jsonFieldVar := j.env.GetJsonField(j.Name)
+	if jsonFieldVar.IsArray {
+		existing := j.env.GetByToken(j.Name, RslArrayT).value.([]interface{})
+		existing = append(existing, match)
+		j.env.SetAndImplyType(j.Name, existing)
+	} else {
+		j.env.SetAndImplyType(j.Name, match)
+	}
 }

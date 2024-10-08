@@ -225,12 +225,22 @@ func (e *Env) GetByName(varName string, acceptableTypes ...RslTypeEnum) RuntimeL
 }
 
 func (e *Env) AssignJsonField(name Token, path JsonPath) {
-	e.jsonFields[name.GetLexeme()] = JsonFieldVar{
-		Name: name,
-		Path: path,
-		env:  e,
+	isArray := false
+	for _, element := range path.elements {
+		if element.token.IsArray || element.token.GetLexeme() == WILDCARD {
+			isArray = true
+			break
+		}
 	}
-	e.SetAndImplyType(name, []interface{}{})
+	e.jsonFields[name.GetLexeme()] = JsonFieldVar{
+		Name:    name,
+		Path:    path,
+		IsArray: isArray,
+		env:     e,
+	}
+	if isArray {
+		e.SetAndImplyType(name, []interface{}{})
+	}
 }
 
 func (e *Env) GetJsonField(name Token) JsonFieldVar {

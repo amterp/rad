@@ -9,13 +9,15 @@ url = "https://google.com"
 Id = json.id
 Names = json.names
 
-rad url:
+request url:
     fields Id, Names
+print(Id + 1)
+print(Names)
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/not_root_array.json", "--NO-COLOR")
-	expected := `Id  Names                 
-1   [Alice, Bob, Charlie]  
+	expected := `2
+[Alice, Bob, Charlie]
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
@@ -169,7 +171,51 @@ request url:
 print(ids)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/root_prim_array.json", "--NO-COLOR")
-	assertOutput(t, stdOutBuffer, "[[1, 2, 3]]\n")
+	assertOutput(t, stdOutBuffer, "[1, 2, 3]\n")
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestCaptureNonArrayAndArray(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+len = json.len
+ages = json.results[].age
+
+request url:
+    fields len, ages
+print(len + 1)
+print(ages)
+`
+	expected := `3
+[30, 40]
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestCaptureNonArrayAndWildcard(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+len = json.len
+ages = json.results.*.age
+
+request url:
+    fields len, ages
+print(len + 1)
+print(ages)
+`
+	expected := `3
+[30, 40]
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()

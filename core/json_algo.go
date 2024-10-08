@@ -109,7 +109,7 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 	case map[string]interface{}:
 		dataMap := data.(map[string]interface{})
 		for childKey, child := range node.children {
-			if childKey == "*" {
+			if childKey == WILDCARD {
 				// wildcard match, traverse all children
 				// get list of sorted keys to iterate through, for deterministic order
 				// todo: at this point this is a concession -- we should be traversing in the original order of the json
@@ -139,7 +139,7 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 
 func (t *Trie) capture(data interface{}, node *Node, keyToCaptureInstead interface{}, captures int) {
 	for i := 0; i < captures; i++ {
-		if keyToCaptureInstead == nil && node.key != "*" {
+		if keyToCaptureInstead == nil && node.key != WILDCARD {
 			for _, field := range node.fields {
 				field.AddMatch(data)
 			}

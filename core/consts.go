@@ -6,6 +6,10 @@ const (
 	NO_NUM_RETURN_VALUES_CONSTRAINT = -1
 )
 
+const (
+	WILDCARD = "*"
+)
+
 // function names
 const (
 	// todo add others
