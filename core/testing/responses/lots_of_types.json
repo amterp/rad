@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "name": "Alice",
+    "old": true,
+    "height": 1.7,
+    "friends": [
+      {
+        "id": 2,
+        "name": "Bob"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Bob",
+    "old": false,
+    "height": 1.8,
+    "friends": [
+      {
+        "id": 1,
+        "name": "Alice"
+      },
+      {
+        "id": 3,
+        "name": "Charlie",
+        "height": null
+      },
+      null
+    ]
+  },
+  null
+]

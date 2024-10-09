@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -90,7 +91,8 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	case []bool:
 		e.Vars[varName] = NewRuntimeBoolArray(value.([]bool))
 	case []interface{}:
-		e.Vars[varName] = NewRuntimeMixedArray(value.([]interface{}))
+		converted := e.recursivelyConvertTypes(varNameToken, value.([]interface{}))
+		e.Vars[varName] = NewRuntimeMixedArray(converted.([]interface{}))
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
@@ -282,4 +284,33 @@ func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslType
 	}
 	e.i.error(varNameToken, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
 	panic(UNREACHABLE)
+}
+
+func (e *Env) recursivelyConvertTypes(token Token, arr interface{}) interface{} {
+	switch coerced := arr.(type) {
+	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
+	// json 'ints' into floats
+	case string, int64, float64, bool:
+		return coerced
+	case int:
+		return int64(coerced)
+	case []interface{}:
+		output := make([]interface{}, len(coerced))
+		for i, val := range coerced {
+			output[i] = e.recursivelyConvertTypes(token, val)
+		}
+		return output
+	case map[string]interface{}:
+		jsonData, err := json.Marshal(coerced)
+		if err != nil {
+			e.i.error(token, fmt.Sprintf("Error marshalling json: %v", err))
+		}
+		return string(jsonData)
+	case nil:
+		// todo this is me wanting to avoid nulls in RSL.... but definitely surprising?
+		return "null"
+	default:
+		e.i.error(token, "Unsupported type in array")
+		panic(UNREACHABLE)
+	}
 }

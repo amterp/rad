@@ -220,3 +220,51 @@ print(ages)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestCaptureJsonNode(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+node = json.results.Alice
+request url:
+    fields node
+print(node)
+`
+	expected := "{\"age\":30,\"hometown\":\"New York\"}\n"
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestCanCaptureWholeJson(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+node = json
+request url:
+    fields node
+print(node)
+`
+	expected := "[{\"id\":1,\"name\":\"Alice\"}, {\"id\":2,\"name\":\"Bob\"}]\n"
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestCanCaptureWholeComplexJson(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+node = json
+request url:
+    fields node
+print(node)
+`
+	expected := "[{\"friends\":[{\"id\":2,\"name\":\"Bob\"}],\"height\":1.7,\"id\":1,\"name\":\"Alice\",\"old\":true}, {\"friends\":[{\"id\":1,\"name\":\"Alice\"},{\"height\":null,\"id\":3,\"name\":\"Charlie\"},null],\"height\":1.8,\"id\":2,\"name\":\"Bob\",\"old\":false}, null]\n"
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--NO-COLOR")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}

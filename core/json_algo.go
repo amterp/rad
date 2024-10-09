@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 )
@@ -92,7 +93,7 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 		}
 	}
 
-	switch data.(type) {
+	switch coerced := data.(type) {
 	case string, int, float32, float64, bool, nil:
 		// leaf
 		if len(node.children) == 0 {
@@ -107,7 +108,7 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
 		}
 	case map[string]interface{}:
-		dataMap := data.(map[string]interface{})
+		dataMap := coerced
 		for childKey, child := range node.children {
 			if childKey == WILDCARD {
 				// wildcard match, traverse all children
@@ -128,6 +129,16 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 			} else {
 				RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected key '%s' but was not present\n", childKey))
 			}
+		}
+		if len(node.fields) > 0 && node.key != WILDCARD {
+			// we're at a dictionary node and being asked to capture. let's capture the node as JSON
+			jsonData, err := json.Marshal(dataMap)
+			if err != nil {
+				RP.TokenErrorExit(node.radToken, fmt.Sprintf("Error capturing json for field: %v\n", err))
+			}
+			// max: we want to capture at least once, but if we've captured from children nodes, we want to capture
+			// that many
+			t.capture(string(jsonData), node, keyToCaptureInstead, max(capStats.captures, 1))
 		}
 	default:
 		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected map for non-array node '%v': %v\n", node, data))
