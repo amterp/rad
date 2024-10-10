@@ -96,11 +96,16 @@ func RunRslNonVoidFunction(
 func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
 	functionName := function.GetLexeme()
 	switch functionName {
-	case "print": // todo would be nice to make this a reference to a var that GoLand can find
+	case PRINT:
 		runPrint(args)
-	case "debug":
+	case PPRINT:
+		if len(args) > 1 {
+			i.error(function, PPRINT+"() takes zero or one argument")
+		}
+		runPrettyPrint(i, function, args)
+	case DEBUG:
 		runDebug(args)
-	case "exit":
+	case EXIT:
 		if len(args) == 0 {
 			os.Exit(0)
 		} else if len(args) == 1 {
@@ -117,31 +122,6 @@ func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
 	default:
 		RunRslNonVoidFunction(i, function, NO_NUM_RETURN_VALUES_CONSTRAINT, args)
 	}
-}
-
-func runPrint(values []interface{}) {
-	output := resolveOutputString(values)
-	RP.Print(output)
-}
-
-func runDebug(values []interface{}) {
-	output := resolveOutputString(values)
-	RP.ScriptDebug(output)
-}
-
-func resolveOutputString(values []interface{}) string {
-	output := ""
-
-	if len(values) == 0 {
-		output = "\n"
-	} else {
-		for _, v := range values {
-			output += ToPrintable(v) + " "
-		}
-		output = output[:len(output)-1] // remove last space
-		output = output + "\n"
-	}
-	return output
 }
 
 func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {

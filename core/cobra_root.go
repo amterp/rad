@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -137,6 +138,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 			RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v\n", args[posArgsIndex:]))
 		}
 
+		color.NoColor = noColorFlag
 		interpreter := NewInterpreter(instructions)
 		interpreter.InitArgs(cobraArgs)
 		interpreter.Run()
