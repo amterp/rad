@@ -7,7 +7,7 @@ import (
 
 type Env struct {
 	i          *MainInterpreter
-	Vars       map[string]RuntimeLiteral
+	Vars       map[string]interface{} // values are NOT pointers, they're the actual value
 	jsonFields map[string]JsonFieldVar
 	Enclosing  *Env
 }
@@ -15,7 +15,7 @@ type Env struct {
 func NewEnv(i *MainInterpreter) *Env {
 	return &Env{
 		i:          i,
-		Vars:       make(map[string]RuntimeLiteral),
+		Vars:       make(map[string]interface{}),
 		jsonFields: make(map[string]JsonFieldVar),
 		Enclosing:  nil,
 	}
@@ -24,7 +24,7 @@ func NewEnv(i *MainInterpreter) *Env {
 func (e *Env) NewChildEnv() Env {
 	return Env{
 		i:          e.i,
-		Vars:       make(map[string]RuntimeLiteral),
+		Vars:       make(map[string]interface{}),
 		jsonFields: make(map[string]JsonFieldVar),
 		Enclosing:  e,
 	}
@@ -38,23 +38,23 @@ func (e *Env) InitArg(arg CobraArg) {
 	argType := arg.Arg.Type
 	switch argType {
 	case RslStringT:
-		e.Vars[arg.Arg.Name] = NewRuntimeString(arg.GetString())
+		e.Vars[arg.Arg.Name] = arg.GetString()
 	case RslStringArrayT:
-		e.Vars[arg.Arg.Name] = NewRuntimeStringArray(arg.GetStringArray())
+		e.Vars[arg.Arg.Name] = arg.GetStringArray()
 	case RslIntT:
-		e.Vars[arg.Arg.Name] = NewRuntimeInt(arg.GetInt())
+		e.Vars[arg.Arg.Name] = arg.GetInt()
 	case RslIntArrayT:
-		e.Vars[arg.Arg.Name] = NewRuntimeIntArray(arg.GetIntArray())
+		e.Vars[arg.Arg.Name] = arg.GetIntArray()
 	case RslFloatT:
-		e.Vars[arg.Arg.Name] = NewRuntimeFloat(arg.GetFloat())
+		e.Vars[arg.Arg.Name] = arg.GetFloat()
 	case RslFloatArrayT:
-		e.Vars[arg.Arg.Name] = NewRuntimeFloatArray(arg.GetFloatArray())
+		e.Vars[arg.Arg.Name] = arg.GetFloatArray()
 	case RslBoolT:
-		e.Vars[arg.Arg.Name] = NewRuntimeBool(arg.GetBool())
+		e.Vars[arg.Arg.Name] = arg.GetBool()
 	case RslBoolArrayT:
-		e.Vars[arg.Arg.Name] = NewRuntimeBoolArray(arg.GetBoolArray())
+		e.Vars[arg.Arg.Name] = arg.GetBoolArray()
 	case RslArrayT:
-		e.Vars[arg.Arg.Name] = NewRuntimeMixedArray(arg.GetMixedArray())
+		e.Vars[arg.Arg.Name] = arg.GetMixedArray()
 	default:
 		e.i.error(arg.Arg.DeclarationToken, fmt.Sprintf("Unsupported arg type, cannot init: %v", argType))
 	}
@@ -75,24 +75,24 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 
 	switch value.(type) {
 	case string:
-		e.Vars[varName] = NewRuntimeString(value.(string))
+		e.Vars[varName] = value.(string)
 	case []string:
-		e.Vars[varName] = NewRuntimeStringArray(value.([]string))
+		e.Vars[varName] = value.([]string)
 	case int64:
-		e.Vars[varName] = NewRuntimeInt(value.(int64))
+		e.Vars[varName] = value.(int64)
 	case []int64:
-		e.Vars[varName] = NewRuntimeIntArray(value.([]int64))
+		e.Vars[varName] = value.([]int64)
 	case float64:
-		e.Vars[varName] = NewRuntimeFloat(value.(float64))
+		e.Vars[varName] = value.(float64)
 	case []float64:
-		e.Vars[varName] = NewRuntimeFloatArray(value.([]float64))
+		e.Vars[varName] = value.([]float64)
 	case bool:
-		e.Vars[varName] = NewRuntimeBool(value.(bool))
+		e.Vars[varName] = value.(bool)
 	case []bool:
-		e.Vars[varName] = NewRuntimeBoolArray(value.([]bool))
+		e.Vars[varName] = value.([]bool)
 	case []interface{}:
 		converted := e.recursivelyConvertTypes(varNameToken, value.([]interface{}))
-		e.Vars[varName] = NewRuntimeMixedArray(converted.([]interface{}))
+		e.Vars[varName] = converted.([]interface{})
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
@@ -117,18 +117,18 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if !ok {
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string: %v", value))
 			} else {
-				e.Vars[varName] = NewRuntimeString(val)
+				e.Vars[varName] = val
 			}
 		case RslStringArrayT:
 			switch coerced := value.(type) {
 			case []string:
-				e.Vars[varName] = NewRuntimeStringArray(coerced)
+				e.Vars[varName] = coerced
 			case []interface{}:
 				strings, ok := AsStringArray(coerced)
 				if !ok {
 					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string array: %v", value))
 				} else {
-					e.Vars[varName] = NewRuntimeStringArray(strings)
+					e.Vars[varName] = strings
 				}
 			}
 		case RslIntT:
@@ -136,18 +136,18 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if !ok {
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", value))
 			} else {
-				e.Vars[varName] = NewRuntimeInt(val)
+				e.Vars[varName] = val
 			}
 		case RslIntArrayT:
 			switch coerced := value.(type) {
 			case []int64:
-				e.Vars[varName] = NewRuntimeIntArray(coerced)
+				e.Vars[varName] = coerced
 			case []interface{}:
 				strings, ok := AsIntArray(coerced)
 				if !ok {
 					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int array: %v", value))
 				} else {
-					e.Vars[varName] = NewRuntimeIntArray(strings)
+					e.Vars[varName] = strings
 				}
 			}
 		case RslFloatT:
@@ -155,18 +155,18 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if !ok {
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float: %v", value))
 			} else {
-				e.Vars[varName] = NewRuntimeFloat(val)
+				e.Vars[varName] = val
 			}
 		case RslFloatArrayT:
 			switch coerced := value.(type) {
 			case []float64:
-				e.Vars[varName] = NewRuntimeFloatArray(coerced)
+				e.Vars[varName] = coerced
 			case []interface{}:
 				floats, ok := AsFloatArray(coerced)
 				if !ok {
 					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float array: %v", value))
 				} else {
-					e.Vars[varName] = NewRuntimeFloatArray(floats)
+					e.Vars[varName] = floats
 				}
 			}
 		case RslBoolT:
@@ -174,36 +174,36 @@ func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, va
 			if !ok {
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool: %v", value))
 			} else {
-				e.Vars[varName] = NewRuntimeBool(val)
+				e.Vars[varName] = val
 			}
 		case RslBoolArrayT:
 			switch coerced := value.(type) {
 			case []bool:
-				e.Vars[varName] = NewRuntimeBoolArray(coerced)
+				e.Vars[varName] = coerced
 			case []interface{}:
 				bools, ok := AsBoolArray(coerced)
 				if !ok {
 					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool array: %v", value))
 				} else {
-					e.Vars[varName] = NewRuntimeBoolArray(bools)
+					e.Vars[varName] = bools
 				}
 			}
 		case RslArrayT:
 			switch coerced := value.(type) {
 			case []interface{}:
-				e.Vars[varName] = NewRuntimeMixedArray(coerced)
+				e.Vars[varName] = coerced
 			case []string:
 				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = NewRuntimeMixedArray(array)
+				e.Vars[varName] = array
 			case []int64:
 				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = NewRuntimeMixedArray(array)
+				e.Vars[varName] = array
 			case []float64:
 				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = NewRuntimeMixedArray(array)
+				e.Vars[varName] = array
 			case []bool:
 				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = NewRuntimeMixedArray(array)
+				e.Vars[varName] = array
 			default:
 				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected mixed array: %v", value))
 			}
@@ -218,11 +218,11 @@ func (e *Env) Exists(name string) bool {
 	return ok
 }
 
-func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) interface{} {
 	return e.getOrError(varNameToken.GetLexeme(), varNameToken, acceptableTypes...)
 }
 
-func (e *Env) GetByName(varName string, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+func (e *Env) GetByName(varName string, acceptableTypes ...RslTypeEnum) interface{} {
 	return e.getOrError(varName, nil, acceptableTypes...)
 }
 
@@ -256,7 +256,7 @@ func (e *Env) GetJsonField(name Token) JsonFieldVar {
 	return field
 }
 
-func (e *Env) getOrError(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) RuntimeLiteral {
+func (e *Env) getOrError(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) interface{} {
 	val, ok := e.get(varName, varNameToken, acceptableTypes...)
 	if !ok {
 		e.i.error(varNameToken, fmt.Sprintf("Undefined variable referenced: %v", varName))
@@ -264,13 +264,13 @@ func (e *Env) getOrError(varName string, varNameToken Token, acceptableTypes ...
 	return val
 }
 
-func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) (RuntimeLiteral, bool) {
+func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslTypeEnum) (interface{}, bool) {
 	val, ok := e.Vars[varName]
 	if !ok {
 		if e.Enclosing != nil {
 			return e.Enclosing.get(varName, varNameToken, acceptableTypes...)
 		}
-		return RuntimeLiteral{}, false
+		return nil, false
 	}
 
 	if len(acceptableTypes) == 0 {
@@ -278,7 +278,7 @@ func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslType
 	}
 
 	for _, acceptableType := range acceptableTypes {
-		if val.Type == acceptableType {
+		if acceptableType.MatchesValue(val) {
 			return val, true
 		}
 	}

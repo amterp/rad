@@ -16,7 +16,7 @@ func NewSwitchInterpreter(i *MainInterpreter) *SwitchInterpreter {
 	return &SwitchInterpreter{i: i}
 }
 
-func (s SwitchInterpreter) RunBlock(block SwitchBlock) []RuntimeLiteral {
+func (s SwitchInterpreter) RunBlock(block SwitchBlock) []interface{} {
 	var discriminator Token
 	if block.Discriminator != nil {
 		token := *block.Discriminator
@@ -43,9 +43,9 @@ func (s SwitchInterpreter) RunAssignment(assignment SwitchAssignment) {
 	for i, output := range outputs {
 		varType := assignment.VarTypes[i]
 		if varType != nil {
-			s.i.env.SetAndExpectType(identifiers[i], &varType.Type, output.value)
+			s.i.env.SetAndExpectType(identifiers[i], &varType.Type, output)
 		} else {
-			s.i.env.SetAndImplyType(identifiers[i], output.value)
+			s.i.env.SetAndImplyType(identifiers[i], output)
 		}
 	}
 }
@@ -90,7 +90,7 @@ type switchInvocation struct {
 	defaultExprs  *[]Expr
 }
 
-func (s *switchInvocation) execute() []RuntimeLiteral {
+func (s *switchInvocation) execute() []interface{} {
 	if s.discriminator == nil {
 		return s.decideBasedOnStringInterpolation()
 	} else {
@@ -98,9 +98,9 @@ func (s *switchInvocation) execute() []RuntimeLiteral {
 	}
 }
 
-func (s *switchInvocation) decideBasedOnKeys() []RuntimeLiteral {
+func (s *switchInvocation) decideBasedOnKeys() []interface{} {
 	discrValueLiteral := s.si.i.env.GetByToken(s.discriminator)
-	discrValueString := fmt.Sprintf("%v", discrValueLiteral.value)
+	discrValueString := fmt.Sprintf("%v", discrValueLiteral)
 
 	var exprs []Expr
 	for _, instance := range s.cases {
@@ -128,8 +128,7 @@ func (s *switchInvocation) decideBasedOnKeys() []RuntimeLiteral {
 // 3. choose the option that references the most unique variables
 // 4. tie-break with the option that references the most total variables
 // 5. if there is still a tie, error
-
-func (s *switchInvocation) decideBasedOnStringInterpolation() []RuntimeLiteral {
+func (s *switchInvocation) decideBasedOnStringInterpolation() []interface{} {
 	s.si.i.LiteralI.ShouldInterpolate = false
 
 	// count unique and total variable counts for every case
@@ -189,19 +188,19 @@ func (s *switchInvocation) decideBasedOnStringInterpolation() []RuntimeLiteral {
 
 	s.si.i.LiteralI.ShouldInterpolate = true
 
-	var outputs []RuntimeLiteral
+	var outputs []interface{}
 	for _, expr := range s.cases[highestCaseIndex].values {
 		// we end up re-evaluating the winning expressions, but in theory they should be idempotent?
-		outputs = append(outputs, NewRuntimeLiteral(expr.Accept(s.si.i)))
+		outputs = append(outputs, expr.Accept(s.si.i))
 	}
 
 	return outputs
 }
 
-func (s *switchInvocation) evaluateExpressions(exprs []Expr) []RuntimeLiteral {
-	var outputs []RuntimeLiteral
+func (s *switchInvocation) evaluateExpressions(exprs []Expr) []interface{} {
+	var outputs []interface{}
 	for _, expr := range exprs {
-		outputs = append(outputs, NewRuntimeLiteral(expr.Accept(s.si.i)))
+		outputs = append(outputs, expr.Accept(s.si.i))
 	}
 	return outputs
 }

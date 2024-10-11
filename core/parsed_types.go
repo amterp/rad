@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type RslTypeEnum int
 
 const (
@@ -13,6 +15,46 @@ const (
 	RslFloatArrayT
 	RslBoolArrayT
 )
+
+func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
+	if r == nil {
+		return false
+	}
+
+	switch *r {
+	case RslStringT:
+		_, ok := val.(string)
+		return ok
+	case RslIntT:
+		_, ok := val.(int64)
+		return ok
+	case RslFloatT:
+		_, ok := val.(float64)
+		return ok
+	case RslBoolT:
+		_, ok := val.(bool)
+		return ok
+	case RslArrayT:
+		_, ok := val.([]interface{})
+		return ok
+	case RslStringArrayT:
+		_, ok := val.([]string)
+		return ok
+	case RslIntArrayT:
+		_, ok := val.([]int64)
+		return ok
+	case RslFloatArrayT:
+		_, ok := val.([]float64)
+		return ok
+	case RslBoolArrayT:
+		_, ok := val.([]bool)
+		return ok
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
+	}
+
+	return false
+}
 
 func (r *RslTypeEnum) IsArray() bool {
 	if r == nil {

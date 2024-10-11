@@ -91,7 +91,7 @@ func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {
-	return i.env.GetByToken(variable.Name).value
+	return i.env.GetByToken(variable.Name)
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {

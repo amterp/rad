@@ -27,7 +27,7 @@ func (i *MainInterpreter) VisitCompoundAssignStmt(assign CompoundAssign) {
 	default:
 		i.error(assign.Operator, "Invalid compound assignment operator")
 	}
-	result := i.execute(variable.value, operand, assign.Operator, operatorType)
+	result := i.execute(variable, operand, assign.Operator, operatorType)
 	i.env.SetAndImplyType(assign.Name, result)
 }
 

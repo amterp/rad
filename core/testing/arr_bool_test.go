@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestBoolArrays(t *testing.T) {
+func TestBoolArrays_General(t *testing.T) {
 	rsl := `
 a bool[] = [true, true, false]
 print(a)
@@ -18,3 +18,18 @@ true-true-false
 	assertNoErrors(t)
 	resetTestState()
 }
+
+// todo uncomment when += operations implemented for bool arrays
+//func TestBoolArrays_CanModify(t *testing.T) {
+//	rsl := `
+//a bool[] = [true, true, false]
+//a += [true]
+//print(a)
+//`
+//	setupAndRunCode(t, rsl)
+//	expected := `[true, true, false, true]
+//`
+//	assertOnlyOutput(t, stdOutBuffer, expected)
+//	assertNoErrors(t)
+//	resetTestState()
+//}

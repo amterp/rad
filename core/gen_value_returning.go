@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-type RlaReturning interface {
-	Accept(visitor RlaReturningVisitor) []RuntimeLiteral
+type ValueReturning interface {
+	Accept(visitor ValueReturningVisitor) []interface{}
 }
-type RlaReturningVisitor interface {
-	VisitSwitchBlockRlaReturning(SwitchBlock) []RuntimeLiteral
+type ValueReturningVisitor interface {
+	VisitSwitchBlockValueReturning(SwitchBlock) []interface{}
 }
 type SwitchBlock struct {
 	SwitchToken   Token
@@ -18,8 +18,8 @@ type SwitchBlock struct {
 	Stmts         []SwitchStmt
 }
 
-func (e SwitchBlock) Accept(visitor RlaReturningVisitor) []RuntimeLiteral {
-	return visitor.VisitSwitchBlockRlaReturning(e)
+func (e SwitchBlock) Accept(visitor ValueReturningVisitor) []interface{} {
+	return visitor.VisitSwitchBlockValueReturning(e)
 }
 func (e SwitchBlock) String() string {
 	var parts []string

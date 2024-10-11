@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestStringArrays(t *testing.T) {
+func TestStringArrays_General(t *testing.T) {
 	rsl := `
 a string[] = ["a", "b", "c"]
 print(a)
@@ -23,12 +23,24 @@ a-b-c
 	resetTestState()
 }
 
-func TestStringArrayIsString(t *testing.T) {
+func TestStringArrays_IsString(t *testing.T) {
 	rsl := `
 a string[] = ["a", "b", "c"]
 print(a + [1])
 `
 	setupAndRunCode(t, rsl)
 	assertError(t, 1, "RslError at L3/9 on '+': Cannot join two arrays of different types: string[], mixed array\n")
+	resetTestState()
+}
+
+func TestStringArrays_CanModify(t *testing.T) {
+	rsl := `
+a string[] = ["a", "b", "c"]
+a += ["d"]
+print(a)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[a, b, c, d]\n")
+	assertNoErrors(t)
 	resetTestState()
 }

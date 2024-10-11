@@ -147,7 +147,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 			env := interpreter.env
 			for varName, val := range env.Vars {
 				// todo handle different types specifically
-				RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val.value))
+				RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val))
 			}
 		}
 	}

@@ -145,7 +145,7 @@ func (r *radInvocation) execute() {
 		if r.fieldsToNotPrint.Has(field.GetLexeme()) {
 			return nil, false
 		}
-		return ToStringArray(r.ri.i.env.GetByToken(field).GetMixedArray()), true
+		return ToStringArray(r.ri.i.env.GetByToken(field).([]interface{})), true
 	})
 
 	tbl := NewTblWriter()

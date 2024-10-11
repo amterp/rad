@@ -102,7 +102,7 @@ func main() {
 		"Color      : Token ColorToken, Expr ColorValue, Expr Regex",
 	})
 
-	defineAst(outputDir, "RlaReturning", "[]RuntimeLiteral", []string{
+	defineAst(outputDir, "ValueReturning", "[]interface{}", []string{
 		"SwitchBlock  : Token SwitchToken, *Token Discriminator, []SwitchStmt Stmts",
 	})
 

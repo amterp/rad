@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestMixedArrays(t *testing.T) {
+func TestMixedArrays_General(t *testing.T) {
 	rsl := `
 a = [1, 2, 3]
 print(a)
@@ -30,7 +30,7 @@ a-3-false-5.5
 	resetTestState()
 }
 
-func TestMixedArrayOfArrays(t *testing.T) {
+func TestMixedArrays_NestedArrays(t *testing.T) {
 	rsl := `
 a = [1, [2, 3], 4]
 for b in a:
@@ -46,7 +46,7 @@ for b in a:
 	resetTestState()
 }
 
-func TestMixedArrayDeepNesting(t *testing.T) {
+func TestMixedArrays_DeepNesting(t *testing.T) {
 	rsl := `
 a = [1, [2, [3, ["four"]], 5]]
 print(a[0]) // 1
@@ -69,6 +69,18 @@ four
 5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMixedArrays_CanModify(t *testing.T) {
+	rsl := `
+a = [1, [2, 3], 4]
+a += [5.1, "six"]
+print(a)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[1, [2, 3], 4, 5.1, six]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
