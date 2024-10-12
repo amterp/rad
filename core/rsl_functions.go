@@ -133,8 +133,10 @@ func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 		return int64(len(v))
 	case []interface{}:
 		return int64(len(v))
+	case RslMap:
+		return int64(v.Len())
 	default:
-		i.error(function, "len() takes a string or array")
+		i.error(function, "len() takes a string or collection")
 		panic(UNREACHABLE)
 	}
 }

@@ -57,3 +57,33 @@ if true:
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestOr(t *testing.T) {
+	rsl := `
+t = true
+f = false
+if t or f:
+	print("TRUE")
+else:
+	print("FALSE")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "TRUE\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestAnd(t *testing.T) {
+	rsl := `
+t = true
+f = false
+if t and f:
+	print("TRUE")
+else:
+	print("FALSE")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "FALSE\n")
+	assertNoErrors(t)
+	resetTestState()
+}

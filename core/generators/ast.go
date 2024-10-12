@@ -42,21 +42,22 @@ func main() {
 		"LoaArray     : ArrayLiteral Value",
 	})
 
-	// expression     -> logic_or
-	// logic_or       -> logic_and ( "or" logic_and )*
-	// logic_and      -> equality ( "and" equality )*
-	// equality       -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
-	// comparison     -> term ( ( GT | GTE | LT | LTE ) term )*
-	// term           -> factor ( ( "-" | "+" ) factor )*
-	// factor         -> unary ( ( "/" | "*" ) unary )*
-	// unary          -> ( "!" | "-" ) unary | primary
-	// primary        -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
-	// arrayAccess    -> IDENTIFIER "[" expression "]"
-	// functionCall   -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
+	// expression       -> logic_or
+	// logic_or         -> logic_and ( "or" logic_and )*
+	// logic_and        -> equality ( "and" equality )*
+	// equality         -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
+	// comparison       -> term ( ( GT | GTE | LT | LTE ) term )*
+	// term             -> factor ( ( "-" | "+" ) factor )*
+	// factor           -> unary ( ( "/" | "*" ) unary )*
+	// unary            -> ( "!" | "-" ) unary | primary
+	// primary          -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
+	// collectionAccess -> expression "[" expression "]"
+	// functionCall     -> IDENTIFIER "(" ( ( expression ( "," expression )* )? ( IDENTIFIER "=" expression ( "," IDENTIFIER "=" expression )* )? )? ")"
 	defineAst(outputDir, "Expr", "interface{}", []string{
 		"ExprLoa           : LiteralOrArray Value",
 		"ArrayExpr         : []Expr Values",
-		"ArrayAccess       : Expr Array, Expr Index, Token OpenBracketToken",
+		"MapExpr           : []Expr Keys, []Expr Values, Token OpenBraceToken",
+		"CollectionAccess  : Expr Collection, Expr Key, Token OpenBracketToken",
 		"FunctionCall      : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
 		"Variable          : Token Name",
 		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /

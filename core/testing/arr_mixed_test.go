@@ -84,3 +84,16 @@ print(a)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestMixedArrays_ConcatDoesNotModifyInPlace(t *testing.T) {
+	rsl := `
+a = [1, 2, 3]
+b = a + [4]
+print(a)
+print(b)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[1, 2, 3]\n[1, 2, 3, 4]\n")
+	assertNoErrors(t)
+	resetTestState()
+}

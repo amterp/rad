@@ -10,6 +10,7 @@ const (
 	RslFloatT
 	RslBoolT
 	RslArrayT
+	RslMapT
 )
 
 type RslArgTypeT int
@@ -46,6 +47,9 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 		return ok
 	case RslArrayT:
 		_, ok := val.([]interface{})
+		return ok
+	case RslMapT:
+		_, ok := val.(RslMap)
 		return ok
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))

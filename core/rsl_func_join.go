@@ -1,6 +1,8 @@
 package core
 
-import "strings"
+import (
+	"strings"
+)
 
 func RunJoin(i *MainInterpreter, function Token, values []interface{}) interface{} {
 	if len(values) < 2 {
@@ -17,10 +19,9 @@ func RunJoin(i *MainInterpreter, function Token, values []interface{}) interface
 	}
 
 	var arr []string
-	switch values[0].(type) {
+	switch coerced := values[0].(type) {
 	case []interface{}:
-		elements := values[0].([]interface{})
-		for _, v := range elements {
+		for _, v := range coerced {
 			arr = append(arr, ToPrintable(v))
 		}
 	default:

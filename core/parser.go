@@ -765,10 +765,12 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 		return &ExprLoa{Value: &LoaLiteral{Value: literal}}
 	} else if arrayExpr, ok := p.arrayExpr(); ok {
 		expr = arrayExpr
+	} else if mapExpr, ok := p.mapExpr(); ok {
+		expr = mapExpr
 	} else if p.matchAny(IDENTIFIER) {
 		identifier := p.previous()
-		// ( after an identifier -> function call
 		if p.peekType(LEFT_PAREN) {
+			// ( after an identifier -> function call
 			p.rewind()
 			expr = p.functionCall(numExpectedReturnValues)
 		} else {
@@ -780,9 +782,9 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 
 	for p.peekType(LEFT_BRACKET) {
 		openBracket := p.advance()
-		index := p.expr(1)
-		p.consume(RIGHT_BRACKET, "Expected ']' after index expression")
-		expr = &ArrayAccess{Array: expr, Index: index, OpenBracketToken: openBracket}
+		keyExpr := p.expr(1)
+		p.consume(RIGHT_BRACKET, "Expected ']' after collection lookup")
+		expr = &CollectionAccess{Collection: expr, Key: keyExpr, OpenBracketToken: openBracket}
 	}
 
 	return expr
@@ -828,6 +830,29 @@ func (p *Parser) arrayExpr() (Expr, bool) {
 	}
 
 	return &ArrayExpr{Values: values}, true
+}
+
+func (p *Parser) mapExpr() (Expr, bool) {
+	if !p.matchAny(LEFT_BRACE) {
+		return nil, false
+	}
+	openBrace := p.previous()
+
+	if p.matchAny(RIGHT_BRACE) {
+		return &MapExpr{Keys: []Expr{}, Values: []Expr{}, OpenBraceToken: openBrace}, true
+	}
+
+	keys := []Expr{p.expr(1)}
+	p.consume(COLON, "Expected ':' between map key and value")
+	values := []Expr{p.expr(1)}
+	for !p.matchAny(RIGHT_BRACE) {
+		p.consume(COMMA, "Expected ',' between map elements")
+		keys = append(keys, p.expr(1))
+		p.consume(COLON, "Expected ':' between map key and value")
+		values = append(values, p.expr(1))
+	}
+
+	return &MapExpr{Keys: keys, Values: values, OpenBraceToken: openBrace}, true
 }
 
 func (p *Parser) listComprehension(expr Expr) (Expr, bool) {

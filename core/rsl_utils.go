@@ -6,26 +6,28 @@ import (
 )
 
 func ToPrintable(val interface{}) string {
-	switch v := val.(type) {
+	switch coerced := val.(type) {
 	case int64:
-		return strconv.FormatInt(v, 10)
+		return strconv.FormatInt(coerced, 10)
 	case float64:
-		return strconv.FormatFloat(v, 'f', -1, 64)
+		return strconv.FormatFloat(coerced, 'f', -1, 64)
 	case string:
-		return v
+		return coerced
 	case bool:
-		return strconv.FormatBool(v)
+		return strconv.FormatBool(coerced)
 	case []interface{}:
 		out := "["
-		for i, elem := range v {
+		for i, elem := range coerced {
 			if i > 0 {
 				out += ", "
 			}
 			out += ToPrintable(elem)
 		}
 		return out + "]"
+	case RslMap:
+		return coerced.ToString()
 	default:
-		RP.RadErrorExit(fmt.Sprintf("unknown type: %T", val))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", val))
 		panic(UNREACHABLE)
 	}
 }

@@ -12,7 +12,8 @@ type Expr interface {
 type ExprVisitor interface {
 	VisitExprLoaExpr(ExprLoa) interface{}
 	VisitArrayExprExpr(ArrayExpr) interface{}
-	VisitArrayAccessExpr(ArrayAccess) interface{}
+	VisitMapExprExpr(MapExpr) interface{}
+	VisitCollectionAccessExpr(CollectionAccess) interface{}
 	VisitFunctionCallExpr(FunctionCall) interface{}
 	VisitVariableExpr(Variable) interface{}
 	VisitBinaryExpr(Binary) interface{}
@@ -47,21 +48,38 @@ func (e ArrayExpr) String() string {
 	return fmt.Sprintf("ArrayExpr(%s)", strings.Join(parts, ", "))
 }
 
-type ArrayAccess struct {
-	Array            Expr
-	Index            Expr
+type MapExpr struct {
+	Keys           []Expr
+	Values         []Expr
+	OpenBraceToken Token
+}
+
+func (e MapExpr) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitMapExprExpr(e)
+}
+func (e MapExpr) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Keys: %v", e.Keys))
+	parts = append(parts, fmt.Sprintf("Values: %v", e.Values))
+	parts = append(parts, fmt.Sprintf("OpenBraceToken: %v", e.OpenBraceToken))
+	return fmt.Sprintf("MapExpr(%s)", strings.Join(parts, ", "))
+}
+
+type CollectionAccess struct {
+	Collection       Expr
+	Key              Expr
 	OpenBracketToken Token
 }
 
-func (e ArrayAccess) Accept(visitor ExprVisitor) interface{} {
-	return visitor.VisitArrayAccessExpr(e)
+func (e CollectionAccess) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitCollectionAccessExpr(e)
 }
-func (e ArrayAccess) String() string {
+func (e CollectionAccess) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("Array: %v", e.Array))
-	parts = append(parts, fmt.Sprintf("Index: %v", e.Index))
+	parts = append(parts, fmt.Sprintf("Collection: %v", e.Collection))
+	parts = append(parts, fmt.Sprintf("Key: %v", e.Key))
 	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
-	return fmt.Sprintf("ArrayAccess(%s)", strings.Join(parts, ", "))
+	return fmt.Sprintf("CollectionAccess(%s)", strings.Join(parts, ", "))
 }
 
 type FunctionCall struct {

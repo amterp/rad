@@ -73,18 +73,20 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 		}
 	}
 
-	switch value.(type) {
+	switch coerced := value.(type) {
 	case string:
-		e.Vars[varName] = value.(string)
+		e.Vars[varName] = coerced
 	case int64:
-		e.Vars[varName] = value.(int64)
+		e.Vars[varName] = coerced
 	case float64:
-		e.Vars[varName] = value.(float64)
+		e.Vars[varName] = coerced
 	case bool:
-		e.Vars[varName] = value.(bool)
+		e.Vars[varName] = coerced
 	case []interface{}:
-		converted := e.recursivelyConvertTypes(varNameToken, value.([]interface{}))
+		converted := e.recursivelyConvertTypes(varNameToken, coerced)
 		e.Vars[varName] = converted.([]interface{})
+	case RslMap:
+		e.Vars[varName] = coerced
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
@@ -163,6 +165,9 @@ func (e *Env) get(varName string, varNameToken Token, acceptableTypes ...RslType
 	panic(UNREACHABLE)
 }
 
+// todo since supporting maps, I think I can get rid of this
+// it was originally implemented because we might capture JSON as a list of unhandled types, but
+// now we should be able to capture json and convert it entirely to native RSL types up front
 func (e *Env) recursivelyConvertTypes(token Token, arr interface{}) interface{} {
 	switch coerced := arr.(type) {
 	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls

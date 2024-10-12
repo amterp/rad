@@ -26,7 +26,7 @@ func runPrettyPrint(i *MainInterpreter, function Token, values []interface{}) {
 	arg := values[0]
 	switch coerced := arg.(type) {
 	case string:
-		output = prettify(i, function, coerced)
+		output = prettifyJsonString(i, function, coerced)
 	case []interface{}:
 		var items []interface{}
 		for _, item := range coerced {
@@ -44,15 +44,18 @@ func runPrettyPrint(i *MainInterpreter, function Token, values []interface{}) {
 		if marshalled, err := json.Marshal(items); err != nil {
 			i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
 		} else {
-			output = prettify(i, function, string(marshalled))
+			output = prettifyJsonString(i, function, string(marshalled))
 		}
+	case RslMap:
+		// todo this might be unordered when printed?
+		output = prettify(i, function, coerced.mapping)
 	default:
 		unformatted, err := jsoncolor.Marshal(arg)
 		if err != nil {
 			RP.RadDebug(fmt.Sprintf("Failed to marshall %v", arg))
 			i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
 		}
-		output = prettify(i, function, string(unformatted))
+		output = prettifyJsonString(i, function, string(unformatted))
 	}
 	RP.Print(output + "\n")
 }
@@ -71,21 +74,25 @@ func resolveOutputString(values []interface{}) string {
 	return output
 }
 
-func prettify(i *MainInterpreter, function Token, unformatted string) string {
+func prettifyJsonString(i *MainInterpreter, function Token, unformatted string) string {
 	bytes := []byte(unformatted)
 	if json.Valid(bytes) {
 		var unmarshalled interface{}
 		if err := json.Unmarshal(bytes, &unmarshalled); err != nil {
 			i.error(function, fmt.Sprintf("Error unmarshalling JSON: %v", err))
 		}
-		f := jsoncolor.NewFormatter()
-		// todo could add coloring here on formatter
-		out, err := jsoncolor.MarshalIndentWithFormatter(unmarshalled, "", "  ", f)
-		if err != nil {
-			i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
-		}
-		return string(out)
+		return prettify(i, function, unmarshalled)
 	} else {
 		return unformatted
 	}
+}
+
+func prettify(i *MainInterpreter, function Token, jsonStruct interface{}) string {
+	f := jsoncolor.NewFormatter()
+	// todo could add coloring here on formatter
+	out, err := jsoncolor.MarshalIndentWithFormatter(jsonStruct, "", "  ", f)
+	if err != nil {
+		i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
+	}
+	return string(out)
 }

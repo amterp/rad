@@ -82,7 +82,7 @@ addCompoundAssignment       -> IDENTIFIER "+=" IDENTIFIER
 minusCompoundAssignment     -> IDENTIFIER "-=" IDENTIFIER
 multiplyCompoundAssignment  -> IDENTIFIER "*=" IDENTIFIER
 divideCompoundAssignment    -> IDENTIFIER "/=" IDENTIFIER
-arrayAssignment             -> IDENTIFIER arrayType "=" arrayExpr
+arrayAssignment             -> IDENTIFIER "=" arrayExpr
 arrayExpr                   -> "[" ( expression ( "," expression )* )? "]"
 expressionAssignment        -> IDENTIFIER primitiveType? "=" expression
 radBlock                    -> "rad" IDENTIFIER COLON NEWLINE ( INDENT radStmt NEWLINE )*
@@ -140,8 +140,10 @@ term                        -> factor ( ( "-" | "+" ) factor )*
 factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
                                | primary
-primary                     -> "(" expression ")" | literalOrArray | arrayExpr | arrayAccess | functionCall | IDENTIFIER
-arrayAccess                 -> primary "[" expression "]"
+primary                     -> "(" expression ")" | literalOrArray | arrayExpr | mapExpr | collectionAccess | functionCall | IDENTIFIER
+collectionAccess            -> expression "[" expression "]"
+mapExpr                     -> "{" mapEntry? ("," mapEntry)* "}"
+mapEntry                    -> expression ":" expression
 literalOrArray              -> literal | arrayLiteral
 literal                     -> STRING | NUMBER | BOOL
 arrayLiteral                -> "[" ( literal ( "," literal )* )? "]"

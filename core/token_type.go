@@ -6,10 +6,12 @@ type TokenType string
 const (
 	// Single-character tokens
 
-	LEFT_PAREN    TokenType = "LEFT_PAREN"
+	LEFT_PAREN    TokenType = "LEFT_PAREN" // (
 	RIGHT_PAREN   TokenType = "RIGHT_PAREN"
-	LEFT_BRACKET  TokenType = "LEFT_BRACKET"
+	LEFT_BRACKET  TokenType = "LEFT_BRACKET" // [
 	RIGHT_BRACKET TokenType = "RIGHT_BRACKET"
+	LEFT_BRACE    TokenType = "LEFT_BRACE" // {
+	RIGHT_BRACE   TokenType = "RIGHT_BRACE"
 	COMMA         TokenType = "COMMA"
 	COLON         TokenType = "COLON"
 	NEWLINE       TokenType = "NEWLINE"

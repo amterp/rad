@@ -1,6 +1,8 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type MainInterpreter struct {
 	env        *Env
@@ -51,13 +53,47 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 	return values
 }
 
-func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
-	array := access.Array.Accept(i)
-	index := access.Index.Accept(i)
+func (i *MainInterpreter) VisitMapExprExpr(expr MapExpr) interface{} {
+	rslMap := NewRslMap()
+	for idx, key := range expr.Keys {
+		keyVal := key.Accept(i)
+		keyValString, ok := keyVal.(string)
+		if !ok {
+			i.error(expr.OpenBraceToken, fmt.Sprintf("Map keys must be strings; key #%d was %v (%T)", idx, keyVal, keyVal))
+		}
 
-	switch coerced := array.(type) {
+		value := expr.Values[idx].Accept(i)
+		rslMap.Set(keyValString, value)
+	}
+	return *rslMap
+}
+
+func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) interface{} {
+	collection := access.Collection.Accept(i)
+	key := access.Key.Accept(i)
+
+	switch coerced := collection.(type) {
 	case []interface{}:
-		return coerced[index.(int64)]
+		switch coercedKey := key.(type) {
+		case int64:
+			return coerced[coercedKey]
+		default:
+			i.error(access.OpenBracketToken, "Array access key must be an int")
+			panic(UNREACHABLE)
+		}
+	case RslMap:
+		switch coercedKey := key.(type) {
+		case string:
+			val, exists := coerced.Get(coercedKey)
+			if !exists {
+				i.error(access.OpenBracketToken, fmt.Sprintf("Key '%s' not found in map", coercedKey))
+				panic(UNREACHABLE)
+			}
+			return val
+		default:
+			i.error(access.OpenBracketToken, fmt.Sprintf("Map access key must be a string, was %v (%T)", key, key))
+			panic(UNREACHABLE)
+		}
 	default:
 		i.error(access.OpenBracketToken, "Bug! Should've failed earlier")
 		panic(UNREACHABLE)
@@ -90,15 +126,16 @@ func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
 	left := logical.Left.Accept(i).(bool)
 	right := logical.Right.Accept(i).(bool)
 
-	switch logical.Operator.GetType() {
-	case AND:
-		return left && right
-	case OR:
-		return left || right
-	default:
+	operator, ok := GLOBAL_KEYWORDS[logical.Operator.GetLexeme()]
+	if !ok || (operator != OR && operator != AND) {
 		i.error(logical.Operator, "Bug! Non-and/or logical operator should've not passed the parser")
 		panic(UNREACHABLE)
 	}
+
+	if operator == OR {
+		return left || right
+	}
+	return left && right
 }
 
 func (i *MainInterpreter) VisitGroupingExpr(grouping Grouping) interface{} {
@@ -255,6 +292,7 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	case []interface{}:
 		arr := rangeValue.([]interface{})
 		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
+	// todo allow iterating through map
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
 	}

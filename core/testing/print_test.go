@@ -168,3 +168,23 @@ false
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestPrettyPrintMap(t *testing.T) {
+	rsl := `
+a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
+pprint(a)
+`
+	expected := `{
+  "alice":35,
+  "bob":"bar",
+  "charlie": [
+    1,
+    "hi"
+  ]
+}
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

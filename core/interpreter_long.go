@@ -216,6 +216,8 @@ func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorT
 		default:
 			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
+	default:
+		i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 	}
 	panic(UNREACHABLE)
 }
