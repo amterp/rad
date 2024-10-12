@@ -56,14 +56,6 @@ func (i *MainInterpreter) VisitArrayAccessExpr(access ArrayAccess) interface{} {
 	index := access.Index.Accept(i)
 
 	switch coerced := array.(type) {
-	case []string:
-		return coerced[index.(int64)]
-	case []int64:
-		return coerced[index.(int64)]
-	case []float64:
-		return coerced[index.(int64)]
-	case []bool:
-		return coerced[index.(int64)]
 	case []interface{}:
 		return coerced[index.(int64)]
 	default:
@@ -163,23 +155,18 @@ func (i *MainInterpreter) VisitPrimaryAssignStmt(assign PrimaryAssign) {
 
 	switch values := value.(type) {
 	case []interface{}:
-		handleMultiAssignment(i, values, assign.Identifiers, assign.VarTypes) // todo does this handle all arrays?
+		handleMultiAssignment(i, values, assign.Identifiers) // todo does this handle all arrays?
 	default:
 		i.error(assign.Identifiers[0], "Expected multiple values, got one")
 	}
 }
 
-func handleMultiAssignment[T any](i *MainInterpreter, values []T, identifiers []Token, varTypes []*RslType) {
+func handleMultiAssignment[T any](i *MainInterpreter, values []T, identifiers []Token) {
 	if len(values) != len(identifiers) {
 		i.error(identifiers[0], fmt.Sprintf("Expected %d values, got %d", len(identifiers), len(values)))
 	}
 	for idx, val := range values {
-		if varTypes[idx] != nil {
-			varType := &(*varTypes[idx]).Type
-			i.env.SetAndExpectType(identifiers[idx], varType, val)
-		} else {
-			i.env.SetAndImplyType(identifiers[idx], val)
-		}
+		i.env.SetAndImplyType(identifiers[idx], val)
 	}
 }
 
@@ -265,18 +252,6 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	}
 
 	switch rangeValue.(type) {
-	case []string:
-		arr := rangeValue.([]string)
-		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
-	case []int64:
-		arr := rangeValue.([]int64)
-		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
-	case []float64:
-		arr := rangeValue.([]float64)
-		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
-	case []bool:
-		arr := rangeValue.([]bool)
-		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
 	case []interface{}:
 		arr := rangeValue.([]interface{})
 		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
@@ -296,14 +271,6 @@ func (i *MainInterpreter) VisitListComprehensionExpr(comp ListComprehension) int
 		valIdent = comp.Identifier1
 	}
 	switch coerced := rangeVals.(type) {
-	case []string:
-		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
-	case []int64:
-		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
-	case []float64:
-		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
-	case []bool:
-		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
 	case []interface{}:
 		return i.computeWithChildEnv(runListComprehensionLoop(i, comp.For, coerced, idxIdent, valIdent, comp.Expression, comp.Condition))
 	default:
@@ -364,11 +331,11 @@ func runListComprehensionLoop[T any](
 	}
 }
 
-func (i *MainInterpreter) VisitBreakStmtStmt(stmt BreakStmt) {
+func (i *MainInterpreter) VisitBreakStmtStmt(BreakStmt) {
 	i.breaking = true
 }
 
-func (i *MainInterpreter) VisitContinueStmtStmt(stmt ContinueStmt) {
+func (i *MainInterpreter) VisitContinueStmtStmt(ContinueStmt) {
 	i.continuing = true
 }
 

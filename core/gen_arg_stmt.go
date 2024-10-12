@@ -16,7 +16,7 @@ type ArgDeclaration struct {
 	Identifier Token
 	Rename     *Token
 	Flag       *Token
-	ArgType    RslType
+	ArgType    RslArgType
 	IsOptional bool
 	Default    *LiteralOrArray
 	Comment    *ArgCommentToken

@@ -39,7 +39,7 @@ print(pick(opts, "Hamb"))
 
 func TestPickErrorsIfEmptyOptions(t *testing.T) {
 	rsl := `
-opts string[] = []
+opts = []
 pick(opts)
 `
 	setupAndRunCode(t, rsl)

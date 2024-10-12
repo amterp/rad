@@ -66,7 +66,6 @@ func (e FunctionStmt) String() string {
 
 type PrimaryAssign struct {
 	Identifiers []Token
-	VarTypes    []*RslType
 	Initializer Expr
 }
 
@@ -76,7 +75,6 @@ func (e PrimaryAssign) Accept(visitor StmtVisitor) {
 func (e PrimaryAssign) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
-	parts = append(parts, fmt.Sprintf("VarTypes: %v", e.VarTypes))
 	parts = append(parts, fmt.Sprintf("Initializer: %v", e.Initializer))
 	return fmt.Sprintf("PrimaryAssign(%s)", strings.Join(parts, ", "))
 }
@@ -175,7 +173,6 @@ func (e SwitchBlockStmt) String() string {
 
 type SwitchAssignment struct {
 	Identifiers []Token
-	VarTypes    []*RslType
 	Block       SwitchBlock
 }
 
@@ -185,7 +182,6 @@ func (e SwitchAssignment) Accept(visitor StmtVisitor) {
 func (e SwitchAssignment) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
-	parts = append(parts, fmt.Sprintf("VarTypes: %v", e.VarTypes))
 	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
 	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
 }

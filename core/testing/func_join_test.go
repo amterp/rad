@@ -4,7 +4,7 @@ import "testing"
 
 func TestStringJoin(t *testing.T) {
 	rsl := `
-arr string[] = ["Hi", "there"]
+arr = ["Hi", "there"]
 print(join(arr, " "))
 print(join(arr, " ", "Alice: "))
 print(join(arr, " ", "Alice: ", "!"))
@@ -21,7 +21,7 @@ Alice: Hi there!
 
 func TestIntJoin(t *testing.T) {
 	rsl := `
-arr int[] = [1, 2, 3]
+arr = [1, 2, 3]
 print(join(arr, "_"))
 print(join(arr, "_", "Nums: "))
 print(join(arr, "_", "Nums: ", "_4"))
@@ -38,7 +38,7 @@ Nums: 1_2_3_4
 
 func TestFloatJoin(t *testing.T) {
 	rsl := `
-arr float[] = [1.1, 1.2, 1.3]
+arr = [1.1, 1.2, 1.3]
 print(join(arr, " yes "))
 print(join(arr, " yes ", "Floats: "))
 print(join(arr, " yes ", "Floats: ", " :D"))

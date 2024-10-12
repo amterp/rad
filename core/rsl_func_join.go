@@ -18,23 +18,6 @@ func RunJoin(i *MainInterpreter, function Token, values []interface{}) interface
 
 	var arr []string
 	switch values[0].(type) {
-	case []string:
-		arr = values[0].([]string)
-	case []int64:
-		ints := values[0].([]int64)
-		for _, v := range ints {
-			arr = append(arr, ToPrintable(v))
-		}
-	case []float64:
-		floats := values[0].([]float64)
-		for _, v := range floats {
-			arr = append(arr, ToPrintable(v))
-		}
-	case []bool:
-		floats := values[0].([]bool)
-		for _, v := range floats {
-			arr = append(arr, ToPrintable(v))
-		}
 	case []interface{}:
 		elements := values[0].([]interface{})
 		for _, v := range elements {

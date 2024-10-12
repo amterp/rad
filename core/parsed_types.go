@@ -10,10 +10,20 @@ const (
 	RslFloatT
 	RslBoolT
 	RslArrayT
-	RslStringArrayT
-	RslIntArrayT
-	RslFloatArrayT
-	RslBoolArrayT
+)
+
+type RslArgTypeT int
+
+const (
+	ArgStringT RslArgTypeT = iota
+	ArgIntT
+	ArgFloatT
+	ArgBoolT
+	ArgMixedArrayT
+	ArgStringArrayT
+	ArgIntArrayT
+	ArgFloatArrayT
+	ArgBoolArrayT
 )
 
 func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
@@ -37,18 +47,6 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 	case RslArrayT:
 		_, ok := val.([]interface{})
 		return ok
-	case RslStringArrayT:
-		_, ok := val.([]string)
-		return ok
-	case RslIntArrayT:
-		_, ok := val.([]int64)
-		return ok
-	case RslFloatArrayT:
-		_, ok := val.([]float64)
-		return ok
-	case RslBoolArrayT:
-		_, ok := val.([]bool)
-		return ok
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
 	}
@@ -64,9 +62,9 @@ func (r *RslTypeEnum) IsArray() bool {
 	return *r == RslArrayT
 }
 
-type RslType struct {
+type RslArgType struct {
 	Token Token
-	Type  RslTypeEnum
+	Type  RslArgTypeT
 }
 
 type JsonPath struct {

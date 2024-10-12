@@ -7,7 +7,7 @@ type ScriptArg struct {
 	ApiName          string
 	DeclarationToken Token
 	Flag             *string
-	Type             RslTypeEnum
+	Type             RslArgTypeT
 	Description      *string
 	IsOptional       bool
 	// first check the Type and IsOptional, then get the value
@@ -59,10 +59,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	if NotNil(defaultVal, func() LiteralOrArray { return nil }) {
 		literal := (*defaultVal).Accept(l)
 		switch scriptArg.Type {
-		case RslStringT:
+		case ArgStringT:
 			val := literal.(string)
 			scriptArg.DefaultString = &val
-		case RslStringArrayT:
+		case ArgStringArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []string
 				scriptArg.DefaultStringArray = &val
@@ -70,10 +70,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]string)
 				scriptArg.DefaultStringArray = &val
 			}
-		case RslIntT:
+		case ArgIntT:
 			val := literal.(int64)
 			scriptArg.DefaultInt = &val
-		case RslIntArrayT:
+		case ArgIntArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []int64
 				scriptArg.DefaultIntArray = &val
@@ -81,10 +81,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]int64)
 				scriptArg.DefaultIntArray = &val
 			}
-		case RslFloatT:
+		case ArgFloatT:
 			val := literal.(float64)
 			scriptArg.DefaultFloat = &val
-		case RslFloatArrayT:
+		case ArgFloatArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []float64
 				scriptArg.DefaultFloatArray = &val
@@ -92,10 +92,10 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 				val := literal.([]float64)
 				scriptArg.DefaultFloatArray = &val
 			}
-		case RslBoolT:
+		case ArgBoolT:
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val
-		case RslBoolArrayT:
+		case ArgBoolArrayT:
 			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
 				var val []bool
 				scriptArg.DefaultBoolArray = &val

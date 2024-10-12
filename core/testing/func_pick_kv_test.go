@@ -34,8 +34,8 @@ print(pick_kv(keys, values, "Bee"))
 
 func TestPickKvErrorsIfEmptyKeysValues(t *testing.T) {
 	rsl := `
-keys string[] = []
-values string[] = []
+keys = []
+values = []
 pick_kv(keys, values)
 `
 	setupAndRunCode(t, rsl)

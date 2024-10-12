@@ -26,8 +26,6 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 		switch filter.(type) {
 		case string, int64, float64, bool:
 			filters = append(filters, ToPrintable(filter))
-		case []string:
-			filters = filter.([]string)
 		case []interface{}:
 			strings, ok := AsStringArray(filter.([]interface{}))
 			if !ok {
@@ -53,12 +51,6 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 	}
 
 	switch values := args[1].(type) {
-	case []string:
-		return pickKv(i, function, "", filters, keys, values)
-	case []int64:
-		return pickKv(i, function, "", filters, keys, values)
-	case []float64:
-		return pickKv(i, function, "", filters, keys, values)
 	case []interface{}:
 		return pickKv(i, function, "", filters, keys, values)
 	default:

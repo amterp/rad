@@ -153,7 +153,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 	}
 
 	for _, arg := range scriptMetadata.Args {
-		cobraArg := CreateCobraArg(RP, cmd, arg)
+		cobraArg := CreateCobraArg(cmd, arg)
 		cobraArgs = append(cobraArgs, &cobraArg)
 	}
 

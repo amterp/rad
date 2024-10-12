@@ -37,23 +37,23 @@ func (e *Env) InitArg(arg CobraArg) {
 
 	argType := arg.Arg.Type
 	switch argType {
-	case RslStringT:
+	case ArgStringT:
 		e.Vars[arg.Arg.Name] = arg.GetString()
-	case RslStringArrayT:
+	case ArgStringArrayT:
 		e.Vars[arg.Arg.Name] = arg.GetStringArray()
-	case RslIntT:
+	case ArgIntT:
 		e.Vars[arg.Arg.Name] = arg.GetInt()
-	case RslIntArrayT:
+	case ArgIntArrayT:
 		e.Vars[arg.Arg.Name] = arg.GetIntArray()
-	case RslFloatT:
+	case ArgFloatT:
 		e.Vars[arg.Arg.Name] = arg.GetFloat()
-	case RslFloatArrayT:
+	case ArgFloatArrayT:
 		e.Vars[arg.Arg.Name] = arg.GetFloatArray()
-	case RslBoolT:
+	case ArgBoolT:
 		e.Vars[arg.Arg.Name] = arg.GetBool()
-	case RslBoolArrayT:
+	case ArgBoolArrayT:
 		e.Vars[arg.Arg.Name] = arg.GetBoolArray()
-	case RslArrayT:
+	case ArgMixedArrayT:
 		e.Vars[arg.Arg.Name] = arg.GetMixedArray()
 	default:
 		e.i.error(arg.Arg.DeclarationToken, fmt.Sprintf("Unsupported arg type, cannot init: %v", argType))
@@ -76,140 +76,17 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	switch value.(type) {
 	case string:
 		e.Vars[varName] = value.(string)
-	case []string:
-		e.Vars[varName] = value.([]string)
 	case int64:
 		e.Vars[varName] = value.(int64)
-	case []int64:
-		e.Vars[varName] = value.([]int64)
 	case float64:
 		e.Vars[varName] = value.(float64)
-	case []float64:
-		e.Vars[varName] = value.([]float64)
 	case bool:
 		e.Vars[varName] = value.(bool)
-	case []bool:
-		e.Vars[varName] = value.([]bool)
 	case []interface{}:
 		converted := e.recursivelyConvertTypes(varNameToken, value.([]interface{}))
 		e.Vars[varName] = converted.([]interface{})
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
-	}
-}
-
-// SetAndExpectType 'value' expected to not be a pointer, should be e.g. string
-func (e *Env) SetAndExpectType(varNameToken Token, expectedType *RslTypeEnum, value interface{}) {
-	varName := varNameToken.GetLexeme()
-
-	if e.Enclosing != nil {
-		_, ok := e.Enclosing.get(varName, varNameToken)
-		if ok {
-			e.Enclosing.SetAndExpectType(varNameToken, expectedType, value)
-		}
-	}
-
-	if expectedType != nil {
-		expectedTypeVal := *expectedType
-		switch expectedTypeVal {
-		case RslStringT:
-			val, ok := value.(string)
-			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string: %v", value))
-			} else {
-				e.Vars[varName] = val
-			}
-		case RslStringArrayT:
-			switch coerced := value.(type) {
-			case []string:
-				e.Vars[varName] = coerced
-			case []interface{}:
-				strings, ok := AsStringArray(coerced)
-				if !ok {
-					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected string array: %v", value))
-				} else {
-					e.Vars[varName] = strings
-				}
-			}
-		case RslIntT:
-			val, ok := value.(int64)
-			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int: %v", value))
-			} else {
-				e.Vars[varName] = val
-			}
-		case RslIntArrayT:
-			switch coerced := value.(type) {
-			case []int64:
-				e.Vars[varName] = coerced
-			case []interface{}:
-				strings, ok := AsIntArray(coerced)
-				if !ok {
-					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected int array: %v", value))
-				} else {
-					e.Vars[varName] = strings
-				}
-			}
-		case RslFloatT:
-			val, ok := value.(float64)
-			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float: %v", value))
-			} else {
-				e.Vars[varName] = val
-			}
-		case RslFloatArrayT:
-			switch coerced := value.(type) {
-			case []float64:
-				e.Vars[varName] = coerced
-			case []interface{}:
-				floats, ok := AsFloatArray(coerced)
-				if !ok {
-					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected float array: %v", value))
-				} else {
-					e.Vars[varName] = floats
-				}
-			}
-		case RslBoolT:
-			val, ok := value.(bool)
-			if !ok {
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool: %v", value))
-			} else {
-				e.Vars[varName] = val
-			}
-		case RslBoolArrayT:
-			switch coerced := value.(type) {
-			case []bool:
-				e.Vars[varName] = coerced
-			case []interface{}:
-				bools, ok := AsBoolArray(coerced)
-				if !ok {
-					e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected bool array: %v", value))
-				} else {
-					e.Vars[varName] = bools
-				}
-			}
-		case RslArrayT:
-			switch coerced := value.(type) {
-			case []interface{}:
-				e.Vars[varName] = coerced
-			case []string:
-				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = array
-			case []int64:
-				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = array
-			case []float64:
-				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = array
-			case []bool:
-				array, _ := AsMixedArray(coerced)
-				e.Vars[varName] = array
-			default:
-				e.i.error(varNameToken, fmt.Sprintf("Type mismatch, expected mixed array: %v", value))
-			}
-		default:
-			e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: %v = %v", varName, value))
-		}
 	}
 }
 

@@ -131,12 +131,6 @@ func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 	switch v := values[0].(type) {
 	case string:
 		return int64(len(v))
-	case []string:
-		return int64(len(v))
-	case []int64:
-		return int64(len(v))
-	case []float64:
-		return int64(len(v))
 	case []interface{}:
 		return int64(len(v))
 	default:

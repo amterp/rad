@@ -15,42 +15,6 @@ func ToPrintable(val interface{}) string {
 		return v
 	case bool:
 		return strconv.FormatBool(v)
-	case []int64:
-		out := "["
-		for i, elem := range v {
-			if i > 0 {
-				out += ", "
-			}
-			out += ToPrintable(elem)
-		}
-		return out + "]"
-	case []float64:
-		out := "["
-		for i, elem := range v {
-			if i > 0 {
-				out += ", "
-			}
-			out += ToPrintable(elem)
-		}
-		return out + "]"
-	case []string:
-		out := "["
-		for i, elem := range v {
-			if i > 0 {
-				out += ", "
-			}
-			out += ToPrintable(elem)
-		}
-		return out + "]"
-	case []bool:
-		out := "["
-		for i, elem := range v {
-			if i > 0 {
-				out += ", "
-			}
-			out += ToPrintable(elem)
-		}
-		return out + "]"
 	case []interface{}:
 		out := "["
 		for i, elem := range v {

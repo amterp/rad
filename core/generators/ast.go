@@ -70,14 +70,14 @@ func main() {
 		"Empty              :",
 		"ExprStmt           : Expr Expression",
 		"FunctionStmt       : FunctionCall Call",
-		"PrimaryAssign      : []Token Identifiers, []*RslType VarTypes, Expr Initializer", // allow []Expr?
+		"PrimaryAssign      : []Token Identifiers, Expr Initializer", // allow []Expr?
 		"CompoundAssign     : Token Name, Token Operator, Expr Value",
 		"FileHeader         : FilerHeaderToken FhToken",
 		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock           : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",
 		"JsonPathAssign     : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt    : SwitchBlock Block",
-		"SwitchAssignment   : []Token Identifiers, []*RslType VarTypes, SwitchBlock Block",
+		"SwitchAssignment   : []Token Identifiers, SwitchBlock Block",
 		"Block			    : []Stmt Stmts",
 		"IfStmt             : []IfCase Cases, *Block ElseBlock",
 		"IfCase             : Token IfToken, Expr Condition, Block Body",
@@ -87,7 +87,7 @@ func main() {
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{
-		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslType ArgType, " + // todo rename 'Rename'?
+		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslArgType ArgType, " + // todo rename 'Rename'?
 			"bool IsOptional, *LiteralOrArray Default, *ArgCommentToken Comment",
 	})
 

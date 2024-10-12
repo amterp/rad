@@ -21,8 +21,6 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 		switch filter.(type) {
 		case string, int64, float64, bool:
 			filters = append(filters, ToPrintable(filter))
-		case []string:
-			filters = filter.([]string)
 		case []interface{}:
 			strings, ok := AsStringArray(filter.([]interface{}))
 			if !ok {
@@ -37,14 +35,12 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 	}
 
 	switch options := values[0].(type) {
-	case []string:
-		// todo prompt should be a named/optional arg when we support that, i.e. pick(options, prompt="foo")
-		return pickString(i, function, "", filters, options)
 	case []interface{}:
 		array, ok := AsStringArray(options)
 		if !ok {
 			i.error(function, "pick() does not allow non-string arrays as options")
 		}
+		// todo prompt should be a named/optional arg when we support that, i.e. pick(options, prompt="foo")
 		return pickString(i, function, "", filters, array)
 	default:
 		i.error(function, "pick() takes a string array as the first argument")
