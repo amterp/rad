@@ -68,23 +68,25 @@ func main() {
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
-		"Empty              :",
-		"ExprStmt           : Expr Expression",
-		"FunctionStmt       : FunctionCall Call",
-		"PrimaryAssign      : []Token Identifiers, Expr Initializer", // allow []Expr?
-		"CompoundAssign     : Token Name, Token Operator, Expr Value",
-		"FileHeader         : FilerHeaderToken FhToken",
-		"ArgBlock           : Token ArgsKeyword, []ArgStmt Stmts",
-		"RadBlock           : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",
-		"JsonPathAssign     : Token Identifier, JsonPath Path",
-		"SwitchBlockStmt    : SwitchBlock Block",
-		"SwitchAssignment   : []Token Identifiers, SwitchBlock Block",
-		"Block			    : []Stmt Stmts",
-		"IfStmt             : []IfCase Cases, *Block ElseBlock",
-		"IfCase             : Token IfToken, Expr Condition, Block Body",
-		"ForStmt			: Token ForToken, Token Identifier1, *Token Identifier2, Expr Range, Block Body",
-		"BreakStmt			: Token BreakToken",
-		"ContinueStmt		: Token ContinueToken",
+		"Empty                  :",
+		"ExprStmt               : Expr Expression",
+		"FunctionStmt           : FunctionCall Call",
+		// todo can merge Primary and Compound if we treat == as an operator?
+		"PrimaryAssign          : []Token Identifiers, Expr Initializer", // todo allow []Expr?
+		"CompoundAssign         : Token Name, Token Operator, Expr Value",
+		"CollectionEntryAssign  : Token Identifier, Expr Key, Token Operator, Expr Value",
+		"FileHeader             : FilerHeaderToken FhToken",
+		"ArgBlock               : Token ArgsKeyword, []ArgStmt Stmts",
+		"RadBlock               : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",
+		"JsonPathAssign         : Token Identifier, JsonPath Path",
+		"SwitchBlockStmt        : SwitchBlock Block",
+		"SwitchAssignment       : []Token Identifiers, SwitchBlock Block",
+		"Block			        : []Stmt Stmts",
+		"IfStmt                 : []IfCase Cases, *Block ElseBlock",
+		"IfCase                 : Token IfToken, Expr Condition, Block Body",
+		"ForStmt			    : Token ForToken, Token Identifier1, *Token Identifier2, Expr Range, Block Body",
+		"BreakStmt			    : Token BreakToken",
+		"ContinueStmt		    : Token ContinueToken",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

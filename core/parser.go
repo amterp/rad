@@ -507,6 +507,10 @@ func (p *Parser) assignment() Stmt {
 	var identifiers []Token
 	identifiers = append(identifiers, p.identifier())
 
+	if p.matchAny(LEFT_BRACKET) {
+		return p.collectionEntryAssignment(identifiers[0])
+	}
+
 	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL) {
 		return p.compoundAssignment(identifiers[0], p.previous())
 	}
@@ -546,6 +550,18 @@ func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
 		p.error("Invalid compound assignment operator")
 		panic(UNREACHABLE)
 	}
+}
+
+func (p *Parser) collectionEntryAssignment(identifier Token) Stmt {
+	// just consumed left bracket
+	key := p.expr(1)
+	p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+	// todo technically it should not be illegal to have e.g. a[0] as a standalone 'statement',
+	//  but we don't allow it here
+	operator := p.consumeAny("Expected one of the following operators: [=, +=, -=, *=, /=]",
+		EQUAL, PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL)
+	value := p.expr(1)
+	return &CollectionEntryAssign{Identifier: identifier, Key: key, Operator: operator, Value: value}
 }
 
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
@@ -1168,6 +1184,14 @@ func (p *Parser) consumeKeyword(tokenType TokenType, keywords map[string]TokenTy
 		panic(UNREACHABLE)
 	}
 	return p.previous()
+}
+
+func (p *Parser) consumeAny(errMsg string, expected ...TokenType) Token {
+	if p.matchAny(expected...) {
+		return p.previous()
+	}
+	p.error(errMsg)
+	panic(UNREACHABLE)
 }
 
 func (p *Parser) peekKeyword(expectedKeyword TokenType, keywords map[string]TokenType) bool {

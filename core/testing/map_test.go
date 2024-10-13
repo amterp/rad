@@ -3,11 +3,10 @@ package testing
 import "testing"
 
 // todo maps
-//  - key addition/definition
 //  - key deletion
 //  - contains key
 //  - contains value
-//  - iteration (this will require some thinking with i)
+//  - iteration
 //  - keyset
 //  - valueset
 //  - entryset
@@ -49,15 +48,41 @@ print(a)
 	resetTestState()
 }
 
-// todo
-//func TestMap_CanAddByKey(t *testing.T) {
-//	rsl := `
-//a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
-//a["david"] = 20
-//print(a)
-//`
-//	setupAndRunCode(t, rsl, "--NO-COLOR")
-//	assertOnlyOutput(t, stdOutBuffer, "a\nb\nc\n")
-//	assertNoErrors(t)
-//	resetTestState()
-//}
+func TestMap_CanAddByKey(t *testing.T) {
+	rsl := `
+a = { "alice": 35, "bob": "bar"}
+a["charlie"] = 20
+a[upper("dave")] = "hi"
+print(a)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: bar, charlie: 20, DAVE: hi }\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMap_CanCompoundAssign(t *testing.T) {
+	rsl := `
+a = { "alice": 100, "bob": 200, "charlie": 300, "dave": 400 }
+a["alice"] += 20
+a["bob"] -= 20
+a["charlie"] *= 2
+a["dave"] /= 2
+print(a)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ alice: 120, bob: 180, charlie: 600, dave: 200 }\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMap_CompoundOpOnNonExistentKeyErrors(t *testing.T) {
+	rsl := `
+a = { "alice": 100, "bob": 200, "charlie": 300, "dave": 400 }
+a["eve"] += 20
+print(a)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertError(t, 1, "RslError at L3/11 on '+=': Cannot use compound assignment on non-existing map key \"eve\"\n")
+	resetTestState()
+}

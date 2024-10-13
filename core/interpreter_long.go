@@ -7,14 +7,52 @@ import (
 func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
 	left := binary.Left.Accept(i)
 	right := binary.Right.Accept(i)
-	return i.execute(left, right, binary.Operator, binary.Operator.GetType())
+	return i.executeOp(left, right, binary.Operator, binary.Operator.GetType())
 }
 
 func (i *MainInterpreter) VisitCompoundAssignStmt(assign CompoundAssign) {
-	variable := i.env.GetByToken(assign.Name)
-	operand := assign.Value.Accept(i)
+	left := i.env.GetByToken(assign.Name)
+	right := assign.Value.Accept(i)
+	result := i.calculateResult(left, right, assign.Operator)
+	i.env.SetAndImplyType(assign.Name, result)
+}
+
+func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryAssign) {
+	key := assign.Key.Accept(i)
+	collection := i.env.GetByToken(assign.Identifier)
+	switch coerced := collection.(type) {
+	case []interface{}:
+		idx, ok := key.(int64)
+		if !ok {
+			i.error(assign.Identifier, "Array key must be an int")
+		}
+		arrLen := len(coerced)
+		if idx < 0 || idx >= int64(arrLen) {
+			i.error(assign.Identifier, fmt.Sprintf("Array index out of bounds: %d > max idx %d", idx, arrLen-1))
+		}
+		coerced[idx] = i.calculateResult(coerced[idx], assign.Value.Accept(i), assign.Operator)
+	case RslMap:
+		keyStr, ok := key.(string)
+		if !ok {
+			i.error(assign.Identifier, "Map key must be a string") // todo still unsure about this constraint
+		}
+		existing, ok := coerced.Get(keyStr)
+		if !ok && assign.Operator.GetType() != EQUAL {
+			i.error(assign.Operator, fmt.Sprintf("Cannot use compound assignment on non-existing map key %q", keyStr))
+		}
+		coerced.Set(keyStr, i.calculateResult(existing, assign.Value.Accept(i), assign.Operator))
+		i.env.SetAndImplyType(assign.Identifier, coerced)
+	default:
+		i.error(assign.Operator, fmt.Sprintf("Expected collection, got %T", collection))
+	}
+}
+
+func (i *MainInterpreter) calculateResult(left interface{}, right interface{}, operator Token) interface{} {
 	var operatorType TokenType
-	switch assign.Operator.GetType() {
+	switch operator.GetType() {
+	case EQUAL:
+		// only used by collection entry assignment atm
+		return right
 	case PLUS_EQUAL:
 		operatorType = PLUS
 	case MINUS_EQUAL:
@@ -24,13 +62,12 @@ func (i *MainInterpreter) VisitCompoundAssignStmt(assign CompoundAssign) {
 	case SLASH_EQUAL:
 		operatorType = SLASH
 	default:
-		i.error(assign.Operator, "Invalid compound assignment operator")
+		i.error(operator, "Invalid assignment operator")
 	}
-	result := i.execute(variable, operand, assign.Operator, operatorType)
-	i.env.SetAndImplyType(assign.Name, result)
+	return i.executeOp(left, right, operator, operatorType)
 }
 
-func (i *MainInterpreter) execute(left interface{}, right interface{}, operatorToken Token, operatorType TokenType) interface{} {
+func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operatorToken Token, operatorType TokenType) interface{} {
 	switch left.(type) {
 	case int64:
 		switch right.(type) {
