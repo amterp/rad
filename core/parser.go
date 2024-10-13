@@ -93,7 +93,11 @@ func (p *Parser) rewind() {
 }
 
 func (p *Parser) previous() Token {
-	return p.tokens[p.next-1]
+	return p.lookback(1)
+}
+
+func (p *Parser) lookback(num int) Token {
+	return p.tokens[p.next-num]
 }
 
 func (p *Parser) consume(tokenType TokenType, errorMessageIfNotMatch string) Token {
@@ -126,7 +130,7 @@ func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
 }
 
 func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
-	if p.matchKeyword(ARGS, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, ARGS) {
 		argsKeyword := p.previous()
 		p.consume(COLON, "Expected ':' after 'args'")
 		p.consumeNewlines()
@@ -157,7 +161,7 @@ func (p *Parser) argBlockIfPresent(statements *[]Stmt) {
 // argOneWayReq             -> IDENTIFIER "requires" IDENTIFIER
 // argMutualExcl            -> "one_of" IDENTIFIER ( "," IDENTIFIER )+
 func (p *Parser) argStatement() ArgStmt {
-	if p.matchKeyword(ONE_OF, ARGS_BLOCK_KEYWORDS) {
+	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, ONE_OF) {
 		panic(NOT_IMPLEMENTED)
 	}
 
@@ -172,7 +176,7 @@ func (p *Parser) argStatement() ArgStmt {
 		return p.argDeclaration(identifier)
 	}
 
-	if p.matchKeyword(REQUIRES, ARGS_BLOCK_KEYWORDS) {
+	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, REQUIRES) {
 		panic(NOT_IMPLEMENTED)
 	}
 
@@ -231,15 +235,15 @@ func (p *Parser) argDeclaration(identifier Token) ArgStmt {
 }
 
 func (p *Parser) statement() Stmt {
-	if p.matchKeyword(RAD, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, RAD) {
 		return p.radBlock(Rad)
 	}
 
-	if p.matchKeyword(REQUEST, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, REQUEST) {
 		return p.radBlock(Request)
 	}
 
-	if p.matchKeyword(DISPLAY, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, DISPLAY) {
 		return p.radBlock(Display)
 	}
 
@@ -255,14 +259,14 @@ func (p *Parser) statement() Stmt {
 		if p.nestedForBlockLevel == 0 {
 			p.error("Break statement must be inside a for loop")
 		}
-		return &BreakStmt{BreakToken: p.consumeKeyword(BREAK, GLOBAL_KEYWORDS)}
+		return &BreakStmt{BreakToken: p.consumeKeyword(GLOBAL_KEYWORDS, BREAK)}
 	}
 
 	if p.peekKeyword(CONTINUE, GLOBAL_KEYWORDS) {
 		if p.nestedForBlockLevel == 0 {
 			p.error("Continue statement must be inside a for loop")
 		}
-		return &ContinueStmt{ContinueToken: p.consumeKeyword(CONTINUE, GLOBAL_KEYWORDS)}
+		return &ContinueStmt{ContinueToken: p.consumeKeyword(GLOBAL_KEYWORDS, CONTINUE)}
 	}
 
 	if p.peekKeyword(DELETE, GLOBAL_KEYWORDS) {
@@ -312,11 +316,11 @@ func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 }
 
 func (p *Parser) radStatement(radType RadBlockType) RadStmt {
-	if p.matchKeyword(FIELDS, RAD_BLOCK_KEYWORDS) {
+	if p.matchKeyword(RAD_BLOCK_KEYWORDS, FIELDS) {
 		return p.radFieldsStatement()
 	}
 
-	if p.matchKeyword(SORT, RAD_BLOCK_KEYWORDS) {
+	if p.matchKeyword(RAD_BLOCK_KEYWORDS, SORT) {
 		if radType == Request {
 			// note: maybe we allow this if we add explicit 'display' statements into request blocks?
 			p.error("Sort statement is not allowed in a request block")
@@ -332,10 +336,10 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 	var mods []RadFieldModStmt
 	for !p.matchAny(DEDENT, EOF) {
 		p.consumeNewlines()
-		if p.matchKeyword(TRUNCATE, RAD_BLOCK_KEYWORDS) {
+		if p.matchKeyword(RAD_BLOCK_KEYWORDS, TRUNCATE) {
 			mods = append(mods, p.truncStmt())
 		}
-		if p.matchKeyword(COLOR, RAD_BLOCK_KEYWORDS) {
+		if p.matchKeyword(RAD_BLOCK_KEYWORDS, COLOR) {
 			mods = append(mods, p.colorStmt())
 		}
 		// todo other field mod stmts
@@ -406,8 +410,8 @@ func (p *Parser) radSortStatement() RadStmt {
 		return &Sort{SortToken: sortToken, Identifiers: []Token{}, Directions: []SortDir{}, GeneralSort: &asc}
 	}
 
-	nextMatchesAsc := p.matchKeyword(ASC, RAD_BLOCK_KEYWORDS)
-	nextMatchesDesc := p.matchKeyword(DESC, RAD_BLOCK_KEYWORDS)
+	nextMatchesAsc := p.matchKeyword(RAD_BLOCK_KEYWORDS, ASC)
+	nextMatchesDesc := p.matchKeyword(RAD_BLOCK_KEYWORDS, DESC)
 	if nextMatchesAsc || nextMatchesDesc {
 		p.consume(NEWLINE, "Expected newline after general sort direction")
 		dir := lo.Ternary(nextMatchesAsc, asc, desc)
@@ -419,8 +423,8 @@ func (p *Parser) radSortStatement() RadStmt {
 
 	for !p.matchAny(NEWLINE, DEDENT, EOF) {
 		identifiers = append(identifiers, p.identifier())
-		nextMatchesAsc = p.matchKeyword(ASC, RAD_BLOCK_KEYWORDS)
-		nextMatchesDesc = p.matchKeyword(DESC, RAD_BLOCK_KEYWORDS)
+		nextMatchesAsc = p.matchKeyword(RAD_BLOCK_KEYWORDS, ASC)
+		nextMatchesDesc = p.matchKeyword(RAD_BLOCK_KEYWORDS, DESC)
 		if nextMatchesAsc || nextMatchesDesc {
 			dir := lo.Ternary(nextMatchesAsc, asc, desc)
 			directions = append(directions, dir)
@@ -448,7 +452,7 @@ func (p *Parser) ifStmt() IfStmt {
 	cases = append(cases, p.ifCase())
 	var elseBlock *Block
 	for p.peekKeyword(ELSE, GLOBAL_KEYWORDS) {
-		p.consumeKeyword(ELSE, GLOBAL_KEYWORDS)
+		p.consumeKeyword(GLOBAL_KEYWORDS, ELSE)
 		if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
 			cases = append(cases, p.ifCase())
 		} else {
@@ -463,7 +467,7 @@ func (p *Parser) ifStmt() IfStmt {
 }
 
 func (p *Parser) ifCase() IfCase {
-	ifToken := p.consumeKeyword(IF, GLOBAL_KEYWORDS)
+	ifToken := p.consumeKeyword(GLOBAL_KEYWORDS, IF)
 	condition := p.expr(1)
 	p.consume(COLON, "Expected ':' after if condition")
 	p.consumeNewlines()
@@ -482,14 +486,14 @@ func (p *Parser) block() Block {
 }
 
 func (p *Parser) forStmt() ForStmt {
-	forToken := p.consumeKeyword(FOR, GLOBAL_KEYWORDS)
+	forToken := p.consumeKeyword(GLOBAL_KEYWORDS, FOR)
 	identifier1 := p.consume(IDENTIFIER, "Expected identifier after 'for'")
 	var identifier2 *Token
 	if p.matchAny(COMMA) {
 		i := p.consume(IDENTIFIER, "Expected identifier after ','")
 		identifier2 = &i
 	}
-	p.consumeKeyword(IN, GLOBAL_KEYWORDS)
+	p.consumeKeyword(GLOBAL_KEYWORDS, IN)
 	rangeExpr := p.expr(1)
 	p.consume(COLON, "Expected ':' after range expression")
 	p.consumeNewlines()
@@ -501,7 +505,7 @@ func (p *Parser) forStmt() ForStmt {
 }
 
 func (p *Parser) deleteStmt() Stmt {
-	deleteToken := p.consumeKeyword(DELETE, GLOBAL_KEYWORDS)
+	deleteToken := p.consumeKeyword(GLOBAL_KEYWORDS, DELETE)
 	var vars []VarPath
 	vars = append(vars, p.varPath())
 	for p.matchAny(COMMA) {
@@ -544,7 +548,7 @@ func (p *Parser) assignment() Stmt {
 
 	// finished matching left side of equal sign, now parse right side
 
-	if p.matchKeyword(SWITCH, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, SWITCH) {
 		block := p.switchBlock(identifiers)
 		return &SwitchAssignment{Identifiers: identifiers, Block: block}
 	}
@@ -627,11 +631,11 @@ func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {
 }
 
 func (p *Parser) switchStmt(hasDiscriminator bool, expectedNumReturnValues int) SwitchStmt {
-	if p.matchKeyword(CASE, SWITCH_BLOCK_KEYWORDS) {
+	if p.matchKeyword(SWITCH_BLOCK_KEYWORDS, CASE) {
 		return p.caseStmt(hasDiscriminator, expectedNumReturnValues)
 	}
 
-	if p.matchKeyword(DEFAULT, SWITCH_BLOCK_KEYWORDS) {
+	if p.matchKeyword(SWITCH_BLOCK_KEYWORDS, DEFAULT) {
 		return p.switchDefaultStmt(expectedNumReturnValues)
 	}
 
@@ -695,7 +699,7 @@ func (p *Parser) expr(numExpectedReturnValues int) Expr {
 func (p *Parser) or(numExpectedReturnValues int) Expr {
 	expr := p.and(numExpectedReturnValues)
 
-	for p.matchKeyword(OR, ALL_KEYWORDS) {
+	for p.matchKeyword(ALL_KEYWORDS, OR) {
 		if numExpectedReturnValues != 1 {
 			p.error(onlyOneReturnValueAllowed)
 		}
@@ -710,7 +714,7 @@ func (p *Parser) or(numExpectedReturnValues int) Expr {
 func (p *Parser) and(numExpectedReturnValues int) Expr {
 	expr := p.equality(numExpectedReturnValues)
 
-	for p.matchKeyword(AND, ALL_KEYWORDS) {
+	for p.matchKeyword(ALL_KEYWORDS, AND) {
 		if numExpectedReturnValues != 1 {
 			p.error(onlyOneReturnValueAllowed)
 		}
@@ -723,15 +727,44 @@ func (p *Parser) and(numExpectedReturnValues int) Expr {
 }
 
 func (p *Parser) equality(numExpectedReturnValues int) Expr {
-	expr := p.comparison(numExpectedReturnValues)
+	expr := p.membership(numExpectedReturnValues)
 
 	for p.matchAny(NOT_EQUAL, EQUAL_EQUAL) {
 		if numExpectedReturnValues != 1 {
 			p.error(onlyOneReturnValueAllowed)
 		}
 		operator := p.previous()
-		right := p.comparison(1)
+		right := p.membership(1)
 		expr = &Binary{Left: expr, Operator: operator, Right: right}
+	}
+
+	return expr
+}
+
+func (p *Parser) membership(numExpectedReturnValues int) Expr {
+	expr := p.comparison(numExpectedReturnValues)
+
+	for p.peekKeyword(NOT, GLOBAL_KEYWORDS) || p.peekKeyword(IN, GLOBAL_KEYWORDS) {
+		if p.matchKeywordSeries(GLOBAL_KEYWORDS, NOT, IN) {
+			if numExpectedReturnValues != 1 {
+				p.error(onlyOneReturnValueAllowed)
+			}
+			notToken := p.lookback(2)
+
+			opToken := NewToken(NOT_IN, "not in", notToken.GetCharStart(), notToken.GetLine(), notToken.GetCharLineStart())
+			right := p.comparison(1)
+			expr = &Binary{Left: expr, Operator: opToken, Right: right}
+		} else if p.matchKeyword(GLOBAL_KEYWORDS, IN) {
+			if numExpectedReturnValues != 1 {
+				p.error(onlyOneReturnValueAllowed)
+			}
+			inIdentifierToken := p.previous()
+			operator := NewToken(IN, "in", inIdentifierToken.GetCharStart(), inIdentifierToken.GetLine(), inIdentifierToken.GetCharLineStart())
+			right := p.comparison(1)
+			expr = &Binary{Left: expr, Operator: operator, Right: right}
+		}
+		// we're here, then we must've matched just 'not' without 'in'.
+		// must not be a membership expr, so skip this level.
 	}
 
 	return expr
@@ -894,17 +927,17 @@ func (p *Parser) mapExpr() (Expr, bool) {
 }
 
 func (p *Parser) listComprehension(expr Expr) (Expr, bool) {
-	forToken := p.consumeKeyword(FOR, GLOBAL_KEYWORDS)
+	forToken := p.consumeKeyword(GLOBAL_KEYWORDS, FOR)
 	identifier1 := p.consume(IDENTIFIER, "Expected identifier after 'for'")
 	var identifier2 *Token
 	if p.matchAny(COMMA) {
 		i := p.consume(IDENTIFIER, "Expected identifier after ','")
 		identifier2 = &i
 	}
-	p.consumeKeyword(IN, GLOBAL_KEYWORDS)
+	p.consumeKeyword(GLOBAL_KEYWORDS, IN)
 	rangeExpr := p.expr(1)
 
-	if p.matchKeyword(IF, GLOBAL_KEYWORDS) {
+	if p.matchKeyword(GLOBAL_KEYWORDS, IF) {
 		condition := p.expr(1)
 		p.consume(RIGHT_BRACKET, "Expected ']' after list comprehension")
 		return &ListComprehension{Expression: expr, For: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Condition: &condition}, true
@@ -1121,35 +1154,35 @@ func (p *Parser) mixedArrayLiteral() MixedArrayLiteral {
 func (p *Parser) rslArgType() RslArgType {
 	var argType Token
 	var rslTypeEnum RslArgTypeT
-	if p.matchKeyword(ARRAY, ARGS_BLOCK_KEYWORDS) { // todo technically this is used for typing in non-arg contexts too
+	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, ARRAY) { // todo technically this is used for typing in non-arg contexts too
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			p.error("Brackets cannot follow 'array' type, just use 'array'.")
 		} else {
 			rslTypeEnum = ArgMixedArrayT
 		}
-	} else if p.matchKeyword(STRING, ARGS_BLOCK_KEYWORDS) {
+	} else if p.matchKeyword(ARGS_BLOCK_KEYWORDS, STRING) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			rslTypeEnum = ArgStringArrayT
 		} else {
 			rslTypeEnum = ArgStringT
 		}
-	} else if p.matchKeyword(INT, ARGS_BLOCK_KEYWORDS) {
+	} else if p.matchKeyword(ARGS_BLOCK_KEYWORDS, INT) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			rslTypeEnum = ArgIntArrayT
 		} else {
 			rslTypeEnum = ArgIntT
 		}
-	} else if p.matchKeyword(FLOAT, ARGS_BLOCK_KEYWORDS) {
+	} else if p.matchKeyword(ARGS_BLOCK_KEYWORDS, FLOAT) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			rslTypeEnum = ArgFloatArrayT
 		} else {
 			rslTypeEnum = ArgFloatT
 		}
-	} else if p.matchKeyword(BOOL, ARGS_BLOCK_KEYWORDS) {
+	} else if p.matchKeyword(ARGS_BLOCK_KEYWORDS, BOOL) {
 		argType = p.previous()
 		if p.matchAny(BRACKETS) {
 			rslTypeEnum = ArgBoolArrayT
@@ -1186,22 +1219,36 @@ func (p *Parser) consumeNewlinesMin(min int) {
 	}
 }
 
-func (p *Parser) matchKeyword(tokenType TokenType, keywords map[string]TokenType) bool {
+func (p *Parser) matchKeyword(keywords map[string]TokenType, tokenType TokenType) bool {
+	return p.matchKeywordSeries(keywords, tokenType)
+}
+
+func (p *Parser) matchKeywordSeries(keywords map[string]TokenType, tokenType ...TokenType) bool {
 	next := p.peek()
 	if next.GetType() != IDENTIFIER {
 		return false
 	}
-	if keyword, ok := keywords[next.GetLexeme()]; ok {
-		if keyword == tokenType {
+	for i, t := range tokenType {
+		if keyword, ok := keywords[next.GetLexeme()]; ok {
+			if keyword != t {
+				for j := 0; j < i; j++ {
+					p.rewind()
+				}
+				return false
+			}
 			p.advance()
-			return true
+		} else {
+			for j := 0; j < i; j++ {
+				p.rewind()
+			}
+			return false
 		}
 	}
-	return false
+	return true
 }
 
-func (p *Parser) consumeKeyword(tokenType TokenType, keywords map[string]TokenType) Token {
-	if !p.matchKeyword(tokenType, keywords) {
+func (p *Parser) consumeKeyword(keywords map[string]TokenType, tokenType TokenType) Token {
+	if !p.matchKeyword(keywords, tokenType) {
 		p.error(fmt.Sprintf("Expected keyword %s", tokenType))
 		panic(UNREACHABLE)
 	}
@@ -1217,7 +1264,7 @@ func (p *Parser) consumeAny(errMsg string, expected ...TokenType) Token {
 }
 
 func (p *Parser) peekKeyword(expectedKeyword TokenType, keywords map[string]TokenType) bool {
-	if p.matchKeyword(expectedKeyword, keywords) {
+	if p.matchKeyword(keywords, expectedKeyword) {
 		p.rewind()
 		return true
 	}

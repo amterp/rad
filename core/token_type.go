@@ -66,7 +66,7 @@ const (
 	CASE     TokenType = "CASE"
 	FROM     TokenType = "FROM"
 	ON       TokenType = "ON"
-	RAD      TokenType = "RAD" // todo continue to rethink this being the keyword
+	RAD      TokenType = "RAD"
 	REQUEST  TokenType = "REQUEST"
 	DISPLAY  TokenType = "DISPLAY"
 	OR       TokenType = "OR"
@@ -75,6 +75,8 @@ const (
 	ELSE     TokenType = "ELSE"
 	RESOURCE TokenType = "RESOURCE"
 	DELETE   TokenType = "DELETE"
+	NOT      TokenType = "NOT"
+	NOT_IN   TokenType = "NOT_IN"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

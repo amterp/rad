@@ -33,6 +33,11 @@ func (m *RslMap) Keys() []string {
 	return m.keys
 }
 
+func (m *RslMap) ContainsKey(key string) bool {
+	_, exists := m.mapping[key]
+	return exists
+}
+
 func (m *RslMap) Len() int {
 	return len(m.mapping)
 }

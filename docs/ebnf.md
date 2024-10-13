@@ -134,7 +134,8 @@ forStmtNoIndex              -> "in" IDENTIFIER COLON NEWLINE ( INDENT statement 
 expression                  -> logic_or
 logic_or                    -> logic_and ( "or" logic_and )*
 logic_and                   -> equality ( "and" equality )*
-equality                    -> comparison ( ( NOT_EQUAL | EQUAL ) comparison )*
+equality                    -> membership ( ( NOT_EQUAL | EQUAL ) membership )*
+membership                  -> comparison ( "in" comparison )*
 comparison                  -> term ( ( GT | GTE | LT | LTE ) term )*
 term                        -> factor ( ( "-" | "+" ) factor )*
 factor                      -> unary ( ( "/" | "*" ) unary )*
