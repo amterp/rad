@@ -65,6 +65,7 @@ func main() {
 		"Grouping          : Expr Value",                            // ( expr )
 		"Unary             : Token Operator, Expr Right",            // !, -, +
 		"ListComprehension : Expr Expression, Token For, Token Identifier1, *Token Identifier2, Expr Range, *Expr Condition",
+		"VarPath           : Token Identifier, []Expr Keys", // for e.g. `del myMap["key"][0]`
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
@@ -87,6 +88,7 @@ func main() {
 		"ForStmt			    : Token ForToken, Token Identifier1, *Token Identifier2, Expr Range, Block Body",
 		"BreakStmt			    : Token BreakToken",
 		"ContinueStmt		    : Token ContinueToken",
+		"DeleteStmt			    : Token DeleteToken, []VarPath Vars",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

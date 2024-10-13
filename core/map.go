@@ -37,6 +37,17 @@ func (m *RslMap) Len() int {
 	return len(m.mapping)
 }
 
+func (m *RslMap) Delete(key string) {
+	delete(m.mapping, key)
+	// O(n) a little sad but probably okay
+	for i, k := range m.keys {
+		if k == key {
+			m.keys = append(m.keys[:i], m.keys[i+1:]...)
+			break
+		}
+	}
+}
+
 func (m *RslMap) ToString() string {
 	if m.Len() == 0 {
 		return "{}"

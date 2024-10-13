@@ -265,7 +265,9 @@ func (p *Parser) statement() Stmt {
 		return &ContinueStmt{ContinueToken: p.consumeKeyword(CONTINUE, GLOBAL_KEYWORDS)}
 	}
 
-	// todo all keywords
+	if p.peekKeyword(DELETE, GLOBAL_KEYWORDS) {
+		return p.deleteStmt()
+	}
 
 	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
 		return p.functionCallStmt()
@@ -496,6 +498,26 @@ func (p *Parser) forStmt() ForStmt {
 	block := p.block()
 	p.nestedForBlockLevel -= 1
 	return ForStmt{ForToken: forToken, Identifier1: identifier1, Identifier2: identifier2, Range: rangeExpr, Body: block}
+}
+
+func (p *Parser) deleteStmt() Stmt {
+	deleteToken := p.consumeKeyword(DELETE, GLOBAL_KEYWORDS)
+	var vars []VarPath
+	vars = append(vars, p.varPath())
+	for p.matchAny(COMMA) {
+		vars = append(vars, p.varPath())
+	}
+	return &DeleteStmt{DeleteToken: deleteToken, Vars: vars}
+}
+
+func (p *Parser) varPath() VarPath {
+	identifier := p.consume(IDENTIFIER, "Expected identifier")
+	var keys []Expr
+	for p.matchAny(LEFT_BRACKET) {
+		keys = append(keys, p.expr(1))
+		p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+	}
+	return VarPath{Identifier: identifier, Keys: keys}
 }
 
 func (p *Parser) functionCallStmt() Stmt {

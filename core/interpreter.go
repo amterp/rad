@@ -377,6 +377,75 @@ func (i *MainInterpreter) VisitContinueStmtStmt(ContinueStmt) {
 	i.continuing = true
 }
 
+func (i *MainInterpreter) VisitVarPathExpr(path VarPath) interface{} {
+	i.error(path.Identifier, fmt.Sprintf("%T should not be visited directly", path))
+	panic(UNREACHABLE)
+}
+
+func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
+	for _, varPath := range del.Vars {
+		identifier := varPath.Identifier
+		identifierLexeme := identifier.GetLexeme()
+		if len(varPath.Keys) == 0 {
+			i.env.Delete(identifierLexeme)
+		} else {
+			modified := i.executeDelete(identifier, i.env.GetByToken(identifier), varPath.Keys)
+			i.env.SetAndImplyType(identifier, modified)
+		}
+	}
+}
+
+func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, keys []Expr) interface{} {
+	if len(keys) == 0 {
+		return value
+	}
+
+	key := keys[0].Accept(i)
+	switch coerced := value.(type) {
+	case []interface{}:
+		idx, ok := key.(int64)
+		if !ok {
+			i.error(identifier, fmt.Sprintf("Array index must be an int, was %T (%v)", key, key))
+		}
+		if idx < 0 || idx >= int64(len(coerced)) {
+			i.error(identifier, fmt.Sprintf("Array index out of bounds: %d > max idx %d", idx, len(coerced)-1))
+		}
+
+		if len(keys) == 1 {
+			// end of the line, delete whatever we're pointing at
+			coerced = append(coerced[:idx], coerced[idx+1:]...)
+			return coerced
+		} else {
+			// we want to delete something deeper in the array, recurse
+			coerced[idx] = i.executeDelete(identifier, coerced[idx], keys[1:])
+			return coerced
+		}
+
+	case RslMap:
+		keyStr, ok := key.(string)
+		if !ok {
+			// todo still unsure about this string constraint
+			i.error(identifier, fmt.Sprintf("Map key must be a string, was %T (%v)", key, key))
+		}
+		val, exists := coerced.Get(keyStr)
+		if !exists {
+			i.error(identifier, fmt.Sprintf("Map key %q not found", keyStr))
+		}
+		if len(keys) == 1 {
+			// end of the line, delete whatever we're pointing at
+			coerced.Delete(keyStr)
+			return coerced
+		} else {
+			// we want to delete something deeper in the map, recurse
+			coerced.Set(keyStr, i.executeDelete(identifier, val, keys[1:]))
+			return coerced
+		}
+	default:
+		i.error(identifier, fmt.Sprintf("Expected collection for key %q, got %T", key, value))
+		panic(UNREACHABLE)
+	}
+}
+
 func (i *MainInterpreter) error(token Token, message string) {
 	RP.TokenErrorExit(token, message+"\n")
 }

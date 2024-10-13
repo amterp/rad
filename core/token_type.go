@@ -74,6 +74,7 @@ const (
 	IF       TokenType = "IF"
 	ELSE     TokenType = "ELSE"
 	RESOURCE TokenType = "RESOURCE"
+	DELETE   TokenType = "DELETE"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

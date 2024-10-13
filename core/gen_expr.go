@@ -21,6 +21,7 @@ type ExprVisitor interface {
 	VisitGroupingExpr(Grouping) interface{}
 	VisitUnaryExpr(Unary) interface{}
 	VisitListComprehensionExpr(ListComprehension) interface{}
+	VisitVarPathExpr(VarPath) interface{}
 }
 type ExprLoa struct {
 	Value LiteralOrArray
@@ -195,4 +196,19 @@ func (e ListComprehension) String() string {
 	parts = append(parts, fmt.Sprintf("Range: %v", e.Range))
 	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
 	return fmt.Sprintf("ListComprehension(%s)", strings.Join(parts, ", "))
+}
+
+type VarPath struct {
+	Identifier Token
+	Keys       []Expr
+}
+
+func (e VarPath) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitVarPathExpr(e)
+}
+func (e VarPath) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Keys: %v", e.Keys))
+	return fmt.Sprintf("VarPath(%s)", strings.Join(parts, ", "))
 }

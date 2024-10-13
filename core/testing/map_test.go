@@ -3,7 +3,6 @@ package testing
 import "testing"
 
 // todo maps
-//  - key deletion
 //  - contains key
 //  - contains value
 //  - iteration
@@ -86,3 +85,17 @@ print(a)
 	assertError(t, 1, "RslError at L3/11 on '+=': Cannot use compound assignment on non-existing map key \"eve\"\n")
 	resetTestState()
 }
+
+// todo this needs to work
+//func TestMap_CanModifyArrayNestedInMap(t *testing.T) {
+//	rsl := `
+//a = { "alice": 100, "bob": [10, 20, 30] }
+//a["bob"][1] = 200
+//a["bob"][2] += 5
+//print(a)
+//`
+//	setupAndRunCode(t, rsl, "--NO-COLOR")
+//	assertOnlyOutput(t, stdOutBuffer, "{ alice: 100, bob: [10, 200, 35] }\n")
+//	assertNoErrors(t)
+//	resetTestState()
+//}

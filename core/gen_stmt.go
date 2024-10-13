@@ -28,6 +28,7 @@ type StmtVisitor interface {
 	VisitForStmtStmt(ForStmt)
 	VisitBreakStmtStmt(BreakStmt)
 	VisitContinueStmtStmt(ContinueStmt)
+	VisitDeleteStmtStmt(DeleteStmt)
 }
 type Empty struct {
 }
@@ -296,4 +297,19 @@ func (e ContinueStmt) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("ContinueToken: %v", e.ContinueToken))
 	return fmt.Sprintf("ContinueStmt(%s)", strings.Join(parts, ", "))
+}
+
+type DeleteStmt struct {
+	DeleteToken Token
+	Vars        []VarPath
+}
+
+func (e DeleteStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitDeleteStmtStmt(e)
+}
+func (e DeleteStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("DeleteToken: %v", e.DeleteToken))
+	parts = append(parts, fmt.Sprintf("Vars: %v", e.Vars))
+	return fmt.Sprintf("DeleteStmt(%s)", strings.Join(parts, ", "))
 }

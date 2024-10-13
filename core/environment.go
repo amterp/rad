@@ -97,6 +97,10 @@ func (e *Env) Exists(name string) bool {
 	return ok
 }
 
+func (e *Env) Delete(name string) {
+	delete(e.Vars, name)
+}
+
 func (e *Env) GetByToken(varNameToken Token, acceptableTypes ...RslTypeEnum) interface{} {
 	return e.getOrError(varNameToken.GetLexeme(), varNameToken, acceptableTypes...)
 }
