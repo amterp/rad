@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 )
@@ -132,13 +131,9 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 		}
 		if len(node.fields) > 0 && node.key != WILDCARD {
 			// we're at a dictionary node and being asked to capture. let's capture the node as JSON
-			jsonData, err := json.Marshal(dataMap)
-			if err != nil {
-				RP.TokenErrorExit(node.radToken, fmt.Sprintf("Error capturing json for field: %v\n", err))
-			}
 			// max: we want to capture at least once, but if we've captured from children nodes, we want to capture
 			// that many
-			t.capture(string(jsonData), node, keyToCaptureInstead, max(capStats.captures, 1))
+			t.capture(dataMap, node, keyToCaptureInstead, max(capStats.captures, 1))
 		}
 	default:
 		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected map for non-array node '%v': %v\n", node, data))

@@ -158,7 +158,7 @@ pprint(21)
 pprint(1.2)
 pprint(false)
 `
-	expected := `alice
+	expected := `"alice"
 21
 1.2
 false

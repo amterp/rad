@@ -1,8 +1,8 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
+	"sort"
 )
 
 type Env struct {
@@ -86,7 +86,11 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 		converted := e.recursivelyConvertTypes(varNameToken, coerced)
 		e.Vars[varName] = converted.([]interface{})
 	case RslMap:
-		e.Vars[varName] = coerced
+		converted := e.recursivelyConvertTypes(varNameToken, coerced)
+		e.Vars[varName] = converted.(RslMap)
+	case map[string]interface{}:
+		converted := e.recursivelyConvertTypes(varNameToken, coerced)
+		e.Vars[varName] = converted.(RslMap)
 	default:
 		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
@@ -187,16 +191,22 @@ func (e *Env) recursivelyConvertTypes(token Token, arr interface{}) interface{} 
 		}
 		return output
 	case map[string]interface{}:
-		jsonData, err := json.Marshal(coerced)
-		if err != nil {
-			e.i.error(token, fmt.Sprintf("Error marshalling json: %v", err))
+		m := NewRslMap()
+		sortedKeys := make([]string, 0, len(coerced))
+		for k := range coerced {
+			sortedKeys = append(sortedKeys, k)
 		}
-		return string(jsonData)
+		sort.Strings(sortedKeys)
+		for _, key := range sortedKeys {
+			m.Set(key, e.recursivelyConvertTypes(token, coerced[key]))
+		}
+		return *m
+	case RslMap:
+		return coerced
 	case nil:
-		// todo this is me wanting to avoid nulls in RSL.... but definitely surprising?
-		return "null"
+		return nil
 	default:
-		e.i.error(token, "Unsupported type in array")
+		e.i.error(token, fmt.Sprintf("Unhandled type in array: %T", arr))
 		panic(UNREACHABLE)
 	}
 }

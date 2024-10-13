@@ -229,9 +229,8 @@ request url:
     fields node
 print(node)
 `
-	expected := "{\"age\":30,\"hometown\":\"New York\"}\n"
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
-	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdOutBuffer, "{ age: 30, hometown: New York }\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -245,7 +244,7 @@ request url:
     fields node
 print(node)
 `
-	expected := "[{\"id\":1,\"name\":\"Alice\"}, {\"id\":2,\"name\":\"Bob\"}]\n"
+	expected := "[{ id: 1, name: Alice }, { id: 2, name: Bob }]\n"
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
@@ -259,9 +258,42 @@ url = "https://google.com"
 node = json
 request url:
     fields node
-print(node)
+pprint(node)
 `
-	expected := "[{\"friends\":[{\"id\":2,\"name\":\"Bob\"}],\"height\":1.7,\"id\":1,\"name\":\"Alice\",\"old\":true}, {\"friends\":[{\"id\":1,\"name\":\"Alice\"},{\"height\":null,\"id\":3,\"name\":\"Charlie\"},null],\"height\":1.8,\"id\":2,\"name\":\"Bob\",\"old\":false}, null]\n"
+	expected := `[
+  {
+    "friends": [
+      {
+        "id":2,
+        "name":"Bob"
+      }
+    ],
+    "height":1.7,
+    "id":1,
+    "name":"Alice",
+    "old":true
+  },
+  {
+    "friends": [
+      {
+        "id":1,
+        "name":"Alice"
+      },
+      {
+        "height":null,
+        "id":3,
+        "name":"Charlie"
+      },
+      null
+    ],
+    "height":1.8,
+    "id":2,
+    "name":"Bob",
+    "old":false
+  },
+  null
+]
+`
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")

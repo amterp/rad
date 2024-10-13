@@ -26,6 +26,8 @@ func ToPrintable(val interface{}) string {
 		return out + "]"
 	case RslMap:
 		return coerced.ToString()
+	case nil:
+		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", val))
 		panic(UNREACHABLE)

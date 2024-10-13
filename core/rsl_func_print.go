@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/nwidger/jsoncolor"
 )
@@ -16,47 +15,14 @@ func runDebug(values []interface{}) {
 	RP.ScriptDebug(output)
 }
 
-// todo brute-forced this implementation, it's not good, can almost definitely be improved
 func runPrettyPrint(i *MainInterpreter, function Token, values []interface{}) {
 	if len(values) == 0 {
 		RP.Print("\n")
 	}
 
-	output := ""
 	arg := values[0]
-	switch coerced := arg.(type) {
-	case string:
-		output = prettifyJsonString(i, function, coerced)
-	case []interface{}:
-		var items []interface{}
-		for _, item := range coerced {
-			switch coercedItem := item.(type) {
-			case string:
-				var jsonData interface{}
-				if err := json.Unmarshal([]byte(coercedItem), &jsonData); err != nil {
-					i.error(function, fmt.Sprintf("Error unmarshalling JSON: %v", err))
-				}
-				items = append(items, jsonData)
-			default:
-				items = append(items, coercedItem)
-			}
-		}
-		if marshalled, err := json.Marshal(items); err != nil {
-			i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
-		} else {
-			output = prettifyJsonString(i, function, string(marshalled))
-		}
-	case RslMap:
-		// todo this might be unordered when printed?
-		output = prettify(i, function, coerced.mapping)
-	default:
-		unformatted, err := jsoncolor.Marshal(arg)
-		if err != nil {
-			RP.RadDebug(fmt.Sprintf("Failed to marshall %v", arg))
-			i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
-		}
-		output = prettifyJsonString(i, function, string(unformatted))
-	}
+	jsonStruct := jsonify(arg)
+	output := prettify(i, function, jsonStruct)
 	RP.Print(output + "\n")
 }
 
@@ -74,16 +40,34 @@ func resolveOutputString(values []interface{}) string {
 	return output
 }
 
-func prettifyJsonString(i *MainInterpreter, function Token, unformatted string) string {
-	bytes := []byte(unformatted)
-	if json.Valid(bytes) {
-		var unmarshalled interface{}
-		if err := json.Unmarshal(bytes, &unmarshalled); err != nil {
-			i.error(function, fmt.Sprintf("Error unmarshalling JSON: %v", err))
+func jsonify(arg interface{}) interface{} {
+	switch coerced := arg.(type) {
+	case string:
+		return coerced
+	case int64:
+		return coerced
+	case float64:
+		return coerced
+	case bool:
+		return coerced
+	case []interface{}:
+		var slice []interface{}
+		for _, elem := range coerced {
+			slice = append(slice, jsonify(elem))
 		}
-		return prettify(i, function, unmarshalled)
-	} else {
-		return unformatted
+		return slice
+	case RslMap:
+		mapping := make(map[string]interface{})
+		for _, key := range coerced.Keys() {
+			value, _ := coerced.Get(key)
+			mapping[key] = jsonify(value)
+		}
+		return mapping
+	case nil:
+		return nil
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", arg))
+		panic(UNREACHABLE)
 	}
 }
 
