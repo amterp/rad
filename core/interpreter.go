@@ -279,20 +279,20 @@ func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
 
 func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	rangeValue := stmt.Range.Accept(i)
-	var valIdentifier Token
-	var idxIdentifier *Token
-	if stmt.Identifier2 != nil {
-		idxIdentifier = &stmt.Identifier1
-		valIdentifier = *stmt.Identifier2
-	} else {
-		valIdentifier = stmt.Identifier1
-	}
 
-	switch rangeValue.(type) {
+	switch coerced := rangeValue.(type) {
 	case []interface{}:
-		arr := rangeValue.([]interface{})
-		i.runWithChildEnv(runForLoop(i, stmt, arr, idxIdentifier, valIdentifier))
-	// todo allow iterating through map
+		var valIdentifier Token
+		var idxIdentifier *Token
+		if stmt.Identifier2 != nil {
+			idxIdentifier = &stmt.Identifier1
+			valIdentifier = *stmt.Identifier2
+		} else {
+			valIdentifier = stmt.Identifier1
+		}
+		i.runWithChildEnv(runArrayForLoop(i, stmt, coerced, idxIdentifier, valIdentifier))
+	case RslMap:
+		i.runWithChildEnv(runMapForLoop(i, stmt, coerced, stmt.Identifier1, stmt.Identifier2))
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
 	}
@@ -317,12 +317,49 @@ func (i *MainInterpreter) VisitListComprehensionExpr(comp ListComprehension) int
 	}
 }
 
-func runForLoop[T any](i *MainInterpreter, stmt ForStmt, rangeArr []T, idxIdentifier *Token, valIdentifier Token) func() {
+func runArrayForLoop(
+	i *MainInterpreter,
+	stmt ForStmt,
+	rangeArr []interface{},
+	idxIdentifier *Token,
+	valIdentifier Token,
+) func() {
 	return func() {
 		for idx, val := range rangeArr {
 			i.env.SetAndImplyType(valIdentifier, val)
 			if idxIdentifier != nil {
 				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
+			}
+			stmt.Body.Accept(i)
+			if i.breaking {
+				i.breaking = false
+				break
+			}
+			if i.continuing {
+				i.continuing = false
+				continue
+			}
+		}
+	}
+}
+
+func runMapForLoop(
+	i *MainInterpreter,
+	stmt ForStmt,
+	rangeMap RslMap,
+	keyIdentifier Token,
+	valIdentifier *Token,
+) func() {
+	return func() {
+		keys := rangeMap.keys
+		for _, key := range keys {
+			i.env.SetAndImplyType(keyIdentifier, key)
+			if valIdentifier != nil {
+				val, ok := rangeMap.Get(key)
+				if !ok {
+					i.error(stmt.ForToken, fmt.Sprintf("Bug! Map contains key %q but lookup failed.", key))
+				}
+				i.env.SetAndImplyType(*valIdentifier, val)
 			}
 			stmt.Body.Accept(i)
 			if i.breaking {
