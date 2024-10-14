@@ -63,46 +63,54 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 			val := literal.(string)
 			scriptArg.DefaultString = &val
 		case ArgStringArrayT:
-			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
-				var val []string
-				scriptArg.DefaultStringArray = &val
-			} else {
-				val := literal.([]string)
-				scriptArg.DefaultStringArray = &val
+			arr, ok := literal.([]interface{})
+			if !ok {
+				RP.TokenErrorExit(argDecl.Identifier, "Expected array of strings as default")
 			}
+			var vals []string
+			for _, elem := range arr {
+				vals = append(vals, elem.(string))
+			}
+			scriptArg.DefaultStringArray = &vals
 		case ArgIntT:
 			val := literal.(int64)
 			scriptArg.DefaultInt = &val
 		case ArgIntArrayT:
-			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
-				var val []int64
-				scriptArg.DefaultIntArray = &val
-			} else {
-				val := literal.([]int64)
-				scriptArg.DefaultIntArray = &val
+			arr, ok := literal.([]interface{})
+			if !ok {
+				RP.TokenErrorExit(argDecl.Identifier, "Expected array of ints as default")
 			}
+			var vals []int64
+			for _, elem := range arr {
+				vals = append(vals, elem.(int64))
+			}
+			scriptArg.DefaultIntArray = &vals
 		case ArgFloatT:
 			val := literal.(float64)
 			scriptArg.DefaultFloat = &val
 		case ArgFloatArrayT:
-			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
-				var val []float64
-				scriptArg.DefaultFloatArray = &val
-			} else {
-				val := literal.([]float64)
-				scriptArg.DefaultFloatArray = &val
+			arr, ok := literal.([]interface{})
+			if !ok {
+				RP.TokenErrorExit(argDecl.Identifier, "Expected array of floats as default")
 			}
+			var vals []float64
+			for _, elem := range arr {
+				vals = append(vals, elem.(float64))
+			}
+			scriptArg.DefaultFloatArray = &vals
 		case ArgBoolT:
 			val := literal.(bool)
 			scriptArg.DefaultBool = &val
 		case ArgBoolArrayT:
-			if _, isEmptyArray := literal.([]interface{}); isEmptyArray {
-				var val []bool
-				scriptArg.DefaultBoolArray = &val
-			} else {
-				val := literal.([]bool)
-				scriptArg.DefaultBoolArray = &val
+			arr, ok := literal.([]interface{})
+			if !ok {
+				RP.TokenErrorExit(argDecl.Identifier, "Expected array of bools as default")
 			}
+			var vals []bool
+			for _, elem := range arr {
+				vals = append(vals, elem.(bool))
+			}
+			scriptArg.DefaultBoolArray = &vals
 		default:
 			l.i.error(scriptArg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))
 		}

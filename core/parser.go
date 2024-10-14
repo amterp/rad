@@ -1014,8 +1014,8 @@ func (p *Parser) boolLiteral() BoolLiteral {
 }
 
 func (p *Parser) arrayLiteral(expectedType *RslArgTypeT) (ArrayLiteral, bool) {
-	if p.matchAny(BRACKETS) {
-		return &EmptyArrayLiteral{}, true
+	if p.peekType(BRACKETS) {
+		return p.mixedArrayLiteral(nil), true
 	}
 
 	if !p.matchAny(LEFT_BRACKET) {
@@ -1024,113 +1024,28 @@ func (p *Parser) arrayLiteral(expectedType *RslArgTypeT) (ArrayLiteral, bool) {
 	p.rewind() // rewind the left bracket
 
 	if expectedType == nil || *expectedType == ArgMixedArrayT {
-		return p.mixedArrayLiteral(), true
+		return p.mixedArrayLiteral(nil), true
 	}
 
+	var unwrappedType RslArgTypeT
 	switch *expectedType {
 	case ArgStringArrayT:
-		return p.stringArrayLiteral(), true
+		unwrappedType = ArgStringT
 	case ArgIntArrayT:
-		return p.intArrayLiteral(), true
+		unwrappedType = ArgIntT
 	case ArgFloatArrayT:
-		return p.floatArrayLiteral(), true
+		unwrappedType = ArgFloatT
 	case ArgBoolArrayT:
-		return p.boolArrayLiteral(), true
+		unwrappedType = ArgBoolT
 	default:
-		p.error("Invalid array type")
+		p.error("Invalid array type " + expectedType.AsString())
 		panic(UNREACHABLE)
 	}
+
+	return p.mixedArrayLiteral(&unwrappedType), true
 }
 
-func (p *Parser) stringArrayLiteral() StringArrayLiteral {
-	if p.matchAny(BRACKETS) {
-		return StringArrayLiteral{Values: []StringLiteral{}}
-	}
-
-	p.consume(LEFT_BRACKET, "Expected '[' to start array")
-
-	var values []StringLiteral
-	expectedType := ArgStringT
-	for !p.matchAny(RIGHT_BRACKET) {
-		literal, ok := p.literal(&expectedType)
-		if !ok {
-			p.error("Expected string literal in array")
-		}
-		values = append(values, literal.(StringLiteral))
-		if !p.peekType(RIGHT_BRACKET) {
-			p.consume(COMMA, "Expected ',' between array elements")
-		}
-	}
-	return StringArrayLiteral{Values: values}
-}
-
-func (p *Parser) intArrayLiteral() IntArrayLiteral {
-	if p.matchAny(BRACKETS) {
-		return IntArrayLiteral{Values: []IntLiteral{}}
-	}
-
-	p.consume(LEFT_BRACKET, "Expected '[' to start array")
-
-	var values []IntLiteral
-	expectedType := ArgIntT
-	for !p.matchAny(RIGHT_BRACKET) {
-		literal, ok := p.literal(&expectedType)
-		if !ok {
-			p.error("Expected int literal in array")
-		}
-		values = append(values, literal.(IntLiteral))
-		if !p.peekType(RIGHT_BRACKET) {
-			p.consume(COMMA, "Expected ',' between array elements")
-		}
-	}
-	return IntArrayLiteral{Values: values}
-}
-
-func (p *Parser) floatArrayLiteral() FloatArrayLiteral {
-	if p.matchAny(BRACKETS) {
-		return FloatArrayLiteral{Values: []FloatLiteral{}}
-	}
-
-	p.consume(LEFT_BRACKET, "Expected '[' to start array")
-
-	var values []FloatLiteral
-	expectedType := ArgFloatT
-	for !p.matchAny(RIGHT_BRACKET) {
-		literal, ok := p.literal(&expectedType)
-		if !ok {
-			p.error("Expected float literal in array")
-		}
-		values = append(values, literal.(FloatLiteral))
-		if !p.peekType(RIGHT_BRACKET) {
-			p.consume(COMMA, "Expected ',' between array elements")
-		}
-	}
-	return FloatArrayLiteral{Values: values}
-}
-
-func (p *Parser) boolArrayLiteral() BoolArrayLiteral {
-	if p.matchAny(BRACKETS) {
-		return BoolArrayLiteral{Values: []BoolLiteral{}}
-	}
-
-	p.consume(LEFT_BRACKET, "Expected '[' to start array")
-
-	var values []BoolLiteral
-	expectedType := ArgBoolT
-	for !p.matchAny(RIGHT_BRACKET) {
-		literal, ok := p.literal(&expectedType)
-		if !ok {
-			p.error("Expected bool literal in array")
-		}
-		values = append(values, literal.(BoolLiteral))
-		if !p.peekType(RIGHT_BRACKET) {
-			p.consume(COMMA, "Expected ',' between array elements")
-		}
-	}
-	return BoolArrayLiteral{Values: values}
-}
-
-func (p *Parser) mixedArrayLiteral() MixedArrayLiteral {
+func (p *Parser) mixedArrayLiteral(expectedType *RslArgTypeT) MixedArrayLiteral {
 	if p.matchAny(BRACKETS) {
 		return MixedArrayLiteral{Values: []LiteralOrArray{}}
 	}
@@ -1139,7 +1054,7 @@ func (p *Parser) mixedArrayLiteral() MixedArrayLiteral {
 
 	var values []LiteralOrArray
 	for !p.matchAny(RIGHT_BRACKET) {
-		literal, ok := p.literalOrArray(nil)
+		literal, ok := p.literalOrArray(expectedType)
 		if !ok {
 			p.error("Expected literalOrArray in mixed array")
 		}

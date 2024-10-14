@@ -28,12 +28,7 @@ func main() {
 
 	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"
 	defineAst(outputDir, "ArrayLiteral", "interface{}", []string{
-		"StringArrayLiteral   : []StringLiteral Values",
-		"IntArrayLiteral      : []IntLiteral Values",
-		"FloatArrayLiteral    : []FloatLiteral Values",
-		"BoolArrayLiteral     : []BoolLiteral Values",
 		"MixedArrayLiteral    : []LiteralOrArray Values",
-		"EmptyArrayLiteral    : ", // todo remove and replace with empty MixedArrayLiteral?
 	})
 
 	// literalOrArray -> literal | arrayLiteral

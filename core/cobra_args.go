@@ -67,31 +67,33 @@ func (c *CobraArg) GetString() string {
 	return *c.value.(*string)
 }
 
-func (c *CobraArg) GetStringArray() []string {
-	return *c.value.(*[]string)
-}
-
 func (c *CobraArg) GetInt() int64 {
 	return *c.value.(*int64)
-}
-
-func (c *CobraArg) GetIntArray() []int64 {
-	return *c.value.(*[]int64)
 }
 
 func (c *CobraArg) GetFloat() float64 {
 	return *c.value.(*float64)
 }
 
-func (c *CobraArg) GetFloatArray() []float64 {
-	return *c.value.(*[]float64)
-}
-
-func (c *CobraArg) GetBoolArray() []bool {
-	return *c.value.(*[]bool)
-}
-
-func (c *CobraArg) GetMixedArray() []interface{} {
+func (c *CobraArg) GetArray() []interface{} {
+	switch coerced := c.value.(type) {
+	case *[]string:
+		converted := convert(*coerced)
+		c.value = &converted
+	case *[]int64:
+		converted := convert(*coerced)
+		c.value = &converted
+	case *[]float64:
+		converted := convert(*coerced)
+		c.value = &converted
+	case *[]bool:
+		converted := convert(*coerced)
+		c.value = &converted
+	case *[]interface{}:
+		// do nothing
+	default:
+		RP.RadTokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Bug! Unhandled array type: %T\n", c.value))
+	}
 	return *c.value.(*[]interface{})
 }
 
@@ -107,13 +109,18 @@ func (c *CobraArg) SetValue(arg string) {
 	case ArgStringArrayT:
 		// split on arg commas
 		split := strings.Split(arg, ",")
-		c.value = &split
+		vals := make([]interface{}, len(split))
+		for i, v := range split {
+			vals[i] = v
+		}
+		c.value = &vals
 	case ArgIntT:
 		parsed, err := strconv.Atoi(arg)
 		if err != nil {
 			RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 		}
-		c.value = &parsed
+		val := int64(parsed)
+		c.value = &val
 	case ArgIntArrayT:
 		// split on arg commas
 		split := strings.Split(arg, ",")
@@ -169,8 +176,11 @@ func (c *CobraArg) SetValue(arg string) {
 				RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
 			}
 		}
+		c.value = &bools
+	case ArgMixedArrayT:
+		RP.RadTokenErrorExit(c.Arg.DeclarationToken, "Mixed arrays are not yet supported.")
 	default:
-
+		RP.RadTokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Bug! Unhandled arg type: %v\n", c.Arg.Type))
 	}
 }
 
@@ -238,4 +248,12 @@ func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
 	}
 	cobraArg := CobraArg{Arg: arg, value: cobraArgValue}
 	return cobraArg
+}
+
+func convert[T any](i []T) []interface{} {
+	converted := make([]interface{}, len(i))
+	for j, v := range i {
+		converted[j] = v
+	}
+	return converted
 }

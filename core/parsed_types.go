@@ -27,6 +27,32 @@ const (
 	ArgBoolArrayT
 )
 
+func (r *RslArgTypeT) AsString() string {
+	switch *r {
+	case ArgStringT:
+		return "string"
+	case ArgIntT:
+		return "int"
+	case ArgFloatT:
+		return "float"
+	case ArgBoolT:
+		return "bool"
+	case ArgMixedArrayT:
+		return "mixed array"
+	case ArgStringArrayT:
+		return "string array"
+	case ArgIntArrayT:
+		return "int array"
+	case ArgFloatArrayT:
+		return "float array"
+	case ArgBoolArrayT:
+		return "bool array"
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
+		panic(UNREACHABLE)
+	}
+}
+
 func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 	if r == nil {
 		return false

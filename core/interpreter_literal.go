@@ -32,48 +32,12 @@ func (l LiteralInterpreter) VisitBoolLiteralLiteral(literal BoolLiteral) interfa
 	return literal.Value.Literal
 }
 
-func (l LiteralInterpreter) VisitStringArrayLiteralArrayLiteral(literal StringArrayLiteral) interface{} {
-	var values []string
-	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(string))
-	}
-	return values
-}
-
-func (l LiteralInterpreter) VisitIntArrayLiteralArrayLiteral(literal IntArrayLiteral) interface{} {
-	var values []int64
-	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(int64))
-	}
-	return values
-}
-
-func (l LiteralInterpreter) VisitFloatArrayLiteralArrayLiteral(literal FloatArrayLiteral) interface{} {
-	var values []float64
-	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(float64))
-	}
-	return values
-}
-
-func (l LiteralInterpreter) VisitBoolArrayLiteralArrayLiteral(literal BoolArrayLiteral) interface{} {
-	var values []bool
-	for _, v := range literal.Values {
-		values = append(values, v.Accept(l).(bool))
-	}
-	return values
-}
-
 func (l LiteralInterpreter) VisitMixedArrayLiteralArrayLiteral(literal MixedArrayLiteral) interface{} {
 	var values []interface{}
 	for _, v := range literal.Values {
 		values = append(values, v.Accept(l))
 	}
 	return values
-}
-
-func (l LiteralInterpreter) VisitEmptyArrayLiteralArrayLiteral(EmptyArrayLiteral) interface{} {
-	return []interface{}{}
 }
 
 func (l LiteralInterpreter) VisitLoaLiteralLiteralOrArray(literal LoaLiteral) interface{} {

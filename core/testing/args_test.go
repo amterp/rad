@@ -76,7 +76,7 @@ args:
 print('hi')
 `
 	setupAndRunCode(t, rsl, "one")
-	expectedStdout := `Usage:
+	expected := `Usage:
   test <mandatory1> <mandatory2> [optional] [flags]
 
 Flags:
@@ -84,7 +84,77 @@ Flags:
       --mandatory2 string   
       --optional int         (default 10)
 `
-	assertOutput(t, stdOutBuffer, expectedStdout)
+	assertOutput(t, stdOutBuffer, expected)
 	assertError(t, 1, "Missing required arguments: [mandatory2]\n")
+	resetTestState()
+}
+
+func TestArgs_CanParseAllTypes(t *testing.T) {
+	rsl := `
+args:
+	stringArg string
+	intArg int
+	floatArg float
+	boolArg bool
+	stringArrayArg string[]
+	intArrayArg int[]
+	floatArrayArg float[]
+	boolArrayArg bool[]
+print(upper(stringArg))
+print(intArg + 1)
+print(floatArg + 1.1)
+print(boolArg or false)
+print(upper(stringArrayArg[0]))
+print(intArrayArg[0] + 1)
+print(floatArrayArg[0] + 1.1)
+print(boolArrayArg[0] or false)
+`
+	setupAndRunCode(t, rsl, "alice", "1", "1.1", "true", "bob,charlie", "2,3", "2.1,3.1", "true,false")
+	expected := `ALICE
+2
+2.2
+true
+BOB
+3
+3.2
+true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanParseAllTypeDefaults(t *testing.T) {
+	rsl := `
+args:
+	stringArg string = "alice"
+	intArg int = 1
+	floatArg float = 1.1
+	boolArg bool = true
+	stringArrayArg string[] = ["bob", "charlie"]
+	intArrayArg int[] = [2, 3]
+	floatArrayArg float[] = [2.1, 3.1]
+	boolArrayArg bool[] = [true, false]
+print(upper(stringArg))
+print(intArg + 1)
+print(floatArg + 1.1)
+print(boolArg or false)
+print(upper(stringArrayArg[0]))
+print(intArrayArg[0] + 1)
+print(floatArrayArg[0] + 1.1)
+print(boolArrayArg[0] or false)
+`
+	setupAndRunCode(t, rsl)
+	expected := `ALICE
+2
+2.2
+true
+BOB
+3
+3.2
+true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
 	resetTestState()
 }

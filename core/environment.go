@@ -39,22 +39,14 @@ func (e *Env) InitArg(arg CobraArg) {
 	switch argType {
 	case ArgStringT:
 		e.Vars[arg.Arg.Name] = arg.GetString()
-	case ArgStringArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetStringArray()
 	case ArgIntT:
 		e.Vars[arg.Arg.Name] = arg.GetInt()
-	case ArgIntArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetIntArray()
 	case ArgFloatT:
 		e.Vars[arg.Arg.Name] = arg.GetFloat()
-	case ArgFloatArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetFloatArray()
 	case ArgBoolT:
 		e.Vars[arg.Arg.Name] = arg.GetBool()
-	case ArgBoolArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetBoolArray()
-	case ArgMixedArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetMixedArray()
+	case ArgStringArrayT, ArgIntArrayT, ArgFloatArrayT, ArgBoolArrayT, ArgMixedArrayT:
+		e.Vars[arg.Arg.Name] = arg.GetArray()
 	default:
 		e.i.error(arg.Arg.DeclarationToken, fmt.Sprintf("Unsupported arg type, cannot init: %v", argType))
 	}
