@@ -19,4 +19,6 @@ const (
 	PPRINT             = "pprint"
 	DEBUG              = "debug"
 	EXIT               = "exit"
+	KEYS               = "keys"
+	VALUES             = "values"
 )

@@ -87,10 +87,33 @@ func RunRslNonVoidFunction(
 		return runPickKv(i, function, args)
 	case PICK_FROM_RESOURCE:
 		return runPickFromResource(i, function, args, numExpectedReturnValues)
+	case KEYS:
+		if len(args) != 1 {
+			i.error(function, fmt.Sprintf("%s() takes exactly one argument", KEYS))
+		}
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		switch coerced := args[0].(type) {
+		case RslMap:
+			return coerced.KeysGeneric()
+		default:
+			i.error(function, fmt.Sprintf("%s() takes a map, got %T", KEYS, args[0]))
+		}
+	case VALUES:
+		if len(args) != 1 {
+			i.error(function, fmt.Sprintf("%s() takes exactly one argument", VALUES))
+		}
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		switch coerced := args[0].(type) {
+		case RslMap:
+			return coerced.Values()
+		default:
+			i.error(function, fmt.Sprintf("%s() takes a map, got %T", VALUES, args[0]))
+		}
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
 	}
+	panic(UNREACHABLE)
 }
 
 func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {

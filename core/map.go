@@ -33,6 +33,22 @@ func (m *RslMap) Keys() []string {
 	return m.keys
 }
 
+func (m *RslMap) KeysGeneric() []interface{} {
+	var keys []interface{}
+	for _, key := range m.keys {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
+func (m *RslMap) Values() []interface{} {
+	var values []interface{}
+	for _, key := range m.keys {
+		values = append(values, m.mapping[key])
+	}
+	return values
+}
+
 func (m *RslMap) ContainsKey(key string) bool {
 	_, exists := m.mapping[key]
 	return exists
