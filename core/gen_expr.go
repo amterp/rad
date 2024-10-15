@@ -14,6 +14,7 @@ type ExprVisitor interface {
 	VisitArrayExprExpr(ArrayExpr) interface{}
 	VisitMapExprExpr(MapExpr) interface{}
 	VisitCollectionAccessExpr(CollectionAccess) interface{}
+	VisitSliceAccessExpr(SliceAccess) interface{}
 	VisitFunctionCallExpr(FunctionCall) interface{}
 	VisitVariableExpr(Variable) interface{}
 	VisitBinaryExpr(Binary) interface{}
@@ -81,6 +82,27 @@ func (e CollectionAccess) String() string {
 	parts = append(parts, fmt.Sprintf("Key: %v", e.Key))
 	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
 	return fmt.Sprintf("CollectionAccess(%s)", strings.Join(parts, ", "))
+}
+
+type SliceAccess struct {
+	ListOrString     Expr
+	OpenBracketToken Token
+	Start            *Expr
+	ColonToken       Token
+	End              *Expr
+}
+
+func (e SliceAccess) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitSliceAccessExpr(e)
+}
+func (e SliceAccess) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("ListOrString: %v", e.ListOrString))
+	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
+	parts = append(parts, fmt.Sprintf("Start: %v", e.Start))
+	parts = append(parts, fmt.Sprintf("ColonToken: %v", e.ColonToken))
+	parts = append(parts, fmt.Sprintf("End: %v", e.End))
+	return fmt.Sprintf("SliceAccess(%s)", strings.Join(parts, ", "))
 }
 
 type FunctionCall struct {

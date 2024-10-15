@@ -833,7 +833,7 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 		p.consume(RIGHT_PAREN, "Expected ')' after expression")
 		expr = &Grouping{Value: expr}
 	} else if literal, ok := p.literal(nil); ok {
-		return &ExprLoa{Value: &LoaLiteral{Value: literal}}
+		expr = ExprLoa{Value: &LoaLiteral{Value: literal}}
 	} else if arrayExpr, ok := p.arrayExpr(); ok {
 		expr = arrayExpr
 	} else if mapExpr, ok := p.mapExpr(); ok {
@@ -853,9 +853,35 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 
 	for p.peekType(LEFT_BRACKET) {
 		openBracket := p.advance()
-		keyExpr := p.expr(1)
-		p.consume(RIGHT_BRACKET, "Expected ']' after collection lookup")
-		expr = &CollectionAccess{Collection: expr, Key: keyExpr, OpenBracketToken: openBracket}
+		if p.matchAny(COLON) {
+			if p.matchAny(RIGHT_BRACKET) {
+				// a[:]
+				expr = &SliceAccess{ListOrString: expr, ColonToken: openBracket, OpenBracketToken: openBracket}
+			} else {
+				// a[:end]
+				endExpr := p.expr(1)
+				colonToken := p.consume(RIGHT_BRACKET, "Expected ']' after slice")
+				expr = &SliceAccess{ListOrString: expr, Start: nil, ColonToken: colonToken, End: &endExpr, OpenBracketToken: openBracket}
+			}
+		} else {
+			firstExpr := p.expr(1)
+			if p.matchAny(RIGHT_BRACKET) {
+				// a[idx]
+				expr = &CollectionAccess{Collection: expr, Key: firstExpr, OpenBracketToken: openBracket}
+			} else if p.matchAny(COLON) {
+				if p.matchAny(RIGHT_BRACKET) {
+					// a[start:]
+					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, ColonToken: openBracket, OpenBracketToken: openBracket}
+				} else {
+					// a[start:end]
+					endExpr := p.expr(1)
+					colonToken := p.consume(RIGHT_BRACKET, "Expected ']' after collection access")
+					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, ColonToken: colonToken, End: &endExpr, OpenBracketToken: openBracket}
+				}
+			} else {
+				p.error("Expected ']' for collection access or ':' for slice")
+			}
+		}
 	}
 
 	return expr

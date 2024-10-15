@@ -100,6 +100,22 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 	}
 }
 
+func (i *MainInterpreter) VisitSliceAccessExpr(sliceAccess SliceAccess) interface{} {
+	original := sliceAccess.ListOrString.Accept(i)
+
+	switch coerced := original.(type) {
+	case string:
+		start, end := i.resolveStartEnd(sliceAccess, len(coerced))
+		return coerced[start:end]
+	case []interface{}:
+		start, end := i.resolveStartEnd(sliceAccess, len(coerced))
+		return coerced[start:end]
+	default:
+		i.error(sliceAccess.OpenBracketToken, "Slice access must be on a string or array")
+		panic(UNREACHABLE)
+	}
+}
+
 func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
 	var args []interface{}
 	for _, v := range call.Args {
@@ -430,6 +446,59 @@ func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
 			i.env.SetAndImplyType(identifier, modified)
 		}
 	}
+}
+
+func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int) (int, int) {
+	start := 0
+	end := len
+
+	if sliceAccess.Start != nil {
+		start = i.resolveSliceIndex(sliceAccess.OpenBracketToken, *sliceAccess.Start, len, true)
+	}
+	if sliceAccess.End != nil {
+		end = i.resolveSliceIndex(sliceAccess.OpenBracketToken, *sliceAccess.End, len, false)
+	}
+
+	if start > end {
+		start = end
+	}
+
+	return start, end
+}
+
+func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isStart bool) int {
+	index := expr.Accept(i)
+	rawIdx, ok := index.(int64)
+	if !ok {
+		i.error(token, fmt.Sprintf("Slice index must be an int, was %T (%v)", index, index))
+	}
+
+	var idx = rawIdx
+	if rawIdx < 0 {
+		idx = rawIdx + int64(len)
+	}
+
+	if isStart {
+		if idx < 0 {
+			// the start index is still negative, so we'll slice from the beginning
+			idx = 0
+		}
+		if idx > int64(len) {
+			// the start index is greater than the length of the list, so we'll slice to the end
+			idx = int64(len)
+		}
+	} else {
+		if idx > int64(len) {
+			// the end index is greater than the length of the list, so we'll slice to the end
+			idx = int64(len)
+		}
+		if idx < 0 {
+			// the end index is still negative, so we'll slice from the end
+			idx = 0
+		}
+	}
+
+	return int(idx)
 }
 
 func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, keys []Expr) interface{} {

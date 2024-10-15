@@ -141,8 +141,9 @@ term                        -> factor ( ( "-" | "+" ) factor )*
 factor                      -> unary ( ( "/" | "*" ) unary )*
 unary                       -> ( "!" | "-" ) unary
                                | primary
-primary                     -> "(" expression ")" | literalOrArray | arrayExpr | mapExpr | collectionAccess | functionCall | IDENTIFIER
+primary                     -> "(" expression ")" | literalOrArray | arrayExpr | mapExpr | collectionAccess | sliceAccess | functionCall | IDENTIFIER
 collectionAccess            -> expression "[" expression "]"
+sliceAccess                 -> expression "["  expression ":" expression "]"
 mapExpr                     -> "{" mapEntry? ("," mapEntry)* "}"
 mapEntry                    -> expression ":" expression
 literalOrArray              -> literal | arrayLiteral
