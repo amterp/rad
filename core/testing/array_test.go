@@ -147,6 +147,51 @@ a = [100, 200, 300, 400]
 a[4] = 500
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/1 on 'a': Array index out of bounds: 4 > max idx 3\n")
+	assertError(t, 1, "RslError at L3/1 on 'a': Array index out of bounds: 4 (list length: 4)\n")
+	resetTestState()
+}
+
+func TestArray_NegativeIndexing(t *testing.T) {
+	rsl := `
+a = [100, 200, 300, 400]
+print(a[-1])
+print(a[-2])
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "400\n300\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArray_NegativeIndexAssignment(t *testing.T) {
+	rsl := `
+a = [100, 200, 300, 400]
+a[-1] = 5
+a[-2] = 4
+print(a)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[100, 200, 4, 5]\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArray_TooNegativeIndexingGivesError(t *testing.T) {
+	rsl := `
+a = [100, 200, 300, 400]
+print(a[-99])
+`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "RslError at L3/8 on '[': Array index out of bounds: -99 (list length: 4)\n")
+	resetTestState()
+}
+
+func TestArray_TooNegativeIndexAssignmentGivesError(t *testing.T) {
+	rsl := `
+a = [100, 200, 300, 400]
+a[-99] = 5
+`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "RslError at L3/1 on 'a': Array index out of bounds: -99 (list length: 4)\n")
 	resetTestState()
 }

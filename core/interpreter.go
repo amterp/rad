@@ -76,7 +76,14 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 	case []interface{}:
 		switch coercedKey := key.(type) {
 		case int64:
-			return coerced[coercedKey]
+			adjustedKey := coercedKey
+			if adjustedKey < 0 {
+				adjustedKey += int64(len(coerced))
+			}
+			if adjustedKey < 0 || adjustedKey >= int64(len(coerced)) {
+				i.error(access.OpenBracketToken, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", coercedKey, len(coerced)))
+			}
+			return coerced[adjustedKey]
 		default:
 			i.error(access.OpenBracketToken, "Array access key must be an int")
 			panic(UNREACHABLE)

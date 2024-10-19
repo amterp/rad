@@ -27,11 +27,15 @@ func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryA
 		if !ok {
 			i.error(assign.Identifier, "Array key must be an int")
 		}
-		arrLen := len(coerced)
-		if idx < 0 || idx >= int64(arrLen) {
-			i.error(assign.Identifier, fmt.Sprintf("Array index out of bounds: %d > max idx %d", idx, arrLen-1))
+		adjustedIdx := idx
+		if adjustedIdx < 0 {
+			adjustedIdx += int64(len(coerced))
 		}
-		coerced[idx] = i.calculateResult(coerced[idx], assign.Value.Accept(i), assign.Operator)
+		arrLen := len(coerced)
+		if adjustedIdx < 0 || adjustedIdx >= int64(arrLen) {
+			i.error(assign.Identifier, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", idx, arrLen))
+		}
+		coerced[adjustedIdx] = i.calculateResult(coerced[adjustedIdx], assign.Value.Accept(i), assign.Operator)
 	case RslMap:
 		keyStr, ok := key.(string)
 		if !ok {
