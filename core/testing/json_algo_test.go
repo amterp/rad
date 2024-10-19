@@ -300,3 +300,18 @@ pprint(node)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestAlgo_HelpfulErrorIfRadBlockMixesArrayAndNoneArrayFields(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+
+Names = json.results[].name
+Len = json.len
+
+rad url:
+    fields Names, Len
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
+	assertError(t, 1, "Mocking response for url (matched \".*\"): https://google.com\nRslError at L7/3 on 'rad': Field \"Len\" must be an array, got float\n")
+	resetTestState()
+}

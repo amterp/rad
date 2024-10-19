@@ -145,7 +145,15 @@ func (r *radInvocation) execute() {
 		if r.fieldsToNotPrint.Has(field.GetLexeme()) {
 			return nil, false
 		}
-		return ToStringArray(r.ri.i.env.GetByToken(field).([]interface{})), true
+		fieldVals := r.ri.i.env.GetByToken(field)
+		switch coerced := fieldVals.(type) {
+		case []interface{}:
+			return ToStringArray(coerced), true
+		default:
+			// could maybe print single value for all rows? so populate an array with appropriate # of values
+			r.error(fmt.Sprintf("Field %q must be an array, got %s", field.GetLexeme(), TypeAsString(fieldVals)))
+			panic(UNREACHABLE)
+		}
 	})
 
 	tbl := NewTblWriter()
