@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	PLAIN   = "plain"
 	BLACK   = "black"
 	RED     = "red"
 	GREEN   = "green"
@@ -18,6 +19,7 @@ const (
 var COLORS = []string{BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE}
 
 var (
+	Plain   = tblwriter.Plain
 	Black   = tblwriter.Black
 	Red     = tblwriter.Red
 	Green   = tblwriter.Green
@@ -30,6 +32,8 @@ var (
 
 func ColorFromString(s string) (tblwriter.Color, bool) {
 	switch s {
+	case PLAIN:
+		return Plain, true
 	case BLACK:
 		return Black, true
 	case RED:

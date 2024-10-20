@@ -127,6 +127,29 @@ rad url:
 	resetTestState()
 }
 
+func TestRadColor_Plain(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+	fields name, city
+	city:
+		color "red" "London"
+		color "plain" "ndo"
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
+	expected += "Charlie  Paris        \n"
+	expected += "Bob      " + red("Lo") + "ndo" + red("n") + "       \n"
+	expected += "Alice    New York     \n"
+	expected += "Bob      Los Angeles  \n"
+
+	assertOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func TestRadColorErrorsOnInvalidColor(t *testing.T) {
 	rsl := `
 url = "https://google.com"
