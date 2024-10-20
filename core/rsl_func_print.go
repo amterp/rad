@@ -66,7 +66,7 @@ func jsonify(arg interface{}) interface{} {
 	case nil:
 		return nil
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", arg))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for jsonify: %T", arg))
 		panic(UNREACHABLE)
 	}
 }

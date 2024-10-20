@@ -88,6 +88,21 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 			i.error(access.OpenBracketToken, "Array access key must be an int")
 			panic(UNREACHABLE)
 		}
+	case string:
+		switch coercedKey := key.(type) {
+		case int64:
+			adjustedKey := coercedKey
+			if adjustedKey < 0 {
+				adjustedKey += int64(len(coerced))
+			}
+			if adjustedKey < 0 || adjustedKey >= int64(len(coerced)) {
+				i.error(access.OpenBracketToken, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, len(coerced)))
+			}
+			return string(coerced[adjustedKey])
+		default:
+			i.error(access.OpenBracketToken, "String index must be an int")
+			panic(UNREACHABLE)
+		}
 	case RslMap:
 		switch coercedKey := key.(type) {
 		case string:

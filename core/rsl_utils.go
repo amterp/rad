@@ -29,7 +29,7 @@ func ToPrintable(val interface{}) string {
 	case nil:
 		return "null"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", val))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for printable: %T", val))
 		panic(UNREACHABLE)
 	}
 }
@@ -51,7 +51,7 @@ func TypeAsString(val interface{}) string {
 	case nil:
 		return "null"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type: %T", val))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for as-string: %T", val))
 		panic(UNREACHABLE)
 	}
 }
