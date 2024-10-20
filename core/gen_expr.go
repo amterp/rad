@@ -18,6 +18,7 @@ type ExprVisitor interface {
 	VisitFunctionCallExpr(FunctionCall) interface{}
 	VisitVariableExpr(Variable) interface{}
 	VisitBinaryExpr(Binary) interface{}
+	VisitTernaryExpr(Ternary) interface{}
 	VisitLogicalExpr(Logical) interface{}
 	VisitGroupingExpr(Grouping) interface{}
 	VisitUnaryExpr(Unary) interface{}
@@ -150,6 +151,25 @@ func (e Binary) String() string {
 	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
 	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
 	return fmt.Sprintf("Binary(%s)", strings.Join(parts, ", "))
+}
+
+type Ternary struct {
+	Condition    Expr
+	QuestionMark Token
+	True         Expr
+	False        Expr
+}
+
+func (e Ternary) Accept(visitor ExprVisitor) interface{} {
+	return visitor.VisitTernaryExpr(e)
+}
+func (e Ternary) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
+	parts = append(parts, fmt.Sprintf("QuestionMark: %v", e.QuestionMark))
+	parts = append(parts, fmt.Sprintf("True: %v", e.True))
+	parts = append(parts, fmt.Sprintf("False: %v", e.False))
+	return fmt.Sprintf("Ternary(%s)", strings.Join(parts, ", "))
 }
 
 type Logical struct {

@@ -693,7 +693,25 @@ func (p *Parser) primaryAssignment(identifiers []Token) Stmt {
 }
 
 func (p *Parser) expr(numExpectedReturnValues int) Expr {
-	return p.or(numExpectedReturnValues)
+	return p.ternary(numExpectedReturnValues)
+}
+
+func (p *Parser) ternary(numExpectedReturnValues int) Expr {
+	expr := p.or(numExpectedReturnValues)
+
+	if p.matchAny(QUESTION) {
+		questionMark := p.previous()
+		if numExpectedReturnValues != 1 {
+			// todo technically, there's no reason to now allow multiple return from e.g a function
+			p.error(onlyOneReturnValueAllowed)
+		}
+		trueBranch := p.expr(1)
+		p.consume(COLON, "Expected ':' after true branch of ternary operator")
+		falseBranch := p.expr(1)
+		expr = &Ternary{Condition: expr, QuestionMark: questionMark, True: trueBranch, False: falseBranch}
+	}
+
+	return expr
 }
 
 func (p *Parser) or(numExpectedReturnValues int) Expr {

@@ -131,7 +131,8 @@ forStmt                     -> "for" IDENTIFIER ( forStmtIndex | forStmtNoIndex 
 forStmtIndex                -> "," IDENTIFIER forStmtNoIndex
 forStmtNoIndex              -> "in" IDENTIFIER COLON NEWLINE ( INDENT statement NEWLINE )*
 
-expression                  -> logic_or
+expression                  -> ternary
+ternary                     -> logic_or ( "?" expression ":" expression )
 logic_or                    -> logic_and ( "or" logic_and )*
 logic_and                   -> equality ( "and" equality )*
 equality                    -> membership ( ( NOT_EQUAL | EQUAL ) membership )*

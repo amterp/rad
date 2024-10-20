@@ -57,6 +57,7 @@ func main() {
 		"FunctionCall      : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
 		"Variable          : Token Name",
 		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /
+		"Ternary           : Expr Condition, Token QuestionMark, Expr True, Expr False",
 		"Logical           : Expr Left, Token Operator, Expr Right", // and, or
 		"Grouping          : Expr Value",                            // ( expr )
 		"Unary             : Token Operator, Expr Right",            // !, -, +

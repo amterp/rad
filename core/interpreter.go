@@ -315,6 +315,18 @@ func (i *MainInterpreter) VisitIfCaseStmt(ifCase IfCase) {
 	RP.RadErrorExit("Bug! IfCase should not be visited directly\n")
 }
 
+func (i *MainInterpreter) VisitTernaryExpr(ternary Ternary) interface{} {
+	conditionResult := ternary.Condition.Accept(i)
+	bval, ok := conditionResult.(bool)
+	if !ok {
+		i.error(ternary.QuestionMark, "Ternary condition must resolve to a bool")
+	}
+	if bval {
+		return ternary.True.Accept(i)
+	}
+	return ternary.False.Accept(i)
+}
+
 func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	rangeValue := stmt.Range.Accept(i)
 
