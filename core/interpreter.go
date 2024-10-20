@@ -186,8 +186,12 @@ func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 	valBool, ok := value.(bool)
 	if ok {
 		switch unary.Operator.GetType() {
-		case EXCLAMATION:
-			return !valBool
+		case IDENTIFIER:
+			if unary.Operator.GetLexeme() == "not" {
+				return !valBool
+			} else {
+				i.error(unary.Operator, fmt.Sprintf("Bug! Expected 'not' identifier, got %q", unary.Operator.GetLexeme()))
+			}
 		default:
 			i.error(unary.Operator, "Invalid logical operator, only 'not' is allowed")
 		}

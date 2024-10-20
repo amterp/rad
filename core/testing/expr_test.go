@@ -5,9 +5,9 @@ import "testing"
 func TestNot(t *testing.T) {
 	rsl := `
 a = false
-if !a:
+if not a:
     print("it works!")
-if !!!a:
+if not not not a:
     print("it works!!!")
 `
 	setupAndRunCode(t, rsl)

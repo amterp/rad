@@ -834,7 +834,7 @@ func (p *Parser) factor(numExpectedReturnValues int) Expr {
 }
 
 func (p *Parser) unary(numExpectedReturnValues int) Expr {
-	if p.matchAny(EXCLAMATION, MINUS, PLUS) {
+	if p.matchAny(MINUS, PLUS) || p.matchKeyword(GLOBAL_KEYWORDS, NOT) {
 		operator := p.previous()
 		right := p.unary(1)
 		return &Unary{Operator: operator, Right: right}

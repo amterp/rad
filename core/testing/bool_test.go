@@ -31,9 +31,9 @@ print(false or false)
 func TestBool_Not(t *testing.T) {
 	rsl := `
 print(true)
-print(!true)
+print(not true)
 print(false)
-print(!false)
+print(not false)
 `
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\nfalse\ntrue\n")
