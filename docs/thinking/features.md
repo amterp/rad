@@ -234,3 +234,14 @@ fruit, url = switch inputFruit:
     case "apple, "a": "apple", "https://apple.com" 
     case "banana", "b": "banana", "https://banana.com" 
 ```
+## 2024-10-21
+
+- More Python-like f-strings
+  - require 'f' before quotations? do I really need that?
+  - allow expressions e.g. `"Hello, {upper(name)}"`
+  - also formatting `"{:.2f}"`
+    - explore alternatives, both to f prefix and to this formatting, maybe newer language have nicer syntax
+      - quick search suggests Python is maybe best 
+- Allow invoking bash commands with `ls -l`.
+  - Have syntax for failures? like amber?
+  - Allow interpolation in it e.g. `cd {myDir}`
