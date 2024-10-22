@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -65,10 +64,10 @@ func processString(
 }
 
 // performStringInterpolation replaces {variables} in a string with their values
-func performStringInterpolation(s string, env *Env) string {
-	return processString(s, func(capturing bool, escaped bool, char rune, variable string, result *strings.Builder, env *Env) {
-		value := env.GetByName(variable)
-		result.WriteString(fmt.Sprintf("%v", value))
+func performStringInterpolation(stringToken StringLiteralToken, env *Env) string {
+	return processString(stringToken.Literal, func(capturing bool, escaped bool, char rune, variable string, result *strings.Builder, env *Env) {
+		value := env.GetByName(stringToken, variable)
+		result.WriteString(ToPrintable(value))
 	}, env)
 }
 

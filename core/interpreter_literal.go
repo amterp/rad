@@ -13,11 +13,11 @@ func NewLiteralInterpreter(i *MainInterpreter) *LiteralInterpreter {
 }
 
 func (l LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
-	stringLiteral := literal.Value.Literal
+	stringToken := literal.Value
 	if l.ShouldInterpolate && l.i != nil {
-		return performStringInterpolation(stringLiteral, l.i.env)
+		return performStringInterpolation(stringToken, l.i.env)
 	}
-	return stringLiteral
+	return stringToken.Literal
 }
 
 func (l LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
