@@ -14,6 +14,8 @@ const (
 	MAGENTA = "magenta"
 	CYAN    = "cyan"
 	WHITE   = "white"
+	ORANGE  = "orange"
+	PINK    = "pink"
 )
 
 var COLORS = []string{BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE}
@@ -28,6 +30,8 @@ var (
 	Magenta = tblwriter.Magenta
 	Cyan    = tblwriter.Cyan
 	White   = tblwriter.White
+	Orange  = tblwriter.Orange
+	Pink    = tblwriter.Pink
 )
 
 func ColorFromString(s string) (tblwriter.Color, bool) {
@@ -50,6 +54,10 @@ func ColorFromString(s string) (tblwriter.Color, bool) {
 		return Cyan, true
 	case WHITE:
 		return White, true
+	case ORANGE:
+		return Orange, true
+	case PINK:
+		return Pink, true
 	default:
 		return tblwriter.Plain, false
 	}
