@@ -21,11 +21,14 @@ func TestIn_Array(t *testing.T) {
 a = [40, 50, 60]
 print(50 in a)
 print(70 in a)
+//print(50 not in a) // todo fails, fix
+//print(70 not in a)
 print(true in [true, false])
 print(true in [false])
 `
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\ntrue\nfalse\n")
+	//assertOnlyOutput(t, stdOutBuffer, "true\nfalse\nfalse\ntrue\ntrue\nfalse\n")
 	assertNoErrors(t)
 	resetTestState()
 }

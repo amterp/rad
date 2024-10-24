@@ -16,7 +16,8 @@ type LiteralVisitor interface {
 	VisitBoolLiteralLiteral(BoolLiteral) interface{}
 }
 type StringLiteral struct {
-	Value StringLiteralToken
+	Value       []StringLiteralToken
+	InlineExprs []InlineExpr
 }
 
 func (e StringLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -25,6 +26,7 @@ func (e StringLiteral) Accept(visitor LiteralVisitor) interface{} {
 func (e StringLiteral) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
+	parts = append(parts, fmt.Sprintf("InlineExprs: %v", e.InlineExprs))
 	return fmt.Sprintf("StringLiteral(%s)", strings.Join(parts, ", "))
 }
 

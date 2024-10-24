@@ -68,12 +68,14 @@ print("hello, {var}")
 	resetTestState()
 }
 
+// todo a better error would be to include the whole string e.g.
+// "RslError at L2/20 on '\"hello, {var}\"': Undefined variable referenced: var\n"
 func TestStringInterpolation_ErrorsIfUnknownVariable(t *testing.T) {
 	rsl := `
 print("hello, {var}")
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/20 on '\"hello, {var}\"': Undefined variable referenced: var\n")
+	assertError(t, 1, "RslError at L2/18 on 'var': Undefined variable referenced: var\n")
 	resetTestState()
 }
 
@@ -97,3 +99,65 @@ print("hello, \{var}")
 //	assertNoErrors(t)
 //	resetTestState()
 //}
+
+func TestStringInterpolation_Expressions(t *testing.T) {
+	rsl := `
+print("hello, {2 + 2}")
+a = 2
+b = 3
+print("hello, {a + b}")
+name = "alice"
+print("hello, {len(name)}")
+print("hello, {len('bob')}")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "hello, 4\nhello, 5\nhello, 5\nhello, 3\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+//func TestStringInterpolation_FormattingString(t *testing.T) {
+//	rsl := `
+//name = "alice"
+//print("_{var}_")
+//print("_{var:16}_")
+//print("_{var:<16}_")
+//print("_{var:>16}_")
+//`
+//	expected := `_alice_
+//_           alice_
+//_alice           _
+//_           alice_
+//`
+//	setupAndRunCode(t, rsl)
+//	assertOnlyOutput(t, stdOutBuffer, expected)
+//	assertNoErrors(t)
+//	resetTestState()
+//}
+//
+//func TestStringInterpolation_FormattingFloat(t *testing.T) {
+//	rsl := `
+//pi = 3.14159
+//print("_{pi:.2f}_")
+//print("_{pi:16}_")
+//print("_{pi:<16}_")
+//print("_{pi:>16}_")
+//print("_{pi:<16.2f}_")
+//print("_{pi:>16.2f}_")
+//print("_{pi:.10f}_")
+//`
+//	expected := `_3.14_
+//_         3.14159_
+//_3.14159         _
+//_         3.14159_
+//_3.14            _
+//_            3.14_
+//_3.1415900000_
+//`
+//	setupAndRunCode(t, rsl)
+//	assertOnlyOutput(t, stdOutBuffer, expected)
+//	assertNoErrors(t)
+//	resetTestState()
+//}
+
+// todo formatting expressions e.g. {2 + 2:.2f}

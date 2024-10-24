@@ -48,7 +48,7 @@ func (s SwitchInterpreter) RunAssignment(assignment SwitchAssignment) {
 func (s SwitchInterpreter) VisitSwitchCaseSwitchStmt(switchCase SwitchCase) {
 	var keys []string
 	for _, key := range switchCase.Keys {
-		keys = append(keys, key.Value.Literal)
+		keys = append(keys, key.Value[len(key.Value)-1].FullStringLiteral)
 	}
 
 	var values []Expr
@@ -130,15 +130,12 @@ func (s *switchInvocation) decideBasedOnStringInterpolation() []interface{} {
 	var numTotalReferencedVarsByCaseIndex []int
 	var numUniqueReferencedVarsByCaseIndex []int
 	for _, instance := range s.cases {
-		var numTotalForCase int = 0
+		var numTotalForCase = 0
 		uniqueReferencedVars := strset.New()
 		for _, expr := range instance.values {
-			value, ok := expr.Accept(s.si.i).(string)
-			if ok {
-				referencedVars := extractVariables(value)
-				numTotalForCase += len(referencedVars)
-				uniqueReferencedVars.Add(referencedVars...)
-			}
+			referencedVars := extractVariables(s.si.i, s.blockToken, expr)
+			numTotalForCase += len(referencedVars)
+			uniqueReferencedVars.Add(referencedVars...)
 		}
 		uniqueReferencedVarsList := uniqueReferencedVars.List()
 		numUniqueForCase := len(uniqueReferencedVarsList)

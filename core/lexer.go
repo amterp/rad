@@ -7,7 +7,6 @@ import (
 )
 
 type Lexer struct {
-	printer                Printer
 	source                 string
 	start                  int   // index of start of the current lexeme (0 indexed)
 	next                   int   // index of next character to be read (0 indexed)
@@ -15,12 +14,14 @@ type Lexer struct {
 	lineCharIndex          int   // index of latest parsed char in the current line (1 indexed)
 	indentStack            []int // stack of indents to, to emit indent/dedent tokens
 	userUsingSpacesForTabs *bool // nil until we see the first case of a space indent
+	inStringStarter        *rune // the character that started the current string literal we're in, if we are in one
+	inStringStartIndex     int   // index of the start of the current string literal we're in
+	escaping               bool  // true if we are currently escaping a character in a string using \
 	Tokens                 []Token
 }
 
-func NewLexer(printer Printer, source string) *Lexer {
+func NewLexer(source string) *Lexer {
 	return &Lexer{
-		printer:                printer,
 		source:                 source,
 		start:                  0,
 		next:                   0,
@@ -28,6 +29,9 @@ func NewLexer(printer Printer, source string) *Lexer {
 		lineCharIndex:          0,
 		indentStack:            []int{0},
 		userUsingSpacesForTabs: nil,
+		inStringStarter:        nil,
+		inStringStartIndex:     -1,
+		escaping:               false,
 		Tokens:                 []Token{},
 	}
 }
@@ -90,7 +94,11 @@ func (l *Lexer) scanToken() {
 	case '{':
 		l.addToken(LEFT_BRACE)
 	case '}':
-		l.addToken(RIGHT_BRACE)
+		if l.inStringStarter != nil {
+			l.lexStringLiteral(*l.inStringStarter)
+		} else {
+			l.addToken(RIGHT_BRACE)
+		}
 	case ',':
 		l.addToken(COMMA)
 	case ':':
@@ -155,6 +163,8 @@ func (l *Lexer) scanToken() {
 		l.lexStringLiteral('"')
 	case '\'':
 		l.lexStringLiteral('\'')
+	case '.':
+		l.addToken(DOT)
 	case 'j':
 		if l.matchString("son") {
 			l.lexJsonPath()
@@ -283,14 +293,38 @@ func isDigit(c rune) bool {
 }
 
 func (l *Lexer) lexStringLiteral(endChar rune) {
+	if l.inStringStarter == nil {
+		// we're beginning a truly new string
+		l.inStringStarter = &endChar
+		l.inStringStartIndex = l.start + 1 // +1 to exclude the starting quote
+	}
 	value := ""
 	for !l.match(endChar) {
 		if l.isAtEnd() {
 			l.error("Unterminated string")
 		}
+		if l.match('\\') {
+			l.escaping = !l.escaping
+		} else {
+			l.escaping = false
+		}
+		if l.match('{') {
+			if !l.escaping {
+				l.addStringLiteralToken(value, true)
+				l.start = l.next
+				return
+			} else {
+				l.rewind(1)
+			}
+		}
 		value = value + string(l.advance())
 	}
-	l.addStringLiteralToken(value)
+	l.addStringLiteralToken(value, false)
+	if l.inStringStarter != nil && *l.inStringStarter == endChar {
+		// we're ending the final part of the string broken up by inline exprs
+		l.inStringStarter = nil
+		l.inStringStartIndex = -1
+	}
 }
 
 func (l *Lexer) lexNumber() {
@@ -461,9 +495,13 @@ func (l *Lexer) addToken(tokenType TokenType) {
 	l.Tokens = append(l.Tokens, token)
 }
 
-func (l *Lexer) addStringLiteralToken(literal string) {
+func (l *Lexer) addStringLiteralToken(literal string, followedByInlineExpr bool) {
 	lexeme := l.source[l.start:l.next]
-	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
+	fullString := ""
+	if l.inStringStartIndex != -1 {
+		fullString = l.source[l.inStringStartIndex : l.next-1]
+	}
+	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal, followedByInlineExpr, fullString)
 	l.Tokens = append(l.Tokens, token)
 }
 
@@ -543,5 +581,5 @@ func (l *Lexer) error(message string) {
 	lexeme := l.source[l.start:l.next]
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	lineStart := l.lineCharIndex - (l.next - l.start - 1)
-	l.printer.ErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
+	RP.ErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
 }
