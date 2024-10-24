@@ -20,7 +20,7 @@ func main() {
 
 	// literal -> STRING | NUMBER | BOOL
 	defineAst(outputDir, "Literal", "interface{}", []string{
-		"StringLiteral   : StringLiteralToken Value",
+		"StringLiteral   : []StringLiteralToken Value, []InlineExpr InlineExprs", // expect 1 less InlineExpr than StringLiteralToken
 		"IntLiteral      : IntLiteralToken Value",
 		"FloatLiteral    : FloatLiteralToken Value",
 		"BoolLiteral     : BoolLiteralToken Value",

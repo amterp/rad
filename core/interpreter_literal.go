@@ -12,27 +12,27 @@ func NewLiteralInterpreter(i *MainInterpreter) *LiteralInterpreter {
 	}
 }
 
-func (l LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
-	stringToken := literal.Value
+func (l *LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) interface{} {
 	if l.ShouldInterpolate && l.i != nil {
-		return performStringInterpolation(stringToken, l.i.env)
+		return l.performStringInterpolation(literal)
+	} else {
+		return literal.Value[len(literal.Value)-1].FullStringLiteral
 	}
-	return stringToken.Literal
 }
 
-func (l LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
+func (l *LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
 	return literal.Value.Literal
 }
 
-func (l LiteralInterpreter) VisitFloatLiteralLiteral(literal FloatLiteral) interface{} {
+func (l *LiteralInterpreter) VisitFloatLiteralLiteral(literal FloatLiteral) interface{} {
 	return literal.Value.Literal
 }
 
-func (l LiteralInterpreter) VisitBoolLiteralLiteral(literal BoolLiteral) interface{} {
+func (l *LiteralInterpreter) VisitBoolLiteralLiteral(literal BoolLiteral) interface{} {
 	return literal.Value.Literal
 }
 
-func (l LiteralInterpreter) VisitMixedArrayLiteralArrayLiteral(literal MixedArrayLiteral) interface{} {
+func (l *LiteralInterpreter) VisitMixedArrayLiteralArrayLiteral(literal MixedArrayLiteral) interface{} {
 	var values []interface{}
 	for _, v := range literal.Values {
 		values = append(values, v.Accept(l))
@@ -40,10 +40,10 @@ func (l LiteralInterpreter) VisitMixedArrayLiteralArrayLiteral(literal MixedArra
 	return values
 }
 
-func (l LiteralInterpreter) VisitLoaLiteralLiteralOrArray(literal LoaLiteral) interface{} {
+func (l *LiteralInterpreter) VisitLoaLiteralLiteralOrArray(literal LoaLiteral) interface{} {
 	return literal.Value.Accept(l)
 }
 
-func (l LiteralInterpreter) VisitLoaArrayLiteralOrArray(array LoaArray) interface{} {
+func (l *LiteralInterpreter) VisitLoaArrayLiteralOrArray(array LoaArray) interface{} {
 	return array.Value.Accept(l)
 }

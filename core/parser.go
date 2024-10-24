@@ -10,17 +10,15 @@ const (
 )
 
 type Parser struct {
-	printer             Printer
 	tokens              []Token
 	next                int
 	nestedForBlockLevel int
 }
 
-func NewParser(printer Printer, tokens []Token) *Parser {
+func NewParser(tokens []Token) *Parser {
 	return &Parser{
-		printer: printer,
-		tokens:  tokens,
-		next:    0,
+		tokens: tokens,
+		next:   0,
 	}
 }
 
@@ -118,7 +116,7 @@ func (p *Parser) tryConsume(tokenType TokenType) (Token, bool) {
 // todo this func is susceptible to pointing at an uninformative token
 func (p *Parser) error(message string) {
 	currentToken := p.tokens[p.next]
-	p.printer.TokenErrorExit(currentToken, message+"\n")
+	RP.TokenErrorExit(currentToken, message+"\n")
 }
 
 func (p *Parser) fileHeaderIfPresent(statements *[]Stmt) {
@@ -1038,8 +1036,31 @@ func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 }
 
 func (p *Parser) stringLiteral() StringLiteral {
-	literal := p.consume(STRING_LITERAL, "Expected string literal").(*StringLiteralToken)
-	return StringLiteral{Value: *literal}
+	var stringLiteralTokens []StringLiteralToken
+	var inlineExprs []InlineExpr
+
+	for {
+		literal := p.consume(STRING_LITERAL, "Expected string literal").(*StringLiteralToken)
+		stringLiteralTokens = append(stringLiteralTokens, *literal)
+		if literal.FollowedByInlineExpr {
+			inlineExprs = append(inlineExprs, p.inlineExpr())
+		} else {
+			break
+		}
+	}
+
+	return StringLiteral{Value: stringLiteralTokens, InlineExprs: inlineExprs}
+}
+
+func (p *Parser) inlineExpr() InlineExpr {
+	expr := p.expr(1)
+	var formatting []Token
+	if p.matchAny(COLON) {
+		for !p.matchAny(STRING_LITERAL) {
+			formatting = append(formatting, p.advance())
+		}
+	}
+	return InlineExpr{Expression: expr, Formatting: formatting}
 }
 
 func (p *Parser) intLiteral() IntLiteral {

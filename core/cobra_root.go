@@ -73,10 +73,10 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 }
 
 func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourceCode string) {
-	l := NewLexer(RP, rslSourceCode)
+	l := NewLexer(rslSourceCode)
 	l.Lex()
 
-	p := NewParser(RP, l.Tokens)
+	p := NewParser(l.Tokens)
 	instructions := p.Parse()
 
 	scriptMetadata := ExtractMetadata(instructions)

@@ -38,7 +38,9 @@ func (b BaseToken) GetCharLineStart() int {
 
 type StringLiteralToken struct {
 	BaseToken
-	Literal string
+	Literal              string
+	FollowedByInlineExpr bool
+	FullStringLiteral    string // full string, if the last part of a greater string broken up by inline exprs
 }
 
 type IntLiteralToken struct {
@@ -97,6 +99,8 @@ func NewStringLiteralToken(
 	line int,
 	charLineStart int,
 	literal string,
+	followedByInlineExpr bool,
+	fullStringLiteral string, // full string, if the last part of greater string broken up by inline exprs
 ) Token {
 	return &StringLiteralToken{
 		BaseToken: BaseToken{
@@ -106,7 +110,9 @@ func NewStringLiteralToken(
 			Line:          line,
 			CharLineStart: charLineStart,
 		},
-		Literal: literal,
+		Literal:              literal,
+		FollowedByInlineExpr: followedByInlineExpr,
+		FullStringLiteral:    fullStringLiteral,
 	}
 }
 

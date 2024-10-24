@@ -120,3 +120,8 @@ const (
 	Request RadBlockType = "request"
 	Display RadBlockType = "display"
 )
+
+type InlineExpr struct {
+	Expression Expr
+	Formatting []Token
+}
