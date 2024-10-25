@@ -1209,7 +1209,7 @@ func (p *Parser) matchKeywordSeries(keywords map[string]TokenType, tokenType ...
 		return false
 	}
 	for i, t := range tokenType {
-		if keyword, ok := keywords[next.GetLexeme()]; ok {
+		if keyword, ok := keywords[p.peek().GetLexeme()]; ok {
 			if keyword != t {
 				for j := 0; j < i; j++ {
 					p.rewind()
