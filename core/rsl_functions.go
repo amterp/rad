@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -129,19 +128,7 @@ func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
 	case DEBUG:
 		runDebug(args)
 	case EXIT:
-		if len(args) == 0 {
-			os.Exit(0)
-		} else if len(args) == 1 {
-			arg := args[0]
-			switch coerced := arg.(type) {
-			case int64:
-				os.Exit(int(coerced))
-			default:
-				i.error(function, "exit() takes an integer argument")
-			}
-		} else {
-			i.error(function, "exit() takes zero or one argument")
-		}
+		runExit(i, function, args)
 	default:
 		RunRslNonVoidFunction(i, function, NO_NUM_RETURN_VALUES_CONSTRAINT, args)
 	}

@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"sort"
 )
 
 func CreateTrie(radToken Token, jsonFields []JsonFieldVar) *Trie {
@@ -115,11 +114,7 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 				// todo: at this point this is a concession -- we should be traversing in the original order of the json
 				//  but the json.Unmarshalling we're doing loses us the original ordering for maps. will need to change
 				//  how we get the json if we want to change that (we almost certainly do, this is idiosyncratic behavior)
-				sortedKeys := make([]string, 0, len(dataMap))
-				for k := range dataMap {
-					sortedKeys = append(sortedKeys, k)
-				}
-				sort.Strings(sortedKeys)
+				sortedKeys := SortedKeys(dataMap)
 				for _, key := range sortedKeys {
 					capStats = capStats.add(t.traverse(dataMap[key], child, key))
 				}

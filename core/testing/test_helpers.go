@@ -141,11 +141,10 @@ func assertExitCode(t *testing.T, code int) {
 func assertNoErrors(t *testing.T) {
 	t.Helper()
 	code := errorOrExit.exitCode
-	if code != nil {
-		t.Errorf("Expected no exit code, got %d", *code)
+	if code == nil || *code == 0 {
+		return
 	}
+	t.Errorf("Expected no exit code, got %d", *code)
 	msg := errorOrExit.panicMsg
-	if msg != nil {
-		t.Errorf("Expected no panic, got %s", *msg)
-	}
+	t.Errorf("Expected no panic, got %s", *msg)
 }

@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"sort"
 )
 
 type Env struct {
@@ -135,6 +134,16 @@ func (e *Env) GetJsonField(name Token) JsonFieldVar {
 	return field
 }
 
+func (e *Env) PrintShellExports() {
+	keys := SortedKeys(e.Vars)
+	for _, varName := range keys {
+		val := e.Vars[varName]
+		// todo handle different data types specifically
+		// todo avoid *dangerous* exports like PATH!!
+		RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val))
+	}
+}
+
 func (e *Env) getOrError(varName string, token Token, acceptableTypes ...RslTypeEnum) interface{} {
 	val, ok := e.get(varName, token, acceptableTypes...)
 	if !ok {
@@ -184,11 +193,7 @@ func (e *Env) recursivelyConvertTypes(token Token, arr interface{}) interface{} 
 		return output
 	case map[string]interface{}:
 		m := NewRslMap()
-		sortedKeys := make([]string, 0, len(coerced))
-		for k := range coerced {
-			sortedKeys = append(sortedKeys, k)
-		}
-		sort.Strings(sortedKeys)
+		sortedKeys := SortedKeys(coerced)
 		for _, key := range sortedKeys {
 			m.Set(key, e.recursivelyConvertTypes(token, coerced[key]))
 		}

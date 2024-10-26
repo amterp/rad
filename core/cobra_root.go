@@ -145,11 +145,7 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 
 		if shellFlag {
 			env := interpreter.env
-			for varName, val := range env.Vars {
-				// todo handle different data types specifically
-				// todo avoid *dangerous* exports like PATH!!
-				RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val))
-			}
+			env.PrintShellExports()
 		}
 	}
 

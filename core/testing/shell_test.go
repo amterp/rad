@@ -1,0 +1,59 @@
+package testing
+
+import "testing"
+
+func TestShell_ExportsNothingIfNoVars(t *testing.T) {
+	rsl := `
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	assertOutput(t, stdOutBuffer, "")
+	assertOutput(t, stdErrBuffer, "")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestShell_ExportsStrings(t *testing.T) {
+	rsl := `
+a = "alice"
+b = "bob"
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	assertOutput(t, stdOutBuffer, "export a=\"alice\"\nexport b=\"bob\"\n")
+	assertOutput(t, stdErrBuffer, "")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestShell_PrintsGoToStderr(t *testing.T) {
+	rsl := `
+a = "alice"
+print('hi')
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	assertOutput(t, stdOutBuffer, "export a=\"alice\"\n")
+	assertOutput(t, stdErrBuffer, "hi\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestShell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
+	rsl := `
+exit(2)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	assertOnlyOutput(t, stdOutBuffer, "exit 2\n")
+	assertError(t, 2, "")
+	resetTestState()
+}
+
+func TestShell_NonErrorExitFuncStillExportsVars(t *testing.T) {
+	rsl := `
+a = "alice"
+exit()
+b = "bob"
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	assertOnlyOutput(t, stdOutBuffer, "export a=\"alice\"\n")
+	assertNoErrors(t)
+	resetTestState()
+}
