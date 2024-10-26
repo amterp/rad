@@ -89,7 +89,7 @@ print("hello, \{var}")
 	resetTestState()
 }
 
-// todo this should either be handled better or just pass
+// todo this should fail
 //func TestStringInterpolation_CanEscapeSecond(t *testing.T) {
 //	rsl := `
 //print("hello, {var\}")
@@ -116,48 +116,95 @@ print("hello, {len('bob')}")
 	resetTestState()
 }
 
-//func TestStringInterpolation_FormattingString(t *testing.T) {
-//	rsl := `
-//name = "alice"
-//print("_{var}_")
-//print("_{var:16}_")
-//print("_{var:<16}_")
-//print("_{var:>16}_")
-//`
-//	expected := `_alice_
-//_           alice_
-//_alice           _
-//_           alice_
-//`
-//	setupAndRunCode(t, rsl)
-//	assertOnlyOutput(t, stdOutBuffer, expected)
-//	assertNoErrors(t)
-//	resetTestState()
-//}
-//
-//func TestStringInterpolation_FormattingFloat(t *testing.T) {
-//	rsl := `
-//pi = 3.14159
-//print("_{pi:.2f}_")
-//print("_{pi:16}_")
-//print("_{pi:<16}_")
-//print("_{pi:>16}_")
-//print("_{pi:<16.2f}_")
-//print("_{pi:>16.2f}_")
-//print("_{pi:.10f}_")
-//`
-//	expected := `_3.14_
-//_         3.14159_
-//_3.14159         _
-//_         3.14159_
-//_3.14            _
-//_            3.14_
-//_3.1415900000_
-//`
-//	setupAndRunCode(t, rsl)
-//	assertOnlyOutput(t, stdOutBuffer, expected)
-//	assertNoErrors(t)
-//	resetTestState()
-//}
+func TestStringInterpolation_FormattingString(t *testing.T) {
+	rsl := `
+var = "alice"
+print("_{var}_")
+print("_{var:16}_")
+print("_{var:<16}_")
+print("_{var:>16}_")
+`
+	expected := `_alice_
+_           alice_
+_alice           _
+_           alice_
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
 
-// todo formatting expressions e.g. {2 + 2:.2f}
+func TestStringInterpolation_FormattingInt(t *testing.T) {
+	rsl := `
+num = 12
+print("_{num:.2}_")
+print("_{num:16}_")
+print("_{num:<16}_")
+print("_{num:>16}_")
+print("_{num:<16.2}_")
+print("_{num:>16.2}_")
+print("_{num:.10}_")
+`
+	expected := `_12.00_
+_              12_
+_12              _
+_              12_
+_12.00           _
+_           12.00_
+_12.0000000000_
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestStringInterpolation_FormattingFloat(t *testing.T) {
+	rsl := `
+pi = 3.14159
+print("_{pi:.2}_")
+print("_{pi:16}_")
+print("_{pi:<16}_")
+print("_{pi:>16}_")
+print("_{pi:<16.2}_")
+print("_{pi:>16.2}_")
+print("_{pi:.10}_")
+`
+	expected := `_3.14_
+_        3.141590_
+_3.141590        _
+_        3.141590_
+_3.14            _
+_            3.14_
+_3.1415900000_
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestStringInterpolation_FormattingFloatExpressions(t *testing.T) {
+	rsl := `
+print("_{1 + 2.14159:.2}_")
+print("_{1 + 2.14159:16}_")
+print("_{1 + 2.14159:<16}_")
+print("_{1 + 2.14159:>16}_")
+print("_{1 + 2.14159:<16.2}_")
+print("_{1 + 2.14159:>16.2}_")
+print("_{1 + 2.14159:.10}_")
+`
+	expected := `_3.14_
+_        3.141590_
+_3.141590        _
+_        3.141590_
+_3.14            _
+_            3.14_
+_3.1415900000_
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

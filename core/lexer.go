@@ -349,7 +349,7 @@ func (l *Lexer) lexNumber() {
 		l.addFloatLiteralToken(literal)
 	} else {
 		// int
-		literal, err := strconv.ParseInt(lexeme, 10, 64)
+		literal, err := strconv.ParseInt(lexeme, 10, 64) // what happens to ints starting with 0? e.g. 012?
 		if err != nil {
 			l.error("Invalid integer")
 		}

@@ -22,11 +22,11 @@ const (
 	MINUS         TokenType = "MINUS"
 	PLUS          TokenType = "PLUS"
 	EXCLAMATION   TokenType = "EXCLAMATION"
-	AT            TokenType = "AT" // @
-	LESS          TokenType = "LESS"
-	GREATER       TokenType = "GREATER"
-	SLASH         TokenType = "SLASH" // /
-	STAR          TokenType = "STAR"  // *
+	AT            TokenType = "AT"      // @
+	LESS          TokenType = "LESS"    // <
+	GREATER       TokenType = "GREATER" // >
+	SLASH         TokenType = "SLASH"   // /
+	STAR          TokenType = "STAR"    // *
 
 	// Two-character tokens
 

@@ -123,5 +123,11 @@ const (
 
 type InlineExpr struct {
 	Expression Expr
-	Formatting []Token
+	Formatting *InlineExprFormat
+}
+
+type InlineExprFormat struct {
+	GoFormat      string // does not contain 's' or 'f' at the end; need to add at runtime depending on the given type
+	RslFormat     string
+	IsFloatFormat bool // i.e. something like '.2' has been specified, requiring decimal places
 }

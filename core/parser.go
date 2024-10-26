@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/samber/lo"
+	"strings"
 )
 
 const (
@@ -1005,7 +1006,7 @@ func (p *Parser) literalOrArray(expectedType *RslArgTypeT) (LiteralOrArray, bool
 func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 	if p.peekType(STRING_LITERAL) {
 		if expectedType != nil && *expectedType != ArgStringT {
-			p.error("Expected string literal")
+			p.error("Expected string literal (arg)")
 		}
 		return p.stringLiteral(), true
 	}
@@ -1052,15 +1053,74 @@ func (p *Parser) stringLiteral() StringLiteral {
 	return StringLiteral{Value: stringLiteralTokens, InlineExprs: inlineExprs}
 }
 
+// todo support 0 padding e.g. {:010}
 func (p *Parser) inlineExpr() InlineExpr {
 	expr := p.expr(1)
-	var formatting []Token
+	rslFormatting := strings.Builder{}
+	goFormatting := strings.Builder{}
+	builtRslFormat := ""
+	builtGoFormat := ""
+	isFloatFormat := false
 	if p.matchAny(COLON) {
-		for !p.matchAny(STRING_LITERAL) {
-			formatting = append(formatting, p.advance())
+		// imagine we're parsing <10.2
+		goFormatting.WriteString("%")
+
+		if p.matchAny(LESS) {
+			rslFormatting.WriteString("<")
+			goFormatting.WriteString("-")
+		} else if p.matchAny(GREATER) {
+			rslFormatting.WriteString(">")
+			// not required in Go, it defaults to right align
+		}
+
+		if p.peekType(FLOAT_LITERAL) {
+			width := p.floatLiteral()
+			rslFormatting.WriteString(width.Value.GetLexeme())
+			goFormatting.WriteString(width.Value.GetLexeme())
+
+			isFloatFormat = true
+		}
+
+		if p.previous().GetType() != FLOAT_LITERAL {
+			if p.matchAny(DOT) {
+				isFloatFormat = true
+				rslFormatting.WriteString(".")
+				goFormatting.WriteString(".")
+			}
+
+			if p.peekType(INT_LITERAL) {
+				// could be padding width or precision, if dot preceded
+				intLiteral := p.intLiteral()
+				rslFormatting.WriteString(intLiteral.Value.GetLexeme())
+				goFormatting.WriteString(intLiteral.Value.GetLexeme())
+			} else if isFloatFormat {
+				p.error("Expected precision int literal after dot for inline formatting")
+			}
+		}
+
+		builtRslFormat = rslFormatting.String()
+		if len(builtRslFormat) == 0 {
+			// nothing was specified
+			p.error("Expected formatting after colon in inline expression")
+		}
+
+		if !p.peekType(STRING_LITERAL) {
+			p.error(fmt.Sprintf("Unexpected token %q after inline expression formatting %q",
+				p.peek().GetLexeme(), builtRslFormat))
+		}
+
+		builtGoFormat = goFormatting.String()
+	}
+	if builtRslFormat == "" {
+		return InlineExpr{Expression: expr, Formatting: nil}
+	} else {
+		return InlineExpr{
+			Expression: expr,
+			Formatting: &InlineExprFormat{
+				RslFormat: builtRslFormat, GoFormat: builtGoFormat, IsFloatFormat: isFloatFormat,
+			},
 		}
 	}
-	return InlineExpr{Expression: expr, Formatting: formatting}
 }
 
 func (p *Parser) intLiteral() IntLiteral {

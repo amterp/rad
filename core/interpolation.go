@@ -13,11 +13,52 @@ func (l *LiteralInterpreter) performStringInterpolation(stringLiteral StringLite
 		if i < len(stringLiteral.InlineExprs) {
 			inlineExpr := stringLiteral.InlineExprs[i]
 			exprVal := inlineExpr.Expression.Accept(l.i)
-			result.WriteString(ToPrintable(exprVal))
-			// todo format
+			// todo bad token for sake of error
+			formatted := l.format(stringToken, exprVal, inlineExpr.Formatting)
+			result.WriteString(formatted)
 		}
 	}
 	return result.String()
+}
+
+func (l *LiteralInterpreter) format(token Token, val interface{}, formatting *InlineExprFormat) string {
+	if formatting == nil {
+		return ToPrintable(val)
+	}
+
+	formatInfo := *formatting
+	// expect GoFormat to not have any type specifier on the end yet from parser
+	switch coerced := val.(type) {
+	case int64:
+		if formatInfo.IsFloatFormat {
+			formatStr := formatInfo.GoFormat + "f"
+			return fmt.Sprintf(formatStr, float64(coerced))
+		} else {
+			formatStr := formatInfo.GoFormat + "d"
+			return fmt.Sprintf(formatStr, coerced)
+		}
+	case float64:
+		formatStr := formatInfo.GoFormat + "f"
+		formatted := fmt.Sprintf(formatStr, coerced)
+
+		// todo: removing trailing zeros. Need to consider left/right padding scenarios.
+		//if !formatInfo.IsFloatFormat {
+		//  // No explicit precision set -- then Go defaults to 6. Remove trailing zeros.
+		//	for strings.HasSuffix(formatted, "0") {
+		//		formatted = formatted[:len(formatted)-1]
+		//	}
+		//}
+
+		return formatted
+	default:
+		if formatInfo.IsFloatFormat {
+			l.i.error(token, fmt.Sprintf("Expected number for format, got %T", val))
+			panic(UNREACHABLE)
+		}
+		valStr := ToPrintable(val)
+		formatStr := formatInfo.GoFormat + "s"
+		return fmt.Sprintf(formatStr, valStr)
+	}
 }
 
 // extractVariables extracts variables within non-escaped {} brackets in the input string
