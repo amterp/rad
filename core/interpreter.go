@@ -380,10 +380,10 @@ func runArrayForLoop(
 ) func() {
 	return func() {
 		for idx, val := range rangeArr {
-			i.env.SetAndImplyType(valIdentifier, val)
 			if idxIdentifier != nil {
 				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
 			}
+			i.env.SetAndImplyType(valIdentifier, val)
 			stmt.Body.Accept(i)
 			if i.breaking {
 				i.breaking = false

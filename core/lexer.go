@@ -192,7 +192,7 @@ func (l *Lexer) scanToken() {
 	default:
 		if isDigit(c) {
 			l.lexNumber()
-		} else if isAlpha(c) {
+		} else if isAlpha(c) || c == '_' {
 			l.lexIdentifier()
 		} else {
 			l.error("Unexpected character")
