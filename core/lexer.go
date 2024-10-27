@@ -163,6 +163,8 @@ func (l *Lexer) scanToken() {
 		l.lexStringLiteral('"')
 	case '\'':
 		l.lexStringLiteral('\'')
+	case '`':
+		l.lexStringLiteral('`')
 	case '.':
 		l.addToken(DOT)
 	case 'j':
