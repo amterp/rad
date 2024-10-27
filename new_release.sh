@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-rsl="\
+rsl='
 ---
 Bumps the version in rad, creates a commit, tags it, and optionally pushes it
 
@@ -9,7 +9,7 @@ This will trigger a GitHub action to create a homebrew-rad PR with the new versi
 ---
 args:
     new_version string # The new release version to bump to
-    push p bool # Whether or not a push should also be performed"
+    push p bool # Whether or not a push should also be performed'
 
 new_version=
 push=

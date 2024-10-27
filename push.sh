@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-rsl="\
+rsl='
 ---
 Performs some pre-pushing steps such as build, test, and then pushes if all good.
 ---
 args:
-  branch b string = 'main' # The branch to push to
-  no_push 'no-push' n bool = false # Skip the pushing step"
+  branch b string = "main" # The branch to push to
+  no_push "no-push" n bool = false # Skip the pushing step'
 
 branch=
 no_push=
