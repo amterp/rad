@@ -27,6 +27,7 @@ const (
 	GREATER       TokenType = "GREATER" // >
 	SLASH         TokenType = "SLASH"   // /
 	STAR          TokenType = "STAR"    // *
+	DOLLAR        TokenType = "DOLLAR"  // $
 
 	// Two-character tokens
 
@@ -77,6 +78,8 @@ const (
 	DELETE   TokenType = "DELETE"
 	NOT      TokenType = "NOT"
 	NOT_IN   TokenType = "NOT_IN"
+	UNSAFE   TokenType = "UNSAFE"
+	FAILURE  TokenType = "FAILURE"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

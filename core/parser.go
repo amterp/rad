@@ -246,30 +246,34 @@ func (p *Parser) statement() Stmt {
 		return p.radBlock(Display)
 	}
 
-	if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, IF) {
 		return p.ifStmt()
 	}
 
-	if p.peekKeyword(FOR, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, FOR) {
 		return p.forStmt()
 	}
 
-	if p.peekKeyword(BREAK, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, BREAK) {
 		if p.nestedForBlockLevel == 0 {
 			p.error("Break statement must be inside a for loop")
 		}
 		return &BreakStmt{BreakToken: p.consumeKeyword(GLOBAL_KEYWORDS, BREAK)}
 	}
 
-	if p.peekKeyword(CONTINUE, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, CONTINUE) {
 		if p.nestedForBlockLevel == 0 {
 			p.error("Continue statement must be inside a for loop")
 		}
 		return &ContinueStmt{ContinueToken: p.consumeKeyword(GLOBAL_KEYWORDS, CONTINUE)}
 	}
 
-	if p.peekKeyword(DELETE, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, DELETE) {
 		return p.deleteStmt()
+	}
+
+	if p.isShellCmdNext() {
+		return p.shellCmd([]Token{})
 	}
 
 	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
@@ -450,9 +454,9 @@ func (p *Parser) ifStmt() IfStmt {
 	var cases []IfCase
 	cases = append(cases, p.ifCase())
 	var elseBlock *Block
-	for p.peekKeyword(ELSE, GLOBAL_KEYWORDS) {
+	for p.peekKeyword(GLOBAL_KEYWORDS, ELSE) {
 		p.consumeKeyword(GLOBAL_KEYWORDS, ELSE)
-		if p.peekKeyword(IF, GLOBAL_KEYWORDS) {
+		if p.peekKeyword(GLOBAL_KEYWORDS, IF) {
 			cases = append(cases, p.ifCase())
 		} else {
 			p.consume(COLON, "Expected ':' after 'else'")
@@ -550,6 +554,10 @@ func (p *Parser) assignment() Stmt {
 	if p.matchKeyword(GLOBAL_KEYWORDS, SWITCH) {
 		block := p.switchBlock(identifiers)
 		return &SwitchAssignment{Identifiers: identifiers, Block: block}
+	}
+
+	if p.isShellCmdNext() {
+		return p.shellCmd(identifiers)
 	}
 
 	if len(identifiers) == 1 && p.peekType(JSON_PATH_ELEMENT) {
@@ -761,7 +769,7 @@ func (p *Parser) equality(numExpectedReturnValues int) Expr {
 func (p *Parser) membership(numExpectedReturnValues int) Expr {
 	expr := p.comparison(numExpectedReturnValues)
 
-	for p.peekKeyword(NOT, GLOBAL_KEYWORDS) || p.peekKeyword(IN, GLOBAL_KEYWORDS) {
+	for p.peekKeyword(GLOBAL_KEYWORDS, NOT) || p.peekKeyword(GLOBAL_KEYWORDS, IN) {
 		if p.matchKeywordSeries(GLOBAL_KEYWORDS, NOT, IN) {
 			if numExpectedReturnValues != 1 {
 				p.error(onlyOneReturnValueAllowed)
@@ -933,7 +941,7 @@ func (p *Parser) arrayExpr() (Expr, bool) {
 	}
 
 	expr := p.expr(1)
-	if p.peekKeyword(FOR, GLOBAL_KEYWORDS) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, FOR) {
 		return p.listComprehension(expr)
 	}
 
@@ -1235,6 +1243,42 @@ func (p *Parser) rslArgType() RslArgType {
 	return RslArgType{Token: argType, Type: rslTypeEnum}
 }
 
+func (p *Parser) isShellCmdNext() bool {
+	return p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekType(DOLLAR)
+}
+
+func (p *Parser) shellCmd(identifiers []Token) Stmt {
+	var unsafeToken *Token
+	if p.matchKeyword(GLOBAL_KEYWORDS, UNSAFE) {
+		token := p.previous()
+		unsafeToken = &token
+	}
+	dollarToken := p.consume(DOLLAR, "Expected '$' to start shell command")
+	shellCmdExpr := p.expr(1)
+
+	p.consumeNewlines()
+	var failureBlock *Block
+
+	if p.matchKeyword(GLOBAL_KEYWORDS, FAILURE) {
+		p.consume(COLON, "Expected ':' after failure keyword")
+		p.consumeNewlines()
+		if p.matchAny(INDENT) {
+			b := p.block()
+			failureBlock = &b
+		}
+	} else if unsafeToken == nil {
+		p.error("Expected 'failure' block for non-unsafe shell command")
+	}
+
+	return &ShellCmd{
+		Identifiers:  identifiers,
+		Unsafe:       unsafeToken,
+		Dollar:       dollarToken,
+		CmdExpr:      shellCmdExpr,
+		FailureBlock: failureBlock,
+	}
+}
+
 func (p *Parser) identifier() Token {
 	if p.matchAny(IDENTIFIER) {
 		return p.previous()
@@ -1303,7 +1347,7 @@ func (p *Parser) consumeAny(errMsg string, expected ...TokenType) Token {
 	panic(UNREACHABLE)
 }
 
-func (p *Parser) peekKeyword(expectedKeyword TokenType, keywords map[string]TokenType) bool {
+func (p *Parser) peekKeyword(keywords map[string]TokenType, expectedKeyword TokenType) bool {
 	if p.matchKeyword(keywords, expectedKeyword) {
 		p.rewind()
 		return true

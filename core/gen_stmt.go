@@ -22,6 +22,7 @@ type StmtVisitor interface {
 	VisitJsonPathAssignStmt(JsonPathAssign)
 	VisitSwitchBlockStmtStmt(SwitchBlockStmt)
 	VisitSwitchAssignmentStmt(SwitchAssignment)
+	VisitShellCmdStmt(ShellCmd)
 	VisitBlockStmt(Block)
 	VisitIfStmtStmt(IfStmt)
 	VisitIfCaseStmt(IfCase)
@@ -205,6 +206,27 @@ func (e SwitchAssignment) String() string {
 	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
 	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
 	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
+}
+
+type ShellCmd struct {
+	Identifiers  []Token
+	Unsafe       *Token
+	Dollar       Token
+	CmdExpr      Expr
+	FailureBlock *Block
+}
+
+func (e ShellCmd) Accept(visitor StmtVisitor) {
+	visitor.VisitShellCmdStmt(e)
+}
+func (e ShellCmd) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("Unsafe: %v", e.Unsafe))
+	parts = append(parts, fmt.Sprintf("Dollar: %v", e.Dollar))
+	parts = append(parts, fmt.Sprintf("CmdExpr: %v", e.CmdExpr))
+	parts = append(parts, fmt.Sprintf("FailureBlock: %v", e.FailureBlock))
+	return fmt.Sprintf("ShellCmd(%s)", strings.Join(parts, ", "))
 }
 
 type Block struct {

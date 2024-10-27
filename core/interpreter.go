@@ -276,6 +276,7 @@ func (i *MainInterpreter) VisitExprStmtStmt(stmt ExprStmt) {
 }
 
 func (i *MainInterpreter) VisitSwitchBlockStmtStmt(block SwitchBlockStmt) {
+	// todo have i not implemented the parser emitting these? are blocks currently not supported accidentally?
 	i.switchI.RunBlock(block.Block)
 }
 
@@ -591,7 +592,11 @@ func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, key
 }
 
 func (i *MainInterpreter) error(token Token, message string) {
-	RP.TokenErrorExit(token, message+"\n")
+	i.errorWithCode(token, message, 1)
+}
+
+func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode int) {
+	RP.TokenErrorCodeExit(token, message+"\n", errorCode)
 }
 
 func (i *MainInterpreter) runWithChildEnv(runnable func()) {

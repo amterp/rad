@@ -19,6 +19,8 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"resource": RESOURCE,
 	"del":      DELETE,
 	"not":      NOT,
+	"unsafe":   UNSAFE,
+	"failure":  FAILURE,
 }
 
 var ARGS_BLOCK_KEYWORDS = map[string]TokenType{

@@ -79,6 +79,7 @@ func main() {
 		"JsonPathAssign         : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt        : SwitchBlock Block",
 		"SwitchAssignment       : []Token Identifiers, SwitchBlock Block",
+		"ShellCmd               : []Token Identifiers, *Token Unsafe, Token Dollar, Expr CmdExpr, *Block FailureBlock",
 		"Block			        : []Stmt Stmts",
 		"IfStmt                 : []IfCase Cases, *Block ElseBlock",
 		"IfCase                 : Token IfToken, Expr Condition, Block Body",

@@ -31,9 +31,15 @@ type Printer interface {
 	// Exits.
 	ErrorExit(msg string)
 
+	// Like ErrorExit but takes an error code.
+	ErrorExitCode(msg string, errorCode int)
+
 	// For the parser and interpreter to print errors, with a token.
 	// Exits.
 	TokenErrorExit(token Token, msg string)
+
+	// Like TokenErrorExit but takes an error code.
+	TokenErrorCodeExit(token Token, msg string, errorCode int)
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits.
@@ -123,13 +129,22 @@ func (p *stdPrinter) PrintForShellEval(msg string) {
 }
 
 func (p *stdPrinter) ErrorExit(msg string) {
+	p.ErrorExitCode(msg, 1)
+}
+
+func (p *stdPrinter) ErrorExitCode(msg string, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
 		fmt.Fprint(p.stdErr, msg)
 	}
 	p.printShellExitIfEnabled()
+	p.errorExit(errorCode)
 }
 
 func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
+	p.TokenErrorCodeExit(token, msg, 1)
+}
+
+func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
 		if token == nil {
 			fmt.Fprint(p.stdErr, msg)
@@ -141,13 +156,13 @@ func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
 		}
 	}
 	p.printShellExitIfEnabled()
-	p.exit()
+	p.errorExit(errorCode)
 }
 
 func (p *stdPrinter) RadErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
 	p.printShellExitIfEnabled()
-	p.exit()
+	p.errorExit(1)
 }
 
 func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
@@ -165,7 +180,7 @@ func (p *stdPrinter) UsageErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
 	p.cmd.Usage()
 	p.printShellExitIfEnabled()
-	p.exit()
+	p.errorExit(1)
 }
 
 func (p *stdPrinter) GetStdWriter() io.Writer {
@@ -184,11 +199,11 @@ func (p *stdPrinter) printShellExitIfEnabled() {
 	}
 }
 
-func (p *stdPrinter) exit() {
+func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
 		panic("Stacktrace because --RAD-DEBUG is enabled")
 	} else {
-		RExit(1)
+		RExit(errorCode)
 	}
 }
 

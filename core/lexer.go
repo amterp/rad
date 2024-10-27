@@ -153,6 +153,8 @@ func (l *Lexer) scanToken() {
 		}
 	case '@':
 		l.addToken(AT)
+	case '$':
+		l.addToken(DOLLAR)
 	case '#':
 		if l.match('!') && l.lineCharIndex == 2 {
 			l.lexShebang()
