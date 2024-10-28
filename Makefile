@@ -2,6 +2,7 @@
 
 # Directories
 OUTPUT_DIR := ./core
+BIN_DIR := ./bin
 
 # Commands
 GOFMT := gofmt -w
@@ -19,6 +20,7 @@ format: generate
 	@echo "Formatting generated files..."
 	@find $(OUTPUT_DIR) -name 'gen_*.go' -exec $(GOFMT) {} +
 
-build: format
+build:
 	@echo "Building the project..."
-	@$(GO) build ./...
+	@mkdir -p $(BIN_DIR)
+	@$(GO) build -o $(BIN_DIR)/radd
