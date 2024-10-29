@@ -1,0 +1,37 @@
+#!/usr/bin/env radd
+---
+Bumps the version in rad, creates a commit, tags it, and optionally pushes it
+
+Bumps the version in rad, creates a commit, tags it, and optionally pushes it
+This will trigger a GitHub action to create a homebrew-rad PR with the new version
+---
+args:
+    new_version string # The new release version to bump to
+    push p bool # Whether or not a push should also be performed
+
+// Build & test
+err = $`./push.rad --no-push`
+failure:
+    print("Failed to build and test! ❌")
+    exit(err)
+
+// Update Version in ./core/cobra_root.go
+err = $`sed -i '' "s/Version: \\".*\\"/Version: \\"{new_version}\\"/" ./core/cobra_root.go`
+failure:
+    print("Failed to update version in code! ❌")
+    exit(err)
+
+unsafe $`git add ./core/cobra_root.go`
+unsafe $`git commit -m "Bump version to {new_version}"`
+unsafe $`git tag -a "{new_version}" -m "Bump version to {new_version}"`
+
+if push:
+    err = $`./push.rad`
+    failure:
+        print("Failed to push! ❌")
+        exit(err)
+else:
+    print("Tagged, not pushing...")
+    print("Run 'git push origin main --tags' to push the tag")
+
+print("✅ Finished!")
