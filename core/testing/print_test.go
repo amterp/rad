@@ -188,3 +188,12 @@ pprint(a)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestPrint_CanPrintEmojis(t *testing.T) {
+	rsl := `
+print("👋")`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "👋\n")
+	assertNoErrors(t)
+	resetTestState()
+}

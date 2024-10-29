@@ -7,7 +7,7 @@ import (
 )
 
 type Lexer struct {
-	source                 string
+	source                 []rune
 	start                  int   // index of start of the current lexeme (0 indexed)
 	next                   int   // index of next character to be read (0 indexed)
 	lineIndex              int   // current line number (1 indexed)
@@ -21,8 +21,9 @@ type Lexer struct {
 }
 
 func NewLexer(source string) *Lexer {
+	runes := []rune(source)
 	return &Lexer{
-		source:                 source,
+		source:                 runes,
 		start:                  0,
 		next:                   0,
 		lineIndex:              1,
@@ -43,7 +44,7 @@ func (l *Lexer) Lex() []Token {
 
 	// emit dedent tokens for any remaining indents
 	for i := len(l.indentStack) - 1; i > 0; i-- {
-		lexeme := l.source[l.next:l.next]
+		lexeme := string(l.source[l.next:l.next])
 		token := NewToken(DEDENT, lexeme, l.next, l.lineIndex, l.lineCharIndex)
 		l.Tokens = append(l.Tokens, token)
 	}
@@ -201,7 +202,7 @@ func (l *Lexer) scanToken() {
 }
 
 func (l *Lexer) advance() rune {
-	r := rune(l.source[l.next])
+	r := l.source[l.next]
 	if r == '\n' {
 		l.lineIndex++
 		l.lineCharIndex = 0
@@ -339,7 +340,7 @@ func (l *Lexer) lexNumber() {
 		}
 	}
 
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 
 	if isFloat {
 		literal, err := strconv.ParseFloat(lexeme, 64)
@@ -364,7 +365,7 @@ func (l *Lexer) lexIdentifier() {
 		nextChar = l.peek()
 	}
 
-	text := l.source[l.start:l.next]
+	text := l.currentLexeme()
 
 	if text == "true" {
 		l.addBoolLiteralToken(true)
@@ -403,7 +404,7 @@ func (l *Lexer) lexArgComment() {
 		l.advance()
 	}
 
-	value := strings.TrimSpace(l.source[l.start+1 : l.next])
+	value := strings.TrimSpace(string(l.source[l.start+1 : l.next]))
 	l.addArgCommentLiteralToken(&value)
 }
 
@@ -489,48 +490,52 @@ func (l *Lexer) lexJsonPathElement() {
 	l.addJsonPathElementToken(value, includesBrackets)
 }
 
+func (l *Lexer) currentLexeme() string {
+	return string(l.source[l.start:l.next])
+}
+
 func (l *Lexer) addToken(tokenType TokenType) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewToken(tokenType, lexeme, l.start, l.lineIndex, l.lineCharIndex)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addStringLiteralToken(literal string, followedByInlineExpr bool) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	fullString := ""
 	if l.inStringStartIndex != -1 {
-		fullString = l.source[l.inStringStartIndex : l.next-1]
+		fullString = string(l.source[l.inStringStartIndex : l.next-1])
 	}
 	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal, followedByInlineExpr, fullString)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addIntLiteralToken(literal int64) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addFloatLiteralToken(literal float64) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewFloatLiteralToken(FLOAT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addBoolLiteralToken(literal bool) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewBoolLiteralToken(BOOL_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addFileHeaderToken(oneLiner *string, rest *string) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewFileHeaderToken(FILE_HEADER, lexeme, l.start, l.lineIndex, l.lineCharIndex, *oneLiner, rest)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) addArgCommentLiteralToken(comment *string) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewArgCommentToken(ARG_COMMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, comment)
 	l.Tokens = append(l.Tokens, token)
 }
@@ -551,7 +556,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 
 	if numWhitespaces > l.indentStack[len(l.indentStack)-1] {
 		l.indentStack = append(l.indentStack, numWhitespaces)
-		lexeme := l.source[l.start:l.next]
+		lexeme := l.currentLexeme()
 		token := NewToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
 		l.Tokens = append(l.Tokens, token)
 		return
@@ -559,7 +564,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 
 	for numWhitespaces < l.indentStack[len(l.indentStack)-1] {
 		l.indentStack = l.indentStack[:len(l.indentStack)-1]
-		lexeme := l.source[l.start:l.next]
+		lexeme := l.currentLexeme()
 		token := NewToken(DEDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
 		l.Tokens = append(l.Tokens, token)
 	}
@@ -572,13 +577,13 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 }
 
 func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	token := NewJsonPathElementToken(lexeme, l.start, l.lineIndex, l.lineCharIndex, jsonPathElement, isArray)
 	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) error(message string) {
-	lexeme := l.source[l.start:l.next]
+	lexeme := l.currentLexeme()
 	lexeme = strings.ReplaceAll(lexeme, "\n", "\\n") // todo, instead should maybe just write the last line?
 	lineStart := l.lineCharIndex - (l.next - l.start - 1)
 	RP.ErrorExit(fmt.Sprintf("Error at L%d/%d on '%s': %s\n", l.lineIndex, lineStart, lexeme, message))
