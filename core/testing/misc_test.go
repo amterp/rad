@@ -30,3 +30,17 @@ for _, _ in a:
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestMisc_CanHaveNegativeNumbers(t *testing.T) {
+	rsl := `
+a = -10
+print(a)
+b = -20.2
+print(b)
+print("{-12}")
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "-10\n-20.2\n-12\n")
+	assertNoErrors(t)
+	resetTestState()
+}

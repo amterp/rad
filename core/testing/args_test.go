@@ -8,7 +8,7 @@ args:
     foo "bar" x string`
 )
 
-func TestArgApiRename(t *testing.T) {
+func TestArgs_ApiRename(t *testing.T) {
 	rsl := setupArgRsl + `
 print(foo)
 `
@@ -20,7 +20,7 @@ print(foo)
 	resetTestState()
 }
 
-func TestArgApiRenameUsageString(t *testing.T) {
+func TestArgs_ApiRenameUsageString(t *testing.T) {
 	setupAndRunCode(t, setupArgRsl, "-h")
 	expected := `Usage:
   test <bar> [flags]
@@ -33,7 +33,7 @@ Flags:
 	resetTestState()
 }
 
-func TestPrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
+func TestArgs_PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
 	rsl := `
 args:
 	mandatory string
@@ -52,7 +52,7 @@ Flags:
 	resetTestState()
 }
 
-func TestInvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
+func TestArgs_InvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
 	rsl := `
 args:
 	optionalS string?
@@ -67,7 +67,7 @@ print('hi')
 	resetTestState()
 }
 
-func TestErrorsIfSomeRequiredArgsMissing(t *testing.T) {
+func TestArgs_ErrorsIfSomeRequiredArgsMissing(t *testing.T) {
 	rsl := `
 args:
 	mandatory1 string
@@ -153,6 +153,51 @@ BOB
 3
 3.2
 true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanHaveNegativeIntDefault(t *testing.T) {
+	rsl := `
+args:
+	intArg int = -10
+print(intArg + 1)
+`
+	setupAndRunCode(t, rsl)
+	expected := `-9
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanHaveNegativeFloatDefault(t *testing.T) {
+	rsl := `
+args:
+	floatArg float = -10.2
+print(floatArg + 1)
+`
+	setupAndRunCode(t, rsl)
+	expected := `-9.2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanHaveSeveralMinuses(t *testing.T) {
+	rsl := `
+args:
+	intArg int = --- 10
+	floatArg float = -------10.2
+print(intArg + 1)
+print(floatArg + 1)
+`
+	setupAndRunCode(t, rsl)
+	expected := `-9
+-9.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

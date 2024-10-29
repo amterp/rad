@@ -21,10 +21,16 @@ func (l *LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) in
 }
 
 func (l *LiteralInterpreter) VisitIntLiteralLiteral(literal IntLiteral) interface{} {
+	if literal.IsNegative {
+		return -literal.Value.Literal
+	}
 	return literal.Value.Literal
 }
 
 func (l *LiteralInterpreter) VisitFloatLiteralLiteral(literal FloatLiteral) interface{} {
+	if literal.IsNegative {
+		return -literal.Value.Literal
+	}
 	return literal.Value.Literal
 }
 

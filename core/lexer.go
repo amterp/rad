@@ -140,12 +140,8 @@ func (l *Lexer) scanToken() {
 			l.addToken(PLUS)
 		}
 	case '-':
-		if l.matchString("--") {
-			if !l.match('\n') {
-				l.error("Expected newline after triple quote")
-			} else {
-				l.lexFileHeader()
-			}
+		if l.matchString("--") && l.match('\n') {
+			l.lexFileHeader()
 		} else if l.match('=') {
 			l.addToken(MINUS_EQUAL)
 		} else {

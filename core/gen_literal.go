@@ -31,7 +31,8 @@ func (e StringLiteral) String() string {
 }
 
 type IntLiteral struct {
-	Value IntLiteralToken
+	Value      IntLiteralToken
+	IsNegative bool
 }
 
 func (e IntLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -40,11 +41,13 @@ func (e IntLiteral) Accept(visitor LiteralVisitor) interface{} {
 func (e IntLiteral) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
+	parts = append(parts, fmt.Sprintf("IsNegative: %v", e.IsNegative))
 	return fmt.Sprintf("IntLiteral(%s)", strings.Join(parts, ", "))
 }
 
 type FloatLiteral struct {
-	Value FloatLiteralToken
+	Value      FloatLiteralToken
+	IsNegative bool
 }
 
 func (e FloatLiteral) Accept(visitor LiteralVisitor) interface{} {
@@ -53,6 +56,7 @@ func (e FloatLiteral) Accept(visitor LiteralVisitor) interface{} {
 func (e FloatLiteral) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Value: %v", e.Value))
+	parts = append(parts, fmt.Sprintf("IsNegative: %v", e.IsNegative))
 	return fmt.Sprintf("FloatLiteral(%s)", strings.Join(parts, ", "))
 }
 

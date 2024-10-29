@@ -1,0 +1,31 @@
+#!/usr/bin/env radd
+---
+Performs some pre-pushing steps such as build, test, and then pushes if all good.
+---
+args:
+  branch b string = "main" # The branch to push to
+  no_push "no-push" n bool = false # Skip the pushing step'
+
+print("Building...")
+code = $`go build main.go`
+failure:
+    print("Build failed ❌")
+    exit(code)
+
+// Run tests many times to ensure no flakiness
+print("✅ Testing...")
+code = $`go test ./core/testing -count 50`
+failure:
+    print("Tests failed ❌")
+    exit(code)
+
+if no_push:
+    exit(0)
+
+print("✅ Pushing...")
+code = $`git push origin "{branch}" --tags`
+failure:
+    print("Push failed ❌")
+    exit(code)
+
+print("✅ Pushed!")

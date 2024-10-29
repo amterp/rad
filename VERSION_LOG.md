@@ -2,7 +2,9 @@
 
 Only for major & minor version releases. Contains only notable items.
 
-## 0.4 (in progress)
+## 0.5
+
+## 0.4
 
 - `exit` function
 - Allow output pass-through in `rad` blocks

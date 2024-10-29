@@ -1019,26 +1019,38 @@ func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 		return p.stringLiteral(), true
 	}
 
-	if p.peekType(INT_LITERAL) {
-		if expectedType != nil && *expectedType != ArgIntT {
-			p.error("Expected int literal")
-		}
-		return p.intLiteral(), true
-	}
-
-	if p.peekType(FLOAT_LITERAL) {
-		if expectedType != nil && *expectedType != ArgFloatT {
-			p.error("Expected float literal")
-		}
-		return p.floatLiteral(), true
-	}
-
 	// todo need to emit bool literal tokens
 	if p.peekType(BOOL_LITERAL) {
 		if expectedType != nil && *expectedType != ArgBoolT {
 			p.error("Expected bool literal")
 		}
 		return p.boolLiteral(), true
+	}
+
+	numMinuses := 0
+
+	for p.peekType(MINUS) || p.peekType(PLUS) {
+		if p.matchAny(MINUS) {
+			numMinuses += 1
+		} else {
+			p.matchAny(PLUS)
+		}
+	}
+
+	isNegative := numMinuses%2 == 1
+
+	if p.peekType(INT_LITERAL) {
+		if expectedType != nil && *expectedType != ArgIntT {
+			p.error("Expected int literal")
+		}
+		return p.intLiteral(isNegative), true
+	}
+
+	if p.peekType(FLOAT_LITERAL) {
+		if expectedType != nil && *expectedType != ArgFloatT {
+			p.error("Expected float literal")
+		}
+		return p.floatLiteral(isNegative), true
 	}
 
 	return nil, false
@@ -1082,7 +1094,7 @@ func (p *Parser) inlineExpr() InlineExpr {
 		}
 
 		if p.peekType(FLOAT_LITERAL) {
-			width := p.floatLiteral()
+			width := p.floatLiteral(false)
 			rslFormatting.WriteString(width.Value.GetLexeme())
 			goFormatting.WriteString(width.Value.GetLexeme())
 
@@ -1098,7 +1110,7 @@ func (p *Parser) inlineExpr() InlineExpr {
 
 			if p.peekType(INT_LITERAL) {
 				// could be padding width or precision, if dot preceded
-				intLiteral := p.intLiteral()
+				intLiteral := p.intLiteral(false)
 				rslFormatting.WriteString(intLiteral.Value.GetLexeme())
 				goFormatting.WriteString(intLiteral.Value.GetLexeme())
 			} else if isFloatFormat {
@@ -1131,14 +1143,14 @@ func (p *Parser) inlineExpr() InlineExpr {
 	}
 }
 
-func (p *Parser) intLiteral() IntLiteral {
+func (p *Parser) intLiteral(isNegativeViaOtherTokens bool) IntLiteral {
 	literal := p.consume(INT_LITERAL, "Expected int literal").(*IntLiteralToken)
-	return IntLiteral{Value: *literal}
+	return IntLiteral{Value: *literal, IsNegative: isNegativeViaOtherTokens}
 }
 
-func (p *Parser) floatLiteral() FloatLiteral {
+func (p *Parser) floatLiteral(isNegativeViaOtherTokens bool) FloatLiteral {
 	literal := p.consume(FLOAT_LITERAL, "Expected float literal").(*FloatLiteralToken)
-	return FloatLiteral{Value: *literal}
+	return FloatLiteral{Value: *literal, IsNegative: isNegativeViaOtherTokens}
 }
 
 func (p *Parser) boolLiteral() BoolLiteral {
