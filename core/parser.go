@@ -481,6 +481,7 @@ func (p *Parser) ifCase() IfCase {
 
 func (p *Parser) block() Block {
 	var stmts []Stmt
+	p.consumeNewlines()
 	for !p.matchAny(DEDENT) {
 		stmts = append(stmts, p.statement())
 		p.consumeNewlines()
@@ -1266,20 +1267,63 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 		unsafeToken = &token
 	}
 	dollarToken := p.consume(DOLLAR, "Expected '$' to start shell command")
+
+	var bangToken *Token
+	if p.matchAny(EXCLAMATION) {
+		token := p.previous()
+		bangToken = &token
+	}
+
 	shellCmdExpr := p.expr(1)
 
 	p.consumeNewlines()
-	var failureBlock *Block
 
-	if p.matchKeyword(GLOBAL_KEYWORDS, FAILURE) {
-		p.consume(COLON, "Expected ':' after failure keyword")
+	var failBlock *Block
+	if p.matchKeyword(GLOBAL_KEYWORDS, FAIL) {
+		p.consume(COLON, "Expected ':' after fail keyword")
 		p.consumeNewlines()
 		if p.matchAny(INDENT) {
 			b := p.block()
-			failureBlock = &b
+			failBlock = &b
 		}
-	} else if unsafeToken == nil {
-		p.error("Expected 'failure' block for non-unsafe shell command")
+	}
+
+	var recoverBlock *Block
+	if p.matchKeyword(GLOBAL_KEYWORDS, RECOVER) {
+		p.consume(COLON, "Expected ':' after recover keyword")
+		p.consumeNewlines()
+		if p.matchAny(INDENT) {
+			b := p.block()
+			recoverBlock = &b
+		}
+	}
+
+	if bangToken != nil && failBlock != nil {
+		p.error("Critical shell command (!) cannot have a 'fail' block")
+	}
+
+	if bangToken != nil && recoverBlock != nil {
+		p.error("Critical shell command (!) cannot have a 'recover' block")
+	}
+
+	if bangToken != nil && unsafeToken != nil {
+		p.error("Critical shell command (!) cannot also be 'unsafe'")
+	}
+
+	if unsafeToken != nil && failBlock != nil {
+		p.error("unsafe shell command cannot have a 'fail' block")
+	}
+
+	if unsafeToken != nil && recoverBlock != nil {
+		p.error("unsafe shell command cannot have a 'recover' block")
+	}
+
+	if failBlock != nil && recoverBlock != nil {
+		p.error("Cannot have both 'fail' and 'recover' blocks for shell command")
+	}
+
+	if bangToken == nil && failBlock == nil && recoverBlock == nil && unsafeToken == nil {
+		p.error("Expected unsafe shell command to have either a 'fail' or a 'recover' block")
 	}
 
 	return &ShellCmd{
@@ -1287,7 +1331,9 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 		Unsafe:       unsafeToken,
 		Dollar:       dollarToken,
 		CmdExpr:      shellCmdExpr,
-		FailureBlock: failureBlock,
+		Bang:         bangToken,
+		FailBlock:    failBlock,
+		RecoverBlock: recoverBlock,
 	}
 }
 

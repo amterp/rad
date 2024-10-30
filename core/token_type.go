@@ -79,7 +79,8 @@ const (
 	NOT      TokenType = "NOT"
 	NOT_IN   TokenType = "NOT_IN"
 	UNSAFE   TokenType = "UNSAFE"
-	FAILURE  TokenType = "FAILURE"
+	FAIL     TokenType = "FAIL"
+	RECOVER  TokenType = "RECOVER"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

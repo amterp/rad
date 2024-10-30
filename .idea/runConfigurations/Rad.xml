@@ -2,7 +2,7 @@
   <configuration default="false" name="Rad" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="2rad" />
     <working_directory value="$PROJECT_DIR$" />
-    <parameters value="$PROJECT_DIR$/../rad-cases/mug/roborelease.rad 1" />
+    <parameters value="test.rad" />
     <kind value="PACKAGE" />
     <package value="rad" />
     <directory value="$PROJECT_DIR$" />

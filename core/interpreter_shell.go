@@ -42,7 +42,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	if captureStdout {
 		stdoutPipe, err = cmd.StdoutPipe()
 		if err != nil {
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stdout pipe: %v", err), shellCmd.Unsafe, shellCmd.FailureBlock)
+			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stdout pipe: %v", err), shellCmd)
 		}
 	} else {
 		cmd.Stdout = RIo.StdOut
@@ -51,14 +51,14 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	if captureStderr {
 		stderrPipe, err = cmd.StderrPipe()
 		if err != nil {
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stderr pipe: %v", err), shellCmd.Unsafe, shellCmd.FailureBlock)
+			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stderr pipe: %v", err), shellCmd)
 		}
 	} else {
 		cmd.Stderr = RIo.StdErr
 	}
 
 	if err := cmd.Start(); err != nil {
-		handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error starting command: %v", err), shellCmd.Unsafe, shellCmd.FailureBlock)
+		handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error starting command: %v", err), shellCmd)
 	}
 
 	if captureStdout || captureStderr {
@@ -83,7 +83,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		err = cmd.Wait()
 		if pipeErr := <-errCh; pipeErr != nil {
 			RP.RadDebug("pipe error")
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command:\n%s", pipeErr.Error()), shellCmd.Unsafe, shellCmd.FailureBlock)
+			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command:\n%s", pipeErr.Error()), shellCmd)
 			return
 		}
 	} else {
@@ -94,10 +94,10 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
 			RP.RadDebug("exit error with error code")
-			handleError(i, identifiers, stdout, stderr, exitErr.ExitCode(), fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd.Unsafe, shellCmd.FailureBlock)
+			handleError(i, identifiers, stdout, stderr, exitErr.ExitCode(), fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
 		} else {
 			RP.RadDebug("exit error without error code")
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd.Unsafe, shellCmd.FailureBlock)
+			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
 		}
 		return
 	}
@@ -112,20 +112,30 @@ func handleError(
 	stderr bytes.Buffer,
 	errorCode int,
 	err string,
-	unsafe *Token,
-	failureBlock *Block,
+	cmd ShellCmd,
 ) {
 	defineIdentifiers(i, identifiers, stdout, stderr, errorCode)
 
-	if unsafe == nil {
-		if failureBlock != nil {
-			failureBlock.Accept(i)
-		} else {
-			RP.ErrorExitCode(err, errorCode)
-		}
-	} else {
-		// unsafe is defined, in which case we just print the error and move on
+	if cmd.Bang != nil {
+		// Critical command, exit
+		RP.ErrorExitCode(err, errorCode)
+	}
+
+	if cmd.FailBlock != nil {
+		cmd.FailBlock.Accept(i)
+		RP.ErrorExitCode(err, errorCode)
+	}
+
+	if cmd.RecoverBlock != nil {
+		cmd.RecoverBlock.Accept(i)
+		return
+	}
+
+	if cmd.Unsafe != nil {
 		RP.RadInfo(err)
+		return
+	} else {
+		i.error(cmd.Dollar, fmt.Sprintf("Bug! non-unsafe, non-critical shell command without fail or recover block. %s", err))
 	}
 }
 
