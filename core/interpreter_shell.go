@@ -82,6 +82,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 
 		err = cmd.Wait()
 		if pipeErr := <-errCh; pipeErr != nil {
+			RP.RadDebug("pipe error")
 			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command:\n%s", pipeErr.Error()), shellCmd.Unsafe, shellCmd.FailureBlock)
 			return
 		}
@@ -92,8 +93,10 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
+			RP.RadDebug("exit error with error code")
 			handleError(i, identifiers, stdout, stderr, exitErr.ExitCode(), fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd.Unsafe, shellCmd.FailureBlock)
 		} else {
+			RP.RadDebug("exit error without error code")
 			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd.Unsafe, shellCmd.FailureBlock)
 		}
 		return

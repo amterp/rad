@@ -179,3 +179,76 @@ rad url:
   http 5xx:
     // handling for server-side error
 ```
+
+## 2024-10-30
+
+```
+// if this fails, we log the error, and proceed
+unsafe $`ls -l`
+```
+
+```
+// if this fails, we log the error, and end the script
+$!`ls -l`
+```
+
+^ This syntax is not super self-explanatory (exclamation point is used as a non-null assertion in some languages, but it's not super widespread)
+It may also be easy to miss that there's an exclamation point
+But, maybe these shell stmts will be so common that people quickly get used to it and it'll be valuable for the syntax to be terse
+
+```
+// illegal syntax -- needs one of: unsafe, !, fail:, recover: (see below)
+$`ls -l`
+```
+
+```
+err = $`ls -l`
+recover:
+    // this block will run if the command failed.
+    // after the block finishes, the script CONTINUES.
+```
+
+```
+err = $`ls -l`
+fail:
+    // this block will run if the command failed.
+    // after the block finishes, the script EXITS.
+```
+
+```
+// invalid syntax -- only one of 'fail' or 'recover' allowed
+err = $`ls -l`
+fail:
+    // fail block
+recover:
+    // recover block
+```
+
+Alternatively, share a preceding keyword:
+
+```
+err = $`ls -l`
+catch recover:
+    // same as recover above
+
+// OR
+
+err = $`ls -l`
+catch fail:
+    // same as fail above
+```
+
+^ I don't think 'catch' works here, as 'catch fail' doesn't naturally read as 'catch, then fail after this', instead it can be read as another way to say 'recover'. The two separate blocks is probably best.
+
+---
+
+Some thoughts, probably not but still here for the record:
+
+```
+err = $`ls -l`
+retry 3, i:  // < i is a variable for the attempt #
+    // this block will run if the command failed.
+    // it will retry up to 3 times, rerunning the command and this block if it continues to fail
+    // unclear what happens after 3 tries -- option to exit or continue the script? maybe we shouldn't offer this,
+    // let users write their own retry algos. although, it'd be nice to solve for them if there're enough such use cases
+```

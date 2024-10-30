@@ -222,7 +222,7 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 		return false
 	}
 
-	nextRune := rune(l.source[l.next])
+	nextRune := l.source[l.next]
 	for _, r := range expected {
 		if nextRune == r {
 			if nextRune == '\n' {
@@ -454,6 +454,12 @@ func (l *Lexer) lexSpaceIndent() {
 		return
 	}
 	l.emitIndentTokens(numSpaces, true)
+	if l.next == l.start {
+		// prior to going in here, we rewound to get the indentation parsing correct
+		// if we're still at the same spot, it means we didn't have anything to parse and thus advance us forward,
+		// so we just wanna undo the rewind
+		l.next++
+	}
 }
 
 func (l *Lexer) lexTabIndent() {
