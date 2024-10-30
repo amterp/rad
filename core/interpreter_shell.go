@@ -13,7 +13,7 @@ import (
 //  - implement mocking shell responses, like with json requests
 //  - colors currently get lost (sometimes?)
 //  - tests!
-//  - improve error output
+//  - improve error output, especially when stderr is not captured, because that prints first then, before Rad handles it
 //  - quiet keyword
 
 func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {

@@ -10,26 +10,23 @@ args:
     push p bool # Whether or not a push should also be performed
 
 // Build & test
-err = $`./push.rad --no-push`
-failure:
+$`./push.rad --no-push`
+fail:
     print("Failed to build and test! ❌")
-    exit(err)
 
 // Update Version in ./core/cobra_root.go
-err = $`sed -i '' "s/Version: \\".*\\"/Version: \\"{new_version}\\"/" ./core/cobra_root.go`
-failure:
+$`sed -i '' "s/Version: \\".*\\"/Version: \\"{new_version}\\"/" ./core/cobra_root.go`
+fail:
     print("Failed to update version in code! ❌")
-    exit(err)
 
-unsafe $`git add ./core/cobra_root.go`
-unsafe $`git commit -m "Bump version to {new_version}"`
-unsafe $`git tag -a "{new_version}" -m "Bump version to {new_version}"`
+$!`git add ./core/cobra_root.go`
+$!`git commit -m "Bump version to {new_version}"`
+$!`git tag -a "{new_version}" -m "Bump version to {new_version}"`
 
 if push:
-    err = $`./push.rad`
-    failure:
+    $`./push.rad`
+    fail:
         print("Failed to push! ❌")
-        exit(err)
 else:
     print("Tagged, not pushing...")
     print("Run 'git push origin main --tags' to push the tag")

@@ -7,25 +7,22 @@ args:
   no_push "no-push" n bool = false # Skip the pushing step'
 
 print("Building...")
-code = $`go build main.go`
-failure:
+$`go build main.go`
+fail:
     print("Build failed ❌")
-    exit(code)
 
 // Run tests many times to ensure no flakiness
 print("✅ Testing...")
-code = $`go test ./core/testing -count 50`
-failure:
+$`go test ./core/testing -count 50`
+fail:
     print("Tests failed ❌")
-    exit(code)
 
 if no_push:
     exit(0)
 
 print("✅ Pushing...")
-code = $`git push origin "{branch}" --tags`
-failure:
+$`git push origin "{branch}" --tags`
+fail:
     print("Push failed ❌")
-    exit(code)
 
 print("✅ Pushed!")
