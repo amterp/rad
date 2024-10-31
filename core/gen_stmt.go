@@ -30,6 +30,7 @@ type StmtVisitor interface {
 	VisitBreakStmtStmt(BreakStmt)
 	VisitContinueStmtStmt(ContinueStmt)
 	VisitDeleteStmtStmt(DeleteStmt)
+	VisitDeferStmtStmt(DeferStmt)
 }
 type Empty struct {
 }
@@ -338,4 +339,21 @@ func (e DeleteStmt) String() string {
 	parts = append(parts, fmt.Sprintf("DeleteToken: %v", e.DeleteToken))
 	parts = append(parts, fmt.Sprintf("Vars: %v", e.Vars))
 	return fmt.Sprintf("DeleteStmt(%s)", strings.Join(parts, ", "))
+}
+
+type DeferStmt struct {
+	DeferToken    Token
+	DeferredStmt  *Stmt
+	DeferredBlock *Block
+}
+
+func (e DeferStmt) Accept(visitor StmtVisitor) {
+	visitor.VisitDeferStmtStmt(e)
+}
+func (e DeferStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("DeferToken: %v", e.DeferToken))
+	parts = append(parts, fmt.Sprintf("DeferredStmt: %v", e.DeferredStmt))
+	parts = append(parts, fmt.Sprintf("DeferredBlock: %v", e.DeferredBlock))
+	return fmt.Sprintf("DeferStmt(%s)", strings.Join(parts, ", "))
 }

@@ -22,6 +22,7 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"unsafe":   UNSAFE,
 	"fail":     FAIL,
 	"recover":  RECOVER,
+	"defer":    DEFER,
 }
 
 var ARGS_BLOCK_KEYWORDS = map[string]TokenType{

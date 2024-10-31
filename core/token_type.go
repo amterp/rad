@@ -81,6 +81,7 @@ const (
 	UNSAFE   TokenType = "UNSAFE"
 	FAIL     TokenType = "FAIL"
 	RECOVER  TokenType = "RECOVER"
+	DEFER    TokenType = "DEFER"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

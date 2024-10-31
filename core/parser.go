@@ -272,6 +272,10 @@ func (p *Parser) statement() Stmt {
 		return p.deleteStmt()
 	}
 
+	if p.peekKeyword(GLOBAL_KEYWORDS, DEFER) {
+		return p.deferStmt()
+	}
+
 	if p.isShellCmdNext() {
 		return p.shellCmd([]Token{})
 	}
@@ -460,8 +464,6 @@ func (p *Parser) ifStmt() IfStmt {
 			cases = append(cases, p.ifCase())
 		} else {
 			p.consume(COLON, "Expected ':' after 'else'")
-			p.consumeNewlines()
-			p.consume(INDENT, "Expected indented block after else")
 			block := p.block()
 			elseBlock = &block
 		}
@@ -473,8 +475,6 @@ func (p *Parser) ifCase() IfCase {
 	ifToken := p.consumeKeyword(GLOBAL_KEYWORDS, IF)
 	condition := p.expr(1)
 	p.consume(COLON, "Expected ':' after if condition")
-	p.consumeNewlines()
-	p.consume(INDENT, "Expected indented block after if condition")
 	block := p.block()
 	return IfCase{IfToken: ifToken, Condition: condition, Body: block}
 }
@@ -482,6 +482,7 @@ func (p *Parser) ifCase() IfCase {
 func (p *Parser) block() Block {
 	var stmts []Stmt
 	p.consumeNewlines()
+	p.consume(INDENT, "Expected indented block")
 	for !p.matchAny(DEDENT) {
 		stmts = append(stmts, p.statement())
 		p.consumeNewlines()
@@ -500,8 +501,6 @@ func (p *Parser) forStmt() ForStmt {
 	p.consumeKeyword(GLOBAL_KEYWORDS, IN)
 	rangeExpr := p.expr(1)
 	p.consume(COLON, "Expected ':' after range expression")
-	p.consumeNewlines()
-	p.consume(INDENT, "Expected indented block after for")
 	p.nestedForBlockLevel += 1
 	block := p.block()
 	p.nestedForBlockLevel -= 1
@@ -516,6 +515,17 @@ func (p *Parser) deleteStmt() Stmt {
 		vars = append(vars, p.varPath())
 	}
 	return &DeleteStmt{DeleteToken: deleteToken, Vars: vars}
+}
+
+func (p *Parser) deferStmt() Stmt {
+	deferToken := p.consumeKeyword(GLOBAL_KEYWORDS, DEFER)
+	if p.matchAny(COLON) {
+		block := p.block()
+		return &DeferStmt{DeferToken: deferToken, DeferredStmt: nil, DeferredBlock: &block}
+	} else {
+		stmt := p.statement()
+		return &DeferStmt{DeferToken: deferToken, DeferredStmt: &stmt, DeferredBlock: nil}
+	}
 }
 
 func (p *Parser) varPath() VarPath {
@@ -1282,7 +1292,7 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 	if p.matchKeyword(GLOBAL_KEYWORDS, FAIL) {
 		p.consume(COLON, "Expected ':' after fail keyword")
 		p.consumeNewlines()
-		if p.matchAny(INDENT) {
+		if p.peekType(INDENT) {
 			b := p.block()
 			failBlock = &b
 		}
@@ -1292,7 +1302,7 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 	if p.matchKeyword(GLOBAL_KEYWORDS, RECOVER) {
 		p.consume(COLON, "Expected ':' after recover keyword")
 		p.consumeNewlines()
-		if p.matchAny(INDENT) {
+		if p.peekType(INDENT) {
 			b := p.block()
 			recoverBlock = &b
 		}

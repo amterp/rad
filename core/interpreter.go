@@ -5,12 +5,13 @@ import (
 )
 
 type MainInterpreter struct {
-	env        *Env
-	LiteralI   *LiteralInterpreter
-	argBlockI  *ArgBlockInterpreter
-	radBlockI  *RadBlockInterpreter
-	switchI    *SwitchInterpreter
-	statements []Stmt
+	env           *Env
+	LiteralI      *LiteralInterpreter
+	argBlockI     *ArgBlockInterpreter
+	radBlockI     *RadBlockInterpreter
+	switchI       *SwitchInterpreter
+	statements    []Stmt
+	deferredStmts []DeferStmt
 
 	breaking   bool
 	continuing bool
@@ -18,7 +19,8 @@ type MainInterpreter struct {
 
 func NewInterpreter(statements []Stmt) *MainInterpreter {
 	i := &MainInterpreter{
-		statements: statements,
+		statements:    statements,
+		deferredStmts: make([]DeferStmt, 0),
 	}
 	i.LiteralI = NewLiteralInterpreter(i)
 	i.argBlockI = NewArgBlockInterpreter(i)
@@ -487,6 +489,10 @@ func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
 	}
 }
 
+func (i *MainInterpreter) VisitDeferStmtStmt(deferStmt DeferStmt) {
+	i.deferredStmts = append(i.deferredStmts, deferStmt)
+}
+
 func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int) (int, int) {
 	start := 0
 	end := len
@@ -503,6 +509,34 @@ func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int) (int
 	}
 
 	return start, end
+}
+
+// todo currently these execute after an error is printed. Should they execute before?
+func (i *MainInterpreter) ExecuteDeferredStmts() {
+	// execute backwards (LIFO)
+	for j := len(i.deferredStmts) - 1; j >= 0; j-- {
+		deferredStmt := i.deferredStmts[j]
+
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// we only debug log. we expect the error that occurred to already have been logged.
+					// we might also be here only because a deferred statement invoked a clean exit, for example, so
+					// this is arguably also sometimes just standard flow.
+					RP.RadDebug(fmt.Sprintf("Recovered from panic in deferred statement: %v", r))
+				}
+			}()
+
+			if deferredStmt.DeferredStmt != nil {
+				// todo why does this need to be dereferenced but not the block below?
+				(*deferredStmt.DeferredStmt).Accept(i)
+			} else if deferredStmt.DeferredBlock != nil {
+				deferredStmt.DeferredBlock.Accept(i)
+			} else {
+				i.error(deferredStmt.DeferToken, "Bug! Deferred statement should have either a statement or a block")
+			}
+		}()
+	}
 }
 
 func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isStart bool) int {

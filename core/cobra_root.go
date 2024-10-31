@@ -141,12 +141,15 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 		color.NoColor = noColorFlag
 		interpreter := NewInterpreter(instructions)
 		interpreter.InitArgs(cobraArgs)
+		registerInterpreterWithExit(interpreter)
 		interpreter.Run()
 
 		if shellFlag {
 			env := interpreter.env
 			env.PrintShellExports()
 		}
+
+		RExit(0) // explicit exit to trigger deferred statements
 	}
 
 	for _, arg := range scriptMetadata.Args {
@@ -156,6 +159,29 @@ func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetad
 
 	// hide global flags, that distract from the particular script
 	hideGlobalFlags(cmd)
+}
+
+func registerInterpreterWithExit(interpreter *MainInterpreter) {
+	existing := RExit
+	exiting := false
+	codeToExitWith := 0
+	RExit = func(code int) {
+		if exiting {
+			// we're already exiting. if we're here again, it's probably because one of the deferred
+			// statements is calling exit again (perhaps because it failed). we should keep running
+			// all the deferred statements, however, and *then* exit.
+			// therefore, we panic here in order to send the stack back up to where the deferred statement is being
+			// invoked in the interpreter, which should be wrapped in a recover() block to catch, maybe log, and move on.
+			if codeToExitWith == 0 {
+				codeToExitWith = code
+			}
+			panic(code)
+		}
+		exiting = true
+		codeToExitWith = code
+		interpreter.ExecuteDeferredStmts()
+		existing(codeToExitWith)
+	}
 }
 
 func readSource(scriptPath string) string {
