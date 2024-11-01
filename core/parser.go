@@ -402,7 +402,7 @@ func (p *Parser) radFieldsStatement() RadStmt {
 	var identifiers []Token
 	identifiers = append(identifiers, p.identifier())
 	for !p.matchAny(NEWLINE, DEDENT, EOF) {
-		p.consume(COMMA, "Expected ',' between identifiers")
+		p.consume(COMMA, "Expected ',' between identifiers for rad fields")
 		identifiers = append(identifiers, p.identifier())
 	}
 	return &Fields{Identifiers: identifiers}
@@ -428,7 +428,7 @@ func (p *Parser) radSortStatement() RadStmt {
 	var identifiers []Token
 	var directions []SortDir
 
-	for !p.matchAny(NEWLINE, DEDENT, EOF) {
+	for !p.matchAny(NEWLINE, EOF) {
 		identifiers = append(identifiers, p.identifier())
 		nextMatchesAsc = p.matchKeyword(RAD_BLOCK_KEYWORDS, ASC)
 		nextMatchesDesc = p.matchKeyword(RAD_BLOCK_KEYWORDS, DESC)
@@ -438,7 +438,7 @@ func (p *Parser) radSortStatement() RadStmt {
 		} else {
 			directions = append(directions, asc)
 		}
-		if !p.matchAny(NEWLINE) {
+		if !p.peekType(NEWLINE) {
 			p.consume(COMMA, "Expected ',' between sort fields")
 		}
 	}

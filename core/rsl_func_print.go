@@ -42,13 +42,7 @@ func resolveOutputString(values []interface{}) string {
 
 func jsonify(arg interface{}) interface{} {
 	switch coerced := arg.(type) {
-	case string:
-		return coerced
-	case int64:
-		return coerced
-	case float64:
-		return coerced
-	case bool:
+	case string, int64, float64, bool:
 		return coerced
 	case []interface{}:
 		var slice []interface{}

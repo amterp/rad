@@ -4,6 +4,10 @@ Only for major & minor version releases. Contains only notable items.
 
 ## 0.5
 
+- `defer` statements
+- Further shell command support improvements, critical shell commands
+- Emoji support
+
 ## 0.4
 
 - `exit` function

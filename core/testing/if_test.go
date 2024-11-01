@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestIfStmtTrue(t *testing.T) {
+func TestIf_True(t *testing.T) {
 	rsl := `
 a = ["a", "b", "c"]
 if len(a) > 0:
@@ -16,7 +16,7 @@ else:
 	resetTestState()
 }
 
-func TestIfStmtFalse(t *testing.T) {
+func TestIf_False(t *testing.T) {
 	rsl := `
 a = ["a", "b", "c"]
 if len(a) > 99:
@@ -30,7 +30,7 @@ else:
 	resetTestState()
 }
 
-func TestIfStmtCanRefVarDefinedOutside(t *testing.T) {
+func TestIf_CanRefVarDefinedOutside(t *testing.T) {
 	rsl := `
 name = "alice"
 if true:
@@ -42,7 +42,7 @@ if true:
 	resetTestState()
 }
 
-func TestIfStmtCanRefJsonVarDefinedOutside(t *testing.T) {
+func TestIf_CanRefJsonVarDefinedOutside(t *testing.T) {
 	rsl := `
 url = "url"
 name = json[].name
@@ -58,7 +58,7 @@ if true:
 	resetTestState()
 }
 
-func TestOr(t *testing.T) {
+func TestIf_Or(t *testing.T) {
 	rsl := `
 t = true
 f = false
@@ -73,7 +73,7 @@ else:
 	resetTestState()
 }
 
-func TestAnd(t *testing.T) {
+func TestIf_And(t *testing.T) {
 	rsl := `
 t = true
 f = false

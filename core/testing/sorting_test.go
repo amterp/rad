@@ -12,7 +12,7 @@ city = json[].city
 `
 )
 
-func TestNoSorting(t *testing.T) {
+func TestRadSort_NoSorting(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -30,7 +30,7 @@ Bob      25   Los Angeles
 	resetTestState()
 }
 
-func TestGeneralAscNoToken(t *testing.T) {
+func TestRadSort_GeneralAscNoToken(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -49,7 +49,7 @@ Charlie  30   Paris
 	resetTestState()
 }
 
-func TestGeneralAscWithToken(t *testing.T) {
+func TestRadSort_GeneralAscWithToken(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -68,7 +68,7 @@ Charlie  30   Paris
 	resetTestState()
 }
 
-func TestGeneralDesc(t *testing.T) {
+func TestRadSort_GeneralDesc(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -87,7 +87,7 @@ Alice    30   New York
 	resetTestState()
 }
 
-func TestExplicitAsc(t *testing.T) {
+func TestRadSort_ExplicitAsc(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -106,7 +106,7 @@ Charlie  30   Paris
 	resetTestState()
 }
 
-func TestDescTiebreak(t *testing.T) {
+func TestRadSort_DescTiebreak(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -125,7 +125,7 @@ Charlie  30   Paris
 	resetTestState()
 }
 
-func TestMix(t *testing.T) {
+func TestRadSort_Mix(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
@@ -144,11 +144,35 @@ Bob      40   London
 	resetTestState()
 }
 
-func TestLeavesInExtractionOrderIfNoTiebreaker(t *testing.T) {
+func TestRadSort_LeavesInExtractionOrderIfNoTiebreaker(t *testing.T) {
 	rsl := setupSortingRsl + `
 rad url:
     fields name, age, city
     sort age asc
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
+	expected := `name     age  city        
+Bob      25   Los Angeles  
+Charlie  30   Paris        
+Alice    30   New York     
+Bob      40   London       
+`
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRadSort_CanUseInIfElseBlocks(t *testing.T) {
+	rsl := setupSortingRsl + `
+if true:
+	rad url:
+		fields name, age, city
+		sort age asc
+else:
+	rad url:
+		fields name, age, city
+		sort age desc
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
 	expected := `name     age  city        
