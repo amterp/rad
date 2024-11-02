@@ -82,7 +82,6 @@ func main() {
 		"ShellCmd               : []Token Identifiers, *Token Unsafe, Token Dollar, *Token Bang, Expr CmdExpr, *Block FailBlock, *Block RecoverBlock",
 		"Block			        : []Stmt Stmts",
 		"IfStmt                 : []IfCase Cases, *Block ElseBlock",
-		"IfCase                 : Token IfToken, Expr Condition, Block Body",
 		"ForStmt			    : Token ForToken, Token Identifier1, *Token Identifier2, Expr Range, Block Body",
 		"BreakStmt			    : Token BreakToken",
 		"ContinueStmt		    : Token ContinueToken",
@@ -99,6 +98,7 @@ func main() {
 		"Fields     : []Token Identifiers",
 		"Sort	    : Token SortToken, []Token Identifiers, []SortDir Directions, *SortDir GeneralSort",
 		"FieldMods  : []Token Identifiers, []RadFieldModStmt Mods",
+		"RadIfStmt  : []RadIfCase Cases, *[]RadStmt ElseBlock",
 	})
 
 	defineAst(outputDir, "RadFieldModStmt", "", []string{

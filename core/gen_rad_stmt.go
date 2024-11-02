@@ -13,6 +13,7 @@ type RadStmtVisitor interface {
 	VisitFieldsRadStmt(Fields)
 	VisitSortRadStmt(Sort)
 	VisitFieldModsRadStmt(FieldMods)
+	VisitRadIfStmtRadStmt(RadIfStmt)
 }
 type Fields struct {
 	Identifiers []Token
@@ -59,4 +60,19 @@ func (e FieldMods) String() string {
 	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
 	parts = append(parts, fmt.Sprintf("Mods: %v", e.Mods))
 	return fmt.Sprintf("FieldMods(%s)", strings.Join(parts, ", "))
+}
+
+type RadIfStmt struct {
+	Cases     []RadIfCase
+	ElseBlock *[]RadStmt
+}
+
+func (e RadIfStmt) Accept(visitor RadStmtVisitor) {
+	visitor.VisitRadIfStmtRadStmt(e)
+}
+func (e RadIfStmt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Cases: %v", e.Cases))
+	parts = append(parts, fmt.Sprintf("ElseBlock: %v", e.ElseBlock))
+	return fmt.Sprintf("RadIfStmt(%s)", strings.Join(parts, ", "))
 }

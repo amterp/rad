@@ -301,6 +301,15 @@ func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 		p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q, preceding indented block", radType))
 	}
 
+	radStatements := p.radBlockStmts(radType)
+	// todo: we should validate, including if a field stmt is not listed but should be (based on other statements),
+	//  or if *too many* are listed. When we re-visit static analysis of rad blocks, specifically if-statements,
+	//  we add this.
+	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcToken, Stmts: radStatements}
+	return radBlock
+}
+
+func (p *Parser) radBlockStmts(radType RadBlockType) []RadStmt {
 	var radStatements []RadStmt
 	if p.peekType(COLON) || p.nextNonNewLineTokenIs(INDENT) { // todo i think this breaks if there's a newline between the colon and indent
 		if radType != Display {
@@ -316,10 +325,7 @@ func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 			p.consumeNewlines()
 		}
 	}
-
-	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcToken, Stmts: radStatements}
-	p.validateRadBlock(radBlock)
-	return radBlock
+	return radStatements
 }
 
 func (p *Parser) radStatement(radType RadBlockType) RadStmt {
@@ -335,6 +341,40 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 		return p.radSortStatement()
 	}
 
+	if p.peekKeyword(RAD_BLOCK_KEYWORDS, IF) {
+		var cases []RadIfCase
+		cases = append(cases, p.radIfCase(radType))
+		var elseBlock *[]RadStmt
+		for p.peekKeyword(RAD_BLOCK_KEYWORDS, ELSE) {
+			p.consumeKeyword(RAD_BLOCK_KEYWORDS, ELSE)
+			if p.peekKeyword(RAD_BLOCK_KEYWORDS, IF) {
+				cases = append(cases, p.radIfCase(radType))
+			} else {
+				p.consume(COLON, "Expected ':' after 'else'")
+				radStmts := p.radBlockStmts(radType)
+				elseBlock = &radStmts
+			}
+		}
+		return RadIfStmt{Cases: cases, ElseBlock: elseBlock}
+	}
+
+	// todo modifier
+	// todo table fmt
+	// todo field fmt
+	// todo filtering?
+
+	return p.radFieldMods()
+}
+
+func (p *Parser) radIfCase(radType RadBlockType) RadIfCase {
+	ifToken := p.consumeKeyword(RAD_BLOCK_KEYWORDS, IF)
+	condition := p.expr(1)
+	p.consume(COLON, "Expected ':' after rad if condition")
+	block := p.radBlockStmts(radType)
+	return RadIfCase{IfToken: ifToken, Condition: condition, Body: block}
+}
+
+func (p *Parser) radFieldMods() RadStmt {
 	identifiers := p.commaSeparatedIdentifiers()
 	p.consume(COLON, "Expected ':' to begin field modifier block")
 	p.consumeNewlines()
@@ -352,11 +392,6 @@ func (p *Parser) radStatement(radType RadBlockType) RadStmt {
 		// todo other field mod stmts
 	}
 	return &FieldMods{Identifiers: identifiers, Mods: mods}
-
-	// todo modifier
-	// todo table fmt
-	// todo field fmt
-	// todo filtering?
 }
 
 func (p *Parser) truncStmt() RadFieldModStmt {
@@ -367,35 +402,6 @@ func (p *Parser) truncStmt() RadFieldModStmt {
 func (p *Parser) colorStmt() RadFieldModStmt {
 	colorToken := p.previous()
 	return &Color{ColorToken: colorToken, ColorValue: p.expr(1), Regex: p.expr(1)}
-}
-
-func (p *Parser) validateRadBlock(radBlock *RadBlock) {
-	var reorderedStmts []RadStmt
-	hasFieldsStmt := false
-	var stmtsRequiringFields []string
-	for _, stmt := range radBlock.Stmts {
-		switch stmt := stmt.(type) {
-		case *Fields:
-			if hasFieldsStmt {
-				p.error(fmt.Sprintf("Only one 'fields' statement is allowed in a %s block", radBlock.RadType))
-			}
-			hasFieldsStmt = true
-			// move field statement to the front, so it gets processed first later
-			reorderedStmts = append([]RadStmt{stmt}, reorderedStmts...)
-		case *Sort:
-			stmtsRequiringFields = append(stmtsRequiringFields, stmt.SortToken.GetLexeme())
-			reorderedStmts = append(reorderedStmts, stmt)
-		case *FieldMods:
-			stmtsRequiringFields = append(stmtsRequiringFields, "field modifiers")
-			reorderedStmts = append(reorderedStmts, stmt)
-		default:
-			p.error(fmt.Sprintf("Bug! Unhandled statement type in rad block: %v", stmt))
-		}
-	}
-	if len(stmtsRequiringFields) > 0 && !hasFieldsStmt {
-		p.error(fmt.Sprintf("Missing 'fields' statement required by %v statements: %v",
-			radBlock.RadType, stmtsRequiringFields))
-	}
 }
 
 func (p *Parser) radFieldsStatement() RadStmt {

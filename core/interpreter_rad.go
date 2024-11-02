@@ -32,6 +32,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 		ri:               &r,
 		block:            block,
 		url:              url,
+		fields:           nil,
 		fieldsToNotPrint: strset.New(),
 		colToTruncate:    make(map[string]int64),
 		colToColor:       make(map[string][]radColorMod),
@@ -52,10 +53,11 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 }
 
 func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
-	r.invocation.fields = fields
+	r.invocation.fields = &fields
 }
 
 func (r RadBlockInterpreter) VisitFieldModsRadStmt(mods FieldMods) {
+	r.invocation.assertHasFields("field modifier")
 	modVisitor := fieldModVisitor{
 		identifiers: mods.Identifiers,
 		invocation:  r.invocation,
@@ -66,8 +68,8 @@ func (r RadBlockInterpreter) VisitFieldModsRadStmt(mods FieldMods) {
 }
 
 func (r RadBlockInterpreter) VisitSortRadStmt(sort Sort) {
+	r.invocation.assertHasFields("sort")
 	if sort.GeneralSort != nil {
-		// depend on the fact that field stmt must be the first thing in the block, and so already visited
 		for i, _ := range r.invocation.fields.Identifiers {
 			r.invocation.sorting = append(r.invocation.sorting, ColumnSort{ColIdx: i, Dir: *sort.GeneralSort})
 		}
@@ -89,13 +91,35 @@ func (r RadBlockInterpreter) VisitSortRadStmt(sort Sort) {
 	}
 }
 
+func (r RadBlockInterpreter) VisitRadIfStmtRadStmt(ifStmt RadIfStmt) {
+	for _, caseStmt := range ifStmt.Cases {
+		val := caseStmt.Condition.Accept(r.i)
+		if bval, ok := val.(bool); ok {
+			if bval {
+				for _, stmt := range caseStmt.Body {
+					stmt.Accept(r)
+				}
+				return
+			}
+		} else {
+			r.i.error(caseStmt.IfToken, fmt.Sprintf("If condition must be a boolean, got %s", TypeAsString(val)))
+		}
+	}
+
+	if ifStmt.ElseBlock != nil {
+		for _, stmt := range *ifStmt.ElseBlock {
+			stmt.Accept(r)
+		}
+	}
+}
+
 // == radInvocation ==
 
 type radInvocation struct {
 	ri               *RadBlockInterpreter
 	block            RadBlock
 	url              *string
-	fields           Fields
+	fields           *Fields
 	fieldsToNotPrint *strset.Set
 	sorting          []ColumnSort
 	colToTruncate    map[string]int64
@@ -108,14 +132,13 @@ type radColorMod struct {
 }
 
 func (r *radInvocation) execute() {
-	fields := r.fields.Identifiers
-
-	if fields == nil {
+	if r.fields == nil {
 		// todo instead of just printing, return as string and let user decide what to do with it?
 		executeRequestPassthrough(r)
 		return
 	}
 
+	fields := r.fields.Identifiers
 	if r.url != nil {
 		jsonFields := lo.Map(fields, func(field Token, _ int) JsonFieldVar {
 			return r.ri.i.env.GetJsonField(field)
@@ -196,6 +219,13 @@ func executeRequestPassthrough(r *radInvocation) {
 		} else {
 			RP.Print(data)
 		}
+	}
+}
+
+func (r *radInvocation) assertHasFields(stmtType string) {
+	if r.fields == nil {
+		r.error(fmt.Sprintf("%s statement must be preceded by a 'fields' statement", stmtType))
+		panic(UNREACHABLE)
 	}
 }
 

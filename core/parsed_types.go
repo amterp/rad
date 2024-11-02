@@ -131,3 +131,15 @@ type InlineExprFormat struct {
 	RslFormat     string
 	IsFloatFormat bool // i.e. something like '.2' has been specified, requiring decimal places
 }
+
+type IfCase struct {
+	IfToken   Token
+	Condition Expr
+	Body      Block
+}
+
+type RadIfCase struct {
+	IfToken   Token
+	Condition Expr
+	Body      []RadStmt
+}

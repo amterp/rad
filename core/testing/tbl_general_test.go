@@ -13,7 +13,7 @@ longfloat = json[].longfloat
 `
 )
 
-func TestVariousTypeLengths(t *testing.T) {
+func TestRad_VariousTypeLengths(t *testing.T) {
 	rsl := setupGenTblRsl + `
 rad url:
     fields shortint, longint, shortfloat, longfloat
@@ -28,7 +28,7 @@ rad url:
 	resetTestState()
 }
 
-func TestRequestBlock(t *testing.T) {
+func TestRad_RequestBlock(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 Name = json[].name
@@ -48,7 +48,7 @@ Ages: [30, 40, 30, 25]
 	resetTestState()
 }
 
-func TestRequestBlockComplainsIfNoUrl(t *testing.T) {
+func TestRad_RequestBlockComplainsIfNoUrl(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 Name = json[].name
@@ -61,7 +61,7 @@ request:
 	resetTestState()
 }
 
-func TestDisplayBlock(t *testing.T) {
+func TestRad_DisplayBlock(t *testing.T) {
 	rsl := `
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
@@ -79,7 +79,7 @@ Charlie  25
 	resetTestState()
 }
 
-func TestDisplayBlockErrorsIfGivenUrl(t *testing.T) {
+func TestRad_DisplayBlockErrorsIfGivenUrl(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 Name = ["Alice", "Bob", "Charlie"]
@@ -92,7 +92,7 @@ display url:
 	resetTestState()
 }
 
-func TestRequestThenDisplayBlocks(t *testing.T) {
+func TestRad_RequestThenDisplayBlocks(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 Name = json[].name
@@ -115,7 +115,7 @@ Charlie  2
 	resetTestState()
 }
 
-func TestPassthroughRadBlock(t *testing.T) {
+func TestRad_PassthroughRadBlock(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 rad url
@@ -127,6 +127,84 @@ response. woo!
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRad_CanConditionallyApplySort(t *testing.T) {
+	rsl := `
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+should_sort = true
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Name     Age 
+Alice    30   
+Bob      40   
+Charlie  25   
+Name     Age 
+Charlie  25   
+Bob      40   
+Alice    30   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRad_CanFallBackToElse(t *testing.T) {
+	rsl := `
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+	else:
+		sort Age asc
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Name     Age 
+Charlie  25   
+Alice    30   
+Bob      40   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRad_CanFallBackToElseIf(t *testing.T) {
+	rsl := `
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+	else if true:
+		sort Age asc
+	else:
+		sort Age desc
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Name     Age 
+Charlie  25   
+Alice    30   
+Bob      40   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }

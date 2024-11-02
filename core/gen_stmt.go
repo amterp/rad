@@ -25,7 +25,6 @@ type StmtVisitor interface {
 	VisitShellCmdStmt(ShellCmd)
 	VisitBlockStmt(Block)
 	VisitIfStmtStmt(IfStmt)
-	VisitIfCaseStmt(IfCase)
 	VisitForStmtStmt(ForStmt)
 	VisitBreakStmtStmt(BreakStmt)
 	VisitContinueStmtStmt(ContinueStmt)
@@ -260,23 +259,6 @@ func (e IfStmt) String() string {
 	parts = append(parts, fmt.Sprintf("Cases: %v", e.Cases))
 	parts = append(parts, fmt.Sprintf("ElseBlock: %v", e.ElseBlock))
 	return fmt.Sprintf("IfStmt(%s)", strings.Join(parts, ", "))
-}
-
-type IfCase struct {
-	IfToken   Token
-	Condition Expr
-	Body      Block
-}
-
-func (e IfCase) Accept(visitor StmtVisitor) {
-	visitor.VisitIfCaseStmt(e)
-}
-func (e IfCase) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("IfToken: %v", e.IfToken))
-	parts = append(parts, fmt.Sprintf("Condition: %v", e.Condition))
-	parts = append(parts, fmt.Sprintf("Body: %v", e.Body))
-	return fmt.Sprintf("IfCase(%s)", strings.Join(parts, ", "))
 }
 
 type ForStmt struct {
