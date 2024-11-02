@@ -203,3 +203,27 @@ print(floatArg + 1)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestArgs_CanHaveIntAsDefaultForFloatArg(t *testing.T) {
+	rsl := `
+args:
+	floatArg float = 2
+print(floatArg + 1.2)
+`
+	setupAndRunCode(t, rsl)
+	expected := `3.2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CannotHaveFloatAsDefaultForIntArg(t *testing.T) {
+	rsl := `
+args:
+	intArg int = 1.2
+`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "RslError at L3/18 on '1.2': Expected int literal, got float\n")
+	resetTestState()
+}

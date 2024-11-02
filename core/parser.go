@@ -1031,7 +1031,7 @@ func (p *Parser) literalOrArray(expectedType *RslArgTypeT) (LiteralOrArray, bool
 func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 	if p.peekType(STRING_LITERAL) {
 		if expectedType != nil && *expectedType != ArgStringT {
-			p.error("Expected string literal (arg)")
+			p.error(fmt.Sprintf("Expected %s literal, got string", expectedType.AsString()))
 		}
 		return p.stringLiteral(), true
 	}
@@ -1039,7 +1039,7 @@ func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 	// todo need to emit bool literal tokens
 	if p.peekType(BOOL_LITERAL) {
 		if expectedType != nil && *expectedType != ArgBoolT {
-			p.error("Expected bool literal")
+			p.error(fmt.Sprintf("Expected %s literal, got bool", expectedType.AsString()))
 		}
 		return p.boolLiteral(), true
 	}
@@ -1057,15 +1057,15 @@ func (p *Parser) literal(expectedType *RslArgTypeT) (Literal, bool) {
 	isNegative := numMinuses%2 == 1
 
 	if p.peekType(INT_LITERAL) {
-		if expectedType != nil && *expectedType != ArgIntT {
-			p.error("Expected int literal")
+		if expectedType != nil && *expectedType != ArgIntT && *expectedType != ArgFloatT {
+			p.error(fmt.Sprintf("Expected %s literal, got int", expectedType.AsString()))
 		}
 		return p.intLiteral(isNegative), true
 	}
 
 	if p.peekType(FLOAT_LITERAL) {
 		if expectedType != nil && *expectedType != ArgFloatT {
-			p.error("Expected float literal")
+			p.error(fmt.Sprintf("Expected %s literal, got float", expectedType.AsString()))
 		}
 		return p.floatLiteral(isNegative), true
 	}

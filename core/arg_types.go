@@ -86,8 +86,13 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 			}
 			scriptArg.DefaultIntArray = &vals
 		case ArgFloatT:
-			val := literal.(float64)
-			scriptArg.DefaultFloat = &val
+			switch coerced := literal.(type) {
+			case int64:
+				val := float64(coerced)
+				scriptArg.DefaultFloat = &val
+			case float64:
+				scriptArg.DefaultFloat = &coerced
+			}
 		case ArgFloatArrayT:
 			arr, ok := literal.([]interface{})
 			if !ok {
