@@ -3,6 +3,7 @@ package core
 import (
 	"os"
 	"path/filepath"
+	"time"
 )
 
 var (
@@ -11,6 +12,7 @@ var (
 	RExit      func(int)
 	RReq       *Requester
 	RClock     Clock
+	RSleep     func(duration time.Duration)
 	ScriptPath string
 	ScriptDir  string
 	ScriptName string
@@ -21,6 +23,7 @@ type CmdInput struct {
 	RExit  *func(int)
 	RReq   *Requester
 	RClock Clock
+	RSleep *func(duration time.Duration)
 }
 
 func SetScriptPath(path string) {
@@ -36,6 +39,7 @@ func ResetGlobals() {
 	RExit = nil
 	RReq = nil
 	RClock = nil
+	RSleep = nil
 }
 
 func setGlobals(cmdInput CmdInput) {
@@ -65,6 +69,12 @@ func setGlobals(cmdInput CmdInput) {
 		RClock = NewRealClock()
 	} else {
 		RClock = cmdInput.RClock
-
+	}
+	if cmdInput.RSleep == nil {
+		RSleep = func(duration time.Duration) {
+			time.Sleep(duration)
+		}
+	} else {
+		RSleep = *cmdInput.RSleep
 	}
 }

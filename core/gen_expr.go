@@ -109,6 +109,7 @@ func (e SliceAccess) String() string {
 type FunctionCall struct {
 	Function                Token
 	Args                    []Expr
+	NamedArgs               []NamedArg
 	NumExpectedReturnValues int
 }
 
@@ -119,6 +120,7 @@ func (e FunctionCall) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Function: %v", e.Function))
 	parts = append(parts, fmt.Sprintf("Args: %v", e.Args))
+	parts = append(parts, fmt.Sprintf("NamedArgs: %v", e.NamedArgs))
 	parts = append(parts, fmt.Sprintf("NumExpectedReturnValues: %v", e.NumExpectedReturnValues))
 	return fmt.Sprintf("FunctionCall(%s)", strings.Join(parts, ", "))
 }

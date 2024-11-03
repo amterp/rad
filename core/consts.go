@@ -21,4 +21,5 @@ const (
 	EXIT               = "exit"
 	KEYS               = "keys"
 	VALUES             = "values"
+	SLEEP              = "sleep"
 )

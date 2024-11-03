@@ -141,21 +141,11 @@ func (i *MainInterpreter) VisitSliceAccessExpr(sliceAccess SliceAccess) interfac
 }
 
 func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
-	var args []interface{}
-	for _, v := range call.Args {
-		val := v.Accept(i)
-		args = append(args, val)
-	}
-	return RunRslNonVoidFunction(i, call.Function, call.NumExpectedReturnValues, args)
+	return RunRslNonVoidFunction(i, call.Function, call.NumExpectedReturnValues, evalArgs(i, call.Args), call.NamedArgs)
 }
 
 func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
-	var values []interface{}
-	for _, v := range functionStmt.Call.Args {
-		val := v.Accept(i)
-		values = append(values, val)
-	}
-	RunRslFunction(i, functionStmt.Call.Function, values)
+	RunRslFunction(i, functionStmt.Call)
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {

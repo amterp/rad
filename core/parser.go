@@ -933,14 +933,39 @@ func (p *Parser) functionCall(numExpectedReturnValues int) FunctionCall {
 	function := p.consume(IDENTIFIER, "Expected function name")
 	p.consume(LEFT_PAREN, "Expected '(' after function name")
 	var args []Expr
+	var namedArgs []NamedArg
 	if !p.matchAny(RIGHT_PAREN) {
 		args = append(args, p.expr(1))
-		for !p.matchAny(RIGHT_PAREN) {
-			p.consume(COMMA, "Expected ',' between function arguments")
+		for p.matchAny(COMMA) {
 			args = append(args, p.expr(1))
 		}
+
+		if p.matchAny(EQUAL) {
+			// the latest parsed "arg" must be a named arg prior to '='. remove it and re-interpret.
+			lastArg := args[len(args)-1]
+			args = args[:len(args)-1]
+			argToReinterpret, ok := lastArg.(*Variable)
+			if !ok {
+				p.error("Expected variable for named argument")
+			}
+			firstNamedArg := NamedArg{Arg: argToReinterpret.Name, Value: p.expr(1)}
+
+			namedArgs = append(namedArgs, firstNamedArg)
+			for p.matchAny(COMMA) { // todo would like to support multi-line formatting
+				namedArgs = append(namedArgs, p.namedArg())
+			}
+		}
+
+		p.consume(RIGHT_PAREN, "Expected ')' after function arguments")
 	}
-	return FunctionCall{Function: function, Args: args, NumExpectedReturnValues: numExpectedReturnValues}
+	return FunctionCall{Function: function, Args: args, NamedArgs: namedArgs, NumExpectedReturnValues: numExpectedReturnValues}
+}
+
+func (p *Parser) namedArg() NamedArg {
+	argName := p.consume(IDENTIFIER, "Bug! Expected named argument")
+	p.consume(EQUAL, "Expected '=' after named argument")
+	argValue := p.expr(1)
+	return NamedArg{Arg: argName, Value: argValue}
 }
 
 func (p *Parser) arrayExpr() (Expr, bool) {

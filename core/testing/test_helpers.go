@@ -17,6 +17,7 @@ var (
 	stdOutBuffer = new(bytes.Buffer)
 	stdErrBuffer = new(bytes.Buffer)
 	errorOrExit  = ErrorOrExit{}
+	millisSlept  = make([]int64, 0)
 	// dont need reset
 	testCmdInput = newTestCmdInput()
 )
@@ -31,6 +32,9 @@ func newTestCmdInput() core.CmdInput {
 		errorOrExit.exitCode = &code
 		panic(fmt.Sprintf("Exit code: %d", code))
 	}
+	sleepFunc := func(duration time.Duration) {
+		millisSlept = append(millisSlept, duration.Milliseconds())
+	}
 	return core.CmdInput{
 		RIo: &core.RadIo{
 			StdIn:  stdInBuffer,
@@ -39,6 +43,7 @@ func newTestCmdInput() core.CmdInput {
 		},
 		RExit:  &testExitFunc,
 		RClock: core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
+		RSleep: &sleepFunc,
 	}
 }
 
@@ -106,6 +111,7 @@ func resetTestState() {
 	stdOutBuffer.Reset()
 	stdErrBuffer.Reset()
 	errorOrExit = ErrorOrExit{}
+	millisSlept = make([]int64, 0)
 	core.ResetGlobals()
 }
 
@@ -147,4 +153,21 @@ func assertNoErrors(t *testing.T) {
 	t.Errorf("Expected no exit code, got %d", *code)
 	msg := errorOrExit.panicMsg
 	t.Errorf("Expected no panic, got %s", *msg)
+}
+
+func assertDidNotSleep(t *testing.T) {
+	assertSleptMillis(t) // providing no millis
+}
+
+func assertSleptMillis(t *testing.T, millis ...int64) {
+	if len(millisSlept) != len(millis) {
+		t.Errorf("Expected to sleep %d times, but slept only %d times: %v", len(millis), len(millisSlept), millisSlept)
+	}
+
+	for i, expected := range millis {
+		actual := millisSlept[i]
+		if actual != expected {
+			t.Errorf("Expected to sleep idx %d to be %d millis, but slept %d millis", i, expected, actual)
+		}
+	}
 }

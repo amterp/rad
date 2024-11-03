@@ -143,3 +143,8 @@ type RadIfCase struct {
 	Condition Expr
 	Body      []RadStmt
 }
+
+type NamedArg struct {
+	Arg   Token
+	Value Expr
+}

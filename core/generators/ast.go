@@ -54,7 +54,7 @@ func main() {
 		"MapExpr           : []Expr Keys, []Expr Values, Token OpenBraceToken",
 		"CollectionAccess  : Expr Collection, Expr Key, Token OpenBracketToken",
 		"SliceAccess       : Expr ListOrString, Token OpenBracketToken, *Expr Start, Token ColonToken, *Expr End",
-		"FunctionCall      : Token Function, []Expr Args, int NumExpectedReturnValues", // todo named args
+		"FunctionCall      : Token Function, []Expr Args, []NamedArg NamedArgs, int NumExpectedReturnValues",
 		"Variable          : Token Name",
 		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /
 		"Ternary           : Expr Condition, Token QuestionMark, Expr True, Expr False",

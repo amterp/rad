@@ -11,6 +11,7 @@ func RunRslNonVoidFunction(
 	function Token,
 	numExpectedReturnValues int,
 	args []interface{},
+	namedArgs []NamedArg,
 ) interface{} {
 	functionName := function.GetLexeme()
 
@@ -115,22 +116,27 @@ func RunRslNonVoidFunction(
 	panic(UNREACHABLE)
 }
 
-func RunRslFunction(i *MainInterpreter, function Token, args []interface{}) {
-	functionName := function.GetLexeme()
+func RunRslFunction(i *MainInterpreter, call FunctionCall) {
+	funcToken := call.Function
+	args := evalArgs(i, call.Args)
+	functionName := funcToken.GetLexeme()
+
 	switch functionName {
 	case PRINT:
 		runPrint(args)
 	case PPRINT:
 		if len(args) > 1 {
-			i.error(function, PPRINT+"() takes zero or one argument")
+			i.error(funcToken, PPRINT+"() takes zero or one argument")
 		}
-		runPrettyPrint(i, function, args)
+		runPrettyPrint(i, funcToken, args)
 	case DEBUG:
 		runDebug(args)
 	case EXIT:
-		runExit(i, function, args)
+		runExit(i, funcToken, args)
+	case SLEEP:
+		runSleep(i, funcToken, args, toMap(i, call.NamedArgs))
 	default:
-		RunRslNonVoidFunction(i, function, NO_NUM_RETURN_VALUES_CONSTRAINT, args)
+		RunRslNonVoidFunction(i, funcToken, NO_NUM_RETURN_VALUES_CONSTRAINT, args, call.NamedArgs)
 	}
 }
 
@@ -161,6 +167,23 @@ func runReplace(i *MainInterpreter, function Token, values []interface{}) interf
 	newRegex := ToPrintable(values[2])
 
 	return Replace(i, function, subject, oldRegex, newRegex)
+}
+
+func evalArgs(i *MainInterpreter, args []Expr) []interface{} {
+	var values []interface{}
+	for _, v := range args {
+		val := v.Accept(i)
+		values = append(values, val)
+	}
+	return values
+}
+
+func toMap(i *MainInterpreter, args []NamedArg) map[string]interface{} {
+	m := make(map[string]interface{})
+	for _, arg := range args {
+		m[arg.Arg.GetLexeme()] = arg.Value.Accept(i)
+	}
+	return m
 }
 
 func assertExpectedNumReturnValues(
