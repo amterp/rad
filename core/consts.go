@@ -22,4 +22,7 @@ const (
 	KEYS               = "keys"
 	VALUES             = "values"
 	SLEEP              = "sleep"
+	RAND               = "rand"
+	RAND_INT           = "rand_int"
+	SEED_RANDOM        = "seed_random"
 )

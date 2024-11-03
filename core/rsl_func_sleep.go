@@ -2,8 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/samber/lo"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -56,23 +54,6 @@ func sleep(i *MainInterpreter, sleepToken Token, dur time.Duration, args SleepNa
 		RP.Print(args.Title + "\n")
 	}
 	RSleep(dur)
-}
-
-func validateExpectedNamedArgs(i *MainInterpreter, function Token, expectedArgs []string, namedArgs map[string]interface{}) {
-	var unknownArgs []string
-	for k := range namedArgs {
-		if !lo.Contains(expectedArgs, k) {
-			unknownArgs = append(unknownArgs, k)
-		}
-	}
-
-	if len(unknownArgs) == 0 {
-		return
-	}
-
-	sort.Strings(unknownArgs)
-	unknownArgsStr := strings.Join(unknownArgs, ", ")
-	i.error(function, fmt.Sprintf("Unknown named argument(s): %s", unknownArgsStr))
 }
 
 func parseSleepArgs(args map[string]interface{}) SleepNamedArgs {
