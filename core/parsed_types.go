@@ -98,12 +98,20 @@ type RslArgType struct {
 }
 
 type JsonPath struct {
-	elements []JsonPathElement
+	Elements []JsonPathElement
 }
 
 type JsonPathElement struct {
-	token      JsonPathElementToken
-	arrayToken *Token
+	Identifier Token
+	ArrayToken *Token
+}
+
+func (j *JsonPathElement) IsArray() bool {
+	return j.ArrayToken != nil
+}
+
+func (j *JsonPathElement) IsWildcard() bool {
+	return j.Identifier.GetLexeme() == WILDCARD
 }
 
 type SortDir int

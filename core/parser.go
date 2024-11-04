@@ -568,6 +568,13 @@ func (p *Parser) assignment() Stmt {
 
 	// finished matching left side of equal sign, now parse right side
 
+	if p.peekKeyword(GLOBAL_KEYWORDS, JSON) {
+		if len(identifiers) != 1 {
+			p.error(fmt.Sprintf("Expected 1 identifier for json assignment, got %d", len(identifiers)))
+		}
+		return p.jsonPathAssignment(identifiers[0])
+	}
+
 	if p.matchKeyword(GLOBAL_KEYWORDS, SWITCH) {
 		block := p.switchBlock(identifiers)
 		return &SwitchAssignment{Identifiers: identifiers, Block: block}
@@ -575,11 +582,6 @@ func (p *Parser) assignment() Stmt {
 
 	if p.isShellCmdNext() {
 		return p.shellCmd(identifiers)
-	}
-
-	if len(identifiers) == 1 && p.peekType(JSON_PATH_ELEMENT) {
-		identifier := identifiers[0]
-		return p.jsonPathAssignment(identifier)
 	}
 
 	return p.primaryAssignment(identifiers)
@@ -615,21 +617,29 @@ func (p *Parser) collectionEntryAssignment(identifier Token) Stmt {
 }
 
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
-	element := p.consume(JSON_PATH_ELEMENT, "Expected root json path element").(*JsonPathElementToken)
-	var brackets Token
-	if isArray := p.matchAny(BRACKETS); isArray {
-		brackets = p.previous()
-	}
-	elements := []JsonPathElement{{token: *element, arrayToken: &brackets}}
+	elements := make([]JsonPathElement, 0)
 	for !p.matchAny(NEWLINE) {
-		p.consume(DOT, "Expected '.' to separate json field elements")
-		element = p.consume(JSON_PATH_ELEMENT, "Expected json path element after '.'").(*JsonPathElementToken)
-		if p.matchAny(BRACKETS) {
-			brackets = p.previous()
+		if len(elements) > 0 {
+			p.consume(DOT, "Expected '.' to separate json field elements")
 		}
-		elements = append(elements, JsonPathElement{token: *element, arrayToken: &brackets})
+		elements = append(elements, p.jsonPathElement())
 	}
-	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{elements: elements}}
+	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{Elements: elements}}
+}
+
+func (p *Parser) jsonPathElement() JsonPathElement {
+	var identifier Token
+	if p.matchAny(IDENTIFIER, STAR) {
+		identifier = p.previous()
+	} else {
+		p.error("Expected identifier in json path")
+	}
+	var brackets *Token
+	if p.matchAny(BRACKETS) {
+		t := p.previous()
+		brackets = &t
+	}
+	return JsonPathElement{Identifier: identifier, ArrayToken: brackets}
 }
 
 func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {

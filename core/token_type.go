@@ -47,17 +47,17 @@ const (
 
 	// Literals
 
-	IDENTIFIER        TokenType = "IDENTIFIER"
-	STRING_LITERAL    TokenType = "STRING_LITERAL"
-	INT_LITERAL       TokenType = "INT_LITERAL"
-	FLOAT_LITERAL     TokenType = "FLOAT_LITERAL"
-	BOOL_LITERAL      TokenType = "BOOL_LITERAL"
-	FILE_HEADER       TokenType = "FILE_HEADER"
-	ARG_COMMENT       TokenType = "ARG_COMMENT"
-	JSON_PATH_ELEMENT TokenType = "JSON_PATH_ELEMENT"
+	IDENTIFIER     TokenType = "IDENTIFIER"
+	STRING_LITERAL TokenType = "STRING_LITERAL"
+	INT_LITERAL    TokenType = "INT_LITERAL"
+	FLOAT_LITERAL  TokenType = "FLOAT_LITERAL"
+	BOOL_LITERAL   TokenType = "BOOL_LITERAL"
+	FILE_HEADER    TokenType = "FILE_HEADER"
+	ARG_COMMENT    TokenType = "ARG_COMMENT"
 
 	// Keywords
 
+	JSON     TokenType = "JSON"
 	FOR      TokenType = "FOR"
 	BREAK    TokenType = "BREAK"
 	CONTINUE TokenType = "CONTINUE"

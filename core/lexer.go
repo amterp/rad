@@ -166,12 +166,6 @@ func (l *Lexer) scanToken() {
 		l.lexStringLiteral('`')
 	case '.':
 		l.addToken(DOT)
-	case 'j':
-		if l.matchString("son") {
-			l.lexJsonPath()
-		} else {
-			l.lexIdentifier()
-		}
 	case '/':
 		if l.match('/') {
 			for l.peek() != '\n' && !l.isAtEnd() {
@@ -376,17 +370,6 @@ func (l *Lexer) lexIdentifier() {
 	}
 }
 
-func (l *Lexer) lexJsonPath() {
-	isArray := l.matchString("[]")
-	l.addJsonPathElementToken("json", isArray)
-
-	for l.peek() != '\n' && !l.isAtEnd() {
-		l.start = l.next
-		l.expectAndEmit('.', DOT, "Expected '.' to preface next json path element")
-		l.lexJsonPathElement()
-	}
-}
-
 func (l *Lexer) lexShebang() {
 	// "#!" already matched at start of line
 
@@ -478,24 +461,6 @@ func (l *Lexer) lexTabIndent() {
 	l.emitIndentTokens(numTabs, false)
 }
 
-func (l *Lexer) lexJsonPathElement() {
-	value := ""
-	escaping := false
-	for ((l.peek() != '.' && l.peek() != '[') || escaping) && l.peek() != '\n' && !l.isAtEnd() {
-		if l.peek() == '\\' {
-			escaping = true
-			l.advance()
-		} else {
-			if escaping {
-				escaping = false
-			}
-			value = value + string(l.advance())
-		}
-	}
-	includesBrackets := l.matchString("[]")
-	l.addJsonPathElementToken(value, includesBrackets)
-}
-
 func (l *Lexer) currentLexeme() string {
 	return string(l.source[l.start:l.next])
 }
@@ -580,12 +545,6 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 		l.error(fmt.Sprintf("Inconsistent indentation levels. Expected %d spaces/tabs, got %d",
 			expectedIndentationLevel, numWhitespaces))
 	}
-}
-
-func (l *Lexer) addJsonPathElementToken(jsonPathElement string, isArray bool) {
-	lexeme := l.currentLexeme()
-	token := NewJsonPathElementToken(lexeme, l.start, l.lineIndex, l.lineCharIndex, jsonPathElement, isArray)
-	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) error(message string) {

@@ -42,21 +42,19 @@ type Trie struct {
 }
 
 func (t *Trie) Insert(field JsonFieldVar) {
-	elements := field.Path.elements
+	elements := field.Path.Elements
 
 	currentNode := t.root
 	if currentNode == nil {
-		currentNode = NewNode(t.radToken, elements[0].token.Literal, elements[0].token.IsArray)
+		currentNode = NewNode(t.radToken, elements[0].Identifier.GetLexeme(), elements[0].IsArray())
 		t.root = currentNode
 	}
 
 	for _, element := range elements[1:] {
-		key := element.token.Literal
-		isArray := element.token.IsArray
-
+		key := element.Identifier.GetLexeme()
 		_, ok := currentNode.children[key]
 		if !ok {
-			currentNode.AddChild(NewNode(t.radToken, key, isArray))
+			currentNode.AddChild(NewNode(t.radToken, key, element.IsArray()))
 		}
 
 		currentNode = currentNode.children[key]

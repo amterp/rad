@@ -69,13 +69,6 @@ type ArgCommentToken struct {
 	Literal *string
 }
 
-type JsonPathElementToken struct {
-	BaseToken
-	Literal string
-	// Whether the path element token is tied to an array
-	IsArray bool
-}
-
 func NewToken(
 	tokenType TokenType,
 	lexeme string,
@@ -215,26 +208,5 @@ func NewArgCommentToken(
 			CharLineStart: charLineStart,
 		},
 		Literal: comment,
-	}
-}
-
-func NewJsonPathElementToken(
-	lexeme string,
-	charStart int,
-	line int,
-	charLineStart int,
-	jsonPathElement string,
-	isArray bool,
-) Token {
-	return &JsonPathElementToken{
-		BaseToken: BaseToken{
-			Type:          JSON_PATH_ELEMENT,
-			Lexeme:        lexeme,
-			CharStart:     charStart,
-			Line:          line,
-			CharLineStart: charLineStart,
-		},
-		Literal: jsonPathElement,
-		IsArray: isArray,
 	}
 }

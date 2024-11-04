@@ -1,6 +1,7 @@
 package core
 
 var GLOBAL_KEYWORDS = map[string]TokenType{
+	"json":     JSON,
 	"for":      FOR,
 	"break":    BREAK,
 	"continue": CONTINUE,
