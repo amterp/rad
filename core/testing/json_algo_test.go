@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestJsonNonRootArrayExtraction(t *testing.T) {
+func TestAlgo_JsonNonRootArrayExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -25,7 +25,7 @@ print(Names)
 	resetTestState()
 }
 
-func TestKeyExtraction(t *testing.T) {
+func TestAlgo_KeyExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -48,7 +48,7 @@ Bob    40   Los Angeles
 	resetTestState()
 }
 
-func TestKeyArrayExtraction(t *testing.T) {
+func TestAlgo_KeyArrayExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -73,7 +73,7 @@ David      25   Paris
 	resetTestState()
 }
 
-func TestNestedWildcardExtraction(t *testing.T) {
+func TestAlgo_NestedWildcardExtraction(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -100,7 +100,7 @@ York  England    Bob        40
 	resetTestState()
 }
 
-func TestWildcardListCapture(t *testing.T) {
+func TestAlgo_WildcardListCapture(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -122,7 +122,7 @@ print(ids)
 	resetTestState()
 }
 
-func TestWildcardListObjectCapture(t *testing.T) {
+func TestAlgo_WildcardListObjectCapture(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -144,7 +144,7 @@ print(ids)
 	resetTestState()
 }
 
-func TestListOfObjectCapture(t *testing.T) {
+func TestAlgo_ListOfObjectCapture(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 Building = json.buildings.*
@@ -160,7 +160,7 @@ print([len(x) for x in issues])
 	resetTestState()
 }
 
-func TestCaptureRootArray(t *testing.T) {
+func TestAlgo_CaptureRootArray(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -177,7 +177,7 @@ print(ids)
 	resetTestState()
 }
 
-func TestCaptureNonArrayAndArray(t *testing.T) {
+func TestAlgo_CaptureNonArrayAndArray(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -199,7 +199,7 @@ print(ages)
 	resetTestState()
 }
 
-func TestCaptureNonArrayAndWildcard(t *testing.T) {
+func TestAlgo_CaptureNonArrayAndWildcard(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
@@ -221,7 +221,7 @@ print(ages)
 	resetTestState()
 }
 
-func TestCaptureJsonNode(t *testing.T) {
+func TestAlgo_CaptureJsonNode(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json.results.Alice
@@ -236,7 +236,7 @@ print(node)
 	resetTestState()
 }
 
-func TestCanCaptureWholeJson(t *testing.T) {
+func TestAlgo_CanCaptureWholeJson(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json
@@ -252,7 +252,7 @@ print(node)
 	resetTestState()
 }
 
-func TestCanCaptureWholeComplexJson(t *testing.T) {
+func TestAlgo_CanCaptureWholeComplexJson(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json

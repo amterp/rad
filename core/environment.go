@@ -107,7 +107,7 @@ func (e *Env) GetByName(token Token, varName string, acceptableTypes ...RslTypeE
 func (e *Env) AssignJsonField(name Token, path JsonPath) {
 	isArray := false
 	for _, element := range path.Elements {
-		if element.IsArray() || element.IsWildcard() {
+		if element.WillLeadToArray() {
 			isArray = true
 			break
 		}

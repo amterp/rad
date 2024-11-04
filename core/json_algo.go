@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func CreateTrie(radToken Token, jsonFields []JsonFieldVar) *Trie {
-	trie := &Trie{radToken: radToken}
+func CreateTrie(i *MainInterpreter, radToken Token, jsonFields []JsonFieldVar) *Trie {
+	trie := &Trie{i: i, radToken: radToken}
 	for _, jsonField := range jsonFields {
 		trie.Insert(jsonField)
 	}
@@ -13,21 +13,23 @@ func CreateTrie(radToken Token, jsonFields []JsonFieldVar) *Trie {
 }
 
 type Node struct {
-	radToken Token
-	key      string
-	isArray  bool
+	radToken           Token
+	key                string
+	shouldIterateArray bool
+	idx                *int64
 	// json variables which terminate at this node, and therefore need to capture the data at this level
 	fields   []JsonFieldVar
 	children map[string]*Node
 }
 
-func NewNode(radToken Token, key string, isArray bool) *Node {
+func NewNode(radToken Token, key string, shouldIterateArray bool, idx *int64) *Node {
 	return &Node{
-		radToken: radToken,
-		key:      key,
-		isArray:  isArray,
-		fields:   []JsonFieldVar{},
-		children: map[string]*Node{},
+		radToken:           radToken,
+		key:                key,
+		shouldIterateArray: shouldIterateArray,
+		idx:                idx,
+		fields:             []JsonFieldVar{},
+		children:           map[string]*Node{},
 	}
 }
 
@@ -37,6 +39,7 @@ func (n *Node) AddChild(child *Node) *Node {
 }
 
 type Trie struct {
+	i        *MainInterpreter
 	radToken Token
 	root     *Node
 }
@@ -46,7 +49,9 @@ func (t *Trie) Insert(field JsonFieldVar) {
 
 	currentNode := t.root
 	if currentNode == nil {
-		currentNode = NewNode(t.radToken, elements[0].Identifier.GetLexeme(), elements[0].IsArray())
+		rootElement := elements[0]
+		idx := tryEvalIdx(t.i, rootElement)
+		currentNode = NewNode(t.radToken, rootElement.Identifier.GetLexeme(), rootElement.ShouldIterateArray(), idx)
 		t.root = currentNode
 	}
 
@@ -54,13 +59,27 @@ func (t *Trie) Insert(field JsonFieldVar) {
 		key := element.Identifier.GetLexeme()
 		_, ok := currentNode.children[key]
 		if !ok {
-			currentNode.AddChild(NewNode(t.radToken, key, element.IsArray()))
+			idx := tryEvalIdx(t.i, element)
+			currentNode.AddChild(NewNode(t.radToken, key, element.ShouldIterateArray(), idx))
 		}
 
 		currentNode = currentNode.children[key]
 	}
 
 	currentNode.fields = append(currentNode.fields, field)
+}
+
+func tryEvalIdx(i *MainInterpreter, elem JsonPathElement) *int64 {
+	var idx *int64
+	if elem.Index != nil {
+		val := (*elem.Index).Accept(i)
+		coercedVal, ok := val.(int64)
+		if !ok {
+			i.error(elem.Identifier, fmt.Sprintf("Expected int for array index, got %v (%s)", val, TypeAsString(val)))
+		}
+		idx = &coercedVal
+	}
+	return idx
 }
 
 // ---
@@ -75,14 +94,18 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 		wasLeaf:  false,
 	}
 
-	if node.isArray {
+	if node.shouldIterateArray {
 		dataArray, ok := data.([]interface{})
 		if !ok {
 			// todo feels like we should error here, but in practice does not work, investigate
 			//RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected array for array node '%v': %v\n", node, data))
 		} else {
-			for _, dataChild := range dataArray {
-				capStats = capStats.add(t.traverse(dataChild, node, nil))
+			if node.idx != nil {
+				capStats = capStats.add(t.traverse(dataArray[*node.idx], node, nil))
+			} else {
+				for _, dataChild := range dataArray {
+					capStats = capStats.add(t.traverse(dataChild, node, nil))
+				}
 			}
 			t.capture(data, node, keyToCaptureInstead, capStats.captures)
 			return capStats
@@ -138,7 +161,13 @@ func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interf
 
 func (t *Trie) capture(data interface{}, node *Node, keyToCaptureInstead interface{}, captures int) {
 	for i := 0; i < captures; i++ {
-		if keyToCaptureInstead == nil && node.key != WILDCARD {
+		if node.idx != nil {
+			if _, isArray := data.([]interface{}); !isArray {
+				for _, field := range node.fields {
+					field.AddMatch(data)
+				}
+			}
+		} else if keyToCaptureInstead == nil && node.key != WILDCARD {
 			for _, field := range node.fields {
 				field.AddMatch(data)
 			}

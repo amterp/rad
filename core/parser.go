@@ -639,7 +639,14 @@ func (p *Parser) jsonPathElement() JsonPathElement {
 		t := p.previous()
 		brackets = &t
 	}
-	return JsonPathElement{Identifier: identifier, ArrayToken: brackets}
+
+	var index *Expr
+	if p.matchAny(LEFT_BRACKET) {
+		e := p.expr(1)
+		index = &e
+		p.consume(RIGHT_BRACKET, "Expected ']' after json path index")
+	}
+	return JsonPathElement{Identifier: identifier, ArrayToken: brackets, Index: index}
 }
 
 func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {

@@ -149,7 +149,7 @@ func (r *radInvocation) execute() {
 			r.error(fmt.Sprintf("Error requesting JSON: %v", err))
 		}
 
-		trie := CreateTrie(r.block.RadKeyword, jsonFields)
+		trie := CreateTrie(r.ri.i, r.block.RadKeyword, jsonFields)
 		trie.TraverseTrie(data)
 	}
 
