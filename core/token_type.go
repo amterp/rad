@@ -107,7 +107,6 @@ const (
 	TABLE    TokenType = "TABLE"
 	DEFAULT  TokenType = "DEFAULT"
 	MARKDOWN TokenType = "MARKDOWN"
-	TRUNCATE TokenType = "TRUNCATE"
 
 	EOF TokenType = "EOF"
 )

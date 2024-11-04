@@ -9,6 +9,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"unicode/utf8"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 )
 
 var (
-	isUtf8 = terminalIsUtf8()
+	isTerminalUtf8 = terminalIsUtf8()
 )
 
 type ColumnSort struct {
@@ -25,14 +26,13 @@ type ColumnSort struct {
 }
 
 type TblWriter struct {
-	writer        io.Writer
-	tbl           *tblwriter.Table
-	headers       []string
-	rows          [][]string
-	sorting       []ColumnSort
-	colToTruncate map[string]int64
-	colToColors   map[string][]radColorMod
-	numColumns    int
+	writer      io.Writer
+	tbl         *tblwriter.Table
+	headers     []string
+	rows        [][]string
+	sorting     []ColumnSort
+	colToColors map[string][]radColorMod
+	numColumns  int
 }
 
 func NewTblWriter() *TblWriter {
@@ -58,16 +58,6 @@ func (w *TblWriter) Append(row []string) {
 
 func (w *TblWriter) SetSorting(sorting []ColumnSort) {
 	w.sorting = sorting
-}
-
-func (w *TblWriter) SetTruncation(headers []string, colToTruncate map[string]int64) {
-	for colName, _ := range colToTruncate {
-		if !lo.Contains(headers, colName) {
-			RP.RadErrorExit(fmt.Sprintf("Column to truncate '%s' is not a valid header\n", colName))
-		}
-	}
-
-	w.colToTruncate = colToTruncate
 }
 
 func (w *TblWriter) SetColumnColoring(headers []string, colToColors map[string][]radColorMod) {
@@ -100,17 +90,9 @@ func (w *TblWriter) Render() {
 			lines := strings.Split(cell, "\n")
 			for _, line := range lines {
 				if len(line) > colWidths[i] {
-					colWidths[i] = len(line)
+					colWidths[i] = utf8.RuneCountInString(line)
 				}
 			}
-		}
-	}
-
-	// apply truncation for terminal fitting algo, to immediately treat truncated columns as their specified length
-	for colName, truncateLen := range w.colToTruncate {
-		colIdx := lo.IndexOf(w.headers, colName)
-		if colIdx != -1 {
-			colWidths[colIdx] = int(truncateLen)
 		}
 	}
 
@@ -160,9 +142,9 @@ func (w *TblWriter) Render() {
 		for _, row := range rows {
 			lines := strings.Split(row[i], "\n")
 			for j, line := range lines {
-				if len(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
+				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
-					if isUtf8 {
+					if isTerminalUtf8 {
 						lines[j] = line[:colWidth-1]
 						lines[j] += "…"
 					} else {

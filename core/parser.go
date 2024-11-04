@@ -383,9 +383,6 @@ func (p *Parser) radFieldMods() RadStmt {
 	var mods []RadFieldModStmt
 	for !p.matchAny(DEDENT, EOF) {
 		p.consumeNewlines()
-		if p.matchKeyword(RAD_BLOCK_KEYWORDS, TRUNCATE) {
-			mods = append(mods, p.truncStmt())
-		}
 		if p.matchKeyword(RAD_BLOCK_KEYWORDS, COLOR) {
 			mods = append(mods, p.colorStmt())
 		}
@@ -395,11 +392,6 @@ func (p *Parser) radFieldMods() RadStmt {
 		// todo other field mod stmts
 	}
 	return &FieldMods{Identifiers: identifiers, Mods: mods}
-}
-
-func (p *Parser) truncStmt() RadFieldModStmt {
-	truncateToken := p.previous()
-	return &Truncate{TruncToken: truncateToken, Value: p.expr(1)}
 }
 
 func (p *Parser) colorStmt() RadFieldModStmt {

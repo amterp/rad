@@ -10,7 +10,7 @@ words = json[].words
 rad url:
 	fields id, words
 	words:
-		truncate 10
+		map x -> truncate(x, 10)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/long_values.json", "--NO-COLOR")
 	expected := `id  words      
@@ -31,7 +31,7 @@ name = json[].name
 rad url:
 	fields id, name
 	name:
-		truncate 5
+		map x -> truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
 	expected := `id  name  
@@ -51,10 +51,10 @@ name = json[].name
 rad url:
 	fields name
 	does_not_exist:
-		truncate 5
+		map x -> truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
-	assertError(t, 1, "Mocking response for url (matched \".*\"): https://google.com\nColumn to truncate 'does_not_exist' is not a valid header\n")
+	assertError(t, 1, "RslError at L6/16 on 'does_not_exist': Field \"does_not_exist\" not found in fields\n")
 	resetTestState()
 }
 
@@ -67,7 +67,7 @@ city = json[].city
 rad url:
 	fields age, name, city
 	name, city:
-		truncate 5
+		map x -> truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
 	expected := `age  name   city  

@@ -34,7 +34,6 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 		url:              url,
 		fields:           nil,
 		fieldsToNotPrint: strset.New(),
-		colToTruncate:    make(map[string]int64),
 		colToColor:       make(map[string][]radColorMod),
 		colToMapOp:       make(map[string]Lambda),
 	}
@@ -59,6 +58,17 @@ func (r RadBlockInterpreter) VisitFieldsRadStmt(fields Fields) {
 
 func (r RadBlockInterpreter) VisitFieldModsRadStmt(mods FieldMods) {
 	r.invocation.assertHasFields("field modifier")
+
+	declaredFields := lo.Map(r.invocation.fields.Identifiers, func(field Token, _ int) string {
+		return field.GetLexeme()
+	})
+
+	for _, identifier := range mods.Identifiers {
+		if !lo.Contains(declaredFields, identifier.GetLexeme()) {
+			r.i.error(identifier, fmt.Sprintf("Field %q not found in fields", identifier.GetLexeme()))
+		}
+	}
+
 	modVisitor := fieldModVisitor{
 		identifiers: mods.Identifiers,
 		invocation:  r.invocation,
@@ -123,7 +133,6 @@ type radInvocation struct {
 	fields           *Fields
 	fieldsToNotPrint *strset.Set
 	sorting          []ColumnSort
-	colToTruncate    map[string]int64
 	colToColor       map[string][]radColorMod
 	colToMapOp       map[string]Lambda
 }
@@ -193,7 +202,6 @@ func (r *radInvocation) execute() {
 	}
 
 	tbl.SetSorting(r.sorting)
-	tbl.SetTruncation(headers, r.colToTruncate)
 	tbl.SetColumnColoring(headers, r.colToColor)
 
 	// todo ensure failed requests get nicely printed
@@ -258,18 +266,6 @@ func (r *radInvocation) error(msg string) {
 type fieldModVisitor struct {
 	identifiers []Token
 	invocation  *radInvocation
-}
-
-func (f fieldModVisitor) VisitTruncateRadFieldModStmt(truncate Truncate) {
-	truncLen := truncate.Value.Accept(f.invocation.ri.i)
-	switch coerced := truncLen.(type) {
-	case int64:
-		for _, identifier := range f.identifiers {
-			f.invocation.colToTruncate[identifier.GetLexeme()] = coerced
-		}
-	default:
-		f.invocation.ri.i.error(truncate.TruncToken, "Truncate value must be an integer")
-	}
 }
 
 func (f fieldModVisitor) VisitColorRadFieldModStmt(color Color) {

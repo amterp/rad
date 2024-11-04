@@ -102,7 +102,6 @@ func main() {
 	})
 
 	defineAst(outputDir, "RadFieldModStmt", "", []string{
-		"Truncate   : Token TruncToken, Expr Value",
 		"Color      : Token ColorToken, Expr ColorValue, Expr Regex",
 		"MapMod     : Token MapToken, Lambda Op",
 	})

@@ -49,7 +49,6 @@ var RAD_BLOCK_KEYWORDS = map[string]TokenType{
 	"table":    TABLE,
 	"default":  DEFAULT,
 	"markdown": MARKDOWN,
-	"truncate": TRUNCATE,
 	"if":       IF,
 	"else":     ELSE,
 	"map":      MAP,
