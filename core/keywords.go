@@ -52,6 +52,7 @@ var RAD_BLOCK_KEYWORDS = map[string]TokenType{
 	"truncate": TRUNCATE,
 	"if":       IF,
 	"else":     ELSE,
+	"map":      MAP,
 }
 
 var SWITCH_BLOCK_KEYWORDS = map[string]TokenType{

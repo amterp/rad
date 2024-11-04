@@ -36,6 +36,7 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 		fieldsToNotPrint: strset.New(),
 		colToTruncate:    make(map[string]int64),
 		colToColor:       make(map[string][]radColorMod),
+		colToMapOp:       make(map[string]Lambda),
 	}
 
 	for _, stmt := range block.Stmts {
@@ -124,6 +125,7 @@ type radInvocation struct {
 	sorting          []ColumnSort
 	colToTruncate    map[string]int64
 	colToColor       map[string][]radColorMod
+	colToMapOp       map[string]Lambda
 }
 
 type radColorMod struct {
@@ -165,16 +167,17 @@ func (r *radInvocation) execute() {
 	}
 
 	columns := lo.FilterMap(fields, func(field Token, _ int) ([]string, bool) {
-		if r.fieldsToNotPrint.Has(field.GetLexeme()) {
+		fieldName := field.GetLexeme()
+		if r.fieldsToNotPrint.Has(fieldName) {
 			return nil, false
 		}
 		fieldVals := r.ri.i.env.GetByToken(field)
 		switch coerced := fieldVals.(type) {
 		case []interface{}:
-			return ToStringArray(coerced), true
+			return toTblStr(r.ri.i, r.colToMapOp, fieldName, coerced), true
 		default:
 			// could maybe print single value for all rows? so populate an array with appropriate # of values
-			r.error(fmt.Sprintf("Field %q must be an array, got %s", field.GetLexeme(), TypeAsString(fieldVals)))
+			r.error(fmt.Sprintf("Field %q must be an array, got %s", fieldName, TypeAsString(fieldVals)))
 			panic(UNREACHABLE)
 		}
 	})
@@ -195,6 +198,23 @@ func (r *radInvocation) execute() {
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
+}
+
+func toTblStr(i *MainInterpreter, mapOps map[string]Lambda, fieldName string, column []interface{}) []string {
+	lambda, ok := mapOps[fieldName]
+	if !ok {
+		return ToStringArray(column)
+	}
+	var newVals []string
+	for _, val := range column {
+		identifier := lambda.Args[0]
+		i.runWithChildEnv(func() {
+			i.env.SetAndImplyType(identifier, val)
+			newVal := lambda.Op.Accept(i)
+			newVals = append(newVals, ToPrintable(newVal))
+		})
+	}
+	return newVals
 }
 
 // When no fields are specified, we'll simply perform the request and print the output.
@@ -277,5 +297,12 @@ func (f fieldModVisitor) VisitColorRadFieldModStmt(color Color) {
 		}
 	default:
 		f.invocation.ri.i.error(color.ColorToken, "Color value must be a string")
+	}
+}
+
+func (f fieldModVisitor) VisitMapModRadFieldModStmt(mapMod MapMod) {
+	for _, identifier := range f.identifiers {
+		identifierLexeme := identifier.GetLexeme()
+		f.invocation.colToMapOp[identifierLexeme] = mapMod.Op
 	}
 }

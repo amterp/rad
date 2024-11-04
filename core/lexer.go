@@ -145,6 +145,8 @@ func (l *Lexer) scanToken() {
 			l.lexFileHeader()
 		} else if l.match('=') {
 			l.addToken(MINUS_EQUAL)
+		} else if l.match('>') {
+			l.addToken(ARROW)
 		} else {
 			l.addToken(MINUS)
 		}

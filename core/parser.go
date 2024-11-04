@@ -389,6 +389,9 @@ func (p *Parser) radFieldMods() RadStmt {
 		if p.matchKeyword(RAD_BLOCK_KEYWORDS, COLOR) {
 			mods = append(mods, p.colorStmt())
 		}
+		if p.matchKeyword(RAD_BLOCK_KEYWORDS, MAP) {
+			mods = append(mods, p.mapStmt())
+		}
 		// todo other field mod stmts
 	}
 	return &FieldMods{Identifiers: identifiers, Mods: mods}
@@ -402,6 +405,15 @@ func (p *Parser) truncStmt() RadFieldModStmt {
 func (p *Parser) colorStmt() RadFieldModStmt {
 	colorToken := p.previous()
 	return &Color{ColorToken: colorToken, ColorValue: p.expr(1), Regex: p.expr(1)}
+}
+
+func (p *Parser) mapStmt() RadFieldModStmt {
+	mapToken := p.previous()
+	lambda := p.lambda()
+	if len(lambda.Args) != 1 {
+		p.error(fmt.Sprintf("Expected 1 argument for map lambda, got %d", len(lambda.Args)))
+	}
+	return &MapMod{MapToken: mapToken, Op: lambda}
 }
 
 func (p *Parser) radFieldsStatement() RadStmt {
@@ -1393,6 +1405,18 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 		FailBlock:    failBlock,
 		RecoverBlock: recoverBlock,
 	}
+}
+
+func (p *Parser) lambda() Lambda {
+	var identifiers []Token
+	for !p.matchAny(ARROW) {
+		if len(identifiers) > 0 {
+			p.consume(COMMA, "Expected ',' between lambda identifiers")
+		}
+		identifiers = append(identifiers, p.consume(IDENTIFIER, "Expected identifier in lambda"))
+	}
+	op := p.expr(1)
+	return Lambda{Args: identifiers, Op: op}
 }
 
 func (p *Parser) identifier() Token {

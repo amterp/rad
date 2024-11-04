@@ -161,3 +161,8 @@ type NamedArg struct {
 	Arg   Token
 	Value Expr
 }
+
+type Lambda struct {
+	Args []Token
+	Op   Expr
+}

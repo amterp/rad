@@ -40,6 +40,7 @@ const (
 	MINUS_EQUAL   TokenType = "MINUS_EQUAL"
 	STAR_EQUAL    TokenType = "STAR_EQUAL"
 	SLASH_EQUAL   TokenType = "SLASH_EQUAL"
+	ARROW         TokenType = "ARROW" // ->
 
 	// N-character tokens
 	INDENT TokenType = "INDENT"
@@ -82,6 +83,7 @@ const (
 	FAIL     TokenType = "FAIL"
 	RECOVER  TokenType = "RECOVER"
 	DEFER    TokenType = "DEFER"
+	MAP      TokenType = "MAP"
 
 	// only in Args block
 	STRING   TokenType = "STRING"

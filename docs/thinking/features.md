@@ -234,6 +234,7 @@ fruit, url = switch inputFruit:
     case "apple, "a": "apple", "https://apple.com" 
     case "banana", "b": "banana", "https://banana.com" 
 ```
+
 ## 2024-10-21
 
 - More Python-like f-strings

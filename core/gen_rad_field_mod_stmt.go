@@ -12,6 +12,7 @@ type RadFieldModStmt interface {
 type RadFieldModStmtVisitor interface {
 	VisitTruncateRadFieldModStmt(Truncate)
 	VisitColorRadFieldModStmt(Color)
+	VisitMapModRadFieldModStmt(MapMod)
 }
 type Truncate struct {
 	TruncToken Token
@@ -43,4 +44,19 @@ func (e Color) String() string {
 	parts = append(parts, fmt.Sprintf("ColorValue: %v", e.ColorValue))
 	parts = append(parts, fmt.Sprintf("Regex: %v", e.Regex))
 	return fmt.Sprintf("Color(%s)", strings.Join(parts, ", "))
+}
+
+type MapMod struct {
+	MapToken Token
+	Op       Lambda
+}
+
+func (e MapMod) Accept(visitor RadFieldModStmtVisitor) {
+	visitor.VisitMapModRadFieldModStmt(e)
+}
+func (e MapMod) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("MapToken: %v", e.MapToken))
+	parts = append(parts, fmt.Sprintf("Op: %v", e.Op))
+	return fmt.Sprintf("MapMod(%s)", strings.Join(parts, ", "))
 }
