@@ -3,6 +3,8 @@ main
 sandbox
 docs-web
 bin
+resp.json
+test.rad
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:

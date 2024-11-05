@@ -290,40 +290,38 @@ func (p *Parser) statement() Stmt {
 func (p *Parser) radBlock(radType RadBlockType) *RadBlock {
 	radToken := p.previous()
 
-	var srcToken *Expr
+	var srcExpr *Expr
 	if radType == Request || radType == Rad {
 		if p.peekType(COLON) {
 			p.error(fmt.Sprintf("Expecting url or other source for %v statement", radType))
 		}
 		expr := p.expr(1)
-		srcToken = &expr
-	} else {
-		p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q, preceding indented block", radType))
+		srcExpr = &expr
+		if !p.peekType(COLON) {
+			return &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcExpr, Stmts: []RadStmt{}}
+		}
 	}
+
+	p.consume(COLON, fmt.Sprintf("Expecting ':' to immediately follow %q, preceding indented block", radType))
 
 	radStatements := p.radBlockStmts(radType)
 	// todo: we should validate, including if a field stmt is not listed but should be (based on other statements),
 	//  or if *too many* are listed. When we re-visit static analysis of rad blocks, specifically if-statements,
 	//  we add this.
-	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcToken, Stmts: radStatements}
+	radBlock := &RadBlock{RadKeyword: radToken, RadType: radType, Source: srcExpr, Stmts: radStatements}
 	return radBlock
 }
 
 func (p *Parser) radBlockStmts(radType RadBlockType) []RadStmt {
 	var radStatements []RadStmt
-	if p.peekType(COLON) || p.nextNonNewLineTokenIs(INDENT) { // todo i think this breaks if there's a newline between the colon and indent
-		if radType != Display {
-			p.consume(COLON, fmt.Sprintf("Expecting ':' to precede indented %v block", radType))
-		}
+	p.consumeNewlines()
+	if !p.matchAny(INDENT) {
+		p.error(fmt.Sprintf("Expecting indented contents in %s block", radType))
+	}
+	p.consumeNewlines()
+	for !p.matchAny(DEDENT, EOF) {
+		radStatements = append(radStatements, p.radStatement(radType))
 		p.consumeNewlines()
-		if !p.matchAny(INDENT) {
-			p.error(fmt.Sprintf("Expecting indented contents in %s block", radType))
-		}
-		p.consumeNewlines()
-		for !p.matchAny(DEDENT, EOF) {
-			radStatements = append(radStatements, p.radStatement(radType))
-			p.consumeNewlines()
-		}
 	}
 	return radStatements
 }

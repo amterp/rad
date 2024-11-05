@@ -208,3 +208,27 @@ Bob      40
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestRad_IfStmtWorksOnRadWithUrl(t *testing.T) {
+	rsl := `
+url = "https://google.com"
+name = json[].name
+city = json[].city
+should_sort = true
+rad url:
+	fields name, city
+	if should_sort:
+		sort name asc
+`
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
+	expected := `name     city        
+Alice    New York     
+Bob      London       
+Bob      Los Angeles  
+Charlie  Paris        
+`
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
+	assertNoErrors(t)
+	resetTestState()
+}
