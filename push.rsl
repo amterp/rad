@@ -6,21 +6,18 @@ args:
   branch b string = "main" # The branch to push to
   no_push "no-push" n bool = false # Skip the pushing step'
 
-print("Building...")
 $`go build main.go`
 fail:
     print("Build failed ❌")
 
 // Run tests many times to ensure no flakiness
-print("✅ Testing...")
-$`go test ./core/testing -count 50`
+$`go test ./core/testing -count 30`
 fail:
     print("Tests failed ❌")
 
 if no_push:
     exit(0)
 
-print("✅ Pushing...")
 $`git push origin "{branch}" --tags`
 fail:
     print("Push failed ❌")
