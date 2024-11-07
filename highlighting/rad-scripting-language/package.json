@@ -1,0 +1,25 @@
+{
+  "name": "rad-scripting-language",
+  "displayName": "Rad Scripting Language",
+  "description": "Syntax highlighting for the Rad Scripting Language (RSL)",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "rsl",
+      "aliases": ["RSL", "rsl"],
+      "extensions": [".rsl", ".rad"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "rsl",
+      "scopeName": "source.rsl",
+      "path": "./syntaxes/rsl.tmLanguage.json"
+    }]
+  }
+}

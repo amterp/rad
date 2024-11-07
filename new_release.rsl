@@ -10,7 +10,7 @@ args:
     push p bool # Whether or not a push should also be performed
 
 // Build & test
-$`./push.rad --no-push`
+$`./push.rsl --no-push`
 fail:
     print("Failed to build and test! ❌")
 
@@ -24,7 +24,7 @@ $!`git commit -m "Bump version to {new_version}"`
 $!`git tag -a "{new_version}" -m "Bump version to {new_version}"`
 
 if push:
-    $`./push.rad`
+    $`./push.rsl`
     fail:
         print("Failed to push! ❌")
 else:
