@@ -1,0 +1,12 @@
+#!/usr/bin/env radd
+---
+Build and deploy docs to GitHub Pages.
+---
+
+yml = "./docs-web/mkdocs.yml"
+
+$`test -f {yml}`
+fail:
+    print("❌ mkdocs.yml not found! Are you running this script from the repo root?")
+
+$!`mkdocs gh-deploy -f {yml}`
