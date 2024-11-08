@@ -12,12 +12,12 @@ args:
 // Build & test
 $`./push.rsl --no-push`
 fail:
-    print("Failed to build and test! ❌")
+    print("❌ Failed to build and test!")
 
 // Update Version in ./core/cobra_root.go
 $`sed -i '' "s/Version: \\".*\\"/Version: \\"{new_version}\\"/" ./core/cobra_root.go`
 fail:
-    print("Failed to update version in code! ❌")
+    print("❌ Failed to update version in code!")
 
 $!`git add ./core/cobra_root.go`
 $!`git commit -m "Bump version to {new_version}"`
@@ -26,7 +26,7 @@ $!`git tag -a "{new_version}" -m "Bump version to {new_version}"`
 if push:
     $`./push.rsl`
     fail:
-        print("Failed to push! ❌")
+        print("❌ Failed to push!")
 else:
     print("Tagged, not pushing...")
     print("Run 'git push origin main --tags' to push the tag")

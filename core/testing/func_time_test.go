@@ -4,7 +4,7 @@ import "testing"
 
 func TestDate(t *testing.T) {
 	rsl := `
-a = today_date()
+a = now_date()
 print(a)
 print(a + "100")
 `
@@ -19,7 +19,7 @@ print(a + "100")
 
 func TestYear(t *testing.T) {
 	rsl := `
-a = today_year()
+a = now_year()
 print(a)
 print(a + 100)
 `
@@ -34,7 +34,7 @@ print(a + 100)
 
 func TestMonth(t *testing.T) {
 	rsl := `
-a = today_month()
+a = now_month()
 print(a)
 print(a + 100)
 `
@@ -49,7 +49,7 @@ print(a + 100)
 
 func TestDay(t *testing.T) {
 	rsl := `
-a = today_day()
+a = now_day()
 print(a)
 print(a + 100)
 `
@@ -64,7 +64,7 @@ print(a + 100)
 
 func TestHour(t *testing.T) {
 	rsl := `
-a = today_hour()
+a = now_hour()
 print(a)
 print(a + 100)
 `
@@ -79,7 +79,7 @@ print(a + 100)
 
 func TestMinute(t *testing.T) {
 	rsl := `
-a = today_minute()
+a = now_minute()
 print(a)
 print(a + 100)
 `
@@ -94,7 +94,7 @@ print(a + 100)
 
 func TestSecond(t *testing.T) {
 	rsl := `
-a = today_second()
+a = now_second()
 print(a)
 print(a + 100)
 `

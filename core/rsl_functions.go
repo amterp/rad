@@ -27,31 +27,31 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runLen(i, function, args)
-	case "today_date": // todo is this name good? current_date? date?
+	case "now_date": // todo is this name good? current_date? date?
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RClock.Now().Format("2006-01-02")
-	case "today_year":
+	case "now_year":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Year())
-	case "today_month":
+	case "now_month":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Month())
-	case "today_day":
+	case "now_day":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Day())
-	case "today_hour":
+	case "now_hour":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Hour())
-	case "today_minute":
+	case "now_minute":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Minute())
-	case "today_second":
+	case "now_second":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Second())
@@ -97,13 +97,6 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return strings.HasSuffix(ToPrintable(args[0]), ToPrintable(args[1]))
-	case "contains":
-		if len(args) != 2 {
-			i.error(function, "contains() takes exactly two arguments")
-		}
-		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
-		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return strings.Contains(ToPrintable(args[0]), ToPrintable(args[1]))
 	case "pick":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
@@ -212,7 +205,7 @@ func runReplace(i *MainInterpreter, function Token, values []interface{}) interf
 		i.error(function, "replace() takes exactly three arguments")
 	}
 
-	subject := ToPrintable(values[0])
+	subject := ToPrintable(values[0]) // todo should assert only strings on subject
 	oldRegex := ToPrintable(values[1])
 	newRegex := ToPrintable(values[2])
 

@@ -3,13 +3,19 @@ package testing
 import "testing"
 
 func TestStartsEndsContains(t *testing.T) {
-	setupAndRunArgs(t, "./rads/starts_ends_contains.rad")
+	rsl := `
+a = "alice"
+print(starts_with(a, "al"))
+print(starts_with(a, "ce"))
+
+print(ends_with(a, "al"))
+print(ends_with(a, "ce"))
+`
+	setupAndRunCode(t, rsl)
 	expected := `true
 false
 false
 true
-true
-false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

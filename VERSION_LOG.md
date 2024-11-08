@@ -7,6 +7,7 @@ Only for major & minor version releases. Contains only notable items.
 - `defer` statements
 - Further shell command support improvements, critical shell commands
 - Emoji support
+- Basic syntax highlighter
 
 ## 0.4
 
