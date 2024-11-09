@@ -98,6 +98,21 @@ len(input any[]) -> int
 len(input map) -> int
 ```
 
+### range
+
+```rsl
+range(end int|float) -> int|float[]
+range(start int|float, end int|float) -> int|float[]
+range(start int|float, end int|float, step int|float) -> int|float[]
+```
+
+```rsl
+range(5)         -> [0, 1, 2, 3, 4]
+range(5.5)       -> [0, 1, 2, 3, 4, 5]
+range(0.5, 5)    -> [0.5, 1.5, 2.5, 3.5, 4.5]
+range(10, 5, -2) -> [10, 8, 6]
+```
+
 ## Time
 
 ### now_date

@@ -26,4 +26,5 @@ const (
 	RAND_INT           = "rand_int"
 	SEED_RANDOM        = "seed_random"
 	TRUNCATE           = "truncate"
+	RANGE              = "range"
 )
