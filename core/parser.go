@@ -636,19 +636,21 @@ func (p *Parser) jsonPathElement() JsonPathElement {
 	} else {
 		p.error("Expected identifier in json path")
 	}
-	var brackets *Token
-	if p.matchAny(BRACKETS) {
-		t := p.previous()
-		brackets = &t
+
+	arrElems := make([]JsonPathElementArr, 0)
+
+	for !p.peekType(DOT) && !p.peekType(NEWLINE) {
+		if p.matchAny(BRACKETS) {
+			t := p.previous()
+			arrElems = append(arrElems, JsonPathElementArr{ArrayToken: &t})
+		} else if p.matchAny(LEFT_BRACKET) {
+			e := p.expr(1)
+			p.consume(RIGHT_BRACKET, "Expected ']' after json path index")
+			arrElems = append(arrElems, JsonPathElementArr{Index: &e})
+		}
 	}
 
-	var index *Expr
-	if p.matchAny(LEFT_BRACKET) {
-		e := p.expr(1)
-		index = &e
-		p.consume(RIGHT_BRACKET, "Expected ']' after json path index")
-	}
-	return JsonPathElement{Identifier: identifier, ArrayToken: brackets, Index: index}
+	return JsonPathElement{Identifier: identifier, ArrElems: arrElems}
 }
 
 func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {

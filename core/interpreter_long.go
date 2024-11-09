@@ -302,7 +302,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operato
 		case int64:
 			switch operatorType {
 			case PLUS:
-				return append(coercedLeft, right)
+				return append(coercedLeft, right) // todo we should not allow this, should wrap in []
 			default:
 				i.error(operatorToken, "Invalid binary operator for mixed array, int")
 			}

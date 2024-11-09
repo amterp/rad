@@ -103,20 +103,12 @@ type JsonPath struct {
 
 type JsonPathElement struct {
 	Identifier Token
+	ArrElems   []JsonPathElementArr
+}
+
+type JsonPathElementArr struct {
 	ArrayToken *Token // e.g. json.names[]
 	Index      *Expr  // e.g. json.names[0]
-}
-
-func (j *JsonPathElement) ShouldIterateArray() bool {
-	return j.ArrayToken != nil || j.Index != nil
-}
-
-func (j *JsonPathElement) IsWildcard() bool {
-	return j.Identifier.GetLexeme() == WILDCARD
-}
-
-func (j *JsonPathElement) WillLeadToArray() bool {
-	return j.ArrayToken != nil || j.IsWildcard()
 }
 
 type SortDir int

@@ -1,0 +1,23 @@
+{
+  "people": {
+    "country": "US",
+    "names": [
+      "Alice",
+      "Bob"
+    ],
+    "ages": [
+      25,
+      30
+    ]
+  },
+  "dates": {
+    "years": [
+      2024,
+      2023
+    ],
+    "months": [
+      12,
+      11
+    ]
+  }
+}

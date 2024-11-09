@@ -7,16 +7,16 @@ func TestAlgo_JsonNonRootArrayExtraction(t *testing.T) {
 url = "https://google.com"
 
 Id = json.id
-Names = json.names
+Names = json.names[]
 
 request url:
     fields Id, Names
-print(Id + 1)
+print(Id[0])
 print(Names)
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/not_root_array.json", "--NO-COLOR")
-	expected := `2
+	expected := `1
 [Alice, Bob, Charlie]
 `
 	assertOutput(t, stdOutBuffer, expected)
@@ -78,7 +78,7 @@ func TestAlgo_NestedWildcardExtraction(t *testing.T) {
 url = "https://google.com"
 
 city = json.*
-country = json.*.*[]
+country = json.*.*
 name = json.*.*[].name
 age = json.*.*[].age
 
@@ -164,7 +164,7 @@ func TestAlgo_CaptureRootArray(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 
-ids = json
+ids = json[]
 
 request url:
     fields ids
@@ -186,10 +186,10 @@ ages = json.results[].age
 
 request url:
     fields len, ages
-print(len + 1)
+print(len[0])
 print(ages)
 `
-	expected := `3
+	expected := `2
 [30, 40]
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
@@ -208,10 +208,10 @@ ages = json.results.*.age
 
 request url:
     fields len, ages
-print(len + 1)
+print(len[0])
 print(ages)
 `
-	expected := `3
+	expected := `2
 [30, 40]
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
@@ -227,7 +227,7 @@ url = "https://google.com"
 node = json.results.Alice
 request url:
     fields node
-print(node)
+print(node[0])
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "{ age: 30, hometown: New York }\n")
@@ -242,7 +242,7 @@ url = "https://google.com"
 node = json
 request url:
     fields node
-print(node)
+print(node[0])
 `
 	expected := "[{ id: 1, name: Alice }, { id: 2, name: Bob }]\n"
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
@@ -258,7 +258,7 @@ url = "https://google.com"
 node = json
 request url:
     fields node
-pprint(node)
+pprint(node[0])
 `
 	expected := `[
   {
@@ -311,7 +311,12 @@ Len = json.len
 rad url:
     fields Names, Len
 `
+	expected := `Names  Len 
+Alice  2    
+Bob    2    
+`
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
-	assertError(t, 1, "Mocking response for url (matched \".*\"): https://google.com\nRslError at L7/3 on 'rad': Field \"Len\" must be an array, got float\n")
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	resetTestState()
 }

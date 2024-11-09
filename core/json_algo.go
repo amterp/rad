@@ -2,198 +2,169 @@ package core
 
 import (
 	"fmt"
+	"github.com/samber/lo"
 )
 
-func CreateTrie(i *MainInterpreter, radToken Token, jsonFields []JsonFieldVar) *Trie {
-	trie := &Trie{i: i, radToken: radToken}
-	for _, jsonField := range jsonFields {
-		trie.Insert(jsonField)
-	}
-	return trie
-}
-
-type Node struct {
-	radToken           Token
-	key                string
-	shouldIterateArray bool
-	idx                *int64
-	// json variables which terminate at this node, and therefore need to capture the data at this level
-	fields   []JsonFieldVar
-	children map[string]*Node
-}
-
-func NewNode(radToken Token, key string, shouldIterateArray bool, idx *int64) *Node {
-	return &Node{
-		radToken:           radToken,
-		key:                key,
-		shouldIterateArray: shouldIterateArray,
-		idx:                idx,
-		fields:             []JsonFieldVar{},
-		children:           map[string]*Node{},
-	}
-}
-
-func (n *Node) AddChild(child *Node) *Node {
-	n.children[child.key] = child
-	return n
-}
-
-type Trie struct {
-	i        *MainInterpreter
-	radToken Token
-	root     *Node
-}
-
-func (t *Trie) Insert(field JsonFieldVar) {
-	elements := field.Path.Elements
-
-	currentNode := t.root
-	if currentNode == nil {
-		rootElement := elements[0]
-		idx := tryEvalIdx(t.i, rootElement)
-		currentNode = NewNode(t.radToken, rootElement.Identifier.GetLexeme(), rootElement.ShouldIterateArray(), idx)
-		t.root = currentNode
-	}
-
-	for _, element := range elements[1:] {
-		key := element.Identifier.GetLexeme()
-		_, ok := currentNode.children[key]
-		if !ok {
-			idx := tryEvalIdx(t.i, element)
-			currentNode.AddChild(NewNode(t.radToken, key, element.ShouldIterateArray(), idx))
-		}
-
-		currentNode = currentNode.children[key]
-	}
-
-	currentNode.fields = append(currentNode.fields, field)
-}
-
-func tryEvalIdx(i *MainInterpreter, elem JsonPathElement) *int64 {
-	var idx *int64
-	if elem.Index != nil {
-		val := (*elem.Index).Accept(i)
-		coercedVal, ok := val.(int64)
-		if !ok {
-			i.error(elem.Identifier, fmt.Sprintf("Expected int for array index, got %v (%s)", val, TypeAsString(val)))
-		}
-		idx = &coercedVal
-	}
-	return idx
-}
-
-// ---
-
 func (t *Trie) TraverseTrie(data interface{}) {
-	t.traverse(data, t.root, nil)
+	jsonRoot := lo.Values(t.root.children)[0]
+	captures := t.traverse(nil, data, jsonRoot)
+	for key, values := range captures.captures {
+		t.i.env.SetAndImplyTypeWithToken(t.radToken, key, values)
+		// todo
+		//  - we *always* wrap in an array. some way to encode "expect non-array"?
+	}
 }
 
-func (t *Trie) traverse(data interface{}, node *Node, keyToCaptureInstead interface{}) captureStats {
-	capStats := captureStats{
-		captures: 0,
-		wasLeaf:  false,
-	}
+func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
+	// todo capture whole block if 'json' is one of the fields
 
-	if node.shouldIterateArray {
-		dataArray, ok := data.([]interface{})
-		if !ok {
-			// todo feels like we should error here, but in practice does not work, investigate
-			//RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected array for array node '%v': %v\n", node, data))
-		} else {
-			if node.idx != nil {
-				capStats = capStats.add(t.traverse(dataArray[*node.idx], node, nil))
-			} else {
-				for _, dataChild := range dataArray {
-					capStats = capStats.add(t.traverse(dataChild, node, nil))
+	// traverse children, capture values
+	captures := make([]Capture, 0)
+	for _, child := range lo.Values(node.children) {
+		if child.isArrayWildcard {
+			// iterate through all elements
+			switch coerced := data.(type) {
+			case []interface{}:
+				for _, elem := range coerced {
+					captures = append(captures, t.traverse(nil, elem, child))
 				}
+			default:
+				t.i.error(t.radToken, fmt.Sprintf("Expected array at %s, got %s", child.fullKey, TypeAsString(data)))
 			}
-			t.capture(data, node, keyToCaptureInstead, capStats.captures)
-			return capStats
-		}
-	}
-
-	switch coerced := data.(type) {
-	case string, int, float32, float64, bool, nil:
-		// leaf
-		if len(node.children) == 0 {
-			capStats = captureStats{1, true}
-		} else {
-			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit leaf in data, unexpected for non-leaf node '%v': %v\n", node, data))
-		}
-	case []interface{}:
-		if len(node.children) == 0 {
-			capStats = captureStats{1, true}
-		} else {
-			RP.TokenErrorExit(node.radToken, fmt.Sprintf("Hit array data, but node not marked as array '%v': %v", node, data))
-		}
-	case map[string]interface{}:
-		dataMap := coerced
-		for childKey, child := range node.children {
-			if childKey == WILDCARD {
-				// wildcard match, traverse all children
-				// get list of sorted keys to iterate through, for deterministic order
-				// todo: at this point this is a concession -- we should be traversing in the original order of the json
-				//  but the json.Unmarshalling we're doing loses us the original ordering for maps. will need to change
-				//  how we get the json if we want to change that (we almost certainly do, this is idiosyncratic behavior)
-				sortedKeys := SortedKeys(dataMap)
+		} else if child.idx != nil {
+			// array index lookup
+			switch coerced := data.(type) {
+			case []interface{}:
+				if int(*child.idx) >= len(coerced) {
+					t.i.error(t.radToken, fmt.Sprintf("Index out of bounds at %s: %d", child.fullKey, *child.idx))
+				}
+				captures = append(captures, t.traverse(nil, coerced[*child.idx], child))
+			default:
+				t.i.error(t.radToken, fmt.Sprintf("Expected array at %s, got %s", child.fullKey, TypeAsString(data)))
+			}
+		} else if child.key == WILDCARD {
+			// wildcard key match
+			switch coerced := data.(type) {
+			case map[string]interface{}:
+				sortedKeys := SortedKeys(coerced)
 				for _, key := range sortedKeys {
-					capStats = capStats.add(t.traverse(dataMap[key], child, key))
-				}
-			} else if value, ok := dataMap[childKey]; ok {
-				capStats = capStats.add(t.traverse(value, child, nil))
-			} else {
-				RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected key '%s' but was not present\n", childKey))
-			}
-		}
-		if len(node.fields) > 0 && node.key != WILDCARD {
-			// we're at a dictionary node and being asked to capture. let's capture the node as JSON
-			// max: we want to capture at least once, but if we've captured from children nodes, we want to capture
-			// that many
-			t.capture(dataMap, node, keyToCaptureInstead, max(capStats.captures, 1))
-		}
-	default:
-		RP.TokenErrorExit(node.radToken, fmt.Sprintf("Expected map for non-array node '%v': %v\n", node, data))
-	}
-
-	t.capture(data, node, keyToCaptureInstead, capStats.captures)
-	return capStats
-}
-
-func (t *Trie) capture(data interface{}, node *Node, keyToCaptureInstead interface{}, captures int) {
-	for i := 0; i < captures; i++ {
-		if node.idx != nil {
-			if _, isArray := data.([]interface{}); !isArray {
-				for _, field := range node.fields {
-					field.AddMatch(data)
+					captures = append(captures, t.traverse(&key, coerced[key], child))
 				}
 			}
-		} else if keyToCaptureInstead == nil && node.key != WILDCARD {
-			for _, field := range node.fields {
-				field.AddMatch(data)
-			}
-		} else if keyToCaptureInstead != nil {
-			for _, field := range node.fields {
-				field.AddMatch(keyToCaptureInstead)
+		} else {
+			// regular key lookup
+			switch coerced := data.(type) {
+			case map[string]interface{}:
+				childData, ok := coerced[child.key]
+				if !ok {
+					// todo allow defaulting?
+					t.i.error(t.radToken, "Key not found in JSON: "+child.fullKey)
+				}
+				captures = append(captures, t.traverse(&child.key, childData, child))
+			default:
+				t.i.error(t.radToken, fmt.Sprintf("Expected map at %s, got %s", child.fullKey, TypeAsString(data)))
 			}
 		}
 	}
+
+	capture := t.mergeCaptures(captures, node)
+
+	// capture values at this level
+
+	localCaptures := make(map[string][]interface{})
+	for _, field := range node.fields {
+		if node.key == WILDCARD {
+			if dataKey == nil {
+				t.i.error(t.radToken, fmt.Sprintf("Expected data key at %s, got nil", node.fullKey))
+			}
+			localCaptures[field.Name.GetLexeme()] = []interface{}{*dataKey}
+		} else {
+			localCaptures[field.Name.GetLexeme()] = []interface{}{data}
+		}
+	}
+
+	localCapture := Capture{node: node, captures: localCaptures}
+	capture = t.mergeCapture(capture, localCapture, node)
+
+	return capture
 }
 
-type captureStats struct {
-	// aka rows
-	captures int
-	wasLeaf  bool
+func (t *Trie) mergeCaptures(captures []Capture, node *Node) Capture {
+	if len(captures) == 0 {
+		return Capture{node: node, captures: make(map[string][]interface{})}
+	}
+
+	capture := captures[0]
+	for _, c := range captures[1:] {
+		capture = t.mergeCapture(capture, c, node)
+	}
+
+	return capture
 }
 
-func (c captureStats) add(other captureStats) captureStats {
-	wasLeaf := false
-	if other.wasLeaf {
-		wasLeaf = true
+func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *Node) Capture {
+	if len(capture1.captures) == 0 {
+		return capture2
+	} else if len(capture2.captures) == 0 {
+		return capture1
 	}
-	if wasLeaf {
-		c.captures = 1
-	} else {
-		c.captures += other.captures
+
+	// check if all columns are the same, if so, append rows
+	if len(capture1.captures) == len(capture2.captures) {
+		colsAreTheSame := true
+		for key, _ := range capture1.captures {
+			if _, ok := capture2.captures[key]; !ok {
+				colsAreTheSame = false
+				break
+			}
+		}
+		if colsAreTheSame {
+			for key, values := range capture2.captures {
+				capture1.captures[key] = append(capture1.captures[key], values...)
+			}
+			return capture1
+		}
 	}
-	return c
+
+	// check if overlapping columns. if so, error
+	for key, _ := range capture1.captures {
+		if _, ok := capture2.captures[key]; ok {
+			t.i.error(t.radToken, fmt.Sprintf("Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey))
+		}
+	}
+
+	// columns are non-overlapping. if equal number of rows, append columns.
+	numRows1 := len(lo.Values(capture1.captures)[0])
+	numRows2 := len(lo.Values(capture2.captures)[0])
+	if numRows1 == numRows2 {
+		for key, values := range capture2.captures {
+			capture1.captures[key] = values
+		}
+		return capture1
+	}
+
+	// if one of the numRows is 1, then we'll append its columns and repeat the values to match the others' numRows
+	if numRows1 == 1 {
+		for key, values := range capture1.captures {
+			capture2.captures[key] = make([]interface{}, 0)
+			for i := 0; i < numRows2; i++ {
+				capture2.captures[key] = append(capture2.captures[key], values[0])
+			}
+		}
+		return capture2
+	}
+
+	if numRows2 == 1 {
+		for key, values := range capture2.captures {
+			capture1.captures[key] = make([]interface{}, 0)
+			for i := 0; i < numRows1; i++ {
+				capture1.captures[key] = append(capture1.captures[key], values[0])
+			}
+		}
+		return capture1
+	}
+
+	// if neither numRows is 1, error
+	t.i.error(t.radToken, fmt.Sprintf("Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey))
+	panic(UNREACHABLE)
 }

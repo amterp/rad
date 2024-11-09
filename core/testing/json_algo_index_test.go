@@ -29,6 +29,7 @@ url = "https://google.com"
 Name = json[1].name
 request url:
     fields Name
+Name = Name[0]
 print(Name, len(Name))
 `
 

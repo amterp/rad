@@ -150,7 +150,7 @@ func assertNoErrors(t *testing.T) {
 	if code == nil || *code == 0 {
 		return
 	}
-	t.Errorf("Expected no exit code, got %d", *code)
+	t.Errorf("Expected no exit code, got %d.\nStderr: %s", *code, stdErrBuffer.String())
 	msg := errorOrExit.panicMsg
 	t.Errorf("Expected no panic, got %s", *msg)
 }

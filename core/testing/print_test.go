@@ -37,7 +37,7 @@ url = "https://google.com"
 node = json.results.Alice
 request url:
     fields node
-pprint(node)
+pprint(node[0])
 `
 	expected := `{
   "age":30,
@@ -57,7 +57,7 @@ url = "https://google.com"
 node = json.results.Alice.age
 request url:
     fields node
-pprint(node)
+pprint(node[0])
 `
 	expected := `30
 `
@@ -108,7 +108,7 @@ url = "https://google.com"
 node = json
 request url:
     fields node
-pprint(node)
+pprint(node[0])
 `
 	expected := `[
   {

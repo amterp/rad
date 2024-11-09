@@ -53,14 +53,17 @@ func (e *Env) InitArg(arg CobraArg) {
 
 // SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
 func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
+	e.SetAndImplyTypeWithToken(varNameToken, varNameToken.GetLexeme(), value)
+}
+
+// SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
+func (e *Env) SetAndImplyTypeWithToken(token Token, varName string, value interface{}) {
 	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
 
-	varName := varNameToken.GetLexeme()
-
 	if e.Enclosing != nil {
-		_, ok := e.Enclosing.get(varName, varNameToken)
+		_, ok := e.Enclosing.get(token, varName)
 		if ok {
-			e.Enclosing.SetAndImplyType(varNameToken, value)
+			e.Enclosing.SetAndImplyType(token, value)
 		}
 	}
 
@@ -74,21 +77,21 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 	case bool:
 		e.Vars[varName] = coerced
 	case []interface{}:
-		converted := e.recursivelyConvertTypes(varNameToken, coerced)
+		converted := e.recursivelyConvertTypes(token, coerced)
 		e.Vars[varName] = converted.([]interface{})
 	case RslMap:
-		converted := e.recursivelyConvertTypes(varNameToken, coerced)
+		converted := e.recursivelyConvertTypes(token, coerced)
 		e.Vars[varName] = converted.(RslMap)
 	case map[string]interface{}:
-		converted := e.recursivelyConvertTypes(varNameToken, coerced)
+		converted := e.recursivelyConvertTypes(token, coerced)
 		e.Vars[varName] = converted.(RslMap)
 	default:
-		e.i.error(varNameToken, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
+		e.i.error(token, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
 }
 
 func (e *Env) Exists(name string) bool {
-	_, ok := e.get(name, nil)
+	_, ok := e.get(nil, name)
 	return ok
 }
 
@@ -105,31 +108,23 @@ func (e *Env) GetByName(token Token, varName string, acceptableTypes ...RslTypeE
 }
 
 func (e *Env) AssignJsonField(name Token, path JsonPath) {
-	isArray := false
-	for _, element := range path.Elements {
-		if element.WillLeadToArray() {
-			isArray = true
-			break
-		}
-	}
 	e.jsonFields[name.GetLexeme()] = JsonFieldVar{
-		Name:    name,
-		Path:    path,
-		IsArray: isArray,
-		env:     e,
-	}
-	if isArray {
-		e.SetAndImplyType(name, []interface{}{})
+		Name: name,
+		Path: path,
 	}
 }
 
-func (e *Env) GetJsonField(name Token) JsonFieldVar {
-	field, ok := e.jsonFields[name.GetLexeme()]
+func (e *Env) GetJsonField(nameToken Token) JsonFieldVar {
+	return e.GetJsonFieldWithToken(nameToken, nameToken.GetLexeme())
+}
+
+func (e *Env) GetJsonFieldWithToken(token Token, name string) JsonFieldVar {
+	field, ok := e.jsonFields[name]
 	if !ok {
 		if e.Enclosing != nil {
-			return e.Enclosing.GetJsonField(name)
+			return e.Enclosing.GetJsonFieldWithToken(token, name)
 		}
-		e.i.error(name, fmt.Sprintf("Undefined json field referenced: %v", name))
+		e.i.error(token, fmt.Sprintf("Undefined json field referenced: %v", name))
 	}
 	return field
 }
@@ -145,18 +140,18 @@ func (e *Env) PrintShellExports() {
 }
 
 func (e *Env) getOrError(varName string, token Token, acceptableTypes ...RslTypeEnum) interface{} {
-	val, ok := e.get(varName, token, acceptableTypes...)
+	val, ok := e.get(token, varName, acceptableTypes...)
 	if !ok {
 		e.i.error(token, fmt.Sprintf("Undefined variable referenced: %v", varName))
 	}
 	return val
 }
 
-func (e *Env) get(varName string, token Token, acceptableTypes ...RslTypeEnum) (interface{}, bool) {
+func (e *Env) get(token Token, varName string, acceptableTypes ...RslTypeEnum) (interface{}, bool) {
 	val, ok := e.Vars[varName]
 	if !ok {
 		if e.Enclosing != nil {
-			return e.Enclosing.get(varName, token, acceptableTypes...)
+			return e.Enclosing.get(token, varName, acceptableTypes...)
 		}
 		return nil, false
 	}
