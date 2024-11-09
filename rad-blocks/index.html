@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/functions/">
+        <link rel="canonical" href="https://amterp.github.io/rad/rad-blocks/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../functions/">
       
       
-        <link rel="next" href="../rad-blocks/">
+        <link rel="next" href="../shell-commands/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Functions - Rad Docs</title>
+        <title>Rad Blocks - Rad Docs</title>
       
     
     
@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#rad-block" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -105,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Functions
+              Rad Blocks
             
           </span>
         </div>
@@ -275,6 +280,26 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -285,28 +310,18 @@
       
       
       
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
   
   <span class="md-ellipsis">
-    Functions
+    Rad Blocks
   </span>
   
 
-      </a>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -315,6 +330,51 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rad-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      rad block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      request block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      display block
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -420,6 +480,41 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rad-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      rad block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      request block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      display block
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -436,10 +531,26 @@
   
 
 
-  <h1>Functions</h1>
+  <h1>Rad Blocks</h1>
 
-<p>RSL has functions.</p>
-<p><a href="../reference/ref-functions/">Reference</a></p>
+<h2 id="rad-block"><code>rad</code> block</h2>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+<span class="w">    </span><span class="kt">Name</span>:
+<span class="w">        </span>map<span class="w"> </span>n<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_height:
+<span class="w">        </span>sort<span class="w"> </span><span class="kt">Height</span>,<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>
+<span class="w">    </span><span class="k">else</span>:
+<span class="w">        </span>sort
+</code></pre></div>
+<h2 id="request-block"><code>request</code> block</h2>
+<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+</code></pre></div>
+<h2 id="display-block"><code>display</code> block</h2>
+<div class="highlight"><pre><span></span><code><span class="nf">display:</span>
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+</code></pre></div>
 
 
 
