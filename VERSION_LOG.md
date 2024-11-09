@@ -8,6 +8,7 @@ Only for major & minor version releases. Contains only notable items.
 - Further shell command support improvements, critical shell commands
 - Emoji support
 - Basic syntax highlighter
+- Reworked JSON field extraction algo
 
 ## 0.4
 
