@@ -267,6 +267,12 @@ ends_with(input string, substring string) -> bool
 truncate(input string, length int) -> string
 ```
 
+### split
+
+```rsl
+split(input string, delimiter_regex string) -> string[]
+```
+
 ## Maps
 
 ### keys

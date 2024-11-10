@@ -144,6 +144,10 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runTruncate(i, function, args)
+	case SPLIT:
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runSplit(i, function, args)
 	case RANGE:
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
