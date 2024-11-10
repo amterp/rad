@@ -31,3 +31,13 @@ print(split("Alice      Smith", " +"))
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestSplit_CanSplitOnNoSeparater(t *testing.T) {
+	rsl := `
+print(split("Alice", ""))
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[A, l, i, c, e]\n")
+	assertNoErrors(t)
+	resetTestState()
+}

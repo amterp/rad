@@ -28,5 +28,6 @@ const (
 	TRUNCATE           = "truncate"
 	SPLIT              = "split"
 	RANGE              = "range"
+	UNIQUE             = "unique"
 	CONFIRM            = "confirm"
 )

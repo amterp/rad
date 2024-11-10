@@ -152,6 +152,10 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runRange(i, function, args)
+	case UNIQUE:
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runUnique(i, function, args)
 	case CONFIRM:
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)

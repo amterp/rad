@@ -31,3 +31,5 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - toc:
+      permalink: true # 

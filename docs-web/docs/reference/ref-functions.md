@@ -144,6 +144,22 @@ Are you sure? > n
 Unsure!
 ```
 
+### join
+
+```rsl
+join(input any[], prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
+```
+
+### unique
+
+```rsl
+unique(input any[]) -> any[]
+```
+
+```rsl
+unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
+```
+
 ## Time
 
 ### now_date
@@ -241,12 +257,6 @@ replace(input, "Charlie (.*)", "Alice $1")
 
 ```rsl title="Example 1 Output"
 "Alice Brown" 
-```
-
-### join
-
-```rsl
-join(input any[], prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
 ```
 
 ### starts_with
