@@ -551,7 +551,7 @@
 
   <h1>Shell Commands</h1>
 
-<h2 id="basic-shell-commands">Basic Shell Commands</h2>
+<h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
 <span class="nf">fail:</span>
 <span class="w">    </span>print(<span class="s">&quot;Command failed! Exiting script!&quot;</span>)
@@ -560,13 +560,13 @@
 <span class="nf">recover:</span>
 <span class="w">    </span>print(<span class="s">&quot;Command failed! Continuing script...&quot;</span>)
 </code></pre></div>
-<h2 id="critical-shell-commands">Critical Shell Commands</h2>
+<h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>$!`ls<span class="w"> </span>-l`
 </code></pre></div>
-<h2 id="unsafe-shell-commands">Unsafe Shell Commands</h2>
+<h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls<span class="w"> </span>-l`
 </code></pre></div>
-<h2 id="output-capture">Output Capture</h2>
+<h2 id="output-capture">Output Capture<a class="headerlink" href="#output-capture" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>err_code<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
 err_code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
 err_code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
