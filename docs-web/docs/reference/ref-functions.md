@@ -160,6 +160,18 @@ unique(input any[]) -> any[]
 unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
 ```
 
+### sort
+
+```rsl
+sort(input any[], reverse=bool?)
+```
+
+```rsl
+sort([3, 4, 2, 1])                 // [1, 2, 3, 4]
+sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
+sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
+```
+
 ## Time
 
 ### now_date

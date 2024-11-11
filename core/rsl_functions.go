@@ -156,6 +156,9 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runUnique(i, function, args)
+	case SORT_FUNC:
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		return runSort(i, function, args, namedArgsMap)
 	case CONFIRM:
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)

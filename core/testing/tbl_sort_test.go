@@ -265,7 +265,7 @@ display:
 	resetTestState()
 }
 
-func TestRadSort_ColumnsRemainSortedAfter(t *testing.T) {
+func TestRadSort_ColumnsRemainSortAfter(t *testing.T) {
 	rsl := `
 col = [3, 4, 2, 1]
 display:

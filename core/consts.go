@@ -29,5 +29,6 @@ const (
 	SPLIT              = "split"
 	RANGE              = "range"
 	UNIQUE             = "unique"
+	SORT_FUNC          = "sort"
 	CONFIRM            = "confirm"
 )

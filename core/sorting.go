@@ -51,11 +51,17 @@ func sortColumns(
 	}
 }
 
-func sortList(interp *MainInterpreter, token Token, data []interface{}, dir SortDir) {
-	sort.Slice(data, func(i, j int) bool {
-		comp := compare(interp, token, data[i], data[j])
-		return (dir == Asc && comp < 0) || (dir == Desc && comp > 0)
+func sortList(interp *MainInterpreter, token Token, data []interface{}, dir SortDir) []interface{} {
+	sorted := make([]interface{}, len(data))
+	copy(sorted, data)
+	sort.Slice(sorted, func(i, j int) bool {
+		comp := compare(interp, token, sorted[i], sorted[j])
+		if dir == Asc {
+			return comp < 0
+		}
+		return comp > 0
 	})
+	return sorted
 }
 
 func compare(i *MainInterpreter, token Token, a, b interface{}) int {
