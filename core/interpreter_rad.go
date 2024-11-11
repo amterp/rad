@@ -175,6 +175,8 @@ func (r *radInvocation) execute() {
 		return
 	}
 
+	applySorting(r.ri.i, r.block.RadKeyword, fields, r.sorting)
+
 	columns := lo.FilterMap(fields, func(field Token, _ int) ([]string, bool) {
 		fieldName := field.GetLexeme()
 		if r.fieldsToNotPrint.Has(fieldName) {
@@ -201,11 +203,18 @@ func (r *radInvocation) execute() {
 		tbl.Append(row)
 	}
 
-	tbl.SetSorting(r.sorting)
 	tbl.SetColumnColoring(headers, r.colToColor)
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
+}
+
+func applySorting(i *MainInterpreter, token Token, fields []Token, sorting []ColumnSort) {
+	if len(sorting) == 0 {
+		return
+	}
+
+	sortColumns(i, token, fields, sorting)
 }
 
 func toTblStr(i *MainInterpreter, mapOps map[string]Lambda, fieldName string, column []interface{}) []string {

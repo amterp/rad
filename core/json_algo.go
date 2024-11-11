@@ -8,8 +8,8 @@ import (
 func (t *Trie) TraverseTrie(data interface{}) {
 	jsonRoot := lo.Values(t.root.children)[0]
 	captures := t.traverse(nil, data, jsonRoot)
-	for key, values := range captures.captures {
-		t.i.env.SetAndImplyTypeWithToken(t.radToken, key, values)
+	for varName, values := range captures.captures {
+		t.i.env.SetAndImplyTypeWithToken(t.radToken, varName, values)
 		// todo
 		//  - we *always* wrap in an array. some way to encode "expect non-array"?
 	}

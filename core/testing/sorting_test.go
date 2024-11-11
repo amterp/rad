@@ -186,3 +186,122 @@ Bob      40   London
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestRadSort_CanSortMixedTypes(t *testing.T) {
+	rsl := `
+col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
+col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+display:
+	fields col1, col2
+	sort
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `col1          col2 
+false         5     
+true          4     
+-1.2          11    
+1             0     
+1.5           10    
+2             2     
+2             7     
+a             1     
+a             8     
+b             3     
+[3, 1, 2]     9     
+{ alice: 1 }  6     
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRadSort_CanSortMixedTypesDesc(t *testing.T) {
+	rsl := `
+col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
+col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+display:
+	fields col1, col2
+	sort desc
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `col1          col2 
+{ alice: 1 }  6     
+[3, 1, 2]     9     
+b             3     
+a             8     
+a             1     
+2             7     
+2             2     
+1.5           10    
+1             0     
+-1.2          11    
+true          4     
+false         5     
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRadSort_SortingIsPriorToMapping(t *testing.T) {
+	rsl := `
+col = [0, 1, 2, 3, 4]
+display:
+	fields col
+	sort asc
+	col:
+		map num -> -num
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `col 
+0    
+-1   
+-2   
+-3   
+-4   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRadSort_ColumnsRemainSortedAfter(t *testing.T) {
+	rsl := `
+col = [3, 4, 2, 1]
+display:
+	fields col
+	sort asc
+print(col)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `col 
+1    
+2    
+3    
+4    
+[1, 2, 3, 4]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestRadSort_DoesNotSortColumnsIfNotAskedTo(t *testing.T) {
+	rsl := `
+col = [3, 4, 2, 1]
+display:
+	fields col
+print(col)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `col 
+3    
+4    
+2    
+1    
+[3, 4, 2, 1]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

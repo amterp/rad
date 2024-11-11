@@ -2,8 +2,6 @@ package testing
 
 import "testing"
 
-// todo sorting should occur before mapping, should also be done on original types
-
 func TestRad_FormatFloats(t *testing.T) {
 	rsl := `
 nums = [0.6342, 0.7, 1.63, 0.0923]
@@ -36,10 +34,10 @@ display:
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `nums 
-90    
+1630  
 630   
 200   
-1630  
+90    
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
