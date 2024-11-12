@@ -21,6 +21,7 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"del":     DELETE,
 	"not":     NOT,
 	"unsafe":  UNSAFE,
+	"quiet":   QUIET,
 	"fail":    FAIL,
 	"recover": RECOVER,
 	"defer":   DEFER,

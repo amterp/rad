@@ -57,7 +57,9 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		cmd.Stderr = RIo.StdErr
 	}
 
-	RP.RadInfo(fmt.Sprintf("⚡️ Running: %s\n", cmdStr))
+	if shellCmd.Quiet == nil {
+		RP.RadInfo(fmt.Sprintf("⚡️ Running: %s\n", cmdStr))
+	}
 	if err := cmd.Start(); err != nil {
 		handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error starting command: %v", err), shellCmd)
 	}

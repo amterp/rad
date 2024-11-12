@@ -1319,14 +1319,20 @@ func (p *Parser) rslArgType() RslArgType {
 }
 
 func (p *Parser) isShellCmdNext() bool {
-	return p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekType(DOLLAR)
+	return p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekKeyword(GLOBAL_KEYWORDS, QUIET) || p.peekType(DOLLAR)
 }
 
 func (p *Parser) shellCmd(identifiers []Token) Stmt {
 	var unsafeToken *Token
-	if p.matchKeyword(GLOBAL_KEYWORDS, UNSAFE) {
-		token := p.previous()
-		unsafeToken = &token
+	var quietToken *Token
+	for p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekKeyword(GLOBAL_KEYWORDS, QUIET) {
+		if p.matchKeyword(GLOBAL_KEYWORDS, UNSAFE) {
+			t := p.previous()
+			unsafeToken = &t
+		} else if p.matchKeyword(GLOBAL_KEYWORDS, QUIET) {
+			t := p.previous()
+			quietToken = &t
+		}
 	}
 	dollarToken := p.consume(DOLLAR, "Expected '$' to start shell command")
 
@@ -1391,6 +1397,7 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 	return &ShellCmd{
 		Identifiers:  identifiers,
 		Unsafe:       unsafeToken,
+		Quiet:        quietToken,
 		Dollar:       dollarToken,
 		CmdExpr:      shellCmdExpr,
 		Bang:         bangToken,
