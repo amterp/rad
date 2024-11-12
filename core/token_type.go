@@ -84,6 +84,7 @@ const (
 	FAIL     TokenType = "FAIL"
 	RECOVER  TokenType = "RECOVER"
 	DEFER    TokenType = "DEFER"
+	ERRDEFER TokenType = "ERRDEFER"
 	MAP      TokenType = "MAP"
 
 	// only in Args block

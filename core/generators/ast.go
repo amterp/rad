@@ -86,7 +86,7 @@ func main() {
 		"BreakStmt			    : Token BreakToken",
 		"ContinueStmt		    : Token ContinueToken",
 		"DeleteStmt			    : Token DeleteToken, []VarPath Vars",
-		"DeferStmt			    : Token DeferToken, *Stmt DeferredStmt, *Block DeferredBlock",
+		"DeferStmt			    : Token DeferToken, bool IsErrDefer, *Stmt DeferredStmt, *Block DeferredBlock",
 	})
 
 	defineAst(outputDir, "ArgStmt", "", []string{

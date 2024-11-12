@@ -18,13 +18,14 @@ var GLOBAL_KEYWORDS = map[string]TokenType{
 	"if":      IF,
 	"else":    ELSE,
 	//"resource": RESOURCE,
-	"del":     DELETE,
-	"not":     NOT,
-	"unsafe":  UNSAFE,
-	"quiet":   QUIET,
-	"fail":    FAIL,
-	"recover": RECOVER,
-	"defer":   DEFER,
+	"del":      DELETE,
+	"not":      NOT,
+	"unsafe":   UNSAFE,
+	"quiet":    QUIET,
+	"fail":     FAIL,
+	"recover":  RECOVER,
+	"defer":    DEFER,
+	"errdefer": ERRDEFER,
 }
 
 var ARGS_BLOCK_KEYWORDS = map[string]TokenType{

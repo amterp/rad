@@ -179,7 +179,7 @@ func registerInterpreterWithExit(interpreter *MainInterpreter) {
 		}
 		exiting = true
 		codeToExitWith = code
-		interpreter.ExecuteDeferredStmts()
+		interpreter.ExecuteDeferredStmts(code)
 		existing(codeToExitWith)
 	}
 }

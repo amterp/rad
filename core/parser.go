@@ -272,7 +272,7 @@ func (p *Parser) statement() Stmt {
 		return p.deleteStmt()
 	}
 
-	if p.peekKeyword(GLOBAL_KEYWORDS, DEFER) {
+	if p.peekKeyword(GLOBAL_KEYWORDS, DEFER) || p.peekKeyword(GLOBAL_KEYWORDS, ERRDEFER) {
 		return p.deferStmt()
 	}
 
@@ -526,13 +526,21 @@ func (p *Parser) deleteStmt() Stmt {
 }
 
 func (p *Parser) deferStmt() Stmt {
-	deferToken := p.consumeKeyword(GLOBAL_KEYWORDS, DEFER)
+	var deferToken Token
+	isErrDefer := false
+	if p.matchKeyword(GLOBAL_KEYWORDS, ERRDEFER) {
+		deferToken = p.previous()
+		isErrDefer = true
+	} else {
+		deferToken = p.consumeKeyword(GLOBAL_KEYWORDS, DEFER)
+	}
+
 	if p.matchAny(COLON) {
 		block := p.block()
-		return &DeferStmt{DeferToken: deferToken, DeferredStmt: nil, DeferredBlock: &block}
+		return &DeferStmt{DeferToken: deferToken, IsErrDefer: isErrDefer, DeferredStmt: nil, DeferredBlock: &block}
 	} else {
 		stmt := p.statement()
-		return &DeferStmt{DeferToken: deferToken, DeferredStmt: &stmt, DeferredBlock: nil}
+		return &DeferStmt{DeferToken: deferToken, IsErrDefer: isErrDefer, DeferredStmt: &stmt, DeferredBlock: nil}
 	}
 }
 

@@ -498,10 +498,14 @@ func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int) (int
 }
 
 // todo currently these execute after an error is printed. Should they execute before?
-func (i *MainInterpreter) ExecuteDeferredStmts() {
+func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
 	// execute backwards (LIFO)
 	for j := len(i.deferredStmts) - 1; j >= 0; j-- {
 		deferredStmt := i.deferredStmts[j]
+
+		if deferredStmt.IsErrDefer && errCode == 0 {
+			continue
+		}
 
 		func() {
 			defer func() {

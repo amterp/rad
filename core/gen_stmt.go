@@ -327,6 +327,7 @@ func (e DeleteStmt) String() string {
 
 type DeferStmt struct {
 	DeferToken    Token
+	IsErrDefer    bool
 	DeferredStmt  *Stmt
 	DeferredBlock *Block
 }
@@ -337,6 +338,7 @@ func (e DeferStmt) Accept(visitor StmtVisitor) {
 func (e DeferStmt) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("DeferToken: %v", e.DeferToken))
+	parts = append(parts, fmt.Sprintf("IsErrDefer: %v", e.IsErrDefer))
 	parts = append(parts, fmt.Sprintf("DeferredStmt: %v", e.DeferredStmt))
 	parts = append(parts, fmt.Sprintf("DeferredBlock: %v", e.DeferredBlock))
 	return fmt.Sprintf("DeferStmt(%s)", strings.Join(parts, ", "))
