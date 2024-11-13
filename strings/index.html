@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/rad-blocks/">
+        <link rel="canonical" href="https://amterp.github.io/rad/strings/">
       
       
-        <link rel="prev" href="../functions/">
+        <link rel="prev" href="../shell-commands/">
       
       
-        <link rel="next" href="../shell-commands/">
+        <link rel="next" href="../reference/ref-functions/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Rad Blocks - Rad Docs</title>
+        <title>Strings - Rad Docs</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rad-block" class="md-skip">
+        <a href="#escaping" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Rad Blocks
+              Strings
             
           </span>
         </div>
@@ -320,28 +320,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -350,51 +332,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#rad-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      rad block
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#request-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      request block
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#display-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      display block
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -423,10 +360,28 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../strings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Strings
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -435,6 +390,57 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Escaping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#double-single-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; Single Quotes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backticks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backticks
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -527,29 +533,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#rad-block" class="md-nav__link">
+  <a href="#escaping" class="md-nav__link">
     <span class="md-ellipsis">
-      rad block
+      Escaping
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Escaping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#double-single-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; Single Quotes
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#request-block" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#backticks" class="md-nav__link">
     <span class="md-ellipsis">
-      request block
+      Backticks
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#display-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      display block
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -571,26 +583,31 @@
   
 
 
-  <h1>Rad Blocks</h1>
+  <h1>Strings</h1>
 
-<h2 id="rad-block"><code>rad</code> block<a class="headerlink" href="#rad-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
-<span class="w">    </span><span class="kt">Name</span>:
-<span class="w">        </span>map<span class="w"> </span>n<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
-<span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_height:
-<span class="w">        </span>sort<span class="w"> </span><span class="kt">Height</span>,<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>
-<span class="w">    </span><span class="k">else</span>:
-<span class="w">        </span>sort
-</code></pre></div>
-<h2 id="request-block"><code>request</code> block<a class="headerlink" href="#request-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
-</code></pre></div>
-<h2 id="display-block"><code>display</code> block<a class="headerlink" href="#display-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nf">display:</span>
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
-</code></pre></div>
+<h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>"double quote strings"</code> and <code>'single quote strings'</code> have the same rules around escaping.</li>
+<li><code>`backtick strings`</code> has slightly different rules (less escaping).</li>
+</ul>
+<h3 id="double-single-quotes">Double &amp; Single Quotes<a class="headerlink" href="#double-single-quotes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>\</code> will escape:</li>
+<li><code>{</code> (to prevent string interpolation)</li>
+<li><code>\n</code> new line</li>
+<li><code>\t</code> tab</li>
+<li><code>\</code> i.e. itself, so you can write backslashes</li>
+<li>The respective quote char itself, so <code>"\""</code> and <code>'\''</code><ul>
+<li>However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: <code>`"`</code>, <code>`'`</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="backticks">Backticks<a class="headerlink" href="#backticks" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>\</code> will escape:</li>
+<li><code>{</code> (to prevent string interpolation)</li>
+<li><code>`</code> to allow backticks in the string</li>
+</ul>
 
 
 

@@ -14,7 +14,7 @@
         <link rel="prev" href="../rad-blocks/">
       
       
-        <link rel="next" href="../reference/ref-functions/">
+        <link rel="next" href="../strings/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -283,6 +283,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../defer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../functions/" class="md-nav__link">
         
   
@@ -400,10 +420,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#suppress-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suppress Announcements
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -422,10 +471,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -436,8 +485,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -531,6 +580,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#suppress-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suppress Announcements
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -570,6 +628,23 @@
 <div class="highlight"><pre><span></span><code>err_code<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
 err_code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
 err_code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+</code></pre></div>
+<h2 id="suppress-announcements">Suppress Announcements<a class="headerlink" href="#suppress-announcements" title="Permanent link">&para;</a></h2>
+<p>By default, Rad will 'announce' (i.e. print) commands as they're executed. Example:</p>
+<div class="highlight"><span class="filename">Without quiet</span><pre><span></span><code>$!`ls`
+$!`echo<span class="w"> </span>hello`
+</code></pre></div>
+<div class="highlight"><span class="filename">Without quiet output</span><pre><span></span><code>⚡️ Running: ls
+pick.rsl  simple.rsl  sorting.rsl
+⚡️ Running: echo hello
+hello
+</code></pre></div>
+<p>These announcements can be suppressed with the <code>quiet</code> keyword. It does not impact stdout/stderr output for the command.</p>
+<div class="highlight"><span class="filename">With quiet</span><pre><span></span><code>quiet<span class="w"> </span>$!`ls`
+quiet<span class="w"> </span>$!`echo<span class="w"> </span>hello`
+</code></pre></div>
+<div class="highlight"><span class="filename">With quiet output</span><pre><span></span><code>pick.rsl  simple.rsl  sorting.rsl
+hello
 </code></pre></div>
 
 
