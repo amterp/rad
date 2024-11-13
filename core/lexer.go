@@ -300,21 +300,55 @@ func (l *Lexer) lexStringLiteral(endChar rune) {
 		if l.isAtEnd() {
 			l.error("Unterminated string")
 		}
-		if l.match('\\') {
-			l.escaping = !l.escaping
-		} else {
-			l.escaping = false
-		}
-		if l.match('{') {
-			if !l.escaping {
+
+		if endChar == '`' {
+			// for backticks, only handle \ when it's escaping {
+			if l.match('\\') {
+				if l.isAtEnd() {
+					l.error("Incomplete escape sequence")
+				}
+				next := l.peek()
+				if next == '{' || next == '`' {
+					value += string(l.advance()) // add the {
+				} else {
+					value += "\\" // treat backslash as literal otherwise
+				}
+			} else if l.match('{') {
 				l.addStringLiteralToken(value, true)
 				l.start = l.next
 				return
 			} else {
-				l.rewind(1)
+				value += string(l.advance())
+			}
+		} else {
+			// regular string handling for ' and "
+			if l.match('\\') {
+				if l.isAtEnd() {
+					l.error("Incomplete escape sequence")
+				}
+				next := l.peek()
+
+				if next == endChar || next == '\\' {
+					value += string(l.advance())
+				} else if next == 'n' {
+					value += "\n"
+					l.advance()
+				} else if next == 't' {
+					value += "\t"
+					l.advance()
+				} else if next == '{' {
+					value += string(l.advance())
+				} else {
+					value += "\\"
+				}
+			} else if l.match('{') {
+				l.addStringLiteralToken(value, true)
+				l.start = l.next
+				return
+			} else {
+				value += string(l.advance())
 			}
 		}
-		value = value + string(l.advance())
 	}
 	l.addStringLiteralToken(value, false)
 	if l.inStringStarter != nil && *l.inStringStarter == endChar {
