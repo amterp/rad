@@ -172,6 +172,12 @@ sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
 sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
 ```
 
+### parse_json
+
+```rsl
+parse_json(input string)
+```
+
 ## Time
 
 ### now_date

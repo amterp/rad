@@ -9,6 +9,10 @@ Only for major & minor version releases. Contains only notable items.
 - Emoji support
 - Basic syntax highlighter
 - Reworked JSON field extraction algo
+- `errdefer`
+- Reworked string character escaping
+- Improved rad block sorting operation, added matching `sort` function
+- Added more functions: `confirm`, `range`, `split` etc
 
 ## 0.4
 

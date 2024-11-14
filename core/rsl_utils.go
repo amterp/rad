@@ -55,3 +55,36 @@ func TypeAsString(val interface{}) string {
 		panic(UNREACHABLE)
 	}
 }
+
+// it was originally implemented because we might capture JSON as a list of unhandled types, but
+// now we should be able to capture json and convert it entirely to native RSL types up front
+func ConvertToNativeTypes(interp *MainInterpreter, token Token, arr interface{}) interface{} {
+	switch coerced := arr.(type) {
+	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
+	// json 'ints' into floats
+	case string, int64, float64, bool:
+		return coerced
+	case int:
+		return int64(coerced)
+	case []interface{}:
+		output := make([]interface{}, len(coerced))
+		for i, val := range coerced {
+			output[i] = ConvertToNativeTypes(interp, token, val)
+		}
+		return output
+	case map[string]interface{}:
+		m := NewRslMap()
+		sortedKeys := SortedKeys(coerced)
+		for _, key := range sortedKeys {
+			m.Set(key, ConvertToNativeTypes(interp, token, coerced[key]))
+		}
+		return *m
+	case RslMap:
+		return coerced
+	case nil:
+		return nil
+	default:
+		interp.error(token, fmt.Sprintf("Unhandled type in array: %T", arr))
+		panic(UNREACHABLE)
+	}
+}

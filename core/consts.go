@@ -31,4 +31,5 @@ const (
 	UNIQUE             = "unique"
 	SORT_FUNC          = "sort"
 	CONFIRM            = "confirm"
+	PARSE_JSON         = "parse_json"
 )

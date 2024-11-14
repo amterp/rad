@@ -163,6 +163,10 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runConfirm(i, function, args)
+	case PARSE_JSON:
+		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runParseJson(i, function, args)
 	default:
 		i.error(function, fmt.Sprintf("Unknown function: %v", functionName))
 		panic(UNREACHABLE)
