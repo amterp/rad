@@ -588,11 +588,11 @@
 <h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>"double quote strings"</code> and <code>'single quote strings'</code> have the same rules around escaping.</li>
-<li><code>`backtick strings`</code> has slightly different rules (less escaping).</li>
+<li><code>`backtick strings`</code> have slightly different rules (less escaping).</li>
 </ul>
 <h3 id="double-single-quotes">Double &amp; Single Quotes<a class="headerlink" href="#double-single-quotes" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>\</code> will escape:</li>
+<li><code>\</code> will escape:<ul>
 <li><code>{</code> (to prevent string interpolation)</li>
 <li><code>\n</code> new line</li>
 <li><code>\t</code> tab</li>
@@ -602,11 +602,15 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <h3 id="backticks">Backticks<a class="headerlink" href="#backticks" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>\</code> will escape:</li>
+<li><code>\</code> will escape:<ul>
 <li><code>{</code> (to prevent string interpolation)</li>
 <li><code>`</code> to allow backticks in the string</li>
+</ul>
+</li>
 </ul>
 
 
