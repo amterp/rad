@@ -227,3 +227,15 @@ args:
 	assertError(t, 1, "RslError at L3/18 on '1.2': Expected int literal, got float\n")
 	resetTestState()
 }
+
+func TestArgs_Help(t *testing.T) {
+	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "-h")
+	expected := `Usage:
+  example_arg.rsl <name> [flags]
+
+Flags:
+      --name string   The name.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	resetTestState()
+}

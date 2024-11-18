@@ -212,7 +212,7 @@ func InitCmd(cmd *cobra.Command) {
 		if len(args) >= 2 {
 			if lo.Some(args[1:], []string{"-h", "--help"}) && stdinScriptName == "" {
 				// it has, and with a rsl file source, so let's modify the cmd and re-run the root again
-				SetScriptPath(stdinScriptName)
+				SetScriptPath(args[0])
 				rslSourceCode := readSource(ScriptPath)
 				extractMetadataAndModifyCmd(cmd, rslSourceCode)
 			} else if stdinScriptName != "" {
