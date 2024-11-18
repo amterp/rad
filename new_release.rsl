@@ -1,4 +1,4 @@
-#!/usr/bin/env radd
+#!/usr/bin/env rad
 ---
 Bumps the version in rad, creates a commit, tags it, and optionally pushes it
 

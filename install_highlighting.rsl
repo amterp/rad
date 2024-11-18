@@ -1,4 +1,4 @@
-#!/usr/bin/env radd
+#!/usr/bin/env rad
 ---
 Installs syntax highlighting for RSL files in your VSCode (under ~/.vscode/extensions/).
 ---
