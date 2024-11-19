@@ -2,13 +2,12 @@ package core
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"io"
 	"strings"
 )
 
 // todo make global instance, rather than passing into everything
-// For all output to the user, except perhaps Cobra-handled help/parsing errors.
+// For all output to the user, except perhaps pflag-handled help/parsing errors.
 type Printer interface {
 	// For RSL writers to debug their scripts. They input their debug logs with debug(). Enabled with --DEBUG.
 	ScriptDebug(msg string)
@@ -63,12 +62,12 @@ type Printer interface {
 //
 // isScriptDebug will enable script debug messages
 // isRadDebug will enable rad debug messages, and include stack traces for errors
-func NewPrinter(cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
+func NewPrinter(runner *RadRunner, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
 	return &stdPrinter{
 		stdIn:         RIo.StdIn,
 		stdOut:        RIo.StdOut,
 		stdErr:        RIo.StdErr,
-		cmd:           cmd,
+		runner:        runner,
 		isShellMode:   isShellMode,
 		isQuiet:       isQuiet,
 		isScriptDebug: isScriptDebug,
@@ -80,7 +79,7 @@ type stdPrinter struct {
 	stdIn         io.Reader
 	stdOut        io.Writer
 	stdErr        io.Writer
-	cmd           *cobra.Command
+	runner        *RadRunner
 	isShellMode   bool
 	isQuiet       bool
 	isScriptDebug bool
@@ -178,7 +177,7 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
-	p.cmd.Usage()
+	p.runner.RunUsage()
 	p.printShellExitIfEnabled()
 	p.errorExit(1)
 }

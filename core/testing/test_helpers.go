@@ -3,7 +3,7 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"rad/core"
@@ -19,7 +19,7 @@ var (
 	errorOrExit  = ErrorOrExit{}
 	millisSlept  = make([]int64, 0)
 	// dont need reset
-	testCmdInput = newTestCmdInput()
+	runnerInputInput = newRunnerInputInput()
 )
 
 type ErrorOrExit struct {
@@ -27,7 +27,7 @@ type ErrorOrExit struct {
 	panicMsg *string
 }
 
-func newTestCmdInput() core.CmdInput {
+func newRunnerInputInput() core.RunnerInput {
 	testExitFunc := func(code int) {
 		errorOrExit.exitCode = &code
 		panic(fmt.Sprintf("Exit code: %d", code))
@@ -35,7 +35,7 @@ func newTestCmdInput() core.CmdInput {
 	sleepFunc := func(duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
 	}
-	return core.CmdInput{
+	return core.RunnerInput{
 		RIo: &core.RadIo{
 			StdIn:  stdInBuffer,
 			StdOut: stdOutBuffer,
@@ -82,28 +82,23 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 		stdInBuffer.WriteString(tp.rsl)
 		args = append([]string{"--STDIN", "test"}, tp.args...)
 	}
-	rootCmd := setupCmd(t, args...)
+	runner := setupRunner(t, args...)
 	defer func() {
 		if r := recover(); r != nil {
 			msg := fmt.Sprintf("%v", r)
 			errorOrExit.panicMsg = &msg
 		}
 	}()
-	err := rootCmd.Execute()
-	assert.NoError(t, err, "Command should execute without Cobra error")
+	err := runner.Run()
+	assert.NoError(t, err, "Command should execute without error")
 }
 
-func setupCmd(t *testing.T, args ...string) *cobra.Command {
+func setupRunner(t *testing.T, args ...string) *core.RadRunner {
 	t.Helper()
 
 	os.Args = append([]string{os.Args[0]}, args...)
 
-	rootCmd := core.NewRootCmd(testCmdInput)
-	core.InitCmd(rootCmd)
-
-	rootCmd.SetOut(stdOutBuffer)
-	rootCmd.SetErr(stdErrBuffer)
-	return rootCmd
+	return core.NewRadRunner(runnerInputInput)
 }
 
 func resetTestState() {
@@ -112,6 +107,7 @@ func resetTestState() {
 	stdErrBuffer.Reset()
 	errorOrExit = ErrorOrExit{}
 	millisSlept = make([]int64, 0)
+	pflag.CommandLine = pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
 	core.ResetGlobals()
 }
 

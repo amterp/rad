@@ -1,4 +1,4 @@
-#!/usr/bin/env rad
+#!/usr/bin/env radd
 ---
 Bumps the version in rad, creates a commit, tags it, and optionally pushes it
 
@@ -14,13 +14,15 @@ $`./push.rsl --no-push`
 fail:
     print("❌ Failed to build and test!")
 
-// Update Version in ./core/cobra_root.go
-$`sed -i '' "s/Version: \".*\"/Version: \"{new_version}\"/" ./core/cobra_root.go`
+path = "./core/version.go"
+
+// Update Version in ./core/version.go
+$`sed -i '' "s/Version = \".*\"/Version = \"{new_version}\"/" {path}`
 fail:
     print("❌ Failed to update version in code!")
 
-$!`git add ./core/cobra_root.go`
-$!`git commit -m "Bump version to {new_version}"`
+$!`git add {path}`
+$!`git commit -m "Bump version to {new_version}" {path}`
 $!`git tag -a "{new_version}" -m "Bump version to {new_version}"`
 
 if push:

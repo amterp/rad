@@ -21,7 +21,7 @@ func runExit(i *MainInterpreter, function Token, args []interface{}) {
 }
 
 func exit(i *MainInterpreter, errorCode int) {
-	if shellFlag {
+	if FlagShell.Value {
 		if errorCode == 0 {
 			RP.RadDebug(fmt.Sprintf("Printing shell exports"))
 			i.env.PrintShellExports()

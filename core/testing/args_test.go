@@ -5,7 +5,7 @@ import "testing"
 const (
 	setupArgRsl = `
 args:
-    foo "bar" x string`
+   foo "bar" x string`
 )
 
 func TestArgs_ApiRename(t *testing.T) {
@@ -21,14 +21,25 @@ print(foo)
 }
 
 func TestArgs_ApiRenameUsageString(t *testing.T) {
-	setupAndRunCode(t, setupArgRsl, "-h")
+	setupAndRunCode(t, setupArgRsl, "-h", "--NO-COLOR")
 	expected := `Usage:
-  test <bar> [flags]
+  test <bar>
 
-Flags:
-  -x, --bar string
+Script flags:
+  -x, --bar string   
+
+Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --NO-COLOR               Disable colorized output.
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
+  -V, --version                Print rad version information.
+      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -39,15 +50,26 @@ args:
 	mandatory string
 	optional int = 10
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Usage:
-  test <mandatory> [optional] [flags]
+  test <mandatory> [optional]
 
-Flags:
+Script flags:
       --mandatory string   
       --optional int        (default 10)
+
+Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --NO-COLOR               Disable colorized output.
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
+  -V, --version                Print rad version information.
+      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -75,17 +97,29 @@ args:
 	optional int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl, "one")
-	expected := `Usage:
-  test <mandatory1> <mandatory2> [optional] [flags]
+	setupAndRunCode(t, rsl, "one", "--NO-COLOR")
+	expected := `Missing required arguments: [mandatory2]
+Usage:
+  test <mandatory1> <mandatory2> [optional]
 
-Flags:
+Script flags:
       --mandatory1 string   
       --mandatory2 string   
       --optional int         (default 10)
+
+Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --NO-COLOR               Disable colorized output.
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
+  -V, --version                Print rad version information.
+      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
-	assertOutput(t, stdOutBuffer, expected)
-	assertError(t, 1, "Missing required arguments: [mandatory2]\n")
+	assertOutput(t, stdOutBuffer, "")
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -229,13 +263,23 @@ args:
 }
 
 func TestArgs_Help(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "-h")
+	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "-h", "--NO-COLOR")
 	expected := `Usage:
-  example_arg.rsl <name> [flags]
+  example_arg.rsl <name>
 
-Flags:
+Script flags:
       --name string   The name.
+
+Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --NO-COLOR               Disable colorized output.
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
+  -V, --version                Print rad version information.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertOnlyOutput(t, stdErrBuffer, expected)
 	resetTestState()
 }

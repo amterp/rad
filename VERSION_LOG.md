@@ -13,6 +13,7 @@ Only for major & minor version releases. Contains only notable items.
 - Reworked string character escaping
 - Improved rad block sorting operation, added matching `sort` function
 - Added more functions: `confirm`, `range`, `split` etc
+- Removed Cobra
 
 ## 0.4
 

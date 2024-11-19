@@ -3,10 +3,10 @@ package core
 import "fmt"
 
 type ScriptArg struct {
-	Name             string
-	ApiName          string
+	Name             string // identifier name in the script
+	ApiName          string // name that the user will see
 	DeclarationToken Token
-	Flag             *string
+	Short            *string
 	Type             RslArgTypeT
 	Description      *string
 	IsOptional       bool
@@ -30,14 +30,14 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		apiName = (*rename).(*StringLiteralToken).Literal
 	}
 
-	var flag *string
+	var short *string
 	flagToken := argDecl.Flag
 	if NotNil(flagToken, func() Token { return nil }) {
 		lexeme := (*flagToken).GetLexeme()
 		if len(lexeme) != 1 {
 			l.i.error(*flagToken, fmt.Sprintf("Flag %q must be a single character", lexeme))
 		}
-		flag = &lexeme
+		short = &lexeme
 	}
 
 	var comment *string
@@ -49,7 +49,7 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		Name:             name,
 		ApiName:          apiName,
 		DeclarationToken: argDecl.Identifier,
-		Flag:             flag,
+		Short:            short,
 		Type:             argDecl.ArgType.Type,
 		Description:      comment,
 		IsOptional:       argDecl.IsOptional,

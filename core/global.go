@@ -18,7 +18,7 @@ var (
 	ScriptName string
 )
 
-type CmdInput struct {
+type RunnerInput struct {
 	RIo    *RadIo
 	RExit  *func(int)
 	RReq   *Requester
@@ -42,39 +42,39 @@ func ResetGlobals() {
 	RSleep = nil
 }
 
-func setGlobals(cmdInput CmdInput) {
-	if cmdInput.RIo == nil {
+func setGlobals(runnerInput RunnerInput) {
+	if runnerInput.RIo == nil {
 		RIo = RadIo{
 			StdIn:  os.Stdin,
 			StdOut: os.Stdout,
 			StdErr: os.Stderr,
 		}
 	} else {
-		RIo = *cmdInput.RIo
+		RIo = *runnerInput.RIo
 	}
 
-	if cmdInput.RExit == nil {
+	if runnerInput.RExit == nil {
 		RExit = os.Exit
 	} else {
-		RExit = *cmdInput.RExit
+		RExit = *runnerInput.RExit
 	}
 
-	if cmdInput.RReq == nil {
+	if runnerInput.RReq == nil {
 		RReq = NewRequester()
 	} else {
-		RReq = cmdInput.RReq
+		RReq = runnerInput.RReq
 	}
 
-	if cmdInput.RClock == nil {
+	if runnerInput.RClock == nil {
 		RClock = NewRealClock()
 	} else {
-		RClock = cmdInput.RClock
+		RClock = runnerInput.RClock
 	}
-	if cmdInput.RSleep == nil {
+	if runnerInput.RSleep == nil {
 		RSleep = func(duration time.Duration) {
 			time.Sleep(duration)
 		}
 	} else {
-		RSleep = *cmdInput.RSleep
+		RSleep = *runnerInput.RSleep
 	}
 }
