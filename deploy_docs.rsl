@@ -1,4 +1,4 @@
-#!/usr/bin/env radd
+#!/usr/bin/env rad
 ---
 Build and deploy docs to GitHub Pages.
 ---
