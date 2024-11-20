@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"io"
 	"strings"
 )
@@ -63,12 +62,12 @@ type Printer interface {
 //
 // isScriptDebug will enable script debug messages
 // isRadDebug will enable rad debug messages, and include stack traces for errors
-func NewPrinter(cmd *cobra.Command, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
+func NewPrinter(runner *RadRunner, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
 	return &stdPrinter{
 		stdIn:         RIo.StdIn,
 		stdOut:        RIo.StdOut,
 		stdErr:        RIo.StdErr,
-		cmd:           cmd,
+		runner:        runner,
 		isShellMode:   isShellMode,
 		isQuiet:       isQuiet,
 		isScriptDebug: isScriptDebug,
@@ -80,7 +79,7 @@ type stdPrinter struct {
 	stdIn         io.Reader
 	stdOut        io.Writer
 	stdErr        io.Writer
-	cmd           *cobra.Command
+	runner        *RadRunner
 	isShellMode   bool
 	isQuiet       bool
 	isScriptDebug bool
@@ -178,7 +177,7 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
-	p.cmd.Usage()
+	p.runner.PrintUsage()
 	p.printShellExitIfEnabled()
 	p.errorExit(1)
 }

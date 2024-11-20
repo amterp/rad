@@ -44,10 +44,10 @@ func LongDescription(metadata ScriptMetadata) string {
 	}
 }
 
-func ExtractMetadata(statements []Stmt) ScriptMetadata {
+func ExtractMetadata(statements []Stmt) *ScriptMetadata {
 	args := extractArgs(statements)
 	oneLineDescription, blockDescription := extractDescriptions(statements)
-	return ScriptMetadata{
+	return &ScriptMetadata{
 		Args:               args,
 		OneLineDescription: oneLineDescription,
 		BlockDescription:   blockDescription,

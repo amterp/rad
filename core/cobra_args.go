@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"strconv"
 	"strings"
 )
@@ -184,70 +183,76 @@ func (c *CobraArg) SetValue(arg string) {
 	}
 }
 
-func CreateCobraArg(cmd *cobra.Command, arg ScriptArg) CobraArg {
-	name, argType, flag, description := arg.ApiName, arg.Type, "", ""
+func CreateFlag(arg ScriptArg) RadFlag {
+	name, argType, shorthand, description := arg.ApiName, arg.Type, "", ""
 	if arg.Flag != nil {
-		flag = *arg.Flag
+		shorthand = *arg.Flag
 	}
 	if arg.Description != nil {
 		description = *arg.Description
 	}
 
-	var cobraArgValue interface{}
 	switch argType {
 	case ArgStringT:
 		defVal := ""
 		if arg.DefaultString != nil {
 			defVal = *arg.DefaultString
 		}
-		cobraArgValue = cmd.Flags().StringP(name, flag, defVal, description)
+		f := NewStringRadFlag(name, shorthand, "string", description, defVal)
+		return &f
 	case ArgStringArrayT:
 		var defVal []string
 		if arg.DefaultStringArray != nil {
 			defVal = *arg.DefaultStringArray
 		}
-		cobraArgValue = cmd.Flags().StringSliceP(name, flag, defVal, description)
+		f := NewStringArrRadFlag(name, shorthand, "string,string", description, defVal)
+		return &f
 	case ArgIntT:
 		defVal := int64(0)
 		if arg.DefaultInt != nil {
 			defVal = *arg.DefaultInt
 		}
-		cobraArgValue = cmd.Flags().Int64P(name, flag, defVal, description)
+		f := NewIntRadFlag(name, shorthand, "int", description, defVal)
+		return &f
 	case ArgIntArrayT:
 		var defVal []int64
 		if arg.DefaultIntArray != nil {
 			defVal = *arg.DefaultIntArray
 		}
-		cobraArgValue = cmd.Flags().Int64SliceP(name, flag, defVal, description)
+		f := NewIntArrRadFlag(name, shorthand, "int,int", description, defVal)
+		return &f
 	case ArgFloatT:
 		defVal := 0.0
 		if arg.DefaultFloat != nil {
 			defVal = *arg.DefaultFloat
 		}
-		cobraArgValue = cmd.Flags().Float64P(name, flag, defVal, description)
+		f := NewFloatRadFlag(name, shorthand, "float", description, defVal)
+		return &f
 	case ArgFloatArrayT:
 		var defVal []float64
 		if arg.DefaultFloatArray != nil {
 			defVal = *arg.DefaultFloatArray
 		}
-		cobraArgValue = cmd.Flags().Float64SliceP(name, flag, defVal, description)
+		f := NewFloatArrRadFlag(name, shorthand, "float,float", description, defVal)
+		return &f
 	case ArgBoolT:
 		defVal := false
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool
 		}
-		cobraArgValue = cmd.Flags().BoolP(name, flag, defVal, description)
+		f := NewBoolRadFlag(name, shorthand, description, defVal)
+		return &f
 	case ArgBoolArrayT:
 		var defVal []bool
 		if arg.DefaultBoolArray != nil {
 			defVal = *arg.DefaultBoolArray
 		}
-		cobraArgValue = cmd.Flags().BoolSliceP(name, flag, defVal, description)
+		f := NewBoolArrRadFlag(name, shorthand, "bool,bool", description, defVal)
+		return &f
 	default:
 		RP.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
+		panic(UNREACHABLE)
 	}
-	cobraArg := CobraArg{Arg: arg, value: cobraArgValue}
-	return cobraArg
 }
 
 func convert[T any](i []T) []interface{} {

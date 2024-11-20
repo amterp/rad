@@ -2,11 +2,8 @@ package core
 
 import (
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"io"
 	"os"
 )
 
@@ -27,9 +24,6 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 			UnknownFlags: true,
 		},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if RP == nil {
-				RP = NewPrinter(cmd, ShellFlag, QuietFlag, DebugFlag, RadDebugFlag)
-			}
 			if !rootModified {
 				RP.RadDebug(fmt.Sprintf("Args passed: %v", args))
 				if RadDebugFlag {
@@ -40,125 +34,12 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, mockResponse := range MockResponses {
+			for _, mockResponse := range FlagMockResponse.Value {
 				RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
 				RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
 			}
-
-			var rslSourceCode string
-			if StdinScriptName != "" {
-				// we're in stdin mode
-				SetScriptPath(StdinScriptName)
-				source, err := io.ReadAll(RIo.StdIn)
-				if err != nil {
-					RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
-				}
-				rslSourceCode = string(source)
-			} else if len(args) == 0 {
-				cmd.Help()
-				return
-			} else {
-				SetScriptPath(args[0])
-				rslSourceCode = readSource(ScriptPath)
-			}
-
-			if rootModified {
-				return
-			}
-
-			extractMetadataAndModifyCmd(cmd, rslSourceCode)
-			cmd.Execute()
 		},
 	}
-}
-
-func extractMetadataAndModifyCmd(cmd *cobra.Command, rslSourceCode string) {
-	l := NewLexer(rslSourceCode)
-	l.Lex()
-
-	p := NewParser(l.Tokens)
-	instructions := p.Parse()
-
-	scriptMetadata := ExtractMetadata(instructions)
-	modifyCmd(cmd, ScriptName, scriptMetadata, instructions)
-	rootModified = true
-}
-
-func modifyCmd(cmd *cobra.Command, scriptName string, scriptMetadata ScriptMetadata, instructions []Stmt) {
-	useString := GenerateUseString(scriptName, scriptMetadata.Args)
-	var cobraArgs []*CobraArg
-	cmd.Use = useString
-	cmd.Short = ShortDescription(scriptMetadata)
-	cmd.Long = LongDescription(scriptMetadata)
-	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{} // re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
-	cmd.Run = func(cmd *cobra.Command, args []string) {
-		// fill in positional args, and
-		// error if required args are missing
-		posArgsIndex := 0
-		if StdinScriptName == "" {
-			// We're invoked on an actual string path, which will be the first arg. Cut it out.
-			args = args[1:]
-		}
-		var missingArgs []string
-		for _, cobraArg := range cobraArgs {
-			argName := cobraArg.Arg.ApiName
-			cobraFlag := cmd.Flags().Lookup(argName)
-			if !cobraFlag.Changed {
-				// flag has not been explicitly set by the user
-				if posArgsIndex < len(args) {
-					// there's a positional arg to fill it
-					cobraArg.SetValue(args[posArgsIndex])
-					posArgsIndex++
-				} else if cobraArg.Arg.IsOptional {
-					// there's no positional arg to fill it, but that's okay because it's optional, so continue
-					// but first, fill in the optional's default value if it exists
-					cobraArg.InitializeOptional()
-					continue
-				} else if cobraArg.IsBool() {
-					// all bools are implicitly optional and default false, unless explicitly defaulted to true
-					// this branch implies it was not defaulted to true
-					cobraArg.SetValue("false")
-				} else {
-					missingArgs = append(missingArgs, argName)
-				}
-			}
-		}
-
-		if len(missingArgs) > 0 && len(args) == 0 {
-			cmd.Help()
-			return
-		}
-
-		if len(missingArgs) > 0 {
-			RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s\n", missingArgs))
-		}
-
-		// error if not all positional args were used
-		if posArgsIndex < len(args) {
-			RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v\n", args[posArgsIndex:]))
-		}
-
-		color.NoColor = NoColorFlag
-		interpreter := NewInterpreter(instructions)
-		interpreter.InitArgs(cobraArgs)
-		registerInterpreterWithExit(interpreter)
-		interpreter.Run()
-
-		if ShellFlag {
-			env := interpreter.env
-			env.PrintShellExports()
-		}
-
-		RExit(0) // explicit exit to trigger deferred statements
-	}
-
-	for _, arg := range scriptMetadata.Args {
-		cobraArg := CreateCobraArg(cmd, arg)
-		cobraArgs = append(cobraArgs, &cobraArg)
-	}
-
-	// hide global flags, that distract from the particular script
-	HideGlobalFlags()
 }
 
 func registerInterpreterWithExit(interpreter *MainInterpreter) {
@@ -204,31 +85,14 @@ func InitCmd(cmd *cobra.Command) {
 		// version to run once
 		cmd.SetHelpFunc(nil)
 
-		if RP == nil {
-			RP = NewPrinter(cmd, ShellFlag, QuietFlag, DebugFlag, RadDebugFlag)
-		}
-
 		// try to detect if help has been called on either a script or with --STDIN flag
 		if len(args) >= 2 {
-			if lo.Some(args[1:], []string{"-h", "--help"}) && StdinScriptName == "" {
-				// it has, and with a rsl file source, so let's modify the cmd and re-run the root again
-				SetScriptPath(args[0])
-				rslSourceCode := readSource(ScriptPath)
-				extractMetadataAndModifyCmd(cmd, rslSourceCode)
-			} else if StdinScriptName != "" {
-				// it has, and with reading rsl from stdin, so let's modify the cmd and re-run the root again
-				source, err := io.ReadAll(RIo.StdIn)
-				if err == nil {
-					extractMetadataAndModifyCmd(cmd, string(source))
-				} else {
-					RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
-				}
-			}
+
 		}
 
 		cmd.Help()
 
-		if ShellFlag && StdinScriptName != "" {
+		if ShellFlag && FlagStdinScriptName.Value != "" {
 			// if both these flags are set, we're likely being invoked from within a bash script, so let's
 			// output an exit 0 for bash to eval and exit, so it doesn't continue
 			RP.PrintForShellEval("exit 0")

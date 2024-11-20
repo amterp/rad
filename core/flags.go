@@ -14,7 +14,7 @@ type RadFlag interface {
 	HasNonZeroDefault() bool
 	isRegistered() bool
 	Register()
-	IsSet() bool
+	Configured() bool
 	Lookup() *pflag.Flag
 }
 
@@ -56,7 +56,7 @@ func (f *BaseRadFlag) isRegistered() bool {
 	return f.registered
 }
 
-func (f *BaseRadFlag) IsSet() bool {
+func (f *BaseRadFlag) Configured() bool {
 	return pflag.Lookup(f.Name).Changed
 }
 
@@ -72,13 +72,13 @@ type BoolRadFlag struct {
 	Default bool
 }
 
-func NewBoolRadFlag(name, short, usage string, defaultValue bool) BoolRadFlag {
+func NewBoolRadFlag(name, short, description string, defaultValue bool) BoolRadFlag {
 	return BoolRadFlag{
 		BaseRadFlag: BaseRadFlag{
 			Name:              name,
 			Short:             short,
 			ArgUsage:          "",
-			Description:       usage,
+			Description:       description,
 			defaultAsString:   fmt.Sprint(defaultValue),
 			hasNonZeroDefault: defaultValue != false,
 		},
@@ -91,11 +91,39 @@ func (f *BoolRadFlag) Register() {
 		return
 	}
 
-	pflag.BoolVar(&f.Value, f.Name, f.Default, f.Description)
+	pflag.BoolVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
-	if f.Short != "" {
-		pflag.Lookup(f.Name).Shorthand = f.Short
+	f.registered = true
+}
+
+// --- bool array
+
+type BoolArrRadFlag struct {
+	BaseRadFlag
+	Value   []bool
+	Default []bool
+}
+
+func NewBoolArrRadFlag(name, short, argUsage, description string, defaultValue []bool) BoolArrRadFlag {
+	return BoolArrRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: len(defaultValue) > 0,
+		},
+		Default: defaultValue,
 	}
+}
+
+func (f *BoolArrRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.BoolSliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -108,7 +136,7 @@ type StringRadFlag struct {
 	Default string
 }
 
-func NewStringRadFlag(name, short, argUsage, description string, defaultValue string) StringRadFlag {
+func NewStringRadFlag(name, short, argUsage, description, defaultValue string) StringRadFlag {
 	return StringRadFlag{
 		BaseRadFlag: BaseRadFlag{
 			Name:              name,
@@ -127,11 +155,167 @@ func (f *StringRadFlag) Register() {
 		return
 	}
 
-	pflag.StringVar(&f.Value, f.Name, f.Default, f.Description)
+	pflag.StringVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
-	if f.Short != "" {
-		pflag.Lookup(f.Name).Shorthand = f.Short
+	f.registered = true
+}
+
+// --- string array
+
+type StringArrRadFlag struct {
+	BaseRadFlag
+	Value   []string
+	Default []string
+}
+
+func NewStringArrRadFlag(name, short, argUsage, description string, defaultValue []string) StringArrRadFlag {
+	return StringArrRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: len(defaultValue) > 0,
+		},
+		Default: defaultValue,
 	}
+}
+
+func (f *StringArrRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.StringArrayVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+
+	f.registered = true
+}
+
+// --- int
+
+type IntRadFlag struct {
+	BaseRadFlag
+	Value   int64
+	Default int64
+}
+
+func NewIntRadFlag(name, short, argUsage, description string, defaultValue int64) IntRadFlag {
+	return IntRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: defaultValue != 0,
+		},
+		Default: defaultValue,
+	}
+}
+
+func (f *IntRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.Int64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+
+	f.registered = true
+}
+
+// --- int array
+
+type IntArrRadFlag struct {
+	BaseRadFlag
+	Value   []int64
+	Default []int64
+}
+
+func NewIntArrRadFlag(name, short, argUsage, description string, defaultValue []int64) IntArrRadFlag {
+	return IntArrRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: len(defaultValue) > 0,
+		},
+		Default: defaultValue,
+	}
+}
+
+func (f *IntArrRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.Int64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+
+	f.registered = true
+}
+
+// --- float
+
+type FloatRadFlag struct {
+	BaseRadFlag
+	Value   float64
+	Default float64
+}
+
+func NewFloatRadFlag(name, short, argUsage, description string, defaultValue float64) FloatRadFlag {
+	return FloatRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: defaultValue != 0,
+		},
+		Default: defaultValue,
+	}
+}
+
+func (f *FloatRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.Float64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+
+	f.registered = true
+}
+
+// --- float array
+
+type FloatArrRadFlag struct {
+	BaseRadFlag
+	Value   []float64
+	Default []float64
+}
+
+func NewFloatArrRadFlag(name, short, argUsage, description string, defaultValue []float64) FloatArrRadFlag {
+	return FloatArrRadFlag{
+		BaseRadFlag: BaseRadFlag{
+			Name:              name,
+			Short:             short,
+			ArgUsage:          argUsage,
+			Description:       description,
+			defaultAsString:   ToPrintable(defaultValue),
+			hasNonZeroDefault: len(defaultValue) > 0,
+		},
+		Default: defaultValue,
+	}
+}
+
+func (f *FloatArrRadFlag) Register() {
+	if f.registered {
+		return
+	}
+
+	pflag.Float64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -161,11 +345,7 @@ func (f *MockResponseRadFlag) Register() {
 		return
 	}
 
-	pflag.Var(&f.Value, f.Name, f.Description)
-
-	if f.Short != "" {
-		pflag.Lookup(f.Name).Shorthand = f.Short
-	}
+	pflag.VarP(&f.Value, f.Name, f.Short, f.Description)
 
 	f.registered = true
 }
