@@ -3,10 +3,13 @@ package core
 import (
 	"fmt"
 	"github.com/spf13/pflag"
+	"strconv"
+	"strings"
 )
 
-type RadFlag interface {
+type RslArg interface {
 	GetName() string
+	GetIdentifier() string
 	GetShort() string
 	GetArgUsage() string
 	GetDescription() string
@@ -16,66 +19,103 @@ type RadFlag interface {
 	Register()
 	Configured() bool
 	Lookup() *pflag.Flag
+	SetValue(value string)
+	IsOptional() bool
+	GetToken() Token // nil if not a script arg
+	Hidden(bool)
+	IsHidden() bool
 }
 
-type BaseRadFlag struct {
-	Name              string
+type BaseRslArg struct {
+	Name              string // User-facing arg they'll set in CLI
+	Identifier        string // Identifier in script. If non-script arg, then equal to Name
 	Short             string
 	ArgUsage          string
 	Description       string
 	defaultAsString   string
 	hasNonZeroDefault bool
 	registered        bool
+	scriptArg         *ScriptArg
+	hidden            bool
 }
 
-func (f *BaseRadFlag) GetName() string {
+func (f *BaseRslArg) GetName() string {
 	return f.Name
 }
 
-func (f *BaseRadFlag) GetShort() string {
+func (f *BaseRslArg) GetIdentifier() string {
+	return f.Identifier
+}
+
+func (f *BaseRslArg) GetShort() string {
 	return f.Short
 }
 
-func (f *BaseRadFlag) GetArgUsage() string {
+func (f *BaseRslArg) GetArgUsage() string {
 	return f.ArgUsage
 }
 
-func (f *BaseRadFlag) GetDescription() string {
+func (f *BaseRslArg) GetDescription() string {
 	return f.Description
 }
 
-func (f *BaseRadFlag) DefaultAsString() string {
+func (f *BaseRslArg) DefaultAsString() string {
 	return f.defaultAsString
 }
 
-func (f *BaseRadFlag) HasNonZeroDefault() bool {
+func (f *BaseRslArg) HasNonZeroDefault() bool {
 	return f.hasNonZeroDefault
 }
 
-func (f *BaseRadFlag) isRegistered() bool {
+func (f *BaseRslArg) isRegistered() bool {
 	return f.registered
 }
 
-func (f *BaseRadFlag) Configured() bool {
+func (f *BaseRslArg) Configured() bool {
 	return pflag.Lookup(f.Name).Changed
 }
 
-func (f *BaseRadFlag) Lookup() *pflag.Flag {
+func (f *BaseRslArg) Lookup() *pflag.Flag {
 	return pflag.Lookup(f.Name)
+}
+
+func (f *BaseRslArg) IsOptional() bool {
+	if f.scriptArg == nil {
+		return true
+	}
+
+	return f.scriptArg.IsOptional
+}
+
+func (f *BaseRslArg) GetToken() Token {
+	if f.scriptArg == nil {
+		return nil
+	}
+
+	return f.scriptArg.DeclarationToken
+}
+
+func (f *BaseRslArg) Hidden(hide bool) {
+	f.hidden = hide
+}
+
+func (f *BaseRslArg) IsHidden() bool {
+	return f.hidden
 }
 
 // --- bool
 
-type BoolRadFlag struct {
-	BaseRadFlag
+type BoolRslFlag struct {
+	BaseRslArg
 	Value   bool
 	Default bool
 }
 
-func NewBoolRadFlag(name, short, description string, defaultValue bool) BoolRadFlag {
-	return BoolRadFlag{
-		BaseRadFlag: BaseRadFlag{
+func NewBoolRadFlag(name, short, description string, defaultValue bool) BoolRslFlag {
+	return BoolRslFlag{
+		BaseRslArg: BaseRslArg{
 			Name:              name,
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          "",
 			Description:       description,
@@ -86,7 +126,7 @@ func NewBoolRadFlag(name, short, description string, defaultValue bool) BoolRadF
 	}
 }
 
-func (f *BoolRadFlag) Register() {
+func (f *BoolRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -96,18 +136,31 @@ func (f *BoolRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *BoolRslFlag) SetValue(arg string) {
+	arg = strings.ToLower(arg)
+	if arg == "true" || arg == "1" {
+		f.Value = true
+	} else if arg == "false" || arg == "0" {
+		f.Value = false
+	} else {
+		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+	}
+}
+
 // --- bool array
 
-type BoolArrRadFlag struct {
-	BaseRadFlag
+type BoolArrRslFlag struct {
+	BaseRslArg
 	Value   []bool
 	Default []bool
 }
 
-func NewBoolArrRadFlag(name, short, argUsage, description string, defaultValue []bool) BoolArrRadFlag {
-	return BoolArrRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewBoolArrRadFlag(name, short, argUsage, description string, defaultValue []bool) BoolArrRslFlag {
+	return BoolArrRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -118,7 +171,7 @@ func NewBoolArrRadFlag(name, short, argUsage, description string, defaultValue [
 	}
 }
 
-func (f *BoolArrRadFlag) Register() {
+func (f *BoolArrRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -128,18 +181,37 @@ func (f *BoolArrRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *BoolArrRslFlag) SetValue(arg string) {
+	// split on arg commas
+	split := strings.Split(arg, ",")
+	bools := make([]bool, len(split))
+	for i, v := range split {
+		v = strings.ToLower(v)
+		if v == "true" || v == "1" {
+			bools[i] = true
+		} else if v == "false" || v == "0" {
+			bools[i] = false
+		} else {
+			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+		}
+	}
+	f.Value = bools
+}
+
 // --- string
 
-type StringRadFlag struct {
-	BaseRadFlag
+type StringRslFlag struct {
+	BaseRslArg
 	Value   string
 	Default string
 }
 
-func NewStringRadFlag(name, short, argUsage, description, defaultValue string) StringRadFlag {
-	return StringRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewStringRadFlag(name, short, argUsage, description, defaultValue string) StringRslFlag {
+	return StringRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -150,7 +222,7 @@ func NewStringRadFlag(name, short, argUsage, description, defaultValue string) S
 	}
 }
 
-func (f *StringRadFlag) Register() {
+func (f *StringRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -160,18 +232,24 @@ func (f *StringRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *StringRslFlag) SetValue(arg string) {
+	f.Value = arg
+}
+
 // --- string array
 
-type StringArrRadFlag struct {
-	BaseRadFlag
+type StringArrRslFlag struct {
+	BaseRslArg
 	Value   []string
 	Default []string
 }
 
-func NewStringArrRadFlag(name, short, argUsage, description string, defaultValue []string) StringArrRadFlag {
-	return StringArrRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewStringArrRadFlag(name, short, argUsage, description string, defaultValue []string) StringArrRslFlag {
+	return StringArrRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -182,7 +260,7 @@ func NewStringArrRadFlag(name, short, argUsage, description string, defaultValue
 	}
 }
 
-func (f *StringArrRadFlag) Register() {
+func (f *StringArrRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -192,18 +270,30 @@ func (f *StringArrRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *StringArrRslFlag) SetValue(arg string) {
+	// split on arg commas
+	split := strings.Split(arg, ",")
+	vals := make([]string, len(split))
+	for i, v := range split {
+		vals[i] = v
+	}
+	f.Value = vals
+}
+
 // --- int
 
-type IntRadFlag struct {
-	BaseRadFlag
+type IntRslFlag struct {
+	BaseRslArg
 	Value   int64
 	Default int64
 }
 
-func NewIntRadFlag(name, short, argUsage, description string, defaultValue int64) IntRadFlag {
-	return IntRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewIntRadFlag(name, short, argUsage, description string, defaultValue int64) IntRslFlag {
+	return IntRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -214,7 +304,7 @@ func NewIntRadFlag(name, short, argUsage, description string, defaultValue int64
 	}
 }
 
-func (f *IntRadFlag) Register() {
+func (f *IntRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -224,18 +314,29 @@ func (f *IntRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *IntRslFlag) SetValue(arg string) {
+	parsed, err := strconv.Atoi(arg)
+	if err != nil {
+		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+	}
+	val := int64(parsed)
+	f.Value = val
+}
+
 // --- int array
 
-type IntArrRadFlag struct {
-	BaseRadFlag
+type IntArrRslFlag struct {
+	BaseRslArg
 	Value   []int64
 	Default []int64
 }
 
-func NewIntArrRadFlag(name, short, argUsage, description string, defaultValue []int64) IntArrRadFlag {
-	return IntArrRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewIntArrRadFlag(name, short, argUsage, description string, defaultValue []int64) IntArrRslFlag {
+	return IntArrRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -246,7 +347,7 @@ func NewIntArrRadFlag(name, short, argUsage, description string, defaultValue []
 	}
 }
 
-func (f *IntArrRadFlag) Register() {
+func (f *IntArrRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -256,18 +357,34 @@ func (f *IntArrRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *IntArrRslFlag) SetValue(arg string) {
+	// split on arg commas
+	split := strings.Split(arg, ",")
+	ints := make([]int64, len(split))
+	for i, v := range split {
+		parsed, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+		}
+		ints[i] = parsed
+	}
+	f.Value = ints
+}
+
 // --- float
 
-type FloatRadFlag struct {
-	BaseRadFlag
+type FloatRslFlag struct {
+	BaseRslArg
 	Value   float64
 	Default float64
 }
 
-func NewFloatRadFlag(name, short, argUsage, description string, defaultValue float64) FloatRadFlag {
-	return FloatRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewFloatRadFlag(name, short, argUsage, description string, defaultValue float64) FloatRslFlag {
+	return FloatRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -278,7 +395,7 @@ func NewFloatRadFlag(name, short, argUsage, description string, defaultValue flo
 	}
 }
 
-func (f *FloatRadFlag) Register() {
+func (f *FloatRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -288,18 +405,28 @@ func (f *FloatRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *FloatRslFlag) SetValue(arg string) {
+	parsed, err := strconv.ParseFloat(arg, 64)
+	if err != nil {
+		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+	}
+	f.Value = parsed
+}
+
 // --- float array
 
-type FloatArrRadFlag struct {
-	BaseRadFlag
+type FloatArrRslFlag struct {
+	BaseRslArg
 	Value   []float64
 	Default []float64
 }
 
-func NewFloatArrRadFlag(name, short, argUsage, description string, defaultValue []float64) FloatArrRadFlag {
-	return FloatArrRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewFloatArrRadFlag(name, short, argUsage, description string, defaultValue []float64) FloatArrRslFlag {
+	return FloatArrRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
 			Description:       description,
@@ -310,7 +437,7 @@ func NewFloatArrRadFlag(name, short, argUsage, description string, defaultValue 
 	}
 }
 
-func (f *FloatArrRadFlag) Register() {
+func (f *FloatArrRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -320,17 +447,33 @@ func (f *FloatArrRadFlag) Register() {
 	f.registered = true
 }
 
+func (f *FloatArrRslFlag) SetValue(arg string) {
+	// split on arg commas
+	split := strings.Split(arg, ",")
+	floats := make([]float64, len(split))
+	for i, v := range split {
+		parsed, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+		}
+		floats[i] = parsed
+	}
+	f.Value = floats
+}
+
 // --- MockResponse
 
-type MockResponseRadFlag struct {
-	BaseRadFlag
+type MockResponseRslFlag struct {
+	BaseRslArg
 	Value MockResponseSlice
 }
 
-func NewMockResponseRadFlag(name, short, usage string) MockResponseRadFlag {
-	return MockResponseRadFlag{
-		BaseRadFlag: BaseRadFlag{
-			Name:              name,
+func NewMockResponseRadFlag(name, short, usage string) MockResponseRslFlag {
+	return MockResponseRslFlag{
+		BaseRslArg: BaseRslArg{
+			Name: name,
+
+			Identifier:        name,
 			Short:             short,
 			ArgUsage:          "string",
 			Description:       usage,
@@ -340,7 +483,7 @@ func NewMockResponseRadFlag(name, short, usage string) MockResponseRadFlag {
 	}
 }
 
-func (f *MockResponseRadFlag) Register() {
+func (f *MockResponseRslFlag) Register() {
 	if f.registered {
 		return
 	}
@@ -348,4 +491,9 @@ func (f *MockResponseRadFlag) Register() {
 	pflag.VarP(&f.Value, f.Name, f.Short, f.Description)
 
 	f.registered = true
+}
+
+func (f *MockResponseRslFlag) SetValue(arg string) {
+	RP.RadErrorExit(fmt.Sprintf("This function is expected to only be called for script args."+
+		" MockResponse cannot be a script arg: %v\n", arg))
 }

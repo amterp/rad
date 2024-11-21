@@ -6,10 +6,12 @@ import (
 	"strings"
 )
 
-type ScriptMetadata struct {
+type ScriptData struct {
+	ScriptName         string
 	Args               []ScriptArg
 	OneLineDescription *string
 	BlockDescription   *string
+	Instructions       []Stmt
 }
 
 func GenerateUseString(scriptName string, args []ScriptArg) string {
@@ -26,7 +28,7 @@ func GenerateUseString(scriptName string, args []ScriptArg) string {
 	return strings.Trim(useString, " ")
 }
 
-func ShortDescription(metadata ScriptMetadata) string {
+func ShortDescription(metadata ScriptData) string {
 	description := metadata.OneLineDescription
 	if description != nil {
 		return *description
@@ -35,7 +37,7 @@ func ShortDescription(metadata ScriptMetadata) string {
 	}
 }
 
-func LongDescription(metadata ScriptMetadata) string {
+func LongDescription(metadata ScriptData) string {
 	description := metadata.BlockDescription
 	if description != nil {
 		return *description
@@ -44,18 +46,20 @@ func LongDescription(metadata ScriptMetadata) string {
 	}
 }
 
-func ExtractMetadata(statements []Stmt) *ScriptMetadata {
-	args := extractArgs(statements)
-	oneLineDescription, blockDescription := extractDescriptions(statements)
-	return &ScriptMetadata{
+func ExtractMetadata(instructions []Stmt) *ScriptData {
+	args := extractArgs(instructions)
+	oneLineDescription, blockDescription := extractDescriptions(instructions)
+	return &ScriptData{
+		ScriptName:         ScriptName,
 		Args:               args,
 		OneLineDescription: oneLineDescription,
 		BlockDescription:   blockDescription,
+		Instructions:       instructions,
 	}
 }
 
-func extractDescriptions(statements []Stmt) (*string, *string) {
-	fileHeader, ok := lo.Find(statements, func(stmt Stmt) bool {
+func extractDescriptions(instructions []Stmt) (*string, *string) {
+	fileHeader, ok := lo.Find(instructions, func(stmt Stmt) bool {
 		_, ok := stmt.(*FileHeader)
 		return ok
 	})
@@ -70,9 +74,9 @@ func extractDescriptions(statements []Stmt) (*string, *string) {
 	return oneLiner, block
 }
 
-func extractArgs(statements []Stmt) []ScriptArg {
+func extractArgs(instructions []Stmt) []ScriptArg {
 	var args []ScriptArg
-	argBlockIfFound, ok := lo.Find(statements, func(stmt Stmt) bool {
+	argBlockIfFound, ok := lo.Find(instructions, func(stmt Stmt) bool {
 		_, ok := stmt.(*ArgBlock)
 		return ok
 	})

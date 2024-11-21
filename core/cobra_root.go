@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"os"
 )
 
@@ -11,8 +10,8 @@ var (
 	rootModified bool
 )
 
-func NewRootCmd(cmdInput CmdInput) *cobra.Command {
-	setGlobals(cmdInput)
+func NewRootCmd(runnerInput RunnerInput) *cobra.Command {
+	setGlobals(runnerInput)
 	rootModified = false
 
 	return &cobra.Command{
@@ -25,19 +24,11 @@ func NewRootCmd(cmdInput CmdInput) *cobra.Command {
 		},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if !rootModified {
-				RP.RadDebug(fmt.Sprintf("Args passed: %v", args))
-				if RadDebugFlag {
-					cmd.Flags().VisitAll(func(flag *pflag.Flag) {
-						RP.RadDebug(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
-					})
-				}
+
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, mockResponse := range FlagMockResponse.Value {
-				RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
-				RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
-			}
+
 		},
 	}
 }
@@ -92,19 +83,18 @@ func InitCmd(cmd *cobra.Command) {
 
 		cmd.Help()
 
-		if ShellFlag && FlagStdinScriptName.Value != "" {
+		if FlagShell.Value && FlagStdinScriptName.Value != "" {
 			// if both these flags are set, we're likely being invoked from within a bash script, so let's
 			// output an exit 0 for bash to eval and exit, so it doesn't continue
 			RP.PrintForShellEval("exit 0")
 		}
 	})
 
-	DefineGlobalFlags()
 	cmd.SetOut(RIo.StdErr)
 }
 
 func Execute() {
-	rootCmd := NewRootCmd(CmdInput{})
+	rootCmd := NewRootCmd(RunnerInput{})
 	InitCmd(rootCmd)
 	err := rootCmd.Execute()
 	if err != nil {

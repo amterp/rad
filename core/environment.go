@@ -29,25 +29,30 @@ func (e *Env) NewChildEnv() Env {
 	}
 }
 
-func (e *Env) InitArg(arg CobraArg) {
-	if arg.IsNull {
-		return
-	}
+func (e *Env) InitArg(arg RslArg) {
+	//if arg.IsNull {
+	//	return // todo re-assess this optional thing
+	//}
 
-	argType := arg.Arg.Type
-	switch argType {
-	case ArgStringT:
-		e.Vars[arg.Arg.Name] = arg.GetString()
-	case ArgIntT:
-		e.Vars[arg.Arg.Name] = arg.GetInt()
-	case ArgFloatT:
-		e.Vars[arg.Arg.Name] = arg.GetFloat()
-	case ArgBoolT:
-		e.Vars[arg.Arg.Name] = arg.GetBool()
-	case ArgStringArrayT, ArgIntArrayT, ArgFloatArrayT, ArgBoolArrayT, ArgMixedArrayT:
-		e.Vars[arg.Arg.Name] = arg.GetArray()
+	switch coerced := arg.(type) {
+	case *BoolRslFlag:
+		e.Vars[coerced.Identifier] = coerced.Value
+	case *BoolArrRslFlag:
+		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
+	case *StringRslFlag:
+		e.Vars[coerced.Identifier] = coerced.Value
+	case *StringArrRslFlag:
+		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
+	case *IntRslFlag:
+		e.Vars[coerced.Identifier] = coerced.Value
+	case *IntArrRslFlag:
+		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
+	case *FloatRslFlag:
+		e.Vars[coerced.Identifier] = coerced.Value
+	case *FloatArrRslFlag:
+		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
 	default:
-		e.i.error(arg.Arg.DeclarationToken, fmt.Sprintf("Unsupported arg type, cannot init: %v", argType))
+		e.i.error(arg.GetToken(), fmt.Sprintf("Unsupported arg type, cannot init: %T", arg))
 	}
 }
 
@@ -167,4 +172,12 @@ func (e *Env) get(token Token, varName string, acceptableTypes ...RslTypeEnum) (
 	}
 	e.i.error(token, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
 	panic(UNREACHABLE)
+}
+
+func convertToInterfaceArr[T any](i []T) []interface{} {
+	converted := make([]interface{}, len(i))
+	for j, v := range i {
+		converted[j] = v
+	}
+	return converted
 }

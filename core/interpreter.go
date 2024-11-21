@@ -30,9 +30,9 @@ func NewInterpreter(statements []Stmt) *MainInterpreter {
 	return i
 }
 
-func (i *MainInterpreter) InitArgs(args []*CobraArg) {
+func (i *MainInterpreter) InitArgs(args []RslArg) {
 	for _, arg := range args {
-		i.env.InitArg(*arg)
+		i.env.InitArg(arg)
 	}
 }
 

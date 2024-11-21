@@ -2,191 +2,35 @@ package core
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 )
 
-type CobraArg struct {
-	Arg    ScriptArg
-	value  interface{} // should be a pointer, e.g. *string . This is to allow cobra to set the value
-	IsNull bool
-}
+//
+//func (c *CobraArg) InitializeOptional() {
+//	if c.Arg.DefaultString != nil {
+//		c.value = c.Arg.DefaultString
+//	} else if c.Arg.DefaultStringArray != nil {
+//		c.value = c.Arg.DefaultStringArray
+//	} else if c.Arg.DefaultInt != nil {
+//		c.value = c.Arg.DefaultInt
+//	} else if c.Arg.DefaultIntArray != nil {
+//		c.value = c.Arg.DefaultIntArray
+//	} else if c.Arg.DefaultFloat != nil {
+//		c.value = c.Arg.DefaultFloat
+//	} else if c.Arg.DefaultFloatArray != nil {
+//		c.value = c.Arg.DefaultFloatArray
+//	} else if c.Arg.DefaultBool != nil {
+//		c.value = c.Arg.DefaultBool
+//	} else if c.Arg.DefaultBoolArray != nil {
+//		c.value = c.Arg.DefaultBoolArray
+//	} else {
+//		c.IsNull = true
+//	}
+//}
 
-func (c *CobraArg) IsString() bool {
-	return c.Arg.Type == ArgStringT
-}
-
-func (c *CobraArg) IsStringArray() bool {
-	return c.Arg.Type == ArgStringArrayT
-}
-
-func (c *CobraArg) IsInt() bool {
-	return c.Arg.Type == ArgIntT
-}
-
-func (c *CobraArg) IsIntArray() bool {
-	return c.Arg.Type == ArgIntArrayT
-}
-
-func (c *CobraArg) IsFloat() bool {
-	return c.Arg.Type == ArgFloatT
-}
-
-func (c *CobraArg) IsFloatArray() bool {
-	return c.Arg.Type == ArgFloatArrayT
-}
-
-func (c *CobraArg) IsBool() bool {
-	return c.Arg.Type == ArgBoolT
-}
-
-func (c *CobraArg) InitializeOptional() {
-	if c.Arg.DefaultString != nil {
-		c.value = c.Arg.DefaultString
-	} else if c.Arg.DefaultStringArray != nil {
-		c.value = c.Arg.DefaultStringArray
-	} else if c.Arg.DefaultInt != nil {
-		c.value = c.Arg.DefaultInt
-	} else if c.Arg.DefaultIntArray != nil {
-		c.value = c.Arg.DefaultIntArray
-	} else if c.Arg.DefaultFloat != nil {
-		c.value = c.Arg.DefaultFloat
-	} else if c.Arg.DefaultFloatArray != nil {
-		c.value = c.Arg.DefaultFloatArray
-	} else if c.Arg.DefaultBool != nil {
-		c.value = c.Arg.DefaultBool
-	} else if c.Arg.DefaultBoolArray != nil {
-		c.value = c.Arg.DefaultBoolArray
-	} else {
-		c.IsNull = true
-	}
-}
-
-func (c *CobraArg) GetString() string {
-	return *c.value.(*string)
-}
-
-func (c *CobraArg) GetInt() int64 {
-	return *c.value.(*int64)
-}
-
-func (c *CobraArg) GetFloat() float64 {
-	return *c.value.(*float64)
-}
-
-func (c *CobraArg) GetArray() []interface{} {
-	switch coerced := c.value.(type) {
-	case *[]string:
-		converted := convert(*coerced)
-		c.value = &converted
-	case *[]int64:
-		converted := convert(*coerced)
-		c.value = &converted
-	case *[]float64:
-		converted := convert(*coerced)
-		c.value = &converted
-	case *[]bool:
-		converted := convert(*coerced)
-		c.value = &converted
-	case *[]interface{}:
-		// do nothing
-	default:
-		RP.RadTokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Bug! Unhandled array type: %T\n", c.value))
-	}
-	return *c.value.(*[]interface{})
-}
-
-func (c *CobraArg) GetBool() bool {
-	return *c.value.(*bool)
-}
-
-func (c *CobraArg) SetValue(arg string) {
-	// do proper casting
-	switch c.Arg.Type {
-	case ArgStringT:
-		c.value = &arg
-	case ArgStringArrayT:
-		// split on arg commas
-		split := strings.Split(arg, ",")
-		vals := make([]interface{}, len(split))
-		for i, v := range split {
-			vals[i] = v
-		}
-		c.value = &vals
-	case ArgIntT:
-		parsed, err := strconv.Atoi(arg)
-		if err != nil {
-			RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
-		}
-		val := int64(parsed)
-		c.value = &val
-	case ArgIntArrayT:
-		// split on arg commas
-		split := strings.Split(arg, ",")
-		ints := make([]interface{}, len(split))
-		for i, v := range split {
-			parsed, err := strconv.ParseInt(v, 10, 64)
-			if err != nil {
-				RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
-			}
-			ints[i] = parsed
-		}
-		c.value = &ints
-	case ArgFloatT:
-		parsed, err := strconv.ParseFloat(arg, 64)
-		if err != nil {
-			RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
-		}
-		c.value = &parsed
-	case ArgFloatArrayT:
-		// split on arg commas
-		split := strings.Split(arg, ",")
-		floats := make([]interface{}, len(split))
-		for i, v := range split {
-			parsed, err := strconv.ParseFloat(v, 64)
-			if err != nil {
-				RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
-			}
-			floats[i] = parsed
-		}
-		c.value = &floats
-	case ArgBoolT:
-		arg = strings.ToLower(arg)
-		if arg == "true" || arg == "1" {
-			val := true
-			c.value = &val
-		} else if arg == "false" || arg == "0" {
-			val := false
-			c.value = &val
-		} else {
-			RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
-		}
-	case ArgBoolArrayT:
-		// split on arg commas
-		split := strings.Split(arg, ",")
-		bools := make([]interface{}, len(split))
-		for i, v := range split {
-			v = strings.ToLower(v)
-			if v == "true" || v == "1" {
-				bools[i] = true
-			} else if v == "false" || v == "0" {
-				bools[i] = false
-			} else {
-				RP.TokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
-			}
-		}
-		c.value = &bools
-	case ArgMixedArrayT:
-		RP.RadTokenErrorExit(c.Arg.DeclarationToken, "Mixed arrays are not yet supported.")
-	default:
-		RP.RadTokenErrorExit(c.Arg.DeclarationToken, fmt.Sprintf("Bug! Unhandled arg type: %v\n", c.Arg.Type))
-	}
-}
-
-func CreateFlag(arg ScriptArg) RadFlag {
-	name, argType, shorthand, description := arg.ApiName, arg.Type, "", ""
-	if arg.Flag != nil {
-		shorthand = *arg.Flag
+func CreateFlag(arg ScriptArg) RslArg {
+	apiName, argType, shorthand, description := arg.ApiName, arg.Type, "", ""
+	if arg.Short != nil {
+		shorthand = *arg.Short
 	}
 	if arg.Description != nil {
 		description = *arg.Description
@@ -198,67 +42,75 @@ func CreateFlag(arg ScriptArg) RadFlag {
 		if arg.DefaultString != nil {
 			defVal = *arg.DefaultString
 		}
-		f := NewStringRadFlag(name, shorthand, "string", description, defVal)
+		f := NewStringRadFlag(apiName, shorthand, "string", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgStringArrayT:
 		var defVal []string
 		if arg.DefaultStringArray != nil {
 			defVal = *arg.DefaultStringArray
 		}
-		f := NewStringArrRadFlag(name, shorthand, "string,string", description, defVal)
+		f := NewStringArrRadFlag(apiName, shorthand, "string,string", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgIntT:
 		defVal := int64(0)
 		if arg.DefaultInt != nil {
 			defVal = *arg.DefaultInt
 		}
-		f := NewIntRadFlag(name, shorthand, "int", description, defVal)
+		f := NewIntRadFlag(apiName, shorthand, "int", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgIntArrayT:
 		var defVal []int64
 		if arg.DefaultIntArray != nil {
 			defVal = *arg.DefaultIntArray
 		}
-		f := NewIntArrRadFlag(name, shorthand, "int,int", description, defVal)
+		f := NewIntArrRadFlag(apiName, shorthand, "int,int", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgFloatT:
 		defVal := 0.0
 		if arg.DefaultFloat != nil {
 			defVal = *arg.DefaultFloat
 		}
-		f := NewFloatRadFlag(name, shorthand, "float", description, defVal)
+		f := NewFloatRadFlag(apiName, shorthand, "float", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgFloatArrayT:
 		var defVal []float64
 		if arg.DefaultFloatArray != nil {
 			defVal = *arg.DefaultFloatArray
 		}
-		f := NewFloatArrRadFlag(name, shorthand, "float,float", description, defVal)
+		f := NewFloatArrRadFlag(apiName, shorthand, "float,float", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgBoolT:
 		defVal := false
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool
 		}
-		f := NewBoolRadFlag(name, shorthand, description, defVal)
+		f := NewBoolRadFlag(apiName, shorthand, description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	case ArgBoolArrayT:
 		var defVal []bool
 		if arg.DefaultBoolArray != nil {
 			defVal = *arg.DefaultBoolArray
 		}
-		f := NewBoolArrRadFlag(name, shorthand, "bool,bool", description, defVal)
+		f := NewBoolArrRadFlag(apiName, shorthand, "bool,bool", description, defVal)
+		f.scriptArg = &arg
+		f.Identifier = arg.Name
 		return &f
 	default:
 		RP.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
 		panic(UNREACHABLE)
 	}
-}
-
-func convert[T any](i []T) []interface{} {
-	converted := make([]interface{}, len(i))
-	for j, v := range i {
-		converted[j] = v
-	}
-	return converted
 }
