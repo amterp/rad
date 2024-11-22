@@ -18,7 +18,7 @@ const globalFlagHelp = `Global flags:
       --NO-COLOR               Disable colorized output.
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --version                Print rad version information.
+  -V, --VERSION                Print rad version information.
       --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `

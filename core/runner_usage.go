@@ -25,7 +25,7 @@ func (r *RadRunner) RunUsageExit() {
 func (r *RadRunner) printScriptlessUsage() {
 	buf := new(bytes.Buffer)
 
-	fmt.Fprintf(buf, "Request And Display (RAD): A tool for writing user-friendly command line scripts.\n\n")
+	fmt.Fprintf(buf, "rad: A tool for writing user-friendly command line scripts.\n\n")
 	greenBold(buf, "Usage:\n")
 	bold(buf, "  rad")
 	cyan(buf, " [script path] [flags]\n\n")
@@ -88,10 +88,12 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		}
 
 		line := ""
-		if f.GetShort() != "" {
+		if f.GetShort() != "" && f.GetName() != "" {
 			line = fmt.Sprintf("  -%s, --%s", f.GetShort(), f.GetName())
-		} else {
+		} else if f.GetShort() == "" {
 			line = fmt.Sprintf("      --%s", f.GetName())
+		} else if f.GetName() == "" {
+			line = fmt.Sprintf("  -%s", f.GetShort())
 		}
 
 		argUsage := f.GetArgUsage()

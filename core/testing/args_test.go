@@ -247,7 +247,7 @@ Global flags:
       --NO-COLOR               Disable colorized output.
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --version                Print rad version information.
+  -V, --VERSION                Print rad version information.
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
 	assertOnlyOutput(t, stdErrBuffer, expected)

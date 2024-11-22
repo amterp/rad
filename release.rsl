@@ -6,7 +6,7 @@ Bumps the version in rad, creates a commit, tags it, and optionally pushes it
 This will trigger a GitHub action to create a homebrew-rad PR with the new version
 ---
 args:
-    new_version string # The new release version to bump to
+    version string # The new release version to bump to
     push p bool # Whether or not a push should also be performed
 
 // Build & test
@@ -17,13 +17,13 @@ fail:
 path = "./core/version.go"
 
 // Update Version in ./core/version.go
-$`sed -i '' "s/Version = \".*\"/Version = \"{new_version}\"/" {path}`
+$`sed -i '' "s/Version = \".*\"/Version = \"{version}\"/" {path}`
 fail:
     print("❌ Failed to update version in code!")
 
 $!`git add {path}`
-$!`git commit -m "Bump version to {new_version}" {path}`
-$!`git tag -a "{new_version}" -m "Bump version to {new_version}"`
+$!`git commit -m "Bump version to {version}" {path}`
+$!`git tag -a "{version}" -m "Bump version to {version}"`
 
 if push:
     $`./push.rsl`

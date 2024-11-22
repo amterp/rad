@@ -49,7 +49,7 @@ print("{-12}")
 }
 
 func TestMisc_Version(t *testing.T) {
-	setupAndRunCode(t, "", "--version")
+	setupAndRunCode(t, "", "--VERSION")
 	assertOnlyOutput(t, stdErrBuffer, "rad version "+core.Version+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -64,7 +64,7 @@ func TestMisc_VersionShort(t *testing.T) {
 
 func TestMisc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 	setupAndRunCode(t, "", "-h", "-V", "--NO-COLOR")
-	expected := `Request And Display (RAD): A tool for writing user-friendly command line scripts.
+	expected := `rad: A tool for writing user-friendly command line scripts.
 
 Usage:
   rad [script path] [flags]
