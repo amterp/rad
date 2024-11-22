@@ -28,17 +28,7 @@ func TestArgs_ApiRenameUsageString(t *testing.T) {
 Script flags:
   -x, --bar string   
 
-Global flags:
-  -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --version                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
-`
+` + globalFlagHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -58,17 +48,7 @@ Script flags:
       --mandatory string   
       --optional int        (default 10)
 
-Global flags:
-  -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --version                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
-`
+` + globalFlagHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -107,17 +87,7 @@ Script flags:
       --mandatory2 string   
       --optional int         (default 10)
 
-Global flags:
-  -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --version                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
-`
+` + globalFlagHelp
 	assertOutput(t, stdOutBuffer, "")
 	assertError(t, 1, expected)
 	resetTestState()
