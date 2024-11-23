@@ -25,7 +25,7 @@ func TestArgs_ApiRenameUsageString(t *testing.T) {
 	expected := `Usage:
   test <bar>
 
-Script flags:
+Script args:
   -x, --bar string   
 
 ` + globalFlagHelp
@@ -44,7 +44,7 @@ args:
 	expected := `Usage:
   test <mandatory> [optional]
 
-Script flags:
+Script args:
       --mandatory string   
       --optional int        (default 10)
 
@@ -82,7 +82,7 @@ print('hi')
 Usage:
   test <mandatory1> <mandatory2> [optional]
 
-Script flags:
+Script args:
       --mandatory1 string   
       --mandatory2 string   
       --optional int         (default 10)
@@ -237,7 +237,7 @@ func TestArgs_Help(t *testing.T) {
 	expected := `Usage:
   example_arg.rsl <name>
 
-Script flags:
+Script args:
       --name string   The name.
 
 Global flags:

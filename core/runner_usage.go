@@ -62,7 +62,7 @@ func (r *RadRunner) printScriptUsage() {
 	}
 	fmt.Fprintf(buf, "\n\n")
 
-	greenBold(buf, "Script flags:\n")
+	greenBold(buf, "Script args:\n")
 	flagUsage(buf, r.scriptArgs)
 
 	fmt.Fprintf(buf, "\n")
