@@ -7,17 +7,19 @@ import (
 type ScriptData struct {
 	ScriptName         string
 	Args               []ScriptArg
+	RestArg            *ScriptRestArg
 	OneLineDescription *string // todo not really using this atm, throw away? revisit this syntax
 	BlockDescription   *string
 	Instructions       []Stmt
 }
 
 func ExtractMetadata(instructions []Stmt) *ScriptData {
-	args := extractArgs(instructions)
+	args, restArg := extractArgs(instructions)
 	oneLineDescription, blockDescription := extractDescriptions(instructions)
 	return &ScriptData{
 		ScriptName:         ScriptName,
 		Args:               args,
+		RestArg:            restArg,
 		OneLineDescription: oneLineDescription,
 		BlockDescription:   blockDescription,
 		Instructions:       instructions,
@@ -40,7 +42,7 @@ func extractDescriptions(instructions []Stmt) (*string, *string) {
 	return oneLiner, block
 }
 
-func extractArgs(instructions []Stmt) []ScriptArg {
+func extractArgs(instructions []Stmt) ([]ScriptArg, *ScriptRestArg) {
 	var args []ScriptArg
 	argBlockIfFound, ok := lo.Find(instructions, func(stmt Stmt) bool {
 		_, ok := stmt.(*ArgBlock)
@@ -48,18 +50,25 @@ func extractArgs(instructions []Stmt) []ScriptArg {
 	})
 
 	if !ok {
-		return args
+		return args, nil
 	}
 
+	var restArg *ScriptRestArg
 	argBlock := argBlockIfFound.(*ArgBlock)
 	for _, argStmt := range argBlock.Stmts {
-		argDecl, ok := argStmt.(*ArgDeclaration)
-		if ok {
+		switch coerced := argStmt.(type) {
+		case *ArgDeclaration:
 			literalInterpreter := NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
-			arg := FromArgDecl(literalInterpreter, argDecl)
+			arg := FromArgDecl(literalInterpreter, coerced)
 			args = append(args, *arg)
+		case *ArgRestDecl:
+			restArg = &ScriptRestArg{
+				RestToken: coerced.Identifier,
+				Name:      coerced.Identifier.GetLexeme(),
+				Comment:   coerced.Comment,
+			}
 		}
 	}
 
-	return args
+	return args, restArg
 }

@@ -41,7 +41,7 @@ rest = ["-t", "quiet", "-a", "30"]
 
 Option 2:
 
-Skip unknown args/flags, use recognized flags, put the unrecognized into an array.
+Skip unknown args/flags, use recognized flags, put the unrecognized ones into an array.
 
 ```
 name = Alice

@@ -60,9 +60,15 @@ func (r *RadRunner) printScriptUsage() {
 			cyan(buf, fmt.Sprintf(" <%s>", arg.ApiName))
 		}
 	}
+
+	if r.scriptMetadata.RestArg != nil {
+		cyan(buf, fmt.Sprintf(" [%s...]", r.scriptMetadata.RestArg.Name))
+		// todo the rest arg's comment currently gets dropped, not displayed in help
+	}
+
 	fmt.Fprintf(buf, "\n\n")
 
-	greenBold(buf, "Script flags:\n")
+	greenBold(buf, "Script args:\n")
 	flagUsage(buf, r.scriptArgs)
 
 	fmt.Fprintf(buf, "\n")

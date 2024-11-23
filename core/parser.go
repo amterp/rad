@@ -175,6 +175,15 @@ func (p *Parser) argStatement() ArgStmt {
 		return p.argDeclaration(identifier)
 	}
 
+	if identifier.GetLexeme() == "rest" {
+		var argComment *ArgCommentToken
+		if p.matchAny(ARG_COMMENT) {
+			argComment = p.previous().(*ArgCommentToken)
+		}
+		// todo syntax not great in that it doesn't declare a type. you just need to 'know' it's a string array
+		return &ArgRestDecl{Identifier: identifier, Comment: argComment}
+	}
+
 	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, REQUIRES) {
 		panic(NOT_IMPLEMENTED)
 	}

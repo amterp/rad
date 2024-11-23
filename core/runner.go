@@ -109,13 +109,13 @@ func (r *RadRunner) Run() error {
 
 	// help not explicitly invoked, so let's try parsing other args
 
-	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
+	// re-enable erroring on unknown flags
 	// todo if unknown flag passed, pflag handles the error & prints a kinda ugly msg (twice, bug).
 	//  continue allowing unknown flags and then detect ourselves?
-	pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = false
+	//pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = false
 
-	// todo apparently this is not recommended, I should be using flagsets? I THINK I DO, FOR TESTS?
 	pflag.Parse()
+	fmt.Println(pflag.Args())
 
 	posArgsIndex := 0
 	if FlagStdinScriptName.Value == "" {

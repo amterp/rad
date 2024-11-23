@@ -123,3 +123,9 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 
 	return scriptArg
 }
+
+type ScriptRestArg struct {
+	RestToken Token
+	Name      string
+	Comment   *ArgCommentToken
+}
