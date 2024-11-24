@@ -22,3 +22,17 @@ title: Strings
 - `\` will escape:
     - `{` (to prevent string interpolation)
     - `` ` `` to allow backticks in the string
+
+## String Attributes
+
+- Not all strings are just plain text. They may have attributes such as color.
+- This means that RSL contains logic on how to handle attributes when strings are combined or operated on
+  - e.g. concatenation, slicing, replace functions, etc
+- The following operations maintain color attributes:
+  - concatenation
+  - index lookup
+- The following *do not*, and just return a plain string:
+  - slicing (to be added)
+  - functions: `replace`, `split`
+- Attributes do *not* impact things like equality or comparing strings.
+  - A green string "Alice" and a yellow string "Alice" will be considered 'equal'.

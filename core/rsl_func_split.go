@@ -12,10 +12,10 @@ func runSplit(i *MainInterpreter, function Token, args []interface{}) interface{
 	}
 
 	switch str := args[0].(type) {
-	case string:
+	case RslString:
 		switch sep := args[1].(type) {
-		case string:
-			return regexSplit(str, sep)
+		case RslString:
+			return regexSplit(str.Plain(), sep.Plain())
 		default:
 			i.error(function, SPLIT+fmt.Sprintf("() takes strings as args, got %s", TypeAsString(args[1])))
 			panic(UNREACHABLE)
@@ -38,7 +38,7 @@ func regexSplit(input string, sep string) []interface{} {
 
 	result := make([]interface{}, 0, len(parts))
 	for _, part := range parts {
-		result = append(result, part)
+		result = append(result, NewRslString(part))
 	}
 
 	return result

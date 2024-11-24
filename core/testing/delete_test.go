@@ -21,7 +21,7 @@ b = [3, 4]
 del a
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOnlyOutput(t, stdOutBuffer, "export b=\"[3 4]\"\n") // todo weird list export
+	assertOnlyOutput(t, stdOutBuffer, "export b=\"[3, 4]\"\n") // todo weird list export
 	assertNoErrors(t)
 	resetTestState()
 }

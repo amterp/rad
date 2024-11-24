@@ -19,7 +19,7 @@ func runPick(i *MainInterpreter, function Token, values []interface{}) interface
 	case 2:
 		filter := values[1]
 		switch filter.(type) {
-		case string, int64, float64, bool:
+		case RslString, int64, float64, bool:
 			filters = append(filters, ToPrintable(filter))
 		case []interface{}:
 			strings, ok := AsStringArray(filter.([]interface{}))

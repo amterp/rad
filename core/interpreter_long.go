@@ -37,13 +37,13 @@ func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryA
 		}
 		coerced[adjustedIdx] = i.calculateResult(coerced[adjustedIdx], assign.Value.Accept(i), assign.Operator)
 	case RslMap:
-		keyStr, ok := key.(string)
+		keyStr, ok := key.(RslString)
 		if !ok {
-			i.error(assign.Identifier, "Map key must be a string") // todo still unsure about this constraint
+			i.error(assign.Identifier, fmt.Sprintf("Map key must be a string, was %s", TypeAsString(key))) // todo still unsure about this constraint
 		}
 		existing, ok := coerced.Get(keyStr)
 		if !ok && assign.Operator.GetType() != EQUAL {
-			i.error(assign.Operator, fmt.Sprintf("Cannot use compound assignment on non-existing map key %q", keyStr))
+			i.error(assign.Operator, fmt.Sprintf("Cannot use compound assignment on non-existing map key %q", ToPrintable(keyStr)))
 		}
 		coerced.Set(keyStr, i.calculateResult(existing, assign.Value.Accept(i), assign.Operator))
 		i.env.SetAndImplyType(assign.Identifier, coerced)
@@ -126,13 +126,13 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operato
 			default:
 				i.error(operatorToken, "Invalid binary operator for int, float")
 			}
-		case string:
+		case RslString:
 			switch operatorType {
 			// todo python does not allow this, should we?
 			case IN:
-				return strings.Contains(coercedRight, fmt.Sprintf("%v", coercedLeft))
+				return strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
 			case NOT_IN:
-				return !strings.Contains(coercedRight, fmt.Sprintf("%v", coercedLeft))
+				return !strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
 			default:
 				i.error(operatorToken, "Invalid binary operator for int, string")
 			}
@@ -208,41 +208,41 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operato
 		default:
 			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
-	case string:
+	case RslString:
 		switch coercedRight := right.(type) {
-		case string:
+		case RslString:
 			switch operatorType {
 			case PLUS:
-				return coercedLeft + coercedRight
+				return coercedLeft.Concat(coercedRight)
 			case EQUAL_EQUAL:
-				return coercedLeft == coercedRight
+				return coercedLeft.Equals(coercedRight)
 			case NOT_EQUAL:
-				return coercedLeft != coercedRight
+				return !coercedLeft.Equals(coercedRight)
 			case IN:
-				return strings.Contains(coercedRight, coercedLeft)
+				return strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			case NOT_IN:
-				return !strings.Contains(coercedRight, coercedLeft)
+				return !strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, string")
 			}
 		case int64:
 			switch operatorType {
 			case PLUS:
-				return coercedLeft + fmt.Sprintf("%v", coercedRight)
+				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, int")
 			}
 		case float64:
 			switch operatorType {
 			case PLUS:
-				return coercedLeft + fmt.Sprintf("%v", coercedRight) // todo check formatting
+				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight)) // todo check formatting
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, float")
 			}
 		case bool:
 			switch operatorType {
 			case PLUS:
-				return coercedLeft + fmt.Sprintf("%v", coercedRight)
+				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			default:
 				i.error(operatorToken, "Invalid binary operator for string, bool")
 			}
@@ -292,34 +292,14 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operato
 		}
 	case []interface{}:
 		switch coercedRight := right.(type) {
-		case string:
-			switch operatorType {
-			case PLUS:
-				return append(coercedLeft, right)
-			default:
-				i.error(operatorToken, "Invalid binary operator for mixed array, string")
-			}
+		case RslString:
+			i.error(operatorToken, "Invalid binary operator for mixed array, string")
 		case int64:
-			switch operatorType {
-			case PLUS:
-				return append(coercedLeft, right) // todo we should not allow this, should wrap in []
-			default:
-				i.error(operatorToken, "Invalid binary operator for mixed array, int")
-			}
+			i.error(operatorToken, "Invalid binary operator for mixed array, int")
 		case float64:
-			switch operatorType {
-			case PLUS:
-				return append(coercedLeft, right)
-			default:
-				i.error(operatorToken, "Invalid binary operator for mixed array, float")
-			}
+			i.error(operatorToken, "Invalid binary operator for mixed array, float")
 		case bool:
-			switch operatorType {
-			case PLUS:
-				return append(coercedLeft, right)
-			default:
-				i.error(operatorToken, "Invalid binary operator for mixed array, bool")
-			}
+			i.error(operatorToken, "Invalid binary operator for mixed array, bool")
 		case []interface{}:
 			switch operatorType {
 			case PLUS:

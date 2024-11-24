@@ -103,7 +103,7 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
 	setupAndRunCode(t, `sleep("Invalid!")`)
 	assertDidNotSleep(t)
-	assertError(t, 1, "RslError at L1/5 on 'sleep': sleepInvalid string argument: 'Invalid!'\n")
+	assertError(t, 1, "RslError at L1/5 on 'sleep': invalid string argument: 'Invalid!'\n")
 	resetTestState()
 }
 

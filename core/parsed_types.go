@@ -60,7 +60,7 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 
 	switch *r {
 	case RslStringT:
-		_, ok := val.(string)
+		_, ok := val.(RslString)
 		return ok
 	case RslIntT:
 		_, ok := val.(int64)

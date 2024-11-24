@@ -20,8 +20,8 @@ func runSleep(i *MainInterpreter, sleepToken Token, args []interface{}, namedArg
 	parsedArgs := parseSleepArgs(namedArgs)
 
 	switch coerced := args[0].(type) {
-	case string:
-		durStr := strings.Replace(coerced, " ", "", -1)
+	case RslString:
+		durStr := strings.Replace(coerced.Plain(), " ", "", -1)
 
 		floatVal, err := strconv.ParseFloat(durStr, 64)
 		if err == nil {
@@ -35,7 +35,7 @@ func runSleep(i *MainInterpreter, sleepToken Token, args []interface{}, namedArg
 			return
 		}
 
-		i.error(sleepToken, SLEEP+fmt.Sprintf("Invalid string argument: '%s'", args[0]))
+		i.error(sleepToken, fmt.Sprintf("invalid string argument: '%s'", coerced.Plain()))
 	case int64:
 		sleep(i, sleepToken, time.Duration(coerced)*time.Second, parsedArgs)
 	case float64:
@@ -62,7 +62,8 @@ func parseSleepArgs(args map[string]interface{}) SleepNamedArgs {
 	}
 
 	if title, ok := args[SLEEP_TITLE]; ok {
-		parsedArgs.Title = title.(string)
+		t := title.(RslString)
+		parsedArgs.Title = t.Plain()
 	}
 
 	return parsedArgs

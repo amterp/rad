@@ -40,7 +40,7 @@ func (e *Env) InitArg(arg RslArg) {
 	case *BoolArrRslArg:
 		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
 	case *StringRslArg:
-		e.Vars[coerced.Identifier] = coerced.Value
+		e.Vars[coerced.Identifier] = NewRslString(coerced.Value)
 	case *StringArrRslArg:
 		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
 	case *IntRslArg:
@@ -73,14 +73,10 @@ func (e *Env) SetAndImplyTypeWithToken(token Token, varName string, value interf
 	}
 
 	switch coerced := value.(type) {
+	case RslString, int64, float64, bool:
+		e.Vars[varName] = coerced
 	case string:
-		e.Vars[varName] = coerced
-	case int64:
-		e.Vars[varName] = coerced
-	case float64:
-		e.Vars[varName] = coerced
-	case bool:
-		e.Vars[varName] = coerced
+		e.Vars[varName] = NewRslString(coerced)
 	case []interface{}:
 		converted := ConvertToNativeTypes(e.i, token, coerced)
 		e.Vars[varName] = converted.([]interface{})
@@ -140,7 +136,7 @@ func (e *Env) PrintShellExports() {
 		val := e.Vars[varName]
 		// todo handle different data types specifically
 		// todo avoid *dangerous* exports like PATH!!
-		RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, val))
+		RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, ToPrintable(val)))
 	}
 }
 

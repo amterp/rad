@@ -22,8 +22,9 @@ func (r RadBlockInterpreter) Run(block RadBlock) {
 	if block.Source != nil {
 		src := (*block.Source).Accept(r.i) // todo might be a json blob, in the future
 		switch coerced := src.(type) {
-		case string:
-			url = &coerced
+		case RslString:
+			s := coerced.Plain()
+			url = &s
 		default:
 			r.i.error(block.RadKeyword, "URL must be a string")
 		}
@@ -280,23 +281,23 @@ type fieldModVisitor struct {
 func (f fieldModVisitor) VisitColorRadFieldModStmt(color Color) {
 	colorValue := color.ColorValue.Accept(f.invocation.ri.i)
 	switch coerced := colorValue.(type) {
-	case string:
-		coercedColor, ok := ColorFromString(coerced)
+	case RslString:
+		coercedColor, ok := ColorFromString(coerced.Plain())
 		if !ok {
 			f.invocation.ri.i.error(color.ColorToken, fmt.Sprintf("Invalid color value %q. Allowed: %s",
-				coerced, COLORS))
+				coerced.Plain(), COLOR_STRINGS))
 		}
 		regex := color.Regex.Accept(f.invocation.ri.i)
 		switch coercedRegex := regex.(type) {
-		case string:
-			regex, err := regexp.Compile(coercedRegex)
+		case RslString:
+			regex, err := regexp.Compile(coercedRegex.Plain())
 			if err != nil {
 				f.invocation.ri.i.error(color.ColorToken, fmt.Sprintf("Error compiling regex pattern: %s", err))
 			}
 			for _, identifier := range f.identifiers {
 				identifierLexeme := identifier.GetLexeme()
 				mods := f.invocation.colToColor[identifierLexeme]
-				mods = append(mods, radColorMod{color: coercedColor, regex: regex})
+				mods = append(mods, radColorMod{color: coercedColor.ToTblColor(), regex: regex})
 				f.invocation.colToColor[identifierLexeme] = mods
 			}
 		}

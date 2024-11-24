@@ -3,11 +3,11 @@ package core
 func AsStringArray(v []interface{}) ([]string, bool) {
 	output := make([]string, len(v))
 	for i, val := range v {
-		coerced, ok := val.(string)
+		coerced, ok := val.(RslString)
 		if !ok {
 			return nil, false
 		}
-		output[i] = coerced
+		output[i] = coerced.Plain()
 	}
 	return output, true
 }

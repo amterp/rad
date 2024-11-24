@@ -126,15 +126,8 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 			return 0
 		}
 		return 0
-	case string:
-		bVal := b.(string)
-		if aVal < bVal {
-			return -1
-		}
-		if aVal > bVal {
-			return 1
-		}
-		return 0
+	case RslString:
+		return aVal.Compare(b.(RslString))
 	case []interface{}, RslMap:
 		return 0 // all arrays and maps are considered equal
 	default:
@@ -149,7 +142,7 @@ func precedence(i *MainInterpreter, token Token, v interface{}) int {
 		return 0
 	case int64, float64:
 		return 1
-	case string:
+	case RslString:
 		return 2
 	case []interface{}:
 		return 3

@@ -42,7 +42,9 @@ func resolveOutputString(values []interface{}) string {
 
 func jsonify(arg interface{}) interface{} {
 	switch coerced := arg.(type) {
-	case string, int64, float64, bool:
+	case RslString:
+		return coerced.Plain()
+	case int64, float64, bool:
 		return coerced
 	case []interface{}:
 		var slice []interface{}
@@ -53,7 +55,7 @@ func jsonify(arg interface{}) interface{} {
 	case RslMap:
 		mapping := make(map[string]interface{})
 		for _, key := range coerced.Keys() {
-			value, _ := coerced.Get(key)
+			value, _ := coerced.GetStr(key)
 			mapping[key] = jsonify(value)
 		}
 		return mapping

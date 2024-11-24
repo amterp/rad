@@ -78,11 +78,23 @@ func RunRslNonVoidFunction(
 	case "upper":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return strings.ToUpper(ToPrintable(args[0]))
+		arg := args[0]
+		switch coerced := arg.(type) {
+		case RslString:
+			return coerced.Upper()
+		default:
+			return strings.ToUpper(ToPrintable(arg))
+		}
 	case "lower":
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return strings.ToLower(ToPrintable(args[0]))
+		arg := args[0]
+		switch coerced := arg.(type) {
+		case RslString:
+			return coerced.Lower()
+		default:
+			return strings.ToLower(ToPrintable(arg))
+		}
 	case "starts_with":
 		if len(args) != 2 {
 			i.error(function, "starts_with() takes exactly two arguments")
@@ -118,7 +130,7 @@ func RunRslNonVoidFunction(
 		case RslMap:
 			return coerced.KeysGeneric()
 		default:
-			i.error(function, fmt.Sprintf("%s() takes a map, got %T", KEYS, args[0]))
+			i.error(function, fmt.Sprintf("%s() takes a map, got %s", KEYS, TypeAsString(args[0])))
 		}
 	case VALUES:
 		if len(args) != 1 {
@@ -130,7 +142,7 @@ func RunRslNonVoidFunction(
 		case RslMap:
 			return coerced.Values()
 		default:
-			i.error(function, fmt.Sprintf("%s() takes a map, got %T", VALUES, args[0]))
+			i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
 		}
 	case RAND:
 		assertExpectedNumReturnValues(i, function, functionName, numExpectedReturnValues, 1)
@@ -211,8 +223,8 @@ func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 		i.error(function, "len() takes exactly one argument")
 	}
 	switch v := values[0].(type) {
-	case string:
-		return int64(len(v))
+	case RslString:
+		return v.Len()
 	case []interface{}:
 		return int64(len(v))
 	case RslMap:

@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestCompoundIntAssignments(t *testing.T) {
+func TestCompound_IntAssignments(t *testing.T) {
 	rsl := `a = 1
 a += 3 + 4
 print(a)
@@ -24,7 +24,7 @@ print(a)`
 	resetTestState()
 }
 
-func TestCompoundFloatAssignments(t *testing.T) {
+func TestCompound_FloatAssignments(t *testing.T) {
 	rsl := `b = 1.5
 b += 3.3
 print(b)
@@ -46,7 +46,7 @@ print(b)`
 	resetTestState()
 }
 
-func TestCompoundStringAssignments(t *testing.T) {
+func TestCompound_StringAssignments(t *testing.T) {
 	rsl := `c = "hi"
 c += " there"
 print(c)`
@@ -56,40 +56,37 @@ print(c)`
 	resetTestState()
 }
 
-func TestCompoundAddIntArray(t *testing.T) {
+func TestCompound_AddIntArray(t *testing.T) {
 	rsl := `a = [1]
-a += 2
-a += [3]
+a += [2]
 print(a)`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[1, 2, 3]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[1, 2]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func TestCompoundAddFloatArray(t *testing.T) {
+func TestCompound_AddFloatArray(t *testing.T) {
 	rsl := `a = [1.1]
-a += 2.2
-a += [3.3]
+a += [2.2]
 print(a)`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[1.1, 2.2, 3.3]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[1.1, 2.2]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func TestCompoundAddStringArray(t *testing.T) {
+func TestCompound_AddStringArray(t *testing.T) {
 	rsl := `a = ["alice"]
-a += "bob"
-a += ["charlie"]
+a += ["bob"]
 print(a)`
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[alice, bob, charlie]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[alice, bob]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func TestCompoundSubtractFromArrayErrors(t *testing.T) {
+func TestCompound_SubtractFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a -= 2`
 	setupAndRunCode(t, rsl)
@@ -97,7 +94,7 @@ a -= 2`
 	resetTestState()
 }
 
-func TestCompoundDivideFromArrayErrors(t *testing.T) {
+func TestCompound_DivideFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a /= 2`
 	setupAndRunCode(t, rsl)
@@ -105,10 +102,18 @@ a /= 2`
 	resetTestState()
 }
 
-func TestCompoundMultiplyFromArrayErrors(t *testing.T) {
+func TestCompound_MultiplyFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a *= 2`
 	setupAndRunCode(t, rsl)
 	assertError(t, 1, "RslError at L2/4 on '*=': Invalid binary operator for mixed array, int\n")
+	resetTestState()
+}
+
+func TestCompound_ErrorsIfAppendNotArray(t *testing.T) {
+	rsl := `a = [1]
+a += 2`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "RslError at L2/4 on '+=': Invalid binary operator for mixed array, int\n")
 	resetTestState()
 }

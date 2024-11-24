@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"github.com/scylladb/go-set/strset"
 )
 
@@ -95,7 +94,7 @@ func (s *switchInvocation) execute() []interface{} {
 
 func (s *switchInvocation) decideBasedOnKeys() []interface{} {
 	discrValueLiteral := s.si.i.env.GetByToken(s.discriminator)
-	discrValueString := fmt.Sprintf("%v", discrValueLiteral)
+	discrValueString := ToPrintable(discrValueLiteral)
 
 	var exprs []Expr
 	for _, instance := range s.cases {

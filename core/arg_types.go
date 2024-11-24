@@ -60,8 +60,9 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 		literal := (*defaultVal).Accept(l)
 		switch scriptArg.Type {
 		case ArgStringT:
-			val := literal.(string)
-			scriptArg.DefaultString = &val
+			val := literal.(RslString)
+			def := val.Plain()
+			scriptArg.DefaultString = &def
 		case ArgStringArrayT:
 			arr, ok := literal.([]interface{})
 			if !ok {
@@ -69,7 +70,8 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 			}
 			var vals []string
 			for _, elem := range arr {
-				vals = append(vals, elem.(string))
+				str := elem.(RslString)
+				vals = append(vals, str.Plain())
 			}
 			scriptArg.DefaultStringArray = &vals
 		case ArgIntT:

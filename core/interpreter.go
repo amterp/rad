@@ -59,7 +59,7 @@ func (i *MainInterpreter) VisitMapExprExpr(expr MapExpr) interface{} {
 	rslMap := NewRslMap()
 	for idx, key := range expr.Keys {
 		keyVal := key.Accept(i)
-		keyValString, ok := keyVal.(string)
+		keyValString, ok := keyVal.(RslString)
 		if !ok {
 			i.error(expr.OpenBraceToken, fmt.Sprintf("Map keys must be strings; key #%d was %v (%T)", idx, keyVal, keyVal))
 		}
@@ -90,24 +90,24 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 			i.error(access.OpenBracketToken, "Array access key must be an int")
 			panic(UNREACHABLE)
 		}
-	case string:
+	case RslString:
 		switch coercedKey := key.(type) {
 		case int64:
 			adjustedKey := coercedKey
 			if adjustedKey < 0 {
-				adjustedKey += int64(len(coerced))
+				adjustedKey += coerced.Len()
 			}
-			if adjustedKey < 0 || adjustedKey >= int64(len(coerced)) {
-				i.error(access.OpenBracketToken, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, len(coerced)))
+			if adjustedKey < 0 || adjustedKey >= coerced.Len() {
+				i.error(access.OpenBracketToken, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, coerced.Len()))
 			}
-			return string(coerced[adjustedKey])
+			return coerced.IndexAt(adjustedKey)
 		default:
 			i.error(access.OpenBracketToken, "String index must be an int")
 			panic(UNREACHABLE)
 		}
 	case RslMap:
 		switch coercedKey := key.(type) {
-		case string:
+		case RslString:
 			val, exists := coerced.Get(coercedKey)
 			if !exists {
 				i.error(access.OpenBracketToken, fmt.Sprintf("Key '%s' not found in map", coercedKey))
@@ -128,11 +128,11 @@ func (i *MainInterpreter) VisitSliceAccessExpr(sliceAccess SliceAccess) interfac
 	original := sliceAccess.ListOrString.Accept(i)
 
 	switch coerced := original.(type) {
-	case string:
-		start, end := i.resolveStartEnd(sliceAccess, len(coerced))
-		return coerced[start:end]
+	case RslString:
+		start, end := i.resolveStartEnd(sliceAccess, coerced.Len())
+		return coerced.Slice(start, end)
 	case []interface{}:
-		start, end := i.resolveStartEnd(sliceAccess, len(coerced))
+		start, end := i.resolveStartEnd(sliceAccess, int64(len(coerced)))
 		return coerced[start:end]
 	default:
 		i.error(sliceAccess.OpenBracketToken, "Slice access must be on a string or array")
@@ -398,7 +398,7 @@ func runMapForLoop(
 		for _, key := range keys {
 			i.env.SetAndImplyType(keyIdentifier, key)
 			if valIdentifier != nil {
-				val, ok := rangeMap.Get(key)
+				val, ok := rangeMap.GetStr(key)
 				if !ok {
 					i.error(stmt.ForToken, fmt.Sprintf("Bug! Map contains key %q but lookup failed.", key))
 				}
@@ -479,8 +479,8 @@ func (i *MainInterpreter) VisitDeferStmtStmt(deferStmt DeferStmt) {
 	i.deferredStmts = append(i.deferredStmts, deferStmt)
 }
 
-func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int) (int, int) {
-	start := 0
+func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int64) (int64, int64) {
+	start := int64(0)
 	end := len
 
 	if sliceAccess.Start != nil {
@@ -529,7 +529,7 @@ func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
 	}
 }
 
-func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isStart bool) int {
+func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int64, isStart bool) int64 {
 	index := expr.Accept(i)
 	rawIdx, ok := index.(int64)
 	if !ok {
@@ -538,7 +538,7 @@ func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isS
 
 	var idx = rawIdx
 	if rawIdx < 0 {
-		idx = rawIdx + int64(len)
+		idx = rawIdx + len
 	}
 
 	if isStart {
@@ -546,14 +546,14 @@ func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isS
 			// the start index is still negative, so we'll slice from the beginning
 			idx = 0
 		}
-		if idx > int64(len) {
+		if idx > len {
 			// the start index is greater than the length of the list, so we'll slice to the end
-			idx = int64(len)
+			idx = len
 		}
 	} else {
-		if idx > int64(len) {
+		if idx > len {
 			// the end index is greater than the length of the list, so we'll slice to the end
-			idx = int64(len)
+			idx = len
 		}
 		if idx < 0 {
 			// the end index is still negative, so we'll slice from the end
@@ -561,7 +561,7 @@ func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int, isS
 		}
 	}
 
-	return int(idx)
+	return idx
 }
 
 func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, keys []Expr) interface{} {
@@ -591,7 +591,7 @@ func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, key
 		}
 
 	case RslMap:
-		keyStr, ok := key.(string)
+		keyStr, ok := key.(RslString)
 		if !ok {
 			// todo still unsure about this string constraint
 			i.error(identifier, fmt.Sprintf("Map key must be a string, was %T (%v)", key, key))

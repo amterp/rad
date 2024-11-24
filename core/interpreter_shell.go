@@ -14,7 +14,7 @@ import (
 //  - colors currently get lost (sometimes?)
 //  - tests!
 //  - improve error output, especially when stderr is not captured, because that prints first then, before Rad handles it
-//  - quiet keyword
+//  - silent keyword to suppress output?
 
 func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	identifiers := shellCmd.Identifiers
@@ -24,13 +24,13 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	}
 
 	cmdValue := shellCmd.CmdExpr.Accept(i)
-	cmdStr, ok := cmdValue.(string)
+	cmdStr, ok := cmdValue.(RslString)
 
 	if !ok {
 		i.error(token, "Shell command must be a string")
 	}
 
-	cmd := resolveCmd(i, token, cmdStr)
+	cmd := resolveCmd(i, token, cmdStr.Plain())
 	var stdout, stderr bytes.Buffer
 
 	captureStdout := len(identifiers) >= 2
@@ -143,6 +143,8 @@ func handleError(
 }
 
 func resolveCmd(i *MainInterpreter, token Token, cmdStr string) *exec.Cmd {
+	// todo potentially want to somehow inject a flag which makes pipe commands propagate errors
+
 	// check SHELL first - most accurate reflection of the environment
 	if shell := os.Getenv("SHELL"); shell != "" {
 		return buildCmd(shell, cmdStr)

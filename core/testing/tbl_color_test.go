@@ -161,6 +161,6 @@ rad url:
 		color color "o[a-z]"
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L8/8 on 'color': Invalid color value \"licorice\". Allowed: [black red green yellow blue magenta cyan white]\n")
+	assertError(t, 1, "RslError at L8/8 on 'color': Invalid color value \"licorice\". Allowed: [black blue cyan green magenta orange pink plain red white yellow]\n")
 	resetTestState()
 }

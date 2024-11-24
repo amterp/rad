@@ -244,17 +244,23 @@ epoch_nanos() -> int  // e.g. 1731063226123456789
 
 ### upper
 
+- Preserves string color attributes.
+
 ```rsl
 upper(input any) -> string
 ```
 
 ### lower
 
+- Preserves string color attributes.
+
 ```rsl
 lower(input any) -> string
 ```
 
 ### replace
+
+- Does *not* preserve string color attributes.
 
 **Parameters**:
 
@@ -296,6 +302,8 @@ truncate(input string, length int) -> string
 ```
 
 ### split
+
+- Does *not* preserve string color attributes.
 
 ```rsl
 split(input string, delimiter_regex string) -> string[]

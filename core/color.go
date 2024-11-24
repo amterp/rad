@@ -2,63 +2,89 @@ package core
 
 import (
 	tblwriter "github.com/amterp/go-tbl"
+	"sort"
 )
+
+type RslColor int
 
 const (
-	PLAIN   = "plain"
-	BLACK   = "black"
-	RED     = "red"
-	GREEN   = "green"
-	YELLOW  = "yellow"
-	BLUE    = "blue"
-	MAGENTA = "magenta"
-	CYAN    = "cyan"
-	WHITE   = "white"
-	ORANGE  = "orange"
-	PINK    = "pink"
+	PLAIN RslColor = iota
+	BLACK
+	RED
+	GREEN
+	YELLOW
+	BLUE
+	MAGENTA
+	CYAN
+	WHITE
+	ORANGE
+	PINK
 )
 
-var COLORS = []string{BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE}
+var COLOR_STRINGS = make([]string, 0)
 
-var (
-	Plain   = tblwriter.Plain
-	Black   = tblwriter.Black
-	Red     = tblwriter.Red
-	Green   = tblwriter.Green
-	Yellow  = tblwriter.Yellow
-	Blue    = tblwriter.Blue
-	Magenta = tblwriter.Magenta
-	Cyan    = tblwriter.Cyan
-	White   = tblwriter.White
-	Orange  = tblwriter.Orange
-	Pink    = tblwriter.Pink
-)
+var colorEnumToStrings = map[RslColor]string{
+	PLAIN:   "plain",
+	BLACK:   "black",
+	RED:     "red",
+	GREEN:   "green",
+	YELLOW:  "yellow",
+	BLUE:    "blue",
+	MAGENTA: "magenta",
+	CYAN:    "cyan",
+	WHITE:   "white",
+	ORANGE:  "orange",
+	PINK:    "pink",
+}
 
-func ColorFromString(s string) (tblwriter.Color, bool) {
-	switch s {
+var stringsToColorEnum = make(map[string]RslColor)
+
+func init() {
+	for color, str := range colorEnumToStrings {
+		stringsToColorEnum[str] = color
+		COLOR_STRINGS = append(COLOR_STRINGS, str)
+		sort.Strings(COLOR_STRINGS)
+	}
+}
+
+func (c RslColor) String() string {
+	if s, ok := colorEnumToStrings[c]; ok {
+		return s
+	}
+	return "unknown"
+}
+
+func ColorFromString(s string) (RslColor, bool) {
+	color, ok := stringsToColorEnum[s]
+	return color, ok
+}
+
+func (c RslColor) ToTblColor() tblwriter.Color {
+	switch c {
 	case PLAIN:
-		return Plain, true
+		return tblwriter.Plain
 	case BLACK:
-		return Black, true
+		return tblwriter.Black
 	case RED:
-		return Red, true
+		return tblwriter.Red
 	case GREEN:
-		return Green, true
+		return tblwriter.Green
 	case YELLOW:
-		return Yellow, true
+		return tblwriter.Yellow
 	case BLUE:
-		return Blue, true
+		return tblwriter.Blue
 	case MAGENTA:
-		return Magenta, true
+		return tblwriter.Magenta
 	case CYAN:
-		return Cyan, true
+		return tblwriter.Cyan
 	case WHITE:
-		return White, true
+		return tblwriter.White
 	case ORANGE:
-		return Orange, true
+		return tblwriter.Orange
 	case PINK:
-		return Pink, true
+		return tblwriter.Pink
 	default:
-		return tblwriter.Plain, false
+		RP.RadErrorExit("Bug! To Tbl mapping for " + c.String())
+		panic(UNREACHABLE)
 	}
 }

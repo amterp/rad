@@ -16,7 +16,8 @@ func (l *LiteralInterpreter) VisitStringLiteralLiteral(literal StringLiteral) in
 	if l.ShouldInterpolate && l.i != nil {
 		return l.performStringInterpolation(literal)
 	} else {
-		return literal.Value[len(literal.Value)-1].FullStringLiteral
+		fullString := literal.Value[len(literal.Value)-1].FullStringLiteral
+		return NewRslString(fullString)
 	}
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 // performStringInterpolation replaces {variables} in a string with their values
-func (l *LiteralInterpreter) performStringInterpolation(stringLiteral StringLiteral) string {
+func (l *LiteralInterpreter) performStringInterpolation(stringLiteral StringLiteral) RslString {
 	var result strings.Builder
 	for i, stringToken := range stringLiteral.Value {
 		result.WriteString(stringToken.Literal)
@@ -18,7 +18,7 @@ func (l *LiteralInterpreter) performStringInterpolation(stringLiteral StringLite
 			result.WriteString(formatted)
 		}
 	}
-	return result.String()
+	return NewRslString(result.String())
 }
 
 func (l *LiteralInterpreter) format(token Token, val interface{}, formatting *InlineExprFormat) string {

@@ -131,7 +131,15 @@ func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {
 func assertOutput(t *testing.T, buffer *bytes.Buffer, expected string) {
 	t.Helper()
 	actual := buffer.String()
-	assert.Equal(t, expected, actual, "Output should match expected value")
+	ok := assert.Equal(t, expected, actual, "Output should match expected value")
+	if !ok {
+		stderr := stdErrBuffer.String()
+		if stderr != "" {
+			t.Errorf("Stderr: %s", stderr)
+		} else {
+			t.Errorf("Stderr was empty")
+		}
+	}
 	buffer.Reset()
 }
 

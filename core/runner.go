@@ -8,15 +8,6 @@ import (
 	"os"
 )
 
-var (
-	plain     = color.New(color.Reset).FprintfFunc()
-	green     = color.New(color.FgGreen).FprintfFunc()
-	greenBold = color.New(color.FgGreen, color.Bold).FprintfFunc()
-	yellow    = color.New(color.FgYellow).FprintfFunc()
-	cyan      = color.New(color.FgCyan).FprintfFunc()
-	bold      = color.New(color.Bold).FprintfFunc()
-)
-
 type RadRunner struct {
 	scriptMetadata *ScriptData
 	globalFlags    []RslArg

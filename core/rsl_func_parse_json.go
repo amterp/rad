@@ -11,9 +11,9 @@ func runParseJson(i *MainInterpreter, function Token, args []interface{}) interf
 	}
 
 	switch coerced := args[0].(type) {
-	case string:
+	case RslString:
 		var m interface{}
-		err := json.Unmarshal([]byte(coerced), &m)
+		err := json.Unmarshal([]byte(coerced.Plain()), &m)
 		if err != nil {
 			i.error(function, fmt.Sprintf("Error parsing JSON: %v", err))
 		}

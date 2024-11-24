@@ -13,6 +13,8 @@ func ToPrintable(val interface{}) string {
 		return strconv.FormatFloat(coerced, 'f', -1, 64)
 	case string:
 		return coerced
+	case RslString:
+		return coerced.Plain()
 	case bool:
 		return strconv.FormatBool(coerced)
 	case []interface{}:
@@ -40,7 +42,7 @@ func TypeAsString(val interface{}) string {
 		return "int"
 	case float64:
 		return "float"
-	case string:
+	case RslString, string:
 		return "string"
 	case bool:
 		return "bool"
@@ -62,7 +64,9 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, arr interface{})
 	switch coerced := arr.(type) {
 	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
 	// json 'ints' into floats
-	case string, int64, float64, bool:
+	case string:
+		return NewRslString(coerced)
+	case RslString, int64, float64, bool:
 		return coerced
 	case int:
 		return int64(coerced)
@@ -76,7 +80,7 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, arr interface{})
 		m := NewRslMap()
 		sortedKeys := SortedKeys(coerced)
 		for _, key := range sortedKeys {
-			m.Set(key, ConvertToNativeTypes(interp, token, coerced[key]))
+			m.SetStr(key, ConvertToNativeTypes(interp, token, coerced[key]))
 		}
 		return *m
 	case RslMap:

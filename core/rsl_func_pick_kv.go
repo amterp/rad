@@ -23,11 +23,13 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 		// no filters, leave it empty
 	case 3:
 		filter := args[2]
-		switch filter.(type) {
-		case string, int64, float64, bool:
-			filters = append(filters, ToPrintable(filter))
+		switch coerced := filter.(type) {
+		case RslString:
+			filters = append(filters, coerced.Plain())
+		case int64, float64, bool:
+			filters = append(filters, ToPrintable(coerced))
 		case []interface{}:
-			strings, ok := AsStringArray(filter.([]interface{}))
+			strings, ok := AsStringArray(coerced)
 			if !ok {
 				i.error(function, PICK_KV+"() does not allow non-string arrays as filters")
 			}
