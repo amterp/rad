@@ -20,11 +20,12 @@ func NewRslString(str string) RslString {
 }
 
 func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
-	// todo the fact that this copies without me explicitly telling it probably means it's very wasteful
+	// todo the fact that this copies without me explicitly telling it probably means we're being wasteful
 	segment.String = str
 	return RslString{Segments: []rslStringSegment{segment}}
 }
 
+// does not apply any attributes
 func (s *RslString) Plain() string {
 	// todo can lazily compute and cache
 	var result string
@@ -32,6 +33,19 @@ func (s *RslString) Plain() string {
 		result += segment.String
 	}
 	return result
+}
+
+// applies all the attributes
+func (s *RslString) String() string {
+	builder := strings.Builder{}
+	for _, segment := range s.Segments {
+		if segment.Color != nil {
+			builder.WriteString(segment.Color.Colorize(segment.String))
+		} else {
+			builder.WriteString(segment.String)
+		}
+	}
+	return builder.String()
 }
 
 func (s *RslString) Concat(other RslString) RslString {
@@ -83,8 +97,23 @@ func (s *RslString) Compare(other RslString) int {
 	return 0
 }
 
-func (s *RslString) Upper() RslString {
+func (s *RslString) DeepCopy() RslString {
 	cpy := *s
+	cpy.Segments = make([]rslStringSegment, len(s.Segments))
+	copy(cpy.Segments, s.Segments)
+	return cpy
+}
+
+func (s *RslString) Color(clr RslColor) RslString {
+	cpy := s.DeepCopy()
+	for i := range cpy.Segments {
+		cpy.Segments[i].Color = &clr
+	}
+	return cpy
+}
+
+func (s *RslString) Upper() RslString {
+	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToUpper(segment.String)
 	}
@@ -92,9 +121,15 @@ func (s *RslString) Upper() RslString {
 }
 
 func (s *RslString) Lower() RslString {
-	cpy := *s
+	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToLower(segment.String)
 	}
 	return cpy
+}
+
+func (s *RslString) SetSegmentsColor(clr RslColor) {
+	for i := range s.Segments {
+		s.Segments[i].Color = &clr
+	}
 }

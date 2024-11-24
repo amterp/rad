@@ -2,11 +2,13 @@ package core
 
 import (
 	tblwriter "github.com/amterp/go-tbl"
+	"github.com/fatih/color"
 	"sort"
 )
 
 type RslColor int
 
+// when adding colors, add 1) here, 2) colorEnumToStrings, 3) ToTblColor, and 4) ToFatihColor
 const (
 	PLAIN RslColor = iota
 	BLACK
@@ -84,7 +86,41 @@ func (c RslColor) ToTblColor() tblwriter.Color {
 	case PINK:
 		return tblwriter.Pink
 	default:
-		RP.RadErrorExit("Bug! To Tbl mapping for " + c.String())
+		RP.RadErrorExit("Bug! No Tbl mapping for " + c.String())
 		panic(UNREACHABLE)
 	}
+}
+
+func (c RslColor) ToFatihColor() *color.Color {
+	switch c {
+	case PLAIN:
+		return color.New(color.Reset)
+	case BLACK:
+		return color.New(color.FgBlack)
+	case RED:
+		return color.New(color.FgRed)
+	case GREEN:
+		return color.New(color.FgGreen)
+	case YELLOW:
+		return color.New(color.FgYellow)
+	case BLUE:
+		return color.New(color.FgBlue)
+	case MAGENTA:
+		return color.New(color.FgMagenta)
+	case CYAN:
+		return color.New(color.FgCyan)
+	case WHITE:
+		return color.New(color.FgWhite)
+	case ORANGE:
+		return color.RGB(255, 128, 0)
+	case PINK:
+		return color.RGB(255, 172, 187)
+	default:
+		RP.RadErrorExit("Bug! No fatih mapping for " + c.String())
+		panic(UNREACHABLE)
+	}
+}
+
+func (c RslColor) Colorize(str string) string {
+	return c.ToFatihColor().Sprint(str)
 }

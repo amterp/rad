@@ -14,7 +14,7 @@ func ToPrintable(val interface{}) string {
 	case string:
 		return coerced
 	case RslString:
-		return coerced.Plain()
+		return coerced.String()
 	case bool:
 		return strconv.FormatBool(coerced)
 	case []interface{}:
