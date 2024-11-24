@@ -5,13 +5,14 @@ Performs some pre-pushing steps such as build, test, and then pushes if all good
 args:
   branch b string = "main" # The branch to push to
   no_push "no-push" n bool = false # Skip the pushing step
+  test_count "test-count" t int = 50 # The number of times to run tests.
 
 $`go build main.go`
 fail:
     print("Build failed ❌")
 
 // Run tests many times to ensure no flakiness
-$`go test ./core/testing -count 30`
+$`go test ./core/testing -count {test_count}`
 fail:
     print("Tests failed ❌")
 
