@@ -253,3 +253,62 @@ Global flags:
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	resetTestState()
 }
+
+func TestArgs_HelpWorksForAllTypes(t *testing.T) {
+	rsl := `
+args:
+	stringArg string = "alice"
+	intArg int = 1 # An int.
+	floatArg float = 1.1
+	boolArg bool = true
+	stringArrayArg string[] = ["bob", "charlie"]
+	intArrayArg int[] = [2, 3]
+	floatArrayArg float[] = [2.1, 3.1]
+	boolArrayArg bool[] = [true, false]
+`
+	setupAndRunCode(t, rsl, "-h", "--NO-COLOR")
+	expected := `Usage:
+  test [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
+
+Script args:
+      --stringArg string                (default alice)
+      --intArg int                     An int. (default 1)
+      --floatArg float                  (default 1.1)
+      --boolArg                         (default true)
+      --stringArrayArg string,string    (default [bob, charlie])
+      --intArrayArg int,int             (default [2, 3])
+      --floatArrayArg float,float       (default [2.1, 3.1])
+      --boolArrayArg bool,bool          (default [true, false])
+
+` + globalFlagHelp
+	assertOnlyOutput(t, stdErrBuffer, expected)
+	resetTestState()
+}
+
+func TestArgs_UnsetBoolDefaultsToFalse(t *testing.T) {
+	rsl := `
+args:
+	name string
+	isTall bool
+print(name, isTall)
+`
+	setupAndRunCode(t, rsl, "alice")
+	expected := `alice false
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	resetTestState()
+}
+
+func TestArgs_CanDefaultBoolToTrue(t *testing.T) {
+	rsl := `
+args:
+	name string
+	isTall bool = true
+print(name, isTall)
+`
+	setupAndRunCode(t, rsl, "alice")
+	expected := `alice true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	resetTestState()
+}

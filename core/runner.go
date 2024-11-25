@@ -125,12 +125,11 @@ func (r *RadRunner) Run() error {
 			} else if scriptArg.IsOptional() {
 				// there's no positional arg to fill it, but that's okay because it's optional, so continue
 				// but first, fill in the optional's default value if it exists
-				//scriptArg.InitializeOptional() // todo this is currently already done i think by pflag
+				//scriptArg.InitializeOptional() // todo this is currently already done i think by pflag, remove?
 				continue
-				//} else if _, ok := scriptArg.(*BoolRslArg); ok {
-				//	// all bools are implicitly optional and default false, unless explicitly defaulted to true
-				//	// this branch implies it was not defaulted to true // todo i think also not needed ditto above
-				//	scriptArg.SetValue("false")
+			} else if _, ok := scriptArg.(*BoolRslArg); ok {
+				// all bools are implicitly optional and default false, unless explicitly defaulted to true
+				// this branch implies it was not defaulted to true
 			} else {
 				missingArgs = append(missingArgs, argName)
 			}
