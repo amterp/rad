@@ -320,10 +320,19 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operato
 	panic(UNREACHABLE)
 }
 
+// todo should probably handle RslMap directly
 func contains(array []interface{}, val interface{}) bool {
-	for _, v := range array {
-		if v == val {
-			return true
+	if a, ok := val.(RslString); ok {
+		for _, v := range array {
+			if b, ok := v.(RslString); ok && a.Equals(b) {
+				return true
+			}
+		}
+	} else {
+		for _, v := range array {
+			if v == val {
+				return true
+			}
 		}
 	}
 	return false

@@ -30,6 +30,18 @@ print(true in [false])
 	resetTestState()
 }
 
+func TestIn_StringArray(t *testing.T) {
+	rsl := `
+a = ["alice", "bob", "charlie"]
+print("alice" in a)
+print("ALICE" in a)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func TestIn_NotInArray(t *testing.T) {
 	rsl := `
 a = [40, 50, 60]
