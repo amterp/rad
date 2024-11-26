@@ -1,5 +1,5 @@
 package core
 
 const (
-	Version = "0.4.16"
+	Version = "0.4.17"
 )
