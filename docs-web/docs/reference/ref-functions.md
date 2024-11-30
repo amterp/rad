@@ -349,7 +349,7 @@ seed_random(seed int)
 ### pick
 
 ```rsl
-pick(options string[], filter string?)
+pick(options string[], filter string?) -> string
 ```
 
 Named args:
@@ -358,7 +358,7 @@ Named args:
 ### pick_kv
 
 ```rsl
-pick_kv(keys string[], values string[], filter string?)
+pick_kv(keys string[], values string[], filter string?) -> string
 ```
 
 Named args:
@@ -367,5 +367,19 @@ Named args:
 ### pick_from_resource
 
 ```rsl
-pick_from_resource(resource_path string, filter string?)
+pick_from_resource(resource_path string, filter string?) -> any...
 ```
+
+## HTTP
+
+### http_get
+
+```rsl
+http_get(url string, headers map?) -> map
+```
+
+Map output contains the following keys:
+- `status_code`
+- `body`
+
+Failed queries (e.g. invalid url, no response) will result in an error and script exit.

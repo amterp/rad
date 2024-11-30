@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/nwidger/jsoncolor"
 )
@@ -23,7 +24,7 @@ func runPrettyPrint(i *MainInterpreter, function Token, values []interface{}) {
 	arg := values[0]
 	jsonStruct := jsonify(arg)
 	output := prettify(i, function, jsonStruct)
-	RP.Print(output + "\n")
+	RP.Print(output)
 }
 
 func resolveOutputString(values []interface{}) string {
@@ -70,9 +71,18 @@ func jsonify(arg interface{}) interface{} {
 func prettify(i *MainInterpreter, function Token, jsonStruct interface{}) string {
 	f := jsoncolor.NewFormatter()
 	// todo could add coloring here on formatter
-	out, err := jsoncolor.MarshalIndentWithFormatter(jsonStruct, "", "  ", f)
+
+	buf := &bytes.Buffer{}
+
+	enc := jsoncolor.NewEncoderWithFormatter(buf, f)
+	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
+
+	err := enc.Encode(jsonStruct)
+
 	if err != nil {
 		i.error(function, fmt.Sprintf("Error marshalling JSON: %v", err))
 	}
-	return string(out)
+
+	return buf.String()
 }

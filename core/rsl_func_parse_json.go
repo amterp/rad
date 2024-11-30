@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -12,12 +11,11 @@ func runParseJson(i *MainInterpreter, function Token, args []interface{}) interf
 
 	switch coerced := args[0].(type) {
 	case RslString:
-		var m interface{}
-		err := json.Unmarshal([]byte(coerced.Plain()), &m)
+		out, err := TryConvertJsonToNativeTypes(i, function, coerced.Plain())
 		if err != nil {
 			i.error(function, fmt.Sprintf("Error parsing JSON: %v", err))
 		}
-		return ConvertToNativeTypes(i, function, m)
+		return out
 	default:
 		// maybe a bit harsh, should allow just passthrough of e.g. int64?
 		i.error(function, PARSE_JSON+fmt.Sprintf("() expects string, got %s", TypeAsString(args[0])))

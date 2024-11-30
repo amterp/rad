@@ -3,15 +3,37 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/samber/lo"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
+	"strings"
 )
 
 type Requester struct {
 	jsonPathsByMockedUrlRegex map[string]string
+}
+
+type RequestDef struct {
+	Url     string
+	Body    string
+	Headers map[string]string
+}
+
+type ResponseDef struct {
+	Body       string
+	StatusCode int
+}
+
+func (r *ResponseDef) ToRslMap(i *MainInterpreter, t Token) RslMap {
+	rslMap := NewRslMap()
+	out, _ := TryConvertJsonToNativeTypes(i, t, r.Body)
+	rslMap.SetStr("body", out)
+	rslMap.SetStr("status_code", int64(r.StatusCode))
+	// todo we should add more e.g. reason, message, response headers
+	return *rslMap
 }
 
 func NewRequester() *Requester {
@@ -24,39 +46,36 @@ func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
 
-func (r *Requester) Request(url string) (string, error) {
-	mockJson, ok := r.resolveMockedResponse(url)
-	if ok {
-		return mockJson, nil
-	}
+func (r *Requester) Get(url string, headers map[string]string) (*ResponseDef, error) {
+	req := newGetRequest(url, headers)
+	return r.request(req, func(encodedUrl string) (*http.Response, error) {
+		return http.Get(encodedUrl)
+	})
+}
 
-	urlToQuery, err := encodeUrl(url)
-	if err != nil {
-		return "", err
-	}
+func (r *Requester) Post(url string, body string, headers map[string]string) (*ResponseDef, error) {
+	req := newPostRequest(url, body, headers)
+	return r.request(req, func(encodedUrl string) (*http.Response, error) {
+		request, err := http.NewRequest("POST", encodedUrl, strings.NewReader(body))
+		if err != nil {
+			return nil, fmt.Errorf("error creating POST request: %w", err)
+		}
 
-	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+		for key, value := range headers {
+			request.Header.Add(key, value)
+		}
 
-	resp, err := http.Get(urlToQuery)
-	if err != nil {
-		return "", fmt.Errorf("error making HTTP request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("error reading HTTP body (%v): %w", body, err)
-	}
-
-	return string(body), nil
+		return http.DefaultClient.Do(request)
+	})
 }
 
 func (r *Requester) RequestJson(url string) (interface{}, error) {
-	body, err := r.Request(url)
+	resp, err := r.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
 
+	body := resp.Body
 	bodyBytes := []byte(body)
 	isValidJson := json.Valid(bodyBytes)
 	if !isValidJson {
@@ -77,6 +96,58 @@ func encodeUrl(rawUrl string) (string, error) {
 		return "", fmt.Errorf("error parsing URL %v: %w", rawUrl, err)
 	}
 	return parsedUrl.String(), nil
+}
+
+func newGetRequest(url string, headers map[string]string) RequestDef {
+	return RequestDef{
+		Url:     url,
+		Headers: headers,
+	}
+}
+
+func newPostRequest(encodedUrl string, body string, headers map[string]string) RequestDef {
+	if !lo.Contains(lo.Keys(headers), "Content-Type") {
+		headers["Content-Type"] = "application/json"
+	}
+	return RequestDef{
+		Url:     encodedUrl,
+		Body:    body,
+		Headers: headers,
+	}
+}
+
+func (r *Requester) request(def RequestDef, reqFunc func(encodedUrl string) (*http.Response, error)) (*ResponseDef, error) {
+	url := def.Url
+	mockJson, ok := r.resolveMockedResponse(def.Url)
+	if ok {
+		return &ResponseDef{
+			Body:       mockJson,
+			StatusCode: 200,
+		}, nil
+	}
+
+	urlToQuery, err := encodeUrl(url)
+	if err != nil {
+		return nil, err
+	}
+
+	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+
+	resp, err := reqFunc(urlToQuery)
+	if err != nil {
+		return nil, fmt.Errorf("error making HTTP request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading HTTP body (%v): %w", body, err)
+	}
+
+	return &ResponseDef{
+		Body:       string(body),
+		StatusCode: resp.StatusCode,
+	}, nil
 }
 
 func (r *Requester) resolveMockedResponse(url string) (string, bool) {

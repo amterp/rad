@@ -17,6 +17,14 @@ func NewRslMap() *RslMap {
 	}
 }
 
+func (m *RslMap) ToStringMap() map[string]string {
+	newMap := make(map[string]string)
+	for k, v := range m.mapping {
+		newMap[k] = ToPrintable(v)
+	}
+	return newMap
+}
+
 func (m *RslMap) Set(key RslString, value interface{}) {
 	m.SetStr(key.Plain(), value)
 }

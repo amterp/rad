@@ -244,11 +244,12 @@ func executeRequestPassthrough(r *radInvocation) {
 	}
 
 	// execute request, don't expect responses, just print out the response body
-	data, err := RReq.Request(*url)
+	resp, err := RReq.Get(*url, nil)
 	if err != nil {
 		r.error(fmt.Sprintf("Error requesting: %v", err))
 	}
 
+	data := resp.Body
 	// todo weird to even allow this. if we allow returning the data in the future, maybe it'll make sense. and we
 	//  would allow just the request block version?
 	if r.block.RadType != Request {

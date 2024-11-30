@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -58,10 +59,20 @@ func TypeAsString(val interface{}) string {
 	}
 }
 
+// Convert a json interface{} into native RSL types
+func TryConvertJsonToNativeTypes(i *MainInterpreter, function Token, maybeJsonStr string) (interface{}, error) {
+	var m interface{}
+	err := json.Unmarshal([]byte(maybeJsonStr), &m)
+	if err != nil {
+		return NewRslString(maybeJsonStr), err
+	}
+	return ConvertToNativeTypes(i, function, m), nil
+}
+
 // it was originally implemented because we might capture JSON as a list of unhandled types, but
 // now we should be able to capture json and convert it entirely to native RSL types up front
-func ConvertToNativeTypes(interp *MainInterpreter, token Token, arr interface{}) interface{} {
-	switch coerced := arr.(type) {
+func ConvertToNativeTypes(interp *MainInterpreter, token Token, val interface{}) interface{} {
+	switch coerced := val.(type) {
 	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
 	// json 'ints' into floats
 	case string:
@@ -88,7 +99,7 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, arr interface{})
 	case nil:
 		return nil
 	default:
-		interp.error(token, fmt.Sprintf("Unhandled type in array: %T", arr))
+		interp.error(token, fmt.Sprintf("Unhandled type in array: %T", val))
 		panic(UNREACHABLE)
 	}
 }

@@ -8,6 +8,7 @@ This will trigger a GitHub action to create a homebrew-rad PR with the new versi
 args:
     version string # The new release version to bump to
     push p bool # Whether or not a push should also be performed
+    docs d bool # Also deploy docs.
 
 // Build & test
 $`./push.rsl --no-push`
@@ -31,6 +32,9 @@ if push:
         print("❌ Failed to push!")
 else:
     print("Tagged, not pushing...")
-    print("Run 'git push origin main --tags' to push the tag")
+    print(`Run {yellow("git push origin main --tags")} to push the tag`)
+
+if docs:
+    $!`./deploy_docs.rsl`
 
 print("✅ Finished!")

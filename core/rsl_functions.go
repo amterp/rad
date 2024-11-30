@@ -177,6 +177,9 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runParseJson(i, function, args)
+	case HTTP_GET:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		return runHttpGet(i, function, args, namedArgsMap)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {
