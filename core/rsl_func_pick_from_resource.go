@@ -29,13 +29,13 @@ func runPickFromResource(
 		case RslString, int64, float64, bool:
 			stringFilter = ToPrintable(filter)
 		default:
-			i.error(function, fmt.Sprintf("%s() does not allow arrays as filters", PICK_FROM_RESOURCE))
+			i.error(function, PICK_FROM_RESOURCE+fmt.Sprintf("() does not allow arrays as filters, got %s", TypeAsString(filter)))
 		}
 	}
 
 	jsonResourcePath, ok := args[0].(RslString)
 	if !ok {
-		i.error(function, fmt.Sprintf("%s() takes a string as the first argument", PICK_FROM_RESOURCE))
+		i.error(function, PICK_FROM_RESOURCE+fmt.Sprintf("() takes a string as the first argument, got %s", TypeAsString(args[0])))
 	}
 	resource := LoadPickResource(i, function, jsonResourcePath.Plain(), numExpectedReturnValues)
 	return pickFromResource(i, function, stringFilter, resource)

@@ -14,7 +14,7 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs
 	}
 
 	if numArgs > 3 {
-		i.error(function, fmt.Sprintf("%s() takes at most three arguments, got %v", PICK_KV, numArgs))
+		i.error(function, PICK_KV+fmt.Sprintf("() takes at most three arguments, got %v", numArgs))
 	}
 
 	validateExpectedNamedArgs(i, function, []string{PICK_PROMPT}, namedArgs)
@@ -34,11 +34,11 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs
 		case []interface{}:
 			strings, ok := AsStringArray(coerced)
 			if !ok {
-				i.error(function, PICK_KV+"() does not allow non-string arrays as filters")
+				i.error(function, PICK_KV+fmt.Sprintf("() does not allow non-string arrays as filters, got %s", TypeAsString(coerced)))
 			}
 			filters = strings
 		default:
-			i.error(function, PICK_KV+"() does not allow non-string arrays as filters")
+			i.error(function, PICK_KV+fmt.Sprintf("() does not allow non-string arrays as filters, got %s", TypeAsString(coerced)))
 		}
 	}
 
@@ -46,7 +46,7 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs
 	keys, ok := args[0].([]string)
 	if !ok {
 		if keys, ok = AsStringArray(args[0].([]interface{})); !ok {
-			i.error(function, PICK_KV+"() takes a string array as the first argument")
+			i.error(function, PICK_KV+fmt.Sprintf("() takes a string array as the first argument, got %s", TypeAsString(args[0])))
 			panic(UNREACHABLE)
 		}
 	}
@@ -59,7 +59,7 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs
 	case []interface{}:
 		return pickKv(i, function, parsedArgs.prompt, filters, keys, values)
 	default:
-		i.error(function, PICK_KV+"() takes an array as the second argument")
+		i.error(function, PICK_KV+fmt.Sprintf("() takes an array as the second argument, got %s", TypeAsString(args[1])))
 		panic(UNREACHABLE)
 	}
 }

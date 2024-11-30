@@ -45,7 +45,7 @@ func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs m
 	case []interface{}:
 		array, ok := AsStringArray(options)
 		if !ok {
-			i.error(function, PICK+"() does not allow non-string arrays as options")
+			i.error(function, PICK+fmt.Sprintf("() does not allow non-string arrays as options, got %s", TypeAsString(options)))
 		}
 		return pickString(i, function, parsedArgs.prompt, filters, array)
 	default:
