@@ -352,11 +352,17 @@ seed_random(seed int)
 pick(options string[], filter string?)
 ```
 
+Named args:
+- `prompt`
+
 ### pick_kv
 
 ```rsl
 pick_kv(keys string[], values string[], filter string?)
 ```
+
+Named args:
+- `prompt`
 
 ### pick_from_resource
 

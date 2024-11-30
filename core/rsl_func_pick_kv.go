@@ -7,7 +7,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface{} {
+func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) interface{} {
 	numArgs := len(args)
 	if numArgs < 2 {
 		i.error(function, PICK_KV+"() takes at least two arguments")
@@ -16,6 +16,9 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 	if numArgs > 3 {
 		i.error(function, fmt.Sprintf("%s() takes at most three arguments, got %v", PICK_KV, numArgs))
 	}
+
+	validateExpectedNamedArgs(i, function, []string{PICK_PROMPT}, namedArgs)
+	parsedArgs := parsePickArgs(i, function, namedArgs)
 
 	filters := make([]string, 0)
 	switch numArgs {
@@ -54,7 +57,7 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}) interface
 
 	switch values := args[1].(type) {
 	case []interface{}:
-		return pickKv(i, function, "", filters, keys, values)
+		return pickKv(i, function, parsedArgs.prompt, filters, keys, values)
 	default:
 		i.error(function, PICK_KV+"() takes an array as the second argument")
 		panic(UNREACHABLE)

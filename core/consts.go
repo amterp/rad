@@ -13,6 +13,7 @@ const (
 // function names
 const (
 	// todo add others
+	PICK               = "pick"
 	PICK_FROM_RESOURCE = "pick_from_resource"
 	PICK_KV            = "pick_kv"
 	PRINT              = "print"

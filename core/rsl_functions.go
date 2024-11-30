@@ -109,14 +109,12 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return strings.HasSuffix(ToPrintable(args[0]), ToPrintable(args[1]))
-	case "pick":
+	case PICK:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
-		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
-		return runPick(i, function, args)
+		return runPick(i, function, args, namedArgsMap)
 	case PICK_KV:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
-		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
-		return runPickKv(i, function, args)
+		return runPickKv(i, function, args, namedArgsMap)
 	case PICK_FROM_RESOURCE:
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
 		return runPickFromResource(i, function, args, numExpectedReturnValues)

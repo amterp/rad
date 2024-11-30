@@ -6,46 +6,80 @@ import (
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
-func runPick(i *MainInterpreter, function Token, values []interface{}) interface{} {
-	numArgs := len(values)
+const (
+	PICK_PROMPT = "prompt"
+)
+
+func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) interface{} {
+	numArgs := len(args)
 	if numArgs < 1 {
-		i.error(function, "pick() takes at least one argument")
+		i.error(function, PICK+"() takes at least one argument")
 	}
+
+	validateExpectedNamedArgs(i, function, []string{PICK_PROMPT}, namedArgs)
+	parsedArgs := parsePickArgs(i, function, namedArgs)
 
 	filters := make([]string, 0)
 	switch numArgs {
 	case 1:
 		// no filters, leave it empty
 	case 2:
-		filter := values[1]
+		filter := args[1]
 		switch filter.(type) {
 		case RslString, int64, float64, bool:
 			filters = append(filters, ToPrintable(filter))
 		case []interface{}:
 			strings, ok := AsStringArray(filter.([]interface{}))
 			if !ok {
-				i.error(function, "pick() does not allow non-string arrays as filters")
+				i.error(function, PICK+"() does not allow non-string arrays as filters")
 			}
 			filters = strings
 		default:
-			i.error(function, "pick() does not allow non-string arrays as filters")
+			i.error(function, PICK+"() does not allow non-string arrays as filters")
 		}
 	default:
-		i.error(function, fmt.Sprintf("pick() takes at most two arguments, got %v", numArgs))
+		i.error(function, fmt.Sprintf(PICK+"() takes at most two arguments, got %v", numArgs))
 	}
 
-	switch options := values[0].(type) {
+	switch options := args[0].(type) {
 	case []interface{}:
 		array, ok := AsStringArray(options)
 		if !ok {
-			i.error(function, "pick() does not allow non-string arrays as options")
+			i.error(function, PICK+"() does not allow non-string arrays as options")
 		}
-		// todo prompt should be a named/optional arg when we support that, i.e. pick(options, prompt="foo")
-		return pickString(i, function, "", filters, array)
+		return pickString(i, function, parsedArgs.prompt, filters, array)
 	default:
-		i.error(function, "pick() takes a string array as the first argument")
+		i.error(function, PICK+"() takes a string array as the first argument")
 		panic(UNREACHABLE)
 	}
+}
+
+func parsePickArgs(i *MainInterpreter, function Token, args map[string]interface{}) PickNamedArgs {
+	parsedArgs := PickNamedArgs{
+		prompt: "Pick an option",
+	}
+
+	if prompt, ok := args[PICK_PROMPT]; ok {
+		if rslString, ok := prompt.(RslString); ok {
+			s := rslString.Plain()
+			if len(s) == 0 {
+				// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
+				// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
+				// looks a bit weird but hey, the user has decided no title, what do they expect?)
+				parsedArgs.prompt = " "
+			} else {
+				parsedArgs.prompt = s
+			}
+		} else {
+			i.error(function, function.GetLexeme()+fmt.Sprintf("() %s must be a string, got %s", PICK_PROMPT, TypeAsString(prompt)))
+		}
+	}
+
+	return parsedArgs
+}
+
+type PickNamedArgs struct {
+	prompt string
 }
 
 func pickString(i *MainInterpreter, function Token, prompt string, filters []string, options []string) string {
