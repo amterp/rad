@@ -457,6 +457,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#string-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Attributes
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -585,6 +594,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#string-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Attributes
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -631,6 +649,20 @@
 <li><code>`</code> to allow backticks in the string</li>
 </ul>
 </li>
+</ul>
+<h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Not all strings are just plain text. They may have attributes such as color.</li>
+<li>This means that RSL contains logic on how to handle attributes when strings are combined or operated on</li>
+<li>e.g. concatenation, slicing, replace functions, etc</li>
+<li>The following operations maintain color attributes:</li>
+<li>concatenation</li>
+<li>index lookup</li>
+<li>The following <em>do not</em>, and just return a plain string:</li>
+<li>slicing (to be added)</li>
+<li>functions: <code>replace</code>, <code>split</code></li>
+<li>Attributes do <em>not</em> impact things like equality or comparing strings.</li>
+<li>A green string "Alice" and a yellow string "Alice" will be considered 'equal'.</li>
 </ul>
 
 
