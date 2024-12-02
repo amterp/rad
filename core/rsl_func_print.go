@@ -22,7 +22,7 @@ func runPrettyPrint(i *MainInterpreter, function Token, values []interface{}) {
 	}
 
 	arg := values[0]
-	jsonStruct := jsonify(arg)
+	jsonStruct := RslToJsonType(arg)
 	output := prettify(i, function, jsonStruct)
 	RP.Print(output)
 }
@@ -39,33 +39,6 @@ func resolveOutputString(values []interface{}) string {
 	output = output[:len(output)-1] // remove last space
 	output = output + "\n"
 	return output
-}
-
-func jsonify(arg interface{}) interface{} {
-	switch coerced := arg.(type) {
-	case RslString:
-		return coerced.Plain()
-	case int64, float64, bool:
-		return coerced
-	case []interface{}:
-		var slice []interface{}
-		for _, elem := range coerced {
-			slice = append(slice, jsonify(elem))
-		}
-		return slice
-	case RslMap:
-		mapping := make(map[string]interface{})
-		for _, key := range coerced.Keys() {
-			value, _ := coerced.GetStr(key)
-			mapping[key] = jsonify(value)
-		}
-		return mapping
-	case nil:
-		return nil
-	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for jsonify: %T", arg))
-		panic(UNREACHABLE)
-	}
 }
 
 func prettify(i *MainInterpreter, function Token, jsonStruct interface{}) string {

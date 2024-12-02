@@ -103,3 +103,41 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, val interface{})
 		panic(UNREACHABLE)
 	}
 }
+
+// converts an RSL data structure to a JSON-serializable structure
+func RslToJsonType(arg interface{}) interface{} {
+	switch coerced := arg.(type) {
+	case RslString:
+		return coerced.Plain()
+	case int64, float64, bool:
+		return coerced
+	case []interface{}:
+		var slice []interface{}
+		for _, elem := range coerced {
+			slice = append(slice, RslToJsonType(elem))
+		}
+		return slice
+	case RslMap:
+		mapping := make(map[string]interface{})
+		for _, key := range coerced.Keys() {
+			value, _ := coerced.GetStr(key)
+			mapping[key] = RslToJsonType(value)
+		}
+		return mapping
+	case nil:
+		return nil
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T", arg))
+		panic(UNREACHABLE)
+	}
+}
+
+func JsonToString(jsonVal interface{}) string {
+	jsonBytes, err := json.Marshal(jsonVal)
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		RP.RadErrorExit(fmt.Sprintf("Bug! Non-marshallable json object passed to JsonToString (%T): %v", jsonVal, jsonVal))
+	}
+
+	return string(jsonBytes)
+}

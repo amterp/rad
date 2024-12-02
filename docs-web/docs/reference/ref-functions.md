@@ -372,14 +372,21 @@ pick_from_resource(resource_path string, filter string?) -> any...
 
 ## HTTP
 
+Map outputs contain the following keys:
+- `status_code`
+- `body`
+
+Failed queries (e.g. invalid url, no response) will result in an error and script exit.
+
 ### http_get
 
 ```rsl
 http_get(url string, headers map?) -> map
 ```
 
-Map output contains the following keys:
-- `status_code`
-- `body`
+### http_post
 
-Failed queries (e.g. invalid url, no response) will result in an error and script exit.
+```rsl
+http_post(url string, body any?, headers map?) -> map
+```
+

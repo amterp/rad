@@ -180,6 +180,9 @@ func RunRslNonVoidFunction(
 	case HTTP_GET:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		return runHttpGet(i, function, args, namedArgsMap)
+	case HTTP_POST:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		return runHttpPost(i, function, args, namedArgsMap)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {
@@ -214,6 +217,7 @@ func RunRslFunction(i *MainInterpreter, call FunctionCall) {
 		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
 		runDebug(args)
 	case EXIT:
+		// todo allow following exit code with msg?
 		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
 		runExit(i, funcToken, args)
 	case SLEEP:

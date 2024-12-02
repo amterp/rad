@@ -34,4 +34,5 @@ const (
 	CONFIRM            = "confirm"
 	PARSE_JSON         = "parse_json"
 	HTTP_GET           = "http_get"
+	HTTP_POST          = "http_post"
 )
