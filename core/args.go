@@ -382,8 +382,7 @@ type FloatRslArg struct {
 func NewFloatRadArg(name, short, argUsage, description string, defaultValue float64) FloatRslArg {
 	return FloatRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
-
+			Name:              name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,

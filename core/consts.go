@@ -36,4 +36,5 @@ const (
 	HTTP_GET           = "http_get"
 	HTTP_POST          = "http_post"
 	PARSE_INT          = "int"
+	PARSE_FLOAT        = "float"
 )

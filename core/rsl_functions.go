@@ -187,6 +187,10 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runParseInt(i, function, args)
+	case PARSE_FLOAT:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runParseFloat(i, function, args)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {

@@ -23,3 +23,22 @@ func runParseInt(i *MainInterpreter, function Token, args []interface{}) interfa
 		panic(UNREACHABLE)
 	}
 }
+
+func runParseFloat(i *MainInterpreter, function Token, args []interface{}) interface{} {
+	if len(args) != 1 {
+		i.error(function, PARSE_FLOAT+fmt.Sprintf("() takes 1 argument, got %d", len(args)))
+	}
+
+	switch coerced := args[0].(type) {
+	case RslString:
+		str := coerced.Plain()
+		parsed, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			i.error(function, PARSE_FLOAT+fmt.Sprintf("() could not parse %q as an float", str))
+		}
+		return parsed
+	default:
+		i.error(function, PARSE_FLOAT+fmt.Sprintf("() takes a string, got %s", TypeAsString(args[0])))
+		panic(UNREACHABLE)
+	}
+}
