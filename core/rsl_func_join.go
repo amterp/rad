@@ -28,7 +28,7 @@ func RunJoin(i *MainInterpreter, function Token, values []interface{}) interface
 		i.error(function, "join() takes an array as the first argument")
 	}
 
-	separator := ToPrintable(values[1])
+	separator := ToPrintable(values[1]) // todo should be optional (default to empty string)
 
-	return prefix + strings.Join(arr, separator) + suffix
+	return NewRslString(prefix + strings.Join(arr, separator) + suffix)
 }

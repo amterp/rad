@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestStringJoin(t *testing.T) {
+func TestJoin_String(t *testing.T) {
 	rsl := `
 arr = ["Hi", "there"]
 print(join(arr, " "))
@@ -19,7 +19,7 @@ Alice: Hi there!
 	resetTestState()
 }
 
-func TestIntJoin(t *testing.T) {
+func TestJoin_Int(t *testing.T) {
 	rsl := `
 arr = [1, 2, 3]
 print(join(arr, "_"))
@@ -36,7 +36,7 @@ Nums: 1_2_3_4
 	resetTestState()
 }
 
-func TestFloatJoin(t *testing.T) {
+func TestJoin_Float(t *testing.T) {
 	rsl := `
 arr = [1.1, 1.2, 1.3]
 print(join(arr, " yes "))
@@ -53,7 +53,7 @@ Floats: 1.1 yes 1.2 yes 1.3 :D
 	resetTestState()
 }
 
-func TestMixedJoin(t *testing.T) {
+func TestJoin_Mixed(t *testing.T) {
 	rsl := `
 arr = ["alice", 2]
 print(join(arr, "_"))
@@ -64,6 +64,18 @@ print(join(arr, "_", "(", ")"))
 	expected := `alice_2
 (alice_2
 (alice_2)
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestJoin_ReturnsRslString(t *testing.T) {
+	rsl := `
+print("Hi " + join(["there", "!"], ""))
+`
+	setupAndRunCode(t, rsl)
+	expected := `Hi there!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

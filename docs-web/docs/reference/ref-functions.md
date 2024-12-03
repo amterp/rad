@@ -147,7 +147,7 @@ Unsure!
 ### join
 
 ```rsl
-join(input any[], prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
+join(input any[], joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
 ```
 
 ### unique
