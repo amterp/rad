@@ -183,6 +183,10 @@ func RunRslNonVoidFunction(
 	case HTTP_POST:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		return runHttpPost(i, function, args, namedArgsMap)
+	case PARSE_INT:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runParseInt(i, function, args)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {
