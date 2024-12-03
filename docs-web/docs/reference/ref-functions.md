@@ -404,3 +404,11 @@ http_get(url string, headers map?) -> map
 http_post(url string, body any?, headers map?) -> map
 ```
 
+## Math
+
+### abs
+
+```rsl
+abs(int) -> int
+abs(float) -> float
+```

@@ -191,6 +191,10 @@ func RunRslNonVoidFunction(
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runParseFloat(i, function, args)
+	case ABS:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		return runAbs(i, function, args)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {
@@ -265,6 +269,22 @@ func runReplace(i *MainInterpreter, function Token, values []interface{}) interf
 	newRegex := ToPrintable(values[2])
 
 	return Replace(i, function, subject, oldRegex, newRegex)
+}
+
+func runAbs(i *MainInterpreter, function Token, args []interface{}) interface{} {
+	if len(args) != 1 {
+		i.error(function, ABS+fmt.Sprintf("() takes exactly one argument, got %d", len(args)))
+	}
+
+	switch coerced := args[0].(type) {
+	case int64:
+		return AbsInt(coerced)
+	case float64:
+		return AbsFloat(coerced)
+	default:
+		i.error(function, ABS+fmt.Sprintf("() takes an integer or float, got %s", TypeAsString(args[0])))
+		panic(UNREACHABLE)
+	}
 }
 
 func evalArgs(i *MainInterpreter, args []Expr) []interface{} {

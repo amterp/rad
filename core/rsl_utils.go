@@ -141,3 +141,17 @@ func JsonToString(jsonVal interface{}) string {
 
 	return string(jsonBytes)
 }
+
+func AbsInt(x int64) int64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func AbsFloat(x float64) float64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

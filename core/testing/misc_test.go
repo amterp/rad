@@ -74,3 +74,40 @@ Usage:
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestMisc_Abs_Int(t *testing.T) {
+	rsl := `
+print(abs(10))
+print(abs(-10))
+`
+	setupAndRunCode(t, rsl)
+	expected := `10
+10
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMisc_Abs_Float(t *testing.T) {
+	rsl := `
+print(abs(10.2))
+print(abs(-10.2))
+`
+	setupAndRunCode(t, rsl)
+	expected := `10.2
+10.2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestMisc_Abs_ErrorsOnAlphabetical(t *testing.T) {
+	rsl := `
+a = abs("asd")
+`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "RslError at L2/7 on 'abs': abs() takes an integer or float, got string\n")
+	resetTestState()
+}
