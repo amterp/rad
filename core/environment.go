@@ -42,7 +42,11 @@ func (e *Env) InitArg(arg RslArg) {
 	case *StringRslArg:
 		e.Vars[coerced.Identifier] = NewRslString(coerced.Value)
 	case *StringArrRslArg:
-		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
+		converted := make([]interface{}, len(coerced.Value))
+		for j, v := range coerced.Value {
+			converted[j] = NewRslString(v)
+		}
+		e.Vars[coerced.Identifier] = converted
 	case *IntRslArg:
 		e.Vars[coerced.Identifier] = coerced.Value
 	case *IntArrRslArg:

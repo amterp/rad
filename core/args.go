@@ -209,8 +209,7 @@ type StringRslArg struct {
 func NewStringRadArg(name, short, argUsage, description, defaultValue string) StringRslArg {
 	return StringRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
-
+			Name:              name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -247,8 +246,7 @@ type StringArrRslArg struct {
 func NewStringArrRadArg(name, short, argUsage, description string, defaultValue []string) StringArrRslArg {
 	return StringArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
-
+			Name:              name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
