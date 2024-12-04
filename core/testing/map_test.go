@@ -86,7 +86,7 @@ print(a)
 	resetTestState()
 }
 
-// todo this needs to work
+// todo this needs to work RAD-50
 //func TestMap_CanModifyArrayNestedInMap(t *testing.T) {
 //	rsl := `
 //a = { "alice": 100, "bob": [10, 20, 30] }

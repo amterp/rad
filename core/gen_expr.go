@@ -69,9 +69,9 @@ func (e MapExpr) String() string {
 }
 
 type CollectionAccess struct {
-	Collection       Expr
-	Key              Expr
-	OpenBracketToken Token
+	Collection   Expr
+	Key          Expr
+	AccessOpener Token
 }
 
 func (e CollectionAccess) Accept(visitor ExprVisitor) interface{} {
@@ -81,16 +81,15 @@ func (e CollectionAccess) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Collection: %v", e.Collection))
 	parts = append(parts, fmt.Sprintf("Key: %v", e.Key))
-	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
+	parts = append(parts, fmt.Sprintf("AccessOpener: %v", e.AccessOpener))
 	return fmt.Sprintf("CollectionAccess(%s)", strings.Join(parts, ", "))
 }
 
 type SliceAccess struct {
-	ListOrString     Expr
-	OpenBracketToken Token
-	Start            *Expr
-	ColonToken       Token
-	End              *Expr
+	ListOrString Expr
+	AccessOpener Token
+	Start        *Expr
+	End          *Expr
 }
 
 func (e SliceAccess) Accept(visitor ExprVisitor) interface{} {
@@ -99,9 +98,8 @@ func (e SliceAccess) Accept(visitor ExprVisitor) interface{} {
 func (e SliceAccess) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("ListOrString: %v", e.ListOrString))
-	parts = append(parts, fmt.Sprintf("OpenBracketToken: %v", e.OpenBracketToken))
+	parts = append(parts, fmt.Sprintf("AccessOpener: %v", e.AccessOpener))
 	parts = append(parts, fmt.Sprintf("Start: %v", e.Start))
-	parts = append(parts, fmt.Sprintf("ColonToken: %v", e.ColonToken))
 	parts = append(parts, fmt.Sprintf("End: %v", e.End))
 	return fmt.Sprintf("SliceAccess(%s)", strings.Join(parts, ", "))
 }

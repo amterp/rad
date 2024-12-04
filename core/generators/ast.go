@@ -20,10 +20,11 @@ func main() {
 
 	// literal -> STRING | NUMBER | BOOL
 	defineAst(outputDir, "Literal", "interface{}", []string{
-		"StringLiteral   : []StringLiteralToken Value, []InlineExpr InlineExprs", // expect 1 less InlineExpr than StringLiteralToken
-		"IntLiteral      : IntLiteralToken Value, bool IsNegative",
-		"FloatLiteral    : FloatLiteralToken Value, bool IsNegative",
-		"BoolLiteral     : BoolLiteralToken Value",
+		"StringLiteral     : []StringLiteralToken Value, []InlineExpr InlineExprs", // expect 1 less InlineExpr than StringLiteralToken
+		"IntLiteral        : IntLiteralToken Value, bool IsNegative",
+		"FloatLiteral      : FloatLiteralToken Value, bool IsNegative",
+		"BoolLiteral       : BoolLiteralToken Value",
+		"IdentifierLiteral : Token Tkn", // kinda like 'quoteless' strings. e.g. json.key.etc. Returns as string when visited.
 	})
 
 	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"
@@ -52,8 +53,8 @@ func main() {
 		"ExprLoa           : LiteralOrArray Value",
 		"ArrayExpr         : []Expr Values",
 		"MapExpr           : []Expr Keys, []Expr Values, Token OpenBraceToken",
-		"CollectionAccess  : Expr Collection, Expr Key, Token OpenBracketToken",
-		"SliceAccess       : Expr ListOrString, Token OpenBracketToken, *Expr Start, Token ColonToken, *Expr End",
+		"CollectionAccess  : Expr Collection, Expr Key, Token AccessOpener",
+		"SliceAccess       : Expr ListOrString, Token AccessOpener, *Expr Start, *Expr End",
 		"FunctionCall      : Token Function, []Expr Args, []NamedArg NamedArgs, int NumExpectedReturnValues",
 		"Variable          : Token Name",
 		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /

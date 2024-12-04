@@ -564,7 +564,9 @@ func (p *Parser) assignment() Stmt {
 	identifiers = append(identifiers, p.identifier())
 
 	if p.matchAny(LEFT_BRACKET) {
-		return p.collectionEntryAssignment(identifiers[0])
+		return p.collectionEntryAssignment(identifiers[0], true)
+	} else if p.matchAny(DOT) {
+		return p.collectionEntryAssignment(identifiers[0], false)
 	}
 
 	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL) {
@@ -614,15 +616,24 @@ func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
 	}
 }
 
-func (p *Parser) collectionEntryAssignment(identifier Token) Stmt {
-	// just consumed left bracket
-	key := p.expr(1)
-	p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+func (p *Parser) collectionEntryAssignment(identifier Token, isBracketAccess bool) Stmt {
+	var key Expr
+
+	// todo we need to support nested access here RAD-50
+	if isBracketAccess {
+		key = p.expr(1)
+		p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+	} else {
+		key = ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: p.identifier()}}}
+	}
+
 	// todo technically it should not be illegal to have e.g. a[0] as a standalone 'statement',
 	//  but we don't allow it here
+
 	operator := p.consumeAny("Expected one of the following operators: [=, +=, -=, *=, /=]",
 		EQUAL, PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL)
 	value := p.expr(1)
+
 	return &CollectionEntryAssign{Identifier: identifier, Key: key, Operator: operator, Value: value}
 }
 
@@ -922,39 +933,53 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 		p.error("Expected expression")
 	}
 
-	for p.peekType(LEFT_BRACKET) {
-		openBracket := p.advance()
-		if p.matchAny(COLON) {
+	expr = p.loopWrapCollectionAccess(expr)
+	return expr
+}
+
+func (p *Parser) loopWrapCollectionAccess(expr Expr) Expr {
+	for p.peekType(LEFT_BRACKET) || p.peekType(DOT) {
+		opener := p.advance()
+		if opener.GetType() == DOT {
+			// myMap.
+			if p.matchAny(IDENTIFIER) {
+				// myMap.key
+				identifier := p.previous()
+				identifierExpr := ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
+				expr = &CollectionAccess{Collection: expr, Key: identifierExpr, AccessOpener: opener}
+			} else {
+				p.error("Expected identifier after '.'")
+			}
+		} else if p.matchAny(COLON) {
 			if p.matchAny(RIGHT_BRACKET) {
 				// a[:]
-				expr = &SliceAccess{ListOrString: expr, ColonToken: openBracket, OpenBracketToken: openBracket}
+				expr = &SliceAccess{ListOrString: expr, AccessOpener: opener}
 			} else {
 				// a[:end]
 				endExpr := p.expr(1)
-				colonToken := p.consume(RIGHT_BRACKET, "Expected ']' after slice")
-				expr = &SliceAccess{ListOrString: expr, Start: nil, ColonToken: colonToken, End: &endExpr, OpenBracketToken: openBracket}
+				p.consume(RIGHT_BRACKET, "Expected ']' after slice")
+				expr = &SliceAccess{ListOrString: expr, Start: nil, End: &endExpr, AccessOpener: opener}
 			}
 		} else {
 			firstExpr := p.expr(1)
 			if p.matchAny(RIGHT_BRACKET) {
-				// a[idx]
-				expr = &CollectionAccess{Collection: expr, Key: firstExpr, OpenBracketToken: openBracket}
+				// a[idx] or a[key]
+				expr = &CollectionAccess{Collection: expr, Key: firstExpr, AccessOpener: opener}
 			} else if p.matchAny(COLON) {
 				if p.matchAny(RIGHT_BRACKET) {
 					// a[start:]
-					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, ColonToken: openBracket, OpenBracketToken: openBracket}
+					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, AccessOpener: opener}
 				} else {
 					// a[start:end]
 					endExpr := p.expr(1)
-					colonToken := p.consume(RIGHT_BRACKET, "Expected ']' after collection access")
-					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, ColonToken: colonToken, End: &endExpr, OpenBracketToken: openBracket}
+					p.consume(RIGHT_BRACKET, "Expected ']' after collection access")
+					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, End: &endExpr, AccessOpener: opener}
 				}
 			} else {
 				p.error("Expected ']' for collection access or ':' for slice")
 			}
 		}
 	}
-
 	return expr
 }
 

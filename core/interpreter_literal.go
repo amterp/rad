@@ -54,3 +54,7 @@ func (l *LiteralInterpreter) VisitLoaLiteralLiteralOrArray(literal LoaLiteral) i
 func (l *LiteralInterpreter) VisitLoaArrayLiteralOrArray(array LoaArray) interface{} {
 	return array.Value.Accept(l)
 }
+
+func (l *LiteralInterpreter) VisitIdentifierLiteralLiteral(literal IdentifierLiteral) interface{} {
+	return NewRslString(literal.Tkn.GetLexeme())
+}

@@ -83,11 +83,11 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 				adjustedKey += int64(len(coerced))
 			}
 			if adjustedKey < 0 || adjustedKey >= int64(len(coerced)) {
-				i.error(access.OpenBracketToken, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", coercedKey, len(coerced)))
+				i.error(access.AccessOpener, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", coercedKey, len(coerced)))
 			}
 			return coerced[adjustedKey]
 		default:
-			i.error(access.OpenBracketToken, "Array access key must be an int")
+			i.error(access.AccessOpener, "Array access key must be an int")
 			panic(UNREACHABLE)
 		}
 	case RslString:
@@ -98,11 +98,11 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 				adjustedKey += coerced.Len()
 			}
 			if adjustedKey < 0 || adjustedKey >= coerced.Len() {
-				i.error(access.OpenBracketToken, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, coerced.Len()))
+				i.error(access.AccessOpener, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, coerced.Len()))
 			}
 			return coerced.IndexAt(adjustedKey)
 		default:
-			i.error(access.OpenBracketToken, "String index must be an int")
+			i.error(access.AccessOpener, "String index must be an int")
 			panic(UNREACHABLE)
 		}
 	case RslMap:
@@ -110,16 +110,16 @@ func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) int
 		case RslString:
 			val, exists := coerced.Get(coercedKey)
 			if !exists {
-				i.error(access.OpenBracketToken, fmt.Sprintf("Key '%s' not found in map", coercedKey))
+				i.error(access.AccessOpener, fmt.Sprintf("Key '%s' not found in map", coercedKey))
 				panic(UNREACHABLE)
 			}
 			return val
 		default:
-			i.error(access.OpenBracketToken, fmt.Sprintf("Map access key must be a string, was %v (%T)", key, key))
+			i.error(access.AccessOpener, fmt.Sprintf("Map access key must be a string, was %v (%T)", key, key))
 			panic(UNREACHABLE)
 		}
 	default:
-		i.error(access.OpenBracketToken, "Bug! Should've failed earlier")
+		i.error(access.AccessOpener, "Bug! Should've failed earlier")
 		panic(UNREACHABLE)
 	}
 }
@@ -135,7 +135,7 @@ func (i *MainInterpreter) VisitSliceAccessExpr(sliceAccess SliceAccess) interfac
 		start, end := i.resolveStartEnd(sliceAccess, int64(len(coerced)))
 		return coerced[start:end]
 	default:
-		i.error(sliceAccess.OpenBracketToken, "Slice access must be on a string or array")
+		i.error(sliceAccess.AccessOpener, "Slice access must be on a string or array")
 		panic(UNREACHABLE)
 	}
 }
@@ -484,10 +484,10 @@ func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int64) (i
 	end := len
 
 	if sliceAccess.Start != nil {
-		start = i.resolveSliceIndex(sliceAccess.OpenBracketToken, *sliceAccess.Start, len, true)
+		start = i.resolveSliceIndex(sliceAccess.AccessOpener, *sliceAccess.Start, len, true)
 	}
 	if sliceAccess.End != nil {
-		end = i.resolveSliceIndex(sliceAccess.OpenBracketToken, *sliceAccess.End, len, false)
+		end = i.resolveSliceIndex(sliceAccess.AccessOpener, *sliceAccess.End, len, false)
 	}
 
 	if start > end {
