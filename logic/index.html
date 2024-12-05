@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/args/">
+        <link rel="canonical" href="https://amterp.github.io/rad/logic/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../introduction/">
       
       
-        <link rel="next" href="../assignment/">
+        <link rel="next" href="../rad-blocks/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Args - Rad Docs</title>
+        <title>Boolean Logic - Rad Docs</title>
       
     
     
@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#truthy-falsy" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -105,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Args
+              Boolean Logic
             
           </span>
         </div>
@@ -275,17 +280,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../args/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -294,7 +292,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -383,10 +380,28 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../logic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Boolean Logic
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -395,6 +410,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#truthy-falsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy / Falsy
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -540,6 +582,23 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#truthy-falsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy / Falsy
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -556,31 +615,51 @@
   
 
 
-  <h1>Args</h1>
+  <h1>Boolean Logic</h1>
 
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>argVar<span class="w"> </span><span class="s">&quot;alias&quot;</span>?<span class="w"> </span>shorthand?<span class="w"> </span><span class="k">type</span><span class="w"> </span>=<span class="w"> </span>default?<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Description</span>?
+<h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
+<p>RSL supports truthy/falsy logic.</p>
+<p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(myList)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
+<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>n<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">A</span><span class="w"> </span>required<span class="w"> </span>arg<span class="w"> </span>&#39;name&#39;<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>specified<span class="w"> </span>positionally<span class="w"> </span>or<span class="w"> </span>also<span class="w"> </span><span class="k">with</span><span class="w"> </span>-n.
-<span class="w">    </span>is_employee<span class="w"> </span><span class="s">&quot;is-employee&quot; bool # Variable for script is is_employee, but users will see it as is-employee.</span>
-
-<span class="s">if is_employee:</span>
-<span class="s">    print(&quot;{name} is an employee.&quot;)</span>
-<span class="s">else:</span>
-<span class="s">    print(&quot;{name} is not an employee.&quot;</span>)<span class="w"> </span>
+<p>you can write</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>myList:
+<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>string
-<span class="w">    </span>age_years<span class="w"> </span><span class="s">&quot;age-years&quot; int</span>
-<span class="s">    height float # Height in meters</span>
-<span class="s">    is_employee &quot;is-employee&quot; e bool</span>
-<span class="s">    friends string[] # Specified as e.g. Alice,Bob</span>
-<span class="s">    nationality n strin = &quot;Australian&quot;</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Defaults</span><span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>specified.
-</code></pre></div>
-<p>Example usage:</p>
-<div class="highlight"><pre><span></span><code>script Charlie 30 -e --friends David,Eve -h 1.86
-</code></pre></div>
+<p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
+<p>See below for which values for each type will resolve to false. All other values will resolve to true.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Falsy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td><code>""</code></td>
+</tr>
+<tr>
+<td>int</td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>float</td>
+<td><code>0.0</code></td>
+</tr>
+<tr>
+<td>list</td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td>map</td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that a string which is all whitespace e.g. <code>" "</code> is truthy.</p>
 
 
 

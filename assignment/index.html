@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/args/">
+        <link rel="canonical" href="https://amterp.github.io/rad/assignment/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../args/">
       
       
-        <link rel="next" href="../assignment/">
+        <link rel="next" href="../defer/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Args - Rad Docs</title>
+        <title>Assignment - Rad Docs</title>
       
     
     
@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#legal-assignments" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -105,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Args
+              Assignment
             
           </span>
         </div>
@@ -275,6 +280,26 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Args
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -285,28 +310,18 @@
       
       
       
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
   
   <span class="md-ellipsis">
-    Args
+    Assignment
   </span>
   
 
-      </a>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../assignment/" class="md-nav__link">
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -315,6 +330,42 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#legal-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Legal Assignments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#illegal-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Illegal Assignments
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -540,6 +591,32 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#legal-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Legal Assignments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#illegal-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Illegal Assignments
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -556,30 +633,22 @@
   
 
 
-  <h1>Args</h1>
+  <h1>Assignment</h1>
 
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>argVar<span class="w"> </span><span class="s">&quot;alias&quot;</span>?<span class="w"> </span>shorthand?<span class="w"> </span><span class="k">type</span><span class="w"> </span>=<span class="w"> </span>default?<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Description</span>?
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>n<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">A</span><span class="w"> </span>required<span class="w"> </span>arg<span class="w"> </span>&#39;name&#39;<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>specified<span class="w"> </span>positionally<span class="w"> </span>or<span class="w"> </span>also<span class="w"> </span><span class="k">with</span><span class="w"> </span>-n.
-<span class="w">    </span>is_employee<span class="w"> </span><span class="s">&quot;is-employee&quot; bool # Variable for script is is_employee, but users will see it as is-employee.</span>
+<p>Generally speaking, multi-assignments are only legal for switch expressions, or single operations (e.g. functions) that return multiple values.</p>
+<h2 id="legal-assignments">Legal Assignments<a class="headerlink" href="#legal-assignments" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>pick_from_resoure(...)
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>switch<span class="w"> </span>...
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>parse_int(text)
 
-<span class="s">if is_employee:</span>
-<span class="s">    print(&quot;{name} is an employee.&quot;)</span>
-<span class="s">else:</span>
-<span class="s">    print(&quot;{name} is not an employee.&quot;</span>)<span class="w"> </span>
+myMap[<span class="s">&quot;key&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
+myList[<span class="mi">1</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>string
-<span class="w">    </span>age_years<span class="w"> </span><span class="s">&quot;age-years&quot; int</span>
-<span class="s">    height float # Height in meters</span>
-<span class="s">    is_employee &quot;is-employee&quot; e bool</span>
-<span class="s">    friends string[] # Specified as e.g. Alice,Bob</span>
-<span class="s">    nationality n strin = &quot;Australian&quot;</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Defaults</span><span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>specified.
-</code></pre></div>
-<p>Example usage:</p>
-<div class="highlight"><pre><span></span><code>script Charlie 30 -e --friends David,Eve -h 1.86
+<h2 id="illegal-assignments">Illegal Assignments<a class="headerlink" href="#illegal-assignments" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>
+myMap[<span class="s">&quot;key&quot;], myMap[&quot;key2&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>
+myList[<span class="mi">1</span>],<span class="w"> </span>myList[<span class="mi">2</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>
 </code></pre></div>
 
 
