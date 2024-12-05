@@ -9,6 +9,8 @@ import (
 
 var (
 	NO_NAMED_ARGS = make([]string, 0)
+	ONE_ARG       = []int{1}
+	TWO_ARGS      = []int{1, 2}
 )
 
 // RunRslNonVoidFunction returns pointers to values e.g. *string
@@ -24,59 +26,59 @@ func RunRslNonVoidFunction(
 
 	switch funcName {
 	case "len":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runLen(i, function, args)
 	case "now_date": // todo is this name good? current_date? date?
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RClock.Now().Format("2006-01-02")
 	case "now_year":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Year())
 	case "now_month":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Month())
 	case "now_day":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Day())
 	case "now_hour":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Hour())
 	case "now_minute":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Minute())
 	case "now_second":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return int64(RClock.Now().Second())
 	case "epoch_seconds":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RClock.Now().Unix()
 	case "epoch_millis":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RClock.Now().UnixMilli()
 	case "epoch_nanos":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RClock.Now().UnixNano()
 	case "replace":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runReplace(i, function, args)
 	case "join":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return RunJoin(i, function, args)
 	case "upper":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		arg := args[0]
 		switch coerced := arg.(type) {
@@ -86,7 +88,7 @@ func RunRslNonVoidFunction(
 			return strings.ToUpper(ToPrintable(arg))
 		}
 	case "lower":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		arg := args[0]
 		switch coerced := arg.(type) {
@@ -99,21 +101,21 @@ func RunRslNonVoidFunction(
 		if len(args) != 2 {
 			i.error(function, "starts_with() takes exactly two arguments")
 		}
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return strings.HasPrefix(ToPrintable(args[0]), ToPrintable(args[1]))
 	case "ends_with":
 		if len(args) != 2 {
 			i.error(function, "ends_with() takes exactly two arguments")
 		}
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return strings.HasSuffix(ToPrintable(args[0]), ToPrintable(args[1]))
 	case PICK:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runPick(i, function, args, namedArgsMap)
 	case PICK_KV:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runPickKv(i, function, args, namedArgsMap)
 	case PICK_FROM_RESOURCE:
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
@@ -122,7 +124,7 @@ func RunRslNonVoidFunction(
 		if len(args) != 1 {
 			i.error(function, fmt.Sprintf("%s() takes exactly one argument", KEYS))
 		}
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		switch coerced := args[0].(type) {
 		case RslMap:
@@ -134,7 +136,7 @@ func RunRslNonVoidFunction(
 		if len(args) != 1 {
 			i.error(function, fmt.Sprintf("%s() takes exactly one argument", VALUES))
 		}
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		switch coerced := args[0].(type) {
 		case RslMap:
@@ -143,62 +145,62 @@ func RunRslNonVoidFunction(
 			i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
 		}
 	case RAND:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runRand(i, function, args)
 	case RAND_INT:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runRandInt(i, function, args)
 	case TRUNCATE:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runTruncate(i, function, args)
 	case SPLIT:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runSplit(i, function, args)
 	case RANGE:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runRange(i, function, args)
 	case UNIQUE:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runUnique(i, function, args)
 	case SORT_FUNC:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runSort(i, function, args, namedArgsMap)
 	case CONFIRM:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runConfirm(i, function, args)
 	case PARSE_JSON:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runParseJson(i, function, args)
 	case HTTP_GET:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runHttpGet(i, function, args, namedArgsMap)
 	case HTTP_POST:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runHttpPost(i, function, args, namedArgsMap)
 	case PARSE_INT:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, TWO_ARGS)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return runParseInt(i, function, args)
+		return runParseInt(i, function, numExpectedReturnValues, args)
 	case PARSE_FLOAT:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, TWO_ARGS)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return runParseFloat(i, function, args)
+		return runParseFloat(i, function, numExpectedReturnValues, args)
 	case ABS:
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runAbs(i, function, args)
 	default:
 		color, ok := ColorFromString(funcName)
 		if ok {
-			assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, 1)
+			assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 			validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 			return runColor(i, function, args, color)
 		} else {
@@ -309,11 +311,13 @@ func assertExpectedNumReturnValues(
 	function Token,
 	funcName string,
 	numExpectedReturnValues int,
-	actualNumReturnValues int,
+	allowedNumReturnValues []int,
 ) {
-	if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && numExpectedReturnValues != actualNumReturnValues {
+	if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && !lo.Contains(allowedNumReturnValues, numExpectedReturnValues) {
+		stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
+		allowedReturnNums := strings.Join(stringified, " or ")
 		i.error(function, fmt.Sprintf("%v() returns %v return values, but %v are expected",
-			funcName, actualNumReturnValues, numExpectedReturnValues))
+			funcName, allowedReturnNums, numExpectedReturnValues))
 	}
 }
 

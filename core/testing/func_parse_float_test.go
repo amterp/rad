@@ -34,3 +34,29 @@ print(a + 1.1)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func Test_ParseFloat_CanReadErrorIfNone(t *testing.T) {
+	rsl := `
+a, err = parse_float("2.4")
+print(a + 1.5)
+print(err)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "3.9\n{}\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_ParseFloat_CanReadErrorIfExists(t *testing.T) {
+	rsl := `
+a, err = parse_float("asd")
+print(a)
+print(err.msg)
+print(err.code)
+print(err)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "0\nparse_float() could not parse \"asd\" as an float\nRAD20002\n{ code: RAD20002, msg: parse_float() could not parse \"asd\" as an float }\n")
+	assertNoErrors(t)
+	resetTestState()
+}

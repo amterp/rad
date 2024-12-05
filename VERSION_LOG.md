@@ -14,7 +14,11 @@ Only for major & minor version releases. Contains only notable items.
 - Improved rad block sorting operation, added matching `sort` function
 - Added more functions: `confirm`, `range`, `split` etc
 - Removed Cobra
-- Reworked strings (`RslString`, attributes)
+- Reworked strings (`RslString`, attributes, colors)
+- http functions
+- parsing functions e.g. parse_int, parse_float
+- `.dot.syntax` for map key access
+- Truthy/falsy logic
 
 ## 0.4
 

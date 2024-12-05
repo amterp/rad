@@ -175,3 +175,15 @@ func TruthyFalsy(val interface{}) bool {
 		panic(UNREACHABLE)
 	}
 }
+
+func ErrorRslMap(err RslError, errMsg string) RslMap {
+	m := NewRslMap()
+	m.SetStr("code", NewRslString(string(err)))
+	m.SetStr("msg", NewRslString(errMsg))
+	return *m
+}
+
+func NoErrorRslMap() RslMap {
+	m := NewRslMap()
+	return *m
+}
