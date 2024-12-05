@@ -294,11 +294,7 @@ func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
 	cases := stmt.Cases
 	for _, c := range cases {
 		conditionResult := c.Condition.Accept(i)
-		bval, ok := conditionResult.(bool)
-		if !ok {
-			i.error(c.IfToken, "If condition must resolve to a bool")
-		}
-		if bval {
+		if TruthyFalsy(conditionResult) {
 			c.Body.Accept(i)
 			return
 		}
@@ -310,11 +306,7 @@ func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
 
 func (i *MainInterpreter) VisitTernaryExpr(ternary Ternary) interface{} {
 	conditionResult := ternary.Condition.Accept(i)
-	bval, ok := conditionResult.(bool)
-	if !ok {
-		i.error(ternary.QuestionMark, "Ternary condition must resolve to a bool")
-	}
-	if bval {
+	if TruthyFalsy(conditionResult) {
 		return ternary.True.Accept(i)
 	}
 	return ternary.False.Accept(i)
@@ -435,11 +427,7 @@ func runListComprehensionLoop[T any](
 			}
 			if condition != nil {
 				conditionResult := (*condition).Accept(i)
-				bval, ok := conditionResult.(bool)
-				if !ok {
-					i.error(forToken, "List comprehension condition must resolve to a bool")
-				}
-				if !bval {
+				if !TruthyFalsy(conditionResult) {
 					continue
 				}
 			}
