@@ -2,11 +2,11 @@ package testing
 
 import "testing"
 
-func Test_Float_Basic(t *testing.T) {
+func Test_ParseFloat_Basic(t *testing.T) {
 	rsl := `
-a = float("2.4")
+a = parse_float("2.4")
 print(a + 1.5)
-a = float("123124.1232")
+a = parse_float("123124.1232")
 print(a + 1.5)
 `
 	setupAndRunCode(t, rsl)
@@ -15,18 +15,18 @@ print(a + 1.5)
 	resetTestState()
 }
 
-func Test_Float_ErrorsOnAlphabetical(t *testing.T) {
+func Test_ParseFloat_ErrorsOnAlphabetical(t *testing.T) {
 	rsl := `
-a = float("asd")
+a = parse_float("asd")
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/9 on 'float': float() could not parse \"asd\" as an float\n")
+	assertError(t, 1, "RslError at L2/15 on 'parse_float': parse_float() could not parse \"asd\" as an float\n")
 	resetTestState()
 }
 
-func Test_Float_CanParseInt(t *testing.T) {
+func Test_ParseFloat_CanParseInt(t *testing.T) {
 	rsl := `
-a = float("2")
+a = parse_float("2")
 print(a + 1.1)
 `
 	setupAndRunCode(t, rsl)

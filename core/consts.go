@@ -35,7 +35,7 @@ const (
 	PARSE_JSON         = "parse_json"
 	HTTP_GET           = "http_get"
 	HTTP_POST          = "http_post"
-	PARSE_INT          = "int"
-	PARSE_FLOAT        = "float"
+	PARSE_INT          = "parse_int"
+	PARSE_FLOAT        = "parse_float"
 	ABS                = "abs"
 )
