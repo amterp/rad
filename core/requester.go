@@ -91,10 +91,12 @@ func (r *Requester) RequestJson(url string) (interface{}, error) {
 
 // todo test this more, might need additional query param encoding
 func encodeUrl(rawUrl string) (string, error) {
+	rawUrl = strings.ReplaceAll(rawUrl, "%", "%25")
 	parsedUrl, err := url.Parse(rawUrl)
 	if err != nil {
 		return "", fmt.Errorf("error parsing URL %v: %w", rawUrl, err)
 	}
+	parsedUrl.RawQuery = parsedUrl.Query().Encode()
 	return parsedUrl.String(), nil
 }
 

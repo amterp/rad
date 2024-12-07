@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// todo behaves different from python's, need to justify those or correct it
 func runParseJson(i *MainInterpreter, function Token, args []interface{}) interface{} {
 	if len(args) != 1 {
 		i.error(function, PARSE_JSON+fmt.Sprintf("() takes exactly one argument, got %d", len(args)))

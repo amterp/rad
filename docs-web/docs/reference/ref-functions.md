@@ -177,13 +177,13 @@ sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
 ### parse_int
 
 ```rsl
-parse_int(input str) -> int
+parse_int(input str) -> int, err
 ```
 
 ### parse_float
 
 ```rsl
-parse_float(input str) -> float
+parse_float(input str) -> float, err
 ```
 
 ### parse_json
