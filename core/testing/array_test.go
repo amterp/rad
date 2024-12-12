@@ -149,6 +149,18 @@ a[4] = 500
 	resetTestState()
 }
 
+func TestArray_PositiveIndexing(t *testing.T) {
+	rsl := `
+a = [100, 200, 300, 400]
+print(a[0])
+print(a[1])
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "100\n200\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func TestArray_NegativeIndexing(t *testing.T) {
 	rsl := `
 a = [100, 200, 300, 400]
@@ -180,7 +192,7 @@ a = [100, 200, 300, 400]
 print(a[-99])
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/8 on '[': Array index out of bounds: -99 (list length: 4)\n")
+	assertError(t, 1, "RslError at L3/8 on '[': Index out of bounds: -99 (length: 4)\n")
 	resetTestState()
 }
 

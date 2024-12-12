@@ -123,3 +123,27 @@ print(a)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestDelete_CanDeleteFromListWithSlice(t *testing.T) {
+	rsl := `
+a = [0, 10, 20, 30, 40]
+del a[1:3]
+print(a)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "[0, 30, 40]\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestDelete_CanDeleteFromStringWithSlice(t *testing.T) {
+	rsl := `
+a = "alice"
+del a[1:3]
+print(a)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "ace\n")
+	assertNoErrors(t)
+	resetTestState()
+}

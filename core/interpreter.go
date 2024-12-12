@@ -70,76 +70,6 @@ func (i *MainInterpreter) VisitMapExprExpr(expr MapExpr) interface{} {
 	return *rslMap
 }
 
-func (i *MainInterpreter) VisitCollectionAccessExpr(access CollectionAccess) interface{} {
-	collection := access.Collection.Accept(i)
-	key := access.Key.Accept(i)
-
-	switch coerced := collection.(type) {
-	case []interface{}:
-		switch coercedKey := key.(type) {
-		case int64:
-			adjustedKey := coercedKey
-			if adjustedKey < 0 {
-				adjustedKey += int64(len(coerced))
-			}
-			if adjustedKey < 0 || adjustedKey >= int64(len(coerced)) {
-				i.error(access.AccessOpener, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", coercedKey, len(coerced)))
-			}
-			return coerced[adjustedKey]
-		default:
-			i.error(access.AccessOpener, "Array access key must be an int")
-			panic(UNREACHABLE)
-		}
-	case RslString:
-		switch coercedKey := key.(type) {
-		case int64:
-			adjustedKey := coercedKey
-			if adjustedKey < 0 {
-				adjustedKey += coerced.Len()
-			}
-			if adjustedKey < 0 || adjustedKey >= coerced.Len() {
-				i.error(access.AccessOpener, fmt.Sprintf("String index out of bounds: %d (string length: %d)", coercedKey, coerced.Len()))
-			}
-			return coerced.IndexAt(adjustedKey)
-		default:
-			i.error(access.AccessOpener, "String index must be an int")
-			panic(UNREACHABLE)
-		}
-	case RslMap:
-		switch coercedKey := key.(type) {
-		case RslString:
-			val, exists := coerced.Get(coercedKey)
-			if !exists {
-				i.error(access.AccessOpener, fmt.Sprintf("Key '%s' not found in map", coercedKey))
-				panic(UNREACHABLE)
-			}
-			return val
-		default:
-			i.error(access.AccessOpener, fmt.Sprintf("Map access key must be a string, was %v (%T)", key, key))
-			panic(UNREACHABLE)
-		}
-	default:
-		i.error(access.AccessOpener, "Bug! Should've failed earlier")
-		panic(UNREACHABLE)
-	}
-}
-
-func (i *MainInterpreter) VisitSliceAccessExpr(sliceAccess SliceAccess) interface{} {
-	original := sliceAccess.ListOrString.Accept(i)
-
-	switch coerced := original.(type) {
-	case RslString:
-		start, end := i.resolveStartEnd(sliceAccess, coerced.Len())
-		return coerced.Slice(start, end)
-	case []interface{}:
-		start, end := i.resolveStartEnd(sliceAccess, int64(len(coerced)))
-		return coerced[start:end]
-	default:
-		i.error(sliceAccess.AccessOpener, "Slice access must be on a string or array")
-		panic(UNREACHABLE)
-	}
-}
-
 func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
 	return RunRslNonVoidFunction(i, call.Function, call.NumExpectedReturnValues, evalArgs(i, call.Args), call.NamedArgs)
 }
@@ -445,11 +375,6 @@ func (i *MainInterpreter) VisitContinueStmtStmt(ContinueStmt) {
 	i.continuing = true
 }
 
-func (i *MainInterpreter) VisitVarPathExpr(path VarPath) interface{} {
-	i.error(path.Identifier, fmt.Sprintf("%T should not be visited directly", path))
-	panic(UNREACHABLE)
-}
-
 func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
 	for _, varPath := range del.Vars {
 		identifier := varPath.Identifier
@@ -465,24 +390,6 @@ func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
 
 func (i *MainInterpreter) VisitDeferStmtStmt(deferStmt DeferStmt) {
 	i.deferredStmts = append(i.deferredStmts, deferStmt)
-}
-
-func (i *MainInterpreter) resolveStartEnd(sliceAccess SliceAccess, len int64) (int64, int64) {
-	start := int64(0)
-	end := len
-
-	if sliceAccess.Start != nil {
-		start = i.resolveSliceIndex(sliceAccess.AccessOpener, *sliceAccess.Start, len, true)
-	}
-	if sliceAccess.End != nil {
-		end = i.resolveSliceIndex(sliceAccess.AccessOpener, *sliceAccess.End, len, false)
-	}
-
-	if start > end {
-		start = end
-	}
-
-	return start, end
 }
 
 // todo currently these execute after an error is printed. Should they execute before?
@@ -514,92 +421,6 @@ func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
 				i.error(deferredStmt.DeferToken, "Bug! Deferred statement should have either a statement or a block")
 			}
 		}()
-	}
-}
-
-func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int64, isStart bool) int64 {
-	index := expr.Accept(i)
-	rawIdx, ok := index.(int64)
-	if !ok {
-		i.error(token, fmt.Sprintf("Slice index must be an int, was %T (%v)", index, index))
-	}
-
-	var idx = rawIdx
-	if rawIdx < 0 {
-		idx = rawIdx + len
-	}
-
-	if isStart {
-		if idx < 0 {
-			// the start index is still negative, so we'll slice from the beginning
-			idx = 0
-		}
-		if idx > len {
-			// the start index is greater than the length of the list, so we'll slice to the end
-			idx = len
-		}
-	} else {
-		if idx > len {
-			// the end index is greater than the length of the list, so we'll slice to the end
-			idx = len
-		}
-		if idx < 0 {
-			// the end index is still negative, so we'll slice from the end
-			idx = 0
-		}
-	}
-
-	return idx
-}
-
-func (i *MainInterpreter) executeDelete(identifier Token, value interface{}, keys []Expr) interface{} {
-	if len(keys) == 0 {
-		return value
-	}
-
-	key := keys[0].Accept(i)
-	switch coerced := value.(type) {
-	case []interface{}:
-		idx, ok := key.(int64)
-		if !ok {
-			i.error(identifier, fmt.Sprintf("Array index must be an int, was %T (%v)", key, key))
-		}
-		if idx < 0 || idx >= int64(len(coerced)) {
-			i.error(identifier, fmt.Sprintf("Array index out of bounds: %d > max idx %d", idx, len(coerced)-1))
-		}
-
-		if len(keys) == 1 {
-			// end of the line, delete whatever we're pointing at
-			coerced = append(coerced[:idx], coerced[idx+1:]...)
-			return coerced
-		} else {
-			// we want to delete something deeper in the array, recurse
-			coerced[idx] = i.executeDelete(identifier, coerced[idx], keys[1:])
-			return coerced
-		}
-
-	case RslMap:
-		keyStr, ok := key.(RslString)
-		if !ok {
-			// todo still unsure about this string constraint
-			i.error(identifier, fmt.Sprintf("Map key must be a string, was %T (%v)", key, key))
-		}
-		val, exists := coerced.Get(keyStr)
-		if !exists {
-			i.error(identifier, fmt.Sprintf("Map key %q not found", keyStr))
-		}
-		if len(keys) == 1 {
-			// end of the line, delete whatever we're pointing at
-			coerced.Delete(keyStr)
-			return coerced
-		} else {
-			// we want to delete something deeper in the map, recurse
-			coerced.Set(keyStr, i.executeDelete(identifier, val, keys[1:]))
-			return coerced
-		}
-	default:
-		i.error(identifier, fmt.Sprintf("Expected collection for key %q, got %T", key, value))
-		panic(UNREACHABLE)
 	}
 }
 

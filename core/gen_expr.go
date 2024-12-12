@@ -13,8 +13,6 @@ type ExprVisitor interface {
 	VisitExprLoaExpr(ExprLoa) interface{}
 	VisitArrayExprExpr(ArrayExpr) interface{}
 	VisitMapExprExpr(MapExpr) interface{}
-	VisitCollectionAccessExpr(CollectionAccess) interface{}
-	VisitSliceAccessExpr(SliceAccess) interface{}
 	VisitFunctionCallExpr(FunctionCall) interface{}
 	VisitVariableExpr(Variable) interface{}
 	VisitBinaryExpr(Binary) interface{}
@@ -66,42 +64,6 @@ func (e MapExpr) String() string {
 	parts = append(parts, fmt.Sprintf("Values: %v", e.Values))
 	parts = append(parts, fmt.Sprintf("OpenBraceToken: %v", e.OpenBraceToken))
 	return fmt.Sprintf("MapExpr(%s)", strings.Join(parts, ", "))
-}
-
-type CollectionAccess struct {
-	Collection   Expr
-	Key          Expr
-	AccessOpener Token
-}
-
-func (e CollectionAccess) Accept(visitor ExprVisitor) interface{} {
-	return visitor.VisitCollectionAccessExpr(e)
-}
-func (e CollectionAccess) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("Collection: %v", e.Collection))
-	parts = append(parts, fmt.Sprintf("Key: %v", e.Key))
-	parts = append(parts, fmt.Sprintf("AccessOpener: %v", e.AccessOpener))
-	return fmt.Sprintf("CollectionAccess(%s)", strings.Join(parts, ", "))
-}
-
-type SliceAccess struct {
-	ListOrString Expr
-	AccessOpener Token
-	Start        *Expr
-	End          *Expr
-}
-
-func (e SliceAccess) Accept(visitor ExprVisitor) interface{} {
-	return visitor.VisitSliceAccessExpr(e)
-}
-func (e SliceAccess) String() string {
-	var parts []string
-	parts = append(parts, fmt.Sprintf("ListOrString: %v", e.ListOrString))
-	parts = append(parts, fmt.Sprintf("AccessOpener: %v", e.AccessOpener))
-	parts = append(parts, fmt.Sprintf("Start: %v", e.Start))
-	parts = append(parts, fmt.Sprintf("End: %v", e.End))
-	return fmt.Sprintf("SliceAccess(%s)", strings.Join(parts, ", "))
 }
 
 type FunctionCall struct {
@@ -242,7 +204,8 @@ func (e ListComprehension) String() string {
 
 type VarPath struct {
 	Identifier Token
-	Keys       []Expr
+	Collection Expr
+	Keys       []CollectionKey
 }
 
 func (e VarPath) Accept(visitor ExprVisitor) interface{} {
@@ -251,6 +214,7 @@ func (e VarPath) Accept(visitor ExprVisitor) interface{} {
 func (e VarPath) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Collection: %v", e.Collection))
 	parts = append(parts, fmt.Sprintf("Keys: %v", e.Keys))
 	return fmt.Sprintf("VarPath(%s)", strings.Join(parts, ", "))
 }

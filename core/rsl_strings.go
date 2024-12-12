@@ -133,3 +133,8 @@ func (s *RslString) SetSegmentsColor(clr RslColor) {
 		s.Segments[i].Color = &clr
 	}
 }
+
+func (s *RslString) Delete(start int64, endExclusive int64) interface{} {
+	// todo should maintain attr info
+	return NewRslString(s.Plain()[:start] + s.Plain()[endExclusive:])
+}

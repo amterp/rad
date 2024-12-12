@@ -518,9 +518,9 @@ func (p *Parser) forStmt() ForStmt {
 func (p *Parser) deleteStmt() Stmt {
 	deleteToken := p.consumeKeyword(GLOBAL_KEYWORDS, DELETE)
 	var vars []VarPath
-	vars = append(vars, p.varPath())
+	vars = append(vars, p.varPath(p.identifier()))
 	for p.matchAny(COMMA) {
-		vars = append(vars, p.varPath())
+		vars = append(vars, p.varPath(p.identifier()))
 	}
 	return &DeleteStmt{DeleteToken: deleteToken, Vars: vars}
 }
@@ -544,14 +544,58 @@ func (p *Parser) deferStmt() Stmt {
 	}
 }
 
-func (p *Parser) varPath() VarPath {
-	identifier := p.consume(IDENTIFIER, "Expected identifier")
-	var keys []Expr
-	for p.matchAny(LEFT_BRACKET) {
-		keys = append(keys, p.expr(1))
-		p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+func (p *Parser) varPath(identifier Token) VarPath {
+	var collection Expr
+	if identifier == nil {
+		collection = p.expr(1)
+	} else {
+		collection = ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
 	}
-	return VarPath{Identifier: identifier, Keys: keys}
+
+	return p.varPathWithCollection(identifier, collection)
+}
+
+func (p *Parser) varPathWithCollection(identifier Token, collection Expr) VarPath {
+	var keys []CollectionKey
+	for p.matchAny(LEFT_BRACKET) || p.matchAny(DOT) {
+		opener := p.previous()
+		if opener.GetType() == DOT {
+			// myMap.key
+			expr := p.identifierExpr()
+			keys = append(keys, CollectionKey{Opener: opener, Start: &expr, End: nil})
+		} else if p.matchAny(COLON) {
+			if p.matchAny(RIGHT_BRACKET) {
+				// a[:]
+				keys = append(keys, CollectionKey{Opener: opener, IsSlice: true, Start: nil, End: nil})
+			} else {
+				// a[:end]
+				endExpr := p.expr(1)
+				p.consume(RIGHT_BRACKET, "Expected ']' after slice")
+				keys = append(keys, CollectionKey{Opener: opener, IsSlice: true, Start: nil, End: &endExpr})
+			}
+		} else {
+			expr := p.expr(1)
+			if p.matchAny(COLON) {
+				if p.peekType(RIGHT_BRACKET) {
+					// a[start:]
+					keys = append(keys, CollectionKey{Opener: opener, IsSlice: true, Start: &expr, End: nil})
+				} else {
+					// a[start:end]
+					end := p.expr(1)
+					keys = append(keys, CollectionKey{Opener: opener, IsSlice: true, Start: &expr, End: &end})
+				}
+			} else {
+				// a[start]
+				keys = append(keys, CollectionKey{Opener: opener, Start: &expr, End: nil})
+			}
+			p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
+		}
+	}
+	return VarPath{Identifier: identifier, Collection: collection, Keys: keys}
+}
+
+func (p *Parser) identifierExpr() Expr {
+	return ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: p.identifier()}}}
 }
 
 func (p *Parser) functionCallStmt() Stmt {
@@ -933,54 +977,13 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 		p.error("Expected expression")
 	}
 
-	expr = p.loopWrapCollectionAccess(expr)
-	return expr
-}
+	varPath := p.varPathWithCollection(nil, expr)
 
-func (p *Parser) loopWrapCollectionAccess(expr Expr) Expr {
-	for p.peekType(LEFT_BRACKET) || p.peekType(DOT) {
-		opener := p.advance()
-		if opener.GetType() == DOT {
-			// myMap.
-			if p.matchAny(IDENTIFIER) {
-				// myMap.key
-				identifier := p.previous()
-				identifierExpr := ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
-				expr = &CollectionAccess{Collection: expr, Key: identifierExpr, AccessOpener: opener}
-			} else {
-				p.error("Expected identifier after '.'")
-			}
-		} else if p.matchAny(COLON) {
-			if p.matchAny(RIGHT_BRACKET) {
-				// a[:]
-				expr = &SliceAccess{ListOrString: expr, AccessOpener: opener}
-			} else {
-				// a[:end]
-				endExpr := p.expr(1)
-				p.consume(RIGHT_BRACKET, "Expected ']' after slice")
-				expr = &SliceAccess{ListOrString: expr, Start: nil, End: &endExpr, AccessOpener: opener}
-			}
-		} else {
-			firstExpr := p.expr(1)
-			if p.matchAny(RIGHT_BRACKET) {
-				// a[idx] or a[key]
-				expr = &CollectionAccess{Collection: expr, Key: firstExpr, AccessOpener: opener}
-			} else if p.matchAny(COLON) {
-				if p.matchAny(RIGHT_BRACKET) {
-					// a[start:]
-					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, AccessOpener: opener}
-				} else {
-					// a[start:end]
-					endExpr := p.expr(1)
-					p.consume(RIGHT_BRACKET, "Expected ']' after collection access")
-					expr = &SliceAccess{ListOrString: expr, Start: &firstExpr, End: &endExpr, AccessOpener: opener}
-				}
-			} else {
-				p.error("Expected ']' for collection access or ':' for slice")
-			}
-		}
+	if len(varPath.Keys) > 0 {
+		return varPath
+	} else {
+		return expr
 	}
-	return expr
 }
 
 func (p *Parser) functionCall(numExpectedReturnValues int) FunctionCall {

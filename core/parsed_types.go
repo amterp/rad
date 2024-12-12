@@ -158,3 +158,10 @@ type Lambda struct {
 	Args []Token
 	Op   Expr
 }
+
+type CollectionKey struct {
+	Opener  Token
+	IsSlice bool
+	Start   *Expr
+	End     *Expr
+}

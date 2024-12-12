@@ -53,8 +53,6 @@ func main() {
 		"ExprLoa           : LiteralOrArray Value",
 		"ArrayExpr         : []Expr Values",
 		"MapExpr           : []Expr Keys, []Expr Values, Token OpenBraceToken",
-		"CollectionAccess  : Expr Collection, Expr Key, Token AccessOpener",
-		"SliceAccess       : Expr ListOrString, Token AccessOpener, *Expr Start, *Expr End",
 		"FunctionCall      : Token Function, []Expr Args, []NamedArg NamedArgs, int NumExpectedReturnValues",
 		"Variable          : Token Name",
 		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /
@@ -63,7 +61,8 @@ func main() {
 		"Grouping          : Expr Value",                            // ( expr )
 		"Unary             : Token Operator, Expr Right",            // !, -, +
 		"ListComprehension : Expr Expression, Token For, Token Identifier1, *Token Identifier2, Expr Range, *Expr Condition",
-		"VarPath           : Token Identifier, []Expr Keys", // for e.g. `del myMap["key"][0]`
+		// Identifier can be nil
+		"VarPath           : Token Identifier, Expr Collection, []CollectionKey Keys", // for e.g. `del myMap["key"][0]`
 	})
 
 	defineAst(outputDir, "Stmt", "", []string{
