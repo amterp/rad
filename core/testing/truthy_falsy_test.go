@@ -192,3 +192,17 @@ print(b)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func TestTruthyFalsy_NotTruthy(t *testing.T) {
+	rsl := `
+a = []
+if not a:
+	print("first")
+else:
+	print("second")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "first\n")
+	assertNoErrors(t)
+	resetTestState()
+}

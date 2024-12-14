@@ -105,17 +105,11 @@ func (i *MainInterpreter) VisitGroupingExpr(grouping Grouping) interface{} {
 func (i *MainInterpreter) VisitUnaryExpr(unary Unary) interface{} {
 	value := unary.Right.Accept(i)
 
-	valBool, ok := value.(bool)
-	if ok {
-		switch unary.Operator.GetType() {
-		case IDENTIFIER:
-			if unary.Operator.GetLexeme() == "not" {
-				return !valBool
-			} else {
-				i.error(unary.Operator, fmt.Sprintf("Bug! Expected 'not' identifier, got %q", unary.Operator.GetLexeme()))
-			}
-		default:
-			i.error(unary.Operator, "Invalid logical operator, only 'not' is allowed")
+	if unary.Operator.GetType() == IDENTIFIER {
+		if unary.Operator.GetLexeme() == "not" {
+			return !TruthyFalsy(value)
+		} else {
+			i.error(unary.Operator, fmt.Sprintf("Bug! Expected 'not' identifier, got %q", unary.Operator.GetLexeme()))
 		}
 	}
 
