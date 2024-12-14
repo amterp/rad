@@ -640,7 +640,7 @@ func (p *Parser) assignment() Stmt {
 		return p.shellCmd(identifiers)
 	}
 
-	return p.primaryAssignment(identifiers)
+	return p.basicAssignment(identifiers)
 }
 
 func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
@@ -795,9 +795,9 @@ func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
 	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
-func (p *Parser) primaryAssignment(identifiers []Token) Stmt {
+func (p *Parser) basicAssignment(identifiers []Token) Stmt {
 	initializer := p.expr(len(identifiers))
-	return &PrimaryAssign{Identifiers: identifiers, Initializer: initializer}
+	return &Assign{Identifiers: identifiers, Initializer: initializer}
 }
 
 func (p *Parser) expr(numExpectedReturnValues int) Expr {

@@ -70,7 +70,7 @@ func main() {
 		"ExprStmt               : Expr Expression",
 		"FunctionStmt           : FunctionCall Call",
 		// todo can merge Primary and Compound if we treat == as an operator?
-		"PrimaryAssign          : []Token Identifiers, Expr Initializer", // todo allow []Expr?
+		"Assign                 : []Token Identifiers, Expr Initializer", // todo allow []Expr?
 		"CompoundAssign         : Token Name, Token Operator, Expr Value",
 		"CollectionEntryAssign  : Token Identifier, Expr Key, Token Operator, Expr Value",
 		"FileHeader             : FilerHeaderToken FhToken",

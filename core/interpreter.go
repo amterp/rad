@@ -147,7 +147,7 @@ func (i *MainInterpreter) VisitExpressionStmt(expression Expr) {
 	expression.Accept(i)
 }
 
-func (i *MainInterpreter) VisitPrimaryAssignStmt(assign PrimaryAssign) {
+func (i *MainInterpreter) VisitAssignStmt(assign Assign) {
 	value := assign.Initializer.Accept(i)
 
 	if len(assign.Identifiers) == 1 {
