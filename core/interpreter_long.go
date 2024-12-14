@@ -8,14 +8,7 @@ import (
 func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
 	left := binary.Left.Accept(i)
 	right := binary.Right.Accept(i)
-	return i.executeOp(left, right, binary.Operator, binary.Operator.GetType())
-}
-
-func (i *MainInterpreter) VisitCompoundAssignStmt(assign CompoundAssign) {
-	left := i.env.GetByToken(assign.Name)
-	right := assign.Value.Accept(i)
-	result := i.calculateResult(left, right, assign.Operator)
-	i.env.SetAndImplyType(assign.Name, result)
+	return i.executeOp(left, right, binary.Tkn, binary.Op)
 }
 
 func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryAssign) {
@@ -53,269 +46,261 @@ func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryA
 }
 
 func (i *MainInterpreter) calculateResult(left interface{}, right interface{}, operator Token) interface{} {
-	var operatorType TokenType
-	switch operator.GetType() {
-	case EQUAL:
+	if operator.GetType() == EQUAL {
 		// only used by collection entry assignment atm
 		return right
-	case PLUS_EQUAL:
-		operatorType = PLUS
-	case MINUS_EQUAL:
-		operatorType = MINUS
-	case STAR_EQUAL:
-		operatorType = STAR
-	case SLASH_EQUAL:
-		operatorType = SLASH
-	default:
-		i.error(operator, "Invalid assignment operator")
 	}
-	return i.executeOp(left, right, operator, operatorType)
+
+	op, _ := TKN_TYPE_TO_OP_MAP[operator.GetType()]
+	return i.executeOp(left, right, operator, op)
 }
 
-func (i *MainInterpreter) executeOp(left interface{}, right interface{}, operatorToken Token, operatorType TokenType) interface{} {
+func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Token, op OpType) interface{} {
 	switch coercedLeft := left.(type) {
 	case int64:
 		switch coercedRight := right.(type) {
 		case int64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft + coercedRight
-			case MINUS:
+			case OP_MINUS:
 				return coercedLeft - coercedRight
-			case STAR:
+			case OP_MULTIPLY:
 				return coercedLeft * coercedRight
-			case SLASH:
+			case OP_DIVIDE:
 				return coercedLeft / coercedRight
-			case GREATER:
+			case OP_GREATER:
 				return coercedLeft > coercedRight
-			case GREATER_EQUAL:
+			case OP_GREATER_EQUAL:
 				return coercedLeft >= coercedRight
-			case LESS:
+			case OP_LESS:
 				return coercedLeft < coercedRight
-			case LESS_EQUAL:
+			case OP_LESS_EQUAL:
 				return coercedLeft <= coercedRight
-			case EQUAL_EQUAL:
+			case OP_EQUAL:
 				return coercedLeft == coercedRight
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			default:
-				i.error(operatorToken, "Invalid binary operator for int, int")
+				i.error(tkn, "Invalid binary operator for int, int")
 			}
 		case float64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return float64(coercedLeft) + coercedRight
-			case MINUS:
+			case OP_MINUS:
 				return float64(coercedLeft) - coercedRight
-			case STAR:
+			case OP_MULTIPLY:
 				return float64(coercedLeft) * coercedRight
-			case SLASH:
+			case OP_DIVIDE:
 				return float64(coercedLeft) / coercedRight
-			case GREATER:
+			case OP_GREATER:
 				return float64(coercedLeft) > coercedRight
-			case GREATER_EQUAL:
+			case OP_GREATER_EQUAL:
 				return float64(coercedLeft) >= coercedRight
-			case LESS:
+			case OP_LESS:
 				return float64(coercedLeft) < coercedRight
-			case LESS_EQUAL:
+			case OP_LESS_EQUAL:
 				return float64(coercedLeft) <= coercedRight
-			case EQUAL_EQUAL:
+			case OP_EQUAL:
 				return float64(coercedLeft) == coercedRight
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return float64(coercedLeft) != coercedRight
 			default:
-				i.error(operatorToken, "Invalid binary operator for int, float")
+				i.error(tkn, "Invalid binary operator for int, float")
 			}
 		case RslString:
-			switch operatorType {
+			switch op {
 			// todo python does not allow this, should we?
-			case IN:
+			case OP_IN:
 				return strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
 			default:
-				i.error(operatorToken, "Invalid binary operator for int, string")
+				i.error(tkn, "Invalid binary operator for int, string")
 			}
 		case []interface{}:
-			switch operatorType {
-			case IN:
+			switch op {
+			case OP_IN:
 				return contains(coercedRight, coercedLeft)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case float64:
 		switch coercedRight := right.(type) {
 		case int64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft + float64(coercedRight)
-			case MINUS:
+			case OP_MINUS:
 				return coercedLeft - float64(coercedRight)
-			case STAR:
+			case OP_MULTIPLY:
 				return coercedLeft * float64(coercedRight)
-			case SLASH:
+			case OP_DIVIDE:
 				return coercedLeft / float64(coercedRight)
-			case GREATER:
+			case OP_GREATER:
 				return coercedLeft > float64(coercedRight)
-			case GREATER_EQUAL:
+			case OP_GREATER_EQUAL:
 				return coercedLeft >= float64(coercedRight)
-			case LESS:
+			case OP_LESS:
 				return coercedLeft < float64(coercedRight)
-			case LESS_EQUAL:
+			case OP_LESS_EQUAL:
 				return coercedLeft <= float64(coercedRight)
-			case EQUAL_EQUAL:
+			case OP_EQUAL:
 				return coercedLeft == float64(coercedRight)
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return coercedLeft != float64(coercedRight)
 			default:
-				i.error(operatorToken, "Invalid binary operator for int, int")
+				i.error(tkn, "Invalid binary operator for int, int")
 			}
 		case float64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft + coercedRight
-			case MINUS:
+			case OP_MINUS:
 				return coercedLeft - coercedRight
-			case STAR:
+			case OP_MULTIPLY:
 				return coercedLeft * coercedRight
-			case SLASH:
+			case OP_DIVIDE:
 				return coercedLeft / coercedRight
-			case GREATER:
+			case OP_GREATER:
 				return coercedLeft > coercedRight
-			case GREATER_EQUAL:
+			case OP_GREATER_EQUAL:
 				return coercedLeft >= coercedRight
-			case LESS:
+			case OP_LESS:
 				return coercedLeft < coercedRight
-			case LESS_EQUAL:
+			case OP_LESS_EQUAL:
 				return coercedLeft <= coercedRight
-			case EQUAL_EQUAL:
+			case OP_EQUAL:
 				return coercedLeft == coercedRight
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			default:
-				i.error(operatorToken, "Invalid binary operator for int, float64")
+				i.error(tkn, "Invalid binary operator for int, float64")
 			}
 		case []interface{}:
-			switch operatorType {
-			case IN:
+			switch op {
+			case OP_IN:
 				return contains(coercedRight, coercedLeft)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
+			default:
+				i.error(tkn, "Invalid binary operator for float64, array")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case RslString:
 		switch coercedRight := right.(type) {
 		case RslString:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft.Concat(coercedRight)
-			case EQUAL_EQUAL:
+			case OP_EQUAL:
 				return coercedLeft.Equals(coercedRight)
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return !coercedLeft.Equals(coercedRight)
-			case IN:
+			case OP_IN:
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			default:
-				i.error(operatorToken, "Invalid binary operator for string, string")
+				i.error(tkn, "Invalid binary operator for string, string")
 			}
 		case int64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			default:
-				i.error(operatorToken, "Invalid binary operator for string, int")
+				i.error(tkn, "Invalid binary operator for string, int")
 			}
 		case float64:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight)) // todo check formatting
 			default:
-				i.error(operatorToken, "Invalid binary operator for string, float")
+				i.error(tkn, "Invalid binary operator for string, float")
 			}
 		case bool:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			default:
-				i.error(operatorToken, "Invalid binary operator for string, bool")
+				i.error(tkn, "Invalid binary operator for string, bool")
 			}
 		case []interface{}:
-			switch operatorType {
-			case IN:
+			switch op {
+			case OP_IN:
 				return contains(coercedRight, coercedLeft)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
+			default:
+				i.error(tkn, "Invalid binary operator for string, array")
 			}
 		case RslMap:
-			switch operatorType {
-			case IN:
+			switch op {
+			case OP_IN:
 				return coercedRight.ContainsKey(coercedLeft)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !coercedRight.ContainsKey(coercedLeft)
+			default:
+				i.error(tkn, "Invalid binary operator for string, map")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case bool:
 		switch coercedRight := right.(type) {
 		case bool:
-			switch operatorType {
-			case AND:
-				return coercedLeft && coercedRight
-			case OR:
-				return coercedLeft || coercedRight
-			case EQUAL_EQUAL:
+			switch op {
+			case OP_EQUAL:
 				return coercedLeft == coercedRight
-			case NOT_EQUAL:
+			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			default:
-				i.error(operatorToken, "Invalid binary operator for bool, bool")
+				i.error(tkn, "Invalid binary operator for bool, bool")
 			}
 		case []interface{}:
-			switch operatorType {
-			case IN:
+			switch op {
+			case OP_IN:
 				return contains(coercedRight, coercedLeft)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			default:
-				i.error(operatorToken, "Invalid binary operator for bool, array")
+				i.error(tkn, "Invalid binary operator for bool, array")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	case []interface{}:
 		switch coercedRight := right.(type) {
 		case RslString:
-			i.error(operatorToken, "Invalid binary operator for mixed array, string")
+			i.error(tkn, "Invalid binary operator for mixed array, string")
 		case int64:
-			i.error(operatorToken, "Invalid binary operator for mixed array, int")
+			i.error(tkn, "Invalid binary operator for mixed array, int")
 		case float64:
-			i.error(operatorToken, "Invalid binary operator for mixed array, float")
+			i.error(tkn, "Invalid binary operator for mixed array, float")
 		case bool:
-			i.error(operatorToken, "Invalid binary operator for mixed array, bool")
+			i.error(tkn, "Invalid binary operator for mixed array, bool")
 		case []interface{}:
-			switch operatorType {
-			case PLUS:
+			switch op {
+			case OP_PLUS:
 				return append(coercedLeft, coercedRight...)
-			case IN:
+			case OP_IN:
 				return contains(coercedLeft, coercedRight)
-			case NOT_IN:
+			case OP_NOT_IN:
 				return !contains(coercedLeft, coercedRight)
 			default:
-				i.error(operatorToken, "Invalid binary operator for array, array")
+				i.error(tkn, "Invalid binary operator for array, array")
 			}
 		default:
-			i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 		}
 	default:
-		i.error(operatorToken, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+		i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
 	}
 	panic(UNREACHABLE)
 }

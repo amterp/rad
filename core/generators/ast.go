@@ -55,8 +55,9 @@ func main() {
 		"MapExpr           : []Expr Keys, []Expr Values, Token OpenBraceToken",
 		"FunctionCall      : Token Function, []Expr Args, []NamedArg NamedArgs, int NumExpectedReturnValues",
 		"Variable          : Token Name",
-		"Binary            : Expr Left, Token Operator, Expr Right", // +, -, *, /
+		"Binary            : Token Tkn, Expr Left, OpType Op, Expr Right", // +, -, *, /
 		"Ternary           : Expr Condition, Token QuestionMark, Expr True, Expr False",
+		// todo I think I can collapse logical and binary into one type. maybe not from a EBNF perspective, but from a code perspective
 		"Logical           : Expr Left, Token Operator, Expr Right", // and, or
 		"Grouping          : Expr Value",                            // ( expr )
 		"Unary             : Token Operator, Expr Right",            // !, -, +
@@ -69,9 +70,7 @@ func main() {
 		"Empty                  :",
 		"ExprStmt               : Expr Expression",
 		"FunctionStmt           : FunctionCall Call",
-		// todo can merge Primary and Compound if we treat == as an operator?
 		"Assign                 : []Token Identifiers, Expr Initializer", // todo allow []Expr?
-		"CompoundAssign         : Token Name, Token Operator, Expr Value",
 		"CollectionEntryAssign  : Token Identifier, Expr Key, Token Operator, Expr Value",
 		"FileHeader             : FilerHeaderToken FhToken",
 		"ArgBlock               : Token ArgsKeyword, []ArgStmt Stmts",

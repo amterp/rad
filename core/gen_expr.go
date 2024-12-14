@@ -99,9 +99,10 @@ func (e Variable) String() string {
 }
 
 type Binary struct {
-	Left     Expr
-	Operator Token
-	Right    Expr
+	Tkn   Token
+	Left  Expr
+	Op    OpType
+	Right Expr
 }
 
 func (e Binary) Accept(visitor ExprVisitor) interface{} {
@@ -109,8 +110,9 @@ func (e Binary) Accept(visitor ExprVisitor) interface{} {
 }
 func (e Binary) String() string {
 	var parts []string
+	parts = append(parts, fmt.Sprintf("Tkn: %v", e.Tkn))
 	parts = append(parts, fmt.Sprintf("Left: %v", e.Left))
-	parts = append(parts, fmt.Sprintf("Operator: %v", e.Operator))
+	parts = append(parts, fmt.Sprintf("Op: %v", e.Op))
 	parts = append(parts, fmt.Sprintf("Right: %v", e.Right))
 	return fmt.Sprintf("Binary(%s)", strings.Join(parts, ", "))
 }

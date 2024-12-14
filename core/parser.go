@@ -549,7 +549,7 @@ func (p *Parser) varPath(identifier Token) VarPath {
 	if identifier == nil {
 		collection = p.expr(1)
 	} else {
-		collection = ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
+		collection = p.identifierAsExpr(identifier)
 	}
 
 	return p.varPathWithCollection(identifier, collection)
@@ -595,7 +595,15 @@ func (p *Parser) varPathWithCollection(identifier Token, collection Expr) VarPat
 }
 
 func (p *Parser) identifierExpr() Expr {
-	return ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: p.identifier()}}}
+	return p.identifierAsExpr(p.identifier())
+}
+
+func (p *Parser) identifierAsExpr(identifier Token) ExprLoa {
+	return ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
+}
+
+func (p *Parser) identifierAsVariable(identifier Token) Expr {
+	return &Variable{Name: identifier}
 }
 
 func (p *Parser) functionCallStmt() Stmt {
@@ -645,19 +653,15 @@ func (p *Parser) assignment() Stmt {
 
 func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
 	expr := p.expr(1)
-	switch operator.GetType() {
-	case PLUS_EQUAL:
-		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
-	case MINUS_EQUAL:
-		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
-	case STAR_EQUAL:
-		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
-	case SLASH_EQUAL:
-		return &CompoundAssign{Name: identifier, Operator: operator, Value: expr}
-	default:
+
+	opType, ok := TKN_TYPE_TO_OP_MAP[operator.GetType()]
+
+	if !ok {
 		p.error("Invalid compound assignment operator")
 		panic(UNREACHABLE)
 	}
+
+	return &Assign{Identifiers: []Token{identifier}, Initializer: &Binary{operator, p.identifierAsVariable(identifier), opType, expr}}
 }
 
 func (p *Parser) collectionEntryAssignment(identifier Token, isBracketAccess bool) Stmt {
@@ -668,7 +672,7 @@ func (p *Parser) collectionEntryAssignment(identifier Token, isBracketAccess boo
 		key = p.expr(1)
 		p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
 	} else {
-		key = ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: p.identifier()}}}
+		key = p.identifierExpr()
 	}
 
 	// todo technically it should not be illegal to have e.g. a[0] as a standalone 'statement',
@@ -846,6 +850,7 @@ func (p *Parser) and(numExpectedReturnValues int) Expr {
 		}
 		operator := p.previous()
 		right := p.equality(1)
+		// todo I think I can collapse logical and binary into one
 		expr = &Logical{Left: expr, Operator: operator, Right: right}
 	}
 
@@ -859,9 +864,12 @@ func (p *Parser) equality(numExpectedReturnValues int) Expr {
 		if numExpectedReturnValues != 1 {
 			p.error(onlyOneReturnValueAllowed)
 		}
+
 		operator := p.previous()
+		op, _ := TKN_TYPE_TO_OP_MAP[operator.GetType()]
+
 		right := p.membership(1)
-		expr = &Binary{Left: expr, Operator: operator, Right: right}
+		expr = &Binary{Tkn: operator, Left: expr, Op: op, Right: right}
 	}
 
 	return expr
@@ -876,18 +884,17 @@ func (p *Parser) membership(numExpectedReturnValues int) Expr {
 				p.error(onlyOneReturnValueAllowed)
 			}
 			notToken := p.lookback(2)
-
-			opToken := NewToken(NOT_IN, "not in", notToken.GetCharStart(), notToken.GetLine(), notToken.GetCharLineStart())
+			op, _ := TKN_TYPE_TO_OP_MAP[NOT_IN]
 			right := p.comparison(1)
-			expr = &Binary{Left: expr, Operator: opToken, Right: right}
+			expr = &Binary{Tkn: notToken, Left: expr, Op: op, Right: right}
 		} else if p.matchKeyword(GLOBAL_KEYWORDS, IN) {
 			if numExpectedReturnValues != 1 {
 				p.error(onlyOneReturnValueAllowed)
 			}
 			inIdentifierToken := p.previous()
-			operator := NewToken(IN, "in", inIdentifierToken.GetCharStart(), inIdentifierToken.GetLine(), inIdentifierToken.GetCharLineStart())
+			op, _ := TKN_TYPE_TO_OP_MAP[IN]
 			right := p.comparison(1)
-			expr = &Binary{Left: expr, Operator: operator, Right: right}
+			expr = &Binary{Tkn: inIdentifierToken, Left: expr, Op: op, Right: right}
 		}
 		// we're here, then we must've matched just 'not' without 'in'.
 		// must not be a membership expr, so skip this level.
@@ -904,8 +911,9 @@ func (p *Parser) comparison(numExpectedReturnValues int) Expr {
 			p.error(onlyOneReturnValueAllowed)
 		}
 		operator := p.previous()
+		op, _ := TKN_TYPE_TO_OP_MAP[operator.GetType()]
 		right := p.term(1)
-		expr = &Binary{Left: expr, Operator: operator, Right: right}
+		expr = &Binary{Tkn: operator, Left: expr, Op: op, Right: right}
 	}
 
 	return expr
@@ -919,8 +927,9 @@ func (p *Parser) term(numExpectedReturnValues int) Expr {
 			p.error(onlyOneReturnValueAllowed)
 		}
 		operator := p.previous()
+		op, _ := TKN_TYPE_TO_OP_MAP[operator.GetType()]
 		right := p.factor(1)
-		expr = &Binary{Left: expr, Operator: operator, Right: right}
+		expr = &Binary{Tkn: operator, Left: expr, Op: op, Right: right}
 	}
 
 	return expr
@@ -934,8 +943,9 @@ func (p *Parser) factor(numExpectedReturnValues int) Expr {
 			p.error(onlyOneReturnValueAllowed)
 		}
 		operator := p.previous()
+		op, _ := TKN_TYPE_TO_OP_MAP[operator.GetType()]
 		right := p.unary(1)
-		expr = &Binary{Left: expr, Operator: operator, Right: right}
+		expr = &Binary{Tkn: operator, Left: expr, Op: op, Right: right}
 	}
 
 	return expr
@@ -971,7 +981,7 @@ func (p *Parser) primary(numExpectedReturnValues int) Expr {
 			p.rewind()
 			expr = p.functionCall(numExpectedReturnValues)
 		} else {
-			expr = &Variable{Name: identifier}
+			expr = p.identifierAsVariable(identifier)
 		}
 	} else {
 		p.error("Expected expression")

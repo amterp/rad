@@ -165,3 +165,46 @@ type CollectionKey struct {
 	Start   *Expr
 	End     *Expr
 }
+
+type OpType int
+
+const (
+	OP_PLUS OpType = iota
+	OP_MINUS
+	OP_MULTIPLY
+	OP_DIVIDE
+	OP_EQUAL
+	OP_NOT_EQUAL
+	OP_IN
+	OP_NOT_IN
+	OP_GREATER
+	OP_GREATER_EQUAL
+	OP_LESS
+	OP_LESS_EQUAL
+	//OpMod
+	//OpPow?
+)
+
+var (
+	TKN_TYPE_TO_OP_MAP = map[TokenType]OpType{
+		PLUS:        OP_PLUS,
+		PLUS_EQUAL:  OP_PLUS,
+		MINUS:       OP_MINUS,
+		MINUS_EQUAL: OP_MINUS,
+		STAR:        OP_MULTIPLY,
+		STAR_EQUAL:  OP_MULTIPLY,
+		SLASH:       OP_DIVIDE,
+		SLASH_EQUAL: OP_DIVIDE,
+
+		EQUAL_EQUAL: OP_EQUAL,
+		NOT_EQUAL:   OP_NOT_EQUAL,
+
+		IN:     OP_IN,
+		NOT_IN: OP_NOT_IN,
+
+		GREATER:       OP_GREATER,
+		GREATER_EQUAL: OP_GREATER_EQUAL,
+		LESS:          OP_LESS,
+		LESS_EQUAL:    OP_LESS_EQUAL,
+	}
+)
