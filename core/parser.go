@@ -518,9 +518,9 @@ func (p *Parser) forStmt() ForStmt {
 func (p *Parser) deleteStmt() Stmt {
 	deleteToken := p.consumeKeyword(GLOBAL_KEYWORDS, DELETE)
 	var vars []VarPath
-	vars = append(vars, p.varPath(p.identifier()))
+	vars = append(vars, p.varPath())
 	for p.matchAny(COMMA) {
-		vars = append(vars, p.varPath(p.identifier()))
+		vars = append(vars, p.varPath())
 	}
 	return &DeleteStmt{DeleteToken: deleteToken, Vars: vars}
 }
@@ -544,12 +544,14 @@ func (p *Parser) deferStmt() Stmt {
 	}
 }
 
-func (p *Parser) varPath(identifier Token) VarPath {
+func (p *Parser) varPath() VarPath {
+	var identifier Token
 	var collection Expr
-	if identifier == nil {
-		collection = p.expr(1)
+	if p.peekType(IDENTIFIER) && p.peekTwoAhead().GetType() != LEFT_PAREN { // i.e. not function
+		identifier = p.identifier()
+		collection = p.identifierAsVariable(identifier)
 	} else {
-		collection = p.identifierAsExpr(identifier)
+		collection = p.expr(1)
 	}
 
 	return p.varPathWithCollection(identifier, collection)
@@ -612,46 +614,50 @@ func (p *Parser) functionCallStmt() Stmt {
 }
 
 func (p *Parser) assignment() Stmt {
-	var identifiers []Token
-	identifiers = append(identifiers, p.identifier())
-
-	if p.matchAny(LEFT_BRACKET) {
-		return p.collectionEntryAssignment(identifiers[0], true)
-	} else if p.matchAny(DOT) {
-		return p.collectionEntryAssignment(identifiers[0], false)
-	}
+	var paths []VarPath
+	paths = append(paths, p.varPath())
 
 	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL) {
-		return p.compoundAssignment(identifiers[0], p.previous())
+		return p.compoundAssignment(p.previous(), paths[0])
 	}
 
 	for !p.matchAny(EQUAL) {
 		p.consume(COMMA, "Expected ',' between identifiers")
-		identifiers = append(identifiers, p.identifier())
+		paths = append(paths, p.varPath())
 	}
+
+	equal := p.previous()
 
 	// finished matching left side of equal sign, now parse right side
 
 	if p.peekKeyword(GLOBAL_KEYWORDS, JSON) {
-		if len(identifiers) != 1 {
-			p.error(fmt.Sprintf("Expected 1 identifier for json assignment, got %d", len(identifiers)))
+		if len(paths) != 1 {
+			p.error(fmt.Sprintf("Expected 1 identifier for json assignment, got %d", len(paths)))
 		}
-		return p.jsonPathAssignment(identifiers[0])
+		identifier := paths[0].Identifier
+		if identifier == nil {
+			p.error("Expected identifier for json assignment")
+		}
+		return p.jsonPathAssignment(identifier)
 	}
 
 	if p.matchKeyword(GLOBAL_KEYWORDS, SWITCH) {
+		// todo: don't require identifiers here RAD-54
+		identifiers := p.GetIdentifiers(paths)
 		block := p.switchBlock(identifiers)
 		return &SwitchAssignment{Identifiers: identifiers, Block: block}
 	}
 
 	if p.isShellCmdNext() {
+		// todo: don't require identifiers here RAD-56
+		identifiers := p.GetIdentifiers(paths)
 		return p.shellCmd(identifiers)
 	}
 
-	return p.basicAssignment(identifiers)
+	return p.basicAssignment(equal, paths)
 }
 
-func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
+func (p *Parser) compoundAssignment(operator Token, path VarPath) Stmt {
 	expr := p.expr(1)
 
 	opType, ok := TKN_TYPE_TO_OP_MAP[operator.GetType()]
@@ -661,28 +667,11 @@ func (p *Parser) compoundAssignment(identifier Token, operator Token) Stmt {
 		panic(UNREACHABLE)
 	}
 
-	return &Assign{Identifiers: []Token{identifier}, Initializer: &Binary{operator, p.identifierAsVariable(identifier), opType, expr}}
-}
-
-func (p *Parser) collectionEntryAssignment(identifier Token, isBracketAccess bool) Stmt {
-	var key Expr
-
-	// todo we need to support nested access here RAD-50
-	if isBracketAccess {
-		key = p.expr(1)
-		p.consume(RIGHT_BRACKET, "Expected ']' after collection key")
-	} else {
-		key = p.identifierExpr()
+	return &Assign{
+		Tkn:         operator,
+		Paths:       []VarPath{path},
+		Initializer: &Binary{operator, path, opType, expr},
 	}
-
-	// todo technically it should not be illegal to have e.g. a[0] as a standalone 'statement',
-	//  but we don't allow it here
-
-	operator := p.consumeAny("Expected one of the following operators: [=, +=, -=, *=, /=]",
-		EQUAL, PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL)
-	value := p.expr(1)
-
-	return &CollectionEntryAssign{Identifier: identifier, Key: key, Operator: operator, Value: value}
 }
 
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
@@ -799,9 +788,9 @@ func (p *Parser) switchDefaultStmt(expectedNumReturnValues int) SwitchStmt {
 	return &SwitchDefault{DefaultKeyword: p.previous(), Values: values}
 }
 
-func (p *Parser) basicAssignment(identifiers []Token) Stmt {
-	initializer := p.expr(len(identifiers))
-	return &Assign{Identifiers: identifiers, Initializer: initializer}
+func (p *Parser) basicAssignment(equal Token, paths []VarPath) Stmt {
+	initializer := p.expr(len(paths))
+	return &Assign{Tkn: equal, Paths: paths, Initializer: initializer}
 }
 
 func (p *Parser) expr(numExpectedReturnValues int) Expr {
@@ -1468,7 +1457,7 @@ func (p *Parser) identifier() Token {
 	if p.matchAny(IDENTIFIER) {
 		return p.previous()
 	}
-	p.error("Expected Identifier")
+	p.error("Expected identifier")
 	panic(UNREACHABLE)
 }
 

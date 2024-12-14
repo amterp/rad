@@ -150,24 +150,29 @@ func (i *MainInterpreter) VisitExpressionStmt(expression Expr) {
 func (i *MainInterpreter) VisitAssignStmt(assign Assign) {
 	value := assign.Initializer.Accept(i)
 
-	if len(assign.Identifiers) == 1 {
+	if len(assign.Paths) == 1 {
 		value = []interface{}{value}
 	}
 
 	switch values := value.(type) {
 	case []interface{}:
-		handleMultiAssignment(i, values, assign.Identifiers) // todo does this handle all arrays?
+		handleMultiAssignment(i, assign.Tkn, assign.Paths, values) // todo does this handle all arrays?
 	default:
-		i.error(assign.Identifiers[0], "Expected multiple values, got one")
+		i.error(assign.Tkn, "Expected multiple values, got one")
 	}
 }
 
-func handleMultiAssignment[T any](i *MainInterpreter, values []T, identifiers []Token) {
-	if len(values) != len(identifiers) {
-		i.error(identifiers[0], fmt.Sprintf("Expected %d values, got %d", len(identifiers), len(values)))
+func handleMultiAssignment(i *MainInterpreter, tkn Token, paths []VarPath, values []interface{}) {
+	if len(values) != len(paths) {
+		i.error(tkn, fmt.Sprintf("Expected %d values, got %d", len(paths), len(values)))
 	}
 	for idx, val := range values {
-		i.env.SetAndImplyType(identifiers[idx], val)
+		path := paths[idx]
+		identifier := i.mustIdentifier(tkn, path)
+		if len(path.Keys) > 0 {
+			val = i.traverseVarPath(tkn, i.env.GetByToken(identifier), path.Keys, VarPathLeafSetter{val})
+		}
+		i.env.SetAndImplyType(identifier, val)
 	}
 }
 
@@ -382,7 +387,7 @@ func (i *MainInterpreter) VisitDeleteStmtStmt(del DeleteStmt) {
 		if len(varPath.Keys) == 0 {
 			i.env.Delete(identifierLexeme)
 		} else {
-			modified := i.executeDelete(identifier, i.env.GetByToken(identifier), varPath.Keys)
+			modified := i.traverseVarPath(identifier, i.env.GetByToken(identifier), varPath.Keys, VarPathLeafDeleter{})
 			i.env.SetAndImplyType(identifier, modified)
 		}
 	}

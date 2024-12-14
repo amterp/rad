@@ -70,8 +70,7 @@ func main() {
 		"Empty                  :",
 		"ExprStmt               : Expr Expression",
 		"FunctionStmt           : FunctionCall Call",
-		"Assign                 : []Token Identifiers, Expr Initializer", // todo allow []Expr?
-		"CollectionEntryAssign  : Token Identifier, Expr Key, Token Operator, Expr Value",
+		"Assign                 : Token Tkn, []VarPath Paths, Expr Initializer", // todo allow one-line multi assign?
 		"FileHeader             : FilerHeaderToken FhToken",
 		"ArgBlock               : Token ArgsKeyword, []ArgStmt Stmts",
 		"RadBlock               : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",

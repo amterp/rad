@@ -145,7 +145,7 @@ a = [100, 200, 300, 400]
 a[4] = 500
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/1 on 'a': Array index out of bounds: 4 (list length: 4)\n")
+	assertError(t, 1, "RslError at L3/2 on '[': Index out of bounds: 4 (length: 4)\n")
 	resetTestState()
 }
 
@@ -202,6 +202,6 @@ a = [100, 200, 300, 400]
 a[-99] = 5
 `
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/1 on 'a': Array index out of bounds: -99 (list length: 4)\n")
+	assertError(t, 1, "RslError at L3/2 on '[': Index out of bounds: -99 (length: 4)\n")
 	resetTestState()
 }

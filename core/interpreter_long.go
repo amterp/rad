@@ -11,40 +11,6 @@ func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
 	return i.executeOp(left, right, binary.Tkn, binary.Op)
 }
 
-func (i *MainInterpreter) VisitCollectionEntryAssignStmt(assign CollectionEntryAssign) {
-	key := assign.Key.Accept(i)
-	collection := i.env.GetByToken(assign.Identifier)
-	switch coerced := collection.(type) {
-	case []interface{}:
-		idx, ok := key.(int64)
-		if !ok {
-			i.error(assign.Identifier, "Array key must be an int")
-		}
-		adjustedIdx := idx
-		if adjustedIdx < 0 {
-			adjustedIdx += int64(len(coerced))
-		}
-		arrLen := len(coerced)
-		if adjustedIdx < 0 || adjustedIdx >= int64(arrLen) {
-			i.error(assign.Identifier, fmt.Sprintf("Array index out of bounds: %d (list length: %d)", idx, arrLen))
-		}
-		coerced[adjustedIdx] = i.calculateResult(coerced[adjustedIdx], assign.Value.Accept(i), assign.Operator)
-	case RslMap:
-		keyStr, ok := key.(RslString)
-		if !ok {
-			i.error(assign.Identifier, fmt.Sprintf("Map key must be a string, was %s", TypeAsString(key))) // todo still unsure about this constraint
-		}
-		existing, ok := coerced.Get(keyStr)
-		if !ok && assign.Operator.GetType() != EQUAL {
-			i.error(assign.Operator, fmt.Sprintf("Cannot use compound assignment on non-existing map key %q", ToPrintable(keyStr)))
-		}
-		coerced.Set(keyStr, i.calculateResult(existing, assign.Value.Accept(i), assign.Operator))
-		i.env.SetAndImplyType(assign.Identifier, coerced)
-	default:
-		i.error(assign.Operator, fmt.Sprintf("Expected collection, got %T", collection))
-	}
-}
-
 func (i *MainInterpreter) calculateResult(left interface{}, right interface{}, operator Token) interface{} {
 	if operator.GetType() == EQUAL {
 		// only used by collection entry assignment atm

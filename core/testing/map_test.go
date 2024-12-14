@@ -82,7 +82,7 @@ a["eve"] += 20
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertError(t, 1, "RslError at L3/11 on '+=': Cannot use compound assignment on non-existing map key \"eve\"\n")
+	assertError(t, 1, "RslError at L3/2 on '[': Key not found: \"eve\"\n")
 	resetTestState()
 }
 

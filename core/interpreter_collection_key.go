@@ -2,6 +2,7 @@ package core
 
 import "fmt"
 
+// todo can i re-use traverseVarPath?
 func (i *MainInterpreter) extract(col interface{}, colKey CollectionKey) interface{} {
 	if col == nil {
 		i.error(colKey.Opener, "Cannot slice a nil value")
@@ -45,7 +46,7 @@ func (i *MainInterpreter) colLookup(col interface{}, key CollectionKey) interfac
 		if val, exists := coerced.Get(keyStr); exists {
 			return val
 		} else {
-			i.error(key.Opener, fmt.Sprintf("Key not found: %v", keyStr.Plain()))
+			i.error(key.Opener, fmt.Sprintf("Key not found: %q", keyStr.Plain()))
 			panic(UNREACHABLE)
 		}
 	case []interface{}:

@@ -6,8 +6,8 @@ import (
 )
 
 func TestMisc_SyntaxError(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/invalid_syntax.rad")
-	assertError(t, 1, "RslError at L1/1 on '1': Expected Identifier\n")
+	setupAndRunCode(t, "1 = 2")
+	assertError(t, 1, "RslError at L1/3 on '=': Expected identifier\n")
 	resetTestState()
 }
 

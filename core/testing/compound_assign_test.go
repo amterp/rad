@@ -117,3 +117,24 @@ a += 2`
 	assertError(t, 1, "RslError at L2/4 on '+=': Invalid binary operator for mixed array, int\n")
 	resetTestState()
 }
+
+func TestCompound_AddThroughCollection(t *testing.T) {
+	rsl := `a = [1, 2]
+a[1] += 2
+print(a)`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "[1, 4]\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestCompound_AddThroughNestedCollection(t *testing.T) {
+	rsl := `a = { "alice": [1, 2], "bob": [3, 4] }
+a["alice"][0] += 2
+a.bob[1] += 2
+print(a)`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "{ alice: [3, 2], bob: [3, 6] }\n")
+	assertNoErrors(t)
+	resetTestState()
+}
