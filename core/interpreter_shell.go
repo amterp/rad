@@ -17,10 +17,10 @@ import (
 //  - silent keyword to suppress output?
 
 func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
-	identifiers := shellCmd.Identifiers
+	paths := shellCmd.Paths
 	token := shellCmd.Dollar
-	if len(identifiers) > 3 {
-		i.error(token, "At most 3 identifiers allowed for assignment with shell commands")
+	if len(paths) > 3 {
+		i.error(token, "At most 3 assignments allowed with shell commands")
 	}
 
 	cmdValue := shellCmd.CmdExpr.Accept(i)
@@ -33,8 +33,8 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	cmd := resolveCmd(i, token, cmdStr.Plain())
 	var stdout, stderr bytes.Buffer
 
-	captureStdout := len(identifiers) >= 2
-	captureStderr := len(identifiers) >= 3
+	captureStdout := len(paths) >= 2
+	captureStderr := len(paths) >= 3
 
 	var stdoutPipe, stderrPipe io.ReadCloser
 	var err error
@@ -42,7 +42,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	if captureStdout {
 		stdoutPipe, err = cmd.StdoutPipe()
 		if err != nil {
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stdout pipe: %v", err), shellCmd)
+			handleError(i, token, paths, stdout, stderr, 1, fmt.Sprintf("Error creating stdout pipe: %v", err), shellCmd)
 		}
 	} else {
 		cmd.Stdout = RIo.StdOut
@@ -51,7 +51,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 	if captureStderr {
 		stderrPipe, err = cmd.StderrPipe()
 		if err != nil {
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error creating stderr pipe: %v", err), shellCmd)
+			handleError(i, token, paths, stdout, stderr, 1, fmt.Sprintf("Error creating stderr pipe: %v", err), shellCmd)
 		}
 	} else {
 		cmd.Stderr = RIo.StdErr
@@ -61,7 +61,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		RP.RadInfo(fmt.Sprintf("⚡️ Running: %s\n", cmdStr.String()))
 	}
 	if err := cmd.Start(); err != nil {
-		handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Error starting command: %v", err), shellCmd)
+		handleError(i, token, paths, stdout, stderr, 1, fmt.Sprintf("Error starting command: %v", err), shellCmd)
 	}
 
 	if captureStdout || captureStderr {
@@ -86,7 +86,7 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		err = cmd.Wait()
 		if pipeErr := <-errCh; pipeErr != nil {
 			RP.RadDebug("pipe error")
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command:\n%s", pipeErr.Error()), shellCmd)
+			handleError(i, token, paths, stdout, stderr, 1, fmt.Sprintf("Failed to run command:\n%s", pipeErr.Error()), shellCmd)
 			return
 		}
 	} else {
@@ -97,27 +97,28 @@ func (i *MainInterpreter) VisitShellCmdStmt(shellCmd ShellCmd) {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
 			RP.RadDebug("exit error with error code")
-			handleError(i, identifiers, stdout, stderr, exitErr.ExitCode(), fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
+			handleError(i, token, paths, stdout, stderr, exitErr.ExitCode(), fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
 		} else {
 			RP.RadDebug("exit error without error code")
-			handleError(i, identifiers, stdout, stderr, 1, fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
+			handleError(i, token, paths, stdout, stderr, 1, fmt.Sprintf("Failed to run command: %v\nStderr: %s", err, stderr.String()), shellCmd)
 		}
 		return
 	}
 
-	defineIdentifiers(i, identifiers, stdout, stderr, 0)
+	doAssignment(i, token, paths, stdout, stderr, 0)
 }
 
 func handleError(
 	i *MainInterpreter,
-	identifiers []Token,
+	tkn Token,
+	paths []VarPath,
 	stdout bytes.Buffer,
 	stderr bytes.Buffer,
 	errorCode int,
 	err string,
 	cmd ShellCmd,
 ) {
-	defineIdentifiers(i, identifiers, stdout, stderr, errorCode)
+	doAssignment(i, tkn, paths, stdout, stderr, errorCode)
 
 	if cmd.Bang != nil {
 		// Critical command, exit
@@ -169,15 +170,22 @@ func buildCmd(shellStr string, cmdStr string) *exec.Cmd {
 	return cmd
 }
 
-func defineIdentifiers(i *MainInterpreter, identifiers []Token, stdout bytes.Buffer, stderr bytes.Buffer, errorCode int) {
-	for j, identifier := range identifiers {
+func doAssignment(
+	i *MainInterpreter,
+	tkn Token,
+	paths []VarPath,
+	stdout bytes.Buffer,
+	stderr bytes.Buffer,
+	errorCode int,
+) {
+	for j, path := range paths {
 		switch j {
 		case 0:
-			i.env.SetAndImplyType(identifier, int64(errorCode))
+			i.setValForPath(tkn, path, int64(errorCode))
 		case 1:
-			i.env.SetAndImplyType(identifier, stdout.String())
+			i.setValForPath(tkn, path, stdout.String())
 		case 2:
-			i.env.SetAndImplyType(identifier, stderr.String())
+			i.setValForPath(tkn, path, stderr.String())
 		}
 	}
 }

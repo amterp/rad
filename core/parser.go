@@ -277,7 +277,7 @@ func (p *Parser) statement() Stmt {
 	}
 
 	if p.isShellCmdNext() {
-		return p.shellCmd([]Token{})
+		return p.shellCmd([]VarPath{})
 	}
 
 	if p.peekTypeSeries(IDENTIFIER, LEFT_PAREN) {
@@ -647,9 +647,7 @@ func (p *Parser) assignment() Stmt {
 	}
 
 	if p.isShellCmdNext() {
-		// todo: don't require identifiers here RAD-56
-		identifiers := p.GetIdentifiers(paths)
-		return p.shellCmd(identifiers)
+		return p.shellCmd(paths)
 	}
 
 	return p.basicAssignment(equal, paths)
@@ -1355,7 +1353,7 @@ func (p *Parser) isShellCmdNext() bool {
 	return p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekKeyword(GLOBAL_KEYWORDS, QUIET) || p.peekType(DOLLAR)
 }
 
-func (p *Parser) shellCmd(identifiers []Token) Stmt {
+func (p *Parser) shellCmd(paths []VarPath) Stmt {
 	var unsafeToken *Token
 	var quietToken *Token
 	for p.peekKeyword(GLOBAL_KEYWORDS, UNSAFE) || p.peekKeyword(GLOBAL_KEYWORDS, QUIET) {
@@ -1428,7 +1426,7 @@ func (p *Parser) shellCmd(identifiers []Token) Stmt {
 	}
 
 	return &ShellCmd{
-		Identifiers:  identifiers,
+		Paths:        paths,
 		Unsafe:       unsafeToken,
 		Quiet:        quietToken,
 		Dollar:       dollarToken,

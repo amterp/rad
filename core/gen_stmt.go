@@ -173,7 +173,7 @@ func (e SwitchAssignment) String() string {
 }
 
 type ShellCmd struct {
-	Identifiers  []Token
+	Paths        []VarPath
 	Unsafe       *Token
 	Quiet        *Token
 	Dollar       Token
@@ -188,7 +188,7 @@ func (e ShellCmd) Accept(visitor StmtVisitor) {
 }
 func (e ShellCmd) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("Paths: %v", e.Paths))
 	parts = append(parts, fmt.Sprintf("Unsafe: %v", e.Unsafe))
 	parts = append(parts, fmt.Sprintf("Quiet: %v", e.Quiet))
 	parts = append(parts, fmt.Sprintf("Dollar: %v", e.Dollar))
