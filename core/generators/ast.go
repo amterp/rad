@@ -76,7 +76,8 @@ func main() {
 		"RadBlock               : Token RadKeyword, RadBlockType RadType, *Expr Source, []RadStmt Stmts",
 		"JsonPathAssign         : Token Identifier, JsonPath Path",
 		"SwitchBlockStmt        : SwitchBlock Block",
-		"SwitchAssignment       : []Token Identifiers, SwitchBlock Block",
+		"SwitchAssignment       : []VarPath Paths, SwitchBlock Block",
+		// todo shell cmd should also use varpaths
 		"ShellCmd               : []Token Identifiers, *Token Unsafe, *Token Quiet, Token Dollar, *Token Bang, Expr CmdExpr, *Block FailBlock, *Block RecoverBlock",
 		"Block			        : []Stmt Stmts",
 		"IfStmt                 : []IfCase Cases, *Block ElseBlock",

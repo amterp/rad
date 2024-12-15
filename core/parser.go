@@ -642,10 +642,8 @@ func (p *Parser) assignment() Stmt {
 	}
 
 	if p.matchKeyword(GLOBAL_KEYWORDS, SWITCH) {
-		// todo: don't require identifiers here RAD-54
-		identifiers := p.GetIdentifiers(paths)
-		block := p.switchBlock(identifiers)
-		return &SwitchAssignment{Identifiers: identifiers, Block: block}
+		block := p.switchBlock(len(paths))
+		return &SwitchAssignment{Paths: paths, Block: block}
 	}
 
 	if p.isShellCmdNext() {
@@ -709,13 +707,13 @@ func (p *Parser) jsonPathElement() JsonPathElement {
 	return JsonPathElement{Identifier: identifier, ArrElems: arrElems}
 }
 
-func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {
+func (p *Parser) switchBlock(numExpectedReturnValues int) SwitchBlock {
 	switchToken := p.previous()
 	var discriminator Token
 	if !p.matchAny(COLON) {
 		discriminator = p.consume(IDENTIFIER, "Expected discriminator or colon after switch")
 		p.consume(COLON, "Expected ':' after switch discriminator")
-	} else if len(identifiers) == 0 {
+	} else if numExpectedReturnValues == 0 {
 		// this is a switch block without assignment
 		p.error("Switch assignments must have a discriminator")
 	}
@@ -725,7 +723,7 @@ func (p *Parser) switchBlock(identifiers []Token) SwitchBlock {
 
 	var stmts []SwitchStmt
 	for !p.matchAny(DEDENT) {
-		stmts = append(stmts, p.switchStmt(discriminator != nil, len(identifiers)))
+		stmts = append(stmts, p.switchStmt(discriminator != nil, numExpectedReturnValues))
 		p.consumeNewlines()
 	}
 	return SwitchBlock{SwitchToken: switchToken, Discriminator: &discriminator, Stmts: stmts}

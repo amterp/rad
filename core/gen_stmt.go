@@ -158,8 +158,8 @@ func (e SwitchBlockStmt) String() string {
 }
 
 type SwitchAssignment struct {
-	Identifiers []Token
-	Block       SwitchBlock
+	Paths []VarPath
+	Block SwitchBlock
 }
 
 func (e SwitchAssignment) Accept(visitor StmtVisitor) {
@@ -167,7 +167,7 @@ func (e SwitchAssignment) Accept(visitor StmtVisitor) {
 }
 func (e SwitchAssignment) String() string {
 	var parts []string
-	parts = append(parts, fmt.Sprintf("Identifiers: %v", e.Identifiers))
+	parts = append(parts, fmt.Sprintf("Paths: %v", e.Paths))
 	parts = append(parts, fmt.Sprintf("Block: %v", e.Block))
 	return fmt.Sprintf("SwitchAssignment(%s)", strings.Join(parts, ", "))
 }

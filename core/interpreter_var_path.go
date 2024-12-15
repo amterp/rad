@@ -54,6 +54,14 @@ func (v VarPathLeafSetter) AcceptMapElement(m RslMap, key RslString) RslMap {
 
 // ------------------------------
 
+func (i *MainInterpreter) setValForPath(tkn Token, path VarPath, val interface{}) {
+	identifier := i.mustIdentifier(tkn, path)
+	if len(path.Keys) > 0 {
+		val = i.traverseVarPath(tkn, i.env.GetByToken(identifier), path.Keys, VarPathLeafSetter{val})
+	}
+	i.env.SetAndImplyType(identifier, val)
+}
+
 func (i *MainInterpreter) traverseVarPath(tkn Token, col interface{}, keys []CollectionKey, visitor VarPathLeafVisitor) interface{} {
 	if len(keys) == 0 {
 		return col

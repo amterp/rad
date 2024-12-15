@@ -162,11 +162,7 @@ func handleMultiAssignment(i *MainInterpreter, tkn Token, paths []VarPath, value
 	}
 	for idx, val := range values {
 		path := paths[idx]
-		identifier := i.mustIdentifier(tkn, path)
-		if len(path.Keys) > 0 {
-			val = i.traverseVarPath(tkn, i.env.GetByToken(identifier), path.Keys, VarPathLeafSetter{val})
-		}
-		i.env.SetAndImplyType(identifier, val)
+		i.setValForPath(tkn, path, val)
 	}
 }
 

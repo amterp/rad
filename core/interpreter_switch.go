@@ -37,10 +37,10 @@ func (s SwitchInterpreter) RunBlock(block SwitchBlock) []interface{} {
 
 func (s SwitchInterpreter) RunAssignment(assignment SwitchAssignment) {
 	outputs := s.RunBlock(assignment.Block)
-	identifiers := assignment.Identifiers
+	paths := assignment.Paths
 
 	for i, output := range outputs {
-		s.i.env.SetAndImplyType(identifiers[i], output)
+		s.i.setValForPath(assignment.Block.SwitchToken, paths[i], output)
 	}
 }
 
