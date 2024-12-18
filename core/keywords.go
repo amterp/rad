@@ -35,6 +35,7 @@ var ARGS_BLOCK_KEYWORDS = map[string]TokenType{
 	"bool":     BOOL,
 	"array":    ARRAY,
 	"requires": REQUIRES,
+	"enum":     ENUM,
 	//"one_of":   ONE_OF,
 	//"regex":    REGEX,
 }

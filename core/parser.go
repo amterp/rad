@@ -164,6 +164,14 @@ func (p *Parser) argStatement() ArgStmt {
 		panic(NOT_IMPLEMENTED)
 	}
 
+	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, REGEX) {
+		panic(NOT_IMPLEMENTED)
+	}
+
+	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, ENUM) {
+		return p.argEnumConstraint()
+	}
+
 	identifier := p.consume(IDENTIFIER, "Expected Identifier or keyword")
 
 	if p.peekType(STRING_LITERAL) ||
@@ -181,6 +189,19 @@ func (p *Parser) argStatement() ArgStmt {
 
 	// todo rest
 	panic(NOT_IMPLEMENTED)
+}
+
+func (p *Parser) argEnumConstraint() ArgStmt {
+	enumTkn := p.previous()
+	identifier := p.consume(IDENTIFIER, "Expected identifier after 'enum'")
+	t := ArgStringT
+	values := p.mixedArrayLiteral(&t)
+
+	return &ArgEnum{
+		EnumTkn:    enumTkn,
+		Identifier: identifier,
+		Values:     values,
+	}
 }
 
 func (p *Parser) argDeclaration(identifier Token) ArgStmt {
@@ -1289,17 +1310,17 @@ func (p *Parser) mixedArrayLiteral(expectedType *RslArgTypeT) MixedArrayLiteral 
 		return MixedArrayLiteral{Values: []LiteralOrArray{}}
 	}
 
-	p.consume(LEFT_BRACKET, "Expected '[' to start array")
+	p.consume(LEFT_BRACKET, "Expected '[' to start list")
 
 	var values []LiteralOrArray
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literalOrArray(expectedType)
 		if !ok {
-			p.error("Expected literalOrArray in mixed array")
+			p.error("Expected literal in mixed list")
 		}
 		values = append(values, literal)
 		if !p.peekType(RIGHT_BRACKET) {
-			p.consume(COMMA, "Expected ',' between array elements")
+			p.consume(COMMA, "Expected ',' between list elements")
 		}
 	}
 	return MixedArrayLiteral{Values: values}

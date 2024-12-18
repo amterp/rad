@@ -176,7 +176,7 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
-	fmt.Fprint(p.stdErr, msg)
+	fmt.Fprint(p.stdErr, msg+"\n")
 	p.runner.RunUsage()
 	p.printShellExitIfEnabled()
 	p.errorExit(1)

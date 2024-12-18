@@ -12,6 +12,10 @@ func (a ArgBlockInterpreter) VisitArgDeclarationArgStmt(declaration ArgDeclarati
 	// arg declarations already initialized in env, nothing to do on visit here, just pass
 }
 
+func (a ArgBlockInterpreter) VisitArgEnumArgStmt(enum ArgEnum) {
+	// arg enum constraints are applied prior to running the script, nothing to do on visit here, just pass
+}
+
 func (a ArgBlockInterpreter) Run(block ArgBlock) {
 	for _, stmt := range block.Stmts {
 		stmt.Accept(a)

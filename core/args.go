@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/samber/lo"
 	"github.com/spf13/pflag"
 	"strconv"
 	"strings"
@@ -24,6 +25,7 @@ type RslArg interface {
 	GetToken() Token // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
+	ValidateConstraints() error
 }
 
 type BaseRslArg struct {
@@ -103,6 +105,11 @@ func (f *BaseRslArg) IsHidden() bool {
 	return f.hidden
 }
 
+func (f *BaseRslArg) ValidateConstraints() error {
+	// Base impl does nothing -- each arg type will implement its own constraints
+	return nil
+}
+
 // --- bool
 
 type BoolRslArg struct {
@@ -158,8 +165,7 @@ type BoolArrRslArg struct {
 func NewBoolArrRadArg(name, short, argUsage, description string, defaultValue []bool) BoolArrRslArg {
 	return BoolArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
-
+			Name:              name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -202,11 +208,12 @@ func (f *BoolArrRslArg) SetValue(arg string) {
 
 type StringRslArg struct {
 	BaseRslArg
-	Value   string
-	Default string
+	Value          string
+	Default        string
+	EnumConstraint *[]string
 }
 
-func NewStringRadArg(name, short, argUsage, description, defaultValue string) StringRslArg {
+func NewStringRadArg(name, short, argUsage, description, defaultValue string, enum *[]string) StringRslArg {
 	return StringRslArg{
 		BaseRslArg: BaseRslArg{
 			Name:              name,
@@ -217,7 +224,8 @@ func NewStringRadArg(name, short, argUsage, description, defaultValue string) St
 			defaultAsString:   defaultValue,
 			hasNonZeroDefault: defaultValue != "",
 		},
-		Default: defaultValue,
+		Default:        defaultValue,
+		EnumConstraint: enum,
 	}
 }
 
@@ -233,6 +241,31 @@ func (f *StringRslArg) Register() {
 
 func (f *StringRslArg) SetValue(arg string) {
 	f.Value = arg
+}
+
+func (f *StringRslArg) GetDescription() string {
+	var builder strings.Builder
+
+	builder.WriteString(f.Description)
+
+	if f.EnumConstraint != nil {
+		builder.WriteString(" Valid values: [")
+		builder.WriteString(strings.Join(*f.EnumConstraint, ", "))
+		builder.WriteString("]")
+	}
+
+	return builder.String()
+}
+
+//goland:noinspection GoErrorStringFormat
+func (f *StringRslArg) ValidateConstraints() error {
+	if f.EnumConstraint != nil {
+		if !lo.Contains(*f.EnumConstraint, f.Value) {
+			return fmt.Errorf("Invalid '%s' value: %v (valid values: %s)", f.Name, f.Value, strings.Join(*f.EnumConstraint, ", "))
+		}
+	}
+
+	return nil
 }
 
 // --- string array
@@ -497,7 +530,7 @@ func (f *MockResponseRslArg) SetValue(arg string) {
 
 // --- general
 
-func CreateFlag(arg ScriptArg) RslArg {
+func CreateFlag(arg *ScriptArg) RslArg {
 	apiName, argType, shorthand, description := arg.ApiName, arg.Type, "", ""
 	if arg.Short != nil {
 		shorthand = *arg.Short
@@ -512,8 +545,8 @@ func CreateFlag(arg ScriptArg) RslArg {
 		if arg.DefaultString != nil {
 			defVal = *arg.DefaultString
 		}
-		f := NewStringRadArg(apiName, shorthand, "string", description, defVal)
-		f.scriptArg = &arg
+		f := NewStringRadArg(apiName, shorthand, "string", description, defVal, arg.EnumConstraint)
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgStringArrayT:
@@ -522,7 +555,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultStringArray
 		}
 		f := NewStringArrRadArg(apiName, shorthand, "string,string", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgIntT:
@@ -531,7 +564,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultInt
 		}
 		f := NewIntRadArg(apiName, shorthand, "int", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgIntArrayT:
@@ -540,7 +573,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultIntArray
 		}
 		f := NewIntArrRadArg(apiName, shorthand, "int,int", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgFloatT:
@@ -549,7 +582,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultFloat
 		}
 		f := NewFloatRadArg(apiName, shorthand, "float", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgFloatArrayT:
@@ -558,7 +591,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultFloatArray
 		}
 		f := NewFloatArrRadArg(apiName, shorthand, "float,float", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgBoolT:
@@ -567,7 +600,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultBool
 		}
 		f := NewBoolRadArg(apiName, shorthand, description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	case ArgBoolArrayT:
@@ -576,7 +609,7 @@ func CreateFlag(arg ScriptArg) RslArg {
 			defVal = *arg.DefaultBoolArray
 		}
 		f := NewBoolArrRadArg(apiName, shorthand, "bool,bool", description, defVal)
-		f.scriptArg = &arg
+		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	default:

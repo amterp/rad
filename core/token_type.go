@@ -66,8 +66,6 @@ const (
 	ARGS     TokenType = "ARGS"
 	SWITCH   TokenType = "SWITCH"
 	CASE     TokenType = "CASE"
-	FROM     TokenType = "FROM"
-	ON       TokenType = "ON"
 	RAD      TokenType = "RAD"
 	REQUEST  TokenType = "REQUEST"
 	DISPLAY  TokenType = "DISPLAY"
@@ -75,7 +73,6 @@ const (
 	AND      TokenType = "AND"
 	IF       TokenType = "IF"
 	ELSE     TokenType = "ELSE"
-	RESOURCE TokenType = "RESOURCE"
 	DELETE   TokenType = "DELETE"
 	NOT      TokenType = "NOT"
 	NOT_IN   TokenType = "NOT_IN"
@@ -95,7 +92,8 @@ const (
 	ARRAY    TokenType = "ARRAY"
 	REQUIRES TokenType = "REQUIRES"
 	ONE_OF   TokenType = "ONE_OF"
-	REGEX    TokenType = "REGEX" // todo this is pretty sad to not make available for users as Flag
+	REGEX    TokenType = "REGEX"
+	ENUM     TokenType = "ENUM"
 
 	// only in rad block
 	FIELDS   TokenType = "FIELDS"

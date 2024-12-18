@@ -134,6 +134,10 @@ func (r *RadRunner) Run() error {
 				missingArgs = append(missingArgs, argName)
 			}
 		}
+		err := scriptArg.ValidateConstraints()
+		if err != nil {
+			RP.UsageErrorExit(err.Error())
+		}
 	}
 
 	// finished with our custom additional parsing
@@ -145,12 +149,12 @@ func (r *RadRunner) Run() error {
 	}
 
 	if len(missingArgs) > 0 {
-		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s\n", missingArgs))
+		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", missingArgs))
 	}
 
 	// error if not all positional args were used
 	if posArgsIndex < len(args) {
-		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v\n", args[posArgsIndex:]))
+		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 	}
 
 	// at this point, we'll assume we've been given a script to run, and we should do that now

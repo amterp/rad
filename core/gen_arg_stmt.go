@@ -11,6 +11,7 @@ type ArgStmt interface {
 }
 type ArgStmtVisitor interface {
 	VisitArgDeclarationArgStmt(ArgDeclaration)
+	VisitArgEnumArgStmt(ArgEnum)
 }
 type ArgDeclaration struct {
 	Identifier Token
@@ -35,4 +36,21 @@ func (e ArgDeclaration) String() string {
 	parts = append(parts, fmt.Sprintf("Default: %v", e.Default))
 	parts = append(parts, fmt.Sprintf("Comment: %v", e.Comment))
 	return fmt.Sprintf("ArgDeclaration(%s)", strings.Join(parts, ", "))
+}
+
+type ArgEnum struct {
+	EnumTkn    Token
+	Identifier Token
+	Values     MixedArrayLiteral
+}
+
+func (e ArgEnum) Accept(visitor ArgStmtVisitor) {
+	visitor.VisitArgEnumArgStmt(e)
+}
+func (e ArgEnum) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("EnumTkn: %v", e.EnumTkn))
+	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Values: %v", e.Values))
+	return fmt.Sprintf("ArgEnum(%s)", strings.Join(parts, ", "))
 }

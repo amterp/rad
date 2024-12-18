@@ -2,6 +2,8 @@
 title: Args 
 ---
 
+## Basics
+
 ```rsl
 args:
     argVar "alias"? shorthand? type = default? # Description?
@@ -25,11 +27,27 @@ args:
     height float # Height in meters
     is_employee "is-employee" e bool
     friends string[] # Specified as e.g. Alice,Bob
-    nationality n strin = "Australian" # Defaults to this if not specified.
+    nationality n string = "Australian" # Defaults to this if not specified.
 ```
 
 Example usage:
 
 ```
 script Charlie 30 -e --friends David,Eve -h 1.86
+```
+
+## Constraint Statements
+
+```rsl
+args:
+    name string
+    enum name ["alice", "bob", "charlie"]
+```
+
+```
+// valid!
+myscript alice
+
+// invalid, will print error
+myscript david
 ```
