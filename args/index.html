@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#basics" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -285,6 +290,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Args
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -294,6 +310,41 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraint-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constraint Statements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -540,6 +591,32 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraint-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constraint Statements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -558,6 +635,7 @@
 
   <h1>Args</h1>
 
+<h2 id="basics">Basics<a class="headerlink" href="#basics" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nf">args:</span>
 <span class="w">    </span>argVar<span class="w"> </span><span class="s">&quot;alias&quot;</span>?<span class="w"> </span>shorthand?<span class="w"> </span><span class="k">type</span><span class="w"> </span>=<span class="w"> </span>default?<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Description</span>?
 </code></pre></div>
@@ -576,10 +654,21 @@
 <span class="s">    height float # Height in meters</span>
 <span class="s">    is_employee &quot;is-employee&quot; e bool</span>
 <span class="s">    friends string[] # Specified as e.g. Alice,Bob</span>
-<span class="s">    nationality n strin = &quot;Australian&quot;</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Defaults</span><span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>specified.
+<span class="s">    nationality n string = &quot;Australian&quot;</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Defaults</span><span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>specified.
 </code></pre></div>
 <p>Example usage:</p>
 <div class="highlight"><pre><span></span><code>script Charlie 30 -e --friends David,Eve -h 1.86
+</code></pre></div>
+<h2 id="constraint-statements">Constraint Statements<a class="headerlink" href="#constraint-statements" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>name<span class="w"> </span>string
+<span class="w">    </span>enum<span class="w"> </span>name<span class="w"> </span>[<span class="s">&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;</span>]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>// valid!
+myscript alice
+
+// invalid, will print error
+myscript david
 </code></pre></div>
 
 
