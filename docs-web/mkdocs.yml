@@ -6,6 +6,8 @@ theme:
   name: material
   icon:
     repo: fontawesome/brands/github
+  features:
+    - content.code.copy
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -31,5 +33,22 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true # 
+
+nav:
+  - Home: index.md
+  - Guide:
+      - ./guide/getting_started.md
+      - ./guide/basics.md
+  - Reference:
+    - ./reference/args.md
+    - ./reference/assignment.md
+    - ./reference/defer.md
+    - ./reference/functions.md
+    - ./reference/logic.md
+    - ./reference/rad-blocks.md
+    - ./reference/shell-commands.md
+    - ./reference/strings.md
