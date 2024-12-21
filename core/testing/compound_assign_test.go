@@ -17,7 +17,7 @@ print(a)`
 	expected := `8
 2
 6
-1
+1.5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

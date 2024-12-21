@@ -34,7 +34,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_MULTIPLY:
 				return coercedLeft * coercedRight
 			case OP_DIVIDE:
-				return coercedLeft / coercedRight
+				return float64(coercedLeft) / float64(coercedRight)
 			case OP_GREATER:
 				return coercedLeft > coercedRight
 			case OP_GREATER_EQUAL:
