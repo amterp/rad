@@ -24,7 +24,7 @@ func (r *RadRunner) Run() error {
 	pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
 
 	pflag.Usage = func() {
-		r.RunUsageExit()
+		r.RunUsage()
 	}
 
 	r.globalFlags = CreateAndRegisterGlobalFlags()
@@ -106,6 +106,7 @@ func (r *RadRunner) Run() error {
 	pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = false
 
 	// todo apparently this is not recommended, I should be using flagsets? I THINK I DO, FOR TESTS?
+	//  RAD-67 will prevent double-error print (see https://github.com/spf13/pflag/issues/352)
 	pflag.Parse()
 
 	posArgsIndex := 0

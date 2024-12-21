@@ -1,6 +1,8 @@
 package testing
 
-import "testing"
+import (
+	"testing"
+)
 
 const (
 	setupArgRsl = `
@@ -312,3 +314,64 @@ print(name, isTall)
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	resetTestState()
 }
+
+func TestArgs_MissingArgsPrintsUsageAndReturnsError(t *testing.T) {
+	rsl := `
+args:
+	name string
+	age int
+`
+	setupAndRunCode(t, rsl, "alice", "--NO-COLOR")
+	expected := `Missing required arguments: [age]
+Usage:
+  test <name> <age>
+
+Script args:
+      --name string   
+      --age int       
+
+` + globalFlagHelp
+	assertError(t, 1, expected)
+	resetTestState()
+}
+
+func TestArgs_TooManyArgsPrintsUsageAndReturnsError(t *testing.T) {
+	rsl := `
+args:
+	name string
+	age int
+`
+	setupAndRunCode(t, rsl, "alice", "2", "3", "--NO-COLOR")
+	expected := `Too many positional arguments. Unused: [3]
+Usage:
+  test <name> <age>
+
+Script args:
+      --name string   
+      --age int       
+
+` + globalFlagHelp
+	assertError(t, 1, expected)
+	resetTestState()
+}
+
+// todo RAD-67 - pflag currently ExitsOnError, I think that's why this test doesn't work
+//func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
+//	rsl := `
+//args:
+//	name string
+//	age int
+//`
+//	fmt.Println("hi")
+//	setupAndRunCode(t, rsl, "alice", "2", "-s", "--NO-COLOR")
+//	expected := `Usage:
+//  test <name> <age>
+//
+//Script args:
+//      --name string
+//      --age int
+//
+//` + globalFlagHelp
+//	assertError(t, 1, expected)
+//	resetTestState()
+//}
