@@ -526,6 +526,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatting
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -663,6 +672,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatting
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -713,17 +731,39 @@
 <h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Not all strings are just plain text. They may have attributes such as color.</li>
-<li>This means that RSL contains logic on how to handle attributes when strings are combined or operated on</li>
+<li>This means that RSL contains logic on how to handle attributes when strings are combined or operated on<ul>
 <li>e.g. concatenation, slicing, replace functions, etc</li>
-<li>The following operations maintain color attributes:</li>
+</ul>
+</li>
+<li>The following operations maintain color attributes:<ul>
 <li>concatenation</li>
 <li>index lookup</li>
-<li>The following <em>do not</em>, and just return a plain string:</li>
+</ul>
+</li>
+<li>The following <em>do not</em>, and just return a plain string:<ul>
 <li>slicing (to be added)</li>
 <li>functions: <code>replace</code>, <code>split</code></li>
-<li>Attributes do <em>not</em> impact things like equality or comparing strings.</li>
+</ul>
+</li>
+<li>Attributes do <em>not</em> impact things like equality or comparing strings.<ul>
 <li>A green string "Alice" and a yellow string "Alice" will be considered 'equal'.</li>
 </ul>
+</li>
+</ul>
+<h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Float formatting does <em>not</em> require a <code>f</code> at the end.<ul>
+<li>Correct: <code>{myFloat:.2}</code></li>
+<li>Incorrect: <code>{myFloat:.2f}</code></li>
+</ul>
+</li>
+</ul>
+<p>Examples:</p>
+<div class="highlight"><pre><span></span><code><span class="s">&quot;{myString:20}&quot;</span>
+<span class="s">&quot;{myString:&lt;20}&quot;</span>
+<span class="s">&quot;{myString:&gt;20}&quot;</span>
+<span class="s">&quot;{myFloat:.2}&quot;</span>
+</code></pre></div>
 
 
 
