@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/defer/">
+        <link rel="canonical" href="https://amterp.github.io/rad/reference/rad-blocks/">
       
       
-        <link rel="prev" href="../assignment/">
+        <link rel="prev" href="../logic/">
       
       
-        <link rel="next" href="../functions/">
+        <link rel="next" href="../shell-commands/">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
     
     
       
-        <title>Defer & Errdefer - Rad Docs</title>
+        <title>Rad Blocks - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#defer" class="md-skip">
+        <a href="#rad-block" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Defer & Errdefer
+              Rad Blocks
             
           </span>
         </div>
@@ -233,7 +233,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -263,245 +263,11 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Welcome to Rad
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../args/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Args
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../assignment/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Assignment
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
-    <span class="md-ellipsis">
-      defer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
-    <span class="md-ellipsis">
-      errdefer
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../functions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Functions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../introduction/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Introduction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logic/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Boolean Logic
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Shell Commands
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../strings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Strings
+    Home
   </span>
   
 
@@ -524,10 +290,96 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/basics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -538,8 +390,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -552,11 +404,221 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/ref-functions/" class="md-nav__link">
+      <a href="../args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Args
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../defer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Boolean Logic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rad-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      rad block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      request block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      display block
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings
   </span>
   
 
@@ -598,18 +660,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
+  <a href="#rad-block" class="md-nav__link">
     <span class="md-ellipsis">
-      defer
+      rad block
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
+  <a href="#request-block" class="md-nav__link">
     <span class="md-ellipsis">
-      errdefer
+      request block
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      display block
     </span>
   </a>
   
@@ -633,75 +704,25 @@
   
 
 
-  <h1>Defer & Errdefer</h1>
+  <h1>Rad Blocks</h1>
 
-<ul>
-<li><code>defer</code> and <code>errdefer</code> run in LIFO order, each kind being part of the same one queue.</li>
-<li>If there are several defer statements, and one fails, further defer statements will still attempt to run.</li>
-<li>Rad's error code will become an error if the main script succeeded but a defer statement failed.</li>
-<li>errdefers will not get triggered if the main script succeeded but a <code>defer</code> or <code>errdefer</code> statement failed.</li>
-</ul>
-<h2 id="defer"><code>defer</code><a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">defer Example</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
+<h2 id="rad-block"><code>rad</code> block<a class="headerlink" href="#rad-block" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+<span class="w">    </span><span class="kt">Name</span>:
+<span class="w">        </span>map<span class="w"> </span>n<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_height:
+<span class="w">        </span>sort<span class="w"> </span><span class="kt">Height</span>,<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>
+<span class="w">    </span><span class="k">else</span>:
+<span class="w">        </span>sort
 </code></pre></div>
-<div class="highlight"><span class="filename">defer Example Output</span><pre><span></span><code>Hello!
-3
-4
-1
-2
+<h2 id="request-block"><code>request</code> block<a class="headerlink" href="#request-block" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
 </code></pre></div>
-<h2 id="errdefer"><code>errdefer</code><a class="headerlink" href="#errdefer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">errdefer Example 1</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">0</span>)<span class="w">  </span>//<span class="w"> </span>successful<span class="w"> </span>script<span class="w"> </span>run
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 1 Output</span><pre><span></span><code>Hello!
-5
-6
-1
-2
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 2</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span>perceived<span class="w"> </span><span class="k">as</span><span class="w"> </span>error!
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 2 Output</span><pre><span></span><code>Hello!
-7
-8
-5
-6
-3
-4
-1
-2
+<h2 id="display-block"><code>display</code> block<a class="headerlink" href="#display-block" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="nf">display:</span>
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
 </code></pre></div>
 
 
@@ -752,10 +773,10 @@ exit(<span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </spa
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
     
   </body>

@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/shell-commands/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/basics/">
       
       
-        <link rel="prev" href="../rad-blocks/">
+        <link rel="prev" href="../getting_started/">
       
       
-        <link rel="next" href="../strings/">
+        <link rel="next" href="../../reference/args/">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
     
     
       
-        <title>Shell Commands - Rad Docs</title>
+        <title>Basics - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#basic-shell-commands" class="md-skip">
+        <a href="#variables-assignment" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Shell Commands
+              Basics
             
           </span>
         </div>
@@ -233,7 +233,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -263,11 +263,11 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Welcome to Rad
+    Home
   </span>
   
 
@@ -278,16 +278,53 @@
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../args/" class="md-nav__link">
+      <a href="../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Args
+    Getting Started
   </span>
   
 
@@ -295,129 +332,10 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../assignment/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Assignment
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../defer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../functions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Functions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../introduction/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Introduction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logic/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Boolean Logic
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
+              
+            
+              
+                
   
   
     
@@ -434,7 +352,7 @@
           
   
   <span class="md-ellipsis">
-    Shell Commands
+    Basics
   </span>
   
 
@@ -445,7 +363,7 @@
         
   
   <span class="md-ellipsis">
-    Shell Commands
+    Basics
   </span>
   
 
@@ -465,45 +383,96 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-shell-commands" class="md-nav__link">
+  <a href="#variables-assignment" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Shell Commands
+      Variables &amp; Assignment
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#critical-shell-commands" class="md-nav__link">
+  <a href="#data-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Critical Shell Commands
+      Data Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int" class="md-nav__link">
+    <span class="md-ellipsis">
+      int
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#float" class="md-nav__link">
+    <span class="md-ellipsis">
+      float
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      bool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      list
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      map
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operators
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#unsafe-shell-commands" class="md-nav__link">
+  <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
-      Unsafe Shell Commands
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#output-capture" class="md-nav__link">
-    <span class="md-ellipsis">
-      Output Capture
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#suppress-announcements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Suppress Announcements
+      Control Flow
     </span>
   </a>
   
@@ -516,23 +485,11 @@
     </li>
   
 
-    
+              
+            
+          </ul>
+        </nav>
       
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../strings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Strings
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -551,10 +508,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -565,8 +522,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -579,11 +536,158 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/ref-functions/" class="md-nav__link">
+      <a href="../../reference/args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Args
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/assignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/defer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/functions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Boolean Logic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/rad-blocks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/shell-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/strings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings
   </span>
   
 
@@ -625,45 +729,96 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-shell-commands" class="md-nav__link">
+  <a href="#variables-assignment" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Shell Commands
+      Variables &amp; Assignment
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#critical-shell-commands" class="md-nav__link">
+  <a href="#data-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Critical Shell Commands
+      Data Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int" class="md-nav__link">
+    <span class="md-ellipsis">
+      int
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#float" class="md-nav__link">
+    <span class="md-ellipsis">
+      float
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      bool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      list
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      map
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operators
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#unsafe-shell-commands" class="md-nav__link">
+  <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
-      Unsafe Shell Commands
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#output-capture" class="md-nav__link">
-    <span class="md-ellipsis">
-      Output Capture
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#suppress-announcements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Suppress Announcements
+      Control Flow
     </span>
   </a>
   
@@ -687,45 +842,92 @@
   
 
 
-  <h1>Shell Commands</h1>
+  <h1>Basics</h1>
 
-<h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
-<span class="nf">fail:</span>
-<span class="w">    </span>print(<span class="s">&quot;Command failed! Exiting script!&quot;</span>)
+<p>This section of the guide will rapidly cover the basics of RSL. RSL shares a lot of conventions and syntax with popular languages like Python, so if you're familiar with programming, this will be quick &amp; easy.</p>
+<h2 id="variables-assignment">Variables &amp; Assignment<a class="headerlink" href="#variables-assignment" title="Permanent link">&para;</a></h2>
+<p>To create a variable, you can do it through assignment. Let's use a string example:</p>
+<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
-<span class="nf">recover:</span>
-<span class="w">    </span>print(<span class="s">&quot;Command failed! Continuing script...&quot;</span>)
+<p>You can re-assign variables at any time:</p>
+<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;bob&quot;</span>
 </code></pre></div>
-<h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>$!`ls<span class="w"> </span>-l`
+<div class="admonition warning">
+<p class="admonition-title">You <strong>cannot create</strong> multiple variables this way on one line.</p>
+<p>The following is illegal syntax</p>
+<div class="highlight"><pre><span></span><code>a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;one&quot;, &quot;two&quot;</span>
 </code></pre></div>
-<h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls<span class="w"> </span>-l`
+<p>instead, declare each variable on one line.</p>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;one&quot;</span>
+<span class="s">b = &quot;two&quot;</span>
 </code></pre></div>
-<h2 id="output-capture">Output Capture<a class="headerlink" href="#output-capture" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>err_code<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
-err_code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
-err_code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+</div>
+<h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
+<h3 id="strings">Strings<a class="headerlink" href="#strings" title="Permanent link">&para;</a></h3>
+<p>Strings can be delimited in three ways. The most standard are double quotes (<code>"text"</code>) or single quotes(<code>'text'</code>). The third is backticks (<code>`text`</code>).</p>
+<p>Single and double quotes behave the same way. For example:</p>
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>\nWorld!&#39;
+print(greeting)
 </code></pre></div>
-<h2 id="suppress-announcements">Suppress Announcements<a class="headerlink" href="#suppress-announcements" title="Permanent link">&para;</a></h2>
-<p>By default, Rad will 'announce' (i.e. print) commands as they're executed. Example:</p>
-<div class="highlight"><span class="filename">Without quiet</span><pre><span></span><code>$!`ls`
-$!`echo<span class="w"> </span>hello`
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello
+World!
 </code></pre></div>
-<div class="highlight"><span class="filename">Without quiet output</span><pre><span></span><code>⚡️ Running: ls
-pick.rsl  simple.rsl  sorting.rsl
-⚡️ Running: echo hello
-hello
+</div>
+
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello\nWorld!&quot;</span>
+print(greeting)
 </code></pre></div>
-<p>These announcements can be suppressed with the <code>quiet</code> keyword. It does not impact stdout/stderr output for the command.</p>
-<div class="highlight"><span class="filename">With quiet</span><pre><span></span><code>quiet<span class="w"> </span>$!`ls`
-quiet<span class="w"> </span>$!`echo<span class="w"> </span>hello`
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello
+World!
 </code></pre></div>
-<div class="highlight"><span class="filename">With quiet output</span><pre><span></span><code>pick.rsl  simple.rsl  sorting.rsl
-hello
+</div>
+
+<p>Backtick-delimited strings behave a little differently. Characters like <code>\n</code> don't get escaped and so print as-is.</p>
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>`<span class="kt">Hello</span>\nWorld!`
+print(greeting)
 </code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello\nWorld!
+</code></pre></div>
+</div>
+
+<p>Use backtick strings when you want the contents to remain closer to their 'raw' form.</p>
+<h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
+<h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
+<h3 id="bool">bool<a class="headerlink" href="#bool" title="Permanent link">&para;</a></h3>
+<h3 id="list">list<a class="headerlink" href="#list" title="Permanent link">&para;</a></h3>
+<h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
+<ul>
+<li>TBC<ul>
+<li>incl dot.syntax </li>
+</ul>
+</li>
+</ul>
+<h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
+<ul>
+<li>TBC<ul>
+<li>arithmetic</li>
+<li>comparison</li>
+<li>logical</li>
+<li>concat</li>
+<li>ternary</li>
+</ul>
+</li>
+</ul>
+<h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
+<ul>
+<li>TBC<ul>
+<li>if<ul>
+<li>truthy/falsy </li>
+</ul>
+</li>
+<li>for</li>
+<li>switch</li>
+</ul>
+</li>
+</ul>
 
 
 
@@ -775,10 +977,10 @@ hello
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
     
   </body>

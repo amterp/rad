@@ -8,24 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/introduction/">
+        <link rel="canonical" href="https://amterp.github.io/rad/reference/shell-commands/">
       
       
+        <link rel="prev" href="../rad-blocks/">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+        <link rel="next" href="../strings/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
     
     
       
-        <title>Introduction - Rad Docs</title>
+        <title>Shell Commands - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -44,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -70,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rad" class="md-skip">
+        <a href="#basic-shell-commands" class="md-skip">
           Skip to content
         </a>
       
@@ -86,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -106,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Introduction
+              Shell Commands
             
           </span>
         </div>
@@ -229,7 +233,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -259,7 +263,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -314,7 +318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/getting_started/" class="md-nav__link">
+      <a href="../../guide/getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -335,7 +339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basics/" class="md-nav__link">
+      <a href="../../guide/basics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -360,17 +364,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -384,7 +390,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -398,7 +404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/args/" class="md-nav__link">
+      <a href="../args/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -419,7 +425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/assignment/" class="md-nav__link">
+      <a href="../assignment/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -440,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/defer/" class="md-nav__link">
+      <a href="../defer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -461,7 +467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/functions/" class="md-nav__link">
+      <a href="../functions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -482,7 +488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/logic/" class="md-nav__link">
+      <a href="../logic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -503,7 +509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/rad-blocks/" class="md-nav__link">
+      <a href="../rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -521,10 +527,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../reference/shell-commands/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -533,6 +557,69 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#critical-shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unsafe-shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unsafe Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-capture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Capture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suppress-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suppress Announcements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -545,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/strings/" class="md-nav__link">
+      <a href="../strings/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -591,9 +678,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#rad" class="md-nav__link">
+  <a href="#basic-shell-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Rad
+      Basic Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#critical-shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unsafe-shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unsafe Shell Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-capture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Capture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suppress-announcements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suppress Announcements
     </span>
   </a>
   
@@ -617,13 +740,45 @@
   
 
 
-  <h1>Introduction</h1>
+  <h1>Shell Commands</h1>
 
-<p>Bash scripts are great! They make our lives easier by allowing us to automate common workflows, saving valuable time.</p>
-<p>However, <em>writing</em> Bash scripts is not great, and it can be time-consuming to get them right. One of the main reasons is the syntax - compared to today's popular languages, Bash's syntax is unusual and downright arcane in some places.</p>
-<p>Wouldn't it be nice if we had an alternative with far more familiar and intuitive syntax, but still as powerful in what it can achieve?</p>
-<h2 id="rad">Rad<a class="headerlink" href="#rad" title="Permanent link">&para;</a></h2>
-<p>Rad is a tool for running scripts written in RSL - Rad Scripting Language. RSL is designed to </p>
+<h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
+<span class="nf">fail:</span>
+<span class="w">    </span>print(<span class="s">&quot;Command failed! Exiting script!&quot;</span>)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
+<span class="nf">recover:</span>
+<span class="w">    </span>print(<span class="s">&quot;Command failed! Continuing script...&quot;</span>)
+</code></pre></div>
+<h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>$!`ls<span class="w"> </span>-l`
+</code></pre></div>
+<h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls<span class="w"> </span>-l`
+</code></pre></div>
+<h2 id="output-capture">Output Capture<a class="headerlink" href="#output-capture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>err_code<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+err_code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+err_code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+</code></pre></div>
+<h2 id="suppress-announcements">Suppress Announcements<a class="headerlink" href="#suppress-announcements" title="Permanent link">&para;</a></h2>
+<p>By default, Rad will 'announce' (i.e. print) commands as they're executed. Example:</p>
+<div class="highlight"><span class="filename">Without quiet</span><pre><span></span><code>$!`ls`
+$!`echo<span class="w"> </span>hello`
+</code></pre></div>
+<div class="highlight"><span class="filename">Without quiet output</span><pre><span></span><code>⚡️ Running: ls
+pick.rsl  simple.rsl  sorting.rsl
+⚡️ Running: echo hello
+hello
+</code></pre></div>
+<p>These announcements can be suppressed with the <code>quiet</code> keyword. It does not impact stdout/stderr output for the command.</p>
+<div class="highlight"><span class="filename">With quiet</span><pre><span></span><code>quiet<span class="w"> </span>$!`ls`
+quiet<span class="w"> </span>$!`echo<span class="w"> </span>hello`
+</code></pre></div>
+<div class="highlight"><span class="filename">With quiet output</span><pre><span></span><code>pick.rsl  simple.rsl  sorting.rsl
+hello
+</code></pre></div>
 
 
 
@@ -673,10 +828,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
     
   </body>

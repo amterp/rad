@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/strings/">
+        <link rel="canonical" href="https://amterp.github.io/rad/reference/assignment/">
       
       
-        <link rel="prev" href="../shell-commands/">
+        <link rel="prev" href="../args/">
       
       
-        <link rel="next" href="../reference/ref-functions/">
+        <link rel="next" href="../defer/">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
     
     
       
-        <title>Strings - Rad Docs</title>
+        <title>Assignment - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#escaping" class="md-skip">
+        <a href="#legal-assignments" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Strings
+              Assignment
             
           </span>
         </div>
@@ -233,7 +233,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -263,11 +263,11 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Welcome to Rad
+    Home
   </span>
   
 
@@ -278,6 +278,127 @@
     
       
       
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/basics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
   
@@ -295,149 +416,10 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../assignment/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Assignment
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../defer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../functions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Functions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../introduction/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Introduction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logic/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Boolean Logic
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Shell Commands
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
+              
+            
+              
+                
   
   
     
@@ -454,7 +436,7 @@
           
   
   <span class="md-ellipsis">
-    Strings
+    Assignment
   </span>
   
 
@@ -465,7 +447,7 @@
         
   
   <span class="md-ellipsis">
-    Strings
+    Assignment
   </span>
   
 
@@ -485,51 +467,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#escaping" class="md-nav__link">
+  <a href="#legal-assignments" class="md-nav__link">
     <span class="md-ellipsis">
-      Escaping
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Escaping">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#double-single-quotes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Double &amp; Single Quotes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backticks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Backticks
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#string-attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      String Attributes
+      Legal Assignments
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#formatting" class="md-nav__link">
+  <a href="#illegal-assignments" class="md-nav__link">
     <span class="md-ellipsis">
-      Formatting
+      Illegal Assignments
     </span>
   </a>
   
@@ -542,41 +491,7 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
-        
-          
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Reference
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
-            <span class="md-nav__icon md-icon"></span>
-            Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
+              
             
               
                 
@@ -585,11 +500,116 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/ref-functions/" class="md-nav__link">
+      <a href="../defer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Boolean Logic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rad-blocks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings
   </span>
   
 
@@ -631,51 +651,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#escaping" class="md-nav__link">
+  <a href="#legal-assignments" class="md-nav__link">
     <span class="md-ellipsis">
-      Escaping
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Escaping">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#double-single-quotes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Double &amp; Single Quotes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backticks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Backticks
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#string-attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      String Attributes
+      Legal Assignments
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#formatting" class="md-nav__link">
+  <a href="#illegal-assignments" class="md-nav__link">
     <span class="md-ellipsis">
-      Formatting
+      Illegal Assignments
     </span>
   </a>
   
@@ -699,70 +686,22 @@
   
 
 
-  <h1>Strings</h1>
+  <h1>Assignment</h1>
 
-<h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>"double quote strings"</code> and <code>'single quote strings'</code> have the same rules around escaping.</li>
-<li><code>`backtick strings`</code> have slightly different rules (less escaping).</li>
-</ul>
-<h3 id="double-single-quotes">Double &amp; Single Quotes<a class="headerlink" href="#double-single-quotes" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>\</code> will escape:<ul>
-<li><code>{</code> (to prevent string interpolation)</li>
-<li><code>\n</code> new line</li>
-<li><code>\t</code> tab</li>
-<li><code>\</code> i.e. itself, so you can write backslashes</li>
-<li>The respective quote char itself, so <code>"\""</code> and <code>'\''</code><ul>
-<li>However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: <code>`"`</code>, <code>`'`</code>.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="backticks">Backticks<a class="headerlink" href="#backticks" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>\</code> will escape:<ul>
-<li><code>{</code> (to prevent string interpolation)</li>
-<li><code>`</code> to allow backticks in the string</li>
-</ul>
-</li>
-</ul>
-<h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Not all strings are just plain text. They may have attributes such as color.</li>
-<li>This means that RSL contains logic on how to handle attributes when strings are combined or operated on<ul>
-<li>e.g. concatenation, slicing, replace functions, etc</li>
-</ul>
-</li>
-<li>The following operations maintain color attributes:<ul>
-<li>concatenation</li>
-<li>index lookup</li>
-</ul>
-</li>
-<li>The following <em>do not</em>, and just return a plain string:<ul>
-<li>slicing (to be added)</li>
-<li>functions: <code>replace</code>, <code>split</code></li>
-</ul>
-</li>
-<li>Attributes do <em>not</em> impact things like equality or comparing strings.<ul>
-<li>A green string "Alice" and a yellow string "Alice" will be considered 'equal'.</li>
-</ul>
-</li>
-</ul>
-<h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Float formatting does <em>not</em> require a <code>f</code> at the end.<ul>
-<li>Correct: <code>{myFloat:.2}</code></li>
-<li>Incorrect: <code>{myFloat:.2f}</code></li>
-</ul>
-</li>
-</ul>
-<p>Examples:</p>
-<div class="highlight"><pre><span></span><code><span class="s">&quot;{myString:20}&quot;</span>
-<span class="s">&quot;{myString:&lt;20}&quot;</span>
-<span class="s">&quot;{myString:&gt;20}&quot;</span>
-<span class="s">&quot;{myFloat:.2}&quot;</span>
+<p>Generally speaking, multi-assignments are only legal for switch expressions, or single operations (e.g. functions) that return multiple values.</p>
+<h2 id="legal-assignments">Legal Assignments<a class="headerlink" href="#legal-assignments" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>pick_from_resoure(...)
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>switch<span class="w"> </span>...
+a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>parse_int(text)
+
+myMap[<span class="s">&quot;key&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
+myList[<span class="mi">1</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>
+</code></pre></div>
+<h2 id="illegal-assignments">Illegal Assignments<a class="headerlink" href="#illegal-assignments" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>
+myMap[<span class="s">&quot;key&quot;], myMap[&quot;key2&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>
+myList[<span class="mi">1</span>],<span class="w"> </span>myList[<span class="mi">2</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>
 </code></pre></div>
 
 
@@ -813,10 +752,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
       
     
   </body>
