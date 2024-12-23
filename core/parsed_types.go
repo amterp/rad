@@ -134,7 +134,8 @@ type InlineExpr struct {
 type InlineExprFormat struct {
 	GoFormat      string // does not contain 's' or 'f' at the end; need to add at runtime depending on the given type
 	RslFormat     string
-	IsFloatFormat bool // i.e. something like '.2' has been specified, requiring decimal places
+	IsFloatFormat bool   // i.e. something like '.2' has been specified, requiring decimal places
+	Width         *int64 // width/padding if provided. needs to be added into GoFormat and RslFormat
 }
 
 type IfCase struct {

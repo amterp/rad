@@ -31,14 +31,17 @@ func (l *LiteralInterpreter) format(token Token, val interface{}, formatting *In
 	switch coerced := val.(type) {
 	case int64:
 		if formatInfo.IsFloatFormat {
-			formatStr := formatInfo.GoFormat + "f"
+			formatStr := l.insertWidthIntoNonStrFormat(formatInfo)
+			formatStr += "f"
 			return fmt.Sprintf(formatStr, float64(coerced))
 		} else {
-			formatStr := formatInfo.GoFormat + "d"
+			formatStr := l.insertWidthIntoNonStrFormat(formatInfo)
+			formatStr += "d"
 			return fmt.Sprintf(formatStr, coerced)
 		}
 	case float64:
-		formatStr := formatInfo.GoFormat + "f"
+		formatStr := l.insertWidthIntoNonStrFormat(formatInfo)
+		formatStr += "f"
 		formatted := fmt.Sprintf(formatStr, coerced)
 
 		// todo: removing trailing zeros. Need to consider left/right padding scenarios.
@@ -56,9 +59,35 @@ func (l *LiteralInterpreter) format(token Token, val interface{}, formatting *In
 			panic(UNREACHABLE)
 		}
 		valStr := ToPrintable(val)
-		formatStr := formatInfo.GoFormat + "s"
+		formatStr := l.insertWidthIntoStrFormat(formatInfo, val, valStr)
+		formatStr += "s"
 		return fmt.Sprintf(formatStr, valStr)
 	}
+}
+
+func (l *LiteralInterpreter) insertWidthIntoStrFormat(formatInfo InlineExprFormat, val interface{}, valStr string) string {
+	if formatInfo.Width == nil {
+		return formatInfo.GoFormat
+	}
+
+	width := *formatInfo.Width
+
+	// consider if we need to adjust padding due to color
+	if str, ok := val.(RslString); ok {
+		plainLen := str.Len()
+		coloredLen := int64(len(valStr))
+		diff := coloredLen - plainLen
+		width += diff
+	}
+
+	return strings.ReplaceAll(formatInfo.GoFormat, PADDING_CHAR, fmt.Sprintf("%d", width))
+}
+
+func (l *LiteralInterpreter) insertWidthIntoNonStrFormat(formatInfo InlineExprFormat) string {
+	if formatInfo.Width == nil {
+		return formatInfo.GoFormat
+	}
+	return strings.ReplaceAll(formatInfo.GoFormat, PADDING_CHAR, fmt.Sprintf("%d", *formatInfo.Width))
 }
 
 // extractVariables extracts variables within non-escaped {} brackets in the input string

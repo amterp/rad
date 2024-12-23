@@ -115,7 +115,7 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 
 		// This special character will be replaced with spacing once the
 		// correct alignment is calculated
-		line += "\x00"
+		line += USAGE_ALIGNMENT_CHAR
 		if len(line) > maxlen {
 			maxlen = len(line)
 		}
@@ -129,7 +129,7 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 	}
 
 	for _, line := range lines {
-		sidx := strings.Index(line, "\x00")
+		sidx := strings.Index(line, USAGE_ALIGNMENT_CHAR)
 		spacing := strings.Repeat(" ", maxlen-sidx)
 		// maxlen + 2 comes from + 1 for the \x00 and + 1 for the (deliberate) off-by-one in maxlen-sidx
 		fmt.Fprintln(buf, line[:sidx], spacing, strings.Replace(line[sidx+1:], "\n", "\n"+strings.Repeat(" ", maxlen+2), -1))

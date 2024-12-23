@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/samber/lo"
+	"strconv"
 	"strings"
 )
 
@@ -1197,6 +1198,7 @@ func (p *Parser) inlineExpr() InlineExpr {
 	builtRslFormat := ""
 	builtGoFormat := ""
 	isFloatFormat := false
+	var width *int64
 	if p.matchAny(COLON) {
 		// imagine we're parsing <10.2
 		goFormatting.WriteString("%")
@@ -1210,9 +1212,23 @@ func (p *Parser) inlineExpr() InlineExpr {
 		}
 
 		if p.peekType(FLOAT_LITERAL) {
-			width := p.floatLiteral(false)
-			rslFormatting.WriteString(width.Value.GetLexeme())
-			goFormatting.WriteString(width.Value.GetLexeme())
+			widthAndPrecision := p.floatLiteral(false)
+
+			parts := strings.Split(widthAndPrecision.Value.GetLexeme(), ".")
+			w, ok := strconv.ParseInt(parts[0], 10, 64)
+			if ok != nil {
+				p.error("Expected int literal for inline formatting width")
+			}
+			width = &w
+
+			precision := parts[1]
+
+			rslFormatting.WriteString(PADDING_CHAR)
+			goFormatting.WriteString(PADDING_CHAR)
+			rslFormatting.WriteString(".")
+			goFormatting.WriteString(".")
+			rslFormatting.WriteString(precision)
+			goFormatting.WriteString(precision)
 
 			isFloatFormat = true
 		}
@@ -1227,8 +1243,18 @@ func (p *Parser) inlineExpr() InlineExpr {
 			if p.peekType(INT_LITERAL) {
 				// could be padding width or precision, if dot preceded
 				intLiteral := p.intLiteral(false)
-				rslFormatting.WriteString(intLiteral.Value.GetLexeme())
-				goFormatting.WriteString(intLiteral.Value.GetLexeme())
+
+				if isFloatFormat {
+					// precision
+					rslFormatting.WriteString(intLiteral.Value.GetLexeme())
+					goFormatting.WriteString(intLiteral.Value.GetLexeme())
+				} else {
+					// padding
+					rslFormatting.WriteString(PADDING_CHAR)
+					goFormatting.WriteString(PADDING_CHAR)
+					w := intLiteral.Value.Literal
+					width = &w
+				}
 			} else if isFloatFormat {
 				p.error("Expected precision int literal after dot for inline formatting")
 			}
@@ -1253,7 +1279,7 @@ func (p *Parser) inlineExpr() InlineExpr {
 		return InlineExpr{
 			Expression: expr,
 			Formatting: &InlineExprFormat{
-				RslFormat: builtRslFormat, GoFormat: builtGoFormat, IsFloatFormat: isFloatFormat,
+				RslFormat: builtRslFormat, GoFormat: builtGoFormat, IsFloatFormat: isFloatFormat, Width: width,
 			},
 		}
 	}

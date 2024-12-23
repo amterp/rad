@@ -1,6 +1,9 @@
 package testing
 
-import "testing"
+import (
+	"github.com/fatih/color"
+	"testing"
+)
 
 func TestStringInterpolation_String(t *testing.T) {
 	rsl := `
@@ -203,6 +206,48 @@ _3.14            _
 _            3.14_
 _3.1415900000_
 `
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestStringInterpolation_Formatting_ColorDoesNotImpactPadding(t *testing.T) {
+	// for some reason, the 'shared blue' has nocolor=true when this test is
+	// run by itself, so it fails.... no clue why
+	myBlue := color.New(color.FgBlue)
+	myBlue.EnableColor()
+
+	rsl := `
+n = "alice"
+print("{n:20}")
+print("{blue(n):20}")
+print("{n:<20}")
+print("{blue(n):<20}")
+`
+	expected := "               alice\n"
+	expected += "               " + myBlue.Sprintf("alice") + "\n"
+	expected += "alice               \n"
+	expected += myBlue.Sprintf("alice") + "               \n"
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestStringInterpolation_Formatting_ColorWorksWithoutPadding(t *testing.T) {
+	// for some reason, the 'shared blue' has nocolor=true when this test is
+	// run by itself, so it fails.... no clue why
+	myBlue := color.New(color.FgBlue)
+	myBlue.EnableColor()
+
+	rsl := `
+n = "alice"
+print("{n}")
+print("{blue(n)}")
+`
+	expected := "alice\n"
+	expected += myBlue.Sprintf("alice") + "\n"
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
