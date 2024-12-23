@@ -8,6 +8,8 @@ theme:
     repo: fontawesome/brands/github
   features:
     - content.code.copy
+#    - navigation.sections
+    - navigation.footer
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
