@@ -37,7 +37,9 @@ title: Strings
 - Attributes do *not* impact things like equality or comparing strings.
     - A green string "Alice" and a yellow string "Alice" will be considered 'equal'.
 
-## Formatting
+## String Interpolation
+
+### Formatting
 
 - Float formatting does *not* require a `f` at the end.
     - Correct: `{myFloat:.2}`

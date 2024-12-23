@@ -6,6 +6,7 @@ theme:
   name: material
   icon:
     repo: fontawesome/brands/github
+    annotation: material/arrow-right-circle
   features:
     - content.code.copy
 #    - navigation.sections
@@ -35,6 +36,8 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - attr_list
+  - md_in_html
   - pymdownx.tabbed:
       alternate_style: true
   - toc:

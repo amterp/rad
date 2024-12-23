@@ -68,7 +68,6 @@ World!
 
 Backtick-delimited strings behave a little differently. Characters like `\n` don't get escaped and so print as-is.
 
-
 ```rsl
 greeting = `Hello\nWorld!`
 print(greeting)
