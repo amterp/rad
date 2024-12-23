@@ -53,12 +53,12 @@ func (r *Requester) Get(url string, headers map[string]string) (*ResponseDef, er
 	})
 }
 
-func (r *Requester) Post(url string, body string, headers map[string]string) (*ResponseDef, error) {
-	req := newPostRequest(url, body, headers)
+func (r *Requester) PutOrPost(method string, url string, body string, headers map[string]string) (*ResponseDef, error) {
+	req := newPutOrPostRequest(url, body, headers)
 	return r.request(req, func(encodedUrl string) (*http.Response, error) {
-		request, err := http.NewRequest("POST", encodedUrl, strings.NewReader(body))
+		request, err := http.NewRequest(method, encodedUrl, strings.NewReader(body))
 		if err != nil {
-			return nil, fmt.Errorf("error creating POST request: %w", err)
+			return nil, fmt.Errorf("error creating %s request: %w", method, err)
 		}
 
 		for key, value := range headers {
@@ -107,7 +107,7 @@ func newGetRequest(url string, headers map[string]string) RequestDef {
 	}
 }
 
-func newPostRequest(encodedUrl string, body string, headers map[string]string) RequestDef {
+func newPutOrPostRequest(encodedUrl string, body string, headers map[string]string) RequestDef {
 	if !lo.Contains(lo.Keys(headers), "Content-Type") {
 		headers["Content-Type"] = "application/json"
 	}

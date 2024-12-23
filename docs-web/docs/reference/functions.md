@@ -395,13 +395,22 @@ Failed queries (e.g. invalid url, no response) will result in an error and scrip
 ### http_get
 
 ```rsl
-http_get(url string, headers map?) -> map
+http_get(url string) -> map
+http_get(url string, headers = map) -> map
 ```
 
 ### http_post
 
 ```rsl
-http_post(url string, body any?, headers map?) -> map
+http_post(url string, body any?) -> map
+http_post(url string, body any?, headers = map) -> map
+```
+
+### http_put
+
+```rsl
+http_put(url string, body any?) -> map
+http_put(url string, body any?, headers = map) -> map
 ```
 
 ## Math

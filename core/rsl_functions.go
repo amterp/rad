@@ -185,6 +185,9 @@ func RunRslNonVoidFunction(
 	case HTTP_POST:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		return runHttpPost(i, function, args, namedArgsMap)
+	case HTTP_PUT:
+		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
+		return runHttpPut(i, function, args, namedArgsMap)
 	case PARSE_INT:
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, TWO_ARGS)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
