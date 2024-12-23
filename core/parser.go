@@ -513,6 +513,7 @@ func (p *Parser) block() Block {
 	p.consumeNewlines()
 	p.consume(INDENT, "Expected indented block")
 	for !p.matchAny(DEDENT) {
+		p.consumeNewlines() // this 'consumeNewLines' sandwich seems unfortunate
 		stmts = append(stmts, p.statement())
 		p.consumeNewlines()
 	}
