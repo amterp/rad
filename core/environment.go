@@ -67,32 +67,12 @@ func (e *Env) SetAndImplyType(varNameToken Token, value interface{}) {
 
 // SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
 func (e *Env) SetAndImplyTypeWithToken(token Token, varName string, value interface{}) {
-	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
+	e.setAndImplyTypeWithToken(token, varName, value, true)
+}
 
-	if e.Enclosing != nil {
-		_, ok := e.Enclosing.get(token, varName)
-		if ok {
-			e.Enclosing.SetAndImplyType(token, value)
-		}
-	}
-
-	switch coerced := value.(type) {
-	case RslString, int64, float64, bool:
-		e.Vars[varName] = coerced
-	case string:
-		e.Vars[varName] = NewRslString(coerced)
-	case []interface{}:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.([]interface{})
-	case RslMap:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMap)
-	case map[string]interface{}:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMap)
-	default:
-		e.i.error(token, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
-	}
+// SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
+func (e *Env) SetAndImplyTypeWithTokenIgnoringEnclosing(token Token, varName string, value interface{}) {
+	e.setAndImplyTypeWithToken(token, varName, value, false)
 }
 
 func (e *Env) Exists(name string) bool {
@@ -141,6 +121,37 @@ func (e *Env) PrintShellExports() {
 		// todo handle different data types specifically
 		// todo avoid *dangerous* exports like PATH!!
 		RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, ToPrintable(val)))
+	}
+}
+
+// SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
+func (e *Env) setAndImplyTypeWithToken(token Token, varName string, value interface{}, modifyEnclosing bool) {
+	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
+
+	if modifyEnclosing && e.Enclosing != nil {
+		_, ok := e.Enclosing.get(token, varName)
+		if ok {
+			e.Enclosing.SetAndImplyType(token, value)
+			return
+		}
+	}
+
+	switch coerced := value.(type) {
+	case RslString, int64, float64, bool:
+		e.Vars[varName] = coerced
+	case string:
+		e.Vars[varName] = NewRslString(coerced)
+	case []interface{}:
+		converted := ConvertToNativeTypes(e.i, token, coerced)
+		e.Vars[varName] = converted.([]interface{})
+	case RslMap:
+		converted := ConvertToNativeTypes(e.i, token, coerced)
+		e.Vars[varName] = converted.(RslMap)
+	case map[string]interface{}:
+		converted := ConvertToNativeTypes(e.i, token, coerced)
+		e.Vars[varName] = converted.(RslMap)
+	default:
+		e.i.error(token, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}
 }
 

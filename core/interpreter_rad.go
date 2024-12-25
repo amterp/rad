@@ -227,7 +227,7 @@ func toTblStr(i *MainInterpreter, mapOps map[string]Lambda, fieldName string, co
 	for _, val := range column {
 		identifier := lambda.Args[0]
 		i.runWithChildEnv(func() {
-			i.env.SetAndImplyType(identifier, val)
+			i.env.SetAndImplyTypeWithTokenIgnoringEnclosing(identifier, identifier.GetLexeme(), val)
 			newVal := lambda.Op.Accept(i)
 			newVals = append(newVals, ToPrintable(newVal))
 		})

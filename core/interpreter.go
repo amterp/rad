@@ -202,17 +202,15 @@ func (i *MainInterpreter) VisitSwitchAssignmentStmt(assignment SwitchAssignment)
 }
 
 func (i *MainInterpreter) VisitBlockStmt(block Block) {
-	i.runWithChildEnv(func() {
-		for _, stmt := range block.Stmts {
-			stmt.Accept(i)
-			if i.breaking {
-				break
-			}
-			if i.continuing {
-				break
-			}
+	for _, stmt := range block.Stmts {
+		stmt.Accept(i)
+		if i.breaking {
+			break
 		}
-	})
+		if i.continuing {
+			break
+		}
+	}
 }
 
 func (i *MainInterpreter) VisitIfStmtStmt(stmt IfStmt) {
@@ -250,9 +248,9 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 		} else {
 			valIdentifier = stmt.Identifier1
 		}
-		i.runWithChildEnv(runArrayForLoop(i, stmt, coerced, idxIdentifier, valIdentifier))
+		runArrayForLoop(i, stmt, coerced, idxIdentifier, valIdentifier)
 	case RslMap:
-		i.runWithChildEnv(runMapForLoop(i, stmt, coerced, stmt.Identifier1, stmt.Identifier2))
+		runMapForLoop(i, stmt, coerced, stmt.Identifier1, stmt.Identifier2)
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
 	}
@@ -283,22 +281,20 @@ func runArrayForLoop(
 	rangeArr []interface{},
 	idxIdentifier *Token,
 	valIdentifier Token,
-) func() {
-	return func() {
-		for idx, val := range rangeArr {
-			if idxIdentifier != nil {
-				i.env.SetAndImplyType(*idxIdentifier, int64(idx))
-			}
-			i.env.SetAndImplyType(valIdentifier, val)
-			stmt.Body.Accept(i)
-			if i.breaking {
-				i.breaking = false
-				break
-			}
-			if i.continuing {
-				i.continuing = false
-				continue
-			}
+) {
+	for idx, val := range rangeArr {
+		if idxIdentifier != nil {
+			i.env.SetAndImplyType(*idxIdentifier, int64(idx))
+		}
+		i.env.SetAndImplyType(valIdentifier, val)
+		stmt.Body.Accept(i)
+		if i.breaking {
+			i.breaking = false
+			break
+		}
+		if i.continuing {
+			i.continuing = false
+			continue
 		}
 	}
 }
@@ -309,27 +305,25 @@ func runMapForLoop(
 	rangeMap RslMap,
 	keyIdentifier Token,
 	valIdentifier *Token,
-) func() {
-	return func() {
-		keys := rangeMap.keys
-		for _, key := range keys {
-			i.env.SetAndImplyType(keyIdentifier, key)
-			if valIdentifier != nil {
-				val, ok := rangeMap.GetStr(key)
-				if !ok {
-					i.error(stmt.ForToken, fmt.Sprintf("Bug! Map contains key %q but lookup failed.", key))
-				}
-				i.env.SetAndImplyType(*valIdentifier, val)
+) {
+	keys := rangeMap.keys
+	for _, key := range keys {
+		i.env.SetAndImplyType(keyIdentifier, key)
+		if valIdentifier != nil {
+			val, ok := rangeMap.GetStr(key)
+			if !ok {
+				i.error(stmt.ForToken, fmt.Sprintf("Bug! Map contains key %q but lookup failed.", key))
 			}
-			stmt.Body.Accept(i)
-			if i.breaking {
-				i.breaking = false
-				break
-			}
-			if i.continuing {
-				i.continuing = false
-				continue
-			}
+			i.env.SetAndImplyType(*valIdentifier, val)
+		}
+		stmt.Body.Accept(i)
+		if i.breaking {
+			i.breaking = false
+			break
+		}
+		if i.continuing {
+			i.continuing = false
+			continue
 		}
 	}
 }
