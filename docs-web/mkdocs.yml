@@ -48,6 +48,7 @@ nav:
   - Guide:
       - ./guide/getting_started.md
       - ./guide/basics.md
+      - ./guide/shell_commands.md
   - Reference:
     - ./reference/args.md
     - ./reference/assignment.md

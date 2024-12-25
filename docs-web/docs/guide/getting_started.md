@@ -247,4 +247,6 @@ it will invoke said interpreter on the script (equivalent to `rad ./hello` like 
 
 Great job on getting this far! You've gotten a peek at what rad and RSL have to offer.
 
-If you're ready to dive into more details, then you continue in the next section: [Basics](./basics.md).
+If you're ready to dive into more details, then you can continue in the next section: [Basics](./basics.md).
+
+[//]: # (todo: add link for 'those who want to just see more RSL features')
