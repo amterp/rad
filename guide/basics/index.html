@@ -14,7 +14,7 @@
         <link rel="prev" href="../getting_started/">
       
       
-        <link rel="next" href="../../reference/args/">
+        <link rel="next" href="../shell_commands/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -493,6 +493,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell_commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -855,8 +876,8 @@
 <p>To create a variable, you can do it through assignment. Let's use a string example:</p>
 <div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
 </code></pre></div>
-<p>You can re-assign variables at any time:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;bob&quot;</span>
+<p>You can re-assign variables. Types don't need to stay the same:</p>
+<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">You <strong>cannot create</strong> multiple variables this way on one line.</p>
@@ -869,10 +890,11 @@
 </code></pre></div>
 </div>
 <h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
+<p>RSL's data types closely mirror those of JSON. Namely: strings, ints, floats, bools, lists, and maps.</p>
 <h3 id="strings">Strings<a class="headerlink" href="#strings" title="Permanent link">&para;</a></h3>
 <p>Strings can be delimited in three ways. The most standard are double quotes (<code>"text"</code>) or single quotes(<code>'text'</code>). The third is backticks (<code>`text`</code>).</p>
-<p>Single and double quotes behave the same way. For example:</p>
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>\nWorld!&#39;
+<p>Double and single quotes behave the same way. For example:</p>
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello\nWorld!&quot;</span>
 print(greeting)
 </code></pre></div>
 <div class="result">
@@ -881,7 +903,7 @@ World!
 </code></pre></div>
 </div>
 
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello\nWorld!&quot;</span>
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>\nWorld!&#39;
 print(greeting)
 </code></pre></div>
 <div class="result">
@@ -900,17 +922,136 @@ print(greeting)
 </div>
 
 <p>Use backtick strings when you want the contents to remain closer to their 'raw' form.</p>
+<div class="admonition tip">
+<p class="admonition-title">Why 3 different delimiters?</p>
+<p>Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of the delimiter characters.</p>
+<p>For example, if you want a double quote in your string, you <em>can</em> use double quote delimiters and escape them:</p>
+<div class="highlight"><pre><span></span><code><span class="s">&quot;She said \&quot;Goodbye\&quot;&quot;</span>
+</code></pre></div>
+<p>However, this can be finicky and hard to read. Instead, you can pick one of the other two delimiters, for example:</p>
+<div class="highlight"><pre><span></span><code>&#39;<span class="kt">She</span><span class="w"> </span>said<span class="w"> </span><span class="s">&quot;Goodbye&quot;&#39;</span>
+<span class="s">`She said &quot;Goodbye&quot;</span>`
+</code></pre></div>
+<p>We'll cover this again later, but as a note, backticks can be particularly useful in
+<a href="../shell_commands/">shell commands</a>, as shell/bash commands may include single or double quotes, and backticks
+save us from having to escape them.</p>
+</div>
 <h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
+<p>RSL has ints. There's nothing unusual about them. Example:</p>
+<div class="highlight"><pre><span></span><code>team_size<span class="w"> </span>=<span class="w"> </span><span class="mi">20</span>
+celsius<span class="w"> </span>=<span class="w"> </span>-<span class="mi">5</span>
+</code></pre></div>
+<p>Note that if you divide two ints, you will get back a <a href="#float">float</a>.</p>
+<div class="highlight"><pre><span></span><code>liters<span class="w"> </span>=<span class="w"> </span><span class="mi">10</span>
+people<span class="w"> </span>=<span class="w"> </span><span class="mi">4</span>
+print(<span class="s">&quot;This is a float:&quot;</span>,<span class="w"> </span>liters<span class="w"> </span>/<span class="w"> </span>people)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>This is a float: 2.5
+</code></pre></div>
+</div>
+
 <h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
+<p>The other number type is float:</p>
+<div class="highlight"><pre><span></span><code>length_meters<span class="w"> </span>=<span class="w"> </span><span class="mf">2.68</span>
+</code></pre></div>
+<p>If you want to define a whole number as a float, simply include a decimal place:</p>
+<div class="highlight"><pre><span></span><code>years<span class="w"> </span>=<span class="w"> </span><span class="mf">20.0</span>
+</code></pre></div>
 <h3 id="bool">bool<a class="headerlink" href="#bool" title="Permanent link">&para;</a></h3>
+<p>RSL uses lowercase <code>true</code> / <code>false</code>:</p>
+<div class="highlight"><pre><span></span><code>is_running<span class="w"> </span>=<span class="w"> </span><span class="k">true</span>
+is_tired<span class="w"> </span>=<span class="w"> </span><span class="k">false</span>
+</code></pre></div>
 <h3 id="list">list<a class="headerlink" href="#list" title="Permanent link">&para;</a></h3>
+<p>RSL has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.</p>
+<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;</span>]
+</code></pre></div>
+<p>Lists you define can contain any types:</p>
+<div class="highlight"><pre><span></span><code>mixed<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;</span>,<span class="w"> </span><span class="k">true</span>,<span class="w"> </span><span class="mi">50</span>,<span class="w"> </span>-<span class="mf">2.4</span>]
+</code></pre></div>
+<p>They can also be nested:</p>
+<div class="highlight"><pre><span></span><code>nested<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;, [1, [&quot;very nested&quot;, &quot;ahhh&quot;</span>]]]
+</code></pre></div>
+<p>Indexing and slicing works very similarly to Python. If we assume the 3 variables above exist, you can index with both positive and negative indexes:</p>
+<div class="highlight"><pre><span></span><code>print(names[<span class="mi">0</span>])
+print(mixed[-<span class="mi">1</span>])<span class="w">  </span>//<span class="w"> </span>grab<span class="w"> </span>last<span class="w"> </span>element<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>list
+print(nested[<span class="mi">1</span>][<span class="mi">1</span>][<span class="mi">0</span>])
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>alice
+-2.4
+very nested
+</code></pre></div>
+</div>
+
+<p>And also you can slice:</p>
+<div class="highlight"><pre><span></span><code>numbers<span class="w"> </span>=<span class="w"> </span>[<span class="mi">10</span>,<span class="w"> </span><span class="mi">20</span>,<span class="w"> </span><span class="mi">30</span>,<span class="w"> </span><span class="mi">40</span>,<span class="w"> </span><span class="mi">50</span>]
+print(numbers[<span class="mi">1</span>:<span class="mi">3</span>])
+print(numbers[<span class="mi">2</span>:])
+print(numbers[<span class="o">:-</span><span class="mi">1</span>])
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[20, 30]
+[30, 40, 50]
+[10, 20, 30, 40]
+</code></pre></div>
+</div>
+
 <h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
-<ul>
-<li>TBC<ul>
-<li>incl dot.syntax </li>
-</ul>
-</li>
-</ul>
+<p>The last type, and second of two collection types, is a 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.</p>
+<div class="highlight"><pre><span></span><code>scores<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 25, &quot;bob&quot;: 17, &quot;charlie&quot;</span>:<span class="w"> </span><span class="mi">36</span><span class="w"> </span>}
+</code></pre></div>
+<p>Like lists, they can contain mixed types for values, and can nest. However, <strong>keys must be strings.</strong></p>
+<div class="highlight"><pre><span></span><code>mixed_map<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;accountant&quot;, &quot;mylist&quot;: [&quot;London&quot;, 25] }</span>
+<span class="s">nested_map = { &quot;error&quot;: { &quot;msg&quot;: &quot;Request failed!&quot;, &quot;code&quot;</span>:<span class="w"> </span><span class="mi">400</span><span class="w"> </span>}<span class="w"> </span>}
+</code></pre></div>
+<p>If we take the above example, values can then be accessed in two ways. First is the square bracket lookup:</p>
+<div class="highlight"><pre><span></span><code>print(mixed_map[<span class="s">&quot;alice&quot;])</span>
+<span class="s">print(nested_map[&quot;error&quot;][&quot;msg&quot;</span>])
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>accountant
+Request failed!
+</code></pre></div>
+</div>
+
+<p>Alternatively, you can use a dot syntax. Note this second way only works for keys with no spaces in the name.</p>
+<div class="highlight"><pre><span></span><code>print(mixed_map.alice)
+print(nested_map.error.msg)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>accountant
+Request failed!
+</code></pre></div>
+</div>
+
+<p>You can modify maps using either syntax:</p>
+<div class="highlight"><span class="filename">Using brackets</span><pre><span></span><code>mymap<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 30 }</span>
+
+<span class="s">mymap[&quot;alice&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">40</span>
+print(mymap)
+
+mymap.alice<span class="w"> </span>=<span class="w"> </span><span class="mi">50</span>
+print(mymap)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ alice: 40 }
+{ alice: 50 }
+</code></pre></div>
+</div>
+
+<p>You can also add keys this way:</p>
+<div class="highlight"><pre><span></span><code>mymap<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 30 }</span>
+<span class="s">mymap[&quot;bob&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">31</span>
+mymap.charlie<span class="w"> </span>=<span class="w"> </span><span class="mi">32</span>
+print(mymap)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ alice: 30, bob: 31, charlie: 32 }
+</code></pre></div>
+</div>
+
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
 <ul>
 <li>TBC<ul>
@@ -983,13 +1124,13 @@ print(greeting)
         
         
           
-          <a href="../../reference/args/" class="md-footer__link md-footer__link--next" aria-label="Next: Args">
+          <a href="../shell_commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Args
+                Shell Commands
               </div>
             </div>
             <div class="md-footer__button md-icon">
