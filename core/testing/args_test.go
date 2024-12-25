@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -193,6 +194,64 @@ print(floatArg + 1)
 	resetTestState()
 }
 
+func TestArgs_CanPassNegativeIntWithFlag(t *testing.T) {
+	rsl := `
+args:
+	intArg int
+print(intArg)
+`
+	setupAndRunCode(t, rsl, "--intArg", "-10")
+	expected := `-10
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanPassNegativeIntWithoutFlag(t *testing.T) {
+	t.Skip("TODO: RAD-71") // todo RAD-71
+	rsl := `
+args:
+	intArg int
+print(intArg)
+`
+	setupAndRunCode(t, rsl, "-10")
+	expected := `-10
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanPassNegativeFloatWithFlag(t *testing.T) {
+	rsl := `
+args:
+	floatArg float
+print(floatArg)
+`
+	setupAndRunCode(t, rsl, "--floatArg", "-10.2")
+	expected := `-10.2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestArgs_CanPassNegativeFloatWithoutFlag(t *testing.T) {
+	t.Skip("TODO: RAD-71") // todo RAD-71
+	rsl := `
+args:
+	floatArg float
+print(floatArg)
+`
+	setupAndRunCode(t, rsl, "-10.2")
+	expected := `-10.2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func TestArgs_CanHaveSeveralMinuses(t *testing.T) {
 	rsl := `
 args:
@@ -356,22 +415,23 @@ Script args:
 }
 
 // todo RAD-67 - pflag currently ExitsOnError, I think that's why this test doesn't work
-//func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
-//	rsl := `
-//args:
-//	name string
-//	age int
-//`
-//	fmt.Println("hi")
-//	setupAndRunCode(t, rsl, "alice", "2", "-s", "--NO-COLOR")
-//	expected := `Usage:
-//  test <name> <age>
-//
-//Script args:
-//      --name string
-//      --age int
-//
-//` + globalFlagHelp
-//	assertError(t, 1, expected)
-//	resetTestState()
-//}
+func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
+	t.Skip("TODO: RAD-67")
+	rsl := `
+args:
+	name string
+	age int
+`
+	fmt.Println("hi")
+	setupAndRunCode(t, rsl, "alice", "2", "-s", "--NO-COLOR")
+	expected := `Usage:
+ test <name> <age>
+
+Script args:
+     --name string
+     --age int
+
+` + globalFlagHelp
+	assertError(t, 1, expected)
+	resetTestState()
+}

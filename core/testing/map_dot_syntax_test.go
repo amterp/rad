@@ -38,14 +38,15 @@ print(a)
 }
 
 // todo RAD-50
-//func TestMap_Dot_MixedAssign(t *testing.T) {
-//	rsl := `
-//a = {"alice": { "bob": { "charlie": 1 } } }
-//a.alice["bob"].charlie = 3
-//print(a)
-//`
-//	setupAndRunCode(t, rsl)
-//	assertOnlyOutput(t, stdOutBuffer, "{\"alice\":{\"bob\":{\"charlie\":3}}}\n")
-//	assertNoErrors(t)
-//	resetTestState()
-//}
+func TestMap_Dot_MixedAssign(t *testing.T) {
+	t.Skip("TODO: RAD-50")
+	rsl := `
+a = {"alice": { "bob": { "charlie": 1 } } }
+a.alice["bob"].charlie = 3
+print(a)
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "{\"alice\":{\"bob\":{\"charlie\":3}}}\n")
+	assertNoErrors(t)
+	resetTestState()
+}
