@@ -6,7 +6,7 @@ func Test_Constraint_Enum_Valid(t *testing.T) {
 	rsl := `
 args:
 	name string
-	enum name ["alice", "bob", "charlie"]
+	name enum ["alice", "bob", "charlie"]
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "alice")
@@ -19,7 +19,7 @@ func Test_Constraint_Enum_ErrorsOnInvalid(t *testing.T) {
 	rsl := `
 args:
 	name string
-	enum name ["alice", "bob", "charlie"]
+	name enum ["alice", "bob", "charlie"]
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
@@ -39,10 +39,23 @@ func Test_Constraint_Enum_ErrorsIfNonStringEnum(t *testing.T) {
 	rsl := `
 args:
 	name string
-	enum name ["alice", 2]
+	name enum ["alice", 2]
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
 	assertError(t, 1, "RslError at L4/23 on '2': Expected string literal, got int\n")
+	resetTestState()
+}
+
+func Test_Constraint_Enum_CanHaveArgNamedEnum(t *testing.T) {
+	rsl := `
+args:
+	enum string
+	enum enum ["alice", "bob", "charlie"]
+print("Hi", enum)
+`
+	setupAndRunCode(t, rsl, "alice")
+	assertOnlyOutput(t, stdOutBuffer, "Hi alice\n")
+	assertNoErrors(t)
 	resetTestState()
 }

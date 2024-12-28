@@ -38,10 +38,12 @@ script Charlie 30 -e --friends David,Eve -h 1.86
 
 ## Constraint Statements
 
+### Enum
+
 ```rsl
 args:
     name string
-    enum name ["alice", "bob", "charlie"]
+    name enum ["alice", "bob", "charlie"]
 ```
 
 ```

@@ -169,16 +169,16 @@ func (p *Parser) argStatement() ArgStmt {
 		panic(NOT_IMPLEMENTED)
 	}
 
-	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, ENUM) {
-		return p.argEnumConstraint()
+	identifier := p.consume(IDENTIFIER, "Expected identifier or keyword")
+
+	if p.peekKeyword(ARGS_BLOCK_KEYWORDS, ENUM) {
+		return p.argEnumConstraint(identifier)
 	}
 
-	identifier := p.consume(IDENTIFIER, "Expected Identifier or keyword")
-
-	if p.peekType(STRING_LITERAL) ||
+	if p.peekType(STRING_LITERAL) || // for renames
 		p.peekType(IDENTIFIER) ||
 		p.peekType(STRING) ||
-		p.peekType(INT_LITERAL) ||
+		p.peekType(INT_LITERAL) || // to allow shorthand flags that are e.g. -1
 		p.peekType(BOOL) {
 
 		return p.argDeclaration(identifier)
@@ -192,9 +192,8 @@ func (p *Parser) argStatement() ArgStmt {
 	panic(NOT_IMPLEMENTED)
 }
 
-func (p *Parser) argEnumConstraint() ArgStmt {
-	enumTkn := p.previous()
-	identifier := p.consume(IDENTIFIER, "Expected identifier after 'enum'")
+func (p *Parser) argEnumConstraint(identifier Token) ArgStmt {
+	enumTkn := p.consume(IDENTIFIER, "Bug! Expected enum identifier")
 	t := ArgStringT
 	values := p.mixedArrayLiteral(&t)
 
