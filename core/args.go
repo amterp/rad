@@ -74,11 +74,11 @@ func (f *BaseRslArg) isRegistered() bool {
 }
 
 func (f *BaseRslArg) Configured() bool {
-	return pflag.Lookup(f.Name).Changed
+	return RFlagSet.Lookup(f.Name).Changed
 }
 
 func (f *BaseRslArg) Lookup() *pflag.Flag {
-	return pflag.Lookup(f.Name)
+	return RFlagSet.Lookup(f.Name)
 }
 
 func (f *BaseRslArg) IsOptional() bool {
@@ -138,7 +138,7 @@ func (f *BoolRslArg) Register() {
 		return
 	}
 
-	pflag.BoolVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.BoolVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -182,7 +182,7 @@ func (f *BoolArrRslArg) Register() {
 		return
 	}
 
-	pflag.BoolSliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.BoolSliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -234,7 +234,7 @@ func (f *StringRslArg) Register() {
 		return
 	}
 
-	pflag.StringVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.StringVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -296,7 +296,7 @@ func (f *StringArrRslArg) Register() {
 		return
 	}
 
-	pflag.StringArrayVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.StringArrayVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -340,7 +340,7 @@ func (f *IntRslArg) Register() {
 		return
 	}
 
-	pflag.Int64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Int64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -383,7 +383,7 @@ func (f *IntArrRslArg) Register() {
 		return
 	}
 
-	pflag.Int64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Int64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -430,7 +430,7 @@ func (f *FloatRslArg) Register() {
 		return
 	}
 
-	pflag.Float64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Float64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -472,7 +472,7 @@ func (f *FloatArrRslArg) Register() {
 		return
 	}
 
-	pflag.Float64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Float64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -518,7 +518,7 @@ func (f *MockResponseRslArg) Register() {
 		return
 	}
 
-	pflag.VarP(&f.Value, f.Name, f.Short, f.Description)
+	RFlagSet.VarP(&f.Value, f.Name, f.Short, f.Description)
 
 	f.registered = true
 }

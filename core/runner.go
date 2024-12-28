@@ -21,23 +21,27 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 
 func (r *RadRunner) Run() error {
 	// don't fail on unknown flags. they may be intended for the script, which we won't have parsed initially
-	pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
+	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
+	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
 
-	pflag.Usage = func() {
+	RFlagSet.Usage = func() {
 		r.RunUsage()
 	}
 
 	r.globalFlags = CreateAndRegisterGlobalFlags()
 
-	pflag.Parse()
+	err := RFlagSet.Parse(os.Args[1:])
+	if err != nil {
+		RP.UsageErrorExit(err.Error())
+	}
 
 	// immediately make use of global flags to control behavior for the rest of the program
 
 	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
 
-	RP.RadDebug(fmt.Sprintf("Args passed: %v", pflag.Args()))
+	RP.RadDebug(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
 	if FlagRadDebug.Value {
-		pflag.VisitAll(func(flag *pflag.Flag) {
+		RFlagSet.VisitAll(func(flag *pflag.Flag) {
 			RP.RadDebug(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
 		})
 	}
@@ -50,7 +54,7 @@ func (r *RadRunner) Run() error {
 
 	// now let's see if we were given a script to run.
 
-	args := pflag.Args()
+	args := RFlagSet.Args()
 
 	var scriptName string
 	if FlagStdinScriptName.Configured() {
@@ -103,11 +107,11 @@ func (r *RadRunner) Run() error {
 	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 	// todo if unknown flag passed, pflag handles the error & prints a kinda ugly msg (twice, bug).
 	//  continue allowing unknown flags and then detect ourselves?
-	pflag.CommandLine.ParseErrorsWhitelist.UnknownFlags = false
+	RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 
-	// todo apparently this is not recommended, I should be using flagsets? I THINK I DO, FOR TESTS?
+	// todo apparently this is not recommended, I should be using flagsets? i.e. create new one? I THINK I DO, FOR TESTS?
 	//  RAD-67 will prevent double-error print (see https://github.com/spf13/pflag/issues/352)
-	pflag.Parse()
+	RFlagSet.Parse(os.Args[1:])
 
 	posArgsIndex := 0
 	if FlagStdinScriptName.Value == "" {

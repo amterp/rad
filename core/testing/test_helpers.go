@@ -3,7 +3,6 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"rad/core"
@@ -119,7 +118,6 @@ func resetTestState() {
 	stdErrBuffer.Reset()
 	errorOrExit = ErrorOrExit{}
 	millisSlept = make([]int64, 0)
-	pflag.CommandLine = pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
 	core.ResetGlobals()
 }
 

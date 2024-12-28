@@ -1,12 +1,14 @@
 package core
 
 import (
+	"github.com/spf13/pflag"
 	"os"
 	"path/filepath"
 	"time"
 )
 
 var (
+	RFlagSet   *pflag.FlagSet
 	RP         Printer
 	RIo        RadIo
 	RExit      func(int)
@@ -34,6 +36,7 @@ func SetScriptPath(path string) {
 
 // primarily for tests
 func ResetGlobals() {
+	RFlagSet = nil
 	RP = nil
 	RIo = RadIo{}
 	RExit = nil
