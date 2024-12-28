@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -414,22 +413,20 @@ Script args:
 	resetTestState()
 }
 
-// todo RAD-67 - pflag currently ExitsOnError, I think that's why this test doesn't work
 func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
-	t.Skip("TODO: RAD-67")
 	rsl := `
 args:
 	name string
 	age int
 `
-	fmt.Println("hi")
 	setupAndRunCode(t, rsl, "alice", "2", "-s", "--NO-COLOR")
-	expected := `Usage:
- test <name> <age>
+	expected := `unknown shorthand flag: 's' in -s
+Usage:
+  test <name> <age>
 
 Script args:
-     --name string
-     --age int
+      --name string   
+      --age int       
 
 ` + globalFlagHelp
 	assertError(t, 1, expected)

@@ -21,7 +21,7 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 
 func (r *RadRunner) Run() error {
 	// don't fail on unknown flags. they may be intended for the script, which we won't have parsed initially
-	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ExitOnError)
+	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
 
 	RFlagSet.Usage = func() {
@@ -105,13 +105,13 @@ func (r *RadRunner) Run() error {
 	// help not explicitly invoked, so let's try parsing other args
 
 	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
-	// todo if unknown flag passed, pflag handles the error & prints a kinda ugly msg (twice, bug).
-	//  continue allowing unknown flags and then detect ourselves?
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 
-	// todo apparently this is not recommended, I should be using flagsets? i.e. create new one? I THINK I DO, FOR TESTS?
-	//  RAD-67 will prevent double-error print (see https://github.com/spf13/pflag/issues/352)
-	RFlagSet.Parse(os.Args[1:])
+	// technically re-using the flagset is apparently discouraged, but i've yet to see where it goes wrong
+	err = RFlagSet.Parse(os.Args[1:])
+	if err != nil {
+		RP.UsageErrorExit(err.Error())
+	}
 
 	posArgsIndex := 0
 	if FlagStdinScriptName.Value == "" {
@@ -196,6 +196,7 @@ func (r *RadRunner) createRslArgsFromScript() []RslArg {
 
 	return flags
 }
+
 func readSource(scriptPath string) string {
 	source, err := os.ReadFile(scriptPath)
 	if err != nil {
