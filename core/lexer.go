@@ -96,7 +96,7 @@ func (l *Lexer) scanToken() {
 		l.addToken(LEFT_BRACE)
 	case '}':
 		if l.inStringStarter != nil {
-			l.lexStringLiteral(*l.inStringStarter)
+			l.lexStringLiteral(*l.inStringStarter, false)
 		} else {
 			l.addToken(RIGHT_BRACE)
 		}
@@ -161,11 +161,11 @@ func (l *Lexer) scanToken() {
 			l.lexArgComment()
 		}
 	case '"':
-		l.lexStringLiteral('"')
+		l.lexStringLiteral('"', false)
 	case '\'':
-		l.lexStringLiteral('\'')
+		l.lexStringLiteral('\'', false)
 	case '`':
-		l.lexStringLiteral('`')
+		l.lexStringLiteral('`', false)
 	case '.':
 		l.addToken(DOT)
 	case '/':
@@ -190,7 +190,12 @@ func (l *Lexer) scanToken() {
 		if isDigit(c) {
 			l.lexNumber()
 		} else if isAlpha(c) || c == '_' {
-			l.lexIdentifier()
+			if c == 'r' && l.peekAny('"', '\'', '`') {
+				// raw string
+				l.lexStringLiteral(l.advance(), true)
+			} else {
+				l.lexIdentifier()
+			}
 		} else {
 			l.error("Unexpected character")
 		}
@@ -239,7 +244,7 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 
 func (l *Lexer) matchString(expected string) bool {
 	for i, c := range expected {
-		if l.next+i >= len(l.source) || rune(l.source[l.next+i]) != c {
+		if l.next+i >= len(l.source) || l.source[l.next+i] != c {
 			return false
 		}
 	}
@@ -249,7 +254,7 @@ func (l *Lexer) matchString(expected string) bool {
 
 func (l *Lexer) peekEquals(toCheck string) bool {
 	for i, c := range toCheck {
-		if l.next+i >= len(l.source) || rune(l.source[l.next+i]) != c {
+		if l.next+i >= len(l.source) || l.source[l.next+i] != c {
 			return false
 		}
 	}
@@ -260,7 +265,20 @@ func (l *Lexer) peek() rune {
 	if l.isAtEnd() {
 		return 0
 	}
-	return rune(l.source[l.next])
+	return l.source[l.next]
+}
+
+func (l *Lexer) peekAny(runes ...rune) bool {
+	if l.isAtEnd() {
+		return false
+	}
+
+	for _, r := range runes {
+		if l.peek() == r {
+			return true
+		}
+	}
+	return false
 }
 
 func (l *Lexer) expectAndEmit(expected rune, tokenType TokenType, errorMessage string) {
@@ -289,7 +307,7 @@ func isDigit(c rune) bool {
 	return c >= '0' && c <= '9'
 }
 
-func (l *Lexer) lexStringLiteral(endChar rune) {
+func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
 	if l.inStringStarter == nil {
 		// we're beginning a truly new string
 		l.inStringStarter = &endChar
@@ -301,58 +319,55 @@ func (l *Lexer) lexStringLiteral(endChar rune) {
 			l.error("Unterminated string")
 		}
 
-		if endChar == '`' {
-			// for backticks, only handle \ when it's escaping {
-			if l.match('\\') {
-				if l.isAtEnd() {
-					l.error("Incomplete escape sequence")
-				}
-				next := l.peek()
-				if next == '{' || next == '`' {
-					value += string(l.advance()) // add the {
-				} else {
-					value += "\\" // treat backslash as literal otherwise
-				}
-			} else if l.match('{') {
-				l.addStringLiteralToken(value, true)
-				l.start = l.next
-				return
-			} else {
-				value += string(l.advance())
-			}
-		} else {
-			// regular string handling for ' and "
-			if l.match('\\') {
-				if l.isAtEnd() {
-					l.error("Incomplete escape sequence")
-				}
-				next := l.peek()
+		if l.match('\\') {
+			// we're escaping
 
-				if next == endChar || next == '\\' {
-					value += string(l.advance())
-				} else if next == 'n' {
-					value += "\n"
-					l.advance()
-				} else if next == 't' {
-					value += "\t"
-					l.advance()
-				} else if next == '{' {
-					value += string(l.advance())
-				} else {
-					value += "\\"
-				}
-			} else if l.match('{') {
-				l.addStringLiteralToken(value, true)
-				l.start = l.next
-				return
-			} else {
-				value += string(l.advance())
+			if l.isAtEnd() {
+				l.error("Incomplete escape sequence")
 			}
+			next := l.peek()
+
+			if next == endChar || (next == '\\' && !isRaw) {
+				// allow escaping delimiter or backslash
+				value += string(l.advance())
+			} else if isRaw {
+				// just add the single slash
+				value += "\\"
+
+				if next == '\\' {
+					// our backslash precedes another, and we are in raw mode. we've already added the first, let's add
+					// the second and advance, so it doesn't get interpreted as escaping *its* following character
+					value += string(l.advance())
+				}
+			} else if next == 'n' {
+				// newline
+				value += "\n"
+				l.advance()
+			} else if next == 't' {
+				// tab
+				value += "\t"
+				l.advance()
+			} else if next == '{' {
+				// start of inline expr, so just add the brace
+				value += string(l.advance())
+			} else {
+				// just add the single slash
+				value += "\\"
+			}
+		} else if !isRaw && l.match('{') {
+			l.addStringLiteralToken(value, true)
+			l.start = l.next
+			return
+		} else {
+			value += string(l.advance())
 		}
 	}
+
+	// we've matched the end delimiter, effectively done with the string
+
 	l.addStringLiteralToken(value, false)
 	if l.inStringStarter != nil && *l.inStringStarter == endChar {
-		// we're ending the final part of the string broken up by inline exprs
+		// we're ending the final part of the string broken up by inline exprs, so reset state related to 'inString'
 		l.inStringStarter = nil
 		l.inStringStartIndex = -1
 	}

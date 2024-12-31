@@ -6,3 +6,5 @@
 - should the int/float etc parsing funcs be prefixed with `parse_`?
 - one `http` func for all methods instead of some having their own?
 - `enum name` vs. `name enum` ordering for arg constraints
+- `{}` vs. `${}` for interpolation
+- Ruby-style % syntax or bash heredocs/herestrings?

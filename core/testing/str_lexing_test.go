@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestStrLexing_Newline(t *testing.T) {
+func Test_StrLexing_Newline(t *testing.T) {
 	rsl := `
 print("Hi\nAlice")
 print("Hi\\nAlice")
@@ -13,15 +13,16 @@ print("Hi\\nAlice")
 	resetTestState()
 }
 
-func TestStrLexing_NewlineBacktick(t *testing.T) {
+func Test_StrLexing_NewlineBacktick(t *testing.T) {
 	rsl := "print(`Hi\\nAlice`)"
+	rsl += "\nprint(`Hi\\\\nAlice`)"
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "Hi\\nAlice\n")
+	assertOnlyOutput(t, stdOutBuffer, "Hi\nAlice\nHi\\nAlice\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func TestStrLexing_Tab(t *testing.T) {
+func Test_StrLexing_Tab(t *testing.T) {
 	rsl := `
 print("a\tb")
 `
@@ -31,15 +32,15 @@ print("a\tb")
 	resetTestState()
 }
 
-func TestStrLexing_TabBacktick(t *testing.T) {
+func Test_StrLexing_TabBacktick(t *testing.T) {
 	rsl := "print(`a\\tb`)"
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "a\\tb\n")
+	assertOnlyOutput(t, stdOutBuffer, "a\tb\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func TestStrLexing_EscapeBracket(t *testing.T) {
+func Test_StrLexing_EscapeBracket(t *testing.T) {
 	rsl := `
 print("{upper('alice')}")
 print("\{upper('alice')}")
@@ -50,7 +51,7 @@ print("\{upper('alice')}")
 	resetTestState()
 }
 
-func TestStrLexing_EscapeBracketBacktick(t *testing.T) {
+func Test_StrLexing_EscapeBracketBacktick(t *testing.T) {
 	rsl := "print(`{upper('alice')}`)\nprint(`\\{upper('alice')}`)"
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n{upper('alice')}\n")
@@ -58,7 +59,7 @@ func TestStrLexing_EscapeBracketBacktick(t *testing.T) {
 	resetTestState()
 }
 
-func TestStrLexing_Quotes(t *testing.T) {
+func Test_StrLexing_Quotes(t *testing.T) {
 	rsl := `
 print('single\'quote')
 print("single'quote")
@@ -71,7 +72,7 @@ print("double\"quote")
 	resetTestState()
 }
 
-func TestStrLexing_Empty(t *testing.T) {
+func Test_StrLexing_Empty(t *testing.T) {
 	rsl := `
 print("")
 print('')
@@ -82,7 +83,7 @@ print('')
 	resetTestState()
 }
 
-func TestStrLexing_EmptyBacktick(t *testing.T) {
+func Test_StrLexing_EmptyBacktick(t *testing.T) {
 	rsl := "print(``)"
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "\n")
@@ -90,7 +91,7 @@ func TestStrLexing_EmptyBacktick(t *testing.T) {
 	resetTestState()
 }
 
-func TestStrLexing_SeveralBackslashes(t *testing.T) {
+func Test_StrLexing_SeveralBackslashes(t *testing.T) {
 	rsl := `
 print("\\\\")
 `
@@ -100,7 +101,7 @@ print("\\\\")
 	resetTestState()
 }
 
-func TestStrLexing_Mixed(t *testing.T) {
+func Test_StrLexing_Mixed(t *testing.T) {
 	rsl := `
 print("\"\n\"")
 `
@@ -110,7 +111,7 @@ print("\"\n\"")
 	resetTestState()
 }
 
-func TestStrLexing_DoubleInterp(t *testing.T) {
+func Test_StrLexing_DoubleInterp(t *testing.T) {
 	rsl := `
 x = 1
 y = 2
@@ -122,7 +123,7 @@ print("{x}{y}")
 	resetTestState()
 }
 
-func TestStrLexing_DoubleInterpBacktick(t *testing.T) {
+func Test_StrLexing_DoubleInterpBacktick(t *testing.T) {
 	rsl := "x = 1\ny = 2\nprint(`{x}{y}`)"
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "12\n")
@@ -130,7 +131,7 @@ func TestStrLexing_DoubleInterpBacktick(t *testing.T) {
 	resetTestState()
 }
 
-func TestStrLexing_EscapingBrackets(t *testing.T) {
+func Test_StrLexing_EscapingBrackets(t *testing.T) {
 	rsl := `
 x = 1
 print("\\{x}")
@@ -142,7 +143,7 @@ print("\\\{x}")
 	resetTestState()
 }
 
-func TestStrLexing_Mixed2(t *testing.T) {
+func Test_StrLexing_Mixed2(t *testing.T) {
 	rsl := `
 x = 1
 print("Hello\n{x}\tWorld!")
@@ -153,14 +154,14 @@ print("Hello\n{x}\tWorld!")
 	resetTestState()
 }
 
-func TestStrLexing_Mixed2Backticks(t *testing.T) {
+func Test_StrLexing_Mixed2Backticks(t *testing.T) {
 	rsl := "x = 1\nprint(`Hello\\n{x}\\tWorld!`)"
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "Hello\\n1\\tWorld!\n")
+	assertOnlyOutput(t, stdOutBuffer, "Hello\n1\tWorld!\n")
 	assertNoErrors(t)
 	resetTestState()
 }
-func TestStrLexing_Misc(t *testing.T) {
+func Test_StrLexing_Misc(t *testing.T) {
 	rsl := `
 print("\\")
 print("\n\n\n")
@@ -171,7 +172,7 @@ print("\n\n\n")
 	resetTestState()
 }
 
-func TestStrLexing_EscapingIrrelevantChars(t *testing.T) {
+func Test_StrLexing_EscapingIrrelevantChars(t *testing.T) {
 	rsl := `
 print("\x")
 print("\k")
@@ -182,10 +183,83 @@ print("\k")
 	resetTestState()
 }
 
-func TestStrLexing_EscapingBacktickInBackticks(t *testing.T) {
+func Test_StrLexing_EscapingBacktickInBackticks(t *testing.T) {
 	rsl := "print(`\\``)"
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "`\n")
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func Test_StrLexing_RawStrings_DoubleQuotes(t *testing.T) {
+	rsl := `
+name = "alice"
+print("hi\n{name}")
+print(r"hi\n{name}")
+`
+	setupAndRunCode(t, rsl)
+	expected := `hi
+alice
+hi\n{name}
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_StrLexing_RawStrings_SingleQuotes(t *testing.T) {
+	rsl := `
+name = 'alice'
+print('hi\n{name}')
+print(r'hi\n{name}')
+`
+	setupAndRunCode(t, rsl)
+	expected := `hi
+alice
+hi\n{name}
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_StrLexing_RawStrings_Backticks(t *testing.T) {
+	rsl := `
+name = "alice"
+print("hi\n{name}")
+print(r"hi\n{name}")
+`
+	setupAndRunCode(t, rsl)
+	expected := `hi
+alice
+hi\n{name}
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_StrLexing_RawStrings_DoubleSlashIsTwoSlashes(t *testing.T) {
+	rsl := `
+print(r"\\")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, `\\`+"\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_StrLexing_RawStrings_TripleBackslashDelimiter(t *testing.T) {
+	rsl := `
+print(r"\\\"")
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, `\\"`+"\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+// todo
+// - """ multiline
+// - raw multiline
+// - ${} syntax?

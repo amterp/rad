@@ -2,26 +2,31 @@
 title: Strings
 ---
 
+RSL has three delimiters for strings:
+
+```rsl
+"double quotes"
+'single quotes'
+`backticks`
+```
+
+All three of these behave the same way. RSL offers three so you have alternatives to pick between depending on the contents of your string.
+For example, if you have a string which itself contains lots of single quotes, you may choose to use the double quotes delimiter.
+Or, if your string has both single *and* double quotes, you can use backticks to delimit your string. Specific example:
+
+```rsl
+`Single quotes: 'Hi!', double quotes: "Hi!"`
+```
+
 ## Escaping
-
-- `"double quote strings"` and `'single quote strings'` have the same rules around escaping.
-- `` `backtick strings` `` have slightly different rules (less escaping).
-
-### Double & Single Quotes
 
 - `\` will escape:
     - `{` (to prevent string interpolation)
     - `\n` new line
     - `\t` tab
     - `\` i.e. itself, so you can write backslashes
-    - The respective quote char itself, so `"\""` and `'\''`
+    - The respective string delimiter itself, so `\"`, `\'`, or `` \` ``, epending on the string you're using. 
         - However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: `` `"` ``, `` `'` ``.
-
-### Backticks
-
-- `\` will escape:
-    - `{` (to prevent string interpolation)
-    - `` ` `` to allow backticks in the string
 
 ## String Attributes
 
