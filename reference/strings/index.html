@@ -624,30 +624,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Escaping">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#double-single-quotes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Double &amp; Single Quotes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backticks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Backticks
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -730,30 +706,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Escaping">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#double-single-quotes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Double &amp; Single Quotes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backticks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Backticks
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -809,30 +761,27 @@
 
   <h1>Strings</h1>
 
+<p>RSL has three delimiters for strings:</p>
+<div class="highlight"><pre><span></span><code><span class="s">&quot;double quotes&quot;</span>
+&#39;single<span class="w"> </span>quotes&#39;
+`backticks`
+</code></pre></div>
+<p>All three of these behave the same way. RSL offers three so you have alternatives to pick between depending on the contents of your string.
+For example, if you have a string which itself contains lots of single quotes, you may choose to use the double quotes delimiter.
+Or, if your string has both single <em>and</em> double quotes, you can use backticks to delimit your string. Specific example:</p>
+<div class="highlight"><pre><span></span><code>`<span class="kt">Single</span><span class="w"> </span>quotes:<span class="w"> </span>&#39;<span class="kt">Hi</span>!&#39;,<span class="w"> </span>double<span class="w"> </span>quotes:<span class="w"> </span><span class="s">&quot;Hi!&quot;</span>`
+</code></pre></div>
 <h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>"double quote strings"</code> and <code>'single quote strings'</code> have the same rules around escaping.</li>
-<li><code>`backtick strings`</code> have slightly different rules (less escaping).</li>
-</ul>
-<h3 id="double-single-quotes">Double &amp; Single Quotes<a class="headerlink" href="#double-single-quotes" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>\</code> will escape:<ul>
 <li><code>{</code> (to prevent string interpolation)</li>
 <li><code>\n</code> new line</li>
 <li><code>\t</code> tab</li>
 <li><code>\</code> i.e. itself, so you can write backslashes</li>
-<li>The respective quote char itself, so <code>"\""</code> and <code>'\''</code><ul>
+<li>The respective string delimiter itself, so <code>\"</code>, <code>\'</code>, or <code>\`</code>, epending on the string you're using. <ul>
 <li>However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: <code>`"`</code>, <code>`'`</code>.</li>
 </ul>
 </li>
-</ul>
-</li>
-</ul>
-<h3 id="backticks">Backticks<a class="headerlink" href="#backticks" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>\</code> will escape:<ul>
-<li><code>{</code> (to prevent string interpolation)</li>
-<li><code>`</code> to allow backticks in the string</li>
 </ul>
 </li>
 </ul>
