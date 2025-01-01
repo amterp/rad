@@ -18,16 +18,6 @@ Or, if your string has both single *and* double quotes, you can use backticks to
 `Single quotes: 'Hi!', double quotes: "Hi!"`
 ```
 
-## Escaping
-
-- `\` will escape:
-    - `{` (to prevent string interpolation)
-    - `\n` new line
-    - `\t` tab
-    - `\` i.e. itself, so you can write backslashes
-    - The respective string delimiter itself, so `\"`, `\'`, or `` \` ``, epending on the string you're using. 
-        - However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: `` `"` ``, `` `'` ``.
-
 ## String Attributes
 
 - Not all strings are just plain text. They may have attributes such as color.
@@ -58,3 +48,43 @@ Examples:
 "{myString:>20}"
 "{myFloat:.2}"
 ```
+
+## Escaping
+
+- `\` will escape:
+  - `{` (to prevent string interpolation)
+  - `\n` new line
+  - `\t` tab
+  - `\` i.e. itself, so you can write backslashes
+  - The respective string delimiter itself, so `\"`, `\'`, or `` \` ``, depending on the delimiter you're using.
+    - However, it's advised you use delimiters that don't clash with with the contents of your string, if possible.
+
+## Raw Strings
+
+Raw strings can be used when you want RSL to treat the string as it's written, rather than performing escaping, interpolation, etc.
+
+Raw strings are created by prefixing an `r` to the opening delimiter of your string. For example:
+
+```rsl
+name = "alice"
+text = r"Regards,\n${name}"
+print(text)
+```
+
+<div class="result">
+```
+Regards,\n${name}
+```
+</div>
+
+Notice RSL did not render the `\n` as a newline as it would in a regular string,
+and that `${name}` is also left as-is i.e. no interpolation was performed.
+
+Unlike Python, **you cannot escape *anything* in raw strings**, including the delimiter. For example:
+
+```rsl
+r"\""
+```
+
+is illegal because the backslash does *not* escape the following `"`, and so that quote actually ends the raw string.
+Then we're left with a third and dangling `"` at the end, causing a syntax error.

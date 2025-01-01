@@ -319,7 +319,10 @@ func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
 			l.error("Unterminated string")
 		}
 
-		if l.match('\\') {
+		if isRaw {
+			// raw strings don't escape anything
+			value += string(l.advance())
+		} else if l.match('\\') {
 			// we're escaping
 
 			if l.isAtEnd() {
@@ -330,15 +333,6 @@ func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
 			if next == endChar || (next == '\\' && !isRaw) {
 				// allow escaping delimiter or backslash
 				value += string(l.advance())
-			} else if isRaw {
-				// just add the single slash
-				value += "\\"
-
-				if next == '\\' {
-					// our backslash precedes another, and we are in raw mode. we've already added the first, let's add
-					// the second and advance, so it doesn't get interpreted as escaping *its* following character
-					value += string(l.advance())
-				}
 			} else if next == 'n' {
 				// newline
 				value += "\n"
@@ -354,7 +348,7 @@ func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
 				// just add the single slash
 				value += "\\"
 			}
-		} else if !isRaw && l.match('{') {
+		} else if l.match('{') {
 			l.addStringLiteralToken(value, true)
 			l.start = l.next
 			return

@@ -224,11 +224,9 @@ hi\n{name}
 }
 
 func Test_StrLexing_RawStrings_Backticks(t *testing.T) {
-	rsl := `
-name = "alice"
-print("hi\n{name}")
-print(r"hi\n{name}")
-`
+	rsl := "name = `alice`\n"
+	rsl += "print(`hi\\n{name}`)\n"
+	rsl += "print(r`hi\\n{name}`)\n"
 	setupAndRunCode(t, rsl)
 	expected := `hi
 alice
@@ -249,13 +247,22 @@ print(r"\\")
 	resetTestState()
 }
 
-func Test_StrLexing_RawStrings_TripleBackslashDelimiter(t *testing.T) {
+func Test_StrLexing_RawStrings_SingleBackslash(t *testing.T) {
 	rsl := `
-print(r"\\\"")
+print(r"\")
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, `\\"`+"\n")
+	assertOnlyOutput(t, stdOutBuffer, `\`+"\n")
 	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_StrLexing_RawStrings_ErrorsIfTryingToEscapeDelimiter(t *testing.T) {
+	rsl := `
+print(r"\"")
+`
+	setupAndRunCode(t, rsl)
+	assertError(t, 1, "Error at L3/-2 on '\")\\n': Unterminated string\n")
 	resetTestState()
 }
 
