@@ -2,28 +2,32 @@ package core
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
 type Lexer struct {
-	source                 []rune
-	start                  int   // index of start of the current lexeme (0 indexed)
-	next                   int   // index of next character to be read (0 indexed)
-	lineIndex              int   // current line number (1 indexed)
-	lineCharIndex          int   // index of latest parsed char in the current line (1 indexed)
-	indentStack            []int // stack of indents to, to emit indent/dedent tokens
-	userUsingSpacesForTabs *bool // nil until we see the first case of a space indent
-	inStringStarter        *rune // the character that started the current string literal we're in, if we are in one
-	inStringStartIndex     int   // index of the start of the current string literal we're in
-	escaping               bool  // true if we are currently escaping a character in a string using \
+	srcStr                 string
+	src                    []rune
+	start                  int     // index of start of the current lexeme (0 indexed)
+	next                   int     // index of next character to be read (0 indexed)
+	lineIndex              int     // current line number (1 indexed)
+	lineCharIndex          int     // index of latest parsed char in the current line (1 indexed)
+	indentStack            []int   // stack of indents to, to emit indent/dedent tokens
+	userUsingSpacesForTabs *bool   // nil until we see the first case of a space indent
+	inStringStarter        *string // the delimiter that started the current string literal we're in, if we are in one
+	inStringStartIndex     int     // index of the start of the current string literal we're in
+	inStringDedentNum      int     // the number of whitespaces delete from the from of lines (multiline strings)
+	escaping               bool    // true if we are currently escaping a character in a string using \
 	Tokens                 []Token
 }
 
 func NewLexer(source string) *Lexer {
 	runes := []rune(source)
 	return &Lexer{
-		source:                 runes,
+		srcStr:                 source,
+		src:                    runes,
 		start:                  0,
 		next:                   0,
 		lineIndex:              1,
@@ -32,6 +36,7 @@ func NewLexer(source string) *Lexer {
 		userUsingSpacesForTabs: nil,
 		inStringStarter:        nil,
 		inStringStartIndex:     -1,
+		inStringDedentNum:      0,
 		escaping:               false,
 		Tokens:                 []Token{},
 	}
@@ -44,7 +49,7 @@ func (l *Lexer) Lex() []Token {
 
 	// emit dedent tokens for any remaining indents
 	for i := len(l.indentStack) - 1; i > 0; i-- {
-		lexeme := string(l.source[l.next:l.next])
+		lexeme := string(l.src[l.next:l.next])
 		token := NewToken(DEDENT, lexeme, l.next, l.lineIndex, l.lineCharIndex)
 		l.Tokens = append(l.Tokens, token)
 	}
@@ -54,7 +59,7 @@ func (l *Lexer) Lex() []Token {
 }
 
 func (l *Lexer) isAtEnd() bool {
-	return l.next >= len(l.source)
+	return l.next >= len(l.src)
 }
 
 func (l *Lexer) scanToken() {
@@ -96,7 +101,7 @@ func (l *Lexer) scanToken() {
 		l.addToken(LEFT_BRACE)
 	case '}':
 		if l.inStringStarter != nil {
-			l.lexStringLiteral(*l.inStringStarter, false)
+			l.lexStringLiteral(*l.inStringStarter, false, true)
 		} else {
 			l.addToken(RIGHT_BRACE)
 		}
@@ -161,18 +166,20 @@ func (l *Lexer) scanToken() {
 			l.lexArgComment()
 		}
 	case '"':
-		l.lexStringLiteral('"', false)
+		if l.peekString(`""`) {
+			l.lexTripleQuoteStringLiteral(2, false)
+		} else {
+			l.lexStringLiteral(`"`, false, false)
+		}
 	case '\'':
-		l.lexStringLiteral('\'', false)
+		l.lexStringLiteral("'", false, false)
 	case '`':
-		l.lexStringLiteral('`', false)
+		l.lexStringLiteral("`", false, false)
 	case '.':
 		l.addToken(DOT)
 	case '/':
 		if l.match('/') {
-			for l.peek() != '\n' && !l.isAtEnd() {
-				l.advance()
-			}
+			l.consumeCodeComment()
 		} else if l.match('=') {
 			l.addToken(SLASH_EQUAL)
 		} else {
@@ -192,7 +199,11 @@ func (l *Lexer) scanToken() {
 		} else if isAlpha(c) || c == '_' {
 			if c == 'r' && l.peekAny('"', '\'', '`') {
 				// raw string
-				l.lexStringLiteral(l.advance(), true)
+				if l.peekString(`"""`) {
+					l.lexTripleQuoteStringLiteral(3, true)
+				} else {
+					l.lexStringLiteral(string(l.advance()), true, false)
+				}
 			} else {
 				l.lexIdentifier()
 			}
@@ -203,7 +214,7 @@ func (l *Lexer) scanToken() {
 }
 
 func (l *Lexer) advance() rune {
-	r := l.source[l.next]
+	r := l.src[l.next]
 	if r == '\n' {
 		l.lineIndex++
 		l.lineCharIndex = 0
@@ -223,7 +234,7 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 		return false
 	}
 
-	nextRune := l.source[l.next]
+	nextRune := l.src[l.next]
 	for _, r := range expected {
 		if nextRune == r {
 			if nextRune == '\n' {
@@ -244,7 +255,7 @@ func (l *Lexer) matchAny(expected ...rune) bool {
 
 func (l *Lexer) matchString(expected string) bool {
 	for i, c := range expected {
-		if l.next+i >= len(l.source) || l.source[l.next+i] != c {
+		if l.next+i >= len(l.src) || l.src[l.next+i] != c {
 			return false
 		}
 	}
@@ -252,9 +263,9 @@ func (l *Lexer) matchString(expected string) bool {
 	return true
 }
 
-func (l *Lexer) peekEquals(toCheck string) bool {
+func (l *Lexer) peekString(toCheck string) bool {
 	for i, c := range toCheck {
-		if l.next+i >= len(l.source) || l.source[l.next+i] != c {
+		if l.next+i >= len(l.src) || l.src[l.next+i] != c {
 			return false
 		}
 	}
@@ -265,7 +276,7 @@ func (l *Lexer) peek() rune {
 	if l.isAtEnd() {
 		return 0
 	}
-	return l.source[l.next]
+	return l.src[l.next]
 }
 
 func (l *Lexer) peekAny(runes ...rune) bool {
@@ -307,21 +318,49 @@ func isDigit(c rune) bool {
 	return c >= '0' && c <= '9'
 }
 
-func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
+func (l *Lexer) lexStringLiteral(endDelimiter string, isRaw bool, isResumeString bool) {
+	isMultilineString := endDelimiter == `"""`
+
 	if l.inStringStarter == nil {
 		// we're beginning a truly new string
-		l.inStringStarter = &endChar
+		l.inStringStarter = &endDelimiter
 		l.inStringStartIndex = l.start + 1 // +1 to exclude the starting quote
+		if isMultilineString {
+			l.inStringDedentNum = l.findMultilineDedentNum(l.inStringStartIndex)
+		}
 	}
-	value := ""
-	for !l.match(endChar) {
+
+	text := ""
+	var numWhitespaceToIgnore int
+	if isResumeString {
+		numWhitespaceToIgnore = 0
+	} else {
+		numWhitespaceToIgnore = l.inStringDedentNum
+	}
+
+	for !l.matchString(endDelimiter) {
 		if l.isAtEnd() {
 			l.error("Unterminated string")
 		}
 
+		if (text == "" || text[len(text)-1] == '\n') && numWhitespaceToIgnore > 0 && l.matchAny('\t', ' ') {
+			// "dedent" some leading whitespace if we should (multiline string)
+			numWhitespaceToIgnore--
+			continue
+		}
+
+		if numWhitespaceToIgnore > 0 {
+			l.error("Closing quotes cannot be more indented than the contents of the string block.")
+		}
+
 		if isRaw {
 			// raw strings don't escape anything
-			value += string(l.advance())
+			if l.match('\n') {
+				text += "\n"
+				numWhitespaceToIgnore = l.inStringDedentNum
+			} else {
+				text += string(l.advance())
+			}
 		} else if l.match('\\') {
 			// we're escaping
 
@@ -330,41 +369,87 @@ func (l *Lexer) lexStringLiteral(endChar rune, isRaw bool) {
 			}
 			next := l.peek()
 
-			if next == endChar || (next == '\\' && !isRaw) {
+			if strings.HasSuffix(endDelimiter, string(next)) || next == '\\' {
 				// allow escaping delimiter or backslash
-				value += string(l.advance())
+				text += string(l.advance())
 			} else if next == 'n' {
-				// newline
-				value += "\n"
+				// newline. we don't reset inStringDedentNum because this is a manually written '\n', so visually,
+				// there's no dedenting to do in the block due to this newline.
+				text += "\n"
 				l.advance()
 			} else if next == 't' {
 				// tab
-				value += "\t"
 				l.advance()
+				text += "\t"
 			} else if next == '{' {
 				// start of inline expr, so just add the brace
-				value += string(l.advance())
+				text += string(l.advance())
 			} else {
 				// just add the single slash
-				value += "\\"
+				text += "\\"
 			}
 		} else if l.match('{') {
-			l.addStringLiteralToken(value, true)
+			l.addStringLiteralToken(text, true)
 			l.start = l.next
 			return
+		} else if l.match('\n') {
+			text += "\n"
+			numWhitespaceToIgnore = l.inStringDedentNum
 		} else {
-			value += string(l.advance())
+			text += string(l.advance())
 		}
 	}
 
-	// we've matched the end delimiter, effectively done with the string
+	// we've matched the end delimiter, we're almost done with the string.
+	if isMultilineString {
+		// we've just finished reading a multiline string, which would've required a newline to end. don't consider that
+		// one part of the string.
+		text = text[:len(text)-1]
+	}
 
-	l.addStringLiteralToken(value, false)
-	if l.inStringStarter != nil && *l.inStringStarter == endChar {
+	l.addStringLiteralToken(text, false)
+
+	if l.inStringStarter != nil && *l.inStringStarter == endDelimiter {
 		// we're ending the final part of the string broken up by inline exprs, so reset state related to 'inString'
 		l.inStringStarter = nil
 		l.inStringStartIndex = -1
+		l.inStringDedentNum = 0
 	}
+}
+
+func (l *Lexer) lexTripleQuoteStringLiteral(numQuotesToSkip int, isRaw bool) {
+	for i := 0; i < numQuotesToSkip; i++ {
+		l.advance()
+	}
+
+	// we don't allow anything by whitespace following the triple quote, so let's
+	// consume any whitespace and the first newline
+
+	for l.match(' ') || l.match('\t') {
+		// matching, so just loop again
+	}
+
+	if l.matchString("//") {
+		l.consumeCodeComment()
+	}
+
+	if !l.match('\n') {
+		l.error("String block opening quotes cannot be followed by any non-comment tokens.")
+	}
+
+	l.lexStringLiteral(`"""`, isRaw, false)
+}
+
+func (l *Lexer) findMultilineDedentNum(start int) int {
+	srcToCheck := l.srcStr[start:]
+	re := regexp.MustCompile(`\n([ \t]*)"""`) // whitespace preceding the ending triple quotes
+	matches := re.FindStringSubmatch(srcToCheck)
+	if matches == nil {
+		l.error("Multiline string must end with three closing quotes on their own line, without any preceding non-whitespace characters.")
+		panic(UNREACHABLE)
+	}
+	numWhitespaces := len(matches[1])
+	return numWhitespaces
 }
 
 func (l *Lexer) lexNumber() {
@@ -427,12 +512,19 @@ func (l *Lexer) lexShebang() {
 	}
 }
 
+// invoke once you're sure there are two slashes
+func (l *Lexer) consumeCodeComment() {
+	for l.peek() != '\n' && !l.isAtEnd() {
+		l.advance()
+	}
+}
+
 func (l *Lexer) lexArgComment() {
 	for l.peek() != '\n' && !l.isAtEnd() {
 		l.advance()
 	}
 
-	value := strings.TrimSpace(string(l.source[l.start+1 : l.next]))
+	value := strings.TrimSpace(string(l.src[l.start+1 : l.next]))
 	l.addArgCommentLiteralToken(&value)
 }
 
@@ -507,7 +599,7 @@ func (l *Lexer) lexTabIndent() {
 }
 
 func (l *Lexer) currentLexeme() string {
-	return string(l.source[l.start:l.next])
+	return string(l.src[l.start:l.next])
 }
 
 func (l *Lexer) addToken(tokenType TokenType) {
@@ -520,7 +612,7 @@ func (l *Lexer) addStringLiteralToken(literal string, followedByInlineExpr bool)
 	lexeme := l.currentLexeme()
 	fullString := ""
 	if l.inStringStartIndex != -1 {
-		fullString = string(l.source[l.inStringStartIndex : l.next-1])
+		fullString = string(l.src[l.inStringStartIndex : l.next-1])
 	}
 	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal, followedByInlineExpr, fullString)
 	l.Tokens = append(l.Tokens, token)

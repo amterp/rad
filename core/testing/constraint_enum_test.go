@@ -43,7 +43,7 @@ args:
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
-	assertError(t, 1, "RslError at L4/23 on '2': Expected string literal, got int\n")
+	assertError(t, 1, "RslError at L4/22 on '2': Expected string literal, got int\n")
 	resetTestState()
 }
 
