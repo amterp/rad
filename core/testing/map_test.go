@@ -86,9 +86,7 @@ print(a)
 	resetTestState()
 }
 
-// todo this needs to work RAD-50
 func TestMap_CanModifyArrayNestedInMap(t *testing.T) {
-	t.Skip("TODO: RAD-50")
 	rsl := `
 a = { "alice": 100, "bob": [10, 20, 30] }
 a["bob"][1] = 200
