@@ -19,6 +19,9 @@ Only for major & minor version releases. Contains only notable items.
 - parsing functions e.g. parse_int, parse_float
 - `.dot.syntax` for map key access
 - Truthy/falsy logic
+- Raw strings
+- Multiline strings
+- Arg constraints - enum
 
 ## 0.4
 

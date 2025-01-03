@@ -51,7 +51,7 @@ func (l *Lexer) Lex() []Token {
 	for i := len(l.indentStack) - 1; i > 0; i-- {
 		lexeme := string(l.src[l.next:l.next])
 		token := NewToken(DEDENT, lexeme, l.next, l.lineIndex, l.lineCharIndex)
-		l.Tokens = append(l.Tokens, token)
+		l.appendToken(token)
 	}
 
 	l.Tokens = append(l.Tokens, NewToken(EOF, "", l.next, l.lineIndex, l.lineCharIndex))
@@ -69,14 +69,12 @@ func (l *Lexer) scanToken() {
 	if l.lineCharIndex == 1 {
 		if l.userUsingSpacesForTabs != nil {
 			if *l.userUsingSpacesForTabs {
-				l.rewind(1)
 				l.lexSpaceIndent()
 			} else {
 				l.lexTabIndent()
 			}
 		} else {
 			if c == ' ' {
-				l.rewind(1)
 				l.lexSpaceIndent()
 			} else if c == '\t' {
 				l.lexTabIndent()
@@ -307,6 +305,7 @@ func (l *Lexer) expectNoEmit(expected rune, errorMessage string) {
 }
 
 func (l *Lexer) rewind(num int) {
+	// todo bug: lineCharIndex and lineIndex should probably also be updated here
 	l.next -= num
 }
 
@@ -562,40 +561,33 @@ func (l *Lexer) lexFileHeader() {
 }
 
 func (l *Lexer) lexSpaceIndent() {
-	numSpaces := 0
-	for l.match(' ') {
-		numSpaces++
+	l.lexIndentation(' ', '\t')
+}
+
+func (l *Lexer) lexTabIndent() {
+	l.lexIndentation('\t', ' ')
+}
+
+func (l *Lexer) lexIndentation(allowedWhitespace rune, notAllowedWhitespace rune) {
+	l.rewind(1)
+	numWhitespaces := 0
+	for l.match(allowedWhitespace) {
+		numWhitespaces++
 	}
-	if l.match('\t') {
+	if l.match(notAllowedWhitespace) {
 		l.error("Mixing spaces and tabs for indentation is not allowed")
 	}
 	if l.match('\n') {
 		// ignore blank lines
 		return
 	}
-	l.emitIndentTokens(numSpaces, true)
+	l.emitIndentTokens(numWhitespaces, allowedWhitespace == ' ')
 	if l.next == l.start {
 		// prior to going in here, we rewound to get the indentation parsing correct
 		// if we're still at the same spot, it means we didn't have anything to parse and thus advance us forward,
 		// so we just wanna undo the rewind
 		l.next++
 	}
-}
-
-func (l *Lexer) lexTabIndent() {
-	l.rewind(1)
-	numTabs := 0
-	for l.match('\t') {
-		numTabs++
-	}
-	if l.match(' ') {
-		l.error("Mixing spaces and tabs for indentation is not allowed")
-	}
-	if l.match('\n') {
-		// ignore blank lines
-		return
-	}
-	l.emitIndentTokens(numTabs, false)
 }
 
 func (l *Lexer) currentLexeme() string {
@@ -605,7 +597,7 @@ func (l *Lexer) currentLexeme() string {
 func (l *Lexer) addToken(tokenType TokenType) {
 	lexeme := l.currentLexeme()
 	token := NewToken(tokenType, lexeme, l.start, l.lineIndex, l.lineCharIndex)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addStringLiteralToken(literal string, followedByInlineExpr bool) {
@@ -615,37 +607,37 @@ func (l *Lexer) addStringLiteralToken(literal string, followedByInlineExpr bool)
 		fullString = string(l.src[l.inStringStartIndex : l.next-1])
 	}
 	token := NewStringLiteralToken(STRING_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal, followedByInlineExpr, fullString)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addIntLiteralToken(literal int64) {
 	lexeme := l.currentLexeme()
 	token := NewIntLiteralToken(INT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addFloatLiteralToken(literal float64) {
 	lexeme := l.currentLexeme()
 	token := NewFloatLiteralToken(FLOAT_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addBoolLiteralToken(literal bool) {
 	lexeme := l.currentLexeme()
 	token := NewBoolLiteralToken(BOOL_LITERAL, lexeme, l.start, l.lineIndex, l.lineCharIndex, literal)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addFileHeaderToken(oneLiner *string, rest *string) {
 	lexeme := l.currentLexeme()
 	token := NewFileHeaderToken(FILE_HEADER, lexeme, l.start, l.lineIndex, l.lineCharIndex, *oneLiner, rest)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) addArgCommentLiteralToken(comment *string) {
 	lexeme := l.currentLexeme()
 	token := NewArgCommentToken(ARG_COMMENT, lexeme, l.start, l.lineIndex, l.lineCharIndex, comment)
-	l.Tokens = append(l.Tokens, token)
+	l.appendToken(token)
 }
 
 func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
@@ -666,7 +658,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 		l.indentStack = append(l.indentStack, numWhitespaces)
 		lexeme := l.currentLexeme()
 		token := NewToken(INDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
-		l.Tokens = append(l.Tokens, token)
+		l.appendToken(token)
 		return
 	}
 
@@ -674,7 +666,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 		l.indentStack = l.indentStack[:len(l.indentStack)-1]
 		lexeme := l.currentLexeme()
 		token := NewToken(DEDENT, lexeme, l.start, l.lineIndex, l.lineCharIndex)
-		l.Tokens = append(l.Tokens, token)
+		l.appendToken(token)
 	}
 
 	expectedIndentationLevel := l.indentStack[len(l.indentStack)-1]
@@ -682,6 +674,11 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 		l.error(fmt.Sprintf("Inconsistent indentation levels. Expected %d spaces/tabs, got %d",
 			expectedIndentationLevel, numWhitespaces))
 	}
+}
+
+func (l *Lexer) appendToken(token Token) {
+	RP.RadDebug(fmt.Sprintf("Appending token: %v", token))
+	l.Tokens = append(l.Tokens, token)
 }
 
 func (l *Lexer) error(message string) {

@@ -1057,14 +1057,31 @@ func (p *Parser) arrayExpr() (Expr, bool) {
 		return &ArrayExpr{Values: []Expr{}}, true
 	}
 
+	p.consumeAnyWhitespace()
+
 	expr := p.expr(1)
 	if p.peekKeyword(GLOBAL_KEYWORDS, FOR) {
 		return p.listComprehension(expr)
 	}
 
 	values := []Expr{expr}
-	for !p.matchAny(RIGHT_BRACKET) {
-		p.consume(COMMA, "Expected ',' between array elements")
+	for {
+		p.consumeAnyWhitespace()
+		if p.matchAny(RIGHT_BRACKET) {
+			break
+		}
+
+		if p.matchAny(COMMA) {
+			p.consumeAnyWhitespace()
+			if p.matchAny(RIGHT_BRACKET) {
+				// trailing comma e.g. [1, 2,]
+				break
+			}
+		} else {
+			p.error("Expected ',' or ']' after array element")
+			return nil, false
+		}
+
 		values = append(values, p.expr(1))
 	}
 
@@ -1518,6 +1535,12 @@ func (p *Parser) consumeNewlinesMin(min int) {
 	}
 	if matched < min && !p.isAtEnd() {
 		p.error("Expected newline")
+	}
+}
+
+func (p *Parser) consumeAnyWhitespace() {
+	for p.matchAny(NEWLINE, INDENT, DEDENT) {
+		// throw away
 	}
 }
 

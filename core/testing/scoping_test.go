@@ -112,7 +112,7 @@ print("i", i)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, expected)
-	assertOutput(t, stdErrBuffer, "RslError at L7/12 on 'i': Undefined variable referenced: i\n")
+	assertOutput(t, stdErrBuffer, "RslError at L7/11 on 'i': Undefined variable referenced: i\n")
 	assertExitCode(t, 1)
 	resetTestState()
 }
