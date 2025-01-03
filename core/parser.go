@@ -38,7 +38,7 @@ func (p *Parser) Parse() []Stmt {
 		if _, ok := s.(*Empty); !ok {
 			statements = append(statements, s)
 		}
-		p.consumeNewlines()
+		p.consumeAnyWhitespace()
 	}
 	return statements
 }
@@ -1094,18 +1094,37 @@ func (p *Parser) mapExpr() (Expr, bool) {
 	}
 	openBrace := p.previous()
 
+	p.consumeAnyWhitespace()
+
 	if p.matchAny(RIGHT_BRACE) {
 		return &MapExpr{Keys: []Expr{}, Values: []Expr{}, OpenBraceToken: openBrace}, true
 	}
 
-	keys := []Expr{p.expr(1)}
-	p.consume(COLON, "Expected ':' between map key and value")
-	values := []Expr{p.expr(1)}
-	for !p.matchAny(RIGHT_BRACE) {
-		p.consume(COMMA, "Expected ',' between map elements")
+	var keys []Expr
+	var values []Expr
+	for {
+		p.consumeAnyWhitespace()
 		keys = append(keys, p.expr(1))
+		p.consumeAnyWhitespace()
 		p.consume(COLON, "Expected ':' between map key and value")
+		p.consumeAnyWhitespace()
 		values = append(values, p.expr(1))
+		p.consumeAnyWhitespace()
+
+		if p.matchAny(RIGHT_BRACE) {
+			break
+		}
+
+		if p.matchAny(COMMA) {
+			p.consumeAnyWhitespace()
+			if p.matchAny(RIGHT_BRACE) {
+				// trailing comma e.g. {a: 1, b: 2,}
+				break
+			}
+		} else {
+			p.error("Expected ',' or '}' after map element")
+			return nil, false
+		}
 	}
 
 	return &MapExpr{Keys: keys, Values: values, OpenBraceToken: openBrace}, true

@@ -83,3 +83,77 @@ print(names)
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func Test_Parser_CanDefineListAcrossLines5(t *testing.T) {
+	rsl := `
+names = ["alice","bob"
+	]
+print(names)
+`
+	setupAndRunCode(t, rsl)
+	expected := `[alice, bob]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Parser_CanDefineListAcrossLines6(t *testing.T) {
+	rsl := `
+if true:
+	names = ["alice","bob"
+		]
+print(names)
+`
+	setupAndRunCode(t, rsl)
+	expected := `[alice, bob]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Parser_CanDefineMapAcrossLines1(t *testing.T) {
+	rsl := `
+names = {
+	"alice": 1,
+	"bob": 2,
+}
+print(names)
+`
+	setupAndRunCode(t, rsl)
+	expected := `{ alice: 1, bob: 2 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Parser_CanDefineMapAcrossLines2(t *testing.T) {
+	rsl := `
+names = {"alice": 1,
+	"bob"     :2,
+}
+print(names)
+`
+	setupAndRunCode(t, rsl)
+	expected := `{ alice: 1, bob: 2 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Parser_CanDefineMapAcrossLines3(t *testing.T) {
+	rsl := `
+names = {"alice": 1,
+	"bob"     :2, "charlie": 3}
+print(names)
+`
+	setupAndRunCode(t, rsl)
+	expected := `{ alice: 1, bob: 2, charlie: 3 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
