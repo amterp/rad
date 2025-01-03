@@ -2,7 +2,9 @@
 title: Basics
 ---
 
-This section of the guide will rapidly cover the basics of RSL. RSL shares a lot of conventions and syntax with popular languages like Python, so if you're familiar with programming, this will be quick & easy.
+This section of the guide will rapidly cover the basics of RSL.
+RSL shares a lot of conventions and syntax with popular languages like Python,
+so if you're familiar with programming, this will be pretty straightforward.
 
 ## Variables & Assignment
 
@@ -41,48 +43,32 @@ RSL's data types closely mirror those of JSON. Namely: strings, ints, floats, bo
 
 ### Strings
 
-Strings can be delimited in three ways. The most standard are double quotes (`"text"`) or single quotes(`'text'`). The third is backticks (``` `text` ```).
+Strings can be delimited in three ways:
 
-Double and single quotes behave the same way. For example:
+1. Double quotes: `"text"`
+2. Single quotes: `'text'`
+3. Backticks: ``` `text` ```
+
+All three behave the same way. To demonstrate:
 
 ```rsl
-greeting = "Hello\nWorld!"
+greeting = "Hello!"
+print(greeting)
+
+greeting = 'Hello!'
+print(greeting)
+
+greeting = `Hello!`
 print(greeting)
 ```
 
 <div class="result">
 ```
-Hello
-World!
+Hello!
+Hello!
+Hello!
 ```
 </div>
-
-```rsl
-greeting = 'Hello\nWorld!'
-print(greeting)
-```
-
-<div class="result">
-```
-Hello
-World!
-```
-</div>
-
-Backtick-delimited strings behave a little differently. Characters like `\n` don't get escaped and so print as-is.
-
-```rsl
-greeting = `Hello\nWorld!`
-print(greeting)
-```
-
-<div class="result">
-```
-Hello\nWorld!
-```
-</div>
-
-Use backtick strings when you want the contents to remain closer to their 'raw' form.
 
 !!! tip "Why 3 different delimiters?"
 
@@ -104,6 +90,66 @@ Use backtick strings when you want the contents to remain closer to their 'raw' 
     We'll cover this again later, but as a note, backticks can be particularly useful in
     [shell commands](../guide/shell_commands.md), as shell/bash commands may include single or double quotes, and backticks
     save us from having to escape them.
+
+Strings can include special characters such as `\n` for new lines and `\t` for tabs.
+
+```rsl
+print("Hello\tdear\nreader!")
+```
+
+<div class="result">
+```
+Hello	dear
+reader!
+```
+</div>
+
+RSL also supports **raw strings**. Raw strings do not allow any escaping (including the delimiter used to create them).
+Use them when you want your contents to remain as "raw" and unprocessed as possible.
+
+To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with `r`.
+
+```rsl
+text = r"Hello\tdear\nreader!"
+print(text)
+```
+
+<div class="result">
+```
+Hello\tdear\nreader!
+```
+</div>
+
+Notice the printed string is exactly as written in code - neither the tab nor newline character were replaced.
+
+Again, you could use any of the three delimiters for raw strings:
+
+```rsl
+text = r"Hello\tdear\nreader!"
+text = r'Hello\tdear\nreader!'
+text = r`Hello\tdear\nreader!`
+```
+
+!!! tip "Raw strings for file paths"
+
+    Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:
+
+    ```rsl
+    path = r"C:\Users\Documents\notes.txt"
+    ```
+
+[//]: # (todo MULTILINE STRINGS)
+
+!!! info "You cannot escape the raw string's own delimiter"
+
+    RSL raw strings behave more like their equivalent in Go than Python.
+    In Python, you can escape the delimiter used to make the raw string i.e. `r"quote: \"!"`. If printed, this will
+    display as `quote: \"!` i.e. the escape character is also printed. There are lots of discussions online about this
+    somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
+    in raw strings of any kind.
+    
+    Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
+    string, leaving a dangling `!"` at the end, which is invalid syntax.
 
 ### int
 
@@ -218,8 +264,17 @@ scores = { "alice": 25, "bob": 17, "charlie": 36 }
 Like lists, they can contain mixed types for values, and can nest. However, **keys must be strings.**
 
 ```rsl
-mixed_map = { "alice": "accountant", "mylist": ["London", 25] }
-nested_map = { "error": { "msg": "Request failed!", "code": 400 } }
+mixed_map = { 
+  "alice": "accountant",
+  "mylist": [ "London", 25 ],
+}
+
+nested_map = {
+  "error": {
+    "msg": "Request failed!",
+    "code": 400,
+  }
+}
 ```
 
 If we take the above example, values can then be accessed in two ways. First is the square bracket lookup:
@@ -286,17 +341,168 @@ print(mymap)
 
 ## Operators
 
-- TBC
-    - arithmetic
-    - comparison
-    - logical
-    - concat
-    - ternary
+RSL offers operators similar to many other languages. Below sections very quickly demonstrate.
+
+### Arithmetic
+
+RSL follows the standard order of operations for operators `+ , - , * , /`:
+
+1. Parentheses
+2. Multiplication
+3. Division
+4. Addition
+5. Subtraction
+
+[//]: # (todo update here when adding modulo)
+
+```rsl
+print(1 + 4 / 2)    // 3
+print(2.5 * 3 - 1)  // 6.5
+print((4 + 5) * 2)  // 18
+```
+
+Dividing two integers will result in a floating point number.
+
+```rsl
+print(5 / 2)  // 2.5
+```
+
+### Comparison
+
+Comparisons return bools that can be used in e.g. [if statements](#if-statements).
+
+String comparison is done based on contents.
+
+```rsl
+print("alice" == "alice")  // true
+print("alice" == "bob")    // false
+print("alice" == "Alice")  // false
+```
+
+Numbers can also be compared with the standard comparators `> , >= , < , <= , ==`.
+
+```rsl
+print(2 >= 2)              // true
+print(2 > 2)               // false
+print(2 <= 2)              // true
+print(2 < 2)               // false
+print(2 == 2)              // false
+```
+
+You cannot use these operators to compare non-numbers such as strings:
+
+```rsl
+print("alice" > "bob")  // error
+```
+
+But you *can* check them for equality (will always return false, except equal floats and ints):
+
+```rsl
+print(2 == "alice")  // false
+print(2 == 2.0)      // true
+```
+
+### Logical
+
+RSL uses `and` and `or` for binary logical operations.
+
+```rsl
+print(false and false)  // false
+print(false and true)   // false
+print(true  and false)  // false
+print(true  and true)   // true
+
+print(false or  false)  // false
+print(true  or  false)  // true
+print(false or true)    // true
+print(true  or  true)   // true
+```
+
+And it uses `not` for logical negation.
+
+```rsl
+print(not true)   // false
+print(not false)  // true
+```
+
+### Concatenation
+
+You can concatenate strings with `+`. 
+
+```rsl
+first = "Alice"
+last = "Bobson"
+print(first + last)
+```
+
+<div class="result">
+```
+Alice Bobson
+```
+</div>
+
+You cannot concatenate a string and a non-string. First convert the non-string into a string.
+
+This can be done in several ways, the easiest is likely to use [string interpolation](../reference/strings.md#string-interpolation):
+
+```rsl
+a = 5
+text = "Number: "
+print(text + "${a}")
+```
+
+<div class="result">
+```
+Number: 5
+```
+</div>
+
+### Compound Operators
+
+```rsl
+a = 3
+a += 2   // a is now 5
+a -= 1   // a is now 4
+a *= 3   // a is now 12
+a /= 24  // a is now 0.5
+```
+
+RSL does not support `++` or `--` syntax.
+
+### Ternary
+
+RSL supports `? :` style ternary operators. 
+
+`<condition> ? <true case> : <false case>`
+
+```rsl
+a = 5
+b = a > 0 ? "larger than 0" : "less than 0"
+print(b)
+```
+
+<div class="result">
+```
+larger than 0
+```
+</div>
+
+## Truthy/Falsy
+
+TBC
 
 ## Control Flow
+
+### If Statements
 
 - TBC
     - if
         - truthy/falsy 
     - for
     - switch
+
+## Converting Types
+
+- TBC
+  - parsing
+  - casting (once implemented)

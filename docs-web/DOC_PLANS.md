@@ -43,3 +43,4 @@
   - varpath assignment?
 
 - style guide? tips?
+- something which goes through rsl snippets and runs them to ensure they compile
