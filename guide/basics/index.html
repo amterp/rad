@@ -473,12 +473,105 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arithmetic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logical" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logical
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concatenation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compound-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compound Operators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ternary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ternary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truthyfalsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy/Falsy
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If Statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting Types
     </span>
   </a>
   
@@ -840,12 +933,105 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arithmetic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logical" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logical
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concatenation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compound-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compound Operators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ternary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ternary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truthyfalsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy/Falsy
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If Statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting Types
     </span>
   </a>
   
@@ -871,7 +1057,9 @@
 
   <h1>Basics</h1>
 
-<p>This section of the guide will rapidly cover the basics of RSL. RSL shares a lot of conventions and syntax with popular languages like Python, so if you're familiar with programming, this will be quick &amp; easy.</p>
+<p>This section of the guide will rapidly cover the basics of RSL.
+RSL shares a lot of conventions and syntax with popular languages like Python,
+so if you're familiar with programming, this will be pretty straightforward.</p>
 <h2 id="variables-assignment">Variables &amp; Assignment<a class="headerlink" href="#variables-assignment" title="Permanent link">&para;</a></h2>
 <p>To create a variable, you can do it through assignment. Let's use a string example:</p>
 <div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
@@ -892,36 +1080,29 @@
 <h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
 <p>RSL's data types closely mirror those of JSON. Namely: strings, ints, floats, bools, lists, and maps.</p>
 <h3 id="strings">Strings<a class="headerlink" href="#strings" title="Permanent link">&para;</a></h3>
-<p>Strings can be delimited in three ways. The most standard are double quotes (<code>"text"</code>) or single quotes(<code>'text'</code>). The third is backticks (<code>`text`</code>).</p>
-<p>Double and single quotes behave the same way. For example:</p>
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello\nWorld!&quot;</span>
+<p>Strings can be delimited in three ways:</p>
+<ol>
+<li>Double quotes: <code>"text"</code></li>
+<li>Single quotes: <code>'text'</code></li>
+<li>Backticks: <code>`text`</code></li>
+</ol>
+<p>All three behave the same way. To demonstrate:</p>
+<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello!&quot;</span>
+print(greeting)
+
+greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>!&#39;
+print(greeting)
+
+greeting<span class="w"> </span>=<span class="w"> </span>`<span class="kt">Hello</span>!`
 print(greeting)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Hello
-World!
+<div class="highlight"><pre><span></span><code>Hello!
+Hello!
+Hello!
 </code></pre></div>
 </div>
 
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>\nWorld!&#39;
-print(greeting)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Hello
-World!
-</code></pre></div>
-</div>
-
-<p>Backtick-delimited strings behave a little differently. Characters like <code>\n</code> don't get escaped and so print as-is.</p>
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span>`<span class="kt">Hello</span>\nWorld!`
-print(greeting)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Hello\nWorld!
-</code></pre></div>
-</div>
-
-<p>Use backtick strings when you want the contents to remain closer to their 'raw' form.</p>
 <div class="admonition tip">
 <p class="admonition-title">Why 3 different delimiters?</p>
 <p>Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of the delimiter characters.</p>
@@ -935,6 +1116,48 @@ print(greeting)
 <p>We'll cover this again later, but as a note, backticks can be particularly useful in
 <a href="../shell_commands/">shell commands</a>, as shell/bash commands may include single or double quotes, and backticks
 save us from having to escape them.</p>
+</div>
+<p>Strings can include special characters such as <code>\n</code> for new lines and <code>\t</code> for tabs.</p>
+<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;Hello\tdear\nreader!&quot;</span>)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello   dear
+reader!
+</code></pre></div>
+</div>
+
+<p>RSL also supports <strong>raw strings</strong>. Raw strings do not allow any escaping (including the delimiter used to create them).
+Use them when you want your contents to remain as "raw" and unprocessed as possible.</p>
+<p>To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with <code>r</code>.</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\tdear\nreader!&quot;</span>
+print(text)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello\tdear\nreader!
+</code></pre></div>
+</div>
+
+<p>Notice the printed string is exactly as written in code - neither the tab nor newline character were replaced.</p>
+<p>Again, you could use any of the three delimiters for raw strings:</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\tdear\nreader!&quot;</span>
+text<span class="w"> </span>=<span class="w"> </span>r&#39;<span class="kt">Hello</span>\tdear\nreader!&#39;
+text<span class="w"> </span>=<span class="w"> </span>r`<span class="kt">Hello</span>\tdear\nreader!`
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Raw strings for file paths</p>
+<p>Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:</p>
+<div class="highlight"><pre><span></span><code>path<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;C:\Users\Documents\notes.txt&quot;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">You cannot escape the raw string's own delimiter</p>
+<p>RSL raw strings behave more like their equivalent in Go than Python.
+In Python, you can escape the delimiter used to make the raw string i.e. <code>r"quote: \"!"</code>. If printed, this will
+display as <code>quote: \"!</code> i.e. the escape character is also printed. There are lots of discussions online about this
+somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
+in raw strings of any kind.</p>
+<p>Instead, if you try the same thing in RSL, you will get an error because the quote following <code>\</code> will close the
+string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
 </div>
 <h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
 <p>RSL has ints. There's nothing unusual about them. Example:</p>
@@ -1003,8 +1226,17 @@ print(numbers[<span class="o">:-</span><span class="mi">1</span>])
 <div class="highlight"><pre><span></span><code>scores<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 25, &quot;bob&quot;: 17, &quot;charlie&quot;</span>:<span class="w"> </span><span class="mi">36</span><span class="w"> </span>}
 </code></pre></div>
 <p>Like lists, they can contain mixed types for values, and can nest. However, <strong>keys must be strings.</strong></p>
-<div class="highlight"><pre><span></span><code>mixed_map<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;accountant&quot;, &quot;mylist&quot;: [&quot;London&quot;, 25] }</span>
-<span class="s">nested_map = { &quot;error&quot;: { &quot;msg&quot;: &quot;Request failed!&quot;, &quot;code&quot;</span>:<span class="w"> </span><span class="mi">400</span><span class="w"> </span>}<span class="w"> </span>}
+<div class="highlight"><pre><span></span><code>mixed_map<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span>
+<span class="w">  </span><span class="s">&quot;alice&quot;: &quot;accountant&quot;,</span>
+<span class="s">  &quot;mylist&quot;: [ &quot;London&quot;, 25 ],</span>
+<span class="s">}</span>
+
+<span class="s">nested_map = {</span>
+<span class="s">  &quot;error&quot;: {</span>
+<span class="s">    &quot;msg&quot;: &quot;Request failed!&quot;,</span>
+<span class="s">    &quot;code&quot;</span>:<span class="w"> </span><span class="mi">400</span>,
+<span class="w">  </span>}
+}
 </code></pre></div>
 <p>If we take the above example, values can then be accessed in two ways. First is the square bracket lookup:</p>
 <div class="highlight"><pre><span></span><code>print(mixed_map[<span class="s">&quot;alice&quot;])</span>
@@ -1053,17 +1285,106 @@ print(mymap)
 </div>
 
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
-<ul>
-<li>TBC<ul>
-<li>arithmetic</li>
-<li>comparison</li>
-<li>logical</li>
-<li>concat</li>
-<li>ternary</li>
-</ul>
-</li>
-</ul>
+<p>RSL offers operators similar to many other languages. Below sections very quickly demonstrate.</p>
+<h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
+<p>RSL follows the standard order of operations for operators <code>+ , - , * , /</code>:</p>
+<ol>
+<li>Parentheses</li>
+<li>Multiplication</li>
+<li>Division</li>
+<li>Addition</li>
+<li>Subtraction</li>
+</ol>
+<div class="highlight"><pre><span></span><code>print(<span class="mi">1</span><span class="w"> </span>+<span class="w"> </span><span class="mi">4</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">    </span>//<span class="w"> </span><span class="mi">3</span>
+print(<span class="mf">2.5</span><span class="w"> </span>*<span class="w"> </span><span class="mi">3</span><span class="w"> </span>-<span class="w"> </span><span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">6.5</span>
+print((<span class="mi">4</span><span class="w"> </span>+<span class="w"> </span><span class="mi">5</span>)<span class="w"> </span>*<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mi">18</span>
+</code></pre></div>
+<p>Dividing two integers will result in a floating point number.</p>
+<div class="highlight"><pre><span></span><code>print(<span class="mi">5</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">2.5</span>
+</code></pre></div>
+<h3 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
+<p>Comparisons return bools that can be used in e.g. <a href="#if-statements">if statements</a>.</p>
+<p>String comparison is done based on contents.</p>
+<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; == &quot;alice&quot;)  // true</span>
+<span class="s">print(&quot;alice&quot; == &quot;bob&quot;)    // false</span>
+<span class="s">print(&quot;alice&quot; == &quot;Alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+</code></pre></div>
+<p>Numbers can also be compared with the standard comparators <code>&gt; , &gt;= , &lt; , &lt;= , ==</code>.</p>
+<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="mi">2</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">2</span>)<span class="w">               </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="mi">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="mi">2</span><span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span>)<span class="w">               </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">false</span>
+</code></pre></div>
+<p>You cannot use these operators to compare non-numbers such as strings:</p>
+<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; &gt; &quot;bob&quot;</span>)<span class="w">  </span>//<span class="w"> </span>error
+</code></pre></div>
+<p>But you <em>can</em> check them for equality (will always return false, except equal floats and ints):</p>
+<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="s">&quot;alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mf">2.0</span>)<span class="w">      </span>//<span class="w"> </span><span class="k">true</span>
+</code></pre></div>
+<h3 id="logical">Logical<a class="headerlink" href="#logical" title="Permanent link">&para;</a></h3>
+<p>RSL uses <code>and</code> and <code>or</code> for binary logical operations.</p>
+<div class="highlight"><pre><span></span><code>print(<span class="k">false</span><span class="w"> </span>and<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="k">false</span><span class="w"> </span>and<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="k">true</span><span class="w">  </span>and<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="k">true</span><span class="w">  </span>and<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">true</span>
+
+print(<span class="k">false</span><span class="w"> </span>or<span class="w">  </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="k">true</span><span class="w">  </span>or<span class="w">  </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="k">false</span><span class="w"> </span>or<span class="w"> </span><span class="k">true</span>)<span class="w">    </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="k">true</span><span class="w">  </span>or<span class="w">  </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">true</span>
+</code></pre></div>
+<p>And it uses <code>not</code> for logical negation.</p>
+<div class="highlight"><pre><span></span><code>print(not<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
+print(not<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
+</code></pre></div>
+<h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
+<p>You can concatenate strings with <code>+</code>. </p>
+<div class="highlight"><pre><span></span><code>first<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<span class="s">last = &quot;Bobson&quot;</span>
+print(first<span class="w"> </span>+<span class="w"> </span>last)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Alice Bobson
+</code></pre></div>
+</div>
+
+<p>You cannot concatenate a string and a non-string. First convert the non-string into a string.</p>
+<p>This can be done in several ways, the easiest is likely to use <a href="../../reference/strings/#string-interpolation">string interpolation</a>:</p>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
+text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Number: &quot;</span>
+<span class="s">print(text + &quot;${a}&quot;</span>)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Number: 5
+</code></pre></div>
+</div>
+
+<h3 id="compound-operators">Compound Operators<a class="headerlink" href="#compound-operators" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>
+a<span class="w"> </span>+=<span class="w"> </span><span class="mi">2</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">5</span>
+a<span class="w"> </span>-=<span class="w"> </span><span class="mi">1</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">4</span>
+a<span class="w"> </span>*=<span class="w"> </span><span class="mi">3</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">12</span>
+a<span class="w"> </span>/=<span class="w"> </span><span class="mi">24</span><span class="w">  </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mf">0.5</span>
+</code></pre></div>
+<p>RSL does not support <code>++</code> or <code>--</code> syntax.</p>
+<h3 id="ternary">Ternary<a class="headerlink" href="#ternary" title="Permanent link">&para;</a></h3>
+<p>RSL supports <code>? :</code> style ternary operators. </p>
+<p><code>&lt;condition&gt; ? &lt;true case&gt; : &lt;false case&gt;</code></p>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
+b<span class="w"> </span>=<span class="w"> </span>a<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span><span class="w"> </span>?<span class="w"> </span><span class="s">&quot;larger than 0&quot; : &quot;less than 0&quot;</span>
+print(b)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>larger than 0
+</code></pre></div>
+</div>
+
+<h2 id="truthyfalsy">Truthy/Falsy<a class="headerlink" href="#truthyfalsy" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
 <h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
+<h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <ul>
 <li>TBC<ul>
 <li>if<ul>
@@ -1074,6 +1395,12 @@ print(mymap)
 <li>switch</li>
 </ul>
 </li>
+</ul>
+<h2 id="converting-types">Converting Types<a class="headerlink" href="#converting-types" title="Permanent link">&para;</a></h2>
+<ul>
+<li>TBC</li>
+<li>parsing</li>
+<li>casting (once implemented)</li>
 </ul>
 
 

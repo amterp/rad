@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#escaping" class="md-skip">
+        <a href="#string-attributes" class="md-skip">
           Skip to content
         </a>
       
@@ -618,15 +618,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#escaping" class="md-nav__link">
-    <span class="md-ellipsis">
-      Escaping
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#string-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       String Attributes
@@ -656,6 +647,24 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw Strings
+    </span>
+  </a>
   
 </li>
       
@@ -700,15 +709,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#escaping" class="md-nav__link">
-    <span class="md-ellipsis">
-      Escaping
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#string-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       String Attributes
@@ -738,6 +738,24 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw Strings
+    </span>
+  </a>
   
 </li>
       
@@ -771,20 +789,6 @@ For example, if you have a string which itself contains lots of single quotes, y
 Or, if your string has both single <em>and</em> double quotes, you can use backticks to delimit your string. Specific example:</p>
 <div class="highlight"><pre><span></span><code>`<span class="kt">Single</span><span class="w"> </span>quotes:<span class="w"> </span>&#39;<span class="kt">Hi</span>!&#39;,<span class="w"> </span>double<span class="w"> </span>quotes:<span class="w"> </span><span class="s">&quot;Hi!&quot;</span>`
 </code></pre></div>
-<h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>\</code> will escape:<ul>
-<li><code>{</code> (to prevent string interpolation)</li>
-<li><code>\n</code> new line</li>
-<li><code>\t</code> tab</li>
-<li><code>\</code> i.e. itself, so you can write backslashes</li>
-<li>The respective string delimiter itself, so <code>\"</code>, <code>\'</code>, or <code>\`</code>, epending on the string you're using. <ul>
-<li>However, it's advised to instead mix string delimiters instead, especially with backticks. So respectively: <code>`"`</code>, <code>`'`</code>.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 <h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Not all strings are just plain text. They may have attributes such as color.</li>
@@ -822,6 +826,37 @@ Or, if your string has both single <em>and</em> double quotes, you can use backt
 <span class="s">&quot;{myString:&gt;20}&quot;</span>
 <span class="s">&quot;{myFloat:.2}&quot;</span>
 </code></pre></div>
+<h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>\</code> will escape:</li>
+<li><code>{</code> (to prevent string interpolation)</li>
+<li><code>\n</code> new line</li>
+<li><code>\t</code> tab</li>
+<li><code>\</code> i.e. itself, so you can write backslashes</li>
+<li>The respective string delimiter itself, so <code>\"</code>, <code>\'</code>, or <code>\`</code>, depending on the delimiter you're using.<ul>
+<li>However, it's advised you use delimiters that don't clash with with the contents of your string, if possible.</li>
+</ul>
+</li>
+</ul>
+<h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
+<p>Raw strings can be used when you want RSL to treat the string as it's written, rather than performing escaping, interpolation, etc.</p>
+<p>Raw strings are created by prefixing an <code>r</code> to the opening delimiter of your string. For example:</p>
+<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;alice&quot;</span>
+<span class="s">text = r&quot;Regards,\n${name}&quot;</span>
+print(text)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Regards,\n${name}
+</code></pre></div>
+</div>
+
+<p>Notice RSL did not render the <code>\n</code> as a newline as it would in a regular string,
+and that <code>${name}</code> is also left as-is i.e. no interpolation was performed.</p>
+<p>Unlike Python, <strong>you cannot escape <em>anything</em> in raw strings</strong>, including the delimiter. For example:</p>
+<div class="highlight"><pre><span></span><code>r<span class="s">&quot;\&quot;&quot;</span>
+</code></pre></div>
+<p>is illegal because the backslash does <em>not</em> escape the following <code>"</code>, and so that quote actually ends the raw string.
+Then we're left with a third and dangling <code>"</code> at the end, causing a syntax error.</p>
 
 
 
