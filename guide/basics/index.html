@@ -761,6 +761,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/math/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Math
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/rad-blocks/" class="md-nav__link">
         
   
@@ -1287,17 +1308,16 @@ print(mymap)
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
 <p>RSL offers operators similar to many other languages. Below sections very quickly demonstrate.</p>
 <h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
-<p>RSL follows the standard order of operations for operators <code>+ , - , * , /</code>:</p>
+<p>RSL follows the standard order of operations for operators <code>() , + , - , * , / , %</code>:</p>
 <ol>
 <li>Parentheses</li>
-<li>Multiplication</li>
-<li>Division</li>
-<li>Addition</li>
-<li>Subtraction</li>
+<li>Multiplication, Division, Modulo</li>
+<li>Addition, Subtraction</li>
 </ol>
 <div class="highlight"><pre><span></span><code>print(<span class="mi">1</span><span class="w"> </span>+<span class="w"> </span><span class="mi">4</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">    </span>//<span class="w"> </span><span class="mi">3</span>
 print(<span class="mf">2.5</span><span class="w"> </span>*<span class="w"> </span><span class="mi">3</span><span class="w"> </span>-<span class="w"> </span><span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">6.5</span>
 print((<span class="mi">4</span><span class="w"> </span>+<span class="w"> </span><span class="mi">5</span>)<span class="w"> </span>*<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mi">18</span>
+print(<span class="mi">5</span><span class="w"> </span>%<span class="w"> </span><span class="mi">3</span>)<span class="w">        </span>//<span class="w"> </span><span class="mi">2</span>
 </code></pre></div>
 <p>Dividing two integers will result in a floating point number.</p>
 <div class="highlight"><pre><span></span><code>print(<span class="mi">5</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">2.5</span>
@@ -1310,16 +1330,16 @@ print((<span class="mi">4</span><span class="w"> </span>+<span class="w"> </span
 <span class="s">print(&quot;alice&quot; == &quot;Alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
 </code></pre></div>
 <p>Numbers can also be compared with the standard comparators <code>&gt; , &gt;= , &lt; , &lt;= , ==</code>.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="mi">2</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">2</span>)<span class="w">               </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="mi">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="mi">2</span><span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span>)<span class="w">               </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mi">2</span>)<span class="w">              </span>//<span class="w"> </span><span class="k">false</span>
+<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="mi">2</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">2</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="mi">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
+print(<span class="mi">2</span><span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
+print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
 </code></pre></div>
-<p>You cannot use these operators to compare non-numbers such as strings:</p>
+<p>You cannot use these operators (outside of <code>==</code>) to compare non-numbers such as strings:</p>
 <div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; &gt; &quot;bob&quot;</span>)<span class="w">  </span>//<span class="w"> </span>error
 </code></pre></div>
-<p>But you <em>can</em> check them for equality (will always return false, except equal floats and ints):</p>
+<p>But you <em>can</em> check them for equality (will always return false, except equal ints and floats that are equal):</p>
 <div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="s">&quot;alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
 print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mf">2.0</span>)<span class="w">      </span>//<span class="w"> </span><span class="k">true</span>
 </code></pre></div>
@@ -1351,7 +1371,7 @@ print(first<span class="w"> </span>+<span class="w"> </span>last)
 </div>
 
 <p>You cannot concatenate a string and a non-string. First convert the non-string into a string.</p>
-<p>This can be done in several ways, the easiest is likely to use <a href="../../reference/strings/#string-interpolation">string interpolation</a>:</p>
+<p>This can be done in several ways, the easiest is probably via <a href="../../reference/strings/#string-interpolation">string interpolation</a>:</p>
 <div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
 text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Number: &quot;</span>
 <span class="s">print(text + &quot;${a}&quot;</span>)
@@ -1366,7 +1386,8 @@ text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Numbe
 a<span class="w"> </span>+=<span class="w"> </span><span class="mi">2</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">5</span>
 a<span class="w"> </span>-=<span class="w"> </span><span class="mi">1</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">4</span>
 a<span class="w"> </span>*=<span class="w"> </span><span class="mi">3</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">12</span>
-a<span class="w"> </span>/=<span class="w"> </span><span class="mi">24</span><span class="w">  </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mf">0.5</span>
+a<span class="w"> </span>%=<span class="w"> </span><span class="mi">10</span><span class="w">  </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">2</span>
+a<span class="w"> </span>/=<span class="w"> </span><span class="mi">4</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mf">0.5</span>
 </code></pre></div>
 <p>RSL does not support <code>++</code> or <code>--</code> syntax.</p>
 <h3 id="ternary">Ternary<a class="headerlink" href="#ternary" title="Permanent link">&para;</a></h3>
