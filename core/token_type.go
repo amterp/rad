@@ -25,8 +25,9 @@ const (
 	AT            TokenType = "AT"      // @
 	LESS          TokenType = "LESS"    // <
 	GREATER       TokenType = "GREATER" // >
-	SLASH         TokenType = "SLASH"   // /
 	STAR          TokenType = "STAR"    // *
+	SLASH         TokenType = "SLASH"   // /
+	PERCENT       TokenType = "PERCENT" // %
 	DOLLAR        TokenType = "DOLLAR"  // $
 
 	// Two-character tokens
@@ -40,6 +41,7 @@ const (
 	MINUS_EQUAL   TokenType = "MINUS_EQUAL"
 	STAR_EQUAL    TokenType = "STAR_EQUAL"
 	SLASH_EQUAL   TokenType = "SLASH_EQUAL"
+	PERCENT_EQUAL TokenType = "PERCENT_EQUAL"
 	ARROW         TokenType = "ARROW" // ->
 
 	// N-character tokens

@@ -11,6 +11,7 @@ func ToPrintable(val interface{}) string {
 	case int64:
 		return strconv.FormatInt(coerced, 10)
 	case float64:
+		// todo results many cases of printing many places due to float imprecision. Display fewer places?
 		return strconv.FormatFloat(coerced, 'f', -1, 64)
 	case string:
 		return coerced

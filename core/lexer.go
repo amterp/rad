@@ -155,6 +155,12 @@ func (l *Lexer) scanToken() {
 		}
 	case '@':
 		l.addToken(AT)
+	case '%':
+		if l.match('=') {
+			l.addToken(PERCENT_EQUAL)
+		} else {
+			l.addToken(PERCENT)
+		}
 	case '$':
 		l.addToken(DOLLAR)
 	case '#':

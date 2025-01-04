@@ -22,6 +22,7 @@ Only for major & minor version releases. Contains only notable items.
 - Raw strings
 - Multiline strings
 - Arg constraints - enum
+- Modulo operator `%`
 
 ## 0.4
 

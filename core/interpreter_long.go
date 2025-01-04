@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -34,7 +35,16 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_MULTIPLY:
 				return coercedLeft * coercedRight
 			case OP_DIVIDE:
+				if coercedRight == 0 {
+					// todo idk if this is what we want to do? should we have a nan concept?
+					i.error(tkn, "Cannot divide by 0")
+				}
 				return float64(coercedLeft) / float64(coercedRight)
+			case OP_MODULO:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot modulo by 0")
+				}
+				return coercedLeft % coercedRight
 			case OP_GREATER:
 				return coercedLeft > coercedRight
 			case OP_GREATER_EQUAL:
@@ -59,7 +69,15 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_MULTIPLY:
 				return float64(coercedLeft) * coercedRight
 			case OP_DIVIDE:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot divide by 0")
+				}
 				return float64(coercedLeft) / coercedRight
+			case OP_MODULO:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot modulo by 0")
+				}
+				return math.Mod(float64(coercedLeft), coercedRight)
 			case OP_GREATER:
 				return float64(coercedLeft) > coercedRight
 			case OP_GREATER_EQUAL:
@@ -106,7 +124,15 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_MULTIPLY:
 				return coercedLeft * float64(coercedRight)
 			case OP_DIVIDE:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot divide by 0")
+				}
 				return coercedLeft / float64(coercedRight)
+			case OP_MODULO:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot modulo by 0")
+				}
+				return math.Mod(coercedLeft, float64(coercedRight))
 			case OP_GREATER:
 				return coercedLeft > float64(coercedRight)
 			case OP_GREATER_EQUAL:
@@ -131,7 +157,15 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_MULTIPLY:
 				return coercedLeft * coercedRight
 			case OP_DIVIDE:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot divide by 0")
+				}
 				return coercedLeft / coercedRight
+			case OP_MODULO:
+				if coercedRight == 0 {
+					i.error(tkn, "Cannot modulo by 0")
+				}
+				return math.Mod(coercedLeft, coercedRight)
 			case OP_GREATER:
 				return coercedLeft > coercedRight
 			case OP_GREATER_EQUAL:
@@ -145,7 +179,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			default:
-				i.error(tkn, "Invalid binary operator for int, float64")
+				i.error(tkn, "Invalid binary operator for int, float")
 			}
 		case []interface{}:
 			switch op {
@@ -154,7 +188,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			default:
-				i.error(tkn, "Invalid binary operator for float64, array")
+				i.error(tkn, "Invalid binary operator for float, array")
 			}
 		default:
 			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))

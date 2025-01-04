@@ -8,3 +8,4 @@
 - `enum name` vs. `name enum` ordering for arg constraints
 - `{}` vs. `${}` for interpolation
 - Ruby-style % syntax or bash heredocs/herestrings?
+- Division by 0 errors or returns nan?

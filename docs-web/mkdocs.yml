@@ -55,6 +55,7 @@ nav:
     - ./reference/defer.md
     - ./reference/functions.md
     - ./reference/logic.md
+    - ./reference/math.md
     - ./reference/rad-blocks.md
     - ./reference/shell-commands.md
     - ./reference/strings.md

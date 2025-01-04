@@ -655,7 +655,7 @@ func (p *Parser) assignment() Stmt {
 	var paths []VarPath
 	paths = append(paths, p.varPath())
 
-	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL) {
+	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, PERCENT_EQUAL) {
 		return p.compoundAssignment(p.previous(), paths[0])
 	}
 
@@ -964,7 +964,7 @@ func (p *Parser) term(numExpectedReturnValues int) Expr {
 func (p *Parser) factor(numExpectedReturnValues int) Expr {
 	expr := p.unary(numExpectedReturnValues)
 
-	for p.matchAny(SLASH, STAR) {
+	for p.matchAny(SLASH, STAR, PERCENT) {
 		if numExpectedReturnValues != 1 {
 			p.error(onlyOneReturnValueAllowed)
 		}

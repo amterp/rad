@@ -345,20 +345,17 @@ RSL offers operators similar to many other languages. Below sections very quickl
 
 ### Arithmetic
 
-RSL follows the standard order of operations for operators `() , + , - , * , /`:
+RSL follows the standard order of operations for operators `() , + , - , * , / , %`:
 
 1. Parentheses
-2. Multiplication
-3. Division
-4. Addition
-5. Subtraction
-
-[//]: # (todo update here when adding modulo)
+2. Multiplication, Division, Modulo
+3. Addition, Subtraction
 
 ```rsl
 print(1 + 4 / 2)    // 3
 print(2.5 * 3 - 1)  // 6.5
 print((4 + 5) * 2)  // 18
+print(5 % 3)        // 2
 ```
 
 Dividing two integers will result in a floating point number.
@@ -466,7 +463,8 @@ a = 3
 a += 2   // a is now 5
 a -= 1   // a is now 4
 a *= 3   // a is now 12
-a /= 24  // a is now 0.5
+a %= 10  // a is now 2
+a /= 4   // a is now 0.5
 ```
 
 RSL does not support `++` or `--` syntax.
