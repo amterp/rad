@@ -83,8 +83,9 @@ func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {
 }
 
 func (i *MainInterpreter) VisitLogicalExpr(logical Logical) interface{} {
-	left := logical.Left.Accept(i).(bool)
-	right := logical.Right.Accept(i).(bool)
+	left := TruthyFalsy(logical.Left.Accept(i))
+	// todo *perhaps* we should short-circuit depending on 'left' and the operator. right now, this is eager.
+	right := TruthyFalsy(logical.Right.Accept(i))
 
 	operator, ok := GLOBAL_KEYWORDS[logical.Operator.GetLexeme()]
 	if !ok || (operator != OR && operator != AND) {
