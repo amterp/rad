@@ -81,6 +81,17 @@ func (p *Parser) matchAny(tokenTypes ...TokenType) bool {
 	return false
 }
 
+// rewinds any read whitespace if the token match fails
+func (p *Parser) matchNextAfterWhitespace(t TokenType) bool {
+	matched := p.consumeAnyWhitespace()
+	if p.peekType(t) {
+		p.advance()
+		return true
+	}
+	p.rewindN(matched)
+	return false
+}
+
 func (p *Parser) advance() Token {
 	if !p.isAtEnd() {
 		p.next++
@@ -89,7 +100,11 @@ func (p *Parser) advance() Token {
 }
 
 func (p *Parser) rewind() {
-	p.next--
+	p.rewindN(1)
+}
+
+func (p *Parser) rewindN(n int) {
+	p.next -= n
 }
 
 func (p *Parser) previous() Token {
@@ -819,14 +834,17 @@ func (p *Parser) expr(numExpectedReturnValues int) Expr {
 func (p *Parser) ternary(numExpectedReturnValues int) Expr {
 	expr := p.or(numExpectedReturnValues)
 
-	if p.matchAny(QUESTION) {
+	if p.matchNextAfterWhitespace(QUESTION) {
 		questionMark := p.previous()
 		if numExpectedReturnValues != 1 {
-			// todo technically, there's no reason to now allow multiple return from e.g a function
+			// todo technically, there's no reason to not allow multiple return from e.g a function
 			p.error(onlyOneReturnValueAllowed)
 		}
+		p.consumeAnyWhitespace()
 		trueBranch := p.expr(1)
+		p.consumeAnyWhitespace()
 		p.consume(COLON, "Expected ':' after true branch of ternary operator")
+		p.consumeAnyWhitespace()
 		falseBranch := p.expr(1)
 		expr = &Ternary{Condition: expr, QuestionMark: questionMark, True: trueBranch, False: falseBranch}
 	}
@@ -1557,10 +1575,12 @@ func (p *Parser) consumeNewlinesMin(min int) {
 	}
 }
 
-func (p *Parser) consumeAnyWhitespace() {
+func (p *Parser) consumeAnyWhitespace() int {
+	matched := 0
 	for p.matchAny(NEWLINE, INDENT, DEDENT) {
-		// throw away
+		matched++
 	}
+	return matched
 }
 
 func (p *Parser) matchKeyword(keywords map[string]TokenType, tokenType TokenType) bool {

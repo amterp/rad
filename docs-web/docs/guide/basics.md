@@ -345,7 +345,7 @@ RSL offers operators similar to many other languages. Below sections very quickl
 
 ### Arithmetic
 
-RSL follows the standard order of operations for operators `+ , - , * , /`:
+RSL follows the standard order of operations for operators `() , + , - , * , /`:
 
 1. Parentheses
 2. Multiplication
@@ -382,20 +382,20 @@ print("alice" == "Alice")  // false
 Numbers can also be compared with the standard comparators `> , >= , < , <= , ==`.
 
 ```rsl
-print(2 >= 2)              // true
-print(2 > 2)               // false
-print(2 <= 2)              // true
-print(2 < 2)               // false
-print(2 == 2)              // false
+print(2 >= 2)  // true
+print(2 > 2)   // false
+print(2 <= 2)  // true
+print(2 < 2)   // false
+print(2 == 2)  // false
 ```
 
-You cannot use these operators to compare non-numbers such as strings:
+You cannot use these operators (outside of `==`) to compare non-numbers such as strings:
 
 ```rsl
 print("alice" > "bob")  // error
 ```
 
-But you *can* check them for equality (will always return false, except equal floats and ints):
+But you *can* check them for equality (will always return false, except equal ints and floats that are equal):
 
 ```rsl
 print(2 == "alice")  // false
@@ -443,7 +443,9 @@ Alice Bobson
 
 You cannot concatenate a string and a non-string. First convert the non-string into a string.
 
-This can be done in several ways, the easiest is likely to use [string interpolation](../reference/strings.md#string-interpolation):
+This can be done in several ways, the easiest is probably via [string interpolation](../reference/strings.md#string-interpolation):
+
+[//]: # (todo that might change after str func gets added)
 
 ```rsl
 a = 5
@@ -468,6 +470,8 @@ a /= 24  // a is now 0.5
 ```
 
 RSL does not support `++` or `--` syntax.
+
+[//]: # (todo that might change...)
 
 ### Ternary
 
