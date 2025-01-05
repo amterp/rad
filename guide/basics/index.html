@@ -54,6 +54,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -1327,6 +1329,7 @@ print(<span class="mi">5</span><span class="w"> </span>%<span class="w"> </span>
 <p>String comparison is done based on contents.</p>
 <div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; == &quot;alice&quot;)  // true</span>
 <span class="s">print(&quot;alice&quot; == &quot;bob&quot;)    // false</span>
+<span class="s">print(&quot;alice&quot; != &quot;bob&quot;)    // true</span>
 <span class="s">print(&quot;alice&quot; == &quot;Alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
 </code></pre></div>
 <p>Numbers can also be compared with the standard comparators <code>&gt; , &gt;= , &lt; , &lt;= , ==</code>.</p>
@@ -1339,10 +1342,17 @@ print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span
 <p>You cannot use these operators (outside of <code>==</code>) to compare non-numbers such as strings:</p>
 <div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; &gt; &quot;bob&quot;</span>)<span class="w">  </span>//<span class="w"> </span>error
 </code></pre></div>
-<p>But you <em>can</em> check them for equality (will always return false, except equal ints and floats that are equal):</p>
+<p>But you <em>can</em> check them for equality (will always return false, except ints and floats that are equal):</p>
 <div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="s">&quot;alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
 print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mf">2.0</span>)<span class="w">      </span>//<span class="w"> </span><span class="k">true</span>
 </code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Difference From Python on <code>True == 1</code> and <code>False == 0</code></p>
+<p>In Python, <code>False == 0</code> and <code>True == 1</code> are true, because under the hood, False is really int 0 and True is really int 1,
+hence they're equal. That's not the case in RSL. In RSL, <strong>any two values of different types are not equal</strong>.</p>
+<p>The reasoning stems from <a href="#truthyfalsy">truthy/falsy-ness</a>. In Python, both <code>1</code> and <code>2</code> are truthy. But only <code>1</code> equals <code>True</code>.
+RSL avoids this oddity of making <code>1</code> special by instead making any two different types not equal (except ints/floats).</p>
+</div>
 <h3 id="logical">Logical<a class="headerlink" href="#logical" title="Permanent link">&para;</a></h3>
 <p>RSL uses <code>and</code> and <code>or</code> for binary logical operations.</p>
 <div class="highlight"><pre><span></span><code>print(<span class="k">false</span><span class="w"> </span>and<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
