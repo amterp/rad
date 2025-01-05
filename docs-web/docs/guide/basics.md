@@ -138,6 +138,7 @@ text = r`Hello\tdear\nreader!`
     path = r"C:\Users\Documents\notes.txt"
     ```
 
+[//]: # (todo STRING INTERPOLATION HERE, ALSO FORMATTING? Or too much?)
 [//]: # (todo MULTILINE STRINGS)
 
 !!! info "You cannot escape the raw string's own delimiter"
@@ -407,7 +408,7 @@ print(2 == 2.0)      // true
     In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
     hence they're equal. That's not the case in RSL. In RSL, **any two values of different types are not equal**.
 
-    The reasoning stems from [truthy/falsy-ness](#truthyfalsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
+    The reasoning stems from [truthy/falsy-ness](#truthy-falsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
     RSL avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
 
 [//]: # (todo move this ^ note to the reference section? is it really necessary in this basics section?)
@@ -502,19 +503,147 @@ larger than 0
 ```
 </div>
 
-## Truthy/Falsy
-
-TBC
-
 ## Control Flow
 
 ### If Statements
 
+RSL employs very standard if statements.
+
+You are **not** required to wrap conditions in parentheses `()`.
+
+```rsl
+if units == "metric":
+  print("That's 10 meters.")
+else if units == "imperial":
+  print("That's almost 33 feet.")
+else:
+  print("I don't know what measurement system!")
+```
+
+### For Loops
+
+RSL allows "for each" loops for iterating through collections such as lists.
+
+```rsl
+names = ["Alice", "Bob", "Charlie"]
+for name in names:
+  print("Hi ${name}!")
+```
+
+<div class="result">
+```
+Hi Alice!
+Hi Bob!
+Hi Charlie!
+```
+</div>
+
+You can also iterate through a range of numbers using the [`range`](../reference/functions.md#range) function, which returns a list of numbers within some specified range.
+
+```rsl
+for i in range(5):
+  print(i)
+```
+
+<div class="result">
+```
+0
+1
+2
+3
+4
+```
+</div>
+
+You can also invoke `range` with a starting value i.e. `range(start, end)` and with a step value i.e. `range(start, end, step)`.
+
+If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
+in an additional variable after the `for`. The first variable will be the index, and the second the item.
+
+[//]: # (TODO ^ OR STRING, WHEN RAD-92 IMPLEMENTED)
+
+```rsl
+names = ["Alice", "Bob", "Charlie"]
+for i, name in names:
+  print("${name} is at index ${i}")
+```
+
+<div class="result">
+```
+Alice is at index 0
+Bob is at index 1
+Charlie is at index 2
+```
+</div>
+
+When iterating through a map, if you have one variable in the loop, then that variable will be the key:
+
+```rsl
+colors = { "alice": "blue", "bob": "green" }
+for k in colors:
+  print(k)
+```
+
+<div class="result">
+```
+alice
+bob
+```
+</div>
+
+If you have two, then the first will be the key, and the second will be the value.
+
+```rsl
+colors = { "alice": "blue", "bob": "green" }
+for k, v in colors:
+  print(k, v)
+```
+
+<div class="result">
+```
+alice blue
+bob green
+```
+</div>
+
+[//]: # (todo i, k, v when implemented)
+
 - TBC
-    - if
-        - truthy/falsy 
-    - for
-    - switch
+  - switch
+
+## Truthy / Falsy
+
+RSL supports truthy/falsy logic.
+
+For those unfamiliar, this means that, instead of writing the following (as an example):
+
+```rsl
+if len(my_list) > 0:
+    print("My list has elements!")
+```
+
+you can write
+
+```rsl
+if my_list:
+    print("My list has elements!")
+```
+
+Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.
+
+The following table shows which values return false for each type. **All other values resolve to true.**
+
+| Type   | Falsy | Description   |
+|--------|-------|---------------|
+| string | `""`  | Empty strings |
+| int    | `0`   | Zero          |
+| float  | `0.0` | Zero          |
+| list   | `[]`  | Empty lists   |
+| map    | `{}`  | Empty maps    |
+
+!!! note ""
+
+    Note that a string which is all whitespace e.g. `" "` is truthy.
 
 ## Converting Types
 

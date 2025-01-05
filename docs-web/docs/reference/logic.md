@@ -9,27 +9,29 @@ RSL supports truthy/falsy logic.
 For those unfamiliar, this means that, instead of writing the following (as an example):
 
 ```rsl
-if len(myList) > 0:
+if len(my_list) > 0:
     print("My list has elements!")
 ```
 
 you can write
 
 ```rsl
-if myList:
+if my_list:
     print("My list has elements!")
 ```
 
 Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.
 
-See below for which values for each type will resolve to false. All other values will resolve to true.
+The following table shows which values return false for each type. **All other values resolve to true.**
 
-| Type   | Falsy |
-|--------|-------|
-| string | `""`  |
-| int    | `0`   |
-| float  | `0.0` |
-| list   | `[]`  |
-| map    | `{}`  |
+| Type   | Falsy | Description   |
+|--------|-------|---------------|
+| string | `""`  | Empty strings |
+| int    | `0`   | Zero          |
+| float  | `0.0` | Zero          |
+| list   | `[]`  | Empty lists   |
+| map    | `{}`  | Empty maps    |
 
-Note that a string which is all whitespace e.g. `" "` is truthy.
+!!! note ""
+
+    Note that a string which is all whitespace e.g. `" "` is truthy.
