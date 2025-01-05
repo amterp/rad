@@ -3,7 +3,13 @@ package core
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"strings"
+)
+
+var (
+	FLOAT64_TYPE = reflect.TypeOf(float64(0))
+	INT64_TYPE   = reflect.TypeOf(int64(0))
 )
 
 func (i *MainInterpreter) VisitBinaryExpr(binary Binary) interface{} {
@@ -23,6 +29,17 @@ func (i *MainInterpreter) calculateResult(left interface{}, right interface{}, o
 }
 
 func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Token, op OpType) interface{} {
+	leftType := reflect.TypeOf(left)
+	rightType := reflect.TypeOf(right)
+
+	if (op == OP_EQUAL || op == OP_NOT_EQUAL) &&
+		leftType != rightType &&
+		!(leftType == FLOAT64_TYPE && rightType == INT64_TYPE) && !(leftType == INT64_TYPE && rightType == FLOAT64_TYPE) {
+		// equality check between different types is false. unless the types are int and float, in which case
+		// we fall through and can compare
+		return op == OP_NOT_EQUAL
+	}
+
 	switch coercedLeft := left.(type) {
 	case int64:
 		switch coercedRight := right.(type) {
@@ -109,6 +126,8 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 				return contains(coercedRight, coercedLeft)
 			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
+			default:
+				i.error(tkn, "Invalid binary operator for int, list")
 			}
 		default:
 			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
@@ -188,7 +207,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			default:
-				i.error(tkn, "Invalid binary operator for float, array")
+				i.error(tkn, "Invalid binary operator for float, list")
 			}
 		default:
 			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
@@ -238,7 +257,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			default:
-				i.error(tkn, "Invalid binary operator for string, array")
+				i.error(tkn, "Invalid binary operator for string, list")
 			}
 		case RslMap:
 			switch op {
@@ -270,7 +289,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_IN:
 				return !contains(coercedRight, coercedLeft)
 			default:
-				i.error(tkn, "Invalid binary operator for bool, array")
+				i.error(tkn, "Invalid binary operator for bool, list")
 			}
 		default:
 			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
@@ -278,13 +297,13 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 	case []interface{}:
 		switch coercedRight := right.(type) {
 		case RslString:
-			i.error(tkn, "Invalid binary operator for mixed array, string")
+			i.error(tkn, "Invalid binary operator for list, string")
 		case int64:
-			i.error(tkn, "Invalid binary operator for mixed array, int")
+			i.error(tkn, "Invalid binary operator for list, int")
 		case float64:
-			i.error(tkn, "Invalid binary operator for mixed array, float")
+			i.error(tkn, "Invalid binary operator for list, float")
 		case bool:
-			i.error(tkn, "Invalid binary operator for mixed array, bool")
+			i.error(tkn, "Invalid binary operator for list, bool")
 		case []interface{}:
 			switch op {
 			case OP_PLUS:
@@ -294,7 +313,7 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 			case OP_NOT_IN:
 				return !contains(coercedLeft, coercedRight)
 			default:
-				i.error(tkn, "Invalid binary operator for array, array")
+				i.error(tkn, "Invalid binary operator for list, list")
 			}
 		default:
 			i.error(tkn, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
@@ -306,15 +325,15 @@ func (i *MainInterpreter) executeOp(left interface{}, right interface{}, tkn Tok
 }
 
 // todo should probably handle RslMap directly
-func contains(array []interface{}, val interface{}) bool {
+func contains(list []interface{}, val interface{}) bool {
 	if a, ok := val.(RslString); ok {
-		for _, v := range array {
+		for _, v := range list {
 			if b, ok := v.(RslString); ok && a.Equals(b) {
 				return true
 			}
 		}
 	} else {
-		for _, v := range array {
+		for _, v := range list {
 			if v == val {
 				return true
 			}

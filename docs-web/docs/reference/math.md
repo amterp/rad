@@ -32,9 +32,9 @@ print(5 % 4.5)
 
 Negative numbers is a somewhat complex topic, and different languages handle them differently. Here is a brief overview:
 
-| Result of -11 % 7 | Approach           | Result takes sign of... | Example Languages                                      |
-|-------------------|--------------------|-------------------------|--------------------------------------------------------|
-| -4                | Truncated Division | Numerator (dividend)    | **RSL**, C, C++, Java, JavaScript, Go, Rust, Swift, C# |
-| 3                 | Floored Division   | Denominator (divisor)   | Python, Ruby, R                                        |
+| -11 % 7 =  | Approach           | Result takes sign of... | Example Languages                                     |
+|------------|--------------------|-------------------------|-------------------------------------------------------|
+| -4         | Truncated Division | Numerator (dividend)    | **RSL**, C/C++, Java, JavaScript, Go, Rust, Swift, C# |
+| 3          | Floored Division   | Denominator (divisor)   | Python, Ruby, R                                       |
 
 Notice RSL behaves differently from Python, and instead follows the behavior of most other major languages.

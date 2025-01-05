@@ -38,15 +38,15 @@ func (r *RslArgTypeT) AsString() string {
 	case ArgBoolT:
 		return "bool"
 	case ArgMixedArrayT:
-		return "mixed array"
+		return "mixed list"
 	case ArgStringArrayT:
-		return "string array"
+		return "string list"
 	case ArgIntArrayT:
-		return "int array"
+		return "int list"
 	case ArgFloatArrayT:
-		return "float array"
+		return "float list"
 	case ArgBoolArrayT:
-		return "bool array"
+		return "bool list"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
 		panic(UNREACHABLE)

@@ -1397,7 +1397,7 @@ func (p *Parser) mixedArrayLiteral(expectedType *RslArgTypeT) MixedArrayLiteral 
 	for !p.matchAny(RIGHT_BRACKET) {
 		literal, ok := p.literalOrArray(expectedType)
 		if !ok {
-			p.error("Expected literal in mixed list")
+			p.error("Expected literal in list")
 		}
 		values = append(values, literal)
 		if !p.peekType(RIGHT_BRACKET) {

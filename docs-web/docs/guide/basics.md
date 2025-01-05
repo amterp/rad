@@ -373,6 +373,7 @@ String comparison is done based on contents.
 ```rsl
 print("alice" == "alice")  // true
 print("alice" == "bob")    // false
+print("alice" != "bob")    // true
 print("alice" == "Alice")  // false
 ```
 
@@ -392,12 +393,24 @@ You cannot use these operators (outside of `==`) to compare non-numbers such as 
 print("alice" > "bob")  // error
 ```
 
-But you *can* check them for equality (will always return false, except equal ints and floats that are equal):
+But you *can* check them for equality (will always return false, except ints and floats that are equal):
 
 ```rsl
 print(2 == "alice")  // false
 print(2 == 2.0)      // true
 ```
+
+[//]: # (todo when we add collection equality, document here)
+
+!!! info "Difference From Python on `True == 1` and `False == 0`"
+
+    In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
+    hence they're equal. That's not the case in RSL. In RSL, **any two values of different types are not equal**.
+
+    The reasoning stems from [truthy/falsy-ness](#truthyfalsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
+    RSL avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
+
+[//]: # (todo move this ^ note to the reference section? is it really necessary in this basics section?)
 
 ### Logical
 

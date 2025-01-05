@@ -90,7 +90,7 @@ func TestCompound_SubtractFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a -= 2`
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/4 on '-=': Invalid binary operator for mixed array, int\n")
+	assertError(t, 1, "RslError at L2/4 on '-=': Invalid binary operator for list, int\n")
 	resetTestState()
 }
 
@@ -98,7 +98,7 @@ func TestCompound_DivideFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a /= 2`
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/4 on '/=': Invalid binary operator for mixed array, int\n")
+	assertError(t, 1, "RslError at L2/4 on '/=': Invalid binary operator for list, int\n")
 	resetTestState()
 }
 
@@ -106,7 +106,7 @@ func TestCompound_MultiplyFromArrayErrors(t *testing.T) {
 	rsl := `a = [1]
 a *= 2`
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/4 on '*=': Invalid binary operator for mixed array, int\n")
+	assertError(t, 1, "RslError at L2/4 on '*=': Invalid binary operator for list, int\n")
 	resetTestState()
 }
 
@@ -114,7 +114,7 @@ func TestCompound_ErrorsIfAppendNotArray(t *testing.T) {
 	rsl := `a = [1]
 a += 2`
 	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/4 on '+=': Invalid binary operator for mixed array, int\n")
+	assertError(t, 1, "RslError at L2/4 on '+=': Invalid binary operator for list, int\n")
 	resetTestState()
 }
 
