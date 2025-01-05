@@ -538,15 +538,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#truthyfalsy" class="md-nav__link">
-    <span class="md-ellipsis">
-      Truthy/Falsy
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
@@ -565,8 +556,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#for-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      For Loops
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truthy-falsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy / Falsy
+    </span>
+  </a>
   
 </li>
       
@@ -1019,15 +1028,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#truthyfalsy" class="md-nav__link">
-    <span class="md-ellipsis">
-      Truthy/Falsy
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
@@ -1046,8 +1046,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#for-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      For Loops
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truthy-falsy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truthy / Falsy
+    </span>
+  </a>
   
 </li>
       
@@ -1350,7 +1368,7 @@ print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span
 <p class="admonition-title">Difference From Python on <code>True == 1</code> and <code>False == 0</code></p>
 <p>In Python, <code>False == 0</code> and <code>True == 1</code> are true, because under the hood, False is really int 0 and True is really int 1,
 hence they're equal. That's not the case in RSL. In RSL, <strong>any two values of different types are not equal</strong>.</p>
-<p>The reasoning stems from <a href="#truthyfalsy">truthy/falsy-ness</a>. In Python, both <code>1</code> and <code>2</code> are truthy. But only <code>1</code> equals <code>True</code>.
+<p>The reasoning stems from <a href="#truthy-falsy">truthy/falsy-ness</a>. In Python, both <code>1</code> and <code>2</code> are truthy. But only <code>1</code> equals <code>True</code>.
 RSL avoids this oddity of making <code>1</code> special by instead making any two different types not equal (except ints/floats).</p>
 </div>
 <h3 id="logical">Logical<a class="headerlink" href="#logical" title="Permanent link">&para;</a></h3>
@@ -1412,21 +1430,134 @@ print(b)
 </code></pre></div>
 </div>
 
-<h2 id="truthyfalsy">Truthy/Falsy<a class="headerlink" href="#truthyfalsy" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
 <h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
+<p>RSL employs very standard if statements.</p>
+<p>You are <strong>not</strong> required to wrap conditions in parentheses <code>()</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>units<span class="w"> </span>==<span class="w"> </span><span class="s">&quot;metric&quot;:</span>
+<span class="s">  print(&quot;That&#39;s 10 meters.&quot;)</span>
+<span class="s">else if units == &quot;imperial&quot;:</span>
+<span class="s">  print(&quot;That&#39;s almost 33 feet.&quot;)</span>
+<span class="s">else:</span>
+<span class="s">  print(&quot;I don&#39;t know what measurement system!&quot;</span>)
+</code></pre></div>
+<h3 id="for-loops">For Loops<a class="headerlink" href="#for-loops" title="Permanent link">&para;</a></h3>
+<p>RSL allows "for each" loops for iterating through collections such as lists.</p>
+<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
+<span class="s">for name in names:</span>
+<span class="s">  print(&quot;Hi ${name}!&quot;</span>)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hi Alice!
+Hi Bob!
+Hi Charlie!
+</code></pre></div>
+</div>
+
+<p>You can also iterate through a range of numbers using the <a href="../../reference/functions/#range"><code>range</code></a> function, which returns a list of numbers within some specified range.</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>range(<span class="mi">5</span>):
+<span class="w">  </span>print(i)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>0
+1
+2
+3
+4
+</code></pre></div>
+</div>
+
+<p>You can also invoke <code>range</code> with a starting value i.e. <code>range(start, end)</code> and with a step value i.e. <code>range(start, end, step)</code>.</p>
+<p>If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
+in an additional variable after the <code>for</code>. The first variable will be the index, and the second the item.</p>
+<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
+<span class="s">for i, name in names:</span>
+<span class="s">  print(&quot;${name} is at index ${i}&quot;</span>)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Alice is at index 0
+Bob is at index 1
+Charlie is at index 2
+</code></pre></div>
+</div>
+
+<p>When iterating through a map, if you have one variable in the loop, then that variable will be the key:</p>
+<div class="highlight"><pre><span></span><code>colors<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot;</span><span class="w"> </span>}
+<span class="k">for</span><span class="w"> </span>k<span class="w"> </span><span class="k">in</span><span class="w"> </span>colors:
+<span class="w">  </span>print(k)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>alice
+bob
+</code></pre></div>
+</div>
+
+<p>If you have two, then the first will be the key, and the second will be the value.</p>
+<div class="highlight"><pre><span></span><code>colors<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot;</span><span class="w"> </span>}
+<span class="k">for</span><span class="w"> </span>k,<span class="w"> </span>v<span class="w"> </span><span class="k">in</span><span class="w"> </span>colors:
+<span class="w">  </span>print(k,<span class="w"> </span>v)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>alice blue
+bob green
+</code></pre></div>
+</div>
+
 <ul>
-<li>TBC<ul>
-<li>if<ul>
-<li>truthy/falsy </li>
-</ul>
-</li>
-<li>for</li>
+<li>TBC</li>
 <li>switch</li>
 </ul>
-</li>
-</ul>
+<h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
+<p>RSL supports truthy/falsy logic.</p>
+<p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(my_list)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
+<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+</code></pre></div>
+<p>you can write</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>my_list:
+<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+</code></pre></div>
+<p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
+<p>The following table shows which values return false for each type. <strong>All other values resolve to true.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Falsy</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td><code>""</code></td>
+<td>Empty strings</td>
+</tr>
+<tr>
+<td>int</td>
+<td><code>0</code></td>
+<td>Zero</td>
+</tr>
+<tr>
+<td>float</td>
+<td><code>0.0</code></td>
+<td>Zero</td>
+</tr>
+<tr>
+<td>list</td>
+<td><code>[]</code></td>
+<td>Empty lists</td>
+</tr>
+<tr>
+<td>map</td>
+<td><code>{}</code></td>
+<td>Empty maps</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p>Note that a string which is all whitespace e.g. <code>" "</code> is truthy.</p>
+</div>
 <h2 id="converting-types">Converting Types<a class="headerlink" href="#converting-types" title="Permanent link">&para;</a></h2>
 <ul>
 <li>TBC</li>

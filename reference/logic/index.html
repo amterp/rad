@@ -723,46 +723,54 @@
 <h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
 <p>RSL supports truthy/falsy logic.</p>
 <p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(myList)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(my_list)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
 <span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
 </code></pre></div>
 <p>you can write</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>myList:
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>my_list:
 <span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
 </code></pre></div>
 <p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
-<p>See below for which values for each type will resolve to false. All other values will resolve to true.</p>
+<p>The following table shows which values return false for each type. <strong>All other values resolve to true.</strong></p>
 <table>
 <thead>
 <tr>
 <th>Type</th>
 <th>Falsy</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>string</td>
 <td><code>""</code></td>
+<td>Empty strings</td>
 </tr>
 <tr>
 <td>int</td>
 <td><code>0</code></td>
+<td>Zero</td>
 </tr>
 <tr>
 <td>float</td>
 <td><code>0.0</code></td>
+<td>Zero</td>
 </tr>
 <tr>
 <td>list</td>
 <td><code>[]</code></td>
+<td>Empty lists</td>
 </tr>
 <tr>
 <td>map</td>
 <td><code>{}</code></td>
+<td>Empty maps</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
 <p>Note that a string which is all whitespace e.g. <code>" "</code> is truthy.</p>
+</div>
 
 
 
