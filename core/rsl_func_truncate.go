@@ -13,7 +13,7 @@ func runTruncate(i *MainInterpreter, function Token, args []interface{}) string 
 		if coerced < 0 {
 			i.error(function, TRUNCATE+fmt.Sprintf("() takes a non-negative int, got %d", coerced))
 		}
-		if coerced >= int64(len(str)) {
+		if coerced >= int64(StrLen(str)) {
 			return str
 		}
 		if isTerminalUtf8 {

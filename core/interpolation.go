@@ -75,7 +75,7 @@ func (l *LiteralInterpreter) insertWidthIntoStrFormat(formatInfo InlineExprForma
 	// consider if we need to adjust padding due to color
 	if str, ok := val.(RslString); ok {
 		plainLen := str.Len()
-		coloredLen := int64(len(valStr))
+		coloredLen := int64(StrLen(valStr))
 		diff := coloredLen - plainLen
 		width += diff
 	}

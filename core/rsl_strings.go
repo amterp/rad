@@ -39,13 +39,25 @@ func (s *RslString) Plain() string {
 func (s *RslString) String() string {
 	builder := strings.Builder{}
 	for _, segment := range s.Segments {
-		if segment.Color != nil {
-			builder.WriteString(segment.Color.Colorize(segment.String))
-		} else {
-			builder.WriteString(segment.String)
-		}
+		builder.WriteString(s.ApplyAttributes(segment.String, segment))
 	}
 	return builder.String()
+}
+
+func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string {
+	if segment.Color != nil {
+		return segment.Color.Colorize(str)
+	} else {
+		return str
+	}
+}
+
+func (s *RslString) StringByRune() []interface{} {
+	var result []interface{}
+	for i := int64(0); i < s.Len(); i++ {
+		result = append(result, s.IndexAt(i))
+	}
+	return result
 }
 
 func (s *RslString) Concat(other RslString) RslString {
@@ -62,7 +74,7 @@ func (s *RslString) Equals(other RslString) bool {
 
 func (s *RslString) Len() int64 {
 	// todo also cachable
-	return int64(len(s.Plain()))
+	return int64(StrLen(s.Plain()))
 }
 
 // assumes idx is valid for this string
@@ -71,7 +83,8 @@ func (s *RslString) IndexAt(idx int64) RslString {
 	for _, segment := range s.Segments {
 		nextSegmentLen := len(segment.String)
 		if cumLen+nextSegmentLen > int(idx) {
-			char := s.Plain()[idx] // todo inefficient, should just look up in segment
+			// rune array conversion required to handle multibyte characters e.g. emojis
+			char := []rune(s.Plain())[idx] // todo inefficient, should just look up in segment
 			return newRslStringWithAttr(string(char), segment)
 		}
 		cumLen += +nextSegmentLen

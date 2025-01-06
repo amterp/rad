@@ -35,7 +35,7 @@ func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
 	flagToken := argDecl.Flag
 	if NotNil(flagToken, func() Token { return nil }) {
 		lexeme := (*flagToken).GetLexeme()
-		if len(lexeme) != 1 {
+		if StrLen(lexeme) != 1 {
 			l.i.error(*flagToken, fmt.Sprintf("Flag %q must be a single character", lexeme))
 		}
 		short = &lexeme

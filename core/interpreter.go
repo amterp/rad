@@ -241,17 +241,11 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 
 	switch coerced := rangeValue.(type) {
 	case []interface{}:
-		var valIdentifier Token
-		var idxIdentifier *Token
-		if stmt.Identifier2 != nil {
-			idxIdentifier = &stmt.Identifier1
-			valIdentifier = *stmt.Identifier2
-		} else {
-			valIdentifier = stmt.Identifier1
-		}
-		runArrayForLoop(i, stmt, coerced, idxIdentifier, valIdentifier)
+		runArrayForLoop(i, stmt, coerced)
 	case RslMap:
-		runMapForLoop(i, stmt, coerced, stmt.Identifier1, stmt.Identifier2)
+		runMapForLoop(i, stmt, coerced)
+	case RslString:
+		runArrayForLoop(i, stmt, coerced.StringByRune())
 	default:
 		i.error(stmt.ForToken, "For loop range must be an array")
 	}
@@ -280,9 +274,16 @@ func runArrayForLoop(
 	i *MainInterpreter,
 	stmt ForStmt,
 	rangeArr []interface{},
-	idxIdentifier *Token,
-	valIdentifier Token,
 ) {
+	var valIdentifier Token
+	var idxIdentifier *Token
+	if stmt.Identifier2 != nil {
+		idxIdentifier = &stmt.Identifier1
+		valIdentifier = *stmt.Identifier2
+	} else {
+		valIdentifier = stmt.Identifier1
+	}
+
 	for idx, val := range rangeArr {
 		if idxIdentifier != nil {
 			i.env.SetAndImplyType(*idxIdentifier, int64(idx))
@@ -304,9 +305,10 @@ func runMapForLoop(
 	i *MainInterpreter,
 	stmt ForStmt,
 	rangeMap RslMap,
-	keyIdentifier Token,
-	valIdentifier *Token,
 ) {
+	keyIdentifier := stmt.Identifier1
+	valIdentifier := stmt.Identifier2
+
 	keys := rangeMap.keys
 	for _, key := range keys {
 		i.env.SetAndImplyType(keyIdentifier, key)

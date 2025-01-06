@@ -1,6 +1,9 @@
 package core
 
-import "sort"
+import (
+	"sort"
+	"unicode/utf8"
+)
 
 // this is the best way I can think of to do the 'typed nil' check...
 func NotNil[T comparable](val *T, nilProvider func() T) bool {
@@ -32,4 +35,9 @@ func SortedKeys(m map[string]interface{}) []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+// Simple len(str) call counts bytes, not runes, so e.g. emojis gets counted as multiple characters
+func StrLen(str string) int {
+	return utf8.RuneCountInString(str)
 }

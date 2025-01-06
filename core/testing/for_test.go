@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestFor_BasicLoop(t *testing.T) {
+func Test_For_BasicLoop(t *testing.T) {
 	rsl := `
 a = ["a", "b", "c"]
 for item in a:
@@ -14,7 +14,7 @@ for item in a:
 	resetTestState()
 }
 
-func TestFor_ILoop(t *testing.T) {
+func Test_For_ILoop(t *testing.T) {
 	rsl := `
 a = ["a", "b", "c"]
 for idx, item in a:
@@ -26,7 +26,7 @@ for idx, item in a:
 	resetTestState()
 }
 
-func TestFor_ChangesInsideAreRemembered(t *testing.T) {
+func Test_For_ChangesInsideAreRemembered(t *testing.T) {
 	rsl := `
 num = 0
 a = ["a", "b", "c"]
@@ -40,7 +40,7 @@ print(num)
 	resetTestState()
 }
 
-func TestFor_MapKeyLoop(t *testing.T) {
+func Test_For_MapKeyLoop(t *testing.T) {
 	rsl := `
 a = { "a": 1, "b": 2, "c": 3 }
 for key in a:
@@ -52,7 +52,7 @@ for key in a:
 	resetTestState()
 }
 
-func TestFor_MapKeyValueLoop(t *testing.T) {
+func Test_For_MapKeyValueLoop(t *testing.T) {
 	rsl := `
 a = { "a": 1, "b": 2, "c": 3 }
 for key, value in a:
@@ -61,6 +61,44 @@ for key, value in a:
 `
 	setupAndRunCode(t, rsl)
 	assertOnlyOutput(t, stdOutBuffer, "a\n1\nb\n2\nc\n3\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_For_CanLoopThroughString(t *testing.T) {
+	rsl := `
+a = "hello 👋"
+for char in a:
+	print(char)
+`
+	setupAndRunCode(t, rsl)
+	expected := `h
+e
+l
+l
+o
+ 
+👋
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+// todo RAD-95 below code should be doable via interpolation
+func Test_For_CanLoopThroughColoredString(t *testing.T) {
+	rsl := `
+a = 'h' + blue("el") + 'lo'
+for char in a:
+	print(char)
+`
+	setupAndRunCode(t, rsl)
+	expected := "h\n"
+	expected += blue("e") + "\n"
+	expected += blue("l") + "\n"
+	expected += "l\n"
+	expected += "o\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }

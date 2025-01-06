@@ -24,6 +24,17 @@ print(len(a))
 	resetTestState()
 }
 
+func TestLen_EmojiString(t *testing.T) {
+	rsl := `
+a = "alice 👋"
+print(len(a))
+`
+	setupAndRunCode(t, rsl)
+	assertOnlyOutput(t, stdOutBuffer, "7\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func TestLen_Map(t *testing.T) {
 	rsl := `
 a = { "alice": 40, "bob": "bar", "charlie": [1, "hi"] }

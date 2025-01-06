@@ -116,8 +116,8 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		// This special character will be replaced with spacing once the
 		// correct alignment is calculated
 		line += USAGE_ALIGNMENT_CHAR
-		if len(line) > maxlen {
-			maxlen = len(line)
+		if StrLen(line) > maxlen {
+			maxlen = StrLen(line)
 		}
 
 		line += f.GetDescription()

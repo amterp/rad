@@ -62,7 +62,7 @@ func parsePickArgs(i *MainInterpreter, function Token, args map[string]interface
 	if prompt, ok := args[PICK_PROMPT]; ok {
 		if rslString, ok := prompt.(RslString); ok {
 			s := rslString.Plain()
-			if len(s) == 0 {
+			if StrLen(s) == 0 {
 				// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
 				// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
 				// looks a bit weird but hey, the user has decided no title, what do they expect?)
