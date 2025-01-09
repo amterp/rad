@@ -57,7 +57,7 @@ Examples:
   - `\t` tab
   - `\` i.e. itself, so you can write backslashes
   - The respective string delimiter itself, so `\"`, `\'`, or `` \` ``, depending on the delimiter you're using.
-    - However, it's advised you use delimiters that don't clash with with the contents of your string, if possible.
+    - However, it's advised you use delimiters that don't clash with the contents of your string, if possible.
 
 ## Raw Strings
 

@@ -41,7 +41,7 @@ name = 2
 
 RSL's data types closely mirror those of JSON. Namely: strings, ints, floats, bools, lists, and maps.
 
-### Strings
+### string
 
 Strings can be delimited in three ways:
 
@@ -138,9 +138,6 @@ text = r`Hello\tdear\nreader!`
     path = r"C:\Users\Documents\notes.txt"
     ```
 
-[//]: # (todo STRING INTERPOLATION HERE, ALSO FORMATTING? Or too much?)
-[//]: # (todo MULTILINE STRINGS)
-
 !!! info "You cannot escape the raw string's own delimiter"
 
     RSL raw strings behave more like their equivalent in Go than Python.
@@ -151,6 +148,11 @@ text = r`Hello\tdear\nreader!`
     
     Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
     string, leaving a dangling `!"` at the end, which is invalid syntax.
+
+RSL also support [string interpolation]() and [multiline strings](). 
+
+[//]: # (todo add link to actual sections ^)
+[//]: # (todo move raw section)
 
 ### int
 
