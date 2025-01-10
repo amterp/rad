@@ -418,6 +418,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Arg Block">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constraints
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -719,6 +734,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Arg Block">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constraints
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -746,7 +776,7 @@
 <p>RSL takes a declarative approach to arguments.
 You simply declare what arguments your script accepts, and let RSL take care of the rest, including parsing user input.</p>
 <p>Arguments are declared as part of an <strong>args block</strong>.</p>
-<p>Here's an example for a script which prints an input word N number of times:</p>
+<p>Here's an example for a script we'll call <code>printwords</code> which prints an input word N number of times:</p>
 <div class="highlight"><pre><span></span><code><span class="nf">args:</span>
 <span class="w">    </span>word<span class="w"> </span>string
 <span class="w">    </span>repeats<span class="w"> </span><span class="k">int</span>
@@ -754,9 +784,72 @@ You simply declare what arguments your script accepts, and let RSL take care of 
 <span class="k">for</span><span class="w"> </span>_<span class="w"> </span><span class="k">in</span><span class="w"> </span>range(repeats):
 <span class="w">    </span>print(word)
 </code></pre></div>
+<p>We can print its usage string using the <code>--help</code> flag:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>printwords<span class="w"> </span>--help
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Usage:
+  printwords &lt;word&gt; &lt;repeats&gt;
+
+Script args:
+      --word string
+      --repeats int
+</code></pre></div>
+</div>
+
 <p>This script defines two mandatory arguments: <code>word</code> that is expected to be a string, and <code>repeats</code> which is expected to be an integer.</p>
-<p>RSL will take care of generating the help string and ensuring correct input is provided to the script when invoked.
-For example, it will reject </p>
+<p>Some important things to note:</p>
+<ul>
+<li>All arguments can be defined positionally or via a flag.</li>
+<li>The positional ordering of args is defined by the order of args in the block.</li>
+<li>Flags are automatically generated and can be used by users to pass values for that argument, instead of doing it positionally.</li>
+</ul>
+<p>Let's look at a more complex example to demonstrate some more features. Let's call it <code>wordjoin</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>words<span class="w"> </span>string[]<span class="w">  </span><span class="o">#</span><span class="w"> </span><span class="kt">Words</span><span class="w"> </span>to<span class="w"> </span>join<span class="w"> </span>together.
+<span class="w">    </span>joiner<span class="w"> </span>j<span class="w"> </span>string<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;-&quot;  # Joiner for the words.</span>
+<span class="s">    should_capitalize &quot;capitalize&quot;</span><span class="w"> </span>c<span class="w"> </span>bool<span class="w">  </span><span class="o">#</span><span class="w"> </span><span class="kt">If</span><span class="w"> </span><span class="k">true</span>,<span class="w"> </span>capitalize<span class="w"> </span>the<span class="w"> </span>words.
+
+<span class="k">if</span><span class="w"> </span>should_capitalize:
+<span class="w">    </span>words<span class="w"> </span>=<span class="w"> </span>words[upper(w)<span class="w"> </span><span class="k">for</span><span class="w"> </span>w<span class="w"> </span><span class="k">in</span><span class="w"> </span>words]
+
+print(join(words,<span class="w"> </span>joiner))
+</code></pre></div>
+<p>If we run <code>--help</code> on this one:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>wordjoin<span class="w"> </span>--help
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Usage:
+  wordjoin &lt;words&gt; [joiner] [-c, --capitalize]
+
+Script args:
+      --words string,string    Words to join together.
+      -j, --joiner string      Joiner for the words. (default -)
+      -c, --capitalize         If true, capitalize the words.
+</code></pre></div>
+</div>
+
+<p>Let's break down each declaration to see what's going on here!</p>
+<ol>
+<li><code>words string[]  # Words to join together.</code></li>
+</ol>
+<p>We declare an arg <code>words</code> which is a list of strings. Note that <code>int[]</code>, <code>float[]</code> and <code>bool[]</code> can be used for int, float, and bool lists respectively.
+We also define an arg comment to make the usage string include a description of what the argument is.</p>
+<ol>
+<li><code>joiner j string = "-"  # Joiner for the words.</code></li>
+</ol>
+<p>We declare a second argument, this one a string <code>joiner</code>. We also define a shorthand flag <code>j</code>, allowing users to specify the arg with a simple <code>-j</code> flag.
+After that, we define a <strong>default</strong> for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.</p>
+<ol>
+<li><code>should_capitalize "capitalize" c bool  # If true, capitalize the words.</code></li>
+</ol>
+<p>We declare our final argument <code>should_capitalize</code>. We rename it with <code>"capitalize"</code>, which will be what users see exposed to them.
+<code>should_capitalize</code> will remain the name of the variable to be referenced throughout the script. We define a shorthand <code>c</code>, and specify the parameter is a <code>bool</code> before finally giving it an arg comment.</p>
+<p>Bools are implicitly always false by default.</p>
+<p>To bring it all together, this is the anatomy of an arg declaration (<code>&lt;angle brackets&gt;</code> represent it's required, <code>[square brackets]</code> indicate it's optional):</p>
+<p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
+<p>Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.</p>
+<h3 id="constraints">Constraints<a class="headerlink" href="#constraints" title="Permanent link">&para;</a></h3>
 
 
 
