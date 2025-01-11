@@ -3,8 +3,9 @@ package core
 import (
 	"bytes"
 	"fmt"
-	"github.com/fatih/color"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 var (

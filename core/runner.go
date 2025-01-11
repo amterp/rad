@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/spf13/pflag"
 	"io"
 	"os"
+
+	"github.com/fatih/color"
+	"github.com/spf13/pflag"
 )
 
 type RadRunner struct {

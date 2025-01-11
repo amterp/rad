@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
-	"github.com/samber/lo"
 	"sort"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 var (

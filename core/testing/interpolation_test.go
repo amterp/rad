@@ -1,8 +1,9 @@
 package testing
 
 import (
-	"github.com/fatih/color"
 	"testing"
+
+	"github.com/fatih/color"
 )
 
 func TestStringInterpolation_String(t *testing.T) {

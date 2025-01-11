@@ -3,11 +3,12 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"rad/core"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const globalFlagHelp = `Global flags:

@@ -3,13 +3,14 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/samber/lo"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 type Requester struct {

@@ -2,13 +2,14 @@ package core
 
 import (
 	"fmt"
-	"github.com/amterp/go-tbl"
-	"github.com/samber/lo"
-	"golang.org/x/term"
 	"io"
 	"os"
 	"strings"
 	"unicode/utf8"
+
+	tblwriter "github.com/amterp/go-tbl"
+	"github.com/samber/lo"
+	"golang.org/x/term"
 )
 
 const (

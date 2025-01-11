@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/samber/lo"

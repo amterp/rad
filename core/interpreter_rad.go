@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
+	"regexp"
+
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
 	"github.com/scylladb/go-set/strset"
-	"regexp"
 )
 
 type RadBlockInterpreter struct {

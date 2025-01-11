@@ -1,8 +1,9 @@
 package testing
 
 import (
-	"github.com/fatih/color"
 	"testing"
+
+	"github.com/fatih/color"
 )
 
 var yellow = color.New(color.FgYellow).SprintFunc()

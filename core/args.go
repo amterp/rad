@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"github.com/samber/lo"
-	"github.com/spf13/pflag"
 	"strconv"
 	"strings"
+
+	"github.com/samber/lo"
+	"github.com/spf13/pflag"
 )
 
 type RslArg interface {

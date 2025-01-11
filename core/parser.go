@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
-	"github.com/samber/lo"
 	"strconv"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 const (

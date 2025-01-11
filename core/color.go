@@ -1,9 +1,10 @@
 package core
 
 import (
+	"sort"
+
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/fatih/color"
-	"sort"
 )
 
 type RslColor int

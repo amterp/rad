@@ -2,8 +2,9 @@ package core
 
 import (
 	"fmt"
-	"github.com/charmbracelet/huh"
 	"strings"
+
+	"github.com/charmbracelet/huh"
 )
 
 func runConfirm(i *MainInterpreter, function Token, args []interface{}) bool {
