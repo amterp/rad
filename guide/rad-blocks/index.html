@@ -8,13 +8,9 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/shell_commands/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/rad-blocks/">
       
       
-        <link rel="prev" href="../args/">
-      
-      
-        <link rel="next" href="../../reference/args/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +18,7 @@
     
     
       
-        <title>Shell Commands - Rad Docs</title>
+        <title>Rad Blocks - Rad Docs</title>
       
     
     
@@ -81,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#example" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -113,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Shell Commands
+              Rad Blocks
             
           </span>
         </div>
@@ -283,19 +284,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -309,7 +308,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -323,7 +322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/" class="md-nav__link">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -383,17 +382,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -402,7 +394,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -664,6 +655,23 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -680,9 +688,25 @@
   
 
 
-  <h1>Shell Commands</h1>
+  <h1>Rad Blocks</h1>
 
+<p>This section discusses another unique RSL concept, including <strong>rad blocks</strong>.
+These allow you to easily and concisely define queries to JSON APIs and what data you want to extract from the response, so that it can be displayed as a nice, readable table.</p>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
+<p>This concept becomes a lot clearer after seeing an example. Take the below script example:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>repo<span class="w"> </span>string<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>repo<span class="w"> </span>to<span class="w"> </span>query.<span class="w"> </span><span class="kt">Format</span>:<span class="w"> </span>user/project
+<span class="w">    </span>limit<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>max<span class="w"> </span>commits<span class="w"> </span>to<span class="w"> </span>return.
 
+url<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;</span>
+
+<span class="kt">Time</span><span class="w"> </span>=<span class="w"> </span>json[].commit.author.date
+<span class="kt">Author</span><span class="w"> </span>=<span class="w"> </span>json[].commit.author.name
+<span class="kt">SHA</span><span class="w"> </span>=<span class="w"> </span>json[].sha
+
+rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Time</span>,<span class="w"> </span><span class="kt">Author</span>,<span class="w"> </span><span class="kt">SHA</span>
+</code></pre></div>
 
 
 
@@ -710,44 +734,6 @@
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../args/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Args">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Args
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../reference/args/" class="md-footer__link md-footer__link--next" aria-label="Next: Args">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Args
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
