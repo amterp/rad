@@ -34,7 +34,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	FlagQuiet = NewBoolRadArg("QUIET", "Q", "Suppresses some output.", false)
 	FlagShell = NewBoolRadArg("SHELL", "", "Outputs shell/bash exports of variables, so they can be eval'd", false)
 	FlagVersion = NewBoolRadArg("VERSION", "V", "Print rad version information.", false)
-	FlagStdinScriptName = NewStringRadArg("STDIN", "", "script-name", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.", "", nil)
+	FlagStdinScriptName = NewStringRadArg("STDIN", "", "script-name", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.", "", nil, nil)
 	FlagMockResponse = NewMockResponseRadArg("MOCK-RESPONSE", "", "Add mock response for json requests (pattern:filePath)")
 	registerGlobalFlags()
 	return Flags

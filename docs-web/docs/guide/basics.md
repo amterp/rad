@@ -684,3 +684,7 @@ The following table shows which values return false for each type. **All other v
 - TBC
   - parsing
   - casting (once implemented)
+
+---
+
+Next, let's look at how can accept arguments from users into our scripts: [Args](./args.md).

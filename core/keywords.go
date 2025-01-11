@@ -36,8 +36,8 @@ var ARGS_BLOCK_KEYWORDS = map[string]TokenType{
 	"array":    ARRAY,
 	"requires": REQUIRES,
 	"enum":     ENUM,
+	"regex":    REGEX,
 	//"one_of":   ONE_OF,
-	//"regex":    REGEX,
 }
 
 var RAD_BLOCK_KEYWORDS = map[string]TokenType{

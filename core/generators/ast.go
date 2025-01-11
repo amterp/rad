@@ -97,6 +97,7 @@ func main() {
 		"ArgDeclaration     : Token Identifier, *Token Rename, *Token Flag, RslArgType ArgType, " + // todo rename 'Rename'?
 			"bool IsOptional, *LiteralOrArray Default, *ArgCommentToken Comment",
 		"ArgEnum            : Token EnumTkn, Token Identifier, MixedArrayLiteral Values",
+		"ArgRegex           : Token RegexTkn, Token Identifier, *regexp.Regexp Regex",
 	})
 
 	defineAst(outputDir, "RadStmt", "", []string{
@@ -176,6 +177,7 @@ const astTemplate = `// GENERATED -- DO NOT EDIT
 package core
 import (
     "fmt"
+    "regexp"
     "strings"
 )
 type {{.BaseName}} interface {

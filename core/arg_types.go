@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 type ScriptArg struct {
 	Name             string // identifier name in the script
@@ -11,6 +14,7 @@ type ScriptArg struct {
 	Description      *string
 	IsOptional       bool
 	EnumConstraint   *[]string
+	RegexConstraint  *regexp.Regexp
 	// first check the Type and IsOptional, then get the value
 	// todo I think just make these non-pointers, and have a separate flag to indicate the arg is set
 	DefaultString      *string

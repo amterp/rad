@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/samber/lo"
 )
 
@@ -56,6 +58,8 @@ func extractArgs(instructions []Stmt) []*ScriptArg {
 	literalInterpreter := NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
 
 	argBlock := argBlockIfFound.(*ArgBlock)
+
+	// read out arguments
 	for _, argStmt := range argBlock.Stmts {
 		argDecl, ok := argStmt.(*ArgDeclaration)
 		if ok {
@@ -65,22 +69,34 @@ func extractArgs(instructions []Stmt) []*ScriptArg {
 		}
 	}
 
+	// now check for constraints
 	for _, argStmt := range argBlock.Stmts {
-		enumConstraint, ok := argStmt.(*ArgEnum)
-		if ok {
-			scriptArg, ok := args[enumConstraint.Identifier.GetLexeme()]
+		switch coerced := argStmt.(type) {
+		case *ArgDeclaration:
+			// already handled above
+		case *ArgEnum:
+			scriptArg, ok := args[coerced.Identifier.GetLexeme()]
 			if !ok {
-				RP.ErrorExit("Enum constraint applied to undeclared arg: " + enumConstraint.Identifier.GetLexeme())
+				RP.ErrorExit("Enum constraint applied to undeclared arg: " + coerced.Identifier.GetLexeme())
 			}
-			literal := enumConstraint.Values.Accept(literalInterpreter)
-			switch coerced := literal.(type) {
-			case []interface{}:
-				strArr, ok := AsStringArray(coerced)
-				if !ok {
-					RP.RadErrorExit("Bug! Parser should not have allowed a non-string enum declaration for arg: " + enumConstraint.Identifier.GetLexeme())
-				}
-				scriptArg.EnumConstraint = &strArr
+			literal := coerced.Values.Accept(literalInterpreter)
+			validValues, ok := literal.([]interface{})
+			if !ok {
+				RP.RadErrorExit(fmt.Sprintf("Bug! Parser should not have allowed a non-array enum declaration for arg (got %T): %s", literal, coerced.Identifier.GetLexeme()))
 			}
+			strArr, ok := AsStringArray(validValues)
+			if !ok {
+				RP.RadErrorExit("Bug! Parser should not have allowed a non-string enum declaration for arg: " + coerced.Identifier.GetLexeme())
+			}
+			scriptArg.EnumConstraint = &strArr
+		case *ArgRegex:
+			scriptArg, ok := args[coerced.Identifier.GetLexeme()]
+			if !ok {
+				RP.ErrorExit("Regex constraint applied to undeclared arg: " + coerced.Identifier.GetLexeme())
+			}
+			scriptArg.RegexConstraint = coerced.Regex
+		default:
+			RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled arg stmt type: %T", coerced))
 		}
 	}
 

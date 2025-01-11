@@ -4,7 +4,7 @@ title: Args
 
 This section covers syntax for defining arguments that your script can accept.
 
-## Arg Block
+## Arg Declarations
 
 RSL takes a declarative approach to arguments.
 You simply declare what arguments your script accepts, and let RSL take care of the rest, including parsing user input.
@@ -112,7 +112,91 @@ Feel free to go back up and check this against the example scripts we wrote, you
 
 [//]: # (todo TIP on when to use rename)
 
-### Constraints
+## Constraints
+
+In addition to declaring the arguments themselves, RSL also allows you to declare constraints on those arguments, such as what kinds of values are valid.
+
+By doing this in the args block, RSL can use this information to validate input for you, and automatically include in the information in your script's usage string.
+
+If a user gives an input which doesn't meet one of the listed constraints, rad will print:
+
+1. The specific error and constraint that was violated.
+
+2. The usage string.
+
+### Enums
+
+If you have a string argument where you really only want to accept some limited number of known values, you can use an **enum constraint**.
+
+Let's use a simple example, we'll call the script `colors`:
+
+```rsl
+args:
+    color string
+    color enum ["red", "green", "blue"]
+print("You like {color}!")
+```
+
+If we print the usage string, you can see it tells users what values are valid:
+
+```shell
+rad colors --help
+```
+
+<div class="result">
+```
+Usage:
+  colors <color>
+
+Script args:
+      --color string    Valid values: [red, green, blue].
+```
+</div>
+
+If we invoke this script with a value outside the listed valid values:
+
+```rsl
+rad colors yellow
+```
+
+<div class="result">
+```
+Invalid 'color' value: yellow (valid values: red, green, blue)
+Usage:
+  colors <color>
+
+Script args:
+      --color string    Valid values: [red, green, blue].
+```
+</div>
+
+Whereas using a valid value will run the script as intended:
+
+```shell
+rad colors green
+```
+
+<div class="result">
+```
+You like green!
+```
+</div>
+
+### Regex
+
+If you'd like input strings to match a certain pattern, you can do that via a **regex constraint**.
+
+```rsl
+args:
+    name string
+    name regex "[A-Z][a-z]*"
+print("Hi, {name}")
+```
+
+In this example, a valid `name` value must start with a capital letter, and can then be followed by any number of lowercase letters.
+No other characters will be accepted, so `Alice` will be a valid value, but `bob` or `John123` are not.
+
+As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
 [//]: # (- TBD)
 [//]: # (- enums)

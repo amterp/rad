@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -209,12 +210,13 @@ func (f *BoolArrRslArg) SetValue(arg string) {
 
 type StringRslArg struct {
 	BaseRslArg
-	Value          string
-	Default        string
-	EnumConstraint *[]string
+	Value           string
+	Default         string
+	EnumConstraint  *[]string
+	RegexConstraint *regexp.Regexp
 }
 
-func NewStringRadArg(name, short, argUsage, description, defaultValue string, enum *[]string) StringRslArg {
+func NewStringRadArg(name, short, argUsage, description, defaultValue string, enum *[]string, regex *regexp.Regexp) StringRslArg {
 	return StringRslArg{
 		BaseRslArg: BaseRslArg{
 			Name:              name,
@@ -225,8 +227,9 @@ func NewStringRadArg(name, short, argUsage, description, defaultValue string, en
 			defaultAsString:   defaultValue,
 			hasNonZeroDefault: defaultValue != "",
 		},
-		Default:        defaultValue,
-		EnumConstraint: enum,
+		Default:         defaultValue,
+		EnumConstraint:  enum,
+		RegexConstraint: regex,
 	}
 }
 
@@ -252,7 +255,12 @@ func (f *StringRslArg) GetDescription() string {
 	if f.EnumConstraint != nil {
 		builder.WriteString(" Valid values: [")
 		builder.WriteString(strings.Join(*f.EnumConstraint, ", "))
-		builder.WriteString("]")
+		builder.WriteString("].")
+	}
+
+	if f.RegexConstraint != nil {
+		builder.WriteString(" Regex: ")
+		builder.WriteString((*f.RegexConstraint).String())
 	}
 
 	return builder.String()
@@ -263,6 +271,13 @@ func (f *StringRslArg) ValidateConstraints() error {
 	if f.EnumConstraint != nil {
 		if !lo.Contains(*f.EnumConstraint, f.Value) {
 			return fmt.Errorf("Invalid '%s' value: %v (valid values: %s)", f.Name, f.Value, strings.Join(*f.EnumConstraint, ", "))
+		}
+	}
+
+	constraint := f.RegexConstraint
+	if constraint != nil {
+		if !constraint.MatchString(f.Value) {
+			return fmt.Errorf("Invalid '%s' value: %v (must match regex: %s)", f.Name, f.Value, constraint.String())
 		}
 	}
 
@@ -546,7 +561,7 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		if arg.DefaultString != nil {
 			defVal = *arg.DefaultString
 		}
-		f := NewStringRadArg(apiName, shorthand, "string", description, defVal, arg.EnumConstraint)
+		f := NewStringRadArg(apiName, shorthand, "string", description, defVal, arg.EnumConstraint, arg.RegexConstraint)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f

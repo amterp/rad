@@ -188,3 +188,7 @@ func NoErrorRslMap() RslMap {
 	m := NewRslMap()
 	return *m
 }
+
+func (e StringLiteral) FullString() string {
+	return e.Value[len(e.Value)-1].FullStringLiteral
+}

@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -195,14 +196,14 @@ func (p *Parser) argStatement() ArgStmt {
 		panic(NOT_IMPLEMENTED)
 	}
 
-	if p.matchKeyword(ARGS_BLOCK_KEYWORDS, REGEX) {
-		panic(NOT_IMPLEMENTED)
-	}
-
 	identifier := p.consume(IDENTIFIER, "Expected identifier or keyword")
 
 	if p.peekKeyword(ARGS_BLOCK_KEYWORDS, ENUM) {
 		return p.argEnumConstraint(identifier)
+	}
+
+	if p.peekKeyword(ARGS_BLOCK_KEYWORDS, REGEX) {
+		return p.argRegexConstraint(identifier)
 	}
 
 	if p.peekType(STRING_LITERAL) || // for renames
@@ -231,6 +232,23 @@ func (p *Parser) argEnumConstraint(identifier Token) ArgStmt {
 		EnumTkn:    enumTkn,
 		Identifier: identifier,
 		Values:     values,
+	}
+}
+
+func (p *Parser) argRegexConstraint(identifier Token) ArgStmt {
+	regexTkn := p.consume(IDENTIFIER, "Bug! Expected regex identifier")
+	regex := p.stringLiteral()
+
+	regexStr := regex.FullString()
+	compiled, err := regexp.Compile(regexStr)
+	if err != nil {
+		p.error(fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()))
+	}
+
+	return &ArgRegex{
+		RegexTkn:   regexTkn,
+		Identifier: identifier,
+		Regex:      compiled,
 	}
 }
 

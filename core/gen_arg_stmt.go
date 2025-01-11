@@ -3,6 +3,7 @@ package core
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -12,6 +13,7 @@ type ArgStmt interface {
 type ArgStmtVisitor interface {
 	VisitArgDeclarationArgStmt(ArgDeclaration)
 	VisitArgEnumArgStmt(ArgEnum)
+	VisitArgRegexArgStmt(ArgRegex)
 }
 type ArgDeclaration struct {
 	Identifier Token
@@ -53,4 +55,21 @@ func (e ArgEnum) String() string {
 	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
 	parts = append(parts, fmt.Sprintf("Values: %v", e.Values))
 	return fmt.Sprintf("ArgEnum(%s)", strings.Join(parts, ", "))
+}
+
+type ArgRegex struct {
+	RegexTkn   Token
+	Identifier Token
+	Regex      *regexp.Regexp
+}
+
+func (e ArgRegex) Accept(visitor ArgStmtVisitor) {
+	visitor.VisitArgRegexArgStmt(e)
+}
+func (e ArgRegex) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("RegexTkn: %v", e.RegexTkn))
+	parts = append(parts, fmt.Sprintf("Identifier: %v", e.Identifier))
+	parts = append(parts, fmt.Sprintf("Regex: %v", e.Regex))
+	return fmt.Sprintf("ArgRegex(%s)", strings.Join(parts, ", "))
 }
