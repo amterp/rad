@@ -21,14 +21,16 @@
   - [x] take 1
   - installation troubleshooting
 - basics
-  - [ ] take 1
+  - [x] take 1
 - args
-  - [ ] take 1
+  - [x] take 1
 - rad blocks
   - [ ] take 1
 - functions
   - [ ] take 1
-- string interpolation & formatting
+- string interpolation & formatting, multiline strings
+  - [ ] take 1
+- resources, picking
   - [ ] take 1
 - shell cmds
   - [ ] take 1
@@ -36,11 +38,13 @@
   - [ ] take 1
 - global flags
   - [ ] take 1
+  - mock
 - defer/errdefer
   - [ ] take 1
 - misc advanced
   - [ ] take 1
   - varpath assignment?
+  - shell embedding
 
 - style guide? tips?
 - something which goes through rsl snippets and runs them to ensure they compile

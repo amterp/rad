@@ -88,7 +88,7 @@ Hello!
     ```
     
     We'll cover this again later, but as a note, backticks can be particularly useful in
-    [shell commands](../guide/shell_commands.md), as shell/bash commands may include single or double quotes, and backticks
+    [shell commands](../guide/shell-commands.md), as shell/bash commands may include single or double quotes, and backticks
     save us from having to escape them.
 
 Strings can include special characters such as `\n` for new lines and `\t` for tabs.
@@ -149,7 +149,7 @@ text = r`Hello\tdear\nreader!`
     Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
     string, leaving a dangling `!"` at the end, which is invalid syntax.
 
-RSL also support [string interpolation]() and [multiline strings](). 
+RSL also support [string interpolation](TODO) and [multiline strings](TODO). 
 
 [//]: # (todo add link to actual sections ^)
 [//]: # (todo move raw section)
@@ -685,6 +685,17 @@ The following table shows which values return false for each type. **All other v
   - parsing
   - casting (once implemented)
 
----
+## Learnings Summary
 
-Next, let's look at how can accept arguments from users into our scripts: [Args](./args.md).
+- We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
+- RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
+- RSL has uses operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
+- RSL uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
+    - If you want to increment through a number range, use the `range` function to generate you a list of ints.
+- RSL offers truthy/falsy logic for more concise conditional expressions.
+
+## Next
+
+Good job on getting through the basics of the language! 
+
+Next, let's dive into one of the areas of RSL that make it shine: [Args](./args.md).

@@ -49,10 +49,11 @@ extra_css:
 nav:
   - Home: index.md
   - Guide:
-      - ./guide/getting_started.md
+      - ./guide/getting-started.md
       - ./guide/basics.md
       - ./guide/args.md
-      - ./guide/shell_commands.md
+      - ./guide/rad-blocks.md
+      - ./guide/shell-commands.md
   - Reference:
     - ./reference/args.md
     - ./reference/assignment.md

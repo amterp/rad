@@ -247,6 +247,13 @@ it will invoke said interpreter on the script (equivalent to `rad ./hello` like 
 
 Great job on getting this far! You've gotten a peek at what rad and RSL have to offer.
 
-If you're ready to dive into more details, then you can continue in the next section: [Basics](./basics.md).
+From here, you have two options:
 
-[//]: # (todo: add link for 'those who want to just see more RSL features')
+1. Continue your RSL journey: dive into more details with the next section: [Basics](./basics.md).
+
+2. If you're interested instead in seeing additional unique RSL features, feel free to skip ahead to any of these sections:
+    - [Args](./args.md)
+    - [Rad Blocks](./rad-blocks.md)
+    - [Shell Commands](./shell-commands.md)
+
+[//]: # (TODO pick_from_resource ^)

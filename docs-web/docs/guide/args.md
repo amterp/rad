@@ -198,6 +198,17 @@ No other characters will be accepted, so `Alice` will be a valid value, but `bob
 
 As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
-[//]: # (- TBD)
-[//]: # (- enums)
-[//]: # (- regex &#40;when implemented&#41;)
+## Learnings Summary
+
+- RSL takes a *declarative* approach to args. Rad handles parsing user input.
+- All args can be specified positionally or via a flag from the user.
+- The anatomy of an arg declaration is this:
+
+    `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
+
+- You can apply constraints to arguments inside the arg block, such as `enum` and `regex` constraints.
+- Details in the arg block are used by rad to provide a better usage/help string.
+
+## Next
+
+Nice, let's now look at another RSL feature which makes it uniquely suited to certain types of scripting: [Rad Blocks](./rad-blocks.md).
