@@ -43,8 +43,10 @@ This script defines two mandatory arguments: `word` that is expected to be a str
 
 Some important things to note:
 
+[//]: # (todo point 1 should clarify *FOR USERS*)
+
 - All arguments can be defined positionally or via a flag.
-- The positional ordering of args is defined by the order of args in the block.
+- The positional ordering of args follows the order of declaration in the block.
 - Flags are automatically generated and can be used by users to pass values for that argument, instead of doing it positionally.
 
 Let's look at a more complex example to demonstrate some more features. Let's call it `wordjoin`.
@@ -79,7 +81,7 @@ Script args:
 ```
 </div>
 
-Let's break down each declaration to see what's going on here!
+Let's break down each declaration to see what's going on here.
 
 [//]: # (todo points below all show up as 1)
 
@@ -90,21 +92,25 @@ We also define an arg comment to make the usage string include a description of 
 
 2. `joiner j string = "-"  # Joiner for the words.`
 
-We declare a second argument, this one a string `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
+We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
 After that, we define a **default** for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
 
 3. `should_capitalize "capitalize" c bool  # If true, capitalize the words.`
 
-We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them.
+We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them, instead of the initial variable name.
 `should_capitalize` will remain the name of the variable to be referenced throughout the script. We define a shorthand `c`, and specify the parameter is a `bool` before finally giving it an arg comment.
 
-Bools are implicitly always false by default.
+Bool args are always false by default.
+
+---
 
 To bring it all together, this is the anatomy of an arg declaration (`<angle brackets>` represent it's required, `[square brackets]` indicate it's optional):
 
 `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
 
 Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.
+
+[//]: # (todo TIP on when to use rename)
 
 ### Constraints
 

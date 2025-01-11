@@ -165,6 +165,6 @@ print("two")
 `
 	setupAndRunCode(t, rsl)
 	// this specific error is not ideal, we can (and probably should) improve it
-	assertError(t, 1, "RslError at L5/2 on '\t': Expected expression\n")
+	assertError(t, 1, "RslError at L5/2 on '\\t': Expected expression\n")
 	resetTestState()
 }

@@ -483,9 +483,41 @@ a %= 10  // a is now 2
 a /= 4   // a is now 0.5
 ```
 
-RSL does not support `++` or `--` syntax.
+### Increment / Decrement
 
-[//]: # (todo that might change...)
+You can quickly increment and decrement ints and floats using `++` and `--` syntax.
+
+```rsl
+a = 2
+a++
+print(a)
+
+b = 2.5
+b--
+print(b)
+```
+
+<div class="result">
+```
+3
+1.5
+```
+</div>
+
+The increment and decrement operators produce *statements*, not *expressions*.
+This means that `a++` does not *return* anything, and so cannot be used inside e.g. a conditional.
+
+For example, the following two uses are invalid, because `a++` doesn't return a value:
+
+```rsl
+a = 5
+if a++ > 0:  // invalid, nothing for > to evaluate against on the left side
+  ...
+  
+b = a++  // also invalid because a++ doesn't return any value
+```
+
+Because of that, there's also no reason to support *pre*-incrementing, and so `++a` or `--a` are invalid statements.
 
 ### Ternary
 

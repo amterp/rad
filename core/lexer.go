@@ -144,7 +144,7 @@ func (l *Lexer) scanToken() {
 			l.addToken(PLUS)
 		}
 	case '-':
-		if l.matchString("--") && l.match('\n') {
+		if l.lineCharIndex == 1 && l.matchString("--\n") {
 			l.lexFileHeader()
 		} else if l.match('=') {
 			l.addToken(MINUS_EQUAL)

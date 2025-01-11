@@ -150,8 +150,9 @@ func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) 
 		} else {
 			lexeme := token.GetLexeme()
 			lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
+			lexeme = strings.ReplaceAll(lexeme, "\t", "\\t")
 			fmt.Fprintf(p.stdErr, "RslError at L%d/%d on '%s': %s",
-				token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
+				token.GetLine(), token.GetCharLineStart(), lexeme, msg)
 		}
 	}
 	p.printShellExitIfEnabled()

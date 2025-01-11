@@ -25,6 +25,12 @@ func main() {
 		"FloatLiteral      : FloatLiteralToken Value, bool IsNegative",
 		"BoolLiteral       : BoolLiteralToken Value",
 		"IdentifierLiteral : Token Tkn", // kinda like 'quoteless' strings. e.g. json.key.etc. Returns as string when visited.
+
+		// below synths are for on-the-fly generation of literals that don't have a corresponding token in the code.
+		"SyntheticInt       : int64 Val",
+		//"SyntheticFloat     : float64 Val", // these aren't needed atm, but this is how you would add them
+		//"SyntheticString    : string Val",
+		//"SyntheticBool      : bool Val",
 	})
 
 	// arrayLiteral -> "[" ( literal ( "," literal )* )? "]"

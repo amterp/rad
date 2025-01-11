@@ -15,6 +15,7 @@ type LiteralVisitor interface {
 	VisitFloatLiteralLiteral(FloatLiteral) interface{}
 	VisitBoolLiteralLiteral(BoolLiteral) interface{}
 	VisitIdentifierLiteralLiteral(IdentifierLiteral) interface{}
+	VisitSyntheticIntLiteral(SyntheticInt) interface{}
 }
 type StringLiteral struct {
 	Value       []StringLiteralToken
@@ -85,4 +86,17 @@ func (e IdentifierLiteral) String() string {
 	var parts []string
 	parts = append(parts, fmt.Sprintf("Tkn: %v", e.Tkn))
 	return fmt.Sprintf("IdentifierLiteral(%s)", strings.Join(parts, ", "))
+}
+
+type SyntheticInt struct {
+	Val int64
+}
+
+func (e SyntheticInt) Accept(visitor LiteralVisitor) interface{} {
+	return visitor.VisitSyntheticIntLiteral(e)
+}
+func (e SyntheticInt) String() string {
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Val: %v", e.Val))
+	return fmt.Sprintf("SyntheticInt(%s)", strings.Join(parts, ", "))
 }

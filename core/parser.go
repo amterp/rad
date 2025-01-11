@@ -81,6 +81,14 @@ func (p *Parser) matchAny(tokenTypes ...TokenType) bool {
 	return false
 }
 
+func (p *Parser) matchSeries(tokenTypes ...TokenType) bool {
+	if !p.peekTypeSeries(tokenTypes...) {
+		return false
+	}
+	p.advanceN(len(tokenTypes))
+	return true
+}
+
 // rewinds any read whitespace if the token match fails
 func (p *Parser) matchNextAfterWhitespace(t TokenType) bool {
 	matched := p.consumeAnyWhitespace()
@@ -93,8 +101,14 @@ func (p *Parser) matchNextAfterWhitespace(t TokenType) bool {
 }
 
 func (p *Parser) advance() Token {
-	if !p.isAtEnd() {
-		p.next++
+	return p.advanceN(1)
+}
+
+func (p *Parser) advanceN(n int) Token {
+	for i := 0; i < n; i++ {
+		if !p.isAtEnd() {
+			p.next++
+		}
 	}
 	return p.previous()
 }
@@ -642,6 +656,10 @@ func (p *Parser) identifierAsExpr(identifier Token) ExprLoa {
 	return ExprLoa{Value: &LoaLiteral{Value: &IdentifierLiteral{Tkn: identifier}}}
 }
 
+func (p *Parser) intAsExpr(val int64) ExprLoa {
+	return ExprLoa{Value: &LoaLiteral{Value: &SyntheticInt{Val: val}}}
+}
+
 func (p *Parser) identifierAsVariable(identifier Token) Expr {
 	return &Variable{Name: identifier}
 }
@@ -657,6 +675,10 @@ func (p *Parser) assignment() Stmt {
 
 	if p.matchAny(PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, PERCENT_EQUAL) {
 		return p.compoundAssignment(p.previous(), paths[0])
+	}
+
+	if p.matchSeries(PLUS, PLUS) || p.matchSeries(MINUS, MINUS) {
+		return p.incrDecrStmt(p.previous(), paths[0])
 	}
 
 	for !p.matchAny(EQUAL) {
@@ -705,6 +727,21 @@ func (p *Parser) compoundAssignment(operator Token, path VarPath) Stmt {
 		Tkn:         operator,
 		Paths:       []VarPath{path},
 		Initializer: &Binary{operator, path, opType, expr},
+	}
+}
+
+func (p *Parser) incrDecrStmt(operator Token, path VarPath) Stmt {
+	opType, ok := TKN_TYPE_TO_OP_MAP[operator.GetType()]
+
+	if !ok {
+		p.error("Invalid increment/decrement operator")
+		panic(UNREACHABLE)
+	}
+
+	return &Assign{
+		Tkn:         operator,
+		Paths:       []VarPath{path},
+		Initializer: &Binary{operator, path, opType, p.intAsExpr(1)},
 	}
 }
 
