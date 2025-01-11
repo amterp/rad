@@ -597,6 +597,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -618,6 +636,27 @@
   
   <span class="md-ellipsis">
     Args
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rad-blocks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
   </span>
   
 
@@ -1117,6 +1156,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1194,7 +1251,7 @@ Hello!
 <span class="s">`She said &quot;Goodbye&quot;</span>`
 </code></pre></div>
 <p>We'll cover this again later, but as a note, backticks can be particularly useful in
-<a href="../guide/shell_commands.md">shell commands</a>, as shell/bash commands may include single or double quotes, and backticks
+<a href="../shell-commands/">shell commands</a>, as shell/bash commands may include single or double quotes, and backticks
 save us from having to escape them.</p>
 </div>
 <p>Strings can include special characters such as <code>\n</code> for new lines and <code>\t</code> for tabs.</p>
@@ -1239,7 +1296,7 @@ in raw strings of any kind.</p>
 <p>Instead, if you try the same thing in RSL, you will get an error because the quote following <code>\</code> will close the
 string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
 </div>
-<p>RSL also support <a href="">string interpolation</a> and <a href="">multiline strings</a>. </p>
+<p>RSL also support <a href="TODO">string interpolation</a> and <a href="TODO">multiline strings</a>. </p>
 <h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
 <p>RSL has ints. There's nothing unusual about them. Example:</p>
 <div class="highlight"><pre><span></span><code>team_size<span class="w"> </span>=<span class="w"> </span><span class="mi">20</span>
@@ -1629,8 +1686,20 @@ bob green
 <li>parsing</li>
 <li>casting (once implemented)</li>
 </ul>
-<hr />
-<p>Next, let's look at how can accept arguments from users into our scripts: <a href="../args/">Args</a>.</p>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<ul>
+<li>We rapidly covered many basic topics such as assignment, data types, operators, and control flow.</li>
+<li>RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.</li>
+<li>RSL has uses operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
+<li>RSL uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
+<li>If you want to increment through a number range, use the <code>range</code> function to generate you a list of ints.</li>
+</ul>
+</li>
+<li>RSL offers truthy/falsy logic for more concise conditional expressions.</li>
+</ul>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>Good job on getting through the basics of the language! </p>
+<p>Next, let's dive into one of the areas of RSL that make it shine: <a href="../args/">Args</a>.</p>
 
 
 

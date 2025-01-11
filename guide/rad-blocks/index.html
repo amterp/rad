@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/rad-blocks/">
       
       
+        <link rel="prev" href="../args/">
+      
+      
+        <link rel="next" href="../shell-commands/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -78,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example" class="md-skip">
+        <a href="#basic-example" class="md-skip">
           Skip to content
         </a>
       
@@ -284,17 +288,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -308,7 +314,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -373,6 +379,192 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arg-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arg Block
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-field-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Json Field Definitions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rad-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rad Block
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-rad-block-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Rad Block Options
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Rad Block Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sorting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sorting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mapping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color" class="md-nav__link">
+    <span class="md-ellipsis">
+      Color
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If Statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request Blocks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Display Blocks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -662,9 +854,129 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#basic-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Example
+      Basic Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arg-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arg Block
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-field-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Json Field Definitions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rad-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rad Block
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-rad-block-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Rad Block Options
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Rad Block Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sorting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sorting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mapping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color" class="md-nav__link">
+    <span class="md-ellipsis">
+      Color
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      If Statements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request Blocks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Display Blocks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
     </span>
   </a>
   
@@ -692,9 +1004,10 @@
 
 <p>This section discusses another unique RSL concept, including <strong>rad blocks</strong>.
 These allow you to easily and concisely define queries to JSON APIs and what data you want to extract from the response, so that it can be displayed as a nice, readable table.</p>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<p>This concept becomes a lot clearer after seeing an example. Take the below script example:</p>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h2>
+<p>This concept will become clearer with an example.</p>
+<p>Below is a simple script capable of querying a given GitHub repo for information about its latest commits.</p>
+<div class="highlight"><span class="filename">File: commits</span><pre><span></span><code><span class="nf">args:</span>
 <span class="w">    </span>repo<span class="w"> </span>string<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>repo<span class="w"> </span>to<span class="w"> </span>query.<span class="w"> </span><span class="kt">Format</span>:<span class="w"> </span>user/project
 <span class="w">    </span>limit<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>max<span class="w"> </span>commits<span class="w"> </span>to<span class="w"> </span>return.
 
@@ -707,6 +1020,182 @@ url<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;https:
 rad<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">Time</span>,<span class="w"> </span><span class="kt">Author</span>,<span class="w"> </span><span class="kt">SHA</span>
 </code></pre></div>
+<p>Here's an example of running it, and the command line output:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits<span class="w"> </span>amterp/rad<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Querying url: https://api.github.com/repos/amterp/rad/commits?per_page=5
+Time                  Author          SHA
+2025-01-11T04:15:06Z  Alexander Terp  306f3a4ddb3b09747d61a5eab264c3d72fbbc36e
+2025-01-11T03:07:56Z  Alexander Terp  304a914644dfd73a59b85a191481f9c429b4d25e
+2025-01-11T01:00:42Z  Alexander Terp  7171ec92ae729f9d04e224e16272c9b888dffe41
+2025-01-10T12:11:08Z  Alexander Terp  4b64f585d08d9a5ee40549b6b9624530ac713eb1
+2025-01-09T11:34:51Z  Alexander Terp  abfcf2d940a18b819f7ae9e9040550a9644e5120
+</code></pre></div>
+</div>
+
+<p>Not a <em>terribly</em> interesting table, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and hash string).</p>
+<p>And that's with just a few lines of code! Let's break it down piece by piece.</p>
+<h3 id="arg-block">Arg Block<a class="headerlink" href="#arg-block" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>repo<span class="w"> </span>string<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>repo<span class="w"> </span>to<span class="w"> </span>query.<span class="w"> </span><span class="kt">Format</span>:<span class="w"> </span>user/project
+<span class="w">    </span>limit<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>max<span class="w"> </span>commits<span class="w"> </span>to<span class="w"> </span>return.
+
+url<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;</span>
+</code></pre></div>
+<p>Here we have an <a href="../args/">args block</a> where we declare a <code>repo</code> string and a <code>limit</code> int with a default of 20.
+After the args block, we create a <code>url</code> string using <a href="TODO">string interpolation</a> to fill in the repo name, and the limit for how many commits we want GitHub to give us.</p>
+<h3 id="json-field-definitions">Json Field Definitions<a class="headerlink" href="#json-field-definitions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">Time</span><span class="w"> </span>=<span class="w"> </span>json[].commit.author.date
+<span class="kt">Author</span><span class="w"> </span>=<span class="w"> </span>json[].commit.author.name
+<span class="kt">SHA</span><span class="w"> </span>=<span class="w"> </span>json[].sha
+</code></pre></div>
+<p>This is where things get more interesting. The above definitions correspond to expected <em>paths</em> in the JSON response i.e. a series of keys to look up.</p>
+<p>In RSL nomenclature, we refer to these as <strong>json field definitions</strong>.</p>
+<p>If you query GitHub's API and take a look at the JSON response, you can see how these fields correspond to the data.
+Example URL if you want to see for yourself:</p>
+<p><a href="https://api.github.com/repos/amterp/rad/commits?per_page=2" target="_blank">https://api.github.com/repos/amterp/rad/commits?per_page=2</a></p>
+<p>Here's a simplified example response with two commits, showing the structure we're interested in:</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;306f3a4ddb3b09747d61a5eab264c3d72fbbc36e&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alexander Terp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-11T04:15:06Z&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;306f3a4ddb3b09747d61a5eab264c3d72fbbc36e&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alexander Terp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-11T04:15:06Z&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>You can see how the path for <code>Author = json[].commit.author.name</code> corresponds to a final value of "Alexander Terp".</p>
+<p>Json field definitions leverage a special syntax that RSL offers. They always start with <code>json</code>.
+<code>json</code> can be thought of as representing the JSON blob as a whole, or its root, if you want to think of the JSON data as a tree.</p>
+<p>The <code>[]</code> after <code>json</code> tells RSL that you expect the <code>json</code> blob to be a list, and to "unwrap" it and dig into individual items in that list for the remainder of the path.
+<code>commit</code> then tells it to look up a key of that name (literally <code>commit</code>), and to then look up <code>author</code> next, and then finally <code>name</code>.</p>
+<p>The json field definition syntax can do a lot of things that we won't cover here. For details, see its <a href="../reference/json-field-definition.md">reference page</a>.</p>
+<p>When the json field assignment is executed, its variable (<code>Author</code> for example) is initialized as an empty list.
+It's a "special" list though, as it has a json field definition tied to it, which can be used in a rad block, let's look at that one next.</p>
+<h3 id="rad-block">Rad Block<a class="headerlink" href="#rad-block" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Time</span>,<span class="w"> </span><span class="kt">Author</span>,<span class="w"> </span><span class="kt">SHA</span>
+</code></pre></div>
+<p><code>rad</code> is a keyword. As with the name of the interpreter and CLI tool which runs it, it stands for "Request And Display", to give you an idea for what it does.</p>
+<p>Following the <code>rad</code> keyword, we provide the <code>url</code> variable which will get used to execute an <code>HTTP GET</code> request.
+Then, inside the rad block itself, using the keyword <code>fields</code>, we specify the earlier json fields that we defined.
+Listing them here will tell the rad block to extract data from the resulting JSON blob according to the json field paths that you defined.
+The ordering in which the fields are listed also controls the ordering of columns in the ensuing table that gets printed.</p>
+<p>When run, this will print the table we saw earlier, here it is again for reference (with a limit of 3).</p>
+<div class="highlight"><pre><span></span><code>Time                  Author          SHA
+2025-01-11T04:15:06Z  Alexander Terp  306f3a4ddb3b09747d61a5eab264c3d72fbbc36e
+2025-01-11T03:07:56Z  Alexander Terp  304a914644dfd73a59b85a191481f9c429b4d25e
+2025-01-11T01:00:42Z  Alexander Terp  7171ec92ae729f9d04e224e16272c9b888dffe41
+</code></pre></div>
+<p>Note that the variable names we choose for the json field definitions become the header names in the table.</p>
+<h2 id="additional-rad-block-options">Additional Rad Block Options<a class="headerlink" href="#additional-rad-block-options" title="Permanent link">&para;</a></h2>
+<p>Hopefully you've now got an idea for what the json field definitions and rad blocks allow you to do, conceptually.</p>
+<p>Rad blocks offer additional syntax for controlling what your final table looks like.</p>
+<h3 id="sorting">Sorting<a class="headerlink" href="#sorting" title="Permanent link">&para;</a></h3>
+<p>By default, the rows in your table are sorted by their original order in the JSON blob. However, you can control this.</p>
+<p>Let's say we have the following table by default:</p>
+<div class="highlight"><pre><span></span><code>City         Country  Population
+Los Angeles  USA      3800000
+London       England  8800000
+Houston      USA      2300000
+Copenhagen   Denmark  640000
+</code></pre></div>
+<p>The simplest sorting option is alphabetically, across the whole row.</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span>sort
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>City         Country  Population
+Copenhagen   Denmark  640000
+Houston      USA      2300000
+London       England  8800000
+Los Angeles  USA      3800000
+</code></pre></div>
+</div>
+
+<p>What if we wanted to sort by Country, though? And then break ties with City? We can do that:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span>sort<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">City</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>City         Country  Population
+Copenhagen   Denmark  640000
+London       England  8800000
+Houston      USA      2300000
+Los Angeles  USA      3800000
+</code></pre></div>
+</div>
+
+<p>If we wanted to sort by descending population, you can add <code>desc</code> after the name of the column:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span>sort<span class="w"> </span><span class="kt">Population</span><span class="w"> </span>desc
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>City         Country  Population
+London       England  8800000
+Los Angeles  USA      3800000
+Houston      USA      2300000
+Copenhagen   Denmark  640000
+</code></pre></div>
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">'asc' is the default</p>
+<p><code>sort City</code> and <code>sort City asc</code> are both valid and identical in functionality - you can include it if you want to be explicit.</p>
+</div>
+<h3 id="mapping">Mapping<a class="headerlink" href="#mapping" title="Permanent link">&para;</a></h3>
+<p>You can also <em>transform</em> a column's values before it gets printed.</p>
+<p>For example, let's say you wanted the 'Population' column in the above examples to be in millions, and to display one decimal place, you can do that with a <code>map</code> column modifier:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span><span class="kt">Population</span>:
+<span class="w">        </span>map<span class="w"> </span>p<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;{p/1000000:.1}&quot;</span>
+</code></pre></div>
+<p>If we run this, you'll see the change:</p>
+<div class="highlight"><pre><span></span><code>City         Country  Population
+Los Angeles  USA      3.8
+London       England  8.8
+Houston      USA      2.3
+Copenhagen   Denmark  0.6
+</code></pre></div>
+<p>This example is actually using string interpolation formatting, which we haven't covered yet, so is a bit of a preview. Let's break down this syntax though. After declaring the fields:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">Population:</span>
+<span class="w">    </span>map<span class="w"> </span>p<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;{p/1000000:.1}&quot;</span>
+</code></pre></div>
+<p><code>Population:</code> begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as <code>map</code> or <a href="#color"><code>color</code></a>.</p>
+<p><code>map</code> is considered a keyword in the context of rad blocks. After <code>map</code>, a lambda expression is expected. In this case, we've written <code>p -&gt; "{p/1000000:.1}"</code>.
+Left of the arrow is an identifier <code>p</code> (name could be any valid identifier). This will represent an individual value in the <code>Population</code> list.
+Right of the arrow is an expression for what that entry in the list should <em>become</em>. In this case, we turn it into a string, created using string interpolation.
+Inside the string interpolation expression, we first divide it by one million (<code>p/1000000</code>), and then use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (<code>.1</code>).</p>
+<p>Note that sorting operations are done on the pre-mapping column values.</p>
+<h3 id="color">Color<a class="headerlink" href="#color" title="Permanent link">&para;</a></h3>
+<p>TBC</p>
+<h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
+<p>TBC</p>
+<h2 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
+<h2 id="display-blocks">Display Blocks<a class="headerlink" href="#display-blocks" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
 
 
 
@@ -734,6 +1223,44 @@ rad<span class="w"> </span>url:
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../args/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Args">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Args
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../shell-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Shell Commands
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
