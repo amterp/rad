@@ -524,6 +524,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#increment-decrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Increment / Decrement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ternary" class="md-nav__link">
     <span class="md-ellipsis">
       Ternary
@@ -1035,6 +1044,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#increment-decrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Increment / Decrement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ternary" class="md-nav__link">
     <span class="md-ellipsis">
       Ternary
@@ -1439,7 +1457,32 @@ a<span class="w"> </span>*=<span class="w"> </span><span class="mi">3</span><spa
 a<span class="w"> </span>%=<span class="w"> </span><span class="mi">10</span><span class="w">  </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">2</span>
 a<span class="w"> </span>/=<span class="w"> </span><span class="mi">4</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mf">0.5</span>
 </code></pre></div>
-<p>RSL does not support <code>++</code> or <code>--</code> syntax.</p>
+<h3 id="increment-decrement">Increment / Decrement<a class="headerlink" href="#increment-decrement" title="Permanent link">&para;</a></h3>
+<p>You can quickly increment and decrement ints and floats using <code>++</code> and <code>--</code> syntax.</p>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
+a<span class="o">++</span>
+print(a)
+
+b<span class="w"> </span>=<span class="w"> </span><span class="mf">2.5</span>
+b<span class="c">--</span>
+print(b)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>3
+1.5
+</code></pre></div>
+</div>
+
+<p>The increment and decrement operators produce <em>statements</em>, not <em>expressions</em>.
+This means that <code>a++</code> does not <em>return</em> anything, and so cannot be used inside e.g. a conditional.</p>
+<p>For example, the following two uses are invalid, because <code>a++</code> doesn't return a value:</p>
+<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
+<span class="k">if</span><span class="w"> </span>a<span class="o">++</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:<span class="w">  </span>//<span class="w"> </span>invalid,<span class="w"> </span>nothing<span class="w"> </span><span class="k">for</span><span class="w"> </span>&gt;<span class="w"> </span>to<span class="w"> </span>evaluate<span class="w"> </span>against<span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>left<span class="w"> </span>side
+<span class="w">  </span>...
+
+b<span class="w"> </span>=<span class="w"> </span>a<span class="o">++</span><span class="w">  </span>//<span class="w"> </span>also<span class="w"> </span>invalid<span class="w"> </span>because<span class="w"> </span>a<span class="o">++</span><span class="w"> </span>doesn&#39;t<span class="w"> </span>return<span class="w"> </span><span class="k">any</span><span class="w"> </span><span class="k">value</span>
+</code></pre></div>
+<p>Because of that, there's also no reason to support <em>pre</em>-incrementing, and so <code>++a</code> or <code>--a</code> are invalid statements.</p>
 <h3 id="ternary">Ternary<a class="headerlink" href="#ternary" title="Permanent link">&para;</a></h3>
 <p>RSL supports <code>? :</code> style ternary operators. </p>
 <p><code>&lt;condition&gt; ? &lt;true case&gt; : &lt;false case&gt;</code></p>
@@ -1586,6 +1629,8 @@ bob green
 <li>parsing</li>
 <li>casting (once implemented)</li>
 </ul>
+<hr />
+<p>Next, let's look at how can accept arguments from users into our scripts: <a href="../args/">Args</a>.</p>
 
 
 
