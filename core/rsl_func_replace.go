@@ -8,7 +8,7 @@ import (
 
 // Replace allows capture group replacing, for example
 // replace("Name: abc", "a(b)c", "$1o$1") will return "Name: bobby"
-func Replace(i *MainInterpreter, function Token, oldString string, regexForOld string, regexForNew string) string {
+func Replace(i *MainInterpreter, function Token, oldString string, regexForOld string, regexForNew string) RslString {
 	re, err := regexp.Compile(regexForOld)
 	if err != nil {
 		i.error(function, fmt.Sprintf("Error compiling regex pattern: %s", err))
@@ -32,5 +32,5 @@ func Replace(i *MainInterpreter, function Token, oldString string, regexForOld s
 
 	newString := re.ReplaceAllStringFunc(oldString, replacementFunc)
 
-	return newString
+	return NewRslString(newString)
 }
