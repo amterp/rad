@@ -67,18 +67,18 @@ Raw strings are created by prefixing an `r` to the opening delimiter of your str
 
 ```rsl
 name = "alice"
-text = r"Regards,\n${name}"
+text = r"Regards,\n{name}"
 print(text)
 ```
 
 <div class="result">
 ```
-Regards,\n${name}
+Regards,\n{name}
 ```
 </div>
 
 Notice RSL did not render the `\n` as a newline as it would in a regular string,
-and that `${name}` is also left as-is i.e. no interpolation was performed.
+and that `{name}` is also left as-is i.e. no interpolation was performed.
 
 Unlike Python, **you cannot escape *anything* in raw strings**, including the delimiter. For example:
 

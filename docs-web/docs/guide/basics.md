@@ -463,7 +463,7 @@ This can be done in several ways, the easiest is probably via [string interpolat
 ```rsl
 a = 5
 text = "Number: "
-print(text + "${a}")
+print(text + "{a}")
 ```
 
 <div class="result">
@@ -561,7 +561,7 @@ RSL allows "for each" loops for iterating through collections such as lists.
 ```rsl
 names = ["Alice", "Bob", "Charlie"]
 for name in names:
-  print("Hi ${name}!")
+  print("Hi {name}!")
 ```
 
 <div class="result">
@@ -599,7 +599,7 @@ in an additional variable after the `for`. The first variable will be the index,
 ```rsl
 names = ["Alice", "Bob", "Charlie"]
 for i, name in names:
-  print("${name} is at index ${i}")
+  print("{name} is at index {i}")
 ```
 
 <div class="result">
@@ -689,7 +689,7 @@ The following table shows which values return false for each type. **All other v
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
 - RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
-- RSL has uses operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
+- RSL has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
 - RSL uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
 - RSL offers truthy/falsy logic for more concise conditional expressions.

@@ -136,6 +136,8 @@ func handleError(
 	}
 
 	if cmd.Unsafe != nil {
+		// todo should we do this? results in printing even if the command failing is not unexpected e.g. if it's a
+		//  'test -e' command. I think this should only occur if the *RAD* failed to invoke it or something went wrong.
 		RP.RadInfo(err)
 		return
 	} else {

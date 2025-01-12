@@ -145,8 +145,6 @@ Note that the variable names we choose for the json field definitions become the
 
 ## Additional Rad Block Options
 
-Hopefully you've now got an idea for what the json field definitions and rad blocks allow you to do, conceptually.
-
 Rad blocks offer additional syntax for controlling what your final table looks like.
 
 ### Sorting
@@ -225,7 +223,7 @@ Copenhagen   Denmark  640000
 
 You can also *transform* a column's values before it gets printed.
 
-For example, let's say you wanted the 'Population' column in the above examples to be in millions, and to display one decimal place, you can do that with a `map` column modifier:
+For example, let's say you wanted the 'Population' column in the above example to be in millions, and to display one decimal place, you can do that with a `map` column modifier:
 
 ```rsl
 rad url:
@@ -255,6 +253,8 @@ Population:
 
 `Population:` begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as `map` or [`color`](#color).
 
+[//]: # (todo mention can apply to multiple columns at once?)
+
 `map` is considered a keyword in the context of rad blocks. After `map`, a lambda expression is expected. In this case, we've written `p -> "{p/1000000:.1}"`.
 Left of the arrow is an identifier `p` (name could be any valid identifier). This will represent an individual value in the `Population` list.
 Right of the arrow is an expression for what that entry in the list should *become*. In this case, we turn it into a string, created using string interpolation.
@@ -264,7 +264,28 @@ Note that sorting operations are done on the pre-mapping column values.
 
 ### Color
 
-TBC
+Another column modifier uses the keyword `color`. You can tell rad to color a cell's value depending on its contents by using a regex.
+
+For example:
+
+```rsl
+rad url:
+    fields City, Country, Population
+    Country:
+        color "pink" ".*"
+        color "red" "Denmark"
+        color "blue" "USA"
+```
+
+The syntax is `color <color> <regex>`. You can apply multiple rules, and later rules override earlier ones. 
+For example, here we start off by coloring *everything* pink.
+Then, we add three more rules: any sequence "Denmark" should be colored red, and "USA" should be colored blue.
+
+![color](../assets/rad-color.png)
+
+This screenshot from a terminal demonstrates the colors. England is colored pink because the initial `.*` rule is the only regex that matched it.
+
+See the [reference](../reference/rad-blocks.md#colors) for a list of valid colors.
 
 ### If Statements
 

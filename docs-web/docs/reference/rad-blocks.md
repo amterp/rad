@@ -28,3 +28,9 @@ request url:
 display:
     fields Name, Birthdate, Height
 ```
+
+## Colors
+
+Valid colors:
+
+`plain, black, red, green, yellow, blue, magenta, cyan, white, orange, pink`
