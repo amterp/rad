@@ -1102,7 +1102,6 @@ The ordering in which the fields are listed also controls the ordering of column
 </code></pre></div>
 <p>Note that the variable names we choose for the json field definitions become the header names in the table.</p>
 <h2 id="additional-rad-block-options">Additional Rad Block Options<a class="headerlink" href="#additional-rad-block-options" title="Permanent link">&para;</a></h2>
-<p>Hopefully you've now got an idea for what the json field definitions and rad blocks allow you to do, conceptually.</p>
 <p>Rad blocks offer additional syntax for controlling what your final table looks like.</p>
 <h3 id="sorting">Sorting<a class="headerlink" href="#sorting" title="Permanent link">&para;</a></h3>
 <p>By default, the rows in your table are sorted by their original order in the JSON blob. However, you can control this.</p>
@@ -1161,7 +1160,7 @@ Copenhagen   Denmark  640000
 </div>
 <h3 id="mapping">Mapping<a class="headerlink" href="#mapping" title="Permanent link">&para;</a></h3>
 <p>You can also <em>transform</em> a column's values before it gets printed.</p>
-<p>For example, let's say you wanted the 'Population' column in the above examples to be in millions, and to display one decimal place, you can do that with a <code>map</code> column modifier:</p>
+<p>For example, let's say you wanted the 'Population' column in the above example to be in millions, and to display one decimal place, you can do that with a <code>map</code> column modifier:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
 <span class="w">    </span><span class="kt">Population</span>:
@@ -1185,7 +1184,21 @@ Right of the arrow is an expression for what that entry in the list should <em>b
 Inside the string interpolation expression, we first divide it by one million (<code>p/1000000</code>), and then use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (<code>.1</code>).</p>
 <p>Note that sorting operations are done on the pre-mapping column values.</p>
 <h3 id="color">Color<a class="headerlink" href="#color" title="Permanent link">&para;</a></h3>
-<p>TBC</p>
+<p>Another column modifier uses the keyword <code>color</code>. You can tell rad to color a cell's value depending on its contents by using a regex.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span><span class="kt">Country</span>:
+<span class="w">        </span>color<span class="w"> </span><span class="s">&quot;pink&quot; &quot;.*&quot;</span>
+<span class="s">        color &quot;red&quot; &quot;Denmark&quot;</span>
+<span class="s">        color &quot;blue&quot; &quot;USA&quot;</span>
+</code></pre></div>
+<p>The syntax is <code>color &lt;color&gt; &lt;regex&gt;</code>. You can apply multiple rules, and later rules override earlier ones. 
+For example, here we start off by coloring <em>everything</em> pink.
+Then, we add three more rules: any sequence "Denmark" should be colored red, and "USA" should be colored blue.</p>
+<p><img alt="color" src="../../assets/rad-color.png" /></p>
+<p>This screenshot from a terminal demonstrates the colors. England is colored pink because the initial <code>.*</code> rule is the only regex that matched it.</p>
+<p>See the <a href="../../reference/rad-blocks/#colors">reference</a> for a list of valid colors.</p>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <p>TBC</p>
 <h2 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h2>

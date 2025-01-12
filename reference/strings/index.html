@@ -907,16 +907,16 @@ Or, if your string has both single <em>and</em> double quotes, you can use backt
 <p>Raw strings can be used when you want RSL to treat the string as it's written, rather than performing escaping, interpolation, etc.</p>
 <p>Raw strings are created by prefixing an <code>r</code> to the opening delimiter of your string. For example:</p>
 <div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;alice&quot;</span>
-<span class="s">text = r&quot;Regards,\n${name}&quot;</span>
+<span class="s">text = r&quot;Regards,\n{name}&quot;</span>
 print(text)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Regards,\n${name}
+<div class="highlight"><pre><span></span><code>Regards,\n{name}
 </code></pre></div>
 </div>
 
 <p>Notice RSL did not render the <code>\n</code> as a newline as it would in a regular string,
-and that <code>${name}</code> is also left as-is i.e. no interpolation was performed.</p>
+and that <code>{name}</code> is also left as-is i.e. no interpolation was performed.</p>
 <p>Unlike Python, <strong>you cannot escape <em>anything</em> in raw strings</strong>, including the delimiter. For example:</p>
 <div class="highlight"><pre><span></span><code>r<span class="s">&quot;\&quot;&quot;</span>
 </code></pre></div>

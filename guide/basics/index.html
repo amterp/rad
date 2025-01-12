@@ -1499,7 +1499,7 @@ print(first<span class="w"> </span>+<span class="w"> </span>last)
 <p>This can be done in several ways, the easiest is probably via <a href="../../reference/strings/#string-interpolation">string interpolation</a>:</p>
 <div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
 text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Number: &quot;</span>
-<span class="s">print(text + &quot;${a}&quot;</span>)
+<span class="s">print(text + &quot;{a}&quot;</span>)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Number: 5
@@ -1567,7 +1567,7 @@ print(b)
 <p>RSL allows "for each" loops for iterating through collections such as lists.</p>
 <div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
 <span class="s">for name in names:</span>
-<span class="s">  print(&quot;Hi ${name}!&quot;</span>)
+<span class="s">  print(&quot;Hi {name}!&quot;</span>)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hi Alice!
@@ -1594,7 +1594,7 @@ Hi Charlie!
 in an additional variable after the <code>for</code>. The first variable will be the index, and the second the item.</p>
 <div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
 <span class="s">for i, name in names:</span>
-<span class="s">  print(&quot;${name} is at index ${i}&quot;</span>)
+<span class="s">  print(&quot;{name} is at index {i}&quot;</span>)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Alice is at index 0
@@ -1690,7 +1690,7 @@ bob green
 <ul>
 <li>We rapidly covered many basic topics such as assignment, data types, operators, and control flow.</li>
 <li>RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.</li>
-<li>RSL has uses operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
+<li>RSL has operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
 <li>RSL uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
 <li>If you want to increment through a number range, use the <code>range</code> function to generate you a list of ints.</li>
 </ul>
