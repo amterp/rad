@@ -15,6 +15,8 @@
 
 ## Doc Todo
 
+? change all external links to open in new tabs, don't go off rad docs site
+
 - elevator pitch / motivation / why
   - [ ] take 1
 - getting started
@@ -25,7 +27,7 @@
 - args
   - [x] take 1
 - rad blocks
-  - [ ] take 1
+  - [x] take 1
 - functions
   - [ ] take 1
 - string interpolation & formatting, multiline strings
@@ -45,6 +47,8 @@
   - [ ] take 1
   - varpath assignment?
   - shell embedding
+  - json extraction algo details! visual aids? the idea of representing json as a tree?
 
 - style guide? tips?
 - something which goes through rsl snippets and runs them to ensure they compile
+- parallel 'RSL by Example' guide?

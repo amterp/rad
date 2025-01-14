@@ -53,6 +53,7 @@ nav:
       - ./guide/basics.md
       - ./guide/args.md
       - ./guide/rad-blocks.md
+      - ./guide/functions.md
       - ./guide/shell-commands.md
   - Reference:
     - ./reference/args.md
