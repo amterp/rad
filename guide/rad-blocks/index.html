@@ -14,7 +14,7 @@
         <link rel="prev" href="../args/">
       
       
-        <link rel="next" href="../shell-commands/">
+        <link rel="next" href="../functions/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -577,6 +577,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-commands/" class="md-nav__link">
         
   
@@ -1006,7 +1027,7 @@
 These allow you to easily and concisely define queries to JSON APIs and what data you want to extract from the response, so that it can be displayed as a nice, readable table.</p>
 <h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h2>
 <p>This concept will become clearer with an example.</p>
-<p>Below is a simple script capable of querying a given GitHub repo for information about its latest commits.</p>
+<p>Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about its latest commits.</p>
 <div class="highlight"><span class="filename">File: commits</span><pre><span></span><code><span class="nf">args:</span>
 <span class="w">    </span>repo<span class="w"> </span>string<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>repo<span class="w"> </span>to<span class="w"> </span>query.<span class="w"> </span><span class="kt">Format</span>:<span class="w"> </span>user/project
 <span class="w">    </span>limit<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">The</span><span class="w"> </span>max<span class="w"> </span>commits<span class="w"> </span>to<span class="w"> </span>return.
@@ -1034,7 +1055,7 @@ Time                  Author          SHA
 </code></pre></div>
 </div>
 
-<p>Not a <em>terribly</em> interesting table, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and hash string).</p>
+<p>This is a simple example, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and hash string).</p>
 <p>And that's with just a few lines of code! Let's break it down piece by piece.</p>
 <h3 id="arg-block">Arg Block<a class="headerlink" href="#arg-block" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nf">args:</span>
@@ -1094,7 +1115,7 @@ It's a "special" list though, as it has a json field definition tied to it, whic
 Then, inside the rad block itself, using the keyword <code>fields</code>, we specify the earlier json fields that we defined.
 Listing them here will tell the rad block to extract data from the resulting JSON blob according to the json field paths that you defined.
 The ordering in which the fields are listed also controls the ordering of columns in the ensuing table that gets printed.</p>
-<p>When run, this will print the table we saw earlier, here it is again for reference (with a limit of 3).</p>
+<p>When run, this will print the table we saw earlier; here it is again for reference (with a limit of 3).</p>
 <div class="highlight"><pre><span></span><code>Time                  Author          SHA
 2025-01-11T04:15:06Z  Alexander Terp  306f3a4ddb3b09747d61a5eab264c3d72fbbc36e
 2025-01-11T03:07:56Z  Alexander Terp  304a914644dfd73a59b85a191481f9c429b4d25e
@@ -1178,13 +1199,14 @@ Copenhagen   Denmark  0.6
 <span class="w">    </span>map<span class="w"> </span>p<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;{p/1000000:.1}&quot;</span>
 </code></pre></div>
 <p><code>Population:</code> begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as <code>map</code> or <a href="#color"><code>color</code></a>.</p>
-<p><code>map</code> is considered a keyword in the context of rad blocks. After <code>map</code>, a lambda expression is expected. In this case, we've written <code>p -&gt; "{p/1000000:.1}"</code>.
-Left of the arrow is an identifier <code>p</code> (name could be any valid identifier). This will represent an individual value in the <code>Population</code> list.
-Right of the arrow is an expression for what that entry in the list should <em>become</em>. In this case, we turn it into a string, created using string interpolation.
-Inside the string interpolation expression, we first divide it by one million (<code>p/1000000</code>), and then use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (<code>.1</code>).</p>
+<p><code>map</code> is considered a keyword in the context of rad blocks. After <code>map</code>, a lambda expression is expected, which you can think of as a mini-function.</p>
+<p>In this case, we've written <code>p -&gt; "{p/1000000:.1}"</code>. Left of the arrow is an identifier <code>p</code> (name could be any valid identifier). This will represent an individual value in the <code>Population</code> list.
+Right of the arrow is an expression for what that entry in the list should <em>become</em>.
+It is the <em>output</em> of your lambda mini-function. In this example, we turn it into a string, created using string interpolation.</p>
+<p>Inside the string interpolation expression, we first divide it by one million (<code>p/1000000</code>), and then use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (<code>.1</code>).</p>
 <p>Note that sorting operations are done on the pre-mapping column values.</p>
 <h3 id="color">Color<a class="headerlink" href="#color" title="Permanent link">&para;</a></h3>
-<p>Another column modifier uses the keyword <code>color</code>. You can tell rad to color a cell's value depending on its contents by using a regex.</p>
+<p>Another column modifier uses the keyword <code>color</code>. You can tell rad to color a cell's value depending on its contents by using a <a href="https://en.wikipedia.org/wiki/Regular_expression">regex</a>.</p>
 <p>For example:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
@@ -1198,17 +1220,92 @@ For example, here we start off by coloring <em>everything</em> pink.
 Then, we add three more rules: any sequence "Denmark" should be colored red, and "USA" should be colored blue.</p>
 <p><img alt="color" src="../../assets/rad-color.png" /></p>
 <p>This screenshot from a terminal demonstrates the colors. England is colored pink because the initial <code>.*</code> rule is the only regex that matched it.</p>
+<p>Note that the specific colors that appear varies between terminals and user settings.</p>
 <p>See the <a href="../../reference/rad-blocks/#colors">reference</a> for a list of valid colors.</p>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
-<p>TBC</p>
+<p>Rad blocks can contain if statements, so if you want slightly different behavior for your rad block based on some condition, you don't need to
+copy and paste the whole block into two separate if statements.</p>
+<p>Let's say your script had a flag for sorting by population or not. Here's an example of how that could look:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>sort_by_population<span class="w"> </span><span class="s">&quot;sort-by-population&quot;</span><span class="w"> </span>p<span class="w"> </span>bool<span class="w">  </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span>to<span class="w"> </span>sort<span class="w"> </span>by<span class="w"> </span>population.
+
+...
+
+rad<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_population:
+<span class="w">        </span>sort<span class="w"> </span><span class="kt">Population</span><span class="w"> </span>desc
+<span class="w">    </span><span class="k">else</span>:
+<span class="w">        </span>sort
+</code></pre></div>
+<p>If the flag is enabled, we sort by descending population, otherwise we sort rows alphabetically.</p>
+<p>You can put any rad block statements into these if blocks, including <code>fields</code>, column modifiers, etc.</p>
 <h2 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<p>There are two other types of rad blocks: "request" blocks and "display" blocks. Let's first discuss the former.</p>
+<p>A request block is similar to the <code>rad</code> block, however it does not print out any table after executing its query and
+field extraction step. You can use them to query and extract fields from a returned json blob, and then process the
+populated json fields/lists further if need be, or do whatever else you'd like. </p>
+<p>Generally the syntax is very similar between <code>request</code> and <code>rad</code> blocks.</p>
+<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
+
+//<span class="w"> </span>from<span class="w"> </span>here<span class="w"> </span>the<span class="w"> </span>above<span class="w"> </span>fields&#39;<span class="w"> </span>lists<span class="w"> </span>are<span class="w"> </span>populated<span class="w"> </span><span class="k">with</span><span class="w"> </span>values
+</code></pre></div>
+<p>Naturally, block statements like sorting or coloring have no effect, and may be considered invalid and error.</p>
+<div class="admonition note">
+<p class="admonition-title">Wait so is a request block <em>different</em> from a rad block, or is it a <em>type</em> of rad block?</p>
+<p>We generally consider "display" and "request" blocks to be <em>types</em> of rad blocks, just with slightly different
+syntax and behavior. We may still compare them to <em>the</em> rad block (i.e. the one using <code>rad</code> as its keyword) when
+discussing differences however - it depends on the context in which they're discussed.</p>
+</div>
 <h2 id="display-blocks">Display Blocks<a class="headerlink" href="#display-blocks" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<p>Display blocks are the opposite side of the coin from request blocks.
+Where the request blocks will perform a request, populate your lists, and <em>not</em> print, the display block will simply take
+already-populated lists and display them as a table.</p>
+<p>To demonstrate, you can even manually populate your lists (columns) and use them as fields for the table:</p>
+<div class="highlight"><pre><span></span><code><span class="kt">Nums</span><span class="w"> </span>=<span class="w"> </span>[<span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>]
+<span class="kt">Words</span><span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;hi&quot;, &quot;hello&quot;</span>]
+<span class="nf">display:</span>
+<span class="w">    </span>fields<span class="w"> </span><span class="kt">Nums</span>,<span class="w"> </span><span class="kt">Words</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Nums  Words
+1     hi
+2     hello
+</code></pre></div>
+</div>
+
+<p>Notice <code>display</code> does not take any <code>url</code> or equivalent thereof, as it doesn't perform any requests, and gets all it needs
+from the specified <code>fields</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Combining request and display blocks</p>
+<p>Sometimes you want to display more information in your table than the JSON blob itself provides.
+For example, you may wish to derive an additional column off two others. To accomplish this, you can write a
+<code>request</code> block, derive whatever additional columns you want, and then write a <code>display</code> block to print your final
+range of columns.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
+<span class="w">    </span>fields<span class="w"> </span>width,<span class="w"> </span>height
+
+area<span class="w"> </span>=<span class="w"> </span>[width[i]<span class="w"> </span>*<span class="w"> </span>height[i]<span class="w"> </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>range(width)]
+
+<span class="nf">display:</span>
+<span class="w">    </span>fields<span class="w"> </span>width,<span class="w"> </span>height,<span class="w"> </span>area
+</code></pre></div>
+</div>
 <h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<ul>
+<li>RSL provides first-class support for scripts whose primary purpose is to query a JSON API and present parts of its response in a useful, readable table.</li>
+<li>This is offered by the <code>rad</code> blocks, and its siblings <code>display</code> and <code>request</code>.</li>
+<li>RSL has syntax for specifying <strong>json field definitions</strong> or <strong>json field paths</strong>, that rad blocks can then use to extract fields from a JSON blob response.<ul>
+<li>e.g. <code>Author = json[].commit.author.name</code></li>
+</ul>
+</li>
+<li>Rad blocks offer customization options, such as coloring, transforming cell values, and sorting.</li>
+<li>You can also use if statements inside them.</li>
+</ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<p>RSL offers a range of useful built-in functions to help you write your scripts. We'll take a look at those in the next section: <a href="../functions/">Functions</a>.</p>
 
 
 
@@ -1258,13 +1355,13 @@ Then, we add three more rules: any sequence "Denmark" should be colored red, and
         
         
           
-          <a href="../shell-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
+          <a href="../functions/" class="md-footer__link md-footer__link--next" aria-label="Next: Functions">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Shell Commands
+                Functions
               </div>
             </div>
             <div class="md-footer__button md-icon">
