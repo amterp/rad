@@ -14,7 +14,7 @@
         <link rel="prev" href="../rad-blocks/">
       
       
-        <link rel="next" href="../shell-commands/">
+        <link rel="next" href="../strings-advanced/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -80,6 +80,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#syntax" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -414,6 +419,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Functions
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -424,6 +440,116 @@
 
       </a>
       
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Syntax
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variadic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strings-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings (Advanced)
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -706,6 +832,86 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Syntax
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixed-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixed Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variadic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -726,6 +932,111 @@
 
 <p>RSL offers a range of built-in functions to help you write your scripts. In this section, we'll take a look at the syntax and a few examples.
 For a complete list of available functions, see the <a href="../../reference/functions/">reference</a>.</p>
+<h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
+<p>The syntax for invoking functions is pretty standard. Here's a script with some examples:</p>
+<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Bob&quot;, &quot;Charlie&quot;, &quot;Alice&quot;]</span>
+<span class="s">num_people = len(names)</span>
+<span class="s">print(&quot;There are {num_people} people.&quot;</span>)
+
+sorted_names<span class="w"> </span>=<span class="w"> </span>sort(names)
+print(sorted_names)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>There are 3 people.
+[Alice, Bob, Charlie]
+</code></pre></div>
+</div>
+
+<p>This example uses a few different functions:</p>
+<ul>
+<li><code>len</code></li>
+<li><code>print</code></li>
+<li><code>sort</code></li>
+</ul>
+<h2 id="no-arguments">No Arguments<a class="headerlink" href="#no-arguments" title="Permanent link">&para;</a></h2>
+<p>Some functions take no arguments. For example, <code>rand()</code> returns a random float between 0 and 1:</p>
+<div class="highlight"><pre><span></span><code>random_float<span class="w"> </span>=<span class="w"> </span>rand()
+print(random_float)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>0.8436881320514183
+</code></pre></div>
+</div>
+
+<h2 id="fixed-arguments">Fixed Arguments<a class="headerlink" href="#fixed-arguments" title="Permanent link">&para;</a></h2>
+<p>Some functions take a fixed number of arguments, such as <code>upper</code> and <code>lower</code> that always take one argument:</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;oh WOW!&quot;</span>
+print(upper(text))
+print(lower(text))
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>OH WOW!
+oh wow!
+</code></pre></div>
+</div>
+
+<h2 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h2>
+<p>Some functions can take different numbers of arguments! For example <code>join</code>:</p>
+<div class="highlight"><pre><span></span><code>numbers<span class="w"> </span>=<span class="w"> </span>[<span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>]
+print(join(numbers,<span class="w"> </span><span class="s">&quot;... &quot;))</span>
+
+<span class="s">print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;))</span>
+
+<span class="s">print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;, &quot;!&quot;</span>))
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1... 2... 3
+Okay I&#39;ll count. 1... 2... 3
+Okay I&#39;ll count. 1... 2... 3!
+</code></pre></div>
+</div>
+
+<p>In this example, <code>join</code> is being invoked with all these valid variations:</p>
+<ul>
+<li><code>join(list, joiner)</code></li>
+<li><code>join(list, joiner, prefix)</code></li>
+<li><code>join(list, joiner, prefix, suffix)</code></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Example using join for url query params</p>
+<p>The second variation of <code>join</code> can be handy for generating the query params in a url. For example:</p>
+<div class="highlight"><pre><span></span><code>url<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;https://api.github.com/repos/amterp/rad/commits&quot;</span>
+<span class="s">query_params = [&quot;per_page=5&quot;, &quot;path=README.md&quot;]</span>
+<span class="s">url += join(query_params, &quot;&amp;&quot;, &quot;?&quot;</span>)
+print(url)
+</code></pre></div>
+<p>In this example, the final url will be the following valid URL utilizing those query params:
+<a href="https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5"><code>https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5</code></a></p>
+</div>
+<h2 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h2>
+<p>Finally, some functions may also have named arguments.
+An example of this is <code>http_post</code>. <code>http_post</code> (unsurprisingly) performs an HTTP POST request against an input url, usually with a body of some sort.
+One variation of the function only takes that url:</p>
+<div class="highlight"><pre><span></span><code>response<span class="w"> </span>=<span class="w"> </span>http_post(url,<span class="w"> </span>body)
+</code></pre></div>
+<p>However, if you wish to customize the headers on your HTTP request, you can do so:</p>
+<div class="highlight"><pre><span></span><code>my_headers<span class="w"> </span>=<span class="w"> </span>{
+<span class="w">    </span><span class="s">&quot;Authorization&quot;: &quot;Bearer {token}&quot;</span>,
+}
+response<span class="w"> </span>=<span class="w"> </span>http_post(url,<span class="w"> </span>body,<span class="w"> </span>headers=my_headers)
+</code></pre></div>
+<p>In this example, the named arg <code>headers</code> expects a map. Named args are always optional. Required arguments cannot be specified as required arguments.</p>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<p>There are a lot of built-in functions. If you just want to see what's available and how to use them, it's best to refer to the <a href="../../reference/functions/">reference</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">RSL does not allow defining your own functions</p>
+<p>RSL currently does not allow you to define your own functions, so any function you use is built-in.</p>
+</div>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Function invocation syntax is similar to most other C-like languages such as Python, Java, etc.</li>
+<li>Functions may take no arguments, a fixed number of arguments, a varying number of args, and/or named arguments.</li>
+<li>RSL does not allow you to define your own functions - all functions are built-in.</li>
+</ul>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>We've already covered the <a href="../basics/#string">Basics of strings</a>,
+but there are some more advanced string concepts which are worth covering, such as string interpolation, raw strings, etc.
+We'll cover these in the next section: <a href="../strings-advanced/">Strings (Advanced)</a>!</p>
 
 
 
@@ -775,13 +1086,13 @@ For a complete list of available functions, see the <a href="../../reference/fun
         
         
           
-          <a href="../shell-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
+          <a href="../strings-advanced/" class="md-footer__link md-footer__link--next" aria-label="Next: Strings (Advanced)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Shell Commands
+                Strings (Advanced)
               </div>
             </div>
             <div class="md-footer__button md-icon">

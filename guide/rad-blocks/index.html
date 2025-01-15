@@ -598,6 +598,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../strings-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings (Advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-commands/" class="md-nav__link">
         
   
@@ -1103,7 +1124,7 @@ Example URL if you want to see for yourself:</p>
 <code>json</code> can be thought of as representing the JSON blob as a whole, or its root, if you want to think of the JSON data as a tree.</p>
 <p>The <code>[]</code> after <code>json</code> tells RSL that you expect the <code>json</code> blob to be a list, and to "unwrap" it and dig into individual items in that list for the remainder of the path.
 <code>commit</code> then tells it to look up a key of that name (literally <code>commit</code>), and to then look up <code>author</code> next, and then finally <code>name</code>.</p>
-<p>The json field definition syntax can do a lot of things that we won't cover here. For details, see its <a href="../reference/json-field-definition.md">reference page</a>.</p>
+<p>The json field definition syntax can do a lot of things that we won't cover here. For details, see its <a href="../../reference/json-field-definition/">reference page</a>.</p>
 <p>When the json field assignment is executed, its variable (<code>Author</code> for example) is initialized as an empty list.
 It's a "special" list though, as it has a json field definition tied to it, which can be used in a rad block, let's look at that one next.</p>
 <h3 id="rad-block">Rad Block<a class="headerlink" href="#rad-block" title="Permanent link">&para;</a></h3>
@@ -1224,12 +1245,12 @@ Then, we add three more rules: any sequence "Denmark" should be colored red, and
 <p>See the <a href="../../reference/rad-blocks/#colors">reference</a> for a list of valid colors.</p>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <p>Rad blocks can contain if statements, so if you want slightly different behavior for your rad block based on some condition, you don't need to
-copy and paste the whole block into two separate if statements.</p>
+copy and paste the whole block into two separate if blocks.</p>
 <p>Let's say your script had a flag for sorting by population or not. Here's an example of how that could look:</p>
 <div class="highlight"><pre><span></span><code><span class="nf">args:</span>
 <span class="w">    </span>sort_by_population<span class="w"> </span><span class="s">&quot;sort-by-population&quot;</span><span class="w"> </span>p<span class="w"> </span>bool<span class="w">  </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span>to<span class="w"> </span>sort<span class="w"> </span>by<span class="w"> </span>population.
 
-...
+//<span class="w"> </span>...<span class="w"> </span>some<span class="w"> </span>script<span class="w"> </span>stuff<span class="w"> </span>here
 
 rad<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
@@ -1242,18 +1263,18 @@ rad<span class="w"> </span>url:
 <p>You can put any rad block statements into these if blocks, including <code>fields</code>, column modifiers, etc.</p>
 <h2 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h2>
 <p>There are two other types of rad blocks: "request" blocks and "display" blocks. Let's first discuss the former.</p>
-<p>A request block is similar to the <code>rad</code> block, however it does not print out any table after executing its query and
-field extraction step. You can use them to query and extract fields from a returned json blob, and then process the
-populated json fields/lists further if need be, or do whatever else you'd like. </p>
+<p>A request block is similar to a <code>rad</code> block, however it does not print out any table after executing its query and
+field extraction steps. You can use them to just query and extract fields from a returned json blob and stop there -
+allowing you to separately process the populated json fields/lists further if need be, or do whatever else you'd like.</p>
 <p>Generally the syntax is very similar between <code>request</code> and <code>rad</code> blocks.</p>
 <div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">City</span>,<span class="w"> </span><span class="kt">Country</span>,<span class="w"> </span><span class="kt">Population</span>
 
-//<span class="w"> </span>from<span class="w"> </span>here<span class="w"> </span>the<span class="w"> </span>above<span class="w"> </span>fields&#39;<span class="w"> </span>lists<span class="w"> </span>are<span class="w"> </span>populated<span class="w"> </span><span class="k">with</span><span class="w"> </span>values
+//<span class="w"> </span>from<span class="w"> </span>here<span class="w"> </span>the<span class="w"> </span>above<span class="w"> </span>fields&#39;<span class="w"> </span>lists<span class="w"> </span>are<span class="w"> </span>populated<span class="w"> </span><span class="k">with</span><span class="w"> </span>extracted<span class="w"> </span>values
 </code></pre></div>
 <p>Naturally, block statements like sorting or coloring have no effect, and may be considered invalid and error.</p>
 <div class="admonition note">
-<p class="admonition-title">Wait so is a request block <em>different</em> from a rad block, or is it a <em>type</em> of rad block?</p>
+<p class="admonition-title">Wait, so is a request block <em>different</em> from a rad block, or is it a <em>type</em> of rad block?</p>
 <p>We generally consider "display" and "request" blocks to be <em>types</em> of rad blocks, just with slightly different
 syntax and behavior. We may still compare them to <em>the</em> rad block (i.e. the one using <code>rad</code> as its keyword) when
 discussing differences however - it depends on the context in which they're discussed.</p>

@@ -8,13 +8,9 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/reference/defer/">
+        <link rel="canonical" href="https://amterp.github.io/rad/reference/json-field-definition/">
       
       
-        <link rel="prev" href="../assignment/">
-      
-      
-        <link rel="next" href="../functions/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +18,7 @@
     
     
       
-        <title>Defer & Errdefer - Rad Docs</title>
+        <title>Json Field Definition - Rad Docs</title>
       
     
     
@@ -81,11 +77,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#defer" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -118,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Defer & Errdefer
+              Json Field Definition
             
           </span>
         </div>
@@ -477,19 +468,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -503,7 +492,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -556,28 +545,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../defer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -586,42 +557,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
-    <span class="md-ellipsis">
-      defer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
-    <span class="md-ellipsis">
-      errdefer
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -778,32 +713,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
-    <span class="md-ellipsis">
-      defer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
-    <span class="md-ellipsis">
-      errdefer
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -820,76 +729,10 @@
   
 
 
-  <h1>Defer & Errdefer</h1>
+  <h1>Json Field Definition</h1>
 
-<ul>
-<li><code>defer</code> and <code>errdefer</code> run in LIFO order, each kind being part of the same one queue.</li>
-<li>If there are several defer statements, and one fails, further defer statements will still attempt to run.</li>
-<li>Rad's error code will become an error if the main script succeeded but a defer statement failed.</li>
-<li>errdefers will not get triggered if the main script succeeded but a <code>defer</code> or <code>errdefer</code> statement failed.</li>
-</ul>
-<h2 id="defer"><code>defer</code><a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">defer Example</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-</code></pre></div>
-<div class="highlight"><span class="filename">defer Example Output</span><pre><span></span><code>Hello!
-3
-4
-1
-2
-</code></pre></div>
-<h2 id="errdefer"><code>errdefer</code><a class="headerlink" href="#errdefer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">errdefer Example 1</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">0</span>)<span class="w">  </span>//<span class="w"> </span>successful<span class="w"> </span>script<span class="w"> </span>run
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 1 Output</span><pre><span></span><code>Hello!
-5
-6
-1
-2
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 2</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span>perceived<span class="w"> </span><span class="k">as</span><span class="w"> </span>error!
-</code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 2 Output</span><pre><span></span><code>Hello!
-7
-8
-5
-6
-3
-4
-1
-2
-</code></pre></div>
+<p>TODO
+perhaps reframe as general 'json extraction logic' reference?</p>
 
 
 
@@ -917,44 +760,6 @@ exit(<span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </spa
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../assignment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Assignment">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Assignment
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../functions/" class="md-footer__link md-footer__link--next" aria-label="Next: Functions">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Functions
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
