@@ -2,6 +2,12 @@
 
 A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. Simplifies the process of writing, managing, and sharing API query scripts.
 
+## [Documentation](https://amterp.github.io/rad/)
+
+Docs are still a work in progress, but there's enough to get you started!
+
+Feel free to check out the [**Getting Started**](https://amterp.github.io/rad/guide/getting-started/) guide :)
+
 ## Installation
 
 ### macOS
@@ -130,7 +136,3 @@ Time                   Author                 SHA
 - Rad aims to make writing 95% of your scripts better and easier. However, the last 5% may involve bespoke, complex logic, better suited for general-purpose programming languages such as Python or Bash.
 - You can get quite far with Rad, as RSL provides utilities for the most common things devs would want, but it will inevitably be lacking something that a more general-purpose programming language would offer.
 - The bet is that these complex scripts are few and far between, so that Rad can make your life easier 95% of the time, and require you to pull out the heavy-duty 'general' tooling only once in a while.
-
-## [Documentation](https://amterp.github.io/rad/)
-
-Still very early and barebones.

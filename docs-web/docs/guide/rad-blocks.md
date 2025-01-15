@@ -298,7 +298,7 @@ See the [reference](../reference/rad-blocks.md#colors) for a list of valid color
 ### If Statements
 
 Rad blocks can contain if statements, so if you want slightly different behavior for your rad block based on some condition, you don't need to
-copy and paste the whole block into two separate if statements.
+copy and paste the whole block into two separate if blocks.
 
 Let's say your script had a flag for sorting by population or not. Here's an example of how that could look:
 
@@ -306,7 +306,7 @@ Let's say your script had a flag for sorting by population or not. Here's an exa
 args:
     sort_by_population "sort-by-population" p bool  # Enable to sort by population.
 
-...
+// ... some script stuff here
 
 rad url:
     fields City, Country, Population
@@ -324,9 +324,9 @@ You can put any rad block statements into these if blocks, including `fields`, c
 
 There are two other types of rad blocks: "request" blocks and "display" blocks. Let's first discuss the former.
 
-A request block is similar to the `rad` block, however it does not print out any table after executing its query and
-field extraction step. You can use them to query and extract fields from a returned json blob, and then process the
-populated json fields/lists further if need be, or do whatever else you'd like. 
+A request block is similar to a `rad` block, however it does not print out any table after executing its query and
+field extraction steps. You can use them to just query and extract fields from a returned json blob and stop there -
+allowing you to separately process the populated json fields/lists further if need be, or do whatever else you'd like.
 
 Generally the syntax is very similar between `request` and `rad` blocks.
 
@@ -334,7 +334,7 @@ Generally the syntax is very similar between `request` and `rad` blocks.
 request url:
     fields City, Country, Population
     
-// from here the above fields' lists are populated with values
+// from here the above fields' lists are populated with extracted values
 ```
 
 Naturally, block statements like sorting or coloring have no effect, and may be considered invalid and error.
@@ -342,7 +342,7 @@ Naturally, block statements like sorting or coloring have no effect, and may be 
 [//]: # (todo we should not use 'may' wording, we should decide and be clear RAD-106)
 [//]: # (todo need to update this section when we allow giving json blobs directly to the display or request blocks or rad blocks)
 
-!!! note "Wait so is a request block *different* from a rad block, or is it a *type* of rad block?"
+!!! note "Wait, so is a request block *different* from a rad block, or is it a *type* of rad block?"
 
     We generally consider "display" and "request" blocks to be *types* of rad blocks, just with slightly different
     syntax and behavior. We may still compare them to *the* rad block (i.e. the one using `rad` as its keyword) when

@@ -29,8 +29,8 @@
 - rad blocks
   - [x] take 1
 - functions
-  - [ ] take 1
-- string interpolation & formatting, multiline strings
+  - [x] take 1
+- string interpolation & formatting, multiline strings, raw
   - [ ] take 1
 - resources, picking
   - [ ] take 1
