@@ -39,7 +39,7 @@ name = 2
 
 [//]: # (todo for number types, should we advertise precision/bits?)
 
-RSL's data types closely mirror those of JSON. Namely: strings, ints, floats, bools, lists, and maps.
+RSL has 6 data types: strings, ints, floats, bools, lists, and maps. 
 
 ### string
 

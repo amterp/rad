@@ -22,6 +22,45 @@ func RunRslNonVoidFunction(
 	args []interface{},
 	namedArgs []NamedArg,
 ) interface{} {
+	output := runRslNonVoidFunction(i, function, numExpectedReturnValues, args, namedArgs)
+	bugCheckOutputType(i, function, output)
+	return output
+}
+
+func RunRslFunction(i *MainInterpreter, call FunctionCall) {
+	funcToken := call.Function
+	args := evalArgs(i, call.Args)
+	functionName := funcToken.GetLexeme()
+	namedArgsMap := toMap(i, call.NamedArgs)
+
+	switch functionName {
+	case PRINT:
+		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap) // todo implement coloring?
+		runPrint(args)
+	case PPRINT:
+		if len(args) > 1 {
+			i.error(funcToken, PPRINT+"() takes zero or one argument")
+		}
+		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
+		runPrettyPrint(i, funcToken, args)
+	case DEBUG:
+		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
+		runDebug(args)
+	case EXIT:
+		// todo allow following exit code with msg?
+		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
+		runExit(i, funcToken, args)
+	case SLEEP:
+		runSleep(i, funcToken, args, namedArgsMap)
+	case SEED_RANDOM:
+		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
+		runSeedRandom(i, funcToken, args)
+	default:
+		RunRslNonVoidFunction(i, funcToken, NO_NUM_RETURN_VALUES_CONSTRAINT, args, call.NamedArgs)
+	}
+}
+
+func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturnValues int, args []interface{}, namedArgs []NamedArg) interface{} {
 	funcName := function.GetLexeme()
 	namedArgsMap := toMap(i, namedArgs)
 
@@ -33,7 +72,7 @@ func RunRslNonVoidFunction(
 	case "now_date": // todo is this name good? current_date? date?
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return RClock.Now().Format("2006-01-02")
+		return NewRslString(RClock.Now().Format("2006-01-02"))
 	case "now_year":
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
@@ -86,7 +125,9 @@ func RunRslNonVoidFunction(
 		case RslString:
 			return coerced.Upper()
 		default:
-			return strings.ToUpper(ToPrintable(arg))
+			// todo not convinced we shouldn't just error here. RAD-109
+			//   leads to some complications e.g. maintaining color attributes of list string contents
+			return NewRslString(strings.ToUpper(ToPrintable(arg)))
 		}
 	case "lower":
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
@@ -96,7 +137,8 @@ func RunRslNonVoidFunction(
 		case RslString:
 			return coerced.Lower()
 		default:
-			return strings.ToLower(ToPrintable(arg))
+			// todo ditto re: RAD-109
+			return NewRslString(strings.ToLower(ToPrintable(arg)))
 		}
 	case "starts_with":
 		if len(args) != 2 {
@@ -215,39 +257,6 @@ func RunRslNonVoidFunction(
 	panic(UNREACHABLE)
 }
 
-func RunRslFunction(i *MainInterpreter, call FunctionCall) {
-	funcToken := call.Function
-	args := evalArgs(i, call.Args)
-	functionName := funcToken.GetLexeme()
-	namedArgsMap := toMap(i, call.NamedArgs)
-
-	switch functionName {
-	case PRINT:
-		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap) // todo implement coloring?
-		runPrint(args)
-	case PPRINT:
-		if len(args) > 1 {
-			i.error(funcToken, PPRINT+"() takes zero or one argument")
-		}
-		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-		runPrettyPrint(i, funcToken, args)
-	case DEBUG:
-		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-		runDebug(args)
-	case EXIT:
-		// todo allow following exit code with msg?
-		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-		runExit(i, funcToken, args)
-	case SLEEP:
-		runSleep(i, funcToken, args, namedArgsMap)
-	case SEED_RANDOM:
-		validateExpectedNamedArgs(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-		runSeedRandom(i, funcToken, args)
-	default:
-		RunRslNonVoidFunction(i, funcToken, NO_NUM_RETURN_VALUES_CONSTRAINT, args, call.NamedArgs)
-	}
-}
-
 func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 	if len(values) != 1 {
 		i.error(function, "len() takes exactly one argument")
@@ -340,4 +349,13 @@ func validateExpectedNamedArgs(i *MainInterpreter, function Token, expectedArgs 
 	sort.Strings(unknownArgs)
 	unknownArgsStr := strings.Join(unknownArgs, ", ")
 	i.error(function, fmt.Sprintf("Unknown named argument(s): %s", unknownArgsStr))
+}
+
+func bugCheckOutputType(i *MainInterpreter, token Token, output interface{}) {
+	switch output.(type) {
+	case RslString, int64, float64, bool, []interface{}, RslMap:
+		return
+	default:
+		i.error(token, fmt.Sprintf("Bug! Unexpected return type: %v", TypeAsString(output)))
+	}
 }

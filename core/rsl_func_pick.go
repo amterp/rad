@@ -11,7 +11,7 @@ const (
 	PICK_PROMPT = "prompt"
 )
 
-func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) interface{} {
+func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslString {
 	numArgs := len(args)
 	if numArgs < 1 {
 		i.error(function, PICK+"() takes at least one argument")
@@ -83,7 +83,7 @@ type PickNamedArgs struct {
 	prompt string
 }
 
-func pickString(i *MainInterpreter, function Token, prompt string, filters []string, options []string) string {
+func pickString(i *MainInterpreter, function Token, prompt string, filters []string, options []string) RslString {
 	var filteredOptions []huh.Option[string]
 	for _, option := range options {
 		failedAFilter := false
@@ -103,7 +103,7 @@ func pickString(i *MainInterpreter, function Token, prompt string, filters []str
 	}
 
 	if len(filteredOptions) == 1 {
-		return filteredOptions[0].Value
+		return NewRslString(filteredOptions[0].Value)
 	}
 
 	var result string
@@ -119,5 +119,5 @@ func pickString(i *MainInterpreter, function Token, prompt string, filters []str
 		i.error(function, fmt.Sprintf("Error running pick: %v", err))
 	}
 
-	return result
+	return NewRslString(result)
 }

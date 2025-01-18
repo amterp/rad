@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	isTerminalUtf8 = terminalIsUtf8()
+	terminalSupportsUtf8 = terminalIsUtf8()
 )
 
 type ColumnSort struct {
@@ -137,7 +137,7 @@ func (w *TblWriter) Render() {
 			for j, line := range lines {
 				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
-					if isTerminalUtf8 {
+					if terminalSupportsUtf8 {
 						lines[j] = line[:colWidth-1]
 						lines[j] += "…"
 					} else {

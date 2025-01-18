@@ -105,6 +105,14 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, val interface{})
 	}
 }
 
+func ConvertValuesToNativeTypes(interp *MainInterpreter, token Token, vals []interface{}) []interface{} {
+	output := make([]interface{}, len(vals))
+	for i, val := range vals {
+		output[i] = ConvertToNativeTypes(interp, token, val)
+	}
+	return output
+}
+
 // converts an RSL data structure to a JSON-serializable structure
 func RslToJsonType(arg interface{}) interface{} {
 	switch coerced := arg.(type) {

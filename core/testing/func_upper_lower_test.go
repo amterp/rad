@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestUpperLower(t *testing.T) {
+func Test_UpperLower(t *testing.T) {
 	rsl := `
 a = "aLiCe"
 print(upper(a))

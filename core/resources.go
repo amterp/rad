@@ -57,7 +57,7 @@ func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numEx
 		opts = append(opts, PickResourceOpt{
 			// todo we should probably do some type checking e.g. only array of primitives
 			Keys:   option.Keys,
-			Values: option.Values,
+			Values: ConvertValuesToNativeTypes(i, function, option.Values),
 		})
 	}
 	return PickResource{
