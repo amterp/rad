@@ -81,6 +81,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#pick" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -456,6 +461,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Resources
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -465,6 +481,68 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pick" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pick_kv" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick_kv
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pick_from_resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick_from_resource
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -748,6 +826,59 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pick" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pick_kv" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick_kv
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pick_from_resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      pick_from_resource
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -766,7 +897,78 @@
 
   <h1>Resources</h1>
 
+<p>Depending on your script, you may wish to look up values at some point, such as URL endpoints depending on your input. RSL offers a function for this, <code>pick_from_resource</code>, but before we dive into it, we'll first cover a couple of related functions.</p>
+<h2 id="pick"><code>pick</code><a class="headerlink" href="#pick" title="Permanent link">&para;</a></h2>
+<p><a href="../../reference/functions/#pick"><code>pick</code></a> is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, rad will enter an interactive mode which allows the user to pick a single value to continue with.</p>
+<p>You can try it yourself with this example:</p>
+<div class="highlight"><pre><span></span><code>options<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]</span>
+<span class="s">output = pick(options, &quot;sandwich&quot;)</span>
+<span class="s">print(&quot;You chose: {output}&quot;</span>)
+</code></pre></div>
+<p>When you initially run this, the <code>sandwich</code> filter should exclude <code>chicken burger</code> and ask you to select between two remaining options:</p>
+<div class="highlight"><pre><span></span><code>┃ Pick an option
+┃ &gt; chicken sandwich
+┃   ham sandwich
+</code></pre></div>
+<p>After you choose, you get the final output:</p>
+<div class="highlight"><pre><span></span><code>You chose: chicken sandwich
+</code></pre></div>
+<h2 id="pick_kv"><code>pick_kv</code><a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h2>
+<p>A similar function is <a href="../../reference/functions/#pick_kv"><code>pick_kv</code></a>. However, instead of the values you're filtering and picking between also being the <em>output</em>, <code>pick_kv</code> performs the filtering/picking on a list of <em>keys</em>, each which map to a value that will get output from the function if its associated key is picked. For example:</p>
+<div class="highlight"><pre><span></span><code>keys<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]</span>
+<span class="s">values = [&quot;CHICKEN&quot;, &quot;CHICKEN&quot;, &quot;HAM&quot;]</span>
 
+<span class="s">output = pick_kv(keys, values)</span>
+
+<span class="s">print(&quot;We&#39;ll need {output}!&quot;</span>)
+</code></pre></div>
+<p>In this example, we leave out the filter, as it's optional, which will launch us into an interactive select between all the key values:</p>
+<div class="highlight"><pre><span></span><code>┃ Pick an option
+┃   chicken burger
+┃   chicken sandwich
+┃ &gt; ham sandwich
+</code></pre></div>
+<p>If we pick this third option, this is the final output of the script:</p>
+<div class="highlight"><pre><span></span><code>We&#39;ll need HAM!
+</code></pre></div>
+<p>Notice that the function did not output the <em>key</em> <code>ham sandwich</code> that was selected, but instead the <em>value</em> <code>HAM</code> that it mapped to.</p>
+<h2 id="pick_from_resource"><code>pick_from_resource</code><a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h2>
+<p>Now we'll look at actually using what this section is about - resources. <a href="../../reference/functions/#pick_from_resource"><code>pick_from_resource</code></a> allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous <code>pick</code> functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed.</p>
+<p>Let's do a simple example. As mentioned, a resource file is simply a JSON file. We'll create an example where we look up a url based on user input:</p>
+<div class="highlight"><span class="filename">websites.json</span><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lab&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gitlab.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;GitLab&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gh&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;hub&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;github.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;GitHub&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>You may see some similarity here to what we did with <a href="#pick_kv"><code>pick_kv</code></a>. We're defining two options: one which can get matched by either <code>gl</code> or <code>lab</code>, and one which gets matched by <code>gh</code> or <code>hub</code>. In the first case, if chosen, <code>pick_from_resource</code> will return <em>two</em> values: <code>gitlab.com</code> and <code>GitLab</code>. Similarly it will return <code>github.com</code> and <code>GitHub</code> for the latter.</p>
+<p>Let's create an RSL script to use this resource:</p>
+<div class="highlight"><span class="filename">example.rsl</span><pre><span></span><code><span class="nf">args:</span>
+<span class="w">    </span>website<span class="w"> </span>string<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;</span>
+
+<span class="s">url, name = pick_from_resource(&quot;./resources/websites.json&quot;, website)</span>
+<span class="s">print(&quot;url: {url}, name: {name}&quot;</span>)
+</code></pre></div>
+<p>Note that the first argument to <code>pick_from_resource</code> is a path to a resource file. This path is <em>relative to the script's path</em>.
+This allows you to store your resources with your scripts. In this example, we'll place our files like so:</p>
+<div class="highlight"><pre><span></span><code>.
+├── example.rsl
+└── resources
+    └── websites.json
+</code></pre></div>
+<p>This means that it doesn't matter where on your computer you invoke your script from including if it's on your PATH - the script will consistently look in the same spot for resource files.</p>
+<p>TBC</p>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
 
 
 
