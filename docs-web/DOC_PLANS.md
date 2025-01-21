@@ -16,6 +16,7 @@
 ## Doc Todo
 
 ? change all external links to open in new tabs, don't go off rad docs site
+? consider adding 'exercises'?
 
 - elevator pitch / motivation / why
   - [ ] take 1
@@ -31,7 +32,7 @@
 - functions
   - [x] take 1
 - string interpolation & formatting, multiline strings, raw
-  - [ ] take 1
+  - [x] take 1
 - resources, picking
   - [ ] take 1
 - shell cmds

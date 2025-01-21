@@ -55,6 +55,7 @@ nav:
       - ./guide/rad-blocks.md
       - ./guide/functions.md
       - ./guide/strings-advanced.md
+      - ./guide/resources.md
       - ./guide/shell-commands.md
   - Reference:
     - ./reference/args.md

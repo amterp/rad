@@ -169,8 +169,10 @@ text = r`Hello\n{name}`
 
 ## Learnings Summary
 
-TBC
+- We learned about **string interpolation**, and how we can put expressions directly into strings for evaluation.
+- We saw that we can also **format** the result of said expressions, by using a colon `:` following the expression itself.
+- Finally, we learned about **raw strings** and **multiline strings**.
 
 ## Next
 
-TBC
+Next, we'll cover another useful concept for writing scripts: [resource files](./resources.md).
