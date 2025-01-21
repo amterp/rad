@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Rad" type="GoApplicationRunConfiguration" factoryName="Go Application">
-    <module name="2rad" />
+    <module name="rad" />
     <working_directory value="$PROJECT_DIR$" />
     <parameters value="test.rsl &quot;a&quot; --MOCK-RESPONSE &quot;.*:resp.json&quot;" />
     <kind value="PACKAGE" />

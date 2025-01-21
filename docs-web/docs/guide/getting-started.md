@@ -27,6 +27,12 @@ If this prints rad's version, you're set!
 
 Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of an RSL twist, demoing a couple of features rad provides.
 
+!!! note "Terminology: Rad & RSL"
+
+    Rad is the name of the CLI tool and interpreter capable of running RSL scripts.
+
+    **Rad** stands for "Request And Display", and **RSL** stands for "Rad Scripting Language".
+
 First, create a file, let's call it simply `hello`, and give it the following contents:
 
 ```rsl
@@ -41,7 +47,7 @@ print("Hello, World!")
 
 !!! info "RSL Extensions"
 
-    If you want to give your RSL scripts an extension, it's recommended you follow `.rsl` as a convention.
+    If you want to give your RSL scripts an extension, you can follow `.rsl` as a convention.
 
 Then, run the script from your CLI by invoking `rad` on it, and you should see it print out like so:
 

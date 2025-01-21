@@ -59,7 +59,7 @@ url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 ```
 
 Here we have an [args block](./args.md) where we declare a `repo` string and a `limit` int with a default of 20.
-After the args block, we create a `url` string using [string interpolation](TODO) to fill in the repo name, and the limit for how many commits we want GitHub to give us.
+After the args block, we create a `url` string using [string interpolation](strings-advanced.md#string-interpolation) to fill in the repo name, and the limit for how many commits we want GitHub to give us.
 
 ### Json Field Definitions
 

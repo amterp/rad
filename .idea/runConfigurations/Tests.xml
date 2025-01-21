@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Tests" type="GoTestRunConfiguration" factoryName="Go Test">
-    <module name="2rad" />
+    <module name="rad" />
     <working_directory value="$PROJECT_DIR$/core/testing" />
     <root_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />

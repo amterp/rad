@@ -104,55 +104,22 @@ reader!
 ```
 </div>
 
-RSL also supports **raw strings**. Raw strings do not allow any escaping (including the delimiter used to create them).
-Use them when you want your contents to remain as "raw" and unprocessed as possible.
-
-To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with `r`.
+Strings also support **interpolation**. String interpolation allows you to write expressions *inside your string* that will be evaluated and replaced for the final string. We'll cover this in more depth in a future section, but to give a very simple example:
 
 ```rsl
-text = r"Hello\tdear\nreader!"
-print(text)
+name = "Alice"
+print("Hi, {name}!")
 ```
 
 <div class="result">
 ```
-Hello\tdear\nreader!
+Hi, Alice!
 ```
 </div>
 
-Notice the printed string is exactly as written in code - neither the tab nor newline character were replaced.
+Anything encapsulated in a `{}` gets treated as an expression. Here, the expression is just the identifier `name`, which gets evaluated and substituted, giving us the final `Hi, Alice!` string.
 
-Again, you could use any of the three delimiters for raw strings:
-
-```rsl
-text = r"Hello\tdear\nreader!"
-text = r'Hello\tdear\nreader!'
-text = r`Hello\tdear\nreader!`
-```
-
-!!! tip "Raw strings for file paths"
-
-    Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:
-
-    ```rsl
-    path = r"C:\Users\Documents\notes.txt"
-    ```
-
-!!! info "You cannot escape the raw string's own delimiter"
-
-    RSL raw strings behave more like their equivalent in Go than Python.
-    In Python, you can escape the delimiter used to make the raw string i.e. `r"quote: \"!"`. If printed, this will
-    display as `quote: \"!` i.e. the escape character is also printed. There are lots of discussions online about this
-    somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
-    in raw strings of any kind.
-    
-    Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
-    string, leaving a dangling `!"` at the end, which is invalid syntax.
-
-RSL also support [string interpolation](TODO) and [multiline strings](TODO). 
-
-[//]: # (todo add link to actual sections ^)
-[//]: # (todo move raw section)
+Those are the basics for strings - we'll cover additional string concepts in a future section, [Strings (Advanced)](./strings-advanced.md).
 
 ### int
 
