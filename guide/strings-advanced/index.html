@@ -14,11 +14,11 @@
         <link rel="prev" href="../functions/">
       
       
-        <link rel="next" href="../shell-commands/">
+        <link rel="next" href="../resources/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -80,6 +80,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#string-interpolation" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -203,7 +208,7 @@
         <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -249,7 +254,7 @@
       <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -435,6 +440,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Strings (Advanced)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -445,6 +461,98 @@
 
       </a>
       
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#string-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Interpolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiline-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiline Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resources
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -727,6 +835,68 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#string-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Interpolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiline-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiline Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -752,6 +922,129 @@
 <li>multiline strings</li>
 <li>raw strings</li>
 </ul>
+<h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
+<p>RSL allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.</p>
+<p>Some examples:</p>
+<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<span class="s">print(&quot;Hi, {name}!&quot;)</span>
+
+<span class="s">print(&quot;Uppercase: {upper(name)}&quot;)</span>
+
+<span class="s">print(&quot;Conditions: {len(name) &gt; 5 ? &#39;long name&#39; : &#39;short name&#39;}!&quot;</span>)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hi, Alice!
+Uppercase: ALICE
+Conditions: short name!
+</code></pre></div>
+</div>
+
+<p>String interpolation expressions can be as simple as just an identifier, or can involve function calls, math, list comprehensions, etc (though you should consider extracting complex expressions into named variables beforehand for the sake of clarity).</p>
+<p>Note the use of single quote <code>'</code> strings inside the ternary example's expression. Using double quotes would've closed the "outer" string prematurely, but using another delimiter allows us to avoid that without also needing to escape anything.</p>
+<h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
+<p>You can format expression results while doing string interpolation.
+To do so, follow your expression with <code>:</code> and then the relevant syntax for the formatting you want to do. We'll demonstrate through some examples:</p>
+<div class="highlight"><pre><span></span><code>pi<span class="w"> </span>=<span class="w"> </span><span class="mf">3.14159265359</span>
+
+print(<span class="s">&quot;Pi: {pi}&quot;)       // no formatting</span>
+<span class="s">print(&quot;Pi: {pi:20}&quot;)    // left-pad to 20 places</span>
+<span class="s">print(&quot;Pi: {pi:&gt;20}&quot;)   // equivalent to above left-pad, &gt; is redundant</span>
+<span class="s">print(&quot;Pi: {pi:&lt;20}&quot;)   // right-pad to 20 places</span>
+<span class="s">print(&quot;Pi: {pi:.3}&quot;)    // print to 3 decimal places</span>
+<span class="s">print(&quot;Pi: {pi:10.2}&quot;</span>)<span class="w">  </span>//<span class="w"> </span>left-pad<span class="w"> </span>to<span class="w"> </span><span class="mi">10</span><span class="w"> </span>places,<span class="w"> </span>including<span class="w"> </span><span class="mi">2</span><span class="w"> </span>decimal<span class="w"> </span>places
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Pi: 3.14159265359
+Pi:             3.141593
+Pi:             3.141593
+Pi: 3.141593            
+Pi: 3.142
+Pi:       3.14
+</code></pre></div>
+</div>
+
+<p>The decimal place formatting is only relevant to expressions that result in numbers. If it results in a string, then the formatting will error.</p>
+<h2 id="multiline-strings">Multiline Strings<a class="headerlink" href="#multiline-strings" title="Permanent link">&para;</a></h2>
+<p>Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. <code>"</code> or <code>'</code>.
+For these scenarios, RSL offers <code>"""</code> multiline string syntax. To demonstrate:</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">This is an</span>
+<span class="s">example of text</span>
+<span class="s">that &quot;may contain quotes&quot;!</span>
+<span class="s">&quot;&quot;&quot;</span>
+print(text)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>This is an
+example of text
+that &quot;may contain quotes&quot;!
+</code></pre></div>
+</div>
+
+<p>Some things to note:</p>
+<ol>
+<li>The opening <code>"""</code> must not be followed by any non-comment tokens on the same line.</li>
+<li>The newline after the opening <code>"""</code> is <em>excluded</em> from the contents of the string. Contents begin on the next line.</li>
+<li>The closing <code>"""</code> must not be preceded by any non-whitespace characters on that same line.</li>
+<li>Whitespace preceding the closing <code>"""</code> will get removed from the front of each line in the string block.<ul>
+<li>In other words, you can use the indentation of the closing <code>"""</code> to control the desired indentation of your contents.</li>
+<li>If the closing <code>"""</code> is preceded by more whitespace than exists on any line of string contents, that means we cannot remove that amount of whitespace from the line, leading to an error.</li>
+</ul>
+</li>
+</ol>
+<p>Below, we demonstrate the 4th point. Note that to make the "whitespaces" more visible, I've replaced them with dots, but keep in mind they <em>do represent spaces</em>:</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">....This is an</span>
+<span class="s">.....example of text</span>
+<span class="s">..that &quot;may contain quotes&quot;!</span>
+<span class="s">..&quot;&quot;&quot;</span><span class="w">  </span>//<span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span><span class="w"> </span>preceding<span class="w"> </span>spaces.<span class="w"> </span>will<span class="w"> </span>get<span class="w"> </span>removed<span class="w"> </span>from<span class="w"> </span>each<span class="w"> </span>line<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>contents.
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>..This is an
+...example of text
+that &quot;may contain quotes&quot;!
+</code></pre></div>
+</div>
+
+<h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
+<p>RSL also supports <strong>raw strings</strong>.
+Raw strings don't have any sort of processing done on them (such as string interpolation) and do not allow any escaping (including the delimiter used to create them).
+Use them when you want your contents to remain as "raw" and unprocessed as possible.</p>
+<p>To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with <code>r</code>.</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\n{name}&quot;</span>
+print(text)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello\n{name}
+</code></pre></div>
+</div>
+
+<p>Notice the printed string is exactly as written in code - the newline character and string interpolation are left as-is.</p>
+<p>You could use any of the three delimiters for raw strings:</p>
+<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\n{name}&quot;</span>
+text<span class="w"> </span>=<span class="w"> </span>r&#39;<span class="kt">Hello</span>\n{name}&#39;
+text<span class="w"> </span>=<span class="w"> </span>r`<span class="kt">Hello</span>\n{name}`
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Raw strings for file paths</p>
+<p>Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:</p>
+<div class="highlight"><pre><span></span><code>path<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;C:\Users\Documents\notes.txt&quot;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">You cannot escape the raw string's own delimiter</p>
+<p>RSL raw strings behave more like their equivalent in Go than Python.
+In Python, you can escape the delimiter used to make the raw string i.e. <code>r"quote: \"!"</code>. If printed, this will
+display as <code>quote: \"!</code> i.e. the escape character is also printed. There are lots of discussions online about this
+somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
+in raw strings of any kind.</p>
+<p>Instead, if you try the same thing in RSL, you will get an error because the quote following <code>\</code> will close the
+string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
+</div>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>TBC</p>
 
 
 
@@ -801,13 +1094,13 @@
         
         
           
-          <a href="../shell-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
+          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Shell Commands
+                Resources
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -844,7 +1137,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>
