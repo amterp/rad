@@ -111,8 +111,13 @@ TBC
 
 ## Learnings Summary
 
-TBC
+- `pick` and `pick_kv` are built-in functions that allow users to select one option from many, allowing for an optional filter.
+- `pick_from_resource` is similar, but uses a pre-defined resource file to define the options.
+- The resource file is defined in JSON.
+- The resource file path can be defined relative to the script's path.
 
 ## Next
 
-TBC
+The shell offers a ton of useful utilities, and RSL allows you to leverage them from within your scripts.
+
+We'll look at that in the next section: [Shell Commands](./shell-commands.md).
