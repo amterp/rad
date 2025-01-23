@@ -8,13 +8,9 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/shell-commands/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/global-flags/">
       
       
-        <link rel="prev" href="../resources/">
-      
-      
-        <link rel="next" href="../../reference/args/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +18,7 @@
     
     
       
-        <title>Shell Commands - Rad Docs</title>
+        <title>Global Flags - Rad Docs</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#basic-shell-commands" class="md-skip">
+        <a href="#help" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Shell Commands
+              Global Flags
             
           </span>
         </div>
@@ -288,19 +284,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -314,7 +308,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -472,28 +466,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Shell Commands
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -502,87 +478,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#basic-shell-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      Basic Shell Commands
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#critical-shell-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      Critical Shell Commands
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#unsafe-shell-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      Unsafe Shell Commands
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#capturing-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Capturing Output
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#suppressing-announcements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Suppressing Announcements
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learnings-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learnings Summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      Next
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -851,63 +746,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-shell-commands" class="md-nav__link">
+  <a href="#help" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Shell Commands
+      help
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#critical-shell-commands" class="md-nav__link">
+  <a href="#debug" class="md-nav__link">
     <span class="md-ellipsis">
-      Critical Shell Commands
+      DEBUG
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#unsafe-shell-commands" class="md-nav__link">
+  <a href="#quiet" class="md-nav__link">
     <span class="md-ellipsis">
-      Unsafe Shell Commands
+      QUIET
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#capturing-output" class="md-nav__link">
+  <a href="#no-color" class="md-nav__link">
     <span class="md-ellipsis">
-      Capturing Output
+      NO-COLOR
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#suppressing-announcements" class="md-nav__link">
+  <a href="#mock-response" class="md-nav__link">
     <span class="md-ellipsis">
-      Suppressing Announcements
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learnings-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learnings Summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      Next
+      MOCK-RESPONSE
     </span>
   </a>
   
@@ -931,130 +808,21 @@
   
 
 
-  <h1>Shell Commands</h1>
+  <h1>Global Flags</h1>
 
-<p>The shell offers a wide range of utilities and is a great way to interact with your system e.g. reading/writing files, invoking installed programs, etc.</p>
-<p>While you can do a lot with in-built RSL functionality, sometimes you'll want to invoke things from your shell, and RSL makes that convenient through  syntax we'll explore in this section.</p>
-<h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
-<p>Shell commands can be written via <a href="../basics/#string">strings</a>. You can then <em>invoke</em> shell commands by prefixing a string with a dollar sign <code>$</code>.</p>
-<p>For example:</p>
-<div class="highlight"><pre><span></span><code>$`ls`
-</code></pre></div>
-<p>Here we have the intent to run <code>ls</code> from your shell and printing the output to your terminal.</p>
-<p>Note that you can write the shell command inline like above, or pre-define a string as an identifier (e.g. <code>cmd = ...</code>) and then prefix the identifier with <code>$</code> i.e. <code>$cmd</code> to invoke that pre-defined command.</p>
-<p><strong>The above example won't run as-is though</strong> -- RSL requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
-To do this, you must define either a <code>fail</code> or a <code>recover</code> block below your command invocation. If the command fails, the block you define will get run, but if it succeeds, the block will <em>not</em> run and will be skipped.</p>
-<p>When the <code>fail</code> block is run and finishes, the script <strong>will exit</strong>.</p>
-<p>When the <code>recover</code> block is run and finishes, the script <strong>will continue</strong> with whatever comes after the block.</p>
-<p>You can think of each block as saying how you want shell command failure to be handled - either you want the script to <strong>fail</strong> or you want it to <strong>recover</strong>.</p>
-<p>Here are a couple of examples to demonstrate what happens <em>if the command fails</em>. We create a <code>cmd</code> string to <code>curl</code> a <code>url</code> we defined earlier.</p>
-<div class="highlight"><pre><span></span><code>cmd<span class="w"> </span>=<span class="w"> </span>`curl<span class="w"> </span>{url}`
-$cmd
-<span class="nf">fail:</span>
-<span class="w">    </span>print(<span class="s">&quot;Oh no, curl failed!&quot;)</span>
-
-<span class="s">print(&quot;Hello!&quot;</span>)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Oh no, curl failed!
-</code></pre></div>
-</div>
-
-<p>The <code>Hello!</code> does not get printed because the <code>fail</code> block exits after it runs.
-The exit code of running this script will be non-0, indicating failure.</p>
-<div class="highlight"><pre><span></span><code>cmd<span class="w"> </span>=<span class="w"> </span>`curl<span class="w"> </span>{url}`
-$cmd
-<span class="nf">recover:</span>
-<span class="w">    </span>print(<span class="s">&quot;Oh no, curl failed!&quot;)</span>
-
-<span class="s">print(&quot;Hello!&quot;</span>)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Oh no, curl failed!
-Hello!
-</code></pre></div>
-</div>
-
-<p>Here, the <code>Hello!</code> gets printed because we used <code>recover</code> to indicate that the script should recover from the command failure and keep going.</p>
-<p>In each example, if the command runs successfully, we simply print the output to console and then the <code>Hello!</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">Prefer backticks for shell command strings</p>
-<p>Shell commands often make use of 'single' and "double" quotes, so to minimize delimiter collision, `backticks` often work best
-to contain shell commands when writing them into strings. However, there's nothing stopping you from using other delimiters.</p>
-</div>
-<h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
-<p>RSL requires <code>fail</code> or <code>recover</code> blocks when using <code>$</code> syntax for shell commands in order to help developers write safe and well-behaved scripts.</p>
-<p>However, a very common expectation is that the command should succeed, and if it doesn't, we should fail the script and exit immediately with a non-0 exit code. Rather than requiring explicit <code>fail</code> blocks, which can be a little cumbersome to write every time, you can instead use <code>$!</code> syntax to express that a command is <em>critical</em> i.e. it <em>must</em> succeed, else the script exits.</p>
-<div class="highlight"><pre><span></span><code>$!`ls`
-</code></pre></div>
-<p>This line alone is a perfectly valid shell command and RSL script. If the command fails, we propagate the error code and print the error.</p>
-<h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
-<p>If you want to run a shell command and <em>don't care</em> if it succeeds, you can use the <code>unsafe</code> keyword:</p>
-<div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls`
-</code></pre></div>
-<p>Regardless of if this invocation succeeds or fails, the script will continue.</p>
-<p>Use these judiciously.</p>
-<h2 id="capturing-output">Capturing Output<a class="headerlink" href="#capturing-output" title="Permanent link">&para;</a></h2>
-<p>So far, all example shell invocations have not involved capturing their output. <strong>When we don't capture command outputs, they're automatically printed to the terminal.</strong> However, you can capture command output as strings using the below example syntaxes. In each example, <code>cmd</code> is a predefined string variable representing a shell command.</p>
-<p>1) Capturing exit codes</p>
-<p>You can get the exit code from your invocation by writing it as an assignment to one identifier:</p>
-<div class="highlight"><pre><span></span><code>code<span class="w"> </span>=<span class="w"> </span>$cmd
-</code></pre></div>
-<p>The code returned by your invocation depends on the command. Commonly, a code of <code>0</code> indicates success, and non-0 indicates failure.</p>
-<p>2) Capturing stdout</p>
-<p>Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With RSL, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:</p>
-<div class="highlight"><pre><span></span><code>code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$cmd
-</code></pre></div>
-<p>Note that, when capturing stdout (or stderr), <strong>it does not get printed to the terminal</strong>. It gets redirected to your variable.</p>
-<p>3) Capturing stderr</p>
-<p>Lastly, you can capture stderr by adding a third identifier to the assignment:</p>
-<div class="highlight"><pre><span></span><code>code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$cmd
-</code></pre></div>
-<p>Note that if you don't care about certain outputs, you can conventionally use an underscore <code>_</code> as the respective identifier to indicate to readers that you don't intend to use those outputs later.</p>
-<p>For example, if you're only interested in stderr:</p>
-<div class="highlight"><pre><span></span><code>_,<span class="w"> </span>_,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$cmd
-</code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Silencing command output</p>
-<p>Because capturing stdout and stderr means they don't get printed to the console automatically when the command runs, you can use this fact
-to hide the output of commmands and run them silently:</p>
-<div class="highlight"><pre><span></span><code>_,<span class="w"> </span>_,<span class="w"> </span>_<span class="w"> </span>=<span class="w"> </span>$cmd
-</code></pre></div>
-<p>This example will run "silently", in that none of its output will get printed to the terminal.</p>
-</div>
-<h2 id="suppressing-announcements">Suppressing Announcements<a class="headerlink" href="#suppressing-announcements" title="Permanent link">&para;</a></h2>
-<p>By default, whenever you invoke a shell command, rad will print an 'announcement' to indicate to users what command is being run. For example:</p>
-<div class="highlight"><span class="filename">create.rsl</span><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>filename<span class="w"> </span>string
-$!`touch<span class="w"> </span>{filename}.txt`
-</code></pre></div>
-<p>This short script simply creates a file based on its argument. When invoked, it prints the following output:</p>
-<div class="highlight"><pre><span></span><code>rad create.rsl hi
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: touch hi.txt
-</code></pre></div>
-</div>
-
-<p>If you wish to suppress this output, use the <code>quiet</code> keyword: </p>
-<div class="highlight"><pre><span></span><code>quiet<span class="w"> </span>$!`touch<span class="w"> </span>{filename}.txt`
-</code></pre></div>
-<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
+<p>RSL offers a range of global flags that are available with every RSL script. We'll explore some of them in this section.</p>
+<h2 id="help"><code>help</code><a class="headerlink" href="#help" title="Permanent link">&para;</a></h2>
 <ul>
-<li>RSL offers first-class support for interacting with your shell and invoking shell commands.</li>
-<li>Basic invocations (using <code>$</code>) require either a <code>fail</code> or <code>recover</code> command immediately after.</li>
-<li>If you wish to simply exit when a command fails, you can write it as a <strong>critical command</strong> with <code>$!</code>.</li>
-<li>You can capture command outputs by progressively adding more identifiers to an assignment with the invocation.<ul>
-<li>Identifier 1 = exit code </li>
-<li>Identifier 2 = stdout </li>
-<li>Identifier 3 = stderr</li>
+<li>note on all caps</li>
+<li>note on shell, stdin</li>
 </ul>
-</li>
-<li>Suppress command announcements with the <code>quiet</code> keyword.</li>
-<li>`Backticks` are particularly well-suited to writing shell commands as strings.</li>
+<h2 id="debug"><code>DEBUG</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
+<h2 id="quiet"><code>QUIET</code><a class="headerlink" href="#quiet" title="Permanent link">&para;</a></h2>
+<h2 id="no-color"><code>NO-COLOR</code><a class="headerlink" href="#no-color" title="Permanent link">&para;</a></h2>
+<h2 id="mock-response"><code>MOCK-RESPONSE</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
+<ul>
+<li>note reference</li>
 </ul>
-<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Rad offers several global flags that are available to every script. We'll explore some of those in the next section: <a href="../global-flags/">Global Flags</a>.</p>
 
 
 
@@ -1082,44 +850,6 @@ $!`touch<span class="w"> </span>{filename}.txt`
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../resources/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Resources">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Resources
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../reference/args/" class="md-footer__link md-footer__link--next" aria-label="Next: Args">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Args
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">

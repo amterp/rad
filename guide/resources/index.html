@@ -966,9 +966,15 @@ This allows you to store your resources with your scripts. In this example, we'l
 <p>This means that it doesn't matter where on your computer you invoke your script from including if it's on your PATH - the script will consistently look in the same spot for resource files.</p>
 <p>TBC</p>
 <h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<ul>
+<li><code>pick</code> and <code>pick_kv</code> are built-in functions that allow users to select one option from many, allowing for an optional filter.</li>
+<li><code>pick_from_resource</code> is similar, but uses a pre-defined resource file to define the options.</li>
+<li>The resource file is defined in JSON.</li>
+<li>The resource file path can be defined relative to the script's path.</li>
+</ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>TBC</p>
+<p>The shell offers a ton of useful utilities, and RSL allows you to leverage them from within your scripts.</p>
+<p>We'll look at that in the next section: <a href="../shell-commands/">Shell Commands</a>.</p>
 
 
 
