@@ -34,11 +34,9 @@
 - string interpolation & formatting, multiline strings, raw
   - [x] take 1
 - resources, picking
-  - [ ] take 1
+  - [x] take 1
 - shell cmds
-  - [ ] take 1
-- colors
-  - [ ] take 1
+  - [x] take 1
 - global flags
   - [ ] take 1
   - mock
@@ -46,6 +44,7 @@
   - [ ] take 1
 - misc advanced
   - [ ] take 1
+  - colors
   - varpath assignment?
   - shell embedding
   - json extraction algo details! visual aids? the idea of representing json as a tree?
