@@ -38,7 +38,7 @@
 - shell cmds
   - [x] take 1
 - global flags
-  - [ ] take 1
+  - [x] take 1
   - mock
 - defer/errdefer
   - [ ] take 1

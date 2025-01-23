@@ -57,11 +57,14 @@ nav:
       - ./guide/strings-advanced.md
       - ./guide/resources.md
       - ./guide/shell-commands.md
+      - ./guide/global-flags.md
+      - ./guide/defer-errdefer.md
   - Reference:
     - ./reference/args.md
     - ./reference/assignment.md
     - ./reference/defer.md
     - ./reference/functions.md
+    - ./reference/global-flags.md
     - ./reference/logic.md
     - ./reference/math.md
     - ./reference/rad-blocks.md
