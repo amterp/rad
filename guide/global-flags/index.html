@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/global-flags/">
       
       
+        <link rel="prev" href="../shell-commands/">
+      
+      
+        <link rel="next" href="../defer-errdefer/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -284,17 +288,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -308,7 +314,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -483,6 +489,156 @@
 
               
             
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Global Flags
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Global Flags
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#help" class="md-nav__link">
+    <span class="md-ellipsis">
+      help
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      DEBUG
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quiet" class="md-nav__link">
+    <span class="md-ellipsis">
+      QUIET
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-color" class="md-nav__link">
+    <span class="md-ellipsis">
+      NO-COLOR
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mock-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      MOCK-RESPONSE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../defer-errdefer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -600,6 +756,27 @@
   
   <span class="md-ellipsis">
     Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/global-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Global Flags
   </span>
   
 
@@ -790,6 +967,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#additional-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Commands
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learnings-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learnings Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -812,17 +1016,99 @@
 
 <p>RSL offers a range of global flags that are available with every RSL script. We'll explore some of them in this section.</p>
 <h2 id="help"><code>help</code><a class="headerlink" href="#help" title="Permanent link">&para;</a></h2>
-<ul>
-<li>note on all caps</li>
-<li>note on shell, stdin</li>
-</ul>
+<p>The most basic global flag is <code>--help</code> or <code>-h</code>. <em>All</em> RSL scripts automatically generate a usage string that can be displayed by invoking this flag.</p>
+<p><code>--help</code> also prints available <em>global</em> flags:</p>
+<div class="highlight"><pre><span></span><code>Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --NO-COLOR               Disable colorized output.
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval&#39;d
+  -V, --VERSION                Print rad version information.
+      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+</code></pre></div>
+<p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
 <h2 id="debug"><code>DEBUG</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
+<p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except it only prints if the global flag <code>--DEBUG</code> is enabled. You can use them in your script for debugging as desired.</p>
+<p>For example, given this example:</p>
+<div class="highlight"><span class="filename">debug.rsl</span><pre><span></span><code>print(<span class="s">&quot;1&quot;)</span>
+<span class="s">debug(&quot;2&quot;)</span>
+<span class="s">print(&quot;3&quot;</span>)
+</code></pre></div>
+<p>the following invocations will give the respective outputs:</p>
+<div class="highlight"><pre><span></span><code>rad debug.rsl
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1
+3
+</code></pre></div>
+</div>
+
+<div class="highlight"><pre><span></span><code>rad debug.rsl -D
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1
+DEBUG: 2
+3
+</code></pre></div>
+</div>
+
 <h2 id="quiet"><code>QUIET</code><a class="headerlink" href="#quiet" title="Permanent link">&para;</a></h2>
+<p>Use <code>--QUIET</code> or <code>-Q</code> to suppress <em>some</em> outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.</p>
 <h2 id="no-color"><code>NO-COLOR</code><a class="headerlink" href="#no-color" title="Permanent link">&para;</a></h2>
+<p>A lot of rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
+Sometimes you just want monochrome output, and while rad aims to do this automatically when it detects e.g. you're redirecting output to file, you can force it by using the 
+<code>--NO-COLOR</code> flag.</p>
 <h2 id="mock-response"><code>MOCK-RESPONSE</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
+<p>You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a <a href="../rad-blocks/"><code>rad</code> block</a>.</p>
+<p>In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the <code>MOCK-RESPONSE</code> flag.</p>
+<p><code>MOCK-RESPONSE</code> takes an argument in a <code>&lt;url regex&gt;:&lt;file path&gt;</code> format.
+In other words, you can mock responses based on a regex match of the queried URL, and make them return the contents of a specified file.</p>
+<p>For example, if you wanted to mock a response from GitHub's API, you could define an example response in a file:</p>
+<div class="highlight"><span class="filename">commits.json</span><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;306f3a4ddb3b09747d61a5eab264c3d72fbbc36e&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice Smith&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-11T04:15:06Z&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2b642c482b32e4d87924839b2f5a9592670dee69&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Charlie Johnson&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-10T12:21:03Z&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>And then define it as the mock response with the following example invocation:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rsl<span class="w"> </span>--MOCK-RESPONSE<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
+</code></pre></div>
+<p>Before executing the HTTP request, rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
+avoiding the HTTP request, and simply returning the contents of the mocked response.</p>
+<div class="admonition tip">
+<p class="admonition-title">Match all URLs with .*</p>
+<p>It's common for scripts to perform just one API query, in which case the regex filter doesn't need to be specific.
+Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</p>
+</div>
+<h2 id="additional-commands">Additional Commands<a class="headerlink" href="#additional-commands" title="Permanent link">&para;</a></h2>
+<p>There are more global flags - see the <a href="../../reference/global-flags/">reference</a> for a complete coverage of what's available.</p>
+<h2 id="learnings-summary">Learnings Summary<a class="headerlink" href="#learnings-summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>note reference</li>
+<li>Rad provides several global flags that can be used across all RSL scripts.</li>
+<li>Generally, global flags are in ALL CAPS, such as <code>DEBUG</code> and <code>QUIET</code>.</li>
+<li>Use <code>MOCK-RESPONSE</code> to test your scripts.</li>
 </ul>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>Sometimes you may wish to run commands before your script ends, either normally or via an error, such as cleanups.
+RSL provides a way to do this that we will explore in the next section: <a href="../defer-errdefer/">Defer &amp; Errdefer</a>.</p>
 
 
 
@@ -850,6 +1136,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../shell-commands/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Shell Commands">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Shell Commands
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../defer-errdefer/" class="md-footer__link md-footer__link--next" aria-label="Next: Defer &amp; Errdefer">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Defer & Errdefer
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/reference/logic/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/defer-errdefer/">
       
       
         <link rel="prev" href="../global-flags/">
       
       
-        <link rel="next" href="../math/">
+        <link rel="next" href="../../reference/args/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Boolean Logic - Rad Docs</title>
+        <title>Defer & Errdefer - Rad Docs</title>
       
     
     
@@ -81,11 +81,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#truthy-falsy" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -118,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Boolean Logic
+              Defer & Errdefer
             
           </span>
         </div>
@@ -288,17 +283,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -312,7 +309,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -326,7 +323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/getting-started/" class="md-nav__link">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -347,7 +344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/basics/" class="md-nav__link">
+      <a href="../basics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -360,218 +357,6 @@
   
 
               
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/args/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Args
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/functions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Functions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/strings-advanced/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Strings (Advanced)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/resources/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Resources
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/shell-commands/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Shell Commands
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/global-flags/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Global Flags
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guide/defer-errdefer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Reference
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -601,32 +386,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../assignment/" class="md-nav__link">
+      <a href="../rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Assignment
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../defer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
+    Rad Blocks
   </span>
   
 
@@ -648,6 +412,69 @@
   
   <span class="md-ellipsis">
     Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strings-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strings (Advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
   </span>
   
 
@@ -692,53 +519,79 @@
       
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Boolean Logic
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Boolean Logic
+    Defer & Errdefer
   </span>
   
 
       </a>
       
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+              
+            
+          </ul>
+        </nav>
       
-        <li class="md-nav__item">
-  <a href="#truthy-falsy" class="md-nav__link">
-    <span class="md-ellipsis">
-      Truthy / Falsy
-    </span>
-  </a>
+    </li>
   
-</li>
+
+    
       
-    </ul>
+      
   
-</nav>
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
       
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Args
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -751,7 +604,112 @@
   
   
     <li class="md-nav__item">
-      <a href="../math/" class="md-nav__link">
+      <a href="../../reference/assignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/defer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defer & Errdefer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/global-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Global Flags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Boolean Logic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/math/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -772,7 +730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
+      <a href="../../reference/rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -793,7 +751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
+      <a href="../../reference/shell-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -814,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strings/" class="md-nav__link">
+      <a href="../../reference/strings/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -853,23 +811,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#truthy-falsy" class="md-nav__link">
-    <span class="md-ellipsis">
-      Truthy / Falsy
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -886,58 +827,10 @@
   
 
 
-  <h1>Boolean Logic</h1>
+  <h1>Defer & Errdefer</h1>
 
-<h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
-<p>RSL supports truthy/falsy logic.</p>
-<p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(my_list)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
-</code></pre></div>
-<p>you can write</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>my_list:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
-</code></pre></div>
-<p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
-<p>The following table shows which values return false for each type. <strong>All other values resolve to true.</strong></p>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Falsy</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>string</td>
-<td><code>""</code></td>
-<td>Empty strings</td>
-</tr>
-<tr>
-<td>int</td>
-<td><code>0</code></td>
-<td>Zero</td>
-</tr>
-<tr>
-<td>float</td>
-<td><code>0.0</code></td>
-<td>Zero</td>
-</tr>
-<tr>
-<td>list</td>
-<td><code>[]</code></td>
-<td>Empty lists</td>
-</tr>
-<tr>
-<td>map</td>
-<td><code>{}</code></td>
-<td>Empty maps</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p>Note that a string which is all whitespace e.g. <code>" "</code> is truthy.</p>
+<div class="admonition warning">
+<p class="admonition-title">WIP</p>
 </div>
 
 
@@ -988,13 +881,13 @@
         
         
           
-          <a href="../math/" class="md-footer__link md-footer__link--next" aria-label="Next: Math">
+          <a href="../../reference/args/" class="md-footer__link md-footer__link--next" aria-label="Next: Args">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Math
+                Args
               </div>
             </div>
             <div class="md-footer__button md-icon">
