@@ -27,14 +27,11 @@ $!`git commit -m "Bump version to {version}" {path}`
 $!`git tag -a "{version}" -m "Bump version to {version}"`
 
 if push:
-    $`./push.rsl`
+    $`./push.rsl {docs ? "-d" : ""}`
     fail:
         print("❌ Failed to push!")
 else:
     print("Tagged, not pushing...")
     print(`Run {yellow("git push origin main --tags")} to push the tag`)
-
-if docs:
-    $!`./deploy_docs.rsl`
 
 print("✅ Finished!")

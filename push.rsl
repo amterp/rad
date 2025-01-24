@@ -3,11 +3,12 @@
 Performs some pre-pushing steps such as build, test, and then pushes if all good.
 ---
 args:
-  branch b string = "main" # The branch to push to
-  no_push "no-push" n bool = false # Skip the pushing step
-  test_count "test-count" t int = 50 # The number of times to run tests.
+  branch b string = "main"           # The branch to push to
+  no_push "no-push" n bool = false   # Skip the pushing step
+  test_count "test-count" t int = 50 # The number of times to run tests
+  docs d bool                        # Also push docs
 
-$`go build main.go`
+$`make all`
 fail:
     print("Build failed ❌")
 
@@ -23,4 +24,7 @@ $`git push origin "{branch}" --tags`
 fail:
     print("Push failed ❌")
 
-print("✅ Pushed!")
+if docs:
+    $!`./deploy_docs.rsl`
+
+print(green("✅ Done!"))
