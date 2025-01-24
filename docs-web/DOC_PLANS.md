@@ -41,7 +41,7 @@
   - [x] take 1
   - mock
 - defer/errdefer
-  - [ ] take 1
+  - [x] take 1
 - misc advanced
   - [ ] take 1
   - colors
