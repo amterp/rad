@@ -397,7 +397,7 @@ from the specified `fields`.
 
 [//]: # (todo RAD-107 might change this dynamic)
 
-## Learnings Summary
+## Summary
 
 - RSL provides first-class support for scripts whose primary purpose is to query a JSON API and present parts of its response in a useful, readable table.
 - This is offered by the `rad` blocks, and its siblings `display` and `request`.

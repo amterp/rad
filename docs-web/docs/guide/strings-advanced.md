@@ -167,7 +167,7 @@ text = r`Hello\n{name}`
     Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
     string, leaving a dangling `!"` at the end, which is invalid syntax.
 
-## Learnings Summary
+## Summary
 
 - We learned about **string interpolation**, and how we can put expressions directly into strings for evaluation.
 - We saw that we can also **format** the result of said expressions, by using a colon `:` following the expression itself.

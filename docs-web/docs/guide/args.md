@@ -198,7 +198,7 @@ No other characters will be accepted, so `Alice` will be a valid value, but `bob
 
 As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
-## Learnings Summary
+## Summary
 
 - RSL takes a *declarative* approach to args. Rad handles parsing user input.
 - All args can be specified positionally or via a flag from the user.

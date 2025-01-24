@@ -181,7 +181,7 @@ If you wish to suppress this output, use the `quiet` keyword:
 quiet $!`touch {filename}.txt`
 ```
 
-## Learnings Summary
+## Summary
 
 - RSL offers first-class support for interacting with your shell and invoking shell commands.
 - Basic invocations (using `$`) require either a `fail` or `recover` command immediately after.

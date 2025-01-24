@@ -126,7 +126,7 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 
 There are more global flags - see the [reference](../reference/global-flags.md) for a complete coverage of what's available.
 
-## Learnings Summary
+## Summary
 
 - Rad provides several global flags that can be used across all RSL scripts.
 - Generally, global flags are in ALL CAPS, such as `DEBUG` and `QUIET`.

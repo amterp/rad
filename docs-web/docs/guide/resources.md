@@ -109,7 +109,7 @@ TBC
 
 [//]: # (todo make pick_from_resource interactively select!)
 
-## Learnings Summary
+## Summary
 
 - `pick` and `pick_kv` are built-in functions that allow users to select one option from many, allowing for an optional filter.
 - `pick_from_resource` is similar, but uses a pre-defined resource file to define the options.

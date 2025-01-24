@@ -228,7 +228,7 @@ Basically, when you invoke an executable script this way, the Kernel scans for a
 If it finds a path to an interpreter (in this case, it will find `rad` if you've correctly put it in your `PATH`),
 it will invoke said interpreter on the script (equivalent to `rad ./hello` like we were doing before).
 
-## Learnings Summary
+## Summary
 
 - We learned how to print, and saw an example of **string interpolation**.
 - We were introduced to the **args block**

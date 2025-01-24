@@ -135,7 +135,7 @@ There are a lot of built-in functions. If you just want to see what's available 
 
     RSL currently does not allow you to define your own functions, so any function you use is built-in.
 
-## Learnings Summary
+## Summary
 
 - Function invocation syntax is similar to most other C-like languages such as Python, Java, etc.
 - Functions may take no arguments, a fixed number of arguments, a varying number of args, and/or named arguments.

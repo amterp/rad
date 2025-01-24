@@ -652,7 +652,7 @@ The following table shows which values return false for each type. **All other v
   - parsing
   - casting (once implemented)
 
-## Learnings Summary
+## Summary
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
 - RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
