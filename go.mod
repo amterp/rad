@@ -1,6 +1,6 @@
 module rad
 
-go 1.22
+go 1.23
 
 require (
 	github.com/amterp/go-tbl v0.9.0
