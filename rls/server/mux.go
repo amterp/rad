@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"io"
-	"rsl-lsp/com"
-	"rsl-lsp/log"
-	"rsl-lsp/lsp"
-	"rsl-lsp/rpc"
+	"rls/com"
+	"rls/log"
+	"rls/lsp"
+	"rls/rpc"
 	"sync"
 )
 
@@ -54,13 +54,13 @@ func (m *Mux) Init() (err error) {
 		}
 		if msg.IsNotification() {
 			if msg.Method != "exit" {
-				log.L.Warnw("Dropping notification sent before initialization", "msg", msg)
+				log.L.Warnw("Dropping notification sent before initialization", "msg", com.FlatStr(msg))
 				continue
 			}
 			err = m.handleMessage(msg)
 			continue
 		} else if msg.Method != "initialize" {
-			log.L.Warnw("The client sent a request before initialization", "msg", msg)
+			log.L.Warnw("The client sent a request before initialization", "msg", com.FlatStr(msg))
 			if err = m.write(lsp.NewResponseError(msg.Id, com.ErrServerNotInitialized)); err != nil {
 				return err
 			}
@@ -84,7 +84,7 @@ func (m *Mux) Run() (err error) {
 }
 
 func (m *Mux) handleMessage(msg lsp.IncomingMsg) (err error) {
-	log.L.Infof("Received message: %v", msg)
+	log.L.Infof("Received message: %s", com.FlatStr(msg))
 	if msg.IsNotification() {
 		log.L.Info("Notification")
 		notification, _ := msg.AsNotification()
@@ -132,7 +132,7 @@ func (m *Mux) handleRequestResponse(request lsp.Request) (err error) {
 		}
 		return
 	}
-	log.L.Infow("Sending result", "result", result)
+	log.L.Infow("Sending result", "result", com.FlatStr(result))
 
 	resp := lsp.NewResponse(request.Id, result)
 

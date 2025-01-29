@@ -25,3 +25,7 @@ build:
 	@echo "⚙️ Building the project..."
 	mkdir -p $(BIN_DIR)
 	$(GO) build -o $(BIN_DIR)/radd
+
+vsc-ext:
+	@echo "⚙️ Building VS Code extension..."
+	cd vsc-extension && npm install && npm run compile

@@ -1,0 +1,23 @@
+{
+  "name": "rsl-lsp-vsc-client",
+  "description": "A Visual Studio Code client for the RSL language server.",
+  "author": "Alexander Terp",
+  "license": "MIT",
+  "version": "0.0.1",
+  "publisher": "vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amterp/rad"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "dependencies": {
+    "glob": "^11.0.0",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.1",
+    "@vscode/test-electron": "^2.3.9"
+  }
+}

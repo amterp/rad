@@ -1,0 +1,8 @@
+---
+Test script.
+---
+args:
+    name string
+    age int = 30
+
+print(name, age)

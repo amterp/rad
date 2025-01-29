@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/textproto"
-	"rsl-lsp/com"
-	"rsl-lsp/lsp"
+	"rls/com"
+	"rls/lsp"
 	"strconv"
 )
 

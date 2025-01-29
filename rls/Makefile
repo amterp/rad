@@ -18,4 +18,5 @@ format:
 build:
 	@echo "⚙️ Building the project..."
 	mkdir -p $(BIN_DIR)
-	$(GO) build -o $(BIN_DIR)/rsl-lsp
+	$(GO) build -o $(BIN_DIR)/rls
+	cp $(BIN_DIR)/rls ../vsc-extension/bin

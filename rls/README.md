@@ -1,5 +1,7 @@
 # RSL LSP
 
+- **RLS**: **R**SL **L**anguage **S**erver
+
 ## Helpful Links
 
 - https://pkg.go.dev/golang.org/x/tools/gopls/internal/lsp/protocol

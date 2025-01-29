@@ -3,8 +3,8 @@ package server
 import (
 	"encoding/json"
 	"io"
-	"rsl-lsp/log"
-	"rsl-lsp/lsp"
+	"rls/log"
+	"rls/lsp"
 )
 
 type Server struct {
@@ -34,10 +34,11 @@ func NewServer(r io.Reader, w io.Writer) *Server {
 }
 
 func (s *Server) handleInitialize(params json.RawMessage) (result any, err error) {
-	var initializeParams lsp.InitializeParams
-	if err = json.Unmarshal(params, &initializeParams); err != nil {
+	var initParams lsp.InitializeParams
+	if err = json.Unmarshal(params, &initParams); err != nil {
 		return
 	}
+	log.L.Infof("Received initialize from %s %s", initParams.ClientInfo.Name, initParams.ClientInfo.Version)
 	result = lsp.NewInitializeResult()
 	return
 }

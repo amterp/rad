@@ -1,7 +1,7 @@
 package lsp
 
 import (
-	"rsl-lsp/com"
+	"rls/com"
 )
 
 type InitializeParams struct {

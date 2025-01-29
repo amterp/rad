@@ -1,0 +1,23 @@
+#!/usr/bin/env rad
+---
+Assists in running/developing anything rad-related.
+---
+args:
+    skip_rad "skip-rad" s bool # Enable to skip rebuilding rad.
+    rls r bool                 # Enable to rebuild RLS.
+    vsc v int = 0              # 0 to ignore extension. 1 to re-open it. 2 to rebuild it.
+
+if not skip_rad:
+    $!`make all`
+
+if rls:
+    $!`cd rls && make all`
+
+if vsc >= 2:
+    $!`make vsc-ext`
+
+if vsc >= 1:
+    $!`code vsc-extension`
+
+// todo rad:
+//  count flags RAD-127

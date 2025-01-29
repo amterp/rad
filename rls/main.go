@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
-	"rsl-lsp/log"
-	"rsl-lsp/server"
+	"rls/log"
+	"rls/server"
 )
 
 func main() {
-	fmt.Println("Spinning up RSL LSP server...")
+	fmt.Fprintln(os.Stderr, "Spinning up RSL LSP server...")
 
-	fmt.Println("Initializing logger...")
+	fmt.Fprintln(os.Stderr, "Initializing logger...")
 	log.InitLogger()
 	log.L.Info("Logger initialized")
 
