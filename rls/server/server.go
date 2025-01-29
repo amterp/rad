@@ -32,6 +32,8 @@ func NewServer(r io.Reader, w io.Writer) *Server {
 
 	m.AddRequestHandler(lsp.INITIALIZE, server.handleInitialize)
 	m.AddNotificationHandler(lsp.TD_DID_OPEN, server.handleDidOpen)
+	m.AddNotificationHandler(lsp.TD_DID_CHANGE, server.handleDidChange)
+	m.AddRequestHandler(lsp.TD_COMPLETION, server.handleCompletion)
 
 	return &server
 }
@@ -52,5 +54,23 @@ func (s *Server) handleDidOpen(params json.RawMessage) (err error) {
 		return
 	}
 	s.s.AddDoc(didOpenParams.TextDocument.Uri, didOpenParams.TextDocument.Text)
+	return
+}
+
+func (s *Server) handleDidChange(params json.RawMessage) (err error) {
+	var didChangeParams lsp.DidChangeTextDocumentParams
+	if err = json.Unmarshal(params, &didChangeParams); err != nil {
+		return
+	}
+	s.s.UpdateDoc(didChangeParams.TextDocument.Uri, didChangeParams.ContentChanges)
+	return
+}
+
+func (s *Server) handleCompletion(params json.RawMessage) (result any, err error) {
+	var completionParams lsp.CompletionParams
+	if err = json.Unmarshal(params, &completionParams); err != nil {
+		return
+	}
+	result, err = s.s.Complete(completionParams.TextDocument.Uri, completionParams.Position)
 	return
 }
