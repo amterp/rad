@@ -35,10 +35,12 @@ func NewMux(r io.Reader, w io.Writer) *Mux {
 
 func (m *Mux) AddNotificationHandler(method string, handler NotificationHandler) {
 	m.notificationHandlers[method] = handler
+	log.L.Infof("Registered notification handler for method %s", method)
 }
 
 func (m *Mux) AddRequestHandler(method string, handler RequestHandler) {
 	m.requestHandlers[method] = handler
+	log.L.Infof("Registered request handler for method %s", method)
 }
 
 func (m *Mux) Notify(notification any) (err error) {

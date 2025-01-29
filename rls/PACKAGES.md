@@ -13,10 +13,12 @@ lsp
 rpc
 server
 main
+analysis
 
 log-->server
 log-->main
 log-->rpc
+log-->analysis
 
 com-->lsp
 com-->rpc
@@ -27,4 +29,6 @@ lsp-->rpc
 rpc-->server
 
 server-->main
+
+analysis-->server
 ``` 
