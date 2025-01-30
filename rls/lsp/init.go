@@ -23,7 +23,7 @@ type ServerCapabilities struct {
 	TextDocumentSync int32 `json:"textDocumentSync"`
 	//HoverProvider      bool           `json:"hoverProvider"`
 	//DefinitionProvider bool           `json:"definitionProvider"`
-	//CodeActionProvider bool           `json:"codeActionProvider"`
+	CodeActionProvider bool           `json:"codeActionProvider"`
 	CompletionProvider map[string]any `json:"completionProvider"`
 }
 
@@ -38,7 +38,7 @@ func NewInitializeResult() InitializeResult {
 			TextDocumentSync: 1,
 			//HoverProvider:      true,
 			//DefinitionProvider: true,
-			//CodeActionProvider: true,
+			CodeActionProvider: true,
 			CompletionProvider: map[string]any{
 				"triggerCharacters": []string{".", "#", "$", "!", "/"},
 			},

@@ -151,3 +151,44 @@ func NewCompletionItem(label, detail, doc string) CompletionItem {
 		Doc:    doc,
 	}
 }
+
+type CodeActionParams struct {
+	// The document in which the command was invoked.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	// The range for which the command was invoked.
+	Range Range `json:"range"`
+}
+
+type CodeAction struct {
+	Title   string         `json:"title"`
+	Edit    *WorkspaceEdit `json:"edit,omitempty"`
+	Command *Command       `json:"command,omitempty"`
+}
+
+func NewCodeActionEdit(title string, edit WorkspaceEdit) CodeAction {
+	return CodeAction{
+		Title: title,
+		Edit:  &edit,
+	}
+}
+
+type WorkspaceEdit struct {
+	// URI -> TextEdits
+	Changes map[string][]TextEdit `json:"changes"`
+}
+
+func NewWorkspaceEdit() WorkspaceEdit {
+	return WorkspaceEdit{
+		Changes: make(map[string][]TextEdit),
+	}
+}
+
+func (w *WorkspaceEdit) AddEdit(uri string, rang Range, text string) {
+	w.Changes[uri] = append(w.Changes[uri], *NewTextEdit(rang, text))
+}
+
+type Command struct {
+	Title     string        `json:"title"`
+	Command   string        `json:"command"`
+	Arguments []interface{} `json:"arguments,omitempty"`
+}
