@@ -70,6 +70,8 @@ func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, er
 }
 
 func addShebangInsertion(i *[]lsp.CodeAction, doc *DocState) {
+	// todo use tree sitter to check for shebang node?
+
 	firstLine := doc.GetLine(0)
 	if !strings.HasPrefix(firstLine, "#!") {
 		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
@@ -92,6 +94,7 @@ func addShebangCompletion(i *[]lsp.CompletionItem, doc *DocState, pos lsp.Pos) {
 	*i = append(*i, lsp.CompletionItem{
 		Label:  RadShebang,
 		Detail: "Shebang for rad",
+		// todo add docs
 		//TextEdit: lsp.NewTextEdit(lsp.NewLineRange(0, 0, len(line)), RadShebang),
 	})
 }
