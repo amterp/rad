@@ -2,16 +2,19 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"rls/log"
 	"rls/server"
 )
 
-func main() {
-	fmt.Fprintln(os.Stderr, "Spinning up RSL LSP server...")
+var StdErr io.Writer = os.Stderr
 
-	fmt.Fprintln(os.Stderr, "Initializing logger...")
-	log.InitLogger()
+func main() {
+	fmt.Fprintln(StdErr, "Spinning up RSL LSP server...")
+
+	fmt.Fprintln(StdErr, "Initializing logger...")
+	log.InitLogger(StdErr)
 	log.L.Info("Logger initialized")
 
 	log.L.Info("Creating server...")
