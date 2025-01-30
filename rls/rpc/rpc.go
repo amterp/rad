@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/textproto"
 	"rls/com"
+	"rls/log"
 	"rls/lsp"
 	"strconv"
 )
@@ -35,13 +36,13 @@ func Encode(w *bufio.Writer, msg any) (err error) {
 		return
 	}
 
-	headers := fmt.Sprintf("Content-Length: %d\r\n\r\n", len(content))
+	strMsg := fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(content), string(content))
 
-	if _, err = w.WriteString(headers); err != nil {
+	log.L.Infow("Writing message", "msg", strMsg)
+
+	if _, err = w.WriteString(strMsg); err != nil {
 		return
 	}
-	if _, err = w.Write(content); err != nil {
-		return
-	}
+
 	return w.Flush()
 }

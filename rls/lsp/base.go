@@ -64,7 +64,7 @@ type Response struct {
 	Msg
 	Id     *json.RawMessage `json:"id"`
 	Result any              `json:"result"`
-	Error  *Error           `json:"error"`
+	Error  *Error           `json:"error,omitempty"`
 }
 
 func NewResponse(id *json.RawMessage, result any) Response {

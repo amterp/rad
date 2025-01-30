@@ -24,7 +24,7 @@ type ServerCapabilities struct {
 	//HoverProvider      bool           `json:"hoverProvider"`
 	//DefinitionProvider bool           `json:"definitionProvider"`
 	//CodeActionProvider bool           `json:"codeActionProvider"`
-	CompletionProvider map[string]any `json:"completionProvider"` // bool not supported by spec
+	CompletionProvider map[string]any `json:"completionProvider"`
 }
 
 type ServerInfo struct {
@@ -39,11 +39,13 @@ func NewInitializeResult() InitializeResult {
 			//HoverProvider:      true,
 			//DefinitionProvider: true,
 			//CodeActionProvider: true,
-			CompletionProvider: map[string]any{},
+			CompletionProvider: map[string]any{
+				"triggerCharacters": []string{".", "#", "$", "!", "/"},
+			},
 		},
 		ServerInfo: ServerInfo{
-			Name:    "RSL LSP",
-			Version: com.RslLspVersion,
+			Name:    "RLS",
+			Version: com.RslVersion,
 		},
 	}
 }

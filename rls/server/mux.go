@@ -134,7 +134,7 @@ func (m *Mux) handleRequestResponse(request lsp.Request) (err error) {
 		}
 		return
 	}
-	log.L.Infow("Sending result", "result", com.FlatStr(result))
+	log.L.Infow("Sending result", "result", com.FlatStr(result), "method", request.Method)
 
 	resp := lsp.NewResponse(request.Id, result)
 
