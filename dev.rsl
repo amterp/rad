@@ -1,0 +1,20 @@
+#!/usr/bin/env rad
+---
+Facilitates development of RTS.
+---
+args:
+    version v string = "" # Specify to release with the given version. Without 'v' prefix.
+
+    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
+
+$!`gofmt -w **/*.go`
+$!`goimports -w .`
+
+$!`go build`
+
+version = 'v' + version
+
+$!`git tag {version}`
+$!`git push origin {version}`
+
+print(green("Done!"))
