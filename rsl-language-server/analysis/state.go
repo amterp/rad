@@ -4,15 +4,14 @@ import (
 	"rls/log"
 	"rls/lsp"
 	"strings"
+
+	"github.com/amterp/rts"
 )
 
 type DocState struct {
 	uri  string
 	text string
-}
-
-func NewDocState(uri, text string) *DocState {
-	return &DocState{uri: uri, text: text}
+	tree *rts.RtsTree
 }
 
 func (d *DocState) GetLine(line int) string {
@@ -25,23 +24,48 @@ func (d *DocState) GetLine(line int) string {
 }
 
 type State struct {
+	rts *rts.RslTreeSitter
 	// URI -> Text
 	docs map[string]*DocState
 }
 
 func NewState() *State {
-	return &State{docs: make(map[string]*DocState)}
+	rslTs, err := rts.NewRts()
+	if err != nil {
+		log.L.Fatalw("Failed to create RSL tree sitter", "err", err)
+	}
+
+	return &State{
+		rts:  rslTs,
+		docs: make(map[string]*DocState),
+	}
+}
+
+func (s *State) NewDocState(uri, text string) *DocState {
+	tree, err := s.rts.Parse(text)
+	if err != nil {
+		log.L.Errorw("Failed to parse doc", "uri", uri, "err", err)
+		return nil // todo putting nil into the map??
+	}
+	return &DocState{
+		uri:  uri,
+		text: text,
+		tree: tree,
+	}
 }
 
 func (s *State) AddDoc(uri, text string) {
 	log.L.Infof("Adding doc %s", uri)
-	s.docs[uri] = NewDocState(uri, text)
+	s.docs[uri] = s.NewDocState(uri, text)
 }
 
 func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEvent) {
 	doc := s.docs[uri]
 	for _, change := range changes {
 		log.L.Infow("Updating doc", "uri", uri)
+		log.L.Debugf("Tree before: %s", doc.tree.String())
+		doc.tree.Update(change.Text)
+		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
 	}
 }
@@ -70,10 +94,10 @@ func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, er
 }
 
 func addShebangInsertion(i *[]lsp.CodeAction, doc *DocState) {
-	// todo use tree sitter to check for shebang node?
-
-	firstLine := doc.GetLine(0)
-	if !strings.HasPrefix(firstLine, "#!") {
+	shebang, ok := doc.tree.GetShebang()
+	log.L.Infow("Searched for shebang", "ok", ok, "shebang", shebang)
+	if !ok || shebang.StartPos.Row != 0 {
+		firstLine := doc.GetLine(0)
 		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
 		edit := lsp.NewWorkspaceEdit()
 		edit.AddEdit(doc.uri, lsp.NewLineRange(0, 0, 0), RadShebang+"\n")

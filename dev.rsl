@@ -3,21 +3,73 @@
 Assists in running/developing anything rad-related.
 ---
 args:
-    skip_rad "skip-rad" s bool # Enable to skip rebuilding rad.
-    rls r bool                 # Enable to rebuild RLS.
-    vsc v int = 0              # 0 to ignore extension. 1 to re-open it. 2 to rebuild it.
+    rad bool # Enable to build rad.
+    rls bool # Enable to rebuild RLS.
+    vsc bool # Enable to rebuild VSC extension.
+    docs d bool # Enable to deploy docs.
+    version v string = "" # Specify to release a new rad version. Commits.
+    commit c bool # Enable to create a commit. Stashes local go.mod replaces first.
+    test_count "test-count" t int = 30 # The number of times to run tests, to detect flakiness.
+    no_push "no-push" P bool # Disables pushing.
 
-if not skip_rad:
+    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
+
+if rad:
     $!`make all`
 
 if rls:
-    $!`cd rsl_language_server && make all`
+    $!`cd rsl-language-server && make all`
 
-if vsc >= 2:
-    $!`make vsc-ext`
+if vsc:
+    $!`cd vsc-extension && npm install && npm run compile`
 
-if vsc >= 1:
-    $!`code vsc-extension`
+if docs:
+    $!`mkdocs gh-deploy -f ./docs-web/mkdocs.yml`
+
+if commit:
+    _, mod = quiet $!`cat ./rsl-language-server/go.mod`
+    defer:
+        $!`echo -n '{mod}' > ./rsl-language-server/go.mod`
+    $!`cd rsl-language-server && go mod edit --dropreplace=github.com/amterp/rts`
+    $!`git add .`
+    clean = unsafe $`git status --porcelain | grep -q .`
+    if not clean:
+        $!`git diff HEAD --compact-summary`
+        if confirm("Commit? [y/n] > "):
+            $!`git commit`
+
+if version:
+    if not rad:
+        $!`make all`
+        $!`go test ./core/testing -count {test_count}`
+
+    _, mod = quiet $!`cat ./rsl-language-server/go.mod`
+    defer:
+        $!`echo -n '{mod}' > ./rsl-language-server/go.mod`
+    $!`cd rsl-language-server && go mod edit --dropreplace=github.com/amterp/rts`
+
+    clean_before = unsafe $`git status --porcelain | grep -q .`
+
+    $!`sed -i '' "s/Version = \".*\"/Version = \"{version}\"/" ./core/version.go`
+
+    $!`git add .`
+    $!`git diff HEAD --compact-summary`
+
+    if confirm("Commit, tag & push? [y/n] > "):
+        if clean_before:
+            // implied only our sed version bump made a diff
+            $!`git commit -m "Bump version to {version}"`
+        else:
+            $!`git commit`
+        $!`git tag -a "{version}" -m "Bump version to {version}"`
+        push_cmd = `git push origin {version} --tags`
+        if no_push:
+            print("Not pushing, remember to run", yellow(push_cmd), "later")
+        else:
+            $!push_cmd
+
+print(green("✅ Done!"))
 
 // todo rad:
-//  count flags RAD-127
+//  count flags RAD-127, could add repeats to also do e.g. tests
+//  custom functions (could use go mod edit elsewhere)

@@ -23,22 +23,24 @@ Other than building from source, Rad is not available for other platforms/packag
 
 ⚠️ **Rad is still in early development!** ⚠️
 
-I've made Rad public because it's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
+Rad is a working CLI tool and interpreter that can run useful RSL scripts.
+
+It's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
 
 Below is a quick glimpse of major items that've been implemented and are missing.
 
-### What's Implemented ✅ 
+### What's being worked on 🚧
 
-- Lexer/parser/interpreter running from end-to-end.
-- Large parts of the language.
+- LSP language server ([RLS](./rsl-language-server))
+- [Tree sitter implementation](https://github.com/amterp/tree-sitter-rsl)
+- [Visual Studio Code extension](./vsc-extension)
 
-### What's Missing 🚧
+### What's planned 🌱 
 
 - Many more language features
 - Polished syntax error feedback
-- `rad` script management features
-- Good docs
-- Visual Code extension for script devs
+- `rad` script management features & helpers
+- JetBrains IDE plugin
 
 ## What problem does this solve? 🎯
 

@@ -24,7 +24,6 @@ A Go lib which wraps [RSL's tree sitter](#amterptree-sitter-rsl) implementation 
 
 Intended as a more convenient way of interacting with the tree sitter implementation, containing various convenience methods & greater context.
 
-
 ## [amterp/go-tbl](https://github.com/amterp/go-tbl)
 
 A fork of [tablewriter](https://github.com/olekukonko/tablewriter) leveraged by rad for its table formatting and writing.
