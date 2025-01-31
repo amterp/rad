@@ -1,6 +1,6 @@
 #!/usr/bin/env rad
 ---
-Facilitates development of RTS.
+Facilitates development of RTS. If no args, just builds & formats.
 ---
 args:
     version v string = "" # Specify to release with the given version. Without 'v' prefix.
@@ -12,9 +12,20 @@ $!`goimports -w .`
 
 $!`go build`
 
-version = 'v' + version
+if version:
 
-$!`git tag {version}`
-$!`git push origin {version}`
+    _, mod = quiet $!`cat go.mod`
+    defer:
+        $!`echo -n '{mod}' > go.mod`
+    $!`go mod edit --dropreplace=github.com/amterp/tree-sitter-rsl`
+
+    $!`git add .`
+    $!`git diff HEAD --compact-summary`
+
+    if confirm("Commit, tag & push? [y/n] > "):
+        $!`git commit`
+        version = 'v' + version
+        $!`git tag {version}`
+        $!`git push origin {version} --tags`
 
 print(green("Done!"))
