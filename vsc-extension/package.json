@@ -30,6 +30,13 @@
         "extensions": [".rsl", ".rad"],
         "configuration": "./language-configuration.json"
       }
+    ],
+    "grammars": [
+      {
+        "language": "rsl",
+        "scopeName": "source.rsl",
+        "path": "./syntaxes/rsl.tmLanguage.json"
+      }
     ]
   },
   "scripts": {

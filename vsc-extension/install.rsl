@@ -1,17 +1,21 @@
 #!/usr/bin/env rad
 ---
-Installs syntax highlighting for RSL files in your VSCode (under ~/.vscode/extensions/).
+Installs the VSCode extension into your VSCode (under ~/.vscode/extensions/).
 ---
 vscode = "~/.vscode/extensions"
 $`test -d {vscode}`
 fail:
     print("❌ VS Code extensions directory not found!")
 
-dir = "./highlighting/rad-scripting-language"
+dir = "."
 $`test -d {dir}`
 fail:
     print("❌ Highlighting directory not found! Are you running this script from the root of the project?")
 
+if not confirm("Confirm installation at {vscode}? [y/n] > "):
+    print(red("Exiting...")
+    exit(1)
+
 $!`cp -r {dir} {vscode}`
 
-print("✅ Installed RSL syntax highlighting! You may need to restart VS Code for it to take effect.")
+print(green("✅ Installed RSL syntax highlighting! You may need to restart VS Code for it to take effect."))
