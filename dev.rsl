@@ -3,6 +3,7 @@
 Facilitates development of RTS. If no args, just builds & formats.
 ---
 args:
+    clean c bool # Enable to clean the go cache.
     version v string = "" # Specify to release with the given version. Without 'v' prefix.
 
     version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
@@ -10,22 +11,36 @@ args:
 $!`gofmt -w **/*.go`
 $!`goimports -w .`
 
+if clean:
+    $!`go clean -cache`
+
 $!`go build`
 
 if version:
-
     _, mod = quiet $!`cat go.mod`
     defer:
         $!`echo -n '{mod}' > go.mod`
     $!`go mod edit --dropreplace=github.com/amterp/tree-sitter-rsl`
 
     $!`git add .`
-    $!`git diff HEAD --compact-summary`
 
-    if confirm("Commit, tag & push? [y/n] > "):
-        $!`git commit`
-        version = 'v' + version
-        $!`git tag {version}`
-        $!`git push origin {version} --tags`
+    clean = unsafe $`git status --porcelain | grep -q .`
+    if clean:
+        if confirm("Tag & push? [y/n] > "):
+            version = 'v' + version
+            $!`git tag {version}`
+            $!`git push origin {version} --tags`
+
+    else:
+        $!`git diff HEAD --compact-summary`
+        if confirm("Commit, tag & push? [y/n] > "):
+            $!`git commit`
+            version = 'v' + version
+            $!`git tag {version}`
+            $!`git push origin {version} --tags`
+
 
 print(green("Done!"))
+
+// todo rad:
+//  custom functions, to avoid the tag/push repeat
