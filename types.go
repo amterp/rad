@@ -104,7 +104,7 @@ func newFileHeader(src string, node *ts.Node) (*FileHeader, bool) {
 
 type StringNode struct {
 	BaseNode
-	Contents string
+	RawLexeme string // Literal src, excluding delimiters, ws, comments, etc
 }
 
 func newStringNode(src string, node *ts.Node) (*StringNode, bool) {
@@ -113,7 +113,7 @@ func newStringNode(src string, node *ts.Node) (*StringNode, bool) {
 	contentStart := start.EndByte()
 	contentEnd := end.StartByte()
 	return &StringNode{
-		BaseNode: newBaseNode(src, node),
-		Contents: src[contentStart:contentEnd],
+		BaseNode:  newBaseNode(src, node),
+		RawLexeme: src[contentStart:contentEnd],
 	}, true
 }

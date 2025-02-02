@@ -1,6 +1,6 @@
 #!/usr/bin/env rad
 ---
-Facilitates development of RTS. If no args, just builds & formats.
+Facilitates development of RTS. If no args, just formats, builds, and tests.
 ---
 args:
     clean c bool # Enable to clean the go cache.
@@ -15,6 +15,7 @@ if clean:
     $!`go clean -cache`
 
 $!`go build`
+$!`go test ./test`
 
 if version:
     _, mod = quiet $!`cat go.mod`
@@ -29,7 +30,7 @@ if version:
         if confirm("Tag & push? [y/n] > "):
             version = 'v' + version
             $!`git tag {version}`
-            $!`git push origin {version} --tags`
+            $!`git push origin main --tags`
 
     else:
         $!`git diff HEAD --compact-summary`
@@ -37,8 +38,7 @@ if version:
             $!`git commit`
             version = 'v' + version
             $!`git tag {version}`
-            $!`git push origin {version} --tags`
-
+            $!`git push origin main --tags`
 
 print(green("Done!"))
 
