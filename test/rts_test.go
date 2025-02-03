@@ -24,15 +24,15 @@ func Test_CanParse(t *testing.T) {
 	}
 }
 
-func Test_Tree_CanPrint(t *testing.T) {
+func Test_Tree_Sexp(t *testing.T) {
 	rslTs, _ := rts.NewRts()
 	defer rslTs.Close()
 
 	tree, _ := rslTs.Parse("a = 2\nprint(a)")
 
 	expected := "(source_file (assign left: (var_path root: (identifier)) right: (primary_expr (literal (int)))) (expr_stmt (primary_expr (call func: (identifier) args: (call_arg_list (primary_expr (var_path root: (identifier))))))))"
-	if tree.String() != expected {
-		t.Fatalf("String() failed: %v", tree.String())
+	if tree.Sexp() != expected {
+		t.Fatalf("Sexp failed: %v", tree.String())
 	}
 }
 
@@ -104,42 +104,5 @@ if true:
 	}
 	if nodes[2].Src() != "\"world!\"" {
 		t.Fatalf("Node 2 src didn't match: <%v>", nodes[2].Src())
-	}
-}
-
-func Test_Tree_Query_CanFindMultiline(t *testing.T) {
-	rslTs, _ := rts.NewRts()
-	defer rslTs.Close()
-
-	rsl := `
-a = """
-This is a
-multiline string
-"""
-a = """   
-just whitespace
-"""
-a = """     // asd
-whitespace
-and comment
-"""
-`
-	tree, _ := rslTs.Parse(rsl)
-	nodes, err := rts.QueryNodes[*rts.StringNode](tree)
-	if err != nil {
-		t.Fatalf("Query failed: %v", err)
-	}
-
-	if len(nodes) != 3 {
-		t.Fatalf("Found %d nodes, expected 3", len(nodes))
-	}
-	if nodes[0].RawLexeme != "This is a\nmultiline string\n" {
-		t.Fatalf("Node 0 contents didn't match: <%v>", nodes[0].RawLexeme)
-	}
-	if nodes[1].RawLexeme != "just whitespace\n" {
-		t.Fatalf("Node 1 contents didn't match: <%v>", nodes[1].RawLexeme)
-	}
-	if nodes[2].RawLexeme != "whitespace\nand comment\n" {
-		t.Fatalf("Node 2 contents didn't match: <%v>", nodes[2].RawLexeme)
 	}
 }

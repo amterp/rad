@@ -16,10 +16,11 @@ func NewPosition(p ts.Point) Position {
 type Node interface {
 	Src() string
 	// Indexes in the original source code.
+	// todo wrap in own Range object instead?
 	StartByte() int
-	EndByte() int // exclusive
+	EndByte() int // inclusive
 	StartPos() Position
-	EndPos() Position
+	EndPos() Position // inclusive
 }
 
 func NodeName[T Node]() interface{} {

@@ -1,0 +1,22 @@
+=====
+Str multiline comment on start
+=====
+a = """ // this is allowed
+hello
+friend
+"""
+=====
+B: [ 0, 44] PS: [0, 0], PE: [4, 0] source_file
+B: [ 0, 43] PS: [0, 0], PE: [3, 3]   assign
+B: [ 0,  1] PS: [0, 0], PE: [0, 1]     var_path
+B: [ 0,  1] PS: [0, 0], PE: [0, 1]       identifier `a`
+B: [ 2,  3] PS: [0, 2], PE: [0, 3]     = `=`
+B: [ 4, 43] PS: [0, 4], PE: [3, 3]     primary_expr
+B: [ 4, 43] PS: [0, 4], PE: [3, 3]       literal
+B: [ 4, 43] PS: [0, 4], PE: [3, 3]         string
+B: [ 4, 27] PS: [0, 4], PE: [1, 0]           string_start `""" // this is allowed\n`
+B: [27, 39] PS: [1, 0], PE: [2, 6]           string_contents
+B: [27, 32] PS: [1, 0], PE: [1, 5]             string_content `hello`
+B: [32, 33] PS: [1, 5], PE: [2, 0]             string_content `\n`
+B: [33, 39] PS: [2, 0], PE: [2, 6]             string_content `friend`
+B: [39, 43] PS: [2, 6], PE: [3, 3]           string_end `\n"""`

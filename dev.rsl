@@ -4,6 +4,8 @@ Facilitates development of RTS. If no args, just formats, builds, and tests.
 ---
 args:
     clean c bool # Enable to clean the go cache.
+    no_test "no-test" T bool # Enable to not run tests.
+    dumps d bool # Enable to just test dumps.
     version v string = "" # Specify to release with the given version. Without 'v' prefix.
 
     version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
@@ -14,14 +16,19 @@ $!`goimports -w .`
 if clean:
     $!`go clean -cache`
 
-$!`go build`
-$!`go test ./test`
+if not no_test and not dumps:
+    $!`go build`
+    $!`go test ./test`
+
+if not no_test or dumps:
+    $!`cd ./test/dumps && ./test_dumps.rsl`
 
 if version:
     _, mod = quiet $!`cat go.mod`
     defer:
         $!`echo -n '{mod}' > go.mod`
     $!`go mod edit --dropreplace=github.com/amterp/tree-sitter-rsl`
+    $!`go mod tidy`
 
     $!`git add .`
 

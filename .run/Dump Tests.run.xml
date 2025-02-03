@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Dump Tests" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="rts" />
+    <working_directory value="$PROJECT_DIR$/test/dumps" />
+    <kind value="PACKAGE" />
+    <package value="github.com/amterp/rts/test/dumps" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/test/dumps/run_dump_tests.go" />
+    <method v="2" />
+  </configuration>
+</component>

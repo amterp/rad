@@ -3,7 +3,7 @@ module github.com/amterp/rts
 go 1.23.4
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.10
+	github.com/amterp/tree-sitter-rsl v0.0.14
 	github.com/tree-sitter/go-tree-sitter v0.24.0
 )
 

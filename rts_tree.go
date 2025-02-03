@@ -29,8 +29,12 @@ func (rt *RtsTree) Close() {
 	rt.root.Close()
 }
 
-func (rt *RtsTree) String() string {
+func (rt *RtsTree) Sexp() string {
 	return rt.root.RootNode().ToSexp()
+}
+
+func (rt *RtsTree) String() string {
+	return rt.Dump()
 }
 
 func (rt *RtsTree) GetShebang() (*Shebang, bool) {
