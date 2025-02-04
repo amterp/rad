@@ -1,59 +1,83 @@
 package rts
 
 import (
+	"errors"
 	"fmt"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RtsTree struct {
+type RslTree struct {
 	root   *ts.Tree
 	parser *ts.Parser
 	src    string
 }
 
-func NewRtsTree(tree *ts.Tree, parser *ts.Parser, src string) *RtsTree {
-	return &RtsTree{
+func newRslTree(tree *ts.Tree, parser *ts.Parser, src string) *RslTree {
+	return &RslTree{
 		root:   tree,
 		parser: parser,
 		src:    src,
 	}
 }
 
-func (rt *RtsTree) Update(src string) {
+func (rt *RslTree) Update(src string) {
 	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
 	rt.root = rt.parser.Parse([]byte(src), nil)
 }
 
-func (rt *RtsTree) Close() {
+func (rt *RslTree) Close() {
 	rt.root.Close()
 }
 
-func (rt *RtsTree) Sexp() string {
+func (rt *RslTree) Sexp() string {
 	return rt.root.RootNode().ToSexp()
 }
 
-func (rt *RtsTree) String() string {
+func (rt *RslTree) String() string {
 	return rt.Dump()
 }
 
-func (rt *RtsTree) GetShebang() (*Shebang, bool) {
-	node, ok := rt.findNode("shebang", rt.root.RootNode())
-	if !ok {
-		return nil, false
+func (rt *RslTree) FindShebang() (*Shebang, error) {
+	shebangs, err := findNodes[*Shebang](rt)
+	if err != nil {
+		return nil, err
 	}
-	return newShebang(rt.src, node)
+	if len(shebangs) == 0 {
+		return nil, nil
+	}
+	return shebangs[0], nil
 }
 
-func (rt *RtsTree) GetFileHeader() (*FileHeader, bool) {
-	node, ok := rt.findNode("file_header", rt.root.RootNode())
-	if !ok {
-		return nil, false
+func (rt *RslTree) FindFileHeader() (*FileHeader, error) {
+	fileHeaders, err := findNodes[*FileHeader](rt)
+	if err != nil {
+		return nil, err
 	}
-	return newFileHeader(rt.src, node)
+	if len(fileHeaders) == 0 {
+		return nil, nil
+	}
+	if len(fileHeaders) > 1 {
+		return nil, errors.New("multiple file headers found")
+	}
+	return fileHeaders[0], nil
 }
 
-func QueryNodes[T Node](rt *RtsTree) ([]T, error) {
+func (rt *RslTree) FindArgBlock() (*ArgBlock, error) {
+	argBlocks, err := findNodes[*ArgBlock](rt)
+	if err != nil {
+		return nil, err
+	}
+	if len(argBlocks) == 0 {
+		return nil, nil
+	}
+	if len(argBlocks) > 1 {
+		return nil, errors.New("multiple arg blocks found")
+	}
+	return argBlocks[0], nil
+}
+
+func QueryNodes[T Node](rt *RslTree) ([]T, error) {
 	nodeName := NodeName[T]()
 	query, err := ts.NewQuery(rt.parser.Language(), fmt.Sprintf("(%s) @%s", nodeName, nodeName))
 
@@ -81,13 +105,26 @@ func QueryNodes[T Node](rt *RtsTree) ([]T, error) {
 	return nodes, nil
 }
 
-func (rt *RtsTree) findNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
+func findNodes[T Node](rt *RslTree) ([]T, error) {
+	nodeName := NodeName[T]()
+	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())
+	if !ok {
+		return []T{}, nil
+	}
+	rtsNode, ok := createNode[T](rt.src, node)
+	if !ok {
+		return nil, errors.New("failed to create RTS version of node")
+	}
+	return []T{rtsNode}, nil // todo stub - should search all
+}
+
+func (rt *RslTree) findFirstNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
 	if node.Kind() == nodeKind {
 		return node, true
 	}
 	children := node.Children(node.Walk())
 	for _, child := range children {
-		if n, ok := rt.findNode(nodeKind, &child); ok {
+		if n, ok := rt.findFirstNode(nodeKind, &child); ok {
 			return n, true
 		}
 	}
@@ -103,6 +140,9 @@ func createNode[T Node](src string, node *ts.Node) (T, bool) {
 	case *FileHeader:
 		fileHeader, _ := newFileHeader(src, node)
 		return any(fileHeader).(T), true
+	case *ArgBlock:
+		argBlock, _ := newArgBlock(src, node)
+		return any(argBlock).(T), true
 	case *StringNode:
 		stringNode, _ := newStringNode(src, node)
 		return any(stringNode).(T), true

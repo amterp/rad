@@ -36,3 +36,4 @@ else:
 // todo rad:
 // - reading files built in func
 // - could be improved with some sort of regex extraction algo
+// - could use 'display' block instead of manually printing list?

@@ -1,0 +1,62 @@
+=====
+Args declarations complete
+=====
+args:
+    name string = "ali\\c\ne"
+    midName string = ""
+    lastName string = r"ali\\c\ne"
+    age "AGE" a int = 30 # An age.
+a = 2
+=====
+B: [  0, 136] PS: [0,  0], PE: [6,  0] source_file
+B: [  0, 129] PS: [0,  0], PE: [4, 34]   arg_block
+B: [  0,   4] PS: [0,  0], PE: [0,  4]     args `args`
+B: [  4,   5] PS: [0,  4], PE: [0,  5]     : `:`
+B: [ 10,  35] PS: [1,  4], PE: [1, 29]     declaration: arg_declaration
+B: [ 10,  14] PS: [1,  4], PE: [1,  8]       arg_name: identifier `name`
+B: [ 15,  21] PS: [1,  9], PE: [1, 15]       type: string_type `string`
+B: [ 22,  23] PS: [1, 16], PE: [1, 17]       = `=`
+B: [ 24,  35] PS: [1, 18], PE: [1, 29]       default: string
+B: [ 24,  25] PS: [1, 18], PE: [1, 19]         start: string_start `"`
+B: [ 25,  34] PS: [1, 19], PE: [1, 28]         contents: string_contents
+B: [ 25,  28] PS: [1, 19], PE: [1, 22]           content: string_content `ali`
+B: [ 28,  30] PS: [1, 22], PE: [1, 24]           backslash: esc_backslash `\\`
+B: [ 30,  31] PS: [1, 24], PE: [1, 25]           content: string_content `c`
+B: [ 31,  33] PS: [1, 25], PE: [1, 27]           newline: esc_newline `\n`
+B: [ 33,  34] PS: [1, 27], PE: [1, 28]           content: string_content `e`
+B: [ 34,  35] PS: [1, 28], PE: [1, 29]         end: string_end `"`
+B: [ 40,  59] PS: [2,  4], PE: [2, 23]     declaration: arg_declaration
+B: [ 40,  47] PS: [2,  4], PE: [2, 11]       arg_name: identifier `midName`
+B: [ 48,  54] PS: [2, 12], PE: [2, 18]       type: string_type `string`
+B: [ 55,  56] PS: [2, 19], PE: [2, 20]       = `=`
+B: [ 57,  59] PS: [2, 21], PE: [2, 23]       default: string
+B: [ 57,  58] PS: [2, 21], PE: [2, 22]         start: string_start `"`
+B: [ 58,  59] PS: [2, 22], PE: [2, 23]         end: string_end `"`
+B: [ 64,  94] PS: [3,  4], PE: [3, 34]     declaration: arg_declaration
+B: [ 64,  72] PS: [3,  4], PE: [3, 12]       arg_name: identifier `lastName`
+B: [ 73,  79] PS: [3, 13], PE: [3, 19]       type: string_type `string`
+B: [ 80,  81] PS: [3, 20], PE: [3, 21]       = `=`
+B: [ 82,  94] PS: [3, 22], PE: [3, 34]       default: string
+B: [ 82,  84] PS: [3, 22], PE: [3, 24]         start: string_start `r"`
+B: [ 84,  93] PS: [3, 24], PE: [3, 33]         contents: string_contents
+B: [ 84,  93] PS: [3, 24], PE: [3, 33]           content: string_content `ali\\c\ne`
+B: [ 93,  94] PS: [3, 33], PE: [3, 34]         end: string_end `"`
+B: [ 99, 129] PS: [4,  4], PE: [4, 34]     declaration: arg_declaration
+B: [ 99, 102] PS: [4,  4], PE: [4,  7]       arg_name: identifier `age`
+B: [103, 108] PS: [4,  8], PE: [4, 13]       rename: string
+B: [103, 104] PS: [4,  8], PE: [4,  9]         start: string_start `"`
+B: [104, 107] PS: [4,  9], PE: [4, 12]         contents: string_contents
+B: [104, 107] PS: [4,  9], PE: [4, 12]           content: string_content `AGE`
+B: [107, 108] PS: [4, 12], PE: [4, 13]         end: string_end `"`
+B: [109, 110] PS: [4, 14], PE: [4, 15]       shorthand: shorthand_flag `a`
+B: [111, 114] PS: [4, 16], PE: [4, 19]       type: int_type `int`
+B: [115, 116] PS: [4, 20], PE: [4, 21]       = `=`
+B: [117, 119] PS: [4, 22], PE: [4, 24]       default: int `30`
+B: [122, 129] PS: [4, 27], PE: [4, 34]       comment: comment_text `An age.`
+B: [130, 135] PS: [5,  0], PE: [5,  5]   assign
+B: [130, 131] PS: [5,  0], PE: [5,  1]     left: var_path
+B: [130, 131] PS: [5,  0], PE: [5,  1]       root: identifier `a`
+B: [132, 133] PS: [5,  2], PE: [5,  3]     = `=`
+B: [134, 135] PS: [5,  4], PE: [5,  5]     right: primary_expr
+B: [134, 135] PS: [5,  4], PE: [5,  5]       literal
+B: [134, 135] PS: [5,  4], PE: [5,  5]         int `2`

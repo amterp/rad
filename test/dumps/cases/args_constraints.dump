@@ -1,0 +1,56 @@
+=====
+Args declarations
+=====
+args:
+    name string
+    age int = 30 # An age.
+
+    name enum ["alice", "bob"]
+    name regex "^[A-Z][a-z]$"
+a = 2
+=====
+B: [  0, 117] PS: [0,  0], PE: [7,  0] source_file
+B: [  0, 110] PS: [0,  0], PE: [5, 29]   arg_block
+B: [  0,   4] PS: [0,  0], PE: [0,  4]     args `args`
+B: [  4,   5] PS: [0,  4], PE: [0,  5]     : `:`
+B: [ 10,  21] PS: [1,  4], PE: [1, 15]     declaration: arg_declaration
+B: [ 10,  14] PS: [1,  4], PE: [1,  8]       arg_name: identifier `name`
+B: [ 15,  21] PS: [1,  9], PE: [1, 15]       type: string_type `string`
+B: [ 26,  48] PS: [2,  4], PE: [2, 26]     declaration: arg_declaration
+B: [ 26,  29] PS: [2,  4], PE: [2,  7]       arg_name: identifier `age`
+B: [ 30,  33] PS: [2,  8], PE: [2, 11]       type: int_type `int`
+B: [ 34,  35] PS: [2, 12], PE: [2, 13]       = `=`
+B: [ 36,  38] PS: [2, 14], PE: [2, 16]       default: int `30`
+B: [ 41,  48] PS: [2, 19], PE: [2, 26]       comment: comment_text `An age.`
+B: [ 54,  80] PS: [4,  4], PE: [4, 30]     enum_constraint: arg_enum_constraint
+B: [ 54,  58] PS: [4,  4], PE: [4,  8]       arg_name: identifier `name`
+B: [ 59,  63] PS: [4,  9], PE: [4, 13]       enum `enum`
+B: [ 64,  80] PS: [4, 14], PE: [4, 30]       values: string_list
+B: [ 64,  65] PS: [4, 14], PE: [4, 15]         [ `[`
+B: [ 65,  72] PS: [4, 15], PE: [4, 22]         string: string
+B: [ 65,  66] PS: [4, 15], PE: [4, 16]           start: string_start `"`
+B: [ 66,  71] PS: [4, 16], PE: [4, 21]           contents: string_contents
+B: [ 66,  71] PS: [4, 16], PE: [4, 21]             content: string_content `alice`
+B: [ 71,  72] PS: [4, 21], PE: [4, 22]           end: string_end `"`
+B: [ 72,  73] PS: [4, 22], PE: [4, 23]         , `,`
+B: [ 74,  79] PS: [4, 24], PE: [4, 29]         string: string
+B: [ 74,  75] PS: [4, 24], PE: [4, 25]           start: string_start `"`
+B: [ 75,  78] PS: [4, 25], PE: [4, 28]           contents: string_contents
+B: [ 75,  78] PS: [4, 25], PE: [4, 28]             content: string_content `bob`
+B: [ 78,  79] PS: [4, 28], PE: [4, 29]           end: string_end `"`
+B: [ 79,  80] PS: [4, 29], PE: [4, 30]         ] `]`
+B: [ 85, 110] PS: [5,  4], PE: [5, 29]     regex_constraint: arg_regex_constraint
+B: [ 85,  89] PS: [5,  4], PE: [5,  8]       arg_name: identifier `name`
+B: [ 90,  95] PS: [5,  9], PE: [5, 14]       regex `regex`
+B: [ 96, 110] PS: [5, 15], PE: [5, 29]       regex: string
+B: [ 96,  97] PS: [5, 15], PE: [5, 16]         start: string_start `"`
+B: [ 97, 109] PS: [5, 16], PE: [5, 28]         contents: string_contents
+B: [ 97, 109] PS: [5, 16], PE: [5, 28]           content: string_content `^[A-Z][a-z]$`
+B: [109, 110] PS: [5, 28], PE: [5, 29]         end: string_end `"`
+B: [111, 116] PS: [6,  0], PE: [6,  5]   assign
+B: [111, 112] PS: [6,  0], PE: [6,  1]     left: var_path
+B: [111, 112] PS: [6,  0], PE: [6,  1]       root: identifier `a`
+B: [113, 114] PS: [6,  2], PE: [6,  3]     = `=`
+B: [115, 116] PS: [6,  4], PE: [6,  5]     right: primary_expr
+B: [115, 116] PS: [6,  4], PE: [6,  5]       literal
+B: [115, 116] PS: [6,  4], PE: [6,  5]         int `2`

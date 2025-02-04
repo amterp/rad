@@ -13,18 +13,18 @@ var escapedReplacer = strings.NewReplacer(
 	"\t", "\\t",
 )
 
-func (rt *RtsTree) Dump() string {
-	node := rt.root.RootNode()
-	maxByte, maxPosRow, maxPosCol := findMaxRanges(node, 0, 0, 0)
+func (rt *RslTree) Dump() string {
+	root := rt.root.RootNode()
+	maxByte, maxPosRow, maxPosCol := findMaxRanges(root, 0, 0, 0)
 
 	byteLen := len(fmt.Sprintf("%d", maxByte))
 	rowLen := len(fmt.Sprintf("%d", maxPosRow))
 	colLen := len(fmt.Sprintf("%d", maxPosCol))
-	fmtString := fmt.Sprintf("B: [%%%dd, %%%dd] PS: [%%%dd, %%%dd], PE: [%%%dd, %%%dd] %%s%%s",
+	fmtString := fmt.Sprintf("B: [%%%dd, %%%dd] PS: [%%%dd, %%%dd], PE: [%%%dd, %%%dd] %%s%%s%%s",
 		byteLen, byteLen, rowLen, colLen, rowLen, colLen)
 
 	var sb strings.Builder
-	rt.recurseAppendString(&sb, fmtString, node, 0)
+	rt.recurseAppendString(&sb, fmtString, root, "", 0)
 
 	return sb.String()
 }
@@ -47,13 +47,23 @@ func findMaxRanges(node *ts.Node, maxByte uint, maxPosRow uint, maxPosCol uint) 
 	return maxByte, maxPosRow, maxPosCol
 }
 
-func (rt *RtsTree) recurseAppendString(sb *strings.Builder, fmtString string, node *ts.Node, treeLevel int) {
+func (rt *RslTree) recurseAppendString(
+	sb *strings.Builder,
+	fmtString string,
+	node *ts.Node,
+	nodeFieldName string,
+	treeLevel int,
+) {
 	indent := strings.Repeat("  ", treeLevel)
+	if nodeFieldName != "" {
+		nodeFieldName += ": "
+	}
 	sb.WriteString(fmt.Sprintf(fmtString,
 		node.StartByte(), node.EndByte(),
 		node.StartPosition().Row, node.StartPosition().Column,
 		node.EndPosition().Row, node.EndPosition().Column,
 		indent,
+		nodeFieldName,
 		node.Kind(),
 	))
 
@@ -66,7 +76,8 @@ func (rt *RtsTree) recurseAppendString(sb *strings.Builder, fmtString string, no
 		sb.WriteString("\n")
 	}
 
-	for _, child := range children {
-		rt.recurseAppendString(sb, fmtString, &child, treeLevel+1)
+	for i, child := range children {
+		childFieldName := node.FieldNameForChild(uint32(i))
+		rt.recurseAppendString(sb, fmtString, &child, childFieldName, treeLevel+1)
 	}
 }

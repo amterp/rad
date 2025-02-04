@@ -112,16 +112,13 @@ func parseTestFile(path string) ([]testCase, error) {
 }
 
 func parseRsl(code string) (string, error) {
-	rslTs, err := rts.NewRts()
+	rslTs, err := rts.NewRslParser()
 	if err != nil {
 		return "", err
 	}
 	defer rslTs.Close()
 
-	tree, err := rslTs.Parse(code)
-	if err != nil {
-		return "", err
-	}
+	tree := rslTs.Parse(code)
 	return tree.Dump(), nil
 }
 
