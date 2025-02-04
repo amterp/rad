@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	com "rad/core/common"
 
 	"github.com/fatih/color"
 	"github.com/spf13/pflag"
@@ -82,13 +83,17 @@ func (r *RadRunner) Run() error {
 			rslSourceCode = readSource(ScriptPath)
 		}
 
+		RP.RadDebug(fmt.Sprintf("Read src code (%d chars), lexing...", len(rslSourceCode)))
 		l := NewLexer(rslSourceCode)
 		l.Lex()
 
+		RP.RadDebug(fmt.Sprintf("Lexed %d tokens, parsing...", len(l.Tokens)))
 		p := NewParser(l.Tokens)
 		instructions := p.Parse()
 
-		r.scriptMetadata = ExtractMetadata(instructions)
+		RP.RadDebug(fmt.Sprintf("Parsed %d instructions, extracting script metadata...", len(instructions)))
+		r.scriptMetadata = ExtractMetadata(rslSourceCode, instructions)
+		RP.RadDebug(fmt.Sprintf("Script metadata: %v", com.FlatStr(r.scriptMetadata)))
 	}
 
 	scriptArgs := r.createRslArgsFromScript()

@@ -3,130 +3,84 @@ package core
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/amterp/rts"
 )
 
 type ScriptArg struct {
-	Name             string // identifier name in the script
-	ApiName          string // name that the user will see
-	DeclarationToken Token
-	Short            *string
-	Type             RslArgTypeT
-	Description      *string
-	IsOptional       bool
-	EnumConstraint   *[]string
-	RegexConstraint  *regexp.Regexp
+	Name            string // identifier name in the script
+	ApiName         string // name that the user will see
+	TreeNode        rts.ArgDecl
+	Short           *string
+	Type            RslArgTypeT
+	Description     *string
+	IsOptional      bool
+	EnumConstraint  *[]string
+	RegexConstraint *regexp.Regexp
 	// first check the Type and IsOptional, then get the value
-	// todo I think just make these non-pointers, and have a separate flag to indicate the arg is set
-	DefaultString      *string
-	DefaultStringArray *[]string
-	DefaultInt         *int64
-	DefaultIntArray    *[]int64
-	DefaultFloat       *float64
-	DefaultFloatArray  *[]float64
-	DefaultBool        *bool
-	DefaultBoolArray   *[]bool
+	DefaultString     *string
+	DefaultStringList *[]string
+	DefaultInt        *int64
+	DefaultIntList    *[]int64
+	DefaultFloat      *float64
+	DefaultFloatList  *[]float64
+	DefaultBool       *bool
+	DefaultBoolList   *[]bool
 }
 
-func FromArgDecl(l *LiteralInterpreter, argDecl *ArgDeclaration) *ScriptArg {
-	name := argDecl.Identifier.GetLexeme()
-	apiName := name
-	rename := argDecl.Rename
-	if NotNil(rename, func() Token { return nil }) {
-		apiName = (*rename).(*StringLiteralToken).Literal
-	}
+func FromArgDecl(decl rts.ArgDecl, enumConstraint *rts.ArgEnumConstraint, regexConstraint *rts.ArgRegexConstraint) *ScriptArg {
+	name := decl.Name.Name
+	externalName := decl.ExternalName()
 
-	var short *string
-	flagToken := argDecl.Flag
-	if NotNil(flagToken, func() Token { return nil }) {
-		lexeme := (*flagToken).GetLexeme()
-		if StrLen(lexeme) != 1 {
-			l.i.error(*flagToken, fmt.Sprintf("Flag %q must be a single character", lexeme))
-		}
-		short = &lexeme
-	}
-
-	var comment *string
-	if argDecl.Comment != nil {
-		comment = argDecl.Comment.Literal
-	}
-
+	defaultVal := decl.Default
 	scriptArg := &ScriptArg{
-		Name:             name,
-		ApiName:          apiName,
-		DeclarationToken: argDecl.Identifier,
-		Short:            short,
-		Type:             argDecl.ArgType.Type,
-		Description:      comment,
-		IsOptional:       argDecl.IsOptional,
+		Name:            name,
+		ApiName:         externalName,
+		TreeNode:        decl,
+		Short:           decl.ShorthandStr(),
+		Type:            ToRslArgTypeT(decl.Type.Type),
+		Description:     decl.CommentStr(),
+		IsOptional:      isOptional(decl),
+		EnumConstraint:  convertEnumConstraint(enumConstraint),
+		RegexConstraint: convertRegexConstraint(regexConstraint),
 	}
 
-	defaultVal := argDecl.Default
-	if NotNil(defaultVal, func() LiteralOrArray { return nil }) {
-		literal := (*defaultVal).Accept(l)
-		switch scriptArg.Type {
-		case ArgStringT:
-			val := literal.(RslString)
-			def := val.Plain()
-			scriptArg.DefaultString = &def
-		case ArgStringArrayT:
-			arr, ok := literal.([]interface{})
-			if !ok {
-				RP.TokenErrorExit(argDecl.Identifier, "Expected array of strings as default")
-			}
-			var vals []string
-			for _, elem := range arr {
-				str := elem.(RslString)
-				vals = append(vals, str.Plain())
-			}
-			scriptArg.DefaultStringArray = &vals
-		case ArgIntT:
-			val := literal.(int64)
-			scriptArg.DefaultInt = &val
-		case ArgIntArrayT:
-			arr, ok := literal.([]interface{})
-			if !ok {
-				RP.TokenErrorExit(argDecl.Identifier, "Expected array of ints as default")
-			}
-			var vals []int64
-			for _, elem := range arr {
-				vals = append(vals, elem.(int64))
-			}
-			scriptArg.DefaultIntArray = &vals
-		case ArgFloatT:
-			switch coerced := literal.(type) {
-			case int64:
-				val := float64(coerced)
-				scriptArg.DefaultFloat = &val
-			case float64:
-				scriptArg.DefaultFloat = &coerced
-			}
-		case ArgFloatArrayT:
-			arr, ok := literal.([]interface{})
-			if !ok {
-				RP.TokenErrorExit(argDecl.Identifier, "Expected array of floats as default")
-			}
-			var vals []float64
-			for _, elem := range arr {
-				vals = append(vals, elem.(float64))
-			}
-			scriptArg.DefaultFloatArray = &vals
-		case ArgBoolT:
-			val := literal.(bool)
-			scriptArg.DefaultBool = &val
-		case ArgBoolArrayT:
-			arr, ok := literal.([]interface{})
-			if !ok {
-				RP.TokenErrorExit(argDecl.Identifier, "Expected array of bools as default")
-			}
-			var vals []bool
-			for _, elem := range arr {
-				vals = append(vals, elem.(bool))
-			}
-			scriptArg.DefaultBoolArray = &vals
-		default:
-			l.i.error(scriptArg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v", scriptArg.Type))
-		}
+	if defaultVal != nil {
+		scriptArg.DefaultString = defaultVal.DefaultString
+		scriptArg.DefaultInt = defaultVal.DefaultInt
+		scriptArg.DefaultFloat = defaultVal.DefaultFloat
+		scriptArg.DefaultBool = defaultVal.DefaultBool
+		scriptArg.DefaultStringList = defaultVal.DefaultStringList
+		scriptArg.DefaultIntList = defaultVal.DefaultIntList
+		scriptArg.DefaultFloatList = defaultVal.DefaultFloatList
+		scriptArg.DefaultBoolList = defaultVal.DefaultBoolList
 	}
 
 	return scriptArg
+}
+
+func convertEnumConstraint(constraint *rts.ArgEnumConstraint) *[]string {
+	if constraint == nil {
+		return nil
+	}
+	return &constraint.Values.Values
+}
+
+func convertRegexConstraint(constraint *rts.ArgRegexConstraint) *regexp.Regexp {
+	if constraint == nil {
+		return nil
+	}
+	regexStr := constraint.Regex.Value
+	compiled, err := regexp.Compile(regexStr)
+	if err != nil {
+		RP.NodeErrorExit(constraint, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()))
+	}
+	return compiled
+}
+
+func isOptional(decl rts.ArgDecl) bool {
+	if decl.Type.Type == "bool" {
+		return true
+	}
+	return decl.Default != nil
 }
