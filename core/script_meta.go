@@ -2,103 +2,57 @@ package core
 
 import (
 	"fmt"
+	com "rad/core/common"
 
-	"github.com/samber/lo"
+	"github.com/amterp/rts"
 )
 
 type ScriptData struct {
-	ScriptName         string
-	Args               []*ScriptArg
-	OneLineDescription *string // todo not really using this atm, throw away? revisit this syntax
-	BlockDescription   *string
-	Instructions       []Stmt
+	ScriptName   string
+	Args         []*ScriptArg
+	Description  *string
+	Instructions []Stmt
 }
 
-func ExtractMetadata(instructions []Stmt) *ScriptData {
-	args := extractArgs(instructions)
-	oneLineDescription, blockDescription := extractDescriptions(instructions)
+func ExtractMetadata(src string, instructions []Stmt) *ScriptData {
+	rslTree, err := rts.NewRslParser()
+	if err != nil {
+		RP.RadErrorExit("Failed to create RSL tree sitter: " + err.Error())
+	}
+
+	tree := rslTree.Parse(src)
+	RP.RadDebug("Tree dump:\n" + tree.Dump()) // todo should be lazy i.e. func
+
+	var description *string
+	fileHeader, err := tree.FindFileHeader()
+	if err == nil && fileHeader != nil {
+		description = &fileHeader.Contents
+	}
+
+	argBlock, err := tree.FindArgBlock()
+	RP.RadDebug(fmt.Sprintf("Found arg block: %v", com.FlatStr(argBlock)))
+	args := extractArgs(argBlock)
+
 	return &ScriptData{
-		ScriptName:         ScriptName,
-		Args:               args,
-		OneLineDescription: oneLineDescription,
-		BlockDescription:   blockDescription,
-		Instructions:       instructions,
+		ScriptName:   ScriptName,
+		Args:         args,
+		Description:  description,
+		Instructions: instructions,
 	}
 }
 
-func extractDescriptions(instructions []Stmt) (*string, *string) {
-	fileHeader, ok := lo.Find(instructions, func(stmt Stmt) bool {
-		_, ok := stmt.(*FileHeader)
-		return ok
-	})
+func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
+	var args []*ScriptArg
 
-	if !ok {
-		return nil, nil
+	if argBlock == nil {
+		return nil
 	}
 
-	fh := fileHeader.(*FileHeader)
-	oneLiner := &fh.FhToken.OneLiner
-	block := fh.FhToken.Rest
-	return oneLiner, block
-}
-
-func extractArgs(instructions []Stmt) []*ScriptArg {
-	args := make(map[string]*ScriptArg)
-	var orderedArgs []*ScriptArg
-
-	argBlockIfFound, ok := lo.Find(instructions, func(stmt Stmt) bool {
-		_, ok := stmt.(*ArgBlock)
-		return ok
-	})
-
-	if !ok {
-		return []*ScriptArg{}
+	for _, argDecl := range argBlock.Args {
+		enumConstraint := argBlock.EnumConstraints[argDecl.Name.Name]
+		regexConstraint := argBlock.RegexConstraints[argDecl.Name.Name]
+		args = append(args, FromArgDecl(argDecl, enumConstraint, regexConstraint))
 	}
 
-	literalInterpreter := NewLiteralInterpreter(nil) // todo should probably not be nil, for erroring?
-
-	argBlock := argBlockIfFound.(*ArgBlock)
-
-	// read out arguments
-	for _, argStmt := range argBlock.Stmts {
-		argDecl, ok := argStmt.(*ArgDeclaration)
-		if ok {
-			arg := FromArgDecl(literalInterpreter, argDecl)
-			args[arg.Name] = arg
-			orderedArgs = append(orderedArgs, arg)
-		}
-	}
-
-	// now check for constraints
-	for _, argStmt := range argBlock.Stmts {
-		switch coerced := argStmt.(type) {
-		case *ArgDeclaration:
-			// already handled above
-		case *ArgEnum:
-			scriptArg, ok := args[coerced.Identifier.GetLexeme()]
-			if !ok {
-				RP.ErrorExit("Enum constraint applied to undeclared arg: " + coerced.Identifier.GetLexeme())
-			}
-			literal := coerced.Values.Accept(literalInterpreter)
-			validValues, ok := literal.([]interface{})
-			if !ok {
-				RP.RadErrorExit(fmt.Sprintf("Bug! Parser should not have allowed a non-array enum declaration for arg (got %T): %s", literal, coerced.Identifier.GetLexeme()))
-			}
-			strArr, ok := AsStringArray(validValues)
-			if !ok {
-				RP.RadErrorExit("Bug! Parser should not have allowed a non-string enum declaration for arg: " + coerced.Identifier.GetLexeme())
-			}
-			scriptArg.EnumConstraint = &strArr
-		case *ArgRegex:
-			scriptArg, ok := args[coerced.Identifier.GetLexeme()]
-			if !ok {
-				RP.ErrorExit("Regex constraint applied to undeclared arg: " + coerced.Identifier.GetLexeme())
-			}
-			scriptArg.RegexConstraint = coerced.Regex
-		default:
-			RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled arg stmt type: %T", coerced))
-		}
-	}
-
-	return orderedArgs
+	return args
 }

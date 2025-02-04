@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/amterp/rts"
 )
 
 // todo make global instance, rather than passing into everything
@@ -40,12 +42,21 @@ type Printer interface {
 	// Like TokenErrorExit but takes an error code.
 	TokenErrorCodeExit(token Token, msg string, errorCode int)
 
+	// TODO
+	NodeErrorExit(node rts.Node, msg string)
+
+	// TODO
+	NodeErrorCodeExit(node rts.Node, msg string, errorCode int)
+
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits.
 	RadErrorExit(msg string)
 
 	// Similar to RadErrorExit, but where a token is available for context.
 	RadTokenErrorExit(token Token, msg string)
+
+	// TODO
+	RadNodeErrorExit(node rts.Node, msg string)
 
 	// Similar to RadErrorExit, but prints usage after errors, and before exiting.
 	UsageErrorExit(msg string)
@@ -159,6 +170,22 @@ func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) 
 	p.errorExit(errorCode)
 }
 
+func (p *stdPrinter) NodeErrorExit(node rts.Node, msg string) {
+	p.NodeErrorCodeExit(node, msg, 1)
+}
+
+func (p *stdPrinter) NodeErrorCodeExit(node rts.Node, msg string, errorCode int) {
+	if !p.isQuiet || p.isScriptDebug {
+		src := node.Src()
+		src = strings.ReplaceAll(src, "\n", "\\n")
+		src = strings.ReplaceAll(src, "\t", "\\t")
+		fmt.Fprintf(p.stdErr, "RslError at L%d/%d in '%s': %s",
+			node.StartPos().Row, node.StartPos().Col, src, msg)
+	}
+	p.printShellExitIfEnabled()
+	p.errorExit(errorCode)
+}
+
 func (p *stdPrinter) RadErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
 	p.printShellExitIfEnabled()
@@ -174,6 +201,11 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 		fmt.Fprintf(p.stdErr, "RadError at L%d/%d on '%s': %s",
 			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
 	}
+}
+
+func (p *stdPrinter) RadNodeErrorExit(node rts.Node, msg string) {
+	fmt.Fprintf(p.stdErr, "RadError at L%d/%d in '%s': %s",
+		node.StartPos().Row, node.StartPos().Col, node.Src(), msg)
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {

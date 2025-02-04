@@ -3,7 +3,7 @@ main
 sandbox
 bin
 resp.json
-test.rad
+test.rsl
 docs-web/site
 
 ### Go ###

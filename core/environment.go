@@ -56,7 +56,7 @@ func (e *Env) InitArg(arg RslArg) {
 	case *FloatArrRslArg:
 		e.Vars[coerced.Identifier] = convertToInterfaceArr(coerced.Value)
 	default:
-		e.i.error(arg.GetToken(), fmt.Sprintf("Unsupported arg type, cannot init: %T", arg))
+		e.i.errorNode(arg.GetNode(), fmt.Sprintf("Unsupported arg type, cannot init: %T", arg))
 	}
 }
 

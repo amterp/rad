@@ -50,10 +50,8 @@ func (r *RadRunner) printScriptlessUsage() {
 func (r *RadRunner) printScriptUsage() {
 	buf := new(bytes.Buffer)
 
-	if r.scriptMetadata.BlockDescription != nil {
-		fmt.Fprintf(buf, *r.scriptMetadata.BlockDescription+"\n\n")
-	} else if r.scriptMetadata.OneLineDescription != nil {
-		fmt.Fprintf(buf, *r.scriptMetadata.OneLineDescription+"\n\n")
+	if r.scriptMetadata.Description != nil {
+		fmt.Fprintf(buf, *r.scriptMetadata.Description+"\n")
 	}
 
 	greenBold(buf, "Usage:\n")
