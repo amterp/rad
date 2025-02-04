@@ -27,6 +27,30 @@ const (
 	ArgBoolArrayT
 )
 
+func ToRslArgTypeT(str string) RslArgTypeT {
+	switch str {
+	case "string":
+		return ArgStringT
+	case "int":
+		return ArgIntT
+	case "float":
+		return ArgFloatT
+	case "bool":
+		return ArgBoolT
+	case "string[]":
+		return ArgStringArrayT
+	case "int[]":
+		return ArgIntArrayT
+	case "float[]":
+		return ArgFloatArrayT
+	case "bool[]":
+		return ArgBoolArrayT
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", str))
+		panic(UNREACHABLE)
+	}
+}
+
 func (r *RslArgTypeT) AsString() string {
 	switch *r {
 	case ArgStringT:

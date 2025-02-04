@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+
+	"github.com/amterp/rts"
 )
 
 type MainInterpreter struct {
@@ -418,6 +420,10 @@ func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
 
 func (i *MainInterpreter) error(token Token, message string) {
 	i.errorWithCode(token, message, 1)
+}
+
+func (i *MainInterpreter) errorNode(node rts.Node, message string) {
+	RP.NodeErrorExit(node, message)
 }
 
 func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode int) {

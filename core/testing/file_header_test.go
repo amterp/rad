@@ -25,7 +25,7 @@ Script args:
 	resetTestState()
 }
 
-func Test_FileHeader_PrintsExtra(t *testing.T) {
+func Test_FileHeader_PrintsAll(t *testing.T) {
 	rsl := `
 ---
 This is a one liner!
@@ -37,7 +37,9 @@ args:
 	name string
 `
 	setupAndRunCode(t, rsl, "-h", "--NO-COLOR")
-	expected := `Here is
+	expected := `This is a one liner!
+
+Here is
 the rest!
 
 Usage:

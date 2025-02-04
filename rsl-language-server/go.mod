@@ -9,8 +9,6 @@ require (
 )
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.7 // indirect
-	github.com/mattn/go-pointer v0.0.1 // indirect
-	github.com/tree-sitter/go-tree-sitter v0.24.0 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 )

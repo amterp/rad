@@ -7,7 +7,7 @@ args:
     rls bool # Enable to rebuild RLS.
     vsc bool # Enable to rebuild VSC extension.
     docs d bool # Enable to deploy docs.
-    version v string = "" # Specify to release a new rad version. Commits.
+    version v int = 0 # 1 to bump patch, 2 for minor and 3 for major.
     commit c bool # Enable to create a commit. Stashes local go.mod replaces first.
     test_count "test-count" t int = 30 # The number of times to run tests, to detect flakiness.
     no_push "no-push" P bool # Disables pushing.
@@ -39,6 +39,29 @@ if commit:
             $!`git commit`
 
 if version:
+
+    // resolve version /////////////
+    _, tags = $!`git tag`
+    tags = split(tags[:-1], "\n")
+    tags = [replace(t, "v", "") for t in tags]
+    tags = [split(t, "\.") for t in tags]
+
+    majors = sort([parse_int(t[0]) for t in tags])
+    minors = sort([parse_int(t[1]) for t in tags])
+    patches = sort([parse_int(t[2]) for t in tags])
+
+    major = majors[-1]
+    minor = minors[-1]
+    patch = patches[-1]
+
+    if version == 1:
+        version = "{major}.{minor}.{patch + 1}"
+    else if version == 2:
+        version = "{major}.{minor + 1}.0"
+    else if version == 3:
+        version = "{major + 1}.0.0"
+    ///////////////////////////////
+
     if not rad:
         $!`make all`
         $!`go test ./core/testing -count {test_count}`
@@ -55,14 +78,16 @@ if version:
     $!`git add .`
     $!`git diff HEAD --compact-summary`
 
-    if confirm("Commit, tag & push? [y/n] > "):
+    if confirm("Commit, tag & push? ({version}) [y/n] > "):
+        _, branch  = $!`echo -n $(git branch --show-current)`
+        
         if clean_before:
             // implied only our sed version bump made a diff
             $!`git commit -m "Bump version to {version}"`
         else:
             $!`git commit`
         $!`git tag -a "{version}" -m "Bump version to {version}"`
-        push_cmd = `git push origin {version} --tags`
+        push_cmd = `git push origin {branch} --tags`
         if no_push:
             print("Not pushing, remember to run", yellow(push_cmd), "later")
         else:

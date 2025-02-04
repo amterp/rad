@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rts"
+
 	"github.com/samber/lo"
 	"github.com/spf13/pflag"
 )
@@ -24,7 +26,7 @@ type RslArg interface {
 	Lookup() *pflag.Flag
 	SetValue(value string)
 	IsOptional() bool
-	GetToken() Token // nil if not a script arg
+	GetNode() rts.Node // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
 	ValidateConstraints() error
@@ -91,12 +93,12 @@ func (f *BaseRslArg) IsOptional() bool {
 	return f.scriptArg.IsOptional
 }
 
-func (f *BaseRslArg) GetToken() Token {
+func (f *BaseRslArg) GetNode() rts.Node {
 	if f.scriptArg == nil {
 		return nil
 	}
 
-	return f.scriptArg.DeclarationToken
+	return &f.scriptArg.TreeNode
 }
 
 func (f *BaseRslArg) Hidden(hide bool) {
@@ -152,7 +154,7 @@ func (f *BoolRslArg) SetValue(arg string) {
 	} else if arg == "false" || arg == "0" {
 		f.Value = false
 	} else {
-		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+		RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
 	}
 }
 
@@ -200,7 +202,7 @@ func (f *BoolArrRslArg) SetValue(arg string) {
 		} else if v == "false" || v == "0" {
 			bools[i] = false
 		} else {
-			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+			RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
 		}
 	}
 	f.Value = bools
@@ -364,7 +366,7 @@ func (f *IntRslArg) Register() {
 func (f *IntRslArg) SetValue(arg string) {
 	parsed, err := strconv.Atoi(arg)
 	if err != nil {
-		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+		RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 	}
 	val := int64(parsed)
 	f.Value = val
@@ -411,7 +413,7 @@ func (f *IntArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+			RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
 		}
 		ints[i] = parsed
 	}
@@ -454,7 +456,7 @@ func (f *FloatRslArg) Register() {
 func (f *FloatRslArg) SetValue(arg string) {
 	parsed, err := strconv.ParseFloat(arg, 64)
 	if err != nil {
-		RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+		RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
 	}
 	f.Value = parsed
 }
@@ -500,7 +502,7 @@ func (f *FloatArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseFloat(v, 64)
 		if err != nil {
-			RP.TokenErrorExit(f.scriptArg.DeclarationToken, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+			RP.NodeErrorExit(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
 		}
 		floats[i] = parsed
 	}
@@ -567,8 +569,8 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		return &f
 	case ArgStringArrayT:
 		var defVal []string
-		if arg.DefaultStringArray != nil {
-			defVal = *arg.DefaultStringArray
+		if arg.DefaultStringList != nil {
+			defVal = *arg.DefaultStringList
 		}
 		f := NewStringArrRadArg(apiName, shorthand, "string,string", description, defVal)
 		f.scriptArg = arg
@@ -585,8 +587,8 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		return &f
 	case ArgIntArrayT:
 		var defVal []int64
-		if arg.DefaultIntArray != nil {
-			defVal = *arg.DefaultIntArray
+		if arg.DefaultIntList != nil {
+			defVal = *arg.DefaultIntList
 		}
 		f := NewIntArrRadArg(apiName, shorthand, "int,int", description, defVal)
 		f.scriptArg = arg
@@ -603,8 +605,8 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		return &f
 	case ArgFloatArrayT:
 		var defVal []float64
-		if arg.DefaultFloatArray != nil {
-			defVal = *arg.DefaultFloatArray
+		if arg.DefaultFloatList != nil {
+			defVal = *arg.DefaultFloatList
 		}
 		f := NewFloatArrRadArg(apiName, shorthand, "float,float", description, defVal)
 		f.scriptArg = arg
@@ -621,15 +623,15 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		return &f
 	case ArgBoolArrayT:
 		var defVal []bool
-		if arg.DefaultBoolArray != nil {
-			defVal = *arg.DefaultBoolArray
+		if arg.DefaultBoolList != nil {
+			defVal = *arg.DefaultBoolList
 		}
 		f := NewBoolArrRadArg(apiName, shorthand, "bool,bool", description, defVal)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
 	default:
-		RP.RadTokenErrorExit(arg.DeclarationToken, fmt.Sprintf("Unknown arg type: %v\n", argType))
+		RP.RadNodeErrorExit(&arg.TreeNode, fmt.Sprintf("Unknown arg type: %v\n", argType))
 		panic(UNREACHABLE)
 	}
 }
