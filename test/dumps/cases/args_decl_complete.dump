@@ -51,7 +51,8 @@ B: [107, 108] PS: [4, 12], PE: [4, 13]         end: string_end `"`
 B: [109, 110] PS: [4, 14], PE: [4, 15]       shorthand: shorthand_flag `a`
 B: [111, 114] PS: [4, 16], PE: [4, 19]       type: int_type `int`
 B: [115, 116] PS: [4, 20], PE: [4, 21]       = `=`
-B: [117, 119] PS: [4, 22], PE: [4, 24]       default: int `30`
+B: [117, 119] PS: [4, 22], PE: [4, 24]       default: int_arg
+B: [117, 119] PS: [4, 22], PE: [4, 24]         value: int `30`
 B: [122, 129] PS: [4, 27], PE: [4, 34]       comment: comment_text `An age.`
 B: [130, 135] PS: [5,  0], PE: [5,  5]   assign
 B: [130, 131] PS: [5,  0], PE: [5,  1]     left: var_path

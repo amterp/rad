@@ -27,13 +27,17 @@ for i, d in dumps:
 
 print("+----------------------------------------------+")
 if fails:
-    for r in results:
-        print(r)
+    Num = ["{i + 1:3}" for i in range(len(dumps))]
+    Dump = dumps
+    Result = [replace(r, ".* - ", "") for r in results]
+    display:
+        fields Num, Dump, Result
     print(red("{fails} FAILURES"))
+    if confirm("Update test cases? [y/n] > "):
+        $!`mv ./actual/* ./cases`
 else:
     print(green("ALL PASSED"))
 
 // todo rad:
 // - reading files built in func
-// - could be improved with some sort of regex extraction algo
-// - could use 'display' block instead of manually printing list?
+// - could replace the go code if rad had some sort of regex extraction mechanism

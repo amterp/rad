@@ -39,6 +39,13 @@ func (ad *ArgDecl) CommentStr() *string {
 	return nil
 }
 
+func (ad *ArgDecl) ShorthandStr() *string {
+	if ad.Shorthand != nil {
+		return &ad.Shorthand.Shorthand
+	}
+	return nil
+}
+
 type ArgDeclName struct {
 	BaseNode
 	Name string
@@ -131,7 +138,7 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		if renameNode != nil {
 			argRename = &ArgDeclRename{
 				BaseNode:     newBaseNode(src, renameNode),
-				ExternalName: src[renameNode.StartByte():renameNode.EndByte()],
+				ExternalName: extractString(src, renameNode),
 			}
 		}
 		var argShorthand *ArgDeclShorthand
@@ -153,13 +160,13 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 					DefaultString: &contents,
 				}
 			} else if typeStr == "int" {
-				asInt, _ := strconv.ParseInt(defaultStr, 10, 64)
+				asInt := extractArgInt(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:   newBaseNode(src, defaultNode),
 					DefaultInt: &asInt,
 				}
 			} else if typeStr == "float" {
-				asFloat, _ := strconv.ParseFloat(defaultStr, 64)
+				asFloat := extractArgFloat(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:     newBaseNode(src, defaultNode),
 					DefaultFloat: &asFloat,
@@ -171,13 +178,29 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 					DefaultBool: &asBool,
 				}
 			} else if typeStr == "string[]" {
-				// todo
+				stringList := extractStringList(src, defaultNode)
+				argDefault = &ArgDeclDefault{
+					BaseNode:          newBaseNode(src, defaultNode),
+					DefaultStringList: &stringList,
+				}
 			} else if typeStr == "int[]" {
-				// todo
+				intList := extractIntList(src, defaultNode)
+				argDefault = &ArgDeclDefault{
+					BaseNode:       newBaseNode(src, defaultNode),
+					DefaultIntList: &intList,
+				}
 			} else if typeStr == "float[]" {
-				// todo
+				floatList := extractFloatList(src, defaultNode)
+				argDefault = &ArgDeclDefault{
+					BaseNode:         newBaseNode(src, defaultNode),
+					DefaultFloatList: &floatList,
+				}
 			} else if typeStr == "bool[]" {
-				// todo
+				boolList := extractBoolList(src, defaultNode)
+				argDefault = &ArgDeclDefault{
+					BaseNode:        newBaseNode(src, defaultNode),
+					DefaultBoolList: &boolList,
+				}
 			}
 		}
 
@@ -267,11 +290,69 @@ func findArgRegexConstraints(src string, node *ts.Node) map[string]*ArgRegexCons
 	return constraints
 }
 
+func extractArgInt(src string, defaultNode *ts.Node) int64 {
+	multiplier := int64(1)
+	ops := defaultNode.ChildrenByFieldName("op", defaultNode.Walk())
+	for _, op := range ops {
+		opSrc := src[op.StartByte():op.EndByte()]
+		if opSrc == "-" {
+			multiplier *= -1
+		}
+	}
+	valueNode := defaultNode.ChildByFieldName("value")
+	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
+	value, _ := strconv.ParseInt(valueStr, 10, 64)
+	return value * multiplier
+}
+
+func extractArgFloat(src string, defaultNode *ts.Node) float64 {
+	multiplier := 1.0
+	ops := defaultNode.ChildrenByFieldName("op", defaultNode.Walk())
+	for _, op := range ops {
+		opSrc := src[op.StartByte():op.EndByte()]
+		if opSrc == "-" {
+			multiplier *= -1
+		}
+	}
+	valueNode := defaultNode.ChildByFieldName("value")
+	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
+	value, _ := strconv.ParseFloat(valueStr, 64)
+	return value * multiplier
+}
+
 func extractStringList(src string, valuesNode *ts.Node) []string {
-	valuesStringNodes := valuesNode.ChildrenByFieldName("string", valuesNode.Walk())
+	valuesStringNodes := valuesNode.ChildrenByFieldName("list_entry", valuesNode.Walk())
 	var values []string
 	for _, stringNode := range valuesStringNodes {
 		values = append(values, extractString(src, &stringNode))
+	}
+	return values
+}
+
+func extractIntList(src string, intListNode *ts.Node) []int64 {
+	intArgNodes := intListNode.ChildrenByFieldName("list_entry", intListNode.Walk())
+	var values []int64
+	for _, intArgNode := range intArgNodes {
+		values = append(values, extractArgInt(src, &intArgNode))
+	}
+	return values
+}
+
+func extractFloatList(src string, floatListNode *ts.Node) []float64 {
+	floatArgNodes := floatListNode.ChildrenByFieldName("list_entry", floatListNode.Walk())
+	var values []float64
+	for _, floatArgNode := range floatArgNodes {
+		values = append(values, extractArgFloat(src, &floatArgNode))
+	}
+	return values
+}
+
+func extractBoolList(src string, boolListNode *ts.Node) []bool {
+	boolArgNodes := boolListNode.ChildrenByFieldName("list_entry", boolListNode.Walk())
+	var values []bool
+	for _, boolArgNode := range boolArgNodes {
+		asBool, _ := strconv.ParseBool(src[boolArgNode.StartByte():boolArgNode.EndByte()])
+		values = append(values, asBool)
 	}
 	return values
 }
