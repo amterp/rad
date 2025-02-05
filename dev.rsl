@@ -12,8 +12,6 @@ args:
     test_count "test-count" t int = 30 # The number of times to run tests, to detect flakiness.
     no_push "no-push" P bool # Disables pushing.
 
-    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
-
 if rad:
     $!`make all`
 
