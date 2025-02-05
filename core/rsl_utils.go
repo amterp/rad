@@ -17,6 +17,8 @@ func ToPrintable(val interface{}) string {
 		return coerced
 	case RslString:
 		return coerced.String()
+	case RslValue:
+		return ToPrintable(coerced.Val)
 	case bool:
 		return strconv.FormatBool(coerced)
 	case *[]interface{}:
@@ -24,6 +26,17 @@ func ToPrintable(val interface{}) string {
 	case []interface{}:
 		out := "["
 		for i, elem := range coerced {
+			if i > 0 {
+				out += ", "
+			}
+			out += ToPrintable(elem)
+		}
+		return out + "]"
+	case *RslList:
+		return ToPrintable(*coerced)
+	case RslList:
+		out := "["
+		for i, elem := range coerced.Values {
 			if i > 0 {
 				out += ", "
 			}
@@ -43,7 +56,9 @@ func ToPrintable(val interface{}) string {
 }
 
 func TypeAsString(val interface{}) string {
-	switch val.(type) {
+	switch coerced := val.(type) {
+	case RslValue:
+		return TypeAsString(coerced.Val)
 	case int64:
 		return "int"
 	case float64:
@@ -52,9 +67,9 @@ func TypeAsString(val interface{}) string {
 		return "string"
 	case bool:
 		return "bool"
-	case []interface{}:
-		return "array"
-	case RslMap:
+	case []interface{}, *[]interface{}, RslList, *RslList:
+		return "list"
+	case RslMap, *RslMap:
 		return "map"
 	case nil:
 		return "null"

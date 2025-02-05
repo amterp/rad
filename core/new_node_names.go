@@ -2,6 +2,7 @@ package core
 
 const (
 	// Node Kinds
+	K_COMMENT      = "comment"
 	K_SOURCE_FILE  = "source_file"
 	K_SHEBANG      = "shebang"
 	K_FILE_HEADER  = "file_header"
