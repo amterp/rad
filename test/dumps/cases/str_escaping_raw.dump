@@ -42,6 +42,6 @@ B: [31, 33] PS: [2, 13], PE: [2, 15]             backslash: esc_backslash `\\`
 B: [33, 43] PS: [2, 15], PE: [2, 25]             content: string_content ` a string `
 B: [43, 45] PS: [2, 25], PE: [2, 27]             newline: esc_newline `\n`
 B: [45, 51] PS: [2, 27], PE: [2, 33]             content: string_content ` blah `
-B: [51, 52] PS: [2, 33], PE: [2, 34]             \ `\`
+B: [51, 52] PS: [2, 33], PE: [2, 34]             backslash: \ `\`
 B: [52, 58] PS: [2, 34], PE: [2, 40]             content: string_content ` blahh`
 B: [58, 59] PS: [2, 40], PE: [2, 41]           end: string_end `"`

@@ -8,8 +8,6 @@ args:
     dumps d bool # Enable to just test dumps.
     version v int = 0 # 1 to bump patch, 2 for minor, and 3 for major
 
-    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
-
 $!`gofmt -w **/*.go`
 $!`goimports -w .`
 

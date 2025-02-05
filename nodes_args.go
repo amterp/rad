@@ -1,6 +1,7 @@
 package rts
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -387,7 +388,8 @@ func extractString(src string, stringNode *ts.Node) string {
 			sb.WriteString("\\")
 		default:
 			// todo error
-			panic("unexpected child field name")
+			panic(fmt.Sprintf("unexpected child field name [%d, %d]: %q",
+				content.StartPosition().Row+1, content.StartPosition().Column+1, childFieldName))
 		}
 	}
 

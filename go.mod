@@ -9,4 +9,4 @@ require (
 
 require github.com/mattn/go-pointer v0.0.1 // indirect
 
-//replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl
+replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl

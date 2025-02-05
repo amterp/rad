@@ -7,10 +7,11 @@ args:
 
     name enum ["alice", "bob"]
     name regex "^[A-Z][a-z]$"
+    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
 a = 2
 =====
-B: [  0, 117] PS: [0,  0], PE: [7,  0] source_file
-B: [  0, 110] PS: [0,  0], PE: [5, 29]   arg_block
+B: [  0, 162] PS: [0,  0], PE: [8,  0] source_file
+B: [  0, 155] PS: [0,  0], PE: [6, 44]   arg_block
 B: [  0,   4] PS: [0,  0], PE: [0,  4]     args `args`
 B: [  4,   5] PS: [0,  4], PE: [0,  5]     : `:`
 B: [ 10,  21] PS: [1,  4], PE: [1, 15]     declaration: arg_declaration
@@ -48,10 +49,22 @@ B: [ 96,  97] PS: [5, 15], PE: [5, 16]         start: string_start `"`
 B: [ 97, 109] PS: [5, 16], PE: [5, 28]         contents: string_contents
 B: [ 97, 109] PS: [5, 16], PE: [5, 28]           content: string_content `^[A-Z][a-z]$`
 B: [109, 110] PS: [5, 28], PE: [5, 29]         end: string_end `"`
-B: [111, 116] PS: [6,  0], PE: [6,  5]   assign
-B: [111, 112] PS: [6,  0], PE: [6,  1]     left: var_path
-B: [111, 112] PS: [6,  0], PE: [6,  1]       root: identifier `a`
-B: [113, 114] PS: [6,  2], PE: [6,  3]     = `=`
-B: [115, 116] PS: [6,  4], PE: [6,  5]     right: primary_expr
-B: [115, 116] PS: [6,  4], PE: [6,  5]       literal
-B: [115, 116] PS: [6,  4], PE: [6,  5]         int `2`
+B: [115, 155] PS: [6,  4], PE: [6, 44]     regex_constraint: arg_regex_constraint
+B: [115, 122] PS: [6,  4], PE: [6, 11]       arg_name: identifier `version`
+B: [123, 128] PS: [6, 12], PE: [6, 17]       regex `regex`
+B: [129, 155] PS: [6, 18], PE: [6, 44]       regex: string
+B: [129, 130] PS: [6, 18], PE: [6, 19]         start: string_start `"`
+B: [130, 154] PS: [6, 19], PE: [6, 43]         contents: string_contents
+B: [130, 137] PS: [6, 19], PE: [6, 26]           content: string_content `^[0-9]+`
+B: [137, 138] PS: [6, 26], PE: [6, 27]           backslash: \ `\`
+B: [138, 145] PS: [6, 27], PE: [6, 34]           content: string_content `.[0-9]+`
+B: [145, 146] PS: [6, 34], PE: [6, 35]           backslash: \ `\`
+B: [146, 154] PS: [6, 35], PE: [6, 43]           content: string_content `.[0-9]+$`
+B: [154, 155] PS: [6, 43], PE: [6, 44]         end: string_end `"`
+B: [156, 161] PS: [7,  0], PE: [7,  5]   assign
+B: [156, 157] PS: [7,  0], PE: [7,  1]     left: var_path
+B: [156, 157] PS: [7,  0], PE: [7,  1]       root: identifier `a`
+B: [158, 159] PS: [7,  2], PE: [7,  3]     = `=`
+B: [160, 161] PS: [7,  4], PE: [7,  5]     right: primary_expr
+B: [160, 161] PS: [7,  4], PE: [7,  5]       literal
+B: [160, 161] PS: [7,  4], PE: [7,  5]         int `2`

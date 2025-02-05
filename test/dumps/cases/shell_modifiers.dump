@@ -1,0 +1,73 @@
+=====
+Shell
+=====
+unsafe quiet $`ls 1`
+quiet unsafe $`ls 2`
+
+quiet $!`ls 3`
+
+quiet $`ls 4`
+fail:
+    a = 1
+=====
+B: [ 0, 89] PS: [0,  0], PE: [8,  0] source_file
+B: [ 0, 20] PS: [0,  0], PE: [0, 20]   expr_stmt
+B: [ 0, 20] PS: [0,  0], PE: [0, 20]     shell_cmd
+B: [ 0, 20] PS: [0,  0], PE: [0, 20]       unsafe: unsafe_shell_cmd
+B: [ 0,  6] PS: [0,  0], PE: [0,  6]         unsafe_mod: unsafe `unsafe`
+B: [ 7, 12] PS: [0,  7], PE: [0, 12]         quiet_mod: quiet `quiet`
+B: [13, 14] PS: [0, 13], PE: [0, 14]         $ `$`
+B: [14, 20] PS: [0, 14], PE: [0, 20]         command: primary_expr
+B: [14, 20] PS: [0, 14], PE: [0, 20]           literal
+B: [14, 20] PS: [0, 14], PE: [0, 20]             string
+B: [14, 15] PS: [0, 14], PE: [0, 15]               start: string_start ```
+B: [15, 19] PS: [0, 15], PE: [0, 19]               contents: string_contents
+B: [15, 19] PS: [0, 15], PE: [0, 19]                 content: string_content `ls 1`
+B: [19, 20] PS: [0, 19], PE: [0, 20]               end: string_end ```
+B: [21, 41] PS: [1,  0], PE: [1, 20]   expr_stmt
+B: [21, 41] PS: [1,  0], PE: [1, 20]     shell_cmd
+B: [21, 41] PS: [1,  0], PE: [1, 20]       unsafe: unsafe_shell_cmd
+B: [21, 26] PS: [1,  0], PE: [1,  5]         quiet_mod: quiet `quiet`
+B: [27, 33] PS: [1,  6], PE: [1, 12]         unsafe_mod: unsafe `unsafe`
+B: [34, 35] PS: [1, 13], PE: [1, 14]         $ `$`
+B: [35, 41] PS: [1, 14], PE: [1, 20]         command: primary_expr
+B: [35, 41] PS: [1, 14], PE: [1, 20]           literal
+B: [35, 41] PS: [1, 14], PE: [1, 20]             string
+B: [35, 36] PS: [1, 14], PE: [1, 15]               start: string_start ```
+B: [36, 40] PS: [1, 15], PE: [1, 19]               contents: string_contents
+B: [36, 40] PS: [1, 15], PE: [1, 19]                 content: string_content `ls 2`
+B: [40, 41] PS: [1, 19], PE: [1, 20]               end: string_end ```
+B: [43, 57] PS: [3,  0], PE: [3, 14]   expr_stmt
+B: [43, 57] PS: [3,  0], PE: [3, 14]     shell_cmd
+B: [43, 57] PS: [3,  0], PE: [3, 14]       critical: critical_shell_cmd
+B: [43, 48] PS: [3,  0], PE: [3,  5]         quiet_mod: quiet `quiet`
+B: [49, 51] PS: [3,  6], PE: [3,  8]         $! `$!`
+B: [51, 57] PS: [3,  8], PE: [3, 14]         command: primary_expr
+B: [51, 57] PS: [3,  8], PE: [3, 14]           literal
+B: [51, 57] PS: [3,  8], PE: [3, 14]             string
+B: [51, 52] PS: [3,  8], PE: [3,  9]               start: string_start ```
+B: [52, 56] PS: [3,  9], PE: [3, 13]               contents: string_contents
+B: [52, 56] PS: [3,  9], PE: [3, 13]                 content: string_content `ls 3`
+B: [56, 57] PS: [3, 13], PE: [3, 14]               end: string_end ```
+B: [59, 88] PS: [5,  0], PE: [7,  9]   expr_stmt
+B: [59, 88] PS: [5,  0], PE: [7,  9]     shell_cmd
+B: [59, 88] PS: [5,  0], PE: [7,  9]       checked: checked_shell_cmd
+B: [59, 64] PS: [5,  0], PE: [5,  5]         quiet_mod: quiet `quiet`
+B: [65, 66] PS: [5,  6], PE: [5,  7]         $ `$`
+B: [66, 72] PS: [5,  7], PE: [5, 13]         command: primary_expr
+B: [66, 72] PS: [5,  7], PE: [5, 13]           literal
+B: [66, 72] PS: [5,  7], PE: [5, 13]             string
+B: [66, 67] PS: [5,  7], PE: [5,  8]               start: string_start ```
+B: [67, 71] PS: [5,  8], PE: [5, 12]               contents: string_contents
+B: [67, 71] PS: [5,  8], PE: [5, 12]                 content: string_content `ls 4`
+B: [71, 72] PS: [5, 12], PE: [5, 13]               end: string_end ```
+B: [73, 77] PS: [6,  0], PE: [6,  4]         body_type: shell_body_type
+B: [73, 77] PS: [6,  0], PE: [6,  4]           fail `fail`
+B: [77, 78] PS: [6,  4], PE: [6,  5]         : `:`
+B: [83, 88] PS: [7,  4], PE: [7,  9]         assign
+B: [83, 84] PS: [7,  4], PE: [7,  5]           left: var_path
+B: [83, 84] PS: [7,  4], PE: [7,  5]             root: identifier `a`
+B: [85, 86] PS: [7,  6], PE: [7,  7]           = `=`
+B: [87, 88] PS: [7,  8], PE: [7,  9]           right: primary_expr
+B: [87, 88] PS: [7,  8], PE: [7,  9]             literal
+B: [87, 88] PS: [7,  8], PE: [7,  9]               int `1`
