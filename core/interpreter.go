@@ -423,7 +423,7 @@ func (i *MainInterpreter) error(token Token, message string) {
 }
 
 func (i *MainInterpreter) errorNode(node rts.Node, message string) {
-	RP.CtxErrorExit(NewCtxFromRtsNode(node), message)
+	RP.CtxErrorExit(NewCtxFromRtsNode(node, message))
 }
 
 func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode int) {

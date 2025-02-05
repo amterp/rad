@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"io"
+	"runtime/debug"
 	"strings"
 
 	"github.com/fatih/color"
@@ -21,23 +22,36 @@ type CodeCtx struct {
 	ColEnd   int // inclusive
 }
 
-func NewCtx(src string, node *ts.Node) CodeCtx {
-	return CodeCtx{
-		Src:      src,
-		RowStart: int(node.Range().StartPoint.Row) + 1,
-		RowEnd:   int(node.Range().EndPoint.Row) + 1,
-		ColStart: int(node.Range().StartPoint.Column) + 1,
-		ColEnd:   int(node.Range().EndPoint.Column) + 1,
+type ErrorCtx struct {
+	CodeCtx
+	OneLiner string
+	Details  string
+}
+
+func NewCtx(src string, node *ts.Node, oneLiner string, details string) ErrorCtx {
+	return ErrorCtx{
+		CodeCtx: CodeCtx{
+			Src:      src,
+			RowStart: int(node.Range().StartPoint.Row) + 1,
+			RowEnd:   int(node.Range().EndPoint.Row) + 1,
+			ColStart: int(node.Range().StartPoint.Column) + 1,
+			ColEnd:   int(node.Range().EndPoint.Column) + 1,
+		},
+		OneLiner: oneLiner,
+		Details:  details,
 	}
 }
 
-func NewCtxFromRtsNode(node rts.Node) CodeCtx {
-	return CodeCtx{
-		Src:      node.Src(),
-		RowStart: node.StartPos().Row + 1,
-		RowEnd:   node.EndPos().Row + 1,
-		ColStart: node.StartPos().Col + 1,
-		ColEnd:   node.EndPos().Col + 1,
+func NewCtxFromRtsNode(node rts.Node, oneLiner string) ErrorCtx {
+	return ErrorCtx{
+		CodeCtx: CodeCtx{
+			Src:      node.Src(),
+			RowStart: node.StartPos().Row + 1,
+			RowEnd:   node.EndPos().Row + 1,
+			ColStart: node.StartPos().Col + 1,
+			ColEnd:   node.EndPos().Col + 1,
+		},
+		OneLiner: oneLiner,
 	}
 }
 
@@ -76,10 +90,10 @@ type Printer interface {
 	TokenErrorCodeExit(token Token, msg string, errorCode int)
 
 	// TODO
-	CtxErrorExit(ctx CodeCtx, msg string)
+	CtxErrorExit(ctx ErrorCtx)
 
 	// TODO
-	CtxErrorCodeExit(ctx CodeCtx, msg string, errorCode int)
+	CtxErrorCodeExit(ctx ErrorCtx, errorCode int)
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits.
@@ -203,11 +217,11 @@ func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) 
 	p.errorExit(errorCode)
 }
 
-func (p *stdPrinter) CtxErrorExit(ctx CodeCtx, msg string) {
-	p.CtxErrorCodeExit(ctx, msg, 1)
+func (p *stdPrinter) CtxErrorExit(ctx ErrorCtx) {
+	p.CtxErrorCodeExit(ctx, 1)
 }
 
-func (p *stdPrinter) CtxErrorCodeExit(ctx CodeCtx, msg string, errorCode int) {
+func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
 		// todo do nice src code extraction + print + point
 		fmt.Fprint(p.stdErr, color.YellowString(fmt.Sprintf("Error at L%d/%d\n\n",
@@ -222,10 +236,11 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx CodeCtx, msg string, errorCode int) {
 		errorStartIndent := strings.Repeat(" ", ctx.ColStart-1)
 		fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, strings.Repeat("^", errorLen))
 
-		if len(strings.Split(msg, "\n")) == 0 {
-			fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, color.RedString(msg))
-		} else {
-			fmt.Fprintf(p.stdErr, "\n%s\n", msg)
+		if !IsBlank(ctx.OneLiner) {
+			fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, ctx.OneLiner)
+		}
+		if !IsBlank(ctx.Details) {
+			fmt.Fprintf(p.stdErr, "\n%s\n", ctx.Details)
 		}
 	}
 	p.printShellExitIfEnabled()
@@ -279,10 +294,9 @@ func (p *stdPrinter) printShellExitIfEnabled() {
 
 func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
-		panic("Stacktrace because --RAD-DEBUG is enabled") // todo should do debug stack instead?
-	} else {
-		RExit(errorCode)
+		fmt.Fprintf(p.stdErr, "Stacktrace because --RAD-DEBUG is enabled:\n%s", debug.Stack())
 	}
+	RExit(errorCode)
 }
 
 type NullWriter struct{}

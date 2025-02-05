@@ -4,6 +4,7 @@ sandbox
 bin
 resp.json
 test.rsl
+test2.rsl
 docs-web/site
 
 ### Go ###

@@ -2,6 +2,7 @@ package core
 
 import (
 	"sort"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -40,4 +41,8 @@ func SortedKeys(m map[string]interface{}) []string {
 // Simple len(str) call counts bytes, not runes, so e.g. emojis gets counted as multiple characters
 func StrLen(str string) int {
 	return utf8.RuneCountInString(str)
+}
+
+func IsBlank(str string) bool {
+	return strings.TrimSpace(str) == ""
 }

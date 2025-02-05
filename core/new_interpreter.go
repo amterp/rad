@@ -87,7 +87,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue {
 	defer func() {
 		if r := recover(); r != nil {
-			i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
+			i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Paniced here")
 		}
 	}()
 	return i.unsafeEval(node, numExpectedOutputs)
@@ -170,6 +170,10 @@ func (i *Interpreter) assertExpectedNumOutputs(node *ts.Node, expectedOutputs in
 	}
 }
 
-func (i *Interpreter) errorf(node *ts.Node, format string, args ...interface{}) {
-	RP.CtxErrorExit(NewCtx(i.sd.Src, node), fmt.Sprintf(format, args...))
+func (i *Interpreter) errorf(node *ts.Node, oneLinerFmt string, args ...interface{}) {
+	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), ""))
+}
+
+func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt string, args ...interface{}) {
+	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
 }
