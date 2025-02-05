@@ -1580,7 +1580,7 @@ func (p *Parser) shellCmd(paths []VarPath) Stmt {
 	}
 
 	if bangToken == nil && failBlock == nil && recoverBlock == nil && unsafeToken == nil {
-		p.error("Expected unsafe shell command to have either a 'fail' or a 'recover' block")
+		p.error("Expected shell command to have either a 'fail' or a 'recover' block")
 	}
 
 	return &ShellCmd{

@@ -7,7 +7,7 @@ import (
 )
 
 type MainInterpreter struct {
-	env           *Env
+	env           *OldEnv
 	LiteralI      *LiteralInterpreter
 	argBlockI     *ArgBlockInterpreter
 	radBlockI     *RadBlockInterpreter
@@ -19,7 +19,7 @@ type MainInterpreter struct {
 	continuing bool
 }
 
-func NewInterpreter(statements []Stmt) *MainInterpreter {
+func NewMainInterpreter(statements []Stmt) *MainInterpreter {
 	i := &MainInterpreter{
 		statements:    statements,
 		deferredStmts: make([]DeferStmt, 0),
@@ -28,7 +28,7 @@ func NewInterpreter(statements []Stmt) *MainInterpreter {
 	i.argBlockI = NewArgBlockInterpreter(i)
 	i.radBlockI = NewRadBlockInterpreter(i)
 	i.switchI = NewSwitchInterpreter(i)
-	i.env = NewEnv(i)
+	i.env = NewOldEnv(i)
 	return i
 }
 
@@ -38,11 +38,11 @@ func (i *MainInterpreter) InitArgs(args []RslArg) {
 	}
 }
 
-func (i *MainInterpreter) Run() {
-	for _, stmt := range i.statements {
-		stmt.Accept(i)
-	}
-}
+//func (i *MainInterpreter) Run() {
+//	for _, stmt := range i.statements {
+//		stmt.Accept(i)
+//	}
+//}
 
 func (i *MainInterpreter) VisitExprLoaExpr(loa ExprLoa) interface{} {
 	return loa.Value.Accept(i.LiteralI)
@@ -423,7 +423,7 @@ func (i *MainInterpreter) error(token Token, message string) {
 }
 
 func (i *MainInterpreter) errorNode(node rts.Node, message string) {
-	RP.NodeErrorExit(node, message)
+	RP.CtxErrorExit(NewCtxFromRtsNode(node), message)
 }
 
 func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode int) {

@@ -19,6 +19,8 @@ func ToPrintable(val interface{}) string {
 		return coerced.String()
 	case bool:
 		return strconv.FormatBool(coerced)
+	case *[]interface{}:
+		return ToPrintable(*coerced)
 	case []interface{}:
 		out := "["
 		for i, elem := range coerced {
@@ -28,6 +30,8 @@ func ToPrintable(val interface{}) string {
 			out += ToPrintable(elem)
 		}
 		return out + "]"
+	case *RslMap:
+		return coerced.ToString()
 	case RslMap:
 		return coerced.ToString()
 	case nil:

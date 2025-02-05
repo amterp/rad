@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"io"
 	"os"
-	com "rad/core/common"
 
 	"github.com/fatih/color"
 	"github.com/spf13/pflag"
 )
 
 type RadRunner struct {
-	scriptMetadata *ScriptData
-	globalFlags    []RslArg
-	scriptArgs     []RslArg
+	scriptData  *ScriptData
+	globalFlags []RslArg
+	scriptArgs  []RslArg
 }
 
 func NewRadRunner(runnerInput RunnerInput) *RadRunner {
@@ -83,17 +82,8 @@ func (r *RadRunner) Run() error {
 			rslSourceCode = readSource(ScriptPath)
 		}
 
-		RP.RadDebug(fmt.Sprintf("Read src code (%d chars), lexing...", len(rslSourceCode)))
-		l := NewLexer(rslSourceCode)
-		l.Lex()
-
-		RP.RadDebug(fmt.Sprintf("Lexed %d tokens, parsing...", len(l.Tokens)))
-		p := NewParser(l.Tokens)
-		instructions := p.Parse()
-
-		RP.RadDebug(fmt.Sprintf("Parsed %d instructions, extracting script metadata...", len(instructions)))
-		r.scriptMetadata = ExtractMetadata(rslSourceCode, instructions)
-		RP.RadDebug(fmt.Sprintf("Script metadata: %v", com.FlatStr(r.scriptMetadata)))
+		RP.RadDebug(fmt.Sprintf("Read src code (%d chars), parsing...", len(rslSourceCode)))
+		r.scriptData = ExtractMetadata(rslSourceCode)
 	}
 
 	scriptArgs := r.createRslArgsFromScript()
@@ -170,31 +160,31 @@ func (r *RadRunner) Run() error {
 
 	// at this point, we'll assume we've been given a script to run, and we should do that now
 
-	if r.scriptMetadata == nil {
+	if r.scriptData == nil {
 		RP.RadErrorExit("Bug! Script expected by this point, but found none")
 	}
 
-	interpreter := NewInterpreter(r.scriptMetadata.Instructions)
-	interpreter.InitArgs(scriptArgs)
-	registerInterpreterWithExit(interpreter)
+	interpreter := NewInterpreter(r.scriptData)
+	//interpreter.InitArgs()
+	//registerInterpreterWithExit(interpreter)
 	interpreter.Run()
 
-	if FlagShell.Value {
-		env := interpreter.env
-		env.PrintShellExports()
-	}
+	//if FlagShell.Value {
+	//	env := interpreter.env
+	//	env.PrintShellExports()
+	//}
 
 	RExit(0) // explicit exit to trigger deferred statements
 	return nil
 }
 
 func (r *RadRunner) createRslArgsFromScript() []RslArg {
-	if r.scriptMetadata == nil {
+	if r.scriptData == nil {
 		return nil
 	}
 
-	flags := make([]RslArg, 0, len(r.scriptMetadata.Args))
-	for _, arg := range r.scriptMetadata.Args {
+	flags := make([]RslArg, 0, len(r.scriptData.Args))
+	for _, arg := range r.scriptData.Args {
 		flag := CreateFlag(arg)
 		flag.Register()
 		flags = append(flags, flag)

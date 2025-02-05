@@ -6,7 +6,7 @@ import (
 )
 
 type RslMap struct {
-	mapping map[string]interface{}
+	mapping map[string]interface{} // todo values should be RslValue
 	keys    []string
 }
 

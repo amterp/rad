@@ -8,13 +8,14 @@ import (
 )
 
 type ScriptData struct {
-	ScriptName   string
-	Args         []*ScriptArg
-	Description  *string
-	Instructions []Stmt
+	ScriptName  string
+	Args        []*ScriptArg
+	Description *string
+	Tree        *rts.RslTree
+	Src         string
 }
 
-func ExtractMetadata(src string, instructions []Stmt) *ScriptData {
+func ExtractMetadata(src string) *ScriptData {
 	rslTree, err := rts.NewRslParser()
 	if err != nil {
 		RP.RadErrorExit("Failed to create RSL tree sitter: " + err.Error())
@@ -34,10 +35,11 @@ func ExtractMetadata(src string, instructions []Stmt) *ScriptData {
 	args := extractArgs(argBlock)
 
 	return &ScriptData{
-		ScriptName:   ScriptName,
-		Args:         args,
-		Description:  description,
-		Instructions: instructions,
+		ScriptName:  ScriptName,
+		Args:        args,
+		Description: description,
+		Tree:        tree,
+		Src:         src,
 	}
 }
 
