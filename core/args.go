@@ -154,7 +154,7 @@ func (f *BoolRslArg) SetValue(arg string) {
 	} else if arg == "false" || arg == "0" {
 		f.Value = false
 	} else {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 	}
 }
 
@@ -202,7 +202,7 @@ func (f *BoolArrRslArg) SetValue(arg string) {
 		} else if v == "false" || v == "0" {
 			bools[i] = false
 		} else {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected bool, but could not parse: %v\n", arg))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 		}
 	}
 	f.Value = bools
@@ -366,7 +366,7 @@ func (f *IntRslArg) Register() {
 func (f *IntRslArg) SetValue(arg string) {
 	parsed, err := strconv.Atoi(arg)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
 	}
 	val := int64(parsed)
 	f.Value = val
@@ -413,7 +413,7 @@ func (f *IntArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected int, but could not parse: %v\n", arg))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
 		}
 		ints[i] = parsed
 	}
@@ -456,7 +456,7 @@ func (f *FloatRslArg) Register() {
 func (f *FloatRslArg) SetValue(arg string) {
 	parsed, err := strconv.ParseFloat(arg, 64)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 	}
 	f.Value = parsed
 }
@@ -502,7 +502,7 @@ func (f *FloatArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseFloat(v, 64)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode), fmt.Sprintf("Expected float, but could not parse: %v\n", arg))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 		}
 		floats[i] = parsed
 	}
