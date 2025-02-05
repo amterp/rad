@@ -5,8 +5,41 @@ import (
 	"io"
 	"strings"
 
+	"github.com/fatih/color"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+
 	"github.com/amterp/rts"
 )
+
+type CodeCtx struct {
+	Src string // The whole source code script.
+	// Human-friendly i.e. 1-indexed
+	RowStart int
+	RowEnd   int // inclusive
+	ColStart int
+	ColEnd   int // inclusive
+}
+
+func NewCtx(src string, node *ts.Node) CodeCtx {
+	return CodeCtx{
+		Src:      src,
+		RowStart: int(node.Range().StartPoint.Row) + 1,
+		RowEnd:   int(node.Range().EndPoint.Row) + 1,
+		ColStart: int(node.Range().StartPoint.Column) + 1,
+		ColEnd:   int(node.Range().EndPoint.Column) + 1,
+	}
+}
+
+func NewCtxFromRtsNode(node rts.Node) CodeCtx {
+	return CodeCtx{
+		Src:      node.Src(),
+		RowStart: node.StartPos().Row + 1,
+		RowEnd:   node.EndPos().Row + 1,
+		ColStart: node.StartPos().Col + 1,
+		ColEnd:   node.EndPos().Col + 1,
+	}
+}
 
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps pflag-handled help/parsing errors.
@@ -43,10 +76,10 @@ type Printer interface {
 	TokenErrorCodeExit(token Token, msg string, errorCode int)
 
 	// TODO
-	NodeErrorExit(node rts.Node, msg string)
+	CtxErrorExit(ctx CodeCtx, msg string)
 
 	// TODO
-	NodeErrorCodeExit(node rts.Node, msg string, errorCode int)
+	CtxErrorCodeExit(ctx CodeCtx, msg string, errorCode int)
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits.
@@ -170,17 +203,30 @@ func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) 
 	p.errorExit(errorCode)
 }
 
-func (p *stdPrinter) NodeErrorExit(node rts.Node, msg string) {
-	p.NodeErrorCodeExit(node, msg, 1)
+func (p *stdPrinter) CtxErrorExit(ctx CodeCtx, msg string) {
+	p.CtxErrorCodeExit(ctx, msg, 1)
 }
 
-func (p *stdPrinter) NodeErrorCodeExit(node rts.Node, msg string, errorCode int) {
+func (p *stdPrinter) CtxErrorCodeExit(ctx CodeCtx, msg string, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
-		src := node.Src()
-		src = strings.ReplaceAll(src, "\n", "\\n")
-		src = strings.ReplaceAll(src, "\t", "\\t")
-		fmt.Fprintf(p.stdErr, "RslError at L%d/%d in '%s': %s",
-			node.StartPos().Row, node.StartPos().Col, src, msg)
+		// todo do nice src code extraction + print + point
+		fmt.Fprint(p.stdErr, color.YellowString(fmt.Sprintf("Error at L%d/%d\n\n",
+			ctx.RowStart, ctx.ColStart)))
+		lines := strings.Split(ctx.Src, "\n")
+		relevantLine := lines[ctx.RowStart-1]
+		errorLen := ctx.ColEnd - ctx.ColStart
+		if ctx.RowStart != ctx.RowEnd {
+			errorLen = 1
+		}
+		fmt.Fprintf(p.stdErr, "  %s\n", relevantLine)
+		errorStartIndent := strings.Repeat(" ", ctx.ColStart-1)
+		fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, strings.Repeat("^", errorLen))
+
+		if len(strings.Split(msg, "\n")) == 0 {
+			fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, color.RedString(msg))
+		} else {
+			fmt.Fprintf(p.stdErr, "\n%s\n", msg)
+		}
 	}
 	p.printShellExitIfEnabled()
 	p.errorExit(errorCode)
@@ -205,7 +251,7 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 
 func (p *stdPrinter) RadNodeErrorExit(node rts.Node, msg string) {
 	fmt.Fprintf(p.stdErr, "RadError at L%d/%d in '%s': %s",
-		node.StartPos().Row, node.StartPos().Col, node.Src(), msg)
+		node.StartPos().Row+1, node.StartPos().Col+1, node.Src(), msg)
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
@@ -233,7 +279,7 @@ func (p *stdPrinter) printShellExitIfEnabled() {
 
 func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
-		panic("Stacktrace because --RAD-DEBUG is enabled")
+		panic("Stacktrace because --RAD-DEBUG is enabled") // todo should do debug stack instead?
 	} else {
 		RExit(errorCode)
 	}

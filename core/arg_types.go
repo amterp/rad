@@ -73,7 +73,7 @@ func convertRegexConstraint(constraint *rts.ArgRegexConstraint) *regexp.Regexp {
 	regexStr := constraint.Regex.Value
 	compiled, err := regexp.Compile(regexStr)
 	if err != nil {
-		RP.NodeErrorExit(constraint, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()))
+		RP.CtxErrorExit(NewCtxFromRtsNode(constraint), fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()))
 	}
 	return compiled
 }

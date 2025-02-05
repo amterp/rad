@@ -18,7 +18,7 @@ var (
 )
 
 func (r *RadRunner) RunUsage() {
-	if r.scriptMetadata == nil {
+	if r.scriptData == nil {
 		r.printScriptlessUsage()
 	} else {
 		r.printScriptUsage()
@@ -50,15 +50,15 @@ func (r *RadRunner) printScriptlessUsage() {
 func (r *RadRunner) printScriptUsage() {
 	buf := new(bytes.Buffer)
 
-	if r.scriptMetadata.Description != nil {
-		fmt.Fprintf(buf, *r.scriptMetadata.Description+"\n")
+	if r.scriptData.Description != nil {
+		fmt.Fprintf(buf, *r.scriptData.Description+"\n")
 	}
 
 	greenBold(buf, "Usage:\n")
 	// todo need to prefix with 'rad' if that's how this got invoked.
-	bold(buf, fmt.Sprintf("  %s", r.scriptMetadata.ScriptName))
+	bold(buf, fmt.Sprintf("  %s", r.scriptData.ScriptName))
 
-	for _, arg := range r.scriptMetadata.Args {
+	for _, arg := range r.scriptData.Args {
 		if arg.IsOptional {
 			cyan(buf, fmt.Sprintf(" [%s]", arg.ApiName))
 		} else if arg.Type == ArgBoolT {
