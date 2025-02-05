@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/fatih/color"
+
 	"github.com/amterp/rts"
 )
 
@@ -123,6 +125,7 @@ func parseRsl(code string) (string, error) {
 }
 
 func main() {
+	color.NoColor = true
 	// 1. Find all .dump files in the cases directory.
 	dumpFiles, err := filepath.Glob("./cases/*.dump")
 	if err != nil {

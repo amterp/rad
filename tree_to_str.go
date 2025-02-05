@@ -2,9 +2,9 @@ package rts
 
 import (
 	"fmt"
-	"strings"
-
+	"github.com/fatih/color"
 	ts "github.com/tree-sitter/go-tree-sitter"
+	"strings"
 )
 
 var escapedReplacer = strings.NewReplacer(
@@ -56,6 +56,7 @@ func (rt *RslTree) recurseAppendString(
 ) {
 	indent := strings.Repeat("  ", treeLevel)
 	if nodeFieldName != "" {
+		nodeFieldName = color.MagentaString(nodeFieldName)
 		nodeFieldName += ": "
 	}
 	sb.WriteString(fmt.Sprintf(fmtString,
@@ -64,13 +65,13 @@ func (rt *RslTree) recurseAppendString(
 		node.EndPosition().Row, node.EndPosition().Column,
 		indent,
 		nodeFieldName,
-		node.Kind(),
+		color.GreenString(node.Kind()),
 	))
 
 	children := node.Children(node.Walk())
 	if len(children) == 0 {
 		src := rt.src[node.StartByte():node.EndByte()]
-		sb.WriteString(fmt.Sprintf(" `%s`\n", escapedReplacer.Replace(src)))
+		sb.WriteString(fmt.Sprintf(" `%s`\n", color.YellowString(escapedReplacer.Replace(src))))
 		return
 	} else {
 		sb.WriteString("\n")
