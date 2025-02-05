@@ -1,5 +1,6 @@
 .idea/
 /test/dumps/actual/
+/test/dumps/cases/sandbox.dump
 
 ### Generated gitignore below ###
 

@@ -16,6 +16,7 @@ func NewPosition(p ts.Point) Position {
 type Node interface {
 	Src() string
 	// Indexes in the original source code.
+	// Zero indexed, so add +1 to get human readable values.
 	// todo wrap in own Range object instead?
 	StartByte() int
 	EndByte() int // inclusive

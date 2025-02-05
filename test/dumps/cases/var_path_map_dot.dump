@@ -1,0 +1,23 @@
+=====
+Var path map dot
+=====
+a.aaa
+a.aaa.bbb
+=====
+B: [ 0, 16] PS: [0, 0], PE: [2, 0] source_file
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]   expr_stmt
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]     expr
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]       primary_expr
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]         var_path
+B: [ 0,  1] PS: [0, 0], PE: [0, 1]           root: identifier `a`
+B: [ 1,  2] PS: [0, 1], PE: [0, 2]           . `.`
+B: [ 2,  5] PS: [0, 2], PE: [0, 5]           indexing: identifier `aaa`
+B: [ 6, 15] PS: [1, 0], PE: [1, 9]   expr_stmt
+B: [ 6, 15] PS: [1, 0], PE: [1, 9]     expr
+B: [ 6, 15] PS: [1, 0], PE: [1, 9]       primary_expr
+B: [ 6, 15] PS: [1, 0], PE: [1, 9]         var_path
+B: [ 6,  7] PS: [1, 0], PE: [1, 1]           root: identifier `a`
+B: [ 7,  8] PS: [1, 1], PE: [1, 2]           . `.`
+B: [ 8, 11] PS: [1, 2], PE: [1, 5]           indexing: identifier `aaa`
+B: [11, 12] PS: [1, 5], PE: [1, 6]           . `.`
+B: [12, 15] PS: [1, 6], PE: [1, 9]           indexing: identifier `bbb`

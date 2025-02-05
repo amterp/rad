@@ -30,6 +30,10 @@ func (rt *RslTree) Close() {
 	rt.root.Close()
 }
 
+func (rt *RslTree) Root() *ts.Node {
+	return rt.root.RootNode()
+}
+
 func (rt *RslTree) Sexp() string {
 	return rt.root.RootNode().ToSexp()
 }

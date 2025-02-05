@@ -24,6 +24,7 @@ B: [49, 54] PS: [3,  0], PE: [3,  5]   assign
 B: [49, 50] PS: [3,  0], PE: [3,  1]     left: var_path
 B: [49, 50] PS: [3,  0], PE: [3,  1]       root: identifier `a`
 B: [51, 52] PS: [3,  2], PE: [3,  3]     = `=`
-B: [53, 54] PS: [3,  4], PE: [3,  5]     right: primary_expr
-B: [53, 54] PS: [3,  4], PE: [3,  5]       literal
-B: [53, 54] PS: [3,  4], PE: [3,  5]         int `2`
+B: [53, 54] PS: [3,  4], PE: [3,  5]     right: expr
+B: [53, 54] PS: [3,  4], PE: [3,  5]       primary_expr
+B: [53, 54] PS: [3,  4], PE: [3,  5]         literal
+B: [53, 54] PS: [3,  4], PE: [3,  5]           int `2`

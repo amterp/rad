@@ -65,6 +65,7 @@ B: [156, 161] PS: [7,  0], PE: [7,  5]   assign
 B: [156, 157] PS: [7,  0], PE: [7,  1]     left: var_path
 B: [156, 157] PS: [7,  0], PE: [7,  1]       root: identifier `a`
 B: [158, 159] PS: [7,  2], PE: [7,  3]     = `=`
-B: [160, 161] PS: [7,  4], PE: [7,  5]     right: primary_expr
-B: [160, 161] PS: [7,  4], PE: [7,  5]       literal
-B: [160, 161] PS: [7,  4], PE: [7,  5]         int `2`
+B: [160, 161] PS: [7,  4], PE: [7,  5]     right: expr
+B: [160, 161] PS: [7,  4], PE: [7,  5]       primary_expr
+B: [160, 161] PS: [7,  4], PE: [7,  5]         literal
+B: [160, 161] PS: [7,  4], PE: [7,  5]           int `2`

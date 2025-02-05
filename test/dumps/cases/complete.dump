@@ -234,190 +234,215 @@ B: [ 259,  264] PS: [ 17,  0], PE: [ 17,  5]   assign
 B: [ 259,  260] PS: [ 17,  0], PE: [ 17,  1]     left: var_path
 B: [ 259,  260] PS: [ 17,  0], PE: [ 17,  1]       root: identifier `a`
 B: [ 261,  262] PS: [ 17,  2], PE: [ 17,  3]     = `=`
-B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]     right: primary_expr
-B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]       literal
-B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]         int `2`
+B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]     right: expr
+B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]       primary_expr
+B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]         literal
+B: [ 263,  264] PS: [ 17,  4], PE: [ 17,  5]           int `2`
 B: [ 265,  276] PS: [ 18,  0], PE: [ 18, 11]   assign
 B: [ 265,  266] PS: [ 18,  0], PE: [ 18,  1]     left: var_path
 B: [ 265,  266] PS: [ 18,  0], PE: [ 18,  1]       root: identifier `a`
 B: [ 267,  268] PS: [ 18,  2], PE: [ 18,  3]     = `=`
-B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]     right: primary_expr
-B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]       literal
-B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]         string
-B: [ 269,  270] PS: [ 18,  4], PE: [ 18,  5]           start: string_start `"`
-B: [ 270,  275] PS: [ 18,  5], PE: [ 18, 10]           contents: string_contents
-B: [ 270,  275] PS: [ 18,  5], PE: [ 18, 10]             content: string_content `hello`
-B: [ 275,  276] PS: [ 18, 10], PE: [ 18, 11]           end: string_end `"`
+B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]     right: expr
+B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]       primary_expr
+B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]         literal
+B: [ 269,  276] PS: [ 18,  4], PE: [ 18, 11]           string
+B: [ 269,  270] PS: [ 18,  4], PE: [ 18,  5]             start: string_start `"`
+B: [ 270,  275] PS: [ 18,  5], PE: [ 18, 10]             contents: string_contents
+B: [ 270,  275] PS: [ 18,  5], PE: [ 18, 10]               content: string_content `hello`
+B: [ 275,  276] PS: [ 18, 10], PE: [ 18, 11]             end: string_end `"`
 B: [ 277,  285] PS: [ 19,  0], PE: [ 19,  8]   assign
 B: [ 277,  278] PS: [ 19,  0], PE: [ 19,  1]     left: var_path
 B: [ 277,  278] PS: [ 19,  0], PE: [ 19,  1]       root: identifier `a`
 B: [ 279,  280] PS: [ 19,  2], PE: [ 19,  3]     = `=`
-B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]     right: primary_expr
-B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]       literal
-B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]         float `3.14`
+B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]     right: expr
+B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]       primary_expr
+B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]         literal
+B: [ 281,  285] PS: [ 19,  4], PE: [ 19,  8]           float `3.14`
 B: [ 286,  294] PS: [ 20,  0], PE: [ 20,  8]   assign
 B: [ 286,  287] PS: [ 20,  0], PE: [ 20,  1]     left: var_path
 B: [ 286,  287] PS: [ 20,  0], PE: [ 20,  1]       root: identifier `a`
 B: [ 288,  289] PS: [ 20,  2], PE: [ 20,  3]     = `=`
-B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]     right: primary_expr
-B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]       literal
-B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]         bool
-B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]           true `true`
+B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]     right: expr
+B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]       primary_expr
+B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]         literal
+B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]           bool
+B: [ 290,  294] PS: [ 20,  4], PE: [ 20,  8]             true `true`
 B: [ 295,  308] PS: [ 21,  0], PE: [ 21, 13]   assign
 B: [ 295,  296] PS: [ 21,  0], PE: [ 21,  1]     left: var_path
 B: [ 295,  296] PS: [ 21,  0], PE: [ 21,  1]       root: identifier `a`
 B: [ 297,  298] PS: [ 21,  2], PE: [ 21,  3]     = `=`
-B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]     right: primary_expr
-B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]       literal
-B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]         list
-B: [ 299,  300] PS: [ 21,  4], PE: [ 21,  5]           [ `[`
-B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]           literal
-B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]             int `1`
-B: [ 301,  302] PS: [ 21,  6], PE: [ 21,  7]           , `,`
-B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]           literal
-B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]             int `2`
-B: [ 304,  305] PS: [ 21,  9], PE: [ 21, 10]           , `,`
-B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]           literal
-B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]             int `3`
-B: [ 307,  308] PS: [ 21, 12], PE: [ 21, 13]           ] `]`
+B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]     right: expr
+B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]       primary_expr
+B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]         literal
+B: [ 299,  308] PS: [ 21,  4], PE: [ 21, 13]           list
+B: [ 299,  300] PS: [ 21,  4], PE: [ 21,  5]             [ `[`
+B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]             list_entry: expr
+B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]               primary_expr
+B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]                 literal
+B: [ 300,  301] PS: [ 21,  5], PE: [ 21,  6]                   int `1`
+B: [ 301,  302] PS: [ 21,  6], PE: [ 21,  7]             , `,`
+B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]             list_entry: expr
+B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]               primary_expr
+B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]                 literal
+B: [ 303,  304] PS: [ 21,  8], PE: [ 21,  9]                   int `2`
+B: [ 304,  305] PS: [ 21,  9], PE: [ 21, 10]             , `,`
+B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]             list_entry: expr
+B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]               primary_expr
+B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]                 literal
+B: [ 306,  307] PS: [ 21, 11], PE: [ 21, 12]                   int `3`
+B: [ 307,  308] PS: [ 21, 12], PE: [ 21, 13]             ] `]`
 B: [ 309,  327] PS: [ 22,  0], PE: [ 22, 18]   assign
 B: [ 309,  310] PS: [ 22,  0], PE: [ 22,  1]     left: var_path
 B: [ 309,  310] PS: [ 22,  0], PE: [ 22,  1]       root: identifier `a`
 B: [ 311,  312] PS: [ 22,  2], PE: [ 22,  3]     = `=`
-B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]     right: primary_expr
-B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]       literal
-B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]         map
-B: [ 313,  314] PS: [ 22,  4], PE: [ 22,  5]           { `{`
-B: [ 314,  320] PS: [ 22,  5], PE: [ 22, 11]           map_entry
-B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]             key: primary_expr
-B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]               literal
-B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]                 string
-B: [ 314,  315] PS: [ 22,  5], PE: [ 22,  6]                   start: string_start `"`
-B: [ 315,  316] PS: [ 22,  6], PE: [ 22,  7]                   contents: string_contents
-B: [ 315,  316] PS: [ 22,  6], PE: [ 22,  7]                     content: string_content `x`
-B: [ 316,  317] PS: [ 22,  7], PE: [ 22,  8]                   end: string_end `"`
-B: [ 317,  318] PS: [ 22,  8], PE: [ 22,  9]             : `:`
-B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]             value: primary_expr
-B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]               literal
-B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]                 int `1`
-B: [ 320,  321] PS: [ 22, 11], PE: [ 22, 12]           , `,`
-B: [ 322,  326] PS: [ 22, 13], PE: [ 22, 17]           map_entry
-B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]             key: primary_expr
-B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]               var_path
-B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]                 root: identifier `y`
-B: [ 323,  324] PS: [ 22, 14], PE: [ 22, 15]             : `:`
-B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]             value: primary_expr
-B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]               literal
-B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]                 int `2`
-B: [ 326,  327] PS: [ 22, 17], PE: [ 22, 18]           } `}`
+B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]     right: expr
+B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]       primary_expr
+B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]         literal
+B: [ 313,  327] PS: [ 22,  4], PE: [ 22, 18]           map
+B: [ 313,  314] PS: [ 22,  4], PE: [ 22,  5]             { `{`
+B: [ 314,  320] PS: [ 22,  5], PE: [ 22, 11]             map_entry: map_entry
+B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]               key: expr
+B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]                 primary_expr
+B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]                   literal
+B: [ 314,  317] PS: [ 22,  5], PE: [ 22,  8]                     string
+B: [ 314,  315] PS: [ 22,  5], PE: [ 22,  6]                       start: string_start `"`
+B: [ 315,  316] PS: [ 22,  6], PE: [ 22,  7]                       contents: string_contents
+B: [ 315,  316] PS: [ 22,  6], PE: [ 22,  7]                         content: string_content `x`
+B: [ 316,  317] PS: [ 22,  7], PE: [ 22,  8]                       end: string_end `"`
+B: [ 317,  318] PS: [ 22,  8], PE: [ 22,  9]               : `:`
+B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]               value: expr
+B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]                 primary_expr
+B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]                   literal
+B: [ 319,  320] PS: [ 22, 10], PE: [ 22, 11]                     int `1`
+B: [ 320,  321] PS: [ 22, 11], PE: [ 22, 12]             , `,`
+B: [ 322,  326] PS: [ 22, 13], PE: [ 22, 17]             map_entry: map_entry
+B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]               key: expr
+B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]                 primary_expr
+B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]                   var_path
+B: [ 322,  323] PS: [ 22, 13], PE: [ 22, 14]                     root: identifier `y`
+B: [ 323,  324] PS: [ 22, 14], PE: [ 22, 15]               : `:`
+B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]               value: expr
+B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]                 primary_expr
+B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]                   literal
+B: [ 325,  326] PS: [ 22, 16], PE: [ 22, 17]                     int `2`
+B: [ 326,  327] PS: [ 22, 17], PE: [ 22, 18]             } `}`
 B: [ 329,  357] PS: [ 24,  0], PE: [ 24, 28]   assign
 B: [ 329,  330] PS: [ 24,  0], PE: [ 24,  1]     left: var_path
 B: [ 329,  330] PS: [ 24,  0], PE: [ 24,  1]       root: identifier `a`
 B: [ 331,  332] PS: [ 24,  2], PE: [ 24,  3]     = `=`
-B: [ 333,  357] PS: [ 24,  4], PE: [ 24, 28]     right: primary_expr
-B: [ 333,  357] PS: [ 24,  4], PE: [ 24, 28]       binary_op
-B: [ 333,  342] PS: [ 24,  4], PE: [ 24, 13]         left: primary_expr
-B: [ 333,  342] PS: [ 24,  4], PE: [ 24, 13]           binary_op
-B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]             left: primary_expr
-B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]               literal
-B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]                 int `3`
-B: [ 335,  336] PS: [ 24,  6], PE: [ 24,  7]             op: + `+`
-B: [ 337,  342] PS: [ 24,  8], PE: [ 24, 13]             right: primary_expr
-B: [ 337,  342] PS: [ 24,  8], PE: [ 24, 13]               binary_op
-B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                 left: primary_expr
-B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                   literal
-B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                     int `5`
-B: [ 339,  340] PS: [ 24, 10], PE: [ 24, 11]                 op: * `*`
-B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                 right: primary_expr
-B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                   literal
-B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                     int `3`
-B: [ 343,  344] PS: [ 24, 14], PE: [ 24, 15]         op: - `-`
-B: [ 345,  357] PS: [ 24, 16], PE: [ 24, 28]         right: primary_expr
-B: [ 345,  357] PS: [ 24, 16], PE: [ 24, 28]           binary_op
-B: [ 345,  353] PS: [ 24, 16], PE: [ 24, 24]             left: primary_expr
-B: [ 345,  353] PS: [ 24, 16], PE: [ 24, 24]               binary_op
-B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                 left: primary_expr
-B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                   literal
-B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                     int `1`
-B: [ 347,  348] PS: [ 24, 18], PE: [ 24, 19]                 op: / `/`
-B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                 right: primary_expr
-B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                   literal
-B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                     float `0.01`
-B: [ 354,  355] PS: [ 24, 25], PE: [ 24, 26]             op: % `%`
-B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]             right: primary_expr
-B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]               literal
-B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]                 int `2`
+B: [ 333,  357] PS: [ 24,  4], PE: [ 24, 28]     right: expr
+B: [ 333,  357] PS: [ 24,  4], PE: [ 24, 28]       primary_expr
+B: [ 333,  357] PS: [ 24,  4], PE: [ 24, 28]         binary_op
+B: [ 333,  342] PS: [ 24,  4], PE: [ 24, 13]           left: primary_expr
+B: [ 333,  342] PS: [ 24,  4], PE: [ 24, 13]             binary_op
+B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]               left: primary_expr
+B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]                 literal
+B: [ 333,  334] PS: [ 24,  4], PE: [ 24,  5]                   int `3`
+B: [ 335,  336] PS: [ 24,  6], PE: [ 24,  7]               op: + `+`
+B: [ 337,  342] PS: [ 24,  8], PE: [ 24, 13]               right: primary_expr
+B: [ 337,  342] PS: [ 24,  8], PE: [ 24, 13]                 binary_op
+B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                   left: primary_expr
+B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                     literal
+B: [ 337,  338] PS: [ 24,  8], PE: [ 24,  9]                       int `5`
+B: [ 339,  340] PS: [ 24, 10], PE: [ 24, 11]                   op: * `*`
+B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                   right: primary_expr
+B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                     literal
+B: [ 341,  342] PS: [ 24, 12], PE: [ 24, 13]                       int `3`
+B: [ 343,  344] PS: [ 24, 14], PE: [ 24, 15]           op: - `-`
+B: [ 345,  357] PS: [ 24, 16], PE: [ 24, 28]           right: primary_expr
+B: [ 345,  357] PS: [ 24, 16], PE: [ 24, 28]             binary_op
+B: [ 345,  353] PS: [ 24, 16], PE: [ 24, 24]               left: primary_expr
+B: [ 345,  353] PS: [ 24, 16], PE: [ 24, 24]                 binary_op
+B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                   left: primary_expr
+B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                     literal
+B: [ 345,  346] PS: [ 24, 16], PE: [ 24, 17]                       int `1`
+B: [ 347,  348] PS: [ 24, 18], PE: [ 24, 19]                   op: / `/`
+B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                   right: primary_expr
+B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                     literal
+B: [ 349,  353] PS: [ 24, 20], PE: [ 24, 24]                       float `0.01`
+B: [ 354,  355] PS: [ 24, 25], PE: [ 24, 26]               op: % `%`
+B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]               right: primary_expr
+B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]                 literal
+B: [ 356,  357] PS: [ 24, 27], PE: [ 24, 28]                   int `2`
 B: [ 358,  364] PS: [ 25,  0], PE: [ 25,  6]   compound_assign
 B: [ 358,  359] PS: [ 25,  0], PE: [ 25,  1]     left: var_path
 B: [ 358,  359] PS: [ 25,  0], PE: [ 25,  1]       root: identifier `a`
 B: [ 360,  362] PS: [ 25,  2], PE: [ 25,  4]     op: += `+=`
-B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]     right: primary_expr
-B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]       literal
-B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]         int `2`
+B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]     right: expr
+B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]       primary_expr
+B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]         literal
+B: [ 363,  364] PS: [ 25,  5], PE: [ 25,  6]           int `2`
 B: [ 365,  371] PS: [ 26,  0], PE: [ 26,  6]   compound_assign
 B: [ 365,  366] PS: [ 26,  0], PE: [ 26,  1]     left: var_path
 B: [ 365,  366] PS: [ 26,  0], PE: [ 26,  1]       root: identifier `a`
 B: [ 367,  369] PS: [ 26,  2], PE: [ 26,  4]     op: -= `-=`
-B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]     right: primary_expr
-B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]       literal
-B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]         int `1`
+B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]     right: expr
+B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]       primary_expr
+B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]         literal
+B: [ 370,  371] PS: [ 26,  5], PE: [ 26,  6]           int `1`
 B: [ 372,  378] PS: [ 27,  0], PE: [ 27,  6]   compound_assign
 B: [ 372,  373] PS: [ 27,  0], PE: [ 27,  1]     left: var_path
 B: [ 372,  373] PS: [ 27,  0], PE: [ 27,  1]       root: identifier `a`
 B: [ 374,  376] PS: [ 27,  2], PE: [ 27,  4]     op: *= `*=`
-B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]     right: primary_expr
-B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]       literal
-B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]         int `5`
+B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]     right: expr
+B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]       primary_expr
+B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]         literal
+B: [ 377,  378] PS: [ 27,  5], PE: [ 27,  6]           int `5`
 B: [ 379,  385] PS: [ 28,  0], PE: [ 28,  6]   compound_assign
 B: [ 379,  380] PS: [ 28,  0], PE: [ 28,  1]     left: var_path
 B: [ 379,  380] PS: [ 28,  0], PE: [ 28,  1]       root: identifier `a`
 B: [ 381,  383] PS: [ 28,  2], PE: [ 28,  4]     op: /= `/=`
-B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]     right: primary_expr
-B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]       literal
-B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]         int `2`
+B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]     right: expr
+B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]       primary_expr
+B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]         literal
+B: [ 384,  385] PS: [ 28,  5], PE: [ 28,  6]           int `2`
 B: [ 386,  392] PS: [ 29,  0], PE: [ 29,  6]   compound_assign
 B: [ 386,  387] PS: [ 29,  0], PE: [ 29,  1]     left: var_path
 B: [ 386,  387] PS: [ 29,  0], PE: [ 29,  1]       root: identifier `a`
 B: [ 388,  390] PS: [ 29,  2], PE: [ 29,  4]     op: %= `%=`
-B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]     right: primary_expr
-B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]       literal
-B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]         int `2`
+B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]     right: expr
+B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]       primary_expr
+B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]         literal
+B: [ 391,  392] PS: [ 29,  5], PE: [ 29,  6]           int `2`
 B: [ 394,  422] PS: [ 31,  0], PE: [ 31, 28]   assign
 B: [ 394,  395] PS: [ 31,  0], PE: [ 31,  1]     left: var_path
 B: [ 394,  395] PS: [ 31,  0], PE: [ 31,  1]       root: identifier `a`
 B: [ 396,  397] PS: [ 31,  2], PE: [ 31,  3]     = `=`
-B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]     right: primary_expr
-B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]       literal
-B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]         string
-B: [ 398,  399] PS: [ 31,  4], PE: [ 31,  5]           start: string_start ```
-B: [ 399,  405] PS: [ 31,  5], PE: [ 31, 11]           contents: string_contents
-B: [ 399,  405] PS: [ 31,  5], PE: [ 31, 11]             content: string_content `hello `
-B: [ 405,  421] PS: [ 31, 11], PE: [ 31, 27]           contents: interpolation
-B: [ 405,  406] PS: [ 31, 11], PE: [ 31, 12]             { `{`
-B: [ 406,  420] PS: [ 31, 12], PE: [ 31, 26]             expr: primary_expr
-B: [ 406,  420] PS: [ 31, 12], PE: [ 31, 26]               call
-B: [ 406,  411] PS: [ 31, 12], PE: [ 31, 17]                 func: identifier `upper`
-B: [ 411,  420] PS: [ 31, 17], PE: [ 31, 26]                 args: call_arg_list
-B: [ 411,  412] PS: [ 31, 17], PE: [ 31, 18]                   ( `(`
-B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                   primary_expr
-B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                     literal
-B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                       string
-B: [ 412,  413] PS: [ 31, 18], PE: [ 31, 19]                         start: string_start `"`
-B: [ 413,  418] PS: [ 31, 19], PE: [ 31, 24]                         contents: string_contents
-B: [ 413,  418] PS: [ 31, 19], PE: [ 31, 24]                           content: string_content `alice`
-B: [ 418,  419] PS: [ 31, 24], PE: [ 31, 25]                         end: string_end `"`
-B: [ 419,  420] PS: [ 31, 25], PE: [ 31, 26]                   ) `)`
-B: [ 420,  421] PS: [ 31, 26], PE: [ 31, 27]             } `}`
-B: [ 421,  422] PS: [ 31, 27], PE: [ 31, 28]           end: string_end ```
+B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]     right: expr
+B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]       primary_expr
+B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]         literal
+B: [ 398,  422] PS: [ 31,  4], PE: [ 31, 28]           string
+B: [ 398,  399] PS: [ 31,  4], PE: [ 31,  5]             start: string_start ```
+B: [ 399,  405] PS: [ 31,  5], PE: [ 31, 11]             contents: string_contents
+B: [ 399,  405] PS: [ 31,  5], PE: [ 31, 11]               content: string_content `hello `
+B: [ 405,  421] PS: [ 31, 11], PE: [ 31, 27]             contents: interpolation
+B: [ 405,  406] PS: [ 31, 11], PE: [ 31, 12]               { `{`
+B: [ 406,  420] PS: [ 31, 12], PE: [ 31, 26]               expr: expr
+B: [ 406,  420] PS: [ 31, 12], PE: [ 31, 26]                 primary_expr
+B: [ 406,  420] PS: [ 31, 12], PE: [ 31, 26]                   call
+B: [ 406,  411] PS: [ 31, 12], PE: [ 31, 17]                     func: identifier `upper`
+B: [ 411,  412] PS: [ 31, 17], PE: [ 31, 18]                     ( `(`
+B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                     arg: expr
+B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                       primary_expr
+B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                         literal
+B: [ 412,  419] PS: [ 31, 18], PE: [ 31, 25]                           string
+B: [ 412,  413] PS: [ 31, 18], PE: [ 31, 19]                             start: string_start `"`
+B: [ 413,  418] PS: [ 31, 19], PE: [ 31, 24]                             contents: string_contents
+B: [ 413,  418] PS: [ 31, 19], PE: [ 31, 24]                               content: string_content `alice`
+B: [ 418,  419] PS: [ 31, 24], PE: [ 31, 25]                             end: string_end `"`
+B: [ 419,  420] PS: [ 31, 25], PE: [ 31, 26]                     ) `)`
+B: [ 420,  421] PS: [ 31, 26], PE: [ 31, 27]               } `}`
+B: [ 421,  422] PS: [ 31, 27], PE: [ 31, 28]             end: string_end ```
 B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]   expr_stmt
-B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]     primary_expr
-B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]       call
-B: [ 423,  428] PS: [ 32,  0], PE: [ 32,  5]         func: identifier `print`
-B: [ 428,  431] PS: [ 32,  5], PE: [ 32,  8]         args: call_arg_list
+B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]     expr
+B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]       primary_expr
+B: [ 423,  431] PS: [ 32,  0], PE: [ 32,  8]         call
+B: [ 423,  428] PS: [ 32,  0], PE: [ 32,  5]           func: identifier `print`
 B: [ 428,  429] PS: [ 32,  5], PE: [ 32,  6]           ( `(`
-B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]           primary_expr
-B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]             var_path
-B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]               root: identifier `a`
+B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]           arg: expr
+B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]             primary_expr
+B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]               var_path
+B: [ 429,  430] PS: [ 32,  6], PE: [ 32,  7]                 root: identifier `a`
 B: [ 430,  431] PS: [ 32,  7], PE: [ 32,  8]           ) `)`
 B: [ 433,  447] PS: [ 34,  0], PE: [ 34, 14]   assign
 B: [ 433,  435] PS: [ 34,  0], PE: [ 34,  2]     left: var_path
@@ -445,9 +470,10 @@ B: [ 472,  473] PS: [ 35, 24], PE: [ 35, 25]       . `.`
 B: [ 473,  477] PS: [ 35, 25], PE: [ 35, 29]       identifier `woop`
 B: [ 479,  640] PS: [ 37,  0], PE: [ 49, 24]   rad_block
 B: [ 479,  482] PS: [ 37,  0], PE: [ 37,  3]     rad_type: rad_keyword `rad`
-B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]     source: primary_expr
-B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]       var_path
-B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]         root: identifier `url`
+B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]     source: expr
+B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]       primary_expr
+B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]         var_path
+B: [ 483,  486] PS: [ 37,  4], PE: [ 37,  7]           root: identifier `url`
 B: [ 486,  487] PS: [ 37,  7], PE: [ 37,  8]     : `:`
 B: [ 492,  505] PS: [ 38,  4], PE: [ 38, 17]     rad_field_stmt
 B: [ 492,  498] PS: [ 38,  4], PE: [ 38, 10]       fields `fields`
@@ -464,14 +490,15 @@ B: [ 531,  535] PS: [ 40,  4], PE: [ 40,  8]     rad_sort_stmt
 B: [ 531,  535] PS: [ 40,  4], PE: [ 40,  8]       sort `sort`
 B: [ 541,  570] PS: [ 42,  4], PE: [ 43, 19]     rad_if_stmt
 B: [ 541,  543] PS: [ 42,  4], PE: [ 42,  6]       if `if`
-B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]       condition: comparison_op
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]         primary_expr
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]           var_path
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]             root: identifier `a`
-B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]         ops: > `>`
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]         primary_expr
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]           var_path
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]             root: identifier `b`
+B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]       condition: expr
+B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]         comparison_op
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]           primary_expr
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]             var_path
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]               root: identifier `a`
+B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]           ops: > `>`
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]           primary_expr
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]             var_path
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]               root: identifier `b`
 B: [ 549,  550] PS: [ 42, 12], PE: [ 42, 13]       : `:`
 B: [ 559,  570] PS: [ 43,  8], PE: [ 43, 19]       rad_sort_stmt
 B: [ 559,  563] PS: [ 43,  8], PE: [ 43, 12]         sort `sort`
@@ -486,15 +513,16 @@ B: [ 588,  591] PS: [ 46,  8], PE: [ 46, 11]         map `map`
 B: [ 592,  602] PS: [ 46, 12], PE: [ 46, 22]         lambda
 B: [ 592,  593] PS: [ 46, 12], PE: [ 46, 13]           identifier `a`
 B: [ 594,  596] PS: [ 46, 14], PE: [ 46, 16]           -> `->`
-B: [ 597,  602] PS: [ 46, 17], PE: [ 46, 22]           primary_expr
-B: [ 597,  602] PS: [ 46, 17], PE: [ 46, 22]             binary_op
-B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]               left: primary_expr
-B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]                 var_path
-B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]                   root: identifier `a`
-B: [ 599,  600] PS: [ 46, 19], PE: [ 46, 20]               op: * `*`
-B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]               right: primary_expr
-B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]                 literal
-B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]                   int `2`
+B: [ 597,  602] PS: [ 46, 17], PE: [ 46, 22]           expr
+B: [ 597,  602] PS: [ 46, 17], PE: [ 46, 22]             primary_expr
+B: [ 597,  602] PS: [ 46, 17], PE: [ 46, 22]               binary_op
+B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]                 left: primary_expr
+B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]                   var_path
+B: [ 597,  598] PS: [ 46, 17], PE: [ 46, 18]                     root: identifier `a`
+B: [ 599,  600] PS: [ 46, 19], PE: [ 46, 20]                 op: * `*`
+B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]                 right: primary_expr
+B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]                   literal
+B: [ 601,  602] PS: [ 46, 21], PE: [ 46, 22]                     int `2`
 B: [ 608,  640] PS: [ 48,  4], PE: [ 49, 24]     rad_field_modifier_stmt
 B: [ 608,  610] PS: [ 48,  4], PE: [ 48,  6]       identifier `f1`
 B: [ 610,  611] PS: [ 48,  6], PE: [ 48,  7]       , `,`
@@ -502,84 +530,93 @@ B: [ 612,  614] PS: [ 48,  8], PE: [ 48, 10]       identifier `f2`
 B: [ 614,  615] PS: [ 48, 10], PE: [ 48, 11]       : `:`
 B: [ 624,  640] PS: [ 49,  8], PE: [ 49, 24]       rad_field_mod_color
 B: [ 624,  629] PS: [ 49,  8], PE: [ 49, 13]         color `color`
-B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]         primary_expr
-B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]           literal
-B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]             string
-B: [ 630,  631] PS: [ 49, 14], PE: [ 49, 15]               start: string_start `"`
-B: [ 631,  634] PS: [ 49, 15], PE: [ 49, 18]               contents: string_contents
-B: [ 631,  634] PS: [ 49, 15], PE: [ 49, 18]                 content: string_content `red`
-B: [ 634,  635] PS: [ 49, 18], PE: [ 49, 19]               end: string_end `"`
-B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]         primary_expr
-B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]           literal
-B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]             string
-B: [ 636,  637] PS: [ 49, 20], PE: [ 49, 21]               start: string_start `"`
-B: [ 637,  639] PS: [ 49, 21], PE: [ 49, 23]               contents: string_contents
-B: [ 637,  639] PS: [ 49, 21], PE: [ 49, 23]                 content: string_content `.*`
-B: [ 639,  640] PS: [ 49, 23], PE: [ 49, 24]               end: string_end `"`
+B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]         expr
+B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]           primary_expr
+B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]             literal
+B: [ 630,  635] PS: [ 49, 14], PE: [ 49, 19]               string
+B: [ 630,  631] PS: [ 49, 14], PE: [ 49, 15]                 start: string_start `"`
+B: [ 631,  634] PS: [ 49, 15], PE: [ 49, 18]                 contents: string_contents
+B: [ 631,  634] PS: [ 49, 15], PE: [ 49, 18]                   content: string_content `red`
+B: [ 634,  635] PS: [ 49, 18], PE: [ 49, 19]                 end: string_end `"`
+B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]         expr
+B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]           primary_expr
+B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]             literal
+B: [ 636,  640] PS: [ 49, 20], PE: [ 49, 24]               string
+B: [ 636,  637] PS: [ 49, 20], PE: [ 49, 21]                 start: string_start `"`
+B: [ 637,  639] PS: [ 49, 21], PE: [ 49, 23]                 contents: string_contents
+B: [ 637,  639] PS: [ 49, 21], PE: [ 49, 23]                   content: string_content `.*`
+B: [ 639,  640] PS: [ 49, 23], PE: [ 49, 24]                 end: string_end `"`
 B: [ 642,  754] PS: [ 51,  0], PE: [ 57, 21]   if_stmt
 B: [ 642,  644] PS: [ 51,  0], PE: [ 51,  2]     if `if`
-B: [ 645,  652] PS: [ 51,  3], PE: [ 51, 10]     condition: comparison_op
-B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]       primary_expr
-B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]         var_path
-B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]           root: identifier `bah`
-B: [ 649,  650] PS: [ 51,  7], PE: [ 51,  8]       ops: > `>`
-B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]       primary_expr
-B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]         literal
-B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]           int `5`
+B: [ 645,  652] PS: [ 51,  3], PE: [ 51, 10]     condition: expr
+B: [ 645,  652] PS: [ 51,  3], PE: [ 51, 10]       comparison_op
+B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]         primary_expr
+B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]           var_path
+B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]             root: identifier `bah`
+B: [ 649,  650] PS: [ 51,  7], PE: [ 51,  8]         ops: > `>`
+B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]         primary_expr
+B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]           literal
+B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]             int `5`
 B: [ 652,  653] PS: [ 51, 10], PE: [ 51, 11]     : `:`
 B: [ 658,  671] PS: [ 52,  4], PE: [ 52, 17]     assign
 B: [ 658,  663] PS: [ 52,  4], PE: [ 52,  9]       left: var_path
 B: [ 658,  663] PS: [ 52,  4], PE: [ 52,  9]         root: identifier `hello`
 B: [ 664,  665] PS: [ 52, 10], PE: [ 52, 11]       = `=`
-B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]       right: primary_expr
-B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]         var_path
-B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]           root: identifier `bloop`
+B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]       right: expr
+B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]         primary_expr
+B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]           var_path
+B: [ 666,  671] PS: [ 52, 12], PE: [ 52, 17]             root: identifier `bloop`
 B: [ 677,  754] PS: [ 54,  4], PE: [ 57, 21]     if_stmt
 B: [ 677,  679] PS: [ 54,  4], PE: [ 54,  6]       if `if`
-B: [ 680,  689] PS: [ 54,  7], PE: [ 54, 16]       condition: comparison_op
-B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]         primary_expr
-B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]           var_path
-B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]             root: identifier `blah`
-B: [ 685,  687] PS: [ 54, 12], PE: [ 54, 14]         ops: == `==`
-B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]         primary_expr
-B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]           literal
-B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]             int `2`
+B: [ 680,  689] PS: [ 54,  7], PE: [ 54, 16]       condition: expr
+B: [ 680,  689] PS: [ 54,  7], PE: [ 54, 16]         comparison_op
+B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]           primary_expr
+B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]             var_path
+B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]               root: identifier `blah`
+B: [ 685,  687] PS: [ 54, 12], PE: [ 54, 14]           ops: == `==`
+B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]           primary_expr
+B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]             literal
+B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]               int `2`
 B: [ 689,  690] PS: [ 54, 16], PE: [ 54, 17]       : `:`
 B: [ 699,  709] PS: [ 55,  8], PE: [ 55, 18]       compound_assign
 B: [ 699,  704] PS: [ 55,  8], PE: [ 55, 13]         left: var_path
 B: [ 699,  704] PS: [ 55,  8], PE: [ 55, 13]           root: identifier `yoink`
 B: [ 705,  707] PS: [ 55, 14], PE: [ 55, 16]         op: += `+=`
-B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]         right: primary_expr
-B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]           literal
-B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]             int `2`
+B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]         right: expr
+B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]           primary_expr
+B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]             literal
+B: [ 708,  709] PS: [ 55, 17], PE: [ 55, 18]               int `2`
 B: [ 714,  754] PS: [ 56,  4], PE: [ 57, 21]       alternative: elif_clause
 B: [ 714,  718] PS: [ 56,  4], PE: [ 56,  8]         else `else`
 B: [ 719,  721] PS: [ 56,  9], PE: [ 56, 11]         if `if`
-B: [ 722,  731] PS: [ 56, 12], PE: [ 56, 21]         condition: comparison_op
-B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]           primary_expr
-B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]             var_path
-B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]               root: identifier `blah`
-B: [ 727,  729] PS: [ 56, 17], PE: [ 56, 19]           ops: == `==`
-B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]           primary_expr
-B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]             literal
-B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]               int `3`
+B: [ 722,  731] PS: [ 56, 12], PE: [ 56, 21]         condition: expr
+B: [ 722,  731] PS: [ 56, 12], PE: [ 56, 21]           comparison_op
+B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]             primary_expr
+B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]               var_path
+B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]                 root: identifier `blah`
+B: [ 727,  729] PS: [ 56, 17], PE: [ 56, 19]             ops: == `==`
+B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]             primary_expr
+B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]               literal
+B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]                 int `3`
 B: [ 731,  732] PS: [ 56, 21], PE: [ 56, 22]         : `:`
 B: [ 741,  754] PS: [ 57,  8], PE: [ 57, 21]         assign
 B: [ 741,  745] PS: [ 57,  8], PE: [ 57, 12]           left: var_path
 B: [ 741,  745] PS: [ 57,  8], PE: [ 57, 12]             root: identifier `boom`
 B: [ 746,  747] PS: [ 57, 13], PE: [ 57, 14]           = `=`
-B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]           right: primary_expr
-B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]             literal
-B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]               string
-B: [ 748,  749] PS: [ 57, 15], PE: [ 57, 16]                 start: string_start `"`
-B: [ 749,  753] PS: [ 57, 16], PE: [ 57, 20]                 contents: string_contents
-B: [ 749,  753] PS: [ 57, 16], PE: [ 57, 20]                   content: string_content `haha`
-B: [ 753,  754] PS: [ 57, 20], PE: [ 57, 21]                 end: string_end `"`
+B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]           right: expr
+B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]             primary_expr
+B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]               literal
+B: [ 748,  754] PS: [ 57, 15], PE: [ 57, 21]                 string
+B: [ 748,  749] PS: [ 57, 15], PE: [ 57, 16]                   start: string_start `"`
+B: [ 749,  753] PS: [ 57, 16], PE: [ 57, 20]                   contents: string_contents
+B: [ 749,  753] PS: [ 57, 16], PE: [ 57, 20]                     content: string_content `haha`
+B: [ 753,  754] PS: [ 57, 20], PE: [ 57, 21]                   end: string_end `"`
 B: [ 756,  782] PS: [ 59,  0], PE: [ 60, 13]   rad_block
 B: [ 756,  763] PS: [ 59,  0], PE: [ 59,  7]     rad_type: request_keyword `request`
-B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]     source: primary_expr
-B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]       var_path
-B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]         root: identifier `url`
+B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]     source: expr
+B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]       primary_expr
+B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]         var_path
+B: [ 764,  767] PS: [ 59,  8], PE: [ 59, 11]           root: identifier `url`
 B: [ 767,  768] PS: [ 59, 11], PE: [ 59, 12]     : `:`
 B: [ 773,  782] PS: [ 60,  4], PE: [ 60, 13]     rad_field_stmt
 B: [ 773,  779] PS: [ 60,  4], PE: [ 60, 10]       fields `fields`
@@ -598,265 +635,301 @@ B: [ 816,  867] PS: [ 65,  0], PE: [ 65, 51]   assign
 B: [ 816,  820] PS: [ 65,  0], PE: [ 65,  4]     left: var_path
 B: [ 816,  820] PS: [ 65,  0], PE: [ 65,  4]       root: identifier `area`
 B: [ 821,  822] PS: [ 65,  5], PE: [ 65,  6]     = `=`
-B: [ 823,  867] PS: [ 65,  7], PE: [ 65, 51]     right: primary_expr
-B: [ 823,  867] PS: [ 65,  7], PE: [ 65, 51]       list_comprehension
-B: [ 823,  824] PS: [ 65,  7], PE: [ 65,  8]         [ `[`
-B: [ 824,  844] PS: [ 65,  8], PE: [ 65, 28]         expr: primary_expr
-B: [ 824,  844] PS: [ 65,  8], PE: [ 65, 28]           binary_op
-B: [ 824,  832] PS: [ 65,  8], PE: [ 65, 16]             left: primary_expr
-B: [ 824,  832] PS: [ 65,  8], PE: [ 65, 16]               var_path
-B: [ 824,  829] PS: [ 65,  8], PE: [ 65, 13]                 root: identifier `width`
-B: [ 829,  830] PS: [ 65, 13], PE: [ 65, 14]                 indexing: [ `[`
-B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                 indexing: primary_expr
-B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                   var_path
-B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                     root: identifier `i`
-B: [ 831,  832] PS: [ 65, 15], PE: [ 65, 16]                 indexing: ] `]`
-B: [ 833,  834] PS: [ 65, 17], PE: [ 65, 18]             op: * `*`
-B: [ 835,  844] PS: [ 65, 19], PE: [ 65, 28]             right: primary_expr
-B: [ 835,  844] PS: [ 65, 19], PE: [ 65, 28]               var_path
-B: [ 835,  841] PS: [ 65, 19], PE: [ 65, 25]                 root: identifier `height`
-B: [ 841,  842] PS: [ 65, 25], PE: [ 65, 26]                 indexing: [ `[`
-B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                 indexing: primary_expr
-B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                   var_path
-B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                     root: identifier `i`
-B: [ 843,  844] PS: [ 65, 27], PE: [ 65, 28]                 indexing: ] `]`
-B: [ 845,  848] PS: [ 65, 29], PE: [ 65, 32]         for `for`
-B: [ 849,  850] PS: [ 65, 33], PE: [ 65, 34]         left: identifier `i`
-B: [ 851,  853] PS: [ 65, 35], PE: [ 65, 37]         in `in`
-B: [ 854,  866] PS: [ 65, 38], PE: [ 65, 50]         right: primary_expr
-B: [ 854,  866] PS: [ 65, 38], PE: [ 65, 50]           call
-B: [ 854,  859] PS: [ 65, 38], PE: [ 65, 43]             func: identifier `range`
-B: [ 859,  866] PS: [ 65, 43], PE: [ 65, 50]             args: call_arg_list
-B: [ 859,  860] PS: [ 65, 43], PE: [ 65, 44]               ( `(`
-B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]               primary_expr
-B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                 var_path
-B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                   root: identifier `width`
-B: [ 865,  866] PS: [ 65, 49], PE: [ 65, 50]               ) `)`
-B: [ 866,  867] PS: [ 65, 50], PE: [ 65, 51]         ] `]`
+B: [ 823,  867] PS: [ 65,  7], PE: [ 65, 51]     right: expr
+B: [ 823,  867] PS: [ 65,  7], PE: [ 65, 51]       primary_expr
+B: [ 823,  867] PS: [ 65,  7], PE: [ 65, 51]         list_comprehension
+B: [ 823,  824] PS: [ 65,  7], PE: [ 65,  8]           [ `[`
+B: [ 824,  844] PS: [ 65,  8], PE: [ 65, 28]           expr: expr
+B: [ 824,  844] PS: [ 65,  8], PE: [ 65, 28]             primary_expr
+B: [ 824,  844] PS: [ 65,  8], PE: [ 65, 28]               binary_op
+B: [ 824,  832] PS: [ 65,  8], PE: [ 65, 16]                 left: primary_expr
+B: [ 824,  832] PS: [ 65,  8], PE: [ 65, 16]                   var_path
+B: [ 824,  829] PS: [ 65,  8], PE: [ 65, 13]                     root: identifier `width`
+B: [ 829,  830] PS: [ 65, 13], PE: [ 65, 14]                     [ `[`
+B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                     indexing: expr
+B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                       primary_expr
+B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                         var_path
+B: [ 830,  831] PS: [ 65, 14], PE: [ 65, 15]                           root: identifier `i`
+B: [ 831,  832] PS: [ 65, 15], PE: [ 65, 16]                     ] `]`
+B: [ 833,  834] PS: [ 65, 17], PE: [ 65, 18]                 op: * `*`
+B: [ 835,  844] PS: [ 65, 19], PE: [ 65, 28]                 right: primary_expr
+B: [ 835,  844] PS: [ 65, 19], PE: [ 65, 28]                   var_path
+B: [ 835,  841] PS: [ 65, 19], PE: [ 65, 25]                     root: identifier `height`
+B: [ 841,  842] PS: [ 65, 25], PE: [ 65, 26]                     [ `[`
+B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                     indexing: expr
+B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                       primary_expr
+B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                         var_path
+B: [ 842,  843] PS: [ 65, 26], PE: [ 65, 27]                           root: identifier `i`
+B: [ 843,  844] PS: [ 65, 27], PE: [ 65, 28]                     ] `]`
+B: [ 845,  848] PS: [ 65, 29], PE: [ 65, 32]           for `for`
+B: [ 849,  850] PS: [ 65, 33], PE: [ 65, 34]           left: identifier `i`
+B: [ 851,  853] PS: [ 65, 35], PE: [ 65, 37]           in `in`
+B: [ 854,  866] PS: [ 65, 38], PE: [ 65, 50]           right: expr
+B: [ 854,  866] PS: [ 65, 38], PE: [ 65, 50]             primary_expr
+B: [ 854,  866] PS: [ 65, 38], PE: [ 65, 50]               call
+B: [ 854,  859] PS: [ 65, 38], PE: [ 65, 43]                 func: identifier `range`
+B: [ 859,  860] PS: [ 65, 43], PE: [ 65, 44]                 ( `(`
+B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                 arg: expr
+B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                   primary_expr
+B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                     var_path
+B: [ 860,  865] PS: [ 65, 44], PE: [ 65, 49]                       root: identifier `width`
+B: [ 865,  866] PS: [ 65, 49], PE: [ 65, 50]                 ) `)`
+B: [ 866,  867] PS: [ 65, 50], PE: [ 65, 51]           ] `]`
 B: [ 869,  888] PS: [ 67,  0], PE: [ 67, 19]   assign
 B: [ 869,  876] PS: [ 67,  0], PE: [ 67,  7]     left: var_path
 B: [ 869,  876] PS: [ 67,  0], PE: [ 67,  7]       root: identifier `numbers`
 B: [ 877,  878] PS: [ 67,  8], PE: [ 67,  9]     = `=`
-B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]     right: primary_expr
-B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]       literal
-B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]         list
-B: [ 879,  880] PS: [ 67, 10], PE: [ 67, 11]           [ `[`
-B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]           literal
-B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]             int `1`
-B: [ 881,  882] PS: [ 67, 12], PE: [ 67, 13]           , `,`
-B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]           literal
-B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]             int `2`
-B: [ 884,  885] PS: [ 67, 15], PE: [ 67, 16]           , `,`
-B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]           literal
-B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]             int `3`
-B: [ 887,  888] PS: [ 67, 18], PE: [ 67, 19]           ] `]`
+B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]     right: expr
+B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]       primary_expr
+B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]         literal
+B: [ 879,  888] PS: [ 67, 10], PE: [ 67, 19]           list
+B: [ 879,  880] PS: [ 67, 10], PE: [ 67, 11]             [ `[`
+B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]             list_entry: expr
+B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]               primary_expr
+B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]                 literal
+B: [ 880,  881] PS: [ 67, 11], PE: [ 67, 12]                   int `1`
+B: [ 881,  882] PS: [ 67, 12], PE: [ 67, 13]             , `,`
+B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]             list_entry: expr
+B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]               primary_expr
+B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]                 literal
+B: [ 883,  884] PS: [ 67, 14], PE: [ 67, 15]                   int `2`
+B: [ 884,  885] PS: [ 67, 15], PE: [ 67, 16]             , `,`
+B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]             list_entry: expr
+B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]               primary_expr
+B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]                 literal
+B: [ 886,  887] PS: [ 67, 17], PE: [ 67, 18]                   int `3`
+B: [ 887,  888] PS: [ 67, 18], PE: [ 67, 19]             ] `]`
 B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]   expr_stmt
-B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]     primary_expr
-B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]       call
-B: [ 889,  894] PS: [ 68,  0], PE: [ 68,  5]         func: identifier `print`
-B: [ 894,  917] PS: [ 68,  5], PE: [ 68, 28]         args: call_arg_list
+B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]     expr
+B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]       primary_expr
+B: [ 889,  917] PS: [ 68,  0], PE: [ 68, 28]         call
+B: [ 889,  894] PS: [ 68,  0], PE: [ 68,  5]           func: identifier `print`
 B: [ 894,  895] PS: [ 68,  5], PE: [ 68,  6]           ( `(`
-B: [ 895,  916] PS: [ 68,  6], PE: [ 68, 27]           primary_expr
-B: [ 895,  916] PS: [ 68,  6], PE: [ 68, 27]             call
-B: [ 895,  899] PS: [ 68,  6], PE: [ 68, 10]               func: identifier `join`
-B: [ 899,  916] PS: [ 68, 10], PE: [ 68, 27]               args: call_arg_list
+B: [ 895,  916] PS: [ 68,  6], PE: [ 68, 27]           arg: expr
+B: [ 895,  916] PS: [ 68,  6], PE: [ 68, 27]             primary_expr
+B: [ 895,  916] PS: [ 68,  6], PE: [ 68, 27]               call
+B: [ 895,  899] PS: [ 68,  6], PE: [ 68, 10]                 func: identifier `join`
 B: [ 899,  900] PS: [ 68, 10], PE: [ 68, 11]                 ( `(`
-B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                 primary_expr
-B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                   var_path
-B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                     root: identifier `numbers`
+B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                 arg: expr
+B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                   primary_expr
+B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                     var_path
+B: [ 900,  907] PS: [ 68, 11], PE: [ 68, 18]                       root: identifier `numbers`
 B: [ 907,  908] PS: [ 68, 18], PE: [ 68, 19]                 , `,`
-B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                 primary_expr
-B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                   literal
-B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                     string
-B: [ 909,  910] PS: [ 68, 20], PE: [ 68, 21]                       start: string_start `"`
-B: [ 910,  914] PS: [ 68, 21], PE: [ 68, 25]                       contents: string_contents
-B: [ 910,  914] PS: [ 68, 21], PE: [ 68, 25]                         content: string_content `... `
-B: [ 914,  915] PS: [ 68, 25], PE: [ 68, 26]                       end: string_end `"`
+B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                 arg: expr
+B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                   primary_expr
+B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                     literal
+B: [ 909,  915] PS: [ 68, 20], PE: [ 68, 26]                       string
+B: [ 909,  910] PS: [ 68, 20], PE: [ 68, 21]                         start: string_start `"`
+B: [ 910,  914] PS: [ 68, 21], PE: [ 68, 25]                         contents: string_contents
+B: [ 910,  914] PS: [ 68, 21], PE: [ 68, 25]                           content: string_content `... `
+B: [ 914,  915] PS: [ 68, 25], PE: [ 68, 26]                         end: string_end `"`
 B: [ 915,  916] PS: [ 68, 26], PE: [ 68, 27]                 ) `)`
 B: [ 916,  917] PS: [ 68, 27], PE: [ 68, 28]           ) `)`
 B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]   expr_stmt
-B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]     primary_expr
-B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]       call
-B: [ 918,  923] PS: [ 69,  0], PE: [ 69,  5]         func: identifier `print`
-B: [ 923,  967] PS: [ 69,  5], PE: [ 69, 49]         args: call_arg_list
+B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]     expr
+B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]       primary_expr
+B: [ 918,  967] PS: [ 69,  0], PE: [ 69, 49]         call
+B: [ 918,  923] PS: [ 69,  0], PE: [ 69,  5]           func: identifier `print`
 B: [ 923,  924] PS: [ 69,  5], PE: [ 69,  6]           ( `(`
-B: [ 924,  966] PS: [ 69,  6], PE: [ 69, 48]           primary_expr
-B: [ 924,  966] PS: [ 69,  6], PE: [ 69, 48]             call
-B: [ 924,  928] PS: [ 69,  6], PE: [ 69, 10]               func: identifier `join`
-B: [ 928,  966] PS: [ 69, 10], PE: [ 69, 48]               args: call_arg_list
+B: [ 924,  966] PS: [ 69,  6], PE: [ 69, 48]           arg: expr
+B: [ 924,  966] PS: [ 69,  6], PE: [ 69, 48]             primary_expr
+B: [ 924,  966] PS: [ 69,  6], PE: [ 69, 48]               call
+B: [ 924,  928] PS: [ 69,  6], PE: [ 69, 10]                 func: identifier `join`
 B: [ 928,  929] PS: [ 69, 10], PE: [ 69, 11]                 ( `(`
-B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                 primary_expr
-B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                   var_path
-B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                     root: identifier `numbers`
+B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                 arg: expr
+B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                   primary_expr
+B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                     var_path
+B: [ 929,  936] PS: [ 69, 11], PE: [ 69, 18]                       root: identifier `numbers`
 B: [ 936,  937] PS: [ 69, 18], PE: [ 69, 19]                 , `,`
-B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                 primary_expr
-B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                   literal
-B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                     string
-B: [ 938,  939] PS: [ 69, 20], PE: [ 69, 21]                       start: string_start `"`
-B: [ 939,  943] PS: [ 69, 21], PE: [ 69, 25]                       contents: string_contents
-B: [ 939,  943] PS: [ 69, 21], PE: [ 69, 25]                         content: string_content `... `
-B: [ 943,  944] PS: [ 69, 25], PE: [ 69, 26]                       end: string_end `"`
+B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                 arg: expr
+B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                   primary_expr
+B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                     literal
+B: [ 938,  944] PS: [ 69, 20], PE: [ 69, 26]                       string
+B: [ 938,  939] PS: [ 69, 20], PE: [ 69, 21]                         start: string_start `"`
+B: [ 939,  943] PS: [ 69, 21], PE: [ 69, 25]                         contents: string_contents
+B: [ 939,  943] PS: [ 69, 21], PE: [ 69, 25]                           content: string_content `... `
+B: [ 943,  944] PS: [ 69, 25], PE: [ 69, 26]                         end: string_end `"`
 B: [ 944,  945] PS: [ 69, 26], PE: [ 69, 27]                 , `,`
-B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                 primary_expr
-B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                   literal
-B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                     string
-B: [ 946,  947] PS: [ 69, 28], PE: [ 69, 29]                       start: string_start `"`
-B: [ 947,  964] PS: [ 69, 29], PE: [ 69, 46]                       contents: string_contents
-B: [ 947,  964] PS: [ 69, 29], PE: [ 69, 46]                         content: string_content `Okay I'll count. `
-B: [ 964,  965] PS: [ 69, 46], PE: [ 69, 47]                       end: string_end `"`
+B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                 arg: expr
+B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                   primary_expr
+B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                     literal
+B: [ 946,  965] PS: [ 69, 28], PE: [ 69, 47]                       string
+B: [ 946,  947] PS: [ 69, 28], PE: [ 69, 29]                         start: string_start `"`
+B: [ 947,  964] PS: [ 69, 29], PE: [ 69, 46]                         contents: string_contents
+B: [ 947,  964] PS: [ 69, 29], PE: [ 69, 46]                           content: string_content `Okay I'll count. `
+B: [ 964,  965] PS: [ 69, 46], PE: [ 69, 47]                         end: string_end `"`
 B: [ 965,  966] PS: [ 69, 47], PE: [ 69, 48]                 ) `)`
 B: [ 966,  967] PS: [ 69, 48], PE: [ 69, 49]           ) `)`
 B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]   expr_stmt
-B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]     primary_expr
-B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]       call
-B: [ 968,  973] PS: [ 70,  0], PE: [ 70,  5]         func: identifier `print`
-B: [ 973, 1022] PS: [ 70,  5], PE: [ 70, 54]         args: call_arg_list
+B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]     expr
+B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]       primary_expr
+B: [ 968, 1022] PS: [ 70,  0], PE: [ 70, 54]         call
+B: [ 968,  973] PS: [ 70,  0], PE: [ 70,  5]           func: identifier `print`
 B: [ 973,  974] PS: [ 70,  5], PE: [ 70,  6]           ( `(`
-B: [ 974, 1021] PS: [ 70,  6], PE: [ 70, 53]           primary_expr
-B: [ 974, 1021] PS: [ 70,  6], PE: [ 70, 53]             call
-B: [ 974,  978] PS: [ 70,  6], PE: [ 70, 10]               func: identifier `join`
-B: [ 978, 1021] PS: [ 70, 10], PE: [ 70, 53]               args: call_arg_list
+B: [ 974, 1021] PS: [ 70,  6], PE: [ 70, 53]           arg: expr
+B: [ 974, 1021] PS: [ 70,  6], PE: [ 70, 53]             primary_expr
+B: [ 974, 1021] PS: [ 70,  6], PE: [ 70, 53]               call
+B: [ 974,  978] PS: [ 70,  6], PE: [ 70, 10]                 func: identifier `join`
 B: [ 978,  979] PS: [ 70, 10], PE: [ 70, 11]                 ( `(`
-B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                 primary_expr
-B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                   var_path
-B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                     root: identifier `numbers`
+B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                 arg: expr
+B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                   primary_expr
+B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                     var_path
+B: [ 979,  986] PS: [ 70, 11], PE: [ 70, 18]                       root: identifier `numbers`
 B: [ 986,  987] PS: [ 70, 18], PE: [ 70, 19]                 , `,`
-B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                 primary_expr
-B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                   literal
-B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                     string
-B: [ 988,  989] PS: [ 70, 20], PE: [ 70, 21]                       start: string_start `"`
-B: [ 989,  993] PS: [ 70, 21], PE: [ 70, 25]                       contents: string_contents
-B: [ 989,  993] PS: [ 70, 21], PE: [ 70, 25]                         content: string_content `... `
-B: [ 993,  994] PS: [ 70, 25], PE: [ 70, 26]                       end: string_end `"`
+B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                 arg: expr
+B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                   primary_expr
+B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                     literal
+B: [ 988,  994] PS: [ 70, 20], PE: [ 70, 26]                       string
+B: [ 988,  989] PS: [ 70, 20], PE: [ 70, 21]                         start: string_start `"`
+B: [ 989,  993] PS: [ 70, 21], PE: [ 70, 25]                         contents: string_contents
+B: [ 989,  993] PS: [ 70, 21], PE: [ 70, 25]                           content: string_content `... `
+B: [ 993,  994] PS: [ 70, 25], PE: [ 70, 26]                         end: string_end `"`
 B: [ 994,  995] PS: [ 70, 26], PE: [ 70, 27]                 , `,`
-B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                 primary_expr
-B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                   literal
-B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                     string
-B: [ 996,  997] PS: [ 70, 28], PE: [ 70, 29]                       start: string_start `"`
-B: [ 997, 1014] PS: [ 70, 29], PE: [ 70, 46]                       contents: string_contents
-B: [ 997, 1014] PS: [ 70, 29], PE: [ 70, 46]                         content: string_content `Okay I'll count. `
-B: [1014, 1015] PS: [ 70, 46], PE: [ 70, 47]                       end: string_end `"`
+B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                 arg: expr
+B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                   primary_expr
+B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                     literal
+B: [ 996, 1015] PS: [ 70, 28], PE: [ 70, 47]                       string
+B: [ 996,  997] PS: [ 70, 28], PE: [ 70, 29]                         start: string_start `"`
+B: [ 997, 1014] PS: [ 70, 29], PE: [ 70, 46]                         contents: string_contents
+B: [ 997, 1014] PS: [ 70, 29], PE: [ 70, 46]                           content: string_content `Okay I'll count. `
+B: [1014, 1015] PS: [ 70, 46], PE: [ 70, 47]                         end: string_end `"`
 B: [1015, 1016] PS: [ 70, 47], PE: [ 70, 48]                 , `,`
-B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                 primary_expr
-B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                   literal
-B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                     string
-B: [1017, 1018] PS: [ 70, 49], PE: [ 70, 50]                       start: string_start `"`
-B: [1018, 1019] PS: [ 70, 50], PE: [ 70, 51]                       contents: string_contents
-B: [1018, 1019] PS: [ 70, 50], PE: [ 70, 51]                         content: string_content `!`
-B: [1019, 1020] PS: [ 70, 51], PE: [ 70, 52]                       end: string_end `"`
+B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                 arg: expr
+B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                   primary_expr
+B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                     literal
+B: [1017, 1020] PS: [ 70, 49], PE: [ 70, 52]                       string
+B: [1017, 1018] PS: [ 70, 49], PE: [ 70, 50]                         start: string_start `"`
+B: [1018, 1019] PS: [ 70, 50], PE: [ 70, 51]                         contents: string_contents
+B: [1018, 1019] PS: [ 70, 50], PE: [ 70, 51]                           content: string_content `!`
+B: [1019, 1020] PS: [ 70, 51], PE: [ 70, 52]                         end: string_end `"`
 B: [1020, 1021] PS: [ 70, 52], PE: [ 70, 53]                 ) `)`
 B: [1021, 1022] PS: [ 70, 53], PE: [ 70, 54]           ) `)`
 B: [1024, 1035] PS: [ 72,  0], PE: [ 72, 11]   assign
 B: [1024, 1025] PS: [ 72,  0], PE: [ 72,  1]     left: var_path
 B: [1024, 1025] PS: [ 72,  0], PE: [ 72,  1]       root: identifier `a`
 B: [1026, 1027] PS: [ 72,  2], PE: [ 72,  3]     = `=`
-B: [1028, 1035] PS: [ 72,  4], PE: [ 72, 11]     right: primary_expr
-B: [1028, 1035] PS: [ 72,  4], PE: [ 72, 11]       var_path
-B: [1028, 1032] PS: [ 72,  4], PE: [ 72,  8]         root: identifier `nums`
-B: [1032, 1033] PS: [ 72,  8], PE: [ 72,  9]         indexing: [ `[`
-B: [1033, 1034] PS: [ 72,  9], PE: [ 72, 10]         indexing: slice
-B: [1033, 1034] PS: [ 72,  9], PE: [ 72, 10]           : `:`
-B: [1034, 1035] PS: [ 72, 10], PE: [ 72, 11]         indexing: ] `]`
+B: [1028, 1035] PS: [ 72,  4], PE: [ 72, 11]     right: expr
+B: [1028, 1035] PS: [ 72,  4], PE: [ 72, 11]       primary_expr
+B: [1028, 1035] PS: [ 72,  4], PE: [ 72, 11]         var_path
+B: [1028, 1032] PS: [ 72,  4], PE: [ 72,  8]           root: identifier `nums`
+B: [1032, 1033] PS: [ 72,  8], PE: [ 72,  9]           [ `[`
+B: [1033, 1034] PS: [ 72,  9], PE: [ 72, 10]           indexing: slice
+B: [1033, 1034] PS: [ 72,  9], PE: [ 72, 10]             : `:`
+B: [1034, 1035] PS: [ 72, 10], PE: [ 72, 11]           ] `]`
 B: [1036, 1048] PS: [ 73,  0], PE: [ 73, 12]   assign
 B: [1036, 1037] PS: [ 73,  0], PE: [ 73,  1]     left: var_path
 B: [1036, 1037] PS: [ 73,  0], PE: [ 73,  1]       root: identifier `a`
 B: [1038, 1039] PS: [ 73,  2], PE: [ 73,  3]     = `=`
-B: [1040, 1048] PS: [ 73,  4], PE: [ 73, 12]     right: primary_expr
-B: [1040, 1048] PS: [ 73,  4], PE: [ 73, 12]       var_path
-B: [1040, 1044] PS: [ 73,  4], PE: [ 73,  8]         root: identifier `nums`
-B: [1044, 1045] PS: [ 73,  8], PE: [ 73,  9]         indexing: [ `[`
-B: [1045, 1047] PS: [ 73,  9], PE: [ 73, 11]         indexing: slice
-B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]           start: primary_expr
-B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]             literal
-B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]               int `1`
-B: [1046, 1047] PS: [ 73, 10], PE: [ 73, 11]           : `:`
-B: [1047, 1048] PS: [ 73, 11], PE: [ 73, 12]         indexing: ] `]`
+B: [1040, 1048] PS: [ 73,  4], PE: [ 73, 12]     right: expr
+B: [1040, 1048] PS: [ 73,  4], PE: [ 73, 12]       primary_expr
+B: [1040, 1048] PS: [ 73,  4], PE: [ 73, 12]         var_path
+B: [1040, 1044] PS: [ 73,  4], PE: [ 73,  8]           root: identifier `nums`
+B: [1044, 1045] PS: [ 73,  8], PE: [ 73,  9]           [ `[`
+B: [1045, 1047] PS: [ 73,  9], PE: [ 73, 11]           indexing: slice
+B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]             start: expr
+B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]               primary_expr
+B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]                 literal
+B: [1045, 1046] PS: [ 73,  9], PE: [ 73, 10]                   int `1`
+B: [1046, 1047] PS: [ 73, 10], PE: [ 73, 11]             : `:`
+B: [1047, 1048] PS: [ 73, 11], PE: [ 73, 12]           ] `]`
 B: [1049, 1062] PS: [ 74,  0], PE: [ 74, 13]   assign
 B: [1049, 1050] PS: [ 74,  0], PE: [ 74,  1]     left: var_path
 B: [1049, 1050] PS: [ 74,  0], PE: [ 74,  1]       root: identifier `a`
 B: [1051, 1052] PS: [ 74,  2], PE: [ 74,  3]     = `=`
-B: [1053, 1062] PS: [ 74,  4], PE: [ 74, 13]     right: primary_expr
-B: [1053, 1062] PS: [ 74,  4], PE: [ 74, 13]       var_path
-B: [1053, 1057] PS: [ 74,  4], PE: [ 74,  8]         root: identifier `nums`
-B: [1057, 1058] PS: [ 74,  8], PE: [ 74,  9]         indexing: [ `[`
-B: [1058, 1061] PS: [ 74,  9], PE: [ 74, 12]         indexing: slice
-B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]           start: primary_expr
-B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]             literal
-B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]               int `1`
-B: [1059, 1060] PS: [ 74, 10], PE: [ 74, 11]           : `:`
-B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]           end: primary_expr
-B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]             literal
-B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]               int `2`
-B: [1061, 1062] PS: [ 74, 12], PE: [ 74, 13]         indexing: ] `]`
+B: [1053, 1062] PS: [ 74,  4], PE: [ 74, 13]     right: expr
+B: [1053, 1062] PS: [ 74,  4], PE: [ 74, 13]       primary_expr
+B: [1053, 1062] PS: [ 74,  4], PE: [ 74, 13]         var_path
+B: [1053, 1057] PS: [ 74,  4], PE: [ 74,  8]           root: identifier `nums`
+B: [1057, 1058] PS: [ 74,  8], PE: [ 74,  9]           [ `[`
+B: [1058, 1061] PS: [ 74,  9], PE: [ 74, 12]           indexing: slice
+B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]             start: expr
+B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]               primary_expr
+B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]                 literal
+B: [1058, 1059] PS: [ 74,  9], PE: [ 74, 10]                   int `1`
+B: [1059, 1060] PS: [ 74, 10], PE: [ 74, 11]             : `:`
+B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]             end: expr
+B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]               primary_expr
+B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]                 literal
+B: [1060, 1061] PS: [ 74, 11], PE: [ 74, 12]                   int `2`
+B: [1061, 1062] PS: [ 74, 12], PE: [ 74, 13]           ] `]`
 B: [1063, 1075] PS: [ 75,  0], PE: [ 75, 12]   assign
 B: [1063, 1064] PS: [ 75,  0], PE: [ 75,  1]     left: var_path
 B: [1063, 1064] PS: [ 75,  0], PE: [ 75,  1]       root: identifier `a`
 B: [1065, 1066] PS: [ 75,  2], PE: [ 75,  3]     = `=`
-B: [1067, 1075] PS: [ 75,  4], PE: [ 75, 12]     right: primary_expr
-B: [1067, 1075] PS: [ 75,  4], PE: [ 75, 12]       var_path
-B: [1067, 1071] PS: [ 75,  4], PE: [ 75,  8]         root: identifier `nums`
-B: [1071, 1072] PS: [ 75,  8], PE: [ 75,  9]         indexing: [ `[`
-B: [1072, 1074] PS: [ 75,  9], PE: [ 75, 11]         indexing: slice
-B: [1072, 1073] PS: [ 75,  9], PE: [ 75, 10]           : `:`
-B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]           end: primary_expr
-B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]             literal
-B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]               int `2`
-B: [1074, 1075] PS: [ 75, 11], PE: [ 75, 12]         indexing: ] `]`
+B: [1067, 1075] PS: [ 75,  4], PE: [ 75, 12]     right: expr
+B: [1067, 1075] PS: [ 75,  4], PE: [ 75, 12]       primary_expr
+B: [1067, 1075] PS: [ 75,  4], PE: [ 75, 12]         var_path
+B: [1067, 1071] PS: [ 75,  4], PE: [ 75,  8]           root: identifier `nums`
+B: [1071, 1072] PS: [ 75,  8], PE: [ 75,  9]           [ `[`
+B: [1072, 1074] PS: [ 75,  9], PE: [ 75, 11]           indexing: slice
+B: [1072, 1073] PS: [ 75,  9], PE: [ 75, 10]             : `:`
+B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]             end: expr
+B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]               primary_expr
+B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]                 literal
+B: [1073, 1074] PS: [ 75, 10], PE: [ 75, 11]                   int `2`
+B: [1074, 1075] PS: [ 75, 11], PE: [ 75, 12]           ] `]`
 B: [1077, 1132] PS: [ 77,  0], PE: [ 79,  1]   assign
 B: [1077, 1087] PS: [ 77,  0], PE: [ 77, 10]     left: var_path
 B: [1077, 1087] PS: [ 77,  0], PE: [ 77, 10]       root: identifier `my_headers`
 B: [1088, 1089] PS: [ 77, 11], PE: [ 77, 12]     = `=`
-B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]     right: primary_expr
-B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]       literal
-B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]         map
-B: [1090, 1091] PS: [ 77, 13], PE: [ 77, 14]           { `{`
-B: [1096, 1129] PS: [ 78,  4], PE: [ 78, 37]           map_entry
-B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]             key: primary_expr
-B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]               literal
-B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]                 string
-B: [1096, 1097] PS: [ 78,  4], PE: [ 78,  5]                   start: string_start `"`
-B: [1097, 1110] PS: [ 78,  5], PE: [ 78, 18]                   contents: string_contents
-B: [1097, 1110] PS: [ 78,  5], PE: [ 78, 18]                     content: string_content `Authorization`
-B: [1110, 1111] PS: [ 78, 18], PE: [ 78, 19]                   end: string_end `"`
-B: [1111, 1112] PS: [ 78, 19], PE: [ 78, 20]             : `:`
-B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]             value: primary_expr
-B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]               literal
-B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]                 string
-B: [1113, 1114] PS: [ 78, 21], PE: [ 78, 22]                   start: string_start `"`
-B: [1114, 1121] PS: [ 78, 22], PE: [ 78, 29]                   contents: string_contents
-B: [1114, 1121] PS: [ 78, 22], PE: [ 78, 29]                     content: string_content `Bearer `
-B: [1121, 1128] PS: [ 78, 29], PE: [ 78, 36]                   contents: interpolation
-B: [1121, 1122] PS: [ 78, 29], PE: [ 78, 30]                     { `{`
-B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                     expr: primary_expr
-B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                       var_path
-B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                         root: identifier `token`
-B: [1127, 1128] PS: [ 78, 35], PE: [ 78, 36]                     } `}`
-B: [1128, 1129] PS: [ 78, 36], PE: [ 78, 37]                   end: string_end `"`
-B: [1129, 1130] PS: [ 78, 37], PE: [ 78, 38]           , `,`
-B: [1131, 1132] PS: [ 79,  0], PE: [ 79,  1]           } `}`
+B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]     right: expr
+B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]       primary_expr
+B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]         literal
+B: [1090, 1132] PS: [ 77, 13], PE: [ 79,  1]           map
+B: [1090, 1091] PS: [ 77, 13], PE: [ 77, 14]             { `{`
+B: [1096, 1129] PS: [ 78,  4], PE: [ 78, 37]             map_entry: map_entry
+B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]               key: expr
+B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]                 primary_expr
+B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]                   literal
+B: [1096, 1111] PS: [ 78,  4], PE: [ 78, 19]                     string
+B: [1096, 1097] PS: [ 78,  4], PE: [ 78,  5]                       start: string_start `"`
+B: [1097, 1110] PS: [ 78,  5], PE: [ 78, 18]                       contents: string_contents
+B: [1097, 1110] PS: [ 78,  5], PE: [ 78, 18]                         content: string_content `Authorization`
+B: [1110, 1111] PS: [ 78, 18], PE: [ 78, 19]                       end: string_end `"`
+B: [1111, 1112] PS: [ 78, 19], PE: [ 78, 20]               : `:`
+B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]               value: expr
+B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]                 primary_expr
+B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]                   literal
+B: [1113, 1129] PS: [ 78, 21], PE: [ 78, 37]                     string
+B: [1113, 1114] PS: [ 78, 21], PE: [ 78, 22]                       start: string_start `"`
+B: [1114, 1121] PS: [ 78, 22], PE: [ 78, 29]                       contents: string_contents
+B: [1114, 1121] PS: [ 78, 22], PE: [ 78, 29]                         content: string_content `Bearer `
+B: [1121, 1128] PS: [ 78, 29], PE: [ 78, 36]                       contents: interpolation
+B: [1121, 1122] PS: [ 78, 29], PE: [ 78, 30]                         { `{`
+B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                         expr: expr
+B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                           primary_expr
+B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                             var_path
+B: [1122, 1127] PS: [ 78, 30], PE: [ 78, 35]                               root: identifier `token`
+B: [1127, 1128] PS: [ 78, 35], PE: [ 78, 36]                         } `}`
+B: [1128, 1129] PS: [ 78, 36], PE: [ 78, 37]                       end: string_end `"`
+B: [1129, 1130] PS: [ 78, 37], PE: [ 78, 38]             , `,`
+B: [1131, 1132] PS: [ 79,  0], PE: [ 79,  1]             } `}`
 B: [1133, 1184] PS: [ 80,  0], PE: [ 80, 51]   assign
 B: [1133, 1141] PS: [ 80,  0], PE: [ 80,  8]     left: var_path
 B: [1133, 1141] PS: [ 80,  0], PE: [ 80,  8]       root: identifier `response`
 B: [1142, 1143] PS: [ 80,  9], PE: [ 80, 10]     = `=`
-B: [1144, 1184] PS: [ 80, 11], PE: [ 80, 51]     right: primary_expr
-B: [1144, 1184] PS: [ 80, 11], PE: [ 80, 51]       call
-B: [1144, 1153] PS: [ 80, 11], PE: [ 80, 20]         func: identifier `http_post`
-B: [1153, 1184] PS: [ 80, 20], PE: [ 80, 51]         args: call_arg_list
+B: [1144, 1184] PS: [ 80, 11], PE: [ 80, 51]     right: expr
+B: [1144, 1184] PS: [ 80, 11], PE: [ 80, 51]       primary_expr
+B: [1144, 1184] PS: [ 80, 11], PE: [ 80, 51]         call
+B: [1144, 1153] PS: [ 80, 11], PE: [ 80, 20]           func: identifier `http_post`
 B: [1153, 1154] PS: [ 80, 20], PE: [ 80, 21]           ( `(`
-B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]           primary_expr
-B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]             var_path
-B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]               root: identifier `url`
+B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]           arg: expr
+B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]             primary_expr
+B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]               var_path
+B: [1154, 1157] PS: [ 80, 21], PE: [ 80, 24]                 root: identifier `url`
 B: [1157, 1158] PS: [ 80, 24], PE: [ 80, 25]           , `,`
-B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]           primary_expr
-B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]             var_path
-B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]               root: identifier `body`
+B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]           arg: expr
+B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]             primary_expr
+B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]               var_path
+B: [1159, 1163] PS: [ 80, 26], PE: [ 80, 30]                 root: identifier `body`
 B: [1163, 1164] PS: [ 80, 30], PE: [ 80, 31]           , `,`
-B: [1165, 1183] PS: [ 80, 32], PE: [ 80, 50]           call_named_arg
+B: [1165, 1183] PS: [ 80, 32], PE: [ 80, 50]           named_arg: call_named_arg
 B: [1165, 1172] PS: [ 80, 32], PE: [ 80, 39]             name: identifier `headers`
 B: [1172, 1173] PS: [ 80, 39], PE: [ 80, 40]             = `=`
-B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]             value: primary_expr
-B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]               var_path
-B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]                 root: identifier `my_headers`
+B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]             value: expr
+B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]               primary_expr
+B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]                 var_path
+B: [1173, 1183] PS: [ 80, 40], PE: [ 80, 50]                   root: identifier `my_headers`
 B: [1183, 1184] PS: [ 80, 50], PE: [ 80, 51]           ) `)`
 B: [1186, 1199] PS: [ 82,  0], PE: [ 82, 13]   comment `// text = """`
 B: [1200, 1213] PS: [ 83,  0], PE: [ 83, 13]   comment `// This is an`
@@ -868,524 +941,589 @@ B: [1286, 1309] PS: [ 89,  0], PE: [ 89, 23]   assign
 B: [1286, 1290] PS: [ 89,  0], PE: [ 89,  4]     left: var_path
 B: [1286, 1290] PS: [ 89,  0], PE: [ 89,  4]       root: identifier `text`
 B: [1291, 1292] PS: [ 89,  5], PE: [ 89,  6]     = `=`
-B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]     right: primary_expr
-B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]       literal
-B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]         string
-B: [1293, 1295] PS: [ 89,  7], PE: [ 89,  9]           start: string_start `r"`
-B: [1295, 1308] PS: [ 89,  9], PE: [ 89, 22]           contents: string_contents
-B: [1295, 1308] PS: [ 89,  9], PE: [ 89, 22]             content: string_content `Hello\n{name}`
-B: [1308, 1309] PS: [ 89, 22], PE: [ 89, 23]           end: string_end `"`
+B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]     right: expr
+B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]       primary_expr
+B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]         literal
+B: [1293, 1309] PS: [ 89,  7], PE: [ 89, 23]           string
+B: [1293, 1295] PS: [ 89,  7], PE: [ 89,  9]             start: string_start `r"`
+B: [1295, 1308] PS: [ 89,  9], PE: [ 89, 22]             contents: string_contents
+B: [1295, 1308] PS: [ 89,  9], PE: [ 89, 22]               content: string_content `Hello\n{name}`
+B: [1308, 1309] PS: [ 89, 22], PE: [ 89, 23]             end: string_end `"`
 B: [1310, 1333] PS: [ 90,  0], PE: [ 90, 23]   assign
 B: [1310, 1314] PS: [ 90,  0], PE: [ 90,  4]     left: var_path
 B: [1310, 1314] PS: [ 90,  0], PE: [ 90,  4]       root: identifier `text`
 B: [1315, 1316] PS: [ 90,  5], PE: [ 90,  6]     = `=`
-B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]     right: primary_expr
-B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]       literal
-B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]         string
-B: [1317, 1319] PS: [ 90,  7], PE: [ 90,  9]           start: string_start `r'`
-B: [1319, 1332] PS: [ 90,  9], PE: [ 90, 22]           contents: string_contents
-B: [1319, 1332] PS: [ 90,  9], PE: [ 90, 22]             content: string_content `Hello\n{name}`
-B: [1332, 1333] PS: [ 90, 22], PE: [ 90, 23]           end: string_end `'`
+B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]     right: expr
+B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]       primary_expr
+B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]         literal
+B: [1317, 1333] PS: [ 90,  7], PE: [ 90, 23]           string
+B: [1317, 1319] PS: [ 90,  7], PE: [ 90,  9]             start: string_start `r'`
+B: [1319, 1332] PS: [ 90,  9], PE: [ 90, 22]             contents: string_contents
+B: [1319, 1332] PS: [ 90,  9], PE: [ 90, 22]               content: string_content `Hello\n{name}`
+B: [1332, 1333] PS: [ 90, 22], PE: [ 90, 23]             end: string_end `'`
 B: [1334, 1357] PS: [ 91,  0], PE: [ 91, 23]   assign
 B: [1334, 1338] PS: [ 91,  0], PE: [ 91,  4]     left: var_path
 B: [1334, 1338] PS: [ 91,  0], PE: [ 91,  4]       root: identifier `text`
 B: [1339, 1340] PS: [ 91,  5], PE: [ 91,  6]     = `=`
-B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]     right: primary_expr
-B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]       literal
-B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]         string
-B: [1341, 1343] PS: [ 91,  7], PE: [ 91,  9]           start: string_start `r``
-B: [1343, 1356] PS: [ 91,  9], PE: [ 91, 22]           contents: string_contents
-B: [1343, 1356] PS: [ 91,  9], PE: [ 91, 22]             content: string_content `Hello\n{name}`
-B: [1356, 1357] PS: [ 91, 22], PE: [ 91, 23]           end: string_end ```
+B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]     right: expr
+B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]       primary_expr
+B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]         literal
+B: [1341, 1357] PS: [ 91,  7], PE: [ 91, 23]           string
+B: [1341, 1343] PS: [ 91,  7], PE: [ 91,  9]             start: string_start `r``
+B: [1343, 1356] PS: [ 91,  9], PE: [ 91, 22]             contents: string_contents
+B: [1343, 1356] PS: [ 91,  9], PE: [ 91, 22]               content: string_content `Hello\n{name}`
+B: [1356, 1357] PS: [ 91, 22], PE: [ 91, 23]             end: string_end ```
 B: [1359, 1427] PS: [ 93,  0], PE: [ 93, 68]   assign
 B: [1359, 1362] PS: [ 93,  0], PE: [ 93,  3]     left: var_path
 B: [1359, 1362] PS: [ 93,  0], PE: [ 93,  3]       root: identifier `url`
-B: [1362, 1363] PS: [ 93,  3], PE: [ 93,  4]     left: , `,`
+B: [1362, 1363] PS: [ 93,  3], PE: [ 93,  4]     , `,`
 B: [1364, 1368] PS: [ 93,  5], PE: [ 93,  9]     left: var_path
 B: [1364, 1368] PS: [ 93,  5], PE: [ 93,  9]       root: identifier `name`
 B: [1369, 1370] PS: [ 93, 10], PE: [ 93, 11]     = `=`
-B: [1371, 1427] PS: [ 93, 12], PE: [ 93, 68]     right: primary_expr
-B: [1371, 1427] PS: [ 93, 12], PE: [ 93, 68]       call
-B: [1371, 1389] PS: [ 93, 12], PE: [ 93, 30]         func: identifier `pick_from_resource`
-B: [1389, 1427] PS: [ 93, 30], PE: [ 93, 68]         args: call_arg_list
+B: [1371, 1427] PS: [ 93, 12], PE: [ 93, 68]     right: expr
+B: [1371, 1427] PS: [ 93, 12], PE: [ 93, 68]       primary_expr
+B: [1371, 1427] PS: [ 93, 12], PE: [ 93, 68]         call
+B: [1371, 1389] PS: [ 93, 12], PE: [ 93, 30]           func: identifier `pick_from_resource`
 B: [1389, 1390] PS: [ 93, 30], PE: [ 93, 31]           ( `(`
-B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]           primary_expr
-B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]             literal
-B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]               string
-B: [1390, 1391] PS: [ 93, 31], PE: [ 93, 32]                 start: string_start `"`
-B: [1391, 1416] PS: [ 93, 32], PE: [ 93, 57]                 contents: string_contents
-B: [1391, 1416] PS: [ 93, 32], PE: [ 93, 57]                   content: string_content `./resources/websites.json`
-B: [1416, 1417] PS: [ 93, 57], PE: [ 93, 58]                 end: string_end `"`
+B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]           arg: expr
+B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]             primary_expr
+B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]               literal
+B: [1390, 1417] PS: [ 93, 31], PE: [ 93, 58]                 string
+B: [1390, 1391] PS: [ 93, 31], PE: [ 93, 32]                   start: string_start `"`
+B: [1391, 1416] PS: [ 93, 32], PE: [ 93, 57]                   contents: string_contents
+B: [1391, 1416] PS: [ 93, 32], PE: [ 93, 57]                     content: string_content `./resources/websites.json`
+B: [1416, 1417] PS: [ 93, 57], PE: [ 93, 58]                   end: string_end `"`
 B: [1417, 1418] PS: [ 93, 58], PE: [ 93, 59]           , `,`
-B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]           primary_expr
-B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]             var_path
-B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]               root: identifier `website`
+B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]           arg: expr
+B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]             primary_expr
+B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]               var_path
+B: [1419, 1426] PS: [ 93, 60], PE: [ 93, 67]                 root: identifier `website`
 B: [1426, 1427] PS: [ 93, 67], PE: [ 93, 68]           ) `)`
 B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]   expr_stmt
-B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]     primary_expr
-B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]       call
-B: [1428, 1433] PS: [ 94,  0], PE: [ 94,  5]         func: identifier `print`
-B: [1433, 1461] PS: [ 94,  5], PE: [ 94, 33]         args: call_arg_list
+B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]     expr
+B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]       primary_expr
+B: [1428, 1461] PS: [ 94,  0], PE: [ 94, 33]         call
+B: [1428, 1433] PS: [ 94,  0], PE: [ 94,  5]           func: identifier `print`
 B: [1433, 1434] PS: [ 94,  5], PE: [ 94,  6]           ( `(`
-B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]           primary_expr
-B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]             literal
-B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]               string
-B: [1434, 1435] PS: [ 94,  6], PE: [ 94,  7]                 start: string_start `"`
-B: [1435, 1440] PS: [ 94,  7], PE: [ 94, 12]                 contents: string_contents
-B: [1435, 1440] PS: [ 94,  7], PE: [ 94, 12]                   content: string_content `url: `
-B: [1440, 1445] PS: [ 94, 12], PE: [ 94, 17]                 contents: interpolation
-B: [1440, 1441] PS: [ 94, 12], PE: [ 94, 13]                   { `{`
-B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                   expr: primary_expr
-B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                     var_path
-B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                       root: identifier `url`
-B: [1444, 1445] PS: [ 94, 16], PE: [ 94, 17]                   } `}`
-B: [1445, 1453] PS: [ 94, 17], PE: [ 94, 25]                 contents: string_contents
-B: [1445, 1453] PS: [ 94, 17], PE: [ 94, 25]                   content: string_content `, name: `
-B: [1453, 1459] PS: [ 94, 25], PE: [ 94, 31]                 contents: interpolation
-B: [1453, 1454] PS: [ 94, 25], PE: [ 94, 26]                   { `{`
-B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                   expr: primary_expr
-B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                     var_path
-B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                       root: identifier `name`
-B: [1458, 1459] PS: [ 94, 30], PE: [ 94, 31]                   } `}`
-B: [1459, 1460] PS: [ 94, 31], PE: [ 94, 32]                 end: string_end `"`
+B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]           arg: expr
+B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]             primary_expr
+B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]               literal
+B: [1434, 1460] PS: [ 94,  6], PE: [ 94, 32]                 string
+B: [1434, 1435] PS: [ 94,  6], PE: [ 94,  7]                   start: string_start `"`
+B: [1435, 1440] PS: [ 94,  7], PE: [ 94, 12]                   contents: string_contents
+B: [1435, 1440] PS: [ 94,  7], PE: [ 94, 12]                     content: string_content `url: `
+B: [1440, 1445] PS: [ 94, 12], PE: [ 94, 17]                   contents: interpolation
+B: [1440, 1441] PS: [ 94, 12], PE: [ 94, 13]                     { `{`
+B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                     expr: expr
+B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                       primary_expr
+B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                         var_path
+B: [1441, 1444] PS: [ 94, 13], PE: [ 94, 16]                           root: identifier `url`
+B: [1444, 1445] PS: [ 94, 16], PE: [ 94, 17]                     } `}`
+B: [1445, 1453] PS: [ 94, 17], PE: [ 94, 25]                   contents: string_contents
+B: [1445, 1453] PS: [ 94, 17], PE: [ 94, 25]                     content: string_content `, name: `
+B: [1453, 1459] PS: [ 94, 25], PE: [ 94, 31]                   contents: interpolation
+B: [1453, 1454] PS: [ 94, 25], PE: [ 94, 26]                     { `{`
+B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                     expr: expr
+B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                       primary_expr
+B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                         var_path
+B: [1454, 1458] PS: [ 94, 26], PE: [ 94, 30]                           root: identifier `name`
+B: [1458, 1459] PS: [ 94, 30], PE: [ 94, 31]                     } `}`
+B: [1459, 1460] PS: [ 94, 31], PE: [ 94, 32]                   end: string_end `"`
 B: [1460, 1461] PS: [ 94, 32], PE: [ 94, 33]           ) `)`
 B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]   expr_stmt
-B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]     shell_cmd
-B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]       critical: critical_shell_cmd
-B: [1463, 1465] PS: [ 96,  0], PE: [ 96,  2]         $! `$!`
-B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]         command: primary_expr
-B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]           literal
-B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]             string
-B: [1465, 1466] PS: [ 96,  2], PE: [ 96,  3]               start: string_start ```
-B: [1466, 1468] PS: [ 96,  3], PE: [ 96,  5]               contents: string_contents
-B: [1466, 1468] PS: [ 96,  3], PE: [ 96,  5]                 content: string_content `ls`
-B: [1468, 1469] PS: [ 96,  5], PE: [ 96,  6]               end: string_end ```
+B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]     expr
+B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]       shell_cmd
+B: [1463, 1469] PS: [ 96,  0], PE: [ 96,  6]         critical: critical_shell_cmd
+B: [1463, 1465] PS: [ 96,  0], PE: [ 96,  2]           $! `$!`
+B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]           command: expr
+B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]             primary_expr
+B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]               literal
+B: [1465, 1469] PS: [ 96,  2], PE: [ 96,  6]                 string
+B: [1465, 1466] PS: [ 96,  2], PE: [ 96,  3]                   start: string_start ```
+B: [1466, 1468] PS: [ 96,  3], PE: [ 96,  5]                   contents: string_contents
+B: [1466, 1468] PS: [ 96,  3], PE: [ 96,  5]                     content: string_content `ls`
+B: [1468, 1469] PS: [ 96,  5], PE: [ 96,  6]                   end: string_end ```
 B: [1471, 1489] PS: [ 98,  0], PE: [ 98, 18]   assign
 B: [1471, 1474] PS: [ 98,  0], PE: [ 98,  3]     left: var_path
 B: [1471, 1474] PS: [ 98,  0], PE: [ 98,  3]       root: identifier `cmd`
 B: [1475, 1476] PS: [ 98,  4], PE: [ 98,  5]     = `=`
-B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]     right: primary_expr
-B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]       literal
-B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]         string
-B: [1477, 1478] PS: [ 98,  6], PE: [ 98,  7]           start: string_start ```
-B: [1478, 1483] PS: [ 98,  7], PE: [ 98, 12]           contents: string_contents
-B: [1478, 1483] PS: [ 98,  7], PE: [ 98, 12]             content: string_content `curl `
-B: [1483, 1488] PS: [ 98, 12], PE: [ 98, 17]           contents: interpolation
-B: [1483, 1484] PS: [ 98, 12], PE: [ 98, 13]             { `{`
-B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]             expr: primary_expr
-B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]               var_path
-B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]                 root: identifier `url`
-B: [1487, 1488] PS: [ 98, 16], PE: [ 98, 17]             } `}`
-B: [1488, 1489] PS: [ 98, 17], PE: [ 98, 18]           end: string_end ```
+B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]     right: expr
+B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]       primary_expr
+B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]         literal
+B: [1477, 1489] PS: [ 98,  6], PE: [ 98, 18]           string
+B: [1477, 1478] PS: [ 98,  6], PE: [ 98,  7]             start: string_start ```
+B: [1478, 1483] PS: [ 98,  7], PE: [ 98, 12]             contents: string_contents
+B: [1478, 1483] PS: [ 98,  7], PE: [ 98, 12]               content: string_content `curl `
+B: [1483, 1488] PS: [ 98, 12], PE: [ 98, 17]             contents: interpolation
+B: [1483, 1484] PS: [ 98, 12], PE: [ 98, 13]               { `{`
+B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]               expr: expr
+B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]                 primary_expr
+B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]                   var_path
+B: [1484, 1487] PS: [ 98, 13], PE: [ 98, 16]                     root: identifier `url`
+B: [1487, 1488] PS: [ 98, 16], PE: [ 98, 17]               } `}`
+B: [1488, 1489] PS: [ 98, 17], PE: [ 98, 18]             end: string_end ```
 B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]   expr_stmt
-B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]     shell_cmd
-B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]       checked: checked_shell_cmd
-B: [1490, 1491] PS: [ 99,  0], PE: [ 99,  1]         $ `$`
-B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]         command: primary_expr
-B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]           var_path
-B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]             root: identifier `cmd`
-B: [1495, 1499] PS: [100,  0], PE: [100,  4]         body_type: shell_body_type
-B: [1495, 1499] PS: [100,  0], PE: [100,  4]           fail `fail`
-B: [1499, 1500] PS: [100,  4], PE: [100,  5]         : `:`
-B: [1505, 1533] PS: [101,  4], PE: [101, 32]         expr_stmt
-B: [1505, 1533] PS: [101,  4], PE: [101, 32]           primary_expr
-B: [1505, 1533] PS: [101,  4], PE: [101, 32]             call
-B: [1505, 1510] PS: [101,  4], PE: [101,  9]               func: identifier `print`
-B: [1510, 1533] PS: [101,  9], PE: [101, 32]               args: call_arg_list
-B: [1510, 1511] PS: [101,  9], PE: [101, 10]                 ( `(`
-B: [1511, 1532] PS: [101, 10], PE: [101, 31]                 primary_expr
-B: [1511, 1532] PS: [101, 10], PE: [101, 31]                   literal
-B: [1511, 1532] PS: [101, 10], PE: [101, 31]                     string
-B: [1511, 1512] PS: [101, 10], PE: [101, 11]                       start: string_start `"`
-B: [1512, 1531] PS: [101, 11], PE: [101, 30]                       contents: string_contents
-B: [1512, 1531] PS: [101, 11], PE: [101, 30]                         content: string_content `Oh no, curl failed!`
-B: [1531, 1532] PS: [101, 30], PE: [101, 31]                       end: string_end `"`
-B: [1532, 1533] PS: [101, 31], PE: [101, 32]                 ) `)`
+B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]     expr
+B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]       shell_cmd
+B: [1490, 1533] PS: [ 99,  0], PE: [101, 32]         checked: checked_shell_cmd
+B: [1490, 1491] PS: [ 99,  0], PE: [ 99,  1]           $ `$`
+B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]           command: expr
+B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]             primary_expr
+B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]               var_path
+B: [1491, 1494] PS: [ 99,  1], PE: [ 99,  4]                 root: identifier `cmd`
+B: [1495, 1499] PS: [100,  0], PE: [100,  4]           body_type: shell_body_type
+B: [1495, 1499] PS: [100,  0], PE: [100,  4]             fail `fail`
+B: [1499, 1500] PS: [100,  4], PE: [100,  5]           : `:`
+B: [1505, 1533] PS: [101,  4], PE: [101, 32]           expr_stmt
+B: [1505, 1533] PS: [101,  4], PE: [101, 32]             expr
+B: [1505, 1533] PS: [101,  4], PE: [101, 32]               primary_expr
+B: [1505, 1533] PS: [101,  4], PE: [101, 32]                 call
+B: [1505, 1510] PS: [101,  4], PE: [101,  9]                   func: identifier `print`
+B: [1510, 1511] PS: [101,  9], PE: [101, 10]                   ( `(`
+B: [1511, 1532] PS: [101, 10], PE: [101, 31]                   arg: expr
+B: [1511, 1532] PS: [101, 10], PE: [101, 31]                     primary_expr
+B: [1511, 1532] PS: [101, 10], PE: [101, 31]                       literal
+B: [1511, 1532] PS: [101, 10], PE: [101, 31]                         string
+B: [1511, 1512] PS: [101, 10], PE: [101, 11]                           start: string_start `"`
+B: [1512, 1531] PS: [101, 11], PE: [101, 30]                           contents: string_contents
+B: [1512, 1531] PS: [101, 11], PE: [101, 30]                             content: string_content `Oh no, curl failed!`
+B: [1531, 1532] PS: [101, 30], PE: [101, 31]                           end: string_end `"`
+B: [1532, 1533] PS: [101, 31], PE: [101, 32]                   ) `)`
 B: [1535, 1581] PS: [103,  0], PE: [105, 32]   expr_stmt
-B: [1535, 1581] PS: [103,  0], PE: [105, 32]     shell_cmd
-B: [1535, 1581] PS: [103,  0], PE: [105, 32]       checked: checked_shell_cmd
-B: [1535, 1536] PS: [103,  0], PE: [103,  1]         $ `$`
-B: [1536, 1539] PS: [103,  1], PE: [103,  4]         command: primary_expr
-B: [1536, 1539] PS: [103,  1], PE: [103,  4]           var_path
-B: [1536, 1539] PS: [103,  1], PE: [103,  4]             root: identifier `cmd`
-B: [1540, 1547] PS: [104,  0], PE: [104,  7]         body_type: shell_body_type
-B: [1540, 1547] PS: [104,  0], PE: [104,  7]           recover `recover`
-B: [1547, 1548] PS: [104,  7], PE: [104,  8]         : `:`
-B: [1553, 1581] PS: [105,  4], PE: [105, 32]         expr_stmt
-B: [1553, 1581] PS: [105,  4], PE: [105, 32]           primary_expr
-B: [1553, 1581] PS: [105,  4], PE: [105, 32]             call
-B: [1553, 1558] PS: [105,  4], PE: [105,  9]               func: identifier `print`
-B: [1558, 1581] PS: [105,  9], PE: [105, 32]               args: call_arg_list
-B: [1558, 1559] PS: [105,  9], PE: [105, 10]                 ( `(`
-B: [1559, 1580] PS: [105, 10], PE: [105, 31]                 primary_expr
-B: [1559, 1580] PS: [105, 10], PE: [105, 31]                   literal
-B: [1559, 1580] PS: [105, 10], PE: [105, 31]                     string
-B: [1559, 1560] PS: [105, 10], PE: [105, 11]                       start: string_start `"`
-B: [1560, 1579] PS: [105, 11], PE: [105, 30]                       contents: string_contents
-B: [1560, 1579] PS: [105, 11], PE: [105, 30]                         content: string_content `Oh no, curl failed!`
-B: [1579, 1580] PS: [105, 30], PE: [105, 31]                       end: string_end `"`
-B: [1580, 1581] PS: [105, 31], PE: [105, 32]                 ) `)`
+B: [1535, 1581] PS: [103,  0], PE: [105, 32]     expr
+B: [1535, 1581] PS: [103,  0], PE: [105, 32]       shell_cmd
+B: [1535, 1581] PS: [103,  0], PE: [105, 32]         checked: checked_shell_cmd
+B: [1535, 1536] PS: [103,  0], PE: [103,  1]           $ `$`
+B: [1536, 1539] PS: [103,  1], PE: [103,  4]           command: expr
+B: [1536, 1539] PS: [103,  1], PE: [103,  4]             primary_expr
+B: [1536, 1539] PS: [103,  1], PE: [103,  4]               var_path
+B: [1536, 1539] PS: [103,  1], PE: [103,  4]                 root: identifier `cmd`
+B: [1540, 1547] PS: [104,  0], PE: [104,  7]           body_type: shell_body_type
+B: [1540, 1547] PS: [104,  0], PE: [104,  7]             recover `recover`
+B: [1547, 1548] PS: [104,  7], PE: [104,  8]           : `:`
+B: [1553, 1581] PS: [105,  4], PE: [105, 32]           expr_stmt
+B: [1553, 1581] PS: [105,  4], PE: [105, 32]             expr
+B: [1553, 1581] PS: [105,  4], PE: [105, 32]               primary_expr
+B: [1553, 1581] PS: [105,  4], PE: [105, 32]                 call
+B: [1553, 1558] PS: [105,  4], PE: [105,  9]                   func: identifier `print`
+B: [1558, 1559] PS: [105,  9], PE: [105, 10]                   ( `(`
+B: [1559, 1580] PS: [105, 10], PE: [105, 31]                   arg: expr
+B: [1559, 1580] PS: [105, 10], PE: [105, 31]                     primary_expr
+B: [1559, 1580] PS: [105, 10], PE: [105, 31]                       literal
+B: [1559, 1580] PS: [105, 10], PE: [105, 31]                         string
+B: [1559, 1560] PS: [105, 10], PE: [105, 11]                           start: string_start `"`
+B: [1560, 1579] PS: [105, 11], PE: [105, 30]                           contents: string_contents
+B: [1560, 1579] PS: [105, 11], PE: [105, 30]                             content: string_content `Oh no, curl failed!`
+B: [1579, 1580] PS: [105, 30], PE: [105, 31]                           end: string_end `"`
+B: [1580, 1581] PS: [105, 31], PE: [105, 32]                   ) `)`
 B: [1583, 1595] PS: [107,  0], PE: [107, 12]   expr_stmt
-B: [1583, 1595] PS: [107,  0], PE: [107, 12]     shell_cmd
-B: [1583, 1595] PS: [107,  0], PE: [107, 12]       unsafe: unsafe_shell_cmd
-B: [1583, 1589] PS: [107,  0], PE: [107,  6]         unsafe_mod: unsafe `unsafe`
-B: [1590, 1591] PS: [107,  7], PE: [107,  8]         $ `$`
-B: [1591, 1595] PS: [107,  8], PE: [107, 12]         command: primary_expr
-B: [1591, 1595] PS: [107,  8], PE: [107, 12]           literal
-B: [1591, 1595] PS: [107,  8], PE: [107, 12]             string
-B: [1591, 1592] PS: [107,  8], PE: [107,  9]               start: string_start ```
-B: [1592, 1594] PS: [107,  9], PE: [107, 11]               contents: string_contents
-B: [1592, 1594] PS: [107,  9], PE: [107, 11]                 content: string_content `ls`
-B: [1594, 1595] PS: [107, 11], PE: [107, 12]               end: string_end ```
+B: [1583, 1595] PS: [107,  0], PE: [107, 12]     expr
+B: [1583, 1595] PS: [107,  0], PE: [107, 12]       shell_cmd
+B: [1583, 1595] PS: [107,  0], PE: [107, 12]         unsafe: unsafe_shell_cmd
+B: [1583, 1589] PS: [107,  0], PE: [107,  6]           unsafe_mod: unsafe `unsafe`
+B: [1590, 1591] PS: [107,  7], PE: [107,  8]           $ `$`
+B: [1591, 1595] PS: [107,  8], PE: [107, 12]           command: expr
+B: [1591, 1595] PS: [107,  8], PE: [107, 12]             primary_expr
+B: [1591, 1595] PS: [107,  8], PE: [107, 12]               literal
+B: [1591, 1595] PS: [107,  8], PE: [107, 12]                 string
+B: [1591, 1592] PS: [107,  8], PE: [107,  9]                   start: string_start ```
+B: [1592, 1594] PS: [107,  9], PE: [107, 11]                   contents: string_contents
+B: [1592, 1594] PS: [107,  9], PE: [107, 11]                     content: string_content `ls`
+B: [1594, 1595] PS: [107, 11], PE: [107, 12]                   end: string_end ```
 B: [1597, 1609] PS: [109,  0], PE: [109, 12]   assign
 B: [1597, 1601] PS: [109,  0], PE: [109,  4]     left: var_path
 B: [1597, 1601] PS: [109,  0], PE: [109,  4]       root: identifier `code`
 B: [1602, 1603] PS: [109,  5], PE: [109,  6]     = `=`
-B: [1604, 1609] PS: [109,  7], PE: [109, 12]     right: shell_cmd
-B: [1604, 1609] PS: [109,  7], PE: [109, 12]       critical: critical_shell_cmd
-B: [1604, 1606] PS: [109,  7], PE: [109,  9]         $! `$!`
-B: [1606, 1609] PS: [109,  9], PE: [109, 12]         command: primary_expr
-B: [1606, 1609] PS: [109,  9], PE: [109, 12]           var_path
-B: [1606, 1609] PS: [109,  9], PE: [109, 12]             root: identifier `cmd`
+B: [1604, 1609] PS: [109,  7], PE: [109, 12]     right: expr
+B: [1604, 1609] PS: [109,  7], PE: [109, 12]       shell_cmd
+B: [1604, 1609] PS: [109,  7], PE: [109, 12]         critical: critical_shell_cmd
+B: [1604, 1606] PS: [109,  7], PE: [109,  9]           $! `$!`
+B: [1606, 1609] PS: [109,  9], PE: [109, 12]           command: expr
+B: [1606, 1609] PS: [109,  9], PE: [109, 12]             primary_expr
+B: [1606, 1609] PS: [109,  9], PE: [109, 12]               var_path
+B: [1606, 1609] PS: [109,  9], PE: [109, 12]                 root: identifier `cmd`
 B: [1611, 1631] PS: [111,  0], PE: [111, 20]   assign
 B: [1611, 1615] PS: [111,  0], PE: [111,  4]     left: var_path
 B: [1611, 1615] PS: [111,  0], PE: [111,  4]       root: identifier `code`
-B: [1615, 1616] PS: [111,  4], PE: [111,  5]     left: , `,`
+B: [1615, 1616] PS: [111,  4], PE: [111,  5]     , `,`
 B: [1617, 1623] PS: [111,  6], PE: [111, 12]     left: var_path
 B: [1617, 1623] PS: [111,  6], PE: [111, 12]       root: identifier `stdout`
 B: [1624, 1625] PS: [111, 13], PE: [111, 14]     = `=`
-B: [1626, 1631] PS: [111, 15], PE: [111, 20]     right: shell_cmd
-B: [1626, 1631] PS: [111, 15], PE: [111, 20]       critical: critical_shell_cmd
-B: [1626, 1628] PS: [111, 15], PE: [111, 17]         $! `$!`
-B: [1628, 1631] PS: [111, 17], PE: [111, 20]         command: primary_expr
-B: [1628, 1631] PS: [111, 17], PE: [111, 20]           var_path
-B: [1628, 1631] PS: [111, 17], PE: [111, 20]             root: identifier `cmd`
+B: [1626, 1631] PS: [111, 15], PE: [111, 20]     right: expr
+B: [1626, 1631] PS: [111, 15], PE: [111, 20]       shell_cmd
+B: [1626, 1631] PS: [111, 15], PE: [111, 20]         critical: critical_shell_cmd
+B: [1626, 1628] PS: [111, 15], PE: [111, 17]           $! `$!`
+B: [1628, 1631] PS: [111, 17], PE: [111, 20]           command: expr
+B: [1628, 1631] PS: [111, 17], PE: [111, 20]             primary_expr
+B: [1628, 1631] PS: [111, 17], PE: [111, 20]               var_path
+B: [1628, 1631] PS: [111, 17], PE: [111, 20]                 root: identifier `cmd`
 B: [1633, 1661] PS: [113,  0], PE: [113, 28]   assign
 B: [1633, 1637] PS: [113,  0], PE: [113,  4]     left: var_path
 B: [1633, 1637] PS: [113,  0], PE: [113,  4]       root: identifier `code`
-B: [1637, 1638] PS: [113,  4], PE: [113,  5]     left: , `,`
+B: [1637, 1638] PS: [113,  4], PE: [113,  5]     , `,`
 B: [1639, 1645] PS: [113,  6], PE: [113, 12]     left: var_path
 B: [1639, 1645] PS: [113,  6], PE: [113, 12]       root: identifier `stdout`
-B: [1645, 1646] PS: [113, 12], PE: [113, 13]     left: , `,`
+B: [1645, 1646] PS: [113, 12], PE: [113, 13]     , `,`
 B: [1647, 1653] PS: [113, 14], PE: [113, 20]     left: var_path
 B: [1647, 1653] PS: [113, 14], PE: [113, 20]       root: identifier `stderr`
 B: [1654, 1655] PS: [113, 21], PE: [113, 22]     = `=`
-B: [1656, 1661] PS: [113, 23], PE: [113, 28]     right: shell_cmd
-B: [1656, 1661] PS: [113, 23], PE: [113, 28]       critical: critical_shell_cmd
-B: [1656, 1658] PS: [113, 23], PE: [113, 25]         $! `$!`
-B: [1658, 1661] PS: [113, 25], PE: [113, 28]         command: primary_expr
-B: [1658, 1661] PS: [113, 25], PE: [113, 28]           var_path
-B: [1658, 1661] PS: [113, 25], PE: [113, 28]             root: identifier `cmd`
+B: [1656, 1661] PS: [113, 23], PE: [113, 28]     right: expr
+B: [1656, 1661] PS: [113, 23], PE: [113, 28]       shell_cmd
+B: [1656, 1661] PS: [113, 23], PE: [113, 28]         critical: critical_shell_cmd
+B: [1656, 1658] PS: [113, 23], PE: [113, 25]           $! `$!`
+B: [1658, 1661] PS: [113, 25], PE: [113, 28]           command: expr
+B: [1658, 1661] PS: [113, 25], PE: [113, 28]             primary_expr
+B: [1658, 1661] PS: [113, 25], PE: [113, 28]               var_path
+B: [1658, 1661] PS: [113, 25], PE: [113, 28]                 root: identifier `cmd`
 B: [1663, 1683] PS: [115,  0], PE: [115, 20]   assign
 B: [1663, 1664] PS: [115,  0], PE: [115,  1]     left: var_path
 B: [1663, 1664] PS: [115,  0], PE: [115,  1]       root: identifier `_`
-B: [1664, 1665] PS: [115,  1], PE: [115,  2]     left: , `,`
+B: [1664, 1665] PS: [115,  1], PE: [115,  2]     , `,`
 B: [1666, 1667] PS: [115,  3], PE: [115,  4]     left: var_path
 B: [1666, 1667] PS: [115,  3], PE: [115,  4]       root: identifier `_`
-B: [1667, 1668] PS: [115,  4], PE: [115,  5]     left: , `,`
+B: [1667, 1668] PS: [115,  4], PE: [115,  5]     , `,`
 B: [1669, 1675] PS: [115,  6], PE: [115, 12]     left: var_path
 B: [1669, 1675] PS: [115,  6], PE: [115, 12]       root: identifier `stderr`
 B: [1676, 1677] PS: [115, 13], PE: [115, 14]     = `=`
-B: [1678, 1683] PS: [115, 15], PE: [115, 20]     right: shell_cmd
-B: [1678, 1683] PS: [115, 15], PE: [115, 20]       critical: critical_shell_cmd
-B: [1678, 1680] PS: [115, 15], PE: [115, 17]         $! `$!`
-B: [1680, 1683] PS: [115, 17], PE: [115, 20]         command: primary_expr
-B: [1680, 1683] PS: [115, 17], PE: [115, 20]           var_path
-B: [1680, 1683] PS: [115, 17], PE: [115, 20]             root: identifier `cmd`
+B: [1678, 1683] PS: [115, 15], PE: [115, 20]     right: expr
+B: [1678, 1683] PS: [115, 15], PE: [115, 20]       shell_cmd
+B: [1678, 1683] PS: [115, 15], PE: [115, 20]         critical: critical_shell_cmd
+B: [1678, 1680] PS: [115, 15], PE: [115, 17]           $! `$!`
+B: [1680, 1683] PS: [115, 17], PE: [115, 20]           command: expr
+B: [1680, 1683] PS: [115, 17], PE: [115, 20]             primary_expr
+B: [1680, 1683] PS: [115, 17], PE: [115, 20]               var_path
+B: [1680, 1683] PS: [115, 17], PE: [115, 20]                 root: identifier `cmd`
 B: [1685, 1715] PS: [117,  0], PE: [117, 30]   expr_stmt
-B: [1685, 1715] PS: [117,  0], PE: [117, 30]     shell_cmd
-B: [1685, 1715] PS: [117,  0], PE: [117, 30]       critical: critical_shell_cmd
-B: [1685, 1690] PS: [117,  0], PE: [117,  5]         quiet_mod: quiet `quiet`
-B: [1691, 1693] PS: [117,  6], PE: [117,  8]         $! `$!`
-B: [1693, 1715] PS: [117,  8], PE: [117, 30]         command: primary_expr
-B: [1693, 1715] PS: [117,  8], PE: [117, 30]           literal
-B: [1693, 1715] PS: [117,  8], PE: [117, 30]             string
-B: [1693, 1694] PS: [117,  8], PE: [117,  9]               start: string_start ```
-B: [1694, 1700] PS: [117,  9], PE: [117, 15]               contents: string_contents
-B: [1694, 1700] PS: [117,  9], PE: [117, 15]                 content: string_content `touch `
-B: [1700, 1710] PS: [117, 15], PE: [117, 25]               contents: interpolation
-B: [1700, 1701] PS: [117, 15], PE: [117, 16]                 { `{`
-B: [1701, 1709] PS: [117, 16], PE: [117, 24]                 expr: primary_expr
-B: [1701, 1709] PS: [117, 16], PE: [117, 24]                   var_path
-B: [1701, 1709] PS: [117, 16], PE: [117, 24]                     root: identifier `filename`
-B: [1709, 1710] PS: [117, 24], PE: [117, 25]                 } `}`
-B: [1710, 1714] PS: [117, 25], PE: [117, 29]               contents: string_contents
-B: [1710, 1714] PS: [117, 25], PE: [117, 29]                 content: string_content `.txt`
-B: [1714, 1715] PS: [117, 29], PE: [117, 30]               end: string_end ```
+B: [1685, 1715] PS: [117,  0], PE: [117, 30]     expr
+B: [1685, 1715] PS: [117,  0], PE: [117, 30]       shell_cmd
+B: [1685, 1715] PS: [117,  0], PE: [117, 30]         critical: critical_shell_cmd
+B: [1685, 1690] PS: [117,  0], PE: [117,  5]           quiet_mod: quiet `quiet`
+B: [1691, 1693] PS: [117,  6], PE: [117,  8]           $! `$!`
+B: [1693, 1715] PS: [117,  8], PE: [117, 30]           command: expr
+B: [1693, 1715] PS: [117,  8], PE: [117, 30]             primary_expr
+B: [1693, 1715] PS: [117,  8], PE: [117, 30]               literal
+B: [1693, 1715] PS: [117,  8], PE: [117, 30]                 string
+B: [1693, 1694] PS: [117,  8], PE: [117,  9]                   start: string_start ```
+B: [1694, 1700] PS: [117,  9], PE: [117, 15]                   contents: string_contents
+B: [1694, 1700] PS: [117,  9], PE: [117, 15]                     content: string_content `touch `
+B: [1700, 1710] PS: [117, 15], PE: [117, 25]                   contents: interpolation
+B: [1700, 1701] PS: [117, 15], PE: [117, 16]                     { `{`
+B: [1701, 1709] PS: [117, 16], PE: [117, 24]                     expr: expr
+B: [1701, 1709] PS: [117, 16], PE: [117, 24]                       primary_expr
+B: [1701, 1709] PS: [117, 16], PE: [117, 24]                         var_path
+B: [1701, 1709] PS: [117, 16], PE: [117, 24]                           root: identifier `filename`
+B: [1709, 1710] PS: [117, 24], PE: [117, 25]                     } `}`
+B: [1710, 1714] PS: [117, 25], PE: [117, 29]                   contents: string_contents
+B: [1710, 1714] PS: [117, 25], PE: [117, 29]                     content: string_content `.txt`
+B: [1714, 1715] PS: [117, 29], PE: [117, 30]                   end: string_end ```
 B: [1717, 1753] PS: [119,  0], PE: [119, 36]   expr_stmt
-B: [1717, 1753] PS: [119,  0], PE: [119, 36]     shell_cmd
-B: [1717, 1753] PS: [119,  0], PE: [119, 36]       unsafe: unsafe_shell_cmd
-B: [1717, 1723] PS: [119,  0], PE: [119,  6]         unsafe_mod: unsafe `unsafe`
-B: [1724, 1729] PS: [119,  7], PE: [119, 12]         quiet_mod: quiet `quiet`
-B: [1730, 1731] PS: [119, 13], PE: [119, 14]         $ `$`
-B: [1731, 1753] PS: [119, 14], PE: [119, 36]         command: primary_expr
-B: [1731, 1753] PS: [119, 14], PE: [119, 36]           literal
-B: [1731, 1753] PS: [119, 14], PE: [119, 36]             string
-B: [1731, 1732] PS: [119, 14], PE: [119, 15]               start: string_start ```
-B: [1732, 1738] PS: [119, 15], PE: [119, 21]               contents: string_contents
-B: [1732, 1738] PS: [119, 15], PE: [119, 21]                 content: string_content `touch `
-B: [1738, 1748] PS: [119, 21], PE: [119, 31]               contents: interpolation
-B: [1738, 1739] PS: [119, 21], PE: [119, 22]                 { `{`
-B: [1739, 1747] PS: [119, 22], PE: [119, 30]                 expr: primary_expr
-B: [1739, 1747] PS: [119, 22], PE: [119, 30]                   var_path
-B: [1739, 1747] PS: [119, 22], PE: [119, 30]                     root: identifier `filename`
-B: [1747, 1748] PS: [119, 30], PE: [119, 31]                 } `}`
-B: [1748, 1752] PS: [119, 31], PE: [119, 35]               contents: string_contents
-B: [1748, 1752] PS: [119, 31], PE: [119, 35]                 content: string_content `.txt`
-B: [1752, 1753] PS: [119, 35], PE: [119, 36]               end: string_end ```
+B: [1717, 1753] PS: [119,  0], PE: [119, 36]     expr
+B: [1717, 1753] PS: [119,  0], PE: [119, 36]       shell_cmd
+B: [1717, 1753] PS: [119,  0], PE: [119, 36]         unsafe: unsafe_shell_cmd
+B: [1717, 1723] PS: [119,  0], PE: [119,  6]           unsafe_mod: unsafe `unsafe`
+B: [1724, 1729] PS: [119,  7], PE: [119, 12]           quiet_mod: quiet `quiet`
+B: [1730, 1731] PS: [119, 13], PE: [119, 14]           $ `$`
+B: [1731, 1753] PS: [119, 14], PE: [119, 36]           command: expr
+B: [1731, 1753] PS: [119, 14], PE: [119, 36]             primary_expr
+B: [1731, 1753] PS: [119, 14], PE: [119, 36]               literal
+B: [1731, 1753] PS: [119, 14], PE: [119, 36]                 string
+B: [1731, 1732] PS: [119, 14], PE: [119, 15]                   start: string_start ```
+B: [1732, 1738] PS: [119, 15], PE: [119, 21]                   contents: string_contents
+B: [1732, 1738] PS: [119, 15], PE: [119, 21]                     content: string_content `touch `
+B: [1738, 1748] PS: [119, 21], PE: [119, 31]                   contents: interpolation
+B: [1738, 1739] PS: [119, 21], PE: [119, 22]                     { `{`
+B: [1739, 1747] PS: [119, 22], PE: [119, 30]                     expr: expr
+B: [1739, 1747] PS: [119, 22], PE: [119, 30]                       primary_expr
+B: [1739, 1747] PS: [119, 22], PE: [119, 30]                         var_path
+B: [1739, 1747] PS: [119, 22], PE: [119, 30]                           root: identifier `filename`
+B: [1747, 1748] PS: [119, 30], PE: [119, 31]                     } `}`
+B: [1748, 1752] PS: [119, 31], PE: [119, 35]                   contents: string_contents
+B: [1748, 1752] PS: [119, 31], PE: [119, 35]                     content: string_content `.txt`
+B: [1752, 1753] PS: [119, 35], PE: [119, 36]                   end: string_end ```
 B: [1754, 1790] PS: [120,  0], PE: [120, 36]   expr_stmt
-B: [1754, 1790] PS: [120,  0], PE: [120, 36]     shell_cmd
-B: [1754, 1790] PS: [120,  0], PE: [120, 36]       unsafe: unsafe_shell_cmd
-B: [1754, 1759] PS: [120,  0], PE: [120,  5]         quiet_mod: quiet `quiet`
-B: [1760, 1766] PS: [120,  6], PE: [120, 12]         unsafe_mod: unsafe `unsafe`
-B: [1767, 1768] PS: [120, 13], PE: [120, 14]         $ `$`
-B: [1768, 1790] PS: [120, 14], PE: [120, 36]         command: primary_expr
-B: [1768, 1790] PS: [120, 14], PE: [120, 36]           literal
-B: [1768, 1790] PS: [120, 14], PE: [120, 36]             string
-B: [1768, 1769] PS: [120, 14], PE: [120, 15]               start: string_start ```
-B: [1769, 1775] PS: [120, 15], PE: [120, 21]               contents: string_contents
-B: [1769, 1775] PS: [120, 15], PE: [120, 21]                 content: string_content `touch `
-B: [1775, 1785] PS: [120, 21], PE: [120, 31]               contents: interpolation
-B: [1775, 1776] PS: [120, 21], PE: [120, 22]                 { `{`
-B: [1776, 1784] PS: [120, 22], PE: [120, 30]                 expr: primary_expr
-B: [1776, 1784] PS: [120, 22], PE: [120, 30]                   var_path
-B: [1776, 1784] PS: [120, 22], PE: [120, 30]                     root: identifier `filename`
-B: [1784, 1785] PS: [120, 30], PE: [120, 31]                 } `}`
-B: [1785, 1789] PS: [120, 31], PE: [120, 35]               contents: string_contents
-B: [1785, 1789] PS: [120, 31], PE: [120, 35]                 content: string_content `.txt`
-B: [1789, 1790] PS: [120, 35], PE: [120, 36]               end: string_end ```
+B: [1754, 1790] PS: [120,  0], PE: [120, 36]     expr
+B: [1754, 1790] PS: [120,  0], PE: [120, 36]       shell_cmd
+B: [1754, 1790] PS: [120,  0], PE: [120, 36]         unsafe: unsafe_shell_cmd
+B: [1754, 1759] PS: [120,  0], PE: [120,  5]           quiet_mod: quiet `quiet`
+B: [1760, 1766] PS: [120,  6], PE: [120, 12]           unsafe_mod: unsafe `unsafe`
+B: [1767, 1768] PS: [120, 13], PE: [120, 14]           $ `$`
+B: [1768, 1790] PS: [120, 14], PE: [120, 36]           command: expr
+B: [1768, 1790] PS: [120, 14], PE: [120, 36]             primary_expr
+B: [1768, 1790] PS: [120, 14], PE: [120, 36]               literal
+B: [1768, 1790] PS: [120, 14], PE: [120, 36]                 string
+B: [1768, 1769] PS: [120, 14], PE: [120, 15]                   start: string_start ```
+B: [1769, 1775] PS: [120, 15], PE: [120, 21]                   contents: string_contents
+B: [1769, 1775] PS: [120, 15], PE: [120, 21]                     content: string_content `touch `
+B: [1775, 1785] PS: [120, 21], PE: [120, 31]                   contents: interpolation
+B: [1775, 1776] PS: [120, 21], PE: [120, 22]                     { `{`
+B: [1776, 1784] PS: [120, 22], PE: [120, 30]                     expr: expr
+B: [1776, 1784] PS: [120, 22], PE: [120, 30]                       primary_expr
+B: [1776, 1784] PS: [120, 22], PE: [120, 30]                         var_path
+B: [1776, 1784] PS: [120, 22], PE: [120, 30]                           root: identifier `filename`
+B: [1784, 1785] PS: [120, 30], PE: [120, 31]                     } `}`
+B: [1785, 1789] PS: [120, 31], PE: [120, 35]                   contents: string_contents
+B: [1785, 1789] PS: [120, 31], PE: [120, 35]                     content: string_content `.txt`
+B: [1789, 1790] PS: [120, 35], PE: [120, 36]                   end: string_end ```
 B: [1792, 1858] PS: [122,  0], PE: [124, 24]   defer_block
 B: [1792, 1797] PS: [122,  0], PE: [122,  5]     defer `defer`
 B: [1797, 1798] PS: [122,  5], PE: [122,  6]     : `:`
 B: [1803, 1833] PS: [123,  4], PE: [123, 34]     expr_stmt
-B: [1803, 1833] PS: [123,  4], PE: [123, 34]       shell_cmd
-B: [1803, 1833] PS: [123,  4], PE: [123, 34]         critical: critical_shell_cmd
-B: [1803, 1805] PS: [123,  4], PE: [123,  6]           $! `$!`
-B: [1805, 1833] PS: [123,  6], PE: [123, 34]           command: primary_expr
-B: [1805, 1833] PS: [123,  6], PE: [123, 34]             literal
-B: [1805, 1833] PS: [123,  6], PE: [123, 34]               string
-B: [1805, 1806] PS: [123,  6], PE: [123,  7]                 start: string_start ```
-B: [1806, 1832] PS: [123,  7], PE: [123, 33]                 contents: string_contents
-B: [1806, 1832] PS: [123,  7], PE: [123, 33]                   content: string_content `mv notes-tmp.txt notes.txt`
-B: [1832, 1833] PS: [123, 33], PE: [123, 34]                 end: string_end ```
+B: [1803, 1833] PS: [123,  4], PE: [123, 34]       expr
+B: [1803, 1833] PS: [123,  4], PE: [123, 34]         shell_cmd
+B: [1803, 1833] PS: [123,  4], PE: [123, 34]           critical: critical_shell_cmd
+B: [1803, 1805] PS: [123,  4], PE: [123,  6]             $! `$!`
+B: [1805, 1833] PS: [123,  6], PE: [123, 34]             command: expr
+B: [1805, 1833] PS: [123,  6], PE: [123, 34]               primary_expr
+B: [1805, 1833] PS: [123,  6], PE: [123, 34]                 literal
+B: [1805, 1833] PS: [123,  6], PE: [123, 34]                   string
+B: [1805, 1806] PS: [123,  6], PE: [123,  7]                     start: string_start ```
+B: [1806, 1832] PS: [123,  7], PE: [123, 33]                     contents: string_contents
+B: [1806, 1832] PS: [123,  7], PE: [123, 33]                       content: string_content `mv notes-tmp.txt notes.txt`
+B: [1832, 1833] PS: [123, 33], PE: [123, 34]                     end: string_end ```
 B: [1838, 1858] PS: [124,  4], PE: [124, 24]     expr_stmt
-B: [1838, 1858] PS: [124,  4], PE: [124, 24]       primary_expr
-B: [1838, 1858] PS: [124,  4], PE: [124, 24]         call
-B: [1838, 1843] PS: [124,  4], PE: [124,  9]           func: identifier `print`
-B: [1843, 1858] PS: [124,  9], PE: [124, 24]           args: call_arg_list
+B: [1838, 1858] PS: [124,  4], PE: [124, 24]       expr
+B: [1838, 1858] PS: [124,  4], PE: [124, 24]         primary_expr
+B: [1838, 1858] PS: [124,  4], PE: [124, 24]           call
+B: [1838, 1843] PS: [124,  4], PE: [124,  9]             func: identifier `print`
 B: [1843, 1844] PS: [124,  9], PE: [124, 10]             ( `(`
-B: [1844, 1857] PS: [124, 10], PE: [124, 23]             primary_expr
-B: [1844, 1857] PS: [124, 10], PE: [124, 23]               literal
-B: [1844, 1857] PS: [124, 10], PE: [124, 23]                 string
-B: [1844, 1845] PS: [124, 10], PE: [124, 11]                   start: string_start `"`
-B: [1845, 1856] PS: [124, 11], PE: [124, 22]                   contents: string_contents
-B: [1845, 1856] PS: [124, 11], PE: [124, 22]                     content: string_content `Moved back!`
-B: [1856, 1857] PS: [124, 22], PE: [124, 23]                   end: string_end `"`
+B: [1844, 1857] PS: [124, 10], PE: [124, 23]             arg: expr
+B: [1844, 1857] PS: [124, 10], PE: [124, 23]               primary_expr
+B: [1844, 1857] PS: [124, 10], PE: [124, 23]                 literal
+B: [1844, 1857] PS: [124, 10], PE: [124, 23]                   string
+B: [1844, 1845] PS: [124, 10], PE: [124, 11]                     start: string_start `"`
+B: [1845, 1856] PS: [124, 11], PE: [124, 22]                     contents: string_contents
+B: [1845, 1856] PS: [124, 11], PE: [124, 22]                       content: string_content `Moved back!`
+B: [1856, 1857] PS: [124, 22], PE: [124, 23]                     end: string_end `"`
 B: [1857, 1858] PS: [124, 23], PE: [124, 24]             ) `)`
 B: [1860, 1918] PS: [126,  0], PE: [126, 58]   expr_stmt
-B: [1860, 1918] PS: [126,  0], PE: [126, 58]     shell_cmd
-B: [1860, 1918] PS: [126,  0], PE: [126, 58]       critical: critical_shell_cmd
-B: [1860, 1862] PS: [126,  0], PE: [126,  2]         $! `$!`
-B: [1862, 1918] PS: [126,  2], PE: [126, 58]         command: primary_expr
-B: [1862, 1918] PS: [126,  2], PE: [126, 58]           literal
-B: [1862, 1918] PS: [126,  2], PE: [126, 58]             string
-B: [1862, 1863] PS: [126,  2], PE: [126,  3]               start: string_start ```
-B: [1863, 1899] PS: [126,  3], PE: [126, 39]               contents: string_contents
-B: [1863, 1899] PS: [126,  3], PE: [126, 39]                 content: string_content `sed -i '' "s/Version = .*/Version = `
-B: [1899, 1908] PS: [126, 39], PE: [126, 48]               contents: interpolation
-B: [1899, 1900] PS: [126, 39], PE: [126, 40]                 { `{`
-B: [1900, 1907] PS: [126, 40], PE: [126, 47]                 expr: primary_expr
-B: [1900, 1907] PS: [126, 40], PE: [126, 47]                   var_path
-B: [1900, 1907] PS: [126, 40], PE: [126, 47]                     root: identifier `version`
-B: [1907, 1908] PS: [126, 47], PE: [126, 48]                 } `}`
-B: [1908, 1911] PS: [126, 48], PE: [126, 51]               contents: string_contents
-B: [1908, 1911] PS: [126, 48], PE: [126, 51]                 content: string_content `/" `
-B: [1911, 1917] PS: [126, 51], PE: [126, 57]               contents: interpolation
-B: [1911, 1912] PS: [126, 51], PE: [126, 52]                 { `{`
-B: [1912, 1916] PS: [126, 52], PE: [126, 56]                 expr: primary_expr
-B: [1912, 1916] PS: [126, 52], PE: [126, 56]                   var_path
-B: [1912, 1916] PS: [126, 52], PE: [126, 56]                     root: identifier `path`
-B: [1916, 1917] PS: [126, 56], PE: [126, 57]                 } `}`
-B: [1917, 1918] PS: [126, 57], PE: [126, 58]               end: string_end ```
+B: [1860, 1918] PS: [126,  0], PE: [126, 58]     expr
+B: [1860, 1918] PS: [126,  0], PE: [126, 58]       shell_cmd
+B: [1860, 1918] PS: [126,  0], PE: [126, 58]         critical: critical_shell_cmd
+B: [1860, 1862] PS: [126,  0], PE: [126,  2]           $! `$!`
+B: [1862, 1918] PS: [126,  2], PE: [126, 58]           command: expr
+B: [1862, 1918] PS: [126,  2], PE: [126, 58]             primary_expr
+B: [1862, 1918] PS: [126,  2], PE: [126, 58]               literal
+B: [1862, 1918] PS: [126,  2], PE: [126, 58]                 string
+B: [1862, 1863] PS: [126,  2], PE: [126,  3]                   start: string_start ```
+B: [1863, 1899] PS: [126,  3], PE: [126, 39]                   contents: string_contents
+B: [1863, 1899] PS: [126,  3], PE: [126, 39]                     content: string_content `sed -i '' "s/Version = .*/Version = `
+B: [1899, 1908] PS: [126, 39], PE: [126, 48]                   contents: interpolation
+B: [1899, 1900] PS: [126, 39], PE: [126, 40]                     { `{`
+B: [1900, 1907] PS: [126, 40], PE: [126, 47]                     expr: expr
+B: [1900, 1907] PS: [126, 40], PE: [126, 47]                       primary_expr
+B: [1900, 1907] PS: [126, 40], PE: [126, 47]                         var_path
+B: [1900, 1907] PS: [126, 40], PE: [126, 47]                           root: identifier `version`
+B: [1907, 1908] PS: [126, 47], PE: [126, 48]                     } `}`
+B: [1908, 1911] PS: [126, 48], PE: [126, 51]                   contents: string_contents
+B: [1908, 1911] PS: [126, 48], PE: [126, 51]                     content: string_content `/" `
+B: [1911, 1917] PS: [126, 51], PE: [126, 57]                   contents: interpolation
+B: [1911, 1912] PS: [126, 51], PE: [126, 52]                     { `{`
+B: [1912, 1916] PS: [126, 52], PE: [126, 56]                     expr: expr
+B: [1912, 1916] PS: [126, 52], PE: [126, 56]                       primary_expr
+B: [1912, 1916] PS: [126, 52], PE: [126, 56]                         var_path
+B: [1912, 1916] PS: [126, 52], PE: [126, 56]                           root: identifier `path`
+B: [1916, 1917] PS: [126, 56], PE: [126, 57]                     } `}`
+B: [1917, 1918] PS: [126, 57], PE: [126, 58]                   end: string_end ```
 B: [1919, 1988] PS: [127,  0], PE: [129, 30]   errdefer_block
 B: [1919, 1927] PS: [127,  0], PE: [127,  8]     errdefer `errdefer`
 B: [1927, 1928] PS: [127,  8], PE: [127,  9]     : `:`
 B: [1933, 1957] PS: [128,  4], PE: [128, 28]     expr_stmt
-B: [1933, 1957] PS: [128,  4], PE: [128, 28]       primary_expr
-B: [1933, 1957] PS: [128,  4], PE: [128, 28]         call
-B: [1933, 1938] PS: [128,  4], PE: [128,  9]           func: identifier `print`
-B: [1938, 1957] PS: [128,  9], PE: [128, 28]           args: call_arg_list
+B: [1933, 1957] PS: [128,  4], PE: [128, 28]       expr
+B: [1933, 1957] PS: [128,  4], PE: [128, 28]         primary_expr
+B: [1933, 1957] PS: [128,  4], PE: [128, 28]           call
+B: [1933, 1938] PS: [128,  4], PE: [128,  9]             func: identifier `print`
 B: [1938, 1939] PS: [128,  9], PE: [128, 10]             ( `(`
-B: [1939, 1956] PS: [128, 10], PE: [128, 27]             primary_expr
-B: [1939, 1956] PS: [128, 10], PE: [128, 27]               literal
-B: [1939, 1956] PS: [128, 10], PE: [128, 27]                 string
-B: [1939, 1940] PS: [128, 10], PE: [128, 11]                   start: string_start `"`
-B: [1940, 1955] PS: [128, 11], PE: [128, 26]                   contents: string_contents
-B: [1940, 1955] PS: [128, 11], PE: [128, 26]                     content: string_content `Undoing bump...`
-B: [1955, 1956] PS: [128, 26], PE: [128, 27]                   end: string_end `"`
+B: [1939, 1956] PS: [128, 10], PE: [128, 27]             arg: expr
+B: [1939, 1956] PS: [128, 10], PE: [128, 27]               primary_expr
+B: [1939, 1956] PS: [128, 10], PE: [128, 27]                 literal
+B: [1939, 1956] PS: [128, 10], PE: [128, 27]                   string
+B: [1939, 1940] PS: [128, 10], PE: [128, 11]                     start: string_start `"`
+B: [1940, 1955] PS: [128, 11], PE: [128, 26]                     contents: string_contents
+B: [1940, 1955] PS: [128, 11], PE: [128, 26]                       content: string_content `Undoing bump...`
+B: [1955, 1956] PS: [128, 26], PE: [128, 27]                     end: string_end `"`
 B: [1956, 1957] PS: [128, 27], PE: [128, 28]             ) `)`
 B: [1962, 1988] PS: [129,  4], PE: [129, 30]     expr_stmt
-B: [1962, 1988] PS: [129,  4], PE: [129, 30]       shell_cmd
-B: [1962, 1988] PS: [129,  4], PE: [129, 30]         critical: critical_shell_cmd
-B: [1962, 1964] PS: [129,  4], PE: [129,  6]           $! `$!`
-B: [1964, 1988] PS: [129,  6], PE: [129, 30]           command: primary_expr
-B: [1964, 1988] PS: [129,  6], PE: [129, 30]             literal
-B: [1964, 1988] PS: [129,  6], PE: [129, 30]               string
-B: [1964, 1965] PS: [129,  6], PE: [129,  7]                 start: string_start ```
-B: [1965, 1981] PS: [129,  7], PE: [129, 23]                 contents: string_contents
-B: [1965, 1981] PS: [129,  7], PE: [129, 23]                   content: string_content `git checkout -- `
-B: [1981, 1987] PS: [129, 23], PE: [129, 29]                 contents: interpolation
-B: [1981, 1982] PS: [129, 23], PE: [129, 24]                   { `{`
-B: [1982, 1986] PS: [129, 24], PE: [129, 28]                   expr: primary_expr
-B: [1982, 1986] PS: [129, 24], PE: [129, 28]                     var_path
-B: [1982, 1986] PS: [129, 24], PE: [129, 28]                       root: identifier `path`
-B: [1986, 1987] PS: [129, 28], PE: [129, 29]                   } `}`
-B: [1987, 1988] PS: [129, 29], PE: [129, 30]                 end: string_end ```
+B: [1962, 1988] PS: [129,  4], PE: [129, 30]       expr
+B: [1962, 1988] PS: [129,  4], PE: [129, 30]         shell_cmd
+B: [1962, 1988] PS: [129,  4], PE: [129, 30]           critical: critical_shell_cmd
+B: [1962, 1964] PS: [129,  4], PE: [129,  6]             $! `$!`
+B: [1964, 1988] PS: [129,  6], PE: [129, 30]             command: expr
+B: [1964, 1988] PS: [129,  6], PE: [129, 30]               primary_expr
+B: [1964, 1988] PS: [129,  6], PE: [129, 30]                 literal
+B: [1964, 1988] PS: [129,  6], PE: [129, 30]                   string
+B: [1964, 1965] PS: [129,  6], PE: [129,  7]                     start: string_start ```
+B: [1965, 1981] PS: [129,  7], PE: [129, 23]                     contents: string_contents
+B: [1965, 1981] PS: [129,  7], PE: [129, 23]                       content: string_content `git checkout -- `
+B: [1981, 1987] PS: [129, 23], PE: [129, 29]                     contents: interpolation
+B: [1981, 1982] PS: [129, 23], PE: [129, 24]                       { `{`
+B: [1982, 1986] PS: [129, 24], PE: [129, 28]                       expr: expr
+B: [1982, 1986] PS: [129, 24], PE: [129, 28]                         primary_expr
+B: [1982, 1986] PS: [129, 24], PE: [129, 28]                           var_path
+B: [1982, 1986] PS: [129, 24], PE: [129, 28]                             root: identifier `path`
+B: [1986, 1987] PS: [129, 28], PE: [129, 29]                       } `}`
+B: [1987, 1988] PS: [129, 29], PE: [129, 30]                     end: string_end ```
 B: [1990, 2067] PS: [131,  0], PE: [133, 11]   if_stmt
 B: [1990, 1992] PS: [131,  0], PE: [131,  2]     if `if`
-B: [1993, 1998] PS: [131,  3], PE: [131,  8]     condition: primary_expr
-B: [1993, 1998] PS: [131,  3], PE: [131,  8]       literal
-B: [1993, 1998] PS: [131,  3], PE: [131,  8]         bool
-B: [1993, 1998] PS: [131,  3], PE: [131,  8]           false `false`
+B: [1993, 1998] PS: [131,  3], PE: [131,  8]     condition: expr
+B: [1993, 1998] PS: [131,  3], PE: [131,  8]       primary_expr
+B: [1993, 1998] PS: [131,  3], PE: [131,  8]         literal
+B: [1993, 1998] PS: [131,  3], PE: [131,  8]           bool
+B: [1993, 1998] PS: [131,  3], PE: [131,  8]             false `false`
 B: [1998, 1999] PS: [131,  8], PE: [131,  9]     : `:`
 B: [2001, 2030] PS: [131, 11], PE: [131, 40]     comment `// failure simulation point 1`
 B: [2035, 2055] PS: [132,  4], PE: [132, 24]     expr_stmt
-B: [2035, 2055] PS: [132,  4], PE: [132, 24]       primary_expr
-B: [2035, 2055] PS: [132,  4], PE: [132, 24]         call
-B: [2035, 2040] PS: [132,  4], PE: [132,  9]           func: identifier `print`
-B: [2040, 2055] PS: [132,  9], PE: [132, 24]           args: call_arg_list
+B: [2035, 2055] PS: [132,  4], PE: [132, 24]       expr
+B: [2035, 2055] PS: [132,  4], PE: [132, 24]         primary_expr
+B: [2035, 2055] PS: [132,  4], PE: [132, 24]           call
+B: [2035, 2040] PS: [132,  4], PE: [132,  9]             func: identifier `print`
 B: [2040, 2041] PS: [132,  9], PE: [132, 10]             ( `(`
-B: [2041, 2054] PS: [132, 10], PE: [132, 23]             primary_expr
-B: [2041, 2054] PS: [132, 10], PE: [132, 23]               literal
-B: [2041, 2054] PS: [132, 10], PE: [132, 23]                 string
-B: [2041, 2042] PS: [132, 10], PE: [132, 11]                   start: string_start `"`
-B: [2042, 2053] PS: [132, 11], PE: [132, 22]                   contents: string_contents
-B: [2042, 2053] PS: [132, 11], PE: [132, 22]                     content: string_content `Oh no! BAD!`
-B: [2053, 2054] PS: [132, 22], PE: [132, 23]                   end: string_end `"`
+B: [2041, 2054] PS: [132, 10], PE: [132, 23]             arg: expr
+B: [2041, 2054] PS: [132, 10], PE: [132, 23]               primary_expr
+B: [2041, 2054] PS: [132, 10], PE: [132, 23]                 literal
+B: [2041, 2054] PS: [132, 10], PE: [132, 23]                   string
+B: [2041, 2042] PS: [132, 10], PE: [132, 11]                     start: string_start `"`
+B: [2042, 2053] PS: [132, 11], PE: [132, 22]                     contents: string_contents
+B: [2042, 2053] PS: [132, 11], PE: [132, 22]                       content: string_content `Oh no! BAD!`
+B: [2053, 2054] PS: [132, 22], PE: [132, 23]                     end: string_end `"`
 B: [2054, 2055] PS: [132, 23], PE: [132, 24]             ) `)`
 B: [2060, 2067] PS: [133,  4], PE: [133, 11]     expr_stmt
-B: [2060, 2067] PS: [133,  4], PE: [133, 11]       primary_expr
-B: [2060, 2067] PS: [133,  4], PE: [133, 11]         call
-B: [2060, 2064] PS: [133,  4], PE: [133,  8]           func: identifier `exit`
-B: [2064, 2067] PS: [133,  8], PE: [133, 11]           args: call_arg_list
+B: [2060, 2067] PS: [133,  4], PE: [133, 11]       expr
+B: [2060, 2067] PS: [133,  4], PE: [133, 11]         primary_expr
+B: [2060, 2067] PS: [133,  4], PE: [133, 11]           call
+B: [2060, 2064] PS: [133,  4], PE: [133,  8]             func: identifier `exit`
 B: [2064, 2065] PS: [133,  8], PE: [133,  9]             ( `(`
-B: [2065, 2066] PS: [133,  9], PE: [133, 10]             primary_expr
-B: [2065, 2066] PS: [133,  9], PE: [133, 10]               literal
-B: [2065, 2066] PS: [133,  9], PE: [133, 10]                 int `1`
+B: [2065, 2066] PS: [133,  9], PE: [133, 10]             arg: expr
+B: [2065, 2066] PS: [133,  9], PE: [133, 10]               primary_expr
+B: [2065, 2066] PS: [133,  9], PE: [133, 10]                 literal
+B: [2065, 2066] PS: [133,  9], PE: [133, 10]                   int `1`
 B: [2066, 2067] PS: [133, 10], PE: [133, 11]             ) `)`
 B: [2069, 2087] PS: [135,  0], PE: [135, 18]   expr_stmt
-B: [2069, 2087] PS: [135,  0], PE: [135, 18]     shell_cmd
-B: [2069, 2087] PS: [135,  0], PE: [135, 18]       critical: critical_shell_cmd
-B: [2069, 2071] PS: [135,  0], PE: [135,  2]         $! `$!`
-B: [2071, 2087] PS: [135,  2], PE: [135, 18]         command: primary_expr
-B: [2071, 2087] PS: [135,  2], PE: [135, 18]           literal
-B: [2071, 2087] PS: [135,  2], PE: [135, 18]             string
-B: [2071, 2072] PS: [135,  2], PE: [135,  3]               start: string_start ```
-B: [2072, 2080] PS: [135,  3], PE: [135, 11]               contents: string_contents
-B: [2072, 2080] PS: [135,  3], PE: [135, 11]                 content: string_content `git add `
-B: [2080, 2086] PS: [135, 11], PE: [135, 17]               contents: interpolation
-B: [2080, 2081] PS: [135, 11], PE: [135, 12]                 { `{`
-B: [2081, 2085] PS: [135, 12], PE: [135, 16]                 expr: primary_expr
-B: [2081, 2085] PS: [135, 12], PE: [135, 16]                   var_path
-B: [2081, 2085] PS: [135, 12], PE: [135, 16]                     root: identifier `path`
-B: [2085, 2086] PS: [135, 16], PE: [135, 17]                 } `}`
-B: [2086, 2087] PS: [135, 17], PE: [135, 18]               end: string_end ```
+B: [2069, 2087] PS: [135,  0], PE: [135, 18]     expr
+B: [2069, 2087] PS: [135,  0], PE: [135, 18]       shell_cmd
+B: [2069, 2087] PS: [135,  0], PE: [135, 18]         critical: critical_shell_cmd
+B: [2069, 2071] PS: [135,  0], PE: [135,  2]           $! `$!`
+B: [2071, 2087] PS: [135,  2], PE: [135, 18]           command: expr
+B: [2071, 2087] PS: [135,  2], PE: [135, 18]             primary_expr
+B: [2071, 2087] PS: [135,  2], PE: [135, 18]               literal
+B: [2071, 2087] PS: [135,  2], PE: [135, 18]                 string
+B: [2071, 2072] PS: [135,  2], PE: [135,  3]                   start: string_start ```
+B: [2072, 2080] PS: [135,  3], PE: [135, 11]                   contents: string_contents
+B: [2072, 2080] PS: [135,  3], PE: [135, 11]                     content: string_content `git add `
+B: [2080, 2086] PS: [135, 11], PE: [135, 17]                   contents: interpolation
+B: [2080, 2081] PS: [135, 11], PE: [135, 12]                     { `{`
+B: [2081, 2085] PS: [135, 12], PE: [135, 16]                     expr: expr
+B: [2081, 2085] PS: [135, 12], PE: [135, 16]                       primary_expr
+B: [2081, 2085] PS: [135, 12], PE: [135, 16]                         var_path
+B: [2081, 2085] PS: [135, 12], PE: [135, 16]                           root: identifier `path`
+B: [2085, 2086] PS: [135, 16], PE: [135, 17]                     } `}`
+B: [2086, 2087] PS: [135, 17], PE: [135, 18]                   end: string_end ```
 B: [2088, 2162] PS: [136,  0], PE: [138, 31]   errdefer_block
 B: [2088, 2096] PS: [136,  0], PE: [136,  8]     errdefer `errdefer`
 B: [2096, 2097] PS: [136,  8], PE: [136,  9]     : `:`
 B: [2102, 2130] PS: [137,  4], PE: [137, 32]     expr_stmt
-B: [2102, 2130] PS: [137,  4], PE: [137, 32]       primary_expr
-B: [2102, 2130] PS: [137,  4], PE: [137, 32]         call
-B: [2102, 2107] PS: [137,  4], PE: [137,  9]           func: identifier `print`
-B: [2107, 2130] PS: [137,  9], PE: [137, 32]           args: call_arg_list
+B: [2102, 2130] PS: [137,  4], PE: [137, 32]       expr
+B: [2102, 2130] PS: [137,  4], PE: [137, 32]         primary_expr
+B: [2102, 2130] PS: [137,  4], PE: [137, 32]           call
+B: [2102, 2107] PS: [137,  4], PE: [137,  9]             func: identifier `print`
 B: [2107, 2108] PS: [137,  9], PE: [137, 10]             ( `(`
-B: [2108, 2129] PS: [137, 10], PE: [137, 31]             primary_expr
-B: [2108, 2129] PS: [137, 10], PE: [137, 31]               literal
-B: [2108, 2129] PS: [137, 10], PE: [137, 31]                 string
-B: [2108, 2109] PS: [137, 10], PE: [137, 11]                   start: string_start `"`
-B: [2109, 2119] PS: [137, 11], PE: [137, 21]                   contents: string_contents
-B: [2109, 2119] PS: [137, 11], PE: [137, 21]                     content: string_content `Resetting `
-B: [2119, 2125] PS: [137, 21], PE: [137, 27]                   contents: interpolation
-B: [2119, 2120] PS: [137, 21], PE: [137, 22]                     { `{`
-B: [2120, 2124] PS: [137, 22], PE: [137, 26]                     expr: primary_expr
-B: [2120, 2124] PS: [137, 22], PE: [137, 26]                       var_path
-B: [2120, 2124] PS: [137, 22], PE: [137, 26]                         root: identifier `path`
-B: [2124, 2125] PS: [137, 26], PE: [137, 27]                     } `}`
-B: [2125, 2128] PS: [137, 27], PE: [137, 30]                   contents: string_contents
-B: [2125, 2128] PS: [137, 27], PE: [137, 30]                     content: string_content `...`
-B: [2128, 2129] PS: [137, 30], PE: [137, 31]                   end: string_end `"`
+B: [2108, 2129] PS: [137, 10], PE: [137, 31]             arg: expr
+B: [2108, 2129] PS: [137, 10], PE: [137, 31]               primary_expr
+B: [2108, 2129] PS: [137, 10], PE: [137, 31]                 literal
+B: [2108, 2129] PS: [137, 10], PE: [137, 31]                   string
+B: [2108, 2109] PS: [137, 10], PE: [137, 11]                     start: string_start `"`
+B: [2109, 2119] PS: [137, 11], PE: [137, 21]                     contents: string_contents
+B: [2109, 2119] PS: [137, 11], PE: [137, 21]                       content: string_content `Resetting `
+B: [2119, 2125] PS: [137, 21], PE: [137, 27]                     contents: interpolation
+B: [2119, 2120] PS: [137, 21], PE: [137, 22]                       { `{`
+B: [2120, 2124] PS: [137, 22], PE: [137, 26]                       expr: expr
+B: [2120, 2124] PS: [137, 22], PE: [137, 26]                         primary_expr
+B: [2120, 2124] PS: [137, 22], PE: [137, 26]                           var_path
+B: [2120, 2124] PS: [137, 22], PE: [137, 26]                             root: identifier `path`
+B: [2124, 2125] PS: [137, 26], PE: [137, 27]                       } `}`
+B: [2125, 2128] PS: [137, 27], PE: [137, 30]                     contents: string_contents
+B: [2125, 2128] PS: [137, 27], PE: [137, 30]                       content: string_content `...`
+B: [2128, 2129] PS: [137, 30], PE: [137, 31]                     end: string_end `"`
 B: [2129, 2130] PS: [137, 31], PE: [137, 32]             ) `)`
 B: [2135, 2162] PS: [138,  4], PE: [138, 31]     assign
 B: [2135, 2136] PS: [138,  4], PE: [138,  5]       left: var_path
 B: [2135, 2136] PS: [138,  4], PE: [138,  5]         root: identifier `_`
-B: [2136, 2137] PS: [138,  5], PE: [138,  6]       left: , `,`
+B: [2136, 2137] PS: [138,  5], PE: [138,  6]       , `,`
 B: [2138, 2139] PS: [138,  7], PE: [138,  8]       left: var_path
 B: [2138, 2139] PS: [138,  7], PE: [138,  8]         root: identifier `_`
 B: [2140, 2141] PS: [138,  9], PE: [138, 10]       = `=`
-B: [2142, 2162] PS: [138, 11], PE: [138, 31]       right: shell_cmd
-B: [2142, 2162] PS: [138, 11], PE: [138, 31]         critical: critical_shell_cmd
-B: [2142, 2144] PS: [138, 11], PE: [138, 13]           $! `$!`
-B: [2144, 2162] PS: [138, 13], PE: [138, 31]           command: primary_expr
-B: [2144, 2162] PS: [138, 13], PE: [138, 31]             literal
-B: [2144, 2162] PS: [138, 13], PE: [138, 31]               string
-B: [2144, 2145] PS: [138, 13], PE: [138, 14]                 start: string_start ```
-B: [2145, 2155] PS: [138, 14], PE: [138, 24]                 contents: string_contents
-B: [2145, 2155] PS: [138, 14], PE: [138, 24]                   content: string_content `git reset `
-B: [2155, 2161] PS: [138, 24], PE: [138, 30]                 contents: interpolation
-B: [2155, 2156] PS: [138, 24], PE: [138, 25]                   { `{`
-B: [2156, 2160] PS: [138, 25], PE: [138, 29]                   expr: primary_expr
-B: [2156, 2160] PS: [138, 25], PE: [138, 29]                     var_path
-B: [2156, 2160] PS: [138, 25], PE: [138, 29]                       root: identifier `path`
-B: [2160, 2161] PS: [138, 29], PE: [138, 30]                   } `}`
-B: [2161, 2162] PS: [138, 30], PE: [138, 31]                 end: string_end ```
+B: [2142, 2162] PS: [138, 11], PE: [138, 31]       right: expr
+B: [2142, 2162] PS: [138, 11], PE: [138, 31]         shell_cmd
+B: [2142, 2162] PS: [138, 11], PE: [138, 31]           critical: critical_shell_cmd
+B: [2142, 2144] PS: [138, 11], PE: [138, 13]             $! `$!`
+B: [2144, 2162] PS: [138, 13], PE: [138, 31]             command: expr
+B: [2144, 2162] PS: [138, 13], PE: [138, 31]               primary_expr
+B: [2144, 2162] PS: [138, 13], PE: [138, 31]                 literal
+B: [2144, 2162] PS: [138, 13], PE: [138, 31]                   string
+B: [2144, 2145] PS: [138, 13], PE: [138, 14]                     start: string_start ```
+B: [2145, 2155] PS: [138, 14], PE: [138, 24]                     contents: string_contents
+B: [2145, 2155] PS: [138, 14], PE: [138, 24]                       content: string_content `git reset `
+B: [2155, 2161] PS: [138, 24], PE: [138, 30]                     contents: interpolation
+B: [2155, 2156] PS: [138, 24], PE: [138, 25]                       { `{`
+B: [2156, 2160] PS: [138, 25], PE: [138, 29]                       expr: expr
+B: [2156, 2160] PS: [138, 25], PE: [138, 29]                         primary_expr
+B: [2156, 2160] PS: [138, 25], PE: [138, 29]                           var_path
+B: [2156, 2160] PS: [138, 25], PE: [138, 29]                             root: identifier `path`
+B: [2160, 2161] PS: [138, 29], PE: [138, 30]                       } `}`
+B: [2161, 2162] PS: [138, 30], PE: [138, 31]                     end: string_end ```
 B: [2164, 2239] PS: [140,  0], PE: [142, 11]   if_stmt
 B: [2164, 2166] PS: [140,  0], PE: [140,  2]     if `if`
-B: [2167, 2172] PS: [140,  3], PE: [140,  8]     condition: primary_expr
-B: [2167, 2172] PS: [140,  3], PE: [140,  8]       literal
-B: [2167, 2172] PS: [140,  3], PE: [140,  8]         bool
-B: [2167, 2172] PS: [140,  3], PE: [140,  8]           false `false`
+B: [2167, 2172] PS: [140,  3], PE: [140,  8]     condition: expr
+B: [2167, 2172] PS: [140,  3], PE: [140,  8]       primary_expr
+B: [2167, 2172] PS: [140,  3], PE: [140,  8]         literal
+B: [2167, 2172] PS: [140,  3], PE: [140,  8]           bool
+B: [2167, 2172] PS: [140,  3], PE: [140,  8]             false `false`
 B: [2172, 2173] PS: [140,  8], PE: [140,  9]     : `:`
 B: [2175, 2204] PS: [140, 11], PE: [140, 40]     comment `// failure simulation point 2`
 B: [2209, 2227] PS: [141,  4], PE: [141, 22]     expr_stmt
-B: [2209, 2227] PS: [141,  4], PE: [141, 22]       primary_expr
-B: [2209, 2227] PS: [141,  4], PE: [141, 22]         call
-B: [2209, 2214] PS: [141,  4], PE: [141,  9]           func: identifier `print`
-B: [2214, 2227] PS: [141,  9], PE: [141, 22]           args: call_arg_list
+B: [2209, 2227] PS: [141,  4], PE: [141, 22]       expr
+B: [2209, 2227] PS: [141,  4], PE: [141, 22]         primary_expr
+B: [2209, 2227] PS: [141,  4], PE: [141, 22]           call
+B: [2209, 2214] PS: [141,  4], PE: [141,  9]             func: identifier `print`
 B: [2214, 2215] PS: [141,  9], PE: [141, 10]             ( `(`
-B: [2215, 2226] PS: [141, 10], PE: [141, 21]             primary_expr
-B: [2215, 2226] PS: [141, 10], PE: [141, 21]               literal
-B: [2215, 2226] PS: [141, 10], PE: [141, 21]                 string
-B: [2215, 2216] PS: [141, 10], PE: [141, 11]                   start: string_start `"`
-B: [2216, 2225] PS: [141, 11], PE: [141, 20]                   contents: string_contents
-B: [2216, 2225] PS: [141, 11], PE: [141, 20]                     content: string_content `Bah! BAD!`
-B: [2225, 2226] PS: [141, 20], PE: [141, 21]                   end: string_end `"`
+B: [2215, 2226] PS: [141, 10], PE: [141, 21]             arg: expr
+B: [2215, 2226] PS: [141, 10], PE: [141, 21]               primary_expr
+B: [2215, 2226] PS: [141, 10], PE: [141, 21]                 literal
+B: [2215, 2226] PS: [141, 10], PE: [141, 21]                   string
+B: [2215, 2216] PS: [141, 10], PE: [141, 11]                     start: string_start `"`
+B: [2216, 2225] PS: [141, 11], PE: [141, 20]                     contents: string_contents
+B: [2216, 2225] PS: [141, 11], PE: [141, 20]                       content: string_content `Bah! BAD!`
+B: [2225, 2226] PS: [141, 20], PE: [141, 21]                     end: string_end `"`
 B: [2226, 2227] PS: [141, 21], PE: [141, 22]             ) `)`
 B: [2232, 2239] PS: [142,  4], PE: [142, 11]     expr_stmt
-B: [2232, 2239] PS: [142,  4], PE: [142, 11]       primary_expr
-B: [2232, 2239] PS: [142,  4], PE: [142, 11]         call
-B: [2232, 2236] PS: [142,  4], PE: [142,  8]           func: identifier `exit`
-B: [2236, 2239] PS: [142,  8], PE: [142, 11]           args: call_arg_list
+B: [2232, 2239] PS: [142,  4], PE: [142, 11]       expr
+B: [2232, 2239] PS: [142,  4], PE: [142, 11]         primary_expr
+B: [2232, 2239] PS: [142,  4], PE: [142, 11]           call
+B: [2232, 2236] PS: [142,  4], PE: [142,  8]             func: identifier `exit`
 B: [2236, 2237] PS: [142,  8], PE: [142,  9]             ( `(`
-B: [2237, 2238] PS: [142,  9], PE: [142, 10]             primary_expr
-B: [2237, 2238] PS: [142,  9], PE: [142, 10]               literal
-B: [2237, 2238] PS: [142,  9], PE: [142, 10]                 int `1`
+B: [2237, 2238] PS: [142,  9], PE: [142, 10]             arg: expr
+B: [2237, 2238] PS: [142,  9], PE: [142, 10]               primary_expr
+B: [2237, 2238] PS: [142,  9], PE: [142, 10]                 literal
+B: [2237, 2238] PS: [142,  9], PE: [142, 10]                   int `1`
 B: [2238, 2239] PS: [142, 10], PE: [142, 11]             ) `)`
 B: [2241, 2286] PS: [144,  0], PE: [144, 45]   expr_stmt
-B: [2241, 2286] PS: [144,  0], PE: [144, 45]     shell_cmd
-B: [2241, 2286] PS: [144,  0], PE: [144, 45]       critical: critical_shell_cmd
-B: [2241, 2243] PS: [144,  0], PE: [144,  2]         $! `$!`
-B: [2243, 2286] PS: [144,  2], PE: [144, 45]         command: primary_expr
-B: [2243, 2286] PS: [144,  2], PE: [144, 45]           literal
-B: [2243, 2286] PS: [144,  2], PE: [144, 45]             string
-B: [2243, 2244] PS: [144,  2], PE: [144,  3]               start: string_start ```
-B: [2244, 2275] PS: [144,  3], PE: [144, 34]               contents: string_contents
-B: [2244, 2275] PS: [144,  3], PE: [144, 34]                 content: string_content `git commit -m "Bump version to `
-B: [2275, 2284] PS: [144, 34], PE: [144, 43]               contents: interpolation
-B: [2275, 2276] PS: [144, 34], PE: [144, 35]                 { `{`
-B: [2276, 2283] PS: [144, 35], PE: [144, 42]                 expr: primary_expr
-B: [2276, 2283] PS: [144, 35], PE: [144, 42]                   var_path
-B: [2276, 2283] PS: [144, 35], PE: [144, 42]                     root: identifier `version`
-B: [2283, 2284] PS: [144, 42], PE: [144, 43]                 } `}`
-B: [2284, 2285] PS: [144, 43], PE: [144, 44]               contents: string_contents
-B: [2284, 2285] PS: [144, 43], PE: [144, 44]                 content: string_content `"`
-B: [2285, 2286] PS: [144, 44], PE: [144, 45]               end: string_end ```
+B: [2241, 2286] PS: [144,  0], PE: [144, 45]     expr
+B: [2241, 2286] PS: [144,  0], PE: [144, 45]       shell_cmd
+B: [2241, 2286] PS: [144,  0], PE: [144, 45]         critical: critical_shell_cmd
+B: [2241, 2243] PS: [144,  0], PE: [144,  2]           $! `$!`
+B: [2243, 2286] PS: [144,  2], PE: [144, 45]           command: expr
+B: [2243, 2286] PS: [144,  2], PE: [144, 45]             primary_expr
+B: [2243, 2286] PS: [144,  2], PE: [144, 45]               literal
+B: [2243, 2286] PS: [144,  2], PE: [144, 45]                 string
+B: [2243, 2244] PS: [144,  2], PE: [144,  3]                   start: string_start ```
+B: [2244, 2275] PS: [144,  3], PE: [144, 34]                   contents: string_contents
+B: [2244, 2275] PS: [144,  3], PE: [144, 34]                     content: string_content `git commit -m "Bump version to `
+B: [2275, 2284] PS: [144, 34], PE: [144, 43]                   contents: interpolation
+B: [2275, 2276] PS: [144, 34], PE: [144, 35]                     { `{`
+B: [2276, 2283] PS: [144, 35], PE: [144, 42]                     expr: expr
+B: [2276, 2283] PS: [144, 35], PE: [144, 42]                       primary_expr
+B: [2276, 2283] PS: [144, 35], PE: [144, 42]                         var_path
+B: [2276, 2283] PS: [144, 35], PE: [144, 42]                           root: identifier `version`
+B: [2283, 2284] PS: [144, 42], PE: [144, 43]                     } `}`
+B: [2284, 2285] PS: [144, 43], PE: [144, 44]                   contents: string_contents
+B: [2284, 2285] PS: [144, 43], PE: [144, 44]                     content: string_content `"`
+B: [2285, 2286] PS: [144, 44], PE: [144, 45]                   end: string_end ```
