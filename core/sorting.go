@@ -11,7 +11,7 @@ func sortColumns(
 	orderedCols := make([][]interface{}, 0, len(fields))
 	colsByName := make(map[string][]interface{})
 	for _, field := range fields {
-		values := interp.env.GetByToken(field, RslArrayT).([]interface{})
+		values := interp.env.GetByToken(field, RslListT).([]interface{})
 		orderedCols = append(orderedCols, values)
 		colsByName[field.GetLexeme()] = values
 	}

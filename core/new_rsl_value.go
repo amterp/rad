@@ -1,6 +1,10 @@
 package core
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import (
+	"fmt"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 type RslValue struct {
 	// int64, float64, RslString, bool stored as values
@@ -8,6 +12,25 @@ type RslValue struct {
 	// lists are *RslList
 	// maps are *RslMap
 	Val interface{}
+}
+
+func (v RslValue) Type() RslTypeEnum {
+	switch v.Val.(type) {
+	case int64:
+		return RslIntT
+	case float64:
+		return RslFloatT
+	case RslString:
+		return RslStringT
+	case bool:
+		return RslBoolT
+	case *RslList:
+		return RslListT
+	case *RslMap:
+		return RslMapT
+	default:
+		panic(fmt.Sprintf("Bug! Unhandled RSL type: %T", v.Val))
+	}
 }
 
 func (v RslValue) Index(i *Interpreter, idxNode *ts.Node) RslValue {

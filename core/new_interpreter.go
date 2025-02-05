@@ -87,7 +87,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue {
 	defer func() {
 		if r := recover(); r != nil {
-			i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Paniced here")
+			i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Panic'd here")
 		}
 	}()
 	return i.unsafeEval(node, numExpectedOutputs)
@@ -101,6 +101,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
+	case K_BINARY_OP, K_COMPARISON_OP:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		left := i.getChild(node, F_LEFT)
+		op := i.getChild(node, F_OP)
+		right := i.getChild(node, F_RIGHT)
+		return newRslValues(i, node, i.executeBinary(node, left, right, op))
 
 	// LEAF NODES
 	case K_VAR_PATH:
@@ -122,6 +128,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := strconv.ParseInt(asStr, 10, 64) // todo unhandled err
 		return newRslValues(i, node, asInt)
+	//case K_STRING:
+	//	i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+
 	case K_LIST:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		entries := i.getChildren(node, F_LIST_ENTRY)
