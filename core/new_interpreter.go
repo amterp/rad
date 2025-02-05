@@ -38,7 +38,7 @@ func (i *Interpreter) recursivelyRun(node *ts.Node) {
 func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	switch node.Kind() {
 	// no-ops
-	case K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
+	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
 		return
 
 	case K_SOURCE_FILE:
@@ -52,57 +52,36 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		numExpectedOutputs := len(leftVarPaths)
 		values := i.evaluate(right, numExpectedOutputs)
 		for idx, leftVarPath := range leftVarPaths {
-			v := values[idx]
+			rightValue := values[idx]
+
 			rootIdentifier := i.getChild(&leftVarPath, F_ROOT) // identifier required by grammar
 			rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
+			indexings := i.getChildren(&leftVarPath, F_INDEXING)
+			val, ok := i.env.GetVar(rootIdentifierName)
 
-			indexing := i.getChildren(&leftVarPath, F_INDEXING)
-			if len(indexing) > 0 {
-				// editing collection, so it must exist
-				envVar, ok := i.env.GetVar(rootIdentifierName)
-				if !ok {
-					i.errorf(rootIdentifier, "Undefined variable, cannot assign: %s", rootIdentifierName)
-				}
-				// todo
-				_ = envVar
+			if len(indexings) == 0 {
+				// simple assignment, no collection lookups
+				i.env.SetVar(rootIdentifierName, rightValue)
+				continue
 			}
-			i.env.SetVar(rootIdentifierName, v)
+
+			// modifying collection
+			if !ok {
+				// modifying collection must exist
+				i.errorf(rootIdentifier, "Undefined variable: %s", rootIdentifierName)
+			}
+			for _, index := range indexings[:len(indexings)-1] {
+				val = val.Index(i, &index)
+			}
+			// val is now the collection to modify, using the last index
+			lastIndex := indexings[len(indexings)-1]
+			val.ModifyIdx(i, &lastIndex, rightValue)
 		}
 	case K_EXPR_STMT:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
-}
-
-type RslValue struct {
-	// int64, float64, RslString, bool stored as values
-	// collections (lists, maps) stored as pointers
-	// lists are *[]interface{}
-	// maps are *RslMap
-	Val interface{}
-}
-
-func (i *Interpreter) newRslValue(node *ts.Node, value interface{}) RslValue {
-	switch coerced := value.(type) {
-	case RslValue:
-		return coerced
-	case string:
-		return RslValue{Val: NewRslString(coerced)}
-	case int64, float64, bool:
-		return RslValue{Val: value}
-	case []interface{}:
-		return RslValue{Val: &value}
-	case RslMap:
-		return RslValue{Val: &value}
-	default:
-		i.errorf(node, "Unsupported value type: %T", value)
-		panic(UNREACHABLE)
-	}
-}
-
-func (i *Interpreter) newRslValues(node *ts.Node, value interface{}) []RslValue {
-	return []RslValue{i.newRslValue(node, value)}
 }
 
 func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue {
@@ -127,34 +106,30 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 	case K_VAR_PATH:
 		rootIdentifier := i.getChild(node, F_ROOT) // identifier required by grammar
 		rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
-		indexing := i.getChildren(node, F_INDEXING)
-		if len(indexing) > 0 {
-			// editing collection, so it must exist
-			envVar, ok := i.env.GetVar(rootIdentifierName)
-			if !ok {
-				i.errorf(rootIdentifier, "Undefined variable, cannot assign: %s", rootIdentifierName)
-			}
-			// todo reuse above
-			_ = envVar
-		}
+		indexings := i.getChildren(node, F_INDEXING)
 		val, ok := i.env.GetVar(rootIdentifierName)
 		if !ok {
 			i.errorf(rootIdentifier, "Undefined variable: %s", rootIdentifierName)
 		}
-		return i.newRslValues(node, val)
+		if len(indexings) > 0 {
+			for _, index := range indexings {
+				val = val.Index(i, &index)
+			}
+		}
+		return newRslValues(i, node, val)
 	case K_INT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := strconv.ParseInt(asStr, 10, 64) // todo unhandled err
-		return i.newRslValues(node, asInt)
+		return newRslValues(i, node, asInt)
 	case K_LIST:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		entries := i.getChildren(node, F_LIST_ENTRY)
-		values := make([]interface{}, len(entries))
-		for idx, entry := range entries {
-			values[idx] = i.evaluate(&entry, 1)[0].Val
+		list := NewRslList()
+		for _, entry := range entries {
+			list.Append(i.evaluate(&entry, 1)[0])
 		}
-		return i.newRslValues(node, values)
+		return newRslValues(i, node, list)
 	case K_CALL:
 		funcName := i.getChild(node, F_FUNC)
 		args := i.getChildren(node, F_ARG)
