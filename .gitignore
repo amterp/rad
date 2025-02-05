@@ -5,6 +5,7 @@ bin
 resp.json
 test.rsl
 test2.rsl
+test3.rsl
 docs-web/site
 
 ### Go ###

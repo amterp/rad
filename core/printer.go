@@ -221,6 +221,9 @@ func (p *stdPrinter) CtxErrorExit(ctx ErrorCtx) {
 	p.CtxErrorCodeExit(ctx, 1)
 }
 
+// todo
+//   - print two preceding lines for additional context?
+//   - include line numbers in msg
 func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
 		// todo do nice src code extraction + print + point

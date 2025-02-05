@@ -9,7 +9,7 @@ const (
 	RslIntT
 	RslFloatT
 	RslBoolT
-	RslArrayT
+	RslListT
 	RslMapT
 )
 
@@ -95,7 +95,7 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 	case RslBoolT:
 		_, ok := val.(bool)
 		return ok
-	case RslArrayT:
+	case RslListT:
 		_, ok := val.([]interface{})
 		return ok
 	case RslMapT:
@@ -113,7 +113,7 @@ func (r *RslTypeEnum) IsArray() bool {
 		return false
 	}
 
-	return *r == RslArrayT
+	return *r == RslListT
 }
 
 type RslArgType struct {
@@ -207,7 +207,6 @@ const (
 	OP_GREATER_EQUAL
 	OP_LESS
 	OP_LESS_EQUAL
-	//OpMod
 	//OpPow?
 )
 

@@ -6,6 +6,12 @@ type RslList struct {
 	Values []RslValue
 }
 
+func NewRslList() *RslList {
+	return &RslList{
+		Values: make([]RslValue, 0),
+	}
+}
+
 func (l *RslList) Append(value RslValue) {
 	l.Values = append(l.Values, value)
 }
@@ -30,8 +36,17 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	l.Values[idxInt] = value
 }
 
-func NewRslList() *RslList {
-	return &RslList{
-		Values: make([]RslValue, 0),
+func (l *RslList) Contains(val interface{}) bool {
+	for _, elem := range l.Values {
+		if elem.Val == val {
+			return true
+		}
 	}
+	return false
+}
+
+func (l *RslList) JoinWith(other *RslList) RslValue {
+	newList := NewRslList()
+	newList.Values = append(l.Values, other.Values...)
+	return newRslValue(nil, nil, newList)
 }

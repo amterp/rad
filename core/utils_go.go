@@ -3,6 +3,7 @@ package core
 import (
 	"sort"
 	"strings"
+	"sync"
 	"unicode/utf8"
 )
 
@@ -45,4 +46,16 @@ func StrLen(str string) int {
 
 func IsBlank(str string) bool {
 	return strings.TrimSpace(str) == ""
+}
+
+func Memoize[T any](f func() T) func() T {
+	var once sync.Once
+	var result T
+
+	return func() T {
+		once.Do(func() {
+			result = f()
+		})
+		return result
+	}
 }
