@@ -54,18 +54,17 @@ if version:
 
     $!`git add .`
 
+    version = 'v' + version
     clean = unsafe $`git status --porcelain | grep -q .`
     if clean:
-        version = 'v' + version
         if confirm("Tag & push ({version})? [y/n] > "):
             $!`git tag {version}`
             $!`git push origin main --tags`
 
     else:
         $!`git diff HEAD --compact-summary`
-        if confirm("Commit, tag & push? [y/n] > "):
+        if confirm("Commit, tag & push ({version})? [y/n] > "):
             $!`git commit`
-            version = 'v' + version
             $!`git tag {version}`
             $!`git push origin main --tags`
 

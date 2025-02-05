@@ -1,0 +1,62 @@
+=====
+Assignment
+=====
+a = 1
+a[0] = 2
+a.b.c = 3
+a[0].b["c"] = 4
+=====
+B: [ 0, 41] PS: [0,  0], PE: [4,  0] source_file
+B: [ 0,  5] PS: [0,  0], PE: [0,  5]   assign
+B: [ 0,  1] PS: [0,  0], PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0], PE: [0,  1]       root: identifier `a`
+B: [ 2,  3] PS: [0,  2], PE: [0,  3]     = `=`
+B: [ 4,  5] PS: [0,  4], PE: [0,  5]     right: primary_expr
+B: [ 4,  5] PS: [0,  4], PE: [0,  5]       literal
+B: [ 4,  5] PS: [0,  4], PE: [0,  5]         int `1`
+B: [ 6, 14] PS: [1,  0], PE: [1,  8]   assign
+B: [ 6, 10] PS: [1,  0], PE: [1,  4]     left: var_path
+B: [ 6,  7] PS: [1,  0], PE: [1,  1]       root: identifier `a`
+B: [ 7,  8] PS: [1,  1], PE: [1,  2]       indexing: [ `[`
+B: [ 8,  9] PS: [1,  2], PE: [1,  3]       indexing: primary_expr
+B: [ 8,  9] PS: [1,  2], PE: [1,  3]         literal
+B: [ 8,  9] PS: [1,  2], PE: [1,  3]           int `0`
+B: [ 9, 10] PS: [1,  3], PE: [1,  4]       indexing: ] `]`
+B: [11, 12] PS: [1,  5], PE: [1,  6]     = `=`
+B: [13, 14] PS: [1,  7], PE: [1,  8]     right: primary_expr
+B: [13, 14] PS: [1,  7], PE: [1,  8]       literal
+B: [13, 14] PS: [1,  7], PE: [1,  8]         int `2`
+B: [15, 24] PS: [2,  0], PE: [2,  9]   assign
+B: [15, 20] PS: [2,  0], PE: [2,  5]     left: var_path
+B: [15, 16] PS: [2,  0], PE: [2,  1]       root: identifier `a`
+B: [16, 17] PS: [2,  1], PE: [2,  2]       indexing: . `.`
+B: [17, 18] PS: [2,  2], PE: [2,  3]       indexing: identifier `b`
+B: [18, 19] PS: [2,  3], PE: [2,  4]       indexing: . `.`
+B: [19, 20] PS: [2,  4], PE: [2,  5]       indexing: identifier `c`
+B: [21, 22] PS: [2,  6], PE: [2,  7]     = `=`
+B: [23, 24] PS: [2,  8], PE: [2,  9]     right: primary_expr
+B: [23, 24] PS: [2,  8], PE: [2,  9]       literal
+B: [23, 24] PS: [2,  8], PE: [2,  9]         int `3`
+B: [25, 40] PS: [3,  0], PE: [3, 15]   assign
+B: [25, 36] PS: [3,  0], PE: [3, 11]     left: var_path
+B: [25, 26] PS: [3,  0], PE: [3,  1]       root: identifier `a`
+B: [26, 27] PS: [3,  1], PE: [3,  2]       indexing: [ `[`
+B: [27, 28] PS: [3,  2], PE: [3,  3]       indexing: primary_expr
+B: [27, 28] PS: [3,  2], PE: [3,  3]         literal
+B: [27, 28] PS: [3,  2], PE: [3,  3]           int `0`
+B: [28, 29] PS: [3,  3], PE: [3,  4]       indexing: ] `]`
+B: [29, 30] PS: [3,  4], PE: [3,  5]       indexing: . `.`
+B: [30, 31] PS: [3,  5], PE: [3,  6]       indexing: identifier `b`
+B: [31, 32] PS: [3,  6], PE: [3,  7]       indexing: [ `[`
+B: [32, 35] PS: [3,  7], PE: [3, 10]       indexing: primary_expr
+B: [32, 35] PS: [3,  7], PE: [3, 10]         literal
+B: [32, 35] PS: [3,  7], PE: [3, 10]           string
+B: [32, 33] PS: [3,  7], PE: [3,  8]             start: string_start `"`
+B: [33, 34] PS: [3,  8], PE: [3,  9]             contents: string_contents
+B: [33, 34] PS: [3,  8], PE: [3,  9]               content: string_content `c`
+B: [34, 35] PS: [3,  9], PE: [3, 10]             end: string_end `"`
+B: [35, 36] PS: [3, 10], PE: [3, 11]       indexing: ] `]`
+B: [37, 38] PS: [3, 12], PE: [3, 13]     = `=`
+B: [39, 40] PS: [3, 14], PE: [3, 15]     right: primary_expr
+B: [39, 40] PS: [3, 14], PE: [3, 15]       literal
+B: [39, 40] PS: [3, 14], PE: [3, 15]         int `4`
