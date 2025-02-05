@@ -492,11 +492,11 @@ B: [ 541,  570] PS: [ 42,  4], PE: [ 43, 19]     rad_if_stmt
 B: [ 541,  543] PS: [ 42,  4], PE: [ 42,  6]       if `if`
 B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]       condition: expr
 B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]         comparison_op
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]           primary_expr
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]           left: primary_expr
 B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]             var_path
 B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]               root: identifier `a`
-B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]           ops: > `>`
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]           primary_expr
+B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]           op: > `>`
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]           right: primary_expr
 B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]             var_path
 B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]               root: identifier `b`
 B: [ 549,  550] PS: [ 42, 12], PE: [ 42, 13]       : `:`
@@ -550,11 +550,11 @@ B: [ 642,  754] PS: [ 51,  0], PE: [ 57, 21]   if_stmt
 B: [ 642,  644] PS: [ 51,  0], PE: [ 51,  2]     if `if`
 B: [ 645,  652] PS: [ 51,  3], PE: [ 51, 10]     condition: expr
 B: [ 645,  652] PS: [ 51,  3], PE: [ 51, 10]       comparison_op
-B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]         primary_expr
+B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]         left: primary_expr
 B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]           var_path
 B: [ 645,  648] PS: [ 51,  3], PE: [ 51,  6]             root: identifier `bah`
-B: [ 649,  650] PS: [ 51,  7], PE: [ 51,  8]         ops: > `>`
-B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]         primary_expr
+B: [ 649,  650] PS: [ 51,  7], PE: [ 51,  8]         op: > `>`
+B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]         right: primary_expr
 B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]           literal
 B: [ 651,  652] PS: [ 51,  9], PE: [ 51, 10]             int `5`
 B: [ 652,  653] PS: [ 51, 10], PE: [ 51, 11]     : `:`
@@ -570,11 +570,11 @@ B: [ 677,  754] PS: [ 54,  4], PE: [ 57, 21]     if_stmt
 B: [ 677,  679] PS: [ 54,  4], PE: [ 54,  6]       if `if`
 B: [ 680,  689] PS: [ 54,  7], PE: [ 54, 16]       condition: expr
 B: [ 680,  689] PS: [ 54,  7], PE: [ 54, 16]         comparison_op
-B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]           primary_expr
+B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]           left: primary_expr
 B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]             var_path
 B: [ 680,  684] PS: [ 54,  7], PE: [ 54, 11]               root: identifier `blah`
-B: [ 685,  687] PS: [ 54, 12], PE: [ 54, 14]           ops: == `==`
-B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]           primary_expr
+B: [ 685,  687] PS: [ 54, 12], PE: [ 54, 14]           op: == `==`
+B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]           right: primary_expr
 B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]             literal
 B: [ 688,  689] PS: [ 54, 15], PE: [ 54, 16]               int `2`
 B: [ 689,  690] PS: [ 54, 16], PE: [ 54, 17]       : `:`
@@ -591,11 +591,11 @@ B: [ 714,  718] PS: [ 56,  4], PE: [ 56,  8]         else `else`
 B: [ 719,  721] PS: [ 56,  9], PE: [ 56, 11]         if `if`
 B: [ 722,  731] PS: [ 56, 12], PE: [ 56, 21]         condition: expr
 B: [ 722,  731] PS: [ 56, 12], PE: [ 56, 21]           comparison_op
-B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]             primary_expr
+B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]             left: primary_expr
 B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]               var_path
 B: [ 722,  726] PS: [ 56, 12], PE: [ 56, 16]                 root: identifier `blah`
-B: [ 727,  729] PS: [ 56, 17], PE: [ 56, 19]             ops: == `==`
-B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]             primary_expr
+B: [ 727,  729] PS: [ 56, 17], PE: [ 56, 19]             op: == `==`
+B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]             right: primary_expr
 B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]               literal
 B: [ 730,  731] PS: [ 56, 20], PE: [ 56, 21]                 int `3`
 B: [ 731,  732] PS: [ 56, 21], PE: [ 56, 22]         : `:`

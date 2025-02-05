@@ -2,9 +2,10 @@ package rts
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/fatih/color"
 	ts "github.com/tree-sitter/go-tree-sitter"
-	"strings"
 )
 
 var escapedReplacer = strings.NewReplacer(
