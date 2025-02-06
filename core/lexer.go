@@ -683,7 +683,7 @@ func (l *Lexer) emitIndentTokens(numWhitespaces int, isSpaces bool) {
 }
 
 func (l *Lexer) appendToken(token Token) {
-	RP.RadDebug(fmt.Sprintf("Appending token: %v", token))
+	RP.RadDebugf(fmt.Sprintf("Appending token: %v", token))
 	l.Tokens = append(l.Tokens, token)
 }
 

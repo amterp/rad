@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime/debug"
 	"strconv"
+	"strings"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -158,17 +159,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return newRslValues(i, node, "\t")
 	case K_INTERPOLATION:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		expr := i.getChild(node, F_EXPR)
-		format := i.getChild(node, F_FORMAT)
-		exprResult := i.evaluate(expr, 1)[0]
-		// todo apply format
-		_ = format
-		if rslStr, ok := exprResult.TryGetStr(); ok {
-			// maintain RslString attributes
-			return newRslValues(i, node, rslStr)
-		} else {
-			return newRslValues(i, node, NewRslString(ToPrintable(exprResult)))
-		}
+		exprResult := evaluateInterpolation(i, node)
+		return newRslValues(i, node, exprResult)
 	case K_ESC_BACKSLASH:
 		return newRslValues(i, node, "\\")
 	case K_LIST:
@@ -191,6 +183,82 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		i.errorf(node, "Unsupported expr node kind: %s", node.Kind())
 		panic(UNREACHABLE)
 	}
+}
+
+func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
+	exprNode := i.getChild(interpNode, F_EXPR)
+	formatNode := i.getChild(interpNode, F_FORMAT)
+
+	exprResult := i.evaluate(exprNode, 1)[0]
+	resultType := exprResult.Type()
+
+	if formatNode == nil {
+		if rslStr, ok := exprResult.TryGetStr(); ok {
+			// maintain RslString attributes
+			return newRslValue(i, exprNode, rslStr)
+		} else {
+			return newRslValue(i, exprNode, NewRslString(ToPrintable(exprResult)))
+		}
+	}
+
+	alignmentNode := i.getChild(formatNode, F_ALIGNMENT)
+	paddingNode := i.getChild(formatNode, F_PADDING)
+	precisionNode := i.getChild(formatNode, F_PRECISION)
+
+	var goFmt strings.Builder
+	goFmt.WriteString("%")
+
+	if alignmentNode != nil {
+		alignment := i.sd.Src[alignmentNode.StartByte():alignmentNode.EndByte()]
+		if alignment == "<" {
+			goFmt.WriteString("-")
+		}
+	}
+
+	if paddingNode != nil {
+		padding := i.evaluate(paddingNode, 1)[0].RequireInt(i, paddingNode)
+		if exprStr, ok := exprResult.TryGetStr(); ok {
+			// is string, need to account for color chars (increase padding len if present)
+			plainLen := exprStr.Len()
+			coloredLen := int64(StrLen(exprStr.String()))
+			diff := coloredLen - plainLen
+			padding += diff
+		}
+
+		goFmt.WriteString(fmt.Sprint(padding))
+	}
+
+	if precisionNode != nil {
+		precision := i.evaluate(precisionNode, 1)[0].RequireInt(i, precisionNode)
+
+		if resultType != RslIntT && resultType != RslFloatT {
+			precisionStr := "." + i.sd.Src[precisionNode.StartByte():precisionNode.EndByte()]
+			i.errorf(interpNode, "Cannot format %s with a precision %q", TypeAsString(exprResult), precisionStr)
+		}
+
+		goFmt.WriteString(fmt.Sprintf(".%d", precision))
+	}
+
+	formatted := func() string {
+		switch resultType {
+		case RslIntT:
+			if precisionNode == nil {
+				goFmt.WriteString("d")
+				return fmt.Sprintf(goFmt.String(), int(exprResult.Val.(int64)))
+			} else {
+				goFmt.WriteString("f")
+				return fmt.Sprintf(goFmt.String(), float64(exprResult.Val.(int64)))
+			}
+		case RslFloatT:
+			goFmt.WriteString("f")
+			return fmt.Sprintf(goFmt.String(), exprResult.Val)
+		default:
+			goFmt.WriteString("s")
+			return fmt.Sprintf(goFmt.String(), ToPrintable(exprResult))
+		}
+	}()
+
+	return newRslValue(i, interpNode, formatted)
 }
 
 func (i *Interpreter) getChildren(node *ts.Node, fieldName string) []ts.Node {

@@ -40,17 +40,17 @@ func (r *RadRunner) Run() error {
 
 	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
 
-	RP.RadDebug(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
+	RP.RadDebugf(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
 	if FlagRadDebug.Value {
 		RFlagSet.VisitAll(func(flag *pflag.Flag) {
-			RP.RadDebug(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
+			RP.RadDebugf(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
 		})
 	}
 
 	color.NoColor = FlagNoColor.Value
 	for _, mockResponse := range FlagMockResponse.Value {
 		RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
-		RP.RadDebug(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
+		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
 	}
 
 	// now let's see if we were given a script to run.
@@ -82,7 +82,7 @@ func (r *RadRunner) Run() error {
 			rslSourceCode = readSource(ScriptPath)
 		}
 
-		RP.RadDebug(fmt.Sprintf("Read src code (%d chars), parsing...", len(rslSourceCode)))
+		RP.RadDebugf(fmt.Sprintf("Read src code (%d chars), parsing...", len(rslSourceCode)))
 		r.scriptData = ExtractMetadata(rslSourceCode)
 	}
 

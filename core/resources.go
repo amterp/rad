@@ -71,6 +71,6 @@ func resolveFinalPath(pathFromRslScript string) string {
 	}
 
 	finalPath := filepath.Clean(filepath.Join(ScriptDir, pathFromRslScript))
-	RP.RadDebug(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRslScript, finalPath))
+	RP.RadDebugf(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRslScript, finalPath))
 	return finalPath
 }
