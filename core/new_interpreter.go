@@ -10,8 +10,11 @@ import (
 )
 
 type Interpreter struct {
-	sd  *ScriptData
-	env *Env
+	sd           *ScriptData
+	env          *Env
+	forLoopLevel int
+	breaking     bool
+	continuing   bool
 }
 
 func NewInterpreter(scriptData *ScriptData) *Interpreter {
@@ -39,14 +42,13 @@ func (i *Interpreter) recursivelyRun(node *ts.Node) {
 func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	switch node.Kind() {
 	// no-ops
-	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
-		return
-
 	case K_SOURCE_FILE:
 		children := node.Children(node.Walk())
 		for _, child := range children {
 			i.recursivelyRun(&child)
 		}
+	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
+		return
 	case K_ASSIGN:
 		leftVarPathNodes := i.getChildren(node, F_LEFT)
 		rightNodes := i.getChild(node, F_RIGHT)
@@ -59,11 +61,40 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		leftVarPathNode := i.getChild(node, F_LEFT)
 		rightNode := i.getChild(node, F_RIGHT)
 		opNode := i.getChild(node, F_OP)
-
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue)
 	case K_EXPR_STMT:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
+	case K_BREAK_STMT:
+		if i.forLoopLevel > 0 {
+			i.breaking = true
+		} else {
+			i.errorf(node, "Cannot 'break' outside of a for loop")
+		}
+	case K_CONTINUE_STMT:
+		if i.forLoopLevel > 0 {
+			i.continuing = true
+		} else {
+			i.errorf(node, "Cannot 'continue' outside of a for loop")
+		}
+	case K_IF_STMT:
+		altNodes := i.getChildren(node, F_ALT)
+		for _, altNode := range altNodes {
+			condNode := i.getChild(&altNode, F_CONDITION)
+
+			shouldExecute := true
+			if condNode != nil {
+				condResult := i.evaluate(condNode, 1)[0].TruthyFalsy()
+				shouldExecute = condResult
+			}
+
+			if shouldExecute {
+				stmtNodes := i.getChildren(&altNode, F_STMT)
+				i.runBlock(stmtNodes, false)
+				break
+			}
+		}
+
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
@@ -331,4 +362,23 @@ func (i *Interpreter) doVarPathAssign(leftVarPathNode *ts.Node, rightValue RslVa
 	// val is now the collection to modify, using the last index
 	lastIndex := indexings[len(indexings)-1]
 	val.ModifyIdx(i, &lastIndex, rightValue)
+}
+
+// if stmts, for loops
+func (i *Interpreter) runBlock(stmtNodes []ts.Node, isForLoop bool) {
+	for _, stmtNode := range stmtNodes {
+		i.recursivelyRun(&stmtNode)
+		if i.breaking {
+			if isForLoop {
+				i.breaking = false
+			}
+			break
+		}
+		if i.continuing {
+			if isForLoop {
+				i.continuing = false
+			}
+			continue
+		}
+	}
 }

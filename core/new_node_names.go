@@ -43,6 +43,9 @@ const (
 	K_PLUS             = "+"
 	K_MINUS            = "-"
 	K_NOT              = "not"
+	K_IF_STMT          = "if_stmt"
+	K_BREAK_STMT       = "break_stmt"
+	K_CONTINUE_STMT    = "continue_stmt"
 
 	// Field names
 	F_LEFT       = "left"
@@ -62,4 +65,7 @@ const (
 	F_MAP_ENTRY  = "map_entry"
 	F_KEY        = "key"
 	F_VALUE      = "value"
+	F_ALT        = "alt"
+	F_CONDITION  = "condition"
+	F_STMT       = "stmt"
 )
