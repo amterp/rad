@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	padding = "  "
+	tblPadding = "  "
 )
 
 var (
@@ -69,7 +69,7 @@ func (w *TblWriter) Render() {
 	// todo this should almost definitely be mocked out for tests
 	termWidth, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
-		RP.RadDebug(fmt.Sprintf("Error getting terminal width, setting to 9999: %v\n", err))
+		RP.RadDebugf(fmt.Sprintf("Error getting terminal width, setting to 9999: %v\n", err))
 		termWidth = 9999
 	}
 
@@ -94,12 +94,12 @@ func (w *TblWriter) Render() {
 	for _, l := range colWidths {
 		widthNeeded += l
 	}
-	widthNeeded += len(padding) * (w.numColumns - 1)
+	widthNeeded += len(tblPadding) * (w.numColumns - 1)
 	// +3 to allow room for e.g. scrollbars and other paraphernalia which may be present in people's terminals and
 	// doesn't get counted by term.GetSize
 	widthNeeded += 3
 
-	RP.RadDebug(fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths))
+	RP.RadDebugf(fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths))
 	if widthNeeded > termWidth {
 		// we're over our size limit, as determined by the width of the terminal.
 		// 1. determined the total amount of chars we need to cut down
@@ -122,7 +122,7 @@ func (w *TblWriter) Render() {
 		for i, chars := range charsToRemove {
 			colWidths[i] -= chars
 		}
-		RP.RadDebug(fmt.Sprintf(
+		RP.RadDebugf(fmt.Sprintf(
 			"CharsToReduce: %d, EachColEntitldChars: %d, CharsOverEntitl: %v, TotCharsOverEntitl: %d, PropOfOver: %v, CharsToRm: %v, ColWidthsAfter: %v",
 			charsToReduce, eachColumnEntitledChars, charsOverEntitlement, totalCharsOverEntitlement, proportionOfOver, charsToRemove, colWidths))
 	}
@@ -159,7 +159,7 @@ func (w *TblWriter) Render() {
 	w.tbl.SetAutoWrapText(false)
 	w.tbl.SetHeaderLine(false)
 	w.tbl.EnableBorder(false)
-	w.tbl.SetTablePadding(padding)
+	w.tbl.SetTablePadding(tblPadding)
 	w.tbl.SetNoWhiteSpace(true)
 
 	w.tbl.SetHeader(w.headers)

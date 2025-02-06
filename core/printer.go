@@ -63,7 +63,7 @@ type Printer interface {
 
 	// For Rad (tool) developers to debug the Rad tool, not RSL scripts. Enabled with --RAD-DEBUG.
 	// RSL writers should generally not need to use this.
-	RadDebug(msg string)
+	RadDebugf(format string, args ...interface{})
 
 	// For regular output to the script user
 	Print(msg string)
@@ -154,12 +154,12 @@ func (p *stdPrinter) ScriptDebug(msg string) {
 	}
 }
 
-func (p *stdPrinter) RadDebug(msg string) {
+func (p *stdPrinter) RadDebugf(format string, args ...interface{}) {
 	if p.isRadDebug {
 		if p.isShellMode {
-			fmt.Fprintf(p.stdErr, "RAD DEBUG: %s\n", msg)
+			fmt.Fprintf(p.stdErr, "RAD DEBUG: %s\n", fmt.Sprintf(format, args...))
 		} else {
-			fmt.Fprintf(p.stdOut, "RAD DEBUG: %s\n", msg)
+			fmt.Fprintf(p.stdOut, "RAD DEBUG: %s\n", fmt.Sprintf(format, args...))
 		}
 	}
 }

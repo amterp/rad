@@ -402,7 +402,7 @@ func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
 					// we only debug log. we expect the error that occurred to already have been logged.
 					// we might also be here only because a deferred statement invoked a clean exit, for example, so
 					// this is arguably also sometimes just standard flow.
-					RP.RadDebug(fmt.Sprintf("Recovered from panic in deferred statement: %v", r))
+					RP.RadDebugf(fmt.Sprintf("Recovered from panic in deferred statement: %v", r))
 				}
 			}()
 

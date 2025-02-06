@@ -41,4 +41,7 @@ const (
 	F_CONTENTS   = "contents"
 	F_EXPR       = "expr"
 	F_FORMAT     = "format"
+	F_ALIGNMENT  = "alignment"
+	F_PADDING    = "padding"
+	F_PRECISION  = "precision"
 )

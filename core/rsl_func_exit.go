@@ -23,15 +23,15 @@ func runExit(i *MainInterpreter, function Token, args []interface{}) {
 func exit(i *MainInterpreter, errorCode int) {
 	if FlagShell.Value {
 		if errorCode == 0 {
-			RP.RadDebug(fmt.Sprintf("Printing shell exports"))
+			RP.RadDebugf(fmt.Sprintf("Printing shell exports"))
 			i.env.PrintShellExports()
 		} else {
 			// error scenario, we want the shell script to exit, so just print a shell exit to be eval'd
-			RP.RadDebug(fmt.Sprintf("Printing shell exit %d", errorCode))
+			RP.RadDebugf(fmt.Sprintf("Printing shell exit %d", errorCode))
 			RP.PrintForShellEval(fmt.Sprintf("exit %d\n", errorCode))
 		}
 	}
 
-	RP.RadDebug("Exiting")
+	RP.RadDebugf("Exiting")
 	RExit(errorCode)
 }
