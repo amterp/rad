@@ -12,7 +12,7 @@ const (
 //   - auth?
 //   - query params help?
 //   - generic http for other/all methods?
-func runHttpGet(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMap {
+func runHttpGet(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMapOld {
 	if len(args) != 1 {
 		i.error(function, HTTP_GET+fmt.Sprintf("() takes exactly 1 positional arg, got %d", len(args)))
 	}
@@ -33,11 +33,11 @@ func runHttpGet(i *MainInterpreter, function Token, args []interface{}, namedArg
 	}
 }
 
-func runHttpPost(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMap {
+func runHttpPost(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMapOld {
 	return runHttpPutOrPost(i, function, args, namedArgs, HTTP_POST, "POST")
 }
 
-func runHttpPut(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMap {
+func runHttpPut(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslMapOld {
 	return runHttpPutOrPost(i, function, args, namedArgs, HTTP_PUT, "PUT")
 }
 
@@ -47,7 +47,7 @@ func runHttpPutOrPost(i *MainInterpreter,
 	namedArgs map[string]interface{},
 	funcName string,
 	method string,
-) RslMap {
+) RslMapOld {
 	if len(args) < 1 || len(args) > 2 {
 		i.error(function, funcName+fmt.Sprintf("() takes 1 or 2 positional arguments, got %d", len(args)))
 	}
@@ -78,7 +78,7 @@ func parseHttpReqArgs(i *MainInterpreter, function Token, args map[string]interf
 		Headers: make(map[string]string),
 	}
 	if headerMap, ok := args[HEADERS_NAMED_ARG]; ok {
-		if rslMap, ok := headerMap.(RslMap); ok {
+		if rslMap, ok := headerMap.(RslMapOld); ok {
 			parsedArgs.Headers = rslMap.ToStringMap()
 		} else {
 			i.error(function, function.GetLexeme()+fmt.Sprintf("() %s must be a map, got %s", HEADERS_NAMED_ARG, TypeAsString(headerMap)))

@@ -170,7 +170,7 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		switch coerced := args[0].(type) {
-		case RslMap:
+		case RslMapOld:
 			return coerced.KeysGeneric()
 		default:
 			i.error(function, fmt.Sprintf("%s() takes a map, got %s", KEYS, TypeAsString(args[0])))
@@ -182,7 +182,7 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		switch coerced := args[0].(type) {
-		case RslMap:
+		case RslMapOld:
 			return coerced.Values()
 		default:
 			i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
@@ -266,7 +266,7 @@ func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
 		return v.Len()
 	case []interface{}:
 		return int64(len(v))
-	case RslMap:
+	case RslMapOld:
 		return int64(v.Len())
 	default:
 		i.error(function, "len() takes a string or collection")
@@ -353,7 +353,7 @@ func validateExpectedNamedArgs(i *MainInterpreter, function Token, expectedArgs 
 
 func bugCheckOutputType(i *MainInterpreter, token Token, output interface{}) {
 	switch output.(type) {
-	case RslString, int64, float64, bool, []interface{}, RslMap:
+	case RslString, int64, float64, bool, []interface{}, RslMapOld:
 		return
 	default:
 		i.error(token, fmt.Sprintf("Bug! Unexpected return type: %v", TypeAsString(output)))

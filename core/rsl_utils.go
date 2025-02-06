@@ -14,9 +14,10 @@ func ToPrintable(val interface{}) string {
 		// todo results many cases of printing many places due to float imprecision. Display fewer places?
 		return strconv.FormatFloat(coerced, 'f', -1, 64)
 	case string:
-		return coerced
+		// todo based on contents, should escape quotes, or use other quotes. python does this.
+		return `"` + coerced + `"`
 	case RslString:
-		return coerced.String()
+		return ToPrintable(coerced.String())
 	case RslValue:
 		return ToPrintable(coerced.Val)
 	case bool:
@@ -33,16 +34,9 @@ func ToPrintable(val interface{}) string {
 		}
 		return out + "]"
 	case *RslList:
-		return ToPrintable(*coerced)
+		return coerced.ToString()
 	case RslList:
-		out := "["
-		for i, elem := range coerced.Values {
-			if i > 0 {
-				out += ", "
-			}
-			out += ToPrintable(elem)
-		}
-		return out + "]"
+		return coerced.ToString()
 	case *RslMap:
 		return coerced.ToString()
 	case RslMap:
@@ -108,13 +102,13 @@ func ConvertToNativeTypes(interp *MainInterpreter, token Token, val interface{})
 		}
 		return output
 	case map[string]interface{}:
-		m := NewRslMap()
+		m := NewOldRslMap()
 		sortedKeys := SortedKeys(coerced)
 		for _, key := range sortedKeys {
 			m.SetStr(key, ConvertToNativeTypes(interp, token, coerced[key]))
 		}
 		return *m
-	case RslMap:
+	case RslMapOld:
 		return coerced
 	case nil:
 		return nil
@@ -145,7 +139,7 @@ func RslToJsonType(arg interface{}) interface{} {
 			slice = append(slice, RslToJsonType(elem))
 		}
 		return slice
-	case RslMap:
+	case RslMapOld:
 		mapping := make(map[string]interface{})
 		for _, key := range coerced.Keys() {
 			value, _ := coerced.GetStr(key)
@@ -196,7 +190,7 @@ func TruthyFalsy(val interface{}) bool {
 		return coerced
 	case []interface{}:
 		return len(coerced) != 0
-	case RslMap:
+	case RslMapOld:
 		return len(coerced.Keys()) != 0
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TruthyFalsy: %T", val))
@@ -204,15 +198,15 @@ func TruthyFalsy(val interface{}) bool {
 	}
 }
 
-func ErrorRslMap(err RslError, errMsg string) RslMap {
-	m := NewRslMap()
+func ErrorRslMap(err RslError, errMsg string) RslMapOld {
+	m := NewOldRslMap()
 	m.SetStr("code", NewRslString(string(err)))
 	m.SetStr("msg", NewRslString(errMsg))
 	return *m
 }
 
-func NoErrorRslMap() RslMap {
-	m := NewRslMap()
+func NoErrorRslMap() RslMapOld {
+	m := NewOldRslMap()
 	return *m
 }
 

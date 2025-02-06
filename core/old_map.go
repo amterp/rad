@@ -5,19 +5,19 @@ import (
 	"strings"
 )
 
-type RslMap struct {
+type RslMapOld struct {
 	mapping map[string]interface{} // todo values should be RslValue
 	keys    []string
 }
 
-func NewRslMap() *RslMap {
-	return &RslMap{
+func NewOldRslMap() *RslMapOld {
+	return &RslMapOld{
 		mapping: make(map[string]interface{}),
 		keys:    []string{},
 	}
 }
 
-func (m *RslMap) ToStringMap() map[string]string {
+func (m *RslMapOld) ToStringMap() map[string]string {
 	newMap := make(map[string]string)
 	for k, v := range m.mapping {
 		newMap[k] = ToPrintable(v)
@@ -25,31 +25,31 @@ func (m *RslMap) ToStringMap() map[string]string {
 	return newMap
 }
 
-func (m *RslMap) Set(key RslString, value interface{}) {
+func (m *RslMapOld) Set(key RslString, value interface{}) {
 	m.SetStr(key.Plain(), value)
 }
 
-func (m *RslMap) SetStr(key string, value interface{}) {
+func (m *RslMapOld) SetStr(key string, value interface{}) {
 	if _, exists := m.mapping[key]; !exists {
 		m.keys = append(m.keys, key)
 	}
 	m.mapping[key] = value
 }
 
-func (m *RslMap) Get(key RslString) (interface{}, bool) {
+func (m *RslMapOld) Get(key RslString) (interface{}, bool) {
 	return m.GetStr(key.Plain())
 }
 
-func (m *RslMap) GetStr(key string) (interface{}, bool) {
+func (m *RslMapOld) GetStr(key string) (interface{}, bool) {
 	val, exists := m.mapping[key]
 	return val, exists
 }
 
-func (m *RslMap) Keys() []string {
+func (m *RslMapOld) Keys() []string {
 	return m.keys
 }
 
-func (m *RslMap) KeysGeneric() []interface{} {
+func (m *RslMapOld) KeysGeneric() []interface{} {
 	var keys []interface{}
 	for _, key := range m.keys {
 		keys = append(keys, key)
@@ -57,7 +57,7 @@ func (m *RslMap) KeysGeneric() []interface{} {
 	return keys
 }
 
-func (m *RslMap) Values() []interface{} {
+func (m *RslMapOld) Values() []interface{} {
 	var values []interface{}
 	for _, key := range m.keys {
 		values = append(values, m.mapping[key])
@@ -65,16 +65,16 @@ func (m *RslMap) Values() []interface{} {
 	return values
 }
 
-func (m *RslMap) ContainsKey(key RslString) bool {
+func (m *RslMapOld) ContainsKey(key RslString) bool {
 	_, exists := m.mapping[key.Plain()]
 	return exists
 }
 
-func (m *RslMap) Len() int {
+func (m *RslMapOld) Len() int {
 	return len(m.mapping)
 }
 
-func (m *RslMap) Delete(key RslString) {
+func (m *RslMapOld) Delete(key RslString) {
 	delete(m.mapping, key.Plain())
 	// O(n) a little sad but probably okay
 	for i, k := range m.keys {
@@ -85,7 +85,7 @@ func (m *RslMap) Delete(key RslString) {
 	}
 }
 
-func (m *RslMap) ToString() string {
+func (m *RslMapOld) ToString() string {
 	if m.Len() == 0 {
 		return "{}"
 	}

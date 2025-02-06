@@ -99,7 +99,7 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 		_, ok := val.([]interface{})
 		return ok
 	case RslMapT:
-		_, ok := val.(RslMap)
+		_, ok := val.(RslMapOld)
 		return ok
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))

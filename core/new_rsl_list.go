@@ -50,3 +50,26 @@ func (l *RslList) JoinWith(other *RslList) RslValue {
 	newList.Values = append(l.Values, other.Values...)
 	return newRslValue(nil, nil, newList)
 }
+
+func (l *RslList) Equals(r *RslList) bool {
+	if len(l.Values) != len(r.Values) {
+		return false
+	}
+	for i, elem := range l.Values {
+		if !elem.Equals(r.Values[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+func (l *RslList) ToString() string {
+	out := "[ "
+	for i, elem := range l.Values {
+		if i > 0 {
+			out += ", "
+		}
+		out += ToPrintable(elem)
+	}
+	return out + " ]"
+}

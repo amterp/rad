@@ -110,14 +110,18 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return newRslValues(i, node, i.executeBinary(node, left, right, op))
 
 	// LEAF NODES
+	case K_IDENTIFIER:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		identifier := i.sd.Src[node.StartByte():node.EndByte()]
+		val, ok := i.env.GetVar(identifier)
+		if !ok {
+			i.errorf(node, "Undefined variable: %s", identifier)
+		}
+		return newRslValues(i, node, val)
 	case K_VAR_PATH:
 		rootIdentifier := i.getChild(node, F_ROOT) // identifier required by grammar
-		rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
 		indexings := i.getChildren(node, F_INDEXING)
-		val, ok := i.env.GetVar(rootIdentifierName)
-		if !ok {
-			i.errorf(rootIdentifier, "Undefined variable: %s", rootIdentifierName)
-		}
+		val := i.evaluate(rootIdentifier, 1)[0]
 		if len(indexings) > 0 {
 			for _, index := range indexings {
 				val = val.Index(i, &index)
@@ -171,6 +175,17 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			list.Append(i.evaluate(&entry, 1)[0])
 		}
 		return newRslValues(i, node, list)
+	case K_MAP:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		rslMap := NewRslMap()
+		entries := i.getChildren(node, F_MAP_ENTRY)
+		for _, entry := range entries {
+			keyNode := i.getChild(&entry, F_KEY)
+			valueNode := i.getChild(&entry, F_VALUE)
+			key := evalMapKey(i, keyNode)
+			rslMap.Set(key, i.evaluate(valueNode, 1)[0])
+		}
+		return newRslValues(i, node, rslMap)
 	case K_CALL:
 		funcName := i.getChild(node, F_FUNC)
 		args := i.getChildren(node, F_ARG)

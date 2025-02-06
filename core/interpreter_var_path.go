@@ -15,7 +15,7 @@ func (i *MainInterpreter) VisitVarPathExpr(path VarPath) interface{} {
 type VarPathLeafVisitor interface {
 	AcceptStrSlice(str RslString, start int64, end int64) RslString
 	AcceptListSlice(list []interface{}, start int64, end int64) []interface{}
-	AcceptMapElement(m RslMap, key RslString) RslMap
+	AcceptMapElement(m RslMapOld, key RslString) RslMapOld
 }
 
 type VarPathLeafDeleter struct{}
@@ -28,7 +28,7 @@ func (v VarPathLeafDeleter) AcceptListSlice(list []interface{}, start int64, end
 	return append(list[:start], list[end:]...)
 }
 
-func (v VarPathLeafDeleter) AcceptMapElement(m RslMap, key RslString) RslMap {
+func (v VarPathLeafDeleter) AcceptMapElement(m RslMapOld, key RslString) RslMapOld {
 	m.Delete(key)
 	return m
 }
@@ -47,7 +47,7 @@ func (v VarPathLeafSetter) AcceptListSlice(list []interface{}, start int64, end 
 	return append(append(list[:start], v.Val), list[end:]...)
 }
 
-func (v VarPathLeafSetter) AcceptMapElement(m RslMap, key RslString) RslMap {
+func (v VarPathLeafSetter) AcceptMapElement(m RslMapOld, key RslString) RslMapOld {
 	m.Set(key, v.Val)
 	return m
 }
@@ -89,7 +89,7 @@ func (i *MainInterpreter) traverseVarPath(tkn Token, col interface{}, keys []Col
 			coerced[idx] = i.traverseVarPath(tkn, coerced[idx], keys[1:], visitor)
 			return coerced
 		}
-	case RslMap:
+	case RslMapOld:
 		if key.IsSlice {
 			i.error(key.Opener, fmt.Sprintf("Cannot slice a map: %v", key))
 		}
