@@ -62,7 +62,7 @@ if version:
         else:
             $!`git commit`
         $!`git tag -a "{version}" -m "Bump version to {version}"`
-        push_cmd = `git push origin {version} --tags`
+        push_cmd = `git push origin main {version} --tags`
         if no_push:
             print("Not pushing, remember to run", yellow(push_cmd), "later")
         else:
