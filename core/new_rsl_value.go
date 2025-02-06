@@ -141,6 +141,25 @@ func (v RslValue) RequireNot(i *Interpreter, node *ts.Node, errPrefix string, di
 	return v
 }
 
+func (v RslValue) TruthyFalsy() bool {
+	switch coerced := v.Val.(type) {
+	case int64:
+		return coerced != 0
+	case float64:
+		return coerced != 0
+	case RslString:
+		return coerced.Plain() != ""
+	case bool:
+		return coerced
+	case *RslList:
+		return coerced.Len() != 0
+	case *RslMap:
+		return coerced.Len() != 0
+	default:
+		panic(fmt.Sprintf("Bug! Unhandled type for TruthyFalsy: %T", v.Val))
+	}
+}
+
 func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	switch coerced := value.(type) {
 	case RslValue:

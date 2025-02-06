@@ -73,3 +73,7 @@ func (l *RslList) ToString() string {
 	}
 	return out + " ]"
 }
+
+func (l *RslList) Len() int64 {
+	return int64(len(l.Values))
+}

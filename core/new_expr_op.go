@@ -36,6 +36,10 @@ func getOp(str string) OpType {
 		return OP_IN
 	case "not in": // todo needs to work for if extra spaces between 'not in'
 		return OP_NOT_IN
+	case "and":
+		return OP_AND
+	case "or":
+		return OP_OR
 	default:
 		panic("Bug! Unexpected operator: " + str)
 	}
@@ -68,8 +72,17 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 	return newRslValue(i, parentNode, result)
 }
 
-func (i *Interpreter) executeUnary(opNode, argNode *ts.Node) RslValue {
-	// todo
+func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslValue {
+	switch opNode.Kind() {
+	case K_PLUS:
+		// todo
+		panic("not implemented")
+	case K_MINUS:
+		// todo
+		panic("not implemented")
+	case K_NOT:
+		return newRslValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+	}
 	return RslValue{}
 }
 
@@ -86,6 +99,20 @@ func (i *Interpreter) executeOp(
 	right := Memoize(func() RslValue {
 		return i.evaluate(rightNode, 1)[0]
 	})
+
+	if op == OP_AND {
+		leftB := left().TruthyFalsy()
+		if !leftB {
+			return false
+		}
+		return right().TruthyFalsy()
+	} else if op == OP_OR {
+		leftB := left().TruthyFalsy()
+		if leftB {
+			return true
+		}
+		return right().TruthyFalsy()
+	}
 
 	if op == OP_EQUAL || op == OP_NOT_EQUAL {
 		leftType := left().Type()

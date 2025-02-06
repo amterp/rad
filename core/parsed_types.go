@@ -207,6 +207,8 @@ const ( // todo replace with Node Kinds?
 	OP_GREATER_EQUAL
 	OP_LESS
 	OP_LESS_EQUAL
+	OP_AND
+	OP_OR
 	//OpPow?
 )
 
