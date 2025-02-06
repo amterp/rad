@@ -48,36 +48,20 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 			i.recursivelyRun(&child)
 		}
 	case K_ASSIGN:
-		leftVarPaths := i.getChildren(node, F_LEFT)
-		right := i.getChild(node, F_RIGHT)
-		numExpectedOutputs := len(leftVarPaths)
-		values := i.evaluate(right, numExpectedOutputs)
-		for idx, leftVarPath := range leftVarPaths {
-			rightValue := values[idx]
-
-			rootIdentifier := i.getChild(&leftVarPath, F_ROOT) // identifier required by grammar
-			rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
-			indexings := i.getChildren(&leftVarPath, F_INDEXING)
-			val, ok := i.env.GetVar(rootIdentifierName)
-
-			if len(indexings) == 0 {
-				// simple assignment, no collection lookups
-				i.env.SetVar(rootIdentifierName, rightValue)
-				continue
-			}
-
-			// modifying collection
-			if !ok {
-				// modifying collection must exist
-				i.errorf(rootIdentifier, "Undefined variable: %s", rootIdentifierName)
-			}
-			for _, index := range indexings[:len(indexings)-1] {
-				val = val.Index(i, &index)
-			}
-			// val is now the collection to modify, using the last index
-			lastIndex := indexings[len(indexings)-1]
-			val.ModifyIdx(i, &lastIndex, rightValue)
+		leftVarPathNodes := i.getChildren(node, F_LEFT)
+		rightNodes := i.getChild(node, F_RIGHT)
+		numExpectedOutputs := len(leftVarPathNodes)
+		values := i.evaluate(rightNodes, numExpectedOutputs)
+		for idx, leftVarPathNode := range leftVarPathNodes {
+			i.doVarPathAssign(&leftVarPathNode, values[idx])
 		}
+	case K_COMPOUND_ASSIGN:
+		leftVarPathNode := i.getChild(node, F_LEFT)
+		rightNode := i.getChild(node, F_RIGHT)
+		opNode := i.getChild(node, F_OP)
+
+		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
+		i.doVarPathAssign(leftVarPathNode, newValue)
 	case K_EXPR_STMT:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
 	default:
@@ -308,4 +292,29 @@ func (i *Interpreter) errorf(node *ts.Node, oneLinerFmt string, args ...interfac
 
 func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt string, args ...interface{}) {
 	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
+}
+
+func (i *Interpreter) doVarPathAssign(leftVarPathNode *ts.Node, rightValue RslValue) {
+	rootIdentifier := i.getChild(leftVarPathNode, F_ROOT) // identifier required by grammar
+	rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
+	indexings := i.getChildren(leftVarPathNode, F_INDEXING)
+	val, ok := i.env.GetVar(rootIdentifierName)
+
+	if len(indexings) == 0 {
+		// simple assignment, no collection lookups
+		i.env.SetVar(rootIdentifierName, rightValue)
+		return
+	}
+
+	// modifying collection
+	if !ok {
+		// modifying collection must exist
+		i.errorf(rootIdentifier, "Undefined variable: %s", rootIdentifierName)
+	}
+	for _, index := range indexings[:len(indexings)-1] {
+		val = val.Index(i, &index)
+	}
+	// val is now the collection to modify, using the last index
+	lastIndex := indexings[len(indexings)-1]
+	val.ModifyIdx(i, &lastIndex, rightValue)
 }

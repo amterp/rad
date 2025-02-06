@@ -193,7 +193,7 @@ type CollectionKey struct {
 
 type OpType int
 
-const (
+const ( // todo replace with Node Kinds?
 	OP_PLUS OpType = iota
 	OP_MINUS
 	OP_MULTIPLY

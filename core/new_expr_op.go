@@ -44,22 +44,31 @@ func getOp(str string) OpType {
 func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.Node) RslValue {
 	opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 	op := getOp(opStr)
-
-	left := Memoize(func() RslValue {
-		return i.evaluate(leftNode, 1)[0]
-	})
-	right := Memoize(func() RslValue {
-		return i.evaluate(rightNode, 1)[0]
-	})
-
-	return newRslValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, left, right, op))
+	return newRslValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, op))
 }
 
-func (i *Interpreter) executeCompoundAssign(left *ts.Node, right *ts.Node, opNode *ts.Node) {
-	// todo
+func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node) RslValue {
+	result := func() interface{} {
+		switch opNode.Kind() {
+		case K_PLUS_EQUAL:
+			return i.executeOp(parentNode, left, right, opNode, OP_PLUS)
+		case K_MINUS_EQUAL:
+			return i.executeOp(parentNode, left, right, opNode, OP_MINUS)
+		case K_STAR_EQUAL:
+			return i.executeOp(parentNode, left, right, opNode, OP_MULTIPLY)
+		case K_SLASH_EQUAL:
+			return i.executeOp(parentNode, left, right, opNode, OP_DIVIDE)
+		case K_PERCENT_EQUAL:
+			return i.executeOp(parentNode, left, right, opNode, OP_MODULO)
+		default:
+			i.errorf(opNode, "Invalid compound operator")
+			panic(UNREACHABLE)
+		}
+	}()
+	return newRslValue(i, parentNode, result)
 }
 
-func (i *Interpreter) executeUnary(opNode *ts.Node, argNode *ts.Node) RslValue {
+func (i *Interpreter) executeUnary(opNode, argNode *ts.Node) RslValue {
 	// todo
 	return RslValue{}
 }
@@ -69,10 +78,15 @@ func (i *Interpreter) executeOp(
 	leftNode *ts.Node,
 	rightNode *ts.Node,
 	opNode *ts.Node,
-	left func() RslValue,
-	right func() RslValue,
 	op OpType,
 ) interface{} {
+	left := Memoize(func() RslValue {
+		return i.evaluate(leftNode, 1)[0]
+	})
+	right := Memoize(func() RslValue {
+		return i.evaluate(rightNode, 1)[0]
+	})
+
 	if op == OP_EQUAL || op == OP_NOT_EQUAL {
 		leftType := left().Type()
 		rightType := right().Type()
