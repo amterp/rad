@@ -16,6 +16,9 @@ type rslStringSegment struct {
 
 // todo should these methods be returning *RslString?
 func NewRslString(str string) RslString {
+	if str == "" {
+		return RslString{Segments: []rslStringSegment{}}
+	}
 	return RslString{Segments: []rslStringSegment{{String: str}}}
 }
 

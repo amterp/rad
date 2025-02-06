@@ -128,9 +128,49 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := strconv.ParseInt(asStr, 10, 64) // todo unhandled err
 		return newRslValues(i, node, asInt)
-	//case K_STRING:
-	//	i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-
+	case K_STRING:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		contentsNode := i.getChild(node, F_CONTENTS)
+		str := NewRslString("")
+		for _, child := range contentsNode.Children(contentsNode.Walk()) {
+			str = str.Concat(i.evaluate(&child, 1)[0].RequireStr(i, &child))
+		}
+		return newRslValues(i, node, str)
+	case K_STRING_CONTENT:
+		src := i.sd.Src[node.StartByte():node.EndByte()]
+		return newRslValues(i, node, src)
+	case K_BACKSLASH:
+		// todo potentially divisive - there are 3 options for escaping of 'insignificant' characters
+		//  1. print the backslash and char as-are
+		//  2. 'absorb' the backslash and print the char as-is
+		//  3. error node (tree sitter should no allow it)
+		//  this implementation is 2. may change. Go does 3. python & others do 1 (seems popular)
+		return newRslValues(i, node, "")
+	case K_ESC_SINGLE_QUOTE:
+		return newRslValues(i, node, "'")
+	case K_ESC_DOUBLE_QUOTE:
+		return newRslValues(i, node, `"`)
+	case K_ESC_BACKTICK:
+		return newRslValues(i, node, "`")
+	case K_ESC_NEWLINE:
+		return newRslValues(i, node, "\n")
+	case K_ESC_TAB:
+		return newRslValues(i, node, "\t")
+	case K_INTERPOLATION:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		expr := i.getChild(node, F_EXPR)
+		format := i.getChild(node, F_FORMAT)
+		exprResult := i.evaluate(expr, 1)[0]
+		// todo apply format
+		_ = format
+		if rslStr, ok := exprResult.TryGetStr(); ok {
+			// maintain RslString attributes
+			return newRslValues(i, node, rslStr)
+		} else {
+			return newRslValues(i, node, NewRslString(ToPrintable(exprResult)))
+		}
+	case K_ESC_BACKSLASH:
+		return newRslValues(i, node, "\\")
 	case K_LIST:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		entries := i.getChildren(node, F_LIST_ENTRY)

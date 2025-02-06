@@ -59,6 +59,21 @@ func (v RslValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
 	}
 }
 
+func (v RslValue) RequireStr(i *Interpreter, node *ts.Node) RslString {
+	if str, ok := v.TryGetStr(); ok {
+		return str
+	}
+	i.errorf(node, "Expected string, got %s", TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
+func (v RslValue) TryGetStr() (RslString, bool) {
+	if str, ok := v.Val.(RslString); ok {
+		return str, true
+	}
+	return NewRslString(""), false
+}
+
 func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
 	// todo handle identifier dot syntax
 	// todo handle slice nodes
@@ -79,6 +94,8 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	switch coerced := value.(type) {
 	case RslValue:
 		return coerced
+	case RslString:
+		return RslValue{Val: coerced}
 	case string:
 		return RslValue{Val: NewRslString(coerced)}
 	case int64, float64, bool:
