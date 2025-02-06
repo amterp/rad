@@ -81,7 +81,7 @@ func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValu
 		if idxNode.Kind() == K_IDENTIFIER {
 			// dot syntax e.g. myMap.myKey
 			keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
-			coerced.Set(newRslValueFromStr(keyName), rightValue)
+			coerced.Set(newRslValueStr(keyName), rightValue)
 		} else {
 			// 'traditional' syntax e.g. myMap["myKey"]
 			idxVal := evalMapKey(i, idxNode)
@@ -178,7 +178,7 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	case RslString:
 		return RslValue{Val: coerced}
 	case string:
-		return newRslValueFromStr(coerced)
+		return RslValue{Val: NewRslString(coerced)}
 	case int64, float64, bool:
 		return RslValue{Val: coerced}
 	case *RslList:
@@ -199,6 +199,10 @@ func newRslValues(i *Interpreter, node *ts.Node, value interface{}) []RslValue {
 	return []RslValue{newRslValue(i, node, value)}
 }
 
-func newRslValueFromStr(str string) RslValue {
-	return RslValue{Val: NewRslString(str)}
+func newRslValueStr(str string) RslValue {
+	return newRslValue(nil, nil, str)
+}
+
+func newRslValueRslStr(str RslString) RslValue {
+	return newRslValue(nil, nil, str)
 }
