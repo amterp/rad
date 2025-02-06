@@ -36,7 +36,7 @@ func (i *MainInterpreter) sliceAccess(col interface{}, key CollectionKey) interf
 
 func (i *MainInterpreter) colLookup(col interface{}, key CollectionKey) interface{} {
 	switch coerced := col.(type) {
-	case RslMap:
+	case RslMapOld:
 		start := *key.Start
 		keyVal := start.Accept(i)
 		keyStr, ok := keyVal.(RslString)

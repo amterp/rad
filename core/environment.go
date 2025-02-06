@@ -144,12 +144,12 @@ func (e *OldEnv) setAndImplyTypeWithToken(token Token, varName string, value int
 	case []interface{}:
 		converted := ConvertToNativeTypes(e.i, token, coerced)
 		e.Vars[varName] = converted.([]interface{})
-	case RslMap:
+	case RslMapOld:
 		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMap)
+		e.Vars[varName] = converted.(RslMapOld)
 	case map[string]interface{}:
 		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMap)
+		e.Vars[varName] = converted.(RslMapOld)
 	default:
 		e.i.error(token, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
 	}

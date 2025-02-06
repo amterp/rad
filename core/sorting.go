@@ -128,7 +128,7 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 		return 0
 	case RslString:
 		return aVal.Compare(b.(RslString))
-	case []interface{}, RslMap:
+	case []interface{}, RslMapOld:
 		return 0 // all arrays and maps are considered equal
 	default:
 		i.error(token, "Unsupported type for sorting")
@@ -146,7 +146,7 @@ func precedence(i *MainInterpreter, token Token, v interface{}) int {
 		return 2
 	case []interface{}:
 		return 3
-	case RslMap:
+	case RslMapOld:
 		return 4
 	default:
 		i.error(token, "Unsupported type precedence for sorting")

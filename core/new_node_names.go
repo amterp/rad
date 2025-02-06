@@ -28,6 +28,8 @@ const (
 	K_ESC_NEWLINE      = "esc_newline"
 	K_ESC_TAB          = "esc_tab"
 	K_INTERPOLATION    = "interpolation"
+	K_MAP              = "map"
+	K_IDENTIFIER       = "identifier"
 
 	// Field names
 	F_LEFT       = "left"
@@ -44,4 +46,7 @@ const (
 	F_ALIGNMENT  = "alignment"
 	F_PADDING    = "padding"
 	F_PRECISION  = "precision"
+	F_MAP_ENTRY  = "map_entry"
+	F_KEY        = "key"
+	F_VALUE      = "value"
 )

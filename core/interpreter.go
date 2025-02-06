@@ -58,7 +58,7 @@ func (i *MainInterpreter) VisitArrayExprExpr(expr ArrayExpr) interface{} {
 }
 
 func (i *MainInterpreter) VisitMapExprExpr(expr MapExpr) interface{} {
-	rslMap := NewRslMap()
+	rslMap := NewOldRslMap()
 	for idx, key := range expr.Keys {
 		keyVal := key.Accept(i)
 		keyValString, ok := keyVal.(RslString)
@@ -244,7 +244,7 @@ func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
 	switch coerced := rangeValue.(type) {
 	case []interface{}:
 		runArrayForLoop(i, stmt, coerced)
-	case RslMap:
+	case RslMapOld:
 		runMapForLoop(i, stmt, coerced)
 	case RslString:
 		runArrayForLoop(i, stmt, coerced.StringByRune())
@@ -306,7 +306,7 @@ func runArrayForLoop(
 func runMapForLoop(
 	i *MainInterpreter,
 	stmt ForStmt,
-	rangeMap RslMap,
+	rangeMap RslMapOld,
 ) {
 	keyIdentifier := stmt.Identifier1
 	valIdentifier := stmt.Identifier2

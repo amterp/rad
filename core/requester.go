@@ -28,8 +28,8 @@ type ResponseDef struct {
 	StatusCode int
 }
 
-func (r *ResponseDef) ToRslMap(i *MainInterpreter, t Token) RslMap {
-	rslMap := NewRslMap()
+func (r *ResponseDef) ToRslMap(i *MainInterpreter, t Token) RslMapOld {
+	rslMap := NewOldRslMap()
 	out, _ := TryConvertJsonToNativeTypes(i, t, r.Body)
 	rslMap.SetStr("body", out)
 	rslMap.SetStr("status_code", int64(r.StatusCode))

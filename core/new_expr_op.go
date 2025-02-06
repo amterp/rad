@@ -305,9 +305,9 @@ func (i *Interpreter) executeOp(
 		case *RslMap:
 			switch op {
 			case OP_IN:
-				return coercedRight.ContainsKey(coercedLeft)
+				return coercedRight.ContainsKey(left())
 			case OP_NOT_IN:
-				return !coercedRight.ContainsKey(coercedLeft)
+				return !coercedRight.ContainsKey(left())
 			default:
 				i.errorf(opNode, "Invalid binary operator for string, map")
 			}
