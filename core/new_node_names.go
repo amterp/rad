@@ -30,6 +30,12 @@ const (
 	K_INTERPOLATION    = "interpolation"
 	K_MAP              = "map"
 	K_IDENTIFIER       = "identifier"
+	K_COMPOUND_ASSIGN  = "compound_assign"
+	K_PLUS_EQUAL       = "+="
+	K_MINUS_EQUAL      = "-="
+	K_STAR_EQUAL       = "*="
+	K_SLASH_EQUAL      = "/="
+	K_PERCENT_EQUAL    = "%="
 
 	// Field names
 	F_LEFT       = "left"
