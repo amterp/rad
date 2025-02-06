@@ -46,3 +46,48 @@ hi
 	assertNoErrors(t)
 	resetTestState()
 }
+
+func Test_Revamp_ForLoop(t *testing.T) {
+	rsl := `
+a = [20, 30, 40, 50, 60]
+
+for n in a:
+    print(n)
+    if n > 35:
+        break
+    print("after")
+
+for n in a:
+    print(n)
+    if n > 35:
+        continue
+    print("after")
+
+n = "alice"
+
+for i, l in n:
+    print(i, l)
+`
+	setupAndRunCode(t, rsl)
+	expected := `20
+after
+30
+after
+40
+20
+after
+30
+after
+40
+50
+60
+0 a
+1 l
+2 i
+3 c
+4 e
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}

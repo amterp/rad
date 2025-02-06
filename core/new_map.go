@@ -37,7 +37,7 @@ func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
 	if idxNode.Kind() == K_IDENTIFIER {
 		// dot syntax e.g. myMap.myKey
 		keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
-		value, ok := m.Get(newRslValueFromStr(keyName))
+		value, ok := m.Get(newRslValueStr(keyName))
 		if !ok {
 			i.errorf(idxNode, "Key not found: %s", keyName)
 		}

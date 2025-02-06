@@ -77,6 +77,12 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		} else {
 			i.errorf(node, "Cannot 'continue' outside of a for loop")
 		}
+	case K_FOR_LOOP:
+		i.forLoopLevel++
+		defer func() {
+			i.forLoopLevel--
+		}()
+		i.executeForLoop(node)
 	case K_IF_STMT:
 		altNodes := i.getChildren(node, F_ALT)
 		for _, altNode := range altNodes {
@@ -90,7 +96,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 
 			if shouldExecute {
 				stmtNodes := i.getChildren(&altNode, F_STMT)
-				i.runBlock(stmtNodes, false)
+				i.runBlock(stmtNodes)
 				break
 			}
 		}
@@ -364,21 +370,97 @@ func (i *Interpreter) doVarPathAssign(leftVarPathNode *ts.Node, rightValue RslVa
 	val.ModifyIdx(i, &lastIndex, rightValue)
 }
 
-// if stmts, for loops
-func (i *Interpreter) runBlock(stmtNodes []ts.Node, isForLoop bool) {
-	for _, stmtNode := range stmtNodes {
-		i.recursivelyRun(&stmtNode)
+func (i *Interpreter) executeForLoop(node *ts.Node) {
+	leftsNode := i.getChild(node, F_LEFTS)
+	rightNode := i.getChild(node, F_RIGHT)
+	stmts := i.getChildren(node, F_STMT)
+
+	rightVal := i.evaluate(rightNode, 1)[0]
+	switch coercedRight := rightVal.Val.(type) {
+	case RslString:
+		runForLoopList(i, leftsNode, coercedRight.ToRuneList(), stmts)
+	case *RslList:
+		runForLoopList(i, leftsNode, coercedRight, stmts)
+	case *RslMap:
+		runForLoopMap(i, leftsNode, coercedRight, stmts)
+	default:
+		i.errorf(rightNode, "Cannot iterate through a %s", TypeAsString(rightVal))
+	}
+}
+
+func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, stmts []ts.Node) {
+	var idxNode *ts.Node
+	var itemNode *ts.Node
+
+	leftNodes := i.getChildren(leftsNode, F_LEFT)
+
+	if len(leftNodes) == 1 {
+		itemNode = &leftNodes[0]
+	} else if len(leftNodes) == 2 {
+		idxNode = &leftNodes[0]
+		itemNode = &leftNodes[1]
+	} else {
+		i.errorf(leftsNode, "Expected 1 or 2 variables on left side of for loop")
+	}
+
+	for idx, val := range list.Values {
+		if idxNode != nil {
+			idxName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
+			i.env.SetVar(idxName, newRslValue(i, idxNode, int64(idx)))
+		}
+
+		itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
+		i.env.SetVar(itemName, val)
+
+		i.runBlock(stmts)
 		if i.breaking {
-			if isForLoop {
-				i.breaking = false
-			}
+			i.breaking = false
 			break
 		}
-		if i.continuing {
-			if isForLoop {
-				i.continuing = false
-			}
-			continue
+	}
+}
+
+func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, stmts []ts.Node) {
+	var keyNode *ts.Node
+	var valueNode *ts.Node
+
+	leftNodes := i.getChildren(leftsNode, F_LEFT)
+	numLefts := len(leftNodes)
+
+	if numLefts == 0 || numLefts > 2 {
+		i.errorf(leftsNode, "Expected 1 or 2 variables on left side of for loop")
+	}
+
+	keyNode = &leftNodes[0]
+	if numLefts == 2 {
+		valueNode = &leftNodes[1]
+	}
+
+	for _, key := range rslMap.Keys() {
+		keyName := i.sd.Src[keyNode.StartByte():keyNode.EndByte()]
+		i.env.SetVar(keyName, key)
+
+		if valueNode != nil {
+			valueName := i.sd.Src[valueNode.StartByte():valueNode.EndByte()]
+			value, _ := rslMap.Get(key)
+			i.env.SetVar(valueName, value)
+		}
+
+		i.runBlock(stmts)
+		if i.breaking {
+			i.breaking = false
+			break
+		}
+		i.continuing = false
+	}
+}
+
+// if stmts, for loops
+func (i *Interpreter) runBlock(stmtNodes []ts.Node) {
+	for _, stmtNode := range stmtNodes {
+		i.recursivelyRun(&stmtNode)
+		if i.breaking || i.continuing {
+			break
 		}
 	}
 }

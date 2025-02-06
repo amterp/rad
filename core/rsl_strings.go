@@ -63,6 +63,14 @@ func (s *RslString) StringByRune() []interface{} {
 	return result
 }
 
+func (s *RslString) ToRuneList() *RslList {
+	result := NewRslList()
+	for i := int64(0); i < s.Len(); i++ {
+		result.Append(newRslValueRslStr(s.IndexAt(i)))
+	}
+	return result
+}
+
 func (s *RslString) Concat(other RslString) RslString {
 	return RslString{Segments: append(s.Segments, other.Segments...)}
 }

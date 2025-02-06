@@ -46,9 +46,11 @@ const (
 	K_IF_STMT          = "if_stmt"
 	K_BREAK_STMT       = "break_stmt"
 	K_CONTINUE_STMT    = "continue_stmt"
+	K_FOR_LOOP         = "for_loop"
 
 	// Field names
 	F_LEFT       = "left"
+	F_LEFTS      = "lefts"
 	F_RIGHT      = "right"
 	F_ROOT       = "root"
 	F_INDEXING   = "indexing"

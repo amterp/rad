@@ -35,7 +35,12 @@ func createPrintStr(values []RslValue) string {
 
 	output := ""
 	for _, v := range values {
-		output += ToPrintable(v.Val) + " " // todo if v is a string, don't surround in quotes
+		if str, ok := v.Val.(RslString); ok {
+			// explicit handling for string so we don't print surrounding quotes when it's standalone
+			output += str.String() + " "
+		} else {
+			output += ToPrintable(v.Val) + " "
+		}
 	}
 	output = output[:len(output)-1] // remove last space
 	output = output + "\n"
