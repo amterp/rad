@@ -18,6 +18,7 @@ const (
 	K_LIST             = "list"
 	K_CALL             = "call"
 	K_NOT_OP           = "not_op"
+	K_UNARY_OP         = "unary_op"
 	K_BINARY_OP        = "binary_op"
 	K_COMPARISON_OP    = "comparison_op"
 	K_BOOL_OP          = "bool_op"

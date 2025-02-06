@@ -74,16 +74,27 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 
 func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslValue {
 	switch opNode.Kind() {
-	case K_PLUS:
-		// todo
-		panic("not implemented")
-	case K_MINUS:
-		// todo
-		panic("not implemented")
+	case K_PLUS, K_MINUS:
+		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
+		argVal := i.evaluate(argNode, 1)[0]
+		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for unary op '%s'", TypeAsString(argVal), opStr), RslIntT, RslFloatT)
+		if opNode.Kind() == K_MINUS {
+			switch coerced := argVal.Val.(type) {
+			case int64:
+				return newRslValue(i, parentNode, -coerced)
+			case float64:
+				return newRslValue(i, parentNode, -coerced)
+			default:
+				i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
+			}
+		}
+		return argVal
 	case K_NOT:
 		return newRslValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+	default:
+		i.errorf(opNode, "Invalid unary operator")
+		panic(UNREACHABLE)
 	}
-	return RslValue{}
 }
 
 func (i *Interpreter) executeOp(

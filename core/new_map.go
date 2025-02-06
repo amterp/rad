@@ -125,6 +125,6 @@ func (l *RslMap) Equals(right *RslMap) bool {
 
 func evalMapKey(i *Interpreter, idxNode *ts.Node) RslValue {
 	return i.evaluate(idxNode, 1)[0].
-		RequireNot(i, idxNode, "Map keys cannot be lists", RslListT).
-		RequireNot(i, idxNode, "Map keys cannot be maps", RslMapT)
+		RequireNotType(i, idxNode, "Map keys cannot be lists", RslListT).
+		RequireNotType(i, idxNode, "Map keys cannot be maps", RslMapT)
 }

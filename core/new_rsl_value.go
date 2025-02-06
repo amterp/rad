@@ -130,7 +130,18 @@ func (left RslValue) Equals(right RslValue) bool {
 	}
 }
 
-func (v RslValue) RequireNot(i *Interpreter, node *ts.Node, errPrefix string, disallowedTypes ...RslTypeEnum) RslValue {
+func (v RslValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, allowedTypes ...RslTypeEnum) RslValue {
+	for _, allowedType := range allowedTypes {
+		if v.Type() == allowedType {
+			return v
+		}
+	}
+
+	i.errorf(node, "%s: %s", errPrefix, TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
+func (v RslValue) RequireNotType(i *Interpreter, node *ts.Node, errPrefix string, disallowedTypes ...RslTypeEnum) RslValue {
 	for _, disallowedType := range disallowedTypes {
 		if v.Type() == disallowedType {
 			i.errorf(node, "%s: %s", errPrefix, TypeAsString(v))
