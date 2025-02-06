@@ -14,10 +14,13 @@ const (
 	K_LITERAL          = "literal"
 	K_VAR_PATH         = "var_path"
 	K_INT              = "int"
+	K_BOOL             = "bool"
 	K_LIST             = "list"
 	K_CALL             = "call"
+	K_NOT_OP           = "not_op"
 	K_BINARY_OP        = "binary_op"
 	K_COMPARISON_OP    = "comparison_op"
+	K_BOOL_OP          = "bool_op"
 	K_STRING           = "string"
 	K_STRING_CONTENT   = "string_content"
 	K_BACKSLASH        = "\\"
@@ -36,6 +39,9 @@ const (
 	K_STAR_EQUAL       = "*="
 	K_SLASH_EQUAL      = "/="
 	K_PERCENT_EQUAL    = "%="
+	K_PLUS             = "+"
+	K_MINUS            = "-"
+	K_NOT              = "not"
 
 	// Field names
 	F_LEFT       = "left"

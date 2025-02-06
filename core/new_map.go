@@ -71,8 +71,8 @@ func (m *RslMap) ContainsKey(key RslValue) bool {
 	return exists
 }
 
-func (m *RslMap) Len() int {
-	return len(m.mapping)
+func (m *RslMap) Len() int64 {
+	return int64(len(m.mapping))
 }
 
 func (m *RslMap) Delete(key RslValue) {

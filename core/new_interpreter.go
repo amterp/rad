@@ -86,7 +86,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
-	case K_BINARY_OP, K_COMPARISON_OP:
+	case K_NOT_OP:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		argNode := i.getChild(node, F_ARG)
+		opNode := i.getChild(node, F_OP)
+		return newRslValues(i, node, i.executeUnaryOp(node, argNode, opNode))
+	case K_BINARY_OP, K_COMPARISON_OP, K_BOOL_OP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		left := i.getChild(node, F_LEFT)
 		op := i.getChild(node, F_OP)
@@ -119,12 +124,21 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return newRslValues(i, node, asInt)
 	case K_STRING:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		contentsNode := i.getChild(node, F_CONTENTS)
 		str := NewRslString("")
-		for _, child := range contentsNode.Children(contentsNode.Walk()) {
-			str = str.Concat(i.evaluate(&child, 1)[0].RequireStr(i, &child))
+
+		contentsNode := i.getChild(node, F_CONTENTS)
+		if contentsNode != nil {
+			for _, child := range contentsNode.Children(contentsNode.Walk()) {
+				str = str.Concat(i.evaluate(&child, 1)[0].RequireStr(i, &child))
+			}
 		}
+
 		return newRslValues(i, node, str)
+	case K_BOOL:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		asStr := i.sd.Src[node.StartByte():node.EndByte()]
+		asBool, _ := strconv.ParseBool(asStr)
+		return newRslValues(i, node, asBool)
 	case K_STRING_CONTENT:
 		src := i.sd.Src[node.StartByte():node.EndByte()]
 		return newRslValues(i, node, src)
