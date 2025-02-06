@@ -28,7 +28,7 @@ for i, d in dumps:
 print("+----------------------------------------------+")
 if fails:
     Num = ["{i + 1:3}" for i in range(len(dumps))]
-    Dump = dumps
+    Dump = [replace(d, "\.dump", "") for d in dumps]
     Result = [replace(r, ".* - ", "") for r in results]
     display:
         fields Num, Dump, Result

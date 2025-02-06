@@ -43,8 +43,7 @@ B: [14, 15] PS: [2, 1], PE: [2, 2]           [ `[`
 B: [15, 17] PS: [2, 2], PE: [2, 4]           indexing: expr
 B: [15, 17] PS: [2, 2], PE: [2, 4]             primary_expr
 B: [15, 17] PS: [2, 2], PE: [2, 4]               unary_op
-B: [15, 16] PS: [2, 2], PE: [2, 3]                 op: unary_op_sign
-B: [15, 16] PS: [2, 2], PE: [2, 3]                   - `-`
+B: [15, 16] PS: [2, 2], PE: [2, 3]                 op: - `-`
 B: [16, 17] PS: [2, 3], PE: [2, 4]                 arg: primary_expr
 B: [16, 17] PS: [2, 3], PE: [2, 4]                   literal
 B: [16, 17] PS: [2, 3], PE: [2, 4]                     int `1`

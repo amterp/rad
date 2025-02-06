@@ -28,39 +28,40 @@ B: [16, 31] PS: [1,  4], PE: [1, 19]       primary_expr
 B: [16, 31] PS: [1,  4], PE: [1, 19]         literal
 B: [16, 31] PS: [1,  4], PE: [1, 19]           string
 B: [16, 17] PS: [1,  4], PE: [1,  5]             start: string_start `"`
-B: [17, 23] PS: [1,  5], PE: [1, 11]             contents: string_contents
+B: [17, 30] PS: [1,  5], PE: [1, 18]             contents: string_contents
 B: [17, 23] PS: [1,  5], PE: [1, 11]               content: string_content `there `
-B: [23, 30] PS: [1, 11], PE: [1, 18]             contents: interpolation
-B: [23, 24] PS: [1, 11], PE: [1, 12]               { `{`
-B: [24, 29] PS: [1, 12], PE: [1, 17]               expr: expr
-B: [24, 29] PS: [1, 12], PE: [1, 17]                 primary_expr
-B: [24, 29] PS: [1, 12], PE: [1, 17]                   binary_op
-B: [24, 25] PS: [1, 12], PE: [1, 13]                     left: primary_expr
-B: [24, 25] PS: [1, 12], PE: [1, 13]                       literal
-B: [24, 25] PS: [1, 12], PE: [1, 13]                         int `1`
-B: [26, 27] PS: [1, 14], PE: [1, 15]                     op: + `+`
-B: [28, 29] PS: [1, 16], PE: [1, 17]                     right: primary_expr
-B: [28, 29] PS: [1, 16], PE: [1, 17]                       literal
-B: [28, 29] PS: [1, 16], PE: [1, 17]                         int `1`
-B: [29, 30] PS: [1, 17], PE: [1, 18]               } `}`
+B: [23, 30] PS: [1, 11], PE: [1, 18]               interpolation: interpolation
+B: [23, 24] PS: [1, 11], PE: [1, 12]                 { `{`
+B: [24, 29] PS: [1, 12], PE: [1, 17]                 expr: expr
+B: [24, 29] PS: [1, 12], PE: [1, 17]                   primary_expr
+B: [24, 29] PS: [1, 12], PE: [1, 17]                     binary_op
+B: [24, 25] PS: [1, 12], PE: [1, 13]                       left: primary_expr
+B: [24, 25] PS: [1, 12], PE: [1, 13]                         literal
+B: [24, 25] PS: [1, 12], PE: [1, 13]                           int `1`
+B: [26, 27] PS: [1, 14], PE: [1, 15]                       op: + `+`
+B: [28, 29] PS: [1, 16], PE: [1, 17]                       right: primary_expr
+B: [28, 29] PS: [1, 16], PE: [1, 17]                         literal
+B: [28, 29] PS: [1, 16], PE: [1, 17]                           int `1`
+B: [29, 30] PS: [1, 17], PE: [1, 18]                 } `}`
 B: [30, 31] PS: [1, 18], PE: [1, 19]             end: string_end `"`
 B: [32, 54] PS: [2,  0], PE: [3, 13]   if_stmt
-B: [32, 34] PS: [2,  0], PE: [2,  2]     if `if`
-B: [35, 39] PS: [2,  3], PE: [2,  7]     condition: expr
-B: [35, 39] PS: [2,  3], PE: [2,  7]       primary_expr
-B: [35, 39] PS: [2,  3], PE: [2,  7]         literal
-B: [35, 39] PS: [2,  3], PE: [2,  7]           bool
-B: [35, 39] PS: [2,  3], PE: [2,  7]             true `true`
-B: [39, 40] PS: [2,  7], PE: [2,  8]     : `:`
-B: [42, 54] PS: [3,  1], PE: [3, 13]     assign
-B: [42, 43] PS: [3,  1], PE: [3,  2]       left: var_path
-B: [42, 43] PS: [3,  1], PE: [3,  2]         root: identifier `c`
-B: [44, 45] PS: [3,  3], PE: [3,  4]       = `=`
-B: [46, 54] PS: [3,  5], PE: [3, 13]       right: expr
-B: [46, 54] PS: [3,  5], PE: [3, 13]         primary_expr
-B: [46, 54] PS: [3,  5], PE: [3, 13]           literal
-B: [46, 54] PS: [3,  5], PE: [3, 13]             string
-B: [46, 47] PS: [3,  5], PE: [3,  6]               start: string_start `"`
-B: [47, 53] PS: [3,  6], PE: [3, 12]               contents: string_contents
-B: [47, 53] PS: [3,  6], PE: [3, 12]                 content: string_content `world!`
-B: [53, 54] PS: [3, 12], PE: [3, 13]               end: string_end `"`
+B: [32, 54] PS: [2,  0], PE: [3, 13]     alt: if_alt
+B: [32, 34] PS: [2,  0], PE: [2,  2]       if `if`
+B: [35, 39] PS: [2,  3], PE: [2,  7]       condition: expr
+B: [35, 39] PS: [2,  3], PE: [2,  7]         primary_expr
+B: [35, 39] PS: [2,  3], PE: [2,  7]           literal
+B: [35, 39] PS: [2,  3], PE: [2,  7]             bool
+B: [35, 39] PS: [2,  3], PE: [2,  7]               true `true`
+B: [39, 40] PS: [2,  7], PE: [2,  8]       : `:`
+B: [42, 54] PS: [3,  1], PE: [3, 13]       stmt: assign
+B: [42, 43] PS: [3,  1], PE: [3,  2]         left: var_path
+B: [42, 43] PS: [3,  1], PE: [3,  2]           root: identifier `c`
+B: [44, 45] PS: [3,  3], PE: [3,  4]         = `=`
+B: [46, 54] PS: [3,  5], PE: [3, 13]         right: expr
+B: [46, 54] PS: [3,  5], PE: [3, 13]           primary_expr
+B: [46, 54] PS: [3,  5], PE: [3, 13]             literal
+B: [46, 54] PS: [3,  5], PE: [3, 13]               string
+B: [46, 47] PS: [3,  5], PE: [3,  6]                 start: string_start `"`
+B: [47, 53] PS: [3,  6], PE: [3, 12]                 contents: string_contents
+B: [47, 53] PS: [3,  6], PE: [3, 12]                   content: string_content `world!`
+B: [53, 54] PS: [3, 12], PE: [3, 13]                 end: string_end `"`
