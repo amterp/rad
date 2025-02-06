@@ -86,10 +86,10 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
-	case K_NOT_OP:
+	case K_UNARY_OP, K_NOT_OP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		argNode := i.getChild(node, F_ARG)
 		opNode := i.getChild(node, F_OP)
+		argNode := i.getChild(node, F_ARG)
 		return newRslValues(i, node, i.executeUnaryOp(node, argNode, opNode))
 	case K_BINARY_OP, K_COMPARISON_OP, K_BOOL_OP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
