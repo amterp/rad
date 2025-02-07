@@ -190,8 +190,12 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	case RslMap:
 		return RslValue{Val: &coerced}
 	default:
-		i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
-		panic(UNREACHABLE)
+		if i != nil && node != nil {
+			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
+			panic(UNREACHABLE)
+		} else {
+			panic(fmt.Sprintf("Bug! Unsafe call w/ unsupported value type: %T", coerced))
+		}
 	}
 }
 

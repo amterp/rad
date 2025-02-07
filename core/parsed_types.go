@@ -20,7 +20,7 @@ const (
 	ArgIntT
 	ArgFloatT
 	ArgBoolT
-	ArgMixedArrayT
+	ArgMixedArrayT // todo better support? or delete
 	ArgStringArrayT
 	ArgIntArrayT
 	ArgFloatArrayT

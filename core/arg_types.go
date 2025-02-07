@@ -10,7 +10,7 @@ import (
 type ScriptArg struct {
 	Name            string // identifier name in the script
 	ApiName         string // name that the user will see
-	TreeNode        rts.ArgDecl
+	Decl            rts.ArgDecl
 	Short           *string
 	Type            RslArgTypeT
 	Description     *string
@@ -36,7 +36,7 @@ func FromArgDecl(decl rts.ArgDecl, enumConstraint *rts.ArgEnumConstraint, regexC
 	scriptArg := &ScriptArg{
 		Name:            name,
 		ApiName:         externalName,
-		TreeNode:        decl,
+		Decl:            decl,
 		Short:           decl.ShorthandStr(),
 		Type:            ToRslArgTypeT(decl.Type.Type),
 		Description:     decl.CommentStr(),

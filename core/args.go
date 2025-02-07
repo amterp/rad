@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/amterp/rts"
+	ts "github.com/tree-sitter/go-tree-sitter"
 
 	"github.com/samber/lo"
 	"github.com/spf13/pflag"
 )
 
 type RslArg interface {
-	GetName() string
+	GetExternalName() string
 	GetIdentifier() string
 	GetShort() string
 	GetArgUsage() string
@@ -26,15 +26,15 @@ type RslArg interface {
 	Lookup() *pflag.Flag
 	SetValue(value string)
 	IsOptional() bool
-	GetNode() rts.Node // nil if not a script arg
+	GetNode() *ts.Node // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
 	ValidateConstraints() error
 }
 
 type BaseRslArg struct {
-	Name              string // User-facing arg they'll set in CLI
-	Identifier        string // Identifier in script. If non-script arg, then equal to Name
+	ExternalName      string // User-facing arg they'll set in CLI
+	Identifier        string // Identifier in script. If non-script arg, then equal to ExternalName
 	Short             string
 	ArgUsage          string
 	Description       string
@@ -45,8 +45,8 @@ type BaseRslArg struct {
 	hidden            bool
 }
 
-func (f *BaseRslArg) GetName() string {
-	return f.Name
+func (f *BaseRslArg) GetExternalName() string {
+	return f.ExternalName
 }
 
 func (f *BaseRslArg) GetIdentifier() string {
@@ -78,11 +78,11 @@ func (f *BaseRslArg) isRegistered() bool {
 }
 
 func (f *BaseRslArg) Configured() bool {
-	return RFlagSet.Lookup(f.Name).Changed
+	return RFlagSet.Lookup(f.ExternalName).Changed
 }
 
 func (f *BaseRslArg) Lookup() *pflag.Flag {
-	return RFlagSet.Lookup(f.Name)
+	return RFlagSet.Lookup(f.ExternalName)
 }
 
 func (f *BaseRslArg) IsOptional() bool {
@@ -93,12 +93,12 @@ func (f *BaseRslArg) IsOptional() bool {
 	return f.scriptArg.IsOptional
 }
 
-func (f *BaseRslArg) GetNode() rts.Node {
+func (f *BaseRslArg) GetNode() *ts.Node {
 	if f.scriptArg == nil {
 		return nil
 	}
 
-	return &f.scriptArg.TreeNode
+	return f.scriptArg.Decl.Node()
 }
 
 func (f *BaseRslArg) Hidden(hide bool) {
@@ -125,7 +125,7 @@ type BoolRslArg struct {
 func NewBoolRadArg(name, short, description string, defaultValue bool) BoolRslArg {
 	return BoolRslArg{
 		BaseRslArg: BaseRslArg{
-			Name:              name,
+			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          "",
@@ -142,7 +142,7 @@ func (f *BoolRslArg) Register() {
 		return
 	}
 
-	RFlagSet.BoolVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.BoolVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -154,7 +154,7 @@ func (f *BoolRslArg) SetValue(arg string) {
 	} else if arg == "false" || arg == "0" {
 		f.Value = false
 	} else {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 	}
 }
 
@@ -169,7 +169,7 @@ type BoolArrRslArg struct {
 func NewBoolArrRadArg(name, short, argUsage, description string, defaultValue []bool) BoolArrRslArg {
 	return BoolArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name:              name,
+			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -186,7 +186,7 @@ func (f *BoolArrRslArg) Register() {
 		return
 	}
 
-	RFlagSet.BoolSliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.BoolSliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -202,7 +202,7 @@ func (f *BoolArrRslArg) SetValue(arg string) {
 		} else if v == "false" || v == "0" {
 			bools[i] = false
 		} else {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 		}
 	}
 	f.Value = bools
@@ -221,7 +221,7 @@ type StringRslArg struct {
 func NewStringRadArg(name, short, argUsage, description, defaultValue string, enum *[]string, regex *regexp.Regexp) StringRslArg {
 	return StringRslArg{
 		BaseRslArg: BaseRslArg{
-			Name:              name,
+			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -240,7 +240,7 @@ func (f *StringRslArg) Register() {
 		return
 	}
 
-	RFlagSet.StringVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.StringVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -272,14 +272,14 @@ func (f *StringRslArg) GetDescription() string {
 func (f *StringRslArg) ValidateConstraints() error {
 	if f.EnumConstraint != nil {
 		if !lo.Contains(*f.EnumConstraint, f.Value) {
-			return fmt.Errorf("Invalid '%s' value: %v (valid values: %s)", f.Name, f.Value, strings.Join(*f.EnumConstraint, ", "))
+			return fmt.Errorf("Invalid '%s' value: %v (valid values: %s)", f.ExternalName, f.Value, strings.Join(*f.EnumConstraint, ", "))
 		}
 	}
 
 	constraint := f.RegexConstraint
 	if constraint != nil {
 		if !constraint.MatchString(f.Value) {
-			return fmt.Errorf("Invalid '%s' value: %v (must match regex: %s)", f.Name, f.Value, constraint.String())
+			return fmt.Errorf("Invalid '%s' value: %v (must match regex: %s)", f.ExternalName, f.Value, constraint.String())
 		}
 	}
 
@@ -297,7 +297,7 @@ type StringArrRslArg struct {
 func NewStringArrRadArg(name, short, argUsage, description string, defaultValue []string) StringArrRslArg {
 	return StringArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name:              name,
+			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -314,7 +314,7 @@ func (f *StringArrRslArg) Register() {
 		return
 	}
 
-	RFlagSet.StringArrayVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.StringArrayVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -340,7 +340,7 @@ type IntRslArg struct {
 func NewIntRadArg(name, short, argUsage, description string, defaultValue int64) IntRslArg {
 	return IntRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
+			ExternalName: name,
 
 			Identifier:        name,
 			Short:             short,
@@ -358,7 +358,7 @@ func (f *IntRslArg) Register() {
 		return
 	}
 
-	RFlagSet.Int64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Int64VarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -366,7 +366,7 @@ func (f *IntRslArg) Register() {
 func (f *IntRslArg) SetValue(arg string) {
 	parsed, err := strconv.Atoi(arg)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
 	}
 	val := int64(parsed)
 	f.Value = val
@@ -383,7 +383,7 @@ type IntArrRslArg struct {
 func NewIntArrRadArg(name, short, argUsage, description string, defaultValue []int64) IntArrRslArg {
 	return IntArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
+			ExternalName: name,
 
 			Identifier:        name,
 			Short:             short,
@@ -401,7 +401,7 @@ func (f *IntArrRslArg) Register() {
 		return
 	}
 
-	RFlagSet.Int64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Int64SliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -413,7 +413,7 @@ func (f *IntArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
 		}
 		ints[i] = parsed
 	}
@@ -431,7 +431,7 @@ type FloatRslArg struct {
 func NewFloatRadArg(name, short, argUsage, description string, defaultValue float64) FloatRslArg {
 	return FloatRslArg{
 		BaseRslArg: BaseRslArg{
-			Name:              name,
+			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
 			ArgUsage:          argUsage,
@@ -448,7 +448,7 @@ func (f *FloatRslArg) Register() {
 		return
 	}
 
-	RFlagSet.Float64VarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Float64VarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -456,7 +456,7 @@ func (f *FloatRslArg) Register() {
 func (f *FloatRslArg) SetValue(arg string) {
 	parsed, err := strconv.ParseFloat(arg, 64)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 	}
 	f.Value = parsed
 }
@@ -472,7 +472,7 @@ type FloatArrRslArg struct {
 func NewFloatArrRadArg(name, short, argUsage, description string, defaultValue []float64) FloatArrRslArg {
 	return FloatArrRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
+			ExternalName: name,
 
 			Identifier:        name,
 			Short:             short,
@@ -490,7 +490,7 @@ func (f *FloatArrRslArg) Register() {
 		return
 	}
 
-	RFlagSet.Float64SliceVarP(&f.Value, f.Name, f.Short, f.Default, f.Description)
+	RFlagSet.Float64SliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
 
 	f.registered = true
 }
@@ -502,7 +502,7 @@ func (f *FloatArrRslArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := strconv.ParseFloat(v, 64)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.TreeNode, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 		}
 		floats[i] = parsed
 	}
@@ -519,7 +519,7 @@ type MockResponseRslArg struct {
 func NewMockResponseRadArg(name, short, usage string) MockResponseRslArg {
 	return MockResponseRslArg{
 		BaseRslArg: BaseRslArg{
-			Name: name,
+			ExternalName: name,
 
 			Identifier:        name,
 			Short:             short,
@@ -536,7 +536,7 @@ func (f *MockResponseRslArg) Register() {
 		return
 	}
 
-	RFlagSet.VarP(&f.Value, f.Name, f.Short, f.Description)
+	RFlagSet.VarP(&f.Value, f.ExternalName, f.Short, f.Description)
 
 	f.registered = true
 }
@@ -631,7 +631,7 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		f.Identifier = arg.Name
 		return &f
 	default:
-		RP.RadNodeErrorExit(&arg.TreeNode, fmt.Sprintf("Unknown arg type: %v\n", argType))
+		RP.RadNodeErrorExit(&arg.Decl, fmt.Sprintf("Unknown arg type: %v\n", argType))
 		panic(UNREACHABLE)
 	}
 }
