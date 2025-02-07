@@ -631,7 +631,6 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		f.Identifier = arg.Name
 		return &f
 	default:
-		RP.RadNodeErrorExit(&arg.Decl, fmt.Sprintf("Unknown arg type: %v\n", argType))
-		panic(UNREACHABLE)
+		panic(fmt.Sprintf("Unhandled arg type: %v", argType))
 	}
 }

@@ -239,18 +239,7 @@ func (i *MainInterpreter) VisitTernaryExpr(ternary Ternary) interface{} {
 }
 
 func (i *MainInterpreter) VisitForStmtStmt(stmt ForStmt) {
-	rangeValue := stmt.Range.Accept(i)
-
-	switch coerced := rangeValue.(type) {
-	case []interface{}:
-		runArrayForLoop(i, stmt, coerced)
-	case RslMapOld:
-		runMapForLoop(i, stmt, coerced)
-	case RslString:
-		runArrayForLoop(i, stmt, coerced.StringByRune())
-	default:
-		i.error(stmt.ForToken, "For loop range must be an array")
-	}
+	// DELETE
 }
 
 func (i *MainInterpreter) VisitListComprehensionExpr(comp ListComprehension) interface{} {

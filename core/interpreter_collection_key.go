@@ -2,22 +2,8 @@ package core
 
 import "fmt"
 
-// todo can i re-use traverseVarPath?
 func (i *MainInterpreter) extract(col interface{}, colKey CollectionKey) interface{} {
-	if col == nil {
-		i.error(colKey.Opener, "Cannot slice a nil value")
-	}
-
-	if colKey.IsSlice {
-		return i.sliceAccess(col, colKey)
-	} else {
-		if colKey.End == nil {
-			return i.colLookup(col, colKey)
-		} else {
-			i.error(colKey.Opener, fmt.Sprintf("Bug! Non-slice cannot have an end index: %v", colKey))
-			panic(UNREACHABLE)
-		}
-	}
+	return nil // DELETE
 }
 
 func (i *MainInterpreter) sliceAccess(col interface{}, key CollectionKey) interface{} {
@@ -25,30 +11,7 @@ func (i *MainInterpreter) sliceAccess(col interface{}, key CollectionKey) interf
 }
 
 func (i *MainInterpreter) colLookup(col interface{}, key CollectionKey) interface{} {
-	switch coerced := col.(type) {
-	case RslMapOld:
-		start := *key.Start
-		keyVal := start.Accept(i)
-		keyStr, ok := keyVal.(RslString)
-		if !ok {
-			i.error(key.Opener, fmt.Sprintf("Map key must be a string, was %T (%v)", keyVal, keyVal))
-		}
-		if val, exists := coerced.Get(keyStr); exists {
-			return val
-		} else {
-			i.error(key.Opener, fmt.Sprintf("Key not found: %q", keyStr.Plain()))
-			panic(UNREACHABLE)
-		}
-	case []interface{}:
-		idx := i.resolveLookupIdx(key, int64(len(coerced)))
-		return coerced[idx]
-	case RslString:
-		idx := i.resolveLookupIdx(key, coerced.Len())
-		return coerced.IndexAt(idx)
-	default:
-		i.error(key.Opener, "Lookup must be on a map, array, or string")
-		panic(UNREACHABLE)
-	}
+	return nil // DELETE
 }
 
 func (i *MainInterpreter) resolveLookupIdx(key CollectionKey, len int64) int64 {

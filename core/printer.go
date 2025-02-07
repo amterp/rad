@@ -96,14 +96,11 @@ type Printer interface {
 	CtxErrorCodeExit(ctx ErrorCtx, errorCode int)
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
-	// Exits.
+	// Exits. // todo, delete, replace with panics now that they're caught?
 	RadErrorExit(msg string)
 
 	// Similar to RadErrorExit, but where a token is available for context.
 	RadTokenErrorExit(token Token, msg string)
-
-	// TODO
-	RadNodeErrorExit(node rts.Node, msg string)
 
 	// Similar to RadErrorExit, but prints usage after errors, and before exiting.
 	UsageErrorExit(msg string)
@@ -265,11 +262,6 @@ func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
 		fmt.Fprintf(p.stdErr, "RadError at L%d/%d on '%s': %s",
 			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
 	}
-}
-
-func (p *stdPrinter) RadNodeErrorExit(node rts.Node, msg string) {
-	fmt.Fprintf(p.stdErr, "RadError at L%d/%d in '%s': %s",
-		node.StartPos().Row+1, node.StartPos().Col+1, node.Src(), msg)
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {

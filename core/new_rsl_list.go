@@ -24,28 +24,28 @@ func (l *RslList) Append(value RslValue) {
 	l.Values = append(l.Values, value)
 }
 
-// todo support negative indices
 func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
 	if idxNode.Kind() == K_SLICE {
 		return newRslValue(i, idxNode, l.Slice(i, i.getChild(idxNode, F_START), i.getChild(idxNode, F_END)))
 	}
 
 	idxVal := i.evaluate(idxNode, 1)[0]
-	idxInt := idxVal.RequireInt(i, idxNode)
-	if idxInt < 0 || idxInt >= int64(len(l.Values)) {
-		i.errorf(idxNode, "Index out of bounds: %d", idxInt)
+	rawIdx := idxVal.RequireInt(i, idxNode)
+	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
+	if idx < 0 || idx >= l.Len() {
+		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
 	}
-	return l.Values[idxInt]
+	return l.Values[idx]
 }
 
-// todo support negative indices
 func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	idxVal := i.evaluate(idxNode, 1)[0]
-	idxInt := idxVal.RequireInt(i, idxNode)
-	if idxInt < 0 || idxInt >= int64(len(l.Values)) {
-		i.errorf(idxNode, "Index out of bounds: %d", idxInt)
+	rawIdx := idxVal.RequireInt(i, idxNode)
+	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
+	if idx < 0 || idx >= int64(len(l.Values)) {
+		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
 	}
-	l.Values[idxInt] = value
+	l.Values[idx] = value
 }
 
 func (l *RslList) Slice(i *Interpreter, startNode, endNode *ts.Node) *RslList {
