@@ -49,6 +49,7 @@ const (
 	K_FOR_LOOP         = "for_loop"
 	K_DEFER_BLOCK      = "defer_block"
 	K_ERRDEFER_BLOCK   = "errdefer_block"
+	K_SLICE            = "slice"
 
 	// Field names
 	F_LEFT       = "left"
@@ -73,4 +74,6 @@ const (
 	F_CONDITION  = "condition"
 	F_STMT       = "stmt"
 	F_KEYWORD    = "keyword"
+	F_START      = "start"
+	F_END        = "end"
 )

@@ -26,6 +26,10 @@ func (l *RslList) Append(value RslValue) {
 
 // todo support negative indices
 func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
+	if idxNode.Kind() == K_SLICE {
+		return newRslValue(i, idxNode, l.Slice(i, i.getChild(idxNode, F_START), i.getChild(idxNode, F_END)))
+	}
+
 	idxVal := i.evaluate(idxNode, 1)[0]
 	idxInt := idxVal.RequireInt(i, idxNode)
 	if idxInt < 0 || idxInt >= int64(len(l.Values)) {
@@ -72,6 +76,10 @@ func (l *RslList) Equals(r *RslList) bool {
 }
 
 func (l *RslList) ToString() string {
+	if l.Len() == 0 {
+		return "[ ]"
+	}
+
 	out := "[ "
 	for i, elem := range l.Values {
 		if i > 0 {

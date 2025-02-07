@@ -84,54 +84,9 @@ func (i *MainInterpreter) resolveLookupIdx(key CollectionKey, len int64) int64 {
 }
 
 func (i *MainInterpreter) resolveStartEnd(key CollectionKey, len int64) (int64, int64) {
-	start := int64(0)
-	end := len
-
-	if key.Start != nil {
-		start = i.resolveSliceIndex(key.Opener, *key.Start, len, true)
-	}
-	if key.End != nil {
-		end = i.resolveSliceIndex(key.Opener, *key.End, len, false)
-	}
-
-	if start > end {
-		start = end
-	}
-
-	return start, end
+	return 0, 0 // DELETE
 }
 
 func (i *MainInterpreter) resolveSliceIndex(token Token, expr Expr, len int64, isStart bool) int64 {
-	index := expr.Accept(i)
-	rawIdx, ok := index.(int64)
-	if !ok {
-		i.error(token, fmt.Sprintf("Slice index must be an int, was %T (%v)", index, index))
-	}
-
-	var idx = rawIdx
-	if rawIdx < 0 {
-		idx = rawIdx + len
-	}
-
-	if isStart {
-		if idx < 0 {
-			// the start index is still negative, so we'll slice from the beginning
-			idx = 0
-		}
-		if idx > len {
-			// the start index is greater than the length of the list, so we'll slice to the end
-			idx = len
-		}
-	} else {
-		if idx > len {
-			// the end index is greater than the length of the list, so we'll slice to the end
-			idx = len
-		}
-		if idx < 0 {
-			// the end index is still negative, so we'll slice from the end
-			idx = 0
-		}
-	}
-
-	return idx
+	return 0 // DELETE
 }
