@@ -21,17 +21,7 @@ func (i *MainInterpreter) extract(col interface{}, colKey CollectionKey) interfa
 }
 
 func (i *MainInterpreter) sliceAccess(col interface{}, key CollectionKey) interface{} {
-	switch coerced := col.(type) {
-	case RslString:
-		start, end := i.resolveStartEnd(key, coerced.Len())
-		return coerced.Slice(start, end)
-	case []interface{}:
-		start, end := i.resolveStartEnd(key, int64(len(coerced)))
-		return coerced[start:end]
-	default:
-		i.error(key.Opener, "Slice access must be on a string or array")
-		panic(UNREACHABLE)
-	}
+	return nil // DELETE
 }
 
 func (i *MainInterpreter) colLookup(col interface{}, key CollectionKey) interface{} {

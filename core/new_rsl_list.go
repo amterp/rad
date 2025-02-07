@@ -48,6 +48,17 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	l.Values[idxInt] = value
 }
 
+func (l *RslList) Slice(i *Interpreter, startNode, endNode *ts.Node) *RslList {
+	start, end := ResolveSliceStartEnd(i, startNode, endNode, l.Len())
+
+	newList := NewRslList()
+	for i := start; i < end; i++ {
+		newList.Append(l.Values[i])
+	}
+
+	return newList
+}
+
 func (l *RslList) Contains(val interface{}) bool {
 	for _, elem := range l.Values {
 		if elem.Val == val {

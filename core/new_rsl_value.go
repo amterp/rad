@@ -36,6 +36,8 @@ func (v RslValue) Type() RslTypeEnum {
 func (v RslValue) Index(i *Interpreter, idxNode *ts.Node) RslValue {
 	// todo handle slice nodes
 	switch coerced := v.Val.(type) {
+	case RslString:
+		return newRslValue(i, idxNode, coerced.Slice(i, idxNode))
 	case *RslList:
 		return newRslValue(i, idxNode, coerced.GetIdx(i, idxNode))
 	case *RslMap:

@@ -1,6 +1,9 @@
 package core
 
-import "strings"
+import (
+	ts "github.com/tree-sitter/go-tree-sitter"
+	"strings"
+)
 
 type RslString struct {
 	Segments []rslStringSegment
@@ -104,8 +107,9 @@ func (s *RslString) IndexAt(idx int64) RslString {
 	panic(UNREACHABLE)
 }
 
-func (s *RslString) Slice(start int64, end int64) RslString {
+func (s *RslString) Slice(i *Interpreter, sliceIdxNode *ts.Node) RslString {
 	// todo should maintain attr info
+	start, end := ResolveSliceStartEnd(i, i.getChild(sliceIdxNode, F_START), i.getChild(sliceIdxNode, F_END), s.Len())
 	return NewRslString(s.Plain()[start:end])
 }
 
