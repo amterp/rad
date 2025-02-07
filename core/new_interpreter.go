@@ -108,6 +108,11 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
 	case K_SHELL_STMT:
 		i.executeShellStmt(node)
+	case K_DEL_STMT:
+		rightVarPathNodes := i.getChildren(node, F_RIGHT)
+		for _, rightVarPathNode := range rightVarPathNodes {
+			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL)
+		}
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
@@ -352,10 +357,10 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
 }
 
-func (i *Interpreter) doVarPathAssign(leftVarPathNode *ts.Node, rightValue RslValue) {
-	rootIdentifier := i.getChild(leftVarPathNode, F_ROOT) // identifier required by grammar
+func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue) {
+	rootIdentifier := i.getChild(varPathNode, F_ROOT) // identifier required by grammar
 	rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
-	indexings := i.getChildren(leftVarPathNode, F_INDEXING)
+	indexings := i.getChildren(varPathNode, F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
 	if len(indexings) == 0 {

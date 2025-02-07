@@ -53,6 +53,7 @@ const (
 	K_SHELL_STMT         = "shell_stmt"
 	K_CRITICAL_SHELL_CMD = "critical_shell_cmd"
 	K_FAIL               = "fail"
+	K_DEL_STMT           = "del_stmt"
 
 	// Field names
 	F_LEFT       = "left"

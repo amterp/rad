@@ -39,13 +39,39 @@ func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
 }
 
 func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
+	if idxNode.Kind() == K_SLICE {
+		start, end := ResolveSliceStartEnd(i, idxNode, l.Len())
+		if start < end {
+			newList := NewRslList()
+			newList.Values = append(newList.Values, l.Values[:start]...)
+			if list, ok := value.TryGetList(); ok {
+				newList.Values = append(newList.Values, list.Values...)
+			} else if value == NIL_SENTINAL {
+				// do nothing (delete those values)
+			} else {
+				assignNode := idxNode.Parent().Parent()
+				i.errorf(assignNode, "Cannot assign list slice to a non-list type")
+			}
+			newList.Values = append(newList.Values, l.Values[end:]...)
+			l.Values = newList.Values
+		}
+		return
+	}
+
+	// regular single index
+
 	idxVal := i.evaluate(idxNode, 1)[0]
 	rawIdx := idxVal.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
 	if idx < 0 || idx >= int64(len(l.Values)) {
 		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
 	}
-	l.Values[idx] = value
+
+	if value == NIL_SENTINAL {
+		l.Values = append(l.Values[:idx], l.Values[idx+1:]...)
+	} else {
+		l.Values[idx] = value
+	}
 }
 
 func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {

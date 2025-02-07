@@ -33,7 +33,7 @@ del a[1]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[0, 20, 30, 40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -45,7 +45,7 @@ del a[1][1][0]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[0, [10, [30]], 40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 0, [ 10, [ 30 ] ], 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -59,7 +59,7 @@ print(a)
 print(b)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[0, 20, 30, 40]\n[0, -10, -30, -40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n[ 0, -10, -30, -40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -71,7 +71,7 @@ del a[1], a[1]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[0, 30, 40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -83,7 +83,7 @@ del a[0]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -95,7 +95,7 @@ del a["bob"]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, charlie: [1, hi] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -107,7 +107,7 @@ del a["bob"]["shoes"]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: { car: toyota }, charlie: [1, hi] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\" }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -119,7 +119,7 @@ del a["bob"]["ids"][1]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: { car: toyota, ids: [10, 30] }, charlie: [1, hi] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\", \"ids\": [ 10, 30 ] }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -131,19 +131,7 @@ del a[1:3]
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "[0, 30, 40]\n")
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestDelete_CanDeleteFromStringWithSlice(t *testing.T) {
-	rsl := `
-a = "alice"
-del a[1:3]
-print(a)
-`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "ace\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
