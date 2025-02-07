@@ -180,6 +180,8 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		return RslValue{Val: coerced}
 	case string:
 		return RslValue{Val: NewRslString(coerced)}
+	case int:
+		return RslValue{Val: int64(coerced)}
 	case int64, float64, bool:
 		return RslValue{Val: coerced}
 	case *RslList:
