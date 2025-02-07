@@ -99,11 +99,11 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		}
 
 		line := ""
-		if f.GetShort() != "" && f.GetName() != "" {
-			line = fmt.Sprintf("  -%s, --%s", f.GetShort(), f.GetName())
+		if f.GetShort() != "" && f.GetExternalName() != "" {
+			line = fmt.Sprintf("  -%s, --%s", f.GetShort(), f.GetExternalName())
 		} else if f.GetShort() == "" {
-			line = fmt.Sprintf("      --%s", f.GetName())
-		} else if f.GetName() == "" {
+			line = fmt.Sprintf("      --%s", f.GetExternalName())
+		} else if f.GetExternalName() == "" {
 			line = fmt.Sprintf("  -%s", f.GetShort())
 		}
 

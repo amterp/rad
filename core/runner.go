@@ -116,7 +116,7 @@ func (r *RadRunner) Run() error {
 	}
 	var missingArgs []string
 	for _, scriptArg := range scriptArgs {
-		argName := scriptArg.GetName()
+		argName := scriptArg.GetExternalName()
 		if !scriptArg.Configured() {
 			// flag has not been explicitly set by the user
 			if posArgsIndex < len(args) {
@@ -165,7 +165,7 @@ func (r *RadRunner) Run() error {
 	}
 
 	interpreter := NewInterpreter(r.scriptData)
-	//interpreter.InitArgs()
+	interpreter.InitArgs(scriptArgs)
 	//registerInterpreterWithExit(interpreter)
 	interpreter.Run()
 

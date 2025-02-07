@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/amterp/rts"
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type MainInterpreter struct {
@@ -422,8 +422,8 @@ func (i *MainInterpreter) error(token Token, message string) {
 	i.errorWithCode(token, message, 1)
 }
 
-func (i *MainInterpreter) errorNode(node rts.Node, message string) {
-	RP.CtxErrorExit(NewCtxFromRtsNode(node, message))
+func (i *MainInterpreter) errorNode(node *ts.Node, message string) {
+	RP.CtxErrorExit(NewCtx("", node, message, ""))
 }
 
 func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode int) {

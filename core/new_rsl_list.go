@@ -12,6 +12,14 @@ func NewRslList() *RslList {
 	}
 }
 
+func NewFromGeneric[T any](list []T) *RslList {
+	rslList := NewRslList()
+	for _, elem := range list {
+		rslList.Append(newRslValue(nil, nil, elem))
+	}
+	return rslList
+}
+
 func (l *RslList) Append(value RslValue) {
 	l.Values = append(l.Values, value)
 }
