@@ -40,7 +40,7 @@ type VarPathLeafSetter struct {
 }
 
 func (v VarPathLeafSetter) AcceptStrSlice(str RslString, start int64, end int64) RslString {
-	return str.Replace(start, end, ToPrintable(v.Val))
+	return str // DELETE
 }
 
 func (v VarPathLeafSetter) AcceptListSlice(list []interface{}, start int64, end int64) []interface{} {

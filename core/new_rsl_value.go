@@ -6,6 +6,8 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
+var NIL_SENTINAL = RslValue{Val: nil}
+
 type RslValue struct {
 	// int64, float64, RslString, bool stored as values
 	// collections (lists, maps) stored as pointers
@@ -72,9 +74,14 @@ func (v RslValue) TryGetStr() (RslString, bool) {
 	return NewRslString(""), false
 }
 
-func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
-	// todo handle slice nodes
+func (v RslValue) TryGetList() (*RslList, bool) {
+	if list, ok := v.Val.(*RslList); ok {
+		return list, true
+	}
+	return nil, false
+}
 
+func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
 	switch coerced := v.Val.(type) {
 	case *RslList:
 		coerced.ModifyIdx(i, idxNode, rightValue)

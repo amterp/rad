@@ -22,6 +22,11 @@ func NewRslMap() *RslMap {
 }
 
 func (m *RslMap) Set(key RslValue, value RslValue) {
+	if value == NIL_SENTINAL {
+		m.Delete(key)
+		return
+	}
+
 	if _, exists := m.mapping[key.Hash()]; !exists {
 		m.keys = append(m.keys, key)
 	}
@@ -34,6 +39,7 @@ func (m *RslMap) Get(key RslValue) (RslValue, bool) {
 }
 
 func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
+	// todo grammar: myMap.2 should be okay, treated as "2". but is not valid identifier, so problem!
 	if idxNode.Kind() == K_IDENTIFIER {
 		// dot syntax e.g. myMap.myKey
 		keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]

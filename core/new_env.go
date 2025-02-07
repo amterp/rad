@@ -25,5 +25,9 @@ func (e *Env) GetVar(name string) (RslValue, bool) {
 }
 
 func (e *Env) SetVar(name string, v RslValue) {
-	e.Vars[name] = v
+	if v == NIL_SENTINAL {
+		delete(e.Vars, name)
+	} else {
+		e.Vars[name] = v
+	}
 }

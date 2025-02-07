@@ -23,6 +23,7 @@ type CodeCtx struct {
 }
 
 // TODO require RslError code?
+// TODO perhaps include a map[node]string for multiple explanations for different parts of the code?
 type ErrorCtx struct {
 	CodeCtx
 	OneLiner string
