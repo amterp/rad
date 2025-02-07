@@ -121,16 +121,16 @@ type RslArgType struct {
 	Type  RslArgTypeT
 }
 
-type JsonPath struct {
-	Elements []JsonPathElement
+type JsonPathOld struct {
+	Elements []JsonPathElementOld
 }
 
-type JsonPathElement struct {
+type JsonPathElementOld struct {
 	Identifier Token
-	ArrElems   []JsonPathElementArr
+	ArrElems   []JsonPathElementArrOld
 }
 
-type JsonPathElementArr struct {
+type JsonPathElementArrOld struct {
 	ArrayToken *Token // e.g. json.names[]
 	Index      *Expr  // e.g. json.names[0]
 }

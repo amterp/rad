@@ -54,6 +54,7 @@ const (
 	K_CRITICAL_SHELL_CMD = "critical_shell_cmd"
 	K_FAIL               = "fail"
 	K_DEL_STMT           = "del_stmt"
+	K_JSON_PATH          = "json_path"
 
 	// Field names
 	F_LEFT       = "left"
@@ -61,6 +62,7 @@ const (
 	F_RIGHT      = "right"
 	F_ROOT       = "root"
 	F_INDEXING   = "indexing"
+	F_INDEX      = "index"
 	F_LIST_ENTRY = "list_entry"
 	F_FUNC       = "func"
 	F_ARG        = "arg"
@@ -84,4 +86,5 @@ const (
 	F_QUIET_MOD  = "quiet_mod"
 	F_COMMAND    = "command"
 	F_RESPONSE   = "response"
+	F_SEGMENT    = "segment"
 )

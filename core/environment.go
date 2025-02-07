@@ -7,7 +7,7 @@ import (
 type OldEnv struct {
 	i          *MainInterpreter
 	Vars       map[string]interface{} // values are NOT pointers, they're the actual value
-	jsonFields map[string]JsonFieldVar
+	jsonFields map[string]JsonFieldVarOld
 	Enclosing  *OldEnv
 }
 
@@ -15,7 +15,7 @@ func NewOldEnv(i *MainInterpreter) *OldEnv {
 	return &OldEnv{
 		i:          i,
 		Vars:       make(map[string]interface{}),
-		jsonFields: make(map[string]JsonFieldVar),
+		jsonFields: make(map[string]JsonFieldVarOld),
 		Enclosing:  nil,
 	}
 }
@@ -24,7 +24,7 @@ func (e *OldEnv) NewChildEnv() OldEnv {
 	return OldEnv{
 		i:          e.i,
 		Vars:       make(map[string]interface{}),
-		jsonFields: make(map[string]JsonFieldVar),
+		jsonFields: make(map[string]JsonFieldVarOld),
 		Enclosing:  e,
 	}
 }
@@ -92,18 +92,18 @@ func (e *OldEnv) GetByName(token Token, varName string, acceptableTypes ...RslTy
 	return e.getOrError(varName, token, acceptableTypes...)
 }
 
-func (e *OldEnv) AssignJsonField(name Token, path JsonPath) {
-	e.jsonFields[name.GetLexeme()] = JsonFieldVar{
+func (e *OldEnv) AssignJsonField(name Token, path JsonPathOld) {
+	e.jsonFields[name.GetLexeme()] = JsonFieldVarOld{
 		Name: name,
 		Path: path,
 	}
 }
 
-func (e *OldEnv) GetJsonField(nameToken Token) JsonFieldVar {
+func (e *OldEnv) GetJsonField(nameToken Token) JsonFieldVarOld {
 	return e.GetJsonFieldWithToken(nameToken, nameToken.GetLexeme())
 }
 
-func (e *OldEnv) GetJsonFieldWithToken(token Token, name string) JsonFieldVar {
+func (e *OldEnv) GetJsonFieldWithToken(token Token, name string) JsonFieldVarOld {
 	field, ok := e.jsonFields[name]
 	if !ok {
 		if e.Enclosing != nil {

@@ -153,7 +153,7 @@ func (r *radInvocation) execute() {
 
 	fields := r.fields.Identifiers
 	if r.url != nil {
-		jsonFields := lo.Map(fields, func(field Token, _ int) JsonFieldVar {
+		jsonFields := lo.Map(fields, func(field Token, _ int) JsonFieldVarOld {
 			return r.ri.i.env.GetJsonField(field)
 		})
 
