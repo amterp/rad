@@ -47,6 +47,8 @@ const (
 	K_BREAK_STMT       = "break_stmt"
 	K_CONTINUE_STMT    = "continue_stmt"
 	K_FOR_LOOP         = "for_loop"
+	K_DEFER_BLOCK      = "defer_block"
+	K_ERRDEFER_BLOCK   = "errdefer_block"
 
 	// Field names
 	F_LEFT       = "left"
@@ -70,4 +72,5 @@ const (
 	F_ALT        = "alt"
 	F_CONDITION  = "condition"
 	F_STMT       = "stmt"
+	F_KEYWORD    = "keyword"
 )

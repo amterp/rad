@@ -386,38 +386,6 @@ func (i *MainInterpreter) VisitDeferStmtStmt(deferStmt DeferStmt) {
 	i.deferredStmts = append(i.deferredStmts, deferStmt)
 }
 
-// todo currently these execute after an error is printed. Should they execute before?
-func (i *MainInterpreter) ExecuteDeferredStmts(errCode int) {
-	// execute backwards (LIFO)
-	for j := len(i.deferredStmts) - 1; j >= 0; j-- {
-		deferredStmt := i.deferredStmts[j]
-
-		if deferredStmt.IsErrDefer && errCode == 0 {
-			continue
-		}
-
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					// we only debug log. we expect the error that occurred to already have been logged.
-					// we might also be here only because a deferred statement invoked a clean exit, for example, so
-					// this is arguably also sometimes just standard flow.
-					RP.RadDebugf(fmt.Sprintf("Recovered from panic in deferred statement: %v", r))
-				}
-			}()
-
-			if deferredStmt.DeferredStmt != nil {
-				// todo why does this need to be dereferenced but not the block below?
-				(*deferredStmt.DeferredStmt).Accept(i)
-			} else if deferredStmt.DeferredBlock != nil {
-				deferredStmt.DeferredBlock.Accept(i)
-			} else {
-				i.error(deferredStmt.DeferToken, "Bug! Deferred statement should have either a statement or a block")
-			}
-		}()
-	}
-}
-
 func (i *MainInterpreter) error(token Token, message string) {
 	i.errorWithCode(token, message, 1)
 }
