@@ -4,27 +4,21 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func (l *RslList) Slice(i *Interpreter, startNode, endNode *ts.Node) *RslList {
+func ResolveSliceStartEnd(i *Interpreter, startNode *ts.Node, endNode *ts.Node, length int64) (int64, int64) {
 	start := int64(0)
-	listLen := l.Len()
-	end := listLen
+	end := length
 
 	if startNode != nil {
 		start = i.evaluate(startNode, 1)[0].RequireInt(i, startNode)
-		start = resolveSliceIndex(start, listLen)
+		start = resolveSliceIndex(start, length)
 	}
 
 	if endNode != nil {
 		end = i.evaluate(endNode, 1)[0].RequireInt(i, endNode)
-		end = resolveSliceIndex(end, listLen)
+		end = resolveSliceIndex(end, length)
 	}
 
-	newList := NewRslList()
-	for i := start; i < end; i++ {
-		newList.Append(l.Values[i])
-	}
-
-	return newList
+	return start, end
 }
 
 func resolveSliceIndex(rawIdx, listLen int64) int64 {
