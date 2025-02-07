@@ -87,7 +87,7 @@ func (s *RslString) Len() int64 {
 func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {
 	if idxNode.Kind() == K_SLICE {
 		// todo should maintain attr info
-		start, end := ResolveSliceStartEnd(i, i.getChild(idxNode, F_START), i.getChild(idxNode, F_END), s.Len())
+		start, end := ResolveSliceStartEnd(i, idxNode, s.Len())
 		return NewRslString(s.Plain()[start:end])
 	}
 

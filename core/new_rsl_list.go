@@ -26,7 +26,7 @@ func (l *RslList) Append(value RslValue) {
 
 func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
 	if idxNode.Kind() == K_SLICE {
-		return newRslValue(i, idxNode, l.Slice(i, i.getChild(idxNode, F_START), i.getChild(idxNode, F_END)))
+		return newRslValue(i, idxNode, l.Slice(i, idxNode))
 	}
 
 	idxVal := i.evaluate(idxNode, 1)[0]
@@ -48,8 +48,8 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	l.Values[idx] = value
 }
 
-func (l *RslList) Slice(i *Interpreter, startNode, endNode *ts.Node) *RslList {
-	start, end := ResolveSliceStartEnd(i, startNode, endNode, l.Len())
+func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {
+	start, end := ResolveSliceStartEnd(i, sliceNode, l.Len())
 
 	newList := NewRslList()
 	for i := start; i < end; i++ {

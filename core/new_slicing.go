@@ -4,7 +4,10 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func ResolveSliceStartEnd(i *Interpreter, startNode *ts.Node, endNode *ts.Node, length int64) (int64, int64) {
+func ResolveSliceStartEnd(i *Interpreter, sliceNode *ts.Node, length int64) (int64, int64) {
+	startNode := i.getChild(sliceNode, F_START)
+	endNode := i.getChild(sliceNode, F_END)
+
 	start := int64(0)
 	end := length
 

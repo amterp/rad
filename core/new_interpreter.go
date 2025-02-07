@@ -106,6 +106,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		keywordNode := i.getChild(node, F_KEYWORD)
 		stmtNodes := i.getChildren(node, F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
+	case K_SHELL_STMT:
+		i.executeShellStmt(node)
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
@@ -218,10 +220,10 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 	case K_MAP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		rslMap := NewRslMap()
-		entries := i.getChildren(node, F_MAP_ENTRY)
-		for _, entry := range entries {
-			keyNode := i.getChild(&entry, F_KEY)
-			valueNode := i.getChild(&entry, F_VALUE)
+		entryNodes := i.getChildren(node, F_MAP_ENTRY)
+		for _, entryNode := range entryNodes {
+			keyNode := i.getChild(&entryNode, F_KEY)
+			valueNode := i.getChild(&entryNode, F_VALUE)
 			key := evalMapKey(i, keyNode)
 			rslMap.Set(key, i.evaluate(valueNode, 1)[0])
 		}

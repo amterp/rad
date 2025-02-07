@@ -22,6 +22,7 @@ type CodeCtx struct {
 	ColEnd   int // inclusive
 }
 
+// TODO require RslError code?
 type ErrorCtx struct {
 	CodeCtx
 	OneLiner string
@@ -94,6 +95,8 @@ type Printer interface {
 
 	// TODO
 	CtxErrorCodeExit(ctx ErrorCtx, errorCode int)
+
+	ErrorCodeExitf(errorCode int, msgFmt string, args ...interface{})
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits. // todo, delete, replace with panics now that they're caught?
@@ -187,7 +190,7 @@ func (p *stdPrinter) ErrorExit(msg string) {
 }
 
 func (p *stdPrinter) ErrorExitCode(msg string, errorCode int) {
-	if !p.isQuiet || p.isScriptDebug {
+	if !IsBlank(msg) && (!p.isQuiet || p.isScriptDebug) {
 		fmt.Fprint(p.stdErr, msg)
 	}
 	p.printShellExitIfEnabled()
@@ -242,6 +245,17 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 		if !IsBlank(ctx.Details) {
 			fmt.Fprintf(p.stdErr, "\n%s\n", ctx.Details)
 		}
+	}
+	p.printShellExitIfEnabled()
+	p.errorExit(errorCode)
+}
+
+func (p *stdPrinter) ErrorCodeExitf(errorCode int, msgFmt string, args ...interface{}) {
+	if !p.isQuiet || p.isScriptDebug {
+		if !IsBlank(msgFmt) && !strings.HasSuffix(msgFmt, "\n") {
+			msgFmt += "\n"
+		}
+		fmt.Fprintf(p.stdErr, msgFmt, args...)
 	}
 	p.printShellExitIfEnabled()
 	p.errorExit(errorCode)
