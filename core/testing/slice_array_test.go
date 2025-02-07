@@ -11,7 +11,7 @@ print(a[3:4])
 print(a[0:len(a)])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[10, 20]\n[20, 30]\n[40]\n[10, 20, 30, 40, 50]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20 ]\n[ 20, 30 ]\n[ 40 ]\n[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -24,7 +24,7 @@ print(a[-4:-2])
 print(a[-2:-1])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[10, 20]\n[20, 30]\n[40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20 ]\n[ 20, 30 ]\n[ 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -37,7 +37,7 @@ print(a[-2:2])
 print(a[1:-1])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[30]\n[]\n[20, 30, 40]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 30 ]\n[ ]\n[ 20, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -48,7 +48,7 @@ a = [10, 20, 30, 40, 50]
 print(a[:])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[10, 20, 30, 40, 50]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -63,7 +63,7 @@ print(a[:99])
 print(a[-99:])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[10, 20, 30, 40, 50]\n[10, 20, 30, 40]\n[10, 20, 30, 40, 50]\n[10, 20, 30, 40, 50]\n[10, 20, 30, 40, 50]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -78,7 +78,7 @@ print(a[99:])
 print(a[:-99])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[]\n[]\n[]\n[]\n[]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ ]\n[ ]\n[ ]\n[ ]\n[ ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -90,7 +90,7 @@ print(a[2:])
 print(a[:-2])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[30, 40, 50]\n[10, 20, 30]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ 30, 40, 50 ]\n[ 10, 20, 30 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -102,7 +102,7 @@ print(a[3:2])
 print(a[-2:-3])
 `
 	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[]\n[]\n")
+	assertOnlyOutput(t, stdOutBuffer, "[ ]\n[ ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
