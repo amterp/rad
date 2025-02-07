@@ -10,27 +10,30 @@ func ResolveSliceStartEnd(i *Interpreter, startNode *ts.Node, endNode *ts.Node, 
 
 	if startNode != nil {
 		start = i.evaluate(startNode, 1)[0].RequireInt(i, startNode)
-		start = resolveSliceIndex(start, length)
+		start = CalculateCorrectedIndex(start, length, true)
 	}
 
 	if endNode != nil {
 		end = i.evaluate(endNode, 1)[0].RequireInt(i, endNode)
-		end = resolveSliceIndex(end, length)
+		end = CalculateCorrectedIndex(end, length, true)
 	}
 
 	return start, end
 }
 
-func resolveSliceIndex(rawIdx, listLen int64) int64 {
+// 'corrects' negative indices into their positive equivalents
+func CalculateCorrectedIndex(rawIdx, length int64, clamp bool) int64 {
 	idx := rawIdx
 	if rawIdx < 0 {
-		idx = rawIdx + listLen
+		idx = rawIdx + length
 	}
 
-	if idx < 0 {
-		idx = 0
-	} else if idx > listLen {
-		idx = listLen
+	if clamp {
+		if idx < 0 {
+			idx = 0
+		} else if idx > length {
+			idx = length
+		}
 	}
 
 	return idx

@@ -34,10 +34,9 @@ func (v RslValue) Type() RslTypeEnum {
 }
 
 func (v RslValue) Index(i *Interpreter, idxNode *ts.Node) RslValue {
-	// todo handle slice nodes
 	switch coerced := v.Val.(type) {
 	case RslString:
-		return newRslValue(i, idxNode, coerced.Slice(i, idxNode))
+		return newRslValue(i, idxNode, coerced.Index(i, idxNode))
 	case *RslList:
 		return newRslValue(i, idxNode, coerced.GetIdx(i, idxNode))
 	case *RslMap:
@@ -90,7 +89,7 @@ func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValu
 			coerced.Set(idxVal, rightValue)
 		}
 	default:
-		i.errorf(idxNode, "Indexing not supported for %s", TypeAsString(v))
+		i.errorf(idxNode, "Cannot modify indices for type '%s'", TypeAsString(v))
 		panic(UNREACHABLE)
 	}
 }

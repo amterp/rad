@@ -1,8 +1,9 @@
 package core
 
 import (
-	ts "github.com/tree-sitter/go-tree-sitter"
 	"strings"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RslString struct {
@@ -58,14 +59,6 @@ func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string
 	}
 }
 
-func (s *RslString) StringByRune() []interface{} {
-	var result []interface{}
-	for i := int64(0); i < s.Len(); i++ {
-		result = append(result, s.IndexAt(i))
-	}
-	return result
-}
-
 func (s *RslString) ToRuneList() *RslList {
 	result := NewRslList()
 	for i := int64(0); i < s.Len(); i++ {
@@ -91,6 +84,23 @@ func (s *RslString) Len() int64 {
 	return int64(StrLen(s.Plain()))
 }
 
+func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {
+	if idxNode.Kind() == K_SLICE {
+		// todo should maintain attr info
+		start, end := ResolveSliceStartEnd(i, i.getChild(idxNode, F_START), i.getChild(idxNode, F_END), s.Len())
+		return NewRslString(s.Plain()[start:end])
+	}
+
+	idxVal := i.evaluate(idxNode, 1)[0]
+	rawIdx := idxVal.RequireInt(i, idxNode)
+	idx := CalculateCorrectedIndex(rawIdx, s.Len(), false)
+	if idx < 0 || idx >= s.Len() {
+		ErrIndexOutOfBounds(i, idxNode, rawIdx, s.Len())
+	}
+
+	return s.IndexAt(idx)
+}
+
 // assumes idx is valid for this string
 func (s *RslString) IndexAt(idx int64) RslString {
 	cumLen := 0
@@ -105,12 +115,6 @@ func (s *RslString) IndexAt(idx int64) RslString {
 	}
 	RP.RadErrorExit("Bug! IndexAt called with invalid index")
 	panic(UNREACHABLE)
-}
-
-func (s *RslString) Slice(i *Interpreter, sliceIdxNode *ts.Node) RslString {
-	// todo should maintain attr info
-	start, end := ResolveSliceStartEnd(i, i.getChild(sliceIdxNode, F_START), i.getChild(sliceIdxNode, F_END), s.Len())
-	return NewRslString(s.Plain()[start:end])
 }
 
 func (s *RslString) Compare(other RslString) int {
