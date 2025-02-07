@@ -1,0 +1,116 @@
+=====
+Rad block
+=====
+ID = json[].id
+Name = json[].name
+
+rad "http":
+    fields ID, Name
+    sort
+
+display:
+    fields ID, Name
+    sort Name desc, ID
+    ID, Name:
+        color "red" "^Alice$"
+        map v -> upper(v)
+=====
+B: [  0, 199] PS: [ 0,  0], PE: [13,  0] source_file
+B: [  0,  14] PS: [ 0,  0], PE: [ 0, 14]   assign
+B: [  0,   2] PS: [ 0,  0], PE: [ 0,  2]     left: var_path
+B: [  0,   2] PS: [ 0,  0], PE: [ 0,  2]       root: identifier `ID`
+B: [  3,   4] PS: [ 0,  3], PE: [ 0,  4]     = `=`
+B: [  5,  14] PS: [ 0,  5], PE: [ 0, 14]     right: json_path
+B: [  5,  11] PS: [ 0,  5], PE: [ 0, 11]       segment: json_opener
+B: [  5,   9] PS: [ 0,  5], PE: [ 0,  9]         key: json `json`
+B: [  9,  11] PS: [ 0,  9], PE: [ 0, 11]         index: json_path_indexer
+B: [  9,  10] PS: [ 0,  9], PE: [ 0, 10]           [ `[`
+B: [ 10,  11] PS: [ 0, 10], PE: [ 0, 11]           ] `]`
+B: [ 11,  12] PS: [ 0, 11], PE: [ 0, 12]       . `.`
+B: [ 12,  14] PS: [ 0, 12], PE: [ 0, 14]       segment: json_segment
+B: [ 12,  14] PS: [ 0, 12], PE: [ 0, 14]         key: identifier `id`
+B: [ 15,  33] PS: [ 1,  0], PE: [ 1, 18]   assign
+B: [ 15,  19] PS: [ 1,  0], PE: [ 1,  4]     left: var_path
+B: [ 15,  19] PS: [ 1,  0], PE: [ 1,  4]       root: identifier `Name`
+B: [ 20,  21] PS: [ 1,  5], PE: [ 1,  6]     = `=`
+B: [ 22,  33] PS: [ 1,  7], PE: [ 1, 18]     right: json_path
+B: [ 22,  28] PS: [ 1,  7], PE: [ 1, 13]       segment: json_opener
+B: [ 22,  26] PS: [ 1,  7], PE: [ 1, 11]         key: json `json`
+B: [ 26,  28] PS: [ 1, 11], PE: [ 1, 13]         index: json_path_indexer
+B: [ 26,  27] PS: [ 1, 11], PE: [ 1, 12]           [ `[`
+B: [ 27,  28] PS: [ 1, 12], PE: [ 1, 13]           ] `]`
+B: [ 28,  29] PS: [ 1, 13], PE: [ 1, 14]       . `.`
+B: [ 29,  33] PS: [ 1, 14], PE: [ 1, 18]       segment: json_segment
+B: [ 29,  33] PS: [ 1, 14], PE: [ 1, 18]         key: identifier `name`
+B: [ 35,  75] PS: [ 3,  0], PE: [ 5,  8]   rad_block
+B: [ 35,  38] PS: [ 3,  0], PE: [ 3,  3]     rad_type: rad_keyword `rad`
+B: [ 39,  45] PS: [ 3,  4], PE: [ 3, 10]     source: expr
+B: [ 39,  45] PS: [ 3,  4], PE: [ 3, 10]       primary_expr
+B: [ 39,  45] PS: [ 3,  4], PE: [ 3, 10]         literal
+B: [ 39,  45] PS: [ 3,  4], PE: [ 3, 10]           string
+B: [ 39,  40] PS: [ 3,  4], PE: [ 3,  5]             start: string_start `"`
+B: [ 40,  44] PS: [ 3,  5], PE: [ 3,  9]             contents: string_contents
+B: [ 40,  44] PS: [ 3,  5], PE: [ 3,  9]               content: string_content `http`
+B: [ 44,  45] PS: [ 3,  9], PE: [ 3, 10]             end: string_end `"`
+B: [ 45,  46] PS: [ 3, 10], PE: [ 3, 11]     : `:`
+B: [ 51,  66] PS: [ 4,  4], PE: [ 4, 19]     stmt: rad_field_stmt
+B: [ 51,  57] PS: [ 4,  4], PE: [ 4, 10]       fields `fields`
+B: [ 58,  60] PS: [ 4, 11], PE: [ 4, 13]       identifier: identifier `ID`
+B: [ 60,  61] PS: [ 4, 13], PE: [ 4, 14]       , `,`
+B: [ 62,  66] PS: [ 4, 15], PE: [ 4, 19]       identifier: identifier `Name`
+B: [ 71,  75] PS: [ 5,  4], PE: [ 5,  8]     stmt: rad_sort_stmt
+B: [ 71,  75] PS: [ 5,  4], PE: [ 5,  8]       sort `sort`
+B: [ 77, 198] PS: [ 7,  0], PE: [12, 25]   rad_block
+B: [ 77,  84] PS: [ 7,  0], PE: [ 7,  7]     rad_type: display_keyword `display`
+B: [ 84,  85] PS: [ 7,  7], PE: [ 7,  8]     : `:`
+B: [ 90, 105] PS: [ 8,  4], PE: [ 8, 19]     stmt: rad_field_stmt
+B: [ 90,  96] PS: [ 8,  4], PE: [ 8, 10]       fields `fields`
+B: [ 97,  99] PS: [ 8, 11], PE: [ 8, 13]       identifier: identifier `ID`
+B: [ 99, 100] PS: [ 8, 13], PE: [ 8, 14]       , `,`
+B: [101, 105] PS: [ 8, 15], PE: [ 8, 19]       identifier: identifier `Name`
+B: [110, 128] PS: [ 9,  4], PE: [ 9, 22]     stmt: rad_sort_stmt
+B: [110, 114] PS: [ 9,  4], PE: [ 9,  8]       sort `sort`
+B: [115, 124] PS: [ 9,  9], PE: [ 9, 18]       rad_sort_specifier
+B: [115, 119] PS: [ 9,  9], PE: [ 9, 13]         identifier: identifier `Name`
+B: [120, 124] PS: [ 9, 14], PE: [ 9, 18]         direction: desc `desc`
+B: [124, 125] PS: [ 9, 18], PE: [ 9, 19]       , `,`
+B: [126, 128] PS: [ 9, 20], PE: [ 9, 22]       rad_sort_specifier
+B: [126, 128] PS: [ 9, 20], PE: [ 9, 22]         identifier: identifier `ID`
+B: [133, 198] PS: [10,  4], PE: [12, 25]     stmt: rad_field_modifier_stmt
+B: [133, 135] PS: [10,  4], PE: [10,  6]       identifier: identifier `ID`
+B: [135, 136] PS: [10,  6], PE: [10,  7]       , `,`
+B: [137, 141] PS: [10,  8], PE: [10, 12]       identifier: identifier `Name`
+B: [141, 142] PS: [10, 12], PE: [10, 13]       : `:`
+B: [151, 172] PS: [11,  8], PE: [11, 29]       mod_stmt: rad_field_mod_color
+B: [151, 156] PS: [11,  8], PE: [11, 13]         color `color`
+B: [157, 162] PS: [11, 14], PE: [11, 19]         color: expr
+B: [157, 162] PS: [11, 14], PE: [11, 19]           primary_expr
+B: [157, 162] PS: [11, 14], PE: [11, 19]             literal
+B: [157, 162] PS: [11, 14], PE: [11, 19]               string
+B: [157, 158] PS: [11, 14], PE: [11, 15]                 start: string_start `"`
+B: [158, 161] PS: [11, 15], PE: [11, 18]                 contents: string_contents
+B: [158, 161] PS: [11, 15], PE: [11, 18]                   content: string_content `red`
+B: [161, 162] PS: [11, 18], PE: [11, 19]                 end: string_end `"`
+B: [163, 172] PS: [11, 20], PE: [11, 29]         regex: expr
+B: [163, 172] PS: [11, 20], PE: [11, 29]           primary_expr
+B: [163, 172] PS: [11, 20], PE: [11, 29]             literal
+B: [163, 172] PS: [11, 20], PE: [11, 29]               string
+B: [163, 164] PS: [11, 20], PE: [11, 21]                 start: string_start `"`
+B: [164, 171] PS: [11, 21], PE: [11, 28]                 contents: string_contents
+B: [164, 171] PS: [11, 21], PE: [11, 28]                   content: string_content `^Alice$`
+B: [171, 172] PS: [11, 28], PE: [11, 29]                 end: string_end `"`
+B: [181, 198] PS: [12,  8], PE: [12, 25]       mod_stmt: rad_field_mod_map
+B: [181, 184] PS: [12,  8], PE: [12, 11]         map `map`
+B: [185, 198] PS: [12, 12], PE: [12, 25]         lambda: lambda
+B: [185, 186] PS: [12, 12], PE: [12, 13]           identifier: identifier `v`
+B: [187, 189] PS: [12, 14], PE: [12, 16]           -> `->`
+B: [190, 198] PS: [12, 17], PE: [12, 25]           expr: expr
+B: [190, 198] PS: [12, 17], PE: [12, 25]             primary_expr
+B: [190, 198] PS: [12, 17], PE: [12, 25]               call
+B: [190, 195] PS: [12, 17], PE: [12, 22]                 func: identifier `upper`
+B: [195, 196] PS: [12, 22], PE: [12, 23]                 ( `(`
+B: [196, 197] PS: [12, 23], PE: [12, 24]                 arg: expr
+B: [196, 197] PS: [12, 23], PE: [12, 24]                   primary_expr
+B: [196, 197] PS: [12, 23], PE: [12, 24]                     var_path
+B: [196, 197] PS: [12, 23], PE: [12, 24]                       root: identifier `v`
+B: [197, 198] PS: [12, 24], PE: [12, 25]                 ) `)`
