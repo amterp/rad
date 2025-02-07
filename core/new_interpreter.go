@@ -52,12 +52,19 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
 		return
 	case K_ASSIGN:
-		leftVarPathNodes := i.getChildren(node, F_LEFT)
-		rightNodes := i.getChild(node, F_RIGHT)
-		numExpectedOutputs := len(leftVarPathNodes)
-		values := i.evaluate(rightNodes, numExpectedOutputs)
-		for idx, leftVarPathNode := range leftVarPathNodes {
-			i.doVarPathAssign(&leftVarPathNode, values[idx])
+		rightNode := i.getChild(node, F_RIGHT)
+		if rightNode.Kind() == K_JSON_PATH {
+			// json path assignment
+			jsonFieldVar := NewJsonFieldVar(i, node, rightNode)
+			i.env.SetJsonFieldVar(jsonFieldVar)
+		} else {
+			// regular expr assignment
+			leftVarPathNodes := i.getChildren(node, F_LEFT)
+			numExpectedOutputs := len(leftVarPathNodes)
+			values := i.evaluate(rightNode, numExpectedOutputs)
+			for idx, leftVarPathNode := range leftVarPathNodes {
+				i.doVarPathAssign(&leftVarPathNode, values[idx])
+			}
 		}
 	case K_COMPOUND_ASSIGN:
 		leftVarPathNode := i.getChild(node, F_LEFT)
@@ -334,7 +341,7 @@ func (i *Interpreter) getChild(node *ts.Node, fieldName string) *ts.Node {
 func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
 	count := node.ChildCount()
 	if count != 1 {
-		i.errorf(node, "Expected exactly one child, got %d", count)
+		i.errorf(node, "Bug? Expected exactly one child, got %d", count)
 	}
 	return node.Child(0)
 }

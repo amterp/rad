@@ -1,16 +1,18 @@
 package core
 
 type Env struct {
-	i         *Interpreter
-	Enclosing *Env
-	Vars      map[string]RslValue
+	i             *Interpreter
+	Enclosing     *Env
+	Vars          map[string]RslValue
+	JsonFieldVars map[string]*JsonFieldVar // not pointer?
 }
 
 func NewEnv(i *Interpreter) *Env {
 	return &Env{
-		i:         i,
-		Enclosing: nil,
-		Vars:      make(map[string]RslValue),
+		i:             i,
+		Enclosing:     nil,
+		Vars:          make(map[string]RslValue),
+		JsonFieldVars: make(map[string]*JsonFieldVar),
 	}
 }
 
@@ -30,4 +32,10 @@ func (e *Env) SetVar(name string, v RslValue) {
 	} else {
 		e.Vars[name] = v
 	}
+}
+
+func (e *Env) SetJsonFieldVar(jsonFieldVar *JsonFieldVar) {
+	e.JsonFieldVars[jsonFieldVar.Name] = jsonFieldVar
+	// define empty list for json field
+	e.SetVar(jsonFieldVar.Name, newRslValue(e.i, jsonFieldVar.Node, NewRslList()))
 }

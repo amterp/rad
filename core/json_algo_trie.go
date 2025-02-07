@@ -14,7 +14,7 @@ type Node struct {
 	isArrayWildcard bool
 	idx             *int64
 	// json variables which terminate at this node, and therefore need to capture the data at this level
-	fields   []JsonFieldVar
+	fields   []JsonFieldVarOld
 	children map[string]*Node
 }
 
@@ -23,7 +23,7 @@ type Capture struct {
 	captures map[string][]interface{}
 }
 
-func CreateTrie(i *MainInterpreter, radToken Token, jsonFields []JsonFieldVar) *Trie {
+func CreateTrie(i *MainInterpreter, radToken Token, jsonFields []JsonFieldVarOld) *Trie {
 	trie := &Trie{i: i, radToken: radToken, root: NewNode(nil, "ROOT", false, nil)}
 	for _, jsonField := range jsonFields {
 		trie.Insert(jsonField)
@@ -31,7 +31,7 @@ func CreateTrie(i *MainInterpreter, radToken Token, jsonFields []JsonFieldVar) *
 	return trie
 }
 
-func (t *Trie) Insert(field JsonFieldVar) {
+func (t *Trie) Insert(field JsonFieldVarOld) {
 	node := t.root
 
 	for _, part := range field.Path.Elements {
@@ -84,7 +84,7 @@ func NewNode(parent *Node, key string, isArrayWildcard bool, idx *int64) *Node {
 		fullKey:         fullKey,
 		isArrayWildcard: isArrayWildcard,
 		idx:             idx,
-		fields:          []JsonFieldVar{},
+		fields:          []JsonFieldVarOld{},
 		children:        make(map[string]*Node),
 	}
 }

@@ -188,7 +188,7 @@ func (i *MainInterpreter) VisitRadBlockStmt(block RadBlock) {
 }
 
 func (i *MainInterpreter) VisitJsonPathAssignStmt(assign JsonPathAssign) {
-	i.env.AssignJsonField(assign.Identifier, assign.Path)
+	// DELETE
 }
 
 func (i *MainInterpreter) VisitExprStmtStmt(stmt ExprStmt) {

@@ -765,17 +765,10 @@ func (p *Parser) incrDecrStmt(operator Token, path VarPath) Stmt {
 }
 
 func (p *Parser) jsonPathAssignment(identifier Token) Stmt {
-	elements := make([]JsonPathElement, 0)
-	for !p.matchAny(NEWLINE) {
-		if len(elements) > 0 {
-			p.consume(DOT, "Expected '.' to separate json field elements")
-		}
-		elements = append(elements, p.jsonPathElement())
-	}
-	return &JsonPathAssign{Identifier: identifier, Path: JsonPath{Elements: elements}}
+	return nil // DELETE
 }
 
-func (p *Parser) jsonPathElement() JsonPathElement {
+func (p *Parser) jsonPathElement() JsonPathElementOld {
 	var identifier Token
 	if p.matchAny(IDENTIFIER, STAR) {
 		identifier = p.previous()
@@ -783,20 +776,20 @@ func (p *Parser) jsonPathElement() JsonPathElement {
 		p.error("Expected identifier in json path")
 	}
 
-	arrElems := make([]JsonPathElementArr, 0)
+	arrElems := make([]JsonPathElementArrOld, 0)
 
 	for !p.peekType(DOT) && !p.peekType(NEWLINE) {
 		if p.matchAny(BRACKETS) {
 			t := p.previous()
-			arrElems = append(arrElems, JsonPathElementArr{ArrayToken: &t})
+			arrElems = append(arrElems, JsonPathElementArrOld{ArrayToken: &t})
 		} else if p.matchAny(LEFT_BRACKET) {
 			e := p.expr(1)
 			p.consume(RIGHT_BRACKET, "Expected ']' after json path index")
-			arrElems = append(arrElems, JsonPathElementArr{Index: &e})
+			arrElems = append(arrElems, JsonPathElementArrOld{Index: &e})
 		}
 	}
 
-	return JsonPathElement{Identifier: identifier, ArrElems: arrElems}
+	return JsonPathElementOld{Identifier: identifier, ArrElems: arrElems}
 }
 
 func (p *Parser) switchBlock(numExpectedReturnValues int) SwitchBlock {
