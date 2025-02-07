@@ -227,8 +227,7 @@ func (p *stdPrinter) CtxErrorExit(ctx ErrorCtx) {
 //   - include line numbers in msg
 func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
-		// todo do nice src code extraction + print + point
-		fmt.Fprint(p.stdErr, color.YellowString(fmt.Sprintf("Error at L%d/%d\n\n",
+		fmt.Fprint(p.stdErr, color.YellowString(fmt.Sprintf("Error at L%d:%d\n\n",
 			ctx.RowStart, ctx.ColStart)))
 		lines := strings.Split(ctx.Src, "\n")
 		relevantLine := lines[ctx.RowStart-1]
@@ -238,11 +237,22 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 		}
 		fmt.Fprintf(p.stdErr, "  %s\n", relevantLine)
 		errorStartIndent := strings.Repeat(" ", ctx.ColStart-1)
-		fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, strings.Repeat("^", errorLen))
 
+		fmt.Fprintf(p.stdErr, "  %s%s", errorStartIndent, color.RedString(strings.Repeat("^", errorLen)))
+
+		errStartIdx := StrLen(errorStartIndent) + errorLen
 		if !IsBlank(ctx.OneLiner) {
-			fmt.Fprintf(p.stdErr, "  %s%s\n", errorStartIndent, ctx.OneLiner)
+			redOneLiner := color.RedString(ctx.OneLiner)
+			if StrLen(ctx.OneLiner)+errStartIdx < 80 {
+				// print next to pointing
+				fmt.Fprintf(p.stdErr, " %s\n", redOneLiner)
+				// todo some logic to print on the *left* of the arrow if space (but not space on right side)
+			} else {
+				// print below
+				fmt.Fprintf(p.stdErr, "\n  %s%s\n", errorStartIndent, redOneLiner)
+			}
 		}
+
 		if !IsBlank(ctx.Details) {
 			fmt.Fprintf(p.stdErr, "\n%s\n", ctx.Details)
 		}
