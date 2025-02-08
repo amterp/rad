@@ -120,6 +120,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		for _, rightVarPathNode := range rightVarPathNodes {
 			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL)
 		}
+	case K_RAD_BLOCK:
+		i.runRadBlock(node)
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
@@ -482,6 +484,14 @@ func (i *Interpreter) runBlock(stmtNodes []ts.Node) {
 			break
 		}
 	}
+}
+
+func (i *Interpreter) runWithChildEnv(runnable func()) {
+	originalEnv := i.env
+	env := originalEnv.NewChildEnv()
+	i.env = &env
+	runnable()
+	i.env = originalEnv
 }
 
 type DeferBlock struct {

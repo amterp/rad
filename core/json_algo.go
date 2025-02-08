@@ -1,8 +1,6 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/samber/lo"
 )
 
@@ -10,13 +8,13 @@ func (t *Trie) TraverseTrie(data interface{}) {
 	jsonRoot := lo.Values(t.root.children)[0]
 	captures := t.traverse(nil, data, jsonRoot)
 	for varName, values := range captures.captures {
-		t.i.env.SetAndImplyTypeWithToken(t.radToken, varName, values)
+		t.i.env.SetVar(varName, newRslValue(t.i, t.radKeywordNode, values))
 		// todo
 		//  - we *always* wrap in an array. some way to encode "expect non-array"?
 	}
 }
 
-func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
+func (t *Trie) traverse(dataKey *string, data interface{}, node *TrieNode) Capture {
 	// todo capture whole block if 'json' is one of the fields
 
 	// traverse children, capture values
@@ -30,18 +28,18 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
 					captures = append(captures, t.traverse(nil, elem, child))
 				}
 			default:
-				t.i.error(t.radToken, fmt.Sprintf("Expected array at %s, got %s", child.fullKey, TypeAsString(data)))
+				t.i.errorf(t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		} else if child.idx != nil {
 			// array index lookup
 			switch coerced := data.(type) {
 			case []interface{}:
 				if int(*child.idx) >= len(coerced) {
-					t.i.error(t.radToken, fmt.Sprintf("Index out of bounds at %s: %d", child.fullKey, *child.idx))
+					t.i.errorf(t.radKeywordNode, "Index out of bounds at %s: %d", child.fullKey, *child.idx)
 				}
 				captures = append(captures, t.traverse(nil, coerced[*child.idx], child))
 			default:
-				t.i.error(t.radToken, fmt.Sprintf("Expected array at %s, got %s", child.fullKey, TypeAsString(data)))
+				t.i.errorf(t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		} else if child.key == WILDCARD {
 			// wildcard key match
@@ -59,11 +57,11 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
 				childData, ok := coerced[child.key]
 				if !ok {
 					// todo allow defaulting?
-					t.i.error(t.radToken, "Key not found in JSON: "+child.fullKey)
+					t.i.errorf(t.radKeywordNode, "Key not found in JSON: "+child.fullKey)
 				}
 				captures = append(captures, t.traverse(&child.key, childData, child))
 			default:
-				t.i.error(t.radToken, fmt.Sprintf("Expected map at %s, got %s", child.fullKey, TypeAsString(data)))
+				t.i.errorf(t.radKeywordNode, "Expected map at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		}
 	}
@@ -76,11 +74,11 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
 	for _, field := range node.fields {
 		if node.key == WILDCARD {
 			if dataKey == nil {
-				t.i.error(t.radToken, fmt.Sprintf("Expected data key at %s, got nil", node.fullKey))
+				t.i.errorf(t.radKeywordNode, "Expected data key at %s, got nil", node.fullKey)
 			}
-			localCaptures[field.Name.GetLexeme()] = []interface{}{*dataKey}
+			localCaptures[field.Name] = []interface{}{*dataKey}
 		} else {
-			localCaptures[field.Name.GetLexeme()] = []interface{}{data}
+			localCaptures[field.Name] = []interface{}{data}
 		}
 	}
 
@@ -90,7 +88,7 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *Node) Capture {
 	return capture
 }
 
-func (t *Trie) mergeCaptures(captures []Capture, node *Node) Capture {
+func (t *Trie) mergeCaptures(captures []Capture, node *TrieNode) Capture {
 	if len(captures) == 0 {
 		return Capture{node: node, captures: make(map[string][]interface{})}
 	}
@@ -103,7 +101,7 @@ func (t *Trie) mergeCaptures(captures []Capture, node *Node) Capture {
 	return capture
 }
 
-func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *Node) Capture {
+func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) Capture {
 	if len(capture1.captures) == 0 {
 		return capture2
 	} else if len(capture2.captures) == 0 {
@@ -130,7 +128,7 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *Node) Capt
 	// check if overlapping columns. if so, error
 	for key, _ := range capture1.captures {
 		if _, ok := capture2.captures[key]; ok {
-			t.i.error(t.radToken, fmt.Sprintf("Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey))
+			t.i.errorf(t.radKeywordNode, "Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey)
 		}
 	}
 
@@ -166,6 +164,6 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *Node) Capt
 	}
 
 	// if neither numRows is 1, error
-	t.i.error(t.radToken, fmt.Sprintf("Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey))
+	t.i.errorf(t.radKeywordNode, "Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey)
 	panic(UNREACHABLE)
 }

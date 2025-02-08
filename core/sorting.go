@@ -3,18 +3,17 @@ package core
 import "sort"
 
 func sortColumns(
-	interp *MainInterpreter,
-	token Token,
-	fields []Token,
+	interp *Interpreter,
+	fields []radField,
 	sorting []ColumnSort,
 ) {
 	orderedCols := make([][]interface{}, 0, len(fields))
 	colsByName := make(map[string][]interface{})
-	for _, field := range fields {
-		values := interp.env.GetByToken(field, RslListT).([]interface{})
-		orderedCols = append(orderedCols, values)
-		colsByName[field.GetLexeme()] = values
-	}
+	//for _, field := range fields {
+	//colList, ok := interp.env.GetVar(field.name) // TODO
+	//orderedCols = append(orderedCols, values)
+	//colsByName[field.GetLexeme()] = values
+	//}
 
 	if len(colsByName) == 0 || len(sorting) == 0 {
 		return
@@ -32,23 +31,23 @@ func sortColumns(
 
 	sort.Slice(indices, func(i, j int) bool {
 		// apply rules in order, breaking ties if needed
-		for _, rule := range sorting {
-			col := orderedCols[rule.ColIdx]
-			comp := compare(interp, token, col[indices[i]], col[indices[j]])
-			if comp != 0 {
-				return (rule.Dir == Asc && comp < 0) || (rule.Dir == Desc && comp > 0)
-			}
-		}
+		//for _, rule := range sorting {
+		//	col := orderedCols[rule.ColIdx]
+		//	comp := compare(interp, token, col[indices[i]], col[indices[j]])
+		//	if comp != 0 {
+		//		return (rule.Dir == Asc && comp < 0) || (rule.Dir == Desc && comp > 0)
+		//	}
+		//} // TODO
 		return false
 	})
 
-	for name, col := range colsByName {
-		sorted := make([]interface{}, length)
-		for newIdx, oldIdx := range indices {
-			sorted[newIdx] = col[oldIdx]
-		}
-		interp.env.SetAndImplyTypeWithToken(token, name, sorted)
-	}
+	//for name, col := range colsByName { // TODO
+	//	sorted := make([]interface{}, length)
+	//	for newIdx, oldIdx := range indices {
+	//		sorted[newIdx] = col[oldIdx]
+	//	}
+	//	interp.env.SetVar(name, sorted)
+	//}
 }
 
 func sortList(interp *MainInterpreter, token Token, data []interface{}, dir SortDir) []interface{} {
