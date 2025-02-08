@@ -98,7 +98,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				case K_DESC:
 					r.generalSort.Dir = Desc
 				default:
-					r.i.errorf(directionNode, "Bug! Unknown direction %q", directionNode.Kind)
+					r.i.errorf(directionNode, "Bug! Unknown direction %q", directionNode.Kind())
 				}
 			}
 		} else {
@@ -173,6 +173,25 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			}
 		}
+	case K_RAD_IF_STMT:
+		altNodes := r.i.getChildren(node, F_ALT)
+		for _, altNode := range altNodes {
+			condNode := r.i.getChild(&altNode, F_CONDITION)
+
+			shouldExecute := true
+			if condNode != nil {
+				condResult := r.i.evaluate(condNode, 1)[0].TruthyFalsy()
+				shouldExecute = condResult
+			}
+
+			if shouldExecute {
+				stmtNodes := r.i.getChildren(&altNode, F_STMT)
+				for _, stmtNode := range stmtNodes {
+					r.evalRad(&stmtNode)
+				}
+				break
+			}
+		}
 	}
 }
 
@@ -227,6 +246,10 @@ func (r *radInvocation) execute() {
 	}
 
 	applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
+
+	if r.blockType == Request {
+		return
+	}
 
 	columns := lo.FilterMap(radFields, func(field radField, _ int) ([]string, bool) {
 		if r.fieldsToNotPrint.Has(field.name) {

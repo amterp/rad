@@ -60,7 +60,7 @@ func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.No
 			return i, field.node
 		}
 	}
-	interp.errorf(identifierNode, "Bug! Column %q not found", identifierStr)
+	interp.errorf(identifierNode, "Undefined column %q. Did you include it in a 'fields' statement?", identifierStr)
 	panic(UNREACHABLE)
 }
 
