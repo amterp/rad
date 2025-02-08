@@ -7,6 +7,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	ts "github.com/tree-sitter/go-tree-sitter"
+
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
 	"golang.org/x/term"
@@ -20,9 +22,13 @@ var (
 	terminalSupportsUtf8 = terminalIsUtf8()
 )
 
+type GeneralSort struct {
+	Node *ts.Node
+	Dir  SortDir
+}
 type ColumnSort struct {
-	ColIdx int
-	Dir    SortDir
+	ColIdentifier *ts.Node
+	Dir           SortDir
 }
 
 type TblWriter struct {

@@ -2,8 +2,6 @@ package core
 
 import (
 	"fmt"
-
-	"github.com/samber/lo"
 )
 
 const (
@@ -16,15 +14,16 @@ func runSort(i *MainInterpreter, function Token, args []interface{}, namedArgs m
 	}
 
 	validateExpectedNamedArgs(i, function, []string{SORT_REVERSE}, namedArgs)
-	parsedArgs := parseSortArgs(i, function, namedArgs)
+	//parsedArgs := parseSortArgs(i, function, namedArgs)
 
-	switch coerced := args[0].(type) {
-	case []interface{}:
-		return sortList(i, function, coerced, lo.Ternary(parsedArgs.Reverse, Desc, Asc))
-	default:
-		i.error(function, SORT_FUNC+fmt.Sprintf("() takes a list, got %s", TypeAsString(args[0])))
-		panic(UNREACHABLE)
-	}
+	//switch coerced := args[0].(type) {
+	//case []interface{}:
+	//	return sortList(i, function, coerced, lo.Ternary(parsedArgs.Reverse, Desc, Asc))
+	//default:
+	//	i.error(function, SORT_FUNC+fmt.Sprintf("() takes a list, got %s", TypeAsString(args[0])))
+	//	panic(UNREACHABLE)
+	//}
+	return nil // DELETE
 }
 
 func parseSortArgs(i *MainInterpreter, function Token, args map[string]interface{}) SortNamedArgs {

@@ -1,5 +1,7 @@
 package core
 
+import ts "github.com/tree-sitter/go-tree-sitter"
+
 type Env struct {
 	i             *Interpreter
 	Enclosing     *Env
@@ -41,6 +43,14 @@ func (e *Env) GetVar(name string) (RslValue, bool) {
 		return e.Enclosing.GetVar(name)
 	}
 	return RslValue{}, false
+}
+
+func (e *Env) GetVarElseBug(i *Interpreter, node *ts.Node, name string) RslValue {
+	if val, exists := e.GetVar(name); exists {
+		return val
+	}
+	i.errorf(node, "Bug! Expected variable but didn't find: "+name)
+	panic(UNREACHABLE)
 }
 
 func (e *Env) SetJsonFieldVar(jsonFieldVar *JsonFieldVar) {

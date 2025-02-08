@@ -57,6 +57,10 @@ const (
 	K_JSON_PATH          = "json_path"
 	K_RAD_BLOCK          = "rad_block"
 	K_RAD_FIELD_STMT     = "rad_field_stmt"
+	K_RAD_SORT_STMT      = "rad_sort_stmt"
+	K_RAD_SORT_SPECIFIER = "rad_sort_specifier"
+	K_ASC                = "asc"
+	K_DESC               = "desc"
 
 	// Field names
 	F_LEFT       = "left"
@@ -92,4 +96,6 @@ const (
 	F_SOURCE     = "source"
 	F_RAD_TYPE   = "rad_type"
 	F_IDENTIFIER = "identifier"
+	F_SPECIFIER  = "specifier"
+	F_DIRECTION  = "direction"
 )

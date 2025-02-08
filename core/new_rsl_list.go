@@ -74,6 +74,14 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	}
 }
 
+// more intended for internal use than GetIdx
+func (l *RslList) IndexAt(i *Interpreter, node *ts.Node, idx int64) RslValue {
+	if idx < 0 || idx >= l.Len() {
+		ErrIndexOutOfBounds(i, node, idx, l.Len())
+	}
+	return l.Values[idx]
+}
+
 func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {
 	start, end := ResolveSliceStartEnd(i, sliceNode, l.Len())
 
@@ -129,4 +137,15 @@ func (l *RslList) ToString() string {
 
 func (l *RslList) Len() int64 {
 	return int64(len(l.Values))
+}
+
+func (l *RslList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {
+	if len(indices) != len(l.Values) {
+		i.errorf(node, "Bug! Indices length does not match list length")
+	}
+	sorted := make([]RslValue, l.Len())
+	for newIdx, oldIdx := range indices {
+		sorted[newIdx] = l.Values[oldIdx]
+	}
+	l.Values = sorted
 }
