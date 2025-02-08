@@ -64,6 +64,7 @@ const (
 	K_RAD_FIELD_MODIFIER_STMT = "rad_field_modifier_stmt"
 	K_RAD_FIELD_MOD_COLOR     = "rad_field_mod_color"
 	K_RAD_FIELD_MOD_MAP       = "rad_field_mod_map"
+	K_RAD_IF_STMT             = "rad_if_stmt"
 
 	// Field names
 	F_LEFT       = "left"

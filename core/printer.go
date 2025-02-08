@@ -223,7 +223,7 @@ func (p *stdPrinter) CtxErrorExit(ctx ErrorCtx) {
 }
 
 // todo
-//   - print two preceding lines for additional context?
+//   - print two preceding lines for additional context? if NO, then let's trim the line we're printing
 //   - include line numbers in msg
 func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {

@@ -135,9 +135,11 @@ func (i *Interpreter) executeOp(
 		}
 	}
 
-	switch coercedLeft := left().Val.(type) {
+	leftV := left().Val
+	rightV := right().Val
+	switch coercedLeft := leftV.(type) {
 	case int64:
-		switch coercedRight := right().Val.(type) {
+		switch coercedRight := rightV.(type) {
 		case int64:
 			switch op {
 			case OP_PLUS:
@@ -225,10 +227,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for int, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 		}
 	case float64:
-		switch coercedRight := right().Val.(type) {
+		switch coercedRight := rightV.(type) {
 		case int64:
 			switch op {
 			case OP_PLUS:
@@ -305,10 +307,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for float, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 		}
 	case RslString:
-		switch coercedRight := right().Val.(type) {
+		switch coercedRight := rightV.(type) {
 		case RslString:
 			switch op {
 			case OP_PLUS:
@@ -364,10 +366,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for string, map")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 		}
 	case bool:
-		switch coercedRight := right().Val.(type) {
+		switch coercedRight := rightV.(type) {
 		case bool:
 			switch op {
 			case OP_EQUAL:
@@ -387,10 +389,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for bool, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 		}
 	case *RslList:
-		switch coercedRight := right().Val.(type) {
+		switch coercedRight := rightV.(type) {
 		case RslString:
 			i.errorf(opNode, "Invalid binary operator for list, string")
 		case int64:
@@ -411,10 +413,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for list, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 		}
 	default:
-		i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
+		i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", leftV, rightV))
 	}
 	panic(UNREACHABLE)
 }
