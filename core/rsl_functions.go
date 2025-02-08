@@ -244,15 +244,15 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
 		return runAbs(i, function, args)
 	default:
-		color, ok := ColorFromString(funcName)
-		if ok {
-			assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-			validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-			return runColor(i, function, args, color)
-		} else {
-			i.error(function, fmt.Sprintf("Unknown function: %v", funcName))
-			panic(UNREACHABLE)
-		}
+		//color, ok := ColorFromString(funcName)
+		//if ok {
+		//	assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
+		//	validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
+		//	return runColor(i, function, args, color)
+		//} else {
+		//	i.error(function, fmt.Sprintf("Unknown function: %v", funcName))
+		//	panic(UNREACHABLE)
+		//} // TODO DELETE
 	}
 	panic(UNREACHABLE)
 }
