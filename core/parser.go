@@ -1589,15 +1589,8 @@ func (p *Parser) shellCmd(paths []VarPath) Stmt {
 }
 
 func (p *Parser) lambda() Lambda {
-	var identifiers []Token
-	for !p.matchAny(ARROW) {
-		if len(identifiers) > 0 {
-			p.consume(COMMA, "Expected ',' between lambda identifiers")
-		}
-		identifiers = append(identifiers, p.consume(IDENTIFIER, "Expected identifier in lambda"))
-	}
-	op := p.expr(1)
-	return Lambda{Args: identifiers, Op: op}
+	// DELETE
+	return Lambda{}
 }
 
 func (p *Parser) identifier() Token {

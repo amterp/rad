@@ -1,6 +1,10 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 type RslTypeEnum int
 
@@ -180,8 +184,9 @@ type NamedArg struct {
 }
 
 type Lambda struct {
-	Args []Token
-	Op   Expr
+	Node     *ts.Node
+	Args     []string
+	ExprNode *ts.Node
 }
 
 type CollectionKey struct {

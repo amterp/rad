@@ -7,6 +7,10 @@ import (
 )
 
 func ToPrintable(val interface{}) string {
+	return ToPrintableQuoteStr(val, true)
+}
+
+func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 	switch coerced := val.(type) {
 	case int64:
 		return strconv.FormatInt(coerced, 10)
@@ -15,22 +19,26 @@ func ToPrintable(val interface{}) string {
 		return strconv.FormatFloat(coerced, 'f', -1, 64)
 	case string:
 		// todo based on contents, should escape quotes, or use other quotes. python does this.
-		return `"` + coerced + `"`
+		if quoteStrings {
+			return `"` + coerced + `"`
+		} else {
+			return coerced
+		}
 	case RslString:
-		return ToPrintable(coerced.String())
+		return ToPrintableQuoteStr(coerced.String(), quoteStrings)
 	case RslValue:
-		return ToPrintable(coerced.Val)
+		return ToPrintableQuoteStr(coerced.Val, quoteStrings)
 	case bool:
 		return strconv.FormatBool(coerced)
 	case *[]interface{}:
-		return ToPrintable(*coerced)
+		return ToPrintableQuoteStr(*coerced, quoteStrings)
 	case []interface{}:
 		out := "["
 		for i, elem := range coerced {
 			if i > 0 {
 				out += ", "
 			}
-			out += ToPrintable(elem)
+			out += ToPrintableQuoteStr(elem, quoteStrings)
 		}
 		return out + "]"
 	case *RslList:

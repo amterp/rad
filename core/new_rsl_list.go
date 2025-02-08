@@ -12,10 +12,10 @@ func NewRslList() *RslList {
 	}
 }
 
-func NewFromGeneric[T any](list []T) *RslList {
+func NewRslListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RslList {
 	rslList := NewRslList()
 	for _, elem := range list {
-		rslList.Append(newRslValue(nil, nil, elem))
+		rslList.Append(newRslValue(i, node, elem))
 	}
 	return rslList
 }

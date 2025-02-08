@@ -387,14 +387,6 @@ func (i *MainInterpreter) errorWithCode(token Token, message string, errorCode i
 	RP.TokenErrorCodeExit(token, message+"\n", errorCode)
 }
 
-func (i *MainInterpreter) runWithChildEnv(runnable func()) {
-	originalEnv := i.env
-	env := originalEnv.NewChildEnv()
-	i.env = &env
-	runnable()
-	i.env = originalEnv
-}
-
 func (i *MainInterpreter) computeWithChildEnv(computable func() interface{}) interface{} {
 	originalEnv := i.env
 	env := originalEnv.NewChildEnv()

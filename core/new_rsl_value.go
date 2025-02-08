@@ -74,6 +74,14 @@ func (v RslValue) TryGetStr() (RslString, bool) {
 	return NewRslString(""), false
 }
 
+func (v RslValue) RequireList(i *Interpreter, node *ts.Node) *RslList {
+	if list, ok := v.TryGetList(); ok {
+		return list
+	}
+	i.errorf(node, "Expected list, got %s", TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
 func (v RslValue) TryGetList() (*RslList, bool) {
 	if list, ok := v.Val.(*RslList); ok {
 		return list, true
@@ -199,6 +207,9 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		return RslValue{Val: coerced}
 	case RslMap:
 		return RslValue{Val: &coerced}
+	case []interface{}:
+		list := NewRslListFromGeneric(i, node, coerced)
+		return RslValue{Val: list}
 	default:
 		if i != nil && node != nil {
 			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
