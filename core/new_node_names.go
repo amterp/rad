@@ -11,6 +11,7 @@ const (
 	K_EXPR_STMT               = "expr_stmt"
 	K_EXPR                    = "expr"
 	K_PRIMARY_EXPR            = "primary_expr"
+	K_PARENTHESIZED_EXPR      = "parenthesized_expr"
 	K_LITERAL                 = "literal"
 	K_VAR_PATH                = "var_path"
 	K_INT                     = "int"

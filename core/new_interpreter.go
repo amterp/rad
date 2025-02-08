@@ -143,6 +143,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_PRIMARY_EXPR:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
+	case K_PARENTHESIZED_EXPR:
+		return i.evaluate(i.getChild(node, F_EXPR), numExpectedOutputs)
 	case K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_UNARY_OP, K_NOT_OP:
