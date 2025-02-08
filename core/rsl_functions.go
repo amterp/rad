@@ -65,10 +65,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	namedArgsMap := toMap(i, namedArgs)
 
 	switch funcName {
-	case "len":
-		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-		return runLen(i, function, args)
 	case "now_date": // todo is this name good? current_date? date?
 		assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 		validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
@@ -255,23 +251,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 		//} // TODO DELETE
 	}
 	panic(UNREACHABLE)
-}
-
-func runLen(i *MainInterpreter, function Token, values []interface{}) int64 {
-	if len(values) != 1 {
-		i.error(function, "len() takes exactly one argument")
-	}
-	switch v := values[0].(type) {
-	case RslString:
-		return v.Len()
-	case []interface{}:
-		return int64(len(v))
-	case RslMapOld:
-		return int64(v.Len())
-	default:
-		i.error(function, "len() takes a string or collection")
-		panic(UNREACHABLE)
-	}
 }
 
 func runReplace(i *MainInterpreter, function Token, values []interface{}) interface{} {
