@@ -91,7 +91,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		defer func() {
 			i.forLoopLevel--
 		}()
-		i.executeForLoop(node)
+		stmts := i.getChildren(node, F_STMT)
+		i.executeForLoop(node, func() { i.runBlock(stmts) })
 	case K_IF_STMT:
 		altNodes := i.getChildren(node, F_ALT)
 		for _, altNode := range altNodes {
@@ -250,6 +251,19 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			argValues = append(argValues, i.evaluate(&arg, 1)[0])
 		}
 		return i.callFunction(node, funcName, argValues, numExpectedOutputs)
+	case K_LIST_COMPREHENSION:
+		resultExprNode := i.getChild(node, F_EXPR)
+		conditionNode := i.getChild(node, F_CONDITION)
+
+		resultList := NewRslList()
+		doOneLoop := func() {
+			if conditionNode == nil || i.evaluate(conditionNode, 1)[0].TruthyFalsy() {
+				result := i.evaluate(resultExprNode, 1)[0]
+				resultList.Append(result)
+			}
+		}
+		i.executeForLoop(node, doOneLoop)
+		return newRslValues(i, node, resultList)
 	default:
 		i.errorf(node, "Unsupported expr node kind: %s", node.Kind())
 		panic(UNREACHABLE)
@@ -391,25 +405,24 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue)
 	val.ModifyIdx(i, &lastIndex, rightValue)
 }
 
-func (i *Interpreter) executeForLoop(node *ts.Node) {
+func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
 	leftsNode := i.getChild(node, F_LEFTS)
 	rightNode := i.getChild(node, F_RIGHT)
-	stmts := i.getChildren(node, F_STMT)
 
 	rightVal := i.evaluate(rightNode, 1)[0]
 	switch coercedRight := rightVal.Val.(type) {
 	case RslString:
-		runForLoopList(i, leftsNode, coercedRight.ToRuneList(), stmts)
+		runForLoopList(i, leftsNode, coercedRight.ToRuneList(), doOneLoop)
 	case *RslList:
-		runForLoopList(i, leftsNode, coercedRight, stmts)
+		runForLoopList(i, leftsNode, coercedRight, doOneLoop)
 	case *RslMap:
-		runForLoopMap(i, leftsNode, coercedRight, stmts)
+		runForLoopMap(i, leftsNode, coercedRight, doOneLoop)
 	default:
 		i.errorf(rightNode, "Cannot iterate through a %s", TypeAsString(rightVal))
 	}
 }
 
-func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, stmts []ts.Node) {
+func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, doOneLoop func()) {
 	var idxNode *ts.Node
 	var itemNode *ts.Node
 
@@ -433,7 +446,7 @@ func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, stmts []t
 		itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
 		i.env.SetVar(itemName, val)
 
-		i.runBlock(stmts)
+		doOneLoop()
 		if i.breaking {
 			i.breaking = false
 			break
@@ -441,7 +454,7 @@ func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, stmts []t
 	}
 }
 
-func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, stmts []ts.Node) {
+func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop func()) {
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
@@ -467,7 +480,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, stmts []t
 			i.env.SetVar(valueName, value)
 		}
 
-		i.runBlock(stmts)
+		doOneLoop()
 		if i.breaking {
 			i.breaking = false
 			break
