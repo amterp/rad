@@ -225,7 +225,7 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for int, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 		}
 	case float64:
 		switch coercedRight := right().Val.(type) {
@@ -305,7 +305,7 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for float, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 		}
 	case RslString:
 		switch coercedRight := right().Val.(type) {
@@ -364,7 +364,7 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for string, map")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 		}
 	case bool:
 		switch coercedRight := right().Val.(type) {
@@ -387,7 +387,7 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for bool, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 		}
 	case *RslList:
 		switch coercedRight := right().Val.(type) {
@@ -411,10 +411,10 @@ func (i *Interpreter) executeOp(
 				i.errorf(opNode, "Invalid binary operator for list, list")
 			}
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+			i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 		}
 	default:
-		i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left, right))
+		i.errorf(parentNode, fmt.Sprintf("Invalid binary operand types: %T, %T", left().Val, right().Val))
 	}
 	panic(UNREACHABLE)
 }
