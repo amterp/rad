@@ -19,6 +19,11 @@ type radInvocation struct {
 	fields           []*ts.Node
 	fieldsToNotPrint *strset.Set
 	colToMapOp       map[string]Lambda
+	// if no specific column specified for sorting
+	generalSort *GeneralSort
+	// if specific columns listed for sorting, mutually exclusive with generalSort
+	// in-order of sorting priority
+	colWiseSorting []ColumnSort
 }
 
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
@@ -46,6 +51,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		fields:           make([]*ts.Node, 0),
 		fieldsToNotPrint: strset.New(),
 		colToMapOp:       make(map[string]Lambda),
+		colWiseSorting:   make([]ColumnSort, 0),
 	}
 
 	radStmtNodes := i.getChildren(radBlockNode, F_STMT)
@@ -72,6 +78,52 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		for _, identifierNode := range identifierNodes {
 			r.fields = append(r.fields, &identifierNode)
 		}
+	case K_RAD_SORT_STMT:
+		if r.generalSort != nil || len(r.colWiseSorting) > 0 {
+			r.i.errorf(node, "Only one sort statement allowed per rad block")
+		}
+
+		specifierNodes := r.i.getChildren(node, F_SPECIFIER)
+		if len(specifierNodes) == 0 {
+			r.generalSort = &GeneralSort{
+				Node: node,
+			}
+			directionNode := r.i.getChild(node, F_DIRECTION)
+			if directionNode != nil {
+				switch directionNode.Kind() {
+				case K_ASC:
+					r.generalSort.Dir = Asc
+				case K_DESC:
+					r.generalSort.Dir = Desc
+				default:
+					r.i.errorf(directionNode, "Bug! Unknown direction %q", directionNode.Kind)
+				}
+			}
+		} else {
+			for _, specifierNode := range specifierNodes {
+				r.evalRad(&specifierNode)
+			}
+		}
+	case K_RAD_SORT_SPECIFIER:
+		identifierNode := r.i.getChild(node, F_IDENTIFIER)
+		dirNode := r.i.getChild(node, F_DIRECTION)
+
+		dir := Asc
+		if dirNode != nil {
+			switch dirNode.Kind() {
+			case K_ASC:
+				dir = Asc
+			case K_DESC:
+				dir = Desc
+			default:
+				r.i.errorf(dirNode, "Bug! Unknown direction %q", dirNode.Kind())
+			}
+		}
+
+		r.colWiseSorting = append(r.colWiseSorting, ColumnSort{
+			ColIdentifier: identifierNode,
+			Dir:           dir,
+		})
 	}
 }
 
@@ -136,7 +188,7 @@ func (r *radInvocation) execute() {
 		return
 	}
 
-	//applySorting(r.i, fields, r.sorting)
+	applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
 
 	columns := lo.FilterMap(radFields, func(field radField, _ int) ([]string, bool) {
 		if r.fieldsToNotPrint.Has(field.name) {
@@ -174,12 +226,20 @@ func (r *radInvocation) sourceString() *RslString {
 	return &str
 }
 
-func applySorting(i *Interpreter, fields []radField, sorting []ColumnSort) {
-	if len(sorting) == 0 {
-		return
+func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, colWiseSort []ColumnSort) {
+	if generalSort != nil {
+		if len(colWiseSort) > 0 {
+			i.errorf(generalSort.Node, "Bug! General and column-wise sort expected to be mutually exclusive")
+		}
+		for _, field := range fields {
+			colWiseSort = append(colWiseSort, ColumnSort{
+				ColIdentifier: field.node,
+				Dir:           generalSort.Dir,
+			})
+		}
 	}
 
-	sortColumns(i, fields, sorting)
+	sortColumns(i, fields, colWiseSort)
 }
 
 func toTblStr(i *Interpreter, mapOps map[string]Lambda, fieldName string, column *RslList) []string {
@@ -197,13 +257,6 @@ func toTblStr(i *Interpreter, mapOps map[string]Lambda, fieldName string, column
 	}
 	return newVals
 }
-
-//func (r *radInvocation) assertHasFields(stmtType string) {
-//	if r.fields == nil {
-//		r.error(fmt.Sprintf("%s statement must be preceded by a 'fields' statement", stmtType))
-//		panic(UNREACHABLE)
-//	}
-//}
 
 // == fieldModVisitor ==
 

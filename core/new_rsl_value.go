@@ -89,6 +89,21 @@ func (v RslValue) TryGetList() (*RslList, bool) {
 	return nil, false
 }
 
+func (v RslValue) RequireBool(i *Interpreter, node *ts.Node) bool {
+	if b, ok := v.TryGetBool(); ok {
+		return b
+	}
+	i.errorf(node, "Expected bool, got %s", TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
+func (v RslValue) TryGetBool() (bool, bool) {
+	if b, ok := v.Val.(bool); ok {
+		return b, true
+	}
+	return false, false
+}
+
 func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
 	switch coerced := v.Val.(type) {
 	case *RslList:

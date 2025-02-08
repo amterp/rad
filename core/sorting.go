@@ -1,60 +1,74 @@
 package core
 
-import "sort"
+import (
+	"sort"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 func sortColumns(
 	interp *Interpreter,
 	fields []radField,
 	sorting []ColumnSort,
 ) {
-	orderedCols := make([][]interface{}, 0, len(fields))
-	colsByName := make(map[string][]interface{})
-	//for _, field := range fields {
-	//colList, ok := interp.env.GetVar(field.name) // TODO
-	//orderedCols = append(orderedCols, values)
-	//colsByName[field.GetLexeme()] = values
-	//}
+	orderedCols := make([]*RslList, 0, len(fields))
+	colsByName := make(map[radField]*RslList) // todo radField as key works?
+	for _, field := range fields {
+		colList := interp.env.GetVarElseBug(interp, field.node, field.name).RequireList(interp, field.node)
+		orderedCols = append(orderedCols, colList)
+		colsByName[field] = colList
+	}
 
 	if len(colsByName) == 0 || len(sorting) == 0 {
 		return
 	}
 
-	length := len(orderedCols[0])
+	length := orderedCols[0].Len()
 	if length == 0 {
 		return
 	}
 
-	indices := make([]int, length)
+	// algorithm: we'll sort this 'proxy list' of indices, then apply the resulting
+	// sorting to the actual rows
+	indices := make([]int64, length)
 	for i := range indices {
-		indices[i] = i
+		indices[i] = int64(i)
 	}
 
 	sort.Slice(indices, func(i, j int) bool {
 		// apply rules in order, breaking ties if needed
-		//for _, rule := range sorting {
-		//	col := orderedCols[rule.ColIdx]
-		//	comp := compare(interp, token, col[indices[i]], col[indices[j]])
-		//	if comp != 0 {
-		//		return (rule.Dir == Asc && comp < 0) || (rule.Dir == Desc && comp > 0)
-		//	}
-		//} // TODO
+		for _, rule := range sorting {
+			colIdx, fieldNode := resolveColIdx(interp, fields, rule.ColIdentifier)
+			col := orderedCols[colIdx]
+			comp := compare(interp, fieldNode, col.IndexAt(interp, fieldNode, indices[i]), col.IndexAt(interp, fieldNode, indices[j]))
+			if comp != 0 {
+				return (rule.Dir == Asc && comp < 0) || (rule.Dir == Desc && comp > 0)
+			}
+		}
 		return false
 	})
 
-	//for name, col := range colsByName { // TODO
-	//	sorted := make([]interface{}, length)
-	//	for newIdx, oldIdx := range indices {
-	//		sorted[newIdx] = col[oldIdx]
-	//	}
-	//	interp.env.SetVar(name, sorted)
-	//}
+	for field, col := range colsByName {
+		col.SortAccordingToIndices(interp, field.node, indices)
+	}
 }
 
-func sortList(interp *MainInterpreter, token Token, data []interface{}, dir SortDir) []interface{} {
-	sorted := make([]interface{}, len(data))
-	copy(sorted, data)
+func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.Node) (int, *ts.Node) {
+	identifierStr := interp.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
+	for i, field := range fields {
+		if field.name == identifierStr {
+			return i, field.node
+		}
+	}
+	interp.errorf(identifierNode, "Bug! Column %q not found", identifierStr)
+	panic(UNREACHABLE)
+}
+
+func sortList(interp *Interpreter, fieldNode *ts.Node, data *RslList, dir SortDir) []RslValue {
+	sorted := make([]RslValue, data.Len())
+	copy(sorted, data.Values)
 	sort.Slice(sorted, func(i, j int) bool {
-		comp := compare(interp, token, sorted[i], sorted[j])
+		comp := compare(interp, fieldNode, sorted[i], sorted[j])
 		if dir == Asc {
 			return comp < 0
 		}
@@ -63,10 +77,10 @@ func sortList(interp *MainInterpreter, token Token, data []interface{}, dir Sort
 	return sorted
 }
 
-func compare(i *MainInterpreter, token Token, a, b interface{}) int {
+func compare(i *Interpreter, fieldNode *ts.Node, a, b RslValue) int {
 	// first compare by type
-	aTypePrec := precedence(i, token, a)
-	bTypePrec := precedence(i, token, b)
+	aTypePrec := precedence(i, fieldNode, a)
+	bTypePrec := precedence(i, fieldNode, b)
 	if aTypePrec != bTypePrec {
 		if aTypePrec < bTypePrec {
 			return -1
@@ -75,9 +89,9 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 	}
 
 	// equal type precedence, compare values
-	switch aVal := a.(type) {
+	switch aVal := a.Val.(type) {
 	case bool:
-		bVal := b.(bool)
+		bVal := b.RequireBool(i, fieldNode)
 		if aVal == bVal {
 			return 0
 		}
@@ -86,7 +100,7 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 		}
 		return 1
 	case int64:
-		switch bVal := b.(type) {
+		switch bVal := b.Val.(type) {
 		case int64:
 			if aVal < bVal {
 				return -1
@@ -106,7 +120,7 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 		}
 		return 0
 	case float64:
-		switch bVal := b.(type) {
+		switch bVal := b.Val.(type) {
 		case float64:
 			if aVal < bVal {
 				return -1
@@ -126,29 +140,29 @@ func compare(i *MainInterpreter, token Token, a, b interface{}) int {
 		}
 		return 0
 	case RslString:
-		return aVal.Compare(b.(RslString))
-	case []interface{}, RslMapOld:
+		return aVal.Compare(b.RequireStr(i, fieldNode))
+	case *RslList, *RslMap:
 		return 0 // all arrays and maps are considered equal
 	default:
-		i.error(token, "Unsupported type for sorting")
+		i.errorf(fieldNode, "Bug! Unsupported type for sorting")
 		panic(UNREACHABLE)
 	}
 }
 
-func precedence(i *MainInterpreter, token Token, v interface{}) int {
-	switch v.(type) {
-	case bool:
+func precedence(i *Interpreter, fieldNode *ts.Node, v RslValue) int {
+	switch v.Type() {
+	case RslBoolT:
 		return 0
-	case int64, float64:
+	case RslIntT, RslFloatT:
 		return 1
-	case RslString:
+	case RslStringT:
 		return 2
-	case []interface{}:
+	case RslListT:
 		return 3
-	case RslMapOld:
+	case RslMapT:
 		return 4
 	default:
-		i.error(token, "Unsupported type precedence for sorting")
+		i.errorf(fieldNode, "Unsupported type precedence for sorting")
 		panic(UNREACHABLE)
 	}
 }
