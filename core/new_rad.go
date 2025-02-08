@@ -18,12 +18,13 @@ type radInvocation struct {
 	blockType        RadBlockType
 	fields           []*ts.Node
 	fieldsToNotPrint *strset.Set
-	colToMapOp       map[string]Lambda
 	// if no specific column specified for sorting
 	generalSort *GeneralSort
 	// if specific columns listed for sorting, mutually exclusive with generalSort
 	// in-order of sorting priority
 	colWiseSorting []ColumnSort
+	colToColor     map[string][]radColorMod
+	colToMapOp     map[string]Lambda
 }
 
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
@@ -50,8 +51,9 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		blockType:        blockType,
 		fields:           make([]*ts.Node, 0),
 		fieldsToNotPrint: strset.New(),
-		colToMapOp:       make(map[string]Lambda),
 		colWiseSorting:   make([]ColumnSort, 0),
+		colToColor:       make(map[string][]radColorMod),
+		colToMapOp:       make(map[string]Lambda),
 	}
 
 	radStmtNodes := i.getChildren(radBlockNode, F_STMT)
@@ -124,6 +126,36 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			ColIdentifier: identifierNode,
 			Dir:           dir,
 		})
+	case K_RAD_FIELD_MODIFIER_STMT:
+		identifierNodes := r.i.getChildren(node, F_IDENTIFIER)
+		stmtNodes := r.i.getChildren(node, F_MOD_STMT)
+		var fields []string
+		for _, identifierNode := range identifierNodes {
+			identifierStr := r.i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
+			fields = append(fields, identifierStr)
+		}
+		for _, stmtNode := range stmtNodes {
+			switch stmtNode.Kind() {
+			case K_RAD_FIELD_MOD_COLOR:
+				clrExprNode := r.i.getChild(&stmtNode, F_COLOR)
+				clrStr := r.i.evaluate(clrExprNode, 1)[0].RequireStr(r.i, clrExprNode)
+				clr := ColorFromString(r.i, clrExprNode, clrStr.Plain())
+				regexExprNode := r.i.getChild(&stmtNode, F_REGEX)
+				regexStr := r.i.evaluate(regexExprNode, 1)[0].RequireStr(r.i, regexExprNode)
+				regex, err := regexp.Compile(regexStr.Plain())
+				if err != nil {
+					r.i.errorf(regexExprNode, fmt.Sprintf("Invalid regex pattern: %s", err))
+				}
+				for _, field := range fields {
+					mods, ok := r.colToColor[field]
+					if !ok {
+						mods = make([]radColorMod, 1)
+					}
+					mods = append(mods, radColorMod{color: clr.ToTblColor(), regex: regex})
+					r.colToColor[field] = mods
+				}
+			}
+		}
 	}
 }
 
@@ -212,7 +244,7 @@ func (r *radInvocation) execute() {
 		tbl.Append(row)
 	}
 
-	//tbl.SetColumnColoring(headers, r.colToColor)
+	tbl.SetColumnColoring(headers, r.colToColor)
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()

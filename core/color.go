@@ -3,6 +3,8 @@ package core
 import (
 	"sort"
 
+	ts "github.com/tree-sitter/go-tree-sitter"
+
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/fatih/color"
 )
@@ -57,9 +59,12 @@ func (c RslColor) String() string {
 	return "unknown"
 }
 
-func ColorFromString(s string) (RslColor, bool) {
-	color, ok := stringsToColorEnum[s]
-	return color, ok
+func ColorFromString(i *Interpreter, node *ts.Node, str string) RslColor {
+	clr, ok := stringsToColorEnum[str]
+	if !ok {
+		i.errorf(node, "Invalid color value %q. Allowed: %s", str, COLOR_STRINGS)
+	}
+	return clr
 }
 
 func (c RslColor) ToTblColor() tblwriter.Color {
