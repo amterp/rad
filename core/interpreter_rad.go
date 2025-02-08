@@ -5,8 +5,7 @@ import (
 )
 
 type RadBlockInterpreter struct {
-	i          *MainInterpreter
-	invocation *radInvocationOld
+	i *MainInterpreter
 }
 
 func NewRadBlockInterpreter(i *MainInterpreter) *RadBlockInterpreter {

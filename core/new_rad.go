@@ -154,20 +154,26 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 					mods = append(mods, radColorMod{color: clr.ToTblColor(), regex: regex})
 					r.colToColor[field] = mods
 				}
+			case K_RAD_FIELD_MOD_MAP:
+				lambdaNode := r.i.getChild(&stmtNode, F_LAMBDA)
+				lambdaIdentifierNodes := r.i.getChildren(lambdaNode, F_IDENTIFIER)
+				var lambdaIdentifiers []string
+				for _, lambdaIdentifierNode := range lambdaIdentifierNodes {
+					lambdaIdentifier := r.i.sd.Src[lambdaIdentifierNode.StartByte():lambdaIdentifierNode.EndByte()]
+					lambdaIdentifiers = append(lambdaIdentifiers, lambdaIdentifier)
+				}
+				exprNode := r.i.getChild(lambdaNode, F_EXPR)
+				lambda := Lambda{
+					Node:     lambdaNode,
+					Args:     lambdaIdentifiers,
+					ExprNode: exprNode,
+				}
+				for _, field := range fields {
+					r.colToMapOp[field] = lambda
+				}
 			}
 		}
 	}
-}
-
-type radInvocationOld struct {
-	i                *Interpreter
-	block            RadBlock
-	url              *string
-	fields           *Fields
-	fieldsToNotPrint *strset.Set
-	sorting          []ColumnSort
-	colToColor       map[string][]radColorMod
-	colToMapOp       map[string]Lambda
 }
 
 type radColorMod struct {
@@ -289,45 +295,3 @@ func toTblStr(i *Interpreter, mapOps map[string]Lambda, fieldName string, column
 	}
 	return newVals
 }
-
-// == fieldModVisitor ==
-
-type fieldModVisitor struct {
-	identifiers []Token
-	invocation  *radInvocation
-}
-
-//func (f fieldModVisitor) VisitColorRadFieldModStmt(color Color) {
-//	colorValue := color.ColorValue.Accept(f.invocation.ri.i)
-//	switch coerced := colorValue.(type) {
-//	case RslString:
-//		coercedColor, ok := ColorFromString(coerced.Plain())
-//		if !ok {
-//			f.invocation.ri.i.error(color.ColorToken, fmt.Sprintf("Invalid color value %q. Allowed: %s",
-//				coerced.Plain(), COLOR_STRINGS))
-//		}
-//		regex := color.Regex.Accept(f.invocation.ri.i)
-//		switch coercedRegex := regex.(type) {
-//		case RslString:
-//			regex, err := regexp.Compile(coercedRegex.Plain())
-//			if err != nil {
-//				f.invocation.ri.i.error(color.ColorToken, fmt.Sprintf("Error compiling regex pattern: %s", err))
-//			}
-//			for _, identifier := range f.identifiers {
-//				identifierLexeme := identifier.GetLexeme()
-//				mods := f.invocation.colToColor[identifierLexeme]
-//				mods = append(mods, radColorMod{color: coercedColor.ToTblColor(), regex: regex})
-//				f.invocation.colToColor[identifierLexeme] = mods
-//			}
-//		}
-//	default:
-//		f.invocation.ri.i.error(color.ColorToken, "Color value must be a string")
-//	}
-//}
-//
-//func (f fieldModVisitor) VisitMapModRadFieldModStmt(mapMod MapMod) {
-//	for _, identifier := range f.identifiers {
-//		identifierLexeme := identifier.GetLexeme()
-//		f.invocation.colToMapOp[identifierLexeme] = mapMod.Op
-//	}
-//}

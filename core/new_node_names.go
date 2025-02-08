@@ -104,4 +104,5 @@ const (
 	F_MOD_STMT   = "mod_stmt"
 	F_COLOR      = "color"
 	F_REGEX      = "regex"
+	F_LAMBDA     = "lambda"
 )
