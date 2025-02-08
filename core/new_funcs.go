@@ -4,6 +4,7 @@ import ts "github.com/tree-sitter/go-tree-sitter"
 
 const (
 	FUNC_PRINT = "print"
+	FUNC_LEN   = "len"
 )
 
 var (
@@ -19,9 +20,25 @@ func (i *Interpreter) callFunction(
 	funcName := i.sd.Src[funcNameNode.StartByte():funcNameNode.EndByte()]
 	switch funcName {
 	case FUNC_PRINT:
-		i.assertExpectedNumOutputs(funcNameNode, numExpectedOutputs, 0)
+		i.assertExpectedNumOutputs(callNode, numExpectedOutputs, 0)
 		RP.Print(createPrintStr(argValues))
-		return EMPTY
+		return EMPTY // TODO what happens downstream if assigned?
+	case FUNC_LEN:
+		i.assertExpectedNumOutputs(callNode, numExpectedOutputs, 1)
+		if len(argValues) != 1 {
+			i.errorf(callNode, "%s() takes exactly one argument", FUNC_LEN)
+		}
+		switch v := argValues[0].Val.(type) {
+		case RslString:
+			return newRslValues(i, callNode, v.Len())
+		case *RslList:
+			return newRslValues(i, callNode, v.Len())
+		case *RslMap:
+			return newRslValues(i, callNode, v.Len())
+		default:
+			i.errorf(callNode, "%s() takes a string or collection", FUNC_LEN)
+			panic(UNREACHABLE)
+		}
 	default:
 		i.errorf(funcNameNode, "Unknown function: %s", funcName)
 		panic(UNREACHABLE)
