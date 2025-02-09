@@ -74,23 +74,40 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 
 func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslValue {
 	switch opNode.Kind() {
-	case K_PLUS, K_MINUS:
+	case K_PLUS, K_MINUS, K_PLUS_PLUS, K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 		argVal := i.evaluate(argNode, 1)[0]
-		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for unary op '%s'", TypeAsString(argVal), opStr), RslIntT, RslFloatT)
-		if opNode.Kind() == K_MINUS {
-			switch coerced := argVal.Val.(type) {
-			case int64:
-				return newRslValue(i, parentNode, -coerced)
-			case float64:
-				return newRslValue(i, parentNode, -coerced)
-			default:
-				i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
-			}
+		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RslIntT, RslFloatT)
+
+		intOp, floatOp := i.getUnaryOp(opNode)
+
+		switch coerced := argVal.Val.(type) {
+		case int64:
+			return newRslValue(i, parentNode, intOp(coerced))
+		case float64:
+			return newRslValue(i, parentNode, floatOp(coerced))
+		default:
+			i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
+			panic(UNREACHABLE)
 		}
-		return argVal
 	case K_NOT:
 		return newRslValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+	default:
+		i.errorf(opNode, "Invalid unary operator")
+		panic(UNREACHABLE)
+	}
+}
+
+func (i *Interpreter) getUnaryOp(opNode *ts.Node) (func(int64) int64, func(float64) float64) {
+	switch opNode.Kind() {
+	case K_PLUS:
+		return func(a int64) int64 { return a }, func(a float64) float64 { return a }
+	case K_MINUS:
+		return func(a int64) int64 { return -a }, func(a float64) float64 { return -a }
+	case K_PLUS_PLUS:
+		return func(a int64) int64 { return a + 1 }, func(a float64) float64 { return a + 1 }
+	case K_MINUS_MINUS:
+		return func(a int64) int64 { return a - 1 }, func(a float64) float64 { return a - 1 }
 	default:
 		i.errorf(opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
