@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/huh"
@@ -372,6 +373,80 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, strings.HasPrefix(strings.ToLower(response), "y"))
+			},
+		},
+		{
+			Name:             FUNC_PARSE_JSON,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+
+				out, err := TryConvertJsonToNativeTypes(f.i, f.callNode, arg.value.RequireStr(f.i, arg.node).Plain())
+				if err != nil {
+					f.i.errorf(f.callNode, fmt.Sprintf("Error parsing JSON: %v", err))
+				}
+				return newRslValues(f.i, f.callNode, out)
+			},
+		},
+		{
+			Name:             FUNC_PARSE_INT,
+			ReturnValues:     UP_TO_TWO_RETURN_VALS,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+
+				str := arg.value.RequireStr(f.i, arg.node).Plain()
+				parsed, err := strconv.ParseInt(str, 10, 64)
+
+				if err != nil {
+					errMsg := fmt.Sprintf("%s() failed to parse %q", PARSE_INT, str)
+					if f.numExpectedOutputs == 1 {
+						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
+						panic(UNREACHABLE)
+					} else {
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_INT_FAILED, errMsg))
+					}
+				} else {
+					if f.numExpectedOutputs == 1 {
+						return newRslValues(f.i, f.callNode, parsed)
+					} else {
+						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+					}
+				}
+			},
+		},
+		{
+			Name:             FUNC_PARSE_FLOAT,
+			ReturnValues:     UP_TO_TWO_RETURN_VALS,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+
+				str := arg.value.RequireStr(f.i, arg.node).Plain()
+				parsed, err := strconv.ParseFloat(str, 64)
+
+				if err != nil {
+					errMsg := fmt.Sprintf("%s() failed to parse %q", PARSE_FLOAT, str)
+					if f.numExpectedOutputs == 1 {
+						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
+						panic(UNREACHABLE)
+					} else {
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_FLOAT_FAILED, errMsg))
+					}
+				} else {
+					if f.numExpectedOutputs == 1 {
+						return newRslValues(f.i, f.callNode, parsed)
+					} else {
+						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+					}
+				}
 			},
 		},
 	}

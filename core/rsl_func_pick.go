@@ -129,8 +129,7 @@ var FuncPickFromResource = Func{
 			}
 		}
 
-		values := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
-		return newRslValues(f.i, f.callNode, values...)
+		return pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
 	},
 }
 

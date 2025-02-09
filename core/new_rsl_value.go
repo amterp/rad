@@ -273,7 +273,7 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	}
 }
 
-func newRslValues[T any](i *Interpreter, node *ts.Node, value ...T) []RslValue {
+func newRslValues(i *Interpreter, node *ts.Node, value ...interface{}) []RslValue {
 	values := make([]RslValue, len(value))
 	for idx, v := range value {
 		values[idx] = newRslValue(i, node, v)
