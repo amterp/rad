@@ -9,26 +9,31 @@ import (
 )
 
 const (
-	FUNC_PRINT       = "print"
-	FUNC_PPRINT      = "pprint"
-	FUNC_DEBUG       = "debug"
-	FUNC_EXIT        = "exit"
-	FUNC_SLEEP       = "sleep"
-	FUNC_SEED_RANDOM = "seed_random"
-	FUNC_RAND        = "rand"
-	FUNC_RAND_INT    = "rand_int"
-	FUNC_REPLACE     = "replace"
-	FUNC_LEN         = "len"
-	FUNC_SORT        = "sort"
-	FUNC_NOW         = "now"
-	FUNC_TYPE_OF     = "type_of"
-	FUNC_JOIN        = "join"
-	FUNC_UPPER       = "upper"
-	FUNC_LOWER       = "lower"
-	FUNC_STARTS_WITH = "starts_with"
-	FUNC_ENDS_WITH   = "ends_with"
+	FUNC_PRINT              = "print"
+	FUNC_PPRINT             = "pprint"
+	FUNC_DEBUG              = "debug"
+	FUNC_EXIT               = "exit"
+	FUNC_SLEEP              = "sleep"
+	FUNC_SEED_RANDOM        = "seed_random"
+	FUNC_RAND               = "rand"
+	FUNC_RAND_INT           = "rand_int"
+	FUNC_REPLACE            = "replace"
+	FUNC_LEN                = "len"
+	FUNC_SORT               = "sort"
+	FUNC_NOW                = "now"
+	FUNC_TYPE_OF            = "type_of"
+	FUNC_JOIN               = "join"
+	FUNC_UPPER              = "upper"
+	FUNC_LOWER              = "lower"
+	FUNC_STARTS_WITH        = "starts_with"
+	FUNC_ENDS_WITH          = "ends_with"
+	FUNC_PICK               = "pick"
+	FUNC_PICK_KV            = "pick_kv"
+	FUNC_PICK_FROM_RESOURCE = "pick_from_resource"
 
 	namedArgReverse = "reverse"
+	namedArgTitle   = "title"
+	namedArgPrompt  = "prompt"
 )
 
 var (
@@ -63,6 +68,9 @@ func init() {
 		FuncRand,
 		FuncRandInt,
 		FuncReplace,
+		FuncPick,
+		FuncPickKv,
+		//FuncPickFromResource,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
