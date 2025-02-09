@@ -3,8 +3,6 @@ package core
 import (
 	"math/rand"
 	"time"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var RNG *rand.Rand
@@ -19,8 +17,8 @@ var FuncSeedRandom = Func{
 	RequiredArgCount: 1,
 	ArgTypes:         [][]RslTypeEnum{{RslIntT}},
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		switch coerced := args[0].value.Val.(type) {
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		switch coerced := f.args[0].value.Val.(type) {
 		case int64:
 			RNG = rand.New(rand.NewSource(coerced))
 			return EMPTY
@@ -37,8 +35,8 @@ var FuncRand = Func{
 	RequiredArgCount: 0,
 	ArgTypes:         NO_POS_ARGS,
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		return newRslValues(i, callNode, RNG.Float64())
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		return newRslValues(f.i, f.callNode, RNG.Float64())
 	},
 }
 
@@ -48,26 +46,27 @@ var FuncRandInt = Func{
 	RequiredArgCount: 1,
 	ArgTypes:         [][]RslTypeEnum{{RslIntT}, {RslIntT}},
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RslValue {
 		var min, max int64
 
-		if len(args) == 1 {
-			arg := args[0]
+		if len(f.args) == 1 {
+			arg := f.args[0]
 			min = 0
-			max = arg.value.RequireInt(i, arg.node)
+			max = arg.value.RequireInt(f.i, arg.node)
 		} else {
 			// two args
-			minArg := args[0]
-			maxArg := args[1]
-			min = minArg.value.RequireInt(i, minArg.node)
-			max = maxArg.value.RequireInt(i, maxArg.node)
+			minArg := f.args[0]
+			maxArg := f.args[1]
+			min = minArg.value.RequireInt(f.i, minArg.node)
+			max = maxArg.value.RequireInt(f.i, maxArg.node)
 		}
 
 		if min > max {
-			i.errorf(callNode, "%s() min (%d) must be less than or equal to max (%d).", FUNC_RAND_INT, min, max)
+			f.i.errorf(f.callNode,
+				"%s() min (%d) must be less than or equal to max (%d).", FUNC_RAND_INT, min, max)
 		}
 
 		n := max - min
-		return newRslValues(i, callNode, min+RNG.Int63n(n))
+		return newRslValues(f.i, f.callNode, min+RNG.Int63n(n))
 	},
 }

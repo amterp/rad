@@ -15,12 +15,12 @@ var FuncPick = Func{
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgPrompt: {RslStringT},
 	},
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
-		optionsArg := args[0]
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		optionsArg := f.args[0]
 
 		filters := make([]string, 0)
-		if len(args) == 2 {
-			filteringNode := args[1]
+		if len(f.args) == 2 {
+			filteringNode := f.args[1]
 
 			switch coerced := filteringNode.value.Val.(type) {
 			case RslString:
@@ -30,7 +30,7 @@ var FuncPick = Func{
 					if str, ok := item.Val.(RslString); ok {
 						filters = append(filters, str.Plain())
 					} else {
-						i.errorf(filteringNode.node,
+						f.i.errorf(filteringNode.node,
 							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
 					}
 				}
@@ -39,9 +39,9 @@ var FuncPick = Func{
 			}
 		}
 
-		options := optionsArg.value.RequireList(i, optionsArg.node).AsStringList(false)
-		str := pickKv(i, callNode, options, options, filters, namedArgs)
-		return newRslValues(i, callNode, str)
+		options := optionsArg.value.RequireList(f.i, optionsArg.node).AsStringList(false)
+		str := pickKv(f.i, f.callNode, options, options, filters, f.namedArgs)
+		return newRslValues(f.i, f.callNode, str)
 	},
 }
 
@@ -53,13 +53,13 @@ var FuncPickKv = Func{
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgPrompt: {RslStringT},
 	},
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
-		keyArgs := args[0]
-		valueArgs := args[1]
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		keyArgs := f.args[0]
+		valueArgs := f.args[1]
 
 		filters := make([]string, 0)
-		if len(args) == 3 {
-			filteringNode := args[2]
+		if len(f.args) == 3 {
+			filteringNode := f.args[2]
 
 			switch coerced := filteringNode.value.Val.(type) {
 			case RslString:
@@ -69,7 +69,7 @@ var FuncPickKv = Func{
 					if str, ok := item.Val.(RslString); ok {
 						filters = append(filters, str.Plain())
 					} else {
-						i.errorf(filteringNode.node,
+						f.i.errorf(filteringNode.node,
 							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
 					}
 				}
@@ -78,10 +78,10 @@ var FuncPickKv = Func{
 			}
 		}
 
-		keys := keyArgs.value.RequireList(i, keyArgs.node).AsStringList(false)
-		values := valueArgs.value.RequireList(i, valueArgs.node).Values
-		value := pickKv(i, callNode, keys, values, filters, namedArgs)
-		return newRslValues(i, callNode, value)
+		keys := keyArgs.value.RequireList(f.i, keyArgs.node).AsStringList(false)
+		values := valueArgs.value.RequireList(f.i, valueArgs.node).Values
+		value := pickKv(f.i, f.callNode, keys, values, filters, f.namedArgs)
+		return newRslValues(f.i, f.callNode, value)
 	},
 }
 

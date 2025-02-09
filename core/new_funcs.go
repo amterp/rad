@@ -71,7 +71,7 @@ func (i *Interpreter) callFunction(
 	assertCorrectPositionalArgs(i, callNode, f, args)
 	assertAllowedNamedArgs(i, callNode, f, namedArgs)
 
-	return f.Execute(i, callNode, args, namedArgs)
+	return f.Execute(NewFuncInvocationArgs(i, callNode, args, namedArgs, numExpectedOutputs))
 }
 
 func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Func, numExpectedReturnValues int) {

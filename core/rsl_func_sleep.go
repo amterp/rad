@@ -16,31 +16,31 @@ var FuncSleep = Func{
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgTitle: {RslStringT},
 	},
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
-		arg := args[0]
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		arg := f.args[0]
 		switch coerced := arg.value.Val.(type) {
 		case int64:
-			sleep(i, arg.node, time.Duration(coerced)*time.Second, namedArgs)
+			sleep(f.i, arg.node, time.Duration(coerced)*time.Second, f.namedArgs)
 			return EMPTY
 		case float64:
-			sleep(i, arg.node, time.Duration(coerced*1000)*time.Millisecond, namedArgs)
+			sleep(f.i, arg.node, time.Duration(coerced*1000)*time.Millisecond, f.namedArgs)
 			return EMPTY
 		case RslString:
 			durStr := strings.Replace(coerced.Plain(), " ", "", -1)
 
 			floatVal, err := strconv.ParseFloat(durStr, 64)
 			if err == nil {
-				sleep(i, arg.node, time.Duration(floatVal*1000)*time.Millisecond, namedArgs)
+				sleep(f.i, arg.node, time.Duration(floatVal*1000)*time.Millisecond, f.namedArgs)
 				return EMPTY
 			}
 
 			dur, err := time.ParseDuration(durStr)
 			if err == nil {
-				sleep(i, arg.node, dur, namedArgs)
+				sleep(f.i, arg.node, dur, f.namedArgs)
 				return EMPTY
 			}
 
-			i.errorf(arg.node, "Invalid string argument: %q", coerced.Plain())
+			f.i.errorf(arg.node, "Invalid string argument: %q", coerced.Plain())
 			panic(UNREACHABLE)
 		default:
 			bugIncorrectTypes(FUNC_SLEEP)

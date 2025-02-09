@@ -2,8 +2,6 @@ package core
 
 import (
 	"fmt"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var FuncExit = Func{
@@ -12,12 +10,12 @@ var FuncExit = Func{
 	RequiredArgCount: 0,
 	ArgTypes:         [][]RslTypeEnum{{RslIntT}},
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		if len(args) == 0 {
-			exit(i, 0)
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		if len(f.args) == 0 {
+			exit(f.i, 0)
 		} else {
-			arg := args[0]
-			exit(i, arg.value.RequireInt(i, arg.node))
+			arg := f.args[0]
+			exit(f.i, arg.value.RequireInt(f.i, arg.node))
 		}
 		return EMPTY
 	},
