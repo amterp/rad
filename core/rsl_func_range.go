@@ -1,140 +1,137 @@
 package core
 
-import "fmt"
+import (
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 // todo
 //   - implement steps?
 //   - somehow improve implementation to be a generator, rather than eagerly created list? chugs at e.g. 100_000
-func runRange(i *MainInterpreter, function Token, args []interface{}) []interface{} {
-	if len(args) < 1 || len(args) > 3 {
-		i.error(function, RANGE+fmt.Sprintf("() takes 1 to 3 arguments, got %d", len(args)))
-	}
 
-	useFloats := false
-	for _, arg := range args {
-		switch arg.(type) {
-		case float64:
-			useFloats = true
-		case int64:
-		default:
-			i.error(function, RANGE+fmt.Sprintf("() takes int or float arguments, got %s", TypeAsString(arg)))
+var FuncRange = Func{
+	Name:             FUNC_RANGE,
+	ReturnValues:     ONE_RETURN_VAL,
+	RequiredArgCount: 1,
+	ArgTypes:         [][]RslTypeEnum{{RslIntT, RslFloatT}, {RslIntT, RslFloatT}, {RslIntT, RslFloatT}},
+	NamedArgs:        NO_NAMED_ARGS,
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		useFloats := false
+		for _, arg := range f.args {
+			switch arg.value.Type() {
+			case RslFloatT:
+				useFloats = true
+			case RslIntT:
+			default:
+				bugIncorrectTypes(FUNC_RANGE)
+			}
 		}
-	}
 
-	if useFloats {
-		return runFloatRange(i, function, args)
-	} else {
-		return runIntRange(i, function, args)
-	}
+		if useFloats {
+			return newRslValues(f.i, f.callNode, runFloatRange(f.i, f.callNode, f.args))
+		} else {
+			return newRslValues(f.i, f.callNode, runIntRange(f.i, f.callNode, f.args))
+		}
+	},
 }
 
-func runFloatRange(i *MainInterpreter, function Token, args []interface{}) []interface{} {
+func runFloatRange(interp *Interpreter, callNode *ts.Node, args []positionalArg) []RslValue {
 	var start, end, step float64
-	switch len(args) {
-	case 1:
+
+	firstArg := args[0]
+	secondArg := tryGetArg(1, args)
+	thirdArg := tryGetArg(2, args)
+
+	if thirdArg != nil {
+		start = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
+		end = secondArg.value.RequireFloatAllowingInt(interp, secondArg.node)
+		step = thirdArg.value.RequireFloatAllowingInt(interp, thirdArg.node)
+	} else if secondArg != nil {
+		start = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
+		end = secondArg.value.RequireFloatAllowingInt(interp, secondArg.node)
+		step = 1
+	} else {
 		start = 0
-		end = args[0].(float64)
+		end = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
 		step = 1
-	case 2:
-		switch args[0].(type) {
-		case float64:
-			start = args[0].(float64)
-		case int64:
-			start = float64(args[0].(int64))
-		}
-		switch args[1].(type) {
-		case float64:
-			end = args[1].(float64)
-		case int64:
-			end = float64(args[1].(int64))
-		}
-		step = 1
-	case 3:
-		switch args[0].(type) {
-		case float64:
-			start = args[0].(float64)
-		case int64:
-			start = float64(args[0].(int64))
-		}
-		switch args[1].(type) {
-		case float64:
-			end = args[1].(float64)
-		case int64:
-			end = float64(args[1].(int64))
-		}
-		switch args[2].(type) {
-		case float64:
-			step = args[2].(float64)
-		case int64:
-			step = float64(args[2].(int64))
-		}
 	}
 
 	if step == 0 {
-		i.error(function, RANGE+fmt.Sprintf("() step argument cannot be zero"))
+		// third node must be present if step is zero
+		interp.errorf(thirdArg.node,
+			"%s() step argument cannot be zero", FUNC_RANGE)
 	}
 
 	if start > end && step > 0 {
-		i.error(function, RANGE+fmt.Sprintf("() start %f cannot be greater than end %f with positive step %f", start, end, step))
+		interp.errorf(callNode,
+			"%s() start %f cannot be greater than end %f with positive step %f", FUNC_RANGE, start, end, step)
 	}
 
 	if start < end && step < 0 {
-		i.error(function, RANGE+fmt.Sprintf("() start %f cannot be less than end %f with negative step %f", start, end, step))
+		interp.errorf(callNode,
+			"%s() start %f cannot be less than end %f with negative step %f", FUNC_RANGE, start, end, step)
 	}
 
-	var result []interface{}
+	var result []RslValue
 
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, i)
+			result = append(result, newRslValue(interp, callNode, i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, i)
+			result = append(result, newRslValue(interp, callNode, i))
 		}
 	}
 
 	return result
 }
 
-func runIntRange(i *MainInterpreter, function Token, args []interface{}) []interface{} {
+func runIntRange(interp *Interpreter, callNode *ts.Node, args []positionalArg) []RslValue {
 	var start, end, step int64
-	switch len(args) {
-	case 1:
+
+	firstArg := args[0]
+	secondArg := tryGetArg(1, args)
+	thirdArg := tryGetArg(2, args)
+
+	if thirdArg != nil {
+		start = firstArg.value.RequireInt(interp, firstArg.node)
+		end = secondArg.value.RequireInt(interp, secondArg.node)
+		step = thirdArg.value.RequireInt(interp, thirdArg.node)
+	} else if secondArg != nil {
+		start = firstArg.value.RequireInt(interp, firstArg.node)
+		end = secondArg.value.RequireInt(interp, secondArg.node)
+		step = 1
+	} else {
 		start = 0
-		end = args[0].(int64)
+		end = firstArg.value.RequireInt(interp, firstArg.node)
 		step = 1
-	case 2:
-		start = args[0].(int64)
-		end = args[1].(int64)
-		step = 1
-	case 3:
-		start = args[0].(int64)
-		end = args[1].(int64)
-		step = args[2].(int64)
 	}
 
 	if step == 0 {
-		i.error(function, RANGE+fmt.Sprintf("() step argument cannot be zero"))
+		// third node must be present if step is zero
+		interp.errorf(thirdArg.node,
+			"%s() step argument cannot be zero", FUNC_RANGE)
 	}
 
 	if start > end && step > 0 {
-		i.error(function, RANGE+fmt.Sprintf("() start %d cannot be greater than end %d with positive step %d", start, end, step))
+		interp.errorf(callNode,
+			"%s() start %d cannot be greater than end %d with positive step %d", FUNC_RANGE, start, end, step)
 	}
 
 	if start < end && step < 0 {
-		i.error(function, RANGE+fmt.Sprintf("() start %d cannot be less than end %d with negative step %d", start, end, step))
+		interp.errorf(callNode,
+			"%s() start %d cannot be less than end %d with negative step %d", FUNC_RANGE, start, end, step)
 	}
 
-	var result []interface{}
+	var result []RslValue
 
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, i)
+			result = append(result, newRslValue(interp, callNode, i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, i)
+			result = append(result, newRslValue(interp, callNode, i))
 		}
 	}
 
