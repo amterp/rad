@@ -50,10 +50,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//	default:
 	//		i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
 	//	}
-	//case RANGE:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runRange(i, function, args)
 	//case UNIQUE:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)

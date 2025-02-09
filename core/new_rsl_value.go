@@ -119,6 +119,25 @@ func (v RslValue) TryGetMap() (*RslMap, bool) {
 	return nil, false
 }
 
+func (v RslValue) TryGetFloatAllowingInt() (float64, bool) {
+	switch coerced := v.Val.(type) {
+	case int64:
+		return float64(coerced), true
+	case float64:
+		return coerced, true
+	default:
+		return 0, false
+	}
+}
+
+func (v RslValue) RequireFloatAllowingInt(i *Interpreter, node *ts.Node) float64 {
+	if f, ok := v.TryGetFloatAllowingInt(); ok {
+		return f
+	}
+	i.errorf(node, "Expected float, got %s", TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
 func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
 	switch coerced := v.Val.(type) {
 	case *RslList:
