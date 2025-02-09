@@ -26,10 +26,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case "join":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return RunJoin(i, function, args)
 	//case "upper":
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)

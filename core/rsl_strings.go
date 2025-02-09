@@ -43,7 +43,7 @@ func (s RslString) Plain() string {
 }
 
 // applies all the attributes
-func (s *RslString) String() string {
+func (s RslString) String() string {
 	builder := strings.Builder{}
 	for _, segment := range s.Segments {
 		builder.WriteString(s.ApplyAttributes(segment.String, segment))
