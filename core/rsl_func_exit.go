@@ -2,25 +2,28 @@ package core
 
 import (
 	"fmt"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func runExit(i *MainInterpreter, function Token, args []interface{}) {
-	if len(args) == 0 {
-		exit(i, 0)
-	} else if len(args) == 1 {
-		arg := args[0]
-		switch coerced := arg.(type) {
-		case int64:
-			exit(i, int(coerced))
-		default:
-			i.error(function, EXIT+"() takes an integer argument")
+var FuncExit = Func{
+	Name:             FUNC_EXIT,
+	ReturnValues:     ZERO_RETURN_VALS,
+	RequiredArgCount: 0,
+	ArgTypes:         [][]RslTypeEnum{{RslIntT}},
+	NamedArgs:        NO_NAMED_ARGS,
+	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+		if len(args) == 0 {
+			exit(i, 0)
+		} else {
+			arg := args[0]
+			exit(i, arg.value.RequireInt(i, arg.node))
 		}
-	} else {
-		i.error(function, EXIT+"() takes zero or one argument")
-	}
+		return EMPTY
+	},
 }
 
-func exit(i *MainInterpreter, errorCode int) {
+func exit(i *Interpreter, errorCode int64) {
 	if FlagShell.Value {
 		if errorCode == 0 {
 			RP.RadDebugf(fmt.Sprintf("Printing shell exports"))
@@ -33,5 +36,5 @@ func exit(i *MainInterpreter, errorCode int) {
 	}
 
 	RP.RadDebugf("Exiting")
-	RExit(errorCode)
+	RExit(int(errorCode))
 }
