@@ -125,6 +125,11 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 	case K_RAD_BLOCK:
 		i.runRadBlock(node)
+	case K_INCR_DECR:
+		leftVarPathNode := i.getChild(node, F_LEFT)
+		opNode := i.getChild(node, F_OP)
+		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
+		i.doVarPathAssign(leftVarPathNode, newValue)
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}

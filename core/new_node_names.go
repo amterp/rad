@@ -68,6 +68,9 @@ const (
 	K_RAD_IF_STMT             = "rad_if_stmt"
 	K_LIST_COMPREHENSION      = "list_comprehension"
 	K_ERROR                   = "ERROR"
+	K_INCR_DECR               = "incr_decr"
+	K_PLUS_PLUS               = "++"
+	K_MINUS_MINUS             = "--"
 
 	// Field names
 	F_LEFT       = "left"
