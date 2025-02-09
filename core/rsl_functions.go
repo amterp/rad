@@ -28,9 +28,6 @@ func RunRslFunction(i *MainInterpreter, call FunctionCall) {
 	//namedArgsMap := toMap(i, call.NamedArgs)
 	//
 	//switch functionName {
-	//case DEBUG:
-	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-	//	runDebug(args)
 	//case EXIT:
 	//	// todo allow following exit code with msg?
 	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)

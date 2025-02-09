@@ -10,6 +10,7 @@ import (
 const (
 	FUNC_PRINT   = "print"
 	FUNC_PPRINT  = "pprint"
+	FUNC_DEBUG   = "debug"
 	FUNC_LEN     = "len"
 	FUNC_SORT    = "sort"
 	FUNC_NOW     = "now"
@@ -41,6 +42,7 @@ func init() {
 	functions := []Func{
 		FuncPrint,
 		FuncPPrint,
+		FuncDebug,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
