@@ -87,8 +87,22 @@ exit(code int = 0)
 ```rsl
 sleep(seconds int)
 sleep(seconds float)
-sleep(duration string)
+sleep(duration string)  // e.g. sleep("2h45m")
 ```
+
+Allows for a named arg `title=str".
+
+See the following table for valid `duration` string formats:
+
+| Suffix   | Description  |
+|----------|--------------|
+| h        | Hours        |
+| m        | Minutes      |
+| s        | Seconds      |
+| ms       | Milliseconds |
+| us or µs | Microseconds |
+| ns       | Nanoseconds  |
+
 
 ### len
 
