@@ -26,43 +26,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case "upper":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	arg := args[0]
-	//	switch coerced := arg.(type) {
-	//	case RslString:
-	//		return coerced.Upper()
-	//	default:
-	//		// todo not convinced we shouldn't just error here. RAD-109
-	//		//   leads to some complications e.g. maintaining color attributes of list string contents
-	//		return NewRslString(strings.ToUpper(ToPrintable(arg)))
-	//	}
-	//case "lower":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	arg := args[0]
-	//	switch coerced := arg.(type) {
-	//	case RslString:
-	//		return coerced.Lower()
-	//	default:
-	//		// todo ditto re: RAD-109
-	//		return NewRslString(strings.ToLower(ToPrintable(arg)))
-	//	}
-	//case "starts_with":
-	//	if len(args) != 2 {
-	//		i.error(function, "starts_with() takes exactly two arguments")
-	//	}
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return strings.HasPrefix(ToPrintable(args[0]), ToPrintable(args[1]))
-	//case "ends_with":
-	//	if len(args) != 2 {
-	//		i.error(function, "ends_with() takes exactly two arguments")
-	//	}
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return strings.HasSuffix(ToPrintable(args[0]), ToPrintable(args[1]))
 	//case PICK:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	return runPick(i, function, args, namedArgsMap)

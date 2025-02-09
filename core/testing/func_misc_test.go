@@ -2,19 +2,29 @@ package testing
 
 import "testing"
 
-func TestStartsEndsContains(t *testing.T) {
+func Test_StartsWith(t *testing.T) {
 	rsl := `
 a = "alice"
 print(starts_with(a, "al"))
 print(starts_with(a, "ce"))
-
-print(ends_with(a, "al"))
-print(ends_with(a, "ce"))
 `
 	setupAndRunCode(t, rsl)
 	expected := `true
 false
-false
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_EndsWithWith(t *testing.T) {
+	rsl := `
+a = "alice"
+print(ends_with(a, "al"))
+print(ends_with(a, "ce"))
+`
+	setupAndRunCode(t, rsl)
+	expected := `false
 true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
