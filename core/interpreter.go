@@ -77,7 +77,7 @@ func (i *MainInterpreter) VisitFunctionCallExpr(call FunctionCall) interface{} {
 }
 
 func (i *MainInterpreter) VisitFunctionStmtStmt(functionStmt FunctionStmt) {
-	RunRslFunction(i, functionStmt.Call)
+	// DELETE
 }
 
 func (i *MainInterpreter) VisitVariableExpr(variable Variable) interface{} {

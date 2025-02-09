@@ -21,21 +21,6 @@ func RunRslNonVoidFunction(
 	return output
 }
 
-func RunRslFunction(i *MainInterpreter, call FunctionCall) {
-	//funcToken := call.Function
-	//args := evalArgs(i, call.Args)
-	//functionName := funcToken.GetLexeme()
-	//namedArgsMap := toMap(i, call.NamedArgs)
-	//
-	//switch functionName {
-	//case SEED_RANDOM:
-	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-	//	runSeedRandom(i, funcToken, args)
-	//default:
-	//	RunRslNonVoidFunction(i, funcToken, NO_NUM_RETURN_VALUES_CONSTRAINT, args, call.NamedArgs)
-	//}
-}
-
 func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturnValues int, args []interface{}, namedArgs []NamedArg) interface{} {
 	//funcName := function.GetLexeme()
 	//namedArgsMap := toMap(i, namedArgs)
@@ -119,14 +104,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//	default:
 	//		i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
 	//	}
-	//case RAND:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runRand(i, function, args)
-	//case RAND_INT:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runRandInt(i, function, args)
 	//case TRUNCATE:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
@@ -224,21 +201,6 @@ func evalArgs(i *MainInterpreter, args []Expr) []interface{} {
 		values = append(values, val)
 	}
 	return values
-}
-
-func assertExpectedNumReturnValuesOld(
-	i *MainInterpreter,
-	function Token,
-	funcName string,
-	numExpectedReturnValues int,
-	allowedNumReturnValues []int,
-) {
-	if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && !lo.Contains(allowedNumReturnValues, numExpectedReturnValues) {
-		stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
-		allowedReturnNums := strings.Join(stringified, " or ")
-		i.error(function, fmt.Sprintf("%v() returns %v return values, but %v are expected",
-			funcName, allowedReturnNums, numExpectedReturnValues))
-	}
 }
 
 func validateExpectedNamedArgsOld(i *MainInterpreter, function Token, expectedArgs []string, namedArgs map[string]interface{}) {
