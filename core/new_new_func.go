@@ -30,6 +30,18 @@ const (
 	FUNC_PICK               = "pick"
 	FUNC_PICK_KV            = "pick_kv"
 	FUNC_PICK_FROM_RESOURCE = "pick_from_resource"
+	FUNC_KEYS               = "keys"
+	FUNC_VALUES             = "values"
+	FUNC_TRUNCATE           = "truncate"
+	FUNC_SPLIT              = "split"
+	FUNC_RANGE              = "range"
+	FUNC_UNIQUE             = "unique"
+	FUNC_CONFIRM            = "confirm"
+	FUNC_PARSE_JSON         = "parse_json"
+	FUNC_PARSE_INT          = "parse_int"
+	FUNC_PARSE_FLOAT        = "parse_float"
+	FUNC_HTTP_REQ           = "http_req"
+	FUNC_ABS                = "abs"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -248,6 +260,28 @@ func init() {
 				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
 				prefixStr := prefixArg.value.RequireStr(f.i, prefixArg.node)
 				return newRslValues(f.i, f.callNode, strings.HasSuffix(subjectStr.Plain(), prefixStr.Plain()))
+			},
+		},
+		{
+			Name:             FUNC_KEYS,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslMapT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				return newRslValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Keys())
+			},
+		},
+		{
+			Name:             FUNC_VALUES,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslMapT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				return newRslValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
 			},
 		},
 	}
