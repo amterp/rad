@@ -120,33 +120,7 @@ func (e *OldEnv) PrintShellExports() {
 
 // SetAndImplyType 'value' expected to not be a pointer, should be e.g. string
 func (e *OldEnv) setAndImplyTypeWithToken(token Token, varName string, value interface{}, modifyEnclosing bool) {
-	// todo could make the literal interpreter return LiteralOrArray instead of Go values, making this translation better
-
-	if modifyEnclosing && e.Enclosing != nil {
-		_, ok := e.Enclosing.get(token, varName)
-		if ok {
-			e.Enclosing.SetAndImplyType(token, value)
-			return
-		}
-	}
-
-	switch coerced := value.(type) {
-	case RslString, int64, float64, bool:
-		e.Vars[varName] = coerced
-	case string:
-		e.Vars[varName] = NewRslString(coerced)
-	case []interface{}:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.([]interface{})
-	case RslMapOld:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMapOld)
-	case map[string]interface{}:
-		converted := ConvertToNativeTypes(e.i, token, coerced)
-		e.Vars[varName] = converted.(RslMapOld)
-	default:
-		e.i.error(token, fmt.Sprintf("Unknown type, cannot set: '%T' %q = %q", value, varName, value))
-	}
+	// DELETE
 }
 
 func (e *OldEnv) getOrError(varName string, token Token, acceptableTypes ...RslTypeEnum) interface{} {
@@ -158,25 +132,8 @@ func (e *OldEnv) getOrError(varName string, token Token, acceptableTypes ...RslT
 }
 
 func (e *OldEnv) get(token Token, varName string, acceptableTypes ...RslTypeEnum) (interface{}, bool) {
-	val, ok := e.Vars[varName]
-	if !ok {
-		if e.Enclosing != nil {
-			return e.Enclosing.get(token, varName, acceptableTypes...)
-		}
-		return nil, false
-	}
-
-	if len(acceptableTypes) == 0 {
-		return val, true
-	}
-
-	for _, acceptableType := range acceptableTypes {
-		if acceptableType.MatchesValue(val) {
-			return val, true
-		}
-	}
-	e.i.error(token, fmt.Sprintf("Variable type mismatch: %v, expected: %v", varName, acceptableTypes))
-	panic(UNREACHABLE)
+	// DELETE
+	return nil, false
 }
 
 func convertToInterfaceArr[T any](i []T) []interface{} {

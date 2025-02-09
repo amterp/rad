@@ -29,12 +29,13 @@ type ResponseDef struct {
 }
 
 func (r *ResponseDef) ToRslMap(i *MainInterpreter, t Token) RslMapOld {
-	rslMap := NewOldRslMap()
-	out, _ := TryConvertJsonToNativeTypes(i, t, r.Body)
-	rslMap.SetStr("body", out)
-	rslMap.SetStr("status_code", int64(r.StatusCode))
-	// todo we should add more e.g. reason, message, response headers
-	return *rslMap
+	//rslMap := NewOldRslMap()
+	//out, _ := TryConvertJsonToNativeTypes(i, t, r.Body)
+	//rslMap.SetStr("body", out)
+	//rslMap.SetStr("status_code", int64(r.StatusCode))
+	//// todo we should add more e.g. reason, message, response headers
+	//return *rslMap
+	return RslMapOld{} // TODO
 }
 
 func NewRequester() *Requester {

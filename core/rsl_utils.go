@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 func ToPrintable(val interface{}) string {
@@ -82,54 +84,48 @@ func TypeAsString(val interface{}) string {
 }
 
 // Convert a json interface{} into native RSL types
-func TryConvertJsonToNativeTypes(i *MainInterpreter, function Token, maybeJsonStr string) (interface{}, error) {
+func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr string) (RslValue, error) {
 	var m interface{}
 	err := json.Unmarshal([]byte(maybeJsonStr), &m)
 	if err != nil {
-		return NewRslString(maybeJsonStr), err
+		return newRslValue(i, node, maybeJsonStr), err
 	}
-	return ConvertToNativeTypes(i, function, m), nil
+	return ConvertToNativeTypes(i, node, m), nil
 }
 
 // it was originally implemented because we might capture JSON as a list of unhandled types, but
 // now we should be able to capture json and convert it entirely to native RSL types up front
-func ConvertToNativeTypes(interp *MainInterpreter, token Token, val interface{}) interface{} {
+func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RslValue {
 	switch coerced := val.(type) {
 	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
 	// json 'ints' into floats
-	case string:
-		return NewRslString(coerced)
-	case RslString, int64, float64, bool:
-		return coerced
-	case int:
-		return int64(coerced)
+	case RslString, string, int64, float64, bool:
+		return newRslValue(i, node, coerced)
 	case []interface{}:
-		output := make([]interface{}, len(coerced))
-		for i, val := range coerced {
-			output[i] = ConvertToNativeTypes(interp, token, val)
+		list := NewRslList()
+		for _, val := range coerced {
+			list.Append(ConvertToNativeTypes(i, node, val))
 		}
-		return output
+		return newRslValue(i, node, list)
 	case map[string]interface{}:
-		m := NewOldRslMap()
+		m := NewRslMap()
 		sortedKeys := SortedKeys(coerced)
 		for _, key := range sortedKeys {
-			m.SetStr(key, ConvertToNativeTypes(interp, token, coerced[key]))
+			m.Set(newRslValue(i, node, key), ConvertToNativeTypes(i, node, coerced[key]))
 		}
-		return *m
-	case RslMapOld:
-		return coerced
+		return newRslValue(i, node, m)
 	case nil:
-		return nil
+		return newRslValue(i, node, "nil")
 	default:
-		interp.error(token, fmt.Sprintf("Unhandled type in array: %T", val))
+		i.errorf(node, fmt.Sprintf("Unhandled type in array: %T", val))
 		panic(UNREACHABLE)
 	}
 }
 
-func ConvertValuesToNativeTypes(interp *MainInterpreter, token Token, vals []interface{}) []interface{} {
-	output := make([]interface{}, len(vals))
-	for i, val := range vals {
-		output[i] = ConvertToNativeTypes(interp, token, val)
+func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{}) []RslValue {
+	output := make([]RslValue, len(vals))
+	for idx, val := range vals {
+		output[idx] = ConvertToNativeTypes(i, node, val)
 	}
 	return output
 }

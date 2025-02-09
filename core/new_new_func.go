@@ -88,7 +88,7 @@ func init() {
 		FuncReplace,
 		FuncPick,
 		FuncPickKv,
-		//FuncPickFromResource,
+		FuncPickFromResource,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,

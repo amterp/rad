@@ -1,6 +1,8 @@
 package core
 
 import (
+	"strings"
+
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/samber/lo"
@@ -17,12 +19,11 @@ var FuncPick = Func{
 	},
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		optionsArg := f.args[0]
+		filteringArg := tryGetArg(1, f.args)
 
 		filters := make([]string, 0)
-		if len(f.args) == 2 {
-			filteringNode := f.args[1]
-
-			switch coerced := filteringNode.value.Val.(type) {
+		if filteringArg != nil {
+			switch coerced := filteringArg.value.Val.(type) {
 			case RslString:
 				filters = append(filters, coerced.Plain())
 			case *RslList:
@@ -30,7 +31,7 @@ var FuncPick = Func{
 					if str, ok := item.Val.(RslString); ok {
 						filters = append(filters, str.Plain())
 					} else {
-						f.i.errorf(filteringNode.node,
+						f.i.errorf(filteringArg.node,
 							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
 					}
 				}
@@ -39,8 +40,9 @@ var FuncPick = Func{
 			}
 		}
 
-		options := optionsArg.value.RequireList(f.i, optionsArg.node).AsStringList(false)
-		str := pickKv(f.i, f.callNode, options, options, filters, f.namedArgs)
+		keys := optionsArg.value.RequireList(f.i, optionsArg.node).AsStringList(false)
+		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
+		str := pickKv(f.i, f.callNode, keyGroups, keyGroups, filters, f.namedArgs)[0]
 		return newRslValues(f.i, f.callNode, str)
 	},
 }
@@ -56,12 +58,11 @@ var FuncPickKv = Func{
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
+		filteringArg := tryGetArg(2, f.args)
 
 		filters := make([]string, 0)
-		if len(f.args) == 3 {
-			filteringNode := f.args[2]
-
-			switch coerced := filteringNode.value.Val.(type) {
+		if filteringArg != nil {
+			switch coerced := filteringArg.value.Val.(type) {
 			case RslString:
 				filters = append(filters, coerced.Plain())
 			case *RslList:
@@ -69,7 +70,7 @@ var FuncPickKv = Func{
 					if str, ok := item.Val.(RslString); ok {
 						filters = append(filters, str.Plain())
 					} else {
-						f.i.errorf(filteringNode.node,
+						f.i.errorf(filteringArg.node,
 							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
 					}
 				}
@@ -79,20 +80,68 @@ var FuncPickKv = Func{
 		}
 
 		keys := keyArgs.value.RequireList(f.i, keyArgs.node).AsStringList(false)
+		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		values := valueArgs.value.RequireList(f.i, valueArgs.node).Values
-		value := pickKv(f.i, f.callNode, keys, values, filters, f.namedArgs)
+		valueGroups := lo.Map(values, func(value RslValue, _ int) []RslValue { return []RslValue{value} })
+		value := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
 		return newRslValues(f.i, f.callNode, value)
+	},
+}
+
+var FuncPickFromResource = Func{
+	Name:             FUNC_PICK_FROM_RESOURCE,
+	ReturnValues:     NO_RETURN_LIMIT,
+	RequiredArgCount: 1,
+	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT, RslListT}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgPrompt: {RslStringT},
+	},
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		fileArg := f.args[0]
+		filteringArg := tryGetArg(1, f.args)
+
+		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
+
+		resource := LoadPickResource(f.i, f.callNode, filePath, f.numExpectedOutputs)
+		var keyGroups [][]string
+		var valueGroups [][]RslValue
+		for _, opt := range resource.Opts {
+			keyGroups = append(keyGroups, opt.Keys)
+			valueGroups = append(valueGroups, opt.Values)
+		}
+
+		filters := make([]string, 0)
+		if filteringArg != nil {
+			switch coerced := filteringArg.value.Val.(type) {
+			case RslString:
+				filters = append(filters, coerced.Plain())
+			case *RslList:
+				for _, item := range coerced.Values {
+					if str, ok := item.Val.(RslString); ok {
+						filters = append(filters, str.Plain())
+					} else {
+						f.i.errorf(filteringArg.node,
+							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
+					}
+				}
+			default:
+				bugIncorrectTypes(FUNC_PICK_KV)
+			}
+		}
+
+		values := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
+		return newRslValues(f.i, f.callNode, values...)
 	},
 }
 
 func pickKv[T comparable](
 	i *Interpreter,
 	callNode *ts.Node,
-	keys []string,
-	values []T,
+	keyGroups [][]string,
+	valueGroups [][]T,
 	filters []string,
 	namedArgs map[string]namedArg,
-) T {
+) []T {
 	prompt := "Pick an option"
 	if promptArg, ok := namedArgs[namedArgPrompt]; ok {
 		prompt = promptArg.value.RequireStr(i, promptArg.valueNode).Plain()
@@ -104,32 +153,37 @@ func pickKv[T comparable](
 		}
 	}
 
-	filteredKeyValues := make(map[string]T)
-	for index, key := range keys {
-		failedAFilter := false
-		for _, filter := range filters {
-			if !fuzzy.MatchFold(filter, key) {
-				failedAFilter = true
-				break
+	matchedKeyValues := make(map[string][]T)
+	for index, keyGroup := range keyGroups {
+		values := valueGroups[index]
+		entryKey := strings.Join(lo.Map(values, func(v T, _ int) string { return ToPrintableQuoteStr(v, false) }), " ")
+		entryKey = entryKey + " (" + strings.Join(keyGroup, " ") + ")"
+		for _, key := range keyGroup {
+
+			if len(filters) == 0 {
+				matchedKeyValues[entryKey] = values
+			} else {
+				for _, filter := range filters {
+					if fuzzy.MatchFold(filter, key) {
+						matchedKeyValues[entryKey] = values
+					}
+				}
 			}
 		}
-		if !failedAFilter {
-			filteredKeyValues[key] = values[index]
-		}
 	}
 
-	if len(filteredKeyValues) == 0 {
+	if len(matchedKeyValues) == 0 {
 		// todo potentially allow recovering from this?
-		i.errorf(callNode, "Filtered %s to 0 with filters: %v", Pluralize(len(keys), "option"), filters)
+		i.errorf(callNode, "Filtered %s to 0 with filters: %v", Pluralize(len(keyGroups), "option"), filters)
 	}
 
-	if len(filteredKeyValues) == 1 {
-		return filteredKeyValues[lo.Keys(filteredKeyValues)[0]]
+	if len(matchedKeyValues) == 1 {
+		return matchedKeyValues[lo.Keys(matchedKeyValues)[0]]
 	}
 
-	var result T
-	options := lo.MapToSlice(filteredKeyValues, func(k string, v T) huh.Option[T] { return huh.NewOption(k, v) })
-	err := huh.NewSelect[T]().
+	var result string
+	options := lo.Map(lo.Keys(matchedKeyValues), func(k string, _ int) huh.Option[string] { return huh.NewOption(k, k) })
+	err := huh.NewSelect[string]().
 		Title(prompt).
 		Options(options...).
 		Value(&result).
@@ -140,5 +194,5 @@ func pickKv[T comparable](
 		i.errorf(callNode, "Error running pick: %v", err)
 	}
 
-	return result
+	return matchedKeyValues[result]
 }

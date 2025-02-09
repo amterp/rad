@@ -13,6 +13,7 @@ import (
 var (
 	EMPTY []RslValue
 
+	NO_RETURN_LIMIT       = []int{NO_NUM_RETURN_VALUES_CONSTRAINT}
 	ZERO_RETURN_VALS      = []int{}
 	ONE_RETURN_VAL        = []int{1}
 	UP_TO_TWO_RETURN_VALS = []int{1, 2}
@@ -42,6 +43,8 @@ func (i *Interpreter) callFunction(
 
 	var args []positionalArg
 	for _, argNode := range argNodes {
+		// TODO 'expected output 1' prevents something like
+		//  `print(function_that_returns_two_values())`, it should just "spread out" the args to print
 		value := i.evaluate(&argNode, 1)[0]
 		args = append(args, positionalArg{node: &argNode, value: value})
 	}
@@ -76,24 +79,33 @@ func (i *Interpreter) callFunction(
 
 func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Func, numExpectedReturnValues int) {
 	allowedNumReturnValues := function.ReturnValues
-	if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT &&
-		!lo.Contains(allowedNumReturnValues, numExpectedReturnValues) {
-		var errMsg string
-		if len(allowedNumReturnValues) == 0 {
-			errMsg = fmt.Sprintf("%s() returns no values, but %s expected",
-				function.Name, NumIsAre(numExpectedReturnValues))
-		} else if len(allowedNumReturnValues) == 1 {
-			errMsg = fmt.Sprintf("%s() returns %s, but %s expected",
-				function.Name, Pluralize(allowedNumReturnValues[0], "value"), NumIsAre(numExpectedReturnValues))
-		} else {
-			// allows different numbers of return values
-			stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
-			allowedReturnNums := strings.Join(stringified, " or ")
-			errMsg = fmt.Sprintf("%s() returns %s values, but %s expected",
-				function.Name, allowedReturnNums, NumIsAre(numExpectedReturnValues))
-		}
-		i.errorf(callNode, errMsg)
+	if numExpectedReturnValues == NO_NUM_RETURN_VALUES_CONSTRAINT {
+		return
 	}
+
+	if lo.Contains(allowedNumReturnValues, numExpectedReturnValues) {
+		return
+	}
+
+	if lo.Contains(allowedNumReturnValues, NO_NUM_RETURN_VALUES_CONSTRAINT) {
+		return
+	}
+
+	var errMsg string
+	if len(allowedNumReturnValues) == 0 {
+		errMsg = fmt.Sprintf("%s() returns no values, but %s expected",
+			function.Name, NumIsAre(numExpectedReturnValues))
+	} else if len(allowedNumReturnValues) == 1 {
+		errMsg = fmt.Sprintf("%s() returns %s, but %s expected",
+			function.Name, Pluralize(allowedNumReturnValues[0], "value"), NumIsAre(numExpectedReturnValues))
+	} else {
+		// allows different numbers of return values
+		stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
+		allowedReturnNums := strings.Join(stringified, " or ")
+		errMsg = fmt.Sprintf("%s() returns %s values, but %s expected",
+			function.Name, allowedReturnNums, NumIsAre(numExpectedReturnValues))
+	}
+	i.errorf(callNode, errMsg)
 }
 
 func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
