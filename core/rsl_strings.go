@@ -79,7 +79,7 @@ func (s *RslString) Equals(other RslString) bool {
 	return s.Plain() == other.Plain()
 }
 
-func (s *RslString) Len() int64 {
+func (s RslString) Len() int64 {
 	// todo also cachable
 	return int64(StrLen(s.Plain()))
 }

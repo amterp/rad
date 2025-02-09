@@ -284,6 +284,40 @@ func init() {
 				return newRslValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
 			},
 		},
+		{
+			Name:             FUNC_TRUNCATE,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 2,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				strArg := f.args[0]
+				maxLenArg := f.args[1]
+				maxLen := maxLenArg.value.RequireInt(f.i, maxLenArg.node)
+
+				if maxLen < 0 {
+					f.i.errorf(maxLenArg.node, "%s() takes a non-negative int, got %d", FUNC_TRUNCATE, maxLen)
+				}
+
+				rslStr := strArg.value.RequireStr(f.i, strArg.node)
+				strLen := rslStr.Len()
+
+				if maxLen >= strLen {
+					return newRslValues(f.i, f.callNode, rslStr)
+				}
+
+				str := rslStr.Plain() // todo should maintain attributes
+
+				if terminalSupportsUtf8 {
+					str = str[:maxLen-1]
+					str += "…"
+				} else {
+					str = str[:maxLen-3]
+					str += "..."
+				}
+				return newRslValues(f.i, f.callNode, str)
+			},
+		},
 	}
 
 	functions = append(functions, createColorFunctions()...)
