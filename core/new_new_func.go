@@ -11,6 +11,7 @@ const (
 	FUNC_PRINT   = "print"
 	FUNC_PPRINT  = "pprint"
 	FUNC_DEBUG   = "debug"
+	FUNC_EXIT    = "exit"
 	FUNC_LEN     = "len"
 	FUNC_SORT    = "sort"
 	FUNC_NOW     = "now"
@@ -43,6 +44,7 @@ func init() {
 		FuncPrint,
 		FuncPPrint,
 		FuncDebug,
+		FuncExit,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
