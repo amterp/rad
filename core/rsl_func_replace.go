@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // Allows capture group replacing, for example
@@ -16,18 +14,18 @@ var FuncReplace = Func{
 	RequiredArgCount: 3,
 	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}, {RslStringT}},
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		oldStringArg := args[0]
-		regexForOldArg := args[1]
-		regexForNewArg := args[2]
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		oldStringArg := f.args[0]
+		regexForOldArg := f.args[1]
+		regexForNewArg := f.args[2]
 
-		oldString := oldStringArg.value.RequireStr(i, oldStringArg.node).Plain()
-		regexForOld := regexForOldArg.value.RequireStr(i, regexForOldArg.node).Plain()
-		regexForNew := regexForNewArg.value.RequireStr(i, regexForNewArg.node).Plain()
+		oldString := oldStringArg.value.RequireStr(f.i, oldStringArg.node).Plain()
+		regexForOld := regexForOldArg.value.RequireStr(f.i, regexForOldArg.node).Plain()
+		regexForNew := regexForNewArg.value.RequireStr(f.i, regexForNewArg.node).Plain()
 
 		re, err := regexp.Compile(regexForOld)
 		if err != nil {
-			i.errorf(regexForOldArg.node, fmt.Sprintf("Error compiling regex pattern: %s", err))
+			f.i.errorf(regexForOldArg.node, fmt.Sprintf("Error compiling regex pattern: %s", err))
 		}
 
 		replacementFunc := func(match string) string {
@@ -48,6 +46,6 @@ var FuncReplace = Func{
 
 		newString := re.ReplaceAllStringFunc(oldString, replacementFunc)
 
-		return newRslValues(i, callNode, newString)
+		return newRslValues(f.i, f.callNode, newString)
 	},
 }

@@ -41,6 +41,24 @@ var (
 	NO_NAMED_ARGS = map[string][]RslTypeEnum{}
 )
 
+type FuncInvocationArgs struct {
+	i                  *Interpreter
+	callNode           *ts.Node
+	args               []positionalArg
+	namedArgs          map[string]namedArg
+	numExpectedOutputs int
+}
+
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
+	return FuncInvocationArgs{
+		i:                  i,
+		callNode:           callNode,
+		args:               args,
+		namedArgs:          namedArgs,
+		numExpectedOutputs: numExpectedOutputs,
+	}
+}
+
 type Func struct {
 	Name             string
 	ReturnValues     []int
@@ -52,7 +70,7 @@ type Func struct {
 	// - given at least as many args as required (RequiredArgCount)
 	// - not given more args than types have been defined for (ArgTypes)
 	// - only valid named args are given (if given) (valid name, valid type) (NamedArgs)
-	Execute func(*Interpreter, *ts.Node, []positionalArg, map[string]namedArg) []RslValue
+	Execute func(FuncInvocationArgs) []RslValue
 }
 
 var FunctionsByName map[string]Func
@@ -77,15 +95,15 @@ func init() {
 			RequiredArgCount: 1,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT, RslListT, RslMapT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				arg := args[0]
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
 				switch v := arg.value.Val.(type) {
 				case RslString:
-					return newRslValues(i, arg.node, v.Len())
+					return newRslValues(f.i, arg.node, v.Len())
 				case *RslList:
-					return newRslValues(i, arg.node, v.Len())
+					return newRslValues(f.i, arg.node, v.Len())
 				case *RslMap:
-					return newRslValues(i, arg.node, v.Len())
+					return newRslValues(f.i, arg.node, v.Len())
 				default:
 					panic(bugIncorrectTypes(FUNC_LEN))
 				}
@@ -99,22 +117,22 @@ func init() {
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgReverse: {RslBoolT},
 			},
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
-				reverseArg, exists := namedArgs[namedArgReverse]
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				reverseArg, exists := f.namedArgs[namedArgReverse]
 				reverse := false
 				if exists {
-					reverse = reverseArg.value.RequireBool(i, reverseArg.valueNode)
+					reverse = reverseArg.value.RequireBool(f.i, reverseArg.valueNode)
 				}
 
-				arg := args[0]
+				arg := f.args[0]
 				switch coerced := arg.value.Val.(type) {
 				case *RslList:
-					sortedValues := sortList(i, arg.node, coerced, lo.Ternary(reverse, Desc, Asc))
+					sortedValues := sortList(f.i, arg.node, coerced, lo.Ternary(reverse, Desc, Asc))
 					list := NewRslList()
 					for _, v := range sortedValues {
 						list.Append(v)
 					}
-					return newRslValues(i, arg.node, list)
+					return newRslValues(f.i, arg.node, list)
 				default:
 					panic(bugIncorrectTypes(FUNC_SORT))
 				}
@@ -126,7 +144,7 @@ func init() {
 			RequiredArgCount: 0,
 			ArgTypes:         NO_POS_ARGS,
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, _ []positionalArg, _ map[string]namedArg) []RslValue {
+			Execute: func(f FuncInvocationArgs) []RslValue {
 				m := NewRslMap()
 				m.SetPrimitiveStr("date", RClock.Now().Format("2006-01-02"))
 				m.SetPrimitiveInt("year", RClock.Now().Year())
@@ -143,7 +161,7 @@ func init() {
 
 				m.SetPrimitiveMap("epoch", epochM)
 
-				return newRslValues(i, callNode, m)
+				return newRslValues(f.i, f.callNode, m)
 			},
 		},
 		{
@@ -152,8 +170,8 @@ func init() {
 			RequiredArgCount: 1,
 			ArgTypes:         [][]RslTypeEnum{{}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				return newRslValues(i, callNode, NewRslString(TypeAsString(args[0].value)))
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				return newRslValues(f.i, f.callNode, NewRslString(TypeAsString(f.args[0].value)))
 			},
 		},
 		{
@@ -162,24 +180,24 @@ func init() {
 			RequiredArgCount: 2,
 			ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslStringT}, {RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				listArg := args[0]
-				sepArg := args[1]
-				prefixArg := tryGetArg(2, args)
-				suffixArg := tryGetArg(3, args)
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				listArg := f.args[0]
+				sepArg := f.args[1]
+				prefixArg := tryGetArg(2, f.args)
+				suffixArg := tryGetArg(3, f.args)
 
-				list := listArg.value.RequireList(i, listArg.node)
-				sep := sepArg.value.RequireStr(i, sepArg.node).String()
+				list := listArg.value.RequireList(f.i, listArg.node)
+				sep := sepArg.value.RequireStr(f.i, sepArg.node).String()
 				prefix := ""
 				if prefixArg != nil {
-					prefix = prefixArg.value.RequireStr(i, prefixArg.node).String()
+					prefix = prefixArg.value.RequireStr(f.i, prefixArg.node).String()
 				}
 				suffix := ""
 				if suffixArg != nil {
-					suffix = suffixArg.value.RequireStr(i, suffixArg.node).String()
+					suffix = suffixArg.value.RequireStr(f.i, suffixArg.node).String()
 				}
 
-				return newRslValues(i, callNode, list.Join(sep, prefix, suffix))
+				return newRslValues(f.i, f.callNode, list.Join(sep, prefix, suffix))
 			},
 		},
 		{
@@ -188,9 +206,9 @@ func init() {
 			RequiredArgCount: 1,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				arg := args[0]
-				return newRslValues(i, arg.node, arg.value.RequireStr(i, arg.node).Upper())
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				return newRslValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Upper())
 			},
 		},
 		{
@@ -199,9 +217,9 @@ func init() {
 			RequiredArgCount: 1,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				arg := args[0]
-				return newRslValues(i, arg.node, arg.value.RequireStr(i, arg.node).Lower())
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				return newRslValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Lower())
 			},
 		},
 		{
@@ -210,12 +228,12 @@ func init() {
 			RequiredArgCount: 2,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				subjectArg := args[0]
-				prefixArg := args[1]
-				subjectStr := subjectArg.value.RequireStr(i, subjectArg.node)
-				prefixStr := prefixArg.value.RequireStr(i, prefixArg.node)
-				return newRslValues(i, callNode, strings.HasPrefix(subjectStr.Plain(), prefixStr.Plain()))
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				subjectArg := f.args[0]
+				prefixArg := f.args[1]
+				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
+				prefixStr := prefixArg.value.RequireStr(f.i, prefixArg.node)
+				return newRslValues(f.i, f.callNode, strings.HasPrefix(subjectStr.Plain(), prefixStr.Plain()))
 			},
 		},
 		{
@@ -224,12 +242,12 @@ func init() {
 			RequiredArgCount: 2,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				subjectArg := args[0]
-				prefixArg := args[1]
-				subjectStr := subjectArg.value.RequireStr(i, subjectArg.node)
-				prefixStr := prefixArg.value.RequireStr(i, prefixArg.node)
-				return newRslValues(i, callNode, strings.HasSuffix(subjectStr.Plain(), prefixStr.Plain()))
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				subjectArg := f.args[0]
+				prefixArg := f.args[1]
+				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
+				prefixStr := prefixArg.value.RequireStr(f.i, prefixArg.node)
+				return newRslValues(f.i, f.callNode, strings.HasSuffix(subjectStr.Plain(), prefixStr.Plain()))
 			},
 		},
 	}
@@ -262,16 +280,16 @@ func createColorFunctions() []Func {
 			ReturnValues: ONE_RETURN_VAL,
 			ArgTypes:     [][]RslTypeEnum{{}},
 			NamedArgs:    NO_NAMED_ARGS,
-			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-				clr := ColorFromString(i, callNode, color)
-				arg := args[0]
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				clr := ColorFromString(f.i, f.callNode, color)
+				arg := f.args[0]
 				switch coerced := arg.value.Val.(type) {
 				case RslString:
-					return newRslValues(i, arg.node, coerced.Color(clr))
+					return newRslValues(f.i, arg.node, coerced.Color(clr))
 				default:
 					s := NewRslString(ToPrintable(arg))
 					s.SetSegmentsColor(clr)
-					return newRslValues(i, callNode, s)
+					return newRslValues(f.i, f.callNode, s)
 				}
 			},
 		}

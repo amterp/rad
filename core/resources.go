@@ -7,6 +7,9 @@ import (
 	"path/filepath"
 )
 
+// todo In Go you can apparently define custom json serde with e.g. MarshalJSON and UnmarshalJSON,
+//   see if can leverage it
+
 type PickResource struct {
 	Opts       []PickResourceOpt
 	ReturnType RslTypeEnum

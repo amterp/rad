@@ -15,8 +15,8 @@ var FuncPrint = Func{
 	// TODO BAD!! We need a way to say 'unlimited positional args'
 	ArgTypes:  [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
 	NamedArgs: NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		RP.Print(resolvePrintStr(args))
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		RP.Print(resolvePrintStr(f.args))
 		return EMPTY
 	},
 }
@@ -27,14 +27,14 @@ var FuncPPrint = Func{
 	RequiredArgCount: 0,
 	ArgTypes:         [][]RslTypeEnum{{}},
 	NamedArgs:        NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		if len(args) == 0 {
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		if len(f.args) == 0 {
 			RP.Print("\n")
 		}
 
-		arg := args[0]
+		arg := f.args[0]
 		jsonStruct := RslToJsonType(arg.value)
-		output := prettify(i, callNode, jsonStruct)
+		output := prettify(f.i, f.callNode, jsonStruct)
 		RP.Print(output)
 		return EMPTY
 	},
@@ -47,8 +47,8 @@ var FuncDebug = Func{
 	// TODO BAD!! We need a way to say 'unlimited positional args'
 	ArgTypes:  [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
 	NamedArgs: NO_NAMED_ARGS,
-	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		RP.ScriptDebug(resolvePrintStr(args))
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		RP.ScriptDebug(resolvePrintStr(f.args))
 		return EMPTY
 	},
 }
