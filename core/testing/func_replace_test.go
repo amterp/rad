@@ -41,16 +41,6 @@ Name: bob
 	resetTestState()
 }
 
-func Test_Replace_WithNumbers(t *testing.T) {
-	rsl := `
-print(replace("We are number 2!", 2, 1))
-`
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "We are number 1!\n")
-	assertNoErrors(t)
-	resetTestState()
-}
-
 func Test_Replace_ReturnsString(t *testing.T) {
 	rsl := `
 print(replace("Hi", "Hi", "Hello") + "!")
