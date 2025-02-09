@@ -101,6 +101,7 @@ func init() {
 		FuncPick,
 		FuncPickKv,
 		FuncPickFromResource,
+		FuncSplit,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
