@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/samber/lo"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -273,6 +275,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		i.executeForLoop(node, doOneLoop)
 		return newRslValues(i, node, resultList)
+	case K_TERNARY:
+		conditionNode := i.getChild(node, F_CONDITION)
+		trueNode := i.getChild(node, F_TRUE_BRANCH)
+		falseNode := i.getChild(node, F_FALSE_BRANCH)
+		condition := i.evaluate(conditionNode, 1)[0].TruthyFalsy()
+		return i.evaluate(lo.Ternary(condition, trueNode, falseNode), numExpectedOutputs)
 	default:
 		i.errorf(node, "Unsupported expr node kind: %s", node.Kind())
 		panic(UNREACHABLE)
