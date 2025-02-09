@@ -28,8 +28,6 @@ func RunRslFunction(i *MainInterpreter, call FunctionCall) {
 	//namedArgsMap := toMap(i, call.NamedArgs)
 	//
 	//switch functionName {
-	//case SLEEP:
-	//	runSleep(i, funcToken, args, namedArgsMap)
 	//case SEED_RANDOM:
 	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
 	//	runSeedRandom(i, funcToken, args)

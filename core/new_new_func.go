@@ -12,10 +12,13 @@ const (
 	FUNC_PPRINT  = "pprint"
 	FUNC_DEBUG   = "debug"
 	FUNC_EXIT    = "exit"
+	FUNC_SLEEP   = "sleep"
 	FUNC_LEN     = "len"
 	FUNC_SORT    = "sort"
 	FUNC_NOW     = "now"
 	FUNC_TYPE_OF = "type_of"
+
+	namedArgReverse = "reverse"
 )
 
 var (
@@ -45,6 +48,7 @@ func init() {
 		FuncPPrint,
 		FuncDebug,
 		FuncExit,
+		FuncSleep,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
@@ -71,10 +75,10 @@ func init() {
 			RequiredArgCount: 1,
 			ArgTypes:         [][]RslTypeEnum{{RslStringT, RslListT}},
 			NamedArgs: map[string][]RslTypeEnum{
-				"reverse": {RslBoolT},
+				namedArgReverse: {RslBoolT},
 			},
 			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
-				reverseArg, exists := namedArgs["reverse"]
+				reverseArg, exists := namedArgs[namedArgReverse]
 				reverse := false
 				if exists {
 					reverse = reverseArg.value.RequireBool(i, reverseArg.valueNode)

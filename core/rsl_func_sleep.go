@@ -1,74 +1,66 @@
 package core
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 const (
-	SLEEP_TITLE = "title"
+	namedArgTitle = "title"
 )
 
-func runSleep(i *MainInterpreter, sleepToken Token, args []interface{}, namedArgs map[string]interface{}) {
-	if len(args) != 1 {
-		i.error(sleepToken, SLEEP+"() takes exactly one positional argument")
-	}
+var FuncSleep = Func{
+	Name:             FUNC_SLEEP,
+	ReturnValues:     ZERO_RETURN_VALS,
+	RequiredArgCount: 1,
+	ArgTypes:         [][]RslTypeEnum{{RslIntT, RslFloatT, RslStringT}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgTitle: {RslStringT},
+	},
+	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
+		arg := args[0]
+		switch coerced := arg.value.Val.(type) {
+		case int64:
+			sleep(i, arg.node, time.Duration(coerced)*time.Second, namedArgs)
+			return EMPTY
+		case float64:
+			sleep(i, arg.node, time.Duration(coerced*1000)*time.Millisecond, namedArgs)
+			return EMPTY
+		case RslString:
+			durStr := strings.Replace(coerced.Plain(), " ", "", -1)
 
-	validateExpectedNamedArgsOld(i, sleepToken, []string{SLEEP_TITLE}, namedArgs)
-	parsedArgs := parseSleepArgs(namedArgs)
+			floatVal, err := strconv.ParseFloat(durStr, 64)
+			if err == nil {
+				sleep(i, arg.node, time.Duration(floatVal*1000)*time.Millisecond, namedArgs)
+				return EMPTY
+			}
 
-	switch coerced := args[0].(type) {
-	case RslString:
-		durStr := strings.Replace(coerced.Plain(), " ", "", -1)
+			dur, err := time.ParseDuration(durStr)
+			if err == nil {
+				sleep(i, arg.node, dur, namedArgs)
+				return EMPTY
+			}
 
-		floatVal, err := strconv.ParseFloat(durStr, 64)
-		if err == nil {
-			sleep(i, sleepToken, time.Duration(floatVal*1000)*time.Millisecond, parsedArgs)
-			return
+			i.errorf(arg.node, "Invalid string argument: %q", coerced.Plain())
+			panic(UNREACHABLE)
+		default:
+			bugIncorrectTypes(FUNC_SLEEP)
+			panic(UNREACHABLE)
 		}
-
-		dur, err := time.ParseDuration(durStr)
-		if err == nil {
-			sleep(i, sleepToken, dur, parsedArgs)
-			return
-		}
-
-		i.error(sleepToken, fmt.Sprintf("invalid string argument: '%s'", coerced.Plain()))
-	case int64:
-		sleep(i, sleepToken, time.Duration(coerced)*time.Second, parsedArgs)
-	case float64:
-		sleep(i, sleepToken, time.Duration(coerced*1000)*time.Millisecond, parsedArgs)
-	default:
-		i.error(sleepToken, SLEEP+fmt.Sprintf("() takes an int, float, or string, got %s", TypeAsString(args[0])))
-	}
+	},
 }
 
-func sleep(i *MainInterpreter, sleepToken Token, dur time.Duration, args SleepNamedArgs) {
+func sleep(i *Interpreter, argNode *ts.Node, dur time.Duration, namedArgs map[string]namedArg) {
 	if dur < 0 {
-		i.error(sleepToken, SLEEP+fmt.Sprintf("() cannot take a negative duration: %s", dur.String()))
+		i.errorf(argNode, "%s() cannot take a negative duration: %q", FUNC_SLEEP, dur.String())
 	}
 
-	if args.Title != "" {
-		RP.Print(args.Title + "\n")
+	if title, ok := namedArgs[namedArgTitle]; ok {
+		RP.Print(ToPrintableQuoteStr(title.value, false) + "\n")
 	}
+
 	RSleep(dur)
-}
-
-func parseSleepArgs(args map[string]interface{}) SleepNamedArgs {
-	parsedArgs := SleepNamedArgs{
-		Title: "",
-	}
-
-	if title, ok := args[SLEEP_TITLE]; ok {
-		t := title.(RslString)
-		parsedArgs.Title = t.Plain()
-	}
-
-	return parsedArgs
-}
-
-type SleepNamedArgs struct {
-	Title string
 }
