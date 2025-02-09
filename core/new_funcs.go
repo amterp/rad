@@ -22,7 +22,7 @@ func (i *Interpreter) callFunction(
 	case FUNC_PRINT:
 		i.assertExpectedNumOutputs(callNode, numExpectedOutputs, 0)
 		RP.Print(createPrintStr(argValues))
-		return EMPTY // TODO what happens downstream if assigned?
+		return EMPTY
 	case FUNC_LEN:
 		i.assertExpectedNumOutputs(callNode, numExpectedOutputs, 1)
 		if len(argValues) != 1 {

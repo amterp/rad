@@ -377,7 +377,7 @@ func (i *Interpreter) assertExpectedNumOutputs(node *ts.Node, expectedOutputs in
 	}
 
 	if expectedOutputs != actualOutputs {
-		i.errorf(node, "Expected %d outputs, got %d", expectedOutputs, actualOutputs)
+		i.errorf(node, "Expected %s, got %d", Pluralize(expectedOutputs, "output"), actualOutputs)
 	}
 }
 
