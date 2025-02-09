@@ -1,37 +1,78 @@
 package core
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import (
+	"bytes"
+	"strings"
+
+	"github.com/nwidger/jsoncolor"
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 var FuncPrint = Func{
 	Name:             FUNC_PRINT,
 	ReturnValues:     ZERO_RETURN_VALS,
 	RequiredArgCount: 0,
-	ArgTypes:         [][]RslTypeEnum{{}},
-	NamedArgs: map[string][]RslTypeEnum{
-		"reverse": {RslBoolT},
-	},
+	// TODO BAD!! We need a way to say 'unlimited positional args'
+	ArgTypes:  [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	NamedArgs: NO_NAMED_ARGS,
 	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
-		RP.Print(createPrintStr(args))
+		var sb strings.Builder
+
+		if len(args) == 0 {
+			sb.WriteString("\n")
+		} else {
+			for idx, v := range args {
+				if v.value.Type() == RslStringT {
+					// explicit handling for string so we don't print surrounding quotes when it's standalone
+					sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
+				} else {
+					sb.WriteString(ToPrintableQuoteStr(v.value.Val, true))
+				}
+				if idx < len(args)-1 {
+					sb.WriteString(" ")
+				}
+			}
+			sb.WriteString("\n")
+		}
+
+		RP.Print(sb.String())
+		return EMPTY
+	},
+}
+var FuncPPrint = Func{
+	Name:             FUNC_PPRINT,
+	ReturnValues:     ZERO_RETURN_VALS,
+	RequiredArgCount: 0,
+	ArgTypes:         [][]RslTypeEnum{{}},
+	NamedArgs:        NO_NAMED_ARGS,
+	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+		if len(args) == 0 {
+			RP.Print("\n")
+		}
+
+		arg := args[0]
+		jsonStruct := RslToJsonType(arg.value)
+		output := prettify(i, callNode, jsonStruct)
+		RP.Print(output)
 		return EMPTY
 	},
 }
 
-func createPrintStr(values []positionalArg) string {
-	if len(values) == 0 {
-		return "\n"
+func prettify(i *Interpreter, callNode *ts.Node, jsonStruct interface{}) string {
+	f := jsoncolor.NewFormatter()
+	// todo could add coloring here on formatter
+
+	buf := &bytes.Buffer{}
+
+	enc := jsoncolor.NewEncoderWithFormatter(buf, f)
+	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
+
+	err := enc.Encode(jsonStruct)
+
+	if err != nil {
+		i.errorf(callNode, "Error marshalling JSON: %v", err)
 	}
 
-	output := ""
-	for _, v := range values {
-		if v.value.Type() == RslStringT {
-			// explicit handling for string so we don't print surrounding quotes when it's standalone
-			output += ToPrintableQuoteStr(v.value.Val, false)
-		} else {
-			output += ToPrintableQuoteStr(v.value.Val, true)
-		}
-		output += " "
-	}
-	output = output[:len(output)-1] // remove last space
-	output = output + "\n"
-	return output
+	return buf.String()
 }

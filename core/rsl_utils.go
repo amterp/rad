@@ -137,27 +137,29 @@ func ConvertValuesToNativeTypes(interp *MainInterpreter, token Token, vals []int
 // converts an RSL data structure to a JSON-serializable structure
 func RslToJsonType(arg interface{}) interface{} {
 	switch coerced := arg.(type) {
+	case RslValue:
+		return RslToJsonType(coerced.Val)
 	case RslString:
 		return coerced.Plain()
 	case int64, float64, bool:
 		return coerced
-	case []interface{}:
+	case *RslList:
 		var slice []interface{}
-		for _, elem := range coerced {
+		for _, elem := range coerced.Values {
 			slice = append(slice, RslToJsonType(elem))
 		}
 		return slice
-	case RslMapOld:
+	case *RslMap:
 		mapping := make(map[string]interface{})
 		for _, key := range coerced.Keys() {
-			value, _ := coerced.GetStr(key)
-			mapping[key] = RslToJsonType(value)
+			value, _ := coerced.Get(key)
+			mapping[ToPrintableQuoteStr(key, false)] = RslToJsonType(value)
 		}
 		return mapping
 	case nil:
 		return nil
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T", arg))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T\n", arg))
 		panic(UNREACHABLE)
 	}
 }

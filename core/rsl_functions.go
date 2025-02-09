@@ -28,15 +28,6 @@ func RunRslFunction(i *MainInterpreter, call FunctionCall) {
 	//namedArgsMap := toMap(i, call.NamedArgs)
 	//
 	//switch functionName {
-	//case PRINT:
-	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap) // todo implement coloring?
-	//	runPrint(args)
-	//case PPRINT:
-	//	if len(args) > 1 {
-	//		i.error(funcToken, PPRINT+"() takes zero or one argument")
-	//	}
-	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
-	//	runPrettyPrint(i, funcToken, args)
 	//case DEBUG:
 	//	validateExpectedNamedArgsOld(i, call.Function, NO_NAMED_ARGS, namedArgsMap)
 	//	runDebug(args)

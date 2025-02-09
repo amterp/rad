@@ -9,6 +9,7 @@ import (
 
 const (
 	FUNC_PRINT   = "print"
+	FUNC_PPRINT  = "pprint"
 	FUNC_LEN     = "len"
 	FUNC_SORT    = "sort"
 	FUNC_NOW     = "now"
@@ -39,6 +40,7 @@ var FunctionsByName map[string]Func
 func init() {
 	functions := []Func{
 		FuncPrint,
+		FuncPPrint,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
