@@ -8,15 +8,18 @@ import (
 )
 
 const (
-	FUNC_PRINT   = "print"
-	FUNC_PPRINT  = "pprint"
-	FUNC_DEBUG   = "debug"
-	FUNC_EXIT    = "exit"
-	FUNC_SLEEP   = "sleep"
-	FUNC_LEN     = "len"
-	FUNC_SORT    = "sort"
-	FUNC_NOW     = "now"
-	FUNC_TYPE_OF = "type_of"
+	FUNC_PRINT       = "print"
+	FUNC_PPRINT      = "pprint"
+	FUNC_DEBUG       = "debug"
+	FUNC_EXIT        = "exit"
+	FUNC_SLEEP       = "sleep"
+	FUNC_SEED_RANDOM = "seed_random"
+	FUNC_RAND        = "rand"
+	FUNC_RAND_INT    = "rand_int"
+	FUNC_LEN         = "len"
+	FUNC_SORT        = "sort"
+	FUNC_NOW         = "now"
+	FUNC_TYPE_OF     = "type_of"
 
 	namedArgReverse = "reverse"
 )
@@ -49,6 +52,9 @@ func init() {
 		FuncDebug,
 		FuncExit,
 		FuncSleep,
+		FuncSeedRandom,
+		FuncRand,
+		FuncRandInt,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
