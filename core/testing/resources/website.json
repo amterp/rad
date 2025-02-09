@@ -1,12 +1,12 @@
 {
   "options": [
     {
-      "values": ["gitlab.com"],
-      "keys": ["gl"]
+      "keys": ["gl"],
+      "values": ["gitlab.com"]
     },
     {
-      "values": ["github.com"],
-      "keys": ["gh"]
+      "keys": ["gh"],
+      "values": ["github.com"]
     }
   ]
 }

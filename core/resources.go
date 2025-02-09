@@ -5,19 +5,20 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // todo In Go you can apparently define custom json serde with e.g. MarshalJSON and UnmarshalJSON,
 //   see if can leverage it
 
 type PickResource struct {
-	Opts       []PickResourceOpt
-	ReturnType RslTypeEnum
+	Opts []PickResourceOpt
 }
 
 type PickResourceOpt struct {
 	Keys   []string
-	Values []interface{}
+	Values []RslValue
 }
 
 type PickResourceSerde struct {
@@ -29,38 +30,38 @@ type PickResourceOptionSerde struct {
 	Values []interface{} `json:"values"`
 }
 
-func LoadPickResource(i *MainInterpreter, function Token, jsonPath string, numExpectedReturnValues int) PickResource {
+func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string, numExpectedReturnValues int) PickResource {
 	finalPath := resolveFinalPath(jsonPath)
 	file, err := os.Open(finalPath)
 	if err != nil {
-		i.error(function, fmt.Sprintf("Error opening file: %s", err))
+		i.errorf(callNode, "Error opening file: %s", err)
 	}
 	defer file.Close()
 
 	resource := PickResourceSerde{}
 	decoder := json.NewDecoder(file)
 	if err = decoder.Decode(&resource); err != nil {
-		i.error(function, fmt.Sprintf("Error decoding JSON into pick resource: %s", err))
+		i.errorf(callNode, "Error decoding JSON into pick resource: %s", err)
 	}
 
 	var opts []PickResourceOpt
 	for _, option := range resource.Options {
 		if len(option.Keys) == 0 {
-			i.error(function, "pick resource options must have at least one key")
+			i.errorf(callNode, "pick resource options must have at least one key")
 		}
 
 		if len(option.Values) == 0 {
-			i.error(function, "pick resource options must have at least one value")
+			i.errorf(callNode, "pick resource options must have at least one value")
 		}
 
 		if numExpectedReturnValues != NO_NUM_RETURN_VALUES_CONSTRAINT && len(option.Values) != numExpectedReturnValues {
-			i.error(function, fmt.Sprintf("Expected %d return values from resource option: %q", numExpectedReturnValues, option.Values))
+			i.errorf(callNode, "Expected %d return values from resource option: %q", numExpectedReturnValues, option.Values)
 		}
 
 		opts = append(opts, PickResourceOpt{
 			// todo we should probably do some type checking e.g. only array of primitives
 			Keys:   option.Keys,
-			Values: ConvertValuesToNativeTypes(i, function, option.Values),
+			Values: ConvertValuesToNativeTypes(i, callNode, option.Values),
 		})
 	}
 	return PickResource{
