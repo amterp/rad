@@ -22,6 +22,8 @@ const (
 	FUNC_NOW         = "now"
 	FUNC_TYPE_OF     = "type_of"
 	FUNC_JOIN        = "join"
+	FUNC_UPPER       = "upper"
+	FUNC_LOWER       = "lower"
 
 	namedArgReverse = "reverse"
 )
@@ -167,6 +169,28 @@ func init() {
 				}
 
 				return newRslValues(i, callNode, list.Join(sep, prefix, suffix))
+			},
+		},
+		{
+			Name:             FUNC_UPPER,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				arg := args[0]
+				return newRslValues(i, arg.node, arg.value.RequireStr(i, arg.node).Upper())
+			},
+		},
+		{
+			Name:             FUNC_LOWER,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				arg := args[0]
+				return newRslValues(i, arg.node, arg.value.RequireStr(i, arg.node).Lower())
 			},
 		},
 	}
