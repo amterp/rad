@@ -165,6 +165,7 @@ func (r *RadRunner) Run() error {
 	}
 
 	interpreter := NewInterpreter(r.scriptData)
+	interpreter.CheckForErrors()
 	interpreter.InitArgs(scriptArgs)
 	interpreter.RegisterWithExit()
 	interpreter.Run()
