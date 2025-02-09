@@ -33,7 +33,7 @@ func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
 }
 
 // does not apply any attributes
-func (s *RslString) Plain() string {
+func (s RslString) Plain() string {
 	// todo can lazily compute and cache
 	var result string
 	for _, segment := range s.Segments {

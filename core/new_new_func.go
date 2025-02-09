@@ -16,6 +16,7 @@ const (
 	FUNC_SEED_RANDOM = "seed_random"
 	FUNC_RAND        = "rand"
 	FUNC_RAND_INT    = "rand_int"
+	FUNC_REPLACE     = "replace"
 	FUNC_LEN         = "len"
 	FUNC_SORT        = "sort"
 	FUNC_NOW         = "now"
@@ -55,6 +56,7 @@ func init() {
 		FuncSeedRandom,
 		FuncRand,
 		FuncRandInt,
+		FuncReplace,
 		{
 			Name:             FUNC_LEN,
 			ReturnValues:     ONE_RETURN_VAL,
@@ -146,22 +148,26 @@ func init() {
 
 	FunctionsByName = make(map[string]Func)
 	for _, f := range functions {
-		validateFunction(f)
+		validateFunction(f, FunctionsByName)
 		FunctionsByName[f.Name] = f
 	}
 }
 
-func validateFunction(f Func) {
+func validateFunction(f Func, functionsSoFar map[string]Func) {
 	if f.RequiredArgCount > len(f.ArgTypes) {
 		panic(fmt.Sprintf("Bug! Function %q has more required args than arg types", f.Name))
+	}
+
+	if _, exists := functionsSoFar[f.Name]; exists {
+		panic(fmt.Sprintf("Bug! Function %q already exists", f.Name))
 	}
 }
 
 func createColorFunctions() []Func {
-	colorStrs := COLOR_STRINGS
+	colorStrs := lo.Values(colorEnumToStrings)
 	funcs := make([]Func, len(colorStrs))
-	for _, color := range colorStrs {
-		funcs = append(funcs, Func{
+	for idx, color := range colorStrs {
+		funcs[idx] = Func{
 			Name:         color,
 			ReturnValues: ONE_RETURN_VAL,
 			ArgTypes:     [][]RslTypeEnum{{}},
@@ -178,7 +184,7 @@ func createColorFunctions() []Func {
 					return newRslValues(i, callNode, s)
 				}
 			},
-		})
+		}
 	}
 	return funcs
 }

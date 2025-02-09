@@ -26,10 +26,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case "replace":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runReplace(i, function, args)
 	//case "join":
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
@@ -164,18 +160,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//	//} // TODO DELETE
 	//}
 	panic(UNREACHABLE)
-}
-
-func runReplace(i *MainInterpreter, function Token, values []interface{}) interface{} {
-	if len(values) != 3 {
-		i.error(function, "replace() takes exactly three arguments")
-	}
-
-	subject := ToPrintable(values[0]) // todo should assert only strings on subject
-	oldRegex := ToPrintable(values[1])
-	newRegex := ToPrintable(values[2])
-
-	return Replace(i, function, subject, oldRegex, newRegex)
 }
 
 func runAbs(i *MainInterpreter, function Token, args []interface{}) interface{} {

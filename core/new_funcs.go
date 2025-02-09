@@ -117,8 +117,8 @@ func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Fun
 		if !lo.Contains(acceptableTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
-			i.errorf(arg.node, "The %s argument of %s() must be one of %s, but got %q",
-				humanize.Ordinal(idx+1), function.Name, acceptable, arg.value.Type().AsString())
+			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
+				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
 		}
 	}
 }
