@@ -246,3 +246,15 @@ func newRslValueStr(str string) RslValue {
 func newRslValueRslStr(str RslString) RslValue {
 	return newRslValue(nil, nil, str)
 }
+
+func newRslValueInt(val int) RslValue {
+	return newRslValue(nil, nil, val)
+}
+
+func newRslValueInt64(val int64) RslValue {
+	return newRslValue(nil, nil, val)
+}
+
+func newRslValueMap(val *RslMap) RslValue {
+	return newRslValue(nil, nil, val)
+}
