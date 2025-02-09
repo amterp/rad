@@ -260,13 +260,7 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		return newRslValues(i, node, rslMap)
 	case K_CALL:
-		funcName := i.getChild(node, F_FUNC)
-		args := i.getChildren(node, F_ARG)
-		var argValues []RslValue
-		for _, arg := range args {
-			argValues = append(argValues, i.evaluate(&arg, 1)[0])
-		}
-		return i.callFunction(node, funcName, argValues, numExpectedOutputs)
+		return i.callFunction(node, numExpectedOutputs)
 	case K_LIST_COMPREHENSION:
 		resultExprNode := i.getChild(node, F_EXPR)
 		conditionNode := i.getChild(node, F_CONDITION)

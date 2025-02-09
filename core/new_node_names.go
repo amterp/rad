@@ -84,6 +84,7 @@ const (
 	F_LIST_ENTRY   = "list_entry"
 	F_FUNC         = "func"
 	F_ARG          = "arg"
+	F_NAMED_ARG    = "named_arg"
 	F_OP           = "op"
 	F_CONTENTS     = "contents"
 	F_EXPR         = "expr"
@@ -116,4 +117,5 @@ const (
 	F_LAMBDA       = "lambda"
 	F_TRUE_BRANCH  = "true_branch"
 	F_FALSE_BRANCH = "false_branch"
+	F_NAME         = "name"
 )

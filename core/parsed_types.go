@@ -17,6 +17,26 @@ const (
 	RslMapT
 )
 
+func (r RslTypeEnum) AsString() string {
+	switch r {
+	case RslStringT:
+		return "string"
+	case RslIntT:
+		return "int"
+	case RslFloatT:
+		return "float"
+	case RslBoolT:
+		return "bool"
+	case RslListT:
+		return "list"
+	case RslMapT:
+		return "map"
+	default:
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", r))
+		panic(UNREACHABLE)
+	}
+}
+
 type RslArgTypeT int
 
 const (
@@ -81,12 +101,12 @@ func (r *RslArgTypeT) AsString() string {
 	}
 }
 
-func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
-	if r == nil {
+func (r RslTypeEnum) MatchesValue(val interface{}) bool {
+	if val == nil {
 		return false
 	}
 
-	switch *r {
+	switch r {
 	case RslStringT:
 		_, ok := val.(RslString)
 		return ok
@@ -106,18 +126,14 @@ func (r *RslTypeEnum) MatchesValue(val interface{}) bool {
 		_, ok := val.(RslMapOld)
 		return ok
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", r))
 	}
 
 	return false
 }
 
-func (r *RslTypeEnum) IsArray() bool {
-	if r == nil {
-		return false
-	}
-
-	return *r == RslListT
+func (r RslTypeEnum) IsArray() bool {
+	return r == RslListT
 }
 
 type RslArgType struct {

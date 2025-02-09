@@ -17,7 +17,7 @@ func runHttpGet(i *MainInterpreter, function Token, args []interface{}, namedArg
 		i.error(function, HTTP_GET+fmt.Sprintf("() takes exactly 1 positional arg, got %d", len(args)))
 	}
 
-	validateExpectedNamedArgs(i, function, []string{HEADERS_NAMED_ARG}, namedArgs)
+	validateExpectedNamedArgsOld(i, function, []string{HEADERS_NAMED_ARG}, namedArgs)
 	parsedArgs := parseHttpReqArgs(i, function, namedArgs)
 
 	switch coerced := args[0].(type) {
@@ -52,7 +52,7 @@ func runHttpPutOrPost(i *MainInterpreter,
 		i.error(function, funcName+fmt.Sprintf("() takes 1 or 2 positional arguments, got %d", len(args)))
 	}
 
-	validateExpectedNamedArgs(i, function, []string{HEADERS_NAMED_ARG}, namedArgs)
+	validateExpectedNamedArgsOld(i, function, []string{HEADERS_NAMED_ARG}, namedArgs)
 	parsedArgs := parseHttpReqArgs(i, function, namedArgs)
 
 	url, ok := args[0].(RslString)

@@ -32,7 +32,6 @@ const (
 	SPLIT              = "split"
 	RANGE              = "range"
 	UNIQUE             = "unique"
-	SORT_FUNC          = "sort"
 	CONFIRM            = "confirm"
 	PARSE_JSON         = "parse_json"
 	HTTP_GET           = "http_get"

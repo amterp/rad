@@ -16,7 +16,7 @@ func runSleep(i *MainInterpreter, sleepToken Token, args []interface{}, namedArg
 		i.error(sleepToken, SLEEP+"() takes exactly one positional argument")
 	}
 
-	validateExpectedNamedArgs(i, sleepToken, []string{SLEEP_TITLE}, namedArgs)
+	validateExpectedNamedArgsOld(i, sleepToken, []string{SLEEP_TITLE}, namedArgs)
 	parsedArgs := parseSleepArgs(namedArgs)
 
 	switch coerced := args[0].(type) {

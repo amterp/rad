@@ -59,8 +59,16 @@ func (c RslColor) String() string {
 	return "unknown"
 }
 
-func ColorFromString(i *Interpreter, node *ts.Node, str string) RslColor {
+func TryColorFromString(str string) (RslColor, bool) {
 	clr, ok := stringsToColorEnum[str]
+	if !ok {
+		return PLAIN, false
+	}
+	return clr, true
+}
+
+func ColorFromString(i *Interpreter, node *ts.Node, str string) RslColor {
+	clr, ok := TryColorFromString(str)
 	if !ok {
 		i.errorf(node, "Invalid color value %q. Allowed: %s", str, COLOR_STRINGS)
 	}

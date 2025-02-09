@@ -76,7 +76,7 @@ func TypeAsString(val interface{}) string {
 	case nil:
 		return "null"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for as-string: %T", val))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for as-string: %T\n", val))
 		panic(UNREACHABLE)
 	}
 }
