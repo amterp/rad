@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -69,4 +70,12 @@ func Pluralize(count int, singular string) string {
 
 func PluralizeCustom(count int, singular string, plural string) string {
 	return english.Plural(count, singular, plural)
+}
+
+func NumIsAre(values int) string {
+	if values == 1 {
+		return fmt.Sprintf("%d is", values)
+	} else {
+		return fmt.Sprintf("%d are", values)
+	}
 }

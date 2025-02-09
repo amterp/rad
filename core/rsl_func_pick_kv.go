@@ -18,7 +18,7 @@ func runPickKv(i *MainInterpreter, function Token, args []interface{}, namedArgs
 		i.error(function, PICK_KV+fmt.Sprintf("() takes at most three arguments, got %v", numArgs))
 	}
 
-	validateExpectedNamedArgs(i, function, []string{PICK_PROMPT}, namedArgs)
+	validateExpectedNamedArgsOld(i, function, []string{PICK_PROMPT}, namedArgs)
 	parsedArgs := parsePickArgs(i, function, namedArgs)
 
 	filters := make([]string, 0)

@@ -64,11 +64,11 @@ func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.No
 	panic(UNREACHABLE)
 }
 
-func sortList(interp *Interpreter, fieldNode *ts.Node, data *RslList, dir SortDir) []RslValue {
+func sortList(interp *Interpreter, dataNode *ts.Node, data *RslList, dir SortDir) []RslValue {
 	sorted := make([]RslValue, data.Len())
 	copy(sorted, data.Values)
 	sort.Slice(sorted, func(i, j int) bool {
-		comp := compare(interp, fieldNode, sorted[i], sorted[j])
+		comp := compare(interp, dataNode, sorted[i], sorted[j])
 		if dir == Asc {
 			return comp < 0
 		}

@@ -17,7 +17,7 @@ func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs m
 		i.error(function, PICK+"() takes at least one argument")
 	}
 
-	validateExpectedNamedArgs(i, function, []string{PICK_PROMPT}, namedArgs)
+	validateExpectedNamedArgsOld(i, function, []string{PICK_PROMPT}, namedArgs)
 	parsedArgs := parsePickArgs(i, function, namedArgs)
 
 	filters := make([]string, 0)
