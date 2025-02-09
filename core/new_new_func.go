@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/huh"
+
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -342,6 +344,34 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, output)
+			},
+		},
+		{
+			Name:             FUNC_CONFIRM,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 0,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := tryGetArg(0, f.args)
+
+				prompt := "Confirm? [y/n] > "
+
+				if arg != nil {
+					prompt = arg.value.RequireStr(f.i, arg.node).Plain()
+				}
+
+				var response string
+				err := huh.NewInput().
+					Prompt(prompt).
+					Value(&response).
+					Run()
+				if err != nil {
+					// todo I think this errors if user aborts
+					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
+				}
+
+				return newRslValues(f.i, f.callNode, strings.HasPrefix(strings.ToLower(response), "y"))
 			},
 		},
 	}
