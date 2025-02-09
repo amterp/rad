@@ -50,10 +50,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//	default:
 	//		i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
 	//	}
-	//case PARSE_JSON:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runParseJson(i, function, args)
 	//case HTTP_GET:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	return runHttpGet(i, function, args, namedArgsMap)
@@ -63,14 +59,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//case HTTP_PUT:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	return runHttpPut(i, function, args, namedArgsMap)
-	//case PARSE_INT:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, TWO_ARGS)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runParseInt(i, function, numExpectedReturnValues, args)
-	//case PARSE_FLOAT:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, TWO_ARGS)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runParseFloat(i, function, numExpectedReturnValues, args)
 	//case ABS:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)

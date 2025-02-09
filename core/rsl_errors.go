@@ -2,6 +2,8 @@ package core
 
 type RslError string
 
+// todo can we avoid 5 digits?
+
 const (
 	// RAD1xxxx Syntax Errors
 	// RAD2xxxx Runtime Errors

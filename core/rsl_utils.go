@@ -204,16 +204,15 @@ func TruthyFalsy(val interface{}) bool {
 	}
 }
 
-func ErrorRslMap(err RslError, errMsg string) RslMapOld {
-	m := NewOldRslMap()
-	m.SetStr("code", NewRslString(string(err)))
-	m.SetStr("msg", NewRslString(errMsg))
-	return *m
+func ErrorRslMap(err RslError, errMsg string) *RslMap {
+	m := NewRslMap()
+	m.SetPrimitiveStr("code", string(err))
+	m.SetPrimitiveStr("msg", errMsg)
+	return m
 }
 
-func NoErrorRslMap() RslMapOld {
-	m := NewOldRslMap()
-	return *m
+func NoErrorRslMap() *RslMap {
+	return NewRslMap()
 }
 
 func (e StringLiteral) FullString() string {
