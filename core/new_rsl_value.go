@@ -104,6 +104,21 @@ func (v RslValue) TryGetBool() (bool, bool) {
 	return false, false
 }
 
+func (v RslValue) RequireMap(i *Interpreter, node *ts.Node) *RslMap {
+	if b, ok := v.TryGetMap(); ok {
+		return b
+	}
+	i.errorf(node, "Expected map, got %s", TypeAsString(v))
+	panic(UNREACHABLE)
+}
+
+func (v RslValue) TryGetMap() (*RslMap, bool) {
+	if m, ok := v.Val.(*RslMap); ok {
+		return m, true
+	}
+	return nil, false
+}
+
 func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValue) {
 	switch coerced := v.Val.(type) {
 	case *RslList:
@@ -206,6 +221,10 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	switch coerced := value.(type) {
 	case RslValue:
 		return coerced
+	case []RslValue: // todo risky to have this? might cover up issues
+		list := NewRslList()
+		list.Values = coerced
+		return newRslValue(i, node, list)
 	case RslString:
 		return RslValue{Val: coerced}
 	case string:
