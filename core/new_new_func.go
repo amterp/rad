@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -24,6 +25,8 @@ const (
 	FUNC_JOIN        = "join"
 	FUNC_UPPER       = "upper"
 	FUNC_LOWER       = "lower"
+	FUNC_STARTS_WITH = "starts_with"
+	FUNC_ENDS_WITH   = "ends_with"
 
 	namedArgReverse = "reverse"
 )
@@ -191,6 +194,34 @@ func init() {
 			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
 				arg := args[0]
 				return newRslValues(i, arg.node, arg.value.RequireStr(i, arg.node).Lower())
+			},
+		},
+		{
+			Name:             FUNC_STARTS_WITH,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 2,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				subjectArg := args[0]
+				prefixArg := args[1]
+				subjectStr := subjectArg.value.RequireStr(i, subjectArg.node)
+				prefixStr := prefixArg.value.RequireStr(i, prefixArg.node)
+				return newRslValues(i, callNode, strings.HasPrefix(subjectStr.Plain(), prefixStr.Plain()))
+			},
+		},
+		{
+			Name:             FUNC_ENDS_WITH,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 2,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				subjectArg := args[0]
+				prefixArg := args[1]
+				subjectStr := subjectArg.value.RequireStr(i, subjectArg.node)
+				prefixStr := prefixArg.value.RequireStr(i, prefixArg.node)
+				return newRslValues(i, callNode, strings.HasSuffix(subjectStr.Plain(), prefixStr.Plain()))
 			},
 		},
 	}
