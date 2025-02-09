@@ -100,7 +100,7 @@ type Printer interface {
 	ErrorCodeExitf(errorCode int, msgFmt string, args ...interface{})
 
 	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
-	// Exits. // todo, delete, replace with panics now that they're caught?
+	// Exits.
 	RadErrorExit(msg string)
 
 	// Similar to RadErrorExit, but prints usage after errors, and before exiting.

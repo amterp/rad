@@ -170,10 +170,9 @@ func (r *RadRunner) Run() error {
 	interpreter.RegisterWithExit()
 	interpreter.Run()
 
-	//if FlagShell.Value { todo
-	//	env := interpreter.env
-	//	env.PrintShellExports()
-	//}
+	if FlagShell.Value {
+		interpreter.env.PrintShellExports()
+	}
 
 	RExit(0) // explicit exit to trigger deferred statements
 	return nil

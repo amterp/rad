@@ -32,7 +32,7 @@ func AllNils[T comparable](vals []*T) bool {
 	return true
 }
 
-func SortedKeys(m map[string]interface{}) []string {
+func SortedKeys[T any](m map[string]T) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)

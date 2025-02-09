@@ -192,6 +192,11 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := strconv.ParseInt(asStr, 10, 64) // todo unhandled err
 		return newRslValues(i, node, asInt)
+	case K_FLOAT:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		asStr := i.sd.Src[node.StartByte():node.EndByte()]
+		asFloat, _ := strconv.ParseFloat(asStr, 64) // todo unhandled err
+		return newRslValues(i, node, asFloat)
 	case K_STRING:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		str := NewRslString("")
