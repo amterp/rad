@@ -144,7 +144,7 @@ func (s *RslString) Color(clr RslColor) RslString {
 	return cpy
 }
 
-func (s *RslString) Upper() RslString {
+func (s RslString) Upper() RslString {
 	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToUpper(segment.String)
@@ -152,7 +152,7 @@ func (s *RslString) Upper() RslString {
 	return cpy
 }
 
-func (s *RslString) Lower() RslString {
+func (s RslString) Lower() RslString {
 	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToLower(segment.String)
