@@ -51,6 +51,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
 		return
+	case K_ERROR:
+		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case K_ASSIGN:
 		rightNode := i.getChild(node, F_RIGHT)
 		if rightNode.Kind() == K_JSON_PATH {

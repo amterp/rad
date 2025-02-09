@@ -67,6 +67,7 @@ const (
 	K_RAD_FIELD_MOD_MAP       = "rad_field_mod_map"
 	K_RAD_IF_STMT             = "rad_if_stmt"
 	K_LIST_COMPREHENSION      = "list_comprehension"
+	K_ERROR                   = "ERROR"
 
 	// Field names
 	F_LEFT       = "left"

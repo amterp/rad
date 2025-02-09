@@ -103,9 +103,6 @@ type Printer interface {
 	// Exits. // todo, delete, replace with panics now that they're caught?
 	RadErrorExit(msg string)
 
-	// Similar to RadErrorExit, but where a token is available for context.
-	RadTokenErrorExit(token Token, msg string)
-
 	// Similar to RadErrorExit, but prints usage after errors, and before exiting.
 	UsageErrorExit(msg string)
 
@@ -276,17 +273,6 @@ func (p *stdPrinter) RadErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
 	p.printShellExitIfEnabled()
 	p.errorExit(1)
-}
-
-func (p *stdPrinter) RadTokenErrorExit(token Token, msg string) {
-	if token == nil {
-		fmt.Fprint(p.stdErr, msg)
-	} else {
-		lexeme := token.GetLexeme()
-		lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
-		fmt.Fprintf(p.stdErr, "RadError at L%d/%d on '%s': %s",
-			token.GetLine(), token.GetCharLineStart(), token.GetLexeme(), msg)
-	}
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
