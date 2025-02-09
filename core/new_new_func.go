@@ -21,6 +21,7 @@ const (
 	FUNC_SORT        = "sort"
 	FUNC_NOW         = "now"
 	FUNC_TYPE_OF     = "type_of"
+	FUNC_JOIN        = "join"
 
 	namedArgReverse = "reverse"
 )
@@ -142,6 +143,32 @@ func init() {
 				return newRslValues(i, callNode, NewRslString(TypeAsString(args[0].value)))
 			},
 		},
+		{
+			Name:             FUNC_JOIN,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 2,
+			ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslStringT}, {RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				listArg := args[0]
+				sepArg := args[1]
+				prefixArg := tryGetArg(2, args)
+				suffixArg := tryGetArg(3, args)
+
+				list := listArg.value.RequireList(i, listArg.node)
+				sep := sepArg.value.RequireStr(i, sepArg.node).String()
+				prefix := ""
+				if prefixArg != nil {
+					prefix = prefixArg.value.RequireStr(i, prefixArg.node).String()
+				}
+				suffix := ""
+				if suffixArg != nil {
+					suffix = suffixArg.value.RequireStr(i, suffixArg.node).String()
+				}
+
+				return newRslValues(i, callNode, list.Join(sep, prefix, suffix))
+			},
+		},
 	}
 
 	functions = append(functions, createColorFunctions()...)
@@ -187,6 +214,13 @@ func createColorFunctions() []Func {
 		}
 	}
 	return funcs
+}
+
+func tryGetArg(idx int, args []positionalArg) *positionalArg {
+	if idx >= len(args) {
+		return nil
+	}
+	return &args[idx]
 }
 
 func bugIncorrectTypes(funcName string) string {

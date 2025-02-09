@@ -1,6 +1,9 @@
 package core
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import (
+	ts "github.com/tree-sitter/go-tree-sitter"
+	"strings"
+)
 
 type RslList struct {
 	Values []RslValue
@@ -156,4 +159,12 @@ func (l *RslList) AsStringList() []string {
 		out[i] = ToPrintable(elem)
 	}
 	return out
+}
+
+func (l *RslList) Join(sep string, prefix string, suffix string) RslString {
+	var arr []string
+	for _, v := range l.Values {
+		arr = append(arr, ToPrintableQuoteStr(v, false))
+	}
+	return NewRslString(prefix + strings.Join(arr, sep) + suffix)
 }
