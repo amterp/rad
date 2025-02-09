@@ -103,7 +103,7 @@ func (e *Env) PrintShellExports() {
 		case RslString, int64, float64, bool:
 			printFunc(varName, ToPrintable(val))
 		case *RslList:
-			printFunc(varName, "("+strings.Join(coerced.AsStringList(), " ")+")")
+			printFunc(varName, "("+strings.Join(coerced.AsStringList(true), " ")+")")
 		case *RslMap:
 			// todo can do some stuff with declare -A ?
 			printFunc(varName, "'"+coerced.ToString()+"'")

@@ -8,10 +8,6 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-const (
-	namedArgTitle = "title"
-)
-
 var FuncSleep = Func{
 	Name:             FUNC_SLEEP,
 	ReturnValues:     ZERO_RETURN_VALS,

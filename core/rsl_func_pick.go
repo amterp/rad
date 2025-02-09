@@ -1,123 +1,144 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
+	"github.com/samber/lo"
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-const (
-	PICK_PROMPT = "prompt"
-)
+var FuncPick = Func{
+	Name:             FUNC_PICK,
+	ReturnValues:     ONE_RETURN_VAL,
+	RequiredArgCount: 1,
+	ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslStringT, RslListT}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgPrompt: {RslStringT},
+	},
+	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
+		optionsArg := args[0]
 
-func runPick(i *MainInterpreter, function Token, args []interface{}, namedArgs map[string]interface{}) RslString {
-	numArgs := len(args)
-	if numArgs < 1 {
-		i.error(function, PICK+"() takes at least one argument")
-	}
+		filters := make([]string, 0)
+		if len(args) == 2 {
+			filteringNode := args[1]
 
-	validateExpectedNamedArgsOld(i, function, []string{PICK_PROMPT}, namedArgs)
-	parsedArgs := parsePickArgs(i, function, namedArgs)
-
-	filters := make([]string, 0)
-	switch numArgs {
-	case 1:
-		// no filters, leave it empty
-	case 2:
-		filter := args[1]
-		switch filter.(type) {
-		case RslString, int64, float64, bool:
-			filters = append(filters, ToPrintable(filter))
-		case []interface{}:
-			strings, ok := AsStringArray(filter.([]interface{}))
-			if !ok {
-				i.error(function, PICK+"() does not allow non-string arrays as filters")
+			switch coerced := filteringNode.value.Val.(type) {
+			case RslString:
+				filters = append(filters, coerced.Plain())
+			case *RslList:
+				for _, item := range coerced.Values {
+					if str, ok := item.Val.(RslString); ok {
+						filters = append(filters, str.Plain())
+					} else {
+						i.errorf(filteringNode.node,
+							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
+					}
+				}
+			default:
+				bugIncorrectTypes(FUNC_PICK)
 			}
-			filters = strings
-		default:
-			i.error(function, PICK+"() does not allow non-string arrays as filters")
 		}
-	default:
-		i.error(function, fmt.Sprintf(PICK+"() takes at most two arguments, got %v", numArgs))
-	}
 
-	switch options := args[0].(type) {
-	case []interface{}:
-		array, ok := AsStringArray(options)
-		if !ok {
-			i.error(function, PICK+fmt.Sprintf("() does not allow non-string arrays as options, got %s", TypeAsString(options)))
-		}
-		return pickString(i, function, parsedArgs.prompt, filters, array)
-	default:
-		i.error(function, PICK+"() takes a string array as the first argument")
-		panic(UNREACHABLE)
-	}
+		options := optionsArg.value.RequireList(i, optionsArg.node).AsStringList(false)
+		str := pickKv(i, callNode, options, options, filters, namedArgs)
+		return newRslValues(i, callNode, str)
+	},
 }
 
-func parsePickArgs(i *MainInterpreter, function Token, args map[string]interface{}) PickNamedArgs {
-	parsedArgs := PickNamedArgs{
-		prompt: "Pick an option",
-	}
+var FuncPickKv = Func{
+	Name:             FUNC_PICK_KV,
+	ReturnValues:     ONE_RETURN_VAL,
+	RequiredArgCount: 2,
+	ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslListT}, {RslStringT, RslListT}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgPrompt: {RslStringT},
+	},
+	Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg) []RslValue {
+		keyArgs := args[0]
+		valueArgs := args[1]
 
-	if prompt, ok := args[PICK_PROMPT]; ok {
-		if rslString, ok := prompt.(RslString); ok {
-			s := rslString.Plain()
-			if StrLen(s) == 0 {
-				// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
-				// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
-				// looks a bit weird but hey, the user has decided no title, what do they expect?)
-				parsedArgs.prompt = " "
-			} else {
-				parsedArgs.prompt = s
+		filters := make([]string, 0)
+		if len(args) == 3 {
+			filteringNode := args[2]
+
+			switch coerced := filteringNode.value.Val.(type) {
+			case RslString:
+				filters = append(filters, coerced.Plain())
+			case *RslList:
+				for _, item := range coerced.Values {
+					if str, ok := item.Val.(RslString); ok {
+						filters = append(filters, str.Plain())
+					} else {
+						i.errorf(filteringNode.node,
+							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
+					}
+				}
+			default:
+				bugIncorrectTypes(FUNC_PICK_KV)
 			}
-		} else {
-			i.error(function, function.GetLexeme()+fmt.Sprintf("() %s must be a string, got %s", PICK_PROMPT, TypeAsString(prompt)))
+		}
+
+		keys := keyArgs.value.RequireList(i, keyArgs.node).AsStringList(false)
+		values := valueArgs.value.RequireList(i, valueArgs.node).Values
+		value := pickKv(i, callNode, keys, values, filters, namedArgs)
+		return newRslValues(i, callNode, value)
+	},
+}
+
+func pickKv[T comparable](
+	i *Interpreter,
+	callNode *ts.Node,
+	keys []string,
+	values []T,
+	filters []string,
+	namedArgs map[string]namedArg,
+) T {
+	prompt := "Pick an option"
+	if promptArg, ok := namedArgs[namedArgPrompt]; ok {
+		prompt = promptArg.value.RequireStr(i, promptArg.valueNode).Plain()
+		if prompt == "" {
+			// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
+			// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
+			// looks a bit weird but hey, the user has decided no title, what do they expect?)
+			prompt = " "
 		}
 	}
 
-	return parsedArgs
-}
-
-type PickNamedArgs struct {
-	prompt string
-}
-
-func pickString(i *MainInterpreter, function Token, prompt string, filters []string, options []string) RslString {
-	var filteredOptions []huh.Option[string]
-	for _, option := range options {
+	filteredKeyValues := make(map[string]T)
+	for index, key := range keys {
 		failedAFilter := false
 		for _, filter := range filters {
-			if !fuzzy.MatchFold(filter, option) {
+			if !fuzzy.MatchFold(filter, key) {
 				failedAFilter = true
 				break
 			}
 		}
 		if !failedAFilter {
-			filteredOptions = append(filteredOptions, huh.NewOption(option, option))
+			filteredKeyValues[key] = values[index]
 		}
 	}
 
-	if len(filteredOptions) == 0 {
-		i.error(function, fmt.Sprintf("Filtered %d options to 0 with filters: %v", len(options), filters))
+	if len(filteredKeyValues) == 0 {
+		// todo potentially allow recovering from this?
+		i.errorf(callNode, "Filtered %s to 0 with filters: %v", Pluralize(len(keys), "option"), filters)
 	}
 
-	if len(filteredOptions) == 1 {
-		return NewRslString(filteredOptions[0].Value)
+	if len(filteredKeyValues) == 1 {
+		return filteredKeyValues[lo.Keys(filteredKeyValues)[0]]
 	}
 
-	var result string
-	// todo this probably needs to be mocked out for testing, i don't see a built-in way with huh to
-	//  e.g. provide input as part of a unit test (particularly when using stdin for the RSL script)
-	err := huh.NewSelect[string]().
+	var result T
+	options := lo.MapToSlice(filteredKeyValues, func(k string, v T) huh.Option[T] { return huh.NewOption(k, v) })
+	err := huh.NewSelect[T]().
 		Title(prompt).
-		Options(filteredOptions...).
+		Options(options...).
 		Value(&result).
 		Run()
 
 	if err != nil {
-		i.error(function, fmt.Sprintf("Error running pick: %v", err))
+		// todo If user aborts, this gets triggered (probably should just 'silently' exit if user aborts)
+		i.errorf(callNode, "Error running pick: %v", err)
 	}
 
-	return NewRslString(result)
+	return result
 }

@@ -1,8 +1,9 @@
 package core
 
 import (
-	ts "github.com/tree-sitter/go-tree-sitter"
 	"strings"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RslList struct {
@@ -153,10 +154,10 @@ func (l *RslList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices 
 	l.Values = sorted
 }
 
-func (l *RslList) AsStringList() []string {
+func (l *RslList) AsStringList(quoteStrings bool) []string {
 	out := make([]string, l.Len())
 	for i, elem := range l.Values {
-		out[i] = ToPrintable(elem)
+		out[i] = ToPrintableQuoteStr(elem, quoteStrings)
 	}
 	return out
 }

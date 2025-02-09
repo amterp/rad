@@ -26,15 +26,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case PICK:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	return runPick(i, function, args, namedArgsMap)
-	//case PICK_KV:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	return runPickKv(i, function, args, namedArgsMap)
-	//case PICK_FROM_RESOURCE:
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap) // todo add 'prompt'
-	//	return runPickFromResource(i, function, args, numExpectedReturnValues)
 	//case KEYS:
 	//	if len(args) != 1 {
 	//		i.error(function, fmt.Sprintf("%s() takes exactly one argument", KEYS))
