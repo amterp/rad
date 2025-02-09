@@ -320,6 +320,30 @@ func init() {
 				return newRslValues(f.i, f.callNode, str)
 			},
 		},
+		{
+			Name:             FUNC_UNIQUE,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+
+				output := NewRslList()
+
+				seen := make(map[string]struct{})
+				list := arg.value.RequireList(f.i, arg.node)
+				for _, item := range list.Values {
+					key := ToPrintable(item) // todo not a solid approach
+					if _, exists := seen[key]; !exists {
+						seen[key] = struct{}{}
+						output.Append(item)
+					}
+				}
+
+				return newRslValues(f.i, f.callNode, output)
+			},
+		},
 	}
 
 	functions = append(functions, createColorFunctions()...)
