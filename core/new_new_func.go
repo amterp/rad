@@ -8,12 +8,15 @@ import (
 )
 
 const (
-	FUNC_PRINT = "print"
-	FUNC_LEN   = "len"
-	FUNC_SORT  = "sort"
+	FUNC_PRINT   = "print"
+	FUNC_LEN     = "len"
+	FUNC_SORT    = "sort"
+	FUNC_NOW     = "now"
+	FUNC_TYPE_OF = "type_of"
 )
 
 var (
+	NO_POS_ARGS   = [][]RslTypeEnum{}
 	NO_NAMED_ARGS = map[string][]RslTypeEnum{}
 )
 
@@ -83,6 +86,42 @@ func init() {
 				default:
 					panic(bugIncorrectTypes(FUNC_SORT))
 				}
+			},
+		},
+		{
+			Name:             FUNC_NOW,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 0,
+			ArgTypes:         NO_POS_ARGS,
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, _ []positionalArg, _ map[string]namedArg) []RslValue {
+				m := NewRslMap()
+				m.SetPrimitiveStr("date", RClock.Now().Format("2006-01-02"))
+				m.SetPrimitiveInt("year", RClock.Now().Year())
+				m.SetPrimitiveInt("month", int(RClock.Now().Month()))
+				m.SetPrimitiveInt("day", RClock.Now().Day())
+				m.SetPrimitiveInt("hour", RClock.Now().Hour())
+				m.SetPrimitiveInt("minute", RClock.Now().Minute())
+				m.SetPrimitiveInt("second", RClock.Now().Second())
+
+				epochM := NewRslMap()
+				epochM.SetPrimitiveInt64("seconds", RClock.Now().Unix())
+				epochM.SetPrimitiveInt64("millis", RClock.Now().UnixMilli())
+				epochM.SetPrimitiveInt64("nanos", RClock.Now().UnixNano())
+
+				m.SetPrimitiveMap("epoch", epochM)
+
+				return newRslValues(i, callNode, m)
+			},
+		},
+		{
+			Name:             FUNC_TYPE_OF,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(i *Interpreter, callNode *ts.Node, args []positionalArg, _ map[string]namedArg) []RslValue {
+				return newRslValues(i, callNode, NewRslString(TypeAsString(args[0].value)))
 			},
 		},
 	}

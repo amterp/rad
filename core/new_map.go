@@ -33,6 +33,22 @@ func (m *RslMap) Set(key RslValue, value RslValue) {
 	m.mapping[key.Hash()] = value
 }
 
+func (m *RslMap) SetPrimitiveStr(key string, value string) {
+	m.Set(newRslValueStr(key), newRslValueStr(value))
+}
+
+func (m *RslMap) SetPrimitiveInt(key string, value int) {
+	m.Set(newRslValueStr(key), newRslValueInt(value))
+}
+
+func (m *RslMap) SetPrimitiveInt64(key string, value int64) {
+	m.Set(newRslValueStr(key), newRslValueInt64(value))
+}
+
+func (m *RslMap) SetPrimitiveMap(key string, value *RslMap) {
+	m.Set(newRslValueStr(key), newRslValueMap(value))
+}
+
 func (m *RslMap) Get(key RslValue) (RslValue, bool) {
 	val, exists := m.mapping[key.Hash()]
 	return val, exists

@@ -172,6 +172,42 @@ sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
 sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
 ```
 
+### now
+
+Returns the current time in the machine's local timezone, accessible in various forms.
+
+```rsl
+now() -> map
+```
+
+Map values:
+
+| Accessor         | Description                           | Type   | Example             |
+|------------------|---------------------------------------|--------|---------------------|
+| `.date`          | Current date YYYY-MM-DD               | string | 2019-12-13          |
+| `.year`          | Current calendar year                 | int    | 2019                |
+| `.month`         | Current calendar month                | int    | 12                  |
+| `.day`           | Current calendar day                  | int    | 13                  |
+| `.hour`          | Current clock hour (24h)              | int    | 14                  |
+| `.minute`        | Current minute of the hour            | int    | 15                  |
+| `.second`        | Current second of the minute          | int    | 16                  |
+| `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
+| `.epoch.millis`  | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516123       |
+| `.epoch.nanos`   | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516123456789 |
+
+### type_of
+
+Returns the type of an input variable as a string.
+
+```rsl
+type_of(variable any)
+```
+
+```rsl
+type_of("hi")  // string
+type_of([2])   // list
+```
+
 ## Parsing
 
 ### parse_int
@@ -190,68 +226,6 @@ parse_float(input str) -> float, err
 
 ```rsl
 parse_json(input string) -> any
-```
-
-## Time
-
-### now_date
-
-```rsl
-now_date() -> string  // e.g. "2006-11-25"
-```
-
-### now_year
-
-```rsl
-now_year() -> int  // e.g. 2006
-```
-
-### now_month
-
-```rsl
-now_month() -> int  // e.g. 11
-```
-
-### now_day
-
-```rsl
-now_day() -> int  // e.g. 25
-```
-
-### now_hour
-
-```rsl
-now_hour() -> int  // e.g. 14
-```
-
-### now_minute
-
-```rsl
-now_minute() -> int  // e.g. 31
-```
-
-### now_second
-
-```rsl
-now_second() -> int  // e.g. 35
-```
-
-### epoch_seconds
-
-```rsl
-epoch_seconds() -> int  // e.g. 1731063226
-```
-
-### epoch_millis
-
-```rsl
-epoch_millis() -> int  // e.g. 1731063226123
-```
-
-### epoch_nanos
-
-```rsl
-epoch_nanos() -> int  // e.g. 1731063226123456789
 ```
 
 ## Text
@@ -367,6 +341,7 @@ pick(options string[], filter string?) -> string
 ```
 
 Named args:
+
 - `prompt`
 
 ### pick_kv
@@ -376,6 +351,7 @@ pick_kv(keys string[], values string[], filter string?) -> string
 ```
 
 Named args:
+
 - `prompt`
 
 ### pick_from_resource
@@ -387,6 +363,7 @@ pick_from_resource(resource_path string, filter string?) -> any...
 ## HTTP
 
 Map outputs contain the following keys:
+
 - `status_code`
 - `body`
 

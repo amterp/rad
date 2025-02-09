@@ -2,150 +2,35 @@ package testing
 
 import "testing"
 
-func TestDate(t *testing.T) {
+func Test_Func_Now(t *testing.T) {
 	rsl := `
-a = now_date()
+a = now()
 print(a)
-print(a + "100")
-`
-	setupAndRunCode(t, rsl)
-	expected := `2019-12-13
-2019-12-13100
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
 
-func TestYear(t *testing.T) {
-	rsl := `
-a = now_year()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `2019
-2119
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
+print(a.date, type_of(a.date))
+print(a.year, type_of(a.year))
+print(a.month, type_of(a.month))
+print(a.day, type_of(a.day))
+print(a.hour, type_of(a.hour))
+print(a.minute, type_of(a.minute))
+print(a.second, type_of(a.second))
 
-func TestMonth(t *testing.T) {
-	rsl := `
-a = now_month()
-print(a)
-print(a + 100)
+print(a.epoch.seconds, type_of(a.epoch.seconds))
+print(a.epoch.millis, type_of(a.epoch.millis))
+print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, rsl)
-	expected := `12
-112
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestDay(t *testing.T) {
-	rsl := `
-a = now_day()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `13
-113
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestHour(t *testing.T) {
-	rsl := `
-a = now_hour()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `14
-114
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestMinute(t *testing.T) {
-	rsl := `
-a = now_minute()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `15
-115
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestSecond(t *testing.T) {
-	rsl := `
-a = now_second()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `16
-116
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestEpochSeconds(t *testing.T) {
-	rsl := `
-a = epoch_seconds()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `1576246516
-1576246616
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestEpochMillis(t *testing.T) {
-	rsl := `
-a = epoch_millis()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `1576246516123
-1576246516223
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-	resetTestState()
-}
-
-func TestEpochNanos(t *testing.T) {
-	rsl := `
-a = epoch_nanos()
-print(a)
-print(a + 100)
-`
-	setupAndRunCode(t, rsl)
-	expected := `1576246516123123123
-1576246516123123223
+	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+2019-12-13 string
+2019 int
+12 int
+13 int
+14 int
+15 int
+16 int
+1576246516 int
+1576246516123 int
+1576246516123123123 int
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

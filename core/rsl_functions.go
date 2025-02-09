@@ -59,46 +59,6 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case "now_date": // todo is this name good? current_date? date?
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return NewRslString(RClock.Now().Format("2006-01-02"))
-	//case "now_year":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Year())
-	//case "now_month":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Month())
-	//case "now_day":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Day())
-	//case "now_hour":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Hour())
-	//case "now_minute":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Minute())
-	//case "now_second":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return int64(RClock.Now().Second())
-	//case "epoch_seconds":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return RClock.Now().Unix()
-	//case "epoch_millis":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return RClock.Now().UnixMilli()
-	//case "epoch_nanos":
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return RClock.Now().UnixNano()
 	//case "replace":
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
