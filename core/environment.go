@@ -115,13 +115,7 @@ func (e *OldEnv) GetJsonFieldWithToken(token Token, name string) JsonFieldVarOld
 }
 
 func (e *OldEnv) PrintShellExports() {
-	keys := SortedKeys(e.Vars)
-	for _, varName := range keys {
-		val := e.Vars[varName]
-		// todo handle different data types specifically
-		// todo avoid *dangerous* exports like PATH!!
-		RP.PrintForShellEval(fmt.Sprintf("export %s=\"%v\"\n", varName, ToPrintable(val)))
-	}
+	// DELETE
 }
 
 // SetAndImplyType 'value' expected to not be a pointer, should be e.g. string

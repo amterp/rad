@@ -1,6 +1,11 @@
 package core
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import (
+	"fmt"
+	"strings"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 type Env struct {
 	i             *Interpreter
@@ -81,5 +86,29 @@ func (e *Env) setVar(name string, v RslValue, ignoreEnclosing bool) {
 		delete(e.Vars, name)
 	} else {
 		e.Vars[name] = v
+	}
+}
+
+// todo avoid *dangerous* exports like PATH!!
+func (e *Env) PrintShellExports() {
+	keys := SortedKeys(e.Vars)
+
+	printFunc := func(varName, value string) {
+		RP.PrintForShellEval(fmt.Sprintf("%s=%s\n", varName, value))
+	}
+
+	for _, varName := range keys {
+		val := e.Vars[varName]
+		switch coerced := val.Val.(type) {
+		case RslString, int64, float64, bool:
+			printFunc(varName, ToPrintable(val))
+		case *RslList:
+			printFunc(varName, "("+strings.Join(coerced.AsStringList(), " ")+")")
+		case *RslMap:
+			// todo can do some stuff with declare -A ?
+			printFunc(varName, "'"+coerced.ToString()+"'")
+		default:
+			RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for shell export: %T", val.Val))
+		}
 	}
 }

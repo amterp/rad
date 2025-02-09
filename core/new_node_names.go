@@ -16,6 +16,7 @@ const (
 	K_VAR_PATH                = "var_path"
 	K_INT                     = "int"
 	K_BOOL                    = "bool"
+	K_FLOAT                   = "float"
 	K_LIST                    = "list"
 	K_CALL                    = "call"
 	K_NOT_OP                  = "not_op"
