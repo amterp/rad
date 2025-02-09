@@ -5,6 +5,8 @@ import (
 	"strings"
 	"sync"
 	"unicode/utf8"
+
+	"github.com/dustin/go-humanize/english"
 )
 
 // this is the best way I can think of to do the 'typed nil' check...
@@ -58,4 +60,13 @@ func Memoize[T any](f func() T) func() T {
 		})
 		return result
 	}
+}
+
+// follows some basic rules of english, use PluralizeCustom to override the plural.
+func Pluralize(count int, singular string) string {
+	return english.Plural(count, singular, "")
+}
+
+func PluralizeCustom(count int, singular string, plural string) string {
+	return english.Plural(count, singular, plural)
 }
