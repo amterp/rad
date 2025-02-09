@@ -1,32 +1,30 @@
 package core
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func runSplit(i *MainInterpreter, function Token, args []interface{}) interface{} {
-	if len(args) != 2 {
-		i.error(function, SPLIT+fmt.Sprintf("() takes 2 arguments, got %d", len(args)))
-	}
+var FuncSplit = Func{
+	Name:             FUNC_SPLIT,
+	ReturnValues:     ONE_RETURN_VAL,
+	RequiredArgCount: 2,
+	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+	NamedArgs:        NO_NAMED_ARGS,
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		strArg := f.args[0]
+		splitterArg := f.args[1]
 
-	switch str := args[0].(type) {
-	case RslString:
-		switch sep := args[1].(type) {
-		case RslString:
-			return regexSplit(str.Plain(), sep.Plain())
-		default:
-			i.error(function, SPLIT+fmt.Sprintf("() takes strings as args, got %s", TypeAsString(args[1])))
-			panic(UNREACHABLE)
-		}
-	default:
-		i.error(function, SPLIT+fmt.Sprintf("() takes strings as args, got %s", TypeAsString(args[0])))
-		panic(UNREACHABLE)
-	}
+		str := strArg.value.RequireStr(f.i, strArg.node).Plain()
+		splitter := splitterArg.value.RequireStr(f.i, splitterArg.node).Plain()
+
+		return newRslValues(f.i, f.callNode, regexSplit(f.i, f.callNode, str, splitter))
+	},
 }
 
-func regexSplit(input string, sep string) []interface{} {
+func regexSplit(i *Interpreter, callNode *ts.Node, input string, sep string) []RslValue {
 	re, err := regexp.Compile(sep)
 
 	var parts []string
@@ -36,9 +34,9 @@ func regexSplit(input string, sep string) []interface{} {
 		parts = strings.Split(input, sep)
 	}
 
-	result := make([]interface{}, 0, len(parts))
+	result := make([]RslValue, 0, len(parts))
 	for _, part := range parts {
-		result = append(result, NewRslString(part))
+		result = append(result, newRslValue(i, callNode, part))
 	}
 
 	return result
