@@ -26,54 +26,10 @@ func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturn
 	//namedArgsMap := toMap(i, namedArgs)
 	//
 	//switch funcName {
-	//case KEYS:
-	//	if len(args) != 1 {
-	//		i.error(function, fmt.Sprintf("%s() takes exactly one argument", KEYS))
-	//	}
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	switch coerced := args[0].(type) {
-	//	case RslMapOld:
-	//		return coerced.KeysGeneric()
-	//	default:
-	//		i.error(function, fmt.Sprintf("%s() takes a map, got %s", KEYS, TypeAsString(args[0])))
-	//	}
-	//case VALUES:
-	//	if len(args) != 1 {
-	//		i.error(function, fmt.Sprintf("%s() takes exactly one argument", VALUES))
-	//	}
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	switch coerced := args[0].(type) {
-	//	case RslMapOld:
-	//		return coerced.Values()
-	//	default:
-	//		i.error(function, fmt.Sprintf("%s() takes a map, got %s", VALUES, TypeAsString(args[0])))
-	//	}
-	//case HTTP_GET:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	return runHttpGet(i, function, args, namedArgsMap)
-	//case HTTP_POST:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	return runHttpPost(i, function, args, namedArgsMap)
-	//case HTTP_PUT:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	return runHttpPut(i, function, args, namedArgsMap)
 	//case ABS:
 	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
 	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
 	//	return runAbs(i, function, args)
-	//default:
-	//	//color, ok := ColorFromString(funcName)
-	//	//if ok {
-	//	//	assertExpectedNumReturnValues(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	//	validateExpectedNamedArgs(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	//	return runColor(i, function, args, color)
-	//	//} else {
-	//	//	i.error(function, fmt.Sprintf("Unknown function: %v", funcName))
-	//	//	panic(UNREACHABLE)
-	//	//} // TODO DELETE
-	//}
 	panic(UNREACHABLE)
 }
 

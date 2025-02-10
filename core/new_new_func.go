@@ -43,12 +43,22 @@ const (
 	FUNC_PARSE_JSON         = "parse_json"
 	FUNC_PARSE_INT          = "parse_int"
 	FUNC_PARSE_FLOAT        = "parse_float"
-	FUNC_HTTP_REQ           = "http_req"
+	FUNC_HTTP_GET           = "http_get"
+	FUNC_HTTP_POST          = "http_post"
+	FUNC_HTTP_PUT           = "http_put"
+	FUNC_HTTP_PATCH         = "http_patch"
+	FUNC_HTTP_DELETE        = "http_delete"
+	FUNC_HTTP_HEAD          = "http_head"
+	FUNC_HTTP_OPTIONS       = "http_options"
+	FUNC_HTTP_TRACE         = "http_trace"
+	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
 	namedArgPrompt  = "prompt"
+	namedArgHeaders = "headers"
+	namedArgBody    = "body"
 )
 
 var (
@@ -74,6 +84,7 @@ func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, args []positionalA
 	}
 }
 
+// todo add 'usage' to each function? self-documenting errors when incorrectly using
 type Func struct {
 	Name             string
 	ReturnValues     []int
@@ -452,6 +463,7 @@ func init() {
 	}
 
 	functions = append(functions, createColorFunctions()...)
+	functions = append(functions, createHttpFunctions()...)
 
 	FunctionsByName = make(map[string]Func)
 	for _, f := range functions {
@@ -475,10 +487,11 @@ func createColorFunctions() []Func {
 	funcs := make([]Func, len(colorStrs))
 	for idx, color := range colorStrs {
 		funcs[idx] = Func{
-			Name:         color,
-			ReturnValues: ONE_RETURN_VAL,
-			ArgTypes:     [][]RslTypeEnum{{}},
-			NamedArgs:    NO_NAMED_ARGS,
+			Name:             color,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{}},
+			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				clr := ColorFromString(f.i, f.callNode, color)
 				arg := f.args[0]
@@ -494,6 +507,97 @@ func createColorFunctions() []Func {
 		}
 	}
 	return funcs
+}
+
+func createHttpFunctions() []Func {
+	httpFuncs := []string{
+		FUNC_HTTP_GET,
+		FUNC_HTTP_POST,
+		FUNC_HTTP_PUT,
+		FUNC_HTTP_PATCH,
+		FUNC_HTTP_DELETE,
+		FUNC_HTTP_HEAD,
+		FUNC_HTTP_OPTIONS,
+		FUNC_HTTP_TRACE,
+		FUNC_HTTP_CONNECT,
+	}
+
+	funcs := make([]Func, len(httpFuncs))
+	for idx, httpFunc := range httpFuncs {
+		// todo handle exceptions?
+		//   - auth?
+		//   - query params help?
+		//   - generic http for other/all methods?
+		funcs[idx] = Func{
+			Name:             httpFunc,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgHeaders: {RslMapT}, // string->string or string->list[string]
+				namedArgBody:    {RslMapT, RslStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				urlArg := f.args[0]
+
+				method := httpMethodFromFuncName(httpFunc)
+				url := urlArg.value.RequireStr(f.i, urlArg.node).Plain()
+
+				headers := make(map[string][]string)
+				if headersArg, exists := f.namedArgs[namedArgHeaders]; exists {
+					headerMap := headersArg.value.RequireMap(f.i, headersArg.valueNode)
+					keys := headerMap.Keys()
+					for _, key := range keys {
+						value, _ := headerMap.Get(key)
+						keyStr := key.RequireStr(f.i, headersArg.valueNode).Plain()
+						switch coercedV := value.Val.(type) {
+						case RslString:
+							headers[keyStr] = []string{coercedV.Plain()}
+						case *RslList:
+							headers[keyStr] = coercedV.AsActualStringList(f.i, headersArg.valueNode)
+						}
+					}
+				}
+
+				var body *string
+				if bodyArg, exists := f.namedArgs[namedArgBody]; exists {
+					bodyStr := JsonToString(RslToJsonType(bodyArg.value))
+					body = &bodyStr
+				}
+
+				reqDef := NewRequestDef(method, url, headers, body)
+				response := RReq.Request(reqDef)
+				rslMap := response.ToRslMap(f.i, f.callNode)
+				return newRslValues(f.i, f.callNode, rslMap)
+			},
+		}
+	}
+	return funcs
+}
+
+func httpMethodFromFuncName(httpFunc string) string {
+	switch httpFunc {
+	case FUNC_HTTP_GET:
+		return "GET"
+	case FUNC_HTTP_POST:
+		return "POST"
+	case FUNC_HTTP_PUT:
+		return "PUT"
+	case FUNC_HTTP_PATCH:
+		return "PATCH"
+	case FUNC_HTTP_DELETE:
+		return "DELETE"
+	case FUNC_HTTP_HEAD:
+		return "HEAD"
+	case FUNC_HTTP_OPTIONS:
+		return "OPTIONS"
+	case FUNC_HTTP_TRACE:
+		return "TRACE"
+	case FUNC_HTTP_CONNECT:
+		return "CONNECT"
+	default:
+		panic(fmt.Sprintf("Bug! Unknown HTTP function: %q", httpFunc))
+	}
 }
 
 func tryGetArg(idx int, args []positionalArg) *positionalArg {

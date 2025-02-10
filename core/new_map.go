@@ -45,6 +45,14 @@ func (m *RslMap) SetPrimitiveInt64(key string, value int64) {
 	m.Set(newRslValueStr(key), newRslValueInt64(value))
 }
 
+func (m *RslMap) SetPrimitiveFloat(key string, value float64) {
+	m.Set(newRslValueStr(key), newRslValueFloat64(value))
+}
+
+func (m *RslMap) SetPrimitiveBool(key string, value bool) {
+	m.Set(newRslValueStr(key), newRslValueBool(value))
+}
+
 func (m *RslMap) SetPrimitiveMap(key string, value *RslMap) {
 	m.Set(newRslValueStr(key), newRslValueMap(value))
 }

@@ -9,8 +9,14 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
-	"github.com/samber/lo"
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
+
+var (
+	statusOk     = 200
+	emptyHeaders = make(map[string][]string)
 )
 
 type Requester struct {
@@ -18,24 +24,83 @@ type Requester struct {
 }
 
 type RequestDef struct {
+	Method  string
 	Url     string
-	Body    string
-	Headers map[string]string
+	Headers map[string][]string
+	Body    *string
 }
 
+func NewRequestDef(method, url string, headers map[string][]string, body *string) RequestDef {
+	return RequestDef{
+		Method:  method,
+		Url:     url,
+		Headers: headers,
+		Body:    body,
+	}
+}
+
+func (r RequestDef) BodyReader() io.Reader {
+	if r.Body == nil {
+		return strings.NewReader("") // todo same as nil?
+	}
+	return strings.NewReader(*r.Body)
+}
+
+// todo we should add more e.g. reason, message
 type ResponseDef struct {
-	Body       string
-	StatusCode int
+	Success         bool // true if 2xx response, else false
+	StatusCode      *int
+	Headers         *map[string][]string
+	Body            *string
+	Error           *string // signifies error making request
+	DurationSeconds float64
 }
 
-func (r *ResponseDef) ToRslMap(i *MainInterpreter, t Token) RslMapOld {
-	//rslMap := NewOldRslMap()
-	//out, _ := TryConvertJsonToNativeTypes(i, t, r.Body)
-	//rslMap.SetStr("body", out)
-	//rslMap.SetStr("status_code", int64(r.StatusCode))
-	//// todo we should add more e.g. reason, message, response headers
-	//return *rslMap
-	return RslMapOld{} // TODO
+func NewResponseDef(
+	statusCode *int,
+	headers *map[string][]string,
+	body *string,
+	error *string,
+	durationSeconds float64,
+) ResponseDef {
+	success := false
+	if statusCode != nil && *statusCode >= 200 && *statusCode < 300 {
+		success = true
+	}
+
+	return ResponseDef{
+		Success:         success,
+		StatusCode:      statusCode,
+		Headers:         headers,
+		Body:            body,
+		Error:           error,
+		DurationSeconds: durationSeconds,
+	}
+}
+
+func (r ResponseDef) ToRslMap(i *Interpreter, callNode *ts.Node) *RslMap {
+	rslMap := NewRslMap()
+
+	rslMap.SetPrimitiveBool("success", r.Success)
+	if r.StatusCode != nil {
+		rslMap.SetPrimitiveInt("status_code", *r.StatusCode)
+	}
+	if r.Headers != nil {
+		headers := NewRslMap()
+		for key, values := range *r.Headers {
+			headers.Set(newRslValue(i, callNode, key), newRslValue(i, callNode, values))
+		}
+	}
+	if r.Body != nil {
+		out, _ := TryConvertJsonToNativeTypes(i, callNode, *r.Body)
+		rslMap.Set(newRslValue(i, callNode, "body"), out)
+	}
+	if r.Error != nil {
+		rslMap.SetPrimitiveStr("error", *r.Error)
+	}
+	rslMap.SetPrimitiveFloat("duration_seconds", r.DurationSeconds)
+
+	return rslMap
 }
 
 func NewRequester() *Requester {
@@ -48,36 +113,32 @@ func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
 
-func (r *Requester) Get(url string, headers map[string]string) (*ResponseDef, error) {
-	req := newGetRequest(url, headers)
-	return r.request(req, func(encodedUrl string) (*http.Response, error) {
-		return http.Get(encodedUrl)
-	})
-}
+func (r *Requester) Request(def RequestDef) ResponseDef {
 
-func (r *Requester) PutOrPost(method string, url string, body string, headers map[string]string) (*ResponseDef, error) {
-	req := newPutOrPostRequest(url, body, headers)
-	return r.request(req, func(encodedUrl string) (*http.Response, error) {
-		request, err := http.NewRequest(method, encodedUrl, strings.NewReader(body))
-		if err != nil {
-			return nil, fmt.Errorf("error creating %s request: %w", method, err)
+	req, err := http.NewRequest(def.Method, def.Url, def.BodyReader())
+	for key, values := range def.Headers {
+		for _, value := range values {
+			req.Header.Add(key, value)
 		}
+	}
 
-		for key, value := range headers {
-			request.Header.Add(key, value)
-		}
+	if err != nil {
+		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
+		return NewResponseDef(nil, nil, nil, &msg, 0)
+	}
 
-		return http.DefaultClient.Do(request)
-	})
+	return r.request(req)
 }
 
 func (r *Requester) RequestJson(url string) (interface{}, error) {
-	resp, err := r.Get(url, nil)
-	if err != nil {
-		return nil, err
+	reqDef := NewRequestDef("GET", url, emptyHeaders, nil)
+	response := r.Request(reqDef)
+
+	if !response.Success {
+		return nil, fmt.Errorf("request failed: %s", *response.Error)
 	}
 
-	body := resp.Body
+	body := *response.Body
 	bodyBytes := []byte(body)
 	isValidJson := json.Valid(bodyBytes)
 	if !isValidJson {
@@ -91,6 +152,40 @@ func (r *Requester) RequestJson(url string) (interface{}, error) {
 	return data, nil
 }
 
+func (r *Requester) request(req *http.Request) ResponseDef {
+	mockJson, ok := r.resolveMockedResponse(req.URL.String())
+	if ok {
+		return NewResponseDef(&statusOk, &emptyHeaders, &mockJson, nil, 0)
+	}
+
+	urlToQuery, err := encodeUrl(req.URL.String())
+	if err != nil {
+		msg := fmt.Sprintf("Failed to encode url: %v", err)
+		return NewResponseDef(nil, nil, &mockJson, &msg, 0)
+	}
+
+	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+	start := time.Now()
+	resp, err := http.DefaultClient.Do(req)
+	durationSeconds := time.Since(start).Seconds()
+
+	if err != nil {
+		msg := fmt.Sprintf("Failed to make HTTP request: %v", err)
+		return NewResponseDef(nil, nil, nil, &msg, durationSeconds)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to read response body: %v", err)
+		return NewResponseDef(nil, nil, nil, &msg, durationSeconds)
+	}
+	bodyStr := string(body)
+	headers := map[string][]string(resp.Header)
+
+	return NewResponseDef(&resp.StatusCode, &headers, &bodyStr, nil, durationSeconds)
+}
+
 // todo test this more, might need additional query param encoding
 func encodeUrl(rawUrl string) (string, error) {
 	rawUrl = strings.ReplaceAll(rawUrl, "%", "%25")
@@ -100,58 +195,6 @@ func encodeUrl(rawUrl string) (string, error) {
 	}
 	parsedUrl.RawQuery = parsedUrl.Query().Encode()
 	return parsedUrl.String(), nil
-}
-
-func newGetRequest(url string, headers map[string]string) RequestDef {
-	return RequestDef{
-		Url:     url,
-		Headers: headers,
-	}
-}
-
-func newPutOrPostRequest(encodedUrl string, body string, headers map[string]string) RequestDef {
-	if !lo.Contains(lo.Keys(headers), "Content-Type") {
-		headers["Content-Type"] = "application/json"
-	}
-	return RequestDef{
-		Url:     encodedUrl,
-		Body:    body,
-		Headers: headers,
-	}
-}
-
-func (r *Requester) request(def RequestDef, reqFunc func(encodedUrl string) (*http.Response, error)) (*ResponseDef, error) {
-	url := def.Url
-	mockJson, ok := r.resolveMockedResponse(def.Url)
-	if ok {
-		return &ResponseDef{
-			Body:       mockJson,
-			StatusCode: 200,
-		}, nil
-	}
-
-	urlToQuery, err := encodeUrl(url)
-	if err != nil {
-		return nil, err
-	}
-
-	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
-
-	resp, err := reqFunc(urlToQuery)
-	if err != nil {
-		return nil, fmt.Errorf("error making HTTP request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading HTTP body (%v): %w", body, err)
-	}
-
-	return &ResponseDef{
-		Body:       string(body),
-		StatusCode: resp.StatusCode,
-	}, nil
 }
 
 func (r *Requester) resolveMockedResponse(url string) (string, bool) {
