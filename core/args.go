@@ -634,3 +634,11 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		panic(fmt.Sprintf("Unhandled arg type: %v", argType))
 	}
 }
+
+func convertToInterfaceArr[T any](i []T) []interface{} {
+	converted := make([]interface{}, len(i))
+	for j, v := range i {
+		converted[j] = v
+	}
+	return converted
+}

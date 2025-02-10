@@ -182,26 +182,6 @@ func AbsFloat(x float64) float64 {
 	return x
 }
 
-func TruthyFalsy(val interface{}) bool {
-	switch coerced := val.(type) {
-	case int64:
-		return coerced != 0
-	case float64:
-		return coerced != 0
-	case RslString:
-		return coerced.Plain() != ""
-	case bool:
-		return coerced
-	case []interface{}:
-		return len(coerced) != 0
-	case RslMapOld:
-		return len(coerced.Keys()) != 0
-	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TruthyFalsy: %T", val))
-		panic(UNREACHABLE)
-	}
-}
-
 func ErrorRslMap(err RslError, errMsg string) *RslMap {
 	m := NewRslMap()
 	m.SetPrimitiveStr("code", string(err))
@@ -211,8 +191,4 @@ func ErrorRslMap(err RslError, errMsg string) *RslMap {
 
 func NoErrorRslMap() *RslMap {
 	return NewRslMap()
-}
-
-func (e StringLiteral) FullString() string {
-	return e.Value[len(e.Value)-1].FullStringLiteral
 }

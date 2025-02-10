@@ -84,13 +84,6 @@ type Printer interface {
 	// Like ErrorExit but takes an error code.
 	ErrorExitCode(msg string, errorCode int)
 
-	// For the parser and interpreter to print errors, with a token.
-	// Exits.
-	TokenErrorExit(token Token, msg string)
-
-	// Like TokenErrorExit but takes an error code.
-	TokenErrorCodeExit(token Token, msg string, errorCode int)
-
 	// TODO
 	CtxErrorExit(ctx ErrorCtx)
 
@@ -190,26 +183,6 @@ func (p *stdPrinter) ErrorExit(msg string) {
 func (p *stdPrinter) ErrorExitCode(msg string, errorCode int) {
 	if !IsBlank(msg) && (!p.isQuiet || p.isScriptDebug) {
 		fmt.Fprint(p.stdErr, msg)
-	}
-	p.printShellExitIfEnabled()
-	p.errorExit(errorCode)
-}
-
-func (p *stdPrinter) TokenErrorExit(token Token, msg string) {
-	p.TokenErrorCodeExit(token, msg, 1)
-}
-
-func (p *stdPrinter) TokenErrorCodeExit(token Token, msg string, errorCode int) {
-	if !p.isQuiet || p.isScriptDebug {
-		if token == nil {
-			fmt.Fprint(p.stdErr, msg)
-		} else {
-			lexeme := token.GetLexeme()
-			lexeme = strings.ReplaceAll(lexeme, "\n", "\\n")
-			lexeme = strings.ReplaceAll(lexeme, "\t", "\\t")
-			fmt.Fprintf(p.stdErr, "RslError at L%d/%d on '%s': %s",
-				token.GetLine(), token.GetCharLineStart(), lexeme, msg)
-		}
 	}
 	p.printShellExitIfEnabled()
 	p.errorExit(errorCode)

@@ -415,7 +415,7 @@ func init() {
 				parsed, err := strconv.ParseInt(str, 10, 64)
 
 				if err != nil {
-					errMsg := fmt.Sprintf("%s() failed to parse %q", PARSE_INT, str)
+					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
 					if f.numExpectedOutputs == 1 {
 						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
 						panic(UNREACHABLE)
@@ -444,7 +444,7 @@ func init() {
 				parsed, err := strconv.ParseFloat(str, 64)
 
 				if err != nil {
-					errMsg := fmt.Sprintf("%s() failed to parse %q", PARSE_FLOAT, str)
+					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
 					if f.numExpectedOutputs == 1 {
 						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
 						panic(UNREACHABLE)
