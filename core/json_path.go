@@ -6,11 +6,6 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type JsonFieldVarOld struct {
-	Name Token
-	Path JsonPathOld
-}
-
 type JsonFieldVar struct {
 	Name string
 	Path JsonPath

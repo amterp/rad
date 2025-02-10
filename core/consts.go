@@ -11,10 +11,3 @@ const (
 const (
 	WILDCARD = "*"
 )
-
-// function names
-const (
-	PARSE_INT   = "parse_int"
-	PARSE_FLOAT = "parse_float"
-	ABS         = "abs"
-)
