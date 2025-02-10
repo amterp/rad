@@ -3,11 +3,6 @@ package testing
 import "testing"
 
 // todo maps
-//  - contains key
-//  - contains value
-//  - iteration
-//  - keyset
-//  - valueset
 //  - entryset
 //  - pick functions integration
 
@@ -17,14 +12,14 @@ a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: bar, charlie: [1, hi] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
 func TestMap_CanExtract(t *testing.T) {
 	rsl := `
-a = { "alice": 35, "bob": "bar","charlie": [1, "hi"] }
+a = { "alice": 35, "bob": "bar","charlie": [ 1, "hi" ] }
 print(a["charlie"][0] + 1)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
@@ -42,7 +37,7 @@ a = { "alice": 30 + 5, "bob": foo, upper("charlie"): [1, t or f] }
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: bar, CHARLIE: [1, true] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"CHARLIE\": [ 1, true ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -55,7 +50,7 @@ a[upper("dave")] = "hi"
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 35, bob: bar, charlie: 20, DAVE: hi }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"charlie\": 20, \"DAVE\": \"hi\" }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -70,7 +65,7 @@ a["dave"] /= 2
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 120, bob: 180, charlie: 600, dave: 200 }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 120, \"bob\": 180, \"charlie\": 600, \"dave\": 200 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -82,7 +77,12 @@ a["eve"] += 20
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertError(t, 1, "RslError at L3/2 on '[': Key not found: \"eve\"\n")
+	expected := `Error at L3:3
+
+  a["eve"] += 20
+    ^^^^^ Key not found: "eve"
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -94,7 +94,7 @@ a["bob"][2] += 5
 print(a)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 100, bob: [10, 200, 35] }\n")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 100, \"bob\": [ 10, 200, 35 ] }\n")
 	assertNoErrors(t)
 	resetTestState()
 }

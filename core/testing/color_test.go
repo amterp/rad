@@ -15,11 +15,12 @@ print(blue([true, "hi", 10]))
 	expected += blue("Bob") + "\n"
 	expected += yellow("Charlie") + "\n"
 	expected += yellow("2") + "\n"
-	expected += blue("[true, hi, 10]") + "\n"
+	expected += blue("[ true, \"hi\", 10 ]") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
+
 func TestColor_RespectsNoColorFlag(t *testing.T) {
 	rsl := `
 print(red("Alice"))
@@ -47,7 +48,7 @@ func TestColor_CanUpperLower(t *testing.T) {
 print(upper(red("Alice")))
 print(lower(red("Alice")))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := red("ALICE") + "\n" + red("alice") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -60,7 +61,7 @@ a = "Alice"
 print(lower(red(a)))
 print(a)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := red("alice") + "\n" + "Alice" + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -72,7 +73,7 @@ func TestColor_CanIndex(t *testing.T) {
 a = upper(red("Alice"))
 print(a[2])
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := red("I") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -84,7 +85,7 @@ func TestColor_CanSlice(t *testing.T) {
 a = upper(red("Alice"))
 print(a[2:4])
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := "IC" + "\n" // TODO this *should* be red
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -95,7 +96,7 @@ func TestColor_CanPrintEmojis(t *testing.T) {
 	rsl := `
 print(red("hi 👋"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := red("hi 👋") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -110,7 +111,7 @@ c = red(a)
 print([a, b, c])
 `
 	setupAndRunCode(t, rsl)
-	expected := "[Alice, " + red("Alice") + ", " + red("Alice") + "]\n"
+	expected := "[ \"Alice\", \"" + red("Alice") + "\", \"" + red("Alice") + "\" ]\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -126,7 +127,7 @@ c = red(a)
 print(unique([a, b, c]))
 `
 	setupAndRunCode(t, rsl)
-	expected := "[Alice, " + red("Alice") + "]\n"
+	expected := "[ \"Alice\", \"" + red("Alice") + "\" ]\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -140,7 +141,7 @@ c = red(a)
 print(a == b)
 print(b == c)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := "true\ntrue\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

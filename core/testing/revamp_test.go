@@ -29,7 +29,7 @@ g = "{1 + 1:6.7}"
 print(g)
 
 ` + "h = `\"hi\" 'there' \\`bob\\``" + "\nprint(h)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `hi
 hi
  there
@@ -40,7 +40,7 @@ hi \ h yo
 hi\n there {1 + 1} \nfriend
 hi
  friend
-2
+2.0000000
 "hi" 'there'` + " `bob`\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -68,7 +68,7 @@ n = "alice"
 for i, l in n:
     print(i, l)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `20
 after
 30

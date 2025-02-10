@@ -97,9 +97,9 @@ func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {
 	return newList
 }
 
-func (l *RslList) Contains(val interface{}) bool {
+func (l *RslList) Contains(val RslValue) bool {
 	for _, elem := range l.Values {
-		if elem.Val == val {
+		if elem.Equals(val) {
 			return true
 		}
 	}

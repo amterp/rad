@@ -196,19 +196,19 @@ display:
 	sort
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	expected := `col1          col2 
-false         5     
-true          4     
--1.2          11    
-1             0     
-1.5           10    
-2             2     
-2             7     
-a             1     
-a             8     
-b             3     
-[3, 1, 2]     9     
-{ alice: 1 }  6     
+	expected := `col1            col2 
+false           5     
+true            4     
+-1.2            11    
+1               0     
+1.5             10    
+2               2     
+2               7     
+a               1     
+a               8     
+b               3     
+[ 3, 1, 2 ]     9     
+{ "alice": 1 }  6     
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -224,19 +224,19 @@ display:
 	sort desc
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	expected := `col1          col2 
-{ alice: 1 }  6     
-[3, 1, 2]     9     
-b             3     
-a             8     
-a             1     
-2             7     
-2             2     
-1.5           10    
-1             0     
--1.2          11    
-true          4     
-false         5     
+	expected := `col1            col2 
+{ "alice": 1 }  6     
+[ 3, 1, 2 ]     9     
+b               3     
+a               8     
+a               1     
+2               7     
+2               2     
+1.5             10    
+1               0     
+-1.2            11    
+true            4     
+false           5     
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -279,7 +279,7 @@ print(col)
 2    
 3    
 4    
-[1, 2, 3, 4]
+[ 1, 2, 3, 4 ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -299,7 +299,7 @@ print(col)
 4    
 2    
 1    
-[3, 4, 2, 1]
+[ 3, 4, 2, 1 ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

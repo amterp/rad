@@ -79,7 +79,7 @@ func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
 	value, ok := m.Get(idxVal)
 	if !ok {
 		// todo RAD-138 add mechanism to 'try' getting a key without erroring
-		i.errorf(idxNode, "Key not found: %s", idxVal)
+		i.errorf(idxNode, "Key not found: %s", ToPrintable(idxVal))
 	}
 	return value
 }

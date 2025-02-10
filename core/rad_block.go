@@ -23,8 +23,20 @@ type radInvocation struct {
 	// if specific columns listed for sorting, mutually exclusive with generalSort
 	// in-order of sorting priority
 	colWiseSorting []ColumnSort
-	colToColor     map[string][]radColorMod
-	colToMapOp     map[string]Lambda
+	colToMods      map[string]*radFieldMods
+}
+
+type radFieldMods struct {
+	identifierNode *ts.Node
+	colors         []radColorMod
+	lambda         *Lambda
+}
+
+func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
+	return &radFieldMods{
+		identifierNode: identifierNode,
+		colors:         make([]radColorMod, 0),
+	}
 }
 
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
@@ -52,8 +64,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		fields:           make([]*ts.Node, 0),
 		fieldsToNotPrint: strset.New(),
 		colWiseSorting:   make([]ColumnSort, 0),
-		colToColor:       make(map[string][]radColorMod),
-		colToMapOp:       make(map[string]Lambda),
+		colToMods:        make(map[string]*radFieldMods),
 	}
 
 	radStmtNodes := i.getChildren(radBlockNode, F_STMT)
@@ -65,11 +76,13 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 }
 
 func (r *radInvocation) evalRad(node *ts.Node) {
-	defer func() {
-		if re := recover(); re != nil {
-			r.i.errorDetailsf(node, fmt.Sprintf("%s\n%s", re, debug.Stack()), "Bug! Panic'd here")
-		}
-	}()
+	if !IsTest {
+		defer func() {
+			if re := recover(); re != nil {
+				r.i.errorDetailsf(node, fmt.Sprintf("%s\n%s", re, debug.Stack()), "Bug! Panic'd here")
+			}
+		}()
+	}
 	r.unsafeEvalRad(node)
 }
 
@@ -129,10 +142,13 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	case K_RAD_FIELD_MODIFIER_STMT:
 		identifierNodes := r.i.getChildren(node, F_IDENTIFIER)
 		stmtNodes := r.i.getChildren(node, F_MOD_STMT)
-		var fields []string
+		var fields []radField
 		for _, identifierNode := range identifierNodes {
 			identifierStr := r.i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
-			fields = append(fields, identifierStr)
+			fields = append(fields, radField{
+				node: &identifierNode,
+				name: identifierStr,
+			})
 		}
 		for _, stmtNode := range stmtNodes {
 			switch stmtNode.Kind() {
@@ -147,12 +163,8 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 					r.i.errorf(regexExprNode, fmt.Sprintf("Invalid regex pattern: %s", err))
 				}
 				for _, field := range fields {
-					mods, ok := r.colToColor[field]
-					if !ok {
-						mods = make([]radColorMod, 1)
-					}
-					mods = append(mods, radColorMod{color: clr.ToTblColor(), regex: regex})
-					r.colToColor[field] = mods
+					mods := r.loadFieldMods(field)
+					mods.colors = append(mods.colors, radColorMod{color: clr.ToTblColor(), regex: regex})
 				}
 			case K_RAD_FIELD_MOD_MAP:
 				lambdaNode := r.i.getChild(&stmtNode, F_LAMBDA)
@@ -169,7 +181,8 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 					ExprNode: exprNode,
 				}
 				for _, field := range fields {
-					r.colToMapOp[field] = lambda
+					mods := r.loadFieldMods(field)
+					mods.lambda = &lambda
 				}
 			}
 		}
@@ -195,6 +208,15 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	}
 }
 
+func (r *radInvocation) loadFieldMods(field radField) *radFieldMods {
+	mods, ok := r.colToMods[field.name]
+	if !ok {
+		mods = newRadFieldMods(field.node)
+		r.colToMods[field.name] = mods
+	}
+	return mods
+}
+
 type radColorMod struct {
 	color tblwriter.Color
 	regex *regexp.Regexp
@@ -214,6 +236,14 @@ func (r *radInvocation) execute() {
 		name := r.i.sd.Src[fieldIdentifierNode.StartByte():fieldIdentifierNode.EndByte()]
 		return radField{node: fieldIdentifierNode, name: name}
 	})
+
+	// check all field mods are for fields that actually exist
+	fieldNames := lo.Map(radFields, func(f radField, _ int) string { return f.name })
+	for field, mods := range r.colToMods {
+		if !lo.Contains(fieldNames, field) {
+			r.i.errorf(mods.identifierNode, "Cannot modify undefined field %q", field)
+		}
+	}
 
 	srcStr := r.sourceString()
 	if srcStr != nil {
@@ -260,7 +290,7 @@ func (r *radInvocation) execute() {
 			r.i.errorf(field.node, "Values for field %q not found in environment", field.name)
 		}
 		list := fieldVals.RequireList(r.i, field.node)
-		return toTblStr(r.i, r.colToMapOp, field.name, list), true
+		return toTblStr(r.i, r.colToMods, field.name, list), true
 	})
 
 	tbl := NewTblWriter()
@@ -273,7 +303,7 @@ func (r *radInvocation) execute() {
 		tbl.Append(row)
 	}
 
-	tbl.SetColumnColoring(headers, r.colToColor)
+	tbl.SetColumnColoring(r.colToMods)
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
@@ -303,17 +333,18 @@ func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, c
 	sortColumns(i, fields, colWiseSort)
 }
 
-func toTblStr(i *Interpreter, mapOps map[string]Lambda, fieldName string, column *RslList) []string {
-	lambda, ok := mapOps[fieldName]
-	if !ok {
+func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []string {
+	mods, ok := colToMods[fieldName]
+	if !ok || mods.lambda == nil {
 		return ToStringArrayQuoteStr(column.Values, false)
 	}
 	var newVals []string
 	for _, val := range column.Values {
-		identifier := lambda.Args[0]
+		identifier := mods.lambda.Args[0]
 		i.runWithChildEnv(func() {
 			i.env.SetVarIgnoringEnclosing(identifier, val)
-			newVals = append(newVals, ToPrintableQuoteStr(i.evaluate(lambda.ExprNode, 1)[0], false))
+			newVal := i.evaluate(mods.lambda.ExprNode, 1)[0]
+			newVals = append(newVals, ToPrintableQuoteStr(newVal, false))
 		})
 	}
 	return newVals

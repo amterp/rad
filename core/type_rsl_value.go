@@ -260,12 +260,20 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		return RslValue{Val: coerced}
 	case RslMap:
 		return RslValue{Val: &coerced}
+	case map[string]interface{}:
+		rslMap := NewRslMap()
+		for key, val := range coerced {
+			rslMap.Set(newRslValue(i, node, key), newRslValue(i, node, val))
+		}
+		return RslValue{Val: rslMap}
 	case []interface{}:
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
 	case []string:
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
+	case nil:
+		return RslValue{Val: NewRslString("null")} // todo not good, can't differentiate between string null and actual null
 	default:
 		if i != nil && node != nil {
 			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))

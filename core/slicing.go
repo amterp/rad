@@ -21,6 +21,10 @@ func ResolveSliceStartEnd(i *Interpreter, sliceNode *ts.Node, length int64) (int
 		end = CalculateCorrectedIndex(end, length, true)
 	}
 
+	if start > end {
+		start = end
+	}
+
 	return start, end
 }
 

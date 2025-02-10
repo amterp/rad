@@ -9,7 +9,7 @@ print(join(arr, " "))
 print(join(arr, " ", "Alice: "))
 print(join(arr, " ", "Alice: ", "!"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hi there
 Alice: Hi there
 Alice: Hi there!
@@ -26,7 +26,7 @@ print(join(arr, "_"))
 print(join(arr, "_", "Nums: "))
 print(join(arr, "_", "Nums: ", "_4"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `1_2_3
 Nums: 1_2_3
 Nums: 1_2_3_4
@@ -43,7 +43,7 @@ print(join(arr, " yes "))
 print(join(arr, " yes ", "Floats: "))
 print(join(arr, " yes ", "Floats: ", " :D"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `1.1 yes 1.2 yes 1.3
 Floats: 1.1 yes 1.2 yes 1.3
 Floats: 1.1 yes 1.2 yes 1.3 :D
@@ -60,7 +60,7 @@ print(join(arr, "_"))
 print(join(arr, "_", "("))
 print(join(arr, "_", "(", ")"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `alice_2
 (alice_2
 (alice_2)
@@ -74,7 +74,7 @@ func Test_Join_ReturnsRslString(t *testing.T) {
 	rsl := `
 print(type_of(join(["Hi", "!"], "")))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `string
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

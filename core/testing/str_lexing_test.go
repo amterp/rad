@@ -7,7 +7,7 @@ func Test_StrLexing_Newline(t *testing.T) {
 print("Hi\nAlice")
 print("Hi\\nAlice")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hi\nAlice\nHi\\nAlice\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -16,7 +16,7 @@ print("Hi\\nAlice")
 func Test_StrLexing_NewlineBacktick(t *testing.T) {
 	rsl := "print(`Hi\\nAlice`)"
 	rsl += "\nprint(`Hi\\\\nAlice`)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hi\nAlice\nHi\\nAlice\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -26,7 +26,7 @@ func Test_StrLexing_Tab(t *testing.T) {
 	rsl := `
 print("a\tb")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "a\tb\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -34,7 +34,7 @@ print("a\tb")
 
 func Test_StrLexing_TabBacktick(t *testing.T) {
 	rsl := "print(`a\\tb`)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "a\tb\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -45,7 +45,7 @@ func Test_StrLexing_EscapeBracket(t *testing.T) {
 print("{upper('alice')}")
 print("\{upper('alice')}")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n{upper('alice')}\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -53,7 +53,7 @@ print("\{upper('alice')}")
 
 func Test_StrLexing_EscapeBracketBacktick(t *testing.T) {
 	rsl := "print(`{upper('alice')}`)\nprint(`\\{upper('alice')}`)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n{upper('alice')}\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -66,7 +66,7 @@ print("single'quote")
 print('double"quote')
 print("double\"quote")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "single'quote\nsingle'quote\ndouble\"quote\ndouble\"quote\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -77,7 +77,7 @@ func Test_StrLexing_Empty(t *testing.T) {
 print("")
 print('')
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\n\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -85,7 +85,7 @@ print('')
 
 func Test_StrLexing_EmptyBacktick(t *testing.T) {
 	rsl := "print(``)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -95,7 +95,7 @@ func Test_StrLexing_SeveralBackslashes(t *testing.T) {
 	rsl := `
 print("\\\\")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\\\\\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -105,7 +105,7 @@ func Test_StrLexing_Mixed(t *testing.T) {
 	rsl := `
 print("\"\n\"")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\"\n\"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -117,7 +117,7 @@ x = 1
 y = 2
 print("{x}{y}")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "12\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -125,7 +125,7 @@ print("{x}{y}")
 
 func Test_StrLexing_DoubleInterpBacktick(t *testing.T) {
 	rsl := "x = 1\ny = 2\nprint(`{x}{y}`)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "12\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -137,7 +137,7 @@ x = 1
 print("\\{x}")
 print("\\\{x}")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\\1\n\\{x}\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -148,7 +148,7 @@ func Test_StrLexing_Mixed2(t *testing.T) {
 x = 1
 print("Hello\n{x}\tWorld!")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hello\n1\tWorld!\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -156,7 +156,7 @@ print("Hello\n{x}\tWorld!")
 
 func Test_StrLexing_Mixed2Backticks(t *testing.T) {
 	rsl := "x = 1\nprint(`Hello\\n{x}\\tWorld!`)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hello\n1\tWorld!\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -166,26 +166,27 @@ func Test_StrLexing_Misc(t *testing.T) {
 print("\\")
 print("\n\n\n")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "\\\n\n\n\n\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
-func Test_StrLexing_EscapingIrrelevantChars(t *testing.T) {
+// not necessarily a behavior I'm married to
+func Test_StrLexing_EscapingIrrelevantCharsAbsorbs(t *testing.T) {
 	rsl := `
 print("\x")
 print("\k")
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "\\x\n\\k\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "x\nk\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
 func Test_StrLexing_EscapingBacktickInBackticks(t *testing.T) {
 	rsl := "print(`\\``)"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "`\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -197,7 +198,7 @@ name = "alice"
 print("hi\n{name}")
 print(r"hi\n{name}")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `hi
 alice
 hi\n{name}
@@ -213,7 +214,7 @@ name = 'alice'
 print('hi\n{name}')
 print(r'hi\n{name}')
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `hi
 alice
 hi\n{name}
@@ -227,7 +228,7 @@ func Test_StrLexing_RawStrings_Backticks(t *testing.T) {
 	rsl := "name = `alice`\n"
 	rsl += "print(`hi\\n{name}`)\n"
 	rsl += "print(r`hi\\n{name}`)\n"
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `hi
 alice
 hi\n{name}
@@ -241,7 +242,7 @@ func Test_StrLexing_RawStrings_DoubleSlashIsTwoSlashes(t *testing.T) {
 	rsl := `
 print(r"\\")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, `\\`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -251,7 +252,7 @@ func Test_StrLexing_RawStrings_SingleBackslash(t *testing.T) {
 	rsl := `
 print(r"\")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, `\`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -261,8 +262,13 @@ func Test_StrLexing_RawStrings_ErrorsIfTryingToEscapeDelimiter(t *testing.T) {
 	rsl := `
 print(r"\"")
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "Error at L3/-2 on '\")\\n': Unterminated string\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:7
+
+  print(r"\"")
+        ^^^^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -274,7 +280,7 @@ How are you?
 """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hi Alice
 How are you?
 `
@@ -293,7 +299,7 @@ How are you?
 """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `
 Hi Alice
 How are you?
@@ -313,7 +319,7 @@ zero
 """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `zero
  one
    three
@@ -332,7 +338,7 @@ text = """
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := ` one
   two
     four
@@ -351,7 +357,7 @@ text = """
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := ` Hi
 
 there	alice
@@ -370,7 +376,7 @@ text = r"""
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := ` Hi\n
 there\t{name}
 `
@@ -391,7 +397,7 @@ text = """
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := ` Hialice how are you?
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -409,7 +415,7 @@ Text2
 """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Text1
 """
 Text2
@@ -431,7 +437,7 @@ Text2
 """"
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Text1
 """
 Text2
@@ -449,8 +455,13 @@ text = """abc
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "Error at L2/8 on '\"\"\"': String block opening quotes cannot be followed by any non-comment tokens.\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:8
+
+  text = """abc
+         ^^^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -462,7 +473,7 @@ text = """ // test!
  """
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hi Alice
  How are you?
 `
@@ -479,7 +490,7 @@ text = """ // test!
  """ + " :)"
 print(text)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hi Alice
  How are you? :)
 `
@@ -496,8 +507,13 @@ text = """
  ""
 print(text)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "Error at L3/-3 on '\"\"\"\\n': Multiline string must end with three closing quotes on their own line, without any preceding non-whitespace characters.\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:1
+
+  text = """
+  ^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 

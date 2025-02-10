@@ -9,7 +9,7 @@ func TestPickNoFilterOneOption(t *testing.T) {
 opts = ["Hamburger"]
 print(pick(opts))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -20,7 +20,7 @@ func TestPickFilterWithOneOption(t *testing.T) {
 opts = ["Hamburger"]
 print(pick(opts, "burg"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -31,7 +31,7 @@ func TestPickFilterToOneOption(t *testing.T) {
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 print(pick(opts, "Hamb"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -42,8 +42,13 @@ func TestPickErrorsIfEmptyOptions(t *testing.T) {
 opts = []
 pick(opts)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 0 options to 0 with filters: []\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L3:1
+
+  pick(opts)
+  ^^^^^^^^^^ Filtered 0 options to 0 with filters: []
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -52,8 +57,13 @@ func TestPickErrorsIfFilteredToZeroOptions(t *testing.T) {
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 pick(opts, "asdasdasd")
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/4 on 'pick': Filtered 5 options to 0 with filters: [asdasdasd]\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L3:1
+
+  pick(opts, "asdasdasd")
+  ^^^^^^^^^^^^^^^^^^^^^^^ Filtered 5 options to 0 with filters: [asdasdasd]
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -63,7 +73,7 @@ filter = ["Ham", "ger"]
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 print(pick(opts, filter))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()

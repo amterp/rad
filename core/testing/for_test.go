@@ -8,7 +8,7 @@ a = ["a", "b", "c"]
 for item in a:
 	print(item)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "a\nb\nc\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -20,7 +20,7 @@ a = ["a", "b", "c"]
 for idx, item in a:
 	print(idx, item)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "0 a\n1 b\n2 c\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -34,7 +34,7 @@ for idx, item in a:
 	num += idx
 print(num)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -46,7 +46,7 @@ a = { "a": 1, "b": 2, "c": 3 }
 for key in a:
 	print(key)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "a\nb\nc\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -59,7 +59,7 @@ for key, value in a:
 	print(key)
 	print(value)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "a\n1\nb\n2\nc\n3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -71,7 +71,7 @@ a = "hello 👋"
 for char in a:
 	print(char)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `h
 e
 l
@@ -92,7 +92,7 @@ a = 'h' + blue("el") + 'lo'
 for char in a:
 	print(char)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := "h\n"
 	expected += blue("e") + "\n"
 	expected += blue("l") + "\n"

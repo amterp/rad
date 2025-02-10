@@ -61,14 +61,14 @@ func (w *TblWriter) Append(row []string) {
 	}
 }
 
-func (w *TblWriter) SetColumnColoring(headers []string, colToColors map[string][]radColorMod) {
-	for colName, _ := range colToColors {
-		if !lo.Contains(headers, colName) {
-			RP.RadErrorExit(fmt.Sprintf("Column to color '%s' is not a valid header\n", colName))
+func (w *TblWriter) SetColumnColoring(colToMods map[string]*radFieldMods) {
+	var colorMods = make(map[string][]radColorMod)
+	for colName, mods := range colToMods {
+		if len(mods.colors) > 0 {
+			colorMods[colName] = mods.colors
 		}
 	}
-
-	w.colToColors = colToColors
+	w.colToColors = colorMods
 }
 
 func (w *TblWriter) Render() {

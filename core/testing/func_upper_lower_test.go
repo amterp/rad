@@ -7,7 +7,7 @@ func Test_UpperLower(t *testing.T) {
 a = "aLiCe"
 print(upper(a))
 print(lower(a))`
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `ALICE
 alice
 `

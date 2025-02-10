@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"rad/core"
+	"strings"
 	"testing"
 	"time"
 
@@ -23,6 +24,8 @@ const globalFlagHelp = `Global flags:
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 `
 
+const ignorePanicMsg = "TESTING - IGNORE ME"
+
 var (
 	// stateful, reset for each test
 	stdInBuffer  = new(bytes.Buffer)
@@ -36,13 +39,15 @@ var (
 
 type ErrorOrExit struct {
 	exitCode *int
+	//stderrSnapshot string
 	panicMsg *string
 }
 
 func newRunnerInputInput() core.RunnerInput {
 	testExitFunc := func(code int) {
 		errorOrExit.exitCode = &code
-		panic(fmt.Sprintf("Exit code: %d", code))
+		//errorOrExit.stderrSnapshot = stdErrBuffer.String()
+		panic(ignorePanicMsg)
 	}
 	sleepFunc := func(duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
@@ -88,6 +93,7 @@ func setupAndRunArgs(t *testing.T, args ...string) {
 
 func setupAndRun(t *testing.T, tp *TestParams) {
 	t.Helper()
+	core.IsTest = true
 
 	args := tp.args
 	if tp.rsl != "" {
@@ -98,7 +104,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	defer func() {
 		if r := recover(); r != nil {
 			msg := fmt.Sprintf("%v", r)
-			errorOrExit.panicMsg = &msg
+			if !strings.Contains(msg, ignorePanicMsg) {
+				//errorOrExit.stderrSnapshot += msg
+				errorOrExit.panicMsg = &msg
+			}
 		}
 	}()
 	err := runner.Run()
@@ -150,6 +159,9 @@ func assertAllElseEmpty(t *testing.T) {
 
 func assertError(t *testing.T, expectedCode int, expectedMsg string) {
 	t.Helper()
+	//stdErrBuffer.Reset()
+	//errBuffer := bytes.NewBufferString(errorOrExit.stderrSnapshot)
+	//errorOrExit.stderrSnapshot = ""
 	assertOnlyOutput(t, stdErrBuffer, expectedMsg)
 	assertExitCode(t, expectedCode)
 }
@@ -162,12 +174,14 @@ func assertExitCode(t *testing.T, code int) {
 func assertNoErrors(t *testing.T) {
 	t.Helper()
 	code := errorOrExit.exitCode
-	if code == nil || *code == 0 {
-		return
+
+	if code != nil && *code != 0 {
+		t.Errorf("Expected no exit code, got %d.\nStderr: %s", *code, stdErrBuffer.String())
 	}
-	t.Errorf("Expected no exit code, got %d.\nStderr: %s", *code, stdErrBuffer.String())
-	msg := errorOrExit.panicMsg
-	t.Errorf("Expected no panic, got %s", *msg)
+
+	if errorOrExit.panicMsg != nil {
+		t.Errorf("Expected no panic, got %s", *errorOrExit.panicMsg)
+	}
 }
 
 func assertDidNotSleep(t *testing.T) {

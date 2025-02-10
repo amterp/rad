@@ -157,11 +157,17 @@ url = "https://google.com"
 name = json[].name
 color = "licorice"
 rad url:
-	fields name
-	name:
-		color color "o[a-z]"
+    fields name
+    name:
+        color color "o[a-z]"
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L8/8 on 'color': Invalid color value \"licorice\". Allowed: [black blue cyan green magenta orange pink plain red white yellow]\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L8:15
+
+          color color "o[a-z]"
+                ^^^^^
+                Invalid color value "licorice". Allowed: [black blue cyan green magenta orange pink plain red white yellow]
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }

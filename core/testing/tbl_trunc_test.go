@@ -49,12 +49,17 @@ func TestTruncateErrorsIfInvalidField(t *testing.T) {
 url = "https://google.com"
 name = json[].name
 rad url:
-	fields name
-	does_not_exist:
-		map x -> truncate(x, 5)
+    fields name
+    does_not_exist:
+        map x -> truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
-	assertError(t, 1, "RslError at L6/16 on 'does_not_exist': Field \"does_not_exist\" not found in fields\n")
+	expected := `Error at L6:5
+
+      does_not_exist:
+      ^^^^^^^^^^^^^^ Cannot modify undefined field "does_not_exist"
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
