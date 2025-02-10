@@ -5,7 +5,6 @@ import (
 )
 
 // todo
-//   - implement steps?
 //   - somehow improve implementation to be a generator, rather than eagerly created list? chugs at e.g. 100_000
 
 var FuncRange = Func{

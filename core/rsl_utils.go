@@ -131,10 +131,8 @@ func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{
 }
 
 // converts an RSL data structure to a JSON-serializable structure
-func RslToJsonType(arg interface{}) interface{} {
-	switch coerced := arg.(type) {
-	case RslValue:
-		return RslToJsonType(coerced.Val)
+func RslToJsonType(arg RslValue) interface{} {
+	switch coerced := arg.Val.(type) {
 	case RslString:
 		return coerced.Plain()
 	case int64, float64, bool:

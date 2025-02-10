@@ -54,7 +54,7 @@ func (v RslValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
 	case int64:
 		return coerced
 	default:
-		i.errorf(node, "Expected int, got %s", TypeAsString(v))
+		i.errorf(node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -63,7 +63,7 @@ func (v RslValue) RequireStr(i *Interpreter, node *ts.Node) RslString {
 	if str, ok := v.TryGetStr(); ok {
 		return str
 	}
-	i.errorf(node, "Expected string, got %s", TypeAsString(v))
+	i.errorf(node, "Expected string, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -78,7 +78,7 @@ func (v RslValue) RequireList(i *Interpreter, node *ts.Node) *RslList {
 	if list, ok := v.TryGetList(); ok {
 		return list
 	}
-	i.errorf(node, "Expected list, got %s", TypeAsString(v))
+	i.errorf(node, "Expected list, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -93,7 +93,7 @@ func (v RslValue) RequireBool(i *Interpreter, node *ts.Node) bool {
 	if b, ok := v.TryGetBool(); ok {
 		return b
 	}
-	i.errorf(node, "Expected bool, got %s", TypeAsString(v))
+	i.errorf(node, "Expected bool, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -108,7 +108,7 @@ func (v RslValue) RequireMap(i *Interpreter, node *ts.Node) *RslMap {
 	if b, ok := v.TryGetMap(); ok {
 		return b
 	}
-	i.errorf(node, "Expected map, got %s", TypeAsString(v))
+	i.errorf(node, "Expected map, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -134,7 +134,7 @@ func (v RslValue) RequireFloatAllowingInt(i *Interpreter, node *ts.Node) float64
 	if f, ok := v.TryGetFloatAllowingInt(); ok {
 		return f
 	}
-	i.errorf(node, "Expected float, got %s", TypeAsString(v))
+	i.errorf(node, "Expected float, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -263,6 +263,9 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	case []interface{}:
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
+	case []string:
+		list := NewRslListFromGeneric(i, node, coerced)
+		return RslValue{Val: list}
 	default:
 		if i != nil && node != nil {
 			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
@@ -294,6 +297,14 @@ func newRslValueInt(val int) RslValue {
 }
 
 func newRslValueInt64(val int64) RslValue {
+	return newRslValue(nil, nil, val)
+}
+
+func newRslValueFloat64(val float64) RslValue {
+	return newRslValue(nil, nil, val)
+}
+
+func newRslValueBool(val bool) RslValue {
 	return newRslValue(nil, nil, val)
 }
 

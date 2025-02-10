@@ -162,6 +162,15 @@ func (l *RslList) AsStringList(quoteStrings bool) []string {
 	return out
 }
 
+// requires contents to actually be strings
+func (l *RslList) AsActualStringList(i *Interpreter, node *ts.Node) []string {
+	out := make([]string, l.Len())
+	for idx, elem := range l.Values {
+		out[idx] = elem.RequireStr(i, node).Plain() // todo keep attributes?
+	}
+	return out
+}
+
 func (l *RslList) Join(sep string, prefix string, suffix string) RslString {
 	var arr []string
 	for _, v := range l.Values {
