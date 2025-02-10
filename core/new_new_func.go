@@ -460,6 +460,26 @@ func init() {
 				}
 			},
 		},
+		{
+			Name:             FUNC_ABS,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+
+				switch coerced := arg.value.Val.(type) {
+				case int64:
+					return newRslValues(f.i, f.callNode, AbsInt(coerced))
+				case float64:
+					return newRslValues(f.i, f.callNode, AbsFloat(coerced))
+				default:
+					bugIncorrectTypes(FUNC_ABS)
+					panic(UNREACHABLE)
+				}
+			},
+		},
 	}
 
 	functions = append(functions, createColorFunctions()...)

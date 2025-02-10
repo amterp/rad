@@ -22,31 +22,7 @@ func RunRslNonVoidFunction(
 }
 
 func runRslNonVoidFunction(i *MainInterpreter, function Token, numExpectedReturnValues int, args []interface{}, namedArgs []NamedArg) interface{} {
-	//funcName := function.GetLexeme()
-	//namedArgsMap := toMap(i, namedArgs)
-	//
-	//switch funcName {
-	//case ABS:
-	//	assertExpectedNumReturnValuesOld(i, function, funcName, numExpectedReturnValues, ONE_ARG)
-	//	validateExpectedNamedArgsOld(i, function, NO_NAMED_ARGS, namedArgsMap)
-	//	return runAbs(i, function, args)
 	panic(UNREACHABLE)
-}
-
-func runAbs(i *MainInterpreter, function Token, args []interface{}) interface{} {
-	if len(args) != 1 {
-		i.error(function, ABS+fmt.Sprintf("() takes exactly one argument, got %d", len(args)))
-	}
-
-	switch coerced := args[0].(type) {
-	case int64:
-		return AbsInt(coerced)
-	case float64:
-		return AbsFloat(coerced)
-	default:
-		i.error(function, ABS+fmt.Sprintf("() takes an integer or float, got %s", TypeAsString(args[0])))
-		panic(UNREACHABLE)
-	}
 }
 
 func evalArgs(i *MainInterpreter, args []Expr) []interface{} {
