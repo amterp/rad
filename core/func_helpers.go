@@ -114,6 +114,12 @@ func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Fun
 			function.Name, Pluralize(function.RequiredArgCount, "argument"), len(args))
 	}
 
+	maxAcceptableArgs := len(function.ArgTypes)
+	if len(args) > maxAcceptableArgs {
+		i.errorf(callNode, "%s() requires at most %s, but got %d",
+			function.Name, Pluralize(maxAcceptableArgs, "argument"), len(args))
+	}
+
 	for idx, acceptableTypes := range function.ArgTypes {
 		if len(acceptableTypes) == 0 {
 			// there are no type constraints

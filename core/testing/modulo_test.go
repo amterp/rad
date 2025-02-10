@@ -10,7 +10,7 @@ print(4 % 3)
 print(4 % 4)
 print(4 % 5)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `0
 0
 1
@@ -34,7 +34,7 @@ print(3 % -2)
 print(3 % -3)
 print(3 % -4)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `-1
 -2
 0
@@ -57,7 +57,7 @@ print(5.0 % 2.0)
 print(10.0 % 3.0)
 print(10.0 % 3.3)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `0.25
 0
 1
@@ -89,7 +89,7 @@ print(-5.0 % -2.0)
 print(-10.0 % -3.0)
 print(-10.0 % -3.3)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `-0.25
 -0
 -1
@@ -129,7 +129,7 @@ d = -10
 d %= -6
 print(d)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `4
 -4
 4
@@ -158,7 +158,7 @@ d = -7.2
 d %= -3.5
 print(d)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `0.20000000000000018
 -0.20000000000000018
 0.20000000000000018
@@ -173,8 +173,13 @@ func Test_Modulo_PositiveIntModulo0Errors(t *testing.T) {
 	rsl := `
 print(5 % 0)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/9 on '%': Cannot modulo by 0\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:11
+
+  print(5 % 0)
+            ^ Value is 0, cannot modulo by 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -182,8 +187,13 @@ func Test_Modulo_NegativeIntModulo0Errors(t *testing.T) {
 	rsl := `
 print(-5 % 0)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/10 on '%': Cannot modulo by 0\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:12
+
+  print(-5 % 0)
+             ^ Value is 0, cannot modulo by 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -191,8 +201,13 @@ func Test_Modulo_PositiveFloatModulo0Errors(t *testing.T) {
 	rsl := `
 print(5.5 % 0)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/11 on '%': Cannot modulo by 0\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:13
+
+  print(5.5 % 0)
+              ^ Value is 0, cannot modulo by 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -200,8 +215,13 @@ func Test_Modulo_NegativeFloatModulo0Errors(t *testing.T) {
 	rsl := `
 print(-5.5 % 0)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/12 on '%': Cannot modulo by 0\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:14
+
+  print(-5.5 % 0)
+               ^ Value is 0, cannot modulo by 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -210,7 +230,12 @@ func Test_Modulo_CompoundModulo0Errors(t *testing.T) {
 a = 5
 a %= 0
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/4 on '%=': Cannot modulo by 0\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L3:6
+
+  a %= 0
+       ^ Value is 0, cannot modulo by 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }

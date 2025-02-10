@@ -64,7 +64,7 @@ args:
 	optionalI int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -151,7 +151,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `ALICE
 2
 2.2
@@ -172,7 +172,7 @@ args:
 	intArg int = -10
 print(intArg + 1)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `-9
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -186,7 +186,7 @@ args:
 	floatArg float = -10.2
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `-9.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -260,7 +260,7 @@ args:
 print(intArg + 1)
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `-9
 -9.2
 `
@@ -275,7 +275,7 @@ args:
 	floatArg float = 2
 print(floatArg + 1.2)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `3.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -288,29 +288,29 @@ func TestArgs_CannotHaveFloatAsDefaultForIntArg(t *testing.T) {
 args:
 	intArg int = 1.2
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L3/18 on '1.2': Expected int literal, got float\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L3:16
+
+  	intArg int = 1.2
+                 ^^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
 func TestArgs_Help(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "-h", "--NO-COLOR")
+	rsl := `
+args:
+	name string # The name.
+`
+	setupAndRunCode(t, rsl, "-h", "--NO-COLOR")
 	expected := `Usage:
-  example_arg.rsl <name>
+  test <name>
 
 Script args:
       --name string   The name.
 
-Global flags:
-  -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --VERSION                Print rad version information.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
-`
+` + globalFlagHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	resetTestState()
 }
@@ -336,7 +336,7 @@ Script args:
       --intArg int                     An int. (default 1)
       --floatArg float                  (default 1.1)
       --boolArg                         (default true)
-      --stringArrayArg string,string    (default [bob, charlie])
+      --stringArrayArg string,string    (default ["bob", "charlie"])
       --intArrayArg int,int             (default [2, 3])
       --floatArrayArg float,float       (default [2.1, 3.1])
       --boolArrayArg bool,bool          (default [true, false])

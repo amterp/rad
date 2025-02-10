@@ -19,6 +19,7 @@ var (
 	ScriptPath string
 	ScriptDir  string
 	ScriptName string
+	IsTest     bool
 )
 
 type RunnerInput struct {

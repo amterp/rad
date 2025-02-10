@@ -43,7 +43,15 @@ args:
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
-	assertError(t, 1, "RslError at L4/22 on '2': Expected string literal, got int\n")
+	expected := `Invalid 'name' value: david (valid values: alice)
+Usage:
+  test <name>
+
+Script args:
+      --name string    Valid values: [alice].
+
+` + globalFlagHelp
+	assertError(t, 1, expected)
 	resetTestState()
 }
 

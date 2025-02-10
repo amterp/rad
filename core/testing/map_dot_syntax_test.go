@@ -8,7 +8,7 @@ a = {"alice": 1, "bob": { "charlie": 2 }}
 print(a.alice)
 print(a.alice + a.bob.charlie)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "1\n3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -19,7 +19,7 @@ func TestMap_Dot_CanMixAccess(t *testing.T) {
 a = {"alice": { "bob": { "charlie": 1 } } }
 print(a.alice["bob"].charlie)
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -31,8 +31,8 @@ a = { "alice": 1 }
 a.alice = 2
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 2 }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 2 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -43,8 +43,8 @@ a = {"alice": { "bob": { "charlie": 1 } } }
 a.alice["bob"].charlie = 3
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: { bob: { charlie: 3 } } }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": { \"bob\": { \"charlie\": 3 } } }\n")
 	assertNoErrors(t)
 	resetTestState()
 }

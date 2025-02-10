@@ -10,7 +10,7 @@ if len(a) > 0:
 else:
 	print("empty")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "not empty\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -24,7 +24,7 @@ if len(a) > 99:
 else:
 	print("empty")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "empty\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -36,7 +36,7 @@ name = "alice"
 if true:
 	print(upper(name))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -67,7 +67,7 @@ if t or f:
 else:
 	print("FALSE")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "TRUE\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -82,7 +82,7 @@ if t and f:
 else:
 	print("FALSE")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "FALSE\n")
 	assertNoErrors(t)
 	resetTestState()

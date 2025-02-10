@@ -14,8 +14,8 @@ print(Names)
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--NO-COLOR")
-	expected := `[20, 50, 100]
-[Alice, Bob, Charlie]
+	expected := `[ 20, 50, 100 ]
+[ "Alice", "Bob", "Charlie" ]
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")

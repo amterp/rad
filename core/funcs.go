@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -154,6 +155,12 @@ func init() {
 
 				arg := f.args[0]
 				switch coerced := arg.value.Val.(type) {
+				case RslString:
+					// todo maintain attributes
+					str := f.i.evaluate(arg.node, 1)[0].RequireStr(f.i, f.callNode).Plain()
+					runes := []rune(str)
+					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
+					return newRslValues(f.i, f.callNode, string(runes))
 				case *RslList:
 					sortedValues := sortList(f.i, arg.node, coerced, lo.Ternary(reverse, Desc, Asc))
 					list := NewRslList()
@@ -519,7 +526,7 @@ func createColorFunctions() []Func {
 				case RslString:
 					return newRslValues(f.i, arg.node, coerced.Color(clr))
 				default:
-					s := NewRslString(ToPrintable(arg))
+					s := NewRslString(ToPrintable(arg.value))
 					s.SetSegmentsColor(clr)
 					return newRslValues(f.i, f.callNode, s)
 				}

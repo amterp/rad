@@ -19,7 +19,9 @@ pprint(http_get(url))
       "name":"Bob"
     }
   ],
-  "status_code":200
+  "duration_seconds":0,
+  "status_code":200,
+  "success":true
 }
 `
 	assertOutput(t, stdOutBuffer, expected)

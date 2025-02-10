@@ -47,7 +47,7 @@ func NewCtx(src string, node *ts.Node, oneLiner string, details string) ErrorCtx
 func NewCtxFromRtsNode(node rts.Node, oneLiner string) ErrorCtx {
 	return ErrorCtx{
 		CodeCtx: CodeCtx{
-			Src:      node.Src(),
+			Src:      node.CompleteSrc(),
 			RowStart: node.StartPos().Row + 1,
 			RowEnd:   node.EndPos().Row + 1,
 			ColStart: node.StartPos().Col + 1,
@@ -195,6 +195,7 @@ func (p *stdPrinter) CtxErrorExit(ctx ErrorCtx) {
 // todo
 //   - print two preceding lines for additional context? if NO, then let's trim the line we're printing
 //   - include line numbers in msg
+//   - properly point when using tab indentation (currently doesn't)
 func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 	if !p.isQuiet || p.isScriptDebug {
 		fmt.Fprint(p.stdErr, color.YellowString(fmt.Sprintf("Error at L%d:%d\n\n",

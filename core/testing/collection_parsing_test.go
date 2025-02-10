@@ -4,11 +4,11 @@ import "testing"
 
 func Test_Map_Parse_Empty(t *testing.T) {
 	rsl := `
-a = {}
+a = { }
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{}\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -19,8 +19,8 @@ a = {
 }
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{}\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -30,8 +30,8 @@ func Test_Map_Parse_SingleSpaced(t *testing.T) {
 a = { "alice" : 1 }
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 1 }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -43,8 +43,8 @@ a = {
 }
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 1 }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -54,8 +54,8 @@ func Test_Map_Parse_SingleTrailingComma(t *testing.T) {
 a = {"alice": 1,}
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ alice: 1 }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -69,8 +69,8 @@ a = {
 }
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "{ a: 1, b: 2 }\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"a\": 1, \"b\": 2 }\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -80,8 +80,13 @@ func Test_Map_Parse_ErrorsOnCommaNoElements(t *testing.T) {
 a = {,}
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/6 on ',': Expected expression\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:6
+
+  a = {,}
+       ^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -97,8 +102,8 @@ a = [
 ]
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -138,8 +143,8 @@ a = [
 ]
 print(a)
 `
-	setupAndRunCode(t, rsl)
-	assertOnlyOutput(t, stdOutBuffer, "[a, b, c, [], [1, 2, 3], [nested, [deeply, nested]], [mixed, 1, 2.5, [another, level], types], {}, { key: value }, { another: map, with: [nested, list] }, 1, 2, 3]\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "[ \"a\", \"b\", \"c\", [ ], [ 1, 2, 3 ], [ \"nested\", [ \"deeply\", \"nested\" ] ], [ \"mixed\", 1, 2.5, [ \"another\", \"level\" ], \"types\" ], { }, { \"key\": \"value\" }, { \"another\": \"map\", \"with\": [ \"nested\", \"list\" ] }, 1, 2, 3 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }

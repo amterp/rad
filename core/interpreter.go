@@ -62,11 +62,13 @@ func (i *Interpreter) Run() {
 }
 
 func (i *Interpreter) recursivelyRun(node *ts.Node) {
-	defer func() {
-		if r := recover(); r != nil {
-			i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
-		}
-	}()
+	if !IsTest {
+		defer func() {
+			if r := recover(); r != nil {
+				i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
+			}
+		}()
+	}
 	i.unsafeRecurse(node)
 }
 
@@ -141,7 +143,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 				break
 			}
 		}
-	case K_DEFER_BLOCK, K_ERRDEFER_BLOCK:
+	case K_DEFER_BLOCK:
 		keywordNode := i.getChild(node, F_KEYWORD)
 		stmtNodes := i.getChildren(node, F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
@@ -165,11 +167,13 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 }
 
 func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue {
-	defer func() {
-		if r := recover(); r != nil {
-			i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Panic'd here")
-		}
-	}()
+	if !IsTest {
+		defer func() {
+			if r := recover(); r != nil {
+				i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Panic'd here")
+			}
+		}()
+	}
 	return i.unsafeEval(node, numExpectedOutputs)
 }
 
@@ -261,6 +265,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return newRslValues(i, node, "\n")
 	case K_ESC_TAB:
 		return newRslValues(i, node, "\t")
+	case K_ESC_OPEN_BRACKET:
+		return newRslValues(i, node, "{")
 	case K_INTERPOLATION:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		exprResult := evaluateInterpolation(i, node)
@@ -382,7 +388,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 			return fmt.Sprintf(goFmt.String(), exprResult.Val)
 		default:
 			goFmt.WriteString("s")
-			return fmt.Sprintf(goFmt.String(), ToPrintable(exprResult))
+			return fmt.Sprintf(goFmt.String(), ToPrintableQuoteStr(exprResult, false))
 		}
 	}()
 
@@ -548,66 +554,4 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = &env
 	runnable()
 	i.env = originalEnv
-}
-
-type DeferBlock struct {
-	DeferNode  *ts.Node
-	StmtNodes  []ts.Node
-	IsErrDefer bool
-}
-
-func NewDeferBlock(i *Interpreter, deferKeywordNode *ts.Node, stmtNodes []ts.Node) *DeferBlock {
-	deferKeywordStr := i.sd.Src[deferKeywordNode.StartByte():deferKeywordNode.EndByte()]
-	return &DeferBlock{
-		DeferNode:  deferKeywordNode,
-		StmtNodes:  stmtNodes,
-		IsErrDefer: deferKeywordStr == "errdefer",
-	}
-}
-
-func (i *Interpreter) RegisterWithExit() {
-	existing := RExit
-	exiting := false
-	codeToExitWith := 0
-	RExit = func(code int) {
-		if exiting {
-			// we're already exiting. if we're here again, it's probably because one of the deferred
-			// statements is calling exit again (perhaps because it failed). we should keep running
-			// all the deferred statements, however, and *then* exit.
-			// therefore, we panic here in order to send the stack back up to where the deferred statement is being
-			// invoked in the interpreter, which should be wrapped in a recover() block to catch, maybe log, and move on.
-			if codeToExitWith == 0 {
-				codeToExitWith = code
-			}
-			panic(code)
-		}
-		exiting = true
-		codeToExitWith = code
-		// todo gets executed *after* any error is printed (if error), should delay error print until after (i think?)
-		i.executeDeferBlocks(code)
-		existing(codeToExitWith)
-	}
-}
-
-func (i *Interpreter) executeDeferBlocks(errCode int) {
-	// execute backwards (LIFO)
-	for j := len(i.deferBlocks) - 1; j >= 0; j-- {
-		deferBlock := i.deferBlocks[j]
-
-		if deferBlock.IsErrDefer && errCode == 0 {
-			continue
-		}
-
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					// we only debug log. we expect the error that occurred to already have been logged.
-					// we might also be here only because a deferred statement invoked a clean exit, for example, so
-					// this is arguably also sometimes just standard flow.
-					RP.RadDebugf("Recovered from panic in deferred statement: %v", r)
-				}
-			}()
-			i.runBlock(deferBlock.StmtNodes)
-		}()
-	}
 }

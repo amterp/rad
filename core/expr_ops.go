@@ -237,9 +237,9 @@ func (i *Interpreter) executeOp(
 		case *RslList:
 			switch op {
 			case OP_IN:
-				return coercedRight.Contains(coercedLeft)
+				return coercedRight.Contains(left())
 			case OP_NOT_IN:
-				return !coercedRight.Contains(coercedLeft)
+				return !coercedRight.Contains(left())
 			default:
 				i.errorf(opNode, "Invalid binary operator for int, list")
 			}
@@ -317,9 +317,9 @@ func (i *Interpreter) executeOp(
 		case *RslList:
 			switch op {
 			case OP_IN:
-				return coercedRight.Contains(coercedLeft)
+				return coercedRight.Contains(left())
 			case OP_NOT_IN:
-				return !coercedRight.Contains(coercedLeft)
+				return !coercedRight.Contains(left())
 			default:
 				i.errorf(opNode, "Invalid binary operator for float, list")
 			}
@@ -367,9 +367,9 @@ func (i *Interpreter) executeOp(
 		case *RslList:
 			switch op {
 			case OP_IN:
-				return coercedRight.Contains(coercedLeft)
+				return coercedRight.Contains(left())
 			case OP_NOT_IN:
-				return !coercedRight.Contains(coercedLeft)
+				return !coercedRight.Contains(left())
 			default:
 				i.errorf(opNode, "Invalid binary operator for string, list")
 			}
@@ -399,9 +399,9 @@ func (i *Interpreter) executeOp(
 		case *RslList:
 			switch op {
 			case OP_IN:
-				return coercedRight.Contains(coercedLeft)
+				return coercedRight.Contains(left())
 			case OP_NOT_IN:
-				return !coercedRight.Contains(coercedLeft)
+				return !coercedRight.Contains(left())
 			default:
 				i.errorf(opNode, "Invalid binary operator for bool, list")
 			}
@@ -423,9 +423,9 @@ func (i *Interpreter) executeOp(
 			case OP_PLUS:
 				return coercedLeft.JoinWith(coercedRight)
 			case OP_IN:
-				return coercedLeft.Contains(coercedRight)
+				return coercedLeft.Contains(right())
 			case OP_NOT_IN:
-				return !coercedLeft.Contains(coercedRight)
+				return !coercedLeft.Contains(right())
 			default:
 				i.errorf(opNode, "Invalid binary operator for list, list")
 			}

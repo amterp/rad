@@ -80,9 +80,11 @@ var FuncPickKv = Func{
 		}
 
 		keys := keyArgs.value.RequireList(f.i, keyArgs.node).AsStringList(false)
-		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		values := valueArgs.value.RequireList(f.i, valueArgs.node).Values
+
+		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		valueGroups := lo.Map(values, func(value RslValue, _ int) []RslValue { return []RslValue{value} })
+
 		value := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
 		return newRslValues(f.i, f.callNode, value)
 	},
@@ -141,6 +143,11 @@ func pickKv[T comparable](
 	filters []string,
 	namedArgs map[string]namedArg,
 ) []T {
+	if len(keyGroups) != len(valueGroups) {
+		i.errorf(callNode, "Number of keys and values must match, but got %s and %s",
+			Pluralize(len(keyGroups), "key"), Pluralize(len(valueGroups), "value"))
+	}
+
 	prompt := "Pick an option"
 	if promptArg, ok := namedArgs[namedArgPrompt]; ok {
 		prompt = promptArg.value.RequireStr(i, promptArg.valueNode).Plain()
@@ -162,10 +169,15 @@ func pickKv[T comparable](
 			if len(filters) == 0 {
 				matchedKeyValues[entryKey] = values
 			} else {
+				failedAFilter := false
 				for _, filter := range filters {
-					if fuzzy.MatchFold(filter, key) {
-						matchedKeyValues[entryKey] = values
+					if !fuzzy.MatchFold(filter, key) {
+						failedAFilter = true
+						break
 					}
+				}
+				if !failedAFilter {
+					matchedKeyValues[entryKey] = values
 				}
 			}
 		}

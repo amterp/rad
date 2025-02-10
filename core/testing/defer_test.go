@@ -70,7 +70,12 @@ print(asd)
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "hi\nbye\n")
-	assertError(t, 1, "RslError at L4/9 on 'asd': Undefined variable referenced: asd\n")
+	expected := `Error at L4:7
+
+  print(asd)
+        ^^^ Undefined variable: asd
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -83,7 +88,12 @@ print("hi")
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	assertError(t, 1, "RslError at L3/15 on 'asd': Undefined variable referenced: asd\n")
+	expected := `Error at L3:13
+
+  defer print(asd)
+              ^^^ Undefined variable: asd
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -97,7 +107,12 @@ print("hi")
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	assertError(t, 3, "RslError at L3/15 on 'asd': Undefined variable referenced: asd\n")
+	expected := `Error at L3:13
+
+  defer print(asd)
+              ^^^ Undefined variable: asd
+`
+	assertError(t, 3, expected)
 	resetTestState()
 }
 
@@ -111,7 +126,12 @@ print("hi")
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	assertError(t, 1, "RslError at L4/15 on 'asd': Undefined variable referenced: asd\n")
+	expected := `Error at L4:13
+
+  defer print(asd)  // this error occurs before the exit above, so we use error code 1
+              ^^^ Undefined variable: asd
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -125,6 +145,11 @@ print("hi")
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	assertError(t, 1, "RslError at L3/15 on 'asd': Undefined variable referenced: asd\n")
+	expected := `Error at L3:13
+
+  defer print(asd)
+              ^^^ Undefined variable: asd
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }

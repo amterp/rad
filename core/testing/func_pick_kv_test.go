@@ -10,7 +10,7 @@ keys = ["Chicken"]
 values = ["Chicken Burger"]
 print(pick_kv(keys, values))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Chicken Burger
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -24,7 +24,7 @@ keys = ["Beef", "Chicken", "Fish"]
 values = ["Hamburger", "Chicken Burger", "Fishwich"]
 print(pick_kv(keys, values, "Bee"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hamburger
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -38,8 +38,13 @@ keys = []
 values = []
 pick_kv(keys, values)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L4/7 on 'pick_kv': pick_kv() requires keys and values to have at least one element\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L4:1
+
+  pick_kv(keys, values)
+  ^^^^^^^^^^^^^^^^^^^^^ Filtered 0 options to 0 with filters: []
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -49,8 +54,14 @@ keys = ["Beef"]
 values = ["Hamburger", "Chicken Burger"]
 pick_kv(keys, values)
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L4/7 on 'pick_kv': pick_kv() requires keys and values to be the same length, got 1 keys and 2 values\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L4:1
+
+  pick_kv(keys, values)
+  ^^^^^^^^^^^^^^^^^^^^^
+  Number of keys and values must match, but got 1 key and 2 values
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -60,7 +71,7 @@ keys = ["Beef", "Chicken", "Fish"]
 values = ["Hamburger", "Chicken Burger", "Fishwich"]
 print(pick_kv(keys, values, ["Be", "ef"]))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `Hamburger
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

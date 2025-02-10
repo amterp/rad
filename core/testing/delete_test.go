@@ -9,7 +9,7 @@ b = "bob"
 del a
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOnlyOutput(t, stdOutBuffer, "export b=\"bob\"\n")
+	assertOnlyOutput(t, stdOutBuffer, "b=\"bob\"\n")
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -21,7 +21,7 @@ b = [3, 4]
 del a
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOnlyOutput(t, stdOutBuffer, "export b=\"[3, 4]\"\n") // todo weird list export
+	assertOnlyOutput(t, stdOutBuffer, "b=(3 4)\n")
 	assertNoErrors(t)
 	resetTestState()
 }

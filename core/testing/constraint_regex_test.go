@@ -115,7 +115,12 @@ args:
 	name string
 	name regex "+"
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L5/0 on '\\n': Invalid regex '+': error parsing regexp: missing argument to repetition operator: `+`\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L4:2
+
+  	name regex "+"
+   ^^^^^^^^^^^^^^
+   Invalid regex '+': error parsing regexp: missing argument to repetition operator: ` + "`+`\n"
+	assertError(t, 1, expected)
 	resetTestState()
 }

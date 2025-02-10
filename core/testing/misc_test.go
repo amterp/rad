@@ -6,8 +6,13 @@ import (
 )
 
 func TestMisc_SyntaxError(t *testing.T) {
-	setupAndRunCode(t, "1 = 2")
-	assertError(t, 1, "RslError at L1/3 on '=': Expected identifier\n")
+	setupAndRunCode(t, "1 = 2", "--NO-COLOR")
+	expected := `Error at L1:1
+
+  1 = 2
+  ^^^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -80,7 +85,7 @@ func TestMisc_Abs_Int(t *testing.T) {
 print(abs(10))
 print(abs(-10))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `10
 10
 `
@@ -94,7 +99,7 @@ func TestMisc_Abs_Float(t *testing.T) {
 print(abs(10.2))
 print(abs(-10.2))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `10.2
 10.2
 `
@@ -107,7 +112,13 @@ func TestMisc_Abs_ErrorsOnAlphabetical(t *testing.T) {
 	rsl := `
 a = abs("asd")
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L2/7 on 'abs': abs() takes an integer or float, got string\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L2:9
+
+  a = abs("asd")
+          ^^^^^
+          Got "string" as the 1st argument of abs(), but must be: float or int
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }

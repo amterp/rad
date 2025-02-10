@@ -10,7 +10,7 @@ if not a:
 if not not not a:
     print("it works!!!")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `it works!
 it works!!!
 `

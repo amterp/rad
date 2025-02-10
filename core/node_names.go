@@ -33,6 +33,7 @@ const (
 	K_ESC_BACKTICK            = "esc_backtick"
 	K_ESC_NEWLINE             = "esc_newline"
 	K_ESC_TAB                 = "esc_tab"
+	K_ESC_OPEN_BRACKET        = "esc_open_bracket"
 	K_INTERPOLATION           = "interpolation"
 	K_MAP                     = "map"
 	K_IDENTIFIER              = "identifier"

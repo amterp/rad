@@ -14,7 +14,7 @@ print(rand())
 0.6645600532184904
 0.4377141871869802
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -32,7 +32,7 @@ print(rand_int(100))
 21
 51
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -50,7 +50,7 @@ print(rand_int(96, 100))
 97
 99
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -68,7 +68,7 @@ print(rand_int(-10, 10))
 -9
 1
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -76,21 +76,36 @@ print(rand_int(-10, 10))
 
 func TestRandom_RandErrorsIfArgs(t *testing.T) {
 	rsl := `rand(1)`
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L1/4 on 'rand': rand() does not take arguments.\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L1:1
+
+  rand(1)
+  ^^^^^^^ rand() requires at most 0 arguments, but got 1
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
 func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
 	rsl := `rand_int()`
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L1/8 on 'rand_int': rand_int() takes 1 or 2 arguments.\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L1:1
+
+  rand_int()
+  ^^^^^^^^^^ rand_int() requires at least 1 argument, but got 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
 func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
 	rsl := `seed_random()`
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L1/11 on 'seed_random': seed_random() takes exactly 1 argument.\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L1:1
+
+  seed_random()
+  ^^^^^^^^^^^^^ seed_random() requires at least 1 argument, but got 0
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }

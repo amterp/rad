@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"strconv"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -78,7 +79,7 @@ func TypeAsString(val interface{}) string {
 	case nil:
 		return "null"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for as-string: %T\n", val))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TypeAsString: %T\n%s\n", val, debug.Stack()))
 		panic(UNREACHABLE)
 	}
 }
@@ -153,7 +154,7 @@ func RslToJsonType(arg RslValue) interface{} {
 	case nil:
 		return nil
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T\n", arg))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T\n%s\n", arg.Val, debug.Stack()))
 		panic(UNREACHABLE)
 	}
 }

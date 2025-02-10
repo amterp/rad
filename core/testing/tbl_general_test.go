@@ -39,8 +39,8 @@ print("Names:", Name)
 print("Ages:", Age)
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
-	expected := `Names: [Charlie, Bob, Alice, Bob]
-Ages: [30, 40, 30, 25]
+	expected := `Names: [ "Charlie", "Bob", "Alice", "Bob" ]
+Ages: [ 30, 40, 30, 25 ]
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
@@ -56,8 +56,13 @@ Age = json[].age
 request:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl)
-	assertError(t, 1, "RslError at L5/8 on ':': Expecting url or other source for request statement\n")
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	expected := `Error at L5:8
+
+  request:
+          Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -88,7 +93,12 @@ display url:
     fields Name, Age
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertError(t, 1, "RslError at L5/11 on 'url': Expecting ':' to immediately follow \"display\", preceding indented block\n")
+	expected := `Error at L5:9
+
+  display url:
+          ^^^ Invalid syntax
+`
+	assertError(t, 1, expected)
 	resetTestState()
 }
 
@@ -115,19 +125,18 @@ Charlie  2
 	resetTestState()
 }
 
-func TestRad_PassthroughRadBlock(t *testing.T) {
+func TestRad_RequiresBlockElseError(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 rad url
 `
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/text.txt", "--NO-COLOR")
-	expected := `This is just some text
-to emulate a non-structured
-response. woo!
+	expected := `Error at L3:1
+
+  rad url
+  ^^^^^^^ Invalid syntax
 `
-	assertOutput(t, stdOutBuffer, expected)
-	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
-	assertNoErrors(t)
+	assertError(t, 1, expected)
 	resetTestState()
 }
 

@@ -18,7 +18,7 @@ a = "alice"
 b = "bob"
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOutput(t, stdOutBuffer, "export a=\"alice\"\nexport b=\"bob\"\n")
+	assertOutput(t, stdOutBuffer, "a=\"alice\"\nb=\"bob\"\n")
 	assertOutput(t, stdErrBuffer, "")
 	assertNoErrors(t)
 	resetTestState()
@@ -30,7 +30,7 @@ a = "alice"
 print('hi')
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOutput(t, stdOutBuffer, "export a=\"alice\"\n")
+	assertOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertOutput(t, stdErrBuffer, "hi\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -53,7 +53,7 @@ exit()
 b = "bob"
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
-	assertOnlyOutput(t, stdOutBuffer, "export a=\"alice\"\n")
+	assertOnlyOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertNoErrors(t)
 	resetTestState()
 }

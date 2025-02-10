@@ -8,7 +8,7 @@ a = "alice"
 print(starts_with(a, "al"))
 print(starts_with(a, "ce"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `true
 false
 `
@@ -23,7 +23,7 @@ a = "alice"
 print(ends_with(a, "al"))
 print(ends_with(a, "ce"))
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, rsl, "--NO-COLOR")
 	expected := `false
 true
 `
