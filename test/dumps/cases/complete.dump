@@ -493,33 +493,34 @@ B: [ 501,  502] PS: [ 38, 13], PE: [ 38, 14]       , `,`
 B: [ 503,  505] PS: [ 38, 15], PE: [ 38, 17]       identifier: identifier `f2`
 B: [ 510,  526] PS: [ 39,  4], PE: [ 39, 20]     stmt: rad_sort_stmt
 B: [ 510,  514] PS: [ 39,  4], PE: [ 39,  8]       sort `sort`
-B: [ 515,  522] PS: [ 39,  9], PE: [ 39, 16]       rad_sort_specifier
+B: [ 515,  522] PS: [ 39,  9], PE: [ 39, 16]       specifier: rad_sort_specifier
 B: [ 515,  517] PS: [ 39,  9], PE: [ 39, 11]         identifier: identifier `f1`
 B: [ 518,  522] PS: [ 39, 12], PE: [ 39, 16]         direction: desc `desc`
 B: [ 522,  523] PS: [ 39, 16], PE: [ 39, 17]       , `,`
-B: [ 524,  526] PS: [ 39, 18], PE: [ 39, 20]       rad_sort_specifier
+B: [ 524,  526] PS: [ 39, 18], PE: [ 39, 20]       specifier: rad_sort_specifier
 B: [ 524,  526] PS: [ 39, 18], PE: [ 39, 20]         identifier: identifier `f2`
 B: [ 531,  535] PS: [ 40,  4], PE: [ 40,  8]     stmt: rad_sort_stmt
 B: [ 531,  535] PS: [ 40,  4], PE: [ 40,  8]       sort `sort`
 B: [ 541,  570] PS: [ 42,  4], PE: [ 43, 19]     stmt: rad_if_stmt
-B: [ 541,  543] PS: [ 42,  4], PE: [ 42,  6]       if `if`
-B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]       condition: expr
-B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]         comparison_op
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]           left: primary_expr
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]             var_path
-B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]               root: identifier `a`
-B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]           op: > `>`
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]           right: primary_expr
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]             var_path
-B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]               root: identifier `b`
-B: [ 549,  550] PS: [ 42, 12], PE: [ 42, 13]       : `:`
-B: [ 559,  570] PS: [ 43,  8], PE: [ 43, 19]       rad_sort_stmt
-B: [ 559,  563] PS: [ 43,  8], PE: [ 43, 12]         sort `sort`
-B: [ 564,  566] PS: [ 43, 13], PE: [ 43, 15]         rad_sort_specifier
-B: [ 564,  566] PS: [ 43, 13], PE: [ 43, 15]           identifier: identifier `f2`
-B: [ 566,  567] PS: [ 43, 15], PE: [ 43, 16]         , `,`
-B: [ 568,  570] PS: [ 43, 17], PE: [ 43, 19]         rad_sort_specifier
-B: [ 568,  570] PS: [ 43, 17], PE: [ 43, 19]           identifier: identifier `f1`
+B: [ 541,  570] PS: [ 42,  4], PE: [ 43, 19]       alt: rad_if_alt
+B: [ 541,  543] PS: [ 42,  4], PE: [ 42,  6]         if `if`
+B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]         condition: expr
+B: [ 544,  549] PS: [ 42,  7], PE: [ 42, 12]           comparison_op
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]             left: primary_expr
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]               var_path
+B: [ 544,  545] PS: [ 42,  7], PE: [ 42,  8]                 root: identifier `a`
+B: [ 546,  547] PS: [ 42,  9], PE: [ 42, 10]             op: > `>`
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]             right: primary_expr
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]               var_path
+B: [ 548,  549] PS: [ 42, 11], PE: [ 42, 12]                 root: identifier `b`
+B: [ 549,  550] PS: [ 42, 12], PE: [ 42, 13]         : `:`
+B: [ 559,  570] PS: [ 43,  8], PE: [ 43, 19]         stmt: rad_sort_stmt
+B: [ 559,  563] PS: [ 43,  8], PE: [ 43, 12]           sort `sort`
+B: [ 564,  566] PS: [ 43, 13], PE: [ 43, 15]           specifier: rad_sort_specifier
+B: [ 564,  566] PS: [ 43, 13], PE: [ 43, 15]             identifier: identifier `f2`
+B: [ 566,  567] PS: [ 43, 15], PE: [ 43, 16]           , `,`
+B: [ 568,  570] PS: [ 43, 17], PE: [ 43, 19]           specifier: rad_sort_specifier
+B: [ 568,  570] PS: [ 43, 17], PE: [ 43, 19]             identifier: identifier `f1`
 B: [ 576,  602] PS: [ 45,  4], PE: [ 46, 22]     stmt: rad_field_modifier_stmt
 B: [ 576,  578] PS: [ 45,  4], PE: [ 45,  6]       identifier: identifier `f1`
 B: [ 578,  579] PS: [ 45,  6], PE: [ 45,  7]       : `:`
@@ -1309,7 +1310,7 @@ B: [1912, 1916] PS: [126, 52], PE: [126, 56]                       var_path
 B: [1912, 1916] PS: [126, 52], PE: [126, 56]                         root: identifier `path`
 B: [1916, 1917] PS: [126, 56], PE: [126, 57]                   } `}`
 B: [1917, 1918] PS: [126, 57], PE: [126, 58]               end: string_end ```
-B: [1919, 1988] PS: [127,  0], PE: [129, 30]   errdefer_block
+B: [1919, 1988] PS: [127,  0], PE: [129, 30]   defer_block
 B: [1919, 1927] PS: [127,  0], PE: [127,  8]     keyword: errdefer `errdefer`
 B: [1927, 1928] PS: [127,  8], PE: [127,  9]     : `:`
 B: [1933, 1957] PS: [128,  4], PE: [128, 28]     stmt: expr_stmt
@@ -1399,7 +1400,7 @@ B: [2081, 2085] PS: [135, 12], PE: [135, 16]                       var_path
 B: [2081, 2085] PS: [135, 12], PE: [135, 16]                         root: identifier `path`
 B: [2085, 2086] PS: [135, 16], PE: [135, 17]                   } `}`
 B: [2086, 2087] PS: [135, 17], PE: [135, 18]               end: string_end ```
-B: [2088, 2162] PS: [136,  0], PE: [138, 31]   errdefer_block
+B: [2088, 2162] PS: [136,  0], PE: [138, 31]   defer_block
 B: [2088, 2096] PS: [136,  0], PE: [136,  8]     keyword: errdefer `errdefer`
 B: [2096, 2097] PS: [136,  8], PE: [136,  9]     : `:`
 B: [2102, 2130] PS: [137,  4], PE: [137, 32]     stmt: expr_stmt

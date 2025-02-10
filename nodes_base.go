@@ -15,6 +15,7 @@ func NewPosition(p ts.Point) Position {
 
 type Node interface {
 	Node() *ts.Node
+	CompleteSrc() string
 	Src() string
 	// Indexes in the original source code.
 	// Zero indexed, so add +1 to get human readable values.
@@ -53,7 +54,7 @@ type BaseNode struct {
 func newBaseNode(src string, node *ts.Node) BaseNode {
 	return BaseNode{
 		node:      node,
-		src:       src[node.StartByte():node.EndByte()],
+		src:       src,
 		startByte: int(node.StartByte()),
 		endByte:   int(node.EndByte()),
 		startPos:  NewPosition(node.StartPosition()),
@@ -65,8 +66,12 @@ func (n *BaseNode) Node() *ts.Node {
 	return n.node
 }
 
-func (n *BaseNode) Src() string {
+func (n *BaseNode) CompleteSrc() string {
 	return n.src
+}
+
+func (n *BaseNode) Src() string {
+	return n.src[n.startByte:n.endByte]
 }
 
 func (n *BaseNode) StartByte() int {

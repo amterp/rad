@@ -1,0 +1,80 @@
+=====
+Functions
+=====
+a = myFunc()
+b = myFunc("hi")
+c = myFunc(reverse=true)
+d = myFunc("hello", nums=5)
+=====
+B: [ 0, 83] PS: [0,  0], PE: [4,  0] source_file
+B: [ 0, 12] PS: [0,  0], PE: [0, 12]   assign
+B: [ 0,  1] PS: [0,  0], PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0], PE: [0,  1]       root: identifier `a`
+B: [ 2,  3] PS: [0,  2], PE: [0,  3]     = `=`
+B: [ 4, 12] PS: [0,  4], PE: [0, 12]     right: expr
+B: [ 4, 12] PS: [0,  4], PE: [0, 12]       primary_expr
+B: [ 4, 12] PS: [0,  4], PE: [0, 12]         call
+B: [ 4, 10] PS: [0,  4], PE: [0, 10]           func: identifier `myFunc`
+B: [10, 12] PS: [0, 10], PE: [0, 12]           () `()`
+B: [13, 29] PS: [1,  0], PE: [1, 16]   assign
+B: [13, 14] PS: [1,  0], PE: [1,  1]     left: var_path
+B: [13, 14] PS: [1,  0], PE: [1,  1]       root: identifier `b`
+B: [15, 16] PS: [1,  2], PE: [1,  3]     = `=`
+B: [17, 29] PS: [1,  4], PE: [1, 16]     right: expr
+B: [17, 29] PS: [1,  4], PE: [1, 16]       primary_expr
+B: [17, 29] PS: [1,  4], PE: [1, 16]         call
+B: [17, 23] PS: [1,  4], PE: [1, 10]           func: identifier `myFunc`
+B: [23, 24] PS: [1, 10], PE: [1, 11]           ( `(`
+B: [24, 28] PS: [1, 11], PE: [1, 15]           arg: expr
+B: [24, 28] PS: [1, 11], PE: [1, 15]             primary_expr
+B: [24, 28] PS: [1, 11], PE: [1, 15]               literal
+B: [24, 28] PS: [1, 11], PE: [1, 15]                 string
+B: [24, 25] PS: [1, 11], PE: [1, 12]                   start: string_start `"`
+B: [25, 27] PS: [1, 12], PE: [1, 14]                   contents: string_contents
+B: [25, 27] PS: [1, 12], PE: [1, 14]                     content: string_content `hi`
+B: [27, 28] PS: [1, 14], PE: [1, 15]                   end: string_end `"`
+B: [28, 29] PS: [1, 15], PE: [1, 16]           ) `)`
+B: [30, 54] PS: [2,  0], PE: [2, 24]   assign
+B: [30, 31] PS: [2,  0], PE: [2,  1]     left: var_path
+B: [30, 31] PS: [2,  0], PE: [2,  1]       root: identifier `c`
+B: [32, 33] PS: [2,  2], PE: [2,  3]     = `=`
+B: [34, 54] PS: [2,  4], PE: [2, 24]     right: expr
+B: [34, 54] PS: [2,  4], PE: [2, 24]       primary_expr
+B: [34, 54] PS: [2,  4], PE: [2, 24]         call
+B: [34, 40] PS: [2,  4], PE: [2, 10]           func: identifier `myFunc`
+B: [40, 41] PS: [2, 10], PE: [2, 11]           ( `(`
+B: [41, 53] PS: [2, 11], PE: [2, 23]           named_arg: call_named_arg
+B: [41, 48] PS: [2, 11], PE: [2, 18]             name: identifier `reverse`
+B: [48, 49] PS: [2, 18], PE: [2, 19]             = `=`
+B: [49, 53] PS: [2, 19], PE: [2, 23]             value: expr
+B: [49, 53] PS: [2, 19], PE: [2, 23]               primary_expr
+B: [49, 53] PS: [2, 19], PE: [2, 23]                 literal
+B: [49, 53] PS: [2, 19], PE: [2, 23]                   bool
+B: [49, 53] PS: [2, 19], PE: [2, 23]                     true `true`
+B: [53, 54] PS: [2, 23], PE: [2, 24]           ) `)`
+B: [55, 82] PS: [3,  0], PE: [3, 27]   assign
+B: [55, 56] PS: [3,  0], PE: [3,  1]     left: var_path
+B: [55, 56] PS: [3,  0], PE: [3,  1]       root: identifier `d`
+B: [57, 58] PS: [3,  2], PE: [3,  3]     = `=`
+B: [59, 82] PS: [3,  4], PE: [3, 27]     right: expr
+B: [59, 82] PS: [3,  4], PE: [3, 27]       primary_expr
+B: [59, 82] PS: [3,  4], PE: [3, 27]         call
+B: [59, 65] PS: [3,  4], PE: [3, 10]           func: identifier `myFunc`
+B: [65, 66] PS: [3, 10], PE: [3, 11]           ( `(`
+B: [66, 73] PS: [3, 11], PE: [3, 18]           arg: expr
+B: [66, 73] PS: [3, 11], PE: [3, 18]             primary_expr
+B: [66, 73] PS: [3, 11], PE: [3, 18]               literal
+B: [66, 73] PS: [3, 11], PE: [3, 18]                 string
+B: [66, 67] PS: [3, 11], PE: [3, 12]                   start: string_start `"`
+B: [67, 72] PS: [3, 12], PE: [3, 17]                   contents: string_contents
+B: [67, 72] PS: [3, 12], PE: [3, 17]                     content: string_content `hello`
+B: [72, 73] PS: [3, 17], PE: [3, 18]                   end: string_end `"`
+B: [73, 74] PS: [3, 18], PE: [3, 19]           , `,`
+B: [75, 81] PS: [3, 20], PE: [3, 26]           named_arg: call_named_arg
+B: [75, 79] PS: [3, 20], PE: [3, 24]             name: identifier `nums`
+B: [79, 80] PS: [3, 24], PE: [3, 25]             = `=`
+B: [80, 81] PS: [3, 25], PE: [3, 26]             value: expr
+B: [80, 81] PS: [3, 25], PE: [3, 26]               primary_expr
+B: [80, 81] PS: [3, 25], PE: [3, 26]                 literal
+B: [80, 81] PS: [3, 25], PE: [3, 26]                   int `5`
+B: [81, 82] PS: [3, 26], PE: [3, 27]           ) `)`

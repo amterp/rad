@@ -70,11 +70,11 @@ B: [ 99, 100] PS: [ 8, 13], PE: [ 8, 14]       , `,`
 B: [101, 105] PS: [ 8, 15], PE: [ 8, 19]       identifier: identifier `Name`
 B: [110, 128] PS: [ 9,  4], PE: [ 9, 22]     stmt: rad_sort_stmt
 B: [110, 114] PS: [ 9,  4], PE: [ 9,  8]       sort `sort`
-B: [115, 124] PS: [ 9,  9], PE: [ 9, 18]       rad_sort_specifier
+B: [115, 124] PS: [ 9,  9], PE: [ 9, 18]       specifier: rad_sort_specifier
 B: [115, 119] PS: [ 9,  9], PE: [ 9, 13]         identifier: identifier `Name`
 B: [120, 124] PS: [ 9, 14], PE: [ 9, 18]         direction: desc `desc`
 B: [124, 125] PS: [ 9, 18], PE: [ 9, 19]       , `,`
-B: [126, 128] PS: [ 9, 20], PE: [ 9, 22]       rad_sort_specifier
+B: [126, 128] PS: [ 9, 20], PE: [ 9, 22]       specifier: rad_sort_specifier
 B: [126, 128] PS: [ 9, 20], PE: [ 9, 22]         identifier: identifier `ID`
 B: [133, 198] PS: [10,  4], PE: [12, 25]     stmt: rad_field_modifier_stmt
 B: [133, 135] PS: [10,  4], PE: [10,  6]       identifier: identifier `ID`

@@ -60,14 +60,26 @@ func (rt *RslTree) recurseAppendString(
 		nodeFieldName = color.MagentaString(nodeFieldName)
 		nodeFieldName += ": "
 	}
+
+	var nodeKind string
+	if node.IsError() {
+		nodeKind = color.RedString("ERROR")
+	} else {
+		nodeKind = color.GreenString(node.Kind())
+	}
+
 	sb.WriteString(fmt.Sprintf(fmtString,
 		node.StartByte(), node.EndByte(),
 		node.StartPosition().Row, node.StartPosition().Column,
 		node.EndPosition().Row, node.EndPosition().Column,
 		indent,
 		nodeFieldName,
-		color.GreenString(node.Kind()),
+		nodeKind,
 	))
+
+	if node.IsMissing() {
+		sb.WriteString(color.RedString(" (MISSING)"))
+	}
 
 	children := node.Children(node.Walk())
 	if len(children) == 0 {
