@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	com "rad/core/common"
 	"runtime/debug"
 	"strconv"
 	"strings"
@@ -11,6 +12,10 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
+type Delimiter struct {
+	Open string
+}
+
 type Interpreter struct {
 	sd          *ScriptData
 	env         *Env
@@ -19,11 +24,14 @@ type Interpreter struct {
 	forLoopLevel int
 	breaking     bool
 	continuing   bool
+	// Used to track current delimiter, currently for correct delimiter escaping handling
+	delimiterStack *com.Stack[Delimiter]
 }
 
 func NewInterpreter(scriptData *ScriptData) *Interpreter {
 	i := &Interpreter{
-		sd: scriptData,
+		sd:             scriptData,
+		delimiterStack: com.NewStack[Delimiter](),
 	}
 	i.env = NewEnv(i)
 	return i
@@ -233,11 +241,21 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		str := NewRslString("")
 
 		contentsNode := i.getChild(node, F_CONTENTS)
+
+		// With current TS grammar, last character of closing delimiter is always the delimiter
+		// Admittedly bad, very white boxy and brittle
+		endNode := i.getChild(node, F_END)
+		endStr := i.sd.Src[endNode.StartByte():endNode.EndByte()]
+		delimiterStr := endStr[len(endStr)-1]
+		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
+
 		if contentsNode != nil {
 			for _, child := range contentsNode.Children(contentsNode.Walk()) {
 				str = str.Concat(i.evaluate(&child, 1)[0].RequireStr(i, &child))
 			}
 		}
+
+		i.delimiterStack.Pop()
 
 		return newRslValues(i, node, str)
 	case K_BOOL:
@@ -251,11 +269,23 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 	case K_BACKSLASH:
 		return newRslValues(i, node, "\\")
 	case K_ESC_SINGLE_QUOTE:
-		return newRslValues(i, node, "'")
+		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "'" {
+			return newRslValues(i, node, "'")
+		} else {
+			return newRslValues(i, node, `\'`)
+		}
 	case K_ESC_DOUBLE_QUOTE:
-		return newRslValues(i, node, `"`)
+		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == `"` {
+			return newRslValues(i, node, `"`)
+		} else {
+			return newRslValues(i, node, `\"`)
+		}
 	case K_ESC_BACKTICK:
-		return newRslValues(i, node, "`")
+		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "`" {
+			return newRslValues(i, node, "`")
+		} else {
+			return newRslValues(i, node, "\\`")
+		}
 	case K_ESC_NEWLINE:
 		return newRslValues(i, node, "\n")
 	case K_ESC_TAB:
