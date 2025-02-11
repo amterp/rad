@@ -137,6 +137,10 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case K_IF_STMT:
 		altNodes := i.getChildren(node, F_ALT)
 		for _, altNode := range altNodes {
+			if preStmtNode := i.getChild(&altNode, F_PRE_STMT); preStmtNode != nil {
+				i.recursivelyRun(preStmtNode)
+			}
+
 			condNode := i.getChild(&altNode, F_CONDITION)
 
 			shouldExecute := true
