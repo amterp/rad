@@ -172,14 +172,13 @@ print("\n\n\n")
 	resetTestState()
 }
 
-// not necessarily a behavior I'm married to
-func Test_StrLexing_EscapingIrrelevantCharsAbsorbs(t *testing.T) {
+func Test_StrLexing_EscapingIrrelevantCharsPrintsAsIs(t *testing.T) {
 	rsl := `
 print("\x")
 print("\k")
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
-	assertOnlyOutput(t, stdOutBuffer, "x\nk\n")
+	assertOnlyOutput(t, stdOutBuffer, "\\x\n\\k\n")
 	assertNoErrors(t)
 	resetTestState()
 }

@@ -36,7 +36,7 @@ hi
 hi
  there 2 
 friend
-hi \ h yo
+hi \ \h yo
 hi\n there {1 + 1} \nfriend
 hi
  friend

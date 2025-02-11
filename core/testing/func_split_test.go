@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestSplit_OneChar(t *testing.T) {
+func Test_Split_OneChar(t *testing.T) {
 	rsl := `
 print(split("a,b,c", ","))
 `
@@ -12,7 +12,7 @@ print(split("a,b,c", ","))
 	resetTestState()
 }
 
-func TestSplit_LongSplit(t *testing.T) {
+func Test_Split_LongSplit(t *testing.T) {
 	rsl := `
 print(split("Alice      Smith", " "))
 `
@@ -22,7 +22,7 @@ print(split("Alice      Smith", " "))
 	resetTestState()
 }
 
-func TestSplit_LongSplitRegex(t *testing.T) {
+func Test_Split_LongSplitRegex(t *testing.T) {
 	rsl := `
 print(split("Alice      Smith", " +"))
 `
@@ -32,12 +32,24 @@ print(split("Alice      Smith", " +"))
 	resetTestState()
 }
 
-func TestSplit_CanSplitOnNoSeparater(t *testing.T) {
+func Test_Split_CanSplitOnNoSeparater(t *testing.T) {
 	rsl := `
 print(split("Alice", ""))
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, `[ "A", "l", "i", "c", "e" ]`+"\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Split_CanSplitTags(t *testing.T) {
+	rsl := `
+tags = ["0.0.1", "0.2.1", "0.0.3"]
+tags = [split(t, "\.") for t in tags]
+print(tags)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, `[ [ "0", "0", "1" ], [ "0", "2", "1" ], [ "0", "0", "3" ] ]`+"\n")
 	assertNoErrors(t)
 	resetTestState()
 }

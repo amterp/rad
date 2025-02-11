@@ -4,6 +4,7 @@ Only for major & minor version releases. Contains only notable items.
 
 ## 0.5
 
+- Replaced handwritten lexer/parser with tree sitter.
 - `defer` statements
 - Further shell command support improvements, critical shell commands
 - Emoji support
@@ -21,8 +22,9 @@ Only for major & minor version releases. Contains only notable items.
 - Truthy/falsy logic
 - Raw strings
 - Multiline strings
-- Arg constraints - enum
+- Arg constraints - enum, regex
 - Modulo operator `%`
+- ++/-- operators
 
 ## 0.4
 
