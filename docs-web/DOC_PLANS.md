@@ -63,3 +63,5 @@
 - --CONFIRM-SHELL
 - 'confirm' shell modifier
 - 'input' function
+- if pre-stmt
+- get_path
