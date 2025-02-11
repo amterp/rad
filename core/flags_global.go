@@ -10,6 +10,8 @@ var (
 	// todo allow scripts to override this global flag
 	FlagVersion         BoolRslArg
 	FlagStdinScriptName StringRslArg
+	FlagSrc             BoolRslArg
+	FlagRslTree         BoolRslArg
 	FlagMockResponse    MockResponseRslArg
 
 	// ordering here matters -- it's the order in which they are printed in the usage string
@@ -22,6 +24,8 @@ var (
 		&FlagShell,
 		&FlagVersion,
 		&FlagStdinScriptName,
+		&FlagSrc,
+		&FlagRslTree,
 		&FlagMockResponse,
 	}
 )
@@ -35,6 +39,8 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	FlagShell = NewBoolRadArg("SHELL", "", "Outputs shell/bash exports of variables, so they can be eval'd", false)
 	FlagVersion = NewBoolRadArg("VERSION", "V", "Print rad version information.", false)
 	FlagStdinScriptName = NewStringRadArg("STDIN", "", "script-name", "Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.", "", nil, nil)
+	FlagSrc = NewBoolRadArg("SRC", "", "Instead of running the target script, just print it out.", false)
+	FlagRslTree = NewBoolRadArg("RSL-TREE", "", "Instead of running the target script, print out its syntax tree.", false)
 	FlagMockResponse = NewMockResponseRadArg("MOCK-RESPONSE", "", "Add mock response for json requests (pattern:filePath)")
 	registerGlobalFlags()
 	return Flags

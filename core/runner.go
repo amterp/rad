@@ -93,8 +93,31 @@ func (r *RadRunner) Run() error {
 
 	if FlagHelp.Value {
 		r.RunUsageExit()
-	} else if FlagVersion.Value {
-		RP.RadInfo(fmt.Sprintf("rad version %s\n", Version))
+	}
+
+	shouldExit := false
+	if FlagVersion.Value {
+		shouldExit = true
+		RP.Print(fmt.Sprintf("rad version %s\n", Version))
+	}
+
+	if FlagSrc.Value {
+		shouldExit = true
+		if FlagVersion.Value {
+			RP.Print("\n")
+		}
+		RP.Print(r.scriptData.Src + "\n")
+	}
+
+	if FlagRslTree.Value {
+		shouldExit = true
+		if FlagSrc.Value {
+			RP.Print("\n")
+		}
+		RP.Print(r.scriptData.Tree.Dump())
+	}
+
+	if shouldExit {
 		RExit(0)
 	}
 
