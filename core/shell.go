@@ -65,6 +65,17 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 		RequireType(i, cmdNode, "Shell commands must be strings", RslStringT).
 		RequireStr(i, shellCmdNode)
 
+	if FlagConfirmShellCommands.Value {
+		prompt := fmt.Sprintf("%s\nRun above command? [y/n] > ", cmdStr.Plain())
+		response, err := InteractiveConfirm(prompt)
+		if err != nil {
+			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
+		}
+		if !response {
+			i.errorf(shellCmdNode, RED.Colorize("Aborted shell command, exiting."))
+		}
+	}
+
 	cmd := resolveCmd(i, shellCmdNode, cmdStr.Plain())
 	var stdout, stderr bytes.Buffer
 

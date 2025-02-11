@@ -21,6 +21,7 @@ const globalFlagHelp = `Global flags:
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
   -V, --VERSION                Print rad version information.
       --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --CONFIRM-SHELL          Confirm all shell commands before running them.
       --SRC                    Instead of running the target script, just print it out.
       --RSL-TREE               Instead of running the target script, print out its syntax tree.
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)

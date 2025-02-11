@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/charmbracelet/huh"
-
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -330,14 +328,8 @@ func init() {
 				}
 
 				str := rslStr.Plain() // todo should maintain attributes
+				str = Truncate(str, maxLen)
 
-				if terminalSupportsUtf8 {
-					str = str[:maxLen-1]
-					str += "…"
-				} else {
-					str = str[:maxLen-3]
-					str += "..."
-				}
 				return newRslValues(f.i, f.callNode, str)
 			},
 		},
@@ -380,17 +372,13 @@ func init() {
 					prompt = arg.value.RequireStr(f.i, arg.node).Plain()
 				}
 
-				var response string
-				err := huh.NewInput().
-					Prompt(prompt).
-					Value(&response).
-					Run()
+				response, err := InteractiveConfirm(prompt)
 				if err != nil {
 					// todo I think this errors if user aborts
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
 				}
 
-				return newRslValues(f.i, f.callNode, strings.HasPrefix(strings.ToLower(response), "y"))
+				return newRslValues(f.i, f.callNode, response)
 			},
 		},
 		{
