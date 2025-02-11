@@ -14,3 +14,5 @@ require (
 	github.com/mattn/go-pointer v0.0.1 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 )
+
+replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl
