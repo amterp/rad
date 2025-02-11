@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	com "rad/core/common"
 	"runtime/debug"
 	"strconv"
 
@@ -110,7 +111,7 @@ func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RslVal
 		return newRslValue(i, node, list)
 	case map[string]interface{}:
 		m := NewRslMap()
-		sortedKeys := SortedKeys(coerced)
+		sortedKeys := com.SortedKeys(coerced)
 		for _, key := range sortedKeys {
 			m.Set(newRslValue(i, node, key), ConvertToNativeTypes(i, node, coerced[key]))
 		}

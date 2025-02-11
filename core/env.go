@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	com "rad/core/common"
 	"strings"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -91,7 +92,7 @@ func (e *Env) setVar(name string, v RslValue, ignoreEnclosing bool) {
 
 // todo avoid *dangerous* exports like PATH!!
 func (e *Env) PrintShellExports() {
-	keys := SortedKeys(e.Vars)
+	keys := com.SortedKeys(e.Vars)
 
 	printFunc := func(varName, value string) {
 		RP.PrintForShellEval(fmt.Sprintf("%s=%s\n", varName, value))

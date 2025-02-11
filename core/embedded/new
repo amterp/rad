@@ -1,0 +1,28 @@
+---
+Sets up a new RSL script, including some boilerplate and execution permissions.
+---
+args:
+    path string # The path at which to create the script.
+    add_extension "add-extension" e bool # Add a .rsl extension (if not already in the path name).
+    open o string = "" # Open the script after with the given editor command.
+
+if add_extension and not ends_with(path, ".rsl"):
+    path += ".rsl"
+
+$!`touch {path}`
+contents = r"""
+#!/usr/bin/env rad
+---
+// TODO
+---
+args:
+    // TODO
+"""
+
+quiet $!`echo '{contents}' > {path}`
+$!`chmod +x {path}`
+
+if open:
+    $!`{open} {path}`
+
+print(green("{path} is ready to go."))

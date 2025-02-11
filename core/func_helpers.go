@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	com "rad/core/common"
 	"strings"
 
 	"github.com/dustin/go-humanize"
@@ -94,16 +95,16 @@ func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Fu
 	var errMsg string
 	if len(allowedNumReturnValues) == 0 {
 		errMsg = fmt.Sprintf("%s() returns no values, but %s expected",
-			function.Name, NumIsAre(numExpectedReturnValues))
+			function.Name, com.NumIsAre(numExpectedReturnValues))
 	} else if len(allowedNumReturnValues) == 1 {
 		errMsg = fmt.Sprintf("%s() returns %s, but %s expected",
-			function.Name, Pluralize(allowedNumReturnValues[0], "value"), NumIsAre(numExpectedReturnValues))
+			function.Name, com.Pluralize(allowedNumReturnValues[0], "value"), com.NumIsAre(numExpectedReturnValues))
 	} else {
 		// allows different numbers of return values
 		stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
 		allowedReturnNums := strings.Join(stringified, " or ")
 		errMsg = fmt.Sprintf("%s() returns %s values, but %s expected",
-			function.Name, allowedReturnNums, NumIsAre(numExpectedReturnValues))
+			function.Name, allowedReturnNums, com.NumIsAre(numExpectedReturnValues))
 	}
 	i.errorf(callNode, errMsg)
 }
@@ -111,13 +112,13 @@ func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Fu
 func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
 	if len(args) < function.RequiredArgCount {
 		i.errorf(callNode, "%s() requires at least %s, but got %d",
-			function.Name, Pluralize(function.RequiredArgCount, "argument"), len(args))
+			function.Name, com.Pluralize(function.RequiredArgCount, "argument"), len(args))
 	}
 
 	maxAcceptableArgs := len(function.ArgTypes)
 	if len(args) > maxAcceptableArgs {
 		i.errorf(callNode, "%s() requires at most %s, but got %d",
-			function.Name, Pluralize(maxAcceptableArgs, "argument"), len(args))
+			function.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(args))
 	}
 
 	for idx, acceptableTypes := range function.ArgTypes {

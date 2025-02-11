@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"fmt"
+	com "rad/core/common"
 	"strings"
 
 	"github.com/fatih/color"
@@ -36,13 +37,21 @@ func (r *RadRunner) RunUsageExit() {
 func (r *RadRunner) printScriptlessUsage() {
 	buf := new(bytes.Buffer)
 
-	fmt.Fprintf(buf, "rad: A tool for writing user-friendly command line scripts.\n\n")
+	fmt.Fprintf(buf, "rad: A tool for writing user-friendly command line scripts.\n")
+	fmt.Fprintf(buf, "GitHub: https://github.com/amterp/rad\n")
+	fmt.Fprintf(buf, "Documentation: https://amterp.github.io/rad/\n\n")
+
 	greenBold(buf, "Usage:\n")
 	bold(buf, "  rad")
-	cyan(buf, " [script path] [flags]\n\n")
+	cyan(buf, " [script path | command] [flags]\n\n")
+
+	greenBold(buf, "Commands:\n")
+	commandUsage(buf, CmdsByName)
 
 	greenBold(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)
+
+	basicTips(buf)
 
 	fmt.Fprintf(RIo.StdErr, buf.String())
 }
@@ -115,8 +124,8 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		// This special character will be replaced with spacing once the
 		// correct alignment is calculated
 		line += USAGE_ALIGNMENT_CHAR
-		if StrLen(line) > maxlen {
-			maxlen = StrLen(line)
+		if com.StrLen(line) > maxlen {
+			maxlen = com.StrLen(line)
 		}
 
 		line += f.GetDescription()
@@ -133,4 +142,34 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		// maxlen + 2 comes from + 1 for the \x00 and + 1 for the (deliberate) off-by-one in maxlen-sidx
 		fmt.Fprintln(buf, line[:sidx], spacing, strings.Replace(line[sidx+1:], "\n", "\n"+strings.Repeat(" ", maxlen+2), -1))
 	}
+}
+
+func commandUsage(buf *bytes.Buffer, cmds map[string]EmbeddedCmd) {
+	var sb strings.Builder
+
+	for _, cmd := range cmds {
+		sb.WriteString("  ")
+		sb.WriteString(fmt.Sprintf("%-12s", cmd.Name))
+		sb.WriteString("  ")
+		sb.WriteString(cmd.Description + "\n")
+	}
+
+	sb.WriteString("\nTo see help for a specific command, run `rad <command> -h`.\n\n")
+
+	fmt.Fprintf(buf, sb.String())
+}
+
+func basicTips(buf *bytes.Buffer) {
+	var sb strings.Builder
+
+	sb.WriteString("\n")
+	sb.WriteString("To execute an RSL script:\n")
+	sb.WriteString("  rad path/to/script.rsl [args]\n")
+	sb.WriteString("\n")
+	sb.WriteString("To execute a command:\n")
+	sb.WriteString("  rad <command> [args]\n")
+	sb.WriteString("\n")
+	sb.WriteString("If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n")
+
+	fmt.Fprintf(buf, sb.String())
 }

@@ -379,7 +379,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 		if exprStr, ok := exprResult.TryGetStr(); ok {
 			// is string, need to account for color chars (increase padding len if present)
 			plainLen := exprStr.Len()
-			coloredLen := int64(StrLen(exprStr.String()))
+			coloredLen := int64(com.StrLen(exprStr.String()))
 			diff := coloredLen - plainLen
 			padding += diff
 		}
@@ -442,7 +442,7 @@ func (i *Interpreter) assertExpectedNumOutputs(node *ts.Node, expectedOutputs in
 	}
 
 	if expectedOutputs != actualOutputs {
-		i.errorf(node, "Expected %s, got %d", Pluralize(expectedOutputs, "output"), actualOutputs)
+		i.errorf(node, "Expected %s, got %d", com.Pluralize(expectedOutputs, "output"), actualOutputs)
 	}
 }
 

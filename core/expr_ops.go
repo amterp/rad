@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"math"
+	com "rad/core/common"
 	"strings"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -121,10 +122,10 @@ func (i *Interpreter) executeOp(
 	opNode *ts.Node,
 	op OpType,
 ) interface{} {
-	left := Memoize(func() RslValue {
+	left := com.Memoize(func() RslValue {
 		return i.evaluate(leftNode, 1)[0]
 	})
-	right := Memoize(func() RslValue {
+	right := com.Memoize(func() RslValue {
 		return i.evaluate(rightNode, 1)[0]
 	})
 

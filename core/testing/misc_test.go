@@ -70,11 +70,24 @@ func TestMisc_VersionShort(t *testing.T) {
 func TestMisc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 	setupAndRunCode(t, "", "-h", "-V", "--NO-COLOR")
 	expected := `rad: A tool for writing user-friendly command line scripts.
+GitHub: https://github.com/amterp/rad
+Documentation: https://amterp.github.io/rad/
 
 Usage:
-  rad [script path] [flags]
+  rad [script path | command] [flags]
 
-` + globalFlagHelp
+Commands:
+  new           Sets up a new RSL script, including some boilerplate and execution permissions.
+
+To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + globalFlagHelp + `
+To execute an RSL script:
+  rad path/to/script.rsl [args]
+
+To execute a command:
+  rad <command> [args]
+
+If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+`
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()

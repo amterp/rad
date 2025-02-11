@@ -1,6 +1,7 @@
 package core
 
 import (
+	com "rad/core/common"
 	"strings"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -81,7 +82,7 @@ func (s *RslString) Equals(other RslString) bool {
 
 func (s RslString) Len() int64 {
 	// todo also cachable
-	return int64(StrLen(s.Plain()))
+	return int64(com.StrLen(s.Plain()))
 }
 
 func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {

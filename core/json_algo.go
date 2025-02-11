@@ -1,6 +1,8 @@
 package core
 
 import (
+	com "rad/core/common"
+
 	"github.com/samber/lo"
 )
 
@@ -45,7 +47,7 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *TrieNode) Captu
 			// wildcard key match
 			switch coerced := data.(type) {
 			case map[string]interface{}:
-				sortedKeys := SortedKeys(coerced)
+				sortedKeys := com.SortedKeys(coerced)
 				for _, key := range sortedKeys {
 					captures = append(captures, t.traverse(&key, coerced[key], child))
 				}

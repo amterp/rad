@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	com "rad/core/common"
 
 	"github.com/fatih/color"
 	"github.com/spf13/pflag"
@@ -77,9 +78,17 @@ func (r *RadRunner) Run() error {
 			} else {
 				RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
 			}
-		} else {
+		} else if com.FileExists(ScriptPath) {
 			// script is given via file
 			rslSourceCode = readSource(ScriptPath)
+		} else {
+			// Script doesn't exist, see if it matches an embedded command.
+			src := GetEmbeddedCommandSrc(ScriptPath)
+			if src != nil {
+				rslSourceCode = *src
+			} else {
+				RP.RadErrorExit(fmt.Sprintf("Script '%s' not found\n", ScriptPath))
+			}
 		}
 
 		RP.RadDebugf(fmt.Sprintf("Read src code (%d chars), parsing...", len(rslSourceCode)))

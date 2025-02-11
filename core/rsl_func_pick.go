@@ -1,6 +1,7 @@
 package core
 
 import (
+	com "rad/core/common"
 	"strings"
 
 	"github.com/charmbracelet/huh"
@@ -145,7 +146,7 @@ func pickKv[T comparable](
 ) []T {
 	if len(keyGroups) != len(valueGroups) {
 		i.errorf(callNode, "Number of keys and values must match, but got %s and %s",
-			Pluralize(len(keyGroups), "key"), Pluralize(len(valueGroups), "value"))
+			com.Pluralize(len(keyGroups), "key"), com.Pluralize(len(valueGroups), "value"))
 	}
 
 	prompt := "Pick an option"
@@ -185,7 +186,7 @@ func pickKv[T comparable](
 
 	if len(matchedKeyValues) == 0 {
 		// todo potentially allow recovering from this?
-		i.errorf(callNode, "Filtered %s to 0 with filters: %v", Pluralize(len(keyGroups), "option"), filters)
+		i.errorf(callNode, "Filtered %s to 0 with filters: %v", com.Pluralize(len(keyGroups), "option"), filters)
 	}
 
 	if len(matchedKeyValues) == 1 {

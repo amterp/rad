@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"io"
+	com "rad/core/common"
 	"runtime/debug"
 	"strings"
 
@@ -181,7 +182,7 @@ func (p *stdPrinter) ErrorExit(msg string) {
 }
 
 func (p *stdPrinter) ErrorExitCode(msg string, errorCode int) {
-	if !IsBlank(msg) && (!p.isQuiet || p.isScriptDebug) {
+	if !com.IsBlank(msg) && (!p.isQuiet || p.isScriptDebug) {
 		fmt.Fprint(p.stdErr, msg)
 	}
 	p.printShellExitIfEnabled()
@@ -211,10 +212,10 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 
 		fmt.Fprintf(p.stdErr, "  %s%s", errorStartIndent, color.RedString(strings.Repeat("^", errorLen)))
 
-		errStartIdx := StrLen(errorStartIndent) + errorLen
-		if !IsBlank(ctx.OneLiner) {
+		errStartIdx := com.StrLen(errorStartIndent) + errorLen
+		if !com.IsBlank(ctx.OneLiner) {
 			redOneLiner := color.RedString(ctx.OneLiner)
-			if StrLen(ctx.OneLiner)+errStartIdx < 80 {
+			if com.StrLen(ctx.OneLiner)+errStartIdx < 80 {
 				// print next to pointing
 				fmt.Fprintf(p.stdErr, " %s\n", redOneLiner)
 				// todo some logic to print on the *left* of the arrow if space (but not space on right side)
@@ -224,7 +225,7 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 			}
 		}
 
-		if !IsBlank(ctx.Details) {
+		if !com.IsBlank(ctx.Details) {
 			fmt.Fprintf(p.stdErr, "\n%s\n", ctx.Details)
 		}
 	}
@@ -234,7 +235,7 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 
 func (p *stdPrinter) ErrorCodeExitf(errorCode int, msgFmt string, args ...interface{}) {
 	if !p.isQuiet || p.isScriptDebug {
-		if !IsBlank(msgFmt) && !strings.HasSuffix(msgFmt, "\n") {
+		if !com.IsBlank(msgFmt) && !strings.HasSuffix(msgFmt, "\n") {
 			msgFmt += "\n"
 		}
 		fmt.Fprintf(p.stdErr, msgFmt, args...)

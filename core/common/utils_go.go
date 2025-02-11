@@ -1,7 +1,8 @@
-package core
+package com
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -78,4 +79,9 @@ func NumIsAre(values int) string {
 	} else {
 		return fmt.Sprintf("%d are", values)
 	}
+}
+
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }
