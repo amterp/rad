@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -53,6 +55,7 @@ const (
 	FUNC_HTTP_TRACE         = "http_trace"
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
+	FUNC_GET_PATH           = "get_path"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -508,6 +511,34 @@ func init() {
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
 				}
 				return newRslValues(f.i, f.callNode, response)
+			},
+		},
+		{
+			Name:             FUNC_GET_PATH,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				pathArg := f.args[0]
+				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+
+				rslMap := NewRslMap()
+
+				stat, err1 := os.Stat(path) // todo should be abstracted away for testing
+				absPath, err2 := filepath.Abs(path)
+				if err1 == nil && err2 == nil {
+					rslMap.SetPrimitiveStr("full_path", absPath)
+					rslMap.SetPrimitiveStr("base_name", stat.Name())
+					rslMap.SetPrimitiveStr("permissions", stat.Mode().Perm().String())
+					fileType := lo.Ternary(stat.IsDir(), "dir", "file")
+					rslMap.SetPrimitiveStr("type", fileType)
+					if fileType == "file" {
+						rslMap.SetPrimitiveInt64("size_bytes", stat.Size())
+					}
+				}
+
+				return newRslValues(f.i, f.callNode, rslMap)
 			},
 		},
 	}
