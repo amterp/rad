@@ -67,7 +67,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 		RequireStr(i, shellCmdNode)
 
 	if FlagConfirmShellCommands.Value || isConfirm {
-		response, err := InteractiveConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
+		response, err := InputConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
 		if err != nil {
 			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
 		}

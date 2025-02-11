@@ -52,3 +52,14 @@
 - style guide? tips?
 - something which goes through rsl snippets and runs them to ensure they compile
 - parallel 'RSL by Example' guide?
+
+---
+
+## Updates to make
+
+- --SRC, --RSL-TREE
+- http functions
+- 'new' command
+- --CONFIRM-SHELL
+- 'confirm' shell modifier
+- 'input' function

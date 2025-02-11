@@ -39,6 +39,7 @@ const (
 	FUNC_RANGE              = "range"
 	FUNC_UNIQUE             = "unique"
 	FUNC_CONFIRM            = "confirm"
+	FUNC_INPUT              = "input"
 	FUNC_PARSE_JSON         = "parse_json"
 	FUNC_PARSE_INT          = "parse_int"
 	FUNC_PARSE_FLOAT        = "parse_float"
@@ -58,6 +59,8 @@ const (
 	namedArgPrompt  = "prompt"
 	namedArgHeaders = "headers"
 	namedArgBody    = "body"
+	namedArgHint    = "hint"
+	namedArgDefault = "default"
 )
 
 var (
@@ -372,7 +375,7 @@ func init() {
 					prompt = arg.value.RequireStr(f.i, arg.node).Plain()
 				}
 
-				response, err := InteractiveConfirm("", prompt)
+				response, err := InputConfirm("", prompt)
 				if err != nil {
 					// todo I think this errors if user aborts
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
@@ -473,6 +476,38 @@ func init() {
 					bugIncorrectTypes(FUNC_ABS)
 					panic(UNREACHABLE)
 				}
+			},
+		},
+		{
+			Name:             FUNC_INPUT,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 0,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgHint:    {RslStringT},
+				namedArgDefault: {RslStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				prompt := "> "
+				if promptArg := tryGetArg(0, f.args); promptArg != nil {
+					prompt = promptArg.value.RequireStr(f.i, promptArg.node).Plain()
+				}
+
+				hint := ""
+				if hintArg, exists := f.namedArgs[namedArgHint]; exists {
+					hint = hintArg.value.RequireStr(f.i, hintArg.valueNode).Plain()
+				}
+
+				default_ := ""
+				if defaultArg, exists := f.namedArgs[namedArgDefault]; exists {
+					default_ = defaultArg.value.RequireStr(f.i, defaultArg.valueNode).Plain()
+				}
+
+				response, err := InputText(prompt, hint, default_)
+				if err != nil {
+					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
+				}
+				return newRslValues(f.i, f.callNode, response)
 			},
 		},
 	}
