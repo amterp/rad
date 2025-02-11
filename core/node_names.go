@@ -104,6 +104,7 @@ const (
 	F_END          = "end"
 	F_SHELL_CMD    = "shell_cmd"
 	F_QUIET_MOD    = "quiet_mod"
+	F_CONFIRM_MOD  = "confirm_mod"
 	F_COMMAND      = "command"
 	F_RESPONSE     = "response"
 	F_SEGMENT      = "segment"

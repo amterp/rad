@@ -59,15 +59,15 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs int) shellResult {
 	isQuiet := i.getChild(shellCmdNode, F_QUIET_MOD) != nil
+	isConfirm := i.getChild(shellCmdNode, F_CONFIRM_MOD) != nil
 
 	cmdNode := i.getChild(shellCmdNode, F_COMMAND)
 	cmdStr := i.evaluate(cmdNode, 1)[0].
 		RequireType(i, cmdNode, "Shell commands must be strings", RslStringT).
 		RequireStr(i, shellCmdNode)
 
-	if FlagConfirmShellCommands.Value {
-		prompt := fmt.Sprintf("%s\nRun above command? [y/n] > ", cmdStr.Plain())
-		response, err := InteractiveConfirm(prompt)
+	if FlagConfirmShellCommands.Value || isConfirm {
+		response, err := InteractiveConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
 		if err != nil {
 			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
 		}

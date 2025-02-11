@@ -1,6 +1,7 @@
 package core
 
 import (
+	com "rad/core/common"
 	"strings"
 
 	"github.com/charmbracelet/huh"
@@ -14,12 +15,15 @@ func ToStringArrayQuoteStr[T any](v []T, quoteStrings bool) []string {
 	return output
 }
 
-func InteractiveConfirm(prompt string) (bool, error) {
+func InteractiveConfirm(title string, prompt string) (bool, error) {
 	var response string
-	err := huh.NewInput().
+	input := huh.NewInput().
 		Prompt(prompt).
-		Value(&response).
-		Run()
+		Value(&response)
+	if !com.IsBlank(title) {
+		input.Title(title)
+	}
+	err := input.Run()
 	return strings.HasPrefix(strings.ToLower(response), "y"), err
 }
 

@@ -372,7 +372,7 @@ func init() {
 					prompt = arg.value.RequireStr(f.i, arg.node).Plain()
 				}
 
-				response, err := InteractiveConfirm(prompt)
+				response, err := InteractiveConfirm("", prompt)
 				if err != nil {
 					// todo I think this errors if user aborts
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
