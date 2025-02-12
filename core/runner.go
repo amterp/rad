@@ -104,12 +104,18 @@ func (r *RadRunner) Run() error {
 		r.RunUsageExit()
 	}
 
-	shouldExit := false
 	if FlagVersion.Value {
-		shouldExit = true
 		RP.Print(fmt.Sprintf("rad version %s\n", Version))
+		RExit(0)
 	}
 
+	if com.IsBlank(scriptName) {
+		r.RunUsageExit()
+	}
+
+	// from now on, assume we have a script name (or command)
+
+	shouldExit := false
 	if FlagSrc.Value {
 		shouldExit = true
 		if FlagVersion.Value {

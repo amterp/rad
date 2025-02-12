@@ -69,25 +69,7 @@ func TestMisc_VersionShort(t *testing.T) {
 
 func TestMisc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 	setupAndRunCode(t, "", "-h", "-V", "--NO-COLOR")
-	expected := `rad: A tool for writing user-friendly command line scripts.
-GitHub: https://github.com/amterp/rad
-Documentation: https://amterp.github.io/rad/
-
-Usage:
-  rad [script path | command] [flags]
-
-Commands:
-  new           Sets up a new RSL script, including some boilerplate and execution permissions.
-
-To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + globalFlagHelp + `
-To execute an RSL script:
-  rad path/to/script.rsl [args]
-
-To execute a command:
-  rad <command> [args]
-
-If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
-`
+	expected := radHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -133,5 +115,13 @@ a = abs("asd")
           Got "string" as the 1st argument of abs(), but must be: float or int
 `
 	assertError(t, 1, expected)
+	resetTestState()
+}
+
+func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
+	setupAndRunArgs(t, "--NO-COLOR")
+	expected := radHelp
+	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertNoErrors(t)
 	resetTestState()
 }
