@@ -14,9 +14,12 @@ if version:
     tags = split(tags[:-1], "\n")
     tags = [replace(t, "v", "") for t in tags]
     tags = [split(t, "\.") for t in tags]
-    major = sort([parse_int(t[0]) for t in tags])[-1]
-    minor = sort([parse_int(t[1]) for t in tags if parse_int(t[0]) == major])[-1]
-    patch = sort([parse_int(t[2]) for t in tags if parse_int(t[0]) == major and parse_int(t[1]) == minor])[-1]
+    major = sort([parse_int(t[0]) for t in tags])
+    major = major[-1] // todo necessary until RAD-152
+    minor = sort([parse_int(t[1]) for t in tags if parse_int(t[0]) == major])
+    minor = minor[-1]
+    patch = sort([parse_int(t[2]) for t in tags if parse_int(t[0]) == major and parse_int(t[1]) == minor])
+    patch = patch[-1]
     if version == 1:
         version = "{major}.{minor}.{patch + 1}"
     else if version == 2:
