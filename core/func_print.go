@@ -13,10 +13,13 @@ var FuncPrint = Func{
 	ReturnValues:     ZERO_RETURN_VALS,
 	RequiredArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args'
-	ArgTypes:  [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
-	NamedArgs: NO_NAMED_ARGS,
+	ArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgEnd: {RslStringT},
+		namedArgSep: {RslStringT},
+	},
 	Execute: func(f FuncInvocationArgs) []RslValue {
-		RP.Print(resolvePrintStr(f.args))
+		RP.Print(resolvePrintStr(f))
 		return EMPTY
 	},
 }
@@ -45,32 +48,44 @@ var FuncDebug = Func{
 	ReturnValues:     ZERO_RETURN_VALS,
 	RequiredArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args'
-	ArgTypes:  [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
-	NamedArgs: NO_NAMED_ARGS,
+	ArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgEnd: {RslStringT},
+		namedArgSep: {RslStringT},
+	},
 	Execute: func(f FuncInvocationArgs) []RslValue {
-		RP.ScriptDebug(resolvePrintStr(f.args))
+		RP.ScriptDebug(resolvePrintStr(f))
 		return EMPTY
 	},
 }
 
-func resolvePrintStr(args []positionalArg) string {
+func resolvePrintStr(f FuncInvocationArgs) string {
 	var sb strings.Builder
+	end := "\n"
+	if endArg, ok := f.namedArgs[namedArgEnd]; ok {
+		end = endArg.value.RequireStr(f.i, endArg.valueNode).String()
+	}
 
-	if len(args) == 0 {
-		sb.WriteString("\n")
+	sep := " "
+	if sepArg, ok := f.namedArgs[namedArgSep]; ok {
+		sep = sepArg.value.RequireStr(f.i, sepArg.valueNode).String()
+	}
+
+	if len(f.args) == 0 {
+		sb.WriteString(end)
 	} else {
-		for idx, v := range args {
+		for idx, v := range f.args {
 			if v.value.Type() == RslStringT {
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
 			} else {
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, true))
 			}
-			if idx < len(args)-1 {
-				sb.WriteString(" ")
+			if idx < len(f.args)-1 {
+				sb.WriteString(sep)
 			}
 		}
-		sb.WriteString("\n")
+		sb.WriteString(end)
 	}
 
 	return sb.String()

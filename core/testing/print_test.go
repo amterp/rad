@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestPrint(t *testing.T) {
+func Test_Print(t *testing.T) {
 	setupAndRunArgs(t, "./rsl_scripts/print.rad")
 	expected := `hi alice
 hi bob
@@ -15,7 +15,7 @@ hi charlie
 	resetTestState()
 }
 
-func TestDebugNoDebugFlag(t *testing.T) {
+func Test_DebugNoDebugFlag(t *testing.T) {
 	setupAndRunArgs(t, "./rsl_scripts/debug.rad")
 	expected := "one\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -23,7 +23,7 @@ func TestDebugNoDebugFlag(t *testing.T) {
 	resetTestState()
 }
 
-func TestDebugWithDebugFlag(t *testing.T) {
+func Test_DebugWithDebugFlag(t *testing.T) {
 	setupAndRunArgs(t, "./rsl_scripts/debug.rad", "--DEBUG")
 	expected := "one\nDEBUG: two\nDEBUG: three\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -31,7 +31,7 @@ func TestDebugWithDebugFlag(t *testing.T) {
 	resetTestState()
 }
 
-func TestPrettyPrintDict(t *testing.T) {
+func Test_PrettyPrint_Dict(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json.results.Alice
@@ -51,7 +51,7 @@ pprint(node[0])
 	resetTestState()
 }
 
-func TestPrettyPrintInt(t *testing.T) {
+func Test_PrettyPrint_Int(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json.results.Alice.age
@@ -68,7 +68,7 @@ pprint(node[0])
 	resetTestState()
 }
 
-func TestPrettyPrintArray(t *testing.T) {
+func Test_PrettyPrint_Array(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json[].ids
@@ -102,7 +102,7 @@ pprint(node)
 	resetTestState()
 }
 
-func TestPrettyPrintComplex(t *testing.T) {
+func Test_PrettyPrint_Complex(t *testing.T) {
 	rsl := `
 url = "https://google.com"
 node = json
@@ -151,7 +151,7 @@ pprint(node[0])
 	resetTestState()
 }
 
-func TestPrettyPrintBasics(t *testing.T) {
+func Test_PrettyPrint_Basics(t *testing.T) {
 	rsl := `
 pprint("alice")
 pprint(21)
@@ -169,7 +169,7 @@ false
 	resetTestState()
 }
 
-func TestPrettyPrintMap(t *testing.T) {
+func Test_PrettyPrint_Map(t *testing.T) {
 	rsl := `
 a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
 pprint(a)
@@ -189,11 +189,40 @@ pprint(a)
 	resetTestState()
 }
 
-func TestPrint_CanPrintEmojis(t *testing.T) {
+func Test_Print_CanPrintEmojis(t *testing.T) {
 	rsl := `
 print("👋")`
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "👋\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Print_CanCustomizeEnd(t *testing.T) {
+	rsl := `
+print("hello", "there", "claire", end="bloop")`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "hello there clairebloop")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Print_CanUseEndToRemoveNewlines(t *testing.T) {
+	rsl := `
+print("hello", end="")
+print("there", end="")
+print("claire", end="")`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "hellothereclaire")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Print_CanCustomizeSep(t *testing.T) {
+	rsl := `
+print("hello", "there", "claire", sep="_")`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "hello_there_claire\n")
 	assertNoErrors(t)
 	resetTestState()
 }

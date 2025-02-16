@@ -64,6 +64,8 @@ const (
 	namedArgBody    = "body"
 	namedArgHint    = "hint"
 	namedArgDefault = "default"
+	namedArgEnd     = "end"
+	namedArgSep     = "sep"
 )
 
 var (
