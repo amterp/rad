@@ -14,7 +14,7 @@ print("Hi", name)
   test <name>
 
 Script args:
-      --name string    Regex: [A-Z][a-z]*
+      --name string   Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
@@ -35,7 +35,7 @@ print("Hi", name)
   test <name>
 
 Script args:
-      --name string    Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+      --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
 	assertOnlyOutput(t, stdErrBuffer, expected)
@@ -82,7 +82,7 @@ Usage:
   test <name>
 
 Script args:
-      --name string    Regex: [A-Z][a-z]*
+      --name string   Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
 	assertError(t, 1, expected)
@@ -102,7 +102,7 @@ Usage:
   test <name>
 
 Script args:
-      --name string    Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+      --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
 	assertError(t, 1, expected)

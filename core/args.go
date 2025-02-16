@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rts"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 
 	"github.com/samber/lo"
@@ -250,22 +252,28 @@ func (f *StringRslArg) SetValue(arg string) {
 }
 
 func (f *StringRslArg) GetDescription() string {
-	var builder strings.Builder
+	var sb strings.Builder
 
-	builder.WriteString(f.Description)
+	sb.WriteString(f.Description)
 
 	if f.EnumConstraint != nil {
-		builder.WriteString(" Valid values: [")
-		builder.WriteString(strings.Join(*f.EnumConstraint, ", "))
-		builder.WriteString("].")
+		if sb.Len() > 0 {
+			sb.WriteString(" ")
+		}
+		sb.WriteString("Valid values: [")
+		sb.WriteString(strings.Join(*f.EnumConstraint, ", "))
+		sb.WriteString("].")
 	}
 
 	if f.RegexConstraint != nil {
-		builder.WriteString(" Regex: ")
-		builder.WriteString((*f.RegexConstraint).String())
+		if sb.Len() > 0 {
+			sb.WriteString(" ")
+		}
+		sb.WriteString("Regex: ")
+		sb.WriteString((*f.RegexConstraint).String())
 	}
 
-	return builder.String()
+	return sb.String()
 }
 
 //goland:noinspection GoErrorStringFormat
@@ -333,11 +341,12 @@ func (f *StringArrRslArg) SetValue(arg string) {
 
 type IntRslArg struct {
 	BaseRslArg
-	Value   int64
-	Default int64
+	Value           int64
+	Default         int64
+	RangeConstraint *ArgRangeConstraint
 }
 
-func NewIntRadArg(name, short, argUsage, description string, defaultValue int64) IntRslArg {
+func NewIntRadArg(name, short, argUsage, description string, defaultValue int64, rangeConstraint *ArgRangeConstraint) IntRslArg {
 	return IntRslArg{
 		BaseRslArg: BaseRslArg{
 			ExternalName: name,
@@ -349,7 +358,8 @@ func NewIntRadArg(name, short, argUsage, description string, defaultValue int64)
 			defaultAsString:   ToPrintable(defaultValue),
 			hasNonZeroDefault: defaultValue != 0,
 		},
-		Default: defaultValue,
+		Default:         defaultValue,
+		RangeConstraint: rangeConstraint,
 	}
 }
 
@@ -370,6 +380,20 @@ func (f *IntRslArg) SetValue(arg string) {
 	}
 	val := int64(parsed)
 	f.Value = val
+}
+
+func (f *IntRslArg) GetDescription() string {
+	var sb strings.Builder
+
+	sb.WriteString(f.Description)
+	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
+
+	return sb.String()
+}
+
+func (f *IntRslArg) ValidateConstraints() error {
+	validateRange(f.scriptArg.Decl, float64(f.Value), f.RangeConstraint)
+	return nil
 }
 
 // --- int array
@@ -424,11 +448,12 @@ func (f *IntArrRslArg) SetValue(arg string) {
 
 type FloatRslArg struct {
 	BaseRslArg
-	Value   float64
-	Default float64
+	Value           float64
+	Default         float64
+	RangeConstraint *ArgRangeConstraint
 }
 
-func NewFloatRadArg(name, short, argUsage, description string, defaultValue float64) FloatRslArg {
+func NewFloatRadArg(name, short, argUsage, description string, defaultValue float64, constraint *ArgRangeConstraint) FloatRslArg {
 	return FloatRslArg{
 		BaseRslArg: BaseRslArg{
 			ExternalName:      name,
@@ -439,7 +464,8 @@ func NewFloatRadArg(name, short, argUsage, description string, defaultValue floa
 			defaultAsString:   ToPrintable(defaultValue),
 			hasNonZeroDefault: defaultValue != 0,
 		},
-		Default: defaultValue,
+		Default:         defaultValue,
+		RangeConstraint: constraint,
 	}
 }
 
@@ -459,6 +485,20 @@ func (f *FloatRslArg) SetValue(arg string) {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 	}
 	f.Value = parsed
+}
+
+func (f *FloatRslArg) GetDescription() string {
+	var sb strings.Builder
+
+	sb.WriteString(f.Description)
+	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
+
+	return sb.String()
+}
+
+func (f *FloatRslArg) ValidateConstraints() error {
+	validateRange(f.scriptArg.Decl, f.Value, f.RangeConstraint)
+	return nil
 }
 
 // --- float array
@@ -581,7 +621,7 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		if arg.DefaultInt != nil {
 			defVal = *arg.DefaultInt
 		}
-		f := NewIntRadArg(apiName, shorthand, "int", description, defVal)
+		f := NewIntRadArg(apiName, shorthand, "int", description, defVal, arg.RangeConstraint)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -599,7 +639,7 @@ func CreateFlag(arg *ScriptArg) RslArg {
 		if arg.DefaultFloat != nil {
 			defVal = *arg.DefaultFloat
 		}
-		f := NewFloatRadArg(apiName, shorthand, "float", description, defVal)
+		f := NewFloatRadArg(apiName, shorthand, "float", description, defVal, arg.RangeConstraint)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -641,4 +681,54 @@ func convertToInterfaceArr[T any](i []T) []interface{} {
 		converted[j] = v
 	}
 	return converted
+}
+
+func validateRange(decl rts.ArgDecl, val float64, rangeConstraint *ArgRangeConstraint) {
+	if rangeConstraint == nil {
+		return
+	}
+
+	rMin := rangeConstraint.Min
+	if rMin != nil {
+		if rangeConstraint.MinInclusive {
+			if val < *rMin {
+				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is < minimum %v", decl.ExternalName(), val, *rMin)))
+			}
+		} else {
+			if val <= *rMin {
+				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is <= minimum (exclusive) %v", decl.ExternalName(), val, *rMin)))
+			}
+		}
+	}
+
+	rMax := rangeConstraint.Max
+	if rMax != nil {
+		if rangeConstraint.MaxInclusive {
+			if val > *rMax {
+				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is > maximum %v", decl.ExternalName(), val, *rMax)))
+			}
+		} else {
+			if val >= *rMax {
+				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is >= maximum (exclusive) %v", decl.ExternalName(), val, *rMax)))
+			}
+		}
+	}
+}
+
+func addRangeDescriptionIfPresent(sb *strings.Builder, rangeConstraint *ArgRangeConstraint) {
+	if rangeConstraint != nil {
+		if sb.Len() > 0 {
+			sb.WriteString(" ")
+		}
+		sb.WriteString("Range: ")
+		sb.WriteString(lo.Ternary(rangeConstraint.MinInclusive, "[", "("))
+		if rangeConstraint.Min != nil {
+			sb.WriteString(fmt.Sprintf("%v", *rangeConstraint.Min))
+		}
+		sb.WriteString(", ")
+		if rangeConstraint.Max != nil {
+			sb.WriteString(fmt.Sprintf("%v", *rangeConstraint.Max))
+		}
+		sb.WriteString(lo.Ternary(rangeConstraint.MaxInclusive, "]", ")"))
+	}
 }

@@ -53,7 +53,8 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 	for _, argDecl := range argBlock.Args {
 		enumConstraint := argBlock.EnumConstraints[argDecl.Name.Name]
 		regexConstraint := argBlock.RegexConstraints[argDecl.Name.Name]
-		args = append(args, FromArgDecl(argDecl, enumConstraint, regexConstraint))
+		rangeConstraint := argBlock.RangeConstraints[argDecl.Name.Name]
+		args = append(args, FromArgDecl(argDecl, enumConstraint, regexConstraint, rangeConstraint))
 	}
 
 	return args

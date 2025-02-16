@@ -17,6 +17,7 @@ type ScriptArg struct {
 	IsOptional      bool
 	EnumConstraint  *[]string
 	RegexConstraint *regexp.Regexp
+	RangeConstraint *ArgRangeConstraint
 	// first check the Type and IsOptional, then get the value
 	DefaultString     *string
 	DefaultStringList *[]string
@@ -28,7 +29,19 @@ type ScriptArg struct {
 	DefaultBoolList   *[]bool
 }
 
-func FromArgDecl(decl rts.ArgDecl, enumConstraint *rts.ArgEnumConstraint, regexConstraint *rts.ArgRegexConstraint) *ScriptArg {
+type ArgRangeConstraint struct {
+	Min          *float64
+	MinInclusive bool
+	Max          *float64
+	MaxInclusive bool
+}
+
+func FromArgDecl(
+	decl rts.ArgDecl,
+	enumConstraint *rts.ArgEnumConstraint,
+	regexConstraint *rts.ArgRegexConstraint,
+	rangeConstraint *rts.ArgRangeConstraint,
+) *ScriptArg {
 	name := decl.Name.Name
 	externalName := decl.ExternalName()
 
@@ -43,6 +56,7 @@ func FromArgDecl(decl rts.ArgDecl, enumConstraint *rts.ArgEnumConstraint, regexC
 		IsOptional:      isOptional(decl),
 		EnumConstraint:  convertEnumConstraint(enumConstraint),
 		RegexConstraint: convertRegexConstraint(regexConstraint),
+		RangeConstraint: convertRangeConstraint(rangeConstraint),
 	}
 
 	if defaultVal != nil {
@@ -76,6 +90,33 @@ func convertRegexConstraint(constraint *rts.ArgRegexConstraint) *regexp.Regexp {
 		RP.CtxErrorExit(NewCtxFromRtsNode(constraint, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error())))
 	}
 	return compiled
+}
+
+func convertRangeConstraint(constraint *rts.ArgRangeConstraint) *ArgRangeConstraint {
+	if constraint == nil {
+		return nil
+	}
+
+	rang := constraint.Range
+	minInclusive := rang.Opener.Src() == "["
+	maxInclusive := rang.Closer.Src() == "]"
+
+	var maxV *float64
+	if rang.Max != nil {
+		maxV = &rang.Max.Value
+	}
+
+	var minV *float64
+	if rang.Min != nil {
+		minV = &rang.Min.Value
+	}
+
+	return &ArgRangeConstraint{
+		Min:          minV,
+		MinInclusive: minInclusive,
+		Max:          maxV,
+		MaxInclusive: maxInclusive,
+	}
 }
 
 func isOptional(decl rts.ArgDecl) bool {

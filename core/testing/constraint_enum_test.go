@@ -28,7 +28,7 @@ Usage:
   test <name>
 
 Script args:
-      --name string    Valid values: [alice, bob, charlie].
+      --name string   Valid values: [alice, bob, charlie].
 
 ` + globalFlagHelp
 	assertError(t, 1, expected)
@@ -48,7 +48,7 @@ Usage:
   test <name>
 
 Script args:
-      --name string    Valid values: [alice].
+      --name string   Valid values: [alice].
 
 ` + globalFlagHelp
 	assertError(t, 1, expected)
