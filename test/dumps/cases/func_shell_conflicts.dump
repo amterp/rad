@@ -1,0 +1,26 @@
+=====
+Func shell conflicts work
+=====
+confirm()
+quiet()
+unsafe()
+=====
+B: [ 0, 27] PS: [0, 0], PE: [3, 0] source_file
+B: [ 0,  9] PS: [0, 0], PE: [0, 9]   expr_stmt
+B: [ 0,  9] PS: [0, 0], PE: [0, 9]     expr
+B: [ 0,  9] PS: [0, 0], PE: [0, 9]       primary_expr
+B: [ 0,  9] PS: [0, 0], PE: [0, 9]         call
+B: [ 0,  7] PS: [0, 0], PE: [0, 7]           func: identifier `confirm`
+B: [ 7,  9] PS: [0, 7], PE: [0, 9]           () `()`
+B: [10, 17] PS: [1, 0], PE: [1, 7]   expr_stmt
+B: [10, 17] PS: [1, 0], PE: [1, 7]     expr
+B: [10, 17] PS: [1, 0], PE: [1, 7]       primary_expr
+B: [10, 17] PS: [1, 0], PE: [1, 7]         call
+B: [10, 15] PS: [1, 0], PE: [1, 5]           func: identifier `quiet`
+B: [15, 17] PS: [1, 5], PE: [1, 7]           () `()`
+B: [18, 26] PS: [2, 0], PE: [2, 8]   expr_stmt
+B: [18, 26] PS: [2, 0], PE: [2, 8]     expr
+B: [18, 26] PS: [2, 0], PE: [2, 8]       primary_expr
+B: [18, 26] PS: [2, 0], PE: [2, 8]         call
+B: [18, 24] PS: [2, 0], PE: [2, 6]           func: identifier `unsafe`
+B: [24, 26] PS: [2, 6], PE: [2, 8]           () `()`
