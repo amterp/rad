@@ -14,6 +14,7 @@ type ArgBlock struct {
 	// ArgName -> Constraint
 	EnumConstraints  map[string]*ArgEnumConstraint
 	RegexConstraints map[string]*ArgRegexConstraint
+	RangeConstraints map[string]*ArgRangeConstraint
 }
 
 type ArgDecl struct {
@@ -111,15 +112,36 @@ type ArgRegexValue struct {
 	Value string
 }
 
+type ArgRangeConstraint struct {
+	BaseNode
+	ArgName ArgConstraintArgName
+	Range   ArgRangeValue
+}
+
+type ArgRangeValue struct {
+	Opener ArgRangeOpenerCloser
+	Closer ArgRangeOpenerCloser
+	Min    *ArgRangeMinMax
+	Max    *ArgRangeMinMax
+}
+
+type ArgRangeOpenerCloser struct {
+	BaseNode
+	Token string
+}
+
+type ArgRangeMinMax struct {
+	BaseNode
+	Value float64
+}
+
 func newArgBlock(src string, node *ts.Node) (*ArgBlock, bool) {
-	declarations := findArgDeclarations(src, node)
-	enumConstraints := findArgEnumConstraints(src, node)
-	regexConstraints := findArgRegexConstraints(src, node)
 	return &ArgBlock{
 		BaseNode:         newBaseNode(src, node),
-		Args:             declarations,
-		EnumConstraints:  enumConstraints,
-		RegexConstraints: regexConstraints,
+		Args:             findArgDeclarations(src, node),
+		EnumConstraints:  findArgEnumConstraints(src, node),
+		RegexConstraints: findArgRegexConstraints(src, node),
+		RangeConstraints: findArgRangeConstraints(src, node),
 	}, true
 }
 
@@ -214,7 +236,7 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		}
 
 		argDecls = append(argDecls, ArgDecl{
-			BaseNode: newBaseNode(src, node),
+			BaseNode: newBaseNode(src, &decl),
 			Name: ArgDeclName{
 				BaseNode: newBaseNode(src, nameNode),
 				Name:     src[nameNode.StartByte():nameNode.EndByte()],
@@ -284,6 +306,68 @@ func findArgRegexConstraints(src string, node *ts.Node) map[string]*ArgRegexCons
 			Regex: ArgRegexValue{
 				BaseNode: newBaseNode(src, regexStrNode),
 				Value:    regexStr,
+			},
+		}
+	}
+
+	return constraints
+}
+
+func findArgRangeConstraints(src string, node *ts.Node) map[string]*ArgRangeConstraint {
+	rangeConstraints := node.ChildrenByFieldName("range_constraint", node.Walk())
+	constraints := make(map[string]*ArgRangeConstraint)
+	if len(rangeConstraints) == 0 {
+		return constraints
+	}
+
+	for _, constraint := range rangeConstraints {
+		nameNode := constraint.ChildByFieldName("arg_name")
+
+		name := src[nameNode.StartByte():nameNode.EndByte()]
+
+		openerNode := constraint.ChildByFieldName("opener")
+		closerNode := constraint.ChildByFieldName("closer")
+		minNode := constraint.ChildByFieldName("min")
+		maxNode := constraint.ChildByFieldName("max")
+
+		opener := src[openerNode.StartByte():openerNode.EndByte()]
+		closer := src[closerNode.StartByte():closerNode.EndByte()]
+
+		var rMin *ArgRangeMinMax
+		if minNode != nil {
+			minValue, _ := strconv.ParseFloat(src[minNode.StartByte():minNode.EndByte()], 64)
+			rMin = &ArgRangeMinMax{
+				BaseNode: newBaseNode(src, minNode),
+				Value:    minValue,
+			}
+		}
+
+		var rMax *ArgRangeMinMax
+		if maxNode != nil {
+			maxValue, _ := strconv.ParseFloat(src[maxNode.StartByte():maxNode.EndByte()], 64)
+			rMax = &ArgRangeMinMax{
+				BaseNode: newBaseNode(src, maxNode),
+				Value:    maxValue,
+			}
+		}
+
+		constraints[name] = &ArgRangeConstraint{
+			BaseNode: newBaseNode(src, &constraint),
+			ArgName: ArgConstraintArgName{
+				BaseNode: newBaseNode(src, nameNode),
+				Name:     name,
+			},
+			Range: ArgRangeValue{
+				Opener: ArgRangeOpenerCloser{
+					BaseNode: newBaseNode(src, openerNode),
+					Token:    opener,
+				},
+				Closer: ArgRangeOpenerCloser{
+					BaseNode: newBaseNode(src, closerNode),
+					Token:    closer,
+				},
+				Min: rMin,
+				Max: rMax,
 			},
 		}
 	}

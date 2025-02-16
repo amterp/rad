@@ -1,0 +1,86 @@
+=====
+Args range constraint
+=====
+args:
+    age int
+
+    age1 range [0,]
+    age2 range [,120]
+    age3 range (0,120)
+    age4 range [0,120)
+    age5 range (0,120]
+    age6 range [0.1, 120.5]
+    age7 range [,] // fails
+=====
+B: [  0, 186] PS: [ 0,  0], PE: [10,  0] source_file
+B: [  0, 185] PS: [ 0,  0], PE: [ 9, 27]   arg_block
+B: [  0,   4] PS: [ 0,  0], PE: [ 0,  4]     args `args`
+B: [  4,   5] PS: [ 0,  4], PE: [ 0,  5]     : `:`
+B: [ 10,  17] PS: [ 1,  4], PE: [ 1, 11]     declaration: arg_declaration
+B: [ 10,  13] PS: [ 1,  4], PE: [ 1,  7]       arg_name: identifier `age`
+B: [ 14,  17] PS: [ 1,  8], PE: [ 1, 11]       type: int_type `int`
+B: [ 23,  38] PS: [ 3,  4], PE: [ 3, 19]     range_constraint: arg_range_constraint
+B: [ 23,  27] PS: [ 3,  4], PE: [ 3,  8]       arg_name: identifier `age1`
+B: [ 28,  33] PS: [ 3,  9], PE: [ 3, 14]       range `range`
+B: [ 34,  35] PS: [ 3, 15], PE: [ 3, 16]       opener: [ `[`
+B: [ 35,  36] PS: [ 3, 16], PE: [ 3, 17]       min: int_arg
+B: [ 35,  36] PS: [ 3, 16], PE: [ 3, 17]         value: int `0`
+B: [ 36,  37] PS: [ 3, 17], PE: [ 3, 18]       , `,`
+B: [ 37,  38] PS: [ 3, 18], PE: [ 3, 19]       closer: ] `]`
+B: [ 43,  60] PS: [ 4,  4], PE: [ 4, 21]     range_constraint: arg_range_constraint
+B: [ 43,  47] PS: [ 4,  4], PE: [ 4,  8]       arg_name: identifier `age2`
+B: [ 48,  53] PS: [ 4,  9], PE: [ 4, 14]       range `range`
+B: [ 54,  55] PS: [ 4, 15], PE: [ 4, 16]       opener: [ `[`
+B: [ 55,  56] PS: [ 4, 16], PE: [ 4, 17]       , `,`
+B: [ 56,  59] PS: [ 4, 17], PE: [ 4, 20]       max: int_arg
+B: [ 56,  59] PS: [ 4, 17], PE: [ 4, 20]         value: int `120`
+B: [ 59,  60] PS: [ 4, 20], PE: [ 4, 21]       closer: ] `]`
+B: [ 65,  83] PS: [ 5,  4], PE: [ 5, 22]     range_constraint: arg_range_constraint
+B: [ 65,  69] PS: [ 5,  4], PE: [ 5,  8]       arg_name: identifier `age3`
+B: [ 70,  75] PS: [ 5,  9], PE: [ 5, 14]       range `range`
+B: [ 76,  77] PS: [ 5, 15], PE: [ 5, 16]       opener: ( `(`
+B: [ 77,  78] PS: [ 5, 16], PE: [ 5, 17]       min: int_arg
+B: [ 77,  78] PS: [ 5, 16], PE: [ 5, 17]         value: int `0`
+B: [ 78,  79] PS: [ 5, 17], PE: [ 5, 18]       , `,`
+B: [ 79,  82] PS: [ 5, 18], PE: [ 5, 21]       max: int_arg
+B: [ 79,  82] PS: [ 5, 18], PE: [ 5, 21]         value: int `120`
+B: [ 82,  83] PS: [ 5, 21], PE: [ 5, 22]       closer: ) `)`
+B: [ 88, 106] PS: [ 6,  4], PE: [ 6, 22]     range_constraint: arg_range_constraint
+B: [ 88,  92] PS: [ 6,  4], PE: [ 6,  8]       arg_name: identifier `age4`
+B: [ 93,  98] PS: [ 6,  9], PE: [ 6, 14]       range `range`
+B: [ 99, 100] PS: [ 6, 15], PE: [ 6, 16]       opener: [ `[`
+B: [100, 101] PS: [ 6, 16], PE: [ 6, 17]       min: int_arg
+B: [100, 101] PS: [ 6, 16], PE: [ 6, 17]         value: int `0`
+B: [101, 102] PS: [ 6, 17], PE: [ 6, 18]       , `,`
+B: [102, 105] PS: [ 6, 18], PE: [ 6, 21]       max: int_arg
+B: [102, 105] PS: [ 6, 18], PE: [ 6, 21]         value: int `120`
+B: [105, 106] PS: [ 6, 21], PE: [ 6, 22]       closer: ) `)`
+B: [111, 129] PS: [ 7,  4], PE: [ 7, 22]     range_constraint: arg_range_constraint
+B: [111, 115] PS: [ 7,  4], PE: [ 7,  8]       arg_name: identifier `age5`
+B: [116, 121] PS: [ 7,  9], PE: [ 7, 14]       range `range`
+B: [122, 123] PS: [ 7, 15], PE: [ 7, 16]       opener: ( `(`
+B: [123, 124] PS: [ 7, 16], PE: [ 7, 17]       min: int_arg
+B: [123, 124] PS: [ 7, 16], PE: [ 7, 17]         value: int `0`
+B: [124, 125] PS: [ 7, 17], PE: [ 7, 18]       , `,`
+B: [125, 128] PS: [ 7, 18], PE: [ 7, 21]       max: int_arg
+B: [125, 128] PS: [ 7, 18], PE: [ 7, 21]         value: int `120`
+B: [128, 129] PS: [ 7, 21], PE: [ 7, 22]       closer: ] `]`
+B: [134, 157] PS: [ 8,  4], PE: [ 8, 27]     range_constraint: arg_range_constraint
+B: [134, 138] PS: [ 8,  4], PE: [ 8,  8]       arg_name: identifier `age6`
+B: [139, 144] PS: [ 8,  9], PE: [ 8, 14]       range `range`
+B: [145, 146] PS: [ 8, 15], PE: [ 8, 16]       opener: [ `[`
+B: [146, 149] PS: [ 8, 16], PE: [ 8, 19]       min: float_arg
+B: [146, 149] PS: [ 8, 16], PE: [ 8, 19]         value: float `0.1`
+B: [149, 150] PS: [ 8, 19], PE: [ 8, 20]       , `,`
+B: [151, 156] PS: [ 8, 21], PE: [ 8, 26]       max: float_arg
+B: [151, 156] PS: [ 8, 21], PE: [ 8, 26]         value: float `120.5`
+B: [156, 157] PS: [ 8, 26], PE: [ 8, 27]       closer: ] `]`
+B: [162, 176] PS: [ 9,  4], PE: [ 9, 18]     range_constraint: arg_range_constraint
+B: [162, 166] PS: [ 9,  4], PE: [ 9,  8]       arg_name: identifier `age7`
+B: [167, 172] PS: [ 9,  9], PE: [ 9, 14]       range `range`
+B: [173, 174] PS: [ 9, 15], PE: [ 9, 16]       opener: [ `[`
+B: [174, 175] PS: [ 9, 16], PE: [ 9, 17]       , `,`
+B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]       max: float_arg
+B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]         value: float (MISSING) ``
+B: [175, 176] PS: [ 9, 17], PE: [ 9, 18]       closer: ] `]`
+B: [177, 185] PS: [ 9, 19], PE: [ 9, 27]     comment `// fails`

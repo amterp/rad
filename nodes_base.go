@@ -44,7 +44,7 @@ func NodeName[T Node]() string {
 
 type BaseNode struct {
 	node      *ts.Node
-	src       string
+	src       string // complete src
 	startByte int
 	endByte   int
 	startPos  Position
