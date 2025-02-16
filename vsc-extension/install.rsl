@@ -12,10 +12,6 @@ $`test -d {dir}`
 fail:
     print("❌ Highlighting directory not found! Are you running this script from the root of the project?")
 
-if not confirm("Confirm installation at {vscode}? [y/n] > "):
-    print(red("Exiting...")
-    exit(1)
-
-$!`cp -r {dir} {vscode}`
+confirm $!`cp -r {dir} {vscode}/rsl-extension`
 
 print(green("✅ Installed RSL syntax highlighting! You may need to restart VS Code for it to take effect."))
