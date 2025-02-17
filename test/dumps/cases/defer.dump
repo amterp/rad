@@ -7,27 +7,23 @@ errdefer print(2)
 B: [ 0, 33] PS: [0,  0], PE: [2,  0] source_file
 B: [ 0, 14] PS: [0,  0], PE: [0, 14]   defer_block
 B: [ 0,  5] PS: [0,  0], PE: [0,  5]     keyword: defer `defer`
-B: [ 6, 14] PS: [0,  6], PE: [0, 14]     stmt: expr_stmt
-B: [ 6, 14] PS: [0,  6], PE: [0, 14]       expr
-B: [ 6, 14] PS: [0,  6], PE: [0, 14]         primary_expr
-B: [ 6, 14] PS: [0,  6], PE: [0, 14]           call
-B: [ 6, 11] PS: [0,  6], PE: [0, 11]             func: identifier `print`
-B: [11, 12] PS: [0, 11], PE: [0, 12]             ( `(`
-B: [12, 13] PS: [0, 12], PE: [0, 13]             arg: expr
-B: [12, 13] PS: [0, 12], PE: [0, 13]               primary_expr
-B: [12, 13] PS: [0, 12], PE: [0, 13]                 literal
-B: [12, 13] PS: [0, 12], PE: [0, 13]                   int `1`
-B: [13, 14] PS: [0, 13], PE: [0, 14]             ) `)`
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]     stmt: expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]       base: call
+B: [ 6, 11] PS: [0,  6], PE: [0, 11]         func: identifier `print`
+B: [11, 12] PS: [0, 11], PE: [0, 12]         ( `(`
+B: [12, 13] PS: [0, 12], PE: [0, 13]         arg: expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]           base: primary_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]             literal
+B: [12, 13] PS: [0, 12], PE: [0, 13]               int `1`
+B: [13, 14] PS: [0, 13], PE: [0, 14]         ) `)`
 B: [15, 32] PS: [1,  0], PE: [1, 17]   defer_block
 B: [15, 23] PS: [1,  0], PE: [1,  8]     keyword: errdefer `errdefer`
-B: [24, 32] PS: [1,  9], PE: [1, 17]     stmt: expr_stmt
-B: [24, 32] PS: [1,  9], PE: [1, 17]       expr
-B: [24, 32] PS: [1,  9], PE: [1, 17]         primary_expr
-B: [24, 32] PS: [1,  9], PE: [1, 17]           call
-B: [24, 29] PS: [1,  9], PE: [1, 14]             func: identifier `print`
-B: [29, 30] PS: [1, 14], PE: [1, 15]             ( `(`
-B: [30, 31] PS: [1, 15], PE: [1, 16]             arg: expr
-B: [30, 31] PS: [1, 15], PE: [1, 16]               primary_expr
-B: [30, 31] PS: [1, 15], PE: [1, 16]                 literal
-B: [30, 31] PS: [1, 15], PE: [1, 16]                   int `2`
-B: [31, 32] PS: [1, 16], PE: [1, 17]             ) `)`
+B: [24, 32] PS: [1,  9], PE: [1, 17]     stmt: expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]       base: call
+B: [24, 29] PS: [1,  9], PE: [1, 14]         func: identifier `print`
+B: [29, 30] PS: [1, 14], PE: [1, 15]         ( `(`
+B: [30, 31] PS: [1, 15], PE: [1, 16]         arg: expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]           base: primary_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]             literal
+B: [30, 31] PS: [1, 15], PE: [1, 16]               int `2`
+B: [31, 32] PS: [1, 16], PE: [1, 17]         ) `)`

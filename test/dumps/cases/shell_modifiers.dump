@@ -18,7 +18,7 @@ B: [  7,  14] PS: [0,  7], PE: [0, 14]       confirm_mod: confirm `confirm`
 B: [ 15,  20] PS: [0, 15], PE: [0, 20]       quiet_mod: quiet `quiet`
 B: [ 21,  22] PS: [0, 21], PE: [0, 22]       $ `$`
 B: [ 22,  28] PS: [0, 22], PE: [0, 28]       command: expr
-B: [ 22,  28] PS: [0, 22], PE: [0, 28]         primary_expr
+B: [ 22,  28] PS: [0, 22], PE: [0, 28]         base: primary_expr
 B: [ 22,  28] PS: [0, 22], PE: [0, 28]           literal
 B: [ 22,  28] PS: [0, 22], PE: [0, 28]             string
 B: [ 22,  23] PS: [0, 22], PE: [0, 23]               start: string_start ```
@@ -32,7 +32,7 @@ B: [ 35,  42] PS: [1,  6], PE: [1, 13]       confirm_mod: confirm `confirm`
 B: [ 43,  49] PS: [1, 14], PE: [1, 20]       unsafe_mod: unsafe `unsafe`
 B: [ 50,  51] PS: [1, 21], PE: [1, 22]       $ `$`
 B: [ 51,  57] PS: [1, 22], PE: [1, 28]       command: expr
-B: [ 51,  57] PS: [1, 22], PE: [1, 28]         primary_expr
+B: [ 51,  57] PS: [1, 22], PE: [1, 28]         base: primary_expr
 B: [ 51,  57] PS: [1, 22], PE: [1, 28]           literal
 B: [ 51,  57] PS: [1, 22], PE: [1, 28]             string
 B: [ 51,  52] PS: [1, 22], PE: [1, 23]               start: string_start ```
@@ -44,7 +44,7 @@ B: [ 59,  73] PS: [3,  0], PE: [3, 14]     shell_cmd: critical_shell_cmd
 B: [ 59,  64] PS: [3,  0], PE: [3,  5]       quiet_mod: quiet `quiet`
 B: [ 65,  67] PS: [3,  6], PE: [3,  8]       $! `$!`
 B: [ 67,  73] PS: [3,  8], PE: [3, 14]       command: expr
-B: [ 67,  73] PS: [3,  8], PE: [3, 14]         primary_expr
+B: [ 67,  73] PS: [3,  8], PE: [3, 14]         base: primary_expr
 B: [ 67,  73] PS: [3,  8], PE: [3, 14]           literal
 B: [ 67,  73] PS: [3,  8], PE: [3, 14]             string
 B: [ 67,  68] PS: [3,  8], PE: [3,  9]               start: string_start ```
@@ -57,7 +57,7 @@ B: [ 75,  80] PS: [5,  0], PE: [5,  5]       quiet_mod: quiet `quiet`
 B: [ 81,  88] PS: [5,  6], PE: [5, 13]       confirm_mod: confirm `confirm`
 B: [ 89,  90] PS: [5, 14], PE: [5, 15]       $ `$`
 B: [ 90,  96] PS: [5, 15], PE: [5, 21]       command: expr
-B: [ 90,  96] PS: [5, 15], PE: [5, 21]         primary_expr
+B: [ 90,  96] PS: [5, 15], PE: [5, 21]         base: primary_expr
 B: [ 90,  96] PS: [5, 15], PE: [5, 21]           literal
 B: [ 90,  96] PS: [5, 15], PE: [5, 21]             string
 B: [ 90,  91] PS: [5, 15], PE: [5, 16]               start: string_start ```
@@ -71,6 +71,6 @@ B: [107, 108] PS: [7,  4], PE: [7,  5]         left: var_path
 B: [107, 108] PS: [7,  4], PE: [7,  5]           root: identifier `a`
 B: [109, 110] PS: [7,  6], PE: [7,  7]         = `=`
 B: [111, 112] PS: [7,  8], PE: [7,  9]         right: expr
-B: [111, 112] PS: [7,  8], PE: [7,  9]           primary_expr
+B: [111, 112] PS: [7,  8], PE: [7,  9]           base: primary_expr
 B: [111, 112] PS: [7,  8], PE: [7,  9]             literal
 B: [111, 112] PS: [7,  8], PE: [7,  9]               int `1`

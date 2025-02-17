@@ -26,7 +26,7 @@ func Test_Tree_Sexp(t *testing.T) {
 
 	tree := rslTs.Parse("a = 2\nprint(a)")
 
-	expected := "(source_file (assign left: (var_path root: (identifier)) right: (expr (primary_expr (literal (int))))) (expr_stmt (expr (primary_expr (call func: (identifier) arg: (expr (primary_expr (var_path root: (identifier)))))))))"
+	expected := "(source_file (assign left: (var_path) right: (expr base: (primary_expr (literal (int))))) (expr base: (call arg: (expr base: (var_path)))))"
 	if tree.Sexp() != expected {
 		t.Fatalf("Sexp failed: %v", tree.Sexp())
 	}

@@ -13,26 +13,26 @@ B: [ 3,  4] PS: [0,  3], PE: [0,  4]         left: var_path
 B: [ 3,  4] PS: [0,  3], PE: [0,  4]           root: identifier `a`
 B: [ 5,  6] PS: [0,  5], PE: [0,  6]         = `=`
 B: [ 7, 13] PS: [0,  7], PE: [0, 13]         right: expr
-B: [ 7, 13] PS: [0,  7], PE: [0, 13]           primary_expr
-B: [ 7, 13] PS: [0,  7], PE: [0, 13]             call
-B: [ 7, 11] PS: [0,  7], PE: [0, 11]               func: identifier `blah`
-B: [11, 13] PS: [0, 11], PE: [0, 13]               () `()`
+B: [ 7, 13] PS: [0,  7], PE: [0, 13]           base: call
+B: [ 7, 11] PS: [0,  7], PE: [0, 11]             func: identifier `blah`
+B: [11, 13] PS: [0, 11], PE: [0, 13]             () `()`
 B: [13, 14] PS: [0, 13], PE: [0, 14]       ; `;`
 B: [15, 20] PS: [0, 15], PE: [0, 20]       condition: expr
-B: [15, 20] PS: [0, 15], PE: [0, 20]         comparison_op
-B: [15, 16] PS: [0, 15], PE: [0, 16]           left: primary_expr
-B: [15, 16] PS: [0, 15], PE: [0, 16]             var_path
+B: [15, 20] PS: [0, 15], PE: [0, 20]         base: comparison_op
+B: [15, 16] PS: [0, 15], PE: [0, 16]           left: expr
+B: [15, 16] PS: [0, 15], PE: [0, 16]             base: var_path
 B: [15, 16] PS: [0, 15], PE: [0, 16]               root: identifier `a`
 B: [17, 18] PS: [0, 17], PE: [0, 18]           op: > `>`
-B: [19, 20] PS: [0, 19], PE: [0, 20]           right: primary_expr
-B: [19, 20] PS: [0, 19], PE: [0, 20]             literal
-B: [19, 20] PS: [0, 19], PE: [0, 20]               int `2`
+B: [19, 20] PS: [0, 19], PE: [0, 20]           right: expr
+B: [19, 20] PS: [0, 19], PE: [0, 20]             base: primary_expr
+B: [19, 20] PS: [0, 19], PE: [0, 20]               literal
+B: [19, 20] PS: [0, 19], PE: [0, 20]                 int `2`
 B: [20, 21] PS: [0, 20], PE: [0, 21]       : `:`
 B: [26, 31] PS: [1,  4], PE: [1,  9]       stmt: assign
 B: [26, 27] PS: [1,  4], PE: [1,  5]         left: var_path
 B: [26, 27] PS: [1,  4], PE: [1,  5]           root: identifier `b`
 B: [28, 29] PS: [1,  6], PE: [1,  7]         = `=`
 B: [30, 31] PS: [1,  8], PE: [1,  9]         right: expr
-B: [30, 31] PS: [1,  8], PE: [1,  9]           primary_expr
+B: [30, 31] PS: [1,  8], PE: [1,  9]           base: primary_expr
 B: [30, 31] PS: [1,  8], PE: [1,  9]             literal
 B: [30, 31] PS: [1,  8], PE: [1,  9]               int `2`

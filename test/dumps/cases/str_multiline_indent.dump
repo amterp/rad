@@ -12,7 +12,7 @@ B: [ 0,  1] PS: [0, 0], PE: [0, 1]     left: var_path
 B: [ 0,  1] PS: [0, 0], PE: [0, 1]       root: identifier `a`
 B: [ 2,  3] PS: [0, 2], PE: [0, 3]     = `=`
 B: [ 4, 28] PS: [0, 4], PE: [3, 4]     right: expr
-B: [ 4, 28] PS: [0, 4], PE: [3, 4]       primary_expr
+B: [ 4, 28] PS: [0, 4], PE: [3, 4]       base: primary_expr
 B: [ 4, 28] PS: [0, 4], PE: [3, 4]         literal
 B: [ 4, 28] PS: [0, 4], PE: [3, 4]           string
 B: [ 4,  8] PS: [0, 4], PE: [1, 0]             start: string_start `"""\n`

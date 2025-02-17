@@ -9,19 +9,20 @@ B: [ 0,  1] PS: [0,  0], PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0], PE: [0,  1]       root: identifier `c`
 B: [ 2,  3] PS: [0,  2], PE: [0,  3]     = `=`
 B: [ 4, 35] PS: [0,  4], PE: [0, 35]     right: expr
-B: [ 4, 35] PS: [0,  4], PE: [0, 35]       ternary
+B: [ 4, 35] PS: [0,  4], PE: [0, 35]       base: ternary
 B: [ 4, 10] PS: [0,  4], PE: [0, 10]         condition: expr
-B: [ 4, 10] PS: [0,  4], PE: [0, 10]           comparison_op
-B: [ 4,  5] PS: [0,  4], PE: [0,  5]             left: primary_expr
-B: [ 4,  5] PS: [0,  4], PE: [0,  5]               var_path
+B: [ 4, 10] PS: [0,  4], PE: [0, 10]           base: comparison_op
+B: [ 4,  5] PS: [0,  4], PE: [0,  5]             left: expr
+B: [ 4,  5] PS: [0,  4], PE: [0,  5]               base: var_path
 B: [ 4,  5] PS: [0,  4], PE: [0,  5]                 root: identifier `a`
 B: [ 6,  7] PS: [0,  6], PE: [0,  7]             op: < `<`
-B: [ 8, 10] PS: [0,  8], PE: [0, 10]             right: primary_expr
-B: [ 8, 10] PS: [0,  8], PE: [0, 10]               literal
-B: [ 8, 10] PS: [0,  8], PE: [0, 10]                 int `10`
+B: [ 8, 10] PS: [0,  8], PE: [0, 10]             right: expr
+B: [ 8, 10] PS: [0,  8], PE: [0, 10]               base: primary_expr
+B: [ 8, 10] PS: [0,  8], PE: [0, 10]                 literal
+B: [ 8, 10] PS: [0,  8], PE: [0, 10]                   int `10`
 B: [11, 12] PS: [0, 11], PE: [0, 12]         ? `?`
 B: [13, 23] PS: [0, 13], PE: [0, 23]         true_branch: expr
-B: [13, 23] PS: [0, 13], PE: [0, 23]           primary_expr
+B: [13, 23] PS: [0, 13], PE: [0, 23]           base: primary_expr
 B: [13, 23] PS: [0, 13], PE: [0, 23]             literal
 B: [13, 23] PS: [0, 13], PE: [0, 23]               string
 B: [13, 14] PS: [0, 13], PE: [0, 14]                 start: string_start `"`
@@ -30,7 +31,7 @@ B: [14, 22] PS: [0, 14], PE: [0, 22]                   content: string_content `
 B: [22, 23] PS: [0, 22], PE: [0, 23]                 end: string_end `"`
 B: [24, 25] PS: [0, 24], PE: [0, 25]         : `:`
 B: [26, 35] PS: [0, 26], PE: [0, 35]         false_branch: expr
-B: [26, 35] PS: [0, 26], PE: [0, 35]           primary_expr
+B: [26, 35] PS: [0, 26], PE: [0, 35]           base: primary_expr
 B: [26, 35] PS: [0, 26], PE: [0, 35]             literal
 B: [26, 35] PS: [0, 26], PE: [0, 35]               string
 B: [26, 27] PS: [0, 26], PE: [0, 27]                 start: string_start `"`

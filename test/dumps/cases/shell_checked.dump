@@ -14,7 +14,7 @@ B: [ 0, 21] PS: [0, 0], PE: [2, 9]   shell_stmt
 B: [ 0, 21] PS: [0, 0], PE: [2, 9]     shell_cmd: checked_shell_cmd
 B: [ 0,  1] PS: [0, 0], PE: [0, 1]       $ `$`
 B: [ 1,  5] PS: [0, 1], PE: [0, 5]       command: expr
-B: [ 1,  5] PS: [0, 1], PE: [0, 5]         primary_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]         base: primary_expr
 B: [ 1,  5] PS: [0, 1], PE: [0, 5]           literal
 B: [ 1,  5] PS: [0, 1], PE: [0, 5]             string
 B: [ 1,  2] PS: [0, 1], PE: [0, 2]               start: string_start ```
@@ -28,14 +28,14 @@ B: [16, 17] PS: [2, 4], PE: [2, 5]         left: var_path
 B: [16, 17] PS: [2, 4], PE: [2, 5]           root: identifier `a`
 B: [18, 19] PS: [2, 6], PE: [2, 7]         = `=`
 B: [20, 21] PS: [2, 8], PE: [2, 9]         right: expr
-B: [20, 21] PS: [2, 8], PE: [2, 9]           primary_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]           base: primary_expr
 B: [20, 21] PS: [2, 8], PE: [2, 9]             literal
 B: [20, 21] PS: [2, 8], PE: [2, 9]               int `1`
 B: [23, 47] PS: [4, 0], PE: [6, 9]   shell_stmt
 B: [23, 47] PS: [4, 0], PE: [6, 9]     shell_cmd: checked_shell_cmd
 B: [23, 24] PS: [4, 0], PE: [4, 1]       $ `$`
 B: [24, 28] PS: [4, 1], PE: [4, 5]       command: expr
-B: [24, 28] PS: [4, 1], PE: [4, 5]         primary_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]         base: primary_expr
 B: [24, 28] PS: [4, 1], PE: [4, 5]           literal
 B: [24, 28] PS: [4, 1], PE: [4, 5]             string
 B: [24, 25] PS: [4, 1], PE: [4, 2]               start: string_start ```
@@ -49,6 +49,6 @@ B: [42, 43] PS: [6, 4], PE: [6, 5]         left: var_path
 B: [42, 43] PS: [6, 4], PE: [6, 5]           root: identifier `a`
 B: [44, 45] PS: [6, 6], PE: [6, 7]         = `=`
 B: [46, 47] PS: [6, 8], PE: [6, 9]         right: expr
-B: [46, 47] PS: [6, 8], PE: [6, 9]           primary_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]           base: primary_expr
 B: [46, 47] PS: [6, 8], PE: [6, 9]             literal
 B: [46, 47] PS: [6, 8], PE: [6, 9]               int `1`

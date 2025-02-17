@@ -77,6 +77,6 @@ B: [179, 180] PS: [8,  0], PE: [8,  1]     left: var_path
 B: [179, 180] PS: [8,  0], PE: [8,  1]       root: identifier `a`
 B: [181, 182] PS: [8,  2], PE: [8,  3]     = `=`
 B: [183, 184] PS: [8,  4], PE: [8,  5]     right: expr
-B: [183, 184] PS: [8,  4], PE: [8,  5]       primary_expr
+B: [183, 184] PS: [8,  4], PE: [8,  5]       base: primary_expr
 B: [183, 184] PS: [8,  4], PE: [8,  5]         literal
 B: [183, 184] PS: [8,  4], PE: [8,  5]           int `2`
