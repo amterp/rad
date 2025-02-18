@@ -1,33 +1,40 @@
 {
   "name": "rsl-extension",
-  "description": "An extension for developing in RSL.",
+  "displayName": "RSL Language Pack",
+  "description": "Language support for RSL (Rad Scripting Language).",
   "author": "Alexander Terp",
-  "publisher": "Alexander Terp",
+  "publisher": "amterp",
   "license": "MIT",
   "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/amterp/rad"
   },
-  "categories": [],
+  "categories": [
+    "Programming Languages"
+  ],
   "keywords": [
-    "multi-root ready"
+    "multi-root"
   ],
   "engines": {
     "vscode": "^1.75.0"
   },
-  "activationEvents": [
-    "onLanguage:markdown"
-  ],
   "main": "./client/out/extension",
   "contributes": {
-    "configuration": {
-    },
+    "configuration": {},
     "languages": [
       {
         "id": "rsl",
-        "aliases": ["RSL", "rsl", "Rad Scripting Language", "Rsl"],
-        "extensions": [".rsl", ".rad"],
+        "aliases": [
+          "RSL",
+          "rsl",
+          "Rad Scripting Language",
+          "Rsl"
+        ],
+        "extensions": [
+          ".rsl",
+          ".rad"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
