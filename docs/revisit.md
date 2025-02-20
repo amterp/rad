@@ -7,4 +7,21 @@
 - `{}` vs. `${}` for interpolation
 - Ruby-style % syntax or bash heredocs/herestrings?
 - Division by 0 errors or returns nan?
-- `del a[1], a[1]` on a list - currently deletes two different items, but should perhaps be atomic and "delete the same one" 
+- `del a[1], a[1]` on a list - currently deletes two different items, but should perhaps be atomic and "delete the same one"
+
+- get rid of go-like if stmts
+
+```
+if a; b:
+  c
+```
+
+is not meaningfully shorter than
+
+```
+a
+if b:
+  c
+```
+
+and only confusing to those unfamiliar.
