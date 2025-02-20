@@ -56,6 +56,7 @@ const (
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
 	FUNC_GET_PATH           = "get_path"
+	FUNC_COUNT              = "count"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -541,6 +542,23 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, rslMap)
+			},
+		},
+		{
+			Name:             FUNC_COUNT,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 2,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				strArg := f.args[0]
+				substrArg := f.args[1]
+
+				str := strArg.value.RequireStr(f.i, strArg.node).Plain()
+				substr := substrArg.value.RequireStr(f.i, substrArg.node).Plain()
+
+				count := strings.Count(str, substr)
+				return newRslValues(f.i, f.callNode, count)
 			},
 		},
 	}
