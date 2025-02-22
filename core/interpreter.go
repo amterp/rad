@@ -348,8 +348,11 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		resultList := NewRslList()
 		doOneLoop := func() {
 			if conditionNode == nil || i.evaluate(conditionNode, 1)[0].TruthyFalsy() {
-				result := i.evaluate(resultExprNode, 1)[0]
-				resultList.Append(result)
+				results := i.evaluate(resultExprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+				// if expr (e.g. function) returns several values, they all get appended.
+				for _, result := range results {
+					resultList.Append(result)
+				}
 			}
 		}
 		i.executeForLoop(node, doOneLoop)

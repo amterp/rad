@@ -45,7 +45,6 @@ display:
 }
 
 func TestRad_CanTruncateWithMap(t *testing.T) {
-	t.Skip("TODO")
 	rsl := `
 names = ["Alice", "Bob", "Charlie", "David"]
 display:
@@ -67,7 +66,6 @@ Dav
 }
 
 func TestRad_CanMapTwoFieldsAtOnce(t *testing.T) {
-	t.Skip("TODO")
 	rsl := `
 FirstNames = ["Alice", "Bob", "Charlie", "David"]
 LastNames = ["Smith", "Jones", "Brown", "White"]

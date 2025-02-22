@@ -35,29 +35,28 @@ print([len(x) for x in a])
 	resetTestState()
 }
 
-// todo non void list comprehensions not yet implemented
-//func TestListComprehensionPrints(t *testing.T) {
-//	rsl := `
-//a = [1, 2, 3]
-//[print(x) for x in a]
-//`
-//	setupAndRunCode(t, rsl, "--NO-COLOR")
-//	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
-//	assertNoErrors(t)
-//	resetTestState()
-//}
-//
-//func TestListComprehensionPrintsReturnsEmptyArray(t *testing.T) {
-//	rsl := `
-//a = [1, 2, 3]
-//b = [print(x) for x in a]
-//print(b)
-//`
-//	setupAndRunCode(t, rsl, "--NO-COLOR")
-//	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n[]\n")
-//	assertNoErrors(t)
-//	resetTestState()
-//}
+func TestListComprehensionPrints(t *testing.T) {
+	rsl := `
+a = [1, 2, 3]
+[print(x) for x in a]
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func TestListComprehensionPrintsReturnsEmptyArray(t *testing.T) {
+	rsl := `
+a = [1, 2, 3]
+b = [print(x) for x in a]
+print(b)
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n[ ]\n")
+	assertNoErrors(t)
+	resetTestState()
+}
 
 func TestListComprehensionCanGetIndex(t *testing.T) {
 	rsl := `

@@ -101,7 +101,6 @@ print(b[0] * 100 in a)
 }
 
 func TestIn_CanNestIn(t *testing.T) {
-	t.Skip("TODO") // TODO
 	rsl := `
 a = [true]
 b = [false]
