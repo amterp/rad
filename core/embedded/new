@@ -1,5 +1,5 @@
 ---
-Sets up a new RSL script, including some boilerplate and execution permissions.
+Sets up a new RSL script.
 ---
 args:
     path string # The path at which to create the script.

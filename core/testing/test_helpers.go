@@ -35,7 +35,7 @@ Usage:
   rad [script path | command] [flags]
 
 Commands:
-  new           Sets up a new RSL script, including some boilerplate and execution permissions.
+  new           Sets up a new RSL script.
 
 To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + globalFlagHelp + `
 To execute an RSL script:
