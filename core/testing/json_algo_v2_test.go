@@ -50,7 +50,6 @@ Charlie  9        10
 }
 
 func TestAlgoV2_CanChainArrayLookups(t *testing.T) {
-	t.Skip("TODO") // TODO
 	rsl := `
 url = "https://google.com"
 
@@ -62,7 +61,7 @@ print(Nums)
 `
 
 	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/deeply_nested_arrays.json", "--NO-COLOR")
-	expected := `[2, 4, 6, 8]
+	expected := `[ 2, 4, 6, 8 ]
 `
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
