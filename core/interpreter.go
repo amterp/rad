@@ -113,7 +113,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		opNode := i.getChild(node, F_OP)
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue)
-	case K_EXPR_STMT:
+	case K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
 	case K_BREAK_STMT:
 		if i.forLoopLevel > 0 {
@@ -192,7 +192,25 @@ func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue
 func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslValue {
 	switch node.Kind() {
 	case K_EXPR:
-		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
+		baseNode := i.getChild(node, F_BASE)
+		indexingNodes := i.getChildren(node, F_INDEXING)
+
+		baseResults := i.evaluate(baseNode, numExpectedOutputs)
+
+		if len(indexingNodes) == 0 {
+			return baseResults
+		}
+
+		if numExpectedOutputs != 1 {
+			i.errorf(node, "Cannot index into multiple values")
+		}
+
+		val := baseResults[0]
+		for _, index := range indexingNodes {
+			val = val.Index(i, &index)
+		}
+
+		return newRslValues(i, node, val)
 	case K_PRIMARY_EXPR:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_PARENTHESIZED_EXPR:
@@ -221,11 +239,11 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		return newRslValues(i, node, val)
 	case K_VAR_PATH:
-		rootIdentifier := i.getChild(node, F_ROOT) // identifier required by grammar
-		indexings := i.getChildren(node, F_INDEXING)
-		val := i.evaluate(rootIdentifier, 1)[0]
-		if len(indexings) > 0 {
-			for _, index := range indexings {
+		rootNode := i.getChild(node, F_ROOT)
+		indexingNodes := i.getChildren(node, F_INDEXING)
+		val := i.evaluate(rootNode, 1)[0]
+		if len(indexingNodes) > 0 {
+			for _, index := range indexingNodes {
 				val = val.Index(i, &index)
 			}
 		}
