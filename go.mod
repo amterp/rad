@@ -51,3 +51,5 @@ require (
 )
 
 //replace github.com/amterp/go-tbl => ../go-tbl
+replace github.com/amterp/rts => ../rts
+replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl

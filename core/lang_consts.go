@@ -51,7 +51,6 @@ const (
 	K_CONTINUE_STMT           = "continue_stmt"
 	K_FOR_LOOP                = "for_loop"
 	K_DEFER_BLOCK             = "defer_block"
-	K_ERRDEFER_BLOCK          = "errdefer_block"
 	K_SLICE                   = "slice"
 	K_SHELL_STMT              = "shell_stmt"
 	K_CRITICAL_SHELL_CMD      = "critical_shell_cmd"
@@ -113,7 +112,6 @@ const (
 	F_RAD_TYPE     = "rad_type"
 	F_IDENTIFIER   = "identifier"
 	F_SPECIFIER    = "specifier"
-	F_DIRECTION    = "direction"
 	F_MOD_STMT     = "mod_stmt"
 	F_COLOR        = "color"
 	F_REGEX        = "regex"
@@ -121,4 +119,10 @@ const (
 	F_TRUE_BRANCH  = "true_branch"
 	F_FALSE_BRANCH = "false_branch"
 	F_NAME         = "name"
+	F_FIRST        = "first"
+	F_SECOND       = "second"
+
+	// Keywords
+	KEYWORD_ASC  = "asc"
+	KEYWORD_DESC = "desc"
 )

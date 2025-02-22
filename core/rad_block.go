@@ -89,6 +89,7 @@ func (r *radInvocation) evalRad(node *ts.Node) {
 func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	switch node.Kind() {
 	case K_RAD_FIELD_STMT:
+		// todo validate no field names conflict with keywords e.g. 'asc'. Would be nice to do in static analysis tho.
 		identifierNodes := r.i.getChildren(node, F_IDENTIFIER)
 		for _, identifierNode := range identifierNodes {
 			r.fields = append(r.fields, &identifierNode)
@@ -102,17 +103,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		if len(specifierNodes) == 0 {
 			r.generalSort = &GeneralSort{
 				Node: node,
-			}
-			directionNode := r.i.getChild(node, F_DIRECTION)
-			if directionNode != nil {
-				switch directionNode.Kind() {
-				case K_ASC:
-					r.generalSort.Dir = Asc
-				case K_DESC:
-					r.generalSort.Dir = Desc
-				default:
-					r.i.errorf(directionNode, "Bug! Unknown direction %q", directionNode.Kind())
-				}
+				Dir:  Asc,
 			}
 		} else {
 			for _, specifierNode := range specifierNodes {
@@ -120,23 +111,35 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			}
 		}
 	case K_RAD_SORT_SPECIFIER:
-		identifierNode := r.i.getChild(node, F_IDENTIFIER)
-		dirNode := r.i.getChild(node, F_DIRECTION)
+		firstNode := r.i.getChild(node, F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
+		secondNode := r.i.getChild(node, F_SECOND)
+
+		if secondNode == nil {
+			firstNodeSrc := r.i.sd.Src[firstNode.StartByte():firstNode.EndByte()]
+			if firstNodeSrc == KEYWORD_ASC || firstNodeSrc == KEYWORD_DESC {
+				dir := lo.Ternary(firstNodeSrc == KEYWORD_ASC, Asc, Desc)
+				r.generalSort = &GeneralSort{
+					Node: node,
+					Dir:  dir,
+				}
+				return
+			}
+		}
 
 		dir := Asc
-		if dirNode != nil {
-			switch dirNode.Kind() {
+		if secondNode != nil {
+			switch secondNode.Kind() {
 			case K_ASC:
 				dir = Asc
 			case K_DESC:
 				dir = Desc
 			default:
-				r.i.errorf(dirNode, "Bug! Unknown direction %q", dirNode.Kind())
+				r.i.errorf(secondNode, "Bug! Unknown direction %q", secondNode.Kind())
 			}
 		}
 
 		r.colWiseSorting = append(r.colWiseSorting, ColumnSort{
-			ColIdentifier: identifierNode,
+			ColIdentifier: firstNode,
 			Dir:           dir,
 		})
 	case K_RAD_FIELD_MODIFIER_STMT:
