@@ -109,6 +109,22 @@ func QueryNodes[T Node](rt *RslTree) ([]T, error) {
 	return nodes, nil
 }
 
+func (rt *RslTree) FindInvalidNodes() []*ts.Node {
+	var invalidNodes []*ts.Node
+	recurseFindInvalidNodes(rt.Root(), &invalidNodes)
+	return invalidNodes
+}
+
+func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
+	if node.IsError() || node.IsMissing() {
+		*invalidNodes = append(*invalidNodes, node)
+	}
+	childrenNodes := node.Children(node.Walk())
+	for _, child := range childrenNodes {
+		recurseFindInvalidNodes(&child, invalidNodes)
+	}
+}
+
 func findNodes[T Node](rt *RslTree) ([]T, error) {
 	nodeName := NodeName[T]()
 	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())

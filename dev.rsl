@@ -28,7 +28,7 @@ if version:
     tags = [replace(t, "v", "") for t in tags]
     tags = [split(t, "\.") for t in tags]
 
-    majors = sort([parse_int(t[0]) for t in tags])
+    majors = sort([parse_int(t[0]) for t in tags]) // todo rad [0] required until list comprehensions fixed for this case (we dont care about empty err)
     minors = sort([parse_int(t[1]) for t in tags])
     patches = sort([parse_int(t[2]) for t in tags])
 
