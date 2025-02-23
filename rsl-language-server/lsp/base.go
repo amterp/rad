@@ -51,6 +51,14 @@ type Notification struct {
 	Params *json.RawMessage `json:"params"`
 }
 
+func NewNotification(method string, params *json.RawMessage) Notification {
+	return Notification{
+		Msg:    Msg{Rpc: "2.0"},
+		Method: method,
+		Params: params,
+	}
+}
+
 // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#requestMessage
 type Request struct {
 	Msg

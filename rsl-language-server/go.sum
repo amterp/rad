@@ -1,5 +1,5 @@
-github.com/amterp/rts v0.0.12 h1:f9ykm03dBctMMeohVEnnYQ7JOmnnqic93RYjRtQtzks=
-github.com/amterp/rts v0.0.12/go.mod h1:rfygEPNzNsOQErsUT2t0LGLM39aD7Tl4Ddm+Gj4CnLM=
+github.com/amterp/rts v0.0.13 h1:7y0e7w+7EhJGQG/FhaAvwdGGYZnkwEdNsZnm1SzdVxk=
+github.com/amterp/rts v0.0.13/go.mod h1:rfygEPNzNsOQErsUT2t0LGLM39aD7Tl4Ddm+Gj4CnLM=
 github.com/amterp/tree-sitter-rsl v0.0.21 h1:sIdcytiANd5W1Nt4LykgCeDTqcme9HLpqWBhI941jIM=
 github.com/amterp/tree-sitter-rsl v0.0.21/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

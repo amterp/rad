@@ -1,5 +1,7 @@
 package lsp
 
+import ts "github.com/tree-sitter/go-tree-sitter"
+
 type TextDocumentItem struct {
 	/**
 	 * The text document's URI.
@@ -89,11 +91,24 @@ type Range struct {
 	End   Pos `json:"end"`
 }
 
-func NewLineRange(line, start, end int) Range {
+func NewRange(startLine, starChar, endLine, endChar int) Range {
 	return Range{
-		Start: NewPos(line, start),
-		End:   NewPos(line, end),
+		Start: NewPos(startLine, starChar),
+		End:   NewPos(endLine, endChar),
 	}
+}
+
+func NewRangeFromTsNode(node *ts.Node) Range {
+	return NewRange(
+		int(node.StartPosition().Row),
+		int(node.StartPosition().Column),
+		int(node.EndPosition().Row),
+		int(node.EndPosition().Column),
+	)
+}
+
+func NewLineRange(line, start, end int) Range {
+	return NewRange(line, start, line, end)
 }
 
 type Location struct {

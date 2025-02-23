@@ -9,9 +9,10 @@ import (
 )
 
 type DocState struct {
-	uri  string
-	text string
-	tree *rts.RslTree
+	uri         string
+	text        string
+	tree        *rts.RslTree
+	diagnostics []lsp.Diagnostic
 }
 
 func (d *DocState) GetLine(line int) string {
@@ -44,9 +45,10 @@ func NewState() *State {
 func (s *State) NewDocState(uri, text string) *DocState {
 	tree := s.parser.Parse(text)
 	return &DocState{
-		uri:  uri,
-		text: text,
-		tree: tree,
+		uri:         uri,
+		text:        text,
+		tree:        tree,
+		diagnostics: resolveDiagnostics(tree),
 	}
 }
 
@@ -63,58 +65,21 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 		doc.tree.Update(change.Text)
 		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
+		doc.diagnostics = resolveDiagnostics(doc.tree)
 	}
 }
 
-func (s *State) Complete(uri string, pos lsp.Pos) (result []lsp.CompletionItem, err error) {
-	doc, ok := s.docs[uri]
-	if !ok {
-		return nil, nil // todo return error?
-	}
-
-	var items []lsp.CompletionItem
-	addShebangCompletion(&items, doc, pos)
-	return items, nil
+func (s *State) GetDiagnostics(uri string) []lsp.Diagnostic {
+	return s.docs[uri].diagnostics
 }
 
-func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, err error) {
-	doc, ok := s.docs[uri]
-	if !ok {
-		return nil, nil // todo return error?
+// todo be able to give yet better diagnostics e.g. unknown functions, etc. Where should live though?
+func resolveDiagnostics(tree *rts.RslTree) []lsp.Diagnostic {
+	invalidNodes := tree.FindInvalidNodes()
+	diagnostics := make([]lsp.Diagnostic, len(invalidNodes))
+	for i, node := range invalidNodes {
+		rang := lsp.NewRangeFromTsNode(node)
+		diagnostics[i] = lsp.NewDiagnostic(rang, lsp.Err, "RSL Language Server", "Invalid syntax")
 	}
-
-	var actions []lsp.CodeAction
-	addShebangInsertion(&actions, doc)
-
-	return actions, nil
-}
-
-func addShebangInsertion(i *[]lsp.CodeAction, doc *DocState) {
-	shebang, err := doc.tree.FindShebang()
-	log.L.Infow("Searched for shebang", "err", err, "shebang", shebang)
-	if err != nil || shebang.StartPos().Row != 0 {
-		firstLine := doc.GetLine(0)
-		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
-		edit := lsp.NewWorkspaceEdit()
-		edit.AddEdit(doc.uri, lsp.NewLineRange(0, 0, 0), RadShebang+"\n")
-		action := lsp.NewCodeActionEdit("Add shebang", edit)
-		*i = append(*i, action)
-	}
-}
-
-func addShebangCompletion(i *[]lsp.CompletionItem, doc *DocState, pos lsp.Pos) {
-	// todo use tree sitter to check for shebang node?
-
-	if pos.Line != 0 {
-		return
-	}
-
-	//line := doc.GetLine(pos.Line)
-
-	*i = append(*i, lsp.CompletionItem{
-		Label:  RadShebang,
-		Detail: "Shebang for rad",
-		// todo add docs
-		//TextEdit: lsp.NewTextEdit(lsp.NewLineRange(0, 0, len(line)), RadShebang),
-	})
+	return diagnostics
 }

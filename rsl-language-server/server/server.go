@@ -55,6 +55,8 @@ func (s *Server) handleDidOpen(params json.RawMessage) (err error) {
 		return
 	}
 	s.s.AddDoc(didOpenParams.TextDocument.Uri, didOpenParams.TextDocument.Text)
+	diagnostics := s.s.GetDiagnostics(didOpenParams.TextDocument.Uri)
+	s.notifyDiagnostics(didOpenParams.TextDocument.Uri, diagnostics)
 	return
 }
 
@@ -64,6 +66,8 @@ func (s *Server) handleDidChange(params json.RawMessage) (err error) {
 		return
 	}
 	s.s.UpdateDoc(didChangeParams.TextDocument.Uri, didChangeParams.ContentChanges)
+	diagnostics := s.s.GetDiagnostics(didChangeParams.TextDocument.Uri)
+	s.notifyDiagnostics(didChangeParams.TextDocument.Uri, diagnostics)
 	return
 }
 
@@ -83,4 +87,13 @@ func (s *Server) handleCodeAction(params json.RawMessage) (result any, err error
 	}
 	result, err = s.s.CodeAction(codeActionParams.TextDocument.Uri, codeActionParams.Range)
 	return
+}
+
+func (s *Server) notifyDiagnostics(uri string, diagnostics []lsp.Diagnostic) {
+	log.L.Infof("Notifying of %d diagnostics for %s", len(diagnostics), uri)
+	err := s.m.Notify(lsp.TD_PUBLISH_DIAGNOSTICS, lsp.NewPublishDiagnosticsParams(uri, diagnostics))
+	if err != nil {
+		// todo notify client?
+		log.L.Errorf("Failed to notify diagnostics: %v", err)
+	}
 }

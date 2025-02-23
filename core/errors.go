@@ -7,22 +7,11 @@ func ErrIndexOutOfBounds(i *Interpreter, idxNode *ts.Node, idx int64, length int
 }
 
 func (i *Interpreter) CheckForErrors() {
-	var errorNodes []*ts.Node
-	i.errorCheck(i.sd.Tree.Root(), &errorNodes)
-	if len(errorNodes) > 0 {
-		for _, node := range errorNodes {
+	invalidNodes := i.sd.Tree.FindInvalidNodes()
+	if len(invalidNodes) > 0 {
+		for _, node := range invalidNodes {
 			// TODO print all errors up front instead of exiting here
 			i.errorf(node, "Invalid syntax")
 		}
-	}
-}
-
-func (i *Interpreter) errorCheck(node *ts.Node, errorNodes *[]*ts.Node) {
-	if node.IsError() || node.IsMissing() {
-		*errorNodes = append(*errorNodes, node)
-	}
-	childrenNodes := node.Children(node.Walk())
-	for _, child := range childrenNodes {
-		i.errorCheck(&child, errorNodes)
 	}
 }

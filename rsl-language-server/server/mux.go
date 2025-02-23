@@ -43,16 +43,30 @@ func (m *Mux) AddRequestHandler(method string, handler RequestHandler) {
 	log.L.Infof("Registered request handler for method %s", method)
 }
 
-func (m *Mux) Notify(notification any) (err error) {
-	return m.write(notification)
+func (m *Mux) Notify(method string, params any) (err error) {
+	var msg *json.RawMessage
+	if params == nil {
+		msg = nil
+	}
+
+	b, err := json.Marshal(params)
+	if err != nil {
+		return
+	}
+
+	raw := json.RawMessage(b)
+	msg = &raw
+
+	return m.write(lsp.NewNotification(method, msg))
 }
 
 func (m *Mux) Init() (err error) {
 	log.L.Info("Initializing mux, awaiting initialize msg...")
 	for {
-		msg, err := rpc.Decode(m.reader)
+		var msg lsp.IncomingMsg
+		msg, err = rpc.Decode(m.reader)
 		if err != nil {
-			return err
+			return
 		}
 		if msg.IsNotification() {
 			if msg.Method != "exit" {
@@ -64,7 +78,7 @@ func (m *Mux) Init() (err error) {
 		} else if msg.Method != "initialize" {
 			log.L.Warnw("The client sent a request before initialization", "msg", com.FlatStr(msg))
 			if err = m.write(lsp.NewResponseError(msg.Id, com.ErrServerNotInitialized)); err != nil {
-				return err
+				return
 			}
 			continue
 		}
@@ -77,11 +91,13 @@ func (m *Mux) Init() (err error) {
 
 func (m *Mux) Run() (err error) {
 	for {
-		msg, err := rpc.Decode(m.reader)
+		var msg lsp.IncomingMsg
+		msg, err = rpc.Decode(m.reader)
 		if err != nil {
 			return err
 		}
 		err = m.handleMessage(msg)
+		// todo actually do something with error? Send to client?
 	}
 }
 
