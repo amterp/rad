@@ -1,0 +1,123 @@
+=====
+Switch stmt
+=====
+name = "alice"
+switch name:
+	case "alice": print("ALICE"), print("ANOTHER")
+	case "bob": print("BOB")
+	case "charlie": print("CHARLIE")
+a = 2
+=====
+B: [  0, 142] PS: [0,  0], PE: [6,  0] source_file
+B: [  0,  14] PS: [0,  0], PE: [0, 14]   assign
+B: [  0,   4] PS: [0,  0], PE: [0,  4]     left: var_path
+B: [  0,   4] PS: [0,  0], PE: [0,  4]       root: identifier `name`
+B: [  5,   6] PS: [0,  5], PE: [0,  6]     = `=`
+B: [  7,  14] PS: [0,  7], PE: [0, 14]     right: expr
+B: [  7,  14] PS: [0,  7], PE: [0, 14]       base: primary_expr
+B: [  7,  14] PS: [0,  7], PE: [0, 14]         literal
+B: [  7,  14] PS: [0,  7], PE: [0, 14]           string
+B: [  7,   8] PS: [0,  7], PE: [0,  8]             start: string_start `"`
+B: [  8,  13] PS: [0,  8], PE: [0, 13]             contents: string_contents
+B: [  8,  13] PS: [0,  8], PE: [0, 13]               content: string_content `alice`
+B: [ 13,  14] PS: [0, 13], PE: [0, 14]             end: string_end `"`
+B: [ 15, 135] PS: [1,  0], PE: [4, 33]   switch_stmt
+B: [ 15,  21] PS: [1,  0], PE: [1,  6]     switch `switch`
+B: [ 22,  26] PS: [1,  7], PE: [1, 11]     discriminant: expr
+B: [ 22,  26] PS: [1,  7], PE: [1, 11]       base: var_path
+B: [ 22,  26] PS: [1,  7], PE: [1, 11]         root: identifier `name`
+B: [ 26,  27] PS: [1, 11], PE: [1, 12]     : `:`
+B: [ 29,  75] PS: [2,  1], PE: [2, 47]     case: switch_case
+B: [ 29,  33] PS: [2,  1], PE: [2,  5]       case `case`
+B: [ 34,  41] PS: [2,  6], PE: [2, 13]       case_key: expr
+B: [ 34,  41] PS: [2,  6], PE: [2, 13]         base: primary_expr
+B: [ 34,  41] PS: [2,  6], PE: [2, 13]           literal
+B: [ 34,  41] PS: [2,  6], PE: [2, 13]             string
+B: [ 34,  35] PS: [2,  6], PE: [2,  7]               start: string_start `"`
+B: [ 35,  40] PS: [2,  7], PE: [2, 12]               contents: string_contents
+B: [ 35,  40] PS: [2,  7], PE: [2, 12]                 content: string_content `alice`
+B: [ 40,  41] PS: [2, 12], PE: [2, 13]               end: string_end `"`
+B: [ 41,  42] PS: [2, 13], PE: [2, 14]       : `:`
+B: [ 43,  57] PS: [2, 15], PE: [2, 29]       case_value: expr
+B: [ 43,  57] PS: [2, 15], PE: [2, 29]         base: call
+B: [ 43,  48] PS: [2, 15], PE: [2, 20]           func: identifier `print`
+B: [ 48,  49] PS: [2, 20], PE: [2, 21]           ( `(`
+B: [ 49,  56] PS: [2, 21], PE: [2, 28]           arg: expr
+B: [ 49,  56] PS: [2, 21], PE: [2, 28]             base: primary_expr
+B: [ 49,  56] PS: [2, 21], PE: [2, 28]               literal
+B: [ 49,  56] PS: [2, 21], PE: [2, 28]                 string
+B: [ 49,  50] PS: [2, 21], PE: [2, 22]                   start: string_start `"`
+B: [ 50,  55] PS: [2, 22], PE: [2, 27]                   contents: string_contents
+B: [ 50,  55] PS: [2, 22], PE: [2, 27]                     content: string_content `ALICE`
+B: [ 55,  56] PS: [2, 27], PE: [2, 28]                   end: string_end `"`
+B: [ 56,  57] PS: [2, 28], PE: [2, 29]           ) `)`
+B: [ 57,  58] PS: [2, 29], PE: [2, 30]       , `,`
+B: [ 59,  75] PS: [2, 31], PE: [2, 47]       case_value: expr
+B: [ 59,  75] PS: [2, 31], PE: [2, 47]         base: call
+B: [ 59,  64] PS: [2, 31], PE: [2, 36]           func: identifier `print`
+B: [ 64,  65] PS: [2, 36], PE: [2, 37]           ( `(`
+B: [ 65,  74] PS: [2, 37], PE: [2, 46]           arg: expr
+B: [ 65,  74] PS: [2, 37], PE: [2, 46]             base: primary_expr
+B: [ 65,  74] PS: [2, 37], PE: [2, 46]               literal
+B: [ 65,  74] PS: [2, 37], PE: [2, 46]                 string
+B: [ 65,  66] PS: [2, 37], PE: [2, 38]                   start: string_start `"`
+B: [ 66,  73] PS: [2, 38], PE: [2, 45]                   contents: string_contents
+B: [ 66,  73] PS: [2, 38], PE: [2, 45]                     content: string_content `ANOTHER`
+B: [ 73,  74] PS: [2, 45], PE: [2, 46]                   end: string_end `"`
+B: [ 74,  75] PS: [2, 46], PE: [2, 47]           ) `)`
+B: [ 77, 101] PS: [3,  1], PE: [3, 25]     case: switch_case
+B: [ 77,  81] PS: [3,  1], PE: [3,  5]       case `case`
+B: [ 82,  87] PS: [3,  6], PE: [3, 11]       case_key: expr
+B: [ 82,  87] PS: [3,  6], PE: [3, 11]         base: primary_expr
+B: [ 82,  87] PS: [3,  6], PE: [3, 11]           literal
+B: [ 82,  87] PS: [3,  6], PE: [3, 11]             string
+B: [ 82,  83] PS: [3,  6], PE: [3,  7]               start: string_start `"`
+B: [ 83,  86] PS: [3,  7], PE: [3, 10]               contents: string_contents
+B: [ 83,  86] PS: [3,  7], PE: [3, 10]                 content: string_content `bob`
+B: [ 86,  87] PS: [3, 10], PE: [3, 11]               end: string_end `"`
+B: [ 87,  88] PS: [3, 11], PE: [3, 12]       : `:`
+B: [ 89, 101] PS: [3, 13], PE: [3, 25]       case_value: expr
+B: [ 89, 101] PS: [3, 13], PE: [3, 25]         base: call
+B: [ 89,  94] PS: [3, 13], PE: [3, 18]           func: identifier `print`
+B: [ 94,  95] PS: [3, 18], PE: [3, 19]           ( `(`
+B: [ 95, 100] PS: [3, 19], PE: [3, 24]           arg: expr
+B: [ 95, 100] PS: [3, 19], PE: [3, 24]             base: primary_expr
+B: [ 95, 100] PS: [3, 19], PE: [3, 24]               literal
+B: [ 95, 100] PS: [3, 19], PE: [3, 24]                 string
+B: [ 95,  96] PS: [3, 19], PE: [3, 20]                   start: string_start `"`
+B: [ 96,  99] PS: [3, 20], PE: [3, 23]                   contents: string_contents
+B: [ 96,  99] PS: [3, 20], PE: [3, 23]                     content: string_content `BOB`
+B: [ 99, 100] PS: [3, 23], PE: [3, 24]                   end: string_end `"`
+B: [100, 101] PS: [3, 24], PE: [3, 25]           ) `)`
+B: [103, 135] PS: [4,  1], PE: [4, 33]     case: switch_case
+B: [103, 107] PS: [4,  1], PE: [4,  5]       case `case`
+B: [108, 117] PS: [4,  6], PE: [4, 15]       case_key: expr
+B: [108, 117] PS: [4,  6], PE: [4, 15]         base: primary_expr
+B: [108, 117] PS: [4,  6], PE: [4, 15]           literal
+B: [108, 117] PS: [4,  6], PE: [4, 15]             string
+B: [108, 109] PS: [4,  6], PE: [4,  7]               start: string_start `"`
+B: [109, 116] PS: [4,  7], PE: [4, 14]               contents: string_contents
+B: [109, 116] PS: [4,  7], PE: [4, 14]                 content: string_content `charlie`
+B: [116, 117] PS: [4, 14], PE: [4, 15]               end: string_end `"`
+B: [117, 118] PS: [4, 15], PE: [4, 16]       : `:`
+B: [119, 135] PS: [4, 17], PE: [4, 33]       case_value: expr
+B: [119, 135] PS: [4, 17], PE: [4, 33]         base: call
+B: [119, 124] PS: [4, 17], PE: [4, 22]           func: identifier `print`
+B: [124, 125] PS: [4, 22], PE: [4, 23]           ( `(`
+B: [125, 134] PS: [4, 23], PE: [4, 32]           arg: expr
+B: [125, 134] PS: [4, 23], PE: [4, 32]             base: primary_expr
+B: [125, 134] PS: [4, 23], PE: [4, 32]               literal
+B: [125, 134] PS: [4, 23], PE: [4, 32]                 string
+B: [125, 126] PS: [4, 23], PE: [4, 24]                   start: string_start `"`
+B: [126, 133] PS: [4, 24], PE: [4, 31]                   contents: string_contents
+B: [126, 133] PS: [4, 24], PE: [4, 31]                     content: string_content `CHARLIE`
+B: [133, 134] PS: [4, 31], PE: [4, 32]                   end: string_end `"`
+B: [134, 135] PS: [4, 32], PE: [4, 33]           ) `)`
+B: [136, 141] PS: [5,  0], PE: [5,  5]   assign
+B: [136, 137] PS: [5,  0], PE: [5,  1]     left: var_path
+B: [136, 137] PS: [5,  0], PE: [5,  1]       root: identifier `a`
+B: [138, 139] PS: [5,  2], PE: [5,  3]     = `=`
+B: [140, 141] PS: [5,  4], PE: [5,  5]     right: expr
+B: [140, 141] PS: [5,  4], PE: [5,  5]       base: primary_expr
+B: [140, 141] PS: [5,  4], PE: [5,  5]         literal
+B: [140, 141] PS: [5,  4], PE: [5,  5]           int `2`
