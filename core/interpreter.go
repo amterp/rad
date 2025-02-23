@@ -155,6 +155,61 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 				break
 			}
 		}
+	case K_SWITCH_STMT:
+		leftVarPathNodes := i.getChildren(node, F_LEFT)
+		discriminantNode := i.getChild(node, F_DISCRIMINANT)
+		caseNodes := i.getChildren(node, F_CASE)
+
+		discriminantVal := i.evaluate(discriminantNode, 1)[0]
+
+		matchedCaseNodes := make([]ts.Node, 0)
+		for _, caseNode := range caseNodes {
+			caseKeyNodes := i.getChildren(&caseNode, F_CASE_KEY)
+			for _, caseKeyNode := range caseKeyNodes {
+				caseKey := i.evaluate(&caseKeyNode, 1)[0]
+				if caseKey.Equals(discriminantVal) {
+					matchedCaseNodes = append(matchedCaseNodes, caseNode)
+					break
+				}
+			}
+		}
+
+		if len(matchedCaseNodes) == 0 {
+			i.errorf(discriminantNode, "No matching case found for switch")
+		}
+
+		if len(matchedCaseNodes) > 1 {
+			// todo fancier error msg: should point at the cases that matched, example:
+			// 13 | case 1, "one": blah blah
+			//           ^  ^^^^^ MATCHED        << in red
+			// 14 | case 2, "two": blah blah
+			// 15 | case 3, val: blah blah
+			//              ^^^ MATCHED          << in red
+			// 16 | case 4, "four":  blah blah
+			i.errorf(discriminantNode, "Multiple matching cases found for switch")
+		}
+
+		matchedCaseNode := matchedCaseNodes[0]
+		caseValueNodes := i.getChildren(&matchedCaseNode, F_CASE_VALUE)
+		numAssigns := len(leftVarPathNodes)
+		if numAssigns > 0 && len(caseValueNodes) != numAssigns {
+			i.errorf(&matchedCaseNode, "Expecting %d values, got %d", numAssigns, len(caseValueNodes))
+		}
+
+		for idx, caseValueNode := range caseValueNodes {
+			if numAssigns == 0 {
+				i.evaluate(&caseValueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+			} else {
+				caseValueVals := i.evaluate(&caseValueNode, 1)
+				if len(caseValueVals) != 1 {
+					// in practice, i think only functions can return multiple values,
+					// and we explicitly ask it to return 1 above, so it'd error on invocation there instead.
+					i.errorf(&caseValueNode, "Expecting each case value expression to return exactly one value, returned %d", len(caseValueVals))
+				}
+				i.doVarPathAssign(&leftVarPathNodes[idx], caseValueVals[0])
+			}
+		}
+
 	case K_DEFER_BLOCK:
 		keywordNode := i.getChild(node, F_KEYWORD)
 		stmtNodes := i.getChildren(node, F_STMT)

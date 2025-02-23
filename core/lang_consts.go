@@ -72,6 +72,7 @@ const (
 	K_PLUS_PLUS               = "++"
 	K_MINUS_MINUS             = "--"
 	K_TERNARY                 = "ternary"
+	K_SWITCH_STMT             = "switch_stmt"
 
 	// Field names
 	F_LEFT         = "left"
@@ -121,6 +122,10 @@ const (
 	F_NAME         = "name"
 	F_FIRST        = "first"
 	F_SECOND       = "second"
+	F_DISCRIMINANT = "discriminant"
+	F_CASE         = "case"
+	F_CASE_KEY     = "case_key"
+	F_CASE_VALUE   = "case_value"
 
 	// Keywords
 	KEYWORD_ASC  = "asc"

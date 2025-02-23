@@ -14,7 +14,6 @@ print(a)`
 }
 
 func Test_MultiAssign_InsideCollectionViaSwitch(t *testing.T) {
-	t.Skip("TODO: switch statements to be reimplemented RAD-141") // TODO RAD-141
 	rsl := `a = [1, [2, 3], 4]
 b = "alice"
 a[1][0], a[2] = switch b:
