@@ -35,7 +35,8 @@
           ".rsl",
           ".rad"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "firstLine": "^#!/usr/bin/env rad"
       }
     ],
     "grammars": [
