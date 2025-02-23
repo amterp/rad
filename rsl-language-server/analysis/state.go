@@ -11,7 +11,7 @@ import (
 type DocState struct {
 	uri  string
 	text string
-	tree *rts.RtsTree
+	tree *rts.RslTree
 }
 
 func (d *DocState) GetLine(line int) string {
@@ -24,29 +24,25 @@ func (d *DocState) GetLine(line int) string {
 }
 
 type State struct {
-	rts *rts.RslTreeSitter
+	parser *rts.RslParser
 	// URI -> Text
 	docs map[string]*DocState
 }
 
 func NewState() *State {
-	rslTs, err := rts.NewRts()
+	rslParser, err := rts.NewRslParser()
 	if err != nil {
 		log.L.Fatalw("Failed to create RSL tree sitter", "err", err)
 	}
 
 	return &State{
-		rts:  rslTs,
-		docs: make(map[string]*DocState),
+		parser: rslParser,
+		docs:   make(map[string]*DocState),
 	}
 }
 
 func (s *State) NewDocState(uri, text string) *DocState {
-	tree, err := s.rts.Parse(text)
-	if err != nil {
-		log.L.Errorw("Failed to parse doc", "uri", uri, "err", err)
-		return nil // todo putting nil into the map??
-	}
+	tree := s.parser.Parse(text)
 	return &DocState{
 		uri:  uri,
 		text: text,
@@ -94,9 +90,9 @@ func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, er
 }
 
 func addShebangInsertion(i *[]lsp.CodeAction, doc *DocState) {
-	shebang, ok := doc.tree.GetShebang()
-	log.L.Infow("Searched for shebang", "ok", ok, "shebang", shebang)
-	if !ok || shebang.StartPos.Row != 0 {
+	shebang, err := doc.tree.FindShebang()
+	log.L.Infow("Searched for shebang", "err", err, "shebang", shebang)
+	if err != nil || shebang.StartPos().Row != 0 {
 		firstLine := doc.GetLine(0)
 		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
 		edit := lsp.NewWorkspaceEdit()
