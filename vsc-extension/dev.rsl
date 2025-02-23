@@ -29,6 +29,6 @@ if version:
     stdout = split(stdout, "\n")[0] // cut off newline
     $!`git add .`
     $!`git diff HEAD --compact-summary`
-    confirm $!`git commit -m 'Release {stdout}'`
+    confirm $!`git commit -m 'Release VSCode extension {stdout}'`
     confirm $!`vsce publish`
     confirm $!`git push`
