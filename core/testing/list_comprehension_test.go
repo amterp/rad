@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestListComprehensionAdding(t *testing.T) {
+func Test_ListComprehension_Adding(t *testing.T) {
 	rsl := `
 a = [1, 2, 3]
 print([x + 1 for x in a])
@@ -13,7 +13,7 @@ print([x + 1 for x in a])
 	resetTestState()
 }
 
-func TestListComprehensionUpping(t *testing.T) {
+func Test_ListComprehension_Upping(t *testing.T) {
 	rsl := `
 a = ["a", "b", "c"]
 print([upper(x) for x in a])
@@ -24,7 +24,7 @@ print([upper(x) for x in a])
 	resetTestState()
 }
 
-func TestListComprehensionLens(t *testing.T) {
+func Test_ListComprehension_Lens(t *testing.T) {
 	rsl := `
 a = [[1, 2, 3], [4], [5, 6]]
 print([len(x) for x in a])
@@ -35,7 +35,7 @@ print([len(x) for x in a])
 	resetTestState()
 }
 
-func TestListComprehensionPrints(t *testing.T) {
+func Test_ListComprehension_Prints(t *testing.T) {
 	rsl := `
 a = [1, 2, 3]
 [print(x) for x in a]
@@ -46,7 +46,7 @@ a = [1, 2, 3]
 	resetTestState()
 }
 
-func TestListComprehensionPrintsReturnsEmptyArray(t *testing.T) {
+func Test_ListComprehension_PrintsReturnsEmptyArray(t *testing.T) {
 	rsl := `
 a = [1, 2, 3]
 b = [print(x) for x in a]
@@ -58,7 +58,7 @@ print(b)
 	resetTestState()
 }
 
-func TestListComprehensionCanGetIndex(t *testing.T) {
+func Test_ListComprehension_CanGetIndex(t *testing.T) {
 	rsl := `
 a = [10, 20, 30]
 print([i * x for i, x in a])
@@ -69,7 +69,7 @@ print([i * x for i, x in a])
 	resetTestState()
 }
 
-func TestListComprehensionCanFilterNumbers(t *testing.T) {
+func Test_ListComprehension_CanFilterNumbers(t *testing.T) {
 	rsl := `
 a = [5, 15, 20, 8]
 print([x for x in a if x < 10])
@@ -80,13 +80,24 @@ print([x for x in a if x < 10])
 	resetTestState()
 }
 
-func TestListComprehensionCanFilterStringLengths(t *testing.T) {
+func Test_ListComprehension_CanFilterStringLengths(t *testing.T) {
 	rsl := `
 a = ["a", "aa", "aaa", "aaaa"]
 print([x for x in a if len(x) < 3])
 `
 	setupAndRunCode(t, rsl, "--NO-COLOR")
 	assertOnlyOutput(t, stdOutBuffer, "[ \"a\", \"aa\" ]\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_ListComprehension_FunctionReturningMultipleThingsKeepsOnlyFirst(t *testing.T) {
+	rsl := `
+a = ["1", "2"]
+print([parse_int(x) for x in a])
+`
+	setupAndRunCode(t, rsl, "--NO-COLOR")
+	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2 ]\n")
 	assertNoErrors(t)
 	resetTestState()
 }

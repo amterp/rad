@@ -418,19 +418,20 @@ func init() {
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				parsed, err := strconv.ParseInt(str, 10, 64)
 
-				if err != nil {
-					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					if f.numExpectedOutputs == 1 {
-						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
-						panic(UNREACHABLE)
-					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_INT_FAILED, errMsg))
-					}
-				} else {
+				if err == nil {
 					if f.numExpectedOutputs == 1 {
 						return newRslValues(f.i, f.callNode, parsed)
 					} else {
 						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+					}
+				} else {
+					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
+					if f.numExpectedOutputs == 1 {
+						// todo when errors require codes, redo
+						f.i.errorf(f.callNode, errMsg)
+						panic(UNREACHABLE)
+					} else {
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_INT_FAILED, errMsg))
 					}
 				}
 			},
@@ -447,19 +448,20 @@ func init() {
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				parsed, err := strconv.ParseFloat(str, 64)
 
-				if err != nil {
-					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					if f.numExpectedOutputs == 1 {
-						f.i.errorf(f.callNode, errMsg) // todo when errors require codes, redo
-						panic(UNREACHABLE)
-					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_FLOAT_FAILED, errMsg))
-					}
-				} else {
+				if err == nil {
 					if f.numExpectedOutputs == 1 {
 						return newRslValues(f.i, f.callNode, parsed)
 					} else {
 						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+					}
+				} else {
+					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
+					if f.numExpectedOutputs == 1 {
+						// todo when errors require codes, redo
+						f.i.errorf(f.callNode, errMsg)
+						panic(UNREACHABLE)
+					} else {
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_FLOAT_FAILED, errMsg))
 					}
 				}
 			},

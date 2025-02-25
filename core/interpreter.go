@@ -404,9 +404,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		doOneLoop := func() {
 			if conditionNode == nil || i.evaluate(conditionNode, 1)[0].TruthyFalsy() {
 				results := i.evaluate(resultExprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-				// if expr (e.g. function) returns several values, they all get appended.
-				for _, result := range results {
-					resultList.Append(result)
+				if len(results) > 0 {
+					// note: if expr (e.g. function) returns several values, we keep only the first.
+					resultList.Append(results[0])
 				}
 			}
 		}
