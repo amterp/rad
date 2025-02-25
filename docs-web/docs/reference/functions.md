@@ -317,6 +317,14 @@ truncate(input string, length int) -> string
 split(input string, delimiter_regex string) -> string[]
 ```
 
+### count
+
+```
+count(input string, substring string) -> int
+```
+
+Counts the number of non-overlapping instances of `substring` in `input`.
+
 ## Maps
 
 ### keys
@@ -382,32 +390,36 @@ pick_from_resource(resource_path string, filter string?) -> any...
 
 ## HTTP
 
-Map outputs contain the following keys:
+RSL offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods). Respectively:
 
-- `status_code`
-- `body`
+- `http_get`
+- `http_post`
+- `http_put`
+- `http_patch`
+- `http_delete`
+- `http_head`
+- `http_options`
+- `http_trace`
+- `http_connect`
 
-Failed queries (e.g. invalid url, no response) will result in an error and script exit.
-
-### http_get
+Their inputs and outputs are the same - the only difference between them is the HTTP method in the request.
+We'll use `http_post` as an example.
 
 ```rsl
-http_get(url string) -> map
-http_get(url string, headers = map) -> map
+http_post(url string) -> map
+http_post(url string, body=string|map, headers=map) -> map
 ```
 
-### http_post
+Keys in the `headers` map must be strings, and values may be either strings or lists of strings.
 
-```rsl
-http_post(url string, body any?) -> map
-http_post(url string, body any?, headers = map) -> map
+The **output** map contains the following entries (`?` signifies it may not be present, depending on the result):
+
 ```
-
-### http_put
-
-```rsl
-http_put(url string, body any?) -> map
-http_put(url string, body any?, headers = map) -> map
+"success" -> bool
+"duration_seconds" -> float
+"status_code"? -> int
+"body"? -> any
+"error"? -> string
 ```
 
 ## Math

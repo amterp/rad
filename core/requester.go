@@ -86,6 +86,7 @@ func (r ResponseDef) ToRslMap(i *Interpreter, callNode *ts.Node) *RslMap {
 		rslMap.SetPrimitiveInt("status_code", *r.StatusCode)
 	}
 	if r.Headers != nil {
+		// todo should this *always* be present, but potentially empty?
 		headers := NewRslMap()
 		for key, values := range *r.Headers {
 			headers.Set(newRslValue(i, callNode, key), newRslValue(i, callNode, values))

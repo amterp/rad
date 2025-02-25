@@ -58,7 +58,6 @@
 ## Updates to make
 
 - --SRC, --RSL-TREE
-- http functions
 - 'new' command
 - --CONFIRM-SHELL
 - 'confirm' shell modifier
@@ -66,5 +65,4 @@
 - if pre-stmt
 - get_path
 - arg range constraint
-- count
 - list comprehensions exprs dont need to return 1+ values
