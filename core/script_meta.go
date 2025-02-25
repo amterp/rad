@@ -43,6 +43,16 @@ func ExtractMetadata(src string) *ScriptData {
 	}
 }
 
+func (sd *ScriptData) ValidateNoErrors() {
+	invalidNodes := sd.Tree.FindInvalidNodes()
+	if len(invalidNodes) > 0 {
+		for _, node := range invalidNodes {
+			// TODO print all errors up front instead of exiting here
+			RP.CtxErrorExit(NewCtx(sd.Src, node, "Invalid syntax", ""))
+		}
+	}
+}
+
 func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 	var args []*ScriptArg
 

@@ -38,19 +38,16 @@ Script args:
 func Test_Constraint_Enum_ErrorsIfNonStringEnum(t *testing.T) {
 	rsl := `
 args:
-	name string
-	name enum ["alice", 2]
+    name string
+    name enum ["alice", 2]
 print("Hi", name)
 `
 	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
-	expected := `Invalid 'name' value: david (valid values: alice)
-Usage:
-  test <name>
+	expected := `Error at L4:25
 
-Script args:
-      --name string   Valid values: [alice].
-
-` + globalFlagHelp
+      name enum ["alice", 2]
+                          ^ Invalid syntax
+`
 	assertError(t, 1, expected)
 	resetTestState()
 }

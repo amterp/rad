@@ -136,7 +136,9 @@ func (r *RadRunner) Run() error {
 		RExit(0)
 	}
 
-	// help not explicitly invoked, so let's try parsing other args
+	r.scriptData.ValidateNoErrors()
+
+	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
 
 	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
@@ -203,7 +205,6 @@ func (r *RadRunner) Run() error {
 	}
 
 	interpreter := NewInterpreter(r.scriptData)
-	interpreter.CheckForErrors()
 	interpreter.InitArgs(scriptArgs)
 	interpreter.RegisterWithExit()
 	interpreter.Run()
