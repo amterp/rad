@@ -8,12 +8,13 @@ import (
 )
 
 type RslTree struct {
-	root   *ts.Tree
+	root *ts.Tree
+	// Updatable:
 	parser *ts.Parser
 	src    string
 }
 
-func newRslTree(tree *ts.Tree, parser *ts.Parser, src string) *RslTree {
+func newRslTree(parser *ts.Parser, tree *ts.Tree, src string) *RslTree {
 	return &RslTree{
 		root:   tree,
 		parser: parser,
@@ -24,6 +25,7 @@ func newRslTree(tree *ts.Tree, parser *ts.Parser, src string) *RslTree {
 func (rt *RslTree) Update(src string) {
 	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
 	rt.root = rt.parser.Parse([]byte(src), nil)
+	rt.src = src
 }
 
 func (rt *RslTree) Close() {

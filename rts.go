@@ -28,5 +28,5 @@ func (rts *RslParser) Close() {
 
 func (rts *RslParser) Parse(src string) *RslTree {
 	tree := rts.parser.Parse([]byte(src), nil)
-	return newRslTree(tree, rts.parser, src)
+	return newRslTree(rts.parser, tree, src)
 }
