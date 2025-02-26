@@ -31,7 +31,7 @@ func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, er
 func addShebangInsertion(i *[]lsp.CodeAction, doc *DocState) {
 	shebang, err := doc.tree.FindShebang()
 	log.L.Infow("Searched for shebang", "err", err, "shebang", shebang)
-	if err != nil || shebang.StartPos().Row != 0 {
+	if shebang == nil || shebang.StartPos().Row != 0 {
 		firstLine := doc.GetLine(0)
 		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
 		edit := lsp.NewWorkspaceEdit()
