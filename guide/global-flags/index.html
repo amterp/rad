@@ -565,9 +565,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-color" class="md-nav__link">
+  <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
-      NO-COLOR
+      COLOR
     </span>
   </a>
   
@@ -950,9 +950,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-color" class="md-nav__link">
+  <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
-      NO-COLOR
+      COLOR
     </span>
   </a>
   
@@ -1022,11 +1022,14 @@
   -h, --help                   Print usage string.
   -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
       --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
+      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval&#39;d
   -V, --VERSION                Print rad version information.
       --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
+      --CONFIRM-SHELL          Confirm all shell commands before running them.
+      --SRC                    Instead of running the target script, just print it out.
+      --RSL-TREE               Instead of running the target script, print out its syntax tree.
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 </code></pre></div>
 <p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
@@ -1057,10 +1060,11 @@ DEBUG: 2
 
 <h2 id="quiet"><code>QUIET</code><a class="headerlink" href="#quiet" title="Permanent link">&para;</a></h2>
 <p>Use <code>--QUIET</code> or <code>-Q</code> to suppress <em>some</em> outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.</p>
-<h2 id="no-color"><code>NO-COLOR</code><a class="headerlink" href="#no-color" title="Permanent link">&para;</a></h2>
+<h2 id="color"><code>COLOR</code><a class="headerlink" href="#color" title="Permanent link">&para;</a></h2>
+<p><code>--COLOR mode    Control output colorization. Valid values: [auto, always, never]. (default auto)</code></p>
 <p>A lot of rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
-Sometimes you just want monochrome output, and while rad aims to do this automatically when it detects e.g. you're redirecting output to file, you can force it by using the 
-<code>--NO-COLOR</code> flag.</p>
+By default (<code>auto</code>), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.</p>
+<p>However, you can override the automatic detection by explicitly setting <code>--COLOR=always</code> or <code>--COLOR=never</code> to force having colors, or force <em>not</em> having colors, respectively. </p>
 <h2 id="mock-response"><code>MOCK-RESPONSE</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
 <p>You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a <a href="../rad-blocks/"><code>rad</code> block</a>.</p>
 <p>In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the <code>MOCK-RESPONSE</code> flag.</p>
