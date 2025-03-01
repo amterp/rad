@@ -10,7 +10,7 @@ name = "alice"
 print(greeting + " " + name)
 print("Pi: {1 + 2.14}")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `hi
 hi alice
 Pi: 3.14
@@ -28,7 +28,7 @@ name = "alice"
 print(greeting + ' ' + name)
 print('Pi: {1 + 2.14}')
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `hi
 hi alice
 Pi: 3.14
@@ -44,7 +44,7 @@ func TestStringDelimiters_Backtick(t *testing.T) {
 		"name = `alice`" + "\n" +
 		"print(greeting + ` ` + name)\n" +
 		"print(`Pi: {1 + 2.14}`)\n"
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `hi
 hi alice
 Pi: 3.14

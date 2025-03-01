@@ -14,7 +14,7 @@ print(rand())
 0.6645600532184904
 0.4377141871869802
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -32,7 +32,7 @@ print(rand_int(100))
 21
 51
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -50,7 +50,7 @@ print(rand_int(96, 100))
 97
 99
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -68,7 +68,7 @@ print(rand_int(-10, 10))
 -9
 1
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -76,7 +76,7 @@ print(rand_int(-10, 10))
 
 func TestRandom_RandErrorsIfArgs(t *testing.T) {
 	rsl := `rand(1)`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:1
 
   rand(1)
@@ -88,7 +88,7 @@ func TestRandom_RandErrorsIfArgs(t *testing.T) {
 
 func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
 	rsl := `rand_int()`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:1
 
   rand_int()
@@ -100,7 +100,7 @@ func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
 
 func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
 	rsl := `seed_random()`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:1
 
   seed_random()

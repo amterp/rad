@@ -10,7 +10,7 @@ if not a:
 if not not not a:
     print("it works!!!")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `it works!
 it works!!!
 `
@@ -25,7 +25,7 @@ a = [4, 2, 3, 1]
 print(sort(a)[0])
 print(sort(a)[2:][-1])
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `1
 4
 `

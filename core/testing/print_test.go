@@ -44,7 +44,7 @@ pprint(node[0])
   "hometown":"New York"
 }
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -61,7 +61,7 @@ pprint(node[0])
 `
 	expected := `30
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -95,7 +95,7 @@ pprint(node)
   ]
 ]
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -144,7 +144,7 @@ pprint(node[0])
   "null"
 ]
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -163,7 +163,7 @@ pprint(false)
 1.2
 false
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -183,7 +183,7 @@ pprint(a)
   ]
 }
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -192,7 +192,7 @@ pprint(a)
 func Test_Print_CanPrintEmojis(t *testing.T) {
 	rsl := `
 print("👋")`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "👋\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -201,7 +201,7 @@ print("👋")`
 func Test_Print_CanCustomizeEnd(t *testing.T) {
 	rsl := `
 print("hello", "there", "claire", end="bloop")`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello there clairebloop")
 	assertNoErrors(t)
 	resetTestState()
@@ -212,7 +212,7 @@ func Test_Print_CanUseEndToRemoveNewlines(t *testing.T) {
 print("hello", end="")
 print("there", end="")
 print("claire", end="")`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hellothereclaire")
 	assertNoErrors(t)
 	resetTestState()
@@ -221,7 +221,7 @@ print("claire", end="")`
 func Test_Print_CanCustomizeSep(t *testing.T) {
 	rsl := `
 print("hello", "there", "claire", sep="_")`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello_there_claire\n")
 	assertNoErrors(t)
 	resetTestState()

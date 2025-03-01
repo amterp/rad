@@ -22,7 +22,7 @@ args:
 	name enum ["alice", "bob", "charlie"]
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "david", "--COLOR=never")
 	expected := `Invalid 'name' value: david (valid values: alice, bob, charlie)
 Usage:
   test <name>
@@ -42,7 +42,7 @@ args:
     name enum ["alice", 2]
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "david", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "david", "--COLOR=never")
 	expected := `Error at L4:25
 
       name enum ["alice", 2]

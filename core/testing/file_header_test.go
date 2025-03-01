@@ -10,7 +10,7 @@ This is a one liner!
 args:
 	name string
 `
-	setupAndRunCode(t, rsl, "-h", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
 	expected := `This is a one liner!
 
 Usage:
@@ -36,7 +36,7 @@ the rest!
 args:
 	name string
 `
-	setupAndRunCode(t, rsl, "-h", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
 	expected := `This is a one liner!
 
 Here is

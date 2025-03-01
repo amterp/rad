@@ -10,7 +10,7 @@ if len(a) > 0:
 else:
 	print("empty")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "not empty\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -24,7 +24,7 @@ if len(a) > 99:
 else:
 	print("empty")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "empty\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -36,7 +36,7 @@ name = "alice"
 if true:
 	print(upper(name))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -51,7 +51,7 @@ if true:
 	rad url:
 		fields id, name
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "id  name  \n1   Alice  \n2   Bob    \n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): url\n")
 	assertNoErrors(t)
@@ -67,7 +67,7 @@ if t or f:
 else:
 	print("FALSE")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "TRUE\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -82,7 +82,7 @@ if t and f:
 else:
 	print("FALSE")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "FALSE\n")
 	assertNoErrors(t)
 	resetTestState()

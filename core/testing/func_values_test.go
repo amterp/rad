@@ -9,7 +9,7 @@ print(b)
 print(upper(b[0]))
 print(values({}))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `[ "foo", "bar" ]
 FOO
 [ ]
@@ -21,7 +21,7 @@ FOO
 
 func TestValues_ErrorsIfGivenString(t *testing.T) {
 	rsl := `values("foo")`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:8
 
   values("foo")
@@ -33,7 +33,7 @@ func TestValues_ErrorsIfGivenString(t *testing.T) {
 
 func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
 	rsl := `values()`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:1
 
   values()
@@ -45,7 +45,7 @@ func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
 
 func TestValues_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
 	rsl := `values({}, {})`
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L1:1
 
   values({}, {})

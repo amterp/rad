@@ -6,7 +6,7 @@ func Test_Split_OneChar(t *testing.T) {
 	rsl := `
 print(split("a,b,c", ","))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, `[ "a", "b", "c" ]`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -16,7 +16,7 @@ func Test_Split_LongSplit(t *testing.T) {
 	rsl := `
 print(split("Alice      Smith", " "))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, `[ "Alice", "", "", "", "", "", "Smith" ]`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -26,7 +26,7 @@ func Test_Split_LongSplitRegex(t *testing.T) {
 	rsl := `
 print(split("Alice      Smith", " +"))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ \"Alice\", \"Smith\" ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -36,7 +36,7 @@ func Test_Split_CanSplitOnNoSeparater(t *testing.T) {
 	rsl := `
 print(split("Alice", ""))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, `[ "A", "l", "i", "c", "e" ]`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -48,7 +48,7 @@ tags = ["0.0.1", "0.2.1", "0.0.3"]
 tags = [split(t, "\.") for t in tags]
 print(tags)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, `[ [ "0", "0", "1" ], [ "0", "2", "1" ], [ "0", "0", "3" ] ]`+"\n")
 	assertNoErrors(t)
 	resetTestState()

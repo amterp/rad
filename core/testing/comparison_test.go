@@ -9,7 +9,7 @@ print(1 == 2)
 print(2 == 1)
 print(2 == 2)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 false
@@ -27,7 +27,7 @@ print("a" == "b")
 print("b" == "a")
 print("b" == "b")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 false
@@ -45,7 +45,7 @@ print(1.0 == 2.0)
 print(2.0 == 1.0)
 print(2.0 == 2.0)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 false
@@ -66,7 +66,7 @@ print([1, 2, 3] == [1, 2])
 print([1, 2, 3] == [1, 2, 3, [4])
 print([1, 2, 3, [4]] == [1, 2, 3, [4])
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 false
@@ -88,7 +88,7 @@ print({"a": 1, "b": 2} == {"a": 1})
 print({"a": 1, "b": 2} == {"a": 1, "b": 2, "c": {"d": 3}})
 print({"a": 1, "b": 2, {"d": 3}} == {"a": 1, "b": 2, "c": {"d": 3}})
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 false
@@ -123,7 +123,7 @@ print(false == 0)
 print(true == 2)
 print(2 == true)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 true
 false
@@ -173,7 +173,7 @@ print(false != 0)
 print(true != 2)
 print(2 != true)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `false
 false
 true
@@ -216,7 +216,7 @@ print(1 <= 1)
 print(1 <= 2)
 print(2 <= 1)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `false
 false
 true
@@ -251,7 +251,7 @@ print(1.1 <= 1.1)
 print(1.1 <= 2.1)
 print(2.1 <= 1.1)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `false
 false
 true
@@ -286,7 +286,7 @@ print(1.1 <= 1)
 print(1.1 <= 2)
 print(2.1 <= 1)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `true
 false
 true

@@ -12,7 +12,7 @@ else if a += 5; a > 6:
 else:
     print("3")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -25,7 +25,7 @@ if val = 5; val > 0:
 else:
     print("non-positive")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "positive\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -41,7 +41,7 @@ else if x += 5; x > 5:
 else:
     print("small")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "medium\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -58,7 +58,7 @@ if y -= 2; y > 0:
 else:
     print("negative")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "yes\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -73,7 +73,7 @@ else if print(20); false:
 else:
     print("done")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "10\n20\ndone\n")
 	assertNoErrors(t)
 	resetTestState()

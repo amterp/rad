@@ -1,10 +1,18 @@
 package core
 
+const (
+	COLOR_AUTO   = "auto"
+	COLOR_ALWAYS = "always"
+	COLOR_NEVER  = "never"
+)
+
 var (
+	MODES = []string{COLOR_AUTO, COLOR_ALWAYS, COLOR_NEVER}
+
 	FlagHelp     BoolRslArg
 	FlagDebug    BoolRslArg
 	FlagRadDebug BoolRslArg
-	FlagNoColor  BoolRslArg
+	FlagColor    StringRslArg
 	FlagQuiet    BoolRslArg
 	FlagShell    BoolRslArg
 	// todo allow scripts to override this global flag
@@ -20,7 +28,7 @@ var (
 		&FlagHelp,
 		&FlagDebug,
 		&FlagRadDebug,
-		&FlagNoColor,
+		&FlagColor,
 		&FlagQuiet,
 		&FlagShell,
 		&FlagVersion,
@@ -36,7 +44,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	FlagHelp = NewBoolRadArg("help", "h", "Print usage string.", false)
 	FlagDebug = NewBoolRadArg("DEBUG", "D", "Enables debug output. Intended for RSL script developers.", false)
 	FlagRadDebug = NewBoolRadArg("RAD-DEBUG", "", "Enables Rad debug output. Intended for Rad developers.", false)
-	FlagNoColor = NewBoolRadArg("NO-COLOR", "", "Disable colorized output.", false)
+	FlagColor = NewStringRadArg("COLOR", "", "mode", "Control output colorization.", "auto", &MODES, nil)
 	FlagQuiet = NewBoolRadArg("QUIET", "Q", "Suppresses some output.", false)
 	FlagShell = NewBoolRadArg("SHELL", "", "Outputs shell/bash exports of variables, so they can be eval'd", false)
 	FlagVersion = NewBoolRadArg("VERSION", "V", "Print rad version information.", false)

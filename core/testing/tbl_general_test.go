@@ -18,7 +18,7 @@ func TestRad_VariousTypeLengths(t *testing.T) {
 rad url:
     fields shortint, longint, shortfloat, longfloat
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/numbers.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/numbers.json", "--COLOR=never")
 	expected := `shortint  longint              shortfloat  longfloat          
 1         1234567899987654400  1.12        1234.5678999876543  
 `
@@ -38,7 +38,7 @@ request url:
 print("Names:", Name)
 print("Ages:", Age)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
 	expected := `Names: [ "Charlie", "Bob", "Alice", "Bob" ]
 Ages: [ 30, 40, 30, 25 ]
 `
@@ -56,7 +56,7 @@ Age = json[].age
 request:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L5:8
 
   request:
@@ -73,7 +73,7 @@ Age = [30, 40, 25]
 display:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Name     Age 
 Alice    30   
 Bob      40   
@@ -92,7 +92,7 @@ Age = [30, 40, 25]
 display url:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L5:9
 
   display url:
@@ -113,7 +113,7 @@ NumIds = [len(x) for x in ids]
 display:
 	fields Name, NumIds
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--COLOR=never")
 	expected := `Name     NumIds 
 Alice    3       
 Bob      5       
@@ -130,7 +130,7 @@ func TestRad_RequiresBlockElseError(t *testing.T) {
 url = "https://google.com"
 rad url
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/text.txt", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/text.txt", "--COLOR=never")
 	expected := `Error at L3:1
 
   rad url
@@ -155,7 +155,7 @@ display:
 	if should_sort:
 		sort desc
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Name     Age 
 Alice    30   
 Bob      40   
@@ -182,7 +182,7 @@ display:
 	else:
 		sort Age asc
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Name     Age 
 Charlie  25   
 Alice    30   
@@ -207,7 +207,7 @@ display:
 	else:
 		sort Age desc
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Name     Age 
 Charlie  25   
 Alice    30   
@@ -229,7 +229,7 @@ rad url:
 	if should_sort:
 		sort name asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
 	expected := `name     city        
 Alice    New York     
 Bob      London       

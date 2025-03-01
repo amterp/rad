@@ -161,7 +161,7 @@ rad url:
     name:
         color color "o[a-z]"
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L8:15
 
           color color "o[a-z]"

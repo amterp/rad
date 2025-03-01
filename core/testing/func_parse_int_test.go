@@ -9,7 +9,7 @@ print(a + 1)
 a = parse_int("6178461748674861")
 print(a + 1)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n6178461748674862\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -19,7 +19,7 @@ func Test_ParseInt_ErrorsOnAlphabetical(t *testing.T) {
 	rsl := `
 a = parse_int("asd")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L2:5
 
   a = parse_int("asd")
@@ -33,7 +33,7 @@ func Test_ParseInt_ErrorsOnFloat(t *testing.T) {
 	rsl := `
 a = parse_int("2.4")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L2:5
 
   a = parse_int("2.4")
@@ -49,7 +49,7 @@ a, err = parse_int("2")
 print(a + 1)
 print(err)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n{ }\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -63,7 +63,7 @@ print(err.msg)
 print(err.code)
 print(err)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `0
 parse_int() failed to parse "asd"
 RAD20001
@@ -78,7 +78,7 @@ func Test_ParseInt_DoesNotErrorIfOutputNotRead(t *testing.T) {
 	rsl := `
 parse_int("2")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "")
 	assertNoErrors(t)
 	resetTestState()
@@ -88,7 +88,7 @@ func Test_ParseInt_ErrorsIfExpectingTooManyReturnValues(t *testing.T) {
 	rsl := `
 a, b, c = parse_int("2.4")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L2:11
 
   a, b, c = parse_int("2.4")

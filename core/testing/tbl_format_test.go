@@ -11,7 +11,7 @@ display:
 	nums:
 		map num -> "{num * 100:6.2}%"
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `nums    
   9.23%  
  63.42%  
@@ -32,7 +32,7 @@ display:
 	nums:
 		map num -> num * 10
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `nums 
 1630  
 630   
@@ -53,7 +53,7 @@ display:
 	names:
 		map name -> name[:3]
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `names 
 Ali    
 Bob    
@@ -75,7 +75,7 @@ display:
 	FirstNames, LastNames:
 		map name -> upper(name)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `FirstNames  LastNames 
 ALICE       SMITH      
 BOB         JONES      

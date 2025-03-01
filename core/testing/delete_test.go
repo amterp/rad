@@ -8,7 +8,7 @@ a = "alice"
 b = "bob"
 del a
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOnlyOutput(t, stdOutBuffer, "b=\"bob\"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -20,7 +20,7 @@ a = [1, 2]
 b = [3, 4]
 del a
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOnlyOutput(t, stdOutBuffer, "b=(3 4)\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -32,7 +32,7 @@ a = [0, 10, 20, 30, 40]
 del a[1]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -44,7 +44,7 @@ a = [0, [10, [20, 30]], 40]
 del a[1][1][0]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, [ 10, [ 30 ] ], 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -58,7 +58,7 @@ del a[1], b[2]
 print(a)
 print(b)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n[ 0, -10, -30, -40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -70,7 +70,7 @@ a = [0, 10, 20, 30, 40]
 del a[1], a[1]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -82,7 +82,7 @@ a = [0]
 del a[0]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -94,7 +94,7 @@ a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
 del a["bob"]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -106,7 +106,7 @@ a = { "alice": 35, "bob": { "car": "toyota", "shoes": "brooks" }, "charlie": [1,
 del a["bob"]["shoes"]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\" }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -118,7 +118,7 @@ a = { "alice": 35, "bob": { "car": "toyota", "ids": [10, 20, 30] }, "charlie": [
 del a["bob"]["ids"][1]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\", \"ids\": [ 10, 30 ] }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -130,7 +130,7 @@ a = [0, 10, 20, 30, 40]
 del a[1:3]
 print(a)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
 	resetTestState()

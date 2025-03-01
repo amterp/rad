@@ -13,7 +13,7 @@ print([x * 10 for x in Ids])
 print(Names)
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/arrays.json", "--COLOR=never")
 	expected := `[ 20, 50, 100 ]
 [ "Alice", "Bob", "Charlie" ]
 `
@@ -33,7 +33,7 @@ Name = Name[0]
 print(Name, len(Name))
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
 	expected := `Bob 3
 `
 	assertOutput(t, stdOutBuffer, expected)
@@ -55,7 +55,7 @@ print(Name, len(Name))
 //print(Friend)
 //`
 //
-//	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/obj_arr_with_arrays.json", "--NO-COLOR")
+//	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/obj_arr_with_arrays.json", "--COLOR=never")
 //	expected := `[Bob, Bob]
 //[Alice, Charlie]
 //`

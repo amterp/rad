@@ -6,7 +6,7 @@ import (
 )
 
 func Test_Misc_SyntaxError(t *testing.T) {
-	setupAndRunCode(t, "1 = 2", "--NO-COLOR")
+	setupAndRunCode(t, "1 = 2", "--COLOR=never")
 	expected := `Error at L1:1
 
   1 = 2
@@ -21,7 +21,7 @@ func Test_Misc_CanHaveVarNameThatIsJustAnUnderscore(t *testing.T) {
 _ = 2
 print(_)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -33,7 +33,7 @@ a = [1, 2, 3]
 for _, _ in a:
 	print(_)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -47,7 +47,7 @@ b = -20.2
 print(b)
 print("{-12}")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "-10\n-20.2\n-12\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -68,7 +68,7 @@ func Test_Misc_VersionShort(t *testing.T) {
 }
 
 func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
-	setupAndRunCode(t, "", "-h", "-V", "--NO-COLOR")
+	setupAndRunCode(t, "", "-h", "-V", "--COLOR=never")
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -76,7 +76,7 @@ func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 }
 
 func Test_Misc_PrintsHelpToStderrIfUnknownGlobalFlag(t *testing.T) {
-	setupAndRunArgs(t, "--asd", "--NO-COLOR")
+	setupAndRunArgs(t, "--asd", "--COLOR=never")
 	expected := "unknown flag: --asd\n" + radHelp
 	assertError(t, 1, expected)
 	resetTestState()
@@ -87,7 +87,7 @@ func Test_Misc_Abs_Int(t *testing.T) {
 print(abs(10))
 print(abs(-10))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `10
 10
 `
@@ -101,7 +101,7 @@ func Test_Misc_Abs_Float(t *testing.T) {
 print(abs(10.2))
 print(abs(-10.2))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `10.2
 10.2
 `
@@ -114,7 +114,7 @@ func Test_Misc_Abs_ErrorsOnAlphabetical(t *testing.T) {
 	rsl := `
 a = abs("asd")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L2:9
 
   a = abs("asd")
@@ -126,7 +126,7 @@ a = abs("asd")
 }
 
 func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
-	setupAndRunArgs(t, "--NO-COLOR")
+	setupAndRunArgs(t, "--COLOR=never")
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

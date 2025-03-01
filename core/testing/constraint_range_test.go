@@ -15,7 +15,7 @@ args:
     age3 range (, 200.5]
     age4 range (10, 20)
 `
-	setupAndRunCode(t, rsl, "--help", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--help", "--COLOR=never")
 	expected := `Usage:
   test <age1> <age2> <age3> <age4>
 
@@ -38,7 +38,7 @@ args:
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "40")
+	setupAndRunCode(t, rsl, "--COLOR=never", "40")
 	expected := `Age: 40
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -53,7 +53,7 @@ args:
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "0")
+	setupAndRunCode(t, rsl, "--COLOR=never", "0")
 	expected := `Age: 0
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -68,7 +68,7 @@ args:
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "100")
+	setupAndRunCode(t, rsl, "--COLOR=never", "100")
 	expected := `Age: 100
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -83,7 +83,7 @@ args:
     age range (0, 100)
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "0")
+	setupAndRunCode(t, rsl, "--COLOR=never", "0")
 	expected := `Error at L3:5
 
       age int
@@ -100,7 +100,7 @@ args:
     age range (0, 100)
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "100")
+	setupAndRunCode(t, rsl, "--COLOR=never", "100")
 	expected := `Error at L3:5
 
       age int
@@ -117,7 +117,7 @@ args:
     age range [0.5, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "0.5")
+	setupAndRunCode(t, rsl, "--COLOR=never", "0.5")
 	expected := `Age: 0.5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -132,7 +132,7 @@ args:
     age range (0.5, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "0.5")
+	setupAndRunCode(t, rsl, "--COLOR=never", "0.5")
 	expected := `Error at L3:5
 
       age float
@@ -149,7 +149,7 @@ args:
     age range (0.5,]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "9999")
+	setupAndRunCode(t, rsl, "--COLOR=never", "9999")
 	expected := `Age: 9999
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -164,7 +164,7 @@ args:
     age range (0.5,]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "0.1")
+	setupAndRunCode(t, rsl, "--COLOR=never", "0.1")
 	expected := `Error at L3:5
 
       age float
@@ -181,7 +181,7 @@ args:
     age range (, 200]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "250")
+	setupAndRunCode(t, rsl, "--COLOR=never", "250")
 	expected := `Error at L3:5
 
       age int
@@ -198,7 +198,7 @@ args:
     age range (, 200]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--age", "-300")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--age", "-300")
 	expected := `Age: -300
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

@@ -174,7 +174,13 @@ func (w *TblWriter) Render() {
 		colors = append(colors, tblwriter.Yellow)
 	}
 	w.tbl.SetHeaderColors(colors...)
-	w.tbl.ToggleColor(!FlagNoColor.Value)
+
+	switch FlagColor.Value {
+	case COLOR_NEVER:
+		w.tbl.ToggleColor(false)
+	case COLOR_ALWAYS:
+		w.tbl.ToggleColor(true)
+	}
 
 	if len(w.colToColors) > 0 {
 		columnModByIdx := make(map[int]tblwriter.ColumnMod)

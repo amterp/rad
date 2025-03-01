@@ -7,6 +7,7 @@ import (
 	com "rad/core/common"
 
 	"github.com/fatih/color"
+
 	"github.com/spf13/pflag"
 )
 
@@ -48,7 +49,12 @@ func (r *RadRunner) Run() error {
 		})
 	}
 
-	color.NoColor = FlagNoColor.Value
+	switch FlagColor.Value {
+	case COLOR_NEVER:
+		color.NoColor = true
+	case COLOR_ALWAYS:
+		color.NoColor = false
+	}
 	for _, mockResponse := range FlagMockResponse.Value {
 		RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
 		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))

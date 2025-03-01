@@ -16,7 +16,7 @@ const globalFlagHelp = `Global flags:
   -h, --help                   Print usage string.
   -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
       --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
+      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
   -V, --VERSION                Print rad version information.

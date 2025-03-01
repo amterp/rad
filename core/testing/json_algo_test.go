@@ -15,7 +15,7 @@ print(Id[0])
 print(Names)
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/not_root_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/not_root_array.json", "--COLOR=never")
 	expected := `1
 [ "Alice", "Bob", "Charlie" ]
 `
@@ -37,7 +37,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--COLOR=never")
 	expected := `Name   Age  Hometown    
 Alice  30   New York     
 Bob    40   Los Angeles  
@@ -60,7 +60,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys_array.json", "--COLOR=never")
 	expected := `Name       Age  Hometown 
 Alice      30   London    
 Bob        40   London    
@@ -86,7 +86,7 @@ rad url:
     fields city, country, name, age
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/nested_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/nested_wildcard.json", "--COLOR=never")
 	expected := `city  country    name       age 
 York  Australia  Charlotte  35   
 York  Australia  David      25   
@@ -112,7 +112,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_wildcard.json", "--COLOR=never")
 	expected := `[ "Alice", "Bob", "Charlie" ]
 [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9, 10 ] ]
 `
@@ -134,7 +134,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_objects.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_objects.json", "--COLOR=never")
 	expected := `[ "Alice", "Alice", "Alice", "Bob", "Charlie", "Charlie" ]
 [ 1, 2, 3, 4, 5, 6 ]
 `
@@ -153,7 +153,7 @@ request url:
     fields Building, issues
 print([len(x) for x in issues])
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/issues.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/issues.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "[ 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -170,7 +170,7 @@ request url:
     fields ids
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/root_prim_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/root_prim_array.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "[ 1, 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -192,7 +192,7 @@ print(ages)
 	expected := `2
 [ 30, 40 ]
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -214,7 +214,7 @@ print(ages)
 	expected := `2
 [ 30, 40 ]
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -229,7 +229,7 @@ request url:
     fields node
 print(sort("{node[0]}"))
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/unique_keys.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "      \"\"\"\"\"\",03::NYaeeeghkmnooortww{}\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -245,7 +245,7 @@ request url:
 print(sort("{node[0]}")) // hack to get the test consistent, as the order of keys in a map is not guaranteed
 `
 	expected := `             """""""""""",,,12::::AB[]aabcddeeeiiilmmnno{{}}` + "\n"
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -294,7 +294,7 @@ pprint(node[0])
   "null"
 ]
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/lots_of_types.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
@@ -315,7 +315,7 @@ rad url:
 Alice  2    
 Bob    2    
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_and_non_array.json", "--COLOR=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	resetTestState()

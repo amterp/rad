@@ -15,11 +15,14 @@ Global flags:
   -h, --help                   Print usage string.
   -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
       --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --NO-COLOR               Disable colorized output.
+      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
   -V, --VERSION                Print rad version information.
       --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --CONFIRM-SHELL          Confirm all shell commands before running them.
+      --SRC                    Instead of running the target script, just print it out.
+      --RSL-TREE               Instead of running the target script, print out its syntax tree.
       --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
 ```
 
@@ -66,11 +69,14 @@ DEBUG: 2
 
 Use `--QUIET` or `-Q` to suppress *some* outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.
 
-## `NO-COLOR`
+## `COLOR`
+
+`--COLOR mode    Control output colorization. Valid values: [auto, always, never]. (default auto)`
 
 A lot of rad's outputs have colors e.g. [`pick`](../reference/functions.md#pick) interaction or [`pprint`](../reference/functions.md#pprint) JSON formatted output.
-Sometimes you just want monochrome output, and while rad aims to do this automatically when it detects e.g. you're redirecting output to file, you can force it by using the 
-`--NO-COLOR` flag.
+By default (`auto`), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.
+
+However, you can override the automatic detection by explicitly setting `--COLOR=always` or `--COLOR=never` to force having colors, or force *not* having colors, respectively. 
 
 ## `MOCK-RESPONSE`
 

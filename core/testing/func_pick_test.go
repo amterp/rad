@@ -9,7 +9,7 @@ func TestPickNoFilterOneOption(t *testing.T) {
 opts = ["Hamburger"]
 print(pick(opts))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -20,7 +20,7 @@ func TestPickFilterWithOneOption(t *testing.T) {
 opts = ["Hamburger"]
 print(pick(opts, "burg"))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -31,7 +31,7 @@ func TestPickFilterToOneOption(t *testing.T) {
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 print(pick(opts, "Hamb"))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -42,7 +42,7 @@ func TestPickErrorsIfEmptyOptions(t *testing.T) {
 opts = []
 pick(opts)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L3:1
 
   pick(opts)
@@ -57,7 +57,7 @@ func TestPickErrorsIfFilteredToZeroOptions(t *testing.T) {
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 pick(opts, "asdasdasd")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Error at L3:1
 
   pick(opts, "asdasdasd")
@@ -73,7 +73,7 @@ filter = ["Ham", "ger"]
 opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 print(pick(opts, filter))
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
 	resetTestState()

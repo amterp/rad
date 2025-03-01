@@ -7,7 +7,7 @@ func TestHttpPost_Basic(t *testing.T) {
 url = "http//www.google.com"
 pprint(http_post(url))
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
 	expected := `{
   "body": [
     {

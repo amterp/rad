@@ -5,7 +5,7 @@ import "testing"
 func TestShell_ExportsNothingIfNoVars(t *testing.T) {
 	rsl := `
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOutput(t, stdOutBuffer, "")
 	assertOutput(t, stdErrBuffer, "")
 	assertNoErrors(t)
@@ -17,7 +17,7 @@ func TestShell_ExportsStrings(t *testing.T) {
 a = "alice"
 b = "bob"
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOutput(t, stdOutBuffer, "a=\"alice\"\nb=\"bob\"\n")
 	assertOutput(t, stdErrBuffer, "")
 	assertNoErrors(t)
@@ -29,7 +29,7 @@ func TestShell_PrintsGoToStderr(t *testing.T) {
 a = "alice"
 print('hi')
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertOutput(t, stdErrBuffer, "hi\n")
 	assertNoErrors(t)
@@ -40,7 +40,7 @@ func TestShell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
 	rsl := `
 exit(2)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOnlyOutput(t, stdOutBuffer, "exit 2\n")
 	assertError(t, 2, "")
 	resetTestState()
@@ -52,7 +52,7 @@ a = "alice"
 exit()
 b = "bob"
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR", "--SHELL")
+	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOnlyOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertNoErrors(t)
 	resetTestState()

@@ -14,7 +14,7 @@ rad url:
     fields name, age, country
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/parallel_arrays.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/parallel_arrays.json", "--COLOR=never")
 	expected := `name   age  country 
 Alice  25   US       
 Bob    30   US       
@@ -37,7 +37,7 @@ rad url:
     fields Name, FirstId, SecondId
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_wildcard.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/array_wildcard.json", "--COLOR=never")
 	expected := `Name     FirstId  SecondId 
 Alice    1        2         
 Bob      4        5         
@@ -60,7 +60,7 @@ request url:
 print(Nums)
 `
 
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/deeply_nested_arrays.json", "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/deeply_nested_arrays.json", "--COLOR=never")
 	expected := `[ 2, 4, 6, 8 ]
 `
 	assertOutput(t, stdOutBuffer, expected)

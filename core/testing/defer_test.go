@@ -7,7 +7,7 @@ func TestDefer_CanDefer(t *testing.T) {
 defer print("bye")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -19,7 +19,7 @@ defer print("bye1")
 defer print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -32,7 +32,7 @@ defer:
 	print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye1\nbye2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -44,7 +44,7 @@ defer print("bye")
 print("hi")
 exit(0)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -56,7 +56,7 @@ defer print("bye")
 print("hi")
 exit(1)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertError(t, 1, "")
 	resetTestState()
@@ -68,7 +68,7 @@ defer print("bye")
 print("hi")
 print(asd)
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye\n")
 	expected := `Error at L4:7
 
@@ -86,7 +86,7 @@ defer print(asd)
 defer print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	expected := `Error at L3:13
 
@@ -105,7 +105,7 @@ defer exit(3)  // this one executed before 'asd' error, so we should use its cod
 defer print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	expected := `Error at L3:13
 
@@ -124,7 +124,7 @@ defer print(asd)  // this error occurs before the exit above, so we use error co
 defer print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	expected := `Error at L4:13
 
@@ -143,7 +143,7 @@ defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
 defer print("bye2")
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--NO-COLOR")
+	setupAndRunCode(t, rsl, "--COLOR=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	expected := `Error at L3:13
 
