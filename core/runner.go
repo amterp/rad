@@ -27,7 +27,7 @@ func (r *RadRunner) Run() error {
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
 
 	RFlagSet.Usage = func() {
-		r.RunUsage()
+		r.RunUsage(false)
 	}
 
 	r.globalFlags = CreateAndRegisterGlobalFlags()
@@ -65,7 +65,7 @@ func (r *RadRunner) Run() error {
 		scriptName = args[0]
 	}
 
-	if scriptName != "" || FlagStdinScriptName.Configured() {
+	if !com.IsBlank(scriptName) || FlagStdinScriptName.Configured() {
 		// we've been given a script either via file or stdin -- parse through it and extract metadata
 		SetScriptPath(scriptName)
 		var rslSourceCode string
@@ -110,6 +110,17 @@ func (r *RadRunner) Run() error {
 	}
 
 	if com.IsBlank(scriptName) {
+		// re-enable erroring on unknown flags, so we can check if any unknown global flags were given.
+		// seems like a limitation of pflag that you cannot just 'get unknown flags' after the earlier parse
+		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
+
+		err = RFlagSet.Parse(os.Args[1:])
+		if err != nil {
+			// unknown global flag
+			RP.UsageErrorExit(err.Error())
+		}
+
+		// no flags, effectively, just print the basic usage
 		r.RunUsageExit()
 	}
 

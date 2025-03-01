@@ -26,7 +26,7 @@ Script args:
       --age4 float   Range: (10, 20)
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }

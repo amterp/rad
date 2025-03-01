@@ -20,7 +20,7 @@ Script args:
       --name string   
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -49,7 +49,7 @@ Script args:
       --name string   
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }

@@ -31,7 +31,7 @@ Script args:
   -x, --bar string   
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -51,7 +51,7 @@ Script args:
       --optional int        (default 10)
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -311,7 +311,7 @@ Script args:
       --name string   The name.
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	resetTestState()
 }
 
@@ -342,7 +342,7 @@ Script args:
       --boolArrayArg bool,bool          (default [true, false])
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	resetTestState()
 }
 

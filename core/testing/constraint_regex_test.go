@@ -17,7 +17,7 @@ Script args:
       --name string   Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }
@@ -38,7 +38,7 @@ Script args:
       --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
 
 ` + globalFlagHelp
-	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
 }

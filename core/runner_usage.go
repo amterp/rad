@@ -18,23 +18,23 @@ var (
 	bold      = color.New(color.Bold).FprintfFunc()
 )
 
-func (r *RadRunner) RunUsage() {
+func (r *RadRunner) RunUsage(isErr bool) {
 	if r.scriptData == nil {
-		r.printScriptlessUsage()
+		r.printScriptlessUsage(isErr)
 	} else {
-		r.printScriptUsage()
+		r.printScriptUsage(isErr)
 	}
 }
 
 func (r *RadRunner) RunUsageExit() {
-	r.RunUsage()
+	r.RunUsage(false)
 	if FlagShell.Value {
 		RP.PrintForShellEval("exit 0")
 	}
 	RExit(0)
 }
 
-func (r *RadRunner) printScriptlessUsage() {
+func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	buf := new(bytes.Buffer)
 
 	fmt.Fprintf(buf, "rad: A tool for writing user-friendly command line scripts.\n")
@@ -53,10 +53,10 @@ func (r *RadRunner) printScriptlessUsage() {
 
 	basicTips(buf)
 
-	fmt.Fprintf(RIo.StdErr, buf.String())
+	r.printHelpFromBuffer(buf, isErr)
 }
 
-func (r *RadRunner) printScriptUsage() {
+func (r *RadRunner) printScriptUsage(isErr bool) {
 	buf := new(bytes.Buffer)
 
 	if r.scriptData.Description != nil {
@@ -64,7 +64,6 @@ func (r *RadRunner) printScriptUsage() {
 	}
 
 	greenBold(buf, "Usage:\n")
-	// todo need to prefix with 'rad' if that's how this got invoked.
 	bold(buf, fmt.Sprintf("  %s", r.scriptData.ScriptName))
 
 	for _, arg := range r.scriptData.Args {
@@ -94,7 +93,7 @@ func (r *RadRunner) printScriptUsage() {
 	greenBold(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)
 
-	fmt.Fprintf(RIo.StdErr, buf.String())
+	r.printHelpFromBuffer(buf, isErr)
 }
 
 // does not handle gracefully/adjusting for cutting down lines if not enough width in terminal
@@ -172,4 +171,12 @@ func basicTips(buf *bytes.Buffer) {
 	sb.WriteString("If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n")
 
 	fmt.Fprintf(buf, sb.String())
+}
+
+func (r *RadRunner) printHelpFromBuffer(buf *bytes.Buffer, isErr bool) {
+	ioWriter := RIo.StdOut
+	if FlagShell.Value || isErr {
+		ioWriter = RIo.StdErr
+	}
+	fmt.Fprintf(ioWriter, buf.String())
 }
