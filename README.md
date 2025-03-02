@@ -1,6 +1,57 @@
 # 🤙 Rad - Request And Display
 
-A powerful command-line tool and domain-specific language for effortlessly querying and displaying JSON API data. Simplifies the process of writing, managing, and sharing API query scripts.
+**A lightweight, modern CLI scripting language that's familiar, clean, and readable.**
+
+Effortlessly write high-quality scripts without the quirks of Bash.
+Rad makes command-line scripting simple and intuitive — whether automating tasks, processing text, or interacting with systems and APIs.
+
+Example (file: `greet`):
+
+```
+#!/usr/bin/env rad
+---
+Greets someone by name, potentially a lot of times!
+---
+args:
+  name string             # Name of the person to greet.
+  times int = 1           # How many times to greet them.
+  shout s bool            # Enable to shout at them!
+  greeting string = "Hi"  # How to greet the person.
+  
+  times range (0, 10]
+  greeting enum ["Hi", "Hello", "Hey"]
+
+for _ in range(times):
+  text = "{greeting}, {name}!"
+  if shout:
+    text = upper(text)
+  print(text)
+```
+
+Generated help string:
+
+```
+> ./greet -h
+Greets someone by name, potentially a lot of times!
+
+Usage:
+  greet <name> [times] [shout] [greeting]
+
+Script args:
+      --name string       Name of the person to greet.
+      --times int         How many times to greet them. Range: (0, 10] (default 1)
+  -s, --shout             Enable to shout at them!
+      --greeting string   How to greet the person. Valid values: [Hi, Hello, Hey]. (default Hi)
+```
+
+Example invocation:
+
+```
+> ./greet bob 3 -s
+HI, BOB!
+HI, BOB!
+HI, BOB!
+```
 
 ## [Documentation](https://amterp.github.io/rad/)
 
@@ -31,8 +82,8 @@ Below is a quick glimpse of major items that've been implemented and are missing
 
 ### What's being worked on 🚧
 
+- Language features (there's a long list!)
 - LSP language server ([RLS](./rsl-language-server))
-- [Tree sitter implementation](https://github.com/amterp/tree-sitter-rsl)
 - [Visual Studio Code extension](./vsc-extension)
 
 ### What's planned 🌱 
@@ -41,6 +92,11 @@ Below is a quick glimpse of major items that've been implemented and are missing
 - Polished syntax error feedback
 - `rad` script management features & helpers
 - JetBrains IDE plugin
+- Support for platforms other than macOS: Linux, Windows. 
+
+---
+
+*Note: the below sections are a little dated - RSL has become a lot more general purpose, but the below sections focus mostly on the JSON API interaction features. Still relevant, though!*
 
 ## What problem does this solve? 🎯
 
@@ -87,7 +143,7 @@ Time                   Author                 SHA
 ```
 
 1. This script takes two args: a repo string and an optional limit (defaults to 20).
-  - The `#` comments are read by Rad and used to generate helpful docs / usage strings for the script.
+    - The `#` comments are read by Rad and used to generate helpful docs / usage strings for the script.
 2. It uses string interpolation to resolve the url we will query, based on the supplied args.
 3. It defines the fields to extract from the JSON response.
 4. It executes the query, extracting the specified fields, and displays the resulting data as a table.
