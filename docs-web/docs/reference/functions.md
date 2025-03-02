@@ -124,7 +124,31 @@ range(10, 5, -2) -> [10, 8, 6]
 ### join
 
 ```rsl
-join(input any[], joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
+join(input list, joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
+```
+
+### zip
+
+Combines multiple lists into a list of lists, pairing elements by index.
+
+```rsl
+zip(lists... list, strict bool?, fill any?)
+```
+
+If lists are of unequal length:
+
+- By default, truncates to the shortest.
+- If `fill` is provided, extends shorter lists to the longest, using the fill value.
+- If `strict=true`, raises an error if lengths differ.
+  - `strict` cannot be true while `fill` is defined.
+
+Examples:
+
+```
+zip([1, 2, 3], ["a", "b", "c"])          // [[1, "a"], [2, "b"], [3, "c"]]
+zip([1, 2, 3, 4], ["a", "b"])            // [[1, "a"], [2, "b"]]
+zip([1, 2, 3], ["a", "b"], strict=true)  // Error: Lists must have the same length
+zip([1, 2, 3, 4], ["a", "b"], fill="-")  // [[1, "a"], [2, "b"], [3, "-"], [4, "-"]]
 ```
 
 ### unique

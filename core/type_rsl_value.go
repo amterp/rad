@@ -319,3 +319,7 @@ func newRslValueBool(val bool) RslValue {
 func newRslValueMap(val *RslMap) RslValue {
 	return newRslValue(nil, nil, val)
 }
+
+func newRslValueList(val *RslList) RslValue {
+	return newRslValue(nil, nil, val)
+}

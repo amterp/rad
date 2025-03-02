@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	com "rad/core/common"
 	"sort"
 	"strconv"
 	"strings"
@@ -57,6 +58,7 @@ const (
 	FUNC_ABS                = "abs"
 	FUNC_GET_PATH           = "get_path"
 	FUNC_COUNT              = "count"
+	FUNC_ZIP                = "zip"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -67,6 +69,8 @@ const (
 	namedArgDefault = "default"
 	namedArgEnd     = "end"
 	namedArgSep     = "sep"
+	namedArgFill    = "fill"
+	namedArgStrict  = "strict"
 )
 
 var (
@@ -98,7 +102,7 @@ type Func struct {
 	ReturnValues     []int
 	RequiredArgCount int
 	ArgTypes         [][]RslTypeEnum          // by index, what types are allowed for that index. empty == any
-	NamedArgs        map[string][]RslTypeEnum // name -> allowed types
+	NamedArgs        map[string][]RslTypeEnum // name -> allowed types. empty == any
 	// interpreter, callNode, positional args, named args
 	// Guarantees when Execute invoked:
 	// - given at least as many args as required (RequiredArgCount)
@@ -561,6 +565,74 @@ func init() {
 
 				count := strings.Count(str, substr)
 				return newRslValues(f.i, f.callNode, count)
+			},
+		},
+		{
+			Name:             FUNC_ZIP,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 0,
+			// TODO RAD-167 make truly unlimited
+			ArgTypes: [][]RslTypeEnum{{RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgFill:   {},
+				namedArgStrict: {RslBoolT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				strictArg, strictExists := f.namedArgs[namedArgStrict]
+				strict := false
+				if strictExists {
+					strict = strictArg.value.RequireBool(f.i, strictArg.valueNode)
+				}
+
+				fillArg, fillExists := f.namedArgs[namedArgFill]
+				var fill *RslValue
+				if fillExists {
+					fill = &fillArg.value
+				}
+
+				if strictExists && fillExists {
+					f.i.errorf(f.callNode, "Cannot specify both 'strict' and 'fill' named arguments")
+				}
+
+				if len(f.args) == 0 {
+					return newRslValues(f.i, f.callNode, NewRslList())
+				}
+
+				length := int64(-1)
+				for _, argList := range f.args {
+					list := argList.value.RequireList(f.i, argList.node)
+					if length == -1 {
+						length = list.Len()
+					} else if length != list.Len() {
+						if strict {
+							f.i.errorf(f.callNode, "Strict mode enabled: all lists must have the same length, but got %d and %d", length, list.Len())
+						}
+						if fill == nil {
+							length = com.Int64Min(length, list.Len())
+						} else {
+							length = com.Int64Max(length, list.Len())
+						}
+					}
+				}
+
+				out := NewRslList()
+
+				for idx := int64(0); idx < length; idx++ {
+					listAtIdx := NewRslList()
+					out.Append(newRslValueList(listAtIdx))
+					for _, argList := range f.args {
+						argList := argList.value.RequireList(f.i, argList.node)
+
+						if idx < argList.Len() {
+							listAtIdx.Append(argList.IndexAt(f.i, f.callNode, idx))
+						} else {
+							// logically: this should only happen if fill is provided
+							listAtIdx.Append(*fill)
+						}
+					}
+				}
+
+				return newRslValues(f.i, f.callNode, out)
 			},
 		},
 	}

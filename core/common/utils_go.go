@@ -2,6 +2,7 @@ package com
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"strings"
@@ -84,4 +85,12 @@ func NumIsAre(values int) string {
 func FileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+func Int64Min(a, b int64) int64 {
+	return int64(math.Min(float64(a), float64(b)))
+}
+
+func Int64Max(a, b int64) int64 {
+	return int64(math.Max(float64(a), float64(b)))
 }

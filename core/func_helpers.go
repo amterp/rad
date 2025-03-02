@@ -156,7 +156,7 @@ func assertAllowedNamedArgs(i *Interpreter, callNode *ts.Node, function Func, na
 	// check for invalid types
 	for name, arg := range namedArgs {
 		allowedTypes, _ := allowedNamedArgs[name]
-		if !lo.Contains(allowedTypes, arg.value.Type()) {
+		if len(allowedTypes) > 0 && !lo.Contains(allowedTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(allowedTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
 			i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
