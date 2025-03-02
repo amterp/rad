@@ -561,8 +561,6 @@ You can also invoke `range` with a starting value i.e. `range(start, end)` and w
 If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
 in an additional variable after the `for`. The first variable will be the index, and the second the item.
 
-[//]: # (TODO ^ OR STRING, WHEN RAD-92 IMPLEMENTED)
-
 ```rsl
 names = ["Alice", "Bob", "Charlie"]
 for i, name in names:

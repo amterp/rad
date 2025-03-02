@@ -140,7 +140,11 @@ func (l *RslList) ToString() string {
 }
 
 func (l *RslList) Len() int64 {
-	return int64(len(l.Values))
+	return int64(l.LenInt())
+}
+
+func (l *RslList) LenInt() int {
+	return len(l.Values)
 }
 
 func (l *RslList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {

@@ -566,9 +566,9 @@ func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
 	rightVal := i.evaluate(rightNode, 1)[0]
 	switch coercedRight := rightVal.Val.(type) {
 	case RslString:
-		runForLoopList(i, leftsNode, coercedRight.ToRuneList(), doOneLoop)
+		runForLoopList(i, leftsNode, rightNode, coercedRight.ToRuneList(), doOneLoop)
 	case *RslList:
-		runForLoopList(i, leftsNode, coercedRight, doOneLoop)
+		runForLoopList(i, leftsNode, rightNode, coercedRight, doOneLoop)
 	case *RslMap:
 		runForLoopMap(i, leftsNode, coercedRight, doOneLoop)
 	default:
@@ -576,19 +576,21 @@ func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
 	}
 }
 
-func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, doOneLoop func()) {
+func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList, doOneLoop func()) {
 	var idxNode *ts.Node
-	var itemNode *ts.Node
+	itemNodes := make([]*ts.Node, 0)
 
 	leftNodes := i.getChildren(leftsNode, F_LEFT)
 
-	if len(leftNodes) == 1 {
-		itemNode = &leftNodes[0]
-	} else if len(leftNodes) == 2 {
-		idxNode = &leftNodes[0]
-		itemNode = &leftNodes[1]
+	if len(leftNodes) == 0 {
+		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
+	} else if len(leftNodes) == 1 {
+		itemNodes = append(itemNodes, &leftNodes[0])
 	} else {
-		i.errorf(leftsNode, "Expected 1 or 2 variables on left side of for loop")
+		idxNode = &leftNodes[0]
+		for idx := 1; idx < len(leftNodes); idx++ {
+			itemNodes = append(itemNodes, &leftNodes[idx])
+		}
 	}
 
 	for idx, val := range list.Values {
@@ -597,8 +599,27 @@ func runForLoopList(i *Interpreter, leftsNode *ts.Node, list *RslList, doOneLoop
 			i.env.SetVar(idxName, newRslValue(i, idxNode, int64(idx)))
 		}
 
-		itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
-		i.env.SetVar(itemName, val)
+		if len(itemNodes) == 1 {
+			itemNode := itemNodes[0]
+			itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
+			i.env.SetVar(itemName, val)
+		} else if len(itemNodes) > 1 {
+			// expecting list of lists, unpacking by idx
+			listInList, ok := val.TryGetList()
+			if !ok {
+				i.errorf(rightNode, "Expected list of lists, got element type %q", TypeAsString(val))
+			}
+
+			if listInList.LenInt() < len(itemNodes) {
+				i.errorf(rightNode, "Expected at least %s in inner list, got %d",
+					com.Pluralize(len(itemNodes), "value"), listInList.LenInt())
+			}
+
+			for idx, itemNode := range itemNodes {
+				itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
+				i.env.SetVar(itemName, listInList.Values[idx])
+			}
+		}
 
 		doOneLoop()
 		if i.breaking {
