@@ -209,6 +209,14 @@ type_of("hi")  // string
 type_of([2])   // list
 ```
 
+### str
+
+```
+str(any) -> string
+```
+
+Converts any input to a string.
+
 ## Input
 
 ### input
@@ -349,13 +357,14 @@ count(input string, substring string) -> int
 
 Counts the number of non-overlapping instances of `substring` in `input`.
 
-### str
+### trim
 
 ```
-str(any) -> string
+trim(text string, chars string = " \t\n") -> string
 ```
 
-Converts any input to a string.
+Trims the start and end of an input string.
+If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.
 
 ## Maps
 

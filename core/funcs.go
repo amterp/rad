@@ -61,6 +61,7 @@ const (
 	FUNC_ZIP                = "zip"
 	FUNC_STR                = "str"
 	FUNC_SUM                = "sum"
+	FUNC_TRIM               = "trim"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -669,6 +670,25 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, sum)
+			},
+		},
+		{
+			Name:             FUNC_TRIM,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				text := f.args[0]
+
+				chars := " \t\n"
+				if len(f.args) > 1 {
+					chars = f.args[1].value.RequireStr(f.i, f.args[1].node).Plain()
+				}
+
+				rslString := text.value.RequireStr(f.i, text.node)
+				rslString = rslString.Trim(chars)
+				return newRslValues(f.i, f.callNode, rslString)
 			},
 		},
 	}
