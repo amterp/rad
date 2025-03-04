@@ -349,6 +349,14 @@ count(input string, substring string) -> int
 
 Counts the number of non-overlapping instances of `substring` in `input`.
 
+### str
+
+```
+str(input any) -> string
+```
+
+Converts any input to a string.
+
 ## Maps
 
 ### keys

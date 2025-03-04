@@ -59,6 +59,7 @@ const (
 	FUNC_GET_PATH           = "get_path"
 	FUNC_COUNT              = "count"
 	FUNC_ZIP                = "zip"
+	FUNC_STR                = "str"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -633,6 +634,18 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, out)
+			},
+		},
+		{
+			Name:             FUNC_STR,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				asStr := ToPrintableQuoteStr(arg.value, false)
+				return newRslValues(f.i, f.callNode, asStr)
 			},
 		},
 	}
