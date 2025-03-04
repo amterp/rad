@@ -60,6 +60,7 @@ const (
 	FUNC_COUNT              = "count"
 	FUNC_ZIP                = "zip"
 	FUNC_STR                = "str"
+	FUNC_SUM                = "sum"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -646,6 +647,28 @@ func init() {
 				arg := f.args[0]
 				asStr := ToPrintableQuoteStr(arg.value, false)
 				return newRslValues(f.i, f.callNode, asStr)
+			},
+		},
+		{
+			Name:             FUNC_SUM,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				list := arg.value.RequireList(f.i, arg.node)
+
+				sum := 0.0
+				for idx, item := range list.Values {
+					num, ok := item.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_SUM, TypeAsString(item), idx)
+					}
+					sum += num
+				}
+
+				return newRslValues(f.i, f.callNode, sum)
 			},
 		},
 	}

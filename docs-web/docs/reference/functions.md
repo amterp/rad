@@ -352,7 +352,7 @@ Counts the number of non-overlapping instances of `substring` in `input`.
 ### str
 
 ```
-str(input any) -> string
+str(any) -> string
 ```
 
 Converts any input to a string.
@@ -462,6 +462,14 @@ The **output** map contains the following entries (`?` signifies it may not be p
 abs(int) -> int
 abs(float) -> float
 ```
+
+### sum
+
+```rsl
+sum(list[number]) -> float
+```
+
+Sums the input list of numbers to a resulting float.
 
 ## System
 
