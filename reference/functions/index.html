@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://amterp.github.io/rad/reference/functions/">
       
       
-        <link rel="prev" href="../defer/">
+        <link rel="prev" href="../errors/">
       
       
         <link rel="next" href="../global-flags/">
@@ -640,6 +640,27 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Errors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -817,6 +838,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#str" class="md-nav__link">
+    <span class="md-ellipsis">
+      str
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -979,6 +1009,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#trim" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1124,6 +1163,15 @@
   <a href="#abs" class="md-nav__link">
     <span class="md-ellipsis">
       abs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sum" class="md-nav__link">
+    <span class="md-ellipsis">
+      sum
     </span>
   </a>
   
@@ -1457,6 +1505,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#str" class="md-nav__link">
+    <span class="md-ellipsis">
+      str
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1619,6 +1676,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#trim" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1764,6 +1830,15 @@
   <a href="#abs" class="md-nav__link">
     <span class="md-ellipsis">
       abs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sum" class="md-nav__link">
+    <span class="md-ellipsis">
+      sum
     </span>
   </a>
   
@@ -2034,6 +2109,10 @@ sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span
 <div class="highlight"><pre><span></span><code>type_of(<span class="s">&quot;hi&quot;</span>)<span class="w">  </span>//<span class="w"> </span>string
 type_of([<span class="mi">2</span>])<span class="w">   </span>//<span class="w"> </span>list
 </code></pre></div>
+<h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>str(any) -&gt; string
+</code></pre></div>
+<p>Converts any input to a string.</p>
 <h2 id="input">Input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h2>
 <h3 id="input_1">input<a class="headerlink" href="#input_1" title="Permanent link">&para;</a></h3>
 <p>Get a line of text input from the user.</p>
@@ -2120,6 +2199,11 @@ Unsure!
 <div class="highlight"><pre><span></span><code>count(input string, substring string) -&gt; int
 </code></pre></div>
 <p>Counts the number of non-overlapping instances of <code>substring</code> in <code>input</code>.</p>
+<h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>trim(text string, chars string = &quot; \t\n&quot;) -&gt; string
+</code></pre></div>
+<p>Trims the start and end of an input string.
+If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.</p>
 <h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
 <h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>keys(input<span class="w"> </span>map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>[]
@@ -2187,6 +2271,10 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
 <div class="highlight"><pre><span></span><code><span class="k">abs</span>(<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
 <span class="k">abs</span>(float)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
 </code></pre></div>
+<h3 id="sum">sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sum(list[number])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Sums the input list of numbers to a resulting float.</p>
 <h2 id="system">System<a class="headerlink" href="#system" title="Permanent link">&para;</a></h2>
 <h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>exit(code<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">0</span>)
@@ -2223,7 +2311,7 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../defer/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Defer &amp; Errdefer">
+          <a href="../errors/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Errors">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2233,7 +2321,7 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
                 Previous
               </span>
               <div class="md-ellipsis">
-                Defer & Errdefer
+                Errors
               </div>
             </div>
           </a>
