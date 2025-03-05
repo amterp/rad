@@ -62,6 +62,7 @@ const (
 	FUNC_STR                = "str"
 	FUNC_SUM                = "sum"
 	FUNC_TRIM               = "trim"
+	FUNC_READ_FILE          = "read_file"
 
 	namedArgReverse = "reverse"
 	namedArgTitle   = "title"
@@ -74,6 +75,14 @@ const (
 	namedArgSep     = "sep"
 	namedArgFill    = "fill"
 	namedArgStrict  = "strict"
+	namedArgMode    = "mode"
+
+	constContent   = "content"
+	constSizeBytes = "size_bytes"
+	constText      = "text"
+	constBytes     = "bytes"
+	constCode      = "code"
+	constMsg       = "msg"
 )
 
 var (
@@ -429,7 +438,7 @@ func init() {
 					if f.numExpectedOutputs == 1 {
 						return newRslValues(f.i, f.callNode, parsed)
 					} else {
-						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+						return newRslValues(f.i, f.callNode, parsed, NewRslMap())
 					}
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
@@ -438,7 +447,7 @@ func init() {
 						f.i.errorf(f.callNode, errMsg)
 						panic(UNREACHABLE)
 					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_INT_FAILED, errMsg))
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(com.ErrParseIntFailed, errMsg))
 					}
 				}
 			},
@@ -459,7 +468,7 @@ func init() {
 					if f.numExpectedOutputs == 1 {
 						return newRslValues(f.i, f.callNode, parsed)
 					} else {
-						return newRslValues(f.i, f.callNode, parsed, NoErrorRslMap())
+						return newRslValues(f.i, f.callNode, parsed, NewRslMap())
 					}
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
@@ -468,7 +477,7 @@ func init() {
 						f.i.errorf(f.callNode, errMsg)
 						panic(UNREACHABLE)
 					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(PARSE_FLOAT_FAILED, errMsg))
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(com.ErrParseFloatFailed, errMsg))
 					}
 				}
 			},
@@ -689,6 +698,64 @@ func init() {
 				rslString := text.value.RequireStr(f.i, text.node)
 				rslString = rslString.Trim(chars)
 				return newRslValues(f.i, f.callNode, rslString)
+			},
+		},
+		{
+			// todo potential additional named args
+			//   - encoding="utf-8", # Or null for raw bytes
+			//   - start             # Byte offset start
+			//   - length            # Number of bytes to read
+			//   - head              # First N bytes
+			//   - tail              # Last N bytes
+			Name:             FUNC_READ_FILE,
+			ReturnValues:     UP_TO_TWO_RETURN_VALS,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgMode: {RslStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
+
+				mode := constText
+				if modeArg, exists := f.namedArgs[namedArgMode]; exists {
+					mode = modeArg.value.RequireStr(f.i, modeArg.valueNode).Plain()
+				}
+
+				resultMap := NewRslMap()
+				errMap := NewRslMap()
+
+				data, err := os.ReadFile(path)
+				if err == nil {
+					resultMap.SetPrimitiveInt64(constSizeBytes, int64(len(data)))
+
+					switch strings.ToLower(mode) {
+					case constText:
+						resultMap.SetPrimitiveStr(constContent, string(data))
+					case constBytes:
+						byteList := NewRslList()
+						for _, b := range data {
+							byteList.Append(newRslValueInt64(int64(b)))
+						}
+						resultMap.SetPrimitiveList(constContent, byteList)
+					default:
+						f.i.errorf(f.callNode, "Invalid mode %q in read_file; expected %q or %q", mode, constText, constBytes)
+					}
+				} else if os.IsNotExist(err) {
+					errMap = ErrorRslMap(com.ErrFileNoExist, err.Error())
+				} else if os.IsPermission(err) {
+					errMap = ErrorRslMap(com.ErrFileNoPermission, err.Error())
+				} else {
+					errMap = ErrorRslMap(com.ErrFileRead, err.Error())
+				}
+
+				if f.numExpectedOutputs == 1 {
+					if errMap.Len() > 0 {
+						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
+					}
+					return newRslValues(f.i, f.callNode, resultMap)
+				}
+				return newRslValues(f.i, f.callNode, resultMap, errMap)
 			},
 		},
 	}

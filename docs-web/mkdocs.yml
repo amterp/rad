@@ -63,6 +63,7 @@ nav:
     - ./reference/args.md
     - ./reference/assignment.md
     - ./reference/defer.md
+    - ./reference/errors.md
     - ./reference/functions.md
     - ./reference/global-flags.md
     - ./reference/logic.md

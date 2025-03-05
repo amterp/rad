@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/samber/lo"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -55,6 +57,10 @@ func (m *RslMap) SetPrimitiveBool(key string, value bool) {
 
 func (m *RslMap) SetPrimitiveMap(key string, value *RslMap) {
 	m.Set(newRslValueStr(key), newRslValueMap(value))
+}
+
+func (m *RslMap) SetPrimitiveList(key string, value *RslList) {
+	m.Set(newRslValueStr(key), newRslValueList(value))
 }
 
 func (m *RslMap) Get(key RslValue) (RslValue, bool) {
@@ -151,6 +157,15 @@ func (l *RslMap) Equals(right *RslMap) bool {
 	}
 
 	return true
+}
+
+func (m *RslMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
+	if lo.Contains(lo.Keys(m.mapping), constCode) && lo.Contains(lo.Keys(m.mapping), constMsg) {
+		return fmt.Sprintf("%s (error %s)", m.mapping[constMsg].Val, m.mapping[constCode].Val)
+	}
+
+	i.errorf(node, "Bug! Map is not an error message, contains keys: %s", lo.Keys(m.mapping))
+	panic(UNREACHABLE)
 }
 
 func evalMapKey(i *Interpreter, idxNode *ts.Node) RslValue {

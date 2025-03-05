@@ -184,13 +184,9 @@ func AbsFloat(x float64) float64 {
 	return x
 }
 
-func ErrorRslMap(err RslError, errMsg string) *RslMap {
+func ErrorRslMap(err com.RslError, errMsg string) *RslMap {
 	m := NewRslMap()
-	m.SetPrimitiveStr("code", string(err))
-	m.SetPrimitiveStr("msg", errMsg)
+	m.SetPrimitiveStr(constCode, string(err))
+	m.SetPrimitiveStr(constMsg, errMsg)
 	return m
-}
-
-func NoErrorRslMap() *RslMap {
-	return NewRslMap()
 }
