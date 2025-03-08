@@ -30,7 +30,7 @@ Usage:
 Script args:
       --name string   Valid values: [alice, bob, charlie].
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 	resetTestState()
 }

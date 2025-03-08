@@ -64,6 +64,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 
 	if shouldAddFlag(FLAG_RAD_DEBUG, "") {
 		FlagRadDebug = NewBoolRadArg(flagOrEmpty(FLAG_RAD_DEBUG), flagOrEmpty(""), "Enables Rad debug output. Intended for Rad developers.", false)
+		hideFromUsageIfHaveScript(&FlagRadDebug.hidden)
 		flags = append(flags, &FlagRadDebug)
 	}
 
@@ -79,11 +80,13 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 
 	if shouldAddFlag(FLAG_SHELL, "") {
 		FlagShell = NewBoolRadArg(flagOrEmpty(FLAG_SHELL), flagOrEmpty(""), "Outputs shell/bash exports of variables, so they can be eval'd", false)
+		hideFromUsageIfHaveScript(&FlagShell.hidden)
 		flags = append(flags, &FlagShell)
 	}
 
 	if shouldAddFlag(FLAG_VERSION, FLAG_V) {
 		FlagVersion = NewBoolRadArg(flagOrEmpty(FLAG_VERSION), flagOrEmpty(FLAG_V), "Print rad version information.", false)
+		hideFromUsageIfHaveScript(&FlagVersion.hidden)
 		flags = append(flags, &FlagVersion)
 	}
 
@@ -99,16 +102,22 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 
 	if shouldAddFlag(FLAG_RSL_TREE, "") {
 		FlagRslTree = NewBoolRadArg(flagOrEmpty(FLAG_RSL_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false)
+		hideFromUsageIfHaveScript(&FlagRslTree.hidden)
 		flags = append(flags, &FlagRslTree)
 	}
 
 	if shouldAddFlag(FLAG_MOCK_RESPONSE, "") {
 		FlagMockResponse = NewMockResponseRadArg(flagOrEmpty(FLAG_MOCK_RESPONSE), flagOrEmpty(""), "Add mock response for json requests (pattern:filePath)")
+		hideFromUsageIfHaveScript(&FlagMockResponse.hidden)
 		flags = append(flags, &FlagMockResponse)
 	}
 
 	registerGlobalFlags(flags)
 	return flags
+}
+
+func hideFromUsageIfHaveScript(hidden *bool) {
+	*hidden = HasScript
 }
 
 func registerGlobalFlags(flags []RslArg) {

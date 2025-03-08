@@ -25,7 +25,7 @@ Script args:
       --age3 float   The age3. Range: (, 200.5]
       --age4 float   Range: (10, 20)
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()

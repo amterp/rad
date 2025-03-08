@@ -19,7 +19,7 @@ Usage:
 Script args:
       --name string   
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -48,7 +48,7 @@ Usage:
 Script args:
       --name string   
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()

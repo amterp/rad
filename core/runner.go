@@ -75,6 +75,7 @@ func (r *RadRunner) Run() error {
 		}
 	}
 
+	HasScript = !com.IsBlank(sourceCode)
 	SetScriptPath(scriptPath)
 
 	// three outcomes so far:
@@ -82,7 +83,7 @@ func (r *RadRunner) Run() error {
 	// 2. sourceCode is populated with a script, no error
 	// 3. both sourceCode and errMsg are empty, meaning no script and no error, so print usage
 
-	if !com.IsBlank(sourceCode) {
+	if HasScript {
 		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
 		rslParser, err := rts.NewRslParser()
 		if err != nil {
