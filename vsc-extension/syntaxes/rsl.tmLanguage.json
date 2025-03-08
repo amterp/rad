@@ -33,6 +33,15 @@
 					"include": "#strings"
 				},
 				{
+					"include": "#floats"
+				},
+				{
+					"include": "#ints"
+				},
+				{
+					"include": "#bools"
+				},
+				{
 					"include": "#types"
 				},
 				{
