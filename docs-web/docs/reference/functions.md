@@ -366,6 +366,24 @@ trim(text string, chars string = " \t\n") -> string
 Trims the start and end of an input string.
 If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.
 
+### trim_prefix
+
+```
+trim_prefix(text string, chars string = " \t\n") -> string
+```
+
+Trims the start of an input string.
+If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
+
+### trim_suffix
+
+```
+trim_suffix(text string, chars string = " \t\n") -> string
+```
+
+Trims the end of an input string.
+If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
+
 ## Maps
 
 ### keys
@@ -479,6 +497,85 @@ sum(list[number]) -> float
 ```
 
 Sums the input list of numbers to a resulting float.
+
+### round
+
+```rsl
+round(number float|int, precision int = 0) -> float
+```
+
+Rounds the input number to the specified precision.
+If `precision` is unspecified it defaults to 0 and rounds the number to 0 decimal point.
+
+### floor
+
+```rsl
+floor(num float|int) -> float
+```
+
+Floors the input number to the floor of the given number.
+```
+floor(1.89) -> 1
+```
+
+### ceil
+
+```rsl
+ceil(num float|int) -> float
+```
+
+Ceils the input number to the ceil of the given number.
+```
+ceil(1.21) -> 2
+```
+
+### min
+
+```rsl
+min(nums list[float|num]) -> float
+```
+
+Min function returns the minimum number in the provided list.
+Allowed arguments are list of numbers of type float | int.
+
+```
+min([1,2,3,4]) -> 1
+```
+
+### max
+
+```rsl
+max(nums list[float|num]) -> float
+```
+
+Max function returns the maximum number in the provided list.
+Allowed arguments are list of number of type float | int.
+
+```
+max([1,2,3,4]) -> 4
+```
+
+### clamp
+
+```rsl
+clamp(val, min, max float|int) -> float
+```
+
+Clamp function can take 3 arguments of nums to run the clamp function.
+Clamp function takes a list of n numbers however it works on only first 3 numbers in the list:
+  - 0 -> val
+  - 1 -> min
+  - 2 -> max
+
+Clamp function returns 
+  -  The number if the number is in between the provided max and min. 
+  -  If provided number is lower than min then min is returned.
+  -  If the provided number is greater than max then max is returned.
+
+```
+clamp(10,11,101) -> 11
+```
+
 
 ## System & Files
 
