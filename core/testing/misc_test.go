@@ -238,6 +238,16 @@ print(version+"!")
 	resetTestState()
 }
 
+func Test_Misc_GlobalSrcFlag(t *testing.T) {
+	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "--src", "--color=never")
+	expected := `args:
+    name string # The name.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func globalFlagHelpWithout(s string) string {
 	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s

@@ -5,17 +5,6 @@ import (
 	"fmt"
 	com "rad/core/common"
 	"strings"
-
-	"github.com/fatih/color"
-)
-
-var (
-	plain     = color.New(color.Reset).FprintfFunc()
-	green     = color.New(color.FgGreen).FprintfFunc()
-	greenBold = color.New(color.FgGreen, color.Bold).FprintfFunc()
-	yellow    = color.New(color.FgYellow).FprintfFunc()
-	cyan      = color.New(color.FgCyan).FprintfFunc()
-	bold      = color.New(color.Bold).FprintfFunc()
 )
 
 func (r *RadRunner) RunUsage(isErr bool) {
@@ -41,14 +30,14 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	fmt.Fprintf(buf, "GitHub: https://github.com/amterp/rad\n")
 	fmt.Fprintf(buf, "Documentation: https://amterp.github.io/rad/\n\n")
 
-	greenBold(buf, "Usage:\n")
-	bold(buf, "  rad")
-	cyan(buf, " [script path | command] [flags]\n\n")
+	com.GreenBoldF(buf, "Usage:\n")
+	com.BoldF(buf, "  rad")
+	com.CyanF(buf, " [script path | command] [flags]\n\n")
 
-	greenBold(buf, "Commands:\n")
+	com.GreenBoldF(buf, "Commands:\n")
 	commandUsage(buf, CmdsByName)
 
-	greenBold(buf, "Global flags:\n")
+	com.GreenBoldF(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)
 
 	basicTips(buf)
@@ -63,33 +52,33 @@ func (r *RadRunner) printScriptUsage(isErr bool) {
 		fmt.Fprintf(buf, *r.scriptData.Description+"\n")
 	}
 
-	greenBold(buf, "Usage:\n ")
+	com.GreenBoldF(buf, "Usage:\n ")
 	if !com.IsBlank(r.scriptData.ScriptName) {
-		bold(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
+		com.BoldF(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
 	}
 
 	for _, arg := range r.scriptData.Args {
 		if arg.IsOptional {
-			cyan(buf, fmt.Sprintf(" [%s]", arg.ApiName))
+			com.CyanF(buf, fmt.Sprintf(" [%s]", arg.ApiName))
 		} else if arg.Type == ArgBoolT {
 			if arg.Short == nil {
-				cyan(buf, fmt.Sprintf(" [--%s]", arg.ApiName))
+				com.CyanF(buf, fmt.Sprintf(" [--%s]", arg.ApiName))
 			} else {
-				cyan(buf, fmt.Sprintf(" [-%s, --%s]", *arg.Short, arg.ApiName))
+				com.CyanF(buf, fmt.Sprintf(" [-%s, --%s]", *arg.Short, arg.ApiName))
 			}
 		} else {
-			cyan(buf, fmt.Sprintf(" <%s>", arg.ApiName))
+			com.CyanF(buf, fmt.Sprintf(" <%s>", arg.ApiName))
 		}
 	}
 	fmt.Fprintf(buf, "\n\n")
 
-	greenBold(buf, "Script args:\n")
+	com.GreenBoldF(buf, "Script args:\n")
 	flagUsage(buf, r.scriptArgs)
 
 	fmt.Fprintf(buf, "\n")
 
 	// todo probably don't print these if there's a script? Or only minimal ones if --help is passed (not -h) ?
-	greenBold(buf, "Global flags:\n")
+	com.GreenBoldF(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)
 
 	r.printHelpFromBuffer(buf, isErr)
