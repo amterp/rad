@@ -2,94 +2,94 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://amterp.github.io/rad/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/args/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/basics/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/defer-errdefer/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/functions/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/getting-started/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/global-flags/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/rad-blocks/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/resources/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/shell-commands/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/strings-advanced/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/args/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/assignment/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/defer/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/errors/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/functions/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/global-flags/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/json-field-definition/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/logic/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/math/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/rad-blocks/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/shell-commands/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/strings/</loc>
-         <lastmod>2025-03-05</lastmod>
+         <lastmod>2025-03-08</lastmod>
     </url>
 </urlset>

@@ -549,7 +549,7 @@
         <li class="md-nav__item">
   <a href="#debug" class="md-nav__link">
     <span class="md-ellipsis">
-      DEBUG
+      debug
     </span>
   </a>
   
@@ -558,7 +558,7 @@
         <li class="md-nav__item">
   <a href="#quiet" class="md-nav__link">
     <span class="md-ellipsis">
-      QUIET
+      quiet
     </span>
   </a>
   
@@ -567,7 +567,7 @@
         <li class="md-nav__item">
   <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
-      COLOR
+      color
     </span>
   </a>
   
@@ -576,7 +576,7 @@
         <li class="md-nav__item">
   <a href="#mock-response" class="md-nav__link">
     <span class="md-ellipsis">
-      MOCK-RESPONSE
+      mock-response
     </span>
   </a>
   
@@ -955,7 +955,7 @@
         <li class="md-nav__item">
   <a href="#debug" class="md-nav__link">
     <span class="md-ellipsis">
-      DEBUG
+      debug
     </span>
   </a>
   
@@ -964,7 +964,7 @@
         <li class="md-nav__item">
   <a href="#quiet" class="md-nav__link">
     <span class="md-ellipsis">
-      QUIET
+      quiet
     </span>
   </a>
   
@@ -973,7 +973,7 @@
         <li class="md-nav__item">
   <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
-      COLOR
+      color
     </span>
   </a>
   
@@ -982,7 +982,7 @@
         <li class="md-nav__item">
   <a href="#mock-response" class="md-nav__link">
     <span class="md-ellipsis">
-      MOCK-RESPONSE
+      mock-response
     </span>
   </a>
   
@@ -1041,21 +1041,21 @@
 <p><code>--help</code> also prints available <em>global</em> flags:</p>
 <div class="highlight"><pre><span></span><code>Global flags:
   -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval&#39;d
-  -V, --VERSION                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
-      --CONFIRM-SHELL          Confirm all shell commands before running them.
-      --SRC                    Instead of running the target script, just print it out.
-      --RSL-TREE               Instead of running the target script, print out its syntax tree.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+  -d, --debug                  Enables debug output. Intended for RSL script developers.
+      --rad-debug              Enables Rad debug output. Intended for Rad developers.
+      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet                  Suppresses some output.
+      --shell                  Outputs shell/bash exports of variables, so they can be eval&#39;d
+  -v, --version                Print rad version information.
+      --stdin script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
+      --confirm-shell          Confirm all shell commands before running them.
+      --src                    Instead of running the target script, just print it out.
+      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --mock-response string   Add mock response for json requests (pattern:filePath)
 </code></pre></div>
 <p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
-<h2 id="debug"><code>DEBUG</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except it only prints if the global flag <code>--DEBUG</code> is enabled. You can use them in your script for debugging as desired.</p>
+<h2 id="debug"><code>debug</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
+<p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except that it only prints if the global flag <code>--debug</code> is enabled. You can use them in your script for debugging as desired.</p>
 <p>For example, given this example:</p>
 <div class="highlight"><span class="filename">debug.rsl</span><pre><span></span><code>print(<span class="s">&quot;1&quot;)</span>
 <span class="s">debug(&quot;2&quot;)</span>
@@ -1070,7 +1070,7 @@
 </code></pre></div>
 </div>
 
-<div class="highlight"><pre><span></span><code>rad debug.rsl -D
+<div class="highlight"><pre><span></span><code>rad debug.rsl -d
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>1
@@ -1079,17 +1079,21 @@ DEBUG: 2
 </code></pre></div>
 </div>
 
-<h2 id="quiet"><code>QUIET</code><a class="headerlink" href="#quiet" title="Permanent link">&para;</a></h2>
-<p>Use <code>--QUIET</code> or <code>-Q</code> to suppress <em>some</em> outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.</p>
-<h2 id="color"><code>COLOR</code><a class="headerlink" href="#color" title="Permanent link">&para;</a></h2>
-<p><code>--COLOR mode    Control output colorization. Valid values: [auto, always, never]. (default auto)</code></p>
+<h2 id="quiet"><code>quiet</code><a class="headerlink" href="#quiet" title="Permanent link">&para;</a></h2>
+<p>Use <code>--quiet</code> or <code>-q</code> to suppress <em>some</em> outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.</p>
+<h2 id="color"><code>color</code><a class="headerlink" href="#color" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>--color mode
+    Control output colorization.
+    Valid values: [auto, always, never].
+    (default auto)
+</code></pre></div>
 <p>A lot of rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
 By default (<code>auto</code>), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.</p>
-<p>However, you can override the automatic detection by explicitly setting <code>--COLOR=always</code> or <code>--COLOR=never</code> to force having colors, or force <em>not</em> having colors, respectively. </p>
-<h2 id="mock-response"><code>MOCK-RESPONSE</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
+<p>However, you can override the automatic detection by explicitly setting <code>--color=always</code> or <code>--color=never</code> to force having colors, or force <em>not</em> having colors, respectively. </p>
+<h2 id="mock-response"><code>mock-response</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
 <p>You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a <a href="../rad-blocks/"><code>rad</code> block</a>.</p>
-<p>In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the <code>MOCK-RESPONSE</code> flag.</p>
-<p><code>MOCK-RESPONSE</code> takes an argument in a <code>&lt;url regex&gt;:&lt;file path&gt;</code> format.
+<p>In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the <code>mock-response</code> flag.</p>
+<p><code>mock-response</code> takes an argument in a <code>&lt;url regex&gt;:&lt;file path&gt;</code> format.
 In other words, you can mock responses based on a regex match of the queried URL, and make them return the contents of a specified file.</p>
 <p>For example, if you wanted to mock a response from GitHub's API, you could define an example response in a file:</p>
 <div class="highlight"><span class="filename">commits.json</span><pre><span></span><code><span class="p">[</span>
@@ -1114,7 +1118,7 @@ In other words, you can mock responses based on a regex match of the queried URL
 <span class="p">]</span>
 </code></pre></div>
 <p>And then define it as the mock response with the following example invocation:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rsl<span class="w"> </span>--MOCK-RESPONSE<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rsl<span class="w"> </span>--mock-response<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
 </code></pre></div>
 <p>Before executing the HTTP request, rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
 avoiding the HTTP request, and simply returning the contents of the mocked response.</p>
@@ -1128,9 +1132,14 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Rad provides several global flags that can be used across all RSL scripts.</li>
-<li>Generally, global flags are in ALL CAPS, such as <code>DEBUG</code> and <code>QUIET</code>.</li>
-<li>Use <code>MOCK-RESPONSE</code> to test your scripts.</li>
+<li>Use <code>mock-response</code> to test your scripts.</li>
 </ul>
+<div class="admonition info">
+<p class="admonition-title">Script args can shadow global flags</p>
+<p>If a script defines an arg such as <code>debug</code>, conflicting with an existing global flag, then the script arg will <strong>shadow</strong> the global flag.</p>
+<p>This means that the global flag's functionality is effectively disabled for the script. It gets removed from the script's usage string, and
+the script itself defines the behavior of the flag.</p>
+</div>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Sometimes you may wish to run commands before your script ends, either normally or via an error, such as cleanups.
 RSL provides a way to do this that we will explore in the next section: <a href="../defer-errdefer/">Defer &amp; Errdefer</a>.</p>
