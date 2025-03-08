@@ -70,6 +70,16 @@ brew install rad
 
 Other than building from source, Rad is not available for other platforms/package managers (yet).
 
+### Visual Studio Code Extension
+
+The VS Code extension for RSL can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension). Source [here](./vsc-extension).
+
+It provides syntax highlighting and integrates with the RSL language server for error detection. 
+
+The language server is currently only available on macOS & Linux. Source [here](./rsl-language-server).
+
+![vsc-example.png](./assets/vsc-example.png)
+
 ## Status 📊
 
 ⚠️ **Rad is still in early development!** ⚠️
