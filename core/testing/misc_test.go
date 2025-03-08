@@ -160,17 +160,12 @@ args:
 `
 	setupAndRunCode(t, rsl, "--color=never", "-h")
 	expectedGlobalFlags := `Global flags:
-  -h, --help                   Print usage string.
-  -d                           Enables debug output. Intended for RSL script developers.
-      --rad-debug              Enables Rad debug output. Intended for Rad developers.
-      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -q, --quiet                  Suppresses some output.
-      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
-  -v, --version                Print rad version information.
-      --confirm-shell          Confirm all shell commands before running them.
-      --src                    Instead of running the target script, just print it out.
-      --rsl-tree               Instead of running the target script, print out its syntax tree.
-      --mock-response string   Add mock response for json requests (pattern:filePath)
+  -h, --help            Print usage string.
+  -d                    Enables debug output. Intended for RSL script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
 `
 	expected := `Usage:
   <debug>
@@ -187,27 +182,22 @@ Script args:
 func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
 	rsl := `
 args:
-	myversion v string
+	myquiet q string
 `
 	setupAndRunCode(t, rsl, "--color=never", "-h")
 	expectedGlobalFlags := `Global flags:
-  -h, --help                   Print usage string.
-  -d, --debug                  Enables debug output. Intended for RSL script developers.
-      --rad-debug              Enables Rad debug output. Intended for Rad developers.
-      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -q, --quiet                  Suppresses some output.
-      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
-      --version                Print rad version information.
-      --confirm-shell          Confirm all shell commands before running them.
-      --src                    Instead of running the target script, just print it out.
-      --rsl-tree               Instead of running the target script, print out its syntax tree.
-      --mock-response string   Add mock response for json requests (pattern:filePath)
+  -h, --help            Print usage string.
+  -d, --debug           Enables debug output. Intended for RSL script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
+      --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
 `
 	expected := `Usage:
-  <myversion>
+  <myquiet>
 
 Script args:
-  -v, --myversion string   
+  -q, --myquiet string   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -249,7 +239,7 @@ print(version+"!")
 }
 
 func globalFlagHelpWithout(s string) string {
-	original := globalFlagHelp
+	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s
 	lines := strings.Split(original, "\n")
 	var result []string

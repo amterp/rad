@@ -30,7 +30,7 @@ func TestArgs_ApiRenameUsageString(t *testing.T) {
 Script args:
   -x, --bar string   
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -50,7 +50,7 @@ Script args:
       --mandatory string   
       --optional int        (default 10)
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -90,7 +90,7 @@ Script args:
       --mandatory2 string   
       --optional int         (default 10)
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOutput(t, stdOutBuffer, "")
 	assertError(t, 1, expected)
 	resetTestState()
@@ -310,7 +310,7 @@ args:
 Script args:
       --name string   The name.
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	resetTestState()
 }
@@ -341,7 +341,7 @@ Script args:
       --floatArrayArg float,float       (default [2.1, 3.1])
       --boolArrayArg bool,bool          (default [true, false])
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	resetTestState()
 }
@@ -389,7 +389,7 @@ Script args:
       --name string   
       --age int       
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 	resetTestState()
 }
@@ -409,7 +409,7 @@ Script args:
       --name string   
       --age int       
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 	resetTestState()
 }
@@ -429,7 +429,7 @@ Script args:
       --name string   
       --age int       
 
-` + globalFlagHelp
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 	resetTestState()
 }

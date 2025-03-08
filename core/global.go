@@ -16,6 +16,7 @@ var (
 	RReq       *Requester
 	RClock     Clock
 	RSleep     func(duration time.Duration)
+	HasScript  bool
 	ScriptPath string
 	ScriptDir  string
 	ScriptName string
