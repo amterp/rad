@@ -65,9 +65,9 @@ args:
 print(name)
 `
 	tree := rslTs.Parse(rsl)
-	fileHeader, err := tree.FindFileHeader()
-	if err != nil {
-		t.Fatalf("error finding file header: %v", err)
+	fileHeader, ok := tree.FindFileHeader()
+	if !ok {
+		t.Fatalf("failed to find file header")
 	}
 	if fileHeader.Contents != "These are\nsome file headers.\n" {
 		t.Fatalf("File header contents didn't match: <%v>", fileHeader.Contents)
@@ -87,9 +87,9 @@ args:
     name regex "^[A-Z][a-z]$"
 `
 	tree := rslTs.Parse(rsl)
-	argBlock, err := tree.FindArgBlock()
-	if err != nil {
-		t.Fatalf("error finding arg block: %v", err)
+	argBlock, ok := tree.FindArgBlock()
+	if !ok {
+		t.Fatalf("failed to find arg block")
 	}
 	_ = argBlock
 }

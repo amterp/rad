@@ -44,43 +44,28 @@ func (rt *RslTree) String() string {
 	return rt.Dump()
 }
 
-func (rt *RslTree) FindShebang() (*Shebang, error) {
-	shebangs, err := findNodes[*Shebang](rt)
-	if err != nil {
-		return nil, err
-	}
+func (rt *RslTree) FindShebang() (*Shebang, bool) {
+	shebangs := findNodes[*Shebang](rt)
 	if len(shebangs) == 0 {
-		return nil, nil
+		return nil, false
 	}
-	return shebangs[0], nil
+	return shebangs[0], true // todo bad if multiple
 }
 
-func (rt *RslTree) FindFileHeader() (*FileHeader, error) {
-	fileHeaders, err := findNodes[*FileHeader](rt)
-	if err != nil {
-		return nil, err
-	}
+func (rt *RslTree) FindFileHeader() (*FileHeader, bool) {
+	fileHeaders := findNodes[*FileHeader](rt)
 	if len(fileHeaders) == 0 {
-		return nil, nil
+		return nil, false
 	}
-	if len(fileHeaders) > 1 {
-		return nil, errors.New("multiple file headers found")
-	}
-	return fileHeaders[0], nil
+	return fileHeaders[0], true // todo bad if multiple
 }
 
-func (rt *RslTree) FindArgBlock() (*ArgBlock, error) {
-	argBlocks, err := findNodes[*ArgBlock](rt)
-	if err != nil {
-		return nil, err
-	}
+func (rt *RslTree) FindArgBlock() (*ArgBlock, bool) {
+	argBlocks := findNodes[*ArgBlock](rt)
 	if len(argBlocks) == 0 {
-		return nil, nil
+		return nil, false
 	}
-	if len(argBlocks) > 1 {
-		return nil, errors.New("multiple arg blocks found")
-	}
-	return argBlocks[0], nil
+	return argBlocks[0], true // todo bad if multiple
 }
 
 func QueryNodes[T Node](rt *RslTree) ([]T, error) {
@@ -127,17 +112,17 @@ func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
 	}
 }
 
-func findNodes[T Node](rt *RslTree) ([]T, error) {
+func findNodes[T Node](rt *RslTree) []T {
 	nodeName := NodeName[T]()
 	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())
 	if !ok {
-		return []T{}, nil
+		return []T{}
 	}
 	rtsNode, ok := createNode[T](rt.src, node)
 	if !ok {
-		return nil, errors.New("failed to create RTS version of node")
+		panic(errors.New("failed to create RTS version of node"))
 	}
-	return []T{rtsNode}, nil // todo stub - should search all
+	return []T{rtsNode} // todo stub - should search all
 }
 
 func (rt *RslTree) findFirstNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
