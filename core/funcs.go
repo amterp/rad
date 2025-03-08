@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	com "rad/core/common"
@@ -63,7 +64,16 @@ const (
 	FUNC_STR                = "str"
 	FUNC_SUM                = "sum"
 	FUNC_TRIM               = "trim"
+	FUNC_TRIM_PREFIX        = "trim_prefix"
+	FUNC_TRIM_SUFFIX        = "trim_suffix"
 	FUNC_READ_FILE          = "read_file"
+	FUNC_ROUND              = "round"
+	FUNC_CEIL               = "ceil"
+	FUNC_FLOOR              = "floor"
+	FUNC_MIN                = "min"
+	FUNC_MAX                = "max"
+	FUNC_CLAMP              = "clamp"
+	FUNC_REVERSE            = "reverse"
 
 	namedArgReverse  = "reverse"
 	namedArgTitle    = "title"
@@ -782,15 +792,52 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				text := f.args[0]
+				textArg := f.args[0]
 
 				chars := " \t\n"
 				if len(f.args) > 1 {
-					chars = f.args[1].value.RequireStr(f.i, f.args[1].node).Plain()
+					charsArg := f.args[1]
+					chars = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
 				}
 
-				rslString := text.value.RequireStr(f.i, text.node)
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
 				rslString = rslString.Trim(chars)
+				return newRslValues(f.i, f.callNode, rslString)
+			},
+		},
+		{
+			Name:             FUNC_TRIM_PREFIX,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				textArg := f.args[0]
+				prefix := " \t\n"
+				if len(f.args) > 1 {
+					charsArg := f.args[1]
+					prefix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
+				}
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
+				rslString = rslString.TrimPrefix(prefix)
+				return newRslValues(f.i, f.callNode, rslString)
+			},
+		},
+		{
+			Name:             FUNC_TRIM_SUFFIX,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				textArg := f.args[0]
+				suffix := " \t\n"
+				if len(f.args) > 1 {
+					charsArg := f.args[1]
+					suffix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
+				}
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
+				rslString = rslString.TrimSuffix(suffix)
 				return newRslValues(f.i, f.callNode, rslString)
 			},
 		},
@@ -850,6 +897,131 @@ func init() {
 					return newRslValues(f.i, f.callNode, resultMap)
 				}
 				return newRslValues(f.i, f.callNode, resultMap, errMap)
+			},
+		},
+		{
+			Name:             FUNC_ROUND,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				var precision int64 = 0
+				if len(f.args) > 1 {
+					precisionArg := f.args[1]
+					precision = precisionArg.value.RequireInt(f.i, precisionArg.node)
+					if precision < 0 {
+						f.i.errorf(f.args[1].node, "Precision must be non-negative, got %d", precision)
+					}
+				}
+
+				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
+				factor := math.Pow10(int(precision))
+				rounded := math.Round(val*factor) / factor
+				return newRslValues(f.i, f.callNode, rounded)
+			},
+		},
+		{
+			Name:             FUNC_CEIL,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
+				return newRslValues(f.i, f.callNode, math.Ceil(val))
+			},
+		},
+		{
+			Name:             FUNC_FLOOR,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
+				return newRslValues(f.i, f.callNode, math.Floor(val))
+			},
+		},
+		{
+			Name:             FUNC_MIN,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				list := arg.value.RequireList(f.i, arg.node)
+				if list.Len() == 0 {
+					f.i.errorf(f.callNode, "Cannot find minimum of empty list")
+				}
+
+				minVal := math.MaxFloat64
+				for idx, item := range list.Values {
+					val, ok := item.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MIN, TypeAsString(item), idx)
+					}
+					minVal = math.Min(minVal, val)
+				}
+				return newRslValues(f.i, f.callNode, minVal)
+			},
+		},
+		{
+			Name:             FUNC_MAX,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				list := arg.value.RequireList(f.i, arg.node)
+				if list.Len() == 0 {
+					f.i.errorf(f.callNode, "Cannot find maximum of empty list")
+				}
+
+				maxVal := -math.MaxFloat64
+				for idx, item := range list.Values {
+					val, ok := item.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MAX, TypeAsString(item), idx)
+					}
+					maxVal = math.Max(maxVal, val)
+				}
+				return newRslValues(f.i, f.callNode, maxVal)
+			},
+		},
+		{
+			Name:             FUNC_CLAMP,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 3,
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				// input is a number and a min and max
+				val := f.args[0].value.RequireFloatAllowingInt(f.i, f.args[0].node)
+				minVal := f.args[1].value.RequireFloatAllowingInt(f.i, f.args[1].node)
+				maxVal := f.args[2].value.RequireFloatAllowingInt(f.i, f.args[2].node)
+
+				if minVal > maxVal {
+					f.i.errorf(f.callNode, "min must be less than max, got %f and %f", minVal, maxVal)
+				}
+				return newRslValues(f.i, f.callNode, math.Min(math.Max(val, minVal), maxVal))
+			},
+		},
+		{
+			Name:             FUNC_REVERSE,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:        NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				rslString := arg.value.RequireStr(f.i, arg.node)
+				return newRslValues(f.i, f.callNode, rslString.Reverse())
 			},
 		},
 	}
