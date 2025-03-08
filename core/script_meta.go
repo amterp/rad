@@ -25,12 +25,12 @@ func ExtractMetadata(src string) *ScriptData {
 	RP.RadDebugf("Tree dump:\n" + tree.Dump()) // todo should be lazy i.e. func
 
 	var description *string
-	fileHeader, err := tree.FindFileHeader()
-	if err == nil && fileHeader != nil {
+	fileHeader, ok := tree.FindFileHeader()
+	if ok {
 		description = &fileHeader.Contents
 	}
 
-	argBlock, err := tree.FindArgBlock()
+	argBlock, ok := tree.FindArgBlock()
 	RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.FlatStr(argBlock)))
 	args := extractArgs(argBlock)
 

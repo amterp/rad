@@ -114,7 +114,6 @@ type Printer interface {
 // isRadDebug will enable rad debug messages, and include stack traces for errors
 func NewPrinter(runner *RadRunner, isShellMode bool, isQuiet bool, isScriptDebug bool, isRadDebug bool) Printer {
 	return &stdPrinter{
-		stdIn:         RIo.StdIn,
 		stdOut:        RIo.StdOut,
 		stdErr:        RIo.StdErr,
 		runner:        runner,
@@ -126,7 +125,6 @@ func NewPrinter(runner *RadRunner, isShellMode bool, isQuiet bool, isScriptDebug
 }
 
 type stdPrinter struct {
-	stdIn         io.Reader
 	stdOut        io.Writer
 	stdErr        io.Writer
 	runner        *RadRunner

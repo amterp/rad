@@ -1,10 +1,14 @@
 package core
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	com "rad/core/common"
+	"strings"
+
+	"github.com/amterp/rts"
 
 	"github.com/fatih/color"
 
@@ -23,84 +27,93 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 }
 
 func (r *RadRunner) Run() error {
-	// don't fail on unknown flags. they may be intended for the script, which we won't have parsed initially
-	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
-	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
+	rawArgs := os.Args[1:]
 
-	RFlagSet.Usage = func() {
-		r.RunUsage(false)
+	// before we can parse any flags, we need to read the script ASAP so we can shadow global flags, then
+	// parse flags with pflag, so that we can set up globals like printer, debug logger, etc.
+
+	scriptPath := ""
+	sourceCode := ""
+	errMsg := ""
+
+	if len(rawArgs) > 0 {
+		scriptPath = rawArgs[0]
+
+		if scriptPath == "-" {
+			// remove the '-' from the args so that pflag doesn't try to parse it as a flag
+			os.Args = append([]string{os.Args[0]}, rawArgs[1:]...)
+
+			// reading script from stdin has been requested
+			if RIo.StdIn.HasContent() {
+				source, err := io.ReadAll(RIo.StdIn)
+				if err != nil {
+					errMsg = fmt.Sprintf("Could not read from stdin: %v\n", err)
+				} else {
+					sourceCode = string(source)
+					scriptPath = ""
+				}
+			} else {
+				errMsg = "Requested reading from stdin ('-'), but found no input"
+			}
+		} else if com.FileExists(scriptPath) {
+			// there's a file, read its code
+			source, err := readSource(scriptPath)
+			if err != nil {
+				errMsg = fmt.Sprintf("Could not read script: %v\n", err)
+			} else {
+				sourceCode = source
+			}
+		} else if !strings.HasPrefix(scriptPath, "-") {
+			// no file, but also not a flag, maybe a command?
+			cmdSource := GetEmbeddedCommandSrc(scriptPath)
+			if cmdSource != nil {
+				sourceCode = *cmdSource
+			} else {
+				// was not a file, not a flag, not a command, so error
+				errMsg = fmt.Sprintf("Unknown file or command: %s", scriptPath)
+			}
+		}
 	}
 
-	r.globalFlags = CreateAndRegisterGlobalFlags()
+	SetScriptPath(scriptPath)
 
-	err := RFlagSet.Parse(os.Args[1:])
-	if err != nil {
-		RP.UsageErrorExit(err.Error())
+	// three outcomes so far:
+	// 1. errMsg is populated with an error (we won't have a script)
+	// 2. sourceCode is populated with a script, no error
+	// 3. both sourceCode and errMsg are empty, meaning no script and no error, so print usage
+
+	if !com.IsBlank(sourceCode) {
+		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
+		rslParser, err := rts.NewRslParser()
+		if err != nil {
+			errMsg = fmt.Sprintf("Failed to load RSL parser: %v", err)
+		} else {
+			tree := rslParser.Parse(sourceCode)
+			argBlock, ok := tree.FindArgBlock()
+			if ok {
+				for _, argDecl := range argBlock.Args {
+					FlagsUsedInScript = append(FlagsUsedInScript, argDecl.ExternalName())
+
+					shorthand := argDecl.ShorthandStr()
+					if shorthand != nil {
+						FlagsUsedInScript = append(FlagsUsedInScript, *shorthand)
+					}
+				}
+			}
+		}
 	}
 
-	// immediately make use of global flags to control behavior for the rest of the program
-
-	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
-
-	RP.RadDebugf(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
-	if FlagRadDebug.Value {
-		RFlagSet.VisitAll(func(flag *pflag.Flag) {
-			RP.RadDebugf(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
-		})
+	r.setUpGlobals()
+	if !com.IsBlank(errMsg) {
+		RP.ErrorExit(errMsg)
 	}
-
-	switch FlagColor.Value {
-	case COLOR_NEVER:
-		color.NoColor = true
-	case COLOR_ALWAYS:
-		color.NoColor = false
-	}
-	for _, mockResponse := range FlagMockResponse.Value {
-		RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
-		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
-	}
-
-	// now let's see if we were given a script to run.
 
 	args := RFlagSet.Args()
 
-	var scriptName string
-	if FlagStdinScriptName.Configured() {
-		scriptName = FlagStdinScriptName.Value
-	} else if len(args) > 0 {
-		scriptName = args[0]
+	if !com.IsBlank(sourceCode) {
+		RP.RadDebugf(fmt.Sprintf("Read src code (%d chars), parsing...", len(sourceCode)))
+		r.scriptData = ExtractMetadata(sourceCode)
 	}
-
-	if !com.IsBlank(scriptName) || FlagStdinScriptName.Configured() {
-		// we've been given a script either via file or stdin -- parse through it and extract metadata
-		SetScriptPath(scriptName)
-		var rslSourceCode string
-
-		if FlagStdinScriptName.Configured() {
-			// script is given via stdin
-			source, err := io.ReadAll(RIo.StdIn)
-			if err == nil {
-				rslSourceCode = string(source)
-			} else {
-				RP.RadErrorExit(fmt.Sprintf("Could not read from stdin: %v\n", err))
-			}
-		} else if com.FileExists(ScriptPath) {
-			// script is given via file
-			rslSourceCode = readSource(ScriptPath)
-		} else {
-			// Script doesn't exist, see if it matches an embedded command.
-			src := GetEmbeddedCommandSrc(ScriptPath)
-			if src != nil {
-				rslSourceCode = *src
-			} else {
-				RP.RadErrorExit(fmt.Sprintf("Script '%s' not found\n", ScriptPath))
-			}
-		}
-
-		RP.RadDebugf(fmt.Sprintf("Read src code (%d chars), parsing...", len(rslSourceCode)))
-		r.scriptData = ExtractMetadata(rslSourceCode)
-	}
-
 	scriptArgs := r.createRslArgsFromScript()
 	r.scriptArgs = scriptArgs
 
@@ -115,12 +128,12 @@ func (r *RadRunner) Run() error {
 		RExit(0)
 	}
 
-	if com.IsBlank(scriptName) {
+	if com.IsBlank(sourceCode) {
 		// re-enable erroring on unknown flags, so we can check if any unknown global flags were given.
 		// seems like a limitation of pflag that you cannot just 'get unknown flags' after the earlier parse
 		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 
-		err = RFlagSet.Parse(os.Args[1:])
+		err := RFlagSet.Parse(os.Args[1:])
 		if err != nil {
 			// unknown global flag
 			RP.UsageErrorExit(err.Error())
@@ -161,16 +174,17 @@ func (r *RadRunner) Run() error {
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 
 	// technically re-using the flagset is apparently discouraged, but i've yet to see where it goes wrong
-	err = RFlagSet.Parse(os.Args[1:])
+	err := RFlagSet.Parse(os.Args[1:])
 	if err != nil {
 		RP.UsageErrorExit(err.Error())
 	}
 
 	posArgsIndex := 0
-	if FlagStdinScriptName.Value == "" {
+	if !com.IsBlank(scriptPath) {
 		// We're invoked on an actual string path, which will be the first arg. Cut it out.
 		args = args[1:]
 	}
+
 	var missingArgs []string
 	for _, scriptArg := range scriptArgs {
 		argName := scriptArg.GetExternalName()
@@ -234,6 +248,49 @@ func (r *RadRunner) Run() error {
 	return nil
 }
 
+func (r *RadRunner) setUpGlobals() {
+	// don't fail on unknown flags. they may be intended for the script, which we won't have parsed initially
+	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
+	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
+
+	RFlagSet.Usage = func() {
+		r.RunUsage(false)
+	}
+
+	r.globalFlags = CreateAndRegisterGlobalFlags()
+
+	err := RFlagSet.Parse(os.Args[1:])
+
+	// immediately make use of global flags to control behavior for the rest of the program
+	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
+
+	if err != nil {
+		if errors.Is(err, pflag.ErrHelp) {
+			RExit(0)
+		}
+		RP.UsageErrorExit(err.Error())
+	}
+
+	RP.RadDebugf(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
+	if FlagRadDebug.Value {
+		RFlagSet.VisitAll(func(flag *pflag.Flag) {
+			RP.RadDebugf(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
+		})
+	}
+
+	switch FlagColor.Value {
+	case COLOR_NEVER:
+		color.NoColor = true
+	case COLOR_ALWAYS:
+		color.NoColor = false
+	}
+
+	for _, mockResponse := range FlagMockResponse.Value {
+		RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
+		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
+	}
+}
+
 func (r *RadRunner) createRslArgsFromScript() []RslArg {
 	if r.scriptData == nil {
 		return nil
@@ -249,11 +306,7 @@ func (r *RadRunner) createRslArgsFromScript() []RslArg {
 	return flags
 }
 
-func readSource(scriptPath string) string {
+func readSource(scriptPath string) (string, error) {
 	source, err := os.ReadFile(scriptPath)
-	if err != nil {
-		RP.RadErrorExit(fmt.Sprintf("Could not read script '%s': %v\n", scriptPath, err))
-		RExit(1)
-	}
-	return string(source)
+	return string(source), err
 }

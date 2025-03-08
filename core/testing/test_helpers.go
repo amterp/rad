@@ -20,7 +20,6 @@ const globalFlagHelp = `Global flags:
   -Q, --QUIET                  Suppresses some output.
       --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
   -V, --VERSION                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
       --CONFIRM-SHELL          Confirm all shell commands before running them.
       --SRC                    Instead of running the target script, just print it out.
       --RSL-TREE               Instead of running the target script, print out its syntax tree.
@@ -77,7 +76,7 @@ func newRunnerInputInput() core.RunnerInput {
 	}
 	return core.RunnerInput{
 		RIo: &core.RadIo{
-			StdIn:  stdInBuffer,
+			StdIn:  core.NewBufferReader(stdInBuffer),
 			StdOut: stdOutBuffer,
 			StdErr: stdErrBuffer,
 		},
@@ -121,7 +120,7 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	args := tp.args
 	if tp.rsl != "" {
 		stdInBuffer.WriteString(tp.rsl)
-		args = append([]string{"--STDIN", "test"}, tp.args...)
+		args = append([]string{"-"}, tp.args...)
 	}
 	runner := setupRunner(t, args...)
 	defer func() {

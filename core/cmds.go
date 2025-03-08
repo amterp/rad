@@ -62,9 +62,9 @@ func getFileHeaderLine(fileName string) string {
 	}
 	defer parser.Close()
 	tree := parser.Parse(src)
-	fh, err := tree.FindFileHeader()
-	if err != nil {
-		panic(fmt.Sprintf("Failed to find file header in embedded file %s: %s", fileName, err))
+	fh, ok := tree.FindFileHeader()
+	if !ok {
+		panic(fmt.Sprintf("Failed to find file header in embedded file %s", fileName))
 	}
 	firstLine := strings.Split(fh.Contents, "\n")[0]
 	if !strings.HasSuffix(firstLine, ".") {

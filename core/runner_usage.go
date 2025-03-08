@@ -63,8 +63,10 @@ func (r *RadRunner) printScriptUsage(isErr bool) {
 		fmt.Fprintf(buf, *r.scriptData.Description+"\n")
 	}
 
-	greenBold(buf, "Usage:\n")
-	bold(buf, fmt.Sprintf("  %s", r.scriptData.ScriptName))
+	greenBold(buf, "Usage:\n ")
+	if !com.IsBlank(r.scriptData.ScriptName) {
+		bold(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
+	}
 
 	for _, arg := range r.scriptData.Args {
 		if arg.IsOptional {
@@ -86,9 +88,6 @@ func (r *RadRunner) printScriptUsage(isErr bool) {
 
 	fmt.Fprintf(buf, "\n")
 
-	if !FlagStdinScriptName.Configured() {
-		FlagStdinScriptName.Hidden(true)
-	}
 	// todo probably don't print these if there's a script? Or only minimal ones if --help is passed (not -h) ?
 	greenBold(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)

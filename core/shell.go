@@ -198,8 +198,11 @@ func resolveCmd(i *Interpreter, shellNode *ts.Node, cmdStr string) *exec.Cmd {
 
 func buildCmd(shellStr string, cmdStr string) *exec.Cmd {
 	cmd := exec.Command(shellStr, "-c", cmdStr)
-	cmd.Stdin = RIo.StdIn
+	// if we don't unwrap to Stdin *file*, the command never ends? It's a bit weird, should understand better.
+	cmd.Stdin = RIo.StdIn.Unwrap()
+
 	//cmd.Stderr = RIo.StdErr // todo ? this seems to conflict with the pipes later
 	//cmd.Stdout = RIo.StdOut
+
 	return cmd
 }
