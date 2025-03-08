@@ -9,7 +9,7 @@ args:
 	name regex "[A-Z][a-z]*"
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "--help", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--help", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -30,7 +30,7 @@ args:
 	name enum ["Alice", "Bob"]
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "--help", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--help", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -76,7 +76,7 @@ args:
 	name string
 	name regex "[A-Z][a-z]*"
 `
-	setupAndRunCode(t, rsl, "alice", "--COLOR=never")
+	setupAndRunCode(t, rsl, "alice", "--color=never")
 	expected := `Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
 Usage:
   <name>
@@ -96,7 +96,7 @@ args:
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 `
-	setupAndRunCode(t, rsl, "Charlie", "--COLOR=never")
+	setupAndRunCode(t, rsl, "Charlie", "--color=never")
 	expected := `Invalid 'name' value: Charlie (valid values: Alice, Bob)
 Usage:
   <name>
@@ -115,7 +115,7 @@ args:
 	name string
 	name regex "+"
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L4:2
 
   	name regex "+"

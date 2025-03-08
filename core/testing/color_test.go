@@ -25,7 +25,7 @@ func TestColor_RespectsNoColorFlag(t *testing.T) {
 	rsl := `
 print(red("Alice"))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := "Alice\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -48,7 +48,7 @@ func TestColor_CanUpperLower(t *testing.T) {
 print(upper(red("Alice")))
 print(lower(red("Alice")))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := red("ALICE") + "\n" + red("alice") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -61,7 +61,7 @@ a = "Alice"
 print(lower(red(a)))
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := red("alice") + "\n" + "Alice" + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -73,7 +73,7 @@ func TestColor_CanIndex(t *testing.T) {
 a = upper(red("Alice"))
 print(a[2])
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := red("I") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -85,7 +85,7 @@ func TestColor_CanSlice(t *testing.T) {
 a = upper(red("Alice"))
 print(a[2:4])
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := "IC" + "\n" // TODO this *should* be red
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -96,7 +96,7 @@ func TestColor_CanPrintEmojis(t *testing.T) {
 	rsl := `
 print(red("hi 👋"))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := red("hi 👋") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -126,7 +126,7 @@ b = red(a)
 c = red(a)
 print(unique([a, b, c]))
 `
-	setupAndRunCode(t, rsl, "--COLOR=always")
+	setupAndRunCode(t, rsl, "--color=always")
 	expected := "[ \"Alice\", \"" + red("Alice") + "\" ]\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -141,7 +141,7 @@ c = red(a)
 print(a == b)
 print(b == c)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := "true\ntrue\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

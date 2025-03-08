@@ -23,7 +23,7 @@ print(foo)
 }
 
 func TestArgs_ApiRenameUsageString(t *testing.T) {
-	setupAndRunCode(t, setupArgRsl, "-h", "--COLOR=never")
+	setupAndRunCode(t, setupArgRsl, "-h", "--color=never")
 	expected := `Usage:
   <bar>
 
@@ -42,7 +42,7 @@ args:
 	mandatory string
 	optional int = 10
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Usage:
   <mandatory> [optional]
 
@@ -64,7 +64,7 @@ args:
 	optionalI int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -80,7 +80,7 @@ args:
 	optional int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl, "one", "--COLOR=never")
+	setupAndRunCode(t, rsl, "one", "--color=never")
 	expected := `Missing required arguments: [mandatory2]
 Usage:
   <mandatory1> <mandatory2> [optional]
@@ -151,7 +151,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `ALICE
 2
 2.2
@@ -172,7 +172,7 @@ args:
 	intArg int = -10
 print(intArg + 1)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `-9
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -186,7 +186,7 @@ args:
 	floatArg float = -10.2
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `-9.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -260,7 +260,7 @@ args:
 print(intArg + 1)
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `-9
 -9.2
 `
@@ -275,7 +275,7 @@ args:
 	floatArg float = 2
 print(floatArg + 1.2)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `3.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -288,7 +288,7 @@ func TestArgs_CannotHaveFloatAsDefaultForIntArg(t *testing.T) {
 args:
 	intArg int = 1.2
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:16
 
   	intArg int = 1.2
@@ -303,7 +303,7 @@ func TestArgs_Help(t *testing.T) {
 args:
 	name string # The name.
 `
-	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
+	setupAndRunCode(t, rsl, "-h", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -327,7 +327,7 @@ args:
 	floatArrayArg float[] = [2.1, 3.1]
 	boolArrayArg bool[] = [true, false]
 `
-	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
+	setupAndRunCode(t, rsl, "-h", "--color=never")
 	expected := `Usage:
   [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
 
@@ -380,7 +380,7 @@ args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "--COLOR=never")
+	setupAndRunCode(t, rsl, "alice", "--color=never")
 	expected := `Missing required arguments: [age]
 Usage:
   <name> <age>
@@ -400,7 +400,7 @@ args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "2", "3", "--COLOR=never")
+	setupAndRunCode(t, rsl, "alice", "2", "3", "--color=never")
 	expected := `Too many positional arguments. Unused: [3]
 Usage:
   <name> <age>
@@ -420,7 +420,7 @@ args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "2", "-s", "--COLOR=never")
+	setupAndRunCode(t, rsl, "alice", "2", "-s", "--color=never")
 	expected := `unknown shorthand flag: 's' in -s
 Usage:
   <name> <age>

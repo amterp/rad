@@ -14,16 +14,16 @@ import (
 
 const globalFlagHelp = `Global flags:
   -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --VERSION                Print rad version information.
-      --CONFIRM-SHELL          Confirm all shell commands before running them.
-      --SRC                    Instead of running the target script, just print it out.
-      --RSL-TREE               Instead of running the target script, print out its syntax tree.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+  -d, --debug                  Enables debug output. Intended for RSL script developers.
+      --rad-debug              Enables Rad debug output. Intended for Rad developers.
+      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet                  Suppresses some output.
+      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version                Print rad version information.
+      --confirm-shell          Confirm all shell commands before running them.
+      --src                    Instead of running the target script, just print it out.
+      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --mock-response string   Add mock response for json requests (pattern:filePath)
 `
 
 const radHelp = `rad: A tool for writing user-friendly command line scripts.

@@ -7,7 +7,7 @@ func Test_ShellCmd_CanEcho(t *testing.T) {
 $!"echo hi"
 print('hi2')
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expectedStdout := `hi
 hi2
 `

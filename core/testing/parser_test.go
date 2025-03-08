@@ -13,7 +13,7 @@ for i in range(2):
 	print("bob")
 	// at the end
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `alice
 bob
 bob
@@ -31,7 +31,7 @@ names = [
 ]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -46,7 +46,7 @@ names = ["alice",
 ]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -62,7 +62,7 @@ names = [
 ]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -76,7 +76,7 @@ names = ["alice","bob"
 ]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -90,7 +90,7 @@ names = ["alice","bob"
 	]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -105,7 +105,7 @@ if true:
 		]
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -121,7 +121,7 @@ names = {
 }
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `{ "alice": 1, "bob": 2 }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -136,7 +136,7 @@ names = {"alice": 1,
 }
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `{ "alice": 1, "bob": 2 }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -150,7 +150,7 @@ names = {"alice": 1,
 	"bob"     :2, "charlie": 3}
 print(names)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `{ "alice": 1, "bob": 2, "charlie": 3 }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

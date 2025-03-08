@@ -7,7 +7,7 @@ func TestHttpGet_Basic(t *testing.T) {
 url = "http//www.google.com"
 pprint(http_get(url))
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `{
   "body": [
     {

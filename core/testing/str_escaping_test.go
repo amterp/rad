@@ -7,7 +7,7 @@ func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_SingleQuoteDoubleQu
 print('"hi"')
 print('\"hi\"')
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `"hi"
 \"hi\"
 `
@@ -21,7 +21,7 @@ func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_DoubleQuoteSingleQu
 print("'hi'")
 print("\'hi\'")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `'hi'
 \'hi\'
 `
@@ -33,7 +33,7 @@ print("\'hi\'")
 func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_BacktickSingleQuote(t *testing.T) {
 	rsl := "print('`hi`')\n"
 	rsl += "print('\\`hi\\`')\n"
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := "`hi`\n"
 	expected += "\\`hi\\`\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)

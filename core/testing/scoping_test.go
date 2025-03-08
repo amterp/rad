@@ -9,7 +9,7 @@ if true:
 	a = 2
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -21,7 +21,7 @@ if true:
 	a = 1
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -34,7 +34,7 @@ for i in range(3):
 	a = i
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -46,7 +46,7 @@ for i in range(3):
 	// do nothing
 print(i)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -59,7 +59,7 @@ for i, item in ["a", "b", "c"]:
 print("i", i)
 print("item", item)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "i 2\nitem c\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -72,7 +72,7 @@ for k, v in {"a": 1, "b": 2, "c": 3}:
 print("k", k)
 print("v", v)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "k c\nv 3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -88,7 +88,7 @@ display:
 		map i -> i * 2
 print("i", i)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `nums 
 20    
 i 0
@@ -110,7 +110,7 @@ print("i", i)
 	expected := `nums 
 20    
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	expected = `Error at L7:12
 

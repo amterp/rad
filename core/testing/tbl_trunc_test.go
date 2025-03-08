@@ -12,7 +12,7 @@ rad url:
 	words:
 		map x -> truncate(x, 10)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/long_values.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/long_values.json", "--color=never")
 	expected := `id  words      
 1   Lorem ips…  
 2   Ut placer…  
@@ -33,7 +33,7 @@ rad url:
 	name:
 		map x -> truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `id  name  
 1   Alice  
 2   Bob    
@@ -53,7 +53,7 @@ rad url:
     does_not_exist:
         map x -> truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/id_name.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `Error at L6:5
 
       does_not_exist:
@@ -74,7 +74,7 @@ rad url:
 	name, city:
 		map x -> truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `age  name   city  
 30   Char…  Paris  
 40   Bob    Lond…  
