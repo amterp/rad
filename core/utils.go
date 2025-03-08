@@ -1,5 +1,7 @@
 package core
 
+import com "rad/core/common"
+
 func ToStringArrayQuoteStr[T any](v []T, quoteStrings bool) []string {
 	output := make([]string, len(v))
 	for i, val := range v {
@@ -9,7 +11,7 @@ func ToStringArrayQuoteStr[T any](v []T, quoteStrings bool) []string {
 }
 
 func Truncate(str string, maxLen int64) string {
-	if terminalSupportsUtf8 {
+	if com.TerminalIsUtf8 {
 		str = str[:maxLen-1]
 		str += "…"
 	} else {

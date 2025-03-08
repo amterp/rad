@@ -152,6 +152,10 @@ func (r *RadRunner) Run() error {
 		if FlagVersion.Value {
 			RP.Print("\n")
 		}
+		if !com.IsBlank(ScriptPath) && com.IsTty {
+			// print to stderr, since we wouldn't want to include it in e.g. redirects
+			RP.RadInfo(com.YellowS("%s:\n", ScriptPath))
+		}
 		RP.Print(r.scriptData.Src + "\n")
 	}
 

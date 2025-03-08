@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	com "rad/core/common"
 	"strings"
 	"unicode/utf8"
 
@@ -16,10 +17,6 @@ import (
 
 const (
 	tblPadding = "  "
-)
-
-var (
-	terminalSupportsUtf8 = terminalIsUtf8()
 )
 
 type GeneralSort struct {
@@ -143,7 +140,7 @@ func (w *TblWriter) Render() {
 			for j, line := range lines {
 				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
-					if terminalSupportsUtf8 {
+					if com.TerminalIsUtf8 {
 						lines[j] = line[:colWidth-1]
 						lines[j] += "…"
 					} else {
@@ -201,11 +198,4 @@ func (w *TblWriter) Render() {
 	}
 
 	w.tbl.Render()
-}
-
-func terminalIsUtf8() bool {
-	lang := os.Getenv("LANG")
-	ctype := os.Getenv("LC_CTYPE")
-	// Check for UTF-8 in LANG or LC_CTYPE environment variables
-	return strings.Contains(lang, "UTF-8") || strings.Contains(ctype, "UTF-8")
 }
