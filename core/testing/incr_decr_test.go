@@ -8,7 +8,7 @@ a = 1
 a++
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -21,7 +21,7 @@ for i in range(1000):
 	a++
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1001\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -33,7 +33,7 @@ a = [1, [2]]
 a[1][0]++
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, [ 3 ] ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -45,7 +45,7 @@ a = {"a": 1, "b": {"c": 2}}
 a.b.c++
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, `{ "a": 1, "b": { "c": 3 } }`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -57,7 +57,7 @@ a = 10
 a--
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "9\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -70,7 +70,7 @@ for i in range(1000):
 	a--
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-990\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -82,7 +82,7 @@ a = [1, [2]]
 a[1][0]--
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, [ 1 ] ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -94,7 +94,7 @@ a = {"a": 1, "b": {"c": 2}}
 a.b.c--
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, `{ "a": 1, "b": { "c": 1 } }`+"\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -105,7 +105,7 @@ func Test_Increment_CannotChain(t *testing.T) {
 a = 1
 a++++
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:1
 
   a++++
@@ -120,7 +120,7 @@ func Test_Decrement_CannotChain(t *testing.T) {
 a = 1
 a----
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:1
 
   a----
@@ -135,7 +135,7 @@ func Test_IncrDecr_CannotChain(t *testing.T) {
 a = 1
 a++--
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:1
 
   a++--
@@ -150,7 +150,7 @@ func Test_DecrIncr_CannotChain(t *testing.T) {
 a = 1
 a--++
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:1
 
   a--++
@@ -166,7 +166,7 @@ a = 1.5
 a++
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2.5\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -178,7 +178,7 @@ a = 1.5
 a--
 print(a)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "0.5\n")
 	assertNoErrors(t)
 	resetTestState()

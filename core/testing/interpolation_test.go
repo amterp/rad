@@ -11,7 +11,7 @@ func TestStringInterpolation_String(t *testing.T) {
 var = "alice"
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, alice\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -22,7 +22,7 @@ func TestStringInterpolation_Int(t *testing.T) {
 var = 42
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 42\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -33,7 +33,7 @@ func TestStringInterpolation_Float(t *testing.T) {
 var = 12.5
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 12.5\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -44,7 +44,7 @@ func TestStringInterpolation_Bool(t *testing.T) {
 var = true
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, true\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -55,7 +55,7 @@ func TestStringInterpolation_List(t *testing.T) {
 var = ["alice", 42]
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, [ \"alice\", 42 ]\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -66,7 +66,7 @@ func TestStringInterpolation_Map(t *testing.T) {
 var = { "name": "alice", "age": 42 }
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, { \"name\": \"alice\", \"age\": 42 }\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -78,7 +78,7 @@ func TestStringInterpolation_ErrorsIfUnknownVariable(t *testing.T) {
 	rsl := `
 print("hello, {var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L2:16
 
   print("hello, {var}")
@@ -92,7 +92,7 @@ func TestStringInterpolation_CanEscapeFirst(t *testing.T) {
 	rsl := `
 print("hello, \{var}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, {var}\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -103,7 +103,7 @@ print("hello, \{var}")
 //	rsl := `
 //print("hello, {var\}")
 //`
-//	setupAndRunCode(t, rsl, "--COLOR=never")
+//	setupAndRunCode(t, rsl, "--color=never")
 //	assertOnlyOutput(t, stdOutBuffer, "hello, {var}\n")
 //	assertNoErrors(t)
 //	resetTestState()
@@ -119,7 +119,7 @@ name = "alice"
 print("hello, {len(name)}")
 print("hello, {len('bob')}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 4\nhello, 5\nhello, 5\nhello, 3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -138,7 +138,7 @@ _           alice_
 _alice           _
 _           alice_
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -163,7 +163,7 @@ _12.00           _
 _           12.00_
 _12.0000000000_
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -188,7 +188,7 @@ _3.14            _
 _            3.14_
 _3.1415900000_
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -212,7 +212,7 @@ _3.14            _
 _            3.14_
 _3.1415900000_
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -235,7 +235,7 @@ print("{blue(n):<20}")
 	expected += "               " + myBlue.Sprintf("alice") + "\n"
 	expected += "alice               \n"
 	expected += myBlue.Sprintf("alice") + "               \n"
-	setupAndRunCode(t, rsl, "--COLOR=always")
+	setupAndRunCode(t, rsl, "--color=always")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
@@ -254,7 +254,7 @@ print("{blue(n)}")
 `
 	expected := "alice\n"
 	expected += myBlue.Sprintf("alice") + "\n"
-	setupAndRunCode(t, rsl, "--COLOR=always")
+	setupAndRunCode(t, rsl, "--color=always")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()

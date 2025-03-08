@@ -12,7 +12,7 @@ title, url = switch endpoint:
 print(title)
 print(url)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Cars\nhttps://example.com/automobiles\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -41,7 +41,7 @@ result3 = switch name:
 	case "charlie": "CHARLIE"
 print(result3)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\nBOB\nCHARLIE\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -55,7 +55,7 @@ switch name:
 	case "bob": print("BOB")
 	case "charlie": print("CHARLIE")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\nANOTHER\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -69,7 +69,7 @@ switch name:
 	case "bob": print("BOB")
 	case "charlie": print("CHARLIE")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:8
 
   switch name:
@@ -87,7 +87,7 @@ switch name:
 	case "bob": print("BOB")
 	case "charlie", name: print("CHARLIE")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L3:8
 
   switch name:
@@ -105,7 +105,7 @@ one, two = switch name:
     case "bob": 3, 4
     case "charlie": 5
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L6:5
 
       case "charlie": 5
@@ -126,7 +126,7 @@ result = switch:
 	case: "foo: {name}, bar: {age}, baz: {notdefined}"
 print(result)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "foo: alice, bar: 42\n")
 	assertNoErrors(t)
 	resetTestState()

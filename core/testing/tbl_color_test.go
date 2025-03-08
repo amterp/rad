@@ -21,7 +21,7 @@ rad url:
        color "red" "Los"
        color "blue" "Angeles"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -45,7 +45,7 @@ rad url:
        color "blue" "York"
        color "yellow" "New York"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -68,7 +68,7 @@ rad url:
        color "blue" "Bo"
        color "red" "ob"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += blue("B") + red("ob") + "      London       \n"
@@ -90,7 +90,7 @@ rad url:
     city:
        color "green" "Berlin"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -116,7 +116,7 @@ rad url:
 		color "yellow" "ndon"
 		color "red" "ndo"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "B" + red("ob") + "      L" + blue("o") + red("ndo") + yellow("n") + "       \n"
@@ -139,7 +139,7 @@ rad url:
 		color "red" "London"
 		color "plain" "ndo"
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      " + red("Lo") + "ndo" + red("n") + "       \n"
@@ -161,7 +161,7 @@ rad url:
     name:
         color color "o[a-z]"
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L8:15
 
           color color "o[a-z]"

@@ -29,7 +29,7 @@ g = "{1 + 1:6.7}"
 print(g)
 
 ` + "h = `\"hi\" 'there' \\`bob\\``" + "\nprint(h)"
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `hi
 hi
  there
@@ -68,7 +68,7 @@ n = "alice"
 for i, l in n:
     print(i, l)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `20
 after
 30

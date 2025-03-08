@@ -17,7 +17,7 @@ func TestRadSort_NoSorting(t *testing.T) {
 rad url:
     fields name, age, city
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
@@ -36,7 +36,7 @@ rad url:
     fields name, age, city
     sort
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -55,7 +55,7 @@ rad url:
     fields name, age, city
     sort asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -74,7 +74,7 @@ rad url:
     fields name, age, city
     sort desc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
@@ -93,7 +93,7 @@ rad url:
     fields name, age, city
     sort name asc, age asc, city asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -112,7 +112,7 @@ rad url:
     fields name, age, city
     sort name asc, age desc, city
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      40   London       
@@ -131,7 +131,7 @@ rad url:
     fields name, age, city
     sort age, city desc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -150,7 +150,7 @@ rad url:
     fields name, age, city
     sort age asc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -174,7 +174,7 @@ else:
 		fields name, age, city
 		sort age desc
 `
-	setupAndRunCode(t, rsl, "--MOCK-RESPONSE", ".*:./responses/people.json", "--COLOR=never")
+	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -195,7 +195,7 @@ display:
 	fields col1, col2
 	sort
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col1            col2 
 false           5     
 true            4     
@@ -223,7 +223,7 @@ display:
 	fields col1, col2
 	sort desc
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col1            col2 
 { "alice": 1 }  6     
 [ 3, 1, 2 ]     9     
@@ -252,7 +252,7 @@ display:
 	col:
 		map num -> -num
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col 
 0    
 -1   
@@ -273,7 +273,7 @@ display:
 	sort asc
 print(col)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col 
 1    
 2    
@@ -293,7 +293,7 @@ display:
 	fields col
 print(col)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col 
 3    
 4    

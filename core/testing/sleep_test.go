@@ -50,7 +50,7 @@ sleep("12345ms")
 sleep("5m30s")
 sleep("1.1h2.2m3.3s")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
@@ -65,7 +65,7 @@ sleep("12345 ms")
 sleep("5m 30s")
 sleep("1.1h 2.2m  3.3s")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
@@ -73,7 +73,7 @@ sleep("1.1h 2.2m  3.3s")
 }
 
 func TestSleep_ErrorsIfNoArg(t *testing.T) {
-	setupAndRunCode(t, `sleep()`, "--COLOR=never")
+	setupAndRunCode(t, `sleep()`, "--color=never")
 	assertDidNotSleep(t)
 	expected := `Error at L1:1
 
@@ -85,7 +85,7 @@ func TestSleep_ErrorsIfNoArg(t *testing.T) {
 }
 
 func TestSleep_ErrorsIfNegArg(t *testing.T) {
-	setupAndRunCode(t, `sleep(-10)`, "--COLOR=never")
+	setupAndRunCode(t, `sleep(-10)`, "--color=never")
 	assertDidNotSleep(t)
 	expected := `Error at L1:7
 
@@ -97,7 +97,7 @@ func TestSleep_ErrorsIfNegArg(t *testing.T) {
 }
 
 func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
-	setupAndRunCode(t, `sleep(10, 20)`, "--COLOR=never")
+	setupAndRunCode(t, `sleep(10, 20)`, "--color=never")
 	assertDidNotSleep(t)
 	expected := `Error at L1:1
 
@@ -109,7 +109,7 @@ func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 }
 
 func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
-	setupAndRunCode(t, `sleep(true)`, "--COLOR=never")
+	setupAndRunCode(t, `sleep(true)`, "--color=never")
 	assertDidNotSleep(t)
 	expected := `Error at L1:7
 
@@ -122,7 +122,7 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 }
 
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
-	setupAndRunCode(t, `sleep("Invalid!")`, "--COLOR=never")
+	setupAndRunCode(t, `sleep("Invalid!")`, "--color=never")
 	assertDidNotSleep(t)
 	expected := `Error at L1:7
 

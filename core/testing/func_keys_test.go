@@ -9,7 +9,7 @@ print(b)
 print(upper(b[0]))
 print(keys({}))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `[ "alice", "bob" ]
 ALICE
 [ ]
@@ -21,7 +21,7 @@ ALICE
 
 func TestKeys_ErrorsIfGivenString(t *testing.T) {
 	rsl := `keys("foo")`
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:6
 
   keys("foo")
@@ -33,7 +33,7 @@ func TestKeys_ErrorsIfGivenString(t *testing.T) {
 
 func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
 	rsl := `keys()`
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:1
 
   keys()
@@ -45,7 +45,7 @@ func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
 
 func TestKeys_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
 	rsl := `keys({}, {})`
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:1
 
   keys({}, {})

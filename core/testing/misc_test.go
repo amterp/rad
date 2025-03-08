@@ -7,7 +7,7 @@ import (
 )
 
 func Test_Misc_SyntaxError(t *testing.T) {
-	setupAndRunCode(t, "1 = 2", "--COLOR=never")
+	setupAndRunCode(t, "1 = 2", "--color=never")
 	expected := `Error at L1:1
 
   1 = 2
@@ -22,7 +22,7 @@ func Test_Misc_CanHaveVarNameThatIsJustAnUnderscore(t *testing.T) {
 _ = 2
 print(_)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -34,7 +34,7 @@ a = [1, 2, 3]
 for _, _ in a:
 	print(_)
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
 	assertNoErrors(t)
 	resetTestState()
@@ -48,28 +48,28 @@ b = -20.2
 print(b)
 print("{-12}")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-10\n-20.2\n-12\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
 func Test_Misc_Version(t *testing.T) {
-	setupAndRunCode(t, "", "--VERSION")
+	setupAndRunCode(t, "", "--version")
 	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
 func Test_Misc_VersionShort(t *testing.T) {
-	setupAndRunCode(t, "", "-V")
+	setupAndRunCode(t, "", "-v")
 	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
 	assertNoErrors(t)
 	resetTestState()
 }
 
 func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
-	setupAndRunCode(t, "", "-h", "-V", "--COLOR=never")
+	setupAndRunCode(t, "", "-h", "-v", "--color=never")
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -77,7 +77,7 @@ func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 }
 
 func Test_Misc_PrintsHelpToStderrIfUnknownGlobalFlag(t *testing.T) {
-	setupAndRunArgs(t, "--asd", "--COLOR=never")
+	setupAndRunArgs(t, "--asd", "--color=never")
 	expected := "unknown flag: --asd\n" + radHelp
 	assertError(t, 1, expected)
 	resetTestState()
@@ -88,7 +88,7 @@ func Test_Misc_Abs_Int(t *testing.T) {
 print(abs(10))
 print(abs(-10))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `10
 10
 `
@@ -102,7 +102,7 @@ func Test_Misc_Abs_Float(t *testing.T) {
 print(abs(10.2))
 print(abs(-10.2))
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `10.2
 10.2
 `
@@ -115,7 +115,7 @@ func Test_Misc_Abs_ErrorsOnAlphabetical(t *testing.T) {
 	rsl := `
 a = abs("asd")
 `
-	setupAndRunCode(t, rsl, "--COLOR=never")
+	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L2:9
 
   a = abs("asd")
@@ -127,7 +127,7 @@ a = abs("asd")
 }
 
 func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
-	setupAndRunArgs(t, "--COLOR=never")
+	setupAndRunArgs(t, "--color=never")
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -137,15 +137,46 @@ func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
 func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
 	rsl := `
 args:
-	SRC string
+	src string
 `
-	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
-	expectedGlobalFlags := globalFlagHelpWithout("SRC")
+	setupAndRunCode(t, rsl, "--color=never", "-h")
+	expectedGlobalFlags := globalFlagHelpWithout("src")
 	expected := `Usage:
-  <SRC>
+  <src>
 
 Script args:
-      --SRC string   
+      --src string   
+
+` + expectedGlobalFlags
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Misc_CanShadowGlobalFlagThatHasShorthand(t *testing.T) {
+	rsl := `
+args:
+	debug string
+`
+	setupAndRunCode(t, rsl, "--color=never", "-h")
+	expectedGlobalFlags := `Global flags:
+  -h, --help                   Print usage string.
+  -d                           Enables debug output. Intended for RSL script developers.
+      --rad-debug              Enables Rad debug output. Intended for Rad developers.
+      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet                  Suppresses some output.
+      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version                Print rad version information.
+      --confirm-shell          Confirm all shell commands before running them.
+      --src                    Instead of running the target script, just print it out.
+      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --mock-response string   Add mock response for json requests (pattern:filePath)
+`
+	expected := `Usage:
+  <debug>
+
+Script args:
+      --debug string   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -156,27 +187,27 @@ Script args:
 func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
 	rsl := `
 args:
-	version V string
+	myversion v string
 `
-	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "-h")
 	expectedGlobalFlags := `Global flags:
   -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-      --VERSION                Print rad version information.
-      --CONFIRM-SHELL          Confirm all shell commands before running them.
-      --SRC                    Instead of running the target script, just print it out.
-      --RSL-TREE               Instead of running the target script, print out its syntax tree.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+  -d, --debug                  Enables debug output. Intended for RSL script developers.
+      --rad-debug              Enables Rad debug output. Intended for Rad developers.
+      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet                  Suppresses some output.
+      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
+      --version                Print rad version information.
+      --confirm-shell          Confirm all shell commands before running them.
+      --src                    Instead of running the target script, just print it out.
+      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --mock-response string   Add mock response for json requests (pattern:filePath)
 `
 	expected := `Usage:
-  <version>
+  <myversion>
 
 Script args:
-  -V, --version string   
+  -v, --myversion string   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -187,15 +218,15 @@ Script args:
 func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
 	rsl := `
 args:
-	VERSION V string
+	version v string
 `
-	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
-	expectedGlobalFlags := globalFlagHelpWithout("VERSION")
+	setupAndRunCode(t, rsl, "--color=never", "-h")
+	expectedGlobalFlags := globalFlagHelpWithout("version")
 	expected := `Usage:
-  <VERSION>
+  <version>
 
 Script args:
-  -V, --VERSION string   
+  -v, --version string   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -206,10 +237,10 @@ Script args:
 func Test_Misc_CanShadowGlobalFlagAndUseIt(t *testing.T) {
 	rsl := `
 args:
-	VERSION V string
-print(VERSION+"!")
+	version v string
+print(version+"!")
 `
-	setupAndRunCode(t, rsl, "someversion", "--COLOR=never")
+	setupAndRunCode(t, rsl, "someversion", "--color=never")
 	expected := `someversion!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

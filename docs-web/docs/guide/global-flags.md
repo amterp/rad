@@ -13,24 +13,26 @@ The most basic global flag is `--help` or `-h`. *All* RSL scripts automatically 
 ```
 Global flags:
   -h, --help                   Print usage string.
-  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
-      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
-      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -Q, --QUIET                  Suppresses some output.
-      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
-  -V, --VERSION                Print rad version information.
-      --STDIN script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
-      --CONFIRM-SHELL          Confirm all shell commands before running them.
-      --SRC                    Instead of running the target script, just print it out.
-      --RSL-TREE               Instead of running the target script, print out its syntax tree.
-      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+  -d, --debug                  Enables debug output. Intended for RSL script developers.
+      --rad-debug              Enables Rad debug output. Intended for Rad developers.
+      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet                  Suppresses some output.
+      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version                Print rad version information.
+      --stdin script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --confirm-shell          Confirm all shell commands before running them.
+      --src                    Instead of running the target script, just print it out.
+      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --mock-response string   Add mock response for json requests (pattern:filePath)
 ```
+
+[//]: # (todo script something to keep the above blob in check)
 
 Note that, outside of `help`, all the global flags are ALL CAPS.
 
-## `DEBUG`
+## `debug`
 
-[`debug`](../reference/functions.md#debug) is an built-in function which behaves exactly like `print`, except it only prints if the global flag `--DEBUG` is enabled. You can use them in your script for debugging as desired.
+[`debug`](../reference/functions.md#debug) is an built-in function which behaves exactly like `print`, except that it only prints if the global flag `--debug` is enabled. You can use them in your script for debugging as desired.
 
 For example, given this example:
 
@@ -54,7 +56,7 @@ rad debug.rsl
 </div>
 
 ```
-rad debug.rsl -D
+rad debug.rsl -d
 ```
 
 <div class="result">
@@ -65,26 +67,31 @@ DEBUG: 2
 ```
 </div>
 
-## `QUIET`
+## `quiet`
 
-Use `--QUIET` or `-Q` to suppress *some* outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.
+Use `--quiet` or `-q` to suppress *some* outputs, including print statements and errors. Some outputs still get printed e.g. shell command outputs.
 
-## `COLOR`
+## `color`
 
-`--COLOR mode    Control output colorization. Valid values: [auto, always, never]. (default auto)`
+```
+--color mode
+    Control output colorization.
+    Valid values: [auto, always, never].
+    (default auto)
+```
 
 A lot of rad's outputs have colors e.g. [`pick`](../reference/functions.md#pick) interaction or [`pprint`](../reference/functions.md#pprint) JSON formatted output.
 By default (`auto`), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.
 
-However, you can override the automatic detection by explicitly setting `--COLOR=always` or `--COLOR=never` to force having colors, or force *not* having colors, respectively. 
+However, you can override the automatic detection by explicitly setting `--color=always` or `--color=never` to force having colors, or force *not* having colors, respectively. 
 
-## `MOCK-RESPONSE`
+## `mock-response`
 
 You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a [`rad` block](./rad-blocks.md).
 
-In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the `MOCK-RESPONSE` flag.
+In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the `mock-response` flag.
 
-`MOCK-RESPONSE` takes an argument in a `<url regex>:<file path>` format.
+`mock-response` takes an argument in a `<url regex>:<file path>` format.
 In other words, you can mock responses based on a regex match of the queried URL, and make them return the contents of a specified file.
 
 For example, if you wanted to mock a response from GitHub's API, you could define an example response in a file:
@@ -115,7 +122,7 @@ For example, if you wanted to mock a response from GitHub's API, you could defin
 And then define it as the mock response with the following example invocation:
 
 ```shell
-rad commits.rsl --MOCK-RESPONSE "api.github.*:commits.json"
+rad commits.rsl --mock-response "api.github.*:commits.json"
 ```
 
 Before executing the HTTP request, rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
@@ -135,8 +142,14 @@ There are more global flags - see the [reference](../reference/global-flags.md) 
 ## Summary
 
 - Rad provides several global flags that can be used across all RSL scripts.
-- Generally, global flags are in ALL CAPS, such as `DEBUG` and `QUIET`.
-- Use `MOCK-RESPONSE` to test your scripts.
+- Use `mock-response` to test your scripts.
+
+!!! info "Script args can shadow global flags"
+
+    If a script defines an arg such as `debug`, conflicting with an existing global flag, then the script arg will **shadow** the global flag.
+
+    This means that the global flag's functionality is effectively disabled for the script. It gets removed from the script's usage string, and
+    the script itself defines the behavior of the flag.
 
 ## Next
 
