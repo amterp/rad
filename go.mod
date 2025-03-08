@@ -4,7 +4,7 @@ go 1.23.4
 
 require (
 	github.com/amterp/go-tbl v0.9.0
-	github.com/amterp/rts v0.0.14
+	github.com/amterp/rts v0.0.17
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/fatih/color v1.18.0
@@ -45,7 +45,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

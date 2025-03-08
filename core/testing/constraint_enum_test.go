@@ -25,7 +25,7 @@ print("Hi", name)
 	setupAndRunCode(t, rsl, "david", "--COLOR=never")
 	expected := `Invalid 'name' value: david (valid values: alice, bob, charlie)
 Usage:
-  test <name>
+  <name>
 
 Script args:
       --name string   Valid values: [alice, bob, charlie].

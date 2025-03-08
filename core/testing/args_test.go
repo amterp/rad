@@ -25,7 +25,7 @@ print(foo)
 func TestArgs_ApiRenameUsageString(t *testing.T) {
 	setupAndRunCode(t, setupArgRsl, "-h", "--COLOR=never")
 	expected := `Usage:
-  test <bar>
+  <bar>
 
 Script args:
   -x, --bar string   
@@ -44,7 +44,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "--COLOR=never")
 	expected := `Usage:
-  test <mandatory> [optional]
+  <mandatory> [optional]
 
 Script args:
       --mandatory string   
@@ -83,7 +83,7 @@ print('hi')
 	setupAndRunCode(t, rsl, "one", "--COLOR=never")
 	expected := `Missing required arguments: [mandatory2]
 Usage:
-  test <mandatory1> <mandatory2> [optional]
+  <mandatory1> <mandatory2> [optional]
 
 Script args:
       --mandatory1 string   
@@ -305,7 +305,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
 	expected := `Usage:
-  test <name>
+  <name>
 
 Script args:
       --name string   The name.
@@ -329,7 +329,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "-h", "--COLOR=never")
 	expected := `Usage:
-  test [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
+  [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
 
 Script args:
       --stringArg string                (default alice)
@@ -383,7 +383,7 @@ args:
 	setupAndRunCode(t, rsl, "alice", "--COLOR=never")
 	expected := `Missing required arguments: [age]
 Usage:
-  test <name> <age>
+  <name> <age>
 
 Script args:
       --name string   
@@ -403,7 +403,7 @@ args:
 	setupAndRunCode(t, rsl, "alice", "2", "3", "--COLOR=never")
 	expected := `Too many positional arguments. Unused: [3]
 Usage:
-  test <name> <age>
+  <name> <age>
 
 Script args:
       --name string   
@@ -423,7 +423,7 @@ args:
 	setupAndRunCode(t, rsl, "alice", "2", "-s", "--COLOR=never")
 	expected := `unknown shorthand flag: 's' in -s
 Usage:
-  test <name> <age>
+  <name> <age>
 
 Script args:
       --name string   

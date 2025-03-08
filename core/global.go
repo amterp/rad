@@ -33,12 +33,17 @@ type RunnerInput struct {
 func SetScriptPath(path string) {
 	ScriptPath = path
 	ScriptDir = filepath.Dir(path)
-	ScriptName = filepath.Base(path)
+	if path == "" {
+		ScriptName = ""
+	} else {
+		ScriptName = filepath.Base(path)
+	}
 }
 
 // primarily for tests
 func ResetGlobals() {
 	RFlagSet = nil
+	FlagsUsedInScript = []string{}
 	RP = nil
 	RIo = RadIo{}
 	RExit = nil
@@ -50,7 +55,7 @@ func ResetGlobals() {
 func setGlobals(runnerInput RunnerInput) {
 	if runnerInput.RIo == nil {
 		RIo = RadIo{
-			StdIn:  os.Stdin,
+			StdIn:  NewFileReader(os.Stdin),
 			StdOut: os.Stdout,
 			StdErr: os.Stderr,
 		}

@@ -2,6 +2,7 @@ package testing
 
 import (
 	"rad/core"
+	"strings"
 	"testing"
 )
 
@@ -131,4 +132,100 @@ func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 	resetTestState()
+}
+
+func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
+	rsl := `
+args:
+	SRC string
+`
+	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
+	expectedGlobalFlags := globalFlagHelpWithout("SRC")
+	expected := `Usage:
+  <SRC>
+
+Script args:
+      --SRC string   
+
+` + expectedGlobalFlags
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
+	rsl := `
+args:
+	version V string
+`
+	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
+	expectedGlobalFlags := `Global flags:
+  -h, --help                   Print usage string.
+  -D, --DEBUG                  Enables debug output. Intended for RSL script developers.
+      --RAD-DEBUG              Enables Rad debug output. Intended for Rad developers.
+      --COLOR mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -Q, --QUIET                  Suppresses some output.
+      --SHELL                  Outputs shell/bash exports of variables, so they can be eval'd
+      --VERSION                Print rad version information.
+      --CONFIRM-SHELL          Confirm all shell commands before running them.
+      --SRC                    Instead of running the target script, just print it out.
+      --RSL-TREE               Instead of running the target script, print out its syntax tree.
+      --MOCK-RESPONSE string   Add mock response for json requests (pattern:filePath)
+`
+	expected := `Usage:
+  <version>
+
+Script args:
+  -V, --version string   
+
+` + expectedGlobalFlags
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
+	rsl := `
+args:
+	VERSION V string
+`
+	setupAndRunCode(t, rsl, "--COLOR=never", "-h")
+	expectedGlobalFlags := globalFlagHelpWithout("VERSION")
+	expected := `Usage:
+  <VERSION>
+
+Script args:
+  -V, --VERSION string   
+
+` + expectedGlobalFlags
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Misc_CanShadowGlobalFlagAndUseIt(t *testing.T) {
+	rsl := `
+args:
+	VERSION V string
+print(VERSION+"!")
+`
+	setupAndRunCode(t, rsl, "someversion", "--COLOR=never")
+	expected := `someversion!
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func globalFlagHelpWithout(s string) string {
+	original := globalFlagHelp
+	removeLineWith := "--" + s
+	lines := strings.Split(original, "\n")
+	var result []string
+	for _, line := range lines {
+		if !strings.Contains(line, removeLineWith) {
+			result = append(result, line)
+		}
+	}
+	return strings.Join(result, "\n")
 }

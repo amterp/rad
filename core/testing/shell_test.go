@@ -4,6 +4,7 @@ import "testing"
 
 func TestShell_ExportsNothingIfNoVars(t *testing.T) {
 	rsl := `
+2 + 3
 `
 	setupAndRunCode(t, rsl, "--COLOR=never", "--SHELL")
 	assertOutput(t, stdOutBuffer, "")
