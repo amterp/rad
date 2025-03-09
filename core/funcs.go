@@ -792,14 +792,15 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				text := f.args[0]
+				textArg := f.args[0]
 
 				chars := " \t\n"
 				if len(f.args) > 1 {
-					chars = f.args[1].value.RequireStr(f.i, f.args[1].node).Plain()
+					charsArg := f.args[1]
+					chars = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
 				}
 
-				rslString := text.value.RequireStr(f.i, text.node)
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
 				rslString = rslString.Trim(chars)
 				return newRslValues(f.i, f.callNode, rslString)
 			},
@@ -811,12 +812,13 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				text := f.args[0]
+				textArg := f.args[0]
 				prefix := " \t\n"
 				if len(f.args) > 1 {
-					prefix = f.args[1].value.RequireStr(f.i, f.args[1].node).Plain()
+					charsArg := f.args[1]
+					prefix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
 				}
-				rslString := text.value.RequireStr(f.i, text.node)
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
 				rslString = rslString.TrimPrefix(prefix)
 				return newRslValues(f.i, f.callNode, rslString)
 			},
@@ -828,12 +830,13 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				text := f.args[0]
+				textArg := f.args[0]
 				suffix := " \t\n"
 				if len(f.args) > 1 {
-					suffix = f.args[1].value.RequireStr(f.i, f.args[1].node).Plain()
+					charsArg := f.args[1]
+					suffix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
 				}
-				rslString := text.value.RequireStr(f.i, text.node)
+				rslString := textArg.value.RequireStr(f.i, textArg.node)
 				rslString = rslString.TrimSuffix(suffix)
 				return newRslValues(f.i, f.callNode, rslString)
 			},
@@ -908,9 +911,9 @@ func init() {
 				if len(f.args) > 1 {
 					precisionArg := f.args[1]
 					precision = precisionArg.value.RequireInt(f.i, precisionArg.node)
-				}
-				if precision < 0 {
-					f.i.errorf(f.callNode, "Precision must be non-negative, got %d", precision)
+					if precision < 0 {
+						f.i.errorf(f.args[1].node, "Precision must be non-negative, got %d", precision)
+					}
 				}
 
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
@@ -947,32 +950,21 @@ func init() {
 			Name:             FUNC_MIN,
 			ReturnValues:     ONE_RETURN_VAL,
 			RequiredArgCount: 1,
-			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslListT}},
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				// input is a list of numbers
-				if len(f.args) == 1 && f.args[0].value.Type() == RslListT {
-					list := f.args[0].value.RequireList(f.i, f.args[0].node)
-					if len(list.Values) == 0 {
-						f.i.errorf(f.callNode, "Cannot find minimum of empty list")
-					}
-
-					minVal := math.MaxFloat64
-					for i := range list.Values {
-						val := list.Values[i].RequireFloatAllowingInt(f.i, f.args[0].node)
-						minVal = math.Min(minVal, val)
-					}
-					return newRslValues(f.i, f.callNode, minVal)
+				arg := f.args[0]
+				list := arg.value.RequireList(f.i, arg.node)
+				if list.Len() == 0 {
+					f.i.errorf(f.callNode, "Cannot find minimum of empty list")
 				}
 
-				// input is multiple numbers
-				if len(f.args) < 1 {
-					f.i.errorf(f.callNode, "min() requires at least one argument")
-				}
-
-				minVal := f.args[0].value.RequireFloatAllowingInt(f.i, f.args[0].node)
-				for i := 1; i < len(f.args); i++ {
-					val := f.args[i].value.RequireFloatAllowingInt(f.i, f.args[i].node)
+				minVal := math.MaxFloat64
+				for idx, item := range list.Values {
+					val, ok := item.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MIN, TypeAsString(item), idx)
+					}
 					minVal = math.Min(minVal, val)
 				}
 				return newRslValues(f.i, f.callNode, minVal)
@@ -982,33 +974,21 @@ func init() {
 			Name:             FUNC_MAX,
 			ReturnValues:     ONE_RETURN_VAL,
 			RequiredArgCount: 1,
-			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslListT}},
+			ArgTypes:         [][]RslTypeEnum{{RslListT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				// input is a list of numbers
-				if len(f.args) == 1 && f.args[0].value.Type() == RslListT {
-					list := f.args[0].value.RequireList(f.i, f.args[0].node)
-					if len(list.Values) == 0 {
-						f.i.errorf(f.callNode, "Cannot find maximum of empty list")
-					}
-
-					maxVal := -math.MaxFloat64
-					for i := range list.Values {
-						val := list.Values[i].RequireFloatAllowingInt(f.i, f.args[0].node)
-						maxVal = math.Max(maxVal, val)
-					}
-					return newRslValues(f.i, f.callNode, maxVal)
+				arg := f.args[0]
+				list := arg.value.RequireList(f.i, arg.node)
+				if list.Len() == 0 {
+					f.i.errorf(f.callNode, "Cannot find maximum of empty list")
 				}
 
-				// input is multiple numbers
-				if len(f.args) < 1 {
-					f.i.errorf(f.callNode, "max() requires at least one argument")
-					return newRslValues(f.i, f.callNode, 0)
-				}
-
-				maxVal := f.args[0].value.RequireFloatAllowingInt(f.i, f.args[0].node)
-				for i := 1; i < len(f.args); i++ {
-					val := f.args[i].value.RequireFloatAllowingInt(f.i, f.args[i].node)
+				maxVal := -math.MaxFloat64
+				for idx, item := range list.Values {
+					val, ok := item.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MAX, TypeAsString(item), idx)
+					}
 					maxVal = math.Max(maxVal, val)
 				}
 				return newRslValues(f.i, f.callNode, maxVal)
@@ -1018,43 +998,31 @@ func init() {
 			Name:             FUNC_CLAMP,
 			ReturnValues:     ONE_RETURN_VAL,
 			RequiredArgCount: 1,
-			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslListT}},
+			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				// input is a list of numbers
-				if len(f.args) == 1 && f.args[0].value.Type() == RslListT {
-					list := f.args[0].value.RequireList(f.i, f.args[0].node)
-					if list.Len() == 0 {
-						f.i.errorf(f.callNode, "Cannot clamp empty list")
-					}
-
-					val := list.Values[0].RequireFloatAllowingInt(f.i, f.args[0].node)
-					min := -math.MaxFloat64
-					max := math.MaxFloat64
-					switch len(list.Values) {
-					case 2:
-						min = list.Values[1].RequireFloatAllowingInt(f.i, f.args[0].node)
-					case 3:
-						min = list.Values[1].RequireFloatAllowingInt(f.i, f.args[0].node)
-						max = list.Values[2].RequireFloatAllowingInt(f.i, f.args[0].node)
-					}
-
-					if min > max {
-						f.i.errorf(f.callNode, "min must be less than max, got %f and %f", min, max)
-					}
-					return newRslValues(f.i, f.callNode, math.Min(math.Max(val, min), max))
-				}
-
 				// input is a number and a min and max
-				val := f.args[0].value.RequireFloatAllowingInt(f.i, f.args[0].node)
+				val, ok := f.args[0].value.TryGetFloatAllowingInt()
+				if !ok {
+					f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[0].value), 0)
+				}
 				min := -math.MaxFloat64
 				max := math.MaxFloat64
 				switch len(f.args) {
 				case 2:
-					min = f.args[1].value.RequireFloatAllowingInt(f.i, f.args[1].node)
+					min, ok = f.args[1].value.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[1].value), 1)
+					}
 				case 3:
-					min = f.args[1].value.RequireFloatAllowingInt(f.i, f.args[1].node)
-					max = f.args[2].value.RequireFloatAllowingInt(f.i, f.args[2].node)
+					min, ok = f.args[1].value.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[1].value), 1)
+					}
+					max, ok = f.args[2].value.TryGetFloatAllowingInt()
+					if !ok {
+						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[2].value), 1)
+					}
 				}
 
 				if min > max {

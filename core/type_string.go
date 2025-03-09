@@ -173,11 +173,11 @@ func (s *RslString) Trim(chars string) RslString {
 }
 
 func (s *RslString) TrimPrefix(prefix string) RslString {
-	return NewRslString(strings.TrimPrefix(s.Plain(), prefix))
+	return NewRslString(strings.TrimLeft(s.Plain(), prefix))
 }
 
 func (s *RslString) TrimSuffix(suffix string) RslString {
-	return NewRslString(strings.TrimSuffix(s.Plain(), suffix))
+	return NewRslString(strings.TrimRight(s.Plain(), suffix))
 }
 
 func (s *RslString) Reverse() RslString {
