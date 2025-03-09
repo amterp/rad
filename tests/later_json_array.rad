@@ -1,5 +1,0 @@
-url = "https://api.github.com/repos/torvalds/linux/commits?per_page=2"
-shas = json[].parents[].sha
-
-rad url:
-    fields shas

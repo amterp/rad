@@ -193,8 +193,8 @@ Map values:
 | `.minute`        | Current minute of the hour            | int    | 15                  |
 | `.second`        | Current second of the minute          | int    | 16                  |
 | `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
-| `.epoch.millis`  | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516123       |
-| `.epoch.nanos`   | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516123456789 |
+| `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
+| `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
 
 ### type_of
 

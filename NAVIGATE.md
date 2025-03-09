@@ -9,7 +9,7 @@ Contains the `rad` CLI tool & RSL interpreter + some others.
 | Directory             | Description                                              |
 |-----------------------|----------------------------------------------------------|
 | `core`                | Core code for rad.                                       |
-| `docs-web`            | MkDocs website.                                          |
+| `docs-web`            | MkDocs documentation website.                            |
 | `rsl-language-server` | LSP Language Server for RSL, aka RLS.                    |
 | `textmate-gen`        | Generator for Textmate bundles, using [RTS](#amterprts). |
 | `vsc-extension`       | Implementation for Visual Studio Code extension for RSL. |
@@ -30,4 +30,4 @@ A fork of [tablewriter](https://github.com/olekukonko/tablewriter) leveraged by 
 
 ## [amterp/homebrew-rad](https://github.com/amterp/homebrew-rad)
 
-A contains the [Homebrew](https://github.com/Homebrew/brew) formula for rad.  
+Contains the [Homebrew](https://github.com/Homebrew/brew) formula for rad.
