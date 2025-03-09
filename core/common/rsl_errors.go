@@ -4,6 +4,8 @@ type RslError string
 
 // todo can we avoid 5 digits?
 
+// note to reader: I am currently very inconsistently applying these errors.
+// still debating if we should them, feel free to ignore if you're implementing something.
 const (
 	// RAD1xxxx Syntax Errors
 	// RAD2xxxx Runtime Errors

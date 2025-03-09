@@ -57,6 +57,7 @@ const (
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
 	FUNC_GET_PATH           = "get_path"
+	FUNC_FIND_PATHS         = "find_paths"
 	FUNC_COUNT              = "count"
 	FUNC_ZIP                = "zip"
 	FUNC_STR                = "str"
@@ -64,18 +65,20 @@ const (
 	FUNC_TRIM               = "trim"
 	FUNC_READ_FILE          = "read_file"
 
-	namedArgReverse = "reverse"
-	namedArgTitle   = "title"
-	namedArgPrompt  = "prompt"
-	namedArgHeaders = "headers"
-	namedArgBody    = "body"
-	namedArgHint    = "hint"
-	namedArgDefault = "default"
-	namedArgEnd     = "end"
-	namedArgSep     = "sep"
-	namedArgFill    = "fill"
-	namedArgStrict  = "strict"
-	namedArgMode    = "mode"
+	namedArgReverse  = "reverse"
+	namedArgTitle    = "title"
+	namedArgPrompt   = "prompt"
+	namedArgHeaders  = "headers"
+	namedArgBody     = "body"
+	namedArgHint     = "hint"
+	namedArgDefault  = "default"
+	namedArgEnd      = "end"
+	namedArgSep      = "sep"
+	namedArgFill     = "fill"
+	namedArgStrict   = "strict"
+	namedArgMode     = "mode"
+	namedArgDepth    = "depth"
+	namedArgRelative = "relative"
 
 	constContent   = "content"
 	constSizeBytes = "size_bytes"
@@ -83,6 +86,9 @@ const (
 	constBytes     = "bytes"
 	constCode      = "code"
 	constMsg       = "msg"
+	constTarget    = "target"
+	constCwd       = "cwd"
+	constAbsolute  = "absolute"
 )
 
 var (
@@ -560,6 +566,94 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, rslMap)
+			},
+		},
+		{
+			Name:             FUNC_FIND_PATHS,
+			ReturnValues:     ONE_RETURN_VAL,
+			RequiredArgCount: 1,
+			ArgTypes:         [][]RslTypeEnum{{RslStringT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				// todo: filtering by name, file type
+				//  potentially allow `include_root`
+				namedArgDepth:    {RslIntT},
+				namedArgRelative: {RslStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				pathArg := f.args[0]
+				pathStr := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+
+				depth := int64(-1) // -1 is unlimited
+				if depthArg, exists := f.namedArgs[namedArgDepth]; exists {
+					depth = depthArg.value.RequireInt(f.i, depthArg.valueNode)
+				}
+
+				relativeMode := constTarget
+				if relativeArg, exists := f.namedArgs[namedArgRelative]; exists {
+					relativeMode = relativeArg.value.RequireStr(f.i, relativeArg.valueNode).Plain()
+				}
+
+				absTarget, err := filepath.Abs(pathStr) // todo should be abstracted away for testing
+				if err != nil {
+					f.i.errorf(f.callNode, "Error resolving absolute path for target: %v", err)
+				}
+
+				list := NewRslList()
+				err = filepath.WalkDir(absTarget, func(currPath string, d os.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
+
+					pathRelativeToTarget, err := filepath.Rel(absTarget, currPath)
+					if err != nil {
+						return err
+					}
+
+					if pathRelativeToTarget == "." {
+						// don't include root
+						return nil
+					}
+
+					if depth >= 0 && int64(strings.Count(pathRelativeToTarget, string(os.PathSeparator))) >= depth {
+						if d.IsDir() {
+							return filepath.SkipDir
+						}
+						return nil
+					}
+
+					var formattedPath string
+					switch relativeMode {
+					case constTarget:
+						formattedPath = pathRelativeToTarget
+					case constCwd:
+						cwd, err := os.Getwd() // todo should be abstracted away for testing
+						if err != nil {
+							return err
+						}
+						relToCwd, err := filepath.Rel(cwd, currPath)
+						if err != nil {
+							return err
+						}
+						formattedPath = relToCwd
+					case constAbsolute:
+						absPath, err := filepath.Abs(currPath)
+						if err != nil {
+							return err
+						}
+						formattedPath = absPath
+					default:
+						f.i.errorf(f.callNode, "Invalid target mode %q. Allowed: %v",
+							relativeMode, []string{constTarget, constCwd, constAbsolute})
+					}
+					list.Append(newRslValueStr(formattedPath))
+					return nil
+				})
+
+				if err != nil {
+					f.i.errorf(f.callNode, "Error walking directory: %v", err)
+				}
+
+				return newRslValues(f.i, f.callNode, list)
 			},
 		},
 		{

@@ -83,14 +83,16 @@ That said, here are some specific callouts:
 ### Code Pointers
 
 - [`main.go`](./main.go) is our entry point.
-- [`./core/runner.go`](./core/runner.go) contains logic for parsing arguments, reading the input script, and executing it.
-- [`./core/interpreter.go`](./core/interpreter.go) is the meat of where we step through instructions.
+- [`core/runner.go`](./core/runner.go) contains logic for parsing arguments, reading the input script, and executing it.
+- [`core/interpreter.go`](./core/interpreter.go) is the meat of where we step through instructions.
   - Specifically, it is given the tree sitter concrete syntax tree (CST), and we step through it to execute it.
-- [`./core/global.go`](./core/global.go) contains some global state & variables.
+- [`core/global.go`](./core/global.go) contains some global state & variables.
   - A lot of things in here are abstractions that enable us to swap in implementations for testing.
-- [`./core/funcs.go`](./core/funcs.go) defines most of our inbuilt functions.
-- [`./core/testing`](./core/testing) is where we define the bulk of our tests.
+- [`core/funcs.go`](./core/funcs.go) defines most of our inbuilt functions.
+- [`core/testing`](./core/testing) is where we define the bulk of our tests.
   - They tend to be end-to-end tests which define some RSL code, execute it, and assert against stdout/stderr from rad.
+- [`core/type_rsl_value.go`](./core/type_rsl_value.go) defines a `RslValue` struct type.
+  - It represents runtime variables when rad is interpreting a script, and gets passed around a lot.
 
 ## Questions?
 

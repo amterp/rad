@@ -480,10 +480,61 @@ sum(list[number]) -> float
 
 Sums the input list of numbers to a resulting float.
 
-## System
+## System & Files
 
 ### exit
+
+Exits the script with the given exit code
 
 ```rsl
 exit(code int = 0)
 ```
+
+### read_file
+
+Reads the contents of a file with the given path.
+
+```
+read_file(path: string) -> map
+read_file(path: string, mode: string = "text") -> map
+```
+
+- `mode` is a named arg which is `"text"` by default.
+  - Decodes the contents as UTF-8 and makes it available as string.
+- Other valid value is `"bytes"`.
+  - Reads the bytes and makes them available as a list of ints.
+
+The returned `map` contains two keys:
+
+- `size_bytes -> int`
+- `contents -> string | list[int]` (depending on `mode`)
+
+### get_path
+
+Gets information about a file or directory at the specified path.
+
+```
+get_path(path: string) -> map
+```
+
+The map contains the following entries:
+
+- `full_path -> string`
+- `base_name -> string`
+- `permissions -> string`
+- `type -> string` (`dir` or `file`)
+- `size_bytes -> int` (Entry only defined if it's a file)
+
+### find_paths
+
+Returns a list of paths under the given target directory.
+``
+```
+find_paths(target: string, depth: int = -1, relative: string = "target") -> list[string]
+```
+
+- `depth` defaults to `-1`, indicating no depth limit. Set a positive number to limit how deep the included paths should be.
+- `relative` defaults to `"target"` and defines to where the resulting paths should be relative.
+  - `"target"` (*default*): relative to the input target path
+  - `"cwd"`: relative to the user's current working directory
+  - `"absolute"`: return absolute paths

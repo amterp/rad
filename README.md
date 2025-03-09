@@ -114,7 +114,7 @@ That said, please do give it a try, I'd love to hear your experience and any fee
 
 ### What problem does Rad solve? 🎯
 
-Shell languages like Bash are powerful, but often difficult.
+Shell languages like Bash are powerful, but often difficult to use.
 Bash has unusual syntax for simple things like if statements that makes them hard to remember, and common patterns like
 argument parsing can be tedious to implement.
 Basic data structures like lists, maps, and even strings can be difficult to deal with, if they're available at all.
