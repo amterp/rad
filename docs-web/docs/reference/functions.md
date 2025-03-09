@@ -533,38 +533,31 @@ ceil(1.21) -> 2
 
 ```rsl
 min(nums list[float|num]) -> float
-
-min(num1, num2, ... float|num) -> float
 ```
 
-Min fucntion returns the minimum number in among the provided arguments.
-Allowed arguments are list of number or multiple numbers of type float | int
+Min fucntion returns the minimum number in the provided list.
+Allowed arguments are list of numbers of type float | int
 
 ```
 min([1,2,3,4]) -> 1
-min(1,2,3,4) -> 1
 ```
 
 ### max
 
 ```rsl
 max(nums list[float|num]) -> float
-
-max(num1, num2, ... float|num) -> float
 ```
 
-Max fucntion returns the maximum number in among the provided arguments.
-Allowed arguments are list of number or multiple numbers of type float | int
+Max fucntion returns the maximum number in the provided list.
+Allowed arguments are list of number of type float | int
 
 ```
 max([1,2,3,4]) -> 4
-max(1,2,3,4) -> 4
 ```
 
 ### clamp
 
 ```rsl
-clamp(nums list[float|int]) -> float
 clamp(val, min, max float|int) -> float
 ```
 
@@ -580,7 +573,6 @@ Clamp function returns
   -  If the provided number is greater than max then max is returned.
 
 ```
-clamp([10,1,100]) -> 10
 clamp(10,11,101) -> 11
 ```
 
