@@ -1,9 +1,10 @@
 package com
 
 import (
-	"github.com/mattn/go-isatty"
 	"os"
 	"strings"
+
+	"github.com/mattn/go-isatty"
 )
 
 var (

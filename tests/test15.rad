@@ -1,6 +1,0 @@
-args:
-    a a bool
-    b b bool = true
-    c c bool = false
-
-print(a, b, c)

@@ -63,6 +63,5 @@
 - 'confirm' shell modifier
 - 'input' function
 - if pre-stmt
-- get_path
 - arg range constraint
 - list comprehensions exprs dont need to return 1+ values

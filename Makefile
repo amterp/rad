@@ -1,21 +1,23 @@
-# Makefile
+# Makefile for RSL/rad
 
 # Directories
-OUTPUT_DIR := ./core
 BIN_DIR := ./bin
 
 # Commands
+.PHONY: all format build test clean
 
-.PHONY: all format build
-
-all: format build
+all: format build test
 
 format:
 	@echo "⚙️ Formatting files..."
-	gofmt -w **/*.go
+	find . -name '*.go' -exec gofmt -w {} +
 	goimports -w .
 
 build:
 	@echo "⚙️ Building the project..."
-	mkdir -p $(BIN_DIR)
+	@mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/radd
+
+test:
+	@echo "⚙️ Running tests..."
+	go test ./core/testing

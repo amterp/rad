@@ -78,6 +78,13 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	}
 }
 
+func (l *RslList) RemoveIdx(i *Interpreter, node *ts.Node, idx int) {
+	if idx < 0 || idx >= len(l.Values) {
+		ErrIndexOutOfBounds(i, node, int64(idx), l.Len())
+	}
+	l.Values = append(l.Values[:idx], l.Values[idx+1:]...)
+}
+
 // more intended for internal use than GetIdx
 func (l *RslList) IndexAt(i *Interpreter, node *ts.Node, idx int64) RslValue {
 	if idx < 0 || idx >= l.Len() {
