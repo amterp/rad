@@ -1183,19 +1183,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#system" class="md-nav__link">
+  <a href="#system-files" class="md-nav__link">
     <span class="md-ellipsis">
-      System
+      System &amp; Files
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="System">
+    <nav class="md-nav" aria-label="System & Files">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#exit" class="md-nav__link">
     <span class="md-ellipsis">
       exit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_path
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      find_paths
     </span>
   </a>
   
@@ -1850,19 +1877,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#system" class="md-nav__link">
+  <a href="#system-files" class="md-nav__link">
     <span class="md-ellipsis">
-      System
+      System &amp; Files
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="System">
+    <nav class="md-nav" aria-label="System & Files">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#exit" class="md-nav__link">
     <span class="md-ellipsis">
       exit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_path
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      find_paths
     </span>
   </a>
   
@@ -2090,13 +2144,13 @@ sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span
 </tr>
 <tr>
 <td><code>.epoch.millis</code></td>
-<td>Seconds since 1970-01-01 00:00:00 UTC</td>
+<td>Millis since 1970-01-01 00:00:00 UTC</td>
 <td>int</td>
 <td>1576246516123</td>
 </tr>
 <tr>
 <td><code>.epoch.nanos</code></td>
-<td>Seconds since 1970-01-01 00:00:00 UTC</td>
+<td>Nanos since 1970-01-01 00:00:00 UTC</td>
 <td>int</td>
 <td>1576246516123456789</td>
 </tr>
@@ -2275,10 +2329,51 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
 <div class="highlight"><pre><span></span><code>sum(list[number])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
 </code></pre></div>
 <p>Sums the input list of numbers to a resulting float.</p>
-<h2 id="system">System<a class="headerlink" href="#system" title="Permanent link">&para;</a></h2>
+<h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
 <h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
+<p>Exits the script with the given exit code</p>
 <div class="highlight"><pre><span></span><code>exit(code<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">0</span>)
 </code></pre></div>
+<h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
+<p>Reads the contents of a file with the given path.</p>
+<div class="highlight"><pre><span></span><code>read_file(path: string) -&gt; map
+read_file(path: string, mode: string = &quot;text&quot;) -&gt; map
+</code></pre></div>
+<ul>
+<li><code>mode</code> is a named arg which is <code>"text"</code> by default.</li>
+<li>Decodes the contents as UTF-8 and makes it available as string.</li>
+<li>Other valid value is <code>"bytes"</code>.</li>
+<li>Reads the bytes and makes them available as a list of ints.</li>
+</ul>
+<p>The returned <code>map</code> contains two keys:</p>
+<ul>
+<li><code>size_bytes -&gt; int</code></li>
+<li><code>contents -&gt; string | list[int]</code> (depending on <code>mode</code>)</li>
+</ul>
+<h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
+<p>Gets information about a file or directory at the specified path.</p>
+<div class="highlight"><pre><span></span><code>get_path(path: string) -&gt; map
+</code></pre></div>
+<p>The map contains the following entries:</p>
+<ul>
+<li><code>full_path -&gt; string</code></li>
+<li><code>base_name -&gt; string</code></li>
+<li><code>permissions -&gt; string</code></li>
+<li><code>type -&gt; string</code> (<code>dir</code> or <code>file</code>)</li>
+<li><code>size_bytes -&gt; int</code> (Entry only defined if it's a file)</li>
+</ul>
+<h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
+<p>Returns a list of paths under the given target directory.
+``
+<div class="highlight"><pre><span></span><code>find_paths(target: string, depth: int = -1, relative: string = &quot;target&quot;) -&gt; list[string]
+</code></pre></div></p>
+<ul>
+<li><code>depth</code> defaults to <code>-1</code>, indicating no depth limit. Set a positive number to limit how deep the included paths should be.</li>
+<li><code>relative</code> defaults to <code>"target"</code> and defines to where the resulting paths should be relative.</li>
+<li><code>"target"</code> (<em>default</em>): relative to the input target path</li>
+<li><code>"cwd"</code>: relative to the user's current working directory</li>
+<li><code>"absolute"</code>: return absolute paths</li>
+</ul>
 
 
 
