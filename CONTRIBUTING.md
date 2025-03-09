@@ -8,7 +8,7 @@ Thanks for your interest in contributing to rad! It's much appreciated - this do
 - If not, feel free to raise a new issue.
 - If it's a bug report, it'd be very handy if you could include a few things:
   1. What version of rad you're using (`rad -v`).
-  2. What happens and the behavior you expected.
+  2. What happens, and the behavior you expect.
   3. Replication steps, ideally with an RSL script which replicates the issue.
 
 ## Contributing PRs
@@ -31,7 +31,7 @@ For example, to check (1.24+ is okay):
 go version go1.24.1 darwin/arm64
 ```
 
-One of the Makefile steps includes running an automatic imports fixing step. It requires `goimports`:
+One of the Makefile steps includes an automatic go-imports fixer. It requires `goimports`:
 
 ```shell
 go install golang.org/x/tools/cmd/goimports@latest
@@ -55,9 +55,9 @@ If you're using GoLand, the repo includes a few run configurations that may be h
 
 1. Fork the repo, create a feature branch, and commit your changes.
 2. Push to your fork and open a PR.
-3. If your PR isn’t getting attention, feel free to ping me on it!
+3. If your PR isn't getting attention, please ping me on it!
 
-- Please aim to respect the above [code style & conventions](#code-style--conventions).
+- Please aim to respect the [code style & conventions](#code-style--conventions).
 - Include tests, preferably comprehensive ones.
 - If your changes impact user documentation, consider updating it.
   - If you're not comfortable writing user docs, feel free to leave it out. I can follow up on it :) 
@@ -67,7 +67,7 @@ If you're using GoLand, the repo includes a few run configurations that may be h
 I started this project with very little Go knowledge, and so have definitely broken many idioms and conventions.
 
 Just follow standard Go practices - you'll see this broken in many places in the existing code, so don't
-blindly use them as an example, generally speaking :^) .
+blindly use it for examples, generally speaking :^) .
 
 That said, here are some specific callouts:
 
@@ -75,10 +75,10 @@ That said, here are some specific callouts:
 - Use comments judiciously - convey intent and "why" of code, if it's not already obvious.
 - Your commit messages are also good sources of information: include breakdowns of decisions you made, motivations, etc.
   - Ideally, our `git blame` will be a reliable source of information documenting why the code is the way it is.
-- Try to keep commits small. If you can separate conceptually-unrelated commits into units that each compile & pass tests, that's ideal!
+- Try to keep commits small. If you can separate conceptually-unrelated changes into commits that each compile & pass tests, that's ideal!
 - Run `make format` before making commits.
 - `core` is unfortunately a big folder and package - untangling it into smaller packages at this point is a little tricky.
-  - If you can, with new code, try to package it appropriately, if you can.
+  - If you can, with new code, try to package it appropriately.
 
 ### Code Pointers
 
@@ -88,6 +88,10 @@ That said, here are some specific callouts:
   - Specifically, it is given the tree sitter concrete syntax tree (CST), and we step through it to execute it.
 - [`./core/global.go`](./core/global.go) contains some global state & variables.
   - A lot of things in here are abstractions that enable us to swap in implementations for testing.
-- [`./core/funcs.go`](./core/funcs.go) is where we define most of our inbuilt functions.
+- [`./core/funcs.go`](./core/funcs.go) defines most of our inbuilt functions.
 - [`./core/testing`](./core/testing) is where we define the bulk of our tests.
   - They tend to be end-to-end tests which define some RSL code, execute it, and assert against stdout/stderr from rad.
+
+## Questions?
+
+Feel free to contact me directly or post your question [here](https://github.com/amterp/rad/discussions)!

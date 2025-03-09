@@ -1,11 +1,11 @@
-# 🤙 Rad - Request And Display
+# 🤙 Rad
 
 **A lightweight, modern CLI scripting language that's familiar, clean, and readable.**
 
 Effortlessly write high-quality scripts without the quirks of Bash.
 Rad makes command-line scripting simple and intuitive — whether automating tasks, processing text, or interacting with systems and APIs.
 
-Example (file: `greet`):
+Example script (`greet`):
 
 ```
 #!/usr/bin/env rad
@@ -53,12 +53,6 @@ HI, BOB!
 HI, BOB!
 ```
 
-## [Documentation](https://amterp.github.io/rad/)
-
-Docs are still a work in progress, but there's enough to get you started!
-
-Feel free to check out the [**Getting Started**](https://amterp.github.io/rad/guide/getting-started/) guide :)
-
 ## Installation
 
 ### macOS
@@ -70,6 +64,8 @@ brew install rad
 
 Other than building from source, Rad is not available for other platforms/package managers (yet).
 
+See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source.
+
 ### Visual Studio Code Extension
 
 The VS Code extension for RSL can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension). Source [here](./vsc-extension).
@@ -80,21 +76,31 @@ The language server is currently only available on macOS & Linux. Source [here](
 
 ![vsc-example.png](./assets/vsc-example.png)
 
+## [Documentation](https://amterp.github.io/rad/)
+
+Docs are still a work in progress, but there's enough to get you started!
+
+Feel free to check out the [**Getting Started**](https://amterp.github.io/rad/guide/getting-started/) guide :)
+
 ## Status 📊
 
 ⚠️ **Rad is still in early development!** ⚠️
 
 Rad is a working CLI tool and interpreter that can run useful RSL scripts.
 
-It's complete enough to be useful, but please don't be surprised when major parts of it change, or you hit bugs and rough edges. That said, please do give it a try, I'd love to hear your experience and any feedback :)
+It's complete enough to be useful, but do expect the following:
 
-Below is a quick glimpse of major items that've been implemented and are missing.
+- Major, potentially script-breaking changes
+- Rough edges
+- Bugs
+- Missing features
+
+That said, please do give it a try, I'd love to hear your experience and any feedback :)
 
 ### What's being worked on 🚧
 
 - Language features (there's a long list!)
 - LSP language server ([RLS](./rsl-language-server))
-- [Visual Studio Code extension](./vsc-extension)
 
 ### What's planned 🌱 
 
@@ -104,33 +110,39 @@ Below is a quick glimpse of major items that've been implemented and are missing
 - JetBrains IDE plugin
 - Support for platforms other than macOS: Linux, Windows. 
 
----
+## About
 
-*Note: the below sections are a little dated - RSL has become a lot more general purpose, but the below sections focus mostly on the JSON API interaction features. Still relevant, though!*
+### What problem does Rad solve? 🎯
 
-## What problem does this solve? 🎯
+Shell languages like Bash are powerful, but often difficult.
+Bash has unusual syntax for simple things like if statements that makes them hard to remember, and common patterns like
+argument parsing can be tedious to implement.
+Basic data structures like lists, maps, and even strings can be difficult to deal with, if they're available at all.
 
-Many backend services expose JSON/REST APIs containing valuable information that users often need to query and view ad hoc (e.g. DevOps).
-While various tools exist for this purpose, they often come with drawbacks such as complex syntax, steep learning curves, or the need for extensive setup.
-What's needed is a flexible, easy, and efficient way to:
+What's needed is a higher-level language, bells and whistles included, that's tailored to writing scripts.
+Knowing what's commonly needed in scripts, it needs to make implementing these things as easy as possible,
+and provide all the necessary utilities out of the box.
 
-1. Define and parameterize queries
-2. Extract specific information from API responses
-3. Display the data in a user-friendly format
+### How does Rad solve it? 🛠️
 
-## How does Rad solve it? 🛠️
+Rad is an interpreter for a language called **RSL** (Rad Scripting Language), which is purpose-built for this exact problem.
 
-- Rad comes with a domain-specific language called RSL (Rad Scripting Language).
-- RSL is purpose-built for this problem: to efficiently express what to query, the data to extract, and how to display it.
-- `rad` is a command-line tool which runs these scripts, handling argument parsing, query execution, and result display + formatting.
+- RSL is **familiar**, drawing on popular languages like Python.
+- RSL **knows its domain** - it has unique syntax which makes writing scripts as easy as possible, such as its declarative approach to script args.
+- RSL has **batteries included** - it aims to offer everything you need in a single installation that lets you write the scripts you want.
 
-## Minimal Example 🌟
+### Example: Printing a table of a repo's commits
+
+An example for a type of script that RSL makes very easy to write, is one which queries a JSON API, 
+extracts some fields, and prints the results in a table.
+
+Let's see a concrete example script (`commits`):
 
 ```
 args:
     repo string    # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
-    
+
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 
 Time = json[].commit.author.date
@@ -141,15 +153,15 @@ rad url:
     fields Time, Author, SHA
 ```
 
-Example invocation (let's call the script `commits.rad`):
+Example invocation:
 
 ```
 > rad commits spf13/cobra 3
-
-Time                   Author                 SHA
-2024-07-28T16:18:07Z   Gabe Cook              756ba6dad61458cbbf7abecfc502d230574c57d2
-2024-07-16T23:36:29Z   Sebastiaan van Stijn   371ae25d2c82e519feb48c82d142e6a696fd06dd
-2024-06-01T10:31:11Z   Ville Skyttä           e94f6d0dd9a5e5738dca6bce03c4b1207ffbc0ec
+Querying url: https://api.github.com/repos/spf13/cobra/commits?per_page=3
+Time                  Author          SHA
+2025-03-07T14:53:22Z  styee           4f9ef8cdbbc88c5302be95e0e67fd78ebbfa9dd2
+2025-02-21T12:46:14Z  Fraser Waters   1995054b003053cc1e404bccfbf6d168e8731509
+2025-02-17T19:16:17Z  Yedaya Katsman  f98cf4216d3cb5235e6e0cd00ee00959deb1dc65
 ```
 
 1. This script takes two args: a repo string and an optional limit (defaults to 20).
@@ -157,50 +169,44 @@ Time                   Author                 SHA
 2. It uses string interpolation to resolve the url we will query, based on the supplied args.
 3. It defines the fields to extract from the JSON response.
 4. It executes the query, extracting the specified fields, and displays the resulting data as a table.
-- We keep this example somewhat minimal - there are RSL features we could use to improve this, but it's kept simple here.
-- Some alternative valid invocations for this example:
-  - `rad commits.rad <repo>`
-  - `rad commits.rad --repo <repo> --limit <limit>`
-  - `rad commits.rad --limit <limit> --repo <repo>`
-  - `rad commits.rad <repo> --limit <limit>`
+    - Note the `rad url` syntax: "rad" actually stands for "request and display", which is what this built-in syntax does.
 
-## Alternatives 📚
+We keep this example somewhat minimal - there are RSL features we could use to improve this, but it's kept simple here.
+
+Some alternative valid invocations for this example:
+
+- `rad commits amterp/rad`
+- `rad commits --repo amterp/rad --limit 5`
+- `rad commits --limit 5 --repo amterp/rad`
+- `rad commits amterp/rad --limit 5`
+
+### Alternatives 📚
 
 - **Bash**
-  - Bash, using a combination of `curl`, `jq`, and/or `column`, is an excellent choice.
-  - Bash is the primary tool I'd use, outside of Rad.
-  - But, as much as I like this toolset, Bash is (in my opinion) not syntactically friendly and simple things can be deceivingly laborious to do.
-    - Crucially, arg parsing is decent for simple cases, but more complex ones quickly get unwieldy. For the sorts of scripts Rad targets, that's important.
-  - There's also a bit of a learning curve. Bash can be intimidating to devs that haven't used it a lot, as can `jq` syntax.
-- **Python, Ruby, JavaScript, Rust, etc**
-  - General purpose and very flexible, which can be great. However, this can also mean significantly more code is required to get the behavior you want.
-  - Managing dev environments/installations and sharing scripts in a reliable way can be onerous, depending on the specific language.
-- **HTTPie**
-  - This eases some of the difficulties with using `curl` and `jq` in Bash, but does not help with the rest, e.g. arg parsing, more complex bash logic, etc.
+  - Bash is great, especially for simple scripts that only need to invoke a series of system commands.
+  - That said, as soon as you need to do anything more complex, Bash's syntax quickly becomes cumbersome and unproductive.
+    - Crucially, arg parsing in Bash is good for simple cases, but for anything more complex, it quickly gets unwieldy.
+  - Rad addresses these problems directly, while also being a great choice for simple scripts.
+- **Python, Ruby, JavaScript, Rust, Go, etc**
+  - These are general-purpose languages and very flexible, which can be great.
+  - However, if your goal is just to write scripts, then they're not as focused as Rad.
+    - They require boilerplate, maybe additional installations (modules, libraries), perhaps compilation, etc.
+  - Rad will generally require less code to achieve great scripts that do what you want.
 
-## Why Rad? 🚀
+### Why Rad? 🚀
 
-### Rad Scripting Language (RSL)
+- Rad and its accompanying language, RSL, are **tailored to writing scripts**. You can write better scripts, in fewer lines of code.
+- RSL is familiar, with a low learning curve. It's **simple and easy to pick up**.
+- RSL offers inbuilt syntax that guides you towards writing **user-friendly scripts**, with helpful usage strings (available with `--help`).
+- **Shell integration** - RSL offers built-in syntax for invoking shell commands, so you can still reach for Bash when needed.
 
-- Rad (and its accompanying language RSL) allows you to be *efficient* in writing your scripts. What does this mean?
-- The syntax is designed so that *every* line gets you closer to your goal of querying and displaying JSON.
-- *Every* line is doing heavy lifting; it's dense with meaning.
-- Think of it like this: for every line of RSL you write, Rad saves you from writing several equivalent lines in another language. That saved work has been shifted away from you and into the design and building of Rad, and what Rad is doing behind-the-scenes with the scripts you write.
-- It allows you to, in fewer (and simpler) lines, express your intent much more directly.
-- It does all this while staying simple and easy to learn. You can be writing great scripts within the first hour of getting started.
+### Why *not* Rad? ⚠️
 
-### Easily shareable
+Rad is **optimized for the majority of scripts**, but for extremely complex cases, a general-purpose language **may be more appropriate**.
 
-- Everything you need to write JSON query scripts is built into Rad and RSL. You don't need to download dependencies, and if a Rad script runs on your machine, you can be confident it will run on others' machines too.
+When should you reach for something else?
+- If your script **outgrows Rad** and becomes a full application.
+- If you need **high-performance computation**, beyond typical scripting needs.
+- If your script requires **specialized libraries** that aren't built into Rad.
 
-### Encourages self-documenting scripts
-
-- Rad encourages the documentation of scripts by having it built into the language. There's syntax for documenting the overall script as well as its args.
-- The declaration of args themselves also provides useful information that Rad leverages to generate helpful usage strings for your scripts, such as types or constraints, to make them user-friendly.
-- RSL's syntax is designed to be self-explanatory and readable to anyone. No arcane use of symbols or inscrutable keywords.
-
-## Why *not* Rad? ⚠️
-
-- Rad aims to make writing 95% of your scripts better and easier. However, the last 5% may involve bespoke, complex logic, better suited for general-purpose programming languages such as Python or Bash.
-- You can get quite far with Rad, as RSL provides utilities for the most common things devs would want, but it will inevitably be lacking something that a more general-purpose programming language would offer.
-- The bet is that these complex scripts are few and far between, so that Rad can make your life easier 95% of the time, and require you to pull out the heavy-duty 'general' tooling only once in a while.
+That said, **Rad aims to handle 99% of CLI scripting needs** - so most of the time, it's the right tool for the job.
