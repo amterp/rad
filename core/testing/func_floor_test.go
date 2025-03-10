@@ -13,6 +13,17 @@ print(floor(a))
 	resetTestState()
 }
 
+func Test_Func_Floor_Negative_Ints(t *testing.T) {
+	rsl := `
+a = -2
+print(floor(a))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "-2\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func Test_Func_Floor_Floats(t *testing.T) {
 	rsl := `
 a = 2.234
@@ -20,6 +31,17 @@ print(floor(a))
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Func_Floor_Negative_Floats(t *testing.T) {
+	rsl := `
+a = -2.234
+print(floor(a))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "-3\n")
 	assertNoErrors(t)
 	resetTestState()
 }

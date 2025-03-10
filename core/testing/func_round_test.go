@@ -26,6 +26,18 @@ print(round(a,b))
 	resetTestState()
 }
 
+func Test_Func_Round_Floats_With_ZeroPrecision(t *testing.T) {
+	rsl := `
+a = 2.234
+b = 0
+print(round(a,b))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "2\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func Test_Func_Round_Ints_Without_Precision(t *testing.T) {
 	rsl := `
 a = 1

@@ -373,7 +373,7 @@ trim_prefix(text string, chars string = " \t\n") -> string
 ```
 
 Trims the start of an input string.
-if `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
+If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
 
 ### trim_suffix
 
@@ -505,7 +505,7 @@ round(number float|int, precision int = 0) -> float
 ```
 
 Rounds the input number to the specified precision.
-if `precision` is unspecified it defaults to 0 and rounds the number to 0 decimal point
+If `precision` is unspecified it defaults to 0 and rounds the number to 0 decimal point.
 
 ### floor
 
@@ -513,7 +513,7 @@ if `precision` is unspecified it defaults to 0 and rounds the number to 0 decima
 floor(num float|int) -> float
 ```
 
-Floors the input number to the floor of the given number
+Floors the input number to the floor of the given number.
 ```
 floor(1.89) -> 1
 ```
@@ -524,7 +524,7 @@ floor(1.89) -> 1
 ceil(num float|int) -> float
 ```
 
-Ceils the input number to the ceil of the given number
+Ceils the input number to the ceil of the given number.
 ```
 ceil(1.21) -> 2
 ```
@@ -535,8 +535,8 @@ ceil(1.21) -> 2
 min(nums list[float|num]) -> float
 ```
 
-Min fucntion returns the minimum number in the provided list.
-Allowed arguments are list of numbers of type float | int
+Min function returns the minimum number in the provided list.
+Allowed arguments are list of numbers of type float | int.
 
 ```
 min([1,2,3,4]) -> 1
@@ -548,8 +548,8 @@ min([1,2,3,4]) -> 1
 max(nums list[float|num]) -> float
 ```
 
-Max fucntion returns the maximum number in the provided list.
-Allowed arguments are list of number of type float | int
+Max function returns the maximum number in the provided list.
+Allowed arguments are list of number of type float | int.
 
 ```
 max([1,2,3,4]) -> 4
@@ -562,7 +562,7 @@ clamp(val, min, max float|int) -> float
 ```
 
 Clamp function can take 3 arguments of nums to run the clamp function.
-Clamp function takes a list of n numbers however it wokrs on only first 3 numbers in the list:
+Clamp function takes a list of n numbers however it works on only first 3 numbers in the list:
   - 0 -> val
   - 1 -> min
   - 2 -> max

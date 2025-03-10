@@ -28,6 +28,22 @@ print(clamp(a, b, c))
 	resetTestState()
 }
 
+func Test_Func_Clamp_ErrorsForLessThan3Elements(t *testing.T) {
+	rsl := `
+a = 1
+b = 2
+print(clamp(a, b))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `Error at L4:7
+
+  print(clamp(a, b))
+        ^^^^^^^^^^^ clamp() requires at least 3 arguments, but got 2
+`
+	assertError(t, 1, expected)
+	resetTestState()
+}
+
 func Test_Func_Clamp_ErrorsForNonNumElements(t *testing.T) {
 	rsl := `
 a = 1

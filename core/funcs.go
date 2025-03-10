@@ -997,7 +997,7 @@ func init() {
 		{
 			Name:             FUNC_CLAMP,
 			ReturnValues:     ONE_RETURN_VAL,
-			RequiredArgCount: 1,
+			RequiredArgCount: 3,
 			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
@@ -1006,29 +1006,20 @@ func init() {
 				if !ok {
 					f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[0].value), 0)
 				}
-				min := -math.MaxFloat64
-				max := math.MaxFloat64
-				switch len(f.args) {
-				case 2:
-					min, ok = f.args[1].value.TryGetFloatAllowingInt()
-					if !ok {
-						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[1].value), 1)
-					}
-				case 3:
-					min, ok = f.args[1].value.TryGetFloatAllowingInt()
-					if !ok {
-						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[1].value), 1)
-					}
-					max, ok = f.args[2].value.TryGetFloatAllowingInt()
-					if !ok {
-						f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[2].value), 1)
-					}
+
+				minVal, ok := f.args[1].value.TryGetFloatAllowingInt()
+				if !ok {
+					f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[1].value), 1)
+				}
+				maxVal, ok := f.args[2].value.TryGetFloatAllowingInt()
+				if !ok {
+					f.i.errorf(f.args[0].node, "%s() requires a number, got %q at index %d", FUNC_CLAMP, TypeAsString(f.args[2].value), 1)
 				}
 
-				if min > max {
-					f.i.errorf(f.callNode, "min must be less than max, got %f and %f", min, max)
+				if minVal > maxVal {
+					f.i.errorf(f.callNode, "min must be less than max, got %f and %f", minVal, maxVal)
 				}
-				return newRslValues(f.i, f.callNode, math.Min(math.Max(val, min), max))
+				return newRslValues(f.i, f.callNode, math.Min(math.Max(val, minVal), maxVal))
 			},
 		},
 		{

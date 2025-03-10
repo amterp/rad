@@ -13,6 +13,17 @@ print(ceil(a))
 	resetTestState()
 }
 
+func Test_Func_Ceil_Negative_Ints(t *testing.T) {
+	rsl := `
+a = -1
+print(ceil(a))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "-1\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
 func Test_Func_Ceil_Floats(t *testing.T) {
 	rsl := `
 a = 2.234
@@ -20,6 +31,17 @@ print(ceil(a))
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
+	assertNoErrors(t)
+	resetTestState()
+}
+
+func Test_Func_Ceil_Negative_Floats(t *testing.T) {
+	rsl := `
+a = -2.234
+print(ceil(a))
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "-2\n")
 	assertNoErrors(t)
 	resetTestState()
 }
