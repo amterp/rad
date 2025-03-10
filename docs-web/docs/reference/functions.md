@@ -548,8 +548,8 @@ min([1,2,3,4]) -> 1
 max(nums list[float|num]) -> float
 ```
 
-Max function returns the maximum number in the provided list.
-Allowed arguments are list of number of type float | int.
+Max fucntion returns the maximum number in among the provided arguments.
+Allowed arguments are list of number or multiple numbers of type float | int
 
 ```
 max([1,2,3,4]) -> 4
