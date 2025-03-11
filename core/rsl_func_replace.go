@@ -9,11 +9,11 @@ import (
 // Allows capture group replacing, for example
 // replace("Name: abc", "a(b)c", "$1o$1") will return "Name: bobby"
 var FuncReplace = Func{
-	Name:             FUNC_REPLACE,
-	ReturnValues:     ONE_RETURN_VAL,
-	RequiredArgCount: 3,
-	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}, {RslStringT}},
-	NamedArgs:        NO_NAMED_ARGS,
+	Name:           FUNC_REPLACE,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 3,
+	PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}, {RslStringT}},
+	NamedArgs:      NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		oldStringArg := f.args[0]
 		regexForOldArg := f.args[1]

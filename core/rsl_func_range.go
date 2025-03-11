@@ -8,11 +8,11 @@ import (
 //   - somehow improve implementation to be a generator, rather than eagerly created list? chugs at e.g. 100_000
 
 var FuncRange = Func{
-	Name:             FUNC_RANGE,
-	ReturnValues:     ONE_RETURN_VAL,
-	RequiredArgCount: 1,
-	ArgTypes:         [][]RslTypeEnum{{RslIntT, RslFloatT}, {RslIntT, RslFloatT}, {RslIntT, RslFloatT}},
-	NamedArgs:        NO_NAMED_ARGS,
+	Name:           FUNC_RANGE,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 1,
+	PosArgTypes:    [][]RslTypeEnum{{RslIntT, RslFloatT}, {RslIntT, RslFloatT}, {RslIntT, RslFloatT}},
+	NamedArgs:      NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		useFloats := false
 		for _, arg := range f.args {

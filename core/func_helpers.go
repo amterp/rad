@@ -110,18 +110,18 @@ func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Fu
 }
 
 func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
-	if len(args) < function.RequiredArgCount {
+	if len(args) < function.MinPosArgCount {
 		i.errorf(callNode, "%s() requires at least %s, but got %d",
-			function.Name, com.Pluralize(function.RequiredArgCount, "argument"), len(args))
+			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
 	}
 
-	maxAcceptableArgs := len(function.ArgTypes)
+	maxAcceptableArgs := len(function.PosArgTypes)
 	if len(args) > maxAcceptableArgs {
 		i.errorf(callNode, "%s() requires at most %s, but got %d",
 			function.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(args))
 	}
 
-	for idx, acceptableTypes := range function.ArgTypes {
+	for idx, acceptableTypes := range function.PosArgTypes {
 		if len(acceptableTypes) == 0 {
 			// there are no type constraints
 			continue

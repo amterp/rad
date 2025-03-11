@@ -11,10 +11,10 @@ import (
 )
 
 var FuncPick = Func{
-	Name:             FUNC_PICK,
-	ReturnValues:     ONE_RETURN_VAL,
-	RequiredArgCount: 1,
-	ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslStringT, RslListT}},
+	Name:           FUNC_PICK,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 1,
+	PosArgTypes:    [][]RslTypeEnum{{RslListT}, {RslStringT, RslListT}},
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgPrompt: {RslStringT},
 	},
@@ -49,10 +49,10 @@ var FuncPick = Func{
 }
 
 var FuncPickKv = Func{
-	Name:             FUNC_PICK_KV,
-	ReturnValues:     ONE_RETURN_VAL,
-	RequiredArgCount: 2,
-	ArgTypes:         [][]RslTypeEnum{{RslListT}, {RslListT}, {RslStringT, RslListT}},
+	Name:           FUNC_PICK_KV,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 2,
+	PosArgTypes:    [][]RslTypeEnum{{RslListT}, {RslListT}, {RslStringT, RslListT}},
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgPrompt: {RslStringT},
 	},
@@ -92,10 +92,10 @@ var FuncPickKv = Func{
 }
 
 var FuncPickFromResource = Func{
-	Name:             FUNC_PICK_FROM_RESOURCE,
-	ReturnValues:     NO_RETURN_LIMIT,
-	RequiredArgCount: 1,
-	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT, RslListT}},
+	Name:           FUNC_PICK_FROM_RESOURCE,
+	ReturnValues:   NO_RETURN_LIMIT,
+	MinPosArgCount: 1,
+	PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT, RslListT}},
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgPrompt: {RslStringT},
 	},

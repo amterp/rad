@@ -9,11 +9,11 @@ import (
 )
 
 var FuncPrint = Func{
-	Name:             FUNC_PRINT,
-	ReturnValues:     ZERO_RETURN_VALS,
-	RequiredArgCount: 0,
+	Name:           FUNC_PRINT,
+	ReturnValues:   ZERO_RETURN_VALS,
+	MinPosArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args' RAD-167
-	ArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	PosArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},
@@ -25,11 +25,11 @@ var FuncPrint = Func{
 }
 
 var FuncPPrint = Func{
-	Name:             FUNC_PPRINT,
-	ReturnValues:     ZERO_RETURN_VALS,
-	RequiredArgCount: 0,
-	ArgTypes:         [][]RslTypeEnum{{}},
-	NamedArgs:        NO_NAMED_ARGS,
+	Name:           FUNC_PPRINT,
+	ReturnValues:   ZERO_RETURN_VALS,
+	MinPosArgCount: 0,
+	PosArgTypes:    [][]RslTypeEnum{{}},
+	NamedArgs:      NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		if len(f.args) == 0 {
 			RP.Print("\n")
@@ -44,11 +44,11 @@ var FuncPPrint = Func{
 }
 
 var FuncDebug = Func{
-	Name:             FUNC_DEBUG,
-	ReturnValues:     ZERO_RETURN_VALS,
-	RequiredArgCount: 0,
+	Name:           FUNC_DEBUG,
+	ReturnValues:   ZERO_RETURN_VALS,
+	MinPosArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args'
-	ArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	PosArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},

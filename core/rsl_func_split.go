@@ -8,11 +8,11 @@ import (
 )
 
 var FuncSplit = Func{
-	Name:             FUNC_SPLIT,
-	ReturnValues:     ONE_RETURN_VAL,
-	RequiredArgCount: 2,
-	ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-	NamedArgs:        NO_NAMED_ARGS,
+	Name:           FUNC_SPLIT,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 2,
+	PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+	NamedArgs:      NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		strArg := f.args[0]
 		splitterArg := f.args[1]

@@ -5,11 +5,11 @@ import (
 )
 
 var FuncExit = Func{
-	Name:             FUNC_EXIT,
-	ReturnValues:     ZERO_RETURN_VALS,
-	RequiredArgCount: 0,
-	ArgTypes:         [][]RslTypeEnum{{RslIntT}},
-	NamedArgs:        NO_NAMED_ARGS,
+	Name:           FUNC_EXIT,
+	ReturnValues:   ZERO_RETURN_VALS,
+	MinPosArgCount: 0,
+	PosArgTypes:    [][]RslTypeEnum{{RslIntT}},
+	NamedArgs:      NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		if len(f.args) == 0 {
 			exit(f.i, 0)
