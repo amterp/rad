@@ -369,7 +369,7 @@ func init() {
 				}
 
 				str := rslStr.Plain() // todo should maintain attributes
-				str = Truncate(str, maxLen)
+				str = com.Truncate(str, maxLen)
 
 				return newRslValues(f.i, f.callNode, str)
 			},
@@ -792,17 +792,9 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				textArg := f.args[0]
-
-				chars := " \t\n"
-				if len(f.args) > 1 {
-					charsArg := f.args[1]
-					chars = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
-				}
-
-				rslString := textArg.value.RequireStr(f.i, textArg.node)
-				rslString = rslString.Trim(chars)
-				return newRslValues(f.i, f.callNode, rslString)
+				return runTrim(f, func(str RslString, chars string) RslString {
+					return str.Trim(chars)
+				})
 			},
 		},
 		{
@@ -812,15 +804,9 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				textArg := f.args[0]
-				prefix := " \t\n"
-				if len(f.args) > 1 {
-					charsArg := f.args[1]
-					prefix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
-				}
-				rslString := textArg.value.RequireStr(f.i, textArg.node)
-				rslString = rslString.TrimPrefix(prefix)
-				return newRslValues(f.i, f.callNode, rslString)
+				return runTrim(f, func(str RslString, chars string) RslString {
+					return str.TrimPrefix(chars)
+				})
 			},
 		},
 		{
@@ -830,15 +816,9 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslStringT}, {RslStringT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				textArg := f.args[0]
-				suffix := " \t\n"
-				if len(f.args) > 1 {
-					charsArg := f.args[1]
-					suffix = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
-				}
-				rslString := textArg.value.RequireStr(f.i, textArg.node)
-				rslString = rslString.TrimSuffix(suffix)
-				return newRslValues(f.i, f.callNode, rslString)
+				return runTrim(f, func(str RslString, chars string) RslString {
+					return str.TrimSuffix(chars)
+				})
 			},
 		},
 		{
@@ -912,7 +892,7 @@ func init() {
 					precisionArg := f.args[1]
 					precision = precisionArg.value.RequireInt(f.i, precisionArg.node)
 					if precision < 0 {
-						f.i.errorf(f.args[1].node, "Precision must be non-negative, got %d", precision)
+						f.i.errorf(precisionArg.node, "Precision must be non-negative, got %d", precision)
 					}
 				}
 
@@ -1001,13 +981,16 @@ func init() {
 			ArgTypes:         [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}},
 			NamedArgs:        NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				// input is a number and a min and max
-				val := f.args[0].value.RequireFloatAllowingInt(f.i, f.args[0].node)
-				minVal := f.args[1].value.RequireFloatAllowingInt(f.i, f.args[1].node)
-				maxVal := f.args[2].value.RequireFloatAllowingInt(f.i, f.args[2].node)
+				valArg := f.args[0]
+				minArg := f.args[1]
+				maxArg := f.args[2]
+
+				val := valArg.value.RequireFloatAllowingInt(f.i, valArg.node)
+				minVal := minArg.value.RequireFloatAllowingInt(f.i, minArg.node)
+				maxVal := maxArg.value.RequireFloatAllowingInt(f.i, maxArg.node)
 
 				if minVal > maxVal {
-					f.i.errorf(f.callNode, "min must be less than max, got %f and %f", minVal, maxVal)
+					f.i.errorf(f.callNode, "min must be <= max, got %f and %f", minVal, maxVal)
 				}
 				return newRslValues(f.i, f.callNode, math.Min(math.Max(val, minVal), maxVal))
 			},
@@ -1162,6 +1145,20 @@ func httpMethodFromFuncName(httpFunc string) string {
 	default:
 		panic(fmt.Sprintf("Bug! Unknown HTTP function: %q", httpFunc))
 	}
+}
+
+func runTrim(f FuncInvocationArgs, trimFunc func(str RslString, chars string) RslString) []RslValue {
+	textArg := f.args[0]
+
+	chars := " \t\n"
+	if len(f.args) > 1 {
+		charsArg := f.args[1]
+		chars = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
+	}
+
+	rslString := textArg.value.RequireStr(f.i, textArg.node)
+	rslString = trimFunc(rslString, chars)
+	return newRslValues(f.i, f.callNode, rslString)
 }
 
 func tryGetArg(idx int, args []positionalArg) *positionalArg {

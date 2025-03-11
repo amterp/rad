@@ -173,13 +173,16 @@ func (s *RslString) Trim(chars string) RslString {
 }
 
 func (s *RslString) TrimPrefix(prefix string) RslString {
+	// todo should maintain attr info
 	return NewRslString(strings.TrimLeft(s.Plain(), prefix))
 }
 
 func (s *RslString) TrimSuffix(suffix string) RslString {
+	// todo should maintain attr info
 	return NewRslString(strings.TrimRight(s.Plain(), suffix))
 }
 
 func (s *RslString) Reverse() RslString {
-	return NewRslString(Reverse(s.Plain()))
+	// todo should maintain attr info
+	return NewRslString(com.Reverse(s.Plain()))
 }

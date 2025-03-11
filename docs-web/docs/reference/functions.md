@@ -505,7 +505,7 @@ round(number float|int, precision int = 0) -> float
 ```
 
 Rounds the input number to the specified precision.
-If `precision` is unspecified it defaults to 0 and rounds the number to 0 decimal point.
+If `precision` is unspecified it defaults to 0 and rounds to the nearest integer.
 
 ### floor
 
@@ -513,7 +513,8 @@ If `precision` is unspecified it defaults to 0 and rounds the number to 0 decima
 floor(num float|int) -> float
 ```
 
-Floors the input number to the floor of the given number.
+Rounds the given input down to the next integer.
+
 ```
 floor(1.89) -> 1
 ```
@@ -524,7 +525,8 @@ floor(1.89) -> 1
 ceil(num float|int) -> float
 ```
 
-Ceils the input number to the ceil of the given number.
+Rounds the given input up to the next integer.
+
 ```
 ceil(1.21) -> 2
 ```
@@ -535,11 +537,10 @@ ceil(1.21) -> 2
 min(nums list[float|num]) -> float
 ```
 
-Min function returns the minimum number in the provided list.
-Allowed arguments are list of numbers of type float | int.
+Returns the minimum number in the provided list.
 
 ```
-min([1,2,3,4]) -> 1
+min([1, 2, 3, 4]) -> 1
 ```
 
 ### max
@@ -548,11 +549,10 @@ min([1,2,3,4]) -> 1
 max(nums list[float|num]) -> float
 ```
 
-Max function returns the maximum number in the provided list.
-Allowed arguments are list of number of type float | int.
+Returns the maximum number in the provided list.
 
 ```
-max([1,2,3,4]) -> 4
+max([1, 2, 3, 4]) -> 4
 ```
 
 ### clamp
@@ -561,21 +561,20 @@ max([1,2,3,4]) -> 4
 clamp(val, min, max float|int) -> float
 ```
 
-Clamp function can take 3 arguments of nums to run the clamp function.
-Clamp function takes a list of n numbers however it works on only first 3 numbers in the list:
-  - 0 -> val
-  - 1 -> min
-  - 2 -> max
+Clamps the given number `val` between `min` and `max`.
 
-Clamp function returns 
-  -  The number if the number is in between the provided max and min. 
-  -  If provided number is lower than min then min is returned.
-  -  If the provided number is greater than max then max is returned.
+Specifically, `clamp` returns:
+  -  `val` if it is between the provided min and max. 
+  -  `min` if `val` is lower than `min`.
+  -  `max` if `val` is greater `max`.
+
+`min` must be <= `max`, else the function will error.
 
 ```
-clamp(10,11,101) -> 11
+clamp(25, 20, 30) -> 25
+clamp(10, 20, 30) -> 20
+clamp(40, 20, 30) -> 30
 ```
-
 
 ## System & Files
 
