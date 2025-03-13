@@ -116,7 +116,7 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 		}
 
 		line += f.GetDescription()
-		if f.HasNonZeroDefault() {
+		if f.HasNonZeroDefault() { // todo should we just always print default if it has one?
 			line += fmt.Sprintf(" (default %s)", f.DefaultAsString())
 		}
 

@@ -24,4 +24,32 @@ if b:
   c
 ```
 
-and only confusing to those unfamiliar.
+and 
+only confusing to those unfamiliar.
+
+---
+
+- `excludes` constraint being bidirectional
+
+```
+args:
+  a int
+  b int
+
+  a excludes b
+```
+
+- ^ could argue that defining just `a` should be allowed, but *not* just defining `b`, as we did not say `b excludes a`.
+- In that particular example, not allowing just `b` implies you *need* to define `a`, but again, that precludes `b`, so you can just never define `b`.
+- However, maybe we can come up with an alternative configuration where it *does* make sense.
+
+Another thought: perhaps `a excludes b` on bool args should mean "b cannot be true if a is".
+
+Example where you want mutually exclusive bools:
+```
+args:
+    verbose v bool
+    quiet q bool
+```
+
+---

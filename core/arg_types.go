@@ -8,16 +8,18 @@ import (
 )
 
 type ScriptArg struct {
-	Name            string // identifier name in the script
-	ApiName         string // name that the user will see
-	Decl            rts.ArgDecl
-	Short           *string
-	Type            RslArgTypeT
-	Description     *string
-	IsOptional      bool
-	EnumConstraint  *[]string
-	RegexConstraint *regexp.Regexp
-	RangeConstraint *ArgRangeConstraint
+	Name               string // identifier name in the script
+	ApiName            string // name that the user will see
+	Decl               rts.ArgDecl
+	Short              *string
+	Type               RslArgTypeT
+	Description        *string
+	IsOptional         bool
+	EnumConstraint     *[]string
+	RegexConstraint    *regexp.Regexp
+	RangeConstraint    *ArgRangeConstraint
+	RequiresConstraint []string
+	ExcludesConstraint []string
 	// first check the Type and IsOptional, then get the value
 	DefaultString     *string
 	DefaultStringList *[]string
@@ -41,22 +43,26 @@ func FromArgDecl(
 	enumConstraint *rts.ArgEnumConstraint,
 	regexConstraint *rts.ArgRegexConstraint,
 	rangeConstraint *rts.ArgRangeConstraint,
+	requiresConstraint []string,
+	excludesConstraint []string,
 ) *ScriptArg {
 	name := decl.Name.Name
 	externalName := decl.ExternalName()
 
 	defaultVal := decl.Default
 	scriptArg := &ScriptArg{
-		Name:            name,
-		ApiName:         externalName,
-		Decl:            decl,
-		Short:           decl.ShorthandStr(),
-		Type:            ToRslArgTypeT(decl.Type.Type),
-		Description:     decl.CommentStr(),
-		IsOptional:      isOptional(decl),
-		EnumConstraint:  convertEnumConstraint(enumConstraint),
-		RegexConstraint: convertRegexConstraint(regexConstraint),
-		RangeConstraint: convertRangeConstraint(rangeConstraint),
+		Name:               name,
+		ApiName:            externalName,
+		Decl:               decl,
+		Short:              decl.ShorthandStr(),
+		Type:               ToRslArgTypeT(decl.Type.Type),
+		Description:        decl.CommentStr(),
+		IsOptional:         isOptional(decl),
+		EnumConstraint:     convertEnumConstraint(enumConstraint),
+		RegexConstraint:    convertRegexConstraint(regexConstraint),
+		RangeConstraint:    convertRangeConstraint(rangeConstraint),
+		RequiresConstraint: requiresConstraint,
+		ExcludesConstraint: excludesConstraint,
 	}
 
 	if defaultVal != nil {

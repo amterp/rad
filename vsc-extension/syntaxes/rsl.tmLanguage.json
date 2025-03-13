@@ -46,7 +46,7 @@
 				},
 				{
 					"name": "storage.modifier.rsl",
-					"match": "\\b(enum|regex)\\b"
+					"match": "\\b(enum|regex|mutually|requires|excludes)\\b"
 				},
 				{
 					"name": "string.quoted.double.rsl",

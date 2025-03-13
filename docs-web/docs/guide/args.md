@@ -198,6 +198,123 @@ No other characters will be accepted, so `Alice` will be a valid value, but `bob
 
 As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
+### Relational
+
+If you have several args and you want to require users to always define a subset of them together, or ensure that if they define one, then they don't define another, then you can use **relational** constraints.
+
+For example, if you have args `a` and `b`, you can make them *mutually exclusive* using the `mutually excludes` keywords:
+
+```rsl title="excludes.rsl"
+args:
+  a int
+  b int
+
+  a mutually excludes b
+
+if is_defined("a"):
+  print("a:", a)
+else:
+  print("b:", b)
+```
+
+Without this exclusion constraint, both `a` and `b` would be required args. However, with it, only one can be given at a time. If you give both, you get an error:
+
+```
+excludes.rsl 1 2
+```
+
+<div class="result">
+```
+'a' excludes 'b', but 'b' was given
+
+<usage string here>
+```
+</div>
+
+Invoking with just `a` or `b` is fine though, for example just `b`:
+
+```
+excludes.rsl --b 2
+```
+
+<div class="result">
+```
+b: 2
+```
+</div>
+
+In addition to *exclusion*, you can also express *requirement*. This takes a similar syntax.
+For example, if we wanted to have a script which could either take a full name as a single arg, or first/last names as separate args, we can do this:
+
+```rsl title="requires.rsl"
+args:
+  first_name a string
+  last_name b string
+  full_name c string
+
+  first_name mutually requires last_name
+  full_name mutually excludes first_name, last_name
+
+if is_defined("full_name"):
+  print("Full name:", full_name)
+else:
+  print("First/Last name:", first_name, last_name)
+```
+
+To demonstrate, below are a few examples (using the alphabetical shorthands for brevity).
+
+Separate first and last names:
+
+```
+requires.rsl -a Alice -b Bobson
+```
+
+<div class="result">
+```
+First/Last name: Alice Bobson
+```
+</div>
+
+Full name:
+
+```
+requires.rsl -c "Alice Bobson"
+```
+
+<div class="result">
+```
+Full name: Alice Bobson
+```
+</div>
+
+Just first name:
+
+```
+requires.rsl -a Alice
+```
+
+<div class="result">
+```
+'first_name' requires 'last_name', but 'last_name' was not given
+
+<usage string here>
+```
+</div>
+
+First, last, and full names:
+
+```
+requires.rsl -a Alice -b Bobson -c "Alice Bobson"
+```
+
+<div class="result">
+```
+'first_name' excludes 'full_name', but 'full_name' was given
+
+<usage string here>
+```
+</div>
+
 ## Summary
 
 - RSL takes a *declarative* approach to args. Rad handles parsing user input.
@@ -206,7 +323,7 @@ As with other constraints, rad will validate input against this regex, and if it
 
     `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
 
-- You can apply constraints to arguments inside the arg block, such as `enum` and `regex` constraints.
+- You can apply constraints to arguments inside the arg block, such as `enum`, `regex`, and relational constraints.
 - Details in the arg block are used by rad to provide a better usage/help string.
 
 ## Next

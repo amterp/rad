@@ -78,6 +78,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "alice", "--color=never")
 	expected := `Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
+
 Usage:
   <name>
 
@@ -98,6 +99,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "Charlie", "--color=never")
 	expected := `Invalid 'name' value: Charlie (valid values: Alice, Bob)
+
 Usage:
   <name>
 
