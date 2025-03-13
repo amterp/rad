@@ -8,6 +8,8 @@ import (
 	com "rad/core/common"
 	"strings"
 
+	"github.com/samber/lo"
+
 	"github.com/amterp/rts"
 
 	"github.com/fatih/color"
@@ -190,9 +192,9 @@ func (r *RadRunner) Run() error {
 		args = args[1:]
 	}
 
-	var missingArgs []string
+	atLeastOneFlagConfigured := false
+	var missingArgs []RslArg
 	for _, scriptArg := range scriptArgs {
-		argName := scriptArg.GetExternalName()
 		if !scriptArg.Configured() {
 			// flag has not been explicitly set by the user
 			if posArgsIndex < len(args) {
@@ -208,9 +210,14 @@ func (r *RadRunner) Run() error {
 				// all bools are implicitly optional and default false, unless explicitly defaulted to true
 				// this branch implies it was not defaulted to true
 			} else {
-				missingArgs = append(missingArgs, argName)
+				missingArgs = append(missingArgs, scriptArg)
+				continue // don't validate constraints if it's missing
 			}
+		} else {
+			// arg was given via flag (not positional)
+			atLeastOneFlagConfigured = true
 		}
+
 		err := scriptArg.ValidateConstraints()
 		if err != nil {
 			RP.UsageErrorExit(err.Error())
@@ -219,19 +226,31 @@ func (r *RadRunner) Run() error {
 
 	// finished with our custom additional parsing
 
-	if len(missingArgs) > 0 && len(args) == 0 {
+	if len(missingArgs) > 0 && len(args) == 0 && !atLeastOneFlagConfigured {
 		// if no args were passed but some are required, treat that as the user not really trying to use the script
 		// but instead just asking for help
 		r.RunUsageExit()
 	}
 
-	if len(missingArgs) > 0 {
-		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", missingArgs))
-	}
-
 	// error if not all positional args were used
 	if posArgsIndex < len(args) {
 		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
+	}
+
+	constraintCtx := ConstraintCtx{
+		MissingArgs: missingArgs,
+		ScriptArgs:  scriptArgs,
+	}
+	for _, scriptArg := range scriptArgs {
+		err := scriptArg.ValidateRelationalConstraints(constraintCtx)
+		if err != nil {
+			RP.UsageErrorExit(fmt.Sprintf("Invalid args: %v", err))
+		}
+	}
+
+	missingArgs = removeMissingIfExcludedByOtherDefinedArg(missingArgs, scriptArgs)
+	if len(missingArgs) > 0 {
+		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", TransformRslArgs(missingArgs, RslArg.GetExternalName)))
 	}
 
 	// at this point, we'll assume we've been given a script to run, and we should do that now
@@ -314,4 +333,25 @@ func (r *RadRunner) createRslArgsFromScript() []RslArg {
 func readSource(scriptPath string) (string, error) {
 	source, err := os.ReadFile(scriptPath)
 	return string(source), err
+}
+
+// an argument is only *missing* for error purposes if it is not excluded by another arg, which *is* defined.
+// otherwise, this is just a valid constraint working as expected.
+func removeMissingIfExcludedByOtherDefinedArg(missingArgs []RslArg, args []RslArg) []RslArg {
+	missingIdentifiers := TransformRslArgs(missingArgs, RslArg.GetIdentifier)
+
+	filteredMissingArgs := make([]RslArg, 0)
+	for _, missingArg := range missingArgs {
+		isMissing := true
+		for _, potentialExcluder := range args {
+			if potentialExcluder.Excludes(missingArg) && !lo.Contains(missingIdentifiers, potentialExcluder.GetIdentifier()) {
+				isMissing = false
+				break
+			}
+		}
+		if isMissing {
+			filteredMissingArgs = append(filteredMissingArgs, missingArg)
+		}
+	}
+	return filteredMissingArgs
 }

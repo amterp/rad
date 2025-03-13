@@ -41,6 +41,9 @@ func (i *Interpreter) InitArgs(args []RslArg) {
 	env := i.env
 
 	for _, arg := range args {
+		if !arg.IsDefined() {
+			continue
+		}
 		switch coerced := arg.(type) {
 		case *BoolRslArg:
 			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), coerced.Value))

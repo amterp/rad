@@ -78,7 +78,7 @@ func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 
 func Test_Misc_PrintsHelpToStderrIfUnknownGlobalFlag(t *testing.T) {
 	setupAndRunArgs(t, "--asd", "--color=never")
-	expected := "unknown flag: --asd\n" + radHelp
+	expected := "unknown flag: --asd\n\n" + radHelp
 	assertError(t, 1, expected)
 	resetTestState()
 }

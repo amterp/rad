@@ -74,6 +74,7 @@ const (
 	FUNC_MAX                = "max"
 	FUNC_CLAMP              = "clamp"
 	FUNC_REVERSE            = "reverse"
+	FUNC_IS_DEFINED         = "is_defined"
 
 	namedArgReverse  = "reverse"
 	namedArgTitle    = "title"
@@ -1005,6 +1006,19 @@ func init() {
 				arg := f.args[0]
 				rslString := arg.value.RequireStr(f.i, arg.node)
 				return newRslValues(f.i, f.callNode, rslString.Reverse())
+			},
+		},
+		{
+			Name:           FUNC_IS_DEFINED,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 1,
+			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
+			NamedArgs:      NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				arg := f.args[0]
+				str := arg.value.RequireStr(f.i, arg.node).Plain()
+				_, ok := f.i.env.GetVar(str)
+				return newRslValues(f.i, f.callNode, ok)
 			},
 		},
 	}

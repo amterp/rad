@@ -82,6 +82,7 @@ print('hi')
 `
 	setupAndRunCode(t, rsl, "one", "--color=never")
 	expected := `Missing required arguments: [mandatory2]
+
 Usage:
   <mandatory1> <mandatory2> [optional]
 
@@ -99,14 +100,14 @@ Script args:
 func TestArgs_CanParseAllTypes(t *testing.T) {
 	rsl := `
 args:
-	stringArg string
-	intArg int
-	floatArg float
-	boolArg bool
-	stringArrayArg string[]
-	intArrayArg int[]
-	floatArrayArg float[]
-	boolArrayArg bool[]
+    stringArg string
+    intArg int
+    floatArg float
+    boolArg bool
+    stringArrayArg string[]
+    intArrayArg int[]
+    floatArrayArg float[]
+    boolArrayArg bool[]
 print(upper(stringArg))
 print(intArg + 1)
 print(floatArg + 1.1)
@@ -382,6 +383,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "alice", "--color=never")
 	expected := `Missing required arguments: [age]
+
 Usage:
   <name> <age>
 
@@ -402,6 +404,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "alice", "2", "3", "--color=never")
 	expected := `Too many positional arguments. Unused: [3]
+
 Usage:
   <name> <age>
 
@@ -422,6 +425,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "alice", "2", "-s", "--color=never")
 	expected := `unknown shorthand flag: 's' in -s
+
 Usage:
   <name> <age>
 
