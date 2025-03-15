@@ -200,16 +200,16 @@ As with other constraints, rad will validate input against this regex, and if it
 
 ### Relational
 
-Relational constraints let you express logical relationships between your script’s arguments. There are two types of constraints you can define:
+Relational constraints let you express logical relationships between your script's arguments. There are two types of constraints you can define:
 
-- `excludes` (arguments can’t appear together)
+- `excludes` (arguments can't appear together)
 - `requires` (an argument depends on another argument being provided)
 
 You can optionally precede these with the `mutually` keyword to indicate that the constraint applies in both directions.
 
 #### Exclusion
 
-Use excludes to prevent arguments from being specified together. For example, consider a script that accepts either a file (--file) or a URL (--url), but not both:
+Use `excludes` to prevent arguments from being specified together. For example, consider a script that accepts either a file (`--file`) or a URL (`--url`), but not both:
 
 ```rsl title="fetcher.rsl"
 args:
@@ -243,11 +243,11 @@ Invalid arguments: 'file' excludes 'url', but 'url' was given
 
 #### Requirement
 
-Use the `requires` keyword when specifying one argument means another argument must also be provided. 
-The relationship can be one-way (requires) or two-way (mutually requires).
+Use the `requires` keyword to indicate that, when one argument is defined, so must another argument.
 
-Consider a script that can authenticate either by using a token or by providing a username/password combination. 
-If the user provides a username, the password is required:
+Consider a script that can authenticate either by using a token or by providing a username/password pair. 
+
+If the user provides a username, the password is also required.
 
 ```rsl title="auth.rsl"
 args:

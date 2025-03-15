@@ -2,6 +2,10 @@
 
 Only for major & minor version releases. Contains only notable items.
 
+## 0.6 (ongoing)
+
+- Relational arg constraints: `requires`, `excludes`
+
 ## 0.5
 
 - Replaced handwritten lexer/parser with tree sitter.

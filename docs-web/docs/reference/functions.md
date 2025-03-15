@@ -217,6 +217,14 @@ str(any) -> string
 
 Converts any input to a string.
 
+### is_defined
+
+Checks if a variable exists.
+
+```
+is_defined(var: string) -> bool
+```
+
 ## Input
 
 ### input
