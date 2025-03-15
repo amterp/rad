@@ -200,120 +200,89 @@ As with other constraints, rad will validate input against this regex, and if it
 
 ### Relational
 
-If you have several args and you want to require users to always define a subset of them together, or ensure that if they define one, then they don't define another, then you can use **relational** constraints.
+Relational constraints let you express logical relationships between your script’s arguments. There are two types of constraints you can define:
 
-For example, if you have args `a` and `b`, you can make them *mutually exclusive* using the `mutually excludes` keywords:
+- `excludes` (arguments can’t appear together)
+- `requires` (an argument depends on another argument being provided)
 
-```rsl title="excludes.rsl"
+You can optionally precede these with the `mutually` keyword to indicate that the constraint applies in both directions.
+
+#### Exclusion
+
+Use excludes to prevent arguments from being specified together. For example, consider a script that accepts either a file (--file) or a URL (--url), but not both:
+
+```rsl title="fetcher.rsl"
 args:
-  a int
-  b int
+  file string
+  url string
 
-  a mutually excludes b
+  file mutually excludes url
 
-if is_defined("a"):
-  print("a:", a)
+if is_defined("file"):
+    print("Reading from file:", file)
 else:
-  print("b:", b)
+    print("Fetching from URL:", url)
 ```
 
-Without this exclusion constraint, both `a` and `b` would be required args. However, with it, only one can be given at a time. If you give both, you get an error:
+You can then provide either argument:
 
 ```
-excludes.rsl 1 2
+> rad fetcher.rsl --file data.json
+Reading from file: data.json
+
+> rad fetcher.rsl --url https://example.com/data.json
+Fetching from URL: https://example.com/data.json
 ```
 
-<div class="result">
-```
-'a' excludes 'b', but 'b' was given
-
-<usage string here>
-```
-</div>
-
-Invoking with just `a` or `b` is fine though, for example just `b`:
+If both are provided, Rad gives a clear error:
 
 ```
-excludes.rsl --b 2
+> rad fetcher.rsl --file data.json --url https://example.com/data.json
+Invalid arguments: 'file' excludes 'url', but 'url' was given
 ```
 
-<div class="result">
-```
-b: 2
-```
-</div>
+#### Requirement
 
-In addition to *exclusion*, you can also express *requirement*. This takes a similar syntax.
-For example, if we wanted to have a script which could either take a full name as a single arg, or first/last names as separate args, we can do this:
+Use the `requires` keyword when specifying one argument means another argument must also be provided. 
+The relationship can be one-way (requires) or two-way (mutually requires).
 
-```rsl title="requires.rsl"
+Consider a script that can authenticate either by using a token or by providing a username/password combination. 
+If the user provides a username, the password is required:
+
+```rsl title="auth.rsl"
 args:
-  first_name a string
-  last_name b string
-  full_name c string
+  token string
+  username string
+  password string
 
-  first_name mutually requires last_name
-  full_name mutually excludes first_name, last_name
+  username mutually requires password
+  token mutually excludes username, password
 
-if is_defined("full_name"):
-  print("Full name:", full_name)
+if is_defined("token"):
+    print("Authenticating with token:", token)
 else:
-  print("First/Last name:", first_name, last_name)
+    print("Authenticating user:", username)
 ```
 
-To demonstrate, below are a few examples (using the alphabetical shorthands for brevity).
-
-Separate first and last names:
+Valid usage examples:
 
 ```
-requires.rsl -a Alice -b Bobson
+> rad auth.rsl --token abc123
+Authenticating with token: abc123
+
+> rad auth.rsl --username alice --password secret
+Authenticating user: alice
 ```
 
-<div class="result">
-```
-First/Last name: Alice Bobson
-```
-</div>
-
-Full name:
+Invalid usage examples:
 
 ```
-requires.rsl -c "Alice Bobson"
-```
+> rad auth.rsl --username alice
+Invalid arguments: 'username' requires 'password', but 'password' was not provided
 
-<div class="result">
+> rad auth.rsl --token abc123 --password secret
+Invalid arguments: 'token' excludes 'password', but 'password' was given
 ```
-Full name: Alice Bobson
-```
-</div>
-
-Just first name:
-
-```
-requires.rsl -a Alice
-```
-
-<div class="result">
-```
-'first_name' requires 'last_name', but 'last_name' was not given
-
-<usage string here>
-```
-</div>
-
-First, last, and full names:
-
-```
-requires.rsl -a Alice -b Bobson -c "Alice Bobson"
-```
-
-<div class="result">
-```
-'first_name' excludes 'full_name', but 'full_name' was given
-
-<usage string here>
-```
-</div>
 
 ## Summary
 
