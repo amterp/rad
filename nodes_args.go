@@ -15,6 +15,8 @@ type ArgBlock struct {
 	EnumConstraints  map[string]*ArgEnumConstraint
 	RegexConstraints map[string]*ArgRegexConstraint
 	RangeConstraints map[string]*ArgRangeConstraint
+	Requirements     []ArgRequirement
+	Exclusions       []ArgExclusion
 }
 
 type ArgDecl struct {
@@ -87,11 +89,11 @@ type ArgDeclComment struct {
 
 type ArgEnumConstraint struct {
 	BaseNode
-	ArgName ArgConstraintArgName
+	ArgName ArgName
 	Values  ArgEnumValues
 }
 
-type ArgConstraintArgName struct {
+type ArgName struct {
 	BaseNode
 	Name string
 }
@@ -103,7 +105,7 @@ type ArgEnumValues struct {
 
 type ArgRegexConstraint struct {
 	BaseNode
-	ArgName ArgConstraintArgName
+	ArgName ArgName
 	Regex   ArgRegexValue
 }
 
@@ -114,7 +116,7 @@ type ArgRegexValue struct {
 
 type ArgRangeConstraint struct {
 	BaseNode
-	ArgName ArgConstraintArgName
+	ArgName ArgName
 	Range   ArgRangeValue
 }
 
@@ -135,6 +137,20 @@ type ArgRangeMinMax struct {
 	Value float64
 }
 
+type ArgRequirement struct {
+	BaseNode
+	Arg      ArgName
+	IsMutual bool
+	Required []ArgName
+}
+
+type ArgExclusion struct {
+	BaseNode
+	Arg      ArgName
+	IsMutual bool
+	Excluded []ArgName
+}
+
 func newArgBlock(src string, node *ts.Node) (*ArgBlock, bool) {
 	return &ArgBlock{
 		BaseNode:         newBaseNode(src, node),
@@ -142,6 +158,8 @@ func newArgBlock(src string, node *ts.Node) (*ArgBlock, bool) {
 		EnumConstraints:  findArgEnumConstraints(src, node),
 		RegexConstraints: findArgRegexConstraints(src, node),
 		RangeConstraints: findArgRangeConstraints(src, node),
+		Requirements:     findArgRequirements(src, node),
+		Exclusions:       findArgExclusions(src, node),
 	}, true
 }
 
@@ -270,7 +288,7 @@ func findArgEnumConstraints(src string, node *ts.Node) map[string]*ArgEnumConstr
 		values := extractStringList(src, valuesNode)
 		constraints[name] = &ArgEnumConstraint{
 			BaseNode: newBaseNode(src, &constraint),
-			ArgName: ArgConstraintArgName{
+			ArgName: ArgName{
 				BaseNode: newBaseNode(src, nameNode),
 				Name:     name,
 			},
@@ -299,7 +317,7 @@ func findArgRegexConstraints(src string, node *ts.Node) map[string]*ArgRegexCons
 		regexStr := extractString(src, regexStrNode)
 		constraints[name] = &ArgRegexConstraint{
 			BaseNode: newBaseNode(src, &constraint),
-			ArgName: ArgConstraintArgName{
+			ArgName: ArgName{
 				BaseNode: newBaseNode(src, nameNode),
 				Name:     regexStr,
 			},
@@ -353,7 +371,7 @@ func findArgRangeConstraints(src string, node *ts.Node) map[string]*ArgRangeCons
 
 		constraints[name] = &ArgRangeConstraint{
 			BaseNode: newBaseNode(src, &constraint),
-			ArgName: ArgConstraintArgName{
+			ArgName: ArgName{
 				BaseNode: newBaseNode(src, nameNode),
 				Name:     name,
 			},
@@ -370,6 +388,82 @@ func findArgRangeConstraints(src string, node *ts.Node) map[string]*ArgRangeCons
 				Max: rMax,
 			},
 		}
+	}
+
+	return constraints
+}
+
+func findArgRequirements(src string, node *ts.Node) []ArgRequirement {
+	requiresConstraints := node.ChildrenByFieldName("requires_constraint", node.Walk())
+	constraints := make([]ArgRequirement, 0)
+
+	if len(requiresConstraints) == 0 {
+		return constraints
+	}
+
+	for _, constraint := range requiresConstraints {
+		nameNode := constraint.ChildByFieldName("arg_name")
+		name := src[nameNode.StartByte():nameNode.EndByte()]
+
+		mutuallyNode := constraint.ChildByFieldName("mutually")
+		requiredNodes := constraint.ChildrenByFieldName("required", constraint.Walk())
+
+		requiredArgs := make([]ArgName, 0)
+		for _, requiredNode := range requiredNodes {
+			requiredName := src[requiredNode.StartByte():requiredNode.EndByte()]
+			requiredArgs = append(requiredArgs, ArgName{
+				BaseNode: newBaseNode(src, &requiredNode),
+				Name:     requiredName,
+			})
+		}
+
+		constraints = append(constraints, ArgRequirement{
+			BaseNode: newBaseNode(src, &constraint),
+			Arg: ArgName{
+				BaseNode: newBaseNode(src, nameNode),
+				Name:     name,
+			},
+			IsMutual: mutuallyNode != nil,
+			Required: requiredArgs,
+		})
+	}
+
+	return constraints
+}
+
+func findArgExclusions(src string, node *ts.Node) []ArgExclusion {
+	excludesConstraints := node.ChildrenByFieldName("excludes_constraint", node.Walk())
+	constraints := make([]ArgExclusion, 0)
+
+	if len(excludesConstraints) == 0 {
+		return constraints
+	}
+
+	for _, constraint := range excludesConstraints {
+		nameNode := constraint.ChildByFieldName("arg_name")
+		name := src[nameNode.StartByte():nameNode.EndByte()]
+
+		mutuallyNode := constraint.ChildByFieldName("mutually")
+		excludedNodes := constraint.ChildrenByFieldName("excluded", constraint.Walk())
+
+		excludedArgs := make([]ArgName, 0)
+		for _, excludedNode := range excludedNodes {
+			excludedName := src[excludedNode.StartByte():excludedNode.EndByte()]
+			excludedArgs = append(excludedArgs, ArgName{
+				BaseNode: newBaseNode(src, &excludedNode),
+				Name:     excludedName,
+			})
+		}
+
+		constraints = append(constraints, ArgExclusion{
+			BaseNode: newBaseNode(src, &constraint),
+			Arg: ArgName{
+				BaseNode: newBaseNode(src, nameNode),
+				Name:     name,
+			},
+			IsMutual: mutuallyNode != nil,
+			Excluded: excludedArgs,
+		})
 	}
 
 	return constraints
