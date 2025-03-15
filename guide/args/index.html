@@ -1220,14 +1220,14 @@ Script args:
 No other characters will be accepted, so <code>Alice</code> will be a valid value, but <code>bob</code> or <code>John123</code> are not.</p>
 <p>As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.</p>
 <h3 id="relational">Relational<a class="headerlink" href="#relational" title="Permanent link">&para;</a></h3>
-<p>Relational constraints let you express logical relationships between your script’s arguments. There are two types of constraints you can define:</p>
+<p>Relational constraints let you express logical relationships between your script's arguments. There are two types of constraints you can define:</p>
 <ul>
-<li><code>excludes</code> (arguments can’t appear together)</li>
+<li><code>excludes</code> (arguments can't appear together)</li>
 <li><code>requires</code> (an argument depends on another argument being provided)</li>
 </ul>
 <p>You can optionally precede these with the <code>mutually</code> keyword to indicate that the constraint applies in both directions.</p>
 <h4 id="exclusion">Exclusion<a class="headerlink" href="#exclusion" title="Permanent link">&para;</a></h4>
-<p>Use excludes to prevent arguments from being specified together. For example, consider a script that accepts either a file (--file) or a URL (--url), but not both:</p>
+<p>Use <code>excludes</code> to prevent arguments from being specified together. For example, consider a script that accepts either a file (<code>--file</code>) or a URL (<code>--url</code>), but not both:</p>
 <div class="highlight"><span class="filename">fetcher.rsl</span><pre><span></span><code><span class="nf">args:</span>
 <span class="w">  </span>file<span class="w"> </span>string
 <span class="w">  </span>url<span class="w"> </span>string
@@ -1251,10 +1251,9 @@ Fetching from URL: https://example.com/data.json
 Invalid arguments: &#39;file&#39; excludes &#39;url&#39;, but &#39;url&#39; was given
 </code></pre></div>
 <h4 id="requirement">Requirement<a class="headerlink" href="#requirement" title="Permanent link">&para;</a></h4>
-<p>Use the <code>requires</code> keyword when specifying one argument means another argument must also be provided. 
-The relationship can be one-way (requires) or two-way (mutually requires).</p>
-<p>Consider a script that can authenticate either by using a token or by providing a username/password combination. 
-If the user provides a username, the password is required:</p>
+<p>Use the <code>requires</code> keyword to indicate that, when one argument is defined, so must another argument.</p>
+<p>Consider a script that can authenticate either by using a token or by providing a username/password pair. </p>
+<p>If the user provides a username, the password is also required.</p>
 <div class="highlight"><span class="filename">auth.rsl</span><pre><span></span><code><span class="nf">args:</span>
 <span class="w">  </span>token<span class="w"> </span>string
 <span class="w">  </span>username<span class="w"> </span>string
