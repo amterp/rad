@@ -448,6 +448,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#relational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relational
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relational">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exclusion
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -968,6 +1001,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#relational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relational
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relational">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exclusion
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1153,6 +1219,69 @@ Script args:
 <p>In this example, a valid <code>name</code> value must start with a capital letter, and can then be followed by any number of lowercase letters.
 No other characters will be accepted, so <code>Alice</code> will be a valid value, but <code>bob</code> or <code>John123</code> are not.</p>
 <p>As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.</p>
+<h3 id="relational">Relational<a class="headerlink" href="#relational" title="Permanent link">&para;</a></h3>
+<p>Relational constraints let you express logical relationships between your script’s arguments. There are two types of constraints you can define:</p>
+<ul>
+<li><code>excludes</code> (arguments can’t appear together)</li>
+<li><code>requires</code> (an argument depends on another argument being provided)</li>
+</ul>
+<p>You can optionally precede these with the <code>mutually</code> keyword to indicate that the constraint applies in both directions.</p>
+<h4 id="exclusion">Exclusion<a class="headerlink" href="#exclusion" title="Permanent link">&para;</a></h4>
+<p>Use excludes to prevent arguments from being specified together. For example, consider a script that accepts either a file (--file) or a URL (--url), but not both:</p>
+<div class="highlight"><span class="filename">fetcher.rsl</span><pre><span></span><code><span class="nf">args:</span>
+<span class="w">  </span>file<span class="w"> </span>string
+<span class="w">  </span>url<span class="w"> </span>string
+
+<span class="w">  </span>file<span class="w"> </span>mutually<span class="w"> </span>excludes<span class="w"> </span>url
+
+<span class="k">if</span><span class="w"> </span>is_defined(<span class="s">&quot;file&quot;):</span>
+<span class="s">    print(&quot;Reading from file:&quot;, file)</span>
+<span class="s">else:</span>
+<span class="s">    print(&quot;Fetching from URL:&quot;</span>,<span class="w"> </span>url)
+</code></pre></div>
+<p>You can then provide either argument:</p>
+<div class="highlight"><pre><span></span><code>&gt; rad fetcher.rsl --file data.json
+Reading from file: data.json
+
+&gt; rad fetcher.rsl --url https://example.com/data.json
+Fetching from URL: https://example.com/data.json
+</code></pre></div>
+<p>If both are provided, Rad gives a clear error:</p>
+<div class="highlight"><pre><span></span><code>&gt; rad fetcher.rsl --file data.json --url https://example.com/data.json
+Invalid arguments: &#39;file&#39; excludes &#39;url&#39;, but &#39;url&#39; was given
+</code></pre></div>
+<h4 id="requirement">Requirement<a class="headerlink" href="#requirement" title="Permanent link">&para;</a></h4>
+<p>Use the <code>requires</code> keyword when specifying one argument means another argument must also be provided. 
+The relationship can be one-way (requires) or two-way (mutually requires).</p>
+<p>Consider a script that can authenticate either by using a token or by providing a username/password combination. 
+If the user provides a username, the password is required:</p>
+<div class="highlight"><span class="filename">auth.rsl</span><pre><span></span><code><span class="nf">args:</span>
+<span class="w">  </span>token<span class="w"> </span>string
+<span class="w">  </span>username<span class="w"> </span>string
+<span class="w">  </span>password<span class="w"> </span>string
+
+<span class="w">  </span>username<span class="w"> </span>mutually<span class="w"> </span>requires<span class="w"> </span>password
+<span class="w">  </span>token<span class="w"> </span>mutually<span class="w"> </span>excludes<span class="w"> </span>username,<span class="w"> </span>password
+
+<span class="k">if</span><span class="w"> </span>is_defined(<span class="s">&quot;token&quot;):</span>
+<span class="s">    print(&quot;Authenticating with token:&quot;, token)</span>
+<span class="s">else:</span>
+<span class="s">    print(&quot;Authenticating user:&quot;</span>,<span class="w"> </span>username)
+</code></pre></div>
+<p>Valid usage examples:</p>
+<div class="highlight"><pre><span></span><code>&gt; rad auth.rsl --token abc123
+Authenticating with token: abc123
+
+&gt; rad auth.rsl --username alice --password secret
+Authenticating user: alice
+</code></pre></div>
+<p>Invalid usage examples:</p>
+<div class="highlight"><pre><span></span><code>&gt; rad auth.rsl --username alice
+Invalid arguments: &#39;username&#39; requires &#39;password&#39;, but &#39;password&#39; was not provided
+
+&gt; rad auth.rsl --token abc123 --password secret
+Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;password&#39; was given
+</code></pre></div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>RSL takes a <em>declarative</em> approach to args. Rad handles parsing user input.</li>
@@ -1162,7 +1291,7 @@ No other characters will be accepted, so <code>Alice</code> will be a valid valu
 <p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
 </li>
 <li>
-<p>You can apply constraints to arguments inside the arg block, such as <code>enum</code> and <code>regex</code> constraints.</p>
+<p>You can apply constraints to arguments inside the arg block, such as <code>enum</code>, <code>regex</code>, and relational constraints.</p>
 </li>
 <li>Details in the arg block are used by rad to provide a better usage/help string.</li>
 </ul>

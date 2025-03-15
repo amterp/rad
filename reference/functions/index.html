@@ -1018,6 +1018,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#trim_prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim_prefix
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim_suffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim_suffix
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1172,6 +1190,60 @@
   <a href="#sum" class="md-nav__link">
     <span class="md-ellipsis">
       sum
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      round
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      floor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      ceil
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#min" class="md-nav__link">
+    <span class="md-ellipsis">
+      min
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    <span class="md-ellipsis">
+      max
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp
     </span>
   </a>
   
@@ -1712,6 +1784,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#trim_prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim_prefix
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim_suffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      trim_suffix
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1866,6 +1956,60 @@
   <a href="#sum" class="md-nav__link">
     <span class="md-ellipsis">
       sum
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      round
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      floor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      ceil
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#min" class="md-nav__link">
+    <span class="md-ellipsis">
+      min
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    <span class="md-ellipsis">
+      max
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp
     </span>
   </a>
   
@@ -2258,6 +2402,16 @@ Unsure!
 </code></pre></div>
 <p>Trims the start and end of an input string.
 If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.</p>
+<h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>trim_prefix(text string, chars string = &quot; \t\n&quot;) -&gt; string
+</code></pre></div>
+<p>Trims the start of an input string.
+If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.</p>
+<h3 id="trim_suffix">trim_suffix<a class="headerlink" href="#trim_suffix" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>trim_suffix(text string, chars string = &quot; \t\n&quot;) -&gt; string
+</code></pre></div>
+<p>Trims the end of an input string.
+If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.</p>
 <h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
 <h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>keys(input<span class="w"> </span>map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>[]
@@ -2329,6 +2483,48 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
 <div class="highlight"><pre><span></span><code>sum(list[number])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
 </code></pre></div>
 <p>Sums the input list of numbers to a resulting float.</p>
+<h3 id="round">round<a class="headerlink" href="#round" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>round(number<span class="w"> </span>float|<span class="k">int</span>,<span class="w"> </span>precision<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">0</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Rounds the input number to the specified precision.
+If <code>precision</code> is unspecified it defaults to 0 and rounds to the nearest integer.</p>
+<h3 id="floor">floor<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>floor(num<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Rounds the given input down to the next integer.</p>
+<div class="highlight"><pre><span></span><code>floor(1.89) -&gt; 1
+</code></pre></div>
+<h3 id="ceil">ceil<a class="headerlink" href="#ceil" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ceil(num<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Rounds the given input up to the next integer.</p>
+<div class="highlight"><pre><span></span><code>ceil(1.21) -&gt; 2
+</code></pre></div>
+<h3 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>min(nums<span class="w"> </span>list[float|num])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Returns the minimum number in the provided list.</p>
+<div class="highlight"><pre><span></span><code>min([1, 2, 3, 4]) -&gt; 1
+</code></pre></div>
+<h3 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>max(nums<span class="w"> </span>list[float|num])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Returns the maximum number in the provided list.</p>
+<div class="highlight"><pre><span></span><code>max([1, 2, 3, 4]) -&gt; 4
+</code></pre></div>
+<h3 id="clamp">clamp<a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>clamp(val,<span class="w"> </span>min,<span class="w"> </span>max<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+</code></pre></div>
+<p>Clamps the given number <code>val</code> between <code>min</code> and <code>max</code>.</p>
+<p>Specifically, <code>clamp</code> returns:
+  -  <code>val</code> if it is between the provided min and max. 
+  -  <code>min</code> if <code>val</code> is lower than <code>min</code>.
+  -  <code>max</code> if <code>val</code> is greater <code>max</code>.</p>
+<p><code>min</code> must be &lt;= <code>max</code>, else the function will error.</p>
+<div class="highlight"><pre><span></span><code>clamp(25, 20, 30) -&gt; 25
+clamp(10, 20, 30) -&gt; 20
+clamp(40, 20, 30) -&gt; 30
+</code></pre></div>
 <h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
 <h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
 <p>Exits the script with the given exit code</p>
