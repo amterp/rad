@@ -11,7 +11,6 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 
 	"github.com/samber/lo"
-	"github.com/spf13/pflag"
 )
 
 type ConstraintCtx struct {
@@ -26,12 +25,10 @@ type RslArg interface {
 	GetArgUsage() string
 	GetDescription() string
 	DefaultAsString() string
-	HasNonZeroDefault() bool
-	isRegistered() bool
+	HasNonZeroDefault() bool // todo
 	Register()
 	Configured() bool // configured by the user in some way
 	IsDefined() bool  // either configured or has a default
-	Lookup() *pflag.Flag
 	SetValue(value string)
 	IsOptional() bool
 	GetNode() *ts.Node // nil if not a script arg
@@ -89,10 +86,6 @@ func (f *BaseRslArg) HasNonZeroDefault() bool {
 	return f.hasNonZeroDefault
 }
 
-func (f *BaseRslArg) isRegistered() bool {
-	return f.registered
-}
-
 func (f *BaseRslArg) Configured() bool {
 	return RFlagSet.Lookup(f.ExternalName).Changed || f.manuallySet
 }
@@ -101,16 +94,13 @@ func (f *BaseRslArg) IsDefined() bool {
 	return f.Configured() || f.hasDefault
 }
 
-func (f *BaseRslArg) Lookup() *pflag.Flag {
-	return RFlagSet.Lookup(f.ExternalName)
-}
-
 func (f *BaseRslArg) SetValue(_ string) {
 	f.manuallySet = true
 }
 
 func (f *BaseRslArg) IsOptional() bool {
 	if f.scriptArg == nil {
+		// global args are indeed optional
 		return true
 	}
 
