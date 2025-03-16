@@ -16,7 +16,6 @@ it works!!!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ExprThenIndexing(t *testing.T) {
@@ -31,5 +30,4 @@ print(sort(a)[2:][-1])
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

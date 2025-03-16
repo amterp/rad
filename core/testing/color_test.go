@@ -18,7 +18,6 @@ print(blue([true, "hi", 10]))
 	expected += blue("[ true, \"hi\", 10 ]") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_RespectsNoColorFlag(t *testing.T) {
@@ -29,7 +28,6 @@ print(red("Alice"))
 	expected := "Alice\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanConcat(t *testing.T) {
@@ -40,7 +38,6 @@ print(red("Alice ") + blue("Bob ") + yellow("Charlie"))
 	expected := red("Alice ") + blue("Bob ") + yellow("Charlie") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanUpperLower(t *testing.T) {
@@ -52,7 +49,6 @@ print(lower(red("Alice")))
 	expected := red("ALICE") + "\n" + red("alice") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_ChangesDoNotAffectOriginalString(t *testing.T) {
@@ -65,7 +61,6 @@ print(a)
 	expected := red("alice") + "\n" + "Alice" + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanIndex(t *testing.T) {
@@ -77,7 +72,6 @@ print(a[2])
 	expected := red("I") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanSlice(t *testing.T) {
@@ -89,7 +83,6 @@ print(a[2:4])
 	expected := "IC" + "\n" // TODO this *should* be red
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanPrintEmojis(t *testing.T) {
@@ -100,7 +93,6 @@ print(red("hi 👋"))
 	expected := red("hi 👋") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_CanPrintInArray(t *testing.T) {
@@ -114,7 +106,6 @@ print([a, b, c])
 	expected := "[ \"Alice\", \"" + red("Alice") + "\", \"" + red("Alice") + "\" ]\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo this should not be the case!!
@@ -130,7 +121,6 @@ print(unique([a, b, c]))
 	expected := "[ \"Alice\", \"" + red("Alice") + "\" ]\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestColor_Equality(t *testing.T) {
@@ -145,5 +135,4 @@ print(b == c)
 	expected := "true\ntrue\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

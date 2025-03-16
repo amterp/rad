@@ -12,7 +12,6 @@ print(a + 1.5)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3.9\n123125.6232\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseFloat_ErrorsOnAlphabetical(t *testing.T) {
@@ -26,7 +25,6 @@ a = parse_float("asd")
       ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_ParseFloat_CanParseInt(t *testing.T) {
@@ -37,7 +35,6 @@ print(a + 1.1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3.1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseFloat_CanReadErrorIfNone(t *testing.T) {
@@ -49,7 +46,6 @@ print(err)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3.9\n{ }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseFloat_CanReadErrorIfExists(t *testing.T) {
@@ -68,5 +64,4 @@ RAD20002
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

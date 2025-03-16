@@ -14,7 +14,6 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSort_MixedTypes(t *testing.T) {
@@ -29,7 +28,6 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSort_Reverse_Basic(t *testing.T) {
@@ -45,7 +43,6 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSort_Reverse_MixedTypes(t *testing.T) {
@@ -60,5 +57,4 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

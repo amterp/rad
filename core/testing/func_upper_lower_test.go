@@ -13,5 +13,4 @@ alice
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

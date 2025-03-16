@@ -10,7 +10,6 @@ print(a + 1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestParseJson_Float(t *testing.T) {
@@ -21,7 +20,6 @@ print(a + 1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3.1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestParseJson_Bool(t *testing.T) {
@@ -32,7 +30,6 @@ print(a or false)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestParseJson_String(t *testing.T) {
@@ -43,7 +40,6 @@ print(a + "e")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "alicee\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestParseJson_Map(t *testing.T) {
@@ -66,7 +62,6 @@ audie
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestParseJson_ErrorsOnInvalidJson(t *testing.T) {
@@ -81,7 +76,6 @@ parse_json(r'{asd asd}')
   Error parsing JSON: invalid character 'a' looking for beginning of object key string
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestParseJson_ErrorsOnInvalidType(t *testing.T) {
@@ -95,7 +89,6 @@ parse_json(10)
              ^^ Got "int" as the 1st argument of parse_json(), but must be: string
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestParseJson_ErrorsOnNoArgs(t *testing.T) {
@@ -109,7 +102,6 @@ parse_json()
   ^^^^^^^^^^^^ parse_json() requires at least 1 argument, but got 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestParseJson_ErrorsOnTooManyArgs(t *testing.T) {
@@ -123,5 +115,4 @@ parse_json("1", "2")
   ^^^^^^^^^^^^^^^^^^^^ parse_json() requires at most 1 argument, but got 2
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

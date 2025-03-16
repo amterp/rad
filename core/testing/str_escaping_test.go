@@ -13,7 +13,6 @@ print('\"hi\"')
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_DoubleQuoteSingleQuote(t *testing.T) {
@@ -27,7 +26,6 @@ print("\'hi\'")
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_BacktickSingleQuote(t *testing.T) {
@@ -38,5 +36,4 @@ func Test_Str_Escaping_DoesNotEscapeOtherDelimitersInContent_BacktickSingleQuote
 	expected += "\\`hi\\`\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

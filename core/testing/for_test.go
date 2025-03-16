@@ -11,7 +11,6 @@ for item in a:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "a\nb\nc\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_ILoop(t *testing.T) {
@@ -23,7 +22,6 @@ for idx, item in a:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "0 a\n1 b\n2 c\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_ChangesInsideAreRemembered(t *testing.T) {
@@ -37,7 +35,6 @@ print(num)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_MapKeyLoop(t *testing.T) {
@@ -49,7 +46,6 @@ for key in a:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "a\nb\nc\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_MapKeyValueLoop(t *testing.T) {
@@ -62,7 +58,6 @@ for key, value in a:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "a\n1\nb\n2\nc\n3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_CanLoopThroughString(t *testing.T) {
@@ -82,7 +77,6 @@ o
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo RAD-95 below code should be doable via interpolation
@@ -100,5 +94,4 @@ for char in a:
 	expected += "o\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

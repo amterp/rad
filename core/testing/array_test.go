@@ -14,7 +14,6 @@ print([a, b, c])
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_General(t *testing.T) {
@@ -40,7 +39,6 @@ a-3-false-5.5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_NestedArrays(t *testing.T) {
@@ -56,7 +54,6 @@ for b in a:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // TODO
@@ -73,7 +70,6 @@ print((a[1][1])[0]) // 3
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_DeepNesting(t *testing.T) {
@@ -96,7 +92,6 @@ four
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_CanModify(t *testing.T) {
@@ -108,7 +103,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, [ 2, 3 ], 4, 5.1, \"six\" ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_ConcatDoesNotModifyInPlace(t *testing.T) {
@@ -121,7 +115,6 @@ print(b)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2, 3 ]\n[ 1, 2, 3, 4 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_EntryAssignment(t *testing.T) {
@@ -134,7 +127,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 5, false, \"three\" ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_EntryCompoundAssignment(t *testing.T) {
@@ -149,7 +141,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 120, 180, 600, 200 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_EntryAssignmentOutOfBounds(t *testing.T) {
@@ -164,7 +155,6 @@ a[4] = 500
     ^ Index out of bounds: 4 (length 4)
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArray_PositiveIndexing(t *testing.T) {
@@ -176,7 +166,6 @@ print(a[1])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "100\n200\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_NegativeIndexing(t *testing.T) {
@@ -188,7 +177,6 @@ print(a[-2])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "400\n300\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_NegativeIndexAssignment(t *testing.T) {
@@ -201,7 +189,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 100, 200, 4, 5 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArray_TooNegativeIndexingGivesError(t *testing.T) {
@@ -216,7 +203,6 @@ print(a[-99])
           ^^^ Index out of bounds: -99 (length 4)
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArray_TooNegativeIndexAssignmentGivesError(t *testing.T) {
@@ -231,5 +217,4 @@ a[-99] = 5
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	assertError(t, 1, expected)
-	resetTestState()
 }

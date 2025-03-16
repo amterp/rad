@@ -44,7 +44,6 @@ hi
 "hi" 'there'` + " `bob`\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Revamp_ForLoop(t *testing.T) {
@@ -89,5 +88,4 @@ after
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

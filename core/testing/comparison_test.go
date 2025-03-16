@@ -17,7 +17,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_Equality_String(t *testing.T) {
@@ -35,7 +34,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_Equality_Float(t *testing.T) {
@@ -53,7 +51,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo RAD-92
@@ -75,7 +72,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo RAD-92
@@ -97,7 +93,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_Equality_Mixed(t *testing.T) {
@@ -147,7 +142,6 @@ false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_NotEquality_Mixed(t *testing.T) {
@@ -197,7 +191,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_GtLt_Int(t *testing.T) {
@@ -232,7 +225,6 @@ false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_GtLt_Float(t *testing.T) {
@@ -267,7 +259,6 @@ false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Comparison_GtLt_Mixed(t *testing.T) {
@@ -302,5 +293,4 @@ false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

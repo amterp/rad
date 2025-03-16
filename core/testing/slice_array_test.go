@@ -13,7 +13,6 @@ print(a[0:len(a)])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20 ]\n[ 20, 30 ]\n[ 40 ]\n[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_Negative(t *testing.T) {
@@ -26,7 +25,6 @@ print(a[-2:-1])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20 ]\n[ 20, 30 ]\n[ 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_PositiveAndNegative(t *testing.T) {
@@ -39,7 +37,6 @@ print(a[1:-1])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 30 ]\n[ ]\n[ 20, 30, 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_NoStartEndReturnsWholeArray(t *testing.T) {
@@ -50,7 +47,6 @@ print(a[:])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_OkayOutsideBounds(t *testing.T) {
@@ -65,7 +61,6 @@ print(a[-99:])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_EmptySlices(t *testing.T) {
@@ -80,7 +75,6 @@ print(a[:-99])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ ]\n[ ]\n[ ]\n[ ]\n[ ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_PartialSlices(t *testing.T) {
@@ -92,7 +86,6 @@ print(a[:-2])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 30, 40, 50 ]\n[ 10, 20, 30 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_Array_DoesNotErrorOnNonsenseSlices(t *testing.T) {
@@ -104,5 +97,4 @@ print(a[-2:-3])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ ]\n[ ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

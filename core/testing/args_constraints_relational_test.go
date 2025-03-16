@@ -16,7 +16,6 @@ print("ran")
 	setupAndRunCode(t, rsl, "--a", "alice", "--b", "bob")
 	assertOnlyOutput(t, stdOutBuffer, "ran\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Requires_ErrorsIfNotRequired(t *testing.T) {
@@ -40,7 +39,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Requires_ErrorsIfDefaultRequiresSomethingNotProvided(t *testing.T) {
@@ -66,7 +64,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Excludes_CanGiveFirst(t *testing.T) {
@@ -85,7 +82,6 @@ else:
 	setupAndRunCode(t, rsl, "--file", "file.txt")
 	assertOnlyOutput(t, stdOutBuffer, "Reading from file: file.txt\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Excludes_CanGiveSecond(t *testing.T) {
@@ -104,7 +100,6 @@ else:
 	setupAndRunCode(t, rsl, "--url", "someurl")
 	assertOnlyOutput(t, stdOutBuffer, "Fetching from URL: someurl\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Excludes_ErrorsIfBothProvided(t *testing.T) {
@@ -132,7 +127,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Mixed_CanGiveOne(t *testing.T) {
@@ -153,7 +147,6 @@ else:
 	setupAndRunCode(t, rsl, "--token", "sometoken")
 	assertOnlyOutput(t, stdOutBuffer, "Authenticating with token: sometoken\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Mixed_CanGiveBothOther(t *testing.T) {
@@ -174,7 +167,6 @@ else:
 	setupAndRunCode(t, rsl, "--username", "alice", "--password", "pass")
 	assertOnlyOutput(t, stdOutBuffer, "Authenticating user: alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_Mixed_ErrorsIfAllGiven(t *testing.T) {
@@ -205,7 +197,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Args_Constraints_Relational_ErrorsIfConstraintOnUndefinedArg(t *testing.T) {
@@ -221,5 +212,4 @@ args:
                      ^^^^^^^^ Undefined arg 'username'
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

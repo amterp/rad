@@ -10,7 +10,6 @@ print([x + 1 for x in a])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 2, 3, 4 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_Upping(t *testing.T) {
@@ -21,7 +20,6 @@ print([upper(x) for x in a])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, `[ "A", "B", "C" ]`+"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_Lens(t *testing.T) {
@@ -32,7 +30,6 @@ print([len(x) for x in a])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 3, 1, 2 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_Prints(t *testing.T) {
@@ -43,7 +40,6 @@ a = [1, 2, 3]
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_PrintsReturnsEmptyArray(t *testing.T) {
@@ -55,7 +51,6 @@ print(b)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n[ ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_CanGetIndex(t *testing.T) {
@@ -66,7 +61,6 @@ print([i * x for i, x in a])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 60 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_CanFilterNumbers(t *testing.T) {
@@ -77,7 +71,6 @@ print([x for x in a if x < 10])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 5, 8 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_CanFilterStringLengths(t *testing.T) {
@@ -88,7 +81,6 @@ print([x for x in a if len(x) < 3])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ \"a\", \"aa\" ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ListComprehension_FunctionReturningMultipleThingsKeepsOnlyFirst(t *testing.T) {
@@ -99,5 +91,4 @@ print([parse_int(x) for x in a])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

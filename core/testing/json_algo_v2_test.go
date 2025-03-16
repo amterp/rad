@@ -22,7 +22,6 @@ Bob    30   US
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgoV2_CanExtractFromArrayWithIndex(t *testing.T) {
@@ -46,7 +45,6 @@ Charlie  9        10
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgoV2_CanChainArrayLookups(t *testing.T) {
@@ -66,5 +64,4 @@ print(Nums)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }

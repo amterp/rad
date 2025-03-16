@@ -15,7 +15,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_If_PreStmt_BasicAssignment(t *testing.T) {
@@ -28,7 +27,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "positive\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_If_PreStmt_ChainConditions(t *testing.T) {
@@ -44,7 +42,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "medium\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_If_PreStmt_Nested(t *testing.T) {
@@ -61,7 +58,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "yes\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_If_PreStmt_ExecutesAll(t *testing.T) {
@@ -76,5 +72,4 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "10\n20\ndone\n")
 	assertNoErrors(t)
-	resetTestState()
 }

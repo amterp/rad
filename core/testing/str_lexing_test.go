@@ -10,7 +10,6 @@ print("Hi\\nAlice")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hi\nAlice\nHi\\nAlice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_NewlineBacktick(t *testing.T) {
@@ -19,7 +18,6 @@ func Test_StrLexing_NewlineBacktick(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hi\nAlice\nHi\\nAlice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Tab(t *testing.T) {
@@ -29,7 +27,6 @@ print("a\tb")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "a\tb\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_TabBacktick(t *testing.T) {
@@ -37,7 +34,6 @@ func Test_StrLexing_TabBacktick(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "a\tb\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EscapeBracket(t *testing.T) {
@@ -48,7 +44,6 @@ print("\{upper('alice')}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n{upper('alice')}\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EscapeBracketBacktick(t *testing.T) {
@@ -56,7 +51,6 @@ func Test_StrLexing_EscapeBracketBacktick(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n{upper('alice')}\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Quotes(t *testing.T) {
@@ -69,7 +63,6 @@ print("double\"quote")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "single'quote\nsingle'quote\ndouble\"quote\ndouble\"quote\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Empty(t *testing.T) {
@@ -80,7 +73,6 @@ print('')
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EmptyBacktick(t *testing.T) {
@@ -88,7 +80,6 @@ func Test_StrLexing_EmptyBacktick(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_SeveralBackslashes(t *testing.T) {
@@ -98,7 +89,6 @@ print("\\\\")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\\\\\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Mixed(t *testing.T) {
@@ -108,7 +98,6 @@ print("\"\n\"")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\"\n\"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_DoubleInterp(t *testing.T) {
@@ -120,7 +109,6 @@ print("{x}{y}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "12\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_DoubleInterpBacktick(t *testing.T) {
@@ -128,7 +116,6 @@ func Test_StrLexing_DoubleInterpBacktick(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "12\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EscapingBrackets(t *testing.T) {
@@ -140,7 +127,6 @@ print("\\\{x}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\\1\n\\{x}\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Mixed2(t *testing.T) {
@@ -151,7 +137,6 @@ print("Hello\n{x}\tWorld!")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hello\n1\tWorld!\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Mixed2Backticks(t *testing.T) {
@@ -159,7 +144,6 @@ func Test_StrLexing_Mixed2Backticks(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hello\n1\tWorld!\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 func Test_StrLexing_Misc(t *testing.T) {
 	rsl := `
@@ -169,7 +153,6 @@ print("\n\n\n")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\\\n\n\n\n\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EscapingIrrelevantCharsPrintsAsIs(t *testing.T) {
@@ -180,7 +163,6 @@ print("\k")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\\x\n\\k\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_EscapingBacktickInBackticks(t *testing.T) {
@@ -188,7 +170,6 @@ func Test_StrLexing_EscapingBacktickInBackticks(t *testing.T) {
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "`\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_DoubleQuotes(t *testing.T) {
@@ -204,7 +185,6 @@ hi\n{name}
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_SingleQuotes(t *testing.T) {
@@ -220,7 +200,6 @@ hi\n{name}
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_Backticks(t *testing.T) {
@@ -234,7 +213,6 @@ hi\n{name}
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_DoubleSlashIsTwoSlashes(t *testing.T) {
@@ -244,7 +222,6 @@ print(r"\\")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, `\\`+"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_SingleBackslash(t *testing.T) {
@@ -254,7 +231,6 @@ print(r"\")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, `\`+"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_RawStrings_ErrorsIfTryingToEscapeDelimiter(t *testing.T) {
@@ -268,7 +244,6 @@ print(r"\"")
         ^^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_Simple(t *testing.T) {
@@ -285,7 +260,6 @@ How are you?
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_ExtraStartingAndEndingNewline(t *testing.T) {
@@ -306,7 +280,6 @@ How are you?
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_Indented(t *testing.T) {
@@ -325,7 +298,6 @@ print(text)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_RemovesPrefixedWhiteSpaceDependingOnEndingDelimiter(t *testing.T) {
@@ -344,7 +316,6 @@ print(text)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_InterpolationAndSpecials(t *testing.T) {
@@ -363,7 +334,6 @@ there	alice
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_Raw(t *testing.T) {
@@ -381,7 +351,6 @@ there\t{name}
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo
@@ -401,7 +370,6 @@ print(text)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_CanEscapeTripleQuote(t *testing.T) {
@@ -421,7 +389,6 @@ Text2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo
@@ -443,7 +410,6 @@ Text2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_ErrorIfAnythingAfterOpener(t *testing.T) {
@@ -461,7 +427,6 @@ print(text)
          ^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_NoErrorIfCommentFollowsOpener(t *testing.T) {
@@ -478,7 +443,6 @@ print(text)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_CanConcatOnSameLineAsCloser(t *testing.T) {
@@ -495,7 +459,6 @@ print(text)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_StrLexing_Multiline_ErrorIfClosingQuoteIsLessThan3(t *testing.T) {
@@ -513,7 +476,6 @@ print(text)
   ^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 // todo

@@ -31,7 +31,6 @@ func TestSingleValueSameTypesPickFromResourceGh(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSingleValueSameTypesPickFromResourceGl(t *testing.T) {
@@ -40,7 +39,6 @@ func TestSingleValueSameTypesPickFromResourceGl(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueSameTypesPickFromResourceGh(t *testing.T) {
@@ -50,7 +48,6 @@ GitHub
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueSameTypesPickFromResourceHub(t *testing.T) {
@@ -60,7 +57,6 @@ GitHub
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueSameTypesPickFromResourceGl(t *testing.T) {
@@ -70,7 +66,6 @@ GitLab
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueSameTypesPickFromResourceLab(t *testing.T) {
@@ -80,7 +75,6 @@ GitLab
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueDifferentTypesPickFromResourceAlice(t *testing.T) {
@@ -90,7 +84,6 @@ func TestMultiValueDifferentTypesPickFromResourceAlice(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueDifferentTypesPickFromResourceBob(t *testing.T) {
@@ -100,7 +93,6 @@ func TestMultiValueDifferentTypesPickFromResourceBob(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
@@ -110,7 +102,6 @@ func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestResourcePathIsRelativeToScript(t *testing.T) {
@@ -120,5 +111,4 @@ func TestResourcePathIsRelativeToScript(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -15,7 +15,6 @@ print(pick_kv(keys, values))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestPickKvFilterToOneOption(t *testing.T) {
@@ -29,7 +28,6 @@ print(pick_kv(keys, values, "Bee"))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestPickKvErrorsIfEmptyKeysValues(t *testing.T) {
@@ -45,7 +43,6 @@ pick_kv(keys, values)
   ^^^^^^^^^^^^^^^^^^^^^ Filtered 0 options to 0 with filters: []
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestPickKvErrorsIfKeyValueArraysAreNotEqualLength(t *testing.T) {
@@ -62,7 +59,6 @@ pick_kv(keys, values)
   Number of keys and values must match, but got 1 key and 2 values
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestPickKvWorksWithMultipleTokens(t *testing.T) {
@@ -76,5 +72,4 @@ print(pick_kv(keys, values, ["Be", "ef"]))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

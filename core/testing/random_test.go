@@ -17,7 +17,6 @@ print(rand())
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRandom_RandInt(t *testing.T) {
@@ -35,7 +34,6 @@ print(rand_int(100))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRandom_RandIntMin(t *testing.T) {
@@ -53,7 +51,6 @@ print(rand_int(96, 100))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRandom_RandIntNegNumbers(t *testing.T) {
@@ -71,7 +68,6 @@ print(rand_int(-10, 10))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRandom_RandErrorsIfArgs(t *testing.T) {
@@ -83,7 +79,6 @@ func TestRandom_RandErrorsIfArgs(t *testing.T) {
   ^^^^^^^ rand() requires at most 0 arguments, but got 1
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
@@ -95,7 +90,6 @@ func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
   ^^^^^^^^^^ rand_int() requires at least 1 argument, but got 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
@@ -107,5 +101,4 @@ func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
   ^^^^^^^^^^^^^ seed_random() requires at least 1 argument, but got 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

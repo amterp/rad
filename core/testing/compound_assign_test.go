@@ -21,7 +21,6 @@ print(a)`
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_FloatAssignments(t *testing.T) {
@@ -43,7 +42,6 @@ print(b)`
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_StringAssignments(t *testing.T) {
@@ -53,7 +51,6 @@ print(c)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi there\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_AddIntArray(t *testing.T) {
@@ -63,7 +60,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_AddFloatArray(t *testing.T) {
@@ -73,7 +69,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1.1, 2.2 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_AddStringArray(t *testing.T) {
@@ -83,7 +78,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ \"alice\", \"bob\" ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_SubtractFromArrayErrors(t *testing.T) {
@@ -96,7 +90,6 @@ a -= 2`
     ^^ Invalid binary operator for list, int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestCompound_DivideFromArrayErrors(t *testing.T) {
@@ -109,7 +102,6 @@ a /= 2`
     ^^ Invalid binary operator for list, int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestCompound_MultiplyFromArrayErrors(t *testing.T) {
@@ -122,7 +114,6 @@ a *= 2`
     ^^ Invalid binary operator for list, int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestCompound_ErrorsIfAppendNotArray(t *testing.T) {
@@ -135,7 +126,6 @@ a += 2`
     ^^ Invalid binary operator for list, int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestCompound_AddThroughCollection(t *testing.T) {
@@ -145,7 +135,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, 4 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestCompound_AddThroughNestedCollection(t *testing.T) {
@@ -156,5 +145,4 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": [ 3, 2 ], \"bob\": [ 3, 6 ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }

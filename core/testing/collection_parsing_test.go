@@ -10,7 +10,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_EmptyTwoLine(t *testing.T) {
@@ -22,7 +21,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_SingleSpaced(t *testing.T) {
@@ -33,7 +31,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_SingleMultiline(t *testing.T) {
@@ -46,7 +43,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_SingleTrailingComma(t *testing.T) {
@@ -57,7 +53,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 1 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_DoubleWeird(t *testing.T) {
@@ -72,7 +67,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"a\": 1, \"b\": 2 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Map_Parse_ErrorsOnCommaNoElements(t *testing.T) {
@@ -87,7 +81,6 @@ print(a)
        ^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_List_Parse(t *testing.T) {
@@ -105,7 +98,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Mixed_Parse(t *testing.T) {
@@ -146,5 +138,4 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ \"a\", \"b\", \"c\", [ ], [ 1, 2, 3 ], [ \"nested\", [ \"deeply\", \"nested\" ] ], [ \"mixed\", 1, 2.5, [ \"another\", \"level\" ], \"types\" ], { }, { \"key\": \"value\" }, { \"another\": \"map\", \"with\": [ \"nested\", \"list\" ] }, 1, 2, 3 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

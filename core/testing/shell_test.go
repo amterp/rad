@@ -10,7 +10,6 @@ func TestShell_ExportsNothingIfNoVars(t *testing.T) {
 	assertOutput(t, stdOutBuffer, "")
 	assertOutput(t, stdErrBuffer, "")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestShell_ExportsStrings(t *testing.T) {
@@ -22,7 +21,6 @@ b = "bob"
 	assertOutput(t, stdOutBuffer, "a=\"alice\"\nb=\"bob\"\n")
 	assertOutput(t, stdErrBuffer, "")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestShell_PrintsGoToStderr(t *testing.T) {
@@ -34,7 +32,6 @@ print('hi')
 	assertOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertOutput(t, stdErrBuffer, "hi\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestShell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
@@ -44,7 +41,6 @@ exit(2)
 	setupAndRunCode(t, rsl, "--color=never", "--shell")
 	assertOnlyOutput(t, stdOutBuffer, "exit 2\n")
 	assertError(t, 2, "")
-	resetTestState()
 }
 
 func TestShell_NonErrorExitFuncStillExportsVars(t *testing.T) {
@@ -56,5 +52,4 @@ b = "bob"
 	setupAndRunCode(t, rsl, "--color=never", "--shell")
 	assertOnlyOutput(t, stdOutBuffer, "a=\"alice\"\n")
 	assertNoErrors(t)
-	resetTestState()
 }

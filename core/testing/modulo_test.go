@@ -19,7 +19,6 @@ print(4 % 5)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_NegativeInts(t *testing.T) {
@@ -46,7 +45,6 @@ print(3 % -4)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_PositiveFloats(t *testing.T) {
@@ -66,7 +64,6 @@ print(10.0 % 3.3)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_NegativeFloats(t *testing.T) {
@@ -108,7 +105,6 @@ print(-10.0 % -3.3)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_CompoundOperatorInts(t *testing.T) {
@@ -137,7 +133,6 @@ print(d)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_CompoundOperatorFloats(t *testing.T) {
@@ -166,7 +161,6 @@ print(d)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Modulo_PositiveIntModulo0Errors(t *testing.T) {
@@ -180,7 +174,6 @@ print(5 % 0)
             ^ Value is 0, cannot modulo by 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Modulo_NegativeIntModulo0Errors(t *testing.T) {
@@ -194,7 +187,6 @@ print(-5 % 0)
              ^ Value is 0, cannot modulo by 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Modulo_PositiveFloatModulo0Errors(t *testing.T) {
@@ -208,7 +200,6 @@ print(5.5 % 0)
               ^ Value is 0, cannot modulo by 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Modulo_NegativeFloatModulo0Errors(t *testing.T) {
@@ -222,7 +213,6 @@ print(-5.5 % 0)
                ^ Value is 0, cannot modulo by 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Modulo_CompoundModulo0Errors(t *testing.T) {
@@ -237,5 +227,4 @@ a %= 0
        ^ Value is 0, cannot modulo by 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

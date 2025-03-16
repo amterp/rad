@@ -19,7 +19,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Regex_Help_WithEnum(t *testing.T) {
@@ -40,7 +39,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Regex_Valid(t *testing.T) {
@@ -53,7 +51,6 @@ print("Hi", name)
 	setupAndRunCode(t, rsl, "Alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi Alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_RegexAndEnum_Valid(t *testing.T) {
@@ -67,7 +64,6 @@ print("Hi", name)
 	setupAndRunCode(t, rsl, "Alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi Alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Regex_InvalidInput(t *testing.T) {
@@ -87,7 +83,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_RegexAndEnum_InvalidInput(t *testing.T) {
@@ -108,7 +103,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Regex_InvalidRegex(t *testing.T) {
@@ -124,5 +118,4 @@ args:
    ^^^^^^^^^^^^^^
    Invalid regex '+': error parsing regexp: missing argument to repetition operator: ` + "`+`\n"
 	assertError(t, 1, expected)
-	resetTestState()
 }

@@ -10,7 +10,6 @@ print("hi")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDefer_ExecutesLifo(t *testing.T) {
@@ -22,7 +21,6 @@ print("hi")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDefer_Block(t *testing.T) {
@@ -35,7 +33,6 @@ print("hi")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye1\nbye2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDefer_RunsDespiteCleanExit(t *testing.T) {
@@ -47,7 +44,6 @@ exit(0)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDefer_RunsDespiteErrorExit(t *testing.T) {
@@ -59,7 +55,6 @@ exit(1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hi\nbye\n")
 	assertError(t, 1, "")
-	resetTestState()
 }
 
 func TestDefer_RunsDespiteError(t *testing.T) {
@@ -76,7 +71,6 @@ print(asd)
         ^^^ Undefined variable: asd
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestDefer_AllDefersRunEvenIfOneFails(t *testing.T) {
@@ -94,7 +88,6 @@ print("hi")
               ^^^ Undefined variable: asd
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestDefer_UsesNonZeroCodeFromLifodDeferredExitDespiteDeferredError(t *testing.T) {
@@ -113,7 +106,6 @@ print("hi")
               ^^^ Undefined variable: asd
 `
 	assertError(t, 3, expected)
-	resetTestState()
 }
 
 func TestDefer_UsesErrorCodeLifodDeferredErrorOverLaterNonZeroExit(t *testing.T) {
@@ -132,7 +124,6 @@ print("hi")
               ^^^ Undefined variable: asd
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestDefer_IgnoresZeroCodeFromLifodDeferredExitInsteadUsesDeferredError(t *testing.T) {
@@ -151,5 +142,4 @@ print("hi")
               ^^^ Undefined variable: asd
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

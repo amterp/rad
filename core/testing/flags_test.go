@@ -11,7 +11,6 @@ print(intArg)
 	setupAndRunCode(t, rsl, "2")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanPassNegativeInts(t *testing.T) {
@@ -24,5 +23,4 @@ print(intArg)
 	setupAndRunCode(t, rsl, "--", "-2")
 	assertOnlyOutput(t, stdOutBuffer, "-2\n")
 	assertNoErrors(t)
-	resetTestState()
 }

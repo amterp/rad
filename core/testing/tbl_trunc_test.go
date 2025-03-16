@@ -20,7 +20,6 @@ rad url:
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestTruncateMatchesColWidth(t *testing.T) {
@@ -41,7 +40,6 @@ rad url:
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestTruncateErrorsIfInvalidField(t *testing.T) {
@@ -60,7 +58,6 @@ rad url:
       ^^^^^^^^^^^^^^ Cannot modify undefined field "does_not_exist"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestTruncateTwoFieldsAtOnce(t *testing.T) {
@@ -84,5 +81,4 @@ rad url:
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -11,7 +11,6 @@ del a
 	setupAndRunCode(t, rsl, "--color=never", "--shell")
 	assertOnlyOutput(t, stdOutBuffer, "b=\"bob\"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteArray(t *testing.T) {
@@ -23,7 +22,6 @@ del a
 	setupAndRunCode(t, rsl, "--color=never", "--shell")
 	assertOnlyOutput(t, stdOutBuffer, "b=(3 4)\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteArrayEntry(t *testing.T) {
@@ -35,7 +33,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteNestedArrayEntry(t *testing.T) {
@@ -47,7 +44,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, [ 10, [ 30 ] ], 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteMultipleThingsAtOnce(t *testing.T) {
@@ -61,7 +57,6 @@ print(b)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 30, 40 ]\n[ 0, -10, -30, -40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_ArrayMultiDeleteAreInOrder(t *testing.T) {
@@ -73,7 +68,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_ArrayDeletingLastEntryLeavesEmptyArray(t *testing.T) {
@@ -85,7 +79,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteMapEntry(t *testing.T) {
@@ -97,7 +90,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteNestedMapEntry(t *testing.T) {
@@ -109,7 +101,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\" }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteArrayEntryNestedInMapEntry(t *testing.T) {
@@ -121,7 +112,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\", \"ids\": [ 10, 30 ] }, \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestDelete_CanDeleteFromListWithSlice(t *testing.T) {
@@ -133,5 +123,4 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 30, 40 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -25,7 +25,6 @@ rad url:
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_RequestBlock(t *testing.T) {
@@ -45,7 +44,6 @@ Ages: [ 30, 40, 30, 25 ]
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_RequestBlockComplainsIfNoUrl(t *testing.T) {
@@ -63,7 +61,6 @@ request:
           Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestRad_DisplayBlock(t *testing.T) {
@@ -81,7 +78,6 @@ Charlie  25
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_DisplayBlockErrorsIfGivenUrl(t *testing.T) {
@@ -99,7 +95,6 @@ display url:
           ^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestRad_RequestThenDisplayBlocks(t *testing.T) {
@@ -122,7 +117,6 @@ Charlie  2
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_RequiresBlockElseError(t *testing.T) {
@@ -137,7 +131,6 @@ rad url
   ^^^^^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestRad_CanConditionallyApplySort(t *testing.T) {
@@ -167,7 +160,6 @@ Alice    30
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_CanFallBackToElse(t *testing.T) {
@@ -190,7 +182,6 @@ Bob      40
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_CanFallBackToElseIf(t *testing.T) {
@@ -215,7 +206,6 @@ Bob      40
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_IfStmtWorksOnRadWithUrl(t *testing.T) {
@@ -239,5 +229,4 @@ Charlie  Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }

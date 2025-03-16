@@ -12,7 +12,6 @@ print(false and false)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\nfalse\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestBool_Or(t *testing.T) {
@@ -25,7 +24,6 @@ print(false or false)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\ntrue\ntrue\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestBool_Not(t *testing.T) {
@@ -38,7 +36,6 @@ print(not false)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\nfalse\ntrue\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestBool_Equality(t *testing.T) {
@@ -56,5 +53,4 @@ print(false != false)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\nfalse\ntrue\nfalse\ntrue\ntrue\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }

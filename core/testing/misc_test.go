@@ -14,7 +14,6 @@ func Test_Misc_SyntaxError(t *testing.T) {
   ^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscore(t *testing.T) {
@@ -25,7 +24,6 @@ print(_)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop(t *testing.T) {
@@ -37,7 +35,6 @@ for _, _ in a:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanHaveNegativeNumbers(t *testing.T) {
@@ -51,21 +48,18 @@ print("{-12}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-10\n-20.2\n-12\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_Version(t *testing.T) {
 	setupAndRunCode(t, "", "--version")
 	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_VersionShort(t *testing.T) {
 	setupAndRunCode(t, "", "-v")
 	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
@@ -73,14 +67,12 @@ func Test_Misc_PrioritizesHelpIfBothHelpAndVersionSpecified(t *testing.T) {
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_PrintsHelpToStderrIfUnknownGlobalFlag(t *testing.T) {
 	setupAndRunArgs(t, "--asd", "--color=never")
 	expected := "unknown flag: --asd\n\n" + radHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Misc_Abs_Int(t *testing.T) {
@@ -94,7 +86,6 @@ print(abs(-10))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_Abs_Float(t *testing.T) {
@@ -108,7 +99,6 @@ print(abs(-10.2))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_Abs_ErrorsOnAlphabetical(t *testing.T) {
@@ -123,7 +113,6 @@ a = abs("asd")
           Got "string" as the 1st argument of abs(), but must be: float or int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
@@ -131,7 +120,6 @@ func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
 	expected := radHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
@@ -150,7 +138,6 @@ Script args:
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanShadowGlobalFlagThatHasShorthand(t *testing.T) {
@@ -176,7 +163,6 @@ Script args:
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
@@ -202,7 +188,6 @@ Script args:
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
@@ -221,7 +206,6 @@ Script args:
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_CanShadowGlobalFlagAndUseIt(t *testing.T) {
@@ -235,7 +219,6 @@ print(version+"!")
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Misc_GlobalSrcFlag(t *testing.T) {
@@ -245,7 +228,6 @@ func Test_Misc_GlobalSrcFlag(t *testing.T) {
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func globalFlagHelpWithout(s string) string {

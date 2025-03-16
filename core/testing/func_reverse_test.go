@@ -10,7 +10,6 @@ print(reverse(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "olleh\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Reverse_EmptyString(t *testing.T) {
@@ -21,7 +20,6 @@ print(reverse(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Reverse_StringWithTabSpaces(t *testing.T) {
@@ -32,7 +30,6 @@ print(reverse(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n\tolleh\t\t\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Reverse_With_Nums(t *testing.T) {
@@ -47,5 +44,4 @@ print(reverse(a))
                 ^ Got "int" as the 1st argument of reverse(), but must be: string
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

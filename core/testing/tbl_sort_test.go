@@ -27,7 +27,6 @@ Bob      25   Los Angeles
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_GeneralAscNoToken(t *testing.T) {
@@ -46,7 +45,6 @@ Charlie  30   Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_GeneralAscWithToken(t *testing.T) {
@@ -65,7 +63,6 @@ Charlie  30   Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_GeneralDesc(t *testing.T) {
@@ -84,7 +81,6 @@ Alice    30   New York
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_ExplicitAsc(t *testing.T) {
@@ -103,7 +99,6 @@ Charlie  30   Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_DescTiebreak(t *testing.T) {
@@ -122,7 +117,6 @@ Charlie  30   Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_Mix(t *testing.T) {
@@ -141,7 +135,6 @@ Bob      40   London
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_LeavesInExtractionOrderIfNoTiebreaker(t *testing.T) {
@@ -160,7 +153,6 @@ Bob      40   London
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_CanUseInIfElseBlocks(t *testing.T) {
@@ -184,7 +176,6 @@ Bob      40   London
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_CanSortMixedTypes(t *testing.T) {
@@ -212,7 +203,6 @@ b               3
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_CanSortMixedTypesDesc(t *testing.T) {
@@ -240,7 +230,6 @@ false           5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_SortingIsPriorToMapping(t *testing.T) {
@@ -262,7 +251,6 @@ display:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_ColumnsRemainSortAfter(t *testing.T) {
@@ -283,7 +271,6 @@ print(col)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadSort_DoesNotSortColumnsIfNotAskedTo(t *testing.T) {
@@ -303,5 +290,4 @@ print(col)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

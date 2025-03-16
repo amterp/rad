@@ -14,7 +14,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"charlie\": [ 1, \"hi\" ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_CanExtract(t *testing.T) {
@@ -25,7 +24,6 @@ print(a["charlie"][0] + 1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_CanDeclareWithExpressions(t *testing.T) {
@@ -39,7 +37,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"CHARLIE\": [ 1, true ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_CanAddByKey(t *testing.T) {
@@ -52,7 +49,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": \"bar\", \"charlie\": 20, \"DAVE\": \"hi\" }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_CanCompoundAssign(t *testing.T) {
@@ -67,7 +63,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 120, \"bob\": 180, \"charlie\": 600, \"dave\": 200 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_CompoundOpOnNonExistentKeyErrors(t *testing.T) {
@@ -83,7 +78,6 @@ print(a)
     ^^^^^ Key not found: "eve"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestMap_CanModifyArrayNestedInMap(t *testing.T) {
@@ -96,5 +90,4 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 100, \"bob\": [ 10, 200, 35 ] }\n")
 	assertNoErrors(t)
-	resetTestState()
 }

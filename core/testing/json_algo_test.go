@@ -22,7 +22,6 @@ print(Names)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_KeyExtraction(t *testing.T) {
@@ -45,7 +44,6 @@ Bob    40   Los Angeles
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_KeyArrayExtraction(t *testing.T) {
@@ -70,7 +68,6 @@ David      25   Paris
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_NestedWildcardExtraction(t *testing.T) {
@@ -97,7 +94,6 @@ York  England    Bob        40
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_WildcardListCapture(t *testing.T) {
@@ -119,7 +115,6 @@ print(ids)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_WildcardListObjectCapture(t *testing.T) {
@@ -141,7 +136,6 @@ print(ids)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_ListOfObjectCapture(t *testing.T) {
@@ -157,7 +151,6 @@ print([len(x) for x in issues])
 	assertOutput(t, stdOutBuffer, "[ 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CaptureRootArray(t *testing.T) {
@@ -174,7 +167,6 @@ print(ids)
 	assertOutput(t, stdOutBuffer, "[ 1, 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CaptureNonArrayAndArray(t *testing.T) {
@@ -196,7 +188,6 @@ print(ages)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CaptureNonArrayAndWildcard(t *testing.T) {
@@ -218,7 +209,6 @@ print(ages)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CaptureJsonNode(t *testing.T) {
@@ -233,7 +223,6 @@ print(sort("{node[0]}"))
 	assertOutput(t, stdOutBuffer, "      \"\"\"\"\"\",03::NYaeeeghkmnooortww{}\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CanCaptureWholeJson(t *testing.T) {
@@ -249,7 +238,6 @@ print(sort("{node[0]}")) // hack to get the test consistent, as the order of key
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_CanCaptureWholeComplexJson(t *testing.T) {
@@ -298,7 +286,6 @@ pprint(node[0])
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_HelpfulErrorIfRadBlockMixesArrayAndNoneArrayFields(t *testing.T) {
@@ -318,5 +305,4 @@ Bob    2
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_and_non_array.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
-	resetTestState()
 }

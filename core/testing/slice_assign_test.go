@@ -10,7 +10,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 100, 200, 30, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Slice_Assign_Bigger(t *testing.T) {
@@ -21,7 +20,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 100, 200, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Slice_Assign_Smaller(t *testing.T) {
@@ -32,7 +30,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 100, 200, 20, 30, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Slice_Assign_NoEnd(t *testing.T) {
@@ -43,7 +40,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 100, 200 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Slice_Assign_NoStart(t *testing.T) {
@@ -54,5 +50,4 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 100, 200, 40, 50 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

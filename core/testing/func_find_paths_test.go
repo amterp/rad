@@ -12,7 +12,6 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FindPaths_Cwd(t *testing.T) {
@@ -25,7 +24,6 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FindPaths_Abs(t *testing.T) {
@@ -39,7 +37,6 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FindPaths_Depth(t *testing.T) {
@@ -52,7 +49,6 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FindPaths_Neg3DepthIncludesAll(t *testing.T) {
@@ -65,7 +61,6 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FindPaths_Depth0IncludesNothing(t *testing.T) {
@@ -78,5 +73,4 @@ print(paths)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

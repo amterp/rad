@@ -14,7 +14,6 @@ for idx, valA, valB in [["a", 10], ["b", 20], ["c", 30]]:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_Unpack_Zip(t *testing.T) {
@@ -31,7 +30,6 @@ for idx, valA, valB in zip(a, b):
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_Unpack_Four(t *testing.T) {
@@ -50,7 +48,6 @@ for idx, valA, valB, valC, valD in zip(a, b, c, d):
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_Unpack_DoesNotUnpackIfNotEnoughArgs(t *testing.T) {
@@ -65,7 +62,6 @@ for idx, valA in [["a", 10], ["b", 20], ["c", 30]]:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // not 100% sure about the idx part
@@ -81,7 +77,6 @@ print(c)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_For_Unpack_ErrorsOnNonListOfLists(t *testing.T) {
@@ -97,7 +92,6 @@ for idx, valA, valB in a:
                          ^ Expected list of lists, got element type "int"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 // not really an assertion of what's desired, but it's expected atm
@@ -115,7 +109,6 @@ for idx, valA, valB in a:
                          ^ Expected list of lists, got element type "int"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_For_Unpack_ErrorsIfNotEnoughValuesToUnpack(t *testing.T) {
@@ -131,7 +124,6 @@ for idx, valA, valB, valC in [[10, 20], [30, 40]]:
                                Expected at least 3 values in inner list, got 2
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_For_Unpack_CanUnpackEvenIfNotEnoughLefts(t *testing.T) {
@@ -146,5 +138,4 @@ for idx, valA, valB in [["a", 10, 100], ["b", 20, 200], ["c", 30, 300]]:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

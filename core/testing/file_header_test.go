@@ -22,7 +22,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_FileHeader_PrintsAll(t *testing.T) {
@@ -51,5 +50,4 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

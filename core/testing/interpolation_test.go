@@ -14,7 +14,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Int(t *testing.T) {
@@ -25,7 +24,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 42\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Float(t *testing.T) {
@@ -36,7 +34,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 12.5\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Bool(t *testing.T) {
@@ -47,7 +44,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, true\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_List(t *testing.T) {
@@ -58,7 +54,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, [ \"alice\", 42 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Map(t *testing.T) {
@@ -69,7 +64,6 @@ print("hello, {var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, { \"name\": \"alice\", \"age\": 42 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo a better error would be to include the whole string e.g.
@@ -85,7 +79,6 @@ print("hello, {var}")
                  ^^^ Undefined variable: var
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestStringInterpolation_CanEscapeFirst(t *testing.T) {
@@ -95,7 +88,6 @@ print("hello, \{var}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, {var}\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo this should fail
@@ -106,8 +98,7 @@ print("hello, \{var}")
 //	setupAndRunCode(t, rsl, "--color=never")
 //	assertOnlyOutput(t, stdOutBuffer, "hello, {var}\n")
 //	assertNoErrors(t)
-//	resetTestState()
-//}
+//	//}
 
 func TestStringInterpolation_Expressions(t *testing.T) {
 	rsl := `
@@ -122,7 +113,6 @@ print("hello, {len('bob')}")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello, 4\nhello, 5\nhello, 5\nhello, 3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_FormattingString(t *testing.T) {
@@ -141,7 +131,6 @@ _           alice_
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_FormattingInt(t *testing.T) {
@@ -166,7 +155,6 @@ _12.0000000000_
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_FormattingFloat(t *testing.T) {
@@ -191,7 +179,6 @@ _3.1415900000_
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_FormattingFloatExpressions(t *testing.T) {
@@ -215,7 +202,6 @@ _3.1415900000_
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Formatting_ColorDoesNotImpactPadding(t *testing.T) {
@@ -238,7 +224,6 @@ print("{blue(n):<20}")
 	setupAndRunCode(t, rsl, "--color=always")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringInterpolation_Formatting_ColorWorksWithoutPadding(t *testing.T) {
@@ -257,5 +242,4 @@ print("{blue(n)}")
 	setupAndRunCode(t, rsl, "--color=always")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

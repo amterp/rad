@@ -17,7 +17,6 @@ Pi: 3.14
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringDelimiters_SingleQuote(t *testing.T) {
@@ -35,7 +34,6 @@ Pi: 3.14
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestStringDelimiters_Backtick(t *testing.T) {
@@ -51,5 +49,4 @@ Pi: 3.14
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

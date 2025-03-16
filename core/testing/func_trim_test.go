@@ -10,7 +10,6 @@ print(trim(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Trim_OneChar(t *testing.T) {
@@ -21,7 +20,6 @@ print(trim(a, ","))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "!!,hello,!\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Trim_MultipleChar(t *testing.T) {
@@ -32,5 +30,4 @@ print(trim(a, "!,"))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello\n")
 	assertNoErrors(t)
-	resetTestState()
 }

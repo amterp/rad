@@ -124,6 +124,7 @@ func setupAndRunArgs(t *testing.T, args ...string) {
 
 func setupAndRun(t *testing.T, tp *TestParams) {
 	t.Helper()
+	resetTestState()
 	core.IsTest = true
 
 	args := tp.args

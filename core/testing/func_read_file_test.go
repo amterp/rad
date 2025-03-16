@@ -15,7 +15,6 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_ReadFile_ErrEmptyIfNoError(t *testing.T) {
@@ -28,7 +27,6 @@ print(b)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_ReadFile_OneArg(t *testing.T) {
@@ -41,7 +39,6 @@ print(a)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_ReadFile_NoExist(t *testing.T) {
@@ -54,7 +51,6 @@ print(b)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_ReadFile_NoPermission(t *testing.T) {
@@ -74,7 +70,6 @@ print(b)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 
 	os.Chmod(filePath, originalPerms)
 }
@@ -89,7 +84,6 @@ print(b)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_ReadFile_ExitErrorsIfNoErrVar(t *testing.T) {
@@ -104,5 +98,4 @@ a = read_file("does_not_exist.txt")
       open does_not_exist.txt: no such file or directory (error RAD20005)
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

@@ -12,7 +12,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_DefiningVarInIfBlockIsRemembered(t *testing.T) {
@@ -24,7 +23,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_ChangingVarInForBlockIsRemembered(t *testing.T) {
@@ -37,7 +35,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_DefiningVarInForBlockIsRemembered(t *testing.T) {
@@ -49,7 +46,6 @@ print(i)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_DefiningItemVarInForBlockIsRemembered(t *testing.T) {
@@ -62,7 +58,6 @@ print("item", item)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "i 2\nitem c\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_DefiningKeyValueVarsInForBlockIsRemembered(t *testing.T) {
@@ -75,7 +70,6 @@ print("v", v)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "k c\nv 3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_LastValueOfRadLambdaIsNotRemembered(t *testing.T) {
@@ -95,7 +89,6 @@ i 0
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Scoping_LastValueOfRadLambdaIsNotDefined(t *testing.T) {
@@ -119,5 +112,4 @@ print("i", i)
 `
 	assertOutput(t, stdErrBuffer, expected)
 	assertExitCode(t, 1)
-	resetTestState()
 }

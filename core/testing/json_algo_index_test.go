@@ -20,7 +20,6 @@ print(Names)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestAlgo_Index_CanExtractViaMiddleNodeIndexing(t *testing.T) {
@@ -39,7 +38,6 @@ print(Name, len(Name))
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 // todo this should work, but doesn't. in part because of the 'num captures' logic doesn't seem to hit through, and also
@@ -62,5 +60,4 @@ print(Name, len(Name))
 //	assertOutput(t, stdOutBuffer, expected)
 //	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 //	assertNoErrors(t)
-//	resetTestState()
-//}
+//	//}

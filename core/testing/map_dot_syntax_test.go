@@ -11,7 +11,6 @@ print(a.alice + a.bob.charlie)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_Dot_CanMixAccess(t *testing.T) {
@@ -22,7 +21,6 @@ print(a.alice["bob"].charlie)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_Dot_Assign(t *testing.T) {
@@ -34,7 +32,6 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 2 }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestMap_Dot_MixedAssign(t *testing.T) {
@@ -46,5 +43,4 @@ print(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": { \"bob\": { \"charlie\": 3 } } }\n")
 	assertNoErrors(t)
-	resetTestState()
 }

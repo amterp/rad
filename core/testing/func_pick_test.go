@@ -12,7 +12,6 @@ print(pick(opts))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestPickFilterWithOneOption(t *testing.T) {
@@ -23,7 +22,6 @@ print(pick(opts, "burg"))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestPickFilterToOneOption(t *testing.T) {
@@ -34,7 +32,6 @@ print(pick(opts, "Hamb"))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestPickErrorsIfEmptyOptions(t *testing.T) {
@@ -49,7 +46,6 @@ pick(opts)
   ^^^^^^^^^^ Filtered 0 options to 0 with filters: []
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestPickErrorsIfFilteredToZeroOptions(t *testing.T) {
@@ -64,7 +60,6 @@ pick(opts, "asdasdasd")
   ^^^^^^^^^^^^^^^^^^^^^^^ Filtered 5 options to 0 with filters: [asdasdasd]
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestPickWorksWithMultipleTokens(t *testing.T) {
@@ -76,5 +71,4 @@ print(pick(opts, filter))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hamburger\n")
 	assertNoErrors(t)
-	resetTestState()
 }

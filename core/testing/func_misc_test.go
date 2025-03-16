@@ -14,7 +14,6 @@ false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_EndsWithWith(t *testing.T) {
@@ -29,5 +28,4 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

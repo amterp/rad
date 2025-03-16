@@ -10,7 +10,6 @@ print(len(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestLen_String(t *testing.T) {
@@ -21,7 +20,6 @@ print(len(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "5\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestLen_EmojiString(t *testing.T) {
@@ -32,7 +30,6 @@ print(len(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "7\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestLen_Map(t *testing.T) {
@@ -43,5 +40,4 @@ print(len(a))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
-	resetTestState()
 }

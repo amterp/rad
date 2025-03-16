@@ -28,7 +28,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_Basic(t *testing.T) {
@@ -43,7 +42,6 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_BasicMin(t *testing.T) {
@@ -58,7 +56,6 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_BasicMax(t *testing.T) {
@@ -73,7 +70,6 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_ExclusiveMin(t *testing.T) {
@@ -90,7 +86,6 @@ print("Age:", age)
       ^^^^^^^ 'age' value 0 is <= minimum (exclusive) 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Range_ExclusiveMax(t *testing.T) {
@@ -107,7 +102,6 @@ print("Age:", age)
       ^^^^^^^ 'age' value 100 is >= maximum (exclusive) 100
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Range_FloatBasic(t *testing.T) {
@@ -122,7 +116,6 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_FloatMinExclusive(t *testing.T) {
@@ -139,7 +132,6 @@ print("Age:", age)
       ^^^^^^^^^ 'age' value 0.5 is <= minimum (exclusive) 0.5
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Range_NoMax(t *testing.T) {
@@ -154,7 +146,6 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Range_BelowMinWhenNoMax(t *testing.T) {
@@ -171,7 +162,6 @@ print("Age:", age)
       ^^^^^^^^^ 'age' value 0.1 is <= minimum (exclusive) 0.5
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Range_AboveMaxNoMin(t *testing.T) {
@@ -188,7 +178,6 @@ print("Age:", age)
       ^^^^^^^ 'age' value 250 is > maximum 200
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Range_NoMin(t *testing.T) {
@@ -203,5 +192,4 @@ print("Age:", age)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

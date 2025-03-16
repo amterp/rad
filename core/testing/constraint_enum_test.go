@@ -12,7 +12,6 @@ print("Hi", name)
 	setupAndRunCode(t, rsl, "alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Constraint_Enum_ErrorsOnInvalid(t *testing.T) {
@@ -33,7 +32,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Enum_ErrorsIfNonStringEnum(t *testing.T) {
@@ -50,7 +48,6 @@ print("Hi", name)
                           ^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Constraint_Enum_CanHaveArgNamedEnum(t *testing.T) {
@@ -63,5 +60,4 @@ print("Hi", enum)
 	setupAndRunCode(t, rsl, "alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -9,7 +9,6 @@ print(replace("Hi, Alice", "Alice", "Bob"))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hi, Bob\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Replace_RegexSimple(t *testing.T) {
@@ -19,7 +18,6 @@ print(replace("Hi, how are you today?", ",.*", " there!"))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hi there!\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Replace_RegexCapture(t *testing.T) {
@@ -38,7 +36,6 @@ Name: bob
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Replace_ReturnsString(t *testing.T) {
@@ -48,5 +45,4 @@ print(replace("Hi", "Hi", "Hello") + "!")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Hello!\n")
 	assertNoErrors(t)
-	resetTestState()
 }

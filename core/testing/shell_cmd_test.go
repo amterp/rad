@@ -16,5 +16,4 @@ hi2
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)
 	assertNoErrors(t)
-	resetTestState()
 }

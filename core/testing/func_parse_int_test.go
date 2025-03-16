@@ -12,7 +12,6 @@ print(a + 1)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n6178461748674862\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseInt_ErrorsOnAlphabetical(t *testing.T) {
@@ -26,7 +25,6 @@ a = parse_int("asd")
       ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_ParseInt_ErrorsOnFloat(t *testing.T) {
@@ -40,7 +38,6 @@ a = parse_int("2.4")
       ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_ParseInt_CanReadErrorIfNone(t *testing.T) {
@@ -52,7 +49,6 @@ print(err)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n{ }\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseInt_CanReadErrorIfExists(t *testing.T) {
@@ -71,7 +67,6 @@ RAD20001
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseInt_DoesNotErrorIfOutputNotRead(t *testing.T) {
@@ -81,7 +76,6 @@ parse_int("2")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_ParseInt_ErrorsIfExpectingTooManyReturnValues(t *testing.T) {
@@ -95,5 +89,4 @@ a, b, c = parse_int("2.4")
             ^^^^^^^^^^^^^^^^ parse_int() returns 1 or 2 values, but 3 are expected
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

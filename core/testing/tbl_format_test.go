@@ -20,7 +20,6 @@ display:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_MultiplyInts(t *testing.T) {
@@ -41,7 +40,6 @@ display:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_CanTruncateWithMap(t *testing.T) {
@@ -62,7 +60,6 @@ Dav
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRad_CanMapTwoFieldsAtOnce(t *testing.T) {
@@ -84,5 +81,4 @@ DAVID       WHITE
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

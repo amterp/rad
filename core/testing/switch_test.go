@@ -15,7 +15,6 @@ print(url)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Cars\nhttps://example.com/automobiles\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Switch_BasicAssign2(t *testing.T) {
@@ -44,7 +43,6 @@ print(result3)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\nBOB\nCHARLIE\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Switch_NoAssign(t *testing.T) {
@@ -58,7 +56,6 @@ switch name:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\nANOTHER\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Switch_NoMatchErrors(t *testing.T) {
@@ -76,7 +73,6 @@ switch name:
          ^^^^ No matching case found for switch
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Switch_MultipleMatchesErrors(t *testing.T) {
@@ -94,7 +90,6 @@ switch name:
          ^^^^ Multiple matching cases found for switch
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Switch_AssignNumMismatchErrors(t *testing.T) {
@@ -112,7 +107,6 @@ one, two = switch name:
       ^^^^^^^^^^^^^^^^^ Expecting 2 values, got 1
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func Test_Switch_CanSelectCaseBasedOnUsedVars(t *testing.T) {
@@ -129,5 +123,4 @@ print(result)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "foo: alice, bar: 42\n")
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -13,7 +13,6 @@ print(a[0:len(a)])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "al\nli\nc\nalice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_Negative(t *testing.T) {
@@ -26,7 +25,6 @@ print(a[-2:-1])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "al\nli\nc\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_PositiveAndNegative(t *testing.T) {
@@ -39,7 +37,6 @@ print(a[1:-1])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "i\n\nlic\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_NoStartEndReturnsWholeString(t *testing.T) {
@@ -50,7 +47,6 @@ print(a[:])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "alice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_OkayOutsideBounds(t *testing.T) {
@@ -65,7 +61,6 @@ print(a[-99:])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "alice\nalic\nalice\nalice\nalice\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_EmptySlices(t *testing.T) {
@@ -80,7 +75,6 @@ print(a[:-99])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n\n\n\n\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_PartialSlices(t *testing.T) {
@@ -92,7 +86,6 @@ print(a[:-2])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ice\nali\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSlice_String_DoesNotErrorOnNonsenseSlices(t *testing.T) {
@@ -104,5 +97,4 @@ print(a[-2:-3])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "\n\n")
 	assertNoErrors(t)
-	resetTestState()
 }

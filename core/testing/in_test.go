@@ -13,7 +13,6 @@ print(2 in "456")
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\ntrue\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_Array(t *testing.T) {
@@ -27,7 +26,6 @@ print(true in [false])
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\ntrue\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_StringArray(t *testing.T) {
@@ -39,7 +37,6 @@ print("ALICE" in a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_NotInArray(t *testing.T) {
@@ -51,7 +48,6 @@ print(70 not in a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "false\ntrue\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_Map(t *testing.T) {
@@ -63,7 +59,6 @@ print("dave" in a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_CanBeUsedInIfStatement(t *testing.T) {
@@ -83,7 +78,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "50 is in a\n70 is not in a\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_CanUseExpressions(t *testing.T) {
@@ -97,7 +91,6 @@ print(b[0] * 100 in a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\ntrue\nfalse\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIn_CanNestIn(t *testing.T) {
@@ -112,5 +105,4 @@ print(false in a in b)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "false\ntrue\nfalse\ntrue\n")
 	assertNoErrors(t)
-	resetTestState()
 }

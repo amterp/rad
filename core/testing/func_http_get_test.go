@@ -27,5 +27,4 @@ pprint(http_get(url))
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): http//www.google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }

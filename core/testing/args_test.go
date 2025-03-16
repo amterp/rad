@@ -19,7 +19,6 @@ print(foo)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_ApiRenameUsageString(t *testing.T) {
@@ -33,7 +32,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
@@ -53,7 +51,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_InvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
@@ -69,7 +66,6 @@ print('hi')
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_ErrorsIfSomeRequiredArgsMissing(t *testing.T) {
@@ -94,7 +90,6 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertOutput(t, stdOutBuffer, "")
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArgs_CanParseAllTypes(t *testing.T) {
@@ -129,7 +124,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanParseAllTypeDefaults(t *testing.T) {
@@ -164,7 +158,6 @@ true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanHaveNegativeIntDefault(t *testing.T) {
@@ -178,7 +171,6 @@ print(intArg + 1)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanHaveNegativeFloatDefault(t *testing.T) {
@@ -192,7 +184,6 @@ print(floatArg + 1)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanPassNegativeIntWithFlag(t *testing.T) {
@@ -206,7 +197,6 @@ print(intArg)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanPassNegativeIntWithoutFlag(t *testing.T) {
@@ -221,7 +211,6 @@ print(intArg)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanPassNegativeFloatWithFlag(t *testing.T) {
@@ -235,7 +224,6 @@ print(floatArg)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanPassNegativeFloatWithoutFlag(t *testing.T) {
@@ -250,7 +238,6 @@ print(floatArg)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanHaveSeveralMinuses(t *testing.T) {
@@ -267,7 +254,6 @@ print(floatArg + 1)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CanHaveIntAsDefaultForFloatArg(t *testing.T) {
@@ -281,7 +267,6 @@ print(floatArg + 1.2)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestArgs_CannotHaveFloatAsDefaultForIntArg(t *testing.T) {
@@ -296,7 +281,6 @@ args:
                  ^^ Invalid syntax
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArgs_Help(t *testing.T) {
@@ -313,7 +297,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	resetTestState()
 }
 
 func TestArgs_HelpWorksForAllTypes(t *testing.T) {
@@ -344,7 +327,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	resetTestState()
 }
 
 func TestArgs_UnsetBoolDefaultsToFalse(t *testing.T) {
@@ -358,7 +340,6 @@ print(name, isTall)
 	expected := `alice false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	resetTestState()
 }
 
 func TestArgs_CanDefaultBoolToTrue(t *testing.T) {
@@ -372,7 +353,6 @@ print(name, isTall)
 	expected := `alice true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	resetTestState()
 }
 
 func TestArgs_MissingArgsPrintsUsageAndReturnsError(t *testing.T) {
@@ -393,7 +373,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArgs_TooManyArgsPrintsUsageAndReturnsError(t *testing.T) {
@@ -414,7 +393,6 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
@@ -435,5 +413,4 @@ Script args:
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
-	resetTestState()
 }

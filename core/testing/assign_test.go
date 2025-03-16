@@ -10,7 +10,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 3, 2 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_MultiAssign_InsideCollectionViaSwitch(t *testing.T) {
@@ -24,7 +23,6 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, [ 20, 3 ], 30 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_MultiAssign_InsideCollectionViaFunc(t *testing.T) {
@@ -35,5 +33,4 @@ print(a)`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 1, [ \"Alice\", 3 ], 25 ]\n")
 	assertNoErrors(t)
-	resetTestState()
 }

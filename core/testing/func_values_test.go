@@ -16,7 +16,6 @@ FOO
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestValues_ErrorsIfGivenString(t *testing.T) {
@@ -28,7 +27,6 @@ func TestValues_ErrorsIfGivenString(t *testing.T) {
          ^^^^^ Got "string" as the 1st argument of values(), but must be: map
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
@@ -40,7 +38,6 @@ func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
   ^^^^^^^^ values() requires at least 1 argument, but got 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestValues_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
@@ -52,5 +49,4 @@ func TestValues_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
   ^^^^^^^^^^^^^^ values() requires at most 1 argument, but got 2
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

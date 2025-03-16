@@ -13,7 +13,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "not empty\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIf_False(t *testing.T) {
@@ -27,7 +26,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "empty\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIf_CanRefVarDefinedOutside(t *testing.T) {
@@ -39,7 +37,6 @@ if true:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "ALICE\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIf_CanRefJsonVarDefinedOutside(t *testing.T) {
@@ -55,7 +52,6 @@ if true:
 	assertOutput(t, stdOutBuffer, "id  name  \n1   Alice  \n2   Bob    \n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): url\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIf_Or(t *testing.T) {
@@ -70,7 +66,6 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "TRUE\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestIf_And(t *testing.T) {
@@ -85,5 +80,4 @@ else:
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "FALSE\n")
 	assertNoErrors(t)
-	resetTestState()
 }

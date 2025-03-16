@@ -20,7 +20,6 @@ bob
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines1(t *testing.T) {
@@ -36,7 +35,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines2(t *testing.T) {
@@ -51,7 +49,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines3(t *testing.T) {
@@ -67,7 +64,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines4(t *testing.T) {
@@ -81,7 +77,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines5(t *testing.T) {
@@ -95,7 +90,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineListAcrossLines6(t *testing.T) {
@@ -110,7 +104,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineMapAcrossLines1(t *testing.T) {
@@ -126,7 +119,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineMapAcrossLines2(t *testing.T) {
@@ -141,7 +133,6 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Parser_CanDefineMapAcrossLines3(t *testing.T) {
@@ -155,5 +146,4 @@ print(names)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -34,5 +34,4 @@ print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -9,7 +9,6 @@ print(floor(1))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Floor_Negative_Ints(t *testing.T) {
@@ -19,7 +18,6 @@ print(floor(-2))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Floor_Floats(t *testing.T) {
@@ -29,7 +27,6 @@ print(floor(2.234))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Floor_Negative_Floats(t *testing.T) {
@@ -39,7 +36,6 @@ print(floor(-2.234))
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-3\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Func_Floor_Errors_With_String(t *testing.T) {
@@ -54,5 +50,4 @@ print(floor("ab"))
               Got "string" as the 1st argument of floor(), but must be: float or int
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }

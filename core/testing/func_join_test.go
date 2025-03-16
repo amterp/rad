@@ -16,7 +16,6 @@ Alice: Hi there!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Join_Int(t *testing.T) {
@@ -33,7 +32,6 @@ Nums: 1_2_3_4
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Join_Float(t *testing.T) {
@@ -50,7 +48,6 @@ Floats: 1.1 yes 1.2 yes 1.3 :D
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Join_Mixed(t *testing.T) {
@@ -67,7 +64,6 @@ print(join(arr, "_", "(", ")"))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Join_ReturnsRslString(t *testing.T) {
@@ -79,5 +75,4 @@ print(type_of(join(["Hi", "!"], "")))
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }

@@ -12,7 +12,6 @@ hi charlie
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_DebugNoDebugFlag(t *testing.T) {
@@ -20,7 +19,6 @@ func Test_DebugNoDebugFlag(t *testing.T) {
 	expected := "one\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_DebugWithDebugFlag(t *testing.T) {
@@ -28,7 +26,6 @@ func Test_DebugWithDebugFlag(t *testing.T) {
 	expected := "one\nDEBUG: two\nDEBUG: three\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Dict(t *testing.T) {
@@ -48,7 +45,6 @@ pprint(node[0])
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Int(t *testing.T) {
@@ -65,7 +61,6 @@ pprint(node[0])
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Array(t *testing.T) {
@@ -99,7 +94,6 @@ pprint(node)
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Complex(t *testing.T) {
@@ -148,7 +142,6 @@ pprint(node[0])
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Basics(t *testing.T) {
@@ -166,7 +159,6 @@ false
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_PrettyPrint_Map(t *testing.T) {
@@ -186,7 +178,6 @@ pprint(a)
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Print_CanPrintEmojis(t *testing.T) {
@@ -195,7 +186,6 @@ print("👋")`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "👋\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Print_CanCustomizeEnd(t *testing.T) {
@@ -204,7 +194,6 @@ print("hello", "there", "claire", end="bloop")`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello there clairebloop")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Print_CanUseEndToRemoveNewlines(t *testing.T) {
@@ -215,7 +204,6 @@ print("claire", end="")`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hellothereclaire")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func Test_Print_CanCustomizeSep(t *testing.T) {
@@ -224,5 +212,4 @@ print("hello", "there", "claire", sep="_")`
 	setupAndRunCode(t, rsl, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello_there_claire\n")
 	assertNoErrors(t)
-	resetTestState()
 }

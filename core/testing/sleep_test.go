@@ -7,7 +7,6 @@ func TestSleep_IntBecomesSeconds(t *testing.T) {
 	assertSleptMillis(t, 10000)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_FloatBecomesSeconds(t *testing.T) {
@@ -15,7 +14,6 @@ func TestSleep_FloatBecomesSeconds(t *testing.T) {
 	assertSleptMillis(t, 10200)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_IntInStringBecomesSeconds(t *testing.T) {
@@ -23,7 +21,6 @@ func TestSleep_IntInStringBecomesSeconds(t *testing.T) {
 	assertSleptMillis(t, 10000)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_FloatInStringBecomesSeconds(t *testing.T) {
@@ -31,7 +28,6 @@ func TestSleep_FloatInStringBecomesSeconds(t *testing.T) {
 	assertSleptMillis(t, 10200)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_AllowsZero(t *testing.T) {
@@ -39,7 +35,6 @@ func TestSleep_AllowsZero(t *testing.T) {
 	assertSleptMillis(t, 0)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_GoCompatibleHumanString(t *testing.T) {
@@ -54,7 +49,6 @@ sleep("1.1h2.2m3.3s")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_HumanStringAllowSpaces(t *testing.T) {
@@ -69,7 +63,6 @@ sleep("1.1h 2.2m  3.3s")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestSleep_ErrorsIfNoArg(t *testing.T) {
@@ -81,7 +74,6 @@ func TestSleep_ErrorsIfNoArg(t *testing.T) {
   ^^^^^^^ sleep() requires at least 1 argument, but got 0
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestSleep_ErrorsIfNegArg(t *testing.T) {
@@ -93,7 +85,6 @@ func TestSleep_ErrorsIfNegArg(t *testing.T) {
         ^^^ sleep() cannot take a negative duration: "-10s"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
@@ -105,7 +96,6 @@ func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
   ^^^^^^^^^^^^^ sleep() requires at most 1 argument, but got 2
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
@@ -118,7 +108,6 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
         Got "bool" as the 1st argument of sleep(), but must be: int, float, or string
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
@@ -130,7 +119,6 @@ func TestSleep_ErrorsIfInvalidString(t *testing.T) {
         ^^^^^^^^^^ Invalid string argument: "Invalid!"
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
 
 func TestSleep_CanSleepLessThanMilliWithoutErroring(t *testing.T) {
@@ -138,5 +126,4 @@ func TestSleep_CanSleepLessThanMilliWithoutErroring(t *testing.T) {
 	assertSleptMillis(t, 0)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
-	resetTestState()
 }

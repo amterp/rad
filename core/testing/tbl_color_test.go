@@ -30,7 +30,6 @@ rad url:
 
 	assertOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColor_OverlappingMatches(t *testing.T) {
@@ -54,7 +53,6 @@ rad url:
 
 	assertOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColor_PartialOverlapPriority(t *testing.T) {
@@ -77,7 +75,6 @@ rad url:
 
 	assertOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColor_NoMatches(t *testing.T) {
@@ -99,7 +96,6 @@ rad url:
 
 	assertOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColor_Complex(t *testing.T) {
@@ -125,7 +121,6 @@ rad url:
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColor_Plain(t *testing.T) {
@@ -148,7 +143,6 @@ rad url:
 
 	assertOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
-	resetTestState()
 }
 
 func TestRadColorErrorsOnInvalidColor(t *testing.T) {
@@ -169,5 +163,4 @@ rad url:
                 Invalid color value "licorice". Allowed: [black blue cyan green magenta orange pink plain red white yellow]
 `
 	assertError(t, 1, expected)
-	resetTestState()
 }
