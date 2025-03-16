@@ -74,7 +74,7 @@ const (
 	FUNC_MAX                = "max"
 	FUNC_CLAMP              = "clamp"
 	FUNC_REVERSE            = "reverse"
-	FUNC_IS_DEFINED         = "is_defined"
+	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars.
 
 	namedArgReverse  = "reverse"
 	namedArgTitle    = "title"
