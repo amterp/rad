@@ -44,7 +44,6 @@ const (
 	ArgIntT
 	ArgFloatT
 	ArgBoolT
-	ArgMixedArrayT // todo better support? or delete
 	ArgStringArrayT
 	ArgIntArrayT
 	ArgFloatArrayT
@@ -85,8 +84,6 @@ func (r *RslArgTypeT) AsString() string {
 		return "float"
 	case ArgBoolT:
 		return "bool"
-	case ArgMixedArrayT:
-		return "mixed list"
 	case ArgStringArrayT:
 		return "string list"
 	case ArgIntArrayT:

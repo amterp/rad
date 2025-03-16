@@ -28,7 +28,7 @@ args:
 print("ran")
 `
 	setupAndRunCode(t, rsl, "--a", "alex")
-	expected := `Invalid args: 'a' requires 'b', but 'b' was not given
+	expected := `Invalid args: 'a' requires 'b', but 'b' was not set
 
 Usage:
   <a> <b>
@@ -52,7 +52,7 @@ args:
 print("ran")
 `
 	setupAndRunCode(t, rsl, "--a", "alex")
-	expected := `Invalid args: 'b' requires 'c', but 'c' was not given
+	expected := `Invalid args: 'b' requires 'c', but 'c' was not set
 
 Usage:
   <a> [b] <c>
@@ -116,7 +116,7 @@ else:
     print("Fetching from URL:", url)
 `
 	setupAndRunCode(t, rsl, "--file", "file.txt", "--url", "someurl")
-	expected := `Invalid args: 'file' excludes 'url', but 'url' was given
+	expected := `Invalid args: 'file' excludes 'url', but 'url' was set
 
 Usage:
   <file> <url>
@@ -185,7 +185,7 @@ else:
     print("Authenticating user:", username)
 `
 	setupAndRunCode(t, rsl, "--token", "sometoken", "--username", "alice", "--password", "pass")
-	expected := `Invalid args: 'token' excludes 'username', but 'username' was given
+	expected := `Invalid args: 'token' excludes 'username', but 'username' was set
 
 Usage:
   <token> <username> <password>
@@ -212,4 +212,62 @@ args:
                      ^^^^^^^^ Undefined arg 'username'
 `
 	assertError(t, 1, expected)
+}
+
+func Test_Args_Constraints_Relational_Bool_Can_Require(t *testing.T) {
+	rsl := `
+args:
+    authenticate bool
+	token string
+
+    authenticate mutually requires token
+
+if authenticate:
+    print("Token:", token)
+`
+	setupAndRunCode(t, rsl, "--authenticate", "--token", "sometoken")
+	assertOnlyOutput(t, stdOutBuffer, "Token: sometoken\n")
+	assertNoErrors(t)
+}
+
+func Test_Args_Constraints_Relational_Bool_ErrorsIfBoolFalse(t *testing.T) {
+	rsl := `
+args:
+    authenticate bool
+	token string
+
+    authenticate mutually requires token
+
+if authenticate:
+    print("Token:", token)
+`
+	setupAndRunCode(t, rsl, "--token", "sometoken")
+	expected := `Invalid args: 'token' requires 'authenticate', but 'authenticate' was not set
+
+Usage:
+  [authenticate] <token>
+
+Script args:
+      --authenticate   
+      --token string   
+
+` + scriptGlobalFlagHelp
+	assertError(t, 1, expected)
+}
+
+func Test_Args_Constraints_Relational_Bool_CanDefineRequireeForNonMutualRequirement(t *testing.T) {
+	rsl := `
+args:
+    authenticate bool
+	token string
+
+    authenticate requires token
+
+if authenticate:
+    print("Auth Token:", token)
+print("Non-auth Token:", token)
+`
+	setupAndRunCode(t, rsl, "--token", "sometoken")
+	assertOnlyOutput(t, stdOutBuffer, "Non-auth Token: sometoken\n")
+	assertNoErrors(t)
 }

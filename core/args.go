@@ -15,7 +15,19 @@ import (
 
 type ConstraintCtx struct {
 	MissingArgs []RslArg
-	ScriptArgs  []RslArg
+	ScriptArgs  map[string]RslArg // Identifier -> RslArg
+}
+
+func NewConstraintCtx(missingArgs, scriptArgs []RslArg) ConstraintCtx {
+	scriptArgByIdentifier := make(map[string]RslArg)
+	for _, arg := range scriptArgs {
+		scriptArgByIdentifier[arg.GetIdentifier()] = arg
+	}
+
+	return ConstraintCtx{
+		MissingArgs: missingArgs,
+		ScriptArgs:  scriptArgByIdentifier,
+	}
 }
 
 type RslArg interface {
@@ -129,31 +141,44 @@ func (f *BaseRslArg) ValidateConstraints() error {
 }
 
 func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
-	argNames := make(map[string]string)
-	for _, arg := range ctx.ScriptArgs {
-		argNames[arg.GetIdentifier()] = arg.GetExternalName()
+	missingExternalNames := TransformRslArgs(ctx.MissingArgs, RslArg.GetExternalName)
+	requires := f.requiresConstraint
+
+	thisArgIsDefined := !lo.Contains(missingExternalNames, f.ExternalName)
+	if !thisArgIsDefined {
+		// relational constraints only apply to defined args
+		return nil
 	}
 
-	missingExternalNames := TransformRslArgs(ctx.MissingArgs, RslArg.GetExternalName)
-
-	requires := f.requiresConstraint
 	for _, required := range requires {
-		if externalName, ok := argNames[required]; ok {
-			required = externalName
+		reqArg := ctx.ScriptArgs[required]
+		required = reqArg.GetExternalName()
+
+		requiredArgIsMissing := lo.Contains(missingExternalNames, required)
+		if requiredArgIsMissing {
+			return f.missingRequirement(required)
 		}
 
-		if !lo.Contains(missingExternalNames, f.ExternalName) && lo.Contains(missingExternalNames, required) {
-			return fmt.Errorf("'%s' requires '%s', but '%s' was not given", f.ExternalName, required, required)
+		if boolArg, ok := reqArg.(*BoolRslArg); ok {
+			if !boolArg.Value {
+				return f.missingRequirement(required)
+			}
 		}
 	}
 
 	for _, excluded := range f.excludesConstraint {
-		if externalName, ok := argNames[excluded]; ok {
-			excluded = externalName
+		exclArg := ctx.ScriptArgs[excluded]
+		excluded = exclArg.GetExternalName()
+
+		excludedArgIsDefined := !lo.Contains(missingExternalNames, excluded)
+		if excludedArgIsDefined {
+			return f.excludesRequirement(excluded)
 		}
 
-		if !lo.Contains(missingExternalNames, f.ExternalName) && !lo.Contains(missingExternalNames, excluded) {
-			return fmt.Errorf("'%s' excludes '%s', but '%s' was given", f.ExternalName, excluded, excluded)
+		if boolArg, ok := exclArg.(*BoolRslArg); ok {
+			if boolArg.Value {
+				return f.excludesRequirement(excluded)
+			}
 		}
 	}
 
@@ -900,4 +925,12 @@ func addRangeDescriptionIfPresent(sb *strings.Builder, rangeConstraint *ArgRange
 		}
 		sb.WriteString(lo.Ternary(rangeConstraint.MaxInclusive, "]", ")"))
 	}
+}
+
+func (f *BaseRslArg) missingRequirement(required string) error {
+	return fmt.Errorf("'%s' requires '%s', but '%s' was not set", f.ExternalName, required, required)
+}
+
+func (f *BaseRslArg) excludesRequirement(excluded string) error {
+	return fmt.Errorf("'%s' excludes '%s', but '%s' was set", f.ExternalName, excluded, excluded)
 }
