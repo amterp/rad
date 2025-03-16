@@ -136,7 +136,13 @@ func (r *Requester) RequestJson(url string) (interface{}, error) {
 	response := r.Request(reqDef)
 
 	if !response.Success {
-		return nil, fmt.Errorf("request failed: %s", *response.Error)
+		if response.Error != nil {
+			return nil, fmt.Errorf("request failed: %s", *response.Error)
+		} else if response.StatusCode != nil {
+			return nil, fmt.Errorf("request failed: non-successful status code %d", *response.StatusCode)
+		} else {
+			return nil, fmt.Errorf("request failed: unknown reason") // this probably signifies a bug in Rad
+		}
 	}
 
 	body := *response.Body
