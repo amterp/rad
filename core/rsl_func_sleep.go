@@ -1,7 +1,7 @@
 package core
 
 import (
-	"strconv"
+	"github.com/amterp/rts"
 	"strings"
 	"time"
 
@@ -28,7 +28,7 @@ var FuncSleep = Func{
 		case RslString:
 			durStr := strings.Replace(coerced.Plain(), " ", "", -1)
 
-			floatVal, err := strconv.ParseFloat(durStr, 64)
+			floatVal, err := rts.ParseFloat(durStr)
 			if err == nil {
 				sleep(f.i, arg.node, time.Duration(floatVal*1000)*time.Millisecond, f.namedArgs)
 				return EMPTY
