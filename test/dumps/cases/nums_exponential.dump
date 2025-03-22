@@ -1,0 +1,40 @@
+=====
+Exponentials
+=====
+1.0e9
+1e9
+1E9_8
+1.2e9
+12.3e9
+12.3e9_8
+12.3e-9_8
+=====
+B: [ 0, 48] PS: [0, 0], PE: [7, 0] source_file
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]   expr
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]     base: primary_expr
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]       literal
+B: [ 0,  5] PS: [0, 0], PE: [0, 5]         float `1.0e9`
+B: [ 6,  9] PS: [1, 0], PE: [1, 3]   expr
+B: [ 6,  9] PS: [1, 0], PE: [1, 3]     base: primary_expr
+B: [ 6,  9] PS: [1, 0], PE: [1, 3]       literal
+B: [ 6,  9] PS: [1, 0], PE: [1, 3]         float `1e9`
+B: [10, 15] PS: [2, 0], PE: [2, 5]   expr
+B: [10, 15] PS: [2, 0], PE: [2, 5]     base: primary_expr
+B: [10, 15] PS: [2, 0], PE: [2, 5]       literal
+B: [10, 15] PS: [2, 0], PE: [2, 5]         float `1E9_8`
+B: [16, 21] PS: [3, 0], PE: [3, 5]   expr
+B: [16, 21] PS: [3, 0], PE: [3, 5]     base: primary_expr
+B: [16, 21] PS: [3, 0], PE: [3, 5]       literal
+B: [16, 21] PS: [3, 0], PE: [3, 5]         float `1.2e9`
+B: [22, 28] PS: [4, 0], PE: [4, 6]   expr
+B: [22, 28] PS: [4, 0], PE: [4, 6]     base: primary_expr
+B: [22, 28] PS: [4, 0], PE: [4, 6]       literal
+B: [22, 28] PS: [4, 0], PE: [4, 6]         float `12.3e9`
+B: [29, 37] PS: [5, 0], PE: [5, 8]   expr
+B: [29, 37] PS: [5, 0], PE: [5, 8]     base: primary_expr
+B: [29, 37] PS: [5, 0], PE: [5, 8]       literal
+B: [29, 37] PS: [5, 0], PE: [5, 8]         float `12.3e9_8`
+B: [38, 47] PS: [6, 0], PE: [6, 9]   expr
+B: [38, 47] PS: [6, 0], PE: [6, 9]     base: primary_expr
+B: [38, 47] PS: [6, 0], PE: [6, 9]       literal
+B: [38, 47] PS: [6, 0], PE: [6, 9]         float `12.3e-9_8`
