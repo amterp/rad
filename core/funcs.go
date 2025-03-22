@@ -252,7 +252,7 @@ func init() {
 		{
 			Name:           FUNC_JOIN,
 			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
+			MinPosArgCount: 2, // todo: should "" just be the default joiner?
 			PosArgTypes:    [][]RslTypeEnum{{RslListT}, {RslStringT}, {RslStringT}, {RslStringT}},
 			NamedArgs:      NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {

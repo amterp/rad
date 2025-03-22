@@ -611,7 +611,9 @@ read_file(path: string, mode: string = "text") -> map
 The returned `map` contains two keys:
 
 - `size_bytes -> int`
-- `contents -> string | list[int]` (depending on `mode`)
+- `content -> string | list[int]` (depending on `mode`)
+
+[//]: # (todo should the key be 'contents'? I find myself wanting to write plural frequently...)
 
 ### get_path
 

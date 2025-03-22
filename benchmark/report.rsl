@@ -1,0 +1,25 @@
+#!/usr/bin/env rad
+---
+Processes the hyperfine output report and prints a nice little report.
+---
+
+Benchmark = json.results[].command
+Mean = json.results[].mean
+Stddev = json.results[].stddev
+Min = json.results[].min
+Max = json.results[].max
+Runs = json.results[].times
+
+// todo rad be able to pass own json blobs into rad blocks
+
+rad "mock-response!":
+    fields Benchmark, Mean, Stddev, Min, Max, Runs
+    sort Benchmark
+    Benchmark:
+        map b -> replace(split(b, "/")[-1], ".rsl", "")
+    Mean, Stddev, Min, Max:
+        map n -> round(n * 1000, 1)
+    Runs:
+        map t -> len(t)
+print("Times in milliseconds")
+quiet $!`./macos-hardware.rsl`

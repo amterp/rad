@@ -1,0 +1,60 @@
+#!/usr/bin/env rad
+---
+Runs the benchmark suite. Not expected to work on non-macOS machines.
+---
+args:
+    min_runs "min-runs" int = 10
+    runs r int = 0 # Set to control the specific number of runs.
+    warmup w int = 2
+    skip_readme "skip-readme" bool # Enable to skip appending the report to the README.
+
+    min_runs range [0,]
+    runs range [0,]
+    warmup range [0,]
+
+scripts = find_paths("./scripts", relative="cwd")
+cmds = join(scripts, "' '", "'", "'")
+
+now = now()
+time = now.epoch.seconds
+report_name = "reports/report-{time}.json"
+
+cmd = `hyperfine {cmds} --warmup {warmup} --export-json {report_name}`
+
+if runs > 0:
+    cmd += " --runs {runs}"
+else if min_runs > 0:
+    cmd += " --min-runs {min_runs}"
+
+$!cmd
+
+// todo rad: could avoid by being able to parse own json to rad blocks
+
+cmd = `./report.rsl --mock-response ".*:{report_name}"`
+if skip_readme:
+    $!cmd
+    exit()
+
+_, output = $!cmd
+output = output[:-1]
+
+readme = read_file("README.md").content
+
+_, version = $!`rad -v`
+version = replace(version, "\n", "")
+
+_, hash = $!`git rev-parse --short HEAD`
+hash = replace(hash, "\n", "")
+
+new_section = """
+### {version} (Commit {hash}) ({now.date})
+
+*Full report: [{report_name}]({report_name})*
+
+```
+{output}
+```
+"""
+
+readme = replace(readme, "## Benchmark History\n\n(.*)", "## Benchmark History\n\n{new_section}\n\n$1")
+quiet $!`echo -n '{readme}' > README.md`

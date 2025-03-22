@@ -1,0 +1,17 @@
+#!/usr/bin/env rad
+
+_, cpu = quiet $!`sysctl -n machdep.cpu.brand_string`
+cpu = replace(cpu, "\n", "")
+
+_, ram = quiet $!`sysctl -n hw.memsize`
+ram = replace(ram, "\n", "")
+ram = parse_int(ram) / 1024 / 1024 / 1024
+
+
+_, cores = quiet $!`sysctl -n hw.ncpu`
+cores = replace(cores, "\n", "")
+
+_, macos_vers = quiet $!`sw_vers -productVersion`
+macos_vers = replace(macos_vers, "\n", "")
+
+print("{cpu} ({cores} cores) {ram} GB macOS {macos_vers}")
