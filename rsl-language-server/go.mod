@@ -3,14 +3,14 @@ module rls
 go 1.23.4
 
 require (
-	github.com/amterp/rts v0.0.18
+	github.com/amterp/rts v0.0.19
 	github.com/sanity-io/litter v1.5.6
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	go.uber.org/zap v1.27.0
 )
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.23 // indirect
+	github.com/amterp/tree-sitter-rsl v0.0.24 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect

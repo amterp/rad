@@ -178,7 +178,7 @@
 			"patterns": [
 				{
 					"name": "constant.numeric.float.rsl",
-					"match": "\\b[0-9]+\\.[0-9]+\\b"
+					"match": "\\b\\d(_?\\d+)*((\\.\\d(_?\\d+)*([eE][+-]?\\d(_?\\d+)*)?)|([eE][+-]?\\d(_?\\d+)*))\\b"
 				}
 			]
 		},
@@ -186,7 +186,7 @@
 			"patterns": [
 				{
 					"name": "constant.numeric.integer.rsl",
-					"match": "\\b[0-9]+\\b"
+					"match": "\\b\\d(_?\\d+)*\\b"
 				}
 			]
 		},
