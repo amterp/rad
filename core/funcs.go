@@ -2,13 +2,14 @@ package core
 
 import (
 	"fmt"
-	"github.com/amterp/rts"
 	"math"
 	"os"
 	"path/filepath"
 	com "rad/core/common"
 	"sort"
 	"strings"
+
+	"github.com/amterp/rts"
 
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"

@@ -12,7 +12,10 @@ args:
     runs range [0,]
     warmup range [0,]
 
+$!`cd .. && make all`
+
 scripts = find_paths("./scripts", relative="cwd")
+scripts = ["../bin/radd {s}" for s in scripts]
 cmds = join(scripts, "' '", "'", "'")
 
 now = now()

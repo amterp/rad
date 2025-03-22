@@ -1,9 +1,10 @@
 package core
 
 import (
-	"github.com/amterp/rts"
 	"strings"
 	"time"
+
+	"github.com/amterp/rts"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
