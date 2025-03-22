@@ -2,10 +2,10 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/amterp/go-tbl v0.9.0 h1:eh5bE1RbVKK6tN/FOjsotBNCF4+wvJSsH3HHw2t+Cb4=
 github.com/amterp/go-tbl v0.9.0/go.mod h1:py0viOYEcyfO0Po/EdCW8Tgg7/LXecf6nBlqQFlrOZ8=
-github.com/amterp/rts v0.0.18 h1:QSO/HbP7JwGdGb/V2ULBOHFP+71jQsRvf2EK+8l6A+c=
-github.com/amterp/rts v0.0.18/go.mod h1:Rmw5aHYKwYynrnsBuWwOumEldlCzkWIJMT2Rhrh9JYQ=
-github.com/amterp/tree-sitter-rsl v0.0.23 h1:9m6aL0Y5Rd3mrynlIJQVcYVUAkyS3aWt/No58nLN3+g=
-github.com/amterp/tree-sitter-rsl v0.0.23/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
+github.com/amterp/rts v0.0.19 h1:VZ1j9+McR8Ph6Cd2K4h2vnhjF2srXotGGnPnqyFr2Zs=
+github.com/amterp/rts v0.0.19/go.mod h1:vDtT5G2MjPMm2LsFIhApLCWv3fBGZF8UAceNMYKzRhg=
+github.com/amterp/tree-sitter-rsl v0.0.24 h1:AwVoocmD4CHBxLHb5Ny30Ffk9H4tITmvxT4ZQV9RL/8=
+github.com/amterp/tree-sitter-rsl v0.0.24/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=

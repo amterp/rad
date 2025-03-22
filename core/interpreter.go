@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	rts "github.com/amterp/rts"
 	com "rad/core/common"
 	"runtime/debug"
 	"strconv"
@@ -309,12 +310,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 	case K_INT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
-		asInt, _ := strconv.ParseInt(asStr, 10, 64) // todo unhandled err
+		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
 		return newRslValues(i, node, asInt)
 	case K_FLOAT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
-		asFloat, _ := strconv.ParseFloat(asStr, 64) // todo unhandled err
+		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
 		return newRslValues(i, node, asFloat)
 	case K_STRING:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)

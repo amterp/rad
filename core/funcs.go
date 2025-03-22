@@ -2,12 +2,12 @@ package core
 
 import (
 	"fmt"
+	"github.com/amterp/rts"
 	"math"
 	"os"
 	"path/filepath"
 	com "rad/core/common"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/samber/lo"
@@ -449,7 +449,7 @@ func init() {
 				arg := f.args[0]
 
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
-				parsed, err := strconv.ParseInt(str, 10, 64)
+				parsed, err := rts.ParseInt(str)
 
 				if err == nil {
 					if f.numExpectedOutputs == 1 {
@@ -479,7 +479,7 @@ func init() {
 				arg := f.args[0]
 
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
-				parsed, err := strconv.ParseFloat(str, 64)
+				parsed, err := rts.ParseFloat(str)
 
 				if err == nil {
 					if f.numExpectedOutputs == 1 {

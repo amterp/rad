@@ -593,7 +593,7 @@ func (f *IntArrRslArg) SetValue(arg string) {
 	split := strings.Split(arg, ",")
 	ints := make([]int64, len(split))
 	for i, v := range split {
-		parsed, err := strconv.ParseInt(v, 10, 64)
+		parsed, err := rts.ParseInt(v)
 		if err != nil {
 			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
 		}
@@ -652,7 +652,7 @@ func (f *FloatRslArg) Register() {
 
 func (f *FloatRslArg) SetValue(arg string) {
 	f.BaseRslArg.SetValue(arg)
-	parsed, err := strconv.ParseFloat(arg, 64)
+	parsed, err := rts.ParseFloat(arg)
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 	}
@@ -728,7 +728,7 @@ func (f *FloatArrRslArg) SetValue(arg string) {
 	split := strings.Split(arg, ",")
 	floats := make([]float64, len(split))
 	for i, v := range split {
-		parsed, err := strconv.ParseFloat(v, 64)
+		parsed, err := rts.ParseFloat(v)
 		if err != nil {
 			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
 		}
