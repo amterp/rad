@@ -80,7 +80,7 @@ B: [162, 166] PS: [ 9,  4], PE: [ 9,  8]       arg_name: identifier `age7`
 B: [167, 172] PS: [ 9,  9], PE: [ 9, 14]       range `range`
 B: [173, 174] PS: [ 9, 15], PE: [ 9, 16]       opener: [ `[`
 B: [174, 175] PS: [ 9, 16], PE: [ 9, 17]       , `,`
-B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]       max: float_arg
-B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]         value: float (MISSING) ``
+B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]       max: int_arg
+B: [175, 175] PS: [ 9, 17], PE: [ 9, 17]         value: int (MISSING) ``
 B: [175, 176] PS: [ 9, 17], PE: [ 9, 18]       closer: ] `]`
 B: [177, 185] PS: [ 9, 19], PE: [ 9, 27]     comment `// fails`

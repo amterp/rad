@@ -353,7 +353,8 @@ func findArgRangeConstraints(src string, node *ts.Node) map[string]*ArgRangeCons
 
 		var rMin *ArgRangeMinMax
 		if minNode != nil {
-			minValue, _ := strconv.ParseFloat(src[minNode.StartByte():minNode.EndByte()], 64)
+			str := src[minNode.StartByte():minNode.EndByte()]
+			minValue, _ := ParseFloat(str)
 			rMin = &ArgRangeMinMax{
 				BaseNode: newBaseNode(src, minNode),
 				Value:    minValue,
@@ -362,7 +363,8 @@ func findArgRangeConstraints(src string, node *ts.Node) map[string]*ArgRangeCons
 
 		var rMax *ArgRangeMinMax
 		if maxNode != nil {
-			maxValue, _ := strconv.ParseFloat(src[maxNode.StartByte():maxNode.EndByte()], 64)
+			str := src[maxNode.StartByte():maxNode.EndByte()]
+			maxValue, _ := ParseFloat(str)
 			rMax = &ArgRangeMinMax{
 				BaseNode: newBaseNode(src, maxNode),
 				Value:    maxValue,
@@ -480,7 +482,7 @@ func extractArgInt(src string, defaultNode *ts.Node) int64 {
 	}
 	valueNode := defaultNode.ChildByFieldName("value")
 	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
-	value, _ := strconv.ParseInt(valueStr, 10, 64)
+	value, _ := ParseInt(valueStr)
 	return value * multiplier
 }
 
@@ -495,7 +497,7 @@ func extractArgFloat(src string, defaultNode *ts.Node) float64 {
 	}
 	valueNode := defaultNode.ChildByFieldName("value")
 	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
-	value, _ := strconv.ParseFloat(valueStr, 64)
+	value, _ := ParseFloat(valueStr)
 	return value * multiplier
 }
 

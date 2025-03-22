@@ -1,0 +1,33 @@
+=====
+Numbers can have underscores
+=====
+1234
+1_234
+0.000_001
+12_34.5_6
+12__34
+=====
+B: [ 0, 38] PS: [0, 0], PE: [5, 0] source_file
+B: [ 0,  4] PS: [0, 0], PE: [0, 4]   expr
+B: [ 0,  4] PS: [0, 0], PE: [0, 4]     base: primary_expr
+B: [ 0,  4] PS: [0, 0], PE: [0, 4]       literal
+B: [ 0,  4] PS: [0, 0], PE: [0, 4]         int `1234`
+B: [ 5, 10] PS: [1, 0], PE: [1, 5]   expr
+B: [ 5, 10] PS: [1, 0], PE: [1, 5]     base: primary_expr
+B: [ 5, 10] PS: [1, 0], PE: [1, 5]       literal
+B: [ 5, 10] PS: [1, 0], PE: [1, 5]         int `1_234`
+B: [11, 20] PS: [2, 0], PE: [2, 9]   expr
+B: [11, 20] PS: [2, 0], PE: [2, 9]     base: primary_expr
+B: [11, 20] PS: [2, 0], PE: [2, 9]       literal
+B: [11, 20] PS: [2, 0], PE: [2, 9]         float `0.000_001`
+B: [21, 30] PS: [3, 0], PE: [3, 9]   expr
+B: [21, 30] PS: [3, 0], PE: [3, 9]     base: primary_expr
+B: [21, 30] PS: [3, 0], PE: [3, 9]       literal
+B: [21, 30] PS: [3, 0], PE: [3, 9]         float `12_34.5_6`
+B: [31, 33] PS: [4, 0], PE: [4, 2]   expr
+B: [31, 33] PS: [4, 0], PE: [4, 2]     base: primary_expr
+B: [31, 33] PS: [4, 0], PE: [4, 2]       literal
+B: [31, 33] PS: [4, 0], PE: [4, 2]         int `12`
+B: [33, 37] PS: [4, 2], PE: [4, 6]   expr
+B: [33, 37] PS: [4, 2], PE: [4, 6]     base: primary_expr
+B: [33, 37] PS: [4, 2], PE: [4, 6]       identifier `__34`
