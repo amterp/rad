@@ -14,13 +14,21 @@ B: [ 0, 21] PS: [0, 0], PE: [2, 9]   shell_stmt
 B: [ 0, 21] PS: [0, 0], PE: [2, 9]     shell_cmd: checked_shell_cmd
 B: [ 0,  1] PS: [0, 0], PE: [0, 1]       $ `$`
 B: [ 1,  5] PS: [0, 1], PE: [0, 5]       command: expr
-B: [ 1,  5] PS: [0, 1], PE: [0, 5]         base: primary_expr
-B: [ 1,  5] PS: [0, 1], PE: [0, 5]           literal
-B: [ 1,  5] PS: [0, 1], PE: [0, 5]             string
-B: [ 1,  2] PS: [0, 1], PE: [0, 2]               start: string_start ```
-B: [ 2,  4] PS: [0, 2], PE: [0, 4]               contents: string_contents
-B: [ 2,  4] PS: [0, 2], PE: [0, 4]                 content: string_content `ls`
-B: [ 4,  5] PS: [0, 4], PE: [0, 5]               end: string_end ```
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]         ternary_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]           delegate: or_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]             delegate: and_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]               delegate: compare_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                 delegate: add_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                   delegate: mult_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                     delegate: unary_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                       delegate: indexed_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                         root: primary_expr
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                           literal
+B: [ 1,  5] PS: [0, 1], PE: [0, 5]                             string
+B: [ 1,  2] PS: [0, 1], PE: [0, 2]                               start: string_start ```
+B: [ 2,  4] PS: [0, 2], PE: [0, 4]                               contents: string_contents
+B: [ 2,  4] PS: [0, 2], PE: [0, 4]                                 content: string_content `ls`
+B: [ 4,  5] PS: [0, 4], PE: [0, 5]                               end: string_end ```
 B: [ 6, 10] PS: [1, 0], PE: [1, 4]       response: fail `fail`
 B: [10, 11] PS: [1, 4], PE: [1, 5]       : `:`
 B: [16, 21] PS: [2, 4], PE: [2, 9]       stmt: assign
@@ -28,20 +36,36 @@ B: [16, 17] PS: [2, 4], PE: [2, 5]         left: var_path
 B: [16, 17] PS: [2, 4], PE: [2, 5]           root: identifier `a`
 B: [18, 19] PS: [2, 6], PE: [2, 7]         = `=`
 B: [20, 21] PS: [2, 8], PE: [2, 9]         right: expr
-B: [20, 21] PS: [2, 8], PE: [2, 9]           base: primary_expr
-B: [20, 21] PS: [2, 8], PE: [2, 9]             literal
-B: [20, 21] PS: [2, 8], PE: [2, 9]               int `1`
+B: [20, 21] PS: [2, 8], PE: [2, 9]           ternary_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]             delegate: or_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]               delegate: and_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                 delegate: compare_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                   delegate: add_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                     delegate: mult_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                       delegate: unary_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                         delegate: indexed_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                           root: primary_expr
+B: [20, 21] PS: [2, 8], PE: [2, 9]                             literal
+B: [20, 21] PS: [2, 8], PE: [2, 9]                               int `1`
 B: [23, 47] PS: [4, 0], PE: [6, 9]   shell_stmt
 B: [23, 47] PS: [4, 0], PE: [6, 9]     shell_cmd: checked_shell_cmd
 B: [23, 24] PS: [4, 0], PE: [4, 1]       $ `$`
 B: [24, 28] PS: [4, 1], PE: [4, 5]       command: expr
-B: [24, 28] PS: [4, 1], PE: [4, 5]         base: primary_expr
-B: [24, 28] PS: [4, 1], PE: [4, 5]           literal
-B: [24, 28] PS: [4, 1], PE: [4, 5]             string
-B: [24, 25] PS: [4, 1], PE: [4, 2]               start: string_start ```
-B: [25, 27] PS: [4, 2], PE: [4, 4]               contents: string_contents
-B: [25, 27] PS: [4, 2], PE: [4, 4]                 content: string_content `ls`
-B: [27, 28] PS: [4, 4], PE: [4, 5]               end: string_end ```
+B: [24, 28] PS: [4, 1], PE: [4, 5]         ternary_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]           delegate: or_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]             delegate: and_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]               delegate: compare_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                 delegate: add_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                   delegate: mult_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                     delegate: unary_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                       delegate: indexed_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                         root: primary_expr
+B: [24, 28] PS: [4, 1], PE: [4, 5]                           literal
+B: [24, 28] PS: [4, 1], PE: [4, 5]                             string
+B: [24, 25] PS: [4, 1], PE: [4, 2]                               start: string_start ```
+B: [25, 27] PS: [4, 2], PE: [4, 4]                               contents: string_contents
+B: [25, 27] PS: [4, 2], PE: [4, 4]                                 content: string_content `ls`
+B: [27, 28] PS: [4, 4], PE: [4, 5]                               end: string_end ```
 B: [29, 36] PS: [5, 0], PE: [5, 7]       response: recover `recover`
 B: [36, 37] PS: [5, 7], PE: [5, 8]       : `:`
 B: [42, 47] PS: [6, 4], PE: [6, 9]       stmt: assign
@@ -49,6 +73,14 @@ B: [42, 43] PS: [6, 4], PE: [6, 5]         left: var_path
 B: [42, 43] PS: [6, 4], PE: [6, 5]           root: identifier `a`
 B: [44, 45] PS: [6, 6], PE: [6, 7]         = `=`
 B: [46, 47] PS: [6, 8], PE: [6, 9]         right: expr
-B: [46, 47] PS: [6, 8], PE: [6, 9]           base: primary_expr
-B: [46, 47] PS: [6, 8], PE: [6, 9]             literal
-B: [46, 47] PS: [6, 8], PE: [6, 9]               int `1`
+B: [46, 47] PS: [6, 8], PE: [6, 9]           ternary_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]             delegate: or_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]               delegate: and_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                 delegate: compare_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                   delegate: add_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                     delegate: mult_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                       delegate: unary_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                         delegate: indexed_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                           root: primary_expr
+B: [46, 47] PS: [6, 8], PE: [6, 9]                             literal
+B: [46, 47] PS: [6, 8], PE: [6, 9]                               int `1`

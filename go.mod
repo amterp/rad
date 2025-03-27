@@ -3,9 +3,9 @@ module github.com/amterp/rts
 go 1.23.4
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.24
+	github.com/amterp/tree-sitter-rsl v0.0.25
 	github.com/fatih/color v1.18.0
-	github.com/tree-sitter/go-tree-sitter v0.24.0
+	github.com/tree-sitter/go-tree-sitter v0.25.0
 )
 
 require (

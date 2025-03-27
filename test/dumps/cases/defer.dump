@@ -8,22 +8,56 @@ B: [ 0, 33] PS: [0,  0], PE: [2,  0] source_file
 B: [ 0, 14] PS: [0,  0], PE: [0, 14]   defer_block
 B: [ 0,  5] PS: [0,  0], PE: [0,  5]     keyword: defer `defer`
 B: [ 6, 14] PS: [0,  6], PE: [0, 14]     stmt: expr
-B: [ 6, 14] PS: [0,  6], PE: [0, 14]       base: call
-B: [ 6, 11] PS: [0,  6], PE: [0, 11]         func: identifier `print`
-B: [11, 12] PS: [0, 11], PE: [0, 12]         ( `(`
-B: [12, 13] PS: [0, 12], PE: [0, 13]         arg: expr
-B: [12, 13] PS: [0, 12], PE: [0, 13]           base: primary_expr
-B: [12, 13] PS: [0, 12], PE: [0, 13]             literal
-B: [12, 13] PS: [0, 12], PE: [0, 13]               int `1`
-B: [13, 14] PS: [0, 13], PE: [0, 14]         ) `)`
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]       ternary_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]         delegate: or_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]           delegate: and_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]             delegate: compare_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]               delegate: add_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]                 delegate: mult_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]                   delegate: unary_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]                     delegate: indexed_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]                       root: primary_expr
+B: [ 6, 14] PS: [0,  6], PE: [0, 14]                         call
+B: [ 6, 11] PS: [0,  6], PE: [0, 11]                           func: identifier `print`
+B: [11, 12] PS: [0, 11], PE: [0, 12]                           ( `(`
+B: [12, 13] PS: [0, 12], PE: [0, 13]                           arg: expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                             ternary_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                               delegate: or_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                 delegate: and_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                   delegate: compare_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                     delegate: add_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                       delegate: mult_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                         delegate: unary_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                           delegate: indexed_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                             root: primary_expr
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                               literal
+B: [12, 13] PS: [0, 12], PE: [0, 13]                                                 int `1`
+B: [13, 14] PS: [0, 13], PE: [0, 14]                           ) `)`
 B: [15, 32] PS: [1,  0], PE: [1, 17]   defer_block
 B: [15, 23] PS: [1,  0], PE: [1,  8]     keyword: errdefer `errdefer`
 B: [24, 32] PS: [1,  9], PE: [1, 17]     stmt: expr
-B: [24, 32] PS: [1,  9], PE: [1, 17]       base: call
-B: [24, 29] PS: [1,  9], PE: [1, 14]         func: identifier `print`
-B: [29, 30] PS: [1, 14], PE: [1, 15]         ( `(`
-B: [30, 31] PS: [1, 15], PE: [1, 16]         arg: expr
-B: [30, 31] PS: [1, 15], PE: [1, 16]           base: primary_expr
-B: [30, 31] PS: [1, 15], PE: [1, 16]             literal
-B: [30, 31] PS: [1, 15], PE: [1, 16]               int `2`
-B: [31, 32] PS: [1, 16], PE: [1, 17]         ) `)`
+B: [24, 32] PS: [1,  9], PE: [1, 17]       ternary_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]         delegate: or_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]           delegate: and_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]             delegate: compare_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]               delegate: add_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]                 delegate: mult_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]                   delegate: unary_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]                     delegate: indexed_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]                       root: primary_expr
+B: [24, 32] PS: [1,  9], PE: [1, 17]                         call
+B: [24, 29] PS: [1,  9], PE: [1, 14]                           func: identifier `print`
+B: [29, 30] PS: [1, 14], PE: [1, 15]                           ( `(`
+B: [30, 31] PS: [1, 15], PE: [1, 16]                           arg: expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                             ternary_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                               delegate: or_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                 delegate: and_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                   delegate: compare_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                     delegate: add_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                       delegate: mult_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                         delegate: unary_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                           delegate: indexed_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                             root: primary_expr
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                               literal
+B: [30, 31] PS: [1, 15], PE: [1, 16]                                                 int `2`
+B: [31, 32] PS: [1, 16], PE: [1, 17]                           ) `)`

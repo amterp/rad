@@ -1,6 +1,7 @@
 .idea/
 /test/dumps/actual/
 /test/dumps/cases/sandbox.dump
+.DS_Store
 
 ### Generated gitignore below ###
 

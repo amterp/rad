@@ -15,6 +15,15 @@ B: [ 6,  7] PS: [0,  6], PE: [0,  7]     left: var_path
 B: [ 6,  7] PS: [0,  6], PE: [0,  7]       root: identifier `c`
 B: [ 8,  9] PS: [0,  8], PE: [0,  9]     = `=`
 B: [10, 18] PS: [0, 10], PE: [0, 18]     right: expr
-B: [10, 18] PS: [0, 10], PE: [0, 18]       base: call
-B: [10, 16] PS: [0, 10], PE: [0, 16]         func: identifier `myFunc`
-B: [16, 18] PS: [0, 16], PE: [0, 18]         () `()`
+B: [10, 18] PS: [0, 10], PE: [0, 18]       ternary_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]         delegate: or_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]           delegate: and_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]             delegate: compare_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]               delegate: add_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]                 delegate: mult_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]                   delegate: unary_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]                     delegate: indexed_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]                       root: primary_expr
+B: [10, 18] PS: [0, 10], PE: [0, 18]                         call
+B: [10, 16] PS: [0, 10], PE: [0, 16]                           func: identifier `myFunc`
+B: [16, 18] PS: [0, 16], PE: [0, 18]                           () `()`
