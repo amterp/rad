@@ -1,0 +1,193 @@
+=====
+Switch expression basic
+=====
+title, url = switch endpoint:
+    case "cars", "automobiles" -> "Cars", "{base}/automobiles"
+    case "books" -> "Books", "{base}/reading?type=books"
+a = 2
+=====
+B: [  0, 156] PS: [0,  0] PE: [4,  0] source_file
+B: [  0, 149] PS: [0,  0] PE: [2, 56]   switch_stmt
+B: [  0,   5] PS: [0,  0] PE: [0,  5]     left: var_path
+B: [  0,   5] PS: [0,  0] PE: [0,  5]       root: identifier `title`
+B: [  5,   6] PS: [0,  5] PE: [0,  6]     , `,`
+B: [  7,  10] PS: [0,  7] PE: [0, 10]     left: var_path
+B: [  7,  10] PS: [0,  7] PE: [0, 10]       root: identifier `url`
+B: [ 11,  12] PS: [0, 11] PE: [0, 12]     = `=`
+B: [ 13,  19] PS: [0, 13] PE: [0, 19]     switch `switch`
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]     discriminant: expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]       ternary_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]         delegate: or_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]           delegate: and_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]             delegate: compare_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]               delegate: add_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]                 delegate: mult_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]                   delegate: unary_expr
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]                     delegate: var_path
+B: [ 20,  28] PS: [0, 20] PE: [0, 28]                       root: identifier `endpoint`
+B: [ 28,  29] PS: [0, 28] PE: [0, 29]     : `:`
+B: [ 34,  92] PS: [1,  4] PE: [1, 62]     case: switch_case
+B: [ 34,  38] PS: [1,  4] PE: [1,  8]       case `case`
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]       case_key: expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]         ternary_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]           delegate: or_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]             delegate: and_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]               delegate: compare_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                 delegate: add_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                   delegate: mult_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                     delegate: unary_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                       delegate: indexed_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                         root: primary_expr
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                           literal
+B: [ 39,  45] PS: [1,  9] PE: [1, 15]                             string
+B: [ 39,  40] PS: [1,  9] PE: [1, 10]                               start: string_start `"`
+B: [ 40,  44] PS: [1, 10] PE: [1, 14]                               contents: string_contents
+B: [ 40,  44] PS: [1, 10] PE: [1, 14]                                 content: string_content `cars`
+B: [ 44,  45] PS: [1, 14] PE: [1, 15]                               end: string_end `"`
+B: [ 45,  46] PS: [1, 15] PE: [1, 16]       , `,`
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]       case_key: expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]         ternary_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]           delegate: or_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]             delegate: and_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]               delegate: compare_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                 delegate: add_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                   delegate: mult_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                     delegate: unary_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                       delegate: indexed_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                         root: primary_expr
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                           literal
+B: [ 47,  60] PS: [1, 17] PE: [1, 30]                             string
+B: [ 47,  48] PS: [1, 17] PE: [1, 18]                               start: string_start `"`
+B: [ 48,  59] PS: [1, 18] PE: [1, 29]                               contents: string_contents
+B: [ 48,  59] PS: [1, 18] PE: [1, 29]                                 content: string_content `automobiles`
+B: [ 59,  60] PS: [1, 29] PE: [1, 30]                               end: string_end `"`
+B: [ 61,  92] PS: [1, 31] PE: [1, 62]       alt: switch_case_expr
+B: [ 61,  63] PS: [1, 31] PE: [1, 33]         -> `->`
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]         value: expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]           ternary_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]             delegate: or_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]               delegate: and_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                 delegate: compare_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                   delegate: add_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                     delegate: mult_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                       delegate: unary_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                         delegate: indexed_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                           root: primary_expr
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                             literal
+B: [ 64,  70] PS: [1, 34] PE: [1, 40]                               string
+B: [ 64,  65] PS: [1, 34] PE: [1, 35]                                 start: string_start `"`
+B: [ 65,  69] PS: [1, 35] PE: [1, 39]                                 contents: string_contents
+B: [ 65,  69] PS: [1, 35] PE: [1, 39]                                   content: string_content `Cars`
+B: [ 69,  70] PS: [1, 39] PE: [1, 40]                                 end: string_end `"`
+B: [ 70,  71] PS: [1, 40] PE: [1, 41]         , `,`
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]         value: expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]           ternary_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]             delegate: or_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]               delegate: and_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                 delegate: compare_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                   delegate: add_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                     delegate: mult_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                       delegate: unary_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                         delegate: indexed_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                           root: primary_expr
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                             literal
+B: [ 72,  92] PS: [1, 42] PE: [1, 62]                               string
+B: [ 72,  73] PS: [1, 42] PE: [1, 43]                                 start: string_start `"`
+B: [ 73,  91] PS: [1, 43] PE: [1, 61]                                 contents: string_contents
+B: [ 73,  79] PS: [1, 43] PE: [1, 49]                                   interpolation: interpolation
+B: [ 73,  74] PS: [1, 43] PE: [1, 44]                                     { `{`
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                     expr: expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                       ternary_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                         delegate: or_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                           delegate: and_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                             delegate: compare_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                               delegate: add_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                                 delegate: mult_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                                   delegate: unary_expr
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                                     delegate: var_path
+B: [ 74,  78] PS: [1, 44] PE: [1, 48]                                                       root: identifier `base`
+B: [ 78,  79] PS: [1, 48] PE: [1, 49]                                     } `}`
+B: [ 79,  91] PS: [1, 49] PE: [1, 61]                                   content: string_content `/automobiles`
+B: [ 91,  92] PS: [1, 61] PE: [1, 62]                                 end: string_end `"`
+B: [ 97, 149] PS: [2,  4] PE: [2, 56]     case: switch_case
+B: [ 97, 101] PS: [2,  4] PE: [2,  8]       case `case`
+B: [102, 109] PS: [2,  9] PE: [2, 16]       case_key: expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]         ternary_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]           delegate: or_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]             delegate: and_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]               delegate: compare_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                 delegate: add_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                   delegate: mult_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                     delegate: unary_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                       delegate: indexed_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                         root: primary_expr
+B: [102, 109] PS: [2,  9] PE: [2, 16]                           literal
+B: [102, 109] PS: [2,  9] PE: [2, 16]                             string
+B: [102, 103] PS: [2,  9] PE: [2, 10]                               start: string_start `"`
+B: [103, 108] PS: [2, 10] PE: [2, 15]                               contents: string_contents
+B: [103, 108] PS: [2, 10] PE: [2, 15]                                 content: string_content `books`
+B: [108, 109] PS: [2, 15] PE: [2, 16]                               end: string_end `"`
+B: [110, 149] PS: [2, 17] PE: [2, 56]       alt: switch_case_expr
+B: [110, 112] PS: [2, 17] PE: [2, 19]         -> `->`
+B: [113, 120] PS: [2, 20] PE: [2, 27]         value: expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]           ternary_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]             delegate: or_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]               delegate: and_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                 delegate: compare_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                   delegate: add_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                     delegate: mult_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                       delegate: unary_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                         delegate: indexed_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                           root: primary_expr
+B: [113, 120] PS: [2, 20] PE: [2, 27]                             literal
+B: [113, 120] PS: [2, 20] PE: [2, 27]                               string
+B: [113, 114] PS: [2, 20] PE: [2, 21]                                 start: string_start `"`
+B: [114, 119] PS: [2, 21] PE: [2, 26]                                 contents: string_contents
+B: [114, 119] PS: [2, 21] PE: [2, 26]                                   content: string_content `Books`
+B: [119, 120] PS: [2, 26] PE: [2, 27]                                 end: string_end `"`
+B: [120, 121] PS: [2, 27] PE: [2, 28]         , `,`
+B: [122, 149] PS: [2, 29] PE: [2, 56]         value: expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]           ternary_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]             delegate: or_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]               delegate: and_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                 delegate: compare_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                   delegate: add_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                     delegate: mult_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                       delegate: unary_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                         delegate: indexed_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                           root: primary_expr
+B: [122, 149] PS: [2, 29] PE: [2, 56]                             literal
+B: [122, 149] PS: [2, 29] PE: [2, 56]                               string
+B: [122, 123] PS: [2, 29] PE: [2, 30]                                 start: string_start `"`
+B: [123, 148] PS: [2, 30] PE: [2, 55]                                 contents: string_contents
+B: [123, 129] PS: [2, 30] PE: [2, 36]                                   interpolation: interpolation
+B: [123, 124] PS: [2, 30] PE: [2, 31]                                     { `{`
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                     expr: expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                       ternary_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                         delegate: or_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                           delegate: and_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                             delegate: compare_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                               delegate: add_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                                 delegate: mult_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                                   delegate: unary_expr
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                                     delegate: var_path
+B: [124, 128] PS: [2, 31] PE: [2, 35]                                                       root: identifier `base`
+B: [128, 129] PS: [2, 35] PE: [2, 36]                                     } `}`
+B: [129, 148] PS: [2, 36] PE: [2, 55]                                   content: string_content `/reading?type=books`
+B: [148, 149] PS: [2, 55] PE: [2, 56]                                 end: string_end `"`
+B: [150, 155] PS: [3,  0] PE: [3,  5]   assign
+B: [150, 151] PS: [3,  0] PE: [3,  1]     left: var_path
+B: [150, 151] PS: [3,  0] PE: [3,  1]       root: identifier `a`
+B: [152, 153] PS: [3,  2] PE: [3,  3]     = `=`
+B: [154, 155] PS: [3,  4] PE: [3,  5]     right: expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]       ternary_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]         delegate: or_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]           delegate: and_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]             delegate: compare_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]               delegate: add_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]                 delegate: mult_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]                   delegate: unary_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]                     delegate: indexed_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]                       root: primary_expr
+B: [154, 155] PS: [3,  4] PE: [3,  5]                         literal
+B: [154, 155] PS: [3,  4] PE: [3,  5]                           int `2`
