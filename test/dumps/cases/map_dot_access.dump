@@ -3,26 +3,26 @@ Map dot access
 =====
 a.alice + a.bob.charlie
 =====
-B: [ 0, 24] PS: [0,  0], PE: [1,  0] source_file
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]   expr
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]     ternary_expr
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]       delegate: or_expr
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]         delegate: and_expr
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]           delegate: compare_expr
-B: [ 0, 23] PS: [0,  0], PE: [0, 23]             delegate: add_expr
-B: [ 0,  7] PS: [0,  0], PE: [0,  7]               left: add_expr
-B: [ 0,  7] PS: [0,  0], PE: [0,  7]                 delegate: mult_expr
-B: [ 0,  7] PS: [0,  0], PE: [0,  7]                   delegate: unary_expr
-B: [ 0,  7] PS: [0,  0], PE: [0,  7]                     delegate: var_path
-B: [ 0,  1] PS: [0,  0], PE: [0,  1]                       root: identifier `a`
-B: [ 1,  2] PS: [0,  1], PE: [0,  2]                       . `.`
-B: [ 2,  7] PS: [0,  2], PE: [0,  7]                       indexing: identifier `alice`
-B: [ 8,  9] PS: [0,  8], PE: [0,  9]               op: + `+`
-B: [10, 23] PS: [0, 10], PE: [0, 23]               right: mult_expr
-B: [10, 23] PS: [0, 10], PE: [0, 23]                 delegate: unary_expr
-B: [10, 23] PS: [0, 10], PE: [0, 23]                   delegate: var_path
-B: [10, 11] PS: [0, 10], PE: [0, 11]                     root: identifier `a`
-B: [11, 12] PS: [0, 11], PE: [0, 12]                     . `.`
-B: [12, 15] PS: [0, 12], PE: [0, 15]                     indexing: identifier `bob`
-B: [15, 16] PS: [0, 15], PE: [0, 16]                     . `.`
-B: [16, 23] PS: [0, 16], PE: [0, 23]                     indexing: identifier `charlie`
+B: [ 0, 24] PS: [0,  0] PE: [1,  0] source_file
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]   expr
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]     ternary_expr
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]       delegate: or_expr
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]         delegate: and_expr
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]           delegate: compare_expr
+B: [ 0, 23] PS: [0,  0] PE: [0, 23]             delegate: add_expr
+B: [ 0,  7] PS: [0,  0] PE: [0,  7]               left: add_expr
+B: [ 0,  7] PS: [0,  0] PE: [0,  7]                 delegate: mult_expr
+B: [ 0,  7] PS: [0,  0] PE: [0,  7]                   delegate: unary_expr
+B: [ 0,  7] PS: [0,  0] PE: [0,  7]                     delegate: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                       root: identifier `a`
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]                       . `.`
+B: [ 2,  7] PS: [0,  2] PE: [0,  7]                       indexing: identifier `alice`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]               op: + `+`
+B: [10, 23] PS: [0, 10] PE: [0, 23]               right: mult_expr
+B: [10, 23] PS: [0, 10] PE: [0, 23]                 delegate: unary_expr
+B: [10, 23] PS: [0, 10] PE: [0, 23]                   delegate: var_path
+B: [10, 11] PS: [0, 10] PE: [0, 11]                     root: identifier `a`
+B: [11, 12] PS: [0, 11] PE: [0, 12]                     . `.`
+B: [12, 15] PS: [0, 12] PE: [0, 15]                     indexing: identifier `bob`
+B: [15, 16] PS: [0, 15] PE: [0, 16]                     . `.`
+B: [16, 23] PS: [0, 16] PE: [0, 23]                     indexing: identifier `charlie`

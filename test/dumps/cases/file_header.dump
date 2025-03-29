@@ -8,8 +8,8 @@ a
 file header
 ---
 =====
-B: [ 0, 31] PS: [0, 0], PE: [6, 0] source_file
-B: [ 0, 31] PS: [0, 0], PE: [6, 0]   file_header
-B: [ 0,  3] PS: [0, 0], PE: [0, 3]     --- `---`
-B: [ 4, 27] PS: [1, 0], PE: [5, 0]     contents: file_header_contents `This is\na\n\nfile header\n`
-B: [27, 30] PS: [5, 0], PE: [5, 3]     --- `---`
+B: [ 0, 31] PS: [0, 0] PE: [6, 0] source_file
+B: [ 0, 31] PS: [0, 0] PE: [6, 0]   file_header
+B: [ 0,  3] PS: [0, 0] PE: [0, 3]     --- `---`
+B: [ 4, 27] PS: [1, 0] PE: [5, 0]     contents: file_header_contents `This is\na\n\nfile header\n`
+B: [27, 30] PS: [5, 0] PE: [5, 3]     --- `---`
