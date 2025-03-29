@@ -1,0 +1,10 @@
+#!/usr/bin/env rad
+---
+Performs string concatenation.
+---
+args:
+    iterations int = 50_000
+
+text = ""
+for _ in range(iterations):
+    text += "a"

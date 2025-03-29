@@ -12,16 +12,16 @@ We use [hyperfine](https://github.com/sharkdp/hyperfine) to conduct the benchmar
 
 ## Benchmark History
 
-### rad version 0.5.15 (Commit 4d3bee5) (2025-03-22)
+### rad version 0.5.15 (Commit a6bb304) (2025-03-29)
 
-*Full report: [reports/report-1742614777.json](reports/report-1742614777.json)*
+*Full report: [reports/report-1743228997.json](reports/report-1743228997.json)*
 
 ```
 Benchmark     Mean   Stddev  Min    Max    Runs 
-concat        370.6  6.3     365.8  387.6  10    
-for-loop-add  565.8  17.1    551.9  604.1  10    
-math          496.9  2       493.6  500.3  10    
-read-file     406.8  1.5     403.9  408.6  10    
+concat        369.7  1.5     367.7  372.8  10    
+for-loop-add  285.6  7.8     280    301    10    
+math          511.9  15.7    500.6  541    10    
+read-file     406.3  8.5     401.2  429.9  10    
 Times in milliseconds
 Apple M2 Pro (10 cores) 16 GB macOS 15.3.2
 ```
