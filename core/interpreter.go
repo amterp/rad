@@ -251,38 +251,26 @@ func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue
 
 func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslValue {
 	switch node.Kind() {
-	case K_EXPR:
-		baseNode := i.getChild(node, F_BASE)
-		indexingNodes := i.getChildren(node, F_INDEXING)
-
-		baseResults := i.evaluate(baseNode, numExpectedOutputs)
-
-		if len(indexingNodes) == 0 {
-			return baseResults
-		}
-
-		if numExpectedOutputs != 1 {
-			i.errorf(node, "Cannot index into multiple values")
-		}
-
-		val := baseResults[0]
-		for _, index := range indexingNodes {
-			val = val.Index(i, &index)
-		}
-
-		return newRslValues(i, node, val)
-	case K_PRIMARY_EXPR:
+	case K_EXPR, K_PRIMARY_EXPR, K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case K_PARENTHESIZED_EXPR:
 		return i.evaluate(i.getChild(node, F_EXPR), numExpectedOutputs)
-	case K_LITERAL:
-		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
-	case K_UNARY_OP, K_NOT_OP:
+	case K_UNARY_EXPR:
+		delegateNode := i.getChild(node, F_DELEGATE)
+		if delegateNode != nil {
+			return i.evaluate(delegateNode, numExpectedOutputs)
+		}
+
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		opNode := i.getChild(node, F_OP)
 		argNode := i.getChild(node, F_ARG)
 		return newRslValues(i, node, i.executeUnaryOp(node, argNode, opNode))
-	case K_BINARY_OP, K_COMPARISON_OP, K_BOOL_OP:
+	case K_OR_EXPR, K_AND_EXPR, K_COMPARE_EXPR, K_ADD_EXPR, K_MULT_EXPR:
+		delegateNode := i.getChild(node, F_DELEGATE)
+		if delegateNode != nil {
+			return i.evaluate(delegateNode, numExpectedOutputs)
+		}
+
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		left := i.getChild(node, F_LEFT)
 		op := i.getChild(node, F_OP)
@@ -308,6 +296,18 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			}
 		}
 		return newRslValues(i, node, val)
+	case K_INDEXED_EXPR:
+		rootNode := i.getChild(node, F_ROOT)
+		indexingNodes := i.getChildren(node, F_INDEXING)
+		if len(indexingNodes) > 0 {
+			val := i.evaluate(rootNode, 1)[0]
+			for _, index := range indexingNodes {
+				val = val.Index(i, &index)
+			}
+			return newRslValues(i, node, val)
+		} else {
+			return i.evaluate(rootNode, numExpectedOutputs)
+		}
 	case K_INT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
@@ -417,7 +417,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		i.executeForLoop(node, doOneLoop)
 		return newRslValues(i, node, resultList)
-	case K_TERNARY:
+	case K_TERNARY_EXPR:
+		delegateNode := i.getChild(node, F_DELEGATE)
+		if delegateNode != nil {
+			return i.evaluate(delegateNode, numExpectedOutputs)
+		}
+
 		conditionNode := i.getChild(node, F_CONDITION)
 		trueNode := i.getChild(node, F_TRUE_BRANCH)
 		falseNode := i.getChild(node, F_FALSE_BRANCH)

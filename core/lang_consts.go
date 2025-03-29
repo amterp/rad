@@ -18,11 +18,13 @@ const (
 	K_FLOAT                   = "float"
 	K_LIST                    = "list"
 	K_CALL                    = "call"
-	K_NOT_OP                  = "not_op"
-	K_UNARY_OP                = "unary_op"
-	K_BINARY_OP               = "binary_op"
-	K_COMPARISON_OP           = "comparison_op"
-	K_BOOL_OP                 = "bool_op"
+	K_OR_EXPR                 = "or_expr"
+	K_AND_EXPR                = "and_expr"
+	K_COMPARE_EXPR            = "compare_expr"
+	K_ADD_EXPR                = "add_expr"
+	K_MULT_EXPR               = "mult_expr"
+	K_UNARY_EXPR              = "unary_expr"
+	K_INDEXED_EXPR            = "indexed_expr"
 	K_STRING                  = "string"
 	K_STRING_CONTENT          = "string_content"
 	K_BACKSLASH               = "\\"
@@ -71,7 +73,7 @@ const (
 	K_INCR_DECR               = "incr_decr"
 	K_PLUS_PLUS               = "++"
 	K_MINUS_MINUS             = "--"
-	K_TERNARY                 = "ternary"
+	K_TERNARY_EXPR            = "ternary_expr"
 	K_SWITCH_STMT             = "switch_stmt"
 
 	// Field names
@@ -126,6 +128,7 @@ const (
 	F_CASE         = "case"
 	F_CASE_KEY     = "case_key"
 	F_CASE_VALUE   = "case_value"
+	F_DELEGATE     = "delegate"
 
 	// Keywords
 	KEYWORD_ASC  = "asc"

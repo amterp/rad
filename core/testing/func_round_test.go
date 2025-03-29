@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func Test_Func_Round_Ints_With_Precision(t *testing.T) {
+func Test_Func_Round_IntsWithPrecision(t *testing.T) {
 	rsl := `
 a = 1
 b = 2
@@ -13,7 +13,7 @@ print(round(a, b))
 	assertNoErrors(t)
 }
 
-func Test_Func_Round_Floats_With_Precision(t *testing.T) {
+func Test_Func_Round_FloatsWithPrecision(t *testing.T) {
 	rsl := `
 a = 2.234
 b = 1
@@ -24,7 +24,7 @@ print(round(a, b))
 	assertNoErrors(t)
 }
 
-func Test_Func_Round_Floats_With_ZeroPrecision(t *testing.T) {
+func Test_Func_Round_FloatsWithZeroPrecision(t *testing.T) {
 	rsl := `
 a = 2.234
 b = 0
@@ -35,7 +35,7 @@ print(round(a, b))
 	assertNoErrors(t)
 }
 
-func Test_Func_Round_Ints_Without_Precision(t *testing.T) {
+func Test_Func_Round_IntsWithoutPrecision(t *testing.T) {
 	rsl := `
 a = 1
 print(round(a))
@@ -45,7 +45,7 @@ print(round(a))
 	assertNoErrors(t)
 }
 
-func Test_Func_Round_Floats_Without_Precision(t *testing.T) {
+func Test_Func_Round_FloatsWithoutPrecision(t *testing.T) {
 	rsl := `
 a = 2.234
 print(round(a))
@@ -55,7 +55,7 @@ print(round(a))
 	assertNoErrors(t)
 }
 
-func Test_Func_Round_Errors_Precision_Less_Than_0(t *testing.T) {
+func Test_Func_Round_ErrorsPrecisionLessThan0(t *testing.T) {
 	rsl := `
 a = 1
 b = -1
@@ -70,7 +70,7 @@ print(round(a, b))
 	assertError(t, 1, expected)
 }
 
-func Test_Func_Round_Errors_Precision_String(t *testing.T) {
+func Test_Func_Round_ErrorsPrecisionString(t *testing.T) {
 	rsl := `
 a = 1
 b = "ab"
@@ -85,7 +85,7 @@ print(round(a, b))
 	assertError(t, 1, expected)
 }
 
-func Test_Func_Round_Errors_With_String(t *testing.T) {
+func Test_Func_Round_ErrorsWithString(t *testing.T) {
 	rsl := `
 a = "ab"
 b = 1
