@@ -49,3 +49,73 @@ switch endpoint:
 ```
 
 but then we need to make sure this is compatible with switch *expressions* that return something in e.g. assignments.
+
+---
+
+Simple switch with blocks:
+
+```
+switch foo:
+    case "alice":
+        print("Alice!")
+    case "bob":
+        print("Bob!")
+    default:
+        print("Who?!")
+```
+
+Allowed to have single statement on same line as case:
+
+```
+switch foo:
+    case "alice": print("Alice!")
+    case "bob": print("Bob!")
+    default: print("Who?!")
+```
+
+Can assign:
+
+```
+text = switch foo:
+    case "alice": "Alice!"
+    case "bob": "Bob!"
+    default: "Who?!"
+```
+
+Can assign with blocks:
+
+```
+text = switch foo:
+    case "alice":
+        "Alice!"
+    case "bob":
+        "Bob!"
+    default:
+        "Who?!"
+```
+
+Last line will be evaluated for the return value of the switch expr. Can also assign multiple
+
+```
+text, num = switch foo:
+    case "alice":
+        print("Alice case")
+        "Alice!", 5
+    case "bob":
+        print("Bob case")
+        "Bob!", 6
+    default:
+        print("Default case")
+        "Who?!", 0
+```
+
+Can mix "block" and in-line returns:
+
+```
+text, num = switch foo:
+    case "alice": "Alice!", 5
+    case "bob": "Bob!", 6
+    default:
+        print("Unknown!")
+        exit(1)
+```

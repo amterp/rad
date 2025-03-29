@@ -6,7 +6,8 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var NIL_SENTINAL = RslValue{Val: nil}
+var NIL_SENTINAL = RslValue{Val: 0x0}
+var JSON_SENTINAL = RslValue{Val: 0x1}
 
 type RslValue struct {
 	// int64, float64, RslString, bool stored as values

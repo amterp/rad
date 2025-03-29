@@ -27,18 +27,12 @@ type JsonPathSegmentIdx struct {
 	Idx     *RslValue // e.g. json.names[0]
 }
 
-func NewJsonFieldVar(i *Interpreter, assignNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	leftVarPathNodes := i.getChildren(assignNode, F_LEFT)
-
-	if len(leftVarPathNodes) != 1 {
-		i.errorf(assignNode, "Expected exactly 1 assignment with JSON path")
+func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
+	indexingNodes := i.getChildren(leftNode, F_INDEXING)
+	if len(indexingNodes) != 0 {
+		i.errorf(leftNode, "Json paths must be defined to plain identifiers")
 	}
-	leftNode := leftVarPathNodes[0]
-	if leftNode.ChildCount() != 1 {
-		i.errorf(&leftNode, "Left side of a json path assignment must be only an identifier.")
-	}
-
-	leftIdentifierNode := i.getOnlyChild(&leftNode)
+	leftIdentifierNode := i.getChild(leftNode, F_ROOT)
 
 	var segments []JsonPathSegment
 

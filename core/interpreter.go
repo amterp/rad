@@ -98,19 +98,33 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case K_ASSIGN:
-		rightNode := i.getChild(node, F_RIGHT)
-		if rightNode.Kind() == K_JSON_PATH {
-			// json path assignment
-			jsonFieldVar := NewJsonFieldVar(i, node, rightNode)
-			i.env.SetJsonFieldVar(jsonFieldVar)
-		} else {
-			// regular expr assignment
-			leftVarPathNodes := i.getChildren(node, F_LEFT)
-			numExpectedOutputs := len(leftVarPathNodes)
-			values := i.evaluate(rightNode, numExpectedOutputs)
-			for idx, leftVarPathNode := range leftVarPathNodes {
-				i.doVarPathAssign(&leftVarPathNode, values[idx])
+		leftNodes := i.getChildren(node, F_LEFT)
+		rightNodes := i.getChildren(node, F_RIGHT)
+
+		numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
+		outputs := make([]RslValue, 0)
+		for _, rightNode := range rightNodes {
+			if rightNode.Kind() == K_JSON_PATH {
+				// json path assignment
+				jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
+				i.env.SetJsonFieldVar(jsonFieldVar)
+				outputs = append(outputs, JSON_SENTINAL)
+			} else {
+				outputs = append(outputs, i.evaluate(&rightNode, numReturnValues)...)
 			}
+		}
+
+		if len(leftNodes) != len(outputs) {
+			i.errorf(node, "Cannot assign %d values to %d variables", len(outputs), len(leftNodes))
+		}
+
+		for idx, output := range outputs {
+			if output == JSON_SENTINAL {
+				// json path assignment, no need to assign
+				continue
+			}
+			leftVarPathNode := &leftNodes[idx]
+			i.doVarPathAssign(leftVarPathNode, output)
 		}
 	case K_COMPOUND_ASSIGN:
 		leftVarPathNode := i.getChild(node, F_LEFT)

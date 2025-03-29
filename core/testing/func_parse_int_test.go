@@ -83,10 +83,10 @@ func Test_ParseInt_ErrorsIfExpectingTooManyReturnValues(t *testing.T) {
 a, b, c = parse_int("2.4")
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `Error at L2:11
+	expected := `Error at L2:1
 
   a, b, c = parse_int("2.4")
-            ^^^^^^^^^^^^^^^^ parse_int() returns 1 or 2 values, but 3 are expected
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot assign 2 values to 3 variables
 `
 	assertError(t, 1, expected)
 }
