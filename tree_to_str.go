@@ -21,7 +21,7 @@ func (rt *RslTree) Dump() string {
 	byteLen := len(fmt.Sprintf("%d", maxByte))
 	rowLen := len(fmt.Sprintf("%d", maxPosRow))
 	colLen := len(fmt.Sprintf("%d", maxPosCol))
-	fmtString := fmt.Sprintf("B: [%%%dd, %%%dd] PS: [%%%dd, %%%dd], PE: [%%%dd, %%%dd] %%s%%s%%s",
+	fmtString := fmt.Sprintf("B: [%%%dd, %%%dd] PS: [%%%dd, %%%dd] PE: [%%%dd, %%%dd] %%s%%s%%s",
 		byteLen, byteLen, rowLen, colLen, rowLen, colLen)
 
 	var sb strings.Builder
