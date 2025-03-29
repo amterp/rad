@@ -101,7 +101,6 @@ const (
 	F_VALUE        = "value"
 	F_ALT          = "alt"
 	F_CONDITION    = "condition"
-	F_PRE_STMT     = "pre_stmt"
 	F_STMT         = "stmt"
 	F_KEYWORD      = "keyword"
 	F_START        = "start"
