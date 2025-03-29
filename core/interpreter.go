@@ -100,32 +100,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case K_ASSIGN:
 		leftNodes := i.getChildren(node, F_LEFT)
 		rightNodes := i.getChildren(node, F_RIGHT)
-
-		numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
-		outputs := make([]RslValue, 0)
-		for _, rightNode := range rightNodes {
-			if rightNode.Kind() == K_JSON_PATH {
-				// json path assignment
-				jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
-				i.env.SetJsonFieldVar(jsonFieldVar)
-				outputs = append(outputs, JSON_SENTINAL)
-			} else {
-				outputs = append(outputs, i.evaluate(&rightNode, numReturnValues)...)
-			}
-		}
-
-		if len(leftNodes) != len(outputs) {
-			i.errorf(node, "Cannot assign %d values to %d variables", len(outputs), len(leftNodes))
-		}
-
-		for idx, output := range outputs {
-			if output == JSON_SENTINAL {
-				// json path assignment, no need to assign
-				continue
-			}
-			leftVarPathNode := &leftNodes[idx]
-			i.doVarPathAssign(leftVarPathNode, output)
-		}
+		i.assignRightsToLefts(node, leftNodes, rightNodes)
 	case K_COMPOUND_ASSIGN:
 		leftVarPathNode := i.getChild(node, F_LEFT)
 		rightNode := i.getChild(node, F_RIGHT)
@@ -178,6 +153,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		leftVarPathNodes := i.getChildren(node, F_LEFT)
 		discriminantNode := i.getChild(node, F_DISCRIMINANT)
 		caseNodes := i.getChildren(node, F_CASE)
+		defaultNode := i.getChild(node, F_DEFAULT)
 
 		discriminantVal := i.evaluate(discriminantNode, 1)[0]
 
@@ -194,6 +170,11 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 
 		if len(matchedCaseNodes) == 0 {
+			if defaultNode != nil {
+				caseValueAltNode := i.getChild(defaultNode, F_ALT)
+				i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
+				return
+			}
 			i.errorf(discriminantNode, "No matching case found for switch")
 		}
 
@@ -209,26 +190,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 
 		matchedCaseNode := matchedCaseNodes[0]
-		caseValueNodes := i.getChildren(&matchedCaseNode, F_CASE_VALUE)
-		numAssigns := len(leftVarPathNodes)
-		if numAssigns > 0 && len(caseValueNodes) != numAssigns {
-			i.errorf(&matchedCaseNode, "Expecting %d values, got %d", numAssigns, len(caseValueNodes))
-		}
-
-		for idx, caseValueNode := range caseValueNodes {
-			if numAssigns == 0 {
-				i.evaluate(&caseValueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-			} else {
-				caseValueVals := i.evaluate(&caseValueNode, 1)
-				if len(caseValueVals) != 1 {
-					// in practice, i think only functions can return multiple values,
-					// and we explicitly ask it to return 1 above, so it'd error on invocation there instead.
-					i.errorf(&caseValueNode, "Expecting each case value expression to return exactly one value, returned %d", len(caseValueVals))
-				}
-				i.doVarPathAssign(&leftVarPathNodes[idx], caseValueVals[0])
-			}
-		}
-
+		caseValueAltNode := i.getChild(&matchedCaseNode, F_ALT)
+		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
 	case K_DEFER_BLOCK:
 		keywordNode := i.getChild(node, F_KEYWORD)
 		stmtNodes := i.getChildren(node, F_STMT)
@@ -704,4 +667,62 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = &env
 	runnable()
 	i.env = originalEnv
+}
+
+func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightNodes []ts.Node) {
+	numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
+	outputs := make([]RslValue, 0)
+	for _, rightNode := range rightNodes {
+		if rightNode.Kind() == K_JSON_PATH {
+			// json path assignment
+			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
+			i.env.SetJsonFieldVar(jsonFieldVar)
+			outputs = append(outputs, JSON_SENTINAL)
+		} else {
+			outputs = append(outputs, i.evaluate(&rightNode, numReturnValues)...)
+		}
+	}
+
+	if len(leftNodes) != len(outputs) {
+		i.errorf(parentNode, "Cannot assign %d values to %d variables", len(outputs), len(leftNodes))
+	}
+
+	for idx, output := range outputs {
+		if output == JSON_SENTINAL {
+			// json path assignment, no need to assign
+			continue
+		}
+		leftVarPathNode := &leftNodes[idx]
+		i.doVarPathAssign(leftVarPathNode, output)
+	}
+}
+
+func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNodes []ts.Node) {
+	numExpectedAssigns := len(leftVarPathNodes)
+	switch caseValueAltNode.Kind() {
+	case K_SWITCH_CASE_EXPR:
+		valueNodes := i.getChildren(caseValueAltNode, F_VALUE)
+		i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
+	case K_SWITCH_CASE_BLOCK:
+		stmtNodes := i.getChildren(caseValueAltNode, F_STMT)
+		i.runBlock(stmtNodes)
+
+		yieldNode := i.getChild(caseValueAltNode, F_YIELD_STMT)
+		if numExpectedAssigns > 0 && yieldNode == nil {
+			i.errorf(caseValueAltNode, "Cannot assign without yielding from the switch case")
+		}
+		if yieldNode != nil {
+			valueNodes := i.getChildren(yieldNode, F_VALUE)
+			if numExpectedAssigns == 0 {
+				// nothing to assign, just evaluate
+				for _, valueNode := range valueNodes {
+					i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+				}
+			} else {
+				i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
+			}
+		}
+	default:
+		i.errorf(caseValueAltNode, "Bug! Unsupported switch case value node kind: %s", caseValueAltNode.Kind())
+	}
 }

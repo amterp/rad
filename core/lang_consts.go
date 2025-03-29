@@ -75,6 +75,8 @@ const (
 	K_MINUS_MINUS             = "--"
 	K_TERNARY_EXPR            = "ternary_expr"
 	K_SWITCH_STMT             = "switch_stmt"
+	K_SWITCH_CASE_EXPR        = "switch_case_expr"
+	K_SWITCH_CASE_BLOCK       = "switch_case_block"
 
 	// Field names
 	F_LEFT         = "left"
@@ -90,7 +92,6 @@ const (
 	F_OP           = "op"
 	F_CONTENTS     = "contents"
 	F_EXPR         = "expr"
-	F_BASE         = "base"
 	F_FORMAT       = "format"
 	F_ALIGNMENT    = "alignment"
 	F_PADDING      = "padding"
@@ -127,7 +128,8 @@ const (
 	F_DISCRIMINANT = "discriminant"
 	F_CASE         = "case"
 	F_CASE_KEY     = "case_key"
-	F_CASE_VALUE   = "case_value"
+	F_DEFAULT      = "default"
+	F_YIELD_STMT   = "yield_stmt"
 	F_DELEGATE     = "delegate"
 
 	// Keywords

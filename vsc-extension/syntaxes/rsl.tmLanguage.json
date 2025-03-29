@@ -202,7 +202,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.rsl",
-					"match": "\\b(args|if|for|in|else|json|confirm|unsafe|quiet|or|and|not|switch|case|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
+					"match": "\\b(args|if|for|in|else|json|confirm|unsafe|quiet|or|and|not|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
 				},
 				{
 					"name": "entity.name.tag.rsl",

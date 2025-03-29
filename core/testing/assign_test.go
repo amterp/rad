@@ -16,8 +16,8 @@ func Test_MultiAssign_InsideCollectionViaSwitch(t *testing.T) {
 	rsl := `a = [1, [2, 3], 4]
 b = "alice"
 a[1][0], a[2] = switch b:
-	case "alice": 20, 30
-	case "bob": 40, 50
+	case "alice" -> 20, 30
+	case "bob" -> 40, 50
 print(a)
 `
 	setupAndRunCode(t, rsl, "--color=never")
