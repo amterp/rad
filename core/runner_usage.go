@@ -35,7 +35,7 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	com.CyanF(buf, " [script path | command] [flags]\n\n")
 
 	com.GreenBoldF(buf, "Commands:\n")
-	commandUsage(buf, CmdsByName)
+	commandUsage(buf, Cmds)
 
 	com.GreenBoldF(buf, "Global flags:\n")
 	flagUsage(buf, r.globalFlags)
@@ -131,7 +131,7 @@ func flagUsage(buf *bytes.Buffer, flags []RslArg) {
 	}
 }
 
-func commandUsage(buf *bytes.Buffer, cmds map[string]EmbeddedCmd) {
+func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd) {
 	var sb strings.Builder
 
 	for _, cmd := range cmds {

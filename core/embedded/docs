@@ -1,0 +1,27 @@
+#!/usr/bin/env rad
+---
+Opens rad's documentation website.
+
+Example:
+> rad docs functions get_path
+Opens the functions reference page on the 'get_path' function (via header).
+---
+args:
+    page string = "home" # The page to open on.
+    header string = ""   # An optional header to open to.
+
+    page enum ["home", "functions"]
+
+url = `https://amterp.github.io/rad`
+
+// todo rad: convert to switch stmt
+if page == "home":
+    // nothing to do
+else if page == "functions":
+    url += "/reference/functions"
+
+if header:
+    url += "/#{header}"
+
+print("Opening {url}")
+quiet $!`open {url}`

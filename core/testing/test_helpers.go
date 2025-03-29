@@ -44,6 +44,7 @@ Usage:
 
 Commands:
   new           Sets up a new RSL script.
+  docs          Opens rad's documentation website.
 
 To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + allGlobalFlagHelp + `
 To execute an RSL script:

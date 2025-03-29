@@ -12,7 +12,8 @@ import (
 var embeddedFiles embed.FS
 
 const (
-	EmbCmdNew = "new"
+	EmbCmdNew  = "new"
+	EmbCmdDocs = "docs"
 )
 
 type EmbeddedCmd struct {
@@ -21,6 +22,7 @@ type EmbeddedCmd struct {
 	Description string
 }
 
+var Cmds []EmbeddedCmd
 var CmdsByName map[string]EmbeddedCmd
 
 func GetEmbeddedCommandSrc(name string) *string {
@@ -32,17 +34,22 @@ func GetEmbeddedCommandSrc(name string) *string {
 }
 
 func init() {
-	embeddedCommands := []EmbeddedCmd{
-		{
-			Name:        EmbCmdNew,
-			Src:         getEmbeddedSrc("new"),
-			Description: getFileHeaderLine("new"),
-		},
+	Cmds = []EmbeddedCmd{
+		createEmbeddedCmd(EmbCmdNew),
+		createEmbeddedCmd(EmbCmdDocs),
 	}
 
 	CmdsByName = make(map[string]EmbeddedCmd)
-	for _, cmd := range embeddedCommands {
+	for _, cmd := range Cmds {
 		CmdsByName[cmd.Name] = cmd
+	}
+}
+
+func createEmbeddedCmd(name string) EmbeddedCmd {
+	return EmbeddedCmd{
+		Name:        name,
+		Src:         getEmbeddedSrc(name),
+		Description: getFileHeaderLine(name),
 	}
 }
 
