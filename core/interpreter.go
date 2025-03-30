@@ -287,8 +287,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		indexingNodes := i.getChildren(node, F_INDEXING)
 		val := i.evaluate(rootNode, 1)[0]
 		if len(indexingNodes) > 0 {
-			for _, index := range indexingNodes {
-				val = val.Index(i, &index)
+			for indexIdx, indexNode := range indexingNodes {
+				expectReturnVal := numExpectedOutputs != NO_NUM_RETURN_VALUES_CONSTRAINT && indexIdx < len(indexingNodes)-1
+				val = i.evaluateIndexing(rootNode, indexNode, val, expectReturnVal)
 			}
 		}
 		return newRslValues(i, node, val)
@@ -297,8 +298,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		indexingNodes := i.getChildren(node, F_INDEXING)
 		if len(indexingNodes) > 0 {
 			val := i.evaluate(rootNode, 1)[0]
-			for _, index := range indexingNodes {
-				val = val.Index(i, &index)
+			for indexIdx, index := range indexingNodes {
+				expectReturnVal := numExpectedOutputs != NO_NUM_RETURN_VALUES_CONSTRAINT || indexIdx != len(indexingNodes)-1
+				val = i.evaluateIndexing(rootNode, index, val, expectReturnVal)
 			}
 			return newRslValues(i, node, val)
 		} else {
@@ -396,7 +398,7 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		return newRslValues(i, node, rslMap)
 	case K_CALL:
-		return i.callFunction(node, numExpectedOutputs)
+		return i.callFunction(node, numExpectedOutputs, nil)
 	case K_LIST_COMPREHENSION:
 		resultExprNode := i.getChild(node, F_EXPR)
 		conditionNode := i.getChild(node, F_CONDITION)
@@ -686,6 +688,27 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = &env
 	runnable()
 	i.env = originalEnv
+}
+
+func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RslValue, expectReturnValue bool) RslValue {
+	if index.Kind() == K_CALL {
+		// ufcs
+		ufcsArg := &positionalArg{
+			// todo 'rootNode' is not great to use, it misses indexes in between that and this call,
+			//  resulting in bad error pointing. could potentially replace ts.Node with interface
+			//  'Pointable' i.e. a range we can point to in an error, that's ultimately all we need (?)
+			node:  rootNode,
+			value: val,
+		}
+		if expectReturnValue {
+			return i.callFunction(&index, 1, ufcsArg)[0]
+		} else {
+			i.callFunction(&index, NO_NUM_RETURN_VALUES_CONSTRAINT, ufcsArg)
+			return val
+		}
+	} else {
+		return val.Index(i, &index)
+	}
 }
 
 func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightNodes []ts.Node) {

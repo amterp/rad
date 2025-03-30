@@ -43,7 +43,7 @@ output = output[:-1]
 
 readme = read_file("README.md").content
 
-_, version = $!`rad -v`
+_, version = $!`../bin/radd -v`
 version = replace(version, "\n", "")
 
 _, hash = $!`git rev-parse --short HEAD`

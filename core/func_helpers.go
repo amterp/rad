@@ -35,6 +35,7 @@ type namedArg struct {
 func (i *Interpreter) callFunction(
 	callNode *ts.Node,
 	numExpectedOutputs int,
+	ufcsArg *positionalArg,
 ) []RslValue {
 	funcNameNode := i.getChild(callNode, F_FUNC)
 	argNodes := i.getChildren(callNode, F_ARG)
@@ -43,6 +44,9 @@ func (i *Interpreter) callFunction(
 	funcName := i.sd.Src[funcNameNode.StartByte():funcNameNode.EndByte()]
 
 	var args []positionalArg
+	if ufcsArg != nil {
+		args = append(args, *ufcsArg)
+	}
 	for _, argNode := range argNodes {
 		// TODO 'expected output 1' prevents something like
 		//  `print(function_that_returns_two_values())`, it should just "spread out" the args to print
