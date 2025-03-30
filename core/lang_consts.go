@@ -51,6 +51,7 @@ const (
 	K_BREAK_STMT              = "break_stmt"
 	K_CONTINUE_STMT           = "continue_stmt"
 	K_FOR_LOOP                = "for_loop"
+	K_WHILE_LOOP              = "while_loop"
 	K_DEFER_BLOCK             = "defer_block"
 	K_SLICE                   = "slice"
 	K_SHELL_STMT              = "shell_stmt"

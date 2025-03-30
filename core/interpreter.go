@@ -23,9 +23,9 @@ type Interpreter struct {
 	env         *Env
 	deferBlocks []*DeferBlock
 
-	forLoopLevel int
-	breaking     bool
-	continuing   bool
+	forWhileLoopLevel int
+	breaking          bool
+	continuing        bool
 	// Used to track current delimiter, currently for correct delimiter escaping handling
 	delimiterStack *com.Stack[Delimiter]
 }
@@ -110,24 +110,47 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
 	case K_BREAK_STMT:
-		if i.forLoopLevel > 0 {
+		if i.forWhileLoopLevel > 0 {
 			i.breaking = true
 		} else {
 			i.errorf(node, "Cannot 'break' outside of a for loop")
 		}
 	case K_CONTINUE_STMT:
-		if i.forLoopLevel > 0 {
+		if i.forWhileLoopLevel > 0 {
 			i.continuing = true
 		} else {
 			i.errorf(node, "Cannot 'continue' outside of a for loop")
 		}
 	case K_FOR_LOOP:
-		i.forLoopLevel++
+		i.forWhileLoopLevel++
 		defer func() {
-			i.forLoopLevel--
+			i.forWhileLoopLevel--
 		}()
 		stmts := i.getChildren(node, F_STMT)
 		i.executeForLoop(node, func() { i.runBlock(stmts) })
+	case K_WHILE_LOOP:
+		i.forWhileLoopLevel++
+		defer func() {
+			i.forWhileLoopLevel--
+		}()
+		condNode := i.getChild(node, F_CONDITION)
+		stmtNodes := i.getChildren(node, F_STMT)
+		for {
+			condValue := true
+			if condNode != nil {
+				condValue = i.evaluate(condNode, 1)[0].TruthyFalsy()
+			}
+			if condValue {
+				i.runBlock(stmtNodes)
+				if i.breaking {
+					i.breaking = false
+					break
+				}
+				i.continuing = false
+			} else {
+				break
+			}
+		}
 	case K_IF_STMT:
 		altNodes := i.getChildren(node, F_ALT)
 		for _, altNode := range altNodes {
@@ -651,7 +674,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop
 func (i *Interpreter) runBlock(stmtNodes []ts.Node) {
 	for _, stmtNode := range stmtNodes {
 		i.recursivelyRun(&stmtNode)
-		if i.forLoopLevel > 0 && i.breaking || i.continuing {
+		if i.forWhileLoopLevel > 0 && i.breaking || i.continuing {
 			break
 		}
 	}
