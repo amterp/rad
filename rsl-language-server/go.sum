@@ -1,7 +1,7 @@
-github.com/amterp/rts v0.0.19 h1:VZ1j9+McR8Ph6Cd2K4h2vnhjF2srXotGGnPnqyFr2Zs=
-github.com/amterp/rts v0.0.19/go.mod h1:vDtT5G2MjPMm2LsFIhApLCWv3fBGZF8UAceNMYKzRhg=
-github.com/amterp/tree-sitter-rsl v0.0.24 h1:AwVoocmD4CHBxLHb5Ny30Ffk9H4tITmvxT4ZQV9RL/8=
-github.com/amterp/tree-sitter-rsl v0.0.24/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
+github.com/amterp/rts v0.0.22 h1:MpxMmCCpIFUuMckP0x9k03uWOJAIqLNlKbLtiSIj654=
+github.com/amterp/rts v0.0.22/go.mod h1:y4wyPbJkFxEUKpZ+PWFgo3sD0i6miSUVk9I/VIGS0mg=
+github.com/amterp/tree-sitter-rsl v0.0.27 h1:KZ8it4/UnAeA7GJnck7leKeGhYthcQdMpZA7mHnOghc=
+github.com/amterp/tree-sitter-rsl v0.0.27/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
