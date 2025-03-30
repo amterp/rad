@@ -1,0 +1,60 @@
+=====
+While loop
+=====
+while a > 0:
+    print(2)
+    a--
+=====
+B: [ 0, 34] PS: [0,  0] PE: [3,  0] source_file
+B: [ 0, 33] PS: [0,  0] PE: [2,  7]   while_loop
+B: [ 0,  5] PS: [0,  0] PE: [0,  5]     while `while`
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]     condition: expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]       ternary_expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]         delegate: or_expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]           delegate: and_expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]             delegate: compare_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]               left: compare_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                 delegate: add_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                   delegate: mult_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                     delegate: unary_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                       delegate: var_path
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                         root: identifier `a`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]               op: > `>`
+B: [10, 11] PS: [0, 10] PE: [0, 11]               right: add_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                 delegate: mult_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                   delegate: unary_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                     delegate: indexed_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                       root: primary_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                         literal
+B: [10, 11] PS: [0, 10] PE: [0, 11]                           int `0`
+B: [11, 12] PS: [0, 11] PE: [0, 12]     : `:`
+B: [17, 25] PS: [1,  4] PE: [1, 12]     stmt: expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]       ternary_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]         delegate: or_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]           delegate: and_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]             delegate: compare_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]               delegate: add_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]                 delegate: mult_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]                   delegate: unary_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]                     delegate: indexed_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]                       root: primary_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]                         call
+B: [17, 22] PS: [1,  4] PE: [1,  9]                           func: identifier `print`
+B: [22, 23] PS: [1,  9] PE: [1, 10]                           ( `(`
+B: [23, 24] PS: [1, 10] PE: [1, 11]                           arg: expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                             ternary_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                               delegate: or_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                 delegate: and_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                   delegate: compare_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                     delegate: add_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                       delegate: mult_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                         delegate: unary_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                           delegate: indexed_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                             root: primary_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                               literal
+B: [23, 24] PS: [1, 10] PE: [1, 11]                                                 int `2`
+B: [24, 25] PS: [1, 11] PE: [1, 12]                           ) `)`
+B: [30, 33] PS: [2,  4] PE: [2,  7]     stmt: incr_decr
+B: [30, 31] PS: [2,  4] PE: [2,  5]       left: var_path
+B: [30, 31] PS: [2,  4] PE: [2,  5]         root: identifier `a`
+B: [31, 33] PS: [2,  5] PE: [2,  7]       op: -- `--`
