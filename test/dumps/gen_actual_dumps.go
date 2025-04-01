@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/amterp/color"
 
 	"github.com/amterp/rts"
 )

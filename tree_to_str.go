@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/amterp/color"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
