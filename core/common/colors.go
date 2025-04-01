@@ -1,6 +1,6 @@
 package com
 
-import "github.com/fatih/color"
+import "github.com/amterp/color"
 
 var (
 	plain     = color.New(color.Reset)

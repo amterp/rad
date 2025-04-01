@@ -12,7 +12,7 @@ import (
 
 	"github.com/amterp/rts"
 
-	"github.com/fatih/color"
+	"github.com/amterp/color"
 
 	"github.com/spf13/pflag"
 )

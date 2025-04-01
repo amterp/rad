@@ -5,8 +5,8 @@ import (
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 
+	"github.com/amterp/color"
 	tblwriter "github.com/amterp/go-tbl"
-	"github.com/fatih/color"
 )
 
 type RslColor int

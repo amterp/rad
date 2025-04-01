@@ -3,7 +3,7 @@ package testing
 import (
 	"testing"
 
-	"github.com/fatih/color"
+	"github.com/amterp/color"
 )
 
 var yellow = color.New(color.FgYellow).SprintFunc()

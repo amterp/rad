@@ -4,6 +4,8 @@ import (
 	com "rad/core/common"
 	"strings"
 
+	"github.com/amterp/color"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -14,8 +16,9 @@ type RslString struct {
 }
 
 type rslStringSegment struct {
-	String string
-	Color  *RslColor
+	String    string
+	Color     *RslColor
+	Hyperlink *string
 	// can add bold, etc here too
 }
 
@@ -53,11 +56,23 @@ func (s RslString) String() string {
 }
 
 func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string {
-	if segment.Color != nil {
-		return segment.Color.Colorize(str)
-	} else {
+	if segment.Color == nil && segment.Hyperlink == nil {
 		return str
 	}
+
+	var clr *color.Color
+
+	if segment.Color == nil {
+		clr = color.New()
+	} else {
+		clr = segment.Color.ToFatihColor()
+	}
+
+	if segment.Hyperlink != nil {
+		clr = clr.Hyperlink(*segment.Hyperlink)
+	}
+
+	return clr.Sprint(str)
 }
 
 func (s *RslString) ToRuneList() *RslList {
@@ -145,6 +160,15 @@ func (s *RslString) Color(clr RslColor) RslString {
 	return cpy
 }
 
+func (s *RslString) Hyperlink(link RslString) RslString {
+	cpy := s.DeepCopy()
+	for i := range cpy.Segments {
+		str := link.Plain()
+		cpy.Segments[i].Hyperlink = &str
+	}
+	return cpy
+}
+
 func (s RslString) Upper() RslString {
 	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
@@ -164,6 +188,13 @@ func (s RslString) Lower() RslString {
 func (s *RslString) SetSegmentsColor(clr RslColor) {
 	for i := range s.Segments {
 		s.Segments[i].Color = &clr
+	}
+}
+
+func (s *RslString) SetSegmentsHyperlink(link RslString) {
+	for i := range s.Segments {
+		str := link.Plain()
+		s.Segments[i].Hyperlink = &str
 	}
 }
 

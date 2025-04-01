@@ -76,6 +76,7 @@ const (
 	FUNC_CLAMP              = "clamp"
 	FUNC_REVERSE            = "reverse"
 	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars.
+	FUNC_HYPERLINK          = "hyperlink"
 
 	namedArgReverse  = "reverse"
 	namedArgTitle    = "title"
@@ -1020,6 +1021,26 @@ func init() {
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				_, ok := f.i.env.GetVar(str)
 				return newRslValues(f.i, f.callNode, ok)
+			},
+		},
+		{
+			Name:           FUNC_HYPERLINK,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 2,
+			PosArgTypes:    [][]RslTypeEnum{{}, {RslStringT}},
+			NamedArgs:      NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				text := f.args[0]
+				linkArg := f.args[1]
+				link := linkArg.value.RequireStr(f.i, linkArg.node)
+				switch coerced := text.value.Val.(type) {
+				case RslString:
+					return newRslValues(f.i, text.node, coerced.Hyperlink(link))
+				default:
+					s := NewRslString(ToPrintable(text.value))
+					s.SetSegmentsHyperlink(link)
+					return newRslValues(f.i, f.callNode, s)
+				}
 			},
 		},
 	}

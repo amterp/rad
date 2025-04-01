@@ -703,7 +703,12 @@ func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val Rsl
 		if expectReturnValue {
 			return i.callFunction(&index, 1, ufcsArg)[0]
 		} else {
-			i.callFunction(&index, NO_NUM_RETURN_VALUES_CONSTRAINT, ufcsArg)
+			returnVals := i.callFunction(&index, NO_NUM_RETURN_VALUES_CONSTRAINT, ufcsArg)
+			if len(returnVals) == 1 {
+				// todo not quite right, what if multiple returned?
+				//  e.g. print("1".parse_int()), should print both return vals, but only first one passed on here
+				return returnVals[0]
+			}
 			return val
 		}
 	} else {

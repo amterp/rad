@@ -1,8 +1,12 @@
 package testing
 
-import "testing"
+import (
+	"testing"
 
-func TestColor_CanPrint(t *testing.T) {
+	"github.com/amterp/color"
+)
+
+func Test_Color_CanPrint(t *testing.T) {
 	rsl := `
 print(red("Alice"))
 print(blue("Bob"))
@@ -20,7 +24,7 @@ print(blue([true, "hi", 10]))
 	assertNoErrors(t)
 }
 
-func TestColor_RespectsNoColorFlag(t *testing.T) {
+func Test_Color_RespectsNoColorFlag(t *testing.T) {
 	rsl := `
 print(red("Alice"))
 `
@@ -30,7 +34,7 @@ print(red("Alice"))
 	assertNoErrors(t)
 }
 
-func TestColor_CanConcat(t *testing.T) {
+func Test_Color_CanConcat(t *testing.T) {
 	rsl := `
 print(red("Alice ") + blue("Bob ") + yellow("Charlie"))
 `
@@ -40,7 +44,7 @@ print(red("Alice ") + blue("Bob ") + yellow("Charlie"))
 	assertNoErrors(t)
 }
 
-func TestColor_CanUpperLower(t *testing.T) {
+func Test_Color_CanUpperLower(t *testing.T) {
 	rsl := `
 print(upper(red("Alice")))
 print(lower(red("Alice")))
@@ -51,7 +55,7 @@ print(lower(red("Alice")))
 	assertNoErrors(t)
 }
 
-func TestColor_ChangesDoNotAffectOriginalString(t *testing.T) {
+func Test_Color_ChangesDoNotAffectOriginalString(t *testing.T) {
 	rsl := `
 a = "Alice"
 print(lower(red(a)))
@@ -63,7 +67,7 @@ print(a)
 	assertNoErrors(t)
 }
 
-func TestColor_CanIndex(t *testing.T) {
+func Test_Color_CanIndex(t *testing.T) {
 	rsl := `
 a = upper(red("Alice"))
 print(a[2])
@@ -74,7 +78,7 @@ print(a[2])
 	assertNoErrors(t)
 }
 
-func TestColor_CanSlice(t *testing.T) {
+func Test_Color_CanSlice(t *testing.T) {
 	rsl := `
 a = upper(red("Alice"))
 print(a[2:4])
@@ -85,7 +89,7 @@ print(a[2:4])
 	assertNoErrors(t)
 }
 
-func TestColor_CanPrintEmojis(t *testing.T) {
+func Test_Color_CanPrintEmojis(t *testing.T) {
 	rsl := `
 print(red("hi 👋"))
 `
@@ -95,7 +99,7 @@ print(red("hi 👋"))
 	assertNoErrors(t)
 }
 
-func TestColor_CanPrintInArray(t *testing.T) {
+func Test_Color_CanPrintInArray(t *testing.T) {
 	rsl := `
 a = "Alice"
 b = red(a)
@@ -110,7 +114,7 @@ print([a, b, c])
 
 // todo this should not be the case!!
 //   - given the below equality test, this should just be a single [Alice] (drop all attrs?)
-func TestColor_UniqueConsidersColors(t *testing.T) {
+func Test_Color_UniqueConsidersColors(t *testing.T) {
 	rsl := `
 a = "Alice"
 b = red(a)
@@ -123,7 +127,7 @@ print(unique([a, b, c]))
 	assertNoErrors(t)
 }
 
-func TestColor_Equality(t *testing.T) {
+func Test_Color_Equality(t *testing.T) {
 	rsl := `
 a = "Alice"
 b = red(a)
@@ -133,6 +137,32 @@ print(b == c)
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := "true\ntrue\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Color_HyperlinkEquality(t *testing.T) {
+	rsl := `
+a = "Alice"
+b = red(a).hyperlink("https://example.com")
+c = red(a).hyperlink("https://example.com")
+print(a == b)
+print(b == c)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := "true\ntrue\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Color_CanHyperlink(t *testing.T) {
+	rsl := `
+a = "Alice"
+print(a.hyperlink("https://example.com"))
+print(a.red().hyperlink("https://example.com"))
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := color.New().Hyperlink("https://example.com").Sprintf("Alice") + "\n" + color.New(color.FgRed).Hyperlink("https://example.com").Sprintf("Alice") + "\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
