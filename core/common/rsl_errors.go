@@ -6,6 +6,7 @@ type RslError string
 
 // note to reader: I am currently very inconsistently applying these errors.
 // still debating if we should them, feel free to ignore if you're implementing something.
+// Note: when adding here, updating the reference!! " docs/reference/errors.md "
 const (
 	// RAD1xxxx Syntax Errors
 	// RAD2xxxx Runtime Errors
@@ -14,6 +15,7 @@ const (
 	ErrFileRead                  = "RAD20003"
 	ErrFileNoPermission          = "RAD20004"
 	ErrFileNoExist               = "RAD20005"
+	ErrFileWrite                 = "RAD20006"
 	// RAD3xxxx Type Errors?
 	// RAD4xxxx Validation Errors?
 )

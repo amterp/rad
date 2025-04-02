@@ -68,6 +68,7 @@ const (
 	FUNC_TRIM_PREFIX        = "trim_prefix"
 	FUNC_TRIM_SUFFIX        = "trim_suffix"
 	FUNC_READ_FILE          = "read_file"
+	FUNC_WRITE_FILE         = "write_file"
 	FUNC_ROUND              = "round"
 	FUNC_CEIL               = "ceil"
 	FUNC_FLOOR              = "floor"
@@ -92,16 +93,18 @@ const (
 	namedArgMode     = "mode"
 	namedArgDepth    = "depth"
 	namedArgRelative = "relative"
+	namedArgAppend   = "append"
 
-	constContent   = "content"
-	constSizeBytes = "size_bytes"
-	constText      = "text"
-	constBytes     = "bytes"
-	constCode      = "code"
-	constMsg       = "msg"
-	constTarget    = "target"
-	constCwd       = "cwd"
-	constAbsolute  = "absolute"
+	constContent      = "content"
+	constSizeBytes    = "size_bytes"
+	constBytesWritten = "bytes_written"
+	constText         = "text"
+	constBytes        = "bytes"
+	constCode         = "code"
+	constMsg          = "msg"
+	constTarget       = "target"
+	constCwd          = "cwd"
+	constAbsolute     = "absolute"
 )
 
 var (
@@ -871,6 +874,67 @@ func init() {
 					errMap = ErrorRslMap(com.ErrFileNoPermission, err.Error())
 				} else {
 					errMap = ErrorRslMap(com.ErrFileRead, err.Error())
+				}
+
+				if f.numExpectedOutputs == 1 {
+					if errMap.Len() > 0 {
+						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
+					}
+					return newRslValues(f.i, f.callNode, resultMap)
+				}
+				return newRslValues(f.i, f.callNode, resultMap, errMap)
+			},
+		},
+		{
+			Name:           FUNC_WRITE_FILE,
+			ReturnValues:   UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount: 2,
+			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgAppend: {RslBoolT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
+				content := f.args[1].value.RequireStr(f.i, f.args[1].node).String()
+
+				appendFlag := false
+				if appendArg, exists := f.namedArgs[namedArgAppend]; exists {
+					appendFlag = appendArg.value.RequireBool(f.i, appendArg.valueNode)
+				}
+
+				resultMap := NewRslMap()
+				errMap := NewRslMap()
+
+				data := []byte(content)
+				var err error
+				var bytesWritten int
+
+				if appendFlag {
+					// Open the file in append mode (create if it doesn't exist).
+					file, fileErr := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+					if fileErr != nil {
+						err = fileErr
+					} else {
+						defer file.Close()
+						bytesWritten, err = file.Write(data)
+					}
+				} else {
+					// Overwrite the file (or create it if it doesn't exist).
+					err = os.WriteFile(path, data, 0644)
+					if err == nil {
+						bytesWritten = len(data)
+					}
+				}
+
+				if err == nil {
+					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
+					resultMap.SetPrimitiveStr("path", path)
+				} else if os.IsNotExist(err) {
+					errMap = ErrorRslMap(com.ErrFileNoExist, err.Error())
+				} else if os.IsPermission(err) {
+					errMap = ErrorRslMap(com.ErrFileNoPermission, err.Error())
+				} else {
+					errMap = ErrorRslMap(com.ErrFileWrite, err.Error())
 				}
 
 				if f.numExpectedOutputs == 1 {

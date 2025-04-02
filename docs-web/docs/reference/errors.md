@@ -29,3 +29,8 @@ Did not have permission to read the specified file.
 #### RAD20005
 
 Could not read the specified file, as it did not exist.
+
+
+#### RAD20006
+
+Failed to write to the specified file.

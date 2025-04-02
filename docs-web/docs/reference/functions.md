@@ -615,6 +615,23 @@ The returned `map` contains two keys:
 
 [//]: # (todo should the key be 'contents'? I find myself wanting to write plural frequently...)
 
+### write_file
+
+Writes a string to the given file path. Creates the file if it does not exist.
+
+```
+write_file(path: string, content: string, append: bool = false) -> map, map?
+```
+
+`append` is a named arg controlling whether we should append to the file instead of overriding existing data.
+
+The first returned `map` contains two keys:
+
+- `bytes_written -> int`
+- `path -> string`
+
+The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error exit.
+
 ### get_path
 
 Gets information about a file or directory at the specified path.
