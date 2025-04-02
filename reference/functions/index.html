@@ -1292,6 +1292,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#write_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_path" class="md-nav__link">
     <span class="md-ellipsis">
       get_path
@@ -2067,6 +2076,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#write_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_path" class="md-nav__link">
     <span class="md-ellipsis">
       get_path
@@ -2566,8 +2584,19 @@ read_file(path: string, mode: string = &quot;text&quot;) -&gt; map
 <p>The returned <code>map</code> contains two keys:</p>
 <ul>
 <li><code>size_bytes -&gt; int</code></li>
-<li><code>contents -&gt; string | list[int]</code> (depending on <code>mode</code>)</li>
+<li><code>content -&gt; string | list[int]</code> (depending on <code>mode</code>)</li>
 </ul>
+<h3 id="write_file">write_file<a class="headerlink" href="#write_file" title="Permanent link">&para;</a></h3>
+<p>Writes a string to the given file path. Creates the file if it does not exist.</p>
+<div class="highlight"><pre><span></span><code>write_file(path: string, content: string, append: bool = false) -&gt; map, map?
+</code></pre></div>
+<p><code>append</code> is a named arg controlling whether we should append to the file instead of overriding existing data.</p>
+<p>The first returned <code>map</code> contains two keys:</p>
+<ul>
+<li><code>bytes_written -&gt; int</code></li>
+<li><code>path -&gt; string</code></li>
+</ul>
+<p>The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error exit.</p>
 <h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
 <p>Gets information about a file or directory at the specified path.</p>
 <div class="highlight"><pre><span></span><code>get_path(path: string) -&gt; map
