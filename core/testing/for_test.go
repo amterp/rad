@@ -95,3 +95,20 @@ for char in a:
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_For_CanContinue(t *testing.T) {
+	rsl := `
+for i in range(5):
+	if i == 2:
+		continue
+	print(i)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `0
+1
+3
+4
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

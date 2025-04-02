@@ -199,6 +199,38 @@ print(a, b)
 	assertNoErrors(t)
 }
 
+func Test_Switch_DontNeedToYieldIfBreak(t *testing.T) {
+	rsl := `
+for i in range(5):
+    a = switch i:
+		case 0:
+			yield 10
+		case 1:
+			break
+print(a)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "10\n")
+	assertNoErrors(t)
+}
+
+func Test_Switch_DontNeedToYieldIfContinue(t *testing.T) {
+	rsl := `
+for i in range(5):
+    a = switch i:
+		case 0:
+			yield 10
+		case 1:
+			continue
+		default:
+			yield 20
+print(a)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "20\n")
+	assertNoErrors(t)
+}
+
 func Test_Switch_CanSelectCaseBasedOnUsedVars(t *testing.T) {
 	t.Skip("syntax later became unsupported. here in case I change my mind.")
 	rsl := `

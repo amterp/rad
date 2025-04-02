@@ -634,6 +634,7 @@ func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList
 			i.breaking = false
 			break
 		}
+		i.continuing = false
 	}
 }
 
@@ -676,7 +677,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop
 func (i *Interpreter) runBlock(stmtNodes []ts.Node) {
 	for _, stmtNode := range stmtNodes {
 		i.recursivelyRun(&stmtNode)
-		if i.forWhileLoopLevel > 0 && i.breaking || i.continuing {
+		if i.breakingOrContinuing() {
 			break
 		}
 	}
@@ -754,6 +755,10 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNo
 		stmtNodes := i.getChildren(caseValueAltNode, F_STMT)
 		i.runBlock(stmtNodes)
 
+		if i.breakingOrContinuing() {
+			return
+		}
+
 		yieldNode := i.getChild(caseValueAltNode, F_YIELD_STMT)
 		if numExpectedAssigns > 0 && yieldNode == nil {
 			i.errorf(caseValueAltNode, "Cannot assign without yielding from the switch case")
@@ -772,4 +777,8 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNo
 	default:
 		i.errorf(caseValueAltNode, "Bug! Unsupported switch case value node kind: %s", caseValueAltNode.Kind())
 	}
+}
+
+func (i *Interpreter) breakingOrContinuing() bool {
+	return i.forWhileLoopLevel > 0 && i.breaking || i.continuing
 }
