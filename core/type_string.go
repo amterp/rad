@@ -16,9 +16,9 @@ type RslString struct {
 }
 
 type rslStringSegment struct {
-	String    string
-	Color     *RslColor
-	Hyperlink *string
+	String     string
+	Attributes []RslTextAttr
+	Hyperlink  *string
 	// can add bold, etc here too
 }
 
@@ -27,7 +27,7 @@ func NewRslString(str string) RslString {
 	if str == "" {
 		return RslString{Segments: []rslStringSegment{}}
 	}
-	return RslString{Segments: []rslStringSegment{{String: str}}}
+	return RslString{Segments: []rslStringSegment{{String: str, Attributes: make([]RslTextAttr, 0)}}}
 }
 
 func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
@@ -56,16 +56,17 @@ func (s RslString) String() string {
 }
 
 func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string {
-	if segment.Color == nil && segment.Hyperlink == nil {
+	if len(segment.Attributes) == 0 && segment.Hyperlink == nil {
 		return str
 	}
 
-	var clr *color.Color
+	clr := color.New()
 
-	if segment.Color == nil {
-		clr = color.New()
+	if len(segment.Attributes) == 0 {
 	} else {
-		clr = segment.Color.ToFatihColor()
+		for _, attr := range segment.Attributes {
+			attr.AddAttrTo(clr)
+		}
 	}
 
 	if segment.Hyperlink != nil {
@@ -152,10 +153,10 @@ func (s *RslString) DeepCopy() RslString {
 	return cpy
 }
 
-func (s *RslString) Color(clr RslColor) RslString {
+func (s *RslString) CopyWithAttr(attr RslTextAttr) RslString {
 	cpy := s.DeepCopy()
 	for i := range cpy.Segments {
-		cpy.Segments[i].Color = &clr
+		cpy.Segments[i].Attributes = append(cpy.Segments[i].Attributes, attr)
 	}
 	return cpy
 }
@@ -185,9 +186,10 @@ func (s RslString) Lower() RslString {
 	return cpy
 }
 
-func (s *RslString) SetSegmentsColor(clr RslColor) {
+func (s *RslString) SetAttr(attr RslTextAttr) {
 	for i := range s.Segments {
-		s.Segments[i].Color = &clr
+		segment := s.Segments[i]
+		segment.Attributes = append(segment.Attributes, attr)
 	}
 }
 

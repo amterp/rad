@@ -166,3 +166,36 @@ print(a.red().hyperlink("https://example.com"))
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Color_CanBold(t *testing.T) {
+	rsl := `
+a = "Alice"
+print(a.bold())
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[1mAlice\x1b[22m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Color_CanItalic(t *testing.T) {
+	rsl := `
+a = "Alice"
+print(a.italic())
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[3mAlice\x1b[23m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Color_CanUnderline(t *testing.T) {
+	rsl := `
+a = "Alice"
+print(a.underline())
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[4mAlice\x1b[24m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
