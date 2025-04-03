@@ -392,6 +392,32 @@ trim_suffix(text string, chars string = " \t\n") -> string
 Trims the end of an input string.
 If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
 
+### Colors & Attributes
+
+RSL offers several functions to format text, including colors and modifiers like bold, italics, etc.
+As an example, let's look at the `red` function:
+
+```
+red(string) -> string  // output string will be red
+```
+
+Complete list:
+
+- `plain`
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue`
+- `magenta`
+- `cyan`
+- `white`
+- `orange`
+- `pink`
+- `bold`
+- `italic`
+- `underline`
+
 ## Maps
 
 ### keys

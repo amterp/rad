@@ -156,9 +156,10 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		for _, stmtNode := range stmtNodes {
 			switch stmtNode.Kind() {
 			case K_RAD_FIELD_MOD_COLOR:
+				// todo could I replace this syntax with a 'map' lambda operation?
 				clrExprNode := r.i.getChild(&stmtNode, F_COLOR)
 				clrStr := r.i.evaluate(clrExprNode, 1)[0].RequireStr(r.i, clrExprNode)
-				clr := ColorFromString(r.i, clrExprNode, clrStr.Plain())
+				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
 				regexExprNode := r.i.getChild(&stmtNode, F_REGEX)
 				regexStr := r.i.evaluate(regexExprNode, 1)[0].RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())

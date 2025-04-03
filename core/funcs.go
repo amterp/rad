@@ -1109,7 +1109,7 @@ func init() {
 		},
 	}
 
-	functions = append(functions, createColorFunctions()...)
+	functions = append(functions, createTextAttrFunctions()...)
 	functions = append(functions, createHttpFunctions()...)
 
 	FunctionsByName = make(map[string]Func)
@@ -1129,25 +1129,25 @@ func validateFunction(f Func, functionsSoFar map[string]Func) {
 	}
 }
 
-func createColorFunctions() []Func {
-	colorStrs := lo.Values(colorEnumToStrings)
-	funcs := make([]Func, len(colorStrs))
-	for idx, color := range colorStrs {
+func createTextAttrFunctions() []Func {
+	attrStrs := lo.Values(attrEnumToStrings)
+	funcs := make([]Func, len(attrStrs))
+	for idx, attrStr := range attrStrs {
 		funcs[idx] = Func{
-			Name:           color,
+			Name:           attrStr,
 			ReturnValues:   ONE_RETURN_VAL,
 			MinPosArgCount: 1,
 			PosArgTypes:    [][]RslTypeEnum{{}},
 			NamedArgs:      NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				clr := ColorFromString(f.i, f.callNode, color)
+				attr := AttrFromString(f.i, f.callNode, attrStr)
 				arg := f.args[0]
 				switch coerced := arg.value.Val.(type) {
 				case RslString:
-					return newRslValues(f.i, arg.node, coerced.Color(clr))
+					return newRslValues(f.i, arg.node, coerced.CopyWithAttr(attr))
 				default:
 					s := NewRslString(ToPrintable(arg.value))
-					s.SetSegmentsColor(clr)
+					s.SetAttr(attr)
 					return newRslValues(f.i, f.callNode, s)
 				}
 			},
