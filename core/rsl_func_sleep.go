@@ -10,10 +10,10 @@ import (
 )
 
 var FuncSleep = Func{
-	Name:           FUNC_SLEEP,
-	ReturnValues:   ZERO_RETURN_VALS,
-	MinPosArgCount: 1,
-	PosArgTypes:    [][]RslTypeEnum{{RslIntT, RslFloatT, RslStringT}},
+	Name:            FUNC_SLEEP,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  1,
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT, RslFloatT, RslStringT}}),
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgTitle: {RslStringT},
 	},

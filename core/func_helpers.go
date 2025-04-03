@@ -5,7 +5,6 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/dustin/go-humanize"
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -76,7 +75,7 @@ func (i *Interpreter) callFunction(
 	}
 
 	assertCorrectNumReturnValues(i, callNode, f, numExpectedOutputs)
-	assertCorrectPositionalArgs(i, callNode, f, args)
+	f.PosArgValidator.validate(i, callNode, f, args)
 	assertAllowedNamedArgs(i, callNode, f, namedArgs)
 
 	return f.Execute(NewFuncInvocationArgs(i, callNode, args, namedArgs, numExpectedOutputs))
@@ -111,39 +110,6 @@ func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Fu
 			function.Name, allowedReturnNums, com.NumIsAre(numExpectedReturnValues))
 	}
 	i.errorf(callNode, errMsg)
-}
-
-func assertCorrectPositionalArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
-	if len(args) < function.MinPosArgCount {
-		i.errorf(callNode, "%s() requires at least %s, but got %d",
-			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
-	}
-
-	maxAcceptableArgs := len(function.PosArgTypes)
-	if len(args) > maxAcceptableArgs {
-		i.errorf(callNode, "%s() requires at most %s, but got %d",
-			function.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(args))
-	}
-
-	for idx, acceptableTypes := range function.PosArgTypes {
-		if len(acceptableTypes) == 0 {
-			// there are no type constraints
-			continue
-		}
-
-		if idx >= len(args) {
-			// rest of the args are optional and not supplied
-			break
-		}
-
-		arg := args[idx]
-		if !lo.Contains(acceptableTypes, arg.value.Type()) {
-			acceptable := english.OxfordWordSeries(
-				lo.Map(acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
-			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
-				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
-		}
-	}
 }
 
 func assertAllowedNamedArgs(i *Interpreter, callNode *ts.Node, function Func, namedArgs map[string]namedArg) {

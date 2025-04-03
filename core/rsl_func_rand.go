@@ -12,11 +12,11 @@ func init() {
 }
 
 var FuncSeedRandom = Func{
-	Name:           FUNC_SEED_RANDOM,
-	ReturnValues:   ZERO_RETURN_VALS,
-	MinPosArgCount: 1,
-	PosArgTypes:    [][]RslTypeEnum{{RslIntT}},
-	NamedArgs:      NO_NAMED_ARGS,
+	Name:            FUNC_SEED_RANDOM,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  1,
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}}),
+	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		switch coerced := f.args[0].value.Val.(type) {
 		case int64:
@@ -30,22 +30,22 @@ var FuncSeedRandom = Func{
 }
 
 var FuncRand = Func{
-	Name:           FUNC_RAND,
-	ReturnValues:   ONE_RETURN_VAL,
-	MinPosArgCount: 0,
-	PosArgTypes:    NO_POS_ARGS,
-	NamedArgs:      NO_NAMED_ARGS,
+	Name:            FUNC_RAND,
+	ReturnValues:    ONE_RETURN_VAL,
+	MinPosArgCount:  0,
+	PosArgValidator: NewEnumerableArgSchema(NO_POS_ARGS),
+	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		return newRslValues(f.i, f.callNode, RNG.Float64())
 	},
 }
 
 var FuncRandInt = Func{
-	Name:           FUNC_RAND_INT,
-	ReturnValues:   ONE_RETURN_VAL,
-	MinPosArgCount: 1,
-	PosArgTypes:    [][]RslTypeEnum{{RslIntT}, {RslIntT}},
-	NamedArgs:      NO_NAMED_ARGS,
+	Name:            FUNC_RAND_INT,
+	ReturnValues:    ONE_RETURN_VAL,
+	MinPosArgCount:  1,
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}, {RslIntT}}),
+	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		var min, max int64
 

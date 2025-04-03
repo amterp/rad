@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"github.com/dustin/go-humanize"
+	"github.com/dustin/go-humanize/english"
 	"math"
 	"os"
 	"path/filepath"
@@ -130,13 +132,58 @@ func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, args []positionalA
 	}
 }
 
+type PositionalArgSchema interface {
+	validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg)
+}
+
+type EnumerablePositionalArgSchema struct {
+	argTypes [][]RslTypeEnum
+}
+
+func NewEnumerableArgSchema(argTypes [][]RslTypeEnum) PositionalArgSchema {
+	return EnumerablePositionalArgSchema{argTypes: argTypes}
+}
+
+func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+	if len(args) < function.MinPosArgCount {
+		i.errorf(callNode, "%s() requires at least %s, but got %d",
+			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
+	}
+
+	maxAcceptableArgs := len(s.argTypes)
+	if len(args) > maxAcceptableArgs {
+		i.errorf(callNode, "%s() requires at most %s, but got %d",
+			function.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(args))
+	}
+
+	for idx, acceptableTypes := range s.argTypes {
+		if len(acceptableTypes) == 0 {
+			// there are no type constraints
+			continue
+		}
+
+		if idx >= len(args) {
+			// rest of the args are optional and not supplied
+			break
+		}
+
+		arg := args[idx]
+		if !lo.Contains(acceptableTypes, arg.value.Type()) {
+			acceptable := english.OxfordWordSeries(
+				lo.Map(acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
+			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
+				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
+		}
+	}
+}
+
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
 type Func struct {
-	Name           string
-	ReturnValues   []int
-	MinPosArgCount int
-	PosArgTypes    [][]RslTypeEnum          // by index, what types are allowed for that index. empty == any
-	NamedArgs      map[string][]RslTypeEnum // name -> allowed types. empty == any
+	Name            string
+	ReturnValues    []int
+	MinPosArgCount  int
+	PosArgValidator PositionalArgSchema      // by index, what types are allowed for that index. empty == any
+	NamedArgs       map[string][]RslTypeEnum // name -> allowed types. empty == any
 	// interpreter, callNode, positional args, named args
 	// Guarantees when Execute invoked:
 	// - given at least as many args as required (MinPosArgCount)
@@ -164,11 +211,11 @@ func init() {
 		FuncSplit,
 		FuncRange,
 		{
-			Name:           FUNC_LEN,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT, RslListT, RslMapT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_LEN,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT, RslListT, RslMapT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				switch v := arg.value.Val.(type) {
@@ -184,10 +231,10 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_SORT,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT, RslListT}},
+			Name:            FUNC_SORT,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT, RslListT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgReverse: {RslBoolT},
 			},
@@ -219,11 +266,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_NOW,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 0,
-			PosArgTypes:    NO_POS_ARGS,
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_NOW,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewEnumerableArgSchema(NO_POS_ARGS),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				m := NewRslMap()
 				m.SetPrimitiveStr("date", RClock.Now().Format("2006-01-02"))
@@ -245,21 +292,21 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_TYPE_OF,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_TYPE_OF,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				return newRslValues(f.i, f.callNode, NewRslString(TypeAsString(f.args[0].value)))
 			},
 		},
 		{
-			Name:           FUNC_JOIN,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2, // todo: should "" just be the default joiner?
-			PosArgTypes:    [][]RslTypeEnum{{RslListT}, {RslStringT}, {RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_JOIN,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2, // todo: should "" just be the default joiner?
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}, {RslStringT}, {RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				listArg := f.args[0]
 				sepArg := f.args[1]
@@ -281,33 +328,33 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_UPPER,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_UPPER,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				return newRslValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Upper())
 			},
 		},
 		{
-			Name:           FUNC_LOWER,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_LOWER,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				return newRslValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Lower())
 			},
 		},
 		{
-			Name:           FUNC_STARTS_WITH,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_STARTS_WITH,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
@@ -317,11 +364,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_ENDS_WITH,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_ENDS_WITH,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
@@ -331,33 +378,33 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_KEYS,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslMapT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_KEYS,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslMapT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				return newRslValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Keys())
 			},
 		},
 		{
-			Name:           FUNC_VALUES,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslMapT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_VALUES,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslMapT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				return newRslValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
 			},
 		},
 		{
-			Name:           FUNC_TRUNCATE,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_TRUNCATE,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				strArg := f.args[0]
 				maxLenArg := f.args[1]
@@ -381,11 +428,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_UNIQUE,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslListT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_UNIQUE,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 
@@ -405,11 +452,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_CONFIRM,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 0,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_CONFIRM,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := tryGetArg(0, f.args)
 
@@ -429,11 +476,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_PARSE_JSON,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_PARSE_JSON,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 
@@ -445,11 +492,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_PARSE_INT,
-			ReturnValues:   UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_PARSE_INT,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 
@@ -475,11 +522,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_PARSE_FLOAT,
-			ReturnValues:   UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_PARSE_FLOAT,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 
@@ -505,11 +552,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_ABS,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslFloatT, RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_ABS,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslFloatT, RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 
@@ -525,10 +572,10 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_INPUT,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 0,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
+			Name:            FUNC_INPUT,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgHint:    {RslStringT},
 				namedArgDefault: {RslStringT},
@@ -557,11 +604,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_GET_PATH,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_GET_PATH,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				pathArg := f.args[0]
 				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
@@ -585,10 +632,10 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_FIND_PATHS,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
+			Name:            FUNC_FIND_PATHS,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				// todo: filtering by name, file type
 				//  potentially allow `include_root`
@@ -673,11 +720,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_COUNT,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_COUNT,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				strArg := f.args[0]
 				substrArg := f.args[1]
@@ -694,7 +741,7 @@ func init() {
 			ReturnValues:   ONE_RETURN_VAL,
 			MinPosArgCount: 0,
 			// TODO RAD-167 make truly unlimited
-			PosArgTypes: [][]RslTypeEnum{{RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}},
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgFill:   {},
 				namedArgStrict: {RslBoolT},
@@ -758,11 +805,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_STR,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_STR,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				asStr := ToPrintableQuoteStr(arg.value, false)
@@ -770,11 +817,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_SUM,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslListT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_SUM,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -792,11 +839,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_TRIM,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_TRIM,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				return runTrim(f, func(str RslString, chars string) RslString {
 					return str.Trim(chars)
@@ -804,11 +851,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_TRIM_PREFIX,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_TRIM_PREFIX,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				return runTrim(f, func(str RslString, chars string) RslString {
 					return str.TrimPrefix(chars)
@@ -816,11 +863,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_TRIM_SUFFIX,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_TRIM_SUFFIX,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				return runTrim(f, func(str RslString, chars string) RslString {
 					return str.TrimSuffix(chars)
@@ -834,10 +881,10 @@ func init() {
 			//   - length            # Number of bytes to read
 			//   - head              # First N bytes
 			//   - tail              # Last N bytes
-			Name:           FUNC_READ_FILE,
-			ReturnValues:   UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
+			Name:            FUNC_READ_FILE,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgMode: {RslStringT},
 			},
@@ -886,10 +933,10 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_WRITE_FILE,
-			ReturnValues:   UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}, {RslStringT}},
+			Name:            FUNC_WRITE_FILE,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgAppend: {RslBoolT},
 			},
@@ -947,11 +994,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_ROUND,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_ROUND,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslFloatT, RslIntT}, {RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				var precision int64 = 0
@@ -970,11 +1017,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_CEIL,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslFloatT, RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_CEIL,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslFloatT, RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
@@ -982,11 +1029,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_FLOOR,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslFloatT, RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_FLOOR,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslFloatT, RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
@@ -994,11 +1041,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_MIN,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslListT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_MIN,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -1018,11 +1065,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_MAX,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslListT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_MAX,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -1042,11 +1089,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_CLAMP,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 3,
-			PosArgTypes:    [][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_CLAMP,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  3,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslFloatT, RslIntT}, {RslFloatT, RslIntT}, {RslFloatT, RslIntT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				valArg := f.args[0]
 				minArg := f.args[1]
@@ -1063,11 +1110,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_REVERSE,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_REVERSE,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				rslString := arg.value.RequireStr(f.i, arg.node)
@@ -1075,11 +1122,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_IS_DEFINED,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_IS_DEFINED,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
@@ -1088,11 +1135,11 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_HYPERLINK,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2,
-			PosArgTypes:    [][]RslTypeEnum{{}, {RslStringT}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            FUNC_HYPERLINK,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				text := f.args[0]
 				linkArg := f.args[1]
@@ -1120,8 +1167,12 @@ func init() {
 }
 
 func validateFunction(f Func, functionsSoFar map[string]Func) {
-	if f.MinPosArgCount > len(f.PosArgTypes) {
-		panic(fmt.Sprintf("Bug! Function %q has more required args than arg types", f.Name))
+	validator := f.PosArgValidator
+	switch coerced := validator.(type) {
+	case *EnumerablePositionalArgSchema:
+		if f.MinPosArgCount > len(coerced.argTypes) {
+			panic(fmt.Sprintf("Bug! Function %q has more required args than arg types", f.Name))
+		}
 	}
 
 	if _, exists := functionsSoFar[f.Name]; exists {
@@ -1134,11 +1185,11 @@ func createTextAttrFunctions() []Func {
 	funcs := make([]Func, len(attrStrs))
 	for idx, attrStr := range attrStrs {
 		funcs[idx] = Func{
-			Name:           attrStr,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{}},
-			NamedArgs:      NO_NAMED_ARGS,
+			Name:            attrStr,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}}),
+			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				attr := AttrFromString(f.i, f.callNode, attrStr)
 				arg := f.args[0]
@@ -1176,10 +1227,10 @@ func createHttpFunctions() []Func {
 		//   - query params help?
 		//   - generic http for other/all methods?
 		funcs[idx] = Func{
-			Name:           httpFunc,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
+			Name:            httpFunc,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgHeaders: {RslMapT}, // string->string or string->list[string]
 				namedArgBody:    {RslStringT, RslMapT, RslListT},

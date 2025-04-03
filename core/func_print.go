@@ -13,7 +13,7 @@ var FuncPrint = Func{
 	ReturnValues:   ZERO_RETURN_VALS,
 	MinPosArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args' RAD-167
-	PosArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}),
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},
@@ -25,11 +25,11 @@ var FuncPrint = Func{
 }
 
 var FuncPPrint = Func{
-	Name:           FUNC_PPRINT,
-	ReturnValues:   ZERO_RETURN_VALS,
-	MinPosArgCount: 0,
-	PosArgTypes:    [][]RslTypeEnum{{}},
-	NamedArgs:      NO_NAMED_ARGS,
+	Name:            FUNC_PPRINT,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  0,
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}}),
+	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		if len(f.args) == 0 {
 			RP.Print("\n")
@@ -48,7 +48,7 @@ var FuncDebug = Func{
 	ReturnValues:   ZERO_RETURN_VALS,
 	MinPosArgCount: 0,
 	// TODO BAD!! We need a way to say 'unlimited positional args'
-	PosArgTypes: [][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}},
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}),
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},
