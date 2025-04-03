@@ -1182,7 +1182,7 @@ func createHttpFunctions() []Func {
 			PosArgTypes:    [][]RslTypeEnum{{RslStringT}},
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgHeaders: {RslMapT}, // string->string or string->list[string]
-				namedArgBody:    {RslMapT, RslStringT},
+				namedArgBody:    {RslStringT, RslMapT, RslListT},
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				urlArg := f.args[0]
