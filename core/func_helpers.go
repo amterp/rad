@@ -74,11 +74,19 @@ func (i *Interpreter) callFunction(
 		panic(UNREACHABLE)
 	}
 
-	assertCorrectNumReturnValues(i, callNode, f, numExpectedOutputs)
+	assertMinNumPosArgs(i, callNode, f, args)
 	f.PosArgValidator.validate(i, callNode, f, args)
 	assertAllowedNamedArgs(i, callNode, f, namedArgs)
+	assertCorrectNumReturnValues(i, callNode, f, numExpectedOutputs)
 
 	return f.Execute(NewFuncInvocationArgs(i, callNode, args, namedArgs, numExpectedOutputs))
+}
+
+func assertMinNumPosArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+	if len(args) < function.MinPosArgCount {
+		i.errorf(callNode, "%s() requires at least %s, but got %d",
+			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
+	}
 }
 
 func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Func, numExpectedReturnValues int) {

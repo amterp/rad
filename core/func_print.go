@@ -9,11 +9,10 @@ import (
 )
 
 var FuncPrint = Func{
-	Name:           FUNC_PRINT,
-	ReturnValues:   ZERO_RETURN_VALS,
-	MinPosArgCount: 0,
-	// TODO BAD!! We need a way to say 'unlimited positional args' RAD-167
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}),
+	Name:            FUNC_PRINT,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  0,
+	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},
@@ -44,11 +43,10 @@ var FuncPPrint = Func{
 }
 
 var FuncDebug = Func{
-	Name:           FUNC_DEBUG,
-	ReturnValues:   ZERO_RETURN_VALS,
-	MinPosArgCount: 0,
-	// TODO BAD!! We need a way to say 'unlimited positional args'
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}),
+	Name:            FUNC_DEBUG,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  0,
+	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
 	NamedArgs: map[string][]RslTypeEnum{
 		namedArgEnd: {RslStringT},
 		namedArgSep: {RslStringT},

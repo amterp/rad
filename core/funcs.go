@@ -145,11 +145,6 @@ func NewEnumerableArgSchema(argTypes [][]RslTypeEnum) PositionalArgSchema {
 }
 
 func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
-	if len(args) < function.MinPosArgCount {
-		i.errorf(callNode, "%s() requires at least %s, but got %d",
-			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
-	}
-
 	maxAcceptableArgs := len(s.argTypes)
 	if len(args) > maxAcceptableArgs {
 		i.errorf(callNode, "%s() requires at most %s, but got %d",
@@ -171,6 +166,31 @@ func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Nod
 		if !lo.Contains(acceptableTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
+			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
+				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
+		}
+	}
+}
+
+type VarPositionalArgSchema struct {
+	// acceptable types for any arg
+	acceptableTypes []RslTypeEnum
+}
+
+func NewVarArgSchema(acceptableTypes []RslTypeEnum) PositionalArgSchema {
+	return VarPositionalArgSchema{acceptableTypes: acceptableTypes}
+}
+
+func (s VarPositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+	if len(s.acceptableTypes) == 0 {
+		// there are no type constraints
+		return
+	}
+
+	for idx, arg := range args {
+		if !lo.Contains(s.acceptableTypes, arg.value.Type()) {
+			acceptable := english.OxfordWordSeries(
+				lo.Map(s.acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
 			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
 				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
 		}
@@ -737,11 +757,10 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_ZIP,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 0,
-			// TODO RAD-167 make truly unlimited
-			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}, {RslListT}}),
+			Name:            FUNC_ZIP,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewVarArgSchema([]RslTypeEnum{RslListT}),
 			NamedArgs: map[string][]RslTypeEnum{
 				namedArgFill:   {},
 				namedArgStrict: {RslBoolT},
