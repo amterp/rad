@@ -237,6 +237,47 @@ func (v RslValue) TruthyFalsy() bool {
 	}
 }
 
+func (v RslValue) Accept(visitor *RslTypeVisitor) {
+	switch coerced := v.Val.(type) {
+	case bool:
+		if visitor.VisitBool != nil {
+			visitor.VisitBool(v, coerced)
+			return
+		}
+	case int64:
+		if visitor.VisitInt != nil {
+			visitor.VisitInt(v, coerced)
+			return
+		}
+	case float64:
+		if visitor.VisitFloat != nil {
+			visitor.VisitFloat(v, coerced)
+			return
+		}
+	case RslString:
+		if visitor.VisitString != nil {
+			visitor.VisitString(v, coerced)
+			return
+		}
+	case *RslList:
+		if visitor.VisitList != nil {
+			visitor.VisitList(v, coerced)
+			return
+		}
+	case *RslMap:
+		if visitor.VisitMap != nil {
+			visitor.VisitMap(v, coerced)
+			return
+		}
+	}
+	if visitor.Default != nil {
+		visitor.Default(v)
+		return
+	}
+	visitor.UnhandledTypeError(v)
+	panic(UNREACHABLE)
+}
+
 func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	switch coerced := value.(type) {
 	case RslValue:

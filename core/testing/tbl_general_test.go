@@ -92,7 +92,7 @@ display url:
 	expected := `Error at L5:9
 
   display url:
-          ^^^ Invalid syntax
+          ^^^ Display block source can only be a list or a map. Got "string"
 `
 	assertError(t, 1, expected)
 }

@@ -133,6 +133,9 @@ const (
 	F_DELEGATE     = "delegate"
 
 	// Keywords
-	KEYWORD_ASC  = "asc"
-	KEYWORD_DESC = "desc"
+	KEYWORD_ASC     = "asc"
+	KEYWORD_DESC    = "desc"
+	KEYWORD_RAD     = "rad"
+	KEYWORD_REQUEST = "request"
+	KEYWORD_DISPLAY = "display"
 )

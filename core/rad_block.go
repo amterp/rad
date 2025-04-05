@@ -46,11 +46,11 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 
 	var blockType RadBlockType
 	switch typeStr {
-	case "rad":
+	case KEYWORD_RAD:
 		blockType = Rad
-	case "request":
+	case KEYWORD_REQUEST:
 		blockType = Request
-	case "display":
+	case KEYWORD_DISPLAY:
 		blockType = Display
 	default:
 		i.errorf(radTypeNode, "Bug! Unknown rad block type %q", typeStr)
@@ -249,8 +249,12 @@ func (r *radInvocation) execute() {
 		}
 	}
 
-	srcStr := r.sourceString()
-	if srcStr != nil {
+	data, err := r.resolveData()
+	if err != nil {
+		r.i.errorf(r.srcExprNode, fmt.Sprintf("Error resolving data: %v", err))
+	}
+
+	if data != nil {
 		jsonFields := lo.Map(radFields, func(field radField, _ int) JsonFieldVar {
 			fieldVar, ok := r.i.env.GetJsonFieldVar(field.name)
 			if !ok {
@@ -258,11 +262,6 @@ func (r *radInvocation) execute() {
 			}
 			return *fieldVar
 		})
-
-		data, err := RReq.RequestJson(srcStr.Plain())
-		if err != nil {
-			r.i.errorf(r.srcExprNode, fmt.Sprintf("Error requesting JSON: %v", err))
-		}
 
 		trie := CreateTrie(r.i, r.radKeywordNode, jsonFields)
 		trie.TraverseTrie(data)
@@ -313,12 +312,35 @@ func (r *radInvocation) execute() {
 	tbl.Render()
 }
 
-func (r *radInvocation) sourceString() *RslString {
+func (r *radInvocation) resolveData() (data interface{}, err error) {
 	if r.srcExprNode == nil {
-		return nil
+		return nil, nil
 	}
-	str := r.i.evaluate(r.srcExprNode, 1)[0].RequireStr(r.i, r.srcExprNode)
-	return &str
+
+	src := r.i.evaluate(r.srcExprNode, 1)[0]
+
+	if r.blockType == Rad || r.blockType == Request {
+		str := src.RequireStr(r.i, r.srcExprNode)
+		return RReq.RequestJson(str.Plain())
+	}
+
+	if r.blockType == Display {
+		visitor := NewTypeVisitor(r.i, r.srcExprNode)
+		visitor.VisitList = func(val RslValue, _ *RslList) {
+			data = RslToJsonType(val)
+		}
+		visitor.VisitMap = func(val RslValue, _ *RslMap) {
+			data = RslToJsonType(val)
+		}
+		visitor.Default = func(val RslValue) {
+			r.i.errorf(r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
+		}
+		src.Accept(visitor)
+		return
+	} else {
+		r.i.errorf(r.srcExprNode, "Bug! Unknown rad block type %q", r.blockType)
+		panic(UNREACHABLE)
+	}
 }
 
 func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, colWiseSort []ColumnSort) {
