@@ -199,3 +199,13 @@ print(a.underline())
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Color_CanColorInt(t *testing.T) {
+	rsl := `
+print(2.red())
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[31m2\x1b[0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

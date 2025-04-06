@@ -188,8 +188,7 @@ func (s RslString) Lower() RslString {
 
 func (s *RslString) SetAttr(attr RslTextAttr) {
 	for i := range s.Segments {
-		segment := s.Segments[i]
-		segment.Attributes = append(segment.Attributes, attr)
+		s.Segments[i].Attributes = append(s.Segments[i].Attributes, attr)
 	}
 }
 
