@@ -28,10 +28,11 @@ func Test_Func_Round_FloatsWithZeroPrecision(t *testing.T) {
 	rsl := `
 a = 2.234
 b = 0
-print(round(a, b))
+c = round(a, b)
+print(c, type_of(c))
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "2\n")
+	assertOnlyOutput(t, stdOutBuffer, "2 int\n")
 	assertNoErrors(t)
 }
 
@@ -48,10 +49,11 @@ print(round(a))
 func Test_Func_Round_FloatsWithoutPrecision(t *testing.T) {
 	rsl := `
 a = 2.234
-print(round(a))
+b = round(a)
+print(b, type_of(b))
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "2\n")
+	assertOnlyOutput(t, stdOutBuffer, "2 int\n")
 	assertNoErrors(t)
 }
 

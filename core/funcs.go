@@ -1100,6 +1100,10 @@ func init() {
 				}
 
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
+				if precision == 0 {
+					return newRslValues(f.i, f.callNode, int64(math.Round(val)))
+				}
+
 				factor := math.Pow10(int(precision))
 				rounded := math.Round(val*factor) / factor
 				return newRslValues(f.i, f.callNode, rounded)
