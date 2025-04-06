@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"rls/com"
 	"rls/log"
 	"rls/lsp"
 	"strings"
@@ -25,7 +26,8 @@ func (d *DocState) GetLine(line int) string {
 }
 
 type State struct {
-	parser *rts.RslParser
+	parser       *rts.RslParser
+	rslFunctions *com.FunctionSet
 	// URI -> Text
 	docs map[string]*DocState
 }
@@ -35,10 +37,13 @@ func NewState() *State {
 	if err != nil {
 		log.L.Fatalw("Failed to create RSL tree sitter", "err", err)
 	}
+	rslFunctions := com.LoadNewFunctionSet()
+	log.L.Infof("Loaded %d functions", rslFunctions.Len())
 
 	return &State{
-		parser: rslParser,
-		docs:   make(map[string]*DocState),
+		parser:       rslParser,
+		rslFunctions: rslFunctions,
+		docs:         make(map[string]*DocState),
 	}
 }
 
@@ -48,7 +53,7 @@ func (s *State) NewDocState(uri, text string) *DocState {
 		uri:         uri,
 		text:        text,
 		tree:        tree,
-		diagnostics: resolveDiagnostics(tree),
+		diagnostics: s.resolveDiagnostics(tree),
 	}
 }
 
@@ -65,21 +70,10 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 		doc.tree.Update(change.Text)
 		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
-		doc.diagnostics = resolveDiagnostics(doc.tree)
+		doc.diagnostics = s.resolveDiagnostics(doc.tree)
 	}
 }
 
 func (s *State) GetDiagnostics(uri string) []lsp.Diagnostic {
 	return s.docs[uri].diagnostics
-}
-
-// todo be able to give yet better diagnostics e.g. unknown functions, etc. Where should live though?
-func resolveDiagnostics(tree *rts.RslTree) []lsp.Diagnostic {
-	invalidNodes := tree.FindInvalidNodes()
-	diagnostics := make([]lsp.Diagnostic, len(invalidNodes))
-	for i, node := range invalidNodes {
-		rang := lsp.NewRangeFromTsNode(node)
-		diagnostics[i] = lsp.NewDiagnostic(rang, lsp.Err, "RSL Language Server", "Invalid syntax")
-	}
-	return diagnostics
 }

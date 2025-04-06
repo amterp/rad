@@ -1,12 +1,13 @@
 package core
 
 import (
+	"github.com/amterp/rts/rsl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 func ResolveSliceStartEnd(i *Interpreter, sliceNode *ts.Node, length int64) (int64, int64) {
-	startNode := i.getChild(sliceNode, F_START)
-	endNode := i.getChild(sliceNode, F_END)
+	startNode := i.getChild(sliceNode, rsl.F_START)
+	endNode := i.getChild(sliceNode, rsl.F_END)
 
 	start := int64(0)
 	end := length

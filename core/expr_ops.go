@@ -6,6 +6,8 @@ import (
 	com "rad/core/common"
 	"strings"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -55,15 +57,15 @@ func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.
 func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node) RslValue {
 	result := func() interface{} {
 		switch opNode.Kind() {
-		case K_PLUS_EQUAL:
+		case rsl.K_PLUS_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_PLUS)
-		case K_MINUS_EQUAL:
+		case rsl.K_MINUS_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MINUS)
-		case K_STAR_EQUAL:
+		case rsl.K_STAR_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MULTIPLY)
-		case K_SLASH_EQUAL:
+		case rsl.K_SLASH_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_DIVIDE)
-		case K_PERCENT_EQUAL:
+		case rsl.K_PERCENT_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MODULO)
 		default:
 			i.errorf(opNode, "Invalid compound operator")
@@ -75,7 +77,7 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 
 func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslValue {
 	switch opNode.Kind() {
-	case K_PLUS, K_MINUS, K_PLUS_PLUS, K_MINUS_MINUS:
+	case rsl.K_PLUS, rsl.K_MINUS, rsl.K_PLUS_PLUS, rsl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 		argVal := i.evaluate(argNode, 1)[0]
 		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RslIntT, RslFloatT)
@@ -91,7 +93,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslVa
 			i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
 			panic(UNREACHABLE)
 		}
-	case K_NOT:
+	case rsl.K_NOT:
 		return newRslValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
 	default:
 		i.errorf(opNode, "Invalid unary operator")
@@ -101,13 +103,13 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslVa
 
 func (i *Interpreter) getUnaryOp(opNode *ts.Node) (func(int64) int64, func(float64) float64) {
 	switch opNode.Kind() {
-	case K_PLUS:
+	case rsl.K_PLUS:
 		return func(a int64) int64 { return a }, func(a float64) float64 { return a }
-	case K_MINUS:
+	case rsl.K_MINUS:
 		return func(a int64) int64 { return -a }, func(a float64) float64 { return -a }
-	case K_PLUS_PLUS:
+	case rsl.K_PLUS_PLUS:
 		return func(a int64) int64 { return a + 1 }, func(a float64) float64 { return a + 1 }
-	case K_MINUS_MINUS:
+	case rsl.K_MINUS_MINUS:
 		return func(a int64) int64 { return a - 1 }, func(a float64) float64 { return a - 1 }
 	default:
 		i.errorf(opNode, "Invalid unary operator")

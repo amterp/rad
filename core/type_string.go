@@ -4,6 +4,8 @@ import (
 	com "rad/core/common"
 	"strings"
 
+	"github.com/amterp/rts/rsl"
+
 	"github.com/amterp/color"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -102,7 +104,7 @@ func (s RslString) Len() int64 {
 }
 
 func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {
-	if idxNode.Kind() == K_SLICE {
+	if idxNode.Kind() == rsl.K_SLICE {
 		// todo should maintain attr info
 		start, end := ResolveSliceStartEnd(i, idxNode, s.Len())
 		return NewRslString(s.Plain()[start:end])

@@ -7,7 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	rts "github.com/amterp/rts"
+	"github.com/amterp/rts"
+
+	"github.com/amterp/rts/rsl"
 
 	"github.com/samber/lo"
 
@@ -88,53 +90,53 @@ func (i *Interpreter) recursivelyRun(node *ts.Node) {
 func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	switch node.Kind() {
 	// no-ops
-	case K_SOURCE_FILE:
+	case rsl.K_SOURCE_FILE:
 		children := node.Children(node.Walk())
 		for _, child := range children {
 			i.recursivelyRun(&child)
 		}
-	case K_COMMENT, K_SHEBANG, K_FILE_HEADER, K_ARG_BLOCK:
+	case rsl.K_COMMENT, rsl.K_SHEBANG, rsl.K_FILE_HEADER, rsl.K_ARG_BLOCK:
 		return
-	case K_ERROR:
+	case rsl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
-	case K_ASSIGN:
-		leftNodes := i.getChildren(node, F_LEFT)
-		rightNodes := i.getChildren(node, F_RIGHT)
+	case rsl.K_ASSIGN:
+		leftNodes := i.getChildren(node, rsl.F_LEFT)
+		rightNodes := i.getChildren(node, rsl.F_RIGHT)
 		i.assignRightsToLefts(node, leftNodes, rightNodes)
-	case K_COMPOUND_ASSIGN:
-		leftVarPathNode := i.getChild(node, F_LEFT)
-		rightNode := i.getChild(node, F_RIGHT)
-		opNode := i.getChild(node, F_OP)
+	case rsl.K_COMPOUND_ASSIGN:
+		leftVarPathNode := i.getChild(node, rsl.F_LEFT)
+		rightNode := i.getChild(node, rsl.F_RIGHT)
+		opNode := i.getChild(node, rsl.F_OP)
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue)
-	case K_EXPR:
+	case rsl.K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
-	case K_BREAK_STMT:
+	case rsl.K_BREAK_STMT:
 		if i.forWhileLoopLevel > 0 {
 			i.breaking = true
 		} else {
 			i.errorf(node, "Cannot 'break' outside of a for loop")
 		}
-	case K_CONTINUE_STMT:
+	case rsl.K_CONTINUE_STMT:
 		if i.forWhileLoopLevel > 0 {
 			i.continuing = true
 		} else {
 			i.errorf(node, "Cannot 'continue' outside of a for loop")
 		}
-	case K_FOR_LOOP:
+	case rsl.K_FOR_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		stmts := i.getChildren(node, F_STMT)
+		stmts := i.getChildren(node, rsl.F_STMT)
 		i.executeForLoop(node, func() { i.runBlock(stmts) })
-	case K_WHILE_LOOP:
+	case rsl.K_WHILE_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		condNode := i.getChild(node, F_CONDITION)
-		stmtNodes := i.getChildren(node, F_STMT)
+		condNode := i.getChild(node, rsl.F_CONDITION)
+		stmtNodes := i.getChildren(node, rsl.F_STMT)
 		for {
 			condValue := true
 			if condNode != nil {
@@ -151,10 +153,10 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 				break
 			}
 		}
-	case K_IF_STMT:
-		altNodes := i.getChildren(node, F_ALT)
+	case rsl.K_IF_STMT:
+		altNodes := i.getChildren(node, rsl.F_ALT)
 		for _, altNode := range altNodes {
-			condNode := i.getChild(&altNode, F_CONDITION)
+			condNode := i.getChild(&altNode, rsl.F_CONDITION)
 
 			shouldExecute := true
 			if condNode != nil {
@@ -163,22 +165,22 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 			}
 
 			if shouldExecute {
-				stmtNodes := i.getChildren(&altNode, F_STMT)
+				stmtNodes := i.getChildren(&altNode, rsl.F_STMT)
 				i.runBlock(stmtNodes)
 				break
 			}
 		}
-	case K_SWITCH_STMT:
-		leftVarPathNodes := i.getChildren(node, F_LEFT)
-		discriminantNode := i.getChild(node, F_DISCRIMINANT)
-		caseNodes := i.getChildren(node, F_CASE)
-		defaultNode := i.getChild(node, F_DEFAULT)
+	case rsl.K_SWITCH_STMT:
+		leftVarPathNodes := i.getChildren(node, rsl.F_LEFT)
+		discriminantNode := i.getChild(node, rsl.F_DISCRIMINANT)
+		caseNodes := i.getChildren(node, rsl.F_CASE)
+		defaultNode := i.getChild(node, rsl.F_DEFAULT)
 
 		discriminantVal := i.evaluate(discriminantNode, 1)[0]
 
 		matchedCaseNodes := make([]ts.Node, 0)
 		for _, caseNode := range caseNodes {
-			caseKeyNodes := i.getChildren(&caseNode, F_CASE_KEY)
+			caseKeyNodes := i.getChildren(&caseNode, rsl.F_CASE_KEY)
 			for _, caseKeyNode := range caseKeyNodes {
 				caseKey := i.evaluate(&caseKeyNode, 1)[0]
 				if caseKey.Equals(discriminantVal) {
@@ -190,7 +192,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 
 		if len(matchedCaseNodes) == 0 {
 			if defaultNode != nil {
-				caseValueAltNode := i.getChild(defaultNode, F_ALT)
+				caseValueAltNode := i.getChild(defaultNode, rsl.F_ALT)
 				i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
 				return
 			}
@@ -209,24 +211,24 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 
 		matchedCaseNode := matchedCaseNodes[0]
-		caseValueAltNode := i.getChild(&matchedCaseNode, F_ALT)
+		caseValueAltNode := i.getChild(&matchedCaseNode, rsl.F_ALT)
 		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
-	case K_DEFER_BLOCK:
-		keywordNode := i.getChild(node, F_KEYWORD)
-		stmtNodes := i.getChildren(node, F_STMT)
+	case rsl.K_DEFER_BLOCK:
+		keywordNode := i.getChild(node, rsl.F_KEYWORD)
+		stmtNodes := i.getChildren(node, rsl.F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
-	case K_SHELL_STMT:
+	case rsl.K_SHELL_STMT:
 		i.executeShellStmt(node)
-	case K_DEL_STMT:
-		rightVarPathNodes := i.getChildren(node, F_RIGHT)
+	case rsl.K_DEL_STMT:
+		rightVarPathNodes := i.getChildren(node, rsl.F_RIGHT)
 		for _, rightVarPathNode := range rightVarPathNodes {
 			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL)
 		}
-	case K_RAD_BLOCK:
+	case rsl.K_RAD_BLOCK:
 		i.runRadBlock(node)
-	case K_INCR_DECR:
-		leftVarPathNode := i.getChild(node, F_LEFT)
-		opNode := i.getChild(node, F_OP)
+	case rsl.K_INCR_DECR:
+		leftVarPathNode := i.getChild(node, rsl.F_LEFT)
+		opNode := i.getChild(node, rsl.F_OP)
 		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue)
 	default:
@@ -247,34 +249,34 @@ func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue
 
 func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslValue {
 	switch node.Kind() {
-	case K_EXPR, K_PRIMARY_EXPR, K_LITERAL:
+	case rsl.K_EXPR, rsl.K_PRIMARY_EXPR, rsl.K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
-	case K_PARENTHESIZED_EXPR:
-		return i.evaluate(i.getChild(node, F_EXPR), numExpectedOutputs)
-	case K_UNARY_EXPR:
-		delegateNode := i.getChild(node, F_DELEGATE)
+	case rsl.K_PARENTHESIZED_EXPR:
+		return i.evaluate(i.getChild(node, rsl.F_EXPR), numExpectedOutputs)
+	case rsl.K_UNARY_EXPR:
+		delegateNode := i.getChild(node, rsl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		opNode := i.getChild(node, F_OP)
-		argNode := i.getChild(node, F_ARG)
+		opNode := i.getChild(node, rsl.F_OP)
+		argNode := i.getChild(node, rsl.F_ARG)
 		return newRslValues(i, node, i.executeUnaryOp(node, argNode, opNode))
-	case K_OR_EXPR, K_AND_EXPR, K_COMPARE_EXPR, K_ADD_EXPR, K_MULT_EXPR:
-		delegateNode := i.getChild(node, F_DELEGATE)
+	case rsl.K_OR_EXPR, rsl.K_AND_EXPR, rsl.K_COMPARE_EXPR, rsl.K_ADD_EXPR, rsl.K_MULT_EXPR:
+		delegateNode := i.getChild(node, rsl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		left := i.getChild(node, F_LEFT)
-		op := i.getChild(node, F_OP)
-		right := i.getChild(node, F_RIGHT)
+		left := i.getChild(node, rsl.F_LEFT)
+		op := i.getChild(node, rsl.F_OP)
+		right := i.getChild(node, rsl.F_RIGHT)
 		return newRslValues(i, node, i.executeBinary(node, left, right, op))
 
 	// LEAF NODES
-	case K_IDENTIFIER:
+	case rsl.K_IDENTIFIER:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		identifier := i.sd.Src[node.StartByte():node.EndByte()]
 		val, ok := i.env.GetVar(identifier)
@@ -282,9 +284,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			i.errorf(node, "Undefined variable: %s", identifier)
 		}
 		return newRslValues(i, node, val)
-	case K_VAR_PATH:
-		rootNode := i.getChild(node, F_ROOT)
-		indexingNodes := i.getChildren(node, F_INDEXING)
+	case rsl.K_VAR_PATH:
+		rootNode := i.getChild(node, rsl.F_ROOT)
+		indexingNodes := i.getChildren(node, rsl.F_INDEXING)
 		val := i.evaluate(rootNode, 1)[0]
 		if len(indexingNodes) > 0 {
 			for indexIdx, indexNode := range indexingNodes {
@@ -293,9 +295,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			}
 		}
 		return newRslValues(i, node, val)
-	case K_INDEXED_EXPR:
-		rootNode := i.getChild(node, F_ROOT)
-		indexingNodes := i.getChildren(node, F_INDEXING)
+	case rsl.K_INDEXED_EXPR:
+		rootNode := i.getChild(node, rsl.F_ROOT)
+		indexingNodes := i.getChildren(node, rsl.F_INDEXING)
 		if len(indexingNodes) > 0 {
 			val := i.evaluate(rootNode, 1)[0]
 			for indexIdx, index := range indexingNodes {
@@ -306,25 +308,25 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		} else {
 			return i.evaluate(rootNode, numExpectedOutputs)
 		}
-	case K_INT:
+	case rsl.K_INT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
 		return newRslValues(i, node, asInt)
-	case K_FLOAT:
+	case rsl.K_FLOAT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
 		return newRslValues(i, node, asFloat)
-	case K_STRING:
+	case rsl.K_STRING:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		str := NewRslString("")
 
-		contentsNode := i.getChild(node, F_CONTENTS)
+		contentsNode := i.getChild(node, rsl.F_CONTENTS)
 
 		// With current TS grammar, last character of closing delimiter is always the delimiter
 		// Admittedly bad, very white boxy and brittle
-		endNode := i.getChild(node, F_END)
+		endNode := i.getChild(node, rsl.F_END)
 		endStr := i.sd.Src[endNode.StartByte():endNode.EndByte()]
 		delimiterStr := endStr[len(endStr)-1]
 		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
@@ -338,70 +340,70 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		i.delimiterStack.Pop()
 
 		return newRslValues(i, node, str)
-	case K_BOOL:
+	case rsl.K_BOOL:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asBool, _ := strconv.ParseBool(asStr)
 		return newRslValues(i, node, asBool)
-	case K_STRING_CONTENT:
+	case rsl.K_STRING_CONTENT:
 		src := i.sd.Src[node.StartByte():node.EndByte()]
 		return newRslValues(i, node, src)
-	case K_BACKSLASH:
+	case rsl.K_BACKSLASH:
 		return newRslValues(i, node, "\\")
-	case K_ESC_SINGLE_QUOTE:
+	case rsl.K_ESC_SINGLE_QUOTE:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "'" {
 			return newRslValues(i, node, "'")
 		} else {
 			return newRslValues(i, node, `\'`)
 		}
-	case K_ESC_DOUBLE_QUOTE:
+	case rsl.K_ESC_DOUBLE_QUOTE:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == `"` {
 			return newRslValues(i, node, `"`)
 		} else {
 			return newRslValues(i, node, `\"`)
 		}
-	case K_ESC_BACKTICK:
+	case rsl.K_ESC_BACKTICK:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "`" {
 			return newRslValues(i, node, "`")
 		} else {
 			return newRslValues(i, node, "\\`")
 		}
-	case K_ESC_NEWLINE:
+	case rsl.K_ESC_NEWLINE:
 		return newRslValues(i, node, "\n")
-	case K_ESC_TAB:
+	case rsl.K_ESC_TAB:
 		return newRslValues(i, node, "\t")
-	case K_ESC_OPEN_BRACKET:
+	case rsl.K_ESC_OPEN_BRACKET:
 		return newRslValues(i, node, "{")
-	case K_INTERPOLATION:
+	case rsl.K_INTERPOLATION:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		exprResult := evaluateInterpolation(i, node)
 		return newRslValues(i, node, exprResult)
-	case K_ESC_BACKSLASH:
+	case rsl.K_ESC_BACKSLASH:
 		return newRslValues(i, node, "\\")
-	case K_LIST:
+	case rsl.K_LIST:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		entries := i.getChildren(node, F_LIST_ENTRY)
+		entries := i.getChildren(node, rsl.F_LIST_ENTRY)
 		list := NewRslList()
 		for _, entry := range entries {
 			list.Append(i.evaluate(&entry, 1)[0])
 		}
 		return newRslValues(i, node, list)
-	case K_MAP:
+	case rsl.K_MAP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		rslMap := NewRslMap()
-		entryNodes := i.getChildren(node, F_MAP_ENTRY)
+		entryNodes := i.getChildren(node, rsl.F_MAP_ENTRY)
 		for _, entryNode := range entryNodes {
-			keyNode := i.getChild(&entryNode, F_KEY)
-			valueNode := i.getChild(&entryNode, F_VALUE)
+			keyNode := i.getChild(&entryNode, rsl.F_KEY)
+			valueNode := i.getChild(&entryNode, rsl.F_VALUE)
 			key := evalMapKey(i, keyNode)
 			rslMap.Set(key, i.evaluate(valueNode, 1)[0])
 		}
 		return newRslValues(i, node, rslMap)
-	case K_CALL:
+	case rsl.K_CALL:
 		return i.callFunction(node, numExpectedOutputs, nil)
-	case K_LIST_COMPREHENSION:
-		resultExprNode := i.getChild(node, F_EXPR)
-		conditionNode := i.getChild(node, F_CONDITION)
+	case rsl.K_LIST_COMPREHENSION:
+		resultExprNode := i.getChild(node, rsl.F_EXPR)
+		conditionNode := i.getChild(node, rsl.F_CONDITION)
 
 		resultList := NewRslList()
 		doOneLoop := func() {
@@ -415,15 +417,15 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		}
 		i.executeForLoop(node, doOneLoop)
 		return newRslValues(i, node, resultList)
-	case K_TERNARY_EXPR:
-		delegateNode := i.getChild(node, F_DELEGATE)
+	case rsl.K_TERNARY_EXPR:
+		delegateNode := i.getChild(node, rsl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
-		conditionNode := i.getChild(node, F_CONDITION)
-		trueNode := i.getChild(node, F_TRUE_BRANCH)
-		falseNode := i.getChild(node, F_FALSE_BRANCH)
+		conditionNode := i.getChild(node, rsl.F_CONDITION)
+		trueNode := i.getChild(node, rsl.F_TRUE_BRANCH)
+		falseNode := i.getChild(node, rsl.F_FALSE_BRANCH)
 		condition := i.evaluate(conditionNode, 1)[0].TruthyFalsy()
 		return i.evaluate(lo.Ternary(condition, trueNode, falseNode), numExpectedOutputs)
 	default:
@@ -433,8 +435,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 }
 
 func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
-	exprNode := i.getChild(interpNode, F_EXPR)
-	formatNode := i.getChild(interpNode, F_FORMAT)
+	exprNode := i.getChild(interpNode, rsl.F_EXPR)
+	formatNode := i.getChild(interpNode, rsl.F_FORMAT)
 
 	exprResult := i.evaluate(exprNode, 1)[0]
 	resultType := exprResult.Type()
@@ -448,9 +450,9 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 		}
 	}
 
-	alignmentNode := i.getChild(formatNode, F_ALIGNMENT)
-	paddingNode := i.getChild(formatNode, F_PADDING)
-	precisionNode := i.getChild(formatNode, F_PRECISION)
+	alignmentNode := i.getChild(formatNode, rsl.F_ALIGNMENT)
+	paddingNode := i.getChild(formatNode, rsl.F_PADDING)
+	precisionNode := i.getChild(formatNode, rsl.F_PRECISION)
 
 	var goFmt strings.Builder
 	goFmt.WriteString("%")
@@ -543,9 +545,9 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 }
 
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue) {
-	rootIdentifier := i.getChild(varPathNode, F_ROOT) // identifier required by grammar
+	rootIdentifier := i.getChild(varPathNode, rsl.F_ROOT) // identifier required by grammar
 	rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
-	indexings := i.getChildren(varPathNode, F_INDEXING)
+	indexings := i.getChildren(varPathNode, rsl.F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
 	if len(indexings) == 0 {
@@ -568,8 +570,8 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue)
 }
 
 func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
-	leftsNode := i.getChild(node, F_LEFTS)
-	rightNode := i.getChild(node, F_RIGHT)
+	leftsNode := i.getChild(node, rsl.F_LEFTS)
+	rightNode := i.getChild(node, rsl.F_RIGHT)
 
 	rightVal := i.evaluate(rightNode, 1)[0]
 	switch coercedRight := rightVal.Val.(type) {
@@ -588,7 +590,7 @@ func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList
 	var idxNode *ts.Node
 	itemNodes := make([]*ts.Node, 0)
 
-	leftNodes := i.getChildren(leftsNode, F_LEFT)
+	leftNodes := i.getChildren(leftsNode, rsl.F_LEFT)
 
 	if len(leftNodes) == 0 {
 		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
@@ -642,7 +644,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
-	leftNodes := i.getChildren(leftsNode, F_LEFT)
+	leftNodes := i.getChildren(leftsNode, rsl.F_LEFT)
 	numLefts := len(leftNodes)
 
 	if numLefts == 0 || numLefts > 2 {
@@ -692,7 +694,7 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 }
 
 func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RslValue, expectReturnValue bool) RslValue {
-	if index.Kind() == K_CALL {
+	if index.Kind() == rsl.K_CALL {
 		// ufcs
 		ufcsArg := &positionalArg{
 			// todo 'rootNode' is not great to use, it misses indexes in between that and this call,
@@ -721,7 +723,7 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 	numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
 	outputs := make([]RslValue, 0)
 	for _, rightNode := range rightNodes {
-		if rightNode.Kind() == K_JSON_PATH {
+		if rightNode.Kind() == rsl.K_JSON_PATH {
 			// json path assignment
 			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
 			i.env.SetJsonFieldVar(jsonFieldVar)
@@ -748,23 +750,23 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNodes []ts.Node) {
 	numExpectedAssigns := len(leftVarPathNodes)
 	switch caseValueAltNode.Kind() {
-	case K_SWITCH_CASE_EXPR:
-		valueNodes := i.getChildren(caseValueAltNode, F_VALUE)
+	case rsl.K_SWITCH_CASE_EXPR:
+		valueNodes := i.getChildren(caseValueAltNode, rsl.F_VALUE)
 		i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
-	case K_SWITCH_CASE_BLOCK:
-		stmtNodes := i.getChildren(caseValueAltNode, F_STMT)
+	case rsl.K_SWITCH_CASE_BLOCK:
+		stmtNodes := i.getChildren(caseValueAltNode, rsl.F_STMT)
 		i.runBlock(stmtNodes)
 
 		if i.breakingOrContinuing() {
 			return
 		}
 
-		yieldNode := i.getChild(caseValueAltNode, F_YIELD_STMT)
+		yieldNode := i.getChild(caseValueAltNode, rsl.F_YIELD_STMT)
 		if numExpectedAssigns > 0 && yieldNode == nil {
 			i.errorf(caseValueAltNode, "Cannot assign without yielding from the switch case")
 		}
 		if yieldNode != nil {
-			valueNodes := i.getChildren(yieldNode, F_VALUE)
+			valueNodes := i.getChildren(yieldNode, rsl.F_VALUE)
 			if numExpectedAssigns == 0 {
 				// nothing to assign, just evaluate
 				for _, valueNode := range valueNodes {

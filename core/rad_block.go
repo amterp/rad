@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"runtime/debug"
 
+	"github.com/amterp/rts/rsl"
+
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
 	"github.com/scylladb/go-set/strset"
@@ -40,17 +42,17 @@ func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
 }
 
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
-	srcNode := i.getChild(radBlockNode, F_SOURCE)
-	radTypeNode := i.getChild(radBlockNode, F_RAD_TYPE)
+	srcNode := i.getChild(radBlockNode, rsl.F_SOURCE)
+	radTypeNode := i.getChild(radBlockNode, rsl.F_RAD_TYPE)
 	typeStr := i.sd.Src[radTypeNode.StartByte():radTypeNode.EndByte()]
 
 	var blockType RadBlockType
 	switch typeStr {
-	case KEYWORD_RAD:
+	case rsl.KEYWORD_RAD:
 		blockType = Rad
-	case KEYWORD_REQUEST:
+	case rsl.KEYWORD_REQUEST:
 		blockType = Request
-	case KEYWORD_DISPLAY:
+	case rsl.KEYWORD_DISPLAY:
 		blockType = Display
 	default:
 		i.errorf(radTypeNode, "Bug! Unknown rad block type %q", typeStr)
@@ -67,7 +69,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		colToMods:        make(map[string]*radFieldMods),
 	}
 
-	radStmtNodes := i.getChildren(radBlockNode, F_STMT)
+	radStmtNodes := i.getChildren(radBlockNode, rsl.F_STMT)
 	for _, radStmtNode := range radStmtNodes {
 		ri.evalRad(&radStmtNode)
 	}
@@ -88,18 +90,18 @@ func (r *radInvocation) evalRad(node *ts.Node) {
 
 func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	switch node.Kind() {
-	case K_RAD_FIELD_STMT:
+	case rsl.K_RAD_FIELD_STMT:
 		// todo validate no field names conflict with keywords e.g. 'asc'. Would be nice to do in static analysis tho.
-		identifierNodes := r.i.getChildren(node, F_IDENTIFIER)
+		identifierNodes := r.i.getChildren(node, rsl.F_IDENTIFIER)
 		for _, identifierNode := range identifierNodes {
 			r.fields = append(r.fields, &identifierNode)
 		}
-	case K_RAD_SORT_STMT:
+	case rsl.K_RAD_SORT_STMT:
 		if r.generalSort != nil || len(r.colWiseSorting) > 0 {
 			r.i.errorf(node, "Only one sort statement allowed per rad block")
 		}
 
-		specifierNodes := r.i.getChildren(node, F_SPECIFIER)
+		specifierNodes := r.i.getChildren(node, rsl.F_SPECIFIER)
 		if len(specifierNodes) == 0 {
 			r.generalSort = &GeneralSort{
 				Node: node,
@@ -110,14 +112,14 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				r.evalRad(&specifierNode)
 			}
 		}
-	case K_RAD_SORT_SPECIFIER:
-		firstNode := r.i.getChild(node, F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
-		secondNode := r.i.getChild(node, F_SECOND)
+	case rsl.K_RAD_SORT_SPECIFIER:
+		firstNode := r.i.getChild(node, rsl.F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
+		secondNode := r.i.getChild(node, rsl.F_SECOND)
 
 		if secondNode == nil {
 			firstNodeSrc := r.i.sd.Src[firstNode.StartByte():firstNode.EndByte()]
-			if firstNodeSrc == KEYWORD_ASC || firstNodeSrc == KEYWORD_DESC {
-				dir := lo.Ternary(firstNodeSrc == KEYWORD_ASC, Asc, Desc)
+			if firstNodeSrc == rsl.KEYWORD_ASC || firstNodeSrc == rsl.KEYWORD_DESC {
+				dir := lo.Ternary(firstNodeSrc == rsl.KEYWORD_ASC, Asc, Desc)
 				r.generalSort = &GeneralSort{
 					Node: node,
 					Dir:  dir,
@@ -129,9 +131,9 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		dir := Asc
 		if secondNode != nil {
 			switch secondNode.Kind() {
-			case K_ASC:
+			case rsl.K_ASC:
 				dir = Asc
-			case K_DESC:
+			case rsl.K_DESC:
 				dir = Desc
 			default:
 				r.i.errorf(secondNode, "Bug! Unknown direction %q", secondNode.Kind())
@@ -142,9 +144,9 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			ColIdentifier: firstNode,
 			Dir:           dir,
 		})
-	case K_RAD_FIELD_MODIFIER_STMT:
-		identifierNodes := r.i.getChildren(node, F_IDENTIFIER)
-		stmtNodes := r.i.getChildren(node, F_MOD_STMT)
+	case rsl.K_RAD_FIELD_MODIFIER_STMT:
+		identifierNodes := r.i.getChildren(node, rsl.F_IDENTIFIER)
+		stmtNodes := r.i.getChildren(node, rsl.F_MOD_STMT)
 		var fields []radField
 		for _, identifierNode := range identifierNodes {
 			identifierStr := r.i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
@@ -155,12 +157,12 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		}
 		for _, stmtNode := range stmtNodes {
 			switch stmtNode.Kind() {
-			case K_RAD_FIELD_MOD_COLOR:
+			case rsl.K_RAD_FIELD_MOD_COLOR:
 				// todo could I replace this syntax with a 'map' lambda operation?
-				clrExprNode := r.i.getChild(&stmtNode, F_COLOR)
+				clrExprNode := r.i.getChild(&stmtNode, rsl.F_COLOR)
 				clrStr := r.i.evaluate(clrExprNode, 1)[0].RequireStr(r.i, clrExprNode)
 				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
-				regexExprNode := r.i.getChild(&stmtNode, F_REGEX)
+				regexExprNode := r.i.getChild(&stmtNode, rsl.F_REGEX)
 				regexStr := r.i.evaluate(regexExprNode, 1)[0].RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())
 				if err != nil {
@@ -170,15 +172,15 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 					mods := r.loadFieldMods(field)
 					mods.colors = append(mods.colors, radColorMod{color: clr.ToTblColor(), regex: regex})
 				}
-			case K_RAD_FIELD_MOD_MAP:
-				lambdaNode := r.i.getChild(&stmtNode, F_LAMBDA)
-				lambdaIdentifierNodes := r.i.getChildren(lambdaNode, F_IDENTIFIER)
+			case rsl.K_RAD_FIELD_MOD_MAP:
+				lambdaNode := r.i.getChild(&stmtNode, rsl.F_LAMBDA)
+				lambdaIdentifierNodes := r.i.getChildren(lambdaNode, rsl.F_IDENTIFIER)
 				var lambdaIdentifiers []string
 				for _, lambdaIdentifierNode := range lambdaIdentifierNodes {
 					lambdaIdentifier := r.i.sd.Src[lambdaIdentifierNode.StartByte():lambdaIdentifierNode.EndByte()]
 					lambdaIdentifiers = append(lambdaIdentifiers, lambdaIdentifier)
 				}
-				exprNode := r.i.getChild(lambdaNode, F_EXPR)
+				exprNode := r.i.getChild(lambdaNode, rsl.F_EXPR)
 				lambda := Lambda{
 					Node:     lambdaNode,
 					Args:     lambdaIdentifiers,
@@ -190,10 +192,10 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			}
 		}
-	case K_RAD_IF_STMT:
-		altNodes := r.i.getChildren(node, F_ALT)
+	case rsl.K_RAD_IF_STMT:
+		altNodes := r.i.getChildren(node, rsl.F_ALT)
 		for _, altNode := range altNodes {
-			condNode := r.i.getChild(&altNode, F_CONDITION)
+			condNode := r.i.getChild(&altNode, rsl.F_CONDITION)
 
 			shouldExecute := true
 			if condNode != nil {
@@ -202,7 +204,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			}
 
 			if shouldExecute {
-				stmtNodes := r.i.getChildren(&altNode, F_STMT)
+				stmtNodes := r.i.getChildren(&altNode, rsl.F_STMT)
 				for _, stmtNode := range stmtNodes {
 					r.evalRad(&stmtNode)
 				}

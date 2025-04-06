@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -25,14 +27,14 @@ type shellResult struct {
 }
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
-	leftVarPathNodes := i.getChildren(shellStmtNode, F_LEFT)
+	leftVarPathNodes := i.getChildren(shellStmtNode, rsl.F_LEFT)
 	numExpectedOutputs := len(leftVarPathNodes)
 
 	if numExpectedOutputs > 3 {
 		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
-	shellCmdNode := i.getChild(shellStmtNode, F_SHELL_CMD)
+	shellCmdNode := i.getChild(shellStmtNode, rsl.F_SHELL_CMD)
 	result := i.executeShellCmd(shellCmdNode, len(leftVarPathNodes))
 
 	if numExpectedOutputs >= 1 {
@@ -46,11 +48,11 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 	}
 
 	if result.exitCode != 0 {
-		stmtNodes := i.getChildren(shellCmdNode, F_STMT)
+		stmtNodes := i.getChildren(shellCmdNode, rsl.F_STMT)
 		i.runBlock(stmtNodes)
-		responseNode := i.getChild(shellCmdNode, F_RESPONSE)
+		responseNode := i.getChild(shellCmdNode, rsl.F_RESPONSE)
 		if responseNode != nil {
-			if responseNode.Kind() == K_FAIL {
+			if responseNode.Kind() == rsl.K_FAIL {
 				RP.ErrorExitCode("", result.exitCode)
 			}
 		}
@@ -58,10 +60,10 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 }
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs int) shellResult {
-	isQuiet := i.getChild(shellCmdNode, F_QUIET_MOD) != nil
-	isConfirm := i.getChild(shellCmdNode, F_CONFIRM_MOD) != nil
+	isQuiet := i.getChild(shellCmdNode, rsl.F_QUIET_MOD) != nil
+	isConfirm := i.getChild(shellCmdNode, rsl.F_CONFIRM_MOD) != nil
 
-	cmdNode := i.getChild(shellCmdNode, F_COMMAND)
+	cmdNode := i.getChild(shellCmdNode, rsl.F_COMMAND)
 	cmdStr := i.evaluate(cmdNode, 1)[0].
 		RequireType(i, cmdNode, "Shell commands must be strings", RslStringT).
 		RequireStr(i, shellCmdNode)
@@ -155,7 +157,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 }
 
 func resolveResult(shellNode *ts.Node, numExpectedOutputs int, stdout, stderr bytes.Buffer, exitCode int) shellResult {
-	isCritical := shellNode.Kind() == K_CRITICAL_SHELL_CMD
+	isCritical := shellNode.Kind() == rsl.K_CRITICAL_SHELL_CMD
 	if isCritical && exitCode != 0 {
 		RP.ErrorCodeExitf(exitCode, stderr.String())
 	}

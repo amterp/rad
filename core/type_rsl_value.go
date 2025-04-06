@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -144,7 +146,7 @@ func (v RslValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RslValu
 	case *RslList:
 		coerced.ModifyIdx(i, idxNode, rightValue)
 	case *RslMap:
-		if idxNode.Kind() == K_IDENTIFIER {
+		if idxNode.Kind() == rsl.K_IDENTIFIER {
 			// dot syntax e.g. myMap.myKey
 			keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
 			coerced.Set(newRslValueStr(keyName), rightValue)

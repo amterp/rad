@@ -3,6 +3,8 @@ package core
 import (
 	"strings"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -29,7 +31,7 @@ func (l *RslList) Append(value RslValue) {
 }
 
 func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
-	if idxNode.Kind() == K_SLICE {
+	if idxNode.Kind() == rsl.K_SLICE {
 		return newRslValue(i, idxNode, l.Slice(i, idxNode))
 	}
 
@@ -43,7 +45,7 @@ func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
 }
 
 func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
-	if idxNode.Kind() == K_SLICE {
+	if idxNode.Kind() == rsl.K_SLICE {
 		start, end := ResolveSliceStartEnd(i, idxNode, l.Len())
 		if start < end {
 			newList := NewRslList()

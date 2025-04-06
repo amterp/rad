@@ -5,6 +5,8 @@ import (
 	com "rad/core/common"
 	"strings"
 
+	"github.com/amterp/rts/rsl"
+
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -36,9 +38,9 @@ func (i *Interpreter) callFunction(
 	numExpectedOutputs int,
 	ufcsArg *positionalArg,
 ) []RslValue {
-	funcNameNode := i.getChild(callNode, F_FUNC)
-	argNodes := i.getChildren(callNode, F_ARG)
-	namedArgNodes := i.getChildren(callNode, F_NAMED_ARG)
+	funcNameNode := i.getChild(callNode, rsl.F_FUNC)
+	argNodes := i.getChildren(callNode, rsl.F_ARG)
+	namedArgNodes := i.getChildren(callNode, rsl.F_NAMED_ARG)
 
 	funcName := i.sd.Src[funcNameNode.StartByte():funcNameNode.EndByte()]
 
@@ -55,8 +57,8 @@ func (i *Interpreter) callFunction(
 
 	namedArgs := make(map[string]namedArg)
 	for _, namedArgNode := range namedArgNodes {
-		namedArgNameNode := i.getChild(&namedArgNode, F_NAME)
-		namedArgValueNode := i.getChild(&namedArgNode, F_VALUE)
+		namedArgNameNode := i.getChild(&namedArgNode, rsl.F_NAME)
+		namedArgValueNode := i.getChild(&namedArgNode, rsl.F_VALUE)
 
 		argName := i.sd.Src[namedArgNameNode.StartByte():namedArgNameNode.EndByte()]
 		argValue := i.evaluate(namedArgValueNode, 1)[0]

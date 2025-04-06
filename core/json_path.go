@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -28,23 +30,23 @@ type JsonPathSegmentIdx struct {
 }
 
 func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	indexingNodes := i.getChildren(leftNode, F_INDEXING)
+	indexingNodes := i.getChildren(leftNode, rsl.F_INDEXING)
 	if len(indexingNodes) != 0 {
 		i.errorf(leftNode, "Json paths must be defined to plain identifiers")
 	}
-	leftIdentifierNode := i.getChild(leftNode, F_ROOT)
+	leftIdentifierNode := i.getChild(leftNode, rsl.F_ROOT)
 
 	var segments []JsonPathSegment
 
-	segmentNodes := i.getChildren(jsonPathNode, F_SEGMENT)
+	segmentNodes := i.getChildren(jsonPathNode, rsl.F_SEGMENT)
 	for _, segmentNode := range segmentNodes {
-		identifierNode := i.getChild(&segmentNode, F_KEY)
+		identifierNode := i.getChild(&segmentNode, rsl.F_KEY)
 		identifierStr := i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
-		indexNodes := i.getChildren(&segmentNode, F_INDEX)
+		indexNodes := i.getChildren(&segmentNode, rsl.F_INDEX)
 
 		var idxSegments []JsonPathSegmentIdx
 		for _, indexNode := range indexNodes {
-			idxExprNode := i.getChild(&indexNode, F_EXPR)
+			idxExprNode := i.getChild(&indexNode, rsl.F_EXPR)
 			if idxExprNode == nil {
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
 			} else {

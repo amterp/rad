@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/amterp/rts/rsl"
+
 	"github.com/samber/lo"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -70,7 +72,7 @@ func (m *RslMap) Get(key RslValue) (RslValue, bool) {
 
 func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
 	// todo grammar: myMap.2 should be okay, treated as "2". but is not valid identifier, so problem!
-	if idxNode.Kind() == K_IDENTIFIER {
+	if idxNode.Kind() == rsl.K_IDENTIFIER {
 		// dot syntax e.g. myMap.myKey
 		keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
 		value, ok := m.Get(newRslValueStr(keyName))
