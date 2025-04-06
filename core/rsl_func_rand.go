@@ -61,9 +61,9 @@ var FuncRandInt = Func{
 			max = maxArg.value.RequireInt(f.i, maxArg.node)
 		}
 
-		if min > max {
+		if min >= max {
 			f.i.errorf(f.callNode,
-				"%s() min (%d) must be less than or equal to max (%d).", FUNC_RAND_INT, min, max)
+				"%s() min (%d) must be less than max (%d).", FUNC_RAND_INT, min, max)
 		}
 
 		n := max - min

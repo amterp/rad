@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestRandom_Rand(t *testing.T) {
+func Test_Random_Rand(t *testing.T) {
 	rsl := `seed_random(1)
 print(rand())
 print(rand())
@@ -19,7 +19,7 @@ print(rand())
 	assertNoErrors(t)
 }
 
-func TestRandom_RandInt(t *testing.T) {
+func Test_Random_RandInt(t *testing.T) {
 	rsl := `seed_random(1)
 print(rand_int(100))
 print(rand_int(100))
@@ -36,7 +36,7 @@ print(rand_int(100))
 	assertNoErrors(t)
 }
 
-func TestRandom_RandIntMin(t *testing.T) {
+func Test_Random_RandIntMin(t *testing.T) {
 	rsl := `seed_random(1)
 print(rand_int(96, 100))
 print(rand_int(96, 100))
@@ -53,7 +53,7 @@ print(rand_int(96, 100))
 	assertNoErrors(t)
 }
 
-func TestRandom_RandIntNegNumbers(t *testing.T) {
+func Test_Random_RandIntNegNumbers(t *testing.T) {
 	rsl := `seed_random(1)
 print(rand_int(-10, 10))
 print(rand_int(-10, 10))
@@ -70,7 +70,7 @@ print(rand_int(-10, 10))
 	assertNoErrors(t)
 }
 
-func TestRandom_RandErrorsIfArgs(t *testing.T) {
+func Test_Random_RandErrorsIfArgs(t *testing.T) {
 	rsl := `rand(1)`
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:1
@@ -81,7 +81,7 @@ func TestRandom_RandErrorsIfArgs(t *testing.T) {
 	assertError(t, 1, expected)
 }
 
-func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
+func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
 	rsl := `rand_int()`
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:1
@@ -92,7 +92,7 @@ func TestRandom_RandIntErrorsIfNoArgs(t *testing.T) {
 	assertError(t, 1, expected)
 }
 
-func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
+func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
 	rsl := `seed_random()`
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `Error at L1:1
@@ -100,5 +100,17 @@ func TestRandom_SeedRandomErrorsIfNoArgs(t *testing.T) {
   seed_random()
   ^^^^^^^^^^^^^ seed_random() requires at least 1 argument, but got 0
 `
+	assertError(t, 1, expected)
+}
+
+func Test_Random_ErrorsIfMinMaxSame(t *testing.T) {
+	rsl := `rand_int(2, 2)
+`
+	expected := `Error at L1:1
+
+  rand_int(2, 2)
+  ^^^^^^^^^^^^^^ rand_int() min (2) must be less than max (2).
+`
+	setupAndRunCode(t, rsl, "--color=never")
 	assertError(t, 1, expected)
 }
