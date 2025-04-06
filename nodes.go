@@ -1,6 +1,7 @@
 package rts
 
 import (
+	"github.com/amterp/rts/rsl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -38,12 +39,32 @@ type StringNode struct {
 }
 
 func newStringNode(src string, node *ts.Node) (*StringNode, bool) {
-	start := node.ChildByFieldName("start")
-	end := node.ChildByFieldName("end")
+	start := node.ChildByFieldName(rsl.F_START)
+	end := node.ChildByFieldName(rsl.F_END)
 	contentStart := start.EndByte()
 	contentEnd := end.StartByte()
 	return &StringNode{
 		BaseNode:  newBaseNode(src, node),
 		RawLexeme: src[contentStart:contentEnd],
+	}, true
+}
+
+type CallNode struct {
+	BaseNode
+	Name     string
+	NameNode *ts.Node
+}
+
+func newCallNode(node *ts.Node, completeSrc string) (*CallNode, bool) {
+	nameNode := node.ChildByFieldName(rsl.F_FUNC)
+	if nameNode == nil {
+		return nil, false
+	}
+
+	name := completeSrc[nameNode.StartByte():nameNode.EndByte()]
+	return &CallNode{
+		BaseNode: newBaseNode(completeSrc, node),
+		Name:     name,
+		NameNode: nameNode,
 	}, true
 }

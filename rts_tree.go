@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/amterp/rts/rsl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -100,6 +102,36 @@ func (rt *RslTree) FindInvalidNodes() []*ts.Node {
 	var invalidNodes []*ts.Node
 	recurseFindInvalidNodes(rt.Root(), &invalidNodes)
 	return invalidNodes
+}
+
+func (rt *RslTree) FindCalls() []*CallNode {
+	calls := rt.FindNodes(rsl.K_CALL)
+	callNodes := make([]*CallNode, len(calls))
+	for i, call := range calls {
+		callNode, ok := newCallNode(call, rt.src)
+		if !ok {
+			panic(errors.New("failed to create RTS version of node"))
+		}
+		callNodes[i] = callNode
+	}
+	return callNodes
+}
+
+// todo should take an ID instead of string for kind
+func (rt *RslTree) FindNodes(nodeKind string) []*ts.Node {
+	var found []*ts.Node
+	recurseFindNodes(rt.Root(), nodeKind, &found)
+	return found
+}
+
+func recurseFindNodes(node *ts.Node, nodeKind string, found *[]*ts.Node) {
+	if node.Kind() == nodeKind {
+		*found = append(*found, node)
+	}
+	childrenNodes := node.Children(node.Walk())
+	for _, child := range childrenNodes {
+		recurseFindNodes(&child, nodeKind, found)
+	}
 }
 
 func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
