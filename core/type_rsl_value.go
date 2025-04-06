@@ -237,7 +237,7 @@ func (v RslValue) TruthyFalsy() bool {
 	}
 }
 
-func (v RslValue) Accept(visitor *RslTypeVisitor) {
+func (v RslValue) Accept(visitor *RslTypeVisitor, failIfUnhandled bool) {
 	switch coerced := v.Val.(type) {
 	case bool:
 		if visitor.VisitBool != nil {
@@ -274,8 +274,9 @@ func (v RslValue) Accept(visitor *RslTypeVisitor) {
 		visitor.Default(v)
 		return
 	}
-	visitor.UnhandledTypeError(v)
-	panic(UNREACHABLE)
+	if failIfUnhandled {
+		visitor.UnhandledTypeError(v)
+	}
 }
 
 func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {

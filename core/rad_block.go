@@ -335,7 +335,7 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 		visitor.Default = func(val RslValue) {
 			r.i.errorf(r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
 		}
-		src.Accept(visitor)
+		src.Accept(visitor, true)
 		return
 	} else {
 		r.i.errorf(r.srcExprNode, "Bug! Unknown rad block type %q", r.blockType)
