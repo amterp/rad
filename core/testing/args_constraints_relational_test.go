@@ -271,3 +271,18 @@ print("Non-auth Token:", token)
 	assertOnlyOutput(t, stdOutBuffer, "Non-auth Token: sometoken\n")
 	assertNoErrors(t)
 }
+
+func Test_Args_Constraints_Relational_Bool_OnlyRelevantIfTrue(t *testing.T) {
+	rsl := `
+args:
+	mystring string
+	mybool bool
+
+	mybool excludes mystring
+
+print(mystring)
+`
+	setupAndRunCode(t, rsl, "--mystring", "blah")
+	assertOnlyOutput(t, stdOutBuffer, "blah\n")
+	assertNoErrors(t)
+}

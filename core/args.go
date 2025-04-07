@@ -150,19 +150,29 @@ func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
 		return nil
 	}
 
+	thisArg := ctx.ScriptArgs[f.Identifier]
+	if thisBoolArg, ok := thisArg.(*BoolRslArg); ok {
+		if !thisBoolArg.Value {
+			// this bool arg is false, so its constraints are not relevant
+			return nil
+		}
+	}
+
 	for _, required := range requires {
 		reqArg := ctx.ScriptArgs[required]
 		required = reqArg.GetExternalName()
 
+		if boolArg, ok := reqArg.(*BoolRslArg); ok {
+			if !boolArg.Value {
+				// bool arg is false but is required
+				return f.missingRequirement(required)
+			}
+			return nil
+		}
+
 		requiredArgIsMissing := lo.Contains(missingExternalNames, required)
 		if requiredArgIsMissing {
 			return f.missingRequirement(required)
-		}
-
-		if boolArg, ok := reqArg.(*BoolRslArg); ok {
-			if !boolArg.Value {
-				return f.missingRequirement(required)
-			}
 		}
 	}
 
@@ -170,15 +180,17 @@ func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
 		exclArg := ctx.ScriptArgs[excluded]
 		excluded = exclArg.GetExternalName()
 
+		if boolArg, ok := exclArg.(*BoolRslArg); ok {
+			if boolArg.Value {
+				// bool arg is true but is excluded
+				return f.excludesRequirement(excluded)
+			}
+			return nil
+		}
+
 		excludedArgIsDefined := !lo.Contains(missingExternalNames, excluded)
 		if excludedArgIsDefined {
 			return f.excludesRequirement(excluded)
-		}
-
-		if boolArg, ok := exclArg.(*BoolRslArg); ok {
-			if boolArg.Value {
-				return f.excludesRequirement(excluded)
-			}
 		}
 	}
 
