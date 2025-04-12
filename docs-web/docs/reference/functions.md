@@ -471,6 +471,14 @@ Generate a random V7 UUID.
 uuid_v7() -> string
 ```
 
+### nanoid
+
+Generate a random [Nano ID](https://github.com/ai/nanoid).
+
+```rsl
+nanoid(size: int = 21) -> string
+```
+
 ## Picking
 
 ### pick

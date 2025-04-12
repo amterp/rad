@@ -36,6 +36,7 @@ lower
 magenta
 max
 min
+nanoid
 now
 orange
 parse_float
