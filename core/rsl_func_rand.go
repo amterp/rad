@@ -29,7 +29,7 @@ var FuncRand = Func{
 	Name:            FUNC_RAND,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema(NO_POS_ARGS),
+	PosArgValidator: NO_POS_ARGS,
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		return newRslValues(f.i, f.callNode, RNG.Float64())

@@ -71,6 +71,8 @@ type_of
 underline
 unique
 upper
+uuid_v4
+uuid_v7
 values
 white
 write_file

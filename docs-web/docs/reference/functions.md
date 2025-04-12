@@ -449,8 +449,26 @@ rand_int(min int, max int) -> int
 
 ### seed_random
 
+Seed the random number generator used by [rand](#rand) and [rand_int](#rand_int).
+
 ```rsl
-seed_random(seed int)
+seed_random(seed: int)
+```
+
+### uuid_v4
+
+Generate a random V4 UUID.
+
+```rsl
+uuid_v4() -> string
+```
+
+### uuid_v7
+
+Generate a random V7 UUID.
+
+```rsl
+uuid_v7() -> string
 ```
 
 ## Picking

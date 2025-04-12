@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/dustin/go-humanize"
 	"github.com/dustin/go-humanize/english"
 
@@ -83,6 +85,8 @@ const (
 	FUNC_REVERSE            = "reverse"
 	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars.
 	FUNC_HYPERLINK          = "hyperlink"
+	FUNC_UUID_V4            = "uuid_v4"
+	FUNC_UUID_V7            = "uuid_v7"
 
 	namedArgReverse  = "reverse"
 	namedArgTitle    = "title"
@@ -113,7 +117,7 @@ const (
 )
 
 var (
-	NO_POS_ARGS   = [][]RslTypeEnum{}
+	NO_POS_ARGS   = NewEnumerableArgSchema([][]RslTypeEnum{})
 	NO_NAMED_ARGS = map[string][]RslTypeEnum{}
 )
 
@@ -292,7 +296,7 @@ func init() {
 			Name:            FUNC_NOW,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
-			PosArgValidator: NewEnumerableArgSchema(NO_POS_ARGS),
+			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				m := NewRslMap()
@@ -1246,6 +1250,28 @@ func init() {
 					s.SetSegmentsHyperlink(link)
 					return newRslValues(f.i, f.callNode, s)
 				}
+			},
+		},
+		{
+			Name:            FUNC_UUID_V4,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NO_POS_ARGS,
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				id, _ := uuid.NewRandom()
+				return newRslValues(f.i, f.callNode, id.String())
+			},
+		},
+		{
+			Name:            FUNC_UUID_V7,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NO_POS_ARGS,
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				id, _ := uuid.NewV7()
+				return newRslValues(f.i, f.callNode, id.String())
 			},
 		},
 	}

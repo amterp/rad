@@ -6,7 +6,12 @@ BIN_DIR := ./bin
 # Commands
 .PHONY: all format build test clean
 
-all: format build test
+all: generate format build test
+
+generate:
+	@echo "⚙️ Running generators..."
+	go run "./function-metadata/extract.go"
+	mv "./functions.txt" "./rsl-language-server/com/embedded/"
 
 format:
 	@echo "⚙️ Formatting files..."
@@ -21,3 +26,4 @@ build:
 test:
 	@echo "⚙️ Running tests..."
 	go test ./core/testing
+
