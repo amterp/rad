@@ -13,6 +13,8 @@ exit
 find_paths
 float
 floor
+gen_nanoid
+gen_stid
 get_path
 green
 http_connect
@@ -36,7 +38,6 @@ lower
 magenta
 max
 min
-nanoid
 now
 orange
 parse_float

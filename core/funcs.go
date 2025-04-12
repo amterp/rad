@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/amterp/stid"
+
 	gonanoid "github.com/matoous/go-nanoid/v2"
 
 	"github.com/google/uuid"
@@ -89,24 +91,28 @@ const (
 	FUNC_HYPERLINK          = "hyperlink"
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"
-	FUNC_NANOID             = "nanoid"
+	FUNC_GEN_NANOID         = "gen_nanoid"
+	FUNC_GEN_STID           = "gen_stid"
 
-	namedArgReverse  = "reverse"
-	namedArgTitle    = "title"
-	namedArgPrompt   = "prompt"
-	namedArgHeaders  = "headers"
-	namedArgBody     = "body"
-	namedArgHint     = "hint"
-	namedArgDefault  = "default"
-	namedArgEnd      = "end"
-	namedArgSep      = "sep"
-	namedArgFill     = "fill"
-	namedArgStrict   = "strict"
-	namedArgMode     = "mode"
-	namedArgDepth    = "depth"
-	namedArgRelative = "relative"
-	namedArgAppend   = "append"
-	namedArgSize     = "size"
+	namedArgReverse         = "reverse"
+	namedArgTitle           = "title"
+	namedArgPrompt          = "prompt"
+	namedArgHeaders         = "headers"
+	namedArgBody            = "body"
+	namedArgHint            = "hint"
+	namedArgDefault         = "default"
+	namedArgEnd             = "end"
+	namedArgSep             = "sep"
+	namedArgFill            = "fill"
+	namedArgStrict          = "strict"
+	namedArgMode            = "mode"
+	namedArgDepth           = "depth"
+	namedArgRelative        = "relative"
+	namedArgAppend          = "append"
+	namedArgSize            = "size"
+	namedArgTimeGranularity = "time_granularity"
+	namedArgNumRandomChars  = "num_random_chars"
+	namedArgAlphabet        = "alphabet"
 
 	constContent      = "content"
 	constSizeBytes    = "size_bytes"
@@ -1279,7 +1285,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_NANOID,
+			Name:            FUNC_GEN_NANOID,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
@@ -1298,6 +1304,54 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, gonanoid.Must(size))
+			},
+		},
+		{
+			Name:            FUNC_GEN_STID,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NO_POS_ARGS,
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgAlphabet:        {RslStringT},
+				namedArgTimeGranularity: {RslIntT},
+				namedArgNumRandomChars:  {RslIntT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				config := stid.NewConfig()
+				// defaults
+				config = config.WithTimeGranularity(stid.TimeGranularity(1000)) // default to 1 second
+				config = config.WithRandomChars(5)
+				config = config.WithAlphabet(stid.Base62Alphabet)
+
+				if alphabetArg, exists := f.namedArgs[namedArgAlphabet]; exists {
+					alphabet := alphabetArg.value.RequireStr(f.i, alphabetArg.valueNode).Plain()
+					config = config.WithAlphabet(alphabet)
+				}
+
+				if stepSizeArg, exists := f.namedArgs[namedArgTimeGranularity]; exists {
+					stepSize := stepSizeArg.value.RequireInt(f.i, stepSizeArg.valueNode)
+					config = config.WithTimeGranularity(stid.TimeGranularity(int(stepSize)))
+				}
+
+				if numRandomCharsArg, exists := f.namedArgs[namedArgNumRandomChars]; exists {
+					numRandomChars := numRandomCharsArg.value.RequireInt(f.i, numRandomCharsArg.valueNode)
+					if numRandomChars < 0 {
+						f.i.errorf(numRandomCharsArg.valueNode, "Number of random chars must be non-negative, got %d", numRandomChars)
+					}
+					config = config.WithRandomChars(int(numRandomChars))
+				}
+
+				generator, err := stid.NewGenerator(config)
+				if err != nil {
+					f.i.errorf(f.callNode, "Error creating STID generator: %v", err)
+				}
+
+				id, err := generator.Generate()
+				if err != nil {
+					f.i.errorf(f.callNode, "Error generating STID: %v", err)
+				}
+
+				return newRslValues(f.i, f.callNode, id)
 			},
 		},
 	}

@@ -1,14 +1,17 @@
 module rad
 
-go 1.24.1
+go 1.24.2
 
 require (
 	github.com/amterp/color v1.20.0
 	github.com/amterp/go-tbl v0.9.0
 	github.com/amterp/rts v0.0.25
+	github.com/amterp/stid v1.1.1
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
+	github.com/google/uuid v1.6.0
 	github.com/lithammer/fuzzysearch v1.1.8
+	github.com/matoous/go-nanoid/v2 v2.1.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/nwidger/jsoncolor v0.3.2
 	github.com/samber/lo v1.47.0
@@ -34,9 +37,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect
@@ -54,5 +55,6 @@ require (
 )
 
 //replace github.com/amterp/go-tbl => ../go-tbl
+//replace github.com/amterp/stid => ../stid
 //replace github.com/amterp/rts => ../rts
 //replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl
