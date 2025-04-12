@@ -18,14 +18,10 @@ var FuncSeedRandom = Func{
 	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
-		switch coerced := f.args[0].value.Val.(type) {
-		case int64:
-			RNG = rand.New(rand.NewSource(coerced))
-			return EMPTY
-		default:
-			bugIncorrectTypes(FUNC_SEED_RANDOM)
-			panic(UNREACHABLE)
-		}
+		arg := f.args[0]
+		asInt := arg.value.RequireInt(f.i, arg.node)
+		RNG = rand.New(rand.NewSource(asInt))
+		return EMPTY
 	},
 }
 
