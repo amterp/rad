@@ -1317,11 +1317,11 @@ func init() {
 				namedArgNumRandomChars:  {RslIntT},
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				config := stid.NewConfig()
 				// defaults
-				config = config.WithTimeGranularity(stid.TimeGranularity(1000)) // default to 1 second
-				config = config.WithRandomChars(5)
-				config = config.WithAlphabet(stid.Base62Alphabet)
+				config := stid.NewConfig().
+					WithTimeGranularity(stid.TimeGranularity(1000)).
+					WithRandomChars(5).
+					WithAlphabet(stid.Base62Alphabet)
 
 				if alphabetArg, exists := f.namedArgs[namedArgAlphabet]; exists {
 					alphabet := alphabetArg.value.RequireStr(f.i, alphabetArg.valueNode).Plain()
