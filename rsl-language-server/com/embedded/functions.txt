@@ -13,7 +13,6 @@ exit
 find_paths
 float
 floor
-gen_nanoid
 gen_stid
 get_path
 green

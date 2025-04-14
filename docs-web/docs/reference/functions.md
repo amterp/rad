@@ -471,14 +471,6 @@ Generate a random V7 UUID.
 uuid_v7() -> string
 ```
 
-### gen_nanoid
-
-Generate a random [Nano ID](https://github.com/ai/nanoid).
-
-```rsl
-gen_nanoid(size: int = 21) -> string
-```
-
 ### gen_stid
 
 Generate a random [Short Time ID](https://github.com/amterp/stid) (STID).

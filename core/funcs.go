@@ -11,8 +11,6 @@ import (
 
 	"github.com/amterp/stid"
 
-	gonanoid "github.com/matoous/go-nanoid/v2"
-
 	"github.com/google/uuid"
 
 	"github.com/dustin/go-humanize"
@@ -91,7 +89,6 @@ const (
 	FUNC_HYPERLINK          = "hyperlink"
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"
-	FUNC_GEN_NANOID         = "gen_nanoid"
 	FUNC_GEN_STID           = "gen_stid"
 
 	namedArgReverse         = "reverse"
@@ -1282,28 +1279,6 @@ func init() {
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				id, _ := uuid.NewV7()
 				return newRslValues(f.i, f.callNode, id.String())
-			},
-		},
-		{
-			Name:            FUNC_GEN_NANOID,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs: map[string][]RslTypeEnum{
-				namedArgSize: {RslIntT},
-			},
-			Execute: func(f FuncInvocationArgs) []RslValue {
-				size := 21
-
-				if sizeArg, exists := f.namedArgs[namedArgSize]; exists {
-					size = int(sizeArg.value.RequireInt(f.i, sizeArg.valueNode))
-				}
-
-				if size < 1 || size > 255 {
-					f.i.errorf(f.callNode, "Size must be [1, 255]. Got %d.", size)
-				}
-
-				return newRslValues(f.i, f.callNode, gonanoid.Must(size))
 			},
 		},
 		{
