@@ -422,14 +422,26 @@ Complete list:
 
 ### keys
 
+Returns all keys from an input map as a list.
+
 ```rsl
-keys(input map) -> any[]
+keys(input: map) -> any[]
 ```
 
 ### values
 
+Returns all values from an input map as a list.
+
 ```rsl
-values(input map) -> any[]
+values(input: map) -> any[]
+```
+
+### get_default
+
+Gets the value for the given key in the given map, if the key is in the map. Otherwise, returns the supplied default.
+
+```rsl
+get_default(input: map, key: any, default: any) -> any
 ```
 
 ## Random

@@ -21,6 +21,7 @@ else if page == "functions":
     url += "/reference/functions"
 
 if header:
+    header = lower(header)
     url += "/#{header}"
 
 print("Opening {url}")

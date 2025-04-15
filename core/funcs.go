@@ -90,6 +90,7 @@ const (
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"
 	FUNC_GEN_STID           = "gen_stid"
+	FUNC_GET_DEFAULT        = "get_default"
 
 	namedArgReverse         = "reverse"
 	namedArgTitle           = "title"
@@ -1327,6 +1328,26 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, id)
+			},
+		},
+		{
+			Name:            FUNC_GET_DEFAULT,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  3,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslMapT}, {}, {}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				mapArg := f.args[0]
+				keyArg := f.args[1]
+				defaultArg := f.args[2]
+
+				mapValue := mapArg.value.RequireMap(f.i, mapArg.node)
+				value, ok := mapValue.Get(keyArg.value)
+				if !ok {
+					value = defaultArg.value
+				}
+
+				return newRslValues(f.i, f.callNode, value)
 			},
 		},
 	}
