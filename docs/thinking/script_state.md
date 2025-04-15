@@ -60,6 +60,7 @@ load_state() -> map
 save_state(data: map)
 load_script_data_file(file: str, default: any) -> map { contents: string, path: string }
 write_script_data_file(file: str, contents: any) -> map { bytes_written: int, path: string }, error map
+get_script_home() -> path: string
 
 get_default(map, default) -> any
 ```

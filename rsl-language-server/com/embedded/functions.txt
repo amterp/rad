@@ -16,6 +16,7 @@ floor
 gen_stid
 get_default
 get_path
+get_rad_home
 green
 http_connect
 http_delete

@@ -91,6 +91,7 @@ const (
 	FUNC_UUID_V7            = "uuid_v7"
 	FUNC_GEN_STID           = "gen_stid"
 	FUNC_GET_DEFAULT        = "get_default"
+	FUNC_GET_RAD_HOME       = "get_rad_home" // todo replace with something that gets *any* path in your script home?
 
 	namedArgReverse         = "reverse"
 	namedArgTitle           = "title"
@@ -107,7 +108,6 @@ const (
 	namedArgDepth           = "depth"
 	namedArgRelative        = "relative"
 	namedArgAppend          = "append"
-	namedArgSize            = "size"
 	namedArgTimeGranularity = "time_granularity"
 	namedArgNumRandomChars  = "num_random_chars"
 	namedArgAlphabet        = "alphabet"
@@ -1348,6 +1348,17 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, value)
+			},
+		},
+		{
+			Name:            FUNC_GET_RAD_HOME,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NO_POS_ARGS,
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				radHome := RadHomeInst.HomeDir
+				return newRslValues(f.i, f.callNode, radHome)
 			},
 		},
 	}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -24,11 +25,12 @@ var (
 )
 
 type RunnerInput struct {
-	RIo    *RadIo
-	RExit  *func(int)
-	RReq   *Requester
-	RClock Clock
-	RSleep *func(duration time.Duration)
+	RIo     *RadIo
+	RExit   *func(int)
+	RReq    *Requester
+	RClock  Clock
+	RSleep  *func(duration time.Duration)
+	RadHome *string
 }
 
 func SetScriptPath(path string) {
@@ -88,4 +90,33 @@ func setGlobals(runnerInput RunnerInput) {
 	} else {
 		RSleep = *runnerInput.RSleep
 	}
+
+	var home string
+	if runnerInput.RadHome == nil {
+		home = os.Getenv(RAD_HOME_DIR)
+
+		if home == "" {
+			homeDir, err := os.UserHomeDir()
+			if err == nil {
+				home = filepath.Join(homeDir, ".rad")
+			}
+		}
+
+		if home == "" {
+			failedToDetermineRadHomeDir()
+		}
+	} else {
+		home = *runnerInput.RadHome
+	}
+
+	home, err := filepath.Abs(home)
+	if err != nil {
+		failedToDetermineRadHomeDir()
+	}
+	RadHomeInst = NewRadHome(home)
+}
+
+func failedToDetermineRadHomeDir() {
+	fmt.Fprintf(RIo.StdErr, "Unable to determine home directory for rad. Please define a valid path '%s' as an environment variable.\n", RAD_HOME_DIR)
+	RExit(1)
 }

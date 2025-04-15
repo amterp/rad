@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
 	"rad/core"
 	"strings"
 	"testing"
@@ -84,15 +85,17 @@ func newRunnerInputInput() core.RunnerInput {
 	sleepFunc := func(duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
 	}
+	radTestHome := filepath.Join("./rad_test_home")
 	return core.RunnerInput{
 		RIo: &core.RadIo{
 			StdIn:  core.NewBufferReader(stdInBuffer),
 			StdOut: stdOutBuffer,
 			StdErr: stdErrBuffer,
 		},
-		RExit:  &testExitFunc,
-		RClock: core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
-		RSleep: &sleepFunc,
+		RExit:   &testExitFunc,
+		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
+		RSleep:  &sleepFunc,
+		RadHome: &radTestHome,
 	}
 }
 

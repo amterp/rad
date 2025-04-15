@@ -230,6 +230,21 @@ func Test_Misc_GlobalSrcFlag(t *testing.T) {
 	assertNoErrors(t)
 }
 
+func Test_Misc_Func_Get_Rad_Home(t *testing.T) {
+	rsl := `
+d = get_rad_home()
+d = d.split("/")
+print(d.len() > 0)
+d[-1].print()
+`
+	setupAndRunCode(t, rsl)
+	expected := `true
+rad_test_home
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 func globalFlagHelpWithout(s string) string {
 	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s

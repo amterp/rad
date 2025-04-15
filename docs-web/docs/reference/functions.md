@@ -717,7 +717,7 @@ The map contains the following entries:
 ### find_paths
 
 Returns a list of paths under the given target directory.
-``
+
 ```
 find_paths(target: string, depth: int = -1, relative: string = "target") -> list[string]
 ```
@@ -727,3 +727,11 @@ find_paths(target: string, depth: int = -1, relative: string = "target") -> list
   - `"target"` (*default*): relative to the input target path
   - `"cwd"`: relative to the user's current working directory
   - `"absolute"`: return absolute paths
+
+### get_rad_home
+
+Returns rad's home directory.
+
+```
+get_rad_home() -> string
+```
