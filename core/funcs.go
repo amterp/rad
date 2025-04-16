@@ -1302,7 +1302,7 @@ func init() {
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				// defaults
 				config := stid.NewConfig().
-					WithTimeGranularity(stid.TimeGranularity(1000)).
+					WithTimeGranularity(stid.TimeGranularity(100)).
 					WithRandomChars(5).
 					WithAlphabet(stid.Base62Alphabet)
 

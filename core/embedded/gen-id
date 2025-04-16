@@ -1,0 +1,20 @@
+#!/usr/bin/env rad
+---
+Generates a unique string ID. Useful for e.g. rad stash IDs.
+
+By default, generates STIDs: https://github.com/amterp/stid
+---
+args:
+    uuid_v4 "uuid-v4" bool # Generate a uuid v4 instead of a STID.
+    uuid_v7 "uuid-v7" bool # Generate a uuid v7 instead of a STID.
+
+    uuid_v4 mutually excludes uuid_v7
+
+if uuid_v4:
+    id = uuid_v4()
+else if uuid_v7:
+    id = uuid_v7()
+else:
+    id = gen_stid()
+
+id.print()
