@@ -17,6 +17,7 @@ gen_stid
 get_default
 get_path
 get_rad_home
+get_stash_dir
 green
 http_connect
 http_delete
@@ -35,6 +36,8 @@ italic
 join
 keys
 len
+load_stash_file
+load_state
 lower
 magenta
 max
@@ -59,7 +62,9 @@ red
 replace
 reverse
 round
+save_state
 seed_random
+set_stash_id
 sleep
 sort
 split
@@ -79,5 +84,6 @@ uuid_v7
 values
 white
 write_file
+write_stash_file
 yellow
 zip

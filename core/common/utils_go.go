@@ -3,7 +3,6 @@ package com
 import (
 	"fmt"
 	"math"
-	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -81,12 +80,6 @@ func NumIsAre(values int) string {
 		return fmt.Sprintf("%d are", values)
 	}
 }
-
-func FileExists(path string) bool {
-	_, err := os.Stat(path)
-	return !os.IsNotExist(err)
-}
-
 func Int64Min(a, b int64) int64 {
 	return int64(math.Min(float64(a), float64(b)))
 }

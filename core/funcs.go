@@ -91,7 +91,13 @@ const (
 	FUNC_UUID_V7            = "uuid_v7"
 	FUNC_GEN_STID           = "gen_stid"
 	FUNC_GET_DEFAULT        = "get_default"
-	FUNC_GET_RAD_HOME       = "get_rad_home" // todo replace with something that gets *any* path in your script home?
+	FUNC_GET_RAD_HOME       = "get_rad_home"
+	FUNC_SET_STASH_ID       = "set_stash_id"
+	FUNC_GET_STASH_DIR      = "get_stash_dir" // todo 'path' vs. 'dir' inconsistent naming
+	FUNC_LOAD_STATE         = "load_state"
+	FUNC_SAVE_STATE         = "save_state"
+	FUNC_LOAD_STASH_FILE    = "load_stash_file"
+	FUNC_WRITE_STASH_FILE   = "write_stash_file"
 
 	namedArgReverse         = "reverse"
 	namedArgTitle           = "title"
@@ -122,6 +128,7 @@ const (
 	constTarget       = "target"
 	constCwd          = "cwd"
 	constAbsolute     = "absolute"
+	constPath         = "path"
 )
 
 var (
@@ -1361,6 +1368,131 @@ func init() {
 				return newRslValues(f.i, f.callNode, radHome)
 			},
 		},
+		{
+			Name:            FUNC_SET_STASH_ID,
+			ReturnValues:    ZERO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				// todo validate directory-friendliness
+				scriptIdArg := f.args[0]
+				scriptId := scriptIdArg.value.RequireStr(f.i, scriptIdArg.node).Plain()
+				RadHomeInst.SetScriptId(scriptId)
+				return EMPTY
+			},
+		},
+		{
+			Name:            FUNC_GET_STASH_DIR,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				stashPath := RadHomeInst.GetStash()
+				if stashPath == nil {
+					errMissingScriptId(f.i, f.callNode)
+				}
+
+				subPathArg := tryGetArg(0, f.args)
+				if subPathArg != nil {
+					subPath := subPathArg.value.RequireStr(f.i, subPathArg.node).Plain()
+					path := filepath.Join(*stashPath, subPath)
+					stashPath = &path
+				}
+
+				return newRslValues(f.i, f.callNode, *stashPath)
+			},
+		},
+		{
+			Name:            FUNC_LOAD_STATE,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NO_POS_ARGS,
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				state := RadHomeInst.LoadState(f.i, f.callNode)
+				state.RequireMap(f.i, f.callNode)
+
+				return newRslValues(f.i, f.callNode, state)
+			},
+		},
+		{
+			Name:            FUNC_SAVE_STATE,
+			ReturnValues:    ZERO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslMapT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				mapArg := f.args[0]
+				mapArg.value.RequireMap(f.i, mapArg.node)
+
+				RadHomeInst.SaveState(f.i, f.callNode, mapArg.value)
+
+				return EMPTY
+			},
+		},
+		{
+			Name:            FUNC_LOAD_STASH_FILE,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				pathArg := f.args[0]
+				defaultArg := f.args[1]
+
+				pathFromStash := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+				path := RadHomeInst.GetStashSub(pathFromStash, f.i, f.callNode)
+
+				output := NewRslMap()
+				output.SetPrimitiveStr(constPath, path)
+
+				if !com.FileExists(path) {
+					defaultStr := defaultArg.value.RequireStr(f.i, defaultArg.node).Plain()
+					err := com.CreateFilePathAndWriteString(path, defaultStr)
+					if err != nil {
+						f.i.errorf(f.callNode, "Failed to create file %q: %v", path, err)
+					}
+					// todo add a key to know if the file was created or was already there
+					output.Set(newRslValueStr(constContent), newRslValueStr(defaultStr))
+					return newRslValues(f.i, f.callNode, output)
+				}
+
+				loadResult := com.LoadFile(path)
+				if loadResult.Error != nil {
+					f.i.errorf(f.callNode, "Error loading file %q: %v", path, loadResult.Error)
+				}
+
+				output.SetPrimitiveStr(constContent, loadResult.Content)
+				return newRslValues(f.i, f.callNode, output)
+			},
+		},
+		{
+			Name:            FUNC_WRITE_STASH_FILE,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				pathArg := f.args[0]
+				contentArg := f.args[1]
+
+				pathFromStash := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+				path := RadHomeInst.GetStashSub(pathFromStash, f.i, f.callNode)
+
+				err := com.CreateFilePathAndWriteString(path, contentArg.value.RequireStr(f.i, contentArg.node).Plain())
+				if err != nil {
+					if f.numExpectedOutputs < 2 {
+						f.i.errorf(f.callNode, "Error writing stash file %q: %v", path, err)
+					}
+					errMap := ErrorRslMap(com.ErrFileWrite, err.Error())
+					return newRslValues(f.i, f.callNode, path, errMap)
+				}
+
+				return newRslValues(f.i, f.callNode, path)
+			},
+		},
 	}
 
 	functions = append(functions, createTextAttrFunctions()...)
@@ -1528,4 +1660,8 @@ func tryGetArg(idx int, args []positionalArg) *positionalArg {
 
 func bugIncorrectTypes(funcName string) string {
 	return fmt.Sprintf("Bug! Switch cases should line up with %q definition", funcName)
+}
+
+func errMissingScriptId(i *Interpreter, node *ts.Node) {
+	i.errorf(node, "Script ID is not set. Use %s() first to set it.", FUNC_SET_STASH_ID)
 }

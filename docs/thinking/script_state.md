@@ -58,8 +58,8 @@ $!`vim {cmd_file.path}`
 set_script_id(id: string)
 load_state() -> map
 save_state(data: map)
-load_script_data_file(file: str, default: any) -> map { contents: string, path: string }
-write_script_data_file(file: str, contents: any) -> map { bytes_written: int, path: string }, error map
+load_script_data_file(file: str, default: string) -> map { contents: string, path: string }
+write_script_data_file(file: str, contents: string) -> path: string, error map
 get_script_home() -> path: string
 
 get_default(map, default) -> any
