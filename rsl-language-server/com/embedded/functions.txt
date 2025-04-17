@@ -8,6 +8,7 @@ confirm
 count
 cyan
 debug
+delete_path
 ends_with
 exit
 find_paths

@@ -67,6 +67,7 @@ const (
 	FUNC_ABS                = "abs"
 	FUNC_GET_PATH           = "get_path"
 	FUNC_FIND_PATHS         = "find_paths"
+	FUNC_DELETE_PATH        = "delete_path"
 	FUNC_COUNT              = "count"
 	FUNC_ZIP                = "zip"
 	FUNC_STR                = "str"
@@ -759,6 +760,26 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, list)
+			},
+		},
+		{
+			Name:            FUNC_DELETE_PATH,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
+
+				deleted := false
+
+				if _, err := os.Stat(path); err == nil {
+					// The path exists, so attempt to delete it.
+					err = os.RemoveAll(path)
+					deleted = err == nil
+				}
+
+				return newRslValues(f.i, f.callNode, deleted)
 			},
 		},
 		{
