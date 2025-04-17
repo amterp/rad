@@ -724,9 +724,9 @@ find_paths(target: string, depth: int = -1, relative: string = "target") -> list
 
 - `depth` defaults to `-1`, indicating no depth limit. Set a positive number to limit how deep the included paths should be.
 - `relative` defaults to `"target"` and defines to where the resulting paths should be relative.
-  - `"target"` (*default*): relative to the input target path
-  - `"cwd"`: relative to the user's current working directory
-  - `"absolute"`: return absolute paths
+    - `"target"` (*default*): relative to the input target path
+    - `"cwd"`: relative to the user's current working directory
+    - `"absolute"`: return absolute paths
 
 ### get_rad_home
 

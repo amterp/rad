@@ -1,0 +1,5 @@
+#!/usr/bin/env rad
+---
+Prints out rad's home directory.
+---
+get_rad_home().print()

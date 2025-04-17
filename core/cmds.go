@@ -14,6 +14,7 @@ var embeddedFiles embed.FS
 const (
 	EmbCmdNew   = "new"
 	EmbCmdDocs  = "docs"
+	EmbCmdHome  = "home"
 	EmbCmdGenId = "gen-id"
 )
 
@@ -38,6 +39,7 @@ func init() {
 	Cmds = []EmbeddedCmd{
 		createEmbeddedCmd(EmbCmdNew),
 		createEmbeddedCmd(EmbCmdDocs),
+		createEmbeddedCmd(EmbCmdHome),
 		createEmbeddedCmd(EmbCmdGenId),
 	}
 
