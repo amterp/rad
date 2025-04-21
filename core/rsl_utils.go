@@ -6,6 +6,7 @@ import (
 	com "rad/core/common"
 	"runtime/debug"
 	"strconv"
+	"strings"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -88,7 +89,9 @@ func TypeAsString(val interface{}) string {
 // Convert a json interface{} into native RSL types
 func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr string) (RslValue, error) {
 	var m interface{}
-	err := json.Unmarshal([]byte(maybeJsonStr), &m)
+	decoder := json.NewDecoder(strings.NewReader(maybeJsonStr))
+	decoder.UseNumber()
+	err := decoder.Decode(&m)
 	if err != nil {
 		return newRslValue(i, node, maybeJsonStr), err
 	}
@@ -99,10 +102,23 @@ func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr str
 // now we should be able to capture json and convert it entirely to native RSL types up front
 func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RslValue {
 	switch coerced := val.(type) {
-	// strictly speaking, I don't think ints are necessary to handle, since it seems Go unmarshalls
-	// json 'ints' into floats
+	// strictly speaking, ints are unnecessary as Go unmarshalls them either as float64 or json.Number
 	case RslString, string, int64, float64, bool:
 		return newRslValue(i, node, coerced)
+	case json.Number:
+		s := string(coerced)
+		if !strings.Contains(s, ".") {
+			// try parsing as int64 (for better precision preservation)
+			if iVal, err := coerced.Int64(); err == nil {
+				return newRslValue(i, node, iVal)
+			}
+		}
+		// fallback: treat as float64
+		if fVal, err := coerced.Float64(); err == nil {
+			return newRslValue(i, node, fVal)
+		}
+		i.errorf(node, fmt.Sprintf("Invalid number: %v", s))
+		panic("UNREACHABLE")
 	case []interface{}:
 		list := NewRslList()
 		for _, val := range coerced {
