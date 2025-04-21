@@ -1309,6 +1309,66 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#hashing-encodedecode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hashing &amp; Encode/Decode
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hashing & Encode/Decode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      hash
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_base64" class="md-nav__link">
+    <span class="md-ellipsis">
+      encode_base64
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode_base64" class="md-nav__link">
+    <span class="md-ellipsis">
+      decode_base64
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_base16" class="md-nav__link">
+    <span class="md-ellipsis">
+      encode_base16
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode_base16" class="md-nav__link">
+    <span class="md-ellipsis">
+      decode_base16
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-files" class="md-nav__link">
     <span class="md-ellipsis">
       System &amp; Files
@@ -2147,6 +2207,66 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#hashing-encodedecode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hashing &amp; Encode/Decode
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hashing & Encode/Decode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      hash
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_base64" class="md-nav__link">
+    <span class="md-ellipsis">
+      encode_base64
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode_base64" class="md-nav__link">
+    <span class="md-ellipsis">
+      decode_base64
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_base16" class="md-nav__link">
+    <span class="md-ellipsis">
+      encode_base16
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode_base16" class="md-nav__link">
+    <span class="md-ellipsis">
+      decode_base16
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-files" class="md-nav__link">
     <span class="md-ellipsis">
       System &amp; Files
@@ -2715,6 +2835,37 @@ If <code>precision</code> is unspecified it defaults to 0 and rounds to the near
 clamp(10, 20, 30) -&gt; 20
 clamp(40, 20, 30) -&gt; 30
 </code></pre></div>
+<h2 id="hashing-encodedecode">Hashing &amp; Encode/Decode<a class="headerlink" href="#hashing-encodedecode" title="Permanent link">&para;</a></h2>
+<h3 id="hash">hash<a class="headerlink" href="#hash" title="Permanent link">&para;</a></h3>
+<p>Hash some input text. Can choose between hashing algorithms.</p>
+<div class="highlight"><pre><span></span><code>hash(content: string, algo: string = &quot;sha1&quot;) -&gt; string
+</code></pre></div>
+<p>Supported algos: <code>sha1</code> (default), <code>sha256</code>, <code>sha512</code>, <code>md5</code>.</p>
+<p><strong>Note</strong>: The default <code>sha1</code> is <strong>not cryptographically secure</strong>.
+If you need security, specify a secure algorithm such as <code>sha512</code>.</p>
+<h3 id="encode_base64">encode_base64<a class="headerlink" href="#encode_base64" title="Permanent link">&para;</a></h3>
+<p>Base64 encode some text.</p>
+<div class="highlight"><pre><span></span><code>encode_base64(content: string, url_safe: bool = false, padding: bool = true) -&gt; string
+</code></pre></div>
+<ul>
+<li>Enable <code>url_safe</code> to replaces url-unsafe characters in standard base64 encoding with url-safe ones.</li>
+<li>Disable <code>padding</code> to leave out <code>=</code> padding from the base64 encoding.</li>
+</ul>
+<h3 id="decode_base64">decode_base64<a class="headerlink" href="#decode_base64" title="Permanent link">&para;</a></h3>
+<p>Base64 decode some text.</p>
+<div class="highlight"><pre><span></span><code>decode_base64(content: string, url_safe: bool = false, padding: bool = true) -&gt; string
+</code></pre></div>
+<ul>
+<li><code>url_safe</code> and <code>padding</code> settings should match what was used when <em>encoding</em> to ensure correct decoding.</li>
+</ul>
+<h3 id="encode_base16">encode_base16<a class="headerlink" href="#encode_base16" title="Permanent link">&para;</a></h3>
+<p>Base16 encode some text. Also known as "hex encoding".</p>
+<div class="highlight"><pre><span></span><code>encode_base16(content: string) -&gt; string
+</code></pre></div>
+<h3 id="decode_base16">decode_base16<a class="headerlink" href="#decode_base16" title="Permanent link">&para;</a></h3>
+<p>Base16 decode some text. Also known as "hex decoding".</p>
+<div class="highlight"><pre><span></span><code>decode_base16(content: string) -&gt; string
+</code></pre></div>
 <h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
 <h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
 <p>Exits the script with the given exit code</p>
@@ -2765,10 +2916,12 @@ read_file(path: string, mode: string = &quot;text&quot;) -&gt; map
 </code></pre></div>
 <ul>
 <li><code>depth</code> defaults to <code>-1</code>, indicating no depth limit. Set a positive number to limit how deep the included paths should be.</li>
-<li><code>relative</code> defaults to <code>"target"</code> and defines to where the resulting paths should be relative.</li>
+<li><code>relative</code> defaults to <code>"target"</code> and defines to where the resulting paths should be relative.<ul>
 <li><code>"target"</code> (<em>default</em>): relative to the input target path</li>
 <li><code>"cwd"</code>: relative to the user's current working directory</li>
 <li><code>"absolute"</code>: return absolute paths</li>
+</ul>
+</li>
 </ul>
 <h3 id="get_rad_home">get_rad_home<a class="headerlink" href="#get_rad_home" title="Permanent link">&para;</a></h3>
 <p>Returns rad's home directory.</p>
