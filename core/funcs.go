@@ -1427,14 +1427,16 @@ func init() {
 		},
 		{
 			Name:            FUNC_LOAD_STATE,
-			ReturnValues:    ONE_RETURN_VAL,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				state := RadHomeInst.LoadState(f.i, f.callNode)
+				state, existing := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
-
+				if f.numExpectedOutputs != 1 {
+					return newRslValues(f.i, f.callNode, state, existing)
+				}
 				return newRslValues(f.i, f.callNode, state)
 			},
 		},
@@ -1455,7 +1457,7 @@ func init() {
 		},
 		{
 			Name:            FUNC_LOAD_STASH_FILE,
-			ReturnValues:    ONE_RETURN_VAL,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
@@ -1475,8 +1477,11 @@ func init() {
 					if err != nil {
 						f.i.errorf(f.callNode, "Failed to create file %q: %v", path, err)
 					}
-					// todo add a key to know if the file was created or was already there
+
 					output.Set(newRslValueStr(constContent), newRslValueStr(defaultStr))
+					if f.numExpectedOutputs != 1 {
+						return newRslValues(f.i, f.callNode, output, false) // signal not existed
+					}
 					return newRslValues(f.i, f.callNode, output)
 				}
 
@@ -1486,6 +1491,9 @@ func init() {
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
+				if f.numExpectedOutputs != 1 {
+					return newRslValues(f.i, f.callNode, output, true) // signal existed
+				}
 				return newRslValues(f.i, f.callNode, output)
 			},
 		},

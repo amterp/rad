@@ -720,7 +720,10 @@ func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val Rsl
 }
 
 func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightNodes []ts.Node) {
+	// todo doc better. the *idea* here is we will see how many outputs we get,
+	//   and assign them to their respective lefts based on what we get.
 	numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
+
 	outputs := make([]RslValue, 0)
 	for _, rightNode := range rightNodes {
 		if rightNode.Kind() == rsl.K_JSON_PATH {

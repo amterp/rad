@@ -53,10 +53,11 @@ get_stash_dir("some/path.txt").split("/")[-7:].print()
 func Test_Stash_LoadState(t *testing.T) {
 	rsl := `
 set_stash_id("with_stash")
-load_state().print()
+state, existed = load_state()
+print(state, existed)
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `{ "somekey": "somevalue" }
+	expected := `{ "somekey": "somevalue" } true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -65,10 +66,11 @@ load_state().print()
 func Test_Stash_LoadStateNoExisting(t *testing.T) {
 	rsl := `
 set_stash_id("with_no_stash")
-load_state().print()
+state, existed = load_state()
+print(state, existed)
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `{ }
+	expected := `{ } false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -96,12 +98,12 @@ load_state().print()
 func Test_Stash_LoadStashFileExisting(t *testing.T) {
 	rsl := `
 set_stash_id("with_stash")
-r = load_stash_file("existing.txt", "didn't find")
-r.content.print()
+r, existed = load_stash_file("existing.txt", "didn't find")
+print(existed, r.content)
 r.path.split("/")[-6:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `hello there!
+	expected := `true hello there!
 [ "testing", "rad_test_home", "stash", "with_stash", "files", "existing.txt" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -111,8 +113,8 @@ r.path.split("/")[-6:].print()
 func Test_Stash_LoadStashFileNotExisting(t *testing.T) {
 	rsl := `
 set_stash_id("with_stash")
-r = load_stash_file("non_existing.txt", "didn't find")
-r.content.print()
+r, existed = load_stash_file("non_existing.txt", "didn't find")
+print(existed, r.content)
 r.path.split("/")[-6:].print()
 
 p = get_path(r.path)
@@ -122,7 +124,7 @@ p.base_name.print()
 p.full_path.delete_path()
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `didn't find
+	expected := `false didn't find
 [ "testing", "rad_test_home", "stash", "with_stash", "files", "non_existing.txt" ]
 non_existing.txt
 `

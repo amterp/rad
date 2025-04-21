@@ -45,14 +45,14 @@ func (r *RadHome) GetStashSub(subPath string, i *Interpreter, node *ts.Node) str
 	return filepath.Join(*stash, "files", subPath)
 }
 
-func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) RslValue {
+func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RslValue, bool) {
 	if r.StashId == nil {
 		errMissingScriptId(i, node)
 	}
 
 	path := r.resolveScriptStatePath()
 	if !com.FileExists(path) {
-		return newRslValueMap(NewRslMap())
+		return newRslValueMap(NewRslMap()), false
 	}
 
 	data, err := com.LoadJson(path)
@@ -60,7 +60,7 @@ func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) RslValue {
 		i.errorf(node, "Failed to load state: %s", err)
 	}
 
-	return ConvertToNativeTypes(i, node, data)
+	return ConvertToNativeTypes(i, node, data), true
 }
 
 func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RslValue) {
