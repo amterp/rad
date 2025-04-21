@@ -650,6 +650,57 @@ clamp(10, 20, 30) -> 20
 clamp(40, 20, 30) -> 30
 ```
 
+## Hashing & Encode/Decode
+
+### hash
+
+Hash some input text. Can choose between hashing algorithms.
+
+```
+hash(content: string, algo: string = "sha1") -> string
+```
+
+Supported algos: `sha1` (default), `sha256`, `sha512`, `md5`.
+
+**Note**: The default `sha1` is **not cryptographically secure**.
+If you need security, specify a secure algorithm such as `sha512`.
+
+### encode_base64
+
+Base64 encode some text.
+
+```
+encode_base64(content: string, url_safe: bool = false, padding: bool = true) -> string
+```
+
+- Enable `url_safe` to replaces url-unsafe characters in standard base64 encoding with url-safe ones.
+- Disable `padding` to leave out `=` padding from the base64 encoding.
+
+### decode_base64
+
+Base64 decode some text.
+
+```
+decode_base64(content: string, url_safe: bool = false, padding: bool = true) -> string
+```
+
+- `url_safe` and `padding` settings should match what was used when *encoding* to ensure correct decoding.
+
+### encode_base16
+
+Base16 encode some text. Also known as "hex encoding".
+
+```
+encode_base16(content: string) -> string
+```
+### decode_base16
+
+Base16 decode some text. Also known as "hex decoding".
+
+```
+decode_base16(content: string) -> string
+```
+
 ## System & Files
 
 ### exit

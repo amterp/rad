@@ -8,7 +8,11 @@ confirm
 count
 cyan
 debug
+decode_base16
+decode_base64
 delete_path
+encode_base16
+encode_base64
 ends_with
 exit
 find_paths
@@ -20,6 +24,7 @@ get_path
 get_rad_home
 get_stash_dir
 green
+hash
 http_connect
 http_delete
 http_get

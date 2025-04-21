@@ -1,6 +1,12 @@
 package core
 
 import (
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"math"
 	"os"
@@ -99,6 +105,11 @@ const (
 	FUNC_SAVE_STATE         = "save_state"
 	FUNC_LOAD_STASH_FILE    = "load_stash_file"
 	FUNC_WRITE_STASH_FILE   = "write_stash_file"
+	FUNC_HASH               = "hash"
+	FUNC_ENCODE_BASE64      = "encode_base64"
+	FUNC_DECODE_BASE64      = "decode_base64"
+	FUNC_ENCODE_BASE16      = "encode_base16"
+	FUNC_DECODE_BASE16      = "decode_base16"
 
 	namedArgReverse         = "reverse"
 	namedArgTitle           = "title"
@@ -130,6 +141,13 @@ const (
 	constCwd          = "cwd"
 	constAbsolute     = "absolute"
 	constPath         = "path"
+	constAlgo         = "algo"
+	constMd5          = "md5"
+	constSha1         = "sha1"
+	constSha256       = "sha256"
+	constSha512       = "sha512"
+	constUrlSafe      = "url_safe"
+	constPadding      = "padding"
 )
 
 var (
@@ -1520,6 +1538,152 @@ func init() {
 				}
 
 				return newRslValues(f.i, f.callNode, path)
+			},
+		}, {
+			Name:            FUNC_HASH,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs: map[string][]RslTypeEnum{
+				constAlgo: {RslStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				contentArg := f.args[0]
+				content := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
+
+				algo := constSha1
+				if algoArg, exists := f.namedArgs[constAlgo]; exists {
+					algo = algoArg.value.RequireStr(f.i, algoArg.valueNode).Plain()
+				}
+
+				var digest string
+				switch algo {
+				case constSha1:
+					sum := sha1.Sum([]byte(content))
+					digest = hex.EncodeToString(sum[:])
+				case constSha256:
+					sum := sha256.Sum256([]byte(content))
+					digest = hex.EncodeToString(sum[:])
+				case constSha512:
+					sum := sha512.Sum512([]byte(content))
+					digest = hex.EncodeToString(sum[:])
+				case constMd5:
+					sum := md5.Sum([]byte(content))
+					digest = hex.EncodeToString(sum[:])
+				default:
+					algoArg := f.namedArgs[constAlgo]
+					f.i.errorf(algoArg.valueNode, "Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
+						algo, constSha1, constSha256, constSha512, constMd5)
+				}
+				return newRslValues(f.i, f.callNode, newRslValueStr(digest))
+			},
+		},
+		{
+			Name:           FUNC_ENCODE_BASE64,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{
+				{RslStringT},
+			}),
+			NamedArgs: map[string][]RslTypeEnum{
+				constUrlSafe: {RslBoolT},
+				constPadding: {RslBoolT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				contentArg := f.args[0]
+
+				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
+
+				urlSafe := false
+				if arg, exists := f.namedArgs[constUrlSafe]; exists {
+					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
+				}
+
+				padding := true
+				if arg, exists := f.namedArgs[constPadding]; exists {
+					padding = arg.value.RequireBool(f.i, arg.valueNode)
+				}
+
+				encoder := base64.StdEncoding
+				if urlSafe {
+					encoder = base64.URLEncoding
+				}
+				if !padding {
+					encoder = encoder.WithPadding(base64.NoPadding)
+				}
+
+				encoded := encoder.EncodeToString([]byte(input))
+				return newRslValues(f.i, f.callNode, newRslValueStr(encoded))
+			},
+		},
+		{
+			Name:           FUNC_DECODE_BASE64,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{
+				{RslStringT},
+			}),
+			NamedArgs: map[string][]RslTypeEnum{
+				constUrlSafe: {RslBoolT},
+				constPadding: {RslBoolT},
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				input := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
+
+				urlSafe := false
+				if arg, exists := f.namedArgs[constUrlSafe]; exists {
+					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
+				}
+
+				padding := true
+				if arg, exists := f.namedArgs[constPadding]; exists {
+					padding = arg.value.RequireBool(f.i, arg.valueNode)
+				}
+
+				encoder := base64.StdEncoding
+				if urlSafe {
+					encoder = base64.URLEncoding
+				}
+				if !padding {
+					encoder = encoder.WithPadding(base64.NoPadding)
+				}
+
+				decodedBytes, err := encoder.DecodeString(input)
+				if err != nil {
+					f.i.errorf(f.callNode, "Error decoding base64: %v", err)
+				}
+				decoded := string(decodedBytes)
+				return newRslValues(f.i, f.callNode, newRslValueStr(decoded))
+			},
+		},
+		{
+			Name:            FUNC_ENCODE_BASE16,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				contentArg := f.args[0]
+				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
+				encoded := hex.EncodeToString([]byte(input))
+				return newRslValues(f.i, f.callNode, newRslValueStr(encoded))
+			},
+		},
+		{
+			Name:            FUNC_DECODE_BASE16,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				contentArg := f.args[0]
+				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
+				decodedBytes, err := hex.DecodeString(input)
+				if err != nil {
+					f.i.errorf(f.callNode, "Error decoding base16: %v", err)
+				}
+				decoded := string(decodedBytes)
+				return newRslValues(f.i, f.callNode, newRslValueStr(decoded))
 			},
 		},
 	}
