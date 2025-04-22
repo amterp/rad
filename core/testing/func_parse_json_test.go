@@ -116,3 +116,13 @@ parse_json("1", "2")
 `
 	assertError(t, 1, expected)
 }
+
+func TestParseJson_EmptyList(t *testing.T) {
+	rsl := `
+blop = r'{ "foo": [] }'
+blop.parse_json().print()
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "{ \"foo\": [ ] }\n")
+	assertNoErrors(t)
+}

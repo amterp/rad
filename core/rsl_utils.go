@@ -158,7 +158,7 @@ func RslToJsonType(arg RslValue) interface{} {
 	case float64, bool:
 		return coerced
 	case *RslList:
-		var slice []interface{}
+		slice := make([]interface{}, 0)
 		for _, elem := range coerced.Values {
 			slice = append(slice, RslToJsonType(elem))
 		}

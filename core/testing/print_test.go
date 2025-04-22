@@ -213,3 +213,17 @@ print("hello", "there", "claire", sep="_")`
 	assertOnlyOutput(t, stdOutBuffer, "hello_there_claire\n")
 	assertNoErrors(t)
 }
+
+func Test_Print_PrettyPrintEmptyList(t *testing.T) {
+	rsl := `
+blop = { "foo": [] }
+blop.pprint()
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `{
+  "foo": []
+}
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
