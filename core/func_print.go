@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/nwidger/jsoncolor"
+	"github.com/amterp/jsoncolor"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 

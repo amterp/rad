@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/amterp/color v1.20.0
 	github.com/amterp/go-tbl v0.9.0
+	github.com/amterp/jsoncolor v0.4.0
 	github.com/amterp/rts v0.0.25
 	github.com/amterp/stid v1.1.1
 	github.com/charmbracelet/huh v0.6.0
@@ -12,7 +13,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-isatty v0.0.20
-	github.com/nwidger/jsoncolor v0.3.2
 	github.com/samber/lo v1.47.0
 	github.com/sanity-io/litter v1.5.6
 	github.com/scylladb/go-set v1.0.2
@@ -57,3 +57,4 @@ require (
 //replace github.com/amterp/stid => ../stid
 //replace github.com/amterp/rts => ../rts
 //replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl
+//replace github.com/amterp/jsoncolor => ../jsoncolor

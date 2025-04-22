@@ -252,32 +252,32 @@ pprint(node[0])
   {
     "friends": [
       {
-        "id":2,
-        "name":"Bob"
+        "id": 2,
+        "name": "Bob"
       }
     ],
-    "height":1.7,
-    "id":1,
-    "name":"Alice",
-    "old":true
+    "height": 1.7,
+    "id": 1,
+    "name": "Alice",
+    "old": true
   },
   {
     "friends": [
       {
-        "id":1,
-        "name":"Alice"
+        "id": 1,
+        "name": "Alice"
       },
       {
-        "height":"null",
-        "id":3,
-        "name":"Charlie"
+        "height": "null",
+        "id": 3,
+        "name": "Charlie"
       },
       "null"
     ],
-    "height":1.8,
-    "id":2,
-    "name":"Bob",
-    "old":false
+    "height": 1.8,
+    "id": 2,
+    "name": "Bob",
+    "old": false
   },
   "null"
 ]
