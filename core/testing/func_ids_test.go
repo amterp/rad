@@ -1,6 +1,8 @@
 package testing
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_Func_uuid_v4(t *testing.T) {
 	rsl := `
@@ -46,7 +48,7 @@ else:
 
 func Test_Func_gen_stid_named_args(t *testing.T) {
 	rsl := `
-ids = [gen_stid(alphabet="1234567890abcdef", num_random_chars=8, time_granularity=round(1e3*60*60)) for i in range(1000)]
+ids = [gen_stid(alphabet="1234567890abcdef", num_random_chars=8, tick_size_ms=round(1e3*60*60)) for i in range(1000)]
 uniq = ids.unique().len()
 if ids.len() != uniq:
 	print("IDs are not unique, got {uniq}")

@@ -14,6 +14,7 @@ import (
 	com "rad/core/common"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/amterp/stid"
 
@@ -111,24 +112,24 @@ const (
 	FUNC_ENCODE_BASE16      = "encode_base16"
 	FUNC_DECODE_BASE16      = "decode_base16"
 
-	namedArgReverse         = "reverse"
-	namedArgTitle           = "title"
-	namedArgPrompt          = "prompt"
-	namedArgHeaders         = "headers"
-	namedArgBody            = "body"
-	namedArgHint            = "hint"
-	namedArgDefault         = "default"
-	namedArgEnd             = "end"
-	namedArgSep             = "sep"
-	namedArgFill            = "fill"
-	namedArgStrict          = "strict"
-	namedArgMode            = "mode"
-	namedArgDepth           = "depth"
-	namedArgRelative        = "relative"
-	namedArgAppend          = "append"
-	namedArgTimeGranularity = "time_granularity"
-	namedArgNumRandomChars  = "num_random_chars"
-	namedArgAlphabet        = "alphabet"
+	namedArgReverse        = "reverse"
+	namedArgTitle          = "title"
+	namedArgPrompt         = "prompt"
+	namedArgHeaders        = "headers"
+	namedArgBody           = "body"
+	namedArgHint           = "hint"
+	namedArgDefault        = "default"
+	namedArgEnd            = "end"
+	namedArgSep            = "sep"
+	namedArgFill           = "fill"
+	namedArgStrict         = "strict"
+	namedArgMode           = "mode"
+	namedArgDepth          = "depth"
+	namedArgRelative       = "relative"
+	namedArgAppend         = "append"
+	namedArgTickSizeMs     = "tick_size_ms"
+	namedArgNumRandomChars = "num_random_chars"
+	namedArgAlphabet       = "alphabet"
 
 	constContent      = "content"
 	constSizeBytes    = "size_bytes"
@@ -1334,15 +1335,15 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs: map[string][]RslTypeEnum{
-				namedArgAlphabet:        {RslStringT},
-				namedArgTimeGranularity: {RslIntT},
-				namedArgNumRandomChars:  {RslIntT},
+				namedArgAlphabet:       {RslStringT},
+				namedArgTickSizeMs:     {RslIntT},
+				namedArgNumRandomChars: {RslIntT},
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				// defaults
 				config := stid.NewConfig().
-					WithTimeGranularity(stid.TimeGranularity(100)).
-					WithRandomChars(5).
+					WithTickSize(stid.Decisecond).
+					WithNumRandomChars(5).
 					WithAlphabet(stid.Base62Alphabet)
 
 				if alphabetArg, exists := f.namedArgs[namedArgAlphabet]; exists {
@@ -1350,9 +1351,9 @@ func init() {
 					config = config.WithAlphabet(alphabet)
 				}
 
-				if stepSizeArg, exists := f.namedArgs[namedArgTimeGranularity]; exists {
-					stepSize := stepSizeArg.value.RequireInt(f.i, stepSizeArg.valueNode)
-					config = config.WithTimeGranularity(stid.TimeGranularity(int(stepSize)))
+				if tickSizeArg, exists := f.namedArgs[namedArgTickSizeMs]; exists {
+					tickSize := tickSizeArg.value.RequireInt(f.i, tickSizeArg.valueNode)
+					config = config.WithTickSize(time.Duration(tickSize) * time.Millisecond)
 				}
 
 				if numRandomCharsArg, exists := f.namedArgs[namedArgNumRandomChars]; exists {
@@ -1360,7 +1361,7 @@ func init() {
 					if numRandomChars < 0 {
 						f.i.errorf(numRandomCharsArg.valueNode, "Number of random chars must be non-negative, got %d", numRandomChars)
 					}
-					config = config.WithRandomChars(int(numRandomChars))
+					config = config.WithNumRandomChars(int(numRandomChars))
 				}
 
 				generator, err := stid.NewGenerator(config)
