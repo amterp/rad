@@ -59,6 +59,9 @@ nav:
       - ./guide/shell-commands.md
       - ./guide/global-flags.md
       - ./guide/defer-errdefer.md
+  - Examples:
+    - ./examples/brewi.md
+    - ./examples/hm.md
   - Reference:
     - ./reference/args.md
     - ./reference/assignment.md
