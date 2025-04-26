@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/functions/">
+        <link rel="canonical" href="https://amterp.github.io/rad/examples/brewi/">
       
       
-        <link rel="prev" href="../rad-blocks/">
+        <link rel="prev" href="../../guide/defer-errdefer/">
       
       
-        <link rel="next" href="../strings-advanced/">
+        <link rel="next" href="../hm/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Functions - Rad Docs</title>
+        <title>brewi - Rad Docs</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#syntax" class="md-skip">
+        <a href="#tutorial-building-brewi" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Functions
+              brewi
             
           </span>
         </div>
@@ -288,19 +288,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -314,7 +312,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -328,7 +326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/" class="md-nav__link">
+      <a href="../../guide/getting-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -349,7 +347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/" class="md-nav__link">
+      <a href="../../guide/basics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -370,7 +368,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../args/" class="md-nav__link">
+      <a href="../../guide/args/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -391,7 +389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
+      <a href="../../guide/rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -409,28 +407,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Functions
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../guide/functions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -439,96 +419,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      Syntax
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      No Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fixed Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variadic-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Variadic Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#named-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Named Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      Next
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -541,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strings-advanced/" class="md-nav__link">
+      <a href="../../guide/strings-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -562,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/" class="md-nav__link">
+      <a href="../../guide/resources/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -583,7 +473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
+      <a href="../../guide/shell-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -604,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-flags/" class="md-nav__link">
+      <a href="../../guide/global-flags/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -625,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../defer-errdefer/" class="md-nav__link">
+      <a href="../../guide/defer-errdefer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -650,17 +540,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -674,7 +566,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Examples
@@ -685,10 +577,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../examples/brewi/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    brewi
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -697,6 +607,57 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tutorial-building-brewi" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tutorial: Building brewi
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutorial: Building brewi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-the-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing the script
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -709,7 +670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/hm/" class="md-nav__link">
+      <a href="../hm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1028,74 +989,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
+  <a href="#tutorial-building-brewi" class="md-nav__link">
     <span class="md-ellipsis">
-      Syntax
+      Tutorial: Building brewi
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutorial: Building brewi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#no-arguments" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#writing-the-script" class="md-nav__link">
     <span class="md-ellipsis">
-      No Arguments
+      Writing the script
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fixed Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variadic-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Variadic Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#named-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Named Arguments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      Next
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1117,115 +1039,133 @@
   
 
 
-  <h1>Functions</h1>
+  <h1>brewi</h1>
 
-<p>RSL offers a range of built-in functions to help you write your scripts. In this section, we'll take a look at the syntax and a few examples.
-For a complete list of available functions, see the <a href="../../reference/functions/">reference</a>.</p>
-<h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
-<p>The syntax for invoking functions is pretty standard. Here's a script with some examples:</p>
-<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Bob&quot;, &quot;Charlie&quot;, &quot;Alice&quot;]</span>
-<span class="s">num_people = len(names)</span>
-<span class="s">print(&quot;There are {num_people} people.&quot;</span>)
+<div class="highlight"><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="c">---</span>
+<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+<span class="c">---</span>
+<span class="nf">args:</span>
+<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+<span class="w">    </span>cask<span class="w"> </span>c<span class="w"> </span>bool<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>it&#39;s<span class="w"> </span>a<span class="w"> </span>cask.
 
-sorted_names<span class="w"> </span>=<span class="w"> </span>sort(names)
-print(sorted_names)
+$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
+<span class="k">if</span><span class="w"> </span>confirm():
+<span class="w">    </span>$!`brew<span class="w"> </span>install{cask<span class="w"> </span>?<span class="w"> </span><span class="s">&quot; --cask&quot; : &quot;&quot;</span>}<span class="w"> </span>{formula}`
 </code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>There are 3 people.
-[Alice, Bob, Charlie]
-</code></pre></div>
-</div>
+<div class="highlight"><pre><span></span><code>&gt; brewi --help
+Facilitates checking a brew formula before installing it.
 
-<p>This example uses a few different functions:</p>
-<ul>
-<li><code>len</code></li>
-<li><code>print</code></li>
-<li><code>sort</code></li>
-</ul>
-<h2 id="no-arguments">No Arguments<a class="headerlink" href="#no-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions take no arguments. For example, <code>rand()</code> returns a random float between 0 and 1:</p>
-<div class="highlight"><pre><span></span><code>random_float<span class="w"> </span>=<span class="w"> </span>rand()
-print(random_float)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>0.8436881320514183
-</code></pre></div>
-</div>
+Usage:
+  brewi &lt;formula&gt; [cask]
 
-<h2 id="fixed-arguments">Fixed Arguments<a class="headerlink" href="#fixed-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions take a fixed number of arguments, such as <code>upper</code> and <code>lower</code> that always take one argument:</p>
-<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;oh WOW!&quot;</span>
-print(upper(text))
-print(lower(text))
+Script args:
+      --formula string   Name of the formula to install.
+  -c, --cask             Enable if it&#39;s a cask.
 </code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>OH WOW!
-oh wow!
-</code></pre></div>
-</div>
+<h2 id="tutorial-building-brewi">Tutorial: Building <code>brewi</code><a class="headerlink" href="#tutorial-building-brewi" title="Permanent link">&para;</a></h2>
+<h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
+<p>I tend to run <code>brew info</code> before installing formulas just to double-check that I've got the right one.
+Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
+<p>Rather than writing out these two commands manually each time, it'd be neat if I had an alias, which not only saved some characters, but did this workflow <em>for</em> me.</p>
+<h3 id="writing-the-script">Writing the script<a class="headerlink" href="#writing-the-script" title="Permanent link">&para;</a></h3>
+<p>We want to be able to invoke the script as <code>brewi</code> from the CLI rather than writing out <code>rad ./brewi</code>, so we start off with a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll"><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+</span></code></pre></div></td></tr></table></div>
+<p>Next, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="hll"><span class="c">---</span>
+</span><span class="hll"><span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+</span><span class="hll"><span class="c">---</span>
+</span></code></pre></div></td></tr></table></div>
+<p>We want the script to accept a formula as an argument, i.e. the formula we may be installing. It'll be a string, so let's add this in an <a href="../../guide/args/">arg block</a>. We'll include a little comment to improve our usage string.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="c">---</span>
+<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+<span class="c">---</span>
+<span class="hll"><span class="nf">args:</span>
+</span><span class="hll"><span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+</span></code></pre></div></td></tr></table></div>
+<p><code>formula</code> will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.</p>
+<p>Setup done. First thing we'll wanna do is run <code>brew info</code> with the formula. We'll do this via a <a href="../../guide/shell-commands/">shell command</a>.</p>
+<p>Specifically, we'll use a <a href="../../guide/shell-commands/#critical-shell-commands"><em>critical</em></a> shell command, because if the command fails (including if the formula just doesn't exist), we want to just print the error and exit the script.</p>
+<p>This uses the <code>$!</code> syntax.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="c">---</span>
+<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+<span class="c">---</span>
+<span class="nf">args:</span>
+<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
 
-<h2 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions can take different numbers of arguments! For example <code>join</code>:</p>
-<div class="highlight"><pre><span></span><code>numbers<span class="w"> </span>=<span class="w"> </span>[<span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>]
-print(join(numbers,<span class="w"> </span><span class="s">&quot;... &quot;))</span>
+<span class="hll">$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
+</span></code></pre></div></td></tr></table></div>
+<p>We use <a href="../../guide/strings-advanced/#string-interpolation">string interpolation</a> to insert the formula into the command.</p>
+<p>You can try running the command now! Make sure it's executable (<code>chmod +x ./brewi</code>).</p>
+<p>Next, we want to ask the user if they'd like to proceed with installing the formula. For that, RSL offers the <a href="../../reference/functions/#confirm"><code>confirm</code></a> function.
+The default prompt is <code>Confirm? [y/n] &gt;</code>, which works fine for us here, so we'll do a simple 0-arg <code>confirm()</code> call. The function returns a bool for yes/no, so we'll put it in an if statement.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="c">---</span>
+<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+<span class="c">---</span>
+<span class="nf">args:</span>
+<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
 
-<span class="s">print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;))</span>
-
-<span class="s">print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;, &quot;!&quot;</span>))
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>1... 2... 3
-Okay I&#39;ll count. 1... 2... 3
-Okay I&#39;ll count. 1... 2... 3!
-</code></pre></div>
-</div>
-
-<p>In this example, <code>join</code> is being invoked with all these valid variations:</p>
-<ul>
-<li><code>join(list, joiner)</code></li>
-<li><code>join(list, joiner, prefix)</code></li>
-<li><code>join(list, joiner, prefix, suffix)</code></li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Example using join for url query params</p>
-<p>The second variation of <code>join</code> can be handy for generating the query params in a url. For example:</p>
-<div class="highlight"><pre><span></span><code>url<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;https://api.github.com/repos/amterp/rad/commits&quot;</span>
-<span class="s">query_params = [&quot;per_page=5&quot;, &quot;path=README.md&quot;]</span>
-<span class="s">url += join(query_params, &quot;&amp;&quot;, &quot;?&quot;</span>)
-print(url)
-</code></pre></div>
-<p>In this example, the final url will be the following valid URL utilizing those query params:
-<a href="https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5"><code>https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5</code></a></p>
-</div>
-<h2 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h2>
-<p>Finally, some functions may also have named arguments.
-An example of this is <code>http_post</code>. <code>http_post</code> (unsurprisingly) performs an HTTP POST request against an input url, usually with a body of some sort.
-One variation of the function only takes that url:</p>
-<div class="highlight"><pre><span></span><code>response<span class="w"> </span>=<span class="w"> </span>http_post(url,<span class="w"> </span>body)
-</code></pre></div>
-<p>However, if you wish to customize the headers on your HTTP request, you can do so:</p>
-<div class="highlight"><pre><span></span><code>my_headers<span class="w"> </span>=<span class="w"> </span>{
-<span class="w">    </span><span class="s">&quot;Authorization&quot;: &quot;Bearer {token}&quot;</span>,
-}
-response<span class="w"> </span>=<span class="w"> </span>http_post(url,<span class="w"> </span>body,<span class="w"> </span>headers=my_headers)
-</code></pre></div>
-<p>In this example, the named arg <code>headers</code> expects a map. Named args are always optional. Required arguments cannot be specified as required arguments.</p>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<p>There are a lot of built-in functions. If you just want to see what's available and how to use them, it's best to refer to the <a href="../../reference/functions/">reference</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">RSL does not allow defining your own functions</p>
-<p>RSL currently does not allow you to define your own functions, so any function you use is built-in.</p>
-</div>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Function invocation syntax is similar to most other C-like languages such as Python, Java, etc.</li>
-<li>Functions may take no arguments, a fixed number of arguments, a varying number of args, and/or named arguments.</li>
-<li>RSL does not allow you to define your own functions - all functions are built-in.</li>
-</ul>
-<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>We've already covered the <a href="../basics/#string">Basics of strings</a>,
-but there are some more advanced string concepts which are worth covering, such as string interpolation, raw strings, etc.
-We'll cover these in the next section: <a href="../strings-advanced/">Strings (Advanced)</a>!</p>
+$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
+<span class="hll"><span class="k">if</span><span class="w"> </span>confirm():
+</span><span class="hll"><span class="w">    </span>$!`brew<span class="w"> </span>install<span class="w"> </span>{formula}`
+</span></code></pre></div></td></tr></table></div>
+<p>Feel free to try it again now!</p>
+<p>One last touch: we should also allow installing casks with this script. We'll aim to offer a simple <code>-c</code> flag users can set which modifies the command. </p>
+<p>We'll add the <code>bool</code> arg, and insert an additional interpolation in our <code>brew install</code> command, leveraging RSL's <a href="../../guide/basics/#ternary">ternary</a> syntax.
+We need to pay close attention to whitespace so we make sure the command comes out correct in the cask and non-cask cases.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<span class="c">---</span>
+<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
+<span class="c">---</span>
+<span class="nf">args:</span>
+<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+<span class="hll"><span class="w">    </span>cask<span class="w"> </span>c<span class="w"> </span>bool<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>it&#39;s<span class="w"> </span>a<span class="w"> </span>cask.
+</span>
+$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
+<span class="k">if</span><span class="w"> </span>confirm():
+<span class="hll"><span class="w">    </span>$!`brew<span class="w"> </span>install{cask<span class="w"> </span>?<span class="w"> </span><span class="s">&quot; --cask&quot; : &quot;&quot;</span>}<span class="w"> </span>{formula}`
+</span></code></pre></div></td></tr></table></div>
+<p>Note the shorthand flag in <code>cask c bool</code>.</p>
+<p>Done! If you'd like to see a more complex example next, check out <a href="../hm/">hm</a>.</p>
 
 
 
@@ -1258,7 +1198,7 @@ We'll cover these in the next section: <a href="../strings-advanced/">Strings (A
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../rad-blocks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rad Blocks">
+          <a href="../../guide/defer-errdefer/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Defer &amp; Errdefer">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1268,20 +1208,20 @@ We'll cover these in the next section: <a href="../strings-advanced/">Strings (A
                 Previous
               </span>
               <div class="md-ellipsis">
-                Rad Blocks
+                Defer & Errdefer
               </div>
             </div>
           </a>
         
         
           
-          <a href="../strings-advanced/" class="md-footer__link md-footer__link--next" aria-label="Next: Strings (Advanced)">
+          <a href="../hm/" class="md-footer__link md-footer__link--next" aria-label="Next: hm">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Strings (Advanced)
+                hm
               </div>
             </div>
             <div class="md-footer__button md-icon">
