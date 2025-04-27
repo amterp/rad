@@ -93,7 +93,7 @@ const (
 	FUNC_MAX                = "max"
 	FUNC_CLAMP              = "clamp"
 	FUNC_REVERSE            = "reverse"
-	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars.
+	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars. Or maybe just embrace works for anything, name it 'exists'?
 	FUNC_HYPERLINK          = "hyperlink"
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"

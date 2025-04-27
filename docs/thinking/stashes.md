@@ -217,3 +217,120 @@ We likely want a syntax less likely to collide with common writings in a file he
 ^ Wanna stick away from code that has to actually be evaluated. Like those `""` scare me into thinking we need to interpret. Hence just `@stash_id J3NdHcNJxDI` might be nice. 
 
 Also, we need to exclude `@stash_id` from the help string that gets generated. Logic can be: delete the token, and if a newline follows the token, delete that too.
+
+## 2025-04-27
+
+### Lambdas 2
+
+We should think about functions as well. Custom functions may really just turn out to be variable-assigned lambdas?
+
+### Alternative 1 (Adapted Java style)
+
+```rsl
+normalize = x -> x.trim().lower()
+ 
+normalize(mystring)
+mylist.map(normalize)
+
+normalize = x ->
+    out = x.trim().lower()
+    return out
+```
+
+Pro: Concise.
+
+Con: `->` begins a block, which is unique from rest of language where `:` does that.
+
+### Alternative 2 (Go style)
+
+```rsl
+normalize = func(x) x.trim().lower()
+ 
+normalize(mystring)
+
+normalize = func(x):
+    out = x.trim().lower()
+    return out
+```
+
+Pro: `:` begins block, like it does in most other parts of the language.
+
+Con: Single liner is a little verbose though. Is there a best of both worlds?
+
+### Alternative 3 (Adapted Go style)
+
+```rsl
+normalize = fn x: x.trim().lower()
+ 
+normalize(mystring)
+
+normalize = fn x:
+    out = x.trim().lower()
+    return out
+
+provide = fn: 5
+provide()  // returns 5
+
+multiply = fn x, y: x * y  // uncertain on if x and y should be comma or just space-separated.
+
+mylist.map(fn x: x.upper())
+mylist.map(upper)  // technically, it'd need to redefine all my built-ins as function vars, so they can be passed this way
+```
+
+Pro: Easier parsing because `func x` won't get interpreted as a call, unlike `func(x)`.  
+
+Con: Single liner still a little verbose.
+
+### Alternative 4 (Final?)
+
+```rsl
+normalize = fn(x) x.trim().lower()
+ 
+normalize(mystring)
+
+normalize = fn(x):
+    out = x.trim().lower()
+    return out
+
+provide = fn() 5
+provide()  // returns 5
+
+multiply = fn(x, y) x * y
+
+mylist.map(fn(x) x.upper())
+mylist.map(upper)  // technically, it'd need to redefine all my built-ins as function vars, so they can be passed this way
+```
+
+Pro: Easier parsing because `func x` won't get interpreted as a call, unlike `func(x)`.  
+
+Con: Single liner still a little verbose.
+
+...
+
+Continues on [custom_functions.md](./custom_functions.md).
+
+### Importing functions
+
+We might want to support importing functions from other scripts?
+
+```rsl
+// script1.rsl
+
+normalize = x -> x.trim().lower()
+
+// script2.rsl
+
+from script1.rsl import { normalize }   // << could omit '{ }' for single case
+```
+
+Something like that?
+
+How would rad know where to look for script1.rsl though? Relative paths? Would mean needing to store all these together.
+What if you want to not do that, and have a 'central repo' for all these helper functions you can then use in different scripts?
+This goes against one of the advantages of rad so far: all batteries are already included, and you need no additional dependencies.
+You could argue resources are already an external dependency, in the same way these imported functions would be. hmm.
+
+Maybe relative importing is the way to go.
+Store all your scripts in one location with a relative path `../shared/*` that you can import from? `from ../shared/script1.rsl import normalize`.
+
+More here: [imports.md](./imports.md).
