@@ -225,6 +225,24 @@ Checks if a variable exists.
 is_defined(var: string) -> bool
 ```
 
+### map
+
+Applies a given lambda to every element of a list or entry of a map.
+
+```
+map(list, fn(v) -> any) -> list[any]
+map(map, fn(k, v) -> any) -> list[any]
+```
+
+### filter
+
+Applies a given lambda predicate to every element of a list or entry of a map. Keeps only elements that return true.
+
+```
+filter(list, fn(v) -> bool) -> list
+filter(map, fn(k, v) -> bool) -> map
+```
+
 ## Input
 
 ### input

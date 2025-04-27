@@ -112,6 +112,7 @@ const (
 	FUNC_ENCODE_BASE16      = "encode_base16"
 	FUNC_DECODE_BASE16      = "decode_base16"
 	FUNC_MAP                = "map"
+	FUNC_FILTER             = "filter"
 
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
@@ -1722,6 +1723,49 @@ func init() {
 						return true // signal to keep going
 					})
 					outputValue = newRslValue(f.i, f.callNode, outputList)
+				}).Visit(collectionArg.value)
+
+				return newRslValues(f.i, f.callNode, outputValue)
+			},
+		},
+		{
+			Name:            FUNC_FILTER,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT, RslMapT}, {RslFnT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				collectionArg := f.args[0]
+				fnArg := f.args[1]
+
+				fnNode := fnArg.node
+				fn := fnArg.value.RequireFn(f.i, fnNode)
+				fnName := GetSrc(f.i.sd.Src, fnNode)
+
+				var outputValue RslValue
+				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RslValue, l *RslList) {
+					outputList := NewRslList()
+					for _, val := range l.Values {
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						out := fn.Execute(invocation)
+						if out[0].RequireBool(f.i, fnNode) {
+							// keep item
+							outputList.Append(val)
+						}
+					}
+					outputValue = newRslValue(f.i, f.callNode, outputList)
+				}).ForMap(func(_ RslValue, m *RslMap) {
+					outputMap := NewRslMap()
+					m.Range(func(key, value RslValue) bool {
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						out := fn.Execute(invocation)
+						if out[0].RequireBool(f.i, fnNode) {
+							// keep entry
+							outputMap.Set(key, value)
+						}
+						return true // continue iteration
+					})
+					outputValue = newRslValue(f.i, f.callNode, outputMap)
 				}).Visit(collectionArg.value)
 
 				return newRslValues(f.i, f.callNode, outputValue)

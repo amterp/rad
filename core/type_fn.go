@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/amterp/rts/rsl"
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
-	"strings"
 )
 
 type RslFn struct {
