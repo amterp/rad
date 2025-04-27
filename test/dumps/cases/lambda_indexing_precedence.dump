@@ -1,0 +1,37 @@
+=====
+Lambda indexing precedence
+=====
+fn(n) n.trim().upper()
+=====
+B: [ 0, 23] PS: [0,  0] PE: [1,  0] source_file
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]     ternary_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]       delegate: or_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]         delegate: and_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]           delegate: compare_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]             delegate: add_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]               delegate: mult_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]                 delegate: unary_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]                   delegate: lambda
+B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     fn `fn`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                     ( `(`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     param: identifier `n`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     ) `)`
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                     expr: expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                       ternary_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                         delegate: or_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                           delegate: and_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                             delegate: compare_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                               delegate: add_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                                 delegate: mult_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                                   delegate: unary_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                                     delegate: var_path
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                                       root: identifier `n`
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]                                       . `.`
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                       indexing: call
+B: [ 8, 12] PS: [0,  8] PE: [0, 12]                                         func: identifier `trim`
+B: [12, 14] PS: [0, 12] PE: [0, 14]                                         () `()`
+B: [14, 15] PS: [0, 14] PE: [0, 15]                                       . `.`
+B: [15, 22] PS: [0, 15] PE: [0, 22]                                       indexing: call
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                         func: identifier `upper`
+B: [20, 22] PS: [0, 20] PE: [0, 22]                                         () `()`
