@@ -10,7 +10,7 @@ words = json[].words
 rad url:
 	fields id, words
 	words:
-		map x -> truncate(x, 10)
+		map fn(x) truncate(x, 10)
 `
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/long_values.json", "--color=never")
 	expected := `id  words      
@@ -30,7 +30,7 @@ name = json[].name
 rad url:
 	fields id, name
 	name:
-		map x -> truncate(x, 5)
+		map fn(x) truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `id  name  
@@ -49,7 +49,7 @@ name = json[].name
 rad url:
     fields name
     does_not_exist:
-        map x -> truncate(x, 5)
+        map fn(x) truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `Error at L6:5
@@ -69,7 +69,7 @@ city = json[].city
 rad url:
 	fields age, name, city
 	name, city:
-		map x -> truncate(x, 5)
+		map fn(x) truncate(x, 5)
 `
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `age  name   city  

@@ -16,10 +16,10 @@ rad "mock-response!":
     fields Benchmark, Mean, Stddev, Min, Max, Runs
     sort Benchmark
     Benchmark:
-        map b -> replace(split(b, "/")[-1], ".rsl", "")
+        map fn(b) replace(split(b, "/")[-1], ".rsl", "")
     Mean, Stddev, Min, Max:
-        map n -> round(n * 1000, 1)
+        map fn(n) round(n * 1000, 1)
     Runs:
-        map t -> len(t)
+        map fn(t) len(t)
 print("Times in milliseconds")
 quiet $!`./macos-hardware.rsl`

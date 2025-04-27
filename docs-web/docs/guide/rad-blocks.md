@@ -229,8 +229,12 @@ For example, let's say you wanted the 'Population' column in the above example t
 rad url:
     fields City, Country, Population
     Population:
-        map p -> "{p/1000000:.1}"
+        map fn(p) "{p/1000000:.1}"
 ```
+
+The syntax here is `map <lambda>`. In this example, the lambda is `fn(p) "{p/1000000:.1}"`.
+
+[//]: # (TODO when section added on lambdas in guide, hyperlink here)
 
 If we run this, you'll see the change:
 
@@ -248,7 +252,7 @@ This example is actually using string interpolation formatting, which we haven't
 
 ```rsl
 Population:
-    map p -> "{p/1000000:.1}"
+    map fn(p) "{p/1000000:.1}"
 ```
 
 `Population:` begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as `map` or [`color`](#color).

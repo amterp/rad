@@ -239,7 +239,7 @@ display:
 	fields col
 	sort asc
 	col:
-		map num -> -num
+		map fn(num) -num
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `col 

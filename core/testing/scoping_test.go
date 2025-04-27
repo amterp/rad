@@ -79,7 +79,7 @@ i = 0
 display:
 	fields nums
 	nums:
-		map i -> i * 2
+		map fn(i) i * 2
 print("i", i)
 `
 	setupAndRunCode(t, rsl, "--color=never")
@@ -97,7 +97,7 @@ nums = [10]
 display:
 	fields nums
 	nums:
-		map i -> i * 2
+		map fn(i) i * 2
 print("i", i)
 `
 	expected := `nums 

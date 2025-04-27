@@ -174,16 +174,16 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			case rsl.K_RAD_FIELD_MOD_MAP:
 				lambdaNode := r.i.getChild(&stmtNode, rsl.F_LAMBDA)
-				lambdaIdentifierNodes := r.i.getChildren(lambdaNode, rsl.F_IDENTIFIER)
-				var lambdaIdentifiers []string
-				for _, lambdaIdentifierNode := range lambdaIdentifierNodes {
-					lambdaIdentifier := r.i.sd.Src[lambdaIdentifierNode.StartByte():lambdaIdentifierNode.EndByte()]
-					lambdaIdentifiers = append(lambdaIdentifiers, lambdaIdentifier)
+				lambdaParamNodes := r.i.getChildren(lambdaNode, rsl.F_PARAM)
+				var lambdaParams []string
+				for _, lambdaParamNode := range lambdaParamNodes {
+					lambdaParam := r.i.sd.Src[lambdaParamNode.StartByte():lambdaParamNode.EndByte()]
+					lambdaParams = append(lambdaParams, lambdaParam)
 				}
 				exprNode := r.i.getChild(lambdaNode, rsl.F_EXPR)
 				lambda := Lambda{
 					Node:     lambdaNode,
-					Args:     lambdaIdentifiers,
+					Args:     lambdaParams,
 					ExprNode: exprNode,
 				}
 				for _, field := range fields {

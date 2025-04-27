@@ -8,7 +8,7 @@ title: Rad Blocks
 rad url:
     fields Name, Birthdate, Height
     Name:
-        map n -> truncate(n, 20)
+        map fn(n) truncate(n, 20)
     if sort_by_height:
         sort Height, Name, Birthdate
     else:

@@ -9,7 +9,7 @@ display:
 	fields nums
 	sort nums
 	nums:
-		map num -> "{num * 100:6.2}%"
+		map fn(num) "{num * 100:6.2}%"
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `nums    
@@ -29,7 +29,7 @@ display:
 	fields nums
 	sort nums desc
 	nums:
-		map num -> num * 10
+		map fn(num) num * 10
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `nums 
@@ -49,7 +49,7 @@ display:
 	fields names
 	sort
 	names:
-		map name -> name[:3]
+		map fn(name) name[:3]
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `names 
@@ -70,7 +70,7 @@ display:
 	fields FirstNames, LastNames
 	sort
 	FirstNames, LastNames:
-		map name -> upper(name)
+		map fn(name) upper(name)
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `FirstNames  LastNames 
