@@ -39,13 +39,21 @@ Rather than writing out these two commands manually each time, it'd be neat if I
 
 ### Writing the script
 
-We want to be able to invoke the script as `brewi` from the CLI rather than writing out `rad ./brewi`, so we start off with a [shebang](../guide/getting-started.md#shebang).
+We can use `rad` to create the script file for us.
 
-```rsl linenums="1" hl_lines="1"
+```sh
+rad new brewi -s
+```
+
+This will set us up with an executable script named `brewi`, and the `-s` simplifies the template it's instantiated with to contain *just* a [shebang](../guide/getting-started.md#shebang).
+
+The shebang will allow us to invoke the script as `brewi` from the CLI rather than writing out `rad ./brewi`. Open up `brewi` in your editor, and you should see something like this:
+
+```rsl linenums="1" hl_lines="0"
 #!/usr/bin/env rad
 ```
 
-Next, we want to quickly describe what the script is aiming to do, so we'll add a file header.
+Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
 
 ```rsl linenums="1" hl_lines="2-4"
 #!/usr/bin/env rad
