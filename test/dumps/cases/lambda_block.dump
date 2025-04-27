@@ -1,0 +1,106 @@
+=====
+Lambda block
+=====
+zero = fn():
+    return 5
+one = fn(x):
+    out = x * 2
+    return out
+two = fn(x, y):
+    return x * y
+=====
+B: [  0, 103] PS: [0,  0] PE: [7,  0] source_file
+B: [  0,  25] PS: [0,  0] PE: [1, 12]   assign
+B: [  0,   4] PS: [0,  0] PE: [0,  4]     left: var_path
+B: [  0,   4] PS: [0,  0] PE: [0,  4]       root: identifier `zero`
+B: [  5,   6] PS: [0,  5] PE: [0,  6]     = `=`
+B: [  7,  25] PS: [0,  7] PE: [1, 12]     right: fn_block
+B: [  7,   9] PS: [0,  7] PE: [0,  9]       fn `fn`
+B: [  9,  11] PS: [0,  9] PE: [0, 11]       () `()`
+B: [ 11,  12] PS: [0, 11] PE: [0, 12]       : `:`
+B: [ 17,  25] PS: [1,  4] PE: [1, 12]       return_stmt: return_stmt
+B: [ 17,  23] PS: [1,  4] PE: [1, 10]         return `return`
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]         value: expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]           ternary_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]             delegate: or_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]               delegate: and_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                 delegate: compare_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                   delegate: add_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                     delegate: mult_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                       delegate: unary_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                         delegate: indexed_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                           root: primary_expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                             literal
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                               int `5`
+B: [ 26,  69] PS: [2,  0] PE: [4, 14]   assign
+B: [ 26,  29] PS: [2,  0] PE: [2,  3]     left: var_path
+B: [ 26,  29] PS: [2,  0] PE: [2,  3]       root: identifier `one`
+B: [ 30,  31] PS: [2,  4] PE: [2,  5]     = `=`
+B: [ 32,  69] PS: [2,  6] PE: [4, 14]     right: fn_block
+B: [ 32,  34] PS: [2,  6] PE: [2,  8]       fn `fn`
+B: [ 34,  35] PS: [2,  8] PE: [2,  9]       ( `(`
+B: [ 35,  36] PS: [2,  9] PE: [2, 10]       param: identifier `x`
+B: [ 36,  37] PS: [2, 10] PE: [2, 11]       ) `)`
+B: [ 37,  38] PS: [2, 11] PE: [2, 12]       : `:`
+B: [ 43,  54] PS: [3,  4] PE: [3, 15]       stmt: assign
+B: [ 43,  46] PS: [3,  4] PE: [3,  7]         left: var_path
+B: [ 43,  46] PS: [3,  4] PE: [3,  7]           root: identifier `out`
+B: [ 47,  48] PS: [3,  8] PE: [3,  9]         = `=`
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]         right: expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]           ternary_expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]             delegate: or_expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]               delegate: and_expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]                 delegate: compare_expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]                   delegate: add_expr
+B: [ 49,  54] PS: [3, 10] PE: [3, 15]                     delegate: mult_expr
+B: [ 49,  50] PS: [3, 10] PE: [3, 11]                       left: mult_expr
+B: [ 49,  50] PS: [3, 10] PE: [3, 11]                         delegate: unary_expr
+B: [ 49,  50] PS: [3, 10] PE: [3, 11]                           delegate: var_path
+B: [ 49,  50] PS: [3, 10] PE: [3, 11]                             root: identifier `x`
+B: [ 51,  52] PS: [3, 12] PE: [3, 13]                       op: * `*`
+B: [ 53,  54] PS: [3, 14] PE: [3, 15]                       right: unary_expr
+B: [ 53,  54] PS: [3, 14] PE: [3, 15]                         delegate: indexed_expr
+B: [ 53,  54] PS: [3, 14] PE: [3, 15]                           root: primary_expr
+B: [ 53,  54] PS: [3, 14] PE: [3, 15]                             literal
+B: [ 53,  54] PS: [3, 14] PE: [3, 15]                               int `2`
+B: [ 59,  69] PS: [4,  4] PE: [4, 14]       return_stmt: return_stmt
+B: [ 59,  65] PS: [4,  4] PE: [4, 10]         return `return`
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]         value: expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]           ternary_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]             delegate: or_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]               delegate: and_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                 delegate: compare_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                   delegate: add_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                     delegate: mult_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                       delegate: unary_expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                         delegate: var_path
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                           root: identifier `out`
+B: [ 70, 102] PS: [5,  0] PE: [6, 16]   assign
+B: [ 70,  73] PS: [5,  0] PE: [5,  3]     left: var_path
+B: [ 70,  73] PS: [5,  0] PE: [5,  3]       root: identifier `two`
+B: [ 74,  75] PS: [5,  4] PE: [5,  5]     = `=`
+B: [ 76, 102] PS: [5,  6] PE: [6, 16]     right: fn_block
+B: [ 76,  78] PS: [5,  6] PE: [5,  8]       fn `fn`
+B: [ 78,  79] PS: [5,  8] PE: [5,  9]       ( `(`
+B: [ 79,  80] PS: [5,  9] PE: [5, 10]       param: identifier `x`
+B: [ 80,  81] PS: [5, 10] PE: [5, 11]       , `,`
+B: [ 82,  83] PS: [5, 12] PE: [5, 13]       param: identifier `y`
+B: [ 83,  84] PS: [5, 13] PE: [5, 14]       ) `)`
+B: [ 84,  85] PS: [5, 14] PE: [5, 15]       : `:`
+B: [ 90, 102] PS: [6,  4] PE: [6, 16]       return_stmt: return_stmt
+B: [ 90,  96] PS: [6,  4] PE: [6, 10]         return `return`
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]         value: expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]           ternary_expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]             delegate: or_expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]               delegate: and_expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]                 delegate: compare_expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]                   delegate: add_expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]                     delegate: mult_expr
+B: [ 97,  98] PS: [6, 11] PE: [6, 12]                       left: mult_expr
+B: [ 97,  98] PS: [6, 11] PE: [6, 12]                         delegate: unary_expr
+B: [ 97,  98] PS: [6, 11] PE: [6, 12]                           delegate: var_path
+B: [ 97,  98] PS: [6, 11] PE: [6, 12]                             root: identifier `x`
+B: [ 99, 100] PS: [6, 13] PE: [6, 14]                       op: * `*`
+B: [101, 102] PS: [6, 15] PE: [6, 16]                       right: unary_expr
+B: [101, 102] PS: [6, 15] PE: [6, 16]                         delegate: var_path
+B: [101, 102] PS: [6, 15] PE: [6, 16]                           root: identifier `y`

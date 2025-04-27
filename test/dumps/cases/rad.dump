@@ -13,9 +13,9 @@ display:
     sort Name desc, ID
     ID, Name:
         color "red" "^Alice$"
-        map v -> upper(v)
+        map fn(v) upper(v)
 =====
-B: [  0, 199] PS: [ 0,  0] PE: [13,  0] source_file
+B: [  0, 200] PS: [ 0,  0] PE: [13,  0] source_file
 B: [  0,  14] PS: [ 0,  0] PE: [ 0, 14]   assign
 B: [  0,   2] PS: [ 0,  0] PE: [ 0,  2]     left: var_path
 B: [  0,   2] PS: [ 0,  0] PE: [ 0,  2]       root: identifier `ID`
@@ -68,7 +68,7 @@ B: [ 60,  61] PS: [ 4, 13] PE: [ 4, 14]       , `,`
 B: [ 62,  66] PS: [ 4, 15] PE: [ 4, 19]       identifier: identifier `Name`
 B: [ 71,  75] PS: [ 5,  4] PE: [ 5,  8]     stmt: rad_sort_stmt
 B: [ 71,  75] PS: [ 5,  4] PE: [ 5,  8]       sort `sort`
-B: [ 77, 198] PS: [ 7,  0] PE: [12, 25]   rad_block
+B: [ 77, 199] PS: [ 7,  0] PE: [12, 26]   rad_block
 B: [ 77,  84] PS: [ 7,  0] PE: [ 7,  7]     rad_type: display_keyword `display`
 B: [ 84,  85] PS: [ 7,  7] PE: [ 7,  8]     : `:`
 B: [ 90, 105] PS: [ 8,  4] PE: [ 8, 19]     stmt: rad_field_stmt
@@ -84,7 +84,7 @@ B: [120, 124] PS: [ 9, 14] PE: [ 9, 18]         second: desc `desc`
 B: [124, 125] PS: [ 9, 18] PE: [ 9, 19]       , `,`
 B: [125, 128] PS: [ 9, 19] PE: [ 9, 22]       specifier: rad_sort_specifier
 B: [126, 128] PS: [ 9, 20] PE: [ 9, 22]         first: immediate_identifier `ID`
-B: [133, 198] PS: [10,  4] PE: [12, 25]     stmt: rad_field_modifier_stmt
+B: [133, 199] PS: [10,  4] PE: [12, 26]     stmt: rad_field_modifier_stmt
 B: [133, 135] PS: [10,  4] PE: [10,  6]       identifier: identifier `ID`
 B: [135, 136] PS: [10,  6] PE: [10,  7]       , `,`
 B: [137, 141] PS: [10,  8] PE: [10, 12]       identifier: identifier `Name`
@@ -123,32 +123,34 @@ B: [163, 164] PS: [11, 20] PE: [11, 21]                                 start: s
 B: [164, 171] PS: [11, 21] PE: [11, 28]                                 contents: string_contents
 B: [164, 171] PS: [11, 21] PE: [11, 28]                                   content: string_content `^Alice$`
 B: [171, 172] PS: [11, 28] PE: [11, 29]                                 end: string_end `"`
-B: [181, 198] PS: [12,  8] PE: [12, 25]       mod_stmt: rad_field_mod_map
+B: [181, 199] PS: [12,  8] PE: [12, 26]       mod_stmt: rad_field_mod_map
 B: [181, 184] PS: [12,  8] PE: [12, 11]         map `map`
-B: [185, 198] PS: [12, 12] PE: [12, 25]         lambda: lambda
-B: [185, 186] PS: [12, 12] PE: [12, 13]           identifier: identifier `v`
-B: [187, 189] PS: [12, 14] PE: [12, 16]           -> `->`
-B: [190, 198] PS: [12, 17] PE: [12, 25]           expr: expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]             ternary_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]               delegate: or_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                 delegate: and_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                   delegate: compare_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                     delegate: add_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                       delegate: mult_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                         delegate: unary_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                           delegate: indexed_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                             root: primary_expr
-B: [190, 198] PS: [12, 17] PE: [12, 25]                               call
-B: [190, 195] PS: [12, 17] PE: [12, 22]                                 func: identifier `upper`
-B: [195, 196] PS: [12, 22] PE: [12, 23]                                 ( `(`
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                 arg: expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                   ternary_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                     delegate: or_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                       delegate: and_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                         delegate: compare_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                           delegate: add_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                             delegate: mult_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                               delegate: unary_expr
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                                 delegate: var_path
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                                   root: identifier `v`
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                 ) `)`
+B: [185, 199] PS: [12, 12] PE: [12, 26]         lambda: lambda
+B: [185, 187] PS: [12, 12] PE: [12, 14]           fn `fn`
+B: [187, 188] PS: [12, 14] PE: [12, 15]           ( `(`
+B: [188, 189] PS: [12, 15] PE: [12, 16]           param: identifier `v`
+B: [189, 190] PS: [12, 16] PE: [12, 17]           ) `)`
+B: [191, 199] PS: [12, 18] PE: [12, 26]           expr: expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]             ternary_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]               delegate: or_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                 delegate: and_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                   delegate: compare_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                     delegate: add_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                       delegate: mult_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                         delegate: unary_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                           delegate: indexed_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                             root: primary_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                               call
+B: [191, 196] PS: [12, 18] PE: [12, 23]                                 func: identifier `upper`
+B: [196, 197] PS: [12, 23] PE: [12, 24]                                 ( `(`
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                 arg: expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                   ternary_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                     delegate: or_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                       delegate: and_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                         delegate: compare_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                           delegate: add_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                             delegate: mult_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                               delegate: unary_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                 delegate: var_path
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                   root: identifier `v`
+B: [198, 199] PS: [12, 25] PE: [12, 26]                                 ) `)`
