@@ -33,7 +33,7 @@ var FuncRange = Func{
 	},
 }
 
-func runFloatRange(interp *Interpreter, callNode *ts.Node, args []positionalArg) []RslValue {
+func runFloatRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslValue {
 	var start, end, step float64
 
 	firstArg := args[0]
@@ -85,7 +85,7 @@ func runFloatRange(interp *Interpreter, callNode *ts.Node, args []positionalArg)
 	return result
 }
 
-func runIntRange(interp *Interpreter, callNode *ts.Node, args []positionalArg) []RslValue {
+func runIntRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslValue {
 	var start, end, step int64
 
 	firstArg := args[0]

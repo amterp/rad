@@ -124,6 +124,16 @@ func (m *RslMap) Delete(key RslValue) {
 	}
 }
 
+// fn should return false when it wants to stop. True to continue.
+func (m *RslMap) Range(fn func(key, value RslValue) bool) {
+	for _, key := range m.keys {
+		val := m.mapping[key.Hash()]
+		if !fn(key, val) {
+			return
+		}
+	}
+}
+
 func (m *RslMap) ToString() string {
 	if m.Len() == 0 {
 		return "{ }"

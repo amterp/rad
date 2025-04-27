@@ -333,6 +333,7 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
 	case nil:
+		// todo should I just panic here? fail fast?
 		return RslValue{Val: NewRslString("null")} // todo not good, can't differentiate between string null and actual null
 	default:
 		if i != nil && node != nil {

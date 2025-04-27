@@ -700,7 +700,7 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RslValue, expectReturnValue bool) RslValue {
 	if index.Kind() == rsl.K_CALL {
 		// ufcs
-		ufcsArg := &positionalArg{
+		ufcsArg := &PosArg{
 			// todo 'rootNode' is not great to use, it misses indexes in between that and this call,
 			//  resulting in bad error pointing. could potentially replace ts.Node with interface
 			//  'Pointable' i.e. a range we can point to in an error, that's ultimately all we need (?)

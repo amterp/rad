@@ -111,6 +111,7 @@ const (
 	FUNC_DECODE_BASE64      = "decode_base64"
 	FUNC_ENCODE_BASE16      = "encode_base16"
 	FUNC_DECODE_BASE16      = "decode_base16"
+	FUNC_MAP                = "map"
 
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
@@ -152,20 +153,21 @@ const (
 )
 
 var (
-	NO_POS_ARGS   = NewEnumerableArgSchema([][]RslTypeEnum{})
-	NO_NAMED_ARGS = map[string][]RslTypeEnum{}
+	NO_POS_ARGS         = NewEnumerableArgSchema([][]RslTypeEnum{})
+	NO_NAMED_ARGS       = map[string][]RslTypeEnum{}
+	NO_NAMED_ARGS_INPUT = map[string]namedArg{}
 )
 
 type FuncInvocationArgs struct {
 	i                  *Interpreter
 	callNode           *ts.Node
 	funcName           string
-	args               []positionalArg
+	args               []PosArg
 	namedArgs          map[string]namedArg
 	numExpectedOutputs int
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []positionalArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
 	return FuncInvocationArgs{
 		i:                  i,
 		callNode:           callNode,
@@ -177,7 +179,7 @@ func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, a
 }
 
 type PositionalArgSchema interface {
-	validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg)
+	validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg)
 }
 
 type EnumerablePositionalArgSchema struct {
@@ -188,7 +190,7 @@ func NewEnumerableArgSchema(argTypes [][]RslTypeEnum) PositionalArgSchema {
 	return EnumerablePositionalArgSchema{argTypes: argTypes}
 }
 
-func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
 	maxAcceptableArgs := len(s.argTypes)
 	if len(args) > maxAcceptableArgs {
 		i.errorf(callNode, "%s() requires at most %s, but got %d",
@@ -225,7 +227,7 @@ func NewVarArgSchema(acceptableTypes []RslTypeEnum) PositionalArgSchema {
 	return VarPositionalArgSchema{acceptableTypes: acceptableTypes}
 }
 
-func (s VarPositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+func (s VarPositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
 	if len(s.acceptableTypes) == 0 {
 		// there are no type constraints
 		return
@@ -1688,6 +1690,43 @@ func init() {
 				return newRslValues(f.i, f.callNode, newRslValueStr(decoded))
 			},
 		},
+		{
+			Name:            FUNC_MAP,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  2,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT, RslMapT}, {RslFnT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				collectionArg := f.args[0]
+				fnArg := f.args[1]
+
+				fnNode := fnArg.node
+				fn := fnArg.value.RequireFn(f.i, fnNode)
+				fnName := GetSrc(f.i.sd.Src, fnNode)
+
+				var outputValue RslValue
+				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RslValue, l *RslList) {
+					outputList := NewRslList()
+					for _, val := range l.Values {
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						out := fn.Execute(invocation)
+						outputList.Append(out[0])
+					}
+					outputValue = newRslValue(f.i, f.callNode, outputList)
+				}).ForMap(func(v RslValue, m *RslMap) {
+					outputList := NewRslList()
+					m.Range(func(key, value RslValue) bool {
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						out := fn.Execute(invocation)
+						outputList.Append(out[0])
+						return true // signal to keep going
+					})
+					outputValue = newRslValue(f.i, f.callNode, outputList)
+				}).Visit(collectionArg.value)
+
+				return newRslValues(f.i, f.callNode, outputValue)
+			},
+		},
 	}
 
 	functions = append(functions, createTextAttrFunctions()...)
@@ -1846,7 +1885,7 @@ func runTrim(f FuncInvocationArgs, trimFunc func(str RslString, chars string) Rs
 	return newRslValues(f.i, f.callNode, rslString)
 }
 
-func tryGetArg(idx int, args []positionalArg) *positionalArg {
+func tryGetArg(idx int, args []PosArg) *PosArg {
 	if idx >= len(args) {
 		return nil
 	}

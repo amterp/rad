@@ -21,9 +21,24 @@ var (
 	UP_TO_TWO_RETURN_VALS = []int{1, 2}
 )
 
-type positionalArg struct {
+type PosArg struct {
 	node  *ts.Node
 	value RslValue
+}
+
+func NewPosArg(node *ts.Node, value RslValue) PosArg {
+	return PosArg{
+		node:  node,
+		value: value,
+	}
+}
+
+func NewPosArgs(args ...PosArg) []PosArg {
+	list := make([]PosArg, len(args))
+	for i, arg := range args {
+		list[i] = NewPosArg(arg.node, arg.value)
+	}
+	return list
 }
 
 type namedArg struct {
@@ -36,7 +51,7 @@ type namedArg struct {
 func (i *Interpreter) callFunction(
 	callNode *ts.Node,
 	numExpectedOutputs int,
-	ufcsArg *positionalArg,
+	ufcsArg *PosArg,
 ) []RslValue {
 	funcNameNode := i.getChild(callNode, rsl.F_FUNC)
 	argNodes := i.getChildren(callNode, rsl.F_ARG)
@@ -44,7 +59,7 @@ func (i *Interpreter) callFunction(
 
 	funcName := GetSrc(i.sd.Src, funcNameNode)
 
-	var args []positionalArg
+	var args []PosArg
 	if ufcsArg != nil {
 		args = append(args, *ufcsArg)
 	}
@@ -52,7 +67,7 @@ func (i *Interpreter) callFunction(
 		// TODO 'expected output 1' prevents something like
 		//  `print(function_that_returns_two_values())`, it should just "spread out" the args to print
 		value := i.evaluate(&argNode, 1)[0]
-		args = append(args, positionalArg{node: &argNode, value: value})
+		args = append(args, NewPosArg(&argNode, value))
 	}
 
 	namedArgs := make(map[string]namedArg)
@@ -60,7 +75,7 @@ func (i *Interpreter) callFunction(
 		namedArgNameNode := i.getChild(&namedArgNode, rsl.F_NAME)
 		namedArgValueNode := i.getChild(&namedArgNode, rsl.F_VALUE)
 
-		argName := i.sd.Src[namedArgNameNode.StartByte():namedArgNameNode.EndByte()]
+		argName := GetSrc(i.sd.Src, namedArgNameNode)
 		argValue := i.evaluate(namedArgValueNode, 1)[0]
 		namedArgs[argName] = namedArg{
 			name:      argName,
@@ -91,7 +106,7 @@ func (i *Interpreter) callFunction(
 	return f.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
 }
 
-func assertMinNumPosArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
+func assertMinNumPosArgs(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
 	if len(args) < function.MinPosArgCount {
 		i.errorf(callNode, "%s() requires at least %s, but got %d",
 			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))

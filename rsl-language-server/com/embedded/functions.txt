@@ -46,6 +46,7 @@ load_stash_file
 load_state
 lower
 magenta
+map
 max
 min
 now
