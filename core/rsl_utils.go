@@ -54,6 +54,8 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 		return coerced.ToString()
 	case RslMap:
 		return coerced.ToString()
+	case RslFn:
+		return coerced.ToString()
 	case nil:
 		return "null"
 	default:

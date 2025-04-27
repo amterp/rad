@@ -401,6 +401,10 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		return newRslValues(i, node, rslMap)
 	case rsl.K_CALL:
 		return i.callFunction(node, numExpectedOutputs, nil)
+	case rsl.K_LAMBDA:
+		return newRslValues(i, node, NewLambda(i, node))
+	case rsl.K_FN_BLOCK:
+		return newRslValues(i, node, NewFnBlock(i, node))
 	case rsl.K_LIST_COMPREHENSION:
 		resultExprNode := i.getChild(node, rsl.F_EXPR)
 		conditionNode := i.getChild(node, rsl.F_CONDITION)
@@ -546,7 +550,7 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue) {
 	rootIdentifier := i.getChild(varPathNode, rsl.F_ROOT) // identifier required by grammar
-	rootIdentifierName := i.sd.Src[rootIdentifier.StartByte():rootIdentifier.EndByte()]
+	rootIdentifierName := GetSrc(i.sd.Src, rootIdentifier)
 	indexings := i.getChildren(varPathNode, rsl.F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 

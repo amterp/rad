@@ -28,6 +28,7 @@ func (s *State) addInvalidNodes(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree
 	}
 }
 
+// todo this needs to be updated since lambdas/functions have been added
 func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree) {
 	calls := tree.FindCalls()
 

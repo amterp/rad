@@ -327,17 +327,13 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 	}
 
 	if r.blockType == Display {
-		visitor := NewTypeVisitor(r.i, r.srcExprNode)
-		visitor.VisitList = func(val RslValue, _ *RslList) {
+		NewTypeVisitor(r.i, r.srcExprNode).ForList(func(val RslValue, _ *RslList) {
 			data = RslToJsonType(val)
-		}
-		visitor.VisitMap = func(val RslValue, _ *RslMap) {
+		}).ForMap(func(val RslValue, _ *RslMap) {
 			data = RslToJsonType(val)
-		}
-		visitor.Default = func(val RslValue) {
+		}).ForDefault(func(val RslValue) {
 			r.i.errorf(r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
-		}
-		src.Accept(visitor, true)
+		}).Visit(src)
 		return
 	} else {
 		r.i.errorf(r.srcExprNode, "Bug! Unknown rad block type %q", r.blockType)
@@ -370,7 +366,7 @@ func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName stri
 	for _, val := range column.Values {
 		identifier := mods.lambda.Args[0]
 		i.runWithChildEnv(func() {
-			i.env.SetVarIgnoringEnclosing(identifier, val)
+			i.env.SetVar(identifier, val)
 			newVal := i.evaluate(mods.lambda.ExprNode, 1)[0]
 			newVals = append(newVals, ToPrintableQuoteStr(newVal, false))
 		})

@@ -15,6 +15,7 @@ const (
 	RslBoolT
 	RslListT
 	RslMapT
+	RslFnT // todo update usages of this enum
 )
 
 func (r RslTypeEnum) AsString() string {
@@ -31,6 +32,8 @@ func (r RslTypeEnum) AsString() string {
 		return "list"
 	case RslMapT:
 		return "map"
+	case RslFnT:
+		return "function"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", r))
 		panic(UNREACHABLE)
@@ -113,7 +116,7 @@ const (
 	Display RadBlockType = "display"
 )
 
-type Lambda struct {
+type Lambda struct { // todo delete, replace with RslFn
 	Node     *ts.Node
 	Args     []string
 	ExprNode *ts.Node

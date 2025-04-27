@@ -16,6 +16,7 @@ type RslValue struct {
 	// collections (lists, maps) stored as pointers
 	// lists are *RslList
 	// maps are *RslMap
+	// functions are RslFn
 	Val interface{}
 }
 
@@ -33,6 +34,8 @@ func (v RslValue) Type() RslTypeEnum {
 		return RslListT
 	case *RslMap:
 		return RslMapT
+	case RslFn:
+		return RslFnT
 	default:
 		panic(fmt.Sprintf("Bug! Unhandled RSL type: %T", v.Val))
 	}
@@ -120,6 +123,14 @@ func (v RslValue) TryGetMap() (*RslMap, bool) {
 		return m, true
 	}
 	return nil, false
+}
+
+func (v RslValue) RequireFn(i *Interpreter, node *ts.Node) RslFn {
+	if fn, ok := v.Val.(RslFn); ok {
+		return fn
+	}
+	i.errorf(node, "Expected function, got %q: %s", TypeAsString(v), ToPrintable(v))
+	panic(UNREACHABLE)
 }
 
 func (v RslValue) TryGetFloatAllowingInt() (float64, bool) {
@@ -221,64 +232,66 @@ func (v RslValue) RequireNotType(i *Interpreter, node *ts.Node, errPrefix string
 }
 
 func (v RslValue) TruthyFalsy() bool {
-	switch coerced := v.Val.(type) {
-	case int64:
-		return coerced != 0
-	case float64:
-		return coerced != 0
-	case RslString:
-		return coerced.Plain() != ""
-	case bool:
-		return coerced
-	case *RslList:
-		return coerced.Len() != 0
-	case *RslMap:
-		return coerced.Len() != 0
-	default:
-		panic(fmt.Sprintf("Bug! Unhandled type for TruthyFalsy: %T", v.Val))
-	}
+	out := false
+	NewTypeVisitorUnsafe().ForInt(func(v RslValue, i int64) {
+		out = i != 0
+	}).ForFloat(func(v RslValue, f float64) {
+		out = f != 0
+	}).ForString(func(v RslValue, s RslString) {
+		out = s.Plain() != ""
+	}).ForBool(func(v RslValue, b bool) {
+		out = b
+	}).ForList(func(v RslValue, l *RslList) {
+		out = l.Len() != 0
+	}).ForMap(func(v RslValue, m *RslMap) {
+		out = m.Len() != 0
+	}).Visit(v)
+	return out
 }
 
-func (v RslValue) Accept(visitor *RslTypeVisitor, failIfUnhandled bool) {
+func (v RslValue) Accept(visitor *RslTypeVisitor) {
 	switch coerced := v.Val.(type) {
 	case bool:
-		if visitor.VisitBool != nil {
-			visitor.VisitBool(v, coerced)
+		if visitor.visitBool != nil {
+			visitor.visitBool(v, coerced)
 			return
 		}
 	case int64:
-		if visitor.VisitInt != nil {
-			visitor.VisitInt(v, coerced)
+		if visitor.visitInt != nil {
+			visitor.visitInt(v, coerced)
 			return
 		}
 	case float64:
-		if visitor.VisitFloat != nil {
-			visitor.VisitFloat(v, coerced)
+		if visitor.visitFloat != nil {
+			visitor.visitFloat(v, coerced)
 			return
 		}
 	case RslString:
-		if visitor.VisitString != nil {
-			visitor.VisitString(v, coerced)
+		if visitor.visitString != nil {
+			visitor.visitString(v, coerced)
 			return
 		}
 	case *RslList:
-		if visitor.VisitList != nil {
-			visitor.VisitList(v, coerced)
+		if visitor.visitList != nil {
+			visitor.visitList(v, coerced)
 			return
 		}
 	case *RslMap:
-		if visitor.VisitMap != nil {
-			visitor.VisitMap(v, coerced)
+		if visitor.visitMap != nil {
+			visitor.visitMap(v, coerced)
+			return
+		}
+	case RslFn:
+		if visitor.visitFn != nil {
+			visitor.visitFn(v, coerced)
 			return
 		}
 	}
-	if visitor.Default != nil {
-		visitor.Default(v)
+	if visitor.defaultVisit != nil {
+		visitor.defaultVisit(v)
 		return
 	}
-	if failIfUnhandled {
-		visitor.UnhandledTypeError(v)
-	}
+	visitor.UnhandledTypeError(v)
 }
 
 func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
@@ -305,6 +318,8 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		return RslValue{Val: coerced}
 	case RslMap:
 		return RslValue{Val: &coerced}
+	case RslFn:
+		return RslValue{Val: coerced}
 	case map[string]interface{}:
 		rslMap := NewRslMap()
 		for key, val := range coerced {

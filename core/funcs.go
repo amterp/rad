@@ -159,15 +159,17 @@ var (
 type FuncInvocationArgs struct {
 	i                  *Interpreter
 	callNode           *ts.Node
+	funcName           string
 	args               []positionalArg
 	namedArgs          map[string]namedArg
 	numExpectedOutputs int
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, args []positionalArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []positionalArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
 	return FuncInvocationArgs{
 		i:                  i,
 		callNode:           callNode,
+		funcName:           funcName,
 		args:               args,
 		namedArgs:          namedArgs,
 		numExpectedOutputs: numExpectedOutputs,
@@ -907,27 +909,26 @@ func init() {
 				arg := f.args[0]
 
 				output := int64(0)
-				visitor := NewTypeVisitor(f.i, arg.node)
-				visitor.VisitInt = func(v RslValue, i int64) {
-					output = i
-				}
-				visitor.VisitFloat = func(v RslValue, f float64) {
-					output = int64(f)
-				}
-				visitor.VisitBool = func(v RslValue, b bool) {
-					if b {
-						output = 1
-					} else {
-						output = 0
-					}
-				}
-				visitor.VisitString = func(v RslValue, str RslString) {
-					f.i.errorf(arg.node, "Cannot cast string to int. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_INT)
-				}
-				visitor.Default = func(v RslValue) {
-					f.i.errorf(arg.node, "Cannot cast %q to int", v.Type().AsString())
-				}
-				arg.value.Accept(visitor, true)
+				NewTypeVisitor(f.i, arg.node).
+					ForInt(func(v RslValue, i int64) {
+						output = i
+					}).
+					ForFloat(func(v RslValue, f float64) {
+						output = int64(f)
+					}).
+					ForBool(func(v RslValue, b bool) {
+						if b {
+							output = 1
+						} else {
+							output = 0
+						}
+					}).
+					ForString(func(v RslValue, str RslString) {
+						f.i.errorf(arg.node, "Cannot cast string to int. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_INT)
+					}).
+					ForDefault(func(v RslValue) {
+						f.i.errorf(arg.node, "Cannot cast %q to int", v.Type().AsString())
+					}).Visit(arg.value)
 				return newRslValues(f.i, f.callNode, output)
 			},
 		},
@@ -941,27 +942,27 @@ func init() {
 				arg := f.args[0]
 
 				output := 0.0
-				visitor := NewTypeVisitor(f.i, arg.node)
-				visitor.VisitInt = func(v RslValue, i int64) {
-					output = float64(i)
-				}
-				visitor.VisitFloat = func(v RslValue, f float64) {
-					output = f
-				}
-				visitor.VisitBool = func(v RslValue, b bool) {
-					if b {
-						output = 1.0
-					} else {
-						output = 0.0
-					}
-				}
-				visitor.VisitString = func(v RslValue, str RslString) {
-					f.i.errorf(arg.node, "Cannot cast string to float. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_FLOAT)
-				}
-				visitor.Default = func(v RslValue) {
-					f.i.errorf(arg.node, "Cannot cast %q to float", v.Type().AsString())
-				}
-				arg.value.Accept(visitor, true)
+				NewTypeVisitor(f.i, arg.node).
+					ForInt(func(v RslValue, i int64) {
+						output = float64(i)
+					}).
+					ForFloat(func(v RslValue, f float64) {
+						output = f
+					}).
+					ForBool(func(v RslValue, b bool) {
+						if b {
+							output = 1.0
+						} else {
+							output = 0.0
+						}
+					}).
+					ForString(func(v RslValue, str RslString) {
+						f.i.errorf(arg.node, "Cannot cast string to float. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_FLOAT)
+					}).
+					ForDefault(func(v RslValue) {
+						f.i.errorf(arg.node, "Cannot cast %q to float", v.Type().AsString())
+					}).
+					Visit(arg.value)
 				return newRslValues(f.i, f.callNode, output)
 			},
 		},

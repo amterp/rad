@@ -42,7 +42,7 @@ func (i *Interpreter) callFunction(
 	argNodes := i.getChildren(callNode, rsl.F_ARG)
 	namedArgNodes := i.getChildren(callNode, rsl.F_NAMED_ARG)
 
-	funcName := i.sd.Src[funcNameNode.StartByte():funcNameNode.EndByte()]
+	funcName := GetSrc(i.sd.Src, funcNameNode)
 
 	var args []positionalArg
 	if ufcsArg != nil {
@@ -70,7 +70,14 @@ func (i *Interpreter) callFunction(
 		}
 	}
 
-	f, exists := FunctionsByName[funcName]
+	val, exist := i.env.GetVar(funcName)
+	if exist {
+		// custom function
+		fn := val.RequireFn(i, funcNameNode)
+		return fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+	}
+
+	f, exists := FunctionsByName[funcName] // todo replace this with variable in the environment
 	if !exists {
 		i.errorf(funcNameNode, "Unknown function: %s", funcName)
 		panic(UNREACHABLE)
@@ -81,7 +88,7 @@ func (i *Interpreter) callFunction(
 	assertAllowedNamedArgs(i, callNode, f, namedArgs)
 	assertCorrectNumReturnValues(i, callNode, f, numExpectedOutputs)
 
-	return f.Execute(NewFuncInvocationArgs(i, callNode, args, namedArgs, numExpectedOutputs))
+	return f.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
 }
 
 func assertMinNumPosArgs(i *Interpreter, callNode *ts.Node, function Func, args []positionalArg) {
