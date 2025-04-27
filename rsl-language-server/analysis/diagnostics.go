@@ -28,7 +28,6 @@ func (s *State) addInvalidNodes(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree
 	}
 }
 
-// todo this needs to be updated since lambdas/functions have been added
 func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree) {
 	calls := tree.FindCalls()
 
@@ -45,6 +44,7 @@ func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.Rsl
 
 	for _, node := range unknownFuncNameNodes {
 		rang := lsp.NewRangeFromTsNode(node)
-		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Err, "RSL Language Server", "Unknown function"))
+		// todo this needs to be updated since lambdas/functions have been added. We just warn instead until we have a better script understanding.
+		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Warn, "RSL Language Server", "Non-builtin function"))
 	}
 }
