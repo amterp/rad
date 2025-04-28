@@ -43,6 +43,7 @@ italic
 join
 keys
 len
+load
 load_stash_file
 load_state
 lower

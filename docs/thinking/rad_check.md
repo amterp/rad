@@ -16,6 +16,7 @@ Some things it could check for:
 - ERROR/MISSING nodes in the CST
 - References to unidentified references
 - Invalid `range` constraint e.g. `[2, 1]`
+- Invalid built-in (or custom) function calls (wrong args, etc)
 
 Crucially, we could and **should** share the implementation with our LSP. Whether the LSP directly invokes `rad check`
 or (more realistically) they both invoke shared Go code and simply action the results differently (LSP sends diagnostics,

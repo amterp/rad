@@ -243,6 +243,27 @@ filter(list, fn(v) -> bool) -> list
 filter(map, fn(k, v) -> bool) -> map
 ```
 
+### load
+
+Loads a value into a map. Returns the mapped value.
+
+```
+load(map, key, loader: fn() -> any, reload: bool?, override: any?) -> any
+```
+
+- Examples:
+    - `load(m, k, loader)`
+        - If `m` does not contain `k`, `loader` is run to calculate a value. This value is put into the map under `k` and returned.
+        - If `m` contains `k`, `loader` is ignored, and the existing value is returned.
+    - `load(m, k, loader, reload=true)`
+        - Regardless of if `m` already contains `k`, `loader` is invoked and its value is put into the map for `k` and returned.
+    - `load(m, k, loader, override=myvalue)`
+        - Regardless of if `m` already contains `k`, if `myvalue` is a truthy value, then it is put into `m` under `k` and returned and `loader` is ignored.
+
+`reload` cannot be true with `override` is truthy, that will return an error.
+
+[//]: # (TODO Update that 'truthy' doc when we add nulls and its only null that causes that)
+
 ## Input
 
 ### input

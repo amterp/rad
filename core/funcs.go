@@ -113,6 +113,7 @@ const (
 	FUNC_DECODE_BASE16      = "decode_base16"
 	FUNC_MAP                = "map"
 	FUNC_FILTER             = "filter"
+	FUNC_LOAD               = "load"
 
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
@@ -132,6 +133,10 @@ const (
 	namedArgTickSizeMs     = "tick_size_ms"
 	namedArgNumRandomChars = "num_random_chars"
 	namedArgAlphabet       = "alphabet"
+	namedArgUrlSafe        = "url_safe"
+	namedArgPadding        = "padding"
+	namedArgReload         = "reload"
+	namedArgOverride       = "override"
 
 	constContent      = "content"
 	constSizeBytes    = "size_bytes"
@@ -149,8 +154,6 @@ const (
 	constSha1         = "sha1"
 	constSha256       = "sha256"
 	constSha512       = "sha512"
-	constUrlSafe      = "url_safe"
-	constPadding      = "padding"
 )
 
 var (
@@ -1591,8 +1594,8 @@ func init() {
 				{RslStringT},
 			}),
 			NamedArgs: map[string][]RslTypeEnum{
-				constUrlSafe: {RslBoolT},
-				constPadding: {RslBoolT},
+				namedArgUrlSafe: {RslBoolT},
+				namedArgPadding: {RslBoolT},
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				contentArg := f.args[0]
@@ -1600,12 +1603,12 @@ func init() {
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
 
 				urlSafe := false
-				if arg, exists := f.namedArgs[constUrlSafe]; exists {
+				if arg, exists := f.namedArgs[namedArgUrlSafe]; exists {
 					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
 				}
 
 				padding := true
-				if arg, exists := f.namedArgs[constPadding]; exists {
+				if arg, exists := f.namedArgs[namedArgPadding]; exists {
 					padding = arg.value.RequireBool(f.i, arg.valueNode)
 				}
 
@@ -1629,19 +1632,19 @@ func init() {
 				{RslStringT},
 			}),
 			NamedArgs: map[string][]RslTypeEnum{
-				constUrlSafe: {RslBoolT},
-				constPadding: {RslBoolT},
+				namedArgUrlSafe: {RslBoolT},
+				namedArgPadding: {RslBoolT},
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				input := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
 				urlSafe := false
-				if arg, exists := f.namedArgs[constUrlSafe]; exists {
+				if arg, exists := f.namedArgs[namedArgUrlSafe]; exists {
 					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
 				}
 
 				padding := true
-				if arg, exists := f.namedArgs[constPadding]; exists {
+				if arg, exists := f.namedArgs[namedArgPadding]; exists {
 					padding = arg.value.RequireBool(f.i, arg.valueNode)
 				}
 
@@ -1769,6 +1772,83 @@ func init() {
 				}).Visit(collectionArg.value)
 
 				return newRslValues(f.i, f.callNode, outputValue)
+			},
+		},
+		{
+			Name:           FUNC_LOAD,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 3,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{
+				{RslMapT}, // the map
+				{},        // the key
+				{RslFnT},  // zero‐arg loader function
+			}),
+			NamedArgs: map[string][]RslTypeEnum{
+				namedArgReload:   {RslBoolT},
+				namedArgOverride: {}, // any type
+			},
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				mapArg := f.args[0]
+				keyArg := f.args[1]
+				loaderFnArg := f.args[2]
+
+				m := mapArg.value.RequireMap(f.i, mapArg.node)
+				key := keyArg.value.RequireStr(f.i, keyArg.node).Plain()
+
+				reload := false
+				if a, ok := f.namedArgs[namedArgReload]; ok {
+					reload = a.value.RequireBool(f.i, a.valueNode)
+				}
+				overrideProvided := false
+				var overrideVal RslValue
+				if override, ok := f.namedArgs[namedArgOverride]; ok {
+					overrideProvided = override.value.TruthyFalsy() // todo we need a null type, this is not correct
+					overrideVal = override.value
+				}
+
+				if overrideProvided && reload {
+					f.i.errorf(f.callNode,
+						"Cannot provide values for both %q and %q", namedArgReload, namedArgOverride)
+				}
+
+				// prioritize override
+				if overrideProvided {
+					m.Set(newRslValueStr(key), overrideVal)
+					return newRslValues(f.i, f.callNode, overrideVal)
+				}
+
+				// helper to invoke the loader fn
+				runLoader := func() RslValue {
+					fnNode := loaderFnArg.node
+					fn := loaderFnArg.value.RequireFn(f.i, fnNode)
+					fnName := GetSrc(f.i.sd.Src, fnNode)
+					inv := NewFuncInvocationArgs(
+						f.i,
+						fnNode,
+						fnName,
+						NewPosArgs(), // zero positional args
+						NO_NAMED_ARGS_INPUT,
+						1,
+					)
+					out := fn.Execute(inv)
+					return out[0]
+				}
+
+				// if reload, ignore existing value if present and just load
+				if reload {
+					v := runLoader()
+					m.Set(newRslValueStr(key), v)
+					return newRslValues(f.i, f.callNode, v)
+				}
+
+				if existing, ok := m.Get(newRslValueStr(key)); ok {
+					return newRslValues(f.i, f.callNode, existing)
+				}
+
+				// doesn't exist, so load
+				v := runLoader()
+				m.Set(newRslValueStr(key), v)
+				return newRslValues(f.i, f.callNode, v)
 			},
 		},
 	}

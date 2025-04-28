@@ -6,7 +6,7 @@ require (
 	github.com/amterp/color v1.20.0
 	github.com/amterp/go-tbl v0.9.0
 	github.com/amterp/jsoncolor v0.4.0
-	github.com/amterp/rts v0.0.27
+	github.com/amterp/rts v0.0.28
 	github.com/amterp/stid v1.2.0
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
@@ -23,7 +23,7 @@ require (
 )
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.29 // indirect
+	github.com/amterp/tree-sitter-rsl v0.0.30 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/catppuccin/go v0.2.0 // indirect
