@@ -1051,7 +1051,7 @@
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
 <span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
 <span class="w">    </span><span class="kt">Name</span>:
-<span class="w">        </span>map<span class="w"> </span>n<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
+<span class="w">        </span>map<span class="w"> </span>fn(n)<span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
 <span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_height:
 <span class="w">        </span>sort<span class="w"> </span><span class="kt">Height</span>,<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>
 <span class="w">    </span><span class="k">else</span>:

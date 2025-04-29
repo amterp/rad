@@ -940,6 +940,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      map
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1838,6 +1865,33 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      map
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2663,6 +2717,39 @@ type_of([<span class="mi">2</span>])<span class="w">   </span>//<span class="w">
 <p>Checks if a variable exists.</p>
 <div class="highlight"><pre><span></span><code>is_defined(var: string) -&gt; bool
 </code></pre></div>
+<h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
+<p>Applies a given lambda to every element of a list or entry of a map.</p>
+<div class="highlight"><pre><span></span><code>map(list, fn(v) -&gt; any) -&gt; list[any]
+map(map, fn(k, v) -&gt; any) -&gt; list[any]
+</code></pre></div>
+<h3 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
+<p>Applies a given lambda predicate to every element of a list or entry of a map. Keeps only elements that return true.</p>
+<div class="highlight"><pre><span></span><code>filter(list, fn(v) -&gt; bool) -&gt; list
+filter(map, fn(k, v) -&gt; bool) -&gt; map
+</code></pre></div>
+<h3 id="load">load<a class="headerlink" href="#load" title="Permanent link">&para;</a></h3>
+<p>Loads a value into a map. Returns the mapped value.</p>
+<div class="highlight"><pre><span></span><code>load(map, key, loader: fn() -&gt; any, reload: bool?, override: any?) -&gt; any
+</code></pre></div>
+<ul>
+<li>Examples:<ul>
+<li><code>load(m, k, loader)</code><ul>
+<li>If <code>m</code> does not contain <code>k</code>, <code>loader</code> is run to calculate a value. This value is put into the map under <code>k</code> and returned.</li>
+<li>If <code>m</code> contains <code>k</code>, <code>loader</code> is ignored, and the existing value is returned.</li>
+</ul>
+</li>
+<li><code>load(m, k, loader, reload=true)</code><ul>
+<li>Regardless of if <code>m</code> already contains <code>k</code>, <code>loader</code> is invoked and its value is put into the map for <code>k</code> and returned.</li>
+</ul>
+</li>
+<li><code>load(m, k, loader, override=myvalue)</code><ul>
+<li>Regardless of if <code>m</code> already contains <code>k</code>, if <code>myvalue</code> is a truthy value, then it is put into <code>m</code> under <code>k</code> and returned and <code>loader</code> is ignored.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><code>reload</code> cannot be true with <code>override</code> is truthy, that will return an error.</p>
 <h2 id="input">Input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h2>
 <h3 id="input_1">input<a class="headerlink" href="#input_1" title="Permanent link">&para;</a></h3>
 <p>Get a line of text input from the user.</p>

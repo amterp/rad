@@ -1069,10 +1069,14 @@ Script args:
 Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 <p>Rather than writing out these two commands manually each time, it'd be neat if I had an alias, which not only saved some characters, but did this workflow <em>for</em> me.</p>
 <h3 id="writing-the-script">Writing the script<a class="headerlink" href="#writing-the-script" title="Permanent link">&para;</a></h3>
-<p>We want to be able to invoke the script as <code>brewi</code> from the CLI rather than writing out <code>rad ./brewi</code>, so we start off with a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll"><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-</span></code></pre></div></td></tr></table></div>
-<p>Next, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
+<p>We can use <code>rad</code> to create the script file for us.</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>new<span class="w"> </span>brewi<span class="w"> </span>-s
+</code></pre></div>
+<p>This will set us up with an executable script named <code>brewi</code>, and the <code>-s</code> simplifies the template it's instantiated with to contain <em>just</em> a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
+<p>The shebang will allow us to invoke the script as <code>brewi</code> from the CLI rather than writing out <code>rad ./brewi</code>. Open up <code>brewi</code> in your editor, and you should see something like this:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+</code></pre></div></td></tr></table></div>
+<p>Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
