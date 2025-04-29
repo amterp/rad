@@ -14,7 +14,7 @@ We want a way to statically validate/check scripts without running them. For exa
 Some things it could check for:
 
 - ERROR/MISSING nodes in the CST
-- References to unidentified references
+- References to undefined references
 - Invalid `range` constraint e.g. `[2, 1]`
 - Invalid built-in (or custom) function calls (wrong args, etc)
 

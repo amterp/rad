@@ -7,7 +7,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var FuncSplit = Func{
+var FuncSplit = BuiltInFunc{
 	Name:            FUNC_SPLIT,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,

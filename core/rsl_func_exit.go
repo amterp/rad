@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var FuncExit = Func{
+var FuncExit = BuiltInFunc{
 	Name:            FUNC_EXIT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,

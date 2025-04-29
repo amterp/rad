@@ -9,7 +9,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var FuncSleep = Func{
+var FuncSleep = BuiltInFunc{
 	Name:            FUNC_SLEEP,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,

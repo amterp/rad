@@ -11,7 +11,7 @@ func init() {
 	RNG = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
 
-var FuncSeedRandom = Func{
+var FuncSeedRandom = BuiltInFunc{
 	Name:            FUNC_SEED_RANDOM,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,
@@ -25,7 +25,7 @@ var FuncSeedRandom = Func{
 	},
 }
 
-var FuncRand = Func{
+var FuncRand = BuiltInFunc{
 	Name:            FUNC_RAND,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  0,
@@ -36,7 +36,7 @@ var FuncRand = Func{
 	},
 }
 
-var FuncRandInt = Func{
+var FuncRandInt = BuiltInFunc{
 	Name:            FUNC_RAND_INT,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,

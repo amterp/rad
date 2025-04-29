@@ -183,7 +183,7 @@ func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, a
 }
 
 type PositionalArgSchema interface {
-	validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg)
+	validate(f FuncInvocationArgs, fn *BuiltInFunc)
 }
 
 type EnumerablePositionalArgSchema struct {
@@ -194,11 +194,11 @@ func NewEnumerableArgSchema(argTypes [][]RslTypeEnum) PositionalArgSchema {
 	return EnumerablePositionalArgSchema{argTypes: argTypes}
 }
 
-func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
+func (s EnumerablePositionalArgSchema) validate(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
 	maxAcceptableArgs := len(s.argTypes)
-	if len(args) > maxAcceptableArgs {
-		i.errorf(callNode, "%s() requires at most %s, but got %d",
-			function.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(args))
+	if len(f.args) > maxAcceptableArgs {
+		f.i.errorf(f.callNode, "%s() requires at most %s, but got %d",
+			builtInFunc.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(f.args))
 	}
 
 	for idx, acceptableTypes := range s.argTypes {
@@ -207,17 +207,17 @@ func (s EnumerablePositionalArgSchema) validate(i *Interpreter, callNode *ts.Nod
 			continue
 		}
 
-		if idx >= len(args) {
+		if idx >= len(f.args) {
 			// rest of the args are optional and not supplied
 			break
 		}
 
-		arg := args[idx]
+		arg := f.args[idx]
 		if !lo.Contains(acceptableTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
-			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
-				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
+			f.i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
+				arg.value.Type().AsString(), humanize.Ordinal(idx+1), builtInFunc.Name, acceptable)
 		}
 	}
 }
@@ -231,24 +231,24 @@ func NewVarArgSchema(acceptableTypes []RslTypeEnum) PositionalArgSchema {
 	return VarPositionalArgSchema{acceptableTypes: acceptableTypes}
 }
 
-func (s VarPositionalArgSchema) validate(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
+func (s VarPositionalArgSchema) validate(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
 	if len(s.acceptableTypes) == 0 {
 		// there are no type constraints
 		return
 	}
 
-	for idx, arg := range args {
+	for idx, arg := range f.args {
 		if !lo.Contains(s.acceptableTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(s.acceptableTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
-			i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
-				arg.value.Type().AsString(), humanize.Ordinal(idx+1), function.Name, acceptable)
+			f.i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
+				arg.value.Type().AsString(), humanize.Ordinal(idx+1), builtInFunc.Name, acceptable)
 		}
 	}
 }
 
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
-type Func struct {
+type BuiltInFunc struct {
 	Name            string
 	ReturnValues    []int
 	MinPosArgCount  int
@@ -262,10 +262,10 @@ type Func struct {
 	Execute func(FuncInvocationArgs) []RslValue
 }
 
-var FunctionsByName map[string]Func
+var FunctionsByName map[string]BuiltInFunc
 
 func init() {
-	functions := []Func{
+	functions := []BuiltInFunc{
 		FuncPrint,
 		FuncPPrint,
 		FuncDebug,
@@ -1856,14 +1856,14 @@ func init() {
 	functions = append(functions, createTextAttrFunctions()...)
 	functions = append(functions, createHttpFunctions()...)
 
-	FunctionsByName = make(map[string]Func)
+	FunctionsByName = make(map[string]BuiltInFunc)
 	for _, f := range functions {
 		validateFunction(f, FunctionsByName)
 		FunctionsByName[f.Name] = f
 	}
 }
 
-func validateFunction(f Func, functionsSoFar map[string]Func) {
+func validateFunction(f BuiltInFunc, functionsSoFar map[string]BuiltInFunc) {
 	validator := f.PosArgValidator
 	switch coerced := validator.(type) {
 	case *EnumerablePositionalArgSchema:
@@ -1877,11 +1877,11 @@ func validateFunction(f Func, functionsSoFar map[string]Func) {
 	}
 }
 
-func createTextAttrFunctions() []Func {
+func createTextAttrFunctions() []BuiltInFunc {
 	attrStrs := lo.Values(attrEnumToStrings)
-	funcs := make([]Func, len(attrStrs))
+	funcs := make([]BuiltInFunc, len(attrStrs))
 	for idx, attrStr := range attrStrs {
-		funcs[idx] = Func{
+		funcs[idx] = BuiltInFunc{
 			Name:            attrStr,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,
@@ -1904,7 +1904,7 @@ func createTextAttrFunctions() []Func {
 	return funcs
 }
 
-func createHttpFunctions() []Func {
+func createHttpFunctions() []BuiltInFunc {
 	httpFuncs := []string{
 		FUNC_HTTP_GET,
 		FUNC_HTTP_POST,
@@ -1917,13 +1917,13 @@ func createHttpFunctions() []Func {
 		FUNC_HTTP_CONNECT,
 	}
 
-	funcs := make([]Func, len(httpFuncs))
+	funcs := make([]BuiltInFunc, len(httpFuncs))
 	for idx, httpFunc := range httpFuncs {
 		// todo handle exceptions?
 		//   - auth?
 		//   - query params help?
 		//   - generic http for other/all methods?
-		funcs[idx] = Func{
+		funcs[idx] = BuiltInFunc{
 			Name:            httpFunc,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,

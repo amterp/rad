@@ -8,7 +8,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var FuncPrint = Func{
+var FuncPrint = BuiltInFunc{
 	Name:            FUNC_PRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
@@ -23,7 +23,7 @@ var FuncPrint = Func{
 	},
 }
 
-var FuncPPrint = Func{
+var FuncPPrint = BuiltInFunc{
 	Name:            FUNC_PPRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
@@ -42,7 +42,7 @@ var FuncPPrint = Func{
 	},
 }
 
-var FuncDebug = Func{
+var FuncDebug = BuiltInFunc{
 	Name:            FUNC_DEBUG,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,

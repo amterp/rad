@@ -89,6 +89,7 @@ func (e *Env) PrintShellExports() {
 
 	for _, varName := range keys {
 		val := e.Vars[varName]
+		// type visitor takes a *ts.Node which isn't super applicable here...
 		switch coerced := val.Val.(type) {
 		case RslString, int64, float64, bool:
 			printFunc(varName, ToPrintable(val))
@@ -97,6 +98,8 @@ func (e *Env) PrintShellExports() {
 		case *RslMap:
 			// todo can do some stuff with declare -A ?
 			printFunc(varName, "'"+coerced.ToString()+"'")
+		case RslFn:
+			// skip, doesn't make sense
 		default:
 			RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for shell export: %T", val.Val))
 		}

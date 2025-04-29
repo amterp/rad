@@ -10,7 +10,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var FuncPick = Func{
+var FuncPick = BuiltInFunc{
 	Name:            FUNC_PICK,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
@@ -48,7 +48,7 @@ var FuncPick = Func{
 	},
 }
 
-var FuncPickKv = Func{
+var FuncPickKv = BuiltInFunc{
 	Name:            FUNC_PICK_KV,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,
@@ -91,7 +91,7 @@ var FuncPickKv = Func{
 	},
 }
 
-var FuncPickFromResource = Func{
+var FuncPickFromResource = BuiltInFunc{
 	Name:            FUNC_PICK_FROM_RESOURCE,
 	ReturnValues:    NO_RETURN_LIMIT,
 	MinPosArgCount:  1,

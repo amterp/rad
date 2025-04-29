@@ -41,6 +41,13 @@ func NewInterpreter(scriptData *ScriptData) *Interpreter {
 	return i
 }
 
+func (i *Interpreter) InitBuiltIns() {
+	for name, fn := range FunctionsByName {
+		fnVal := newRslValueFn(NewBuiltIn(fn))
+		i.env.SetVar(name, fnVal)
+	}
+}
+
 func (i *Interpreter) InitArgs(args []RslArg) {
 	env := i.env
 

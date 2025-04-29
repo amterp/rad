@@ -10,12 +10,13 @@ import (
 )
 
 type RslFn struct {
+	BuiltInFunc *BuiltInFunc // if this represents a built-in function
+	// below for non-built-in functions
 	Params     []string
 	Expr       *ts.Node  // for lambdas
 	Body       []ts.Node // for fn blocks
 	ReturnStmt *ts.Node  // for fn blocks
 	Env        *Env      // for closures
-	// todo add something in here to store built-in funcs. also need bool for 'IsBuiltIn'.
 }
 
 func NewLambda(i *Interpreter, lambdaNode *ts.Node) RslFn {
@@ -42,12 +43,26 @@ func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RslFn {
 	}
 }
 
+func NewBuiltIn(inFunc BuiltInFunc) RslFn {
+	return RslFn{
+		BuiltInFunc: &inFunc,
+	}
+}
+
 func (fn RslFn) IsLambda() bool {
 	return fn.Expr != nil
 }
 
 // todo will this be re-used for built-in funcs? probably, but we'll fork off early
 func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
+	if fn.BuiltInFunc != nil {
+		assertMinNumPosArgs(f, fn.BuiltInFunc)
+		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
+		assertAllowedNamedArgs(f, fn.BuiltInFunc)
+		assertCorrectNumReturnValues(f, fn.BuiltInFunc)
+		return fn.BuiltInFunc.Execute(f)
+	}
+
 	i := f.i
 	output := make([]RslValue, 0)
 	i.runWithChildEnv(func() {

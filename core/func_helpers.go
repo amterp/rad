@@ -86,40 +86,32 @@ func (i *Interpreter) callFunction(
 	}
 
 	val, exist := i.env.GetVar(funcName)
-	if exist {
-		// custom function
-		fn := val.RequireFn(i, funcNameNode)
-		return fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+	if !exist {
+		i.errorf(funcNameNode, "Cannot invoke unknown function: %s", funcName)
 	}
 
-	f, exists := FunctionsByName[funcName] // todo replace this with variable in the environment
-	if !exists {
-		i.errorf(funcNameNode, "Unknown function: %s", funcName)
-		panic(UNREACHABLE)
+	fn, ok := val.TryGetFn()
+	if !ok {
+		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	assertMinNumPosArgs(i, callNode, f, args)
-	f.PosArgValidator.validate(i, callNode, f, args)
-	assertAllowedNamedArgs(i, callNode, f, namedArgs)
-	assertCorrectNumReturnValues(i, callNode, f, numExpectedOutputs)
-
-	return f.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+	return fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
 }
 
-func assertMinNumPosArgs(i *Interpreter, callNode *ts.Node, function Func, args []PosArg) {
-	if len(args) < function.MinPosArgCount {
-		i.errorf(callNode, "%s() requires at least %s, but got %d",
-			function.Name, com.Pluralize(function.MinPosArgCount, "argument"), len(args))
+func assertMinNumPosArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
+	if len(f.args) < builtInFunc.MinPosArgCount {
+		f.i.errorf(f.callNode, "%s() requires at least %s, but got %d",
+			builtInFunc.Name, com.Pluralize(builtInFunc.MinPosArgCount, "argument"), len(f.args))
 	}
 }
 
-func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Func, numExpectedReturnValues int) {
-	allowedNumReturnValues := function.ReturnValues
-	if numExpectedReturnValues == NO_NUM_RETURN_VALUES_CONSTRAINT {
+func assertCorrectNumReturnValues(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
+	allowedNumReturnValues := builtInFunc.ReturnValues
+	if f.numExpectedOutputs == NO_NUM_RETURN_VALUES_CONSTRAINT {
 		return
 	}
 
-	if lo.Contains(allowedNumReturnValues, numExpectedReturnValues) {
+	if lo.Contains(allowedNumReturnValues, f.numExpectedOutputs) {
 		return
 	}
 
@@ -130,39 +122,39 @@ func assertCorrectNumReturnValues(i *Interpreter, callNode *ts.Node, function Fu
 	var errMsg string
 	if len(allowedNumReturnValues) == 0 {
 		errMsg = fmt.Sprintf("%s() returns no values, but %s expected",
-			function.Name, com.NumIsAre(numExpectedReturnValues))
+			builtInFunc.Name, com.NumIsAre(f.numExpectedOutputs))
 	} else if len(allowedNumReturnValues) == 1 {
 		errMsg = fmt.Sprintf("%s() returns %s, but %s expected",
-			function.Name, com.Pluralize(allowedNumReturnValues[0], "value"), com.NumIsAre(numExpectedReturnValues))
+			builtInFunc.Name, com.Pluralize(allowedNumReturnValues[0], "value"), com.NumIsAre(f.numExpectedOutputs))
 	} else {
 		// allows different numbers of return values
 		stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
 		allowedReturnNums := strings.Join(stringified, " or ")
 		errMsg = fmt.Sprintf("%s() returns %s values, but %s expected",
-			function.Name, allowedReturnNums, com.NumIsAre(numExpectedReturnValues))
+			builtInFunc.Name, allowedReturnNums, com.NumIsAre(f.numExpectedOutputs))
 	}
-	i.errorf(callNode, errMsg)
+	f.i.errorf(f.callNode, errMsg)
 }
 
-func assertAllowedNamedArgs(i *Interpreter, callNode *ts.Node, function Func, namedArgs map[string]namedArg) {
-	allowedNamedArgs := function.NamedArgs
+func assertAllowedNamedArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
+	allowedNamedArgs := builtInFunc.NamedArgs
 	allowedNames := lo.Keys(allowedNamedArgs)
 
 	// check for invalid names
-	for actualName, arg := range namedArgs {
+	for actualName, arg := range f.namedArgs {
 		if !lo.Contains(allowedNames, actualName) {
-			i.errorf(arg.nameNode, "Unknown named argument %q", actualName)
+			f.i.errorf(arg.nameNode, "Unknown named argument %q", actualName)
 		}
 	}
 
 	// check for invalid types
-	for name, arg := range namedArgs {
+	for name, arg := range f.namedArgs {
 		allowedTypes, _ := allowedNamedArgs[name]
 		if len(allowedTypes) > 0 && !lo.Contains(allowedTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
 				lo.Map(allowedTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
-			i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
-				function.Name, name, arg.value.Type().AsString(), acceptable)
+			f.i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
+				builtInFunc.Name, name, arg.value.Type().AsString(), acceptable)
 		}
 	}
 }

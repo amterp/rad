@@ -17,14 +17,13 @@ quz(4, 10).print()
 	assertNoErrors(t)
 }
 
-func Test_Fn_CanCopyBuiltin(t *testing.T) {
-	t.Skip("TODO not yet expected to pass")
+func Test_Fn_CanCopyBuiltIn(t *testing.T) {
 	rsl := `
 foo = upper
 "test".foo().print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "[ 3, 2 ]\n")
+	assertOnlyOutput(t, stdOutBuffer, "TEST\n")
 	assertNoErrors(t)
 }
 

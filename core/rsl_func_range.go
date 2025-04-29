@@ -7,7 +7,7 @@ import (
 // todo
 //   - somehow improve implementation to be a generator, rather than eagerly created list? chugs at e.g. 100_000
 
-var FuncRange = Func{
+var FuncRange = BuiltInFunc{
 	Name:            FUNC_RANGE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,

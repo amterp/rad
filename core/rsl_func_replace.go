@@ -8,7 +8,7 @@ import (
 
 // Allows capture group replacing, for example
 // replace("Name: abc", "a(b)c", "$1o$1") will return "Name: bobby"
-var FuncReplace = Func{
+var FuncReplace = BuiltInFunc{
 	Name:            FUNC_REPLACE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  3,

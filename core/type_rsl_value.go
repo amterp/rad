@@ -126,11 +126,19 @@ func (v RslValue) TryGetMap() (*RslMap, bool) {
 }
 
 func (v RslValue) RequireFn(i *Interpreter, node *ts.Node) RslFn {
-	if fn, ok := v.Val.(RslFn); ok {
+	if fn, ok := v.TryGetFn(); ok {
 		return fn
 	}
 	i.errorf(node, "Expected function, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
+}
+
+func (v RslValue) TryGetFn() (RslFn, bool) {
+	if fn, ok := v.Val.(RslFn); ok {
+		return fn, true
+	}
+	var zero RslFn
+	return zero, false
 }
 
 func (v RslValue) TryGetFloatAllowingInt() (float64, bool) {
@@ -382,5 +390,9 @@ func newRslValueMap(val *RslMap) RslValue {
 }
 
 func newRslValueList(val *RslList) RslValue {
+	return newRslValue(nil, nil, val)
+}
+
+func newRslValueFn(val RslFn) RslValue {
 	return newRslValue(nil, nil, val)
 }
