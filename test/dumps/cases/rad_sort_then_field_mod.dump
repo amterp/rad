@@ -34,7 +34,7 @@ B: [44, 45] PS: [3,  6] PE: [3,  7]       : `:`
 B: [54, 69] PS: [4,  8] PE: [4, 23]       mod_stmt: rad_field_mod_map
 B: [54, 57] PS: [4,  8] PE: [4, 11]         map `map`
 B: [58, 69] PS: [4, 12] PE: [4, 23]         lambda: lambda
-B: [58, 60] PS: [4, 12] PE: [4, 14]           fn `fn`
+B: [58, 60] PS: [4, 12] PE: [4, 14]           keyword: fn `fn`
 B: [60, 61] PS: [4, 14] PE: [4, 15]           ( `(`
 B: [61, 62] PS: [4, 15] PE: [4, 16]           param: identifier `n`
 B: [62, 63] PS: [4, 16] PE: [4, 17]           ) `)`

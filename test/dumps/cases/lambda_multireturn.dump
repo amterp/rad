@@ -27,7 +27,7 @@ B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                   delegate: 
 B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                     delegate: mult_expr
 B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                       delegate: unary_expr
 B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                         delegate: lambda
-B: [ 8, 10] PS: [0,  8] PE: [0, 10]                                           fn `fn`
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                                           keyword: fn `fn`
 B: [10, 12] PS: [0, 10] PE: [0, 12]                                           () `()`
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                           expr: expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                             ternary_expr
@@ -73,7 +73,7 @@ B: [27, 38] PS: [1,  8] PE: [1, 19]                                   delegate: 
 B: [27, 38] PS: [1,  8] PE: [1, 19]                                     delegate: mult_expr
 B: [27, 38] PS: [1,  8] PE: [1, 19]                                       delegate: unary_expr
 B: [27, 38] PS: [1,  8] PE: [1, 19]                                         delegate: lambda
-B: [27, 29] PS: [1,  8] PE: [1, 10]                                           fn `fn`
+B: [27, 29] PS: [1,  8] PE: [1, 10]                                           keyword: fn `fn`
 B: [29, 31] PS: [1, 10] PE: [1, 12]                                           () `()`
 B: [32, 33] PS: [1, 13] PE: [1, 14]                                           ( `(`
 B: [33, 34] PS: [1, 14] PE: [1, 15]                                           expr: expr
