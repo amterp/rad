@@ -11,6 +11,11 @@ args:
 if add_extension and not ends_with(path, ".rsl"):
     path += ".rsl"
 
+p = get_path(path)
+if p:
+    print(red("Path '{path}' already exists"))
+    exit(1)
+
 $!`touch {path}`
 contents = r"""
 #!/usr/bin/env rad
