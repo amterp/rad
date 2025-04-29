@@ -80,6 +80,8 @@ func TypeAsString(val interface{}) string {
 		return "list"
 	case RslMap, *RslMap:
 		return "map"
+	case RslFn:
+		return "function"
 	case nil:
 		return "null"
 	default:

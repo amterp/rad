@@ -13,7 +13,9 @@ type RslFn struct {
 	BuiltInFunc *BuiltInFunc // if this represents a built-in function
 	// below for non-built-in functions
 	Params     []string
-	Expr       *ts.Node  // for lambdas
+	ReprNode   *ts.Node  // representative node (can point at this for errors)
+	Exprs      []ts.Node // for returning lambdas
+	Stmt       *ts.Node  // for stmt lambdas
 	Body       []ts.Node // for fn blocks
 	ReturnStmt *ts.Node  // for fn blocks
 	Env        *Env      // for closures
@@ -22,21 +24,24 @@ type RslFn struct {
 func NewLambda(i *Interpreter, lambdaNode *ts.Node) RslFn {
 	paramNodes := i.getChildren(lambdaNode, rsl.F_PARAM)
 	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
-	exprNode := i.getChild(lambdaNode, rsl.F_EXPR)
 	return RslFn{
-		Params: params,
-		Expr:   exprNode,
-		Env:    i.env,
+		Params:   params,
+		ReprNode: lambdaNode,
+		Exprs:    i.getChildren(lambdaNode, rsl.F_EXPR),
+		Stmt:     i.getChild(lambdaNode, rsl.F_STMT),
+		Env:      i.env,
 	}
 }
 
 func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RslFn {
+	keywordNode := i.getChild(fnBlockNode, rsl.F_KEYWORD)
 	paramNodes := i.getChildren(fnBlockNode, rsl.F_PARAM)
 	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
 	stmtNodes := i.getChildren(fnBlockNode, rsl.F_STMT)
 	returnNode := i.getChild(fnBlockNode, rsl.F_RETURN_STMT)
 	return RslFn{
 		Params:     params,
+		ReprNode:   keywordNode,
 		Body:       stmtNodes,
 		ReturnStmt: returnNode,
 		Env:        i.env,
@@ -50,7 +55,7 @@ func NewBuiltIn(inFunc BuiltInFunc) RslFn {
 }
 
 func (fn RslFn) IsLambda() bool {
-	return fn.Expr != nil
+	return len(fn.Exprs) > 0 || fn.Stmt != nil
 }
 
 // todo will this be re-used for built-in funcs? probably, but we'll fork off early
@@ -73,7 +78,14 @@ func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
 		}
 
 		if fn.IsLambda() {
-			output = i.evaluate(fn.Expr, NO_NUM_RETURN_VALUES_CONSTRAINT)
+			if len(fn.Exprs) > 0 {
+				for _, exprNode := range fn.Exprs {
+					val := i.evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+					output = append(output, val...) // todo dunno about this splatter
+				}
+			} else {
+				i.recursivelyRun(fn.Stmt)
+			}
 		} else {
 			i.runBlock(fn.Body)
 

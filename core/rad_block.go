@@ -31,7 +31,7 @@ type radInvocation struct {
 type radFieldMods struct {
 	identifierNode *ts.Node
 	colors         []radColorMod
-	lambda         *Lambda
+	lambda         *RslFn
 }
 
 func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
@@ -174,18 +174,26 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			case rsl.K_RAD_FIELD_MOD_MAP:
 				lambdaNode := r.i.getChild(&stmtNode, rsl.F_LAMBDA)
-				lambdaParamNodes := r.i.getChildren(lambdaNode, rsl.F_PARAM)
-				var lambdaParams []string
-				for _, lambdaParamNode := range lambdaParamNodes {
-					lambdaParam := r.i.sd.Src[lambdaParamNode.StartByte():lambdaParamNode.EndByte()]
-					lambdaParams = append(lambdaParams, lambdaParam)
+
+				var lambda RslFn
+				if lambdaNode.Kind() == rsl.K_LAMBDA {
+					lambda = NewLambda(r.i, lambdaNode)
+				} else if lambdaNode.Kind() == rsl.K_FN_BLOCK {
+					lambda = NewFnBlock(r.i, lambdaNode)
+				} else if lambdaNode.Kind() == rsl.K_IDENTIFIER {
+					identifier := GetSrc(r.i.sd.Src, lambdaNode)
+					val, ok := r.i.env.GetVar(identifier)
+					if !ok {
+						r.i.errorf(lambdaNode, "Undefined lambda %q", identifier)
+					}
+					lambda, ok = val.TryGetFn()
+					if !ok {
+						r.i.errorf(lambdaNode, "Expected function, got '%s'", TypeAsString(val))
+					}
+				} else {
+					r.i.errorf(lambdaNode, "Bug! Unknown lambda type %q", lambdaNode.Kind())
 				}
-				exprNode := r.i.getChild(lambdaNode, rsl.F_EXPR)
-				lambda := Lambda{
-					Node:     lambdaNode,
-					Args:     lambdaParams,
-					ExprNode: exprNode,
-				}
+
 				for _, field := range fields {
 					mods := r.loadFieldMods(field)
 					mods.lambda = &lambda
@@ -362,14 +370,13 @@ func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName stri
 	if !ok || mods.lambda == nil {
 		return ToStringArrayQuoteStr(column.Values, false)
 	}
+
+	reprNode := mods.lambda.ReprNode
 	var newVals []string
 	for _, val := range column.Values {
-		identifier := mods.lambda.Args[0]
-		i.runWithChildEnv(func() {
-			i.env.SetVar(identifier, val)
-			newVal := i.evaluate(mods.lambda.ExprNode, 1)[0]
-			newVals = append(newVals, ToPrintableQuoteStr(newVal, false))
-		})
+		mapped := mods.lambda.Execute(NewFuncInvocationArgs(i, reprNode, "map", NewPosArgs(NewPosArg(reprNode, val)), NO_NAMED_ARGS_INPUT, 1))[0]
+		newVals = append(newVals, ToPrintableQuoteStr(mapped, false))
 	}
+
 	return newVals
 }

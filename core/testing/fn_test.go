@@ -105,3 +105,102 @@ bar.print()
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Fn_CanMultiReturn(t *testing.T) {
+	rsl := `
+foo = fn() (1, 2)
+a, b = foo()
+print(a, b)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `1 2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fn_Increment(t *testing.T) {
+	rsl := `
+c = 0
+foo = fn() c++
+for _ in range(10):
+	foo()
+print(c)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `10
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fn_CompoundIncr(t *testing.T) {
+	rsl := `
+c = 0
+foo = fn() c += 2
+for _ in range(10):
+	foo()
+print(c)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `20
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fn_RadBlockLambda(t *testing.T) {
+	rsl := `
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map fn(n) n.upper()
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `name 
+ALEX  
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fn_RadBlockIdentifier(t *testing.T) {
+	rsl := `
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map upper
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `name 
+ALEX  
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fn_RadBlockBlock(t *testing.T) {
+	rsl := `
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map fn(n):
+            out = n.upper()
+            return out
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `name 
+ALEX  
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
