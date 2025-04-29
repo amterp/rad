@@ -34,7 +34,11 @@ func (e *Env) NewChildEnv() Env {
 }
 
 func (e *Env) SetVar(name string, v RslValue) {
-	e.setVar(name, v)
+	e.SetVarUpdatingEnclosing(name, v, false)
+}
+
+func (e *Env) SetVarUpdatingEnclosing(name string, v RslValue, updateEnclosing bool) {
+	e.setVar(name, v, updateEnclosing)
 }
 
 func (e *Env) GetVar(name string) (RslValue, bool) {
@@ -71,7 +75,14 @@ func (e *Env) GetJsonFieldVar(name string) (*JsonFieldVar, bool) {
 	return nil, false
 }
 
-func (e *Env) setVar(name string, v RslValue) {
+func (e *Env) setVar(name string, v RslValue, updateEnclosing bool) {
+	if e.Enclosing != nil && updateEnclosing {
+		if _, exists := e.Enclosing.Vars[name]; exists {
+			e.Enclosing.setVar(name, v, updateEnclosing)
+			return
+		}
+	}
+
 	if v == NIL_SENTINAL {
 		delete(e.Vars, name)
 	} else {

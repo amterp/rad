@@ -38,13 +38,13 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 	result := i.executeShellCmd(shellCmdNode, len(leftVarPathNodes))
 
 	if numExpectedOutputs >= 1 {
-		i.doVarPathAssign(&leftVarPathNodes[0], newRslValue(i, shellCmdNode, result.exitCode))
+		i.doVarPathAssign(&leftVarPathNodes[0], newRslValue(i, shellCmdNode, result.exitCode), false)
 	}
 	if numExpectedOutputs >= 2 {
-		i.doVarPathAssign(&leftVarPathNodes[1], newRslValue(i, shellCmdNode, *result.stdout))
+		i.doVarPathAssign(&leftVarPathNodes[1], newRslValue(i, shellCmdNode, *result.stdout), false)
 	}
 	if numExpectedOutputs >= 3 {
-		i.doVarPathAssign(&leftVarPathNodes[2], newRslValue(i, shellCmdNode, *result.stderr))
+		i.doVarPathAssign(&leftVarPathNodes[2], newRslValue(i, shellCmdNode, *result.stderr), false)
 	}
 
 	if result.exitCode != 0 {

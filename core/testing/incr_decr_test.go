@@ -98,10 +98,10 @@ a = 1
 a++++
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `Error at L3:1
+	expected := `Error at L3:4
 
   a++++
-  ^^^^^ Invalid syntax
+     ^^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }
@@ -112,10 +112,10 @@ a = 1
 a----
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `Error at L3:1
+	expected := `Error at L3:4
 
   a----
-  ^^^^^ Invalid syntax
+     ^^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }
@@ -126,10 +126,10 @@ a = 1
 a++--
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `Error at L3:1
+	expected := `Error at L3:4
 
   a++--
-  ^^^^^ Invalid syntax
+     ^^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }
@@ -140,10 +140,10 @@ a = 1
 a--++
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `Error at L3:1
+	expected := `Error at L3:4
 
   a--++
-  ^^^^^ Invalid syntax
+     ^^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }

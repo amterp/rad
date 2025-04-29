@@ -115,7 +115,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		rightNode := i.getChild(node, rsl.F_RIGHT)
 		opNode := i.getChild(node, rsl.F_OP)
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
-		i.doVarPathAssign(leftVarPathNode, newValue)
+		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rsl.K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
 	case rsl.K_BREAK_STMT:
@@ -229,7 +229,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	case rsl.K_DEL_STMT:
 		rightVarPathNodes := i.getChildren(node, rsl.F_RIGHT)
 		for _, rightVarPathNode := range rightVarPathNodes {
-			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL)
+			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL, true)
 		}
 	case rsl.K_RAD_BLOCK:
 		i.runRadBlock(node)
@@ -237,7 +237,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		leftVarPathNode := i.getChild(node, rsl.F_LEFT)
 		opNode := i.getChild(node, rsl.F_OP)
 		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
-		i.doVarPathAssign(leftVarPathNode, newValue)
+		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
@@ -555,7 +555,7 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
 }
 
-func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue) {
+func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue, updateEnclosing bool) {
 	rootIdentifier := i.getChild(varPathNode, rsl.F_ROOT) // identifier required by grammar
 	rootIdentifierName := GetSrc(i.sd.Src, rootIdentifier)
 	indexings := i.getChildren(varPathNode, rsl.F_INDEXING)
@@ -563,7 +563,7 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue)
 
 	if len(indexings) == 0 {
 		// simple assignment, no collection lookups
-		i.env.SetVar(rootIdentifierName, rightValue)
+		i.env.SetVarUpdatingEnclosing(rootIdentifierName, rightValue, updateEnclosing)
 		return
 	}
 
@@ -757,7 +757,7 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 			continue
 		}
 		leftVarPathNode := &leftNodes[idx]
-		i.doVarPathAssign(leftVarPathNode, output)
+		i.doVarPathAssign(leftVarPathNode, output, false)
 	}
 }
 
