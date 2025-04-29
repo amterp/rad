@@ -161,6 +161,8 @@ func precedence(i *Interpreter, fieldNode *ts.Node, v RslValue) int {
 		return 3
 	case RslMapT:
 		return 4
+	case RslFnT:
+		return 5
 	default:
 		i.errorf(fieldNode, "Unsupported type precedence for sorting")
 		panic(UNREACHABLE)
