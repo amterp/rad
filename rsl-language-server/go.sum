@@ -1,9 +1,9 @@
 github.com/amterp/color v1.20.0 h1:3qR8miQeGMfd++ExLt5xUdMWWYYwohdix6jLMSyXbWM=
 github.com/amterp/color v1.20.0/go.mod h1:XRJ2OonPd9eRKRg6ddVJc6Yv/rvjzMhn+qdIDHKjE04=
-github.com/amterp/rts v0.0.29 h1:6w2JsIX9NQ9s0fzSBjkYgAmQyRlpbveKYjuma4Mrhpw=
-github.com/amterp/rts v0.0.29/go.mod h1:JBeWkZMgxZbludA5TvVhLE85zJCe1SB9OeGFI5s3XdE=
-github.com/amterp/tree-sitter-rsl v0.0.31 h1:B6/KHMWdGILUVPq9T7HIZdvKldhFSMOM3hgK55VCGuw=
-github.com/amterp/tree-sitter-rsl v0.0.31/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
+github.com/amterp/rts v0.0.30 h1:FmG/xy6kJRU4d1OHQRi64bO5b3EeHAJwmiASQwaP4cc=
+github.com/amterp/rts v0.0.30/go.mod h1:p06FnB3/gJG8usupqMQiDRrZk0A6LD1/vHA5sOlIjuY=
+github.com/amterp/tree-sitter-rsl v0.0.32 h1:XDOOKFB/ebCSypZil3rtVihqSQKFnihVe0Uz5/pY2gg=
+github.com/amterp/tree-sitter-rsl v0.0.32/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
