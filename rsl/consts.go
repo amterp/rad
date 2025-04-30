@@ -20,6 +20,7 @@ const (
 	K_BOOL                    = "bool"
 	K_FLOAT                   = "float"
 	K_LIST                    = "list"
+	K_NULL                    = "null"
 	K_CALL                    = "call"
 	K_OR_EXPR                 = "or_expr"
 	K_AND_EXPR                = "and_expr"
