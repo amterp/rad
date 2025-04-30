@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-func (r *RadRunner) RunUsage(isErr bool) {
+func (r *RadRunner) RunUsage(shortHelp, isErr bool) {
 	if r.scriptData == nil {
 		r.printScriptlessUsage(isErr)
 	} else {
-		r.printScriptUsage(isErr)
+		r.printScriptUsage(shortHelp, isErr)
 	}
 }
 
-func (r *RadRunner) RunUsageExit() {
-	r.RunUsage(false)
+func (r *RadRunner) RunUsageExit(shortHelp bool) {
+	r.RunUsage(shortHelp, false)
 	if FlagShell.Value {
 		RP.PrintForShellEval("exit 0")
 	}
@@ -45,7 +45,7 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	r.printHelpFromBuffer(buf, isErr)
 }
 
-func (r *RadRunner) printScriptUsage(isErr bool) {
+func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	buf := new(bytes.Buffer)
 
 	if r.scriptData.Description != nil {
@@ -70,16 +70,20 @@ func (r *RadRunner) printScriptUsage(isErr bool) {
 			com.CyanF(buf, fmt.Sprintf(" <%s>", arg.ApiName))
 		}
 	}
-	fmt.Fprintf(buf, "\n\n")
-
-	com.GreenBoldF(buf, "Script args:\n")
-	flagUsage(buf, r.scriptArgs)
 
 	fmt.Fprintf(buf, "\n")
 
-	// todo probably don't print these if there's a script? Or only minimal ones if --help is passed (not -h) ?
-	com.GreenBoldF(buf, "Global flags:\n")
-	flagUsage(buf, r.globalFlags)
+	if len(r.scriptArgs) > 0 {
+		fmt.Fprintf(buf, "\n")
+		com.GreenBoldF(buf, "Script args:\n")
+		flagUsage(buf, r.scriptArgs)
+	}
+
+	if !shortHelp {
+		fmt.Fprintf(buf, "\n")
+		com.GreenBoldF(buf, "Global flags:\n")
+		flagUsage(buf, r.globalFlags)
+	}
 
 	r.printHelpFromBuffer(buf, isErr)
 }

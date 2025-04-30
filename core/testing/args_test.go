@@ -28,8 +28,7 @@ func TestArgs_ApiRenameUsageString(t *testing.T) {
 
 Script args:
   -x, --bar string   
-
-` + scriptGlobalFlagHelp
+`
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
@@ -47,8 +46,7 @@ args:
 Script args:
       --mandatory string   
       --optional int        (default 10)
-
-` + scriptGlobalFlagHelp
+`
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
@@ -283,7 +281,23 @@ args:
 	assertError(t, 1, expected)
 }
 
-func TestArgs_Help(t *testing.T) {
+func TestArgs_FullHelp(t *testing.T) {
+	rsl := `
+args:
+	name string # The name.
+`
+	setupAndRunCode(t, rsl, "--help", "--color=never")
+	expected := `Usage:
+  <name>
+
+Script args:
+      --name string   The name.
+
+` + scriptGlobalFlagHelp
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func TestArgs_ShortHelp(t *testing.T) {
 	rsl := `
 args:
 	name string # The name.
@@ -294,6 +308,28 @@ args:
 
 Script args:
       --name string   The name.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func TestArgs_ShortHelpNoArgs(t *testing.T) {
+	rsl := `
+print("hi")
+`
+	setupAndRunCode(t, rsl, "-h", "--color=never")
+	expected := `Usage:
+ 
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func TestArgs_FullHelpNoArgs(t *testing.T) {
+	rsl := `
+print("hi")
+`
+	setupAndRunCode(t, rsl, "--help", "--color=never")
+	expected := `Usage:
+ 
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -324,8 +360,7 @@ Script args:
       --intArrayArg int,int             (default [2, 3])
       --floatArrayArg float,float       (default [2.1, 3.1])
       --boolArrayArg bool,bool          (default [true, false])
-
-` + scriptGlobalFlagHelp
+`
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
 

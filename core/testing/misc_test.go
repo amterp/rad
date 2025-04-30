@@ -127,7 +127,7 @@ func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
 args:
 	src string
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("src")
 	expected := `Usage:
   <src>
@@ -145,7 +145,7 @@ func Test_Misc_CanShadowGlobalFlagThatHasShorthand(t *testing.T) {
 args:
 	debug string
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
   -h, --help            Print usage string.
   -d                    Enables debug output. Intended for RSL script developers.
@@ -170,7 +170,7 @@ func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
 args:
 	myquiet q string
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
   -h, --help            Print usage string.
   -d, --debug           Enables debug output. Intended for RSL script developers.
@@ -195,7 +195,7 @@ func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
 args:
 	version v string
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("version")
 	expected := `Usage:
   <version>

@@ -123,7 +123,8 @@ func (r *RadRunner) Run() error {
 	// determine if we should run help/version or not
 
 	if FlagHelp.Value {
-		r.RunUsageExit()
+		shortHelp := !lo.Contains(os.Args[1:], "--help")
+		r.RunUsageExit(shortHelp)
 	}
 
 	if FlagVersion.Value {
@@ -143,7 +144,7 @@ func (r *RadRunner) Run() error {
 		}
 
 		// no flags, effectively, just print the basic usage
-		r.RunUsageExit()
+		r.RunUsageExit(false)
 	}
 
 	// from now on, assume we have a script name (or command)
@@ -227,7 +228,7 @@ func (r *RadRunner) Run() error {
 	if len(missingArgs) > 0 && len(args) == 0 && !atLeastOneFlagConfigured {
 		// if no args were passed but some are required, treat that as the user not really trying to use the script
 		// but instead just asking for help
-		r.RunUsageExit()
+		r.RunUsageExit(true)
 	}
 
 	// error if not all positional args were used
@@ -274,7 +275,7 @@ func (r *RadRunner) setUpGlobals() {
 	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
 
 	RFlagSet.Usage = func() {
-		r.RunUsage(false)
+		r.RunUsage(false, false)
 	}
 
 	r.globalFlags = CreateAndRegisterGlobalFlags()

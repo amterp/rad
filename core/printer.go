@@ -250,7 +250,7 @@ func (p *stdPrinter) RadErrorExit(msg string) {
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg+"\n\n")
-	p.runner.RunUsage(true)
+	p.runner.RunUsage(false, true)
 	p.printShellExitIfEnabled()
 	p.errorExit(1)
 }

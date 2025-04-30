@@ -1349,7 +1349,7 @@ func init() {
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				// defaults
 				config := stid.NewConfig().
-					WithTickSize(stid.Decisecond).
+					WithTickSize(stid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
 					WithNumRandomChars(5).
 					WithAlphabet(stid.Base62Alphabet)
 

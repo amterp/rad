@@ -524,10 +524,10 @@ uuid_v7() -> string
 
 ### gen_stid
 
-Generate a random [Short Time ID](https://github.com/amterp/stid) (STID).
+Generate a random [short time ID](https://github.com/amterp/stid) (stid).
 
 ```rsl
-gen_stid(alphabet: string, time_granularity: int = 100, num_random_chars: int = 5) -> string
+gen_stid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -> string
 ```
 
 `alphabet` defaults to base-62 (`[0-9] [A-Z] [a-z]`).
