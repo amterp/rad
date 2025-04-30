@@ -25,6 +25,7 @@ type RslTypeVisitor struct {
 	visitList    func(RslValue, *RslList)
 	visitMap     func(RslValue, *RslMap)
 	visitFn      func(RslValue, RslFn)
+	visitNull    func(RslValue, RslNull)
 	defaultVisit func(RslValue)
 }
 

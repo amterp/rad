@@ -268,18 +268,18 @@ pprint(node[0])
         "name": "Alice"
       },
       {
-        "height": "null",
+        "height": null,
         "id": 3,
         "name": "Charlie"
       },
-      "null"
+      null
     ],
     "height": 1.8,
     "id": 2,
     "name": "Bob",
     "old": false
   },
-  "null"
+  null
 ]
 `
 	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/lots_of_types.json", "--color=never")

@@ -56,7 +56,7 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 		return coerced.ToString()
 	case RslFn:
 		return coerced.ToString()
-	case nil:
+	case RslNull:
 		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for printable: %T", val))
@@ -82,7 +82,7 @@ func TypeAsString(val interface{}) string {
 		return "map"
 	case RslFn:
 		return "function"
-	case nil:
+	case RslNull:
 		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TypeAsString: %T\n%s\n", val, debug.Stack()))
@@ -137,7 +137,7 @@ func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RslVal
 		}
 		return newRslValue(i, node, m)
 	case nil:
-		return newRslValue(i, node, "nil")
+		return newRslValue(i, node, nil)
 	default:
 		i.errorf(node, fmt.Sprintf("Unhandled type in array: %T", val))
 		panic(UNREACHABLE)
@@ -174,7 +174,7 @@ func RslToJsonType(arg RslValue) interface{} {
 			mapping[ToPrintableQuoteStr(key, false)] = RslToJsonType(value)
 		}
 		return mapping
-	case nil:
+	case RslNull:
 		return nil
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T\n%s\n", arg.Val, debug.Stack()))

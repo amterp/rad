@@ -151,18 +151,20 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RslValue) int {
 
 func precedence(i *Interpreter, fieldNode *ts.Node, v RslValue) int {
 	switch v.Type() {
-	case RslBoolT:
+	case RslNullT:
 		return 0
-	case RslIntT, RslFloatT:
+	case RslBoolT:
 		return 1
-	case RslStringT:
+	case RslIntT, RslFloatT:
 		return 2
-	case RslListT:
+	case RslStringT:
 		return 3
-	case RslMapT:
+	case RslListT:
 		return 4
-	case RslFnT:
+	case RslMapT:
 		return 5
+	case RslFnT:
+		return 6
 	default:
 		i.errorf(fieldNode, "Unsupported type precedence for sorting")
 		panic(UNREACHABLE)

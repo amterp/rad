@@ -352,6 +352,9 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asBool, _ := strconv.ParseBool(asStr)
 		return newRslValues(i, node, asBool)
+	case rsl.K_NULL:
+		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
+		return newRslValues(i, node, nil)
 	case rsl.K_STRING_CONTENT:
 		src := i.sd.Src[node.StartByte():node.EndByte()]
 		return newRslValues(i, node, src)

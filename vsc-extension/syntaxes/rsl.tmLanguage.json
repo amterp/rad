@@ -42,6 +42,9 @@
 					"include": "#bools"
 				},
 				{
+					"include": "#null"
+				},
+				{
 					"include": "#types"
 				},
 				{
@@ -96,6 +99,9 @@
 				},
 				{
 					"include": "#bools"
+				},
+				{
+					"include": "#null"
 				},
 				{
 					"include": "#types"
@@ -179,6 +185,14 @@
 				{
 					"name": "constant.numeric.float.rsl",
 					"match": "\\b\\d(_?\\d+)*((\\.\\d(_?\\d+)*([eE][+-]?\\d(_?\\d+)*)?)|([eE][+-]?\\d(_?\\d+)*))\\b"
+				}
+			]
+		},
+		"null": {
+			"patterns": [
+				{
+					"name": "constant.language.null.rsl",
+					"match": "\\b(null)\\b"
 				}
 			]
 		},

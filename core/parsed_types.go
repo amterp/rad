@@ -15,7 +15,8 @@ const (
 	RslBoolT
 	RslListT
 	RslMapT
-	RslFnT // todo update usages of this enum
+	RslFnT
+	RslNullT
 )
 
 func (r RslTypeEnum) AsString() string {
@@ -34,6 +35,8 @@ func (r RslTypeEnum) AsString() string {
 		return "map"
 	case RslFnT:
 		return "function"
+	case RslNullT:
+		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", r))
 		panic(UNREACHABLE)

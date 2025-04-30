@@ -17,6 +17,7 @@ type RslValue struct {
 	// lists are *RslList
 	// maps are *RslMap
 	// functions are RslFn
+	// nulls are RslNull
 	Val interface{}
 }
 
@@ -35,7 +36,9 @@ func (v RslValue) Type() RslTypeEnum {
 	case *RslMap:
 		return RslMapT
 	case RslFn:
-		return RslFnT
+		return RslFnT // todo add to equals, hash in this file
+	case RslNull:
+		return RslNullT
 	default:
 		panic(fmt.Sprintf("Bug! Unhandled RSL type: %T", v.Val))
 	}
@@ -212,6 +215,9 @@ func (left RslValue) Equals(right RslValue) bool {
 	case *RslMap:
 		coercedRight := right.Val.(*RslMap)
 		return coercedLeft.Equals(coercedRight)
+	case RslNull:
+		// we know they're both null, so true
+		return true
 	default:
 		return false
 	}
@@ -294,6 +300,11 @@ func (v RslValue) Accept(visitor *RslTypeVisitor) {
 			visitor.visitFn(v, coerced)
 			return
 		}
+	case RslNull:
+		if visitor.visitNull != nil {
+			visitor.visitNull(v, coerced)
+			return
+		}
 	}
 	if visitor.defaultVisit != nil {
 		visitor.defaultVisit(v)
@@ -341,8 +352,7 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
 	case nil:
-		// todo should I just panic here? fail fast?
-		return RslValue{Val: NewRslString("null")} // todo not good, can't differentiate between string null and actual null
+		return RslValue{Val: RSL_NULL}
 	default:
 		if i != nil && node != nil {
 			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
@@ -395,4 +405,8 @@ func newRslValueList(val *RslList) RslValue {
 
 func newRslValueFn(val RslFn) RslValue {
 	return newRslValue(nil, nil, val)
+}
+
+func newRslValueNull() RslValue {
+	return newRslValue(nil, nil, RSL_NULL)
 }
