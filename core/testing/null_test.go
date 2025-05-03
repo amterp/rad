@@ -85,4 +85,38 @@ aaa!
 	assertNoErrors(t)
 }
 
+func Test_Null_Expressions(t *testing.T) {
+	rsl := `
+a = null
+b = null
+c = "not null"
+
+print(a == b) // true
+print(a == c) // false
+
+print(a != b) // false
+print(a != c) // true
+
+print(a ? "t" : "f") // f
+
+print(a in [1, 2, 3]) // false
+print(a not in [1, 2, 3]) // true
+print(a in [1, null, 3]) // true
+print(a not in [1, null, 3]) // false
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `true
+false
+false
+true
+f
+false
+true
+true
+false
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 // todo null coalesce operator

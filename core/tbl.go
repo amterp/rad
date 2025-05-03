@@ -140,6 +140,7 @@ func (w *TblWriter) Render() {
 			for j, line := range lines {
 				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
+					// todo if contents contain escape codes, we may cut them off. Should perhaps be truncating before escape codes.
 					if com.TerminalIsUtf8 {
 						lines[j] = line[:colWidth-1]
 						lines[j] += "…"
