@@ -77,6 +77,11 @@ func (v *RslTypeVisitor) ForMap(handler func(RslValue, *RslMap)) *RslTypeVisitor
 	return v
 }
 
+func (v *RslTypeVisitor) ForNull(handler func(RslValue, RslNull)) *RslTypeVisitor {
+	v.visitNull = handler
+	return v
+}
+
 func (v *RslTypeVisitor) ForFn(handler func(RslValue, RslFn)) *RslTypeVisitor {
 	v.visitFn = handler
 	return v

@@ -49,4 +49,19 @@ null
 	assertNoErrors(t)
 }
 
+func Test_Null_IsFalsy(t *testing.T) {
+	rsl := `
+a = null
+if a:
+	print("a is truthy")
+else:
+	print("a is falsy")
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `a is falsy
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 // todo null coalesce operator

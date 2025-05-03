@@ -259,6 +259,8 @@ func (v RslValue) TruthyFalsy() bool {
 		out = l.Len() != 0
 	}).ForMap(func(v RslValue, m *RslMap) {
 		out = m.Len() != 0
+	}).ForNull(func(v RslValue, n RslNull) {
+		out = false
 	}).Visit(v)
 	return out
 }
