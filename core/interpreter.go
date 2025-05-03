@@ -53,6 +53,7 @@ func (i *Interpreter) InitArgs(args []RslArg) {
 
 	for _, arg := range args {
 		if !arg.IsDefined() {
+			env.SetVar(arg.GetIdentifier(), newRslValueNull())
 			continue
 		}
 		switch coerced := arg.(type) {

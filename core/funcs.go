@@ -1290,8 +1290,11 @@ func init() {
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				arg := f.args[0]
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
-				_, ok := f.i.env.GetVar(str)
-				return newRslValues(f.i, f.callNode, ok)
+				val, ok := f.i.env.GetVar(str)
+				if !ok {
+					return newRslValues(f.i, f.callNode, false)
+				}
+				return newRslValues(f.i, f.callNode, val.Type() != RslNullT)
 			},
 		},
 		{

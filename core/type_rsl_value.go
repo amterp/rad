@@ -353,7 +353,7 @@ func newRslValue(i *Interpreter, node *ts.Node, value interface{}) RslValue {
 	case []string:
 		list := NewRslListFromGeneric(i, node, coerced)
 		return RslValue{Val: list}
-	case nil:
+	case RslNull, nil:
 		return RslValue{Val: RSL_NULL}
 	default:
 		if i != nil && node != nil {

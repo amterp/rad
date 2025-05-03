@@ -64,4 +64,25 @@ else:
 	assertNoErrors(t)
 }
 
+func Test_Null_OmittedNonDefaultArgsAreNull(t *testing.T) {
+	rsl := `
+args:
+    aaa string
+    bbb string
+
+    aaa mutually excludes bbb
+
+print(type_of(aaa), type_of(bbb))
+
+if not bbb:
+	print("aaa!")
+`
+	setupAndRunCode(t, rsl, "--aaa=hi", "--color=never")
+	expected := `string null
+aaa!
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 // todo null coalesce operator
