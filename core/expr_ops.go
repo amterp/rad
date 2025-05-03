@@ -140,9 +140,11 @@ func (i *Interpreter) executeOp(
 	} else if op == OP_OR {
 		leftB := left().TruthyFalsy()
 		if leftB {
-			return true
+			// return actual value for falsy coalescing
+			return left()
 		}
-		return right().TruthyFalsy()
+		// return actual value for falsy coalescing
+		return right()
 	}
 
 	if op == OP_EQUAL || op == OP_NOT_EQUAL {

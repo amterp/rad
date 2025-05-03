@@ -197,10 +197,10 @@ print(0 or 1)
 print(1 or 1)
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `false
-true
-true
-true
+	expected := `0
+1
+1
+1
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -214,10 +214,10 @@ print(0.0 or 1.0)
 print(1.0 or 1.0)
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `false
-true
-true
-true
+	expected := `0
+1
+1
+1
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -231,10 +231,10 @@ print("" or "hi")
 print("hi" or "hi")
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `false
-true
-true
-true
+	expected := `
+hi
+hi
+hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -248,10 +248,10 @@ print([] or [0])
 print([0] or [0])
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `false
-true
-true
-true
+	expected := `[ ]
+[ 0 ]
+[ 0 ]
+[ 0 ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -265,10 +265,10 @@ print({} or { "alice" : 1 })
 print({ "alice" : 1 } or { "alice" : 1 })
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `false
-true
-true
-true
+	expected := `{ }
+{ "alice": 1 }
+{ "alice": 1 }
+{ "alice": 1 }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

@@ -31,3 +31,14 @@ print(sort(a)[2:][-1])
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_FalsyCoalescing(t *testing.T) {
+	rsl := `
+print(0 or 0.0 or "" or [] or {} or null or false or "hello!")
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `hello!
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
