@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestShell_ExportsNothingIfNoVars(t *testing.T) {
+func Test_Shell_ExportsNothingIfNoVars(t *testing.T) {
 	rsl := `
 2 + 3
 `
@@ -12,7 +12,7 @@ func TestShell_ExportsNothingIfNoVars(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func TestShell_ExportsStrings(t *testing.T) {
+func Test_Shell_ExportsStrings(t *testing.T) {
 	rsl := `
 a = "alice"
 b = "bob"
@@ -23,7 +23,7 @@ b = "bob"
 	assertNoErrors(t)
 }
 
-func TestShell_PrintsGoToStderr(t *testing.T) {
+func Test_Shell_PrintsGoToStderr(t *testing.T) {
 	rsl := `
 a = "alice"
 print('hi')
@@ -34,7 +34,7 @@ print('hi')
 	assertNoErrors(t)
 }
 
-func TestShell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
+func Test_Shell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
 	rsl := `
 exit(2)
 `
@@ -43,7 +43,7 @@ exit(2)
 	assertError(t, 2, "")
 }
 
-func TestShell_NonErrorExitFuncStillExportsVars(t *testing.T) {
+func Test_Shell_NonErrorExitFuncStillExportsVars(t *testing.T) {
 	rsl := `
 a = "alice"
 exit()
@@ -51,5 +51,25 @@ b = "bob"
 `
 	setupAndRunCode(t, rsl, "--color=never", "--shell")
 	assertOnlyOutput(t, stdOutBuffer, "a=\"alice\"\n")
+	assertNoErrors(t)
+}
+
+func Test_Shell_DoesNotExportLambdas(t *testing.T) {
+	rsl := `
+a = 1
+b = fn() 2
+`
+	setupAndRunCode(t, rsl, "--color=never", "--shell")
+	assertOnlyOutput(t, stdOutBuffer, "a=1\n")
+	assertNoErrors(t)
+}
+
+func Test_Shell_DoesNotExportNulls(t *testing.T) {
+	rsl := `
+a = 1
+b = null
+`
+	setupAndRunCode(t, rsl, "--color=never", "--shell")
+	assertOnlyOutput(t, stdOutBuffer, "a=1\n")
 	assertNoErrors(t)
 }

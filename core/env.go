@@ -111,6 +111,8 @@ func (e *Env) PrintShellExports() {
 			printFunc(varName, "'"+coerced.ToString()+"'")
 		case RslFn:
 			// skip, doesn't make sense
+		case RslNull:
+			// skip, implies undefined
 		default:
 			RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for shell export: %T", val.Val))
 		}
