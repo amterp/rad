@@ -19,7 +19,7 @@ filter
 find_paths
 float
 floor
-gen_stid
+gen_fid
 get_default
 get_path
 get_rad_home

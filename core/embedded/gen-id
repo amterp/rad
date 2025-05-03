@@ -2,11 +2,11 @@
 ---
 Generates a unique string ID. Useful for e.g. rad stash IDs.
 
-By default, generates STIDs: https://github.com/amterp/stid
+By default, generates FIDs: https://github.com/amterp/flexid
 ---
 args:
-    uuid4 bool # Generate a uuid v4 instead of a STID.
-    uuid7 bool # Generate a uuid v7 instead of a STID.
+    uuid4 bool # Generate a uuid v4 instead of a FID.
+    uuid7 bool # Generate a uuid v7 instead of a FID.
 
     uuid4 mutually excludes uuid7
 
@@ -15,6 +15,6 @@ if uuid4:
 else if uuid7:
     id = uuid_v7()
 else:
-    id = gen_stid()
+    id = gen_fid()
 
 id.print()

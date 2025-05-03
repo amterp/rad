@@ -2,14 +2,14 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/amterp/color v1.20.0 h1:3qR8miQeGMfd++ExLt5xUdMWWYYwohdix6jLMSyXbWM=
 github.com/amterp/color v1.20.0/go.mod h1:XRJ2OonPd9eRKRg6ddVJc6Yv/rvjzMhn+qdIDHKjE04=
+github.com/amterp/flexid v1.3.0 h1:J3TpTgH3M70JX5bBvsgJ9DHtRcqK6ssQtGreRDd1vgk=
+github.com/amterp/flexid v1.3.0/go.mod h1:hT0latK+160p/DMRO062K4bLc9ruA3w4P5oASSZ1kME=
 github.com/amterp/go-tbl v0.9.0 h1:eh5bE1RbVKK6tN/FOjsotBNCF4+wvJSsH3HHw2t+Cb4=
 github.com/amterp/go-tbl v0.9.0/go.mod h1:py0viOYEcyfO0Po/EdCW8Tgg7/LXecf6nBlqQFlrOZ8=
 github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+uc=
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
 github.com/amterp/rts v0.0.30 h1:FmG/xy6kJRU4d1OHQRi64bO5b3EeHAJwmiASQwaP4cc=
 github.com/amterp/rts v0.0.30/go.mod h1:p06FnB3/gJG8usupqMQiDRrZk0A6LD1/vHA5sOlIjuY=
-github.com/amterp/stid v1.2.0 h1:d5RjeKO0zZtSwEctipLx39AaJr2m1frRgWqoFP4zkLM=
-github.com/amterp/stid v1.2.0/go.mod h1:X/ZbZrufKCuqjwr6nSmwg5nd4jYuuRt7U/jSnavyGUg=
 github.com/amterp/tree-sitter-rsl v0.0.32 h1:XDOOKFB/ebCSypZil3rtVihqSQKFnihVe0Uz5/pY2gg=
 github.com/amterp/tree-sitter-rsl v0.0.32/go.mod h1:mI2TUxkQL+7CCjrMdU5TA5xy6W1LB6mpCmyy7sDUFCY=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=

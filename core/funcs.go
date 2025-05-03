@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amterp/stid"
+	fid "github.com/amterp/flexid"
 
 	"github.com/google/uuid"
 
@@ -97,7 +97,7 @@ const (
 	FUNC_HYPERLINK          = "hyperlink"
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"
-	FUNC_GEN_STID           = "gen_stid"
+	FUNC_GEN_FID            = "gen_fid"
 	FUNC_GET_DEFAULT        = "get_default"
 	FUNC_GET_RAD_HOME       = "get_rad_home"
 	FUNC_SET_STASH_ID       = "set_stash_id"
@@ -1337,7 +1337,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GEN_STID,
+			Name:            FUNC_GEN_FID,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
@@ -1348,10 +1348,10 @@ func init() {
 			},
 			Execute: func(f FuncInvocationArgs) []RslValue {
 				// defaults
-				config := stid.NewConfig().
-					WithTickSize(stid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
+				config := fid.NewConfig().
+					WithTickSize(fid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
 					WithNumRandomChars(5).
-					WithAlphabet(stid.Base62Alphabet)
+					WithAlphabet(fid.Base62Alphabet)
 
 				if alphabetArg, exists := f.namedArgs[namedArgAlphabet]; exists {
 					alphabet := alphabetArg.value.RequireStr(f.i, alphabetArg.valueNode).Plain()
@@ -1371,14 +1371,14 @@ func init() {
 					config = config.WithNumRandomChars(int(numRandomChars))
 				}
 
-				generator, err := stid.NewGenerator(config)
+				generator, err := fid.NewGenerator(config)
 				if err != nil {
-					f.i.errorf(f.callNode, "Error creating STID generator: %v", err)
+					f.i.errorf(f.callNode, "Error creating FID generator: %v", err)
 				}
 
 				id, err := generator.Generate()
 				if err != nil {
-					f.i.errorf(f.callNode, "Error generating STID: %v", err)
+					f.i.errorf(f.callNode, "Error generating FID: %v", err)
 				}
 
 				return newRslValues(f.i, f.callNode, id)

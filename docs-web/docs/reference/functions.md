@@ -522,12 +522,12 @@ Generate a random V7 UUID.
 uuid_v7() -> string
 ```
 
-### gen_stid
+### gen_fid
 
-Generate a random [short time ID](https://github.com/amterp/stid) (stid).
+Generate a random [flex ID](https://github.com/amterp/flexid) (fid).
 
 ```rsl
-gen_stid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -> string
+gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -> string
 ```
 
 `alphabet` defaults to base-62 (`[0-9] [A-Z] [a-z]`).
