@@ -119,6 +119,8 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rsl.K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
+	case rsl.K_PASS:
+		// no-op
 	case rsl.K_BREAK_STMT:
 		if i.forWhileLoopLevel > 0 {
 			i.breaking = true
