@@ -115,6 +115,9 @@ const (
 	FUNC_FILTER             = "filter"
 	FUNC_LOAD               = "load"
 
+	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
+	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
+
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
 	namedArgPrompt         = "prompt"

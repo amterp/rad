@@ -147,7 +147,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
-  -h, --help            Print usage string.
+  -h, --help            Printf usage string.
   -d                    Enables debug output. Intended for RSL script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet           Suppresses some output.
@@ -172,7 +172,7 @@ args:
 `
 	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
-  -h, --help            Print usage string.
+  -h, --help            Printf usage string.
   -d, --debug           Enables debug output. Intended for RSL script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
       --quiet           Suppresses some output.

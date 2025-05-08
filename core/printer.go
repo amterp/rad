@@ -69,7 +69,7 @@ type Printer interface {
 	RadDebugf(format string, args ...interface{})
 
 	// For regular output to the script user
-	Print(msg string)
+	Printf(format string, args ...interface{})
 
 	// For secondary output to the user from Rad, usually to give some feedback, for example querying a URL.
 	// Goes to stderr.
@@ -154,13 +154,13 @@ func (p *stdPrinter) RadDebugf(format string, args ...interface{}) {
 	}
 }
 
-func (p *stdPrinter) Print(msg string) {
+func (p *stdPrinter) Printf(format string, args ...interface{}) {
 	if p.isQuiet {
 		return
 	} else if p.isShellMode {
-		fmt.Fprint(p.stdErr, msg)
+		fmt.Fprint(p.stdErr, fmt.Sprintf(format, args...))
 	} else {
-		fmt.Fprint(p.stdOut, msg)
+		fmt.Fprint(p.stdOut, fmt.Sprintf(format, args...))
 	}
 }
 

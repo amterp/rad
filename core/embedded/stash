@@ -1,0 +1,17 @@
+#!/usr/bin/env rad
+---
+Interacts with script stashes.
+---
+args:
+    script string  # Which script's stash to interact with.
+    delete bool    # Enable to delete the state.
+
+id = _rad_get_stash_id(script)
+if not id:
+    exit(1)
+
+if delete:
+    _rad_delete_stash(id)
+    exit()
+
+print(id)

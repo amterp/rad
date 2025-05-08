@@ -21,5 +21,5 @@ require (
 	golang.org/x/sys v0.32.0 // indirect
 )
 
-//replace github.com/amterp/rts => ../../rts
-//replace github.com/amterp/tree-sitter-rsl => ../../tree-sitter-rsl
+replace github.com/amterp/rts => ../../rts
+replace github.com/amterp/tree-sitter-rsl => ../../tree-sitter-rsl

@@ -16,6 +16,7 @@ const (
 	EmbCmdDocs  = "docs"
 	EmbCmdHome  = "home"
 	EmbCmdGenId = "gen-id"
+	EmbCmdStash = "stash"
 )
 
 type EmbeddedCmd struct {
@@ -41,6 +42,7 @@ func init() {
 		createEmbeddedCmd(EmbCmdDocs),
 		createEmbeddedCmd(EmbCmdHome),
 		createEmbeddedCmd(EmbCmdGenId),
+		createEmbeddedCmd(EmbCmdStash),
 	}
 
 	CmdsByName = make(map[string]EmbeddedCmd)

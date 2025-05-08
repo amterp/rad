@@ -68,6 +68,21 @@ func (v RslValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
 	}
 }
 
+func (v RslValue) RequireIntAllowingBool(i *Interpreter, node *ts.Node) int64 {
+	switch coerced := v.Val.(type) {
+	case int64:
+		return coerced
+	case bool:
+		if coerced {
+			return 1
+		}
+		return 0
+	default:
+		i.errorf(node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
+		panic(UNREACHABLE)
+	}
+}
+
 func (v RslValue) RequireStr(i *Interpreter, node *ts.Node) RslString {
 	if str, ok := v.TryGetStr(); ok {
 		return str

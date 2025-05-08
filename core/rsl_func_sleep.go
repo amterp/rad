@@ -56,7 +56,7 @@ func sleep(i *Interpreter, argNode *ts.Node, dur time.Duration, namedArgs map[st
 	}
 
 	if title, ok := namedArgs[namedArgTitle]; ok {
-		RP.Print(ToPrintableQuoteStr(title.value, false) + "\n")
+		RP.Printf(ToPrintableQuoteStr(title.value, false) + "\n")
 	}
 
 	RSleep(dur)

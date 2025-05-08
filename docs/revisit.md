@@ -53,3 +53,16 @@ args:
 ```
 
 ---
+
+Metadata file header syntax. Don't love the 
+
+```
+---
+---
+script_id = abc
+---
+```
+
+Scenario where you need an empty doc header to get to the metadata one.
+
+---

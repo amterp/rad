@@ -18,7 +18,7 @@ var FuncPrint = BuiltInFunc{
 		namedArgSep: {RslStringT},
 	},
 	Execute: func(f FuncInvocationArgs) []RslValue {
-		RP.Print(resolvePrintStr(f))
+		RP.Printf(resolvePrintStr(f))
 		return EMPTY
 	},
 }
@@ -31,13 +31,13 @@ var FuncPPrint = BuiltInFunc{
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		if len(f.args) == 0 {
-			RP.Print("\n")
+			RP.Printf("\n")
 		}
 
 		arg := f.args[0]
 		jsonStruct := RslToJsonType(arg.value)
 		output := prettify(f.i, f.callNode, jsonStruct)
-		RP.Print(output)
+		RP.Printf(output)
 		return EMPTY
 	},
 }

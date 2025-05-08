@@ -69,6 +69,7 @@ func (r *RadRunner) Run() error {
 			// no file, but also not a flag, maybe a command?
 			cmdSource := GetEmbeddedCommandSrc(scriptPath)
 			if cmdSource != nil {
+				AddInternalFuncs()
 				sourceCode = *cmdSource
 			} else {
 				// was not a file, not a flag, not a command, so error
@@ -128,7 +129,7 @@ func (r *RadRunner) Run() error {
 	}
 
 	if FlagVersion.Value {
-		RP.Print(fmt.Sprintf("rad version %s\n", Version))
+		RP.Printf(fmt.Sprintf("rad version %s\n", Version))
 		RExit(0)
 	}
 
@@ -153,21 +154,21 @@ func (r *RadRunner) Run() error {
 	if FlagSrc.Value {
 		shouldExit = true
 		if FlagVersion.Value {
-			RP.Print("\n")
+			RP.Printf("\n")
 		}
 		if !com.IsBlank(ScriptPath) && com.IsTty {
 			// print to stderr, since we wouldn't want to include it in e.g. redirects
 			RP.RadInfo(com.YellowS("%s:\n", ScriptPath))
 		}
-		RP.Print(r.scriptData.Src + "\n")
+		RP.Printf(r.scriptData.Src + "\n")
 	}
 
 	if FlagRslTree.Value {
 		shouldExit = true
 		if FlagSrc.Value {
-			RP.Print("\n")
+			RP.Printf("\n")
 		}
-		RP.Print(r.scriptData.Tree.Dump())
+		RP.Printf(r.scriptData.Tree.Dump())
 	}
 
 	if shouldExit {

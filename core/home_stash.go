@@ -31,8 +31,12 @@ func (r *RadHome) GetStash() *string {
 		return nil
 	}
 
-	path := filepath.Join(r.HomeDir, "stash", *r.StashId)
+	path := r.GetStashForId(*r.StashId)
 	return &path
+}
+
+func (r *RadHome) GetStashForId(id string) string {
+	return filepath.Join(r.HomeDir, "stashes", id)
 }
 
 func (r *RadHome) GetStashSub(subPath string, i *Interpreter, node *ts.Node) string {

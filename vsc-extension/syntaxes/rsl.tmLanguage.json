@@ -1,236 +1,236 @@
 {
-	"name": "RSL",
-	"scopeName": "source.rsl",
-	"patterns": [
-		{
-			"name": "comment.line.shebang.rsl",
-			"match": "^#!.*$"
-		},
-		{
-			"name": "comment.block.documentation.rsl",
-			"begin": "^---$",
-			"end": "^---$",
-			"patterns": [
-				{
-					"name": "comment.block.documentation.rsl",
-					"match": ".+"
-				}
-			]
-		},
-		{
-			"begin": "\\bargs\\b(?=:)",
-			"end": "(?=^[^\\s])",
-			"patterns": [
-				{
-					"name": "comment.line.arg.rad",
-					"match": "#.*$"
-				},
-				{
-					"name": "comment.line.double-slash.rad",
-					"match": "//.*$"
-				},
-				{
-					"include": "#strings"
-				},
-				{
-					"include": "#floats"
-				},
-				{
-					"include": "#ints"
-				},
-				{
-					"include": "#bools"
-				},
-				{
-					"include": "#null"
-				},
-				{
-					"include": "#types"
-				},
-				{
-					"name": "storage.modifier.rsl",
-					"match": "\\b(enum|regex|mutually|requires|excludes)\\b"
-				},
-				{
-					"name": "string.quoted.double.rsl",
-					"match": "\"[^\"]*\""
-				},
-				{
-					"name": "constant.character.short-flag.rsl",
-					"match": "\\b[a-zA-Z]\\b"
-				},
-				{
-					"include": "#params"
-				}
-			]
-		},
-		{
-			"begin": "\\b(rad|request|display)\\b",
-			"end": "(?=^[^\\s])",
-			"patterns": [
-				{
-					"name": "storage.modifier.rsl",
-					"match": "\\b(fields|sort|map|color|asc|desc)\\b"
-				},
-				{
-					"include": "#global"
-				}
-			]
-		},
-		{
-			"include": "#global"
-		}
-	],
-	"repository": {
-		"global": {
-			"patterns": [
-				{
-					"name": "comment.line.double-slash.rsl",
-					"match": "//.*$"
-				},
-				{
-					"include": "#strings"
-				},
-				{
-					"include": "#floats"
-				},
-				{
-					"include": "#ints"
-				},
-				{
-					"include": "#bools"
-				},
-				{
-					"include": "#null"
-				},
-				{
-					"include": "#types"
-				},
-				{
-					"name": "entity.name.function.rsl",
-					"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
-				},
-				{
-					"include": "#global_keywords"
-				}
-			]
-		},
-		"string_interpolation": {
-			"name": "string.interpolated.rsl",
-			"begin": "{",
-			"end": "}"
-		},
-		"types": {
-			"patterns": [
-				{
-					"name": "storage.type.rsl",
-					"match": "\\b(bool|array|float|int|json|string)\\b"
-				}
-			]
-		},
-		"params": {
-			"patterns": [
-				{
-					"name": "variable.parameter.rsl",
-					"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b"
-				}
-			]
-		},
-		"strings": {
-			"patterns": [
-				{
-					"name": "string.quoted.multiline.rsl",
-					"begin": "\"\"\"",
-					"end": "\"\"\"",
-					"patterns": [
-						{
-							"include": "#string_interpolation"
-						}
-					]
-				},
-				{
-					"name": "string.quoted.single.rsl",
-					"begin": "'",
-					"end": "'",
-					"patterns": [
-						{
-							"include": "#string_interpolation"
-						}
-					]
-				},
-				{
-					"name": "string.quoted.double.rsl",
-					"begin": "\"",
-					"end": "\"",
-					"patterns": [
-						{
-							"include": "#string_interpolation"
-						}
-					]
-				},
-				{
-					"name": "string.quoted.other.rsl",
-					"begin": "`",
-					"end": "`",
-					"patterns": [
-						{
-							"include": "#string_interpolation"
-						}
-					]
-				}
-			]
-		},
-		"floats": {
-			"patterns": [
-				{
-					"name": "constant.numeric.float.rsl",
-					"match": "\\b\\d(_?\\d+)*((\\.\\d(_?\\d+)*([eE][+-]?\\d(_?\\d+)*)?)|([eE][+-]?\\d(_?\\d+)*))\\b"
-				}
-			]
-		},
-		"null": {
-			"patterns": [
-				{
-					"name": "constant.language.null.rsl",
-					"match": "\\b(null)\\b"
-				}
-			]
-		},
-		"ints": {
-			"patterns": [
-				{
-					"name": "constant.numeric.integer.rsl",
-					"match": "\\b\\d(_?\\d+)*\\b"
-				}
-			]
-		},
-		"bools": {
-			"patterns": [
-				{
-					"name": "constant.language.boolean.rsl",
-					"match": "\\b(true|false)\\b"
-				}
-			]
-		},
-		"global_keywords": {
-			"patterns": [
-				{
-					"name": "keyword.control.rsl",
-					"match": "\\b(args|if|for|while|in|else|json|confirm|unsafe|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
-				},
-				{
-					"name": "entity.name.tag.rsl",
-					"match": "\\$!"
-				},
-				{
-					"name": "entity.name.tag.rsl",
-					"match": "\\$"
-				},
-				{
-					"name": "keyword.operator.arithmetic.rsl",
-					"match": "\\b(\\+)\\b"
-				}
-			]
-		}
-	}
+  "name": "RSL",
+  "scopeName": "source.rsl",
+  "patterns": [
+    {
+      "name": "comment.line.shebang.rsl",
+      "match": "^#!.*$"
+    },
+    {
+      "name": "comment.block.documentation.rsl",
+      "begin": "^---$",
+      "end": "^---$",
+      "patterns": [
+        {
+          "name": "comment.block.documentation.rsl",
+          "match": ".+"
+        }
+      ]
+    },
+    {
+      "begin": "\\bargs\\b(?=:)",
+      "end": "(?=^[^\\s])",
+      "patterns": [
+        {
+          "name": "comment.line.arg.rad",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.line.double-slash.rad",
+          "match": "//.*$"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#floats"
+        },
+        {
+          "include": "#ints"
+        },
+        {
+          "include": "#bools"
+        },
+        {
+          "include": "#null"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "name": "storage.modifier.rsl",
+          "match": "\\b(enum|regex|mutually|requires|excludes)\\b"
+        },
+        {
+          "name": "string.quoted.double.rsl",
+          "match": "\"[^\"]*\""
+        },
+        {
+          "name": "constant.character.short-flag.rsl",
+          "match": "\\b[a-zA-Z]\\b"
+        },
+        {
+          "include": "#params"
+        }
+      ]
+    },
+    {
+      "begin": "\\b(rad|request|display)\\b",
+      "end": "(?=^[^\\s])",
+      "patterns": [
+        {
+          "name": "storage.modifier.rsl",
+          "match": "\\b(fields|sort|map|color|asc|desc)\\b"
+        },
+        {
+          "include": "#global"
+        }
+      ]
+    },
+    {
+      "include": "#global"
+    }
+  ],
+  "repository": {
+    "global": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.rsl",
+          "match": "//.*$"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#floats"
+        },
+        {
+          "include": "#ints"
+        },
+        {
+          "include": "#bools"
+        },
+        {
+          "include": "#null"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "name": "entity.name.function.rsl",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+        },
+        {
+          "include": "#global_keywords"
+        }
+      ]
+    },
+    "string_interpolation": {
+      "name": "string.interpolated.rsl",
+      "begin": "{",
+      "end": "}"
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.rsl",
+          "match": "\\b(bool|array|float|int|json|string)\\b"
+        }
+      ]
+    },
+    "params": {
+      "patterns": [
+        {
+          "name": "variable.parameter.rsl",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.multiline.rsl",
+          "begin": "\"\"\"",
+          "end": "\"\"\"",
+          "patterns": [
+            {
+              "include": "#string_interpolation"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.rsl",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "include": "#string_interpolation"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.double.rsl",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "include": "#string_interpolation"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.other.rsl",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "include": "#string_interpolation"
+            }
+          ]
+        }
+      ]
+    },
+    "floats": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.rsl",
+          "match": "\\b\\d(_?\\d+)*((\\.\\d(_?\\d+)*([eE][+-]?\\d(_?\\d+)*)?)|([eE][+-]?\\d(_?\\d+)*))\\b"
+        }
+      ]
+    },
+    "null": {
+      "patterns": [
+        {
+          "name": "constant.language.null.rsl",
+          "match": "\\b(null)\\b"
+        }
+      ]
+    },
+    "ints": {
+      "patterns": [
+        {
+          "name": "constant.numeric.integer.rsl",
+          "match": "\\b\\d(_?\\d+)*\\b"
+        }
+      ]
+    },
+    "bools": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.rsl",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "global_keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.rsl",
+          "match": "\\b(args|if|for|while|in|else|json|confirm|unsafe|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
+        },
+        {
+          "name": "entity.name.tag.rsl",
+          "match": "\\$!"
+        },
+        {
+          "name": "entity.name.tag.rsl",
+          "match": "\\$"
+        },
+        {
+          "name": "keyword.operator.arithmetic.rsl",
+          "match": "\\b(\\+)\\b"
+        }
+      ]
+    }
+  }
 }

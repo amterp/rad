@@ -32,7 +32,7 @@ set_stash_id("test_id")
 get_stash_dir().split("/")[-5:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `[ "core", "testing", "rad_test_home", "stash", "test_id" ]
+	expected := `[ "core", "testing", "rad_test_home", "stashes", "test_id" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -44,7 +44,7 @@ set_stash_id("test_id")
 get_stash_dir("some/path.txt").split("/")[-7:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
-	expected := `[ "core", "testing", "rad_test_home", "stash", "test_id", "some", "path.txt" ]
+	expected := `[ "core", "testing", "rad_test_home", "stashes", "test_id", "some", "path.txt" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -104,7 +104,7 @@ r.path.split("/")[-6:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `true hello there!
-[ "testing", "rad_test_home", "stash", "with_stash", "files", "existing.txt" ]
+[ "testing", "rad_test_home", "stashes", "with_stash", "files", "existing.txt" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -125,7 +125,7 @@ p.full_path.delete_path()
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `false didn't find
-[ "testing", "rad_test_home", "stash", "with_stash", "files", "non_existing.txt" ]
+[ "testing", "rad_test_home", "stashes", "with_stash", "files", "non_existing.txt" ]
 non_existing.txt
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -147,7 +147,7 @@ r.path.delete_path()
 `
 	setupAndRunCode(t, rsl, "--color=never")
 	expected := `hello HELLO
-[ "testing", "rad_test_home", "stash", "with_stash", "files", "bloop.txt" ]
+[ "testing", "rad_test_home", "stashes", "with_stash", "files", "bloop.txt" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

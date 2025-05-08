@@ -8,14 +8,14 @@ var FuncExit = BuiltInFunc{
 	Name:            FUNC_EXIT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT, RslBoolT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) []RslValue {
 		if len(f.args) == 0 {
 			exit(f.i, 0)
 		} else {
 			arg := f.args[0]
-			exit(f.i, arg.value.RequireInt(f.i, arg.node))
+			exit(f.i, arg.value.RequireIntAllowingBool(f.i, arg.node))
 		}
 		return EMPTY
 	},
