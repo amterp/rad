@@ -259,8 +259,7 @@ B: [150, 161] PS: [11, 15] PE: [11, 26]                                         
 B: [150, 161] PS: [11, 15] PE: [11, 26]                                                         content: string_content `big enough!`
 B: [161, 162] PS: [11, 26] PE: [11, 27]                                                       end: string_end `"`
 B: [162, 163] PS: [11, 27] PE: [11, 28]                               ) `)`
-B: [172, 177] PS: [12,  8] PE: [12, 13]         stmt: break_stmt
-B: [172, 177] PS: [12,  8] PE: [12, 13]           break `break`
+B: [172, 177] PS: [12,  8] PE: [12, 13]         stmt: break_stmt `break`
 B: [182, 186] PS: [13,  4] PE: [13,  8]       else `else`
 B: [186, 215] PS: [13,  8] PE: [14, 27]       alt: else_alt
 B: [186, 187] PS: [13,  8] PE: [13,  9]         : `:`
@@ -310,8 +309,7 @@ B: [229, 230] PS: [16, 12] PE: [16, 13]                   delegate: unary_expr
 B: [229, 230] PS: [16, 12] PE: [16, 13]                     delegate: var_path
 B: [229, 230] PS: [16, 12] PE: [16, 13]                       root: identifier `a`
 B: [230, 231] PS: [16, 13] PE: [16, 14]     : `:`
-B: [236, 244] PS: [17,  4] PE: [17, 12]     stmt: continue_stmt
-B: [236, 244] PS: [17,  4] PE: [17, 12]       continue `continue`
+B: [236, 244] PS: [17,  4] PE: [17, 12]     stmt: continue_stmt `continue`
 B: [249, 271] PS: [18,  4] PE: [18, 26]     stmt: expr
 B: [249, 271] PS: [18,  4] PE: [18, 26]       ternary_expr
 B: [249, 271] PS: [18,  4] PE: [18, 26]         delegate: or_expr

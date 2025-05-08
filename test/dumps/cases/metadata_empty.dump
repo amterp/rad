@@ -1,0 +1,42 @@
+=====
+Metadata header
+=====
+---
+This is a file header.
+---
+---
+a = fn() 2
+=====
+B: [ 0, 46] PS: [0,  0] PE: [5,  0] source_file
+B: [ 0, 35] PS: [0,  0] PE: [4,  0]   file_header
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     --- `---`
+B: [ 4, 27] PS: [1,  0] PE: [2,  0]     contents: file_header_contents `This is a file header.\n`
+B: [27, 30] PS: [2,  0] PE: [2,  3]     --- `---`
+B: [31, 34] PS: [3,  0] PE: [3,  3]     --- `---`
+B: [35, 45] PS: [4,  0] PE: [4, 10]   assign
+B: [35, 36] PS: [4,  0] PE: [4,  1]     left: var_path
+B: [35, 36] PS: [4,  0] PE: [4,  1]       root: identifier `a`
+B: [37, 38] PS: [4,  2] PE: [4,  3]     = `=`
+B: [39, 45] PS: [4,  4] PE: [4, 10]     right: expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]       ternary_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]         delegate: or_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]           delegate: and_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]             delegate: compare_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]               delegate: add_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]                 delegate: mult_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]                   delegate: unary_expr
+B: [39, 45] PS: [4,  4] PE: [4, 10]                     delegate: lambda
+B: [39, 41] PS: [4,  4] PE: [4,  6]                       keyword: fn `fn`
+B: [41, 43] PS: [4,  6] PE: [4,  8]                       () `()`
+B: [44, 45] PS: [4,  9] PE: [4, 10]                       expr: expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                         ternary_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                           delegate: or_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                             delegate: and_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                               delegate: compare_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                 delegate: add_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                   delegate: mult_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                     delegate: unary_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                       delegate: indexed_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                         root: primary_expr
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                           literal
+B: [44, 45] PS: [4,  9] PE: [4, 10]                                             int `2`
