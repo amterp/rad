@@ -44,16 +44,9 @@ func AddInternalFuncs() {
 					return newRslValues(f.i, f.callNode, RSL_NULL)
 				}
 
-				for key, value := range fh.MetadataEntries {
-					if key == "stash_id" {
-						switch value.(type) {
-						case string, int, float64, bool:
-							return newRslValues(f.i, f.callNode, value)
-						default:
-							// todo return msg
-							return newRslValues(f.i, f.callNode, RSL_NULL)
-						}
-					}
+				stashId, ok := fh.MetadataEntries[STASH_ID]
+				if ok {
+					return newRslValues(f.i, f.callNode, stashId)
 				}
 
 				return newRslValues(f.i, f.callNode, RSL_NULL)

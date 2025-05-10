@@ -14,7 +14,7 @@ import (
 )
 
 const scriptGlobalFlagHelp = `Global flags:
-  -h, --help            Printf usage string.
+  -h, --help            Print usage string.
   -d, --debug           Enables debug output. Intended for RSL script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet           Suppresses some output.
@@ -23,13 +23,13 @@ const scriptGlobalFlagHelp = `Global flags:
 `
 
 const allGlobalFlagHelp = `Global flags:
-  -h, --help                   Printf usage string.
+  -h, --help                   Print usage string.
   -d, --debug                  Enables debug output. Intended for RSL script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet                  Suppresses some output.
       --shell                  Outputs shell/bash exports of variables, so they can be eval'd
-  -v, --version                Printf rad version information.
+  -v, --version                Print rad version information.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
       --rsl-tree               Instead of running the target script, print out its syntax tree.

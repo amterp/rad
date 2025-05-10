@@ -1,6 +1,6 @@
 package core
 
 const (
-	Version = "0.5.34"
+	Version = "0.5.35"
 	// todo add in commit hash somehow?
 )

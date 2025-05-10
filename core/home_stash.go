@@ -22,7 +22,7 @@ func NewRadHome(home string) *RadHome {
 	}
 }
 
-func (r *RadHome) SetScriptId(id string) {
+func (r *RadHome) SetStashId(id string) {
 	r.StashId = &id
 }
 

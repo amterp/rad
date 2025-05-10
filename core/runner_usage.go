@@ -49,7 +49,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	buf := new(bytes.Buffer)
 
 	if r.scriptData.Description != nil {
-		fmt.Fprintf(buf, *r.scriptData.Description+"\n")
+		fmt.Fprintf(buf, *r.scriptData.Description+"\n\n")
 	}
 
 	com.GreenBoldF(buf, "Usage:\n ")

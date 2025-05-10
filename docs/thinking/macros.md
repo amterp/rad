@@ -57,3 +57,27 @@ Blah blah @@script << escaped?
 @script_id = J3nSdEa1v5T
 ---
 ```
+
+## 2025-05-10
+
+Tried the above approach. Don't like it. For example, specifying just metadata looks like this
+
+```
+---
+---
+script_id = asdf
+---
+```
+
+Could be argued this encourages writing actual docs in your header, though. But it's also a little harder to parse, and seems especially hard for the textmate bundle.
+
+Let's try this instead:
+
+```
+---
+Some documentation
+@script_id = "asdf"
+---
+```
+
+i.e. it's part of the existing file header block, and they can be tagged onto the end specifically.

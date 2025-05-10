@@ -10,4 +10,5 @@ const (
 
 const (
 	WILDCARD = "*"
+	STASH_ID = "stash_id"
 )

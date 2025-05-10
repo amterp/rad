@@ -54,7 +54,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	flags := make([]RslArg, 0)
 
 	if shouldAddFlag(FLAG_HELP, FLAG_H) {
-		FlagHelp = NewBoolRadArg(flagOrEmpty(FLAG_HELP), flagOrEmpty(FLAG_H), "Printf usage string.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagHelp = NewBoolRadArg(flagOrEmpty(FLAG_HELP), flagOrEmpty(FLAG_H), "Print usage string.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
 		flags = append(flags, &FlagHelp)
 	}
 
@@ -86,7 +86,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	}
 
 	if shouldAddFlag(FLAG_VERSION, FLAG_V) {
-		FlagVersion = NewBoolRadArg(flagOrEmpty(FLAG_VERSION), flagOrEmpty(FLAG_V), "Printf rad version information.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagVersion = NewBoolRadArg(flagOrEmpty(FLAG_VERSION), flagOrEmpty(FLAG_V), "Print rad version information.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
 		hideFromUsageIfHaveScript(&FlagVersion.hidden)
 		flags = append(flags, &FlagVersion)
 	}

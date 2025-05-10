@@ -21,14 +21,17 @@ get_stash_dir()
 	expected := `Error at L2:1
 
   get_stash_dir()
-  ^^^^^^^^^^^^^^^ Script ID is not set. Use set_stash_id() first to set it.
+  ^^^^^^^^^^^^^^^
+  Script ID is not set. Set the 'stash_id' macro in the file header.
 `
 	assertError(t, 1, expected)
 }
 
 func Test_Stash_GetStashDir(t *testing.T) {
 	rsl := `
-set_stash_id("test_id")
+---
+@stash_id = test_id
+---
 get_stash_dir().split("/")[-5:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
@@ -40,7 +43,9 @@ get_stash_dir().split("/")[-5:].print()
 
 func Test_Stash_GetStashDir_SubPath(t *testing.T) {
 	rsl := `
-set_stash_id("test_id")
+---
+@stash_id = test_id
+---
 get_stash_dir("some/path.txt").split("/")[-7:].print()
 `
 	setupAndRunCode(t, rsl, "--color=never")
@@ -52,7 +57,9 @@ get_stash_dir("some/path.txt").split("/")[-7:].print()
 
 func Test_Stash_LoadState(t *testing.T) {
 	rsl := `
-set_stash_id("with_stash")
+---
+@stash_id = with_stash
+---
 state, existed = load_state()
 print(state, existed)
 `
@@ -65,7 +72,9 @@ print(state, existed)
 
 func Test_Stash_LoadStateNoExisting(t *testing.T) {
 	rsl := `
-set_stash_id("with_no_stash")
+---
+@stash_id = with_no_stash
+---
 state, existed = load_state()
 print(state, existed)
 `
@@ -78,7 +87,9 @@ print(state, existed)
 
 func Test_Stash_SaveAndLoadState(t *testing.T) {
 	rsl := `
-set_stash_id("with_stash")
+---
+@stash_id = with_stash
+---
 m = load_state()
 m.print()
 save_state({ "changed": true })
@@ -97,7 +108,9 @@ load_state().print()
 
 func Test_Stash_LoadStashFileExisting(t *testing.T) {
 	rsl := `
-set_stash_id("with_stash")
+---
+@stash_id = with_stash
+---
 r, existed = load_stash_file("existing.txt", "didn't find")
 print(existed, r.content)
 r.path.split("/")[-6:].print()
@@ -112,7 +125,9 @@ r.path.split("/")[-6:].print()
 
 func Test_Stash_LoadStashFileNotExisting(t *testing.T) {
 	rsl := `
-set_stash_id("with_stash")
+---
+@stash_id = with_stash
+---
 r, existed = load_stash_file("non_existing.txt", "didn't find")
 print(existed, r.content)
 r.path.split("/")[-6:].print()
@@ -134,7 +149,9 @@ non_existing.txt
 
 func Test_Stash_WriteStashFile(t *testing.T) {
 	rsl := `
-set_stash_id("with_stash")
+---
+@stash_id = with_stash
+---
 
 write_stash_file("bloop.txt", "hello HELLO")
 r = load_stash_file("bloop.txt", "didn't find")

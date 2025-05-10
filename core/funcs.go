@@ -100,7 +100,6 @@ const (
 	FUNC_GEN_FID            = "gen_fid"
 	FUNC_GET_DEFAULT        = "get_default"
 	FUNC_GET_RAD_HOME       = "get_rad_home"
-	FUNC_SET_STASH_ID       = "set_stash_id"
 	FUNC_GET_STASH_DIR      = "get_stash_dir" // todo 'path' vs. 'dir' inconsistent naming
 	FUNC_LOAD_STATE         = "load_state"
 	FUNC_SAVE_STATE         = "save_state"
@@ -1422,20 +1421,6 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_SET_STASH_ID,
-			ReturnValues:    ZERO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
-			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RslValue {
-				// todo validate directory-friendliness
-				scriptIdArg := f.args[0]
-				scriptId := scriptIdArg.value.RequireStr(f.i, scriptIdArg.node).Plain()
-				RadHomeInst.SetScriptId(scriptId)
-				return EMPTY
-			},
-		},
-		{
 			Name:            FUNC_GET_STASH_DIR,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
@@ -2027,5 +2012,5 @@ func bugIncorrectTypes(funcName string) string {
 }
 
 func errMissingScriptId(i *Interpreter, node *ts.Node) {
-	i.errorf(node, "Script ID is not set. Use %s() first to set it.", FUNC_SET_STASH_ID)
+	i.errorf(node, "Script ID is not set. Set the '%s' macro in the file header.", STASH_ID)
 }

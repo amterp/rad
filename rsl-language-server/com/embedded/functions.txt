@@ -73,7 +73,6 @@ reverse
 round
 save_state
 seed_random
-set_stash_id
 sleep
 sort
 split

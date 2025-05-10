@@ -30,6 +30,10 @@ func ExtractMetadata(src string) *ScriptData {
 	fileHeader, ok := tree.FindFileHeader()
 	if ok {
 		description = &fileHeader.Contents
+		stashId, ok := fileHeader.MetadataEntries[STASH_ID]
+		if ok {
+			RadHomeInst.SetStashId(stashId)
+		}
 	}
 
 	argBlock, ok := tree.FindArgBlock()
