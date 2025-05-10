@@ -247,3 +247,29 @@ func Test_Color_ErrorsOnNegativeRgb(t *testing.T) {
 `
 	assertError(t, 1, expected)
 }
+
+func Test_Colorize_CanColorNames(t *testing.T) {
+	rsl := `
+names = ["Alice", "Bob", "Charlie", "David"]
+for n in names:
+	n.colorize(names).print()
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m\n\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_CanColorInDisplayBlock(t *testing.T) {
+	rsl := `
+names = ["Alice", "Bob", "Charlie", "David"]
+display:
+	fields names
+	names:
+		map fn(n) n.colorize(names)
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[33mnames                                 \x1b[0m \n\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m                                   \n\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m                                     \n\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m                                 \n\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m                                   \n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

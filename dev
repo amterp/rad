@@ -61,6 +61,7 @@ if version:
         confirm $!`git push origin {branch} --tags`
 
 if push:
+    $!`make all`
     branch = get_branch()
     $!`git push origin {branch} --tags`
 

@@ -465,6 +465,27 @@ Apply RGB coloring to some input text. Not all terminals support this.
 color_rgb(input: any, red: int, green: int, blue: int) -> string
 ```
 
+### colorize
+
+Given some universe of possible, enumerable values, and a value from that list of values, color the given value with some
+RGB color assigned to it. The same value will always be given the same color, given the same list of possible values.
+
+Can use to quickly assign best-effort 'unique' colors to values in an enumerable set. Nice for coloring tables, etc.
+
+```
+colorize(value: any, possibleValues: list[any]) -> string
+```
+
+Example demonstrating use in a `display` block:
+
+```
+names = ["Alice", "Bob", "Charlie", "David"]
+display:
+    fields names
+    names:
+        map fn(n) n.colorize(names)
+```
+
 ## Maps
 
 ### keys

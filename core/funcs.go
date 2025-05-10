@@ -114,6 +114,7 @@ const (
 	FUNC_FILTER             = "filter"
 	FUNC_LOAD               = "load"
 	FUNC_COLOR_RGB          = "color_rgb"
+	FUNC_COLORIZE           = "colorize"
 
 	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
@@ -283,6 +284,7 @@ func init() {
 		FuncPickFromResource,
 		FuncSplit,
 		FuncRange,
+		FuncColorize,
 		{
 			Name:            FUNC_LEN,
 			ReturnValues:    ONE_RETURN_VAL,
@@ -1875,11 +1877,11 @@ func init() {
 				switch coerced := textArg.value.Val.(type) {
 				case RslString:
 					str := coerced.DeepCopy()
-					str.SetRgb(red, green, blue)
+					str.SetRgb64(red, green, blue)
 					return newRslValues(f.i, textArg.node, str)
 				default:
 					s := NewRslString(ToPrintable(textArg.value))
-					s.SetRgb(red, green, blue)
+					s.SetRgb64(red, green, blue)
 					return newRslValues(f.i, f.callNode, s)
 				}
 			},

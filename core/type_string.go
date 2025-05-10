@@ -224,9 +224,13 @@ func (s *RslString) Reverse() RslString {
 	return NewRslString(com.Reverse(s.Plain()))
 }
 
-func (s RslString) SetRgb(red int64, green int64, blue int64) {
-	rgb := com.NewRgb64(red, green, blue)
+func (s RslString) SetRgb(red int, green int, blue int) {
+	rgb := com.NewRgb(red, green, blue)
 	for i := range s.Segments {
 		s.Segments[i].Rgb = &rgb
 	}
+}
+
+func (s RslString) SetRgb64(red int64, green int64, blue int64) {
+	s.SetRgb(int(red), int(green), int(blue))
 }

@@ -5,6 +5,7 @@ bold
 ceil
 clamp
 color_rgb
+colorize
 confirm
 count
 cyan
