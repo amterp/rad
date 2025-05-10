@@ -69,7 +69,7 @@ print(name)
 	if !ok {
 		t.Fatalf("failed to find file header")
 	}
-	if fileHeader.Contents != "These are\nsome file headers.\n" {
+	if fileHeader.Contents != "These are\nsome file headers." {
 		t.Fatalf("File header contents didn't match: <%v>", fileHeader.Contents)
 	}
 }

@@ -1,7 +1,8 @@
 package rts
 
 import (
-	"strconv"
+	"regexp"
+	"strings"
 
 	"github.com/amterp/rts/rsl"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -20,7 +21,7 @@ func newShebang(src string, node *ts.Node) (*Shebang, bool) {
 type FileHeader struct {
 	BaseNode
 	Contents        string
-	MetadataEntries map[string]interface{} // possible values: int, float, string, bool
+	MetadataEntries map[string]string
 }
 
 func newFileHeader(src string, node *ts.Node) (*FileHeader, bool) {
@@ -30,38 +31,12 @@ func newFileHeader(src string, node *ts.Node) (*FileHeader, bool) {
 		return nil, false
 	}
 
-	metadataEntryNodes := node.ChildrenByFieldName(rsl.F_METADATA_ENTRY, node.Walk())
-
-	metadataEntries := make(map[string]interface{}, len(metadataEntryNodes))
-	for _, entryNode := range metadataEntryNodes {
-		keyNode := entryNode.ChildByFieldName(rsl.F_KEY)
-		key := src[keyNode.StartByte():keyNode.EndByte()]
-		valueNode := entryNode.ChildByFieldName(rsl.F_VALUE)
-		switch valueNode.Kind() {
-		case rsl.K_INT:
-			str := src[valueNode.StartByte():valueNode.EndByte()]
-			value, _ := strconv.Atoi(str)
-			metadataEntries[key] = value
-		case rsl.K_FLOAT:
-			str := src[valueNode.StartByte():valueNode.EndByte()]
-			value, _ := strconv.ParseFloat(str, 64)
-			metadataEntries[key] = value
-		case rsl.K_STRING:
-			strContentsNode := valueNode.ChildByFieldName(rsl.F_CONTENTS)
-			metadataEntries[key] = src[strContentsNode.StartByte():strContentsNode.EndByte()]
-		case rsl.K_BOOL:
-			str := src[valueNode.StartByte():valueNode.EndByte()]
-			if str == "true" {
-				metadataEntries[key] = true
-			} else if str == "false" {
-				metadataEntries[key] = false
-			}
-		}
-	}
+	rawContents := src[contentsNode.StartByte():contentsNode.EndByte()]
+	fhContents, metadataEntries := extractContentsAndMetadata(rawContents)
 
 	return &FileHeader{
 		BaseNode:        newBaseNode(src, node),
-		Contents:        src[contentsNode.StartByte():contentsNode.EndByte()],
+		Contents:        fhContents,
 		MetadataEntries: metadataEntries,
 	}, true
 }
@@ -100,4 +75,33 @@ func newCallNode(node *ts.Node, completeSrc string) (*CallNode, bool) {
 		Name:     name,
 		NameNode: nameNode,
 	}, true
+}
+
+func extractContentsAndMetadata(rawContents string) (string, map[string]string) {
+	lines := strings.Split(rawContents, "\n")
+
+	metadataRegex := regexp.MustCompile(`^@([a-zA-Z0-9_]+)\s*=\s*(.+)$`)
+
+	metadataEntries := make(map[string]string)
+	var fhContents string
+	for i := len(lines) - 1; i >= 0; i-- {
+		line := strings.TrimSpace(lines[i])
+
+		if line == "" {
+			continue
+		}
+
+		matches := metadataRegex.FindStringSubmatch(line)
+
+		if matches != nil && len(matches) == 3 {
+			identifier := matches[1]
+			value := strings.TrimSpace(matches[2])
+			metadataEntries[identifier] = value
+		} else {
+			lines = lines[:i+1]
+			fhContents = strings.Join(lines, "\n")
+			break
+		}
+	}
+	return fhContents, metadataEntries
 }
