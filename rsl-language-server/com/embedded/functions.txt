@@ -4,6 +4,7 @@ blue
 bold
 ceil
 clamp
+color_rgb
 confirm
 count
 cyan

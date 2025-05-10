@@ -113,6 +113,7 @@ const (
 	FUNC_MAP                = "map"
 	FUNC_FILTER             = "filter"
 	FUNC_LOAD               = "load"
+	FUNC_COLOR_RGB          = "color_rgb"
 
 	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
@@ -1840,6 +1841,47 @@ func init() {
 				v := runLoader()
 				m.Set(newRslValueStr(key), v)
 				return newRslValues(f.i, f.callNode, v)
+			},
+		},
+		{
+			Name:           FUNC_COLOR_RGB,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 4,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{
+				{},
+				{RslIntT},
+				{RslIntT},
+				{RslIntT},
+			}),
+			NamedArgs: NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				textArg := f.args[0]
+				redArg := f.args[1]
+				greenArg := f.args[2]
+				blueArg := f.args[3]
+
+				extractRgb := func(arg PosArg) int64 {
+					node := arg.node
+					val := arg.value.RequireInt(f.i, node)
+					if val < 0 || val > 255 {
+						f.i.errorf(node, "RGB values must be [0, 255]; got %d", val)
+					}
+					return val
+				}
+				red := extractRgb(redArg)
+				green := extractRgb(greenArg)
+				blue := extractRgb(blueArg)
+
+				switch coerced := textArg.value.Val.(type) {
+				case RslString:
+					str := coerced.DeepCopy()
+					str.SetRgb(red, green, blue)
+					return newRslValues(f.i, textArg.node, str)
+				default:
+					s := NewRslString(ToPrintable(textArg.value))
+					s.SetRgb(red, green, blue)
+					return newRslValues(f.i, f.callNode, s)
+				}
 			},
 		},
 	}

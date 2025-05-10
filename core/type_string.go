@@ -21,7 +21,7 @@ type rslStringSegment struct {
 	String     string
 	Attributes []RslTextAttr
 	Hyperlink  *string
-	// can add bold, etc here too
+	Rgb        *com.Rgb
 }
 
 // todo should these methods be returning *RslString?
@@ -58,17 +58,20 @@ func (s RslString) String() string {
 }
 
 func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string {
-	if len(segment.Attributes) == 0 && segment.Hyperlink == nil {
+	if len(segment.Attributes) == 0 && segment.Hyperlink == nil && segment.Rgb == nil {
 		return str
 	}
 
 	clr := color.New()
 
-	if len(segment.Attributes) == 0 {
-	} else {
-		for _, attr := range segment.Attributes {
-			attr.AddAttrTo(clr)
-		}
+	for _, attr := range segment.Attributes {
+		attr.AddAttrTo(clr)
+	}
+
+	if segment.Rgb != nil {
+		// todo note: ordering here means RGB is applied after the other attributes.
+		//  What if yellow() invoked after RGB on a string?
+		clr = clr.AddRGB(segment.Rgb.R, segment.Rgb.G, segment.Rgb.B)
 	}
 
 	if segment.Hyperlink != nil {
@@ -219,4 +222,11 @@ func (s *RslString) TrimSuffix(suffix string) RslString {
 func (s *RslString) Reverse() RslString {
 	// todo should maintain attr info
 	return NewRslString(com.Reverse(s.Plain()))
+}
+
+func (s RslString) SetRgb(red int64, green int64, blue int64) {
+	rgb := com.NewRgb64(red, green, blue)
+	for i := range s.Segments {
+		s.Segments[i].Rgb = &rgb
+	}
 }

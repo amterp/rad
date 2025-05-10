@@ -457,6 +457,14 @@ Complete list:
 - `italic`
 - `underline`
 
+### color_rgb
+
+Apply RGB coloring to some input text. Not all terminals support this.
+
+```
+color_rgb(input: any, red: int, green: int, blue: int) -> string
+```
+
 ## Maps
 
 ### keys

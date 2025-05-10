@@ -209,3 +209,41 @@ print(2.red())
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Color_CanRgbColor(t *testing.T) {
+	rsl := `
+print("Hi".color_rgb(50, 110, 220))
+print(2.color_rgb(50, 110, 220))
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "\x1b[38;2;50;110;220mHi\x1b[0;22;0;0;0m\n"
+	expected += "\x1b[38;2;50;110;220m2\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Color_ErrorsOnTooLargeRgb(t *testing.T) {
+	rsl := `
+"Hi".color_rgb(300, 110, 220)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `Error at L2:16
+
+  "Hi".color_rgb(300, 110, 220)
+                 ^^^ RGB values must be [0, 255]; got 300
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Color_ErrorsOnNegativeRgb(t *testing.T) {
+	rsl := `
+"Hi".color_rgb(50, 110, -10)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `Error at L2:25
+
+  "Hi".color_rgb(50, 110, -10)
+                          ^^^ RGB values must be [0, 255]; got -10
+`
+	assertError(t, 1, expected)
+}
