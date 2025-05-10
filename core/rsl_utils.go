@@ -157,9 +157,7 @@ func RslToJsonType(arg RslValue) interface{} {
 	switch coerced := arg.Val.(type) {
 	case RslString:
 		return coerced.Plain()
-	case int64:
-		return float64(coerced)
-	case float64, bool:
+	case int64, float64, bool:
 		return coerced
 	case *RslList:
 		slice := make([]interface{}, 0)

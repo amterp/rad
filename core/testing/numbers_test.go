@@ -38,3 +38,15 @@ print(parse_json(a))
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_NumberPrecision_BigFloatMaintainsPrecisionWhenPrettyPrinted(t *testing.T) {
+	rsl := `
+a = 46046166185414656
+pprint(a)
+`
+	setupAndRunCode(t, rsl, "--color=never")
+	expected := `46046166185414656
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
