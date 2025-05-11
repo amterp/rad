@@ -25,6 +25,7 @@ type ArgDecl struct {
 	Type      ArgDeclType
 	Rename    *ArgDeclRename
 	Shorthand *ArgDeclShorthand
+	Optional  *ArgDeclOptional
 	Default   *ArgDeclDefault
 	Comment   *ArgDeclComment
 }
@@ -80,6 +81,9 @@ type ArgDeclDefault struct {
 	DefaultIntList    *[]int64
 	DefaultFloatList  *[]float64
 	DefaultBoolList   *[]bool
+}
+type ArgDeclOptional struct {
+	BaseNode
 }
 
 type ArgDeclComment struct {
@@ -172,6 +176,7 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		renameNode := decl.ChildByFieldName("rename")
 		shorthandNode := decl.ChildByFieldName("shorthand")
 		typeNode := decl.ChildByFieldName("type")
+		optionalNode := decl.ChildByFieldName("optional")
 		defaultNode := decl.ChildByFieldName("default")
 		commentNode := decl.ChildByFieldName("comment")
 
@@ -187,6 +192,13 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 			argShorthand = &ArgDeclShorthand{
 				BaseNode:  newBaseNode(src, shorthandNode),
 				Shorthand: src[shorthandNode.StartByte():shorthandNode.EndByte()],
+			}
+		}
+
+		var argOptional *ArgDeclOptional
+		if optionalNode != nil {
+			argOptional = &ArgDeclOptional{
+				BaseNode: newBaseNode(src, optionalNode),
 			}
 		}
 
@@ -265,6 +277,7 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 			},
 			Rename:    argRename,
 			Shorthand: argShorthand,
+			Optional:  argOptional,
 			Default:   argDefault,
 			Comment:   argComment,
 		})
