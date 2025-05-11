@@ -14,13 +14,14 @@ type ScriptArg struct {
 	Short              *string
 	Type               RslArgTypeT
 	Description        *string
-	IsOptional         bool
+	IsNullable         bool // aka is optional. e.g. 'string?' syntax
+	HasDefaultValue    bool
 	EnumConstraint     *[]string
 	RegexConstraint    *regexp.Regexp
 	RangeConstraint    *ArgRangeConstraint
 	RequiresConstraint []string
 	ExcludesConstraint []string
-	// first check the Type and IsOptional, then get the value
+	// first check the Type and HasDefaultValue, then get the value
 	DefaultString     *string
 	DefaultStringList *[]string
 	DefaultInt        *int64
@@ -57,7 +58,8 @@ func FromArgDecl(
 		Short:              decl.ShorthandStr(),
 		Type:               ToRslArgTypeT(decl.Type.Type),
 		Description:        decl.CommentStr(),
-		IsOptional:         isOptional(decl),
+		IsNullable:         decl.Optional != nil,
+		HasDefaultValue:    hasDefaultValue(decl),
 		EnumConstraint:     convertEnumConstraint(enumConstraint),
 		RegexConstraint:    convertRegexConstraint(regexConstraint),
 		RangeConstraint:    convertRangeConstraint(rangeConstraint),
@@ -125,10 +127,7 @@ func convertRangeConstraint(constraint *rts.ArgRangeConstraint) *ArgRangeConstra
 	}
 }
 
-func isOptional(decl rts.ArgDecl) bool {
-	if decl.Optional != nil {
-		return true
-	}
+func hasDefaultValue(decl rts.ArgDecl) bool {
 	if decl.Type.Type == "bool" {
 		return true
 	}

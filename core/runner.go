@@ -237,7 +237,7 @@ func (r *RadRunner) Run() error {
 		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 	}
 
-	constraintCtx := NewConstraintCtx(missingArgs, scriptArgs)
+	constraintCtx := NewConstraintCtx(scriptArgs)
 	for _, scriptArg := range scriptArgs {
 		err := scriptArg.ValidateRelationalConstraints(constraintCtx)
 		if err != nil {

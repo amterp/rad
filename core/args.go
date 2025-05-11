@@ -14,19 +14,17 @@ import (
 )
 
 type ConstraintCtx struct {
-	MissingArgs []RslArg
-	ScriptArgs  map[string]RslArg // Identifier -> RslArg
+	ScriptArgs map[string]RslArg // Identifier -> RslArg
 }
 
-func NewConstraintCtx(missingArgs, scriptArgs []RslArg) ConstraintCtx {
+func NewConstraintCtx(scriptArgs []RslArg) ConstraintCtx {
 	scriptArgByIdentifier := make(map[string]RslArg)
 	for _, arg := range scriptArgs {
 		scriptArgByIdentifier[arg.GetIdentifier()] = arg
 	}
 
 	return ConstraintCtx{
-		MissingArgs: missingArgs,
-		ScriptArgs:  scriptArgByIdentifier,
+		ScriptArgs: scriptArgByIdentifier,
 	}
 }
 
@@ -43,6 +41,7 @@ type RslArg interface {
 	IsDefined() bool  // either configured or has a default
 	SetValue(value string)
 	IsOptional() bool
+	IsNullable() bool
 	GetNode() *ts.Node // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
@@ -116,7 +115,15 @@ func (f *BaseRslArg) IsOptional() bool {
 		return true
 	}
 
-	return f.scriptArg.IsOptional
+	return f.scriptArg.HasDefaultValue || f.scriptArg.IsNullable
+}
+
+func (f *BaseRslArg) IsNullable() bool {
+	if f.scriptArg == nil {
+		return false
+	}
+
+	return f.scriptArg.IsNullable
 }
 
 func (f *BaseRslArg) GetNode() *ts.Node {
@@ -141,11 +148,9 @@ func (f *BaseRslArg) ValidateConstraints() error {
 }
 
 func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
-	missingExternalNames := TransformRslArgs(ctx.MissingArgs, RslArg.GetExternalName)
 	requires := f.requiresConstraint
 
-	thisArgIsDefined := !lo.Contains(missingExternalNames, f.ExternalName)
-	if !thisArgIsDefined {
+	if !f.IsDefined() {
 		// relational constraints only apply to defined args
 		return nil
 	}
@@ -170,8 +175,7 @@ func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
 			return nil
 		}
 
-		requiredArgIsMissing := lo.Contains(missingExternalNames, required)
-		if requiredArgIsMissing {
+		if !reqArg.IsDefined() {
 			return f.missingRequirement(required)
 		}
 	}
@@ -188,8 +192,7 @@ func (f *BaseRslArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
 			return nil
 		}
 
-		excludedArgIsDefined := !lo.Contains(missingExternalNames, excluded)
-		if excludedArgIsDefined {
+		if exclArg.IsDefined() {
 			return f.excludesRequirement(excluded)
 		}
 	}

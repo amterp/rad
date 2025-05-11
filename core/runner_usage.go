@@ -58,7 +58,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	}
 
 	for _, arg := range r.scriptData.Args {
-		if arg.IsOptional {
+		if arg.HasDefaultValue || arg.IsNullable {
 			com.CyanF(buf, fmt.Sprintf(" [%s]", arg.ApiName))
 		} else if arg.Type == ArgBoolT {
 			if arg.Short == nil {
