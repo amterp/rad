@@ -126,6 +126,9 @@ func convertRangeConstraint(constraint *rts.ArgRangeConstraint) *ArgRangeConstra
 }
 
 func isOptional(decl rts.ArgDecl) bool {
+	if decl.Optional != nil {
+		return true
+	}
 	if decl.Type.Type == "bool" {
 		return true
 	}
