@@ -48,6 +48,10 @@
           "include": "#types"
         },
         {
+          "name": "constant.language.nullable.rsl",
+          "match": "\\?"
+        },
+        {
           "name": "storage.modifier.rsl",
           "match": "\\b(enum|regex|mutually|requires|excludes)\\b"
         },
