@@ -74,7 +74,8 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
 		}
 		if !response {
-			i.errorf(shellCmdNode, RED.Colorize("Aborted shell command, exiting."))
+			emptyBuffer := bytes.Buffer{}
+			return resolveResult(shellCmdNode, numExpectedOutputs, emptyBuffer, emptyBuffer, 1)
 		}
 	}
 
