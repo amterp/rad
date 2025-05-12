@@ -10,11 +10,13 @@ import (
 )
 
 type ScriptData struct {
-	ScriptName  string
-	Args        []*ScriptArg
-	Description *string
-	Tree        *rts.RslTree
-	Src         string
+	ScriptName         string
+	Args               []*ScriptArg
+	Description        *string
+	Tree               *rts.RslTree
+	Src                string
+	DisableGlobalFlags bool
+	DisableArgsBlock   bool
 }
 
 func ExtractMetadata(src string) *ScriptData {
@@ -24,28 +26,39 @@ func ExtractMetadata(src string) *ScriptData {
 	}
 
 	tree := rslTree.Parse(src)
-	RP.RadDebugf("Tree dump:\n" + tree.Dump()) // todo should be lazy i.e. func
 
+	disableGlobalFlags := false
+	disableArgsBlock := false
 	var description *string
-	fileHeader, ok := tree.FindFileHeader()
-	if ok {
+	if fileHeader, ok := tree.FindFileHeader(); ok {
 		description = &fileHeader.Contents
-		stashId, ok := fileHeader.MetadataEntries[STASH_ID]
-		if ok {
+		if stashId, ok := fileHeader.MetadataEntries[MACRO_STASH_ID]; ok {
 			RadHomeInst.SetStashId(stashId)
+		}
+
+		// TODO 'true' should be implicit i.e. don't need `= true` or whatever
+		if _, ok := fileHeader.MetadataEntries[MACRO_DISABLE_GLOBAL_FLAGS]; ok {
+			disableGlobalFlags = true
+		}
+		if _, ok := fileHeader.MetadataEntries[MACRO_DISABLE_ARGS_BLOCK]; ok {
+			disableArgsBlock = true
 		}
 	}
 
-	argBlock, ok := tree.FindArgBlock()
-	RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.FlatStr(argBlock)))
-	args := extractArgs(argBlock)
+	var args []*ScriptArg
+	if argBlock, ok := tree.FindArgBlock(); ok {
+		RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.FlatStr(argBlock)))
+		args = extractArgs(argBlock)
+	}
 
 	return &ScriptData{
-		ScriptName:  ScriptName,
-		Args:        args,
-		Description: description,
-		Tree:        tree,
-		Src:         src,
+		ScriptName:         ScriptName,
+		Args:               args,
+		Description:        description,
+		Tree:               tree,
+		Src:                src,
+		DisableGlobalFlags: disableGlobalFlags,
+		DisableArgsBlock:   disableArgsBlock,
 	}
 }
 

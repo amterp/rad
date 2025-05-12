@@ -1894,7 +1894,10 @@ func init() {
 			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{}),
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RslValue {
-				args := os.Args
+				// When a rad script is invoked, os.Args will look like:
+				// [ "rad", "./script.rsl", "arg1", "arg2" ]
+				// Users will not expect or want the initial "rad", so we cut that out.
+				args := os.Args[1:]
 				return newRslValues(f.i, f.callNode, args)
 			},
 		},
@@ -2068,5 +2071,5 @@ func bugIncorrectTypes(funcName string) string {
 }
 
 func errMissingScriptId(i *Interpreter, node *ts.Node) {
-	i.errorf(node, "Script ID is not set. Set the '%s' macro in the file header.", STASH_ID)
+	i.errorf(node, "Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID)
 }

@@ -44,7 +44,7 @@ func AddInternalFuncs() {
 					return newRslValues(f.i, f.callNode, RSL_NULL)
 				}
 
-				stashId, ok := fh.MetadataEntries[STASH_ID]
+				stashId, ok := fh.MetadataEntries[MACRO_STASH_ID]
 				if ok {
 					return newRslValues(f.i, f.callNode, stashId)
 				}

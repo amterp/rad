@@ -78,6 +78,13 @@ func (r *RadRunner) Run() error {
 		}
 	}
 
+	// set up a best-effort printer temporarily. May get recreated with global flags later.
+	RP = NewPrinter(r, false, false, false, false)
+
+	if !com.IsBlank(errMsg) {
+		RP.ErrorExit(errMsg)
+	}
+
 	HasScript = !com.IsBlank(sourceCode)
 	SetScriptPath(scriptPath)
 
@@ -87,37 +94,36 @@ func (r *RadRunner) Run() error {
 	// 3. both sourceCode and errMsg are empty, meaning no script and no error, so print usage
 
 	if HasScript {
+		r.scriptData = ExtractMetadata(sourceCode)
+	}
+
+	if HasScript {
 		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
 		rslParser, err := rts.NewRslParser()
 		if err != nil {
-			errMsg = fmt.Sprintf("Failed to load RSL parser: %v", err)
-		} else {
-			tree := rslParser.Parse(sourceCode)
-			argBlock, ok := tree.FindArgBlock()
-			if ok {
-				for _, argDecl := range argBlock.Args {
-					FlagsUsedInScript = append(FlagsUsedInScript, argDecl.ExternalName())
+			RP.ErrorExit(fmt.Sprintf("Failed to load RSL parser: %v", err))
+		}
+		tree := rslParser.Parse(sourceCode)
+		argBlock, ok := tree.FindArgBlock()
+		if ok {
+			if r.scriptData != nil && r.scriptData.DisableArgsBlock {
+				RP.ErrorExit(fmt.Sprintf("%s enabled, but args block found.", MACRO_DISABLE_ARGS_BLOCK))
+			}
 
-					shorthand := argDecl.ShorthandStr()
-					if shorthand != nil {
-						FlagsUsedInScript = append(FlagsUsedInScript, *shorthand)
-					}
+			for _, argDecl := range argBlock.Args {
+				FlagsUsedInScript = append(FlagsUsedInScript, argDecl.ExternalName())
+
+				shorthand := argDecl.ShorthandStr()
+				if shorthand != nil {
+					FlagsUsedInScript = append(FlagsUsedInScript, *shorthand)
 				}
 			}
 		}
 	}
 
 	r.setUpGlobals()
-	if !com.IsBlank(errMsg) {
-		RP.ErrorExit(errMsg)
-	}
-
 	args := RFlagSet.Args()
 
-	if !com.IsBlank(sourceCode) {
-		RP.RadDebugf(fmt.Sprintf("Read src code (%d chars), parsing...", len(sourceCode)))
-		r.scriptData = ExtractMetadata(sourceCode)
-	}
 	scriptArgs := r.createRslArgsFromScript()
 	r.scriptArgs = scriptArgs
 
@@ -180,7 +186,9 @@ func (r *RadRunner) Run() error {
 	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
 
 	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
-	RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
+	if !r.scriptData.DisableArgsBlock || !r.scriptData.DisableGlobalFlags {
+		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
+	}
 
 	// technically re-using the flagset is apparently discouraged, but i've yet to see where it goes wrong
 	err := RFlagSet.Parse(os.Args[1:])
@@ -279,7 +287,9 @@ func (r *RadRunner) setUpGlobals() {
 		r.RunUsage(false, false)
 	}
 
-	r.globalFlags = CreateAndRegisterGlobalFlags()
+	if r.scriptData == nil || !r.scriptData.DisableGlobalFlags {
+		r.globalFlags = CreateAndRegisterGlobalFlags()
+	}
 
 	err := RFlagSet.Parse(os.Args[1:])
 
