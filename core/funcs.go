@@ -115,6 +115,7 @@ const (
 	FUNC_LOAD               = "load"
 	FUNC_COLOR_RGB          = "color_rgb"
 	FUNC_COLORIZE           = "colorize"
+	FUNC_GET_ARGS           = "get_args"
 
 	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
@@ -1884,6 +1885,17 @@ func init() {
 					s.SetRgb64(red, green, blue)
 					return newRslValues(f.i, f.callNode, s)
 				}
+			},
+		},
+		{
+			Name:            FUNC_GET_ARGS,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  0,
+			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RslValue {
+				args := os.Args
+				return newRslValues(f.i, f.callNode, args)
 			},
 		},
 	}
