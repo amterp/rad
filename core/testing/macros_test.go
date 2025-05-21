@@ -61,3 +61,20 @@ Usage:
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Macros_NoGlobalFlagsInUsageIfDisabled(t *testing.T) {
+	rsl := `
+---
+Docs here.
+@disable_global_flags=1 n                        
+---
+`
+	setupAndRunCode(t, rsl, "--color=never", "-h")
+	expected := `Docs here.
+
+Usage:
+ 
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

@@ -79,7 +79,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 		flagUsage(buf, r.scriptArgs)
 	}
 
-	if !shortHelp {
+	if !shortHelp && !r.scriptData.DisableGlobalFlags {
 		fmt.Fprintf(buf, "\n")
 		com.GreenBoldF(buf, "Global flags:\n")
 		flagUsage(buf, r.globalFlags)
