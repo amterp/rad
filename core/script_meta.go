@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	com "rad/core/common"
+	"strconv"
 
 	"github.com/samber/lo"
 
@@ -36,13 +37,8 @@ func ExtractMetadata(src string) *ScriptData {
 			RadHomeInst.SetStashId(stashId)
 		}
 
-		// TODO 'true' should be implicit i.e. don't need `= true` or whatever
-		if _, ok := fileHeader.MetadataEntries[MACRO_DISABLE_GLOBAL_FLAGS]; ok {
-			disableGlobalFlags = true
-		}
-		if _, ok := fileHeader.MetadataEntries[MACRO_DISABLE_ARGS_BLOCK]; ok {
-			disableArgsBlock = true
-		}
+		disableGlobalFlags = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_GLOBAL_FLAGS)
+		disableArgsBlock = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_ARGS_BLOCK)
 	}
 
 	var args []*ScriptArg
@@ -137,6 +133,26 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 	}
 
 	return args
+}
+
+func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
+	val, ok := macroMap[macro]
+	if !ok {
+		return true
+	}
+
+	var rslVal RslValue
+	if i64, err := strconv.ParseInt(val, 10, 64); err == nil {
+		rslVal = newRslValueInt64(i64)
+	} else if f64, err := strconv.ParseFloat(val, 64); err == nil {
+		rslVal = newRslValueFloat64(f64)
+	} else if b, err := strconv.ParseBool(val); err == nil {
+		rslVal = newRslValueBool(b)
+	} else {
+		rslVal = newRslValueStr(val)
+	}
+
+	return rslVal.TruthyFalsy()
 }
 
 func errUndefinedArg(node rts.Node, name string) {

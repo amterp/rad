@@ -9,8 +9,8 @@ const (
 )
 
 const (
-	WILDCARD                   = "*"
-	MACRO_STASH_ID             = "stash_id"
-	MACRO_DISABLE_GLOBAL_FLAGS = "disable_global_flags"
-	MACRO_DISABLE_ARGS_BLOCK   = "disable_args_block"
+	WILDCARD                  = "*"
+	MACRO_STASH_ID            = "stash_id"
+	MACRO_ENABLE_GLOBAL_FLAGS = "enable_global_flags"
+	MACRO_ENABLE_ARGS_BLOCK   = "enable_args_block"
 )

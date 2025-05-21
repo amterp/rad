@@ -66,10 +66,10 @@ func Test_Macros_NoGlobalFlagsInUsageIfDisabled(t *testing.T) {
 	rsl := `
 ---
 Docs here.
-@disable_global_flags=1 n                        
+@enable_global_flags = 0
 ---
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, rsl, "--color=never", "--help")
 	expected := `Docs here.
 
 Usage:
@@ -77,4 +77,24 @@ Usage:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
+}
+
+func Test_Macros_DisablingGlobalFlagsLeadsToComplaintsAboutThemIfSpecified(t *testing.T) {
+	rsl := `
+---
+Docs here.
+@enable_global_flags = 0
+---
+debug("hi1")
+print("hi2")
+`
+	setupAndRunCode(t, rsl, "--debug")
+	expected := `unknown flag: --debug
+
+Docs here.
+
+Usage:
+ 
+`
+	assertError(t, 1, expected)
 }

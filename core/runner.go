@@ -107,7 +107,7 @@ func (r *RadRunner) Run() error {
 		argBlock, ok := tree.FindArgBlock()
 		if ok {
 			if r.scriptData != nil && r.scriptData.DisableArgsBlock {
-				RP.ErrorExit(fmt.Sprintf("%s enabled, but args block found.", MACRO_DISABLE_ARGS_BLOCK))
+				RP.ErrorExit(fmt.Sprintf("%s disabled, but args block found.", MACRO_ENABLE_ARGS_BLOCK))
 			}
 
 			for _, argDecl := range argBlock.Args {
@@ -185,8 +185,8 @@ func (r *RadRunner) Run() error {
 
 	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
 
-	// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 	if !r.scriptData.DisableArgsBlock || !r.scriptData.DisableGlobalFlags {
+		// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 	}
 
