@@ -53,6 +53,11 @@ func ResetGlobals() {
 	RReq = nil
 	RClock = nil
 	RSleep = nil
+	HasScript = false
+	ScriptPath = ""
+	ScriptDir = ""
+	ScriptName = ""
+	IsTest = false
 }
 
 func setGlobals(runnerInput RunnerInput) {
