@@ -58,7 +58,6 @@ func (fn RslFn) IsLambda() bool {
 	return len(fn.Exprs) > 0 || fn.Stmt != nil
 }
 
-// todo will this be re-used for built-in funcs? probably, but we'll fork off early
 func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
 	if fn.BuiltInFunc != nil {
 		assertMinNumPosArgs(f, fn.BuiltInFunc)

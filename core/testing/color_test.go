@@ -269,7 +269,7 @@ display:
 		map fn(n) n.colorize(names)
 `
 	setupAndRunCode(t, rsl, "--color=always")
-	expected := "\x1b[33mnames                                 \x1b[0m \n\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m                                   \n\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m                                     \n\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m                                 \n\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m                                   \n"
+	expected := "\x1b[33mnames  \x1b[0m \n\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m    \n\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m      \n\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m  \n\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m    \n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }

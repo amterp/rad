@@ -32,7 +32,7 @@ type TblWriter struct {
 	writer      io.Writer
 	tbl         *tblwriter.Table
 	headers     []string
-	rows        [][]string
+	rows        [][]RslString
 	colToColors map[string][]radColorMod
 	numColumns  int
 }
@@ -51,7 +51,7 @@ func (w *TblWriter) SetHeader(headers []string) {
 	w.numColumns = len(headers)
 }
 
-func (w *TblWriter) Append(row []string) {
+func (w *TblWriter) Append(row []RslString) {
 	w.rows = append(w.rows, row)
 	if w.numColumns < len(row) {
 		w.numColumns = len(row)
@@ -83,7 +83,7 @@ func (w *TblWriter) Render() {
 	}
 	for _, row := range w.rows {
 		for i, cell := range row {
-			lines := strings.Split(cell, "\n")
+			lines := strings.Split(cell.Plain(), "\n")
 			for _, line := range lines {
 				if len(line) > colWidths[i] {
 					colWidths[i] = utf8.RuneCountInString(line)
@@ -136,7 +136,8 @@ func (w *TblWriter) Render() {
 		colWidth := colWidths[i]
 		w.tbl.SetColMinWidth(i, colWidth)
 		for _, row := range rows {
-			lines := strings.Split(row[i], "\n")
+			cell := row[i]
+			lines := strings.Split(cell.Plain(), "\n")
 			for j, line := range lines {
 				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
@@ -150,7 +151,8 @@ func (w *TblWriter) Render() {
 					}
 				}
 			}
-			row[i] = strings.Join(lines, "\n")
+			rejoined := strings.Join(lines, "\n")
+			row[i] = cell.CopyAttrTo(rejoined)
 		}
 	}
 
@@ -195,7 +197,10 @@ func (w *TblWriter) Render() {
 	}
 
 	for _, row := range rows {
-		w.tbl.Append(row)
+		rowStr := lo.Map(row, func(cell RslString, _ int) string {
+			return cell.String()
+		})
+		w.tbl.Append(rowStr)
 	}
 
 	w.tbl.Render()

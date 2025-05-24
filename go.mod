@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/amterp/color v1.20.0
 	github.com/amterp/flexid v1.3.0
-	github.com/amterp/go-tbl v0.9.0
+	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
 	github.com/amterp/rts v0.0.33
 	github.com/charmbracelet/huh v0.6.0
@@ -35,7 +35,6 @@ require (
 	github.com/charmbracelet/x/term v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-	github.com/fatih/color v1.18.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect

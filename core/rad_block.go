@@ -294,7 +294,7 @@ func (r *radInvocation) execute() {
 		return
 	}
 
-	columns := lo.FilterMap(radFields, func(field radField, _ int) ([]string, bool) {
+	columns := lo.FilterMap(radFields, func(field radField, _ int) ([]RslString, bool) {
 		if r.fieldsToNotPrint.Has(field.name) {
 			return nil, false
 		}
@@ -310,7 +310,7 @@ func (r *radInvocation) execute() {
 
 	tbl.SetHeader(headers)
 	for i := range columns[0] {
-		row := lo.Map(columns, func(column []string, _ int) string {
+		row := lo.Map(columns, func(column []RslString, _ int) RslString {
 			return column[i]
 		})
 		tbl.Append(row)
@@ -365,18 +365,36 @@ func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, c
 	sortColumns(i, fields, colWiseSort)
 }
 
-func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []string {
+func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []RslString {
 	mods, ok := colToMods[fieldName]
 	if !ok || mods.lambda == nil {
-		return ToStringArrayQuoteStr(column.Values, false)
+		return toStringArrayQuoteStr(column.Values, false)
 	}
 
 	reprNode := mods.lambda.ReprNode
-	var newVals []string
+	var newVals []RslString
 	for _, val := range column.Values {
-		mapped := mods.lambda.Execute(NewFuncInvocationArgs(i, reprNode, "map", NewPosArgs(NewPosArg(reprNode, val)), NO_NAMED_ARGS_INPUT, 1))[0]
-		newVals = append(newVals, ToPrintableQuoteStr(mapped, false))
+		mapped := mods.lambda.Execute(NewFuncInvocationArgs(i, reprNode, FUNC_MAP, NewPosArgs(NewPosArg(reprNode, val)), NO_NAMED_ARGS_INPUT, 1))[0]
+		newVals = append(newVals, toStringQuoteStr(mapped, false))
 	}
 
 	return newVals
+}
+
+func toStringArrayQuoteStr(v []RslValue, quoteStrings bool) []RslString {
+	output := make([]RslString, len(v))
+	for i, val := range v {
+		output[i] = toStringQuoteStr(val, quoteStrings)
+	}
+	return output
+}
+
+func toStringQuoteStr(v RslValue, quoteStrings bool) RslString {
+	switch coerced := v.Val.(type) {
+	case RslString:
+		return coerced
+	default:
+		str := ToPrintableQuoteStr(coerced, quoteStrings)
+		return NewRslString(str)
+	}
 }

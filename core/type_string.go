@@ -38,6 +38,14 @@ func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
 	return RslString{Segments: []rslStringSegment{segment}}
 }
 
+// Copies only the attributes of the first segment. Maybe could change somehow?
+func (s RslString) CopyAttrTo(otherStr string) RslString {
+	cpy := s.DeepCopy()
+	cpy.Segments[0].String = otherStr
+	cpy.Segments = cpy.Segments[:1] // keep only the first segment
+	return cpy
+}
+
 // does not apply any attributes
 func (s RslString) Plain() string {
 	// todo can lazily compute and cache
@@ -52,33 +60,9 @@ func (s RslString) Plain() string {
 func (s RslString) String() string {
 	builder := strings.Builder{}
 	for _, segment := range s.Segments {
-		builder.WriteString(s.ApplyAttributes(segment.String, segment))
+		builder.WriteString(s.applyAttributes(segment.String, segment))
 	}
 	return builder.String()
-}
-
-func (s *RslString) ApplyAttributes(str string, segment rslStringSegment) string {
-	if len(segment.Attributes) == 0 && segment.Hyperlink == nil && segment.Rgb == nil {
-		return str
-	}
-
-	clr := color.New()
-
-	for _, attr := range segment.Attributes {
-		attr.AddAttrTo(clr)
-	}
-
-	if segment.Rgb != nil {
-		// todo note: ordering here means RGB is applied after the other attributes.
-		//  What if yellow() invoked after RGB on a string?
-		clr = clr.AddRGB(segment.Rgb.R, segment.Rgb.G, segment.Rgb.B)
-	}
-
-	if segment.Hyperlink != nil {
-		clr = clr.Hyperlink(*segment.Hyperlink)
-	}
-
-	return clr.Sprint(str)
 }
 
 func (s *RslString) ToRuneList() *RslList {
@@ -233,4 +217,28 @@ func (s RslString) SetRgb(red int, green int, blue int) {
 
 func (s RslString) SetRgb64(red int64, green int64, blue int64) {
 	s.SetRgb(int(red), int(green), int(blue))
+}
+
+func (s *RslString) applyAttributes(str string, segment rslStringSegment) string {
+	if len(segment.Attributes) == 0 && segment.Hyperlink == nil && segment.Rgb == nil {
+		return str
+	}
+
+	clr := color.New()
+
+	for _, attr := range segment.Attributes {
+		attr.AddAttrTo(clr)
+	}
+
+	if segment.Rgb != nil {
+		// todo note: ordering here means RGB is applied after the other attributes.
+		//  What if yellow() invoked after RGB on a string?
+		clr = clr.AddRGB(segment.Rgb.R, segment.Rgb.G, segment.Rgb.B)
+	}
+
+	if segment.Hyperlink != nil {
+		clr = clr.Hyperlink(*segment.Hyperlink)
+	}
+
+	return clr.Sprint(str)
 }
