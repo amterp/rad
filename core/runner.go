@@ -107,7 +107,7 @@ func (r *RadRunner) Run() error {
 		argBlock, ok := tree.FindArgBlock()
 		if ok {
 			if r.scriptData != nil && r.scriptData.DisableArgsBlock {
-				RP.ErrorExit(fmt.Sprintf("%s disabled, but args block found.", MACRO_ENABLE_ARGS_BLOCK))
+				RP.ErrorExit(fmt.Sprintf("Macro '%s' disabled, but args block found.\n", MACRO_ENABLE_ARGS_BLOCK))
 			}
 
 			for _, argDecl := range argBlock.Args {

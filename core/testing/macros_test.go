@@ -1,6 +1,8 @@
 package testing
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_Macros_ReadingStashId(t *testing.T) {
 	rsl := `
@@ -95,6 +97,22 @@ Docs here.
 
 Usage:
  
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Macros_ErrorsIfArgsBlockDisabledButSpecified(t *testing.T) {
+	rsl := `
+---
+Docs here.
+@enable_args_block = 0
+---
+args:
+	name string
+print("hi")
+`
+	setupAndRunCode(t, rsl)
+	expected := `Macro 'enable_args_block' disabled, but args block found.
 `
 	assertError(t, 1, expected)
 }

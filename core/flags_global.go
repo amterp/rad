@@ -34,23 +34,22 @@ var (
 
 	FlagsUsedInScript []string
 
-	FlagHelp     BoolRslArg
-	FlagDebug    BoolRslArg
-	FlagRadDebug BoolRslArg
-	FlagColor    StringRslArg
-	FlagQuiet    BoolRslArg
-	FlagShell    BoolRslArg
-	// todo allow scripts to override this global flag
+	FlagHelp                 BoolRslArg
+	FlagDebug                BoolRslArg
+	FlagRadDebug             BoolRslArg
+	FlagColor                StringRslArg
+	FlagQuiet                BoolRslArg
+	FlagShell                BoolRslArg
 	FlagVersion              BoolRslArg
 	FlagConfirmShellCommands BoolRslArg
 	FlagSrc                  BoolRslArg
 	FlagRslTree              BoolRslArg
 	FlagMockResponse         MockResponseRslArg
-
-	// ordering here matters -- it's the order in which they are printed in the usage string
+	// ^ when adding more, update ResetGlobals function
 )
 
 func CreateAndRegisterGlobalFlags() []RslArg {
+	// ordering of this list matters -- it's the order in which they are printed in the usage string
 	flags := make([]RslArg, 0)
 
 	if shouldAddFlag(FLAG_HELP, FLAG_H) {

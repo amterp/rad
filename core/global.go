@@ -53,6 +53,23 @@ func ResetGlobals() {
 	RReq = nil
 	RClock = nil
 	RSleep = nil
+	HasScript = false
+	ScriptPath = ""
+	ScriptDir = ""
+	ScriptName = ""
+	IsTest = false
+
+	FlagHelp = BoolRslArg{}
+	FlagDebug = BoolRslArg{}
+	FlagRadDebug = BoolRslArg{}
+	FlagColor = StringRslArg{}
+	FlagQuiet = BoolRslArg{}
+	FlagShell = BoolRslArg{}
+	FlagVersion = BoolRslArg{}
+	FlagConfirmShellCommands = BoolRslArg{}
+	FlagSrc = BoolRslArg{}
+	FlagRslTree = BoolRslArg{}
+	FlagMockResponse = MockResponseRslArg{}
 }
 
 func setGlobals(runnerInput RunnerInput) {
