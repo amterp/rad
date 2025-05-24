@@ -3,22 +3,27 @@
 Facilitates developing rad.
 ---
 args:
-    version v int = 0 # 1 to bump patch, 2 for minor and 3 for major.
+    release r int?    # 1 to bump patch, 2 for minor and 3 for major.
     docs d bool       # Enable to deploy docs.
     amend a bool      # Enable to amend the last commit with the version bump instead of creating a new commit.
     push p bool       # Enable to push local commits.
+    build b bool      # Enable to build.
+    validate v bool   # Enable to build & test.
 
 get_branch = fn():
     _, branch  = $!`echo -n $(git branch --show-current)`
     return branch
 
-if version:
+if build:
+    $!`make build`
+
+if release or push or validate:
     $!`make all`
 
 if docs:
     $!`mkdocs gh-deploy -f ./docs-web/mkdocs.yml`
 
-if version:
+if release:
     // resolve version /////////////
     _, tags = $!`git tag`
     tags = split(tags[:-1], "\n")
@@ -27,11 +32,11 @@ if version:
     major = sort([parse_int(t[0]) for t in tags])[-1]
     minor = sort([parse_int(t[1]) for t in tags if parse_int(t[0]) == major])[-1]
     patch = sort([parse_int(t[2]) for t in tags if parse_int(t[0]) == major and parse_int(t[1]) == minor])[-1]
-    if version == 1:
+    if release == 1:
         version = "{major}.{minor}.{patch + 1}"
-    else if version == 2:
+    else if release == 2:
         version = "{major}.{minor + 1}.0"
-    else if version == 3:
+    else if release == 3:
         version = "{major + 1}.0.0"
     print("Bumping to version:", green(version))
     ///////////////////////////////
@@ -61,7 +66,6 @@ if version:
         confirm $!`git push origin {branch} --tags`
 
 if push:
-    $!`make all`
     branch = get_branch()
     $!`git push origin {branch} --tags`
 
