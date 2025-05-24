@@ -289,6 +289,12 @@ func (r *RadRunner) setUpGlobals() {
 
 	if r.scriptData == nil || !r.scriptData.DisableGlobalFlags {
 		r.globalFlags = CreateAndRegisterGlobalFlags()
+	} else {
+		// If we don't define our own help flag, pflag intercepts and runs its own usage.
+		// If global flags disabled, that includes help, so we define this throwaway flag to
+		// absorb the --help and prevent pflag from doing something undesirable.
+		help := false
+		RFlagSet.BoolVarP(&help, "help", "h", false, "")
 	}
 
 	err := RFlagSet.Parse(os.Args[1:])

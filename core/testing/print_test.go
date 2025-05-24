@@ -5,7 +5,7 @@ import (
 )
 
 func Test_Print(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/print.rad")
+	setupAndRunArgs(t, "./rsl_scripts/print.rsl")
 	expected := `hi alice
 hi bob
 hi charlie
@@ -15,14 +15,14 @@ hi charlie
 }
 
 func Test_DebugNoDebugFlag(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/debug.rad")
+	setupAndRunArgs(t, "./rsl_scripts/debug.rsl")
 	expected := "one\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_DebugWithDebugFlag(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/debug.rad", "--debug")
+	setupAndRunArgs(t, "./rsl_scripts/debug.rsl", "--debug")
 	expected := "one\nDEBUG: two\nDEBUG: three\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

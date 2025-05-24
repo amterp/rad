@@ -64,18 +64,16 @@ Usage:
 	assertNoErrors(t)
 }
 
-func Test_Macros_NoGlobalFlagsInUsageIfDisabled(t *testing.T) {
+func Test_Macros_HelpDisabledIfGlobalFlagsDisabled(t *testing.T) {
 	rsl := `
 ---
 Docs here.
 @enable_global_flags = 0
 ---
+print("hi")
 `
-	setupAndRunCode(t, rsl, "--color=never", "--help")
-	expected := `Docs here.
-
-Usage:
- 
+	setupAndRunCode(t, rsl, "--help")
+	expected := `hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -115,4 +113,25 @@ print("hi")
 	expected := `Macro 'enable_args_block' disabled, but args block found.
 `
 	assertError(t, 1, expected)
+}
+
+func Test_Macros_DoesPassthroughOfHelp(t *testing.T) {
+	rsl := `
+---
+@enable_args_block = 0
+@enable_global_flags = 0
+---
+
+my_args = get_args()[1:].join(" ")
+quiet $!'./rsl_scripts/hello.rsl {my_args}'
+`
+	setupAndRunCode(t, rsl, "--help", "--color=never")
+	expected := `Usage:
+  hello.rsl <name>
+
+Script args:
+      --name string   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
 }

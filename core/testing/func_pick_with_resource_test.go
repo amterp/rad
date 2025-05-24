@@ -105,7 +105,7 @@ func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
 }
 
 func TestResourcePathIsRelativeToScript(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/people_resource.rad", "bob")
+	setupAndRunArgs(t, "./rsl_scripts/people_resource.rsl", "bob")
 	expected := `Bob
 350
 `
