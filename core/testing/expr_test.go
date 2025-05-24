@@ -42,3 +42,14 @@ print(0 or 0.0 or "" or [] or {} or null or false or "hello!")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_CanMultiplyStrings(t *testing.T) {
+	rsl := `
+print("hello!" * 3)
+print("hello!".red() * 3)
+`
+	setupAndRunCode(t, rsl, "--color=always")
+	expected := "hello!hello!hello!\n\x1b[31mhello!\x1b[0m\x1b[31mhello!\x1b[0m\x1b[31mhello!\x1b[0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

@@ -219,6 +219,18 @@ func (s RslString) SetRgb64(red int64, green int64, blue int64) {
 	s.SetRgb(int(red), int(green), int(blue))
 }
 
+func (s RslString) Repeat(multiplier int64) RslString {
+	if multiplier <= 0 {
+		return NewRslString("")
+	}
+
+	cpy := s.DeepCopy()
+	for i := int64(1); i < multiplier; i++ {
+		cpy.Segments = append(cpy.Segments, s.Segments...)
+	}
+	return cpy
+}
+
 func (s *RslString) applyAttributes(str string, segment rslStringSegment) string {
 	if len(segment.Attributes) == 0 && segment.Hyperlink == nil && segment.Rgb == nil {
 		return str

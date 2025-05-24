@@ -233,6 +233,8 @@ func (i *Interpreter) executeOp(
 				return strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
 			case OP_NOT_IN:
 				return !strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
+			case OP_MULTIPLY:
+				return coercedRight.Repeat(coercedLeft)
 			}
 		case *RslList:
 			switch op {
@@ -347,6 +349,8 @@ func (i *Interpreter) executeOp(
 			switch op {
 			case OP_PLUS:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
+			case OP_MULTIPLY:
+				return coercedLeft.Repeat(coercedRight)
 			}
 		case float64:
 			switch op {
