@@ -24,6 +24,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/amterp/rts"
+	"github.com/amterp/rts/raderr"
 
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -119,6 +120,7 @@ const (
 
 	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
+	INTERNAL_FUNC_RUN_CHECK    = "_rad_run_check"
 
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
@@ -599,7 +601,7 @@ func init() {
 						f.i.errorf(f.callNode, errMsg)
 						panic(UNREACHABLE)
 					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(com.ErrParseIntFailed, errMsg))
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(raderr.ErrParseIntFailed, errMsg))
 					}
 				}
 			},
@@ -629,7 +631,7 @@ func init() {
 						f.i.errorf(f.callNode, errMsg)
 						panic(UNREACHABLE)
 					} else {
-						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(com.ErrParseFloatFailed, errMsg))
+						return newRslValues(f.i, f.callNode, 0, ErrorRslMap(raderr.ErrParseFloatFailed, errMsg))
 					}
 				}
 			},
@@ -1091,11 +1093,11 @@ func init() {
 						f.i.errorf(f.callNode, "Invalid mode %q in read_file; expected %q or %q", mode, constText, constBytes)
 					}
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRslMap(com.ErrFileNoExist, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileNoExist, err.Error())
 				} else if os.IsPermission(err) {
-					errMap = ErrorRslMap(com.ErrFileNoPermission, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileNoPermission, err.Error())
 				} else {
-					errMap = ErrorRslMap(com.ErrFileRead, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileRead, err.Error())
 				}
 
 				if f.numExpectedOutputs == 1 {
@@ -1152,11 +1154,11 @@ func init() {
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
 					resultMap.SetPrimitiveStr("path", path)
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRslMap(com.ErrFileNoExist, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileNoExist, err.Error())
 				} else if os.IsPermission(err) {
-					errMap = ErrorRslMap(com.ErrFileNoPermission, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileNoPermission, err.Error())
 				} else {
-					errMap = ErrorRslMap(com.ErrFileWrite, err.Error())
+					errMap = ErrorRslMap(raderr.ErrFileWrite, err.Error())
 				}
 
 				if f.numExpectedOutputs == 1 {
@@ -1549,7 +1551,7 @@ func init() {
 					if f.numExpectedOutputs < 2 {
 						f.i.errorf(f.callNode, "Error writing stash file %q: %v", path, err)
 					}
-					errMap := ErrorRslMap(com.ErrFileWrite, err.Error())
+					errMap := ErrorRslMap(raderr.ErrFileWrite, err.Error())
 					return newRslValues(f.i, f.callNode, path, errMap)
 				}
 

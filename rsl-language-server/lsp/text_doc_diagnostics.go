@@ -1,5 +1,7 @@
 package lsp
 
+import "github.com/amterp/rts/check"
+
 type DiagnosticSeverity int
 
 const (
@@ -27,6 +29,27 @@ func NewDiagnostic(rang Range, severity DiagnosticSeverity, source, msg string) 
 		Severity: severity,
 		Source:   source,
 		Message:  msg,
+	}
+}
+
+func NewDiagnosticFromCheck(checkD check.Diagnostic) Diagnostic {
+	rang := NewRangeFromCheckNode(checkD.Range)
+	var severity DiagnosticSeverity
+	switch checkD.Severity {
+	case check.Error:
+		severity = Err
+	case check.Hint:
+		severity = Hint
+	case check.Warning:
+		severity = Warn
+	case check.Info:
+		severity = Info
+	}
+	return Diagnostic{
+		Range:    rang,
+		Severity: severity,
+		Source:   "RSL Language Server",
+		Message:  checkD.Message,
 	}
 }
 

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rts/raderr"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -204,7 +206,7 @@ func AbsFloat(x float64) float64 {
 	return x
 }
 
-func ErrorRslMap(err com.RslError, errMsg string) *RslMap {
+func ErrorRslMap(err raderr.Error, errMsg string) *RslMap {
 	m := NewRslMap()
 	m.SetPrimitiveStr(constCode, string(err))
 	m.SetPrimitiveStr(constMsg, errMsg)

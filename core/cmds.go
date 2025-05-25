@@ -17,6 +17,7 @@ const (
 	EmbCmdHome  = "home"
 	EmbCmdGenId = "gen-id"
 	EmbCmdStash = "stash"
+	EmbCmdCheck = "check"
 )
 
 type EmbeddedCmd struct {
@@ -40,6 +41,7 @@ func init() {
 	Cmds = []EmbeddedCmd{
 		createEmbeddedCmd(EmbCmdNew),
 		createEmbeddedCmd(EmbCmdDocs),
+		createEmbeddedCmd(EmbCmdCheck),
 		createEmbeddedCmd(EmbCmdHome),
 		createEmbeddedCmd(EmbCmdGenId),
 		createEmbeddedCmd(EmbCmdStash),

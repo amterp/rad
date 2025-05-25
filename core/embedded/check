@@ -1,0 +1,39 @@
+#!/usr/bin/env rad
+---
+Validates & lints Rad scripts.
+---
+args:
+    script string  # Path of script to check.
+
+result = _rad_run_check(script)
+
+diagnostics = result.diagnostics
+
+if not diagnostics:
+    print("No diagnostics to report.")
+    exit()
+
+error = false
+for d in diagnostics:
+    color = switch d.severity:
+        case "Hint" -> white
+        case "Info" -> cyan
+        case "Warn" -> orange
+        case "Error":
+            error = true
+            yield red
+    
+    start = d.pos.yellow()
+    sev = d.severity.color().upper()
+    print("{start}: {sev}")
+    print()
+    padding = 6 * " "
+    print("  {d.start_line + 1:4} | {d.line_src.cyan()}")
+    start_padding = d.start_char * " "
+    print("{padding} |{start_padding} ^ {d.msg.color()}")
+    if "code" in d:
+        print("{padding} |{start_padding} (code: {d.code})")
+    print()
+
+print("Reported {len(diagnostics)} diagnostics.")
+exit(error)

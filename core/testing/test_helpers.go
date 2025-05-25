@@ -46,6 +46,7 @@ Usage:
 Commands:
   new           Sets up a new RSL script.
   docs          Opens rad's documentation website.
+  check         Validates & lints Rad scripts.
   home          Prints out rad's home directory.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   stash         Interacts with script stashes.

@@ -6,6 +6,8 @@ import (
 	"rls/lsp"
 	"strings"
 
+	"github.com/amterp/rts/check"
+
 	"github.com/amterp/rts"
 )
 
@@ -14,6 +16,7 @@ type DocState struct {
 	text        string
 	tree        *rts.RslTree
 	diagnostics []lsp.Diagnostic
+	checker     check.RadChecker
 }
 
 func (d *DocState) GetLine(line int) string {
@@ -49,11 +52,13 @@ func NewState() *State {
 
 func (s *State) NewDocState(uri, text string) *DocState {
 	tree := s.parser.Parse(text)
+	checker := check.NewCheckerWithTree(tree, s.parser, text)
 	return &DocState{
 		uri:         uri,
 		text:        text,
 		tree:        tree,
-		diagnostics: s.resolveDiagnostics(tree),
+		diagnostics: s.resolveDiagnostics(tree, checker),
+		checker:     checker,
 	}
 }
 
@@ -70,7 +75,8 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 		doc.tree.Update(change.Text)
 		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
-		doc.diagnostics = s.resolveDiagnostics(doc.tree)
+		doc.checker.UpdateSrc(change.Text) // todo CHECKER WILL REPEAT PARSE, BAD
+		doc.diagnostics = s.resolveDiagnostics(doc.tree, doc.checker)
 	}
 }
 

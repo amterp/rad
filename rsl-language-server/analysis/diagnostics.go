@@ -4,27 +4,31 @@ import (
 	"rls/log"
 	"rls/lsp"
 
+	"github.com/amterp/rts/check"
+
 	"github.com/amterp/rts"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func (s *State) resolveDiagnostics(tree *rts.RslTree) []lsp.Diagnostic {
+func (s *State) resolveDiagnostics(tree *rts.RslTree, checker check.RadChecker) []lsp.Diagnostic {
 	diagnostics := make([]lsp.Diagnostic, 0)
-	s.addInvalidNodes(&diagnostics, tree)
+	result, err := checker.CheckDefault()
+	if err == nil {
+		s.addCheckerDiagnotics(&diagnostics, result)
+	} else {
+		log.L.Errorf("Failed to check script: %v", err)
+	}
 	s.addUnknownFunctions(&diagnostics, tree)
 	return diagnostics
 }
 
-func (s *State) addInvalidNodes(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree) {
-	invalidNodes := tree.FindInvalidNodes()
+func (s *State) addCheckerDiagnotics(diagnostics *[]lsp.Diagnostic, checkResult check.Result) {
+	checkDiagnostics := checkResult.Diagnostics
 
-	if len(invalidNodes) > 0 {
-		log.L.Infof("Found %d invalid nodes", len(invalidNodes))
-	}
+	log.L.Infof("Found %d checker diagnostics", len(checkDiagnostics))
 
-	for _, node := range invalidNodes {
-		rang := lsp.NewRangeFromTsNode(node)
-		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Err, "RSL Language Server", "Invalid node"))
+	for _, checkD := range checkDiagnostics {
+		*diagnostics = append(*diagnostics, lsp.NewDiagnosticFromCheck(checkD))
 	}
 }
 
