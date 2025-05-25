@@ -43,7 +43,7 @@ func ExtractMetadata(src string) *ScriptData {
 
 	var args []*ScriptArg
 	if argBlock, ok := tree.FindArgBlock(); ok {
-		RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.FlatStr(argBlock)))
+		RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.Dump(argBlock)))
 		args = extractArgs(argBlock)
 	}
 

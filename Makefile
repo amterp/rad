@@ -18,7 +18,7 @@ format:
 	find . -name '*.go' -exec gofmt -w {} +
 	goimports -w .
 
-build: generate format
+build:
 	@echo "⚙️ Building the project..."
 	@mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/radd

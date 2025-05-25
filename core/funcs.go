@@ -159,6 +159,13 @@ const (
 	constSha1         = "sha1"
 	constSha256       = "sha256"
 	constSha512       = "sha512"
+	constExists       = "exists"
+	constFullPath     = "full_path"
+	constBaseName     = "base_name"
+	constPermissions  = "permissions"
+	constType         = "type"
+	constDir          = "dir"
+	constFile         = "file"
 )
 
 var (
@@ -690,18 +697,24 @@ func init() {
 				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
 
 				rslMap := NewRslMap()
+				rslMap.SetPrimitiveBool(constExists, false)
 
-				stat, err1 := os.Stat(path) // todo should be abstracted away for testing
-				absPath, err2 := filepath.Abs(path)
-				if err1 == nil && err2 == nil {
-					rslMap.SetPrimitiveStr("full_path", absPath)
-					rslMap.SetPrimitiveStr("base_name", stat.Name())
-					rslMap.SetPrimitiveStr("permissions", stat.Mode().Perm().String())
-					fileType := lo.Ternary(stat.IsDir(), "dir", "file")
-					rslMap.SetPrimitiveStr("type", fileType)
-					if fileType == "file" {
-						rslMap.SetPrimitiveInt64("size_bytes", stat.Size())
+				// todo os. calls should be abstracted away for testing
+				absPath := com.ToAbsolutePath(path)
+				RP.RadDebugf("Abs path: '%s'", absPath)
+
+				rslMap.SetPrimitiveStr(constFullPath, absPath)
+
+				stat, err1 := os.Stat(path)
+				if err1 == nil {
+					rslMap.SetPrimitiveStr(constBaseName, stat.Name())
+					rslMap.SetPrimitiveStr(constPermissions, stat.Mode().Perm().String())
+					fileType := lo.Ternary(stat.IsDir(), constDir, constFile)
+					rslMap.SetPrimitiveStr(constType, fileType)
+					if fileType == constFile {
+						rslMap.SetPrimitiveInt64(constSizeBytes, stat.Size())
 					}
+					rslMap.SetPrimitiveBool(constExists, true)
 				}
 
 				return newRslValues(f.i, f.callNode, rslMap)

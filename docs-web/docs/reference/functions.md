@@ -825,9 +825,13 @@ Gets information about a file or directory at the specified path.
 get_path(path: string) -> map
 ```
 
-The map contains the following entries:
+The map will always contain these entries:
 
 - `full_path -> string`
+- `exists -> bool`
+
+Only if the path exists, will it also contain the following entries:
+
 - `base_name -> string`
 - `permissions -> string`
 - `type -> string` (`dir` or `file`)

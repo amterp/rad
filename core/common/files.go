@@ -5,7 +5,17 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
+
+func ToAbsolutePath(path string) string {
+	if strings.HasPrefix(path, "~") {
+		home, _ := os.UserHomeDir()          // todo technically should handle
+		path = filepath.Join(home, path[1:]) // drop the "~"
+	}
+	abs, _ := filepath.Abs(path) // todo handle?
+	return abs
+}
 
 func FileExists(path string) bool {
 	_, err := os.Stat(path)

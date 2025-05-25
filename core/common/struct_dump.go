@@ -4,7 +4,7 @@ import (
 	"github.com/sanity-io/litter"
 )
 
-func FlatStr(item any) string {
+func Dump(item any) string {
 	return litter.Sdump(item)
 }
 

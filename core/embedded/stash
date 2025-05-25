@@ -5,13 +5,26 @@ Interacts with script stashes.
 args:
     script string  # Which script's stash to interact with.
     delete bool    # Enable to delete the state.
+    id bool        # Enable to print the stash ID.
+    state bool     # Enable to print the state.
 
-id = _rad_get_stash_id(script)
-if not id:
+stash_id = _rad_get_stash_id(script)
+
+if id:
+    print(stash_id)
+
+if not stash_id:
+    print("Found no stash ID for script '{script}'.")
     exit(1)
 
 if delete:
-    _rad_delete_stash(id)
+    _rad_delete_stash(stash_id)
     exit()
 
-print(id)
+if state:
+    state_path = `{get_rad_home()}/stashes/{stash_id}/state.json`
+    path = get_path(state_path)
+    if path.exists:
+        path.full_path.read_file().content.parse_json().pprint()
+    else:
+        print("No state file for this stash ID.")
