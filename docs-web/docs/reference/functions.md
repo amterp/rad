@@ -2,40 +2,89 @@
 title: Functions
 ---
 
+This page aims to concisely document *all* in-built Rad functions.
+
+## How to Read This Document
+
+### Function Signatures
+
+You'll see notation like this for function signatures (below are not real functions in Rad; just examples):
+
+```
+greet(name: string, times: int = 10) -> string
+```
+
+This means the function `greet` takes one required string argument `name`, and an optional int argument `times` which
+defaults to 10 if not specified. It returns a string.
+
+```
+greet_many(names: list[string] | ...string) -> none
+```
+
+This means that `greet_many` can be called in two ways: either with a single argument that is a list of strings, or `|`
+a variable number of string arguments.
+In both cases, the function returns nothing.
+
+```
+do_something(input: any, log: string?) -> any, error?!
+```
+
+This means the function `do_something` takes a required argument `input` which can be of *any* type.
+It also has an optional argument `log` which will default to `null` if left unspecified.
+
+The values it returns depends on how the function is called. If it's being assigned to two variables e.g.
+
+```
+foo, bar = do_something(myvar)
+```
+
+then it will return some `any` value for `foo`, and it returns a nullable `error` for `bar`.
+
+The exclamation point `!` signifies that, if the call is only assigned to one variable e.g.
+
+```
+foo = do_something(myvar)
+```
+
+and the function *fails* i.e. *would* return a non-`null` `error` value, then it will instead panic and exit the script
+with said error.
+
+### `error`
+
+`error` may be referenced as a return type for some functions. `error` is really a `map` with the following keys:
+
+- `code: string` - An [error code](./errors.md) indicating the type of error.
+- `msg: string` - A description of the error.
+
+---
+
 ## Output
 
 ### print
 
-**Description**:
-
 Prints the given input. Includes a newline after. Stringifies whatever is given to it.
 
 ```rsl
-print(items ...any?)
+print(items ...any?, sep: string = " ", end: string = "\n")
 ```
 
-**Parameters**:
+**Parameters**
 
-- `items: ...any?`: Zero or more items to print. If several are given, they get printed separated by spaces.
+| Parameter | Type            | Description                                                                    |
+|-----------|-----------------|--------------------------------------------------------------------------------|
+| `items`   | `...any?`       | Zero or more items to print. If several are given, they are separated by `sep. |
+| `sep`     | `string = " "`  | Delimiter between `items`.                                                     |
+| `end`     | `string = "\n"` | Appended to the output after all `items`.                                      |
 
-**Examples**:
+**Examples**
 
 ```rsl
 print("Hello!")
-```
+print()              // prints a newline
+print([1, 20, 300])  // prints "[ 1, 20, 300 ]"
 
-```rsl
 name = "Alice"
-print("Hello", name)  // prints "Hello Alice"
-```
-
-```rsl
-print()  // prints a newline
-```
-
-```rsl
-numbers = [1, 20, 300]
-print(numbers)  // prints "[1, 20, 300]"
+print("Hello", name) // prints "Hello Alice"
 ```
 
 ### pprint
@@ -97,7 +146,6 @@ See the following table for valid `duration` string formats:
 | us or µs | Microseconds |
 | ns       | Nanoseconds  |
 
-
 ### len
 
 ```rsl
@@ -140,7 +188,7 @@ If lists are of unequal length:
 - By default, truncates to the shortest.
 - If `fill` is provided, extends shorter lists to the longest, using the fill value.
 - If `strict=true`, raises an error if lengths differ.
-  - `strict` cannot be true while `fill` is defined.
+    - `strict` cannot be true while `fill` is defined.
 
 Examples:
 
@@ -253,12 +301,15 @@ load(map, key, loader: fn() -> any, reload: bool?, override: any?) -> any
 
 - Examples:
     - `load(m, k, loader)`
-        - If `m` does not contain `k`, `loader` is run to calculate a value. This value is put into the map under `k` and returned.
+        - If `m` does not contain `k`, `loader` is run to calculate a value. This value is put into the map under `k`
+          and returned.
         - If `m` contains `k`, `loader` is ignored, and the existing value is returned.
     - `load(m, k, loader, reload=true)`
-        - Regardless of if `m` already contains `k`, `loader` is invoked and its value is put into the map for `k` and returned.
+        - Regardless of if `m` already contains `k`, `loader` is invoked and its value is put into the map for `k` and
+          returned.
     - `load(m, k, loader, override=myvalue)`
-        - Regardless of if `m` already contains `k`, if `myvalue` is a truthy value, then it is put into `m` under `k` and returned and `loader` is ignored.
+        - Regardless of if `m` already contains `k`, if `myvalue` is a truthy value, then it is put into `m` under `k`
+          and returned and `loader` is ignored.
 
 `reload` cannot be true with `override` is truthy, that will return an error.
 
@@ -467,8 +518,9 @@ color_rgb(input: any, red: int, green: int, blue: int) -> string
 
 ### colorize
 
-Given some universe of possible, enumerable values, and a value from that list of values, color the given value with some
-RGB color assigned to it. The same value will always be given the same color, given the same list of possible values.
+Given some universe of possible, enumerable values, and a value from that list of values,
+color the given value with some RGB color assigned to it.
+The same value will always be given the same color, given the same list of possible values.
 
 Can use to quickly assign best-effort 'unique' colors to values in an enumerable set. Nice for coloring tables, etc.
 
@@ -591,7 +643,8 @@ pick_from_resource(resource_path string, filter string?) -> any...
 
 ## HTTP
 
-RSL offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods). Respectively:
+RSL offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods).
+Respectively:
 
 - `http_get`
 - `http_post`
@@ -706,9 +759,10 @@ clamp(val, min, max float|int) -> float
 Clamps the given number `val` between `min` and `max`.
 
 Specifically, `clamp` returns:
-  -  `val` if it is between the provided min and max. 
-  -  `min` if `val` is lower than `min`.
-  -  `max` if `val` is greater `max`.
+
+- `val` if it is between the provided min and max.
+- `min` if `val` is lower than `min`.
+- `max` if `val` is greater `max`.
 
 `min` must be <= `max`, else the function will error.
 
@@ -761,6 +815,7 @@ Base16 encode some text. Also known as "hex encoding".
 ```
 encode_base16(content: string) -> string
 ```
+
 ### decode_base16
 
 Base16 decode some text. Also known as "hex decoding".
@@ -789,9 +844,9 @@ read_file(path: string, mode: string = "text") -> map
 ```
 
 - `mode` is a named arg which is `"text"` by default.
-  - Decodes the contents as UTF-8 and makes it available as string.
+    - Decodes the contents as UTF-8 and makes it available as string.
 - Other valid value is `"bytes"`.
-  - Reads the bytes and makes them available as a list of ints.
+    - Reads the bytes and makes them available as a list of ints.
 
 The returned `map` contains two keys:
 
@@ -815,7 +870,8 @@ The first returned `map` contains two keys:
 - `bytes_written -> int`
 - `path -> string`
 
-The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error exit.
+The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error
+exit.
 
 ### get_path
 
@@ -845,7 +901,8 @@ Returns a list of paths under the given target directory.
 find_paths(target: string, depth: int = -1, relative: string = "target") -> list[string]
 ```
 
-- `depth` defaults to `-1`, indicating no depth limit. Set a positive number to limit how deep the included paths should be.
+- `depth` defaults to `-1`, indicating no depth limit. Set a positive number to limit how deep the included paths should
+  be.
 - `relative` defaults to `"target"` and defines to where the resulting paths should be relative.
     - `"target"` (*default*): relative to the input target path
     - `"cwd"`: relative to the user's current working directory
@@ -858,3 +915,112 @@ Returns rad's home directory.
 ```
 get_rad_home() -> string
 ```
+
+## Home & Stash
+
+### `get_rad_home`
+
+Returns the path to rad's home folder on the user's machine.
+
+```
+get_rad_home() -> string
+```
+
+**Return Values**
+
+Defaults to `$HOME/.rad`, or `$RAD_HOME` if it's defined.
+
+### `get_stash_dir`
+
+Returns the full path to the script's stash directory, with the given subpath if specified.
+
+Requires a stash ID to have been defined.
+
+[//]: # (TODO link to stash id docs, and for below)
+
+```
+get_stash_dir(subpath: string?) -> string
+```
+
+**Return Values**
+
+- Without subpath defined: `<rad home>/stashes/<stash id>`
+- With subpath defined: `<rad home>/stashes/<stash id>/<subpath>`
+
+### `load_state`
+
+Loads the script's stashed state. Creates it if it doesn't already exist.
+
+Requires a stash ID to have been defined.
+
+```
+load_state() -> map, bool
+```
+
+**Return Values**
+
+1. `map` containing the saved state. Starts empty, before anything is saved to it.
+2. `bool` representing if the state existed before the load, or if it was just created.
+
+### `save_state`
+
+Saves the given state to the stash's state file.
+
+Requires a stash ID to have been defined.
+
+```
+save_state(state: map)
+```
+
+**Parameters**
+
+| Parameter | Type  | Description               |
+|-----------|-------|---------------------------|
+| `state`   | `map` | The state object to save. |
+
+### `load_stash_file`
+
+Loads the contents of a file under the script's stash.
+If the file doesn't exist, it gets created with the given default contents.
+
+Requires a stash ID to have been defined.
+
+```
+load_stash_file(subpath: string, default_contents: string) -> map, bool
+```
+
+**Parameters**
+
+| Parameter          | Type     | Description                                       |
+|--------------------|----------|---------------------------------------------------|
+| `subpath`          | `string` | The subpath to the file under the script's stash. |
+| `default_contents` | `string` | Default contents if the file doesn't exist.       |
+
+**Return Values**
+
+1. `map` containing the following keys:
+    - `path: string` - full path to the script
+    - `content: string` - loaded contents
+2. `bool` indicating if the loaded file already existed or had to be created. `true` if existed.
+
+### `write_stash_file`
+
+Write text to a file under the script's stash.
+
+Requires a stash ID to have been defined.
+
+```
+write_stash_file(subpath: string, contents: string) -> string, error?!
+```
+
+**Parameters**
+
+| Parameter  | Type     | Description                                        |
+|------------|----------|----------------------------------------------------|
+| `subpath`  | `string` | The subpath for the file under the script's stash. |
+| `contents` | `string` | Contents to write.                                 |
+
+**Return Values**
+
+1. `string` for the full path to the written file.
+2. `error` map containing errors if the write was unsuccessful; otherwise `null`.

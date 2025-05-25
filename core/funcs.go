@@ -143,7 +143,7 @@ const (
 	namedArgReload         = "reload"
 	namedArgOverride       = "override"
 
-	constContent      = "content"
+	constContent      = "content" // todo rename to 'contents'? feels more natural
 	constSizeBytes    = "size_bytes"
 	constBytesWritten = "bytes_written"
 	constText         = "text"
@@ -1503,7 +1503,7 @@ func init() {
 				path := RadHomeInst.GetStashSub(pathFromStash, f.i, f.callNode)
 
 				output := NewRslMap()
-				output.SetPrimitiveStr(constPath, path)
+				output.SetPrimitiveStr(constPath, path) // todo 'full_path' to be consistent with get_path?
 
 				if !com.FileExists(path) {
 					defaultStr := defaultArg.value.RequireStr(f.i, defaultArg.node).Plain()
@@ -1553,9 +1553,14 @@ func init() {
 					return newRslValues(f.i, f.callNode, path, errMap)
 				}
 
-				return newRslValues(f.i, f.callNode, path)
+				if f.numExpectedOutputs >= 2 {
+					return newRslValues(f.i, f.callNode, path, nil)
+				}
+
+				return newRslValues(f.i, f.callNode, path) // todo seems weird to return full path?
 			},
-		}, {
+		},
+		{
 			Name:            FUNC_HASH,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,

@@ -7,7 +7,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-const RAD_HOME_DIR = "RAD_HOME_DIR"
+const ENV_RAD_HOME = "RAD_HOME"
 
 var RadHomeInst *RadHome
 
