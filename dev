@@ -44,12 +44,6 @@ if version:
         version = "{major + 1}.0.0"
     ///////////////////////////////
 
-    _, mod = quiet $!`cat go.mod`
-    defer:
-        $!`echo -n '{mod}' > go.mod`
-    $!`go mod edit --dropreplace=github.com/amterp/tree-sitter-rsl`
-    $!`go mod tidy`
-
     $!`git add .`
 
     version = 'v' + version
