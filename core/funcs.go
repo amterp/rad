@@ -32,6 +32,7 @@ import (
 
 const (
 	FUNC_PRINT              = "print"
+	FUNC_PRINT_ERR          = "print_err"
 	FUNC_PPRINT             = "pprint"
 	FUNC_DEBUG              = "debug"
 	FUNC_EXIT               = "exit"
@@ -283,6 +284,7 @@ func init() {
 		FuncPrint,
 		FuncPPrint,
 		FuncDebug,
+		FuncPrintErr,
 		FuncExit,
 		FuncSleep,
 		FuncSeedRandom,

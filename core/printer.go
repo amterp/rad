@@ -75,6 +75,9 @@ type Printer interface {
 	// Goes to stderr.
 	RadInfo(msg string)
 
+	// Used to print messages from the RSL script to stderr.
+	ScriptStderrf(format string, args ...interface{})
+
 	// For output that will be evaluated by the shell, used by --SHELL.
 	PrintForShellEval(msg string)
 
@@ -169,6 +172,10 @@ func (p *stdPrinter) RadInfo(msg string) {
 		return
 	}
 	fmt.Fprint(p.stdErr, msg)
+}
+
+func (p *stdPrinter) ScriptStderrf(format string, args ...interface{}) {
+	fmt.Fprint(p.stdErr, fmt.Sprintf(format, args...))
 }
 
 func (p *stdPrinter) PrintForShellEval(msg string) {

@@ -87,6 +87,14 @@ name = "Alice"
 print("Hello", name) // prints "Hello Alice"
 ```
 
+### print_err
+
+Behaves like [`print`](#print) but always goes to stderr instead of stdout.
+
+```rsl
+print_err(items ...any?, sep: string = " ", end: string = "\n")
+```
+
 ### pprint
 
 **Description**:
@@ -117,10 +125,10 @@ pprint(item)
 
 ### debug
 
-Behaves like `print` but only prints if debug is enabled via the `--DEBUG` flag.
+Behaves like [`print`](#print) but only prints if debug is enabled via the `--DEBUG` flag.
 
 ```rsl
-debug(items ...any?)
+debug(items ...any?, sep: string = " ", end: string = "\n")
 ```
 
 ## Misc

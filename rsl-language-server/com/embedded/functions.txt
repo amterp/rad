@@ -66,6 +66,7 @@ pink
 plain
 pprint
 print
+print_err
 rand
 rand_int
 range

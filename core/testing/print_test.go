@@ -227,3 +227,18 @@ blop.pprint()
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_PrintErr(t *testing.T) {
+	rsl := `
+print_err("hi alice")
+print_err("hi", "bob", sep="_")
+print_err("hi", end="_charlie\n")
+`
+	setupAndRunCode(t, rsl)
+	expected := `hi alice
+hi_bob
+hi_charlie
+`
+	assertOnlyOutput(t, stdErrBuffer, expected)
+	assertNoErrors(t)
+}

@@ -57,6 +57,21 @@ var FuncDebug = BuiltInFunc{
 	},
 }
 
+var FuncPrintErr = BuiltInFunc{
+	Name:            FUNC_PRINT_ERR,
+	ReturnValues:    ZERO_RETURN_VALS,
+	MinPosArgCount:  0,
+	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
+	NamedArgs: map[string][]RslTypeEnum{
+		namedArgEnd: {RslStringT},
+		namedArgSep: {RslStringT},
+	},
+	Execute: func(f FuncInvocationArgs) []RslValue {
+		RP.ScriptStderrf(resolvePrintStr(f))
+		return EMPTY
+	},
+}
+
 func resolvePrintStr(f FuncInvocationArgs) string {
 	var sb strings.Builder
 	end := "\n"
