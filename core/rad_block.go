@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	com "rad/core/common"
 	"regexp"
 	"runtime/debug"
 
@@ -294,7 +295,8 @@ func (r *radInvocation) execute() {
 		return
 	}
 
-	columns := lo.FilterMap(radFields, func(field radField, _ int) ([]RslString, bool) {
+	longestColumnLen := 0
+	cellsRowThenColumn := lo.FilterMap(radFields, func(field radField, _ int) ([]RslString, bool) {
 		if r.fieldsToNotPrint.Has(field.name) {
 			return nil, false
 		}
@@ -302,15 +304,21 @@ func (r *radInvocation) execute() {
 		if !ok {
 			r.i.errorf(field.node, "Values for field %q not found in environment", field.name)
 		}
-		list := fieldVals.RequireList(r.i, field.node)
-		return toTblStr(r.i, r.colToMods, field.name, list), true
+		columnValues := fieldVals.RequireList(r.i, field.node)
+		longestColumnLen = com.IntMax(longestColumnLen, columnValues.LenInt())
+		return columnStrings(r.i, r.colToMods, field.name, columnValues), true
 	})
 
 	tbl := NewTblWriter()
 
 	tbl.SetHeader(headers)
-	for i := range columns[0] {
-		row := lo.Map(columns, func(column []RslString, _ int) RslString {
+
+	// transform columnar data to rows and append to table
+	for i := range longestColumnLen {
+		row := lo.Map(cellsRowThenColumn, func(column []RslString, _ int) RslString {
+			if i >= len(column) {
+				return EMPTY_STR
+			}
 			return column[i]
 		})
 		tbl.Append(row)
@@ -365,7 +373,7 @@ func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, c
 	sortColumns(i, fields, colWiseSort)
 }
 
-func toTblStr(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []RslString {
+func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []RslString {
 	mods, ok := colToMods[fieldName]
 	if !ok || mods.lambda == nil {
 		return toStringArrayQuoteStr(column.Values, false)

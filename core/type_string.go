@@ -11,6 +11,8 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
+var EMPTY_STR = NewRslString("")
+
 type RslString struct {
 	Segments []rslStringSegment
 	// todo offer isRegex funcs which will return true if all segments are regexes, for example?
@@ -40,6 +42,10 @@ func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
 
 // Copies only the attributes of the first segment. Maybe could change somehow?
 func (s RslString) CopyAttrTo(otherStr string) RslString {
+	if len(s.Segments) == 0 {
+		return NewRslString(otherStr)
+	}
+
 	cpy := s.DeepCopy()
 	cpy.Segments[0].String = otherStr
 	cpy.Segments = cpy.Segments[:1] // keep only the first segment

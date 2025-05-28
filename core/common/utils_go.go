@@ -80,10 +80,19 @@ func NumIsAre(values int) string {
 		return fmt.Sprintf("%d are", values)
 	}
 }
+
 func Int64Min(a, b int64) int64 {
 	return int64(math.Min(float64(a), float64(b)))
 }
 
 func Int64Max(a, b int64) int64 {
 	return int64(math.Max(float64(a), float64(b)))
+}
+
+func IntMin(a, b int) int {
+	return int(math.Min(float64(a), float64(b)))
+}
+
+func IntMax(a, b int) int {
+	return int(math.Max(float64(a), float64(b)))
 }
