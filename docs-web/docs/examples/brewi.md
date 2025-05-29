@@ -2,7 +2,7 @@
 title: brewi
 ---
 
-```rsl
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -49,13 +49,13 @@ This will set us up with an executable script named `brewi`, and the `-s` simpli
 
 The shebang will allow us to invoke the script as `brewi` from the CLI rather than writing out `rad ./brewi`. Open up `brewi` in your editor, and you should see something like this:
 
-```rsl linenums="1" hl_lines="0"
+```rad linenums="1" hl_lines="0"
 #!/usr/bin/env rad
 ```
 
 Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
 
-```rsl linenums="1" hl_lines="2-4"
+```rad linenums="1" hl_lines="2-4"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -64,7 +64,7 @@ Facilitates checking a brew formula before installing it.
 
 We want the script to accept a formula as an argument, i.e. the formula we may be installing. It'll be a string, so let's add this in an [arg block](../guide/args.md). We'll include a little comment to improve our usage string.
 
-```rsl linenums="1" hl_lines="5-6"
+```rad linenums="1" hl_lines="5-6"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -81,7 +81,7 @@ Specifically, we'll use a [*critical*](../guide/shell-commands.md#critical-shell
 
 This uses the `$!` syntax.
 
-```rsl linenums="1" hl_lines="8"
+```rad linenums="1" hl_lines="8"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -99,7 +99,7 @@ You can try running the command now! Make sure it's executable (`chmod +x ./brew
 Next, we want to ask the user if they'd like to proceed with installing the formula. For that, RSL offers the [`confirm`](../reference/functions.md#confirm) function.
 The default prompt is `Confirm? [y/n] > `, which works fine for us here, so we'll do a simple 0-arg `confirm()` call. The function returns a bool for yes/no, so we'll put it in an if statement.
 
-```rsl linenums="1" hl_lines="9-10"
+```rad linenums="1" hl_lines="9-10"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -119,7 +119,7 @@ One last touch: we should also allow installing casks with this script. We'll ai
 We'll add the `bool` arg, and insert an additional interpolation in our `brew install` command, leveraging RSL's [ternary](../guide/basics.md#ternary) syntax.
 We need to pay close attention to whitespace so we make sure the command comes out correct in the cask and non-cask cases.
 
-```rsl linenums="1" hl_lines="7 11"
+```rad linenums="1" hl_lines="7 11"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.

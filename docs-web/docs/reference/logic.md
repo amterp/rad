@@ -8,14 +8,14 @@ RSL supports truthy/falsy logic.
 
 For those unfamiliar, this means that, instead of writing the following (as an example):
 
-```rsl
+```rad
 if len(my_list) > 0:
     print("My list has elements!")
 ```
 
 you can write
 
-```rsl
+```rad
 if my_list:
     print("My list has elements!")
 ```

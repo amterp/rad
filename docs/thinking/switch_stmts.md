@@ -2,7 +2,7 @@
 
 Switch stmt approach:
 
-```rsl
+```rad
 title, url = switch endpoint:
     case "cars": "Cars", "{base}/automobiles"
     case "books": "Books", "{base}/reading?type=books"
@@ -10,7 +10,7 @@ title, url = switch endpoint:
 
 Map approach:
 
-```rsl
+```rad
 opts = [
     {
         "keys": ["cars"],
@@ -36,7 +36,7 @@ So, let's consider going ahead with the switch statement approach.
 
 What if you want switch *blocks*?
 
-```rsl
+```rad
 switch endpoint:
     case bloop:
         this is

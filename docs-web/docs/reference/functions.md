@@ -64,7 +64,7 @@ with said error.
 
 Prints the given input. Includes a newline after. Stringifies whatever is given to it.
 
-```rsl
+```rad
 print(items ...any?, sep: string = " ", end: string = "\n")
 ```
 
@@ -78,7 +78,7 @@ print(items ...any?, sep: string = " ", end: string = "\n")
 
 **Examples**
 
-```rsl
+```rad
 print("Hello!")
 print()              // prints a newline
 print([1, 20, 300])  // prints "[ 1, 20, 300 ]"
@@ -91,7 +91,7 @@ print("Hello", name) // prints "Hello Alice"
 
 Behaves like [`print`](#print) but always goes to stderr instead of stdout.
 
-```rsl
+```rad
 print_err(items ...any?, sep: string = " ", end: string = "\n")
 ```
 
@@ -101,7 +101,7 @@ print_err(items ...any?, sep: string = " ", end: string = "\n")
 
 Pretty prints the given input. Mainly useful for maps so they get printed in a json-style.
 
-```rsl
+```rad
 pprint(item any?)
 ```
 
@@ -111,7 +111,7 @@ pprint(item any?)
 
 **Examples**:
 
-```rsl title="Example 1"
+```rad title="Example 1"
 item = { "name": "Alice", age: 30 }
 pprint(item)
 ```
@@ -127,7 +127,7 @@ pprint(item)
 
 Behaves like [`print`](#print) but only prints if debug is enabled via the `--DEBUG` flag.
 
-```rsl
+```rad
 debug(items ...any?, sep: string = " ", end: string = "\n")
 ```
 
@@ -135,7 +135,7 @@ debug(items ...any?, sep: string = " ", end: string = "\n")
 
 ### sleep
 
-```rsl
+```rad
 sleep(seconds int)
 sleep(seconds float)
 sleep(duration string)  // e.g. sleep("2h45m")
@@ -156,7 +156,7 @@ See the following table for valid `duration` string formats:
 
 ### len
 
-```rsl
+```rad
 len(input string) -> int
 len(input any[]) -> int
 len(input map) -> int
@@ -164,13 +164,13 @@ len(input map) -> int
 
 ### range
 
-```rsl
+```rad
 range(end int|float) -> int|float[]
 range(start int|float, end int|float) -> int|float[]
 range(start int|float, end int|float, step int|float) -> int|float[]
 ```
 
-```rsl
+```rad
 range(5)         -> [0, 1, 2, 3, 4]
 range(5.5)       -> [0, 1, 2, 3, 4, 5]
 range(0.5, 5)    -> [0.5, 1.5, 2.5, 3.5, 4.5]
@@ -179,7 +179,7 @@ range(10, 5, -2) -> [10, 8, 6]
 
 ### join
 
-```rsl
+```rad
 join(input list, joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
 ```
 
@@ -187,7 +187,7 @@ join(input list, joiner string, prefix string|int|float|bool?, suffix string|int
 
 Combines multiple lists into a list of lists, pairing elements by index.
 
-```rsl
+```rad
 zip(lists... list, strict bool?, fill any?)
 ```
 
@@ -209,21 +209,21 @@ zip([1, 2, 3, 4], ["a", "b"], fill="-")  // [[1, "a"], [2, "b"], [3, "-"], [4, "
 
 ### unique
 
-```rsl
+```rad
 unique(input any[]) -> any[]
 ```
 
-```rsl
+```rad
 unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
 ```
 
 ### sort
 
-```rsl
+```rad
 sort(input any[], reverse=bool?)
 ```
 
-```rsl
+```rad
 sort([3, 4, 2, 1])                 // [1, 2, 3, 4]
 sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
 sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
@@ -233,7 +233,7 @@ sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
 
 Returns the current time in the machine's local timezone, accessible in various forms.
 
-```rsl
+```rad
 now() -> map
 ```
 
@@ -256,11 +256,11 @@ Map values:
 
 Returns the type of an input variable as a string.
 
-```rsl
+```rad
 type_of(variable any)
 ```
 
-```rsl
+```rad
 type_of("hi")  // string
 type_of([2])   // list
 ```
@@ -329,7 +329,7 @@ load(map, key, loader: fn() -> any, reload: bool?, override: any?) -> any
 
 Get a line of text input from the user.
 
-```rsl
+```rad
 input(prompt string?, default=string?, hint=string?) -> string
 ```
 
@@ -337,12 +337,12 @@ input(prompt string?, default=string?, hint=string?) -> string
 
 Get a boolean confirmation from the user.
 
-```rsl
+```rad
 confirm() -> bool
 confirm(prompt string) -> bool
 ```
 
-```rsl title="Example 1"
+```rad title="Example 1"
 if confirm():
     print("Confirmed!")
 else:
@@ -354,7 +354,7 @@ Confirm? [y/n] y
 Confirmed!
 ```
 
-```rsl title="Example 2"
+```rad title="Example 2"
 if confirm("Are you sure? > "):
     print("You're sure!")
 else:
@@ -370,19 +370,19 @@ Unsure!
 
 ### parse_int
 
-```rsl
+```rad
 parse_int(input str) -> int, err
 ```
 
 ### parse_float
 
-```rsl
+```rad
 parse_float(input str) -> float, err
 ```
 
 ### parse_json
 
-```rsl
+```rad
 parse_json(input string) -> any
 ```
 
@@ -392,7 +392,7 @@ parse_json(input string) -> any
 
 - Preserves string color attributes.
 
-```rsl
+```rad
 upper(input any) -> string
 ```
 
@@ -400,7 +400,7 @@ upper(input any) -> string
 
 - Preserves string color attributes.
 
-```rsl
+```rad
 lower(input any) -> string
 ```
 
@@ -414,36 +414,36 @@ lower(input any) -> string
 - `old: string`: Regex pattern of what text to replace.
 - `new: string`: Regex pattern of what to replace matches *with*.
 
-```rsl
+```rad
 replace(input string, old string, new string) -> string
 ```
 
 **Examples**:
 
-```rsl title="Example 1"
+```rad title="Example 1"
 input = "Name: Charlie Brown"
 replace(input, "Charlie (.*)", "Alice $1") 
 ```
 
-```rsl title="Example 1 Output"
+```rad title="Example 1 Output"
 "Alice Brown" 
 ```
 
 ### starts_with
 
-```rsl
+```rad
 starts_with(input string, substring string) -> bool
 ```
 
 ### ends_with
 
-```rsl
+```rad
 ends_with(input string, substring string) -> bool
 ```
 
 ### truncate
 
-```rsl
+```rad
 truncate(input string, length int) -> string
 ```
 
@@ -451,7 +451,7 @@ truncate(input string, length int) -> string
 
 - Does *not* preserve string color attributes.
 
-```rsl
+```rad
 split(input string, delimiter_regex string) -> string[]
 ```
 
@@ -552,7 +552,7 @@ display:
 
 Returns all keys from an input map as a list.
 
-```rsl
+```rad
 keys(input: map) -> any[]
 ```
 
@@ -560,7 +560,7 @@ keys(input: map) -> any[]
 
 Returns all values from an input map as a list.
 
-```rsl
+```rad
 values(input: map) -> any[]
 ```
 
@@ -568,7 +568,7 @@ values(input: map) -> any[]
 
 Gets the value for the given key in the given map, if the key is in the map. Otherwise, returns the supplied default.
 
-```rsl
+```rad
 get_default(input: map, key: any, default: any) -> any
 ```
 
@@ -576,13 +576,13 @@ get_default(input: map, key: any, default: any) -> any
 
 ### rand
 
-```rsl
+```rad
 rand() -> float
 ```
 
 ### rand_int
 
-```rsl
+```rad
 rand_int(max int) -> int
 rand_int(min int, max int) -> int
 ```
@@ -591,7 +591,7 @@ rand_int(min int, max int) -> int
 
 Seed the random number generator used by [rand](#rand) and [rand_int](#rand_int).
 
-```rsl
+```rad
 seed_random(seed: int)
 ```
 
@@ -599,7 +599,7 @@ seed_random(seed: int)
 
 Generate a random V4 UUID.
 
-```rsl
+```rad
 uuid_v4() -> string
 ```
 
@@ -607,7 +607,7 @@ uuid_v4() -> string
 
 Generate a random V7 UUID.
 
-```rsl
+```rad
 uuid_v7() -> string
 ```
 
@@ -615,7 +615,7 @@ uuid_v7() -> string
 
 Generate a random [flex ID](https://github.com/amterp/flexid) (fid).
 
-```rsl
+```rad
 gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -> string
 ```
 
@@ -625,7 +625,7 @@ gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) ->
 
 ### pick
 
-```rsl
+```rad
 pick(options string[], filter string?) -> string
 ```
 
@@ -635,7 +635,7 @@ Named args:
 
 ### pick_kv
 
-```rsl
+```rad
 pick_kv(keys string[], values string[], filter string?) -> string
 ```
 
@@ -645,7 +645,7 @@ Named args:
 
 ### pick_from_resource
 
-```rsl
+```rad
 pick_from_resource(resource_path string, filter string?) -> any...
 ```
 
@@ -667,7 +667,7 @@ Respectively:
 Their inputs and outputs are the same - the only difference between them is the HTTP method in the request.
 We'll use `http_post` as an example.
 
-```rsl
+```rad
 http_post(url string) -> map
 http_post(url string, body=string|map, headers=map) -> map
 ```
@@ -688,14 +688,14 @@ The **output** map contains the following entries (`?` signifies it may not be p
 
 ### abs
 
-```rsl
+```rad
 abs(int) -> int
 abs(float) -> float
 ```
 
 ### sum
 
-```rsl
+```rad
 sum(list[number]) -> float
 ```
 
@@ -703,7 +703,7 @@ Sums the input list of numbers to a resulting float.
 
 ### round
 
-```rsl
+```rad
 round(number float|int, precision int = 0) -> float
 ```
 
@@ -712,7 +712,7 @@ If `precision` is unspecified it defaults to 0 and rounds to the nearest integer
 
 ### floor
 
-```rsl
+```rad
 floor(num float|int) -> float
 ```
 
@@ -724,7 +724,7 @@ floor(1.89) -> 1
 
 ### ceil
 
-```rsl
+```rad
 ceil(num float|int) -> float
 ```
 
@@ -736,7 +736,7 @@ ceil(1.21) -> 2
 
 ### min
 
-```rsl
+```rad
 min(nums list[float|num]) -> float
 ```
 
@@ -748,7 +748,7 @@ min([1, 2, 3, 4]) -> 1
 
 ### max
 
-```rsl
+```rad
 max(nums list[float|num]) -> float
 ```
 
@@ -760,7 +760,7 @@ max([1, 2, 3, 4]) -> 4
 
 ### clamp
 
-```rsl
+```rad
 clamp(val, min, max float|int) -> float
 ```
 
@@ -838,7 +838,7 @@ decode_base16(content: string) -> string
 
 Exits the script with the given exit code
 
-```rsl
+```rad
 exit(code int = 0)
 ```
 

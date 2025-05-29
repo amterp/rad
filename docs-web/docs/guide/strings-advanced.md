@@ -15,7 +15,7 @@ RSL allows embedding expressions inside your strings that will get evaluated and
 
 Some examples:
 
-```rsl
+```rad
 name = "Alice"
 print("Hi, {name}!")
 
@@ -41,7 +41,7 @@ Note the use of single quote `'` strings inside the ternary example's expression
 You can format expression results while doing string interpolation.
 To do so, follow your expression with `:` and then the relevant syntax for the formatting you want to do. We'll demonstrate through some examples:
 
-```rsl
+```rad
 pi = 3.14159265359
 
 print("Pi: {pi}")       // no formatting
@@ -73,7 +73,7 @@ The decimal place formatting is only relevant to expressions that result in numb
 Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. `"` or `'`.
 For these scenarios, RSL offers `"""` multiline string syntax. To demonstrate:
 
-```rsl
+```rad
 text = """
 This is an
 example of text
@@ -101,7 +101,7 @@ Some things to note:
 
 Below, we demonstrate the 4th point. Note that to make the "whitespaces" more visible, I've replaced them with dots, but keep in mind they *do represent spaces*:
 
-```rsl
+```rad
 text = """
 ....This is an
 .....example of text
@@ -127,7 +127,7 @@ Use them when you want your contents to remain as "raw" and unprocessed as possi
 
 To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with `r`.
 
-```rsl
+```rad
 text = r"Hello\n{name}"
 print(text)
 ```
@@ -142,7 +142,7 @@ Notice the printed string is exactly as written in code - the newline character 
 
 You could use any of the three delimiters for raw strings:
 
-```rsl
+```rad
 text = r"Hello\n{name}"
 text = r'Hello\n{name}'
 text = r`Hello\n{name}`
@@ -152,7 +152,7 @@ text = r`Hello\n{name}`
 
     Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:
 
-    ```rsl
+    ```rad
     path = r"C:\Users\Documents\notes.txt"
     ```
 

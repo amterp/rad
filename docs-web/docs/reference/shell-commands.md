@@ -4,13 +4,13 @@ title: Shell Commands
 
 ## Basic Shell Commands
 
-```rsl
+```rad
 $`ls -l`
 fail:
     print("Command failed! Exiting script!")
 ```
 
-```rsl
+```rad
 $`ls -l`
 recover:
     print("Command failed! Continuing script...")
@@ -18,19 +18,19 @@ recover:
 
 ## Critical Shell Commands
 
-```rsl
+```rad
 $!`ls -l`
 ```
 
 ## Unsafe Shell Commands
 
-```rsl
+```rad
 unsafe $`ls -l`
 ```
 
 ## Output Capture
 
-```rsl
+```rad
 err_code = $!`ls -l`
 err_code, stdout = $!`ls -l`
 err_code, stdout, stderr = $!`ls -l`
@@ -40,7 +40,7 @@ err_code, stdout, stderr = $!`ls -l`
 
 By default, Rad will 'announce' (i.e. print) commands as they're executed. Example:
 
-```rsl title="Without quiet"
+```rad title="Without quiet"
 $!`ls`
 $!`echo hello`
 ```
@@ -54,7 +54,7 @@ hello
 
 These announcements can be suppressed with the `quiet` keyword. It does not impact stdout/stderr output for the command.
 
-```rsl title="With quiet"
+```rad title="With quiet"
 quiet $!`ls`
 quiet $!`echo hello`
 ```

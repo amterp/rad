@@ -8,7 +8,7 @@ Every script has its own store, stored with rad's own config home.
 
 Example 'uh' implementation (RSL impl/variation of um):
 
-```rsl
+```rad
 set_script_id("1u4HSWY2mLP")
 
 ensure_state("entries", {})
@@ -32,7 +32,7 @@ cmd_file = load_script_data_file(command, "") // keys: 'contents', 'path'
 $!`vim {cmd_file.path}`
 ```
 
-```rsl
+```rad
 set_script_id("1u4HSWY2mLP")
 
 ensure_state("entries", {})
@@ -158,7 +158,7 @@ We should think about functions as well. Custom functions may really just turn o
 
 ### Alternative 1 (Adapted Java style)
 
-```rsl
+```rad
 normalize = x -> x.trim().lower()
  
 normalize(mystring)
@@ -175,7 +175,7 @@ Con: `->` begins a block, which is unique from rest of language where `:` does t
 
 ### Alternative 2 (Go style)
 
-```rsl
+```rad
 normalize = func(x) x.trim().lower()
  
 normalize(mystring)
@@ -191,7 +191,7 @@ Con: Single liner is a little verbose though. Is there a best of both worlds?
 
 ### Alternative 3 (Adapted Go style)
 
-```rsl
+```rad
 normalize = fn x: x.trim().lower()
  
 normalize(mystring)
@@ -215,7 +215,7 @@ Con: Single liner still a little verbose.
 
 ### Alternative 4 (Final?)
 
-```rsl
+```rad
 normalize = fn(x) x.trim().lower()
  
 normalize(mystring)
@@ -245,7 +245,7 @@ Continues on [custom_functions.md](./custom_functions.md).
 
 We might want to support importing functions from other scripts?
 
-```rsl
+```rad
 // script1.rsl
 
 normalize = x -> x.trim().lower()

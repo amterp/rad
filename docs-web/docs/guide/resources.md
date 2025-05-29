@@ -10,7 +10,7 @@ Depending on your script, you may wish to look up values at some point, such as 
 
 You can try it yourself with this example:
 
-```rsl
+```rad
 options = ["chicken burger", "chicken sandwich", "ham sandwich"]
 output = pick(options, "sandwich")
 print("You chose: {output}")
@@ -34,7 +34,7 @@ You chose: chicken sandwich
 
 A similar function is [`pick_kv`](../reference/functions.md#pick_kv). However, instead of the values you're filtering and picking between also being the *output*, `pick_kv` performs the filtering/picking on a list of *keys*, each which map to a value that will get output from the function if its associated key is picked. For example:
 
-```rsl
+```rad
 keys = ["chicken burger", "chicken sandwich", "ham sandwich"]
 values = ["CHICKEN", "CHICKEN", "HAM"]
 
@@ -85,7 +85,7 @@ You may see some similarity here to what we did with [`pick_kv`](#pick_kv). We'r
 
 Let's create an RSL script to use this resource:
 
-```rsl title="example.rsl"
+```rad title="example.rsl"
 args:
     website string = ""
 

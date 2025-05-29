@@ -1,6 +1,6 @@
 Dollar sign?
 
-```rsl
+```rad
 greeting = "hello {name}, you live on {address}"
 greeting = "hello ${name}, you live on ${address}"
 ```
@@ -9,7 +9,7 @@ greeting = "hello ${name}, you live on ${address}"
 
 Opt in?
 
-```rsl
+```rad
 greeting = f"hello {name}, you live on {address}"
 greeting = f"hello ${name}, you live on ${address}"
 ```
@@ -18,7 +18,7 @@ greeting = f"hello ${name}, you live on ${address}"
 
 raw?
 
-```rsl
+```rad
 greeting = r"hello {name}, you live on {address}"  // no interpolation
 
 greeting = "hello {name}, you live on {address}"
@@ -30,7 +30,7 @@ blocks?
 with and without interpolation
 with and without escaping for e.g. \n or \t
 
-```rsl
+```rad
 
 // regular single line strings, will interpolate, and put name on own line
 text = "hi\n{name}"

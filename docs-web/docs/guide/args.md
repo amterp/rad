@@ -13,7 +13,7 @@ Arguments are declared as part of an **args block**.
 
 Here's an example for a script we'll call `printwords` which prints an input word N number of times:
 
-```rsl
+```rad
 args:
     word string
     repeats int
@@ -51,7 +51,7 @@ Some important things to note:
 
 Let's look at a more complex example to demonstrate some more features. Let's call it `wordjoin`.
 
-```rsl
+```rad
 args:
     words string[]  # Words to join together.
     joiner j string = "-"  # Joiner for the words.
@@ -130,7 +130,7 @@ If you have a string argument where you really only want to accept some limited 
 
 Let's use a simple example, we'll call the script `colors`:
 
-```rsl
+```rad
 args:
     color string
     color enum ["red", "green", "blue"]
@@ -155,7 +155,7 @@ Script args:
 
 If we invoke this script with a value outside the listed valid values:
 
-```rsl
+```rad
 rad colors yellow
 ```
 
@@ -186,7 +186,7 @@ You like green!
 
 If you'd like input strings to match a certain pattern, you can do that via a **regex constraint**.
 
-```rsl
+```rad
 args:
     name string
     name regex "[A-Z][a-z]*"
@@ -211,7 +211,7 @@ You can optionally precede these with the `mutually` keyword to indicate that th
 
 Use `excludes` to prevent arguments from being specified together. For example, consider a script that accepts either a file (`--file`) or a URL (`--url`), but not both:
 
-```rsl title="fetcher.rsl"
+```rad title="fetcher.rsl"
 args:
   file string
   url string
@@ -249,7 +249,7 @@ Consider a script that can authenticate either by using a token or by providing 
 
 If the user provides a username, the password is also required.
 
-```rsl title="auth.rsl"
+```rad title="auth.rsl"
 args:
   token string
   username string

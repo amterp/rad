@@ -4,7 +4,7 @@ Some thinking over on [stashes.md](./stashes.md).
 
 TLDR of the syntax I concluded on there:
 
-```rsl
+```rad
 normalize = fn(x) x.trim().lower()
  
 normalize(mystring)

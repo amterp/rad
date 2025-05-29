@@ -4,12 +4,12 @@ title: Args
 
 ## Basics
 
-```rsl
+```rad
 args:
     argVar "alias"? shorthand? type = default? # Description?
 ```
 
-```rsl
+```rad
 args:
     name n string # A required arg 'name' which can be specified positionally or also with -n.
     is_employee "is-employee" bool # Variable for script is is_employee, but users will see it as is-employee.
@@ -20,7 +20,7 @@ else:
     print("{name} is not an employee.") 
 ```
 
-```rsl
+```rad
 args:
     name string
     age_years "age-years" int
@@ -40,7 +40,7 @@ script Charlie 30 -e --friends David,Eve -h 1.86
 
 ### Enum
 
-```rsl
+```rad
 args:
     name string
     name enum ["alice", "bob", "charlie"]

@@ -12,7 +12,7 @@ Shell commands can be written via [strings](./basics.md#string). You can then *i
 
 For example:
 
-```rsl
+```rad
 $`ls`
 ```
 
@@ -31,7 +31,7 @@ You can think of each block as saying how you want shell command failure to be h
 
 Here are a couple of examples to demonstrate what happens *if the command fails*. We create a `cmd` string to `curl` a `url` we defined earlier.
 
-```rsl
+```rad
 cmd = `curl {url}`
 $cmd
 fail:
@@ -49,7 +49,7 @@ Oh no, curl failed!
 The `Hello!` does not get printed because the `fail` block exits after it runs.
 The exit code of running this script will be non-0, indicating failure.
 
-```rsl
+```rad
 cmd = `curl {url}`
 $cmd
 recover:
@@ -80,7 +80,7 @@ RSL requires `fail` or `recover` blocks when using `$` syntax for shell commands
 
 However, a very common expectation is that the command should succeed, and if it doesn't, we should fail the script and exit immediately with a non-0 exit code. Rather than requiring explicit `fail` blocks, which can be a little cumbersome to write every time, you can instead use `$!` syntax to express that a command is *critical* i.e. it *must* succeed, else the script exits.
 
-```rsl
+```rad
 $!`ls`
 ```
 
@@ -90,7 +90,7 @@ This line alone is a perfectly valid shell command and RSL script. If the comman
 
 If you want to run a shell command and *don't care* if it succeeds, you can use the `unsafe` keyword:
 
-```rsl
+```rad
 unsafe $`ls`
 ```
 
@@ -108,7 +108,7 @@ So far, all example shell invocations have not involved capturing their output. 
 
 You can get the exit code from your invocation by writing it as an assignment to one identifier:
 
-```rsl
+```rad
 code = $cmd
 ```
 
@@ -118,7 +118,7 @@ The code returned by your invocation depends on the command. Commonly, a code of
 
 Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With RSL, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:
 
-```rsl
+```rad
 code, stdout = $cmd
 ```
 
@@ -128,7 +128,7 @@ Note that, when capturing stdout (or stderr), **it does not get printed to the t
 
 Lastly, you can capture stderr by adding a third identifier to the assignment:
 
-```rsl
+```rad
 code, stdout, stderr = $cmd
 ```
 
@@ -136,7 +136,7 @@ Note that if you don't care about certain outputs, you can conventionally use an
 
 For example, if you're only interested in stderr:
 
-```rsl
+```rad
 _, _, stderr = $cmd
 ```
 
@@ -145,7 +145,7 @@ _, _, stderr = $cmd
     Because capturing stdout and stderr means they don't get printed to the console automatically when the command runs, you can use this fact
     to hide the output of commmands and run them silently:
 
-    ```rsl
+    ```rad
     _, _, _ = $cmd
     ```
 
@@ -157,7 +157,7 @@ _, _, stderr = $cmd
 
 By default, whenever you invoke a shell command, rad will print an 'announcement' to indicate to users what command is being run. For example:
 
-```rsl title="create.rsl"
+```rad title="create.rsl"
 args:
     filename string
 $!`touch {filename}.txt`
@@ -177,7 +177,7 @@ rad create.rsl hi
 
 If you wish to suppress this output, use the `quiet` keyword: 
 
-```rsl
+```rad
 quiet $!`touch {filename}.txt`
 ```
 

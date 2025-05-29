@@ -4,7 +4,7 @@ Capturing "the rest" of provided args as an array to be used in the script for e
 
 ---
 
-```rsl
+```rad
 args:
     name string
     age a float

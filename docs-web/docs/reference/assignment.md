@@ -6,7 +6,7 @@ Generally speaking, multi-assignments are only legal for switch expressions, or 
 
 ## Legal Assignments
 
-```rsl
+```rad
 a = 1
 a, b = pick_from_resoure(...)
 a, b = switch ...
@@ -18,7 +18,7 @@ myList[1] = 3
 
 ## Illegal Assignments
 
-```rsl
+```rad
 a, b = 1, 2
 myMap["key"], myMap["key2"] = 2, 3
 myList[1], myList[2] = 3, 4

@@ -9,7 +9,7 @@ title: Defer & Errdefer
 
 ## `defer`
 
-```rsl title="defer Example"
+```rad title="defer Example"
 defer:
     print(1)
     print(2)
@@ -29,7 +29,7 @@ Hello!
 
 ## `errdefer`
 
-```rsl title="errdefer Example 1"
+```rad title="errdefer Example 1"
 defer:
     print(1)
     print(2)
@@ -54,7 +54,7 @@ Hello!
 2
 ```
 
-```rsl title="errdefer Example 2"
+```rad title="errdefer Example 2"
 defer:
     print(1)
     print(2)

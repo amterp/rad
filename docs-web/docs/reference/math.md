@@ -6,7 +6,7 @@ title: Math
 
 RSL has a modulo operator. It can be used to get the remainder after performing integer division.
 
-```rsl
+```rad
 print(5 % 3)
 ```
 
@@ -18,7 +18,7 @@ print(5 % 3)
 
 This also works for floats, or mixes between floats and ints.
 
-```rsl
+```rad
 print(5.6 % 4.1)
 print(5 % 4.5)
 ```

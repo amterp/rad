@@ -35,7 +35,7 @@ Let's write the classic "Hello, World!" program. We'll then modify it to give it
 
 First, create a file, let's call it simply `hello`, and give it the following contents:
 
-```rsl
+```rad
 print("Hello, World!") 
 ```
 
@@ -69,7 +69,7 @@ One of the selling points of rad is that it makes defining arguments to your scr
 
 Let's modify the script to greet a name you input from command line.
 
-```rsl
+```rad
 args:
   name string
   
@@ -119,7 +119,7 @@ RSL facilitates writing well-documented and easy-to-use scripts, in part through
 
 First, we'll add a **file header** to your script.
 
-```rsl
+```rad
 ---
 Prints a polite greeting using an input name.
 ---
@@ -142,7 +142,7 @@ print("Hello, {name}!")
 
 Second, we can add **comments** to args that a script declares. Let's do that too:
 
-```rsl
+```rad
 ---
 Prints a polite greeting using an input name.
 ---
@@ -161,7 +161,7 @@ print("Hello, {name}!")
 
     You can use code comments on your arg comments, if you so choose e.g.
 
-    ```rsl
+    ```rad
     name string # A name.  // todo make this more descriptive
     ```
 
@@ -195,7 +195,7 @@ Needing to manually invoke `rad` each time you want to run an RSL script can be 
 
 Let's add one to our script. It has to go on the very first line.
 
-```rsl
+```rad
 #!/usr/bin/env rad
 ---
 Prints a polite greeting using an input name.

@@ -11,7 +11,7 @@ This concept will become clearer with an example.
 
 Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about its latest commits.
 
-```rsl title="File: commits"
+```rad title="File: commits"
 args:
     repo string    # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
@@ -50,7 +50,7 @@ And that's with just a few lines of code! Let's break it down piece by piece.
 
 ### Arg Block
 
-```rsl
+```rad
 args:
     repo string    # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
@@ -63,7 +63,7 @@ After the args block, we create a `url` string using [string interpolation](stri
 
 ### Json Field Definitions
 
-```rsl
+```rad
 Time = json[].commit.author.date
 Author = json[].commit.author.name
 SHA = json[].sha
@@ -120,7 +120,7 @@ It's a "special" list though, as it has a json field definition tied to it, whic
 
 ### Rad Block
 
-```rsl
+```rad
 rad url:
     fields Time, Author, SHA
 ```
@@ -163,7 +163,7 @@ Copenhagen   Denmark  640000
 
 The simplest sorting option is alphabetically, across the whole row.
 
-```rsl
+```rad
 rad url:
     fields City, Country, Population
     sort
@@ -181,7 +181,7 @@ Los Angeles  USA      3800000
 
 What if we wanted to sort by Country, though? And then break ties with City? We can do that:
 
-```rsl
+```rad
 rad url:
     fields City, Country, Population
     sort Country, City
@@ -199,7 +199,7 @@ Los Angeles  USA      3800000
 
 If we wanted to sort by descending population, you can add `desc` after the name of the column:
 
-```rsl
+```rad
 rad url:
     fields City, Country, Population
     sort Population desc
@@ -225,7 +225,7 @@ You can also *transform* a column's values before it gets printed.
 
 For example, let's say you wanted the 'Population' column in the above example to be in millions, and to display one decimal place, you can do that with a `map` column modifier:
 
-```rsl
+```rad
 rad url:
     fields City, Country, Population
     Population:
@@ -250,7 +250,7 @@ This example is actually using string interpolation formatting, which we haven't
 
 [//]: # (TODO link to string interpolation formatting section when added, above)
 
-```rsl
+```rad
 Population:
     map fn(p) "{p/1000000:.1}"
 ```
@@ -278,7 +278,7 @@ Another column modifier uses the keyword `color`. You can tell rad to color a ce
 
 For example:
 
-```rsl
+```rad
 rad url:
     fields City, Country, Population
     Country:
@@ -306,7 +306,7 @@ copy and paste the whole block into two separate if blocks.
 
 Let's say your script had a flag for sorting by population or not. Here's an example of how that could look:
 
-```rsl
+```rad
 args:
     sort_by_population "sort-by-population" p bool  # Enable to sort by population.
 
@@ -334,7 +334,7 @@ allowing you to separately process the populated json fields/lists further if ne
 
 Generally the syntax is very similar between `request` and `rad` blocks.
 
-```rsl
+```rad
 request url:
     fields City, Country, Population
     
@@ -362,7 +362,7 @@ already-populated lists and display them as a table.
 
 To demonstrate, you can even manually populate your lists (columns) and use them as fields for the table:
 
-```rsl
+```rad
 Nums = [1, 2]
 Words = ["hi", "hello"]
 display:
@@ -389,7 +389,7 @@ from the specified `fields`.
 
     For example:
 
-    ```rsl
+    ```rad
     request url:
         fields width, height
 

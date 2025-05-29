@@ -36,7 +36,7 @@ Note that, outside of `help`, all the global flags are ALL CAPS.
 
 For example, given this example:
 
-```rsl title="debug.rsl"
+```rad title="debug.rsl"
 print("1")
 debug("2")
 print("3")

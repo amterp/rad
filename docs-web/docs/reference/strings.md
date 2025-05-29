@@ -4,7 +4,7 @@ title: Strings
 
 RSL has three delimiters for strings:
 
-```rsl
+```rad
 "double quotes"
 'single quotes'
 `backticks`
@@ -14,7 +14,7 @@ All three of these behave the same way. RSL offers three so you have alternative
 For example, if you have a string which itself contains lots of single quotes, you may choose to use the double quotes delimiter.
 Or, if your string has both single *and* double quotes, you can use backticks to delimit your string. Specific example:
 
-```rsl
+```rad
 `Single quotes: 'Hi!', double quotes: "Hi!"`
 ```
 
@@ -42,7 +42,7 @@ Or, if your string has both single *and* double quotes, you can use backticks to
 
 Examples:
 
-```rsl
+```rad
 "{myString:20}"
 "{myString:<20}"
 "{myString:>20}"
@@ -65,7 +65,7 @@ Raw strings can be used when you want RSL to treat the string as it's written, r
 
 Raw strings are created by prefixing an `r` to the opening delimiter of your string. For example:
 
-```rsl
+```rad
 name = "alice"
 text = r"Regards,\n{name}"
 print(text)
@@ -82,7 +82,7 @@ and that `{name}` is also left as-is i.e. no interpolation was performed.
 
 Unlike Python, **you cannot escape *anything* in raw strings**, including the delimiter. For example:
 
-```rsl
+```rad
 r"\""
 ```
 

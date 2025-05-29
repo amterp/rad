@@ -9,7 +9,7 @@ For a complete list of available functions, see the [reference](../reference/fun
 
 The syntax for invoking functions is pretty standard. Here's a script with some examples:
 
-```rsl
+```rad
 names = ["Bob", "Charlie", "Alice"]
 num_people = len(names)
 print("There are {num_people} people.")
@@ -35,7 +35,7 @@ This example uses a few different functions:
 
 Some functions take no arguments. For example, `rand()` returns a random float between 0 and 1:
 
-```rsl
+```rad
 random_float = rand()
 print(random_float)
 ```
@@ -50,7 +50,7 @@ print(random_float)
 
 Some functions take a fixed number of arguments, such as `upper` and `lower` that always take one argument:
 
-```rsl
+```rad
 text = "oh WOW!"
 print(upper(text))
 print(lower(text))
@@ -67,7 +67,7 @@ oh wow!
 
 Some functions can take different numbers of arguments! For example `join`:
 
-```rsl
+```rad
 numbers = [1, 2, 3]
 print(join(numbers, "... "))
 
@@ -94,7 +94,7 @@ In this example, `join` is being invoked with all these valid variations:
 
     The second variation of `join` can be handy for generating the query params in a url. For example:
 
-    ```rsl
+    ```rad
     url = "https://api.github.com/repos/amterp/rad/commits"
     query_params = ["per_page=5", "path=README.md"]
     url += join(query_params, "&", "?")
@@ -110,13 +110,13 @@ Finally, some functions may also have named arguments.
 An example of this is `http_post`. `http_post` (unsurprisingly) performs an HTTP POST request against an input url, usually with a body of some sort.
 One variation of the function only takes that url:
 
-```rsl
+```rad
 response = http_post(url, body)
 ```
 
 However, if you wish to customize the headers on your HTTP request, you can do so:
 
-```rsl
+```rad
 my_headers = {
     "Authorization": "Bearer {token}",
 }

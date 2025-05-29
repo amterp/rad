@@ -4,7 +4,7 @@ title: Rad Blocks
 
 ## `rad` block
 
-```rsl
+```rad
 rad url:
     fields Name, Birthdate, Height
     Name:
@@ -17,14 +17,14 @@ rad url:
 
 ## `request` block
 
-```rsl
+```rad
 request url:
     fields Name, Birthdate, Height
 ```
 
 ## `display` block
 
-```rsl
+```rad
 display:
     fields Name, Birthdate, Height
 ```
