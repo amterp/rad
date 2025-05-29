@@ -65,3 +65,24 @@
 - if pre-stmt
 - arg range constraint
 - list comprehensions exprs dont need to return 1+ values
+
+---
+
+## 2025-05-29 Doc Update Push
+
+- [ ] update existing
+  - [x] getting started
+  - [ ] basics
+  - [ ] args
+  - [ ] rad blocks
+  - [ ] functions
+  - [ ] strings
+  - [ ] resources
+  - [ ] shell commands
+  - [ ] global flags
+  - [ ] defer/errdefer
+- [ ] new
+  - [ ] example: hm
+  - [ ] example: dot
+  - [ ] guide: stashes
+  - [ ] guide: misc - macros

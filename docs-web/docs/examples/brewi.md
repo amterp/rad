@@ -2,7 +2,9 @@
 title: brewi
 ---
 
-```rad
+## Preview
+
+```rad linenums="1" hl_lines="0"
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -17,7 +19,7 @@ if confirm():
 ```
 
 ```
-> brewi --help
+> brewi -h
 Facilitates checking a brew formula before installing it.
 
 Usage:
@@ -135,4 +137,19 @@ if confirm():
 
 Note the shorthand flag in `cask c bool`.
 
-Done! If you'd like to see a more complex example next, check out [hm](./hm.md).
+Done! You've now got a great, convenient helper script for installing things with brew :)
+
+```
+> brewi -h
+Facilitates checking a brew formula before installing it.
+
+Usage:
+  brewi <formula> [cask]
+
+Script args:
+      --formula string   Name of the formula to install.
+  -c, --cask             Enable if it's a cask.
+```
+
+
+If you'd like to see a more complex example next, check out [hm](./hm.md).
