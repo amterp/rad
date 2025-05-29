@@ -4,7 +4,7 @@ title: Shell Commands
 
 The shell offers a wide range of utilities and is a great way to interact with your system e.g. reading/writing files, invoking installed programs, etc.
 
-While you can do a lot with in-built RSL functionality, sometimes you'll want to invoke things from your shell, and RSL makes that convenient through  syntax we'll explore in this section.
+While you can do a lot with in-built Rad functionality, sometimes you'll want to invoke things from your shell, and Rad makes that convenient through  syntax we'll explore in this section.
 
 ## Basic Shell Commands
 
@@ -20,7 +20,7 @@ Here we have the intent to run `ls` from your shell and printing the output to y
 
 Note that you can write the shell command inline like above, or pre-define a string as an identifier (e.g. `cmd = ...`) and then prefix the identifier with `$` i.e. `$cmd` to invoke that pre-defined command.
 
-**The above example won't run as-is though** -- RSL requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
+**The above example won't run as-is though** -- Rad requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
 To do this, you must define either a `fail` or a `recover` block below your command invocation. If the command fails, the block you define will get run, but if it succeeds, the block will *not* run and will be skipped.
 
 When the `fail` block is run and finishes, the script **will exit**.
@@ -76,7 +76,7 @@ In each example, if the command runs successfully, we simply print the output to
 
 ## Critical Shell Commands
 
-RSL requires `fail` or `recover` blocks when using `$` syntax for shell commands in order to help developers write safe and well-behaved scripts.
+Rad requires `fail` or `recover` blocks when using `$` syntax for shell commands in order to help developers write safe and well-behaved scripts.
 
 However, a very common expectation is that the command should succeed, and if it doesn't, we should fail the script and exit immediately with a non-0 exit code. Rather than requiring explicit `fail` blocks, which can be a little cumbersome to write every time, you can instead use `$!` syntax to express that a command is *critical* i.e. it *must* succeed, else the script exits.
 
@@ -84,7 +84,7 @@ However, a very common expectation is that the command should succeed, and if it
 $!`ls`
 ```
 
-This line alone is a perfectly valid shell command and RSL script. If the command fails, we propagate the error code and print the error.
+This line alone is a perfectly valid shell command and Rad script. If the command fails, we propagate the error code and print the error.
 
 ## Unsafe Shell Commands
 
@@ -116,7 +116,7 @@ The code returned by your invocation depends on the command. Commonly, a code of
 
 2) Capturing stdout
 
-Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With RSL, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:
+Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With Rad, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:
 
 ```rad
 code, stdout = $cmd
@@ -155,7 +155,7 @@ _, _, stderr = $cmd
 
 ## Suppressing Announcements
 
-By default, whenever you invoke a shell command, rad will print an 'announcement' to indicate to users what command is being run. For example:
+By default, whenever you invoke a shell command, Rad will print an 'announcement' to indicate to users what command is being run. For example:
 
 ```rad title="create.rsl"
 args:
@@ -183,7 +183,7 @@ quiet $!`touch {filename}.txt`
 
 ## Summary
 
-- RSL offers first-class support for interacting with your shell and invoking shell commands.
+- Rad offers first-class support for interacting with your shell and invoking shell commands.
 - Basic invocations (using `$`) require either a `fail` or `recover` command immediately after.
 - If you wish to simply exit when a command fails, you can write it as a **critical command** with `$!`.
 - You can capture command outputs by progressively adding more identifiers to an assignment with the invocation.

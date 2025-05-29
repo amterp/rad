@@ -2,11 +2,11 @@
 title: Resources
 ---
 
-Depending on your script, you may wish to look up values at some point, such as URL endpoints depending on your input. RSL offers a function for this, `pick_from_resource`, but before we dive into it, we'll first cover a couple of related functions.
+Depending on your script, you may wish to look up values at some point, such as URL endpoints depending on your input. Rad offers a function for this, `pick_from_resource`, but before we dive into it, we'll first cover a couple of related functions.
 
 ## `pick`
 
-[`pick`](../reference/functions.md#pick) is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, rad will enter an interactive mode which allows the user to pick a single value to continue with.
+[`pick`](../reference/functions.md#pick) is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, Rad will enter an interactive mode which allows the user to pick a single value to continue with.
 
 You can try it yourself with this example:
 
@@ -83,7 +83,7 @@ Let's do a simple example. As mentioned, a resource file is simply a JSON file. 
 
 You may see some similarity here to what we did with [`pick_kv`](#pick_kv). We're defining two options: one which can get matched by either `gl` or `lab`, and one which gets matched by `gh` or `hub`. In the first case, if chosen, `pick_from_resource` will return *two* values: `gitlab.com` and `GitLab`. Similarly it will return `github.com` and `GitHub` for the latter.
 
-Let's create an RSL script to use this resource:
+Let's create an Rad script to use this resource:
 
 ```rad title="example.rsl"
 args:
@@ -118,6 +118,6 @@ TBC
 
 ## Next
 
-The shell offers a ton of useful utilities, and RSL allows you to leverage them from within your scripts.
+The shell offers a ton of useful utilities, and Rad allows you to leverage them from within your scripts.
 
 We'll look at that in the next section: [Shell Commands](./shell-commands.md).

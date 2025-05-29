@@ -2,7 +2,7 @@
 title: Rad Blocks
 ---
 
-This section discusses another unique RSL concept, including **rad blocks**.
+This section discusses another unique Rad concept, including **rad blocks**.
 These allow you to easily and concisely define queries to JSON APIs and what data you want to extract from the response, so that it can be displayed as a nice, readable table.
 
 ## Basic Example
@@ -71,7 +71,7 @@ SHA = json[].sha
 
 This is where things get more interesting. The above definitions correspond to expected *paths* in the JSON response i.e. a series of keys to look up.
 
-In RSL nomenclature, we refer to these as **json field definitions**.
+In Rad nomenclature, we refer to these as **json field definitions**.
 
 If you query GitHub's API and take a look at the JSON response, you can see how these fields correspond to the data.
 Example URL if you want to see for yourself:
@@ -105,10 +105,10 @@ Here's a simplified example response with two commits, showing the structure we'
 
 You can see how the path for `Author = json[].commit.author.name` corresponds to a final value of "Alexander Terp".
 
-Json field definitions leverage a special syntax that RSL offers. They always start with `json`.
+Json field definitions leverage a special syntax that Rad offers. They always start with `json`.
 `json` can be thought of as representing the JSON blob as a whole, or its root, if you want to think of the JSON data as a tree.
 
-The `[]` after `json` tells RSL that you expect the `json` blob to be a list, and to "unwrap" it and dig into individual items in that list for the remainder of the path.
+The `[]` after `json` tells Rad that you expect the `json` blob to be a list, and to "unwrap" it and dig into individual items in that list for the remainder of the path.
 `commit` then tells it to look up a key of that name (literally `commit`), and to then look up `author` next, and then finally `name`.
 
 The json field definition syntax can do a lot of things that we won't cover here. For details, see its [reference page](../reference/json-field-definition.md).
@@ -403,13 +403,13 @@ from the specified `fields`.
 
 ## Summary
 
-- RSL provides first-class support for scripts whose primary purpose is to query a JSON API and present parts of its response in a useful, readable table.
+- Rad provides first-class support for scripts whose primary purpose is to query a JSON API and present parts of its response in a useful, readable table.
 - This is offered by the `rad` blocks, and its siblings `display` and `request`.
-- RSL has syntax for specifying **json field definitions** or **json field paths**, that rad blocks can then use to extract fields from a JSON blob response.
+- Rad has syntax for specifying **json field definitions** or **json field paths**, that rad blocks can then use to extract fields from a JSON blob response.
     - e.g. `Author = json[].commit.author.name`
 - Rad blocks offer customization options, such as coloring, transforming cell values, and sorting.
   - You can also use if statements inside them.
 
 ## Next
 
-RSL offers a range of useful built-in functions to help you write your scripts. We'll take a look at those in the next section: [Functions](./functions.md).
+Rad offers a range of useful built-in functions to help you write your scripts. We'll take a look at those in the next section: [Functions](./functions.md).

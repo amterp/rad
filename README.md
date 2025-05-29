@@ -58,8 +58,7 @@ HI, BOB!
 ### macOS
 
 ```shell
-brew tap amterp/rad
-brew install rad
+brew install amterp/rad/rad
 ```
 
 Other than building from source, Rad is not available for other platforms/package managers (yet).

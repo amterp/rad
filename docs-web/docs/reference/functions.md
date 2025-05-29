@@ -492,7 +492,7 @@ If `chars` is left unspecified, then it will default to whitespace characters i.
 
 ### Colors & Attributes
 
-RSL offers several functions to format text, including colors and modifiers like bold, italics, etc.
+Rad offers several functions to format text, including colors and modifiers like bold, italics, etc.
 As an example, let's look at the `red` function:
 
 ```
@@ -651,7 +651,7 @@ pick_from_resource(resource_path string, filter string?) -> any...
 
 ## HTTP
 
-RSL offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods).
+Rad offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods).
 Respectively:
 
 - `http_get`

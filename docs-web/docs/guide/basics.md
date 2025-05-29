@@ -2,8 +2,8 @@
 title: Basics
 ---
 
-This section of the guide will rapidly cover the basics of RSL.
-RSL shares a lot of conventions and syntax with popular languages like Python,
+This section of the guide will rapidly cover the basics of Rad.
+Rad shares a lot of conventions and syntax with popular languages like Python,
 so if you're familiar with programming, this will be pretty straightforward.
 
 ## Variables & Assignment
@@ -39,7 +39,7 @@ name = 2
 
 [//]: # (todo for number types, should we advertise precision/bits?)
 
-RSL has 6 data types: strings, ints, floats, bools, lists, and maps. 
+Rad has 6 data types: strings, ints, floats, bools, lists, and maps. 
 
 ### string
 
@@ -123,7 +123,7 @@ Those are the basics for strings - we'll cover additional string concepts in a f
 
 ### int
 
-RSL has ints. There's nothing unusual about them. Example:
+Rad has ints. There's nothing unusual about them. Example:
 
 ```rad
 team_size = 20
@@ -160,7 +160,7 @@ years = 20.0
 
 ### bool
 
-RSL uses lowercase `true` / `false`:
+Rad uses lowercase `true` / `false`:
 
 ```rad
 is_running = true
@@ -169,7 +169,7 @@ is_tired = false
 
 ### list
 
-RSL has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.
+Rad has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.
 
 ```rad
 names = ["alice", "bob", "charlie"]
@@ -311,11 +311,11 @@ print(mymap)
 
 ## Operators
 
-RSL offers operators similar to many other languages. Below sections very quickly demonstrate.
+Rad offers operators similar to many other languages. Below sections very quickly demonstrate.
 
 ### Arithmetic
 
-RSL follows the standard order of operations for operators `() , + , - , * , / , %`:
+Rad follows the standard order of operations for operators `() , + , - , * , / , %`:
 
 1. Parentheses
 2. Multiplication, Division, Modulo
@@ -375,16 +375,16 @@ print(2 == 2.0)      // true
 !!! info "Difference From Python on `True == 1` and `False == 0`"
 
     In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
-    hence they're equal. That's not the case in RSL. In RSL, **any two values of different types are not equal**.
+    hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal**.
 
     The reasoning stems from [truthy/falsy-ness](#truthy-falsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
-    RSL avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
+    Rad avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
 
 [//]: # (todo move this ^ note to the reference section? is it really necessary in this basics section?)
 
 ### Logical
 
-RSL uses `and` and `or` for binary logical operations.
+Rad uses `and` and `or` for binary logical operations.
 
 ```rad
 print(false and false)  // false
@@ -488,7 +488,7 @@ Because of that, there's also no reason to support *pre*-incrementing, and so `+
 
 ### Ternary
 
-RSL supports `? :` style ternary operators. 
+Rad supports `? :` style ternary operators. 
 
 `<condition> ? <true case> : <false case>`
 
@@ -508,7 +508,7 @@ larger than 0
 
 ### If Statements
 
-RSL employs very standard if statements.
+Rad employs very standard if statements.
 
 You are **not** required to wrap conditions in parentheses `()`.
 
@@ -523,7 +523,7 @@ else:
 
 ### For Loops
 
-RSL allows "for each" loops for iterating through collections such as lists.
+Rad allows "for each" loops for iterating through collections such as lists.
 
 ```rad
 names = ["Alice", "Bob", "Charlie"]
@@ -612,7 +612,7 @@ bob green
 
 ## Truthy / Falsy
 
-RSL supports truthy/falsy logic.
+Rad supports truthy/falsy logic.
 
 For those unfamiliar, this means that, instead of writing the following (as an example):
 
@@ -653,14 +653,14 @@ The following table shows which values return false for each type. **All other v
 ## Summary
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
-- RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
-- RSL has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
-- RSL uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
+- Rad has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
+- Rad has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
+- Rad uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
-- RSL offers truthy/falsy logic for more concise conditional expressions.
+- Rad offers truthy/falsy logic for more concise conditional expressions.
 
 ## Next
 
 Good job on getting through the basics of the language! 
 
-Next, let's dive into one of the areas of RSL that make it shine: [Args](./args.md).
+Next, let's dive into one of the areas of Rad that make it shine: [Args](./args.md).

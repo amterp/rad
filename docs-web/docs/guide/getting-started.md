@@ -7,31 +7,24 @@ title: Getting Started
 ### macOS
 
 ```shell
-brew tap amterp/rad
-brew install rad
+brew install amterp/rad/rad
 ```
 
-Other than building from source, rad is not available for other platforms/package managers (yet).
+Other than building from source, Rad is not available for other platforms/package managers (yet).
 
 ### Checking Installation
 
-After you've installed rad, you can check your installation:
+After you've installed Rad, you can check your installation:
 
 ```shell
 rad -V
 ```
 
-If this prints rad's version, you're set!
+If this prints Rad's version, you're set!
 
-## Your First RSL Script - Hello World
+## Your First Rad Script - Hello World
 
-Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of an RSL twist, demoing a couple of features rad provides.
-
-!!! note "Terminology: Rad & RSL"
-
-    Rad is the name of the CLI tool and interpreter capable of running RSL scripts.
-
-    **Rad** stands for "Request And Display", and **RSL** stands for "Rad Scripting Language".
+Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of a Rad twist, demoing a couple of features Rad provides.
 
 First, create a file, let's call it simply `hello`, and give it the following contents:
 
@@ -45,9 +38,9 @@ print("Hello, World!")
 
     You can read more about it [in the reference](../reference/functions.md#print).
 
-!!! info "RSL Extensions"
+!!! info "File Extension"
 
-    If you want to give your RSL scripts an extension, you can follow `.rsl` as a convention.
+    If you want to give your Rad scripts an extension, you can follow `.rad` as a convention.
 
 Then, run the script from your CLI by invoking `rad` on it, and you should see it print out like so:
 
@@ -61,11 +54,11 @@ Hello, World!
 ```
 </div>
 
-Nice! Next, let's spruce it up with a few RSL features.
+Nice! Next, let's spruce it up with a few Rad features.
 
-## Adding In Some RSL Features
+## Adding In Some Rad Features
 
-One of the selling points of rad is that it makes defining arguments to your script super simple, using a declarative style.
+One of the selling points of Rad is that it makes defining arguments to your script super simple, using a declarative style.
 
 Let's modify the script to greet a name you input from command line.
 
@@ -79,7 +72,7 @@ print("Hello, {name}!")
 A couple of things to note here:
 
 1. We define an "args block". Right now it contains just the one line, but [you can do lots of things in here](../reference/args.md).
-2. The modified `print()` utilizes [string interpolation](../reference/strings.md#string-interpolation). String interpolation in RSL behaves a lot like it does in Python (you'll see this is a pattern).
+2. The modified `print()` utilizes [string interpolation](../reference/strings.md#string-interpolation). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
 
 Now, let's try invoking the script again, and this time, input your (or someone's) name:
 
@@ -109,13 +102,13 @@ Script args:
 ```
 </div>
 
-If you run an RSL script without providing *any* args to a script which expects at least one, rad will print out the script usage, interpreting your invocation similar to if you had passed `--help`.
+If you run an Rad script without providing *any* args to a script which expects at least one, Rad will print out the script usage, interpreting your invocation similar to if you had passed `--help`.
 
-This shows a little of the automatic script usage string generation that rad gives you. Let's explore that a bit more.
+This shows a little of the automatic script usage string generation that Rad gives you. Let's explore that a bit more.
 
 ## Improving Script Usage String
 
-RSL facilitates writing well-documented and easy-to-use scripts, in part through unique syntax that it offers. Let's use a couple of those now.
+Rad facilitates writing well-documented and easy-to-use scripts, in part through unique syntax that it offers. Let's use a couple of those now.
 
 First, we'll add a **file header** to your script.
 
@@ -131,7 +124,7 @@ print("Hello, {name}!")
 
 !!! tip "File Headers"
 
-    File headers, as the name suggests, go at the top of RSL scripts (with the exception of shebangs, to be covered later). 
+    File headers, as the name suggests, go at the top of Rad scripts (with the exception of shebangs, to be covered later). 
     They allow you to write a description for your script in between two `---` lines. The contents will get printed as part of the script's usage string.
 
     Some ideas on what to cover in your file headers:
@@ -154,10 +147,10 @@ print("Hello, {name}!")
 
 !!! info "Note on `#` vs. `//`"
 
-    RSL uses `#` to denote a *arg* comments in RSL.
-    `#` comments are special and **do get passed** to RSL's parser and can affect script behavior (namely in this case, adding information to the script usage string). 
+    Rad uses `#` to denote a *arg* comments in Rad.
+    `#` comments are special and **do get passed** to Rad's parser and can affect script behavior (namely in this case, adding information to the script usage string). 
 
-    Standard code comments in RSL use `//`, similar to Java or C/C++. These are stripped prior to parsing and don't impact script behavior.
+    Standard code comments in Rad use `//`, similar to Java or C/C++. These are stripped prior to parsing and don't impact script behavior.
 
     You can use code comments on your arg comments, if you so choose e.g.
 
@@ -191,7 +184,7 @@ Not only is the script now easier to maintain for developers, it's also easier f
 
 Last thing, as part of this introduction guide.
 
-Needing to manually invoke `rad` each time you want to run an RSL script can be a little cumbersome. Thankfully, Unix kernels provide a mechanism known as a "shebang".
+Needing to manually invoke `rad` each time you want to run an Rad script can be a little cumbersome. Thankfully, Unix kernels provide a mechanism known as a "shebang".
 
 Let's add one to our script. It has to go on the very first line.
 
@@ -235,11 +228,11 @@ it will invoke said interpreter on the script (equivalent to `rad ./hello` like 
 - We saw how we can write self-documenting scripts that also help our users by leveraging **file headers** and **arg comments**.
 - We saw how we can leverage **shebangs** to make our scripts more convenient to run.
 
-!!! info "Note on RSL file contents ordering"
+!!! info "Note on Rad file contents ordering"
 
     Rad expects a certain order between shebangs, file headers, arg blocks, and the rest of your code.
 
-    **It's important to adhere to the following ordering in RSL scripts**, or you'll see errors:
+    **It's important to adhere to the following ordering in Rad scripts**, or you'll see errors:
     
     1) Shebang (if present)
   
@@ -251,13 +244,13 @@ it will invoke said interpreter on the script (equivalent to `rad ./hello` like 
 
 ## Next
 
-Great job on getting this far! You've gotten a peek at what rad and RSL have to offer.
+Great job on getting this far! You've gotten a peek at what Rad has to offer.
 
 From here, you have two options:
 
-1. Continue your RSL journey: dive into more details with the next section: [Basics](./basics.md).
+1. Continue your Rad journey: dive into more details with the next section: [Basics](./basics.md).
 
-2. If you're interested instead in seeing additional unique RSL features, feel free to skip ahead to any of these sections:
+2. If you're interested instead in seeing additional unique Rad features, feel free to skip ahead to any of these sections:
     - [Args](./args.md)
     - [Rad Blocks](./rad-blocks.md)
     - [Shell Commands](./shell-commands.md)

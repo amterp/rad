@@ -2,7 +2,7 @@
 title: Strings
 ---
 
-RSL has three delimiters for strings:
+Rad has three delimiters for strings:
 
 ```rad
 "double quotes"
@@ -10,7 +10,7 @@ RSL has three delimiters for strings:
 `backticks`
 ```
 
-All three of these behave the same way. RSL offers three so you have alternatives to pick between depending on the contents of your string.
+All three of these behave the same way. Rad offers three so you have alternatives to pick between depending on the contents of your string.
 For example, if you have a string which itself contains lots of single quotes, you may choose to use the double quotes delimiter.
 Or, if your string has both single *and* double quotes, you can use backticks to delimit your string. Specific example:
 
@@ -21,7 +21,7 @@ Or, if your string has both single *and* double quotes, you can use backticks to
 ## String Attributes
 
 - Not all strings are just plain text. They may have attributes such as color.
-- This means that RSL contains logic on how to handle attributes when strings are combined or operated on
+- This means that Rad contains logic on how to handle attributes when strings are combined or operated on
     - e.g. concatenation, slicing, replace functions, etc
 - The following operations maintain color attributes:
     - concatenation
@@ -61,7 +61,7 @@ Examples:
 
 ## Raw Strings
 
-Raw strings can be used when you want RSL to treat the string as it's written, rather than performing escaping, interpolation, etc.
+Raw strings can be used when you want Rad to treat the string as it's written, rather than performing escaping, interpolation, etc.
 
 Raw strings are created by prefixing an `r` to the opening delimiter of your string. For example:
 
@@ -77,7 +77,7 @@ Regards,\n{name}
 ```
 </div>
 
-Notice RSL did not render the `\n` as a newline as it would in a regular string,
+Notice Rad did not render the `\n` as a newline as it would in a regular string,
 and that `{name}` is also left as-is i.e. no interpolation was performed.
 
 Unlike Python, **you cannot escape *anything* in raw strings**, including the delimiter. For example:

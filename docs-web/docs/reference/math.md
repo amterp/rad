@@ -4,7 +4,7 @@ title: Math
 
 ## Modulo
 
-RSL has a modulo operator. It can be used to get the remainder after performing integer division.
+Rad has a modulo operator. It can be used to get the remainder after performing integer division.
 
 ```rad
 print(5 % 3)
@@ -34,7 +34,7 @@ Negative numbers is a somewhat complex topic, and different languages handle the
 
 | -11 % 7 =  | Approach           | Result takes sign of... | Example Languages                                     |
 |------------|--------------------|-------------------------|-------------------------------------------------------|
-| -4         | Truncated Division | Numerator (dividend)    | **RSL**, C/C++, Java, JavaScript, Go, Rust, Swift, C# |
+| -4         | Truncated Division | Numerator (dividend)    | **Rad**, C/C++, Java, JavaScript, Go, Rust, Swift, C# |
 | 3          | Floored Division   | Denominator (divisor)   | Python, Ruby, R                                       |
 
-Notice RSL behaves differently from Python, and instead follows the behavior of most other major languages.
+Notice Rad behaves differently from Python, and instead follows the behavior of most other major languages.

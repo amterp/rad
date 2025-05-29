@@ -2,7 +2,7 @@
 title: Functions
 ---
 
-RSL offers a range of built-in functions to help you write your scripts. In this section, we'll take a look at the syntax and a few examples.
+Rad offers a range of built-in functions to help you write your scripts. In this section, we'll take a look at the syntax and a few examples.
 For a complete list of available functions, see the [reference](../reference/functions.md).
 
 ## Syntax
@@ -131,15 +131,15 @@ In this example, the named arg `headers` expects a map. Named args are always op
 
 There are a lot of built-in functions. If you just want to see what's available and how to use them, it's best to refer to the [reference](../reference/functions.md).
 
-!!! note "RSL does not allow defining your own functions"
+!!! note "Rad does not allow defining your own functions"
 
-    RSL currently does not allow you to define your own functions, so any function you use is built-in.
+    Rad currently does not allow you to define your own functions, so any function you use is built-in.
 
 ## Summary
 
 - Function invocation syntax is similar to most other C-like languages such as Python, Java, etc.
 - Functions may take no arguments, a fixed number of arguments, a varying number of args, and/or named arguments.
-- RSL does not allow you to define your own functions - all functions are built-in.
+- Rad does not allow you to define your own functions - all functions are built-in.
 
 ## Next
 

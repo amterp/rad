@@ -96,7 +96,7 @@ We use [string interpolation](../guide/strings-advanced.md#string-interpolation)
 
 You can try running the command now! Make sure it's executable (`chmod +x ./brewi`).
 
-Next, we want to ask the user if they'd like to proceed with installing the formula. For that, RSL offers the [`confirm`](../reference/functions.md#confirm) function.
+Next, we want to ask the user if they'd like to proceed with installing the formula. For that, Rad offers the [`confirm`](../reference/functions.md#confirm) function.
 The default prompt is `Confirm? [y/n] > `, which works fine for us here, so we'll do a simple 0-arg `confirm()` call. The function returns a bool for yes/no, so we'll put it in an if statement.
 
 ```rad linenums="1" hl_lines="9-10"
@@ -116,7 +116,7 @@ Feel free to try it again now!
 
 One last touch: we should also allow installing casks with this script. We'll aim to offer a simple `-c` flag users can set which modifies the command. 
 
-We'll add the `bool` arg, and insert an additional interpolation in our `brew install` command, leveraging RSL's [ternary](../guide/basics.md#ternary) syntax.
+We'll add the `bool` arg, and insert an additional interpolation in our `brew install` command, leveraging Rad's [ternary](../guide/basics.md#ternary) syntax.
 We need to pay close attention to whitespace so we make sure the command comes out correct in the cask and non-cask cases.
 
 ```rad linenums="1" hl_lines="7 11"

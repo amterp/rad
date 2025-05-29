@@ -2,24 +2,24 @@
 title: Global Flags
 ---
 
-RSL offers a range of global flags that are available with every RSL script. We'll explore some of them in this section.
+Rad offers a range of global flags that are available with every Rad script. We'll explore some of them in this section.
 
 ## `help`
 
-The most basic global flag is `--help` or `-h`. *All* RSL scripts automatically generate a usage string that can be displayed by invoking this flag.
+The most basic global flag is `--help` or `-h`. *All* Rad scripts automatically generate a usage string that can be displayed by invoking this flag.
 
 `--help` also prints available *global* flags:
 
 ```
 Global flags:
   -h, --help                   Print usage string.
-  -d, --debug                  Enables debug output. Intended for RSL script developers.
+  -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet                  Suppresses some output.
       --shell                  Outputs shell/bash exports of variables, so they can be eval'd
   -v, --version                Print rad version information.
-      --stdin script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the 'script name'.
+      --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the 'script name'.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
       --rsl-tree               Instead of running the target script, print out its syntax tree.
@@ -80,8 +80,8 @@ Use `--quiet` or `-q` to suppress *some* outputs, including print statements and
     (default auto)
 ```
 
-A lot of rad's outputs have colors e.g. [`pick`](../reference/functions.md#pick) interaction or [`pprint`](../reference/functions.md#pprint) JSON formatted output.
-By default (`auto`), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.
+A lot of Rad's outputs have colors e.g. [`pick`](../reference/functions.md#pick) interaction or [`pprint`](../reference/functions.md#pprint) JSON formatted output.
+By default (`auto`), Rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.
 
 However, you can override the automatic detection by explicitly setting `--color=always` or `--color=never` to force having colors, or force *not* having colors, respectively. 
 
@@ -125,7 +125,7 @@ And then define it as the mock response with the following example invocation:
 rad commits.rsl --mock-response "api.github.*:commits.json"
 ```
 
-Before executing the HTTP request, rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
+Before executing the HTTP request, Rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
 avoiding the HTTP request, and simply returning the contents of the mocked response.
 
 !!! tip "Match all URLs with .*"
@@ -141,7 +141,7 @@ There are more global flags - see the [reference](../reference/global-flags.md) 
 
 ## Summary
 
-- Rad provides several global flags that can be used across all RSL scripts.
+- Rad provides several global flags that can be used across all Rad scripts.
 - Use `mock-response` to test your scripts.
 
 !!! info "Script args can shadow global flags"
@@ -154,4 +154,4 @@ There are more global flags - see the [reference](../reference/global-flags.md) 
 ## Next
 
 Sometimes you may wish to run commands before your script ends, either normally or via an error, such as cleanups.
-RSL provides a way to do this that we will explore in the next section: [Defer & Errdefer](./defer-errdefer.md).
+Rad provides a way to do this that we will explore in the next section: [Defer & Errdefer](./defer-errdefer.md).

@@ -4,7 +4,7 @@ title: Boolean Logic
 
 ## Truthy / Falsy
 
-RSL supports truthy/falsy logic.
+Rad supports truthy/falsy logic.
 
 For those unfamiliar, this means that, instead of writing the following (as an example):
 

@@ -4,7 +4,7 @@
   - JSON Queries
   - Non-JSON Queries (general scripting)
 - Advanced?
-- RSL By Example
+- Rad By Example
 - Reference
   - Functions
   - Keywords
@@ -51,7 +51,7 @@
 
 - style guide? tips?
 - something which goes through rsl snippets and runs them to ensure they compile
-- parallel 'RSL by Example' guide?
+- parallel 'Rad by Example' guide?
 
 ---
 

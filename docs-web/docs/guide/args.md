@@ -6,8 +6,8 @@ This section covers syntax for defining arguments that your script can accept.
 
 ## Arg Declarations
 
-RSL takes a declarative approach to arguments.
-You simply declare what arguments your script accepts, and let RSL take care of the rest, including parsing user input.
+Rad takes a declarative approach to arguments.
+You simply declare what arguments your script accepts, and let Rad take care of the rest, including parsing user input.
 
 Arguments are declared as part of an **args block**.
 
@@ -114,11 +114,11 @@ Feel free to go back up and check this against the example scripts we wrote, you
 
 ## Constraints
 
-In addition to declaring the arguments themselves, RSL also allows you to declare constraints on those arguments, such as what kinds of values are valid.
+In addition to declaring the arguments themselves, Rad also allows you to declare constraints on those arguments, such as what kinds of values are valid.
 
-By doing this in the args block, RSL can use this information to validate input for you, and automatically include in the information in your script's usage string.
+By doing this in the args block, Rad can use this information to validate input for you, and automatically include in the information in your script's usage string.
 
-If a user gives an input which doesn't meet one of the listed constraints, rad will print:
+If a user gives an input which doesn't meet one of the listed constraints, Rad will print:
 
 1. The specific error and constraint that was violated.
 
@@ -196,7 +196,7 @@ print("Hi, {name}")
 In this example, a valid `name` value must start with a capital letter, and can then be followed by any number of lowercase letters.
 No other characters will be accepted, so `Alice` will be a valid value, but `bob` or `John123` are not.
 
-As with other constraints, rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
+As with other constraints, Rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
 ### Relational
 
@@ -286,15 +286,15 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 
 ## Summary
 
-- RSL takes a *declarative* approach to args. Rad handles parsing user input.
+- Rad takes a *declarative* approach to args, and handles parsing user input.
 - All args can be specified positionally or via a flag from the user.
 - The anatomy of an arg declaration is this:
 
     `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
 
 - You can apply constraints to arguments inside the arg block, such as `enum`, `regex`, and relational constraints.
-- Details in the arg block are used by rad to provide a better usage/help string.
+- Details in the arg block are used by Rad to provide a better usage/help string.
 
 ## Next
 
-Nice, let's now look at another RSL feature which makes it uniquely suited to certain types of scripting: [Rad Blocks](./rad-blocks.md).
+Nice, let's now look at another Rad feature which makes it uniquely suited to certain types of scripting: [Rad Blocks](./rad-blocks.md).

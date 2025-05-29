@@ -11,7 +11,7 @@ In this section, we'll cover some more advanced string concepts:
 
 ## String Interpolation
 
-RSL allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.
+Rad allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.
 
 Some examples:
 
@@ -71,7 +71,7 @@ The decimal place formatting is only relevant to expressions that result in numb
 ## Multiline Strings
 
 Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. `"` or `'`.
-For these scenarios, RSL offers `"""` multiline string syntax. To demonstrate:
+For these scenarios, Rad offers `"""` multiline string syntax. To demonstrate:
 
 ```rad
 text = """
@@ -121,7 +121,7 @@ that "may contain quotes"!
 
 ## Raw Strings
 
-RSL also supports **raw strings**.
+Rad also supports **raw strings**.
 Raw strings don't have any sort of processing done on them (such as string interpolation) and do not allow any escaping (including the delimiter used to create them).
 Use them when you want your contents to remain as "raw" and unprocessed as possible.
 
@@ -158,13 +158,13 @@ text = r`Hello\n{name}`
 
 !!! info "You cannot escape the raw string's own delimiter"
 
-    RSL raw strings behave more like their equivalent in Go than Python.
+    Rad raw strings behave more like their equivalent in Go than Python.
     In Python, you can escape the delimiter used to make the raw string i.e. `r"quote: \"!"`. If printed, this will
     display as `quote: \"!` i.e. the escape character is also printed. There are lots of discussions online about this
-    somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
+    somewhat odd behavior, which is why Rad (and Go) opted to instead keep the rules very simple and not allow escaping
     in raw strings of any kind.
     
-    Instead, if you try the same thing in RSL, you will get an error because the quote following `\` will close the
+    Instead, if you try the same thing in Rad, you will get an error because the quote following `\` will close the
     string, leaving a dangling `!"` at the end, which is invalid syntax.
 
 ## Summary
