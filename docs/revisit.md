@@ -54,15 +54,7 @@ args:
 
 ---
 
-Metadata file header syntax. Don't love the 
-
-```
----
----
-script_id = abc
----
-```
-
-Scenario where you need an empty doc header to get to the metadata one.
-
----
+- index in for loops i.e. `for i, name in names`
+  - it's weird to go from `for name in names` to adding something *before* name to become the index.
+  - people could mistakenly add it after and now 'name' is the idx and 'i' is the name.
+  - alternatives in reddit thread. e.g. `for name in names by idx`, etc.

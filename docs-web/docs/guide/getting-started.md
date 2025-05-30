@@ -72,7 +72,7 @@ print("Hello, {name}!")
 A couple of things to note here:
 
 1. We define an "args block". Right now it contains just the one line, but [you can do lots of things in here](./args.md).
-2. The modified `print()` utilizes [string interpolation](./strings-advanced#string-interpolation). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
+2. The modified `print()` utilizes [string interpolation](strings-advanced.md#string-interpolation). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
 
 Now, let's try invoking the script again, and this time, input your (or someone's) name:
 

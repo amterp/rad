@@ -4,42 +4,30 @@ title: Basics
 
 This section of the guide will rapidly cover the basics of Rad.
 Rad shares a lot of conventions and syntax with popular languages like Python,
-so if you're familiar with programming, this will be pretty straightforward.
+so if you're familiar with programming, this will be a breeze.
 
 ## Variables & Assignment
 
 To create a variable, you can do it through assignment. Let's use a string example:
 
-```rad
+```rad linenums="1" hl_lines="0"
 name = "Alice"
 ```
 
 You can re-assign variables. Types don't need to stay the same:
 
-```rad
+```rad linenums="1" hl_lines="2"
+name = "Alice"
 name = 2
 ```
-
-!!! warning "You **cannot create** multiple variables this way on one line."
-
-    The following is illegal syntax
-
-    ```rad
-    a, b = "one", "two"
-    ```
-
-    instead, declare each variable on one line.
-
-    ```rad
-    a = "one"
-    b = "two"
-    ```
 
 ## Data Types
 
 [//]: # (todo for number types, should we advertise precision/bits?)
 
-Rad has 6 data types: strings, ints, floats, bools, lists, and maps. 
+Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.
+
+[//]: # (TODO what about function types?!)
 
 ### string
 
@@ -51,15 +39,10 @@ Strings can be delimited in three ways:
 
 All three behave the same way. To demonstrate:
 
-```rad
-greeting = "Hello!"
-print(greeting)
-
-greeting = 'Hello!'
-print(greeting)
-
-greeting = `Hello!`
-print(greeting)
+```rad linenums="1" hl_lines="0"
+print("Hello!")
+print('Hello!')
+print(`Hello!`)
 ```
 
 <div class="result">
@@ -70,9 +53,9 @@ Hello!
 ```
 </div>
 
-!!! tip "Why 3 different delimiters?"
+!!! info "Why 3 different delimiters?"
 
-    Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of the delimiter characters.
+    Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of those delimiter characters.
 
     For example, if you want a double quote in your string, you *can* use double quote delimiters and escape them:
 
@@ -169,7 +152,7 @@ is_tired = false
 
 ### list
 
-Rad has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.
+Rad has two collection types: lists and maps. First, let's look at lists.
 
 ```rad
 names = ["alice", "bob", "charlie"]
@@ -187,7 +170,7 @@ They can also be nested:
 nested = ["alice", [1, ["very nested", "ahhh"]]]
 ```
 
-Indexing and slicing works very similarly to Python. If we assume the 3 variables above exist, you can index with both positive and negative indexes:
+Indexing and slicing works very similarly to Python. Using the above 3 variables for an example, you can index with both positive and negative indexes:
 
 ```rad
 print(names[0])
@@ -203,7 +186,7 @@ very nested
 ```
 </div>
 
-And also you can slice:
+You can also slice:
 
 ```rad
 numbers = [10, 20, 30, 40, 50]
@@ -225,13 +208,13 @@ print(numbers[:-1])
 
 ### map
 
-The last type, and second of two collection types, is a 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.
+The other collection type is 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.
 
 ```rad
 scores = { "alice": 25, "bob": 17, "charlie": 36 }
 ```
 
-Like lists, they can contain mixed types for values, and can nest. However, **keys must be strings.**
+Like lists, they can contain mixed types for values, and can nest.
 
 ```rad
 mixed_map = { 
@@ -277,7 +260,7 @@ Request failed!
 
 You can modify maps using either syntax:
 
-```rad title="Using brackets"
+```rad
 mymap = { "alice": 30 }
 
 mymap["alice"] = 40
@@ -309,6 +292,10 @@ print(mymap)
 ```
 </div>
 
+### Other Types
+
+Rad has other types that we won't cover here. For example `null` and [function references](functions.md).  
+
 ## Operators
 
 Rad offers operators similar to many other languages. Below sections very quickly demonstrate.
@@ -334,6 +321,13 @@ Dividing two integers will result in a floating point number.
 print(5 / 2)  // 2.5
 ```
 
+You can multiply strings to repeat them:
+
+```rad
+name = "alice"
+print(name * 3)  // alicealicealice
+```
+
 ### Comparison
 
 Comparisons return bools that can be used in e.g. [if statements](#if-statements).
@@ -354,7 +348,7 @@ print(2 >= 2)  // true
 print(2 > 2)   // false
 print(2 <= 2)  // true
 print(2 < 2)   // false
-print(2 == 2)  // false
+print(2 == 2)  // true
 ```
 
 You cannot use these operators (outside of `==`) to compare non-numbers such as strings:
@@ -375,7 +369,7 @@ print(2 == 2.0)      // true
 !!! info "Difference From Python on `True == 1` and `False == 0`"
 
     In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
-    hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal**.
+    hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal** (except ints/floats).
 
     The reasoning stems from [truthy/falsy-ness](#truthy-falsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
     Rad avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
@@ -421,25 +415,27 @@ Alice Bobson
 ```
 </div>
 
-You cannot concatenate a string and a non-string. First convert the non-string into a string.
+You can concatenate strings with non-strings, as long as the string is the first operand. This means you may need to convert the non-string to a string first.
 
-This can be done in several ways, the easiest is probably via [string interpolation](../reference/strings.md#string-interpolation):
+This can be done in several ways, the easiest is probably via the [`str`](../reference/functions.md#str) function.
 
 [//]: # (todo that might change after str func gets added)
 
 ```rad
-a = 5
-text = "Number: "
-print(text + "{a}")
+a = 1
+text = ". Bullet point one"
+print(str(a) + text)
 ```
 
 <div class="result">
 ```
-Number: 5
+1. Bullet point one
 ```
 </div>
 
 ### Compound Operators
+
+Rad also supports compound operators for modifying variables in-place.
 
 ```rad
 a = 3
@@ -479,7 +475,7 @@ For example, the following two uses are invalid, because `a++` doesn't return a 
 ```rad
 a = 5
 if a++ > 0:  // invalid, nothing for > to evaluate against on the left side
-  ...
+    ...
   
 b = a++  // also invalid because a++ doesn't return any value
 ```
@@ -514,12 +510,17 @@ You are **not** required to wrap conditions in parentheses `()`.
 
 ```rad
 if units == "metric":
-  print("That's 10 meters.")
+    print("That's 10 meters.")
 else if units == "imperial":
-  print("That's almost 33 feet.")
+    print("That's almost 33 feet.")
 else:
-  print("I don't know what measurement system!")
+    print("I don't know what measurement system!")
 ```
+
+!!! info "Blocks use whitespace & indentation"
+    Note that Rad uses whitespace & indentation to denote blocks, instead of braces.
+
+    As a convention, you can use 4 spaces for indentation. Mixing tabs and spaces is not allowed.
 
 ### For Loops
 
@@ -528,7 +529,7 @@ Rad allows "for each" loops for iterating through collections such as lists.
 ```rad
 names = ["Alice", "Bob", "Charlie"]
 for name in names:
-  print("Hi {name}!")
+    print("Hi {name}!")
 ```
 
 <div class="result">
@@ -543,7 +544,7 @@ You can also iterate through a range of numbers using the [`range`](../reference
 
 ```rad
 for i in range(5):
-  print(i)
+    print(i)
 ```
 
 <div class="result">
@@ -564,7 +565,7 @@ in an additional variable after the `for`. The first variable will be the index,
 ```rad
 names = ["Alice", "Bob", "Charlie"]
 for i, name in names:
-  print("{name} is at index {i}")
+    print("{name} is at index {i}")
 ```
 
 <div class="result">
@@ -580,7 +581,7 @@ When iterating through a map, if you have one variable in the loop, then that va
 ```rad
 colors = { "alice": "blue", "bob": "green" }
 for k in colors:
-  print(k)
+    print(k)
 ```
 
 <div class="result">
@@ -595,7 +596,7 @@ If you have two, then the first will be the key, and the second will be the valu
 ```rad
 colors = { "alice": "blue", "bob": "green" }
 for k, v in colors:
-  print(k, v)
+    print(k, v)
 ```
 
 <div class="result">
@@ -605,16 +606,116 @@ bob green
 ```
 </div>
 
-[//]: # (todo i, k, v when implemented)
+A useful function to know when iterating is [`zip`](../reference/functions.md#zip).
+It lets you combine parallel lists into a list of lists. To demonstrate:
 
-- TBC
-  - switch
+```rad linenums="1" hl_lines="0"
+names = ["alice", "bob", "charlie"]
+ages = [30, 40, 25]
+zipped = zip(names, ages)
+print(zipped)  // [ [ "alice", 30 ], [ "bob", 40 ], [ "charlie", 25 ] ]
+```
+
+These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop: 
+
+```rad linenums="1" hl_lines="3-4"
+names = ["alice", "bob", "charlie"]
+ages = [30, 40, 25]
+for _, name, age in zip(names, ages):
+    print(name, age)
+```
+
+<div class="result">
+```
+alice 30
+bob 40
+charlie 25
+```
+</div>
+
+!!! info "Use of `_`"
+    Note the use of `_` in the above for loop. It technically is the index, previously denoted by `i`, but by convention,
+    we use `_` to indicate that a variable is unused.
+
+### Switch Statements
+
+Rad has switch statements and switch expressions.
+
+You can `switch` on a value and write cases to match against, including a `default`.
+
+```rad linenums="1" hl_lines="0"
+args:
+    a float
+    op string
+    b float
+
+switch op:
+    case "add":
+        result = a + b
+        print("added: {result}")
+    case "multiply":
+        result = a * b
+        print("multiplied: {result}")
+    default:
+        print("I don't know how to do that.")
+```
+
+Cases can be written as blocks or single-line expressions.
+For example, the above `default` could be made into a single line:
+
+```rad linenums="1" hl_lines="13"
+args:
+    a float
+    op string
+    b float
+
+switch op:
+    case "add":
+        result = a + b
+        print("added: {result}")
+    case "multiply":
+        result = a * b
+        print("multiplied: {result}")
+    default -> print("I don't know how to do that.")
+```
+
+The above examples are switch **statements**, because they do not return anything.
+Switch **expressions** can be used in assignments.
+
+```rad linenums="1" hl_lines="0"
+args:
+    item string
+
+sound = switch item:
+    case "car" -> "vroom"
+    case "mouse" -> "squeek"
+    default -> "moo"  // default to cow
+
+print(sound)
+```
+
+The above example cases are all single-line expressions (`case ... -> ...`).
+If you want to write a case as a block in a switch expression, you can use the `yield` keyword to return values (yes plural, switch cases can return multiple values).
+
+```rad linenums="1" hl_lines="4-11"
+args:
+    item string
+
+sound, plural = switch item:
+    case "car" -> "vroom", "cars"
+    case "mouse" -> "squeek", "mice"
+    default:
+        print("Don't know '{item}'; defaulting to cow.")
+        yield "moo", "cows"
+
+print(`{plural} go "{sound}"`)
+```
 
 ## Truthy / Falsy
 
 Rad supports truthy/falsy logic.
 
-For those unfamiliar, this means that, instead of writing the following (as an example):
+This means that, instead of writing the following (as an example):
 
 ```rad
 if len(my_list) > 0:
@@ -640,24 +741,45 @@ The following table shows which values return false for each type. **All other v
 | list   | `[]`  | Empty lists   |
 | map    | `{}`  | Empty maps    |
 
-!!! note ""
+!!! note "Blank strings and `null`"
 
-    Note that a string which is all whitespace e.g. `" "` is truthy.
+    - A string which is all whitespace e.g. `" "` is still truthy.
+    - `null` is falsy.
 
 ## Converting Types
 
-- TBC
-  - parsing
-  - casting (once implemented)
+Converting types may involve simple casts, or parsing.
+
+When casting, you can use the following functions:
+[`str`](../reference/functions.md#str),  [`int`](../reference/functions.md#int),  [`float`](../reference/functions.md#float)
+
+```rad
+print(int(2.1))  // 2
+print(float(2))  // 2.0
+print(str(2.2))  // "2.2"
+```
+
+Note that `int` and `float` will error on strings. To parse a string, use the following functions:
+[`parse_int`](../reference/functions.md#parse_int),  [`parse_float`](../reference/functions.md#parse_float)
+
+```rad
+print(parse_int("2"))      // 2
+print(parse_float("2.2"))  // 2.2
+
+print(parse_int("2.2"))    // error
+print(parse_float("bob"))  // error
+```
 
 ## Summary
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
-- Rad has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
+- Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.
 - Rad has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
 - Rad uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
 - Rad offers truthy/falsy logic for more concise conditional expressions.
+- Rad has switch statements and expressions. The latter uses `yield` as a keyword to return values from cases.
+- Rad has functions for casting `str`, `int`, `float` and for parsing `parse_int`, `parse_float` values.
 
 ## Next
 

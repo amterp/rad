@@ -56,6 +56,8 @@ with said error.
 - `code: string` - An [error code](./errors.md) indicating the type of error.
 - `msg: string` - A description of the error.
 
+Lastly, you may also see `number` referenced as a type -- this just means `int | float`, i.e. any numeric type.
+
 ---
 
 ## Output
@@ -164,10 +166,11 @@ len(input map) -> int
 
 ### range
 
+Generates a list of numbers in a specified range. Useful in for loops.
+
 ```rad
-range(end int|float) -> int|float[]
-range(start int|float, end int|float) -> int|float[]
-range(start int|float, end int|float, step int|float) -> int|float[]
+range(end number) -> [number]
+range(start number, end number, step: number = 1) -> [number]
 ```
 
 ```rad
@@ -267,11 +270,32 @@ type_of([2])   // list
 
 ### str
 
+Converts any input to a string.
+
 ```
-str(any) -> string
+str(input: any) -> string
 ```
 
-Converts any input to a string.
+
+### int
+
+Try to convert an input to an int.
+
+Does not work on strings. If you want to parse a string to an int, use [`parse_int`](#parse_int).
+
+```
+int(input: any) -> int
+```
+
+### float
+
+Try to convert an input to a float.
+
+Does not work on strings. If you want to parse a string to a float, use [`parse_float`](#parse_float).
+
+```
+str(input: any) -> string
+```
 
 ### is_defined
 
