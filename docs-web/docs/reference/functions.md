@@ -56,6 +56,8 @@ with said error.
 - `code: string` - An [error code](./errors.md) indicating the type of error.
 - `msg: string` - A description of the error.
 
+Lastly, you may also see `number` referenced as a type -- this just means `int | float`, i.e. any numeric type.
+
 ---
 
 ## Output
@@ -164,10 +166,11 @@ len(input map) -> int
 
 ### range
 
+Generates a list of numbers in a specified range. Useful in for loops.
+
 ```rad
-range(end int|float) -> int|float[]
-range(start int|float, end int|float) -> int|float[]
-range(start int|float, end int|float, step int|float) -> int|float[]
+range(end number) -> [number]
+range(start number, end number, step: number = 1) -> [number]
 ```
 
 ```rad

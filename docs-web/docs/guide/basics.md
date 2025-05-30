@@ -4,42 +4,30 @@ title: Basics
 
 This section of the guide will rapidly cover the basics of Rad.
 Rad shares a lot of conventions and syntax with popular languages like Python,
-so if you're familiar with programming, this will be pretty straightforward.
+so if you're familiar with programming, this will be a breeze.
 
 ## Variables & Assignment
 
 To create a variable, you can do it through assignment. Let's use a string example:
 
-```rad
+```rad linenums="1" hl_lines="0"
 name = "Alice"
 ```
 
 You can re-assign variables. Types don't need to stay the same:
 
-```rad
+```rad linenums="1" hl_lines="2"
+name = "Alice"
 name = 2
 ```
-
-!!! warning "You **cannot create** multiple variables this way on one line."
-
-    The following is illegal syntax
-
-    ```rad
-    a, b = "one", "two"
-    ```
-
-    instead, declare each variable on one line.
-
-    ```rad
-    a = "one"
-    b = "two"
-    ```
 
 ## Data Types
 
 [//]: # (todo for number types, should we advertise precision/bits?)
 
-Rad has 6 data types: strings, ints, floats, bools, lists, and maps. 
+Rad has 7 types: strings, ints, floats, bools, lists, maps, and null. 
+
+[//]: # (TODO what about function types?!)
 
 ### string
 
@@ -51,15 +39,10 @@ Strings can be delimited in three ways:
 
 All three behave the same way. To demonstrate:
 
-```rad
-greeting = "Hello!"
-print(greeting)
-
-greeting = 'Hello!'
-print(greeting)
-
-greeting = `Hello!`
-print(greeting)
+```rad linenums="1" hl_lines="0"
+print("Hello!")
+print('Hello!')
+print(`Hello!`)
 ```
 
 <div class="result">
@@ -70,9 +53,9 @@ Hello!
 ```
 </div>
 
-!!! tip "Why 3 different delimiters?"
+!!! info "Why 3 different delimiters?"
 
-    Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of the delimiter characters.
+    Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of those delimiter characters.
 
     For example, if you want a double quote in your string, you *can* use double quote delimiters and escape them:
 
@@ -169,7 +152,7 @@ is_tired = false
 
 ### list
 
-Rad has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.
+Rad has two collection types: lists and maps. First, let's look at lists.
 
 ```rad
 names = ["alice", "bob", "charlie"]
@@ -187,7 +170,7 @@ They can also be nested:
 nested = ["alice", [1, ["very nested", "ahhh"]]]
 ```
 
-Indexing and slicing works very similarly to Python. If we assume the 3 variables above exist, you can index with both positive and negative indexes:
+Indexing and slicing works very similarly to Python. Using the above 3 variables for an example, you can index with both positive and negative indexes:
 
 ```rad
 print(names[0])
@@ -203,7 +186,7 @@ very nested
 ```
 </div>
 
-And also you can slice:
+You can also slice:
 
 ```rad
 numbers = [10, 20, 30, 40, 50]
@@ -225,13 +208,13 @@ print(numbers[:-1])
 
 ### map
 
-The last type, and second of two collection types, is a 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.
+The other collection type is 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.
 
 ```rad
 scores = { "alice": 25, "bob": 17, "charlie": 36 }
 ```
 
-Like lists, they can contain mixed types for values, and can nest. However, **keys must be strings.**
+Like lists, they can contain mixed types for values, and can nest.
 
 ```rad
 mixed_map = { 
@@ -277,7 +260,7 @@ Request failed!
 
 You can modify maps using either syntax:
 
-```rad title="Using brackets"
+```rad
 mymap = { "alice": 30 }
 
 mymap["alice"] = 40
@@ -309,6 +292,15 @@ print(mymap)
 ```
 </div>
 
+### null
+
+Finally, Rad has a `null` type, used to represent the absence of a value. 
+
+```rad
+my_var = null
+print(my_var)  // prints 'null'
+```
+
 ## Operators
 
 Rad offers operators similar to many other languages. Below sections very quickly demonstrate.
@@ -334,6 +326,13 @@ Dividing two integers will result in a floating point number.
 print(5 / 2)  // 2.5
 ```
 
+You can multiply strings to repeat them:
+
+```rad
+name = "alice"
+print(name * 3)  // alicealicealice
+```
+
 ### Comparison
 
 Comparisons return bools that can be used in e.g. [if statements](#if-statements).
@@ -354,7 +353,7 @@ print(2 >= 2)  // true
 print(2 > 2)   // false
 print(2 <= 2)  // true
 print(2 < 2)   // false
-print(2 == 2)  // false
+print(2 == 2)  // true
 ```
 
 You cannot use these operators (outside of `==`) to compare non-numbers such as strings:
@@ -375,7 +374,7 @@ print(2 == 2.0)      // true
 !!! info "Difference From Python on `True == 1` and `False == 0`"
 
     In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
-    hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal**.
+    hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal** (except ints/floats).
 
     The reasoning stems from [truthy/falsy-ness](#truthy-falsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
     Rad avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
@@ -421,25 +420,27 @@ Alice Bobson
 ```
 </div>
 
-You cannot concatenate a string and a non-string. First convert the non-string into a string.
+You can concatenate strings with non-strings, as long as the string is the first operand. This means you may need to convert the non-string to a string first.
 
-This can be done in several ways, the easiest is probably via [string interpolation](../reference/strings.md#string-interpolation):
+This can be done in several ways, the easiest is probably via the [`str`](../reference/functions.md#str) function.
 
 [//]: # (todo that might change after str func gets added)
 
 ```rad
-a = 5
-text = "Number: "
-print(text + "{a}")
+a = 1
+text = ". Bullet point one"
+print(str(a) + text)
 ```
 
 <div class="result">
 ```
-Number: 5
+1. Bullet point one
 ```
 </div>
 
 ### Compound Operators
+
+Rad also supports compound operators for modifying variables in-place.
 
 ```rad
 a = 3
@@ -605,16 +606,19 @@ bob green
 ```
 </div>
 
-[//]: # (todo i, k, v when implemented)
+When iterating through lists of lists, you can iterate through the items in the inner lists in parallel by 
 
-- TBC
-  - switch
+[//]: # (TODO zip, etc)
+
+### Switch Statements
+
+[//]: # (TODO)
 
 ## Truthy / Falsy
 
 Rad supports truthy/falsy logic.
 
-For those unfamiliar, this means that, instead of writing the following (as an example):
+This means that, instead of writing the following (as an example):
 
 ```rad
 if len(my_list) > 0:
@@ -640,9 +644,10 @@ The following table shows which values return false for each type. **All other v
 | list   | `[]`  | Empty lists   |
 | map    | `{}`  | Empty maps    |
 
-!!! note ""
+!!! note "Note"
 
-    Note that a string which is all whitespace e.g. `" "` is truthy.
+    - A string which is all whitespace e.g. `" "` is still truthy.
+    - `null` is falsy.
 
 ## Converting Types
 
@@ -653,7 +658,7 @@ The following table shows which values return false for each type. **All other v
 ## Summary
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
-- Rad has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.
+- Rad has 7 data types: strings, ints, floats, bools, lists, maps, and null.
 - Rad has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
 - Rad uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
