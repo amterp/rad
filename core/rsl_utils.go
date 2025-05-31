@@ -212,3 +212,7 @@ func ErrorRadMap(err raderr.Error, errMsg string) *RadMap {
 	m.SetPrimitiveStr(constMsg, errMsg)
 	return m
 }
+
+func GetSrc(src string, node *ts.Node) string {
+	return src[node.StartByte():node.EndByte()]
+}
