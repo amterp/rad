@@ -1,0 +1,74 @@
+=====
+Multiline ternary
+=====
+c = a < 10
+    ? "smaller!"
+    : "bigger!"
+=====
+B: [ 0, 44] PS: [0,  0] PE: [3,  0] source_file
+B: [ 0, 10] PS: [0,  0] PE: [0, 10]   assign
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `c`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
+B: [ 4, 10] PS: [0,  4] PE: [0, 10]     right: expr
+B: [ 4, 10] PS: [0,  4] PE: [0, 10]       ternary_expr
+B: [ 4, 10] PS: [0,  4] PE: [0, 10]         delegate: or_expr
+B: [ 4, 10] PS: [0,  4] PE: [0, 10]           delegate: and_expr
+B: [ 4, 10] PS: [0,  4] PE: [0, 10]             delegate: compare_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]               left: compare_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                 delegate: add_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                   delegate: mult_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     delegate: unary_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                       delegate: var_path
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         root: identifier `a`
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]               op: < `<`
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]               right: add_expr
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                 delegate: mult_expr
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                   delegate: unary_expr
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                     delegate: indexed_expr
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                       root: primary_expr
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                         literal
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                           int `10`
+B: [10, 43] PS: [0, 10] PE: [2, 15]   expr
+B: [10, 43] PS: [0, 10] PE: [2, 15]     ternary_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]       condition: or_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]         delegate: and_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]           delegate: compare_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]             delegate: add_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]               delegate: mult_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]                 delegate: unary_expr
+B: [10, 10] PS: [0, 10] PE: [0, 10]                   delegate: var_path
+B: [10, 10] PS: [0, 10] PE: [0, 10]                     root: identifier (MISSING) ``
+B: [15, 16] PS: [1,  4] PE: [1,  5]       ? `?`
+B: [17, 27] PS: [1,  6] PE: [1, 16]       true_branch: expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]         ternary_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]           delegate: or_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]             delegate: and_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]               delegate: compare_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                 delegate: add_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                   delegate: mult_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                     delegate: unary_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                       delegate: indexed_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                         root: primary_expr
+B: [17, 27] PS: [1,  6] PE: [1, 16]                           literal
+B: [17, 27] PS: [1,  6] PE: [1, 16]                             string
+B: [17, 18] PS: [1,  6] PE: [1,  7]                               start: string_start `"`
+B: [18, 26] PS: [1,  7] PE: [1, 15]                               contents: string_contents
+B: [18, 26] PS: [1,  7] PE: [1, 15]                                 content: string_content `smaller!`
+B: [26, 27] PS: [1, 15] PE: [1, 16]                               end: string_end `"`
+B: [32, 33] PS: [2,  4] PE: [2,  5]       : `:`
+B: [34, 43] PS: [2,  6] PE: [2, 15]       false_branch: ternary_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]         delegate: or_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]           delegate: and_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]             delegate: compare_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]               delegate: add_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]                 delegate: mult_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]                   delegate: unary_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]                     delegate: indexed_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]                       root: primary_expr
+B: [34, 43] PS: [2,  6] PE: [2, 15]                         literal
+B: [34, 43] PS: [2,  6] PE: [2, 15]                           string
+B: [34, 35] PS: [2,  6] PE: [2,  7]                             start: string_start `"`
+B: [35, 42] PS: [2,  7] PE: [2, 14]                             contents: string_contents
+B: [35, 42] PS: [2,  7] PE: [2, 14]                               content: string_content `bigger!`
+B: [42, 43] PS: [2, 14] PE: [2, 15]                             end: string_end `"`

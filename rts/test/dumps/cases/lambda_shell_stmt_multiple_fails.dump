@@ -1,0 +1,58 @@
+=====
+Lambda shell multi stmt fails
+=====
+fn() ($!`echo hi`, $!`echo hello`)
+=====
+B: [ 0, 35] PS: [0,  0] PE: [1,  0] source_file
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]   expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]     ternary_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]       delegate: or_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]         delegate: and_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]           delegate: compare_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]             delegate: add_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]               delegate: mult_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]                 delegate: unary_expr
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]                   delegate: lambda
+B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     keyword: fn `fn`
+B: [ 2,  4] PS: [0,  2] PE: [0,  4]                     () `()`
+B: [ 5,  6] PS: [0,  5] PE: [0,  6]                     ( `(`
+B: [ 6, 18] PS: [0,  6] PE: [0, 18]                     ERROR
+B: [ 6, 17] PS: [0,  6] PE: [0, 17]                       critical_shell_cmd
+B: [ 6,  8] PS: [0,  6] PE: [0,  8]                         $! `$!`
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                         command: expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                           ternary_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                             delegate: or_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                               delegate: and_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                 delegate: compare_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                   delegate: add_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                     delegate: mult_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                       delegate: unary_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                         delegate: indexed_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                           root: primary_expr
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                             literal
+B: [ 8, 17] PS: [0,  8] PE: [0, 17]                                               string
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                                 start: string_start ```
+B: [ 9, 16] PS: [0,  9] PE: [0, 16]                                                 contents: string_contents
+B: [ 9, 16] PS: [0,  9] PE: [0, 16]                                                   content: string_content `echo hi`
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                                 end: string_end ```
+B: [17, 18] PS: [0, 17] PE: [0, 18]                       , `,`
+B: [19, 33] PS: [0, 19] PE: [0, 33]                     stmt: shell_stmt
+B: [19, 33] PS: [0, 19] PE: [0, 33]                       shell_cmd: critical_shell_cmd
+B: [19, 21] PS: [0, 19] PE: [0, 21]                         $! `$!`
+B: [21, 33] PS: [0, 21] PE: [0, 33]                         command: expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                           ternary_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                             delegate: or_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                               delegate: and_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                 delegate: compare_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                   delegate: add_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                     delegate: mult_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                       delegate: unary_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                         delegate: indexed_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                           root: primary_expr
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                             literal
+B: [21, 33] PS: [0, 21] PE: [0, 33]                                               string
+B: [21, 22] PS: [0, 21] PE: [0, 22]                                                 start: string_start ```
+B: [22, 32] PS: [0, 22] PE: [0, 32]                                                 contents: string_contents
+B: [22, 32] PS: [0, 22] PE: [0, 32]                                                   content: string_content `echo hello`
+B: [32, 33] PS: [0, 32] PE: [0, 33]                                                 end: string_end ```
+B: [33, 34] PS: [0, 33] PE: [0, 34]                     ) `)`

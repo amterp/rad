@@ -1,0 +1,63 @@
+=====
+Assignment multi right
+=====
+a, b, c = 1, 2 + 3, myFunc()
+=====
+B: [ 0, 29] PS: [0,  0] PE: [1,  0] source_file
+B: [ 0, 28] PS: [0,  0] PE: [0, 28]   assign
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]     , `,`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]     left: var_path
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]       root: identifier `b`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]     , `,`
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]     left: var_path
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]       root: identifier `c`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]     = `=`
+B: [10, 11] PS: [0, 10] PE: [0, 11]     right: expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]       ternary_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]         delegate: or_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]           delegate: and_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]             delegate: compare_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]               delegate: add_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                 delegate: mult_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                   delegate: unary_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                     delegate: indexed_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                       root: primary_expr
+B: [10, 11] PS: [0, 10] PE: [0, 11]                         literal
+B: [10, 11] PS: [0, 10] PE: [0, 11]                           int `1`
+B: [11, 12] PS: [0, 11] PE: [0, 12]     , `,`
+B: [13, 18] PS: [0, 13] PE: [0, 18]     right: expr
+B: [13, 18] PS: [0, 13] PE: [0, 18]       ternary_expr
+B: [13, 18] PS: [0, 13] PE: [0, 18]         delegate: or_expr
+B: [13, 18] PS: [0, 13] PE: [0, 18]           delegate: and_expr
+B: [13, 18] PS: [0, 13] PE: [0, 18]             delegate: compare_expr
+B: [13, 18] PS: [0, 13] PE: [0, 18]               delegate: add_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                 left: add_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                   delegate: mult_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                     delegate: unary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                       delegate: indexed_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                         root: primary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                           literal
+B: [13, 14] PS: [0, 13] PE: [0, 14]                             int `2`
+B: [15, 16] PS: [0, 15] PE: [0, 16]                 op: + `+`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                 right: mult_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                   delegate: unary_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                     delegate: indexed_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                       root: primary_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                         literal
+B: [17, 18] PS: [0, 17] PE: [0, 18]                           int `3`
+B: [18, 19] PS: [0, 18] PE: [0, 19]     , `,`
+B: [20, 28] PS: [0, 20] PE: [0, 28]     right: expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]       ternary_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]         delegate: or_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]           delegate: and_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]             delegate: compare_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]               delegate: add_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]                 delegate: mult_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]                   delegate: unary_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]                     delegate: indexed_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]                       root: primary_expr
+B: [20, 28] PS: [0, 20] PE: [0, 28]                         call
+B: [20, 26] PS: [0, 20] PE: [0, 26]                           func: identifier `myFunc`
+B: [26, 28] PS: [0, 26] PE: [0, 28]                           () `()`

@@ -1,0 +1,101 @@
+=====
+Lambda avoids ambiguous multireturn
+=====
+process(fn() a, b)
+process(fn() (a, b))
+=====
+B: [ 0, 40] PS: [0,  0] PE: [2,  0] source_file
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]     ternary_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]       delegate: or_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]         delegate: and_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]           delegate: compare_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]             delegate: add_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]               delegate: mult_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]                 delegate: unary_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]                   delegate: indexed_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]                     root: primary_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]                       call
+B: [ 0,  7] PS: [0,  0] PE: [0,  7]                         func: identifier `process`
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]                         ( `(`
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                         arg: expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                           ternary_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                             delegate: or_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                               delegate: and_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                 delegate: compare_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                   delegate: add_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                     delegate: mult_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                       delegate: unary_expr
+B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                         delegate: lambda
+B: [ 8, 10] PS: [0,  8] PE: [0, 10]                                           keyword: fn `fn`
+B: [10, 12] PS: [0, 10] PE: [0, 12]                                           () `()`
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                           expr: expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                             ternary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                               delegate: or_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                 delegate: and_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                   delegate: compare_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                     delegate: add_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                       delegate: mult_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                         delegate: unary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                           delegate: var_path
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                             root: identifier `a`
+B: [14, 15] PS: [0, 14] PE: [0, 15]                         , `,`
+B: [16, 17] PS: [0, 16] PE: [0, 17]                         arg: expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                           ternary_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                             delegate: or_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                               delegate: and_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                 delegate: compare_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                   delegate: add_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                     delegate: mult_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                       delegate: unary_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                         delegate: var_path
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                           root: identifier `b`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                         ) `)`
+B: [19, 39] PS: [1,  0] PE: [1, 20]   expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]     ternary_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]       delegate: or_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]         delegate: and_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]           delegate: compare_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]             delegate: add_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]               delegate: mult_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]                 delegate: unary_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]                   delegate: indexed_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]                     root: primary_expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]                       call
+B: [19, 26] PS: [1,  0] PE: [1,  7]                         func: identifier `process`
+B: [26, 27] PS: [1,  7] PE: [1,  8]                         ( `(`
+B: [27, 38] PS: [1,  8] PE: [1, 19]                         arg: expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                           ternary_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                             delegate: or_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                               delegate: and_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                                 delegate: compare_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                                   delegate: add_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                                     delegate: mult_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                                       delegate: unary_expr
+B: [27, 38] PS: [1,  8] PE: [1, 19]                                         delegate: lambda
+B: [27, 29] PS: [1,  8] PE: [1, 10]                                           keyword: fn `fn`
+B: [29, 31] PS: [1, 10] PE: [1, 12]                                           () `()`
+B: [32, 33] PS: [1, 13] PE: [1, 14]                                           ( `(`
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                           expr: expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                             ternary_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                               delegate: or_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                 delegate: and_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                   delegate: compare_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                     delegate: add_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                       delegate: mult_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                         delegate: unary_expr
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                           delegate: var_path
+B: [33, 34] PS: [1, 14] PE: [1, 15]                                                             root: identifier `a`
+B: [34, 35] PS: [1, 15] PE: [1, 16]                                           , `,`
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                           expr: expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                             ternary_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                               delegate: or_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                 delegate: and_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                   delegate: compare_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                     delegate: add_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                       delegate: mult_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                         delegate: unary_expr
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                           delegate: var_path
+B: [36, 37] PS: [1, 17] PE: [1, 18]                                                             root: identifier `b`
+B: [37, 38] PS: [1, 18] PE: [1, 19]                                           ) `)`
+B: [38, 39] PS: [1, 19] PE: [1, 20]                         ) `)`

@@ -1,0 +1,78 @@
+=====
+Pass
+=====
+pass
+
+for i in range(10):
+    pass
+
+if i == 0:
+    pass
+else:
+    pass
+    pass
+=====
+B: [ 0, 80] PS: [ 0,  0] PE: [10,  0] source_file
+B: [ 0,  4] PS: [ 0,  0] PE: [ 0,  4]   pass_stmt `pass`
+B: [ 6, 34] PS: [ 2,  0] PE: [ 3,  8]   for_loop
+B: [ 6,  9] PS: [ 2,  0] PE: [ 2,  3]     for `for`
+B: [10, 11] PS: [ 2,  4] PE: [ 2,  5]     lefts: for_lefts
+B: [10, 11] PS: [ 2,  4] PE: [ 2,  5]       left: identifier `i`
+B: [12, 14] PS: [ 2,  6] PE: [ 2,  8]     in `in`
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]     right: expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]       ternary_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]         delegate: or_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]           delegate: and_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]             delegate: compare_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]               delegate: add_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                 delegate: mult_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                   delegate: unary_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                     delegate: indexed_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                       root: primary_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                         call
+B: [15, 20] PS: [ 2,  9] PE: [ 2, 14]                           func: identifier `range`
+B: [20, 21] PS: [ 2, 14] PE: [ 2, 15]                           ( `(`
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                           arg: expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                             ternary_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                               delegate: or_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                 delegate: and_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                   delegate: compare_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                     delegate: add_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                       delegate: mult_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                         delegate: unary_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                           delegate: indexed_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                             root: primary_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                               literal
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                                 int `10`
+B: [23, 24] PS: [ 2, 17] PE: [ 2, 18]                           ) `)`
+B: [24, 25] PS: [ 2, 18] PE: [ 2, 19]     : `:`
+B: [30, 34] PS: [ 3,  4] PE: [ 3,  8]     stmt: pass_stmt `pass`
+B: [36, 79] PS: [ 5,  0] PE: [ 9,  8]   if_stmt
+B: [36, 55] PS: [ 5,  0] PE: [ 6,  8]     alt: if_alt
+B: [36, 38] PS: [ 5,  0] PE: [ 5,  2]       if `if`
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]       condition: expr
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]         ternary_expr
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]           delegate: or_expr
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]             delegate: and_expr
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]               delegate: compare_expr
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                 left: compare_expr
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                   delegate: add_expr
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                     delegate: mult_expr
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                       delegate: unary_expr
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                         delegate: var_path
+B: [39, 40] PS: [ 5,  3] PE: [ 5,  4]                           root: identifier `i`
+B: [41, 43] PS: [ 5,  5] PE: [ 5,  7]                 op: == `==`
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                 right: add_expr
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                   delegate: mult_expr
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                     delegate: unary_expr
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                       delegate: indexed_expr
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                         root: primary_expr
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                           literal
+B: [44, 45] PS: [ 5,  8] PE: [ 5,  9]                             int `0`
+B: [45, 46] PS: [ 5,  9] PE: [ 5, 10]       : `:`
+B: [51, 55] PS: [ 6,  4] PE: [ 6,  8]       stmt: pass_stmt `pass`
+B: [56, 60] PS: [ 7,  0] PE: [ 7,  4]     else `else`
+B: [60, 79] PS: [ 7,  4] PE: [ 9,  8]     alt: else_alt
+B: [60, 61] PS: [ 7,  4] PE: [ 7,  5]       : `:`
+B: [66, 70] PS: [ 8,  4] PE: [ 8,  8]       stmt: pass_stmt `pass`
+B: [75, 79] PS: [ 9,  4] PE: [ 9,  8]       stmt: pass_stmt `pass`

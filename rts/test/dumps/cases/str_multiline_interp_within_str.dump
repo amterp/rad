@@ -1,0 +1,79 @@
+=====
+Str multiline indentation
+=====
+a = """
+"{name}"
+"""
+b = """
+'{age}'
+"""
+=====
+B: [ 0, 41] PS: [0, 0] PE: [6, 0] source_file
+B: [ 0, 20] PS: [0, 0] PE: [2, 3]   assign
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]       root: identifier `a`
+B: [ 2,  3] PS: [0, 2] PE: [0, 3]     = `=`
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]     right: expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]       ternary_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]         delegate: or_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]           delegate: and_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]             delegate: compare_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]               delegate: add_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                 delegate: mult_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                   delegate: unary_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                     delegate: indexed_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                       root: primary_expr
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                         literal
+B: [ 4, 20] PS: [0, 4] PE: [2, 3]                           string
+B: [ 4,  8] PS: [0, 4] PE: [1, 0]                             start: string_start `"""\n`
+B: [ 8, 16] PS: [1, 0] PE: [1, 8]                             contents: string_contents
+B: [ 8,  9] PS: [1, 0] PE: [1, 1]                               content: string_content `"`
+B: [ 9, 15] PS: [1, 1] PE: [1, 7]                               interpolation: interpolation
+B: [ 9, 10] PS: [1, 1] PE: [1, 2]                                 { `{`
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                 expr: expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                   ternary_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                     delegate: or_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                       delegate: and_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                         delegate: compare_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                           delegate: add_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                             delegate: mult_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                               delegate: unary_expr
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                                 delegate: var_path
+B: [10, 14] PS: [1, 2] PE: [1, 6]                                                   root: identifier `name`
+B: [14, 15] PS: [1, 6] PE: [1, 7]                                 } `}`
+B: [15, 16] PS: [1, 7] PE: [1, 8]                               content: string_content `"`
+B: [16, 20] PS: [1, 8] PE: [2, 3]                             end: string_end `\n"""`
+B: [21, 40] PS: [3, 0] PE: [5, 3]   assign
+B: [21, 22] PS: [3, 0] PE: [3, 1]     left: var_path
+B: [21, 22] PS: [3, 0] PE: [3, 1]       root: identifier `b`
+B: [23, 24] PS: [3, 2] PE: [3, 3]     = `=`
+B: [25, 40] PS: [3, 4] PE: [5, 3]     right: expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]       ternary_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]         delegate: or_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]           delegate: and_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]             delegate: compare_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]               delegate: add_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]                 delegate: mult_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]                   delegate: unary_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]                     delegate: indexed_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]                       root: primary_expr
+B: [25, 40] PS: [3, 4] PE: [5, 3]                         literal
+B: [25, 40] PS: [3, 4] PE: [5, 3]                           string
+B: [25, 29] PS: [3, 4] PE: [4, 0]                             start: string_start `"""\n`
+B: [29, 36] PS: [4, 0] PE: [4, 7]                             contents: string_contents
+B: [29, 30] PS: [4, 0] PE: [4, 1]                               content: string_content `'`
+B: [30, 35] PS: [4, 1] PE: [4, 6]                               interpolation: interpolation
+B: [30, 31] PS: [4, 1] PE: [4, 2]                                 { `{`
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                 expr: expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                   ternary_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                     delegate: or_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                       delegate: and_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                         delegate: compare_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                           delegate: add_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                             delegate: mult_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                               delegate: unary_expr
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                                 delegate: var_path
+B: [31, 34] PS: [4, 2] PE: [4, 5]                                                   root: identifier `age`
+B: [34, 35] PS: [4, 5] PE: [4, 6]                                 } `}`
+B: [35, 36] PS: [4, 6] PE: [4, 7]                               content: string_content `'`
+B: [36, 40] PS: [4, 7] PE: [5, 3]                             end: string_end `\n"""`

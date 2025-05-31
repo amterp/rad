@@ -1,0 +1,48 @@
+=====
+UFCS
+=====
+a.b(foo, bar).c().d
+=====
+B: [ 0, 20] PS: [0,  0] PE: [1,  0] source_file
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]   expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]     ternary_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]       delegate: or_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]         delegate: and_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]           delegate: compare_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]             delegate: add_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]               delegate: mult_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]                 delegate: unary_expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]                   delegate: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                     root: identifier `a`
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]                     . `.`
+B: [ 2, 13] PS: [0,  2] PE: [0, 13]                     indexing: call
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                       func: identifier `b`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]                       ( `(`
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                       arg: expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                         ternary_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                           delegate: or_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                             delegate: and_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                               delegate: compare_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                                 delegate: add_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                                   delegate: mult_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                                     delegate: unary_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                                       delegate: var_path
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                                         root: identifier `foo`
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]                       , `,`
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                       arg: expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                         ternary_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                           delegate: or_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                             delegate: and_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                               delegate: compare_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                                 delegate: add_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                                   delegate: mult_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                                     delegate: unary_expr
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                                       delegate: var_path
+B: [ 9, 12] PS: [0,  9] PE: [0, 12]                                         root: identifier `bar`
+B: [12, 13] PS: [0, 12] PE: [0, 13]                       ) `)`
+B: [13, 14] PS: [0, 13] PE: [0, 14]                     . `.`
+B: [14, 17] PS: [0, 14] PE: [0, 17]                     indexing: call
+B: [14, 15] PS: [0, 14] PE: [0, 15]                       func: identifier `c`
+B: [15, 17] PS: [0, 15] PE: [0, 17]                       () `()`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                     . `.`
+B: [18, 19] PS: [0, 18] PE: [0, 19]                     indexing: identifier `d`
