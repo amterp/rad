@@ -57,7 +57,7 @@
 
 ## Updates to make
 
-- --SRC, --RSL-TREE
+- --SRC, --SRC-TREE
 - 'new' command
 - --CONFIRM-SHELL
 - 'confirm' shell modifier
@@ -72,7 +72,7 @@
 
 - [ ] update existing
   - [x] getting started
-  - [ ] basics
+  - [x] basics
   - [ ] args
   - [ ] rad blocks
   - [ ] functions

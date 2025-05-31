@@ -22,7 +22,7 @@ Global flags:
       --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the 'script name'.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
-      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --src-tree               Instead of running the target script, print out its syntax tree.
       --mock-response string   Add mock response for json requests (pattern:filePath)
 ```
 

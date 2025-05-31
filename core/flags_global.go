@@ -24,7 +24,7 @@ const (
 	FLAG_V             = "v"
 	FLAG_CONFIRM_SHELL = "confirm-shell"
 	FLAG_SRC           = "src"
-	FLAG_RSL_TREE      = "rsl-tree"
+	FLAG_SRC_TREE      = "src-tree"
 	FLAG_MOCK_RESPONSE = "mock-response"
 )
 
@@ -100,8 +100,8 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 		flags = append(flags, &FlagSrc)
 	}
 
-	if shouldAddFlag(FLAG_RSL_TREE, "") {
-		FlagRslTree = NewBoolRadArg(flagOrEmpty(FLAG_RSL_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+	if shouldAddFlag(FLAG_SRC_TREE, "") {
+		FlagRslTree = NewBoolRadArg(flagOrEmpty(FLAG_SRC_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
 		hideFromUsageIfHaveScript(&FlagRslTree.hidden)
 		flags = append(flags, &FlagRslTree)
 	}
