@@ -1,7 +1,7 @@
 package rts
 
 import (
-	rsl "github.com/amterp/tree-sitter-rsl/bindings/go"
+	rsl "github.com/amterp/tree-sitter-rad/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 

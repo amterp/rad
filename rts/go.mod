@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/amterp/color v1.20.0
-	github.com/amterp/tree-sitter-rsl v0.0.35
+	github.com/amterp/tree-sitter-rad v0.1.0
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 )
 
@@ -15,4 +15,4 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 )
 
-//replace github.com/amterp/tree-sitter-rl => ../tree-sitter-rl
+//replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad

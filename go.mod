@@ -23,7 +23,7 @@ require (
 )
 
 require (
-	github.com/amterp/tree-sitter-rsl v0.0.35 // indirect
+	github.com/amterp/tree-sitter-rad v0.1.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/catppuccin/go v0.2.0 // indirect
@@ -56,5 +56,5 @@ require (
 //replace github.com/amterp/flexid => ../flexid
 replace github.com/amterp/rad/rts => ./rts
 
-//replace github.com/amterp/tree-sitter-rl => ../tree-sitter-rl
+//replace github.com/amterp/tree-sitter-rad => ../tree-sitter-rad
 //replace github.com/amterp/jsoncolor => ../jsoncolor
