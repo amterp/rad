@@ -45,7 +45,13 @@
         "scopeName": "source.rsl",
         "path": "./syntaxes/rsl.tmLanguage.json"
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "[rsl]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
