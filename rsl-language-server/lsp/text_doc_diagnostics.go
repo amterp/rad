@@ -1,6 +1,6 @@
 package lsp
 
-import "github.com/amterp/rts/check"
+import "github.com/amterp/rad/rts/check"
 
 type DiagnosticSeverity int
 

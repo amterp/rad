@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 
-	"github.com/amterp/rts/rsl"
+	"github.com/amterp/rad/rts/rsl"
 
 	"github.com/samber/lo"
 

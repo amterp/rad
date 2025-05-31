@@ -10,7 +10,7 @@ import (
 
 	"github.com/samber/lo"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 
 	"github.com/amterp/color"
 

@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	com "rad/core/common"
 
-	"github.com/amterp/rts/check"
+	"github.com/amterp/rad/rts/check"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 func AddInternalFuncs() {

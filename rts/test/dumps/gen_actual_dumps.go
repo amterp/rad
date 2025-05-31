@@ -9,7 +9,7 @@ import (
 
 	"github.com/amterp/color"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 // testCase holds one test block from a .dump file.

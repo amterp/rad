@@ -1,7 +1,7 @@
 package lsp
 
 import (
-	"github.com/amterp/rts/check"
+	"github.com/amterp/rad/rts/check"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 

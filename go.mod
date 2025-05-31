@@ -7,7 +7,7 @@ require (
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
-	github.com/amterp/rts v0.0.34
+	github.com/amterp/rad/rts v0.0.0
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
@@ -54,6 +54,7 @@ require (
 
 //replace github.com/amterp/go-tbl => ../go-tbl
 //replace github.com/amterp/flexid => ../flexid
-//replace github.com/amterp/rts => ../rts
+replace github.com/amterp/rad/rts => ./rts
+
 //replace github.com/amterp/tree-sitter-rsl => ../tree-sitter-rsl
 //replace github.com/amterp/jsoncolor => ../jsoncolor

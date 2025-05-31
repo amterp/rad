@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/amterp/rts/rsl"
+	"github.com/amterp/rad/rts/rsl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 

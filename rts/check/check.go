@@ -1,8 +1,8 @@
 package check
 
 import (
-	"github.com/amterp/rts"
-	"github.com/amterp/rts/raderr"
+	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/raderr"
 )
 
 // todo be able to check scripts with different versions of Rad?

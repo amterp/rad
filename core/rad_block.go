@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"runtime/debug"
 
-	"github.com/amterp/rts/rsl"
+	"github.com/amterp/rad/rts/rsl"
 
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"

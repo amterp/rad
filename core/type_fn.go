@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amterp/rts/rsl"
+	"github.com/amterp/rad/rts/rsl"
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )

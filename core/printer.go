@@ -11,7 +11,7 @@ import (
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 type CodeCtx struct {

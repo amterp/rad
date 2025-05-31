@@ -5,7 +5,7 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/amterp/rts/rsl"
+	"github.com/amterp/rad/rts/rsl"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"

@@ -23,8 +23,8 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/amterp/rts"
-	"github.com/amterp/rts/raderr"
+	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/raderr"
 
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 type ScriptArg struct {

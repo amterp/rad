@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/amterp/rts/raderr"
+	"github.com/amterp/rad/rts/raderr"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )

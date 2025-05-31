@@ -1,4 +1,4 @@
-module github.com/amterp/rts
+module github.com/amterp/rad/rts
 
 go 1.24.1
 

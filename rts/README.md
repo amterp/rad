@@ -5,7 +5,7 @@ A Go library wrapping the Go bindings for [RSL](https://github.com/amterp/rad)'s
 ## Installation
 
 ```
-go get -u github.com/amterp/rts
+go get -u github.com/amterp/rad/rts
 ```
 
 # Git blame ignore revs

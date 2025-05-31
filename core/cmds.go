@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 //go:embed embedded/*

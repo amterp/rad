@@ -3,7 +3,7 @@ package rts_test
 import (
 	"testing"
 
-	"github.com/amterp/rts"
+	"github.com/amterp/rad/rts"
 )
 
 func Test_Tree_Query_CanFindStrings(t *testing.T) {

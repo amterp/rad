@@ -1,6 +1,6 @@
 package main
 
-import "github.com/amterp/rts"
+import "github.com/amterp/rad/rts"
 
 func main() {
 	rts.NewRts()
