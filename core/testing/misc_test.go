@@ -17,35 +17,35 @@ func Test_Misc_SyntaxError(t *testing.T) {
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscore(t *testing.T) {
-	rsl := `
+	script := `
 _ = 2
 print(_)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n")
 	assertNoErrors(t)
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop(t *testing.T) {
-	rsl := `
+	script := `
 a = [1, 2, 3]
 for _, _ in a:
 	print(_)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
 	assertNoErrors(t)
 }
 
 func Test_Misc_CanHaveNegativeNumbers(t *testing.T) {
-	rsl := `
+	script := `
 a = -10
 print(a)
 b = -20.2
 print(b)
 print("{-12}")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-10\n-20.2\n-12\n")
 	assertNoErrors(t)
 }
@@ -76,11 +76,11 @@ func Test_Misc_PrintsHelpToStderrIfUnknownGlobalFlag(t *testing.T) {
 }
 
 func Test_Misc_Abs_Int(t *testing.T) {
-	rsl := `
+	script := `
 print(abs(10))
 print(abs(-10))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10
 10
 `
@@ -89,11 +89,11 @@ print(abs(-10))
 }
 
 func Test_Misc_Abs_Float(t *testing.T) {
-	rsl := `
+	script := `
 print(abs(10.2))
 print(abs(-10.2))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10.2
 10.2
 `
@@ -102,10 +102,10 @@ print(abs(-10.2))
 }
 
 func Test_Misc_Abs_ErrorsOnAlphabetical(t *testing.T) {
-	rsl := `
+	script := `
 a = abs("asd")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:9
 
   a = abs("asd")
@@ -123,11 +123,11 @@ func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
 }
 
 func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	src string
 `
-	setupAndRunCode(t, rsl, "--color=never", "--help")
+	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("src")
 	expected := `Usage:
   <src>
@@ -141,14 +141,14 @@ Script args:
 }
 
 func Test_Misc_CanShadowGlobalFlagThatHasShorthand(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	debug string
 `
-	setupAndRunCode(t, rsl, "--color=never", "--help")
+	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
   -h, --help            Print usage string.
-  -d                    Enables debug output. Intended for RSL script developers.
+  -d                    Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
@@ -166,14 +166,14 @@ Script args:
 }
 
 func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	myquiet q string
 `
-	setupAndRunCode(t, rsl, "--color=never", "--help")
+	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global flags:
   -h, --help            Print usage string.
-  -d, --debug           Enables debug output. Intended for RSL script developers.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
       --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
@@ -191,11 +191,11 @@ Script args:
 }
 
 func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	version v string
 `
-	setupAndRunCode(t, rsl, "--color=never", "--help")
+	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("version")
 	expected := `Usage:
   <version>
@@ -209,12 +209,12 @@ Script args:
 }
 
 func Test_Misc_CanShadowGlobalFlagAndUseIt(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	version v string
 print(version+"!")
 `
-	setupAndRunCode(t, rsl, "someversion", "--color=never")
+	setupAndRunCode(t, script, "someversion", "--color=never")
 	expected := `someversion!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -222,7 +222,7 @@ print(version+"!")
 }
 
 func Test_Misc_GlobalSrcFlag(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/example_arg.rsl", "--src", "--color=never")
+	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--src", "--color=never")
 	expected := `args:
     name string # The name.
 `
@@ -231,13 +231,13 @@ func Test_Misc_GlobalSrcFlag(t *testing.T) {
 }
 
 func Test_Misc_Func_Get_Rad_Home(t *testing.T) {
-	rsl := `
+	script := `
 d = get_rad_home()
 d = d.split("/")
 print(d.len() > 0)
 d[-1].print()
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, script)
 	expected := `true
 rad_test_home
 `

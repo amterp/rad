@@ -3,36 +3,36 @@ package core
 import (
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslList struct {
-	Values []RslValue
+type RadList struct {
+	Values []RadValue
 }
 
-func NewRslList() *RslList {
-	return &RslList{
-		Values: make([]RslValue, 0),
+func NewRadList() *RadList {
+	return &RadList{
+		Values: make([]RadValue, 0),
 	}
 }
 
-func NewRslListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RslList {
-	rslList := NewRslList()
+func NewRadListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RadList {
+	radList := NewRadList()
 	for _, elem := range list {
-		rslList.Append(newRslValue(i, node, elem))
+		radList.Append(newRadValue(i, node, elem))
 	}
-	return rslList
+	return radList
 }
 
-func (l *RslList) Append(value RslValue) {
+func (l *RadList) Append(value RadValue) {
 	l.Values = append(l.Values, value)
 }
 
-func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
-	if idxNode.Kind() == rsl.K_SLICE {
-		return newRslValue(i, idxNode, l.Slice(i, idxNode))
+func (l *RadList) GetIdx(i *Interpreter, idxNode *ts.Node) RadValue {
+	if idxNode.Kind() == rl.K_SLICE {
+		return newRadValue(i, idxNode, l.Slice(i, idxNode))
 	}
 
 	idxVal := i.evaluate(idxNode, 1)[0]
@@ -44,11 +44,11 @@ func (l *RslList) GetIdx(i *Interpreter, idxNode *ts.Node) RslValue {
 	return l.Values[idx]
 }
 
-func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
-	if idxNode.Kind() == rsl.K_SLICE {
+func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
+	if idxNode.Kind() == rl.K_SLICE {
 		start, end := ResolveSliceStartEnd(i, idxNode, l.Len())
 		if start < end {
-			newList := NewRslList()
+			newList := NewRadList()
 			newList.Values = append(newList.Values, l.Values[:start]...)
 			if list, ok := value.TryGetList(); ok {
 				newList.Values = append(newList.Values, list.Values...)
@@ -80,7 +80,7 @@ func (l *RslList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RslValue) {
 	}
 }
 
-func (l *RslList) RemoveIdx(i *Interpreter, node *ts.Node, idx int) {
+func (l *RadList) RemoveIdx(i *Interpreter, node *ts.Node, idx int) {
 	if idx < 0 || idx >= len(l.Values) {
 		ErrIndexOutOfBounds(i, node, int64(idx), l.Len())
 	}
@@ -88,17 +88,17 @@ func (l *RslList) RemoveIdx(i *Interpreter, node *ts.Node, idx int) {
 }
 
 // more intended for internal use than GetIdx
-func (l *RslList) IndexAt(i *Interpreter, node *ts.Node, idx int64) RslValue {
+func (l *RadList) IndexAt(i *Interpreter, node *ts.Node, idx int64) RadValue {
 	if idx < 0 || idx >= l.Len() {
 		ErrIndexOutOfBounds(i, node, idx, l.Len())
 	}
 	return l.Values[idx]
 }
 
-func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {
+func (l *RadList) Slice(i *Interpreter, sliceNode *ts.Node) *RadList {
 	start, end := ResolveSliceStartEnd(i, sliceNode, l.Len())
 
-	newList := NewRslList()
+	newList := NewRadList()
 	for i := start; i < end; i++ {
 		newList.Append(l.Values[i])
 	}
@@ -106,7 +106,7 @@ func (l *RslList) Slice(i *Interpreter, sliceNode *ts.Node) *RslList {
 	return newList
 }
 
-func (l *RslList) Contains(val RslValue) bool {
+func (l *RadList) Contains(val RadValue) bool {
 	for _, elem := range l.Values {
 		if elem.Equals(val) {
 			return true
@@ -115,13 +115,13 @@ func (l *RslList) Contains(val RslValue) bool {
 	return false
 }
 
-func (l *RslList) JoinWith(other *RslList) RslValue {
-	newList := NewRslList()
+func (l *RadList) JoinWith(other *RadList) RadValue {
+	newList := NewRadList()
 	newList.Values = append(l.Values, other.Values...)
-	return newRslValue(nil, nil, newList)
+	return newRadValue(nil, nil, newList)
 }
 
-func (l *RslList) Equals(r *RslList) bool {
+func (l *RadList) Equals(r *RadList) bool {
 	if len(l.Values) != len(r.Values) {
 		return false
 	}
@@ -133,7 +133,7 @@ func (l *RslList) Equals(r *RslList) bool {
 	return true
 }
 
-func (l *RslList) ToString() string {
+func (l *RadList) ToString() string {
 	if l.Len() == 0 {
 		return "[ ]"
 	}
@@ -148,26 +148,26 @@ func (l *RslList) ToString() string {
 	return out + " ]"
 }
 
-func (l *RslList) Len() int64 {
+func (l *RadList) Len() int64 {
 	return int64(l.LenInt())
 }
 
-func (l *RslList) LenInt() int {
+func (l *RadList) LenInt() int {
 	return len(l.Values)
 }
 
-func (l *RslList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {
+func (l *RadList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {
 	if len(indices) != len(l.Values) {
 		i.errorf(node, "Bug! Indices length does not match list length")
 	}
-	sorted := make([]RslValue, l.Len())
+	sorted := make([]RadValue, l.Len())
 	for newIdx, oldIdx := range indices {
 		sorted[newIdx] = l.Values[oldIdx]
 	}
 	l.Values = sorted
 }
 
-func (l *RslList) AsStringList(quoteStrings bool) []string {
+func (l *RadList) AsStringList(quoteStrings bool) []string {
 	out := make([]string, l.Len())
 	for i, elem := range l.Values {
 		out[i] = ToPrintableQuoteStr(elem, quoteStrings)
@@ -176,7 +176,7 @@ func (l *RslList) AsStringList(quoteStrings bool) []string {
 }
 
 // requires contents to actually be strings
-func (l *RslList) AsActualStringList(i *Interpreter, node *ts.Node) []string {
+func (l *RadList) AsActualStringList(i *Interpreter, node *ts.Node) []string {
 	out := make([]string, l.Len())
 	for idx, elem := range l.Values {
 		out[idx] = elem.RequireStr(i, node).Plain() // todo keep attributes?
@@ -184,10 +184,10 @@ func (l *RslList) AsActualStringList(i *Interpreter, node *ts.Node) []string {
 	return out
 }
 
-func (l *RslList) Join(sep string, prefix string, suffix string) RslString {
+func (l *RadList) Join(sep string, prefix string, suffix string) RadString {
 	var arr []string
 	for _, v := range l.Values {
 		arr = append(arr, ToPrintableQuoteStr(v, false))
 	}
-	return NewRslString(prefix + strings.Join(arr, sep) + suffix)
+	return NewRadString(prefix + strings.Join(arr, sep) + suffix)
 }

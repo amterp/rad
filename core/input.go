@@ -20,7 +20,7 @@ func InputConfirm(title string, prompt string) (bool, error) {
 	return strings.HasPrefix(strings.ToLower(response), "y"), err
 }
 
-func InputText(prompt, hint, default_ string) (RslString, error) {
+func InputText(prompt, hint, default_ string) (RadString, error) {
 	var response string
 	input := huh.NewInput().
 		Prompt(prompt).
@@ -36,5 +36,5 @@ func InputText(prompt, hint, default_ string) (RslString, error) {
 	if len(response) == 0 {
 		response = default_
 	}
-	return NewRslString(response), err
+	return NewRadString(response), err
 }

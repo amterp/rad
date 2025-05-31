@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -25,7 +25,7 @@ type FileHeader struct {
 }
 
 func newFileHeader(src string, node *ts.Node) (*FileHeader, bool) {
-	contentsNode := node.ChildByFieldName(rsl.F_CONTENTS)
+	contentsNode := node.ChildByFieldName(rl.F_CONTENTS)
 	if contentsNode == nil {
 		// would be strange
 		return nil, false
@@ -47,8 +47,8 @@ type StringNode struct {
 }
 
 func newStringNode(src string, node *ts.Node) (*StringNode, bool) {
-	start := node.ChildByFieldName(rsl.F_START)
-	end := node.ChildByFieldName(rsl.F_END)
+	start := node.ChildByFieldName(rl.F_START)
+	end := node.ChildByFieldName(rl.F_END)
 	contentStart := start.EndByte()
 	contentEnd := end.StartByte()
 	return &StringNode{
@@ -64,7 +64,7 @@ type CallNode struct {
 }
 
 func newCallNode(node *ts.Node, completeSrc string) (*CallNode, bool) {
-	nameNode := node.ChildByFieldName(rsl.F_FUNC)
+	nameNode := node.ChildByFieldName(rl.F_FUNC)
 	if nameNode == nil {
 		return nil, false
 	}

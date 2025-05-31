@@ -3,20 +3,20 @@ package testing
 import "testing"
 
 const (
-	websiteRsl = `
+	websiteScript = `
 args:
     filter string
 
 url = pick_from_resource("./resources/website.json", filter)
 print(url)`
-	websitesRsl = `
+	websitesScript = `
 args:
     filter string
 
 url, title = pick_from_resource("./resources/websites.json", filter)
 print(url)
 print(title)`
-	peopleRsl = `
+	peopleScript = `
 args:
     filter string
 
@@ -26,7 +26,7 @@ print(age * 10)`
 )
 
 func TestSingleValueSameTypesPickFromResourceGh(t *testing.T) {
-	setupAndRunCode(t, websiteRsl, "gh")
+	setupAndRunCode(t, websiteScript, "gh")
 	expected := `github.com
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -34,7 +34,7 @@ func TestSingleValueSameTypesPickFromResourceGh(t *testing.T) {
 }
 
 func TestSingleValueSameTypesPickFromResourceGl(t *testing.T) {
-	setupAndRunCode(t, websiteRsl, "gl")
+	setupAndRunCode(t, websiteScript, "gl")
 	expected := `gitlab.com
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -42,7 +42,7 @@ func TestSingleValueSameTypesPickFromResourceGl(t *testing.T) {
 }
 
 func TestMultiValueSameTypesPickFromResourceGh(t *testing.T) {
-	setupAndRunCode(t, websitesRsl, "gh")
+	setupAndRunCode(t, websitesScript, "gh")
 	expected := `github.com
 GitHub
 `
@@ -51,7 +51,7 @@ GitHub
 }
 
 func TestMultiValueSameTypesPickFromResourceHub(t *testing.T) {
-	setupAndRunCode(t, websitesRsl, "hub")
+	setupAndRunCode(t, websitesScript, "hub")
 	expected := `github.com
 GitHub
 `
@@ -60,7 +60,7 @@ GitHub
 }
 
 func TestMultiValueSameTypesPickFromResourceGl(t *testing.T) {
-	setupAndRunCode(t, websitesRsl, "gl")
+	setupAndRunCode(t, websitesScript, "gl")
 	expected := `gitlab.com
 GitLab
 `
@@ -69,7 +69,7 @@ GitLab
 }
 
 func TestMultiValueSameTypesPickFromResourceLab(t *testing.T) {
-	setupAndRunCode(t, websitesRsl, "lab")
+	setupAndRunCode(t, websitesScript, "lab")
 	expected := `gitlab.com
 GitLab
 `
@@ -78,7 +78,7 @@ GitLab
 }
 
 func TestMultiValueDifferentTypesPickFromResourceAlice(t *testing.T) {
-	setupAndRunCode(t, peopleRsl, "alice")
+	setupAndRunCode(t, peopleScript, "alice")
 	expected := `Alice
 250
 `
@@ -87,7 +87,7 @@ func TestMultiValueDifferentTypesPickFromResourceAlice(t *testing.T) {
 }
 
 func TestMultiValueDifferentTypesPickFromResourceBob(t *testing.T) {
-	setupAndRunCode(t, peopleRsl, "bob")
+	setupAndRunCode(t, peopleScript, "bob")
 	expected := `Bob
 350
 `
@@ -96,7 +96,7 @@ func TestMultiValueDifferentTypesPickFromResourceBob(t *testing.T) {
 }
 
 func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
-	setupAndRunCode(t, peopleRsl, "robert")
+	setupAndRunCode(t, peopleScript, "robert")
 	expected := `Bob
 350
 `
@@ -105,7 +105,7 @@ func TestMultiValueDifferentTypesPickFromResourceRobert(t *testing.T) {
 }
 
 func TestResourcePathIsRelativeToScript(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/people_resource.rsl", "bob")
+	setupAndRunArgs(t, "./rad_scripts/people_resource.rad", "bob")
 	expected := `Bob
 350
 `

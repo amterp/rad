@@ -3,22 +3,22 @@ package testing
 import "testing"
 
 func Test_ParseInt_Basic(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_int("2")
 print(a + 1)
 a = parse_int("6178461748674861")
 print(a + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n6178461748674862\n")
 	assertNoErrors(t)
 }
 
 func Test_ParseInt_ErrorsOnAlphabetical(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_int("asd")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   a = parse_int("asd")
@@ -28,10 +28,10 @@ a = parse_int("asd")
 }
 
 func Test_ParseInt_ErrorsOnFloat(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_int("2.4")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   a = parse_int("2.4")
@@ -41,25 +41,25 @@ a = parse_int("2.4")
 }
 
 func Test_ParseInt_CanReadErrorIfNone(t *testing.T) {
-	rsl := `
+	script := `
 a, err = parse_int("2")
 print(a + 1)
 print(err)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n{ }\n")
 	assertNoErrors(t)
 }
 
 func Test_ParseInt_CanReadErrorIfExists(t *testing.T) {
-	rsl := `
+	script := `
 a, err = parse_int("asd")
 print(a)
 print(err.msg)
 print(err.code)
 print(err)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `0
 parse_int() failed to parse "asd"
 RAD20001
@@ -70,19 +70,19 @@ RAD20001
 }
 
 func Test_ParseInt_DoesNotErrorIfOutputNotRead(t *testing.T) {
-	rsl := `
+	script := `
 parse_int("2")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "")
 	assertNoErrors(t)
 }
 
 func Test_ParseInt_ErrorsIfExpectingTooManyReturnValues(t *testing.T) {
-	rsl := `
+	script := `
 a, b, c = parse_int("2.4")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   a, b, c = parse_int("2.4")

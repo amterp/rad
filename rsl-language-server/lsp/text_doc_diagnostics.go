@@ -48,7 +48,7 @@ func NewDiagnosticFromCheck(checkD check.Diagnostic) Diagnostic {
 	return Diagnostic{
 		Range:    rang,
 		Severity: severity,
-		Source:   "RSL Language Server",
+		Source:   "Rad Language Server",
 		Message:  checkD.Message,
 	}
 }

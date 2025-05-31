@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestAlgo_Index_CanExtractIndexLeafNode(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Ids = json[].ids[1]
 Names = json[].name
@@ -13,7 +13,7 @@ print([x * 10 for x in Ids])
 print(Names)
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/arrays.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/arrays.json", "--color=never")
 	expected := `[ 20, 50, 100 ]
 [ "Alice", "Bob", "Charlie" ]
 `
@@ -23,7 +23,7 @@ print(Names)
 }
 
 func TestAlgo_Index_CanExtractViaMiddleNodeIndexing(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Name = json[1].name
 request url:
@@ -32,7 +32,7 @@ Name = Name[0]
 print(Name, len(Name))
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `Bob 3
 `
 	assertOutput(t, stdOutBuffer, expected)
@@ -43,7 +43,7 @@ print(Name, len(Name))
 // todo this should work, but doesn't. in part because of the 'num captures' logic doesn't seem to hit through, and also
 //  the 'Name' field doesn't *know* it'll become an array, so it gets written as a single value.
 //func TestAlgo_Index_RepeatedCapturesFromLevels(t *testing.T) {
-//	rsl := `
+//	rl := `
 //url = "https://google.com"
 //Name = json[1].name
 //Friend = json[1].friends[].name
@@ -53,7 +53,7 @@ print(Name, len(Name))
 //print(Friend)
 //`
 //
-//	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/obj_arr_with_arrays.json", "--color=never")
+//	setupAndRunCode(t, rl, "--mock-response", ".*:./responses/obj_arr_with_arrays.json", "--color=never")
 //	expected := `[Bob, Bob]
 //[Alice, Charlie]
 //`

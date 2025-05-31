@@ -3,10 +3,10 @@ package testing
 import "testing"
 
 func Test_Ufcs_Basic(t *testing.T) {
-	rsl := `
+	script := `
 print("hi".upper())
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `HI
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -14,10 +14,10 @@ print("hi".upper())
 }
 
 func Test_Ufcs_Chained(t *testing.T) {
-	rsl := `
+	script := `
 "hi".upper().print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `HI
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -25,10 +25,10 @@ func Test_Ufcs_Chained(t *testing.T) {
 }
 
 func Test_Ufcs_WithArgs(t *testing.T) {
-	rsl := `
+	script := `
 "hello!".replace("l", "o").print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `heooo!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -37,12 +37,12 @@ func Test_Ufcs_WithArgs(t *testing.T) {
 
 func Test_Ufcs_ChainedMultiline(t *testing.T) {
 	t.Skip("TODO this is not supported yet, but should be")
-	rsl := `
+	script := `
 "hi"
 	.upper()
 	.print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `HI
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -50,11 +50,11 @@ func Test_Ufcs_ChainedMultiline(t *testing.T) {
 }
 
 func Test_Ufcs_ErrorsIfIncorrectUfcsArg(t *testing.T) {
-	rsl := `
+	script := `
 a = [1, 2, 3]
 a[1].replace("l", "o")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L3:1
 
   a[1].replace("l", "o")

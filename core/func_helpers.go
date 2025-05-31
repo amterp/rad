@@ -5,7 +5,7 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"
@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	EMPTY []RslValue
+	EMPTY []RadValue
 
 	NO_RETURN_LIMIT       = []int{NO_NUM_RETURN_VALUES_CONSTRAINT}
 	ZERO_RETURN_VALS      = []int{}
@@ -23,10 +23,10 @@ var (
 
 type PosArg struct {
 	node  *ts.Node
-	value RslValue
+	value RadValue
 }
 
-func NewPosArg(node *ts.Node, value RslValue) PosArg {
+func NewPosArg(node *ts.Node, value RadValue) PosArg {
 	return PosArg{
 		node:  node,
 		value: value,
@@ -43,7 +43,7 @@ func NewPosArgs(args ...PosArg) []PosArg {
 
 type namedArg struct {
 	name      string
-	value     RslValue
+	value     RadValue
 	nameNode  *ts.Node
 	valueNode *ts.Node
 }
@@ -52,10 +52,10 @@ func (i *Interpreter) callFunction(
 	callNode *ts.Node,
 	numExpectedOutputs int,
 	ufcsArg *PosArg,
-) []RslValue {
-	funcNameNode := i.getChild(callNode, rsl.F_FUNC)
-	argNodes := i.getChildren(callNode, rsl.F_ARG)
-	namedArgNodes := i.getChildren(callNode, rsl.F_NAMED_ARG)
+) []RadValue {
+	funcNameNode := i.getChild(callNode, rl.F_FUNC)
+	argNodes := i.getChildren(callNode, rl.F_ARG)
+	namedArgNodes := i.getChildren(callNode, rl.F_NAMED_ARG)
 
 	funcName := GetSrc(i.sd.Src, funcNameNode)
 
@@ -72,8 +72,8 @@ func (i *Interpreter) callFunction(
 
 	namedArgs := make(map[string]namedArg)
 	for _, namedArgNode := range namedArgNodes {
-		namedArgNameNode := i.getChild(&namedArgNode, rsl.F_NAME)
-		namedArgValueNode := i.getChild(&namedArgNode, rsl.F_VALUE)
+		namedArgNameNode := i.getChild(&namedArgNode, rl.F_NAME)
+		namedArgValueNode := i.getChild(&namedArgNode, rl.F_VALUE)
 
 		argName := GetSrc(i.sd.Src, namedArgNameNode)
 		argValue := i.evaluate(namedArgValueNode, 1)[0]
@@ -152,7 +152,7 @@ func assertAllowedNamedArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
 		allowedTypes, _ := allowedNamedArgs[name]
 		if len(allowedTypes) > 0 && !lo.Contains(allowedTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
-				lo.Map(allowedTypes, func(t RslTypeEnum, _ int) string { return t.AsString() }), "or")
+				lo.Map(allowedTypes, func(t RadTypeEnum, _ int) string { return t.AsString() }), "or")
 			f.i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
 				builtInFunc.Name, name, arg.value.Type().AsString(), acceptable)
 		}

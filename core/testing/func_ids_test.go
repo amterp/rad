@@ -5,7 +5,7 @@ import (
 )
 
 func Test_Func_uuid_v4(t *testing.T) {
-	rsl := `
+	script := `
 ids = [uuid_v4() for i in range(1000)]
 uniq = ids.unique().len()
 if ids.len() != uniq:
@@ -13,13 +13,13 @@ if ids.len() != uniq:
 else:
 	print("IDs are unique")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "IDs are unique\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_uuid_v7(t *testing.T) {
-	rsl := `
+	script := `
 ids = [uuid_v7() for i in range(1000)]
 uniq = ids.unique().len()
 if ids.len() != uniq:
@@ -27,13 +27,13 @@ if ids.len() != uniq:
 else:
 	print("IDs are unique")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "IDs are unique\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_gen_fid(t *testing.T) {
-	rsl := `
+	script := `
 ids = [gen_fid() for i in range(1000)]
 uniq = ids.unique().len()
 if ids.len() != uniq:
@@ -41,13 +41,13 @@ if ids.len() != uniq:
 else:
 	print("IDs are unique")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "IDs are unique\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_gen_fid_named_args(t *testing.T) {
-	rsl := `
+	script := `
 ids = [gen_fid(alphabet="1234567890abcdef", num_random_chars=8, tick_size_ms=round(1e3*60*60)) for i in range(1000)]
 uniq = ids.unique().len()
 if ids.len() != uniq:
@@ -55,16 +55,16 @@ if ids.len() != uniq:
 else:
 	print("IDs are unique")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "IDs are unique\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_gen_fid_ErrorsOnEmptyAlphabet(t *testing.T) {
-	rsl := `
+	script := `
 gen_fid(alphabet="")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   gen_fid(alphabet="")
@@ -75,10 +75,10 @@ gen_fid(alphabet="")
 }
 
 func Test_Func_gen_fid_ErrorsOnNegNumRandomChars(t *testing.T) {
-	rsl := `
+	script := `
 gen_fid(num_random_chars=-1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:26
 
   gen_fid(num_random_chars=-1)

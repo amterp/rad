@@ -10,7 +10,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func (s *State) resolveDiagnostics(tree *rts.RslTree, checker check.RadChecker) []lsp.Diagnostic {
+func (s *State) resolveDiagnostics(tree *rts.RadTree, checker check.RadChecker) []lsp.Diagnostic {
 	diagnostics := make([]lsp.Diagnostic, 0)
 	result, err := checker.CheckDefault()
 	if err == nil {
@@ -32,12 +32,12 @@ func (s *State) addCheckerDiagnotics(diagnostics *[]lsp.Diagnostic, checkResult 
 	}
 }
 
-func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.RslTree) {
+func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.RadTree) {
 	calls := tree.FindCalls()
 
 	unknownFuncNameNodes := make([]*ts.Node, 0)
 	for _, call := range calls {
-		if !s.rslFunctions.Contains(call.Name) {
+		if !s.radFunctions.Contains(call.Name) {
 			unknownFuncNameNodes = append(unknownFuncNameNodes, call.NameNode)
 		}
 	}
@@ -49,6 +49,6 @@ func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.Rsl
 	for _, node := range unknownFuncNameNodes {
 		rang := lsp.NewRangeFromTsNode(node)
 		// todo this needs to be updated since lambdas/functions have been added. We just warn instead until we have a better script understanding.
-		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Warn, "RSL Language Server", "Non-builtin function"))
+		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Warn, "Rad Language Server", "Non-builtin function"))
 	}
 }

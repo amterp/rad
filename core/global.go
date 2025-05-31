@@ -59,17 +59,17 @@ func ResetGlobals() {
 	ScriptName = ""
 	IsTest = false
 
-	FlagHelp = BoolRslArg{}
-	FlagDebug = BoolRslArg{}
-	FlagRadDebug = BoolRslArg{}
-	FlagColor = StringRslArg{}
-	FlagQuiet = BoolRslArg{}
-	FlagShell = BoolRslArg{}
-	FlagVersion = BoolRslArg{}
-	FlagConfirmShellCommands = BoolRslArg{}
-	FlagSrc = BoolRslArg{}
-	FlagRslTree = BoolRslArg{}
-	FlagMockResponse = MockResponseRslArg{}
+	FlagHelp = BoolRadArg{}
+	FlagDebug = BoolRadArg{}
+	FlagRadDebug = BoolRadArg{}
+	FlagColor = StringRadArg{}
+	FlagQuiet = BoolRadArg{}
+	FlagShell = BoolRadArg{}
+	FlagVersion = BoolRadArg{}
+	FlagConfirmShellCommands = BoolRadArg{}
+	FlagSrc = BoolRadArg{}
+	FlagRadTree = BoolRadArg{}
+	FlagMockResponse = MockResponseRadArg{}
 }
 
 func setGlobals(runnerInput RunnerInput) {

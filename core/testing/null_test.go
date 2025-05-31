@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func Test_Null_Print(t *testing.T) {
-	rsl := `
+	script := `
 print(null)
 null.print()
 [1, 2, null, 3].print()
 {"key": null}.print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `null
 null
 [ 1, 2, null, 3 ]
@@ -20,10 +20,10 @@ null
 }
 
 func Test_Null_ErrorsIfUsedInWrongFunction(t *testing.T) {
-	rsl := `
+	script := `
 split(null, ",")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:7
 
   split(null, ",")
@@ -33,14 +33,14 @@ split(null, ",")
 }
 
 func Test_Null_ParseJsonGivesNull(t *testing.T) {
-	rsl := `
+	script := `
 j = r'{ "key": null }'
 o = parse_json(j)
 print(o)
 print(o.key)
 print(type_of(o.key))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "key": null }
 null
 null
@@ -50,14 +50,14 @@ null
 }
 
 func Test_Null_IsFalsy(t *testing.T) {
-	rsl := `
+	script := `
 a = null
 if a:
 	print("a is truthy")
 else:
 	print("a is falsy")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `a is falsy
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -65,7 +65,7 @@ else:
 }
 
 func Test_Null_OmittedNonDefaultArgsAreNull(t *testing.T) {
-	rsl := `
+	script := `
 args:
     aaa string
     bbb string
@@ -77,7 +77,7 @@ print(type_of(aaa), type_of(bbb))
 if not bbb:
 	print("aaa!")
 `
-	setupAndRunCode(t, rsl, "--aaa=hi", "--color=never")
+	setupAndRunCode(t, script, "--aaa=hi", "--color=never")
 	expected := `string null
 aaa!
 `
@@ -86,7 +86,7 @@ aaa!
 }
 
 func Test_Null_Expressions(t *testing.T) {
-	rsl := `
+	script := `
 a = null
 b = null
 c = "not null"
@@ -104,7 +104,7 @@ print(a not in [1, 2, 3]) // true
 print(a in [1, null, 3]) // true
 print(a not in [1, null, 3]) // false
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false

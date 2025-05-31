@@ -113,14 +113,14 @@ func parseTestFile(path string) ([]testCase, error) {
 	return tests, nil
 }
 
-func parseRsl(code string) (string, error) {
-	rslTs, err := rts.NewRslParser()
+func parseScript(code string) (string, error) {
+	radParser, err := rts.NewRadParser()
 	if err != nil {
 		return "", err
 	}
-	defer rslTs.Close()
+	defer radParser.Close()
 
-	tree := rslTs.Parse(code)
+	tree := radParser.Parse(code)
 	return tree.Dump(), nil
 }
 
@@ -157,7 +157,7 @@ func main() {
 		defer file.Close()
 
 		for i, tb := range testBlocks {
-			actual, err := parseRsl(tb.Code)
+			actual, err := parseScript(tb.Code)
 			if err != nil {
 				fmt.Fprintf(os.Stderr,
 					"%s (#%d, %q): Parse error: %v\n",

@@ -89,7 +89,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 }
 
 // does not handle gracefully/adjusting for cutting down lines if not enough width in terminal
-func flagUsage(buf *bytes.Buffer, flags []RslArg) {
+func flagUsage(buf *bytes.Buffer, flags []RadArg) {
 	lines := make([]string, 0, len(flags))
 
 	maxlen := 0
@@ -154,8 +154,8 @@ func basicTips(buf *bytes.Buffer) {
 	var sb strings.Builder
 
 	sb.WriteString("\n")
-	sb.WriteString("To execute an RSL script:\n")
-	sb.WriteString("  rad path/to/script.rsl [args]\n")
+	sb.WriteString("To execute a Rad script:\n")
+	sb.WriteString("  rad path/to/script.rad [args]\n")
 	sb.WriteString("\n")
 	sb.WriteString("To execute a command:\n")
 	sb.WriteString("  rad <command> [args]\n")

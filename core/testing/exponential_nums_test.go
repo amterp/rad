@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func Test_NumExponential_CanWrite(t *testing.T) {
-	rsl := `
+	script := `
 print(1.0e9)
 print(1e9)
 print(1E1_8)
@@ -13,7 +13,7 @@ print(12.3e1_8)
 print(1.23e-1_8)
 print(12.3e-1_9)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `1000000000
 1000000000
 1000000000000000000
@@ -28,12 +28,12 @@ print(12.3e-1_9)
 }
 
 func Test_NumExponential_CanUseInArgs(t *testing.T) {
-	rsl := `
+	script := `
 args:
     a float = 2e3
     a range [1e3, 3e3]
 `
-	setupAndRunCode(t, rsl, "4000", "--color=never")
+	setupAndRunCode(t, script, "4000", "--color=never")
 	expected := `Error at L3:5
 
       a float = 2e3

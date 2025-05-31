@@ -14,7 +14,7 @@ var escapedReplacer = strings.NewReplacer(
 	"\t", "\\t",
 )
 
-func (rt *RslTree) Dump() string {
+func (rt *RadTree) Dump() string {
 	root := rt.root.RootNode()
 	maxByte, maxPosRow, maxPosCol := findMaxRanges(root, 0, 0, 0)
 
@@ -48,7 +48,7 @@ func findMaxRanges(node *ts.Node, maxByte uint, maxPosRow uint, maxPosCol uint) 
 	return maxByte, maxPosRow, maxPosCol
 }
 
-func (rt *RslTree) recurseAppendString(
+func (rt *RadTree) recurseAppendString(
 	sb *strings.Builder,
 	fmtString string,
 	node *ts.Node,

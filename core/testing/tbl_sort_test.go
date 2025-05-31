@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 const (
-	setupSortingRsl = `
+	setupSortingScript = `
 url = "https://google.com"
 
 name = json[].name
@@ -13,11 +13,11 @@ city = json[].city
 )
 
 func TestRadSort_NoSorting(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
@@ -30,12 +30,12 @@ Bob      25   Los Angeles
 }
 
 func TestRadSort_GeneralAscNoToken(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -48,12 +48,12 @@ Charlie  30   Paris
 }
 
 func TestRadSort_GeneralAscWithToken(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort asc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -66,12 +66,12 @@ Charlie  30   Paris
 }
 
 func TestRadSort_GeneralDesc(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort desc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Charlie  30   Paris        
 Bob      40   London       
@@ -84,12 +84,12 @@ Alice    30   New York
 }
 
 func TestRadSort_ExplicitAsc(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort name asc, age asc, city asc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      25   Los Angeles  
@@ -102,12 +102,12 @@ Charlie  30   Paris
 }
 
 func TestRadSort_DescTiebreak(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort name asc, age desc, city
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Alice    30   New York     
 Bob      40   London       
@@ -120,12 +120,12 @@ Charlie  30   Paris
 }
 
 func TestRadSort_Mix(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort age, city desc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -138,12 +138,12 @@ Bob      40   London
 }
 
 func TestRadSort_LeavesInExtractionOrderIfNoTiebreaker(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 rad url:
     fields name, age, city
     sort age asc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -156,7 +156,7 @@ Bob      40   London
 }
 
 func TestRadSort_CanUseInIfElseBlocks(t *testing.T) {
-	rsl := setupSortingRsl + `
+	script := setupSortingScript + `
 if true:
 	rad url:
 		fields name, age, city
@@ -166,7 +166,7 @@ else:
 		fields name, age, city
 		sort age desc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     age  city        
 Bob      25   Los Angeles  
 Charlie  30   Paris        
@@ -179,14 +179,14 @@ Bob      40   London
 }
 
 func TestRadSort_CanSortMixedTypes(t *testing.T) {
-	rsl := `
+	script := `
 col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
 col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 display:
 	fields col1, col2
 	sort
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `col1            col2 
 false           5     
 true            4     
@@ -206,14 +206,14 @@ b               3
 }
 
 func TestRadSort_CanSortMixedTypesDesc(t *testing.T) {
-	rsl := `
+	script := `
 col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
 col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 display:
 	fields col1, col2
 	sort desc
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `col1            col2 
 { "alice": 1 }  6     
 [ 3, 1, 2 ]     9     
@@ -233,7 +233,7 @@ false           5
 }
 
 func TestRadSort_SortingIsPriorToMapping(t *testing.T) {
-	rsl := `
+	script := `
 col = [0, 1, 2, 3, 4]
 display:
 	fields col
@@ -241,7 +241,7 @@ display:
 	col:
 		map fn(num) -num
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `col 
 0    
 -1   
@@ -254,14 +254,14 @@ display:
 }
 
 func TestRadSort_ColumnsRemainSortAfter(t *testing.T) {
-	rsl := `
+	script := `
 col = [3, 4, 2, 1]
 display:
 	fields col
 	sort asc
 print(col)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `col 
 1    
 2    
@@ -274,13 +274,13 @@ print(col)
 }
 
 func TestRadSort_DoesNotSortColumnsIfNotAskedTo(t *testing.T) {
-	rsl := `
+	script := `
 col = [3, 4, 2, 1]
 display:
 	fields col
 print(col)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `col 
 3    
 4    

@@ -11,7 +11,7 @@ var red = color.New(color.FgRed).SprintFunc()
 var blue = color.New(color.FgBlue).SprintFunc()
 
 func TestRadColor_NonOverlappingMatches(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -21,7 +21,7 @@ rad url:
        color "red" "Los"
        color "blue" "Angeles"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -33,7 +33,7 @@ rad url:
 }
 
 func TestRadColor_OverlappingMatches(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -44,7 +44,7 @@ rad url:
        color "blue" "York"
        color "yellow" "New York"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -56,7 +56,7 @@ rad url:
 }
 
 func TestRadColor_PartialOverlapPriority(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -66,7 +66,7 @@ rad url:
        color "blue" "Bo"
        color "red" "ob"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += blue("B") + red("ob") + "      London       \n"
@@ -78,7 +78,7 @@ rad url:
 }
 
 func TestRadColor_NoMatches(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -87,7 +87,7 @@ rad url:
     city:
        color "green" "Berlin"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      London       \n"
@@ -99,7 +99,7 @@ rad url:
 }
 
 func TestRadColor_Complex(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -112,7 +112,7 @@ rad url:
 		color "yellow" "ndon"
 		color "red" "ndo"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "B" + red("ob") + "      L" + blue("o") + red("ndo") + yellow("n") + "       \n"
@@ -124,7 +124,7 @@ rad url:
 }
 
 func TestRadColor_Plain(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -134,7 +134,7 @@ rad url:
 		color "red" "London"
 		color "plain" "ndo"
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json")
 	expected := yellow("name   ") + "  " + yellow("city       ") + " \n"
 	expected += "Charlie  Paris        \n"
 	expected += "Bob      " + red("Lo") + "ndo" + red("n") + "       \n"
@@ -146,7 +146,7 @@ rad url:
 }
 
 func TestRadColorErrorsOnInvalidColor(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 color = "licorice"
@@ -155,7 +155,7 @@ rad url:
     name:
         color color "o[a-z]"
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L8:15
 
           color color "o[a-z]"

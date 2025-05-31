@@ -19,8 +19,8 @@ import (
 
 type RadRunner struct {
 	scriptData  *ScriptData
-	globalFlags []RslArg
-	scriptArgs  []RslArg
+	globalFlags []RadArg
+	scriptArgs  []RadArg
 }
 
 func NewRadRunner(runnerInput RunnerInput) *RadRunner {
@@ -99,11 +99,11 @@ func (r *RadRunner) Run() error {
 
 	if HasScript {
 		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
-		rslParser, err := rts.NewRslParser()
+		radParser, err := rts.NewRadParser()
 		if err != nil {
-			RP.ErrorExit(fmt.Sprintf("Failed to load RSL parser: %v", err))
+			RP.ErrorExit(fmt.Sprintf("Failed to load Rad parser: %v", err))
 		}
-		tree := rslParser.Parse(sourceCode)
+		tree := radParser.Parse(sourceCode)
 		argBlock, ok := tree.FindArgBlock()
 		if ok {
 			if r.scriptData != nil && r.scriptData.DisableArgsBlock {
@@ -124,7 +124,7 @@ func (r *RadRunner) Run() error {
 	r.setUpGlobals()
 	args := RFlagSet.Args()
 
-	scriptArgs := r.createRslArgsFromScript()
+	scriptArgs := r.createRadArgsFromScript()
 	r.scriptArgs = scriptArgs
 
 	// determine if we should run help/version or not
@@ -169,7 +169,7 @@ func (r *RadRunner) Run() error {
 		RP.Printf(r.scriptData.Src + "\n")
 	}
 
-	if FlagRslTree.Value {
+	if FlagRadTree.Value {
 		shouldExit = true
 		if FlagSrc.Value {
 			RP.Printf("\n")
@@ -203,7 +203,7 @@ func (r *RadRunner) Run() error {
 	}
 
 	atLeastOneFlagConfigured := false
-	var missingArgs []RslArg
+	var missingArgs []RadArg
 	for _, scriptArg := range scriptArgs {
 		if !scriptArg.Configured() {
 			// flag has not been explicitly set by the user
@@ -214,7 +214,7 @@ func (r *RadRunner) Run() error {
 			} else if scriptArg.IsOptional() {
 				// there's no positional arg to fill it, but that's okay because it's optional, so continue
 				continue
-			} else if _, ok := scriptArg.(*BoolRslArg); ok {
+			} else if _, ok := scriptArg.(*BoolRadArg); ok {
 				// all bools are implicitly optional and default false, unless explicitly defaulted to true
 				// this branch implies it was not defaulted to true
 			} else {
@@ -255,7 +255,7 @@ func (r *RadRunner) Run() error {
 
 	missingArgs = removeMissingIfExcludedByOtherDefinedArg(missingArgs, scriptArgs)
 	if len(missingArgs) > 0 {
-		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", TransformRslArgs(missingArgs, RslArg.GetExternalName)))
+		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", TransformRadArgs(missingArgs, RadArg.GetExternalName)))
 	}
 
 	// at this point, we'll assume we've been given a script to run, and we should do that now
@@ -329,12 +329,12 @@ func (r *RadRunner) setUpGlobals() {
 	}
 }
 
-func (r *RadRunner) createRslArgsFromScript() []RslArg {
+func (r *RadRunner) createRadArgsFromScript() []RadArg {
 	if r.scriptData == nil {
 		return nil
 	}
 
-	flags := make([]RslArg, 0, len(r.scriptData.Args))
+	flags := make([]RadArg, 0, len(r.scriptData.Args))
 	for _, arg := range r.scriptData.Args {
 		flag := CreateFlag(arg)
 		flag.Register()
@@ -351,10 +351,10 @@ func readSource(scriptPath string) (string, error) {
 
 // an argument is only *missing* for error purposes if it is not excluded by another arg, which *is* defined.
 // otherwise, this is just a valid constraint working as expected.
-func removeMissingIfExcludedByOtherDefinedArg(missingArgs []RslArg, args []RslArg) []RslArg {
-	missingIdentifiers := TransformRslArgs(missingArgs, RslArg.GetIdentifier)
+func removeMissingIfExcludedByOtherDefinedArg(missingArgs []RadArg, args []RadArg) []RadArg {
+	missingIdentifiers := TransformRadArgs(missingArgs, RadArg.GetIdentifier)
 
-	filteredMissingArgs := make([]RslArg, 0)
+	filteredMissingArgs := make([]RadArg, 0)
 	for _, missingArg := range missingArgs {
 		isMissing := true
 		for _, potentialExcluder := range args {

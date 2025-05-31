@@ -4,49 +4,49 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslTree struct {
+type RadTree struct {
 	root *ts.Tree
 	// Updatable:
 	parser *ts.Parser
 	src    string
 }
 
-func newRslTree(parser *ts.Parser, tree *ts.Tree, src string) *RslTree {
-	return &RslTree{
+func newRadTree(parser *ts.Parser, tree *ts.Tree, src string) *RadTree {
+	return &RadTree{
 		root:   tree,
 		parser: parser,
 		src:    src,
 	}
 }
 
-func (rt *RslTree) Update(src string) {
+func (rt *RadTree) Update(src string) {
 	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
 	rt.root = rt.parser.Parse([]byte(src), nil)
 	rt.src = src
 }
 
-func (rt *RslTree) Close() {
+func (rt *RadTree) Close() {
 	rt.root.Close()
 }
 
-func (rt *RslTree) Root() *ts.Node {
+func (rt *RadTree) Root() *ts.Node {
 	return rt.root.RootNode()
 }
 
-func (rt *RslTree) Sexp() string {
+func (rt *RadTree) Sexp() string {
 	return rt.root.RootNode().ToSexp()
 }
 
-func (rt *RslTree) String() string {
+func (rt *RadTree) String() string {
 	return rt.Dump()
 }
 
-func (rt *RslTree) FindShebang() (*Shebang, bool) {
+func (rt *RadTree) FindShebang() (*Shebang, bool) {
 	shebangs := findNodes[*Shebang](rt)
 	if len(shebangs) == 0 {
 		return nil, false
@@ -54,7 +54,7 @@ func (rt *RslTree) FindShebang() (*Shebang, bool) {
 	return shebangs[0], true // todo bad if multiple
 }
 
-func (rt *RslTree) FindFileHeader() (*FileHeader, bool) {
+func (rt *RadTree) FindFileHeader() (*FileHeader, bool) {
 	fileHeaders := findNodes[*FileHeader](rt)
 	if len(fileHeaders) == 0 {
 		return nil, false
@@ -62,7 +62,7 @@ func (rt *RslTree) FindFileHeader() (*FileHeader, bool) {
 	return fileHeaders[0], true // todo bad if multiple
 }
 
-func (rt *RslTree) FindArgBlock() (*ArgBlock, bool) {
+func (rt *RadTree) FindArgBlock() (*ArgBlock, bool) {
 	argBlocks := findNodes[*ArgBlock](rt)
 	if len(argBlocks) == 0 {
 		return nil, false
@@ -70,7 +70,7 @@ func (rt *RslTree) FindArgBlock() (*ArgBlock, bool) {
 	return argBlocks[0], true // todo bad if multiple
 }
 
-func QueryNodes[T Node](rt *RslTree) ([]T, error) {
+func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 	nodeName := NodeName[T]()
 	query, err := ts.NewQuery(rt.parser.Language(), fmt.Sprintf("(%s) @%s", nodeName, nodeName))
 
@@ -98,14 +98,14 @@ func QueryNodes[T Node](rt *RslTree) ([]T, error) {
 	return nodes, nil
 }
 
-func (rt *RslTree) FindInvalidNodes() []*ts.Node {
+func (rt *RadTree) FindInvalidNodes() []*ts.Node {
 	var invalidNodes []*ts.Node
 	recurseFindInvalidNodes(rt.Root(), &invalidNodes)
 	return invalidNodes
 }
 
-func (rt *RslTree) FindCalls() []*CallNode {
-	calls := rt.FindNodes(rsl.K_CALL)
+func (rt *RadTree) FindCalls() []*CallNode {
+	calls := rt.FindNodes(rl.K_CALL)
 	callNodes := make([]*CallNode, len(calls))
 	for i, call := range calls {
 		callNode, ok := newCallNode(call, rt.src)
@@ -118,7 +118,7 @@ func (rt *RslTree) FindCalls() []*CallNode {
 }
 
 // todo should take an ID instead of string for kind
-func (rt *RslTree) FindNodes(nodeKind string) []*ts.Node {
+func (rt *RadTree) FindNodes(nodeKind string) []*ts.Node {
 	var found []*ts.Node
 	recurseFindNodes(rt.Root(), nodeKind, &found)
 	return found
@@ -144,7 +144,7 @@ func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
 	}
 }
 
-func findNodes[T Node](rt *RslTree) []T {
+func findNodes[T Node](rt *RadTree) []T {
 	nodeName := NodeName[T]()
 	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())
 	if !ok {
@@ -157,7 +157,7 @@ func findNodes[T Node](rt *RslTree) []T {
 	return []T{rtsNode} // todo stub - should search all
 }
 
-func (rt *RslTree) findFirstNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
+func (rt *RadTree) findFirstNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
 	if node.Kind() == nodeKind {
 		return node, true
 	}

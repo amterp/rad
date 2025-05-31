@@ -11,8 +11,8 @@ func sortColumns(
 	fields []radField,
 	sorting []ColumnSort,
 ) {
-	orderedCols := make([]*RslList, 0, len(fields))
-	colsByName := make(map[radField]*RslList) // todo radField as key works?
+	orderedCols := make([]*RadList, 0, len(fields))
+	colsByName := make(map[radField]*RadList) // todo radField as key works?
 	for _, field := range fields {
 		colList := interp.env.GetVarElseBug(interp, field.node, field.name).RequireList(interp, field.node)
 		orderedCols = append(orderedCols, colList)
@@ -64,8 +64,8 @@ func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.No
 	panic(UNREACHABLE)
 }
 
-func sortList(interp *Interpreter, dataNode *ts.Node, data *RslList, dir SortDir) []RslValue {
-	sorted := make([]RslValue, data.Len())
+func sortList(interp *Interpreter, dataNode *ts.Node, data *RadList, dir SortDir) []RadValue {
+	sorted := make([]RadValue, data.Len())
 	copy(sorted, data.Values)
 	sort.Slice(sorted, func(i, j int) bool {
 		comp := compare(interp, dataNode, sorted[i], sorted[j])
@@ -77,7 +77,7 @@ func sortList(interp *Interpreter, dataNode *ts.Node, data *RslList, dir SortDir
 	return sorted
 }
 
-func compare(i *Interpreter, fieldNode *ts.Node, a, b RslValue) int {
+func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
 	// first compare by type
 	aTypePrec := precedence(i, fieldNode, a)
 	bTypePrec := precedence(i, fieldNode, b)
@@ -139,9 +139,9 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RslValue) int {
 			return 0
 		}
 		return 0
-	case RslString:
+	case RadString:
 		return aVal.Compare(b.RequireStr(i, fieldNode))
-	case *RslList, *RslMap:
+	case *RadList, *RadMap:
 		return 0 // all arrays and maps are considered equal
 	default:
 		i.errorf(fieldNode, "Bug! Unsupported type for sorting")
@@ -149,21 +149,21 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RslValue) int {
 	}
 }
 
-func precedence(i *Interpreter, fieldNode *ts.Node, v RslValue) int {
+func precedence(i *Interpreter, fieldNode *ts.Node, v RadValue) int {
 	switch v.Type() {
-	case RslNullT:
+	case RadNullT:
 		return 0
-	case RslBoolT:
+	case RadBoolT:
 		return 1
-	case RslIntT, RslFloatT:
+	case RadIntT, RadFloatT:
 		return 2
-	case RslStringT:
+	case RadStringT:
 		return 3
-	case RslListT:
+	case RadListT:
 		return 4
-	case RslMapT:
+	case RadMapT:
 		return 5
-	case RslFnT:
+	case RadFnT:
 		return 6
 	default:
 		i.errorf(fieldNode, "Unsupported type precedence for sorting")

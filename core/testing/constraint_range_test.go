@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func Test_Constraint_Range_Help(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age1 int # The age1.
     age2 int
@@ -15,7 +15,7 @@ args:
     age3 range (, 200.5]
     age4 range (10, 20)
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
   <age1> <age2> <age3> <age4>
 
@@ -31,13 +31,13 @@ Script args:
 }
 
 func Test_Constraint_Range_Basic(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "40")
+	setupAndRunCode(t, script, "--color=never", "40")
 	expected := `Age: 40
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -45,13 +45,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_BasicMin(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "0")
+	setupAndRunCode(t, script, "--color=never", "0")
 	expected := `Age: 0
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -59,13 +59,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_BasicMax(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range [0, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "100")
+	setupAndRunCode(t, script, "--color=never", "100")
 	expected := `Age: 100
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -73,13 +73,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_ExclusiveMin(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range (0, 100)
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "0")
+	setupAndRunCode(t, script, "--color=never", "0")
 	expected := `Error at L3:5
 
       age int
@@ -89,13 +89,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_ExclusiveMax(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range (0, 100)
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "100")
+	setupAndRunCode(t, script, "--color=never", "100")
 	expected := `Error at L3:5
 
       age int
@@ -105,13 +105,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_FloatBasic(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age float
     age range [0.5, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "0.5")
+	setupAndRunCode(t, script, "--color=never", "0.5")
 	expected := `Age: 0.5
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -119,13 +119,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_FloatMinExclusive(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age float
     age range (0.5, 100]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "0.5")
+	setupAndRunCode(t, script, "--color=never", "0.5")
 	expected := `Error at L3:5
 
       age float
@@ -135,13 +135,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_NoMax(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age float
     age range (0.5,]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "9999")
+	setupAndRunCode(t, script, "--color=never", "9999")
 	expected := `Age: 9999
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -149,13 +149,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_BelowMinWhenNoMax(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age float
     age range (0.5,]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "0.1")
+	setupAndRunCode(t, script, "--color=never", "0.1")
 	expected := `Error at L3:5
 
       age float
@@ -165,13 +165,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_AboveMaxNoMin(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range (, 200]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "250")
+	setupAndRunCode(t, script, "--color=never", "250")
 	expected := `Error at L3:5
 
       age int
@@ -181,13 +181,13 @@ print("Age:", age)
 }
 
 func Test_Constraint_Range_NoMin(t *testing.T) {
-	rsl := `
+	script := `
 args:
     age int
     age range (, 200]
 print("Age:", age)
 `
-	setupAndRunCode(t, rsl, "--color=never", "--age", "-300")
+	setupAndRunCode(t, script, "--color=never", "--age", "-300")
 	expected := `Age: -300
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

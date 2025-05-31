@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func Test_Revamp_Strings(t *testing.T) {
-	rsl := `
+	script := `
 a = "hi"
 print(a)
 
@@ -29,7 +29,7 @@ g = "{1 + 1:6.7}"
 print(g)
 
 ` + "h = `\"hi\" 'there' \\`bob\\``" + "\nprint(h)"
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `hi
 hi
  there
@@ -47,7 +47,7 @@ hi
 }
 
 func Test_Revamp_ForLoop(t *testing.T) {
-	rsl := `
+	script := `
 a = [20, 30, 40, 50, 60]
 
 for n in a:
@@ -67,7 +67,7 @@ n = "alice"
 for i, l in n:
     print(i, l)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `20
 after
 30

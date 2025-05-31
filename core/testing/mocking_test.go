@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestMockResponse(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Id = json[].id
@@ -13,7 +13,7 @@ rad url:
     fields Id, Name
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	// todo notice strange trailing whitespace in table below, would be good to trim probably
 	expected := `Id  Name  
 1   Alice  

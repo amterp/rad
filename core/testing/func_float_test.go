@@ -3,12 +3,12 @@ package testing
 import "testing"
 
 func Test_Func_Float_PassthroughForFloat(t *testing.T) {
-	rsl := `
+	script := `
 a = float(10.2)
 print(a)
 print(type_of(a))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10.2
 float
 `
@@ -17,12 +17,12 @@ float
 }
 
 func Test_Func_Float_ConvertsInt(t *testing.T) {
-	rsl := `
+	script := `
 a = float(10)
 print(a)
 print(type_of(a))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10
 float
 `
@@ -31,13 +31,13 @@ float
 }
 
 func Test_Func_Float_Bool(t *testing.T) {
-	rsl := `
+	script := `
 a = float(true)
 b = float(false)
 print(a, b)
 print(type_of(a), type_of(b))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `1 0
 float float
 `
@@ -46,10 +46,10 @@ float float
 }
 
 func Test_Func_Float_ErrorsOnMap(t *testing.T) {
-	rsl := `
+	script := `
 float({})
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:7
 
   float({})
@@ -59,10 +59,10 @@ float({})
 }
 
 func Test_Func_Float_ErrorsOnStringWithDetails(t *testing.T) {
-	rsl := `
+	script := `
 float("10")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:7
 
   float("10")

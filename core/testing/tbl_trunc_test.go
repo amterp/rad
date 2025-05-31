@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestTruncate(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 id = json[].id
 words = json[].words
@@ -12,7 +12,7 @@ rad url:
 	words:
 		map fn(x) truncate(x, 10)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/long_values.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/long_values.json", "--color=never")
 	expected := `id  words      
 1   Lorem ips…  
 2   Ut placer…  
@@ -23,7 +23,7 @@ rad url:
 }
 
 func TestTruncateMatchesColWidth(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 id = json[].id
 name = json[].name
@@ -32,7 +32,7 @@ rad url:
 	name:
 		map fn(x) truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `id  name  
 1   Alice  
 2   Bob    
@@ -43,7 +43,7 @@ rad url:
 }
 
 func TestTruncateErrorsIfInvalidField(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 rad url:
@@ -51,7 +51,7 @@ rad url:
     does_not_exist:
         map fn(x) truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `Error at L6:5
 
       does_not_exist:
@@ -61,7 +61,7 @@ rad url:
 }
 
 func TestTruncateTwoFieldsAtOnce(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 age = json[].age
 name = json[].name
@@ -71,7 +71,7 @@ rad url:
 	name, city:
 		map fn(x) truncate(x, 5)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `age  name   city  
 30   Char…  Paris  
 40   Bob    Lond…  

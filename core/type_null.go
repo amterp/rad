@@ -1,5 +1,5 @@
 package core
 
-type RslNull struct{}
+type RadNull struct{}
 
-var RSL_NULL = RslNull{}
+var RAD_NULL = RadNull{}

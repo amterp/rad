@@ -9,11 +9,11 @@ import (
 	tblwriter "github.com/amterp/go-tbl"
 )
 
-type RslTextAttr int
+type RadTextAttr int
 
 // when adding attrs, add 1) here, 2) attrEnumToStrings, 3) ToTblColor, and 4) ToFatihAttr
 const (
-	PLAIN RslTextAttr = iota
+	PLAIN RadTextAttr = iota
 	BLACK
 	RED
 	GREEN
@@ -32,7 +32,7 @@ const (
 
 var ATTR_STRINGS = make([]string, 0)
 
-var attrEnumToStrings = map[RslTextAttr]string{
+var attrEnumToStrings = map[RadTextAttr]string{
 	PLAIN:     "plain",
 	BLACK:     "black",
 	RED:       "red",
@@ -49,7 +49,7 @@ var attrEnumToStrings = map[RslTextAttr]string{
 	UNDERLINE: "underline",
 }
 
-var stringsToAttrEnum = make(map[string]RslTextAttr)
+var stringsToAttrEnum = make(map[string]RadTextAttr)
 
 func init() {
 	for attr, str := range attrEnumToStrings {
@@ -59,14 +59,14 @@ func init() {
 	}
 }
 
-func (a RslTextAttr) String() string {
+func (a RadTextAttr) String() string {
 	if s, ok := attrEnumToStrings[a]; ok {
 		return s
 	}
 	return "unknown"
 }
 
-func TryColorFromString(str string) (RslTextAttr, bool) {
+func TryColorFromString(str string) (RadTextAttr, bool) {
 	clr, ok := stringsToAttrEnum[str]
 	if !ok {
 		return PLAIN, false
@@ -74,7 +74,7 @@ func TryColorFromString(str string) (RslTextAttr, bool) {
 	return clr, true
 }
 
-func AttrFromString(i *Interpreter, node *ts.Node, str string) RslTextAttr {
+func AttrFromString(i *Interpreter, node *ts.Node, str string) RadTextAttr {
 	clr, ok := TryColorFromString(str)
 	if !ok {
 		i.errorf(node, "Invalid color value %q. Allowed: %s", str, ATTR_STRINGS)
@@ -82,7 +82,7 @@ func AttrFromString(i *Interpreter, node *ts.Node, str string) RslTextAttr {
 	return clr
 }
 
-func (a RslTextAttr) ToTblColor() tblwriter.Color {
+func (a RadTextAttr) ToTblColor() tblwriter.Color {
 	switch a {
 	case PLAIN:
 		return tblwriter.Plain
@@ -112,7 +112,7 @@ func (a RslTextAttr) ToTblColor() tblwriter.Color {
 	}
 }
 
-func (a RslTextAttr) AddAttrTo(clr *color.Color) {
+func (a RadTextAttr) AddAttrTo(clr *color.Color) {
 	switch a {
 	case PLAIN:
 		clr.Add(color.Reset)
@@ -148,7 +148,7 @@ func (a RslTextAttr) AddAttrTo(clr *color.Color) {
 	}
 }
 
-func (a RslTextAttr) Colorize(str string) string {
+func (a RadTextAttr) Colorize(str string) string {
 	clr := color.New()
 	a.AddAttrTo(clr)
 	return clr.Sprint(str)

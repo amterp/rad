@@ -9,7 +9,7 @@ import (
 
 	"github.com/amterp/rad/rts"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
 
@@ -43,36 +43,36 @@ func NewInterpreter(scriptData *ScriptData) *Interpreter {
 
 func (i *Interpreter) InitBuiltIns() {
 	for name, fn := range FunctionsByName {
-		fnVal := newRslValueFn(NewBuiltIn(fn))
+		fnVal := newRadValueFn(NewBuiltIn(fn))
 		i.env.SetVar(name, fnVal)
 	}
 }
 
-func (i *Interpreter) InitArgs(args []RslArg) {
+func (i *Interpreter) InitArgs(args []RadArg) {
 	env := i.env
 
 	for _, arg := range args {
 		if !arg.IsDefined() {
-			env.SetVar(arg.GetIdentifier(), newRslValueNull())
+			env.SetVar(arg.GetIdentifier(), newRadValueNull())
 			continue
 		}
 		switch coerced := arg.(type) {
-		case *BoolRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), coerced.Value))
-		case *BoolArrRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), NewRslListFromGeneric(i, arg.GetNode(), coerced.Value)))
-		case *StringRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), coerced.Value))
-		case *StringArrRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), NewRslListFromGeneric(i, arg.GetNode(), coerced.Value)))
-		case *IntRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), coerced.Value))
-		case *IntArrRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), NewRslListFromGeneric(i, arg.GetNode(), coerced.Value)))
-		case *FloatRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), coerced.Value))
-		case *FloatArrRslArg:
-			env.SetVar(coerced.Identifier, newRslValue(i, arg.GetNode(), NewRslListFromGeneric(i, arg.GetNode(), coerced.Value)))
+		case *BoolRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+		case *BoolArrRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+		case *StringRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+		case *StringArrRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+		case *IntRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+		case *IntArrRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+		case *FloatRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+		case *FloatArrRadArg:
+			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
 		default:
 			i.errorf(arg.GetNode(), "Unsupported arg type, cannot init: %T", arg)
 		}
@@ -98,55 +98,55 @@ func (i *Interpreter) recursivelyRun(node *ts.Node) {
 func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	switch node.Kind() {
 	// no-ops
-	case rsl.K_SOURCE_FILE:
+	case rl.K_SOURCE_FILE:
 		children := node.Children(node.Walk())
 		for _, child := range children {
 			i.recursivelyRun(&child)
 		}
-	case rsl.K_COMMENT, rsl.K_SHEBANG, rsl.K_FILE_HEADER, rsl.K_ARG_BLOCK:
+	case rl.K_COMMENT, rl.K_SHEBANG, rl.K_FILE_HEADER, rl.K_ARG_BLOCK:
 		return
-	case rsl.K_ERROR:
+	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
-	case rsl.K_ASSIGN:
-		leftNodes := i.getChildren(node, rsl.F_LEFT)
-		rightNodes := i.getChildren(node, rsl.F_RIGHT)
+	case rl.K_ASSIGN:
+		leftNodes := i.getChildren(node, rl.F_LEFT)
+		rightNodes := i.getChildren(node, rl.F_RIGHT)
 		i.assignRightsToLefts(node, leftNodes, rightNodes)
-	case rsl.K_COMPOUND_ASSIGN:
-		leftVarPathNode := i.getChild(node, rsl.F_LEFT)
-		rightNode := i.getChild(node, rsl.F_RIGHT)
-		opNode := i.getChild(node, rsl.F_OP)
+	case rl.K_COMPOUND_ASSIGN:
+		leftVarPathNode := i.getChild(node, rl.F_LEFT)
+		rightNode := i.getChild(node, rl.F_RIGHT)
+		opNode := i.getChild(node, rl.F_OP)
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
-	case rsl.K_EXPR:
+	case rl.K_EXPR:
 		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
-	case rsl.K_PASS:
+	case rl.K_PASS:
 		// no-op
-	case rsl.K_BREAK_STMT:
+	case rl.K_BREAK_STMT:
 		if i.forWhileLoopLevel > 0 {
 			i.breaking = true
 		} else {
 			i.errorf(node, "Cannot 'break' outside of a for loop")
 		}
-	case rsl.K_CONTINUE_STMT:
+	case rl.K_CONTINUE_STMT:
 		if i.forWhileLoopLevel > 0 {
 			i.continuing = true
 		} else {
 			i.errorf(node, "Cannot 'continue' outside of a for loop")
 		}
-	case rsl.K_FOR_LOOP:
+	case rl.K_FOR_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		stmts := i.getChildren(node, rsl.F_STMT)
+		stmts := i.getChildren(node, rl.F_STMT)
 		i.executeForLoop(node, func() { i.runBlock(stmts) })
-	case rsl.K_WHILE_LOOP:
+	case rl.K_WHILE_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		condNode := i.getChild(node, rsl.F_CONDITION)
-		stmtNodes := i.getChildren(node, rsl.F_STMT)
+		condNode := i.getChild(node, rl.F_CONDITION)
+		stmtNodes := i.getChildren(node, rl.F_STMT)
 		for {
 			condValue := true
 			if condNode != nil {
@@ -163,10 +163,10 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 				break
 			}
 		}
-	case rsl.K_IF_STMT:
-		altNodes := i.getChildren(node, rsl.F_ALT)
+	case rl.K_IF_STMT:
+		altNodes := i.getChildren(node, rl.F_ALT)
 		for _, altNode := range altNodes {
-			condNode := i.getChild(&altNode, rsl.F_CONDITION)
+			condNode := i.getChild(&altNode, rl.F_CONDITION)
 
 			shouldExecute := true
 			if condNode != nil {
@@ -175,22 +175,22 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 			}
 
 			if shouldExecute {
-				stmtNodes := i.getChildren(&altNode, rsl.F_STMT)
+				stmtNodes := i.getChildren(&altNode, rl.F_STMT)
 				i.runBlock(stmtNodes)
 				break
 			}
 		}
-	case rsl.K_SWITCH_STMT:
-		leftVarPathNodes := i.getChildren(node, rsl.F_LEFT)
-		discriminantNode := i.getChild(node, rsl.F_DISCRIMINANT)
-		caseNodes := i.getChildren(node, rsl.F_CASE)
-		defaultNode := i.getChild(node, rsl.F_DEFAULT)
+	case rl.K_SWITCH_STMT:
+		leftVarPathNodes := i.getChildren(node, rl.F_LEFT)
+		discriminantNode := i.getChild(node, rl.F_DISCRIMINANT)
+		caseNodes := i.getChildren(node, rl.F_CASE)
+		defaultNode := i.getChild(node, rl.F_DEFAULT)
 
 		discriminantVal := i.evaluate(discriminantNode, 1)[0]
 
 		matchedCaseNodes := make([]ts.Node, 0)
 		for _, caseNode := range caseNodes {
-			caseKeyNodes := i.getChildren(&caseNode, rsl.F_CASE_KEY)
+			caseKeyNodes := i.getChildren(&caseNode, rl.F_CASE_KEY)
 			for _, caseKeyNode := range caseKeyNodes {
 				caseKey := i.evaluate(&caseKeyNode, 1)[0]
 				if caseKey.Equals(discriminantVal) {
@@ -202,7 +202,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 
 		if len(matchedCaseNodes) == 0 {
 			if defaultNode != nil {
-				caseValueAltNode := i.getChild(defaultNode, rsl.F_ALT)
+				caseValueAltNode := i.getChild(defaultNode, rl.F_ALT)
 				i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
 				return
 			}
@@ -221,24 +221,24 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		}
 
 		matchedCaseNode := matchedCaseNodes[0]
-		caseValueAltNode := i.getChild(&matchedCaseNode, rsl.F_ALT)
+		caseValueAltNode := i.getChild(&matchedCaseNode, rl.F_ALT)
 		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
-	case rsl.K_DEFER_BLOCK:
-		keywordNode := i.getChild(node, rsl.F_KEYWORD)
-		stmtNodes := i.getChildren(node, rsl.F_STMT)
+	case rl.K_DEFER_BLOCK:
+		keywordNode := i.getChild(node, rl.F_KEYWORD)
+		stmtNodes := i.getChildren(node, rl.F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
-	case rsl.K_SHELL_STMT:
+	case rl.K_SHELL_STMT:
 		i.executeShellStmt(node)
-	case rsl.K_DEL_STMT:
-		rightVarPathNodes := i.getChildren(node, rsl.F_RIGHT)
+	case rl.K_DEL_STMT:
+		rightVarPathNodes := i.getChildren(node, rl.F_RIGHT)
 		for _, rightVarPathNode := range rightVarPathNodes {
 			i.doVarPathAssign(&rightVarPathNode, NIL_SENTINAL, true)
 		}
-	case rsl.K_RAD_BLOCK:
+	case rl.K_RAD_BLOCK:
 		i.runRadBlock(node)
-	case rsl.K_INCR_DECR:
-		leftVarPathNode := i.getChild(node, rsl.F_LEFT)
-		opNode := i.getChild(node, rsl.F_OP)
+	case rl.K_INCR_DECR:
+		leftVarPathNode := i.getChild(node, rl.F_LEFT)
+		opNode := i.getChild(node, rl.F_OP)
 		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	default:
@@ -246,7 +246,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	}
 }
 
-func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue {
+func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RadValue {
 	if !IsTest {
 		defer func() {
 			if r := recover(); r != nil {
@@ -257,46 +257,46 @@ func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RslValue
 	return i.unsafeEval(node, numExpectedOutputs)
 }
 
-func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslValue {
+func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RadValue {
 	switch node.Kind() {
-	case rsl.K_EXPR, rsl.K_PRIMARY_EXPR, rsl.K_LITERAL:
+	case rl.K_EXPR, rl.K_PRIMARY_EXPR, rl.K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
-	case rsl.K_PARENTHESIZED_EXPR:
-		return i.evaluate(i.getChild(node, rsl.F_EXPR), numExpectedOutputs)
-	case rsl.K_UNARY_EXPR:
-		delegateNode := i.getChild(node, rsl.F_DELEGATE)
+	case rl.K_PARENTHESIZED_EXPR:
+		return i.evaluate(i.getChild(node, rl.F_EXPR), numExpectedOutputs)
+	case rl.K_UNARY_EXPR:
+		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		opNode := i.getChild(node, rsl.F_OP)
-		argNode := i.getChild(node, rsl.F_ARG)
-		return newRslValues(i, node, i.executeUnaryOp(node, argNode, opNode))
-	case rsl.K_OR_EXPR, rsl.K_AND_EXPR, rsl.K_COMPARE_EXPR, rsl.K_ADD_EXPR, rsl.K_MULT_EXPR:
-		delegateNode := i.getChild(node, rsl.F_DELEGATE)
+		opNode := i.getChild(node, rl.F_OP)
+		argNode := i.getChild(node, rl.F_ARG)
+		return newRadValues(i, node, i.executeUnaryOp(node, argNode, opNode))
+	case rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_COMPARE_EXPR, rl.K_ADD_EXPR, rl.K_MULT_EXPR:
+		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		left := i.getChild(node, rsl.F_LEFT)
-		op := i.getChild(node, rsl.F_OP)
-		right := i.getChild(node, rsl.F_RIGHT)
-		return newRslValues(i, node, i.executeBinary(node, left, right, op))
+		left := i.getChild(node, rl.F_LEFT)
+		op := i.getChild(node, rl.F_OP)
+		right := i.getChild(node, rl.F_RIGHT)
+		return newRadValues(i, node, i.executeBinary(node, left, right, op))
 
 	// LEAF NODES
-	case rsl.K_IDENTIFIER:
+	case rl.K_IDENTIFIER:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		identifier := i.sd.Src[node.StartByte():node.EndByte()]
 		val, ok := i.env.GetVar(identifier)
 		if !ok {
 			i.errorf(node, "Undefined variable: %s", identifier)
 		}
-		return newRslValues(i, node, val)
-	case rsl.K_VAR_PATH:
-		rootNode := i.getChild(node, rsl.F_ROOT)
-		indexingNodes := i.getChildren(node, rsl.F_INDEXING)
+		return newRadValues(i, node, val)
+	case rl.K_VAR_PATH:
+		rootNode := i.getChild(node, rl.F_ROOT)
+		indexingNodes := i.getChildren(node, rl.F_INDEXING)
 		val := i.evaluate(rootNode, 1)[0]
 		if len(indexingNodes) > 0 {
 			for indexIdx, indexNode := range indexingNodes {
@@ -304,39 +304,39 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 				val = i.evaluateIndexing(rootNode, indexNode, val, expectReturnVal)
 			}
 		}
-		return newRslValues(i, node, val)
-	case rsl.K_INDEXED_EXPR:
-		rootNode := i.getChild(node, rsl.F_ROOT)
-		indexingNodes := i.getChildren(node, rsl.F_INDEXING)
+		return newRadValues(i, node, val)
+	case rl.K_INDEXED_EXPR:
+		rootNode := i.getChild(node, rl.F_ROOT)
+		indexingNodes := i.getChildren(node, rl.F_INDEXING)
 		if len(indexingNodes) > 0 {
 			val := i.evaluate(rootNode, 1)[0]
 			for indexIdx, index := range indexingNodes {
 				expectReturnVal := numExpectedOutputs != NO_NUM_RETURN_VALUES_CONSTRAINT || indexIdx != len(indexingNodes)-1
 				val = i.evaluateIndexing(rootNode, index, val, expectReturnVal)
 			}
-			return newRslValues(i, node, val)
+			return newRadValues(i, node, val)
 		} else {
 			return i.evaluate(rootNode, numExpectedOutputs)
 		}
-	case rsl.K_INT:
+	case rl.K_INT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
-		return newRslValues(i, node, asInt)
-	case rsl.K_FLOAT:
+		return newRadValues(i, node, asInt)
+	case rl.K_FLOAT:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
-		return newRslValues(i, node, asFloat)
-	case rsl.K_STRING:
+		return newRadValues(i, node, asFloat)
+	case rl.K_STRING:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		str := NewRslString("")
+		str := NewRadString("")
 
-		contentsNode := i.getChild(node, rsl.F_CONTENTS)
+		contentsNode := i.getChild(node, rl.F_CONTENTS)
 
 		// With current TS grammar, last character of closing delimiter is always the delimiter
 		// Admittedly bad, very white boxy and brittle
-		endNode := i.getChild(node, rsl.F_END)
+		endNode := i.getChild(node, rl.F_END)
 		endStr := i.sd.Src[endNode.StartByte():endNode.EndByte()]
 		delimiterStr := endStr[len(endStr)-1]
 		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
@@ -349,80 +349,80 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 
 		i.delimiterStack.Pop()
 
-		return newRslValues(i, node, str)
-	case rsl.K_BOOL:
+		return newRadValues(i, node, str)
+	case rl.K_BOOL:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asBool, _ := strconv.ParseBool(asStr)
-		return newRslValues(i, node, asBool)
-	case rsl.K_NULL:
+		return newRadValues(i, node, asBool)
+	case rl.K_NULL:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		return newRslValues(i, node, nil)
-	case rsl.K_STRING_CONTENT:
+		return newRadValues(i, node, nil)
+	case rl.K_STRING_CONTENT:
 		src := i.sd.Src[node.StartByte():node.EndByte()]
-		return newRslValues(i, node, src)
-	case rsl.K_BACKSLASH:
-		return newRslValues(i, node, "\\")
-	case rsl.K_ESC_SINGLE_QUOTE:
+		return newRadValues(i, node, src)
+	case rl.K_BACKSLASH:
+		return newRadValues(i, node, "\\")
+	case rl.K_ESC_SINGLE_QUOTE:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "'" {
-			return newRslValues(i, node, "'")
+			return newRadValues(i, node, "'")
 		} else {
-			return newRslValues(i, node, `\'`)
+			return newRadValues(i, node, `\'`)
 		}
-	case rsl.K_ESC_DOUBLE_QUOTE:
+	case rl.K_ESC_DOUBLE_QUOTE:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == `"` {
-			return newRslValues(i, node, `"`)
+			return newRadValues(i, node, `"`)
 		} else {
-			return newRslValues(i, node, `\"`)
+			return newRadValues(i, node, `\"`)
 		}
-	case rsl.K_ESC_BACKTICK:
+	case rl.K_ESC_BACKTICK:
 		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "`" {
-			return newRslValues(i, node, "`")
+			return newRadValues(i, node, "`")
 		} else {
-			return newRslValues(i, node, "\\`")
+			return newRadValues(i, node, "\\`")
 		}
-	case rsl.K_ESC_NEWLINE:
-		return newRslValues(i, node, "\n")
-	case rsl.K_ESC_TAB:
-		return newRslValues(i, node, "\t")
-	case rsl.K_ESC_OPEN_BRACKET:
-		return newRslValues(i, node, "{")
-	case rsl.K_INTERPOLATION:
+	case rl.K_ESC_NEWLINE:
+		return newRadValues(i, node, "\n")
+	case rl.K_ESC_TAB:
+		return newRadValues(i, node, "\t")
+	case rl.K_ESC_OPEN_BRACKET:
+		return newRadValues(i, node, "{")
+	case rl.K_INTERPOLATION:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
 		exprResult := evaluateInterpolation(i, node)
-		return newRslValues(i, node, exprResult)
-	case rsl.K_ESC_BACKSLASH:
-		return newRslValues(i, node, "\\")
-	case rsl.K_LIST:
+		return newRadValues(i, node, exprResult)
+	case rl.K_ESC_BACKSLASH:
+		return newRadValues(i, node, "\\")
+	case rl.K_LIST:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		entries := i.getChildren(node, rsl.F_LIST_ENTRY)
-		list := NewRslList()
+		entries := i.getChildren(node, rl.F_LIST_ENTRY)
+		list := NewRadList()
 		for _, entry := range entries {
 			list.Append(i.evaluate(&entry, 1)[0])
 		}
-		return newRslValues(i, node, list)
-	case rsl.K_MAP:
+		return newRadValues(i, node, list)
+	case rl.K_MAP:
 		i.assertExpectedNumOutputs(node, numExpectedOutputs, 1)
-		rslMap := NewRslMap()
-		entryNodes := i.getChildren(node, rsl.F_MAP_ENTRY)
+		radMap := NewRadMap()
+		entryNodes := i.getChildren(node, rl.F_MAP_ENTRY)
 		for _, entryNode := range entryNodes {
-			keyNode := i.getChild(&entryNode, rsl.F_KEY)
-			valueNode := i.getChild(&entryNode, rsl.F_VALUE)
+			keyNode := i.getChild(&entryNode, rl.F_KEY)
+			valueNode := i.getChild(&entryNode, rl.F_VALUE)
 			key := evalMapKey(i, keyNode)
-			rslMap.Set(key, i.evaluate(valueNode, 1)[0])
+			radMap.Set(key, i.evaluate(valueNode, 1)[0])
 		}
-		return newRslValues(i, node, rslMap)
-	case rsl.K_CALL:
+		return newRadValues(i, node, radMap)
+	case rl.K_CALL:
 		return i.callFunction(node, numExpectedOutputs, nil)
-	case rsl.K_LAMBDA:
-		return newRslValues(i, node, NewLambda(i, node))
-	case rsl.K_FN_BLOCK:
-		return newRslValues(i, node, NewFnBlock(i, node))
-	case rsl.K_LIST_COMPREHENSION:
-		resultExprNode := i.getChild(node, rsl.F_EXPR)
-		conditionNode := i.getChild(node, rsl.F_CONDITION)
+	case rl.K_LAMBDA:
+		return newRadValues(i, node, NewLambda(i, node))
+	case rl.K_FN_BLOCK:
+		return newRadValues(i, node, NewFnBlock(i, node))
+	case rl.K_LIST_COMPREHENSION:
+		resultExprNode := i.getChild(node, rl.F_EXPR)
+		conditionNode := i.getChild(node, rl.F_CONDITION)
 
-		resultList := NewRslList()
+		resultList := NewRadList()
 		doOneLoop := func() {
 			if conditionNode == nil || i.evaluate(conditionNode, 1)[0].TruthyFalsy() {
 				results := i.evaluate(resultExprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
@@ -433,16 +433,16 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 			}
 		}
 		i.executeForLoop(node, doOneLoop)
-		return newRslValues(i, node, resultList)
-	case rsl.K_TERNARY_EXPR:
-		delegateNode := i.getChild(node, rsl.F_DELEGATE)
+		return newRadValues(i, node, resultList)
+	case rl.K_TERNARY_EXPR:
+		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.evaluate(delegateNode, numExpectedOutputs)
 		}
 
-		conditionNode := i.getChild(node, rsl.F_CONDITION)
-		trueNode := i.getChild(node, rsl.F_TRUE_BRANCH)
-		falseNode := i.getChild(node, rsl.F_FALSE_BRANCH)
+		conditionNode := i.getChild(node, rl.F_CONDITION)
+		trueNode := i.getChild(node, rl.F_TRUE_BRANCH)
+		falseNode := i.getChild(node, rl.F_FALSE_BRANCH)
 		condition := i.evaluate(conditionNode, 1)[0].TruthyFalsy()
 		return i.evaluate(lo.Ternary(condition, trueNode, falseNode), numExpectedOutputs)
 	default:
@@ -451,25 +451,25 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RslVal
 	}
 }
 
-func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
-	exprNode := i.getChild(interpNode, rsl.F_EXPR)
-	formatNode := i.getChild(interpNode, rsl.F_FORMAT)
+func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
+	exprNode := i.getChild(interpNode, rl.F_EXPR)
+	formatNode := i.getChild(interpNode, rl.F_FORMAT)
 
 	exprResult := i.evaluate(exprNode, 1)[0]
 	resultType := exprResult.Type()
 
 	if formatNode == nil {
-		if rslStr, ok := exprResult.TryGetStr(); ok {
-			// maintain RslString attributes
-			return newRslValue(i, exprNode, rslStr)
+		if radStr, ok := exprResult.TryGetStr(); ok {
+			// maintain RadString attributes
+			return newRadValue(i, exprNode, radStr)
 		} else {
-			return newRslValue(i, exprNode, NewRslString(ToPrintable(exprResult)))
+			return newRadValue(i, exprNode, NewRadString(ToPrintable(exprResult)))
 		}
 	}
 
-	alignmentNode := i.getChild(formatNode, rsl.F_ALIGNMENT)
-	paddingNode := i.getChild(formatNode, rsl.F_PADDING)
-	precisionNode := i.getChild(formatNode, rsl.F_PRECISION)
+	alignmentNode := i.getChild(formatNode, rl.F_ALIGNMENT)
+	paddingNode := i.getChild(formatNode, rl.F_PADDING)
+	precisionNode := i.getChild(formatNode, rl.F_PRECISION)
 
 	var goFmt strings.Builder
 	goFmt.WriteString("%")
@@ -497,7 +497,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 	if precisionNode != nil {
 		precision := i.evaluate(precisionNode, 1)[0].RequireInt(i, precisionNode)
 
-		if resultType != RslIntT && resultType != RslFloatT {
+		if resultType != RadIntT && resultType != RadFloatT {
 			precisionStr := "." + i.sd.Src[precisionNode.StartByte():precisionNode.EndByte()]
 			i.errorf(interpNode, "Cannot format %s with a precision %q", TypeAsString(exprResult), precisionStr)
 		}
@@ -507,7 +507,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 
 	formatted := func() string {
 		switch resultType {
-		case RslIntT:
+		case RadIntT:
 			if precisionNode == nil {
 				goFmt.WriteString("d")
 				return fmt.Sprintf(goFmt.String(), int(exprResult.Val.(int64)))
@@ -515,7 +515,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 				goFmt.WriteString("f")
 				return fmt.Sprintf(goFmt.String(), float64(exprResult.Val.(int64)))
 			}
-		case RslFloatT:
+		case RadFloatT:
 			goFmt.WriteString("f")
 			return fmt.Sprintf(goFmt.String(), exprResult.Val)
 		default:
@@ -524,7 +524,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RslValue {
 		}
 	}()
 
-	return newRslValue(i, interpNode, formatted)
+	return newRadValue(i, interpNode, formatted)
 }
 
 func (i *Interpreter) getChildren(node *ts.Node, fieldName string) []ts.Node {
@@ -561,10 +561,10 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
 }
 
-func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue, updateEnclosing bool) {
-	rootIdentifier := i.getChild(varPathNode, rsl.F_ROOT) // identifier required by grammar
+func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
+	rootIdentifier := i.getChild(varPathNode, rl.F_ROOT) // identifier required by grammar
 	rootIdentifierName := GetSrc(i.sd.Src, rootIdentifier)
-	indexings := i.getChildren(varPathNode, rsl.F_INDEXING)
+	indexings := i.getChildren(varPathNode, rl.F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
 	if len(indexings) == 0 {
@@ -587,27 +587,27 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RslValue,
 }
 
 func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
-	leftsNode := i.getChild(node, rsl.F_LEFTS)
-	rightNode := i.getChild(node, rsl.F_RIGHT)
+	leftsNode := i.getChild(node, rl.F_LEFTS)
+	rightNode := i.getChild(node, rl.F_RIGHT)
 
 	rightVal := i.evaluate(rightNode, 1)[0]
 	switch coercedRight := rightVal.Val.(type) {
-	case RslString:
+	case RadString:
 		runForLoopList(i, leftsNode, rightNode, coercedRight.ToRuneList(), doOneLoop)
-	case *RslList:
+	case *RadList:
 		runForLoopList(i, leftsNode, rightNode, coercedRight, doOneLoop)
-	case *RslMap:
+	case *RadMap:
 		runForLoopMap(i, leftsNode, coercedRight, doOneLoop)
 	default:
 		i.errorf(rightNode, "Cannot iterate through a %s", TypeAsString(rightVal))
 	}
 }
 
-func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList, doOneLoop func()) {
+func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RadList, doOneLoop func()) {
 	var idxNode *ts.Node
 	itemNodes := make([]*ts.Node, 0)
 
-	leftNodes := i.getChildren(leftsNode, rsl.F_LEFT)
+	leftNodes := i.getChildren(leftsNode, rl.F_LEFT)
 
 	if len(leftNodes) == 0 {
 		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
@@ -623,7 +623,7 @@ func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList
 	for idx, val := range list.Values {
 		if idxNode != nil {
 			idxName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
-			i.env.SetVar(idxName, newRslValue(i, idxNode, int64(idx)))
+			i.env.SetVar(idxName, newRadValue(i, idxNode, int64(idx)))
 		}
 
 		if len(itemNodes) == 1 {
@@ -657,11 +657,11 @@ func runForLoopList(i *Interpreter, leftsNode, rightNode *ts.Node, list *RslList
 	}
 }
 
-func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop func()) {
+func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop func()) {
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
-	leftNodes := i.getChildren(leftsNode, rsl.F_LEFT)
+	leftNodes := i.getChildren(leftsNode, rl.F_LEFT)
 	numLefts := len(leftNodes)
 
 	if numLefts == 0 || numLefts > 2 {
@@ -673,13 +673,13 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, rslMap *RslMap, doOneLoop
 		valueNode = &leftNodes[1]
 	}
 
-	for _, key := range rslMap.Keys() {
+	for _, key := range radMap.Keys() {
 		keyName := i.sd.Src[keyNode.StartByte():keyNode.EndByte()]
 		i.env.SetVar(keyName, key)
 
 		if valueNode != nil {
 			valueName := i.sd.Src[valueNode.StartByte():valueNode.EndByte()]
-			value, _ := rslMap.Get(key)
+			value, _ := radMap.Get(key)
 			i.env.SetVar(valueName, value)
 		}
 
@@ -710,8 +710,8 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = originalEnv
 }
 
-func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RslValue, expectReturnValue bool) RslValue {
-	if index.Kind() == rsl.K_CALL {
+func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RadValue, expectReturnValue bool) RadValue {
+	if index.Kind() == rl.K_CALL {
 		// ufcs
 		ufcsArg := &PosArg{
 			// todo 'rootNode' is not great to use, it misses indexes in between that and this call,
@@ -744,9 +744,9 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 	//   one of those return values is an error, and if there's no var to assign it to, we panic. RAD-294
 	numReturnValues := lo.Ternary(len(leftNodes) == 1, 1, NO_NUM_RETURN_VALUES_CONSTRAINT)
 
-	outputs := make([]RslValue, 0)
+	outputs := make([]RadValue, 0)
 	for _, rightNode := range rightNodes {
-		if rightNode.Kind() == rsl.K_JSON_PATH {
+		if rightNode.Kind() == rl.K_JSON_PATH {
 			// json path assignment
 			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
 			i.env.SetJsonFieldVar(jsonFieldVar)
@@ -773,23 +773,23 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNodes []ts.Node) {
 	numExpectedAssigns := len(leftVarPathNodes)
 	switch caseValueAltNode.Kind() {
-	case rsl.K_SWITCH_CASE_EXPR:
-		valueNodes := i.getChildren(caseValueAltNode, rsl.F_VALUE)
+	case rl.K_SWITCH_CASE_EXPR:
+		valueNodes := i.getChildren(caseValueAltNode, rl.F_VALUE)
 		i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
-	case rsl.K_SWITCH_CASE_BLOCK:
-		stmtNodes := i.getChildren(caseValueAltNode, rsl.F_STMT)
+	case rl.K_SWITCH_CASE_BLOCK:
+		stmtNodes := i.getChildren(caseValueAltNode, rl.F_STMT)
 		i.runBlock(stmtNodes)
 
 		if i.breakingOrContinuing() {
 			return
 		}
 
-		yieldNode := i.getChild(caseValueAltNode, rsl.F_YIELD_STMT)
+		yieldNode := i.getChild(caseValueAltNode, rl.F_YIELD_STMT)
 		if numExpectedAssigns > 0 && yieldNode == nil {
 			i.errorf(caseValueAltNode, "Cannot assign without yielding from the switch case")
 		}
 		if yieldNode != nil {
-			valueNodes := i.getChildren(yieldNode, rsl.F_VALUE)
+			valueNodes := i.getChildren(yieldNode, rl.F_VALUE)
 			if numExpectedAssigns == 0 {
 				// nothing to assign, just evaluate
 				for _, valueNode := range valueNodes {

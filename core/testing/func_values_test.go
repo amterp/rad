@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func TestValues(t *testing.T) {
-	rsl := `a = { "alice": "foo", "bob": "bar" }
+	script := `a = { "alice": "foo", "bob": "bar" }
 b = values(a)
 print(b)
 print(upper(b[0]))
 print(values({}))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "foo", "bar" ]
 FOO
 [ ]
@@ -19,8 +19,8 @@ FOO
 }
 
 func TestValues_ErrorsIfGivenString(t *testing.T) {
-	rsl := `values("foo")`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `values("foo")`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:8
 
   values("foo")
@@ -30,8 +30,8 @@ func TestValues_ErrorsIfGivenString(t *testing.T) {
 }
 
 func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
-	rsl := `values()`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `values()`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   values()
@@ -41,8 +41,8 @@ func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
 }
 
 func TestValues_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
-	rsl := `values({}, {})`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `values({}, {})`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   values({}, {})

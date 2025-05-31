@@ -13,9 +13,9 @@ var FuncColorize = BuiltInFunc{
 	Name:            FUNC_COLORIZE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}, {RslListT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}, {RadListT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		valueArg := f.args[0]
 		possibleValuesArg := f.args[1]
 		possibleValues := possibleValuesArg.value.RequireList(f.i, possibleValuesArg.node).AsStringList(false)
@@ -37,9 +37,9 @@ var FuncColorize = BuiltInFunc{
 			f.i.errorf(f.callNode, "Failed to get color for value '%s': %s", value, err.Error())
 		}
 
-		s := NewRslString(value)
+		s := NewRadString(value)
 		s.SetRgb(r, g, b)
-		return newRslValues(f.i, f.callNode, s)
+		return newRadValues(f.i, f.callNode, s)
 	},
 }
 

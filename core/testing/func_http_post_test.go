@@ -3,11 +3,11 @@ package testing
 import "testing"
 
 func TestHttpPost_Basic(t *testing.T) {
-	rsl := `
+	script := `
 url = "http//www.google.com"
 pprint(http_post(url))
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	expected := `{
   "body": [
     {

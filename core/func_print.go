@@ -12,12 +12,12 @@ var FuncPrint = BuiltInFunc{
 	Name:            FUNC_PRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgEnd: {RslStringT},
-		namedArgSep: {RslStringT},
+	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgEnd: {RadStringT},
+		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		RP.Printf(resolvePrintStr(f))
 		return EMPTY
 	},
@@ -27,15 +27,15 @@ var FuncPPrint = BuiltInFunc{
 	Name:            FUNC_PPRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		if len(f.args) == 0 {
 			RP.Printf("\n")
 		}
 
 		arg := f.args[0]
-		jsonStruct := RslToJsonType(arg.value)
+		jsonStruct := RadToJsonType(arg.value)
 		output := prettify(f.i, f.callNode, jsonStruct)
 		RP.Printf(output)
 		return EMPTY
@@ -46,12 +46,12 @@ var FuncDebug = BuiltInFunc{
 	Name:            FUNC_DEBUG,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgEnd: {RslStringT},
-		namedArgSep: {RslStringT},
+	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgEnd: {RadStringT},
+		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		RP.ScriptDebug(resolvePrintStr(f))
 		return EMPTY
 	},
@@ -61,12 +61,12 @@ var FuncPrintErr = BuiltInFunc{
 	Name:            FUNC_PRINT_ERR,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RslTypeEnum{}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgEnd: {RslStringT},
-		namedArgSep: {RslStringT},
+	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgEnd: {RadStringT},
+		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		RP.ScriptStderrf(resolvePrintStr(f))
 		return EMPTY
 	},
@@ -88,7 +88,7 @@ func resolvePrintStr(f FuncInvocationArgs) string {
 		sb.WriteString(end)
 	} else {
 		for idx, v := range f.args {
-			if v.value.Type() == RslStringT {
+			if v.value.Type() == RadStringT {
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
 			} else {

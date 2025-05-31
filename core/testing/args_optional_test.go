@@ -5,7 +5,7 @@ import (
 )
 
 func Test_Args_Optional(t *testing.T) {
-	rsl := `
+	script := `
 args:
     name string
     age int
@@ -14,7 +14,7 @@ args:
 
 print(name, age, role, year, sep="|")
 `
-	setupAndRunCode(t, rsl, "hey", "30", "--color=never")
+	setupAndRunCode(t, script, "hey", "30", "--color=never")
 	expected := `hey|30|null|null
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -22,7 +22,7 @@ print(name, age, role, year, sep="|")
 }
 
 func Test_Args_Optional_RelationalRequiresMet(t *testing.T) {
-	rsl := `
+	script := `
 args:
     name string
     age int?
@@ -30,7 +30,7 @@ args:
 
 print(name, age, sep="|")
 `
-	setupAndRunCode(t, rsl, "hey", "30", "--color=never")
+	setupAndRunCode(t, script, "hey", "30", "--color=never")
 	expected := `hey|30
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -38,7 +38,7 @@ print(name, age, sep="|")
 }
 
 func Test_Args_Optional_RelationalRequiresNotMet(t *testing.T) {
-	rsl := `
+	script := `
 args:
     name string
     age int?
@@ -46,7 +46,7 @@ args:
 
 print(name, age, sep="|")
 `
-	setupAndRunCode(t, rsl, "hey", "--color=never")
+	setupAndRunCode(t, script, "hey", "--color=never")
 	expected := `Invalid args: 'name' requires 'age', but 'age' was not set
 
 Usage:

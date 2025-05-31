@@ -7,14 +7,14 @@ import (
 )
 
 func Test_GetPath_DoesNotExist(t *testing.T) {
-	rsl := `
+	script := `
 p = "does_not_exist"
 path = get_path(p)
 print(path.keys())
 vals = path.values()
 print("/{p}" in str(vals))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "exists", "full_path" ]
 true
 `
@@ -23,7 +23,7 @@ true
 }
 
 func Test_GetPath_Exists(t *testing.T) {
-	rsl := `
+	script := `
 p = "data/test_file.txt"
 path = get_path(p)
 print(path.keys())
@@ -33,7 +33,7 @@ print(path.permissions)
 print(path.type)
 print(path.size_bytes)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "exists", "full_path", "base_name", "permissions", "type", "size_bytes" ]
 true
 test_file.txt
@@ -46,12 +46,12 @@ file
 }
 
 func Test_GetPath_ExpandsHome(t *testing.T) {
-	rsl := `
+	script := `
 p = "~/.rad"
 path = get_path(p)
 print(path.full_path)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	home, _ := os.UserHomeDir()
 	expected := fmt.Sprintf("%s/.rad\n", home)
 	assertOnlyOutput(t, stdOutBuffer, expected)

@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func Test_Constraint_Regex_Help(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -22,14 +22,14 @@ Script args:
 }
 
 func Test_Constraint_Regex_Help_WithEnum(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -42,37 +42,37 @@ Script args:
 }
 
 func Test_Constraint_Regex_Valid(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "Alice")
+	setupAndRunCode(t, script, "Alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi Alice\n")
 	assertNoErrors(t)
 }
 
 func Test_Constraint_RegexAndEnum_Valid(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 print("Hi", name)
 `
-	setupAndRunCode(t, rsl, "Alice")
+	setupAndRunCode(t, script, "Alice")
 	assertOnlyOutput(t, stdOutBuffer, "Hi Alice\n")
 	assertNoErrors(t)
 }
 
 func Test_Constraint_Regex_InvalidInput(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 `
-	setupAndRunCode(t, rsl, "alice", "--color=never")
+	setupAndRunCode(t, script, "alice", "--color=never")
 	expected := `Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
 
 Usage:
@@ -86,13 +86,13 @@ Script args:
 }
 
 func Test_Constraint_RegexAndEnum_InvalidInput(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 `
-	setupAndRunCode(t, rsl, "Charlie", "--color=never")
+	setupAndRunCode(t, script, "Charlie", "--color=never")
 	expected := `Invalid 'name' value: Charlie (valid values: Alice, Bob)
 
 Usage:
@@ -106,12 +106,12 @@ Script args:
 }
 
 func Test_Constraint_Regex_InvalidRegex(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	name regex "+"
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L4:2
 
   	name regex "+"

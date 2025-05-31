@@ -5,7 +5,7 @@ import (
 )
 
 func Test_Args_Constraints_Relational_Requires_OkayIfBothRequiredProvided(t *testing.T) {
-	rsl := `
+	script := `
 args:
     a string
     b string
@@ -13,13 +13,13 @@ args:
     a requires b
 print("ran")
 `
-	setupAndRunCode(t, rsl, "--a", "alice", "--b", "bob")
+	setupAndRunCode(t, script, "--a", "alice", "--b", "bob")
 	assertOnlyOutput(t, stdOutBuffer, "ran\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Requires_ErrorsIfNotRequired(t *testing.T) {
-	rsl := `
+	script := `
 args:
     a string
     b string
@@ -27,7 +27,7 @@ args:
     a requires b
 print("ran")
 `
-	setupAndRunCode(t, rsl, "--a", "alex")
+	setupAndRunCode(t, script, "--a", "alex")
 	expected := `Invalid args: 'a' requires 'b', but 'b' was not set
 
 Usage:
@@ -42,7 +42,7 @@ Script args:
 }
 
 func Test_Args_Constraints_Relational_Requires_ErrorsIfDefaultRequiresSomethingNotProvided(t *testing.T) {
-	rsl := `
+	script := `
 args:
     a string
     b string = "bob"
@@ -51,7 +51,7 @@ args:
     b requires c
 print("ran")
 `
-	setupAndRunCode(t, rsl, "--a", "alex")
+	setupAndRunCode(t, script, "--a", "alex")
 	expected := `Invalid args: 'b' requires 'c', but 'c' was not set
 
 Usage:
@@ -67,7 +67,7 @@ Script args:
 }
 
 func Test_Args_Constraints_Relational_Excludes_CanGiveFirst(t *testing.T) {
-	rsl := `
+	script := `
 args:
     file string
     url string
@@ -79,13 +79,13 @@ if is_defined("file"):
 else:
     print("Fetching from URL:", url)
 `
-	setupAndRunCode(t, rsl, "--file", "file.txt")
+	setupAndRunCode(t, script, "--file", "file.txt")
 	assertOnlyOutput(t, stdOutBuffer, "Reading from file: file.txt\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Excludes_CanGiveSecond(t *testing.T) {
-	rsl := `
+	script := `
 args:
     file string
     url string
@@ -97,13 +97,13 @@ if is_defined("file"):
 else:
     print("Fetching from URL:", url)
 `
-	setupAndRunCode(t, rsl, "--url", "someurl")
+	setupAndRunCode(t, script, "--url", "someurl")
 	assertOnlyOutput(t, stdOutBuffer, "Fetching from URL: someurl\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Excludes_ErrorsIfBothProvided(t *testing.T) {
-	rsl := `
+	script := `
 args:
     file string
     url string
@@ -115,7 +115,7 @@ if is_defined("file"):
 else:
     print("Fetching from URL:", url)
 `
-	setupAndRunCode(t, rsl, "--file", "file.txt", "--url", "someurl")
+	setupAndRunCode(t, script, "--file", "file.txt", "--url", "someurl")
 	expected := `Invalid args: 'file' excludes 'url', but 'url' was set
 
 Usage:
@@ -130,7 +130,7 @@ Script args:
 }
 
 func Test_Args_Constraints_Relational_Mixed_CanGiveOne(t *testing.T) {
-	rsl := `
+	script := `
 args:
     token string
     username string
@@ -144,13 +144,13 @@ if is_defined("token"):
 else:
     print("Authenticating user:", username)
 `
-	setupAndRunCode(t, rsl, "--token", "sometoken")
+	setupAndRunCode(t, script, "--token", "sometoken")
 	assertOnlyOutput(t, stdOutBuffer, "Authenticating with token: sometoken\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Mixed_CanGiveBothOther(t *testing.T) {
-	rsl := `
+	script := `
 args:
     token string
     username string
@@ -164,13 +164,13 @@ if is_defined("token"):
 else:
     print("Authenticating user:", username)
 `
-	setupAndRunCode(t, rsl, "--username", "alice", "--password", "pass")
+	setupAndRunCode(t, script, "--username", "alice", "--password", "pass")
 	assertOnlyOutput(t, stdOutBuffer, "Authenticating user: alice\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Mixed_ErrorsIfAllGiven(t *testing.T) {
-	rsl := `
+	script := `
 args:
     token string
     username string
@@ -184,7 +184,7 @@ if is_defined("token"):
 else:
     print("Authenticating user:", username)
 `
-	setupAndRunCode(t, rsl, "--token", "sometoken", "--username", "alice", "--password", "pass")
+	setupAndRunCode(t, script, "--token", "sometoken", "--username", "alice", "--password", "pass")
 	expected := `Invalid args: 'token' excludes 'username', but 'username' was set
 
 Usage:
@@ -200,12 +200,12 @@ Script args:
 }
 
 func Test_Args_Constraints_Relational_ErrorsIfConstraintOnUndefinedArg(t *testing.T) {
-	rsl := `
+	script := `
 args:
     token string
     token excludes username
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, script)
 	expected := `Error at L4:20
 
       token excludes username
@@ -215,7 +215,7 @@ args:
 }
 
 func Test_Args_Constraints_Relational_Bool_Can_Require(t *testing.T) {
-	rsl := `
+	script := `
 args:
     authenticate bool
 	token string
@@ -225,13 +225,13 @@ args:
 if authenticate:
     print("Token:", token)
 `
-	setupAndRunCode(t, rsl, "--authenticate", "--token", "sometoken")
+	setupAndRunCode(t, script, "--authenticate", "--token", "sometoken")
 	assertOnlyOutput(t, stdOutBuffer, "Token: sometoken\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Bool_ErrorsIfBoolFalse(t *testing.T) {
-	rsl := `
+	script := `
 args:
     authenticate bool
 	token string
@@ -241,7 +241,7 @@ args:
 if authenticate:
     print("Token:", token)
 `
-	setupAndRunCode(t, rsl, "--token", "sometoken")
+	setupAndRunCode(t, script, "--token", "sometoken")
 	expected := `Invalid args: 'token' requires 'authenticate', but 'authenticate' was not set
 
 Usage:
@@ -256,7 +256,7 @@ Script args:
 }
 
 func Test_Args_Constraints_Relational_Bool_CanDefineRequireeForNonMutualRequirement(t *testing.T) {
-	rsl := `
+	script := `
 args:
     authenticate bool
 	token string
@@ -267,13 +267,13 @@ if authenticate:
     print("Auth Token:", token)
 print("Non-auth Token:", token)
 `
-	setupAndRunCode(t, rsl, "--token", "sometoken")
+	setupAndRunCode(t, script, "--token", "sometoken")
 	assertOnlyOutput(t, stdOutBuffer, "Non-auth Token: sometoken\n")
 	assertNoErrors(t)
 }
 
 func Test_Args_Constraints_Relational_Bool_OnlyRelevantIfTrue(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	mystring string
 	mybool bool
@@ -282,7 +282,7 @@ args:
 
 print(mystring)
 `
-	setupAndRunCode(t, rsl, "--mystring", "blah")
+	setupAndRunCode(t, script, "--mystring", "blah")
 	assertOnlyOutput(t, stdOutBuffer, "blah\n")
 	assertNoErrors(t)
 }

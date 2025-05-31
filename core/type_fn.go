@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslFn struct {
+type RadFn struct {
 	BuiltInFunc *BuiltInFunc // if this represents a built-in function
 	// below for non-built-in functions
 	Params     []string
@@ -21,25 +21,25 @@ type RslFn struct {
 	Env        *Env      // for closures
 }
 
-func NewLambda(i *Interpreter, lambdaNode *ts.Node) RslFn {
-	paramNodes := i.getChildren(lambdaNode, rsl.F_PARAM)
+func NewLambda(i *Interpreter, lambdaNode *ts.Node) RadFn {
+	paramNodes := i.getChildren(lambdaNode, rl.F_PARAM)
 	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
-	return RslFn{
+	return RadFn{
 		Params:   params,
 		ReprNode: lambdaNode,
-		Exprs:    i.getChildren(lambdaNode, rsl.F_EXPR),
-		Stmt:     i.getChild(lambdaNode, rsl.F_STMT),
+		Exprs:    i.getChildren(lambdaNode, rl.F_EXPR),
+		Stmt:     i.getChild(lambdaNode, rl.F_STMT),
 		Env:      i.env,
 	}
 }
 
-func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RslFn {
-	keywordNode := i.getChild(fnBlockNode, rsl.F_KEYWORD)
-	paramNodes := i.getChildren(fnBlockNode, rsl.F_PARAM)
+func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RadFn {
+	keywordNode := i.getChild(fnBlockNode, rl.F_KEYWORD)
+	paramNodes := i.getChildren(fnBlockNode, rl.F_PARAM)
 	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
-	stmtNodes := i.getChildren(fnBlockNode, rsl.F_STMT)
-	returnNode := i.getChild(fnBlockNode, rsl.F_RETURN_STMT)
-	return RslFn{
+	stmtNodes := i.getChildren(fnBlockNode, rl.F_STMT)
+	returnNode := i.getChild(fnBlockNode, rl.F_RETURN_STMT)
+	return RadFn{
 		Params:     params,
 		ReprNode:   keywordNode,
 		Body:       stmtNodes,
@@ -48,17 +48,17 @@ func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RslFn {
 	}
 }
 
-func NewBuiltIn(inFunc BuiltInFunc) RslFn {
-	return RslFn{
+func NewBuiltIn(inFunc BuiltInFunc) RadFn {
+	return RadFn{
 		BuiltInFunc: &inFunc,
 	}
 }
 
-func (fn RslFn) IsLambda() bool {
+func (fn RadFn) IsLambda() bool {
 	return len(fn.Exprs) > 0 || fn.Stmt != nil
 }
 
-func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
+func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
 	if fn.BuiltInFunc != nil {
 		assertMinNumPosArgs(f, fn.BuiltInFunc)
 		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
@@ -68,7 +68,7 @@ func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
 	}
 
 	i := f.i
-	output := make([]RslValue, 0)
+	output := make([]RadValue, 0)
 	i.runWithChildEnv(func() {
 		args := f.args
 		// custom funcs don't support namedArgs, so we ignore them. Parser doesn't allow them anyway.
@@ -98,7 +98,7 @@ func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
 			}
 
 			if fn.ReturnStmt != nil {
-				valueNodes := i.getChildren(fn.ReturnStmt, rsl.F_VALUE)
+				valueNodes := i.getChildren(fn.ReturnStmt, rl.F_VALUE)
 				for _, valueNode := range valueNodes {
 					val := i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
 					output = append(output, val...) // todo this is probably bad and inconsistent with e.g. switch yields
@@ -109,7 +109,7 @@ func (fn RslFn) Execute(f FuncInvocationArgs) []RslValue {
 	return output
 }
 
-func (fn RslFn) ToString() string {
+func (fn RadFn) ToString() string {
 	// todo can we include var name if possible?
 	return fmt.Sprintf("<fn (%s)>", strings.Join(fn.Params, ", "))
 }

@@ -17,52 +17,52 @@ func AddInternalFuncs() {
 			Name:            INTERNAL_FUNC_GET_STASH_ID,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RslValue {
+			Execute: func(f FuncInvocationArgs) []RadValue {
 				argNode := f.args[0]
 				cmd := argNode.value.RequireStr(f.i, argNode.node).Plain()
 				path, err := exec.LookPath(cmd)
 				if err != nil {
 					// todo return msg
-					return newRslValues(f.i, f.callNode, RSL_NULL)
+					return newRadValues(f.i, f.callNode, RAD_NULL)
 				}
 
-				rslParser, err := rts.NewRslParser()
+				radParser, err := rts.NewRadParser()
 				if err != nil {
 					// todo return msg
-					return newRslValues(f.i, f.callNode, RSL_NULL)
+					return newRadValues(f.i, f.callNode, RAD_NULL)
 				}
 
 				src, err := readSource(path)
 				if err != nil {
 					// todo return msg
-					return newRslValues(f.i, f.callNode, RSL_NULL)
+					return newRadValues(f.i, f.callNode, RAD_NULL)
 				}
-				tree := rslParser.Parse(src)
+				tree := radParser.Parse(src)
 				_ = tree
 
 				fh, ok := tree.FindFileHeader()
 				if !ok {
 					// todo return msg
-					return newRslValues(f.i, f.callNode, RSL_NULL)
+					return newRadValues(f.i, f.callNode, RAD_NULL)
 				}
 
 				stashId, ok := fh.MetadataEntries[MACRO_STASH_ID]
 				if ok {
-					return newRslValues(f.i, f.callNode, stashId)
+					return newRadValues(f.i, f.callNode, stashId)
 				}
 
-				return newRslValues(f.i, f.callNode, RSL_NULL)
+				return newRadValues(f.i, f.callNode, RAD_NULL)
 			},
 		},
 		{
 			Name:            INTERNAL_FUNC_DELETE_STASH,
 			ReturnValues:    ZERO_RETURN_VALS,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RslValue {
+			Execute: func(f FuncInvocationArgs) []RadValue {
 				idArg := f.args[0]
 				id := idArg.value.RequireStr(f.i, idArg.node).Plain()
 				path := RadHomeInst.GetStashForId(id)
@@ -78,9 +78,9 @@ func AddInternalFuncs() {
 			Name:            INTERNAL_FUNC_RUN_CHECK,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RslValue {
+			Execute: func(f FuncInvocationArgs) []RadValue {
 				scriptArg := f.args[0]
 				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
 				result := com.LoadFile(scriptPath)
@@ -101,10 +101,10 @@ func AddInternalFuncs() {
 					f.i.errorf(scriptArg.node, "Failed to run checker: %s", err.Error())
 				}
 
-				rslMap := NewRslMap()
-				diagnostics := NewRslList()
+				radMap := NewRadMap()
+				diagnostics := NewRadList()
 				for _, diag := range checkR.Diagnostics {
-					diagMap := NewRslMap()
+					diagMap := NewRadMap()
 					diagMap.SetPrimitiveStr("src", diag.RangedSrc)
 					diagMap.SetPrimitiveStr("line_src", diag.LineSrc)
 
@@ -117,11 +117,11 @@ func AddInternalFuncs() {
 					if diag.Code != nil {
 						diagMap.SetPrimitiveStr("code", diag.Code.String())
 					}
-					diagnostics.Append(newRslValueMap(diagMap))
+					diagnostics.Append(newRadValueMap(diagMap))
 				}
-				rslMap.SetPrimitiveList("diagnostics", diagnostics)
+				radMap.SetPrimitiveList("diagnostics", diagnostics)
 
-				return newRslValues(f.i, f.callNode, rslMap)
+				return newRadValues(f.i, f.callNode, radMap)
 			},
 		},
 	}

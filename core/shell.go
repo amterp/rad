@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -27,32 +27,32 @@ type shellResult struct {
 }
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
-	leftVarPathNodes := i.getChildren(shellStmtNode, rsl.F_LEFT)
+	leftVarPathNodes := i.getChildren(shellStmtNode, rl.F_LEFT)
 	numExpectedOutputs := len(leftVarPathNodes)
 
 	if numExpectedOutputs > 3 {
 		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
-	shellCmdNode := i.getChild(shellStmtNode, rsl.F_SHELL_CMD)
+	shellCmdNode := i.getChild(shellStmtNode, rl.F_SHELL_CMD)
 	result := i.executeShellCmd(shellCmdNode, len(leftVarPathNodes))
 
 	if numExpectedOutputs >= 1 {
-		i.doVarPathAssign(&leftVarPathNodes[0], newRslValue(i, shellCmdNode, result.exitCode), false)
+		i.doVarPathAssign(&leftVarPathNodes[0], newRadValue(i, shellCmdNode, result.exitCode), false)
 	}
 	if numExpectedOutputs >= 2 {
-		i.doVarPathAssign(&leftVarPathNodes[1], newRslValue(i, shellCmdNode, *result.stdout), false)
+		i.doVarPathAssign(&leftVarPathNodes[1], newRadValue(i, shellCmdNode, *result.stdout), false)
 	}
 	if numExpectedOutputs >= 3 {
-		i.doVarPathAssign(&leftVarPathNodes[2], newRslValue(i, shellCmdNode, *result.stderr), false)
+		i.doVarPathAssign(&leftVarPathNodes[2], newRadValue(i, shellCmdNode, *result.stderr), false)
 	}
 
 	if result.exitCode != 0 {
-		stmtNodes := i.getChildren(shellCmdNode, rsl.F_STMT)
+		stmtNodes := i.getChildren(shellCmdNode, rl.F_STMT)
 		i.runBlock(stmtNodes)
-		responseNode := i.getChild(shellCmdNode, rsl.F_RESPONSE)
+		responseNode := i.getChild(shellCmdNode, rl.F_RESPONSE)
 		if responseNode != nil {
-			if responseNode.Kind() == rsl.K_FAIL {
+			if responseNode.Kind() == rl.K_FAIL {
 				RP.ErrorExitCode("", result.exitCode)
 			}
 		}
@@ -60,12 +60,12 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 }
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs int) shellResult {
-	isQuiet := i.getChild(shellCmdNode, rsl.F_QUIET_MOD) != nil
-	isConfirm := i.getChild(shellCmdNode, rsl.F_CONFIRM_MOD) != nil
+	isQuiet := i.getChild(shellCmdNode, rl.F_QUIET_MOD) != nil
+	isConfirm := i.getChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
-	cmdNode := i.getChild(shellCmdNode, rsl.F_COMMAND)
+	cmdNode := i.getChild(shellCmdNode, rl.F_COMMAND)
 	cmdStr := i.evaluate(cmdNode, 1)[0].
-		RequireType(i, cmdNode, "Shell commands must be strings", RslStringT).
+		RequireType(i, cmdNode, "Shell commands must be strings", RadStringT).
 		RequireStr(i, shellCmdNode)
 
 	if FlagConfirmShellCommands.Value || isConfirm {
@@ -158,7 +158,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 }
 
 func resolveResult(shellNode *ts.Node, numExpectedOutputs int, stdout, stderr bytes.Buffer, exitCode int) shellResult {
-	isCritical := shellNode.Kind() == rsl.K_CRITICAL_SHELL_CMD
+	isCritical := shellNode.Kind() == rl.K_CRITICAL_SHELL_CMD
 	if isCritical && exitCode != 0 {
 		RP.ErrorCodeExitf(exitCode, stderr.String())
 	}

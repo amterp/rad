@@ -45,7 +45,7 @@ func NewInitializeResult() InitializeResult {
 		},
 		ServerInfo: ServerInfo{
 			Name:    "RLS",
-			Version: com.RslVersion,
+			Version: com.RlsVersion,
 		},
 	}
 }

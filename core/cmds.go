@@ -71,7 +71,7 @@ func getEmbeddedSrc(name string) string {
 
 func getFileHeaderLine(fileName string) string {
 	src := getEmbeddedSrc(fileName) // todo we're reading it *twice* per command, a little wasteful
-	parser, err := rts.NewRslParser()
+	parser, err := rts.NewRadParser()
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create parser for embedded file %s: %s", fileName, err))
 	}

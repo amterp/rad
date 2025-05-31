@@ -10,7 +10,7 @@ func (t *Trie) TraverseTrie(data interface{}) {
 	jsonRoot := lo.Values(t.root.children)[0]
 	captures := t.traverse(nil, data, jsonRoot)
 	for varName, values := range captures.captures {
-		t.i.env.SetVar(varName, newRslValue(t.i, t.radKeywordNode, values))
+		t.i.env.SetVar(varName, newRadValue(t.i, t.radKeywordNode, values))
 		// todo
 		//  - we *always* wrap in an array. some way to encode "expect non-array"?
 	}

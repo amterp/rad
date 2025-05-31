@@ -3,17 +3,17 @@ package testing
 import "testing"
 
 func Test_Pass_Root(t *testing.T) {
-	rsl := `
+	script := `
 pass
 print("Made it!")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Made it!\n")
 	assertNoErrors(t)
 }
 
 func Test_Pass_IfStmt(t *testing.T) {
-	rsl := `
+	script := `
 if true:
 	pass
 else:
@@ -26,19 +26,19 @@ else:
 
 print("Made it!")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Made it!\n")
 	assertNoErrors(t)
 }
 
 func Test_Pass_ForLoop(t *testing.T) {
-	rsl := `
+	script := `
 for i in range(5):
 	pass
 
 print("Made it!")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "Made it!\n")
 	assertNoErrors(t)
 }

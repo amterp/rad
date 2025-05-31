@@ -5,11 +5,11 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslParser struct {
+type RadParser struct {
 	parser *ts.Parser
 }
 
-func NewRslParser() (rts *RslParser, err error) {
+func NewRadParser() (rts *RadParser, err error) {
 	parser := ts.NewParser()
 
 	err = parser.SetLanguage(ts.NewLanguage(rsl.Language()))
@@ -17,16 +17,16 @@ func NewRslParser() (rts *RslParser, err error) {
 		return nil, err
 	}
 
-	return &RslParser{
+	return &RadParser{
 		parser: parser,
 	}, nil
 }
 
-func (rts *RslParser) Close() {
+func (rts *RadParser) Close() {
 	rts.parser.Close()
 }
 
-func (rts *RslParser) Parse(src string) *RslTree {
+func (rts *RadParser) Parse(src string) *RadTree {
 	tree := rts.parser.Parse([]byte(src), nil)
-	return newRslTree(rts.parser, tree, src)
+	return newRadTree(rts.parser, tree, src)
 }

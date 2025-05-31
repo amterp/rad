@@ -6,47 +6,47 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslTypeEnum int
+type RadTypeEnum int
 
 const (
-	RslStringT RslTypeEnum = iota
-	RslIntT
-	RslFloatT
-	RslBoolT
-	RslListT
-	RslMapT
-	RslFnT
-	RslNullT
+	RadStringT RadTypeEnum = iota
+	RadIntT
+	RadFloatT
+	RadBoolT
+	RadListT
+	RadMapT
+	RadFnT
+	RadNullT
 )
 
-func (r RslTypeEnum) AsString() string {
+func (r RadTypeEnum) AsString() string {
 	switch r {
-	case RslStringT:
+	case RadStringT:
 		return "string"
-	case RslIntT:
+	case RadIntT:
 		return "int"
-	case RslFloatT:
+	case RadFloatT:
 		return "float"
-	case RslBoolT:
+	case RadBoolT:
 		return "bool"
-	case RslListT:
+	case RadListT:
 		return "list"
-	case RslMapT:
+	case RadMapT:
 		return "map"
-	case RslFnT:
+	case RadFnT:
 		return "function"
-	case RslNullT:
+	case RadNullT:
 		return "null"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", r))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", r))
 		panic(UNREACHABLE)
 	}
 }
 
-type RslArgTypeT int
+type RadArgTypeT int
 
 const (
-	ArgStringT RslArgTypeT = iota
+	ArgStringT RadArgTypeT = iota
 	ArgIntT
 	ArgFloatT
 	ArgBoolT
@@ -56,7 +56,7 @@ const (
 	ArgBoolArrayT
 )
 
-func ToRslArgTypeT(str string) RslArgTypeT {
+func ToRadArgTypeT(str string) RadArgTypeT {
 	switch str {
 	case "string":
 		return ArgStringT
@@ -75,12 +75,12 @@ func ToRslArgTypeT(str string) RslArgTypeT {
 	case "bool[]":
 		return ArgBoolArrayT
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", str))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", str))
 		panic(UNREACHABLE)
 	}
 }
 
-func (r *RslArgTypeT) AsString() string {
+func (r *RadArgTypeT) AsString() string {
 	switch *r {
 	case ArgStringT:
 		return "string"
@@ -99,7 +99,7 @@ func (r *RslArgTypeT) AsString() string {
 	case ArgBoolArrayT:
 		return "bool list"
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled RSL type: %v", *r))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", *r))
 		panic(UNREACHABLE)
 	}
 }
@@ -114,12 +114,12 @@ const (
 type RadBlockType string
 
 const (
-	Rad     RadBlockType = "rad"
-	Request RadBlockType = "request"
-	Display RadBlockType = "display"
+	RadBlock     RadBlockType = "rad"
+	RequestBlock RadBlockType = "request"
+	DisplayBlock RadBlockType = "display"
 )
 
-type Lambda struct { // todo delete, replace with RslFn
+type Lambda struct { // todo delete, replace with RadFn
 	Node     *ts.Node
 	Args     []string
 	ExprNode *ts.Node

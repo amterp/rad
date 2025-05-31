@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestAlgoV2_RepeatsColumnValuesToMatchNumRows(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 country = json.people.country
@@ -14,7 +14,7 @@ rad url:
     fields name, age, country
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/parallel_arrays.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/parallel_arrays.json", "--color=never")
 	expected := `name   age  country 
 Alice  25   US       
 Bob    30   US       
@@ -25,7 +25,7 @@ Bob    30   US
 }
 
 func TestAlgoV2_CanExtractFromArrayWithIndex(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Name = json.*
@@ -36,7 +36,7 @@ rad url:
     fields Name, FirstId, SecondId
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_wildcard.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/array_wildcard.json", "--color=never")
 	expected := `Name     FirstId  SecondId 
 Alice    1        2         
 Bob      4        5         
@@ -48,7 +48,7 @@ Charlie  9        10
 }
 
 func TestAlgoV2_CanChainArrayLookups(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Nums = json[][][][1]
@@ -58,7 +58,7 @@ request url:
 print(Nums)
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/deeply_nested_arrays.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/deeply_nested_arrays.json", "--color=never")
 	expected := `[ 2, 4, 6, 8 ]
 `
 	assertOutput(t, stdOutBuffer, expected)

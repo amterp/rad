@@ -15,7 +15,7 @@ import (
 
 const scriptGlobalFlagHelp = `Global flags:
   -h, --help            Print usage string.
-  -d, --debug           Enables debug output. Intended for RSL script developers.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
@@ -24,7 +24,7 @@ const scriptGlobalFlagHelp = `Global flags:
 
 const allGlobalFlagHelp = `Global flags:
   -h, --help                   Print usage string.
-  -d, --debug                  Enables debug output. Intended for RSL script developers.
+  -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet                  Suppresses some output.
@@ -44,7 +44,7 @@ Usage:
   rad [script path | command] [flags]
 
 Commands:
-  new           Sets up a new RSL script.
+  new           Sets up a new Rad script.
   docs          Opens rad's documentation website.
   check         Validates & lints Rad scripts.
   home          Prints out rad's home directory.
@@ -52,8 +52,8 @@ Commands:
   stash         Interacts with script stashes.
 
 To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + allGlobalFlagHelp + `
-To execute an RSL script:
-  rad path/to/script.rsl [args]
+To execute a Rad script:
+  rad path/to/script.rad [args]
 
 To execute a command:
   rad <command> [args]
@@ -104,15 +104,15 @@ func newRunnerInputInput() core.RunnerInput {
 }
 
 type TestParams struct {
-	rsl        string
+	script     string
 	stdinInput string // todo not implemented
 	args       []string
 }
 
-func NewTestParams(rsl string, args ...string) *TestParams {
+func NewTestParams(script string, args ...string) *TestParams {
 	return &TestParams{
-		rsl:  rsl,
-		args: args,
+		script: script,
+		args:   args,
 	}
 }
 
@@ -121,8 +121,8 @@ func (tp *TestParams) StdinInput(stdinInput string) *TestParams {
 	return tp
 }
 
-func setupAndRunCode(t *testing.T, rsl string, args ...string) {
-	setupAndRun(t, NewTestParams(rsl, args...))
+func setupAndRunCode(t *testing.T, script string, args ...string) {
+	setupAndRun(t, NewTestParams(script, args...))
 }
 
 func setupAndRunArgs(t *testing.T, args ...string) {
@@ -136,8 +136,8 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	core.IsTest = true
 
 	args := tp.args
-	if tp.rsl != "" {
-		stdInBuffer.WriteString(tp.rsl)
+	if tp.script != "" {
+		stdInBuffer.WriteString(tp.script)
 		args = append([]string{"-"}, tp.args...)
 	}
 	runner := setupRunner(t, args...)

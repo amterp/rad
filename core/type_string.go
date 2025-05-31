@@ -4,46 +4,46 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/color"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var EMPTY_STR = NewRslString("")
+var EMPTY_STR = NewRadString("")
 
-type RslString struct {
-	Segments []rslStringSegment
+type RadString struct {
+	Segments []radStringSegment
 	// todo offer isRegex funcs which will return true if all segments are regexes, for example?
 	//  concat between non-regex and regex give non-regex? or regex?
 }
 
-type rslStringSegment struct {
+type radStringSegment struct {
 	String     string
-	Attributes []RslTextAttr
+	Attributes []RadTextAttr
 	Hyperlink  *string
 	Rgb        *com.Rgb
 }
 
-// todo should these methods be returning *RslString?
-func NewRslString(str string) RslString {
+// todo should these methods be returning *RadString?
+func NewRadString(str string) RadString {
 	if str == "" {
-		return RslString{Segments: []rslStringSegment{}}
+		return RadString{Segments: []radStringSegment{}}
 	}
-	return RslString{Segments: []rslStringSegment{{String: str, Attributes: make([]RslTextAttr, 0)}}}
+	return RadString{Segments: []radStringSegment{{String: str, Attributes: make([]RadTextAttr, 0)}}}
 }
 
-func newRslStringWithAttr(str string, segment rslStringSegment) RslString {
+func newRadStringWithAttr(str string, segment radStringSegment) RadString {
 	// todo the fact that this copies without me explicitly telling it probably means we're being wasteful
 	segment.String = str
-	return RslString{Segments: []rslStringSegment{segment}}
+	return RadString{Segments: []radStringSegment{segment}}
 }
 
 // Copies only the attributes of the first segment. Maybe could change somehow?
-func (s RslString) CopyAttrTo(otherStr string) RslString {
+func (s RadString) CopyAttrTo(otherStr string) RadString {
 	if len(s.Segments) == 0 {
-		return NewRslString(otherStr)
+		return NewRadString(otherStr)
 	}
 
 	cpy := s.DeepCopy()
@@ -53,7 +53,7 @@ func (s RslString) CopyAttrTo(otherStr string) RslString {
 }
 
 // does not apply any attributes
-func (s RslString) Plain() string {
+func (s RadString) Plain() string {
 	// todo can lazily compute and cache
 	var result string
 	for _, segment := range s.Segments {
@@ -63,7 +63,7 @@ func (s RslString) Plain() string {
 }
 
 // applies all the attributes
-func (s RslString) String() string {
+func (s RadString) String() string {
 	builder := strings.Builder{}
 	for _, segment := range s.Segments {
 		builder.WriteString(s.applyAttributes(segment.String, segment))
@@ -71,36 +71,36 @@ func (s RslString) String() string {
 	return builder.String()
 }
 
-func (s *RslString) ToRuneList() *RslList {
-	result := NewRslList()
+func (s *RadString) ToRuneList() *RadList {
+	result := NewRadList()
 	for i := int64(0); i < s.Len(); i++ {
-		result.Append(newRslValueRslStr(s.IndexAt(i)))
+		result.Append(newRadValueRadStr(s.IndexAt(i)))
 	}
 	return result
 }
 
-func (s *RslString) Concat(other RslString) RslString {
-	return RslString{Segments: append(s.Segments, other.Segments...)}
+func (s *RadString) Concat(other RadString) RadString {
+	return RadString{Segments: append(s.Segments, other.Segments...)}
 }
 
-func (s *RslString) ConcatStr(other string) RslString {
-	return s.Concat(NewRslString(other))
+func (s *RadString) ConcatStr(other string) RadString {
+	return s.Concat(NewRadString(other))
 }
 
-func (s *RslString) Equals(other RslString) bool {
+func (s *RadString) Equals(other RadString) bool {
 	return s.Plain() == other.Plain()
 }
 
-func (s RslString) Len() int64 {
+func (s RadString) Len() int64 {
 	// todo also cachable
 	return int64(com.StrLen(s.Plain()))
 }
 
-func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {
-	if idxNode.Kind() == rsl.K_SLICE {
+func (s *RadString) Index(i *Interpreter, idxNode *ts.Node) RadString {
+	if idxNode.Kind() == rl.K_SLICE {
 		// todo should maintain attr info
 		start, end := ResolveSliceStartEnd(i, idxNode, s.Len())
-		return NewRslString(s.Plain()[start:end])
+		return NewRadString(s.Plain()[start:end])
 	}
 
 	idxVal := i.evaluate(idxNode, 1)[0]
@@ -114,14 +114,14 @@ func (s *RslString) Index(i *Interpreter, idxNode *ts.Node) RslString {
 }
 
 // assumes idx is valid for this string
-func (s *RslString) IndexAt(idx int64) RslString {
+func (s *RadString) IndexAt(idx int64) RadString {
 	cumLen := 0
 	for _, segment := range s.Segments {
 		nextSegmentLen := len(segment.String)
 		if cumLen+nextSegmentLen > int(idx) {
 			// rune array conversion required to handle multibyte characters e.g. emojis
 			char := []rune(s.Plain())[idx] // todo inefficient, should just look up in segment
-			return newRslStringWithAttr(string(char), segment)
+			return newRadStringWithAttr(string(char), segment)
 		}
 		cumLen += +nextSegmentLen
 	}
@@ -129,7 +129,7 @@ func (s *RslString) IndexAt(idx int64) RslString {
 	panic(UNREACHABLE)
 }
 
-func (s *RslString) Compare(other RslString) int {
+func (s *RadString) Compare(other RadString) int {
 	sVal := s.Plain()
 	oVal := other.Plain()
 	if sVal < oVal {
@@ -141,14 +141,14 @@ func (s *RslString) Compare(other RslString) int {
 	return 0
 }
 
-func (s *RslString) DeepCopy() RslString {
+func (s *RadString) DeepCopy() RadString {
 	cpy := *s
-	cpy.Segments = make([]rslStringSegment, len(s.Segments))
+	cpy.Segments = make([]radStringSegment, len(s.Segments))
 	copy(cpy.Segments, s.Segments)
 	return cpy
 }
 
-func (s *RslString) CopyWithAttr(attr RslTextAttr) RslString {
+func (s *RadString) CopyWithAttr(attr RadTextAttr) RadString {
 	cpy := s.DeepCopy()
 	for i := range cpy.Segments {
 		cpy.Segments[i].Attributes = append(cpy.Segments[i].Attributes, attr)
@@ -156,7 +156,7 @@ func (s *RslString) CopyWithAttr(attr RslTextAttr) RslString {
 	return cpy
 }
 
-func (s *RslString) Hyperlink(link RslString) RslString {
+func (s *RadString) Hyperlink(link RadString) RadString {
 	cpy := s.DeepCopy()
 	for i := range cpy.Segments {
 		str := link.Plain()
@@ -165,7 +165,7 @@ func (s *RslString) Hyperlink(link RslString) RslString {
 	return cpy
 }
 
-func (s RslString) Upper() RslString {
+func (s RadString) Upper() RadString {
 	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToUpper(segment.String)
@@ -173,7 +173,7 @@ func (s RslString) Upper() RslString {
 	return cpy
 }
 
-func (s RslString) Lower() RslString {
+func (s RadString) Lower() RadString {
 	cpy := s.DeepCopy()
 	for i, segment := range cpy.Segments {
 		cpy.Segments[i].String = strings.ToLower(segment.String)
@@ -181,53 +181,53 @@ func (s RslString) Lower() RslString {
 	return cpy
 }
 
-func (s *RslString) SetAttr(attr RslTextAttr) {
+func (s *RadString) SetAttr(attr RadTextAttr) {
 	for i := range s.Segments {
 		s.Segments[i].Attributes = append(s.Segments[i].Attributes, attr)
 	}
 }
 
-func (s *RslString) SetSegmentsHyperlink(link RslString) {
+func (s *RadString) SetSegmentsHyperlink(link RadString) {
 	for i := range s.Segments {
 		str := link.Plain()
 		s.Segments[i].Hyperlink = &str
 	}
 }
 
-func (s *RslString) Trim(chars string) RslString {
+func (s *RadString) Trim(chars string) RadString {
 	// todo should maintain attr info
-	return NewRslString(strings.Trim(s.Plain(), chars))
+	return NewRadString(strings.Trim(s.Plain(), chars))
 }
 
-func (s *RslString) TrimPrefix(prefix string) RslString {
+func (s *RadString) TrimPrefix(prefix string) RadString {
 	// todo should maintain attr info
-	return NewRslString(strings.TrimLeft(s.Plain(), prefix))
+	return NewRadString(strings.TrimLeft(s.Plain(), prefix))
 }
 
-func (s *RslString) TrimSuffix(suffix string) RslString {
+func (s *RadString) TrimSuffix(suffix string) RadString {
 	// todo should maintain attr info
-	return NewRslString(strings.TrimRight(s.Plain(), suffix))
+	return NewRadString(strings.TrimRight(s.Plain(), suffix))
 }
 
-func (s *RslString) Reverse() RslString {
+func (s *RadString) Reverse() RadString {
 	// todo should maintain attr info
-	return NewRslString(com.Reverse(s.Plain()))
+	return NewRadString(com.Reverse(s.Plain()))
 }
 
-func (s RslString) SetRgb(red int, green int, blue int) {
+func (s RadString) SetRgb(red int, green int, blue int) {
 	rgb := com.NewRgb(red, green, blue)
 	for i := range s.Segments {
 		s.Segments[i].Rgb = &rgb
 	}
 }
 
-func (s RslString) SetRgb64(red int64, green int64, blue int64) {
+func (s RadString) SetRgb64(red int64, green int64, blue int64) {
 	s.SetRgb(int(red), int(green), int(blue))
 }
 
-func (s RslString) Repeat(multiplier int64) RslString {
+func (s RadString) Repeat(multiplier int64) RadString {
 	if multiplier <= 0 {
-		return NewRslString("")
+		return NewRadString("")
 	}
 
 	cpy := s.DeepCopy()
@@ -237,7 +237,7 @@ func (s RslString) Repeat(multiplier int64) RslString {
 	return cpy
 }
 
-func (s *RslString) applyAttributes(str string, segment rslStringSegment) string {
+func (s *RadString) applyAttributes(str string, segment radStringSegment) string {
 	if len(segment.Attributes) == 0 && segment.Hyperlink == nil && segment.Rgb == nil {
 		return str
 	}

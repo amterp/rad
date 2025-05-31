@@ -32,7 +32,7 @@ type TblWriter struct {
 	writer      io.Writer
 	tbl         *tblwriter.Table
 	headers     []string
-	rows        [][]RslString
+	rows        [][]RadString
 	colToColors map[string][]radColorMod
 	numColumns  int
 }
@@ -51,7 +51,7 @@ func (w *TblWriter) SetHeader(headers []string) {
 	w.numColumns = len(headers)
 }
 
-func (w *TblWriter) Append(row []RslString) {
+func (w *TblWriter) Append(row []RadString) {
 	w.rows = append(w.rows, row)
 	if w.numColumns < len(row) {
 		w.numColumns = len(row)
@@ -197,7 +197,7 @@ func (w *TblWriter) Render() {
 	}
 
 	for _, row := range rows {
-		rowStr := lo.Map(row, func(cell RslString, _ int) string {
+		rowStr := lo.Map(row, func(cell RadString, _ int) string {
 			return cell.String()
 		})
 		w.tbl.Append(rowStr)

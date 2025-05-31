@@ -3,28 +3,28 @@ package testing
 import "testing"
 
 func Test_Func_Max_Ints(t *testing.T) {
-	rsl := `
+	script := `
 print(max([1, 2, 3]))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_Max_Mix(t *testing.T) {
-	rsl := `
+	script := `
 print(max([1, 2.2, 3]))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
 }
 
 func Test_Func_Max_ErrorsForNonNumElements(t *testing.T) {
-	rsl := `
+	script := `
 print(max([1, "ab", 3]))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:11
 
   print(max([1, "ab", 3]))
@@ -34,10 +34,10 @@ print(max([1, "ab", 3]))
 }
 
 func Test_Func_Max_Negative(t *testing.T) {
-	rsl := `
+	script := `
 print(max([-1, -2.2, -3]))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "-1\n")
 	assertNoErrors(t)
 }

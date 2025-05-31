@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -26,32 +26,32 @@ type JsonPathSegment struct {
 
 type JsonPathSegmentIdx struct {
 	IdxNode *ts.Node  // e.g. json.names[]
-	Idx     *RslValue // e.g. json.names[0]
+	Idx     *RadValue // e.g. json.names[0]
 }
 
 func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	indexingNodes := i.getChildren(leftNode, rsl.F_INDEXING)
+	indexingNodes := i.getChildren(leftNode, rl.F_INDEXING)
 	if len(indexingNodes) != 0 {
 		i.errorf(leftNode, "Json paths must be defined to plain identifiers")
 	}
-	leftIdentifierNode := i.getChild(leftNode, rsl.F_ROOT)
+	leftIdentifierNode := i.getChild(leftNode, rl.F_ROOT)
 
 	var segments []JsonPathSegment
 
-	segmentNodes := i.getChildren(jsonPathNode, rsl.F_SEGMENT)
+	segmentNodes := i.getChildren(jsonPathNode, rl.F_SEGMENT)
 	for _, segmentNode := range segmentNodes {
-		identifierNode := i.getChild(&segmentNode, rsl.F_KEY)
+		identifierNode := i.getChild(&segmentNode, rl.F_KEY)
 		identifierStr := i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
-		indexNodes := i.getChildren(&segmentNode, rsl.F_INDEX)
+		indexNodes := i.getChildren(&segmentNode, rl.F_INDEX)
 
 		var idxSegments []JsonPathSegmentIdx
 		for _, indexNode := range indexNodes {
-			idxExprNode := i.getChild(&indexNode, rsl.F_EXPR)
+			idxExprNode := i.getChild(&indexNode, rl.F_EXPR)
 			if idxExprNode == nil {
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
 			} else {
 				idx := i.evaluate(idxExprNode, 1)[0]
-				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), RslIntT)
+				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), RadIntT)
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode, Idx: &idx})
 			}
 		}

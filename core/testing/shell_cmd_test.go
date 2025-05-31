@@ -3,11 +3,11 @@ package testing
 import "testing"
 
 func Test_ShellCmd_CanEcho(t *testing.T) {
-	rsl := `
+	script := `
 $!"echo hi"
 print('hi2')
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expectedStdout := `hi
 hi2
 `

@@ -15,9 +15,9 @@ var FuncSeedRandom = BuiltInFunc{
 	Name:            FUNC_SEED_RANDOM,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		arg := f.args[0]
 		asInt := arg.value.RequireInt(f.i, arg.node)
 		RNG = rand.New(rand.NewSource(asInt))
@@ -31,8 +31,8 @@ var FuncRand = BuiltInFunc{
 	MinPosArgCount:  0,
 	PosArgValidator: NO_POS_ARGS,
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
-		return newRslValues(f.i, f.callNode, RNG.Float64())
+	Execute: func(f FuncInvocationArgs) []RadValue {
+		return newRadValues(f.i, f.callNode, RNG.Float64())
 	},
 }
 
@@ -40,9 +40,9 @@ var FuncRandInt = BuiltInFunc{
 	Name:            FUNC_RAND_INT,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT}, {RslIntT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}, {RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		var min, max int64
 
 		if len(f.args) == 1 {
@@ -63,6 +63,6 @@ var FuncRandInt = BuiltInFunc{
 		}
 
 		n := max - min
-		return newRslValues(f.i, f.callNode, min+RNG.Int63n(n))
+		return newRadValues(f.i, f.callNode, min+RNG.Int63n(n))
 	},
 }

@@ -11,7 +11,7 @@ import (
 var StdErr io.Writer = os.Stderr
 
 func main() {
-	fmt.Fprintln(StdErr, "Spinning up RSL LSP server...")
+	fmt.Fprintln(StdErr, "Spinning up Rad LSP server...")
 
 	fmt.Fprintln(StdErr, "Initializing logger...")
 	log.InitLogger(StdErr)

@@ -3,10 +3,10 @@ package testing
 import "testing"
 
 func Test_Func_GetArgs(t *testing.T) {
-	rsl := `
+	script := `
 print(get_args())
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "--color=never" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

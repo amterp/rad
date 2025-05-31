@@ -122,7 +122,7 @@ For example, if you wanted to mock a response from GitHub's API, you could defin
 And then define it as the mock response with the following example invocation:
 
 ```shell
-rad commits.rsl --mock-response "api.github.*:commits.json"
+rad commits.rl --mock-response "api.github.*:commits.json"
 ```
 
 Before executing the HTTP request, Rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,

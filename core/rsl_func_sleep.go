@@ -13,11 +13,11 @@ var FuncSleep = BuiltInFunc{
 	Name:            FUNC_SLEEP,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT, RslFloatT, RslStringT}}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgTitle: {RslStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadFloatT, RadStringT}}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgTitle: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		arg := f.args[0]
 		switch coerced := arg.value.Val.(type) {
 		case int64:
@@ -26,7 +26,7 @@ var FuncSleep = BuiltInFunc{
 		case float64:
 			sleep(f.i, arg.node, time.Duration(coerced*1000)*time.Millisecond, f.namedArgs)
 			return EMPTY
-		case RslString:
+		case RadString:
 			durStr := strings.Replace(coerced.Plain(), " ", "", -1)
 
 			floatVal, err := rts.ParseFloat(durStr)

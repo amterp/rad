@@ -12,9 +12,9 @@ var FuncReplace = BuiltInFunc{
 	Name:            FUNC_REPLACE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  3,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT}, {RslStringT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}, {RadStringT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		oldStringArg := f.args[0]
 		regexForOldArg := f.args[1]
 		regexForNewArg := f.args[2]
@@ -46,6 +46,6 @@ var FuncReplace = BuiltInFunc{
 
 		newString := re.ReplaceAllStringFunc(oldString, replacementFunc)
 
-		return newRslValues(f.i, f.callNode, newString)
+		return newRadValues(f.i, f.callNode, newString)
 	},
 }

@@ -3,11 +3,11 @@ package testing
 import "testing"
 
 func Test_UpperLower(t *testing.T) {
-	rsl := `
+	script := `
 a = "aLiCe"
 print(upper(a))
 print(lower(a))`
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `ALICE
 alice
 `

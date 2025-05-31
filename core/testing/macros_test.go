@@ -5,14 +5,14 @@ import (
 )
 
 func Test_Macros_ReadingStashId(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 Many lines!
 @stash_id = abracadabra
 ---
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, script, "--color=never", "-h")
 	expected := `Docs here.
 Many lines!
 
@@ -24,14 +24,14 @@ Usage:
 }
 
 func Test_Macros_ReadingStashIdWithSpace(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 Many lines!
 @stash_id = abracadabra bloop
 ---
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, script, "--color=never", "-h")
 	expected := `Docs here.
 Many lines!
 
@@ -43,7 +43,7 @@ Usage:
 }
 
 func Test_Macros_BecomesPartOfContentsIfFollowedByMoreDoc(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 Many lines!
@@ -51,7 +51,7 @@ Many lines!
 Another line!
 ---
 `
-	setupAndRunCode(t, rsl, "--color=never", "-h")
+	setupAndRunCode(t, script, "--color=never", "-h")
 	expected := `Docs here.
 Many lines!
 @stash_id = abracadabra
@@ -65,14 +65,14 @@ Usage:
 }
 
 func Test_Macros_HelpDisabledIfGlobalFlagsDisabled(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 @enable_global_flags = 0
 ---
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--help")
+	setupAndRunCode(t, script, "--help")
 	expected := `hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -80,7 +80,7 @@ print("hi")
 }
 
 func Test_Macros_DisablingGlobalFlagsLeadsToComplaintsAboutThemIfSpecified(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 @enable_global_flags = 0
@@ -88,7 +88,7 @@ Docs here.
 debug("hi1")
 print("hi2")
 `
-	setupAndRunCode(t, rsl, "--debug")
+	setupAndRunCode(t, script, "--debug")
 	expected := `unknown flag: --debug
 
 Docs here.
@@ -100,7 +100,7 @@ Usage:
 }
 
 func Test_Macros_ErrorsIfArgsBlockDisabledButSpecified(t *testing.T) {
-	rsl := `
+	script := `
 ---
 Docs here.
 @enable_args_block = 0
@@ -109,25 +109,25 @@ args:
 	name string
 print("hi")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, script)
 	expected := `Macro 'enable_args_block' disabled, but args block found.
 `
 	assertError(t, 1, expected)
 }
 
 func Test_Macros_DoesPassthroughOfHelp(t *testing.T) {
-	rsl := `
+	script := `
 ---
 @enable_args_block = 0
 @enable_global_flags = 0
 ---
 
 my_args = get_args()[1:].join(" ")
-quiet $!'./rsl_scripts/hello.rsl {my_args}'
+quiet $!'./rad_scripts/hello.rad {my_args}'
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  hello.rsl <name>
+  hello.rad <name>
 
 Script args:
       --name string   

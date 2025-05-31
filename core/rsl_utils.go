@@ -31,9 +31,9 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 		} else {
 			return coerced
 		}
-	case RslString:
+	case RadString:
 		return ToPrintableQuoteStr(coerced.String(), quoteStrings)
-	case RslValue:
+	case RadValue:
 		return ToPrintableQuoteStr(coerced.Val, quoteStrings)
 	case bool:
 		return strconv.FormatBool(coerced)
@@ -48,17 +48,17 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 			out += ToPrintableQuoteStr(elem, quoteStrings)
 		}
 		return out + "]"
-	case *RslList:
+	case *RadList:
 		return coerced.ToString()
-	case RslList:
+	case RadList:
 		return coerced.ToString()
-	case *RslMap:
+	case *RadMap:
 		return coerced.ToString()
-	case RslMap:
+	case RadMap:
 		return coerced.ToString()
-	case RslFn:
+	case RadFn:
 		return coerced.ToString()
-	case RslNull:
+	case RadNull:
 		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for printable: %T", val))
@@ -68,23 +68,23 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 
 func TypeAsString(val interface{}) string {
 	switch coerced := val.(type) {
-	case RslValue:
+	case RadValue:
 		return TypeAsString(coerced.Val)
 	case int64:
 		return "int"
 	case float64:
 		return "float"
-	case RslString, string:
+	case RadString, string:
 		return "string"
 	case bool:
 		return "bool"
-	case []interface{}, *[]interface{}, RslList, *RslList:
+	case []interface{}, *[]interface{}, RadList, *RadList:
 		return "list"
-	case RslMap, *RslMap:
+	case RadMap, *RadMap:
 		return "map"
-	case RslFn:
+	case RadFn:
 		return "function"
-	case RslNull:
+	case RadNull:
 		return "null"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TypeAsString: %T\n%s\n", val, debug.Stack()))
@@ -92,92 +92,92 @@ func TypeAsString(val interface{}) string {
 	}
 }
 
-// Convert a json interface{} into native RSL types
-func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr string) (RslValue, error) {
+// Convert a json interface{} into native Rad types
+func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr string) (RadValue, error) {
 	var m interface{}
 	decoder := json.NewDecoder(strings.NewReader(maybeJsonStr))
 	decoder.UseNumber()
 	err := decoder.Decode(&m)
 	if err != nil {
-		return newRslValue(i, node, maybeJsonStr), err
+		return newRadValue(i, node, maybeJsonStr), err
 	}
 	return ConvertToNativeTypes(i, node, m), nil
 }
 
 // it was originally implemented because we might capture JSON as a list of unhandled types, but
-// now we should be able to capture json and convert it entirely to native RSL types up front
-func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RslValue {
+// now we should be able to capture json and convert it entirely to native Rad types up front
+func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RadValue {
 	switch coerced := val.(type) {
 	// strictly speaking, ints are unnecessary as Go unmarshalls them either as float64 or json.Number
-	case RslString, string, int64, float64, bool:
-		return newRslValue(i, node, coerced)
+	case RadString, string, int64, float64, bool:
+		return newRadValue(i, node, coerced)
 	case json.Number:
 		s := string(coerced)
 		if !strings.Contains(s, ".") {
 			// try parsing as int64 (for better precision preservation)
 			if iVal, err := coerced.Int64(); err == nil {
-				return newRslValue(i, node, iVal)
+				return newRadValue(i, node, iVal)
 			}
 		}
 		// fallback: treat as float64
 		if fVal, err := coerced.Float64(); err == nil {
-			return newRslValue(i, node, fVal)
+			return newRadValue(i, node, fVal)
 		}
 		i.errorf(node, fmt.Sprintf("Invalid number: %v", s))
 		panic("UNREACHABLE")
 	case []interface{}:
-		list := NewRslList()
+		list := NewRadList()
 		for _, val := range coerced {
 			list.Append(ConvertToNativeTypes(i, node, val))
 		}
-		return newRslValue(i, node, list)
+		return newRadValue(i, node, list)
 	case map[string]interface{}:
-		m := NewRslMap()
+		m := NewRadMap()
 		sortedKeys := com.SortedKeys(coerced)
 		for _, key := range sortedKeys {
-			m.Set(newRslValue(i, node, key), ConvertToNativeTypes(i, node, coerced[key]))
+			m.Set(newRadValue(i, node, key), ConvertToNativeTypes(i, node, coerced[key]))
 		}
-		return newRslValue(i, node, m)
+		return newRadValue(i, node, m)
 	case nil:
-		return newRslValue(i, node, nil)
+		return newRadValue(i, node, nil)
 	default:
 		i.errorf(node, fmt.Sprintf("Unhandled type in array: %T", val))
 		panic(UNREACHABLE)
 	}
 }
 
-func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{}) []RslValue {
-	output := make([]RslValue, len(vals))
+func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{}) []RadValue {
+	output := make([]RadValue, len(vals))
 	for idx, val := range vals {
 		output[idx] = ConvertToNativeTypes(i, node, val)
 	}
 	return output
 }
 
-// converts an RSL data structure to a JSON-schema-adhering structure.
-func RslToJsonType(arg RslValue) interface{} {
+// converts an Rad data structure to a JSON-schema-adhering structure.
+func RadToJsonType(arg RadValue) interface{} {
 	switch coerced := arg.Val.(type) {
-	case RslString:
+	case RadString:
 		return coerced.Plain()
 	case int64, float64, bool:
 		return coerced
-	case *RslList:
+	case *RadList:
 		slice := make([]interface{}, 0)
 		for _, elem := range coerced.Values {
-			slice = append(slice, RslToJsonType(elem))
+			slice = append(slice, RadToJsonType(elem))
 		}
 		return slice
-	case *RslMap:
+	case *RadMap:
 		mapping := make(map[string]interface{})
 		for _, key := range coerced.Keys() {
 			value, _ := coerced.Get(key)
-			mapping[ToPrintableQuoteStr(key, false)] = RslToJsonType(value)
+			mapping[ToPrintableQuoteStr(key, false)] = RadToJsonType(value)
 		}
 		return mapping
-	case RslNull:
+	case RadNull:
 		return nil
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RslToJsonType: %T\n%s\n", arg.Val, debug.Stack()))
+		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RadToJsonType: %T\n%s\n", arg.Val, debug.Stack()))
 		panic(UNREACHABLE)
 	}
 }
@@ -206,8 +206,8 @@ func AbsFloat(x float64) float64 {
 	return x
 }
 
-func ErrorRslMap(err raderr.Error, errMsg string) *RslMap {
-	m := NewRslMap()
+func ErrorRadMap(err raderr.Error, errMsg string) *RadMap {
+	m := NewRadMap()
 	m.SetPrimitiveStr(constCode, string(err))
 	m.SetPrimitiveStr(constMsg, errMsg)
 	return m

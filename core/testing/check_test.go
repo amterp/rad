@@ -6,7 +6,7 @@ func Test_Check_Valid(t *testing.T) {
 	// todo should be more happy about it!
 	expected := `No diagnostics to report.
 `
-	setupAndRunArgs(t, "check", "./rsl_scripts/hello.rsl", "--color=never")
+	setupAndRunArgs(t, "check", "./rad_scripts/hello.rad", "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
@@ -26,7 +26,7 @@ L3:2: ERROR
 
 Reported 2 diagnostics.
 `
-	setupAndRunArgs(t, "check", "./rsl_scripts/invalid.rsl", "--color=never")
+	setupAndRunArgs(t, "check", "./rad_scripts/invalid.rad", "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertExitCode(t, 1)
 }

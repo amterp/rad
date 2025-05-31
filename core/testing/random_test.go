@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func Test_Random_Rand(t *testing.T) {
-	rsl := `seed_random(1)
+	script := `seed_random(1)
 print(rand())
 print(rand())
 print(rand())
@@ -14,13 +14,13 @@ print(rand())
 0.6645600532184904
 0.4377141871869802
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_Random_RandInt(t *testing.T) {
-	rsl := `seed_random(1)
+	script := `seed_random(1)
 print(rand_int(100))
 print(rand_int(100))
 print(rand_int(100))
@@ -31,13 +31,13 @@ print(rand_int(100))
 21
 51
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_Random_RandIntMin(t *testing.T) {
-	rsl := `seed_random(1)
+	script := `seed_random(1)
 print(rand_int(96, 100))
 print(rand_int(96, 100))
 print(rand_int(96, 100))
@@ -48,13 +48,13 @@ print(rand_int(96, 100))
 97
 99
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_Random_RandIntNegNumbers(t *testing.T) {
-	rsl := `seed_random(1)
+	script := `seed_random(1)
 print(rand_int(-10, 10))
 print(rand_int(-10, 10))
 print(rand_int(-10, 10))
@@ -65,14 +65,14 @@ print(rand_int(-10, 10))
 -9
 1
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_Random_RandErrorsIfArgs(t *testing.T) {
-	rsl := `rand(1)`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `rand(1)`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   rand(1)
@@ -82,8 +82,8 @@ func Test_Random_RandErrorsIfArgs(t *testing.T) {
 }
 
 func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
-	rsl := `rand_int()`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `rand_int()`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   rand_int()
@@ -93,8 +93,8 @@ func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
 }
 
 func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
-	rsl := `seed_random()`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `seed_random()`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   seed_random()
@@ -104,13 +104,13 @@ func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
 }
 
 func Test_Random_ErrorsIfMinMaxSame(t *testing.T) {
-	rsl := `rand_int(2, 2)
+	script := `rand_int(2, 2)
 `
 	expected := `Error at L1:1
 
   rand_int(2, 2)
   ^^^^^^^^^^^^^^ rand_int() min (2) must be less than max (2).
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertError(t, 1, expected)
 }

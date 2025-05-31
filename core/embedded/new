@@ -1,15 +1,15 @@
 #!/usr/bin/env rad
 ---
-Sets up a new RSL script.
+Sets up a new Rad script.
 ---
 args:
     path string                          # The path at which to create the script.
-    add_extension "add-extension" e bool # Add a .rsl extension (if not already in the path name).
+    add_extension "add-extension" e bool # Add a .rad extension (if not already in the path name).
     open o string = ""                   # Open the script after with the given editor command.
     shebang s bool                       # Just include a shebang in the file's contents.
 
-if add_extension and not ends_with(path, ".rsl"):
-    path += ".rsl"
+if add_extension and not ends_with(path, ".rad"):
+    path += ".rad"
 
 p = get_path(path)
 if p:

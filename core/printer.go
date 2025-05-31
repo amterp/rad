@@ -23,7 +23,7 @@ type CodeCtx struct {
 	ColEnd   int // inclusive
 }
 
-// TODO require RslError code?
+// TODO require RadError code?
 // TODO perhaps include a map[node]string for multiple explanations for different parts of the code?
 type ErrorCtx struct {
 	CodeCtx
@@ -61,11 +61,11 @@ func NewCtxFromRtsNode(node rts.Node, oneLiner string) ErrorCtx {
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps pflag-handled help/parsing errors.
 type Printer interface {
-	// For RSL writers to debug their scripts. They input their debug logs with debug(). Enabled with --DEBUG.
+	// For Rad writers to debug their scripts. They input their debug logs with debug(). Enabled with --DEBUG.
 	ScriptDebug(msg string)
 
-	// For Rad (tool) developers to debug the Rad tool, not RSL scripts. Enabled with --RAD-DEBUG.
-	// RSL writers should generally not need to use this.
+	// For Rad (tool) developers to debug the Rad tool, not Rad scripts. Enabled with --RAD-DEBUG.
+	// Rad writers should generally not need to use this.
 	RadDebugf(format string, args ...interface{})
 
 	// For regular output to the script user
@@ -75,13 +75,13 @@ type Printer interface {
 	// Goes to stderr.
 	RadInfo(msg string)
 
-	// Used to print messages from the RSL script to stderr.
+	// Used to print messages from the Rad script to stderr.
 	ScriptStderrf(format string, args ...interface{})
 
 	// For output that will be evaluated by the shell, used by --SHELL.
 	PrintForShellEval(msg string)
 
-	// For errors related to running the RSL script, with no token available for context.
+	// For errors related to running the Rad script, with no token available for context.
 	// Exits.
 	ErrorExit(msg string)
 
@@ -96,7 +96,7 @@ type Printer interface {
 
 	ErrorCodeExitf(errorCode int, msgFmt string, args ...interface{})
 
-	// For errors not related to the RSL script, but to rad itself and its usage (probably misuse or rad bugs).
+	// For errors not related to the Rad script, but to rad itself and its usage (probably misuse or rad bugs).
 	// Exits.
 	RadErrorExit(msg string)
 
@@ -111,7 +111,7 @@ type Printer interface {
 //
 // isQuiet
 // suppresses all output except shell eval prints and rad usage errors, unless isDebug is true, in which
-// case it will also print rsl errors stdout, and all debug messages
+// case it will also print rl errors stdout, and all debug messages
 //
 // isScriptDebug will enable script debug messages
 // isRadDebug will enable rad debug messages, and include stack traces for errors

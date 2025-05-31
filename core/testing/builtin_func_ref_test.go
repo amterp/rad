@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func Test_CanReferenceBuiltInFuncs(t *testing.T) {
-	rsl := `
+	script := `
 foo = upper
 "test".foo().print()
 
 ["Test", "Foo"].map(lower).print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `TEST
 [ "test", "foo" ]
 `
@@ -18,13 +18,13 @@ foo = upper
 }
 
 func Test_CanSaveBuiltInFuncRefAndThenShadow(t *testing.T) {
-	rsl := `
+	script := `
 foo = upper
 upper = "hi"
 print(upper)
 print(foo(upper))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `hi
 HI
 `
@@ -33,10 +33,10 @@ HI
 }
 
 func Test_ErrorsIfInvokingUndefinedSymbol(t *testing.T) {
-	rsl := `
+	script := `
 notarealsymbol()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   notarealsymbol()
@@ -46,11 +46,11 @@ notarealsymbol()
 }
 
 func Test_ErrorsIfInvokingNonFunction(t *testing.T) {
-	rsl := `
+	script := `
 foo = "hi"
 foo(2)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L3:1
 
   foo(2)

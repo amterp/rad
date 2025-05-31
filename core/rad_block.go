@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"runtime/debug"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
@@ -32,7 +32,7 @@ type radInvocation struct {
 type radFieldMods struct {
 	identifierNode *ts.Node
 	colors         []radColorMod
-	lambda         *RslFn
+	lambda         *RadFn
 }
 
 func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
@@ -43,18 +43,18 @@ func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
 }
 
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
-	srcNode := i.getChild(radBlockNode, rsl.F_SOURCE)
-	radTypeNode := i.getChild(radBlockNode, rsl.F_RAD_TYPE)
+	srcNode := i.getChild(radBlockNode, rl.F_SOURCE)
+	radTypeNode := i.getChild(radBlockNode, rl.F_RAD_TYPE)
 	typeStr := i.sd.Src[radTypeNode.StartByte():radTypeNode.EndByte()]
 
 	var blockType RadBlockType
 	switch typeStr {
-	case rsl.KEYWORD_RAD:
-		blockType = Rad
-	case rsl.KEYWORD_REQUEST:
-		blockType = Request
-	case rsl.KEYWORD_DISPLAY:
-		blockType = Display
+	case rl.KEYWORD_RAD:
+		blockType = RadBlock
+	case rl.KEYWORD_REQUEST:
+		blockType = RequestBlock
+	case rl.KEYWORD_DISPLAY:
+		blockType = DisplayBlock
 	default:
 		i.errorf(radTypeNode, "Bug! Unknown rad block type %q", typeStr)
 	}
@@ -70,7 +70,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		colToMods:        make(map[string]*radFieldMods),
 	}
 
-	radStmtNodes := i.getChildren(radBlockNode, rsl.F_STMT)
+	radStmtNodes := i.getChildren(radBlockNode, rl.F_STMT)
 	for _, radStmtNode := range radStmtNodes {
 		ri.evalRad(&radStmtNode)
 	}
@@ -91,18 +91,18 @@ func (r *radInvocation) evalRad(node *ts.Node) {
 
 func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	switch node.Kind() {
-	case rsl.K_RAD_FIELD_STMT:
+	case rl.K_RAD_FIELD_STMT:
 		// todo validate no field names conflict with keywords e.g. 'asc'. Would be nice to do in static analysis tho.
-		identifierNodes := r.i.getChildren(node, rsl.F_IDENTIFIER)
+		identifierNodes := r.i.getChildren(node, rl.F_IDENTIFIER)
 		for _, identifierNode := range identifierNodes {
 			r.fields = append(r.fields, &identifierNode)
 		}
-	case rsl.K_RAD_SORT_STMT:
+	case rl.K_RAD_SORT_STMT:
 		if r.generalSort != nil || len(r.colWiseSorting) > 0 {
 			r.i.errorf(node, "Only one sort statement allowed per rad block")
 		}
 
-		specifierNodes := r.i.getChildren(node, rsl.F_SPECIFIER)
+		specifierNodes := r.i.getChildren(node, rl.F_SPECIFIER)
 		if len(specifierNodes) == 0 {
 			r.generalSort = &GeneralSort{
 				Node: node,
@@ -113,14 +113,14 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				r.evalRad(&specifierNode)
 			}
 		}
-	case rsl.K_RAD_SORT_SPECIFIER:
-		firstNode := r.i.getChild(node, rsl.F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
-		secondNode := r.i.getChild(node, rsl.F_SECOND)
+	case rl.K_RAD_SORT_SPECIFIER:
+		firstNode := r.i.getChild(node, rl.F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
+		secondNode := r.i.getChild(node, rl.F_SECOND)
 
 		if secondNode == nil {
 			firstNodeSrc := r.i.sd.Src[firstNode.StartByte():firstNode.EndByte()]
-			if firstNodeSrc == rsl.KEYWORD_ASC || firstNodeSrc == rsl.KEYWORD_DESC {
-				dir := lo.Ternary(firstNodeSrc == rsl.KEYWORD_ASC, Asc, Desc)
+			if firstNodeSrc == rl.KEYWORD_ASC || firstNodeSrc == rl.KEYWORD_DESC {
+				dir := lo.Ternary(firstNodeSrc == rl.KEYWORD_ASC, Asc, Desc)
 				r.generalSort = &GeneralSort{
 					Node: node,
 					Dir:  dir,
@@ -132,9 +132,9 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		dir := Asc
 		if secondNode != nil {
 			switch secondNode.Kind() {
-			case rsl.K_ASC:
+			case rl.K_ASC:
 				dir = Asc
-			case rsl.K_DESC:
+			case rl.K_DESC:
 				dir = Desc
 			default:
 				r.i.errorf(secondNode, "Bug! Unknown direction %q", secondNode.Kind())
@@ -145,9 +145,9 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			ColIdentifier: firstNode,
 			Dir:           dir,
 		})
-	case rsl.K_RAD_FIELD_MODIFIER_STMT:
-		identifierNodes := r.i.getChildren(node, rsl.F_IDENTIFIER)
-		stmtNodes := r.i.getChildren(node, rsl.F_MOD_STMT)
+	case rl.K_RAD_FIELD_MODIFIER_STMT:
+		identifierNodes := r.i.getChildren(node, rl.F_IDENTIFIER)
+		stmtNodes := r.i.getChildren(node, rl.F_MOD_STMT)
 		var fields []radField
 		for _, identifierNode := range identifierNodes {
 			identifierStr := r.i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
@@ -158,12 +158,12 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		}
 		for _, stmtNode := range stmtNodes {
 			switch stmtNode.Kind() {
-			case rsl.K_RAD_FIELD_MOD_COLOR:
+			case rl.K_RAD_FIELD_MOD_COLOR:
 				// todo could I replace this syntax with a 'map' lambda operation?
-				clrExprNode := r.i.getChild(&stmtNode, rsl.F_COLOR)
+				clrExprNode := r.i.getChild(&stmtNode, rl.F_COLOR)
 				clrStr := r.i.evaluate(clrExprNode, 1)[0].RequireStr(r.i, clrExprNode)
 				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
-				regexExprNode := r.i.getChild(&stmtNode, rsl.F_REGEX)
+				regexExprNode := r.i.getChild(&stmtNode, rl.F_REGEX)
 				regexStr := r.i.evaluate(regexExprNode, 1)[0].RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())
 				if err != nil {
@@ -173,15 +173,15 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 					mods := r.loadFieldMods(field)
 					mods.colors = append(mods.colors, radColorMod{color: clr.ToTblColor(), regex: regex})
 				}
-			case rsl.K_RAD_FIELD_MOD_MAP:
-				lambdaNode := r.i.getChild(&stmtNode, rsl.F_LAMBDA)
+			case rl.K_RAD_FIELD_MOD_MAP:
+				lambdaNode := r.i.getChild(&stmtNode, rl.F_LAMBDA)
 
-				var lambda RslFn
-				if lambdaNode.Kind() == rsl.K_LAMBDA {
+				var lambda RadFn
+				if lambdaNode.Kind() == rl.K_LAMBDA {
 					lambda = NewLambda(r.i, lambdaNode)
-				} else if lambdaNode.Kind() == rsl.K_FN_BLOCK {
+				} else if lambdaNode.Kind() == rl.K_FN_BLOCK {
 					lambda = NewFnBlock(r.i, lambdaNode)
-				} else if lambdaNode.Kind() == rsl.K_IDENTIFIER {
+				} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
 					identifier := GetSrc(r.i.sd.Src, lambdaNode)
 					val, ok := r.i.env.GetVar(identifier)
 					if !ok {
@@ -201,10 +201,10 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			}
 		}
-	case rsl.K_RAD_IF_STMT:
-		altNodes := r.i.getChildren(node, rsl.F_ALT)
+	case rl.K_RAD_IF_STMT:
+		altNodes := r.i.getChildren(node, rl.F_ALT)
 		for _, altNode := range altNodes {
-			condNode := r.i.getChild(&altNode, rsl.F_CONDITION)
+			condNode := r.i.getChild(&altNode, rl.F_CONDITION)
 
 			shouldExecute := true
 			if condNode != nil {
@@ -213,7 +213,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			}
 
 			if shouldExecute {
-				stmtNodes := r.i.getChildren(&altNode, rsl.F_STMT)
+				stmtNodes := r.i.getChildren(&altNode, rl.F_STMT)
 				for _, stmtNode := range stmtNodes {
 					r.evalRad(&stmtNode)
 				}
@@ -291,12 +291,12 @@ func (r *radInvocation) execute() {
 
 	applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
 
-	if r.blockType == Request {
+	if r.blockType == RequestBlock {
 		return
 	}
 
 	longestColumnLen := 0
-	cellsRowThenColumn := lo.FilterMap(radFields, func(field radField, _ int) ([]RslString, bool) {
+	cellsRowThenColumn := lo.FilterMap(radFields, func(field radField, _ int) ([]RadString, bool) {
 		if r.fieldsToNotPrint.Has(field.name) {
 			return nil, false
 		}
@@ -315,7 +315,7 @@ func (r *radInvocation) execute() {
 
 	// transform columnar data to rows and append to table
 	for i := range longestColumnLen {
-		row := lo.Map(cellsRowThenColumn, func(column []RslString, _ int) RslString {
+		row := lo.Map(cellsRowThenColumn, func(column []RadString, _ int) RadString {
 			if i >= len(column) {
 				return EMPTY_STR
 			}
@@ -337,17 +337,17 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 
 	src := r.i.evaluate(r.srcExprNode, 1)[0]
 
-	if r.blockType == Rad || r.blockType == Request {
+	if r.blockType == RadBlock || r.blockType == RequestBlock {
 		str := src.RequireStr(r.i, r.srcExprNode)
 		return RReq.RequestJson(str.Plain())
 	}
 
-	if r.blockType == Display {
-		NewTypeVisitor(r.i, r.srcExprNode).ForList(func(val RslValue, _ *RslList) {
-			data = RslToJsonType(val)
-		}).ForMap(func(val RslValue, _ *RslMap) {
-			data = RslToJsonType(val)
-		}).ForDefault(func(val RslValue) {
+	if r.blockType == DisplayBlock {
+		NewTypeVisitor(r.i, r.srcExprNode).ForList(func(val RadValue, _ *RadList) {
+			data = RadToJsonType(val)
+		}).ForMap(func(val RadValue, _ *RadMap) {
+			data = RadToJsonType(val)
+		}).ForDefault(func(val RadValue) {
 			r.i.errorf(r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
 		}).Visit(src)
 		return
@@ -373,14 +373,14 @@ func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, c
 	sortColumns(i, fields, colWiseSort)
 }
 
-func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RslList) []RslString {
+func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RadList) []RadString {
 	mods, ok := colToMods[fieldName]
 	if !ok || mods.lambda == nil {
 		return toStringArrayQuoteStr(column.Values, false)
 	}
 
 	reprNode := mods.lambda.ReprNode
-	var newVals []RslString
+	var newVals []RadString
 	for _, val := range column.Values {
 		mapped := mods.lambda.Execute(NewFuncInvocationArgs(i, reprNode, FUNC_MAP, NewPosArgs(NewPosArg(reprNode, val)), NO_NAMED_ARGS_INPUT, 1))[0]
 		newVals = append(newVals, toStringQuoteStr(mapped, false))
@@ -389,20 +389,20 @@ func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName
 	return newVals
 }
 
-func toStringArrayQuoteStr(v []RslValue, quoteStrings bool) []RslString {
-	output := make([]RslString, len(v))
+func toStringArrayQuoteStr(v []RadValue, quoteStrings bool) []RadString {
+	output := make([]RadString, len(v))
 	for i, val := range v {
 		output[i] = toStringQuoteStr(val, quoteStrings)
 	}
 	return output
 }
 
-func toStringQuoteStr(v RslValue, quoteStrings bool) RslString {
+func toStringQuoteStr(v RadValue, quoteStrings bool) RadString {
 	switch coerced := v.Val.(type) {
-	case RslString:
+	case RadString:
 		return coerced
 	default:
 		str := ToPrintableQuoteStr(coerced, quoteStrings)
-		return NewRslString(str)
+		return NewRadString(str)
 	}
 }

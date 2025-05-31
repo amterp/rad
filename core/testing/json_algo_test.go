@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestAlgo_JsonNonRootArrayExtraction(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Id = json.id
@@ -15,7 +15,7 @@ print(Id[0])
 print(Names)
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/not_root_array.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/not_root_array.json", "--color=never")
 	expected := `1
 [ "Alice", "Bob", "Charlie" ]
 `
@@ -25,7 +25,7 @@ print(Names)
 }
 
 func TestAlgo_KeyExtraction(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Name = json.results.*
@@ -36,7 +36,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
 	expected := `Name   Age  Hometown    
 Alice  30   New York     
 Bob    40   Los Angeles  
@@ -47,7 +47,7 @@ Bob    40   Los Angeles
 }
 
 func TestAlgo_KeyArrayExtraction(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Hometown = json.*
@@ -58,7 +58,7 @@ rad url:
     fields Name, Age, Hometown
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys_array.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys_array.json", "--color=never")
 	expected := `Name       Age  Hometown 
 Alice      30   London    
 Bob        40   London    
@@ -71,7 +71,7 @@ David      25   Paris
 }
 
 func TestAlgo_NestedWildcardExtraction(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 city = json.*
@@ -83,7 +83,7 @@ rad url:
     fields city, country, name, age
 `
 
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/nested_wildcard.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/nested_wildcard.json", "--color=never")
 	expected := `city  country    name       age 
 York  Australia  Charlotte  35   
 York  Australia  David      25   
@@ -97,7 +97,7 @@ York  England    Bob        40
 }
 
 func TestAlgo_WildcardListCapture(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 names = json.*
@@ -108,7 +108,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_wildcard.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/array_wildcard.json", "--color=never")
 	expected := `[ "Alice", "Bob", "Charlie" ]
 [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9, 10 ] ]
 `
@@ -118,7 +118,7 @@ print(ids)
 }
 
 func TestAlgo_WildcardListObjectCapture(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 names = json.*
@@ -129,7 +129,7 @@ request url:
 print(names)
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_objects.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/array_objects.json", "--color=never")
 	expected := `[ "Alice", "Alice", "Alice", "Bob", "Charlie", "Charlie" ]
 [ 1, 2, 3, 4, 5, 6 ]
 `
@@ -139,7 +139,7 @@ print(ids)
 }
 
 func TestAlgo_ListOfObjectCapture(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Building = json.buildings.*
 issues = json.buildings.*.issues
@@ -147,14 +147,14 @@ request url:
     fields Building, issues
 print([len(x) for x in issues])
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/issues.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/issues.json", "--color=never")
 	assertOutput(t, stdOutBuffer, "[ 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CaptureRootArray(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 ids = json[]
@@ -163,14 +163,14 @@ request url:
     fields ids
 print(ids)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/root_prim_array.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/root_prim_array.json", "--color=never")
 	assertOutput(t, stdOutBuffer, "[ 1, 2, 3 ]\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CaptureNonArrayAndArray(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 len = json.len
@@ -184,14 +184,14 @@ print(ages)
 	expected := `2
 [ 30, 40 ]
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_and_non_array.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/array_and_non_array.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CaptureNonArrayAndWildcard(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 len = json.len
@@ -205,28 +205,28 @@ print(ages)
 	expected := `2
 [ 30, 40 ]
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CaptureJsonNode(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json.results.Alice
 request url:
     fields node
 print(sort("{node[0]}"))
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
 	assertOutput(t, stdOutBuffer, "      \"\"\"\"\"\",03::NYaeeeghkmnooortww{}\n")
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CanCaptureWholeJson(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json
 request url:
@@ -234,14 +234,14 @@ request url:
 print(sort("{node[0]}")) // hack to get the test consistent, as the order of keys in a map is not guaranteed
 `
 	expected := `             """""""""""",,,12::::AB[]aabcddeeeiiilmmnno{{}}` + "\n"
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_CanCaptureWholeComplexJson(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json
 request url:
@@ -282,14 +282,14 @@ pprint(node[0])
   null
 ]
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/lots_of_types.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/lots_of_types.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func TestAlgo_HelpfulErrorIfRadBlockMixesArrayAndNoneArrayFields(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 
 Names = json.results[].name
@@ -302,7 +302,7 @@ rad url:
 Alice  2    
 Bob    2    
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/array_and_non_array.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/array_and_non_array.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 }

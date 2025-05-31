@@ -14,7 +14,7 @@ import (
 type DocState struct {
 	uri         string
 	text        string
-	tree        *rts.RslTree
+	tree        *rts.RadTree
 	diagnostics []lsp.Diagnostic
 	checker     check.RadChecker
 }
@@ -29,23 +29,23 @@ func (d *DocState) GetLine(line int) string {
 }
 
 type State struct {
-	parser       *rts.RslParser
-	rslFunctions *com.FunctionSet
+	parser       *rts.RadParser
+	radFunctions *com.FunctionSet
 	// URI -> Text
 	docs map[string]*DocState
 }
 
 func NewState() *State {
-	rslParser, err := rts.NewRslParser()
+	radParser, err := rts.NewRadParser()
 	if err != nil {
-		log.L.Fatalw("Failed to create RSL tree sitter", "err", err)
+		log.L.Fatalw("Failed to create Rad tree sitter", "err", err)
 	}
-	rslFunctions := com.LoadNewFunctionSet()
-	log.L.Infof("Loaded %d functions", rslFunctions.Len())
+	radFunctions := com.LoadNewFunctionSet()
+	log.L.Infof("Loaded %d functions", radFunctions.Len())
 
 	return &State{
-		parser:       rslParser,
-		rslFunctions: rslFunctions,
+		parser:       radParser,
+		radFunctions: radFunctions,
 		docs:         make(map[string]*DocState),
 	}
 }

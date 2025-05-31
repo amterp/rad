@@ -8,9 +8,9 @@ var FuncExit = BuiltInFunc{
 	Name:            FUNC_EXIT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT, RslBoolT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadBoolT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		if len(f.args) == 0 {
 			exit(f.i, 0)
 		} else {

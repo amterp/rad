@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func Test_DisplayBlock_CanGiveOwnList(t *testing.T) {
-	rsl := `
+	script := `
 a = [
 	{
 		"name": "alice"
@@ -16,7 +16,7 @@ Name = json[].name
 display a:
 	fields Name
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name  
 alice  
 bob    
@@ -26,7 +26,7 @@ bob
 }
 
 func Test_DisplayBlock_CanGiveOwnMap(t *testing.T) {
-	rsl := `
+	script := `
 a = {
 	"results": [
 		{
@@ -41,7 +41,7 @@ Name = json.results[].name
 display a:
 	fields Name
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name  
 alice  
 bob    

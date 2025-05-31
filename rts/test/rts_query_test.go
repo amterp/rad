@@ -7,15 +7,15 @@ import (
 )
 
 func Test_Tree_Query_CanFindStrings(t *testing.T) {
-	rslTs, _ := rts.NewRslParser()
-	defer rslTs.Close()
+	radParser, _ := rts.NewRadParser()
+	defer radParser.Close()
 
-	rsl := `a = "hello"
+	script := `a = "hello"
 b = "there {1 + 1}"
 if true:
 	c = "world!"
 `
-	tree := rslTs.Parse(rsl)
+	tree := radParser.Parse(script)
 	nodes, err := rts.QueryNodes[*rts.StringNode](tree)
 	if err != nil {
 		t.Fatalf("Query failed: %v", err)

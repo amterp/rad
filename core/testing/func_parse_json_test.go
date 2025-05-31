@@ -3,47 +3,47 @@ package testing
 import "testing"
 
 func TestParseJson_Int(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_json("2")
 print(a + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3\n")
 	assertNoErrors(t)
 }
 
 func TestParseJson_Float(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_json("2.1")
 print(a + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "3.1\n")
 	assertNoErrors(t)
 }
 
 func TestParseJson_Bool(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_json("true")
 print(a or false)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "true\n")
 	assertNoErrors(t)
 }
 
 func TestParseJson_String(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_json('"alice"')
 print(a + "e")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "alicee\n")
 	assertNoErrors(t)
 }
 
 func TestParseJson_Map(t *testing.T) {
-	rsl := `
+	script := `
 a = parse_json(r'{"name": "alice", "age": 20, "height": 5.5, "is_student": true, "cars": ["audi", "bmw"], "friends": {"bob": 1, "charlie": 2}}')
 print(a["name"] + "e")
 print(a["age"] + 1)
@@ -52,7 +52,7 @@ print(a["is_student"] or false)
 print(a["cars"][0] + "e")
 print(a["friends"]["bob"] + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `alicee
 21
 6.6
@@ -65,10 +65,10 @@ audie
 }
 
 func TestParseJson_ErrorsOnInvalidJson(t *testing.T) {
-	rsl := `
+	script := `
 parse_json(r'{asd asd}')
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   parse_json(r'{asd asd}')
@@ -79,10 +79,10 @@ parse_json(r'{asd asd}')
 }
 
 func TestParseJson_ErrorsOnInvalidType(t *testing.T) {
-	rsl := `
+	script := `
 parse_json(10)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:12
 
   parse_json(10)
@@ -92,10 +92,10 @@ parse_json(10)
 }
 
 func TestParseJson_ErrorsOnNoArgs(t *testing.T) {
-	rsl := `
+	script := `
 parse_json()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   parse_json()
@@ -105,10 +105,10 @@ parse_json()
 }
 
 func TestParseJson_ErrorsOnTooManyArgs(t *testing.T) {
-	rsl := `
+	script := `
 parse_json("1", "2")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   parse_json("1", "2")
@@ -118,11 +118,11 @@ parse_json("1", "2")
 }
 
 func TestParseJson_EmptyList(t *testing.T) {
-	rsl := `
+	script := `
 blop = r'{ "foo": [] }'
 blop.parse_json().print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "{ \"foo\": [ ] }\n")
 	assertNoErrors(t)
 }

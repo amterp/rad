@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func TestKeys(t *testing.T) {
-	rsl := `a = { "alice": "foo", "bob": "bar" }
+	script := `a = { "alice": "foo", "bob": "bar" }
 b = keys(a)
 print(b)
 print(upper(b[0]))
 print(keys({}))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "alice", "bob" ]
 ALICE
 [ ]
@@ -19,8 +19,8 @@ ALICE
 }
 
 func TestKeys_ErrorsIfGivenString(t *testing.T) {
-	rsl := `keys("foo")`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `keys("foo")`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:6
 
   keys("foo")
@@ -30,8 +30,8 @@ func TestKeys_ErrorsIfGivenString(t *testing.T) {
 }
 
 func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
-	rsl := `keys()`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `keys()`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   keys()
@@ -41,8 +41,8 @@ func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
 }
 
 func TestKeys_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
-	rsl := `keys({}, {})`
-	setupAndRunCode(t, rsl, "--color=never")
+	script := `keys({}, {})`
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L1:1
 
   keys({}, {})

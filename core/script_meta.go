@@ -14,19 +14,19 @@ type ScriptData struct {
 	ScriptName         string
 	Args               []*ScriptArg
 	Description        *string
-	Tree               *rts.RslTree
+	Tree               *rts.RadTree
 	Src                string
 	DisableGlobalFlags bool
 	DisableArgsBlock   bool
 }
 
 func ExtractMetadata(src string) *ScriptData {
-	rslTree, err := rts.NewRslParser()
+	radTree, err := rts.NewRadParser()
 	if err != nil {
-		RP.RadErrorExit("Failed to create RSL tree sitter: " + err.Error())
+		RP.RadErrorExit("Failed to create Rad tree sitter: " + err.Error())
 	}
 
-	tree := rslTree.Parse(src)
+	tree := radTree.Parse(src)
 
 	disableGlobalFlags := false
 	disableArgsBlock := false
@@ -141,18 +141,18 @@ func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
 		return true
 	}
 
-	var rslVal RslValue
+	var radVal RadValue
 	if i64, err := strconv.ParseInt(val, 10, 64); err == nil {
-		rslVal = newRslValueInt64(i64)
+		radVal = newRadValueInt64(i64)
 	} else if f64, err := strconv.ParseFloat(val, 64); err == nil {
-		rslVal = newRslValueFloat64(f64)
+		radVal = newRadValueFloat64(f64)
 	} else if b, err := strconv.ParseBool(val); err == nil {
-		rslVal = newRslValueBool(b)
+		radVal = newRadValueBool(b)
 	} else {
-		rslVal = newRslValueStr(val)
+		radVal = newRadValueStr(val)
 	}
 
-	return rslVal.TruthyFalsy()
+	return radVal.TruthyFalsy()
 }
 
 func errUndefinedArg(node rts.Node, name string) {

@@ -4,28 +4,28 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RslMap struct {
-	// keys are hashes of an RslValue
+type RadMap struct {
+	// keys are hashes of an RadValue
 	// cannot be collections, though (no maps, lists)
-	mapping map[string]RslValue
-	keys    []RslValue
+	mapping map[string]RadValue
+	keys    []RadValue
 }
 
-func NewRslMap() *RslMap {
-	return &RslMap{
-		mapping: make(map[string]RslValue),
-		keys:    []RslValue{},
+func NewRadMap() *RadMap {
+	return &RadMap{
+		mapping: make(map[string]RadValue),
+		keys:    []RadValue{},
 	}
 }
 
-func (m *RslMap) Set(key RslValue, value RslValue) {
+func (m *RadMap) Set(key RadValue, value RadValue) {
 	if value == NIL_SENTINAL {
 		m.Delete(key)
 		return
@@ -37,45 +37,45 @@ func (m *RslMap) Set(key RslValue, value RslValue) {
 	m.mapping[key.Hash()] = value
 }
 
-func (m *RslMap) SetPrimitiveStr(key string, value string) {
-	m.Set(newRslValueStr(key), newRslValueStr(value))
+func (m *RadMap) SetPrimitiveStr(key string, value string) {
+	m.Set(newRadValueStr(key), newRadValueStr(value))
 }
 
-func (m *RslMap) SetPrimitiveInt(key string, value int) {
-	m.Set(newRslValueStr(key), newRslValueInt(value))
+func (m *RadMap) SetPrimitiveInt(key string, value int) {
+	m.Set(newRadValueStr(key), newRadValueInt(value))
 }
 
-func (m *RslMap) SetPrimitiveInt64(key string, value int64) {
-	m.Set(newRslValueStr(key), newRslValueInt64(value))
+func (m *RadMap) SetPrimitiveInt64(key string, value int64) {
+	m.Set(newRadValueStr(key), newRadValueInt64(value))
 }
 
-func (m *RslMap) SetPrimitiveFloat(key string, value float64) {
-	m.Set(newRslValueStr(key), newRslValueFloat64(value))
+func (m *RadMap) SetPrimitiveFloat(key string, value float64) {
+	m.Set(newRadValueStr(key), newRadValueFloat64(value))
 }
 
-func (m *RslMap) SetPrimitiveBool(key string, value bool) {
-	m.Set(newRslValueStr(key), newRslValueBool(value))
+func (m *RadMap) SetPrimitiveBool(key string, value bool) {
+	m.Set(newRadValueStr(key), newRadValueBool(value))
 }
 
-func (m *RslMap) SetPrimitiveMap(key string, value *RslMap) {
-	m.Set(newRslValueStr(key), newRslValueMap(value))
+func (m *RadMap) SetPrimitiveMap(key string, value *RadMap) {
+	m.Set(newRadValueStr(key), newRadValueMap(value))
 }
 
-func (m *RslMap) SetPrimitiveList(key string, value *RslList) {
-	m.Set(newRslValueStr(key), newRslValueList(value))
+func (m *RadMap) SetPrimitiveList(key string, value *RadList) {
+	m.Set(newRadValueStr(key), newRadValueList(value))
 }
 
-func (m *RslMap) Get(key RslValue) (RslValue, bool) {
+func (m *RadMap) Get(key RadValue) (RadValue, bool) {
 	val, exists := m.mapping[key.Hash()]
 	return val, exists
 }
 
-func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
+func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 	// todo grammar: myMap.2 should be okay, treated as "2". but is not valid identifier, so problem!
-	if idxNode.Kind() == rsl.K_IDENTIFIER {
+	if idxNode.Kind() == rl.K_IDENTIFIER {
 		// dot syntax e.g. myMap.myKey
 		keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
-		value, ok := m.Get(newRslValueStr(keyName))
+		value, ok := m.Get(newRadValueStr(keyName))
 		if !ok {
 			i.errorf(idxNode, "Key not found: %s", keyName)
 		}
@@ -92,28 +92,28 @@ func (m *RslMap) GetNode(i *Interpreter, idxNode *ts.Node) RslValue {
 	return value
 }
 
-func (m *RslMap) Keys() []RslValue {
+func (m *RadMap) Keys() []RadValue {
 	return m.keys
 }
 
-func (m *RslMap) Values() []RslValue {
-	var values []RslValue
+func (m *RadMap) Values() []RadValue {
+	var values []RadValue
 	for _, key := range m.keys {
 		values = append(values, m.mapping[key.Hash()])
 	}
 	return values
 }
 
-func (m *RslMap) ContainsKey(key RslValue) bool {
+func (m *RadMap) ContainsKey(key RadValue) bool {
 	_, exists := m.mapping[key.Hash()]
 	return exists
 }
 
-func (m *RslMap) Len() int64 {
+func (m *RadMap) Len() int64 {
 	return int64(len(m.mapping))
 }
 
-func (m *RslMap) Delete(key RslValue) {
+func (m *RadMap) Delete(key RadValue) {
 	delete(m.mapping, key.Hash())
 	// O(n) a little sad but probably okay
 	for i, k := range m.keys {
@@ -125,7 +125,7 @@ func (m *RslMap) Delete(key RslValue) {
 }
 
 // fn should return false when it wants to stop. True to continue.
-func (m *RslMap) Range(fn func(key, value RslValue) bool) {
+func (m *RadMap) Range(fn func(key, value RadValue) bool) {
 	for _, key := range m.keys {
 		val := m.mapping[key.Hash()]
 		if !fn(key, val) {
@@ -134,7 +134,7 @@ func (m *RslMap) Range(fn func(key, value RslValue) bool) {
 	}
 }
 
-func (m *RslMap) ToString() string {
+func (m *RadMap) ToString() string {
 	if m.Len() == 0 {
 		return "{ }"
 	}
@@ -155,7 +155,7 @@ func (m *RslMap) ToString() string {
 	return sb.String()
 }
 
-func (l *RslMap) Equals(right *RslMap) bool {
+func (l *RadMap) Equals(right *RadMap) bool {
 	if l.Len() != right.Len() {
 		return false
 	}
@@ -171,7 +171,7 @@ func (l *RslMap) Equals(right *RslMap) bool {
 	return true
 }
 
-func (m *RslMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
+func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 	if lo.Contains(lo.Keys(m.mapping), constCode) && lo.Contains(lo.Keys(m.mapping), constMsg) {
 		return fmt.Sprintf("%s (error %s)", m.mapping[constMsg].Val, m.mapping[constCode].Val)
 	}
@@ -180,8 +180,8 @@ func (m *RslMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 	panic(UNREACHABLE)
 }
 
-func evalMapKey(i *Interpreter, idxNode *ts.Node) RslValue {
+func evalMapKey(i *Interpreter, idxNode *ts.Node) RadValue {
 	return i.evaluate(idxNode, 1)[0].
-		RequireNotType(i, idxNode, "Map keys cannot be lists", RslListT).
-		RequireNotType(i, idxNode, "Map keys cannot be maps", RslMapT)
+		RequireNotType(i, idxNode, "Map keys cannot be lists", RadListT).
+		RequireNotType(i, idxNode, "Map keys cannot be maps", RadMapT)
 }

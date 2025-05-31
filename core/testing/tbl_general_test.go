@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 const (
-	setupGenTblRsl = `
+	setupGenTblScript = `
 url = "https://google.com"
 
 shortint = json[].shortint
@@ -14,11 +14,11 @@ longfloat = json[].longfloat
 )
 
 func TestRad_VariousTypeLengths(t *testing.T) {
-	rsl := setupGenTblRsl + `
+	script := setupGenTblScript + `
 rad url:
     fields shortint, longint, shortfloat, longfloat
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/numbers.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/numbers.json", "--color=never")
 	expected := `shortint  longint              shortfloat  longfloat          
 1         1234567899987654400  1.12        1234.5678999876543  
 `
@@ -28,7 +28,7 @@ rad url:
 }
 
 func TestRad_RequestBlock(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Name = json[].name
 Age = json[].age
@@ -37,7 +37,7 @@ request url:
 print("Names:", Name)
 print("Ages:", Age)
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `Names: [ "Charlie", "Bob", "Alice", "Bob" ]
 Ages: [ 30, 40, 30, 25 ]
 `
@@ -47,14 +47,14 @@ Ages: [ 30, 40, 30, 25 ]
 }
 
 func TestRad_RequestBlockComplainsIfNoUrl(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Name = json[].name
 Age = json[].age
 request:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L5:8
 
   request:
@@ -64,13 +64,13 @@ request:
 }
 
 func TestRad_DisplayBlock(t *testing.T) {
-	rsl := `
+	script := `
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 display:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name     Age 
 Alice    30   
 Bob      40   
@@ -81,14 +81,14 @@ Charlie  25
 }
 
 func TestRad_DisplayBlockErrorsIfGivenUrl(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 display url:
     fields Name, Age
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L5:9
 
   display url:
@@ -98,7 +98,7 @@ display url:
 }
 
 func TestRad_RequestThenDisplayBlocks(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 Name = json[].name
 ids = json[].ids
@@ -108,7 +108,7 @@ NumIds = [len(x) for x in ids]
 display:
 	fields Name, NumIds
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/arrays.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/arrays.json", "--color=never")
 	expected := `Name     NumIds 
 Alice    3       
 Bob      5       
@@ -120,11 +120,11 @@ Charlie  2
 }
 
 func TestRad_RequiresBlockElseError(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 rad url
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/text.txt", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/text.txt", "--color=never")
 	expected := `Error at L3:1
 
   rad url
@@ -134,7 +134,7 @@ rad url
 }
 
 func TestRad_CanConditionallyApplySort(t *testing.T) {
-	rsl := `
+	script := `
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
@@ -148,7 +148,7 @@ display:
 	if should_sort:
 		sort desc
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name     Age 
 Alice    30   
 Bob      40   
@@ -163,7 +163,7 @@ Alice    30
 }
 
 func TestRad_CanFallBackToElse(t *testing.T) {
-	rsl := `
+	script := `
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
@@ -174,7 +174,7 @@ display:
 	else:
 		sort Age asc
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name     Age 
 Charlie  25   
 Alice    30   
@@ -185,7 +185,7 @@ Bob      40
 }
 
 func TestRad_CanFallBackToElseIf(t *testing.T) {
-	rsl := `
+	script := `
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
@@ -198,7 +198,7 @@ display:
 	else:
 		sort Age desc
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Name     Age 
 Charlie  25   
 Alice    30   
@@ -209,7 +209,7 @@ Bob      40
 }
 
 func TestRad_IfStmtWorksOnRadWithUrl(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 name = json[].name
 city = json[].city
@@ -219,7 +219,7 @@ rad url:
 	if should_sort:
 		sort name asc
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/people.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
 	expected := `name     city        
 Alice    New York     
 Bob      London       

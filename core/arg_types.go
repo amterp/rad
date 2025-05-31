@@ -12,7 +12,7 @@ type ScriptArg struct {
 	ApiName            string // name that the user will see
 	Decl               rts.ArgDecl
 	Short              *string
-	Type               RslArgTypeT
+	Type               RadArgTypeT
 	Description        *string
 	IsNullable         bool // aka is optional. e.g. 'string?' syntax
 	HasDefaultValue    bool
@@ -56,7 +56,7 @@ func FromArgDecl(
 		ApiName:            externalName,
 		Decl:               decl,
 		Short:              decl.ShorthandStr(),
-		Type:               ToRslArgTypeT(decl.Type.Type),
+		Type:               ToRadArgTypeT(decl.Type.Type),
 		Description:        decl.CommentStr(),
 		IsNullable:         decl.Optional != nil,
 		HasDefaultValue:    hasDefaultValue(decl),

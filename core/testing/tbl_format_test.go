@@ -3,7 +3,7 @@ package testing
 import "testing"
 
 func TestRad_FormatFloats(t *testing.T) {
-	rsl := `
+	script := `
 nums = [0.6342, 0.7, 1.63, 0.0923]
 display:
 	fields nums
@@ -11,7 +11,7 @@ display:
 	nums:
 		map fn(num) "{num * 100:6.2}%"
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `nums    
   9.23%  
  63.42%  
@@ -23,7 +23,7 @@ display:
 }
 
 func TestRad_MultiplyInts(t *testing.T) {
-	rsl := `
+	script := `
 nums = [63, 20, 163, 9]
 display:
 	fields nums
@@ -31,7 +31,7 @@ display:
 	nums:
 		map fn(num) num * 10
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `nums 
 1630  
 630   
@@ -43,7 +43,7 @@ display:
 }
 
 func TestRad_CanTruncateWithMap(t *testing.T) {
-	rsl := `
+	script := `
 names = ["Alice", "Bob", "Charlie", "David"]
 display:
 	fields names
@@ -51,7 +51,7 @@ display:
 	names:
 		map fn(name) name[:3]
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `names 
 Ali    
 Bob    
@@ -63,7 +63,7 @@ Dav
 }
 
 func TestRad_CanMapTwoFieldsAtOnce(t *testing.T) {
-	rsl := `
+	script := `
 FirstNames = ["Alice", "Bob", "Charlie", "David"]
 LastNames = ["Smith", "Jones", "Brown", "White"]
 display:
@@ -72,7 +72,7 @@ display:
 	FirstNames, LastNames:
 		map fn(name) upper(name)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `FirstNames  LastNames 
 ALICE       SMITH      
 BOB         JONES      

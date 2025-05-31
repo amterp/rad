@@ -14,13 +14,13 @@ type RadChecker interface {
 }
 
 type RadCheckerImpl struct {
-	parser *rts.RslParser
-	tree   *rts.RslTree
+	parser *rts.RadParser
+	tree   *rts.RadTree
 	src    string
 }
 
 func NewChecker() (RadChecker, error) {
-	parser, err := rts.NewRslParser()
+	parser, err := rts.NewRadParser()
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func NewChecker() (RadChecker, error) {
 	return NewCheckerWithTree(tree, parser, ""), nil
 }
 
-func NewCheckerWithTree(tree *rts.RslTree, parser *rts.RslParser, src string) RadChecker {
+func NewCheckerWithTree(tree *rts.RadTree, parser *rts.RadParser, src string) RadChecker {
 	return &RadCheckerImpl{
 		parser: parser,
 		tree:   tree,

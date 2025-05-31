@@ -7,11 +7,11 @@ import (
 
 func Test_Func_WriteFile(t *testing.T) {
 	filePath := "data/test_write.txt"
-	rsl := `
+	script := `
 a, b = write_file("data/test_write.txt", "hello world")
 print(a)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "bytes_written": 11, "path": "data/test_write.txt" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -24,11 +24,11 @@ func Test_Func_WriteFile_Append(t *testing.T) {
 	filePath := "data/test_write_append.txt"
 	os.WriteFile(filePath, []byte("hello"), 0644)
 
-	rsl := `
+	script := `
 a, b = write_file("data/test_write_append.txt", " world", append=true)
 print(a)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "bytes_written": 6, "path": "data/test_write_append.txt" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -50,11 +50,11 @@ func Test_Func_WriteFile_NoPermission(t *testing.T) {
 	// Remove write permission.
 	os.Chmod(filePath, originalPerms&^0222)
 
-	rsl := `
+	script := `
 a, b = write_file("data/no_permission_write.txt", "content")
 print(b)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "code": "RAD20004", "msg": "open data/no_permission_write.txt: permission denied" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -65,11 +65,11 @@ print(b)
 }
 
 func Test_Func_WriteFile_ErrorsOnDirectory(t *testing.T) {
-	rsl := `
+	script := `
 a, b = write_file("data/", "content")
 print(b)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "code": "RAD20006", "msg": "open data/: is a directory" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -77,10 +77,10 @@ print(b)
 }
 
 func Test_Func_WriteFile_ExitErrorsIfNoErrVar(t *testing.T) {
-	rsl := `
+	script := `
 a = write_file("does_not_exist_dir/test.txt", "content")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   a = write_file("does_not_exist_dir/test.txt", "content")

@@ -3,14 +3,14 @@ package testing
 import "testing"
 
 func Test_FileHeader_PrintsOneLinerIfOnlyThat(t *testing.T) {
-	rsl := `
+	script := `
 ---
 This is a one liner!
 ---
 args:
 	name string
 `
-	setupAndRunCode(t, rsl, "-h", "--color=never")
+	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `This is a one liner!
 
 Usage:
@@ -24,7 +24,7 @@ Script args:
 }
 
 func Test_FileHeader_PrintsAll(t *testing.T) {
-	rsl := `
+	script := `
 ---
 This is a one liner!
 
@@ -34,7 +34,7 @@ the rest!
 args:
 	name string
 `
-	setupAndRunCode(t, rsl, "-h", "--color=never")
+	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `This is a one liner!
 
 Here is

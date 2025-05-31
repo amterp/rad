@@ -34,23 +34,23 @@ var (
 
 	FlagsUsedInScript []string
 
-	FlagHelp                 BoolRslArg
-	FlagDebug                BoolRslArg
-	FlagRadDebug             BoolRslArg
-	FlagColor                StringRslArg
-	FlagQuiet                BoolRslArg
-	FlagShell                BoolRslArg
-	FlagVersion              BoolRslArg
-	FlagConfirmShellCommands BoolRslArg
-	FlagSrc                  BoolRslArg
-	FlagRslTree              BoolRslArg
-	FlagMockResponse         MockResponseRslArg
+	FlagHelp                 BoolRadArg
+	FlagDebug                BoolRadArg
+	FlagRadDebug             BoolRadArg
+	FlagColor                StringRadArg
+	FlagQuiet                BoolRadArg
+	FlagShell                BoolRadArg
+	FlagVersion              BoolRadArg
+	FlagConfirmShellCommands BoolRadArg
+	FlagSrc                  BoolRadArg
+	FlagRadTree              BoolRadArg
+	FlagMockResponse         MockResponseRadArg
 	// ^ when adding more, update ResetGlobals function
 )
 
-func CreateAndRegisterGlobalFlags() []RslArg {
+func CreateAndRegisterGlobalFlags() []RadArg {
 	// ordering of this list matters -- it's the order in which they are printed in the usage string
-	flags := make([]RslArg, 0)
+	flags := make([]RadArg, 0)
 
 	if shouldAddFlag(FLAG_HELP, FLAG_H) {
 		FlagHelp = NewBoolRadArg(flagOrEmpty(FLAG_HELP), flagOrEmpty(FLAG_H), "Print usage string.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
@@ -58,7 +58,7 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	}
 
 	if shouldAddFlag(FLAG_DEBUG, FLAG_D) {
-		FlagDebug = NewBoolRadArg(flagOrEmpty(FLAG_DEBUG), flagOrEmpty(FLAG_D), "Enables debug output. Intended for RSL script developers.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagDebug = NewBoolRadArg(flagOrEmpty(FLAG_DEBUG), flagOrEmpty(FLAG_D), "Enables debug output. Intended for Rad script developers.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
 		flags = append(flags, &FlagDebug)
 	}
 
@@ -101,9 +101,9 @@ func CreateAndRegisterGlobalFlags() []RslArg {
 	}
 
 	if shouldAddFlag(FLAG_SRC_TREE, "") {
-		FlagRslTree = NewBoolRadArg(flagOrEmpty(FLAG_SRC_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
-		hideFromUsageIfHaveScript(&FlagRslTree.hidden)
-		flags = append(flags, &FlagRslTree)
+		FlagRadTree = NewBoolRadArg(flagOrEmpty(FLAG_SRC_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		hideFromUsageIfHaveScript(&FlagRadTree.hidden)
+		flags = append(flags, &FlagRadTree)
 	}
 
 	if shouldAddFlag(FLAG_MOCK_RESPONSE, "") {
@@ -120,7 +120,7 @@ func hideFromUsageIfHaveScript(hidden *bool) {
 	*hidden = HasScript
 }
 
-func registerGlobalFlags(flags []RslArg) {
+func registerGlobalFlags(flags []RadArg) {
 	for _, flag := range flags {
 		flag.Register()
 	}

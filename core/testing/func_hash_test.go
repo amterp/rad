@@ -3,14 +3,14 @@ package testing
 import "testing"
 
 func Test_Func_Hash(t *testing.T) {
-	rsl := `
+	script := `
 hash("hello friend!").print()
 hash("hello friend!", algo="sha1").print()
 hash("hello friend!", algo="sha256").print()
 hash("hello friend!", algo="sha512").print()
 hash("hello friend!", algo="md5").print()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `925ad7fb5133dfdbed43b9c5a472b09fb53d54c2
 925ad7fb5133dfdbed43b9c5a472b09fb53d54c2
 0f3319990f3d61147e6fe024c13eb54a986cf707a2bd76fe7930611e52303ff2
@@ -22,10 +22,10 @@ c36a9dc2ed5a18ffb7c529a6df6cfd214b34ff618441f1254dd34830ad6c4d271b42fdf6e1bcc54f
 }
 
 func Test_Func_HashErrorsForUnknownAlgo(t *testing.T) {
-	rsl := `
+	script := `
 hash("hello friend!", algo="does not exist")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:28
 
   hash("hello friend!", algo="does not exist")

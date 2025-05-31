@@ -5,16 +5,16 @@ import (
 )
 
 const (
-	setupArgRsl = `
+	setupArgScript = `
 args:
    foo "bar" x string`
 )
 
 func TestArgs_ApiRename(t *testing.T) {
-	rsl := setupArgRsl + `
+	script := setupArgScript + `
 print(foo)
 `
-	setupAndRunCode(t, rsl, "hey")
+	setupAndRunCode(t, script, "hey")
 	expected := `hey
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -22,7 +22,7 @@ print(foo)
 }
 
 func TestArgs_ApiRenameUsageString(t *testing.T) {
-	setupAndRunCode(t, setupArgRsl, "-h", "--color=never")
+	setupAndRunCode(t, setupArgScript, "-h", "--color=never")
 	expected := `Usage:
   <bar>
 
@@ -34,12 +34,12 @@ Script args:
 }
 
 func TestArgs_PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	mandatory string
 	optional int = 10
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Usage:
   <mandatory> [optional]
 
@@ -53,13 +53,13 @@ Script args:
 
 func TestArgs_InvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
 	t.Skip("Optional args temporarily not supported -- need to rethink")
-	rsl := `
+	script := `
 args:
 	optionalS string?
 	optionalI int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `hi
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -67,14 +67,14 @@ print('hi')
 }
 
 func TestArgs_ErrorsIfSomeRequiredArgsMissing(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	mandatory1 string
 	mandatory2 string
 	optional int = 10
 print('hi')
 `
-	setupAndRunCode(t, rsl, "one", "--color=never")
+	setupAndRunCode(t, script, "one", "--color=never")
 	expected := `Missing required arguments: [mandatory2]
 
 Usage:
@@ -91,7 +91,7 @@ Script args:
 }
 
 func TestArgs_CanParseAllTypes(t *testing.T) {
-	rsl := `
+	script := `
 args:
     stringArg string
     intArg int
@@ -110,7 +110,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, rsl, "alice", "1", "1.1", "true", "bob,charlie", "2,3", "2.1,3.1", "true,false")
+	setupAndRunCode(t, script, "alice", "1", "1.1", "true", "bob,charlie", "2,3", "2.1,3.1", "true,false")
 	expected := `ALICE
 2
 2.2
@@ -125,7 +125,7 @@ true
 }
 
 func TestArgs_CanParseAllTypeDefaults(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	stringArg string = "alice"
 	intArg int = 1
@@ -144,7 +144,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `ALICE
 2
 2.2
@@ -159,12 +159,12 @@ true
 }
 
 func TestArgs_CanHaveNegativeIntDefault(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	intArg int = -10
 print(intArg + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `-9
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -172,12 +172,12 @@ print(intArg + 1)
 }
 
 func TestArgs_CanHaveNegativeFloatDefault(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	floatArg float = -10.2
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `-9.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -185,12 +185,12 @@ print(floatArg + 1)
 }
 
 func TestArgs_CanPassNegativeIntWithFlag(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	intArg int
 print(intArg)
 `
-	setupAndRunCode(t, rsl, "--intArg", "-10")
+	setupAndRunCode(t, script, "--intArg", "-10")
 	expected := `-10
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -199,12 +199,12 @@ print(intArg)
 
 func TestArgs_CanPassNegativeIntWithoutFlag(t *testing.T) {
 	t.Skip("TODO: RAD-71") // todo RAD-71
-	rsl := `
+	script := `
 args:
 	intArg int
 print(intArg)
 `
-	setupAndRunCode(t, rsl, "-10")
+	setupAndRunCode(t, script, "-10")
 	expected := `-10
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -212,12 +212,12 @@ print(intArg)
 }
 
 func TestArgs_CanPassNegativeFloatWithFlag(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	floatArg float
 print(floatArg)
 `
-	setupAndRunCode(t, rsl, "--floatArg", "-10.2")
+	setupAndRunCode(t, script, "--floatArg", "-10.2")
 	expected := `-10.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -226,12 +226,12 @@ print(floatArg)
 
 func TestArgs_CanPassNegativeFloatWithoutFlag(t *testing.T) {
 	t.Skip("TODO: RAD-71") // todo RAD-71
-	rsl := `
+	script := `
 args:
 	floatArg float
 print(floatArg)
 `
-	setupAndRunCode(t, rsl, "-10.2")
+	setupAndRunCode(t, script, "-10.2")
 	expected := `-10.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -239,14 +239,14 @@ print(floatArg)
 }
 
 func TestArgs_CanHaveSeveralMinuses(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	intArg int = --- 10
 	floatArg float = -------10.2
 print(intArg + 1)
 print(floatArg + 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `-9
 -9.2
 `
@@ -255,12 +255,12 @@ print(floatArg + 1)
 }
 
 func TestArgs_CanHaveIntAsDefaultForFloatArg(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	floatArg float = 2
 print(floatArg + 1.2)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `3.2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -268,11 +268,11 @@ print(floatArg + 1.2)
 }
 
 func TestArgs_CannotHaveFloatAsDefaultForIntArg(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	intArg int = 1.2
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L3:16
 
   	intArg int = 1.2
@@ -282,11 +282,11 @@ args:
 }
 
 func TestArgs_FullHelp(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string # The name.
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -298,11 +298,11 @@ Script args:
 }
 
 func TestArgs_ShortHelp(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string # The name.
 `
-	setupAndRunCode(t, rsl, "-h", "--color=never")
+	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
   <name>
 
@@ -313,10 +313,10 @@ Script args:
 }
 
 func TestArgs_ShortHelpNoArgs(t *testing.T) {
-	rsl := `
+	script := `
 print("hi")
 `
-	setupAndRunCode(t, rsl, "-h", "--color=never")
+	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
  
 `
@@ -324,10 +324,10 @@ print("hi")
 }
 
 func TestArgs_FullHelpNoArgs(t *testing.T) {
-	rsl := `
+	script := `
 print("hi")
 `
-	setupAndRunCode(t, rsl, "--help", "--color=never")
+	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
  
 
@@ -336,7 +336,7 @@ print("hi")
 }
 
 func TestArgs_HelpWorksForAllTypes(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	stringArg string = "alice"
 	intArg int = 1 # An int.
@@ -347,7 +347,7 @@ args:
 	floatArrayArg float[] = [2.1, 3.1]
 	boolArrayArg bool[] = [true, false]
 `
-	setupAndRunCode(t, rsl, "-h", "--color=never")
+	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
   [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
 
@@ -365,38 +365,38 @@ Script args:
 }
 
 func TestArgs_UnsetBoolDefaultsToFalse(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	isTall bool
 print(name, isTall)
 `
-	setupAndRunCode(t, rsl, "alice")
+	setupAndRunCode(t, script, "alice")
 	expected := `alice false
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
 
 func TestArgs_CanDefaultBoolToTrue(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	isTall bool = true
 print(name, isTall)
 `
-	setupAndRunCode(t, rsl, "alice")
+	setupAndRunCode(t, script, "alice")
 	expected := `alice true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
 
 func TestArgs_MissingArgsPrintsUsageAndReturnsError(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "--color=never")
+	setupAndRunCode(t, script, "alice", "--color=never")
 	expected := `Missing required arguments: [age]
 
 Usage:
@@ -411,12 +411,12 @@ Script args:
 }
 
 func TestArgs_TooManyArgsPrintsUsageAndReturnsError(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "2", "3", "--color=never")
+	setupAndRunCode(t, script, "alice", "2", "3", "--color=never")
 	expected := `Too many positional arguments. Unused: [3]
 
 Usage:
@@ -431,12 +431,12 @@ Script args:
 }
 
 func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
-	rsl := `
+	script := `
 args:
 	name string
 	age int
 `
-	setupAndRunCode(t, rsl, "alice", "2", "-s", "--color=never")
+	setupAndRunCode(t, script, "alice", "2", "-s", "--color=never")
 	expected := `unknown shorthand flag: 's' in -s
 
 Usage:

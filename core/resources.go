@@ -18,7 +18,7 @@ type PickResource struct {
 
 type PickResourceOpt struct {
 	Keys   []string
-	Values []RslValue
+	Values []RadValue
 }
 
 type PickResourceSerde struct {
@@ -69,12 +69,12 @@ func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string, numExp
 	}
 }
 
-func resolveFinalPath(pathFromRslScript string) string {
-	if filepath.IsAbs(pathFromRslScript) {
-		return pathFromRslScript
+func resolveFinalPath(pathFromRadScript string) string {
+	if filepath.IsAbs(pathFromRadScript) {
+		return pathFromRadScript
 	}
 
-	finalPath := filepath.Clean(filepath.Join(ScriptDir, pathFromRslScript))
-	RP.RadDebugf(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRslScript, finalPath))
+	finalPath := filepath.Clean(filepath.Join(ScriptDir, pathFromRadScript))
+	RP.RadDebugf(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRadScript, finalPath))
 	return finalPath
 }

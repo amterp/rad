@@ -3,39 +3,39 @@ package testing
 import "testing"
 
 func Test_Count_Basic(t *testing.T) {
-	rsl := `
+	script := `
 print(count("banana", "n"))
 print(count("abracadabra", "a"))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "2\n5\n")
 	assertNoErrors(t)
 }
 
 func Test_Count_Overlap(t *testing.T) {
-	rsl := `
+	script := `
 print(count("aaa", "aa"))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n")
 	assertNoErrors(t)
 }
 
 func Test_Count_Empty(t *testing.T) {
-	rsl := `
+	script := `
 print(count("aaa", ""))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "4\n")
 	assertNoErrors(t)
 }
 
 func Test_Count_EmptyStr(t *testing.T) {
-	rsl := `
+	script := `
 print(count("", "a"))
 print(count("", ""))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "0\n1\n")
 	assertNoErrors(t)
 }

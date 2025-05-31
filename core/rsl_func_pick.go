@@ -14,22 +14,22 @@ var FuncPick = BuiltInFunc{
 	Name:            FUNC_PICK,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}, {RslStringT, RslListT}}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgPrompt: {RslStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadStringT, RadListT}}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		optionsArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
 		filters := make([]string, 0)
 		if filteringArg != nil {
 			switch coerced := filteringArg.value.Val.(type) {
-			case RslString:
+			case RadString:
 				filters = append(filters, coerced.Plain())
-			case *RslList:
+			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RslString); ok {
+					if str, ok := item.Val.(RadString); ok {
 						filters = append(filters, str.Plain())
 					} else {
 						f.i.errorf(filteringArg.node,
@@ -44,7 +44,7 @@ var FuncPick = BuiltInFunc{
 		keys := optionsArg.value.RequireList(f.i, optionsArg.node).AsStringList(false)
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		str := pickKv(f.i, f.callNode, keyGroups, keyGroups, filters, f.namedArgs)[0]
-		return newRslValues(f.i, f.callNode, str)
+		return newRadValues(f.i, f.callNode, str)
 	},
 }
 
@@ -52,11 +52,11 @@ var FuncPickKv = BuiltInFunc{
 	Name:            FUNC_PICK_KV,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslListT}, {RslListT}, {RslStringT, RslListT}}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgPrompt: {RslStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadListT}, {RadStringT, RadListT}}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
 		filteringArg := tryGetArg(2, f.args)
@@ -64,11 +64,11 @@ var FuncPickKv = BuiltInFunc{
 		filters := make([]string, 0)
 		if filteringArg != nil {
 			switch coerced := filteringArg.value.Val.(type) {
-			case RslString:
+			case RadString:
 				filters = append(filters, coerced.Plain())
-			case *RslList:
+			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RslString); ok {
+					if str, ok := item.Val.(RadString); ok {
 						filters = append(filters, str.Plain())
 					} else {
 						f.i.errorf(filteringArg.node,
@@ -84,10 +84,10 @@ var FuncPickKv = BuiltInFunc{
 		values := valueArgs.value.RequireList(f.i, valueArgs.node).Values
 
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
-		valueGroups := lo.Map(values, func(value RslValue, _ int) []RslValue { return []RslValue{value} })
+		valueGroups := lo.Map(values, func(value RadValue, _ int) []RadValue { return []RadValue{value} })
 
 		value := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
-		return newRslValues(f.i, f.callNode, value)
+		return newRadValues(f.i, f.callNode, value)
 	},
 }
 
@@ -95,11 +95,11 @@ var FuncPickFromResource = BuiltInFunc{
 	Name:            FUNC_PICK_FROM_RESOURCE,
 	ReturnValues:    NO_RETURN_LIMIT,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslStringT}, {RslStringT, RslListT}}),
-	NamedArgs: map[string][]RslTypeEnum{
-		namedArgPrompt: {RslStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT, RadListT}}),
+	NamedArgs: map[string][]RadTypeEnum{
+		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		fileArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
@@ -107,7 +107,7 @@ var FuncPickFromResource = BuiltInFunc{
 
 		resource := LoadPickResource(f.i, f.callNode, filePath, f.numExpectedOutputs)
 		var keyGroups [][]string
-		var valueGroups [][]RslValue
+		var valueGroups [][]RadValue
 		for _, opt := range resource.Opts {
 			keyGroups = append(keyGroups, opt.Keys)
 			valueGroups = append(valueGroups, opt.Values)
@@ -116,11 +116,11 @@ var FuncPickFromResource = BuiltInFunc{
 		filters := make([]string, 0)
 		if filteringArg != nil {
 			switch coerced := filteringArg.value.Val.(type) {
-			case RslString:
+			case RadString:
 				filters = append(filters, coerced.Plain())
-			case *RslList:
+			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RslString); ok {
+					if str, ok := item.Val.(RadString); ok {
 						filters = append(filters, str.Plain())
 					} else {
 						f.i.errorf(filteringArg.node,

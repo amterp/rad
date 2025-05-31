@@ -32,7 +32,7 @@ Let's say we already have a file `notes.txt` containing some text. In this scrip
 When run:
 
 ```shell
-rad defer.rsl
+rad defer.rl
 ```
 
 <div class="result">
@@ -97,7 +97,7 @@ Version = 1
 If we execute our script, we get the following output:
 
 ```shell
-rad bump.rsl 2
+rad bump.rl 2
 ```
 
 <div class="result">
@@ -116,7 +116,7 @@ We can see the series of commands get run as we expect, including output from gi
 **Now let's say that we activate failure point 1** by setting its condition to `true`. This means that, after performing the `sed` command, but before we `git add`, the script exits, and we trigger just the first `errdefer` block to 'reset' the `VERSION` file.
 
 ```shell
-rad bump.rsl 3
+rad bump.rl 3
 ```
 
 <div class="result">
@@ -133,7 +133,7 @@ If you run this locally, you should see with `git status` that there are no chan
 Next let's try deactivating failure point 1 again and enabling failure point 2, and running our script again. This time, we can expect the `git add` to run, and our failure will occur after, but before the `git commit`.
 
 ```shell
-rad bump.rsl 3
+rad bump.rl 3
 ```
 
 <div class="result">

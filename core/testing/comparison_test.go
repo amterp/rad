@@ -3,13 +3,13 @@ package testing
 import "testing"
 
 func Test_Comparison_Equality_Int(t *testing.T) {
-	rsl := `
+	script := `
 print(1 == 1)
 print(1 == 2)
 print(2 == 1)
 print(2 == 2)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false
@@ -20,13 +20,13 @@ true
 }
 
 func Test_Comparison_Equality_String(t *testing.T) {
-	rsl := `
+	script := `
 print("a" == "a")
 print("a" == "b")
 print("b" == "a")
 print("b" == "b")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false
@@ -37,13 +37,13 @@ true
 }
 
 func Test_Comparison_Equality_Float(t *testing.T) {
-	rsl := `
+	script := `
 print(1.0 == 1.0)
 print(1.0 == 2.0)
 print(2.0 == 1.0)
 print(2.0 == 2.0)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false
@@ -56,14 +56,14 @@ true
 // todo RAD-92
 func Test_Comparison_Equality_List(t *testing.T) {
 	t.Skip("TODO RAD-92")
-	rsl := `
+	script := `
 print([1, 2, 3] == [1, 2, 3])
 print([1, 2, 3] == [1, 2, 4])
 print([1, 2, 3] == [1, 2])
 print([1, 2, 3] == [1, 2, 3, [4])
 print([1, 2, 3, [4]] == [1, 2, 3, [4])
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false
@@ -77,14 +77,14 @@ true
 // todo RAD-92
 func Test_Comparison_Equality_Map(t *testing.T) {
 	t.Skip("TODO RAD-92")
-	rsl := `
+	script := `
 print({"a": 1, "b": 2} == {"a": 1, "b": 2})
 print({"a": 1, "b": 2} == {"a": 1, "b": 3})
 print({"a": 1, "b": 2} == {"a": 1})
 print({"a": 1, "b": 2} == {"a": 1, "b": 2, "c": {"d": 3}})
 print({"a": 1, "b": 2, {"d": 3}} == {"a": 1, "b": 2, "c": {"d": 3}})
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 false
@@ -96,7 +96,7 @@ true
 }
 
 func Test_Comparison_Equality_Mixed(t *testing.T) {
-	rsl := `
+	script := `
 print(1 == 1.0)
 print(1.0 == 1)
 print(1 == "1")
@@ -118,7 +118,7 @@ print(false == 0)
 print(true == 2)
 print(2 == true)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 true
 false
@@ -145,7 +145,7 @@ false
 }
 
 func Test_Comparison_NotEquality_Mixed(t *testing.T) {
-	rsl := `
+	script := `
 print(1 != 1.0)
 print(1.0 != 1)
 print(1 != "1")
@@ -167,7 +167,7 @@ print(false != 0)
 print(true != 2)
 print(2 != true)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `false
 false
 true
@@ -194,7 +194,7 @@ true
 }
 
 func Test_Comparison_GtLt_Int(t *testing.T) {
-	rsl := `
+	script := `
 print(1 > 1)
 print(1 > 2)
 print(2 > 1)
@@ -209,7 +209,7 @@ print(1 <= 1)
 print(1 <= 2)
 print(2 <= 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `false
 false
 true
@@ -228,7 +228,7 @@ false
 }
 
 func Test_Comparison_GtLt_Float(t *testing.T) {
-	rsl := `
+	script := `
 print(1.1 > 1.1)
 print(1.1 > 2.1)
 print(2.1 > 1.1)
@@ -243,7 +243,7 @@ print(1.1 <= 1.1)
 print(1.1 <= 2.1)
 print(2.1 <= 1.1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `false
 false
 true
@@ -262,7 +262,7 @@ false
 }
 
 func Test_Comparison_GtLt_Mixed(t *testing.T) {
-	rsl := `
+	script := `
 print(1.1 > 1)
 print(1.1 > 2)
 print(2.1 > 1)
@@ -277,7 +277,7 @@ print(1.1 <= 1)
 print(1.1 <= 2)
 print(2.1 <= 1)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 true

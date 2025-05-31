@@ -78,30 +78,30 @@ func NewResponseDef(
 	}
 }
 
-func (r ResponseDef) ToRslMap(i *Interpreter, callNode *ts.Node) *RslMap {
-	rslMap := NewRslMap()
+func (r ResponseDef) ToRadMap(i *Interpreter, callNode *ts.Node) *RadMap {
+	radMap := NewRadMap()
 
-	rslMap.SetPrimitiveBool("success", r.Success)
+	radMap.SetPrimitiveBool("success", r.Success)
 	if r.StatusCode != nil {
-		rslMap.SetPrimitiveInt("status_code", *r.StatusCode)
+		radMap.SetPrimitiveInt("status_code", *r.StatusCode)
 	}
 	if r.Headers != nil {
 		// todo should this *always* be present, but potentially empty?
-		headers := NewRslMap()
+		headers := NewRadMap()
 		for key, values := range *r.Headers {
-			headers.Set(newRslValue(i, callNode, key), newRslValue(i, callNode, values))
+			headers.Set(newRadValue(i, callNode, key), newRadValue(i, callNode, values))
 		}
 	}
 	if r.Body != nil {
 		out, _ := TryConvertJsonToNativeTypes(i, callNode, *r.Body)
-		rslMap.Set(newRslValue(i, callNode, "body"), out)
+		radMap.Set(newRadValue(i, callNode, "body"), out)
 	}
 	if r.Error != nil {
-		rslMap.SetPrimitiveStr("error", *r.Error)
+		radMap.SetPrimitiveStr("error", *r.Error)
 	}
-	rslMap.SetPrimitiveFloat("duration_seconds", r.DurationSeconds)
+	radMap.SetPrimitiveFloat("duration_seconds", r.DurationSeconds)
 
-	return rslMap
+	return radMap
 }
 
 func NewRequester() *Requester {

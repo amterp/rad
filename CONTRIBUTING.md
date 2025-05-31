@@ -9,7 +9,7 @@ Thanks for your interest in contributing to rad! It's much appreciated - this do
 - If it's a bug report, it'd be very handy if you could include a few things:
   1. What version of rad you're using (`rad -v`).
   2. What happens, and the behavior you expect.
-  3. Replication steps, ideally with an RSL script which replicates the issue.
+  3. Replication steps, ideally with a Rad script which replicates the issue.
 
 ## Contributing PRs
 

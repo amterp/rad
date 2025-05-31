@@ -3,12 +3,12 @@ package testing
 import "testing"
 
 func Test_Func_Int_PassthroughForInt(t *testing.T) {
-	rsl := `
+	script := `
 a = int(10)
 print(a)
 print(type_of(a))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10
 int
 `
@@ -17,12 +17,12 @@ int
 }
 
 func Test_Func_Int_FloorsFloat(t *testing.T) {
-	rsl := `
+	script := `
 a = int(10.7)
 print(a)
 print(type_of(a))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `10
 int
 `
@@ -31,13 +31,13 @@ int
 }
 
 func Test_Func_Int_Bool(t *testing.T) {
-	rsl := `
+	script := `
 a = int(true)
 b = int(false)
 print(a, b)
 print(type_of(a), type_of(b))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `1 0
 int int
 `
@@ -46,10 +46,10 @@ int int
 }
 
 func Test_Func_Int_ErrorsOnMap(t *testing.T) {
-	rsl := `
+	script := `
 int({})
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   int({})
@@ -59,10 +59,10 @@ int({})
 }
 
 func Test_Func_Int_ErrorsOnStringWithDetails(t *testing.T) {
-	rsl := `
+	script := `
 int("10")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   int("10")

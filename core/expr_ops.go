@@ -6,7 +6,7 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/amterp/rad/rts/rsl"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -48,53 +48,53 @@ func getOp(str string) OpType {
 	}
 }
 
-func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.Node) RslValue {
+func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.Node) RadValue {
 	opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 	op := getOp(opStr)
-	return newRslValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, op))
+	return newRadValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, op))
 }
 
-func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node) RslValue {
+func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node) RadValue {
 	result := func() interface{} {
 		switch opNode.Kind() {
-		case rsl.K_PLUS_EQUAL:
+		case rl.K_PLUS_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_PLUS)
-		case rsl.K_MINUS_EQUAL:
+		case rl.K_MINUS_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MINUS)
-		case rsl.K_STAR_EQUAL:
+		case rl.K_STAR_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MULTIPLY)
-		case rsl.K_SLASH_EQUAL:
+		case rl.K_SLASH_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_DIVIDE)
-		case rsl.K_PERCENT_EQUAL:
+		case rl.K_PERCENT_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MODULO)
 		default:
 			i.errorf(opNode, "Invalid compound operator")
 			panic(UNREACHABLE)
 		}
 	}()
-	return newRslValue(i, parentNode, result)
+	return newRadValue(i, parentNode, result)
 }
 
-func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslValue {
+func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadValue {
 	switch opNode.Kind() {
-	case rsl.K_PLUS, rsl.K_MINUS, rsl.K_PLUS_PLUS, rsl.K_MINUS_MINUS:
+	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 		argVal := i.evaluate(argNode, 1)[0]
-		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RslIntT, RslFloatT)
+		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RadIntT, RadFloatT)
 
 		intOp, floatOp := i.getUnaryOp(opNode)
 
 		switch coerced := argVal.Val.(type) {
 		case int64:
-			return newRslValue(i, parentNode, intOp(coerced))
+			return newRadValue(i, parentNode, intOp(coerced))
 		case float64:
-			return newRslValue(i, parentNode, floatOp(coerced))
+			return newRadValue(i, parentNode, floatOp(coerced))
 		default:
 			i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
 			panic(UNREACHABLE)
 		}
-	case rsl.K_NOT:
-		return newRslValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+	case rl.K_NOT:
+		return newRadValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
 	default:
 		i.errorf(opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
@@ -103,13 +103,13 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RslVa
 
 func (i *Interpreter) getUnaryOp(opNode *ts.Node) (func(int64) int64, func(float64) float64) {
 	switch opNode.Kind() {
-	case rsl.K_PLUS:
+	case rl.K_PLUS:
 		return func(a int64) int64 { return a }, func(a float64) float64 { return a }
-	case rsl.K_MINUS:
+	case rl.K_MINUS:
 		return func(a int64) int64 { return -a }, func(a float64) float64 { return -a }
-	case rsl.K_PLUS_PLUS:
+	case rl.K_PLUS_PLUS:
 		return func(a int64) int64 { return a + 1 }, func(a float64) float64 { return a + 1 }
-	case rsl.K_MINUS_MINUS:
+	case rl.K_MINUS_MINUS:
 		return func(a int64) int64 { return a - 1 }, func(a float64) float64 { return a - 1 }
 	default:
 		i.errorf(opNode, "Invalid unary operator")
@@ -124,10 +124,10 @@ func (i *Interpreter) executeOp(
 	opNode *ts.Node,
 	op OpType,
 ) interface{} {
-	left := com.Memoize(func() RslValue {
+	left := com.Memoize(func() RadValue {
 		return i.evaluate(leftNode, 1)[0]
 	})
-	right := com.Memoize(func() RslValue {
+	right := com.Memoize(func() RadValue {
 		return i.evaluate(rightNode, 1)[0]
 	})
 
@@ -150,7 +150,7 @@ func (i *Interpreter) executeOp(
 	if op == OP_EQUAL || op == OP_NOT_EQUAL {
 		leftType := left().Type()
 		rightType := right().Type()
-		if leftType != rightType && !(leftType == RslFloatT && rightType == RslIntT) && !(leftType == RslIntT && rightType == RslFloatT) {
+		if leftType != rightType && !(leftType == RadFloatT && rightType == RadIntT) && !(leftType == RadIntT && rightType == RadFloatT) {
 			// different types are not equal
 			// UNLESS they're int/float, in which case we fall through to below and compare there
 			return op == OP_NOT_EQUAL
@@ -226,7 +226,7 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_EQUAL:
 				return float64(coercedLeft) != coercedRight
 			}
-		case RslString:
+		case RadString:
 			switch op {
 			// todo python does not allow this, should we?
 			case OP_IN:
@@ -236,14 +236,14 @@ func (i *Interpreter) executeOp(
 			case OP_MULTIPLY:
 				return coercedRight.Repeat(coercedLeft)
 			}
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_IN:
 				return coercedRight.Contains(left())
 			case OP_NOT_IN:
 				return !coercedRight.Contains(left())
 			}
-		case *RslMap:
+		case *RadMap:
 			switch op {
 			case OP_IN:
 				return coercedRight.ContainsKey(left())
@@ -315,14 +315,14 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			}
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_IN:
 				return coercedRight.Contains(left())
 			case OP_NOT_IN:
 				return !coercedRight.Contains(left())
 			}
-		case *RslMap:
+		case *RadMap:
 			switch op {
 			case OP_IN:
 				return coercedRight.ContainsKey(left())
@@ -330,9 +330,9 @@ func (i *Interpreter) executeOp(
 				return !coercedRight.ContainsKey(left())
 			}
 		}
-	case RslString:
+	case RadString:
 		switch coercedRight := rightV.(type) {
-		case RslString:
+		case RadString:
 			switch op {
 			case OP_PLUS:
 				return coercedLeft.Concat(coercedRight)
@@ -362,14 +362,14 @@ func (i *Interpreter) executeOp(
 			case OP_PLUS:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_IN:
 				return coercedRight.Contains(left())
 			case OP_NOT_IN:
 				return !coercedRight.Contains(left())
 			}
-		case *RslMap:
+		case *RadMap:
 			switch op {
 			case OP_IN:
 				return coercedRight.ContainsKey(left())
@@ -386,14 +386,14 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_EQUAL:
 				return coercedLeft != coercedRight
 			}
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_IN:
 				return coercedRight.Contains(left())
 			case OP_NOT_IN:
 				return !coercedRight.Contains(left())
 			}
-		case *RslMap:
+		case *RadMap:
 			switch op {
 			case OP_IN:
 				return coercedRight.ContainsKey(left())
@@ -401,9 +401,9 @@ func (i *Interpreter) executeOp(
 				return !coercedRight.ContainsKey(left())
 			}
 		}
-	case *RslList:
+	case *RadList:
 		switch coercedRight := rightV.(type) {
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_PLUS:
 				return coercedLeft.JoinWith(coercedRight)
@@ -417,23 +417,23 @@ func (i *Interpreter) executeOp(
 		case OP_PLUS:
 			additionalErrMsg = ". Did you mean to wrap the right side in a list in order to append?"
 		}
-	case RslNull:
+	case RadNull:
 		switch coercedRight := rightV.(type) {
-		case *RslList:
+		case *RadList:
 			switch op {
 			case OP_IN:
 				return coercedRight.Contains(left())
 			case OP_NOT_IN:
 				return !coercedRight.Contains(left())
 			}
-		case *RslMap:
+		case *RadMap:
 			switch op {
 			case OP_IN:
 				return coercedRight.ContainsKey(left())
 			case OP_NOT_IN:
 				return !coercedRight.ContainsKey(left())
 			}
-		case RslNull:
+		case RadNull:
 			switch op {
 			case OP_EQUAL:
 				return true

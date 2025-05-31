@@ -5,7 +5,7 @@ import (
 )
 
 func Test_Print(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/print.rsl")
+	setupAndRunArgs(t, "./rad_scripts/print.rad")
 	expected := `hi alice
 hi bob
 hi charlie
@@ -15,21 +15,21 @@ hi charlie
 }
 
 func Test_DebugNoDebugFlag(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/debug.rsl")
+	setupAndRunArgs(t, "./rad_scripts/debug.rad")
 	expected := "one\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_DebugWithDebugFlag(t *testing.T) {
-	setupAndRunArgs(t, "./rsl_scripts/debug.rsl", "--debug")
+	setupAndRunArgs(t, "./rad_scripts/debug.rad", "--debug")
 	expected := "one\nDEBUG: two\nDEBUG: three\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Dict(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json.results.Alice
 request url:
@@ -41,14 +41,14 @@ pprint(node[0])
   "hometown": "New York"
 }
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Int(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json.results.Alice.age
 request url:
@@ -57,14 +57,14 @@ pprint(node[0])
 `
 	expected := `30
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/unique_keys.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Array(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json[].ids
 request url:
@@ -90,14 +90,14 @@ pprint(node)
   ]
 ]
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/arrays.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/arrays.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Complex(t *testing.T) {
-	rsl := `
+	script := `
 url = "https://google.com"
 node = json
 request url:
@@ -138,14 +138,14 @@ pprint(node[0])
   null
 ]
 `
-	setupAndRunCode(t, rsl, "--mock-response", ".*:./responses/lots_of_types.json", "--color=never")
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/lots_of_types.json", "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Basics(t *testing.T) {
-	rsl := `
+	script := `
 pprint("alice")
 pprint(21)
 pprint(1.2)
@@ -156,13 +156,13 @@ pprint(false)
 1.2
 false
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_PrettyPrint_Map(t *testing.T) {
-	rsl := `
+	script := `
 a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
 pprint(a)
 `
@@ -175,51 +175,51 @@ pprint(a)
   ]
 }
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_Print_CanPrintEmojis(t *testing.T) {
-	rsl := `
+	script := `
 print("👋")`
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "👋\n")
 	assertNoErrors(t)
 }
 
 func Test_Print_CanCustomizeEnd(t *testing.T) {
-	rsl := `
+	script := `
 print("hello", "there", "claire", end="bloop")`
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello there clairebloop")
 	assertNoErrors(t)
 }
 
 func Test_Print_CanUseEndToRemoveNewlines(t *testing.T) {
-	rsl := `
+	script := `
 print("hello", end="")
 print("there", end="")
 print("claire", end="")`
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hellothereclaire")
 	assertNoErrors(t)
 }
 
 func Test_Print_CanCustomizeSep(t *testing.T) {
-	rsl := `
+	script := `
 print("hello", "there", "claire", sep="_")`
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "hello_there_claire\n")
 	assertNoErrors(t)
 }
 
 func Test_Print_PrettyPrintEmptyList(t *testing.T) {
-	rsl := `
+	script := `
 blop = { "foo": [] }
 blop.pprint()
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{
   "foo": []
 }
@@ -229,12 +229,12 @@ blop.pprint()
 }
 
 func Test_PrintErr(t *testing.T) {
-	rsl := `
+	script := `
 print_err("hi alice")
 print_err("hi", "bob", sep="_")
 print_err("hi", end="_charlie\n")
 `
-	setupAndRunCode(t, rsl)
+	setupAndRunCode(t, script)
 	expected := `hi alice
 hi_bob
 hi_charlie

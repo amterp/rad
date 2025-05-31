@@ -11,29 +11,29 @@ var FuncRange = BuiltInFunc{
 	Name:            FUNC_RANGE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RslTypeEnum{{RslIntT, RslFloatT}, {RslIntT, RslFloatT}, {RslIntT, RslFloatT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadFloatT}, {RadIntT, RadFloatT}, {RadIntT, RadFloatT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RslValue {
+	Execute: func(f FuncInvocationArgs) []RadValue {
 		useFloats := false
 		for _, arg := range f.args {
 			switch arg.value.Type() {
-			case RslFloatT:
+			case RadFloatT:
 				useFloats = true
-			case RslIntT:
+			case RadIntT:
 			default:
 				bugIncorrectTypes(FUNC_RANGE)
 			}
 		}
 
 		if useFloats {
-			return newRslValues(f.i, f.callNode, runFloatRange(f.i, f.callNode, f.args))
+			return newRadValues(f.i, f.callNode, runFloatRange(f.i, f.callNode, f.args))
 		} else {
-			return newRslValues(f.i, f.callNode, runIntRange(f.i, f.callNode, f.args))
+			return newRadValues(f.i, f.callNode, runIntRange(f.i, f.callNode, f.args))
 		}
 	},
 }
 
-func runFloatRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslValue {
+func runFloatRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RadValue {
 	var start, end, step float64
 
 	firstArg := args[0]
@@ -70,22 +70,22 @@ func runFloatRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslV
 			"%s() start %f cannot be less than end %f with negative step %f", FUNC_RANGE, start, end, step)
 	}
 
-	var result []RslValue
+	var result []RadValue
 
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, newRslValue(interp, callNode, i))
+			result = append(result, newRadValue(interp, callNode, i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, newRslValue(interp, callNode, i))
+			result = append(result, newRadValue(interp, callNode, i))
 		}
 	}
 
 	return result
 }
 
-func runIntRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslValue {
+func runIntRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RadValue {
 	var start, end, step int64
 
 	firstArg := args[0]
@@ -122,15 +122,15 @@ func runIntRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RslVal
 			"%s() start %d cannot be less than end %d with negative step %d", FUNC_RANGE, start, end, step)
 	}
 
-	var result []RslValue
+	var result []RadValue
 
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, newRslValue(interp, callNode, i))
+			result = append(result, newRadValue(interp, callNode, i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, newRslValue(interp, callNode, i))
+			result = append(result, newRadValue(interp, callNode, i))
 		}
 	}
 

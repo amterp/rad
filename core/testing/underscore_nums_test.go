@@ -3,12 +3,12 @@ package testing
 import "testing"
 
 func Test_NumUnderscores_CanWrite(t *testing.T) {
-	rsl := `
+	script := `
 print(1_234)
 print(0.123_456)
 print(12_34.56_78)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `1234
 0.123456
 1234.5678
@@ -18,7 +18,7 @@ print(12_34.56_78)
 }
 
 func Test_NumUnderscores_CanUseInArgs(t *testing.T) {
-	rsl := `
+	script := `
 args:
   a int = 1_234
   b float = 0.123_456
@@ -27,7 +27,7 @@ args:
 
 print(a, b)
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `1234 0.123456
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -35,7 +35,7 @@ print(a, b)
 }
 
 func Test_NumUnderscores_CanUseInArgs_Range(t *testing.T) {
-	rsl := `
+	script := `
 args:
   a int = 1_234
   b float = 0.123_456
@@ -44,7 +44,7 @@ args:
 
 print(a, b)
 `
-	setupAndRunCode(t, rsl, "3000", "--color=never")
+	setupAndRunCode(t, script, "3000", "--color=never")
 	expected := `Error at L3:3
 
     a int = 1_234

@@ -38,28 +38,28 @@ func TestSleep_AllowsZero(t *testing.T) {
 }
 
 func TestSleep_GoCompatibleHumanString(t *testing.T) {
-	rsl := `
+	script := `
 sleep("10s")
 sleep("10.2s")
 sleep("12345ms")
 sleep("5m30s")
 sleep("1.1h2.2m3.3s")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
 }
 
 func TestSleep_HumanStringAllowSpaces(t *testing.T) {
-	rsl := `
+	script := `
 sleep("10 s")
 sleep("10.2 s")
 sleep("12345 ms")
 sleep("5m 30s")
 sleep("1.1h 2.2m  3.3s")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	assertSleptMillis(t, 10_000, 10_200, 12_345, 330_000, 4_095_300)
 	assertAllElseEmpty(t)
 	assertNoErrors(t)

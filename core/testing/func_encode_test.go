@@ -3,12 +3,12 @@ package testing
 import "testing"
 
 func Test_Func_EncodeDecodeBase64(t *testing.T) {
-	rsl := `
+	script := `
 t = encode_base64("hello friend!")
 print(t)
 print(decode_base64(t))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `aGVsbG8gZnJpZW5kIQ==
 hello friend!
 `
@@ -17,12 +17,12 @@ hello friend!
 }
 
 func Test_Func_EncodeDecodeBase64NoPadding(t *testing.T) {
-	rsl := `
+	script := `
 t = encode_base64("hello friend!", padding=false)
 print(t)
 print(decode_base64(t, padding=false))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `aGVsbG8gZnJpZW5kIQ
 hello friend!
 `
@@ -31,12 +31,12 @@ hello friend!
 }
 
 func Test_Func_EncodeDecodeBase64UrlSafe(t *testing.T) {
-	rsl := `
+	script := `
 t = encode_base64("is this url friendly?!", url_safe=true)
 print(t)
 print(decode_base64(t, url_safe=true))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `aXMgdGhpcyB1cmwgZnJpZW5kbHk_IQ==
 is this url friendly?!
 `
@@ -45,10 +45,10 @@ is this url friendly?!
 }
 
 func Test_Func_DecodeBase64ErrorsOnInvalidInput(t *testing.T) {
-	rsl := `
+	script := `
 decode_base64(";;;< those are not part of base64")
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   decode_base64(";;;< those are not part of base64")
@@ -59,12 +59,12 @@ decode_base64(";;;< those are not part of base64")
 }
 
 func Test_Func_EncodeDecodeBase16(t *testing.T) {
-	rsl := `
+	script := `
 t = encode_base16("hello friend!")
 print(t)
 print(decode_base16(t))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `68656c6c6f20667269656e6421
 hello friend!
 `

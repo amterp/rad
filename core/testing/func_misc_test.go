@@ -3,12 +3,12 @@ package testing
 import "testing"
 
 func Test_StartsWith(t *testing.T) {
-	rsl := `
+	script := `
 a = "alice"
 print(starts_with(a, "al"))
 print(starts_with(a, "ce"))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `true
 false
 `
@@ -17,12 +17,12 @@ false
 }
 
 func Test_EndsWithWith(t *testing.T) {
-	rsl := `
+	script := `
 a = "alice"
 print(ends_with(a, "al"))
 print(ends_with(a, "ce"))
 `
-	setupAndRunCode(t, rsl, "--color=never")
+	setupAndRunCode(t, script, "--color=never")
 	expected := `false
 true
 `
