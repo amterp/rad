@@ -10,4 +10,4 @@ mkdocs serve -f ./docs-web/mkdocs.yml
 
 ## Deploy
 
-Use [deploy_docs.rsl](../deploy_docs.rsl)
+Use [deploy_docs.rad](../deploy_docs.rad)

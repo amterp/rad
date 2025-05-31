@@ -3,9 +3,9 @@ main
 sandbox
 bin
 resp.json
-test.rsl
-test2.rsl
-test3.rsl
+test.rad
+test2.rad
+test3.rad
 resource.json
 docs-web/site
 

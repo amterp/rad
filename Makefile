@@ -1,4 +1,4 @@
-# Makefile for RSL/rad
+# Makefile for rad
 
 # Directories
 BIN_DIR := ./bin
@@ -11,7 +11,7 @@ all: generate format build test
 generate:
 	@echo "⚙️ Running generators..."
 	go run "./function-metadata/extract.go"
-	mv "./functions.txt" "./rsl-language-server/com/embedded/"
+	mv "./functions.txt" "./lsp-server/com/embedded/"
 
 format:
 	@echo "⚙️ Formatting files..."

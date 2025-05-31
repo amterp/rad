@@ -4,10 +4,10 @@ This directory contains scripts/tools/infrastructure for benchmarking rad. The g
 
 ## How To
 
-We use [hyperfine](https://github.com/sharkdp/hyperfine) to conduct the benchmarks. [benchmark.rsl](./benchmark.rsl) can be invoked to run the benchmark suite & report. For example:
+We use [hyperfine](https://github.com/sharkdp/hyperfine) to conduct the benchmarks. [benchmark.rad](./benchmark.rad) can be invoked to run the benchmark suite & report. For example:
 
 ```
-./benchmark.rsl --mock-response ".*:report.json"
+./benchmark.rad --mock-response ".*:report.json"
 ```
 
 ## Benchmark History

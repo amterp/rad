@@ -85,7 +85,7 @@ You may see some similarity here to what we did with [`pick_kv`](#pick_kv). We'r
 
 Let's create an Rad script to use this resource:
 
-```rad title="example.rsl"
+```rad title="example.rad"
 args:
     website string = ""
 
@@ -98,7 +98,7 @@ This allows you to store your resources with your scripts. In this example, we'l
 
 ```
 .
-├── example.rsl
+├── example.rad
 └── resources
     └── websites.json
 ```

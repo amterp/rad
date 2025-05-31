@@ -47,7 +47,7 @@ $!`echo hello`
 
 ```title="Without quiet output"
 ⚡️ Running: ls
-pick.rsl  simple.rsl  sorting.rsl
+pick.rad  simple.rad  sorting.rad
 ⚡️ Running: echo hello
 hello
 ```
@@ -60,6 +60,6 @@ quiet $!`echo hello`
 ```
 
 ```title="With quiet output"
-pick.rsl  simple.rsl  sorting.rsl
+pick.rad  simple.rad  sorting.rad
 hello
 ```

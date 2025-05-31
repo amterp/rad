@@ -1,7 +1,7 @@
 {
   "results": [
     {
-      "command": "../bin/radd scripts/concat.rsl",
+      "command": "../bin/radd scripts/concat.rad",
       "mean": 0.5100992292,
       "stddev": 0.0029189330395512545,
       "median": 0.5092756209,
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "command": "../bin/radd scripts/for-loop-add.rsl",
+      "command": "../bin/radd scripts/for-loop-add.rad",
       "mean": 0.4182889,
       "stddev": 0.007154627709993458,
       "median": 0.4160980999,
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "command": "../bin/radd scripts/math.rsl",
+      "command": "../bin/radd scripts/math.rad",
       "mean": 0.596971075,
       "stddev": 0.021810020689576146,
       "median": 0.5892580584,
@@ -103,7 +103,7 @@
       ]
     },
     {
-      "command": "../bin/radd scripts/read-file.rsl",
+      "command": "../bin/radd scripts/read-file.rad",
       "mean": 0.551084496,
       "stddev": 0.019700134897382652,
       "median": 0.5472810584000001,

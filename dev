@@ -22,7 +22,7 @@ if release or push or validate:
     $!`make all`
 
 if dumps:
-    $!`cd ./rts/test/dumps && ./test_dumps.rsl`
+    $!`cd ./rts/test/dumps && ./test_dumps.rad`
 
 if docs:
     $!`mkdocs gh-deploy -f ./docs-web/mkdocs.yml`

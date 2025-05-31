@@ -211,7 +211,7 @@ You can optionally precede these with the `mutually` keyword to indicate that th
 
 Use `excludes` to prevent arguments from being specified together. For example, consider a script that accepts either a file (`--file`) or a URL (`--url`), but not both:
 
-```rad title="fetcher.rsl"
+```rad title="fetcher.rad"
 args:
   file string
   url string
@@ -227,17 +227,17 @@ else:
 You can then provide either argument:
 
 ```
-> rad fetcher.rsl --file data.json
+> rad fetcher.rad --file data.json
 Reading from file: data.json
 
-> rad fetcher.rsl --url https://example.com/data.json
+> rad fetcher.rad --url https://example.com/data.json
 Fetching from URL: https://example.com/data.json
 ```
 
 If both are provided, Rad gives a clear error:
 
 ```
-> rad fetcher.rsl --file data.json --url https://example.com/data.json
+> rad fetcher.rad --file data.json --url https://example.com/data.json
 Invalid arguments: 'file' excludes 'url', but 'url' was given
 ```
 
@@ -249,7 +249,7 @@ Consider a script that can authenticate either by using a token or by providing 
 
 If the user provides a username, the password is also required.
 
-```rad title="auth.rsl"
+```rad title="auth.rad"
 args:
   token string
   username string
@@ -267,20 +267,20 @@ else:
 Valid usage examples:
 
 ```
-> rad auth.rsl --token abc123
+> rad auth.rad --token abc123
 Authenticating with token: abc123
 
-> rad auth.rsl --username alice --password secret
+> rad auth.rad --username alice --password secret
 Authenticating user: alice
 ```
 
 Invalid usage examples:
 
 ```
-> rad auth.rsl --username alice
+> rad auth.rad --username alice
 Invalid arguments: 'username' requires 'password', but 'password' was not provided
 
-> rad auth.rsl --token abc123 --password secret
+> rad auth.rad --token abc123 --password secret
 Invalid arguments: 'token' excludes 'password', but 'password' was given
 ```
 

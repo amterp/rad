@@ -12,7 +12,7 @@ You may wish to use them to clean up or undo operations before exiting.
 
 Here is an example:
 
-```rad title="defer.rsl"
+```rad title="defer.rad"
 $!`mv notes.txt notes-tmp.txt`
 defer:
     $!`mv notes-tmp.txt notes.txt`
@@ -58,7 +58,7 @@ Below is an example of a version-bumping script. Using `sed`, this script replac
 and commits it. However, if there's a failure in between the `sed` and `commit` steps, then we want to undo earlier steps as a cleanup, in order to
 make the script *atomic* i.e. it either succeeds entirely or does nothing, leaving no intermediary state changes behind. We accomplish this through `errdefer` blocks. 
 
-```rad title="bump.rsl"
+```rad title="bump.rad"
 args:
     version string
 

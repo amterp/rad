@@ -33,7 +33,7 @@ $!cmd
 
 // todo rad: could avoid by being able to parse own json to rad blocks
 
-cmd = `./report.rsl --mock-response ".*:{report_name}"`
+cmd = `./report.rad --mock-response ".*:{report_name}"`
 if skip_readme:
     $!cmd
     exit()

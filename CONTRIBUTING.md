@@ -90,8 +90,8 @@ That said, here are some specific callouts:
   - A lot of things in here are abstractions that enable us to swap in implementations for testing.
 - [`core/funcs.go`](./core/funcs.go) defines most of our inbuilt functions.
 - [`core/testing`](./core/testing) is where we define the bulk of our tests.
-  - They tend to be end-to-end tests which define some RSL code, execute it, and assert against stdout/stderr from rad.
-- [`core/type_rsl_value.go`](./core/type_rsl_value.go) defines a `RslValue` struct type.
+  - They tend to be end-to-end tests which define some Rad code, execute it, and assert against stdout/stderr from rad.
+- [`core/type_rad_value.go`](./core/type_rad_value.go) defines a `RadValue` struct type.
   - It represents runtime variables when rad is interpreting a script, and gets passed around a lot.
 
 ## Questions?

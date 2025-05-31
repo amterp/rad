@@ -67,11 +67,11 @@ See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source
 
 ### Visual Studio Code Extension
 
-The VS Code extension for RSL can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension). Source [here](./vsc-extension).
+The VS Code extension for Rad can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension). Source [here](./vsc-extension).
 
-It provides syntax highlighting and integrates with the RSL language server for error detection. 
+It provides syntax highlighting and integrates with the Rad language server for error detection. 
 
-The language server is currently only available on macOS & Linux. Source [here](./rsl-language-server).
+The language server is currently only available on macOS & Linux. Source [here](lsp-server).
 
 ![vsc-example.png](./assets/vsc-example.png)
 
@@ -85,7 +85,7 @@ Feel free to check out the [**Getting Started**](https://amterp.github.io/rad/gu
 
 ⚠️ **Rad is still in early development!** ⚠️
 
-Rad is a working CLI tool and interpreter that can run useful RSL scripts.
+Rad is a working CLI tool and interpreter that can run useful Rad scripts.
 
 It's complete enough to be useful, but do expect the following:
 
@@ -99,7 +99,7 @@ That said, please do give it a try, I'd love to hear your experience and any fee
 ### What's being worked on 🚧
 
 - Language features (there's a long list!)
-- LSP language server ([RLS](./rsl-language-server))
+- LSP language server ([RLS](lsp-server))
 
 ### What's planned 🌱 
 
@@ -124,15 +124,15 @@ and provide all the necessary utilities out of the box.
 
 ### How does Rad solve it? 🛠️
 
-Rad is an interpreter for a language called **RSL** (Rad Scripting Language), which is purpose-built for this exact problem.
+Rad is a language and interpreter, purpose-built for this exact problem.
 
-- RSL is **familiar**, drawing on popular languages like Python.
-- RSL **knows its domain** - it has unique syntax which makes writing scripts as easy as possible, such as its declarative approach to script args.
-- RSL has **batteries included** - it aims to offer everything you need in a single installation that lets you write the scripts you want.
+- Rad is **familiar**, drawing on popular languages like Python.
+- Rad **knows its domain** - it has unique syntax which makes writing scripts as easy as possible, such as its declarative approach to script args.
+- Rad has **batteries included** - it aims to offer everything you need in a single installation that lets you write the scripts you want.
 
 ### Example: Printing a table of a repo's commits
 
-An example for a type of script that RSL makes very easy to write, is one which queries a JSON API, 
+An example for a type of script that Rad makes very easy to write, is one which queries a JSON API, 
 extracts some fields, and prints the results in a table.
 
 Let's see a concrete example script (`commits`):
@@ -170,7 +170,7 @@ Time                  Author          SHA
 4. It executes the query, extracting the specified fields, and displays the resulting data as a table.
     - Note the `rad url` syntax: "rad" actually stands for "request and display", which is what this built-in syntax does.
 
-We keep this example somewhat minimal - there are RSL features we could use to improve this, but it's kept simple here.
+We keep this example somewhat minimal - there are Rad features we could use to improve this, but it's kept simple here.
 
 Some alternative valid invocations for this example:
 
@@ -194,10 +194,10 @@ Some alternative valid invocations for this example:
 
 ### Why Rad? 🚀
 
-- Rad and its accompanying language, RSL, are **tailored to writing scripts**. You can write better scripts, in fewer lines of code.
-- RSL is familiar, with a low learning curve. It's **simple and easy to pick up**.
-- RSL offers inbuilt syntax that guides you towards writing **user-friendly scripts**, with helpful usage strings (available with `--help`).
-- **Shell integration** - RSL offers built-in syntax for invoking shell commands, so you can still reach for Bash when needed.
+- Rad is **tailored to writing scripts**. You can write better scripts, in fewer lines of code.
+- Rad is familiar, with a low learning curve. It's **simple and easy to pick up**.
+- Rad offers inbuilt syntax that guides you towards writing **user-friendly scripts**, with helpful usage strings (available with `--help`).
+- **Shell integration** - Rad offers built-in syntax for invoking shell commands, so you can still reach for Bash when needed.
 
 ### Why *not* Rad? ⚠️
 

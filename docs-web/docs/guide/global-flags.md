@@ -36,7 +36,7 @@ Note that, outside of `help`, all the global flags are ALL CAPS.
 
 For example, given this example:
 
-```rad title="debug.rsl"
+```rad title="debug.rad"
 print("1")
 debug("2")
 print("3")
@@ -45,7 +45,7 @@ print("3")
 the following invocations will give the respective outputs:
 
 ```
-rad debug.rsl
+rad debug.rad
 ```
 
 <div class="result">
@@ -56,7 +56,7 @@ rad debug.rsl
 </div>
 
 ```
-rad debug.rsl -d
+rad debug.rad -d
 ```
 
 <div class="result">

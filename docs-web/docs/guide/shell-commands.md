@@ -157,7 +157,7 @@ _, _, stderr = $cmd
 
 By default, whenever you invoke a shell command, Rad will print an 'announcement' to indicate to users what command is being run. For example:
 
-```rad title="create.rsl"
+```rad title="create.rad"
 args:
     filename string
 $!`touch {filename}.txt`
@@ -166,7 +166,7 @@ $!`touch {filename}.txt`
 This short script simply creates a file based on its argument. When invoked, it prints the following output:
 
 ```
-rad create.rsl hi
+rad create.rad hi
 ```
 
 <div class="result">
