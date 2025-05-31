@@ -1,6 +1,6 @@
 {
-  "name": "rsl-lsp-vsc-client",
-  "description": "A Visual Studio Code client for the RSL language server.",
+  "name": "rad-lsp-vsc-client",
+  "description": "A Visual Studio Code client for the Rad language server.",
   "author": "Alexander Terp",
   "license": "MIT",
   "version": "0.0.1",

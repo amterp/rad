@@ -221,7 +221,7 @@ then it will invoke said interpreter on the script (equivalent to `rad ./hello` 
 
 ## Visual Studio Code Extension
 
-Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension) which offers nice syntax highlighting and script validation.
+Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation.
 
 Installing it is highly recommended!
 

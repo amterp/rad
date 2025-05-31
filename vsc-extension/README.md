@@ -1,4 +1,4 @@
-# RSL Visual Studio Code Extension
+# Rad Visual Studio Code Extension
 
 ## Dev
 

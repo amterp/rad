@@ -67,7 +67,7 @@ See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source
 
 ### Visual Studio Code Extension
 
-The VS Code extension for Rad can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rsl-extension). Source [here](./vsc-extension).
+The VS Code extension for Rad can be found [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension). Source [here](./vsc-extension).
 
 It provides syntax highlighting and integrates with the Rad language server for error detection. 
 

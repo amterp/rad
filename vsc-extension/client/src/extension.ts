@@ -23,10 +23,10 @@ export function activate(context: vscode.ExtensionContext) {
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: "file", language: "rsl" }]
+        documentSelector: [{ scheme: "file", language: "rad" }]
     };
 
-    const client = new LanguageClient("rls", "RSL Language Server", serverOptions, clientOptions);
+    const client = new LanguageClient("rls", "Rad Language Server", serverOptions, clientOptions);
     client.start();
 
     context.subscriptions.push(client);

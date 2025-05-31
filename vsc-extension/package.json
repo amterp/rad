@@ -1,11 +1,11 @@
 {
-  "name": "rsl-extension",
-  "displayName": "RSL Language Pack",
-  "description": "Language support for RSL (Rad Scripting Language).",
+  "name": "rad-extension",
+  "displayName": "Rad (Language Support)",
+  "description": "Language support for Rad, a modern CLI scripting language.",
   "author": "Alexander Terp",
   "publisher": "amterp",
   "license": "MIT",
-  "version": "0.0.19",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/amterp/rad"
@@ -24,16 +24,15 @@
     "configuration": {},
     "languages": [
       {
-        "id": "rsl",
+        "id": "rad",
         "aliases": [
-          "RSL",
-          "rsl",
+          "Rad",
           "Rad Scripting Language",
-          "Rsl"
+          "Rad Script"
         ],
         "extensions": [
-          ".rsl",
-          ".rad"
+          ".rad",
+          ".rsl"
         ],
         "configuration": "./language-configuration.json",
         "firstLine": "^#!/usr/bin/env rad"
@@ -41,13 +40,13 @@
     ],
     "grammars": [
       {
-        "language": "rsl",
-        "scopeName": "source.rsl",
-        "path": "./syntaxes/rsl.tmLanguage.json"
+        "language": "rad",
+        "scopeName": "source.rad",
+        "path": "./syntaxes/rad.tmLanguage.json"
       }
     ],
     "configurationDefaults": {
-      "[rsl]": {
+      "[rad]": {
         "editor.insertSpaces": true,
         "editor.tabSize": 4
       }
