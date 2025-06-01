@@ -73,7 +73,7 @@
 - [ ] update existing
   - [x] getting started
   - [x] basics
-  - [ ] args
+  - [x] args
   - [ ] rad blocks
   - [ ] functions
   - [ ] strings

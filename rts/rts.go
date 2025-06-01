@@ -1,7 +1,7 @@
 package rts
 
 import (
-	rsl "github.com/amterp/tree-sitter-rad/bindings/go"
+	rad "github.com/amterp/tree-sitter-rad/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -12,7 +12,7 @@ type RadParser struct {
 func NewRadParser() (rts *RadParser, err error) {
 	parser := ts.NewParser()
 
-	err = parser.SetLanguage(ts.NewLanguage(rsl.Language()))
+	err = parser.SetLanguage(ts.NewLanguage(rad.Language()))
 	if err != nil {
 		return nil, err
 	}

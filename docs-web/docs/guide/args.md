@@ -11,9 +11,10 @@ You simply declare what arguments your script accepts, and let Rad take care of 
 
 Arguments are declared as part of an **args block**.
 
-Here's an example for a script we'll call `printwords` which prints an input word N number of times:
+Here's an example script we'll call `printwords` that prints an input word some number of times:
 
-```rad
+```rad linenums="1" hl_lines="0"
+#!/usr/bin/env rad
 args:
     word string
     repeats int
@@ -22,10 +23,10 @@ for _ in range(repeats):
     print(word)
 ```
 
-We can print its usage string using the `--help` flag:
+We can print its usage string using the `-h` flag:
 
 ```shell
-rad printwords --help
+./printwords -h
 ```
 
 <div class="result">
@@ -51,10 +52,11 @@ Some important things to note:
 
 Let's look at a more complex example to demonstrate some more features. Let's call it `wordjoin`.
 
-```rad
+```rad linenums="1" hl_lines="0"
+#!/usr/bin/env rad
 args:
-    words string[]  # Words to join together.
-    joiner j string = "-"  # Joiner for the words.
+    words string[]                         # Words to join together.
+    joiner j string = "-"                  # Joiner for the words.
     should_capitalize "capitalize" c bool  # If true, capitalize the words.
 
 if should_capitalize:
@@ -63,10 +65,10 @@ if should_capitalize:
 print(join(words, joiner))
 ```
 
-If we run `--help` on this one:
+If we run `-h` on this one:
 
 ```shell
-rad wordjoin --help
+./wordjoin -h
 ```
 
 <div class="result">
@@ -86,18 +88,15 @@ Let's break down each declaration to see what's going on here.
 [//]: # (todo points below all show up as 1)
 
 1. `words string[]  # Words to join together.`
-
-We declare an arg `words` which is a list of strings. Note that `int[]`, `float[]` and `bool[]` can be used for int, float, and bool lists respectively.
-We also define an arg comment to make the usage string include a description of what the argument is.
+    - We declare an arg `words` which is a list of strings. Note that `int[]`, `float[]` and `bool[]` can be used for int, float, and bool lists respectively.
+    - We also define an arg comment to make the usage string include a description of what the argument is.
 
 2. `joiner j string = "-"  # Joiner for the words.`
-
-We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
-After that, we define a **default** for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
+    - We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
+    - After that, we define a **default** value `-` for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
 
 3. `should_capitalize "capitalize" c bool  # If true, capitalize the words.`
-
-We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them, instead of the initial variable name.
+    - We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them, instead of the initial variable name.
 `should_capitalize` will remain the name of the variable to be referenced throughout the script. We define a shorthand `c`, and specify the parameter is a `bool` before finally giving it an arg comment.
 
 Bool args are always false by default.
@@ -130,7 +129,8 @@ If you have a string argument where you really only want to accept some limited 
 
 Let's use a simple example, we'll call the script `colors`:
 
-```rad
+```rad linenums="1" hl_lines="0"
+#!/usr/bin/env rad
 args:
     color string
     color enum ["red", "green", "blue"]
@@ -140,7 +140,7 @@ print("You like {color}!")
 If we print the usage string, you can see it tells users what values are valid:
 
 ```shell
-rad colors --help
+./colors -h
 ```
 
 <div class="result">
@@ -156,7 +156,7 @@ Script args:
 If we invoke this script with a value outside the listed valid values:
 
 ```rad
-rad colors yellow
+./colors yellow
 ```
 
 <div class="result">
@@ -173,7 +173,7 @@ Script args:
 Whereas using a valid value will run the script as intended:
 
 ```shell
-rad colors green
+./colors green
 ```
 
 <div class="result">
@@ -200,10 +200,10 @@ As with other constraints, Rad will validate input against this regex, and if it
 
 ### Relational
 
-Relational constraints let you express logical relationships between your script's arguments. There are two types of constraints you can define:
+Relational constraints let you express logical relationships **between your script's arguments**. There are two types of constraints you can define:
 
 - `excludes` (arguments can't appear together)
-- `requires` (an argument depends on another argument being provided)
+- `requires` (an argument depends on another argument also being provided)
 
 You can optionally precede these with the `mutually` keyword to indicate that the constraint applies in both directions.
 
@@ -211,7 +211,8 @@ You can optionally precede these with the `mutually` keyword to indicate that th
 
 Use `excludes` to prevent arguments from being specified together. For example, consider a script that accepts either a file (`--file`) or a URL (`--url`), but not both:
 
-```rad title="fetcher.rad"
+```rad title="File: fetcher"
+#!/usr/bin/env rad
 args:
   file string
   url string
@@ -227,17 +228,17 @@ else:
 You can then provide either argument:
 
 ```
-> rad fetcher.rad --file data.json
+> ./fetcher --file data.json
 Reading from file: data.json
 
-> rad fetcher.rad --url https://example.com/data.json
+> ./fetcher --url https://example.com/data.json
 Fetching from URL: https://example.com/data.json
 ```
 
 If both are provided, Rad gives a clear error:
 
 ```
-> rad fetcher.rad --file data.json --url https://example.com/data.json
+> ./fetcher --file data.json --url https://example.com/data.json
 Invalid arguments: 'file' excludes 'url', but 'url' was given
 ```
 
@@ -249,7 +250,7 @@ Consider a script that can authenticate either by using a token or by providing 
 
 If the user provides a username, the password is also required.
 
-```rad title="auth.rad"
+```rad title="File: auth"
 args:
   token string
   username string
@@ -267,20 +268,20 @@ else:
 Valid usage examples:
 
 ```
-> rad auth.rad --token abc123
+> ./auth --token abc123
 Authenticating with token: abc123
 
-> rad auth.rad --username alice --password secret
+> ./auth --username alice --password secret
 Authenticating user: alice
 ```
 
 Invalid usage examples:
 
 ```
-> rad auth.rad --username alice
+> ./auth --username alice
 Invalid arguments: 'username' requires 'password', but 'password' was not provided
 
-> rad auth.rad --token abc123 --password secret
+> ./auth --token abc123 --password secret
 Invalid arguments: 'token' excludes 'password', but 'password' was given
 ```
 
@@ -288,7 +289,7 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 
 - Rad takes a *declarative* approach to args, and handles parsing user input.
 - All args can be specified positionally or via a flag from the user.
-- The anatomy of an arg declaration is this:
+- Anatomy of an arg declaration:
 
     `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
 
