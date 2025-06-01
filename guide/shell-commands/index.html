@@ -1102,7 +1102,7 @@
   <h1>Shell Commands</h1>
 
 <p>The shell offers a wide range of utilities and is a great way to interact with your system e.g. reading/writing files, invoking installed programs, etc.</p>
-<p>While you can do a lot with in-built RSL functionality, sometimes you'll want to invoke things from your shell, and RSL makes that convenient through  syntax we'll explore in this section.</p>
+<p>While you can do a lot with in-built Rad functionality, sometimes you'll want to invoke things from your shell, and Rad makes that convenient through  syntax we'll explore in this section.</p>
 <h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
 <p>Shell commands can be written via <a href="../basics/#string">strings</a>. You can then <em>invoke</em> shell commands by prefixing a string with a dollar sign <code>$</code>.</p>
 <p>For example:</p>
@@ -1110,18 +1110,18 @@
 </code></pre></div>
 <p>Here we have the intent to run <code>ls</code> from your shell and printing the output to your terminal.</p>
 <p>Note that you can write the shell command inline like above, or pre-define a string as an identifier (e.g. <code>cmd = ...</code>) and then prefix the identifier with <code>$</code> i.e. <code>$cmd</code> to invoke that pre-defined command.</p>
-<p><strong>The above example won't run as-is though</strong> -- RSL requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
+<p><strong>The above example won't run as-is though</strong> -- Rad requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
 To do this, you must define either a <code>fail</code> or a <code>recover</code> block below your command invocation. If the command fails, the block you define will get run, but if it succeeds, the block will <em>not</em> run and will be skipped.</p>
 <p>When the <code>fail</code> block is run and finishes, the script <strong>will exit</strong>.</p>
 <p>When the <code>recover</code> block is run and finishes, the script <strong>will continue</strong> with whatever comes after the block.</p>
 <p>You can think of each block as saying how you want shell command failure to be handled - either you want the script to <strong>fail</strong> or you want it to <strong>recover</strong>.</p>
 <p>Here are a couple of examples to demonstrate what happens <em>if the command fails</em>. We create a <code>cmd</code> string to <code>curl</code> a <code>url</code> we defined earlier.</p>
-<div class="highlight"><pre><span></span><code>cmd<span class="w"> </span>=<span class="w"> </span>`curl<span class="w"> </span>{url}`
+<div class="highlight"><pre><span></span><code>cmd = `curl {url}`
 $cmd
-<span class="nf">fail:</span>
-<span class="w">    </span>print(<span class="s">&quot;Oh no, curl failed!&quot;)</span>
+fail:
+    print(&quot;Oh no, curl failed!&quot;)
 
-<span class="s">print(&quot;Hello!&quot;</span>)
+print(&quot;Hello!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Oh no, curl failed!
@@ -1130,12 +1130,12 @@ $cmd
 
 <p>The <code>Hello!</code> does not get printed because the <code>fail</code> block exits after it runs.
 The exit code of running this script will be non-0, indicating failure.</p>
-<div class="highlight"><pre><span></span><code>cmd<span class="w"> </span>=<span class="w"> </span>`curl<span class="w"> </span>{url}`
+<div class="highlight"><pre><span></span><code>cmd = `curl {url}`
 $cmd
-<span class="nf">recover:</span>
-<span class="w">    </span>print(<span class="s">&quot;Oh no, curl failed!&quot;)</span>
+recover:
+    print(&quot;Oh no, curl failed!&quot;)
 
-<span class="s">print(&quot;Hello!&quot;</span>)
+print(&quot;Hello!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Oh no, curl failed!
@@ -1151,14 +1151,14 @@ Hello!
 to contain shell commands when writing them into strings. However, there's nothing stopping you from using other delimiters.</p>
 </div>
 <h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
-<p>RSL requires <code>fail</code> or <code>recover</code> blocks when using <code>$</code> syntax for shell commands in order to help developers write safe and well-behaved scripts.</p>
+<p>Rad requires <code>fail</code> or <code>recover</code> blocks when using <code>$</code> syntax for shell commands in order to help developers write safe and well-behaved scripts.</p>
 <p>However, a very common expectation is that the command should succeed, and if it doesn't, we should fail the script and exit immediately with a non-0 exit code. Rather than requiring explicit <code>fail</code> blocks, which can be a little cumbersome to write every time, you can instead use <code>$!</code> syntax to express that a command is <em>critical</em> i.e. it <em>must</em> succeed, else the script exits.</p>
 <div class="highlight"><pre><span></span><code>$!`ls`
 </code></pre></div>
-<p>This line alone is a perfectly valid shell command and RSL script. If the command fails, we propagate the error code and print the error.</p>
+<p>This line alone is a perfectly valid shell command and Rad script. If the command fails, we propagate the error code and print the error.</p>
 <h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
 <p>If you want to run a shell command and <em>don't care</em> if it succeeds, you can use the <code>unsafe</code> keyword:</p>
-<div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls`
+<div class="highlight"><pre><span></span><code>unsafe $`ls`
 </code></pre></div>
 <p>Regardless of if this invocation succeeds or fails, the script will continue.</p>
 <p>Use these judiciously.</p>
@@ -1166,38 +1166,38 @@ to contain shell commands when writing them into strings. However, there's nothi
 <p>So far, all example shell invocations have not involved capturing their output. <strong>When we don't capture command outputs, they're automatically printed to the terminal.</strong> However, you can capture command output as strings using the below example syntaxes. In each example, <code>cmd</code> is a predefined string variable representing a shell command.</p>
 <p>1) Capturing exit codes</p>
 <p>You can get the exit code from your invocation by writing it as an assignment to one identifier:</p>
-<div class="highlight"><pre><span></span><code>code<span class="w"> </span>=<span class="w"> </span>$cmd
+<div class="highlight"><pre><span></span><code>code = $cmd
 </code></pre></div>
 <p>The code returned by your invocation depends on the command. Commonly, a code of <code>0</code> indicates success, and non-0 indicates failure.</p>
 <p>2) Capturing stdout</p>
-<p>Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With RSL, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:</p>
-<div class="highlight"><pre><span></span><code>code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$cmd
+<p>Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With Rad, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:</p>
+<div class="highlight"><pre><span></span><code>code, stdout = $cmd
 </code></pre></div>
 <p>Note that, when capturing stdout (or stderr), <strong>it does not get printed to the terminal</strong>. It gets redirected to your variable.</p>
 <p>3) Capturing stderr</p>
 <p>Lastly, you can capture stderr by adding a third identifier to the assignment:</p>
-<div class="highlight"><pre><span></span><code>code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$cmd
+<div class="highlight"><pre><span></span><code>code, stdout, stderr = $cmd
 </code></pre></div>
 <p>Note that if you don't care about certain outputs, you can conventionally use an underscore <code>_</code> as the respective identifier to indicate to readers that you don't intend to use those outputs later.</p>
 <p>For example, if you're only interested in stderr:</p>
-<div class="highlight"><pre><span></span><code>_,<span class="w"> </span>_,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$cmd
+<div class="highlight"><pre><span></span><code>_, _, stderr = $cmd
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Silencing command output</p>
 <p>Because capturing stdout and stderr means they don't get printed to the console automatically when the command runs, you can use this fact
 to hide the output of commmands and run them silently:</p>
-<div class="highlight"><pre><span></span><code>_,<span class="w"> </span>_,<span class="w"> </span>_<span class="w"> </span>=<span class="w"> </span>$cmd
+<div class="highlight"><pre><span></span><code>_, _, _ = $cmd
 </code></pre></div>
 <p>This example will run "silently", in that none of its output will get printed to the terminal.</p>
 </div>
 <h2 id="suppressing-announcements">Suppressing Announcements<a class="headerlink" href="#suppressing-announcements" title="Permanent link">&para;</a></h2>
-<p>By default, whenever you invoke a shell command, rad will print an 'announcement' to indicate to users what command is being run. For example:</p>
-<div class="highlight"><span class="filename">create.rsl</span><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>filename<span class="w"> </span>string
-$!`touch<span class="w"> </span>{filename}.txt`
+<p>By default, whenever you invoke a shell command, Rad will print an 'announcement' to indicate to users what command is being run. For example:</p>
+<div class="highlight"><span class="filename">create.rad</span><pre><span></span><code>args:
+    filename string
+$!`touch {filename}.txt`
 </code></pre></div>
 <p>This short script simply creates a file based on its argument. When invoked, it prints the following output:</p>
-<div class="highlight"><pre><span></span><code>rad create.rsl hi
+<div class="highlight"><pre><span></span><code>rad create.rad hi
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: touch hi.txt
@@ -1205,11 +1205,11 @@ $!`touch<span class="w"> </span>{filename}.txt`
 </div>
 
 <p>If you wish to suppress this output, use the <code>quiet</code> keyword: </p>
-<div class="highlight"><pre><span></span><code>quiet<span class="w"> </span>$!`touch<span class="w"> </span>{filename}.txt`
+<div class="highlight"><pre><span></span><code>quiet $!`touch {filename}.txt`
 </code></pre></div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>RSL offers first-class support for interacting with your shell and invoking shell commands.</li>
+<li>Rad offers first-class support for interacting with your shell and invoking shell commands.</li>
 <li>Basic invocations (using <code>$</code>) require either a <code>fail</code> or <code>recover</code> command immediately after.</li>
 <li>If you wish to simply exit when a command fails, you can write it as a <strong>critical command</strong> with <code>$!</code>.</li>
 <li>You can capture command outputs by progressively adding more identifiers to an assignment with the invocation.<ul>

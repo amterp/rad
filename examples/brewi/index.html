@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tutorial-building-brewi" class="md-skip">
+        <a href="#preview" class="md-skip">
           Skip to content
         </a>
       
@@ -622,6 +622,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tutorial-building-brewi" class="md-nav__link">
     <span class="md-ellipsis">
       Tutorial: Building brewi
@@ -989,6 +998,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tutorial-building-brewi" class="md-nav__link">
     <span class="md-ellipsis">
       Tutorial: Building brewi
@@ -1041,19 +1059,30 @@
 
   <h1>brewi</h1>
 
-<div class="highlight"><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="c">---</span>
-<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-<span class="c">---</span>
-<span class="nf">args:</span>
-<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
-<span class="w">    </span>cask<span class="w"> </span>c<span class="w"> </span>bool<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>it&#39;s<span class="w"> </span>a<span class="w"> </span>cask.
+<h2 id="preview">Preview<a class="headerlink" href="#preview" title="Permanent link">&para;</a></h2>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Facilitates checking a brew formula before installing it.
+---
+args:
+    formula string # Name of the formula to install.
+    cask c bool    # Enable if it&#39;s a cask.
 
-$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
-<span class="k">if</span><span class="w"> </span>confirm():
-<span class="w">    </span>$!`brew<span class="w"> </span>install{cask<span class="w"> </span>?<span class="w"> </span><span class="s">&quot; --cask&quot; : &quot;&quot;</span>}<span class="w"> </span>{formula}`
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>&gt; brewi --help
+$!`brew info {formula}`
+if confirm():
+    $!`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><pre><span></span><code>&gt; brewi -h
 Facilitates checking a brew formula before installing it.
 
 Usage:
@@ -1074,16 +1103,16 @@ Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 </code></pre></div>
 <p>This will set us up with an executable script named <code>brewi</code>, and the <code>-s</code> simplifies the template it's instantiated with to contain <em>just</em> a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
 <p>The shebang will allow us to invoke the script as <code>brewi</code> from the CLI rather than writing out <code>rad ./brewi</code>. Open up <code>brewi</code> in your editor, and you should see something like this:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 </code></pre></div></td></tr></table></div>
 <p>Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="hll"><span class="c">---</span>
-</span><span class="hll"><span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-</span><span class="hll"><span class="c">---</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="hll">---
+</span><span class="hll">Facilitates checking a brew formula before installing it.
+</span><span class="hll">---
 </span></code></pre></div></td></tr></table></div>
 <p>We want the script to accept a formula as an argument, i.e. the formula we may be installing. It'll be a string, so let's add this in an <a href="../../guide/args/">arg block</a>. We'll include a little comment to improve our usage string.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1091,12 +1120,12 @@ Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="c">---</span>
-<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-<span class="c">---</span>
-<span class="hll"><span class="nf">args:</span>
-</span><span class="hll"><span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Facilitates checking a brew formula before installing it.
+---
+<span class="hll">args:
+</span><span class="hll">    formula string # Name of the formula to install.
 </span></code></pre></div></td></tr></table></div>
 <p><code>formula</code> will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.</p>
 <p>Setup done. First thing we'll wanna do is run <code>brew info</code> with the formula. We'll do this via a <a href="../../guide/shell-commands/">shell command</a>.</p>
@@ -1109,18 +1138,18 @@ Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="c">---</span>
-<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-<span class="c">---</span>
-<span class="nf">args:</span>
-<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Facilitates checking a brew formula before installing it.
+---
+args:
+    formula string # Name of the formula to install.
 
-<span class="hll">$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
+<span class="hll">$!`brew info {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>We use <a href="../../guide/strings-advanced/#string-interpolation">string interpolation</a> to insert the formula into the command.</p>
 <p>You can try running the command now! Make sure it's executable (<code>chmod +x ./brewi</code>).</p>
-<p>Next, we want to ask the user if they'd like to proceed with installing the formula. For that, RSL offers the <a href="../../reference/functions/#confirm"><code>confirm</code></a> function.
+<p>Next, we want to ask the user if they'd like to proceed with installing the formula. For that, Rad offers the <a href="../../reference/functions/#confirm"><code>confirm</code></a> function.
 The default prompt is <code>Confirm? [y/n] &gt;</code>, which works fine for us here, so we'll do a simple 0-arg <code>confirm()</code> call. The function returns a bool for yes/no, so we'll put it in an if statement.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1131,20 +1160,20 @@ The default prompt is <code>Confirm? [y/n] &gt;</code>, which works fine for us 
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="c">---</span>
-<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-<span class="c">---</span>
-<span class="nf">args:</span>
-<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Facilitates checking a brew formula before installing it.
+---
+args:
+    formula string # Name of the formula to install.
 
-$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
-<span class="hll"><span class="k">if</span><span class="w"> </span>confirm():
-</span><span class="hll"><span class="w">    </span>$!`brew<span class="w"> </span>install<span class="w"> </span>{formula}`
+$!`brew info {formula}`
+<span class="hll">if confirm():
+</span><span class="hll">    $!`brew install {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>Feel free to try it again now!</p>
 <p>One last touch: we should also allow installing casks with this script. We'll aim to offer a simple <code>-c</code> flag users can set which modifies the command. </p>
-<p>We'll add the <code>bool</code> arg, and insert an additional interpolation in our <code>brew install</code> command, leveraging RSL's <a href="../../guide/basics/#ternary">ternary</a> syntax.
+<p>We'll add the <code>bool</code> arg, and insert an additional interpolation in our <code>brew install</code> command, leveraging Rad's <a href="../../guide/basics/#ternary">ternary</a> syntax.
 We need to pay close attention to whitespace so we make sure the command comes out correct in the cask and non-cask cases.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1156,20 +1185,31 @@ We need to pay close attention to whitespace so we make sure the command comes o
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="o">#</span>!/usr/bin/env<span class="w"> </span>rad
-<span class="c">---</span>
-<span class="kt">Facilitates</span><span class="w"> </span>checking<span class="w"> </span>a<span class="w"> </span>brew<span class="w"> </span>formula<span class="w"> </span>before<span class="w"> </span>installing<span class="w"> </span>it.
-<span class="c">---</span>
-<span class="nf">args:</span>
-<span class="w">    </span>formula<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Name</span><span class="w"> </span><span class="k">of</span><span class="w"> </span>the<span class="w"> </span>formula<span class="w"> </span>to<span class="w"> </span>install.
-<span class="hll"><span class="w">    </span>cask<span class="w"> </span>c<span class="w"> </span>bool<span class="w">    </span><span class="o">#</span><span class="w"> </span><span class="kt">Enable</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>it&#39;s<span class="w"> </span>a<span class="w"> </span>cask.
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Facilitates checking a brew formula before installing it.
+---
+args:
+    formula string # Name of the formula to install.
+<span class="hll">    cask c bool    # Enable if it&#39;s a cask.
 </span>
-$!`brew<span class="w"> </span>info<span class="w"> </span>{formula}`
-<span class="k">if</span><span class="w"> </span>confirm():
-<span class="hll"><span class="w">    </span>$!`brew<span class="w"> </span>install{cask<span class="w"> </span>?<span class="w"> </span><span class="s">&quot; --cask&quot; : &quot;&quot;</span>}<span class="w"> </span>{formula}`
+$!`brew info {formula}`
+if confirm():
+<span class="hll">    $!`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>Note the shorthand flag in <code>cask c bool</code>.</p>
-<p>Done! If you'd like to see a more complex example next, check out <a href="../hm/">hm</a>.</p>
+<p>Done! You've now got a great, convenient helper script for installing things with brew :)</p>
+<div class="highlight"><pre><span></span><code>&gt; brewi -h
+Facilitates checking a brew formula before installing it.
+
+Usage:
+  brewi &lt;formula&gt; [cask]
+
+Script args:
+      --formula string   Name of the formula to install.
+  -c, --cask             Enable if it&#39;s a cask.
+</code></pre></div>
+<p>If you'd like to see a more complex example next, check out <a href="../hm/">hm</a>.</p>
 
 
 

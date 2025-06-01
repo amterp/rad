@@ -1018,13 +1018,13 @@
 <li>errdefers will not get triggered if the main script succeeded but a <code>defer</code> or <code>errdefer</code> statement failed.</li>
 </ul>
 <h2 id="defer"><code>defer</code><a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">defer Example</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
+<div class="highlight"><span class="filename">defer Example</span><pre><span></span><code>defer:
+    print(1)
+    print(2)
+defer:
+    print(3)
+    print(4)
+print(&quot;Hello!&quot;)
 </code></pre></div>
 <div class="highlight"><span class="filename">defer Example Output</span><pre><span></span><code>Hello!
 3
@@ -1033,20 +1033,20 @@ print(<span class="s">&quot;Hello!&quot;</span>)
 2
 </code></pre></div>
 <h2 id="errdefer"><code>errdefer</code><a class="headerlink" href="#errdefer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><span class="filename">errdefer Example 1</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">0</span>)<span class="w">  </span>//<span class="w"> </span>successful<span class="w"> </span>script<span class="w"> </span>run
+<div class="highlight"><span class="filename">errdefer Example 1</span><pre><span></span><code>defer:
+    print(1)
+    print(2)
+errdefer:
+    print(3)
+    print(4)
+defer:
+    print(5)
+    print(6)
+errdefer:
+    print(7)
+    print(8)
+print(&quot;Hello!&quot;)
+exit(0)  // successful script run
 </code></pre></div>
 <div class="highlight"><span class="filename">errdefer Example 1 Output</span><pre><span></span><code>Hello!
 5
@@ -1054,20 +1054,20 @@ exit(<span class="mi">0</span>)<span class="w">  </span>//<span class="w"> </spa
 1
 2
 </code></pre></div>
-<div class="highlight"><span class="filename">errdefer Example 2</span><pre><span></span><code><span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">1</span>)
-<span class="w">    </span>print(<span class="mi">2</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">3</span>)
-<span class="w">    </span>print(<span class="mi">4</span>)
-<span class="nf">defer:</span>
-<span class="w">    </span>print(<span class="mi">5</span>)
-<span class="w">    </span>print(<span class="mi">6</span>)
-<span class="nf">errdefer:</span>
-<span class="w">    </span>print(<span class="mi">7</span>)
-<span class="w">    </span>print(<span class="mi">8</span>)
-print(<span class="s">&quot;Hello!&quot;</span>)
-exit(<span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span>perceived<span class="w"> </span><span class="k">as</span><span class="w"> </span>error!
+<div class="highlight"><span class="filename">errdefer Example 2</span><pre><span></span><code>defer:
+    print(1)
+    print(2)
+errdefer:
+    print(3)
+    print(4)
+defer:
+    print(5)
+    print(6)
+errdefer:
+    print(7)
+    print(8)
+print(&quot;Hello!&quot;)
+exit(1)  // perceived as error!
 </code></pre></div>
 <div class="highlight"><span class="filename">errdefer Example 2 Output</span><pre><span></span><code>Hello!
 7

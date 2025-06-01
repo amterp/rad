@@ -994,14 +994,14 @@
   <h1>Boolean Logic</h1>
 
 <h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
-<p>RSL supports truthy/falsy logic.</p>
+<p>Rad supports truthy/falsy logic.</p>
 <p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(my_list)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+<div class="highlight"><pre><span></span><code>if len(my_list) &gt; 0:
+    print(&quot;My list has elements!&quot;)
 </code></pre></div>
 <p>you can write</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>my_list:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+<div class="highlight"><pre><span></span><code>if my_list:
+    print(&quot;My list has elements!&quot;)
 </code></pre></div>
 <p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
 <p>The following table shows which values return false for each type. <strong>All other values resolve to true.</strong></p>

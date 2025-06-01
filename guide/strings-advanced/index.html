@@ -1091,14 +1091,14 @@
 <li>raw strings</li>
 </ul>
 <h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
-<p>RSL allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.</p>
+<p>Rad allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.</p>
 <p>Some examples:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
-<span class="s">print(&quot;Hi, {name}!&quot;)</span>
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+print(&quot;Hi, {name}!&quot;)
 
-<span class="s">print(&quot;Uppercase: {upper(name)}&quot;)</span>
+print(&quot;Uppercase: {upper(name)}&quot;)
 
-<span class="s">print(&quot;Conditions: {len(name) &gt; 5 ? &#39;long name&#39; : &#39;short name&#39;}!&quot;</span>)
+print(&quot;Conditions: {len(name) &gt; 5 ? &#39;long name&#39; : &#39;short name&#39;}!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hi, Alice!
@@ -1112,14 +1112,14 @@ Conditions: short name!
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <p>You can format expression results while doing string interpolation.
 To do so, follow your expression with <code>:</code> and then the relevant syntax for the formatting you want to do. We'll demonstrate through some examples:</p>
-<div class="highlight"><pre><span></span><code>pi<span class="w"> </span>=<span class="w"> </span><span class="mf">3.14159265359</span>
+<div class="highlight"><pre><span></span><code>pi = 3.14159265359
 
-print(<span class="s">&quot;Pi: {pi}&quot;)       // no formatting</span>
-<span class="s">print(&quot;Pi: {pi:20}&quot;)    // left-pad to 20 places</span>
-<span class="s">print(&quot;Pi: {pi:&gt;20}&quot;)   // equivalent to above left-pad, &gt; is redundant</span>
-<span class="s">print(&quot;Pi: {pi:&lt;20}&quot;)   // right-pad to 20 places</span>
-<span class="s">print(&quot;Pi: {pi:.3}&quot;)    // print to 3 decimal places</span>
-<span class="s">print(&quot;Pi: {pi:10.2}&quot;</span>)<span class="w">  </span>//<span class="w"> </span>left-pad<span class="w"> </span>to<span class="w"> </span><span class="mi">10</span><span class="w"> </span>places,<span class="w"> </span>including<span class="w"> </span><span class="mi">2</span><span class="w"> </span>decimal<span class="w"> </span>places
+print(&quot;Pi: {pi}&quot;)       // no formatting
+print(&quot;Pi: {pi:20}&quot;)    // left-pad to 20 places
+print(&quot;Pi: {pi:&gt;20}&quot;)   // equivalent to above left-pad, &gt; is redundant
+print(&quot;Pi: {pi:&lt;20}&quot;)   // right-pad to 20 places
+print(&quot;Pi: {pi:.3}&quot;)    // print to 3 decimal places
+print(&quot;Pi: {pi:10.2}&quot;)  // left-pad to 10 places, including 2 decimal places
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Pi: 3.14159265359
@@ -1134,12 +1134,12 @@ Pi:       3.14
 <p>The decimal place formatting is only relevant to expressions that result in numbers. If it results in a string, then the formatting will error.</p>
 <h2 id="multiline-strings">Multiline Strings<a class="headerlink" href="#multiline-strings" title="Permanent link">&para;</a></h2>
 <p>Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. <code>"</code> or <code>'</code>.
-For these scenarios, RSL offers <code>"""</code> multiline string syntax. To demonstrate:</p>
-<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">This is an</span>
-<span class="s">example of text</span>
-<span class="s">that &quot;may contain quotes&quot;!</span>
-<span class="s">&quot;&quot;&quot;</span>
+For these scenarios, Rad offers <code>"""</code> multiline string syntax. To demonstrate:</p>
+<div class="highlight"><pre><span></span><code>text = &quot;&quot;&quot;
+This is an
+example of text
+that &quot;may contain quotes&quot;!
+&quot;&quot;&quot;
 print(text)
 </code></pre></div>
 <div class="result">
@@ -1161,11 +1161,11 @@ that &quot;may contain quotes&quot;!
 </li>
 </ol>
 <p>Below, we demonstrate the 4th point. Note that to make the "whitespaces" more visible, I've replaced them with dots, but keep in mind they <em>do represent spaces</em>:</p>
-<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">....This is an</span>
-<span class="s">.....example of text</span>
-<span class="s">..that &quot;may contain quotes&quot;!</span>
-<span class="s">..&quot;&quot;&quot;</span><span class="w">  </span>//<span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span><span class="w"> </span>preceding<span class="w"> </span>spaces.<span class="w"> </span>will<span class="w"> </span>get<span class="w"> </span>removed<span class="w"> </span>from<span class="w"> </span>each<span class="w"> </span>line<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>contents.
+<div class="highlight"><pre><span></span><code>text = &quot;&quot;&quot;
+....This is an
+.....example of text
+..that &quot;may contain quotes&quot;!
+..&quot;&quot;&quot;  // &lt; 2 preceding spaces. will get removed from each line in the contents.
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>..This is an
@@ -1175,11 +1175,11 @@ that &quot;may contain quotes&quot;!
 </div>
 
 <h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
-<p>RSL also supports <strong>raw strings</strong>.
+<p>Rad also supports <strong>raw strings</strong>.
 Raw strings don't have any sort of processing done on them (such as string interpolation) and do not allow any escaping (including the delimiter used to create them).
 Use them when you want your contents to remain as "raw" and unprocessed as possible.</p>
 <p>To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with <code>r</code>.</p>
-<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\n{name}&quot;</span>
+<div class="highlight"><pre><span></span><code>text = r&quot;Hello\n{name}&quot;
 print(text)
 </code></pre></div>
 <div class="result">
@@ -1189,24 +1189,24 @@ print(text)
 
 <p>Notice the printed string is exactly as written in code - the newline character and string interpolation are left as-is.</p>
 <p>You could use any of the three delimiters for raw strings:</p>
-<div class="highlight"><pre><span></span><code>text<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;Hello\n{name}&quot;</span>
-text<span class="w"> </span>=<span class="w"> </span>r&#39;<span class="kt">Hello</span>\n{name}&#39;
-text<span class="w"> </span>=<span class="w"> </span>r`<span class="kt">Hello</span>\n{name}`
+<div class="highlight"><pre><span></span><code>text = r&quot;Hello\n{name}&quot;
+text = r&#39;Hello\n{name}&#39;
+text = r`Hello\n{name}`
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Raw strings for file paths</p>
 <p>Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:</p>
-<div class="highlight"><pre><span></span><code>path<span class="w"> </span>=<span class="w"> </span>r<span class="s">&quot;C:\Users\Documents\notes.txt&quot;</span>
+<div class="highlight"><pre><span></span><code>path = r&quot;C:\Users\Documents\notes.txt&quot;
 </code></pre></div>
 </div>
 <div class="admonition info">
 <p class="admonition-title">You cannot escape the raw string's own delimiter</p>
-<p>RSL raw strings behave more like their equivalent in Go than Python.
+<p>Rad raw strings behave more like their equivalent in Go than Python.
 In Python, you can escape the delimiter used to make the raw string i.e. <code>r"quote: \"!"</code>. If printed, this will
 display as <code>quote: \"!</code> i.e. the escape character is also printed. There are lots of discussions online about this
-somewhat odd behavior, which is why RSL (and Go) opted to instead keep the rules very simple and not allow escaping
+somewhat odd behavior, which is why Rad (and Go) opted to instead keep the rules very simple and not allow escaping
 in raw strings of any kind.</p>
-<p>Instead, if you try the same thing in RSL, you will get an error because the quote following <code>\</code> will close the
+<p>Instead, if you try the same thing in Rad, you will get an error because the quote following <code>\</code> will close the
 string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
 </div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>

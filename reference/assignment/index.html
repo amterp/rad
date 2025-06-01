@@ -1013,18 +1013,18 @@
 
 <p>Generally speaking, multi-assignments are only legal for switch expressions, or single operations (e.g. functions) that return multiple values.</p>
 <h2 id="legal-assignments">Legal Assignments<a class="headerlink" href="#legal-assignments" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>
-a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>pick_from_resoure(...)
-a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>switch<span class="w"> </span>...
-a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span>parse_int(text)
+<div class="highlight"><pre><span></span><code>a = 1
+a, b = pick_from_resoure(...)
+a, b = switch ...
+a, b = parse_int(text)
 
-myMap[<span class="s">&quot;key&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
-myList[<span class="mi">1</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>
+myMap[&quot;key&quot;] = 2
+myList[1] = 3
 </code></pre></div>
 <h2 id="illegal-assignments">Illegal Assignments<a class="headerlink" href="#illegal-assignments" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>
-myMap[<span class="s">&quot;key&quot;], myMap[&quot;key2&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>
-myList[<span class="mi">1</span>],<span class="w"> </span>myList[<span class="mi">2</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>
+<div class="highlight"><pre><span></span><code>a, b = 1, 2
+myMap[&quot;key&quot;], myMap[&quot;key2&quot;] = 2, 3
+myList[1], myList[2] = 3, 4
 </code></pre></div>
 
 

@@ -1048,22 +1048,22 @@
   <h1>Rad Blocks</h1>
 
 <h2 id="rad-block"><code>rad</code> block<a class="headerlink" href="#rad-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>url:
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
-<span class="w">    </span><span class="kt">Name</span>:
-<span class="w">        </span>map<span class="w"> </span>fn(n)<span class="w"> </span>truncate(n,<span class="w"> </span><span class="mi">20</span>)
-<span class="w">    </span><span class="k">if</span><span class="w"> </span>sort_by_height:
-<span class="w">        </span>sort<span class="w"> </span><span class="kt">Height</span>,<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>
-<span class="w">    </span><span class="k">else</span>:
-<span class="w">        </span>sort
+<div class="highlight"><pre><span></span><code>rad url:
+    fields Name, Birthdate, Height
+    Name:
+        map fn(n) truncate(n, 20)
+    if sort_by_height:
+        sort Height, Name, Birthdate
+    else:
+        sort
 </code></pre></div>
 <h2 id="request-block"><code>request</code> block<a class="headerlink" href="#request-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>request<span class="w"> </span>url:
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+<div class="highlight"><pre><span></span><code>request url:
+    fields Name, Birthdate, Height
 </code></pre></div>
 <h2 id="display-block"><code>display</code> block<a class="headerlink" href="#display-block" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nf">display:</span>
-<span class="w">    </span>fields<span class="w"> </span><span class="kt">Name</span>,<span class="w"> </span><span class="kt">Birthdate</span>,<span class="w"> </span><span class="kt">Height</span>
+<div class="highlight"><pre><span></span><code>display:
+    fields Name, Birthdate, Height
 </code></pre></div>
 <h2 id="colors">Colors<a class="headerlink" href="#colors" title="Permanent link">&para;</a></h2>
 <p>Valid colors:</p>

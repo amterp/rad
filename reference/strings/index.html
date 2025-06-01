@@ -1075,20 +1075,20 @@
 
   <h1>Strings</h1>
 
-<p>RSL has three delimiters for strings:</p>
-<div class="highlight"><pre><span></span><code><span class="s">&quot;double quotes&quot;</span>
-&#39;single<span class="w"> </span>quotes&#39;
+<p>Rad has three delimiters for strings:</p>
+<div class="highlight"><pre><span></span><code>&quot;double quotes&quot;
+&#39;single quotes&#39;
 `backticks`
 </code></pre></div>
-<p>All three of these behave the same way. RSL offers three so you have alternatives to pick between depending on the contents of your string.
+<p>All three of these behave the same way. Rad offers three so you have alternatives to pick between depending on the contents of your string.
 For example, if you have a string which itself contains lots of single quotes, you may choose to use the double quotes delimiter.
 Or, if your string has both single <em>and</em> double quotes, you can use backticks to delimit your string. Specific example:</p>
-<div class="highlight"><pre><span></span><code>`<span class="kt">Single</span><span class="w"> </span>quotes:<span class="w"> </span>&#39;<span class="kt">Hi</span>!&#39;,<span class="w"> </span>double<span class="w"> </span>quotes:<span class="w"> </span><span class="s">&quot;Hi!&quot;</span>`
+<div class="highlight"><pre><span></span><code>`Single quotes: &#39;Hi!&#39;, double quotes: &quot;Hi!&quot;`
 </code></pre></div>
 <h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Not all strings are just plain text. They may have attributes such as color.</li>
-<li>This means that RSL contains logic on how to handle attributes when strings are combined or operated on<ul>
+<li>This means that Rad contains logic on how to handle attributes when strings are combined or operated on<ul>
 <li>e.g. concatenation, slicing, replace functions, etc</li>
 </ul>
 </li>
@@ -1117,10 +1117,10 @@ Or, if your string has both single <em>and</em> double quotes, you can use backt
 </li>
 </ul>
 <p>Examples:</p>
-<div class="highlight"><pre><span></span><code><span class="s">&quot;{myString:20}&quot;</span>
-<span class="s">&quot;{myString:&lt;20}&quot;</span>
-<span class="s">&quot;{myString:&gt;20}&quot;</span>
-<span class="s">&quot;{myFloat:.2}&quot;</span>
+<div class="highlight"><pre><span></span><code>&quot;{myString:20}&quot;
+&quot;{myString:&lt;20}&quot;
+&quot;{myString:&gt;20}&quot;
+&quot;{myFloat:.2}&quot;
 </code></pre></div>
 <h2 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1135,10 +1135,10 @@ Or, if your string has both single <em>and</em> double quotes, you can use backt
 </li>
 </ul>
 <h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
-<p>Raw strings can be used when you want RSL to treat the string as it's written, rather than performing escaping, interpolation, etc.</p>
+<p>Raw strings can be used when you want Rad to treat the string as it's written, rather than performing escaping, interpolation, etc.</p>
 <p>Raw strings are created by prefixing an <code>r</code> to the opening delimiter of your string. For example:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;alice&quot;</span>
-<span class="s">text = r&quot;Regards,\n{name}&quot;</span>
+<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+text = r&quot;Regards,\n{name}&quot;
 print(text)
 </code></pre></div>
 <div class="result">
@@ -1146,10 +1146,10 @@ print(text)
 </code></pre></div>
 </div>
 
-<p>Notice RSL did not render the <code>\n</code> as a newline as it would in a regular string,
+<p>Notice Rad did not render the <code>\n</code> as a newline as it would in a regular string,
 and that <code>{name}</code> is also left as-is i.e. no interpolation was performed.</p>
 <p>Unlike Python, <strong>you cannot escape <em>anything</em> in raw strings</strong>, including the delimiter. For example:</p>
-<div class="highlight"><pre><span></span><code>r<span class="s">&quot;\&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code>r&quot;\&quot;&quot;
 </code></pre></div>
 <p>is illegal because the backslash does <em>not</em> escape the following <code>"</code>, and so that quote actually ends the raw string.
 Then we're left with a third and dangling <code>"</code> at the end, causing a syntax error.</p>

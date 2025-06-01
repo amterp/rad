@@ -1042,34 +1042,34 @@
   <h1>Args</h1>
 
 <h2 id="basics">Basics<a class="headerlink" href="#basics" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>argVar<span class="w"> </span><span class="s">&quot;alias&quot;</span>?<span class="w"> </span>shorthand?<span class="w"> </span><span class="k">type</span><span class="w"> </span>=<span class="w"> </span>default?<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Description</span>?
+<div class="highlight"><pre><span></span><code>args:
+    argVar &quot;alias&quot;? shorthand? type = default? # Description?
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>n<span class="w"> </span>string<span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">A</span><span class="w"> </span>required<span class="w"> </span>arg<span class="w"> </span>&#39;name&#39;<span class="w"> </span>which<span class="w"> </span>can<span class="w"> </span>be<span class="w"> </span>specified<span class="w"> </span>positionally<span class="w"> </span>or<span class="w"> </span>also<span class="w"> </span><span class="k">with</span><span class="w"> </span>-n.
-<span class="w">    </span>is_employee<span class="w"> </span><span class="s">&quot;is-employee&quot; bool # Variable for script is is_employee, but users will see it as is-employee.</span>
+<div class="highlight"><pre><span></span><code>args:
+    name n string # A required arg &#39;name&#39; which can be specified positionally or also with -n.
+    is_employee &quot;is-employee&quot; bool # Variable for script is is_employee, but users will see it as is-employee.
 
-<span class="s">if is_employee:</span>
-<span class="s">    print(&quot;{name} is an employee.&quot;)</span>
-<span class="s">else:</span>
-<span class="s">    print(&quot;{name} is not an employee.&quot;</span>)<span class="w"> </span>
+if is_employee:
+    print(&quot;{name} is an employee.&quot;)
+else:
+    print(&quot;{name} is not an employee.&quot;) 
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>string
-<span class="w">    </span>age_years<span class="w"> </span><span class="s">&quot;age-years&quot; int</span>
-<span class="s">    height float # Height in meters</span>
-<span class="s">    is_employee &quot;is-employee&quot; e bool</span>
-<span class="s">    friends string[] # Specified as e.g. Alice,Bob</span>
-<span class="s">    nationality n string = &quot;Australian&quot;</span><span class="w"> </span><span class="o">#</span><span class="w"> </span><span class="kt">Defaults</span><span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span><span class="k">if</span><span class="w"> </span>not<span class="w"> </span>specified.
+<div class="highlight"><pre><span></span><code>args:
+    name string
+    age_years &quot;age-years&quot; int
+    height float # Height in meters
+    is_employee &quot;is-employee&quot; e bool
+    friends string[] # Specified as e.g. Alice,Bob
+    nationality n string = &quot;Australian&quot; # Defaults to this if not specified.
 </code></pre></div>
 <p>Example usage:</p>
 <div class="highlight"><pre><span></span><code>script Charlie 30 -e --friends David,Eve -h 1.86
 </code></pre></div>
 <h2 id="constraint-statements">Constraint Statements<a class="headerlink" href="#constraint-statements" title="Permanent link">&para;</a></h2>
 <h3 id="enum">Enum<a class="headerlink" href="#enum" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>name<span class="w"> </span>string
-<span class="w">    </span>name<span class="w"> </span>enum<span class="w"> </span>[<span class="s">&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;</span>]
+<div class="highlight"><pre><span></span><code>args:
+    name string
+    name enum [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// valid!
 myscript alice

@@ -1052,13 +1052,13 @@
 <h2 id="defer">Defer<a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
 <p><code>defer</code> blocks always run before the script exits, regardless of if it's due to an error or not.</p>
 <p>Here is an example:</p>
-<div class="highlight"><span class="filename">defer.rsl</span><pre><span></span><code>$!`mv<span class="w"> </span>notes.txt<span class="w"> </span>notes-tmp.txt`
-<span class="nf">defer:</span>
-<span class="w">    </span>$!`mv<span class="w"> </span>notes-tmp.txt<span class="w"> </span>notes.txt`
-<span class="w">    </span>print(<span class="s">&quot;Moved back!&quot;)</span>
+<div class="highlight"><span class="filename">defer.rad</span><pre><span></span><code>$!`mv notes.txt notes-tmp.txt`
+defer:
+    $!`mv notes-tmp.txt notes.txt`
+    print(&quot;Moved back!&quot;)
 
-<span class="s">$!`echo &quot;hi!&quot;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span>notes.txt`
-$!`cat<span class="w"> </span>notes.txt`
+$!`echo &quot;hi!&quot; &gt;&gt; notes.txt`
+$!`cat notes.txt`
 </code></pre></div>
 <p>Let's say we already have a file <code>notes.txt</code> containing some text. In this script, we take the following steps, largely by invoking <a href="../shell-commands/">shell commands</a>:</p>
 <ol>
@@ -1068,7 +1068,7 @@ $!`cat<span class="w"> </span>notes.txt`
 <li>Print the contents <code>notes.txt</code> to show what it contains.</li>
 </ol>
 <p>When run:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>defer.rsl
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>defer.rl
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: mv notes.txt notes-tmp.txt
@@ -1088,38 +1088,38 @@ However, if the script fails before reaching that step, rollback actions may sti
 <p>Below is an example of a version-bumping script. Using <code>sed</code>, this script replaces the version in a file called <code>VERSION</code>, stages the file with git,
 and commits it. However, if there's a failure in between the <code>sed</code> and <code>commit</code> steps, then we want to undo earlier steps as a cleanup, in order to
 make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing, leaving no intermediary state changes behind. We accomplish this through <code>errdefer</code> blocks. </p>
-<div class="highlight"><span class="filename">bump.rsl</span><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>version<span class="w"> </span>string
+<div class="highlight"><span class="filename">bump.rad</span><pre><span></span><code>args:
+    version string
 
-path<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;VERSION&quot;</span>
+path = &quot;VERSION&quot;
 
-<span class="s">$!`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`</span>
-<span class="s">errdefer:</span>
-<span class="s">    print(&quot;Undoing bump...&quot;)</span>
-<span class="s">    $!`git checkout -- {path}`</span>
+$!`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`
+errdefer:
+    print(&quot;Undoing bump...&quot;)
+    $!`git checkout -- {path}`
 
-<span class="s">if false:  // failure simulation point 1</span>
-<span class="s">    print(&quot;Oh no! ERROR!&quot;)</span>
-<span class="s">    exit(1)</span>
+if false:  // failure simulation point 1
+    print(&quot;Oh no! ERROR!&quot;)
+    exit(1)
 
-<span class="s">$!`git add {path}`</span>
-<span class="s">errdefer:</span>
-<span class="s">    print(&quot;Resetting {path}...&quot;)</span>
-<span class="s">    _, _ = $!`git reset {path}`</span>
+$!`git add {path}`
+errdefer:
+    print(&quot;Resetting {path}...&quot;)
+    _, _ = $!`git reset {path}`
 
-<span class="s">if false:  // failure simulation point 2</span>
-<span class="s">    print(&quot;Bah! ERROR!&quot;)</span>
-<span class="s">    exit(1)</span>
+if false:  // failure simulation point 2
+    print(&quot;Bah! ERROR!&quot;)
+    exit(1)
 
-<span class="s">$!`git commit -m &quot;Bump version to {version}&quot;`</span>
-<span class="s">print(&quot;Done!&quot;</span>)
+$!`git commit -m &quot;Bump version to {version}&quot;`
+print(&quot;Done!&quot;)
 </code></pre></div>
 <p>We include a couple of "failure points". We can set their condition to <code>true</code> to have them simulate an error, as the exit code of '1' indicates failure.</p>
 <p>Before we do that though, we can see an example of this script working correctly. Let's say we define our <code>VERSION</code> file in the same directory as the script as follows:</p>
 <div class="highlight"><span class="filename">VERSION</span><pre><span></span><code>Version = 1
 </code></pre></div>
 <p>If we execute our script, we get the following output:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rsl<span class="w"> </span><span class="m">2</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">2</span>
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 2/&quot; VERSION
@@ -1133,7 +1133,7 @@ Done!
 
 <p>We can see the series of commands get run as we expect, including output from git. Notice that none of our <code>errdefer</code> blocks ran, because there were no failures.</p>
 <p><strong>Now let's say that we activate failure point 1</strong> by setting its condition to <code>true</code>. This means that, after performing the <code>sed</code> command, but before we <code>git add</code>, the script exits, and we trigger just the first <code>errdefer</code> block to 'reset' the <code>VERSION</code> file.</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rsl<span class="w"> </span><span class="m">3</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION
@@ -1145,7 +1145,7 @@ Undoing bump...
 
 <p>If you run this locally, you should see with <code>git status</code> that there are no changes to the <code>VERSION</code> file, thanks to our <code>errdefer</code> block rolling back the <code>sed</code> replacement.</p>
 <p>Next let's try deactivating failure point 1 again and enabling failure point 2, and running our script again. This time, we can expect the <code>git add</code> to run, and our failure will occur after, but before the <code>git commit</code>.</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rsl<span class="w"> </span><span class="m">3</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION

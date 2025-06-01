@@ -1066,40 +1066,40 @@
   <h1>Shell Commands</h1>
 
 <h2 id="basic-shell-commands">Basic Shell Commands<a class="headerlink" href="#basic-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
-<span class="nf">fail:</span>
-<span class="w">    </span>print(<span class="s">&quot;Command failed! Exiting script!&quot;</span>)
+<div class="highlight"><pre><span></span><code>$`ls -l`
+fail:
+    print(&quot;Command failed! Exiting script!&quot;)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>$`ls<span class="w"> </span>-l`
-<span class="nf">recover:</span>
-<span class="w">    </span>print(<span class="s">&quot;Command failed! Continuing script...&quot;</span>)
+<div class="highlight"><pre><span></span><code>$`ls -l`
+recover:
+    print(&quot;Command failed! Continuing script...&quot;)
 </code></pre></div>
 <h2 id="critical-shell-commands">Critical Shell Commands<a class="headerlink" href="#critical-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>$!`ls<span class="w"> </span>-l`
+<div class="highlight"><pre><span></span><code>$!`ls -l`
 </code></pre></div>
 <h2 id="unsafe-shell-commands">Unsafe Shell Commands<a class="headerlink" href="#unsafe-shell-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>unsafe<span class="w"> </span>$`ls<span class="w"> </span>-l`
+<div class="highlight"><pre><span></span><code>unsafe $`ls -l`
 </code></pre></div>
 <h2 id="output-capture">Output Capture<a class="headerlink" href="#output-capture" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>err_code<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
-err_code,<span class="w"> </span>stdout<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
-err_code,<span class="w"> </span>stdout,<span class="w"> </span>stderr<span class="w"> </span>=<span class="w"> </span>$!`ls<span class="w"> </span>-l`
+<div class="highlight"><pre><span></span><code>err_code = $!`ls -l`
+err_code, stdout = $!`ls -l`
+err_code, stdout, stderr = $!`ls -l`
 </code></pre></div>
 <h2 id="suppress-announcements">Suppress Announcements<a class="headerlink" href="#suppress-announcements" title="Permanent link">&para;</a></h2>
 <p>By default, Rad will 'announce' (i.e. print) commands as they're executed. Example:</p>
 <div class="highlight"><span class="filename">Without quiet</span><pre><span></span><code>$!`ls`
-$!`echo<span class="w"> </span>hello`
+$!`echo hello`
 </code></pre></div>
 <div class="highlight"><span class="filename">Without quiet output</span><pre><span></span><code>⚡️ Running: ls
-pick.rsl  simple.rsl  sorting.rsl
+pick.rad  simple.rad  sorting.rad
 ⚡️ Running: echo hello
 hello
 </code></pre></div>
 <p>These announcements can be suppressed with the <code>quiet</code> keyword. It does not impact stdout/stderr output for the command.</p>
-<div class="highlight"><span class="filename">With quiet</span><pre><span></span><code>quiet<span class="w"> </span>$!`ls`
-quiet<span class="w"> </span>$!`echo<span class="w"> </span>hello`
+<div class="highlight"><span class="filename">With quiet</span><pre><span></span><code>quiet $!`ls`
+quiet $!`echo hello`
 </code></pre></div>
-<div class="highlight"><span class="filename">With quiet output</span><pre><span></span><code>pick.rsl  simple.rsl  sorting.rsl
+<div class="highlight"><span class="filename">With quiet output</span><pre><span></span><code>pick.rad  simple.rad  sorting.rad
 hello
 </code></pre></div>
 

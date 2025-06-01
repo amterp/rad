@@ -842,6 +842,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#print_err" class="md-nav__link">
+    <span class="md-ellipsis">
+      print_err
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pprint" class="md-nav__link">
     <span class="md-ellipsis">
       pprint
@@ -959,6 +968,24 @@
   <a href="#str" class="md-nav__link">
     <span class="md-ellipsis">
       str
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int" class="md-nav__link">
+    <span class="md-ellipsis">
+      int
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#float" class="md-nav__link">
+    <span class="md-ellipsis">
+      float
     </span>
   </a>
   
@@ -1887,6 +1914,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#print_err" class="md-nav__link">
+    <span class="md-ellipsis">
+      print_err
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pprint" class="md-nav__link">
     <span class="md-ellipsis">
       pprint
@@ -2004,6 +2040,24 @@
   <a href="#str" class="md-nav__link">
     <span class="md-ellipsis">
       str
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int" class="md-nav__link">
+    <span class="md-ellipsis">
+      int
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#float" class="md-nav__link">
+    <span class="md-ellipsis">
+      float
     </span>
   </a>
   
@@ -2765,11 +2819,12 @@ with said error.</p>
 <li><code>code: string</code> - An <a href="../errors/">error code</a> indicating the type of error.</li>
 <li><code>msg: string</code> - A description of the error.</li>
 </ul>
+<p>Lastly, you may also see <code>number</code> referenced as a type -- this just means <code>int | float</code>, i.e. any numeric type.</p>
 <hr />
 <h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h2>
 <h3 id="print">print<a class="headerlink" href="#print" title="Permanent link">&para;</a></h3>
 <p>Prints the given input. Includes a newline after. Stringifies whatever is given to it.</p>
-<div class="highlight"><pre><span></span><code>print(items<span class="w"> </span>...<span class="k">any</span>?,<span class="w"> </span>sep:<span class="w"> </span>string<span class="w"> </span>=<span class="w"> </span><span class="s">&quot; &quot;, end: string = &quot;\n&quot;</span>)
+<div class="highlight"><pre><span></span><code>print(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
 </code></pre></div>
 <p><strong>Parameters</strong></p>
 <table>
@@ -2799,24 +2854,28 @@ with said error.</p>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
-<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;Hello!&quot;)</span>
-<span class="s">print()              // prints a newline</span>
-<span class="s">print([1, 20, 300])  // prints &quot;[ 1, 20, 300 ]&quot;</span>
+<div class="highlight"><pre><span></span><code>print(&quot;Hello!&quot;)
+print()              // prints a newline
+print([1, 20, 300])  // prints &quot;[ 1, 20, 300 ]&quot;
 
-<span class="s">name = &quot;Alice&quot;</span>
-<span class="s">print(&quot;Hello&quot;, name) // prints &quot;Hello Alice&quot;</span>
+name = &quot;Alice&quot;
+print(&quot;Hello&quot;, name) // prints &quot;Hello Alice&quot;
+</code></pre></div>
+<h3 id="print_err">print_err<a class="headerlink" href="#print_err" title="Permanent link">&para;</a></h3>
+<p>Behaves like <a href="#print"><code>print</code></a> but always goes to stderr instead of stdout.</p>
+<div class="highlight"><pre><span></span><code>print_err(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
 </code></pre></div>
 <h3 id="pprint">pprint<a class="headerlink" href="#pprint" title="Permanent link">&para;</a></h3>
 <p><strong>Description</strong>:</p>
 <p>Pretty prints the given input. Mainly useful for maps so they get printed in a json-style.</p>
-<div class="highlight"><pre><span></span><code>pprint(item<span class="w"> </span><span class="k">any</span>?)
+<div class="highlight"><pre><span></span><code>pprint(item any?)
 </code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
 <li><code>input: any?</code>: Zero or one item to pretty print. If zero, just prints a newline.</li>
 </ul>
 <p><strong>Examples</strong>:</p>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>item<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;name&quot;: &quot;Alice&quot;</span>,<span class="w"> </span>age:<span class="w"> </span><span class="mi">30</span><span class="w"> </span>}
+<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>item = { &quot;name&quot;: &quot;Alice&quot;, age: 30 }
 pprint(item)
 </code></pre></div>
 <div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code><span class="p">{</span>
@@ -2825,14 +2884,14 @@ pprint(item)
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
-<p>Behaves like <code>print</code> but only prints if debug is enabled via the <code>--DEBUG</code> flag.</p>
-<div class="highlight"><pre><span></span><code>debug(items<span class="w"> </span>...<span class="k">any</span>?)
+<p>Behaves like <a href="#print"><code>print</code></a> but only prints if debug is enabled via the <code>--DEBUG</code> flag.</p>
+<div class="highlight"><pre><span></span><code>debug(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
 </code></pre></div>
 <h2 id="misc">Misc<a class="headerlink" href="#misc" title="Permanent link">&para;</a></h2>
 <h3 id="sleep">sleep<a class="headerlink" href="#sleep" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sleep(seconds<span class="w"> </span><span class="k">int</span>)
-sleep(seconds<span class="w"> </span>float)
-sleep(duration<span class="w"> </span>string)<span class="w">  </span>//<span class="w"> </span>e.g.<span class="w"> </span>sleep(<span class="s">&quot;2h45m&quot;</span>)
+<div class="highlight"><pre><span></span><code>sleep(seconds int)
+sleep(seconds float)
+sleep(duration string)  // e.g. sleep(&quot;2h45m&quot;)
 </code></pre></div>
 <p>Allows for a named arg `title=str".</p>
 <p>See the following table for valid <code>duration</code> string formats:</p>
@@ -2871,26 +2930,26 @@ sleep(duration<span class="w"> </span>string)<span class="w">  </span>//<span cl
 </tbody>
 </table>
 <h3 id="len">len<a class="headerlink" href="#len" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">len</span>(input<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
-<span class="k">len</span>(input<span class="w"> </span><span class="k">any</span>[])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
-<span class="k">len</span>(input<span class="w"> </span>map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
+<div class="highlight"><pre><span></span><code>len(input string) -&gt; int
+len(input any[]) -&gt; int
+len(input map) -&gt; int
 </code></pre></div>
 <h3 id="range">range<a class="headerlink" href="#range" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>range(<span class="k">end</span><span class="w"> </span><span class="k">int</span>|float)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>|float[]
-range(start<span class="w"> </span><span class="k">int</span>|float,<span class="w"> </span><span class="k">end</span><span class="w"> </span><span class="k">int</span>|float)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>|float[]
-range(start<span class="w"> </span><span class="k">int</span>|float,<span class="w"> </span><span class="k">end</span><span class="w"> </span><span class="k">int</span>|float,<span class="w"> </span>step<span class="w"> </span><span class="k">int</span>|float)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>|float[]
+<p>Generates a list of numbers in a specified range. Useful in for loops.</p>
+<div class="highlight"><pre><span></span><code>range(end number) -&gt; [number]
+range(start number, end number, step: number = 1) -&gt; [number]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>range(<span class="mi">5</span>)<span class="w">         </span><span class="o">-&gt;</span><span class="w"> </span>[<span class="mi">0</span>,<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>]
-range(<span class="mf">5.5</span>)<span class="w">       </span><span class="o">-&gt;</span><span class="w"> </span>[<span class="mi">0</span>,<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>,<span class="w"> </span><span class="mi">5</span>]
-range(<span class="mf">0.5</span>,<span class="w"> </span><span class="mi">5</span>)<span class="w">    </span><span class="o">-&gt;</span><span class="w"> </span>[<span class="mf">0.5</span>,<span class="w"> </span><span class="mf">1.5</span>,<span class="w"> </span><span class="mf">2.5</span>,<span class="w"> </span><span class="mf">3.5</span>,<span class="w"> </span><span class="mf">4.5</span>]
-range(<span class="mi">10</span>,<span class="w"> </span><span class="mi">5</span>,<span class="w"> </span>-<span class="mi">2</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>[<span class="mi">10</span>,<span class="w"> </span><span class="mi">8</span>,<span class="w"> </span><span class="mi">6</span>]
+<div class="highlight"><pre><span></span><code>range(5)         -&gt; [0, 1, 2, 3, 4]
+range(5.5)       -&gt; [0, 1, 2, 3, 4, 5]
+range(0.5, 5)    -&gt; [0.5, 1.5, 2.5, 3.5, 4.5]
+range(10, 5, -2) -&gt; [10, 8, 6]
 </code></pre></div>
 <h3 id="join">join<a class="headerlink" href="#join" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>join(input<span class="w"> </span>list,<span class="w"> </span>joiner<span class="w"> </span>string,<span class="w"> </span>prefix<span class="w"> </span>string|<span class="k">int</span>|float|bool?,<span class="w"> </span>suffix<span class="w"> </span>string|<span class="k">int</span>|float|bool?)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>join(input list, joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -&gt; string
 </code></pre></div>
 <h3 id="zip">zip<a class="headerlink" href="#zip" title="Permanent link">&para;</a></h3>
 <p>Combines multiple lists into a list of lists, pairing elements by index.</p>
-<div class="highlight"><pre><span></span><code>zip(lists...<span class="w"> </span>list,<span class="w"> </span>strict<span class="w"> </span>bool?,<span class="w"> </span>fill<span class="w"> </span><span class="k">any</span>?)
+<div class="highlight"><pre><span></span><code>zip(lists... list, strict bool?, fill any?)
 </code></pre></div>
 <p>If lists are of unequal length:</p>
 <ul>
@@ -2908,20 +2967,20 @@ zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;], strict=true)  // Error: Lists mus
 zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;], fill=&quot;-&quot;)  // [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;-&quot;], [4, &quot;-&quot;]]
 </code></pre></div>
 <h3 id="unique">unique<a class="headerlink" href="#unique" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>unique(input<span class="w"> </span><span class="k">any</span>[])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>[]
+<div class="highlight"><pre><span></span><code>unique(input any[]) -&gt; any[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>unique([<span class="mi">2</span>,<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>])<span class="w">  </span>//<span class="w"> </span>[<span class="mi">2</span>,<span class="w"> </span><span class="mi">1</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>]
+<div class="highlight"><pre><span></span><code>unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
 </code></pre></div>
 <h3 id="sort">sort<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sort(input<span class="w"> </span><span class="k">any</span>[],<span class="w"> </span>reverse=bool?)
+<div class="highlight"><pre><span></span><code>sort(input any[], reverse=bool?)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">1</span>])<span class="w">                 </span>//<span class="w"> </span>[<span class="mi">1</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>]
-sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">1</span>],<span class="w"> </span>reversed=<span class="k">true</span>)<span class="w">  </span>//<span class="w"> </span>[<span class="mi">4</span>,<span class="w"> </span><span class="mi">3</span>,<span class="w"> </span><span class="mi">2</span>,<span class="w"> </span><span class="mi">1</span>]
-sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span>,<span class="w"> </span><span class="s">&quot;2&quot;, 1, true])         // [true, 1, 3, 4, &quot;2&quot;</span>]
+<div class="highlight"><pre><span></span><code>sort([3, 4, 2, 1])                 // [1, 2, 3, 4]
+sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
+sort([3, 4, &quot;2&quot;, 1, true])         // [true, 1, 3, 4, &quot;2&quot;]
 </code></pre></div>
 <h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
 <p>Returns the current time in the machine's local timezone, accessible in various forms.</p>
-<div class="highlight"><pre><span></span><code>now()<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>map
+<div class="highlight"><pre><span></span><code>now() -&gt; map
 </code></pre></div>
 <p>Map values:</p>
 <table>
@@ -2998,15 +3057,25 @@ sort([<span class="mi">3</span>,<span class="w"> </span><span class="mi">4</span
 </table>
 <h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
 <p>Returns the type of an input variable as a string.</p>
-<div class="highlight"><pre><span></span><code>type_of(<span class="k">variable</span><span class="w"> </span><span class="k">any</span>)
+<div class="highlight"><pre><span></span><code>type_of(variable any)
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>type_of(<span class="s">&quot;hi&quot;</span>)<span class="w">  </span>//<span class="w"> </span>string
-type_of([<span class="mi">2</span>])<span class="w">   </span>//<span class="w"> </span>list
+<div class="highlight"><pre><span></span><code>type_of(&quot;hi&quot;)  // string
+type_of([2])   // list
 </code></pre></div>
 <h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>str(any) -&gt; string
-</code></pre></div>
 <p>Converts any input to a string.</p>
+<div class="highlight"><pre><span></span><code>str(input: any) -&gt; string
+</code></pre></div>
+<h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
+<p>Try to convert an input to an int.</p>
+<p>Does not work on strings. If you want to parse a string to an int, use <a href="#parse_int"><code>parse_int</code></a>.</p>
+<div class="highlight"><pre><span></span><code>int(input: any) -&gt; int
+</code></pre></div>
+<h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
+<p>Try to convert an input to a float.</p>
+<p>Does not work on strings. If you want to parse a string to a float, use <a href="#parse_float"><code>parse_float</code></a>.</p>
+<div class="highlight"><pre><span></span><code>str(input: any) -&gt; string
+</code></pre></div>
 <h3 id="is_defined">is_defined<a class="headerlink" href="#is_defined" title="Permanent link">&para;</a></h3>
 <p>Checks if a variable exists.</p>
 <div class="highlight"><pre><span></span><code>is_defined(var: string) -&gt; bool
@@ -3050,51 +3119,51 @@ filter(map, fn(k, v) -&gt; bool) -&gt; map
 <h2 id="input">Input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h2>
 <h3 id="input_1">input<a class="headerlink" href="#input_1" title="Permanent link">&para;</a></h3>
 <p>Get a line of text input from the user.</p>
-<div class="highlight"><pre><span></span><code>input(prompt<span class="w"> </span>string?,<span class="w"> </span>default=string?,<span class="w"> </span>hint=string?)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>input(prompt string?, default=string?, hint=string?) -&gt; string
 </code></pre></div>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
 <p>Get a boolean confirmation from the user.</p>
-<div class="highlight"><pre><span></span><code>confirm()<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>bool
-confirm(prompt<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>bool
+<div class="highlight"><pre><span></span><code>confirm() -&gt; bool
+confirm(prompt string) -&gt; bool
 </code></pre></div>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code><span class="k">if</span><span class="w"> </span>confirm():
-<span class="w">    </span>print(<span class="s">&quot;Confirmed!&quot;)</span>
-<span class="s">else:</span>
-<span class="s">    print(&quot;Not confirmed!&quot;</span>)
+<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>if confirm():
+    print(&quot;Confirmed!&quot;)
+else:
+    print(&quot;Not confirmed!&quot;)
 </code></pre></div>
 <div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code>Confirm? [y/n] y
 Confirmed!
 </code></pre></div>
-<div class="highlight"><span class="filename">Example 2</span><pre><span></span><code><span class="k">if</span><span class="w"> </span>confirm(<span class="s">&quot;Are you sure? &gt; &quot;):</span>
-<span class="s">    print(&quot;You&#39;re sure!&quot;)</span>
-<span class="s">else:</span>
-<span class="s">    print(&quot;Unsure!&quot;</span>)
+<div class="highlight"><span class="filename">Example 2</span><pre><span></span><code>if confirm(&quot;Are you sure? &gt; &quot;):
+    print(&quot;You&#39;re sure!&quot;)
+else:
+    print(&quot;Unsure!&quot;)
 </code></pre></div>
 <div class="highlight"><span class="filename">Example 2 Output</span><pre><span></span><code>Are you sure? &gt; n
 Unsure!
 </code></pre></div>
 <h2 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h2>
 <h3 id="parse_int">parse_int<a class="headerlink" href="#parse_int" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_int(input<span class="w"> </span>str)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>,<span class="w"> </span>err
+<div class="highlight"><pre><span></span><code>parse_int(input str) -&gt; int, err
 </code></pre></div>
 <h3 id="parse_float">parse_float<a class="headerlink" href="#parse_float" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_float(input<span class="w"> </span>str)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float,<span class="w"> </span>err
+<div class="highlight"><pre><span></span><code>parse_float(input str) -&gt; float, err
 </code></pre></div>
 <h3 id="parse_json">parse_json<a class="headerlink" href="#parse_json" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_json(input<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>
+<div class="highlight"><pre><span></span><code>parse_json(input string) -&gt; any
 </code></pre></div>
 <h2 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h2>
 <h3 id="upper">upper<a class="headerlink" href="#upper" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Preserves string color attributes.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>upper(input<span class="w"> </span><span class="k">any</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>upper(input any) -&gt; string
 </code></pre></div>
 <h3 id="lower">lower<a class="headerlink" href="#lower" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Preserves string color attributes.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>lower(input<span class="w"> </span><span class="k">any</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>lower(input any) -&gt; string
 </code></pre></div>
 <h3 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3106,28 +3175,28 @@ Unsure!
 <li><code>old: string</code>: Regex pattern of what text to replace.</li>
 <li><code>new: string</code>: Regex pattern of what to replace matches <em>with</em>.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>replace(input<span class="w"> </span>string,<span class="w"> </span>old<span class="w"> </span>string,<span class="w"> </span>new<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>replace(input string, old string, new string) -&gt; string
 </code></pre></div>
 <p><strong>Examples</strong>:</p>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>input<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Name: Charlie Brown&quot;</span>
-<span class="s">replace(input, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;</span>)<span class="w"> </span>
+<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>input = &quot;Name: Charlie Brown&quot;
+replace(input, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;) 
 </code></pre></div>
-<div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code><span class="s">&quot;Alice Brown&quot;</span><span class="w"> </span>
+<div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code>&quot;Alice Brown&quot; 
 </code></pre></div>
 <h3 id="starts_with">starts_with<a class="headerlink" href="#starts_with" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>starts_with(input<span class="w"> </span>string,<span class="w"> </span>substring<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>bool
+<div class="highlight"><pre><span></span><code>starts_with(input string, substring string) -&gt; bool
 </code></pre></div>
 <h3 id="ends_with">ends_with<a class="headerlink" href="#ends_with" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>ends_with(input<span class="w"> </span>string,<span class="w"> </span>substring<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>bool
+<div class="highlight"><pre><span></span><code>ends_with(input string, substring string) -&gt; bool
 </code></pre></div>
 <h3 id="truncate">truncate<a class="headerlink" href="#truncate" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>truncate(input<span class="w"> </span>string,<span class="w"> </span>length<span class="w"> </span><span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>truncate(input string, length int) -&gt; string
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Does <em>not</em> preserve string color attributes.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>split(input<span class="w"> </span>string,<span class="w"> </span>delimiter_regex<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string[]
+<div class="highlight"><pre><span></span><code>split(input string, delimiter_regex string) -&gt; string[]
 </code></pre></div>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>count(input string, substring string) -&gt; int
@@ -3149,7 +3218,7 @@ If <code>chars</code> is left unspecified, then it will default to whitespace ch
 <p>Trims the end of an input string.
 If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.</p>
 <h3 id="colors-attributes">Colors &amp; Attributes<a class="headerlink" href="#colors-attributes" title="Permanent link">&para;</a></h3>
-<p>RSL offers several functions to format text, including colors and modifiers like bold, italics, etc.
+<p>Rad offers several functions to format text, including colors and modifiers like bold, italics, etc.
 As an example, let's look at the <code>red</code> function:</p>
 <div class="highlight"><pre><span></span><code>red(string) -&gt; string  // output string will be red
 </code></pre></div>
@@ -3191,61 +3260,61 @@ display:
 <h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
 <h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <p>Returns all keys from an input map as a list.</p>
-<div class="highlight"><pre><span></span><code>keys(input:<span class="w"> </span>map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>[]
+<div class="highlight"><pre><span></span><code>keys(input: map) -&gt; any[]
 </code></pre></div>
 <h3 id="values">values<a class="headerlink" href="#values" title="Permanent link">&para;</a></h3>
 <p>Returns all values from an input map as a list.</p>
-<div class="highlight"><pre><span></span><code>values(input:<span class="w"> </span>map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>[]
+<div class="highlight"><pre><span></span><code>values(input: map) -&gt; any[]
 </code></pre></div>
 <h3 id="get_default">get_default<a class="headerlink" href="#get_default" title="Permanent link">&para;</a></h3>
 <p>Gets the value for the given key in the given map, if the key is in the map. Otherwise, returns the supplied default.</p>
-<div class="highlight"><pre><span></span><code>get_default(input:<span class="w"> </span>map,<span class="w"> </span>key:<span class="w"> </span><span class="k">any</span>,<span class="w"> </span>default:<span class="w"> </span><span class="k">any</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>
+<div class="highlight"><pre><span></span><code>get_default(input: map, key: any, default: any) -&gt; any
 </code></pre></div>
 <h2 id="random">Random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h2>
 <h3 id="rand">rand<a class="headerlink" href="#rand" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rand()<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>rand() -&gt; float
 </code></pre></div>
 <h3 id="rand_int">rand_int<a class="headerlink" href="#rand_int" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rand_int(max<span class="w"> </span><span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
-rand_int(min<span class="w"> </span><span class="k">int</span>,<span class="w"> </span>max<span class="w"> </span><span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
+<div class="highlight"><pre><span></span><code>rand_int(max int) -&gt; int
+rand_int(min int, max int) -&gt; int
 </code></pre></div>
 <h3 id="seed_random">seed_random<a class="headerlink" href="#seed_random" title="Permanent link">&para;</a></h3>
 <p>Seed the random number generator used by <a href="#rand">rand</a> and <a href="#rand_int">rand_int</a>.</p>
-<div class="highlight"><pre><span></span><code>seed_random(seed:<span class="w"> </span><span class="k">int</span>)
+<div class="highlight"><pre><span></span><code>seed_random(seed: int)
 </code></pre></div>
 <h3 id="uuid_v4">uuid_v4<a class="headerlink" href="#uuid_v4" title="Permanent link">&para;</a></h3>
 <p>Generate a random V4 UUID.</p>
-<div class="highlight"><pre><span></span><code>uuid_v<span class="mi">4</span>()<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>uuid_v4() -&gt; string
 </code></pre></div>
 <h3 id="uuid_v7">uuid_v7<a class="headerlink" href="#uuid_v7" title="Permanent link">&para;</a></h3>
 <p>Generate a random V7 UUID.</p>
-<div class="highlight"><pre><span></span><code>uuid_v<span class="mi">7</span>()<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>uuid_v7() -&gt; string
 </code></pre></div>
 <h3 id="gen_fid">gen_fid<a class="headerlink" href="#gen_fid" title="Permanent link">&para;</a></h3>
 <p>Generate a random <a href="https://github.com/amterp/flexid">flex ID</a> (fid).</p>
-<div class="highlight"><pre><span></span><code>gen_fid(alphabet:<span class="w"> </span>string,<span class="w"> </span>tick_size_ms:<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">100</span>,<span class="w"> </span>num_random_chars:<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -&gt; string
 </code></pre></div>
 <p><code>alphabet</code> defaults to base-62 (<code>[0-9] [A-Z] [a-z]</code>).</p>
 <h2 id="picking">Picking<a class="headerlink" href="#picking" title="Permanent link">&para;</a></h2>
 <h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick(options<span class="w"> </span>string[],<span class="w"> </span>filter<span class="w"> </span>string?)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>pick(options string[], filter string?) -&gt; string
 </code></pre></div>
 <p>Named args:</p>
 <ul>
 <li><code>prompt</code></li>
 </ul>
 <h3 id="pick_kv">pick_kv<a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick_kv(keys<span class="w"> </span>string[],<span class="w"> </span>values<span class="w"> </span>string[],<span class="w"> </span>filter<span class="w"> </span>string?)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>string
+<div class="highlight"><pre><span></span><code>pick_kv(keys string[], values string[], filter string?) -&gt; string
 </code></pre></div>
 <p>Named args:</p>
 <ul>
 <li><code>prompt</code></li>
 </ul>
 <h3 id="pick_from_resource">pick_from_resource<a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick_from_resource(resource_path<span class="w"> </span>string,<span class="w"> </span>filter<span class="w"> </span>string?)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">any</span>...
+<div class="highlight"><pre><span></span><code>pick_from_resource(resource_path string, filter string?) -&gt; any...
 </code></pre></div>
 <h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">&para;</a></h2>
-<p>RSL offers a function for each of the 9 <a href="https://en.wikipedia.org/wiki/HTTP#Request_methods">HTTP method types</a>.
+<p>Rad offers a function for each of the 9 <a href="https://en.wikipedia.org/wiki/HTTP#Request_methods">HTTP method types</a>.
 Respectively:</p>
 <ul>
 <li><code>http_get</code></li>
@@ -3260,8 +3329,8 @@ Respectively:</p>
 </ul>
 <p>Their inputs and outputs are the same - the only difference between them is the HTTP method in the request.
 We'll use <code>http_post</code> as an example.</p>
-<div class="highlight"><pre><span></span><code>http_post(url<span class="w"> </span>string)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>map
-http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|map,<span class="w"> </span>headers=map)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>map
+<div class="highlight"><pre><span></span><code>http_post(url string) -&gt; map
+http_post(url string, body=string|map, headers=map) -&gt; map
 </code></pre></div>
 <p>Keys in the <code>headers</code> map must be strings, and values may be either strings or lists of strings.</p>
 <p>The <strong>output</strong> map contains the following entries (<code>?</code> signifies it may not be present, depending on the result):</p>
@@ -3273,44 +3342,44 @@ http_post(url<span class="w"> </span>string,<span class="w"> </span>body=string|
 </code></pre></div>
 <h2 id="math">Math<a class="headerlink" href="#math" title="Permanent link">&para;</a></h2>
 <h3 id="abs">abs<a class="headerlink" href="#abs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">abs</span>(<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">int</span>
-<span class="k">abs</span>(float)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>abs(int) -&gt; int
+abs(float) -&gt; float
 </code></pre></div>
 <h3 id="sum">sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sum(list[number])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>sum(list[number]) -&gt; float
 </code></pre></div>
 <p>Sums the input list of numbers to a resulting float.</p>
 <h3 id="round">round<a class="headerlink" href="#round" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>round(number<span class="w"> </span>float|<span class="k">int</span>,<span class="w"> </span>precision<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">0</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>round(number float|int, precision int = 0) -&gt; float
 </code></pre></div>
 <p>Rounds the input number to the specified precision.
 If <code>precision</code> is unspecified it defaults to 0 and rounds to the nearest integer.</p>
 <h3 id="floor">floor<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>floor(num<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>floor(num float|int) -&gt; float
 </code></pre></div>
 <p>Rounds the given input down to the next integer.</p>
 <div class="highlight"><pre><span></span><code>floor(1.89) -&gt; 1
 </code></pre></div>
 <h3 id="ceil">ceil<a class="headerlink" href="#ceil" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>ceil(num<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>ceil(num float|int) -&gt; float
 </code></pre></div>
 <p>Rounds the given input up to the next integer.</p>
 <div class="highlight"><pre><span></span><code>ceil(1.21) -&gt; 2
 </code></pre></div>
 <h3 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>min(nums<span class="w"> </span>list[float|num])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>min(nums list[float|num]) -&gt; float
 </code></pre></div>
 <p>Returns the minimum number in the provided list.</p>
 <div class="highlight"><pre><span></span><code>min([1, 2, 3, 4]) -&gt; 1
 </code></pre></div>
 <h3 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>max(nums<span class="w"> </span>list[float|num])<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>max(nums list[float|num]) -&gt; float
 </code></pre></div>
 <p>Returns the maximum number in the provided list.</p>
 <div class="highlight"><pre><span></span><code>max([1, 2, 3, 4]) -&gt; 4
 </code></pre></div>
 <h3 id="clamp">clamp<a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>clamp(val,<span class="w"> </span>min,<span class="w"> </span>max<span class="w"> </span>float|<span class="k">int</span>)<span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span>float
+<div class="highlight"><pre><span></span><code>clamp(val, min, max float|int) -&gt; float
 </code></pre></div>
 <p>Clamps the given number <code>val</code> between <code>min</code> and <code>max</code>.</p>
 <p>Specifically, <code>clamp</code> returns:</p>
@@ -3358,7 +3427,7 @@ If you need security, specify a secure algorithm such as <code>sha512</code>.</p
 <h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
 <h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
 <p>Exits the script with the given exit code</p>
-<div class="highlight"><pre><span></span><code>exit(code<span class="w"> </span><span class="k">int</span><span class="w"> </span>=<span class="w"> </span><span class="mi">0</span>)
+<div class="highlight"><pre><span></span><code>exit(code int = 0)
 </code></pre></div>
 <h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
 <p>Reads the contents of a file with the given path.</p>

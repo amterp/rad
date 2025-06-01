@@ -1119,34 +1119,34 @@
 
   <h1>Global Flags</h1>
 
-<p>RSL offers a range of global flags that are available with every RSL script. We'll explore some of them in this section.</p>
+<p>Rad offers a range of global flags that are available with every Rad script. We'll explore some of them in this section.</p>
 <h2 id="help"><code>help</code><a class="headerlink" href="#help" title="Permanent link">&para;</a></h2>
-<p>The most basic global flag is <code>--help</code> or <code>-h</code>. <em>All</em> RSL scripts automatically generate a usage string that can be displayed by invoking this flag.</p>
+<p>The most basic global flag is <code>--help</code> or <code>-h</code>. <em>All</em> Rad scripts automatically generate a usage string that can be displayed by invoking this flag.</p>
 <p><code>--help</code> also prints available <em>global</em> flags:</p>
 <div class="highlight"><pre><span></span><code>Global flags:
   -h, --help                   Print usage string.
-  -d, --debug                  Enables debug output. Intended for RSL script developers.
+  -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet                  Suppresses some output.
       --shell                  Outputs shell/bash exports of variables, so they can be eval&#39;d
   -v, --version                Print rad version information.
-      --stdin script-name      Enables reading RSL from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
+      --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
-      --rsl-tree               Instead of running the target script, print out its syntax tree.
+      --src-tree               Instead of running the target script, print out its syntax tree.
       --mock-response string   Add mock response for json requests (pattern:filePath)
 </code></pre></div>
 <p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
 <h2 id="debug"><code>debug</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except that it only prints if the global flag <code>--debug</code> is enabled. You can use them in your script for debugging as desired.</p>
 <p>For example, given this example:</p>
-<div class="highlight"><span class="filename">debug.rsl</span><pre><span></span><code>print(<span class="s">&quot;1&quot;)</span>
-<span class="s">debug(&quot;2&quot;)</span>
-<span class="s">print(&quot;3&quot;</span>)
+<div class="highlight"><span class="filename">debug.rad</span><pre><span></span><code>print(&quot;1&quot;)
+debug(&quot;2&quot;)
+print(&quot;3&quot;)
 </code></pre></div>
 <p>the following invocations will give the respective outputs:</p>
-<div class="highlight"><pre><span></span><code>rad debug.rsl
+<div class="highlight"><pre><span></span><code>rad debug.rad
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>1
@@ -1154,7 +1154,7 @@
 </code></pre></div>
 </div>
 
-<div class="highlight"><pre><span></span><code>rad debug.rsl -d
+<div class="highlight"><pre><span></span><code>rad debug.rad -d
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>1
@@ -1171,8 +1171,8 @@ DEBUG: 2
     Valid values: [auto, always, never].
     (default auto)
 </code></pre></div>
-<p>A lot of rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
-By default (<code>auto</code>), rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.</p>
+<p>A lot of Rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
+By default (<code>auto</code>), Rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.</p>
 <p>However, you can override the automatic detection by explicitly setting <code>--color=always</code> or <code>--color=never</code> to force having colors, or force <em>not</em> having colors, respectively. </p>
 <h2 id="mock-response"><code>mock-response</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
 <p>You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a <a href="../rad-blocks/"><code>rad</code> block</a>.</p>
@@ -1202,9 +1202,9 @@ In other words, you can mock responses based on a regex match of the queried URL
 <span class="p">]</span>
 </code></pre></div>
 <p>And then define it as the mock response with the following example invocation:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rsl<span class="w"> </span>--mock-response<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rl<span class="w"> </span>--mock-response<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
 </code></pre></div>
-<p>Before executing the HTTP request, rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
+<p>Before executing the HTTP request, Rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
 avoiding the HTTP request, and simply returning the contents of the mocked response.</p>
 <div class="admonition tip">
 <p class="admonition-title">Match all URLs with .*</p>
@@ -1215,7 +1215,7 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <p>There are more global flags - see the <a href="../../reference/global-flags/">reference</a> for a complete coverage of what's available.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Rad provides several global flags that can be used across all RSL scripts.</li>
+<li>Rad provides several global flags that can be used across all Rad scripts.</li>
 <li>Use <code>mock-response</code> to test your scripts.</li>
 </ul>
 <div class="admonition info">
@@ -1226,7 +1226,7 @@ the script itself defines the behavior of the flag.</p>
 </div>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Sometimes you may wish to run commands before your script ends, either normally or via an error, such as cleanups.
-RSL provides a way to do this that we will explore in the next section: <a href="../defer-errdefer/">Defer &amp; Errdefer</a>.</p>
+Rad provides a way to do this that we will explore in the next section: <a href="../defer-errdefer/">Defer &amp; Errdefer</a>.</p>
 
 
 

@@ -463,6 +463,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#other-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Types
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -569,6 +578,15 @@
   <a href="#for-loops" class="md-nav__link">
     <span class="md-ellipsis">
       For Loops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switch Statements
     </span>
   </a>
   
@@ -1253,6 +1271,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#other-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Types
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1364,6 +1391,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#switch-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switch Statements
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1425,28 +1461,20 @@
 
   <h1>Basics</h1>
 
-<p>This section of the guide will rapidly cover the basics of RSL.
-RSL shares a lot of conventions and syntax with popular languages like Python,
-so if you're familiar with programming, this will be pretty straightforward.</p>
+<p>This section of the guide will rapidly cover the basics of Rad.
+Rad shares a lot of conventions and syntax with popular languages like Python,
+so if you're familiar with programming, this will be a breeze.</p>
 <h2 id="variables-assignment">Variables &amp; Assignment<a class="headerlink" href="#variables-assignment" title="Permanent link">&para;</a></h2>
 <p>To create a variable, you can do it through assignment. Let's use a string example:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
-</code></pre></div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>name = &quot;Alice&quot;
+</code></pre></div></td></tr></table></div>
 <p>You can re-assign variables. Types don't need to stay the same:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">You <strong>cannot create</strong> multiple variables this way on one line.</p>
-<p>The following is illegal syntax</p>
-<div class="highlight"><pre><span></span><code>a,<span class="w"> </span>b<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;one&quot;, &quot;two&quot;</span>
-</code></pre></div>
-<p>instead, declare each variable on one line.</p>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;one&quot;</span>
-<span class="s">b = &quot;two&quot;</span>
-</code></pre></div>
-</div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>name = &quot;Alice&quot;
+<span class="hll">name = 2
+</span></code></pre></div></td></tr></table></div>
 <h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
-<p>RSL has 6 data types: strings, ints, floats, bools, lists, and maps. </p>
+<p>Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.</p>
 <h3 id="string">string<a class="headerlink" href="#string" title="Permanent link">&para;</a></h3>
 <p>Strings can be delimited in three ways:</p>
 <ol>
@@ -1455,15 +1483,12 @@ so if you're familiar with programming, this will be pretty straightforward.</p>
 <li>Backticks: <code>`text`</code></li>
 </ol>
 <p>All three behave the same way. To demonstrate:</p>
-<div class="highlight"><pre><span></span><code>greeting<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Hello!&quot;</span>
-print(greeting)
-
-greeting<span class="w"> </span>=<span class="w"> </span>&#39;<span class="kt">Hello</span>!&#39;
-print(greeting)
-
-greeting<span class="w"> </span>=<span class="w"> </span>`<span class="kt">Hello</span>!`
-print(greeting)
-</code></pre></div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>print(&quot;Hello!&quot;)
+print(&#39;Hello!&#39;)
+print(`Hello!`)
+</code></pre></div></td></tr></table></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello!
 Hello!
@@ -1471,22 +1496,22 @@ Hello!
 </code></pre></div>
 </div>
 
-<div class="admonition tip">
+<div class="admonition info">
 <p class="admonition-title">Why 3 different delimiters?</p>
-<p>Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of the delimiter characters.</p>
+<p>Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of those delimiter characters.</p>
 <p>For example, if you want a double quote in your string, you <em>can</em> use double quote delimiters and escape them:</p>
-<div class="highlight"><pre><span></span><code><span class="s">&quot;She said \&quot;Goodbye\&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code>&quot;She said \&quot;Goodbye\&quot;&quot;
 </code></pre></div>
 <p>However, this can be finicky and hard to read. Instead, you can pick one of the other two delimiters, for example:</p>
-<div class="highlight"><pre><span></span><code>&#39;<span class="kt">She</span><span class="w"> </span>said<span class="w"> </span><span class="s">&quot;Goodbye&quot;&#39;</span>
-<span class="s">`She said &quot;Goodbye&quot;</span>`
+<div class="highlight"><pre><span></span><code>&#39;She said &quot;Goodbye&quot;&#39;
+`She said &quot;Goodbye&quot;`
 </code></pre></div>
 <p>We'll cover this again later, but as a note, backticks can be particularly useful in
 <a href="../shell-commands/">shell commands</a>, as shell/bash commands may include single or double quotes, and backticks
 save us from having to escape them.</p>
 </div>
 <p>Strings can include special characters such as <code>\n</code> for new lines and <code>\t</code> for tabs.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;Hello\tdear\nreader!&quot;</span>)
+<div class="highlight"><pre><span></span><code>print(&quot;Hello\tdear\nreader!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello   dear
@@ -1495,8 +1520,8 @@ reader!
 </div>
 
 <p>Strings also support <strong>interpolation</strong>. String interpolation allows you to write expressions <em>inside your string</em> that will be evaluated and replaced for the final string. We'll cover this in more depth in a future section, but to give a very simple example:</p>
-<div class="highlight"><pre><span></span><code>name<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
-<span class="s">print(&quot;Hi, {name}!&quot;</span>)
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+print(&quot;Hi, {name}!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hi, Alice!
@@ -1506,14 +1531,14 @@ reader!
 <p>Anything encapsulated in a <code>{}</code> gets treated as an expression. Here, the expression is just the identifier <code>name</code>, which gets evaluated and substituted, giving us the final <code>Hi, Alice!</code> string.</p>
 <p>Those are the basics for strings - we'll cover additional string concepts in a future section, <a href="../strings-advanced/">Strings (Advanced)</a>.</p>
 <h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
-<p>RSL has ints. There's nothing unusual about them. Example:</p>
-<div class="highlight"><pre><span></span><code>team_size<span class="w"> </span>=<span class="w"> </span><span class="mi">20</span>
-celsius<span class="w"> </span>=<span class="w"> </span>-<span class="mi">5</span>
+<p>Rad has ints. There's nothing unusual about them. Example:</p>
+<div class="highlight"><pre><span></span><code>team_size = 20
+celsius = -5
 </code></pre></div>
 <p>Note that if you divide two ints, you will get back a <a href="#float">float</a>.</p>
-<div class="highlight"><pre><span></span><code>liters<span class="w"> </span>=<span class="w"> </span><span class="mi">10</span>
-people<span class="w"> </span>=<span class="w"> </span><span class="mi">4</span>
-print(<span class="s">&quot;This is a float:&quot;</span>,<span class="w"> </span>liters<span class="w"> </span>/<span class="w"> </span>people)
+<div class="highlight"><pre><span></span><code>liters = 10
+people = 4
+print(&quot;This is a float:&quot;, liters / people)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>This is a float: 2.5
@@ -1522,30 +1547,30 @@ print(<span class="s">&quot;This is a float:&quot;</span>,<span class="w"> </spa
 
 <h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
 <p>The other number type is float:</p>
-<div class="highlight"><pre><span></span><code>length_meters<span class="w"> </span>=<span class="w"> </span><span class="mf">2.68</span>
+<div class="highlight"><pre><span></span><code>length_meters = 2.68
 </code></pre></div>
 <p>If you want to define a whole number as a float, simply include a decimal place:</p>
-<div class="highlight"><pre><span></span><code>years<span class="w"> </span>=<span class="w"> </span><span class="mf">20.0</span>
+<div class="highlight"><pre><span></span><code>years = 20.0
 </code></pre></div>
 <h3 id="bool">bool<a class="headerlink" href="#bool" title="Permanent link">&para;</a></h3>
-<p>RSL uses lowercase <code>true</code> / <code>false</code>:</p>
-<div class="highlight"><pre><span></span><code>is_running<span class="w"> </span>=<span class="w"> </span><span class="k">true</span>
-is_tired<span class="w"> </span>=<span class="w"> </span><span class="k">false</span>
+<p>Rad uses lowercase <code>true</code> / <code>false</code>:</p>
+<div class="highlight"><pre><span></span><code>is_running = true
+is_tired = false
 </code></pre></div>
 <h3 id="list">list<a class="headerlink" href="#list" title="Permanent link">&para;</a></h3>
-<p>RSL has two collection types: lists and maps. First, let's look at lists. These are also sometimes referred to as 'arrays' in other languages.</p>
-<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;</span>]
+<p>Rad has two collection types: lists and maps. First, let's look at lists.</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
 </code></pre></div>
 <p>Lists you define can contain any types:</p>
-<div class="highlight"><pre><span></span><code>mixed<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;</span>,<span class="w"> </span><span class="k">true</span>,<span class="w"> </span><span class="mi">50</span>,<span class="w"> </span>-<span class="mf">2.4</span>]
+<div class="highlight"><pre><span></span><code>mixed = [&quot;alice&quot;, true, 50, -2.4]
 </code></pre></div>
 <p>They can also be nested:</p>
-<div class="highlight"><pre><span></span><code>nested<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;alice&quot;, [1, [&quot;very nested&quot;, &quot;ahhh&quot;</span>]]]
+<div class="highlight"><pre><span></span><code>nested = [&quot;alice&quot;, [1, [&quot;very nested&quot;, &quot;ahhh&quot;]]]
 </code></pre></div>
-<p>Indexing and slicing works very similarly to Python. If we assume the 3 variables above exist, you can index with both positive and negative indexes:</p>
-<div class="highlight"><pre><span></span><code>print(names[<span class="mi">0</span>])
-print(mixed[-<span class="mi">1</span>])<span class="w">  </span>//<span class="w"> </span>grab<span class="w"> </span>last<span class="w"> </span>element<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>list
-print(nested[<span class="mi">1</span>][<span class="mi">1</span>][<span class="mi">0</span>])
+<p>Indexing and slicing works very similarly to Python. Using the above 3 variables for an example, you can index with both positive and negative indexes:</p>
+<div class="highlight"><pre><span></span><code>print(names[0])
+print(mixed[-1])  // grab last element in the list
+print(nested[1][1][0])
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>alice
@@ -1554,11 +1579,11 @@ very nested
 </code></pre></div>
 </div>
 
-<p>And also you can slice:</p>
-<div class="highlight"><pre><span></span><code>numbers<span class="w"> </span>=<span class="w"> </span>[<span class="mi">10</span>,<span class="w"> </span><span class="mi">20</span>,<span class="w"> </span><span class="mi">30</span>,<span class="w"> </span><span class="mi">40</span>,<span class="w"> </span><span class="mi">50</span>]
-print(numbers[<span class="mi">1</span>:<span class="mi">3</span>])
-print(numbers[<span class="mi">2</span>:])
-print(numbers[<span class="o">:-</span><span class="mi">1</span>])
+<p>You can also slice:</p>
+<div class="highlight"><pre><span></span><code>numbers = [10, 20, 30, 40, 50]
+print(numbers[1:3])
+print(numbers[2:])
+print(numbers[:-1])
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>[20, 30]
@@ -1568,25 +1593,25 @@ print(numbers[<span class="o">:-</span><span class="mi">1</span>])
 </div>
 
 <h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
-<p>The last type, and second of two collection types, is a 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.</p>
-<div class="highlight"><pre><span></span><code>scores<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 25, &quot;bob&quot;: 17, &quot;charlie&quot;</span>:<span class="w"> </span><span class="mi">36</span><span class="w"> </span>}
+<p>The other collection type is 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.</p>
+<div class="highlight"><pre><span></span><code>scores = { &quot;alice&quot;: 25, &quot;bob&quot;: 17, &quot;charlie&quot;: 36 }
 </code></pre></div>
-<p>Like lists, they can contain mixed types for values, and can nest. However, <strong>keys must be strings.</strong></p>
-<div class="highlight"><pre><span></span><code>mixed_map<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span>
-<span class="w">  </span><span class="s">&quot;alice&quot;: &quot;accountant&quot;,</span>
-<span class="s">  &quot;mylist&quot;: [ &quot;London&quot;, 25 ],</span>
-<span class="s">}</span>
+<p>Like lists, they can contain mixed types for values, and can nest.</p>
+<div class="highlight"><pre><span></span><code>mixed_map = { 
+  &quot;alice&quot;: &quot;accountant&quot;,
+  &quot;mylist&quot;: [ &quot;London&quot;, 25 ],
+}
 
-<span class="s">nested_map = {</span>
-<span class="s">  &quot;error&quot;: {</span>
-<span class="s">    &quot;msg&quot;: &quot;Request failed!&quot;,</span>
-<span class="s">    &quot;code&quot;</span>:<span class="w"> </span><span class="mi">400</span>,
-<span class="w">  </span>}
+nested_map = {
+  &quot;error&quot;: {
+    &quot;msg&quot;: &quot;Request failed!&quot;,
+    &quot;code&quot;: 400,
+  }
 }
 </code></pre></div>
 <p>If we take the above example, values can then be accessed in two ways. First is the square bracket lookup:</p>
-<div class="highlight"><pre><span></span><code>print(mixed_map[<span class="s">&quot;alice&quot;])</span>
-<span class="s">print(nested_map[&quot;error&quot;][&quot;msg&quot;</span>])
+<div class="highlight"><pre><span></span><code>print(mixed_map[&quot;alice&quot;])
+print(nested_map[&quot;error&quot;][&quot;msg&quot;])
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>accountant
@@ -1605,12 +1630,12 @@ Request failed!
 </div>
 
 <p>You can modify maps using either syntax:</p>
-<div class="highlight"><span class="filename">Using brackets</span><pre><span></span><code>mymap<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 30 }</span>
+<div class="highlight"><pre><span></span><code>mymap = { &quot;alice&quot;: 30 }
 
-<span class="s">mymap[&quot;alice&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">40</span>
+mymap[&quot;alice&quot;] = 40
 print(mymap)
 
-mymap.alice<span class="w"> </span>=<span class="w"> </span><span class="mi">50</span>
+mymap.alice = 50
 print(mymap)
 </code></pre></div>
 <div class="result">
@@ -1620,9 +1645,9 @@ print(mymap)
 </div>
 
 <p>You can also add keys this way:</p>
-<div class="highlight"><pre><span></span><code>mymap<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: 30 }</span>
-<span class="s">mymap[&quot;bob&quot;</span>]<span class="w"> </span>=<span class="w"> </span><span class="mi">31</span>
-mymap.charlie<span class="w"> </span>=<span class="w"> </span><span class="mi">32</span>
+<div class="highlight"><pre><span></span><code>mymap = { &quot;alice&quot;: 30 }
+mymap[&quot;bob&quot;] = 31
+mymap.charlie = 32
 print(mymap)
 </code></pre></div>
 <div class="result">
@@ -1630,106 +1655,113 @@ print(mymap)
 </code></pre></div>
 </div>
 
+<h3 id="other-types">Other Types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
+<p>Rad has other types that we won't cover here. For example <code>null</code> and <a href="../functions/">function references</a>.  </p>
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
-<p>RSL offers operators similar to many other languages. Below sections very quickly demonstrate.</p>
+<p>Rad offers operators similar to many other languages. Below sections very quickly demonstrate.</p>
 <h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
-<p>RSL follows the standard order of operations for operators <code>() , + , - , * , / , %</code>:</p>
+<p>Rad follows the standard order of operations for operators <code>() , + , - , * , / , %</code>:</p>
 <ol>
 <li>Parentheses</li>
 <li>Multiplication, Division, Modulo</li>
 <li>Addition, Subtraction</li>
 </ol>
-<div class="highlight"><pre><span></span><code>print(<span class="mi">1</span><span class="w"> </span>+<span class="w"> </span><span class="mi">4</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">    </span>//<span class="w"> </span><span class="mi">3</span>
-print(<span class="mf">2.5</span><span class="w"> </span>*<span class="w"> </span><span class="mi">3</span><span class="w"> </span>-<span class="w"> </span><span class="mi">1</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">6.5</span>
-print((<span class="mi">4</span><span class="w"> </span>+<span class="w"> </span><span class="mi">5</span>)<span class="w"> </span>*<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mi">18</span>
-print(<span class="mi">5</span><span class="w"> </span>%<span class="w"> </span><span class="mi">3</span>)<span class="w">        </span>//<span class="w"> </span><span class="mi">2</span>
+<div class="highlight"><pre><span></span><code>print(1 + 4 / 2)    // 3
+print(2.5 * 3 - 1)  // 6.5
+print((4 + 5) * 2)  // 18
+print(5 % 3)        // 2
 </code></pre></div>
 <p>Dividing two integers will result in a floating point number.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="mi">5</span><span class="w"> </span>/<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="mf">2.5</span>
+<div class="highlight"><pre><span></span><code>print(5 / 2)  // 2.5
+</code></pre></div>
+<p>You can multiply strings to repeat them:</p>
+<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+print(name * 3)  // alicealicealice
 </code></pre></div>
 <h3 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
 <p>Comparisons return bools that can be used in e.g. <a href="#if-statements">if statements</a>.</p>
 <p>String comparison is done based on contents.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; == &quot;alice&quot;)  // true</span>
-<span class="s">print(&quot;alice&quot; == &quot;bob&quot;)    // false</span>
-<span class="s">print(&quot;alice&quot; != &quot;bob&quot;)    // true</span>
-<span class="s">print(&quot;alice&quot; == &quot;Alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+<div class="highlight"><pre><span></span><code>print(&quot;alice&quot; == &quot;alice&quot;)  // true
+print(&quot;alice&quot; == &quot;bob&quot;)    // false
+print(&quot;alice&quot; != &quot;bob&quot;)    // true
+print(&quot;alice&quot; == &quot;Alice&quot;)  // false
 </code></pre></div>
 <p>Numbers can also be compared with the standard comparators <code>&gt; , &gt;= , &lt; , &lt;= , ==</code>.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="mi">2</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">2</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="mi">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="mi">2</span><span class="w"> </span>&lt;<span class="w"> </span><span class="mi">2</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mi">2</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
+<div class="highlight"><pre><span></span><code>print(2 &gt;= 2)  // true
+print(2 &gt; 2)   // false
+print(2 &lt;= 2)  // true
+print(2 &lt; 2)   // false
+print(2 == 2)  // true
 </code></pre></div>
 <p>You cannot use these operators (outside of <code>==</code>) to compare non-numbers such as strings:</p>
-<div class="highlight"><pre><span></span><code>print(<span class="s">&quot;alice&quot; &gt; &quot;bob&quot;</span>)<span class="w">  </span>//<span class="w"> </span>error
+<div class="highlight"><pre><span></span><code>print(&quot;alice&quot; &gt; &quot;bob&quot;)  // error
 </code></pre></div>
 <p>But you <em>can</em> check them for equality (will always return false, except ints and floats that are equal):</p>
-<div class="highlight"><pre><span></span><code>print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="s">&quot;alice&quot;</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="mi">2</span><span class="w"> </span>==<span class="w"> </span><span class="mf">2.0</span>)<span class="w">      </span>//<span class="w"> </span><span class="k">true</span>
+<div class="highlight"><pre><span></span><code>print(2 == &quot;alice&quot;)  // false
+print(2 == 2.0)      // true
 </code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Difference From Python on <code>True == 1</code> and <code>False == 0</code></p>
 <p>In Python, <code>False == 0</code> and <code>True == 1</code> are true, because under the hood, False is really int 0 and True is really int 1,
-hence they're equal. That's not the case in RSL. In RSL, <strong>any two values of different types are not equal</strong>.</p>
+hence they're equal. That's not the case in Rad. In Rad, <strong>any two values of different types are not equal</strong> (except ints/floats).</p>
 <p>The reasoning stems from <a href="#truthy-falsy">truthy/falsy-ness</a>. In Python, both <code>1</code> and <code>2</code> are truthy. But only <code>1</code> equals <code>True</code>.
-RSL avoids this oddity of making <code>1</code> special by instead making any two different types not equal (except ints/floats).</p>
+Rad avoids this oddity of making <code>1</code> special by instead making any two different types not equal (except ints/floats).</p>
 </div>
 <h3 id="logical">Logical<a class="headerlink" href="#logical" title="Permanent link">&para;</a></h3>
-<p>RSL uses <code>and</code> and <code>or</code> for binary logical operations.</p>
-<div class="highlight"><pre><span></span><code>print(<span class="k">false</span><span class="w"> </span>and<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="k">false</span><span class="w"> </span>and<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="k">true</span><span class="w">  </span>and<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="k">true</span><span class="w">  </span>and<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">true</span>
+<p>Rad uses <code>and</code> and <code>or</code> for binary logical operations.</p>
+<div class="highlight"><pre><span></span><code>print(false and false)  // false
+print(false and true)   // false
+print(true  and false)  // false
+print(true  and true)   // true
 
-print(<span class="k">false</span><span class="w"> </span>or<span class="w">  </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">false</span>
-print(<span class="k">true</span><span class="w">  </span>or<span class="w">  </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="k">false</span><span class="w"> </span>or<span class="w"> </span><span class="k">true</span>)<span class="w">    </span>//<span class="w"> </span><span class="k">true</span>
-print(<span class="k">true</span><span class="w">  </span>or<span class="w">  </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">true</span>
+print(false or  false)  // false
+print(true  or  false)  // true
+print(false or true)    // true
+print(true  or  true)   // true
 </code></pre></div>
 <p>And it uses <code>not</code> for logical negation.</p>
-<div class="highlight"><pre><span></span><code>print(not<span class="w"> </span><span class="k">true</span>)<span class="w">   </span>//<span class="w"> </span><span class="k">false</span>
-print(not<span class="w"> </span><span class="k">false</span>)<span class="w">  </span>//<span class="w"> </span><span class="k">true</span>
+<div class="highlight"><pre><span></span><code>print(not true)   // false
+print(not false)  // true
 </code></pre></div>
 <h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
 <p>You can concatenate strings with <code>+</code>. </p>
-<div class="highlight"><pre><span></span><code>first<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Alice&quot;</span>
-<span class="s">last = &quot;Bobson&quot;</span>
-print(first<span class="w"> </span>+<span class="w"> </span>last)
+<div class="highlight"><pre><span></span><code>first = &quot;Alice&quot;
+last = &quot;Bobson&quot;
+print(first + last)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Alice Bobson
 </code></pre></div>
 </div>
 
-<p>You cannot concatenate a string and a non-string. First convert the non-string into a string.</p>
-<p>This can be done in several ways, the easiest is probably via <a href="../../reference/strings/#string-interpolation">string interpolation</a>:</p>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
-text<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;Number: &quot;</span>
-<span class="s">print(text + &quot;{a}&quot;</span>)
+<p>You can concatenate strings with non-strings, as long as the string is the first operand. This means you may need to convert the non-string to a string first.</p>
+<p>This can be done in several ways, the easiest is probably via the <a href="../../reference/functions/#str"><code>str</code></a> function.</p>
+<div class="highlight"><pre><span></span><code>a = 1
+text = &quot;. Bullet point one&quot;
+print(str(a) + text)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Number: 5
+<div class="highlight"><pre><span></span><code>1. Bullet point one
 </code></pre></div>
 </div>
 
 <h3 id="compound-operators">Compound Operators<a class="headerlink" href="#compound-operators" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">3</span>
-a<span class="w"> </span>+=<span class="w"> </span><span class="mi">2</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">5</span>
-a<span class="w"> </span>-=<span class="w"> </span><span class="mi">1</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">4</span>
-a<span class="w"> </span>*=<span class="w"> </span><span class="mi">3</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">12</span>
-a<span class="w"> </span>%=<span class="w"> </span><span class="mi">10</span><span class="w">  </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mi">2</span>
-a<span class="w"> </span>/=<span class="w"> </span><span class="mi">4</span><span class="w">   </span>//<span class="w"> </span>a<span class="w"> </span><span class="k">is</span><span class="w"> </span>now<span class="w"> </span><span class="mf">0.5</span>
+<p>Rad also supports compound operators for modifying variables in-place.</p>
+<div class="highlight"><pre><span></span><code>a = 3
+a += 2   // a is now 5
+a -= 1   // a is now 4
+a *= 3   // a is now 12
+a %= 10  // a is now 2
+a /= 4   // a is now 0.5
 </code></pre></div>
 <h3 id="increment-decrement">Increment / Decrement<a class="headerlink" href="#increment-decrement" title="Permanent link">&para;</a></h3>
 <p>You can quickly increment and decrement ints and floats using <code>++</code> and <code>--</code> syntax.</p>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">2</span>
-a<span class="o">++</span>
+<div class="highlight"><pre><span></span><code>a = 2
+a++
 print(a)
 
-b<span class="w"> </span>=<span class="w"> </span><span class="mf">2.5</span>
-b<span class="c">--</span>
+b = 2.5
+b--
 print(b)
 </code></pre></div>
 <div class="result">
@@ -1741,18 +1773,18 @@ print(b)
 <p>The increment and decrement operators produce <em>statements</em>, not <em>expressions</em>.
 This means that <code>a++</code> does not <em>return</em> anything, and so cannot be used inside e.g. a conditional.</p>
 <p>For example, the following two uses are invalid, because <code>a++</code> doesn't return a value:</p>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
-<span class="k">if</span><span class="w"> </span>a<span class="o">++</span><span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:<span class="w">  </span>//<span class="w"> </span>invalid,<span class="w"> </span>nothing<span class="w"> </span><span class="k">for</span><span class="w"> </span>&gt;<span class="w"> </span>to<span class="w"> </span>evaluate<span class="w"> </span>against<span class="w"> </span>on<span class="w"> </span>the<span class="w"> </span>left<span class="w"> </span>side
-<span class="w">  </span>...
+<div class="highlight"><pre><span></span><code>a = 5
+if a++ &gt; 0:  // invalid, nothing for &gt; to evaluate against on the left side
+    ...
 
-b<span class="w"> </span>=<span class="w"> </span>a<span class="o">++</span><span class="w">  </span>//<span class="w"> </span>also<span class="w"> </span>invalid<span class="w"> </span>because<span class="w"> </span>a<span class="o">++</span><span class="w"> </span>doesn&#39;t<span class="w"> </span>return<span class="w"> </span><span class="k">any</span><span class="w"> </span><span class="k">value</span>
+b = a++  // also invalid because a++ doesn&#39;t return any value
 </code></pre></div>
 <p>Because of that, there's also no reason to support <em>pre</em>-incrementing, and so <code>++a</code> or <code>--a</code> are invalid statements.</p>
 <h3 id="ternary">Ternary<a class="headerlink" href="#ternary" title="Permanent link">&para;</a></h3>
-<p>RSL supports <code>? :</code> style ternary operators. </p>
+<p>Rad supports <code>? :</code> style ternary operators. </p>
 <p><code>&lt;condition&gt; ? &lt;true case&gt; : &lt;false case&gt;</code></p>
-<div class="highlight"><pre><span></span><code>a<span class="w"> </span>=<span class="w"> </span><span class="mi">5</span>
-b<span class="w"> </span>=<span class="w"> </span>a<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span><span class="w"> </span>?<span class="w"> </span><span class="s">&quot;larger than 0&quot; : &quot;less than 0&quot;</span>
+<div class="highlight"><pre><span></span><code>a = 5
+b = a &gt; 0 ? &quot;larger than 0&quot; : &quot;less than 0&quot;
 print(b)
 </code></pre></div>
 <div class="result">
@@ -1762,20 +1794,25 @@ print(b)
 
 <h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
-<p>RSL employs very standard if statements.</p>
+<p>Rad employs very standard if statements.</p>
 <p>You are <strong>not</strong> required to wrap conditions in parentheses <code>()</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>units<span class="w"> </span>==<span class="w"> </span><span class="s">&quot;metric&quot;:</span>
-<span class="s">  print(&quot;That&#39;s 10 meters.&quot;)</span>
-<span class="s">else if units == &quot;imperial&quot;:</span>
-<span class="s">  print(&quot;That&#39;s almost 33 feet.&quot;)</span>
-<span class="s">else:</span>
-<span class="s">  print(&quot;I don&#39;t know what measurement system!&quot;</span>)
+<div class="highlight"><pre><span></span><code>if units == &quot;metric&quot;:
+    print(&quot;That&#39;s 10 meters.&quot;)
+else if units == &quot;imperial&quot;:
+    print(&quot;That&#39;s almost 33 feet.&quot;)
+else:
+    print(&quot;I don&#39;t know what measurement system!&quot;)
 </code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Blocks use whitespace &amp; indentation</p>
+<p>Note that Rad uses whitespace &amp; indentation to denote blocks, instead of braces.</p>
+<p>As a convention, you can use 4 spaces for indentation. Mixing tabs and spaces is not allowed.</p>
+</div>
 <h3 id="for-loops">For Loops<a class="headerlink" href="#for-loops" title="Permanent link">&para;</a></h3>
-<p>RSL allows "for each" loops for iterating through collections such as lists.</p>
-<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
-<span class="s">for name in names:</span>
-<span class="s">  print(&quot;Hi {name}!&quot;</span>)
+<p>Rad allows "for each" loops for iterating through collections such as lists.</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+for name in names:
+    print(&quot;Hi {name}!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hi Alice!
@@ -1785,8 +1822,8 @@ Hi Charlie!
 </div>
 
 <p>You can also iterate through a range of numbers using the <a href="../../reference/functions/#range"><code>range</code></a> function, which returns a list of numbers within some specified range.</p>
-<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>range(<span class="mi">5</span>):
-<span class="w">  </span>print(i)
+<div class="highlight"><pre><span></span><code>for i in range(5):
+    print(i)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>0
@@ -1800,9 +1837,9 @@ Hi Charlie!
 <p>You can also invoke <code>range</code> with a starting value i.e. <code>range(start, end)</code> and with a step value i.e. <code>range(start, end, step)</code>.</p>
 <p>If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
 in an additional variable after the <code>for</code>. The first variable will be the index, and the second the item.</p>
-<div class="highlight"><pre><span></span><code>names<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]</span>
-<span class="s">for i, name in names:</span>
-<span class="s">  print(&quot;{name} is at index {i}&quot;</span>)
+<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+for i, name in names:
+    print(&quot;{name} is at index {i}&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Alice is at index 0
@@ -1812,9 +1849,9 @@ Charlie is at index 2
 </div>
 
 <p>When iterating through a map, if you have one variable in the loop, then that variable will be the key:</p>
-<div class="highlight"><pre><span></span><code>colors<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot;</span><span class="w"> </span>}
-<span class="k">for</span><span class="w"> </span>k<span class="w"> </span><span class="k">in</span><span class="w"> </span>colors:
-<span class="w">  </span>print(k)
+<div class="highlight"><pre><span></span><code>colors = { &quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot; }
+for k in colors:
+    print(k)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>alice
@@ -1823,9 +1860,9 @@ bob
 </div>
 
 <p>If you have two, then the first will be the key, and the second will be the value.</p>
-<div class="highlight"><pre><span></span><code>colors<span class="w"> </span>=<span class="w"> </span>{<span class="w"> </span><span class="s">&quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot;</span><span class="w"> </span>}
-<span class="k">for</span><span class="w"> </span>k,<span class="w"> </span>v<span class="w"> </span><span class="k">in</span><span class="w"> </span>colors:
-<span class="w">  </span>print(k,<span class="w"> </span>v)
+<div class="highlight"><pre><span></span><code>colors = { &quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot; }
+for k, v in colors:
+    print(k, v)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>alice blue
@@ -1833,19 +1870,149 @@ bob green
 </code></pre></div>
 </div>
 
-<ul>
-<li>TBC</li>
-<li>switch</li>
-</ul>
+<p>A useful function to know when iterating is <a href="../../reference/functions/#zip"><code>zip</code></a>.
+It lets you combine parallel lists into a list of lists. To demonstrate:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+ages = [30, 40, 25]
+zipped = zip(names, ages)
+print(zipped)  // [ [ &quot;alice&quot;, 30 ], [ &quot;bob&quot;, 40 ], [ &quot;charlie&quot;, 25 ] ]
+</code></pre></div></td></tr></table></div>
+<p>These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop: </p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+ages = [30, 40, 25]
+<span class="hll">for _, name, age in zip(names, ages):
+</span><span class="hll">    print(name, age)
+</span></code></pre></div></td></tr></table></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>alice 30
+bob 40
+charlie 25
+</code></pre></div>
+</div>
+
+<div class="admonition info">
+<p class="admonition-title">Use of <code>_</code></p>
+<p>Note the use of <code>_</code> in the above for loop. It technically is the index, previously denoted by <code>i</code>, but by convention,
+we use <code>_</code> to indicate that a variable is unused.</p>
+</div>
+<h3 id="switch-statements">Switch Statements<a class="headerlink" href="#switch-statements" title="Permanent link">&para;</a></h3>
+<p>Rad has switch statements and switch expressions.</p>
+<p>You can <code>switch</code> on a value and write cases to match against, including a <code>default</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    a float
+    op string
+    b float
+
+switch op:
+    case &quot;add&quot;:
+        result = a + b
+        print(&quot;added: {result}&quot;)
+    case &quot;multiply&quot;:
+        result = a * b
+        print(&quot;multiplied: {result}&quot;)
+    default:
+        print(&quot;I don&#39;t know how to do that.&quot;)
+</code></pre></div></td></tr></table></div>
+<p>Cases can be written as blocks or single-line expressions.
+For example, the above <code>default</code> could be made into a single line:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    a float
+    op string
+    b float
+
+switch op:
+    case &quot;add&quot;:
+        result = a + b
+        print(&quot;added: {result}&quot;)
+    case &quot;multiply&quot;:
+        result = a * b
+        print(&quot;multiplied: {result}&quot;)
+<span class="hll">    default -&gt; print(&quot;I don&#39;t know how to do that.&quot;)
+</span></code></pre></div></td></tr></table></div>
+<p>The above examples are switch <strong>statements</strong>, because they do not return anything.
+Switch <strong>expressions</strong> can be used in assignments.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    item string
+
+sound = switch item:
+    case &quot;car&quot; -&gt; &quot;vroom&quot;
+    case &quot;mouse&quot; -&gt; &quot;squeek&quot;
+    default -&gt; &quot;moo&quot;  // default to cow
+
+print(sound)
+</code></pre></div></td></tr></table></div>
+<p>The above example cases are all single-line expressions (<code>case ... -&gt; ...</code>).
+If you want to write a case as a block in a switch expression, you can use the <code>yield</code> keyword to return values (yes plural, switch cases can return multiple values).</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    item string
+
+<span class="hll">sound, plural = switch item:
+</span><span class="hll">    case &quot;car&quot; -&gt; &quot;vroom&quot;, &quot;cars&quot;
+</span><span class="hll">    case &quot;mouse&quot; -&gt; &quot;squeek&quot;, &quot;mice&quot;
+</span><span class="hll">    default:
+</span><span class="hll">        print(&quot;Don&#39;t know &#39;{item}&#39;; defaulting to cow.&quot;)
+</span><span class="hll">        yield &quot;moo&quot;, &quot;cows&quot;
+</span><span class="hll">
+</span><span class="hll">print(`{plural} go &quot;{sound}&quot;`)
+</span></code></pre></div></td></tr></table></div>
 <h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
-<p>RSL supports truthy/falsy logic.</p>
-<p>For those unfamiliar, this means that, instead of writing the following (as an example):</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="k">len</span>(my_list)<span class="w"> </span>&gt;<span class="w"> </span><span class="mi">0</span>:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+<p>Rad supports truthy/falsy logic.</p>
+<p>This means that, instead of writing the following (as an example):</p>
+<div class="highlight"><pre><span></span><code>if len(my_list) &gt; 0:
+    print(&quot;My list has elements!&quot;)
 </code></pre></div>
 <p>you can write</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span>my_list:
-<span class="w">    </span>print(<span class="s">&quot;My list has elements!&quot;</span>)
+<div class="highlight"><pre><span></span><code>if my_list:
+    print(&quot;My list has elements!&quot;)
 </code></pre></div>
 <p>Essentially, you can use any type as a condition, and it will resolve to true or false depending on the value.</p>
 <p>The following table shows which values return false for each type. <strong>All other values resolve to true.</strong></p>
@@ -1886,28 +2053,44 @@ bob green
 </tbody>
 </table>
 <div class="admonition note">
-<p>Note that a string which is all whitespace e.g. <code>" "</code> is truthy.</p>
+<p class="admonition-title">Blank strings and <code>null</code></p>
+<ul>
+<li>A string which is all whitespace e.g. <code>" "</code> is still truthy.</li>
+<li><code>null</code> is falsy.</li>
+</ul>
 </div>
 <h2 id="converting-types">Converting Types<a class="headerlink" href="#converting-types" title="Permanent link">&para;</a></h2>
-<ul>
-<li>TBC</li>
-<li>parsing</li>
-<li>casting (once implemented)</li>
-</ul>
+<p>Converting types may involve simple casts, or parsing.</p>
+<p>When casting, you can use the following functions:
+<a href="../../reference/functions/#str"><code>str</code></a>,  <a href="../../reference/functions/#int"><code>int</code></a>,  <a href="../../reference/functions/#float"><code>float</code></a></p>
+<div class="highlight"><pre><span></span><code>print(int(2.1))  // 2
+print(float(2))  // 2.0
+print(str(2.2))  // &quot;2.2&quot;
+</code></pre></div>
+<p>Note that <code>int</code> and <code>float</code> will error on strings. To parse a string, use the following functions:
+<a href="../../reference/functions/#parse_int"><code>parse_int</code></a>,  <a href="../../reference/functions/#parse_float"><code>parse_float</code></a></p>
+<div class="highlight"><pre><span></span><code>print(parse_int(&quot;2&quot;))      // 2
+print(parse_float(&quot;2.2&quot;))  // 2.2
+
+print(parse_int(&quot;2.2&quot;))    // error
+print(parse_float(&quot;bob&quot;))  // error
+</code></pre></div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>We rapidly covered many basic topics such as assignment, data types, operators, and control flow.</li>
-<li>RSL has 6 data types that map from JSON: strings, ints, floats, bools, lists, and maps.</li>
-<li>RSL has operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
-<li>RSL uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
+<li>Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.</li>
+<li>Rad has operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
+<li>Rad uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
 <li>If you want to increment through a number range, use the <code>range</code> function to generate you a list of ints.</li>
 </ul>
 </li>
-<li>RSL offers truthy/falsy logic for more concise conditional expressions.</li>
+<li>Rad offers truthy/falsy logic for more concise conditional expressions.</li>
+<li>Rad has switch statements and expressions. The latter uses <code>yield</code> as a keyword to return values from cases.</li>
+<li>Rad has functions for casting <code>str</code>, <code>int</code>, <code>float</code> and for parsing <code>parse_int</code>, <code>parse_float</code> values.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Good job on getting through the basics of the language! </p>
-<p>Next, let's dive into one of the areas of RSL that make it shine: <a href="../args/">Args</a>.</p>
+<p>Next, let's dive into one of the areas of Rad that make it shine: <a href="../args/">Args</a>.</p>
 
 
 

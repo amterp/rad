@@ -1065,13 +1065,13 @@
 
   <h1>Resources</h1>
 
-<p>Depending on your script, you may wish to look up values at some point, such as URL endpoints depending on your input. RSL offers a function for this, <code>pick_from_resource</code>, but before we dive into it, we'll first cover a couple of related functions.</p>
+<p>Depending on your script, you may wish to look up values at some point, such as URL endpoints depending on your input. Rad offers a function for this, <code>pick_from_resource</code>, but before we dive into it, we'll first cover a couple of related functions.</p>
 <h2 id="pick"><code>pick</code><a class="headerlink" href="#pick" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/functions/#pick"><code>pick</code></a> is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, rad will enter an interactive mode which allows the user to pick a single value to continue with.</p>
+<p><a href="../../reference/functions/#pick"><code>pick</code></a> is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, Rad will enter an interactive mode which allows the user to pick a single value to continue with.</p>
 <p>You can try it yourself with this example:</p>
-<div class="highlight"><pre><span></span><code>options<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]</span>
-<span class="s">output = pick(options, &quot;sandwich&quot;)</span>
-<span class="s">print(&quot;You chose: {output}&quot;</span>)
+<div class="highlight"><pre><span></span><code>options = [&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]
+output = pick(options, &quot;sandwich&quot;)
+print(&quot;You chose: {output}&quot;)
 </code></pre></div>
 <p>When you initially run this, the <code>sandwich</code> filter should exclude <code>chicken burger</code> and ask you to select between two remaining options:</p>
 <div class="highlight"><pre><span></span><code>┃ Pick an option
@@ -1083,12 +1083,12 @@
 </code></pre></div>
 <h2 id="pick_kv"><code>pick_kv</code><a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h2>
 <p>A similar function is <a href="../../reference/functions/#pick_kv"><code>pick_kv</code></a>. However, instead of the values you're filtering and picking between also being the <em>output</em>, <code>pick_kv</code> performs the filtering/picking on a list of <em>keys</em>, each which map to a value that will get output from the function if its associated key is picked. For example:</p>
-<div class="highlight"><pre><span></span><code>keys<span class="w"> </span>=<span class="w"> </span>[<span class="s">&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]</span>
-<span class="s">values = [&quot;CHICKEN&quot;, &quot;CHICKEN&quot;, &quot;HAM&quot;]</span>
+<div class="highlight"><pre><span></span><code>keys = [&quot;chicken burger&quot;, &quot;chicken sandwich&quot;, &quot;ham sandwich&quot;]
+values = [&quot;CHICKEN&quot;, &quot;CHICKEN&quot;, &quot;HAM&quot;]
 
-<span class="s">output = pick_kv(keys, values)</span>
+output = pick_kv(keys, values)
 
-<span class="s">print(&quot;We&#39;ll need {output}!&quot;</span>)
+print(&quot;We&#39;ll need {output}!&quot;)
 </code></pre></div>
 <p>In this example, we leave out the filter, as it's optional, which will launch us into an interactive select between all the key values:</p>
 <div class="highlight"><pre><span></span><code>┃ Pick an option
@@ -1117,17 +1117,17 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>You may see some similarity here to what we did with <a href="#pick_kv"><code>pick_kv</code></a>. We're defining two options: one which can get matched by either <code>gl</code> or <code>lab</code>, and one which gets matched by <code>gh</code> or <code>hub</code>. In the first case, if chosen, <code>pick_from_resource</code> will return <em>two</em> values: <code>gitlab.com</code> and <code>GitLab</code>. Similarly it will return <code>github.com</code> and <code>GitHub</code> for the latter.</p>
-<p>Let's create an RSL script to use this resource:</p>
-<div class="highlight"><span class="filename">example.rsl</span><pre><span></span><code><span class="nf">args:</span>
-<span class="w">    </span>website<span class="w"> </span>string<span class="w"> </span>=<span class="w"> </span><span class="s">&quot;&quot;</span>
+<p>Let's create an Rad script to use this resource:</p>
+<div class="highlight"><span class="filename">example.rad</span><pre><span></span><code>args:
+    website string = &quot;&quot;
 
-<span class="s">url, name = pick_from_resource(&quot;./resources/websites.json&quot;, website)</span>
-<span class="s">print(&quot;url: {url}, name: {name}&quot;</span>)
+url, name = pick_from_resource(&quot;./resources/websites.json&quot;, website)
+print(&quot;url: {url}, name: {name}&quot;)
 </code></pre></div>
 <p>Note that the first argument to <code>pick_from_resource</code> is a path to a resource file. This path is <em>relative to the script's path</em>.
 This allows you to store your resources with your scripts. In this example, we'll place our files like so:</p>
 <div class="highlight"><pre><span></span><code>.
-├── example.rsl
+├── example.rad
 └── resources
     └── websites.json
 </code></pre></div>
@@ -1141,7 +1141,7 @@ This allows you to store your resources with your scripts. In this example, we'l
 <li>The resource file path can be defined relative to the script's path.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>The shell offers a ton of useful utilities, and RSL allows you to leverage them from within your scripts.</p>
+<p>The shell offers a ton of useful utilities, and Rad allows you to leverage them from within your scripts.</p>
 <p>We'll look at that in the next section: <a href="../shell-commands/">Shell Commands</a>.</p>
 
 
