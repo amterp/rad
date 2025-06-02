@@ -360,18 +360,24 @@ func init() {
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) []RadValue {
 				m := NewRadMap()
-				m.SetPrimitiveStr("date", RClock.Now().Format("2006-01-02"))
-				m.SetPrimitiveInt("year", RClock.Now().Year())
-				m.SetPrimitiveInt("month", int(RClock.Now().Month()))
-				m.SetPrimitiveInt("day", RClock.Now().Day())
-				m.SetPrimitiveInt("hour", RClock.Now().Hour())
-				m.SetPrimitiveInt("minute", RClock.Now().Minute())
-				m.SetPrimitiveInt("second", RClock.Now().Second())
+				now := RClock.Now()
+				hour := now.Hour()
+				minute := now.Minute()
+				second := now.Second()
+
+				m.SetPrimitiveStr("date", now.Format("2006-01-02"))
+				m.SetPrimitiveInt("year", now.Year())
+				m.SetPrimitiveInt("month", int(now.Month()))
+				m.SetPrimitiveInt("day", now.Day())
+				m.SetPrimitiveInt("hour", hour)
+				m.SetPrimitiveInt("minute", minute)
+				m.SetPrimitiveInt("second", second)
+				m.SetPrimitiveStr("time", fmt.Sprintf("%02d:%02d:%02d", hour, minute, second))
 
 				epochM := NewRadMap()
-				epochM.SetPrimitiveInt64("seconds", RClock.Now().Unix())
-				epochM.SetPrimitiveInt64("millis", RClock.Now().UnixMilli())
-				epochM.SetPrimitiveInt64("nanos", RClock.Now().UnixNano())
+				epochM.SetPrimitiveInt64("seconds", now.Unix())
+				epochM.SetPrimitiveInt64("millis", now.UnixMilli())
+				epochM.SetPrimitiveInt64("nanos", now.UnixNano())
 
 				m.SetPrimitiveMap("epoch", epochM)
 

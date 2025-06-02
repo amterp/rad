@@ -20,7 +20,7 @@ print(a.epoch.millis, type_of(a.epoch.millis))
 print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
 2019-12-13 string
 2019 int
 12 int
