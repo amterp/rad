@@ -947,15 +947,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#now" class="md-nav__link">
-    <span class="md-ellipsis">
-      now
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#type_of" class="md-nav__link">
     <span class="md-ellipsis">
       type_of
@@ -1685,6 +1676,39 @@
   <a href="#write_stash_file" class="md-nav__link">
     <span class="md-ellipsis">
       write_stash_file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#now" class="md-nav__link">
+    <span class="md-ellipsis">
+      now
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse_epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      parse_epoch
     </span>
   </a>
   
@@ -2019,15 +2043,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#now" class="md-nav__link">
-    <span class="md-ellipsis">
-      now
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#type_of" class="md-nav__link">
     <span class="md-ellipsis">
       type_of
@@ -2767,6 +2782,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#time" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#now" class="md-nav__link">
+    <span class="md-ellipsis">
+      now
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse_epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      parse_epoch
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2978,83 +3026,6 @@ zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;], fill=&quot;-&quot;)  // [[1, &
 sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
 sort([3, 4, &quot;2&quot;, 1, true])         // [true, 1, 3, 4, &quot;2&quot;]
 </code></pre></div>
-<h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
-<p>Returns the current time in the machine's local timezone, accessible in various forms.</p>
-<div class="highlight"><pre><span></span><code>now() -&gt; map
-</code></pre></div>
-<p>Map values:</p>
-<table>
-<thead>
-<tr>
-<th>Accessor</th>
-<th>Description</th>
-<th>Type</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>.date</code></td>
-<td>Current date YYYY-MM-DD</td>
-<td>string</td>
-<td>2019-12-13</td>
-</tr>
-<tr>
-<td><code>.year</code></td>
-<td>Current calendar year</td>
-<td>int</td>
-<td>2019</td>
-</tr>
-<tr>
-<td><code>.month</code></td>
-<td>Current calendar month</td>
-<td>int</td>
-<td>12</td>
-</tr>
-<tr>
-<td><code>.day</code></td>
-<td>Current calendar day</td>
-<td>int</td>
-<td>13</td>
-</tr>
-<tr>
-<td><code>.hour</code></td>
-<td>Current clock hour (24h)</td>
-<td>int</td>
-<td>14</td>
-</tr>
-<tr>
-<td><code>.minute</code></td>
-<td>Current minute of the hour</td>
-<td>int</td>
-<td>15</td>
-</tr>
-<tr>
-<td><code>.second</code></td>
-<td>Current second of the minute</td>
-<td>int</td>
-<td>16</td>
-</tr>
-<tr>
-<td><code>.epoch.seconds</code></td>
-<td>Seconds since 1970-01-01 00:00:00 UTC</td>
-<td>int</td>
-<td>1576246516</td>
-</tr>
-<tr>
-<td><code>.epoch.millis</code></td>
-<td>Millis since 1970-01-01 00:00:00 UTC</td>
-<td>int</td>
-<td>1576246516123</td>
-</tr>
-<tr>
-<td><code>.epoch.nanos</code></td>
-<td>Nanos since 1970-01-01 00:00:00 UTC</td>
-<td>int</td>
-<td>1576246516123456789</td>
-</tr>
-</tbody>
-</table>
 <h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
 <p>Returns the type of an input variable as a string.</p>
 <div class="highlight"><pre><span></span><code>type_of(variable any)
@@ -3613,6 +3584,136 @@ If the file doesn't exist, it gets created with the given default contents.</p>
 <li><code>string</code> for the full path to the written file.</li>
 <li><code>error</code> map containing errors if the write was unsuccessful; otherwise <code>null</code>.</li>
 </ol>
+<h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
+<h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
+<p>Returns the current time in the machine's local timezone, accessible in various forms.</p>
+<div class="highlight"><pre><span></span><code>now() -&gt; map
+</code></pre></div>
+<p>Map values:</p>
+<table>
+<thead>
+<tr>
+<th>Accessor</th>
+<th>Description</th>
+<th>Type</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.date</code></td>
+<td>Current date YYYY-MM-DD</td>
+<td>string</td>
+<td>2019-12-13</td>
+</tr>
+<tr>
+<td><code>.year</code></td>
+<td>Current calendar year</td>
+<td>int</td>
+<td>2019</td>
+</tr>
+<tr>
+<td><code>.month</code></td>
+<td>Current calendar month</td>
+<td>int</td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>.day</code></td>
+<td>Current calendar day</td>
+<td>int</td>
+<td>13</td>
+</tr>
+<tr>
+<td><code>.hour</code></td>
+<td>Current clock hour (24h)</td>
+<td>int</td>
+<td>14</td>
+</tr>
+<tr>
+<td><code>.minute</code></td>
+<td>Current minute of the hour</td>
+<td>int</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>.second</code></td>
+<td>Current second of the minute</td>
+<td>int</td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>.time</code></td>
+<td>Current time in "hh:mm:ss" format</td>
+<td>string</td>
+<td>14:15:16</td>
+</tr>
+<tr>
+<td><code>.epoch.seconds</code></td>
+<td>Seconds since 1970-01-01 00:00:00 UTC</td>
+<td>int</td>
+<td>1576246516</td>
+</tr>
+<tr>
+<td><code>.epoch.millis</code></td>
+<td>Millis since 1970-01-01 00:00:00 UTC</td>
+<td>int</td>
+<td>1576246516123</td>
+</tr>
+<tr>
+<td><code>.epoch.nanos</code></td>
+<td>Nanos since 1970-01-01 00:00:00 UTC</td>
+<td>int</td>
+<td>1576246516123456789</td>
+</tr>
+</tbody>
+</table>
+<h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
+<p>Given a Unix epoch timestamp, parse it into various other ready-to-use formats in the form of a map.</p>
+<div class="highlight"><pre><span></span><code>parse_epoch(epoch: int, unit: string = &quot;auto&quot;, tz: string = &quot;default&quot;) -&gt; map?, error?!
+</code></pre></div>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>epoch</code></td>
+<td><code>int</code></td>
+<td>The Unix epoch timestamp to parse.</td>
+</tr>
+<tr>
+<td><code>unit</code></td>
+<td><code>string = "auto"</code></td>
+<td>The unit of the epoch e.g. seconds, milliseconds, microseconds, or nanoseconds.<br/>Default <code>auto</code> will try to derive it from the number of digits in <code>epoch</code>.</td>
+</tr>
+<tr>
+<td><code>tz</code></td>
+<td><code>string = "default"</code></td>
+<td>The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Return Values</strong></p>
+<ol>
+<li>The returned map contains the same fields as <a href="#now"><code>now</code></a>. It is <code>null</code> if there was an error parsing.</li>
+<li>A nullable error map.</li>
+</ol>
+<p><strong>Examples</strong></p>
+<div class="highlight"><pre><span></span><code>// Parse seconds epoch
+time, err = parse_epoch(1712345678)  // err will be null
+
+// Millis with TZ
+time, err = parse_epoch(1712345678123, tz=&quot;America/Chicago&quot;)  // err will be null
+
+// Invalid time zone
+time, err = parse_epoch(1712345678, tz=&quot;not real time zone&quot;)  // time will be null, but err defined
+</code></pre></div>
 
 
 
