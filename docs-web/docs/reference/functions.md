@@ -232,29 +232,6 @@ sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
 sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
 ```
 
-### now
-
-Returns the current time in the machine's local timezone, accessible in various forms.
-
-```rad
-now() -> map
-```
-
-Map values:
-
-| Accessor         | Description                           | Type   | Example             |
-|------------------|---------------------------------------|--------|---------------------|
-| `.date`          | Current date YYYY-MM-DD               | string | 2019-12-13          |
-| `.year`          | Current calendar year                 | int    | 2019                |
-| `.month`         | Current calendar month                | int    | 12                  |
-| `.day`           | Current calendar day                  | int    | 13                  |
-| `.hour`          | Current clock hour (24h)              | int    | 14                  |
-| `.minute`        | Current minute of the hour            | int    | 15                  |
-| `.second`        | Current second of the minute          | int    | 16                  |
-| `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
-| `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
-| `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
-
 ### type_of
 
 Returns the type of an input variable as a string.
@@ -275,7 +252,6 @@ Converts any input to a string.
 ```
 str(input: any) -> string
 ```
-
 
 ### int
 
@@ -1056,3 +1032,63 @@ write_stash_file(subpath: string, contents: string) -> string, error?!
 
 1. `string` for the full path to the written file.
 2. `error` map containing errors if the write was unsuccessful; otherwise `null`.
+
+## Time
+
+### now
+
+Returns the current time in the machine's local timezone, accessible in various forms.
+
+```
+now() -> map
+```
+
+Map values:
+
+| Accessor         | Description                           | Type   | Example             |
+|------------------|---------------------------------------|--------|---------------------|
+| `.date`          | Current date YYYY-MM-DD               | string | 2019-12-13          |
+| `.year`          | Current calendar year                 | int    | 2019                |
+| `.month`         | Current calendar month                | int    | 12                  |
+| `.day`           | Current calendar day                  | int    | 13                  |
+| `.hour`          | Current clock hour (24h)              | int    | 14                  |
+| `.minute`        | Current minute of the hour            | int    | 15                  |
+| `.second`        | Current second of the minute          | int    | 16                  |
+| `.time`          | Current time in "hh:mm:ss" format     | string | 14:15:16            |
+| `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
+| `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
+| `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
+
+### parse_epoch
+
+Given a Unix epoch timestamp, parse it into various other ready-to-use formats in the form of a map.
+
+```
+parse_epoch(epoch: int, unit: string = "auto", tz: string = "default") -> map?, error?!
+```
+
+**Parameters**
+
+| Parameter | Type                 | Description                                                                                                                                              |
+|-----------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `epoch`   | `int`                | The Unix epoch timestamp to parse.                                                                                                                       |
+| `unit`    | `string = "auto"`    | The unit of the epoch e.g. seconds, milliseconds, microseconds, or nanoseconds.<br/>Default `auto` will try to derive it from the number of digits in `epoch`. |
+| `tz`      | `string = "default"` | The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.                                          |
+
+**Return Values**
+
+1. The returned map contains the same fields as [`now`](#now). It is `null` if there was an error parsing.
+2. A nullable error map.
+
+**Examples**
+
+```rad
+// Parse seconds epoch
+time, err = parse_epoch(1712345678)  // err will be null
+
+// Millis with TZ
+time, err = parse_epoch(1712345678123, tz="America/Chicago")  // err will be null
+
+// Invalid time zone
+time, err = parse_epoch(1712345678, tz="not real time zone")  // time will be null, but err defined
+```

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	com "rad/core/common"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -44,6 +45,7 @@ const (
 	FUNC_LEN                = "len"
 	FUNC_SORT               = "sort"
 	FUNC_NOW                = "now"
+	FUNC_PARSE_EPOCH        = "parse_epoch"
 	FUNC_TYPE_OF            = "type_of"
 	FUNC_JOIN               = "join"
 	FUNC_UPPER              = "upper"
@@ -145,6 +147,8 @@ const (
 	namedArgPadding        = "padding"
 	namedArgReload         = "reload"
 	namedArgOverride       = "override"
+	namedArgUnit           = "unit"
+	namedArgTz             = "tz"
 
 	constContent      = "content" // todo rename to 'contents'? feels more natural
 	constSizeBytes    = "size_bytes"
@@ -169,6 +173,12 @@ const (
 	constType         = "type"
 	constDir          = "dir"
 	constFile         = "file"
+	constDefault      = "default"
+	constAuto         = "auto"
+	constSeconds      = "seconds"
+	constMilliseconds = "milliseconds"
+	constMicroseconds = "microseconds"
+	constNanoseconds  = "nanoseconds"
 )
 
 var (
@@ -357,31 +367,145 @@ func init() {
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
-			NamedArgs:       NO_NAMED_ARGS,
+			NamedArgs: map[string][]RadTypeEnum{
+				namedArgTz: {RadStringT},
+			},
 			Execute: func(f FuncInvocationArgs) []RadValue {
-				m := NewRadMap()
-				now := RClock.Now()
-				hour := now.Hour()
-				minute := now.Minute()
-				second := now.Second()
+				tz := constDefault
+				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
+					tz = tzArg.value.RequireStr(f.i, tzArg.valueNode).Plain()
+				}
+				var location *time.Location
+				if tz == constDefault {
+					location = time.Local
+				} else {
+					var err error
+					location, err = time.LoadLocation(tz)
+					if err != nil {
+						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
+						if f.numExpectedOutputs == 1 {
+							f.i.errorf(f.callNode, errMsg)
+							panic(UNREACHABLE)
+						}
+						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+					}
+				}
 
-				m.SetPrimitiveStr("date", now.Format("2006-01-02"))
-				m.SetPrimitiveInt("year", now.Year())
-				m.SetPrimitiveInt("month", int(now.Month()))
-				m.SetPrimitiveInt("day", now.Day())
-				m.SetPrimitiveInt("hour", hour)
-				m.SetPrimitiveInt("minute", minute)
-				m.SetPrimitiveInt("second", second)
-				m.SetPrimitiveStr("time", fmt.Sprintf("%02d:%02d:%02d", hour, minute, second))
+				nowMap := NewTimeMap(RClock.Now().In(location))
+				if f.numExpectedOutputs == 1 {
+					return newRadValues(f.i, f.callNode, nowMap)
+				}
+				return newRadValues(f.i, f.callNode, nowMap, RAD_NULL)
+			},
+		},
+		{
+			Name:            FUNC_PARSE_EPOCH,
+			ReturnValues:    UP_TO_TWO_RETURN_VALS,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}}),
+			NamedArgs: map[string][]RadTypeEnum{
+				namedArgTz:   {RadStringT},
+				namedArgUnit: {RadStringT},
+			},
+			Execute: func(f FuncInvocationArgs) []RadValue {
+				epochArg := f.args[0]
+				epoch := epochArg.value.RequireInt(f.i, epochArg.node)
 
-				epochM := NewRadMap()
-				epochM.SetPrimitiveInt64("seconds", now.Unix())
-				epochM.SetPrimitiveInt64("millis", now.UnixMilli())
-				epochM.SetPrimitiveInt64("nanos", now.UnixNano())
+				tz := constDefault
+				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
+					tz = tzArg.value.RequireStr(f.i, tzArg.valueNode).Plain()
+				}
 
-				m.SetPrimitiveMap("epoch", epochM)
+				unit := constAuto
+				if unitArg, exists := f.namedArgs[namedArgUnit]; exists {
+					unit = strings.ToLower(unitArg.value.RequireStr(f.i, unitArg.valueNode).Plain())
+				}
 
-				return newRadValues(f.i, f.callNode, m)
+				isNegative := epoch < 0
+				absEpoch := epoch
+				if isNegative {
+					absEpoch = -absEpoch
+				}
+
+				digitCount := len(strconv.FormatInt(absEpoch, 10))
+				var second int64
+				var nanoSecond int64
+
+				if unit == constAuto {
+					switch digitCount {
+					case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10:
+						second = absEpoch
+						nanoSecond = 0
+					case 13:
+						second = absEpoch / 1_000
+						nanoSecond = (absEpoch % 1_000) * 1_000_000
+					case 16:
+						second = absEpoch / 1_000_000
+						nanoSecond = (absEpoch % 1_000_000) * 1_000
+					case 19:
+						second = absEpoch / 1_000_000_000
+						nanoSecond = absEpoch % 1_000_000_000
+					default:
+						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
+						if f.numExpectedOutputs == 1 {
+							f.i.errorf(epochArg.node, errMsg)
+							panic(UNREACHABLE)
+						}
+						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrAmbiguousEpoch, errMsg))
+					}
+				} else {
+					switch unit {
+					case constSeconds:
+						second = absEpoch
+						nanoSecond = 0
+					case constMilliseconds:
+						second = absEpoch / 1_000
+						nanoSecond = (absEpoch % 1_000) * 1_000_000
+					case constMicroseconds:
+						second = absEpoch / 1_000_000
+						nanoSecond = (absEpoch % 1_000_000) * 1_000
+					case constNanoseconds:
+						second = absEpoch / 1_000_000_000
+						nanoSecond = absEpoch % 1_000_000_000
+					default:
+						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
+							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
+						if f.numExpectedOutputs == 1 {
+							f.i.errorf(f.callNode, errMsg)
+							panic(UNREACHABLE)
+						}
+						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeUnit, errMsg))
+					}
+				}
+
+				if isNegative {
+					second = -second
+					nanoSecond = -nanoSecond
+				}
+
+				var location *time.Location
+				if tz == constDefault {
+					location = time.Local
+				} else {
+					var err error
+					location, err = time.LoadLocation(tz)
+					if err != nil {
+						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
+						if f.numExpectedOutputs == 1 {
+							f.i.errorf(f.callNode, errMsg)
+							panic(UNREACHABLE)
+						}
+						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+					}
+				}
+
+				goTime := time.Unix(second, nanoSecond).In(location)
+				timeMap := NewTimeMap(goTime)
+
+				if f.numExpectedOutputs == 1 {
+					return newRadValues(f.i, f.callNode, timeMap)
+				}
+				return newRadValues(f.i, f.callNode, timeMap, RAD_NULL)
 			},
 		},
 		{

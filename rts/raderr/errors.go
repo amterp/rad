@@ -18,6 +18,9 @@ const (
 	ErrFileNoPermission       = "RAD20004"
 	ErrFileNoExist            = "RAD20005"
 	ErrFileWrite              = "RAD20006"
+	ErrAmbiguousEpoch         = "RAD20007"
+	ErrInvalidTimeUnit        = "RAD20008"
+	ErrInvalidTimeZone        = "RAD20009"
 
 	// RAD3xxxx Type Errors?
 

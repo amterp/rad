@@ -97,7 +97,7 @@ func newRunnerInputInput() core.RunnerInput {
 			StdErr: stdErrBuffer,
 		},
 		RExit:   &testExitFunc,
-		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
+		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.Local),
 		RSleep:  &sleepFunc,
 		RadHome: &radTestHome,
 	}
