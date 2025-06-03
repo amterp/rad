@@ -48,6 +48,18 @@ func CreateFilePathAndWriteString(path string, str string) error {
 	return writeFileWithDir(path, []byte(str))
 }
 
+func DeleteFileIfExists(relativePath string) error {
+	if _, err := os.Stat(relativePath); err == nil {
+		err := os.Remove(relativePath)
+		if err != nil {
+			return fmt.Errorf("failed to delete file: %w", err)
+		}
+	} else if !os.IsNotExist(err) {
+		return fmt.Errorf("failed to check file: %w", err)
+	}
+	return nil
+}
+
 func LoadFile(path string) LoadFileResult {
 	data, err := os.ReadFile(path)
 	if err != nil {

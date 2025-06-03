@@ -12,7 +12,7 @@ if add_extension and not ends_with(path, ".rad"):
     path += ".rad"
 
 p = get_path(path)
-if p:
+if p.exists:
     print(red("Path '{path}' already exists"))
     exit(1)
 
