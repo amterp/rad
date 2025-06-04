@@ -17,10 +17,10 @@ Other than building from source, Rad is not available for other platforms/packag
 After you've installed Rad, you can check your installation:
 
 ```shell
-rad -V
+rad -h
 ```
 
-If this prints Rad's version, you're set!
+If this prints the help string for Rad, you're set!
 
 ## Your First Rad Script - Hello World
 
