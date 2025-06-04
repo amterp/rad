@@ -1339,6 +1339,11 @@ print(&quot;Hello, {name}!&quot;)
 <p>When you invoke an executable script this way, the Kernel scans for a shebang (<code>#!</code>) in the first line.
 If it finds a path to an interpreter (in this case, it will find <code>rad</code>, if set up correctly in your <code>PATH</code>),
 then it will invoke said interpreter on the script (equivalent to <code>rad ./hello</code> like we were doing before).</p>
+<div class="admonition tip">
+<p class="admonition-title">rad new</p>
+<p>Rad has a command <code>rad new &lt;script&gt;</code> which saves you repeating these steps.
+It creates a ready-to-edit executable file with a <code>rad</code> shebang on the top.</p>
+</div>
 <h2 id="visual-studio-code-extension">Visual Studio Code Extension<a class="headerlink" href="#visual-studio-code-extension" title="Permanent link">&para;</a></h2>
 <p>Rad has a VS Code extension <a href="https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension">here</a> which offers nice syntax highlighting and script validation.</p>
 <p>Installing it is highly recommended!</p>
