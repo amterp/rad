@@ -23,12 +23,14 @@ contents = r"""
 """
 
 if not shebang:
-    contents += """
+    contents += r"""
     ---
-    // TODO
+    Hello World script for Rad
     ---
     args:
-        // TODO
+        name string # Person to greet.
+
+    print("Hello, {name}!")
     """
 
 write_file(path, contents)

@@ -219,6 +219,9 @@ When you invoke an executable script this way, the Kernel scans for a shebang (`
 If it finds a path to an interpreter (in this case, it will find `rad`, if set up correctly in your `PATH`),
 then it will invoke said interpreter on the script (equivalent to `rad ./hello` like we were doing before).
 
+!!! tip "rad new"
+    Rad has a command `rad new <script>` which saves you repeating these steps. It creates a ready-to-edit executable file with a `rad` shebang on the top.
+
 ## Visual Studio Code Extension
 
 Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation.
