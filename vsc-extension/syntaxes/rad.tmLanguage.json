@@ -53,7 +53,7 @@
         },
         {
           "name": "storage.modifier.rad",
-          "match": "\\b(enum|regex|mutually|requires|excludes)\\b"
+          "match": "\\b(enum|range|regex|mutually|requires|excludes)\\b"
         },
         {
           "name": "string.quoted.double.rad",
