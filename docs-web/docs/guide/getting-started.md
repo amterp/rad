@@ -220,7 +220,8 @@ If it finds a path to an interpreter (in this case, it will find `rad`, if set u
 then it will invoke said interpreter on the script (equivalent to `rad ./hello` like we were doing before).
 
 !!! tip "rad new"
-    Rad has a command `rad new <script>` which saves you repeating these steps. It creates a ready-to-edit executable file with a `rad` shebang on the top.
+    Rad has a command `rad new <script>` which saves you repeating these steps.
+    It creates a ready-to-edit executable file with a `rad` shebang on the top.
 
 ## Visual Studio Code Extension
 

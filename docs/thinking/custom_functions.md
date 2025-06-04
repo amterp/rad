@@ -218,3 +218,115 @@ implemented later, but so perhaps it was designed this way because they were con
 had a clean slate, is this still the best way to do it?
 
 Another tangent back to the `string?!` error syntax, maybe we drop this `!` idea and simply allow `error`, which is basically equivalent to `string?!` would otherwise be.
+
+## 2025-06-04
+
+Reddit discussion: https://www.reddit.com/r/ProgrammingLanguages/comments/1l2nbpj/feedback_idea_for_error_handling/
+
+- Skepticism on Go-like approach, misunderstanding about how Go-like (or not) Rad's proposed approach is. 
+  - Communicate more clearly the difference from Go, maybe don't compare at all.
+- Proposal contributes to learning curve. Approach is alien to newcomers.
+- Complicates nested function calls.
+- Strong support for a `Result`-like union as an alternative.
+  - Would need pattern matching. Recommended check out OCaml for example.
+- How does propagation work? Good question.
+  - Propagate with question mark? Look at how that works in other languages.
+  - Some alternatives:
+
+```
+a, err = myfoo()
+err?
+// or does exclamation point make more sense?
+err!
+```
+
+```
+a = myfoo()!
+// these alternatives probably also require the enclosing function to declare 'error' in its return signature
+// I guess we only allow one error in the signature? probably as the last output?
+```
+
+- Error structure customization. I proposed just a string.
+  - Customizability suggested potentially? Probably not.
+  - Perhaps a canonical structure e.g. map with fields "msg", "stacktrace"
+- Clarification on 'CLI language'. Invokes Rad being a bash/oil/fish-like language for some, which it's not.
+  - ?? How better communicate to avoid this misunderstanding?
+
+### Union Approach
+
+This document has proposed a non-union approach above, where the error is separated. Let's consider a union approach and what that could look like.
+
+Points of inspiration: Zig, Rust
+
+```
+fn myfoo(op: string, n: int) -> float|error:
+    if op == "add":
+        return n + 5
+    if op == "divide":
+        return n / 5
+    return error("Invalid op: {op}")
+
+a = myfoo()
+
+// 'a' is technically a union type. it's either a float or an error.
+
+// could propagate like this maybe? treats error in a special way
+try a
+
+// more likely, you do this
+a = try myfoo()
+
+// this will leave with 'a' definitely being non-error. it can still be null if our return signature is -> float?|error
+// what I don't like about this though is that, we're moving away from this idea of 'just panic if error is unhandled'
+// and having that be the default behavior. 'try' should be opt-out, not opt-in.
+
+// would it be confusing to sorta flip what 'try' does? rather than propagating, it *disables* propagating? i.e.
+a = try myfoo()
+
+// allows 'a' to be an error? if we hadn't written 'try', it would propagate it up? think more.
+
+// in terms of handling with pattern matching
+
+a = try myfoo()
+myfloat = switch type_of(a):
+    case "float" -> a
+    case "error" -> 0
+
+// this reuses switch. it sorta is like defaulting to 0 if there's an error. it's not safe tho, could typo the cases.
+
+myfloat = match a:
+    float -> a
+    error -> 0
+    
+// don't love that 'match' term. here we're sorta implying it works for just types, and if it doesn't then what's
+// point of 'switch'? What if did commit to that tho? cut out 'case' keyword, and be more clever on what we will receive?
+
+myfloat = switch a:
+    float -> a
+    error -> 0
+    "example" -> -1
+    
+// silly example but sorta demonstrates ^. You can switch on types, and then specific values for equality. Only cornor
+// where this could cause issues is if we ever wanted to actually allow storing references to types as variables. e.g.
+
+myvar = float
+switch myvar:
+    float -> ...
+    
+// here, should myvar match on that case or not? It's *equal* to float, but it *is not a float*,
+// but rather a reference to the type 'float'.
+
+// in any case, it'd be nice to have a 'catch'-like syntax.
+
+a = myfoo() catch 0
+
+// worried it's not that self-explanatory, and zig is not popular enough that i can reasonably lean on that to
+// lower the learning curve. 
+```
+
+Things to think for next time:
+
+- Flip `try` from Zig to opt-out of propagating? Alternative keyword?
+- 'catch' equivalent for rad?
+- Switch statements on types?
+- try to conclude: union type, or separate 'error' return?
