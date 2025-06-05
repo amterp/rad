@@ -1,4 +1,4 @@
-#!/usr/bin/env rad
+#!/usr/bin/env radd
 args:
     name string
 

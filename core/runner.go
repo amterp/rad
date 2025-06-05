@@ -241,8 +241,8 @@ func (r *RadRunner) Run() error {
 		r.RunUsageExit(true)
 	}
 
-	// error if not all positional args were used
-	if posArgsIndex < len(args) {
+	if posArgsIndex < len(args) && !r.scriptData.DisableArgsBlock {
+		// error if not all positional args were used
 		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
 	}
 

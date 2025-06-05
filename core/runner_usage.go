@@ -79,7 +79,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	if !(r.scriptData.DisableGlobalOpts && len(scriptOptions) == 0) {
 		fmt.Fprintf(buf, " [OPTIONS]")
 	}
-	
+
 	fmt.Fprintf(buf, "\n")
 
 	if len(r.scriptArgs) > 0 {

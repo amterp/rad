@@ -115,6 +115,7 @@ print("hi")
 	assertError(t, 1, expected)
 }
 
+// todo this test is actually bad because it invokes *another instance* of Rad to generate the usage string
 func Test_Macros_DoesPassthroughOfHelp(t *testing.T) {
 	script := `
 ---
@@ -122,15 +123,31 @@ func Test_Macros_DoesPassthroughOfHelp(t *testing.T) {
 @enable_global_options = 0
 ---
 
-my_args = get_args()[1:].join(" ")
+my_args = get_args().join(" ")
 quiet $!'./rad_scripts/hello.rad {my_args}'
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  hello.rad <name>
+  hello.rad <name> [OPTIONS]
 
 Script args:
       --name string   
+
+` + scriptGlobalFlagHelp
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Macros_DoesNotComplainOfUnusedPositionalArgsIfArgsBlocKDisabled(t *testing.T) {
+	script := `
+---
+Docs here.
+@enable_args_block = 0
+---
+print("hi", get_args())
+`
+	setupAndRunCode(t, script, "bob")
+	expected := `hi [ "bob" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
