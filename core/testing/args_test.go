@@ -24,7 +24,7 @@ print(foo)
 func TestArgs_ApiRenameUsageString(t *testing.T) {
 	setupAndRunCode(t, setupArgScript, "-h", "--color=never")
 	expected := `Usage:
-  <bar>
+  <bar> [OPTIONS]
 
 Script args:
   -x, --bar string   
@@ -41,7 +41,7 @@ args:
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `Usage:
-  <mandatory> [optional]
+  <mandatory> [optional] [OPTIONS]
 
 Script args:
       --mandatory string   
@@ -78,7 +78,7 @@ print('hi')
 	expected := `Missing required arguments: [mandatory2]
 
 Usage:
-  <mandatory1> <mandatory2> [optional]
+  <mandatory1> <mandatory2> [optional] [OPTIONS]
 
 Script args:
       --mandatory1 string   
@@ -110,7 +110,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, script, "alice", "1", "1.1", "true", "bob,charlie", "2,3", "2.1,3.1", "true,false")
+	setupAndRunCode(t, script, "alice", "1", "1.1", "bob,charlie", "2,3", "2.1,3.1", "true,false", "--boolArg")
 	expected := `ALICE
 2
 2.2
@@ -288,7 +288,7 @@ args:
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   The name.
@@ -304,7 +304,7 @@ args:
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   The name.
@@ -318,7 +318,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
- 
+  [OPTIONS]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
@@ -329,7 +329,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
- 
+  [OPTIONS]
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -349,17 +349,17 @@ args:
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  [stringArg] [intArg] [floatArg] [boolArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg]
+  [stringArg] [intArg] [floatArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg] [OPTIONS]
 
 Script args:
       --stringArg string                (default alice)
       --intArg int                     An int. (default 1)
       --floatArg float                  (default 1.1)
-      --boolArg                         (default true)
       --stringArrayArg string,string    (default ["bob", "charlie"])
       --intArrayArg int,int             (default [2, 3])
       --floatArrayArg float,float       (default [2.1, 3.1])
       --boolArrayArg bool,bool          (default [true, false])
+      --boolArg                         (default true)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
@@ -400,7 +400,7 @@ args:
 	expected := `Missing required arguments: [age]
 
 Usage:
-  <name> <age>
+  <name> <age> [OPTIONS]
 
 Script args:
       --name string   
@@ -420,7 +420,7 @@ args:
 	expected := `Too many positional arguments. Unused: [3]
 
 Usage:
-  <name> <age>
+  <name> <age> [OPTIONS]
 
 Script args:
       --name string   
@@ -440,7 +440,7 @@ args:
 	expected := `unknown shorthand flag: 's' in -s
 
 Usage:
-  <name> <age>
+  <name> <age> [OPTIONS]
 
 Script args:
       --name string   

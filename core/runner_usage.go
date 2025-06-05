@@ -37,7 +37,7 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	com.GreenBoldF(buf, "Commands:\n")
 	commandUsage(buf, Cmds)
 
-	com.GreenBoldF(buf, "Global flags:\n")
+	com.GreenBoldF(buf, "Global options:\n")
 	flagUsage(buf, r.globalFlags)
 
 	basicTips(buf)
@@ -57,31 +57,40 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 		com.BoldF(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
 	}
 
-	for _, arg := range r.scriptData.Args {
-		if arg.HasDefaultValue || arg.IsNullable {
-			com.CyanF(buf, fmt.Sprintf(" [%s]", arg.ApiName))
-		} else if arg.Type == ArgBoolT {
-			if arg.Short == nil {
-				com.CyanF(buf, fmt.Sprintf(" [--%s]", arg.ApiName))
-			} else {
-				com.CyanF(buf, fmt.Sprintf(" [-%s, --%s]", *arg.Short, arg.ApiName))
-			}
+	// separate out positionals from options, to print positionals first
+	scriptArgs := make([]RadArg, 0)
+	scriptOptions := make([]RadArg, 0)
+
+	for _, arg := range r.scriptArgs {
+		if arg.GetType() == ArgBoolT {
+			// booleans are not positionally available
+			scriptOptions = append(scriptOptions, arg)
+			continue
+		}
+		scriptArgs = append(scriptArgs, arg)
+
+		if arg.IsOptional() {
+			com.CyanF(buf, fmt.Sprintf(" [%s]", arg.GetExternalName()))
 		} else {
-			com.CyanF(buf, fmt.Sprintf(" <%s>", arg.ApiName))
+			com.CyanF(buf, fmt.Sprintf(" <%s>", arg.GetExternalName()))
 		}
 	}
 
+	if !(r.scriptData.DisableGlobalOpts && len(scriptOptions) == 0) {
+		fmt.Fprintf(buf, " [OPTIONS]")
+	}
+	
 	fmt.Fprintf(buf, "\n")
 
 	if len(r.scriptArgs) > 0 {
 		fmt.Fprintf(buf, "\n")
 		com.GreenBoldF(buf, "Script args:\n")
-		flagUsage(buf, r.scriptArgs)
+		flagUsage(buf, append(scriptArgs, scriptOptions...))
 	}
 
-	if !shortHelp && !r.scriptData.DisableGlobalFlags {
+	if !shortHelp && !r.scriptData.DisableGlobalOpts {
 		fmt.Fprintf(buf, "\n")
-		com.GreenBoldF(buf, "Global flags:\n")
+		com.GreenBoldF(buf, "Global options:\n")
 		flagUsage(buf, r.globalFlags)
 	}
 

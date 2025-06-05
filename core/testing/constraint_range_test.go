@@ -17,7 +17,7 @@ args:
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <age1> <age2> <age3> <age4>
+  <age1> <age2> <age3> <age4> [OPTIONS]
 
 Script args:
       --age1 int     The age1. Range: [0, 100]

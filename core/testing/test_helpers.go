@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const scriptGlobalFlagHelp = `Global flags:
+const scriptGlobalFlagHelp = `Global options:
   -h, --help            Print usage string.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never]. (default auto)
@@ -22,7 +22,7 @@ const scriptGlobalFlagHelp = `Global flags:
       --src             Instead of running the target script, just print it out.
 `
 
-const allGlobalFlagHelp = `Global flags:
+const allGlobalFlagHelp = `Global options:
   -h, --help                   Print usage string.
   -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.

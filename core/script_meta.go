@@ -11,13 +11,13 @@ import (
 )
 
 type ScriptData struct {
-	ScriptName         string
-	Args               []*ScriptArg
-	Description        *string
-	Tree               *rts.RadTree
-	Src                string
-	DisableGlobalFlags bool
-	DisableArgsBlock   bool
+	ScriptName        string
+	Args              []*ScriptArg
+	Description       *string
+	Tree              *rts.RadTree
+	Src               string
+	DisableGlobalOpts bool
+	DisableArgsBlock  bool
 }
 
 func ExtractMetadata(src string) *ScriptData {
@@ -28,7 +28,7 @@ func ExtractMetadata(src string) *ScriptData {
 
 	tree := radTree.Parse(src)
 
-	disableGlobalFlags := false
+	disableGlobalOpts := false
 	disableArgsBlock := false
 	var description *string
 	if fileHeader, ok := tree.FindFileHeader(); ok {
@@ -37,7 +37,7 @@ func ExtractMetadata(src string) *ScriptData {
 			RadHomeInst.SetStashId(stashId)
 		}
 
-		disableGlobalFlags = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_GLOBAL_FLAGS)
+		disableGlobalOpts = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_GLOBAL_OPTIONS)
 		disableArgsBlock = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_ARGS_BLOCK)
 	}
 
@@ -48,13 +48,13 @@ func ExtractMetadata(src string) *ScriptData {
 	}
 
 	return &ScriptData{
-		ScriptName:         ScriptName,
-		Args:               args,
-		Description:        description,
-		Tree:               tree,
-		Src:                src,
-		DisableGlobalFlags: disableGlobalFlags,
-		DisableArgsBlock:   disableArgsBlock,
+		ScriptName:        ScriptName,
+		Args:              args,
+		Description:       description,
+		Tree:              tree,
+		Src:               src,
+		DisableGlobalOpts: disableGlobalOpts,
+		DisableArgsBlock:  disableArgsBlock,
 	}
 }
 

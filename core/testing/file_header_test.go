@@ -14,7 +14,7 @@ args:
 	expected := `This is a one liner!
 
 Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   
@@ -41,7 +41,7 @@ Here is
 the rest!
 
 Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   

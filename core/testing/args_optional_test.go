@@ -50,7 +50,7 @@ print(name, age, sep="|")
 	expected := `Invalid args: 'name' requires 'age', but 'age' was not set
 
 Usage:
-  <name> [age]
+  <name> [age] [OPTIONS]
 
 Script args:
       --name string   

@@ -31,7 +31,7 @@ print("ran")
 	expected := `Invalid args: 'a' requires 'b', but 'b' was not set
 
 Usage:
-  <a> <b>
+  <a> <b> [OPTIONS]
 
 Script args:
       --a string   
@@ -55,7 +55,7 @@ print("ran")
 	expected := `Invalid args: 'b' requires 'c', but 'c' was not set
 
 Usage:
-  <a> [b] <c>
+  <a> [b] <c> [OPTIONS]
 
 Script args:
       --a string   
@@ -119,7 +119,7 @@ else:
 	expected := `Invalid args: 'file' excludes 'url', but 'url' was set
 
 Usage:
-  <file> <url>
+  <file> <url> [OPTIONS]
 
 Script args:
       --file string   
@@ -188,7 +188,7 @@ else:
 	expected := `Invalid args: 'token' excludes 'username', but 'username' was set
 
 Usage:
-  <token> <username> <password>
+  <token> <username> <password> [OPTIONS]
 
 Script args:
       --token string      
@@ -245,11 +245,11 @@ if authenticate:
 	expected := `Invalid args: 'token' requires 'authenticate', but 'authenticate' was not set
 
 Usage:
-  [authenticate] <token>
+  <token> [OPTIONS]
 
 Script args:
-      --authenticate   
       --token string   
+      --authenticate   
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)

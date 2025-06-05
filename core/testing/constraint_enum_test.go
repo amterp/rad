@@ -25,7 +25,7 @@ print("Hi", name)
 	expected := `Invalid 'name' value: david (valid values: alice, bob, charlie)
 
 Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   Valid values: [alice, bob, charlie].

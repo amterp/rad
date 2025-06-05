@@ -17,7 +17,7 @@ Many lines!
 Many lines!
 
 Usage:
- 
+  [OPTIONS]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -36,7 +36,7 @@ Many lines!
 Many lines!
 
 Usage:
- 
+  [OPTIONS]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -58,17 +58,17 @@ Many lines!
 Another line!
 
 Usage:
- 
+  [OPTIONS]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
-func Test_Macros_HelpDisabledIfGlobalFlagsDisabled(t *testing.T) {
+func Test_Macros_HelpDisabledIfGlobalOptionsDisabled(t *testing.T) {
 	script := `
 ---
 Docs here.
-@enable_global_flags = 0
+@enable_global_options = 0
 ---
 print("hi")
 `
@@ -79,11 +79,11 @@ print("hi")
 	assertNoErrors(t)
 }
 
-func Test_Macros_DisablingGlobalFlagsLeadsToComplaintsAboutThemIfSpecified(t *testing.T) {
+func Test_Macros_DisablingGlobalOptionsLeadsToComplaintsAboutThemIfSpecified(t *testing.T) {
 	script := `
 ---
 Docs here.
-@enable_global_flags = 0
+@enable_global_options = 0
 ---
 debug("hi1")
 print("hi2")
@@ -119,7 +119,7 @@ func Test_Macros_DoesPassthroughOfHelp(t *testing.T) {
 	script := `
 ---
 @enable_args_block = 0
-@enable_global_flags = 0
+@enable_global_options = 0
 ---
 
 my_args = get_args()[1:].join(" ")

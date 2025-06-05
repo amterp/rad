@@ -36,6 +36,7 @@ type RadArg interface {
 	GetDescription() string
 	DefaultAsString() string
 	HasNonZeroDefault() bool // todo
+	GetType() RadArgTypeT
 	Register()
 	Configured() bool // configured by the user in some way
 	IsDefined() bool  // either configured or has a default
@@ -259,6 +260,10 @@ func (f *BoolRadArg) SetValue(arg string) {
 	}
 }
 
+func (f *BoolRadArg) GetType() RadArgTypeT {
+	return ArgBoolT
+}
+
 // --- bool array
 
 type BoolArrRadArg struct {
@@ -319,6 +324,10 @@ func (f *BoolArrRadArg) SetValue(arg string) {
 		}
 	}
 	f.Value = bools
+}
+
+func (f *BoolArrRadArg) GetType() RadArgTypeT {
+	return ArgBoolArrayT
 }
 
 // --- string
@@ -425,6 +434,10 @@ func (f *StringRadArg) ValidateConstraints() error {
 	return nil
 }
 
+func (f *StringRadArg) GetType() RadArgTypeT {
+	return ArgStringT
+}
+
 // --- string array
 
 type StringArrRadArg struct {
@@ -479,6 +492,10 @@ func (f *StringArrRadArg) SetValue(arg string) {
 		vals[i] = v
 	}
 	f.Value = vals
+}
+
+func (f *StringArrRadArg) GetType() RadArgTypeT {
+	return ArgStringArrayT
 }
 
 // --- int
@@ -557,6 +574,10 @@ func (f *IntRadArg) ValidateConstraints() error {
 	return nil // todo validateRange should return error
 }
 
+func (f *IntRadArg) GetType() RadArgTypeT {
+	return ArgIntT
+}
+
 // --- int array
 
 type IntArrRadArg struct {
@@ -615,6 +636,10 @@ func (f *IntArrRadArg) SetValue(arg string) {
 		ints[i] = parsed
 	}
 	f.Value = ints
+}
+
+func (f *IntArrRadArg) GetType() RadArgTypeT {
+	return ArgIntArrayT
 }
 
 // --- float
@@ -692,6 +717,10 @@ func (f *FloatRadArg) ValidateConstraints() error {
 	return nil // todo validateRange should return error
 }
 
+func (f *FloatRadArg) GetType() RadArgTypeT {
+	return ArgFloatT
+}
+
 // --- float array
 
 type FloatArrRadArg struct {
@@ -752,6 +781,10 @@ func (f *FloatArrRadArg) SetValue(arg string) {
 	f.Value = floats
 }
 
+func (f *FloatArrRadArg) GetType() RadArgTypeT {
+	return ArgFloatArrayT
+}
+
 // --- MockResponse
 
 type MockResponseRadArg struct {
@@ -786,6 +819,10 @@ func (f *MockResponseRadArg) Register() {
 func (f *MockResponseRadArg) SetValue(arg string) {
 	RP.RadErrorExit(fmt.Sprintf("This function is expected to only be called for script args."+
 		" MockResponse cannot be a script arg: %v\n", arg))
+}
+
+func (f *MockResponseRadArg) GetType() RadArgTypeT {
+	return ArgStringT // hmm not really
 }
 
 // --- general

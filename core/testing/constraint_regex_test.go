@@ -11,7 +11,7 @@ print("Hi", name)
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   Regex: [A-Z][a-z]*
@@ -31,7 +31,7 @@ print("Hi", name)
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
@@ -76,7 +76,7 @@ args:
 	expected := `Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
 
 Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   Regex: [A-Z][a-z]*
@@ -96,7 +96,7 @@ args:
 	expected := `Invalid 'name' value: Charlie (valid values: Alice, Bob)
 
 Usage:
-  <name>
+  <name> [OPTIONS]
 
 Script args:
       --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*

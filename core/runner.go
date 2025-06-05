@@ -185,7 +185,7 @@ func (r *RadRunner) Run() error {
 
 	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
 
-	if !r.scriptData.DisableArgsBlock || !r.scriptData.DisableGlobalFlags {
+	if !r.scriptData.DisableArgsBlock || !r.scriptData.DisableGlobalOpts {
 		// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
 		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
 	}
@@ -207,16 +207,17 @@ func (r *RadRunner) Run() error {
 	for _, scriptArg := range scriptArgs {
 		if !scriptArg.Configured() {
 			// flag has not been explicitly set by the user
-			if posArgsIndex < len(args) {
+			if _, ok := scriptArg.(*BoolRadArg); ok {
+				// all bools are implicitly optional. they either default to false or explicitly to true.
+				// they cannot be filled in positionally. continue.
+				continue
+			} else if posArgsIndex < len(args) {
 				// there's a positional arg to fill it
 				scriptArg.SetValue(args[posArgsIndex])
 				posArgsIndex++
 			} else if scriptArg.IsOptional() {
-				// there's no positional arg to fill it, but that's okay because it's optional, so continue
-				continue
-			} else if _, ok := scriptArg.(*BoolRadArg); ok {
-				// all bools are implicitly optional and default false, unless explicitly defaulted to true
-				// this branch implies it was not defaulted to true
+				// there's no positional arg to fill it, but that's okay because it's optional.
+				continue // TODO no tests fail if we remove this, but I think it would be incorrect to remove
 			} else {
 				missingArgs = append(missingArgs, scriptArg)
 				continue // don't validate constraints if it's missing
@@ -287,7 +288,7 @@ func (r *RadRunner) setUpGlobals() {
 		r.RunUsage(false, false)
 	}
 
-	if r.scriptData == nil || !r.scriptData.DisableGlobalFlags {
+	if r.scriptData == nil || !r.scriptData.DisableGlobalOpts {
 		r.globalFlags = CreateAndRegisterGlobalFlags()
 	} else {
 		// If we don't define our own help flag, pflag intercepts and runs its own usage.
