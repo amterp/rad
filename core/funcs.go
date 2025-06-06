@@ -133,6 +133,7 @@ const (
 	namedArgBody           = "body"
 	namedArgHint           = "hint"
 	namedArgDefault        = "default"
+	namedArgSecret         = "secret"
 	namedArgEnd            = "end"
 	namedArgSep            = "sep"
 	namedArgFill           = "fill"
@@ -797,6 +798,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				namedArgHint:    {RadStringT},
 				namedArgDefault: {RadStringT},
+				namedArgSecret:  {RadBoolT},
 			},
 			Execute: func(f FuncInvocationArgs) []RadValue {
 				prompt := "> "
@@ -814,7 +816,12 @@ func init() {
 					default_ = defaultArg.value.RequireStr(f.i, defaultArg.valueNode).Plain()
 				}
 
-				response, err := InputText(prompt, hint, default_)
+				secret := false
+				if secretArg, exists := f.namedArgs[namedArgSecret]; exists {
+					secret = secretArg.value.RequireBool(f.i, secretArg.valueNode)
+				}
+
+				response, err := InputText(prompt, hint, default_, secret)
 				if err != nil {
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
 				}

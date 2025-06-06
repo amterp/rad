@@ -330,7 +330,36 @@ load(map, key, loader: fn() -> any, reload: bool?, override: any?) -> any
 Get a line of text input from the user.
 
 ```rad
-input(prompt string?, default=string?, hint=string?) -> string
+input(prompt string?, default=string?, hint=string?, secret=bool?) -> string
+```
+
+**Parameters**
+
+| Parameter | Type     | Description                                                                   |
+|-----------|----------|-------------------------------------------------------------------------------|
+| `prompt`  | `string` | The text prompt to display to the user.                                       |
+| `default` | `string` | Default value if the user doesn't enter anything.                             |
+| `hint`    | `string` | Placeholder text shown in the input field. Has no impact if `secret` enabled. |
+| `secret`  | `bool`   | If true, hides the input (useful for passwords).                              |
+
+**Return Values**
+
+Returns the user's input as a string. If the user doesn't enter anything, returns the default value.
+
+**Examples**
+
+```rad
+// Basic input
+name = input("What's your name? ")
+
+// With default value
+color = input("Favorite color? ", default="blue")
+
+// With hint
+email = input("Email address: ", hint="example@domain.com")
+
+// Password input
+password = input("Enter password: ", secret=true)
 ```
 
 ### confirm
@@ -932,7 +961,8 @@ get_env(name: string) -> string
 
 **Return Values**
 
-Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty string.
+Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty
+string.
 
 **Examples**
 
