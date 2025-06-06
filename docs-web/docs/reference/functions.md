@@ -916,6 +916,34 @@ find_paths(target: string, depth: int = -1, relative: string = "target") -> list
     - `"cwd"`: relative to the user's current working directory
     - `"absolute"`: return absolute paths
 
+### get_env
+
+Retrieves the value of an environment variable.
+
+```
+get_env(name: string) -> string
+```
+
+**Parameters**
+
+| Parameter | Type     | Description                           |
+|-----------|----------|---------------------------------------|
+| `name`    | `string` | The name of the environment variable. |
+
+**Return Values**
+
+Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty string.
+
+**Examples**
+
+```rad
+// Get an environment variable
+home_dir = get_env("HOME")
+
+// Use with 'or' operator to provide a default value
+api_key = get_env("API_KEY") or "default_key"
+```
+
 ### get_rad_home
 
 Returns rad's home directory.
@@ -1069,11 +1097,11 @@ parse_epoch(epoch: int, unit: string = "auto", tz: string = "default") -> map?, 
 
 **Parameters**
 
-| Parameter | Type                 | Description                                                                                                                                              |
-|-----------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `epoch`   | `int`                | The Unix epoch timestamp to parse.                                                                                                                       |
+| Parameter | Type                 | Description                                                                                                                                                    |
+|-----------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `epoch`   | `int`                | The Unix epoch timestamp to parse.                                                                                                                             |
 | `unit`    | `string = "auto"`    | The unit of the epoch e.g. seconds, milliseconds, microseconds, or nanoseconds.<br/>Default `auto` will try to derive it from the number of digits in `epoch`. |
-| `tz`      | `string = "default"` | The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.                                          |
+| `tz`      | `string = "default"` | The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.                                           |
 
 **Return Values**
 

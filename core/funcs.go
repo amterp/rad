@@ -109,6 +109,7 @@ const (
 	FUNC_SAVE_STATE         = "save_state"
 	FUNC_LOAD_STASH_FILE    = "load_stash_file"
 	FUNC_WRITE_STASH_FILE   = "write_stash_file"
+	FUNC_GET_ENV            = "get_env"
 	FUNC_HASH               = "hash"
 	FUNC_ENCODE_BASE64      = "encode_base64"
 	FUNC_DECODE_BASE64      = "decode_base64"
@@ -852,6 +853,19 @@ func init() {
 				}
 
 				return newRadValues(f.i, f.callNode, radMap)
+			},
+		},
+		{
+			Name:            FUNC_GET_ENV,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RadValue {
+				envVarArg := f.args[0]
+				envVar := envVarArg.value.RequireStr(f.i, envVarArg.node).Plain()
+				envValue := os.Getenv(envVar)
+				return newRadValues(f.i, f.callNode, newRadValueStr(envValue))
 			},
 		},
 		{
