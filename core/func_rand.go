@@ -17,11 +17,11 @@ var FuncSeedRandom = BuiltInFunc{
 	MinPosArgCount:  1,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		arg := f.args[0]
 		asInt := arg.value.RequireInt(f.i, arg.node)
 		RNG = rand.New(rand.NewSource(asInt))
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 
@@ -31,7 +31,7 @@ var FuncRand = BuiltInFunc{
 	MinPosArgCount:  0,
 	PosArgValidator: NO_POS_ARGS,
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		return newRadValues(f.i, f.callNode, RNG.Float64())
 	},
 }
@@ -42,7 +42,7 @@ var FuncRandInt = BuiltInFunc{
 	MinPosArgCount:  1,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}, {RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		var min, max int64
 
 		if len(f.args) == 1 {

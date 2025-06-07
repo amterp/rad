@@ -142,6 +142,7 @@ const (
 	F_PARAM          = "param"
 	F_METADATA_ENTRY = "metadata_entry"
 	F_BLOCK_COLON    = "block_colon"
+	F_CATCH          = "catch"
 
 	// Keywords
 	KEYWORD_ASC     = "asc"

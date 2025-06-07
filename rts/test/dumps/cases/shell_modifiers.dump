@@ -18,7 +18,7 @@ B: [  7,  14] PS: [0,  7] PE: [0, 14]       confirm_mod: confirm `confirm`
 B: [ 15,  20] PS: [0, 15] PE: [0, 20]       quiet_mod: quiet `quiet`
 B: [ 21,  22] PS: [0, 21] PE: [0, 22]       $ `$`
 B: [ 22,  28] PS: [0, 22] PE: [0, 28]       command: expr
-B: [ 22,  28] PS: [0, 22] PE: [0, 28]         ternary_expr
+B: [ 22,  28] PS: [0, 22] PE: [0, 28]         delegate: ternary_expr
 B: [ 22,  28] PS: [0, 22] PE: [0, 28]           delegate: or_expr
 B: [ 22,  28] PS: [0, 22] PE: [0, 28]             delegate: and_expr
 B: [ 22,  28] PS: [0, 22] PE: [0, 28]               delegate: compare_expr
@@ -40,7 +40,7 @@ B: [ 35,  42] PS: [1,  6] PE: [1, 13]       confirm_mod: confirm `confirm`
 B: [ 43,  49] PS: [1, 14] PE: [1, 20]       unsafe_mod: unsafe `unsafe`
 B: [ 50,  51] PS: [1, 21] PE: [1, 22]       $ `$`
 B: [ 51,  57] PS: [1, 22] PE: [1, 28]       command: expr
-B: [ 51,  57] PS: [1, 22] PE: [1, 28]         ternary_expr
+B: [ 51,  57] PS: [1, 22] PE: [1, 28]         delegate: ternary_expr
 B: [ 51,  57] PS: [1, 22] PE: [1, 28]           delegate: or_expr
 B: [ 51,  57] PS: [1, 22] PE: [1, 28]             delegate: and_expr
 B: [ 51,  57] PS: [1, 22] PE: [1, 28]               delegate: compare_expr
@@ -60,7 +60,7 @@ B: [ 59,  73] PS: [3,  0] PE: [3, 14]     shell_cmd: critical_shell_cmd
 B: [ 59,  64] PS: [3,  0] PE: [3,  5]       quiet_mod: quiet `quiet`
 B: [ 65,  67] PS: [3,  6] PE: [3,  8]       $! `$!`
 B: [ 67,  73] PS: [3,  8] PE: [3, 14]       command: expr
-B: [ 67,  73] PS: [3,  8] PE: [3, 14]         ternary_expr
+B: [ 67,  73] PS: [3,  8] PE: [3, 14]         delegate: ternary_expr
 B: [ 67,  73] PS: [3,  8] PE: [3, 14]           delegate: or_expr
 B: [ 67,  73] PS: [3,  8] PE: [3, 14]             delegate: and_expr
 B: [ 67,  73] PS: [3,  8] PE: [3, 14]               delegate: compare_expr
@@ -81,7 +81,7 @@ B: [ 75,  80] PS: [5,  0] PE: [5,  5]       quiet_mod: quiet `quiet`
 B: [ 81,  88] PS: [5,  6] PE: [5, 13]       confirm_mod: confirm `confirm`
 B: [ 89,  90] PS: [5, 14] PE: [5, 15]       $ `$`
 B: [ 90,  96] PS: [5, 15] PE: [5, 21]       command: expr
-B: [ 90,  96] PS: [5, 15] PE: [5, 21]         ternary_expr
+B: [ 90,  96] PS: [5, 15] PE: [5, 21]         delegate: ternary_expr
 B: [ 90,  96] PS: [5, 15] PE: [5, 21]           delegate: or_expr
 B: [ 90,  96] PS: [5, 15] PE: [5, 21]             delegate: and_expr
 B: [ 90,  96] PS: [5, 15] PE: [5, 21]               delegate: compare_expr
@@ -103,7 +103,7 @@ B: [107, 108] PS: [7,  4] PE: [7,  5]         left: var_path
 B: [107, 108] PS: [7,  4] PE: [7,  5]           root: identifier `a`
 B: [109, 110] PS: [7,  6] PE: [7,  7]         = `=`
 B: [111, 112] PS: [7,  8] PE: [7,  9]         right: expr
-B: [111, 112] PS: [7,  8] PE: [7,  9]           ternary_expr
+B: [111, 112] PS: [7,  8] PE: [7,  9]           delegate: ternary_expr
 B: [111, 112] PS: [7,  8] PE: [7,  9]             delegate: or_expr
 B: [111, 112] PS: [7,  8] PE: [7,  9]               delegate: and_expr
 B: [111, 112] PS: [7,  8] PE: [7,  9]                 delegate: compare_expr

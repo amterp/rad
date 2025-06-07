@@ -19,7 +19,7 @@ B: [31, 32] PS: [6,  0] PE: [6,  1]     left: var_path
 B: [31, 32] PS: [6,  0] PE: [6,  1]       root: identifier `a`
 B: [33, 34] PS: [6,  2] PE: [6,  3]     = `=`
 B: [35, 41] PS: [6,  4] PE: [6, 10]     right: expr
-B: [35, 41] PS: [6,  4] PE: [6, 10]       ternary_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]       delegate: ternary_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]         delegate: or_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]           delegate: and_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]             delegate: compare_expr
@@ -30,7 +30,7 @@ B: [35, 41] PS: [6,  4] PE: [6, 10]                     delegate: fn_lambda
 B: [35, 37] PS: [6,  4] PE: [6,  6]                       keyword: fn `fn`
 B: [37, 39] PS: [6,  6] PE: [6,  8]                       () `()`
 B: [40, 41] PS: [6,  9] PE: [6, 10]                       expr: expr
-B: [40, 41] PS: [6,  9] PE: [6, 10]                         ternary_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                         delegate: ternary_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                           delegate: or_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                             delegate: and_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                               delegate: compare_expr

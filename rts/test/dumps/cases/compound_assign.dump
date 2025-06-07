@@ -13,7 +13,7 @@ B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]       root: identifier `a`
 B: [ 2,  4] PS: [0, 2] PE: [0, 4]     op: += `+=`
 B: [ 5,  6] PS: [0, 5] PE: [0, 6]     right: expr
-B: [ 5,  6] PS: [0, 5] PE: [0, 6]       ternary_expr
+B: [ 5,  6] PS: [0, 5] PE: [0, 6]       delegate: ternary_expr
 B: [ 5,  6] PS: [0, 5] PE: [0, 6]         delegate: or_expr
 B: [ 5,  6] PS: [0, 5] PE: [0, 6]           delegate: and_expr
 B: [ 5,  6] PS: [0, 5] PE: [0, 6]             delegate: compare_expr
@@ -29,7 +29,7 @@ B: [ 7,  8] PS: [1, 0] PE: [1, 1]     left: var_path
 B: [ 7,  8] PS: [1, 0] PE: [1, 1]       root: identifier `a`
 B: [ 9, 11] PS: [1, 2] PE: [1, 4]     op: -= `-=`
 B: [12, 13] PS: [1, 5] PE: [1, 6]     right: expr
-B: [12, 13] PS: [1, 5] PE: [1, 6]       ternary_expr
+B: [12, 13] PS: [1, 5] PE: [1, 6]       delegate: ternary_expr
 B: [12, 13] PS: [1, 5] PE: [1, 6]         delegate: or_expr
 B: [12, 13] PS: [1, 5] PE: [1, 6]           delegate: and_expr
 B: [12, 13] PS: [1, 5] PE: [1, 6]             delegate: compare_expr
@@ -45,7 +45,7 @@ B: [14, 15] PS: [2, 0] PE: [2, 1]     left: var_path
 B: [14, 15] PS: [2, 0] PE: [2, 1]       root: identifier `a`
 B: [16, 18] PS: [2, 2] PE: [2, 4]     op: *= `*=`
 B: [19, 20] PS: [2, 5] PE: [2, 6]     right: expr
-B: [19, 20] PS: [2, 5] PE: [2, 6]       ternary_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]       delegate: ternary_expr
 B: [19, 20] PS: [2, 5] PE: [2, 6]         delegate: or_expr
 B: [19, 20] PS: [2, 5] PE: [2, 6]           delegate: and_expr
 B: [19, 20] PS: [2, 5] PE: [2, 6]             delegate: compare_expr
@@ -61,7 +61,7 @@ B: [21, 22] PS: [3, 0] PE: [3, 1]     left: var_path
 B: [21, 22] PS: [3, 0] PE: [3, 1]       root: identifier `a`
 B: [23, 25] PS: [3, 2] PE: [3, 4]     op: /= `/=`
 B: [26, 27] PS: [3, 5] PE: [3, 6]     right: expr
-B: [26, 27] PS: [3, 5] PE: [3, 6]       ternary_expr
+B: [26, 27] PS: [3, 5] PE: [3, 6]       delegate: ternary_expr
 B: [26, 27] PS: [3, 5] PE: [3, 6]         delegate: or_expr
 B: [26, 27] PS: [3, 5] PE: [3, 6]           delegate: and_expr
 B: [26, 27] PS: [3, 5] PE: [3, 6]             delegate: compare_expr
@@ -77,7 +77,7 @@ B: [28, 29] PS: [4, 0] PE: [4, 1]     left: var_path
 B: [28, 29] PS: [4, 0] PE: [4, 1]       root: identifier `a`
 B: [30, 32] PS: [4, 2] PE: [4, 4]     op: %= `%=`
 B: [33, 34] PS: [4, 5] PE: [4, 6]     right: expr
-B: [33, 34] PS: [4, 5] PE: [4, 6]       ternary_expr
+B: [33, 34] PS: [4, 5] PE: [4, 6]       delegate: ternary_expr
 B: [33, 34] PS: [4, 5] PE: [4, 6]         delegate: or_expr
 B: [33, 34] PS: [4, 5] PE: [4, 6]           delegate: and_expr
 B: [33, 34] PS: [4, 5] PE: [4, 6]             delegate: compare_expr

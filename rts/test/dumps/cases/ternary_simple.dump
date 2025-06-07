@@ -9,7 +9,7 @@ B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `c`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
 B: [ 4, 35] PS: [0,  4] PE: [0, 35]     right: expr
-B: [ 4, 35] PS: [0,  4] PE: [0, 35]       ternary_expr
+B: [ 4, 35] PS: [0,  4] PE: [0, 35]       delegate: ternary_expr
 B: [ 4, 10] PS: [0,  4] PE: [0, 10]         condition: or_expr
 B: [ 4, 10] PS: [0,  4] PE: [0, 10]           delegate: and_expr
 B: [ 4, 10] PS: [0,  4] PE: [0, 10]             delegate: compare_expr
@@ -29,7 +29,7 @@ B: [ 8, 10] PS: [0,  8] PE: [0, 10]                         literal
 B: [ 8, 10] PS: [0,  8] PE: [0, 10]                           int `10`
 B: [11, 12] PS: [0, 11] PE: [0, 12]         ? `?`
 B: [13, 23] PS: [0, 13] PE: [0, 23]         true_branch: expr
-B: [13, 23] PS: [0, 13] PE: [0, 23]           ternary_expr
+B: [13, 23] PS: [0, 13] PE: [0, 23]           delegate: ternary_expr
 B: [13, 23] PS: [0, 13] PE: [0, 23]             delegate: or_expr
 B: [13, 23] PS: [0, 13] PE: [0, 23]               delegate: and_expr
 B: [13, 23] PS: [0, 13] PE: [0, 23]                 delegate: compare_expr

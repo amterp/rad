@@ -15,4 +15,4 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 )
 
-//replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad
+replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad

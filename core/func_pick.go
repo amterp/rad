@@ -18,7 +18,7 @@ var FuncPick = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		optionsArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
@@ -56,7 +56,7 @@ var FuncPickKv = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
 		filteringArg := tryGetArg(2, f.args)
@@ -99,13 +99,13 @@ var FuncPickFromResource = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		fileArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
 		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
 
-		resource := LoadPickResource(f.i, f.callNode, filePath, f.numExpectedOutputs)
+		resource := LoadPickResource(f.i, f.callNode, filePath, f.ctx.ExpectedOutput)
 		var keyGroups [][]string
 		var valueGroups [][]RadValue
 		for _, opt := range resource.Opts {
@@ -132,7 +132,7 @@ var FuncPickFromResource = BuiltInFunc{
 			}
 		}
 
-		return pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
+		return newRadValues(f.i, f.callNode, pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs))
 	},
 }
 

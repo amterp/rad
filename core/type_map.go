@@ -26,7 +26,7 @@ func NewRadMap() *RadMap {
 }
 
 func (m *RadMap) Set(key RadValue, value RadValue) {
-	if value == NIL_SENTINAL {
+	if value == VOID_SENTINEL {
 		m.Delete(key)
 		return
 	}
@@ -181,7 +181,9 @@ func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 }
 
 func evalMapKey(i *Interpreter, idxNode *ts.Node) RadValue {
-	return i.evaluate(idxNode, 1)[0].
+	return i.evaluate(idxNode, EXPECT_ONE_OUTPUT).
 		RequireNotType(i, idxNode, "Map keys cannot be lists", RadListT).
-		RequireNotType(i, idxNode, "Map keys cannot be maps", RadMapT)
+		RequireNotType(i, idxNode, "Map keys cannot be maps", RadMapT).
+		RequireNotType(i, idxNode, "Map keys cannot be functions", RadFnT).
+		RequireNotType(i, idxNode, "Map keys cannot be errors", RadErrorT)
 }

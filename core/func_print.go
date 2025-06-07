@@ -17,9 +17,9 @@ var FuncPrint = BuiltInFunc{
 		namedArgEnd: {RadStringT},
 		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.Printf(resolvePrintStr(f))
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 
@@ -29,7 +29,7 @@ var FuncPPrint = BuiltInFunc{
 	MinPosArgCount:  0,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		if len(f.args) == 0 {
 			RP.Printf("\n")
 		}
@@ -38,7 +38,7 @@ var FuncPPrint = BuiltInFunc{
 		jsonStruct := RadToJsonType(arg.value)
 		output := prettify(f.i, f.callNode, jsonStruct)
 		RP.Printf(output)
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 
@@ -51,9 +51,9 @@ var FuncDebug = BuiltInFunc{
 		namedArgEnd: {RadStringT},
 		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptDebug(resolvePrintStr(f))
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 
@@ -66,9 +66,9 @@ var FuncPrintErr = BuiltInFunc{
 		namedArgEnd: {RadStringT},
 		namedArgSep: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptStderrf(resolvePrintStr(f))
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 
@@ -88,10 +88,11 @@ func resolvePrintStr(f FuncInvocationArgs) string {
 		sb.WriteString(end)
 	} else {
 		for idx, v := range f.args {
-			if v.value.Type() == RadStringT {
+			switch v.value.Type() {
+			case RadStringT, RadErrorT:
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
-			} else {
+			default:
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, true))
 			}
 			if idx < len(f.args)-1 {

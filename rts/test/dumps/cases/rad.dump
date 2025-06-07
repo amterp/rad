@@ -45,7 +45,7 @@ B: [ 29,  33] PS: [ 1, 14] PE: [ 1, 18]         key: identifier `name`
 B: [ 35,  75] PS: [ 3,  0] PE: [ 5,  8]   rad_block
 B: [ 35,  38] PS: [ 3,  0] PE: [ 3,  3]     rad_type: rad_keyword `rad`
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]     source: expr
-B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]       ternary_expr
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]       delegate: ternary_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]         delegate: or_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]           delegate: and_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]             delegate: compare_expr
@@ -92,7 +92,7 @@ B: [141, 142] PS: [10, 12] PE: [10, 13]       : `:`
 B: [151, 172] PS: [11,  8] PE: [11, 29]       mod_stmt: rad_field_mod_color
 B: [151, 156] PS: [11,  8] PE: [11, 13]         color `color`
 B: [157, 162] PS: [11, 14] PE: [11, 19]         color: expr
-B: [157, 162] PS: [11, 14] PE: [11, 19]           ternary_expr
+B: [157, 162] PS: [11, 14] PE: [11, 19]           delegate: ternary_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]             delegate: or_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]               delegate: and_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]                 delegate: compare_expr
@@ -108,7 +108,7 @@ B: [158, 161] PS: [11, 15] PE: [11, 18]                                 contents
 B: [158, 161] PS: [11, 15] PE: [11, 18]                                   content: string_content `red`
 B: [161, 162] PS: [11, 18] PE: [11, 19]                                 end: string_end `"`
 B: [163, 172] PS: [11, 20] PE: [11, 29]         regex: expr
-B: [163, 172] PS: [11, 20] PE: [11, 29]           ternary_expr
+B: [163, 172] PS: [11, 20] PE: [11, 29]           delegate: ternary_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]             delegate: or_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]               delegate: and_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]                 delegate: compare_expr
@@ -132,7 +132,7 @@ B: [188, 189] PS: [12, 15] PE: [12, 16]           param: fn_param
 B: [188, 189] PS: [12, 15] PE: [12, 16]             name: identifier `v`
 B: [189, 190] PS: [12, 16] PE: [12, 17]           ) `)`
 B: [191, 199] PS: [12, 18] PE: [12, 26]           expr: expr
-B: [191, 199] PS: [12, 18] PE: [12, 26]             ternary_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]             delegate: ternary_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]               delegate: or_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                 delegate: and_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                   delegate: compare_expr
@@ -145,7 +145,7 @@ B: [191, 199] PS: [12, 18] PE: [12, 26]                               call
 B: [191, 196] PS: [12, 18] PE: [12, 23]                                 func: identifier `upper`
 B: [196, 197] PS: [12, 23] PE: [12, 24]                                 ( `(`
 B: [197, 198] PS: [12, 24] PE: [12, 25]                                 arg: expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                   ternary_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                   delegate: ternary_expr
 B: [197, 198] PS: [12, 24] PE: [12, 25]                                     delegate: or_expr
 B: [197, 198] PS: [12, 24] PE: [12, 25]                                       delegate: and_expr
 B: [197, 198] PS: [12, 24] PE: [12, 25]                                         delegate: compare_expr

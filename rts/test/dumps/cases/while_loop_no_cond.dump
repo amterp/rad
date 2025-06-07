@@ -10,7 +10,7 @@ B: [ 0, 27] PS: [0,  0] PE: [2,  7]   while_loop
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]     while `while`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]     : `:`
 B: [11, 19] PS: [1,  4] PE: [1, 12]     stmt: expr
-B: [11, 19] PS: [1,  4] PE: [1, 12]       ternary_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]       delegate: ternary_expr
 B: [11, 19] PS: [1,  4] PE: [1, 12]         delegate: or_expr
 B: [11, 19] PS: [1,  4] PE: [1, 12]           delegate: and_expr
 B: [11, 19] PS: [1,  4] PE: [1, 12]             delegate: compare_expr
@@ -23,7 +23,7 @@ B: [11, 19] PS: [1,  4] PE: [1, 12]                         call
 B: [11, 16] PS: [1,  4] PE: [1,  9]                           func: identifier `print`
 B: [16, 17] PS: [1,  9] PE: [1, 10]                           ( `(`
 B: [17, 18] PS: [1, 10] PE: [1, 11]                           arg: expr
-B: [17, 18] PS: [1, 10] PE: [1, 11]                             ternary_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                             delegate: ternary_expr
 B: [17, 18] PS: [1, 10] PE: [1, 11]                               delegate: or_expr
 B: [17, 18] PS: [1, 10] PE: [1, 11]                                 delegate: and_expr
 B: [17, 18] PS: [1, 10] PE: [1, 11]                                   delegate: compare_expr

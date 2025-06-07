@@ -12,7 +12,7 @@ B: [  0, 105] PS: [0,  0] PE: [6,  0] source_file
 B: [  0, 104] PS: [0,  0] PE: [5, 22]   rad_block
 B: [  0,   3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword `rad`
 B: [  4,   7] PS: [0,  4] PE: [0,  7]     source: expr
-B: [  4,   7] PS: [0,  4] PE: [0,  7]       ternary_expr
+B: [  4,   7] PS: [0,  4] PE: [0,  7]       delegate: ternary_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]         delegate: or_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]           delegate: and_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]             delegate: compare_expr
@@ -44,7 +44,7 @@ B: [ 70,  73] PS: [4, 12] PE: [4, 15]             left: var_path
 B: [ 70,  73] PS: [4, 12] PE: [4, 15]               root: identifier `out`
 B: [ 74,  75] PS: [4, 16] PE: [4, 17]             = `=`
 B: [ 76,  81] PS: [4, 18] PE: [4, 23]             right: expr
-B: [ 76,  81] PS: [4, 18] PE: [4, 23]               ternary_expr
+B: [ 76,  81] PS: [4, 18] PE: [4, 23]               delegate: ternary_expr
 B: [ 76,  81] PS: [4, 18] PE: [4, 23]                 delegate: or_expr
 B: [ 76,  81] PS: [4, 18] PE: [4, 23]                   delegate: and_expr
 B: [ 76,  81] PS: [4, 18] PE: [4, 23]                     delegate: compare_expr
@@ -63,7 +63,7 @@ B: [ 80,  81] PS: [4, 22] PE: [4, 23]                                   int `2`
 B: [ 94, 104] PS: [5, 12] PE: [5, 22]           return_stmt: return_stmt
 B: [ 94, 100] PS: [5, 12] PE: [5, 18]             return `return`
 B: [101, 104] PS: [5, 19] PE: [5, 22]             value: expr
-B: [101, 104] PS: [5, 19] PE: [5, 22]               ternary_expr
+B: [101, 104] PS: [5, 19] PE: [5, 22]               delegate: ternary_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                 delegate: or_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                   delegate: and_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                     delegate: compare_expr

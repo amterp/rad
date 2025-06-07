@@ -235,7 +235,7 @@ B: [ 259,  260] PS: [ 17,  0] PE: [ 17,  1]     left: var_path
 B: [ 259,  260] PS: [ 17,  0] PE: [ 17,  1]       root: identifier `a`
 B: [ 261,  262] PS: [ 17,  2] PE: [ 17,  3]     = `=`
 B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]     right: expr
-B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]       ternary_expr
+B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]       delegate: ternary_expr
 B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]         delegate: or_expr
 B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]           delegate: and_expr
 B: [ 263,  264] PS: [ 17,  4] PE: [ 17,  5]             delegate: compare_expr
@@ -251,7 +251,7 @@ B: [ 265,  266] PS: [ 18,  0] PE: [ 18,  1]     left: var_path
 B: [ 265,  266] PS: [ 18,  0] PE: [ 18,  1]       root: identifier `a`
 B: [ 267,  268] PS: [ 18,  2] PE: [ 18,  3]     = `=`
 B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]     right: expr
-B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]       ternary_expr
+B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]       delegate: ternary_expr
 B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]         delegate: or_expr
 B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]           delegate: and_expr
 B: [ 269,  276] PS: [ 18,  4] PE: [ 18, 11]             delegate: compare_expr
@@ -271,7 +271,7 @@ B: [ 277,  278] PS: [ 19,  0] PE: [ 19,  1]     left: var_path
 B: [ 277,  278] PS: [ 19,  0] PE: [ 19,  1]       root: identifier `a`
 B: [ 279,  280] PS: [ 19,  2] PE: [ 19,  3]     = `=`
 B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]     right: expr
-B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]       ternary_expr
+B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]       delegate: ternary_expr
 B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]         delegate: or_expr
 B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]           delegate: and_expr
 B: [ 281,  285] PS: [ 19,  4] PE: [ 19,  8]             delegate: compare_expr
@@ -287,7 +287,7 @@ B: [ 286,  287] PS: [ 20,  0] PE: [ 20,  1]     left: var_path
 B: [ 286,  287] PS: [ 20,  0] PE: [ 20,  1]       root: identifier `a`
 B: [ 288,  289] PS: [ 20,  2] PE: [ 20,  3]     = `=`
 B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]     right: expr
-B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]       ternary_expr
+B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]       delegate: ternary_expr
 B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]         delegate: or_expr
 B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]           delegate: and_expr
 B: [ 290,  294] PS: [ 20,  4] PE: [ 20,  8]             delegate: compare_expr
@@ -304,7 +304,7 @@ B: [ 295,  296] PS: [ 21,  0] PE: [ 21,  1]     left: var_path
 B: [ 295,  296] PS: [ 21,  0] PE: [ 21,  1]       root: identifier `a`
 B: [ 297,  298] PS: [ 21,  2] PE: [ 21,  3]     = `=`
 B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]     right: expr
-B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]       ternary_expr
+B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]       delegate: ternary_expr
 B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]         delegate: or_expr
 B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]           delegate: and_expr
 B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]             delegate: compare_expr
@@ -317,7 +317,7 @@ B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]                         literal
 B: [ 299,  308] PS: [ 21,  4] PE: [ 21, 13]                           list
 B: [ 299,  300] PS: [ 21,  4] PE: [ 21,  5]                             [ `[`
 B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                             list_entry: expr
-B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                               ternary_expr
+B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                               delegate: ternary_expr
 B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                                 delegate: or_expr
 B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                                   delegate: and_expr
 B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                                     delegate: compare_expr
@@ -330,7 +330,7 @@ B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                                     
 B: [ 300,  301] PS: [ 21,  5] PE: [ 21,  6]                                                   int `1`
 B: [ 301,  302] PS: [ 21,  6] PE: [ 21,  7]                             , `,`
 B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                             list_entry: expr
-B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                               ternary_expr
+B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                               delegate: ternary_expr
 B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                                 delegate: or_expr
 B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                                   delegate: and_expr
 B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                                     delegate: compare_expr
@@ -343,7 +343,7 @@ B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                                     
 B: [ 303,  304] PS: [ 21,  8] PE: [ 21,  9]                                                   int `2`
 B: [ 304,  305] PS: [ 21,  9] PE: [ 21, 10]                             , `,`
 B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                             list_entry: expr
-B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                               ternary_expr
+B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                               delegate: ternary_expr
 B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                                 delegate: or_expr
 B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                                   delegate: and_expr
 B: [ 306,  307] PS: [ 21, 11] PE: [ 21, 12]                                     delegate: compare_expr
@@ -360,7 +360,7 @@ B: [ 309,  310] PS: [ 22,  0] PE: [ 22,  1]     left: var_path
 B: [ 309,  310] PS: [ 22,  0] PE: [ 22,  1]       root: identifier `a`
 B: [ 311,  312] PS: [ 22,  2] PE: [ 22,  3]     = `=`
 B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]     right: expr
-B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]       ternary_expr
+B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]       delegate: ternary_expr
 B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]         delegate: or_expr
 B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]           delegate: and_expr
 B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]             delegate: compare_expr
@@ -374,7 +374,7 @@ B: [ 313,  327] PS: [ 22,  4] PE: [ 22, 18]                           map
 B: [ 313,  314] PS: [ 22,  4] PE: [ 22,  5]                             { `{`
 B: [ 314,  320] PS: [ 22,  5] PE: [ 22, 11]                             map_entry: map_entry
 B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                               key: expr
-B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                                 ternary_expr
+B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                                 delegate: ternary_expr
 B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                                   delegate: or_expr
 B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                                     delegate: and_expr
 B: [ 314,  317] PS: [ 22,  5] PE: [ 22,  8]                                       delegate: compare_expr
@@ -391,7 +391,7 @@ B: [ 315,  316] PS: [ 22,  6] PE: [ 22,  7]                                     
 B: [ 316,  317] PS: [ 22,  7] PE: [ 22,  8]                                                       end: string_end `"`
 B: [ 317,  318] PS: [ 22,  8] PE: [ 22,  9]                               : `:`
 B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                               value: expr
-B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                 ternary_expr
+B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                 delegate: ternary_expr
 B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                   delegate: or_expr
 B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                     delegate: and_expr
 B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                       delegate: compare_expr
@@ -405,7 +405,7 @@ B: [ 319,  320] PS: [ 22, 10] PE: [ 22, 11]                                     
 B: [ 320,  321] PS: [ 22, 11] PE: [ 22, 12]                             , `,`
 B: [ 322,  326] PS: [ 22, 13] PE: [ 22, 17]                             map_entry: map_entry
 B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                               key: expr
-B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                 ternary_expr
+B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                 delegate: ternary_expr
 B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                   delegate: or_expr
 B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                     delegate: and_expr
 B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                       delegate: compare_expr
@@ -416,7 +416,7 @@ B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                     
 B: [ 322,  323] PS: [ 22, 13] PE: [ 22, 14]                                                 root: identifier `y`
 B: [ 323,  324] PS: [ 22, 14] PE: [ 22, 15]                               : `:`
 B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                               value: expr
-B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                                 ternary_expr
+B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                                 delegate: ternary_expr
 B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                                   delegate: or_expr
 B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                                     delegate: and_expr
 B: [ 325,  326] PS: [ 22, 16] PE: [ 22, 17]                                       delegate: compare_expr
@@ -433,7 +433,7 @@ B: [ 329,  330] PS: [ 24,  0] PE: [ 24,  1]     left: var_path
 B: [ 329,  330] PS: [ 24,  0] PE: [ 24,  1]       root: identifier `a`
 B: [ 331,  332] PS: [ 24,  2] PE: [ 24,  3]     = `=`
 B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]     right: expr
-B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]       ternary_expr
+B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]       delegate: ternary_expr
 B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]         delegate: or_expr
 B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]           delegate: and_expr
 B: [ 333,  357] PS: [ 24,  4] PE: [ 24, 28]             delegate: compare_expr
@@ -486,7 +486,7 @@ B: [ 358,  359] PS: [ 25,  0] PE: [ 25,  1]     left: var_path
 B: [ 358,  359] PS: [ 25,  0] PE: [ 25,  1]       root: identifier `a`
 B: [ 360,  362] PS: [ 25,  2] PE: [ 25,  4]     op: += `+=`
 B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]     right: expr
-B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]       ternary_expr
+B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]       delegate: ternary_expr
 B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]         delegate: or_expr
 B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]           delegate: and_expr
 B: [ 363,  364] PS: [ 25,  5] PE: [ 25,  6]             delegate: compare_expr
@@ -502,7 +502,7 @@ B: [ 365,  366] PS: [ 26,  0] PE: [ 26,  1]     left: var_path
 B: [ 365,  366] PS: [ 26,  0] PE: [ 26,  1]       root: identifier `a`
 B: [ 367,  369] PS: [ 26,  2] PE: [ 26,  4]     op: -= `-=`
 B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]     right: expr
-B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]       ternary_expr
+B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]       delegate: ternary_expr
 B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]         delegate: or_expr
 B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]           delegate: and_expr
 B: [ 370,  371] PS: [ 26,  5] PE: [ 26,  6]             delegate: compare_expr
@@ -518,7 +518,7 @@ B: [ 372,  373] PS: [ 27,  0] PE: [ 27,  1]     left: var_path
 B: [ 372,  373] PS: [ 27,  0] PE: [ 27,  1]       root: identifier `a`
 B: [ 374,  376] PS: [ 27,  2] PE: [ 27,  4]     op: *= `*=`
 B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]     right: expr
-B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]       ternary_expr
+B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]       delegate: ternary_expr
 B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]         delegate: or_expr
 B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]           delegate: and_expr
 B: [ 377,  378] PS: [ 27,  5] PE: [ 27,  6]             delegate: compare_expr
@@ -534,7 +534,7 @@ B: [ 379,  380] PS: [ 28,  0] PE: [ 28,  1]     left: var_path
 B: [ 379,  380] PS: [ 28,  0] PE: [ 28,  1]       root: identifier `a`
 B: [ 381,  383] PS: [ 28,  2] PE: [ 28,  4]     op: /= `/=`
 B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]     right: expr
-B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]       ternary_expr
+B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]       delegate: ternary_expr
 B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]         delegate: or_expr
 B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]           delegate: and_expr
 B: [ 384,  385] PS: [ 28,  5] PE: [ 28,  6]             delegate: compare_expr
@@ -550,7 +550,7 @@ B: [ 386,  387] PS: [ 29,  0] PE: [ 29,  1]     left: var_path
 B: [ 386,  387] PS: [ 29,  0] PE: [ 29,  1]       root: identifier `a`
 B: [ 388,  390] PS: [ 29,  2] PE: [ 29,  4]     op: %= `%=`
 B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]     right: expr
-B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]       ternary_expr
+B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]       delegate: ternary_expr
 B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]         delegate: or_expr
 B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]           delegate: and_expr
 B: [ 391,  392] PS: [ 29,  5] PE: [ 29,  6]             delegate: compare_expr
@@ -566,7 +566,7 @@ B: [ 394,  395] PS: [ 31,  0] PE: [ 31,  1]     left: var_path
 B: [ 394,  395] PS: [ 31,  0] PE: [ 31,  1]       root: identifier `a`
 B: [ 396,  397] PS: [ 31,  2] PE: [ 31,  3]     = `=`
 B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]     right: expr
-B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]       ternary_expr
+B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]       delegate: ternary_expr
 B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]         delegate: or_expr
 B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]           delegate: and_expr
 B: [ 398,  422] PS: [ 31,  4] PE: [ 31, 28]             delegate: compare_expr
@@ -583,7 +583,7 @@ B: [ 399,  405] PS: [ 31,  5] PE: [ 31, 11]                               conten
 B: [ 405,  421] PS: [ 31, 11] PE: [ 31, 27]                               interpolation: interpolation
 B: [ 405,  406] PS: [ 31, 11] PE: [ 31, 12]                                 { `{`
 B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                 expr: expr
-B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                   ternary_expr
+B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                   delegate: ternary_expr
 B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                     delegate: or_expr
 B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                       delegate: and_expr
 B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                         delegate: compare_expr
@@ -596,7 +596,7 @@ B: [ 406,  420] PS: [ 31, 12] PE: [ 31, 26]                                     
 B: [ 406,  411] PS: [ 31, 12] PE: [ 31, 17]                                                       func: identifier `upper`
 B: [ 411,  412] PS: [ 31, 17] PE: [ 31, 18]                                                       ( `(`
 B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                       arg: expr
-B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                         ternary_expr
+B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                         delegate: ternary_expr
 B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                           delegate: or_expr
 B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                             delegate: and_expr
 B: [ 412,  419] PS: [ 31, 18] PE: [ 31, 25]                                                               delegate: compare_expr
@@ -615,7 +615,7 @@ B: [ 419,  420] PS: [ 31, 25] PE: [ 31, 26]                                     
 B: [ 420,  421] PS: [ 31, 26] PE: [ 31, 27]                                 } `}`
 B: [ 421,  422] PS: [ 31, 27] PE: [ 31, 28]                             end: string_end ```
 B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]   expr
-B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]     ternary_expr
+B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]     delegate: ternary_expr
 B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]       delegate: or_expr
 B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]         delegate: and_expr
 B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]           delegate: compare_expr
@@ -628,7 +628,7 @@ B: [ 423,  431] PS: [ 32,  0] PE: [ 32,  8]                       call
 B: [ 423,  428] PS: [ 32,  0] PE: [ 32,  5]                         func: identifier `print`
 B: [ 428,  429] PS: [ 32,  5] PE: [ 32,  6]                         ( `(`
 B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                         arg: expr
-B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                           ternary_expr
+B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                           delegate: ternary_expr
 B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                             delegate: or_expr
 B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                               delegate: and_expr
 B: [ 429,  430] PS: [ 32,  6] PE: [ 32,  7]                                 delegate: compare_expr
@@ -676,7 +676,7 @@ B: [ 473,  477] PS: [ 35, 25] PE: [ 35, 29]         key: identifier `woop`
 B: [ 479,  641] PS: [ 37,  0] PE: [ 49, 24]   rad_block
 B: [ 479,  482] PS: [ 37,  0] PE: [ 37,  3]     rad_type: rad_keyword `rad`
 B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]     source: expr
-B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]       ternary_expr
+B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]       delegate: ternary_expr
 B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]         delegate: or_expr
 B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]           delegate: and_expr
 B: [ 483,  486] PS: [ 37,  4] PE: [ 37,  7]             delegate: compare_expr
@@ -705,7 +705,7 @@ B: [ 541,  570] PS: [ 42,  4] PE: [ 43, 19]     stmt: rad_if_stmt
 B: [ 541,  570] PS: [ 42,  4] PE: [ 43, 19]       alt: rad_if_alt
 B: [ 541,  543] PS: [ 42,  4] PE: [ 42,  6]         if `if`
 B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]         condition: expr
-B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]           ternary_expr
+B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]           delegate: ternary_expr
 B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]             delegate: or_expr
 B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]               delegate: and_expr
 B: [ 544,  549] PS: [ 42,  7] PE: [ 42, 12]                 delegate: compare_expr
@@ -741,7 +741,7 @@ B: [ 595,  596] PS: [ 46, 15] PE: [ 46, 16]           param: fn_param
 B: [ 595,  596] PS: [ 46, 15] PE: [ 46, 16]             name: identifier `a`
 B: [ 596,  597] PS: [ 46, 16] PE: [ 46, 17]           ) `)`
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]           expr: expr
-B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]             ternary_expr
+B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]             delegate: ternary_expr
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]               delegate: or_expr
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]                 delegate: and_expr
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]                   delegate: compare_expr
@@ -765,7 +765,7 @@ B: [ 615,  616] PS: [ 48, 10] PE: [ 48, 11]       : `:`
 B: [ 625,  641] PS: [ 49,  8] PE: [ 49, 24]       mod_stmt: rad_field_mod_color
 B: [ 625,  630] PS: [ 49,  8] PE: [ 49, 13]         color `color`
 B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]         color: expr
-B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]           ternary_expr
+B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]           delegate: ternary_expr
 B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]             delegate: or_expr
 B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]               delegate: and_expr
 B: [ 631,  636] PS: [ 49, 14] PE: [ 49, 19]                 delegate: compare_expr
@@ -781,7 +781,7 @@ B: [ 632,  635] PS: [ 49, 15] PE: [ 49, 18]                                 cont
 B: [ 632,  635] PS: [ 49, 15] PE: [ 49, 18]                                   content: string_content `red`
 B: [ 635,  636] PS: [ 49, 18] PE: [ 49, 19]                                 end: string_end `"`
 B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]         regex: expr
-B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]           ternary_expr
+B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]           delegate: ternary_expr
 B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]             delegate: or_expr
 B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]               delegate: and_expr
 B: [ 637,  641] PS: [ 49, 20] PE: [ 49, 24]                 delegate: compare_expr
@@ -800,7 +800,7 @@ B: [ 643,  755] PS: [ 51,  0] PE: [ 57, 21]   if_stmt
 B: [ 643,  755] PS: [ 51,  0] PE: [ 57, 21]     alt: if_alt
 B: [ 643,  645] PS: [ 51,  0] PE: [ 51,  2]       if `if`
 B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]       condition: expr
-B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]         ternary_expr
+B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]         delegate: ternary_expr
 B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]           delegate: or_expr
 B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]             delegate: and_expr
 B: [ 646,  653] PS: [ 51,  3] PE: [ 51, 10]               delegate: compare_expr
@@ -824,7 +824,7 @@ B: [ 659,  664] PS: [ 52,  4] PE: [ 52,  9]         left: var_path
 B: [ 659,  664] PS: [ 52,  4] PE: [ 52,  9]           root: identifier `hello`
 B: [ 665,  666] PS: [ 52, 10] PE: [ 52, 11]         = `=`
 B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]         right: expr
-B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]           ternary_expr
+B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]           delegate: ternary_expr
 B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]             delegate: or_expr
 B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]               delegate: and_expr
 B: [ 667,  672] PS: [ 52, 12] PE: [ 52, 17]                 delegate: compare_expr
@@ -837,7 +837,7 @@ B: [ 678,  755] PS: [ 54,  4] PE: [ 57, 21]       stmt: if_stmt
 B: [ 678,  710] PS: [ 54,  4] PE: [ 55, 18]         alt: if_alt
 B: [ 678,  680] PS: [ 54,  4] PE: [ 54,  6]           if `if`
 B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]           condition: expr
-B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]             ternary_expr
+B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]             delegate: ternary_expr
 B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]               delegate: or_expr
 B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]                 delegate: and_expr
 B: [ 681,  690] PS: [ 54,  7] PE: [ 54, 16]                   delegate: compare_expr
@@ -861,7 +861,7 @@ B: [ 700,  705] PS: [ 55,  8] PE: [ 55, 13]             left: var_path
 B: [ 700,  705] PS: [ 55,  8] PE: [ 55, 13]               root: identifier `yoink`
 B: [ 706,  708] PS: [ 55, 14] PE: [ 55, 16]             op: += `+=`
 B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]             right: expr
-B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]               ternary_expr
+B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]               delegate: ternary_expr
 B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]                 delegate: or_expr
 B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]                   delegate: and_expr
 B: [ 709,  710] PS: [ 55, 17] PE: [ 55, 18]                     delegate: compare_expr
@@ -876,7 +876,7 @@ B: [ 715,  719] PS: [ 56,  4] PE: [ 56,  8]         else `else`
 B: [ 720,  755] PS: [ 56,  9] PE: [ 57, 21]         alt: if_alt
 B: [ 720,  722] PS: [ 56,  9] PE: [ 56, 11]           if `if`
 B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]           condition: expr
-B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]             ternary_expr
+B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]             delegate: ternary_expr
 B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]               delegate: or_expr
 B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]                 delegate: and_expr
 B: [ 723,  732] PS: [ 56, 12] PE: [ 56, 21]                   delegate: compare_expr
@@ -900,7 +900,7 @@ B: [ 742,  746] PS: [ 57,  8] PE: [ 57, 12]             left: var_path
 B: [ 742,  746] PS: [ 57,  8] PE: [ 57, 12]               root: identifier `boom`
 B: [ 747,  748] PS: [ 57, 13] PE: [ 57, 14]             = `=`
 B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]             right: expr
-B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]               ternary_expr
+B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]               delegate: ternary_expr
 B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]                 delegate: or_expr
 B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]                   delegate: and_expr
 B: [ 749,  755] PS: [ 57, 15] PE: [ 57, 21]                     delegate: compare_expr
@@ -918,7 +918,7 @@ B: [ 754,  755] PS: [ 57, 20] PE: [ 57, 21]                                     
 B: [ 757,  783] PS: [ 59,  0] PE: [ 60, 13]   rad_block
 B: [ 757,  764] PS: [ 59,  0] PE: [ 59,  7]     rad_type: request_keyword `request`
 B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]     source: expr
-B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]       ternary_expr
+B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]       delegate: ternary_expr
 B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]         delegate: or_expr
 B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]           delegate: and_expr
 B: [ 765,  768] PS: [ 59,  8] PE: [ 59, 11]             delegate: compare_expr
@@ -946,7 +946,7 @@ B: [ 817,  821] PS: [ 65,  0] PE: [ 65,  4]     left: var_path
 B: [ 817,  821] PS: [ 65,  0] PE: [ 65,  4]       root: identifier `area`
 B: [ 822,  823] PS: [ 65,  5] PE: [ 65,  6]     = `=`
 B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]     right: expr
-B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]       ternary_expr
+B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]       delegate: ternary_expr
 B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]         delegate: or_expr
 B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]           delegate: and_expr
 B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]             delegate: compare_expr
@@ -958,7 +958,7 @@ B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]                       root: primary_
 B: [ 824,  868] PS: [ 65,  7] PE: [ 65, 51]                         list_comprehension
 B: [ 824,  825] PS: [ 65,  7] PE: [ 65,  8]                           [ `[`
 B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                           expr: expr
-B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                             ternary_expr
+B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                             delegate: ternary_expr
 B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                               delegate: or_expr
 B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                                 delegate: and_expr
 B: [ 825,  845] PS: [ 65,  8] PE: [ 65, 28]                                   delegate: compare_expr
@@ -970,7 +970,7 @@ B: [ 825,  833] PS: [ 65,  8] PE: [ 65, 16]                                     
 B: [ 825,  830] PS: [ 65,  8] PE: [ 65, 13]                                               root: identifier `width`
 B: [ 830,  831] PS: [ 65, 13] PE: [ 65, 14]                                               [ `[`
 B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                               indexing: expr
-B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                                 ternary_expr
+B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                                 delegate: ternary_expr
 B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                                   delegate: or_expr
 B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                                     delegate: and_expr
 B: [ 831,  832] PS: [ 65, 14] PE: [ 65, 15]                                                       delegate: compare_expr
@@ -986,7 +986,7 @@ B: [ 836,  845] PS: [ 65, 19] PE: [ 65, 28]                                     
 B: [ 836,  842] PS: [ 65, 19] PE: [ 65, 25]                                             root: identifier `height`
 B: [ 842,  843] PS: [ 65, 25] PE: [ 65, 26]                                             [ `[`
 B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                             indexing: expr
-B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                               ternary_expr
+B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                               delegate: ternary_expr
 B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                                 delegate: or_expr
 B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                                   delegate: and_expr
 B: [ 843,  844] PS: [ 65, 26] PE: [ 65, 27]                                                     delegate: compare_expr
@@ -1001,7 +1001,7 @@ B: [ 850,  851] PS: [ 65, 33] PE: [ 65, 34]                           lefts: for
 B: [ 850,  851] PS: [ 65, 33] PE: [ 65, 34]                             left: identifier `i`
 B: [ 852,  854] PS: [ 65, 35] PE: [ 65, 37]                           in `in`
 B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                           right: expr
-B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                             ternary_expr
+B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                             delegate: ternary_expr
 B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                               delegate: or_expr
 B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                                 delegate: and_expr
 B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                                   delegate: compare_expr
@@ -1014,7 +1014,7 @@ B: [ 855,  867] PS: [ 65, 38] PE: [ 65, 50]                                     
 B: [ 855,  860] PS: [ 65, 38] PE: [ 65, 43]                                                 func: identifier `range`
 B: [ 860,  861] PS: [ 65, 43] PE: [ 65, 44]                                                 ( `(`
 B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                 arg: expr
-B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                   ternary_expr
+B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                   delegate: ternary_expr
 B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                     delegate: or_expr
 B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                       delegate: and_expr
 B: [ 861,  866] PS: [ 65, 44] PE: [ 65, 49]                                                         delegate: compare_expr
@@ -1030,7 +1030,7 @@ B: [ 870,  877] PS: [ 67,  0] PE: [ 67,  7]     left: var_path
 B: [ 870,  877] PS: [ 67,  0] PE: [ 67,  7]       root: identifier `numbers`
 B: [ 878,  879] PS: [ 67,  8] PE: [ 67,  9]     = `=`
 B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]     right: expr
-B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]       ternary_expr
+B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]       delegate: ternary_expr
 B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]         delegate: or_expr
 B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]           delegate: and_expr
 B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]             delegate: compare_expr
@@ -1043,7 +1043,7 @@ B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]                         literal
 B: [ 880,  889] PS: [ 67, 10] PE: [ 67, 19]                           list
 B: [ 880,  881] PS: [ 67, 10] PE: [ 67, 11]                             [ `[`
 B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                             list_entry: expr
-B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                               ternary_expr
+B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                               delegate: ternary_expr
 B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                                 delegate: or_expr
 B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                                   delegate: and_expr
 B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                                     delegate: compare_expr
@@ -1056,7 +1056,7 @@ B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                                     
 B: [ 881,  882] PS: [ 67, 11] PE: [ 67, 12]                                                   int `1`
 B: [ 882,  883] PS: [ 67, 12] PE: [ 67, 13]                             , `,`
 B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                             list_entry: expr
-B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                               ternary_expr
+B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                               delegate: ternary_expr
 B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                                 delegate: or_expr
 B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                                   delegate: and_expr
 B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                                     delegate: compare_expr
@@ -1069,7 +1069,7 @@ B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                                     
 B: [ 884,  885] PS: [ 67, 14] PE: [ 67, 15]                                                   int `2`
 B: [ 885,  886] PS: [ 67, 15] PE: [ 67, 16]                             , `,`
 B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                             list_entry: expr
-B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                               ternary_expr
+B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                               delegate: ternary_expr
 B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                                 delegate: or_expr
 B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                                   delegate: and_expr
 B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                                     delegate: compare_expr
@@ -1082,7 +1082,7 @@ B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                                     
 B: [ 887,  888] PS: [ 67, 17] PE: [ 67, 18]                                                   int `3`
 B: [ 888,  889] PS: [ 67, 18] PE: [ 67, 19]                             ] `]`
 B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]   expr
-B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]     ternary_expr
+B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]     delegate: ternary_expr
 B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]       delegate: or_expr
 B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]         delegate: and_expr
 B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]           delegate: compare_expr
@@ -1095,7 +1095,7 @@ B: [ 890,  918] PS: [ 68,  0] PE: [ 68, 28]                       call
 B: [ 890,  895] PS: [ 68,  0] PE: [ 68,  5]                         func: identifier `print`
 B: [ 895,  896] PS: [ 68,  5] PE: [ 68,  6]                         ( `(`
 B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                         arg: expr
-B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                           ternary_expr
+B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                           delegate: ternary_expr
 B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                             delegate: or_expr
 B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                               delegate: and_expr
 B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                                 delegate: compare_expr
@@ -1108,7 +1108,7 @@ B: [ 896,  917] PS: [ 68,  6] PE: [ 68, 27]                                     
 B: [ 896,  900] PS: [ 68,  6] PE: [ 68, 10]                                               func: identifier `join`
 B: [ 900,  901] PS: [ 68, 10] PE: [ 68, 11]                                               ( `(`
 B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                               arg: expr
-B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                 ternary_expr
+B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                 delegate: ternary_expr
 B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                   delegate: or_expr
 B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                     delegate: and_expr
 B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                       delegate: compare_expr
@@ -1119,7 +1119,7 @@ B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                     
 B: [ 901,  908] PS: [ 68, 11] PE: [ 68, 18]                                                                 root: identifier `numbers`
 B: [ 908,  909] PS: [ 68, 18] PE: [ 68, 19]                                               , `,`
 B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                               arg: expr
-B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                                 ternary_expr
+B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                                 delegate: ternary_expr
 B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                                   delegate: or_expr
 B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                                     delegate: and_expr
 B: [ 910,  916] PS: [ 68, 20] PE: [ 68, 26]                                                       delegate: compare_expr
@@ -1137,7 +1137,7 @@ B: [ 915,  916] PS: [ 68, 25] PE: [ 68, 26]                                     
 B: [ 916,  917] PS: [ 68, 26] PE: [ 68, 27]                                               ) `)`
 B: [ 917,  918] PS: [ 68, 27] PE: [ 68, 28]                         ) `)`
 B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]   expr
-B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]     ternary_expr
+B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]     delegate: ternary_expr
 B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]       delegate: or_expr
 B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]         delegate: and_expr
 B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]           delegate: compare_expr
@@ -1150,7 +1150,7 @@ B: [ 919,  968] PS: [ 69,  0] PE: [ 69, 49]                       call
 B: [ 919,  924] PS: [ 69,  0] PE: [ 69,  5]                         func: identifier `print`
 B: [ 924,  925] PS: [ 69,  5] PE: [ 69,  6]                         ( `(`
 B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                         arg: expr
-B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                           ternary_expr
+B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                           delegate: ternary_expr
 B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                             delegate: or_expr
 B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                               delegate: and_expr
 B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                                 delegate: compare_expr
@@ -1163,7 +1163,7 @@ B: [ 925,  967] PS: [ 69,  6] PE: [ 69, 48]                                     
 B: [ 925,  929] PS: [ 69,  6] PE: [ 69, 10]                                               func: identifier `join`
 B: [ 929,  930] PS: [ 69, 10] PE: [ 69, 11]                                               ( `(`
 B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                               arg: expr
-B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                 ternary_expr
+B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                 delegate: ternary_expr
 B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                   delegate: or_expr
 B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                     delegate: and_expr
 B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                       delegate: compare_expr
@@ -1174,7 +1174,7 @@ B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                     
 B: [ 930,  937] PS: [ 69, 11] PE: [ 69, 18]                                                                 root: identifier `numbers`
 B: [ 937,  938] PS: [ 69, 18] PE: [ 69, 19]                                               , `,`
 B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                               arg: expr
-B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                                 ternary_expr
+B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                                 delegate: ternary_expr
 B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                                   delegate: or_expr
 B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                                     delegate: and_expr
 B: [ 939,  945] PS: [ 69, 20] PE: [ 69, 26]                                                       delegate: compare_expr
@@ -1191,7 +1191,7 @@ B: [ 940,  944] PS: [ 69, 21] PE: [ 69, 25]                                     
 B: [ 944,  945] PS: [ 69, 25] PE: [ 69, 26]                                                                       end: string_end `"`
 B: [ 945,  946] PS: [ 69, 26] PE: [ 69, 27]                                               , `,`
 B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                               arg: expr
-B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                                 ternary_expr
+B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                                 delegate: ternary_expr
 B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                                   delegate: or_expr
 B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                                     delegate: and_expr
 B: [ 947,  966] PS: [ 69, 28] PE: [ 69, 47]                                                       delegate: compare_expr
@@ -1209,7 +1209,7 @@ B: [ 965,  966] PS: [ 69, 46] PE: [ 69, 47]                                     
 B: [ 966,  967] PS: [ 69, 47] PE: [ 69, 48]                                               ) `)`
 B: [ 967,  968] PS: [ 69, 48] PE: [ 69, 49]                         ) `)`
 B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]   expr
-B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]     ternary_expr
+B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]     delegate: ternary_expr
 B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]       delegate: or_expr
 B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]         delegate: and_expr
 B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]           delegate: compare_expr
@@ -1222,7 +1222,7 @@ B: [ 969, 1023] PS: [ 70,  0] PE: [ 70, 54]                       call
 B: [ 969,  974] PS: [ 70,  0] PE: [ 70,  5]                         func: identifier `print`
 B: [ 974,  975] PS: [ 70,  5] PE: [ 70,  6]                         ( `(`
 B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                         arg: expr
-B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                           ternary_expr
+B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                           delegate: ternary_expr
 B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                             delegate: or_expr
 B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                               delegate: and_expr
 B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                                 delegate: compare_expr
@@ -1235,7 +1235,7 @@ B: [ 975, 1022] PS: [ 70,  6] PE: [ 70, 53]                                     
 B: [ 975,  979] PS: [ 70,  6] PE: [ 70, 10]                                               func: identifier `join`
 B: [ 979,  980] PS: [ 70, 10] PE: [ 70, 11]                                               ( `(`
 B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                               arg: expr
-B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                 ternary_expr
+B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                 delegate: ternary_expr
 B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                   delegate: or_expr
 B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                     delegate: and_expr
 B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                       delegate: compare_expr
@@ -1246,7 +1246,7 @@ B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                     
 B: [ 980,  987] PS: [ 70, 11] PE: [ 70, 18]                                                                 root: identifier `numbers`
 B: [ 987,  988] PS: [ 70, 18] PE: [ 70, 19]                                               , `,`
 B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                               arg: expr
-B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                                 ternary_expr
+B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                                 delegate: ternary_expr
 B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                                   delegate: or_expr
 B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                                     delegate: and_expr
 B: [ 989,  995] PS: [ 70, 20] PE: [ 70, 26]                                                       delegate: compare_expr
@@ -1263,7 +1263,7 @@ B: [ 990,  994] PS: [ 70, 21] PE: [ 70, 25]                                     
 B: [ 994,  995] PS: [ 70, 25] PE: [ 70, 26]                                                                       end: string_end `"`
 B: [ 995,  996] PS: [ 70, 26] PE: [ 70, 27]                                               , `,`
 B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                               arg: expr
-B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                                 ternary_expr
+B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                                 delegate: ternary_expr
 B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                                   delegate: or_expr
 B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                                     delegate: and_expr
 B: [ 997, 1016] PS: [ 70, 28] PE: [ 70, 47]                                                       delegate: compare_expr
@@ -1280,7 +1280,7 @@ B: [ 998, 1015] PS: [ 70, 29] PE: [ 70, 46]                                     
 B: [1015, 1016] PS: [ 70, 46] PE: [ 70, 47]                                                                       end: string_end `"`
 B: [1016, 1017] PS: [ 70, 47] PE: [ 70, 48]                                               , `,`
 B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                               arg: expr
-B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                                 ternary_expr
+B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                                 delegate: ternary_expr
 B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                                   delegate: or_expr
 B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                                     delegate: and_expr
 B: [1018, 1021] PS: [ 70, 49] PE: [ 70, 52]                                                       delegate: compare_expr
@@ -1302,7 +1302,7 @@ B: [1025, 1026] PS: [ 72,  0] PE: [ 72,  1]     left: var_path
 B: [1025, 1026] PS: [ 72,  0] PE: [ 72,  1]       root: identifier `a`
 B: [1027, 1028] PS: [ 72,  2] PE: [ 72,  3]     = `=`
 B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]     right: expr
-B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]       ternary_expr
+B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]       delegate: ternary_expr
 B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]         delegate: or_expr
 B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]           delegate: and_expr
 B: [1029, 1036] PS: [ 72,  4] PE: [ 72, 11]             delegate: compare_expr
@@ -1320,7 +1320,7 @@ B: [1037, 1038] PS: [ 73,  0] PE: [ 73,  1]     left: var_path
 B: [1037, 1038] PS: [ 73,  0] PE: [ 73,  1]       root: identifier `a`
 B: [1039, 1040] PS: [ 73,  2] PE: [ 73,  3]     = `=`
 B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]     right: expr
-B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]       ternary_expr
+B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]       delegate: ternary_expr
 B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]         delegate: or_expr
 B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]           delegate: and_expr
 B: [1041, 1049] PS: [ 73,  4] PE: [ 73, 12]             delegate: compare_expr
@@ -1332,7 +1332,7 @@ B: [1041, 1045] PS: [ 73,  4] PE: [ 73,  8]                       root: identifi
 B: [1045, 1046] PS: [ 73,  8] PE: [ 73,  9]                       [ `[`
 B: [1046, 1048] PS: [ 73,  9] PE: [ 73, 11]                       indexing: slice
 B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                         start: expr
-B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                           ternary_expr
+B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                           delegate: ternary_expr
 B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                             delegate: or_expr
 B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                               delegate: and_expr
 B: [1046, 1047] PS: [ 73,  9] PE: [ 73, 10]                                 delegate: compare_expr
@@ -1350,7 +1350,7 @@ B: [1050, 1051] PS: [ 74,  0] PE: [ 74,  1]     left: var_path
 B: [1050, 1051] PS: [ 74,  0] PE: [ 74,  1]       root: identifier `a`
 B: [1052, 1053] PS: [ 74,  2] PE: [ 74,  3]     = `=`
 B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]     right: expr
-B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]       ternary_expr
+B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]       delegate: ternary_expr
 B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]         delegate: or_expr
 B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]           delegate: and_expr
 B: [1054, 1063] PS: [ 74,  4] PE: [ 74, 13]             delegate: compare_expr
@@ -1362,7 +1362,7 @@ B: [1054, 1058] PS: [ 74,  4] PE: [ 74,  8]                       root: identifi
 B: [1058, 1059] PS: [ 74,  8] PE: [ 74,  9]                       [ `[`
 B: [1059, 1062] PS: [ 74,  9] PE: [ 74, 12]                       indexing: slice
 B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                         start: expr
-B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                           ternary_expr
+B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                           delegate: ternary_expr
 B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                             delegate: or_expr
 B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                               delegate: and_expr
 B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                                 delegate: compare_expr
@@ -1375,7 +1375,7 @@ B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                                     
 B: [1059, 1060] PS: [ 74,  9] PE: [ 74, 10]                                               int `1`
 B: [1060, 1061] PS: [ 74, 10] PE: [ 74, 11]                         : `:`
 B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                         end: expr
-B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                           ternary_expr
+B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                           delegate: ternary_expr
 B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                             delegate: or_expr
 B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                               delegate: and_expr
 B: [1061, 1062] PS: [ 74, 11] PE: [ 74, 12]                                 delegate: compare_expr
@@ -1392,7 +1392,7 @@ B: [1064, 1065] PS: [ 75,  0] PE: [ 75,  1]     left: var_path
 B: [1064, 1065] PS: [ 75,  0] PE: [ 75,  1]       root: identifier `a`
 B: [1066, 1067] PS: [ 75,  2] PE: [ 75,  3]     = `=`
 B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]     right: expr
-B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]       ternary_expr
+B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]       delegate: ternary_expr
 B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]         delegate: or_expr
 B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]           delegate: and_expr
 B: [1068, 1076] PS: [ 75,  4] PE: [ 75, 12]             delegate: compare_expr
@@ -1405,7 +1405,7 @@ B: [1072, 1073] PS: [ 75,  8] PE: [ 75,  9]                       [ `[`
 B: [1073, 1075] PS: [ 75,  9] PE: [ 75, 11]                       indexing: slice
 B: [1073, 1074] PS: [ 75,  9] PE: [ 75, 10]                         : `:`
 B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                         end: expr
-B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                           ternary_expr
+B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                           delegate: ternary_expr
 B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                             delegate: or_expr
 B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                               delegate: and_expr
 B: [1074, 1075] PS: [ 75, 10] PE: [ 75, 11]                                 delegate: compare_expr
@@ -1422,7 +1422,7 @@ B: [1078, 1088] PS: [ 77,  0] PE: [ 77, 10]     left: var_path
 B: [1078, 1088] PS: [ 77,  0] PE: [ 77, 10]       root: identifier `my_headers`
 B: [1089, 1090] PS: [ 77, 11] PE: [ 77, 12]     = `=`
 B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]     right: expr
-B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]       ternary_expr
+B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]       delegate: ternary_expr
 B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]         delegate: or_expr
 B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]           delegate: and_expr
 B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]             delegate: compare_expr
@@ -1436,7 +1436,7 @@ B: [1091, 1133] PS: [ 77, 13] PE: [ 79,  1]                           map
 B: [1091, 1092] PS: [ 77, 13] PE: [ 77, 14]                             { `{`
 B: [1097, 1130] PS: [ 78,  4] PE: [ 78, 37]                             map_entry: map_entry
 B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                               key: expr
-B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                                 ternary_expr
+B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                                 delegate: ternary_expr
 B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                                   delegate: or_expr
 B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                                     delegate: and_expr
 B: [1097, 1112] PS: [ 78,  4] PE: [ 78, 19]                                       delegate: compare_expr
@@ -1453,7 +1453,7 @@ B: [1098, 1111] PS: [ 78,  5] PE: [ 78, 18]                                     
 B: [1111, 1112] PS: [ 78, 18] PE: [ 78, 19]                                                       end: string_end `"`
 B: [1112, 1113] PS: [ 78, 19] PE: [ 78, 20]                               : `:`
 B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                               value: expr
-B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                                 ternary_expr
+B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                                 delegate: ternary_expr
 B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                                   delegate: or_expr
 B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                                     delegate: and_expr
 B: [1114, 1130] PS: [ 78, 21] PE: [ 78, 37]                                       delegate: compare_expr
@@ -1470,7 +1470,7 @@ B: [1115, 1122] PS: [ 78, 22] PE: [ 78, 29]                                     
 B: [1122, 1129] PS: [ 78, 29] PE: [ 78, 36]                                                         interpolation: interpolation
 B: [1122, 1123] PS: [ 78, 29] PE: [ 78, 30]                                                           { `{`
 B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                           expr: expr
-B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                             ternary_expr
+B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                             delegate: ternary_expr
 B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                               delegate: or_expr
 B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                                 delegate: and_expr
 B: [1123, 1128] PS: [ 78, 30] PE: [ 78, 35]                                                                   delegate: compare_expr
@@ -1488,7 +1488,7 @@ B: [1134, 1142] PS: [ 80,  0] PE: [ 80,  8]     left: var_path
 B: [1134, 1142] PS: [ 80,  0] PE: [ 80,  8]       root: identifier `response`
 B: [1143, 1144] PS: [ 80,  9] PE: [ 80, 10]     = `=`
 B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]     right: expr
-B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]       ternary_expr
+B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]       delegate: ternary_expr
 B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]         delegate: or_expr
 B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]           delegate: and_expr
 B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]             delegate: compare_expr
@@ -1501,7 +1501,7 @@ B: [1145, 1185] PS: [ 80, 11] PE: [ 80, 51]                         call
 B: [1145, 1154] PS: [ 80, 11] PE: [ 80, 20]                           func: identifier `http_post`
 B: [1154, 1155] PS: [ 80, 20] PE: [ 80, 21]                           ( `(`
 B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                           arg: expr
-B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                             ternary_expr
+B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                             delegate: ternary_expr
 B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                               delegate: or_expr
 B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                                 delegate: and_expr
 B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                                   delegate: compare_expr
@@ -1512,7 +1512,7 @@ B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                                     
 B: [1155, 1158] PS: [ 80, 21] PE: [ 80, 24]                                             root: identifier `url`
 B: [1158, 1159] PS: [ 80, 24] PE: [ 80, 25]                           , `,`
 B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                           arg: expr
-B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                             ternary_expr
+B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                             delegate: ternary_expr
 B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                               delegate: or_expr
 B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                                 delegate: and_expr
 B: [1160, 1164] PS: [ 80, 26] PE: [ 80, 30]                                   delegate: compare_expr
@@ -1526,7 +1526,7 @@ B: [1166, 1184] PS: [ 80, 32] PE: [ 80, 50]                           named_arg:
 B: [1166, 1173] PS: [ 80, 32] PE: [ 80, 39]                             name: identifier `headers`
 B: [1173, 1174] PS: [ 80, 39] PE: [ 80, 40]                             = `=`
 B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                             value: expr
-B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                               ternary_expr
+B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                               delegate: ternary_expr
 B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                                 delegate: or_expr
 B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                                   delegate: and_expr
 B: [1174, 1184] PS: [ 80, 40] PE: [ 80, 50]                                     delegate: compare_expr
@@ -1541,7 +1541,7 @@ B: [1187, 1191] PS: [ 82,  0] PE: [ 82,  4]     left: var_path
 B: [1187, 1191] PS: [ 82,  0] PE: [ 82,  4]       root: identifier `text`
 B: [1192, 1193] PS: [ 82,  5] PE: [ 82,  6]     = `=`
 B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]     right: expr
-B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]       ternary_expr
+B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]       delegate: ternary_expr
 B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]         delegate: or_expr
 B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]           delegate: and_expr
 B: [1194, 1255] PS: [ 82,  7] PE: [ 86,  3]             delegate: compare_expr
@@ -1561,7 +1561,7 @@ B: [1224, 1225] PS: [ 84, 15] PE: [ 85,  0]                               conten
 B: [1225, 1251] PS: [ 85,  0] PE: [ 85, 26]                               content: string_content `that "may contain quotes"!`
 B: [1251, 1255] PS: [ 85, 26] PE: [ 86,  3]                             end: string_end `\n"""`
 B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]   expr
-B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]     ternary_expr
+B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]     delegate: ternary_expr
 B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]       delegate: or_expr
 B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]         delegate: and_expr
 B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]           delegate: compare_expr
@@ -1574,7 +1574,7 @@ B: [1256, 1267] PS: [ 87,  0] PE: [ 87, 11]                       call
 B: [1256, 1261] PS: [ 87,  0] PE: [ 87,  5]                         func: identifier `print`
 B: [1261, 1262] PS: [ 87,  5] PE: [ 87,  6]                         ( `(`
 B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                         arg: expr
-B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                           ternary_expr
+B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                           delegate: ternary_expr
 B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                             delegate: or_expr
 B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                               delegate: and_expr
 B: [1262, 1266] PS: [ 87,  6] PE: [ 87, 10]                                 delegate: compare_expr
@@ -1589,7 +1589,7 @@ B: [1269, 1273] PS: [ 89,  0] PE: [ 89,  4]     left: var_path
 B: [1269, 1273] PS: [ 89,  0] PE: [ 89,  4]       root: identifier `text`
 B: [1274, 1275] PS: [ 89,  5] PE: [ 89,  6]     = `=`
 B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]     right: expr
-B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]       ternary_expr
+B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]       delegate: ternary_expr
 B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]         delegate: or_expr
 B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]           delegate: and_expr
 B: [1276, 1292] PS: [ 89,  7] PE: [ 89, 23]             delegate: compare_expr
@@ -1609,7 +1609,7 @@ B: [1293, 1297] PS: [ 90,  0] PE: [ 90,  4]     left: var_path
 B: [1293, 1297] PS: [ 90,  0] PE: [ 90,  4]       root: identifier `text`
 B: [1298, 1299] PS: [ 90,  5] PE: [ 90,  6]     = `=`
 B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]     right: expr
-B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]       ternary_expr
+B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]       delegate: ternary_expr
 B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]         delegate: or_expr
 B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]           delegate: and_expr
 B: [1300, 1316] PS: [ 90,  7] PE: [ 90, 23]             delegate: compare_expr
@@ -1629,7 +1629,7 @@ B: [1317, 1321] PS: [ 91,  0] PE: [ 91,  4]     left: var_path
 B: [1317, 1321] PS: [ 91,  0] PE: [ 91,  4]       root: identifier `text`
 B: [1322, 1323] PS: [ 91,  5] PE: [ 91,  6]     = `=`
 B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]     right: expr
-B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]       ternary_expr
+B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]       delegate: ternary_expr
 B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]         delegate: or_expr
 B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]           delegate: and_expr
 B: [1324, 1340] PS: [ 91,  7] PE: [ 91, 23]             delegate: compare_expr
@@ -1652,7 +1652,7 @@ B: [1347, 1351] PS: [ 93,  5] PE: [ 93,  9]     left: var_path
 B: [1347, 1351] PS: [ 93,  5] PE: [ 93,  9]       root: identifier `name`
 B: [1352, 1353] PS: [ 93, 10] PE: [ 93, 11]     = `=`
 B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]     right: expr
-B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]       ternary_expr
+B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]       delegate: ternary_expr
 B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]         delegate: or_expr
 B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]           delegate: and_expr
 B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]             delegate: compare_expr
@@ -1665,7 +1665,7 @@ B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]                         call
 B: [1354, 1372] PS: [ 93, 12] PE: [ 93, 30]                           func: identifier `pick_from_resource`
 B: [1372, 1373] PS: [ 93, 30] PE: [ 93, 31]                           ( `(`
 B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                           arg: expr
-B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                             ternary_expr
+B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                             delegate: ternary_expr
 B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                               delegate: or_expr
 B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                                 delegate: and_expr
 B: [1373, 1400] PS: [ 93, 31] PE: [ 93, 58]                                   delegate: compare_expr
@@ -1682,7 +1682,7 @@ B: [1374, 1399] PS: [ 93, 32] PE: [ 93, 57]                                     
 B: [1399, 1400] PS: [ 93, 57] PE: [ 93, 58]                                                   end: string_end `"`
 B: [1400, 1401] PS: [ 93, 58] PE: [ 93, 59]                           , `,`
 B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                           arg: expr
-B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                             ternary_expr
+B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                             delegate: ternary_expr
 B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                               delegate: or_expr
 B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                                 delegate: and_expr
 B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                                   delegate: compare_expr
@@ -1693,7 +1693,7 @@ B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                                     
 B: [1402, 1409] PS: [ 93, 60] PE: [ 93, 67]                                             root: identifier `website`
 B: [1409, 1410] PS: [ 93, 67] PE: [ 93, 68]                           ) `)`
 B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]   expr
-B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]     ternary_expr
+B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]     delegate: ternary_expr
 B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]       delegate: or_expr
 B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]         delegate: and_expr
 B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]           delegate: compare_expr
@@ -1706,7 +1706,7 @@ B: [1411, 1444] PS: [ 94,  0] PE: [ 94, 33]                       call
 B: [1411, 1416] PS: [ 94,  0] PE: [ 94,  5]                         func: identifier `print`
 B: [1416, 1417] PS: [ 94,  5] PE: [ 94,  6]                         ( `(`
 B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                         arg: expr
-B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                           ternary_expr
+B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                           delegate: ternary_expr
 B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                             delegate: or_expr
 B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                               delegate: and_expr
 B: [1417, 1443] PS: [ 94,  6] PE: [ 94, 32]                                 delegate: compare_expr
@@ -1723,7 +1723,7 @@ B: [1418, 1423] PS: [ 94,  7] PE: [ 94, 12]                                     
 B: [1423, 1428] PS: [ 94, 12] PE: [ 94, 17]                                                   interpolation: interpolation
 B: [1423, 1424] PS: [ 94, 12] PE: [ 94, 13]                                                     { `{`
 B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                     expr: expr
-B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                       ternary_expr
+B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                       delegate: ternary_expr
 B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                         delegate: or_expr
 B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                           delegate: and_expr
 B: [1424, 1427] PS: [ 94, 13] PE: [ 94, 16]                                                             delegate: compare_expr
@@ -1737,7 +1737,7 @@ B: [1428, 1436] PS: [ 94, 17] PE: [ 94, 25]                                     
 B: [1436, 1442] PS: [ 94, 25] PE: [ 94, 31]                                                   interpolation: interpolation
 B: [1436, 1437] PS: [ 94, 25] PE: [ 94, 26]                                                     { `{`
 B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                     expr: expr
-B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                       ternary_expr
+B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                       delegate: ternary_expr
 B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                         delegate: or_expr
 B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                           delegate: and_expr
 B: [1437, 1441] PS: [ 94, 26] PE: [ 94, 30]                                                             delegate: compare_expr
@@ -1753,7 +1753,7 @@ B: [1446, 1452] PS: [ 96,  0] PE: [ 96,  6]   shell_stmt
 B: [1446, 1452] PS: [ 96,  0] PE: [ 96,  6]     shell_cmd: critical_shell_cmd
 B: [1446, 1448] PS: [ 96,  0] PE: [ 96,  2]       $! `$!`
 B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]       command: expr
-B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]         ternary_expr
+B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]         delegate: ternary_expr
 B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]           delegate: or_expr
 B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]             delegate: and_expr
 B: [1448, 1452] PS: [ 96,  2] PE: [ 96,  6]               delegate: compare_expr
@@ -1773,7 +1773,7 @@ B: [1454, 1457] PS: [ 98,  0] PE: [ 98,  3]     left: var_path
 B: [1454, 1457] PS: [ 98,  0] PE: [ 98,  3]       root: identifier `cmd`
 B: [1458, 1459] PS: [ 98,  4] PE: [ 98,  5]     = `=`
 B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]     right: expr
-B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]       ternary_expr
+B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]       delegate: ternary_expr
 B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]         delegate: or_expr
 B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]           delegate: and_expr
 B: [1460, 1472] PS: [ 98,  6] PE: [ 98, 18]             delegate: compare_expr
@@ -1790,7 +1790,7 @@ B: [1461, 1466] PS: [ 98,  7] PE: [ 98, 12]                               conten
 B: [1466, 1471] PS: [ 98, 12] PE: [ 98, 17]                               interpolation: interpolation
 B: [1466, 1467] PS: [ 98, 12] PE: [ 98, 13]                                 { `{`
 B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                 expr: expr
-B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                   ternary_expr
+B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                   delegate: ternary_expr
 B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                     delegate: or_expr
 B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                       delegate: and_expr
 B: [1467, 1470] PS: [ 98, 13] PE: [ 98, 16]                                         delegate: compare_expr
@@ -1805,7 +1805,7 @@ B: [1473, 1516] PS: [ 99,  0] PE: [101, 32]   shell_stmt
 B: [1473, 1516] PS: [ 99,  0] PE: [101, 32]     shell_cmd: checked_shell_cmd
 B: [1473, 1474] PS: [ 99,  0] PE: [ 99,  1]       $ `$`
 B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]       command: expr
-B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]         ternary_expr
+B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]         delegate: ternary_expr
 B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]           delegate: or_expr
 B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]             delegate: and_expr
 B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]               delegate: compare_expr
@@ -1817,7 +1817,7 @@ B: [1474, 1477] PS: [ 99,  1] PE: [ 99,  4]                         root: identi
 B: [1478, 1482] PS: [100,  0] PE: [100,  4]       response: fail `fail`
 B: [1482, 1483] PS: [100,  4] PE: [100,  5]       : `:`
 B: [1488, 1516] PS: [101,  4] PE: [101, 32]       stmt: expr
-B: [1488, 1516] PS: [101,  4] PE: [101, 32]         ternary_expr
+B: [1488, 1516] PS: [101,  4] PE: [101, 32]         delegate: ternary_expr
 B: [1488, 1516] PS: [101,  4] PE: [101, 32]           delegate: or_expr
 B: [1488, 1516] PS: [101,  4] PE: [101, 32]             delegate: and_expr
 B: [1488, 1516] PS: [101,  4] PE: [101, 32]               delegate: compare_expr
@@ -1830,7 +1830,7 @@ B: [1488, 1516] PS: [101,  4] PE: [101, 32]                           call
 B: [1488, 1493] PS: [101,  4] PE: [101,  9]                             func: identifier `print`
 B: [1493, 1494] PS: [101,  9] PE: [101, 10]                             ( `(`
 B: [1494, 1515] PS: [101, 10] PE: [101, 31]                             arg: expr
-B: [1494, 1515] PS: [101, 10] PE: [101, 31]                               ternary_expr
+B: [1494, 1515] PS: [101, 10] PE: [101, 31]                               delegate: ternary_expr
 B: [1494, 1515] PS: [101, 10] PE: [101, 31]                                 delegate: or_expr
 B: [1494, 1515] PS: [101, 10] PE: [101, 31]                                   delegate: and_expr
 B: [1494, 1515] PS: [101, 10] PE: [101, 31]                                     delegate: compare_expr
@@ -1850,7 +1850,7 @@ B: [1518, 1564] PS: [103,  0] PE: [105, 32]   shell_stmt
 B: [1518, 1564] PS: [103,  0] PE: [105, 32]     shell_cmd: checked_shell_cmd
 B: [1518, 1519] PS: [103,  0] PE: [103,  1]       $ `$`
 B: [1519, 1522] PS: [103,  1] PE: [103,  4]       command: expr
-B: [1519, 1522] PS: [103,  1] PE: [103,  4]         ternary_expr
+B: [1519, 1522] PS: [103,  1] PE: [103,  4]         delegate: ternary_expr
 B: [1519, 1522] PS: [103,  1] PE: [103,  4]           delegate: or_expr
 B: [1519, 1522] PS: [103,  1] PE: [103,  4]             delegate: and_expr
 B: [1519, 1522] PS: [103,  1] PE: [103,  4]               delegate: compare_expr
@@ -1862,7 +1862,7 @@ B: [1519, 1522] PS: [103,  1] PE: [103,  4]                         root: identi
 B: [1523, 1530] PS: [104,  0] PE: [104,  7]       response: recover `recover`
 B: [1530, 1531] PS: [104,  7] PE: [104,  8]       : `:`
 B: [1536, 1564] PS: [105,  4] PE: [105, 32]       stmt: expr
-B: [1536, 1564] PS: [105,  4] PE: [105, 32]         ternary_expr
+B: [1536, 1564] PS: [105,  4] PE: [105, 32]         delegate: ternary_expr
 B: [1536, 1564] PS: [105,  4] PE: [105, 32]           delegate: or_expr
 B: [1536, 1564] PS: [105,  4] PE: [105, 32]             delegate: and_expr
 B: [1536, 1564] PS: [105,  4] PE: [105, 32]               delegate: compare_expr
@@ -1875,7 +1875,7 @@ B: [1536, 1564] PS: [105,  4] PE: [105, 32]                           call
 B: [1536, 1541] PS: [105,  4] PE: [105,  9]                             func: identifier `print`
 B: [1541, 1542] PS: [105,  9] PE: [105, 10]                             ( `(`
 B: [1542, 1563] PS: [105, 10] PE: [105, 31]                             arg: expr
-B: [1542, 1563] PS: [105, 10] PE: [105, 31]                               ternary_expr
+B: [1542, 1563] PS: [105, 10] PE: [105, 31]                               delegate: ternary_expr
 B: [1542, 1563] PS: [105, 10] PE: [105, 31]                                 delegate: or_expr
 B: [1542, 1563] PS: [105, 10] PE: [105, 31]                                   delegate: and_expr
 B: [1542, 1563] PS: [105, 10] PE: [105, 31]                                     delegate: compare_expr
@@ -1896,7 +1896,7 @@ B: [1566, 1578] PS: [107,  0] PE: [107, 12]     shell_cmd: unsafe_shell_cmd
 B: [1566, 1572] PS: [107,  0] PE: [107,  6]       unsafe_mod: unsafe `unsafe`
 B: [1573, 1574] PS: [107,  7] PE: [107,  8]       $ `$`
 B: [1574, 1578] PS: [107,  8] PE: [107, 12]       command: expr
-B: [1574, 1578] PS: [107,  8] PE: [107, 12]         ternary_expr
+B: [1574, 1578] PS: [107,  8] PE: [107, 12]         delegate: ternary_expr
 B: [1574, 1578] PS: [107,  8] PE: [107, 12]           delegate: or_expr
 B: [1574, 1578] PS: [107,  8] PE: [107, 12]             delegate: and_expr
 B: [1574, 1578] PS: [107,  8] PE: [107, 12]               delegate: compare_expr
@@ -1918,7 +1918,7 @@ B: [1585, 1586] PS: [109,  5] PE: [109,  6]     = `=`
 B: [1587, 1592] PS: [109,  7] PE: [109, 12]     shell_cmd: critical_shell_cmd
 B: [1587, 1589] PS: [109,  7] PE: [109,  9]       $! `$!`
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]       command: expr
-B: [1589, 1592] PS: [109,  9] PE: [109, 12]         ternary_expr
+B: [1589, 1592] PS: [109,  9] PE: [109, 12]         delegate: ternary_expr
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]           delegate: or_expr
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]             delegate: and_expr
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]               delegate: compare_expr
@@ -1937,7 +1937,7 @@ B: [1607, 1608] PS: [111, 13] PE: [111, 14]     = `=`
 B: [1609, 1614] PS: [111, 15] PE: [111, 20]     shell_cmd: critical_shell_cmd
 B: [1609, 1611] PS: [111, 15] PE: [111, 17]       $! `$!`
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]       command: expr
-B: [1611, 1614] PS: [111, 17] PE: [111, 20]         ternary_expr
+B: [1611, 1614] PS: [111, 17] PE: [111, 20]         delegate: ternary_expr
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]           delegate: or_expr
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]             delegate: and_expr
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]               delegate: compare_expr
@@ -1959,7 +1959,7 @@ B: [1637, 1638] PS: [113, 21] PE: [113, 22]     = `=`
 B: [1639, 1644] PS: [113, 23] PE: [113, 28]     shell_cmd: critical_shell_cmd
 B: [1639, 1641] PS: [113, 23] PE: [113, 25]       $! `$!`
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]       command: expr
-B: [1641, 1644] PS: [113, 25] PE: [113, 28]         ternary_expr
+B: [1641, 1644] PS: [113, 25] PE: [113, 28]         delegate: ternary_expr
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]           delegate: or_expr
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]             delegate: and_expr
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]               delegate: compare_expr
@@ -1981,7 +1981,7 @@ B: [1659, 1660] PS: [115, 13] PE: [115, 14]     = `=`
 B: [1661, 1666] PS: [115, 15] PE: [115, 20]     shell_cmd: critical_shell_cmd
 B: [1661, 1663] PS: [115, 15] PE: [115, 17]       $! `$!`
 B: [1663, 1666] PS: [115, 17] PE: [115, 20]       command: expr
-B: [1663, 1666] PS: [115, 17] PE: [115, 20]         ternary_expr
+B: [1663, 1666] PS: [115, 17] PE: [115, 20]         delegate: ternary_expr
 B: [1663, 1666] PS: [115, 17] PE: [115, 20]           delegate: or_expr
 B: [1663, 1666] PS: [115, 17] PE: [115, 20]             delegate: and_expr
 B: [1663, 1666] PS: [115, 17] PE: [115, 20]               delegate: compare_expr
@@ -1995,7 +1995,7 @@ B: [1668, 1698] PS: [117,  0] PE: [117, 30]     shell_cmd: critical_shell_cmd
 B: [1668, 1673] PS: [117,  0] PE: [117,  5]       quiet_mod: quiet `quiet`
 B: [1674, 1676] PS: [117,  6] PE: [117,  8]       $! `$!`
 B: [1676, 1698] PS: [117,  8] PE: [117, 30]       command: expr
-B: [1676, 1698] PS: [117,  8] PE: [117, 30]         ternary_expr
+B: [1676, 1698] PS: [117,  8] PE: [117, 30]         delegate: ternary_expr
 B: [1676, 1698] PS: [117,  8] PE: [117, 30]           delegate: or_expr
 B: [1676, 1698] PS: [117,  8] PE: [117, 30]             delegate: and_expr
 B: [1676, 1698] PS: [117,  8] PE: [117, 30]               delegate: compare_expr
@@ -2012,7 +2012,7 @@ B: [1677, 1683] PS: [117,  9] PE: [117, 15]                                 cont
 B: [1683, 1693] PS: [117, 15] PE: [117, 25]                                 interpolation: interpolation
 B: [1683, 1684] PS: [117, 15] PE: [117, 16]                                   { `{`
 B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                   expr: expr
-B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                     ternary_expr
+B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                     delegate: ternary_expr
 B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                       delegate: or_expr
 B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                         delegate: and_expr
 B: [1684, 1692] PS: [117, 16] PE: [117, 24]                                           delegate: compare_expr
@@ -2030,7 +2030,7 @@ B: [1700, 1706] PS: [119,  0] PE: [119,  6]       unsafe_mod: unsafe `unsafe`
 B: [1707, 1712] PS: [119,  7] PE: [119, 12]       quiet_mod: quiet `quiet`
 B: [1713, 1714] PS: [119, 13] PE: [119, 14]       $ `$`
 B: [1714, 1736] PS: [119, 14] PE: [119, 36]       command: expr
-B: [1714, 1736] PS: [119, 14] PE: [119, 36]         ternary_expr
+B: [1714, 1736] PS: [119, 14] PE: [119, 36]         delegate: ternary_expr
 B: [1714, 1736] PS: [119, 14] PE: [119, 36]           delegate: or_expr
 B: [1714, 1736] PS: [119, 14] PE: [119, 36]             delegate: and_expr
 B: [1714, 1736] PS: [119, 14] PE: [119, 36]               delegate: compare_expr
@@ -2047,7 +2047,7 @@ B: [1715, 1721] PS: [119, 15] PE: [119, 21]                                 cont
 B: [1721, 1731] PS: [119, 21] PE: [119, 31]                                 interpolation: interpolation
 B: [1721, 1722] PS: [119, 21] PE: [119, 22]                                   { `{`
 B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                   expr: expr
-B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                     ternary_expr
+B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                     delegate: ternary_expr
 B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                       delegate: or_expr
 B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                         delegate: and_expr
 B: [1722, 1730] PS: [119, 22] PE: [119, 30]                                           delegate: compare_expr
@@ -2065,7 +2065,7 @@ B: [1737, 1742] PS: [120,  0] PE: [120,  5]       quiet_mod: quiet `quiet`
 B: [1743, 1749] PS: [120,  6] PE: [120, 12]       unsafe_mod: unsafe `unsafe`
 B: [1750, 1751] PS: [120, 13] PE: [120, 14]       $ `$`
 B: [1751, 1773] PS: [120, 14] PE: [120, 36]       command: expr
-B: [1751, 1773] PS: [120, 14] PE: [120, 36]         ternary_expr
+B: [1751, 1773] PS: [120, 14] PE: [120, 36]         delegate: ternary_expr
 B: [1751, 1773] PS: [120, 14] PE: [120, 36]           delegate: or_expr
 B: [1751, 1773] PS: [120, 14] PE: [120, 36]             delegate: and_expr
 B: [1751, 1773] PS: [120, 14] PE: [120, 36]               delegate: compare_expr
@@ -2082,7 +2082,7 @@ B: [1752, 1758] PS: [120, 15] PE: [120, 21]                                 cont
 B: [1758, 1768] PS: [120, 21] PE: [120, 31]                                 interpolation: interpolation
 B: [1758, 1759] PS: [120, 21] PE: [120, 22]                                   { `{`
 B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                   expr: expr
-B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                     ternary_expr
+B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                     delegate: ternary_expr
 B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                       delegate: or_expr
 B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                         delegate: and_expr
 B: [1759, 1767] PS: [120, 22] PE: [120, 30]                                           delegate: compare_expr
@@ -2101,7 +2101,7 @@ B: [1786, 1816] PS: [123,  4] PE: [123, 34]     stmt: shell_stmt
 B: [1786, 1816] PS: [123,  4] PE: [123, 34]       shell_cmd: critical_shell_cmd
 B: [1786, 1788] PS: [123,  4] PE: [123,  6]         $! `$!`
 B: [1788, 1816] PS: [123,  6] PE: [123, 34]         command: expr
-B: [1788, 1816] PS: [123,  6] PE: [123, 34]           ternary_expr
+B: [1788, 1816] PS: [123,  6] PE: [123, 34]           delegate: ternary_expr
 B: [1788, 1816] PS: [123,  6] PE: [123, 34]             delegate: or_expr
 B: [1788, 1816] PS: [123,  6] PE: [123, 34]               delegate: and_expr
 B: [1788, 1816] PS: [123,  6] PE: [123, 34]                 delegate: compare_expr
@@ -2117,7 +2117,7 @@ B: [1789, 1815] PS: [123,  7] PE: [123, 33]                                 cont
 B: [1789, 1815] PS: [123,  7] PE: [123, 33]                                   content: string_content `mv notes-tmp.txt notes.txt`
 B: [1815, 1816] PS: [123, 33] PE: [123, 34]                                 end: string_end ```
 B: [1821, 1841] PS: [124,  4] PE: [124, 24]     stmt: expr
-B: [1821, 1841] PS: [124,  4] PE: [124, 24]       ternary_expr
+B: [1821, 1841] PS: [124,  4] PE: [124, 24]       delegate: ternary_expr
 B: [1821, 1841] PS: [124,  4] PE: [124, 24]         delegate: or_expr
 B: [1821, 1841] PS: [124,  4] PE: [124, 24]           delegate: and_expr
 B: [1821, 1841] PS: [124,  4] PE: [124, 24]             delegate: compare_expr
@@ -2130,7 +2130,7 @@ B: [1821, 1841] PS: [124,  4] PE: [124, 24]                         call
 B: [1821, 1826] PS: [124,  4] PE: [124,  9]                           func: identifier `print`
 B: [1826, 1827] PS: [124,  9] PE: [124, 10]                           ( `(`
 B: [1827, 1840] PS: [124, 10] PE: [124, 23]                           arg: expr
-B: [1827, 1840] PS: [124, 10] PE: [124, 23]                             ternary_expr
+B: [1827, 1840] PS: [124, 10] PE: [124, 23]                             delegate: ternary_expr
 B: [1827, 1840] PS: [124, 10] PE: [124, 23]                               delegate: or_expr
 B: [1827, 1840] PS: [124, 10] PE: [124, 23]                                 delegate: and_expr
 B: [1827, 1840] PS: [124, 10] PE: [124, 23]                                   delegate: compare_expr
@@ -2150,7 +2150,7 @@ B: [1843, 1901] PS: [126,  0] PE: [126, 58]   shell_stmt
 B: [1843, 1901] PS: [126,  0] PE: [126, 58]     shell_cmd: critical_shell_cmd
 B: [1843, 1845] PS: [126,  0] PE: [126,  2]       $! `$!`
 B: [1845, 1901] PS: [126,  2] PE: [126, 58]       command: expr
-B: [1845, 1901] PS: [126,  2] PE: [126, 58]         ternary_expr
+B: [1845, 1901] PS: [126,  2] PE: [126, 58]         delegate: ternary_expr
 B: [1845, 1901] PS: [126,  2] PE: [126, 58]           delegate: or_expr
 B: [1845, 1901] PS: [126,  2] PE: [126, 58]             delegate: and_expr
 B: [1845, 1901] PS: [126,  2] PE: [126, 58]               delegate: compare_expr
@@ -2167,7 +2167,7 @@ B: [1846, 1882] PS: [126,  3] PE: [126, 39]                                 cont
 B: [1882, 1891] PS: [126, 39] PE: [126, 48]                                 interpolation: interpolation
 B: [1882, 1883] PS: [126, 39] PE: [126, 40]                                   { `{`
 B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                   expr: expr
-B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                     ternary_expr
+B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                     delegate: ternary_expr
 B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                       delegate: or_expr
 B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                         delegate: and_expr
 B: [1883, 1890] PS: [126, 40] PE: [126, 47]                                           delegate: compare_expr
@@ -2181,7 +2181,7 @@ B: [1891, 1894] PS: [126, 48] PE: [126, 51]                                 cont
 B: [1894, 1900] PS: [126, 51] PE: [126, 57]                                 interpolation: interpolation
 B: [1894, 1895] PS: [126, 51] PE: [126, 52]                                   { `{`
 B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                   expr: expr
-B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                     ternary_expr
+B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                     delegate: ternary_expr
 B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                       delegate: or_expr
 B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                         delegate: and_expr
 B: [1895, 1899] PS: [126, 52] PE: [126, 56]                                           delegate: compare_expr
@@ -2196,7 +2196,7 @@ B: [1902, 1971] PS: [127,  0] PE: [129, 30]   defer_block
 B: [1902, 1910] PS: [127,  0] PE: [127,  8]     keyword: errdefer `errdefer`
 B: [1910, 1911] PS: [127,  8] PE: [127,  9]     : `:`
 B: [1916, 1940] PS: [128,  4] PE: [128, 28]     stmt: expr
-B: [1916, 1940] PS: [128,  4] PE: [128, 28]       ternary_expr
+B: [1916, 1940] PS: [128,  4] PE: [128, 28]       delegate: ternary_expr
 B: [1916, 1940] PS: [128,  4] PE: [128, 28]         delegate: or_expr
 B: [1916, 1940] PS: [128,  4] PE: [128, 28]           delegate: and_expr
 B: [1916, 1940] PS: [128,  4] PE: [128, 28]             delegate: compare_expr
@@ -2209,7 +2209,7 @@ B: [1916, 1940] PS: [128,  4] PE: [128, 28]                         call
 B: [1916, 1921] PS: [128,  4] PE: [128,  9]                           func: identifier `print`
 B: [1921, 1922] PS: [128,  9] PE: [128, 10]                           ( `(`
 B: [1922, 1939] PS: [128, 10] PE: [128, 27]                           arg: expr
-B: [1922, 1939] PS: [128, 10] PE: [128, 27]                             ternary_expr
+B: [1922, 1939] PS: [128, 10] PE: [128, 27]                             delegate: ternary_expr
 B: [1922, 1939] PS: [128, 10] PE: [128, 27]                               delegate: or_expr
 B: [1922, 1939] PS: [128, 10] PE: [128, 27]                                 delegate: and_expr
 B: [1922, 1939] PS: [128, 10] PE: [128, 27]                                   delegate: compare_expr
@@ -2229,7 +2229,7 @@ B: [1945, 1971] PS: [129,  4] PE: [129, 30]     stmt: shell_stmt
 B: [1945, 1971] PS: [129,  4] PE: [129, 30]       shell_cmd: critical_shell_cmd
 B: [1945, 1947] PS: [129,  4] PE: [129,  6]         $! `$!`
 B: [1947, 1971] PS: [129,  6] PE: [129, 30]         command: expr
-B: [1947, 1971] PS: [129,  6] PE: [129, 30]           ternary_expr
+B: [1947, 1971] PS: [129,  6] PE: [129, 30]           delegate: ternary_expr
 B: [1947, 1971] PS: [129,  6] PE: [129, 30]             delegate: or_expr
 B: [1947, 1971] PS: [129,  6] PE: [129, 30]               delegate: and_expr
 B: [1947, 1971] PS: [129,  6] PE: [129, 30]                 delegate: compare_expr
@@ -2246,7 +2246,7 @@ B: [1948, 1964] PS: [129,  7] PE: [129, 23]                                   co
 B: [1964, 1970] PS: [129, 23] PE: [129, 29]                                   interpolation: interpolation
 B: [1964, 1965] PS: [129, 23] PE: [129, 24]                                     { `{`
 B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                     expr: expr
-B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                       ternary_expr
+B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                       delegate: ternary_expr
 B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                         delegate: or_expr
 B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                           delegate: and_expr
 B: [1965, 1969] PS: [129, 24] PE: [129, 28]                                             delegate: compare_expr
@@ -2261,7 +2261,7 @@ B: [1973, 2050] PS: [131,  0] PE: [133, 11]   if_stmt
 B: [1973, 2050] PS: [131,  0] PE: [133, 11]     alt: if_alt
 B: [1973, 1975] PS: [131,  0] PE: [131,  2]       if `if`
 B: [1976, 1981] PS: [131,  3] PE: [131,  8]       condition: expr
-B: [1976, 1981] PS: [131,  3] PE: [131,  8]         ternary_expr
+B: [1976, 1981] PS: [131,  3] PE: [131,  8]         delegate: ternary_expr
 B: [1976, 1981] PS: [131,  3] PE: [131,  8]           delegate: or_expr
 B: [1976, 1981] PS: [131,  3] PE: [131,  8]             delegate: and_expr
 B: [1976, 1981] PS: [131,  3] PE: [131,  8]               delegate: compare_expr
@@ -2276,7 +2276,7 @@ B: [1976, 1981] PS: [131,  3] PE: [131,  8]                               false 
 B: [1981, 1982] PS: [131,  8] PE: [131,  9]       : `:`
 B: [1984, 2013] PS: [131, 11] PE: [131, 40]       comment `// failure simulation point 1`
 B: [2018, 2038] PS: [132,  4] PE: [132, 24]       stmt: expr
-B: [2018, 2038] PS: [132,  4] PE: [132, 24]         ternary_expr
+B: [2018, 2038] PS: [132,  4] PE: [132, 24]         delegate: ternary_expr
 B: [2018, 2038] PS: [132,  4] PE: [132, 24]           delegate: or_expr
 B: [2018, 2038] PS: [132,  4] PE: [132, 24]             delegate: and_expr
 B: [2018, 2038] PS: [132,  4] PE: [132, 24]               delegate: compare_expr
@@ -2289,7 +2289,7 @@ B: [2018, 2038] PS: [132,  4] PE: [132, 24]                           call
 B: [2018, 2023] PS: [132,  4] PE: [132,  9]                             func: identifier `print`
 B: [2023, 2024] PS: [132,  9] PE: [132, 10]                             ( `(`
 B: [2024, 2037] PS: [132, 10] PE: [132, 23]                             arg: expr
-B: [2024, 2037] PS: [132, 10] PE: [132, 23]                               ternary_expr
+B: [2024, 2037] PS: [132, 10] PE: [132, 23]                               delegate: ternary_expr
 B: [2024, 2037] PS: [132, 10] PE: [132, 23]                                 delegate: or_expr
 B: [2024, 2037] PS: [132, 10] PE: [132, 23]                                   delegate: and_expr
 B: [2024, 2037] PS: [132, 10] PE: [132, 23]                                     delegate: compare_expr
@@ -2306,7 +2306,7 @@ B: [2025, 2036] PS: [132, 11] PE: [132, 22]                                     
 B: [2036, 2037] PS: [132, 22] PE: [132, 23]                                                     end: string_end `"`
 B: [2037, 2038] PS: [132, 23] PE: [132, 24]                             ) `)`
 B: [2043, 2050] PS: [133,  4] PE: [133, 11]       stmt: expr
-B: [2043, 2050] PS: [133,  4] PE: [133, 11]         ternary_expr
+B: [2043, 2050] PS: [133,  4] PE: [133, 11]         delegate: ternary_expr
 B: [2043, 2050] PS: [133,  4] PE: [133, 11]           delegate: or_expr
 B: [2043, 2050] PS: [133,  4] PE: [133, 11]             delegate: and_expr
 B: [2043, 2050] PS: [133,  4] PE: [133, 11]               delegate: compare_expr
@@ -2319,7 +2319,7 @@ B: [2043, 2050] PS: [133,  4] PE: [133, 11]                           call
 B: [2043, 2047] PS: [133,  4] PE: [133,  8]                             func: identifier `exit`
 B: [2047, 2048] PS: [133,  8] PE: [133,  9]                             ( `(`
 B: [2048, 2049] PS: [133,  9] PE: [133, 10]                             arg: expr
-B: [2048, 2049] PS: [133,  9] PE: [133, 10]                               ternary_expr
+B: [2048, 2049] PS: [133,  9] PE: [133, 10]                               delegate: ternary_expr
 B: [2048, 2049] PS: [133,  9] PE: [133, 10]                                 delegate: or_expr
 B: [2048, 2049] PS: [133,  9] PE: [133, 10]                                   delegate: and_expr
 B: [2048, 2049] PS: [133,  9] PE: [133, 10]                                     delegate: compare_expr
@@ -2335,7 +2335,7 @@ B: [2052, 2070] PS: [135,  0] PE: [135, 18]   shell_stmt
 B: [2052, 2070] PS: [135,  0] PE: [135, 18]     shell_cmd: critical_shell_cmd
 B: [2052, 2054] PS: [135,  0] PE: [135,  2]       $! `$!`
 B: [2054, 2070] PS: [135,  2] PE: [135, 18]       command: expr
-B: [2054, 2070] PS: [135,  2] PE: [135, 18]         ternary_expr
+B: [2054, 2070] PS: [135,  2] PE: [135, 18]         delegate: ternary_expr
 B: [2054, 2070] PS: [135,  2] PE: [135, 18]           delegate: or_expr
 B: [2054, 2070] PS: [135,  2] PE: [135, 18]             delegate: and_expr
 B: [2054, 2070] PS: [135,  2] PE: [135, 18]               delegate: compare_expr
@@ -2352,7 +2352,7 @@ B: [2055, 2063] PS: [135,  3] PE: [135, 11]                                 cont
 B: [2063, 2069] PS: [135, 11] PE: [135, 17]                                 interpolation: interpolation
 B: [2063, 2064] PS: [135, 11] PE: [135, 12]                                   { `{`
 B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                   expr: expr
-B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                     ternary_expr
+B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                     delegate: ternary_expr
 B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                       delegate: or_expr
 B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                         delegate: and_expr
 B: [2064, 2068] PS: [135, 12] PE: [135, 16]                                           delegate: compare_expr
@@ -2367,7 +2367,7 @@ B: [2071, 2145] PS: [136,  0] PE: [138, 31]   defer_block
 B: [2071, 2079] PS: [136,  0] PE: [136,  8]     keyword: errdefer `errdefer`
 B: [2079, 2080] PS: [136,  8] PE: [136,  9]     : `:`
 B: [2085, 2113] PS: [137,  4] PE: [137, 32]     stmt: expr
-B: [2085, 2113] PS: [137,  4] PE: [137, 32]       ternary_expr
+B: [2085, 2113] PS: [137,  4] PE: [137, 32]       delegate: ternary_expr
 B: [2085, 2113] PS: [137,  4] PE: [137, 32]         delegate: or_expr
 B: [2085, 2113] PS: [137,  4] PE: [137, 32]           delegate: and_expr
 B: [2085, 2113] PS: [137,  4] PE: [137, 32]             delegate: compare_expr
@@ -2380,7 +2380,7 @@ B: [2085, 2113] PS: [137,  4] PE: [137, 32]                         call
 B: [2085, 2090] PS: [137,  4] PE: [137,  9]                           func: identifier `print`
 B: [2090, 2091] PS: [137,  9] PE: [137, 10]                           ( `(`
 B: [2091, 2112] PS: [137, 10] PE: [137, 31]                           arg: expr
-B: [2091, 2112] PS: [137, 10] PE: [137, 31]                             ternary_expr
+B: [2091, 2112] PS: [137, 10] PE: [137, 31]                             delegate: ternary_expr
 B: [2091, 2112] PS: [137, 10] PE: [137, 31]                               delegate: or_expr
 B: [2091, 2112] PS: [137, 10] PE: [137, 31]                                 delegate: and_expr
 B: [2091, 2112] PS: [137, 10] PE: [137, 31]                                   delegate: compare_expr
@@ -2397,7 +2397,7 @@ B: [2092, 2102] PS: [137, 11] PE: [137, 21]                                     
 B: [2102, 2108] PS: [137, 21] PE: [137, 27]                                                     interpolation: interpolation
 B: [2102, 2103] PS: [137, 21] PE: [137, 22]                                                       { `{`
 B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                       expr: expr
-B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                         ternary_expr
+B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                         delegate: ternary_expr
 B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                           delegate: or_expr
 B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                             delegate: and_expr
 B: [2103, 2107] PS: [137, 22] PE: [137, 26]                                                               delegate: compare_expr
@@ -2420,7 +2420,7 @@ B: [2123, 2124] PS: [138,  9] PE: [138, 10]       = `=`
 B: [2125, 2145] PS: [138, 11] PE: [138, 31]       shell_cmd: critical_shell_cmd
 B: [2125, 2127] PS: [138, 11] PE: [138, 13]         $! `$!`
 B: [2127, 2145] PS: [138, 13] PE: [138, 31]         command: expr
-B: [2127, 2145] PS: [138, 13] PE: [138, 31]           ternary_expr
+B: [2127, 2145] PS: [138, 13] PE: [138, 31]           delegate: ternary_expr
 B: [2127, 2145] PS: [138, 13] PE: [138, 31]             delegate: or_expr
 B: [2127, 2145] PS: [138, 13] PE: [138, 31]               delegate: and_expr
 B: [2127, 2145] PS: [138, 13] PE: [138, 31]                 delegate: compare_expr
@@ -2437,7 +2437,7 @@ B: [2128, 2138] PS: [138, 14] PE: [138, 24]                                   co
 B: [2138, 2144] PS: [138, 24] PE: [138, 30]                                   interpolation: interpolation
 B: [2138, 2139] PS: [138, 24] PE: [138, 25]                                     { `{`
 B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                     expr: expr
-B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                       ternary_expr
+B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                       delegate: ternary_expr
 B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                         delegate: or_expr
 B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                           delegate: and_expr
 B: [2139, 2143] PS: [138, 25] PE: [138, 29]                                             delegate: compare_expr
@@ -2452,7 +2452,7 @@ B: [2147, 2222] PS: [140,  0] PE: [142, 11]   if_stmt
 B: [2147, 2222] PS: [140,  0] PE: [142, 11]     alt: if_alt
 B: [2147, 2149] PS: [140,  0] PE: [140,  2]       if `if`
 B: [2150, 2155] PS: [140,  3] PE: [140,  8]       condition: expr
-B: [2150, 2155] PS: [140,  3] PE: [140,  8]         ternary_expr
+B: [2150, 2155] PS: [140,  3] PE: [140,  8]         delegate: ternary_expr
 B: [2150, 2155] PS: [140,  3] PE: [140,  8]           delegate: or_expr
 B: [2150, 2155] PS: [140,  3] PE: [140,  8]             delegate: and_expr
 B: [2150, 2155] PS: [140,  3] PE: [140,  8]               delegate: compare_expr
@@ -2467,7 +2467,7 @@ B: [2150, 2155] PS: [140,  3] PE: [140,  8]                               false 
 B: [2155, 2156] PS: [140,  8] PE: [140,  9]       : `:`
 B: [2158, 2187] PS: [140, 11] PE: [140, 40]       comment `// failure simulation point 2`
 B: [2192, 2210] PS: [141,  4] PE: [141, 22]       stmt: expr
-B: [2192, 2210] PS: [141,  4] PE: [141, 22]         ternary_expr
+B: [2192, 2210] PS: [141,  4] PE: [141, 22]         delegate: ternary_expr
 B: [2192, 2210] PS: [141,  4] PE: [141, 22]           delegate: or_expr
 B: [2192, 2210] PS: [141,  4] PE: [141, 22]             delegate: and_expr
 B: [2192, 2210] PS: [141,  4] PE: [141, 22]               delegate: compare_expr
@@ -2480,7 +2480,7 @@ B: [2192, 2210] PS: [141,  4] PE: [141, 22]                           call
 B: [2192, 2197] PS: [141,  4] PE: [141,  9]                             func: identifier `print`
 B: [2197, 2198] PS: [141,  9] PE: [141, 10]                             ( `(`
 B: [2198, 2209] PS: [141, 10] PE: [141, 21]                             arg: expr
-B: [2198, 2209] PS: [141, 10] PE: [141, 21]                               ternary_expr
+B: [2198, 2209] PS: [141, 10] PE: [141, 21]                               delegate: ternary_expr
 B: [2198, 2209] PS: [141, 10] PE: [141, 21]                                 delegate: or_expr
 B: [2198, 2209] PS: [141, 10] PE: [141, 21]                                   delegate: and_expr
 B: [2198, 2209] PS: [141, 10] PE: [141, 21]                                     delegate: compare_expr
@@ -2497,7 +2497,7 @@ B: [2199, 2208] PS: [141, 11] PE: [141, 20]                                     
 B: [2208, 2209] PS: [141, 20] PE: [141, 21]                                                     end: string_end `"`
 B: [2209, 2210] PS: [141, 21] PE: [141, 22]                             ) `)`
 B: [2215, 2222] PS: [142,  4] PE: [142, 11]       stmt: expr
-B: [2215, 2222] PS: [142,  4] PE: [142, 11]         ternary_expr
+B: [2215, 2222] PS: [142,  4] PE: [142, 11]         delegate: ternary_expr
 B: [2215, 2222] PS: [142,  4] PE: [142, 11]           delegate: or_expr
 B: [2215, 2222] PS: [142,  4] PE: [142, 11]             delegate: and_expr
 B: [2215, 2222] PS: [142,  4] PE: [142, 11]               delegate: compare_expr
@@ -2510,7 +2510,7 @@ B: [2215, 2222] PS: [142,  4] PE: [142, 11]                           call
 B: [2215, 2219] PS: [142,  4] PE: [142,  8]                             func: identifier `exit`
 B: [2219, 2220] PS: [142,  8] PE: [142,  9]                             ( `(`
 B: [2220, 2221] PS: [142,  9] PE: [142, 10]                             arg: expr
-B: [2220, 2221] PS: [142,  9] PE: [142, 10]                               ternary_expr
+B: [2220, 2221] PS: [142,  9] PE: [142, 10]                               delegate: ternary_expr
 B: [2220, 2221] PS: [142,  9] PE: [142, 10]                                 delegate: or_expr
 B: [2220, 2221] PS: [142,  9] PE: [142, 10]                                   delegate: and_expr
 B: [2220, 2221] PS: [142,  9] PE: [142, 10]                                     delegate: compare_expr
@@ -2526,7 +2526,7 @@ B: [2224, 2269] PS: [144,  0] PE: [144, 45]   shell_stmt
 B: [2224, 2269] PS: [144,  0] PE: [144, 45]     shell_cmd: critical_shell_cmd
 B: [2224, 2226] PS: [144,  0] PE: [144,  2]       $! `$!`
 B: [2226, 2269] PS: [144,  2] PE: [144, 45]       command: expr
-B: [2226, 2269] PS: [144,  2] PE: [144, 45]         ternary_expr
+B: [2226, 2269] PS: [144,  2] PE: [144, 45]         delegate: ternary_expr
 B: [2226, 2269] PS: [144,  2] PE: [144, 45]           delegate: or_expr
 B: [2226, 2269] PS: [144,  2] PE: [144, 45]             delegate: and_expr
 B: [2226, 2269] PS: [144,  2] PE: [144, 45]               delegate: compare_expr
@@ -2543,7 +2543,7 @@ B: [2227, 2258] PS: [144,  3] PE: [144, 34]                                 cont
 B: [2258, 2267] PS: [144, 34] PE: [144, 43]                                 interpolation: interpolation
 B: [2258, 2259] PS: [144, 34] PE: [144, 35]                                   { `{`
 B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                   expr: expr
-B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                     ternary_expr
+B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                     delegate: ternary_expr
 B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                       delegate: or_expr
 B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                         delegate: and_expr
 B: [2259, 2266] PS: [144, 35] PE: [144, 42]                                           delegate: compare_expr

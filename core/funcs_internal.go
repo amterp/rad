@@ -19,7 +19,7 @@ func AddInternalFuncs() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				argNode := f.args[0]
 				cmd := argNode.value.RequireStr(f.i, argNode.node).Plain()
 				path, err := exec.LookPath(cmd)
@@ -62,7 +62,7 @@ func AddInternalFuncs() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				idArg := f.args[0]
 				id := idArg.value.RequireStr(f.i, idArg.node).Plain()
 				path := RadHomeInst.GetStashForId(id)
@@ -71,7 +71,7 @@ func AddInternalFuncs() {
 				if err != nil {
 					f.i.errorf(idArg.node, "Failed to delete stash: %s", err.Error())
 				}
-				return EMPTY
+				return VOID_SENTINEL
 			},
 		},
 		{
@@ -80,7 +80,7 @@ func AddInternalFuncs() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				scriptArg := f.args[0]
 				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
 				result := com.LoadFile(scriptPath)

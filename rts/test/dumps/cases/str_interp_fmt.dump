@@ -12,7 +12,7 @@ B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
 B: [ 4, 15] PS: [0,  4] PE: [0, 15]     right: expr
-B: [ 4, 15] PS: [0,  4] PE: [0, 15]       ternary_expr
+B: [ 4, 15] PS: [0,  4] PE: [0, 15]       delegate: ternary_expr
 B: [ 4, 15] PS: [0,  4] PE: [0, 15]         delegate: or_expr
 B: [ 4, 15] PS: [0,  4] PE: [0, 15]           delegate: and_expr
 B: [ 4, 15] PS: [0,  4] PE: [0, 15]             delegate: compare_expr
@@ -28,7 +28,7 @@ B: [ 5, 14] PS: [0,  5] PE: [0, 14]                             contents: string
 B: [ 5, 14] PS: [0,  5] PE: [0, 14]                               interpolation: interpolation
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                                 { `{`
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                 expr: expr
-B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                   ternary_expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                   delegate: ternary_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                     delegate: or_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                       delegate: and_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]                                         delegate: compare_expr
@@ -57,7 +57,7 @@ B: [16, 17] PS: [1,  0] PE: [1,  1]     left: var_path
 B: [16, 17] PS: [1,  0] PE: [1,  1]       root: identifier `b`
 B: [18, 19] PS: [1,  2] PE: [1,  3]     = `=`
 B: [20, 33] PS: [1,  4] PE: [1, 17]     right: expr
-B: [20, 33] PS: [1,  4] PE: [1, 17]       ternary_expr
+B: [20, 33] PS: [1,  4] PE: [1, 17]       delegate: ternary_expr
 B: [20, 33] PS: [1,  4] PE: [1, 17]         delegate: or_expr
 B: [20, 33] PS: [1,  4] PE: [1, 17]           delegate: and_expr
 B: [20, 33] PS: [1,  4] PE: [1, 17]             delegate: compare_expr
@@ -73,7 +73,7 @@ B: [21, 32] PS: [1,  5] PE: [1, 16]                             contents: string
 B: [21, 32] PS: [1,  5] PE: [1, 16]                               interpolation: interpolation
 B: [21, 22] PS: [1,  5] PE: [1,  6]                                 { `{`
 B: [22, 27] PS: [1,  6] PE: [1, 11]                                 expr: expr
-B: [22, 27] PS: [1,  6] PE: [1, 11]                                   ternary_expr
+B: [22, 27] PS: [1,  6] PE: [1, 11]                                   delegate: ternary_expr
 B: [22, 27] PS: [1,  6] PE: [1, 11]                                     delegate: or_expr
 B: [22, 27] PS: [1,  6] PE: [1, 11]                                       delegate: and_expr
 B: [22, 27] PS: [1,  6] PE: [1, 11]                                         delegate: compare_expr
@@ -104,7 +104,7 @@ B: [34, 35] PS: [2,  0] PE: [2,  1]     left: var_path
 B: [34, 35] PS: [2,  0] PE: [2,  1]       root: identifier `c`
 B: [36, 37] PS: [2,  2] PE: [2,  3]     = `=`
 B: [38, 52] PS: [2,  4] PE: [2, 18]     right: expr
-B: [38, 52] PS: [2,  4] PE: [2, 18]       ternary_expr
+B: [38, 52] PS: [2,  4] PE: [2, 18]       delegate: ternary_expr
 B: [38, 52] PS: [2,  4] PE: [2, 18]         delegate: or_expr
 B: [38, 52] PS: [2,  4] PE: [2, 18]           delegate: and_expr
 B: [38, 52] PS: [2,  4] PE: [2, 18]             delegate: compare_expr
@@ -120,7 +120,7 @@ B: [39, 51] PS: [2,  5] PE: [2, 17]                             contents: string
 B: [39, 51] PS: [2,  5] PE: [2, 17]                               interpolation: interpolation
 B: [39, 40] PS: [2,  5] PE: [2,  6]                                 { `{`
 B: [40, 45] PS: [2,  6] PE: [2, 11]                                 expr: expr
-B: [40, 45] PS: [2,  6] PE: [2, 11]                                   ternary_expr
+B: [40, 45] PS: [2,  6] PE: [2, 11]                                   delegate: ternary_expr
 B: [40, 45] PS: [2,  6] PE: [2, 11]                                     delegate: or_expr
 B: [40, 45] PS: [2,  6] PE: [2, 11]                                       delegate: and_expr
 B: [40, 45] PS: [2,  6] PE: [2, 11]                                         delegate: compare_expr
@@ -152,7 +152,7 @@ B: [53, 54] PS: [3,  0] PE: [3,  1]     left: var_path
 B: [53, 54] PS: [3,  0] PE: [3,  1]       root: identifier `d`
 B: [55, 56] PS: [3,  2] PE: [3,  3]     = `=`
 B: [57, 71] PS: [3,  4] PE: [3, 18]     right: expr
-B: [57, 71] PS: [3,  4] PE: [3, 18]       ternary_expr
+B: [57, 71] PS: [3,  4] PE: [3, 18]       delegate: ternary_expr
 B: [57, 71] PS: [3,  4] PE: [3, 18]         delegate: or_expr
 B: [57, 71] PS: [3,  4] PE: [3, 18]           delegate: and_expr
 B: [57, 71] PS: [3,  4] PE: [3, 18]             delegate: compare_expr
@@ -168,7 +168,7 @@ B: [58, 70] PS: [3,  5] PE: [3, 17]                             contents: string
 B: [58, 70] PS: [3,  5] PE: [3, 17]                               interpolation: interpolation
 B: [58, 59] PS: [3,  5] PE: [3,  6]                                 { `{`
 B: [59, 64] PS: [3,  6] PE: [3, 11]                                 expr: expr
-B: [59, 64] PS: [3,  6] PE: [3, 11]                                   ternary_expr
+B: [59, 64] PS: [3,  6] PE: [3, 11]                                   delegate: ternary_expr
 B: [59, 64] PS: [3,  6] PE: [3, 11]                                     delegate: or_expr
 B: [59, 64] PS: [3,  6] PE: [3, 11]                                       delegate: and_expr
 B: [59, 64] PS: [3,  6] PE: [3, 11]                                         delegate: compare_expr

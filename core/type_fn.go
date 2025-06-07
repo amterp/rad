@@ -14,7 +14,7 @@ type RadFn struct {
 	// below for non-built-in functions
 	Params     []string
 	ReprNode   *ts.Node  // representative node (can point at this for errors)
-	Exprs      []ts.Node // for returning lambdas
+	Expr       *ts.Node  // for returning lambdas
 	Stmt       *ts.Node  // for stmt lambdas
 	Body       []ts.Node // for fn blocks
 	ReturnStmt *ts.Node  // for fn blocks
@@ -35,7 +35,7 @@ func NewLambdaOneLiner(i *Interpreter, lambdaNode *ts.Node) RadFn {
 	return RadFn{
 		Params:   params,
 		ReprNode: lambdaNode,
-		Exprs:    i.getChildren(lambdaNode, rl.F_EXPR),
+		Expr:     i.getChild(lambdaNode, rl.F_EXPR),
 		Stmt:     i.getChild(lambdaNode, rl.F_STMT),
 		Env:      i.env,
 	}
@@ -61,59 +61,67 @@ func NewBuiltIn(inFunc BuiltInFunc) RadFn {
 	}
 }
 
-func (fn RadFn) IsLambda() bool {
-	return len(fn.Exprs) > 0 || fn.Stmt != nil
+func (fn RadFn) IsBuiltIn() bool {
+	return fn.BuiltInFunc != nil
 }
 
-func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
-	if fn.BuiltInFunc != nil {
+func (fn RadFn) IsLambda() bool { // todo not accurate, can have named func with this
+	return fn.Expr != nil || fn.Stmt != nil
+}
+
+func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
+	if fn.BuiltInFunc == nil {
+		if len(f.args) != len(fn.Params) {
+			f.i.errorf(f.callNode, "Expected %d args, but was invoked with %d", len(fn.Params), len(f.args))
+		}
+
+		i := f.i
+		out = VOID_SENTINEL
+		i.runWithChildEnv(func() {
+			args := f.args
+			// custom funcs don't support namedArgs, so we ignore them. Parser doesn't allow them anyway.
+			for idx, arg := range args {
+				i.env.SetVar(fn.Params[idx], arg.value)
+			}
+
+			if fn.IsLambda() {
+				if fn.Expr != nil {
+					out = i.evaluate(fn.Expr, NO_CONSTRAINT_OUTPUT)
+				}
+				if fn.Stmt != nil {
+					i.evaluate(fn.Stmt, NO_CONSTRAINT_OUTPUT)
+				}
+			} else {
+				i.runBlock(fn.Body)
+
+				if i.breakingOrContinuing() {
+					return
+				}
+
+				if !f.ctx.ExpectedOutput.Acceptable(0) && fn.ReturnStmt == nil {
+					i.errorf(f.callNode, "Expected %s, but function '%s' is missing a return statement.",
+						f.ctx.ExpectedOutput.String(), f.funcName)
+				}
+
+				if fn.ReturnStmt != nil {
+					returnExpr := i.getChild(fn.ReturnStmt, rl.F_VALUE)
+					out = i.evaluate(returnExpr, EXPECT_ONE_OUTPUT)
+				}
+			}
+		})
+	} else {
 		assertMinNumPosArgs(f, fn.BuiltInFunc)
 		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
 		assertAllowedNamedArgs(f, fn.BuiltInFunc)
 		assertCorrectNumReturnValues(f, fn.BuiltInFunc)
-		return fn.BuiltInFunc.Execute(f)
+		out = fn.BuiltInFunc.Execute(f)
 	}
 
-	i := f.i
-	output := make([]RadValue, 0)
-	i.runWithChildEnv(func() {
-		args := f.args
-		// custom funcs don't support namedArgs, so we ignore them. Parser doesn't allow them anyway.
-		for idx, arg := range args {
-			i.env.SetVar(fn.Params[idx], arg.value)
-		}
+	if f.panicIfError && out.IsError() {
+		f.i.NewRadPanic(f.callNode, out).Panic()
+	}
 
-		if fn.IsLambda() {
-			if len(fn.Exprs) > 0 {
-				for _, exprNode := range fn.Exprs {
-					val := i.evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-					output = append(output, val...) // todo dunno about this splatter
-				}
-			} else {
-				i.recursivelyRun(fn.Stmt)
-			}
-		} else {
-			i.runBlock(fn.Body)
-
-			if i.breakingOrContinuing() {
-				return
-			}
-
-			if f.numExpectedOutputs > 0 && fn.ReturnStmt == nil {
-				i.errorf(f.callNode, "Expected %d outputs, but function '%s' is missing a return statement.",
-					f.numExpectedOutputs, f.funcName)
-			}
-
-			if fn.ReturnStmt != nil {
-				valueNodes := i.getChildren(fn.ReturnStmt, rl.F_VALUE)
-				for _, valueNode := range valueNodes {
-					val := i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-					output = append(output, val...) // todo this is probably bad and inconsistent with e.g. switch yields
-				}
-			}
-		}
-	})
-	return output
+	return
 }
 
 func (fn RadFn) ToString() string {

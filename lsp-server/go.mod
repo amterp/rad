@@ -23,4 +23,4 @@ require (
 
 replace github.com/amterp/rad/rts => ../rts
 
-//replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad
+replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad

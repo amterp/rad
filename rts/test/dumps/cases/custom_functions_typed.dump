@@ -21,7 +21,7 @@ B: [ 14,  18] PS: [0, 14] PE: [0, 18]     return_type: fn_param_or_return_type
 B: [ 14,  18] PS: [0, 14] PE: [0, 18]       fn_leaf_type
 B: [ 14,  18] PS: [0, 14] PE: [0, 18]         void_type `void`
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]     expr: expr
-B: [ 19,  30] PS: [0, 19] PE: [0, 30]       ternary_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]       delegate: ternary_expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]         delegate: or_expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]           delegate: and_expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]             delegate: compare_expr
@@ -34,7 +34,7 @@ B: [ 19,  30] PS: [0, 19] PE: [0, 30]                         call
 B: [ 19,  24] PS: [0, 19] PE: [0, 24]                           func: identifier `print`
 B: [ 24,  25] PS: [0, 24] PE: [0, 25]                           ( `(`
 B: [ 25,  29] PS: [0, 25] PE: [0, 29]                           arg: expr
-B: [ 25,  29] PS: [0, 25] PE: [0, 29]                             ternary_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                             delegate: ternary_expr
 B: [ 25,  29] PS: [0, 25] PE: [0, 29]                               delegate: or_expr
 B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                 delegate: and_expr
 B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                   delegate: compare_expr
@@ -62,7 +62,7 @@ B: [ 43,  49] PS: [1, 12] PE: [1, 18]         fn_leaf_type
 B: [ 43,  49] PS: [1, 12] PE: [1, 18]           string_type `string`
 B: [ 49,  50] PS: [1, 18] PE: [1, 19]     ) `)`
 B: [ 51,  67] PS: [1, 20] PE: [1, 36]     expr: expr
-B: [ 51,  67] PS: [1, 20] PE: [1, 36]       ternary_expr
+B: [ 51,  67] PS: [1, 20] PE: [1, 36]       delegate: ternary_expr
 B: [ 51,  67] PS: [1, 20] PE: [1, 36]         delegate: or_expr
 B: [ 51,  67] PS: [1, 20] PE: [1, 36]           delegate: and_expr
 B: [ 51,  67] PS: [1, 20] PE: [1, 36]             delegate: compare_expr
@@ -75,7 +75,7 @@ B: [ 51,  67] PS: [1, 20] PE: [1, 36]                         call
 B: [ 51,  56] PS: [1, 20] PE: [1, 25]                           func: identifier `print`
 B: [ 56,  57] PS: [1, 25] PE: [1, 26]                           ( `(`
 B: [ 57,  66] PS: [1, 26] PE: [1, 35]                           arg: expr
-B: [ 57,  66] PS: [1, 26] PE: [1, 35]                             ternary_expr
+B: [ 57,  66] PS: [1, 26] PE: [1, 35]                             delegate: ternary_expr
 B: [ 57,  66] PS: [1, 26] PE: [1, 35]                               delegate: or_expr
 B: [ 57,  66] PS: [1, 26] PE: [1, 35]                                 delegate: and_expr
 B: [ 57,  66] PS: [1, 26] PE: [1, 35]                                   delegate: compare_expr
@@ -92,7 +92,7 @@ B: [ 58,  62] PS: [1, 27] PE: [1, 31]                                           
 B: [ 62,  65] PS: [1, 31] PE: [1, 34]                                                     interpolation: interpolation
 B: [ 62,  63] PS: [1, 31] PE: [1, 32]                                                       { `{`
 B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                       expr: expr
-B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                         ternary_expr
+B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                         delegate: ternary_expr
 B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                           delegate: or_expr
 B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                             delegate: and_expr
 B: [ 63,  64] PS: [1, 32] PE: [1, 33]                                                               delegate: compare_expr
@@ -113,7 +113,7 @@ B: [ 82,  85] PS: [2, 14] PE: [2, 17]     return_type: fn_param_or_return_type
 B: [ 82,  85] PS: [2, 14] PE: [2, 17]       fn_leaf_type
 B: [ 82,  85] PS: [2, 14] PE: [2, 17]         int_type `int`
 B: [ 86,  91] PS: [2, 18] PE: [2, 23]     expr: expr
-B: [ 86,  91] PS: [2, 18] PE: [2, 23]       ternary_expr
+B: [ 86,  91] PS: [2, 18] PE: [2, 23]       delegate: ternary_expr
 B: [ 86,  91] PS: [2, 18] PE: [2, 23]         delegate: or_expr
 B: [ 86,  91] PS: [2, 18] PE: [2, 23]           delegate: and_expr
 B: [ 86,  91] PS: [2, 18] PE: [2, 23]             delegate: compare_expr
@@ -151,7 +151,7 @@ B: [119, 120] PS: [3, 27] PE: [3, 28]     block_colon: : `:`
 B: [125, 133] PS: [4,  4] PE: [4, 12]     return_stmt: return_stmt
 B: [125, 131] PS: [4,  4] PE: [4, 10]       return `return`
 B: [132, 133] PS: [4, 11] PE: [4, 12]       value: expr
-B: [132, 133] PS: [4, 11] PE: [4, 12]         ternary_expr
+B: [132, 133] PS: [4, 11] PE: [4, 12]         delegate: ternary_expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]           delegate: or_expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]             delegate: and_expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]               delegate: compare_expr
@@ -187,7 +187,7 @@ B: [171, 172] PS: [5, 37] PE: [5, 38]     block_colon: : `:`
 B: [177, 185] PS: [6,  4] PE: [6, 12]     return_stmt: return_stmt
 B: [177, 183] PS: [6,  4] PE: [6, 10]       return `return`
 B: [184, 185] PS: [6, 11] PE: [6, 12]       value: expr
-B: [184, 185] PS: [6, 11] PE: [6, 12]         ternary_expr
+B: [184, 185] PS: [6, 11] PE: [6, 12]         delegate: ternary_expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]           delegate: or_expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]             delegate: and_expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]               delegate: compare_expr
@@ -219,7 +219,7 @@ B: [215, 216] PS: [7, 29] PE: [7, 30]     block_colon: : `:`
 B: [221, 229] PS: [8,  4] PE: [8, 12]     return_stmt: return_stmt
 B: [221, 227] PS: [8,  4] PE: [8, 10]       return `return`
 B: [228, 229] PS: [8, 11] PE: [8, 12]       value: expr
-B: [228, 229] PS: [8, 11] PE: [8, 12]         ternary_expr
+B: [228, 229] PS: [8, 11] PE: [8, 12]         delegate: ternary_expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]           delegate: or_expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]             delegate: and_expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]               delegate: compare_expr

@@ -20,7 +20,7 @@ B: [10, 11] PS: [ 2,  4] PE: [ 2,  5]     lefts: for_lefts
 B: [10, 11] PS: [ 2,  4] PE: [ 2,  5]       left: identifier `i`
 B: [12, 14] PS: [ 2,  6] PE: [ 2,  8]     in `in`
 B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]     right: expr
-B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]       ternary_expr
+B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]       delegate: ternary_expr
 B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]         delegate: or_expr
 B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]           delegate: and_expr
 B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]             delegate: compare_expr
@@ -33,7 +33,7 @@ B: [15, 24] PS: [ 2,  9] PE: [ 2, 18]                         call
 B: [15, 20] PS: [ 2,  9] PE: [ 2, 14]                           func: identifier `range`
 B: [20, 21] PS: [ 2, 14] PE: [ 2, 15]                           ( `(`
 B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                           arg: expr
-B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                             ternary_expr
+B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                             delegate: ternary_expr
 B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                               delegate: or_expr
 B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                 delegate: and_expr
 B: [21, 23] PS: [ 2, 15] PE: [ 2, 17]                                   delegate: compare_expr
@@ -51,7 +51,7 @@ B: [36, 79] PS: [ 5,  0] PE: [ 9,  8]   if_stmt
 B: [36, 55] PS: [ 5,  0] PE: [ 6,  8]     alt: if_alt
 B: [36, 38] PS: [ 5,  0] PE: [ 5,  2]       if `if`
 B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]       condition: expr
-B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]         ternary_expr
+B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]         delegate: ternary_expr
 B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]           delegate: or_expr
 B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]             delegate: and_expr
 B: [39, 45] PS: [ 5,  3] PE: [ 5,  9]               delegate: compare_expr

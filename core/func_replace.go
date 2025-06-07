@@ -14,7 +14,7 @@ var FuncReplace = BuiltInFunc{
 	MinPosArgCount:  3,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}, {RadStringT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		oldStringArg := f.args[0]
 		regexForOldArg := f.args[1]
 		regexForNewArg := f.args[2]

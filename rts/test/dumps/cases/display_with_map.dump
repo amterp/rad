@@ -11,7 +11,7 @@ B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
 B: [ 4,  6] PS: [0,  4] PE: [0,  6]     right: expr
-B: [ 4,  6] PS: [0,  4] PE: [0,  6]       ternary_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]       delegate: ternary_expr
 B: [ 4,  6] PS: [0,  4] PE: [0,  6]         delegate: or_expr
 B: [ 4,  6] PS: [0,  4] PE: [0,  6]           delegate: and_expr
 B: [ 4,  6] PS: [0,  4] PE: [0,  6]             delegate: compare_expr
@@ -27,7 +27,7 @@ B: [ 5,  6] PS: [0,  5] PE: [0,  6]                             } `}`
 B: [ 7, 37] PS: [1,  0] PE: [2, 19]   rad_block
 B: [ 7, 14] PS: [1,  0] PE: [1,  7]     rad_type: display_keyword `display`
 B: [15, 16] PS: [1,  8] PE: [1,  9]     source: expr
-B: [15, 16] PS: [1,  8] PE: [1,  9]       ternary_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]       delegate: ternary_expr
 B: [15, 16] PS: [1,  8] PE: [1,  9]         delegate: or_expr
 B: [15, 16] PS: [1,  8] PE: [1,  9]           delegate: and_expr
 B: [15, 16] PS: [1,  8] PE: [1,  9]             delegate: compare_expr

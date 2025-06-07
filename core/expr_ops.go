@@ -79,7 +79,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 	switch opNode.Kind() {
 	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
-		argVal := i.evaluate(argNode, 1)[0]
+		argVal := i.evaluate(argNode, EXPECT_ONE_OUTPUT)
 		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RadIntT, RadFloatT)
 
 		intOp, floatOp := i.getUnaryOp(opNode)
@@ -94,7 +94,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 			panic(UNREACHABLE)
 		}
 	case rl.K_NOT:
-		return newRadValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+		return newRadValue(i, parentNode, !i.evaluate(argNode, EXPECT_ONE_OUTPUT).TruthyFalsy())
 	default:
 		i.errorf(opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
@@ -125,10 +125,10 @@ func (i *Interpreter) executeOp(
 	op OpType,
 ) interface{} {
 	left := com.Memoize(func() RadValue {
-		return i.evaluate(leftNode, 1)[0]
+		return i.evaluate(leftNode, EXPECT_ONE_OUTPUT)
 	})
 	right := com.Memoize(func() RadValue {
-		return i.evaluate(rightNode, 1)[0]
+		return i.evaluate(rightNode, EXPECT_ONE_OUTPUT)
 	})
 
 	if op == OP_AND {
@@ -150,9 +150,14 @@ func (i *Interpreter) executeOp(
 	if op == OP_EQUAL || op == OP_NOT_EQUAL {
 		leftType := left().Type()
 		rightType := right().Type()
-		if leftType != rightType && !(leftType == RadFloatT && rightType == RadIntT) && !(leftType == RadIntT && rightType == RadFloatT) {
+		// Allow comparison between RadError and RadString
+		if leftType != rightType &&
+			!(leftType == RadFloatT && rightType == RadIntT) &&
+			!(leftType == RadIntT && rightType == RadFloatT) &&
+			!((leftType == RadErrorT && rightType == RadStringT) ||
+				(leftType == RadStringT && rightType == RadErrorT)) {
 			// different types are not equal
-			// UNLESS they're int/float, in which case we fall through to below and compare there
+			// UNLESS they're int/float or error/string, in which case we fall through to below and compare there
 			return op == OP_NOT_EQUAL
 		}
 	}
@@ -376,6 +381,19 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_IN:
 				return !coercedRight.ContainsKey(left())
 			}
+		case *RadError:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Concat(coercedRight.Msg())
+			case OP_EQUAL:
+				return coercedLeft.Equals(coercedRight.Msg())
+			case OP_NOT_EQUAL:
+				return !coercedLeft.Equals(coercedRight.Msg())
+			case OP_IN:
+				return strings.Contains(coercedRight.Msg().Plain(), coercedLeft.Plain())
+			case OP_NOT_IN:
+				return !strings.Contains(coercedRight.Msg().Plain(), coercedLeft.Plain())
+			}
 		}
 	case bool:
 		switch coercedRight := rightV.(type) {
@@ -439,6 +457,60 @@ func (i *Interpreter) executeOp(
 				return true
 			case OP_NOT_EQUAL:
 				return false
+			}
+		}
+	case *RadError:
+		switch coercedRight := rightV.(type) {
+		case RadString:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Msg().Concat(coercedRight)
+			case OP_EQUAL:
+				return coercedLeft.Msg().Equals(coercedRight)
+			case OP_NOT_EQUAL:
+				return !coercedLeft.Msg().Equals(coercedRight)
+			case OP_IN:
+				return strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
+			case OP_NOT_IN:
+				return !strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
+			}
+		case *RadError:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Msg().Concat(coercedRight.Msg())
+			case OP_EQUAL:
+				return coercedLeft.Equals(coercedRight)
+			case OP_NOT_EQUAL:
+				return !coercedLeft.Equals(coercedRight)
+			}
+		case int64:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
+			}
+		case float64:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
+			}
+		case bool:
+			switch op {
+			case OP_PLUS:
+				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
+			}
+		case *RadList:
+			switch op {
+			case OP_IN:
+				return coercedRight.Contains(left())
+			case OP_NOT_IN:
+				return !coercedRight.Contains(left())
+			}
+		case *RadMap:
+			switch op {
+			case OP_IN:
+				return coercedRight.ContainsKey(left())
+			case OP_NOT_IN:
+				return !coercedRight.ContainsKey(left())
 			}
 		}
 	}

@@ -8,8 +8,9 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var NIL_SENTINAL = RadValue{Val: 0x0}
-var JSON_SENTINAL = RadValue{Val: 0x1}
+// used to internally delete things e.g. vars from env, but also empty returns. too much? subtle bugs?
+var VOID_SENTINEL = RadValue{Val: 0x0}
+var JSON_SENTINEL = RadValue{Val: 0x1}
 
 type RadValue struct {
 	// int64, float64, RadString, bool stored as values
@@ -18,6 +19,7 @@ type RadValue struct {
 	// maps are *RadMap
 	// functions are RadFn
 	// nulls are RadNull
+	// errors are *RadError
 	Val interface{}
 }
 
@@ -39,6 +41,8 @@ func (v RadValue) Type() RadTypeEnum {
 		return RadFnT // todo add to equals, hash in this file
 	case RadNull:
 		return RadNullT
+	case *RadError:
+		return RadErrorT
 	default:
 		panic(fmt.Sprintf("Bug! Unhandled Rad type: %T", v.Val))
 	}
@@ -159,6 +163,21 @@ func (v RadValue) TryGetFn() (RadFn, bool) {
 	return zero, false
 }
 
+func (v RadValue) RequireError(i *Interpreter, node *ts.Node) *RadError {
+	if err, ok := v.TryGetError(); ok {
+		return err
+	}
+	i.errorf(node, "Expected error, got %q: %s", TypeAsString(v), ToPrintable(v))
+	panic(UNREACHABLE)
+}
+
+func (v RadValue) TryGetError() (*RadError, bool) {
+	if err, ok := v.Val.(*RadError); ok {
+		return err, true
+	}
+	return nil, false
+}
+
 func (v RadValue) TryGetFloatAllowingInt() (float64, bool) {
 	switch coerced := v.Val.(type) {
 	case int64:
@@ -176,6 +195,11 @@ func (v RadValue) RequireFloatAllowingInt(i *Interpreter, node *ts.Node) float64
 	}
 	i.errorf(node, "Expected float, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
+}
+
+func (v RadValue) IsError() bool {
+	_, ok := v.Val.(*RadError)
+	return ok
 }
 
 func (v RadValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RadValue) {
@@ -204,6 +228,8 @@ func (v RadValue) Hash() string {
 		return val.Plain() // attributes don't impact hash
 	case int64, float64, bool:
 		return fmt.Sprintf("%v", val)
+	case *RadError:
+		return val.Hash()
 	default:
 		panic(fmt.Sprintf("Cannot key on a %s", TypeAsString(v)))
 	}
@@ -233,6 +259,9 @@ func (left RadValue) Equals(right RadValue) bool {
 	case RadNull:
 		// we know they're both null, so true
 		return true
+	case *RadError:
+		coercedRight := right.Val.(*RadError)
+		return coercedLeft.Equals(coercedRight)
 	default:
 		return false
 	}
@@ -322,6 +351,11 @@ func (v RadValue) Accept(visitor *RadTypeVisitor) {
 			visitor.visitNull(v, coerced)
 			return
 		}
+	case *RadError:
+		if visitor.visitError != nil {
+			visitor.visitError(v, coerced)
+			return
+		}
 	}
 	if visitor.defaultVisit != nil {
 		visitor.defaultVisit(v)
@@ -356,6 +390,8 @@ func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
 		return RadValue{Val: &coerced}
 	case RadFn:
 		return RadValue{Val: coerced}
+	case *RadError:
+		return RadValue{Val: coerced}
 	case map[string]interface{}:
 		radMap := NewRadMap()
 		for key, val := range coerced {
@@ -380,12 +416,20 @@ func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
 	}
 }
 
-func newRadValues(i *Interpreter, node *ts.Node, value ...interface{}) []RadValue {
-	values := make([]RadValue, len(value))
-	for idx, v := range value {
-		values[idx] = newRadValue(i, node, v)
+func newRadValues(i *Interpreter, node *ts.Node, value ...interface{}) RadValue {
+	if len(value) == 0 {
+		return RAD_NULL_VAL
 	}
-	return values
+
+	if len(value) == 1 {
+		return newRadValue(i, node, value[0])
+	}
+
+	list := NewRadList()
+	for _, v := range value {
+		list.Append(newRadValue(i, node, v))
+	}
+	return newRadValue(i, node, list)
 }
 
 func newRadValueStr(str string) RadValue {
@@ -424,6 +468,6 @@ func newRadValueFn(val RadFn) RadValue {
 	return newRadValue(nil, nil, val)
 }
 
-func newRadValueNull() RadValue {
-	return newRadValue(nil, nil, RAD_NULL)
+func newRadValueError(val *RadError) RadValue {
+	return newRadValue(nil, nil, val)
 }

@@ -83,7 +83,7 @@ func (e *Env) setVar(name string, v RadValue, updateEnclosing bool) {
 		}
 	}
 
-	if v == NIL_SENTINAL {
+	if v == VOID_SENTINEL {
 		delete(e.Vars, name)
 	} else {
 		e.Vars[name] = v

@@ -9,7 +9,7 @@ B: [ 0, 34] PS: [0,  0] PE: [3,  0] source_file
 B: [ 0, 33] PS: [0,  0] PE: [2,  7]   while_loop
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]     while `while`
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]     condition: expr
-B: [ 6, 11] PS: [0,  6] PE: [0, 11]       ternary_expr
+B: [ 6, 11] PS: [0,  6] PE: [0, 11]       delegate: ternary_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]         delegate: or_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]           delegate: and_expr
 B: [ 6, 11] PS: [0,  6] PE: [0, 11]             delegate: compare_expr
@@ -29,7 +29,7 @@ B: [10, 11] PS: [0, 10] PE: [0, 11]                         literal
 B: [10, 11] PS: [0, 10] PE: [0, 11]                           int `0`
 B: [11, 12] PS: [0, 11] PE: [0, 12]     : `:`
 B: [17, 25] PS: [1,  4] PE: [1, 12]     stmt: expr
-B: [17, 25] PS: [1,  4] PE: [1, 12]       ternary_expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]       delegate: ternary_expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]         delegate: or_expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]           delegate: and_expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]             delegate: compare_expr
@@ -42,7 +42,7 @@ B: [17, 25] PS: [1,  4] PE: [1, 12]                         call
 B: [17, 22] PS: [1,  4] PE: [1,  9]                           func: identifier `print`
 B: [22, 23] PS: [1,  9] PE: [1, 10]                           ( `(`
 B: [23, 24] PS: [1, 10] PE: [1, 11]                           arg: expr
-B: [23, 24] PS: [1, 10] PE: [1, 11]                             ternary_expr
+B: [23, 24] PS: [1, 10] PE: [1, 11]                             delegate: ternary_expr
 B: [23, 24] PS: [1, 10] PE: [1, 11]                               delegate: or_expr
 B: [23, 24] PS: [1, 10] PE: [1, 11]                                 delegate: and_expr
 B: [23, 24] PS: [1, 10] PE: [1, 11]                                   delegate: compare_expr

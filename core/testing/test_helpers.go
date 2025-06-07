@@ -76,14 +76,14 @@ var (
 
 type ErrorOrExit struct {
 	exitCode *int
-	//stderrSnapshot string
+	// stderrSnapshot string
 	panicMsg *string
 }
 
 func newRunnerInputInput() core.RunnerInput {
 	testExitFunc := func(code int) {
 		errorOrExit.exitCode = &code
-		//errorOrExit.stderrSnapshot = stdErrBuffer.String()
+		// errorOrExit.stderrSnapshot = stdErrBuffer.String()
 		panic(ignorePanicMsg)
 	}
 	sleepFunc := func(duration time.Duration) {
@@ -145,7 +145,7 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 		if r := recover(); r != nil {
 			msg := fmt.Sprintf("%v", r)
 			if !strings.Contains(msg, ignorePanicMsg) {
-				//errorOrExit.stderrSnapshot += msg
+				// errorOrExit.stderrSnapshot += msg
 				errorOrExit.panicMsg = &msg
 			}
 		}
@@ -199,9 +199,6 @@ func assertAllElseEmpty(t *testing.T) {
 
 func assertError(t *testing.T, expectedCode int, expectedMsg string) {
 	t.Helper()
-	//stdErrBuffer.Reset()
-	//errBuffer := bytes.NewBufferString(errorOrExit.stderrSnapshot)
-	//errorOrExit.stderrSnapshot = ""
 	assertOnlyOutput(t, stdErrBuffer, expectedMsg)
 	assertExitCode(t, expectedCode)
 }

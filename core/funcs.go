@@ -76,6 +76,7 @@ const (
 	FUNC_HTTP_TRACE         = "http_trace"
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
+	FUNC_ERROR              = "error"
 	FUNC_GET_PATH           = "get_path"
 	FUNC_FIND_PATHS         = "find_paths"
 	FUNC_DELETE_PATH        = "delete_path"
@@ -190,22 +191,24 @@ var (
 )
 
 type FuncInvocationArgs struct {
-	i                  *Interpreter
-	callNode           *ts.Node
-	funcName           string
-	args               []PosArg
-	namedArgs          map[string]namedArg
-	numExpectedOutputs int
+	i            *Interpreter
+	callNode     *ts.Node
+	funcName     string
+	args         []PosArg
+	namedArgs    map[string]namedArg
+	ctx          *EvalCtx
+	panicIfError bool
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, isBuiltIn bool, ctx *EvalCtx) FuncInvocationArgs {
 	return FuncInvocationArgs{
-		i:                  i,
-		callNode:           callNode,
-		funcName:           funcName,
-		args:               args,
-		namedArgs:          namedArgs,
-		numExpectedOutputs: numExpectedOutputs,
+		i:            i,
+		callNode:     callNode,
+		funcName:     funcName,
+		args:         args,
+		namedArgs:    namedArgs,
+		panicIfError: !(funcName == FUNC_ERROR && isBuiltIn),
+		ctx:          ctx,
 	}
 }
 
@@ -286,7 +289,7 @@ type BuiltInFunc struct {
 	// - given at least as many args as required (MinPosArgCount)
 	// - not given more args than types have been defined for (PosArgTypes)
 	// - only valid named args are given (if given) (valid name, valid type) (NamedArgs)
-	Execute func(FuncInvocationArgs) []RadValue
+	Execute func(FuncInvocationArgs) RadValue
 }
 
 var FunctionsByName map[string]BuiltInFunc
@@ -315,7 +318,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT, RadListT, RadMapT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				switch v := arg.value.Val.(type) {
 				case RadString:
@@ -337,7 +340,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				namedArgReverse: {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				reverseArg, exists := f.namedArgs[namedArgReverse]
 				reverse := false
 				if exists {
@@ -348,7 +351,7 @@ func init() {
 				switch coerced := arg.value.Val.(type) {
 				case RadString:
 					// todo maintain attributes
-					str := f.i.evaluate(arg.node, 1)[0].RequireStr(f.i, f.callNode).Plain()
+					str := f.i.evaluate(arg.node, EXPECT_ONE_OUTPUT).RequireStr(f.i, f.callNode).Plain()
 					runes := []rune(str)
 					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
 					return newRadValues(f.i, f.callNode, string(runes))
@@ -372,7 +375,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				namedArgTz: {RadStringT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				tz := constDefault
 				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
 					tz = tzArg.value.RequireStr(f.i, tzArg.valueNode).Plain()
@@ -385,19 +388,12 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
 					}
 				}
 
 				nowMap := NewTimeMap(RClock.Now().In(location))
-				if f.numExpectedOutputs == 1 {
-					return newRadValues(f.i, f.callNode, nowMap)
-				}
-				return newRadValues(f.i, f.callNode, nowMap, RAD_NULL)
+				return newRadValues(f.i, f.callNode, nowMap)
 			},
 		},
 		{
@@ -409,7 +405,7 @@ func init() {
 				namedArgTz:   {RadStringT},
 				namedArgUnit: {RadStringT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				epochArg := f.args[0]
 				epoch := epochArg.value.RequireInt(f.i, epochArg.node)
 
@@ -449,11 +445,7 @@ func init() {
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
 						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(epochArg.node, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrAmbiguousEpoch, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch))
 					}
 				} else {
 					switch unit {
@@ -472,11 +464,7 @@ func init() {
 					default:
 						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
 							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeUnit, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit))
 					}
 				}
 
@@ -493,21 +481,13 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
 					}
 				}
 
 				goTime := time.Unix(second, nanoSecond).In(location)
 				timeMap := NewTimeMap(goTime)
-
-				if f.numExpectedOutputs == 1 {
-					return newRadValues(f.i, f.callNode, timeMap)
-				}
-				return newRadValues(f.i, f.callNode, timeMap, RAD_NULL)
+				return newRadValues(f.i, f.callNode, timeMap)
 			},
 		},
 		{
@@ -516,7 +496,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				return newRadValues(f.i, f.callNode, NewRadString(TypeAsString(f.args[0].value)))
 			},
 		},
@@ -526,7 +506,7 @@ func init() {
 			MinPosArgCount:  2, // todo: should "" just be the default joiner?
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadStringT}, {RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				listArg := f.args[0]
 				sepArg := f.args[1]
 				prefixArg := tryGetArg(2, f.args)
@@ -552,7 +532,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Upper())
 			},
@@ -563,7 +543,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Lower())
 			},
@@ -574,7 +554,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
 				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
@@ -588,7 +568,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
 				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
@@ -602,7 +582,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadMapT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Keys())
 			},
@@ -613,7 +593,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadMapT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
 			},
@@ -624,7 +604,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				strArg := f.args[0]
 				maxLenArg := f.args[1]
 				maxLen := maxLenArg.value.RequireInt(f.i, maxLenArg.node)
@@ -652,7 +632,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				output := NewRadList()
@@ -676,7 +656,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := tryGetArg(0, f.args)
 
 				prompt := "Confirm? [y/n] > "
@@ -700,7 +680,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				out, err := TryConvertJsonToNativeTypes(f.i, f.callNode, arg.value.RequireStr(f.i, arg.node).Plain())
@@ -716,27 +696,17 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				parsed, err := rts.ParseInt(str)
 
 				if err == nil {
-					if f.numExpectedOutputs == 1 {
-						return newRadValues(f.i, f.callNode, parsed)
-					} else {
-						return newRadValues(f.i, f.callNode, parsed, NewRadMap())
-					}
+					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					if f.numExpectedOutputs == 1 {
-						// todo when errors require codes, redo
-						f.i.errorf(f.callNode, errMsg)
-						panic(UNREACHABLE)
-					} else {
-						return newRadValues(f.i, f.callNode, 0, ErrorRadMap(raderr.ErrParseIntFailed, errMsg))
-					}
+					return newRadValues(f.i, f.callNode, 0, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
 				}
 			},
 		},
@@ -746,27 +716,17 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				parsed, err := rts.ParseFloat(str)
 
 				if err == nil {
-					if f.numExpectedOutputs == 1 {
-						return newRadValues(f.i, f.callNode, parsed)
-					} else {
-						return newRadValues(f.i, f.callNode, parsed, NewRadMap())
-					}
+					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					if f.numExpectedOutputs == 1 {
-						// todo when errors require codes, redo
-						f.i.errorf(f.callNode, errMsg)
-						panic(UNREACHABLE)
-					} else {
-						return newRadValues(f.i, f.callNode, 0, ErrorRadMap(raderr.ErrParseFloatFailed, errMsg))
-					}
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseFloatFailed))
 				}
 			},
 		},
@@ -776,7 +736,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				switch coerced := arg.value.Val.(type) {
@@ -791,6 +751,17 @@ func init() {
 			},
 		},
 		{
+			Name:            FUNC_ERROR,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) RadValue {
+				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
+				return newRadValues(f.i, f.callNode, NewError(err))
+			},
+		},
+		{
 			Name:            FUNC_INPUT,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  0,
@@ -800,7 +771,7 @@ func init() {
 				namedArgDefault: {RadStringT},
 				namedArgSecret:  {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				prompt := "> "
 				if promptArg := tryGetArg(0, f.args); promptArg != nil {
 					prompt = promptArg.value.RequireStr(f.i, promptArg.node).Plain()
@@ -834,7 +805,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
 
@@ -868,7 +839,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				envVarArg := f.args[0]
 				envVar := envVarArg.value.RequireStr(f.i, envVarArg.node).Plain()
 				envValue := os.Getenv(envVar)
@@ -886,7 +857,7 @@ func init() {
 				namedArgDepth:    {RadIntT},
 				namedArgRelative: {RadStringT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				pathStr := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
 
@@ -969,7 +940,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
 				deleted := false
@@ -989,7 +960,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				strArg := f.args[0]
 				substrArg := f.args[1]
 
@@ -1009,7 +980,7 @@ func init() {
 				namedArgFill:   {},
 				namedArgStrict: {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				strictArg, strictExists := f.namedArgs[namedArgStrict]
 				strict := false
 				if strictExists {
@@ -1073,7 +1044,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				asStr := ToPrintableQuoteStr(arg.value, false)
 				return newRadValues(f.i, f.callNode, asStr)
@@ -1085,7 +1056,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				output := int64(0)
@@ -1118,7 +1089,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
 				output := 0.0
@@ -1152,7 +1123,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
 
@@ -1174,7 +1145,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.Trim(chars)
 				})
@@ -1186,7 +1157,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimPrefix(chars)
 				})
@@ -1198,7 +1169,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimSuffix(chars)
 				})
@@ -1218,7 +1189,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				namedArgMode: {RadStringT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
 				mode := constText
@@ -1227,7 +1198,6 @@ func init() {
 				}
 
 				resultMap := NewRadMap()
-				errMap := NewRadMap()
 
 				data, err := os.ReadFile(path)
 				if err == nil {
@@ -1246,20 +1216,14 @@ func init() {
 						f.i.errorf(f.callNode, "Invalid mode %q in read_file; expected %q or %q", mode, constText, constBytes)
 					}
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoExist, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoPermission, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					errMap = ErrorRadMap(raderr.ErrFileRead, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
 				}
 
-				if f.numExpectedOutputs == 1 {
-					if errMap.Len() > 0 {
-						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
-					}
-					return newRadValues(f.i, f.callNode, resultMap)
-				}
-				return newRadValues(f.i, f.callNode, resultMap, errMap)
+				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{
@@ -1270,7 +1234,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				namedArgAppend: {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 				content := f.args[1].value.RequireStr(f.i, f.args[1].node).String()
 
@@ -1280,7 +1244,6 @@ func init() {
 				}
 
 				resultMap := NewRadMap()
-				errMap := NewRadMap()
 
 				data := []byte(content)
 				var err error
@@ -1307,20 +1270,14 @@ func init() {
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
 					resultMap.SetPrimitiveStr("path", path)
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoExist, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoPermission, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					errMap = ErrorRadMap(raderr.ErrFileWrite, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
 				}
 
-				if f.numExpectedOutputs == 1 {
-					if errMap.Len() > 0 {
-						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
-					}
-					return newRadValues(f.i, f.callNode, resultMap)
-				}
-				return newRadValues(f.i, f.callNode, resultMap, errMap)
+				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{
@@ -1329,7 +1286,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}, {RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				var precision int64 = 0
 				if len(f.args) > 1 {
@@ -1356,7 +1313,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
 				return newRadValues(f.i, f.callNode, math.Ceil(val))
@@ -1368,7 +1325,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
 				return newRadValues(f.i, f.callNode, math.Floor(val))
@@ -1380,7 +1337,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
 				if list.Len() == 0 {
@@ -1404,7 +1361,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
 				if list.Len() == 0 {
@@ -1428,7 +1385,7 @@ func init() {
 			MinPosArgCount:  3,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}, {RadFloatT, RadIntT}, {RadFloatT, RadIntT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				valArg := f.args[0]
 				minArg := f.args[1]
 				maxArg := f.args[2]
@@ -1449,7 +1406,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				radString := arg.value.RequireStr(f.i, arg.node)
 				return newRadValues(f.i, f.callNode, radString.Reverse())
@@ -1461,7 +1418,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
 				val, ok := f.i.env.GetVar(str)
@@ -1477,7 +1434,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				text := f.args[0]
 				linkArg := f.args[1]
 				link := linkArg.value.RequireStr(f.i, linkArg.node)
@@ -1497,7 +1454,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				id, _ := uuid.NewRandom()
 				return newRadValues(f.i, f.callNode, id.String())
 			},
@@ -1508,7 +1465,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				id, _ := uuid.NewV7()
 				return newRadValues(f.i, f.callNode, id.String())
 			},
@@ -1523,7 +1480,7 @@ func init() {
 				namedArgTickSizeMs:     {RadIntT},
 				namedArgNumRandomChars: {RadIntT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				// defaults
 				config := fid.NewConfig().
 					WithTickSize(fid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
@@ -1567,7 +1524,7 @@ func init() {
 			MinPosArgCount:  3,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadMapT}, {}, {}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				keyArg := f.args[1]
 				defaultArg := f.args[2]
@@ -1587,7 +1544,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				radHome := RadHomeInst.HomeDir
 				return newRadValues(f.i, f.callNode, radHome)
 			},
@@ -1598,7 +1555,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				stashPath := RadHomeInst.GetStash()
 				if stashPath == nil {
 					errMissingScriptId(f.i, f.callNode)
@@ -1620,13 +1577,10 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				state, existing := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
-				if f.numExpectedOutputs != 1 {
-					return newRadValues(f.i, f.callNode, state, existing)
-				}
-				return newRadValues(f.i, f.callNode, state)
+				return newRadValues(f.i, f.callNode, state, existing)
 			},
 		},
 		{
@@ -1635,13 +1589,13 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadMapT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				mapArg.value.RequireMap(f.i, mapArg.node)
 
 				RadHomeInst.SaveState(f.i, f.callNode, mapArg.value)
 
-				return EMPTY
+				return newRadValues(f.i, f.callNode)
 			},
 		},
 		{
@@ -1650,7 +1604,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				defaultArg := f.args[1]
 
@@ -1664,26 +1618,22 @@ func init() {
 					defaultStr := defaultArg.value.RequireStr(f.i, defaultArg.node).Plain()
 					err := com.CreateFilePathAndWriteString(path, defaultStr)
 					if err != nil {
-						f.i.errorf(f.callNode, "Failed to create file %q: %v", path, err)
+						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
 					}
 
 					output.Set(newRadValueStr(constContent), newRadValueStr(defaultStr))
-					if f.numExpectedOutputs != 1 {
-						return newRadValues(f.i, f.callNode, output, false) // signal not existed
-					}
-					return newRadValues(f.i, f.callNode, output)
+					return newRadValues(f.i, f.callNode, output, false) // signal not existed
 				}
 
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
-					f.i.errorf(f.callNode, "Error loading file %q: %v", path, loadResult.Error)
+					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
-				if f.numExpectedOutputs != 1 {
-					return newRadValues(f.i, f.callNode, output, true) // signal existed
-				}
-				return newRadValues(f.i, f.callNode, output)
+				return newRadValues(f.i, f.callNode, output, true) // signal existed
 			},
 		},
 		{
@@ -1692,7 +1642,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				contentArg := f.args[1]
 
@@ -1701,15 +1651,8 @@ func init() {
 
 				err := com.CreateFilePathAndWriteString(path, contentArg.value.RequireStr(f.i, contentArg.node).Plain())
 				if err != nil {
-					if f.numExpectedOutputs < 2 {
-						f.i.errorf(f.callNode, "Error writing stash file %q: %v", path, err)
-					}
-					errMap := ErrorRadMap(raderr.ErrFileWrite, err.Error())
-					return newRadValues(f.i, f.callNode, path, errMap)
-				}
-
-				if f.numExpectedOutputs >= 2 {
-					return newRadValues(f.i, f.callNode, path, nil)
+					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrFileWrite))
 				}
 
 				return newRadValues(f.i, f.callNode, path) // todo seems weird to return full path?
@@ -1723,7 +1666,7 @@ func init() {
 			NamedArgs: map[string][]RadTypeEnum{
 				constAlgo: {RadStringT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				content := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
 
@@ -1748,8 +1691,9 @@ func init() {
 					digest = hex.EncodeToString(sum[:])
 				default:
 					algoArg := f.namedArgs[constAlgo]
-					f.i.errorf(algoArg.valueNode, "Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
+					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
+					return newRadValues(f.i, algoArg.valueNode, NewErrorStr(errMsg))
 				}
 				return newRadValues(f.i, f.callNode, newRadValueStr(digest))
 			},
@@ -1765,7 +1709,7 @@ func init() {
 				namedArgUrlSafe: {RadBoolT},
 				namedArgPadding: {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
@@ -1803,7 +1747,7 @@ func init() {
 				namedArgUrlSafe: {RadBoolT},
 				namedArgPadding: {RadBoolT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				input := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
 				urlSafe := false
@@ -1838,7 +1782,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
 				encoded := hex.EncodeToString([]byte(input))
@@ -1851,7 +1795,7 @@ func init() {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
 				decodedBytes, err := hex.DecodeString(input)
@@ -1868,7 +1812,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT, RadMapT}, {RadFnT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				collectionArg := f.args[0]
 				fnArg := f.args[1]
 
@@ -1880,17 +1824,17 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
-						outputList.Append(out[0])
+						outputList.Append(out)
 					}
 					outputValue = newRadValue(f.i, f.callNode, outputList)
 				}).ForMap(func(v RadValue, m *RadMap) {
 					outputList := NewRadList()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
-						outputList.Append(out[0])
+						outputList.Append(out)
 						return true // signal to keep going
 					})
 					outputValue = newRadValue(f.i, f.callNode, outputList)
@@ -1905,7 +1849,7 @@ func init() {
 			MinPosArgCount:  2,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT, RadMapT}, {RadFnT}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				collectionArg := f.args[0]
 				fnArg := f.args[1]
 
@@ -1917,9 +1861,9 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
-						if out[0].RequireBool(f.i, fnNode) {
+						if out.RequireBool(f.i, fnNode) {
 							// keep item
 							outputList.Append(val)
 						}
@@ -1928,9 +1872,9 @@ func init() {
 				}).ForMap(func(_ RadValue, m *RadMap) {
 					outputMap := NewRadMap()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
-						if out[0].RequireBool(f.i, fnNode) {
+						if out.RequireBool(f.i, fnNode) {
 							// keep entry
 							outputMap.Set(key, value)
 						}
@@ -1955,7 +1899,7 @@ func init() {
 				namedArgReload:   {RadBoolT},
 				namedArgOverride: {}, // any type
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				keyArg := f.args[1]
 				loaderFnArg := f.args[2]
@@ -1996,10 +1940,11 @@ func init() {
 						fnName,
 						NewPosArgs(), // zero positional args
 						NO_NAMED_ARGS_INPUT,
-						1,
+						fn.IsBuiltIn(),
+						EXPECT_ONE_OUTPUT,
 					)
 					out := fn.Execute(inv)
-					return out[0]
+					return out
 				}
 
 				// if reload, ignore existing value if present and just load
@@ -2030,7 +1975,7 @@ func init() {
 				{RadIntT},
 			}),
 			NamedArgs: NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				textArg := f.args[0]
 				redArg := f.args[1]
 				greenArg := f.args[2]
@@ -2066,7 +2011,7 @@ func init() {
 			MinPosArgCount:  0,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				// When a rad script is invoked, os.Args will look like:
 				// [ "rad", "./script.rl", "arg1", "arg2" ]
 				// Users will not expect or want the initial "rad", so we cut that out.
@@ -2110,7 +2055,7 @@ func createTextAttrFunctions() []BuiltInFunc {
 			MinPosArgCount:  1,
 			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
 			NamedArgs:       NO_NAMED_ARGS,
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				attr := AttrFromString(f.i, f.callNode, attrStr)
 				arg := f.args[0]
 				switch coerced := arg.value.Val.(type) {
@@ -2155,7 +2100,7 @@ func createHttpFunctions() []BuiltInFunc {
 				namedArgHeaders: {RadMapT}, // string->string or string->list[string]
 				namedArgBody:    {RadStringT, RadMapT, RadListT},
 			},
-			Execute: func(f FuncInvocationArgs) []RadValue {
+			Execute: func(f FuncInvocationArgs) RadValue {
 				urlArg := f.args[0]
 
 				method := httpMethodFromFuncName(httpFunc)
@@ -2218,7 +2163,7 @@ func httpMethodFromFuncName(httpFunc string) string {
 	}
 }
 
-func runTrim(f FuncInvocationArgs, trimFunc func(str RadString, chars string) RadString) []RadValue {
+func runTrim(f FuncInvocationArgs, trimFunc func(str RadString, chars string) RadString) RadValue {
 	textArg := f.args[0]
 
 	chars := " \t\n"
