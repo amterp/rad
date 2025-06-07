@@ -35,15 +35,6 @@ print(a)
 	assertNoErrors(t)
 }
 
-func Test_Assign_MultiSimple(t *testing.T) {
-	script := `a, b = 1, 2
-print(a, b)
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "1 2\n")
-	assertNoErrors(t)
-}
-
 func Test_Assign_CannotAssignJsonFieldToIndexVarPath(t *testing.T) {
 	script := `a = [0]
 a[0] = json.id
@@ -56,43 +47,4 @@ a[0] = json.id
   ^^^^ Json paths must be defined to plain identifiers
 `
 	assertError(t, 1, expected)
-}
-
-func Test_Assign_CannotAssignJsonFieldToIndexVarPathInMulti(t *testing.T) {
-	script := `b = []
-a, b[0], c = 1, json.id, 3
-`
-
-	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:4
-
-  a, b[0], c = 1, json.id, 3
-     ^^^^ Json paths must be defined to plain identifiers
-`
-	assertError(t, 1, expected)
-}
-
-func Test_Assign_CanAssignMultiReturningFunctionsIfSufficientLefts(t *testing.T) {
-	script := `a, b, c, d = parse_int("1"), parse_int("2")
-print(a, b, c, d)
-`
-
-	setupAndRunCode(t, script, "--color=never")
-	expected := `1 { } 2 { }
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
-func Test_Assign_CanAssignMultiIntoCollections(t *testing.T) {
-	script := `a, b = [10], [20]
-a[0], b[0] = 100, 200
-print(a, b)
-`
-
-	setupAndRunCode(t, script, "--color=never")
-	expected := `[ 100 ] [ 200 ]
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
 }

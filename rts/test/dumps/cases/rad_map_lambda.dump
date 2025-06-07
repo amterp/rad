@@ -30,10 +30,11 @@ B: [34, 37] PS: [2,  4] PE: [2,  7]       identifier: identifier `Age`
 B: [37, 38] PS: [2,  7] PE: [2,  8]       : `:`
 B: [47, 62] PS: [3,  8] PE: [3, 23]       mod_stmt: rad_field_mod_map
 B: [47, 50] PS: [3,  8] PE: [3, 11]         map `map`
-B: [51, 62] PS: [3, 12] PE: [3, 23]         lambda: lambda
+B: [51, 62] PS: [3, 12] PE: [3, 23]         lambda: fn_lambda
 B: [51, 53] PS: [3, 12] PE: [3, 14]           keyword: fn `fn`
 B: [53, 54] PS: [3, 14] PE: [3, 15]           ( `(`
-B: [54, 55] PS: [3, 15] PE: [3, 16]           param: identifier `n`
+B: [54, 55] PS: [3, 15] PE: [3, 16]           fn_param
+B: [54, 55] PS: [3, 15] PE: [3, 16]             name: identifier `n`
 B: [55, 56] PS: [3, 16] PE: [3, 17]           ) `)`
 B: [57, 62] PS: [3, 18] PE: [3, 23]           expr: expr
 B: [57, 62] PS: [3, 18] PE: [3, 23]             ternary_expr

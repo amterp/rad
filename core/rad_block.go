@@ -177,10 +177,8 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				lambdaNode := r.i.getChild(&stmtNode, rl.F_LAMBDA)
 
 				var lambda RadFn
-				if lambdaNode.Kind() == rl.K_LAMBDA {
+				if lambdaNode.Kind() == rl.K_FN_LAMBDA {
 					lambda = NewLambda(r.i, lambdaNode)
-				} else if lambdaNode.Kind() == rl.K_FN_BLOCK {
-					lambda = NewFnBlock(r.i, lambdaNode)
 				} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
 					identifier := GetSrc(r.i.sd.Src, lambdaNode)
 					val, ok := r.i.env.GetVar(identifier)

@@ -414,10 +414,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RadVal
 		return newRadValues(i, node, radMap)
 	case rl.K_CALL:
 		return i.callFunction(node, numExpectedOutputs, nil)
-	case rl.K_LAMBDA:
+	case rl.K_FN_LAMBDA:
 		return newRadValues(i, node, NewLambda(i, node))
-	case rl.K_FN_BLOCK:
-		return newRadValues(i, node, NewFnBlock(i, node))
 	case rl.K_LIST_COMPREHENSION:
 		resultExprNode := i.getChild(node, rl.F_EXPR)
 		conditionNode := i.getChild(node, rl.F_CONDITION)

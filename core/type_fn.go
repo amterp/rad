@@ -22,8 +22,16 @@ type RadFn struct {
 }
 
 func NewLambda(i *Interpreter, lambdaNode *ts.Node) RadFn {
-	paramNodes := i.getChildren(lambdaNode, rl.F_PARAM)
-	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
+	blockColon := i.getChild(lambdaNode, rl.F_BLOCK_COLON)
+	if blockColon == nil {
+		return NewLambdaOneLiner(i, lambdaNode)
+	} else {
+		return NewLambdaBlock(i, lambdaNode)
+	}
+}
+
+func NewLambdaOneLiner(i *Interpreter, lambdaNode *ts.Node) RadFn {
+	params := resolveParamNames(i, lambdaNode)
 	return RadFn{
 		Params:   params,
 		ReprNode: lambdaNode,
@@ -33,12 +41,11 @@ func NewLambda(i *Interpreter, lambdaNode *ts.Node) RadFn {
 	}
 }
 
-func NewFnBlock(i *Interpreter, fnBlockNode *ts.Node) RadFn {
-	keywordNode := i.getChild(fnBlockNode, rl.F_KEYWORD)
-	paramNodes := i.getChildren(fnBlockNode, rl.F_PARAM)
-	params := lo.Map(paramNodes, func(n ts.Node, _ int) string { return GetSrc(i.sd.Src, &n) })
-	stmtNodes := i.getChildren(fnBlockNode, rl.F_STMT)
-	returnNode := i.getChild(fnBlockNode, rl.F_RETURN_STMT)
+func NewLambdaBlock(i *Interpreter, lambdaNode *ts.Node) RadFn {
+	keywordNode := i.getChild(lambdaNode, rl.F_KEYWORD)
+	params := resolveParamNames(i, lambdaNode)
+	stmtNodes := i.getChildren(lambdaNode, rl.F_STMT)
+	returnNode := i.getChild(lambdaNode, rl.F_RETURN_STMT)
 	return RadFn{
 		Params:     params,
 		ReprNode:   keywordNode,
@@ -112,4 +119,12 @@ func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
 func (fn RadFn) ToString() string {
 	// todo can we include var name if possible?
 	return fmt.Sprintf("<fn (%s)>", strings.Join(fn.Params, ", "))
+}
+
+func resolveParamNames(i *Interpreter, lambdaNode *ts.Node) []string {
+	paramNodes := i.getChildren(lambdaNode, rl.F_PARAM)
+	return lo.Map(paramNodes, func(n ts.Node, _ int) string {
+		nameNode := i.getChild(&n, rl.F_NAME)
+		return GetSrc(i.sd.Src, nameNode)
+	})
 }

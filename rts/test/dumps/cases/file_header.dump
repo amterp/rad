@@ -26,7 +26,7 @@ B: [35, 41] PS: [6,  4] PE: [6, 10]             delegate: compare_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]               delegate: add_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]                 delegate: mult_expr
 B: [35, 41] PS: [6,  4] PE: [6, 10]                   delegate: unary_expr
-B: [35, 41] PS: [6,  4] PE: [6, 10]                     delegate: lambda
+B: [35, 41] PS: [6,  4] PE: [6, 10]                     delegate: fn_lambda
 B: [35, 37] PS: [6,  4] PE: [6,  6]                       keyword: fn `fn`
 B: [37, 39] PS: [6,  6] PE: [6,  8]                       () `()`
 B: [40, 41] PS: [6,  9] PE: [6, 10]                       expr: expr

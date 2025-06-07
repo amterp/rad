@@ -12,7 +12,7 @@ B: [ 0, 34] PS: [0,  0] PE: [0, 34]           delegate: compare_expr
 B: [ 0, 34] PS: [0,  0] PE: [0, 34]             delegate: add_expr
 B: [ 0, 34] PS: [0,  0] PE: [0, 34]               delegate: mult_expr
 B: [ 0, 34] PS: [0,  0] PE: [0, 34]                 delegate: unary_expr
-B: [ 0, 34] PS: [0,  0] PE: [0, 34]                   delegate: lambda
+B: [ 0, 34] PS: [0,  0] PE: [0, 34]                   delegate: fn_lambda
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     keyword: fn `fn`
 B: [ 2,  4] PS: [0,  2] PE: [0,  4]                     () `()`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                     ( `(`

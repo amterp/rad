@@ -13,7 +13,7 @@ B: [ 0, 16] PS: [0,  0] PE: [0, 16]           delegate: compare_expr
 B: [ 0, 16] PS: [0,  0] PE: [0, 16]             delegate: add_expr
 B: [ 0, 16] PS: [0,  0] PE: [0, 16]               delegate: mult_expr
 B: [ 0, 16] PS: [0,  0] PE: [0, 16]                 delegate: unary_expr
-B: [ 0, 16] PS: [0,  0] PE: [0, 16]                   delegate: lambda
+B: [ 0, 16] PS: [0,  0] PE: [0, 16]                   delegate: fn_lambda
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     keyword: fn `fn`
 B: [ 2,  4] PS: [0,  2] PE: [0,  4]                     () `()`
 B: [ 5, 16] PS: [0,  5] PE: [0, 16]                     stmt: shell_stmt
@@ -43,7 +43,7 @@ B: [17, 35] PS: [1,  0] PE: [1, 18]           delegate: compare_expr
 B: [17, 35] PS: [1,  0] PE: [1, 18]             delegate: add_expr
 B: [17, 35] PS: [1,  0] PE: [1, 18]               delegate: mult_expr
 B: [17, 35] PS: [1,  0] PE: [1, 18]                 delegate: unary_expr
-B: [17, 35] PS: [1,  0] PE: [1, 18]                   delegate: lambda
+B: [17, 35] PS: [1,  0] PE: [1, 18]                   delegate: fn_lambda
 B: [17, 19] PS: [1,  0] PE: [1,  2]                     keyword: fn `fn`
 B: [19, 21] PS: [1,  2] PE: [1,  4]                     () `()`
 B: [22, 23] PS: [1,  5] PE: [1,  6]                     ( `(`
