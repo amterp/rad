@@ -330,3 +330,124 @@ Things to think for next time:
 - 'catch' equivalent for rad?
 - Switch statements on types?
 - try to conclude: union type, or separate 'error' return?
+
+## 2025-06-07
+
+Liking the union idea, and thinking about adapting Zig's `try` syntax. What about `catch` ?
+
+```
+fn myfoo() -> int|error:
+  pass
+
+// here, if myfoo() returns an error, it instantly gets propagated up.
+a = myfoo()
+
+// if myfoo() returns an error, it will instead by let through and assigned to 'a'
+a = catch myfoo()
+switch_type a:
+  int -> print("It's an int!")
+  error -> print("It's an error D:")
+```
+
+Multiple returns complicate this a bit. How say 'return 2 values, or an error'?
+
+```
+a, b = catch myfoo() // if error, what are 'a' and 'b'?
+```
+
+Don't actually see how a union approach to errors work here ...
+Zig gets away with it in part because it doesn't have multiple return values (or rather, it requires users to package them up into a single e.g. struct).
+They have destructuring. Idk if we necessarily want this in Rad? It could be nice tho, perhaps.
+
+```
+fn myfoo() -> list|error:
+  return [1, 2]
+  return error("Bad!")
+
+[a, b] = myfoo() // can safely destructure because an error would be propagated immediately
+
+out = catch myfoo() // cannot safely destructure because error may be returned
+switch_type out:
+  error -> print("Error: {out}")
+  default -> [ a, b ] = out
+```
+
+If we do this, we should get rid of multiple returns, I think. Keeping both would be bad (two ways to do the same thing).
+
+---
+
+Okay, let me lay out the spec for functions. Custom and built-in functions will follow this spec.
+
+No type hinting:
+
+```
+fn myfoo1():
+  return 1 // single return
+
+fn myfoo2():
+  return [1, 2, 3] // multiple return
+
+fn myfoo3():
+  return error("something went wrong")
+
+a = myfoo()
+
+b = myfoo2()         // can still store list
+[x, y, z] = myfoo3() // or can destructure
+[x, y, z] = b        // can also go via variable first if you want
+
+c = myfoo3()       // if error, this will immediately propagate. if we continue, c is guaranteed to be a non-error value
+c = catch myfoo3() // here, 'c' may be assigned the error instead.
+
+switch_type c:  // unsure about a switch_type syntax, or if `type c` should return a type that `switch` then branches on
+  int, float -> print("got number!")
+  error -> print("error: {c}")
+  default -> print("got something else")
+
+// nested function calls are now simple. multiple returns just become a list to the next one.
+mybar(myfoo())
+myfoo().mybar()  // UFCS
+mybar(catch myfoo())
+
+(catch myfoo()).mybar()  // UFCS
+catch myfoo().mybar()    // UFCS binds tighter than 'catch', catch should apply to the entire expression
+
+myquz(*myfoo())  // but could use spread operator to spread out to 3 different args, if myquz accepted that
+```
+
+Type hinting:
+
+```
+fn myfoo1() -> int:
+  return 1 // single return
+
+fn myfoo2() -> [int, int, int]:
+  return [1, 2, 3] // multiple return
+
+fn myfoo3() -> [int, int, int]|error:
+  return error("something went wrong")
+
+// alternatively, could also just write this, if you don't care for type safety on a destructured level
+fn myfoo3() -> list|error:
+  return error("something went wrong")
+```
+
+A lot of other languages implement a tuple type for this sorta thing, but I'm not convinced we need it?
+
+Void functions.
+
+```
+fn no_error() -> none:
+  pass
+
+no_error()  // valid
+a = no_error() // always invalid
+
+fn maybe_error() -> error?:
+  pass
+
+maybe_error() // valid, will panic if error
+catch maybe_error() // valid, will silently continue if error
+a = maybe_error() // 'a' will always be null, `error?` means nullable, and if we return error, then we will panic. kinda weird maybe.
+a = catch maybe_error() // a may be null, or 'error' if error returned
+```

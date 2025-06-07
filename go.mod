@@ -19,6 +19,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.10.0
 	github.com/tree-sitter/go-tree-sitter v0.25.0
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/term v0.24.0
 )
 
