@@ -35,10 +35,10 @@ B: [ 47,  50] PS: [3,  8] PE: [3, 11]         map `map`
 B: [ 51, 104] PS: [3, 12] PE: [5, 22]         lambda: fn_lambda
 B: [ 51,  53] PS: [3, 12] PE: [3, 14]           keyword: fn `fn`
 B: [ 53,  54] PS: [3, 14] PE: [3, 15]           ( `(`
-B: [ 54,  55] PS: [3, 15] PE: [3, 16]           fn_param
+B: [ 54,  55] PS: [3, 15] PE: [3, 16]           param: fn_param
 B: [ 54,  55] PS: [3, 15] PE: [3, 16]             name: identifier `n`
 B: [ 55,  56] PS: [3, 16] PE: [3, 17]           ) `)`
-B: [ 56,  57] PS: [3, 17] PE: [3, 18]           : `:`
+B: [ 56,  57] PS: [3, 17] PE: [3, 18]           block_colon: : `:`
 B: [ 70,  81] PS: [4, 12] PE: [4, 23]           stmt: assign
 B: [ 70,  73] PS: [4, 12] PE: [4, 15]             left: var_path
 B: [ 70,  73] PS: [4, 12] PE: [4, 15]               root: identifier `out`

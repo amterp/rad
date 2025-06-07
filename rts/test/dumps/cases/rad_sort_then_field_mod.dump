@@ -36,7 +36,7 @@ B: [54, 57] PS: [4,  8] PE: [4, 11]         map `map`
 B: [58, 69] PS: [4, 12] PE: [4, 23]         lambda: fn_lambda
 B: [58, 60] PS: [4, 12] PE: [4, 14]           keyword: fn `fn`
 B: [60, 61] PS: [4, 14] PE: [4, 15]           ( `(`
-B: [61, 62] PS: [4, 15] PE: [4, 16]           fn_param
+B: [61, 62] PS: [4, 15] PE: [4, 16]           param: fn_param
 B: [61, 62] PS: [4, 15] PE: [4, 16]             name: identifier `n`
 B: [62, 63] PS: [4, 16] PE: [4, 17]           ) `)`
 B: [64, 69] PS: [4, 18] PE: [4, 23]           expr: expr

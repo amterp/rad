@@ -54,7 +54,7 @@ B: [ 31,  67] PS: [1,  0] PE: [1, 36]   fn_named
 B: [ 31,  33] PS: [1,  0] PE: [1,  2]     keyword: fn `fn`
 B: [ 34,  39] PS: [1,  3] PE: [1,  8]     name: identifier `myfoo`
 B: [ 39,  40] PS: [1,  8] PE: [1,  9]     ( `(`
-B: [ 40,  49] PS: [1,  9] PE: [1, 18]     fn_param
+B: [ 40,  49] PS: [1,  9] PE: [1, 18]     param: fn_param
 B: [ 40,  41] PS: [1,  9] PE: [1, 10]       name: identifier `a`
 B: [ 41,  42] PS: [1, 10] PE: [1, 11]       : `:`
 B: [ 43,  49] PS: [1, 12] PE: [1, 18]       type: fn_param_or_return_type
@@ -136,7 +136,7 @@ B: [ 92, 133] PS: [3,  0] PE: [4, 12]   fn_named
 B: [ 92,  94] PS: [3,  0] PE: [3,  2]     keyword: fn `fn`
 B: [ 95, 100] PS: [3,  3] PE: [3,  8]     name: identifier `myfoo`
 B: [100, 101] PS: [3,  8] PE: [3,  9]     ( `(`
-B: [101, 109] PS: [3,  9] PE: [3, 17]     fn_param
+B: [101, 109] PS: [3,  9] PE: [3, 17]     param: fn_param
 B: [101, 102] PS: [3,  9] PE: [3, 10]       name: identifier `a`
 B: [102, 103] PS: [3, 10] PE: [3, 11]       : `:`
 B: [104, 109] PS: [3, 12] PE: [3, 17]       type: fn_param_or_return_type
@@ -147,7 +147,7 @@ B: [111, 113] PS: [3, 19] PE: [3, 21]     -> `->`
 B: [114, 119] PS: [3, 22] PE: [3, 27]     return_type: fn_param_or_return_type
 B: [114, 119] PS: [3, 22] PE: [3, 27]       fn_leaf_type
 B: [114, 119] PS: [3, 22] PE: [3, 27]         float_type `float`
-B: [119, 120] PS: [3, 27] PE: [3, 28]     : `:`
+B: [119, 120] PS: [3, 27] PE: [3, 28]     block_colon: : `:`
 B: [125, 133] PS: [4,  4] PE: [4, 12]     return_stmt: return_stmt
 B: [125, 131] PS: [4,  4] PE: [4, 10]       return `return`
 B: [132, 133] PS: [4, 11] PE: [4, 12]       value: expr
@@ -166,7 +166,7 @@ B: [134, 185] PS: [5,  0] PE: [6, 12]   fn_named
 B: [134, 136] PS: [5,  0] PE: [5,  2]     keyword: fn `fn`
 B: [137, 142] PS: [5,  3] PE: [5,  8]     name: identifier `myfoo`
 B: [142, 143] PS: [5,  8] PE: [5,  9]     ( `(`
-B: [143, 151] PS: [5,  9] PE: [5, 17]     fn_param
+B: [143, 151] PS: [5,  9] PE: [5, 17]     param: fn_param
 B: [143, 144] PS: [5,  9] PE: [5, 10]       name: identifier `a`
 B: [144, 145] PS: [5, 10] PE: [5, 11]       : `:`
 B: [146, 151] PS: [5, 12] PE: [5, 17]       type: fn_param_or_return_type
@@ -183,7 +183,7 @@ B: [162, 165] PS: [5, 28] PE: [5, 31]         int_type `int`
 B: [165, 166] PS: [5, 31] PE: [5, 32]       | `|`
 B: [166, 171] PS: [5, 32] PE: [5, 37]       fn_leaf_type
 B: [166, 171] PS: [5, 32] PE: [5, 37]         error_type `error`
-B: [171, 172] PS: [5, 37] PE: [5, 38]     : `:`
+B: [171, 172] PS: [5, 37] PE: [5, 38]     block_colon: : `:`
 B: [177, 185] PS: [6,  4] PE: [6, 12]     return_stmt: return_stmt
 B: [177, 183] PS: [6,  4] PE: [6, 10]       return `return`
 B: [184, 185] PS: [6, 11] PE: [6, 12]       value: expr
@@ -202,7 +202,7 @@ B: [186, 229] PS: [7,  0] PE: [8, 12]   fn_named
 B: [186, 188] PS: [7,  0] PE: [7,  2]     keyword: fn `fn`
 B: [189, 194] PS: [7,  3] PE: [7,  8]     name: identifier `myfoo`
 B: [194, 195] PS: [7,  8] PE: [7,  9]     ( `(`
-B: [195, 204] PS: [7,  9] PE: [7, 18]     fn_param
+B: [195, 204] PS: [7,  9] PE: [7, 18]     param: fn_param
 B: [195, 196] PS: [7,  9] PE: [7, 10]       name: identifier `a`
 B: [196, 197] PS: [7, 10] PE: [7, 11]       : `:`
 B: [198, 204] PS: [7, 12] PE: [7, 18]       type: fn_param_or_return_type
@@ -215,7 +215,7 @@ B: [209, 215] PS: [7, 23] PE: [7, 29]     return_type: fn_param_or_return_type
 B: [209, 215] PS: [7, 23] PE: [7, 29]       fn_leaf_type
 B: [209, 214] PS: [7, 23] PE: [7, 28]         error_type `error`
 B: [214, 215] PS: [7, 28] PE: [7, 29]         optional: ? `?`
-B: [215, 216] PS: [7, 29] PE: [7, 30]     : `:`
+B: [215, 216] PS: [7, 29] PE: [7, 30]     block_colon: : `:`
 B: [221, 229] PS: [8,  4] PE: [8, 12]     return_stmt: return_stmt
 B: [221, 227] PS: [8,  4] PE: [8, 10]       return `return`
 B: [228, 229] PS: [8, 11] PE: [8, 12]       value: expr
