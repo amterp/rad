@@ -84,6 +84,7 @@ const (
 	K_SWITCH_CASE_BLOCK       = "switch_case_block"
 	K_FN_LAMBDA               = "fn_lambda"
 	K_PASS                    = "pass_stmt"
+	K_FN_NAMED                = "fn_named"
 
 	// Field names
 	F_LEFT           = "left"

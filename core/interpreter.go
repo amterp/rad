@@ -100,6 +100,12 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 	// no-ops
 	case rl.K_SOURCE_FILE:
 		children := node.Children(node.Walk())
+		// first define custom named functions
+		for _, child := range children {
+			if child.Kind() == rl.K_FN_NAMED {
+				i.defineCustomNamedFunction(child)
+			}
+		}
 		for _, child := range children {
 			i.recursivelyRun(&child)
 		}
@@ -223,6 +229,12 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		matchedCaseNode := matchedCaseNodes[0]
 		caseValueAltNode := i.getChild(&matchedCaseNode, rl.F_ALT)
 		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
+	case rl.K_FN_NAMED:
+		if node.Parent().Kind() == rl.K_SOURCE_FILE {
+			// these are already defined initially
+			return
+		}
+		i.defineCustomNamedFunction(*node)
 	case rl.K_DEFER_BLOCK:
 		keywordNode := i.getChild(node, rl.F_KEYWORD)
 		stmtNodes := i.getChildren(node, rl.F_STMT)
@@ -766,6 +778,12 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 		leftVarPathNode := &leftNodes[idx]
 		i.doVarPathAssign(leftVarPathNode, output, false)
 	}
+}
+func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
+	nameNode := i.getChild(&fnNamedNode, rl.F_NAME)
+	name := GetSrc(i.sd.Src, nameNode)
+	lambda := NewLambda(i, &fnNamedNode)
+	i.env.SetVar(name, newRadValueFn(lambda))
 }
 
 func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNodes []ts.Node) {
