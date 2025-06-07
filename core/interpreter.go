@@ -124,7 +124,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_EXPR:
-		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
+		i.evalCatchableExpr(node, NO_NUM_RETURN_VALUES_CONSTRAINT)
 	case rl.K_PASS:
 		// no-op
 	case rl.K_BREAK_STMT:
@@ -271,7 +271,9 @@ func (i *Interpreter) evaluate(node *ts.Node, numExpectedOutputs int) []RadValue
 
 func (i *Interpreter) unsafeEval(node *ts.Node, numExpectedOutputs int) []RadValue {
 	switch node.Kind() {
-	case rl.K_EXPR, rl.K_PRIMARY_EXPR, rl.K_LITERAL:
+	case rl.K_EXPR:
+		return i.evalCatchableExpr(node, numExpectedOutputs)
+	case rl.K_PRIMARY_EXPR, rl.K_LITERAL:
 		return i.evaluate(i.getOnlyChild(node), numExpectedOutputs)
 	case rl.K_PARENTHESIZED_EXPR:
 		return i.evaluate(i.getChild(node, rl.F_EXPR), numExpectedOutputs)
@@ -822,4 +824,18 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNo
 
 func (i *Interpreter) breakingOrContinuing() bool {
 	return i.forWhileLoopLevel > 0 && i.breaking || i.continuing
+}
+
+func (i *Interpreter) evalCatchableExpr(exprNode *ts.Node, numExpectedReturnValues int) []RadValue {
+	catchNode := i.getChild(exprNode, rl.F_CATCH)
+	delegateNode := i.getChild(exprNode, rl.F_DELEGATE)
+	out := i.evaluate(delegateNode, numExpectedReturnValues)
+
+	if len(out) == 0 || out[0].Type() != RadErrorT || catchNode != nil {
+		return out
+	}
+
+	err := out[0].RequireError(i, exprNode)
+	i.errorf(exprNode, err.Msg().Plain())
+	panic(UNREACHABLE)
 }

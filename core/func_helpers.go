@@ -95,7 +95,8 @@ func (i *Interpreter) callFunction(
 		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	return fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+	output := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+	return output
 }
 
 func assertMinNumPosArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {

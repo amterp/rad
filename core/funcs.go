@@ -76,6 +76,7 @@ const (
 	FUNC_HTTP_TRACE         = "http_trace"
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
+	FUNC_ERROR              = "error"
 	FUNC_GET_PATH           = "get_path"
 	FUNC_FIND_PATHS         = "find_paths"
 	FUNC_DELETE_PATH        = "delete_path"
@@ -788,6 +789,17 @@ func init() {
 					bugIncorrectTypes(FUNC_ABS)
 					panic(UNREACHABLE)
 				}
+			},
+		},
+		{
+			Name:            FUNC_ERROR,
+			ReturnValues:    ONE_RETURN_VAL,
+			MinPosArgCount:  1,
+			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			NamedArgs:       NO_NAMED_ARGS,
+			Execute: func(f FuncInvocationArgs) []RadValue {
+				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
+				return newRadValues(f.i, f.callNode, NewError(err))
 			},
 		},
 		{

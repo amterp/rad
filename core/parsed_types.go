@@ -17,6 +17,7 @@ const (
 	RadMapT
 	RadFnT
 	RadNullT
+	RadErrorT
 )
 
 func (r RadTypeEnum) AsString() string {
@@ -37,6 +38,8 @@ func (r RadTypeEnum) AsString() string {
 		return "function"
 	case RadNullT:
 		return "null"
+	case RadErrorT:
+		return "error"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", r))
 		panic(UNREACHABLE)

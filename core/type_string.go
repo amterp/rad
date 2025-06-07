@@ -79,15 +79,15 @@ func (s *RadString) ToRuneList() *RadList {
 	return result
 }
 
-func (s *RadString) Concat(other RadString) RadString {
+func (s RadString) Concat(other RadString) RadString {
 	return RadString{Segments: append(s.Segments, other.Segments...)}
 }
 
-func (s *RadString) ConcatStr(other string) RadString {
+func (s RadString) ConcatStr(other string) RadString {
 	return s.Concat(NewRadString(other))
 }
 
-func (s *RadString) Equals(other RadString) bool {
+func (s RadString) Equals(other RadString) bool {
 	return s.Plain() == other.Plain()
 }
 
