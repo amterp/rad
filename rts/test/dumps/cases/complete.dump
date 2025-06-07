@@ -734,10 +734,11 @@ B: [ 576,  578] PS: [ 45,  4] PE: [ 45,  6]       identifier: identifier `f1`
 B: [ 578,  579] PS: [ 45,  6] PE: [ 45,  7]       : `:`
 B: [ 588,  603] PS: [ 46,  8] PE: [ 46, 23]       mod_stmt: rad_field_mod_map
 B: [ 588,  591] PS: [ 46,  8] PE: [ 46, 11]         map `map`
-B: [ 592,  603] PS: [ 46, 12] PE: [ 46, 23]         lambda: lambda
+B: [ 592,  603] PS: [ 46, 12] PE: [ 46, 23]         lambda: fn_lambda
 B: [ 592,  594] PS: [ 46, 12] PE: [ 46, 14]           keyword: fn `fn`
 B: [ 594,  595] PS: [ 46, 14] PE: [ 46, 15]           ( `(`
-B: [ 595,  596] PS: [ 46, 15] PE: [ 46, 16]           param: identifier `a`
+B: [ 595,  596] PS: [ 46, 15] PE: [ 46, 16]           fn_param
+B: [ 595,  596] PS: [ 46, 15] PE: [ 46, 16]             name: identifier `a`
 B: [ 596,  597] PS: [ 46, 16] PE: [ 46, 17]           ) `)`
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]           expr: expr
 B: [ 598,  603] PS: [ 46, 18] PE: [ 46, 23]             ternary_expr

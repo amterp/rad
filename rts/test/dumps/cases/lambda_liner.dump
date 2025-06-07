@@ -18,7 +18,7 @@ B: [ 7, 13] PS: [0,  7] PE: [0, 13]             delegate: compare_expr
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]               delegate: add_expr
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]                 delegate: mult_expr
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]                   delegate: unary_expr
-B: [ 7, 13] PS: [0,  7] PE: [0, 13]                     delegate: lambda
+B: [ 7, 13] PS: [0,  7] PE: [0, 13]                     delegate: fn_lambda
 B: [ 7,  9] PS: [0,  7] PE: [0,  9]                       keyword: fn `fn`
 B: [ 9, 11] PS: [0,  9] PE: [0, 11]                       () `()`
 B: [12, 13] PS: [0, 12] PE: [0, 13]                       expr: expr
@@ -45,10 +45,11 @@ B: [20, 31] PS: [1,  6] PE: [1, 17]             delegate: compare_expr
 B: [20, 31] PS: [1,  6] PE: [1, 17]               delegate: add_expr
 B: [20, 31] PS: [1,  6] PE: [1, 17]                 delegate: mult_expr
 B: [20, 31] PS: [1,  6] PE: [1, 17]                   delegate: unary_expr
-B: [20, 31] PS: [1,  6] PE: [1, 17]                     delegate: lambda
+B: [20, 31] PS: [1,  6] PE: [1, 17]                     delegate: fn_lambda
 B: [20, 22] PS: [1,  6] PE: [1,  8]                       keyword: fn `fn`
 B: [22, 23] PS: [1,  8] PE: [1,  9]                       ( `(`
-B: [23, 24] PS: [1,  9] PE: [1, 10]                       param: identifier `x`
+B: [23, 24] PS: [1,  9] PE: [1, 10]                       fn_param
+B: [23, 24] PS: [1,  9] PE: [1, 10]                         name: identifier `x`
 B: [24, 25] PS: [1, 10] PE: [1, 11]                       ) `)`
 B: [26, 31] PS: [1, 12] PE: [1, 17]                       expr: expr
 B: [26, 31] PS: [1, 12] PE: [1, 17]                         ternary_expr
@@ -79,12 +80,14 @@ B: [38, 52] PS: [2,  6] PE: [2, 20]             delegate: compare_expr
 B: [38, 52] PS: [2,  6] PE: [2, 20]               delegate: add_expr
 B: [38, 52] PS: [2,  6] PE: [2, 20]                 delegate: mult_expr
 B: [38, 52] PS: [2,  6] PE: [2, 20]                   delegate: unary_expr
-B: [38, 52] PS: [2,  6] PE: [2, 20]                     delegate: lambda
+B: [38, 52] PS: [2,  6] PE: [2, 20]                     delegate: fn_lambda
 B: [38, 40] PS: [2,  6] PE: [2,  8]                       keyword: fn `fn`
 B: [40, 41] PS: [2,  8] PE: [2,  9]                       ( `(`
-B: [41, 42] PS: [2,  9] PE: [2, 10]                       param: identifier `x`
+B: [41, 42] PS: [2,  9] PE: [2, 10]                       fn_param
+B: [41, 42] PS: [2,  9] PE: [2, 10]                         name: identifier `x`
 B: [42, 43] PS: [2, 10] PE: [2, 11]                       , `,`
-B: [44, 45] PS: [2, 12] PE: [2, 13]                       param: identifier `y`
+B: [44, 45] PS: [2, 12] PE: [2, 13]                       fn_param
+B: [44, 45] PS: [2, 12] PE: [2, 13]                         name: identifier `y`
 B: [45, 46] PS: [2, 13] PE: [2, 14]                       ) `)`
 B: [47, 52] PS: [2, 15] PE: [2, 20]                       expr: expr
 B: [47, 52] PS: [2, 15] PE: [2, 20]                         ternary_expr

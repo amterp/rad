@@ -106,19 +106,6 @@ bar.print()
 	assertNoErrors(t)
 }
 
-func Test_Fn_CanMultiReturn(t *testing.T) {
-	script := `
-foo = fn() (1, 2)
-a, b = foo()
-print(a, b)
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `1 2
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
 func Test_Fn_Increment(t *testing.T) {
 	script := `
 c = 0

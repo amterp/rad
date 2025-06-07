@@ -125,10 +125,11 @@ B: [164, 171] PS: [11, 21] PE: [11, 28]                                   conten
 B: [171, 172] PS: [11, 28] PE: [11, 29]                                 end: string_end `"`
 B: [181, 199] PS: [12,  8] PE: [12, 26]       mod_stmt: rad_field_mod_map
 B: [181, 184] PS: [12,  8] PE: [12, 11]         map `map`
-B: [185, 199] PS: [12, 12] PE: [12, 26]         lambda: lambda
+B: [185, 199] PS: [12, 12] PE: [12, 26]         lambda: fn_lambda
 B: [185, 187] PS: [12, 12] PE: [12, 14]           keyword: fn `fn`
 B: [187, 188] PS: [12, 14] PE: [12, 15]           ( `(`
-B: [188, 189] PS: [12, 15] PE: [12, 16]           param: identifier `v`
+B: [188, 189] PS: [12, 15] PE: [12, 16]           fn_param
+B: [188, 189] PS: [12, 15] PE: [12, 16]             name: identifier `v`
 B: [189, 190] PS: [12, 16] PE: [12, 17]           ) `)`
 B: [191, 199] PS: [12, 18] PE: [12, 26]           expr: expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]             ternary_expr

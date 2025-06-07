@@ -82,8 +82,7 @@ const (
 	K_SWITCH_STMT             = "switch_stmt"
 	K_SWITCH_CASE_EXPR        = "switch_case_expr"
 	K_SWITCH_CASE_BLOCK       = "switch_case_block"
-	K_LAMBDA                  = "lambda"
-	K_FN_BLOCK                = "fn_block"
+	K_FN_LAMBDA               = "fn_lambda"
 	K_PASS                    = "pass_stmt"
 
 	// Field names
@@ -141,6 +140,7 @@ const (
 	F_DELEGATE       = "delegate"
 	F_PARAM          = "param"
 	F_METADATA_ENTRY = "metadata_entry"
+	F_BLOCK_COLON    = "block_colon"
 
 	// Keywords
 	KEYWORD_ASC     = "asc"
