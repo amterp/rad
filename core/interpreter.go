@@ -81,21 +81,26 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 
 func (i *Interpreter) Run() {
 	node := i.sd.Tree.Root()
-	i.recursivelyRun(node)
+	i.safelyEvaluate(node, NO_CONSTRAINT_OUTPUT)
 }
 
-func (i *Interpreter) recursivelyRun(node *ts.Node) {
+func (i *Interpreter) safelyEvaluate(node *ts.Node, ctx EvalCtx) RadValue {
 	if !IsTest {
 		defer func() {
 			if r := recover(); r != nil {
+				radPanic, ok := r.(*RadPanic)
+				if ok {
+					err := radPanic.Err()
+					i.errorf(err.Node, "%s", err.Msg())
+				}
 				i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
 			}
 		}()
 	}
-	i.unsafeRecurse(node)
+	return i.evaluate(node, ctx)
 }
 
-func (i *Interpreter) unsafeRecurse(node *ts.Node) {
+func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
 	switch node.Kind() {
 	// no-ops
 	case rl.K_SOURCE_FILE:
@@ -107,10 +112,10 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 			}
 		}
 		for _, child := range children {
-			i.recursivelyRun(&child)
+			i.evaluate(&child, NO_CONSTRAINT_OUTPUT)
 		}
 	case rl.K_COMMENT, rl.K_SHEBANG, rl.K_FILE_HEADER, rl.K_ARG_BLOCK:
-		return
+		// no-op
 	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case rl.K_ASSIGN:
@@ -124,7 +129,12 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_EXPR:
-		i.evaluate(i.getOnlyChild(node), NO_NUM_RETURN_VALUES_CONSTRAINT)
+		out := i.evaluate(i.getChild(node, rl.F_DELEGATE), ctx)
+		catchNode := i.getChild(node, rl.F_CATCH)
+		if catchNode == nil {
+			i.MaybePropagateError(node, out)
+		}
+		return out
 	case rl.K_PASS:
 		// no-op
 	case rl.K_BREAK_STMT:
@@ -156,7 +166,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		for {
 			condValue := true
 			if condNode != nil {
-				condValue = i.evaluate(condNode, 1).TruthyFalsy()
+				condValue = i.evaluate(condNode, EXPECT_ONE_OUTPUT).TruthyFalsy()
 			}
 			if condValue {
 				i.runBlock(stmtNodes)
@@ -176,7 +186,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 
 			shouldExecute := true
 			if condNode != nil {
-				condResult := i.evaluate(condNode, 1).TruthyFalsy()
+				condResult := i.evaluate(condNode, EXPECT_ONE_OUTPUT).TruthyFalsy()
 				shouldExecute = condResult
 			}
 
@@ -192,13 +202,13 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		caseNodes := i.getChildren(node, rl.F_CASE)
 		defaultNode := i.getChild(node, rl.F_DEFAULT)
 
-		discriminantVal := i.evaluate(discriminantNode, 1)
+		discriminantVal := i.evaluate(discriminantNode, EXPECT_ONE_OUTPUT)
 
 		matchedCaseNodes := make([]ts.Node, 0)
 		for _, caseNode := range caseNodes {
 			caseKeyNodes := i.getChildren(&caseNode, rl.F_CASE_KEY)
 			for _, caseKeyNode := range caseKeyNodes {
-				caseKey := i.evaluate(&caseKeyNode, 1)
+				caseKey := i.evaluate(&caseKeyNode, EXPECT_ONE_OUTPUT)
 				if caseKey.Equals(discriminantVal) {
 					matchedCaseNodes = append(matchedCaseNodes, caseNode)
 					break
@@ -210,7 +220,7 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 			if defaultNode != nil {
 				caseValueAltNode := i.getChild(defaultNode, rl.F_ALT)
 				i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
-				return
+				return VOID_SENTINEL
 			}
 			i.errorf(discriminantNode, "No matching case found for switch")
 		}
@@ -230,11 +240,10 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		caseValueAltNode := i.getChild(&matchedCaseNode, rl.F_ALT)
 		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
 	case rl.K_FN_NAMED:
-		if node.Parent().Kind() == rl.K_SOURCE_FILE {
-			// these are already defined initially
-			return
+		// do not redefine top-level functions as they're already defined
+		if node.Parent().Kind() != rl.K_SOURCE_FILE {
+			i.defineCustomNamedFunction(*node)
 		}
-		i.defineCustomNamedFunction(*node)
 	case rl.K_DEFER_BLOCK:
 		keywordNode := i.getChild(node, rl.F_KEYWORD)
 		stmtNodes := i.getChildren(node, rl.F_STMT)
@@ -253,55 +262,27 @@ func (i *Interpreter) unsafeRecurse(node *ts.Node) {
 		opNode := i.getChild(node, rl.F_OP)
 		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
-	default:
-		i.errorf(node, "Unsupported node kind: %s", node.Kind())
-	}
-}
-
-func (i *Interpreter) evaluate(node *ts.Node, evalCtx EvalCtx) RadValue {
-	if !IsTest {
-		defer func() {
-			if r := recover(); r != nil {
-				i.errorDetailsf(node, fmt.Sprintf("%s\n%s", r, debug.Stack()), "Bug! Panicked here")
-			}
-		}()
-	}
-	return i.unsafeEval(node, evalCtx)
-}
-
-func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
-	switch node.Kind() {
-	case rl.K_EXPR:
-		out := i.evaluate(i.getOnlyChild(node), evalCtx)
-
-		if out.IsError() {
-			err := out.RequireError(i, node)
-			catchNode := i.getChild(node, rl.F_CATCH)
-			err.ShouldPropagate = catchNode == nil
-		}
-
-		return out
 	case rl.K_PRIMARY_EXPR, rl.K_LITERAL:
-		return i.evaluate(i.getOnlyChild(node), evalCtx)
+		return i.evaluate(i.getOnlyChild(node), ctx)
 	case rl.K_PARENTHESIZED_EXPR:
-		return i.evaluate(i.getChild(node, rl.F_EXPR), evalCtx)
+		return i.evaluate(i.getChild(node, rl.F_EXPR), ctx)
 	case rl.K_UNARY_EXPR:
 		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
-			return i.evaluate(delegateNode, evalCtx)
+			return i.evaluate(delegateNode, ctx)
 		}
 
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		opNode := i.getChild(node, rl.F_OP)
 		argNode := i.getChild(node, rl.F_ARG)
 		return newRadValues(i, node, i.executeUnaryOp(node, argNode, opNode))
 	case rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_COMPARE_EXPR, rl.K_ADD_EXPR, rl.K_MULT_EXPR:
 		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
-			return i.evaluate(delegateNode, evalCtx)
+			return i.evaluate(delegateNode, ctx)
 		}
 
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		left := i.getChild(node, rl.F_LEFT)
 		op := i.getChild(node, rl.F_OP)
 		right := i.getChild(node, rl.F_RIGHT)
@@ -309,7 +290,7 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 
 	// LEAF NODES
 	case rl.K_IDENTIFIER:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		identifier := i.sd.Src[node.StartByte():node.EndByte()]
 		val, ok := i.env.GetVar(identifier)
 		if !ok {
@@ -319,39 +300,37 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 	case rl.K_VAR_PATH:
 		rootNode := i.getChild(node, rl.F_ROOT)
 		indexingNodes := i.getChildren(node, rl.F_INDEXING)
-		val := i.evaluate(rootNode, 1)
-		if len(indexingNodes) > 0 {
-			for indexIdx, indexNode := range indexingNodes {
-				expectReturnVal := numExpectedOutputs != NO_NUM_RETURN_VALUES_CONSTRAINT && indexIdx < len(indexingNodes)-1
-				val = i.evaluateIndexing(rootNode, indexNode, val, expectReturnVal)
-			}
+		val := i.evaluate(rootNode, EXPECT_ONE_OUTPUT)
+		for indexIdx, indexNode := range indexingNodes {
+			expectReturnVal := ctx.ExpectedOutput != NoConstraint && indexIdx < len(indexingNodes)-1
+			val = i.evaluateIndexing(rootNode, indexNode, val, expectReturnVal)
 		}
 		return newRadValues(i, node, val)
 	case rl.K_INDEXED_EXPR:
 		rootNode := i.getChild(node, rl.F_ROOT)
 		indexingNodes := i.getChildren(node, rl.F_INDEXING)
 		if len(indexingNodes) > 0 {
-			val := i.evaluate(rootNode, 1)
+			val := i.evaluate(rootNode, EXPECT_ONE_OUTPUT)
 			for indexIdx, index := range indexingNodes {
-				expectReturnVal := numExpectedOutputs != NO_NUM_RETURN_VALUES_CONSTRAINT || indexIdx != len(indexingNodes)-1
+				expectReturnVal := ctx.ExpectedOutput != NoConstraint || indexIdx != len(indexingNodes)-1
 				val = i.evaluateIndexing(rootNode, index, val, expectReturnVal)
 			}
 			return newRadValues(i, node, val)
 		} else {
-			return i.evaluate(rootNode, evalCtx)
+			return i.evaluate(rootNode, ctx)
 		}
 	case rl.K_INT:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
 		return newRadValues(i, node, asInt)
 	case rl.K_FLOAT:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
 		return newRadValues(i, node, asFloat)
 	case rl.K_STRING:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		str := NewRadString("")
 
 		contentsNode := i.getChild(node, rl.F_CONTENTS)
@@ -365,7 +344,7 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 
 		if contentsNode != nil {
 			for _, child := range contentsNode.Children(contentsNode.Walk()) {
-				str = str.Concat(i.evaluate(&child, 1).RequireStr(i, &child))
+				str = str.Concat(i.evaluate(&child, EXPECT_ONE_OUTPUT).RequireStr(i, &child))
 			}
 		}
 
@@ -373,12 +352,12 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 
 		return newRadValues(i, node, str)
 	case rl.K_BOOL:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		asStr := i.sd.Src[node.StartByte():node.EndByte()]
 		asBool, _ := strconv.ParseBool(asStr)
 		return newRadValues(i, node, asBool)
 	case rl.K_NULL:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		return newRadValues(i, node, nil)
 	case rl.K_STRING_CONTENT:
 		src := i.sd.Src[node.StartByte():node.EndByte()]
@@ -410,13 +389,13 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 	case rl.K_ESC_OPEN_BRACKET:
 		return newRadValues(i, node, "{")
 	case rl.K_INTERPOLATION:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		exprResult := evaluateInterpolation(i, node)
 		return newRadValues(i, node, exprResult)
 	case rl.K_ESC_BACKSLASH:
 		return newRadValues(i, node, "\\")
 	case rl.K_LIST:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		entries := i.getChildren(node, rl.F_LIST_ENTRY)
 		list := NewRadList()
 		for _, entry := range entries {
@@ -428,18 +407,18 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 		}
 		return newRadValues(i, node, list)
 	case rl.K_MAP:
-		i.assertExpectedNumOutputs(node, evalCtx, One)
+		i.assertExpectedNumOutputs(node, ctx, One)
 		radMap := NewRadMap()
 		entryNodes := i.getChildren(node, rl.F_MAP_ENTRY)
 		for _, entryNode := range entryNodes {
 			keyNode := i.getChild(&entryNode, rl.F_KEY)
 			valueNode := i.getChild(&entryNode, rl.F_VALUE)
 			key := evalMapKey(i, keyNode)
-			radMap.Set(key, i.evaluate(valueNode, 1))
+			radMap.Set(key, i.evaluate(valueNode, EXPECT_ONE_OUTPUT))
 		}
 		return newRadValues(i, node, radMap)
 	case rl.K_CALL:
-		return i.callFunction(node, evalCtx, nil)
+		return i.callFunction(node, ctx, nil)
 	case rl.K_FN_LAMBDA:
 		return newRadValues(i, node, NewLambda(i, node))
 	case rl.K_LIST_COMPREHENSION:
@@ -449,8 +428,8 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 		var errorToPropagate *RadValue
 		resultList := NewRadList()
 		doOneLoop := func() {
-			if conditionNode == nil || i.evaluate(conditionNode, 1).TruthyFalsy() {
-				out := i.evaluate(resultExprNode, 1)
+			if conditionNode == nil || i.evaluate(conditionNode, EXPECT_ONE_OUTPUT).TruthyFalsy() {
+				out := i.evaluate(resultExprNode, EXPECT_ONE_OUTPUT)
 				if out.IsErrorToPropagate() {
 					i.breaking = true
 					errorToPropagate = &out
@@ -469,25 +448,25 @@ func (i *Interpreter) unsafeEval(node *ts.Node, evalCtx EvalCtx) RadValue {
 	case rl.K_TERNARY_EXPR:
 		delegateNode := i.getChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
-			return i.evaluate(delegateNode, evalCtx)
+			return i.evaluate(delegateNode, ctx)
 		}
 
 		conditionNode := i.getChild(node, rl.F_CONDITION)
 		trueNode := i.getChild(node, rl.F_TRUE_BRANCH)
 		falseNode := i.getChild(node, rl.F_FALSE_BRANCH)
-		condition := i.evaluate(conditionNode, 1).TruthyFalsy()
-		return i.evaluate(lo.Ternary(condition, trueNode, falseNode), evalCtx)
+		condition := i.evaluate(conditionNode, EXPECT_ONE_OUTPUT).TruthyFalsy()
+		return i.evaluate(lo.Ternary(condition, trueNode, falseNode), ctx)
 	default:
-		i.errorf(node, "Unsupported expr node kind: %s", node.Kind())
-		panic(UNREACHABLE)
+		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
+	return VOID_SENTINEL
 }
 
 func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	exprNode := i.getChild(interpNode, rl.F_EXPR)
 	formatNode := i.getChild(interpNode, rl.F_FORMAT)
 
-	exprResult := i.evaluate(exprNode, 1)
+	exprResult := i.evaluate(exprNode, EXPECT_ONE_OUTPUT)
 	resultType := exprResult.Type()
 
 	if formatNode == nil {
@@ -517,7 +496,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	}
 
 	if paddingNode != nil {
-		padding := i.evaluate(paddingNode, 1).RequireInt(i, paddingNode)
+		padding := i.evaluate(paddingNode, EXPECT_ONE_OUTPUT).RequireInt(i, paddingNode)
 		if exprStr, ok := exprResult.TryGetStr(); ok {
 			// is string, need to account for color chars (increase padding len if present)
 			plainLen := exprStr.Len()
@@ -530,7 +509,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	}
 
 	if precisionNode != nil {
-		precision := i.evaluate(precisionNode, 1).RequireInt(i, precisionNode)
+		precision := i.evaluate(precisionNode, EXPECT_ONE_OUTPUT).RequireInt(i, precisionNode)
 
 		if resultType != RadIntT && resultType != RadFloatT {
 			precisionStr := "." + i.sd.Src[precisionNode.StartByte():precisionNode.EndByte()]
@@ -627,7 +606,7 @@ func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func()) {
 	leftsNode := i.getChild(node, rl.F_LEFTS)
 	rightNode := i.getChild(node, rl.F_RIGHT)
 
-	rightVal := i.evaluate(rightNode, 1)
+	rightVal := i.evaluate(rightNode, EXPECT_ONE_OUTPUT)
 	switch coercedRight := rightVal.Val.(type) {
 	case RadString:
 		runForLoopList(i, leftsNode, rightNode, coercedRight.ToRuneList(), doOneLoop)
@@ -732,7 +711,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 // if stmts, for loops
 func (i *Interpreter) runBlock(stmtNodes []ts.Node) {
 	for _, stmtNode := range stmtNodes {
-		i.recursivelyRun(&stmtNode)
+		i.evaluate(&stmtNode, NO_CONSTRAINT_OUTPUT)
 		if i.breakingOrContinuing() {
 			break
 		}
@@ -758,9 +737,9 @@ func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val Rad
 			value: val,
 		}
 		if expectReturnValue {
-			return i.callFunction(&index, 1, ufcsArg)
+			return i.callFunction(&index, EXPECT_ONE_OUTPUT, ufcsArg)
 		} else {
-			return i.callFunction(&index, NO_NUM_RETURN_VALUES_CONSTRAINT, ufcsArg)
+			return i.callFunction(&index, NO_CONSTRAINT_OUTPUT, ufcsArg)
 		}
 	} else {
 		return val.Index(i, &index)
@@ -776,7 +755,7 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 			i.env.SetJsonFieldVar(jsonFieldVar)
 			outputs = append(outputs, JSON_SENTINEL)
 		} else {
-			out := i.evaluate(&rightNode, 1)
+			out := i.evaluate(&rightNode, EXPECT_ONE_OUTPUT)
 			if out.IsErrorToPropagate() {
 
 			}
@@ -828,7 +807,7 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNo
 			if numExpectedAssigns == 0 {
 				// nothing to assign, just evaluate
 				for _, valueNode := range valueNodes {
-					i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+					i.evaluate(&valueNode, NO_CONSTRAINT_OUTPUT)
 				}
 			} else {
 				i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)

@@ -64,7 +64,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	isConfirm := i.getChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
 	cmdNode := i.getChild(shellCmdNode, rl.F_COMMAND)
-	cmdStr := i.evaluate(cmdNode, 1)[0].
+	cmdStr := i.evaluate(cmdNode, EXPECT_ONE_OUTPUT).
 		RequireType(i, cmdNode, "Shell commands must be strings", RadStringT).
 		RequireStr(i, shellCmdNode)
 
@@ -204,8 +204,8 @@ func buildCmd(shellStr string, cmdStr string) *exec.Cmd {
 	// if we don't unwrap to Stdin *file*, the command never ends? It's a bit weird, should understand better.
 	cmd.Stdin = RIo.StdIn.Unwrap()
 
-	//cmd.Stderr = RIo.StdErr // todo ? this seems to conflict with the pipes later
-	//cmd.Stdout = RIo.StdOut
+	// cmd.Stderr = RIo.StdErr // todo ? this seems to conflict with the pipes later
+	// cmd.Stdout = RIo.StdOut
 
 	return cmd
 }

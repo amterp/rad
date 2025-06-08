@@ -41,7 +41,7 @@ func (v RadValue) Type() RadTypeEnum {
 		return RadFnT // todo add to equals, hash in this file
 	case RadNull:
 		return RadNullT
-	case RadError:
+	case *RadError:
 		return RadErrorT
 	default:
 		panic(fmt.Sprintf("Bug! Unhandled Rad type: %T", v.Val))
@@ -233,7 +233,7 @@ func (v RadValue) Hash() string {
 		return val.Plain() // attributes don't impact hash
 	case int64, float64, bool:
 		return fmt.Sprintf("%v", val)
-	case RadError:
+	case *RadError:
 		return val.Hash()
 	default:
 		panic(fmt.Sprintf("Cannot key on a %s", TypeAsString(v)))
@@ -264,8 +264,8 @@ func (left RadValue) Equals(right RadValue) bool {
 	case RadNull:
 		// we know they're both null, so true
 		return true
-	case RadError:
-		coercedRight := right.Val.(RadError)
+	case *RadError:
+		coercedRight := right.Val.(*RadError)
 		return coercedLeft.Equals(coercedRight)
 	default:
 		return false
@@ -356,7 +356,7 @@ func (v RadValue) Accept(visitor *RadTypeVisitor) {
 			visitor.visitNull(v, coerced)
 			return
 		}
-	case RadError:
+	case *RadError:
 		if visitor.visitError != nil {
 			visitor.visitError(v, coerced)
 			return
@@ -395,7 +395,7 @@ func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
 		return RadValue{Val: &coerced}
 	case RadFn:
 		return RadValue{Val: coerced}
-	case RadError:
+	case *RadError:
 		return RadValue{Val: coerced}
 	case map[string]interface{}:
 		radMap := NewRadMap()
@@ -473,6 +473,6 @@ func newRadValueFn(val RadFn) RadValue {
 	return newRadValue(nil, nil, val)
 }
 
-func newRadValueError(val RadError) RadValue {
+func newRadValueError(val *RadError) RadValue {
 	return newRadValue(nil, nil, val)
 }

@@ -26,7 +26,7 @@ type RadTypeVisitor struct {
 	visitMap     func(RadValue, *RadMap)
 	visitFn      func(RadValue, RadFn)
 	visitNull    func(RadValue, RadNull)
-	visitError   func(RadValue, RadError)
+	visitError   func(RadValue, *RadError)
 	defaultVisit func(RadValue)
 }
 
@@ -88,7 +88,7 @@ func (v *RadTypeVisitor) ForFn(handler func(RadValue, RadFn)) *RadTypeVisitor {
 	return v
 }
 
-func (v *RadTypeVisitor) ForError(handler func(RadValue, RadError)) *RadTypeVisitor {
+func (v *RadTypeVisitor) ForError(handler func(RadValue, *RadError)) *RadTypeVisitor {
 	v.visitError = handler
 	return v
 }

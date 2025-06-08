@@ -105,7 +105,7 @@ var FuncPickFromResource = BuiltInFunc{
 
 		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
 
-		resource := LoadPickResource(f.i, f.callNode, filePath, f.numExpectedOutputs)
+		resource := LoadPickResource(f.i, f.callNode, filePath, f.ctx.ExpectedOutput)
 		var keyGroups [][]string
 		var valueGroups [][]RadValue
 		for _, opt := range resource.Opts {
@@ -132,7 +132,7 @@ var FuncPickFromResource = BuiltInFunc{
 			}
 		}
 
-		return pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
+		return newRadValues(f.i, f.callNode, pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs))
 	},
 }
 

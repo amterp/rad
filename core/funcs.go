@@ -191,22 +191,22 @@ var (
 )
 
 type FuncInvocationArgs struct {
-	i                  *Interpreter
-	callNode           *ts.Node
-	funcName           string
-	args               []PosArg
-	namedArgs          map[string]namedArg
-	numExpectedOutputs int
+	i         *Interpreter
+	callNode  *ts.Node
+	funcName  string
+	args      []PosArg
+	namedArgs map[string]namedArg
+	ctx       EvalCtx
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, numExpectedOutputs int) FuncInvocationArgs {
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, ctx EvalCtx) FuncInvocationArgs {
 	return FuncInvocationArgs{
-		i:                  i,
-		callNode:           callNode,
-		funcName:           funcName,
-		args:               args,
-		namedArgs:          namedArgs,
-		numExpectedOutputs: numExpectedOutputs,
+		i:         i,
+		callNode:  callNode,
+		funcName:  funcName,
+		args:      args,
+		namedArgs: namedArgs,
+		ctx:       ctx,
 	}
 }
 
@@ -349,7 +349,7 @@ func init() {
 				switch coerced := arg.value.Val.(type) {
 				case RadString:
 					// todo maintain attributes
-					str := f.i.evaluate(arg.node, 1).RequireStr(f.i, f.callNode).Plain()
+					str := f.i.evaluate(arg.node, EXPECT_ONE_OUTPUT).RequireStr(f.i, f.callNode).Plain()
 					runes := []rune(str)
 					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
 					return newRadValues(f.i, f.callNode, string(runes))
@@ -386,19 +386,12 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
 					}
 				}
 
 				nowMap := NewTimeMap(RClock.Now().In(location))
-				if f.numExpectedOutputs == 1 {
-					return newRadValues(f.i, f.callNode, nowMap)
-				}
-				return newRadValues(f.i, f.callNode, nowMap, RAD_NULL)
+				return newRadValues(f.i, f.callNode, nowMap)
 			},
 		},
 		{
@@ -450,11 +443,7 @@ func init() {
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
 						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(epochArg.node, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrAmbiguousEpoch, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch))
 					}
 				} else {
 					switch unit {
@@ -473,11 +462,7 @@ func init() {
 					default:
 						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
 							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeUnit, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit))
 					}
 				}
 
@@ -494,21 +479,13 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						if f.numExpectedOutputs == 1 {
-							f.i.errorf(f.callNode, errMsg)
-							panic(UNREACHABLE)
-						}
-						return newRadValues(f.i, f.callNode, RAD_NULL, ErrorRadMap(raderr.ErrInvalidTimeZone, errMsg))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
 					}
 				}
 
 				goTime := time.Unix(second, nanoSecond).In(location)
 				timeMap := NewTimeMap(goTime)
-
-				if f.numExpectedOutputs == 1 {
-					return newRadValues(f.i, f.callNode, timeMap)
-				}
-				return newRadValues(f.i, f.callNode, timeMap, RAD_NULL)
+				return newRadValues(f.i, f.callNode, timeMap)
 			},
 		},
 		{
@@ -724,20 +701,10 @@ func init() {
 				parsed, err := rts.ParseInt(str)
 
 				if err == nil {
-					if f.numExpectedOutputs == 1 {
-						return newRadValues(f.i, f.callNode, parsed)
-					} else {
-						return newRadValues(f.i, f.callNode, parsed, NewRadMap())
-					}
+					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					if f.numExpectedOutputs == 1 {
-						// todo when errors require codes, redo
-						f.i.errorf(f.callNode, errMsg)
-						panic(UNREACHABLE)
-					} else {
-						return newRadValues(f.i, f.callNode, 0, ErrorRadMap(raderr.ErrParseIntFailed, errMsg))
-					}
+					return newRadValues(f.i, f.callNode, 0, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
 				}
 			},
 		},
@@ -754,20 +721,10 @@ func init() {
 				parsed, err := rts.ParseFloat(str)
 
 				if err == nil {
-					if f.numExpectedOutputs == 1 {
-						return newRadValues(f.i, f.callNode, parsed)
-					} else {
-						return newRadValues(f.i, f.callNode, parsed, NewRadMap())
-					}
+					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					if f.numExpectedOutputs == 1 {
-						// todo when errors require codes, redo
-						f.i.errorf(f.callNode, errMsg)
-						panic(UNREACHABLE)
-					} else {
-						return newRadValues(f.i, f.callNode, 0, ErrorRadMap(raderr.ErrParseFloatFailed, errMsg))
-					}
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseFloatFailed))
 				}
 			},
 		},
@@ -799,7 +756,7 @@ func init() {
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
-				return newRadValues(f.i, f.callNode, NewError(err))
+				return newRadValues(f.i, f.callNode, NewError(err).SetShouldPropagate(false))
 			},
 		},
 		{
@@ -1239,7 +1196,6 @@ func init() {
 				}
 
 				resultMap := NewRadMap()
-				errMap := NewRadMap()
 
 				data, err := os.ReadFile(path)
 				if err == nil {
@@ -1258,20 +1214,14 @@ func init() {
 						f.i.errorf(f.callNode, "Invalid mode %q in read_file; expected %q or %q", mode, constText, constBytes)
 					}
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoExist, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoPermission, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					errMap = ErrorRadMap(raderr.ErrFileRead, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
 				}
 
-				if f.numExpectedOutputs == 1 {
-					if errMap.Len() > 0 {
-						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
-					}
-					return newRadValues(f.i, f.callNode, resultMap)
-				}
-				return newRadValues(f.i, f.callNode, resultMap, errMap)
+				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{
@@ -1292,7 +1242,6 @@ func init() {
 				}
 
 				resultMap := NewRadMap()
-				errMap := NewRadMap()
 
 				data := []byte(content)
 				var err error
@@ -1319,20 +1268,14 @@ func init() {
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
 					resultMap.SetPrimitiveStr("path", path)
 				} else if os.IsNotExist(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoExist, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					errMap = ErrorRadMap(raderr.ErrFileNoPermission, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					errMap = ErrorRadMap(raderr.ErrFileWrite, err.Error())
+					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
 				}
 
-				if f.numExpectedOutputs == 1 {
-					if errMap.Len() > 0 {
-						f.i.errorf(f.callNode, errMap.AsErrMsg(f.i, f.callNode))
-					}
-					return newRadValues(f.i, f.callNode, resultMap)
-				}
-				return newRadValues(f.i, f.callNode, resultMap, errMap)
+				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{
@@ -1635,10 +1578,7 @@ func init() {
 			Execute: func(f FuncInvocationArgs) RadValue {
 				state, existing := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
-				if f.numExpectedOutputs != 1 {
-					return newRadValues(f.i, f.callNode, state, existing)
-				}
-				return newRadValues(f.i, f.callNode, state)
+				return newRadValues(f.i, f.callNode, state, existing)
 			},
 		},
 		{
@@ -1676,26 +1616,22 @@ func init() {
 					defaultStr := defaultArg.value.RequireStr(f.i, defaultArg.node).Plain()
 					err := com.CreateFilePathAndWriteString(path, defaultStr)
 					if err != nil {
-						f.i.errorf(f.callNode, "Failed to create file %q: %v", path, err)
+						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
 					}
 
 					output.Set(newRadValueStr(constContent), newRadValueStr(defaultStr))
-					if f.numExpectedOutputs != 1 {
-						return newRadValues(f.i, f.callNode, output, false) // signal not existed
-					}
-					return newRadValues(f.i, f.callNode, output)
+					return newRadValues(f.i, f.callNode, output, false) // signal not existed
 				}
 
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
-					f.i.errorf(f.callNode, "Error loading file %q: %v", path, loadResult.Error)
+					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
-				if f.numExpectedOutputs != 1 {
-					return newRadValues(f.i, f.callNode, output, true) // signal existed
-				}
-				return newRadValues(f.i, f.callNode, output)
+				return newRadValues(f.i, f.callNode, output, true) // signal existed
 			},
 		},
 		{
@@ -1713,15 +1649,8 @@ func init() {
 
 				err := com.CreateFilePathAndWriteString(path, contentArg.value.RequireStr(f.i, contentArg.node).Plain())
 				if err != nil {
-					if f.numExpectedOutputs < 2 {
-						f.i.errorf(f.callNode, "Error writing stash file %q: %v", path, err)
-					}
-					errMap := ErrorRadMap(raderr.ErrFileWrite, err.Error())
-					return newRadValues(f.i, f.callNode, path, errMap)
-				}
-
-				if f.numExpectedOutputs >= 2 {
-					return newRadValues(f.i, f.callNode, path, nil)
+					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrFileWrite))
 				}
 
 				return newRadValues(f.i, f.callNode, path) // todo seems weird to return full path?
@@ -1760,8 +1689,9 @@ func init() {
 					digest = hex.EncodeToString(sum[:])
 				default:
 					algoArg := f.namedArgs[constAlgo]
-					f.i.errorf(algoArg.valueNode, "Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
+					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
+					return newRadValues(f.i, algoArg.valueNode, NewErrorStr(errMsg))
 				}
 				return newRadValues(f.i, f.callNode, newRadValueStr(digest))
 			},
@@ -1892,7 +1822,7 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 					}
@@ -1900,7 +1830,7 @@ func init() {
 				}).ForMap(func(v RadValue, m *RadMap) {
 					outputList := NewRadList()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 						return true // signal to keep going
@@ -1929,7 +1859,7 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep item
@@ -1940,7 +1870,7 @@ func init() {
 				}).ForMap(func(_ RadValue, m *RadMap) {
 					outputMap := NewRadMap()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, 1)
+						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep entry
@@ -2008,7 +1938,7 @@ func init() {
 						fnName,
 						NewPosArgs(), // zero positional args
 						NO_NAMED_ARGS_INPUT,
-						1,
+						EXPECT_ONE_OUTPUT,
 					)
 					out := fn.Execute(inv)
 					return out

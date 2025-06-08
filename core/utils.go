@@ -60,7 +60,7 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 		return coerced.ToString()
 	case RadNull:
 		return "null"
-	case RadError:
+	case *RadError:
 		return ToPrintableQuoteStr(coerced.Msg().String(), quoteStrings)
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for printable: %T", val))
@@ -88,7 +88,7 @@ func TypeAsString(val interface{}) string {
 		return "function"
 	case RadNull:
 		return "null"
-	case RadError:
+	case *RadError:
 		return "error"
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for TypeAsString: %T\n%s\n", val, debug.Stack()))
@@ -180,7 +180,7 @@ func RadToJsonType(arg RadValue) interface{} {
 		return mapping
 	case RadNull:
 		return nil
-	case RadError:
+	case *RadError:
 		return coerced.Msg().Plain()
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for RadToJsonType: %T\n%s\n", arg.Val, debug.Stack()))

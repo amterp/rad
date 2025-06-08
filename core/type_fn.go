@@ -14,7 +14,7 @@ type RadFn struct {
 	// below for non-built-in functions
 	Params     []string
 	ReprNode   *ts.Node  // representative node (can point at this for errors)
-	Exprs      []ts.Node // for returning lambdas
+	Expr       *ts.Node  // for returning lambdas
 	Stmt       *ts.Node  // for stmt lambdas
 	Body       []ts.Node // for fn blocks
 	ReturnStmt *ts.Node  // for fn blocks
@@ -35,7 +35,7 @@ func NewLambdaOneLiner(i *Interpreter, lambdaNode *ts.Node) RadFn {
 	return RadFn{
 		Params:   params,
 		ReprNode: lambdaNode,
-		Exprs:    i.getChildren(lambdaNode, rl.F_EXPR),
+		Expr:     i.getChild(lambdaNode, rl.F_EXPR),
 		Stmt:     i.getChild(lambdaNode, rl.F_STMT),
 		Env:      i.env,
 	}
@@ -65,8 +65,8 @@ func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
 }
 
-func (fn RadFn) IsLambda() bool {
-	return len(fn.Exprs) > 0 || fn.Stmt != nil
+func (fn RadFn) IsLambda() bool { // todo not accurate, can have named func with this
+	return fn.Expr != nil || fn.Stmt != nil
 }
 
 func (fn RadFn) Execute(f FuncInvocationArgs) RadValue {
@@ -79,7 +79,7 @@ func (fn RadFn) Execute(f FuncInvocationArgs) RadValue {
 	}
 
 	i := f.i
-	output := make([]RadValue, 0)
+	out := VOID_SENTINEL
 	i.runWithChildEnv(func() {
 		args := f.args
 		// custom funcs don't support namedArgs, so we ignore them. Parser doesn't allow them anyway.
@@ -88,14 +88,11 @@ func (fn RadFn) Execute(f FuncInvocationArgs) RadValue {
 		}
 
 		if fn.IsLambda() {
-			if len(fn.Exprs) > 0 {
-				for _, exprNode := range fn.Exprs {
-					val := i.evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-
-					output = append(output, val...) // todo dunno about this splatter
-				}
-			} else {
-				i.recursivelyRun(fn.Stmt)
+			if fn.Expr != nil {
+				out = i.evaluate(fn.Expr, NO_CONSTRAINT_OUTPUT)
+			}
+			if fn.Stmt != nil {
+				i.evaluate(fn.Stmt, NO_CONSTRAINT_OUTPUT)
 			}
 		} else {
 			i.runBlock(fn.Body)
@@ -104,21 +101,23 @@ func (fn RadFn) Execute(f FuncInvocationArgs) RadValue {
 				return
 			}
 
-			if f.numExpectedOutputs > 0 && fn.ReturnStmt == nil {
-				i.errorf(f.callNode, "Expected %d outputs, but function '%s' is missing a return statement.",
-					f.numExpectedOutputs, f.funcName)
+			if !f.ctx.ExpectedOutput.Acceptable(0) && fn.ReturnStmt == nil {
+				i.errorf(f.callNode, "Expected %s, but function '%s' is missing a return statement.",
+					f.ctx.ExpectedOutput.String(), f.funcName)
 			}
 
 			if fn.ReturnStmt != nil {
-				valueNodes := i.getChildren(fn.ReturnStmt, rl.F_VALUE)
-				for _, valueNode := range valueNodes {
-					val := i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
-					output = append(output, val...) // todo this is probably bad and inconsistent with e.g. switch yields
+				returnExpr := i.getChild(fn.ReturnStmt, rl.F_VALUE)
+				out = i.evaluate(returnExpr, EXPECT_ONE_OUTPUT)
+				err, ok := out.TryGetError()
+				if ok {
+					// we just got a suppressed error. as we pass it through our function, we un-suppress it.
+					err.ShouldPropagate = true
 				}
 			}
 		}
 	})
-	return output
+	return out
 }
 
 func (fn RadFn) ToString() string {

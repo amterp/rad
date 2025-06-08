@@ -79,7 +79,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 	switch opNode.Kind() {
 	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
-		argVal := i.evaluate(argNode, 1)[0]
+		argVal := i.evaluate(argNode, EXPECT_ONE_OUTPUT)
 		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RadIntT, RadFloatT)
 
 		intOp, floatOp := i.getUnaryOp(opNode)
@@ -94,7 +94,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 			panic(UNREACHABLE)
 		}
 	case rl.K_NOT:
-		return newRadValue(i, parentNode, !i.evaluate(argNode, 1)[0].TruthyFalsy())
+		return newRadValue(i, parentNode, !i.evaluate(argNode, EXPECT_ONE_OUTPUT).TruthyFalsy())
 	default:
 		i.errorf(opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
@@ -125,10 +125,10 @@ func (i *Interpreter) executeOp(
 	op OpType,
 ) interface{} {
 	left := com.Memoize(func() RadValue {
-		return i.evaluate(leftNode, 1)[0]
+		return i.evaluate(leftNode, EXPECT_ONE_OUTPUT)
 	})
 	right := com.Memoize(func() RadValue {
-		return i.evaluate(rightNode, 1)[0]
+		return i.evaluate(rightNode, EXPECT_ONE_OUTPUT)
 	})
 
 	if op == OP_AND {
@@ -381,7 +381,7 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_IN:
 				return !coercedRight.ContainsKey(left())
 			}
-		case RadError:
+		case *RadError:
 			switch op {
 			case OP_PLUS:
 				return coercedLeft.Concat(coercedRight.Msg())
@@ -459,7 +459,7 @@ func (i *Interpreter) executeOp(
 				return false
 			}
 		}
-	case RadError:
+	case *RadError:
 		switch coercedRight := rightV.(type) {
 		case RadString:
 			switch op {
@@ -474,7 +474,7 @@ func (i *Interpreter) executeOp(
 			case OP_NOT_IN:
 				return !strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
 			}
-		case RadError:
+		case *RadError:
 			switch op {
 			case OP_PLUS:
 				return coercedLeft.Msg().Concat(coercedRight.Msg())
