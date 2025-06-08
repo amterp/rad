@@ -10,14 +10,14 @@ var FuncExit = BuiltInFunc{
 	MinPosArgCount:  0,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadBoolT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		if len(f.args) == 0 {
 			exit(f.i, 0)
 		} else {
 			arg := f.args[0]
 			exit(f.i, arg.value.RequireIntAllowingBool(f.i, arg.node))
 		}
-		return EMPTY
+		return VOID_SENTINEL
 	},
 }
 

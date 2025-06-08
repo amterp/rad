@@ -13,7 +13,7 @@ var FuncRange = BuiltInFunc{
 	MinPosArgCount:  1,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadFloatT}, {RadIntT, RadFloatT}, {RadIntT, RadFloatT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		useFloats := false
 		for _, arg := range f.args {
 			switch arg.value.Type() {

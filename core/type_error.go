@@ -1,11 +1,15 @@
 package core
 
 type RadError struct {
-	msg RadString
+	msg             RadString
+	ShouldPropagate bool
 }
 
-func NewError(msg RadString) RadError {
-	return RadError{msg: msg}
+func NewError(msg RadString) *RadError {
+	return &RadError{
+		msg:             msg,
+		ShouldPropagate: true,
+	}
 }
 
 func (e RadError) Msg() RadString {

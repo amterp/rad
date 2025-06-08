@@ -13,7 +13,7 @@ var FuncSplit = BuiltInFunc{
 	MinPosArgCount:  2,
 	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
 	NamedArgs:       NO_NAMED_ARGS,
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		strArg := f.args[0]
 		splitterArg := f.args[1]
 

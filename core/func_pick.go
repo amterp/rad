@@ -18,7 +18,7 @@ var FuncPick = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		optionsArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
@@ -56,7 +56,7 @@ var FuncPickKv = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
 		filteringArg := tryGetArg(2, f.args)
@@ -99,7 +99,7 @@ var FuncPickFromResource = BuiltInFunc{
 	NamedArgs: map[string][]RadTypeEnum{
 		namedArgPrompt: {RadStringT},
 	},
-	Execute: func(f FuncInvocationArgs) []RadValue {
+	Execute: func(f FuncInvocationArgs) RadValue {
 		fileArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 

@@ -69,7 +69,7 @@ func (fn RadFn) IsLambda() bool {
 	return len(fn.Exprs) > 0 || fn.Stmt != nil
 }
 
-func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
+func (fn RadFn) Execute(f FuncInvocationArgs) RadValue {
 	if fn.BuiltInFunc != nil {
 		assertMinNumPosArgs(f, fn.BuiltInFunc)
 		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
@@ -91,6 +91,7 @@ func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
 			if len(fn.Exprs) > 0 {
 				for _, exprNode := range fn.Exprs {
 					val := i.evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+
 					output = append(output, val...) // todo dunno about this splatter
 				}
 			} else {

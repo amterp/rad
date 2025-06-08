@@ -76,12 +76,52 @@ a = catch true ? foo(1) : foo(2)
 print("Got: {a}")
 
 fn foo(x):
-	print("Running {x}"
+	print("Running {x}")
 	return error("error: {x}")
 `
 	setupAndRunCode(t, script)
 	expected := `Running 1
 Got: error: 1
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Catch_ListComprehensionPropagates(t *testing.T) {
+	script := `
+a = bar()
+
+fn foo(x):
+	print("Foo {x}")
+	return error("error: {x}")
+
+fn bar():
+	print("Bar")
+	return [foo(a) for a in [1, 2]]
+`
+	setupAndRunCode(t, script)
+	stdoutExpected := `Bar
+Foo 1
+`
+	stderrExpected := `error: 1
+`
+	assertOutput(t, stdOutBuffer, stdoutExpected)
+	assertOutput(t, stdErrBuffer, stderrExpected)
+	assertExitCode(t, 1)
+}
+
+func Test_Catch_ListComprehensionCanCatch(t *testing.T) {
+	script := `
+a = catch [foo(a) for a in [1, 2]]
+print("Got: {a}")
+
+fn foo(x):
+	print("Foo {x}")
+	return error("error: {x}")
+`
+	setupAndRunCode(t, script)
+	expected := `Bar
+Foo 1
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

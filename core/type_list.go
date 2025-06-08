@@ -35,7 +35,7 @@ func (l *RadList) GetIdx(i *Interpreter, idxNode *ts.Node) RadValue {
 		return newRadValue(i, idxNode, l.Slice(i, idxNode))
 	}
 
-	idxVal := i.evaluate(idxNode, 1)[0]
+	idxVal := i.evaluate(idxNode, 1)
 	rawIdx := idxVal.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
 	if idx < 0 || idx >= l.Len() {
@@ -52,7 +52,7 @@ func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
 			newList.Values = append(newList.Values, l.Values[:start]...)
 			if list, ok := value.TryGetList(); ok {
 				newList.Values = append(newList.Values, list.Values...)
-			} else if value == NIL_SENTINAL {
+			} else if value == VOID_SENTINEL {
 				// do nothing (delete those values)
 			} else {
 				assignNode := idxNode.Parent().Parent()
@@ -66,14 +66,14 @@ func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
 
 	// regular single index
 
-	idxVal := i.evaluate(idxNode, 1)[0]
+	idxVal := i.evaluate(idxNode, 1)
 	rawIdx := idxVal.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
 	if idx < 0 || idx >= int64(len(l.Values)) {
 		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
 	}
 
-	if value == NIL_SENTINAL {
+	if value == VOID_SENTINEL {
 		l.Values = append(l.Values[:idx], l.Values[idx+1:]...)
 	} else {
 		l.Values[idx] = value

@@ -13,8 +13,6 @@ import (
 )
 
 var (
-	EMPTY []RadValue
-
 	NO_RETURN_LIMIT       = []int{NO_NUM_RETURN_VALUES_CONSTRAINT}
 	ZERO_RETURN_VALS      = []int{}
 	ONE_RETURN_VAL        = []int{1}
@@ -50,11 +48,9 @@ type namedArg struct {
 
 func (i *Interpreter) callFunction(
 	callNode *ts.Node,
-	numExpectedOutputs int,
+	evalCtx EvalCtx,
 	ufcsArg *PosArg,
-) []RadValue {
-	catchNode := i.getChild(callNode, rl.F_CATCH)
-	isCatch := catchNode != nil
+) RadValue {
 	funcNameNode := i.getChild(callNode, rl.F_FUNC)
 	argNodes := i.getChildren(callNode, rl.F_ARG)
 	namedArgNodes := i.getChildren(callNode, rl.F_NAMED_ARG)
@@ -68,7 +64,10 @@ func (i *Interpreter) callFunction(
 	for _, argNode := range argNodes {
 		// TODO 'expected output 1' prevents something like
 		//  `print(function_that_returns_two_values())`, it should just "spread out" the args to print
-		value := i.evaluate(&argNode, 1)[0]
+		value := i.evaluate(&argNode, 1)
+		if value.IsErrorToPropagate() {
+			return value
+		}
 		args = append(args, NewPosArg(&argNode, value))
 	}
 
@@ -78,7 +77,10 @@ func (i *Interpreter) callFunction(
 		namedArgValueNode := i.getChild(&namedArgNode, rl.F_VALUE)
 
 		argName := GetSrc(i.sd.Src, namedArgNameNode)
-		argValue := i.evaluate(namedArgValueNode, 1)[0]
+		argValue := i.evaluate(namedArgValueNode, 1)
+		if argValue.IsErrorToPropagate() {
+			return argValue
+		}
 		namedArgs[argName] = namedArg{
 			name:      argName,
 			value:     argValue,
@@ -99,9 +101,8 @@ func (i *Interpreter) callFunction(
 
 	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
 
-	if len(out) > 0 && out[0].Type() == RadErrorT && !isCatch && !(funcName == FUNC_ERROR && fn.IsBuiltIn()) {
-		err := out[0].RequireError(i, callNode)
-		i.errorf(callNode, err.Msg().Plain())
+	if out.IsErrorToPropagate() && funcName == FUNC_ERROR && fn.IsBuiltIn() {
+		out.RequireError(i, callNode).ShouldPropagate = false
 	}
 
 	return out
