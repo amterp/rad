@@ -53,6 +53,8 @@ func (i *Interpreter) callFunction(
 	numExpectedOutputs int,
 	ufcsArg *PosArg,
 ) []RadValue {
+	catchNode := i.getChild(callNode, rl.F_CATCH)
+	isCatch := catchNode != nil
 	funcNameNode := i.getChild(callNode, rl.F_FUNC)
 	argNodes := i.getChildren(callNode, rl.F_ARG)
 	namedArgNodes := i.getChildren(callNode, rl.F_NAMED_ARG)
@@ -95,8 +97,14 @@ func (i *Interpreter) callFunction(
 		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	output := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
-	return output
+	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, numExpectedOutputs))
+
+	if len(out) > 0 && out[0].Type() == RadErrorT && !isCatch && !(funcName == FUNC_ERROR && fn.IsBuiltIn()) {
+		err := out[0].RequireError(i, callNode)
+		i.errorf(callNode, err.Msg().Plain())
+	}
+
+	return out
 }
 
 func assertMinNumPosArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {

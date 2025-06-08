@@ -88,10 +88,11 @@ func resolvePrintStr(f FuncInvocationArgs) string {
 		sb.WriteString(end)
 	} else {
 		for idx, v := range f.args {
-			if v.value.Type() == RadStringT {
+			switch v.value.Type() {
+			case RadStringT, RadErrorT:
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
-			} else {
+			default:
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, true))
 			}
 			if idx < len(f.args)-1 {

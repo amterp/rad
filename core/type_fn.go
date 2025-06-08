@@ -61,6 +61,10 @@ func NewBuiltIn(inFunc BuiltInFunc) RadFn {
 	}
 }
 
+func (fn RadFn) IsBuiltIn() bool {
+	return fn.BuiltInFunc != nil
+}
+
 func (fn RadFn) IsLambda() bool {
 	return len(fn.Exprs) > 0 || fn.Stmt != nil
 }
@@ -86,11 +90,11 @@ func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
 		if fn.IsLambda() {
 			if len(fn.Exprs) > 0 {
 				for _, exprNode := range fn.Exprs {
-					val := i.Evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+					val := i.evaluate(&exprNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
 					output = append(output, val...) // todo dunno about this splatter
 				}
 			} else {
-				i.recursivelyRun(fn.Stmt, true)
+				i.recursivelyRun(fn.Stmt)
 			}
 		} else {
 			i.runBlock(fn.Body)
@@ -107,8 +111,8 @@ func (fn RadFn) Execute(f FuncInvocationArgs) []RadValue {
 			if fn.ReturnStmt != nil {
 				valueNodes := i.getChildren(fn.ReturnStmt, rl.F_VALUE)
 				for _, valueNode := range valueNodes {
-					val := i.Evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT) // TODO HERE
-					output = append(output, val...)                                // todo this is probably bad and inconsistent with e.g. switch yields
+					val := i.evaluate(&valueNode, NO_NUM_RETURN_VALUES_CONSTRAINT)
+					output = append(output, val...) // todo this is probably bad and inconsistent with e.g. switch yields
 				}
 			}
 		}

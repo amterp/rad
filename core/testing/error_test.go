@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+func Test_Error_CreationNoAssign(t *testing.T) {
+	script := `
+error("test error message")
+`
+	setupAndRunCode(t, script)
+	assertOnlyOutput(t, stdOutBuffer, "")
+	assertNoErrors(t)
+}
+
 func Test_Error_Creation(t *testing.T) {
 	script := `
 err = error("test error message")
@@ -35,17 +44,17 @@ func Test_Error_StringOperations(t *testing.T) {
 err = error("error message")
 str = "string"
 
-// Test concatenation
+// concatenation
 print(err + str)
 print(str + err)
 
-// Test equality with string
+// equality with string
 print(err == "error message")
 print(err != "error message")
 print(err == "different")
 print(err != "different")
 
-// Test in/not in operations
+// in/not in operations
 print(err in "This is an error message")
 print(err not in "This is an error message")
 print(err in "No match here")
@@ -71,7 +80,7 @@ func Test_Error_NumericOperations(t *testing.T) {
 	script := `
 err = error("error")
 
-// Test concatenation with numbers
+// concatenation with numbers
 print(err + 123)
 print(err + 3.14)
 `
@@ -87,7 +96,7 @@ func Test_Error_BooleanOperations(t *testing.T) {
 	script := `
 err = error("error")
 
-// Test concatenation with booleans
+// concatenation with booleans
 print(err + true)
 print(err + false)
 `
@@ -110,14 +119,14 @@ err4 = error("item4")
 list = [err1, err2, err3]
 map = {err1: 1, err2: 2, err3: 3}
 
-// Test in/not in operations with list
+// in/not in operations with list
 print(err1 in list)
 print(err2 in list)
 print(err3 in list)
 print(err4 in list)
 print(err4 not in list)
 
-// Test in/not in operations with map
+// in/not in operations with map
 print(err1 in map)
 print(err2 in map)
 print(err3 in map)

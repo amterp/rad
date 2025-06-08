@@ -61,7 +61,7 @@ func ToPrintableQuoteStr(val interface{}, quoteStrings bool) string {
 	case RadNull:
 		return "null"
 	case RadError:
-		return coerced.Msg().String()
+		return ToPrintableQuoteStr(coerced.Msg().String(), quoteStrings)
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled type for printable: %T", val))
 		panic(UNREACHABLE)
