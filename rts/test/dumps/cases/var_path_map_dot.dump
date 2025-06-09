@@ -6,7 +6,7 @@ a.aaa.bbb
 =====
 B: [ 0, 16] PS: [0, 0] PE: [2, 0] source_file
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]   expr
-B: [ 0,  5] PS: [0, 0] PE: [0, 5]     ternary_expr
+B: [ 0,  5] PS: [0, 0] PE: [0, 5]     delegate: ternary_expr
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]       delegate: or_expr
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]         delegate: and_expr
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]           delegate: compare_expr
@@ -18,7 +18,7 @@ B: [ 0,  1] PS: [0, 0] PE: [0, 1]                     root: identifier `a`
 B: [ 1,  2] PS: [0, 1] PE: [0, 2]                     . `.`
 B: [ 2,  5] PS: [0, 2] PE: [0, 5]                     indexing: identifier `aaa`
 B: [ 6, 15] PS: [1, 0] PE: [1, 9]   expr
-B: [ 6, 15] PS: [1, 0] PE: [1, 9]     ternary_expr
+B: [ 6, 15] PS: [1, 0] PE: [1, 9]     delegate: ternary_expr
 B: [ 6, 15] PS: [1, 0] PE: [1, 9]       delegate: or_expr
 B: [ 6, 15] PS: [1, 0] PE: [1, 9]         delegate: and_expr
 B: [ 6, 15] PS: [1, 0] PE: [1, 9]           delegate: compare_expr

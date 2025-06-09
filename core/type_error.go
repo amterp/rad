@@ -6,33 +6,25 @@ import (
 )
 
 type RadError struct {
-	Node            *ts.Node
-	msg             RadString
-	Code            raderr.Error
-	ShouldPropagate bool
+	Node *ts.Node
+	msg  RadString
+	Code raderr.Error
 }
 
 func NewError(msg RadString) *RadError {
 	return &RadError{
-		msg:             msg,
-		ShouldPropagate: true,
+		msg: msg,
 	}
 }
 
 func NewErrorStr(msg string) *RadError { // todo make a constructor forcing a Rad error code
 	return &RadError{
-		msg:             NewRadString(msg),
-		ShouldPropagate: true,
+		msg: NewRadString(msg),
 	}
 }
 
 func (e *RadError) SetCode(code raderr.Error) *RadError {
 	e.Code = code
-	return e
-}
-
-func (e *RadError) SetShouldPropagate(shouldPropagate bool) *RadError {
-	e.ShouldPropagate = shouldPropagate
 	return e
 }
 

@@ -14,7 +14,7 @@ B: [ 5,  6] PS: [0,  5] PE: [0,  6]     = `=`
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]     shell_cmd: critical_shell_cmd
 B: [ 7,  9] PS: [0,  7] PE: [0,  9]       $! `$!`
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]       command: expr
-B: [ 9, 13] PS: [0,  9] PE: [0, 13]         ternary_expr
+B: [ 9, 13] PS: [0,  9] PE: [0, 13]         delegate: ternary_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]           delegate: or_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]             delegate: and_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]               delegate: compare_expr
@@ -39,7 +39,7 @@ B: [27, 28] PS: [1, 13] PE: [1, 14]     = `=`
 B: [29, 35] PS: [1, 15] PE: [1, 21]     shell_cmd: critical_shell_cmd
 B: [29, 31] PS: [1, 15] PE: [1, 17]       $! `$!`
 B: [31, 35] PS: [1, 17] PE: [1, 21]       command: expr
-B: [31, 35] PS: [1, 17] PE: [1, 21]         ternary_expr
+B: [31, 35] PS: [1, 17] PE: [1, 21]         delegate: ternary_expr
 B: [31, 35] PS: [1, 17] PE: [1, 21]           delegate: or_expr
 B: [31, 35] PS: [1, 17] PE: [1, 21]             delegate: and_expr
 B: [31, 35] PS: [1, 17] PE: [1, 21]               delegate: compare_expr
@@ -67,7 +67,7 @@ B: [57, 58] PS: [2, 21] PE: [2, 22]     = `=`
 B: [59, 65] PS: [2, 23] PE: [2, 29]     shell_cmd: critical_shell_cmd
 B: [59, 61] PS: [2, 23] PE: [2, 25]       $! `$!`
 B: [61, 65] PS: [2, 25] PE: [2, 29]       command: expr
-B: [61, 65] PS: [2, 25] PE: [2, 29]         ternary_expr
+B: [61, 65] PS: [2, 25] PE: [2, 29]         delegate: ternary_expr
 B: [61, 65] PS: [2, 25] PE: [2, 29]           delegate: or_expr
 B: [61, 65] PS: [2, 25] PE: [2, 29]             delegate: and_expr
 B: [61, 65] PS: [2, 25] PE: [2, 29]               delegate: compare_expr
@@ -95,7 +95,7 @@ B: [74, 75] PS: [3,  8] PE: [3,  9]     = `=`
 B: [76, 82] PS: [3, 10] PE: [3, 16]     shell_cmd: critical_shell_cmd
 B: [76, 78] PS: [3, 10] PE: [3, 12]       $! `$!`
 B: [78, 82] PS: [3, 12] PE: [3, 16]       command: expr
-B: [78, 82] PS: [3, 12] PE: [3, 16]         ternary_expr
+B: [78, 82] PS: [3, 12] PE: [3, 16]         delegate: ternary_expr
 B: [78, 82] PS: [3, 12] PE: [3, 16]           delegate: or_expr
 B: [78, 82] PS: [3, 12] PE: [3, 16]             delegate: and_expr
 B: [78, 82] PS: [3, 12] PE: [3, 16]               delegate: compare_expr

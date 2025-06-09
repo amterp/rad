@@ -8,7 +8,7 @@ B: [ 0, 30] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0, 29] PS: [0,  0] PE: [1, 20]   rad_block
 B: [ 0,  7] PS: [0,  0] PE: [0,  7]     rad_type: request_keyword `request`
 B: [ 7,  7] PS: [0,  7] PE: [0,  7]     source: expr
-B: [ 7,  7] PS: [0,  7] PE: [0,  7]       ternary_expr
+B: [ 7,  7] PS: [0,  7] PE: [0,  7]       delegate: ternary_expr
 B: [ 7,  7] PS: [0,  7] PE: [0,  7]         delegate: or_expr
 B: [ 7,  7] PS: [0,  7] PE: [0,  7]           delegate: and_expr
 B: [ 7,  7] PS: [0,  7] PE: [0,  7]             delegate: compare_expr

@@ -84,23 +84,23 @@ func (i *Interpreter) Run() {
 	i.safelyEvaluate(node, NO_CONSTRAINT_OUTPUT)
 }
 
-func (i *Interpreter) safelyEvaluate(node *ts.Node, ctx EvalCtx) RadValue {
-	if !IsTest {
-		defer func() {
-			if r := recover(); r != nil {
-				radPanic, ok := r.(*RadPanic)
-				if ok {
-					err := radPanic.Err()
-					i.errorf(err.Node, "%s", err.Msg())
-				}
+func (i *Interpreter) safelyEvaluate(node *ts.Node, ctx *EvalCtx) RadValue {
+	defer func() {
+		if r := recover(); r != nil {
+			radPanic, ok := r.(*RadPanic)
+			if ok {
+				err := radPanic.Err()
+				i.errorf(err.Node, "%s", err.Msg()) // todo probably want this for tests too?
+			}
+			if !IsTest {
 				i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
 			}
-		}()
-	}
+		}
+	}()
 	return i.evaluate(node, ctx)
 }
 
-func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
+func (i *Interpreter) evaluate(node *ts.Node, ctx *EvalCtx) (out RadValue) {
 	switch node.Kind() {
 	// no-ops
 	case rl.K_SOURCE_FILE:
@@ -129,12 +129,19 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_EXPR:
-		out := i.evaluate(i.getChild(node, rl.F_DELEGATE), ctx)
 		catchNode := i.getChild(node, rl.F_CATCH)
-		if catchNode == nil {
-			i.MaybePropagateError(node, out)
+		if catchNode != nil {
+			defer func() {
+				if r := recover(); r != nil {
+					if radPanic, ok := r.(*RadPanic); ok {
+						out = radPanic.ErrV
+					} else {
+						panic(r)
+					}
+				}
+			}()
 		}
-		return out
+		out = i.evaluate(i.getChild(node, rl.F_DELEGATE), ctx)
 	case rl.K_PASS:
 		// no-op
 	case rl.K_BREAK_STMT:
@@ -399,11 +406,7 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
 		entries := i.getChildren(node, rl.F_LIST_ENTRY)
 		list := NewRadList()
 		for _, entry := range entries {
-			out := i.evaluate(&entry, EXPECT_ONE_OUTPUT)
-			if out.IsErrorToPropagate() {
-				return out
-			}
-			list.Append(out)
+			list.Append(i.evaluate(&entry, EXPECT_ONE_OUTPUT))
 		}
 		return newRadValues(i, node, list)
 	case rl.K_MAP:
@@ -425,24 +428,13 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
 		resultExprNode := i.getChild(node, rl.F_EXPR)
 		conditionNode := i.getChild(node, rl.F_CONDITION)
 
-		var errorToPropagate *RadValue
 		resultList := NewRadList()
 		doOneLoop := func() {
 			if conditionNode == nil || i.evaluate(conditionNode, EXPECT_ONE_OUTPUT).TruthyFalsy() {
-				out := i.evaluate(resultExprNode, EXPECT_ONE_OUTPUT)
-				if out.IsErrorToPropagate() {
-					i.breaking = true
-					errorToPropagate = &out
-				} else {
-					resultList.Append(out)
-				}
+				resultList.Append(i.evaluate(resultExprNode, EXPECT_ONE_OUTPUT))
 			}
 		}
 		i.executeForLoop(node, doOneLoop)
-
-		if errorToPropagate != nil {
-			return *errorToPropagate
-		}
 
 		return newRadValues(i, node, resultList)
 	case rl.K_TERNARY_EXPR:
@@ -459,7 +451,7 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx EvalCtx) RadValue {
 	default:
 		i.errorf(node, "Unsupported node kind: %s", node.Kind())
 	}
-	return VOID_SENTINEL
+	return
 }
 
 func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
@@ -557,7 +549,7 @@ func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
 	return node.Child(0)
 }
 
-func (i *Interpreter) assertExpectedNumOutputs(node *ts.Node, evalCtx EvalCtx, actual ExpectedOutput) {
+func (i *Interpreter) assertExpectedNumOutputs(node *ts.Node, evalCtx *EvalCtx, actual ExpectedOutput) {
 	if evalCtx.ExpectedOutput == NoConstraint {
 		return
 	}
@@ -755,11 +747,7 @@ func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightN
 			i.env.SetJsonFieldVar(jsonFieldVar)
 			outputs = append(outputs, JSON_SENTINEL)
 		} else {
-			out := i.evaluate(&rightNode, EXPECT_ONE_OUTPUT)
-			if out.IsErrorToPropagate() {
-
-			}
-			outputs = append(outputs, out)
+			outputs = append(outputs, i.evaluate(&rightNode, EXPECT_ONE_OUTPUT))
 		}
 	}
 

@@ -7,7 +7,7 @@ width.s or height[i]
 =====
 B: [ 0, 65] PS: [0,  0] PE: [3,  0] source_file
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]   expr
-B: [ 0, 21] PS: [0,  0] PE: [0, 21]     ternary_expr
+B: [ 0, 21] PS: [0,  0] PE: [0, 21]     delegate: ternary_expr
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]       delegate: or_expr
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]         left: or_expr
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]           delegate: and_expr
@@ -19,7 +19,7 @@ B: [ 0,  8] PS: [0,  0] PE: [0,  8]                     delegate: var_path
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]                       root: identifier `width`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                       [ `[`
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                       indexing: expr
-B: [ 6,  7] PS: [0,  6] PE: [0,  7]                         ternary_expr
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]                         delegate: ternary_expr
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                           delegate: or_expr
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                             delegate: and_expr
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                               delegate: compare_expr
@@ -39,7 +39,7 @@ B: [12, 21] PS: [0, 12] PE: [0, 21]                   delegate: var_path
 B: [12, 18] PS: [0, 12] PE: [0, 18]                     root: identifier `height`
 B: [18, 19] PS: [0, 18] PE: [0, 19]                     [ `[`
 B: [19, 20] PS: [0, 19] PE: [0, 20]                     indexing: expr
-B: [19, 20] PS: [0, 19] PE: [0, 20]                       ternary_expr
+B: [19, 20] PS: [0, 19] PE: [0, 20]                       delegate: ternary_expr
 B: [19, 20] PS: [0, 19] PE: [0, 20]                         delegate: or_expr
 B: [19, 20] PS: [0, 19] PE: [0, 20]                           delegate: and_expr
 B: [19, 20] PS: [0, 19] PE: [0, 20]                             delegate: compare_expr
@@ -50,7 +50,7 @@ B: [19, 20] PS: [0, 19] PE: [0, 20]                                     delegate
 B: [19, 20] PS: [0, 19] PE: [0, 20]                                       root: identifier `i`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                     ] `]`
 B: [22, 43] PS: [1,  0] PE: [1, 21]   expr
-B: [22, 43] PS: [1,  0] PE: [1, 21]     ternary_expr
+B: [22, 43] PS: [1,  0] PE: [1, 21]     delegate: ternary_expr
 B: [22, 43] PS: [1,  0] PE: [1, 21]       delegate: or_expr
 B: [22, 30] PS: [1,  0] PE: [1,  8]         left: or_expr
 B: [22, 30] PS: [1,  0] PE: [1,  8]           delegate: and_expr
@@ -62,7 +62,7 @@ B: [22, 30] PS: [1,  0] PE: [1,  8]                     delegate: var_path
 B: [22, 27] PS: [1,  0] PE: [1,  5]                       root: identifier `width`
 B: [27, 28] PS: [1,  5] PE: [1,  6]                       [ `[`
 B: [28, 29] PS: [1,  6] PE: [1,  7]                       indexing: expr
-B: [28, 29] PS: [1,  6] PE: [1,  7]                         ternary_expr
+B: [28, 29] PS: [1,  6] PE: [1,  7]                         delegate: ternary_expr
 B: [28, 29] PS: [1,  6] PE: [1,  7]                           delegate: or_expr
 B: [28, 29] PS: [1,  6] PE: [1,  7]                             delegate: and_expr
 B: [28, 29] PS: [1,  6] PE: [1,  7]                               delegate: compare_expr
@@ -84,7 +84,7 @@ B: [34, 43] PS: [1, 12] PE: [1, 21]                   delegate: var_path
 B: [34, 40] PS: [1, 12] PE: [1, 18]                     root: identifier `height`
 B: [40, 41] PS: [1, 18] PE: [1, 19]                     [ `[`
 B: [41, 42] PS: [1, 19] PE: [1, 20]                     indexing: expr
-B: [41, 42] PS: [1, 19] PE: [1, 20]                       ternary_expr
+B: [41, 42] PS: [1, 19] PE: [1, 20]                       delegate: ternary_expr
 B: [41, 42] PS: [1, 19] PE: [1, 20]                         delegate: or_expr
 B: [41, 42] PS: [1, 19] PE: [1, 20]                           delegate: and_expr
 B: [41, 42] PS: [1, 19] PE: [1, 20]                             delegate: compare_expr
@@ -95,7 +95,7 @@ B: [41, 42] PS: [1, 19] PE: [1, 20]                                     delegate
 B: [41, 42] PS: [1, 19] PE: [1, 20]                                       root: identifier `i`
 B: [42, 43] PS: [1, 20] PE: [1, 21]                     ] `]`
 B: [44, 64] PS: [2,  0] PE: [2, 20]   expr
-B: [44, 64] PS: [2,  0] PE: [2, 20]     ternary_expr
+B: [44, 64] PS: [2,  0] PE: [2, 20]     delegate: ternary_expr
 B: [44, 64] PS: [2,  0] PE: [2, 20]       delegate: or_expr
 B: [44, 51] PS: [2,  0] PE: [2,  7]         left: or_expr
 B: [44, 51] PS: [2,  0] PE: [2,  7]           delegate: and_expr
@@ -117,7 +117,7 @@ B: [55, 64] PS: [2, 11] PE: [2, 20]                   delegate: var_path
 B: [55, 61] PS: [2, 11] PE: [2, 17]                     root: identifier `height`
 B: [61, 62] PS: [2, 17] PE: [2, 18]                     [ `[`
 B: [62, 63] PS: [2, 18] PE: [2, 19]                     indexing: expr
-B: [62, 63] PS: [2, 18] PE: [2, 19]                       ternary_expr
+B: [62, 63] PS: [2, 18] PE: [2, 19]                       delegate: ternary_expr
 B: [62, 63] PS: [2, 18] PE: [2, 19]                         delegate: or_expr
 B: [62, 63] PS: [2, 18] PE: [2, 19]                           delegate: and_expr
 B: [62, 63] PS: [2, 18] PE: [2, 19]                             delegate: compare_expr

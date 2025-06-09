@@ -14,7 +14,7 @@ B: [  0, 117] PS: [0,  0] PE: [8,  0] source_file
 B: [  0, 116] PS: [0,  0] PE: [7, 21]   rad_block
 B: [  0,   3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword `rad`
 B: [  4,   7] PS: [0,  4] PE: [0,  7]     source: expr
-B: [  4,   7] PS: [0,  4] PE: [0,  7]       ternary_expr
+B: [  4,   7] PS: [0,  4] PE: [0,  7]       delegate: ternary_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]         delegate: or_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]           delegate: and_expr
 B: [  4,   7] PS: [0,  4] PE: [0,  7]             delegate: compare_expr
@@ -33,7 +33,7 @@ B: [ 33, 116] PS: [2,  4] PE: [7, 21]     stmt: rad_if_stmt
 B: [ 33,  51] PS: [2,  4] PE: [3, 12]       alt: rad_if_alt
 B: [ 33,  35] PS: [2,  4] PE: [2,  6]         if `if`
 B: [ 36,  37] PS: [2,  7] PE: [2,  8]         condition: expr
-B: [ 36,  37] PS: [2,  7] PE: [2,  8]           ternary_expr
+B: [ 36,  37] PS: [2,  7] PE: [2,  8]           delegate: ternary_expr
 B: [ 36,  37] PS: [2,  7] PE: [2,  8]             delegate: or_expr
 B: [ 36,  37] PS: [2,  7] PE: [2,  8]               delegate: and_expr
 B: [ 36,  37] PS: [2,  7] PE: [2,  8]                 delegate: compare_expr
@@ -49,7 +49,7 @@ B: [ 56,  60] PS: [4,  4] PE: [4,  8]       else `else`
 B: [ 61,  84] PS: [4,  9] PE: [5, 17]       alt: rad_if_alt
 B: [ 61,  63] PS: [4,  9] PE: [4, 11]         if `if`
 B: [ 64,  65] PS: [4, 12] PE: [4, 13]         condition: expr
-B: [ 64,  65] PS: [4, 12] PE: [4, 13]           ternary_expr
+B: [ 64,  65] PS: [4, 12] PE: [4, 13]           delegate: ternary_expr
 B: [ 64,  65] PS: [4, 12] PE: [4, 13]             delegate: or_expr
 B: [ 64,  65] PS: [4, 12] PE: [4, 13]               delegate: and_expr
 B: [ 64,  65] PS: [4, 12] PE: [4, 13]                 delegate: compare_expr

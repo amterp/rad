@@ -10,7 +10,7 @@ B: [ 0, 63] PS: [0,  0] PE: [4,  0] source_file
 B: [ 0, 62] PS: [0,  0] PE: [3, 23]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword `rad`
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]     source: expr
-B: [ 4,  7] PS: [0,  4] PE: [0,  7]       ternary_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]       delegate: ternary_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]         delegate: or_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]           delegate: and_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]             delegate: compare_expr
@@ -37,7 +37,7 @@ B: [54, 55] PS: [3, 15] PE: [3, 16]           param: fn_param
 B: [54, 55] PS: [3, 15] PE: [3, 16]             name: identifier `n`
 B: [55, 56] PS: [3, 16] PE: [3, 17]           ) `)`
 B: [57, 62] PS: [3, 18] PE: [3, 23]           expr: expr
-B: [57, 62] PS: [3, 18] PE: [3, 23]             ternary_expr
+B: [57, 62] PS: [3, 18] PE: [3, 23]             delegate: ternary_expr
 B: [57, 62] PS: [3, 18] PE: [3, 23]               delegate: or_expr
 B: [57, 62] PS: [3, 18] PE: [3, 23]                 delegate: and_expr
 B: [57, 62] PS: [3, 18] PE: [3, 23]                   delegate: compare_expr

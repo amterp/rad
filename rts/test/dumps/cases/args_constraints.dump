@@ -77,7 +77,7 @@ B: [179, 180] PS: [8,  0] PE: [8,  1]     left: var_path
 B: [179, 180] PS: [8,  0] PE: [8,  1]       root: identifier `a`
 B: [181, 182] PS: [8,  2] PE: [8,  3]     = `=`
 B: [183, 184] PS: [8,  4] PE: [8,  5]     right: expr
-B: [183, 184] PS: [8,  4] PE: [8,  5]       ternary_expr
+B: [183, 184] PS: [8,  4] PE: [8,  5]       delegate: ternary_expr
 B: [183, 184] PS: [8,  4] PE: [8,  5]         delegate: or_expr
 B: [183, 184] PS: [8,  4] PE: [8,  5]           delegate: and_expr
 B: [183, 184] PS: [8,  4] PE: [8,  5]             delegate: compare_expr

@@ -191,22 +191,24 @@ var (
 )
 
 type FuncInvocationArgs struct {
-	i         *Interpreter
-	callNode  *ts.Node
-	funcName  string
-	args      []PosArg
-	namedArgs map[string]namedArg
-	ctx       EvalCtx
+	i            *Interpreter
+	callNode     *ts.Node
+	funcName     string
+	args         []PosArg
+	namedArgs    map[string]namedArg
+	ctx          *EvalCtx
+	panicIfError bool
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, ctx EvalCtx) FuncInvocationArgs {
+func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, isBuiltIn bool, ctx *EvalCtx) FuncInvocationArgs {
 	return FuncInvocationArgs{
-		i:         i,
-		callNode:  callNode,
-		funcName:  funcName,
-		args:      args,
-		namedArgs: namedArgs,
-		ctx:       ctx,
+		i:            i,
+		callNode:     callNode,
+		funcName:     funcName,
+		args:         args,
+		namedArgs:    namedArgs,
+		panicIfError: !(funcName == FUNC_ERROR && isBuiltIn),
+		ctx:          ctx,
 	}
 }
 
@@ -756,7 +758,7 @@ func init() {
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
-				return newRadValues(f.i, f.callNode, NewError(err).SetShouldPropagate(false))
+				return newRadValues(f.i, f.callNode, NewError(err))
 			},
 		},
 		{
@@ -1822,7 +1824,7 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 					}
@@ -1830,7 +1832,7 @@ func init() {
 				}).ForMap(func(v RadValue, m *RadMap) {
 					outputList := NewRadList()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 						return true // signal to keep going
@@ -1859,7 +1861,7 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep item
@@ -1870,7 +1872,7 @@ func init() {
 				}).ForMap(func(_ RadValue, m *RadMap) {
 					outputMap := NewRadMap()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep entry
@@ -1938,6 +1940,7 @@ func init() {
 						fnName,
 						NewPosArgs(), // zero positional args
 						NO_NAMED_ARGS_INPUT,
+						fn.IsBuiltIn(),
 						EXPECT_ONE_OUTPUT,
 					)
 					out := fn.Execute(inv)

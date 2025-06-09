@@ -5,7 +5,7 @@ a[1].replace("l", "o")
 =====
 B: [ 0, 23] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr
-B: [ 0, 22] PS: [0,  0] PE: [0, 22]     ternary_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]     delegate: ternary_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]       delegate: or_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]         delegate: and_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]           delegate: compare_expr
@@ -16,7 +16,7 @@ B: [ 0, 22] PS: [0,  0] PE: [0, 22]                   delegate: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]                     root: identifier `a`
 B: [ 1,  2] PS: [0,  1] PE: [0,  2]                     [ `[`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                     indexing: expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                       ternary_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                       delegate: ternary_expr
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                         delegate: or_expr
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                           delegate: and_expr
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                             delegate: compare_expr
@@ -33,7 +33,7 @@ B: [ 5, 22] PS: [0,  5] PE: [0, 22]                     indexing: call
 B: [ 5, 12] PS: [0,  5] PE: [0, 12]                       func: identifier `replace`
 B: [12, 13] PS: [0, 12] PE: [0, 13]                       ( `(`
 B: [13, 16] PS: [0, 13] PE: [0, 16]                       arg: expr
-B: [13, 16] PS: [0, 13] PE: [0, 16]                         ternary_expr
+B: [13, 16] PS: [0, 13] PE: [0, 16]                         delegate: ternary_expr
 B: [13, 16] PS: [0, 13] PE: [0, 16]                           delegate: or_expr
 B: [13, 16] PS: [0, 13] PE: [0, 16]                             delegate: and_expr
 B: [13, 16] PS: [0, 13] PE: [0, 16]                               delegate: compare_expr
@@ -50,7 +50,7 @@ B: [14, 15] PS: [0, 14] PE: [0, 15]                                             
 B: [15, 16] PS: [0, 15] PE: [0, 16]                                               end: string_end `"`
 B: [16, 17] PS: [0, 16] PE: [0, 17]                       , `,`
 B: [18, 21] PS: [0, 18] PE: [0, 21]                       arg: expr
-B: [18, 21] PS: [0, 18] PE: [0, 21]                         ternary_expr
+B: [18, 21] PS: [0, 18] PE: [0, 21]                         delegate: ternary_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                           delegate: or_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                             delegate: and_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                               delegate: compare_expr

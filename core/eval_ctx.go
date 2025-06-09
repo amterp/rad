@@ -43,8 +43,8 @@ type EvalCtx struct {
 	ExpectedOutput ExpectedOutput
 }
 
-func NewEvalCtx(ExpectValue ExpectedOutput) EvalCtx {
-	return EvalCtx{
+func NewEvalCtx(ExpectValue ExpectedOutput) *EvalCtx {
+	return &EvalCtx{
 		ExpectedOutput: ExpectValue,
 	}
 }

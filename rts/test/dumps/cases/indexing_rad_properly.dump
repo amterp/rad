@@ -5,7 +5,7 @@ a > 1 or b[a] == 1
 =====
 B: [ 0, 19] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr
-B: [ 0, 18] PS: [0,  0] PE: [0, 18]     ternary_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]     delegate: ternary_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]       delegate: or_expr
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]         left: or_expr
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]           delegate: and_expr
@@ -35,7 +35,7 @@ B: [ 9, 13] PS: [0,  9] PE: [0, 13]                     delegate: var_path
 B: [ 9, 10] PS: [0,  9] PE: [0, 10]                       root: identifier `b`
 B: [10, 11] PS: [0, 10] PE: [0, 11]                       [ `[`
 B: [11, 12] PS: [0, 11] PE: [0, 12]                       indexing: expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                         ternary_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                         delegate: ternary_expr
 B: [11, 12] PS: [0, 11] PE: [0, 12]                           delegate: or_expr
 B: [11, 12] PS: [0, 11] PE: [0, 12]                             delegate: and_expr
 B: [11, 12] PS: [0, 11] PE: [0, 12]                               delegate: compare_expr

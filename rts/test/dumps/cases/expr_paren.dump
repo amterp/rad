@@ -5,7 +5,7 @@ print((1 + 2) * 2)
 =====
 B: [ 0, 19] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr
-B: [ 0, 18] PS: [0,  0] PE: [0, 18]     ternary_expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]     delegate: ternary_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]       delegate: or_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]         delegate: and_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]           delegate: compare_expr
@@ -18,7 +18,7 @@ B: [ 0, 18] PS: [0,  0] PE: [0, 18]                       call
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]                         func: identifier `print`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                         ( `(`
 B: [ 6, 17] PS: [0,  6] PE: [0, 17]                         arg: expr
-B: [ 6, 17] PS: [0,  6] PE: [0, 17]                           ternary_expr
+B: [ 6, 17] PS: [0,  6] PE: [0, 17]                           delegate: ternary_expr
 B: [ 6, 17] PS: [0,  6] PE: [0, 17]                             delegate: or_expr
 B: [ 6, 17] PS: [0,  6] PE: [0, 17]                               delegate: and_expr
 B: [ 6, 17] PS: [0,  6] PE: [0, 17]                                 delegate: compare_expr
@@ -31,7 +31,7 @@ B: [ 6, 13] PS: [0,  6] PE: [0, 13]                                             
 B: [ 6, 13] PS: [0,  6] PE: [0, 13]                                               parenthesized_expr
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                                                 ( `(`
 B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                 expr: expr
-B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                   ternary_expr
+B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                   delegate: ternary_expr
 B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                     delegate: or_expr
 B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                       delegate: and_expr
 B: [ 7, 12] PS: [0,  7] PE: [0, 12]                                                         delegate: compare_expr

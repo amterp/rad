@@ -20,7 +20,7 @@ B: [14, 15] PS: [0, 14] PE: [0, 15]           ] `]`
 B: [15, 18] PS: [0, 15] PE: [0, 18]         index: json_path_indexer
 B: [15, 16] PS: [0, 15] PE: [0, 16]           [ `[`
 B: [16, 17] PS: [0, 16] PE: [0, 17]           expr: expr
-B: [16, 17] PS: [0, 16] PE: [0, 17]             ternary_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]             delegate: ternary_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]               delegate: or_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]                 delegate: and_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]                   delegate: compare_expr
@@ -41,7 +41,7 @@ B: [23, 24] PS: [0, 23] PE: [0, 24]           ] `]`
 B: [24, 27] PS: [0, 24] PE: [0, 27]         index: json_path_indexer
 B: [24, 25] PS: [0, 24] PE: [0, 25]           [ `[`
 B: [25, 26] PS: [0, 25] PE: [0, 26]           expr: expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]             ternary_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]             delegate: ternary_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]               delegate: or_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]                 delegate: and_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]                   delegate: compare_expr

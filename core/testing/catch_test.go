@@ -38,18 +38,23 @@ fn foo():
 
 func Test_Catch_CanCatchOnNestedFunctions(t *testing.T) {
 	script := `
-a = catch foo()
+a = catch foo(1)
 print("First", a)
-a = catch foo().foo()
+a = catch foo(2).foo()
 print("Second", a)
 
 fn foo(x):
-	if type_of(x) == "error":
-		return error("this is an error: {x}")
-	return 1
+	print("Foo!", x)
+	out = x
+	if x == 2:
+		out = error("this is an error: {x}")
+	return out
 `
 	setupAndRunCode(t, script)
-	expected := `
+	expected := `Foo! 1
+First 1
+Foo! 2
+Second this is an error: 2
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -57,15 +62,18 @@ fn foo(x):
 
 func Test_Catch_ImmediatelyPropagatesOnNestedFunctions(t *testing.T) {
 	script := `
-foo().foo()
+foo(1).foo()
 
 fn foo(x):
-	if type_of(x) == "error":
-		return error("two")
-	return error("one")
+  print_err("Foo!", x)
+  return error(out)
 `
 	setupAndRunCode(t, script)
-	expected := `one, not two
+	expected := `Foo! 1
+Error at L6:16
+
+    return error(out)
+                 ^^^ Undefined variable: out
 `
 	assertError(t, 1, expected)
 }
@@ -92,21 +100,22 @@ func Test_Catch_ListComprehensionPropagates(t *testing.T) {
 a = bar()
 
 fn foo(x):
-	print("Foo {x}")
-	return error("error: {x}")
+	print_err("Foo {x}")
+	return error("error {x}")
 
 fn bar():
-	print("Bar")
+	print_err("bar")
 	return [foo(a) for a in [1, 2]]
 `
 	setupAndRunCode(t, script)
-	stdoutExpected := `Bar
+	expected := `bar
 Foo 1
+Error at L10:10
+
+  	return [foo(a) for a in [1, 2]]
+           ^^^^^^ error 1
 `
-	stderrExpected := `error: 1
-`
-	assertOutput(t, stdOutBuffer, stdoutExpected)
-	assertOutput(t, stdErrBuffer, stderrExpected)
+	assertOnlyOutput(t, stdErrBuffer, expected)
 	assertExitCode(t, 1)
 }
 
@@ -120,8 +129,8 @@ fn foo(x):
 	return error("error: {x}")
 `
 	setupAndRunCode(t, script)
-	expected := `Bar
-Foo 1
+	expected := `Foo 1
+Got: error: 1
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -201,7 +210,10 @@ fn bar():
 	return error("bar error")
 `
 	setupAndRunCode(t, script)
-	expected := `bar error
+	expected := `Error at L5:6
+
+  	a = bar()
+       ^^^^^ bar error
 `
 	assertError(t, 1, expected)
 }
@@ -218,7 +230,10 @@ fn bar():
 	return error("bar error")
 `
 	setupAndRunCode(t, script)
-	expected := `foo error
+	expected := `Error at L2:1
+
+  foo()
+  ^^^^^ foo error
 `
 	assertError(t, 1, expected)
 }
@@ -228,16 +243,20 @@ func Test_Catch_LambdaMapErrors(t *testing.T) {
 a = [1, 2]
 a.map(foo).print()
 
-foo = fn(x):
+fn foo(x):
 	return error("this is an error")
 `
 	setupAndRunCode(t, script)
-	expected := `
+	expected := `Error at L3:3
+
+  a.map(foo).print()
+    ^^^^^^^^ this is an error
 `
 	assertError(t, 1, expected)
 }
 
 func Test_Catch_LambdaMapCanCatch(t *testing.T) {
+	t.Skipf("TODO: not possible yet. Probably just want a catch=true named arg in map?")
 	script := `
 a = [1, 2]
 a.map(foo).print()

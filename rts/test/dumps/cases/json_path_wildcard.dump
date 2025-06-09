@@ -82,7 +82,7 @@ B: [79, 82] PS: [4,  9] PE: [4, 12]         key: identifier `aaa`
 B: [82, 85] PS: [4, 12] PE: [4, 15]         index: json_path_indexer
 B: [82, 83] PS: [4, 12] PE: [4, 13]           [ `[`
 B: [83, 84] PS: [4, 13] PE: [4, 14]           expr: expr
-B: [83, 84] PS: [4, 13] PE: [4, 14]             ternary_expr
+B: [83, 84] PS: [4, 13] PE: [4, 14]             delegate: ternary_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]               delegate: or_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]                 delegate: and_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]                   delegate: compare_expr

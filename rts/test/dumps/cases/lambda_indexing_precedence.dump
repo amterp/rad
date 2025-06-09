@@ -5,7 +5,7 @@ fn(n) n.trim().upper()
 =====
 B: [ 0, 23] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr
-B: [ 0, 22] PS: [0,  0] PE: [0, 22]     ternary_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]     delegate: ternary_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]       delegate: or_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]         delegate: and_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]           delegate: compare_expr
@@ -19,7 +19,7 @@ B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     param: fn_param
 B: [ 3,  4] PS: [0,  3] PE: [0,  4]                       name: identifier `n`
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     ) `)`
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                     expr: expr
-B: [ 6, 22] PS: [0,  6] PE: [0, 22]                       ternary_expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                       delegate: ternary_expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                         delegate: or_expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                           delegate: and_expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                             delegate: compare_expr

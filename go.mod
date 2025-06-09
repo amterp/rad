@@ -56,6 +56,5 @@ require (
 //replace github.com/amterp/go-tbl => ../go-tbl
 //replace github.com/amterp/flexid => ../flexid
 replace github.com/amterp/rad/rts => ./rts
-
-//replace github.com/amterp/tree-sitter-rad => ../tree-sitter-rad
+replace github.com/amterp/tree-sitter-rad => ../tree-sitter-rad
 //replace github.com/amterp/jsoncolor => ../jsoncolor

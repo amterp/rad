@@ -5,7 +5,7 @@ print("hello, \{var}")
 =====
 B: [ 0, 23] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr
-B: [ 0, 22] PS: [0,  0] PE: [0, 22]     ternary_expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]     delegate: ternary_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]       delegate: or_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]         delegate: and_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]           delegate: compare_expr
@@ -18,7 +18,7 @@ B: [ 0, 22] PS: [0,  0] PE: [0, 22]                       call
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]                         func: identifier `print`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                         ( `(`
 B: [ 6, 21] PS: [0,  6] PE: [0, 21]                         arg: expr
-B: [ 6, 21] PS: [0,  6] PE: [0, 21]                           ternary_expr
+B: [ 6, 21] PS: [0,  6] PE: [0, 21]                           delegate: ternary_expr
 B: [ 6, 21] PS: [0,  6] PE: [0, 21]                             delegate: or_expr
 B: [ 6, 21] PS: [0,  6] PE: [0, 21]                               delegate: and_expr
 B: [ 6, 21] PS: [0,  6] PE: [0, 21]                                 delegate: compare_expr

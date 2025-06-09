@@ -5,7 +5,7 @@ sort(mylist)[0]
 =====
 B: [ 0, 16] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]   expr
-B: [ 0, 15] PS: [0,  0] PE: [0, 15]     ternary_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]     delegate: ternary_expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]       delegate: or_expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]         delegate: and_expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]           delegate: compare_expr
@@ -18,7 +18,7 @@ B: [ 0, 12] PS: [0,  0] PE: [0, 12]                       call
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]                         func: identifier `sort`
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         ( `(`
 B: [ 5, 11] PS: [0,  5] PE: [0, 11]                         arg: expr
-B: [ 5, 11] PS: [0,  5] PE: [0, 11]                           ternary_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                           delegate: ternary_expr
 B: [ 5, 11] PS: [0,  5] PE: [0, 11]                             delegate: or_expr
 B: [ 5, 11] PS: [0,  5] PE: [0, 11]                               delegate: and_expr
 B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                 delegate: compare_expr
@@ -30,7 +30,7 @@ B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                           ro
 B: [11, 12] PS: [0, 11] PE: [0, 12]                         ) `)`
 B: [12, 13] PS: [0, 12] PE: [0, 13]                     [ `[`
 B: [13, 14] PS: [0, 13] PE: [0, 14]                     indexing: expr
-B: [13, 14] PS: [0, 13] PE: [0, 14]                       ternary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                       delegate: ternary_expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                         delegate: or_expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                           delegate: and_expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                             delegate: compare_expr

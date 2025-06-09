@@ -45,7 +45,7 @@ type namedArg struct {
 
 func (i *Interpreter) callFunction(
 	callNode *ts.Node,
-	ctx EvalCtx,
+	ctx *EvalCtx,
 	ufcsArg *PosArg,
 ) RadValue {
 	funcNameNode := i.getChild(callNode, rl.F_FUNC)
@@ -59,13 +59,8 @@ func (i *Interpreter) callFunction(
 		args = append(args, *ufcsArg)
 	}
 	for _, argNode := range argNodes {
-		// TODO 'expected output 1' prevents something like
-		//  `print(function_that_returns_two_values())`, it should just "spread out" the args to print
-		value := i.evaluate(&argNode, EXPECT_ONE_OUTPUT)
-		if value.IsErrorToPropagate() {
-			return value
-		}
-		args = append(args, NewPosArg(&argNode, value))
+		argValue := i.evaluate(&argNode, EXPECT_ONE_OUTPUT)
+		args = append(args, NewPosArg(&argNode, argValue))
 	}
 
 	namedArgs := make(map[string]namedArg)
@@ -75,9 +70,6 @@ func (i *Interpreter) callFunction(
 
 		argName := GetSrc(i.sd.Src, namedArgNameNode)
 		argValue := i.evaluate(namedArgValueNode, EXPECT_ONE_OUTPUT)
-		if argValue.IsErrorToPropagate() {
-			return argValue
-		}
 		namedArgs[argName] = namedArg{
 			name:      argName,
 			value:     argValue,
@@ -96,12 +88,7 @@ func (i *Interpreter) callFunction(
 		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, ctx))
-
-	if out.IsErrorToPropagate() && funcName == FUNC_ERROR && fn.IsBuiltIn() {
-		out.RequireError(i, callNode).ShouldPropagate = false
-	}
-
+	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn(), ctx))
 	return out
 }
 

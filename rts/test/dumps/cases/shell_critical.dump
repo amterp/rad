@@ -8,7 +8,7 @@ B: [0, 6] PS: [0, 0] PE: [0, 6]   shell_stmt
 B: [0, 6] PS: [0, 0] PE: [0, 6]     shell_cmd: critical_shell_cmd
 B: [0, 2] PS: [0, 0] PE: [0, 2]       $! `$!`
 B: [2, 6] PS: [0, 2] PE: [0, 6]       command: expr
-B: [2, 6] PS: [0, 2] PE: [0, 6]         ternary_expr
+B: [2, 6] PS: [0, 2] PE: [0, 6]         delegate: ternary_expr
 B: [2, 6] PS: [0, 2] PE: [0, 6]           delegate: or_expr
 B: [2, 6] PS: [0, 2] PE: [0, 6]             delegate: and_expr
 B: [2, 6] PS: [0, 2] PE: [0, 6]               delegate: compare_expr

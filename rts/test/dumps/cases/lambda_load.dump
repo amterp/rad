@@ -5,7 +5,7 @@ m.load("k", fn() "two", reload=true)
 =====
 B: [ 0, 37] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]   expr
-B: [ 0, 36] PS: [0,  0] PE: [0, 36]     ternary_expr
+B: [ 0, 36] PS: [0,  0] PE: [0, 36]     delegate: ternary_expr
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]       delegate: or_expr
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]         delegate: and_expr
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]           delegate: compare_expr
@@ -19,7 +19,7 @@ B: [ 2, 36] PS: [0,  2] PE: [0, 36]                     indexing: call
 B: [ 2,  6] PS: [0,  2] PE: [0,  6]                       func: identifier `load`
 B: [ 6,  7] PS: [0,  6] PE: [0,  7]                       ( `(`
 B: [ 7, 10] PS: [0,  7] PE: [0, 10]                       arg: expr
-B: [ 7, 10] PS: [0,  7] PE: [0, 10]                         ternary_expr
+B: [ 7, 10] PS: [0,  7] PE: [0, 10]                         delegate: ternary_expr
 B: [ 7, 10] PS: [0,  7] PE: [0, 10]                           delegate: or_expr
 B: [ 7, 10] PS: [0,  7] PE: [0, 10]                             delegate: and_expr
 B: [ 7, 10] PS: [0,  7] PE: [0, 10]                               delegate: compare_expr
@@ -36,7 +36,7 @@ B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                             
 B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                               end: string_end `"`
 B: [10, 11] PS: [0, 10] PE: [0, 11]                       , `,`
 B: [12, 22] PS: [0, 12] PE: [0, 22]                       arg: expr
-B: [12, 22] PS: [0, 12] PE: [0, 22]                         ternary_expr
+B: [12, 22] PS: [0, 12] PE: [0, 22]                         delegate: ternary_expr
 B: [12, 22] PS: [0, 12] PE: [0, 22]                           delegate: or_expr
 B: [12, 22] PS: [0, 12] PE: [0, 22]                             delegate: and_expr
 B: [12, 22] PS: [0, 12] PE: [0, 22]                               delegate: compare_expr
@@ -47,7 +47,7 @@ B: [12, 22] PS: [0, 12] PE: [0, 22]                                       delega
 B: [12, 14] PS: [0, 12] PE: [0, 14]                                         keyword: fn `fn`
 B: [14, 16] PS: [0, 14] PE: [0, 16]                                         () `()`
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                         expr: expr
-B: [17, 22] PS: [0, 17] PE: [0, 22]                                           ternary_expr
+B: [17, 22] PS: [0, 17] PE: [0, 22]                                           delegate: ternary_expr
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                             delegate: or_expr
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                               delegate: and_expr
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                                 delegate: compare_expr
@@ -67,7 +67,7 @@ B: [24, 35] PS: [0, 24] PE: [0, 35]                       named_arg: call_named_
 B: [24, 30] PS: [0, 24] PE: [0, 30]                         name: identifier `reload`
 B: [30, 31] PS: [0, 30] PE: [0, 31]                         = `=`
 B: [31, 35] PS: [0, 31] PE: [0, 35]                         value: expr
-B: [31, 35] PS: [0, 31] PE: [0, 35]                           ternary_expr
+B: [31, 35] PS: [0, 31] PE: [0, 35]                           delegate: ternary_expr
 B: [31, 35] PS: [0, 31] PE: [0, 35]                             delegate: or_expr
 B: [31, 35] PS: [0, 31] PE: [0, 35]                               delegate: and_expr
 B: [31, 35] PS: [0, 31] PE: [0, 35]                                 delegate: compare_expr

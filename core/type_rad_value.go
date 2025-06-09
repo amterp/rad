@@ -202,11 +202,6 @@ func (v RadValue) IsError() bool {
 	return ok
 }
 
-func (v RadValue) IsErrorToPropagate() bool {
-	err, ok := v.Val.(*RadError)
-	return ok && err.ShouldPropagate
-}
-
 func (v RadValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RadValue) {
 	switch coerced := v.Val.(type) {
 	case *RadList:
