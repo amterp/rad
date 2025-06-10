@@ -92,23 +92,6 @@ switch name:
 	assertError(t, 1, expected)
 }
 
-func Test_Switch_AssignNumMismatchErrors(t *testing.T) {
-	script := `
-name = "charlie"
-one, two = switch name:
-    case "alice" -> 1, 2
-    case "bob" -> 3, 4
-    case "charlie" -> 5
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L6:20
-
-      case "charlie" -> 5
-                     ^^^^ Cannot assign 1 values to 2 variables
-`
-	assertError(t, 1, expected)
-}
-
 func Test_Switch_BasicDefaultAssign(t *testing.T) {
 	script := `
 a, b = switch 4:
@@ -172,7 +155,12 @@ a = switch 4:
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "10\n30 40\n30\n50\n")
+	expected := `10
+30 40
+30
+50
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 

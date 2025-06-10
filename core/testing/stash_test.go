@@ -1,6 +1,9 @@
 package testing
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func Test_Rad_home(t *testing.T) {
 	script := `
@@ -60,11 +63,11 @@ func Test_Stash_LoadState(t *testing.T) {
 ---
 @stash_id = with_stash
 ---
-state, existed = load_state()
-print(state, existed)
+state = load_state()
+print(state)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "somekey": "somevalue" } true
+	expected := `{ "somekey": "somevalue" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -75,11 +78,11 @@ func Test_Stash_LoadStateNoExisting(t *testing.T) {
 ---
 @stash_id = with_no_stash
 ---
-state, existed = load_state()
-print(state, existed)
+state = load_state()
+print(state)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ } false
+	expected := `{ }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -111,12 +114,12 @@ func Test_Stash_LoadStashFileExisting(t *testing.T) {
 ---
 @stash_id = with_stash
 ---
-r, existed = load_stash_file("existing.txt", "didn't find")
-print(existed, r.content)
+r = load_stash_file("existing.txt", "didn't find")
+print(r.created, r.content)
 r.path.split("/")[-6:].print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `true hello there!
+	expected := `false hello there!
 [ "testing", "rad_test_home", "stashes", "with_stash", "files", "existing.txt" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -128,8 +131,8 @@ func Test_Stash_LoadStashFileNotExisting(t *testing.T) {
 ---
 @stash_id = with_stash
 ---
-r, existed = load_stash_file("non_existing.txt", "didn't find")
-print(existed, r.content)
+r = load_stash_file("non_existing.txt", "didn't find")
+print(r.created, r.content)
 r.path.split("/")[-6:].print()
 
 p = get_path(r.path)
@@ -139,7 +142,7 @@ p.base_name.print()
 p.full_path.delete_path()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `false didn't find
+	expected := `true didn't find
 [ "testing", "rad_test_home", "stashes", "with_stash", "files", "non_existing.txt" ]
 non_existing.txt
 `
@@ -148,6 +151,7 @@ non_existing.txt
 }
 
 func Test_Stash_WriteStashFile(t *testing.T) {
+	defer os.Remove("rad_test_home/stashes/with_stash/files/bloop.txt")
 	script := `
 ---
 @stash_id = with_stash

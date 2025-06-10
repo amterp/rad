@@ -104,8 +104,17 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 				}
 
 				if fn.ReturnStmt != nil {
-					returnExpr := i.getChild(fn.ReturnStmt, rl.F_VALUE)
-					out = i.evaluate(returnExpr, EXPECT_ONE_OUTPUT)
+					rightNodes := i.getChildren(fn.ReturnStmt, rl.F_RIGHT)
+					if len(rightNodes) > 1 {
+						list := NewRadList()
+						for _, rightNode := range rightNodes {
+							val := i.evaluate(&rightNode, EXPECT_ONE_OUTPUT)
+							list.Append(val)
+						}
+						out = newRadValueList(list)
+					} else {
+						out = i.evaluate(&rightNodes[0], EXPECT_ONE_OUTPUT)
+					}
 				}
 			}
 		})
@@ -117,8 +126,14 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 		out = fn.BuiltInFunc.Execute(f)
 	}
 
-	if f.panicIfError && out.IsError() {
-		f.i.NewRadPanic(f.callNode, out).Panic()
+	if out.IsError() {
+		if f.panicIfError {
+			f.i.NewRadPanic(f.callNode, out).Panic()
+		} else {
+			// we'll let this error propagate, so let's clear its node for error pointing, if it has one
+			err := out.RequireError(f.i, f.callNode)
+			err.SetNode(nil)
+		}
 	}
 
 	return

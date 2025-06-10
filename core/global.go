@@ -10,18 +10,19 @@ import (
 )
 
 var (
-	RFlagSet   *pflag.FlagSet
-	RP         Printer
-	RIo        RadIo
-	RExit      func(int)
-	RReq       *Requester
-	RClock     Clock
-	RSleep     func(duration time.Duration)
-	HasScript  bool
-	ScriptPath string
-	ScriptDir  string
-	ScriptName string
-	IsTest     bool
+	RFlagSet                 *pflag.FlagSet
+	RP                       Printer
+	RIo                      RadIo
+	RExit                    func(int)
+	RReq                     *Requester
+	RClock                   Clock
+	RSleep                   func(duration time.Duration)
+	HasScript                bool
+	ScriptPath               string
+	ScriptDir                string
+	ScriptName               string
+	IsTest                   bool
+	AlreadyExportedShellVars bool
 )
 
 type RunnerInput struct {
@@ -58,6 +59,7 @@ func ResetGlobals() {
 	ScriptDir = ""
 	ScriptName = ""
 	IsTest = false
+	AlreadyExportedShellVars = false
 
 	FlagHelp = BoolRadArg{}
 	FlagDebug = BoolRadArg{}

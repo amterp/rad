@@ -62,7 +62,7 @@ B: [ 80,  81] PS: [4, 22] PE: [4, 23]                                 literal
 B: [ 80,  81] PS: [4, 22] PE: [4, 23]                                   int `2`
 B: [ 94, 104] PS: [5, 12] PE: [5, 22]           return_stmt: return_stmt
 B: [ 94, 100] PS: [5, 12] PE: [5, 18]             return `return`
-B: [101, 104] PS: [5, 19] PE: [5, 22]             value: expr
+B: [101, 104] PS: [5, 19] PE: [5, 22]             right: expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]               delegate: ternary_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                 delegate: or_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                   delegate: and_expr

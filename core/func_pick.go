@@ -86,8 +86,8 @@ var FuncPickKv = BuiltInFunc{
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		valueGroups := lo.Map(values, func(value RadValue, _ int) []RadValue { return []RadValue{value} })
 
-		value := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
-		return newRadValues(f.i, f.callNode, value)
+		out := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
+		return newRadValues(f.i, f.callNode, out)
 	},
 }
 
@@ -132,7 +132,12 @@ var FuncPickFromResource = BuiltInFunc{
 			}
 		}
 
-		return newRadValues(f.i, f.callNode, pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs))
+		out := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
+		if len(out) == 1 {
+			return newRadValues(f.i, f.callNode, out[0])
+		} else {
+			return newRadValues(f.i, f.callNode, out)
+		}
 	},
 }
 

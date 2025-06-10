@@ -126,7 +126,7 @@ B: [79, 80] PS: [3, 10] PE: [3, 11]     ) `)`
 B: [80, 81] PS: [3, 11] PE: [3, 12]     block_colon: : `:`
 B: [86, 98] PS: [4,  4] PE: [4, 16]     return_stmt: return_stmt
 B: [86, 92] PS: [4,  4] PE: [4, 10]       return `return`
-B: [93, 98] PS: [4, 11] PE: [4, 16]       value: expr
+B: [93, 98] PS: [4, 11] PE: [4, 16]       right: expr
 B: [93, 98] PS: [4, 11] PE: [4, 16]         delegate: ternary_expr
 B: [93, 98] PS: [4, 11] PE: [4, 16]           delegate: or_expr
 B: [93, 98] PS: [4, 11] PE: [4, 16]             delegate: and_expr

@@ -154,6 +154,7 @@ const (
 	namedArgTz             = "tz"
 
 	constContent      = "content" // todo rename to 'contents'? feels more natural
+	constCreated      = "created"
 	constSizeBytes    = "size_bytes"
 	constBytesWritten = "bytes_written"
 	constText         = "text"
@@ -445,7 +446,7 @@ func init() {
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
 						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(epochArg.node))
 					}
 				} else {
 					switch unit {
@@ -464,7 +465,7 @@ func init() {
 					default:
 						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
 							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit).SetNode(epochArg.node))
 					}
 				}
 
@@ -481,7 +482,7 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone).SetNode(epochArg.node))
 					}
 				}
 
@@ -706,7 +707,7 @@ func init() {
 					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return newRadValues(f.i, f.callNode, 0, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
 				}
 			},
 		},
@@ -1578,9 +1579,9 @@ func init() {
 			PosArgValidator: NO_POS_ARGS,
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
-				state, existing := RadHomeInst.LoadState(f.i, f.callNode)
+				state, _ := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
-				return newRadValues(f.i, f.callNode, state, existing)
+				return newRadValues(f.i, f.callNode, state)
 			},
 		},
 		{
@@ -1623,7 +1624,8 @@ func init() {
 					}
 
 					output.Set(newRadValueStr(constContent), newRadValueStr(defaultStr))
-					return newRadValues(f.i, f.callNode, output, false) // signal not existed
+					output.SetPrimitiveBool(constCreated, true)
+					return newRadValues(f.i, f.callNode, output) // signal not existed
 				}
 
 				loadResult := com.LoadFile(path)
@@ -1633,7 +1635,8 @@ func init() {
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
-				return newRadValues(f.i, f.callNode, output, true) // signal existed
+				output.SetPrimitiveBool(constCreated, false)
+				return newRadValues(f.i, f.callNode, output) // signal existed
 			},
 		},
 		{

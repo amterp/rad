@@ -73,3 +73,13 @@ b = null
 	assertOnlyOutput(t, stdOutBuffer, "a=1\n")
 	assertNoErrors(t)
 }
+
+func Test_Shell_DoesNotExportPath(t *testing.T) {
+	script := `
+a = 1
+PATH = "noo"
+`
+	setupAndRunCode(t, script, "--color=never", "--shell")
+	assertOnlyOutput(t, stdOutBuffer, "a=1\n")
+	assertNoErrors(t)
+}

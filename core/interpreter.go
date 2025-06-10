@@ -90,7 +90,11 @@ func (i *Interpreter) safelyEvaluate(node *ts.Node, ctx *EvalCtx) RadValue {
 			radPanic, ok := r.(*RadPanic)
 			if ok {
 				err := radPanic.Err()
-				i.errorf(err.Node, "%s", err.Msg()) // todo probably want this for tests too?
+				msg := err.Msg().Plain()
+				if !com.IsBlank(string(err.Code)) {
+					msg += fmt.Sprintf(" (code %s)", err.Code)
+				}
+				i.errorf(err.Node, msg)
 			}
 			if !IsTest {
 				i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
@@ -119,9 +123,14 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx *EvalCtx) (out RadValue) {
 	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case rl.K_ASSIGN:
-		leftNodes := i.getChildren(node, rl.F_LEFT)
 		rightNodes := i.getChildren(node, rl.F_RIGHT)
-		i.assignRightsToLefts(node, leftNodes, rightNodes)
+		leftNodes := i.getChildren(node, rl.F_LEFT)
+		if len(leftNodes) > 0 {
+			i.assignRightsToLefts(node, leftNodes, rightNodes, false)
+		} else {
+			leftsNodes := i.getChildren(node, rl.F_LEFTS)
+			i.assignRightsToLefts(node, leftsNodes, rightNodes, true)
+		}
 	case rl.K_COMPOUND_ASSIGN:
 		leftVarPathNode := i.getChild(node, rl.F_LEFT)
 		rightNode := i.getChild(node, rl.F_RIGHT)
@@ -204,7 +213,12 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx *EvalCtx) (out RadValue) {
 			}
 		}
 	case rl.K_SWITCH_STMT:
-		leftVarPathNodes := i.getChildren(node, rl.F_LEFT)
+		leftNodes := i.getChildren(node, rl.F_LEFT)
+		destructure := false
+		if len(leftNodes) == 0 {
+			leftNodes = i.getChildren(node, rl.F_LEFTS)
+			destructure = true
+		}
 		discriminantNode := i.getChild(node, rl.F_DISCRIMINANT)
 		caseNodes := i.getChildren(node, rl.F_CASE)
 		defaultNode := i.getChild(node, rl.F_DEFAULT)
@@ -226,7 +240,7 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx *EvalCtx) (out RadValue) {
 		if len(matchedCaseNodes) == 0 {
 			if defaultNode != nil {
 				caseValueAltNode := i.getChild(defaultNode, rl.F_ALT)
-				i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
+				i.executeSwitchCase(caseValueAltNode, leftNodes, destructure)
 				return VOID_SENTINEL
 			}
 			i.errorf(discriminantNode, "No matching case found for switch")
@@ -245,7 +259,7 @@ func (i *Interpreter) evaluate(node *ts.Node, ctx *EvalCtx) (out RadValue) {
 
 		matchedCaseNode := matchedCaseNodes[0]
 		caseValueAltNode := i.getChild(&matchedCaseNode, rl.F_ALT)
-		i.executeSwitchCase(caseValueAltNode, leftVarPathNodes)
+		i.executeSwitchCase(caseValueAltNode, leftNodes, destructure)
 	case rl.K_FN_NAMED:
 		// do not redefine top-level functions as they're already defined
 		if node.Parent().Kind() != rl.K_SOURCE_FILE {
@@ -738,31 +752,77 @@ func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val Rad
 	}
 }
 
-func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes, rightNodes []ts.Node) {
-	outputs := make([]RadValue, 0)
-	for _, rightNode := range rightNodes {
+func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes []ts.Node, rightNodes []ts.Node, destructure bool) {
+	if destructure {
+		if len(rightNodes) == 1 {
+			rightNode := rightNodes[0]
+			if rightNode.Kind() == rl.K_JSON_PATH {
+				jsonFieldVar := NewJsonFieldVar(i, &leftNodes[0], &rightNode)
+				i.env.SetJsonFieldVar(jsonFieldVar)
+			} else {
+				val := i.evaluate(&rightNode, NO_CONSTRAINT_OUTPUT)
+				list, ok := val.TryGetList()
+				if ok {
+					for idx, leftNode := range leftNodes {
+						if len(list.Values) > idx {
+							val := list.Values[idx]
+							i.doVarPathAssign(&leftNode, val, false)
+						} else {
+							i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+						}
+					}
+					return
+				} else {
+					i.doVarPathAssign(&leftNodes[0], val, false)
+				}
+			}
+
+			for _, leftNode := range leftNodes[1:] {
+				i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+			}
+			return
+		}
+
+		for idx, leftNode := range leftNodes {
+			if len(rightNodes) > idx {
+				rightNode := rightNodes[idx]
+				if rightNode.Kind() == rl.K_JSON_PATH {
+					jsonFieldVar := NewJsonFieldVar(i, &leftNode, &rightNode)
+					i.env.SetJsonFieldVar(jsonFieldVar)
+				} else {
+					val := i.evaluate(&rightNode, NO_CONSTRAINT_OUTPUT)
+					i.doVarPathAssign(&leftNode, val, false)
+				}
+			} else {
+				i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+			}
+		}
+		return
+	}
+
+	// not destructuring, means exactly 1 left node
+
+	if len(rightNodes) == 1 {
+		rightNode := rightNodes[0]
 		if rightNode.Kind() == rl.K_JSON_PATH {
-			// json path assignment
-			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[len(outputs)], &rightNode) // todo index bounds error isn't user friendly
+			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[0], &rightNode)
 			i.env.SetJsonFieldVar(jsonFieldVar)
-			outputs = append(outputs, JSON_SENTINEL)
 		} else {
-			outputs = append(outputs, i.evaluate(&rightNode, EXPECT_ONE_OUTPUT))
+			val := i.evaluate(&rightNodes[0], NO_CONSTRAINT_OUTPUT)
+			i.doVarPathAssign(&leftNodes[0], val, false)
 		}
+		return
 	}
 
-	if len(leftNodes) != len(outputs) {
-		i.errorf(parentNode, "Cannot assign %d values to %d variables", len(outputs), len(leftNodes))
-	}
+	// not destructuring (so 1 left) & not 1 right node;
+	// means at least 2 right nodes -> pack into list and assign to 1 left
 
-	for idx, output := range outputs {
-		if output == JSON_SENTINEL {
-			// json path assignment, no need to assign
-			continue
-		}
-		leftVarPathNode := &leftNodes[idx]
-		i.doVarPathAssign(leftVarPathNode, output, false)
+	list := NewRadList()
+	for _, rightNode := range rightNodes {
+		val := i.evaluate(&rightNode, NO_CONSTRAINT_OUTPUT)
+		list.Append(val)
 	}
+	i.doVarPathAssign(&leftNodes[0], newRadValueList(list), false)
 }
 
 func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
@@ -772,12 +832,18 @@ func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
 	i.env.SetVar(name, newRadValueFn(lambda))
 }
 
-func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNodes []ts.Node) {
-	numExpectedAssigns := len(leftVarPathNodes)
+func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftNodes []ts.Node, destructure bool) {
+	numExpectedAssigns := len(leftNodes)
 	switch caseValueAltNode.Kind() {
 	case rl.K_SWITCH_CASE_EXPR:
-		valueNodes := i.getChildren(caseValueAltNode, rl.F_VALUE)
-		i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
+		rightNodes := i.getChildren(caseValueAltNode, rl.F_RIGHT)
+		if numExpectedAssigns == 0 {
+			for _, rightNode := range rightNodes {
+				i.evaluate(&rightNode, NO_CONSTRAINT_OUTPUT)
+			}
+		} else {
+			i.assignRightsToLefts(caseValueAltNode, leftNodes, rightNodes, destructure)
+		}
 	case rl.K_SWITCH_CASE_BLOCK:
 		stmtNodes := i.getChildren(caseValueAltNode, rl.F_STMT)
 		i.runBlock(stmtNodes)
@@ -791,14 +857,14 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node, leftVarPathNo
 			i.errorf(caseValueAltNode, "Cannot assign without yielding from the switch case")
 		}
 		if yieldNode != nil {
-			valueNodes := i.getChildren(yieldNode, rl.F_VALUE)
+			rightNodes := i.getChildren(yieldNode, rl.F_RIGHT)
 			if numExpectedAssigns == 0 {
 				// nothing to assign, just evaluate
-				for _, valueNode := range valueNodes {
-					i.evaluate(&valueNode, NO_CONSTRAINT_OUTPUT)
+				for _, rightNode := range rightNodes {
+					i.evaluate(&rightNode, NO_CONSTRAINT_OUTPUT)
 				}
 			} else {
-				i.assignRightsToLefts(caseValueAltNode, leftVarPathNodes, valueNodes)
+				i.assignRightsToLefts(caseValueAltNode, leftNodes, rightNodes, destructure)
 			}
 		}
 	default:

@@ -90,8 +90,12 @@ func (e *Env) setVar(name string, v RadValue, updateEnclosing bool) {
 	}
 }
 
-// todo avoid *dangerous* exports like PATH!!
 func (e *Env) PrintShellExports() {
+	if AlreadyExportedShellVars {
+		return
+	}
+	AlreadyExportedShellVars = true
+
 	keys := com.SortedKeys(e.Vars)
 
 	printFunc := func(varName, value string) {
@@ -99,6 +103,12 @@ func (e *Env) PrintShellExports() {
 	}
 
 	for _, varName := range keys {
+		if varName == "PATH" {
+			// skip PATH, if royally messes up users and there doesn't
+			// appear to be any legitimate use case for it
+			continue
+		}
+
 		val := e.Vars[varName]
 		// type visitor takes a *ts.Node which isn't super applicable here...
 		switch coerced := val.Val.(type) {

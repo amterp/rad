@@ -62,7 +62,7 @@ B: [ 35,  40] PS: [2,  7] PE: [2, 12]                                 content: s
 B: [ 40,  41] PS: [2, 12] PE: [2, 13]                               end: string_end `"`
 B: [ 42,  77] PS: [2, 14] PE: [2, 49]       alt: switch_case_expr
 B: [ 42,  44] PS: [2, 14] PE: [2, 16]         -> `->`
-B: [ 45,  59] PS: [2, 17] PE: [2, 31]         value: expr
+B: [ 45,  59] PS: [2, 17] PE: [2, 31]         right: expr
 B: [ 45,  59] PS: [2, 17] PE: [2, 31]           delegate: ternary_expr
 B: [ 45,  59] PS: [2, 17] PE: [2, 31]             delegate: or_expr
 B: [ 45,  59] PS: [2, 17] PE: [2, 31]               delegate: and_expr
@@ -93,7 +93,7 @@ B: [ 52,  57] PS: [2, 24] PE: [2, 29]                                           
 B: [ 57,  58] PS: [2, 29] PE: [2, 30]                                                       end: string_end `"`
 B: [ 58,  59] PS: [2, 30] PE: [2, 31]                               ) `)`
 B: [ 59,  60] PS: [2, 31] PE: [2, 32]         , `,`
-B: [ 61,  77] PS: [2, 33] PE: [2, 49]         value: expr
+B: [ 61,  77] PS: [2, 33] PE: [2, 49]         right: expr
 B: [ 61,  77] PS: [2, 33] PE: [2, 49]           delegate: ternary_expr
 B: [ 61,  77] PS: [2, 33] PE: [2, 49]             delegate: or_expr
 B: [ 61,  77] PS: [2, 33] PE: [2, 49]               delegate: and_expr
@@ -143,7 +143,7 @@ B: [ 85,  88] PS: [3,  7] PE: [3, 10]                                 content: s
 B: [ 88,  89] PS: [3, 10] PE: [3, 11]                               end: string_end `"`
 B: [ 90, 105] PS: [3, 12] PE: [3, 27]       alt: switch_case_expr
 B: [ 90,  92] PS: [3, 12] PE: [3, 14]         -> `->`
-B: [ 93, 105] PS: [3, 15] PE: [3, 27]         value: expr
+B: [ 93, 105] PS: [3, 15] PE: [3, 27]         right: expr
 B: [ 93, 105] PS: [3, 15] PE: [3, 27]           delegate: ternary_expr
 B: [ 93, 105] PS: [3, 15] PE: [3, 27]             delegate: or_expr
 B: [ 93, 105] PS: [3, 15] PE: [3, 27]               delegate: and_expr
@@ -193,7 +193,7 @@ B: [113, 120] PS: [4,  7] PE: [4, 14]                                 content: s
 B: [120, 121] PS: [4, 14] PE: [4, 15]                               end: string_end `"`
 B: [122, 141] PS: [4, 16] PE: [4, 35]       alt: switch_case_expr
 B: [122, 124] PS: [4, 16] PE: [4, 18]         -> `->`
-B: [125, 141] PS: [4, 19] PE: [4, 35]         value: expr
+B: [125, 141] PS: [4, 19] PE: [4, 35]         right: expr
 B: [125, 141] PS: [4, 19] PE: [4, 35]           delegate: ternary_expr
 B: [125, 141] PS: [4, 19] PE: [4, 35]             delegate: or_expr
 B: [125, 141] PS: [4, 19] PE: [4, 35]               delegate: and_expr

@@ -54,7 +54,7 @@ B: [ 28,  29] PS: [1, 12] PE: [1, 13]                           literal
 B: [ 28,  29] PS: [1, 12] PE: [1, 13]                             int `2`
 B: [ 30,  35] PS: [1, 14] PE: [1, 19]       alt: switch_case_expr
 B: [ 30,  32] PS: [1, 14] PE: [1, 16]         -> `->`
-B: [ 33,  35] PS: [1, 17] PE: [1, 19]         value: expr
+B: [ 33,  35] PS: [1, 17] PE: [1, 19]         right: expr
 B: [ 33,  35] PS: [1, 17] PE: [1, 19]           delegate: ternary_expr
 B: [ 33,  35] PS: [1, 17] PE: [1, 19]             delegate: or_expr
 B: [ 33,  35] PS: [1, 17] PE: [1, 19]               delegate: and_expr
@@ -123,7 +123,7 @@ B: [ 66,  68] PS: [3, 18] PE: [3, 20]                                           
 B: [ 68,  69] PS: [3, 20] PE: [3, 21]                               ) `)`
 B: [ 78,  86] PS: [4,  8] PE: [4, 16]         yield_stmt: yield_stmt
 B: [ 78,  83] PS: [4,  8] PE: [4, 13]           yield `yield`
-B: [ 84,  86] PS: [4, 14] PE: [4, 16]           value: expr
+B: [ 84,  86] PS: [4, 14] PE: [4, 16]           right: expr
 B: [ 84,  86] PS: [4, 14] PE: [4, 16]             delegate: ternary_expr
 B: [ 84,  86] PS: [4, 14] PE: [4, 16]               delegate: or_expr
 B: [ 84,  86] PS: [4, 14] PE: [4, 16]                 delegate: and_expr
@@ -139,7 +139,7 @@ B: [ 91, 104] PS: [5,  4] PE: [5, 17]     default: switch_default
 B: [ 91,  98] PS: [5,  4] PE: [5, 11]       default `default`
 B: [ 99, 104] PS: [5, 12] PE: [5, 17]       alt: switch_case_expr
 B: [ 99, 101] PS: [5, 12] PE: [5, 14]         -> `->`
-B: [102, 104] PS: [5, 15] PE: [5, 17]         value: expr
+B: [102, 104] PS: [5, 15] PE: [5, 17]         right: expr
 B: [102, 104] PS: [5, 15] PE: [5, 17]           delegate: ternary_expr
 B: [102, 104] PS: [5, 15] PE: [5, 17]             delegate: or_expr
 B: [102, 104] PS: [5, 15] PE: [5, 17]               delegate: and_expr

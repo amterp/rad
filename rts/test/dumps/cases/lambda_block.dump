@@ -28,7 +28,7 @@ B: [  9,  11] PS: [0,  9] PE: [0, 11]                       () `()`
 B: [ 11,  12] PS: [0, 11] PE: [0, 12]                       block_colon: : `:`
 B: [ 17,  25] PS: [1,  4] PE: [1, 12]                       return_stmt: return_stmt
 B: [ 17,  23] PS: [1,  4] PE: [1, 10]                         return `return`
-B: [ 24,  25] PS: [1, 11] PE: [1, 12]                         value: expr
+B: [ 24,  25] PS: [1, 11] PE: [1, 12]                         right: expr
 B: [ 24,  25] PS: [1, 11] PE: [1, 12]                           delegate: ternary_expr
 B: [ 24,  25] PS: [1, 11] PE: [1, 12]                             delegate: or_expr
 B: [ 24,  25] PS: [1, 11] PE: [1, 12]                               delegate: and_expr
@@ -82,7 +82,7 @@ B: [ 53,  54] PS: [3, 14] PE: [3, 15]                                           
 B: [ 53,  54] PS: [3, 14] PE: [3, 15]                                               int `2`
 B: [ 59,  69] PS: [4,  4] PE: [4, 14]                       return_stmt: return_stmt
 B: [ 59,  65] PS: [4,  4] PE: [4, 10]                         return `return`
-B: [ 66,  69] PS: [4, 11] PE: [4, 14]                         value: expr
+B: [ 66,  69] PS: [4, 11] PE: [4, 14]                         right: expr
 B: [ 66,  69] PS: [4, 11] PE: [4, 14]                           delegate: ternary_expr
 B: [ 66,  69] PS: [4, 11] PE: [4, 14]                             delegate: or_expr
 B: [ 66,  69] PS: [4, 11] PE: [4, 14]                               delegate: and_expr
@@ -116,7 +116,7 @@ B: [ 83,  84] PS: [5, 13] PE: [5, 14]                       ) `)`
 B: [ 84,  85] PS: [5, 14] PE: [5, 15]                       block_colon: : `:`
 B: [ 90, 102] PS: [6,  4] PE: [6, 16]                       return_stmt: return_stmt
 B: [ 90,  96] PS: [6,  4] PE: [6, 10]                         return `return`
-B: [ 97, 102] PS: [6, 11] PE: [6, 16]                         value: expr
+B: [ 97, 102] PS: [6, 11] PE: [6, 16]                         right: expr
 B: [ 97, 102] PS: [6, 11] PE: [6, 16]                           delegate: ternary_expr
 B: [ 97, 102] PS: [6, 11] PE: [6, 16]                             delegate: or_expr
 B: [ 97, 102] PS: [6, 11] PE: [6, 16]                               delegate: and_expr
