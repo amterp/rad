@@ -13,10 +13,10 @@ a, b = switch num:
 =====
 B: [  0, 175] PS: [0,  0] PE: [9,  0] source_file
 B: [  0, 174] PS: [0,  0] PE: [8, 18]   switch_stmt
-B: [  0,   1] PS: [0,  0] PE: [0,  1]     left: var_path
+B: [  0,   1] PS: [0,  0] PE: [0,  1]     lefts: var_path
 B: [  0,   1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
 B: [  1,   2] PS: [0,  1] PE: [0,  2]     , `,`
-B: [  3,   4] PS: [0,  3] PE: [0,  4]     left: var_path
+B: [  3,   4] PS: [0,  3] PE: [0,  4]     lefts: var_path
 B: [  3,   4] PS: [0,  3] PE: [0,  4]       root: identifier `b`
 B: [  5,   6] PS: [0,  5] PE: [0,  6]     = `=`
 B: [  7,  13] PS: [0,  7] PE: [0, 13]     switch `switch`
@@ -92,7 +92,7 @@ B: [ 54,  55] PS: [2, 20] PE: [2, 21]                                           
 B: [ 55,  56] PS: [2, 21] PE: [2, 22]                               ) `)`
 B: [ 65,  77] PS: [3,  8] PE: [3, 20]         yield_stmt: yield_stmt
 B: [ 65,  70] PS: [3,  8] PE: [3, 13]           yield `yield`
-B: [ 71,  73] PS: [3, 14] PE: [3, 16]           value: expr
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]           right: expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]             delegate: ternary_expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]               delegate: or_expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                 delegate: and_expr
@@ -105,7 +105,7 @@ B: [ 71,  73] PS: [3, 14] PE: [3, 16]                             root: primary_
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                               literal
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                 int `10`
 B: [ 73,  74] PS: [3, 16] PE: [3, 17]           , `,`
-B: [ 75,  77] PS: [3, 18] PE: [3, 20]           value: expr
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]           right: expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]             delegate: ternary_expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]               delegate: or_expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]                 delegate: and_expr
@@ -135,7 +135,7 @@ B: [ 88, 110] PS: [4, 10] PE: [5, 20]       alt: switch_case_block
 B: [ 88,  89] PS: [4, 10] PE: [4, 11]         : `:`
 B: [ 98, 110] PS: [5,  8] PE: [5, 20]         yield_stmt: yield_stmt
 B: [ 98, 103] PS: [5,  8] PE: [5, 13]           yield `yield`
-B: [104, 106] PS: [5, 14] PE: [5, 16]           value: expr
+B: [104, 106] PS: [5, 14] PE: [5, 16]           right: expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]             delegate: ternary_expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]               delegate: or_expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]                 delegate: and_expr
@@ -148,7 +148,7 @@ B: [104, 106] PS: [5, 14] PE: [5, 16]                             root: primary_
 B: [104, 106] PS: [5, 14] PE: [5, 16]                               literal
 B: [104, 106] PS: [5, 14] PE: [5, 16]                                 int `30`
 B: [106, 107] PS: [5, 16] PE: [5, 17]           , `,`
-B: [108, 110] PS: [5, 18] PE: [5, 20]           value: expr
+B: [108, 110] PS: [5, 18] PE: [5, 20]           right: expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]             delegate: ternary_expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]               delegate: or_expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]                 delegate: and_expr
@@ -196,7 +196,7 @@ B: [153, 154] PS: [7, 29] PE: [7, 30]                                           
 B: [154, 155] PS: [7, 30] PE: [7, 31]                               ) `)`
 B: [164, 174] PS: [8,  8] PE: [8, 18]         yield_stmt: yield_stmt
 B: [164, 169] PS: [8,  8] PE: [8, 13]           yield `yield`
-B: [170, 171] PS: [8, 14] PE: [8, 15]           value: expr
+B: [170, 171] PS: [8, 14] PE: [8, 15]           right: expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]             delegate: ternary_expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]               delegate: or_expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]                 delegate: and_expr
@@ -209,7 +209,7 @@ B: [170, 171] PS: [8, 14] PE: [8, 15]                             root: primary_
 B: [170, 171] PS: [8, 14] PE: [8, 15]                               literal
 B: [170, 171] PS: [8, 14] PE: [8, 15]                                 int `0`
 B: [171, 172] PS: [8, 15] PE: [8, 16]           , `,`
-B: [173, 174] PS: [8, 17] PE: [8, 18]           value: expr
+B: [173, 174] PS: [8, 17] PE: [8, 18]           right: expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]             delegate: ternary_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]               delegate: or_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                 delegate: and_expr

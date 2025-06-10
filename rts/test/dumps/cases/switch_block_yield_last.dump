@@ -86,7 +86,7 @@ B: [51, 52] PS: [2, 20] PE: [2, 21]                               ) `)`
 B: [61, 69] PS: [3,  8] PE: [3, 16]         ERROR
 B: [61, 69] PS: [3,  8] PE: [3, 16]           yield_stmt
 B: [61, 66] PS: [3,  8] PE: [3, 13]             yield `yield`
-B: [67, 69] PS: [3, 14] PE: [3, 16]             value: expr
+B: [67, 69] PS: [3, 14] PE: [3, 16]             right: expr
 B: [67, 69] PS: [3, 14] PE: [3, 16]               delegate: ternary_expr
 B: [67, 69] PS: [3, 14] PE: [3, 16]                 delegate: or_expr
 B: [67, 69] PS: [3, 14] PE: [3, 16]                   delegate: and_expr

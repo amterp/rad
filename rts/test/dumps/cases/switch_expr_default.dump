@@ -8,10 +8,10 @@ foo, bar = switch num:
 =====
 B: [ 0, 88] PS: [0,  0] PE: [4,  0] source_file
 B: [ 0, 87] PS: [0,  0] PE: [3, 19]   switch_stmt
-B: [ 0,  3] PS: [0,  0] PE: [0,  3]     left: var_path
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     lefts: var_path
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]       root: identifier `foo`
 B: [ 3,  4] PS: [0,  3] PE: [0,  4]     , `,`
-B: [ 5,  8] PS: [0,  5] PE: [0,  8]     left: var_path
+B: [ 5,  8] PS: [0,  5] PE: [0,  8]     lefts: var_path
 B: [ 5,  8] PS: [0,  5] PE: [0,  8]       root: identifier `bar`
 B: [ 9, 10] PS: [0,  9] PE: [0, 10]     = `=`
 B: [11, 17] PS: [0, 11] PE: [0, 17]     switch `switch`
@@ -55,7 +55,7 @@ B: [35, 36] PS: [1, 12] PE: [1, 13]                           literal
 B: [35, 36] PS: [1, 12] PE: [1, 13]                             int `2`
 B: [37, 46] PS: [1, 14] PE: [1, 23]       alt: switch_case_expr
 B: [37, 39] PS: [1, 14] PE: [1, 16]         -> `->`
-B: [40, 42] PS: [1, 17] PE: [1, 19]         value: expr
+B: [40, 42] PS: [1, 17] PE: [1, 19]         right: expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]           delegate: ternary_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]             delegate: or_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]               delegate: and_expr
@@ -68,7 +68,7 @@ B: [40, 42] PS: [1, 17] PE: [1, 19]                           root: primary_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]                             literal
 B: [40, 42] PS: [1, 17] PE: [1, 19]                               int `10`
 B: [42, 43] PS: [1, 19] PE: [1, 20]         , `,`
-B: [44, 46] PS: [1, 21] PE: [1, 23]         value: expr
+B: [44, 46] PS: [1, 21] PE: [1, 23]         right: expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]           delegate: ternary_expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]             delegate: or_expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]               delegate: and_expr
@@ -96,7 +96,7 @@ B: [56, 57] PS: [2,  9] PE: [2, 10]                           literal
 B: [56, 57] PS: [2,  9] PE: [2, 10]                             int `3`
 B: [58, 67] PS: [2, 11] PE: [2, 20]       alt: switch_case_expr
 B: [58, 60] PS: [2, 11] PE: [2, 13]         -> `->`
-B: [61, 63] PS: [2, 14] PE: [2, 16]         value: expr
+B: [61, 63] PS: [2, 14] PE: [2, 16]         right: expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]           delegate: ternary_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]             delegate: or_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]               delegate: and_expr
@@ -109,7 +109,7 @@ B: [61, 63] PS: [2, 14] PE: [2, 16]                           root: primary_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]                             literal
 B: [61, 63] PS: [2, 14] PE: [2, 16]                               int `30`
 B: [63, 64] PS: [2, 16] PE: [2, 17]         , `,`
-B: [65, 67] PS: [2, 18] PE: [2, 20]         value: expr
+B: [65, 67] PS: [2, 18] PE: [2, 20]         right: expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]           delegate: ternary_expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]             delegate: or_expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]               delegate: and_expr
@@ -125,7 +125,7 @@ B: [72, 87] PS: [3,  4] PE: [3, 19]     default: switch_default
 B: [72, 79] PS: [3,  4] PE: [3, 11]       default `default`
 B: [80, 87] PS: [3, 12] PE: [3, 19]       alt: switch_case_expr
 B: [80, 82] PS: [3, 12] PE: [3, 14]         -> `->`
-B: [83, 84] PS: [3, 15] PE: [3, 16]         value: expr
+B: [83, 84] PS: [3, 15] PE: [3, 16]         right: expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]           delegate: ternary_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]             delegate: or_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]               delegate: and_expr
@@ -138,7 +138,7 @@ B: [83, 84] PS: [3, 15] PE: [3, 16]                           root: primary_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]                             literal
 B: [83, 84] PS: [3, 15] PE: [3, 16]                               int `0`
 B: [84, 85] PS: [3, 16] PE: [3, 17]         , `,`
-B: [86, 87] PS: [3, 18] PE: [3, 19]         value: expr
+B: [86, 87] PS: [3, 18] PE: [3, 19]         right: expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]           delegate: ternary_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]             delegate: or_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]               delegate: and_expr

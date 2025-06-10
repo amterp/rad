@@ -150,7 +150,7 @@ B: [114, 119] PS: [3, 22] PE: [3, 27]         float_type `float`
 B: [119, 120] PS: [3, 27] PE: [3, 28]     block_colon: : `:`
 B: [125, 133] PS: [4,  4] PE: [4, 12]     return_stmt: return_stmt
 B: [125, 131] PS: [4,  4] PE: [4, 10]       return `return`
-B: [132, 133] PS: [4, 11] PE: [4, 12]       value: expr
+B: [132, 133] PS: [4, 11] PE: [4, 12]       right: expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]         delegate: ternary_expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]           delegate: or_expr
 B: [132, 133] PS: [4, 11] PE: [4, 12]             delegate: and_expr
@@ -186,7 +186,7 @@ B: [166, 171] PS: [5, 32] PE: [5, 37]         error_type `error`
 B: [171, 172] PS: [5, 37] PE: [5, 38]     block_colon: : `:`
 B: [177, 185] PS: [6,  4] PE: [6, 12]     return_stmt: return_stmt
 B: [177, 183] PS: [6,  4] PE: [6, 10]       return `return`
-B: [184, 185] PS: [6, 11] PE: [6, 12]       value: expr
+B: [184, 185] PS: [6, 11] PE: [6, 12]       right: expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]         delegate: ternary_expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]           delegate: or_expr
 B: [184, 185] PS: [6, 11] PE: [6, 12]             delegate: and_expr
@@ -218,7 +218,7 @@ B: [214, 215] PS: [7, 28] PE: [7, 29]         optional: ? `?`
 B: [215, 216] PS: [7, 29] PE: [7, 30]     block_colon: : `:`
 B: [221, 229] PS: [8,  4] PE: [8, 12]     return_stmt: return_stmt
 B: [221, 227] PS: [8,  4] PE: [8, 10]       return `return`
-B: [228, 229] PS: [8, 11] PE: [8, 12]       value: expr
+B: [228, 229] PS: [8, 11] PE: [8, 12]       right: expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]         delegate: ternary_expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]           delegate: or_expr
 B: [228, 229] PS: [8, 11] PE: [8, 12]             delegate: and_expr

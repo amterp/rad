@@ -41,6 +41,8 @@ func Test_Func_WriteFile_NoPermission(t *testing.T) {
 	filePath := "data/no_permission_write.txt"
 
 	os.WriteFile(filePath, []byte("initial"), 0644)
+	defer os.Remove(filePath)
+
 	info, err := os.Stat(filePath)
 	if err != nil {
 		t.Fatalf("Failed to stat file: %v", err)
@@ -49,31 +51,33 @@ func Test_Func_WriteFile_NoPermission(t *testing.T) {
 
 	// Remove write permission.
 	os.Chmod(filePath, originalPerms&^0222)
+	defer os.Chmod(filePath, originalPerms)
 
 	script := `
-a, b = write_file("data/no_permission_write.txt", "content")
-print(b)
+a = write_file("data/no_permission_write.txt", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "code": "RAD20004", "msg": "open data/no_permission_write.txt: permission denied" }
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
+	expected := `Error at L2:5
 
-	os.Chmod(filePath, originalPerms)
-	os.Remove(filePath)
+  a = write_file("data/no_permission_write.txt", "content")
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      open data/no_permission_write.txt: permission denied (code RAD20004)
+`
+	assertError(t, 1, expected)
+
 }
 
 func Test_Func_WriteFile_ErrorsOnDirectory(t *testing.T) {
 	script := `
-a, b = write_file("data/", "content")
-print(b)
+a = write_file("data/", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "code": "RAD20006", "msg": "open data/: is a directory" }
+	expected := `Error at L2:5
+
+  a = write_file("data/", "content")
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ open data/: is a directory (code RAD20006)
 `
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
+	assertError(t, 1, expected)
 }
 
 func Test_Func_WriteFile_ExitErrorsIfNoErrVar(t *testing.T) {
@@ -85,7 +89,7 @@ a = write_file("does_not_exist_dir/test.txt", "content")
 
   a = write_file("does_not_exist_dir/test.txt", "content")
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open does_not_exist_dir/test.txt: no such file or directory (error RAD20005)
+      open does_not_exist_dir/test.txt: no such file or directory (code RAD20005)
 `
 	assertError(t, 1, expected)
 }

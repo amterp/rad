@@ -55,7 +55,7 @@ func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string, expect
 		}
 
 		if !expectedOutput.Acceptable(len(option.Values)) {
-			i.errorf(callNode, "Expected %s from resource option: %q", expectedOutput.String(), option.Values)
+			i.errorf(callNode, "Expected %s from resource option: %v", expectedOutput.String(), option.Values)
 		}
 
 		opts = append(opts, PickResourceOpt{

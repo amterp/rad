@@ -22,7 +22,7 @@ a = parse_float("asd")
 	expected := `Error at L2:5
 
   a = parse_float("asd")
-      ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd"
+      ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd" (code RAD20002)
 `
 	assertError(t, 1, expected)
 }
@@ -37,30 +37,23 @@ print(a + 1.1)
 	assertNoErrors(t)
 }
 
-func Test_ParseFloat_CanReadErrorIfNone(t *testing.T) {
+func Test_ParseFloat_CanCatchEvenIfNoError(t *testing.T) {
 	script := `
-a, err = parse_float("2.4")
-print(a + 1.5)
-print(err)
+a = catch parse_float("2.4")
+print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "3.9\n{ }\n")
+	assertOnlyOutput(t, stdOutBuffer, "2.4\n")
 	assertNoErrors(t)
 }
 
-func Test_ParseFloat_CanReadErrorIfExists(t *testing.T) {
+func Test_ParseFloat_CaCatchErrorIfExists(t *testing.T) {
 	script := `
-a, err = parse_float("asd")
-print(a)
-print(err.msg)
-print(err.code)
-print(err)
+a = catch parse_float("asd")
+print("Got", a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `0
-parse_float() failed to parse "asd"
-RAD20002
-{ "code": "RAD20002", "msg": "parse_float() failed to parse "asd"" }
+	expected := `Got parse_float() failed to parse "asd"
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

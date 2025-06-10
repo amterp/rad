@@ -1645,10 +1645,10 @@ B: [1326, 1339] PS: [ 91,  9] PE: [ 91, 22]                             contents
 B: [1326, 1339] PS: [ 91,  9] PE: [ 91, 22]                               content: string_content `Hello\n{name}`
 B: [1339, 1340] PS: [ 91, 22] PE: [ 91, 23]                             end: string_end ```
 B: [1342, 1410] PS: [ 93,  0] PE: [ 93, 68]   assign
-B: [1342, 1345] PS: [ 93,  0] PE: [ 93,  3]     left: var_path
+B: [1342, 1345] PS: [ 93,  0] PE: [ 93,  3]     lefts: var_path
 B: [1342, 1345] PS: [ 93,  0] PE: [ 93,  3]       root: identifier `url`
 B: [1345, 1346] PS: [ 93,  3] PE: [ 93,  4]     , `,`
-B: [1347, 1351] PS: [ 93,  5] PE: [ 93,  9]     left: var_path
+B: [1347, 1351] PS: [ 93,  5] PE: [ 93,  9]     lefts: var_path
 B: [1347, 1351] PS: [ 93,  5] PE: [ 93,  9]       root: identifier `name`
 B: [1352, 1353] PS: [ 93, 10] PE: [ 93, 11]     = `=`
 B: [1354, 1410] PS: [ 93, 12] PE: [ 93, 68]     right: expr
@@ -1928,10 +1928,10 @@ B: [1589, 1592] PS: [109,  9] PE: [109, 12]                     delegate: unary_
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]                       delegate: var_path
 B: [1589, 1592] PS: [109,  9] PE: [109, 12]                         root: identifier `cmd`
 B: [1594, 1614] PS: [111,  0] PE: [111, 20]   shell_stmt
-B: [1594, 1598] PS: [111,  0] PE: [111,  4]     left: var_path
+B: [1594, 1598] PS: [111,  0] PE: [111,  4]     lefts: var_path
 B: [1594, 1598] PS: [111,  0] PE: [111,  4]       root: identifier `code`
 B: [1598, 1599] PS: [111,  4] PE: [111,  5]     , `,`
-B: [1600, 1606] PS: [111,  6] PE: [111, 12]     left: var_path
+B: [1600, 1606] PS: [111,  6] PE: [111, 12]     lefts: var_path
 B: [1600, 1606] PS: [111,  6] PE: [111, 12]       root: identifier `stdout`
 B: [1607, 1608] PS: [111, 13] PE: [111, 14]     = `=`
 B: [1609, 1614] PS: [111, 15] PE: [111, 20]     shell_cmd: critical_shell_cmd
@@ -1947,13 +1947,13 @@ B: [1611, 1614] PS: [111, 17] PE: [111, 20]                     delegate: unary_
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]                       delegate: var_path
 B: [1611, 1614] PS: [111, 17] PE: [111, 20]                         root: identifier `cmd`
 B: [1616, 1644] PS: [113,  0] PE: [113, 28]   shell_stmt
-B: [1616, 1620] PS: [113,  0] PE: [113,  4]     left: var_path
+B: [1616, 1620] PS: [113,  0] PE: [113,  4]     lefts: var_path
 B: [1616, 1620] PS: [113,  0] PE: [113,  4]       root: identifier `code`
 B: [1620, 1621] PS: [113,  4] PE: [113,  5]     , `,`
-B: [1622, 1628] PS: [113,  6] PE: [113, 12]     left: var_path
+B: [1622, 1628] PS: [113,  6] PE: [113, 12]     lefts: var_path
 B: [1622, 1628] PS: [113,  6] PE: [113, 12]       root: identifier `stdout`
 B: [1628, 1629] PS: [113, 12] PE: [113, 13]     , `,`
-B: [1630, 1636] PS: [113, 14] PE: [113, 20]     left: var_path
+B: [1630, 1636] PS: [113, 14] PE: [113, 20]     lefts: var_path
 B: [1630, 1636] PS: [113, 14] PE: [113, 20]       root: identifier `stderr`
 B: [1637, 1638] PS: [113, 21] PE: [113, 22]     = `=`
 B: [1639, 1644] PS: [113, 23] PE: [113, 28]     shell_cmd: critical_shell_cmd
@@ -1969,13 +1969,13 @@ B: [1641, 1644] PS: [113, 25] PE: [113, 28]                     delegate: unary_
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]                       delegate: var_path
 B: [1641, 1644] PS: [113, 25] PE: [113, 28]                         root: identifier `cmd`
 B: [1646, 1666] PS: [115,  0] PE: [115, 20]   shell_stmt
-B: [1646, 1647] PS: [115,  0] PE: [115,  1]     left: var_path
+B: [1646, 1647] PS: [115,  0] PE: [115,  1]     lefts: var_path
 B: [1646, 1647] PS: [115,  0] PE: [115,  1]       root: identifier `_`
 B: [1647, 1648] PS: [115,  1] PE: [115,  2]     , `,`
-B: [1649, 1650] PS: [115,  3] PE: [115,  4]     left: var_path
+B: [1649, 1650] PS: [115,  3] PE: [115,  4]     lefts: var_path
 B: [1649, 1650] PS: [115,  3] PE: [115,  4]       root: identifier `_`
 B: [1650, 1651] PS: [115,  4] PE: [115,  5]     , `,`
-B: [1652, 1658] PS: [115,  6] PE: [115, 12]     left: var_path
+B: [1652, 1658] PS: [115,  6] PE: [115, 12]     lefts: var_path
 B: [1652, 1658] PS: [115,  6] PE: [115, 12]       root: identifier `stderr`
 B: [1659, 1660] PS: [115, 13] PE: [115, 14]     = `=`
 B: [1661, 1666] PS: [115, 15] PE: [115, 20]     shell_cmd: critical_shell_cmd
@@ -2411,10 +2411,10 @@ B: [2108, 2111] PS: [137, 27] PE: [137, 30]                                     
 B: [2111, 2112] PS: [137, 30] PE: [137, 31]                                                   end: string_end `"`
 B: [2112, 2113] PS: [137, 31] PE: [137, 32]                           ) `)`
 B: [2118, 2145] PS: [138,  4] PE: [138, 31]     stmt: shell_stmt
-B: [2118, 2119] PS: [138,  4] PE: [138,  5]       left: var_path
+B: [2118, 2119] PS: [138,  4] PE: [138,  5]       lefts: var_path
 B: [2118, 2119] PS: [138,  4] PE: [138,  5]         root: identifier `_`
 B: [2119, 2120] PS: [138,  5] PE: [138,  6]       , `,`
-B: [2121, 2122] PS: [138,  7] PE: [138,  8]       left: var_path
+B: [2121, 2122] PS: [138,  7] PE: [138,  8]       lefts: var_path
 B: [2121, 2122] PS: [138,  7] PE: [138,  8]         root: identifier `_`
 B: [2123, 2124] PS: [138,  9] PE: [138, 10]       = `=`
 B: [2125, 2145] PS: [138, 11] PE: [138, 31]       shell_cmd: critical_shell_cmd

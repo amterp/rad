@@ -28,6 +28,11 @@ func (e *RadError) SetCode(code raderr.Error) *RadError {
 	return e
 }
 
+func (e *RadError) SetNode(node *ts.Node) *RadError {
+	e.Node = node
+	return e
+}
+
 func (e *RadError) Msg() RadString {
 	return e.msg
 }

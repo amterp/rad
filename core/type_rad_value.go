@@ -422,7 +422,12 @@ func newRadValues(i *Interpreter, node *ts.Node, value ...interface{}) RadValue 
 	}
 
 	if len(value) == 1 {
-		return newRadValue(i, node, value[0])
+		val := value[0]
+		err, ok := val.(*RadError)
+		if ok && err.Node == nil {
+			err.SetNode(node)
+		}
+		return newRadValue(i, node, val)
 	}
 
 	list := NewRadList()

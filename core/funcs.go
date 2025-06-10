@@ -445,7 +445,7 @@ func init() {
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
 						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(epochArg.node))
 					}
 				} else {
 					switch unit {
@@ -464,7 +464,7 @@ func init() {
 					default:
 						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
 							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit).SetNode(epochArg.node))
 					}
 				}
 
@@ -481,7 +481,7 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
+						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone).SetNode(epochArg.node))
 					}
 				}
 
@@ -706,7 +706,7 @@ func init() {
 					return newRadValues(f.i, f.callNode, parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return newRadValues(f.i, f.callNode, 0, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
+					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
 				}
 			},
 		},

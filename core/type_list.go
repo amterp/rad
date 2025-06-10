@@ -27,6 +27,9 @@ func NewRadListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RadL
 }
 
 func (l *RadList) Append(value RadValue) {
+	if value == VOID_SENTINEL {
+		return
+	}
 	l.Values = append(l.Values, value)
 }
 

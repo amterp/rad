@@ -22,7 +22,7 @@ a = parse_int("asd")
 	expected := `Error at L2:5
 
   a = parse_int("asd")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd"
+      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd" (code RAD20001)
 `
 	assertError(t, 1, expected)
 }
@@ -35,35 +35,30 @@ a = parse_int("2.4")
 	expected := `Error at L2:5
 
   a = parse_int("2.4")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4"
+      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4" (code RAD20001)
 `
 	assertError(t, 1, expected)
 }
 
-func Test_ParseInt_CanReadErrorIfNone(t *testing.T) {
+func Test_ParseInt_CanCatchEvenIfNoError(t *testing.T) {
 	script := `
-a, err = parse_int("2")
-print(a + 1)
-print(err)
+a = catch parse_int("2")
+print("Got: {a}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "3\n{ }\n")
+	expected := `Got: 2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
 func Test_ParseInt_CanReadErrorIfExists(t *testing.T) {
 	script := `
-a, err = parse_int("asd")
-print(a)
-print(err.msg)
-print(err.code)
-print(err)
+a = catch parse_int("asd")
+print("Got: {a}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `0
-parse_int() failed to parse "asd"
-RAD20001
-{ "code": "RAD20001", "msg": "parse_int() failed to parse "asd"" }
+	expected := `Got: parse_int() failed to parse "asd"
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -76,17 +71,4 @@ parse_int("2")
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "")
 	assertNoErrors(t)
-}
-
-func Test_ParseInt_ErrorsIfExpectingTooManyReturnValues(t *testing.T) {
-	script := `
-a, b, c = parse_int("2.4")
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a, b, c = parse_int("2.4")
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot assign 2 values to 3 variables
-`
-	assertError(t, 1, expected)
 }

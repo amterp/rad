@@ -172,7 +172,12 @@ a = switch 4:
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "10\n30 40\n30\n50\n")
+	expected := `10
+30 40
+30
+50
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
 
