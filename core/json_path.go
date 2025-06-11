@@ -56,7 +56,10 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 			}
 		}
 
-		segments = append(segments, JsonPathSegment{Identifier: identifierStr, SegmentNode: &segmentNode, IdxSegments: idxSegments})
+		segments = append(
+			segments,
+			JsonPathSegment{Identifier: identifierStr, SegmentNode: &segmentNode, IdxSegments: idxSegments},
+		)
 	}
 
 	identifierStr := i.sd.Src[leftIdentifierNode.StartByte():leftIdentifierNode.EndByte()]

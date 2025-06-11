@@ -130,7 +130,12 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) 
 	// check if overlapping columns. if so, error
 	for key, _ := range capture1.captures {
 		if _, ok := capture2.captures[key]; ok {
-			t.i.errorf(t.radKeywordNode, "Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey)
+			t.i.errorf(
+				t.radKeywordNode,
+				"Cannot merge captures: %s and %s",
+				capture1.node.fullKey,
+				capture2.node.fullKey,
+			)
 		}
 	}
 

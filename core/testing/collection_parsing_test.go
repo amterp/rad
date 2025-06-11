@@ -136,6 +136,10 @@ a = [
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "[ \"a\", \"b\", \"c\", [ ], [ 1, 2, 3 ], [ \"nested\", [ \"deeply\", \"nested\" ] ], [ \"mixed\", 1, 2.5, [ \"another\", \"level\" ], \"types\" ], { }, { \"key\": \"value\" }, { \"another\": \"map\", \"with\": [ \"nested\", \"list\" ] }, 1, 2, 3 ]\n")
+	assertOnlyOutput(
+		t,
+		stdOutBuffer,
+		"[ \"a\", \"b\", \"c\", [ ], [ 1, 2, 3 ], [ \"nested\", [ \"deeply\", \"nested\" ] ], [ \"mixed\", 1, 2.5, [ \"another\", \"level\" ], \"types\" ], { }, { \"key\": \"value\" }, { \"another\": \"map\", \"with\": [ \"nested\", \"list\" ] }, 1, 2, 3 ]\n",
+	)
 	assertNoErrors(t)
 }

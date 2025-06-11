@@ -21,6 +21,7 @@ if build:
 if release or push or validate:
     $!`go mod tidy`
     $!`make all`
+    $!`golines -w . -m 120`
 
 if dumps:
     $!`cd ./rts/test/dumps && ./test_dumps.rad`

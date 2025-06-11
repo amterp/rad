@@ -16,6 +16,7 @@ delete_path
 encode_base16
 encode_base64
 ends_with
+error
 exit
 filter
 find_paths

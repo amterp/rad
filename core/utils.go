@@ -192,7 +192,9 @@ func JsonToString(jsonVal interface{}) string {
 	jsonBytes, err := json.Marshal(jsonVal)
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
-		RP.RadErrorExit(fmt.Sprintf("Bug! Non-marshallable json object passed to JsonToString (%T): %v", jsonVal, jsonVal))
+		RP.RadErrorExit(
+			fmt.Sprintf("Bug! Non-marshallable json object passed to JsonToString (%T): %v", jsonVal, jsonVal),
+		)
 	}
 
 	return string(jsonBytes)

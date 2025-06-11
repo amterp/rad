@@ -732,7 +732,12 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = originalEnv
 }
 
-func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RadValue, expectReturnValue bool) RadValue {
+func (i *Interpreter) evaluateIndexing(
+	rootNode *ts.Node,
+	index ts.Node,
+	val RadValue,
+	expectReturnValue bool,
+) RadValue {
 	if index.Kind() == rl.K_CALL {
 		// ufcs
 		ufcsArg := &PosArg{
@@ -752,7 +757,12 @@ func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val Rad
 	}
 }
 
-func (i *Interpreter) assignRightsToLefts(parentNode *ts.Node, leftNodes []ts.Node, rightNodes []ts.Node, destructure bool) {
+func (i *Interpreter) assignRightsToLefts(
+	parentNode *ts.Node,
+	leftNodes []ts.Node,
+	rightNodes []ts.Node,
+	destructure bool,
+) {
 	if destructure {
 		if len(rightNodes) == 1 {
 			rightNode := rightNodes[0]

@@ -201,7 +201,15 @@ type FuncInvocationArgs struct {
 	panicIfError bool
 }
 
-func NewFuncInvocationArgs(i *Interpreter, callNode *ts.Node, funcName string, args []PosArg, namedArgs map[string]namedArg, isBuiltIn bool, ctx *EvalCtx) FuncInvocationArgs {
+func NewFuncInvocationArgs(
+	i *Interpreter,
+	callNode *ts.Node,
+	funcName string,
+	args []PosArg,
+	namedArgs map[string]namedArg,
+	isBuiltIn bool,
+	ctx *EvalCtx,
+) FuncInvocationArgs {
 	return FuncInvocationArgs{
 		i:            i,
 		callNode:     callNode,
@@ -445,8 +453,16 @@ func init() {
 						second = absEpoch / 1_000_000_000
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
-						errMsg := fmt.Sprintf("Ambiguous epoch length (%d digits). Use '%s' to disambiguate.", digitCount, namedArgUnit)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(epochArg.node))
+						errMsg := fmt.Sprintf(
+							"Ambiguous epoch length (%d digits). Use '%s' to disambiguate.",
+							digitCount,
+							namedArgUnit,
+						)
+						return newRadValues(
+							f.i,
+							f.callNode,
+							NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(epochArg.node),
+						)
 					}
 				} else {
 					switch unit {
@@ -502,11 +518,13 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_JOIN,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2, // todo: should "" just be the default joiner?
-			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadStringT}, {RadStringT}, {RadStringT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name:           FUNC_JOIN,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 2, // todo: should "" just be the default joiner?
+			PosArgValidator: NewEnumerableArgSchema(
+				[][]RadTypeEnum{{RadListT}, {RadStringT}, {RadStringT}, {RadStringT}},
+			),
+			NamedArgs: NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				listArg := f.args[0]
 				sepArg := f.args[1]
@@ -1076,7 +1094,11 @@ func init() {
 						}
 					}).
 					ForString(func(v RadValue, str RadString) {
-						f.i.errorf(arg.node, "Cannot cast string to int. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_INT)
+						f.i.errorf(
+							arg.node,
+							"Cannot cast string to int. Did you mean to use '%s' to parse the given string?",
+							FUNC_PARSE_INT,
+						)
 					}).
 					ForDefault(func(v RadValue) {
 						f.i.errorf(arg.node, "Cannot cast %q to int", v.Type().AsString())
@@ -1109,7 +1131,11 @@ func init() {
 						}
 					}).
 					ForString(func(v RadValue, str RadString) {
-						f.i.errorf(arg.node, "Cannot cast string to float. Did you mean to use '%s' to parse the given string?", FUNC_PARSE_FLOAT)
+						f.i.errorf(
+							arg.node,
+							"Cannot cast string to float. Did you mean to use '%s' to parse the given string?",
+							FUNC_PARSE_FLOAT,
+						)
 					}).
 					ForDefault(func(v RadValue) {
 						f.i.errorf(arg.node, "Cannot cast %q to float", v.Type().AsString())
@@ -1132,7 +1158,13 @@ func init() {
 				for idx, item := range list.Values {
 					num, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_SUM, TypeAsString(item), idx)
+						f.i.errorf(
+							arg.node,
+							"%s() requires a list of numbers, got %q at index %d",
+							FUNC_SUM,
+							TypeAsString(item),
+							idx,
+						)
 					}
 					sum += num
 				}
@@ -1214,7 +1246,13 @@ func init() {
 						}
 						resultMap.SetPrimitiveList(constContent, byteList)
 					default:
-						f.i.errorf(f.callNode, "Invalid mode %q in read_file; expected %q or %q", mode, constText, constBytes)
+						f.i.errorf(
+							f.callNode,
+							"Invalid mode %q in read_file; expected %q or %q",
+							mode,
+							constText,
+							constBytes,
+						)
 					}
 				} else if os.IsNotExist(err) {
 					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
@@ -1349,7 +1387,13 @@ func init() {
 				for idx, item := range list.Values {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MIN, TypeAsString(item), idx)
+						f.i.errorf(
+							arg.node,
+							"%s() requires a list of numbers, got %q at index %d",
+							FUNC_MIN,
+							TypeAsString(item),
+							idx,
+						)
 					}
 					minVal = math.Min(minVal, val)
 				}
@@ -1373,7 +1417,13 @@ func init() {
 				for idx, item := range list.Values {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(arg.node, "%s() requires a list of numbers, got %q at index %d", FUNC_MAX, TypeAsString(item), idx)
+						f.i.errorf(
+							arg.node,
+							"%s() requires a list of numbers, got %q at index %d",
+							FUNC_MAX,
+							TypeAsString(item),
+							idx,
+						)
 					}
 					maxVal = math.Max(maxVal, val)
 				}
@@ -1381,11 +1431,13 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_CLAMP,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  3,
-			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadFloatT, RadIntT}, {RadFloatT, RadIntT}, {RadFloatT, RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name:           FUNC_CLAMP,
+			ReturnValues:   ONE_RETURN_VAL,
+			MinPosArgCount: 3,
+			PosArgValidator: NewEnumerableArgSchema(
+				[][]RadTypeEnum{{RadFloatT, RadIntT}, {RadFloatT, RadIntT}, {RadFloatT, RadIntT}},
+			),
+			NamedArgs: NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				valArg := f.args[0]
 				minArg := f.args[1]
@@ -1501,7 +1553,11 @@ func init() {
 				if numRandomCharsArg, exists := f.namedArgs[namedArgNumRandomChars]; exists {
 					numRandomChars := numRandomCharsArg.value.RequireInt(f.i, numRandomCharsArg.valueNode)
 					if numRandomChars < 0 {
-						f.i.errorf(numRandomCharsArg.valueNode, "Number of random chars must be non-negative, got %d", numRandomChars)
+						f.i.errorf(
+							numRandomCharsArg.valueNode,
+							"Number of random chars must be non-negative, got %d",
+							numRandomChars,
+						)
 					}
 					config = config.WithNumRandomChars(int(numRandomChars))
 				}
@@ -1827,7 +1883,15 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(
+							f.i,
+							f.callNode,
+							fnName,
+							NewPosArgs(NewPosArg(fnNode, val)),
+							NO_NAMED_ARGS_INPUT,
+							fn.IsBuiltIn(),
+							EXPECT_ONE_OUTPUT,
+						)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 					}
@@ -1835,7 +1899,15 @@ func init() {
 				}).ForMap(func(v RadValue, m *RadMap) {
 					outputList := NewRadList()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(
+							f.i,
+							f.callNode,
+							fnName,
+							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
+							NO_NAMED_ARGS_INPUT,
+							fn.IsBuiltIn(),
+							EXPECT_ONE_OUTPUT,
+						)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 						return true // signal to keep going
@@ -1864,7 +1936,15 @@ func init() {
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
 					outputList := NewRadList()
 					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, val)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(
+							f.i,
+							f.callNode,
+							fnName,
+							NewPosArgs(NewPosArg(fnNode, val)),
+							NO_NAMED_ARGS_INPUT,
+							fn.IsBuiltIn(),
+							EXPECT_ONE_OUTPUT,
+						)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep item
@@ -1875,7 +1955,15 @@ func init() {
 				}).ForMap(func(_ RadValue, m *RadMap) {
 					outputMap := NewRadMap()
 					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(f.i, f.callNode, fnName, NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn(), EXPECT_ONE_OUTPUT)
+						invocation := NewFuncInvocationArgs(
+							f.i,
+							f.callNode,
+							fnName,
+							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
+							NO_NAMED_ARGS_INPUT,
+							fn.IsBuiltIn(),
+							EXPECT_ONE_OUTPUT,
+						)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
 							// keep entry

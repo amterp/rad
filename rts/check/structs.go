@@ -41,7 +41,13 @@ type Diagnostic struct {
 	Code        *raderr.Error
 }
 
-func NewDiagnosticFromNode(node *ts.Node, originalSrc string, severity Severity, msg string, code *raderr.Error) Diagnostic {
+func NewDiagnosticFromNode(
+	node *ts.Node,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *raderr.Error,
+) Diagnostic {
 	line := int(node.StartPosition().Row)
 	rang := Range{
 		Start: Pos{

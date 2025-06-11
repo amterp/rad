@@ -199,7 +199,10 @@ func pickKv[T comparable](
 	}
 
 	var result string
-	options := lo.Map(lo.Keys(matchedKeyValues), func(k string, _ int) huh.Option[string] { return huh.NewOption(k, k) })
+	options := lo.Map(
+		lo.Keys(matchedKeyValues),
+		func(k string, _ int) huh.Option[string] { return huh.NewOption(k, k) },
+	)
 	err := huh.NewSelect[string]().
 		Title(prompt).
 		Options(options...).

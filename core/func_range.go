@@ -8,11 +8,13 @@ import (
 //   - somehow improve implementation to be a generator, rather than eagerly created list? chugs at e.g. 100_000
 
 var FuncRange = BuiltInFunc{
-	Name:            FUNC_RANGE,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadFloatT}, {RadIntT, RadFloatT}, {RadIntT, RadFloatT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name:           FUNC_RANGE,
+	ReturnValues:   ONE_RETURN_VAL,
+	MinPosArgCount: 1,
+	PosArgValidator: NewEnumerableArgSchema(
+		[][]RadTypeEnum{{RadIntT, RadFloatT}, {RadIntT, RadFloatT}, {RadIntT, RadFloatT}},
+	),
+	NamedArgs: NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		useFloats := false
 		for _, arg := range f.args {

@@ -162,7 +162,13 @@ print(a.hyperlink("https://example.com"))
 print(a.red().hyperlink("https://example.com"))
 `
 	setupAndRunCode(t, script, "--color=always")
-	expected := color.New().Hyperlink("https://example.com").Sprintf("Alice") + "\n" + color.New(color.FgRed).Hyperlink("https://example.com").Sprintf("Alice") + "\n"
+	expected := color.New().
+		Hyperlink("https://example.com").
+		Sprintf("Alice") +
+		"\n" + color.New(color.FgRed).
+		Hyperlink("https://example.com").
+		Sprintf("Alice") +
+		"\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }

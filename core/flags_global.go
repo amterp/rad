@@ -53,61 +53,148 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	flags := make([]RadArg, 0)
 
 	if shouldAddFlag(FLAG_HELP, FLAG_H) {
-		FlagHelp = NewBoolRadArg(flagOrEmpty(FLAG_HELP), flagOrEmpty(FLAG_H), "Print usage string.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagHelp = NewBoolRadArg(
+			flagOrEmpty(FLAG_HELP),
+			flagOrEmpty(FLAG_H),
+			"Print usage string.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagHelp)
 	}
 
 	if shouldAddFlag(FLAG_DEBUG, FLAG_D) {
-		FlagDebug = NewBoolRadArg(flagOrEmpty(FLAG_DEBUG), flagOrEmpty(FLAG_D), "Enables debug output. Intended for Rad script developers.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagDebug = NewBoolRadArg(
+			flagOrEmpty(FLAG_DEBUG),
+			flagOrEmpty(FLAG_D),
+			"Enables debug output. Intended for Rad script developers.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagDebug)
 	}
 
 	if shouldAddFlag(FLAG_RAD_DEBUG, "") {
-		FlagRadDebug = NewBoolRadArg(flagOrEmpty(FLAG_RAD_DEBUG), flagOrEmpty(""), "Enables Rad debug output. Intended for Rad developers.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagRadDebug = NewBoolRadArg(
+			flagOrEmpty(FLAG_RAD_DEBUG),
+			flagOrEmpty(""),
+			"Enables Rad debug output. Intended for Rad developers.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		hideFromUsageIfHaveScript(&FlagRadDebug.hidden)
 		flags = append(flags, &FlagRadDebug)
 	}
 
 	if shouldAddFlag(FLAG_COLOR, "") {
-		FlagColor = NewStringRadArg(flagOrEmpty(FLAG_COLOR), flagOrEmpty(""), "mode", "Control output colorization.", false, "auto", &MODES, nil, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagColor = NewStringRadArg(
+			flagOrEmpty(FLAG_COLOR),
+			flagOrEmpty(""),
+			"mode",
+			"Control output colorization.",
+			false,
+			"auto",
+			&MODES,
+			nil,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagColor)
 	}
 
 	if shouldAddFlag(FLAG_QUIET, FLAG_Q) {
-		FlagQuiet = NewBoolRadArg(flagOrEmpty(FLAG_QUIET), flagOrEmpty(FLAG_Q), "Suppresses some output.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagQuiet = NewBoolRadArg(
+			flagOrEmpty(FLAG_QUIET),
+			flagOrEmpty(FLAG_Q),
+			"Suppresses some output.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagQuiet)
 	}
 
 	if shouldAddFlag(FLAG_SHELL, "") {
-		FlagShell = NewBoolRadArg(flagOrEmpty(FLAG_SHELL), flagOrEmpty(""), "Outputs shell/bash exports of variables, so they can be eval'd", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagShell = NewBoolRadArg(
+			flagOrEmpty(FLAG_SHELL),
+			flagOrEmpty(""),
+			"Outputs shell/bash exports of variables, so they can be eval'd",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		hideFromUsageIfHaveScript(&FlagShell.hidden)
 		flags = append(flags, &FlagShell)
 	}
 
 	if shouldAddFlag(FLAG_VERSION, FLAG_V) {
-		FlagVersion = NewBoolRadArg(flagOrEmpty(FLAG_VERSION), flagOrEmpty(FLAG_V), "Print rad version information.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagVersion = NewBoolRadArg(
+			flagOrEmpty(FLAG_VERSION),
+			flagOrEmpty(FLAG_V),
+			"Print rad version information.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		hideFromUsageIfHaveScript(&FlagVersion.hidden)
 		flags = append(flags, &FlagVersion)
 	}
 
 	if shouldAddFlag(FLAG_CONFIRM_SHELL, "") {
-		FlagConfirmShellCommands = NewBoolRadArg(flagOrEmpty(FLAG_CONFIRM_SHELL), flagOrEmpty(""), "Confirm all shell commands before running them.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagConfirmShellCommands = NewBoolRadArg(
+			flagOrEmpty(FLAG_CONFIRM_SHELL),
+			flagOrEmpty(""),
+			"Confirm all shell commands before running them.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagConfirmShellCommands)
 	}
 
 	if shouldAddFlag(FLAG_SRC, "") {
-		FlagSrc = NewBoolRadArg(flagOrEmpty(FLAG_SRC), flagOrEmpty(""), "Instead of running the target script, just print it out.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagSrc = NewBoolRadArg(
+			flagOrEmpty(FLAG_SRC),
+			flagOrEmpty(""),
+			"Instead of running the target script, just print it out.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		flags = append(flags, &FlagSrc)
 	}
 
 	if shouldAddFlag(FLAG_SRC_TREE, "") {
-		FlagRadTree = NewBoolRadArg(flagOrEmpty(FLAG_SRC_TREE), flagOrEmpty(""), "Instead of running the target script, print out its syntax tree.", false, false, NO_CONSTRAINTS, NO_CONSTRAINTS)
+		FlagRadTree = NewBoolRadArg(
+			flagOrEmpty(FLAG_SRC_TREE),
+			flagOrEmpty(""),
+			"Instead of running the target script, print out its syntax tree.",
+			false,
+			false,
+			NO_CONSTRAINTS,
+			NO_CONSTRAINTS,
+		)
 		hideFromUsageIfHaveScript(&FlagRadTree.hidden)
 		flags = append(flags, &FlagRadTree)
 	}
 
 	if shouldAddFlag(FLAG_MOCK_RESPONSE, "") {
-		FlagMockResponse = NewMockResponseRadArg(flagOrEmpty(FLAG_MOCK_RESPONSE), flagOrEmpty(""), "Add mock response for json requests (pattern:filePath)")
+		FlagMockResponse = NewMockResponseRadArg(
+			flagOrEmpty(FLAG_MOCK_RESPONSE),
+			flagOrEmpty(""),
+			"Add mock response for json requests (pattern:filePath)",
+		)
 		hideFromUsageIfHaveScript(&FlagMockResponse.hidden)
 		flags = append(flags, &FlagMockResponse)
 	}

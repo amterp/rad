@@ -420,14 +420,24 @@ func (f *StringRadArg) ValidateConstraints() error {
 
 	if f.EnumConstraint != nil {
 		if !lo.Contains(*f.EnumConstraint, f.Value) {
-			return fmt.Errorf("Invalid '%s' value: %v (valid values: %s)", f.ExternalName, f.Value, strings.Join(*f.EnumConstraint, ", "))
+			return fmt.Errorf(
+				"Invalid '%s' value: %v (valid values: %s)",
+				f.ExternalName,
+				f.Value,
+				strings.Join(*f.EnumConstraint, ", "),
+			)
 		}
 	}
 
 	constraint := f.RegexConstraint
 	if constraint != nil {
 		if !constraint.MatchString(f.Value) {
-			return fmt.Errorf("Invalid '%s' value: %v (must match regex: %s)", f.ExternalName, f.Value, constraint.String())
+			return fmt.Errorf(
+				"Invalid '%s' value: %v (must match regex: %s)",
+				f.ExternalName,
+				f.Value,
+				constraint.String(),
+			)
 		}
 	}
 
@@ -550,7 +560,9 @@ func (f *IntRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	parsed, err := strconv.Atoi(arg)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(
+			NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
+		)
 	}
 	val := int64(parsed)
 	f.Value = val
@@ -631,7 +643,9 @@ func (f *IntArrRadArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := rts.ParseInt(v)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(
+				NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
+			)
 		}
 		ints[i] = parsed
 	}
@@ -694,7 +708,9 @@ func (f *FloatRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	parsed, err := rts.ParseFloat(arg)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(
+			NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
+		)
 	}
 	f.Value = parsed
 }
@@ -774,7 +790,9 @@ func (f *FloatArrRadArg) SetValue(arg string) {
 	for i, v := range split {
 		parsed, err := rts.ParseFloat(v)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(
+				NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
+			)
 		}
 		floats[i] = parsed
 	}
@@ -843,7 +861,18 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultString
 		}
-		f := NewStringRadArg(apiName, shorthand, "string", description, hasDefault, defVal, arg.EnumConstraint, arg.RegexConstraint, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewStringRadArg(
+			apiName,
+			shorthand,
+			"string",
+			description,
+			hasDefault,
+			defVal,
+			arg.EnumConstraint,
+			arg.RegexConstraint,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -853,7 +882,16 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultStringList
 		}
-		f := NewStringArrRadArg(apiName, shorthand, "string,string", description, hasDefault, defVal, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewStringArrRadArg(
+			apiName,
+			shorthand,
+			"string,string",
+			description,
+			hasDefault,
+			defVal,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -863,7 +901,17 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultInt
 		}
-		f := NewIntRadArg(apiName, shorthand, "int", description, hasDefault, defVal, arg.RangeConstraint, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewIntRadArg(
+			apiName,
+			shorthand,
+			"int",
+			description,
+			hasDefault,
+			defVal,
+			arg.RangeConstraint,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -873,7 +921,16 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultIntList
 		}
-		f := NewIntArrRadArg(apiName, shorthand, "int,int", description, hasDefault, defVal, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewIntArrRadArg(
+			apiName,
+			shorthand,
+			"int,int",
+			description,
+			hasDefault,
+			defVal,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -883,7 +940,17 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultFloat
 		}
-		f := NewFloatRadArg(apiName, shorthand, "float", description, hasDefault, defVal, arg.RangeConstraint, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewFloatRadArg(
+			apiName,
+			shorthand,
+			"float",
+			description,
+			hasDefault,
+			defVal,
+			arg.RangeConstraint,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -893,7 +960,16 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultFloatList
 		}
-		f := NewFloatArrRadArg(apiName, shorthand, "float,float", description, hasDefault, defVal, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewFloatArrRadArg(
+			apiName,
+			shorthand,
+			"float,float",
+			description,
+			hasDefault,
+			defVal,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -902,7 +978,15 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool
 		}
-		f := NewBoolRadArg(apiName, shorthand, description, true, defVal, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewBoolRadArg(
+			apiName,
+			shorthand,
+			description,
+			true,
+			defVal,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -912,7 +996,16 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultBoolList
 		}
-		f := NewBoolArrRadArg(apiName, shorthand, "bool,bool", description, hasDefault, defVal, arg.RequiresConstraint, arg.ExcludesConstraint)
+		f := NewBoolArrRadArg(
+			apiName,
+			shorthand,
+			"bool,bool",
+			description,
+			hasDefault,
+			defVal,
+			arg.RequiresConstraint,
+			arg.ExcludesConstraint,
+		)
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
@@ -938,7 +1031,12 @@ func validateRange(decl rts.ArgDecl, val float64, rangeConstraint *ArgRangeConst
 	if rMin != nil {
 		if rangeConstraint.MinInclusive {
 			if val < *rMin {
-				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is < minimum %v", decl.ExternalName(), val, *rMin)))
+				RP.CtxErrorExit(
+					NewCtxFromRtsNode(
+						&decl,
+						fmt.Sprintf("'%s' value %v is < minimum %v", decl.ExternalName(), val, *rMin),
+					),
+				)
 			}
 		} else {
 			if val <= *rMin {
@@ -951,7 +1049,12 @@ func validateRange(decl rts.ArgDecl, val float64, rangeConstraint *ArgRangeConst
 	if rMax != nil {
 		if rangeConstraint.MaxInclusive {
 			if val > *rMax {
-				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is > maximum %v", decl.ExternalName(), val, *rMax)))
+				RP.CtxErrorExit(
+					NewCtxFromRtsNode(
+						&decl,
+						fmt.Sprintf("'%s' value %v is > maximum %v", decl.ExternalName(), val, *rMax),
+					),
+				)
 			}
 		} else {
 			if val >= *rMax {

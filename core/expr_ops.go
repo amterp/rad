@@ -80,7 +80,13 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
 		argVal := i.evaluate(argNode, EXPECT_ONE_OUTPUT)
-		argVal.RequireType(i, argNode, fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr), RadIntT, RadFloatT)
+		argVal.RequireType(
+			i,
+			argNode,
+			fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr),
+			RadIntT,
+			RadFloatT,
+		)
 
 		intOp, floatOp := i.getUnaryOp(opNode)
 

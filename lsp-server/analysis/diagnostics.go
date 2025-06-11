@@ -49,6 +49,9 @@ func (s *State) addUnknownFunctions(diagnostics *[]lsp.Diagnostic, tree *rts.Rad
 	for _, node := range unknownFuncNameNodes {
 		rang := lsp.NewRangeFromTsNode(node)
 		// todo this needs to be updated since lambdas/functions have been added. We just warn instead until we have a better script understanding.
-		*diagnostics = append(*diagnostics, lsp.NewDiagnostic(rang, lsp.Warn, "Rad Language Server", "Non-builtin function"))
+		*diagnostics = append(
+			*diagnostics,
+			lsp.NewDiagnostic(rang, lsp.Warn, "Rad Language Server", "Non-builtin function"),
+		)
 	}
 }

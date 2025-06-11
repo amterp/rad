@@ -40,7 +40,12 @@ func sortColumns(
 		for _, rule := range sorting {
 			colIdx, fieldNode := resolveColIdx(interp, fields, rule.ColIdentifier)
 			col := orderedCols[colIdx]
-			comp := compare(interp, fieldNode, col.IndexAt(interp, fieldNode, indices[i]), col.IndexAt(interp, fieldNode, indices[j]))
+			comp := compare(
+				interp,
+				fieldNode,
+				col.IndexAt(interp, fieldNode, indices[i]),
+				col.IndexAt(interp, fieldNode, indices[j]),
+			)
 			if comp != 0 {
 				return (rule.Dir == Asc && comp < 0) || (rule.Dir == Desc && comp > 0)
 			}

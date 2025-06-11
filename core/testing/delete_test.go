@@ -99,7 +99,11 @@ del a["bob"]["shoes"]
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\" }, \"charlie\": [ 1, \"hi\" ] }\n")
+	assertOnlyOutput(
+		t,
+		stdOutBuffer,
+		"{ \"alice\": 35, \"bob\": { \"car\": \"toyota\" }, \"charlie\": [ 1, \"hi\" ] }\n",
+	)
 	assertNoErrors(t)
 }
 
@@ -110,7 +114,11 @@ del a["bob"]["ids"][1]
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "{ \"alice\": 35, \"bob\": { \"car\": \"toyota\", \"ids\": [ 10, 30 ] }, \"charlie\": [ 1, \"hi\" ] }\n")
+	assertOnlyOutput(
+		t,
+		stdOutBuffer,
+		"{ \"alice\": 35, \"bob\": { \"car\": \"toyota\", \"ids\": [ 10, 30 ] }, \"charlie\": [ 1, \"hi\" ] }\n",
+	)
 	assertNoErrors(t)
 }
 

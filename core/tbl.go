@@ -102,7 +102,9 @@ func (w *TblWriter) Render() {
 	// doesn't get counted by term.GetSize
 	widthNeeded += 3
 
-	RP.RadDebugf(fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths))
+	RP.RadDebugf(
+		fmt.Sprintf("TermWidth: %d, WidthNeeded: %d, ColWidthsBefore: %v\n", termWidth, widthNeeded, colWidths),
+	)
 	if widthNeeded > termWidth {
 		// we're over our size limit, as determined by the width of the terminal.
 		// 1. determined the total amount of chars we need to cut down
@@ -127,7 +129,14 @@ func (w *TblWriter) Render() {
 		}
 		RP.RadDebugf(fmt.Sprintf(
 			"CharsToReduce: %d, EachColEntitldChars: %d, CharsOverEntitl: %v, TotCharsOverEntitl: %d, PropOfOver: %v, CharsToRm: %v, ColWidthsAfter: %v",
-			charsToReduce, eachColumnEntitledChars, charsOverEntitlement, totalCharsOverEntitlement, proportionOfOver, charsToRemove, colWidths))
+			charsToReduce,
+			eachColumnEntitledChars,
+			charsOverEntitlement,
+			totalCharsOverEntitlement,
+			proportionOfOver,
+			charsToRemove,
+			colWidths,
+		))
 	}
 
 	// truncate cells to fit within column widths
@@ -139,7 +148,8 @@ func (w *TblWriter) Render() {
 			cell := row[i]
 			lines := strings.Split(cell.Plain(), "\n")
 			for j, line := range lines {
-				if utf8.RuneCountInString(line) > colWidth && colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
+				if utf8.RuneCountInString(line) > colWidth &&
+					colWidth > 3 { // >3 to prevent slice indexing problem for ellipses below
 					// todo in theory we should be wrapping, rather than just cutting off.
 					// todo if contents contain escape codes, we may cut them off. Should perhaps be truncating before escape codes.
 					if com.TerminalIsUtf8 {

@@ -59,7 +59,11 @@ print(a[:99])
 print(a[-99:])
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n")
+	assertOnlyOutput(
+		t,
+		stdOutBuffer,
+		"[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n[ 10, 20, 30, 40, 50 ]\n",
+	)
 	assertNoErrors(t)
 }
 

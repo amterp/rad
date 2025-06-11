@@ -136,6 +136,10 @@ func setGlobals(runnerInput RunnerInput) {
 }
 
 func failedToDetermineRadHomeDir() {
-	fmt.Fprintf(RIo.StdErr, "Unable to determine home directory for rad. Please define a valid path '%s' as an environment variable.\n", ENV_RAD_HOME)
+	fmt.Fprintf(
+		RIo.StdErr,
+		"Unable to determine home directory for rad. Please define a valid path '%s' as an environment variable.\n",
+		ENV_RAD_HOME,
+	)
 	RExit(1)
 }

@@ -256,7 +256,9 @@ func (r *RadRunner) Run() error {
 
 	missingArgs = removeMissingIfExcludedByOtherDefinedArg(missingArgs, scriptArgs)
 	if len(missingArgs) > 0 {
-		RP.UsageErrorExit(fmt.Sprintf("Missing required arguments: %s", TransformRadArgs(missingArgs, RadArg.GetExternalName)))
+		RP.UsageErrorExit(
+			fmt.Sprintf("Missing required arguments: %s", TransformRadArgs(missingArgs, RadArg.GetExternalName)),
+		)
 	}
 
 	// at this point, we'll assume we've been given a script to run, and we should do that now
@@ -359,7 +361,8 @@ func removeMissingIfExcludedByOtherDefinedArg(missingArgs []RadArg, args []RadAr
 	for _, missingArg := range missingArgs {
 		isMissing := true
 		for _, potentialExcluder := range args {
-			if potentialExcluder.Excludes(missingArg) && !lo.Contains(missingIdentifiers, potentialExcluder.GetIdentifier()) {
+			if potentialExcluder.Excludes(missingArg) &&
+				!lo.Contains(missingIdentifiers, potentialExcluder.GetIdentifier()) {
 				isMissing = false
 				break
 			}

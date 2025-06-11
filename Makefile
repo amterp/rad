@@ -26,4 +26,3 @@ build:
 test:
 	@echo "⚙️ Running tests..."
 	go test ./core/testing
-

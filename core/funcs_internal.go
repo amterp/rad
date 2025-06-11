@@ -110,7 +110,10 @@ func AddInternalFuncs() {
 
 					diagMap.SetPrimitiveInt("start_line", diag.Range.Start.Line)
 					diagMap.SetPrimitiveInt("start_char", diag.Range.Start.Character)
-					diagMap.SetPrimitiveStr("pos", fmt.Sprintf("L%d:%d", diag.Range.Start.Line+1, diag.Range.Start.Character+1))
+					diagMap.SetPrimitiveStr(
+						"pos",
+						fmt.Sprintf("L%d:%d", diag.Range.Start.Line+1, diag.Range.Start.Character+1),
+					)
 
 					diagMap.SetPrimitiveStr("severity", diag.Severity.String())
 					diagMap.SetPrimitiveStr("msg", diag.Message)

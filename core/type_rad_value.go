@@ -278,7 +278,12 @@ func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, a
 	panic(UNREACHABLE)
 }
 
-func (v RadValue) RequireNotType(i *Interpreter, node *ts.Node, errPrefix string, disallowedTypes ...RadTypeEnum) RadValue {
+func (v RadValue) RequireNotType(
+	i *Interpreter,
+	node *ts.Node,
+	errPrefix string,
+	disallowedTypes ...RadTypeEnum,
+) RadValue {
 	for _, disallowedType := range disallowedTypes {
 		if v.Type() == disallowedType {
 			i.errorf(node, "%s: %s", errPrefix, TypeAsString(v))

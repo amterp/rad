@@ -140,7 +140,12 @@ func flagUsage(buf *bytes.Buffer, flags []RadArg) {
 		sidx := strings.Index(line, USAGE_ALIGNMENT_CHAR)
 		spacing := strings.Repeat(" ", maxlen-sidx)
 		// maxlen + 2 comes from + 1 for the \x00 and + 1 for the (deliberate) off-by-one in maxlen-sidx
-		fmt.Fprintln(buf, line[:sidx], spacing, strings.Replace(line[sidx+1:], "\n", "\n"+strings.Repeat(" ", maxlen+2), -1))
+		fmt.Fprintln(
+			buf,
+			line[:sidx],
+			spacing,
+			strings.Replace(line[sidx+1:], "\n", "\n"+strings.Repeat(" ", maxlen+2), -1),
+		)
 	}
 }
 
@@ -169,7 +174,9 @@ func basicTips(buf *bytes.Buffer) {
 	sb.WriteString("To execute a command:\n")
 	sb.WriteString("  rad <command> [args]\n")
 	sb.WriteString("\n")
-	sb.WriteString("If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n")
+	sb.WriteString(
+		"If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n",
+	)
 
 	fmt.Fprintf(buf, sb.String())
 }

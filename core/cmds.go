@@ -84,7 +84,9 @@ func getFileHeaderLine(fileName string) string {
 	firstLine := strings.Split(fh.Contents, "\n")[0]
 	if !strings.HasSuffix(firstLine, ".") {
 		// Heuristic for the first line being a decent standalone description, for usage in rad help message.
-		panic(fmt.Sprintf("First line in header of embedded file %s isn't a complete sentence: %s", fileName, firstLine))
+		panic(
+			fmt.Sprintf("First line in header of embedded file %s isn't a complete sentence: %s", fileName, firstLine),
+		)
 	}
 	return firstLine
 }

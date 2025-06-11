@@ -29,7 +29,12 @@ var FuncColorize = BuiltInFunc{
 
 		value := valueArg.value.RequireStr(f.i, valueArg.node).Plain()
 		if !lo.Contains(possibleValues, value) {
-			f.i.errorf(valueArg.node, "Value '%s' not found in the provided list of possible values: %s", value, possibleValues)
+			f.i.errorf(
+				valueArg.node,
+				"Value '%s' not found in the provided list of possible values: %s",
+				value,
+				possibleValues,
+			)
 		}
 
 		r, g, b, err := GetEnumColor(value, possibleValues)
