@@ -50,7 +50,7 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 			if idxExprNode == nil {
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
 			} else {
-				idx := i.evaluate(idxExprNode, EXPECT_ONE_OUTPUT)
+				idx := i.evaluate(idxExprNode)
 				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), RadIntT)
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode, Idx: &idx})
 			}

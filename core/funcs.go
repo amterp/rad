@@ -197,7 +197,6 @@ type FuncInvocationArgs struct {
 	funcName     string
 	args         []PosArg
 	namedArgs    map[string]namedArg
-	ctx          *EvalCtx
 	panicIfError bool
 }
 
@@ -208,7 +207,6 @@ func NewFuncInvocationArgs(
 	args []PosArg,
 	namedArgs map[string]namedArg,
 	isBuiltIn bool,
-	ctx *EvalCtx,
 ) FuncInvocationArgs {
 	return FuncInvocationArgs{
 		i:            i,
@@ -217,7 +215,6 @@ func NewFuncInvocationArgs(
 		args:         args,
 		namedArgs:    namedArgs,
 		panicIfError: !(funcName == FUNC_ERROR && isBuiltIn),
-		ctx:          ctx,
 	}
 }
 
@@ -360,7 +357,7 @@ func init() {
 				switch coerced := arg.value.Val.(type) {
 				case RadString:
 					// todo maintain attributes
-					str := f.i.evaluate(arg.node, EXPECT_ONE_OUTPUT).RequireStr(f.i, f.callNode).Plain()
+					str := f.i.evaluate(arg.node).RequireStr(f.i, f.callNode).Plain()
 					runes := []rune(str)
 					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
 					return newRadValues(f.i, f.callNode, string(runes))
@@ -1890,7 +1887,6 @@ func init() {
 							NewPosArgs(NewPosArg(fnNode, val)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
-							EXPECT_ONE_OUTPUT,
 						)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
@@ -1906,7 +1902,6 @@ func init() {
 							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
-							EXPECT_ONE_OUTPUT,
 						)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
@@ -1943,7 +1938,6 @@ func init() {
 							NewPosArgs(NewPosArg(fnNode, val)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
-							EXPECT_ONE_OUTPUT,
 						)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
@@ -1962,7 +1956,6 @@ func init() {
 							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
-							EXPECT_ONE_OUTPUT,
 						)
 						out := fn.Execute(invocation)
 						if out.RequireBool(f.i, fnNode) {
@@ -2025,15 +2018,7 @@ func init() {
 					fnNode := loaderFnArg.node
 					fn := loaderFnArg.value.RequireFn(f.i, fnNode)
 					fnName := GetSrc(f.i.sd.Src, fnNode)
-					inv := NewFuncInvocationArgs(
-						f.i,
-						fnNode,
-						fnName,
-						NewPosArgs(), // zero positional args
-						NO_NAMED_ARGS_INPUT,
-						fn.IsBuiltIn(),
-						EXPECT_ONE_OUTPUT,
-					)
+					inv := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn())
 					out := fn.Execute(inv)
 					return out
 				}

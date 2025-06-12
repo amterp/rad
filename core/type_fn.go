@@ -86,10 +86,10 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 
 			if fn.IsLambda() {
 				if fn.Expr != nil {
-					out = i.evaluate(fn.Expr, NO_CONSTRAINT_OUTPUT)
+					out = i.evaluate(fn.Expr)
 				}
 				if fn.Stmt != nil {
-					i.evaluate(fn.Stmt, NO_CONSTRAINT_OUTPUT)
+					i.evaluate(fn.Stmt)
 				}
 			} else {
 				i.runBlock(fn.Body)
@@ -98,22 +98,17 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 					return
 				}
 
-				if !f.ctx.ExpectedOutput.Acceptable(0) && fn.ReturnStmt == nil {
-					i.errorf(f.callNode, "Expected %s, but function '%s' is missing a return statement.",
-						f.ctx.ExpectedOutput.String(), f.funcName)
-				}
-
 				if fn.ReturnStmt != nil {
 					rightNodes := i.getChildren(fn.ReturnStmt, rl.F_RIGHT)
 					if len(rightNodes) > 1 {
 						list := NewRadList()
 						for _, rightNode := range rightNodes {
-							val := i.evaluate(&rightNode, EXPECT_ONE_OUTPUT)
+							val := i.evaluate(&rightNode)
 							list.Append(val)
 						}
 						out = newRadValueList(list)
 					} else {
-						out = i.evaluate(&rightNodes[0], EXPECT_ONE_OUTPUT)
+						out = i.evaluate(&rightNodes[0])
 					}
 				}
 			}
@@ -122,7 +117,6 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 		assertMinNumPosArgs(f, fn.BuiltInFunc)
 		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
 		assertAllowedNamedArgs(f, fn.BuiltInFunc)
-		assertCorrectNumReturnValues(f, fn.BuiltInFunc)
 		out = fn.BuiltInFunc.Execute(f)
 	}
 

@@ -1,9 +1,8 @@
 package core
 
 import (
-	com "rad/core/common"
-
 	"github.com/amterp/rad/rts/rl"
+	com "rad/core/common"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"
@@ -44,11 +43,7 @@ type namedArg struct {
 	valueNode *ts.Node
 }
 
-func (i *Interpreter) callFunction(
-	callNode *ts.Node,
-	ctx *EvalCtx,
-	ufcsArg *PosArg,
-) RadValue {
+func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue {
 	funcNameNode := i.getChild(callNode, rl.F_FUNC)
 	argNodes := i.getChildren(callNode, rl.F_ARG)
 	namedArgNodes := i.getChildren(callNode, rl.F_NAMED_ARG)
@@ -60,7 +55,7 @@ func (i *Interpreter) callFunction(
 		args = append(args, *ufcsArg)
 	}
 	for _, argNode := range argNodes {
-		argValue := i.evaluate(&argNode, EXPECT_ONE_OUTPUT)
+		argValue := i.evaluate(&argNode)
 		args = append(args, NewPosArg(&argNode, argValue))
 	}
 
@@ -70,7 +65,7 @@ func (i *Interpreter) callFunction(
 		namedArgValueNode := i.getChild(&namedArgNode, rl.F_VALUE)
 
 		argName := GetSrc(i.sd.Src, namedArgNameNode)
-		argValue := i.evaluate(namedArgValueNode, EXPECT_ONE_OUTPUT)
+		argValue := i.evaluate(namedArgValueNode)
 		namedArgs[argName] = namedArg{
 			name:      argName,
 			value:     argValue,
@@ -89,7 +84,7 @@ func (i *Interpreter) callFunction(
 		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn(), ctx))
+	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn()))
 	return out
 }
 
@@ -98,40 +93,6 @@ func assertMinNumPosArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
 		f.i.errorf(f.callNode, "%s() requires at least %s, but got %d",
 			builtInFunc.Name, com.Pluralize(builtInFunc.MinPosArgCount, "argument"), len(f.args))
 	}
-}
-
-func assertCorrectNumReturnValues(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
-	// TODO REVAMP REDO THIS. When we have better function definitions.
-
-	// allowedNumReturnValues := builtInFunc.ReturnValues
-	//
-	// if f.numExpectedOutputs == NO_NUM_RETURN_VALUES_CONSTRAINT {
-	// 	return
-	// }
-	//
-	// if lo.Contains(allowedNumReturnValues, f.numExpectedOutputs) {
-	// 	return
-	// }
-	//
-	// if lo.Contains(allowedNumReturnValues, NO_NUM_RETURN_VALUES_CONSTRAINT) {
-	// 	return
-	// }
-	//
-	// var errMsg string
-	// if len(allowedNumReturnValues) == 0 {
-	// 	errMsg = fmt.Sprintf("%s() returns no values, but %s expected",
-	// 		builtInFunc.Name, com.NumIsAre(f.numExpectedOutputs))
-	// } else if len(allowedNumReturnValues) == 1 {
-	// 	errMsg = fmt.Sprintf("%s() returns %s, but %s expected",
-	// 		builtInFunc.Name, com.Pluralize(allowedNumReturnValues[0], "value"), com.NumIsAre(f.numExpectedOutputs))
-	// } else {
-	// 	// allows different numbers of return values
-	// 	stringified := lo.Map(allowedNumReturnValues, func(item int, _ int) string { return fmt.Sprintf("%d", item) })
-	// 	allowedReturnNums := strings.Join(stringified, " or ")
-	// 	errMsg = fmt.Sprintf("%s() returns %s values, but %s expected",
-	// 		builtInFunc.Name, allowedReturnNums, com.NumIsAre(f.numExpectedOutputs))
-	// }
-	// f.i.errorf(f.callNode, errMsg)
 }
 
 func assertAllowedNamedArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {

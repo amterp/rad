@@ -105,7 +105,7 @@ var FuncPickFromResource = BuiltInFunc{
 
 		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
 
-		resource := LoadPickResource(f.i, f.callNode, filePath, f.ctx.ExpectedOutput)
+		resource := LoadPickResource(f.i, f.callNode, filePath)
 		var keyGroups [][]string
 		var valueGroups [][]RadValue
 		for _, opt := range resource.Opts {

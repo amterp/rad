@@ -181,7 +181,7 @@ func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 }
 
 func evalMapKey(i *Interpreter, idxNode *ts.Node) RadValue {
-	return i.evaluate(idxNode, EXPECT_ONE_OUTPUT).
+	return i.evaluate(idxNode).
 		RequireNotType(i, idxNode, "Map keys cannot be lists", RadListT).
 		RequireNotType(i, idxNode, "Map keys cannot be maps", RadMapT).
 		RequireNotType(i, idxNode, "Map keys cannot be functions", RadFnT)

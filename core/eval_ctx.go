@@ -35,16 +35,3 @@ func (e ExpectedOutput) Acceptable(actual int) bool {
 		panic(fmt.Sprintf("Bug! Unhandled value: %d", e))
 	}
 }
-
-var EXPECT_ONE_OUTPUT = NewEvalCtx(One)
-var NO_CONSTRAINT_OUTPUT = NewEvalCtx(NoConstraint)
-
-type EvalCtx struct {
-	ExpectedOutput ExpectedOutput
-}
-
-func NewEvalCtx(ExpectValue ExpectedOutput) *EvalCtx {
-	return &EvalCtx{
-		ExpectedOutput: ExpectValue,
-	}
-}

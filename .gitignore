@@ -3,7 +3,7 @@ main
 sandbox
 bin
 resp.json
-test.rad
+test.rad*
 test2.rad
 test3.rad
 resource.json

@@ -38,7 +38,7 @@ func (l *RadList) GetIdx(i *Interpreter, idxNode *ts.Node) RadValue {
 		return newRadValue(i, idxNode, l.Slice(i, idxNode))
 	}
 
-	idxVal := i.evaluate(idxNode, EXPECT_ONE_OUTPUT)
+	idxVal := i.evaluate(idxNode)
 	rawIdx := idxVal.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
 	if idx < 0 || idx >= l.Len() {
@@ -69,7 +69,7 @@ func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
 
 	// regular single index
 
-	idxVal := i.evaluate(idxNode, EXPECT_ONE_OUTPUT)
+	idxVal := i.evaluate(idxNode)
 	rawIdx := idxVal.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
 	if idx < 0 || idx >= int64(len(l.Values)) {

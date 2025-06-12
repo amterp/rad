@@ -30,7 +30,7 @@ type PickResourceOptionSerde struct {
 	Values []interface{} `json:"values"`
 }
 
-func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string, expectedOutput ExpectedOutput) PickResource {
+func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) PickResource {
 	finalPath := resolveFinalPath(jsonPath)
 	file, err := os.Open(finalPath)
 	if err != nil {
@@ -52,10 +52,6 @@ func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string, expect
 
 		if len(option.Values) == 0 {
 			i.errorf(callNode, "pick resource options must have at least one value")
-		}
-
-		if !expectedOutput.Acceptable(len(option.Values)) {
-			i.errorf(callNode, "Expected %s from resource option: %v", expectedOutput.String(), option.Values)
 		}
 
 		opts = append(opts, PickResourceOpt{

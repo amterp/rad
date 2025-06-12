@@ -161,10 +161,10 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			case rl.K_RAD_FIELD_MOD_COLOR:
 				// todo could I replace this syntax with a 'map' lambda operation?
 				clrExprNode := r.i.getChild(&stmtNode, rl.F_COLOR)
-				clrStr := r.i.evaluate(clrExprNode, EXPECT_ONE_OUTPUT).RequireStr(r.i, clrExprNode)
+				clrStr := r.i.evaluate(clrExprNode).RequireStr(r.i, clrExprNode)
 				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
 				regexExprNode := r.i.getChild(&stmtNode, rl.F_REGEX)
-				regexStr := r.i.evaluate(regexExprNode, EXPECT_ONE_OUTPUT).RequireStr(r.i, regexExprNode)
+				regexStr := r.i.evaluate(regexExprNode).RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())
 				if err != nil {
 					r.i.errorf(regexExprNode, fmt.Sprintf("Invalid regex pattern: %s", err))
@@ -206,7 +206,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 
 			shouldExecute := true
 			if condNode != nil {
-				condResult := r.i.evaluate(condNode, EXPECT_ONE_OUTPUT).TruthyFalsy()
+				condResult := r.i.evaluate(condNode).TruthyFalsy()
 				shouldExecute = condResult
 			}
 
@@ -333,7 +333,7 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 		return nil, nil
 	}
 
-	src := r.i.evaluate(r.srcExprNode, EXPECT_ONE_OUTPUT)
+	src := r.i.evaluate(r.srcExprNode)
 
 	if r.blockType == RadBlock || r.blockType == RequestBlock {
 		str := src.RequireStr(r.i, r.srcExprNode)
@@ -388,7 +388,6 @@ func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName
 				NewPosArgs(NewPosArg(reprNode, val)),
 				NO_NAMED_ARGS_INPUT,
 				mods.lambda.IsBuiltIn(),
-				EXPECT_ONE_OUTPUT,
 			),
 		)
 		newVals = append(newVals, toStringQuoteStr(mapped, false))
