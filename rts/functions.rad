@@ -1,0 +1,305 @@
+fn print(_items: *any, sep: str = " ", end: str = "\n") -> void:
+    pass
+
+fn print_err(_items: *any, sep: str = " ", end: str = "\n") -> void:
+    pass
+
+fn pprint(_item: any) -> void:
+    pass
+
+fn debug(_items: *any, sep: str = " ", end: str = "\n") -> void:
+    pass
+
+fn exit(_code: int = 0) -> void:
+    pass
+
+fn sleep(_duration: num|str, title: str?) -> void:
+    pass
+
+fn seed_random(_seed: int) -> void:
+    pass
+
+fn rand() -> float:
+    pass
+
+fn rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -> int:
+    pass
+
+fn replace(_original: str, _find: str, _replace: str) -> str:
+    pass
+
+fn len(_val: list|str|map) -> int:
+    pass
+
+fn sort(_val: list|str) -> list|str:
+    pass
+
+// changed default to local
+fn now(tz: str = "local") ->
+        { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int,
+          "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }:
+    pass
+
+fn parse_epoch(_epoch: int, *, tz: str = "local",
+        unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> 
+        { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int,
+          "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }:
+    pass
+
+// enumerate all the types here, will need a test
+fn type_of(_var: str) -> ["int", "str", "list", "map", "float"]:
+    pass
+
+fn join(_list: list, joiner: str = "", prefix: str = "", suffix: str = "") -> str:
+    pass
+
+fn lower(_val: str) -> str:
+    pass
+
+fn upper(_val: str) -> str:
+    pass
+
+fn starts_with(_val: str, _start: str) -> bool:
+    pass
+
+fn ends_with(_val: str, _end: str) -> bool:
+    pass
+
+fn pick(_options: [*str], _filter: str?, *, prompt: str = "Pick an option") -> str:
+    pass
+
+fn pick_kv(keys: [*str], values: [*any], _filter: str?, *, prompt: str = "Pick an option") -> any:
+    pass
+
+fn pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any:
+    pass 
+
+fn keys(_map: map) -> [*any]:
+    pass
+
+fn values(_map: map) -> [*any]:
+    pass
+
+fn truncate(_str: str, _len: int) -> str:
+    pass
+
+fn unique(_list: [*any]) -> [*any]:
+    pass
+
+fn confirm(prompt: str?) -> bool:
+    pass
+
+fn parse_json(_str: str) -> any:
+    pass
+
+fn parse_int(_str: str) -> int|error:
+    pass
+
+fn parse_float(_str: str) -> float|error:
+    pass
+
+fn abs(_num: num) -> num:
+    pass
+
+fn error(_msg: str) -> error:
+    pass
+
+fn input(prompt: str?, *, hint: str?, default: str?, secret: bool = false) -> str:
+    pass
+
+fn get_path(_path: str) ->
+        { "exists": bool, "full_path": str, "base_name"?: str,
+          "permissions"?: str, "type"?: str, "size_bytes"?: int }:
+    pass
+
+fn get_env(_var: str) -> str:
+    pass
+
+fn find_paths(_path: str, *, depth: int?, relative: ["target", "cwd", "absolute"] =  "target") -> [*str]:
+    pass
+
+// todo implement and revisit 'relative' here
+fn delete_path(_path: str, *, relative: ["target", "cwd", "absolute"] =  "target") -> bool:
+    pass
+
+fn count(_subject: str|[*any], _inner: any) -> int:
+    pass
+
+fn zip(_lists: *list) -> [*list]:
+    pass
+
+fn str(_var: any) -> str:
+    pass
+
+fn int(_var: any) -> int|error:
+    pass
+
+fn float(_var: any) -> float|error:
+    pass
+
+fn sum(_nums: [*num]) -> num:
+    pass
+
+fn trim(_subject: str, to_trim: str = " ") -> str:
+    pass
+
+fn trim_prefix(_subject: str, to_trim: str = " ") -> str:
+    pass
+
+fn trim_suffix(_subject: str, to_trim: str = " ") -> str:
+    pass
+
+fn read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_bytes": int, "content": str|[int] }:
+    pass
+
+fn write_file(_path: str, _content: str, *, append: bool = false) -> error|{ "bytes_written": int, "path": str }:
+    pass
+
+fn round(_num: num, _decimals: int = 0) -> num:
+    pass
+
+fn ceil(_num: num) -> int:
+    pass
+
+fn floor(_num: num) -> int:
+    pass
+
+// todo varargs versions
+fn min(_num: [*num]) -> num|error:
+    pass
+
+fn max(_num: [*num]) -> num|error:
+    pass
+
+fn clamp(val: num, min: num, max: num) -> num:
+    pass
+
+fn reverse(_val: str|list) -> str|list:
+    pass
+
+fn is_defined(_var: str) -> bool:
+    pass
+
+fn hyperlink(_str: str) -> str:
+    pass
+
+fn uuid_v4() -> str:
+    pass
+
+fn uuid_v7() -> str:
+    pass
+
+fn get_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str:
+    pass
+
+fn get_default(_map: map, key: any, default: any) -> any:
+    pass
+
+fn get_rad_home() -> str:
+    pass
+
+fn get_stash_dir(_sub_path: str?) -> error|str:
+    pass
+
+fn load_state() -> map:
+    pass
+
+fn save_state(_state: map) -> void:
+    pass
+
+// renamed path -> full_path
+fn load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "created": bool, "content"?: str }:
+    pass
+
+// todo should this return a map containing "full path?"
+fn write_stash_file(_path: str, _content: str) -> error:
+    pass
+
+fn hash(_val: str, algo: ["sha1", "sha256", "sha512", "md5"] = "sha1") -> str:
+    pass
+
+// todo base64/base16 should be args, prob?
+fn encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> str:
+    pass
+
+fn decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> str:
+    pass
+
+fn encode_base16(_content: str) -> str:
+    pass
+
+fn decode_base16(_content: str) -> str:
+    pass
+
+fn map(
+    _coll: map|list,
+    _fn: fn(any) -> any | fn(any, any) -> any
+        ) -> map|list:
+    pass
+
+fn filter(
+    _coll: map|list,
+    _fn: fn(any) -> bool | fn(any, any) -> bool
+        ) -> map|list:
+    pass
+
+fn load(_map: map, _key: any, _loader: fn() any, *, reload: bool = false, override: any?) -> any:
+    pass
+
+fn color_rgb(_str: str, red: int, green: int, blue: int) -> error|str:
+    pass
+
+fn get_args() -> [*str]:
+    pass
+
+// replace with http(url, "GET") , etc?
+fn http_get(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_post(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_put(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_patch(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_delete(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_head(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_options(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_trace(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn http_connect(url: str, *, body: any, headers: map) ->
+        { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
+    pass
+
+fn colorize(_val: str, _enum: [*str]) -> str:
+    pass
+
+//todo
+//  If I wanted a list of strings, I would write [*string].
+// if I wanted a list of length two, with a string and an int,
+// I'd write [string, int]. For maps, I could specify a schema with { "mykey": int, "myotherkey": [string] }
+// for generic 'map of string keys, int values', maybe simply { string: int } ?
+// remember:
+// should validate no _prefixed var names after , *,
+// add colors/bold/attr
+// now() and parse_epoch() have same elaborate type. Allow syntax for defining types?
+//   time = type { ... }
+//   same with http functions

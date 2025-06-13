@@ -7,6 +7,7 @@ args:
     docs d bool       # Enable to deploy docs.
     amend a bool      # Enable to amend the last commit with the version bump instead of creating a new commit.
     push p bool       # Enable to push local commits.
+    force_push "force-push" P bool  # Enable to just push, no checks or anything.
     build b bool      # Enable to build.
     validate v bool   # Enable to build & test.
     dumps bool        # Enable to run the dump tests.
@@ -71,7 +72,7 @@ if release:
         $!`git tag -a "{version}" -m "Bump version to {version}"`
         confirm $!`git push origin {branch} --tags`
 
-if push:
+if push or force_push:
     branch = get_branch()
     $!`git push origin {branch} --tags`
 

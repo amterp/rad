@@ -166,10 +166,10 @@ const (
 	constAbsolute     = "absolute"
 	constPath         = "path"
 	constAlgo         = "algo"
-	constMd5          = "md5"
 	constSha1         = "sha1"
 	constSha256       = "sha256"
 	constSha512       = "sha512"
+	constMd5          = "md5"
 	constExists       = "exists"
 	constFullPath     = "full_path"
 	constBaseName     = "base_name"
@@ -1227,10 +1227,9 @@ func init() {
 					mode = modeArg.value.RequireStr(f.i, modeArg.valueNode).Plain()
 				}
 
-				resultMap := NewRadMap()
-
 				data, err := os.ReadFile(path)
 				if err == nil {
+					resultMap := NewRadMap()
 					resultMap.SetPrimitiveInt64(constSizeBytes, int64(len(data)))
 
 					switch strings.ToLower(mode) {
@@ -1251,6 +1250,7 @@ func init() {
 							constBytes,
 						)
 					}
+					return newRadValues(f.i, f.callNode, resultMap)
 				} else if os.IsNotExist(err) {
 					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
@@ -1258,8 +1258,6 @@ func init() {
 				} else {
 					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
 				}
-
-				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{
@@ -1278,8 +1276,6 @@ func init() {
 				if appendArg, exists := f.namedArgs[namedArgAppend]; exists {
 					appendFlag = appendArg.value.RequireBool(f.i, appendArg.valueNode)
 				}
-
-				resultMap := NewRadMap()
 
 				data := []byte(content)
 				var err error
@@ -1303,8 +1299,10 @@ func init() {
 				}
 
 				if err == nil {
+					resultMap := NewRadMap()
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
-					resultMap.SetPrimitiveStr("path", path)
+					resultMap.SetPrimitiveStr(constPath, path)
+					return newRadValues(f.i, f.callNode, resultMap)
 				} else if os.IsNotExist(err) {
 					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
@@ -1312,8 +1310,6 @@ func init() {
 				} else {
 					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
 				}
-
-				return newRadValues(f.i, f.callNode, resultMap)
 			},
 		},
 		{

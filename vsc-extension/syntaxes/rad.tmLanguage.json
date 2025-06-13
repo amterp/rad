@@ -128,7 +128,7 @@
       "patterns": [
         {
           "name": "storage.type.rad",
-          "match": "\\b(bool|array|float|int|json|string)\\b"
+          "match": "\\b(bool|list|map|float|int|json|str|any|void|num|error)\\b"
         }
       ]
     },

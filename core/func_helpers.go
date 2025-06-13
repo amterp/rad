@@ -1,8 +1,9 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/rl"
 	com "rad/core/common"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/samber/lo"
