@@ -5,20 +5,20 @@ import "testing"
 const (
 	websiteScript = `
 args:
-    filter string
+    filter str
 
 url = pick_from_resource("./resources/website.json", filter)
 print(url)`
 	websitesScript = `
 args:
-    filter string
+    filter str
 
 url, title = pick_from_resource("./resources/websites.json", filter)
 print(url)
 print(title)`
 	peopleScript = `
 args:
-    filter string
+    filter str
 
 name, age = pick_from_resource("./resources/people.json", filter)
 print(name)

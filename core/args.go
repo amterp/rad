@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rad/rts/rl"
+
 	"github.com/amterp/rad/rts"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -327,7 +329,7 @@ func (f *BoolArrRadArg) SetValue(arg string) {
 }
 
 func (f *BoolArrRadArg) GetType() RadArgTypeT {
-	return ArgBoolArrayT
+	return ArgBoolListT
 }
 
 // --- string
@@ -505,7 +507,7 @@ func (f *StringArrRadArg) SetValue(arg string) {
 }
 
 func (f *StringArrRadArg) GetType() RadArgTypeT {
-	return ArgStringArrayT
+	return ArgStrListT
 }
 
 // --- int
@@ -653,7 +655,7 @@ func (f *IntArrRadArg) SetValue(arg string) {
 }
 
 func (f *IntArrRadArg) GetType() RadArgTypeT {
-	return ArgIntArrayT
+	return ArgIntListT
 }
 
 // --- float
@@ -800,7 +802,7 @@ func (f *FloatArrRadArg) SetValue(arg string) {
 }
 
 func (f *FloatArrRadArg) GetType() RadArgTypeT {
-	return ArgFloatArrayT
+	return ArgFloatListT
 }
 
 // --- MockResponse
@@ -816,7 +818,7 @@ func NewMockResponseRadArg(name, short, usage string) MockResponseRadArg {
 			ExternalName:      name,
 			Identifier:        name,
 			Short:             short,
-			ArgUsage:          "string",
+			ArgUsage:          rl.T_STR,
 			Description:       usage,
 			defaultAsString:   "",
 			hasNonZeroDefault: false,
@@ -864,7 +866,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewStringRadArg(
 			apiName,
 			shorthand,
-			"string",
+			rl.T_STR,
 			description,
 			hasDefault,
 			defVal,
@@ -876,7 +878,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
-	case ArgStringArrayT:
+	case ArgStrListT:
 		var defVal []string
 		hasDefault := arg.DefaultStringList != nil
 		if hasDefault {
@@ -915,7 +917,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
-	case ArgIntArrayT:
+	case ArgIntListT:
 		var defVal []int64
 		hasDefault := arg.DefaultIntList != nil
 		if hasDefault {
@@ -954,7 +956,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
-	case ArgFloatArrayT:
+	case ArgFloatListT:
 		var defVal []float64
 		hasDefault := arg.DefaultFloatList != nil
 		if hasDefault {
@@ -990,7 +992,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.scriptArg = arg
 		f.Identifier = arg.Name
 		return &f
-	case ArgBoolArrayT:
+	case ArgBoolListT:
 		var defVal []bool
 		hasDefault := arg.DefaultBoolList != nil
 		if hasDefault {

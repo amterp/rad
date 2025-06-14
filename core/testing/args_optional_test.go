@@ -7,9 +7,9 @@ import (
 func Test_Args_Optional(t *testing.T) {
 	script := `
 args:
-    name string
+    name str
     age int
-    role string?
+    role str?
     year int?
 
 print(name, age, role, year, sep="|")
@@ -24,7 +24,7 @@ print(name, age, role, year, sep="|")
 func Test_Args_Optional_RelationalRequiresMet(t *testing.T) {
 	script := `
 args:
-    name string
+    name str
     age int?
 	name requires age
 
@@ -40,7 +40,7 @@ print(name, age, sep="|")
 func Test_Args_Optional_RelationalRequiresNotMet(t *testing.T) {
 	script := `
 args:
-    name string
+    name str
     age int?
 	name requires age
 
@@ -53,8 +53,8 @@ Usage:
   <name> [age] [OPTIONS]
 
 Script args:
-      --name string   
-      --age int       
+      --name str   
+      --age int    
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)

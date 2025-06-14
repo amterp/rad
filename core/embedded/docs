@@ -7,8 +7,8 @@ Example:
 Opens the functions reference page on the 'get_path' function (via header).
 ---
 args:
-    page string = "home" # The page to open on.
-    header string = ""   # An optional header to open to.
+    page str = "home" # The page to open on.
+    header str = ""   # An optional header to open to.
 
     page enum ["home", "functions"]
 

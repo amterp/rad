@@ -42,7 +42,7 @@ print(clamp(1, "ab", 2))
 
   print(clamp(1, "ab", 2))
                  ^^^^
-                 Got "string" as the 2nd argument of clamp(), but must be: float or int
+                 Got "str" as the 2nd argument of clamp(), but must be: float or int
 `
 	assertError(t, 1, expected)
 }

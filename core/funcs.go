@@ -357,7 +357,7 @@ func init() {
 				switch coerced := arg.value.Val.(type) {
 				case RadString:
 					// todo maintain attributes
-					str := f.i.evaluate(arg.node).RequireStr(f.i, f.callNode).Plain()
+					str := f.i.eval(arg.node).Val.RequireStr(f.i, f.callNode).Plain()
 					runes := []rune(str)
 					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
 					return newRadValues(f.i, f.callNode, string(runes))

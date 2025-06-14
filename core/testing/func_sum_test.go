@@ -31,7 +31,7 @@ print(sum(a))
 	expected := `Error at L3:11
 
   print(sum(a))
-            ^ sum() requires a list of numbers, got "string" at index 1
+            ^ sum() requires a list of numbers, got "str" at index 1
 `
 	assertError(t, 1, expected)
 }

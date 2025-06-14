@@ -161,10 +161,10 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			case rl.K_RAD_FIELD_MOD_COLOR:
 				// todo could I replace this syntax with a 'map' lambda operation?
 				clrExprNode := r.i.getChild(&stmtNode, rl.F_COLOR)
-				clrStr := r.i.evaluate(clrExprNode).RequireStr(r.i, clrExprNode)
+				clrStr := r.i.eval(clrExprNode).Val.RequireStr(r.i, clrExprNode)
 				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
 				regexExprNode := r.i.getChild(&stmtNode, rl.F_REGEX)
-				regexStr := r.i.evaluate(regexExprNode).RequireStr(r.i, regexExprNode)
+				regexStr := r.i.eval(regexExprNode).Val.RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())
 				if err != nil {
 					r.i.errorf(regexExprNode, fmt.Sprintf("Invalid regex pattern: %s", err))
@@ -206,7 +206,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 
 			shouldExecute := true
 			if condNode != nil {
-				condResult := r.i.evaluate(condNode).TruthyFalsy()
+				condResult := r.i.eval(condNode).Val.TruthyFalsy()
 				shouldExecute = condResult
 			}
 
@@ -333,7 +333,7 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 		return nil, nil
 	}
 
-	src := r.i.evaluate(r.srcExprNode)
+	src := r.i.eval(r.srcExprNode).Val
 
 	if r.blockType == RadBlock || r.blockType == RequestBlock {
 		str := src.RequireStr(r.i, r.srcExprNode)

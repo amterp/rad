@@ -7,8 +7,8 @@ import (
 func Test_Args_Constraints_Relational_Requires_OkayIfBothRequiredProvided(t *testing.T) {
 	script := `
 args:
-    a string
-    b string
+    a str
+    b str
 
     a requires b
 print("ran")
@@ -21,8 +21,8 @@ print("ran")
 func Test_Args_Constraints_Relational_Requires_ErrorsIfNotRequired(t *testing.T) {
 	script := `
 args:
-    a string
-    b string
+    a str
+    b str
 
     a requires b
 print("ran")
@@ -34,8 +34,8 @@ Usage:
   <a> <b> [OPTIONS]
 
 Script args:
-      --a string   
-      --b string   
+      --a str   
+      --b str   
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -44,9 +44,9 @@ Script args:
 func Test_Args_Constraints_Relational_Requires_ErrorsIfDefaultRequiresSomethingNotProvided(t *testing.T) {
 	script := `
 args:
-    a string
-    b string = "bob"
-    c string
+    a str
+    b str = "bob"
+    c str
 
     b requires c
 print("ran")
@@ -58,9 +58,9 @@ Usage:
   <a> [b] <c> [OPTIONS]
 
 Script args:
-      --a string   
-      --b string    (default bob)
-      --c string   
+      --a str   
+      --b str    (default bob)
+      --c str   
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -69,8 +69,8 @@ Script args:
 func Test_Args_Constraints_Relational_Excludes_CanGiveFirst(t *testing.T) {
 	script := `
 args:
-    file string
-    url string
+    file str
+    url str
 
     file mutually excludes url
 
@@ -87,8 +87,8 @@ else:
 func Test_Args_Constraints_Relational_Excludes_CanGiveSecond(t *testing.T) {
 	script := `
 args:
-    file string
-    url string
+    file str
+    url str
 
     file mutually excludes url
 
@@ -105,8 +105,8 @@ else:
 func Test_Args_Constraints_Relational_Excludes_ErrorsIfBothProvided(t *testing.T) {
 	script := `
 args:
-    file string
-    url string
+    file str
+    url str
 
     file mutually excludes url
 
@@ -122,8 +122,8 @@ Usage:
   <file> <url> [OPTIONS]
 
 Script args:
-      --file string   
-      --url string    
+      --file str   
+      --url str    
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -132,9 +132,9 @@ Script args:
 func Test_Args_Constraints_Relational_Mixed_CanGiveOne(t *testing.T) {
 	script := `
 args:
-    token string
-    username string
-    password string
+    token str
+    username str
+    password str
 
     username mutually requires password
     token mutually excludes username, password
@@ -152,9 +152,9 @@ else:
 func Test_Args_Constraints_Relational_Mixed_CanGiveBothOther(t *testing.T) {
 	script := `
 args:
-    token string
-    username string
-    password string
+    token str
+    username str
+    password str
 
     username mutually requires password
     token mutually excludes username, password
@@ -172,9 +172,9 @@ else:
 func Test_Args_Constraints_Relational_Mixed_ErrorsIfAllGiven(t *testing.T) {
 	script := `
 args:
-    token string
-    username string
-    password string
+    token str
+    username str
+    password str
 
     username mutually requires password
     token mutually excludes username, password
@@ -191,9 +191,9 @@ Usage:
   <token> <username> <password> [OPTIONS]
 
 Script args:
-      --token string      
-      --username string   
-      --password string   
+      --token str      
+      --username str   
+      --password str   
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -202,7 +202,7 @@ Script args:
 func Test_Args_Constraints_Relational_ErrorsIfConstraintOnUndefinedArg(t *testing.T) {
 	script := `
 args:
-    token string
+    token str
     token excludes username
 `
 	setupAndRunCode(t, script)
@@ -218,7 +218,7 @@ func Test_Args_Constraints_Relational_Bool_Can_Require(t *testing.T) {
 	script := `
 args:
     authenticate bool
-	token string
+	token str
 
     authenticate mutually requires token
 
@@ -234,7 +234,7 @@ func Test_Args_Constraints_Relational_Bool_ErrorsIfBoolFalse(t *testing.T) {
 	script := `
 args:
     authenticate bool
-	token string
+	token str
 
     authenticate mutually requires token
 
@@ -248,7 +248,7 @@ Usage:
   <token> [OPTIONS]
 
 Script args:
-      --token string   
+      --token str      
       --authenticate   
 
 ` + scriptGlobalFlagHelp
@@ -259,7 +259,7 @@ func Test_Args_Constraints_Relational_Bool_CanDefineRequireeForNonMutualRequirem
 	script := `
 args:
     authenticate bool
-	token string
+	token str
 
     authenticate requires token
 
@@ -275,7 +275,7 @@ print("Non-auth Token:", token)
 func Test_Args_Constraints_Relational_Bool_OnlyRelevantIfTrue(t *testing.T) {
 	script := `
 args:
-	mystring string
+	mystring str
 	mybool bool
 
 	mybool excludes mystring

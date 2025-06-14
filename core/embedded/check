@@ -3,7 +3,7 @@
 Validates & lints Rad scripts.
 ---
 args:
-    script string  # Path of script to check.
+    script str  # Path of script to check.
 
 result = _rad_run_check(script)
 

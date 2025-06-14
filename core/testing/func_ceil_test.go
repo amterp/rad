@@ -47,7 +47,7 @@ print(ceil("ab"))
 
   print(ceil("ab"))
              ^^^^
-             Got "string" as the 1st argument of ceil(), but must be: float or int
+             Got "str" as the 1st argument of ceil(), but must be: float or int
 `
 	assertError(t, 1, expected)
 }

@@ -8,7 +8,7 @@ func Test_FileHeader_PrintsOneLinerIfOnlyThat(t *testing.T) {
 This is a one liner!
 ---
 args:
-	name string
+	name str
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `This is a one liner!
@@ -17,7 +17,7 @@ Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   
+      --name str   
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -32,7 +32,7 @@ Here is
 the rest!
 ---
 args:
-	name string
+	name str
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `This is a one liner!
@@ -44,7 +44,7 @@ Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   
+      --name str   
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

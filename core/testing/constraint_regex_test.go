@@ -5,7 +5,7 @@ import "testing"
 func Test_Constraint_Regex_Help(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 print("Hi", name)
 `
@@ -14,7 +14,7 @@ print("Hi", name)
   <name> [OPTIONS]
 
 Script args:
-      --name string   Regex: [A-Z][a-z]*
+      --name str   Regex: [A-Z][a-z]*
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -24,7 +24,7 @@ Script args:
 func Test_Constraint_Regex_Help_WithEnum(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 print("Hi", name)
@@ -34,7 +34,7 @@ print("Hi", name)
   <name> [OPTIONS]
 
 Script args:
-      --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+      --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -44,7 +44,7 @@ Script args:
 func Test_Constraint_Regex_Valid(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 print("Hi", name)
 `
@@ -56,7 +56,7 @@ print("Hi", name)
 func Test_Constraint_RegexAndEnum_Valid(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 print("Hi", name)
@@ -69,7 +69,7 @@ print("Hi", name)
 func Test_Constraint_Regex_InvalidInput(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 `
 	setupAndRunCode(t, script, "alice", "--color=never")
@@ -79,7 +79,7 @@ Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   Regex: [A-Z][a-z]*
+      --name str   Regex: [A-Z][a-z]*
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -88,7 +88,7 @@ Script args:
 func Test_Constraint_RegexAndEnum_InvalidInput(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "[A-Z][a-z]*"
 	name enum ["Alice", "Bob"]
 `
@@ -99,7 +99,7 @@ Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+      --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -108,7 +108,7 @@ Script args:
 func Test_Constraint_Regex_InvalidRegex(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name regex "+"
 `
 	setupAndRunCode(t, script, "--color=never")

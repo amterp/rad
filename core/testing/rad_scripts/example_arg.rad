@@ -1,2 +1,2 @@
 args:
-    name string # The name.
+    name str # The name.

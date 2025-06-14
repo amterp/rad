@@ -1,5 +1,5 @@
 args:
-    filter string
+    filter str
 
 name, age = pick_from_resource("../resources/people.json", filter)
 print(name)

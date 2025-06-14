@@ -1,7 +1,7 @@
 github.com/amterp/color v1.20.0 h1:3qR8miQeGMfd++ExLt5xUdMWWYYwohdix6jLMSyXbWM=
 github.com/amterp/color v1.20.0/go.mod h1:XRJ2OonPd9eRKRg6ddVJc6Yv/rvjzMhn+qdIDHKjE04=
-github.com/amterp/tree-sitter-rad v0.1.0 h1:nqp+iN8/MPFgzl3NBVda001dWNZ7Rn7OchCpRl7iuJI=
-github.com/amterp/tree-sitter-rad v0.1.0/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
+github.com/amterp/tree-sitter-rad v0.1.2 h1:z3Mue5bxDtmKFZDt8erDkhhwCOhBf5z9uEOpsQicSIE=
+github.com/amterp/tree-sitter-rad v0.1.2/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -54,7 +54,7 @@ foo(2)
 	expected := `Error at L3:1
 
   foo(2)
-  ^^^ Cannot invoke 'foo' as a function: it is a string
+  ^^^ Cannot invoke 'foo' as a function: it is a str
 `
 	assertError(t, 1, expected)
 }

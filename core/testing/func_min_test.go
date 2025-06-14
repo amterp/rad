@@ -28,7 +28,7 @@ print(min([1, "ab", 3]))
 	expected := `Error at L2:11
 
   print(min([1, "ab", 3]))
-            ^^^^^^^^^^^^ min() requires a list of numbers, got "string" at index 1
+            ^^^^^^^^^^^^ min() requires a list of numbers, got "str" at index 1
 `
 	assertError(t, 1, expected)
 }

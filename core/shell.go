@@ -64,7 +64,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	isConfirm := i.getChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
 	cmdNode := i.getChild(shellCmdNode, rl.F_COMMAND)
-	cmdStr := i.evaluate(cmdNode).
+	cmdStr := i.eval(cmdNode).Val.
 		RequireType(i, cmdNode, "Shell commands must be strings", RadStringT).
 		RequireStr(i, shellCmdNode)
 

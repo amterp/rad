@@ -2,7 +2,7 @@ package testing
 
 import "testing"
 
-func TestIf_True(t *testing.T) {
+func Test_If_True(t *testing.T) {
 	script := `
 a = ["a", "b", "c"]
 if len(a) > 0:
@@ -15,7 +15,7 @@ else:
 	assertNoErrors(t)
 }
 
-func TestIf_False(t *testing.T) {
+func Test_If_False(t *testing.T) {
 	script := `
 a = ["a", "b", "c"]
 if len(a) > 99:
@@ -28,7 +28,7 @@ else:
 	assertNoErrors(t)
 }
 
-func TestIf_CanRefVarDefinedOutside(t *testing.T) {
+func Test_If_CanRefVarDefinedOutside(t *testing.T) {
 	script := `
 name = "alice"
 if true:
@@ -39,7 +39,7 @@ if true:
 	assertNoErrors(t)
 }
 
-func TestIf_CanRefJsonVarDefinedOutside(t *testing.T) {
+func Test_If_CanRefJsonVarDefinedOutside(t *testing.T) {
 	script := `
 url = "url"
 name = json[].name
@@ -54,7 +54,7 @@ if true:
 	assertNoErrors(t)
 }
 
-func TestIf_Or(t *testing.T) {
+func Test_If_Or(t *testing.T) {
 	script := `
 t = true
 f = false
@@ -68,7 +68,7 @@ else:
 	assertNoErrors(t)
 }
 
-func TestIf_And(t *testing.T) {
+func Test_If_And(t *testing.T) {
 	script := `
 t = true
 f = false
@@ -79,5 +79,24 @@ else:
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "FALSE\n")
+	assertNoErrors(t)
+}
+
+func Test_If_CanReturnInBranch(t *testing.T) {
+	script := `
+print(foo())
+fn foo():
+	print("first")	
+	if true:
+		return "foo"
+	else:
+		return "bar"
+	print("second")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `first
+foo
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }

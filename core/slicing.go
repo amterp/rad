@@ -13,12 +13,12 @@ func ResolveSliceStartEnd(i *Interpreter, sliceNode *ts.Node, length int64) (int
 	end := length
 
 	if startNode != nil {
-		start = i.evaluate(startNode).RequireInt(i, startNode)
+		start = i.eval(startNode).Val.RequireInt(i, startNode)
 		start = CalculateCorrectedIndex(start, length, true)
 	}
 
 	if endNode != nil {
-		end = i.evaluate(endNode).RequireInt(i, endNode)
+		end = i.eval(endNode).Val.RequireInt(i, endNode)
 		end = CalculateCorrectedIndex(end, length, true)
 	}
 

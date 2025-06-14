@@ -27,7 +27,7 @@ split(null, ",")
 	expected := `Error at L2:7
 
   split(null, ",")
-        ^^^^ Got "null" as the 1st argument of split(), but must be: string
+        ^^^^ Got "null" as the 1st argument of split(), but must be: str
 `
 	assertError(t, 1, expected)
 }
@@ -67,8 +67,8 @@ else:
 func Test_Null_OmittedNonDefaultArgsAreNull(t *testing.T) {
 	script := `
 args:
-    aaa string
-    bbb string
+    aaa str
+    bbb str
 
     aaa mutually excludes bbb
 
@@ -78,7 +78,7 @@ if not bbb:
 	print("aaa!")
 `
 	setupAndRunCode(t, script, "--aaa=hi", "--color=never")
-	expected := `string null
+	expected := `str null
 aaa!
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)

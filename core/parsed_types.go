@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 
+	"github.com/amterp/rad/rts/rl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -23,13 +25,13 @@ const (
 func (r RadTypeEnum) AsString() string {
 	switch r {
 	case RadStringT:
-		return "string"
+		return rl.T_STR
 	case RadIntT:
-		return "int"
+		return rl.T_INT
 	case RadFloatT:
-		return "float"
+		return rl.T_FLOAT
 	case RadBoolT:
-		return "bool"
+		return rl.T_BOOL
 	case RadListT:
 		return "list"
 	case RadMapT:
@@ -53,56 +55,32 @@ const (
 	ArgIntT
 	ArgFloatT
 	ArgBoolT
-	ArgStringArrayT
-	ArgIntArrayT
-	ArgFloatArrayT
-	ArgBoolArrayT
+	ArgStrListT
+	ArgIntListT
+	ArgFloatListT
+	ArgBoolListT
 )
 
 func ToRadArgTypeT(str string) RadArgTypeT {
 	switch str {
-	case "string":
+	case rl.T_STR:
 		return ArgStringT
-	case "int":
+	case rl.T_INT:
 		return ArgIntT
-	case "float":
+	case rl.T_FLOAT:
 		return ArgFloatT
-	case "bool":
+	case rl.T_BOOL:
 		return ArgBoolT
-	case "string[]":
-		return ArgStringArrayT
-	case "int[]":
-		return ArgIntArrayT
-	case "float[]":
-		return ArgFloatArrayT
-	case "bool[]":
-		return ArgBoolArrayT
+	case rl.T_STR_LIST:
+		return ArgStrListT
+	case rl.T_INT_LIST:
+		return ArgIntListT
+	case rl.T_FLOAT_LIST:
+		return ArgFloatListT
+	case rl.T_BOOL_LIST:
+		return ArgBoolListT
 	default:
 		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", str))
-		panic(UNREACHABLE)
-	}
-}
-
-func (r *RadArgTypeT) AsString() string {
-	switch *r {
-	case ArgStringT:
-		return "string"
-	case ArgIntT:
-		return "int"
-	case ArgFloatT:
-		return "float"
-	case ArgBoolT:
-		return "bool"
-	case ArgStringArrayT:
-		return "string list"
-	case ArgIntArrayT:
-		return "int list"
-	case ArgFloatArrayT:
-		return "float list"
-	case ArgBoolArrayT:
-		return "bool list"
-	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", *r))
 		panic(UNREACHABLE)
 	}
 }
@@ -146,5 +124,5 @@ const ( // todo replace with Node Kinds?
 	OP_LESS_EQUAL
 	OP_AND
 	OP_OR
-	//OpPow?
+	// OpPow?
 )

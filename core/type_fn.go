@@ -12,13 +12,12 @@ import (
 type RadFn struct {
 	BuiltInFunc *BuiltInFunc // if this represents a built-in function
 	// below for non-built-in functions
-	Params     []string
-	ReprNode   *ts.Node  // representative node (can point at this for errors)
-	Expr       *ts.Node  // for returning lambdas
-	Stmt       *ts.Node  // for stmt lambdas
-	Body       []ts.Node // for fn blocks
-	ReturnStmt *ts.Node  // for fn blocks
-	Env        *Env      // for closures
+	Params   []string
+	ReprNode *ts.Node  // representative node (can point at this for errors)
+	Expr     *ts.Node  // for returning lambdas
+	Stmt     *ts.Node  // for stmt lambdas
+	Body     []ts.Node // for fn blocks
+	Env      *Env      // for closures
 }
 
 func NewLambda(i *Interpreter, lambdaNode *ts.Node) RadFn {
@@ -45,13 +44,11 @@ func NewLambdaBlock(i *Interpreter, lambdaNode *ts.Node) RadFn {
 	keywordNode := i.getChild(lambdaNode, rl.F_KEYWORD)
 	params := resolveParamNames(i, lambdaNode)
 	stmtNodes := i.getChildren(lambdaNode, rl.F_STMT)
-	returnNode := i.getChild(lambdaNode, rl.F_RETURN_STMT)
 	return RadFn{
-		Params:     params,
-		ReprNode:   keywordNode,
-		Body:       stmtNodes,
-		ReturnStmt: returnNode,
-		Env:        i.env,
+		Params:   params,
+		ReprNode: keywordNode,
+		Body:     stmtNodes,
+		Env:      i.env,
 	}
 }
 
@@ -80,37 +77,20 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 		i.runWithChildEnv(func() {
 			args := f.args
 			// custom funcs don't support namedArgs, so we ignore them. Parser doesn't allow them anyway.
+			// todo ^^ no longer accurate
 			for idx, arg := range args {
 				i.env.SetVar(fn.Params[idx], arg.value)
 			}
 
 			if fn.IsLambda() {
 				if fn.Expr != nil {
-					out = i.evaluate(fn.Expr)
+					out = i.eval(fn.Expr).Val
 				}
 				if fn.Stmt != nil {
-					i.evaluate(fn.Stmt)
+					i.eval(fn.Stmt)
 				}
 			} else {
-				i.runBlock(fn.Body)
-
-				if i.breakingOrContinuing() {
-					return
-				}
-
-				if fn.ReturnStmt != nil {
-					rightNodes := i.getChildren(fn.ReturnStmt, rl.F_RIGHT)
-					if len(rightNodes) > 1 {
-						list := NewRadList()
-						for _, rightNode := range rightNodes {
-							val := i.evaluate(&rightNode)
-							list.Append(val)
-						}
-						out = newRadValueList(list)
-					} else {
-						out = i.evaluate(&rightNodes[0])
-					}
-				}
+				out = i.runBlock(fn.Body).Val
 			}
 		})
 	} else {

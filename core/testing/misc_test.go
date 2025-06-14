@@ -109,8 +109,7 @@ a = abs("asd")
 	expected := `Error at L2:9
 
   a = abs("asd")
-          ^^^^^
-          Got "string" as the 1st argument of abs(), but must be: float or int
+          ^^^^^ Got "str" as the 1st argument of abs(), but must be: float or int
 `
 	assertError(t, 1, expected)
 }
@@ -125,7 +124,7 @@ func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {
 func Test_Misc_CanShadowGlobalFlag(t *testing.T) {
 	script := `
 args:
-	src string
+	src str
 `
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("src")
@@ -133,7 +132,7 @@ args:
   <src> [OPTIONS]
 
 Script args:
-      --src string   
+      --src str   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -143,7 +142,7 @@ Script args:
 func Test_Misc_CanShadowGlobalFlagThatHasShorthand(t *testing.T) {
 	script := `
 args:
-	debug string
+	debug str
 `
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global options:
@@ -158,7 +157,7 @@ args:
   <debug> [OPTIONS]
 
 Script args:
-      --debug string   
+      --debug str   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -168,7 +167,7 @@ Script args:
 func Test_Misc_CanShadowGlobalShorthand(t *testing.T) {
 	script := `
 args:
-	myquiet q string
+	myquiet q str
 `
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global options:
@@ -183,7 +182,7 @@ args:
   <myquiet> [OPTIONS]
 
 Script args:
-  -q, --myquiet string   
+  -q, --myquiet str   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -193,7 +192,7 @@ Script args:
 func Test_Misc_CanShadowGlobalFlagAndShorthand(t *testing.T) {
 	script := `
 args:
-	version v string
+	version v str
 `
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := globalFlagHelpWithout("version")
@@ -201,7 +200,7 @@ args:
   <version> [OPTIONS]
 
 Script args:
-  -v, --version string   
+  -v, --version str   
 
 ` + expectedGlobalFlags
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -211,7 +210,7 @@ Script args:
 func Test_Misc_CanShadowGlobalFlagAndUseIt(t *testing.T) {
 	script := `
 args:
-	version v string
+	version v str
 print(version+"!")
 `
 	setupAndRunCode(t, script, "someversion", "--color=never")
@@ -224,7 +223,7 @@ print(version+"!")
 func Test_Misc_GlobalSrcFlag(t *testing.T) {
 	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--src", "--color=never")
 	expected := `args:
-    name string # The name.
+    name str # The name.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

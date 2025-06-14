@@ -105,7 +105,7 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 
   sleep(true)
         ^^^^
-        Got "bool" as the 1st argument of sleep(), but must be: int, float, or string
+        Got "bool" as the 1st argument of sleep(), but must be: int, float, or str
 `
 	assertError(t, 1, expected)
 }

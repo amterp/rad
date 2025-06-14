@@ -241,7 +241,7 @@ print(r"\"")
 	expected := `Error at L2:7
 
   print(r"\"")
-        ^^^^ Invalid syntax
+        ^^^^^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }

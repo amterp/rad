@@ -7,7 +7,7 @@ import (
 const (
 	setupArgScript = `
 args:
-   foo "bar" x string`
+   foo "bar" x str`
 )
 
 func TestArgs_ApiRename(t *testing.T) {
@@ -27,7 +27,7 @@ func TestArgs_ApiRenameUsageString(t *testing.T) {
   <bar> [OPTIONS]
 
 Script args:
-  -x, --bar string   
+  -x, --bar str   
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -36,7 +36,7 @@ Script args:
 func TestArgs_PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
 	script := `
 args:
-	mandatory string
+	mandatory str
 	optional int = 10
 `
 	setupAndRunCode(t, script, "--color=never")
@@ -44,8 +44,8 @@ args:
   <mandatory> [optional] [OPTIONS]
 
 Script args:
-      --mandatory string   
-      --optional int        (default 10)
+      --mandatory str   
+      --optional int     (default 10)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -55,7 +55,7 @@ func TestArgs_InvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
 	t.Skip("Optional args temporarily not supported -- need to rethink")
 	script := `
 args:
-	optionalS string?
+	optionalS str?
 	optionalI int = 10
 print('hi')
 `
@@ -69,8 +69,8 @@ print('hi')
 func TestArgs_ErrorsIfSomeRequiredArgsMissing(t *testing.T) {
 	script := `
 args:
-	mandatory1 string
-	mandatory2 string
+	mandatory1 str
+	mandatory2 str
 	optional int = 10
 print('hi')
 `
@@ -81,9 +81,9 @@ Usage:
   <mandatory1> <mandatory2> [optional] [OPTIONS]
 
 Script args:
-      --mandatory1 string   
-      --mandatory2 string   
-      --optional int         (default 10)
+      --mandatory1 str   
+      --mandatory2 str   
+      --optional int      (default 10)
 
 ` + scriptGlobalFlagHelp
 	assertOutput(t, stdOutBuffer, "")
@@ -93,14 +93,14 @@ Script args:
 func TestArgs_CanParseAllTypes(t *testing.T) {
 	script := `
 args:
-    stringArg string
+    stringArg str
     intArg int
     floatArg float
     boolArg bool
-    stringArrayArg string[]
-    intArrayArg int[]
-    floatArrayArg float[]
-    boolArrayArg bool[]
+    stringArrayArg [*str]
+    intArrayArg [*int]
+    floatArrayArg [*float]
+    boolArrayArg [*bool]
 print(upper(stringArg))
 print(intArg + 1)
 print(floatArg + 1.1)
@@ -127,14 +127,14 @@ true
 func TestArgs_CanParseAllTypeDefaults(t *testing.T) {
 	script := `
 args:
-	stringArg string = "alice"
+	stringArg str = "alice"
 	intArg int = 1
 	floatArg float = 1.1
 	boolArg bool = true
-	stringArrayArg string[] = ["bob", "charlie"]
-	intArrayArg int[] = [2, 3]
-	floatArrayArg float[] = [2.1, 3.1]
-	boolArrayArg bool[] = [true, false]
+	stringArrayArg [*str] = ["bob", "charlie"]
+	intArrayArg [*int] = [2, 3]
+	floatArrayArg [*float] = [2.1, 3.1]
+	boolArrayArg [*bool] = [true, false]
 print(upper(stringArg))
 print(intArg + 1)
 print(floatArg + 1.1)
@@ -284,14 +284,14 @@ args:
 func TestArgs_FullHelp(t *testing.T) {
 	script := `
 args:
-	name string # The name.
+	name str # The name.
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   The name.
+      --name str   The name.
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -300,14 +300,14 @@ Script args:
 func TestArgs_ShortHelp(t *testing.T) {
 	script := `
 args:
-	name string # The name.
+	name str # The name.
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   The name.
+      --name str   The name.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
@@ -338,21 +338,21 @@ print("hi")
 func TestArgs_HelpWorksForAllTypes(t *testing.T) {
 	script := `
 args:
-	stringArg string = "alice"
+	stringArg str = "alice"
 	intArg int = 1 # An int.
 	floatArg float = 1.1
 	boolArg bool = true
-	stringArrayArg string[] = ["bob", "charlie"]
-	intArrayArg int[] = [2, 3]
-	floatArrayArg float[] = [2.1, 3.1]
-	boolArrayArg bool[] = [true, false]
+	stringArrayArg [*str] = ["bob", "charlie"]
+	intArrayArg [*int] = [2, 3]
+	floatArrayArg [*float] = [2.1, 3.1]
+	boolArrayArg [*bool] = [true, false]
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
   [stringArg] [intArg] [floatArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg] [OPTIONS]
 
 Script args:
-      --stringArg string                (default alice)
+      --stringArg str                   (default alice)
       --intArg int                     An int. (default 1)
       --floatArg float                  (default 1.1)
       --stringArrayArg string,string    (default ["bob", "charlie"])
@@ -367,7 +367,7 @@ Script args:
 func TestArgs_UnsetBoolDefaultsToFalse(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	isTall bool
 print(name, isTall)
 `
@@ -380,7 +380,7 @@ print(name, isTall)
 func TestArgs_CanDefaultBoolToTrue(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	isTall bool = true
 print(name, isTall)
 `
@@ -393,7 +393,7 @@ print(name, isTall)
 func TestArgs_MissingArgsPrintsUsageAndReturnsError(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	age int
 `
 	setupAndRunCode(t, script, "alice", "--color=never")
@@ -403,8 +403,8 @@ Usage:
   <name> <age> [OPTIONS]
 
 Script args:
-      --name string   
-      --age int       
+      --name str   
+      --age int    
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -413,7 +413,7 @@ Script args:
 func TestArgs_TooManyArgsPrintsUsageAndReturnsError(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	age int
 `
 	setupAndRunCode(t, script, "alice", "2", "3", "--color=never")
@@ -423,8 +423,8 @@ Usage:
   <name> <age> [OPTIONS]
 
 Script args:
-      --name string   
-      --age int       
+      --name str   
+      --age int    
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -433,7 +433,7 @@ Script args:
 func TestArgs_InvalidFlagPrintsUsageAndReturnsError(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	age int
 `
 	setupAndRunCode(t, script, "alice", "2", "-s", "--color=never")
@@ -443,8 +443,8 @@ Usage:
   <name> <age> [OPTIONS]
 
 Script args:
-      --name string   
-      --age int       
+      --name str   
+      --age int    
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)

@@ -79,7 +79,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 	switch opNode.Kind() {
 	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
 		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
-		argVal := i.evaluate(argNode)
+		argVal := i.eval(argNode).Val
 		argVal.RequireType(
 			i,
 			argNode,
@@ -100,7 +100,7 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 			panic(UNREACHABLE)
 		}
 	case rl.K_NOT:
-		return newRadValue(i, parentNode, !i.evaluate(argNode).TruthyFalsy())
+		return newRadValue(i, parentNode, !i.eval(argNode).Val.TruthyFalsy())
 	default:
 		i.errorf(opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
@@ -131,10 +131,10 @@ func (i *Interpreter) executeOp(
 	op OpType,
 ) interface{} {
 	left := com.Memoize(func() RadValue {
-		return i.evaluate(leftNode)
+		return i.eval(leftNode).Val
 	})
 	right := com.Memoize(func() RadValue {
-		return i.evaluate(rightNode)
+		return i.eval(rightNode).Val
 	})
 
 	if op == OP_AND {

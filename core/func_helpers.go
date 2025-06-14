@@ -56,7 +56,7 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 		args = append(args, *ufcsArg)
 	}
 	for _, argNode := range argNodes {
-		argValue := i.evaluate(&argNode)
+		argValue := i.eval(&argNode).Val
 		args = append(args, NewPosArg(&argNode, argValue))
 	}
 
@@ -66,7 +66,7 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 		namedArgValueNode := i.getChild(&namedArgNode, rl.F_VALUE)
 
 		argName := GetSrc(i.sd.Src, namedArgNameNode)
-		argValue := i.evaluate(namedArgValueNode)
+		argValue := i.eval(namedArgValueNode).Val
 		namedArgs[argName] = namedArg{
 			name:      argName,
 			value:     argValue,

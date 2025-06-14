@@ -243,7 +243,7 @@ fn filter(
         ) -> map|list:
     pass
 
-fn load(_map: map, _key: any, _loader: fn() any, *, reload: bool = false, override: any?) -> any:
+fn load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false, override: any?) -> any:
     pass
 
 fn color_rgb(_str: str, red: int, green: int, blue: int) -> error|str:

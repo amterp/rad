@@ -3,9 +3,9 @@
 Sets up a new Rad script.
 ---
 args:
-    path string                          # The path at which to create the script.
+    path str                             # The path at which to create the script.
     add_extension "add-extension" e bool # Add a .rad extension (if not already in the path name).
-    open o string = ""                   # Open the script after with the given editor command.
+    open o str = ""                      # Open the script after with the given editor command.
     shebang s bool                       # Just include a shebang in the file's contents.
 
 if add_extension and not ends_with(path, ".rad"):

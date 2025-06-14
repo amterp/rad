@@ -58,7 +58,7 @@ a[1].replace("l", "o")
 	expected := `Error at L3:1
 
   a[1].replace("l", "o")
-  ^ Got "int" as the 1st argument of replace(), but must be: string
+  ^ Got "int" as the 1st argument of replace(), but must be: str
 `
 	// todo ^ known issue, we pass a bad node for the error pointing
 	assertError(t, 1, expected)

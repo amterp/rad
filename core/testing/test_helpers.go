@@ -23,17 +23,17 @@ const scriptGlobalFlagHelp = `Global options:
 `
 
 const allGlobalFlagHelp = `Global options:
-  -h, --help                   Print usage string.
-  -d, --debug                  Enables debug output. Intended for Rad script developers.
-      --rad-debug              Enables Rad debug output. Intended for Rad developers.
-      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -q, --quiet                  Suppresses some output.
-      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
-  -v, --version                Print rad version information.
-      --confirm-shell          Confirm all shell commands before running them.
-      --src                    Instead of running the target script, just print it out.
-      --src-tree               Instead of running the target script, print out its syntax tree.
-      --mock-response string   Add mock response for json requests (pattern:filePath)
+  -h, --help                Print usage string.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never]. (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --src                 Instead of running the target script, just print it out.
+      --src-tree            Instead of running the target script, print out its syntax tree.
+      --mock-response str   Add mock response for json requests (pattern:filePath)
 `
 
 const radHelp = `rad: A tool for writing user-friendly command line scripts.

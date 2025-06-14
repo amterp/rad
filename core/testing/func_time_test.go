@@ -21,7 +21,7 @@ print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576206916, "millis": 1576206916123, "nanos": 1576206916123123123 } }
-2019-12-13 string
+2019-12-13 str
 2019 int
 12 int
 13 int
@@ -55,7 +55,7 @@ print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `{ "date": "2019-12-12", "year": 2019, "month": 12, "day": 12, "hour": 21, "minute": 15, "second": 16, "time": "21:15:16", "epoch": { "seconds": 1576206916, "millis": 1576206916123, "nanos": 1576206916123123123 } }
-2019-12-12 string
+2019-12-12 str
 2019 int
 12 int
 12 int

@@ -82,7 +82,7 @@ print(round(a, b))
 	expected := `Error at L4:16
 
   print(round(a, b))
-                 ^ Got "string" as the 2nd argument of round(), but must be: int
+                 ^ Got "str" as the 2nd argument of round(), but must be: int
 `
 	assertError(t, 1, expected)
 }
@@ -98,7 +98,7 @@ print(round(a, b))
 
   print(round(a, b))
               ^
-              Got "string" as the 1st argument of round(), but must be: float or int
+              Got "str" as the 1st argument of round(), but must be: float or int
 `
 	assertError(t, 1, expected)
 }

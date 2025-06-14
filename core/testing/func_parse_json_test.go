@@ -86,7 +86,7 @@ parse_json(10)
 	expected := `Error at L2:12
 
   parse_json(10)
-             ^^ Got "int" as the 1st argument of parse_json(), but must be: string
+             ^^ Got "int" as the 1st argument of parse_json(), but must be: str
 `
 	assertError(t, 1, expected)
 }

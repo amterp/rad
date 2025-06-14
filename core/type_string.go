@@ -103,8 +103,7 @@ func (s *RadString) Index(i *Interpreter, idxNode *ts.Node) RadString {
 		return NewRadString(s.Plain()[start:end])
 	}
 
-	idxVal := i.evaluate(idxNode)
-	rawIdx := idxVal.RequireInt(i, idxNode)
+	rawIdx := i.eval(idxNode).Val.RequireInt(i, idxNode)
 	idx := CalculateCorrectedIndex(rawIdx, s.Len(), false)
 	if idx < 0 || idx >= s.Len() {
 		ErrIndexOutOfBounds(i, idxNode, rawIdx, s.Len())

@@ -295,6 +295,11 @@ func (v RadValue) RequireNotType(
 }
 
 func (v RadValue) TruthyFalsy() bool {
+	if v == VOID_SENTINEL {
+		// should we even error?
+		return false
+	}
+
 	out := false
 	NewTypeVisitorUnsafe().ForInt(func(v RadValue, i int64) {
 		out = i != 0

@@ -3,7 +3,7 @@
 Interacts with script stashes.
 ---
 args:
-    script string  # Which script's stash to interact with.
+    script str     # Which script's stash to interact with.
     delete bool    # Enable to delete the state.
     id bool        # Enable to print the stash ID.
     state bool     # Enable to print the state.

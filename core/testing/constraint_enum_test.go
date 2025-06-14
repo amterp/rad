@@ -5,7 +5,7 @@ import "testing"
 func Test_Constraint_Enum_Valid(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name enum ["alice", "bob", "charlie"]
 print("Hi", name)
 `
@@ -17,7 +17,7 @@ print("Hi", name)
 func Test_Constraint_Enum_ErrorsOnInvalid(t *testing.T) {
 	script := `
 args:
-	name string
+	name str
 	name enum ["alice", "bob", "charlie"]
 print("Hi", name)
 `
@@ -28,7 +28,7 @@ Usage:
   <name> [OPTIONS]
 
 Script args:
-      --name string   Valid values: [alice, bob, charlie].
+      --name str   Valid values: [alice, bob, charlie].
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -37,7 +37,7 @@ Script args:
 func Test_Constraint_Enum_ErrorsIfNonStringEnum(t *testing.T) {
 	script := `
 args:
-    name string
+    name str
     name enum ["alice", 2]
 print("Hi", name)
 `
@@ -53,7 +53,7 @@ print("Hi", name)
 func Test_Constraint_Enum_CanHaveArgNamedEnum(t *testing.T) {
 	script := `
 args:
-	enum string
+	enum str
 	enum enum ["alice", "bob", "charlie"]
 print("Hi", enum)
 `

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rad/rts/rl"
+
 	"github.com/amterp/rad/rts/raderr"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -77,7 +79,7 @@ func TypeAsString(val interface{}) string {
 	case float64:
 		return "float"
 	case RadString, string:
-		return "string"
+		return rl.T_STR
 	case bool:
 		return "bool"
 	case []interface{}, *[]interface{}, RadList, *RadList:

@@ -24,7 +24,7 @@ func TestKeys_ErrorsIfGivenString(t *testing.T) {
 	expected := `Error at L1:6
 
   keys("foo")
-       ^^^^^ Got "string" as the 1st argument of keys(), but must be: map
+       ^^^^^ Got "str" as the 1st argument of keys(), but must be: map
 `
 	assertError(t, 1, expected)
 }

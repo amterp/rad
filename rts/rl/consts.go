@@ -85,6 +85,8 @@ const (
 	K_FN_LAMBDA               = "fn_lambda"
 	K_PASS                    = "pass_stmt"
 	K_FN_NAMED                = "fn_named"
+	K_RETURN_STMT             = "return_stmt"
+	K_YIELD_STMT              = "yield_stmt"
 
 	// Field names
 	F_LEFT           = "left"
@@ -150,4 +152,14 @@ const (
 	KEYWORD_RAD     = "rad"
 	KEYWORD_REQUEST = "request"
 	KEYWORD_DISPLAY = "display"
+
+	// Types
+	T_STR        = "str"
+	T_STR_LIST   = "[*str]"
+	T_INT        = "int"
+	T_INT_LIST   = "[*int]"
+	T_FLOAT      = "float"
+	T_FLOAT_LIST = "[*float]"
+	T_BOOL       = "bool"
+	T_BOOL_LIST  = "[*bool]"
 )

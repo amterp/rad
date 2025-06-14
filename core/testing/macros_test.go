@@ -106,7 +106,7 @@ Docs here.
 @enable_args_block = 0
 ---
 args:
-	name string
+	name str
 print("hi")
 `
 	setupAndRunCode(t, script)
@@ -131,7 +131,7 @@ quiet $!'./rad_scripts/hello.rad {my_args}'
   hello.rad <name> [OPTIONS]
 
 Script args:
-      --name string   
+      --name str   
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)

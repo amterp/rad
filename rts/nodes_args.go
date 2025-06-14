@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/amterp/rad/rts/rl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -206,49 +208,49 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		var argDefault *ArgDeclDefault
 		if defaultNode != nil {
 			defaultStr := src[defaultNode.StartByte():defaultNode.EndByte()]
-			if typeStr == "string" {
+			if typeStr == rl.T_STR {
 				contents := extractString(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:      newBaseNode(src, defaultNode),
 					DefaultString: &contents,
 				}
-			} else if typeStr == "int" {
+			} else if typeStr == rl.T_INT {
 				asInt := extractArgInt(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:   newBaseNode(src, defaultNode),
 					DefaultInt: &asInt,
 				}
-			} else if typeStr == "float" {
+			} else if typeStr == rl.T_FLOAT {
 				asFloat := extractArgFloat(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:     newBaseNode(src, defaultNode),
 					DefaultFloat: &asFloat,
 				}
-			} else if typeStr == "bool" {
+			} else if typeStr == rl.T_BOOL {
 				asBool, _ := strconv.ParseBool(defaultStr)
 				argDefault = &ArgDeclDefault{
 					BaseNode:    newBaseNode(src, defaultNode),
 					DefaultBool: &asBool,
 				}
-			} else if typeStr == "string[]" {
+			} else if typeStr == rl.T_STR_LIST {
 				stringList := extractStringList(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:          newBaseNode(src, defaultNode),
 					DefaultStringList: &stringList,
 				}
-			} else if typeStr == "int[]" {
+			} else if typeStr == rl.T_INT_LIST {
 				intList := extractIntList(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:       newBaseNode(src, defaultNode),
 					DefaultIntList: &intList,
 				}
-			} else if typeStr == "float[]" {
+			} else if typeStr == rl.T_FLOAT_LIST {
 				floatList := extractFloatList(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:         newBaseNode(src, defaultNode),
 					DefaultFloatList: &floatList,
 				}
-			} else if typeStr == "bool[]" {
+			} else if typeStr == rl.T_BOOL_LIST {
 				boolList := extractBoolList(src, defaultNode)
 				argDefault = &ArgDeclDefault{
 					BaseNode:        newBaseNode(src, defaultNode),

@@ -71,7 +71,7 @@ func Test_Join_ReturnsRadString(t *testing.T) {
 print(type_of(join(["Hi", "!"], "")))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `string
+	expected := `str
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

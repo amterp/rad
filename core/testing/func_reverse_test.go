@@ -41,7 +41,7 @@ print(reverse(a))
 	expected := `Error at L3:15
 
   print(reverse(a))
-                ^ Got "int" as the 1st argument of reverse(), but must be: string
+                ^ Got "int" as the 1st argument of reverse(), but must be: str
 `
 	assertError(t, 1, expected)
 }
