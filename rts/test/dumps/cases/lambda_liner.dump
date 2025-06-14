@@ -20,7 +20,8 @@ B: [ 7, 13] PS: [0,  7] PE: [0, 13]                 delegate: mult_expr
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]                   delegate: unary_expr
 B: [ 7, 13] PS: [0,  7] PE: [0, 13]                     delegate: fn_lambda
 B: [ 7,  9] PS: [0,  7] PE: [0,  9]                       keyword: fn `fn`
-B: [ 9, 11] PS: [0,  9] PE: [0, 11]                       () `()`
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                       ( `(`
+B: [10, 11] PS: [0, 10] PE: [0, 11]                       ) `)`
 B: [12, 13] PS: [0, 12] PE: [0, 13]                       expr: expr
 B: [12, 13] PS: [0, 12] PE: [0, 13]                         delegate: ternary_expr
 B: [12, 13] PS: [0, 12] PE: [0, 13]                           delegate: or_expr

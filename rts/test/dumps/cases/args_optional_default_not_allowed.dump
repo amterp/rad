@@ -4,15 +4,15 @@ Args optional ERRORs if also default values
 args:
    aaa int? = 2
    bbb float? = 2.2
-   ccc string? = "hi"
+   ccc str? = "hi"
    ddd bool? = true
-   eee int[]? = [2, 3]
-   fff float[]? = [2.2, 3.3]
-   ggg string[]? = ["hi", "hello"]
-   hhh bool[]? = [true, false]
+   eee [*int]? = [2, 3]
+   fff [*float]? = [2.2, 3.3]
+   ggg [*str]? = ["hi", "hello"]
+   hhh [*bool]? = [true, false]
 =====
-B: [  0, 202] PS: [0,  0] PE: [9,  0] source_file
-B: [  0, 201] PS: [0,  0] PE: [8, 30]   arg_block
+B: [  0, 200] PS: [0,  0] PE: [9,  0] source_file
+B: [  0, 199] PS: [0,  0] PE: [8, 31]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
 B: [  4,   5] PS: [0,  4] PE: [0,  5]     : `:`
 B: [  9,  17] PS: [1,  3] PE: [1, 11]     declaration: arg_declaration
@@ -29,74 +29,72 @@ B: [ 34,  35] PS: [2, 12] PE: [2, 13]       optional: ? `?`
 B: [ 36,  41] PS: [2, 14] PE: [2, 19]     ERROR
 B: [ 36,  37] PS: [2, 14] PE: [2, 15]       = `=`
 B: [ 38,  41] PS: [2, 16] PE: [2, 19]       float `2.2`
-B: [ 45,  76] PS: [3,  3] PE: [4, 12]     declaration: arg_declaration
+B: [ 45,  73] PS: [3,  3] PE: [4, 12]     declaration: arg_declaration
 B: [ 45,  48] PS: [3,  3] PE: [3,  6]       arg_name: identifier `ccc`
-B: [ 49,  58] PS: [3,  7] PE: [3, 16]       ERROR
-B: [ 49,  55] PS: [3,  7] PE: [3, 13]         type: string_type `string`
-B: [ 55,  56] PS: [3, 13] PE: [3, 14]         optional: ? `?`
-B: [ 57,  58] PS: [3, 15] PE: [3, 16]         = `=`
-B: [ 59,  63] PS: [3, 17] PE: [3, 21]       rename: string
-B: [ 59,  60] PS: [3, 17] PE: [3, 18]         start: string_start `"`
-B: [ 60,  62] PS: [3, 18] PE: [3, 20]         contents: string_contents
-B: [ 60,  62] PS: [3, 18] PE: [3, 20]           content: string_content `hi`
-B: [ 62,  63] PS: [3, 20] PE: [3, 21]         end: string_end `"`
-B: [ 67,  68] PS: [4,  3] PE: [4,  4]       shorthand: shorthand_flag `d`
-B: [ 68,  70] PS: [4,  4] PE: [4,  6]       ERROR
-B: [ 68,  69] PS: [4,  4] PE: [4,  5]         shorthand_flag `d`
-B: [ 69,  70] PS: [4,  5] PE: [4,  6]         shorthand_flag `d`
-B: [ 71,  75] PS: [4,  7] PE: [4, 11]       type: bool_type `bool`
-B: [ 75,  76] PS: [4, 11] PE: [4, 12]       optional: ? `?`
-B: [ 77,  83] PS: [4, 13] PE: [4, 19]     ERROR
-B: [ 77,  78] PS: [4, 13] PE: [4, 14]       = `=`
-B: [ 79,  83] PS: [4, 15] PE: [4, 19]       true `true`
-B: [ 87,  97] PS: [5,  3] PE: [5, 13]     declaration: arg_declaration
-B: [ 87,  90] PS: [5,  3] PE: [5,  6]       arg_name: identifier `eee`
-B: [ 91,  96] PS: [5,  7] PE: [5, 12]       type: int_list_type `int[]`
-B: [ 96,  97] PS: [5, 12] PE: [5, 13]       optional: ? `?`
-B: [ 98, 106] PS: [5, 14] PE: [5, 22]     ERROR
-B: [ 98,  99] PS: [5, 14] PE: [5, 15]       = `=`
-B: [100, 101] PS: [5, 16] PE: [5, 17]       [ `[`
-B: [101, 102] PS: [5, 17] PE: [5, 18]       int `2`
-B: [102, 103] PS: [5, 18] PE: [5, 19]       , `,`
-B: [104, 105] PS: [5, 20] PE: [5, 21]       int `3`
-B: [105, 106] PS: [5, 21] PE: [5, 22]       ] `]`
-B: [110, 122] PS: [6,  3] PE: [6, 15]     declaration: arg_declaration
-B: [110, 113] PS: [6,  3] PE: [6,  6]       arg_name: identifier `fff`
-B: [114, 121] PS: [6,  7] PE: [6, 14]       type: float_list_type `float[]`
-B: [121, 122] PS: [6, 14] PE: [6, 15]       optional: ? `?`
-B: [123, 170] PS: [6, 16] PE: [7, 34]     ERROR
-B: [123, 124] PS: [6, 16] PE: [6, 17]       = `=`
-B: [125, 126] PS: [6, 18] PE: [6, 19]       [ `[`
-B: [126, 129] PS: [6, 19] PE: [6, 22]       float `2.2`
-B: [129, 130] PS: [6, 22] PE: [6, 23]       , `,`
-B: [131, 134] PS: [6, 24] PE: [6, 27]       float `3.3`
-B: [134, 135] PS: [6, 27] PE: [6, 28]       ] `]`
-B: [139, 142] PS: [7,  3] PE: [7,  6]       identifier `ggg`
-B: [143, 161] PS: [7,  7] PE: [7, 25]       ERROR
-B: [143, 151] PS: [7,  7] PE: [7, 15]         type: string_list_type `string[]`
-B: [151, 152] PS: [7, 15] PE: [7, 16]         optional: ? `?`
-B: [153, 154] PS: [7, 17] PE: [7, 18]         = `=`
-B: [155, 156] PS: [7, 19] PE: [7, 20]         [ `[`
-B: [156, 160] PS: [7, 20] PE: [7, 24]         string
-B: [156, 157] PS: [7, 20] PE: [7, 21]           start: string_start `"`
-B: [157, 159] PS: [7, 21] PE: [7, 23]           contents: string_contents
-B: [157, 159] PS: [7, 21] PE: [7, 23]             content: string_content `hi`
-B: [159, 160] PS: [7, 23] PE: [7, 24]           end: string_end `"`
-B: [160, 161] PS: [7, 24] PE: [7, 25]         , `,`
-B: [162, 169] PS: [7, 26] PE: [7, 33]       string
-B: [162, 163] PS: [7, 26] PE: [7, 27]         start: string_start `"`
-B: [163, 168] PS: [7, 27] PE: [7, 32]         contents: string_contents
-B: [163, 168] PS: [7, 27] PE: [7, 32]           content: string_content `hello`
-B: [168, 169] PS: [7, 32] PE: [7, 33]         end: string_end `"`
-B: [169, 170] PS: [7, 33] PE: [7, 34]       ] `]`
-B: [174, 185] PS: [8,  3] PE: [8, 14]     declaration: arg_declaration
-B: [174, 177] PS: [8,  3] PE: [8,  6]       arg_name: identifier `hhh`
-B: [178, 184] PS: [8,  7] PE: [8, 13]       type: bool_list_type `bool[]`
-B: [184, 185] PS: [8, 13] PE: [8, 14]       optional: ? `?`
-B: [186, 201] PS: [8, 15] PE: [8, 30]     ERROR
-B: [186, 187] PS: [8, 15] PE: [8, 16]       = `=`
-B: [188, 189] PS: [8, 17] PE: [8, 18]       [ `[`
-B: [189, 193] PS: [8, 18] PE: [8, 22]       true `true`
-B: [193, 194] PS: [8, 22] PE: [8, 23]       , `,`
-B: [195, 200] PS: [8, 24] PE: [8, 29]       false `false`
-B: [200, 201] PS: [8, 29] PE: [8, 30]       ] `]`
+B: [ 49,  55] PS: [3,  7] PE: [3, 13]       ERROR
+B: [ 49,  52] PS: [3,  7] PE: [3, 10]         type: string_type `str`
+B: [ 52,  53] PS: [3, 10] PE: [3, 11]         optional: ? `?`
+B: [ 54,  55] PS: [3, 12] PE: [3, 13]         = `=`
+B: [ 56,  60] PS: [3, 14] PE: [3, 18]       rename: string
+B: [ 56,  57] PS: [3, 14] PE: [3, 15]         start: string_start `"`
+B: [ 57,  59] PS: [3, 15] PE: [3, 17]         contents: string_contents
+B: [ 57,  59] PS: [3, 15] PE: [3, 17]           content: string_content `hi`
+B: [ 59,  60] PS: [3, 17] PE: [3, 18]         end: string_end `"`
+B: [ 64,  67] PS: [4,  3] PE: [4,  6]       ERROR
+B: [ 64,  67] PS: [4,  3] PE: [4,  6]         identifier `ddd`
+B: [ 68,  72] PS: [4,  7] PE: [4, 11]       type: bool_type `bool`
+B: [ 72,  73] PS: [4, 11] PE: [4, 12]       optional: ? `?`
+B: [ 74,  80] PS: [4, 13] PE: [4, 19]     ERROR
+B: [ 74,  75] PS: [4, 13] PE: [4, 14]       = `=`
+B: [ 76,  80] PS: [4, 15] PE: [4, 19]       true `true`
+B: [ 84,  95] PS: [5,  3] PE: [5, 14]     declaration: arg_declaration
+B: [ 84,  87] PS: [5,  3] PE: [5,  6]       arg_name: identifier `eee`
+B: [ 88,  94] PS: [5,  7] PE: [5, 13]       type: int_list_type `[*int]`
+B: [ 94,  95] PS: [5, 13] PE: [5, 14]       optional: ? `?`
+B: [ 96, 104] PS: [5, 15] PE: [5, 23]     ERROR
+B: [ 96,  97] PS: [5, 15] PE: [5, 16]       = `=`
+B: [ 98,  99] PS: [5, 17] PE: [5, 18]       [ `[`
+B: [ 99, 100] PS: [5, 18] PE: [5, 19]       int `2`
+B: [100, 101] PS: [5, 19] PE: [5, 20]       , `,`
+B: [102, 103] PS: [5, 21] PE: [5, 22]       int `3`
+B: [103, 104] PS: [5, 22] PE: [5, 23]       ] `]`
+B: [108, 121] PS: [6,  3] PE: [6, 16]     declaration: arg_declaration
+B: [108, 111] PS: [6,  3] PE: [6,  6]       arg_name: identifier `fff`
+B: [112, 120] PS: [6,  7] PE: [6, 15]       type: float_list_type `[*float]`
+B: [120, 121] PS: [6, 15] PE: [6, 16]       optional: ? `?`
+B: [122, 167] PS: [6, 17] PE: [7, 32]     ERROR
+B: [122, 123] PS: [6, 17] PE: [6, 18]       = `=`
+B: [124, 125] PS: [6, 19] PE: [6, 20]       [ `[`
+B: [125, 128] PS: [6, 20] PE: [6, 23]       float `2.2`
+B: [128, 129] PS: [6, 23] PE: [6, 24]       , `,`
+B: [130, 133] PS: [6, 25] PE: [6, 28]       float `3.3`
+B: [133, 134] PS: [6, 28] PE: [6, 29]       ] `]`
+B: [138, 141] PS: [7,  3] PE: [7,  6]       identifier `ggg`
+B: [142, 158] PS: [7,  7] PE: [7, 23]       ERROR
+B: [142, 148] PS: [7,  7] PE: [7, 13]         type: string_list_type `[*str]`
+B: [148, 149] PS: [7, 13] PE: [7, 14]         optional: ? `?`
+B: [150, 151] PS: [7, 15] PE: [7, 16]         = `=`
+B: [152, 153] PS: [7, 17] PE: [7, 18]         [ `[`
+B: [153, 157] PS: [7, 18] PE: [7, 22]         string
+B: [153, 154] PS: [7, 18] PE: [7, 19]           start: string_start `"`
+B: [154, 156] PS: [7, 19] PE: [7, 21]           contents: string_contents
+B: [154, 156] PS: [7, 19] PE: [7, 21]             content: string_content `hi`
+B: [156, 157] PS: [7, 21] PE: [7, 22]           end: string_end `"`
+B: [157, 158] PS: [7, 22] PE: [7, 23]         , `,`
+B: [159, 166] PS: [7, 24] PE: [7, 31]       string
+B: [159, 160] PS: [7, 24] PE: [7, 25]         start: string_start `"`
+B: [160, 165] PS: [7, 25] PE: [7, 30]         contents: string_contents
+B: [160, 165] PS: [7, 25] PE: [7, 30]           content: string_content `hello`
+B: [165, 166] PS: [7, 30] PE: [7, 31]         end: string_end `"`
+B: [166, 167] PS: [7, 31] PE: [7, 32]       ] `]`
+B: [171, 183] PS: [8,  3] PE: [8, 15]     declaration: arg_declaration
+B: [171, 174] PS: [8,  3] PE: [8,  6]       arg_name: identifier `hhh`
+B: [175, 182] PS: [8,  7] PE: [8, 14]       type: bool_list_type `[*bool]`
+B: [182, 183] PS: [8, 14] PE: [8, 15]       optional: ? `?`
+B: [184, 199] PS: [8, 16] PE: [8, 31]     ERROR
+B: [184, 185] PS: [8, 16] PE: [8, 17]       = `=`
+B: [186, 187] PS: [8, 18] PE: [8, 19]       [ `[`
+B: [187, 191] PS: [8, 19] PE: [8, 23]       true `true`
+B: [191, 192] PS: [8, 23] PE: [8, 24]       , `,`
+B: [193, 198] PS: [8, 25] PE: [8, 30]       false `false`
+B: [198, 199] PS: [8, 30] PE: [8, 31]       ] `]`

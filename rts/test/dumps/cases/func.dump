@@ -23,7 +23,8 @@ B: [ 4, 12] PS: [0,  4] PE: [0, 12]                     delegate: indexed_expr
 B: [ 4, 12] PS: [0,  4] PE: [0, 12]                       root: primary_expr
 B: [ 4, 12] PS: [0,  4] PE: [0, 12]                         call
 B: [ 4, 10] PS: [0,  4] PE: [0, 10]                           func: identifier `myFunc`
-B: [10, 12] PS: [0, 10] PE: [0, 12]                           () `()`
+B: [10, 11] PS: [0, 10] PE: [0, 11]                           ( `(`
+B: [11, 12] PS: [0, 11] PE: [0, 12]                           ) `)`
 B: [13, 29] PS: [1,  0] PE: [1, 16]   assign
 B: [13, 14] PS: [1,  0] PE: [1,  1]     left: var_path
 B: [13, 14] PS: [1,  0] PE: [1,  1]       root: identifier `b`

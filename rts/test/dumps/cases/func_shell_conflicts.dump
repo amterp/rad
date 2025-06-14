@@ -18,7 +18,8 @@ B: [ 0,  9] PS: [0, 0] PE: [0, 9]                   delegate: indexed_expr
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]                     root: primary_expr
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]                       call
 B: [ 0,  7] PS: [0, 0] PE: [0, 7]                         func: identifier `confirm`
-B: [ 7,  9] PS: [0, 7] PE: [0, 9]                         () `()`
+B: [ 7,  8] PS: [0, 7] PE: [0, 8]                         ( `(`
+B: [ 8,  9] PS: [0, 8] PE: [0, 9]                         ) `)`
 B: [10, 17] PS: [1, 0] PE: [1, 7]   expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]     delegate: ternary_expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]       delegate: or_expr
@@ -31,7 +32,8 @@ B: [10, 17] PS: [1, 0] PE: [1, 7]                   delegate: indexed_expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]                     root: primary_expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]                       call
 B: [10, 15] PS: [1, 0] PE: [1, 5]                         func: identifier `quiet`
-B: [15, 17] PS: [1, 5] PE: [1, 7]                         () `()`
+B: [15, 16] PS: [1, 5] PE: [1, 6]                         ( `(`
+B: [16, 17] PS: [1, 6] PE: [1, 7]                         ) `)`
 B: [18, 26] PS: [2, 0] PE: [2, 8]   expr
 B: [18, 26] PS: [2, 0] PE: [2, 8]     delegate: ternary_expr
 B: [18, 26] PS: [2, 0] PE: [2, 8]       delegate: or_expr
@@ -44,4 +46,5 @@ B: [18, 26] PS: [2, 0] PE: [2, 8]                   delegate: indexed_expr
 B: [18, 26] PS: [2, 0] PE: [2, 8]                     root: primary_expr
 B: [18, 26] PS: [2, 0] PE: [2, 8]                       call
 B: [18, 24] PS: [2, 0] PE: [2, 6]                         func: identifier `unsafe`
-B: [24, 26] PS: [2, 6] PE: [2, 8]                         () `()`
+B: [24, 25] PS: [2, 6] PE: [2, 7]                         ( `(`
+B: [25, 26] PS: [2, 7] PE: [2, 8]                         ) `)`

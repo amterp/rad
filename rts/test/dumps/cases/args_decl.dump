@@ -2,37 +2,37 @@
 Args declarations
 =====
 args:
-    name string
+    name str
     age int = 30 # An age.
 a = 2
 =====
-B: [ 0, 55] PS: [0,  0] PE: [4,  0] source_file
-B: [ 0, 48] PS: [0,  0] PE: [2, 26]   arg_block
+B: [ 0, 52] PS: [0,  0] PE: [4,  0] source_file
+B: [ 0, 45] PS: [0,  0] PE: [2, 26]   arg_block
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     args `args`
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]     : `:`
-B: [10, 21] PS: [1,  4] PE: [1, 15]     declaration: arg_declaration
+B: [10, 18] PS: [1,  4] PE: [1, 12]     declaration: arg_declaration
 B: [10, 14] PS: [1,  4] PE: [1,  8]       arg_name: identifier `name`
-B: [15, 21] PS: [1,  9] PE: [1, 15]       type: string_type `string`
-B: [26, 48] PS: [2,  4] PE: [2, 26]     declaration: arg_declaration
-B: [26, 29] PS: [2,  4] PE: [2,  7]       arg_name: identifier `age`
-B: [30, 33] PS: [2,  8] PE: [2, 11]       type: int_type `int`
-B: [34, 35] PS: [2, 12] PE: [2, 13]       = `=`
-B: [36, 38] PS: [2, 14] PE: [2, 16]       default: int_arg
-B: [36, 38] PS: [2, 14] PE: [2, 16]         value: int `30`
-B: [41, 48] PS: [2, 19] PE: [2, 26]       comment: comment_text `An age.`
-B: [49, 54] PS: [3,  0] PE: [3,  5]   assign
-B: [49, 50] PS: [3,  0] PE: [3,  1]     left: var_path
-B: [49, 50] PS: [3,  0] PE: [3,  1]       root: identifier `a`
-B: [51, 52] PS: [3,  2] PE: [3,  3]     = `=`
-B: [53, 54] PS: [3,  4] PE: [3,  5]     right: expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]       delegate: ternary_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]         delegate: or_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]           delegate: and_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]             delegate: compare_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]               delegate: add_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]                 delegate: mult_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]                   delegate: unary_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]                     delegate: indexed_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]                       root: primary_expr
-B: [53, 54] PS: [3,  4] PE: [3,  5]                         literal
-B: [53, 54] PS: [3,  4] PE: [3,  5]                           int `2`
+B: [15, 18] PS: [1,  9] PE: [1, 12]       type: string_type `str`
+B: [23, 45] PS: [2,  4] PE: [2, 26]     declaration: arg_declaration
+B: [23, 26] PS: [2,  4] PE: [2,  7]       arg_name: identifier `age`
+B: [27, 30] PS: [2,  8] PE: [2, 11]       type: int_type `int`
+B: [31, 32] PS: [2, 12] PE: [2, 13]       = `=`
+B: [33, 35] PS: [2, 14] PE: [2, 16]       default: int_arg
+B: [33, 35] PS: [2, 14] PE: [2, 16]         value: int `30`
+B: [38, 45] PS: [2, 19] PE: [2, 26]       comment: comment_text `An age.`
+B: [46, 51] PS: [3,  0] PE: [3,  5]   assign
+B: [46, 47] PS: [3,  0] PE: [3,  1]     left: var_path
+B: [46, 47] PS: [3,  0] PE: [3,  1]       root: identifier `a`
+B: [48, 49] PS: [3,  2] PE: [3,  3]     = `=`
+B: [50, 51] PS: [3,  4] PE: [3,  5]     right: expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]       delegate: ternary_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]         delegate: or_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]           delegate: and_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]             delegate: compare_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]               delegate: add_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]                 delegate: mult_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]                   delegate: unary_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]                     delegate: indexed_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]                       root: primary_expr
+B: [50, 51] PS: [3,  4] PE: [3,  5]                         literal
+B: [50, 51] PS: [3,  4] PE: [3,  5]                           int `2`

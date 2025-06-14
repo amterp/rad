@@ -14,7 +14,8 @@ B: [ 0, 34] PS: [0,  0] PE: [0, 34]               delegate: mult_expr
 B: [ 0, 34] PS: [0,  0] PE: [0, 34]                 delegate: unary_expr
 B: [ 0, 34] PS: [0,  0] PE: [0, 34]                   delegate: fn_lambda
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     keyword: fn `fn`
-B: [ 2,  4] PS: [0,  2] PE: [0,  4]                     () `()`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                     ( `(`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     ) `)`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                     ( `(`
 B: [ 6, 18] PS: [0,  6] PE: [0, 18]                     ERROR
 B: [ 6, 17] PS: [0,  6] PE: [0, 17]                       critical_shell_cmd

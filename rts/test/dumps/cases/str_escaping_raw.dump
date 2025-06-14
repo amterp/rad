@@ -3,9 +3,9 @@ Str escaping
 =====
 a = "\\"
 b = "\n"
-c = "this is \\ a string \n blah \ blahh"
+c = "this is \\ a str \n blah \ blahh"
 =====
-B: [ 0, 60] PS: [0,  0] PE: [3,  0] source_file
+B: [ 0, 57] PS: [0,  0] PE: [3,  0] source_file
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
@@ -46,29 +46,29 @@ B: [13, 14] PS: [1,  4] PE: [1,  5]                             start: string_st
 B: [14, 16] PS: [1,  5] PE: [1,  7]                             contents: string_contents
 B: [14, 16] PS: [1,  5] PE: [1,  7]                               newline: esc_newline `\n`
 B: [16, 17] PS: [1,  7] PE: [1,  8]                             end: string_end `"`
-B: [18, 59] PS: [2,  0] PE: [2, 41]   assign
+B: [18, 56] PS: [2,  0] PE: [2, 38]   assign
 B: [18, 19] PS: [2,  0] PE: [2,  1]     left: var_path
 B: [18, 19] PS: [2,  0] PE: [2,  1]       root: identifier `c`
 B: [20, 21] PS: [2,  2] PE: [2,  3]     = `=`
-B: [22, 59] PS: [2,  4] PE: [2, 41]     right: expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]       delegate: ternary_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]         delegate: or_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]           delegate: and_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]             delegate: compare_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]               delegate: add_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]                 delegate: mult_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]                   delegate: unary_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]                     delegate: indexed_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]                       root: primary_expr
-B: [22, 59] PS: [2,  4] PE: [2, 41]                         literal
-B: [22, 59] PS: [2,  4] PE: [2, 41]                           string
+B: [22, 56] PS: [2,  4] PE: [2, 38]     right: expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]       delegate: ternary_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]         delegate: or_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]           delegate: and_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]             delegate: compare_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]               delegate: add_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                 delegate: mult_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                   delegate: unary_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                     delegate: indexed_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                       root: primary_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                         literal
+B: [22, 56] PS: [2,  4] PE: [2, 38]                           string
 B: [22, 23] PS: [2,  4] PE: [2,  5]                             start: string_start `"`
-B: [23, 58] PS: [2,  5] PE: [2, 40]                             contents: string_contents
+B: [23, 55] PS: [2,  5] PE: [2, 37]                             contents: string_contents
 B: [23, 31] PS: [2,  5] PE: [2, 13]                               content: string_content `this is `
 B: [31, 33] PS: [2, 13] PE: [2, 15]                               backslash: esc_backslash `\\`
-B: [33, 43] PS: [2, 15] PE: [2, 25]                               content: string_content ` a string `
-B: [43, 45] PS: [2, 25] PE: [2, 27]                               newline: esc_newline `\n`
-B: [45, 51] PS: [2, 27] PE: [2, 33]                               content: string_content ` blah `
-B: [51, 52] PS: [2, 33] PE: [2, 34]                               backslash: \ `\`
-B: [52, 58] PS: [2, 34] PE: [2, 40]                               content: string_content ` blahh`
-B: [58, 59] PS: [2, 40] PE: [2, 41]                             end: string_end `"`
+B: [33, 40] PS: [2, 15] PE: [2, 22]                               content: string_content ` a str `
+B: [40, 42] PS: [2, 22] PE: [2, 24]                               newline: esc_newline `\n`
+B: [42, 48] PS: [2, 24] PE: [2, 30]                               content: string_content ` blah `
+B: [48, 49] PS: [2, 30] PE: [2, 31]                               backslash: \ `\`
+B: [49, 55] PS: [2, 31] PE: [2, 37]                               content: string_content ` blahh`
+B: [55, 56] PS: [2, 37] PE: [2, 38]                             end: string_end `"`

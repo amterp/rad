@@ -11,7 +11,8 @@ B: [ 0, 99] PS: [0,  0] PE: [5,  0] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   fn_named
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
 B: [ 3,  8] PS: [0,  3] PE: [0,  8]     name: identifier `myfoo`
-B: [ 8, 10] PS: [0,  8] PE: [0, 10]     () `()`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]     ( `(`
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]     ) `)`
 B: [11, 22] PS: [0, 11] PE: [0, 22]     expr: expr
 B: [11, 22] PS: [0, 11] PE: [0, 22]       delegate: ternary_expr
 B: [11, 22] PS: [0, 11] PE: [0, 22]         delegate: or_expr
@@ -95,7 +96,8 @@ B: [50, 51] PS: [1, 27] PE: [1, 28]                           ) `)`
 B: [52, 68] PS: [2,  0] PE: [2, 16]   fn_named
 B: [52, 54] PS: [2,  0] PE: [2,  2]     keyword: fn `fn`
 B: [55, 60] PS: [2,  3] PE: [2,  8]     name: identifier `myfoo`
-B: [60, 62] PS: [2,  8] PE: [2, 10]     () `()`
+B: [60, 61] PS: [2,  8] PE: [2,  9]     ( `(`
+B: [61, 62] PS: [2,  9] PE: [2, 10]     ) `)`
 B: [63, 68] PS: [2, 11] PE: [2, 16]     expr: expr
 B: [63, 68] PS: [2, 11] PE: [2, 16]       delegate: ternary_expr
 B: [63, 68] PS: [2, 11] PE: [2, 16]         delegate: or_expr
@@ -124,7 +126,7 @@ B: [78, 79] PS: [3,  9] PE: [3, 10]     param: fn_param
 B: [78, 79] PS: [3,  9] PE: [3, 10]       name: identifier `a`
 B: [79, 80] PS: [3, 10] PE: [3, 11]     ) `)`
 B: [80, 81] PS: [3, 11] PE: [3, 12]     block_colon: : `:`
-B: [86, 98] PS: [4,  4] PE: [4, 16]     return_stmt: return_stmt
+B: [86, 98] PS: [4,  4] PE: [4, 16]     stmt: return_stmt
 B: [86, 92] PS: [4,  4] PE: [4, 10]       return `return`
 B: [93, 98] PS: [4, 11] PE: [4, 16]       right: expr
 B: [93, 98] PS: [4, 11] PE: [4, 16]         delegate: ternary_expr

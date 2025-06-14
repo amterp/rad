@@ -45,7 +45,8 @@ B: [12, 22] PS: [0, 12] PE: [0, 22]                                   delegate: 
 B: [12, 22] PS: [0, 12] PE: [0, 22]                                     delegate: unary_expr
 B: [12, 22] PS: [0, 12] PE: [0, 22]                                       delegate: fn_lambda
 B: [12, 14] PS: [0, 12] PE: [0, 14]                                         keyword: fn `fn`
-B: [14, 16] PS: [0, 14] PE: [0, 16]                                         () `()`
+B: [14, 15] PS: [0, 14] PE: [0, 15]                                         ( `(`
+B: [15, 16] PS: [0, 15] PE: [0, 16]                                         ) `)`
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                         expr: expr
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                           delegate: ternary_expr
 B: [17, 22] PS: [0, 17] PE: [0, 22]                                             delegate: or_expr
