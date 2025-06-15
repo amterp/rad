@@ -84,8 +84,8 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 			i,
 			argNode,
 			fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr),
-			RadIntT,
-			RadFloatT,
+			rl.RadIntT,
+			rl.RadFloatT,
 		)
 
 		intOp, floatOp := i.getUnaryOp(opNode)
@@ -158,10 +158,10 @@ func (i *Interpreter) executeOp(
 		rightType := right().Type()
 		// Allow comparison between RadError and RadString
 		if leftType != rightType &&
-			!(leftType == RadFloatT && rightType == RadIntT) &&
-			!(leftType == RadIntT && rightType == RadFloatT) &&
-			!((leftType == RadErrorT && rightType == RadStringT) ||
-				(leftType == RadStringT && rightType == RadErrorT)) {
+			!(leftType == rl.RadFloatT && rightType == rl.RadIntT) &&
+			!(leftType == rl.RadIntT && rightType == rl.RadFloatT) &&
+			!((leftType == rl.RadErrorT && rightType == rl.RadStrT) ||
+				(leftType == rl.RadStrT && rightType == rl.RadErrorT)) {
 			// different types are not equal
 			// UNLESS they're int/float or error/string, in which case we fall through to below and compare there
 			return op == OP_NOT_EQUAL

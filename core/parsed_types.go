@@ -8,46 +8,6 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-type RadTypeEnum int
-
-const (
-	RadStringT RadTypeEnum = iota
-	RadIntT
-	RadFloatT
-	RadBoolT
-	RadListT
-	RadMapT
-	RadFnT
-	RadNullT
-	RadErrorT
-)
-
-func (r RadTypeEnum) AsString() string {
-	switch r {
-	case RadStringT:
-		return rl.T_STR
-	case RadIntT:
-		return rl.T_INT
-	case RadFloatT:
-		return rl.T_FLOAT
-	case RadBoolT:
-		return rl.T_BOOL
-	case RadListT:
-		return "list"
-	case RadMapT:
-		return "map"
-	case RadFnT:
-		return "function"
-	case RadNullT:
-		return "null"
-	case RadErrorT:
-		return "error"
-	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", r))
-		panic(UNREACHABLE)
-	}
-}
-
 type RadArgTypeT int
 
 const (

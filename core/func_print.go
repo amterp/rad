@@ -2,6 +2,7 @@ package core
 
 import (
 	"bytes"
+	"github.com/amterp/rad/rts/rl"
 	"strings"
 
 	"github.com/amterp/jsoncolor"
@@ -12,10 +13,10 @@ var FuncPrint = BuiltInFunc{
 	Name:            FUNC_PRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgEnd: {RadStringT},
-		namedArgSep: {RadStringT},
+	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgEnd: {rl.RadStrT},
+		namedArgSep: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.Printf(resolvePrintStr(f))
@@ -27,7 +28,7 @@ var FuncPPrint = BuiltInFunc{
 	Name:            FUNC_PPRINT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		if len(f.args) == 0 {
@@ -46,10 +47,10 @@ var FuncDebug = BuiltInFunc{
 	Name:            FUNC_DEBUG,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgEnd: {RadStringT},
-		namedArgSep: {RadStringT},
+	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgEnd: {rl.RadStrT},
+		namedArgSep: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptDebug(resolvePrintStr(f))
@@ -61,10 +62,10 @@ var FuncPrintErr = BuiltInFunc{
 	Name:            FUNC_PRINT_ERR,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]RadTypeEnum{}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgEnd: {RadStringT},
-		namedArgSep: {RadStringT},
+	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgEnd: {rl.RadStrT},
+		namedArgSep: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptStderrf(resolvePrintStr(f))
@@ -89,7 +90,7 @@ func resolvePrintStr(f FuncInvocationArgs) string {
 	} else {
 		for idx, v := range f.args {
 			switch v.value.Type() {
-			case RadStringT, RadErrorT:
+			case rl.RadStrT, rl.RadErrorT:
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
 				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
 			default:

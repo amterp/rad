@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	"regexp"
 	"strings"
 
@@ -11,7 +12,7 @@ var FuncSplit = BuiltInFunc{
 	Name:            FUNC_SPLIT,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		strArg := f.args[0]

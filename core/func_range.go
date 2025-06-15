@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -12,16 +13,16 @@ var FuncRange = BuiltInFunc{
 	ReturnValues:   ONE_RETURN_VAL,
 	MinPosArgCount: 1,
 	PosArgValidator: NewEnumerableArgSchema(
-		[][]RadTypeEnum{{RadIntT, RadFloatT}, {RadIntT, RadFloatT}, {RadIntT, RadFloatT}},
+		[][]rl.RadType{{rl.RadIntT, rl.RadFloatT}, {rl.RadIntT, rl.RadFloatT}, {rl.RadIntT, rl.RadFloatT}},
 	),
 	NamedArgs: NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		useFloats := false
 		for _, arg := range f.args {
 			switch arg.value.Type() {
-			case RadFloatT:
+			case rl.RadFloatT:
 				useFloats = true
-			case RadIntT:
+			case rl.RadIntT:
 			default:
 				bugIncorrectTypes(FUNC_RANGE)
 			}

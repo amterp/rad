@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -51,7 +50,7 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
 			} else {
 				idx := i.eval(idxExprNode).Val
-				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), RadIntT)
+				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), rl.RadIntT)
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode, Idx: &idx})
 			}
 		}

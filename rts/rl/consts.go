@@ -1,7 +1,5 @@
 package rl
 
-// used externally
-//
 //goland:noinspection ALL
 const (
 	// Node Kinds
@@ -162,4 +160,10 @@ const (
 	T_FLOAT_LIST = "[*float]"
 	T_BOOL       = "bool"
 	T_BOOL_LIST  = "[*bool]"
+	T_ERROR      = "error"
+	T_ANY        = "any"
+	T_NUM        = "num"
+	T_VOID       = "void"
+	T_LIST       = "list"
+	T_MAP        = "map"
 )

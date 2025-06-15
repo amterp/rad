@@ -516,10 +516,10 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 
 	if formatNode == nil {
 		switch resultType {
-		case RadStringT:
+		case rl.RadStrT:
 			// to maintain attributes
 			return exprResult
-		case RadErrorT:
+		case rl.RadErrorT:
 			return newRadValue(i, exprNode, exprResult.RequireError(i, interpNode).Msg())
 		default:
 			return newRadValue(i, exprNode, NewRadString(ToPrintable(exprResult)))
@@ -556,7 +556,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	if precisionNode != nil {
 		precision := i.eval(precisionNode).Val.RequireInt(i, precisionNode)
 
-		if resultType != RadIntT && resultType != RadFloatT {
+		if resultType != rl.RadIntT && resultType != rl.RadFloatT {
 			precisionStr := "." + i.sd.Src[precisionNode.StartByte():precisionNode.EndByte()]
 			i.errorf(interpNode, "Cannot format %s with a precision %q", TypeAsString(exprResult), precisionStr)
 		}
@@ -566,7 +566,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 
 	formatted := func() string {
 		switch resultType {
-		case RadIntT:
+		case rl.RadIntT:
 			if precisionNode == nil {
 				goFmt.WriteString("d")
 				return fmt.Sprintf(goFmt.String(), int(exprResult.Val.(int64)))
@@ -574,7 +574,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 				goFmt.WriteString("f")
 				return fmt.Sprintf(goFmt.String(), float64(exprResult.Val.(int64)))
 			}
-		case RadFloatT:
+		case rl.RadFloatT:
 			goFmt.WriteString("f")
 			return fmt.Sprintf(goFmt.String(), exprResult.Val)
 		default:

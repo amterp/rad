@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	com "rad/core/common"
 	"strings"
 
@@ -14,9 +15,9 @@ var FuncPick = BuiltInFunc{
 	Name:            FUNC_PICK,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadStringT, RadListT}}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgPrompt: {RadStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}, {rl.RadStrT, rl.RadListT}}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgPrompt: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		optionsArg := f.args[0]
@@ -52,9 +53,9 @@ var FuncPickKv = BuiltInFunc{
 	Name:            FUNC_PICK_KV,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadListT}, {RadListT}, {RadStringT, RadListT}}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgPrompt: {RadStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}, {rl.RadListT}, {rl.RadStrT, rl.RadListT}}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgPrompt: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		keyArgs := f.args[0]
@@ -95,9 +96,9 @@ var FuncPickFromResource = BuiltInFunc{
 	Name:            FUNC_PICK_FROM_RESOURCE,
 	ReturnValues:    NO_RETURN_LIMIT,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT, RadListT}}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgPrompt: {RadStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT, rl.RadListT}}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgPrompt: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		fileArg := f.args[0]

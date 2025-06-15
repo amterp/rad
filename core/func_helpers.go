@@ -112,7 +112,7 @@ func assertAllowedNamedArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
 		allowedTypes, _ := allowedNamedArgs[name]
 		if len(allowedTypes) > 0 && !lo.Contains(allowedTypes, arg.value.Type()) {
 			acceptable := english.OxfordWordSeries(
-				lo.Map(allowedTypes, func(t RadTypeEnum, _ int) string { return t.AsString() }), "or")
+				lo.Map(allowedTypes, func(t rl.RadType, _ int) string { return t.AsString() }), "or")
 			f.i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
 				builtInFunc.Name, name, arg.value.Type().AsString(), acceptable)
 		}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	"strings"
 	"time"
 
@@ -13,9 +14,9 @@ var FuncSleep = BuiltInFunc{
 	Name:            FUNC_SLEEP,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadFloatT, RadStringT}}),
-	NamedArgs: map[string][]RadTypeEnum{
-		namedArgTitle: {RadStringT},
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT, rl.RadFloatT, rl.RadStrT}}),
+	NamedArgs: map[string][]rl.RadType{
+		namedArgTitle: {rl.RadStrT},
 	},
 	Execute: func(f FuncInvocationArgs) RadValue {
 		arg := f.args[0]

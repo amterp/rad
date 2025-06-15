@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	"sort"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -156,19 +157,19 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
 
 func precedence(i *Interpreter, fieldNode *ts.Node, v RadValue) int {
 	switch v.Type() {
-	case RadNullT:
+	case rl.RadNullT:
 		return 0
-	case RadBoolT:
+	case rl.RadBoolT:
 		return 1
-	case RadIntT, RadFloatT:
+	case rl.RadIntT, rl.RadFloatT:
 		return 2
-	case RadStringT:
+	case rl.RadStrT:
 		return 3
-	case RadListT:
+	case rl.RadListT:
 		return 4
-	case RadMapT:
+	case rl.RadMapT:
 		return 5
-	case RadFnT:
+	case rl.RadFnT:
 		return 6
 	default:
 		i.errorf(fieldNode, "Unsupported type precedence for sorting")

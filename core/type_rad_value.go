@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -23,26 +22,26 @@ type RadValue struct {
 	Val interface{}
 }
 
-func (v RadValue) Type() RadTypeEnum {
+func (v RadValue) Type() rl.RadType {
 	switch v.Val.(type) {
 	case int64:
-		return RadIntT
+		return rl.RadIntT
 	case float64:
-		return RadFloatT
+		return rl.RadFloatT
 	case RadString:
-		return RadStringT
+		return rl.RadStrT
 	case bool:
-		return RadBoolT
+		return rl.RadBoolT
 	case *RadList:
-		return RadListT
+		return rl.RadListT
 	case *RadMap:
-		return RadMapT
+		return rl.RadMapT
 	case RadFn:
-		return RadFnT // todo add to equals, hash in this file
+		return rl.RadFnT // todo add to equals, hash in this file
 	case RadNull:
-		return RadNullT
+		return rl.RadNullT
 	case *RadError:
-		return RadErrorT
+		return rl.RadErrorT
 	default:
 		panic(fmt.Sprintf("Bug! Unhandled Rad type: %T", v.Val))
 	}
@@ -267,7 +266,7 @@ func (left RadValue) Equals(right RadValue) bool {
 	}
 }
 
-func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, allowedTypes ...RadTypeEnum) RadValue {
+func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, allowedTypes ...rl.RadType) RadValue {
 	for _, allowedType := range allowedTypes {
 		if v.Type() == allowedType {
 			return v
@@ -282,7 +281,7 @@ func (v RadValue) RequireNotType(
 	i *Interpreter,
 	node *ts.Node,
 	errPrefix string,
-	disallowedTypes ...RadTypeEnum,
+	disallowedTypes ...rl.RadType,
 ) RadValue {
 	for _, disallowedType := range disallowedTypes {
 		if v.Type() == disallowedType {

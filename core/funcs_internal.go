@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/amterp/rad/rts/rl"
 	"os"
 	"os/exec"
 	com "rad/core/common"
@@ -17,7 +18,7 @@ func AddInternalFuncs() {
 			Name:            INTERNAL_FUNC_GET_STASH_ID,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				argNode := f.args[0]
@@ -60,7 +61,7 @@ func AddInternalFuncs() {
 			Name:            INTERNAL_FUNC_DELETE_STASH,
 			ReturnValues:    ZERO_RETURN_VALS,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				idArg := f.args[0]
@@ -78,7 +79,7 @@ func AddInternalFuncs() {
 			Name:            INTERNAL_FUNC_RUN_CHECK,
 			ReturnValues:    ONE_RETURN_VAL,
 			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}}),
+			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
 			NamedArgs:       NO_NAMED_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				scriptArg := f.args[0]

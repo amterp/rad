@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/amterp/rad/rts/rl"
 	"math/rand"
 	"time"
 )
@@ -15,7 +16,7 @@ var FuncSeedRandom = BuiltInFunc{
 	Name:            FUNC_SEED_RANDOM,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		arg := f.args[0]
@@ -40,7 +41,7 @@ var FuncRandInt = BuiltInFunc{
 	Name:            FUNC_RAND_INT,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT}, {RadIntT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT}, {rl.RadIntT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		var min, max int64

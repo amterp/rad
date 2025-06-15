@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/amterp/rad/rts/rl"
 	"regexp"
 	"strings"
 )
@@ -12,7 +13,7 @@ var FuncReplace = BuiltInFunc{
 	Name:            FUNC_REPLACE,
 	ReturnValues:    ONE_RETURN_VAL,
 	MinPosArgCount:  3,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadStringT}, {RadStringT}, {RadStringT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}, {rl.RadStrT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		oldStringArg := f.args[0]

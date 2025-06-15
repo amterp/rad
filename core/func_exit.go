@@ -2,13 +2,14 @@ package core
 
 import (
 	"fmt"
+	"github.com/amterp/rad/rts/rl"
 )
 
 var FuncExit = BuiltInFunc{
 	Name:            FUNC_EXIT,
 	ReturnValues:    ZERO_RETURN_VALS,
 	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]RadTypeEnum{{RadIntT, RadBoolT}}),
+	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT, rl.RadBoolT}}),
 	NamedArgs:       NO_NAMED_ARGS,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		if len(f.args) == 0 {
