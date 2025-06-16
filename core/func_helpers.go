@@ -57,7 +57,9 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 	}
 	for _, argNode := range argNodes {
 		argValue := i.eval(&argNode).Val
-		args = append(args, NewPosArg(&argNode, argValue))
+		if argValue != VOID_SENTINEL {
+			args = append(args, NewPosArg(&argNode, argValue))
+		}
 	}
 
 	namedArgs := make(map[string]namedArg)

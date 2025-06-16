@@ -1,9 +1,10 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/rl"
 	"strings"
 	"time"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts"
 

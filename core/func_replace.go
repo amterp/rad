@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
-	"github.com/amterp/rad/rts/rl"
 	"regexp"
 	"strings"
+
+	"github.com/amterp/rad/rts/rl"
 )
 
 // Allows capture group replacing, for example

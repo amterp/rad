@@ -3,9 +3,10 @@ package core
 import (
 	"errors"
 	"fmt"
-	"github.com/amterp/rad/rts/rl"
 	"math"
 	"sort"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
 )

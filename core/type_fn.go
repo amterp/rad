@@ -12,42 +12,28 @@ import (
 type RadFn struct {
 	BuiltInFunc *BuiltInFunc // if this represents a built-in function
 	// below for non-built-in functions
+	ReprNode *ts.Node // representative node (can point at this for errors)
 	Params   []string
-	ReprNode *ts.Node  // representative node (can point at this for errors)
-	Expr     *ts.Node  // for returning lambdas
-	Stmt     *ts.Node  // for stmt lambdas
-	Body     []ts.Node // for fn blocks
-	Env      *Env      // for closures
+	Stmts    []ts.Node
+	IsBlock  bool // if this is a block function or expr. Block functions can only return with a 'return' stmt.
+	Env      *Env // for closures
 }
 
 func NewLambda(i *Interpreter, lambdaNode *ts.Node) RadFn {
-	blockColon := i.getChild(lambdaNode, rl.F_BLOCK_COLON)
-	if blockColon == nil {
-		return NewLambdaOneLiner(i, lambdaNode)
-	} else {
-		return NewLambdaBlock(i, lambdaNode)
-	}
-}
-
-func NewLambdaOneLiner(i *Interpreter, lambdaNode *ts.Node) RadFn {
 	params := resolveParamNames(i, lambdaNode)
+	stmts := i.getChildren(lambdaNode, rl.F_STMT)
+	reprNode := lambdaNode
+	isBlock := i.getChild(lambdaNode, rl.F_BLOCK_COLON) != nil
+
+	if isBlock {
+		reprNode = i.getChild(lambdaNode, rl.F_KEYWORD)
+	}
+
 	return RadFn{
 		Params:   params,
-		ReprNode: lambdaNode,
-		Expr:     i.getChild(lambdaNode, rl.F_EXPR),
-		Stmt:     i.getChild(lambdaNode, rl.F_STMT),
-		Env:      i.env,
-	}
-}
-
-func NewLambdaBlock(i *Interpreter, lambdaNode *ts.Node) RadFn {
-	keywordNode := i.getChild(lambdaNode, rl.F_KEYWORD)
-	params := resolveParamNames(i, lambdaNode)
-	stmtNodes := i.getChildren(lambdaNode, rl.F_STMT)
-	return RadFn{
-		Params:   params,
-		ReprNode: keywordNode,
-		Body:     stmtNodes,
+		ReprNode: reprNode,
+		Stmts:    stmts,
+		IsBlock:  isBlock,
 		Env:      i.env,
 	}
 }
@@ -60,10 +46,6 @@ func NewBuiltIn(inFunc BuiltInFunc) RadFn {
 
 func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
-}
-
-func (fn RadFn) IsLambda() bool { // todo not accurate, can have named func with this
-	return fn.Expr != nil || fn.Stmt != nil
 }
 
 func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
@@ -82,15 +64,13 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 				i.env.SetVar(fn.Params[idx], arg.value)
 			}
 
-			if fn.IsLambda() {
-				if fn.Expr != nil {
-					out = i.eval(fn.Expr).Val
-				}
-				if fn.Stmt != nil {
-					i.eval(fn.Stmt)
+			res := i.runBlock(fn.Stmts)
+			if fn.IsBlock {
+				if res.Ctrl == CtrlReturn {
+					out = res.Val
 				}
 			} else {
-				out = i.runBlock(fn.Body).Val
+				out = res.Val
 			}
 		})
 	} else {

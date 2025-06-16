@@ -1,9 +1,10 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/rl"
 	"math/rand"
 	"time"
+
+	"github.com/amterp/rad/rts/rl"
 )
 
 var RNG *rand.Rand

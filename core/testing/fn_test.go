@@ -191,3 +191,16 @@ ALEX
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Fn_BlockRequiresReturn(t *testing.T) {
+	script := `
+print(add(4, 5))
+fn add(x, y):
+	x + y
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

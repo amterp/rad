@@ -754,13 +754,14 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 
 // if stmts, for loops
 func (i *Interpreter) runBlock(stmtNodes []ts.Node) EvalResult {
+	var res EvalResult
 	for _, stmtNode := range stmtNodes {
-		res := i.eval(&stmtNode)
+		res = i.eval(&stmtNode)
 		if res.Ctrl != CtrlNormal {
-			return res
+			break
 		}
 	}
-	return VoidNormal
+	return res
 }
 
 func (i *Interpreter) runWithChildEnv(runnable func()) {

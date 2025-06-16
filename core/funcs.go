@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/amterp/rad/rts/rl"
 	"math"
 	"os"
 	"path/filepath"
@@ -17,6 +16,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/amterp/rad/rts/rl"
 
 	fid "github.com/amterp/flexid"
 

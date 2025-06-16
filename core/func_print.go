@@ -2,8 +2,9 @@ package core
 
 import (
 	"bytes"
-	"github.com/amterp/rad/rts/rl"
 	"strings"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/jsoncolor"
 	ts "github.com/tree-sitter/go-tree-sitter"

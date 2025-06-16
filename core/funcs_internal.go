@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"github.com/amterp/rad/rts/rl"
 	"os"
 	"os/exec"
 	com "rad/core/common"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts/check"
 

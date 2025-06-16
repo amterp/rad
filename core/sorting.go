@@ -1,8 +1,9 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/rl"
 	"sort"
+
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )

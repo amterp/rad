@@ -1,9 +1,10 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/rl"
 	com "rad/core/common"
 	"strings"
+
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
