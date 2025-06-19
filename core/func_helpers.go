@@ -45,11 +45,11 @@ type namedArg struct {
 }
 
 func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue {
-	funcNameNode := i.getChild(callNode, rl.F_FUNC)
-	argNodes := i.getChildren(callNode, rl.F_ARG)
-	namedArgNodes := i.getChildren(callNode, rl.F_NAMED_ARG)
+	funcNameNode := rl.GetChild(callNode, rl.F_FUNC)
+	argNodes := rl.GetChildren(callNode, rl.F_ARG)
+	namedArgNodes := rl.GetChildren(callNode, rl.F_NAMED_ARG)
 
-	funcName := GetSrc(i.sd.Src, funcNameNode)
+	funcName := rl.GetSrc(funcNameNode, i.sd.Src)
 
 	var args []PosArg
 	if ufcsArg != nil {
@@ -64,11 +64,17 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 
 	namedArgs := make(map[string]namedArg)
 	for _, namedArgNode := range namedArgNodes {
-		namedArgNameNode := i.getChild(&namedArgNode, rl.F_NAME)
-		namedArgValueNode := i.getChild(&namedArgNode, rl.F_VALUE)
+		namedArgNameNode := rl.GetChild(&namedArgNode, rl.F_NAME)
+		namedArgValueNode := rl.GetChild(&namedArgNode, rl.F_VALUE)
 
-		argName := GetSrc(i.sd.Src, namedArgNameNode)
+		argName := rl.GetSrc(namedArgNameNode, i.sd.Src)
 		argValue := i.eval(namedArgValueNode).Val
+
+		_, exist := namedArgs[argName]
+		if exist {
+			i.errorf(namedArgNameNode, "Duplicate named argument: %s", argName)
+		}
+
 		namedArgs[argName] = namedArg{
 			name:      argName,
 			value:     argValue,

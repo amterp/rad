@@ -1872,7 +1872,7 @@ func init() {
 
 				fnNode := fnArg.node
 				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := GetSrc(f.i.sd.Src, fnNode)
+				fnName := rl.GetSrc(fnNode, f.i.sd.Src)
 
 				var outputValue RadValue
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
@@ -1923,7 +1923,7 @@ func init() {
 
 				fnNode := fnArg.node
 				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := GetSrc(f.i.sd.Src, fnNode)
+				fnName := rl.GetSrc(fnNode, f.i.sd.Src)
 
 				var outputValue RadValue
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
@@ -2015,7 +2015,7 @@ func init() {
 				runLoader := func() RadValue {
 					fnNode := loaderFnArg.node
 					fn := loaderFnArg.value.RequireFn(f.i, fnNode)
-					fnName := GetSrc(f.i.sd.Src, fnNode)
+					fnName := rl.GetSrc(fnNode, f.i.sd.Src)
 					inv := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn())
 					out := fn.Execute(inv)
 					return out

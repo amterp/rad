@@ -164,22 +164,22 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case rl.K_ASSIGN:
-		rightNodes := i.getChildren(node, rl.F_RIGHT)
-		leftNodes := i.getChildren(node, rl.F_LEFT)
+		rightNodes := rl.GetChildren(node, rl.F_RIGHT)
+		leftNodes := rl.GetChildren(node, rl.F_LEFT)
 		if len(leftNodes) > 0 {
 			return i.assignRightsToLefts(leftNodes, rightNodes, false)
 		} else {
-			leftsNodes := i.getChildren(node, rl.F_LEFTS)
+			leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
 			return i.assignRightsToLefts(leftsNodes, rightNodes, true)
 		}
 	case rl.K_COMPOUND_ASSIGN:
-		leftVarPathNode := i.getChild(node, rl.F_LEFT)
-		rightNode := i.getChild(node, rl.F_RIGHT)
-		opNode := i.getChild(node, rl.F_OP)
+		leftVarPathNode := rl.GetChild(node, rl.F_LEFT)
+		rightNode := rl.GetChild(node, rl.F_RIGHT)
+		opNode := rl.GetChild(node, rl.F_OP)
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_EXPR:
-		catchNode := i.getChild(node, rl.F_CATCH)
+		catchNode := rl.GetChild(node, rl.F_CATCH)
 		if catchNode != nil {
 			defer func() {
 				if r := recover(); r != nil {
@@ -191,7 +191,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 				}
 			}()
 		}
-		out = i.eval(i.getChild(node, rl.F_DELEGATE))
+		out = i.eval(rl.GetChild(node, rl.F_DELEGATE))
 	case rl.K_PASS:
 		// no-op
 	case rl.K_RETURN_STMT:
@@ -213,15 +213,15 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		stmts := i.getChildren(node, rl.F_STMT)
+		stmts := rl.GetChildren(node, rl.F_STMT)
 		i.executeForLoop(node, func() EvalResult { return i.runBlock(stmts) })
 	case rl.K_WHILE_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		condNode := i.getChild(node, rl.F_CONDITION)
-		stmtNodes := i.getChildren(node, rl.F_STMT)
+		condNode := rl.GetChild(node, rl.F_CONDITION)
+		stmtNodes := rl.GetChildren(node, rl.F_STMT)
 		for {
 			condValue := true
 			if condNode != nil {
@@ -240,9 +240,9 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			}
 		}
 	case rl.K_IF_STMT:
-		altNodes := i.getChildren(node, rl.F_ALT)
+		altNodes := rl.GetChildren(node, rl.F_ALT)
 		for _, altNode := range altNodes {
-			condNode := i.getChild(&altNode, rl.F_CONDITION)
+			condNode := rl.GetChild(&altNode, rl.F_CONDITION)
 
 			shouldExecute := true
 			if condNode != nil {
@@ -251,20 +251,20 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			}
 
 			if shouldExecute {
-				stmtNodes := i.getChildren(&altNode, rl.F_STMT)
+				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT)
 				return i.runBlock(stmtNodes)
 			}
 		}
 	case rl.K_SWITCH_STMT:
-		discriminantNode := i.getChild(node, rl.F_DISCRIMINANT)
-		caseNodes := i.getChildren(node, rl.F_CASE)
-		defaultNode := i.getChild(node, rl.F_DEFAULT)
+		discriminantNode := rl.GetChild(node, rl.F_DISCRIMINANT)
+		caseNodes := rl.GetChildren(node, rl.F_CASE)
+		defaultNode := rl.GetChild(node, rl.F_DEFAULT)
 
 		discriminantVal := i.eval(discriminantNode).Val
 
 		matchedCaseNodes := make([]ts.Node, 0)
 		for _, caseNode := range caseNodes {
-			caseKeyNodes := i.getChildren(&caseNode, rl.F_CASE_KEY)
+			caseKeyNodes := rl.GetChildren(&caseNode, rl.F_CASE_KEY)
 			for _, caseKeyNode := range caseKeyNodes {
 				caseKey := i.eval(&caseKeyNode).Val
 				if caseKey.Equals(discriminantVal) {
@@ -276,7 +276,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 
 		if len(matchedCaseNodes) == 0 {
 			if defaultNode != nil {
-				caseValueAltNode := i.getChild(defaultNode, rl.F_ALT)
+				caseValueAltNode := rl.GetChild(defaultNode, rl.F_ALT)
 				return i.executeSwitchCase(caseValueAltNode)
 			}
 			i.errorf(discriminantNode, "No matching case found for switch")
@@ -294,7 +294,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		}
 
 		matchedCaseNode := matchedCaseNodes[0]
-		caseValueAltNode := i.getChild(&matchedCaseNode, rl.F_ALT)
+		caseValueAltNode := rl.GetChild(&matchedCaseNode, rl.F_ALT)
 		return i.executeSwitchCase(caseValueAltNode)
 	case rl.K_FN_NAMED:
 		// do not redefine top-level functions as they're already defined
@@ -302,45 +302,45 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			i.defineCustomNamedFunction(*node)
 		}
 	case rl.K_DEFER_BLOCK:
-		keywordNode := i.getChild(node, rl.F_KEYWORD)
-		stmtNodes := i.getChildren(node, rl.F_STMT)
+		keywordNode := rl.GetChild(node, rl.F_KEYWORD)
+		stmtNodes := rl.GetChildren(node, rl.F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
 	case rl.K_SHELL_STMT:
 		i.executeShellStmt(node)
 	case rl.K_DEL_STMT:
-		rightVarPathNodes := i.getChildren(node, rl.F_RIGHT)
+		rightVarPathNodes := rl.GetChildren(node, rl.F_RIGHT)
 		for _, rightVarPathNode := range rightVarPathNodes {
 			i.doVarPathAssign(&rightVarPathNode, VOID_SENTINEL, true)
 		}
 	case rl.K_RAD_BLOCK:
 		i.runRadBlock(node)
 	case rl.K_INCR_DECR:
-		leftVarPathNode := i.getChild(node, rl.F_LEFT)
-		opNode := i.getChild(node, rl.F_OP)
+		leftVarPathNode := rl.GetChild(node, rl.F_LEFT)
+		opNode := rl.GetChild(node, rl.F_OP)
 		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_PRIMARY_EXPR, rl.K_LITERAL:
 		return i.eval(i.getOnlyChild(node))
 	case rl.K_PARENTHESIZED_EXPR:
-		return i.eval(i.getChild(node, rl.F_EXPR))
+		return i.eval(rl.GetChild(node, rl.F_EXPR))
 	case rl.K_UNARY_EXPR:
-		delegateNode := i.getChild(node, rl.F_DELEGATE)
+		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.eval(delegateNode)
 		}
 
-		opNode := i.getChild(node, rl.F_OP)
-		argNode := i.getChild(node, rl.F_ARG)
+		opNode := rl.GetChild(node, rl.F_OP)
+		argNode := rl.GetChild(node, rl.F_ARG)
 		return NormalVal(newRadValues(i, node, i.executeUnaryOp(node, argNode, opNode)))
 	case rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_COMPARE_EXPR, rl.K_ADD_EXPR, rl.K_MULT_EXPR:
-		delegateNode := i.getChild(node, rl.F_DELEGATE)
+		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.eval(delegateNode)
 		}
 
-		left := i.getChild(node, rl.F_LEFT)
-		op := i.getChild(node, rl.F_OP)
-		right := i.getChild(node, rl.F_RIGHT)
+		left := rl.GetChild(node, rl.F_LEFT)
+		op := rl.GetChild(node, rl.F_OP)
+		right := rl.GetChild(node, rl.F_RIGHT)
 		return NormalVal(newRadValues(i, node, i.executeBinary(node, left, right, op)))
 
 	// LEAF NODES
@@ -352,16 +352,16 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		}
 		return NormalVal(newRadValues(i, node, val))
 	case rl.K_VAR_PATH:
-		rootNode := i.getChild(node, rl.F_ROOT)
-		indexingNodes := i.getChildren(node, rl.F_INDEXING)
+		rootNode := rl.GetChild(node, rl.F_ROOT)
+		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
 		val := i.eval(rootNode).Val
 		for _, indexNode := range indexingNodes {
 			val = i.evaluateIndexing(rootNode, indexNode, val)
 		}
 		return NormalVal(newRadValues(i, node, val))
 	case rl.K_INDEXED_EXPR:
-		rootNode := i.getChild(node, rl.F_ROOT)
-		indexingNodes := i.getChildren(node, rl.F_INDEXING)
+		rootNode := rl.GetChild(node, rl.F_ROOT)
+		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
 		if len(indexingNodes) > 0 {
 			val := i.eval(rootNode).Val
 			for _, index := range indexingNodes {
@@ -382,11 +382,11 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_STRING:
 		str := NewRadString("")
 
-		contentsNode := i.getChild(node, rl.F_CONTENTS)
+		contentsNode := rl.GetChild(node, rl.F_CONTENTS)
 
 		// With current TS grammar, last character of closing delimiter is always the delimiter
 		// Admittedly bad, very white boxy and brittle
-		endNode := i.getChild(node, rl.F_END)
+		endNode := rl.GetChild(node, rl.F_END)
 		endStr := i.sd.Src[endNode.StartByte():endNode.EndByte()]
 		delimiterStr := endStr[len(endStr)-1]
 		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
@@ -441,7 +441,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_ESC_BACKSLASH:
 		return NormalVal(newRadValues(i, node, "\\"))
 	case rl.K_LIST:
-		entries := i.getChildren(node, rl.F_LIST_ENTRY)
+		entries := rl.GetChildren(node, rl.F_LIST_ENTRY)
 		list := NewRadList()
 		for _, entry := range entries {
 			list.Append(i.eval(&entry).Val)
@@ -449,10 +449,10 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		return NormalVal(newRadValues(i, node, list))
 	case rl.K_MAP:
 		radMap := NewRadMap()
-		entryNodes := i.getChildren(node, rl.F_MAP_ENTRY)
+		entryNodes := rl.GetChildren(node, rl.F_MAP_ENTRY)
 		for _, entryNode := range entryNodes {
-			keyNode := i.getChild(&entryNode, rl.F_KEY)
-			valueNode := i.getChild(&entryNode, rl.F_VALUE)
+			keyNode := rl.GetChild(&entryNode, rl.F_KEY)
+			valueNode := rl.GetChild(&entryNode, rl.F_VALUE)
 			key := evalMapKey(i, keyNode)
 			radMap.Set(key, i.eval(valueNode).Val)
 		}
@@ -462,8 +462,8 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_FN_LAMBDA:
 		return NormalVal(newRadValues(i, node, NewLambda(i, node)))
 	case rl.K_LIST_COMPREHENSION:
-		resultExprNode := i.getChild(node, rl.F_EXPR)
-		conditionNode := i.getChild(node, rl.F_CONDITION)
+		resultExprNode := rl.GetChild(node, rl.F_EXPR)
+		conditionNode := rl.GetChild(node, rl.F_CONDITION)
 
 		resultList := NewRadList()
 		doOneLoop := func() EvalResult {
@@ -476,14 +476,14 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 
 		return NormalVal(newRadValues(i, node, resultList))
 	case rl.K_TERNARY_EXPR:
-		delegateNode := i.getChild(node, rl.F_DELEGATE)
+		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
 		if delegateNode != nil {
 			return i.eval(delegateNode)
 		}
 
-		conditionNode := i.getChild(node, rl.F_CONDITION)
-		trueNode := i.getChild(node, rl.F_TRUE_BRANCH)
-		falseNode := i.getChild(node, rl.F_FALSE_BRANCH)
+		conditionNode := rl.GetChild(node, rl.F_CONDITION)
+		trueNode := rl.GetChild(node, rl.F_TRUE_BRANCH)
+		falseNode := rl.GetChild(node, rl.F_FALSE_BRANCH)
 		condition := i.eval(conditionNode).Val.TruthyFalsy()
 		return i.eval(lo.Ternary(condition, trueNode, falseNode))
 	default:
@@ -493,7 +493,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 }
 
 func (i *Interpreter) evalRights(node *ts.Node) RadValue {
-	rightNodes := i.getChildren(node, rl.F_RIGHT)
+	rightNodes := rl.GetChildren(node, rl.F_RIGHT)
 	if len(rightNodes) == 0 {
 		return VOID_SENTINEL
 	}
@@ -508,8 +508,8 @@ func (i *Interpreter) evalRights(node *ts.Node) RadValue {
 }
 
 func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
-	exprNode := i.getChild(interpNode, rl.F_EXPR)
-	formatNode := i.getChild(interpNode, rl.F_FORMAT)
+	exprNode := rl.GetChild(interpNode, rl.F_EXPR)
+	formatNode := rl.GetChild(interpNode, rl.F_FORMAT)
 
 	exprResult := i.eval(exprNode).Val
 	resultType := exprResult.Type()
@@ -526,9 +526,9 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 		}
 	}
 
-	alignmentNode := i.getChild(formatNode, rl.F_ALIGNMENT)
-	paddingNode := i.getChild(formatNode, rl.F_PADDING)
-	precisionNode := i.getChild(formatNode, rl.F_PRECISION)
+	alignmentNode := rl.GetChild(formatNode, rl.F_ALIGNMENT)
+	paddingNode := rl.GetChild(formatNode, rl.F_PADDING)
+	precisionNode := rl.GetChild(formatNode, rl.F_PRECISION)
 
 	var goFmt strings.Builder
 	goFmt.WriteString("%")
@@ -586,14 +586,6 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	return newRadValue(i, interpNode, formatted)
 }
 
-func (i *Interpreter) getChildren(node *ts.Node, fieldName string) []ts.Node {
-	return node.ChildrenByFieldName(fieldName, node.Walk())
-}
-
-func (i *Interpreter) getChild(node *ts.Node, fieldName string) *ts.Node {
-	return node.ChildByFieldName(fieldName)
-}
-
 func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
 	count := node.ChildCount()
 	if count != 1 {
@@ -611,9 +603,9 @@ func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt s
 }
 
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
-	rootIdentifier := i.getChild(varPathNode, rl.F_ROOT) // identifier required by grammar
-	rootIdentifierName := GetSrc(i.sd.Src, rootIdentifier)
-	indexings := i.getChildren(varPathNode, rl.F_INDEXING)
+	rootIdentifier := rl.GetChild(varPathNode, rl.F_ROOT) // identifier required by grammar
+	rootIdentifierName := rl.GetSrc(rootIdentifier, i.sd.Src)
+	indexings := rl.GetChildren(varPathNode, rl.F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
 	if len(indexings) == 0 {
@@ -636,8 +628,8 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue,
 }
 
 func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func() EvalResult) EvalResult {
-	leftsNode := i.getChild(node, rl.F_LEFTS)
-	rightNode := i.getChild(node, rl.F_RIGHT)
+	leftsNode := rl.GetChild(node, rl.F_LEFTS)
+	rightNode := rl.GetChild(node, rl.F_RIGHT)
 
 	res := i.eval(rightNode)
 	switch coercedRight := res.Val.Val.(type) {
@@ -662,7 +654,7 @@ func runForLoopList(
 	var idxNode *ts.Node
 	itemNodes := make([]*ts.Node, 0)
 
-	leftNodes := i.getChildren(leftsNode, rl.F_LEFT)
+	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
 
 	if len(leftNodes) == 0 {
 		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
@@ -719,7 +711,7 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
-	leftNodes := i.getChildren(leftsNode, rl.F_LEFT)
+	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
 	numLefts := len(leftNodes)
 
 	if numLefts == 0 || numLefts > 2 {
@@ -869,8 +861,8 @@ func (i *Interpreter) assignRightsToLefts(leftNodes []ts.Node, rightNodes []ts.N
 }
 
 func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
-	nameNode := i.getChild(&fnNamedNode, rl.F_NAME)
-	name := GetSrc(i.sd.Src, nameNode)
+	nameNode := rl.GetChild(&fnNamedNode, rl.F_NAME)
+	name := rl.GetSrc(nameNode, i.sd.Src)
 	lambda := NewLambda(i, &fnNamedNode)
 	i.env.SetVar(name, newRadValueFn(lambda))
 }
@@ -880,7 +872,7 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
 	case rl.K_SWITCH_CASE_EXPR:
 		return NormalVal(i.evalRights(caseValueAltNode))
 	case rl.K_SWITCH_CASE_BLOCK:
-		stmtNodes := i.getChildren(caseValueAltNode, rl.F_STMT)
+		stmtNodes := rl.GetChildren(caseValueAltNode, rl.F_STMT)
 		res := i.runBlock(stmtNodes)
 		switch res.Ctrl {
 		case CtrlNormal, CtrlBreak, CtrlContinue, CtrlReturn:

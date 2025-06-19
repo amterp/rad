@@ -6,8 +6,8 @@ import (
 )
 
 func ResolveSliceStartEnd(i *Interpreter, sliceNode *ts.Node, length int64) (int64, int64) {
-	startNode := i.getChild(sliceNode, rl.F_START)
-	endNode := i.getChild(sliceNode, rl.F_END)
+	startNode := rl.GetChild(sliceNode, rl.F_START)
+	endNode := rl.GetChild(sliceNode, rl.F_END)
 
 	start := int64(0)
 	end := length

@@ -13,7 +13,7 @@ require (
 
 require (
 	github.com/amterp/color v1.20.0 // indirect
-	github.com/amterp/tree-sitter-rad v0.1.2 // indirect
+	github.com/amterp/tree-sitter-rad v0.1.3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect

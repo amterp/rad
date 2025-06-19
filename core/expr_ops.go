@@ -521,7 +521,7 @@ func (i *Interpreter) executeOp(
 		}
 	}
 
-	opSrc := GetSrc(i.sd.Src, opNode)
+	opSrc := rl.GetSrc(opNode, i.sd.Src)
 
 	i.errorf(parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
 		TypeAsString(leftV), opSrc, TypeAsString(rightV), additionalErrMsg)

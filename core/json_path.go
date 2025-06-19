@@ -30,23 +30,23 @@ type JsonPathSegmentIdx struct {
 }
 
 func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	indexingNodes := i.getChildren(leftNode, rl.F_INDEXING)
+	indexingNodes := rl.GetChildren(leftNode, rl.F_INDEXING)
 	if len(indexingNodes) != 0 {
 		i.errorf(leftNode, "Json paths must be defined to plain identifiers")
 	}
-	leftIdentifierNode := i.getChild(leftNode, rl.F_ROOT)
+	leftIdentifierNode := rl.GetChild(leftNode, rl.F_ROOT)
 
 	var segments []JsonPathSegment
 
-	segmentNodes := i.getChildren(jsonPathNode, rl.F_SEGMENT)
+	segmentNodes := rl.GetChildren(jsonPathNode, rl.F_SEGMENT)
 	for _, segmentNode := range segmentNodes {
-		identifierNode := i.getChild(&segmentNode, rl.F_KEY)
+		identifierNode := rl.GetChild(&segmentNode, rl.F_KEY)
 		identifierStr := i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
-		indexNodes := i.getChildren(&segmentNode, rl.F_INDEX)
+		indexNodes := rl.GetChildren(&segmentNode, rl.F_INDEX)
 
 		var idxSegments []JsonPathSegmentIdx
 		for _, indexNode := range indexNodes {
-			idxExprNode := i.getChild(&indexNode, rl.F_EXPR)
+			idxExprNode := rl.GetChild(&indexNode, rl.F_EXPR)
 			if idxExprNode == nil {
 				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
 			} else {

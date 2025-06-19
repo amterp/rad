@@ -10,8 +10,6 @@ import (
 
 	"github.com/amterp/rad/rts/rl"
 
-	"github.com/amterp/rad/rts/raderr"
-
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -214,15 +212,4 @@ func AbsFloat(x float64) float64 {
 		return -x
 	}
 	return x
-}
-
-func ErrorRadMap(err raderr.Error, errMsg string) *RadMap {
-	m := NewRadMap()
-	m.SetPrimitiveStr(constCode, string(err))
-	m.SetPrimitiveStr(constMsg, errMsg)
-	return m
-}
-
-func GetSrc(src string, node *ts.Node) string {
-	return src[node.StartByte():node.EndByte()]
 }

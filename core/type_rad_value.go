@@ -10,7 +10,6 @@ import (
 
 // used to internally delete things e.g. vars from env, but also empty returns. too much? subtle bugs?
 var VOID_SENTINEL = RadValue{Val: 0x0}
-var JSON_SENTINEL = RadValue{Val: 0x1}
 
 type RadValue struct {
 	// int64, float64, RadString, bool stored as values
@@ -372,6 +371,42 @@ func (v RadValue) Accept(visitor *RadTypeVisitor) {
 		return
 	}
 	visitor.UnhandledTypeError(v)
+}
+
+func (v RadValue) ToCompatSubject() (out rl.CompatSubject) {
+	if v == VOID_SENTINEL {
+		return rl.NewVoidSubject()
+	}
+
+	NewTypeVisitorUnsafe().
+		ForBool(func(val RadValue, actual bool) {
+			out = rl.NewBoolSubject(actual)
+		}).
+		ForInt(func(val RadValue, actual int64) {
+			out = rl.NewIntSubject(actual)
+		}).
+		ForFloat(func(val RadValue, actual float64) {
+			out = rl.NewFloatSubject(actual)
+		}).
+		ForString(func(val RadValue, actual RadString) {
+			out = rl.NewStrSubject(actual.Plain())
+		}).
+		ForList(func(val RadValue, actual *RadList) {
+			out = rl.NewListSubject()
+		}).
+		ForMap(func(val RadValue, actual *RadMap) {
+			out = rl.NewMapSubject()
+		}).
+		ForNull(func(val RadValue, actual RadNull) {
+			out = rl.NewNullSubject()
+		}).
+		ForFn(func(val RadValue, actual RadFn) {
+			out = rl.NewFnSubject()
+		}).
+		ForError(func(RadValue, *RadError) {
+			out = rl.NewErrorSubject()
+		}).Visit(v)
+	return
 }
 
 func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {

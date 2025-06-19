@@ -27,14 +27,14 @@ type shellResult struct {
 }
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
-	leftVarPathNodes := i.getChildren(shellStmtNode, rl.F_LEFT)
+	leftVarPathNodes := rl.GetChildren(shellStmtNode, rl.F_LEFT)
 	numExpectedOutputs := len(leftVarPathNodes)
 
 	if numExpectedOutputs > 3 {
 		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
-	shellCmdNode := i.getChild(shellStmtNode, rl.F_SHELL_CMD)
+	shellCmdNode := rl.GetChild(shellStmtNode, rl.F_SHELL_CMD)
 	result := i.executeShellCmd(shellCmdNode, len(leftVarPathNodes))
 
 	if numExpectedOutputs >= 1 {
@@ -48,9 +48,9 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 	}
 
 	if result.exitCode != 0 {
-		stmtNodes := i.getChildren(shellCmdNode, rl.F_STMT)
+		stmtNodes := rl.GetChildren(shellCmdNode, rl.F_STMT)
 		i.runBlock(stmtNodes)
-		responseNode := i.getChild(shellCmdNode, rl.F_RESPONSE)
+		responseNode := rl.GetChild(shellCmdNode, rl.F_RESPONSE)
 		if responseNode != nil {
 			if responseNode.Kind() == rl.K_FAIL {
 				RP.ErrorExitCode("", result.exitCode)
@@ -60,10 +60,10 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
 }
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs int) shellResult {
-	isQuiet := i.getChild(shellCmdNode, rl.F_QUIET_MOD) != nil
-	isConfirm := i.getChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
+	isQuiet := rl.GetChild(shellCmdNode, rl.F_QUIET_MOD) != nil
+	isConfirm := rl.GetChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
-	cmdNode := i.getChild(shellCmdNode, rl.F_COMMAND)
+	cmdNode := rl.GetChild(shellCmdNode, rl.F_COMMAND)
 	cmdStr := i.eval(cmdNode).Val.
 		RequireType(i, cmdNode, "Shell commands must be strings", rl.RadStrT).
 		RequireStr(i, shellCmdNode)

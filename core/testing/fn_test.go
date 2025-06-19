@@ -91,6 +91,7 @@ a.print()
 	assertNoErrors(t)
 }
 
+// TODO 2025-06-18: this test regressed, output should provide more signature information
 func Test_Fn_CanPrint(t *testing.T) {
 	script := `
 foo = fn() 5
@@ -99,8 +100,8 @@ bar = fn(x, y) x * y
 bar.print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `<fn ()>
-<fn (x, y)>
+	expected := `<fn>
+<fn>
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

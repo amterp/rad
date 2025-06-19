@@ -128,7 +128,7 @@
       "patterns": [
         {
           "name": "storage.type.rad",
-          "match": "\\b(bool|list|map|float|int|json|str|any|void|num|error)\\b"
+          "match": "\\b(bool|list|map|float|int|json|str|any|void|error)\\b"
         }
       ]
     },
@@ -220,7 +220,7 @@
       "patterns": [
         {
           "name": "keyword.control.rad",
-          "match": "\\b(args|if|for|while|in|else|pass|json|confirm|unsafe|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
+          "match": "\\b(args|if|for|while|in|else|pass|catch|json|confirm|unsafe|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
         },
         {
           "name": "entity.name.tag.rad",
