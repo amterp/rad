@@ -27,24 +27,27 @@ type shellResult struct {
 }
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
-	leftVarPathNodes := rl.GetChildren(shellStmtNode, rl.F_LEFT)
-	numExpectedOutputs := len(leftVarPathNodes)
+	leftNode := rl.GetChildren(shellStmtNode, rl.F_LEFT)
+	leftNodes := rl.GetChildren(shellStmtNode, rl.F_LEFTS)
+	leftNodes = append(leftNode, leftNodes...) // todo hacky
+
+	numExpectedOutputs := len(leftNodes)
 
 	if numExpectedOutputs > 3 {
 		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
 	shellCmdNode := rl.GetChild(shellStmtNode, rl.F_SHELL_CMD)
-	result := i.executeShellCmd(shellCmdNode, len(leftVarPathNodes))
+	result := i.executeShellCmd(shellCmdNode, numExpectedOutputs)
 
 	if numExpectedOutputs >= 1 {
-		i.doVarPathAssign(&leftVarPathNodes[0], newRadValue(i, shellCmdNode, result.exitCode), false)
+		i.doVarPathAssign(&leftNodes[0], newRadValue(i, shellCmdNode, result.exitCode), false)
 	}
 	if numExpectedOutputs >= 2 {
-		i.doVarPathAssign(&leftVarPathNodes[1], newRadValue(i, shellCmdNode, *result.stdout), false)
+		i.doVarPathAssign(&leftNodes[1], newRadValue(i, shellCmdNode, *result.stdout), false)
 	}
 	if numExpectedOutputs >= 3 {
-		i.doVarPathAssign(&leftVarPathNodes[2], newRadValue(i, shellCmdNode, *result.stderr), false)
+		i.doVarPathAssign(&leftNodes[2], newRadValue(i, shellCmdNode, *result.stderr), false)
 	}
 
 	if result.exitCode != 0 {

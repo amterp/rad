@@ -32,7 +32,7 @@ if docs:
 
 if release:
     // resolve version /////////////
-    _, tags = $!`git tag`
+    _, tags = $!`git tag -l`
     tags = split(tags[:-1], "\n")
     tags = [replace(t, "v", "") for t in tags]
     tags = [split(t, "\.") for t in tags]
