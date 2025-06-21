@@ -28,7 +28,7 @@ if not shebang:
     Hello World script for Rad
     ---
     args:
-        name string # Person to greet.
+        name str # Person to greet.
 
     print("Hello, {name}!")
     """

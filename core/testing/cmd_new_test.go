@@ -14,6 +14,7 @@ func Test_Cmd_New_FailsIfExists(t *testing.T) {
 }
 
 func Test_Cmd_New_SucceedsIfNotExists(t *testing.T) {
+	defer com.DeleteFileIfExists("does_not_exist")
 	setupAndRunArgs(t, "new", "does_not_exist", "--color=never")
 	expectedStdout := `does_not_exist is ready to go.
 `
@@ -23,5 +24,18 @@ func Test_Cmd_New_SucceedsIfNotExists(t *testing.T) {
 `
 	assertOutput(t, stdErrBuffer, expectedStderr)
 	assertNoErrors(t)
-	com.DeleteFileIfExists("does_not_exist")
+}
+
+func Test_Cmd_New_CreatedFileIsRunnable(t *testing.T) {
+	defer com.DeleteFileIfExists("does_not_exist")
+	setupAndRunArgs(t, "new", "does_not_exist", "--color=never")
+	stdOutBuffer.Reset()
+	stdErrBuffer.Reset()
+	assertNoErrors(t)
+
+	setupAndRunArgs(t, "does_not_exist", "Alex", "--color=never")
+	expected := `Hello, Alex!
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
 }
