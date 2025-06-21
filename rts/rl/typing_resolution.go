@@ -1,6 +1,8 @@
 package rl
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import (
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
 	paramNodes := GetChildren(fnNode, F_PARAM)
@@ -53,6 +55,7 @@ func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
 	return typingFn
 }
 
+// input node expected to be kind 'fn_param_or_return_type'
 func resolveTyping(node *ts.Node) TypingT {
 	leafNodes := GetChildren(node, F_LEAF_TYPE)
 
@@ -85,15 +88,56 @@ func resolveTyping(node *ts.Node) TypingT {
 		case K_BOOL_LIST_TYPE:
 			typing = NewListType(NewVarArgType(NewBoolType()))
 		case K_LIST_TYPE:
-			typing = NewAnyListType()
+			anyNode := GetChild(typeNode, F_ANY)
+			if anyNode != nil {
+				return NewAnyListType()
+			}
+			listTypeNodes := GetChildren(typeNode, F_TYPE)
+			if len(listTypeNodes) > 0 {
+				typings := make([]TypingT, 0)
+				for _, listTypeNode := range listTypeNodes {
+					typing = resolveTyping(&listTypeNode)
+					typings = append(typings, typing)
+				}
+				return NewListType(typings...)
+			}
+			enumStrNodes := GetChildren(typeNode, F_ENUM)
+			strNodes := make([]*ts.Node, 0)
+			for _, enumStrNode := range enumStrNodes {
+				strNodes = append(strNodes, &enumStrNode)
+			}
+			return NewStrEnumType(strNodes...)
 		case K_NUM_TYPE:
-			typing = NewNumType()
+			typing = NewNumType() // TODO remove
 		case K_ANY_TYPE:
 			typing = NewAnyType()
 		case K_FN_TYPE:
 			typing = NewAnyType() // TODO
 		case K_MAP_TYPE:
-			typing = NewAnyMapType()
+			anyNode := GetChild(typeNode, F_ANY)
+			if anyNode != nil {
+				return NewAnyMapType()
+			}
+			entryNodes := GetChildren(typeNode, F_NAMED_ENTRY)
+			if len(entryNodes) > 0 {
+				keyValues := make(map[MapNamedKey]TypingT)
+				for _, entryNode := range entryNodes {
+					keyNode := GetChild(&entryNode, F_KEY_NAME)
+					keyOptionalNode := GetChild(&entryNode, F_OPTIONAL)
+					valueNode := GetChild(&entryNode, F_VALUE_TYPE)
+					valueTyping := resolveTyping(valueNode)
+
+					key := NewMapNamedKey(keyNode, keyOptionalNode != nil)
+					keyValues[key] = valueTyping
+				}
+				return NewStructType(keyValues)
+			}
+
+			keyTypeNode := GetChild(typeNode, F_KEY_TYPE)
+			valueTypeNode := GetChild(typeNode, F_VALUE_TYPE)
+			keyTyping := resolveTyping(keyTypeNode)
+			valueTyping := resolveTyping(valueTypeNode)
+			return NewMapType(keyTyping, valueTyping)
 		case K_ERROR_TYPE:
 			typing = NewErrorType()
 		case K_VOID_TYPE:

@@ -1,11 +1,16 @@
 package rl
 
-import "fmt"
+import (
+	"fmt"
+
+	ts "github.com/tree-sitter/go-tree-sitter"
+)
 
 // first check Val, then Type
 type TypingCompatVal struct {
-	Val  interface{} // Specific int64, float64, string, bool
-	Type *RadType
+	Val       interface{} // Specific int64, float64, string, bool, []interface{}, map[string]interface{}
+	Type      *RadType
+	Evaluator *func(*ts.Node) interface{}
 }
 
 func NewSubject(val interface{}) TypingCompatVal {
@@ -18,6 +23,10 @@ func NewSubject(val interface{}) TypingCompatVal {
 		return NewStrSubject(coerced)
 	case bool:
 		return NewBoolSubject(coerced)
+	case []interface{}:
+		return NewListSubject() // todo should we give value, recurse?
+	case map[string]interface{}:
+		return NewMapSubject() // todo should we give value, recurse?
 	default:
 		panic(fmt.Sprintf("Unhandled type for TypingCompatVal: %v", coerced))
 	}

@@ -167,7 +167,7 @@ func (fn RadFn) typeCheck(i *Interpreter, typing *rl.TypingT, node *ts.Node, val
 		return
 	}
 
-	isCompat := (*typing).IsCompatibleWith(val.ToCompatSubject())
+	isCompat := (*typing).IsCompatibleWith(val.ToCompatSubject(i))
 	if !isCompat {
 		if val == VOID_SENTINEL {
 			i.errorf(node, "Expected '%s', but got void value.", (*typing).Name())

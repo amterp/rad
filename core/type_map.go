@@ -180,6 +180,14 @@ func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 	panic(UNREACHABLE)
 }
 
+func (m *RadMap) ToGoMap() map[string]interface{} {
+	goMap := make(map[string]interface{}, len(m.mapping))
+	for k, v := range m.mapping {
+		goMap[k] = v.ToGoValue()
+	}
+	return goMap
+}
+
 func evalMapKey(i *Interpreter, idxNode *ts.Node) RadValue {
 	return i.eval(idxNode).Val.
 		RequireNotType(i, idxNode, "Map keys cannot be lists", rl.RadListT).

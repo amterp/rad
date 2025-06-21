@@ -43,7 +43,7 @@ func (v RadValue) Type() rl.RadType {
 	case *RadError:
 		return rl.RadErrorT
 	default:
-		panic(fmt.Sprintf("Bug! Unhandled Rad type: %T", v.Val))
+		panic(fmt.Sprintf("Bug! Unhandled Rad type in Type: '%T'", v.Val))
 	}
 }
 
@@ -373,7 +373,43 @@ func (v RadValue) Accept(visitor *RadTypeVisitor) {
 	visitor.UnhandledTypeError(v)
 }
 
-func (v RadValue) ToCompatSubject() (out rl.TypingCompatVal) {
+func (v RadValue) ToGoValue() (out interface{}) {
+	if v == VOID_SENTINEL {
+		return nil // or should we return an error?
+	}
+
+	NewTypeVisitorUnsafe().
+		ForBool(func(val RadValue, actual bool) {
+			out = actual
+		}).
+		ForInt(func(val RadValue, actual int64) {
+			out = actual
+		}).
+		ForFloat(func(val RadValue, actual float64) {
+			out = actual
+		}).
+		ForString(func(val RadValue, actual RadString) {
+			out = actual.Plain()
+		}).
+		ForList(func(val RadValue, actual *RadList) {
+			out = actual.ToGoList()
+		}).
+		ForMap(func(val RadValue, actual *RadMap) {
+			out = actual.ToGoMap()
+		}).
+		ForNull(func(val RadValue, actual RadNull) {
+			out = nil
+		}).
+		ForFn(func(val RadValue, actual RadFn) {
+			out = actual
+		}).
+		ForError(func(val RadValue, actual *RadError) {
+			out = actual.Msg().String()
+		}).Visit(v)
+	return
+}
+
+func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
 	if v == VOID_SENTINEL {
 		return rl.NewVoidSubject()
 	}
@@ -390,12 +426,16 @@ func (v RadValue) ToCompatSubject() (out rl.TypingCompatVal) {
 		}).
 		ForString(func(val RadValue, actual RadString) {
 			out = rl.NewStrSubject(actual.Plain())
+			out.Evaluator = typingEvaluator(i)
 		}).
 		ForList(func(val RadValue, actual *RadList) {
 			out = rl.NewListSubject()
+			out.Val = actual.ToGoList()
 		}).
 		ForMap(func(val RadValue, actual *RadMap) {
 			out = rl.NewMapSubject()
+			out.Val = actual.ToGoMap()
+			out.Evaluator = typingEvaluator(i)
 		}).
 		ForNull(func(val RadValue, actual RadNull) {
 			out = rl.NewNullSubject()
@@ -520,4 +560,15 @@ func newRadValueFn(val RadFn) RadValue {
 
 func newRadValueError(val *RadError) RadValue {
 	return newRadValue(nil, nil, val)
+}
+
+func typingEvaluator(i *Interpreter) *func(*ts.Node) interface{} {
+	evalF := func(node *ts.Node) interface{} {
+		res := i.eval(node)
+		if res.Val == VOID_SENTINEL {
+			i.errorf(node, "Bug?! Expected a string, got void.")
+		}
+		return res.Val.ToGoValue()
+	}
+	return &evalF
 }

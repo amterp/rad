@@ -193,3 +193,11 @@ func (l *RadList) Join(sep string, prefix string, suffix string) RadString {
 	}
 	return NewRadString(prefix + strings.Join(arr, sep) + suffix)
 }
+
+func (l *RadList) ToGoList() []interface{} {
+	out := make([]interface{}, len(l.Values))
+	for idx, val := range l.Values {
+		out[idx] = val.ToGoValue()
+	}
+	return out
+}

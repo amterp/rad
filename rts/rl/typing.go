@@ -43,7 +43,7 @@ func (r RadType) AsString() string {
 	case RadErrorT:
 		return T_ERROR
 	default:
-		panic(fmt.Sprintf("Bug! Unhandled Rad type: %v", r))
+		panic(fmt.Sprintf("Bug! Unhandled Rad type in AsString: %v", r))
 	}
 }
 
@@ -256,36 +256,70 @@ func (t *TypingListT) Name() string {
 }
 
 func (t *TypingListT) IsCompatibleWith(val TypingCompatVal) bool {
+	// 1. We have a *value* at runtime
 	if val.Val != nil {
-		switch coerced := (val.Val).(type) {
-		case []interface{}:
+		slice, ok := val.Val.([]interface{})
+		if !ok {
+			return false
+		}
 
-			// TODO INCORRECT, NEEDS TO SUPPORT E.G. [*int]
-			if len(coerced) != len(t.types) {
+		// Empty list type "[]" – it only matches an empty runtime slice
+		if len(t.types) == 0 {
+			return len(slice) == 0
+		}
+
+		// Detect whether the last declared element is a var‑arg
+		lastIdx := len(t.types) - 1
+		if varArg, ok := t.types[lastIdx].(*TypingVarArgT); ok {
+			// Variadic list handling
+			// Require at least the non‑variadic prefix
+			if len(slice) < lastIdx {
 				return false
 			}
-			for i, elem := range coerced {
-				if !t.types[i].IsCompatibleWith(NewSubject(elem)) {
+
+			// Fixed‑prefix check
+			for i := 0; i < lastIdx; i++ {
+				if !t.types[i].IsCompatibleWith(NewSubject(slice[i])) {
+					return false
+				}
+			}
+
+			// Var‑arg tail check
+			for i := lastIdx; i < len(slice); i++ {
+				if !varArg.t.IsCompatibleWith(NewSubject(slice[i])) {
 					return false
 				}
 			}
 			return true
-		default:
+		}
+
+		// Fixed‑length tuple handling
+		if len(slice) != len(t.types) {
 			return false
 		}
+
+		for i, elem := range slice {
+			if !t.types[i].IsCompatibleWith(NewSubject(elem)) {
+				return false
+			}
+		}
+
+		return true
 	}
+
+	// 2. We only know the *RadType* at runtime
 	if val.Type != nil {
+		// When the runtime system only tells us "it’s a list", we do a best
+		// effort: we accept the value because the element‑level information
+		// is unavailable at runtime.
 		return *val.Type == RadListT
 	}
+
+	// 3. No information to work with
 	return false
 }
 
 type TypingAnyMapT struct{} // var: map i.e. { any: any }
-type TypingMapT struct {    // var: { string: int } OR { "mykey": int, "mykey2"?: float }
-	keyT  TypingT
-	valT  TypingT
-	named map[MapNamedKey]TypingT
-}
 
 func NewAnyMapType() *TypingAnyMapT {
 	return &TypingAnyMapT{}
@@ -299,6 +333,114 @@ func (t *TypingAnyMapT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Type != nil {
 		return *val.Type == RadMapT
 	}
+	return false
+}
+
+type TypingStructT struct { // var: { "mykey": int, "mykey2"?: float }
+	named map[MapNamedKey]TypingT
+}
+
+func NewStructType(named map[MapNamedKey]TypingT) *TypingStructT {
+	return &TypingStructT{
+		named: named,
+	}
+}
+
+func (t *TypingStructT) Name() string {
+	return "struct" // todo improve this, need evaluator
+}
+
+func (t *TypingStructT) IsCompatibleWith(val TypingCompatVal) bool {
+	// 1. We have a *value*
+	if val.Val != nil {
+		actualMap, ok := (val.Val).(map[string]interface{})
+		if !ok {
+			// Not a map.
+			return false
+		}
+
+		if val.Evaluator == nil {
+			// Can't validate keys, take loose approach
+			return true
+		}
+
+		// Validate each declared field
+		seen := make(map[string]bool)
+		for mapKey, typ := range t.named {
+			expectedKeyName := (*val.Evaluator)(mapKey.Name)
+			keyName, ok := expectedKeyName.(string)
+			if !ok {
+				// Key was not a string, unexpected.
+				return false
+			}
+
+			actualVal, exists := actualMap[keyName]
+			if !exists {
+				if mapKey.IsOptional {
+					continue // missing optional key is fine
+				}
+				return false // required key absent
+			}
+
+			seen[keyName] = true
+			if !typ.IsCompatibleWith(NewSubject(actualVal)) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	// 2. Only RadType information available
+	if val.Type != nil {
+		return *val.Type == RadMapT
+	}
+
+	// 3. No information to work with
+	return false
+}
+
+type TypingMapT struct { // var: { string: int }
+	keyT TypingT
+	valT TypingT
+}
+
+func NewMapType(key, val TypingT) *TypingMapT {
+	return &TypingMapT{
+		keyT: key,
+		valT: val,
+	}
+}
+
+func (t *TypingMapT) Name() string {
+	return fmt.Sprintf("{ %s: %s }", t.keyT.Name(), t.valT.Name())
+}
+
+func (t *TypingMapT) IsCompatibleWith(val TypingCompatVal) bool {
+	// 1. We have a *value*
+	if val.Val != nil {
+		actualMap, ok := (val.Val).(map[string]interface{})
+		if !ok {
+			// Not a map.
+			return false
+		}
+
+		for k, v := range actualMap {
+			if !t.keyT.IsCompatibleWith(NewSubject(k)) ||
+				!t.valT.IsCompatibleWith(NewSubject(v)) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	// 2. Only RadType information available
+	if val.Type != nil {
+		return *val.Type == RadMapT
+	}
+
+	// 3. No information to work with
 	return false
 }
 
@@ -369,20 +511,30 @@ type TypingFnT struct { // var: fn(int, int) -> int
 }
 
 type TypingStrEnumT struct { // var: ["foo", "bar"] = "bar"
-	values []string
+	strNodes []*ts.Node
+}
+
+func NewStrEnumType(stringNodes ...*ts.Node) *TypingStrEnumT {
+	return &TypingStrEnumT{
+		strNodes: stringNodes,
+	}
 }
 
 func (t *TypingStrEnumT) Name() string {
-	var sb strings.Builder
-	sb.WriteString("[")
-	for i, v := range t.values {
-		if i > 0 {
-			sb.WriteString(", ")
-		}
-		sb.WriteString(fmt.Sprintf("%q", v))
-	}
-	sb.WriteString("]")
-	return sb.String()
+	return "str enum"
+
+	// TODO should do something like the below, but we only have nodes.
+	//  probably should make the IsCompatibleWith method return error, with the msg.
+	// var sb strings.Builder
+	// sb.WriteString("[")
+	// for i, v := range t.strNodes {
+	// 	if i > 0 {
+	// 		sb.WriteString(", ")
+	// 	}
+	// 	sb.WriteString(fmt.Sprintf("%q", v))
+	// }
+	// sb.WriteString("]")
+	// return sb.String()
 }
 
 func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
@@ -391,13 +543,18 @@ func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 		if !ok {
 			return false
 		}
-		for _, enumVal := range t.values {
-			if strVal == enumVal {
-				return true
+
+		if val.Evaluator != nil {
+			for _, strNode := range t.strNodes {
+				out := (*val.Evaluator)(strNode)
+				if out == strVal {
+					return true
+				}
 			}
+			return false
 		}
-		return false
 	}
+
 	if val.Type != nil {
 		// best effort, we can't know for sure cause value is not provided
 		return *val.Type == RadStrT
@@ -455,8 +612,15 @@ func (t *TypingUnionT) IsCompatibleWith(val TypingCompatVal) bool {
 }
 
 type MapNamedKey struct {
-	Name       string
+	Name       *ts.Node
 	IsOptional bool
+}
+
+func NewMapNamedKey(name *ts.Node, isOptional bool) MapNamedKey {
+	return MapNamedKey{
+		Name:       name,
+		IsOptional: isOptional,
+	}
 }
 
 type TypingFnParam struct {

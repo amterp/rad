@@ -268,3 +268,632 @@ fn foo(x: float, y?) -> float:
 `
 	assertError(t, 1, expected)
 }
+
+func Test_Typing_StrParamValid(t *testing.T) {
+	script := `
+foo("hi")
+fn foo(x: str):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|hi|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StrParamInvalid(t *testing.T) {
+	script := `
+foo(2)
+fn foo(x: str):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(2)
+      ^ Value '2' (int) is not compatible with expected type 'str'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StrReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> str:
+	return "hi"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `hi
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StrReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> str:
+	return 2
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '2' (int) is not compatible with expected type 'str'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_IntParamValid(t *testing.T) {
+	script := `
+foo(2)
+fn foo(x: int):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|2|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_IntParamInvalid(t *testing.T) {
+	script := `
+foo("2")
+fn foo(x: int):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo("2")
+      ^^^ Value '"2"' (str) is not compatible with expected type 'int'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_IntReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> int:
+	return 2
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_IntReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> int:
+	return "2"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '"2"' (str) is not compatible with expected type 'int'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_BoolParamValid(t *testing.T) {
+	script := `
+foo(true)
+fn foo(x: bool):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|true|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+// todo should 0 and 1 be allow for bools?
+func Test_Typing_BoolParamInvalid(t *testing.T) {
+	script := `
+foo(1)
+fn foo(x: bool):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(1)
+      ^ Value '1' (int) is not compatible with expected type 'bool'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_BoolReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> bool:
+	return true
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+// todo should 0 and 1 be allow for bools?
+func Test_Typing_BoolReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> bool:
+	return 1
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '1' (int) is not compatible with expected type 'bool'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_ErrorParamValid(t *testing.T) {
+	script := `
+foo(error("bad!"))
+fn foo(x: error):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|bad!|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_ErrorParamInvalid(t *testing.T) {
+	script := `
+foo(1)
+fn foo(x: error):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(1)
+      ^ Value '1' (int) is not compatible with expected type 'error'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_ErrorReturnValid(t *testing.T) {
+	script := `
+(catch foo()).print()
+fn foo() -> error:
+	return error("bad!")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `bad!
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_ErrorReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> error:
+	return 1
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '1' (int) is not compatible with expected type 'error'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_ParamCannotBeVoid(t *testing.T) {
+	script := `
+foo(1).print()
+fn foo(x: void) -> str:
+	return "|{x}|"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L3:8
+
+  fn foo(x: void) -> str:
+         ^^ Invalid syntax
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyListParamValid(t *testing.T) {
+	script := `
+foo([1, 2])
+fn foo(x: list):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|[ 1, 2 ]|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyListParamInvalid(t *testing.T) {
+	script := `
+foo(1)
+fn foo(x: list):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(1)
+      ^ Value '1' (int) is not compatible with expected type 'list'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyListParamInvalidVarArg(t *testing.T) {
+	script := `
+foo(1, 2)
+fn foo(x: list):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(1, 2)
+      ^ Value '1' (int) is not compatible with expected type 'list'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyListReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> list:
+	return [1, 2]
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `[ 1, 2 ]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyListReturnVarArgReturn(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> list:
+	return 1, 2
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `[ 1, 2 ]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyListReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> list:
+	return 1
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '1' (int) is not compatible with expected type 'list'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_ListParamValid(t *testing.T) {
+	script := `
+foo([1, "hi"])
+fn foo(x: [int, str]):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|[ 1, "hi" ]|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_ListParamInvalid(t *testing.T) {
+	script := `
+foo(["hi", 1])
+fn foo(x: [int, str]):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(["hi", 1])
+      ^^^^^^^^^
+      Value '[ "hi", 1 ]' (list) is not compatible with expected type '[int, str]'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_ListReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> [int, str]:
+	return [1, "2"]
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `[ 1, "2" ]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_ListReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> [int, str]:
+	return [1, 2]
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '[ 1, 2 ]' (list) is not compatible with expected type '[int, str]'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StrEnumParamValid(t *testing.T) {
+	script := `
+foo("foo")
+fn foo(x: ["foo", "bar"]):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|foo|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StrEnumParamInvalid(t *testing.T) {
+	script := `
+foo("quz")
+fn foo(x: ["foo", "bar"]):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo("quz")
+      ^^^^^ Value '"quz"' (str) is not compatible with expected type 'str enum'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StrEnumReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> ["foo", "bar"]:
+	return "foo"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `foo
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StrEnumReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> ["foo", "bar"]:
+	return "quz"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '"quz"' (str) is not compatible with expected type 'str enum'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyMapParamValid(t *testing.T) {
+	script := `
+foo({"a": 1})
+fn foo(x: map):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|{ "a": 1 }|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyMapParamInvalid(t *testing.T) {
+	script := `
+foo(2)
+fn foo(x: map):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(2)
+      ^ Value '2' (int) is not compatible with expected type 'map'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyMapReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> map:
+	return {"a": 1}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "a": 1 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyMapReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> map:
+	return 1
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '1' (int) is not compatible with expected type 'map'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StructParamValid(t *testing.T) {
+	script := `
+foo({"key1": 10})
+fn foo(x: {"key1": int}):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|{ "key1": 10 }|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StructParamInvalid(t *testing.T) {
+	script := `
+foo({"key2": 10})
+fn foo(x: {"key1": int}):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo({"key2": 10})
+      ^^^^^^^^^^^^
+      Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StructReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key1": 10}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "key1": 10 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_StructReturnInvalidKeys(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key2": 10}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_StructReturnInvalidValue(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key2": "hi"}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^
+  Value '{ "key2": "hi" }' (map) is not compatible with expected type 'struct'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_MapParamValid(t *testing.T) {
+	script := `
+foo({"key1": 10})
+fn foo(x: {str: int}):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|{ "key1": 10 }|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_MapParamInvalid(t *testing.T) {
+	script := `
+foo({"key1": "hi"})
+fn foo(x: {str: int}):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo({"key1": "hi"})
+      ^^^^^^^^^^^^^^
+      Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_MapReturnValid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": 10}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "key1": 10 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_MapReturnInvalidKeys(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": "hi"}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^
+  Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+`
+	assertError(t, 1, expected)
+}
+
+// TODO VARARG
+// TODO OPTIONAL
+// TODO UNION

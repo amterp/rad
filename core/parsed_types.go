@@ -40,8 +40,7 @@ func ToRadArgTypeT(str string) RadArgTypeT {
 	case rl.T_BOOL_LIST:
 		return ArgBoolListT
 	default:
-		RP.RadErrorExit(fmt.Sprintf("Bug! Unhandled Rad type: %v", str))
-		panic(UNREACHABLE)
+		panic(fmt.Sprintf("Bug! Unhandled Rad type in ToRadArgTypeT: '%v'", str))
 	}
 }
 

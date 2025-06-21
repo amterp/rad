@@ -164,6 +164,12 @@ const (
 	F_VARARG_MARKER  = "vararg_marker"
 	F_OPTIONAL       = "optional"
 	F_LEAF_TYPE      = "leaf_type"
+	F_ANY            = "any"
+	F_ENUM           = "enum"
+	F_NAMED_ENTRY    = "named_entry"
+	F_KEY_NAME       = "key_name"
+	F_KEY_TYPE       = "key_type"
+	F_VALUE_TYPE     = "value_type"
 
 	// Keywords
 	KEYWORD_ASC     = "asc"
