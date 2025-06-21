@@ -49,7 +49,7 @@ func (r RadType) AsString() string {
 
 type TypingT interface {
 	Name() string
-	IsCompatibleWith(val CompatSubject) bool
+	IsCompatibleWith(val TypingCompatVal) bool
 }
 
 // Primitives / Union Primitives
@@ -63,7 +63,7 @@ func (t *TypingStrT) Name() string {
 	return T_STR
 }
 
-func (t *TypingStrT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingStrT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		_, ok := (val.Val).(string)
 		return ok
@@ -84,7 +84,7 @@ func (t *TypingIntT) Name() string {
 	return T_INT
 }
 
-func (t *TypingIntT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingIntT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		_, ok := (val.Val).(int64)
 		return ok
@@ -105,7 +105,7 @@ func (t *TypingFloatT) Name() string {
 	return T_FLOAT
 }
 
-func (t *TypingFloatT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingFloatT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		switch val.Val.(type) {
 		case float64, int64:
@@ -128,7 +128,7 @@ func (t *TypingBoolT) Name() string {
 	return T_BOOL
 }
 
-func (t *TypingBoolT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingBoolT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		_, ok := (val.Val).(bool)
 		return ok
@@ -149,7 +149,7 @@ func (t *TypingErrorT) Name() string {
 	return T_ERROR
 }
 
-func (t *TypingErrorT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingErrorT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Type != nil {
 		return *val.Type == RadErrorT
 	}
@@ -166,7 +166,7 @@ func (t *TypingAnyT) Name() string {
 	return T_ANY
 }
 
-func (t *TypingAnyT) IsCompatibleWith(CompatSubject) bool {
+func (t *TypingAnyT) IsCompatibleWith(TypingCompatVal) bool {
 	return true
 }
 
@@ -181,7 +181,7 @@ func (t *TypingNumT) Name() string {
 	return T_NUM
 }
 
-func (t *TypingNumT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingNumT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		switch (val.Val).(type) {
 		case int64, float64:
@@ -206,7 +206,7 @@ func (t *TypingVoidT) Name() string {
 	return T_VOID
 }
 
-func (t *TypingVoidT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingVoidT) IsCompatibleWith(val TypingCompatVal) bool {
 	// Void is a special case, it means no return value.
 	if val.Val == nil && val.Type == nil {
 		return true
@@ -225,7 +225,7 @@ func (t *TypingAnyListT) Name() string {
 	return T_LIST
 }
 
-func (t *TypingAnyListT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingAnyListT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Type != nil {
 		return *val.Type == RadListT
 	}
@@ -255,7 +255,7 @@ func (t *TypingListT) Name() string {
 	return sb.String()
 }
 
-func (t *TypingListT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingListT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		switch coerced := (val.Val).(type) {
 		case []interface{}:
@@ -295,7 +295,7 @@ func (t *TypingAnyMapT) Name() string {
 	return T_MAP
 }
 
-func (t *TypingAnyMapT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingAnyMapT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Type != nil {
 		return *val.Type == RadMapT
 	}
@@ -317,7 +317,7 @@ func (t *TypingVarArgT) Name() string {
 	return fmt.Sprintf("*%s", t.t.Name())
 }
 
-func (t *TypingVarArgT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingVarArgT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		switch coerced := (val.Val).(type) {
 		case []interface{}:
@@ -351,7 +351,7 @@ func (t *TypingOptionalT) Name() string {
 	return fmt.Sprintf("%s?", t.t.Name())
 }
 
-func (t *TypingOptionalT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingOptionalT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		return t.t.IsCompatibleWith(val)
 	}
@@ -385,7 +385,7 @@ func (t *TypingStrEnumT) Name() string {
 	return sb.String()
 }
 
-func (t *TypingStrEnumT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		strVal, ok := (val.Val).(string)
 		if !ok {
@@ -434,7 +434,7 @@ func (t *TypingUnionT) Name() string {
 	return sb.String()
 }
 
-func (t *TypingUnionT) IsCompatibleWith(val CompatSubject) bool {
+func (t *TypingUnionT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		for _, typ := range t.types {
 			if typ.IsCompatibleWith(val) {

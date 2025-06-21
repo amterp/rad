@@ -373,7 +373,7 @@ func (v RadValue) Accept(visitor *RadTypeVisitor) {
 	visitor.UnhandledTypeError(v)
 }
 
-func (v RadValue) ToCompatSubject() (out rl.CompatSubject) {
+func (v RadValue) ToCompatSubject() (out rl.TypingCompatVal) {
 	if v == VOID_SENTINEL {
 		return rl.NewVoidSubject()
 	}

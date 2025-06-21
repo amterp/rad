@@ -3,12 +3,12 @@ package rl
 import "fmt"
 
 // first check Val, then Type
-type CompatSubject struct {
+type TypingCompatVal struct {
 	Val  interface{} // Specific int64, float64, string, bool
 	Type *RadType
 }
 
-func NewSubject(val interface{}) CompatSubject {
+func NewSubject(val interface{}) TypingCompatVal {
 	switch coerced := val.(type) {
 	case int64:
 		return NewIntSubject(coerced)
@@ -19,77 +19,77 @@ func NewSubject(val interface{}) CompatSubject {
 	case bool:
 		return NewBoolSubject(coerced)
 	default:
-		panic(fmt.Sprintf("Unhandled type for CompatSubject: %v", coerced))
+		panic(fmt.Sprintf("Unhandled type for TypingCompatVal: %v", coerced))
 	}
 }
 
-func NewIntSubject(val int64) CompatSubject {
+func NewIntSubject(val int64) TypingCompatVal {
 	t := RadIntT
-	return CompatSubject{
+	return TypingCompatVal{
 		Val:  val,
 		Type: &t,
 	}
 }
 
-func NewFloatSubject(val float64) CompatSubject {
+func NewFloatSubject(val float64) TypingCompatVal {
 	t := RadFloatT
-	return CompatSubject{
+	return TypingCompatVal{
 		Val:  val,
 		Type: &t,
 	}
 }
 
-func NewStrSubject(val string) CompatSubject {
+func NewStrSubject(val string) TypingCompatVal {
 	t := RadStrT
-	return CompatSubject{
+	return TypingCompatVal{
 		Val:  val,
 		Type: &t,
 	}
 }
 
-func NewBoolSubject(val bool) CompatSubject {
+func NewBoolSubject(val bool) TypingCompatVal {
 	t := RadBoolT
-	return CompatSubject{
+	return TypingCompatVal{
 		Val:  val,
 		Type: &t,
 	}
 }
 
-func NewListSubject() CompatSubject {
+func NewListSubject() TypingCompatVal {
 	t := RadListT
-	return CompatSubject{
+	return TypingCompatVal{
 		Type: &t,
 	}
 }
 
-func NewMapSubject() CompatSubject {
+func NewMapSubject() TypingCompatVal {
 	t := RadMapT
-	return CompatSubject{
+	return TypingCompatVal{
 		Type: &t,
 	}
 }
 
-func NewFnSubject() CompatSubject {
+func NewFnSubject() TypingCompatVal {
 	t := RadFnT
-	return CompatSubject{
+	return TypingCompatVal{
 		Type: &t,
 	}
 }
 
-func NewNullSubject() CompatSubject {
+func NewNullSubject() TypingCompatVal {
 	t := RadNullT
-	return CompatSubject{
+	return TypingCompatVal{
 		Type: &t,
 	}
 }
 
-func NewErrorSubject() CompatSubject {
+func NewErrorSubject() TypingCompatVal {
 	t := RadErrorT
-	return CompatSubject{
+	return TypingCompatVal{
 		Type: &t,
 	}
 }
 
-func NewVoidSubject() CompatSubject {
-	return CompatSubject{}
+func NewVoidSubject() TypingCompatVal {
+	return TypingCompatVal{}
 }
