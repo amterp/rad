@@ -170,32 +170,6 @@ func (t *TypingAnyT) IsCompatibleWith(TypingCompatVal) bool {
 	return true
 }
 
-// TODO REMOVE THIS, UNNECESSARY, FLOAT IS ENOUGH
-type TypingNumT struct{} // var: num i.e. int | float
-
-func NewNumType() *TypingNumT {
-	return &TypingNumT{}
-}
-
-func (t *TypingNumT) Name() string {
-	return T_NUM
-}
-
-func (t *TypingNumT) IsCompatibleWith(val TypingCompatVal) bool {
-	if val.Val != nil {
-		switch (val.Val).(type) {
-		case int64, float64:
-			return true
-		default:
-			return false
-		}
-	}
-	if val.Type != nil {
-		return *val.Type == RadIntT || *val.Type == RadFloatT
-	}
-	return false
-}
-
 type TypingVoidT struct{} // -> void
 
 func NewVoidType() *TypingVoidT {

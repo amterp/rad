@@ -107,8 +107,6 @@ func resolveTyping(node *ts.Node) TypingT {
 				strNodes = append(strNodes, &enumStrNode)
 			}
 			return NewStrEnumType(strNodes...)
-		case K_NUM_TYPE:
-			typing = NewNumType() // TODO remove
 		case K_ANY_TYPE:
 			typing = NewAnyType()
 		case K_FN_TYPE:
