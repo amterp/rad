@@ -13,10 +13,10 @@ Example script (`greet`):
 Greets someone by name, potentially a lot of times!
 ---
 args:
-  name string             # Name of the person to greet.
+  name str                # Name of the person to greet.
   times int = 1           # How many times to greet them.
   shout s bool            # Enable to shout at them!
-  greeting string = "Hi"  # How to greet the person.
+  greeting str    = "Hi"  # How to greet the person.
   
   times range (0, 10]
   greeting enum ["Hi", "Hello", "Hey"]
@@ -38,10 +38,10 @@ Usage:
   greet <name> [times] [shout] [greeting]
 
 Script args:
-      --name string       Name of the person to greet.
+      --name str          Name of the person to greet.
       --times int         How many times to greet them. Range: (0, 10] (default 1)
   -s, --shout             Enable to shout at them!
-      --greeting string   How to greet the person. Valid values: [Hi, Hello, Hey]. (default Hi)
+      --greeting str      How to greet the person. Valid values: [Hi, Hello, Hey]. (default Hi)
 ```
 
 Example invocation:
@@ -139,7 +139,7 @@ Let's see a concrete example script (`commits`):
 
 ```
 args:
-    repo string    # The repo to query. Format: user/project
+    repo str       # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
 
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
