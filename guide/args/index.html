@@ -1175,7 +1175,7 @@ You simply declare what arguments your script accepts, and let Rad take care of 
 <span class="normal">6</span>
 <span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 args:
-    word string
+    word str
     repeats int
 
 for _ in range(repeats):
@@ -1189,7 +1189,7 @@ for _ in range(repeats):
   printwords &lt;word&gt; &lt;repeats&gt;
 
 Script args:
-      --word string
+      --word str
       --repeats int
 </code></pre></div>
 </div>
@@ -1213,8 +1213,8 @@ Script args:
 <span class="normal"> 9</span>
 <span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 args:
-    words string[]                         # Words to join together.
-    joiner j string = &quot;-&quot;                  # Joiner for the words.
+    words str[]                            # Words to join together.
+    joiner j str = &quot;-&quot;                     # Joiner for the words.
     should_capitalize &quot;capitalize&quot; c bool  # If true, capitalize the words.
 
 if should_capitalize:
@@ -1230,23 +1230,23 @@ print(join(words, joiner))
   wordjoin &lt;words&gt; [joiner] [-c, --capitalize]
 
 Script args:
-      --words string,string    Words to join together.
-      -j, --joiner string      Joiner for the words. (default -)
-      -c, --capitalize         If true, capitalize the words.
+      --words str,str       Words to join together.
+      -j, --joiner str      Joiner for the words. (default -)
+      -c, --capitalize      If true, capitalize the words.
 </code></pre></div>
 </div>
 
 <p>Let's break down each declaration to see what's going on here.</p>
 <ol>
 <li>
-<p><code>words string[]  # Words to join together.</code></p>
+<p><code>words str[]  # Words to join together.</code></p>
 <ul>
 <li>We declare an arg <code>words</code> which is a list of strings. Note that <code>int[]</code>, <code>float[]</code> and <code>bool[]</code> can be used for int, float, and bool lists respectively.</li>
 <li>We also define an arg comment to make the usage string include a description of what the argument is.</li>
 </ul>
 </li>
 <li>
-<p><code>joiner j string = "-"  # Joiner for the words.</code></p>
+<p><code>joiner j str = "-"  # Joiner for the words.</code></p>
 <ul>
 <li>We declare a second argument, this one a string called <code>joiner</code>. We also define a shorthand flag <code>j</code>, allowing users to specify the arg with a simple <code>-j</code> flag.</li>
 <li>After that, we define a <strong>default</strong> value <code>-</code> for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.</li>

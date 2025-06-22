@@ -1089,7 +1089,7 @@ However, if the script fails before reaching that step, rollback actions may sti
 and commits it. However, if there's a failure in between the <code>sed</code> and <code>commit</code> steps, then we want to undo earlier steps as a cleanup, in order to
 make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing, leaving no intermediary state changes behind. We accomplish this through <code>errdefer</code> blocks. </p>
 <div class="highlight"><span class="filename">bump.rad</span><pre><span></span><code>args:
-    version string
+    version str
 
 path = &quot;VERSION&quot;
 

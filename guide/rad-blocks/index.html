@@ -1239,7 +1239,7 @@ These allow you to easily and concisely define queries to JSON APIs and what dat
 <p>This concept will become clearer with an example.</p>
 <p>Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about its latest commits.</p>
 <div class="highlight"><span class="filename">File: commits</span><pre><span></span><code>args:
-    repo string    # The repo to query. Format: user/project
+    repo str       # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
 
 url = &quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;
@@ -1269,7 +1269,7 @@ Time                  Author          SHA
 <p>And that's with just a few lines of code! Let's break it down piece by piece.</p>
 <h3 id="arg-block">Arg Block<a class="headerlink" href="#arg-block" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>args:
-    repo string    # The repo to query. Format: user/project
+    repo str       # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
 
 url = &quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;

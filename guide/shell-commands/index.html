@@ -1193,7 +1193,7 @@ to hide the output of commmands and run them silently:</p>
 <h2 id="suppressing-announcements">Suppressing Announcements<a class="headerlink" href="#suppressing-announcements" title="Permanent link">&para;</a></h2>
 <p>By default, whenever you invoke a shell command, Rad will print an 'announcement' to indicate to users what command is being run. For example:</p>
 <div class="highlight"><span class="filename">create.rad</span><pre><span></span><code>args:
-    filename string
+    filename str
 $!`touch {filename}.txt`
 </code></pre></div>
 <p>This short script simply creates a file based on its argument. When invoked, it prints the following output:</p>

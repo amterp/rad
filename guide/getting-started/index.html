@@ -1207,7 +1207,7 @@
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll">args:
-</span><span class="hll">  name string
+</span><span class="hll">  name str
 </span><span class="hll">
 </span><span class="hll">print(&quot;Hello, {name}!&quot;)
 </span></code></pre></div></td></tr></table></div>
@@ -1232,7 +1232,7 @@
   hello &lt;name&gt;
 
 Script args:
-      --name string
+      --name str
 </code></pre></div>
 </div>
 
@@ -1251,7 +1251,7 @@ Script args:
 </span><span class="hll">Prints a polite greeting using an input name.
 </span><span class="hll">---
 </span>args:
-  name string
+  name str
 
 print(&quot;Hello, {name}!&quot;)
 </code></pre></div></td></tr></table></div>
@@ -1277,7 +1277,7 @@ They allow you to write a description for your script in between two <code>---</
 Prints a polite greeting using an input name.
 ---
 args:
-<span class="hll">  name string # The name of someone to greet.
+<span class="hll">  name str # The name of someone to greet.
 </span>
 print(&quot;Hello, {name}!&quot;)
 </code></pre></div></td></tr></table></div>
@@ -1287,7 +1287,7 @@ print(&quot;Hello, {name}!&quot;)
 <code>#</code> comments are special and <strong>do get passed</strong> to Rad's parser and can affect script behavior (namely in this case, adding information to the script usage string). </p>
 <p>Standard code comments in Rad use <code>//</code>, similar to Java or C/C++, and don't impact script behavior.</p>
 <p>You can use code comments on your arg comments, if you so choose e.g.</p>
-<div class="highlight"><pre><span></span><code>name string # A name.  // todo make this more descriptive
+<div class="highlight"><pre><span></span><code>name str # A name.  // todo make this more descriptive
 </code></pre></div>
 </div>
 <p>Now, when someone reads the script, it's pretty clear what the script does and what the expected arguments are.</p>
@@ -1301,7 +1301,7 @@ Usage:
   hello &lt;name&gt;
 
 Script args:
-<span class="hll">      --name string   The name of someone to greet.
+<span class="hll">      --name str   The name of someone to greet.
 </span></code></pre></div>
 </div>
 
@@ -1321,7 +1321,7 @@ Script args:
 Prints a polite greeting using an input name.
 ---
 args:
-  name string # The name of someone to greet.
+  name str # The name of someone to greet.
 
 print(&quot;Hello, {name}!&quot;)
 </code></pre></div></td></tr></table></div>

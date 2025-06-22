@@ -1604,6 +1604,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get_env" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_env
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_rad_home" class="md-nav__link">
     <span class="md-ellipsis">
       get_rad_home
@@ -2700,6 +2709,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get_env" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_env
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_rad_home" class="md-nav__link">
     <span class="md-ellipsis">
       get_rad_home
@@ -2839,7 +2857,7 @@
 <h2 id="how-to-read-this-document">How to Read This Document<a class="headerlink" href="#how-to-read-this-document" title="Permanent link">&para;</a></h2>
 <h3 id="function-signatures">Function Signatures<a class="headerlink" href="#function-signatures" title="Permanent link">&para;</a></h3>
 <p>You'll see notation like this for function signatures (below are not real functions in Rad; just examples):</p>
-<div class="highlight"><pre><span></span><code>greet(name: string, times: int = 10) -&gt; string
+<div class="highlight"><pre><span></span><code>greet(name: str, times: int = 10) -&gt; string
 </code></pre></div>
 <p>This means the function <code>greet</code> takes one required string argument <code>name</code>, and an optional int argument <code>times</code> which
 defaults to 10 if not specified. It returns a string.</p>
@@ -3090,7 +3108,54 @@ filter(map, fn(k, v) -&gt; bool) -&gt; map
 <h2 id="input">Input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h2>
 <h3 id="input_1">input<a class="headerlink" href="#input_1" title="Permanent link">&para;</a></h3>
 <p>Get a line of text input from the user.</p>
-<div class="highlight"><pre><span></span><code>input(prompt string?, default=string?, hint=string?) -&gt; string
+<div class="highlight"><pre><span></span><code>input(prompt string?, default=string?, hint=string?, secret=bool?) -&gt; string
+</code></pre></div>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prompt</code></td>
+<td><code>string</code></td>
+<td>The text prompt to display to the user.</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td><code>string</code></td>
+<td>Default value if the user doesn't enter anything.</td>
+</tr>
+<tr>
+<td><code>hint</code></td>
+<td><code>string</code></td>
+<td>Placeholder text shown in the input field. Has no impact if <code>secret</code> enabled.</td>
+</tr>
+<tr>
+<td><code>secret</code></td>
+<td><code>bool</code></td>
+<td>If true, hides the input (useful for passwords).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Return Values</strong></p>
+<p>Returns the user's input as a string. If the user doesn't enter anything, returns the default value.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight"><pre><span></span><code>// Basic input
+name = input(&quot;What&#39;s your name? &quot;)
+
+// With default value
+color = input(&quot;Favorite color? &quot;, default=&quot;blue&quot;)
+
+// With hint
+email = input(&quot;Email address: &quot;, hint=&quot;example@domain.com&quot;)
+
+// Password input
+password = input(&quot;Enter password: &quot;, secret=true)
 </code></pre></div>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
 <p>Get a boolean confirmation from the user.</p>
@@ -3462,6 +3527,37 @@ exit.</p>
 </ul>
 </li>
 </ul>
+<h3 id="get_env">get_env<a class="headerlink" href="#get_env" title="Permanent link">&para;</a></h3>
+<p>Retrieves the value of an environment variable.</p>
+<div class="highlight"><pre><span></span><code>get_env(name: string) -&gt; string
+</code></pre></div>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>The name of the environment variable.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Return Values</strong></p>
+<p>Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty
+string.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight"><pre><span></span><code>// Get an environment variable
+home_dir = get_env(&quot;HOME&quot;)
+
+// Use with &#39;or&#39; operator to provide a default value
+api_key = get_env(&quot;API_KEY&quot;) or &quot;default_key&quot;
+</code></pre></div>
 <h3 id="get_rad_home">get_rad_home<a class="headerlink" href="#get_rad_home" title="Permanent link">&para;</a></h3>
 <p>Returns rad's home directory.</p>
 <div class="highlight"><pre><span></span><code>get_rad_home() -&gt; string

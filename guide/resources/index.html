@@ -1119,7 +1119,7 @@ print(&quot;We&#39;ll need {output}!&quot;)
 <p>You may see some similarity here to what we did with <a href="#pick_kv"><code>pick_kv</code></a>. We're defining two options: one which can get matched by either <code>gl</code> or <code>lab</code>, and one which gets matched by <code>gh</code> or <code>hub</code>. In the first case, if chosen, <code>pick_from_resource</code> will return <em>two</em> values: <code>gitlab.com</code> and <code>GitLab</code>. Similarly it will return <code>github.com</code> and <code>GitHub</code> for the latter.</p>
 <p>Let's create an Rad script to use this resource:</p>
 <div class="highlight"><span class="filename">example.rad</span><pre><span></span><code>args:
-    website string = &quot;&quot;
+    website str = &quot;&quot;
 
 url, name = pick_from_resource(&quot;./resources/websites.json&quot;, website)
 print(&quot;url: {url}, name: {name}&quot;)
