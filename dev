@@ -24,7 +24,7 @@ if release or push or validate:
     $!`make all`
     $!`golines -w . -m 120`
 
-if dumps:
+if dumps or validate:
     $!`cd ./rts/test/dumps && ./test_dumps.rad`
 
 if docs:

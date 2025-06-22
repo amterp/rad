@@ -56,31 +56,68 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 
 			seen := make(map[string]bool)
 
+			params := fn.Typing.Params
+			paramCount := len(params)
+			// handle positional and variadic args
 			for idx, arg := range f.args {
-				if idx >= len(fn.Typing.Params) {
-					i.errorf(f.callNode,
-						"Expected at most %d args, but was invoked with %d", len(fn.Typing.Params), len(f.args))
+				// if we've consumed all fixed params
+				if idx >= paramCount {
+					// check if last param is variadic
+					if paramCount > 0 && params[paramCount-1].IsVariadic {
+						varArg := params[paramCount-1]
+						// collect all remaining args into a slice
+						radList := NewRadList()
+						for j := paramCount - 1; j < len(f.args); j++ {
+							elem := f.args[j].value
+							fn.typeCheck(i, varArg.Type, arg.node, elem)
+							radList.Append(elem)
+						}
+						i.env.SetVar(varArg.Name, newRadValueList(radList))
+						seen[varArg.Name] = true
+						break
+					} else {
+						i.errorf(f.callNode,
+							"Expected at most %d args, but was invoked with %d", paramCount, len(f.args))
+					}
 				}
 
-				param := fn.Typing.Params[idx]
+				param := params[idx]
+
+				if param.IsVariadic {
+					radList := NewRadList()
+
+					for j := idx; j < len(f.args); j++ {
+						elem := f.args[j].value
+						fn.typeCheck(i, param.Type, f.args[j].node, elem)
+						radList.Append(elem)
+					}
+
+					i.env.SetVar(param.Name, newRadValueList(radList))
+					seen[param.Name] = true
+					break
+				}
+
 				if param.NamedOnly {
 					i.errorf(arg.node, "Too many positional args, remaining args are named-only.")
 				}
 
+				// normal type check
 				if param.Type != nil {
 					fn.typeCheck(f.i, param.Type, arg.node, arg.value)
 				}
+
 				seen[param.Name] = true
 				i.env.SetVar(param.Name, arg.value)
 			}
 
+			// named args (unchanged)
 			byName := fn.Typing.ByName()
 
 			names := make([]string, 0, len(f.namedArgs))
 			for name := range f.namedArgs {
 				names = append(names, name)
 			}
-			sort.Strings(names) // ascending lexicographic order
+			sort.Strings(names)
 
 			for _, name := range names {
 				arg := f.namedArgs[name]
@@ -107,11 +144,9 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 				i.env.SetVar(param.Name, arg.value)
 			}
 
-			// check for missing required args, or define optional/default args
-			for _, param := range fn.Typing.Params {
-				_, seenParam := seen[param.Name]
-
-				if seenParam {
+			// check for missing required args, handle defaults or null
+			for _, param := range params {
+				if seen[param.Name] {
 					continue
 				}
 
@@ -126,6 +161,11 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 
 				if param.IsOptional || (param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject())) {
 					i.env.SetVar(param.Name, RAD_NULL_VAL)
+					continue
+				}
+
+				if param.IsVariadic {
+					i.env.SetVar(param.Name, newRadValueList(NewRadList()))
 					continue
 				}
 

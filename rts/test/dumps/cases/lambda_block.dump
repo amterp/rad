@@ -56,7 +56,7 @@ B: [ 32,  69] PS: [2,  6] PE: [4, 14]                   delegate: unary_expr
 B: [ 32,  69] PS: [2,  6] PE: [4, 14]                     delegate: fn_lambda
 B: [ 32,  34] PS: [2,  6] PE: [2,  8]                       keyword: fn `fn`
 B: [ 34,  35] PS: [2,  8] PE: [2,  9]                       ( `(`
-B: [ 35,  36] PS: [2,  9] PE: [2, 10]                       param: fn_param
+B: [ 35,  36] PS: [2,  9] PE: [2, 10]                       normal_param: normal_param
 B: [ 35,  36] PS: [2,  9] PE: [2, 10]                         name: identifier `x`
 B: [ 36,  37] PS: [2, 10] PE: [2, 11]                       ) `)`
 B: [ 37,  38] PS: [2, 11] PE: [2, 12]                       block_colon: : `:`
@@ -108,10 +108,10 @@ B: [ 76, 102] PS: [5,  6] PE: [6, 16]                   delegate: unary_expr
 B: [ 76, 102] PS: [5,  6] PE: [6, 16]                     delegate: fn_lambda
 B: [ 76,  78] PS: [5,  6] PE: [5,  8]                       keyword: fn `fn`
 B: [ 78,  79] PS: [5,  8] PE: [5,  9]                       ( `(`
-B: [ 79,  80] PS: [5,  9] PE: [5, 10]                       param: fn_param
+B: [ 79,  80] PS: [5,  9] PE: [5, 10]                       normal_param: normal_param
 B: [ 79,  80] PS: [5,  9] PE: [5, 10]                         name: identifier `x`
 B: [ 80,  81] PS: [5, 10] PE: [5, 11]                       , `,`
-B: [ 82,  83] PS: [5, 12] PE: [5, 13]                       param: fn_param
+B: [ 82,  83] PS: [5, 12] PE: [5, 13]                       normal_param: normal_param
 B: [ 82,  83] PS: [5, 12] PE: [5, 13]                         name: identifier `y`
 B: [ 83,  84] PS: [5, 13] PE: [5, 14]                       ) `)`
 B: [ 84,  85] PS: [5, 14] PE: [5, 15]                       block_colon: : `:`

@@ -30,7 +30,7 @@ B: [ 8, 14] PS: [0,  8] PE: [0, 14]                                         dele
 B: [ 8, 10] PS: [0,  8] PE: [0, 10]                                           keyword: fn `fn`
 B: [10, 11] PS: [0, 10] PE: [0, 11]                                           ( `(`
 B: [11, 12] PS: [0, 11] PE: [0, 12]                                           ) `)`
-B: [13, 14] PS: [0, 13] PE: [0, 14]                                           expr: expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                           stmt: expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                             delegate: ternary_expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                               delegate: or_expr
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                                 delegate: and_expr
@@ -77,7 +77,7 @@ B: [27, 38] PS: [1,  8] PE: [1, 19]                                         dele
 B: [27, 29] PS: [1,  8] PE: [1, 10]                                           keyword: fn `fn`
 B: [29, 30] PS: [1, 10] PE: [1, 11]                                           ( `(`
 B: [30, 31] PS: [1, 11] PE: [1, 12]                                           ) `)`
-B: [32, 38] PS: [1, 13] PE: [1, 19]                                           expr: expr
+B: [32, 38] PS: [1, 13] PE: [1, 19]                                           stmt: expr
 B: [32, 38] PS: [1, 13] PE: [1, 19]                                             delegate: ternary_expr
 B: [32, 38] PS: [1, 13] PE: [1, 19]                                               delegate: or_expr
 B: [32, 38] PS: [1, 13] PE: [1, 19]                                                 delegate: and_expr

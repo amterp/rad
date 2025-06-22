@@ -189,7 +189,7 @@ func (t *TypingVoidT) IsCompatibleWith(val TypingCompatVal) bool {
 }
 
 // Collections
-type TypingAnyListT struct{} // var: list i.e. [*any]
+type TypingAnyListT struct{} // var: list i.e. any[]
 
 func NewAnyListType() *TypingAnyListT {
 	return &TypingAnyListT{}
@@ -206,17 +206,54 @@ func (t *TypingAnyListT) IsCompatibleWith(val TypingCompatVal) bool {
 	return false
 }
 
-type TypingListT struct { // var: [*int] OR [str, int] i.e. tuple
-	types []TypingT
+type TypingListT struct { // var: int[]
+	elem TypingT
 }
 
-func NewListType(types ...TypingT) *TypingListT {
-	return &TypingListT{
-		types: types,
-	}
+func NewListType(elem TypingT) *TypingListT {
+	return &TypingListT{elem: elem}
 }
 
 func (t *TypingListT) Name() string {
+	return t.elem.Name() + "[]"
+}
+
+func (t *TypingListT) IsCompatibleWith(val TypingCompatVal) bool {
+	// 1. Value‐level check
+	if val.Val != nil {
+		actualList, ok := val.Val.([]interface{})
+		if !ok {
+			return false
+		}
+
+		// every element must match t.elem
+		for _, actualElem := range actualList {
+			if !t.elem.IsCompatibleWith(NewSubject(actualElem)) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	// 2. Type‐level only: accept any list
+	if val.Type != nil {
+		return *val.Type == RadListT
+	}
+
+	// 3. no info
+	return false // todo or should we say true?
+}
+
+type TypingTupleT struct { // var: [int, float]
+	types []TypingT
+}
+
+func NewTupleType(types ...TypingT) *TypingTupleT {
+	return &TypingTupleT{types: types}
+}
+
+func (t *TypingTupleT) Name() string {
 	var sb strings.Builder
 	sb.WriteString("[")
 	for i, typ := range t.types {
@@ -229,67 +266,32 @@ func (t *TypingListT) Name() string {
 	return sb.String()
 }
 
-func (t *TypingListT) IsCompatibleWith(val TypingCompatVal) bool {
-	// 1. We have a *value* at runtime
+func (t *TypingTupleT) IsCompatibleWith(val TypingCompatVal) bool {
+	// 1. Value‐level check
 	if val.Val != nil {
-		slice, ok := val.Val.([]interface{})
+		actualList, ok := val.Val.([]interface{})
 		if !ok {
 			return false
 		}
 
-		// Empty list type "[]" – it only matches an empty runtime slice
-		if len(t.types) == 0 {
-			return len(slice) == 0
-		}
-
-		// Detect whether the last declared element is a var‑arg
-		lastIdx := len(t.types) - 1
-		if varArg, ok := t.types[lastIdx].(*TypingVarArgT); ok {
-			// Variadic list handling
-			// Require at least the non‑variadic prefix
-			if len(slice) < lastIdx {
-				return false
-			}
-
-			// Fixed‑prefix check
-			for i := 0; i < lastIdx; i++ {
-				if !t.types[i].IsCompatibleWith(NewSubject(slice[i])) {
-					return false
-				}
-			}
-
-			// Var‑arg tail check
-			for i := lastIdx; i < len(slice); i++ {
-				if !varArg.t.IsCompatibleWith(NewSubject(slice[i])) {
-					return false
-				}
-			}
-			return true
-		}
-
-		// Fixed‑length tuple handling
-		if len(slice) != len(t.types) {
+		if len(actualList) != len(t.types) {
 			return false
 		}
 
-		for i, elem := range slice {
-			if !t.types[i].IsCompatibleWith(NewSubject(elem)) {
+		for i, actualElem := range actualList {
+			if !t.types[i].IsCompatibleWith(NewSubject(actualElem)) {
 				return false
 			}
 		}
-
 		return true
 	}
 
-	// 2. We only know the *RadType* at runtime
+	// 2. Type‐level only: accept any list
 	if val.Type != nil {
-		// When the runtime system only tells us "it’s a list", we do a best
-		// effort: we accept the value because the element‑level information
-		// is unavailable at runtime.
 		return *val.Type == RadListT
 	}
 
-	// 3. No information to work with
+	// 3. no info
 	return false
 }
 
@@ -600,6 +602,7 @@ func NewMapNamedKey(name *ts.Node, isOptional bool) MapNamedKey {
 type TypingFnParam struct {
 	Name       string
 	Type       *TypingT
+	IsVariadic bool // vararg
 	NamedOnly  bool // if true, can only be passed as a named arg
 	IsOptional bool
 	Default    *ts.Node // if no default, this is nil

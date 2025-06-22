@@ -128,10 +128,10 @@ B: [181, 184] PS: [12,  8] PE: [12, 11]         map `map`
 B: [185, 199] PS: [12, 12] PE: [12, 26]         lambda: fn_lambda
 B: [185, 187] PS: [12, 12] PE: [12, 14]           keyword: fn `fn`
 B: [187, 188] PS: [12, 14] PE: [12, 15]           ( `(`
-B: [188, 189] PS: [12, 15] PE: [12, 16]           param: fn_param
+B: [188, 189] PS: [12, 15] PE: [12, 16]           normal_param: normal_param
 B: [188, 189] PS: [12, 15] PE: [12, 16]             name: identifier `v`
 B: [189, 190] PS: [12, 16] PE: [12, 17]           ) `)`
-B: [191, 199] PS: [12, 18] PE: [12, 26]           expr: expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]           stmt: expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]             delegate: ternary_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]               delegate: or_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                 delegate: and_expr

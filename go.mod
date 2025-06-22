@@ -24,7 +24,7 @@ require (
 )
 
 require (
-	github.com/amterp/tree-sitter-rad v0.1.3 // indirect
+	github.com/amterp/tree-sitter-rad v0.1.4 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/catppuccin/go v0.2.0 // indirect

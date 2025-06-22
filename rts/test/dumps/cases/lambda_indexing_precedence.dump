@@ -15,10 +15,10 @@ B: [ 0, 22] PS: [0,  0] PE: [0, 22]                 delegate: unary_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]                   delegate: fn_lambda
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]                     keyword: fn `fn`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                     ( `(`
-B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     param: fn_param
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     normal_param: normal_param
 B: [ 3,  4] PS: [0,  3] PE: [0,  4]                       name: identifier `n`
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     ) `)`
-B: [ 6, 22] PS: [0,  6] PE: [0, 22]                     expr: expr
+B: [ 6, 22] PS: [0,  6] PE: [0, 22]                     stmt: expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                       delegate: ternary_expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                         delegate: or_expr
 B: [ 6, 22] PS: [0,  6] PE: [0, 22]                           delegate: and_expr

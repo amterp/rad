@@ -1,0 +1,41 @@
+=====
+Typing list
+=====
+fn foo(x: int[]):
+    pass
+fn bar(x: int|float[]?):
+    pass
+=====
+B: [ 0, 61] PS: [0,  0] PE: [4,  0] source_file
+B: [ 0, 26] PS: [0,  0] PE: [1,  8]   fn_named
+B: [ 0,  2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
+B: [ 3,  6] PS: [0,  3] PE: [0,  6]     name: identifier `foo`
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]     ( `(`
+B: [ 7, 15] PS: [0,  7] PE: [0, 15]     normal_param: normal_param
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]       name: identifier `x`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]       : `:`
+B: [10, 15] PS: [0, 10] PE: [0, 15]       type: fn_param_or_return_type
+B: [10, 15] PS: [0, 10] PE: [0, 15]         leaf_type: fn_leaf_type
+B: [10, 13] PS: [0, 10] PE: [0, 13]           type: int_type `int`
+B: [13, 15] PS: [0, 13] PE: [0, 15]           list: [] `[]`
+B: [15, 16] PS: [0, 15] PE: [0, 16]     ) `)`
+B: [16, 17] PS: [0, 16] PE: [0, 17]     block_colon: : `:`
+B: [22, 26] PS: [1,  4] PE: [1,  8]     stmt: pass_stmt `pass`
+B: [27, 60] PS: [2,  0] PE: [3,  8]   fn_named
+B: [27, 29] PS: [2,  0] PE: [2,  2]     keyword: fn `fn`
+B: [30, 33] PS: [2,  3] PE: [2,  6]     name: identifier `bar`
+B: [33, 34] PS: [2,  6] PE: [2,  7]     ( `(`
+B: [34, 49] PS: [2,  7] PE: [2, 22]     normal_param: normal_param
+B: [34, 35] PS: [2,  7] PE: [2,  8]       name: identifier `x`
+B: [35, 36] PS: [2,  8] PE: [2,  9]       : `:`
+B: [37, 49] PS: [2, 10] PE: [2, 22]       type: fn_param_or_return_type
+B: [37, 40] PS: [2, 10] PE: [2, 13]         leaf_type: fn_leaf_type
+B: [37, 40] PS: [2, 10] PE: [2, 13]           type: int_type `int`
+B: [40, 41] PS: [2, 13] PE: [2, 14]         | `|`
+B: [41, 49] PS: [2, 14] PE: [2, 22]         leaf_type: fn_leaf_type
+B: [41, 46] PS: [2, 14] PE: [2, 19]           type: float_type `float`
+B: [46, 48] PS: [2, 19] PE: [2, 21]           list: [] `[]`
+B: [48, 49] PS: [2, 21] PE: [2, 22]           optional: ? `?`
+B: [49, 50] PS: [2, 22] PE: [2, 23]     ) `)`
+B: [50, 51] PS: [2, 23] PE: [2, 24]     block_colon: : `:`
+B: [56, 60] PS: [3,  4] PE: [3,  8]     stmt: pass_stmt `pass`

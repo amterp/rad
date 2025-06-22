@@ -19,7 +19,7 @@ B: [  8,   9] PS: [0,  8] PE: [0,  9]     ( `(`
 B: [  9,  10] PS: [0,  9] PE: [0, 10]     ) `)`
 B: [ 11,  13] PS: [0, 11] PE: [0, 13]     -> `->`
 B: [ 14,  18] PS: [0, 14] PE: [0, 18]     return_type: void_type `void`
-B: [ 19,  30] PS: [0, 19] PE: [0, 30]     expr: expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]     stmt: expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]       delegate: ternary_expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]         delegate: or_expr
 B: [ 19,  30] PS: [0, 19] PE: [0, 30]           delegate: and_expr
@@ -53,14 +53,14 @@ B: [ 31,  64] PS: [1,  0] PE: [1, 33]   fn_named
 B: [ 31,  33] PS: [1,  0] PE: [1,  2]     keyword: fn `fn`
 B: [ 34,  39] PS: [1,  3] PE: [1,  8]     name: identifier `myfoo`
 B: [ 39,  40] PS: [1,  8] PE: [1,  9]     ( `(`
-B: [ 40,  46] PS: [1,  9] PE: [1, 15]     param: fn_param
+B: [ 40,  46] PS: [1,  9] PE: [1, 15]     normal_param: normal_param
 B: [ 40,  41] PS: [1,  9] PE: [1, 10]       name: identifier `a`
 B: [ 41,  42] PS: [1, 10] PE: [1, 11]       : `:`
 B: [ 43,  46] PS: [1, 12] PE: [1, 15]       type: fn_param_or_return_type
 B: [ 43,  46] PS: [1, 12] PE: [1, 15]         leaf_type: fn_leaf_type
-B: [ 43,  46] PS: [1, 12] PE: [1, 15]           string_type `str`
+B: [ 43,  46] PS: [1, 12] PE: [1, 15]           type: string_type `str`
 B: [ 46,  47] PS: [1, 15] PE: [1, 16]     ) `)`
-B: [ 48,  64] PS: [1, 17] PE: [1, 33]     expr: expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]     stmt: expr
 B: [ 48,  64] PS: [1, 17] PE: [1, 33]       delegate: ternary_expr
 B: [ 48,  64] PS: [1, 17] PE: [1, 33]         delegate: or_expr
 B: [ 48,  64] PS: [1, 17] PE: [1, 33]           delegate: and_expr
@@ -111,8 +111,8 @@ B: [ 74,  75] PS: [2,  9] PE: [2, 10]     ) `)`
 B: [ 76,  78] PS: [2, 11] PE: [2, 13]     -> `->`
 B: [ 79,  82] PS: [2, 14] PE: [2, 17]     return_type: fn_param_or_return_type
 B: [ 79,  82] PS: [2, 14] PE: [2, 17]       leaf_type: fn_leaf_type
-B: [ 79,  82] PS: [2, 14] PE: [2, 17]         int_type `int`
-B: [ 83,  88] PS: [2, 18] PE: [2, 23]     expr: expr
+B: [ 79,  82] PS: [2, 14] PE: [2, 17]         type: int_type `int`
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]     stmt: expr
 B: [ 83,  88] PS: [2, 18] PE: [2, 23]       delegate: ternary_expr
 B: [ 83,  88] PS: [2, 18] PE: [2, 23]         delegate: or_expr
 B: [ 83,  88] PS: [2, 18] PE: [2, 23]           delegate: and_expr
@@ -136,17 +136,17 @@ B: [ 89, 130] PS: [3,  0] PE: [4, 12]   fn_named
 B: [ 89,  91] PS: [3,  0] PE: [3,  2]     keyword: fn `fn`
 B: [ 92,  97] PS: [3,  3] PE: [3,  8]     name: identifier `myfoo`
 B: [ 97,  98] PS: [3,  8] PE: [3,  9]     ( `(`
-B: [ 98, 106] PS: [3,  9] PE: [3, 17]     param: fn_param
+B: [ 98, 106] PS: [3,  9] PE: [3, 17]     normal_param: normal_param
 B: [ 98,  99] PS: [3,  9] PE: [3, 10]       name: identifier `a`
 B: [ 99, 100] PS: [3, 10] PE: [3, 11]       : `:`
 B: [101, 106] PS: [3, 12] PE: [3, 17]       type: fn_param_or_return_type
 B: [101, 106] PS: [3, 12] PE: [3, 17]         leaf_type: fn_leaf_type
-B: [101, 106] PS: [3, 12] PE: [3, 17]           float_type `float`
+B: [101, 106] PS: [3, 12] PE: [3, 17]           type: float_type `float`
 B: [106, 107] PS: [3, 17] PE: [3, 18]     ) `)`
 B: [108, 110] PS: [3, 19] PE: [3, 21]     -> `->`
 B: [111, 116] PS: [3, 22] PE: [3, 27]     return_type: fn_param_or_return_type
 B: [111, 116] PS: [3, 22] PE: [3, 27]       leaf_type: fn_leaf_type
-B: [111, 116] PS: [3, 22] PE: [3, 27]         float_type `float`
+B: [111, 116] PS: [3, 22] PE: [3, 27]         type: float_type `float`
 B: [116, 117] PS: [3, 27] PE: [3, 28]     block_colon: : `:`
 B: [122, 130] PS: [4,  4] PE: [4, 12]     stmt: return_stmt
 B: [122, 128] PS: [4,  4] PE: [4, 10]       return `return`
@@ -166,23 +166,23 @@ B: [131, 182] PS: [5,  0] PE: [6, 12]   fn_named
 B: [131, 133] PS: [5,  0] PE: [5,  2]     keyword: fn `fn`
 B: [134, 139] PS: [5,  3] PE: [5,  8]     name: identifier `myfoo`
 B: [139, 140] PS: [5,  8] PE: [5,  9]     ( `(`
-B: [140, 148] PS: [5,  9] PE: [5, 17]     param: fn_param
+B: [140, 148] PS: [5,  9] PE: [5, 17]     normal_param: normal_param
 B: [140, 141] PS: [5,  9] PE: [5, 10]       name: identifier `a`
 B: [141, 142] PS: [5, 10] PE: [5, 11]       : `:`
 B: [143, 148] PS: [5, 12] PE: [5, 17]       type: fn_param_or_return_type
 B: [143, 148] PS: [5, 12] PE: [5, 17]         leaf_type: fn_leaf_type
-B: [143, 148] PS: [5, 12] PE: [5, 17]           float_type `float`
+B: [143, 148] PS: [5, 12] PE: [5, 17]           type: float_type `float`
 B: [148, 149] PS: [5, 17] PE: [5, 18]     ) `)`
 B: [150, 152] PS: [5, 19] PE: [5, 21]     -> `->`
 B: [153, 168] PS: [5, 22] PE: [5, 37]     return_type: fn_param_or_return_type
 B: [153, 158] PS: [5, 22] PE: [5, 27]       leaf_type: fn_leaf_type
-B: [153, 158] PS: [5, 22] PE: [5, 27]         float_type `float`
+B: [153, 158] PS: [5, 22] PE: [5, 27]         type: float_type `float`
 B: [158, 159] PS: [5, 27] PE: [5, 28]       | `|`
 B: [159, 162] PS: [5, 28] PE: [5, 31]       leaf_type: fn_leaf_type
-B: [159, 162] PS: [5, 28] PE: [5, 31]         int_type `int`
+B: [159, 162] PS: [5, 28] PE: [5, 31]         type: int_type `int`
 B: [162, 163] PS: [5, 31] PE: [5, 32]       | `|`
 B: [163, 168] PS: [5, 32] PE: [5, 37]       leaf_type: fn_leaf_type
-B: [163, 168] PS: [5, 32] PE: [5, 37]         error_type `error`
+B: [163, 168] PS: [5, 32] PE: [5, 37]         type: error_type `error`
 B: [168, 169] PS: [5, 37] PE: [5, 38]     block_colon: : `:`
 B: [174, 182] PS: [6,  4] PE: [6, 12]     stmt: return_stmt
 B: [174, 180] PS: [6,  4] PE: [6, 10]       return `return`
@@ -202,18 +202,18 @@ B: [183, 226] PS: [7,  0] PE: [8, 12]   fn_named
 B: [183, 185] PS: [7,  0] PE: [7,  2]     keyword: fn `fn`
 B: [186, 191] PS: [7,  3] PE: [7,  8]     name: identifier `myfoo`
 B: [191, 192] PS: [7,  8] PE: [7,  9]     ( `(`
-B: [192, 201] PS: [7,  9] PE: [7, 18]     param: fn_param
+B: [192, 201] PS: [7,  9] PE: [7, 18]     normal_param: normal_param
 B: [192, 193] PS: [7,  9] PE: [7, 10]       name: identifier `a`
 B: [193, 194] PS: [7, 10] PE: [7, 11]       : `:`
 B: [195, 201] PS: [7, 12] PE: [7, 18]       type: fn_param_or_return_type
 B: [195, 201] PS: [7, 12] PE: [7, 18]         leaf_type: fn_leaf_type
-B: [195, 200] PS: [7, 12] PE: [7, 17]           float_type `float`
+B: [195, 200] PS: [7, 12] PE: [7, 17]           type: float_type `float`
 B: [200, 201] PS: [7, 17] PE: [7, 18]           optional: ? `?`
 B: [201, 202] PS: [7, 18] PE: [7, 19]     ) `)`
 B: [203, 205] PS: [7, 20] PE: [7, 22]     -> `->`
 B: [206, 212] PS: [7, 23] PE: [7, 29]     return_type: fn_param_or_return_type
 B: [206, 212] PS: [7, 23] PE: [7, 29]       leaf_type: fn_leaf_type
-B: [206, 211] PS: [7, 23] PE: [7, 28]         error_type `error`
+B: [206, 211] PS: [7, 23] PE: [7, 28]         type: error_type `error`
 B: [211, 212] PS: [7, 28] PE: [7, 29]         optional: ? `?`
 B: [212, 213] PS: [7, 29] PE: [7, 30]     block_colon: : `:`
 B: [218, 226] PS: [8,  4] PE: [8, 12]     stmt: return_stmt

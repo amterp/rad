@@ -97,10 +97,10 @@ args:
     intArg int
     floatArg float
     boolArg bool
-    stringArrayArg [*str]
-    intArrayArg [*int]
-    floatArrayArg [*float]
-    boolArrayArg [*bool]
+    stringArrayArg str[]
+    intArrayArg int[]
+    floatArrayArg float[]
+    boolArrayArg bool[]
 print(upper(stringArg))
 print(intArg + 1)
 print(floatArg + 1.1)
@@ -131,10 +131,10 @@ args:
 	intArg int = 1
 	floatArg float = 1.1
 	boolArg bool = true
-	stringArrayArg [*str] = ["bob", "charlie"]
-	intArrayArg [*int] = [2, 3]
-	floatArrayArg [*float] = [2.1, 3.1]
-	boolArrayArg [*bool] = [true, false]
+	stringArrayArg str[] = ["bob", "charlie"]
+	intArrayArg int[] = [2, 3]
+	floatArrayArg float[] = [2.1, 3.1]
+	boolArrayArg bool[] = [true, false]
 print(upper(stringArg))
 print(intArg + 1)
 print(floatArg + 1.1)
@@ -342,10 +342,10 @@ args:
 	intArg int = 1 # An int.
 	floatArg float = 1.1
 	boolArg bool = true
-	stringArrayArg [*str] = ["bob", "charlie"]
-	intArrayArg [*int] = [2, 3]
-	floatArrayArg [*float] = [2.1, 3.1]
-	boolArrayArg [*bool] = [true, false]
+	stringArrayArg str[] = ["bob", "charlie"]
+	intArrayArg int[] = [2, 3]
+	floatArrayArg float[] = [2.1, 3.1]
+	boolArrayArg bool[] = [true, false]
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:

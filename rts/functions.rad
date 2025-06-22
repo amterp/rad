@@ -1,13 +1,13 @@
-fn print(_items: *any, sep: str = " ", end: str = "\n") -> void:
+fn print(*_items: any, sep: str = " ", end: str = "\n") -> void:
     pass
 
-fn print_err(_items: *any, sep: str = " ", end: str = "\n") -> void:
+fn print_err(*_items: any, sep: str = " ", end: str = "\n") -> void:
     pass
 
 fn pprint(_item: any) -> void:
     pass
 
-fn debug(_items: *any, sep: str = " ", end: str = "\n") -> void:
+fn debug(*_items: any, sep: str = " ", end: str = "\n") -> void:
     pass
 
 fn exit(_code: int = 0) -> void:
@@ -65,25 +65,25 @@ fn starts_with(_val: str, _start: str) -> bool:
 fn ends_with(_val: str, _end: str) -> bool:
     pass
 
-fn pick(_options: [*str], _filter: str?, *, prompt: str = "Pick an option") -> str:
+fn pick(_options: str[], _filter: str?, *, prompt: str = "Pick an option") -> str:
     pass
 
-fn pick_kv(keys: [*str], values: [*any], _filter: str?, *, prompt: str = "Pick an option") -> any:
+fn pick_kv(keys: str[], values: any[], _filter: str?, *, prompt: str = "Pick an option") -> any:
     pass
 
 fn pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any:
     pass 
 
-fn keys(_map: map) -> [*any]:
+fn keys(_map: map) -> any[]:
     pass
 
-fn values(_map: map) -> [*any]:
+fn values(_map: map) -> any[]:
     pass
 
 fn truncate(_str: str, _len: int) -> str:
     pass
 
-fn unique(_list: [*any]) -> [*any]:
+fn unique(_list: any[]) -> any[]:
     pass
 
 fn confirm(prompt: str?) -> bool:
@@ -98,7 +98,7 @@ fn parse_int(_str: str) -> int|error:
 fn parse_float(_str: str) -> float|error:
     pass
 
-fn abs(_num: num) -> num:
+fn abs(_num: float) -> float:
     pass
 
 fn error(_msg: str) -> error:
@@ -115,17 +115,17 @@ fn get_path(_path: str) ->
 fn get_env(_var: str) -> str:
     pass
 
-fn find_paths(_path: str, *, depth: int?, relative: ["target", "cwd", "absolute"] =  "target") -> [*str]:
+fn find_paths(_path: str, *, depth: int?, relative: ["target", "cwd", "absolute"] =  "target") -> str[]:
     pass
 
 // todo implement and revisit 'relative' here
 fn delete_path(_path: str, *, relative: ["target", "cwd", "absolute"] =  "target") -> bool:
     pass
 
-fn count(_subject: str|[*any], _inner: any) -> int:
+fn count(_subject: str|any[], _inner: any) -> int:
     pass
 
-fn zip(_lists: *list) -> [*list]:
+fn zip(*_lists: list) -> list[]:
     pass
 
 fn str(_var: any) -> str:
@@ -137,7 +137,7 @@ fn int(_var: any) -> int|error:
 fn float(_var: any) -> float|error:
     pass
 
-fn sum(_nums: [*num]) -> num:
+fn sum(_nums: float[]) -> float:
     pass
 
 fn trim(_subject: str, to_trim: str = " ") -> str:
@@ -155,23 +155,23 @@ fn read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_b
 fn write_file(_path: str, _content: str, *, append: bool = false) -> error|{ "bytes_written": int, "path": str }:
     pass
 
-fn round(_num: num, _decimals: int = 0) -> num:
+fn round(_num: float, _decimals: int = 0) -> float:
     pass
 
-fn ceil(_num: num) -> int:
+fn ceil(_num: float) -> int:
     pass
 
-fn floor(_num: num) -> int:
+fn floor(_num: float) -> int:
     pass
 
 // todo varargs versions
-fn min(_num: [*num]) -> num|error:
+fn min(_num: float[]) -> float|error:
     pass
 
-fn max(_num: [*num]) -> num|error:
+fn max(_num: float[]) -> float|error:
     pass
 
-fn clamp(val: num, min: num, max: num) -> num:
+fn clamp(val: float, min: float, max: float) -> float:
     pass
 
 fn reverse(_val: str|list) -> str|list:
@@ -249,7 +249,7 @@ fn load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false, ove
 fn color_rgb(_str: str, red: int, green: int, blue: int) -> error|str:
     pass
 
-fn get_args() -> [*str]:
+fn get_args() -> str[]:
     pass
 
 // replace with http(url, "GET") , etc?
@@ -289,7 +289,7 @@ fn http_connect(url: str, *, body: any, headers: map) ->
         { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }:
     pass
 
-fn colorize(_val: str, _enum: [*str]) -> str:
+fn colorize(_val: str, _enum: str[]) -> str:
     pass
 
 //todo
