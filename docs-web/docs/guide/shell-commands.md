@@ -159,7 +159,7 @@ By default, whenever you invoke a shell command, Rad will print an 'announcement
 
 ```rad title="create.rad"
 args:
-    filename string
+    filename str
 $!`touch {filename}.txt`
 ```
 

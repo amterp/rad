@@ -64,8 +64,8 @@ Let's modify the script to greet a name you input from command line.
 
 ```rad linenums="1" hl_lines="1-4"
 args:
-  name string
-  
+  name str
+
 print("Hello, {name}!")
 ```
 
@@ -98,7 +98,7 @@ Usage:
   hello <name>
 
 Script args:
-      --name string
+      --name str
 ```
 </div>
 
@@ -117,7 +117,7 @@ First, we'll add a **file header** to your script.
 Prints a polite greeting using an input name.
 ---
 args:
-  name string
+  name str
   
 print("Hello, {name}!")
 ```
@@ -140,7 +140,7 @@ Second, we can add **comments** to args that a script declares. Let's do that to
 Prints a polite greeting using an input name.
 ---
 args:
-  name string # The name of someone to greet.
+  name str # The name of someone to greet.
   
 print("Hello, {name}!")
 ```
@@ -155,7 +155,7 @@ print("Hello, {name}!")
     You can use code comments on your arg comments, if you so choose e.g.
 
     ```rad
-    name string # A name.  // todo make this more descriptive
+    name str # A name.  // todo make this more descriptive
     ```
 
 Now, when someone reads the script, it's pretty clear what the script does and what the expected arguments are.
@@ -174,7 +174,7 @@ Usage:
   hello <name>
 
 Script args:
-      --name string   The name of someone to greet.
+      --name str   The name of someone to greet.
 ```
 </div>
 
@@ -192,7 +192,7 @@ Let's add one to our script. It has to go on the very first line.
 Prints a polite greeting using an input name.
 ---
 args:
-  name string # The name of someone to greet.
+  name str # The name of someone to greet.
   
 print("Hello, {name}!")
 ```

@@ -11,7 +11,7 @@ args:
 
 ```rad
 args:
-    name n string # A required arg 'name' which can be specified positionally or also with -n.
+    name n str # A required arg 'name' which can be specified positionally or also with -n.
     is_employee "is-employee" bool # Variable for script is is_employee, but users will see it as is-employee.
     
 if is_employee:

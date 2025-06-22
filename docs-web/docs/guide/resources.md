@@ -87,7 +87,7 @@ Let's create an Rad script to use this resource:
 
 ```rad title="example.rad"
 args:
-    website string = ""
+    website str = ""
 
 url, name = pick_from_resource("./resources/websites.json", website)
 print("url: {url}, name: {name}")

@@ -29,7 +29,7 @@ Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.
 
 [//]: # (TODO what about function types?!)
 
-### string
+### str
 
 Strings can be delimited in three ways:
 

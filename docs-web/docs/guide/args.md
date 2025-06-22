@@ -16,7 +16,7 @@ Here's an example script we'll call `printwords` that prints an input word some 
 ```rad linenums="1" hl_lines="0"
 #!/usr/bin/env rad
 args:
-    word string
+    word str
     repeats int
     
 for _ in range(repeats):
@@ -35,7 +35,7 @@ Usage:
   printwords <word> <repeats>
 
 Script args:
-      --word string
+      --word str
       --repeats int
 ```
 </div>
@@ -55,8 +55,8 @@ Let's look at a more complex example to demonstrate some more features. Let's ca
 ```rad linenums="1" hl_lines="0"
 #!/usr/bin/env rad
 args:
-    words string[]                         # Words to join together.
-    joiner j string = "-"                  # Joiner for the words.
+    words str[]                            # Words to join together.
+    joiner j str = "-"                     # Joiner for the words.
     should_capitalize "capitalize" c bool  # If true, capitalize the words.
 
 if should_capitalize:
@@ -77,9 +77,9 @@ Usage:
   wordjoin <words> [joiner] [-c, --capitalize]
 
 Script args:
-      --words string,string    Words to join together.
-      -j, --joiner string      Joiner for the words. (default -)
-      -c, --capitalize         If true, capitalize the words.
+      --words str,str       Words to join together.
+      -j, --joiner str      Joiner for the words. (default -)
+      -c, --capitalize      If true, capitalize the words.
 ```
 </div>
 
@@ -87,11 +87,11 @@ Let's break down each declaration to see what's going on here.
 
 [//]: # (todo points below all show up as 1)
 
-1. `words string[]  # Words to join together.`
+1. `words str[]  # Words to join together.`
     - We declare an arg `words` which is a list of strings. Note that `int[]`, `float[]` and `bool[]` can be used for int, float, and bool lists respectively.
     - We also define an arg comment to make the usage string include a description of what the argument is.
 
-2. `joiner j string = "-"  # Joiner for the words.`
+2. `joiner j str = "-"  # Joiner for the words.`
     - We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
     - After that, we define a **default** value `-` for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
 

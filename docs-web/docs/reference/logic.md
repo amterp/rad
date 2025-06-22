@@ -24,13 +24,13 @@ Essentially, you can use any type as a condition, and it will resolve to true or
 
 The following table shows which values return false for each type. **All other values resolve to true.**
 
-| Type   | Falsy | Description   |
-|--------|-------|---------------|
-| string | `""`  | Empty strings |
-| int    | `0`   | Zero          |
-| float  | `0.0` | Zero          |
-| list   | `[]`  | Empty lists   |
-| map    | `{}`  | Empty maps    |
+| Type  | Falsy | Description   |
+|-------|-------|---------------|
+| str   | `""`  | Empty strings |
+| int   | `0`   | Zero          |
+| float | `0.0` | Zero          |
+| list  | `[]`  | Empty lists   |
+| map   | `{}`  | Empty maps    |
 
 !!! note ""
 

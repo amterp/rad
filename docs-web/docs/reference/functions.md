@@ -11,7 +11,7 @@ This page aims to concisely document *all* in-built Rad functions.
 You'll see notation like this for function signatures (below are not real functions in Rad; just examples):
 
 ```
-greet(name: string, times: int = 10) -> string
+greet(name: str, times: int = 10) -> string
 ```
 
 This means the function `greet` takes one required string argument `name`, and an optional int argument `times` which

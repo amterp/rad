@@ -10,7 +10,7 @@ title: brewi
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str    # Name of the formula to install.
     cask c bool    # Enable if it's a cask.
 
 $!`brew info {formula}`
@@ -26,7 +26,7 @@ Usage:
   brewi <formula> [cask]
 
 Script args:
-      --formula string   Name of the formula to install.
+      --formula str      Name of the formula to install.
   -c, --cask             Enable if it's a cask.
 ```
 

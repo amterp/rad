@@ -13,7 +13,7 @@ Below is a simple script capable of querying a given GitHub repo (leveraging Git
 
 ```rad title="File: commits"
 args:
-    repo string    # The repo to query. Format: user/project
+    repo str       # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
     
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
@@ -52,7 +52,7 @@ And that's with just a few lines of code! Let's break it down piece by piece.
 
 ```rad
 args:
-    repo string    # The repo to query. Format: user/project
+    repo str       # The repo to query. Format: user/project
     limit int = 20 # The max commits to return.
     
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"

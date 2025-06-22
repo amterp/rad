@@ -60,7 +60,7 @@ make the script *atomic* i.e. it either succeeds entirely or does nothing, leavi
 
 ```rad title="bump.rad"
 args:
-    version string
+    version str
 
 path = "VERSION"
 
