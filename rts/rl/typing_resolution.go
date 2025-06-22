@@ -16,7 +16,7 @@ func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
 		optionalNode := GetChild(&paramNode, F_OPTIONAL)
 		defaultNode := GetChild(&paramNode, F_DEFAULT)
 
-		if varArgMarkerNode != nil && nameNode == nil {
+		if varArgMarkerNode != nil && nameNode == nil { // TODO this will change for varargs
 			// syntax: , *,
 			namedOnly = true
 			continue

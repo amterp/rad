@@ -353,6 +353,21 @@ fn foo(x: int):
 	assertError(t, 1, expected)
 }
 
+func Test_Typing_IntParamNull(t *testing.T) {
+	script := `
+foo(null)
+fn foo(x: int):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(null)
+      ^^^^ Value 'null' (null) is not compatible with expected type 'int'
+`
+	assertError(t, 1, expected)
+}
+
 func Test_Typing_IntReturnValid(t *testing.T) {
 	script := `
 foo().print()
@@ -493,6 +508,52 @@ fn foo() -> error:
   ^^^^^ Value '1' (int) is not compatible with expected type 'error'
 `
 	assertError(t, 1, expected)
+}
+
+func Test_Typing_AnyParamValid(t *testing.T) {
+	script := `
+foo(1)
+foo('hi')
+foo(true)
+foo(null)
+fn foo(x: any):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|1|
+|hi|
+|true|
+|null|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_AnyReturnValid(t *testing.T) {
+	script := `
+foo(1).print()
+foo(2).print()
+foo(3).print()
+foo(4).print()
+fn foo(x) -> any:
+    switch x:
+        case 1:
+			return 1
+        case 2:
+			return "hi"
+        case 3:
+			return true
+        case 4:
+			return null
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `1
+hi
+true
+null
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
 }
 
 func Test_Typing_ParamCannotBeVoid(t *testing.T) {
@@ -894,6 +955,195 @@ fn foo() -> {str: int}:
 	assertError(t, 1, expected)
 }
 
-// TODO VARARG
-// TODO OPTIONAL
-// TODO UNION
+func Test_Typing_VarArgParamValid(t *testing.T) {
+	t.Skip("TODO: implement varargs as '*x: int' rather than 'x: *int'")
+	script := `
+foo(1)
+foo(1, 2)
+fn foo(*x: int): // todo ISSUE: how know '1' shouldn't be a single int? what if typing was (*int)|int ?
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|[ 1 ]|
+|[ 1, 2 ]|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_VarArgParamInvalid(t *testing.T) {
+	t.Skip("TODO: implement varargs as '*x: int' rather than 'x: *int'")
+	script := `
+foo({"key1": "hi"})
+fn foo(x: {str: int}):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo({"key1": "hi"})
+      ^^^^^^^^^^^^^^
+      Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_VarArgReturnValid(t *testing.T) {
+	t.Skip("TODO: implement varargs as '*x: int' rather than 'x: *int'")
+	script := `
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": 10}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "key1": 10 }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_VarArgReturnInvalid(t *testing.T) {
+	t.Skip("TODO: implement varargs as '*x: int' rather than 'x: *int'")
+	script := `
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": "hi"}
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^
+  Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_OptionalParamValid(t *testing.T) {
+	script := `
+foo()
+foo(null)
+foo(1)
+fn foo(x: int?):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|null|
+|null|
+|1|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_OptionalParamInvalid(t *testing.T) {
+	script := `
+foo("hi")
+fn foo(x: int?):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo("hi")
+      ^^^^ Value '"hi"' (str) is not compatible with expected type 'int?'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_OptionalReturnValid(t *testing.T) {
+	script := `
+foo().print()
+bar().print()
+fn foo() -> int?:
+	return 1
+fn bar() -> int?:
+	return null
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `1
+null
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_OptionalReturnInvalid(t *testing.T) {
+	script := `
+foo().print()
+fn foo() -> int?:
+	return "hi"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo().print()
+  ^^^^^ Value '"hi"' (str) is not compatible with expected type 'int?'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_UnionParamValid(t *testing.T) {
+	script := `
+foo(1)
+foo("hi")
+fn foo(x: int|str):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `|1|
+|hi|
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_UnionParamInvalid(t *testing.T) {
+	script := `
+foo(1.2)
+fn foo(x: int|str):
+	print("|{x}|")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:5
+
+  foo(1.2)
+      ^^^ Value '1.2' (float) is not compatible with expected type 'int|str'
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Typing_UnionReturnValid(t *testing.T) {
+	script := `
+foo(1).print()
+foo(2).print()
+fn foo(x) -> int|str:
+	switch x:
+		case 1:
+			return 1
+		case 2:
+			return "hi"
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `1
+hi
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Typing_UnionReturnInvalid(t *testing.T) {
+	script := `
+foo(1).print()
+foo(2).print()
+fn foo(x) -> int|str:
+	return 1.2
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  foo(1).print()
+  ^^^^^^ Value '1.2' (float) is not compatible with expected type 'int|str'
+`
+	assertError(t, 1, expected)
+}
