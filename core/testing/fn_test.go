@@ -205,3 +205,16 @@ fn add(x, y):
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Fn_CanReturnNothing(t *testing.T) {
+	script := `
+print(foo(4, 5), 2)
+fn foo(x, y):
+	return
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
