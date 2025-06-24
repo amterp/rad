@@ -23,9 +23,6 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/dustin/go-humanize"
-	"github.com/dustin/go-humanize/english"
-
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/raderr"
 
@@ -188,7 +185,6 @@ const (
 )
 
 var (
-	NO_POS_ARGS         = NewEnumerableArgSchema([][]rl.RadType{})
 	NO_NAMED_ARGS       = map[string][]rl.RadType{}
 	NO_NAMED_ARGS_INPUT = map[string]namedArg{}
 )
@@ -220,84 +216,11 @@ func NewFuncInvocationArgs(
 	}
 }
 
-type PositionalArgSchema interface {
-	validate(f FuncInvocationArgs, fn *BuiltInFunc)
-}
-
-type EnumerablePositionalArgSchema struct {
-	argTypes [][]rl.RadType
-}
-
-func NewEnumerableArgSchema(argTypes [][]rl.RadType) PositionalArgSchema {
-	return EnumerablePositionalArgSchema{argTypes: argTypes}
-}
-
-func (s EnumerablePositionalArgSchema) validate(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
-	maxAcceptableArgs := len(s.argTypes)
-	if len(f.args) > maxAcceptableArgs {
-		f.i.errorf(f.callNode, "%s() requires at most %s, but got %d",
-			builtInFunc.Name, com.Pluralize(maxAcceptableArgs, "argument"), len(f.args))
-	}
-
-	for idx, acceptableTypes := range s.argTypes {
-		if len(acceptableTypes) == 0 {
-			// there are no type constraints
-			continue
-		}
-
-		if idx >= len(f.args) {
-			// rest of the args are optional and not supplied
-			break
-		}
-
-		arg := f.args[idx]
-		if !lo.Contains(acceptableTypes, arg.value.Type()) {
-			acceptable := english.OxfordWordSeries(
-				lo.Map(acceptableTypes, func(t rl.RadType, _ int) string { return t.AsString() }), "or")
-			f.i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
-				arg.value.Type().AsString(), humanize.Ordinal(idx+1), builtInFunc.Name, acceptable)
-		}
-	}
-}
-
-type VarPositionalArgSchema struct {
-	// acceptable types for any arg
-	acceptableTypes []rl.RadType
-}
-
-func NewVarArgSchema(acceptableTypes []rl.RadType) PositionalArgSchema {
-	return VarPositionalArgSchema{acceptableTypes: acceptableTypes}
-}
-
-func (s VarPositionalArgSchema) validate(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
-	if len(s.acceptableTypes) == 0 {
-		// there are no type constraints
-		return
-	}
-
-	for idx, arg := range f.args {
-		if !lo.Contains(s.acceptableTypes, arg.value.Type()) {
-			acceptable := english.OxfordWordSeries(
-				lo.Map(s.acceptableTypes, func(t rl.RadType, _ int) string { return t.AsString() }), "or")
-			f.i.errorf(arg.node, "Got %q as the %s argument of %s(), but must be: %s",
-				arg.value.Type().AsString(), humanize.Ordinal(idx+1), builtInFunc.Name, acceptable)
-		}
-	}
-}
-
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
 type BuiltInFunc struct {
-	Name            string
-	ReturnValues    []int
-	MinPosArgCount  int
-	PosArgValidator PositionalArgSchema     // by index, what types are allowed for that index. empty == any
-	NamedArgs       map[string][]rl.RadType // name -> allowed types. empty == any
-	// interpreter, callNode, positional args, named args
-	// Guarantees when Execute invoked:
-	// - given at least as many args as required (MinPosArgCount)
-	// - not given more args than types have been defined for (PosArgTypes)
-	// - only valid named args are given (if given) (valid name, valid type) (NamedArgs)
-	Execute func(FuncInvocationArgs) RadValue
+	Name      string
+	Signature *rts.FnSignature
+	Execute   func(FuncInvocationArgs) RadValue
 }
 
 var FunctionsByName map[string]BuiltInFunc
@@ -321,11 +244,7 @@ func init() {
 		FuncRange,
 		FuncColorize,
 		{
-			Name:            FUNC_LEN,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT, rl.RadListT, rl.RadMapT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_LEN,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				switch v := arg.value.Val.(type) {
@@ -341,13 +260,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_SORT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT, rl.RadListT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgReverse: {rl.RadBoolT},
-			},
+			Name: FUNC_SORT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				reverseArg, exists := f.namedArgs[namedArgReverse]
 				reverse := false
@@ -376,13 +289,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_NOW,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs: map[string][]rl.RadType{
-				namedArgTz: {rl.RadStrT},
-			},
+			Name: FUNC_NOW,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				tz := constDefault
 				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
@@ -405,14 +312,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_PARSE_EPOCH,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgTz:   {rl.RadStrT},
-				namedArgUnit: {rl.RadStrT},
-			},
+			Name: FUNC_PARSE_EPOCH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				epochArg := f.args[0]
 				epoch := epochArg.value.RequireInt(f.i, epochArg.node)
@@ -507,23 +407,13 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_TYPE_OF,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_TYPE_OF,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				return newRadValues(f.i, f.callNode, NewRadString(TypeAsString(f.args[0].value)))
 			},
 		},
 		{
-			Name:           FUNC_JOIN,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 2, // todo: should "" just be the default joiner?
-			PosArgValidator: NewEnumerableArgSchema(
-				[][]rl.RadType{{rl.RadListT}, {rl.RadStrT}, {rl.RadStrT}, {rl.RadStrT}},
-			),
-			NamedArgs: NO_NAMED_ARGS,
+			Name: FUNC_JOIN,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				listArg := f.args[0]
 				sepArg := f.args[1]
@@ -545,33 +435,21 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_UPPER,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_UPPER,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Upper())
 			},
 		},
 		{
-			Name:            FUNC_LOWER,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_LOWER,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Lower())
 			},
 		},
 		{
-			Name:            FUNC_STARTS_WITH,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_STARTS_WITH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
@@ -581,11 +459,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ENDS_WITH,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_ENDS_WITH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				subjectArg := f.args[0]
 				prefixArg := f.args[1]
@@ -595,33 +469,21 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_KEYS,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadMapT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_KEYS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Keys())
 			},
 		},
 		{
-			Name:            FUNC_VALUES,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadMapT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_VALUES,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
 			},
 		},
 		{
-			Name:            FUNC_TRUNCATE,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_TRUNCATE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				strArg := f.args[0]
 				maxLenArg := f.args[1]
@@ -645,11 +507,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_UNIQUE,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_UNIQUE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -669,11 +527,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_CONFIRM,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_CONFIRM,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := tryGetArg(0, f.args)
 
@@ -693,11 +547,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_PARSE_JSON,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_PARSE_JSON,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -709,11 +559,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_PARSE_INT,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_PARSE_INT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -729,11 +575,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_PARSE_FLOAT,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_PARSE_FLOAT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -749,11 +591,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ABS,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadFloatT, rl.RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_ABS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -769,26 +607,14 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ERROR,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_ERROR,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
 				return newRadValues(f.i, f.callNode, NewError(err))
 			},
 		},
 		{
-			Name:            FUNC_INPUT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgHint:    {rl.RadStrT},
-				namedArgDefault: {rl.RadStrT},
-				namedArgSecret:  {rl.RadBoolT},
-			},
+			Name: FUNC_INPUT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				prompt := "> "
 				if promptArg := tryGetArg(0, f.args); promptArg != nil {
@@ -818,11 +644,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GET_PATH,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_PATH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
@@ -852,11 +674,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GET_ENV,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_ENV,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				envVarArg := f.args[0]
 				envVar := envVarArg.value.RequireStr(f.i, envVarArg.node).Plain()
@@ -865,16 +683,9 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_FIND_PATHS,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				// todo: filtering by name, file type
-				//  potentially allow `include_root`
-				namedArgDepth:    {rl.RadIntT},
-				namedArgRelative: {rl.RadStrT},
-			},
+			Name: FUNC_FIND_PATHS,
+			// todo: filtering by name, file type
+			//  potentially allow `include_root`
 			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				pathStr := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
@@ -953,11 +764,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_DELETE_PATH,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_DELETE_PATH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
@@ -973,11 +780,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_COUNT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_COUNT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				strArg := f.args[0]
 				substrArg := f.args[1]
@@ -990,14 +793,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ZIP,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NewVarArgSchema([]rl.RadType{rl.RadListT}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgFill:   {},
-				namedArgStrict: {rl.RadBoolT},
-			},
+			Name: FUNC_ZIP,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				strictArg, strictExists := f.namedArgs[namedArgStrict]
 				strict := false
@@ -1057,11 +853,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_STR,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_STR,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				asStr := ToPrintableQuoteStr(arg.value, false)
@@ -1069,11 +861,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_INT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_INT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -1106,11 +894,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_FLOAT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_FLOAT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 
@@ -1144,11 +928,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_SUM,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_SUM,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -1172,11 +952,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_TRIM,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_TRIM,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.Trim(chars)
@@ -1184,11 +960,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_TRIM_PREFIX,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_TRIM_PREFIX,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimPrefix(chars)
@@ -1196,11 +968,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_TRIM_SUFFIX,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_TRIM_SUFFIX,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimSuffix(chars)
@@ -1214,13 +982,7 @@ func init() {
 			//   - length            # Number of bytes to read
 			//   - head              # First N bytes
 			//   - tail              # Last N bytes
-			Name:            FUNC_READ_FILE,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgMode: {rl.RadStrT},
-			},
+			Name: FUNC_READ_FILE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
@@ -1263,13 +1025,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_WRITE_FILE,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgAppend: {rl.RadBoolT},
-			},
+			Name: FUNC_WRITE_FILE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 				content := f.args[1].value.RequireStr(f.i, f.args[1].node).String()
@@ -1315,11 +1071,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ROUND,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadFloatT, rl.RadIntT}, {rl.RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_ROUND,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				var precision int64 = 0
@@ -1342,11 +1094,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_CEIL,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadFloatT, rl.RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_CEIL,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
@@ -1354,11 +1102,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_FLOOR,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadFloatT, rl.RadIntT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_FLOOR,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
@@ -1366,11 +1110,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_MIN,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_MIN,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -1396,11 +1136,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_MAX,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_MAX,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				list := arg.value.RequireList(f.i, arg.node)
@@ -1426,13 +1162,7 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_CLAMP,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 3,
-			PosArgValidator: NewEnumerableArgSchema(
-				[][]rl.RadType{{rl.RadFloatT, rl.RadIntT}, {rl.RadFloatT, rl.RadIntT}, {rl.RadFloatT, rl.RadIntT}},
-			),
-			NamedArgs: NO_NAMED_ARGS,
+			Name: FUNC_CLAMP,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				valArg := f.args[0]
 				minArg := f.args[1]
@@ -1449,11 +1179,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_REVERSE,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_REVERSE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				radString := arg.value.RequireStr(f.i, arg.node)
@@ -1461,11 +1187,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_IS_DEFINED,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_IS_DEFINED,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				arg := f.args[0]
 				str := arg.value.RequireStr(f.i, arg.node).Plain()
@@ -1477,11 +1199,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_HYPERLINK,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_HYPERLINK,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				text := f.args[0]
 				linkArg := f.args[1]
@@ -1497,37 +1215,21 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_UUID_V4,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_UUID_V4,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				id, _ := uuid.NewRandom()
 				return newRadValues(f.i, f.callNode, id.String())
 			},
 		},
 		{
-			Name:            FUNC_UUID_V7,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_UUID_V7,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				id, _ := uuid.NewV7()
 				return newRadValues(f.i, f.callNode, id.String())
 			},
 		},
 		{
-			Name:            FUNC_GEN_FID,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs: map[string][]rl.RadType{
-				namedArgAlphabet:       {rl.RadStrT},
-				namedArgTickSizeMs:     {rl.RadIntT},
-				namedArgNumRandomChars: {rl.RadIntT},
-			},
+			Name: FUNC_GEN_FID,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				// defaults
 				config := fid.NewConfig().
@@ -1571,11 +1273,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GET_DEFAULT,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  3,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadMapT}, {}, {}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_DEFAULT,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				keyArg := f.args[1]
@@ -1591,22 +1289,14 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GET_RAD_HOME,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_RAD_HOME,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				radHome := RadHomeInst.HomeDir
 				return newRadValues(f.i, f.callNode, radHome)
 			},
 		},
 		{
-			Name:            FUNC_GET_STASH_DIR,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_STASH_DIR,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				stashPath := RadHomeInst.GetStash()
 				if stashPath == nil {
@@ -1624,11 +1314,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_LOAD_STATE,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  0,
-			PosArgValidator: NO_POS_ARGS,
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_LOAD_STATE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				state, _ := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
@@ -1636,11 +1322,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_SAVE_STATE,
-			ReturnValues:    ZERO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadMapT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_SAVE_STATE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				mapArg.value.RequireMap(f.i, mapArg.node)
@@ -1651,11 +1333,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_LOAD_STASH_FILE,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_LOAD_STASH_FILE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				defaultArg := f.args[1]
@@ -1691,11 +1369,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_WRITE_STASH_FILE,
-			ReturnValues:    UP_TO_TWO_RETURN_VALS,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_WRITE_STASH_FILE,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				pathArg := f.args[0]
 				contentArg := f.args[1]
@@ -1713,13 +1387,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_HASH,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				constAlgo: {rl.RadStrT},
-			},
+			Name: FUNC_HASH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				content := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
@@ -1753,16 +1421,7 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_ENCODE_BASE64,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{
-				{rl.RadStrT},
-			}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgUrlSafe: {rl.RadBoolT},
-				namedArgPadding: {rl.RadBoolT},
-			},
+			Name: FUNC_ENCODE_BASE64,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 
@@ -1791,16 +1450,7 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_DECODE_BASE64,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{
-				{rl.RadStrT},
-			}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgUrlSafe: {rl.RadBoolT},
-				namedArgPadding: {rl.RadBoolT},
-			},
+			Name: FUNC_DECODE_BASE64,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				input := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
 
@@ -1831,11 +1481,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_ENCODE_BASE16,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_ENCODE_BASE16,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
@@ -1844,11 +1490,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_DECODE_BASE16,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_DECODE_BASE16,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				contentArg := f.args[0]
 				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
@@ -1861,18 +1503,14 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_MAP,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT, rl.RadMapT}, {rl.RadFnT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_MAP,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				collectionArg := f.args[0]
 				fnArg := f.args[1]
 
 				fnNode := fnArg.node
 				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := rl.GetSrc(fnNode, f.i.sd.Src)
+				fnName := f.i.GetSrcForNode(fnNode)
 
 				var outputValue RadValue
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
@@ -1912,18 +1550,14 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_FILTER,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  2,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT, rl.RadMapT}, {rl.RadFnT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_FILTER,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				collectionArg := f.args[0]
 				fnArg := f.args[1]
 
 				fnNode := fnArg.node
 				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := rl.GetSrc(fnNode, f.i.sd.Src)
+				fnName := f.i.GetSrcForNode(fnNode)
 
 				var outputValue RadValue
 				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
@@ -1969,18 +1603,7 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_LOAD,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 3,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{
-				{rl.RadMapT}, // the map
-				{},           // the key
-				{rl.RadFnT},  // zero‐arg loader function
-			}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgReload:   {rl.RadBoolT},
-				namedArgOverride: {}, // any type
-			},
+			Name: FUNC_LOAD,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				mapArg := f.args[0]
 				keyArg := f.args[1]
@@ -2015,7 +1638,7 @@ func init() {
 				runLoader := func() RadValue {
 					fnNode := loaderFnArg.node
 					fn := loaderFnArg.value.RequireFn(f.i, fnNode)
-					fnName := rl.GetSrc(fnNode, f.i.sd.Src)
+					fnName := f.i.GetSrcForNode(fnNode)
 					inv := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn())
 					out := fn.Execute(inv)
 					return out
@@ -2039,16 +1662,7 @@ func init() {
 			},
 		},
 		{
-			Name:           FUNC_COLOR_RGB,
-			ReturnValues:   ONE_RETURN_VAL,
-			MinPosArgCount: 4,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{
-				{},
-				{rl.RadIntT},
-				{rl.RadIntT},
-				{rl.RadIntT},
-			}),
-			NamedArgs: NO_NAMED_ARGS,
+			Name: FUNC_COLOR_RGB,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				textArg := f.args[0]
 				redArg := f.args[1]
@@ -2080,11 +1694,7 @@ func init() {
 			},
 		},
 		{
-			Name:            FUNC_GET_ARGS,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  0,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: FUNC_GET_ARGS,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				// When a rad script is invoked, os.Args will look like:
 				// [ "rad", "./script.rl", "arg1", "arg2" ]
@@ -2100,22 +1710,12 @@ func init() {
 
 	FunctionsByName = make(map[string]BuiltInFunc)
 	for _, f := range functions {
-		validateFunction(f, FunctionsByName)
-		FunctionsByName[f.Name] = f
-	}
-}
-
-func validateFunction(f BuiltInFunc, functionsSoFar map[string]BuiltInFunc) {
-	validator := f.PosArgValidator
-	switch coerced := validator.(type) {
-	case *EnumerablePositionalArgSchema:
-		if f.MinPosArgCount > len(coerced.argTypes) {
-			panic(fmt.Sprintf("Bug! Function %q has more required args than arg types", f.Name))
+		sig := rts.GetSignature(f.Name)
+		if sig == nil {
+			panic("Bug! Function " + f.Name + " does not have a signature defined")
 		}
-	}
-
-	if _, exists := functionsSoFar[f.Name]; exists {
-		panic(fmt.Sprintf("Bug! Function %q already exists", f.Name))
+		f.Signature = sig
+		FunctionsByName[f.Name] = f
 	}
 }
 
@@ -2124,11 +1724,7 @@ func createTextAttrFunctions() []BuiltInFunc {
 	funcs := make([]BuiltInFunc, len(attrStrs))
 	for idx, attrStr := range attrStrs {
 		funcs[idx] = BuiltInFunc{
-			Name:            attrStr,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: attrStr,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				attr := AttrFromString(f.i, f.callNode, attrStr)
 				arg := f.args[0]
@@ -2166,14 +1762,7 @@ func createHttpFunctions() []BuiltInFunc {
 		//   - query params help?
 		//   - generic http for other/all methods?
 		funcs[idx] = BuiltInFunc{
-			Name:            httpFunc,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs: map[string][]rl.RadType{
-				namedArgHeaders: {rl.RadMapT}, // string->string or string->list[string]
-				namedArgBody:    {rl.RadStrT, rl.RadMapT, rl.RadListT},
-			},
+			Name: httpFunc,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				urlArg := f.args[0]
 

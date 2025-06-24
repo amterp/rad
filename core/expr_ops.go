@@ -49,7 +49,7 @@ func getOp(str string) OpType {
 }
 
 func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.Node) RadValue {
-	opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
+	opStr := i.GetSrcForNode(opNode)
 	op := getOp(opStr)
 	return newRadValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, op))
 }
@@ -78,7 +78,7 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadValue {
 	switch opNode.Kind() {
 	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
-		opStr := i.sd.Src[opNode.StartByte():opNode.EndByte()]
+		opStr := i.GetSrcForNode(opNode)
 		argVal := i.eval(argNode).Val
 		argVal.RequireType(
 			i,
@@ -521,7 +521,7 @@ func (i *Interpreter) executeOp(
 		}
 	}
 
-	opSrc := rl.GetSrc(opNode, i.sd.Src)
+	opSrc := i.GetSrcForNode(opNode)
 
 	i.errorf(parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
 		TypeAsString(leftV), opSrc, TypeAsString(rightV), additionalErrMsg)

@@ -28,7 +28,8 @@ print(max([1, "ab", 3]))
 	expected := `Error at L2:11
 
   print(max([1, "ab", 3]))
-            ^^^^^^^^^^^^ max() requires a list of numbers, got "str" at index 1
+            ^^^^^^^^^^^^
+            Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float[]'
 `
 	assertError(t, 1, expected)
 }

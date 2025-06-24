@@ -41,7 +41,7 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 	segmentNodes := rl.GetChildren(jsonPathNode, rl.F_SEGMENT)
 	for _, segmentNode := range segmentNodes {
 		identifierNode := rl.GetChild(&segmentNode, rl.F_KEY)
-		identifierStr := i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
+		identifierStr := i.GetSrcForNode(identifierNode)
 		indexNodes := rl.GetChildren(&segmentNode, rl.F_INDEX)
 
 		var idxSegments []JsonPathSegmentIdx
@@ -62,7 +62,7 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 		)
 	}
 
-	identifierStr := i.sd.Src[leftIdentifierNode.StartByte():leftIdentifierNode.EndByte()]
+	identifierStr := i.GetSrcForNode(leftIdentifierNode)
 	return &JsonFieldVar{
 		Name: identifierStr,
 		Path: JsonPath{Segments: segments},

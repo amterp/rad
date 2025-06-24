@@ -30,7 +30,7 @@ hash("hello friend!", algo="does not exist")
 
   hash("hello friend!", algo="does not exist")
                              ^^^^^^^^^^^^^^^^
-                             Unsupported hash algorithm "does not exist"; supported: sha1, sha256, sha512, md5
+                             Value '"does not exist"' (str) is not compatible with expected type 'str enum'
 `
 	assertError(t, 1, expected)
 }

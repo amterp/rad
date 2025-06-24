@@ -208,7 +208,7 @@ func (v RadValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RadValu
 	case *RadMap:
 		if idxNode.Kind() == rl.K_IDENTIFIER {
 			// dot syntax e.g. myMap.myKey
-			keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
+			keyName := i.GetSrcForNode(idxNode)
 			coerced.Set(newRadValueStr(keyName), rightValue)
 		} else {
 			// 'traditional' syntax e.g. myMap["myKey"]
@@ -562,12 +562,15 @@ func newRadValueError(val *RadError) RadValue {
 	return newRadValue(nil, nil, val)
 }
 
-func typingEvaluator(i *Interpreter) *func(*ts.Node) interface{} {
-	evalF := func(node *ts.Node) interface{} {
-		res := i.eval(node)
-		if res.Val == VOID_SENTINEL {
-			i.errorf(node, "Bug?! Expected a string, got void.")
-		}
+func typingEvaluator(i *Interpreter) *func(*ts.Node, string) interface{} {
+	evalF := func(node *ts.Node, src string) interface{} {
+		var res EvalResult
+		i.WithTmpSrc(src, func() {
+			res = i.eval(node)
+			if res.Val == VOID_SENTINEL {
+				i.errorf(node, "Bug?! Expected a string, got void.")
+			}
+		})
 		return res.Val.ToGoValue()
 	}
 	return &evalF

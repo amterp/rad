@@ -4,8 +4,6 @@ import (
 	com "rad/core/common"
 	"strings"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/samber/lo"
@@ -13,13 +11,7 @@ import (
 )
 
 var FuncPick = BuiltInFunc{
-	Name:            FUNC_PICK,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}, {rl.RadStrT, rl.RadListT}}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgPrompt: {rl.RadStrT},
-	},
+	Name: FUNC_PICK,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		optionsArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
@@ -51,13 +43,7 @@ var FuncPick = BuiltInFunc{
 }
 
 var FuncPickKv = BuiltInFunc{
-	Name:            FUNC_PICK_KV,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadListT}, {rl.RadListT}, {rl.RadStrT, rl.RadListT}}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgPrompt: {rl.RadStrT},
-	},
+	Name: FUNC_PICK_KV,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
@@ -94,13 +80,7 @@ var FuncPickKv = BuiltInFunc{
 }
 
 var FuncPickFromResource = BuiltInFunc{
-	Name:            FUNC_PICK_FROM_RESOURCE,
-	ReturnValues:    NO_RETURN_LIMIT,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT, rl.RadListT}}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgPrompt: {rl.RadStrT},
-	},
+	Name: FUNC_PICK_FROM_RESOURCE,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		fileArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)

@@ -3,8 +3,6 @@ package rl
 import (
 	"fmt"
 	"strings"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // Actual interpreter types
@@ -343,7 +341,7 @@ func (t *TypingStructT) IsCompatibleWith(val TypingCompatVal) bool {
 		// Validate each declared field
 		seen := make(map[string]bool)
 		for mapKey, typ := range t.named {
-			expectedKeyName := (*val.Evaluator)(mapKey.Name)
+			expectedKeyName := (*val.Evaluator)(mapKey.Name.Node, mapKey.Name.Src)
 			keyName, ok := expectedKeyName.(string)
 			if !ok {
 				// Key was not a string, unexpected.
@@ -481,16 +479,17 @@ func (t *TypingOptionalT) IsCompatibleWith(val TypingCompatVal) bool {
 
 // Complex / Unions / Misc
 type TypingFnT struct { // var: fn(int, int) -> int
+	Name    string // empty if anonymous
 	Params  []TypingFnParam
 	ReturnT *TypingT
 	// nils mean no typing
 }
 
 type TypingStrEnumT struct { // var: ["foo", "bar"] = "bar"
-	strNodes []*ts.Node
+	strNodes []*RadNode
 }
 
-func NewStrEnumType(stringNodes ...*ts.Node) *TypingStrEnumT {
+func NewStrEnumType(stringNodes ...*RadNode) *TypingStrEnumT {
 	return &TypingStrEnumT{
 		strNodes: stringNodes,
 	}
@@ -522,7 +521,7 @@ func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 
 		if val.Evaluator != nil {
 			for _, strNode := range t.strNodes {
-				out := (*val.Evaluator)(strNode)
+				out := (*val.Evaluator)(strNode.Node, strNode.Src)
 				if out == strVal {
 					return true
 				}
@@ -588,11 +587,11 @@ func (t *TypingUnionT) IsCompatibleWith(val TypingCompatVal) bool {
 }
 
 type MapNamedKey struct {
-	Name       *ts.Node
+	Name       *RadNode
 	IsOptional bool
 }
 
-func NewMapNamedKey(name *ts.Node, isOptional bool) MapNamedKey {
+func NewMapNamedKey(name *RadNode, isOptional bool) MapNamedKey {
 	return MapNamedKey{
 		Name:       name,
 		IsOptional: isOptional,
@@ -605,7 +604,7 @@ type TypingFnParam struct {
 	IsVariadic bool // vararg
 	NamedOnly  bool // if true, can only be passed as a named arg
 	IsOptional bool
-	Default    *ts.Node // if no default, this is nil
+	Default    *RadNode // if no default, this is nil
 }
 
 func (t TypingFnParam) AnonymousOnly() bool {

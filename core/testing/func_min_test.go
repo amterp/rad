@@ -28,7 +28,8 @@ print(min([1, "ab", 3]))
 	expected := `Error at L2:11
 
   print(min([1, "ab", 3]))
-            ^^^^^^^^^^^^ min() requires a list of numbers, got "str" at index 1
+            ^^^^^^^^^^^^
+            Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float[]'
 `
 	assertError(t, 1, expected)
 }

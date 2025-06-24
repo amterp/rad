@@ -71,7 +71,7 @@ func TestSleep_ErrorsIfNoArg(t *testing.T) {
 	expected := `Error at L1:1
 
   sleep()
-  ^^^^^^^ sleep() requires at least 1 argument, but got 0
+  ^^^^^^^ Missing required argument '_duration'
 `
 	assertError(t, 1, expected)
 }
@@ -90,10 +90,10 @@ func TestSleep_ErrorsIfNegArg(t *testing.T) {
 func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 	setupAndRunCode(t, `sleep(10, 20)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:1
+	expected := `Error at L1:11
 
   sleep(10, 20)
-  ^^^^^^^^^^^^^ sleep() requires at most 1 argument, but got 2
+            ^^ Value '20' (int) is not compatible with expected type 'str?'
 `
 	assertError(t, 1, expected)
 }
@@ -104,8 +104,7 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 	expected := `Error at L1:7
 
   sleep(true)
-        ^^^^
-        Got "bool" as the 1st argument of sleep(), but must be: int, float, or str
+        ^^^^ Value 'true' (bool) is not compatible with expected type 'float|str'
 `
 	assertError(t, 1, expected)
 }

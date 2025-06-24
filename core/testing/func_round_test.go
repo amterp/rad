@@ -82,7 +82,7 @@ print(round(a, b))
 	expected := `Error at L4:16
 
   print(round(a, b))
-                 ^ Got "str" as the 2nd argument of round(), but must be: int
+                 ^ Value '"ab"' (str) is not compatible with expected type 'int'
 `
 	assertError(t, 1, expected)
 }
@@ -97,8 +97,7 @@ print(round(a, b))
 	expected := `Error at L4:13
 
   print(round(a, b))
-              ^
-              Got "str" as the 1st argument of round(), but must be: float or int
+              ^ Value '"ab"' (str) is not compatible with expected type 'float'
 `
 	assertError(t, 1, expected)
 }

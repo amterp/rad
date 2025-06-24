@@ -10,7 +10,7 @@ import (
 type TypingCompatVal struct {
 	Val       interface{} // Specific int64, float64, string, bool, []interface{}, map[string]interface{}
 	Type      *RadType
-	Evaluator *func(*ts.Node) interface{}
+	Evaluator *func(*ts.Node, string) interface{}
 }
 
 func NewSubject(val interface{}) TypingCompatVal {

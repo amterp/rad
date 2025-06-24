@@ -6,8 +6,6 @@ import (
 	"os/exec"
 	com "rad/core/common"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/amterp/rad/rts/check"
 
 	"github.com/amterp/rad/rts"
@@ -16,11 +14,7 @@ import (
 func AddInternalFuncs() {
 	functions := []BuiltInFunc{
 		{
-			Name:            INTERNAL_FUNC_GET_STASH_ID,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: INTERNAL_FUNC_GET_STASH_ID,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				argNode := f.args[0]
 				cmd := argNode.value.RequireStr(f.i, argNode.node).Plain()
@@ -59,11 +53,7 @@ func AddInternalFuncs() {
 			},
 		},
 		{
-			Name:            INTERNAL_FUNC_DELETE_STASH,
-			ReturnValues:    ZERO_RETURN_VALS,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: INTERNAL_FUNC_DELETE_STASH,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				idArg := f.args[0]
 				id := idArg.value.RequireStr(f.i, idArg.node).Plain()
@@ -77,11 +67,7 @@ func AddInternalFuncs() {
 			},
 		},
 		{
-			Name:            INTERNAL_FUNC_RUN_CHECK,
-			ReturnValues:    ONE_RETURN_VAL,
-			MinPosArgCount:  1,
-			PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}}),
-			NamedArgs:       NO_NAMED_ARGS,
+			Name: INTERNAL_FUNC_RUN_CHECK,
 			Execute: func(f FuncInvocationArgs) RadValue {
 				scriptArg := f.args[0]
 				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
@@ -132,6 +118,7 @@ func AddInternalFuncs() {
 	}
 
 	for _, f := range functions {
+		f.Signature = rts.GetSignature(f.Name)
 		FunctionsByName[f.Name] = f
 	}
 }

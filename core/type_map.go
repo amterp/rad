@@ -74,7 +74,7 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 	// todo grammar: myMap.2 should be okay, treated as "2". but is not valid identifier, so problem!
 	if idxNode.Kind() == rl.K_IDENTIFIER {
 		// dot syntax e.g. myMap.myKey
-		keyName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
+		keyName := i.GetSrcForNode(idxNode)
 		value, ok := m.Get(newRadValueStr(keyName))
 		if !ok {
 			i.errorf(idxNode, "Key not found: %s", keyName)

@@ -18,8 +18,8 @@ type RadFn struct {
 	Env      *Env // for closures
 }
 
-func NewLambda(i *Interpreter, fnNode *ts.Node) RadFn {
-	typing := rl.NewTypingFnT(fnNode, i.sd.Src)
+func NewFn(i *Interpreter, fnNode *ts.Node) RadFn {
+	typing := rl.NewTypingFnT(fnNode, i.GetSrc())
 	stmts := rl.GetChildren(fnNode, rl.F_STMT)
 	reprNode := fnNode
 	isBlock := rl.GetChild(fnNode, rl.F_BLOCK_COLON) != nil
@@ -47,133 +47,154 @@ func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
 }
 
+// TODO: built-in functions aren't getting the defaults from signatures
 func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 	i := f.i
+
+	var typing *rl.TypingFnT
 	if fn.BuiltInFunc == nil {
-		out = VOID_SENTINEL
-		i.runWithChildEnv(func() {
-			// todo the following checking logic should be in IsCompatibleWith for TypingFnT
+		typing = fn.Typing
+	} else {
+		sig := fn.BuiltInFunc.Signature
+		if sig != nil {
+			typing = fn.BuiltInFunc.Signature.Typing
+		}
 
-			seen := make(map[string]bool)
+		// assertMinNumPosArgs(f, fn.BuiltInFunc)
+		// fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
+		// assertAllowedNamedArgs(f, fn.BuiltInFunc)
+		// out = fn.BuiltInFunc.Execute(f)
+	}
 
-			params := fn.Typing.Params
-			paramCount := len(params)
-			// handle positional and variadic args
-			for idx, arg := range f.args {
-				// if we've consumed all fixed params
-				if idx >= paramCount {
-					// check if last param is variadic
-					if paramCount > 0 && params[paramCount-1].IsVariadic {
-						varArg := params[paramCount-1]
-						// collect all remaining args into a slice
-						radList := NewRadList()
-						for j := paramCount - 1; j < len(f.args); j++ {
-							elem := f.args[j].value
-							fn.typeCheck(i, varArg.Type, arg.node, elem)
-							radList.Append(elem)
-						}
-						i.env.SetVar(varArg.Name, newRadValueList(radList))
-						seen[varArg.Name] = true
-						break
-					} else {
-						i.errorf(f.callNode,
-							"Expected at most %d args, but was invoked with %d", paramCount, len(f.args))
-					}
-				}
+	out = VOID_SENTINEL
+	i.runWithChildEnv(func() {
+		// todo the following checking logic should be in IsCompatibleWith for TypingFnT
 
-				param := params[idx]
+		seen := make(map[string]bool)
 
-				if param.IsVariadic {
+		params := typing.Params
+		paramCount := len(params)
+		// handle positional and variadic args
+		for idx, arg := range f.args {
+			// if we've consumed all fixed params
+			if idx >= paramCount {
+				// check if last param is variadic
+				if paramCount > 0 && params[paramCount-1].IsVariadic {
+					varArg := params[paramCount-1]
+					// collect all remaining args into a slice
 					radList := NewRadList()
-
-					for j := idx; j < len(f.args); j++ {
+					for j := paramCount - 1; j < len(f.args); j++ {
 						elem := f.args[j].value
-						fn.typeCheck(i, param.Type, f.args[j].node, elem)
+						typeCheck(i, varArg.Type, arg.node, elem)
 						radList.Append(elem)
 					}
-
-					i.env.SetVar(param.Name, newRadValueList(radList))
-					seen[param.Name] = true
+					i.env.SetVar(varArg.Name, newRadValueList(radList))
+					seen[varArg.Name] = true
 					break
+				} else {
+					i.errorf(f.callNode,
+						"Expected at most %d args, but was invoked with %d", paramCount, len(f.args))
+				}
+			}
+
+			param := params[idx]
+
+			if param.IsVariadic {
+				radList := NewRadList()
+
+				for j := idx; j < len(f.args); j++ {
+					elem := f.args[j].value
+					typeCheck(i, param.Type, f.args[j].node, elem)
+					radList.Append(elem)
 				}
 
-				if param.NamedOnly {
-					i.errorf(arg.node, "Too many positional args, remaining args are named-only.")
-				}
-
-				// normal type check
-				if param.Type != nil {
-					fn.typeCheck(f.i, param.Type, arg.node, arg.value)
-				}
-
+				i.env.SetVar(param.Name, newRadValueList(radList))
 				seen[param.Name] = true
-				i.env.SetVar(param.Name, arg.value)
+				break
 			}
 
-			// named args (unchanged)
-			byName := fn.Typing.ByName()
-
-			names := make([]string, 0, len(f.namedArgs))
-			for name := range f.namedArgs {
-				names = append(names, name)
-			}
-			sort.Strings(names)
-
-			for _, name := range names {
-				arg := f.namedArgs[name]
-
-				param, ok := byName[name]
-				if !ok {
-					i.errorf(arg.nameNode, "Unknown named argument '%s'", name)
-				}
-
-				if param.AnonymousOnly() {
-					i.errorf(arg.nameNode,
-						"Argument '%s' cannot be passed as named arg, only positionally.", name)
-				}
-
-				if seen[name] {
-					i.errorf(arg.nameNode, "Argument '%s' already specified.", name)
-				}
-
-				if param.Type != nil {
-					fn.typeCheck(f.i, param.Type, arg.valueNode, arg.value)
-				}
-
-				seen[param.Name] = true
-				i.env.SetVar(param.Name, arg.value)
+			if param.NamedOnly {
+				i.errorf(arg.node, "Too many positional args, remaining args are named-only.")
 			}
 
-			// check for missing required args, handle defaults or null
-			for _, param := range params {
-				if seen[param.Name] {
-					continue
-				}
+			// normal type check
+			if param.Type != nil {
+				typeCheck(i, param.Type, arg.node, arg.value)
+			}
 
-				if param.Default != nil {
-					defaultVal := i.eval(param.Default).Val
+			seen[param.Name] = true
+			i.env.SetVar(param.Name, arg.value)
+		}
+
+		// named args (unchanged)
+		byName := typing.ByName()
+
+		names := make([]string, 0, len(f.namedArgs))
+		for name := range f.namedArgs {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+
+		for _, name := range names {
+			arg := f.namedArgs[name]
+
+			param, ok := byName[name]
+			if !ok {
+				i.errorf(arg.nameNode, "Unknown named argument '%s'", name)
+			}
+
+			if param.AnonymousOnly() {
+				i.errorf(arg.nameNode,
+					"Argument '%s' cannot be passed as named arg, only positionally.", name)
+			}
+
+			if seen[name] {
+				i.errorf(arg.nameNode, "Argument '%s' already specified.", name)
+			}
+
+			if param.Type != nil {
+				typeCheck(f.i, param.Type, arg.valueNode, arg.value)
+			}
+
+			seen[param.Name] = true
+			i.env.SetVar(param.Name, arg.value)
+		}
+
+		// check for missing required args, handle defaults or null
+		for _, param := range params {
+			if seen[param.Name] {
+				continue
+			}
+
+			if param.Default != nil {
+				i.WithTmpSrc(param.Default.Src, func() {
+					defaultVal := i.eval(param.Default.Node).Val
 					if param.Type != nil {
-						fn.typeCheck(i, param.Type, param.Default, defaultVal)
+						typeCheck(i, param.Type, param.Default.Node, defaultVal)
 					}
 					i.env.SetVar(param.Name, defaultVal)
-					continue
-				}
-
-				if param.IsOptional || (param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject())) {
-					i.env.SetVar(param.Name, RAD_NULL_VAL)
-					continue
-				}
-
-				if param.IsVariadic {
-					i.env.SetVar(param.Name, newRadValueList(NewRadList()))
-					continue
-				}
-
-				i.errorf(f.callNode, "Missing required argument '%s'", param.Name)
+				})
+				continue
 			}
 
+			if param.IsOptional || (param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject())) {
+				i.env.SetVar(param.Name, RAD_NULL_VAL)
+				continue
+			}
+
+			if param.IsVariadic {
+				i.env.SetVar(param.Name, newRadValueList(NewRadList()))
+				continue
+			}
+
+			// todo below exposes _vars not meant to be. Perhaps just say # of missing args?
+			i.errorf(f.callNode, "Missing required argument '%s'", param.Name)
+		}
+
+		// todo this should be more shared between the two branches?
+		if fn.BuiltInFunc == nil {
 			res := i.runBlock(fn.Stmts)
-			fn.typeCheck(i, fn.Typing.ReturnT, f.callNode, res.Val)
+			typeCheck(i, typing.ReturnT, f.callNode, res.Val)
 			if fn.IsBlock {
 				if res.Ctrl == CtrlReturn {
 					out = res.Val
@@ -181,13 +202,10 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 			} else {
 				out = res.Val
 			}
-		})
-	} else {
-		assertMinNumPosArgs(f, fn.BuiltInFunc)
-		fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
-		assertAllowedNamedArgs(f, fn.BuiltInFunc)
-		out = fn.BuiltInFunc.Execute(f)
-	}
+		} else {
+			out = fn.BuiltInFunc.Execute(f)
+		}
+	})
 
 	if out.IsError() {
 		if f.panicIfError {
@@ -202,7 +220,7 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 	return
 }
 
-func (fn RadFn) typeCheck(i *Interpreter, typing *rl.TypingT, node *ts.Node, val RadValue) {
+func typeCheck(i *Interpreter, typing *rl.TypingT, node *ts.Node, val RadValue) {
 	if typing == nil {
 		return
 	}

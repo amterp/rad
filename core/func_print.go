@@ -11,14 +11,7 @@ import (
 )
 
 var FuncPrint = BuiltInFunc{
-	Name:            FUNC_PRINT,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgEnd: {rl.RadStrT},
-		namedArgSep: {rl.RadStrT},
-	},
+	Name: FUNC_PRINT,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.Printf(resolvePrintStr(f))
 		return VOID_SENTINEL
@@ -26,11 +19,7 @@ var FuncPrint = BuiltInFunc{
 }
 
 var FuncPPrint = BuiltInFunc{
-	Name:            FUNC_PPRINT,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  0,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_PPRINT,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		if len(f.args) == 0 {
 			RP.Printf("\n")
@@ -45,14 +34,7 @@ var FuncPPrint = BuiltInFunc{
 }
 
 var FuncDebug = BuiltInFunc{
-	Name:            FUNC_DEBUG,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgEnd: {rl.RadStrT},
-		namedArgSep: {rl.RadStrT},
-	},
+	Name: FUNC_DEBUG,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptDebug(resolvePrintStr(f))
 		return VOID_SENTINEL
@@ -60,14 +42,7 @@ var FuncDebug = BuiltInFunc{
 }
 
 var FuncPrintErr = BuiltInFunc{
-	Name:            FUNC_PRINT_ERR,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  0,
-	PosArgValidator: NewVarArgSchema([]rl.RadType{}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgEnd: {rl.RadStrT},
-		namedArgSep: {rl.RadStrT},
-	},
+	Name: FUNC_PRINT_ERR,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		RP.ScriptStderrf(resolvePrintStr(f))
 		return VOID_SENTINEL

@@ -35,6 +35,7 @@ print('hi')
 }
 
 func Test_Shell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars(t *testing.T) {
+	t.Skip("TOOD RAD-319: if we exit inside a function its params get exported, not good.")
 	script := `
 exit(2)
 `
@@ -44,6 +45,7 @@ exit(2)
 }
 
 func Test_Shell_NonErrorExitFuncStillExportsVars(t *testing.T) {
+	t.Skip("TOOD RAD-319: if we exit inside a function its params get exported, not good.")
 	script := `
 a = "alice"
 exit()

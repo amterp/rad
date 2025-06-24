@@ -62,6 +62,7 @@ type Interpreter struct {
 	sd          *ScriptData
 	env         *Env
 	deferBlocks []*DeferBlock
+	tmpSrc      *string
 
 	forWhileLoopLevel int
 	// Used to track current delimiter, currently for correct delimiter escaping handling
@@ -345,7 +346,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 
 	// LEAF NODES
 	case rl.K_IDENTIFIER:
-		identifier := i.sd.Src[node.StartByte():node.EndByte()]
+		identifier := i.GetSrcForNode(node)
 		val, ok := i.env.GetVar(identifier)
 		if !ok {
 			i.errorf(node, "Undefined variable: %s", identifier)
@@ -372,11 +373,11 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			return i.eval(rootNode)
 		}
 	case rl.K_INT:
-		asStr := i.sd.Src[node.StartByte():node.EndByte()]
+		asStr := i.GetSrcForNode(node)
 		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
 		return NormalVal(newRadValues(i, node, asInt))
 	case rl.K_FLOAT:
-		asStr := i.sd.Src[node.StartByte():node.EndByte()]
+		asStr := i.GetSrcForNode(node)
 		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
 		return NormalVal(newRadValues(i, node, asFloat))
 	case rl.K_STRING:
@@ -387,7 +388,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		// With current TS grammar, last character of closing delimiter is always the delimiter
 		// Admittedly bad, very white boxy and brittle
 		endNode := rl.GetChild(node, rl.F_END)
-		endStr := i.sd.Src[endNode.StartByte():endNode.EndByte()]
+		endStr := i.GetSrcForNode(endNode)
 		delimiterStr := endStr[len(endStr)-1]
 		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
 
@@ -401,13 +402,13 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 
 		return NormalVal(newRadValues(i, node, str))
 	case rl.K_BOOL:
-		asStr := i.sd.Src[node.StartByte():node.EndByte()]
+		asStr := i.GetSrcForNode(node)
 		asBool, _ := strconv.ParseBool(asStr)
 		return NormalVal(newRadValues(i, node, asBool))
 	case rl.K_NULL:
 		return NormalVal(newRadValues(i, node, nil))
 	case rl.K_STRING_CONTENT:
-		src := i.sd.Src[node.StartByte():node.EndByte()]
+		src := i.GetSrcForNode(node)
 		return NormalVal(newRadValues(i, node, src))
 	case rl.K_BACKSLASH:
 		return NormalVal(newRadValues(i, node, "\\"))
@@ -460,7 +461,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_CALL:
 		return NormalVal(i.callFunction(node, nil))
 	case rl.K_FN_LAMBDA:
-		return NormalVal(newRadValues(i, node, NewLambda(i, node)))
+		return NormalVal(newRadValues(i, node, NewFn(i, node)))
 	case rl.K_LIST_COMPREHENSION:
 		resultExprNode := rl.GetChild(node, rl.F_EXPR)
 		conditionNode := rl.GetChild(node, rl.F_CONDITION)
@@ -534,7 +535,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	goFmt.WriteString("%")
 
 	if alignmentNode != nil {
-		alignment := i.sd.Src[alignmentNode.StartByte():alignmentNode.EndByte()]
+		alignment := i.GetSrcForNode(alignmentNode)
 		if alignment == "<" {
 			goFmt.WriteString("-")
 		}
@@ -557,7 +558,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 		precision := i.eval(precisionNode).Val.RequireInt(i, precisionNode)
 
 		if resultType != rl.RadIntT && resultType != rl.RadFloatT {
-			precisionStr := "." + i.sd.Src[precisionNode.StartByte():precisionNode.EndByte()]
+			precisionStr := "." + i.GetSrcForNode(precisionNode)
 			i.errorf(interpNode, "Cannot format %s with a precision %q", TypeAsString(exprResult), precisionStr)
 		}
 
@@ -595,16 +596,16 @@ func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
 }
 
 func (i *Interpreter) errorf(node *ts.Node, oneLinerFmt string, args ...interface{}) {
-	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), ""))
+	RP.CtxErrorExit(NewCtx(i.GetSrc(), node, fmt.Sprintf(oneLinerFmt, args...), ""))
 }
 
 func (i *Interpreter) errorDetailsf(node *ts.Node, details string, oneLinerFmt string, args ...interface{}) {
-	RP.CtxErrorExit(NewCtx(i.sd.Src, node, fmt.Sprintf(oneLinerFmt, args...), details))
+	RP.CtxErrorExit(NewCtx(i.GetSrc(), node, fmt.Sprintf(oneLinerFmt, args...), details))
 }
 
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
 	rootIdentifier := rl.GetChild(varPathNode, rl.F_ROOT) // identifier required by grammar
-	rootIdentifierName := rl.GetSrc(rootIdentifier, i.sd.Src)
+	rootIdentifierName := i.GetSrcForNode(rootIdentifier)
 	indexings := rl.GetChildren(varPathNode, rl.F_INDEXING)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
@@ -670,13 +671,13 @@ func runForLoopList(
 Loop:
 	for idx, val := range list.Values {
 		if idxNode != nil {
-			idxName := i.sd.Src[idxNode.StartByte():idxNode.EndByte()]
+			idxName := i.GetSrcForNode(idxNode)
 			i.env.SetVar(idxName, newRadValue(i, idxNode, int64(idx)))
 		}
 
 		if len(itemNodes) == 1 {
 			itemNode := itemNodes[0]
-			itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
+			itemName := i.GetSrcForNode(itemNode)
 			i.env.SetVar(itemName, val)
 		} else if len(itemNodes) > 1 {
 			// expecting list of lists, unpacking by idx
@@ -691,7 +692,7 @@ Loop:
 			}
 
 			for idx, itemNode := range itemNodes {
-				itemName := i.sd.Src[itemNode.StartByte():itemNode.EndByte()]
+				itemName := i.GetSrcForNode(itemNode)
 				i.env.SetVar(itemName, listInList.Values[idx])
 			}
 		}
@@ -724,11 +725,11 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 	}
 
 	for _, key := range radMap.Keys() {
-		keyName := i.sd.Src[keyNode.StartByte():keyNode.EndByte()]
+		keyName := i.GetSrcForNode(keyNode)
 		i.env.SetVar(keyName, key)
 
 		if valueNode != nil {
-			valueName := i.sd.Src[valueNode.StartByte():valueNode.EndByte()]
+			valueName := i.GetSrcForNode(valueNode)
 			value, _ := radMap.Get(key)
 			i.env.SetVar(valueName, value)
 		}
@@ -862,9 +863,29 @@ func (i *Interpreter) assignRightsToLefts(leftNodes []ts.Node, rightNodes []ts.N
 
 func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
 	nameNode := rl.GetChild(&fnNamedNode, rl.F_NAME)
-	name := rl.GetSrc(nameNode, i.sd.Src)
-	lambda := NewLambda(i, &fnNamedNode)
+	name := i.GetSrcForNode(nameNode)
+	lambda := NewFn(i, &fnNamedNode)
 	i.env.SetVar(name, newRadValueFn(lambda))
+}
+
+func (i *Interpreter) GetSrc() string {
+	if i.tmpSrc != nil {
+		return *i.tmpSrc
+	}
+	return i.sd.Src
+}
+
+func (i *Interpreter) GetSrcForNode(node *ts.Node) string {
+	return i.GetSrc()[node.StartByte():node.EndByte()]
+}
+
+// todo this is somewhat hacky, not a fan. only use when you're extremely sure fn won't panic
+func (i *Interpreter) WithTmpSrc(tmpSrc string, fn func()) {
+	i.tmpSrc = &tmpSrc
+	defer func() {
+		i.tmpSrc = nil
+	}()
+	fn()
 }
 
 func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {

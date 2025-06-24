@@ -45,7 +45,7 @@ func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
 func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 	srcNode := rl.GetChild(radBlockNode, rl.F_SOURCE)
 	radTypeNode := rl.GetChild(radBlockNode, rl.F_RAD_TYPE)
-	typeStr := i.sd.Src[radTypeNode.StartByte():radTypeNode.EndByte()]
+	typeStr := i.GetSrcForNode(radTypeNode)
 
 	var blockType RadBlockType
 	switch typeStr {
@@ -118,7 +118,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		secondNode := rl.GetChild(node, rl.F_SECOND)
 
 		if secondNode == nil {
-			firstNodeSrc := r.i.sd.Src[firstNode.StartByte():firstNode.EndByte()]
+			firstNodeSrc := r.i.GetSrcForNode(firstNode)
 			if firstNodeSrc == rl.KEYWORD_ASC || firstNodeSrc == rl.KEYWORD_DESC {
 				dir := lo.Ternary(firstNodeSrc == rl.KEYWORD_ASC, Asc, Desc)
 				r.generalSort = &GeneralSort{
@@ -150,7 +150,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		stmtNodes := rl.GetChildren(node, rl.F_MOD_STMT)
 		var fields []radField
 		for _, identifierNode := range identifierNodes {
-			identifierStr := r.i.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
+			identifierStr := r.i.GetSrcForNode(&identifierNode)
 			fields = append(fields, radField{
 				node: &identifierNode,
 				name: identifierStr,
@@ -178,9 +178,9 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 
 				var lambda RadFn
 				if lambdaNode.Kind() == rl.K_FN_LAMBDA {
-					lambda = NewLambda(r.i, lambdaNode)
+					lambda = NewFn(r.i, lambdaNode)
 				} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
-					identifier := rl.GetSrc(lambdaNode, r.i.sd.Src)
+					identifier := r.i.GetSrcForNode(lambdaNode)
 					val, ok := r.i.env.GetVar(identifier)
 					if !ok {
 						r.i.errorf(lambdaNode, "Undefined lambda %q", identifier)
@@ -246,7 +246,7 @@ func (r *radInvocation) execute() {
 	}
 
 	radFields := lo.Map(r.fields, func(fieldIdentifierNode *ts.Node, _ int) radField {
-		name := r.i.sd.Src[fieldIdentifierNode.StartByte():fieldIdentifierNode.EndByte()]
+		name := r.i.GetSrcForNode(fieldIdentifierNode)
 		return radField{node: fieldIdentifierNode, name: name}
 	})
 

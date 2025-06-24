@@ -4,17 +4,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/amterp/rad/rts/rl"
-
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var FuncSplit = BuiltInFunc{
-	Name:            FUNC_SPLIT,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_SPLIT,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		strArg := f.args[0]
 		splitterArg := f.args[1]

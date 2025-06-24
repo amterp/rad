@@ -76,20 +76,19 @@ func Test_Random_RandErrorsIfArgs(t *testing.T) {
 	expected := `Error at L1:1
 
   rand(1)
-  ^^^^^^^ rand() requires at most 0 arguments, but got 1
+  ^^^^^^^ Expected at most 0 args, but was invoked with 1
 `
 	assertError(t, 1, expected)
 }
 
 func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
-	script := `rand_int()`
+	script := `seed_random(1)
+rand_int().print()`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  rand_int()
-  ^^^^^^^^^^ rand_int() requires at least 1 argument, but got 0
+	expected := `42983569834913930
 `
-	assertError(t, 1, expected)
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
 }
 
 func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
@@ -98,7 +97,7 @@ func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
 	expected := `Error at L1:1
 
   seed_random()
-  ^^^^^^^^^^^^^ seed_random() requires at least 1 argument, but got 0
+  ^^^^^^^^^^^^^ Missing required argument '_seed'
 `
 	assertError(t, 1, expected)
 }

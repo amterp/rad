@@ -9,7 +9,7 @@ type DeferBlock struct {
 }
 
 func NewDeferBlock(i *Interpreter, deferKeywordNode *ts.Node, stmtNodes []ts.Node) *DeferBlock {
-	deferKeywordStr := i.sd.Src[deferKeywordNode.StartByte():deferKeywordNode.EndByte()]
+	deferKeywordStr := i.GetSrcForNode(deferKeywordNode)
 	return &DeferBlock{
 		DeferNode:  deferKeywordNode,
 		StmtNodes:  stmtNodes,

@@ -109,7 +109,7 @@ a = abs("asd")
 	expected := `Error at L2:9
 
   a = abs("asd")
-          ^^^^^ Got "str" as the 1st argument of abs(), but must be: float or int
+          ^^^^^ Value '"asd"' (str) is not compatible with expected type 'float'
 `
 	assertError(t, 1, expected)
 }

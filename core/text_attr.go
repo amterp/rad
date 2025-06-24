@@ -32,6 +32,7 @@ const (
 
 var ATTR_STRINGS = make([]string, 0)
 
+// this collection should have matching in-built functions
 var attrEnumToStrings = map[RadTextAttr]string{
 	PLAIN:     "plain",
 	BLACK:     "black",

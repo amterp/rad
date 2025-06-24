@@ -4,18 +4,12 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/amterp/rad/rts/rl"
 )
 
 // Allows capture group replacing, for example
 // replace("Name: abc", "a(b)c", "$1o$1") will return "Name: bobby"
 var FuncReplace = BuiltInFunc{
-	Name:            FUNC_REPLACE,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  3,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadStrT}, {rl.RadStrT}, {rl.RadStrT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_REPLACE,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		oldStringArg := f.args[0]
 		regexForOldArg := f.args[1]

@@ -1,12 +1,8 @@
 package core
 
 import (
-	com "rad/core/common"
-
 	"github.com/amterp/rad/rts/rl"
 
-	"github.com/dustin/go-humanize/english"
-	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -49,12 +45,14 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 	argNodes := rl.GetChildren(callNode, rl.F_ARG)
 	namedArgNodes := rl.GetChildren(callNode, rl.F_NAMED_ARG)
 
-	funcName := rl.GetSrc(funcNameNode, i.sd.Src)
+	funcName := i.GetSrcForNode(funcNameNode)
 
 	var args []PosArg
+
 	if ufcsArg != nil {
 		args = append(args, *ufcsArg)
 	}
+
 	for _, argNode := range argNodes {
 		argValue := i.eval(&argNode).Val
 		if argValue != VOID_SENTINEL {
@@ -67,7 +65,7 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 		namedArgNameNode := rl.GetChild(&namedArgNode, rl.F_NAME)
 		namedArgValueNode := rl.GetChild(&namedArgNode, rl.F_VALUE)
 
-		argName := rl.GetSrc(namedArgNameNode, i.sd.Src)
+		argName := i.GetSrcForNode(namedArgNameNode)
 		argValue := i.eval(namedArgValueNode).Val
 
 		_, exist := namedArgs[argName]
@@ -95,34 +93,4 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 
 	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn()))
 	return out
-}
-
-func assertMinNumPosArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
-	if len(f.args) < builtInFunc.MinPosArgCount {
-		f.i.errorf(f.callNode, "%s() requires at least %s, but got %d",
-			builtInFunc.Name, com.Pluralize(builtInFunc.MinPosArgCount, "argument"), len(f.args))
-	}
-}
-
-func assertAllowedNamedArgs(f FuncInvocationArgs, builtInFunc *BuiltInFunc) {
-	allowedNamedArgs := builtInFunc.NamedArgs
-	allowedNames := lo.Keys(allowedNamedArgs)
-
-	// check for invalid names
-	for actualName, arg := range f.namedArgs {
-		if !lo.Contains(allowedNames, actualName) {
-			f.i.errorf(arg.nameNode, "Unknown named argument %q", actualName)
-		}
-	}
-
-	// check for invalid types
-	for name, arg := range f.namedArgs {
-		allowedTypes, _ := allowedNamedArgs[name]
-		if len(allowedTypes) > 0 && !lo.Contains(allowedTypes, arg.value.Type()) {
-			acceptable := english.OxfordWordSeries(
-				lo.Map(allowedTypes, func(t rl.RadType, _ int) string { return t.AsString() }), "or")
-			f.i.errorf(arg.valueNode, "%s(): Named arg %s was %s, but must be: %s",
-				builtInFunc.Name, name, arg.value.Type().AsString(), acceptable)
-		}
-	}
 }

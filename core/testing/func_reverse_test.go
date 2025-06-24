@@ -41,7 +41,8 @@ print(reverse(a))
 	expected := `Error at L3:15
 
   print(reverse(a))
-                ^ Got "int" as the 1st argument of reverse(), but must be: str
+                ^
+                Value '123' (int) is not compatible with expected type 'str|list'
 `
 	assertError(t, 1, expected)
 }

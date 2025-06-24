@@ -46,8 +46,7 @@ print(ceil("ab"))
 	expected := `Error at L2:12
 
   print(ceil("ab"))
-             ^^^^
-             Got "str" as the 1st argument of ceil(), but must be: float or int
+             ^^^^ Value '"ab"' (str) is not compatible with expected type 'float'
 `
 	assertError(t, 1, expected)
 }

@@ -4,21 +4,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/amterp/rad/rts"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var FuncSleep = BuiltInFunc{
-	Name:            FUNC_SLEEP,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT, rl.RadFloatT, rl.RadStrT}}),
-	NamedArgs: map[string][]rl.RadType{
-		namedArgTitle: {rl.RadStrT},
-	},
+	Name: FUNC_SLEEP,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		arg := f.args[0]
 		switch coerced := arg.value.Val.(type) {

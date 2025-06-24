@@ -3,8 +3,6 @@ package core
 import (
 	"math/rand"
 	"time"
-
-	"github.com/amterp/rad/rts/rl"
 )
 
 var RNG *rand.Rand
@@ -14,11 +12,7 @@ func init() {
 }
 
 var FuncSeedRandom = BuiltInFunc{
-	Name:            FUNC_SEED_RANDOM,
-	ReturnValues:    ZERO_RETURN_VALS,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_SEED_RANDOM,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		arg := f.args[0]
 		asInt := arg.value.RequireInt(f.i, arg.node)
@@ -28,26 +22,21 @@ var FuncSeedRandom = BuiltInFunc{
 }
 
 var FuncRand = BuiltInFunc{
-	Name:            FUNC_RAND,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  0,
-	PosArgValidator: NO_POS_ARGS,
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_RAND,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		return newRadValues(f.i, f.callNode, RNG.Float64())
 	},
 }
 
 var FuncRandInt = BuiltInFunc{
-	Name:            FUNC_RAND_INT,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  1,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{rl.RadIntT}, {rl.RadIntT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_RAND_INT,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		var min, max int64
 
-		if len(f.args) == 1 {
+		if len(f.args) == 0 {
+			min = 0
+			max = 922337203685477580
+		} else if len(f.args) == 1 {
 			arg := f.args[0]
 			min = 0
 			max = arg.value.RequireInt(f.i, arg.node)

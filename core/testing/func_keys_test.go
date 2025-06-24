@@ -24,7 +24,7 @@ func TestKeys_ErrorsIfGivenString(t *testing.T) {
 	expected := `Error at L1:6
 
   keys("foo")
-       ^^^^^ Got "str" as the 1st argument of keys(), but must be: map
+       ^^^^^ Value '"foo"' (str) is not compatible with expected type 'map'
 `
 	assertError(t, 1, expected)
 }
@@ -35,7 +35,7 @@ func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
 	expected := `Error at L1:1
 
   keys()
-  ^^^^^^ keys() requires at least 1 argument, but got 0
+  ^^^^^^ Missing required argument '_map'
 `
 	assertError(t, 1, expected)
 }
@@ -46,7 +46,7 @@ func TestKeys_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
 	expected := `Error at L1:1
 
   keys({}, {})
-  ^^^^^^^^^^^^ keys() requires at most 1 argument, but got 2
+  ^^^^^^^^^^^^ Expected at most 1 args, but was invoked with 2
 `
 	assertError(t, 1, expected)
 }

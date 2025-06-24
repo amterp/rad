@@ -6,17 +6,11 @@ import (
 	"math"
 	"sort"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/samber/lo"
 )
 
 var FuncColorize = BuiltInFunc{
-	Name:            FUNC_COLORIZE,
-	ReturnValues:    ONE_RETURN_VAL,
-	MinPosArgCount:  2,
-	PosArgValidator: NewEnumerableArgSchema([][]rl.RadType{{}, {rl.RadListT}}),
-	NamedArgs:       NO_NAMED_ARGS,
+	Name: FUNC_COLORIZE,
 	Execute: func(f FuncInvocationArgs) RadValue {
 		valueArg := f.args[0]
 		possibleValuesArg := f.args[1]

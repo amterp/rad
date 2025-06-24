@@ -61,7 +61,7 @@ func sortColumns(
 }
 
 func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.Node) (int, *ts.Node) {
-	identifierStr := interp.sd.Src[identifierNode.StartByte():identifierNode.EndByte()]
+	identifierStr := interp.GetSrcForNode(identifierNode)
 	for i, field := range fields {
 		if field.name == identifierStr {
 			return i, field.node

@@ -28,7 +28,7 @@ print(clamp(1, 2))
 	expected := `Error at L2:7
 
   print(clamp(1, 2))
-        ^^^^^^^^^^^ clamp() requires at least 3 arguments, but got 2
+        ^^^^^^^^^^^ Missing required argument 'max'
 `
 	assertError(t, 1, expected)
 }
@@ -42,7 +42,7 @@ print(clamp(1, "ab", 2))
 
   print(clamp(1, "ab", 2))
                  ^^^^
-                 Got "str" as the 2nd argument of clamp(), but must be: float or int
+                 Value '"ab"' (str) is not compatible with expected type 'float'
 `
 	assertError(t, 1, expected)
 }

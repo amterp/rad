@@ -46,8 +46,7 @@ print(floor("ab"))
 	expected := `Error at L2:13
 
   print(floor("ab"))
-              ^^^^
-              Got "str" as the 1st argument of floor(), but must be: float or int
+              ^^^^ Value '"ab"' (str) is not compatible with expected type 'float'
 `
 	assertError(t, 1, expected)
 }

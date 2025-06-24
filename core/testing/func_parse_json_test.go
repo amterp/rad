@@ -86,7 +86,7 @@ parse_json(10)
 	expected := `Error at L2:12
 
   parse_json(10)
-             ^^ Got "int" as the 1st argument of parse_json(), but must be: str
+             ^^ Value '10' (int) is not compatible with expected type 'str'
 `
 	assertError(t, 1, expected)
 }
@@ -99,7 +99,7 @@ parse_json()
 	expected := `Error at L2:1
 
   parse_json()
-  ^^^^^^^^^^^^ parse_json() requires at least 1 argument, but got 0
+  ^^^^^^^^^^^^ Missing required argument '_str'
 `
 	assertError(t, 1, expected)
 }
@@ -112,7 +112,7 @@ parse_json("1", "2")
 	expected := `Error at L2:1
 
   parse_json("1", "2")
-  ^^^^^^^^^^^^^^^^^^^^ parse_json() requires at most 1 argument, but got 2
+  ^^^^^^^^^^^^^^^^^^^^ Expected at most 1 args, but was invoked with 2
 `
 	assertError(t, 1, expected)
 }

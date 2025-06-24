@@ -27,7 +27,7 @@ split(null, ",")
 	expected := `Error at L2:7
 
   split(null, ",")
-        ^^^^ Got "null" as the 1st argument of split(), but must be: str
+        ^^^^ Value 'null' (null) is not compatible with expected type 'str'
 `
 	assertError(t, 1, expected)
 }
