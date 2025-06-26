@@ -50,10 +50,10 @@ func Test_Func_Int_ErrorsOnMap(t *testing.T) {
 int({})
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
+	expected := `Error at L2:1
 
   int({})
-      ^^ Cannot cast "map" to int
+  ^^^^^^^ Cannot cast "map" to int
 `
 	assertError(t, 1, expected)
 }
@@ -63,11 +63,11 @@ func Test_Func_Int_ErrorsOnStringWithDetails(t *testing.T) {
 int("10")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
+	expected := `Error at L2:1
 
   int("10")
-      ^^^^
-      Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string?
+  ^^^^^^^^^
+  Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string?
 `
 	assertError(t, 1, expected)
 }

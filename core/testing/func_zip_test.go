@@ -88,7 +88,7 @@ print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
 
   print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        Cannot specify both 'strict' and 'fill' named arguments
+        Cannot enable 'strict' with 'fill' specified
 `
 	assertError(t, 1, expected)
 }

@@ -43,12 +43,19 @@ func NewBuiltIn(inFunc BuiltInFunc) RadFn {
 	}
 }
 
+func (fn RadFn) Name() string {
+	if fn.BuiltInFunc != nil {
+		return fn.BuiltInFunc.Name
+	}
+	return fn.Typing.Name
+}
+
 func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
 }
 
 // TODO: built-in functions aren't getting the defaults from signatures
-func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
+func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 	i := f.i
 
 	var typing *rl.TypingFnT
@@ -59,11 +66,6 @@ func (fn RadFn) Execute(f FuncInvocationArgs) (out RadValue) {
 		if sig != nil {
 			typing = fn.BuiltInFunc.Signature.Typing
 		}
-
-		// assertMinNumPosArgs(f, fn.BuiltInFunc)
-		// fn.BuiltInFunc.PosArgValidator.validate(f, fn.BuiltInFunc)
-		// assertAllowedNamedArgs(f, fn.BuiltInFunc)
-		// out = fn.BuiltInFunc.Execute(f)
 	}
 
 	out = VOID_SENTINEL

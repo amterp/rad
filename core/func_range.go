@@ -10,7 +10,7 @@ import (
 
 var FuncRange = BuiltInFunc{
 	Name: FUNC_RANGE,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		useFloats := false
 		for _, arg := range f.args {
 			switch arg.value.Type() {

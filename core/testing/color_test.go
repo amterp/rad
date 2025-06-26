@@ -233,10 +233,10 @@ func Test_Color_ErrorsOnTooLargeRgb(t *testing.T) {
 "Hi".color_rgb(300, 110, 220)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:16
+	expected := `Error at L2:6
 
   "Hi".color_rgb(300, 110, 220)
-                 ^^^ RGB values must be [0, 255]; got 300
+       ^^^^^^^^^^^^^^^^^^^^^^^^ RGB values must be [0, 255]; got 300
 `
 	assertError(t, 1, expected)
 }
@@ -246,10 +246,10 @@ func Test_Color_ErrorsOnNegativeRgb(t *testing.T) {
 "Hi".color_rgb(50, 110, -10)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:25
+	expected := `Error at L2:6
 
   "Hi".color_rgb(50, 110, -10)
-                          ^^^ RGB values must be [0, 255]; got -10
+       ^^^^^^^^^^^^^^^^^^^^^^^ RGB values must be [0, 255]; got -10
 `
 	assertError(t, 1, expected)
 }

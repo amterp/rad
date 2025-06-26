@@ -15,7 +15,7 @@ func AddInternalFuncs() {
 	functions := []BuiltInFunc{
 		{
 			Name: INTERNAL_FUNC_GET_STASH_ID,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				argNode := f.args[0]
 				cmd := argNode.value.RequireStr(f.i, argNode.node).Plain()
 				path, err := exec.LookPath(cmd)
@@ -54,7 +54,7 @@ func AddInternalFuncs() {
 		},
 		{
 			Name: INTERNAL_FUNC_DELETE_STASH,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				idArg := f.args[0]
 				id := idArg.value.RequireStr(f.i, idArg.node).Plain()
 				path := RadHomeInst.GetStashForId(id)
@@ -68,7 +68,7 @@ func AddInternalFuncs() {
 		},
 		{
 			Name: INTERNAL_FUNC_RUN_CHECK,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				scriptArg := f.args[0]
 				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
 				result := com.LoadFile(scriptPath)

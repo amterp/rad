@@ -91,6 +91,6 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
-	out := fn.Execute(NewFuncInvocationArgs(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn()))
+	out := fn.Execute(NewFnInvocation(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn()))
 	return out
 }

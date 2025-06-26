@@ -6,7 +6,7 @@ import (
 
 var FuncExit = BuiltInFunc{
 	Name: FUNC_EXIT,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		if len(f.args) == 0 {
 			exit(f.i, 0)
 		} else {

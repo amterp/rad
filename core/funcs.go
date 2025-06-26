@@ -185,42 +185,80 @@ const (
 )
 
 var (
-	NO_NAMED_ARGS       = map[string][]rl.RadType{}
 	NO_NAMED_ARGS_INPUT = map[string]namedArg{}
 )
 
-type FuncInvocationArgs struct {
+type FuncInvocation struct {
 	i            *Interpreter
 	callNode     *ts.Node
-	funcName     string
 	args         []PosArg
 	namedArgs    map[string]namedArg
 	panicIfError bool
 }
 
-func NewFuncInvocationArgs(
+func NewFnInvocation(
 	i *Interpreter,
 	callNode *ts.Node,
 	funcName string,
 	args []PosArg,
 	namedArgs map[string]namedArg,
 	isBuiltIn bool,
-) FuncInvocationArgs {
-	return FuncInvocationArgs{
+) FuncInvocation {
+	return FuncInvocation{
 		i:            i,
 		callNode:     callNode,
-		funcName:     funcName,
 		args:         args,
 		namedArgs:    namedArgs,
 		panicIfError: !(funcName == FUNC_ERROR && isBuiltIn),
 	}
 }
 
+func (f FuncInvocation) GetArg(name string) RadValue {
+	val, ok := f.i.env.GetVar(name)
+	if !ok {
+		panic(fmt.Sprintf("Bug!! In built function requested undefined arg '%s', is your signature correct?",
+			name))
+	}
+	return val
+}
+
+func (f FuncInvocation) GetBool(name string) bool {
+	return f.GetArg(name).RequireBool(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetInt(name string) int64 {
+	return f.GetArg(name).RequireInt(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetFloat(name string) float64 {
+	return f.GetArg(name).RequireFloatAllowingInt(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetStr(name string) RadString {
+	return f.GetArg(name).RequireStr(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetList(name string) *RadList {
+	return f.GetArg(name).RequireList(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetMap(name string) *RadMap {
+	return f.GetArg(name).RequireMap(f.i, f.callNode)
+}
+
+func (f FuncInvocation) GetFn(name string) RadFn {
+	return f.GetArg(name).RequireFn(f.i, f.callNode)
+}
+
+func (f FuncInvocation) Return(vals ...interface{}) RadValue {
+	return newRadValues(f.i, f.callNode, vals...)
+}
+
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
 type BuiltInFunc struct {
 	Name      string
 	Signature *rts.FnSignature
-	Execute   func(FuncInvocationArgs) RadValue
+	Execute   func(FuncInvocation) RadValue
 }
 
 var FunctionsByName map[string]BuiltInFunc
@@ -245,15 +283,15 @@ func init() {
 		FuncColorize,
 		{
 			Name: FUNC_LEN,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				switch v := arg.value.Val.(type) {
+			Execute: func(f FuncInvocation) RadValue {
+				coll := f.GetArg("_val")
+				switch v := coll.Val.(type) {
 				case RadString:
-					return newRadValues(f.i, arg.node, v.Len())
+					return f.Return(v.Len())
 				case *RadList:
-					return newRadValues(f.i, arg.node, v.Len())
+					return f.Return(v.Len())
 				case *RadMap:
-					return newRadValues(f.i, arg.node, v.Len())
+					return f.Return(v.Len())
 				default:
 					panic(bugIncorrectTypes(FUNC_LEN))
 				}
@@ -261,28 +299,23 @@ func init() {
 		},
 		{
 			Name: FUNC_SORT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				reverseArg, exists := f.namedArgs[namedArgReverse]
-				reverse := false
-				if exists {
-					reverse = reverseArg.value.RequireBool(f.i, reverseArg.valueNode)
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				reverse := f.GetBool("reverse")
 
-				arg := f.args[0]
-				switch coerced := arg.value.Val.(type) {
+				coll := f.GetArg("_val")
+				switch coerced := coll.Val.(type) {
 				case RadString:
 					// todo maintain attributes
-					str := f.i.eval(arg.node).Val.RequireStr(f.i, f.callNode).Plain()
-					runes := []rune(str)
+					runes := []rune(coerced.Plain())
 					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
-					return newRadValues(f.i, f.callNode, string(runes))
+					return f.Return(string(runes))
 				case *RadList:
-					sortedValues := sortList(f.i, arg.node, coerced, lo.Ternary(reverse, Desc, Asc))
+					sortedValues := sortList(f.i, f.callNode, coerced, lo.Ternary(reverse, Desc, Asc))
 					list := NewRadList()
 					for _, v := range sortedValues {
 						list.Append(v)
 					}
-					return newRadValues(f.i, arg.node, list)
+					return f.Return(list)
 				default:
 					panic(bugIncorrectTypes(FUNC_SORT))
 				}
@@ -290,42 +323,30 @@ func init() {
 		},
 		{
 			Name: FUNC_NOW,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				tz := constDefault
-				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
-					tz = tzArg.value.RequireStr(f.i, tzArg.valueNode).Plain()
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				tz := f.GetStr("tz").Plain()
 				var location *time.Location
-				if tz == constDefault {
+				if tz == "local" {
 					location = time.Local
 				} else {
 					var err error
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
+						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
 					}
 				}
 
 				nowMap := NewTimeMap(RClock.Now().In(location))
-				return newRadValues(f.i, f.callNode, nowMap)
+				return f.Return(nowMap)
 			},
 		},
 		{
 			Name: FUNC_PARSE_EPOCH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				epochArg := f.args[0]
-				epoch := epochArg.value.RequireInt(f.i, epochArg.node)
-
-				tz := constDefault
-				if tzArg, exists := f.namedArgs[namedArgTz]; exists {
-					tz = tzArg.value.RequireStr(f.i, tzArg.valueNode).Plain()
-				}
-
-				unit := constAuto
-				if unitArg, exists := f.namedArgs[namedArgUnit]; exists {
-					unit = strings.ToLower(unitArg.value.RequireStr(f.i, unitArg.valueNode).Plain())
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				epoch := f.GetInt("_epoch")
+				tz := f.GetStr("tz").Plain()
+				unit := f.GetStr("unit").Plain()
 
 				isNegative := epoch < 0
 				absEpoch := epoch
@@ -357,11 +378,7 @@ func init() {
 							digitCount,
 							namedArgUnit,
 						)
-						return newRadValues(
-							f.i,
-							f.callNode,
-							NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(epochArg.node),
-						)
+						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(f.callNode))
 					}
 				} else {
 					switch unit {
@@ -380,7 +397,7 @@ func init() {
 					default:
 						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
 							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit).SetNode(epochArg.node))
+						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit).SetNode(f.callNode))
 					}
 				}
 
@@ -390,131 +407,105 @@ func init() {
 				}
 
 				var location *time.Location
-				if tz == constDefault {
+				if tz == "local" {
 					location = time.Local
 				} else {
 					var err error
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone).SetNode(epochArg.node))
+						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone).SetNode(f.callNode))
 					}
 				}
 
 				goTime := time.Unix(second, nanoSecond).In(location)
 				timeMap := NewTimeMap(goTime)
-				return newRadValues(f.i, f.callNode, timeMap)
+				return f.Return(timeMap)
 			},
 		},
 		{
 			Name: FUNC_TYPE_OF,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				return newRadValues(f.i, f.callNode, NewRadString(TypeAsString(f.args[0].value)))
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(NewRadString(TypeAsString(f.GetArg("_var"))))
 			},
 		},
 		{
 			Name: FUNC_JOIN,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				listArg := f.args[0]
-				sepArg := f.args[1]
-				prefixArg := tryGetArg(2, f.args)
-				suffixArg := tryGetArg(3, f.args)
-
-				list := listArg.value.RequireList(f.i, listArg.node)
-				sep := sepArg.value.RequireStr(f.i, sepArg.node).String()
-				prefix := ""
-				if prefixArg != nil {
-					prefix = prefixArg.value.RequireStr(f.i, prefixArg.node).String()
-				}
-				suffix := ""
-				if suffixArg != nil {
-					suffix = suffixArg.value.RequireStr(f.i, suffixArg.node).String()
-				}
-
-				return newRadValues(f.i, f.callNode, list.Join(sep, prefix, suffix))
+			Execute: func(f FuncInvocation) RadValue {
+				list := f.GetList("_list")
+				sep := f.GetStr("sep").Plain()
+				prefix := f.GetStr("prefix").Plain()
+				suffix := f.GetStr("suffix").Plain()
+				return f.Return(list.Join(sep, prefix, suffix))
 			},
 		},
 		{
 			Name: FUNC_UPPER,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Upper())
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(f.GetStr("_val").Upper())
 			},
 		},
 		{
 			Name: FUNC_LOWER,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				return newRadValues(f.i, arg.node, arg.value.RequireStr(f.i, arg.node).Lower())
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(f.GetStr("_val").Lower())
 			},
 		},
 		{
 			Name: FUNC_STARTS_WITH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				subjectArg := f.args[0]
-				prefixArg := f.args[1]
-				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
-				prefixStr := prefixArg.value.RequireStr(f.i, prefixArg.node)
-				return newRadValues(f.i, f.callNode, strings.HasPrefix(subjectStr.Plain(), prefixStr.Plain()))
+			Execute: func(f FuncInvocation) RadValue {
+				val := f.GetStr("_val")
+				start := f.GetStr("_start")
+				return f.Return(strings.HasPrefix(val.Plain(), start.Plain()))
 			},
 		},
 		{
 			Name: FUNC_ENDS_WITH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				subjectArg := f.args[0]
-				prefixArg := f.args[1]
-				subjectStr := subjectArg.value.RequireStr(f.i, subjectArg.node)
-				prefixStr := prefixArg.value.RequireStr(f.i, prefixArg.node)
-				return newRadValues(f.i, f.callNode, strings.HasSuffix(subjectStr.Plain(), prefixStr.Plain()))
+			Execute: func(f FuncInvocation) RadValue {
+				val := f.GetStr("_val")
+				end := f.GetStr("_end")
+				return f.Return(strings.HasSuffix(val.Plain(), end.Plain()))
 			},
 		},
 		{
 			Name: FUNC_KEYS,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Keys())
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(f.GetMap("_map").Keys())
 			},
 		},
 		{
 			Name: FUNC_VALUES,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				return newRadValues(f.i, arg.node, arg.value.RequireMap(f.i, arg.node).Values())
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(f.GetMap("_map").Values())
 			},
 		},
 		{
 			Name: FUNC_TRUNCATE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				strArg := f.args[0]
-				maxLenArg := f.args[1]
-				maxLen := maxLenArg.value.RequireInt(f.i, maxLenArg.node)
-
+			Execute: func(f FuncInvocation) RadValue {
+				str := f.GetStr("_str")
+				maxLen := f.GetInt("_len")
 				if maxLen < 0 {
-					f.i.errorf(maxLenArg.node, "%s() takes a non-negative int, got %d", FUNC_TRUNCATE, maxLen)
+					f.i.errorf(f.callNode, "%s() takes a non-negative int, got %d", FUNC_TRUNCATE, maxLen)
 				}
 
-				radStr := strArg.value.RequireStr(f.i, strArg.node)
-				strLen := radStr.Len()
-
+				strLen := str.Len()
 				if maxLen >= strLen {
-					return newRadValues(f.i, f.callNode, radStr)
+					return f.Return(str)
 				}
 
-				str := radStr.Plain() // todo should maintain attributes
-				str = com.Truncate(str, maxLen)
+				newStr := str.Plain() // todo should maintain attributes
+				newStr = com.Truncate(newStr, maxLen)
 
-				return newRadValues(f.i, f.callNode, str)
+				return f.Return(newStr)
 			},
 		},
 		{
 			Name: FUNC_UNIQUE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-
+			Execute: func(f FuncInvocation) RadValue {
 				output := NewRadList()
 
 				seen := make(map[string]struct{})
-				list := arg.value.RequireList(f.i, arg.node)
+				list := f.GetList("_list")
 				for _, item := range list.Values {
 					key := ToPrintable(item) // todo not a solid approach
 					if _, exists := seen[key]; !exists {
@@ -523,19 +514,13 @@ func init() {
 					}
 				}
 
-				return newRadValues(f.i, f.callNode, output)
+				return f.Return(output)
 			},
 		},
 		{
 			Name: FUNC_CONFIRM,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := tryGetArg(0, f.args)
-
-				prompt := "Confirm? [y/n] > "
-
-				if arg != nil {
-					prompt = arg.value.RequireStr(f.i, arg.node).Plain()
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				prompt := f.GetStr("prompt").Plain()
 
 				response, err := InputConfirm("", prompt)
 				if err != nil {
@@ -543,63 +528,55 @@ func init() {
 					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
 				}
 
-				return newRadValues(f.i, f.callNode, response)
+				return f.Return(response)
 			},
 		},
 		{
 			Name: FUNC_PARSE_JSON,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-
-				out, err := TryConvertJsonToNativeTypes(f.i, f.callNode, arg.value.RequireStr(f.i, arg.node).Plain())
+			Execute: func(f FuncInvocation) RadValue {
+				out, err := TryConvertJsonToNativeTypes(f.i, f.callNode, f.GetStr("_str").Plain())
 				if err != nil {
 					f.i.errorf(f.callNode, fmt.Sprintf("Error parsing JSON: %v", err))
 				}
-				return newRadValues(f.i, f.callNode, out)
+				return f.Return(out)
 			},
 		},
 		{
 			Name: FUNC_PARSE_INT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-
-				str := arg.value.RequireStr(f.i, arg.node).Plain()
+			Execute: func(f FuncInvocation) RadValue {
+				str := f.GetStr("_str").Plain()
 				parsed, err := rts.ParseInt(str)
 
 				if err == nil {
-					return newRadValues(f.i, f.callNode, parsed)
+					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
 				}
 			},
 		},
 		{
 			Name: FUNC_PARSE_FLOAT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-
-				str := arg.value.RequireStr(f.i, arg.node).Plain()
+			Execute: func(f FuncInvocation) RadValue {
+				str := f.GetStr("_str").Plain()
 				parsed, err := rts.ParseFloat(str)
 
 				if err == nil {
-					return newRadValues(f.i, f.callNode, parsed)
+					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrParseFloatFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrParseFloatFailed))
 				}
 			},
 		},
 		{
 			Name: FUNC_ABS,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-
-				switch coerced := arg.value.Val.(type) {
+			Execute: func(f FuncInvocation) RadValue {
+				switch coerced := f.GetArg("_num").Val.(type) {
 				case int64:
-					return newRadValues(f.i, f.callNode, AbsInt(coerced))
+					return f.Return(AbsInt(coerced))
 				case float64:
-					return newRadValues(f.i, f.callNode, AbsFloat(coerced))
+					return f.Return(AbsFloat(coerced))
 				default:
 					bugIncorrectTypes(FUNC_ABS)
 					panic(UNREACHABLE)
@@ -608,46 +585,30 @@ func init() {
 		},
 		{
 			Name: FUNC_ERROR,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				err := f.args[0].value.RequireStr(f.i, f.args[0].node)
-				return newRadValues(f.i, f.callNode, NewError(err))
+			Execute: func(f FuncInvocation) RadValue {
+				err := f.GetStr("_msg")
+				return f.Return(NewError(err))
 			},
 		},
 		{
 			Name: FUNC_INPUT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				prompt := "> "
-				if promptArg := tryGetArg(0, f.args); promptArg != nil {
-					prompt = promptArg.value.RequireStr(f.i, promptArg.node).Plain()
-				}
-
-				hint := ""
-				if hintArg, exists := f.namedArgs[namedArgHint]; exists {
-					hint = hintArg.value.RequireStr(f.i, hintArg.valueNode).Plain()
-				}
-
-				default_ := ""
-				if defaultArg, exists := f.namedArgs[namedArgDefault]; exists {
-					default_ = defaultArg.value.RequireStr(f.i, defaultArg.valueNode).Plain()
-				}
-
-				secret := false
-				if secretArg, exists := f.namedArgs[namedArgSecret]; exists {
-					secret = secretArg.value.RequireBool(f.i, secretArg.valueNode)
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				prompt := f.GetStr("prompt").Plain()
+				hint := f.GetStr("hint").Plain()
+				default_ := f.GetStr("default").Plain()
+				secret := f.GetBool("secret")
 
 				response, err := InputText(prompt, hint, default_, secret)
 				if err != nil {
-					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
+					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err)) // TODO RETURN ERROR
 				}
-				return newRadValues(f.i, f.callNode, response)
+				return f.Return(response)
 			},
 		},
 		{
 			Name: FUNC_GET_PATH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				pathArg := f.args[0]
-				path := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
 
 				radMap := NewRadMap()
 				radMap.SetPrimitiveBool(constExists, false)
@@ -670,37 +631,28 @@ func init() {
 					radMap.SetPrimitiveBool(constExists, true)
 				}
 
-				return newRadValues(f.i, f.callNode, radMap)
+				return f.Return(radMap)
 			},
 		},
 		{
 			Name: FUNC_GET_ENV,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				envVarArg := f.args[0]
-				envVar := envVarArg.value.RequireStr(f.i, envVarArg.node).Plain()
+			Execute: func(f FuncInvocation) RadValue {
+				envVar := f.GetStr("_var").Plain()
 				envValue := os.Getenv(envVar)
-				return newRadValues(f.i, f.callNode, newRadValueStr(envValue))
+				return f.Return(envValue)
 			},
 		},
 		{
 			Name: FUNC_FIND_PATHS,
 			// todo: filtering by name, file type
 			//  potentially allow `include_root`
-			Execute: func(f FuncInvocationArgs) RadValue {
-				pathArg := f.args[0]
-				pathStr := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
+				depth := f.GetInt("depth")
 
-				depth := int64(-1) // -1 is unlimited
-				if depthArg, exists := f.namedArgs[namedArgDepth]; exists {
-					depth = depthArg.value.RequireInt(f.i, depthArg.valueNode)
-				}
+				relativeMode := f.GetStr("relative").Plain()
 
-				relativeMode := constTarget
-				if relativeArg, exists := f.namedArgs[namedArgRelative]; exists {
-					relativeMode = relativeArg.value.RequireStr(f.i, relativeArg.valueNode).Plain()
-				}
-
-				absTarget, err := filepath.Abs(pathStr) // todo should be abstracted away for testing
+				absTarget, err := filepath.Abs(path) // todo should be abstracted away for testing
 				if err != nil {
 					f.i.errorf(f.callNode, "Error resolving absolute path for target: %v", err)
 				}
@@ -760,14 +712,14 @@ func init() {
 					f.i.errorf(f.callNode, "Error walking directory: %v", err)
 				}
 
-				return newRadValues(f.i, f.callNode, list)
+				return f.Return(list)
 			},
 		},
 		{
+			// todo should offer args like find_paths
 			Name: FUNC_DELETE_PATH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
-
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
 				deleted := false
 
 				if _, err := os.Stat(path); err == nil {
@@ -776,55 +728,46 @@ func init() {
 					deleted = err == nil
 				}
 
-				return newRadValues(f.i, f.callNode, deleted)
+				return f.Return(deleted)
 			},
 		},
 		{
+			// todo should support counting matches in a list as well
 			Name: FUNC_COUNT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				strArg := f.args[0]
-				substrArg := f.args[1]
+			Execute: func(f FuncInvocation) RadValue {
+				outer := f.GetStr("_str").Plain()
+				inner := f.GetStr("_substr").Plain()
 
-				str := strArg.value.RequireStr(f.i, strArg.node).Plain()
-				substr := substrArg.value.RequireStr(f.i, substrArg.node).Plain()
-
-				count := strings.Count(str, substr)
-				return newRadValues(f.i, f.callNode, count)
+				count := strings.Count(outer, inner)
+				return f.Return(count)
 			},
 		},
 		{
 			Name: FUNC_ZIP,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				strictArg, strictExists := f.namedArgs[namedArgStrict]
-				strict := false
-				if strictExists {
-					strict = strictArg.value.RequireBool(f.i, strictArg.valueNode)
+			Execute: func(f FuncInvocation) RadValue {
+				strict := f.GetBool("strict")
+
+				fill := f.GetArg("fill")
+
+				if strict && !fill.IsNull() {
+					f.i.errorf(f.callNode, "Cannot enable 'strict' with 'fill' specified")
 				}
 
-				fillArg, fillExists := f.namedArgs[namedArgFill]
-				var fill *RadValue
-				if fillExists {
-					fill = &fillArg.value
-				}
-
-				if strictExists && fillExists {
-					f.i.errorf(f.callNode, "Cannot specify both 'strict' and 'fill' named arguments")
-				}
-
-				if len(f.args) == 0 {
-					return newRadValues(f.i, f.callNode, NewRadList())
+				lists := f.GetList("_lists")
+				if lists.LenInt() == 0 {
+					return f.Return(NewRadList())
 				}
 
 				length := int64(-1)
-				for _, argList := range f.args {
-					list := argList.value.RequireList(f.i, argList.node)
+				for _, subList := range lists.Values {
+					list := subList.RequireList(f.i, f.callNode)
 					if length == -1 {
 						length = list.Len()
 					} else if length != list.Len() {
 						if strict {
 							f.i.errorf(f.callNode, "Strict mode enabled: all lists must have the same length, but got %d and %d", length, list.Len())
 						}
-						if fill == nil {
+						if fill.IsNull() {
 							length = com.Int64Min(length, list.Len())
 						} else {
 							length = com.Int64Max(length, list.Len())
@@ -837,108 +780,95 @@ func init() {
 				for idx := int64(0); idx < length; idx++ {
 					listAtIdx := NewRadList()
 					out.Append(newRadValueList(listAtIdx))
-					for _, argList := range f.args {
-						argList := argList.value.RequireList(f.i, argList.node)
+					for _, subListVal := range lists.Values {
+						subList := subListVal.RequireList(f.i, f.callNode)
 
-						if idx < argList.Len() {
-							listAtIdx.Append(argList.IndexAt(f.i, f.callNode, idx))
+						if idx < subList.Len() {
+							listAtIdx.Append(subList.IndexAt(f.i, f.callNode, idx))
 						} else {
 							// logically: this should only happen if fill is provided
-							listAtIdx.Append(*fill)
+							listAtIdx.Append(fill)
 						}
 					}
 				}
 
-				return newRadValues(f.i, f.callNode, out)
+				return f.Return(out)
 			},
 		},
 		{
 			Name: FUNC_STR,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				asStr := ToPrintableQuoteStr(arg.value, false)
-				return newRadValues(f.i, f.callNode, asStr)
+			Execute: func(f FuncInvocation) RadValue {
+				asStr := ToPrintableQuoteStr(f.GetArg("_var"), false)
+				return f.Return(asStr)
 			},
 		},
 		{
 			Name: FUNC_INT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
+			Execute: func(f FuncInvocation) RadValue {
+				arg := f.GetArg("_var")
 
-				output := int64(0)
-				NewTypeVisitor(f.i, arg.node).
-					ForInt(func(v RadValue, i int64) {
-						output = i
-					}).
-					ForFloat(func(v RadValue, f float64) {
-						output = int64(f)
-					}).
-					ForBool(func(v RadValue, b bool) {
-						if b {
-							output = 1
-						} else {
-							output = 0
-						}
-					}).
-					ForString(func(v RadValue, str RadString) {
-						f.i.errorf(
-							arg.node,
-							"Cannot cast string to int. Did you mean to use '%s' to parse the given string?",
-							FUNC_PARSE_INT,
-						)
-					}).
-					ForDefault(func(v RadValue) {
-						f.i.errorf(arg.node, "Cannot cast %q to int", v.Type().AsString())
-					}).Visit(arg.value)
-				return newRadValues(f.i, f.callNode, output)
+				switch coerced := arg.Val.(type) {
+				case int64:
+					return f.Return(coerced)
+				case float64:
+					return f.Return(int64(coerced))
+				case bool:
+					if coerced {
+						return f.Return(int64(1))
+					} else {
+						return f.Return(int64(0))
+					}
+				case RadString:
+					f.i.errorf(
+						f.callNode,
+						"Cannot cast string to int. Did you mean to use '%s' to parse the given string?",
+						FUNC_PARSE_INT,
+					)
+				default:
+					f.i.errorf(f.callNode, "Cannot cast %q to int", arg.Type().AsString())
+				}
+				panic(UNREACHABLE)
 			},
 		},
 		{
 			Name: FUNC_FLOAT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
+			Execute: func(f FuncInvocation) RadValue {
+				arg := f.GetArg("_var")
 
-				output := 0.0
-				NewTypeVisitor(f.i, arg.node).
-					ForInt(func(v RadValue, i int64) {
-						output = float64(i)
-					}).
-					ForFloat(func(v RadValue, f float64) {
-						output = f
-					}).
-					ForBool(func(v RadValue, b bool) {
-						if b {
-							output = 1.0
-						} else {
-							output = 0.0
-						}
-					}).
-					ForString(func(v RadValue, str RadString) {
-						f.i.errorf(
-							arg.node,
-							"Cannot cast string to float. Did you mean to use '%s' to parse the given string?",
-							FUNC_PARSE_FLOAT,
-						)
-					}).
-					ForDefault(func(v RadValue) {
-						f.i.errorf(arg.node, "Cannot cast %q to float", v.Type().AsString())
-					}).
-					Visit(arg.value)
-				return newRadValues(f.i, f.callNode, output)
+				switch coerced := arg.Val.(type) {
+				case int64:
+					return f.Return(float64(coerced))
+				case float64:
+					return f.Return(coerced)
+				case bool:
+					if coerced {
+						return f.Return(float64(1))
+					} else {
+						return f.Return(float64(0))
+					}
+				case RadString:
+					f.i.errorf(
+						f.callNode,
+						"Cannot cast string to float. Did you mean to use '%s' to parse the given string?",
+						FUNC_PARSE_FLOAT,
+					)
+				default:
+					f.i.errorf(f.callNode, "Cannot cast %q to float", arg.Type().AsString())
+				}
+				panic(UNREACHABLE)
 			},
 		},
 		{
 			Name: FUNC_SUM,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				list := arg.value.RequireList(f.i, arg.node)
+			Execute: func(f FuncInvocation) RadValue {
+				list := f.GetList("_nums")
 
 				sum := 0.0
 				for idx, item := range list.Values {
 					num, ok := item.TryGetFloatAllowingInt()
 					if !ok {
 						f.i.errorf(
-							arg.node,
+							f.callNode,
 							"%s() requires a list of numbers, got %q at index %d",
 							FUNC_SUM,
 							TypeAsString(item),
@@ -948,12 +878,12 @@ func init() {
 					sum += num
 				}
 
-				return newRadValues(f.i, f.callNode, sum)
+				return f.Return(sum)
 			},
 		},
 		{
 			Name: FUNC_TRIM,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.Trim(chars)
 				})
@@ -961,7 +891,7 @@ func init() {
 		},
 		{
 			Name: FUNC_TRIM_PREFIX,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimPrefix(chars)
 				})
@@ -969,7 +899,7 @@ func init() {
 		},
 		{
 			Name: FUNC_TRIM_SUFFIX,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				return runTrim(f, func(str RadString, chars string) RadString {
 					return str.TrimSuffix(chars)
 				})
@@ -983,13 +913,9 @@ func init() {
 			//   - head              # First N bytes
 			//   - tail              # Last N bytes
 			Name: FUNC_READ_FILE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
-
-				mode := constText
-				if modeArg, exists := f.namedArgs[namedArgMode]; exists {
-					mode = modeArg.value.RequireStr(f.i, modeArg.valueNode).Plain()
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
+				mode := f.GetStr("mode").Plain()
 
 				data, err := os.ReadFile(path)
 				if err == nil {
@@ -1008,32 +934,29 @@ func init() {
 					default:
 						f.i.errorf(
 							f.callNode,
-							"Invalid mode %q in read_file; expected %q or %q",
+							"Bug! Invalid mode %q in %s; expected %q or %q",
 							mode,
+							FUNC_READ_FILE,
 							constText,
 							constBytes,
 						)
 					}
-					return newRadValues(f.i, f.callNode, resultMap)
+					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
 				}
 			},
 		},
 		{
 			Name: FUNC_WRITE_FILE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				path := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
-				content := f.args[1].value.RequireStr(f.i, f.args[1].node).String()
-
-				appendFlag := false
-				if appendArg, exists := f.namedArgs[namedArgAppend]; exists {
-					appendFlag = appendArg.value.RequireBool(f.i, appendArg.valueNode)
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
+				content := f.GetStr("_content").Plain()
+				appendFlag := f.GetBool("append")
 
 				data := []byte(content)
 				var err error
@@ -1060,60 +983,52 @@ func init() {
 					resultMap := NewRadMap()
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
 					resultMap.SetPrimitiveStr(constPath, path)
-					return newRadValues(f.i, f.callNode, resultMap)
+					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
 				} else {
-					return newRadValues(f.i, f.callNode, NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
+					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
 				}
 			},
 		},
 		{
 			Name: FUNC_ROUND,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				var precision int64 = 0
-				if len(f.args) > 1 {
-					precisionArg := f.args[1]
-					precision = precisionArg.value.RequireInt(f.i, precisionArg.node)
-					if precision < 0 {
-						f.i.errorf(precisionArg.node, "Precision must be non-negative, got %d", precision)
-					}
+			Execute: func(f FuncInvocation) RadValue {
+				num := f.GetFloat("_num")
+				precision := f.GetInt("_decimals")
+				if precision < 0 {
+					f.i.errorf(f.callNode, "Precision must be non-negative, got %d", precision)
 				}
 
-				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
 				if precision == 0 {
-					return newRadValues(f.i, f.callNode, int64(math.Round(val)))
+					return f.Return(int64(math.Round(num)))
 				}
 
 				factor := math.Pow10(int(precision))
-				rounded := math.Round(val*factor) / factor
-				return newRadValues(f.i, f.callNode, rounded)
+				rounded := math.Round(num*factor) / factor
+				return f.Return(rounded)
 			},
 		},
 		{
 			Name: FUNC_CEIL,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
-				return newRadValues(f.i, f.callNode, math.Ceil(val))
+			Execute: func(f FuncInvocation) RadValue {
+				num := f.GetFloat("_num")
+				return f.Return(math.Ceil(num))
 			},
 		},
 		{
 			Name: FUNC_FLOOR,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				val := arg.value.RequireFloatAllowingInt(f.i, arg.node)
-				return newRadValues(f.i, f.callNode, math.Floor(val))
+			Execute: func(f FuncInvocation) RadValue {
+				num := f.GetFloat("_num")
+				return f.Return(math.Floor(num))
 			},
 		},
 		{
 			Name: FUNC_MIN,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				list := arg.value.RequireList(f.i, arg.node)
+			Execute: func(f FuncInvocation) RadValue {
+				list := f.GetList("_nums")
 				if list.Len() == 0 {
 					f.i.errorf(f.callNode, "Cannot find minimum of empty list")
 				}
@@ -1123,7 +1038,7 @@ func init() {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
 						f.i.errorf(
-							arg.node,
+							f.callNode,
 							"%s() requires a list of numbers, got %q at index %d",
 							FUNC_MIN,
 							TypeAsString(item),
@@ -1132,14 +1047,13 @@ func init() {
 					}
 					minVal = math.Min(minVal, val)
 				}
-				return newRadValues(f.i, f.callNode, minVal)
+				return f.Return(minVal)
 			},
 		},
 		{
 			Name: FUNC_MAX,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				list := arg.value.RequireList(f.i, arg.node)
+			Execute: func(f FuncInvocation) RadValue {
+				list := f.GetList("_nums")
 				if list.Len() == 0 {
 					f.i.errorf(f.callNode, "Cannot find maximum of empty list")
 				}
@@ -1149,7 +1063,7 @@ func init() {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
 						f.i.errorf(
-							arg.node,
+							f.callNode,
 							"%s() requires a list of numbers, got %q at index %d",
 							FUNC_MAX,
 							TypeAsString(item),
@@ -1158,100 +1072,96 @@ func init() {
 					}
 					maxVal = math.Max(maxVal, val)
 				}
-				return newRadValues(f.i, f.callNode, maxVal)
+
+				return f.Return(maxVal)
 			},
 		},
 		{
 			Name: FUNC_CLAMP,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				valArg := f.args[0]
-				minArg := f.args[1]
-				maxArg := f.args[2]
+			Execute: func(f FuncInvocation) RadValue {
+				valNum := f.GetFloat("val")
+				minNum := f.GetFloat("min")
+				maxNum := f.GetFloat("max")
 
-				val := valArg.value.RequireFloatAllowingInt(f.i, valArg.node)
-				minVal := minArg.value.RequireFloatAllowingInt(f.i, minArg.node)
-				maxVal := maxArg.value.RequireFloatAllowingInt(f.i, maxArg.node)
-
-				if minVal > maxVal {
-					f.i.errorf(f.callNode, "min must be <= max, got %f and %f", minVal, maxVal)
+				if minNum > maxNum {
+					f.i.errorf(f.callNode, "min must be <= max, got %f and %f", minNum, maxNum)
 				}
-				return newRadValues(f.i, f.callNode, math.Min(math.Max(val, minVal), maxVal))
+				return f.Return(math.Min(math.Max(valNum, minNum), maxNum))
 			},
 		},
 		{
 			Name: FUNC_REVERSE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				radString := arg.value.RequireStr(f.i, arg.node)
-				return newRadValues(f.i, f.callNode, radString.Reverse())
+			Execute: func(f FuncInvocation) RadValue {
+				val := f.GetStr("_val")
+				return f.Return(val.Reverse())
 			},
 		},
 		{
 			Name: FUNC_IS_DEFINED,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				arg := f.args[0]
-				str := arg.value.RequireStr(f.i, arg.node).Plain()
-				val, ok := f.i.env.GetVar(str)
+			Execute: func(f FuncInvocation) RadValue {
+				name := f.GetStr("_var").Plain()
+				val, ok := f.i.env.GetVar(name)
 				if !ok {
-					return newRadValues(f.i, f.callNode, false)
+					return f.Return(false)
 				}
-				return newRadValues(f.i, f.callNode, val.Type() != rl.RadNullT)
+				return f.Return(val.Type() != rl.RadNullT)
 			},
 		},
 		{
 			Name: FUNC_HYPERLINK,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				text := f.args[0]
-				linkArg := f.args[1]
-				link := linkArg.value.RequireStr(f.i, linkArg.node)
-				switch coerced := text.value.Val.(type) {
+			Execute: func(f FuncInvocation) RadValue {
+				text := f.GetArg("_val")
+				link := f.GetStr("_link")
+				switch coerced := text.Val.(type) {
 				case RadString:
-					return newRadValues(f.i, text.node, coerced.Hyperlink(link))
+					return f.Return(coerced.Hyperlink(link))
 				default:
-					s := NewRadString(ToPrintable(text.value))
+					s := NewRadString(ToPrintable(text))
 					s.SetSegmentsHyperlink(link)
-					return newRadValues(f.i, f.callNode, s)
+					return f.Return(s)
 				}
 			},
 		},
 		{
 			Name: FUNC_UUID_V4,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				id, _ := uuid.NewRandom()
-				return newRadValues(f.i, f.callNode, id.String())
+				return f.Return(id.String())
 			},
 		},
 		{
 			Name: FUNC_UUID_V7,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				id, _ := uuid.NewV7()
-				return newRadValues(f.i, f.callNode, id.String())
+				return f.Return(id.String())
 			},
 		},
 		{
 			Name: FUNC_GEN_FID,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				// defaults
 				config := fid.NewConfig().
 					WithTickSize(fid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
 					WithNumRandomChars(5).
 					WithAlphabet(fid.Base62Alphabet)
 
-				if alphabetArg, exists := f.namedArgs[namedArgAlphabet]; exists {
-					alphabet := alphabetArg.value.RequireStr(f.i, alphabetArg.valueNode).Plain()
-					config = config.WithAlphabet(alphabet)
+				alphabet := f.GetArg("alphabet")
+				if !alphabet.IsNull() {
+					config = config.WithAlphabet(alphabet.RequireStr(f.i, f.callNode).Plain())
 				}
 
-				if tickSizeArg, exists := f.namedArgs[namedArgTickSizeMs]; exists {
-					tickSize := tickSizeArg.value.RequireInt(f.i, tickSizeArg.valueNode)
+				tickSizeMs := f.GetArg("tick_size_ms")
+				if !tickSizeMs.IsNull() {
+					tickSize := tickSizeMs.RequireInt(f.i, f.callNode)
 					config = config.WithTickSize(time.Duration(tickSize) * time.Millisecond)
 				}
 
-				if numRandomCharsArg, exists := f.namedArgs[namedArgNumRandomChars]; exists {
-					numRandomChars := numRandomCharsArg.value.RequireInt(f.i, numRandomCharsArg.valueNode)
+				numRandomCharsArg := f.GetArg("num_random_chars")
+				if !numRandomCharsArg.IsNull() {
+					numRandomChars := numRandomCharsArg.RequireInt(f.i, f.callNode)
 					if numRandomChars < 0 {
 						f.i.errorf(
-							numRandomCharsArg.valueNode,
+							f.callNode,
 							"Number of random chars must be non-negative, got %d",
 							numRandomChars,
 						)
@@ -1269,133 +1179,117 @@ func init() {
 					f.i.errorf(f.callNode, "Error generating FID: %v", err)
 				}
 
-				return newRadValues(f.i, f.callNode, id)
+				return f.Return(id)
 			},
 		},
 		{
 			Name: FUNC_GET_DEFAULT,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				mapArg := f.args[0]
-				keyArg := f.args[1]
-				defaultArg := f.args[2]
+			Execute: func(f FuncInvocation) RadValue {
+				radMap := f.GetMap("_map")
+				key := f.GetArg("key")
+				def := f.GetArg("default")
 
-				mapValue := mapArg.value.RequireMap(f.i, mapArg.node)
-				value, ok := mapValue.Get(keyArg.value)
+				value, ok := radMap.Get(key)
 				if !ok {
-					value = defaultArg.value
+					value = def
 				}
 
-				return newRadValues(f.i, f.callNode, value)
+				return f.Return(value)
 			},
 		},
 		{
 			Name: FUNC_GET_RAD_HOME,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				radHome := RadHomeInst.HomeDir
-				return newRadValues(f.i, f.callNode, radHome)
+				return f.Return(radHome)
 			},
 		},
 		{
 			Name: FUNC_GET_STASH_DIR,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				stashPath := RadHomeInst.GetStash()
 				if stashPath == nil {
 					errMissingScriptId(f.i, f.callNode)
 				}
 
-				subPathArg := tryGetArg(0, f.args)
-				if subPathArg != nil {
-					subPath := subPathArg.value.RequireStr(f.i, subPathArg.node).Plain()
-					path := filepath.Join(*stashPath, subPath)
-					stashPath = &path
-				}
+				subPath := f.GetStr("_sub_path").Plain()
+				path := filepath.Join(*stashPath, subPath)
+				stashPath = &path
 
-				return newRadValues(f.i, f.callNode, *stashPath)
+				return f.Return(*stashPath)
 			},
 		},
 		{
 			Name: FUNC_LOAD_STATE,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				state, _ := RadHomeInst.LoadState(f.i, f.callNode)
 				state.RequireMap(f.i, f.callNode)
-				return newRadValues(f.i, f.callNode, state)
+				return f.Return(state)
 			},
 		},
 		{
 			Name: FUNC_SAVE_STATE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				mapArg := f.args[0]
-				mapArg.value.RequireMap(f.i, mapArg.node)
-
-				RadHomeInst.SaveState(f.i, f.callNode, mapArg.value)
-
-				return newRadValues(f.i, f.callNode)
+			Execute: func(f FuncInvocation) RadValue {
+				RadHomeInst.SaveState(f.i, f.callNode, f.GetArg("_state"))
+				return f.Return()
 			},
 		},
 		{
 			Name: FUNC_LOAD_STASH_FILE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				pathArg := f.args[0]
-				defaultArg := f.args[1]
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
+				def := f.GetStr("_default").Plain()
 
-				pathFromStash := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
-				path := RadHomeInst.GetStashSub(pathFromStash, f.i, f.callNode)
+				path = RadHomeInst.GetStashSub(path, f.i, f.callNode)
 
 				output := NewRadMap()
-				output.SetPrimitiveStr(constPath, path) // todo 'full_path' to be consistent with get_path?
+				output.SetPrimitiveStr(constFullPath, path)
 
 				if !com.FileExists(path) {
-					defaultStr := defaultArg.value.RequireStr(f.i, defaultArg.node).Plain()
-					err := com.CreateFilePathAndWriteString(path, defaultStr)
+					err := com.CreateFilePathAndWriteString(path, def)
 					if err != nil {
 						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
-						return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
+						return f.Return(NewErrorStr(errMsg))
 					}
 
-					output.Set(newRadValueStr(constContent), newRadValueStr(defaultStr))
+					output.SetPrimitiveStr(constContent, def)
 					output.SetPrimitiveBool(constCreated, true)
-					return newRadValues(f.i, f.callNode, output) // signal not existed
+					return f.Return(output) // signal not existed
 				}
 
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
 					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
-					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg))
+					return f.Return(NewErrorStr(errMsg))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
 				output.SetPrimitiveBool(constCreated, false)
-				return newRadValues(f.i, f.callNode, output) // signal existed
+				return f.Return(output) // signal existed
 			},
 		},
 		{
 			Name: FUNC_WRITE_STASH_FILE,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				pathArg := f.args[0]
-				contentArg := f.args[1]
+			Execute: func(f FuncInvocation) RadValue {
+				path := f.GetStr("_path").Plain()
+				content := f.GetStr("_content").Plain()
 
-				pathFromStash := pathArg.value.RequireStr(f.i, pathArg.node).Plain()
-				path := RadHomeInst.GetStashSub(pathFromStash, f.i, f.callNode)
+				path = RadHomeInst.GetStashSub(path, f.i, f.callNode)
 
-				err := com.CreateFilePathAndWriteString(path, contentArg.value.RequireStr(f.i, contentArg.node).Plain())
+				err := com.CreateFilePathAndWriteString(path, content)
 				if err != nil {
 					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
-					return newRadValues(f.i, f.callNode, NewErrorStr(errMsg).SetCode(raderr.ErrFileWrite))
+					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrFileWrite))
 				}
 
-				return newRadValues(f.i, f.callNode, path) // todo seems weird to return full path?
+				return f.Return()
 			},
 		},
 		{
 			Name: FUNC_HASH,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				contentArg := f.args[0]
-				content := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
-
-				algo := constSha1
-				if algoArg, exists := f.namedArgs[constAlgo]; exists {
-					algo = algoArg.value.RequireStr(f.i, algoArg.valueNode).Plain()
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				content := f.GetStr("_val").Plain()
+				algo := f.GetStr("algo").Plain()
 
 				var digest string
 				switch algo {
@@ -1412,30 +1306,19 @@ func init() {
 					sum := md5.Sum([]byte(content))
 					digest = hex.EncodeToString(sum[:])
 				default:
-					algoArg := f.namedArgs[constAlgo]
 					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
-					return newRadValues(f.i, algoArg.valueNode, NewErrorStr(errMsg))
+					return f.Return(NewErrorStr(errMsg))
 				}
-				return newRadValues(f.i, f.callNode, newRadValueStr(digest))
+				return f.Return(newRadValueStr(digest))
 			},
 		},
 		{
 			Name: FUNC_ENCODE_BASE64,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				contentArg := f.args[0]
-
-				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
-
-				urlSafe := false
-				if arg, exists := f.namedArgs[namedArgUrlSafe]; exists {
-					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
-				}
-
-				padding := true
-				if arg, exists := f.namedArgs[namedArgPadding]; exists {
-					padding = arg.value.RequireBool(f.i, arg.valueNode)
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				content := f.GetStr("_content").Plain()
+				urlSafe := f.GetBool("url_safe")
+				padding := f.GetBool("padding")
 
 				encoder := base64.StdEncoding
 				if urlSafe {
@@ -1445,24 +1328,16 @@ func init() {
 					encoder = encoder.WithPadding(base64.NoPadding)
 				}
 
-				encoded := encoder.EncodeToString([]byte(input))
-				return newRadValues(f.i, f.callNode, newRadValueStr(encoded))
+				encoded := encoder.EncodeToString([]byte(content))
+				return f.Return(newRadValueStr(encoded))
 			},
 		},
 		{
 			Name: FUNC_DECODE_BASE64,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				input := f.args[0].value.RequireStr(f.i, f.args[0].node).Plain()
-
-				urlSafe := false
-				if arg, exists := f.namedArgs[namedArgUrlSafe]; exists {
-					urlSafe = arg.value.RequireBool(f.i, arg.valueNode)
-				}
-
-				padding := true
-				if arg, exists := f.namedArgs[namedArgPadding]; exists {
-					padding = arg.value.RequireBool(f.i, arg.valueNode)
-				}
+			Execute: func(f FuncInvocation) RadValue {
+				content := f.GetStr("_content").Plain()
+				urlSafe := f.GetBool("url_safe")
+				padding := f.GetBool("padding")
 
 				encoder := base64.StdEncoding
 				if urlSafe {
@@ -1472,70 +1347,64 @@ func init() {
 					encoder = encoder.WithPadding(base64.NoPadding)
 				}
 
-				decodedBytes, err := encoder.DecodeString(input)
+				decodedBytes, err := encoder.DecodeString(content)
 				if err != nil {
 					f.i.errorf(f.callNode, "Error decoding base64: %v", err)
 				}
 				decoded := string(decodedBytes)
-				return newRadValues(f.i, f.callNode, newRadValueStr(decoded))
+				return f.Return(newRadValueStr(decoded))
 			},
 		},
 		{
 			Name: FUNC_ENCODE_BASE16,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				contentArg := f.args[0]
-				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
-				encoded := hex.EncodeToString([]byte(input))
-				return newRadValues(f.i, f.callNode, newRadValueStr(encoded))
+			Execute: func(f FuncInvocation) RadValue {
+				content := f.GetStr("_content").Plain()
+				encoded := hex.EncodeToString([]byte(content))
+				return f.Return(newRadValueStr(encoded))
 			},
 		},
 		{
 			Name: FUNC_DECODE_BASE16,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				contentArg := f.args[0]
-				input := contentArg.value.RequireStr(f.i, contentArg.node).Plain()
-				decodedBytes, err := hex.DecodeString(input)
+			Execute: func(f FuncInvocation) RadValue {
+				content := f.GetStr("_content").Plain()
+				decodedBytes, err := hex.DecodeString(content)
 				if err != nil {
 					f.i.errorf(f.callNode, "Error decoding base16: %v", err)
 				}
 				decoded := string(decodedBytes)
-				return newRadValues(f.i, f.callNode, newRadValueStr(decoded))
+				return f.Return(newRadValueStr(decoded))
 			},
 		},
 		{
 			Name: FUNC_MAP,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				collectionArg := f.args[0]
-				fnArg := f.args[1]
+			Execute: func(f FuncInvocation) RadValue {
+				coll := f.GetArg("_coll")
+				fn := f.GetFn("_fn")
 
-				fnNode := fnArg.node
-				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := f.i.GetSrcForNode(fnNode)
-
-				var outputValue RadValue
-				NewTypeVisitor(f.i, collectionArg.node).ForList(func(v RadValue, l *RadList) {
+				switch coerced := coll.Val.(type) {
+				case *RadList:
 					outputList := NewRadList()
-					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(
+					for _, val := range coerced.Values {
+						invocation := NewFnInvocation(
 							f.i,
 							f.callNode,
-							fnName,
-							NewPosArgs(NewPosArg(fnNode, val)),
+							fn.Name(),
+							NewPosArgs(NewPosArg(f.callNode, val)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
 						)
 						out := fn.Execute(invocation)
 						outputList.Append(out)
 					}
-					outputValue = newRadValue(f.i, f.callNode, outputList)
-				}).ForMap(func(v RadValue, m *RadMap) {
+					return f.Return(outputList)
+				case *RadMap:
 					outputList := NewRadList()
-					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(
+					coerced.Range(func(key, value RadValue) bool {
+						invocation := NewFnInvocation(
 							f.i,
 							f.callNode,
-							fnName,
-							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
+							fn.Name(),
+							NewPosArgs(NewPosArg(f.callNode, key), NewPosArg(f.callNode, value)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
 						)
@@ -1543,164 +1412,155 @@ func init() {
 						outputList.Append(out)
 						return true // signal to keep going
 					})
-					outputValue = newRadValue(f.i, f.callNode, outputList)
-				}).Visit(collectionArg.value)
-
-				return newRadValues(f.i, f.callNode, outputValue)
+					return f.Return(outputList)
+				default:
+					panic(fmt.Sprintf("Bug! Expected either list or map %s", coll.Type().AsString()))
+				}
 			},
 		},
 		{
 			Name: FUNC_FILTER,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				collectionArg := f.args[0]
-				fnArg := f.args[1]
+			Execute: func(f FuncInvocation) RadValue {
+				coll := f.GetArg("_coll")
+				fn := f.GetFn("_fn")
 
-				fnNode := fnArg.node
-				fn := fnArg.value.RequireFn(f.i, fnNode)
-				fnName := f.i.GetSrcForNode(fnNode)
-
-				var outputValue RadValue
-				NewTypeVisitor(f.i, collectionArg.node).ForList(func(_ RadValue, l *RadList) {
+				switch coerced := coll.Val.(type) {
+				case *RadList:
 					outputList := NewRadList()
-					for _, val := range l.Values {
-						invocation := NewFuncInvocationArgs(
+					for _, val := range coerced.Values {
+						invocation := NewFnInvocation(
 							f.i,
 							f.callNode,
-							fnName,
-							NewPosArgs(NewPosArg(fnNode, val)),
+							fn.Name(),
+							NewPosArgs(NewPosArg(f.callNode, val)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
 						)
 						out := fn.Execute(invocation)
-						if out.RequireBool(f.i, fnNode) {
-							// keep item
+						if out.RequireBool(f.i, f.callNode) {
 							outputList.Append(val)
 						}
 					}
-					outputValue = newRadValue(f.i, f.callNode, outputList)
-				}).ForMap(func(_ RadValue, m *RadMap) {
+					return f.Return(outputList)
+
+				case *RadMap:
 					outputMap := NewRadMap()
-					m.Range(func(key, value RadValue) bool {
-						invocation := NewFuncInvocationArgs(
+					coerced.Range(func(key, value RadValue) bool {
+						invocation := NewFnInvocation(
 							f.i,
 							f.callNode,
-							fnName,
-							NewPosArgs(NewPosArg(fnNode, key), NewPosArg(fnNode, value)),
+							fn.Name(),
+							NewPosArgs(NewPosArg(f.callNode, key), NewPosArg(f.callNode, value)),
 							NO_NAMED_ARGS_INPUT,
 							fn.IsBuiltIn(),
 						)
 						out := fn.Execute(invocation)
-						if out.RequireBool(f.i, fnNode) {
-							// keep entry
+						if out.RequireBool(f.i, f.callNode) {
 							outputMap.Set(key, value)
 						}
-						return true // continue iteration
+						return true
 					})
-					outputValue = newRadValue(f.i, f.callNode, outputMap)
-				}).Visit(collectionArg.value)
+					return f.Return(outputMap)
 
-				return newRadValues(f.i, f.callNode, outputValue)
+				default:
+					panic(fmt.Sprintf("Bug! Expected either list or map %s", coll.Type().AsString()))
+				}
 			},
 		},
 		{
 			Name: FUNC_LOAD,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				mapArg := f.args[0]
-				keyArg := f.args[1]
-				loaderFnArg := f.args[2]
+			Execute: func(f FuncInvocation) RadValue {
+				coll := f.GetArg("_map")
+				key := f.GetArg("_key")
+				loaderFn := f.GetFn("_loader")
 
-				m := mapArg.value.RequireMap(f.i, mapArg.node)
-				key := keyArg.value.RequireStr(f.i, keyArg.node).Plain()
+				// parse named args
+				reload := f.GetBool("reload")
+				overrideVal := f.GetArg(namedArgOverride)
 
-				reload := false
-				if a, ok := f.namedArgs[namedArgReload]; ok {
-					reload = a.value.RequireBool(f.i, a.valueNode)
-				}
-				overrideProvided := false
-				var overrideVal RadValue
-				if override, ok := f.namedArgs[namedArgOverride]; ok {
-					overrideProvided = override.value.TruthyFalsy() // todo we need a null type, this is not correct
-					overrideVal = override.value
-				}
-
-				if overrideProvided && reload {
+				if !overrideVal.IsNull() && reload {
 					f.i.errorf(f.callNode,
 						"Cannot provide values for both %q and %q", namedArgReload, namedArgOverride)
 				}
 
-				// prioritize override
-				if overrideProvided {
-					m.Set(newRadValueStr(key), overrideVal)
-					return newRadValues(f.i, f.callNode, overrideVal)
-				}
+				switch m := coll.Val.(type) {
+				case *RadMap:
+					// override wins
+					if !overrideVal.IsNull() {
+						m.Set(key, overrideVal)
+						return f.Return(overrideVal)
+					}
 
-				// helper to invoke the loader fn
-				runLoader := func() RadValue {
-					fnNode := loaderFnArg.node
-					fn := loaderFnArg.value.RequireFn(f.i, fnNode)
-					fnName := f.i.GetSrcForNode(fnNode)
-					inv := NewFuncInvocationArgs(f.i, fnNode, fnName, NewPosArgs(), NO_NAMED_ARGS_INPUT, fn.IsBuiltIn())
-					out := fn.Execute(inv)
-					return out
-				}
+					// helper to call loader
+					runLoader := func() RadValue {
+						inv := NewFnInvocation(
+							f.i, f.callNode,
+							loaderFn.Name(),
+							NewPosArgs(),
+							NO_NAMED_ARGS_INPUT,
+							loaderFn.IsBuiltIn(),
+						)
+						return loaderFn.Execute(inv)
+					}
 
-				// if reload, ignore existing value if present and just load
-				if reload {
+					// forced reload
+					if reload {
+						v := runLoader()
+						m.Set(key, v)
+						return f.Return(v)
+					}
+
+					// existing?
+					if existing, ok := m.Get(key); ok {
+						return f.Return(existing)
+					}
+
+					// load new
 					v := runLoader()
-					m.Set(newRadValueStr(key), v)
-					return newRadValues(f.i, f.callNode, v)
-				}
+					m.Set(key, v)
+					return f.Return(v)
 
-				if existing, ok := m.Get(newRadValueStr(key)); ok {
-					return newRadValues(f.i, f.callNode, existing)
+				default:
+					panic(fmt.Sprintf("Bug! Expected map but got %s", coll.Type().AsString()))
 				}
-
-				// doesn't exist, so load
-				v := runLoader()
-				m.Set(newRadValueStr(key), v)
-				return newRadValues(f.i, f.callNode, v)
 			},
 		},
 		{
 			Name: FUNC_COLOR_RGB,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				textArg := f.args[0]
-				redArg := f.args[1]
-				greenArg := f.args[2]
-				blueArg := f.args[3]
+			Execute: func(f FuncInvocation) RadValue {
+				valArg := f.GetArg("_val")
 
-				extractRgb := func(arg PosArg) int64 {
-					node := arg.node
-					val := arg.value.RequireInt(f.i, node)
-					if val < 0 || val > 255 {
-						f.i.errorf(node, "RGB values must be [0, 255]; got %d", val)
+				extract := func(v int64) int64 {
+					if v < 0 || v > 255 {
+						f.i.errorf(f.callNode, "RGB values must be [0, 255]; got %d", v)
 					}
-					return val
+					return v
 				}
-				red := extractRgb(redArg)
-				green := extractRgb(greenArg)
-				blue := extractRgb(blueArg)
 
-				switch coerced := textArg.value.Val.(type) {
+				red := extract(f.GetInt("red"))
+				green := extract(f.GetInt("green"))
+				blue := extract(f.GetInt("blue"))
+
+				switch coerced := valArg.Val.(type) {
 				case RadString:
 					str := coerced.DeepCopy()
 					str.SetRgb64(red, green, blue)
-					return newRadValues(f.i, textArg.node, str)
+					return f.Return(str)
 				default:
-					s := NewRadString(ToPrintable(textArg.value))
-					s.SetRgb64(red, green, blue)
-					return newRadValues(f.i, f.callNode, s)
+					str := NewRadString(ToPrintable(valArg))
+					str.SetRgb64(red, green, blue)
+					return f.Return(str)
 				}
 			},
 		},
 		{
 			Name: FUNC_GET_ARGS,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				// When a rad script is invoked, os.Args will look like:
 				// [ "rad", "./script.rl", "arg1", "arg2" ]
 				// Users will not expect or want the initial "rad", so we cut that out.
 				args := os.Args[1:]
-				return newRadValues(f.i, f.callNode, args)
+				return f.Return(args)
 			},
 		},
 	}
@@ -1725,16 +1585,15 @@ func createTextAttrFunctions() []BuiltInFunc {
 	for idx, attrStr := range attrStrs {
 		funcs[idx] = BuiltInFunc{
 			Name: attrStr,
-			Execute: func(f FuncInvocationArgs) RadValue {
+			Execute: func(f FuncInvocation) RadValue {
 				attr := AttrFromString(f.i, f.callNode, attrStr)
-				arg := f.args[0]
-				switch coerced := arg.value.Val.(type) {
+				switch coerced := f.GetArg("_item").Val.(type) {
 				case RadString:
-					return newRadValues(f.i, arg.node, coerced.CopyWithAttr(attr))
+					return f.Return(coerced.CopyWithAttr(attr))
 				default:
-					s := NewRadString(ToPrintable(arg.value))
+					s := NewRadString(ToPrintable(coerced))
 					s.SetAttr(attr)
-					return newRadValues(f.i, f.callNode, s)
+					return f.Return(s)
 				}
 			},
 		}
@@ -1763,38 +1622,39 @@ func createHttpFunctions() []BuiltInFunc {
 		//   - generic http for other/all methods?
 		funcs[idx] = BuiltInFunc{
 			Name: httpFunc,
-			Execute: func(f FuncInvocationArgs) RadValue {
-				urlArg := f.args[0]
-
+			Execute: func(f FuncInvocation) RadValue {
+				url := f.GetStr("url").Plain()
 				method := httpMethodFromFuncName(httpFunc)
-				url := urlArg.value.RequireStr(f.i, urlArg.node).Plain()
 
 				headers := make(map[string][]string)
-				if headersArg, exists := f.namedArgs[namedArgHeaders]; exists {
-					headerMap := headersArg.value.RequireMap(f.i, headersArg.valueNode)
+
+				headersArg := f.GetArg(namedArgHeaders)
+				if !headersArg.IsNull() {
+					headerMap := headersArg.RequireMap(f.i, f.callNode)
 					keys := headerMap.Keys()
 					for _, key := range keys {
 						value, _ := headerMap.Get(key)
-						keyStr := key.RequireStr(f.i, headersArg.valueNode).Plain()
+						keyStr := key.RequireStr(f.i, f.callNode).Plain()
 						switch coercedV := value.Val.(type) {
 						case RadString:
 							headers[keyStr] = []string{coercedV.Plain()}
 						case *RadList:
-							headers[keyStr] = coercedV.AsActualStringList(f.i, headersArg.valueNode)
+							headers[keyStr] = coercedV.AsActualStringList(f.i, f.callNode)
 						}
 					}
 				}
 
 				var body *string
-				if bodyArg, exists := f.namedArgs[namedArgBody]; exists {
-					bodyStr := JsonToString(RadToJsonType(bodyArg.value))
+				bodyArg := f.GetArg(namedArgBody)
+				if !bodyArg.IsNull() {
+					bodyStr := JsonToString(RadToJsonType(bodyArg))
 					body = &bodyStr
 				}
 
 				reqDef := NewRequestDef(method, url, headers, body)
 				response := RReq.Request(reqDef)
 				radMap := response.ToRadMap(f.i, f.callNode)
-				return newRadValues(f.i, f.callNode, radMap)
+				return f.Return(radMap)
 			},
 		}
 	}
@@ -1826,18 +1686,12 @@ func httpMethodFromFuncName(httpFunc string) string {
 	}
 }
 
-func runTrim(f FuncInvocationArgs, trimFunc func(str RadString, chars string) RadString) RadValue {
-	textArg := f.args[0]
+func runTrim(f FuncInvocation, trimFunc func(str RadString, chars string) RadString) RadValue {
+	subject := f.GetStr("_subject")
+	toTrim := f.GetStr("_to_trim").Plain()
 
-	chars := " \t\n"
-	if len(f.args) > 1 {
-		charsArg := f.args[1]
-		chars = charsArg.value.RequireStr(f.i, charsArg.node).Plain()
-	}
-
-	radString := textArg.value.RequireStr(f.i, textArg.node)
-	radString = trimFunc(radString, chars)
-	return newRadValues(f.i, f.callNode, radString)
+	subject = trimFunc(subject, toTrim)
+	return f.Return(subject)
 }
 
 func tryGetArg(idx int, args []PosArg) *PosArg {

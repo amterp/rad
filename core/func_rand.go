@@ -13,7 +13,7 @@ func init() {
 
 var FuncSeedRandom = BuiltInFunc{
 	Name: FUNC_SEED_RANDOM,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		arg := f.args[0]
 		asInt := arg.value.RequireInt(f.i, arg.node)
 		RNG = rand.New(rand.NewSource(asInt))
@@ -23,14 +23,14 @@ var FuncSeedRandom = BuiltInFunc{
 
 var FuncRand = BuiltInFunc{
 	Name: FUNC_RAND,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		return newRadValues(f.i, f.callNode, RNG.Float64())
 	},
 }
 
 var FuncRandInt = BuiltInFunc{
 	Name: FUNC_RAND_INT,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		var min, max int64
 
 		if len(f.args) == 0 {

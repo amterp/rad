@@ -148,11 +148,11 @@ a = parse_epoch(17123456781)
 	setupAndRunCode(t, script, "--color=never")
 	expectedStdout := `Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
 `
-	expectedStderr := `Error at L4:17
+	expectedStderr := `Error at L4:5
 
   a = parse_epoch(17123456781)
-                  ^^^^^^^^^^^
-                  Ambiguous epoch length (11 digits). Use 'unit' to disambiguate. (code RAD20007)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+      Ambiguous epoch length (11 digits). Use 'unit' to disambiguate. (code RAD20007)
 `
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)

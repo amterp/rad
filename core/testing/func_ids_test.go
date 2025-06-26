@@ -79,10 +79,10 @@ func Test_Func_gen_fid_ErrorsOnNegNumRandomChars(t *testing.T) {
 gen_fid(num_random_chars=-1)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:26
+	expected := `Error at L2:1
 
   gen_fid(num_random_chars=-1)
-                           ^^ Number of random chars must be non-negative, got -1
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Number of random chars must be non-negative, got -1
 `
 	assertError(t, 1, expected)
 }

@@ -116,7 +116,7 @@ func Test_Stash_LoadStashFileExisting(t *testing.T) {
 ---
 r = load_stash_file("existing.txt", "didn't find")
 print(r.created, r.content)
-r.path.split("/")[-6:].print()
+r.full_path.split("/")[-6:].print()
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `false hello there!
@@ -133,9 +133,9 @@ func Test_Stash_LoadStashFileNotExisting(t *testing.T) {
 ---
 r = load_stash_file("non_existing.txt", "didn't find")
 print(r.created, r.content)
-r.path.split("/")[-6:].print()
+r.full_path.split("/")[-6:].print()
 
-p = get_path(r.path)
+p = get_path(r.full_path)
 p.base_name.print()
 
 // clean up
@@ -161,10 +161,10 @@ write_stash_file("bloop.txt", "hello HELLO")
 r = load_stash_file("bloop.txt", "didn't find")
 
 r.content.print()
-r.path.split("/")[-6:].print()
+r.full_path.split("/")[-6:].print()
 
 // clean up
-r.path.delete_path()
+r.full_path.delete_path()
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `hello HELLO

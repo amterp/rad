@@ -47,6 +47,10 @@ func (v RadValue) Type() rl.RadType {
 	}
 }
 
+func (v RadValue) IsNull() bool {
+	return v.Val == RAD_NULL
+}
+
 func (v RadValue) Index(i *Interpreter, idxNode *ts.Node) RadValue {
 	switch coerced := v.Val.(type) {
 	case RadString:

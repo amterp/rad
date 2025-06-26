@@ -11,7 +11,7 @@ import (
 
 var FuncSleep = BuiltInFunc{
 	Name: FUNC_SLEEP,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		arg := f.args[0]
 		switch coerced := arg.value.Val.(type) {
 		case int64:

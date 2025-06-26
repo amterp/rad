@@ -12,7 +12,7 @@ import (
 
 var FuncPrint = BuiltInFunc{
 	Name: FUNC_PRINT,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		RP.Printf(resolvePrintStr(f))
 		return VOID_SENTINEL
 	},
@@ -20,7 +20,7 @@ var FuncPrint = BuiltInFunc{
 
 var FuncPPrint = BuiltInFunc{
 	Name: FUNC_PPRINT,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		if len(f.args) == 0 {
 			RP.Printf("\n")
 		}
@@ -35,7 +35,7 @@ var FuncPPrint = BuiltInFunc{
 
 var FuncDebug = BuiltInFunc{
 	Name: FUNC_DEBUG,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		RP.ScriptDebug(resolvePrintStr(f))
 		return VOID_SENTINEL
 	},
@@ -43,13 +43,13 @@ var FuncDebug = BuiltInFunc{
 
 var FuncPrintErr = BuiltInFunc{
 	Name: FUNC_PRINT_ERR,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		RP.ScriptStderrf(resolvePrintStr(f))
 		return VOID_SENTINEL
 	},
 }
 
-func resolvePrintStr(f FuncInvocationArgs) string {
+func resolvePrintStr(f FuncInvocation) string {
 	var sb strings.Builder
 	end := "\n"
 	if endArg, ok := f.namedArgs[namedArgEnd]; ok {

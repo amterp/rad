@@ -381,7 +381,7 @@ func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName
 	var newVals []RadString
 	for _, val := range column.Values {
 		mapped := mods.lambda.Execute(
-			NewFuncInvocationArgs(
+			NewFnInvocation(
 				i,
 				reprNode,
 				FUNC_MAP,

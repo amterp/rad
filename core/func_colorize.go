@@ -11,7 +11,7 @@ import (
 
 var FuncColorize = BuiltInFunc{
 	Name: FUNC_COLORIZE,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		valueArg := f.args[0]
 		possibleValuesArg := f.args[1]
 		possibleValues := possibleValuesArg.value.RequireList(f.i, possibleValuesArg.node).AsStringList(false)

@@ -10,7 +10,7 @@ import (
 // replace("Name: abc", "a(b)c", "$1o$1") will return "Name: bobby"
 var FuncReplace = BuiltInFunc{
 	Name: FUNC_REPLACE,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		oldStringArg := f.args[0]
 		regexForOldArg := f.args[1]
 		regexForNewArg := f.args[2]

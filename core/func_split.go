@@ -9,7 +9,7 @@ import (
 
 var FuncSplit = BuiltInFunc{
 	Name: FUNC_SPLIT,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		strArg := f.args[0]
 		splitterArg := f.args[1]
 

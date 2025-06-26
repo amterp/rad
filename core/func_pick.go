@@ -12,7 +12,7 @@ import (
 
 var FuncPick = BuiltInFunc{
 	Name: FUNC_PICK,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		optionsArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 
@@ -44,7 +44,7 @@ var FuncPick = BuiltInFunc{
 
 var FuncPickKv = BuiltInFunc{
 	Name: FUNC_PICK_KV,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		keyArgs := f.args[0]
 		valueArgs := f.args[1]
 		filteringArg := tryGetArg(2, f.args)
@@ -81,7 +81,7 @@ var FuncPickKv = BuiltInFunc{
 
 var FuncPickFromResource = BuiltInFunc{
 	Name: FUNC_PICK_FROM_RESOURCE,
-	Execute: func(f FuncInvocationArgs) RadValue {
+	Execute: func(f FuncInvocation) RadValue {
 		fileArg := f.args[0]
 		filteringArg := tryGetArg(1, f.args)
 

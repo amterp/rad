@@ -39,13 +39,13 @@ func init() {
 		newFnSignature(`rand() -> float`),
 		newFnSignature(`rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -> int`),
 		newFnSignature(`replace(_original: str, _find: str, _replace: str) -> str`),
-		newFnSignature(`len(_val: list|str|map) -> int`),
+		newFnSignature(`len(_val: str|list|map) -> int`),
 		newFnSignature(`sort(_val: list|str, *, reverse: bool = false) -> list|str`),
-		newFnSignature(`now(tz: str = "local") -> { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
+		newFnSignature(`now(*, tz: str = "local") -> { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),
 		newFnSignature(`range(_start: float, _end: float?, _step: float = 1) -> float[]`), // todo weird to always have floats?
-		newFnSignature(`join(_list: list, joiner: str = "", prefix: str = "", suffix: str = "") -> str`),
+		newFnSignature(`join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str`),
 		newFnSignature(`split(_val: str, _sep: str) -> str[]`),
 		newFnSignature(`lower(_val: str) -> str`),
 		newFnSignature(`upper(_val: str) -> str`),
@@ -58,43 +58,41 @@ func init() {
 		newFnSignature(`values(_map: map) -> any[]`),
 		newFnSignature(`truncate(_str: str, _len: int) -> str`),
 		newFnSignature(`unique(_list: any[]) -> any[]`),
-		newFnSignature(`confirm(prompt: str?) -> bool`),
+		newFnSignature(`confirm(prompt: str = "Confirm? [y/n] > ") -> bool`),
 		newFnSignature(`parse_json(_str: str) -> any`),
 		newFnSignature(`parse_int(_str: str) -> int|error`),
 		newFnSignature(`parse_float(_str: str) -> float|error`),
 		newFnSignature(`abs(_num: float) -> float`),
 		newFnSignature(`error(_msg: str) -> error`),
-		newFnSignature(`input(prompt: str?, *, hint: str?, default: str?, secret: bool = false) -> str`),
+		newFnSignature(`input(prompt: str = "> ", *, hint: str?, default: str?, secret: bool = false) -> str`),
 		newFnSignature(`get_path(_path: str) -> { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int }`),
 		newFnSignature(`get_env(_var: str) -> str`),
-		newFnSignature(`find_paths(_path: str, *, depth: int?, relative: ["target", "cwd", "absolute"] = "target") -> str[]`),
-		newFnSignature(`delete_path(_path: str, *, relative: ["target", "cwd", "absolute"] = "target") -> bool`),
-		newFnSignature(`count(_subject: str|any[], _inner: any) -> int`),
+		newFnSignature(`find_paths(_path: str, *, depth: int = -1, relative: ["target", "cwd", "absolute"] = "target") -> str[]`),
+		newFnSignature(`delete_path(_path: str) -> bool`),
+		newFnSignature(`count(_str: str, _substr: str) -> int`),
 		newFnSignature(`zip(*_lists: list, *, fill: any?, strict: bool = false) -> list[]`),
 		newFnSignature(`str(_var: any) -> str`),
 		newFnSignature(`int(_var: any) -> int|error`),
 		newFnSignature(`float(_var: any) -> float|error`),
 		newFnSignature(`sum(_nums: float[]) -> float`),
-		newFnSignature(`trim(_subject: str, to_trim: str = " ") -> str`),
-		newFnSignature(`trim_prefix(_subject: str, to_trim: str = " ") -> str`),
-		newFnSignature(`trim_suffix(_subject: str, to_trim: str = " ") -> str`),
+		newFnSignature(`trim(_subject: str, _to_trim: str = " \t\n") -> str`),
+		newFnSignature(`trim_prefix(_subject: str, _to_trim: str = " \t\n") -> str`),
+		newFnSignature(`trim_suffix(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_bytes": int, "content": str|[int] }`),
 		newFnSignature(`write_file(_path: str, _content: str, *, append: bool = false) -> error|{ "bytes_written": int, "path": str }`),
 		newFnSignature(`round(_num: float, _decimals: int = 0) -> float`),
 		newFnSignature(`ceil(_num: float) -> int`),
 		newFnSignature(`floor(_num: float) -> int`),
-		newFnSignature(`min(_num: float[]) -> float|error`),
-		newFnSignature(`max(_num: float[]) -> float|error`),
+		newFnSignature(`min(_nums: float[]) -> float|error`),
+		newFnSignature(`max(_nums: float[]) -> float|error`),
 		newFnSignature(`clamp(val: float, min: float, max: float) -> float`),
 		newFnSignature(`reverse(_val: str|list) -> str|list`),
 		newFnSignature(`is_defined(_var: str) -> bool`),
-		newFnSignature(`hyperlink(_str: str, _link: str) -> str`),
+		newFnSignature(`hyperlink(_val: any, _link: str) -> str`),
 		newFnSignature(`uuid_v4() -> str`),
 		newFnSignature(`uuid_v7() -> str`),
 		newFnSignature(`gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str`),
-		newFnSignature(`get_default(_map: map, key: any, default: any) -> any`),
-		newFnSignature(`get_rad_home() -> str`),
-		newFnSignature(`get_stash_dir(_sub_path: str?) -> error|str`),
+		newFnSignature(`get_stash_dir(_sub_path: str = "") -> error|str`),
 		newFnSignature(`load_state() -> map`),
 		newFnSignature(`save_state(_state: map) -> void`),
 		newFnSignature(`load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "created": bool, "content"?: str }`),
@@ -109,13 +107,8 @@ func init() {
 		newFnSignature(`get_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str`),
 		newFnSignature(`get_default(_map: map, key: any, default: any) -> any`),
 		newFnSignature(`get_rad_home() -> str`),
-		newFnSignature(`get_stash_dir(_sub_path: str?) -> error|str`),
-		newFnSignature(`load_state() -> map`),
-		newFnSignature(`save_state(_state: map) -> void`),
-		newFnSignature(`load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "created": bool, "content"?: str }`),
-		newFnSignature(`write_stash_file(_path: str, _content: str) -> error`),
 		newFnSignature(`load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false, override: any?) -> any`),
-		newFnSignature(`color_rgb(_str: any, red: int, green: int, blue: int) -> error|str`),
+		newFnSignature(`color_rgb(_val: any, red: int, green: int, blue: int) -> error|str`),
 		newFnSignature(`colorize(_val: str, _enum: str[]) -> str`),
 		newFnSignature(`http_get(url: str, *, body: any?, headers: map?) -> { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }`),
 		newFnSignature(`http_post(url: str, *, body: any?, headers: map?) -> { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }`),
@@ -155,12 +148,18 @@ func init() {
 
 	FnSignaturesByName = make(map[string]FnSignature, len(signatures))
 
-	// todo this is actually a bit slow. ~7 millis as of 2025-06-24. meaning every rad script takes at least 7 millis extra.\
+	// todo this is actually a bit slow. ~7 millis as of 2025-06-24. meaning every rad script takes at least 7 millis extra.
 	//  lazy load? or figure out a fast eager way?
 	for _, sig := range signatures {
 		fn := fmt.Sprintf("fn %s:\n    pass\n", sig.Signature)
 		tree := parser.Parse(fn)
+		// todo check tree for errors
 		typing := rl.NewTypingFnT(tree.Root().Child(0), tree.src)
+
+		if _, ok := FnSignaturesByName[typing.Name]; ok {
+			panic(fmt.Sprintf("Duplicate function signature found: %s", typing.Name))
+		}
+
 		sig.Typing = typing
 		sig.Name = typing.Name
 		FnSignaturesByName[sig.Name] = sig
