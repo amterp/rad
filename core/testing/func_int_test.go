@@ -53,7 +53,7 @@ int({})
 	expected := `Error at L2:1
 
   int({})
-  ^^^^^^^ Cannot cast "map" to int
+  ^^^^^^^ Cannot cast "map" to int (RAD20016)
 `
 	assertError(t, 1, expected)
 }
@@ -67,7 +67,7 @@ int("10")
 
   int("10")
   ^^^^^^^^^
-  Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string?
+  Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string? (RAD20016)
 `
 	assertError(t, 1, expected)
 }

@@ -22,7 +22,7 @@ a = parse_float("asd")
 	expected := `Error at L2:5
 
   a = parse_float("asd")
-      ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd" (code RAD20002)
+      ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd" (RAD20002)
 `
 	assertError(t, 1, expected)
 }

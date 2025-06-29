@@ -24,8 +24,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/amterp/rad/rts"
-	"github.com/amterp/rad/rts/raderr"
-
 	"github.com/samber/lo"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -254,6 +252,10 @@ func (f FuncInvocation) Return(vals ...interface{}) RadValue {
 	return newRadValues(f.i, f.callNode, vals...)
 }
 
+func (f FuncInvocation) ReturnErrf(code rl.Error, msg string, args ...interface{}) RadValue {
+	return f.Return(NewErrorStr(fmt.Sprintf(msg, args...)).SetCode(code).SetNode(f.callNode))
+}
+
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
 type BuiltInFunc struct {
 	Name      string
@@ -333,7 +335,7 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone))
+						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrInvalidTimeZone))
 					}
 				}
 
@@ -378,7 +380,7 @@ func init() {
 							digitCount,
 							namedArgUnit,
 						)
-						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrAmbiguousEpoch).SetNode(f.callNode))
+						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetNode(f.callNode))
 					}
 				} else {
 					switch unit {
@@ -395,9 +397,9 @@ func init() {
 						second = absEpoch / 1_000_000_000
 						nanoSecond = absEpoch % 1_000_000_000
 					default:
-						errMsg := fmt.Sprintf("%s(): invalid units %q; expected one of %s, %s, %s, %s, %s",
-							FUNC_PARSE_EPOCH, unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
-						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeUnit).SetNode(f.callNode))
+						return f.ReturnErrf(rl.ErrInvalidTimeUnit,
+							"invalid units %q; expected one of %s, %s, %s, %s, %s",
+							unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
 					}
 				}
 
@@ -413,8 +415,7 @@ func init() {
 					var err error
 					location, err = time.LoadLocation(tz)
 					if err != nil {
-						errMsg := fmt.Sprintf("%s(): invalid time zone %q", FUNC_PARSE_EPOCH, tz)
-						return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrInvalidTimeZone).SetNode(f.callNode))
+						return f.ReturnErrf(rl.ErrInvalidTimeZone, "invalid time zone %q", tz)
 					}
 				}
 
@@ -485,7 +486,7 @@ func init() {
 				str := f.GetStr("_str")
 				maxLen := f.GetInt("_len")
 				if maxLen < 0 {
-					f.i.errorf(f.callNode, "%s() takes a non-negative int, got %d", FUNC_TRUNCATE, maxLen)
+					f.ReturnErrf(FUNC_TRUNCATE, "%s() takes a non-negative int, got %d")
 				}
 
 				strLen := str.Len()
@@ -525,7 +526,7 @@ func init() {
 				response, err := InputConfirm("", prompt)
 				if err != nil {
 					// todo I think this errors if user aborts
-					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err))
+					f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 
 				return f.Return(response)
@@ -536,7 +537,7 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				out, err := TryConvertJsonToNativeTypes(f.i, f.callNode, f.GetStr("_str").Plain())
 				if err != nil {
-					f.i.errorf(f.callNode, fmt.Sprintf("Error parsing JSON: %v", err))
+					return f.ReturnErrf(rl.ErrParseJson, "Error parsing JSON: %v", err)
 				}
 				return f.Return(out)
 			},
@@ -551,7 +552,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrParseIntFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseIntFailed))
 				}
 			},
 		},
@@ -565,7 +566,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrParseFloatFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseFloatFailed))
 				}
 			},
 		},
@@ -600,7 +601,7 @@ func init() {
 
 				response, err := InputText(prompt, hint, default_, secret)
 				if err != nil {
-					f.i.errorf(f.callNode, fmt.Sprintf("Error reading input: %v", err)) // TODO RETURN ERROR
+					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 				return f.Return(response)
 			},
@@ -652,9 +653,17 @@ func init() {
 
 				relativeMode := f.GetStr("relative").Plain()
 
+				switch relativeMode {
+				case constTarget, constCwd, constAbsolute:
+					// no-op, valid values
+				default:
+					return f.ReturnErrf(rl.ErrBugTypeCheck, "Invalid target mode %q. Allowed: %v",
+						relativeMode, []string{constTarget, constCwd, constAbsolute})
+				}
+
 				absTarget, err := filepath.Abs(path) // todo should be abstracted away for testing
 				if err != nil {
-					f.i.errorf(f.callNode, "Error resolving absolute path for target: %v", err)
+					return f.ReturnErrf(rl.ErrGenericRuntime, "Error resolving absolute path for target: %v", err)
 				}
 
 				list := NewRadList()
@@ -701,15 +710,14 @@ func init() {
 						}
 						formattedPath = absPath
 					default:
-						f.i.errorf(f.callNode, "Invalid target mode %q. Allowed: %v",
-							relativeMode, []string{constTarget, constCwd, constAbsolute})
+						panic(fmt.Sprintf("Bug! Invalid target mode %q, should've been caught earlier.", relativeMode))
 					}
 					list.Append(newRadValueStr(formattedPath))
 					return nil
 				})
 
 				if err != nil {
-					f.i.errorf(f.callNode, "Error walking directory: %v", err)
+					return f.ReturnErrf(rl.ErrFileWalk, "Error walking directory: %v", err)
 				}
 
 				return f.Return(list)
@@ -746,11 +754,10 @@ func init() {
 			Name: FUNC_ZIP,
 			Execute: func(f FuncInvocation) RadValue {
 				strict := f.GetBool("strict")
-
 				fill := f.GetArg("fill")
 
 				if strict && !fill.IsNull() {
-					f.i.errorf(f.callNode, "Cannot enable 'strict' with 'fill' specified")
+					return f.ReturnErrf(rl.ErrMutualExclArgs, "Cannot enable 'strict' with 'fill' specified")
 				}
 
 				lists := f.GetList("_lists")
@@ -765,7 +772,8 @@ func init() {
 						length = list.Len()
 					} else if length != list.Len() {
 						if strict {
-							f.i.errorf(f.callNode, "Strict mode enabled: all lists must have the same length, but got %d and %d", length, list.Len())
+							return f.ReturnErrf(rl.ErrZipStrict,
+								"Strict mode enabled: all lists must have the same length, but got %d and %d", length, list.Len())
 						}
 						if fill.IsNull() {
 							length = com.Int64Min(length, list.Len())
@@ -819,15 +827,13 @@ func init() {
 						return f.Return(int64(0))
 					}
 				case RadString:
-					f.i.errorf(
-						f.callNode,
+					return f.ReturnErrf(
+						rl.ErrCast,
 						"Cannot cast string to int. Did you mean to use '%s' to parse the given string?",
-						FUNC_PARSE_INT,
-					)
+						FUNC_PARSE_INT)
 				default:
-					f.i.errorf(f.callNode, "Cannot cast %q to int", arg.Type().AsString())
+					return f.ReturnErrf(rl.ErrCast, "Cannot cast %q to int", arg.Type().AsString())
 				}
-				panic(UNREACHABLE)
 			},
 		},
 		{
@@ -847,15 +853,13 @@ func init() {
 						return f.Return(float64(0))
 					}
 				case RadString:
-					f.i.errorf(
-						f.callNode,
+					return f.ReturnErrf(
+						rl.ErrCast,
 						"Cannot cast string to float. Did you mean to use '%s' to parse the given string?",
-						FUNC_PARSE_FLOAT,
-					)
+						FUNC_PARSE_FLOAT)
 				default:
-					f.i.errorf(f.callNode, "Cannot cast %q to float", arg.Type().AsString())
+					return f.ReturnErrf(rl.ErrCast, "Cannot cast %q to float", arg.Type().AsString())
 				}
-				panic(UNREACHABLE)
 			},
 		},
 		{
@@ -867,13 +871,11 @@ func init() {
 				for idx, item := range list.Values {
 					num, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(
-							f.callNode,
-							"%s() requires a list of numbers, got %q at index %d",
-							FUNC_SUM,
+						return f.ReturnErrf(
+							rl.ErrBugTypeCheck,
+							"Requires a list of numbers, got %q at index %d",
 							TypeAsString(item),
-							idx,
-						)
+							idx)
 					}
 					sum += num
 				}
@@ -932,22 +934,21 @@ func init() {
 						}
 						resultMap.SetPrimitiveList(constContent, byteList)
 					default:
-						f.i.errorf(
-							f.callNode,
+						return f.ReturnErrf(
+							rl.ErrBugTypeCheck,
 							"Bug! Invalid mode %q in %s; expected %q or %q",
 							mode,
 							FUNC_READ_FILE,
 							constText,
-							constBytes,
-						)
+							constBytes)
 					}
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileRead))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileRead))
 				}
 			},
 		},
@@ -985,11 +986,11 @@ func init() {
 					resultMap.SetPrimitiveStr(constPath, path)
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStr(err.Error()).SetCode(raderr.ErrFileWrite))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileWrite))
 				}
 			},
 		},
@@ -999,7 +1000,7 @@ func init() {
 				num := f.GetFloat("_num")
 				precision := f.GetInt("_decimals")
 				if precision < 0 {
-					f.i.errorf(f.callNode, "Precision must be non-negative, got %d", precision)
+					return f.ReturnErrf(rl.ErrNumInvalidRange, "Precision must be non-negative, got %d", precision)
 				}
 
 				if precision == 0 {
@@ -1030,20 +1031,19 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				list := f.GetList("_nums")
 				if list.Len() == 0 {
-					f.i.errorf(f.callNode, "Cannot find minimum of empty list")
+					return f.ReturnErrf(rl.ErrEmptyList, "Cannot find minimum of empty list")
 				}
 
 				minVal := math.MaxFloat64
 				for idx, item := range list.Values {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(
-							f.callNode,
-							"%s() requires a list of numbers, got %q at index %d",
+						return f.ReturnErrf(
+							rl.ErrBugTypeCheck,
+							"Requires a list of numbers, got %q at index %d",
 							FUNC_MIN,
 							TypeAsString(item),
-							idx,
-						)
+							idx)
 					}
 					minVal = math.Min(minVal, val)
 				}
@@ -1055,20 +1055,19 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				list := f.GetList("_nums")
 				if list.Len() == 0 {
-					f.i.errorf(f.callNode, "Cannot find maximum of empty list")
+					return f.ReturnErrf(rl.ErrEmptyList, "Cannot find maximum of empty list")
 				}
 
 				maxVal := -math.MaxFloat64
 				for idx, item := range list.Values {
 					val, ok := item.TryGetFloatAllowingInt()
 					if !ok {
-						f.i.errorf(
-							f.callNode,
+						return f.ReturnErrf(
+							rl.ErrBugTypeCheck,
 							"%s() requires a list of numbers, got %q at index %d",
 							FUNC_MAX,
 							TypeAsString(item),
-							idx,
-						)
+							idx)
 					}
 					maxVal = math.Max(maxVal, val)
 				}
@@ -1084,7 +1083,7 @@ func init() {
 				maxNum := f.GetFloat("max")
 
 				if minNum > maxNum {
-					f.i.errorf(f.callNode, "min must be <= max, got %f and %f", minNum, maxNum)
+					return f.ReturnErrf(rl.ErrArgsContradict, "min must be <= max, got %f and %f", minNum, maxNum)
 				}
 				return f.Return(math.Min(math.Max(valNum, minNum), maxNum))
 			},
@@ -1160,23 +1159,22 @@ func init() {
 				if !numRandomCharsArg.IsNull() {
 					numRandomChars := numRandomCharsArg.RequireInt(f.i, f.callNode)
 					if numRandomChars < 0 {
-						f.i.errorf(
-							f.callNode,
+						return f.ReturnErrf(
+							rl.ErrNumInvalidRange,
 							"Number of random chars must be non-negative, got %d",
-							numRandomChars,
-						)
+							numRandomChars)
 					}
 					config = config.WithNumRandomChars(int(numRandomChars))
 				}
 
 				generator, err := fid.NewGenerator(config)
 				if err != nil {
-					f.i.errorf(f.callNode, "Error creating FID generator: %v", err)
+					return f.ReturnErrf(rl.ErrFid, "Error creating FID generator: %v", err)
 				}
 
 				id, err := generator.Generate()
 				if err != nil {
-					f.i.errorf(f.callNode, "Error generating FID: %v", err)
+					return f.ReturnErrf(rl.ErrFid, "Error generating FID: %v", err)
 				}
 
 				return f.Return(id)
@@ -1209,7 +1207,7 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				stashPath := RadHomeInst.GetStash()
 				if stashPath == nil {
-					errMissingScriptId(f.i, f.callNode)
+					return f.Return(errNoStashId(f.callNode))
 				}
 
 				subPath := f.GetStr("_sub_path").Plain()
@@ -1222,7 +1220,10 @@ func init() {
 		{
 			Name: FUNC_LOAD_STATE,
 			Execute: func(f FuncInvocation) RadValue {
-				state, _ := RadHomeInst.LoadState(f.i, f.callNode)
+				state, _, err := RadHomeInst.LoadState(f.i, f.callNode)
+				if err != nil {
+					return f.Return(err)
+				}
 				state.RequireMap(f.i, f.callNode)
 				return f.Return(state)
 			},
@@ -1230,17 +1231,23 @@ func init() {
 		{
 			Name: FUNC_SAVE_STATE,
 			Execute: func(f FuncInvocation) RadValue {
-				RadHomeInst.SaveState(f.i, f.callNode, f.GetArg("_state"))
+				err := RadHomeInst.SaveState(f.i, f.callNode, f.GetArg("_state"))
+				if err != nil {
+					return f.Return(err)
+				}
 				return f.Return()
 			},
 		},
 		{
 			Name: FUNC_LOAD_STASH_FILE,
 			Execute: func(f FuncInvocation) RadValue {
-				path := f.GetStr("_path").Plain()
+				pathStr := f.GetStr("_path").Plain()
 				def := f.GetStr("_default").Plain()
 
-				path = RadHomeInst.GetStashSub(path, f.i, f.callNode)
+				path, err := RadHomeInst.GetStashSub(pathStr, f.callNode)
+				if err != nil {
+					return f.Return(err)
+				}
 
 				output := NewRadMap()
 				output.SetPrimitiveStr(constFullPath, path)
@@ -1271,15 +1278,18 @@ func init() {
 		{
 			Name: FUNC_WRITE_STASH_FILE,
 			Execute: func(f FuncInvocation) RadValue {
-				path := f.GetStr("_path").Plain()
+				pathStr := f.GetStr("_path").Plain()
 				content := f.GetStr("_content").Plain()
 
-				path = RadHomeInst.GetStashSub(path, f.i, f.callNode)
+				path, err1 := RadHomeInst.GetStashSub(pathStr, f.callNode)
+				if err1 != nil {
+					return f.Return(err1)
+				}
 
 				err := com.CreateFilePathAndWriteString(path, content)
 				if err != nil {
 					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
-					return f.Return(NewErrorStr(errMsg).SetCode(raderr.ErrFileWrite))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrFileWrite))
 				}
 
 				return f.Return()
@@ -1349,7 +1359,7 @@ func init() {
 
 				decodedBytes, err := encoder.DecodeString(content)
 				if err != nil {
-					f.i.errorf(f.callNode, "Error decoding base64: %v", err)
+					return f.ReturnErrf(rl.ErrDecode, "Error decoding base64: %v", err)
 				}
 				decoded := string(decodedBytes)
 				return f.Return(newRadValueStr(decoded))
@@ -1369,7 +1379,7 @@ func init() {
 				content := f.GetStr("_content").Plain()
 				decodedBytes, err := hex.DecodeString(content)
 				if err != nil {
-					f.i.errorf(f.callNode, "Error decoding base16: %v", err)
+					return f.ReturnErrf(rl.ErrDecode, "Error decoding base16: %v", err)
 				}
 				decoded := string(decodedBytes)
 				return f.Return(newRadValueStr(decoded))
@@ -1479,7 +1489,7 @@ func init() {
 				overrideVal := f.GetArg(namedArgOverride)
 
 				if !overrideVal.IsNull() && reload {
-					f.i.errorf(f.callNode,
+					return f.ReturnErrf(rl.ErrMutualExclArgs,
 						"Cannot provide values for both %q and %q", namedArgReload, namedArgOverride)
 				}
 
@@ -1530,16 +1540,15 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				valArg := f.GetArg("_val")
 
-				extract := func(v int64) int64 {
-					if v < 0 || v > 255 {
-						f.i.errorf(f.callNode, "RGB values must be [0, 255]; got %d", v)
-					}
-					return v
-				}
+				red := f.GetInt("red")
+				green := f.GetInt("green")
+				blue := f.GetInt("blue")
 
-				red := extract(f.GetInt("red"))
-				green := extract(f.GetInt("green"))
-				blue := extract(f.GetInt("blue"))
+				for _, color := range []int64{red, green, blue} {
+					if color < 0 || color > 255 {
+						return f.ReturnErrf(rl.ErrNumInvalidRange, "RGB values must be [0, 255]; got %d", color)
+					}
+				}
 
 				switch coerced := valArg.Val.(type) {
 				case RadString:
@@ -1703,8 +1712,4 @@ func tryGetArg(idx int, args []PosArg) *PosArg {
 
 func bugIncorrectTypes(funcName string) string {
 	return fmt.Sprintf("Bug! Switch cases should line up with %q definition", funcName)
-}
-
-func errMissingScriptId(i *Interpreter, node *ts.Node) {
-	i.errorf(node, "Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID)
 }

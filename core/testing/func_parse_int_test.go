@@ -22,7 +22,7 @@ a = parse_int("asd")
 	expected := `Error at L2:5
 
   a = parse_int("asd")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd" (code RAD20001)
+      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd" (RAD20001)
 `
 	assertError(t, 1, expected)
 }
@@ -35,7 +35,7 @@ a = parse_int("2.4")
 	expected := `Error at L2:5
 
   a = parse_int("2.4")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4" (code RAD20001)
+      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4" (RAD20001)
 `
 	assertError(t, 1, expected)
 }

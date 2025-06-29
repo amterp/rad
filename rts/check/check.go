@@ -2,7 +2,7 @@ package check
 
 import (
 	"github.com/amterp/rad/rts"
-	"github.com/amterp/rad/rts/raderr"
+	"github.com/amterp/rad/rts/rl"
 )
 
 // todo be able to check scripts with different versions of Rad?
@@ -61,6 +61,6 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
 	nodes := c.tree.FindInvalidNodes()
 	for _, node := range nodes {
-		*d = append(*d, NewDiagnosticError(node, c.src, "Invalid syntax", raderr.ErrInvalidSyntax))
+		*d = append(*d, NewDiagnosticError(node, c.src, "Invalid syntax", rl.ErrInvalidSyntax))
 	}
 }

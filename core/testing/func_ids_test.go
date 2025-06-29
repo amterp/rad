@@ -69,7 +69,7 @@ gen_fid(alphabet="")
 
   gen_fid(alphabet="")
   ^^^^^^^^^^^^^^^^^^^^
-  Error creating FID generator: alphabet must contain at least 2 characters
+  Error creating FID generator: alphabet must contain at least 2 characters (RAD20020)
 `
 	assertError(t, 1, expected)
 }
@@ -82,7 +82,8 @@ gen_fid(num_random_chars=-1)
 	expected := `Error at L2:1
 
   gen_fid(num_random_chars=-1)
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Number of random chars must be non-negative, got -1
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  Number of random chars must be non-negative, got -1 (RAD20017)
 `
 	assertError(t, 1, expected)
 }

@@ -3,7 +3,7 @@ package check
 import (
 	"strings"
 
-	"github.com/amterp/rad/rts/raderr"
+	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -38,7 +38,7 @@ type Diagnostic struct {
 	LineSrc     string // Src for the line at the start of Range
 	Severity    Severity
 	Message     string
-	Code        *raderr.Error
+	Code        *rl.Error
 }
 
 func NewDiagnosticFromNode(
@@ -46,7 +46,7 @@ func NewDiagnosticFromNode(
 	originalSrc string,
 	severity Severity,
 	msg string,
-	code *raderr.Error,
+	code *rl.Error,
 ) Diagnostic {
 	line := int(node.StartPosition().Row)
 	rang := Range{
@@ -71,7 +71,7 @@ func NewDiagnosticFromNode(
 	}
 }
 
-func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code raderr.Error) Diagnostic {
+func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
 	return NewDiagnosticFromNode(node, originalSrc, Error, msg, &code)
 }
 

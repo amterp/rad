@@ -53,7 +53,7 @@ float({})
 	expected := `Error at L2:1
 
   float({})
-  ^^^^^^^^^ Cannot cast "map" to float
+  ^^^^^^^^^ Cannot cast "map" to float (RAD20016)
 `
 	assertError(t, 1, expected)
 }
@@ -67,7 +67,7 @@ float("10")
 
   float("10")
   ^^^^^^^^^^^
-  Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string?
+  Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string? (RAD20016)
 `
 	assertError(t, 1, expected)
 }

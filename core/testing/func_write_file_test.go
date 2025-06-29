@@ -61,7 +61,7 @@ a = write_file("data/no_permission_write.txt", "content")
 
   a = write_file("data/no_permission_write.txt", "content")
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open data/no_permission_write.txt: permission denied (code RAD20004)
+      open data/no_permission_write.txt: permission denied (RAD20004)
 `
 	assertError(t, 1, expected)
 
@@ -75,7 +75,7 @@ a = write_file("data/", "content")
 	expected := `Error at L2:5
 
   a = write_file("data/", "content")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ open data/: is a directory (code RAD20006)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ open data/: is a directory (RAD20006)
 `
 	assertError(t, 1, expected)
 }
@@ -89,7 +89,7 @@ a = write_file("does_not_exist_dir/test.txt", "content")
 
   a = write_file("does_not_exist_dir/test.txt", "content")
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open does_not_exist_dir/test.txt: no such file or directory (code RAD20005)
+      open does_not_exist_dir/test.txt: no such file or directory (RAD20005)
 `
 	assertError(t, 1, expected)
 }

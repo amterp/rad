@@ -39,7 +39,7 @@ print(b)
 
   a = read_file("does_not_exist.txt")
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open does_not_exist.txt: no such file or directory (code RAD20005)
+      open does_not_exist.txt: no such file or directory (RAD20005)
 `
 	assertError(t, 1, expected)
 }
@@ -62,7 +62,7 @@ print(b)
 
   a = read_file("data/no_permission.txt")
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open data/no_permission.txt: permission denied (code RAD20004)
+      open data/no_permission.txt: permission denied (RAD20004)
 `
 	assertError(t, 1, expected)
 }
@@ -76,7 +76,7 @@ print(b)
 	expected := `Error at L2:5
 
   a = read_file("data/")
-      ^^^^^^^^^^^^^^^^^^ read data/: is a directory (code RAD20003)
+      ^^^^^^^^^^^^^^^^^^ read data/: is a directory (RAD20003)
 `
 	assertError(t, 1, expected)
 }

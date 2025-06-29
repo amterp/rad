@@ -83,8 +83,7 @@ a = now(tz="another bad one")
 	expectedStderr := `Error at L4:5
 
   a = now(tz="another bad one")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^
-      Invalid time zone 'another bad one' (code RAD20009)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^ Invalid time zone 'another bad one' (RAD20009)
 `
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)
@@ -152,7 +151,7 @@ a = parse_epoch(17123456781)
 
   a = parse_epoch(17123456781)
       ^^^^^^^^^^^^^^^^^^^^^^^^
-      Ambiguous epoch length (11 digits). Use 'unit' to disambiguate. (code RAD20007)
+      Ambiguous epoch length (11 digits). Use 'unit' to disambiguate. (RAD20007)
 `
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)

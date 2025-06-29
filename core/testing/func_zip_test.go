@@ -74,7 +74,7 @@ print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
 
   print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        Strict mode enabled: all lists must have the same length, but got 4 and 2
+        Strict mode enabled: all lists must have the same length, but got 4 and 2 (RAD20015)
 `
 	assertError(t, 1, expected)
 }
@@ -88,7 +88,7 @@ print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
 
   print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        Cannot enable 'strict' with 'fill' specified
+        Cannot enable 'strict' with 'fill' specified (RAD20014)
 `
 	assertError(t, 1, expected)
 }

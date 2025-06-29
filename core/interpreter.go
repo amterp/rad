@@ -132,7 +132,7 @@ func (i *Interpreter) safelyEvaluate(node *ts.Node) EvalResult {
 				err := radPanic.Err()
 				msg := err.Msg().Plain()
 				if !com.IsBlank(string(err.Code)) {
-					msg += fmt.Sprintf(" (code %s)", err.Code)
+					msg += fmt.Sprintf(" (%s)", err.Code)
 				}
 				i.errorf(err.Node, msg)
 			}

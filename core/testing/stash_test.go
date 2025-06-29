@@ -25,7 +25,7 @@ get_stash_dir()
 
   get_stash_dir()
   ^^^^^^^^^^^^^^^
-  Script ID is not set. Set the 'stash_id' macro in the file header.
+  Script ID is not set. Set the 'stash_id' macro in the file header. (RAD20022)
 `
 	assertError(t, 1, expected)
 }

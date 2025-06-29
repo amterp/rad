@@ -53,7 +53,7 @@ decode_base64(";;;< those are not part of base64")
 
   decode_base64(";;;< those are not part of base64")
   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Error decoding base64: illegal base64 data at input byte 0
+  Error decoding base64: illegal base64 data at input byte 0 (RAD20021)
 `
 	assertError(t, 1, expected)
 }

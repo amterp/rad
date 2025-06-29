@@ -1,8 +1,11 @@
 package core
 
 import (
+	"fmt"
 	"path/filepath"
 	com "rad/core/common"
+
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -39,24 +42,23 @@ func (r *RadHome) GetStashForId(id string) string {
 	return filepath.Join(r.HomeDir, "stashes", id)
 }
 
-func (r *RadHome) GetStashSub(subPath string, i *Interpreter, node *ts.Node) string {
+func (r *RadHome) GetStashSub(subPath string, node *ts.Node) (string, *RadError) {
 	stash := r.GetStash()
 	if stash == nil {
-		errMissingScriptId(i, node)
-		panic(UNREACHABLE)
+		return "", errNoStashId(node)
 	}
 
-	return filepath.Join(*stash, "files", subPath)
+	return filepath.Join(*stash, "files", subPath), nil
 }
 
-func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool) {
+func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool, *RadError) {
 	if r.StashId == nil {
-		errMissingScriptId(i, node)
+		return RadValue{}, false, errNoStashId(node)
 	}
 
 	path := r.resolveScriptStatePath()
 	if !com.FileExists(path) {
-		return newRadValueMap(NewRadMap()), false
+		return newRadValueMap(NewRadMap()), false, nil
 	}
 
 	data, err := com.LoadJson(path)
@@ -64,12 +66,12 @@ func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool) {
 		i.errorf(node, "Failed to load state: %s", err)
 	}
 
-	return ConvertToNativeTypes(i, node, data), true
+	return ConvertToNativeTypes(i, node, data), true, nil
 }
 
-func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RadValue) {
+func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RadValue) *RadError {
 	if r.StashId == nil {
-		errMissingScriptId(i, node)
+		return errNoStashId(node)
 	}
 
 	path := r.resolveScriptStatePath()
@@ -79,9 +81,17 @@ func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RadValue) {
 	if err != nil {
 		i.errorf(node, "Failed to save state: %s", err)
 	}
+	return nil
 }
 
 func (r *RadHome) resolveScriptStatePath() string {
 	stashHome := *r.GetStash()
 	return filepath.Join(stashHome, "state.json")
+}
+
+func errNoStashId(node *ts.Node) *RadError {
+	return NewErrorStr(
+		fmt.Sprintf("Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID),
+	).SetCode(rl.ErrNoStashId).
+		SetNode(node)
 }

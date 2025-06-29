@@ -73,7 +73,7 @@ parse_json(r'{asd asd}')
 
   parse_json(r'{asd asd}')
   ^^^^^^^^^^^^^^^^^^^^^^^^
-  Error parsing JSON: invalid character 'a' looking for beginning of object key string
+  Error parsing JSON: invalid character 'a' looking for beginning of object key string (RAD20011)
 `
 	assertError(t, 1, expected)
 }

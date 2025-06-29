@@ -67,7 +67,7 @@ print(round(a, b))
 	expected := `Error at L4:7
 
   print(round(a, b))
-        ^^^^^^^^^^^ Precision must be non-negative, got -1
+        ^^^^^^^^^^^ Precision must be non-negative, got -1 (RAD20017)
 `
 	assertError(t, 1, expected)
 }

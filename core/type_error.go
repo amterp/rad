@@ -1,14 +1,14 @@
 package core
 
 import (
-	"github.com/amterp/rad/rts/raderr"
+	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadError struct {
 	Node *ts.Node
 	msg  RadString
-	Code raderr.Error
+	Code rl.Error
 }
 
 func NewError(msg RadString) *RadError {
@@ -23,7 +23,7 @@ func NewErrorStr(msg string) *RadError { // todo make a constructor forcing a Ra
 	}
 }
 
-func (e *RadError) SetCode(code raderr.Error) *RadError {
+func (e *RadError) SetCode(code rl.Error) *RadError {
 	e.Code = code
 	return e
 }

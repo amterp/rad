@@ -92,7 +92,7 @@ m.load("k", fn() exit(1), reload=true, override="overrode!")
 
   m.load("k", fn() exit(1), reload=true, override="overrode!")
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    Cannot provide values for both "reload" and "override"
+    Cannot provide values for both "reload" and "override" (RAD20014)
 `
 	assertError(t, 1, expected)
 }
