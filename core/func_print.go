@@ -21,12 +21,9 @@ var FuncPrint = BuiltInFunc{
 var FuncPPrint = BuiltInFunc{
 	Name: FUNC_PPRINT,
 	Execute: func(f FuncInvocation) RadValue {
-		if len(f.args) == 0 {
-			RP.Printf("\n")
-		}
+		item := f.GetArg("_item")
 
-		arg := f.args[0]
-		jsonStruct := RadToJsonType(arg.value)
+		jsonStruct := RadToJsonType(item)
 		output := prettify(f.i, f.callNode, jsonStruct)
 		RP.Printf(output)
 		return VOID_SENTINEL
@@ -51,28 +48,22 @@ var FuncPrintErr = BuiltInFunc{
 
 func resolvePrintStr(f FuncInvocation) string {
 	var sb strings.Builder
-	end := "\n"
-	if endArg, ok := f.namedArgs[namedArgEnd]; ok {
-		end = endArg.value.RequireStr(f.i, endArg.valueNode).String()
-	}
+	items := f.GetList("_items")
+	end := f.GetStr("end").Plain()
+	sep := f.GetStr("sep").Plain()
 
-	sep := " "
-	if sepArg, ok := f.namedArgs[namedArgSep]; ok {
-		sep = sepArg.value.RequireStr(f.i, sepArg.valueNode).String()
-	}
-
-	if len(f.args) == 0 {
+	if items.IsEmpty() {
 		sb.WriteString(end)
 	} else {
-		for idx, v := range f.args {
-			switch v.value.Type() {
+		for idx, v := range items.Values {
+			switch v.Type() {
 			case rl.RadStrT, rl.RadErrorT:
 				// explicit handling for string so we don't print surrounding quotes when it's standalone
-				sb.WriteString(ToPrintableQuoteStr(v.value.Val, false))
+				sb.WriteString(ToPrintableQuoteStr(v.Val, false))
 			default:
-				sb.WriteString(ToPrintableQuoteStr(v.value.Val, true))
+				sb.WriteString(ToPrintableQuoteStr(v.Val, true))
 			}
-			if idx < len(f.args)-1 {
+			if idx < items.LenInt()-1 {
 				sb.WriteString(sep)
 			}
 		}

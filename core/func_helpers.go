@@ -6,13 +6,6 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-var (
-	NO_RETURN_LIMIT       = []int{NO_NUM_RETURN_VALUES_CONSTRAINT}
-	ZERO_RETURN_VALS      = []int{}
-	ONE_RETURN_VAL        = []int{1}
-	UP_TO_TWO_RETURN_VALS = []int{1, 2}
-)
-
 type PosArg struct {
 	node  *ts.Node
 	value RadValue

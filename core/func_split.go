@@ -10,13 +10,10 @@ import (
 var FuncSplit = BuiltInFunc{
 	Name: FUNC_SPLIT,
 	Execute: func(f FuncInvocation) RadValue {
-		strArg := f.args[0]
-		splitterArg := f.args[1]
+		toSplit := f.GetStr("_val").Plain()
+		splitter := f.GetStr("_sep").Plain()
 
-		str := strArg.value.RequireStr(f.i, strArg.node).Plain()
-		splitter := splitterArg.value.RequireStr(f.i, splitterArg.node).Plain()
-
-		return newRadValues(f.i, f.callNode, regexSplit(f.i, f.callNode, str, splitter))
+		return f.Return(regexSplit(f.i, f.callNode, toSplit, splitter))
 	},
 }
 

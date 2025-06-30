@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"path/filepath"
 	com "rad/core/common"
 
@@ -90,8 +89,7 @@ func (r *RadHome) resolveScriptStatePath() string {
 }
 
 func errNoStashId(node *ts.Node) *RadError {
-	return NewErrorStr(
-		fmt.Sprintf("Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID),
-	).SetCode(rl.ErrNoStashId).
+	return NewErrorStrf("Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID).
+		SetCode(rl.ErrNoStashId).
 		SetNode(node)
 }

@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/amterp/rad/rts/rl"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // todo
@@ -12,124 +11,111 @@ var FuncRange = BuiltInFunc{
 	Name: FUNC_RANGE,
 	Execute: func(f FuncInvocation) RadValue {
 		useFloats := false
-		for _, arg := range f.args {
-			switch arg.value.Type() {
+
+		arg1 := f.GetArg("_arg1")
+		arg2 := f.GetArg("_arg2")
+		step := f.GetArg("_step")
+
+		for _, arg := range []RadValue{arg1, arg2, step} {
+			switch arg.Type() {
 			case rl.RadFloatT:
 				useFloats = true
-			case rl.RadIntT:
+			case rl.RadIntT, rl.RadNullT:
 			default:
 				bugIncorrectTypes(FUNC_RANGE)
 			}
 		}
 
 		if useFloats {
-			return newRadValues(f.i, f.callNode, runFloatRange(f.i, f.callNode, f.args))
+			return runFloatRange(f, arg1, arg2, step)
 		} else {
-			return newRadValues(f.i, f.callNode, runIntRange(f.i, f.callNode, f.args))
+			return runIntRange(f, arg1, arg2, step)
 		}
 	},
 }
 
-func runFloatRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RadValue {
+func runFloatRange(f FuncInvocation, arg1, arg2, stepArg RadValue) RadValue {
 	var start, end, step float64
 
-	firstArg := args[0]
-	secondArg := tryGetArg(1, args)
-	thirdArg := tryGetArg(2, args)
-
-	if thirdArg != nil {
-		start = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
-		end = secondArg.value.RequireFloatAllowingInt(interp, secondArg.node)
-		step = thirdArg.value.RequireFloatAllowingInt(interp, thirdArg.node)
-	} else if secondArg != nil {
-		start = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
-		end = secondArg.value.RequireFloatAllowingInt(interp, secondArg.node)
-		step = 1
+	if arg2.IsNull() {
+		start = 0.0
+		end = arg1.RequireFloatAllowingInt(f.i, f.callNode)
 	} else {
-		start = 0
-		end = firstArg.value.RequireFloatAllowingInt(interp, firstArg.node)
-		step = 1
+		start = arg1.RequireFloatAllowingInt(f.i, f.callNode)
+		end = arg2.RequireFloatAllowingInt(f.i, f.callNode)
 	}
+	step = stepArg.RequireFloatAllowingInt(f.i, f.callNode)
 
 	if step == 0 {
-		// third node must be present if step is zero
-		interp.errorf(thirdArg.node,
-			"%s() step argument cannot be zero", FUNC_RANGE)
+		return f.ReturnErrf(rl.ErrNumInvalidRange, "Step argument cannot be zero")
 	}
 
 	if start > end && step > 0 {
-		interp.errorf(callNode,
-			"%s() start %f cannot be greater than end %f with positive step %f", FUNC_RANGE, start, end, step)
+		return f.ReturnErrf(rl.ErrArgsContradict, "Start %f cannot be greater than end %f with positive step %f",
+			start, end, step)
 	}
 
 	if start < end && step < 0 {
-		interp.errorf(callNode,
-			"%s() start %f cannot be less than end %f with negative step %f", FUNC_RANGE, start, end, step)
+		return f.ReturnErrf(rl.ErrArgsContradict, "Start %f cannot be less than end %f with negative step %f",
+			start, end, step)
 	}
 
 	var result []RadValue
 
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, newRadValue(interp, callNode, i))
+			result = append(result, newRadValueFloat64(i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, newRadValue(interp, callNode, i))
+			result = append(result, newRadValueFloat64(i))
 		}
 	}
 
-	return result
+	return f.Return(result)
 }
 
-func runIntRange(interp *Interpreter, callNode *ts.Node, args []PosArg) []RadValue {
+func runIntRange(f FuncInvocation, arg1, arg2, stepArg RadValue) RadValue {
 	var start, end, step int64
 
-	firstArg := args[0]
-	secondArg := tryGetArg(1, args)
-	thirdArg := tryGetArg(2, args)
-
-	if thirdArg != nil {
-		start = firstArg.value.RequireInt(interp, firstArg.node)
-		end = secondArg.value.RequireInt(interp, secondArg.node)
-		step = thirdArg.value.RequireInt(interp, thirdArg.node)
-	} else if secondArg != nil {
-		start = firstArg.value.RequireInt(interp, firstArg.node)
-		end = secondArg.value.RequireInt(interp, secondArg.node)
-		step = 1
-	} else {
+	if arg2.IsNull() {
 		start = 0
-		end = firstArg.value.RequireInt(interp, firstArg.node)
-		step = 1
+		end = arg1.RequireInt(f.i, f.callNode)
+	} else {
+		start = arg1.RequireInt(f.i, f.callNode)
+		end = arg2.RequireInt(f.i, f.callNode)
 	}
+	step = stepArg.RequireInt(f.i, f.callNode)
 
 	if step == 0 {
-		// third node must be present if step is zero
-		interp.errorf(thirdArg.node,
-			"%s() step argument cannot be zero", FUNC_RANGE)
+		return f.ReturnErrf(
+			rl.ErrNumInvalidRange,
+			"Step argument cannot be zero")
 	}
 
 	if start > end && step > 0 {
-		interp.errorf(callNode,
-			"%s() start %d cannot be greater than end %d with positive step %d", FUNC_RANGE, start, end, step)
+		return f.ReturnErrf(
+			rl.ErrArgsContradict,
+			"Start %d cannot be greater than end %d with positive step %d",
+			start, end, step)
 	}
-
 	if start < end && step < 0 {
-		interp.errorf(callNode,
-			"%s() start %d cannot be less than end %d with negative step %d", FUNC_RANGE, start, end, step)
+		return f.ReturnErrf(
+			rl.ErrArgsContradict,
+			"Start %d cannot be less than end %d with negative step %d",
+			start, end, step)
 	}
 
 	var result []RadValue
-
 	if step < 0 {
 		for i := start; i > end; i += step {
-			result = append(result, newRadValue(interp, callNode, i))
+			result = append(result, newRadValueInt64(i))
 		}
 	} else {
 		for i := start; i < end; i += step {
-			result = append(result, newRadValue(interp, callNode, i))
+			result = append(result, newRadValueInt64(i))
 		}
 	}
 
-	return result
+	return f.Return(result)
 }

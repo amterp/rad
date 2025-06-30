@@ -201,3 +201,7 @@ func (l *RadList) ToGoList() []interface{} {
 	}
 	return out
 }
+
+func (l *RadList) IsEmpty() bool {
+	return l.LenInt() == 0
+}

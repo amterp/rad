@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -17,9 +19,9 @@ func NewError(msg RadString) *RadError {
 	}
 }
 
-func NewErrorStr(msg string) *RadError { // todo make a constructor forcing a Rad error code
+func NewErrorStrf(msg string, args ...interface{}) *RadError { // todo make a constructor forcing a Rad error code
 	return &RadError{
-		msg: NewRadString(msg),
+		msg: NewRadString(fmt.Sprintf(msg, args...)),
 	}
 }
 

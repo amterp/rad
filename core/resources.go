@@ -30,28 +30,28 @@ type PickResourceOptionSerde struct {
 	Values []interface{} `json:"values"`
 }
 
-func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) PickResource {
+func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) (PickResource, *RadError) {
 	finalPath := resolveFinalPath(jsonPath)
 	file, err := os.Open(finalPath)
 	if err != nil {
-		i.errorf(callNode, "Error opening file: %s", err)
+		return PickResource{}, NewErrorStrf("Error opening file: %s", err)
 	}
 	defer file.Close()
 
 	resource := PickResourceSerde{}
 	decoder := json.NewDecoder(file)
 	if err = decoder.Decode(&resource); err != nil {
-		i.errorf(callNode, "Error decoding JSON into pick resource: %s", err)
+		return PickResource{}, NewErrorStrf("Error decoding JSON into pick resource: %s", err)
 	}
 
 	var opts []PickResourceOpt
 	for _, option := range resource.Options {
 		if len(option.Keys) == 0 {
-			i.errorf(callNode, "pick resource options must have at least one key")
+			return PickResource{}, NewErrorStrf("pick resource options must have at least one key")
 		}
 
 		if len(option.Values) == 0 {
-			i.errorf(callNode, "pick resource options must have at least one value")
+			return PickResource{}, NewErrorStrf("pick resource options must have at least one value")
 		}
 
 		opts = append(opts, PickResourceOpt{
@@ -62,7 +62,7 @@ func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) PickRe
 	}
 	return PickResource{
 		Opts: opts,
-	}
+	}, nil
 }
 
 func resolveFinalPath(pathFromRadScript string) string {

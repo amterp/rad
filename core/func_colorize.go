@@ -6,41 +6,38 @@ import (
 	"math"
 	"sort"
 
+	"github.com/amterp/rad/rts/rl"
+
 	"github.com/samber/lo"
 )
 
 var FuncColorize = BuiltInFunc{
 	Name: FUNC_COLORIZE,
 	Execute: func(f FuncInvocation) RadValue {
-		valueArg := f.args[0]
-		possibleValuesArg := f.args[1]
-		possibleValues := possibleValuesArg.value.RequireList(f.i, possibleValuesArg.node).AsStringList(false)
+		strVal := f.GetStr("_val").Plain()
+		enum := lo.Uniq(f.GetList("_enum").AsStringList(false))
 
-		if len(possibleValues) == 0 {
-			f.i.errorf(possibleValuesArg.node, "Possible values list cannot be empty, but was.")
+		if len(enum) == 0 {
+			return f.ReturnErrf(rl.ErrEmptyList, "Possible values list cannot be empty, but was.")
 		}
 
-		possibleValues = lo.Uniq(possibleValues)
-		sort.Strings(possibleValues)
+		sort.Strings(enum)
 
-		value := valueArg.value.RequireStr(f.i, valueArg.node).Plain()
-		if !lo.Contains(possibleValues, value) {
-			f.i.errorf(
-				valueArg.node,
+		if !lo.Contains(enum, strVal) {
+			return f.ReturnErrf(rl.ErrColorizeValNotInEnum,
 				"Value '%s' not found in the provided list of possible values: %s",
-				value,
-				possibleValues,
-			)
+				strVal,
+				enum)
 		}
 
-		r, g, b, err := GetEnumColor(value, possibleValues)
+		r, g, b, err := GetEnumColor(strVal, enum)
 		if err != nil {
-			f.i.errorf(f.callNode, "Failed to get color for value '%s': %s", value, err.Error())
+			return f.ReturnErrf(rl.ErrEmptyList, "Failed to get color for value '%s': %s", strVal, err.Error())
 		}
 
-		s := NewRadString(value)
+		s := NewRadString(strVal)
 		s.SetRgb(r, g, b)
-		return newRadValues(f.i, f.callNode, s)
+		return f.Return(s)
 	},
 }
 

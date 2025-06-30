@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/amterp/rad/rts/rl"
 )
 
 // Allows capture group replacing, for example
@@ -11,17 +13,13 @@ import (
 var FuncReplace = BuiltInFunc{
 	Name: FUNC_REPLACE,
 	Execute: func(f FuncInvocation) RadValue {
-		oldStringArg := f.args[0]
-		regexForOldArg := f.args[1]
-		regexForNewArg := f.args[2]
+		original := f.GetStr("_original").Plain()
+		find := f.GetStr("_find").Plain()
+		replace := f.GetStr("_replace").Plain()
 
-		oldString := oldStringArg.value.RequireStr(f.i, oldStringArg.node).Plain()
-		regexForOld := regexForOldArg.value.RequireStr(f.i, regexForOldArg.node).Plain()
-		regexForNew := regexForNewArg.value.RequireStr(f.i, regexForNewArg.node).Plain()
-
-		re, err := regexp.Compile(regexForOld)
+		re, err := regexp.Compile(find)
 		if err != nil {
-			f.i.errorf(regexForOldArg.node, fmt.Sprintf("Error compiling regex pattern: %s", err))
+			return f.ReturnErrf(rl.ErrInvalidRegex, "Error compiling regex pattern: %s", err)
 		}
 
 		replacementFunc := func(match string) string {
@@ -31,7 +29,7 @@ var FuncReplace = BuiltInFunc{
 				return match
 			}
 
-			result := regexForNew
+			result := replace
 			for i, submatch := range submatches {
 				placeholder := fmt.Sprintf("$%d", i)
 				result = strings.ReplaceAll(result, placeholder, submatch)
@@ -40,8 +38,8 @@ var FuncReplace = BuiltInFunc{
 			return result
 		}
 
-		newString := re.ReplaceAllStringFunc(oldString, replacementFunc)
+		newString := re.ReplaceAllStringFunc(original, replacementFunc)
 
-		return newRadValues(f.i, f.callNode, newString)
+		return f.Return(newString)
 	},
 }

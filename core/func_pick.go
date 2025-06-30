@@ -7,38 +7,35 @@ import (
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/samber/lo"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var FuncPick = BuiltInFunc{
 	Name: FUNC_PICK,
 	Execute: func(f FuncInvocation) RadValue {
-		optionsArg := f.args[0]
-		filteringArg := tryGetArg(1, f.args)
+		options := f.GetList("_options").AsStringList(false)
+		filterArg := f.GetArg("_filter")
 
 		filters := make([]string, 0)
-		if filteringArg != nil {
-			switch coerced := filteringArg.value.Val.(type) {
+		if !filterArg.IsNull() {
+			switch coerced := filterArg.Val.(type) {
 			case RadString:
 				filters = append(filters, coerced.Plain())
 			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RadString); ok {
-						filters = append(filters, str.Plain())
-					} else {
-						f.i.errorf(filteringArg.node,
-							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
-					}
+					filters = append(filters, item.RequireStr(f.i, f.callNode).Plain())
 				}
 			default:
 				bugIncorrectTypes(FUNC_PICK)
 			}
 		}
 
-		keys := optionsArg.value.RequireList(f.i, optionsArg.node).AsStringList(false)
-		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
-		str := pickKv(f.i, f.callNode, keyGroups, keyGroups, filters, f.namedArgs)[0]
-		return newRadValues(f.i, f.callNode, str)
+		keyGroups := lo.Map(options, func(key string, _ int) []string { return []string{key} })
+		str, err := pickKv(f.i, keyGroups, keyGroups, filters, f.namedArgs)
+		if err != nil {
+			return f.Return(err)
+		}
+
+		return f.Return(str[0])
 	},
 }
 
@@ -56,12 +53,7 @@ var FuncPickKv = BuiltInFunc{
 				filters = append(filters, coerced.Plain())
 			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RadString); ok {
-						filters = append(filters, str.Plain())
-					} else {
-						f.i.errorf(filteringArg.node,
-							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
-					}
+					filters = append(filters, item.RequireStr(f.i, f.callNode).Plain())
 				}
 			default:
 				bugIncorrectTypes(FUNC_PICK_KV)
@@ -74,8 +66,11 @@ var FuncPickKv = BuiltInFunc{
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		valueGroups := lo.Map(values, func(value RadValue, _ int) []RadValue { return []RadValue{value} })
 
-		out := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)[0]
-		return newRadValues(f.i, f.callNode, out)
+		out, err := pickKv(f.i, keyGroups, valueGroups, filters, f.namedArgs)
+		if err != nil {
+			return f.Return(err)
+		}
+		return f.Return(out[0])
 	},
 }
 
@@ -87,7 +82,11 @@ var FuncPickFromResource = BuiltInFunc{
 
 		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
 
-		resource := LoadPickResource(f.i, f.callNode, filePath)
+		resource, err := LoadPickResource(f.i, f.callNode, filePath)
+		if err != nil {
+			return f.Return(err)
+		}
+
 		var keyGroups [][]string
 		var valueGroups [][]RadValue
 		for _, opt := range resource.Opts {
@@ -102,19 +101,19 @@ var FuncPickFromResource = BuiltInFunc{
 				filters = append(filters, coerced.Plain())
 			case *RadList:
 				for _, item := range coerced.Values {
-					if str, ok := item.Val.(RadString); ok {
-						filters = append(filters, str.Plain())
-					} else {
-						f.i.errorf(filteringArg.node,
-							"All filters must be strings, but got %q: %v", TypeAsString(item), item)
-					}
+					filters = append(filters, item.RequireStr(f.i, f.callNode).Plain())
 				}
 			default:
 				bugIncorrectTypes(FUNC_PICK_KV)
 			}
 		}
 
-		out := pickKv(f.i, f.callNode, keyGroups, valueGroups, filters, f.namedArgs)
+		out, err := pickKv(f.i, keyGroups, valueGroups, filters, f.namedArgs)
+
+		if err != nil {
+			return f.Return(err)
+		}
+
 		if len(out) == 1 {
 			return newRadValues(f.i, f.callNode, out[0])
 		} else {
@@ -125,14 +124,13 @@ var FuncPickFromResource = BuiltInFunc{
 
 func pickKv[T comparable](
 	i *Interpreter,
-	callNode *ts.Node,
 	keyGroups [][]string,
 	valueGroups [][]T,
 	filters []string,
 	namedArgs map[string]namedArg,
-) []T {
+) ([]T, *RadError) {
 	if len(keyGroups) != len(valueGroups) {
-		i.errorf(callNode, "Number of keys and values must match, but got %s and %s",
+		return []T{}, NewErrorStrf("Number of keys and values must match, but got %s and %s",
 			com.Pluralize(len(keyGroups), "key"), com.Pluralize(len(valueGroups), "value"))
 	}
 
@@ -172,12 +170,15 @@ func pickKv[T comparable](
 	}
 
 	if len(matchedKeyValues) == 0 {
-		// todo potentially allow recovering from this?
-		i.errorf(callNode, "Filtered %s to 0 with filters: %v", com.Pluralize(len(keyGroups), "option"), filters)
+		return []T{}, NewErrorStrf(
+			"Filtered %s to 0 with filters: %v",
+			com.Pluralize(len(keyGroups), "option"),
+			filters,
+		)
 	}
 
 	if len(matchedKeyValues) == 1 {
-		return matchedKeyValues[lo.Keys(matchedKeyValues)[0]]
+		return matchedKeyValues[lo.Keys(matchedKeyValues)[0]], nil
 	}
 
 	var result string
@@ -193,8 +194,8 @@ func pickKv[T comparable](
 
 	if err != nil {
 		// todo If user aborts, this gets triggered (probably should just 'silently' exit if user aborts)
-		i.errorf(callNode, "Error running pick: %v", err)
+		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}
 
-	return matchedKeyValues[result]
+	return matchedKeyValues[result], nil
 }

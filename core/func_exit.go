@@ -7,12 +7,8 @@ import (
 var FuncExit = BuiltInFunc{
 	Name: FUNC_EXIT,
 	Execute: func(f FuncInvocation) RadValue {
-		if len(f.args) == 0 {
-			exit(f.i, 0)
-		} else {
-			arg := f.args[0]
-			exit(f.i, arg.value.RequireIntAllowingBool(f.i, arg.node))
-		}
+		err := f.GetIntAllowingBool("_code")
+		exit(f.i, err)
 		return VOID_SENTINEL
 	},
 }

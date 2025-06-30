@@ -85,7 +85,7 @@ func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
 	script := `seed_random(1)
 rand_int().print()`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `42983569834913930
+	expected := `5577006791947779410
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -108,7 +108,7 @@ func Test_Random_ErrorsIfMinMaxSame(t *testing.T) {
 	expected := `Error at L1:1
 
   rand_int(2, 2)
-  ^^^^^^^^^^^^^^ rand_int() min (2) must be less than max (2).
+  ^^^^^^^^^^^^^^ min (2) must be less than max (2). (RAD20019)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertError(t, 1, expected)

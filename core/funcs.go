@@ -228,6 +228,10 @@ func (f FuncInvocation) GetInt(name string) int64 {
 	return f.GetArg(name).RequireInt(f.i, f.callNode)
 }
 
+func (f FuncInvocation) GetIntAllowingBool(name string) int64 {
+	return f.GetArg(name).RequireIntAllowingBool(f.i, f.callNode)
+}
+
 func (f FuncInvocation) GetFloat(name string) float64 {
 	return f.GetArg(name).RequireFloatAllowingInt(f.i, f.callNode)
 }
@@ -253,7 +257,7 @@ func (f FuncInvocation) Return(vals ...interface{}) RadValue {
 }
 
 func (f FuncInvocation) ReturnErrf(code rl.Error, msg string, args ...interface{}) RadValue {
-	return f.Return(NewErrorStr(fmt.Sprintf(msg, args...)).SetCode(code).SetNode(f.callNode))
+	return f.Return(NewErrorStrf(msg, args...).SetCode(code).SetNode(f.callNode))
 }
 
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
@@ -295,7 +299,8 @@ func init() {
 				case *RadMap:
 					return f.Return(v.Len())
 				default:
-					panic(bugIncorrectTypes(FUNC_LEN))
+					bugIncorrectTypes(FUNC_LEN)
+					panic(UNREACHABLE)
 				}
 			},
 		},
@@ -319,7 +324,8 @@ func init() {
 					}
 					return f.Return(list)
 				default:
-					panic(bugIncorrectTypes(FUNC_SORT))
+					bugIncorrectTypes(FUNC_SORT)
+					panic(UNREACHABLE)
 				}
 			},
 		},
@@ -335,7 +341,7 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrInvalidTimeZone))
+						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrInvalidTimeZone))
 					}
 				}
 
@@ -380,7 +386,7 @@ func init() {
 							digitCount,
 							namedArgUnit,
 						)
-						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetNode(f.callNode))
+						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetNode(f.callNode))
 					}
 				} else {
 					switch unit {
@@ -486,7 +492,7 @@ func init() {
 				str := f.GetStr("_str")
 				maxLen := f.GetInt("_len")
 				if maxLen < 0 {
-					f.ReturnErrf(FUNC_TRUNCATE, "%s() takes a non-negative int, got %d")
+					return f.ReturnErrf(rl.ErrNumInvalidRange, "Requires a non-negative int, got %d", maxLen)
 				}
 
 				strLen := str.Len()
@@ -526,7 +532,7 @@ func init() {
 				response, err := InputConfirm("", prompt)
 				if err != nil {
 					// todo I think this errors if user aborts
-					f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
+					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 
 				return f.Return(response)
@@ -552,7 +558,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseIntFailed))
+					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseIntFailed))
 				}
 			},
 		},
@@ -566,7 +572,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseFloatFailed))
+					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseFloatFailed))
 				}
 			},
 		},
@@ -944,11 +950,11 @@ func init() {
 					}
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileRead))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileRead))
 				}
 			},
 		},
@@ -986,11 +992,11 @@ func init() {
 					resultMap.SetPrimitiveStr(constPath, path)
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileWrite))
+					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileWrite))
 				}
 			},
 		},
@@ -1256,7 +1262,7 @@ func init() {
 					err := com.CreateFilePathAndWriteString(path, def)
 					if err != nil {
 						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
-						return f.Return(NewErrorStr(errMsg))
+						return f.Return(NewErrorStrf(errMsg))
 					}
 
 					output.SetPrimitiveStr(constContent, def)
@@ -1267,7 +1273,7 @@ func init() {
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
 					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
-					return f.Return(NewErrorStr(errMsg))
+					return f.Return(NewErrorStrf(errMsg))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
@@ -1289,7 +1295,7 @@ func init() {
 				err := com.CreateFilePathAndWriteString(path, content)
 				if err != nil {
 					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
-					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrFileWrite))
+					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileWrite))
 				}
 
 				return f.Return()
@@ -1318,7 +1324,7 @@ func init() {
 				default:
 					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
-					return f.Return(NewErrorStr(errMsg))
+					return f.Return(NewErrorStrf(errMsg))
 				}
 				return f.Return(newRadValueStr(digest))
 			},
@@ -1710,6 +1716,6 @@ func tryGetArg(idx int, args []PosArg) *PosArg {
 	return &args[idx]
 }
 
-func bugIncorrectTypes(funcName string) string {
-	return fmt.Sprintf("Bug! Switch cases should line up with %q definition", funcName)
+func bugIncorrectTypes(funcName string) {
+	panic(fmt.Sprintf("Bug! Switch cases should line up with %q definition", funcName))
 }

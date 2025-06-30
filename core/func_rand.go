@@ -3,6 +3,8 @@ package core
 import (
 	"math/rand"
 	"time"
+
+	"github.com/amterp/rad/rts/rl"
 )
 
 var RNG *rand.Rand
@@ -14,9 +16,7 @@ func init() {
 var FuncSeedRandom = BuiltInFunc{
 	Name: FUNC_SEED_RANDOM,
 	Execute: func(f FuncInvocation) RadValue {
-		arg := f.args[0]
-		asInt := arg.value.RequireInt(f.i, arg.node)
-		RNG = rand.New(rand.NewSource(asInt))
+		RNG = rand.New(rand.NewSource(f.GetInt("_seed")))
 		return VOID_SENTINEL
 	},
 }
@@ -24,33 +24,28 @@ var FuncSeedRandom = BuiltInFunc{
 var FuncRand = BuiltInFunc{
 	Name: FUNC_RAND,
 	Execute: func(f FuncInvocation) RadValue {
-		return newRadValues(f.i, f.callNode, RNG.Float64())
+		return f.Return(RNG.Float64())
 	},
 }
 
 var FuncRandInt = BuiltInFunc{
 	Name: FUNC_RAND_INT,
 	Execute: func(f FuncInvocation) RadValue {
+		arg1 := f.GetInt("_arg1")
+		arg2 := f.GetArg("_arg2")
+
 		var min, max int64
 
-		if len(f.args) == 0 {
+		if arg2.IsNull() {
 			min = 0
-			max = 922337203685477580
-		} else if len(f.args) == 1 {
-			arg := f.args[0]
-			min = 0
-			max = arg.value.RequireInt(f.i, arg.node)
+			max = arg1
 		} else {
-			// two args
-			minArg := f.args[0]
-			maxArg := f.args[1]
-			min = minArg.value.RequireInt(f.i, minArg.node)
-			max = maxArg.value.RequireInt(f.i, maxArg.node)
+			min = arg1
+			max = arg2.RequireInt(f.i, f.callNode)
 		}
 
 		if min >= max {
-			f.i.errorf(f.callNode,
-				"%s() min (%d) must be less than max (%d).", FUNC_RAND_INT, min, max)
+			return f.ReturnErrf(rl.ErrArgsContradict, "min (%d) must be less than max (%d).", min, max)
 		}
 
 		n := max - min

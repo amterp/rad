@@ -31,7 +31,7 @@ func init() {
 	signatures := []FnSignature{
 		newFnSignature(`print(*_items: any, *, sep: str = " ", end: str = "\n") -> void`),
 		newFnSignature(`print_err(*_items: any, *, sep: str = " ", end: str = "\n") -> void`),
-		newFnSignature(`pprint(_item: any) -> void`),
+		newFnSignature(`pprint(_item: any?) -> void`),
 		newFnSignature(`debug(*_items: any, *, sep: str = " ", end: str = "\n") -> void`),
 		newFnSignature(`exit(_code: int|bool = 0) -> void`),
 		newFnSignature(`sleep(_duration: float|str, title: str?) -> void`),
@@ -44,7 +44,7 @@ func init() {
 		newFnSignature(`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),
-		newFnSignature(`range(_start: float, _end: float?, _step: float = 1) -> float[]`), // todo weird to always have floats?
+		newFnSignature(`range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> float[]`), // todo weird to always have floats?
 		newFnSignature(`join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str`),
 		newFnSignature(`split(_val: str, _sep: str) -> str[]`),
 		newFnSignature(`lower(_val: str) -> str`),

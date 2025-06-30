@@ -79,10 +79,10 @@ func TestSleep_ErrorsIfNoArg(t *testing.T) {
 func TestSleep_ErrorsIfNegArg(t *testing.T) {
 	setupAndRunCode(t, `sleep(-10)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:7
+	expected := `Error at L1:1
 
   sleep(-10)
-        ^^^ sleep() cannot take a negative duration: "-10s"
+  ^^^^^^^^^^ Cannot take a negative duration: "-10s"
 `
 	assertError(t, 1, expected)
 }
@@ -112,10 +112,10 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
 	setupAndRunCode(t, `sleep("Invalid!")`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:7
+	expected := `Error at L1:1
 
   sleep("Invalid!")
-        ^^^^^^^^^^ Invalid string argument: "Invalid!"
+  ^^^^^^^^^^^^^^^^^ Invalid string argument: "Invalid!" (RAD20023)
 `
 	assertError(t, 1, expected)
 }

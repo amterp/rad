@@ -54,7 +54,6 @@ func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
 }
 
-// TODO: built-in functions aren't getting the defaults from signatures
 func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 	i := f.i
 
@@ -179,13 +178,13 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 				continue
 			}
 
-			if param.IsOptional || (param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject())) {
-				i.env.SetVar(param.Name, RAD_NULL_VAL)
+			if param.IsVariadic {
+				i.env.SetVar(param.Name, newRadValueList(NewRadList()))
 				continue
 			}
 
-			if param.IsVariadic {
-				i.env.SetVar(param.Name, newRadValueList(NewRadList()))
+			if param.IsOptional || (param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject())) {
+				i.env.SetVar(param.Name, RAD_NULL_VAL)
 				continue
 			}
 
