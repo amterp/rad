@@ -136,28 +136,34 @@ func pickKv[T comparable](
 		prompt = " "
 	}
 
+	// map from the key-label to the slice of values
 	matchedKeyValues := make(map[string][]T)
-	for index, keyGroup := range keyGroups {
-		values := valueGroups[index]
-		entryKey := strings.Join(lo.Map(values, func(v T, _ int) string {
-			return ToPrintableQuoteStr(v, false)
-		}), " ")
-		entryKey = entryKey + " (" + strings.Join(keyGroup, " ") + ")"
-		for _, key := range keyGroup {
+	for idx, keyGroup := range keyGroups {
+		values := valueGroups[idx]
+		// build the label from the keyGroup only
+		entryKey := strings.Join(keyGroup, " ")
 
-			if len(filters) == 0 {
-				matchedKeyValues[entryKey] = values
-			} else {
-				failedAFilter := false
-				for _, filter := range filters {
-					if !fuzzy.MatchFold(filter, key) {
-						failedAFilter = true
+		// apply filters (if any) against each key in the group
+		if len(filters) == 0 {
+			matchedKeyValues[entryKey] = values
+		} else {
+			keep := true
+			for _, filter := range filters {
+				// require at least one of the keys to fuzzy-match the filter
+				found := false
+				for _, key := range keyGroup {
+					if fuzzy.MatchFold(filter, key) {
+						found = true
 						break
 					}
 				}
-				if !failedAFilter {
-					matchedKeyValues[entryKey] = values
+				if !found {
+					keep = false
+					break
 				}
+			}
+			if keep {
+				matchedKeyValues[entryKey] = values
 			}
 		}
 	}
@@ -170,11 +176,16 @@ func pickKv[T comparable](
 		)
 	}
 
+	// if exactly one match, return it immediately
 	if len(matchedKeyValues) == 1 {
-		return matchedKeyValues[lo.Keys(matchedKeyValues)[0]], nil
+		// grab the only slice of values
+		for _, vals := range matchedKeyValues {
+			return vals, nil
+		}
 	}
 
-	var result string
+	// otherwise prompt the user to pick one of the key labels
+	var selected string
 	options := lo.Map(
 		lo.Keys(matchedKeyValues),
 		func(k string, _ int) huh.Option[string] { return huh.NewOption(k, k) },
@@ -182,13 +193,11 @@ func pickKv[T comparable](
 	err := huh.NewSelect[string]().
 		Title(prompt).
 		Options(options...).
-		Value(&result).
+		Value(&selected).
 		Run()
-
 	if err != nil {
-		// todo If user aborts, this gets triggered (probably should just 'silently' exit if user aborts)
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}
 
-	return matchedKeyValues[result], nil
+	return matchedKeyValues[selected], nil
 }
