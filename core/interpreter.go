@@ -347,6 +347,9 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	// LEAF NODES
 	case rl.K_IDENTIFIER:
 		identifier := i.GetSrcForNode(node)
+		if identifier == "_" {
+			i.errorf(node, "Cannot use '_' as a value")
+		}
 		val, ok := i.env.GetVar(identifier)
 		if !ok {
 			i.errorf(node, "Undefined variable: %s", identifier)

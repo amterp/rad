@@ -16,21 +16,25 @@ func Test_Misc_SyntaxError(t *testing.T) {
 	assertError(t, 1, expected)
 }
 
-func Test_Misc_CanHaveVarNameThatIsJustAnUnderscore(t *testing.T) {
+func Test_Misc_ReadingFromUnderscoreVarErrors(t *testing.T) {
 	script := `
 _ = 2
 print(_)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "2\n")
-	assertNoErrors(t)
+	expected := `Error at L3:7
+
+  print(_)
+        ^ Cannot use '_' as a value
+`
+	assertError(t, 1, expected)
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop(t *testing.T) {
 	script := `
 a = [1, 2, 3]
-for _, _ in a:
-	print(_)
+for _, v in a:
+	print(v)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\n2\n3\n")
