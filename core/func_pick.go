@@ -30,7 +30,7 @@ var FuncPick = BuiltInFunc{
 		}
 
 		keyGroups := lo.Map(options, func(key string, _ int) []string { return []string{key} })
-		str, err := pickKv(f.i, keyGroups, keyGroups, filters, f.namedArgs)
+		str, err := pickKv(f, keyGroups, keyGroups, filters)
 		if err != nil {
 			return f.Return(err)
 		}
@@ -42,13 +42,13 @@ var FuncPick = BuiltInFunc{
 var FuncPickKv = BuiltInFunc{
 	Name: FUNC_PICK_KV,
 	Execute: func(f FuncInvocation) RadValue {
-		keyArgs := f.args[0]
-		valueArgs := f.args[1]
-		filteringArg := tryGetArg(2, f.args)
+		keys := f.GetList("keys").AsStringList(false)
+		values := f.GetList("values").Values
+		filter := f.GetArg("_filter")
 
 		filters := make([]string, 0)
-		if filteringArg != nil {
-			switch coerced := filteringArg.value.Val.(type) {
+		if !filter.IsNull() {
+			switch coerced := filter.Val.(type) {
 			case RadString:
 				filters = append(filters, coerced.Plain())
 			case *RadList:
@@ -60,13 +60,10 @@ var FuncPickKv = BuiltInFunc{
 			}
 		}
 
-		keys := keyArgs.value.RequireList(f.i, keyArgs.node).AsStringList(false)
-		values := valueArgs.value.RequireList(f.i, valueArgs.node).Values
-
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		valueGroups := lo.Map(values, func(value RadValue, _ int) []RadValue { return []RadValue{value} })
 
-		out, err := pickKv(f.i, keyGroups, valueGroups, filters, f.namedArgs)
+		out, err := pickKv(f, keyGroups, valueGroups, filters)
 		if err != nil {
 			return f.Return(err)
 		}
@@ -77,12 +74,10 @@ var FuncPickKv = BuiltInFunc{
 var FuncPickFromResource = BuiltInFunc{
 	Name: FUNC_PICK_FROM_RESOURCE,
 	Execute: func(f FuncInvocation) RadValue {
-		fileArg := f.args[0]
-		filteringArg := tryGetArg(1, f.args)
+		path := f.GetStr("path").Plain()
+		filter := f.GetArg("_filter")
 
-		filePath := fileArg.value.RequireStr(f.i, fileArg.node).Plain()
-
-		resource, err := LoadPickResource(f.i, f.callNode, filePath)
+		resource, err := LoadPickResource(f.i, f.callNode, path)
 		if err != nil {
 			return f.Return(err)
 		}
@@ -95,8 +90,8 @@ var FuncPickFromResource = BuiltInFunc{
 		}
 
 		filters := make([]string, 0)
-		if filteringArg != nil {
-			switch coerced := filteringArg.value.Val.(type) {
+		if !filter.IsNull() {
+			switch coerced := filter.Val.(type) {
 			case RadString:
 				filters = append(filters, coerced.Plain())
 			case *RadList:
@@ -108,7 +103,7 @@ var FuncPickFromResource = BuiltInFunc{
 			}
 		}
 
-		out, err := pickKv(f.i, keyGroups, valueGroups, filters, f.namedArgs)
+		out, err := pickKv(f, keyGroups, valueGroups, filters)
 
 		if err != nil {
 			return f.Return(err)
@@ -123,32 +118,30 @@ var FuncPickFromResource = BuiltInFunc{
 }
 
 func pickKv[T comparable](
-	i *Interpreter,
+	f FuncInvocation,
 	keyGroups [][]string,
 	valueGroups [][]T,
 	filters []string,
-	namedArgs map[string]namedArg,
 ) ([]T, *RadError) {
 	if len(keyGroups) != len(valueGroups) {
 		return []T{}, NewErrorStrf("Number of keys and values must match, but got %s and %s",
 			com.Pluralize(len(keyGroups), "key"), com.Pluralize(len(valueGroups), "value"))
 	}
 
-	prompt := "Pick an option"
-	if promptArg, ok := namedArgs[namedArgPrompt]; ok {
-		prompt = promptArg.value.RequireStr(i, promptArg.valueNode).Plain()
-		if prompt == "" {
-			// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
-			// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
-			// looks a bit weird but hey, the user has decided no title, what do they expect?)
-			prompt = " "
-		}
+	prompt := f.GetStr("prompt").Plain()
+	if prompt == "" {
+		// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
+		// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
+		// looks a bit weird but hey, the user has decided no title, what do they expect?)
+		prompt = " "
 	}
 
 	matchedKeyValues := make(map[string][]T)
 	for index, keyGroup := range keyGroups {
 		values := valueGroups[index]
-		entryKey := strings.Join(lo.Map(values, func(v T, _ int) string { return ToPrintableQuoteStr(v, false) }), " ")
+		entryKey := strings.Join(lo.Map(values, func(v T, _ int) string {
+			return ToPrintableQuoteStr(v, false)
+		}), " ")
 		entryKey = entryKey + " (" + strings.Join(keyGroup, " ") + ")"
 		for _, key := range keyGroup {
 
