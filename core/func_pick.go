@@ -136,20 +136,19 @@ func pickKv[T comparable](
 		prompt = " "
 	}
 
-	// map from the key-label to the slice of values
+	// matched values by label, plus an ordered list of labels
 	matchedKeyValues := make(map[string][]T)
-	for idx, keyGroup := range keyGroups {
-		values := valueGroups[idx]
-		// build the label from the keyGroup only
-		entryKey := strings.Join(keyGroup, " ")
+	orderedKeys := make([]string, 0, len(keyGroups))
 
-		// apply filters (if any) against each key in the group
-		if len(filters) == 0 {
-			matchedKeyValues[entryKey] = values
-		} else {
-			keep := true
+	for i, keyGroup := range keyGroups {
+		values := valueGroups[i]
+		label := strings.Join(keyGroup, " ")
+
+		// decide whether this one passes filters
+		keep := len(filters) == 0
+		if !keep {
+			keep = true
 			for _, filter := range filters {
-				// require at least one of the keys to fuzzy-match the filter
 				found := false
 				for _, key := range keyGroup {
 					if fuzzy.MatchFold(filter, key) {
@@ -162,13 +161,15 @@ func pickKv[T comparable](
 					break
 				}
 			}
-			if keep {
-				matchedKeyValues[entryKey] = values
-			}
+		}
+
+		if keep {
+			matchedKeyValues[label] = values
+			orderedKeys = append(orderedKeys, label)
 		}
 	}
 
-	if len(matchedKeyValues) == 0 {
+	if len(orderedKeys) == 0 {
 		return []T{}, NewErrorStrf(
 			"Filtered %s to 0 with filters: %v",
 			com.Pluralize(len(keyGroups), "option"),
@@ -176,26 +177,23 @@ func pickKv[T comparable](
 		)
 	}
 
-	// if exactly one match, return it immediately
-	if len(matchedKeyValues) == 1 {
-		// grab the only slice of values
-		for _, vals := range matchedKeyValues {
-			return vals, nil
-		}
+	// single match? return immediately
+	if len(orderedKeys) == 1 {
+		return matchedKeyValues[orderedKeys[0]], nil
 	}
 
-	// otherwise prompt the user to pick one of the key labels
+	// build options in original order
 	var selected string
-	options := lo.Map(
-		lo.Keys(matchedKeyValues),
-		func(k string, _ int) huh.Option[string] { return huh.NewOption(k, k) },
-	)
-	err := huh.NewSelect[string]().
+	opts := make([]huh.Option[string], len(orderedKeys))
+	for i, lbl := range orderedKeys {
+		opts[i] = huh.NewOption(lbl, lbl)
+	}
+
+	if err := huh.NewSelect[string]().
 		Title(prompt).
-		Options(options...).
+		Options(opts...).
 		Value(&selected).
-		Run()
-	if err != nil {
+		Run(); err != nil {
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}
 
