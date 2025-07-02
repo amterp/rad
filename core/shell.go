@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"sync"
 
 	"github.com/amterp/rad/rts/rl"
 
@@ -66,28 +67,31 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	isQuiet := rl.GetChild(shellCmdNode, rl.F_QUIET_MOD) != nil
 	isConfirm := rl.GetChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
+	// evaluate the command string
 	cmdNode := rl.GetChild(shellCmdNode, rl.F_COMMAND)
 	cmdStr := i.eval(cmdNode).Val.
 		RequireType(i, cmdNode, "Shell commands must be strings", rl.RadStrT).
 		RequireStr(i, shellCmdNode)
 
+	// optional confirmation prompt
 	if FlagConfirmShellCommands.Value || isConfirm {
-		response, err := InputConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
+		ok, err := InputConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
 		if err != nil {
 			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
 		}
-		if !response {
-			emptyBuffer := bytes.Buffer{}
-			return resolveResult(shellCmdNode, numExpectedOutputs, emptyBuffer, emptyBuffer, 1)
+		if !ok {
+			empty := bytes.Buffer{}
+			return resolveResult(shellCmdNode, numExpectedOutputs, empty, empty, 1)
 		}
 	}
 
 	cmd := resolveCmd(i, shellCmdNode, cmdStr.Plain())
-	var stdout, stderr bytes.Buffer
+	var stdoutBuf, stderrBuf bytes.Buffer
 
 	captureStdout := numExpectedOutputs >= 2
 	captureStderr := numExpectedOutputs >= 3
 
+	// set up pipes if we need to capture output
 	var stdoutPipe, stderrPipe io.ReadCloser
 	var err error
 
@@ -116,50 +120,58 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 		i.errorf(shellCmdNode, "Error starting command: %v", err)
 	}
 
+	// if capturing, drain both pipes in parallel to avoid race with cmd.Wait()
 	if captureStdout || captureStderr {
+		var waitGroup sync.WaitGroup
 		errCh := make(chan error, 2)
 
-		go func() {
-			if captureStdout {
-				if _, err := io.Copy(&stdout, stdoutPipe); err != nil {
-					errCh <- fmt.Errorf("stdout pipe error: %w", err)
-					return
+		if captureStdout {
+			waitGroup.Add(1)
+			go func() {
+				defer waitGroup.Done()
+				if _, copyErr := io.Copy(&stdoutBuf, stdoutPipe); copyErr != nil {
+					errCh <- fmt.Errorf("stdout pipe error: %w", copyErr)
 				}
-			}
-			if captureStderr {
-				if _, err := io.Copy(&stderr, stderrPipe); err != nil {
-					errCh <- fmt.Errorf("stderr pipe error: %w", err)
-					return
-				}
-			}
-			errCh <- nil
-		}()
-
-		err = cmd.Wait()
-		if pipeErr := <-errCh; pipeErr != nil {
-			RP.RadDebugf("pipe error")
-			i.errorf(shellCmdNode, "Failed to run command: %s", pipeErr)
+			}()
 		}
+		if captureStderr {
+			waitGroup.Add(1)
+			go func() {
+				defer waitGroup.Done()
+				if _, copyErr := io.Copy(&stderrBuf, stderrPipe); copyErr != nil {
+					errCh <- fmt.Errorf("stderr pipe error: %w", copyErr)
+				}
+			}()
+		}
+
+		// wait for the process to exit, then for all copies to finish
+		waitErr := cmd.Wait()
+		waitGroup.Wait()
+		close(errCh)
+
+		// if any pipe copy failed, report it
+		for pipeErr := range errCh {
+			if pipeErr != nil {
+				i.errorf(shellCmdNode, "Failed to run command: %v", pipeErr)
+			}
+		}
+		err = waitErr
 	} else {
+		// no capturing: just wait for completion
 		err = cmd.Wait()
 	}
 
+	// handle exit codes and errors
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
-			// cmd return non-0, which is valid in rad
-			RP.RadDebugf("exit error with error code")
-			return resolveResult(shellCmdNode, numExpectedOutputs, stdout, stderr, exitErr.ExitCode())
-		} else {
-			// genuine error, error exit no matter what
-			RP.RadDebugf("exit error without error code")
-			i.errorf(shellCmdNode, "Failed to run command: %v\nStderr: %s\n", err, stderr.String())
+			return resolveResult(shellCmdNode, numExpectedOutputs, stdoutBuf, stderrBuf, exitErr.ExitCode())
 		}
+		i.errorf(shellCmdNode, "Failed to run command: %v\nStderr: %s\n", err, stderrBuf.String())
 	}
 
-	return resolveResult(shellCmdNode, numExpectedOutputs, stdout, stderr, 0)
+	return resolveResult(shellCmdNode, numExpectedOutputs, stdoutBuf, stderrBuf, 0)
 }
-
 func resolveResult(shellNode *ts.Node, numExpectedOutputs int, stdout, stderr bytes.Buffer, exitCode int) shellResult {
 	isCritical := shellNode.Kind() == rl.K_CRITICAL_SHELL_CMD
 	if isCritical && exitCode != 0 {
