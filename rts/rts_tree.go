@@ -70,6 +70,14 @@ func (rt *RadTree) FindArgBlock() (*ArgBlock, bool) {
 	return argBlocks[0], true // todo bad if multiple
 }
 
+func (rt *RadTree) FindCmdBlock() (*CmdBlock, bool) {
+	cmdBlocks := findNodes[*CmdBlock](rt)
+	if len(cmdBlocks) == 0 {
+		return nil, false
+	}
+	return cmdBlocks[0], true // todo bad if multiple
+}
+
 func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 	nodeName := NodeName[T]()
 	query, err := ts.NewQuery(rt.parser.Language(), fmt.Sprintf("(%s) @%s", nodeName, nodeName))
@@ -182,6 +190,9 @@ func createNode[T Node](src string, node *ts.Node) (T, bool) {
 	case *ArgBlock:
 		argBlock, _ := newArgBlock(src, node)
 		return any(argBlock).(T), true
+	case *CmdBlock:
+		cmdBlock, _ := newCmdBlock(src, node)
+		return any(cmdBlock).(T), true
 	case *StringNode:
 		stringNode, _ := newStringNode(src, node)
 		return any(stringNode).(T), true

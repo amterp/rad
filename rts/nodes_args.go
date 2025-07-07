@@ -554,6 +554,7 @@ func extractBoolList(src string, boolListNode *ts.Node) []bool {
 }
 
 // extractString of a string node. Does not perform interpolation.
+// todo don't love this... maybe should spawn a mini interpreter
 func extractString(src string, stringNode *ts.Node) string {
 	contents := stringNode.ChildByFieldName("contents")
 	if contents == nil {

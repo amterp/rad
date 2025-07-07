@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	com "rad/core/common"
 	"strings"
 
@@ -21,11 +22,20 @@ type RadRunner struct {
 	scriptData  *ScriptData
 	globalFlags []RadArg
 	scriptArgs  []RadArg
+	cmdPath     []string
 }
 
 func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 	setGlobals(runnerInput)
 	return &RadRunner{}
+}
+
+func (r *RadRunner) ResolveCmdPath() string {
+	parts := r.cmdPath
+	if len(parts) == 0 && r.scriptData != nil && !com.IsBlank(r.scriptData.ScriptName) {
+		parts = append(parts, r.scriptData.ScriptName)
+	}
+	return strings.Join(parts, " ")
 }
 
 func (r *RadRunner) Run() error {
@@ -95,9 +105,7 @@ func (r *RadRunner) Run() error {
 
 	if HasScript {
 		r.scriptData = ExtractMetadata(sourceCode)
-	}
 
-	if HasScript {
 		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
 		radParser, err := rts.NewRadParser()
 		if err != nil {
@@ -122,16 +130,35 @@ func (r *RadRunner) Run() error {
 	}
 
 	r.setUpGlobals()
-	args := RFlagSet.Args()
 
 	scriptArgs := r.createRadArgsFromScript()
 	r.scriptArgs = scriptArgs
 
+	containsLongHelp := lo.Contains(os.Args[1:], "--help")
+
+	failedCmdLookup := false
+	if r.scriptData != nil && r.scriptData.Cmds != nil && len(os.Args) > 2 {
+		potentialCmd := os.Args[2]
+		cmd := r.scriptData.Cmds.FindCmd(potentialCmd)
+		if cmd != nil {
+			// we've invoked a command, so restart the runner but as if the command was the script.
+			absCmdPath := filepath.Join(ScriptDir, cmd.Path.Str)
+			os.Args = append([]string{os.Args[0], absCmdPath}, os.Args[3:]...)
+			runner := NewRadRunner(RunnerInput{}) // TODO not test-friendly
+			if len(runner.cmdPath) == 0 {
+				runner.cmdPath = []string{r.scriptData.ScriptName}
+			}
+			runner.cmdPath = append(runner.cmdPath, cmd.Name.Str)
+			runner.Run()
+			RExit(0)
+		}
+		failedCmdLookup = true
+	}
+
 	// determine if we should run help/version or not
 
 	if FlagHelp.Value {
-		shortHelp := !lo.Contains(os.Args[1:], "--help")
-		r.RunUsageExit(shortHelp)
+		r.RunUsageExit(!containsLongHelp)
 	}
 
 	if FlagVersion.Value {
@@ -181,6 +208,11 @@ func (r *RadRunner) Run() error {
 		RExit(0)
 	}
 
+	if failedCmdLookup {
+		r.RunUsage(!containsLongHelp, true)
+		RExit(1)
+	}
+
 	r.scriptData.ValidateNoErrors()
 
 	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
@@ -196,12 +228,14 @@ func (r *RadRunner) Run() error {
 		RP.UsageErrorExit(err.Error())
 	}
 
-	posArgsIndex := 0
+	args := RFlagSet.Args()
+
 	if !com.IsBlank(scriptPath) {
 		// We're invoked on an actual string path, which will be the first arg. Cut it out.
 		args = args[1:]
 	}
 
+	posArgsIndex := 0
 	atLeastOneFlagConfigured := false
 	var missingArgs []RadArg
 	for _, scriptArg := range scriptArgs {

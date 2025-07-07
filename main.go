@@ -1,6 +1,8 @@
 package main
 
-import "rad/core"
+import (
+	"rad/core"
+)
 
 func main() {
 	runner := core.NewRadRunner(core.RunnerInput{})
