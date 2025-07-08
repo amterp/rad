@@ -1,5 +1,9 @@
 # Script Commands
 
+Relevant: [bundling](./bundling.md).
+
+## 2025-05-25
+
 Right now, you can write a script and easily make it take flags/args.
 
 ```
@@ -266,6 +270,90 @@ The requirement to split your script is probably good for larger scripts, but ca
 Perhaps we can allow this 'commands' approach still, for a single file?
 Kind of a combination with the [previous section](#concatenated-scripts) on concatenated single-file scripts.
 
----
+## 2025-07-08
 
-Relevant: [bundling](./bundling.md).
+I tried the above `commands:` block syntax, and I don't think anyone is going to be happy with that.
+It may seem clean for some scripts, that have truly completely isolated commands, but I faced a couple of issues on the two scripts I tried this syntax on:
+
+`hm`
+
+- I wanted `hm <script>` to be a valid invocation for the 'standard' approach, but current syntax doesn't support that -- everything has to be a command.
+  - Could probably be solved via some 'default' case-kinda thing.
+
+`dot`
+
+- I had ~20 lines of common code I would need to either copy into each command script, or define and import into each (if we supported that). In any case, the import & run lines would need to be written.
+  - Could perhaps allow writing some arbitrary code *before*
+
+Let's go back to basics. What do we actually want/need from a command framework?
+
+1. Ability to run some shared code first
+2. Hard to mess up e.g. stash_id
+3. Nested commands
+4. Standard `arg block` functionality for each command
+5. Command *optional* i.e. *can* write commands, but if no command, the inputs just go into a 'default handle'
+6. Static inspectability -- usage string needs to be able to see what commands are available.
+7. Nice-to-have: ability to implement all the commands in the same file.
+    - Makes it much easier to share and manage, especially if the implementations are quite small.
+    - Still ability to split as well, though.
+
+Ideas that come to mind:
+
+1. Import the separate command scripts
+    - Invoke them as functions? Each parameter is named.
+2. Pass functions as command-handlers.
+    - Align the structure of function signatures with args (args maybe need to be a subset?)
+
+1 and 2 are somewhat similar, by using functions. Maybe we could even allow both.
+
+Function handlers
+
+```
+commands:
+    add add # One liner add description.
+    rm rm   # One liner rm description.
+
+fn add(file str):
+    <impl>
+
+fn rm(file str):
+    <impl>
+```
+
+Actually let's stop right there real quick. I don't know that this syntax is compatible enough with requirement #5 i.e. 'optional' part of commands.
+We probably need to build this into the args block, actually. That way, you can say "can take a command as first string", otherwise do all these other args.
+Can we fit it in somehow? Don't wanna be too verbose. Also want to make it completely optional, which is new for positional args in the arg block.
+
+Another downside I identify with the above approach, just to note, is the loss of a file header. Maybe we can come up with some fn docstring equivalent?
+
+```
+commands:
+    add add
+    rm rm
+args:
+    file str
+
+fn add(file str):
+    """
+    Here is a docstring for add.
+    """
+    <impl>
+
+fn rm(file str):
+    """
+    Here is a docstring for rm.
+    """
+    <impl>
+```
+
+Here, we're saying that `add` and `rm` will be invoked as commands if matched, otherwise we'll use the `args` block.
+But hmm, the fn approach is a *little* odd. We have these args blocks, can we reuse them? Somewhat like I previously suggested in this document.
+
+```
+command add:
+    file str
+args:
+    file str
+```
+
+Hmm, but how do we separate the actual impl for `add`? Maybe still pass a handler fn somehow? One that doesn't take args? idk
