@@ -52,10 +52,10 @@ func inputText(prompt string, hint string, default_ string) (RadString, error) {
 		Prompt(prompt).
 		Value(&response)
 
-	if com.IsBlank(hint) {
-		input.Placeholder("Default: " + default_)
-	} else {
+	if !com.IsBlank(hint) {
 		input.Placeholder(hint)
+	} else if !com.IsBlank(default_) {
+		input.Placeholder("Default: " + default_)
 	}
 
 	err := input.Run()
