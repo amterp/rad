@@ -266,6 +266,30 @@ for n in names:
 	assertNoErrors(t)
 }
 
+func Test_Colorize_SkipIfSingleMultiple(t *testing.T) {
+	script := `
+names = ["Alice", "Bob"]
+for n in names:
+	n.colorize(names, skip_if_single=true).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_SkipIfSingleOne(t *testing.T) {
+	script := `
+names = ["Alice"]
+for n in names:
+	n.colorize(names, skip_if_single=true).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "Alice\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 func Test_Colorize_CanColorInDisplayBlock(t *testing.T) {
 	script := `
 names = ["Alice", "Bob", "Charlie", "David"]

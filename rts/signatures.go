@@ -109,7 +109,7 @@ func init() {
 		newFnSignature(`get_rad_home() -> str`),
 		newFnSignature(`load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false, override: any?) -> error|any`),
 		newFnSignature(`color_rgb(_val: any, red: int, green: int, blue: int) -> error|str`),
-		newFnSignature(`colorize(_val: str, _enum: str[]) -> str`),
+		newFnSignature(`colorize(_val: str, _enum: str[], *, skip_if_single: bool = false) -> str`),
 		newFnSignature(`http_get(url: str, *, body: any?, headers: map?) -> { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }`),
 		newFnSignature(`http_post(url: str, *, body: any?, headers: map?) -> { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }`),
 		newFnSignature(`http_put(url: str, *, body: any?, headers: map?) -> { "success": bool, "status_code"?: int, "error"?: str, "duration_seconds"?: float }`),

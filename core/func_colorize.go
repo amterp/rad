@@ -16,9 +16,16 @@ var FuncColorize = BuiltInFunc{
 	Execute: func(f FuncInvocation) RadValue {
 		strVal := f.GetStr("_val").Plain()
 		enum := lo.Uniq(f.GetList("_enum").AsStringList(false))
+		skipIfSingle := f.GetBool("skip_if_single")
 
 		if len(enum) == 0 {
 			return f.ReturnErrf(rl.ErrEmptyList, "Possible values list cannot be empty, but was.")
+		}
+
+		// if there's only one value and the user asked us to skip, just return white/unchanged
+		if skipIfSingle && len(enum) == 1 {
+			s := NewRadString(strVal)
+			return f.Return(s)
 		}
 
 		sort.Strings(enum)
