@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/amterp/color v1.20.0
-	github.com/amterp/tree-sitter-rad v0.1.7
+	github.com/amterp/tree-sitter-rad v0.1.6
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 )
 

@@ -13,7 +13,6 @@ import (
 type ScriptData struct {
 	ScriptName        string
 	Args              []*ScriptArg
-	Cmds              *rts.CmdBlock
 	Description       *string
 	Tree              *rts.RadTree
 	Src               string
@@ -25,7 +24,6 @@ func ExtractMetadata(src string) *ScriptData {
 	radTree, err := rts.NewRadParser()
 	if err != nil {
 		RP.RadErrorExit("Failed to create Rad tree sitter: " + err.Error())
-		panic(UNREACHABLE)
 	}
 
 	tree := radTree.Parse(src)
@@ -49,16 +47,9 @@ func ExtractMetadata(src string) *ScriptData {
 		args = extractArgs(argBlock)
 	}
 
-	var cmds *rts.CmdBlock
-	if cmdBlock, ok := tree.FindCmdBlock(); ok {
-		RP.RadDebugf(fmt.Sprintf("Found cmd block: %v", com.Dump(cmdBlock)))
-		cmds = cmdBlock
-	}
-
 	return &ScriptData{
 		ScriptName:        ScriptName,
 		Args:              args,
-		Cmds:              cmds,
 		Description:       description,
 		Tree:              tree,
 		Src:               src,

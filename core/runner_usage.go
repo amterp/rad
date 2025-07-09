@@ -18,7 +18,7 @@ func (r *RadRunner) RunUsage(shortHelp, isErr bool) {
 func (r *RadRunner) RunUsageExit(shortHelp bool) {
 	r.RunUsage(shortHelp, false)
 	if FlagShell.Value {
-		RP.PrintForShellEval("exit 0") // todo should we move this into RunUsage and maybe print exit 1 if error?
+		RP.PrintForShellEval("exit 0")
 	}
 	RExit(0)
 }
@@ -53,9 +53,8 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	}
 
 	com.GreenBoldF(buf, "Usage:\n ")
-	cmdPath := r.ResolveCmdPath()
-	if !com.IsBlank(cmdPath) {
-		com.BoldF(buf, fmt.Sprintf(" %s", cmdPath))
+	if !com.IsBlank(r.scriptData.ScriptName) {
+		com.BoldF(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
 	}
 
 	// separate out positionals from options, to print positionals first
@@ -77,10 +76,6 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 		}
 	}
 
-	if r.scriptData.Cmds != nil {
-		com.CyanF(buf, " <command>")
-	}
-
 	if !(r.scriptData.DisableGlobalOpts && len(scriptOptions) == 0) {
 		fmt.Fprintf(buf, " [OPTIONS]")
 	}
@@ -91,14 +86,6 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 		fmt.Fprintf(buf, "\n")
 		com.GreenBoldF(buf, "Script args:\n")
 		flagUsage(buf, append(scriptArgs, scriptOptions...))
-	}
-
-	if r.scriptData.Cmds != nil {
-		fmt.Fprintf(buf, "\n")
-		com.GreenBoldF(buf, "Commands:\n")
-		for _, cmd := range r.scriptData.Cmds.Cmds {
-			fmt.Fprintf(buf, "  %s\n", cmd.Name.Str) // todo write the top line of file header
-		}
 	}
 
 	if !shortHelp && !r.scriptData.DisableGlobalOpts {
