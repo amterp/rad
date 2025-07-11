@@ -45,6 +45,7 @@ type Flag[T any] struct {
 	Short    string
 	Usage    string
 	Optional bool
+	Hidden   bool
 	Default  *T
 	Value    *T
 }
@@ -69,11 +70,17 @@ func (f *Flag[T]) SetOptional(b bool) *Flag[T] {
 	return f
 }
 
+func (f *Flag[T]) SetHidden(b bool) *Flag[T] {
+	f.Hidden = b
+	return f
+}
+
 type SliceFlag[T any] struct {
 	Name      string
 	Short     string
 	Usage     string
 	Optional  bool
+	Hidden    bool
 	Separator *string
 	Default   *[]T
 	Value     *[]T
@@ -96,6 +103,11 @@ func (f *SliceFlag[T]) SetDefault(v []T) *SliceFlag[T] {
 
 func (f *SliceFlag[T]) SetOptional(b bool) *SliceFlag[T] {
 	f.Optional = b
+	return f
+}
+
+func (f *SliceFlag[T]) SetHidden(b bool) *SliceFlag[T] {
+	f.Hidden = b
 	return f
 }
 
