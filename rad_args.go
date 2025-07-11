@@ -10,6 +10,7 @@ func NewFlagSet() *FlagSet {
 
 type BoolFlag = Flag[bool]
 type StringFlag = Flag[string]
+type StringSliceFlag = SliceFlag[string]
 
 //
 
@@ -20,14 +21,21 @@ func (fs *FlagSet) Parse(args []string) error {
 //
 
 func (fs *FlagSet) AddBool(name string) *BoolFlag {
-	return &Flag[bool]{
+	def := false
+	return &BoolFlag{
 		Name:    name,
-		Default: false,
+		Default: &def,
 	}
 }
 
 func (fs *FlagSet) AddString(name string) *StringFlag {
-	return &Flag[string]{Name: name}
+	return &StringFlag{Name: name}
+}
+
+func (fs *FlagSet) AddStringSlice(name string) *StringSliceFlag {
+	return &StringSliceFlag{
+		Name: name,
+	}
 }
 
 //
@@ -37,7 +45,7 @@ type Flag[T any] struct {
 	Short    string
 	Usage    string
 	Optional bool
-	Default  T
+	Default  *T
 	Value    *T
 }
 
@@ -52,12 +60,46 @@ func (f *Flag[T]) SetUsage(u string) *Flag[T] {
 }
 
 func (f *Flag[T]) SetDefault(v T) *Flag[T] {
-	f.Default = v
-	f.Value = &v
+	f.Default = &v
 	return f
 }
 
 func (f *Flag[T]) SetOptional(b bool) *Flag[T] {
 	f.Optional = b
+	return f
+}
+
+type SliceFlag[T any] struct {
+	Name      string
+	Short     string
+	Usage     string
+	Optional  bool
+	Separator *string
+	Default   *[]T
+	Value     *[]T
+}
+
+func (f *SliceFlag[T]) SetShort(s string) *SliceFlag[T] {
+	f.Short = s
+	return f
+}
+
+func (f *SliceFlag[T]) SetUsage(u string) *SliceFlag[T] {
+	f.Usage = u
+	return f
+}
+
+func (f *SliceFlag[T]) SetDefault(v []T) *SliceFlag[T] {
+	f.Default = &v
+	return f
+}
+
+func (f *SliceFlag[T]) SetOptional(b bool) *SliceFlag[T] {
+	f.Optional = b
+	return f
+}
+
+func (f *SliceFlag[T]) SetSeparator(sep string) *SliceFlag[T] {
+	f.Separator = &sep
 	return f
 }

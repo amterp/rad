@@ -23,8 +23,8 @@ func Test_Basic(t *testing.T) {
 	err := fs.Parse(os.Args)
 	assert.Nil(t, err)
 
-	assert.Equal(t, true, boolFlag)
-	assert.Equal(t, "alice", strFlag)
+	assert.Equal(t, true, *boolFlag)
+	assert.Equal(t, "alice", *strFlag)
 }
 
 func Test_OptionalString(t *testing.T) {
@@ -37,7 +37,36 @@ func Test_OptionalString(t *testing.T) {
 		Value
 
 	err := fs.Parse(os.Args)
-	assert.Nil(t, err)
 
+	assert.Nil(t, err)
 	assert.Nil(t, strFlag)
+}
+
+func Test_StringSliceMultiple(t *testing.T) {
+	fs := NewFlagSet()
+
+	strSliceFlag := fs.AddStringSlice("bar").
+		SetShort("b").
+		SetUsage("bar usage here").
+		Value
+
+	err := fs.Parse([]string{"--bar", "alice", "--bar", "bob"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"alice", "bob"}, *strSliceFlag)
+}
+
+func Test_StringSliceSeparator(t *testing.T) {
+	fs := NewFlagSet()
+
+	strSliceFlag := fs.AddStringSlice("bar").
+		SetShort("b").
+		SetUsage("bar usage here").
+		SetSeparator("|").
+		Value
+
+	err := fs.Parse([]string{"--bar", "alice|bob"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"alice", "bob"}, *strSliceFlag)
 }
