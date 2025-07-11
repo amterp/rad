@@ -42,6 +42,8 @@ type StringFlag struct {
 }
 type IntFlag struct {
 	Flag[int]
+	min *int
+	max *int
 }
 
 // SLICE FLAGS
@@ -174,6 +176,16 @@ func (f *IntFlag) SetOptional(b bool) *IntFlag {
 
 func (f *IntFlag) SetHidden(b bool) *IntFlag {
 	f.Hidden = b
+	return f
+}
+
+func (f *IntFlag) SetMin(min int) *IntFlag {
+	f.min = &min
+	return f
+}
+
+func (f *IntFlag) SetMax(max int) *IntFlag {
+	f.max = &max
 	return f
 }
 

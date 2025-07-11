@@ -101,3 +101,30 @@ func Test_StringSliceVariadicAndSeparator(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"alice", "bob", "charlie"}, *strSliceFlag)
 }
+
+func Test_IntRangeConstraint(t *testing.T) {
+	fs := NewFlagSet()
+
+	intFlag := fs.AddInt("foo").
+		SetMin(5).
+		SetMax(10).
+		Value
+
+	err := fs.Parse([]string{"--foo", "7"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, 7, *intFlag)
+}
+
+func Test_IntRangeConstraintErrors(t *testing.T) {
+	fs := NewFlagSet()
+
+	_ = fs.AddInt("foo").
+		SetMin(5).
+		SetMax(10).
+		Value
+
+	err := fs.Parse([]string{"--foo", "70"})
+
+	assert.NotNil(t, err)
+}
