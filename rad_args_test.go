@@ -70,3 +70,34 @@ func Test_StringSliceSeparator(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"alice", "bob"}, *strSliceFlag)
 }
+
+func Test_StringSliceVariadic(t *testing.T) {
+	fs := NewFlagSet()
+
+	strSliceFlag := fs.AddStringSlice("bar").
+		SetShort("b").
+		SetUsage("bar usage here").
+		SetVariadic(true).
+		Value
+
+	err := fs.Parse([]string{"--bar", "alice", "bob"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"alice", "bob"}, *strSliceFlag)
+}
+
+func Test_StringSliceVariadicAndSeparator(t *testing.T) {
+	fs := NewFlagSet()
+
+	strSliceFlag := fs.AddStringSlice("bar").
+		SetShort("b").
+		SetUsage("bar usage here").
+		SetVariadic(true).
+		SetSeparator(",").
+		Value
+
+	err := fs.Parse([]string{"--bar", "alice", "bob,charlie"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"alice", "bob", "charlie"}, *strSliceFlag)
+}

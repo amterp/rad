@@ -82,6 +82,7 @@ type SliceFlag[T any] struct {
 	Optional  bool
 	Hidden    bool
 	Separator *string
+	Variadic  bool
 	Default   *[]T
 	Value     *[]T
 }
@@ -113,5 +114,10 @@ func (f *SliceFlag[T]) SetHidden(b bool) *SliceFlag[T] {
 
 func (f *SliceFlag[T]) SetSeparator(sep string) *SliceFlag[T] {
 	f.Separator = &sep
+	return f
+}
+
+func (f *SliceFlag[T]) SetVariadic(b bool) *SliceFlag[T] {
+	f.Variadic = b
 	return f
 }
