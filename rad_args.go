@@ -16,7 +16,7 @@ func (fs *FlagSet) Parse(args []string) error {
 	return nil
 }
 
-// NON-SLICE FLAGS
+// BASE TYPES
 
 type BaseFlag struct {
 	Name     string
@@ -32,8 +32,17 @@ type Flag[T any] struct {
 	Value   *T
 }
 
-type BoolFlag = Flag[bool]
-type StringFlag = Flag[string]
+// NON-SLICE FLAGS
+
+type BoolFlag struct {
+	Flag[bool]
+}
+type StringFlag struct {
+	Flag[string]
+}
+type IntFlag struct {
+	Flag[int]
+}
 
 // SLICE FLAGS
 
@@ -48,23 +57,34 @@ type SliceFlag[T any] struct {
 type StringSliceFlag = SliceFlag[string]
 type IntSliceFlag = SliceFlag[int]
 
-// ADD
+// ADD METHODS
 
 func (fs *FlagSet) AddBool(name string) *BoolFlag {
 	def := false
 	f := &BoolFlag{
-		BaseFlag: BaseFlag{
-			Name: name,
+		Flag: Flag[bool]{
+			BaseFlag: BaseFlag{Name: name},
+			Default:  &def,
 		},
-		Default: &def,
 	}
 	return f
 }
 
 func (fs *FlagSet) AddString(name string) *StringFlag {
 	f := &StringFlag{
-		BaseFlag: BaseFlag{
-			Name: name,
+		Flag: Flag[string]{
+			BaseFlag: BaseFlag{Name: name},
+		},
+	}
+	return f
+}
+
+func (fs *FlagSet) AddInt(name string) *IntFlag {
+	def := 0
+	f := &IntFlag{
+		Flag: Flag[int]{
+			BaseFlag: BaseFlag{Name: name},
+			Default:  &def,
 		},
 	}
 	return f
@@ -82,27 +102,77 @@ func (fs *FlagSet) AddIntSlice(name string) *IntSliceFlag {
 
 // NON-SLICE SETTERS
 
-func (f *Flag[T]) SetShort(s string) *Flag[T] {
+func (f *BoolFlag) SetShort(s string) *BoolFlag {
 	f.Short = s
 	return f
 }
 
-func (f *Flag[T]) SetUsage(u string) *Flag[T] {
+func (f *BoolFlag) SetUsage(u string) *BoolFlag {
 	f.Usage = u
 	return f
 }
 
-func (f *Flag[T]) SetDefault(v T) *Flag[T] {
+func (f *BoolFlag) SetDefault(v bool) *BoolFlag {
 	f.Default = &v
 	return f
 }
 
-func (f *Flag[T]) SetOptional(b bool) *Flag[T] {
+func (f *BoolFlag) SetOptional(b bool) *BoolFlag {
 	f.Optional = b
 	return f
 }
 
-func (f *Flag[T]) SetHidden(b bool) *Flag[T] {
+func (f *BoolFlag) SetHidden(b bool) *BoolFlag {
+	f.Hidden = b
+	return f
+}
+
+func (f *StringFlag) SetShort(s string) *StringFlag {
+	f.Short = s
+	return f
+}
+
+func (f *StringFlag) SetUsage(u string) *StringFlag {
+	f.Usage = u
+	return f
+}
+
+func (f *StringFlag) SetDefault(v string) *StringFlag {
+	f.Default = &v
+	return f
+}
+
+func (f *StringFlag) SetOptional(b bool) *StringFlag {
+	f.Optional = b
+	return f
+}
+
+func (f *StringFlag) SetHidden(b bool) *StringFlag {
+	f.Hidden = b
+	return f
+}
+
+func (f *IntFlag) SetShort(s string) *IntFlag {
+	f.Short = s
+	return f
+}
+
+func (f *IntFlag) SetUsage(u string) *IntFlag {
+	f.Usage = u
+	return f
+}
+
+func (f *IntFlag) SetDefault(v int) *IntFlag {
+	f.Default = &v
+	return f
+}
+
+func (f *IntFlag) SetOptional(b bool) *IntFlag {
+	f.Optional = b
+	return f
+}
+
+func (f *IntFlag) SetHidden(b bool) *IntFlag {
 	f.Hidden = b
 	return f
 }
