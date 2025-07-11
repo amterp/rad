@@ -33,11 +33,12 @@ func (fs *FlagSet) AddString(name string) *StringFlag {
 //
 
 type Flag[T any] struct {
-	Name    string
-	Short   string
-	Usage   string
-	Default T
-	Value   *T
+	Name     string
+	Short    string
+	Usage    string
+	Optional bool
+	Default  T
+	Value    *T
 }
 
 func (f *Flag[T]) SetShort(s string) *Flag[T] {
@@ -53,5 +54,10 @@ func (f *Flag[T]) SetUsage(u string) *Flag[T] {
 func (f *Flag[T]) SetDefault(v T) *Flag[T] {
 	f.Default = v
 	f.Value = &v
+	return f
+}
+
+func (f *Flag[T]) SetOptional(b bool) *Flag[T] {
+	f.Optional = b
 	return f
 }

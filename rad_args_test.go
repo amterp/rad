@@ -26,3 +26,18 @@ func Test_Basic(t *testing.T) {
 	assert.Equal(t, true, boolFlag)
 	assert.Equal(t, "alice", strFlag)
 }
+
+func Test_OptionalString(t *testing.T) {
+	fs := NewFlagSet()
+
+	strFlag := fs.AddString("bar").
+		SetShort("b").
+		SetUsage("bar usage here").
+		SetOptional(true).
+		Value
+
+	err := fs.Parse(os.Args)
+	assert.Nil(t, err)
+
+	assert.Nil(t, strFlag)
+}
