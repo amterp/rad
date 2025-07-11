@@ -12,7 +12,7 @@ func NewFlagSet() *FlagSet {
 	}
 }
 
-func (fs *FlagSet) Parse(args []string) error {
+func (fs *FlagSet) Parse(args []string) *ParseError {
 	return nil
 }
 
