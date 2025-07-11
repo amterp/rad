@@ -1,0 +1,27 @@
+#!/usr/bin/env rad
+---
+Facilitates developing Rad Args.
+---
+args:
+    push p bool       # Enable to push local commits.
+    force_push "force-push" P bool  # Enable to just push, no checks or anything.
+    build b bool      # Enable to build.
+    validate v bool   # Enable to build & test.
+
+if build:
+    $!`make build`
+
+if push or validate:
+    $!`go mod tidy`
+    $!`make all`
+    $!`golines -w . -m 120`
+
+if push or force_push:
+    branch = get_branch()
+    $!`git push origin {branch} --tags`
+
+print(green("✅ Done!"))
+
+fn get_branch():
+    _, branch  = $!`echo -n $(git branch --show-current)`
+    return branch
