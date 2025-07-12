@@ -13,3 +13,25 @@ Existing libraries such as cobra, pflag are great, but are not quite flexible en
 to fulfill this role, in a reusable way, so that other projects may benefit as well.
 
 More details to come.
+
+## Todo
+
+## Build out API
+
+- Additional types
+- Commands
+- Relational constraints
+- Regex
+- Enum
+- Interactive mode
+- Usage string override
+- Custom usage coloring theme
+- Disable unknown/missing args checks
+- Inspect what was parsed, what was not
+- Change Set to With?
+
+### Examples
+
+- commands
+- common flags between commands
+- `--` ending
