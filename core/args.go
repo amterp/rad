@@ -268,13 +268,13 @@ func (f *BoolRadArg) GetType() RadArgTypeT {
 
 // --- bool array
 
-type BoolArrRadArg struct {
+type BoolListRadArg struct {
 	BaseRadArg
 	Value   []bool
 	Default []bool
 }
 
-func NewBoolArrRadArg(name,
+func NewBoolListRadArg(name,
 	short,
 	argUsage,
 	description string,
@@ -282,8 +282,8 @@ func NewBoolArrRadArg(name,
 	defaultValue []bool,
 	requires,
 	excludes []string,
-) BoolArrRadArg {
-	return BoolArrRadArg{
+) BoolListRadArg {
+	return BoolListRadArg{
 		BaseRadArg: BaseRadArg{
 			ExternalName:       name,
 			Identifier:         name,
@@ -300,7 +300,7 @@ func NewBoolArrRadArg(name,
 	}
 }
 
-func (f *BoolArrRadArg) Register() {
+func (f *BoolListRadArg) Register() {
 	if f.registered {
 		return
 	}
@@ -310,7 +310,7 @@ func (f *BoolArrRadArg) Register() {
 	f.registered = true
 }
 
-func (f *BoolArrRadArg) SetValue(arg string) {
+func (f *BoolListRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	// split on arg commas
 	split := strings.Split(arg, ",")
@@ -328,7 +328,7 @@ func (f *BoolArrRadArg) SetValue(arg string) {
 	f.Value = bools
 }
 
-func (f *BoolArrRadArg) GetType() RadArgTypeT {
+func (f *BoolListRadArg) GetType() RadArgTypeT {
 	return ArgBoolListT
 }
 
@@ -452,13 +452,13 @@ func (f *StringRadArg) GetType() RadArgTypeT {
 
 // --- string array
 
-type StringArrRadArg struct {
+type StringListRadArg struct {
 	BaseRadArg
 	Value   []string
 	Default []string
 }
 
-func NewStringArrRadArg(
+func NewStringListRadArg(
 	name,
 	short,
 	argUsage,
@@ -467,8 +467,8 @@ func NewStringArrRadArg(
 	defaultValue,
 	requires,
 	excludes []string,
-) StringArrRadArg {
-	return StringArrRadArg{
+) StringListRadArg {
+	return StringListRadArg{
 		BaseRadArg: BaseRadArg{
 			ExternalName:       name,
 			Identifier:         name,
@@ -485,7 +485,7 @@ func NewStringArrRadArg(
 	}
 }
 
-func (f *StringArrRadArg) Register() {
+func (f *StringListRadArg) Register() {
 	if f.registered {
 		return
 	}
@@ -495,7 +495,7 @@ func (f *StringArrRadArg) Register() {
 	f.registered = true
 }
 
-func (f *StringArrRadArg) SetValue(arg string) {
+func (f *StringListRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	// split on arg commas
 	split := strings.Split(arg, ",")
@@ -506,7 +506,7 @@ func (f *StringArrRadArg) SetValue(arg string) {
 	f.Value = vals
 }
 
-func (f *StringArrRadArg) GetType() RadArgTypeT {
+func (f *StringListRadArg) GetType() RadArgTypeT {
 	return ArgStrListT
 }
 
@@ -594,13 +594,13 @@ func (f *IntRadArg) GetType() RadArgTypeT {
 
 // --- int array
 
-type IntArrRadArg struct {
+type IntListRadArg struct {
 	BaseRadArg
 	Value   []int64
 	Default []int64
 }
 
-func NewIntArrRadArg(
+func NewIntListRadArg(
 	name,
 	short,
 	argUsage,
@@ -609,8 +609,8 @@ func NewIntArrRadArg(
 	defaultValue []int64,
 	requires,
 	excludes []string,
-) IntArrRadArg {
-	return IntArrRadArg{
+) IntListRadArg {
+	return IntListRadArg{
 		BaseRadArg: BaseRadArg{
 			ExternalName:       name,
 			Identifier:         name,
@@ -627,7 +627,7 @@ func NewIntArrRadArg(
 	}
 }
 
-func (f *IntArrRadArg) Register() {
+func (f *IntListRadArg) Register() {
 	if f.registered {
 		return
 	}
@@ -637,7 +637,7 @@ func (f *IntArrRadArg) Register() {
 	f.registered = true
 }
 
-func (f *IntArrRadArg) SetValue(arg string) {
+func (f *IntListRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	// split on arg commas
 	split := strings.Split(arg, ",")
@@ -654,7 +654,7 @@ func (f *IntArrRadArg) SetValue(arg string) {
 	f.Value = ints
 }
 
-func (f *IntArrRadArg) GetType() RadArgTypeT {
+func (f *IntListRadArg) GetType() RadArgTypeT {
 	return ArgIntListT
 }
 
@@ -741,13 +741,13 @@ func (f *FloatRadArg) GetType() RadArgTypeT {
 
 // --- float array
 
-type FloatArrRadArg struct {
+type FloatListRadArg struct {
 	BaseRadArg
 	Value   []float64
 	Default []float64
 }
 
-func NewFloatArrRadArg(
+func NewFloatListRadArg(
 	name,
 	short,
 	argUsage,
@@ -756,8 +756,8 @@ func NewFloatArrRadArg(
 	defaultValue []float64,
 	requires,
 	excludes []string,
-) FloatArrRadArg {
-	return FloatArrRadArg{
+) FloatListRadArg {
+	return FloatListRadArg{
 		BaseRadArg: BaseRadArg{
 			ExternalName:       name,
 			Identifier:         name,
@@ -774,7 +774,7 @@ func NewFloatArrRadArg(
 	}
 }
 
-func (f *FloatArrRadArg) Register() {
+func (f *FloatListRadArg) Register() {
 	if f.registered {
 		return
 	}
@@ -784,7 +784,7 @@ func (f *FloatArrRadArg) Register() {
 	f.registered = true
 }
 
-func (f *FloatArrRadArg) SetValue(arg string) {
+func (f *FloatListRadArg) SetValue(arg string) {
 	f.BaseRadArg.SetValue(arg)
 	// split on arg commas
 	split := strings.Split(arg, ",")
@@ -801,7 +801,7 @@ func (f *FloatArrRadArg) SetValue(arg string) {
 	f.Value = floats
 }
 
-func (f *FloatArrRadArg) GetType() RadArgTypeT {
+func (f *FloatListRadArg) GetType() RadArgTypeT {
 	return ArgFloatListT
 }
 
@@ -884,7 +884,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultStringList
 		}
-		f := NewStringArrRadArg(
+		f := NewStringListRadArg(
 			apiName,
 			shorthand,
 			"string,string",
@@ -923,7 +923,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultIntList
 		}
-		f := NewIntArrRadArg(
+		f := NewIntListRadArg(
 			apiName,
 			shorthand,
 			"int,int",
@@ -962,7 +962,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultFloatList
 		}
-		f := NewFloatArrRadArg(
+		f := NewFloatListRadArg(
 			apiName,
 			shorthand,
 			"float,float",
@@ -998,7 +998,7 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		if hasDefault {
 			defVal = *arg.DefaultBoolList
 		}
-		f := NewBoolArrRadArg(
+		f := NewBoolListRadArg(
 			apiName,
 			shorthand,
 			"bool,bool",

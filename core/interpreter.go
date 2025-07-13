@@ -96,19 +96,19 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 		switch coerced := arg.(type) {
 		case *BoolRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
-		case *BoolArrRadArg:
+		case *BoolListRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
 		case *StringRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
-		case *StringArrRadArg:
+		case *StringListRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
 		case *IntRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
-		case *IntArrRadArg:
+		case *IntListRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
 		case *FloatRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
-		case *FloatArrRadArg:
+		case *FloatListRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
 		default:
 			i.errorf(arg.GetNode(), "Unsupported arg type, cannot init: %T", arg)
