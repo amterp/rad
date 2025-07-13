@@ -8,7 +8,7 @@ import (
 )
 
 func Test_Basic(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	boolFlag, err := NewBool("foo").
 		SetShort("f").
@@ -32,7 +32,7 @@ func Test_Basic(t *testing.T) {
 }
 
 func Test_OptionalString(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	strFlag, err := NewString("bar").
 		SetShort("b").
@@ -49,7 +49,7 @@ func Test_OptionalString(t *testing.T) {
 }
 
 func Test_StringSliceMultiple(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	strSliceFlag, err := NewStringSlice("bar").
 		SetShort("b").
@@ -63,7 +63,7 @@ func Test_StringSliceMultiple(t *testing.T) {
 }
 
 func Test_StringSliceSeparator(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	strSliceFlag, err := NewStringSlice("bar").
 		SetShort("b").
@@ -78,7 +78,7 @@ func Test_StringSliceSeparator(t *testing.T) {
 }
 
 func Test_StringSliceVariadic(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	strSliceFlag, err := NewStringSlice("bar").
 		SetShort("b").
@@ -93,7 +93,7 @@ func Test_StringSliceVariadic(t *testing.T) {
 }
 
 func Test_StringSliceVariadicAndSeparator(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	strSliceFlag, err := NewStringSlice("bar").
 		SetShort("b").
@@ -109,7 +109,7 @@ func Test_StringSliceVariadicAndSeparator(t *testing.T) {
 }
 
 func Test_IntRangeConstraint(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	intFlag, err := NewInt("foo").
 		SetMin(5).
@@ -123,7 +123,7 @@ func Test_IntRangeConstraint(t *testing.T) {
 }
 
 func Test_IntRangeConstraintErrors(t *testing.T) {
-	fs := NewFlagSet()
+	fs := NewCmd()
 
 	_, err := NewInt("foo").
 		SetMin(5).
@@ -133,4 +133,31 @@ func Test_IntRangeConstraintErrors(t *testing.T) {
 
 	parseErr := fs.Parse([]string{"--foo", "70"})
 	assert.NotNil(t, parseErr)
+}
+
+func Test_Cmds(t *testing.T) {
+	addCmd := NewCmd()
+	addFile, err := NewString("file").
+		Register(addCmd)
+	assert.NoError(t, err)
+
+	rmCmd := NewCmd()
+	rmName, err := NewInt("name").
+		Register(rmCmd)
+	assert.NoError(t, err)
+
+	rootCmd := NewCmd()
+
+	addInvoked, err := rootCmd.RegisterCmd("add", addCmd)
+	assert.NoError(t, err)
+
+	rmInvoked, err := rootCmd.RegisterCmd("rm", rmCmd)
+	assert.NoError(t, err)
+
+	parseErr := rootCmd.Parse([]string{"add", "--file", "test.txt"})
+	assert.NotNil(t, parseErr)
+	assert.True(t, *addInvoked)
+	assert.False(t, *rmInvoked)
+	assert.Nil(t, rmName)
+	assert.Equal(t, "test.txt", *addFile)
 }

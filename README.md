@@ -16,10 +16,9 @@ More details to come.
 
 ## Todo
 
-## Build out API
+### Build out API
 
 - Additional types
-- Commands
 - Relational constraints
 - Regex
 - Enum

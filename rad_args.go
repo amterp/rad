@@ -5,19 +5,23 @@ import (
 )
 
 type FlagSet struct {
+	used       *bool
 	flags      map[string]any
 	positional []string
+	subCmds    map[string]*FlagSet
 }
 
-func NewFlagSet() *FlagSet {
+func NewCmd() *FlagSet {
 	return &FlagSet{
 		flags:      make(map[string]any),
 		positional: []string{},
+		subCmds:    make(map[string]*FlagSet),
 	}
 }
 
 func (fs *FlagSet) Parse(args []string) *ParseError {
 	// todo
+	//  remember to check if particular command invoked
 	return nil
 }
 
@@ -251,4 +255,14 @@ func (f SliceFlag[T]) Register(fs *FlagSet) (*[]T, error) {
 	fs.positional = append(fs.positional, f.Name)
 
 	return valPtr, nil
+}
+
+func (fs *FlagSet) RegisterCmd(name string, cmd *FlagSet) (*bool, error) {
+	if _, exists := fs.subCmds[name]; exists {
+		return nil, fmt.Errorf("command %q already defined", name)
+	}
+
+	fs.subCmds[name] = cmd
+	cmd.used = new(bool)
+	return cmd.used, nil
 }
