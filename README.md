@@ -1,20 +1,20 @@
-# Rad Args
+# Ra
 
-A Go library for CLI arg parsing.
+![ra-logo](./media/ra.png)
 
-## 🚧 Under Development 🚧
-
-Not yet ready for use.
+A Go library for CLI arg parsing. Powers the argument parsing in [Rad](https://github.com/amterp/rad)!
 
 ## Overview
 
 Existing libraries such as cobra, pflag are great, but are not quite flexible enough to meet the needs of
-[rad](https://github.com/amterp/rad), and are missing crucial features. The goal of this Rad Args library is
+Rad, and are missing crucial features. The goal of this Rad Args library is
 to fulfill this role, in a reusable way, so that other projects may benefit as well.
+
+POSIX compliance is up to the user, but not imposed by the library.
 
 More details to come.
 
-## Todo
+## 🚧 Under Development 🚧
 
 ### Build out API
 
