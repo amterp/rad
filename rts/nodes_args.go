@@ -36,7 +36,7 @@ func (ad *ArgDecl) ExternalName() string {
 	if ad.Rename != nil {
 		return ad.Rename.ExternalName
 	}
-	return ad.Name.Name
+	return strings.Replace(ad.Name.Name, "_", "-", -1)
 }
 
 func (ad *ArgDecl) CommentStr() *string {

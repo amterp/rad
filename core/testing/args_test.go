@@ -449,3 +449,31 @@ Script args:
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
+
+func Test_Args_AutomaticallyReplacesUnderscoresWithHyphens(t *testing.T) {
+	script := `
+args:
+	test_arg str
+print(test_arg)
+`
+	setupAndRunCode(t, script, "--test-arg", "bob", "--color=never")
+	expected := `bob
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func Test_Args_AutomaticallyReplacesUnderscoresWithHyphensUsage(t *testing.T) {
+	script := `
+args:
+	test_arg str
+print(test_arg)
+`
+	setupAndRunCode(t, script, "-h", "--color=never")
+	expected := `Usage:
+  <test-arg> [OPTIONS]
+
+Script args:
+      --test-arg str   
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
