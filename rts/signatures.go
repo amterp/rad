@@ -40,7 +40,7 @@ func init() {
 		newFnSignature(`rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -> int`),
 		newFnSignature(`replace(_original: str, _find: str, _replace: str) -> str`),
 		newFnSignature(`len(_val: str|list|map) -> int`),
-		newFnSignature(`sort(_val: list|str, *, reverse: bool = false) -> list|str`),
+		newFnSignature(`sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -> list|str`),
 		newFnSignature(`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),

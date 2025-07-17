@@ -84,6 +84,38 @@ func sortList(interp *Interpreter, dataNode *ts.Node, data *RadList, dir SortDir
 	return sorted
 }
 
+func sortListParallel(
+	interp *Interpreter,
+	dataNode *ts.Node,
+	data *RadList,
+	dir SortDir,
+) (sortedVals []RadValue, idxs []int) {
+	n := data.Len()
+	// 1) initialize our proxy indices [0, 1, 2, etc]
+	idxs = make([]int, n)
+	for i := range idxs {
+		idxs[i] = i
+	}
+
+	// 2) sort the indices by comparing respective values
+	sort.Slice(idxs, func(i, j int) bool {
+		a := data.Values[idxs[i]]
+		b := data.Values[idxs[j]]
+		cmp := compare(interp, dataNode, a, b)
+		if dir == Asc {
+			return cmp < 0
+		}
+		return cmp > 0
+	})
+
+	// 3) build the sortedVals slice in that order
+	sortedVals = make([]RadValue, n)
+	for k, orig := range idxs {
+		sortedVals[k] = data.Values[orig]
+	}
+	return
+}
+
 func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
 	// first compare by type
 	aTypePrec := precedence(i, fieldNode, a)

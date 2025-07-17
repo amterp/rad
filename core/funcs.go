@@ -308,21 +308,76 @@ func init() {
 			Name: FUNC_SORT,
 			Execute: func(f FuncInvocation) RadValue {
 				reverse := f.GetBool("reverse")
+				primary := f.GetArg("_primary")
+				others := f.GetList("_others")
 
-				coll := f.GetArg("_val")
-				switch coerced := coll.Val.(type) {
+				switch coerced := primary.Val.(type) {
 				case RadString:
-					// todo maintain attributes
-					runes := []rune(coerced.Plain())
-					sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
-					return f.Return(string(runes))
-				case *RadList:
-					sortedValues := sortList(f.i, f.callNode, coerced, lo.Ternary(reverse, Desc, Asc))
-					list := NewRadList()
-					for _, v := range sortedValues {
-						list.Append(v)
+					if others.Len() > 0 {
+						return f.ReturnErrf(rl.ErrGenericRuntime, "Can only parallel sort lists.")
 					}
-					return f.Return(list)
+					runes := []rune(coerced.Plain())
+					if reverse {
+						sort.Slice(runes, func(i, j int) bool { return runes[i] > runes[j] })
+					} else {
+						sort.Slice(runes, func(i, j int) bool { return runes[i] < runes[j] })
+					}
+					return f.Return(string(runes))
+
+				case *RadList:
+					n := coerced.Len()
+					dir := Asc
+					if reverse {
+						dir = Desc
+					}
+
+					if others.Len() == 0 {
+						sortedVals, _ := sortListParallel(f.i, f.callNode, coerced, dir)
+						out := NewRadList()
+						for _, v := range sortedVals {
+							out.Append(v)
+						}
+						return f.Return(out)
+					}
+
+					// validate and collect the parallel lists
+					otherLists := make([]*RadList, others.Len())
+					for i, otherVal := range others.Values {
+						lst, ok := otherVal.Val.(*RadList)
+						if !ok || lst.Len() != n {
+							return f.ReturnErrf(rl.ErrGenericRuntime,
+								"Input lists were not the same length: %d vs %d", n, lst.Len())
+						}
+						otherLists[i] = lst
+					}
+
+					// sort primary and get the index permutation
+					_, idxs := sortListParallel(f.i, f.callNode, coerced, dir)
+
+					// rebuild the primary in sorted order
+					sortedPrimary := NewRadList()
+					for _, orig := range idxs {
+						sortedPrimary.Append(coerced.Values[orig])
+					}
+
+					// rebuild each parallel list in lock-step
+					sortedOthers := make([]RadValue, len(otherLists))
+					for k, lst := range otherLists {
+						newLst := NewRadList()
+						for _, orig := range idxs {
+							newLst.Append(lst.Values[orig])
+						}
+						sortedOthers[k] = newRadValueList(newLst)
+					}
+
+					// if there are parallels, return [primary, …others] as one RadList tuple
+					tuple := NewRadList()
+					tuple.Append(newRadValueList(sortedPrimary))
+					for _, v := range sortedOthers {
+						tuple.Append(v)
+					}
+					return f.Return(tuple)
+
 				default:
 					bugIncorrectTypes(FUNC_SORT)
 					panic(UNREACHABLE)
