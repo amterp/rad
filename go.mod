@@ -1,4 +1,4 @@
-module github.com/amterp/rad-args
+module github.com/amterp/ra
 
 go 1.24.1
 
