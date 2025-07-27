@@ -596,7 +596,7 @@ func (c *Cmd) setStringValue(f *StringFlag, value string) error {
 			}
 		}
 		if !valid {
-			return fmt.Errorf("invalid value for %s: %s", f.Name, value)
+			return fmt.Errorf("Invalid '%s' value: %s (valid values: %s)", f.Name, value, strings.Join(*f.EnumConstraint, ", "))
 		}
 	}
 

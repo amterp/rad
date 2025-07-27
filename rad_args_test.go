@@ -392,6 +392,7 @@ func Test_StringEnumConstraintError(t *testing.T) {
 
 	err = fs.ParseOrError([]string{"--level", "invalid"})
 	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "Invalid 'level' value: invalid (valid values: debug, info, warn, error)")
 }
 
 func Test_StringRegexConstraint(t *testing.T) {
