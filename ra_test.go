@@ -1145,15 +1145,15 @@ func Test_HelpFlags_Exit(t *testing.T) {
 	cleanup()
 }
 
-func Test_HiddenInLongHelp(t *testing.T) {
+func Test_HiddenInShortHelp(t *testing.T) {
 	cleanup, _, stderr := mockExit(t)
 	defer cleanup()
 
 	assert.Panics(t, func() {
 		fs := NewCmd("test")
 		NewString("visible-flag").Register(fs)
-		NewString("hidden-flag").SetHiddenInLongHelp(true).Register(fs)
-		fs.ParseOrExit([]string{"--help"})
+		NewString("hidden-flag").SetHiddenInShortHelp(true).Register(fs)
+		fs.ParseOrExit([]string{"-h"})
 	})
 
 	output := stderr.String()
@@ -1161,12 +1161,12 @@ func Test_HiddenInLongHelp(t *testing.T) {
 	assert.NotContains(t, output, "hidden-flag")
 }
 
-func Test_ShortHelpIsTheSameAsLongHelp(t *testing.T) {
+func Test_ShortHelpVsLongHelp(t *testing.T) {
 	cleanup, _, longStderr := mockExit(t)
 	assert.Panics(t, func() {
 		fs := NewCmd("test")
 		NewString("visible-flag").Register(fs)
-		NewString("hidden-flag").SetHiddenInLongHelp(true).Register(fs)
+		NewString("advanced-flag").SetHiddenInShortHelp(true).Register(fs)
 		fs.ParseOrExit([]string{"--help"})
 	})
 	cleanup()
@@ -1175,17 +1175,19 @@ func Test_ShortHelpIsTheSameAsLongHelp(t *testing.T) {
 	assert.Panics(t, func() {
 		fs := NewCmd("test")
 		NewString("visible-flag").Register(fs)
-		NewString("hidden-flag").SetHiddenInLongHelp(true).Register(fs)
+		NewString("advanced-flag").SetHiddenInShortHelp(true).Register(fs)
 		fs.ParseOrExit([]string{"-h"})
 	})
 	cleanup()
 
-	// Per spec, the only difference is that HiddenInLongHelp flags are not shown in long help.
-	// The structure should otherwise be identical.
+	// Per spec, HiddenInShortHelp flags are shown in long help but not in short help.
+	// Long help should show both visible and advanced flags
 	assert.Contains(t, longStderr.String(), "visible-flag")
-	assert.NotContains(t, longStderr.String(), "hidden-flag")
+	assert.Contains(t, longStderr.String(), "advanced-flag")
+
+	// Short help should only show visible flags, not advanced ones
 	assert.Contains(t, shortStderr.String(), "visible-flag")
-	assert.Contains(t, shortStderr.String(), "hidden-flag")
+	assert.NotContains(t, shortStderr.String(), "advanced-flag")
 }
 
 func Test_CustomUsage(t *testing.T) {
@@ -1287,7 +1289,7 @@ func Test_UsageStringFormat(t *testing.T) {
 		Register(fs, WithGlobal(true))
 	NewString("src").
 		SetUsage("Instead of running the target script, just print it out").
-		SetHiddenInLongHelp(true).
+		SetHiddenInShortHelp(true).
 		Register(fs, WithGlobal(true))
 
 	assert.Panics(t, func() {
@@ -1313,12 +1315,14 @@ Global options:
       --color str       Control output colorization. Valid values: [auto, always, never]. (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --src str         (optional) Instead of running the target script, just print it out
   -h, --help            Print usage string.
 `
 	// Compare the full output as a string
 	assert.Equal(t, strings.TrimSpace(expected), strings.TrimSpace(stderr.String()))
 
-	assert.NotContains(t, stderr.String(), "--src")
+	// --src should now appear in long help (--help) since it's marked HiddenInShortHelp
+	assert.Contains(t, stderr.String(), "--src")
 }
 
 func Test_UsageStringFormatWithSubcommands(t *testing.T) {
@@ -2012,22 +2016,6 @@ func Test_ExcludesFlags_RequiredFlagsShouldNotBeRequiredWhenExcluded(t *testing.
 }
 
 func Test_AutoHelpOnNoArgs_CoreBehavior(t *testing.T) {
-	// Mock stderr to capture help output
-	var capturedOutput bytes.Buffer
-	originalStderrWriter := stderrWriter
-	stderrWriter = &capturedOutput
-	defer func() { stderrWriter = originalStderrWriter }()
-
-	// Mock osExit to prevent actual exit and track if it was called
-	var exitCode int
-	var exitCalled bool
-	originalOsExit := osExit
-	osExit = func(code int) {
-		exitCode = code
-		exitCalled = true
-	}
-	defer func() { osExit = originalOsExit }()
-
 	cmd := NewCmd("test")
 	cmd.SetAutoHelpOnNoArgs(true) // Enable auto-help
 
@@ -2035,20 +2023,11 @@ func Test_AutoHelpOnNoArgs_CoreBehavior(t *testing.T) {
 	_, err := NewString("required-flag").Register(cmd)
 	assert.NoError(t, err)
 
-	// Call with no args - should trigger auto-help (not error)
+	// Call with no args - should return HelpInvokedErr
 	err = cmd.ParseOrError([]string{})
 
-	// Should not return an error (auto-help should handle it)
-	assert.Nil(t, err, "should not error when auto-help is triggered")
-
-	// Should have called exit with code 0
-	assert.True(t, exitCalled, "osExit should have been called")
-	assert.Equal(t, 0, exitCode, "should exit with code 0 when showing help")
-
-	// Should have output help text
-	output := capturedOutput.String()
-	assert.Contains(t, output, "Usage:", "should show help output")
-	assert.Contains(t, output, "required-flag", "should show the required flag in help")
+	// Should return HelpInvokedErr
+	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr when auto-help is triggered")
 }
 
 func Test_AutoHelpOnNoArgs_OnlyWhenRequiredArgsExist(t *testing.T) {
@@ -2065,18 +2044,6 @@ func Test_AutoHelpOnNoArgs_OnlyWhenRequiredArgsExist(t *testing.T) {
 }
 
 func Test_AutoHelpOnNoArgs_WorksForSubcommands(t *testing.T) {
-	// Mock stderr to capture help output
-	var capturedOutput bytes.Buffer
-	originalStderrWriter := stderrWriter
-	stderrWriter = &capturedOutput
-	defer func() { stderrWriter = originalStderrWriter }()
-
-	// Mock osExit to prevent actual exit
-	var exitCode int
-	originalOsExit := osExit
-	osExit = func(code int) { exitCode = code }
-	defer func() { osExit = originalOsExit }()
-
 	parentCmd := NewCmd("parent")
 	subCmd := NewCmd("sub")
 	subCmd.SetAutoHelpOnNoArgs(true) // Enable auto-help on subcommand
@@ -2088,19 +2055,11 @@ func Test_AutoHelpOnNoArgs_WorksForSubcommands(t *testing.T) {
 	_, err = parentCmd.RegisterCmd(subCmd)
 	assert.NoError(t, err)
 
-	// Call subcommand with no args - should trigger auto-help
+	// Call subcommand with no args - should return HelpInvokedErr
 	err = parentCmd.ParseOrError([]string{"sub"})
 
-	// Should not return an error (auto-help should handle it)
-	assert.Nil(t, err, "should not error when subcommand auto-help is triggered")
-
-	// Should have called exit with code 0
-	assert.Equal(t, 0, exitCode, "should exit with code 0 when showing subcommand help")
-
-	// Should have output help text for subcommand
-	output := capturedOutput.String()
-	assert.Contains(t, output, "Usage:", "should show help output")
-	assert.Contains(t, output, "sub-required", "should show the subcommand's required flag")
+	// Should return HelpInvokedErr
+	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr when subcommand auto-help is triggered")
 }
 
 func Test_AutoHelpOnNoArgs_RespectsCustomUsage(t *testing.T) {
@@ -2115,22 +2074,76 @@ func Test_AutoHelpOnNoArgs_RespectsCustomUsage(t *testing.T) {
 		customUsageIsLongHelp = isLongHelp
 	})
 
-	// Mock osExit to prevent actual exit
-	originalOsExit := osExit
-	osExit = func(code int) {}
-	defer func() { osExit = originalOsExit }()
-
 	// Add a required flag
 	_, err := NewString("required-flag").Register(cmd)
 	assert.NoError(t, err)
 
-	// Call with no args - should trigger auto-help using custom usage
+	// Call with no args - should return HelpInvokedErr
 	err = cmd.ParseOrError([]string{})
 
-	// Should not return an error
-	assert.Nil(t, err, "should not error when auto-help with custom usage is triggered")
+	// Should return HelpInvokedErr
+	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr when auto-help with custom usage is triggered")
 
 	// Should have called custom usage function
 	assert.True(t, customUsageCalled, "should call custom usage function")
 	assert.False(t, customUsageIsLongHelp, "should call custom usage with isLongHelp=false (short help)")
+}
+
+func Test_ParseOrExit_HandlesHelpInvokedErr(t *testing.T) {
+	// Mock stderr to capture output
+	var capturedOutput bytes.Buffer
+	originalStderrWriter := stderrWriter
+	stderrWriter = &capturedOutput
+	defer func() { stderrWriter = originalStderrWriter }()
+
+	// Mock osExit to capture exit code
+	var exitCode int
+	var exitCalled bool
+	originalOsExit := osExit
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+	defer func() { osExit = originalOsExit }()
+
+	cmd := NewCmd("test")
+	cmd.SetAutoHelpOnNoArgs(true)
+
+	_, err := NewString("required-flag").Register(cmd)
+	assert.NoError(t, err)
+
+	// Call ParseOrExit which should handle help invoked error properly
+	cmd.ParseOrExit([]string{})
+
+	// Should have exited with code 0
+	assert.True(t, exitCalled, "should have called osExit")
+	assert.Equal(t, 0, exitCode, "should exit with code 0 for help")
+
+	// Should have output the usage text
+	output := capturedOutput.String()
+	assert.Contains(t, output, "Usage:", "should output usage text")
+	assert.Contains(t, output, "required-flag", "should show required flag")
+}
+
+func Test_ParseOrError_NeverCallsOsExit(t *testing.T) {
+	// Mock osExit to ensure it's never called
+	var exitCalled bool
+	originalOsExit := osExit
+	osExit = func(code int) {
+		exitCalled = true
+	}
+	defer func() { osExit = originalOsExit }()
+
+	cmd := NewCmd("test")
+
+	// Test with --help flag
+	err := cmd.ParseOrError([]string{"--help"})
+	assert.False(t, exitCalled, "ParseOrError should never call osExit")
+	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr")
+
+	// Test with -h flag
+	exitCalled = false
+	err = cmd.ParseOrError([]string{"-h"})
+	assert.False(t, exitCalled, "ParseOrError should never call osExit for -h")
+	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr")
 }

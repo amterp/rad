@@ -39,8 +39,8 @@ func (f *Int64Flag) SetHidden(b bool) *Int64Flag {
 	return f
 }
 
-func (f *Int64Flag) SetHiddenInLongHelp(b bool) *Int64Flag {
-	f.HiddenInLongHelp = b
+func (f *Int64Flag) SetHiddenInShortHelp(b bool) *Int64Flag {
+	f.HiddenInShortHelp = b
 	return f
 }
 

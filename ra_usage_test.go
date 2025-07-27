@@ -423,20 +423,33 @@ func Test_Usage_HiddenAndLongHelpFlags(t *testing.T) {
 		Register(cmd)
 	assert.NoError(t, err)
 
-	// Hidden in long help - should only appear in short help
-	shortOnly, err := NewString("debug-info").
+	// Hidden in short help - should only appear in long help
+	longOnly, err := NewString("debug-info").
 		SetUsage("Debug information").
-		SetHiddenInLongHelp(true).
+		SetHiddenInShortHelp(true).
 		Register(cmd)
 	assert.NoError(t, err)
 
 	_ = regular
 	_ = hidden
-	_ = shortOnly
+	_ = longOnly
 
-	// Test short help (should include shortOnly flag)
+	// Test short help (should exclude longOnly flag)
 	shortUsage := cmd.GenerateUsage(false)
 	expectedShort := `Testing hidden flag behavior
+
+Usage:
+  myapp <config> [OPTIONS]
+
+Arguments:
+      --config str   (required) Configuration file
+`
+
+	assert.Equal(t, strings.TrimSpace(expectedShort), strings.TrimSpace(shortUsage))
+
+	// Test long help (should include longOnly flag)
+	longUsage := cmd.GenerateUsage(true)
+	expectedLong := `Testing hidden flag behavior
 
 Usage:
   myapp <config> <debug-info> [OPTIONS]
@@ -444,19 +457,6 @@ Usage:
 Arguments:
       --config str       (required) Configuration file
       --debug-info str   (required) Debug information
-`
-
-	assert.Equal(t, strings.TrimSpace(expectedShort), strings.TrimSpace(shortUsage))
-
-	// Test long help (should exclude shortOnly flag)
-	longUsage := cmd.GenerateUsage(true)
-	expectedLong := `Testing hidden flag behavior
-
-Usage:
-  myapp <config> [OPTIONS]
-
-Arguments:
-      --config str   (required) Configuration file
 `
 
 	assert.Equal(t, strings.TrimSpace(expectedLong), strings.TrimSpace(longUsage))

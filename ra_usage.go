@@ -125,7 +125,7 @@ func (c *Cmd) generateSynopsis(isLongHelp bool) string {
 			if base.Hidden {
 				continue
 			}
-			if isLongHelp && base.HiddenInLongHelp {
+			if !isLongHelp && base.HiddenInShortHelp {
 				continue
 			}
 
@@ -179,7 +179,7 @@ func (c *Cmd) generateSynopsis(isLongHelp bool) string {
 		if base.Hidden {
 			continue
 		}
-		if isLongHelp && base.HiddenInLongHelp {
+		if !isLongHelp && base.HiddenInShortHelp {
 			continue
 		}
 
@@ -222,7 +222,7 @@ func (c *Cmd) generateSynopsis(isLongHelp bool) string {
 		if base.Hidden {
 			continue
 		}
-		if isLongHelp && base.HiddenInLongHelp {
+		if !isLongHelp && base.HiddenInShortHelp {
 			continue
 		}
 
@@ -359,7 +359,7 @@ func (c *Cmd) formatFlags(flags []any, isLongHelp bool) string {
 			flagParts = append(flagParts, "")
 			continue
 		}
-		if isLongHelp && base.HiddenInLongHelp {
+		if !isLongHelp && base.HiddenInShortHelp {
 			flagParts = append(flagParts, "")
 			continue
 		}

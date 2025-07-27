@@ -35,8 +35,8 @@ func (f *BoolFlag) SetHidden(b bool) *BoolFlag {
 	return f
 }
 
-func (f *BoolFlag) SetHiddenInLongHelp(b bool) *BoolFlag {
-	f.HiddenInLongHelp = b
+func (f *BoolFlag) SetHiddenInShortHelp(b bool) *BoolFlag {
+	f.HiddenInShortHelp = b
 	return f
 }
 

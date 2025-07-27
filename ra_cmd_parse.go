@@ -1,22 +1,56 @@
 package ra
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 )
 
+// HelpInvokedErr is returned by ParseOrError when help is invoked (via -h, --help, or auto-help).
+// Users can compare against this constant to detect when help was shown instead of a parsing error.
+var HelpInvokedErr = errors.New("help invoked")
+
+// Internal error wrapper to carry exit code for ParseOrExit
+type helpInvokedError struct {
+	output   string // The usage text that was/would be output
+	exitCode int    // The exit code (0 for help, 1 for error)
+}
+
+func (e *helpInvokedError) Error() string {
+	return HelpInvokedErr.Error()
+}
+
+func (e *helpInvokedError) Unwrap() error {
+	return HelpInvokedErr
+}
+
 func (c *Cmd) ParseOrExit(args []string, opts ...ParseOpt) {
 	err := c.parse(args, opts...)
 	if err != nil {
-		fmt.Fprintln(stderrWriter, err.Error())
-		fmt.Fprintln(stderrWriter, c.GenerateLongUsage())
-		osExit(1)
+		// Check if this is a help invoked error
+		if helpErr, ok := err.(*helpInvokedError); ok {
+			// Usage was already output, just exit with the appropriate code
+			fmt.Fprint(stderrWriter, helpErr.output)
+			osExit(helpErr.exitCode)
+		} else {
+			// Regular error - show error message and usage
+			fmt.Fprintln(stderrWriter, err.Error())
+			fmt.Fprintln(stderrWriter, c.GenerateLongUsage())
+			osExit(1)
+		}
 	}
 }
 
 func (c *Cmd) ParseOrError(args []string, opts ...ParseOpt) error {
-	return c.parse(args, opts...)
+	err := c.parse(args, opts...)
+	if err != nil {
+		// Convert internal help error to public constant
+		if _, ok := err.(*helpInvokedError); ok {
+			return HelpInvokedErr
+		}
+	}
+	return err
 }
 
 func (c *Cmd) parse(args []string, opts ...ParseOpt) error {
@@ -58,33 +92,38 @@ func (c *Cmd) parseWithPreserveState(args []string, preserveConfigured bool, opt
 	if c.helpEnabled {
 		for _, arg := range args {
 			if arg == "--help" {
+				var output string
 				if c.customUsage != nil {
-					c.customUsage(true)
+					c.customUsage(true) // Long help
+					output = ""         // Custom usage handles output directly
 				} else {
-					fmt.Fprint(stderrWriter, c.GenerateLongUsage())
+					output = c.GenerateLongUsage()
 				}
-				osExit(0)
+				return &helpInvokedError{output: output, exitCode: 0}
 			}
 			if arg == "-h" {
+				var output string
 				if c.customUsage != nil {
 					c.customUsage(false)
+					output = "" // Custom usage handles output directly
 				} else {
-					fmt.Fprint(stderrWriter, c.GenerateShortUsage())
+					output = c.GenerateShortUsage()
 				}
-				osExit(0)
+				return &helpInvokedError{output: output, exitCode: 0}
 			}
 		}
 	}
 
 	// Check for auto-help: if enabled, no args provided, and command has required flags
 	if c.autoHelpOnNoArgs && len(args) == 0 && c.hasRequiredFlags() {
+		var output string
 		if c.customUsage != nil {
 			c.customUsage(false) // Use short help (false) for auto-help
+			output = ""          // Custom usage handles output directly
 		} else {
-			fmt.Fprint(stderrWriter, c.GenerateShortUsage())
+			output = c.GenerateShortUsage()
 		}
-		osExit(0)
-		return nil // This should never be reached due to osExit, but added for clarity
+		return &helpInvokedError{output: output, exitCode: 0}
 	}
 
 	// Check if we have number shorts mode

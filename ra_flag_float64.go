@@ -38,8 +38,8 @@ func (f *Float64Flag) SetHidden(b bool) *Float64Flag {
 	return f
 }
 
-func (f *Float64Flag) SetHiddenInLongHelp(b bool) *Float64Flag {
-	f.HiddenInLongHelp = b
+func (f *Float64Flag) SetHiddenInShortHelp(b bool) *Float64Flag {
+	f.HiddenInShortHelp = b
 	return f
 }
 

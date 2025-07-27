@@ -60,8 +60,8 @@ func (f *SliceFlag[T]) SetHidden(b bool) *SliceFlag[T] {
 	return f
 }
 
-func (f *SliceFlag[T]) SetHiddenInLongHelp(b bool) *SliceFlag[T] {
-	f.HiddenInLongHelp = b
+func (f *SliceFlag[T]) SetHiddenInShortHelp(b bool) *SliceFlag[T] {
+	f.HiddenInShortHelp = b
 	return f
 }
 

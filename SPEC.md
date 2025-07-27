@@ -201,20 +201,50 @@ cmd.ParseOrError([]string{"--environment", "prod", "--version", "1.2.3"}) // Par
 
 ## Error Handling
 
-The default behavior (`ParseOrExit`) is to print a user-friendly error and usage information to `stderr`, then exit with a non-zero status code. `ParseOrError` can be used to handle errors programmatically.
+The library provides two parsing methods with different error handling behaviors:
+
+- **`ParseOrExit`**: Prints errors and usage to `stderr`, then exits with appropriate code (0 for help, 1 for errors)
+- **`ParseOrError`**: Returns errors for programmatic handling, never calls `exit()`
 
 For testability, the library uses interface-based dependency injection for exit functionality and stderr writing, allowing for clean test mocking without race conditions.
 
-### ParseError Structure
-
-- Contains the error message (implementation details are private).
-- The parser fails on the first error encountered.
-
 ### Error Types
+
+#### Regular Parsing Errors
+
 - Unknown flag
 - Missing required flag value
 - Type conversion errors
 - Constraint violations (enum, regex, min/max)
+
+#### Help Invoked Error
+A special exported error constant returned when help/usage is displayed:
+
+```go
+var HelpInvokedErr = errors.New("help invoked")
+```
+
+**When returned:**
+- `-h` or `--help` flags are used
+- Auto-help triggers due to no arguments + required flags
+
+**Usage:**
+```go
+err := cmd.ParseOrError(args)
+if err == ra.HelpInvokedErr {
+    // Help was shown, handle appropriately
+    return
+} else if err != nil {
+    // Handle actual parsing error
+    log.Fatal(err)
+}
+```
+
+**Behavior:**
+- `ParseOrError` returns `HelpInvokedErr` without exiting
+- `ParseOrExit` detects help invocation, outputs help text, and exits with code 0
+
+This provides clean separation between help invocation and actual parsing errors.
 
 ## State Management
 
