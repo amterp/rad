@@ -1016,6 +1016,30 @@ func Test_EmptyArgs(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func Test_MultipleMissingRequiredArgs(t *testing.T) {
+	fs := NewCmd("test")
+	_, err := NewString("mandatory1").Register(fs)
+	assert.NoError(t, err)
+	_, err = NewString("mandatory2").Register(fs)
+	assert.NoError(t, err)
+	_, err = NewString("optional1").SetOptional(true).Register(fs)
+	assert.NoError(t, err)
+
+	err = fs.ParseOrError([]string{})
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "Missing required arguments: [mandatory1, mandatory2]")
+}
+
+func Test_SingleMissingRequiredArg(t *testing.T) {
+	fs := NewCmd("test")
+	_, err := NewString("mandatory2").Register(fs)
+	assert.NoError(t, err)
+
+	err = fs.ParseOrError([]string{})
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "Missing required arguments: [mandatory2]")
+}
+
 func Test_EmptyArgsWithDefault(t *testing.T) {
 	fs := NewCmd("test")
 	flag, err := NewString("flag").SetDefault("default").Register(fs)

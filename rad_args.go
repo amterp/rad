@@ -596,7 +596,12 @@ func (c *Cmd) setStringValue(f *StringFlag, value string) error {
 			}
 		}
 		if !valid {
-			return fmt.Errorf("Invalid '%s' value: %s (valid values: %s)", f.Name, value, strings.Join(*f.EnumConstraint, ", "))
+			return fmt.Errorf(
+				"Invalid '%s' value: %s (valid values: %s)",
+				f.Name,
+				value,
+				strings.Join(*f.EnumConstraint, ", "),
+			)
 		}
 	}
 
@@ -1243,52 +1248,64 @@ func (c *Cmd) validateRequired() error {
 
 	// Second pass: Check if required flags are missing
 	// This runs after relational constraints so more specific errors take precedence
-	for name, flag := range c.flags {
-		switch f := flag.(type) {
-		case *StringFlag:
-			if !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *IntFlag:
-			if !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *BoolFlag:
-			// Boolean flags have implicit default of false, so never required
-			// (only check if explicitly required AND has no implicit default)
-		case *Int64Flag:
-			if !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *Float64Flag:
-			if !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *SliceFlag[string]:
-			// Variadic slice flags have implicit default of empty slice, so never required
-			if !f.Variadic && !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *SliceFlag[int]:
-			// Variadic slice flags have implicit default of empty slice, so never required
-			if !f.Variadic && !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *SliceFlag[int64]:
-			// Variadic slice flags have implicit default of empty slice, so never required
-			if !f.Variadic && !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *SliceFlag[float64]:
-			// Variadic slice flags have implicit default of empty slice, so never required
-			if !f.Variadic && !f.Optional && f.Default == nil && !c.configured[name] {
-				return fmt.Errorf("required flag missing: %s", name)
-			}
-		case *SliceFlag[bool]:
-			// Boolean slice flags have implicit default of empty slice, so never required
+	// Check in registration order: positional flags first, then non-positional flags
+	var missingRequired []string
+
+	// Check positional flags first
+	for _, name := range c.positional {
+		if c.isFlagRequired(name) && !c.configured[name] {
+			missingRequired = append(missingRequired, name)
 		}
 	}
+
+	// Then check non-positional flags
+	for _, name := range c.nonPositional {
+		if c.isFlagRequired(name) && !c.configured[name] {
+			missingRequired = append(missingRequired, name)
+		}
+	}
+
+	if len(missingRequired) > 0 {
+		return fmt.Errorf("Missing required arguments: [%s]", strings.Join(missingRequired, ", "))
+	}
 	return nil
+}
+
+func (c *Cmd) isFlagRequired(name string) bool {
+	flag, exists := c.flags[name]
+	if !exists {
+		return false
+	}
+
+	switch f := flag.(type) {
+	case *StringFlag:
+		return !f.Optional && f.Default == nil
+	case *IntFlag:
+		return !f.Optional && f.Default == nil
+	case *BoolFlag:
+		// Boolean flags have implicit default of false, so never required
+		return false
+	case *Int64Flag:
+		return !f.Optional && f.Default == nil
+	case *Float64Flag:
+		return !f.Optional && f.Default == nil
+	case *SliceFlag[string]:
+		// Variadic slice flags have implicit default of empty slice, so never required
+		return !f.Variadic && !f.Optional && f.Default == nil
+	case *SliceFlag[int]:
+		// Variadic slice flags have implicit default of empty slice, so never required
+		return !f.Variadic && !f.Optional && f.Default == nil
+	case *SliceFlag[int64]:
+		// Variadic slice flags have implicit default of empty slice, so never required
+		return !f.Variadic && !f.Optional && f.Default == nil
+	case *SliceFlag[float64]:
+		// Variadic slice flags have implicit default of empty slice, so never required
+		return !f.Variadic && !f.Optional && f.Default == nil
+	case *SliceFlag[bool]:
+		// Boolean slice flags have implicit default of empty slice, so never required
+		return false
+	}
+	return false
 }
 
 func (c *Cmd) applyGlobalFlags(subCmd *Cmd) error {
