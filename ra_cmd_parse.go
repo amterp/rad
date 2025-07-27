@@ -131,10 +131,32 @@ func (c *Cmd) parseWithPreserveState(args []string, preserveConfigured bool, opt
 
 	// Parse arguments
 	i := 0
+	seenDashDash := false // Track if we've seen -- and should treat everything as positional
+
 	for i < len(args) {
 		arg := args[i]
 
-		// Check for subcommand first
+		// Check for -- (end of flags marker)
+		if arg == "--" && !seenDashDash {
+			seenDashDash = true
+			i++
+			continue
+		}
+
+		// If we're in positional-only mode, treat everything as positional
+		if seenDashDash {
+			if err := c.assignPositionalWithMode(arg, true); err != nil {
+				if cfg.ignoreUnknown {
+					c.unknownArgs = append(c.unknownArgs, arg)
+				} else {
+					return err
+				}
+			}
+			i++
+			continue
+		}
+
+		// Check for subcommand first (only if not in positional-only mode)
 		if !strings.HasPrefix(arg, "-") {
 			if subCmd, exists := c.subCmds[arg]; exists {
 				*subCmd.used = true
@@ -152,7 +174,7 @@ func (c *Cmd) parseWithPreserveState(args []string, preserveConfigured bool, opt
 			}
 		}
 
-		// Handle flags
+		// Handle flags (only if not in positional-only mode)
 		if strings.HasPrefix(arg, "-") {
 			consumed, err := c.parseFlag(args, i, numberShortsMode)
 			if err != nil {
@@ -552,6 +574,10 @@ func (c *Cmd) parseShortFlag(args []string, index int, numberShortsMode bool) (i
 	return consumed, nil
 }
 func (c *Cmd) assignPositional(value string) error {
+	return c.assignPositionalWithMode(value, false)
+}
+
+func (c *Cmd) assignPositionalWithMode(value string, positionalOnlyMode bool) error {
 	// Find next unassigned positional flag
 	for _, name := range c.positional {
 		flag := c.flags[name]
@@ -616,6 +642,11 @@ func (c *Cmd) assignPositional(value string) error {
 				// Variadic positional - collect if this is the current one or no flag seen since last variadic
 				if c.lastVariadicFlag == name {
 					c.configured[name] = true
+					_, err := c.appendStringSliceValue(f, value)
+					return err
+				}
+				// In positional-only mode (after --), continue appending to any configured variadic flag
+				if positionalOnlyMode && c.configured[name] {
 					_, err := c.appendStringSliceValue(f, value)
 					return err
 				}

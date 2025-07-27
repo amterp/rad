@@ -2147,3 +2147,245 @@ func Test_ParseOrError_NeverCallsOsExit(t *testing.T) {
 	assert.False(t, exitCalled, "ParseOrError should never call osExit for -h")
 	assert.Equal(t, HelpInvokedErr, err, "should return HelpInvokedErr")
 }
+
+func Test_DoubleDash_BasicBehavior(t *testing.T) {
+	cmd := NewCmd("test")
+
+	verbose, err := NewBool("verbose").
+		SetShort("v").
+		SetUsage("Enable verbose output").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	file, err := NewString("file").
+		SetUsage("Input file").
+		SetPositionalOnly(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	output, err := NewString("output").
+		SetUsage("Output file").
+		SetPositionalOnly(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: arguments that look like flags after -- should be treated as positional
+	err = cmd.ParseOrError([]string{"--verbose", "--", "--flag-like-arg", "-v"})
+	assert.NoError(t, err)
+
+	assert.True(t, *verbose)
+	assert.Equal(t, "--flag-like-arg", *file)
+	assert.Equal(t, "-v", *output)
+}
+
+func Test_DoubleDash_OnlyPositionalAfterDoubleDash(t *testing.T) {
+	cmd := NewCmd("test")
+
+	flag1, err := NewString("flag1").
+		SetUsage("First flag").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	files, err := NewStringSlice("files").
+		SetUsage("Input files").
+		SetPositionalOnly(true).
+		SetVariadic(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: everything after -- should be positional, even if it looks like flags
+	err = cmd.ParseOrError([]string{"--flag1", "value1", "--", "--not-a-flag", "-a", "--another"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, "value1", *flag1)
+	assert.Equal(t, []string{"--not-a-flag", "-a", "--another"}, *files)
+}
+
+func Test_DoubleDash_EmptyAfterDoubleDash(t *testing.T) {
+	cmd := NewCmd("test")
+
+	verbose, err := NewBool("verbose").
+		SetShort("v").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	file, err := NewString("file").
+		SetPositionalOnly(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: -- with nothing after it should work
+	err = cmd.ParseOrError([]string{"--verbose", "--"})
+	assert.NoError(t, err)
+
+	assert.True(t, *verbose)
+	assert.Equal(t, "", *file) // Should remain empty
+}
+
+func Test_DoubleDash_OnlyDoubleDash(t *testing.T) {
+	cmd := NewCmd("test")
+
+	verbose, err := NewBool("verbose").
+		SetShort("v").
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: just -- by itself
+	err = cmd.ParseOrError([]string{"--"})
+	assert.NoError(t, err)
+
+	assert.False(t, *verbose) // Should remain false
+}
+
+func Test_DoubleDash_WithRequiredFlags(t *testing.T) {
+	cmd := NewCmd("test")
+
+	required, err := NewString("required").
+		SetUsage("Required flag").
+		SetFlagOnly(true). // Make this flag-only so it can't be satisfied positionally
+		Register(cmd)
+	assert.NoError(t, err)
+
+	file, err := NewString("file").
+		SetPositionalOnly(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: required flags must still be satisfied before --
+	err = cmd.ParseOrError([]string{"--", "positional-arg"})
+	assert.Error(t, err)
+	if err != nil {
+		assert.Contains(t, err.Error(), "Missing required arguments: [required]")
+	}
+
+	// Test: providing required flag before -- should work
+	err = cmd.ParseOrError([]string{"--required", "value", "--", "positional-arg"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, "value", *required)
+	assert.Equal(t, "positional-arg", *file)
+}
+
+func Test_DoubleDash_WithVariadicSlice(t *testing.T) {
+	cmd := NewCmd("test")
+
+	flag1, err := NewString("flag1").
+		SetUsage("First flag").
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	files, err := NewStringSlice("files").
+		SetUsage("Input files").
+		SetVariadic(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: variadic slice should consume everything after --
+	err = cmd.ParseOrError([]string{"--flag1", "value", "--files", "file1", "--", "file2", "--flag-like", "file3"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, "value", *flag1)
+	assert.Equal(t, []string{"file1", "file2", "--flag-like", "file3"}, *files)
+}
+
+func Test_DoubleDash_MixedWithShortFlags(t *testing.T) {
+	cmd := NewCmd("test")
+
+	verbose, err := NewBool("verbose").
+		SetShort("v").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	debug, err := NewBool("debug").
+		SetShort("d").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	args, err := NewStringSlice("args").
+		SetPositionalOnly(true).
+		SetVariadic(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: short flags should work normally before --, but be treated as positional after
+	err = cmd.ParseOrError([]string{"-vd", "--", "-v", "-d", "normal-arg"})
+	assert.NoError(t, err)
+
+	assert.True(t, *verbose)
+	assert.True(t, *debug)
+	assert.Equal(t, []string{"-v", "-d", "normal-arg"}, *args)
+}
+
+func Test_DoubleDash_WithSubcommands(t *testing.T) {
+	cmd := NewCmd("main")
+
+	verbose, err := NewBool("verbose").
+		SetShort("v").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Create subcommand
+	subCmd := NewCmd("sub")
+
+	subFile, err := NewString("file").
+		SetUsage("Sub file").
+		SetPositionalOnly(true).
+		Register(subCmd)
+	assert.NoError(t, err)
+
+	_, err = cmd.RegisterCmd(subCmd)
+	assert.NoError(t, err)
+
+	// Test: -- should work with subcommands
+	err = cmd.ParseOrError([]string{"--verbose", "sub", "--", "--not-a-flag"})
+	assert.NoError(t, err)
+
+	assert.True(t, *verbose)
+	assert.Equal(t, "--not-a-flag", *subFile)
+}
+
+func Test_DoubleDash_MultipleTimes(t *testing.T) {
+	cmd := NewCmd("test")
+
+	args, err := NewStringSlice("args").
+		SetPositionalOnly(true).
+		SetVariadic(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: multiple -- should be treated as regular arguments after the first
+	err = cmd.ParseOrError([]string{"--", "--", "arg1", "--", "arg2"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, []string{"--", "arg1", "--", "arg2"}, *args)
+}
+
+func Test_DoubleDash_WithEqualsFlag(t *testing.T) {
+	cmd := NewCmd("test")
+
+	flag1, err := NewString("flag1").
+		Register(cmd)
+	assert.NoError(t, err)
+
+	args, err := NewStringSlice("args").
+		SetPositionalOnly(true).
+		SetVariadic(true).
+		SetOptional(true).
+		Register(cmd)
+	assert.NoError(t, err)
+
+	// Test: -- should work with = syntax flags
+	err = cmd.ParseOrError([]string{"--flag1=value", "--", "--flag2=value2"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, "value", *flag1)
+	assert.Equal(t, []string{"--flag2=value2"}, *args)
+}
