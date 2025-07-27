@@ -76,6 +76,17 @@ func (c *Cmd) parseWithPreserveState(args []string, preserveConfigured bool, opt
 		}
 	}
 
+	// Check for auto-help: if enabled, no args provided, and command has required flags
+	if c.autoHelpOnNoArgs && len(args) == 0 && c.hasRequiredFlags() {
+		if c.customUsage != nil {
+			c.customUsage(false) // Use short help (false) for auto-help
+		} else {
+			fmt.Fprint(stderrWriter, c.GenerateShortUsage())
+		}
+		osExit(0)
+		return nil // This should never be reached due to osExit, but added for clarity
+	}
+
 	// Check if we have number shorts mode
 	numberShortsMode := c.hasNumberShorts()
 
@@ -1267,5 +1278,24 @@ func (c *Cmd) isFlagExcludedByConfiguredFlag(flagName string) bool {
 			}
 		}
 	}
+	return false
+}
+
+// hasRequiredFlags returns true if the command has any required flags
+func (c *Cmd) hasRequiredFlags() bool {
+	// Check positional flags first
+	for _, name := range c.positional {
+		if c.isFlagRequired(name) {
+			return true
+		}
+	}
+
+	// Then check non-positional flags
+	for _, name := range c.nonPositional {
+		if c.isFlagRequired(name) {
+			return true
+		}
+	}
+
 	return false
 }

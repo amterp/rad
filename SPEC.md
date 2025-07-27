@@ -169,6 +169,35 @@ invoked, err := cmd.RegisterCmd(subCmd)
 - **SetCustomUsage(func(isLongHelp bool))**: Overrides the entire usage generation logic.
 - **SetHelpEnabled(bool)**: Disables the automatic registration of `-h`/`--help` flags if set to `false`.
 - **SetExcludeNameFromUsage(bool)**: Excludes the command name from usage output.
+- **SetAutoHelpOnNoArgs(bool)**: When enabled, automatically shows help (equivalent to `-h`) if no arguments are provided and the command has required flags. This provides a user-friendly experience when users run a command without arguments to see what options are available.
+
+#### Auto-Help on No Arguments
+
+When `SetAutoHelpOnNoArgs(true)` is enabled, the following behavior applies:
+
+- **Trigger condition**: No arguments provided AND command has required flags
+- **Action**: Show short help (`-h` equivalent) and exit with code 0
+- **Scope**: Works for both main commands and subcommands
+- **Precedence**: Takes precedence over "missing required arguments" errors
+
+**Example:**
+```go
+cmd := NewCmd("deploy")
+cmd.SetAutoHelpOnNoArgs(true)
+
+// Required flags
+NewString("environment").Register(cmd)
+NewString("version").Register(cmd)
+
+// Optional flags  
+NewBool("force").SetOptional(true).Register(cmd)
+
+// Running with no args shows help instead of error
+cmd.ParseOrError([]string{}) // Shows help, exits 0
+
+// Running with some args works normally
+cmd.ParseOrError([]string{"--environment", "prod", "--version", "1.2.3"}) // Parses normally
+```
 
 ## Error Handling
 

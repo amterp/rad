@@ -2010,3 +2010,127 @@ func Test_ExcludesFlags_RequiredFlagsShouldNotBeRequiredWhenExcluded(t *testing.
 	assert.NotNil(t, err, "should fail when neither mutually exclusive required flag is provided")
 	assert.Contains(t, err.Error(), "Missing required arguments")
 }
+
+func Test_AutoHelpOnNoArgs_CoreBehavior(t *testing.T) {
+	// Mock stderr to capture help output
+	var capturedOutput bytes.Buffer
+	originalStderrWriter := stderrWriter
+	stderrWriter = &capturedOutput
+	defer func() { stderrWriter = originalStderrWriter }()
+
+	// Mock osExit to prevent actual exit and track if it was called
+	var exitCode int
+	var exitCalled bool
+	originalOsExit := osExit
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+	defer func() { osExit = originalOsExit }()
+
+	cmd := NewCmd("test")
+	cmd.SetAutoHelpOnNoArgs(true) // Enable auto-help
+
+	// Add a required flag
+	_, err := NewString("required-flag").Register(cmd)
+	assert.NoError(t, err)
+
+	// Call with no args - should trigger auto-help (not error)
+	err = cmd.ParseOrError([]string{})
+
+	// Should not return an error (auto-help should handle it)
+	assert.Nil(t, err, "should not error when auto-help is triggered")
+
+	// Should have called exit with code 0
+	assert.True(t, exitCalled, "osExit should have been called")
+	assert.Equal(t, 0, exitCode, "should exit with code 0 when showing help")
+
+	// Should have output help text
+	output := capturedOutput.String()
+	assert.Contains(t, output, "Usage:", "should show help output")
+	assert.Contains(t, output, "required-flag", "should show the required flag in help")
+}
+
+func Test_AutoHelpOnNoArgs_OnlyWhenRequiredArgsExist(t *testing.T) {
+	cmd := NewCmd("test")
+	cmd.SetAutoHelpOnNoArgs(true) // Enable auto-help
+
+	// Add only optional flags (no required flags)
+	_, err := NewString("optional-flag").SetOptional(true).Register(cmd)
+	assert.NoError(t, err)
+
+	// Call with no args - should parse normally since no required args
+	err = cmd.ParseOrError([]string{})
+	assert.Nil(t, err, "should parse normally when no required args exist")
+}
+
+func Test_AutoHelpOnNoArgs_WorksForSubcommands(t *testing.T) {
+	// Mock stderr to capture help output
+	var capturedOutput bytes.Buffer
+	originalStderrWriter := stderrWriter
+	stderrWriter = &capturedOutput
+	defer func() { stderrWriter = originalStderrWriter }()
+
+	// Mock osExit to prevent actual exit
+	var exitCode int
+	originalOsExit := osExit
+	osExit = func(code int) { exitCode = code }
+	defer func() { osExit = originalOsExit }()
+
+	parentCmd := NewCmd("parent")
+	subCmd := NewCmd("sub")
+	subCmd.SetAutoHelpOnNoArgs(true) // Enable auto-help on subcommand
+
+	// Add required flag to subcommand
+	_, err := NewString("sub-required").Register(subCmd)
+	assert.NoError(t, err)
+
+	_, err = parentCmd.RegisterCmd(subCmd)
+	assert.NoError(t, err)
+
+	// Call subcommand with no args - should trigger auto-help
+	err = parentCmd.ParseOrError([]string{"sub"})
+
+	// Should not return an error (auto-help should handle it)
+	assert.Nil(t, err, "should not error when subcommand auto-help is triggered")
+
+	// Should have called exit with code 0
+	assert.Equal(t, 0, exitCode, "should exit with code 0 when showing subcommand help")
+
+	// Should have output help text for subcommand
+	output := capturedOutput.String()
+	assert.Contains(t, output, "Usage:", "should show help output")
+	assert.Contains(t, output, "sub-required", "should show the subcommand's required flag")
+}
+
+func Test_AutoHelpOnNoArgs_RespectsCustomUsage(t *testing.T) {
+	// Track if custom usage was called
+	var customUsageCalled bool
+	var customUsageIsLongHelp bool
+
+	cmd := NewCmd("test")
+	cmd.SetAutoHelpOnNoArgs(true) // Enable auto-help
+	cmd.SetCustomUsage(func(isLongHelp bool) {
+		customUsageCalled = true
+		customUsageIsLongHelp = isLongHelp
+	})
+
+	// Mock osExit to prevent actual exit
+	originalOsExit := osExit
+	osExit = func(code int) {}
+	defer func() { osExit = originalOsExit }()
+
+	// Add a required flag
+	_, err := NewString("required-flag").Register(cmd)
+	assert.NoError(t, err)
+
+	// Call with no args - should trigger auto-help using custom usage
+	err = cmd.ParseOrError([]string{})
+
+	// Should not return an error
+	assert.Nil(t, err, "should not error when auto-help with custom usage is triggered")
+
+	// Should have called custom usage function
+	assert.True(t, customUsageCalled, "should call custom usage function")
+	assert.False(t, customUsageIsLongHelp, "should call custom usage with isLongHelp=false (short help)")
+}

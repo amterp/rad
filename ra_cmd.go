@@ -18,6 +18,7 @@ type Cmd struct {
 	customUsage          func(bool) // if set, this function will be called to print usage instead of the default
 	helpEnabled          bool       // default true automatically adds a help flag
 	excludeNameFromUsage bool       // if true, this command will not be included in usage output
+	autoHelpOnNoArgs     bool       // if true, show help when no args provided and required args exist
 
 	// state post-parse
 	used             *bool           // after parsing, whether this command was invoked
@@ -58,6 +59,11 @@ func (c *Cmd) SetHelpEnabled(enable bool) *Cmd {
 
 func (c *Cmd) SetExcludeNameFromUsage(exclude bool) *Cmd {
 	c.excludeNameFromUsage = exclude
+	return c
+}
+
+func (c *Cmd) SetAutoHelpOnNoArgs(enable bool) *Cmd {
+	c.autoHelpOnNoArgs = enable
 	return c
 }
 
