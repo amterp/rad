@@ -52,6 +52,33 @@ All flags support:
 - **Excludes**: Flags that cannot be used together with this flag. Works one-way like `Requires` - only the flag declaring the exclusion needs to specify the relationship.
 - **Requires**: Flags that must be present when this flag is used.
 
+#### Exclusion and Required Flag Interaction
+
+When a flag excludes another flag, and both flags are required, the exclusion takes precedence over the requirement. This means:
+
+- If flag A excludes flag B, and both are required, providing flag A makes flag B no longer required.
+- If neither flag is provided, both flags will be reported as missing required arguments.
+- If both flags are provided, an exclusion error will be raised.
+
+**Example:**
+```go
+// Both flags are required and mutually exclusive
+fileFlag, _ := NewString("file").SetExcludes([]string{"url"}).Register(cmd)
+urlFlag, _ := NewString("url").SetExcludes([]string{"file"}).Register(cmd)
+
+// Valid: Only file provided (url is no longer required due to exclusion)
+cmd.ParseOrError([]string{"--file", "input.txt"})
+
+// Valid: Only url provided (file is no longer required due to exclusion)  
+cmd.ParseOrError([]string{"--url", "https://example.com"})
+
+// Invalid: Both provided (exclusion violation)
+cmd.ParseOrError([]string{"--file", "input.txt", "--url", "https://example.com"})
+
+// Invalid: Neither provided (both missing required arguments)
+cmd.ParseOrError([]string{})
+```
+
 ### Value Constraints
 
 - **EnumConstraint** (string): Restricts value to a specific set.

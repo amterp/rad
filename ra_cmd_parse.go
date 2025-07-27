@@ -1017,14 +1017,14 @@ func (c *Cmd) validateRequired() error {
 
 	// Check positional flags first
 	for _, name := range c.positional {
-		if c.isFlagRequired(name) && !c.configured[name] {
+		if c.isFlagRequired(name) && !c.configured[name] && !c.isFlagExcludedByConfiguredFlag(name) {
 			missingRequired = append(missingRequired, name)
 		}
 	}
 
 	// Then check non-positional flags
 	for _, name := range c.nonPositional {
-		if c.isFlagRequired(name) && !c.configured[name] {
+		if c.isFlagRequired(name) && !c.configured[name] && !c.isFlagExcludedByConfiguredFlag(name) {
 			missingRequired = append(missingRequired, name)
 		}
 	}
@@ -1218,5 +1218,54 @@ func (c *Cmd) flagHasValue(name string) bool {
 		}
 	}
 
+	return false
+}
+
+// isFlagExcludedByConfiguredFlag returns true if the given flag is excluded by any configured flag
+func (c *Cmd) isFlagExcludedByConfiguredFlag(flagName string) bool {
+	// Check if any configured flag excludes the given flag
+	for configuredFlagName, isConfigured := range c.configured {
+		if !isConfigured || configuredFlagName == flagName {
+			continue
+		}
+
+		// Check if this configured flag excludes the target flag
+		if flag, exists := c.flags[configuredFlagName]; exists {
+			var excludes *[]string
+			switch f := flag.(type) {
+			case *StringFlag:
+				excludes = f.Excludes
+			case *IntFlag:
+				excludes = f.Excludes
+			case *BoolFlag:
+				// For boolean flags, only consider exclusion when the flag is true
+				if f.Value != nil && *f.Value {
+					excludes = f.Excludes
+				}
+			case *Int64Flag:
+				excludes = f.Excludes
+			case *Float64Flag:
+				excludes = f.Excludes
+			case *SliceFlag[string]:
+				excludes = f.Excludes
+			case *SliceFlag[int]:
+				excludes = f.Excludes
+			case *SliceFlag[int64]:
+				excludes = f.Excludes
+			case *SliceFlag[float64]:
+				excludes = f.Excludes
+			case *SliceFlag[bool]:
+				excludes = f.Excludes
+			}
+
+			if excludes != nil {
+				for _, excluded := range *excludes {
+					if excluded == flagName {
+						return true
+					}
+				}
+			}
+		}
+	}
 	return false
 }

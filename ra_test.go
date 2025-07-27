@@ -1934,3 +1934,79 @@ func Test_HelpEnabled_True_AutomaticHelp(t *testing.T) {
 	assert.Contains(t, usage, "-h")
 	assert.Contains(t, usage, "Print usage string")
 }
+
+func Test_ExcludesFlags_RequiredFlagsShouldNotBeRequiredWhenExcluded(t *testing.T) {
+	// This test reproduces the issue where mutually exclusive required flags
+	// incorrectly fail validation when one excludes the other
+	fs := NewCmd("test")
+
+	// Two required flags that mutually exclude each other
+	fileFlag, err := NewString("file").
+		SetExcludes([]string{"url"}).
+		Register(fs) // required by default
+	assert.NoError(t, err)
+
+	urlFlag, err := NewString("url").
+		SetExcludes([]string{"file"}).
+		Register(fs) // required by default
+	assert.NoError(t, err)
+
+	// This should succeed: specifying --file should make url no longer required
+	// since file excludes url
+	err = fs.ParseOrError([]string{"--file", "file.txt"})
+	assert.Nil(t, err, "should succeed when file is provided (url should not be required due to exclusion)")
+	assert.Equal(t, "file.txt", *fileFlag)
+	assert.Equal(t, "", *urlFlag) // should remain empty/default
+
+	// Reset and test the other direction
+	fs2 := NewCmd("test")
+	fileFlag2, err := NewString("file").
+		SetExcludes([]string{"url"}).
+		Register(fs2)
+	assert.NoError(t, err)
+
+	urlFlag2, err := NewString("url").
+		SetExcludes([]string{"file"}).
+		Register(fs2)
+	assert.NoError(t, err)
+
+	// This should also succeed: specifying --url should make file no longer required
+	err = fs2.ParseOrError([]string{"--url", "https://example.com"})
+	assert.Nil(t, err, "should succeed when url is provided (file should not be required due to exclusion)")
+	assert.Equal(t, "", *fileFlag2) // should remain empty/default
+	assert.Equal(t, "https://example.com", *urlFlag2)
+
+	// Reset and test that both flags still cause an error when both are provided
+	fs3 := NewCmd("test")
+	_, err = NewString("file").
+		SetExcludes([]string{"url"}).
+		Register(fs3)
+	assert.NoError(t, err)
+
+	_, err = NewString("url").
+		SetExcludes([]string{"file"}).
+		Register(fs3)
+	assert.NoError(t, err)
+
+	// This should fail: both flags provided should trigger exclusion error
+	err = fs3.ParseOrError([]string{"--file", "file.txt", "--url", "https://example.com"})
+	assert.NotNil(t, err, "should fail when both mutually exclusive flags are provided")
+	assert.Contains(t, err.Error(), "excludes")
+
+	// Reset and test that neither flag provided should fail due to missing required args
+	fs4 := NewCmd("test")
+	_, err = NewString("file").
+		SetExcludes([]string{"url"}).
+		Register(fs4)
+	assert.NoError(t, err)
+
+	_, err = NewString("url").
+		SetExcludes([]string{"file"}).
+		Register(fs4)
+	assert.NoError(t, err)
+
+	// This should fail: neither flag provided, so both are missing (no exclusion applies)
+	err = fs4.ParseOrError([]string{})
+	assert.NotNil(t, err, "should fail when neither mutually exclusive required flag is provided")
+	assert.Contains(t, err.Error(), "Missing required arguments")
+}
