@@ -8,6 +8,8 @@ github.com/amterp/go-tbl v0.12.0 h1:on3p/pZmfxMObGiauDaf3pwg/gfKbyW6qXiluH/MOuk=
 github.com/amterp/go-tbl v0.12.0/go.mod h1:o6DcTIAfB1EvEy5iiwoXbOrKer7/Y2bV9743Q3CJCPI=
 github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+uc=
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
+github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c h1:96wJffev/8SOkTNj8HnH/mJKbRpJ2kyKGsNluEC8Wwc=
+github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c/go.mod h1:BLWf38KEVbwO+1HkWohcXW6HdFdoe1jGEU3orZj3a3w=
 github.com/amterp/tree-sitter-rad v0.1.6 h1:qc4upliKkwENLsS9sXhuBzjj+vI3jHN7+u09KL/Bw+E=
 github.com/amterp/tree-sitter-rad v0.1.6/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
@@ -109,8 +111,6 @@ github.com/tree-sitter/tree-sitter-rust v0.23.2/go.mod h1:hfeGWic9BAfgTrc7Xf6FaO
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
-golang.org/x/crypto v0.35.0 h1:b15kiHdrGCHrP6LvwaQ3c03kgNhhiMgvlhxHQhmg2Xs=
-golang.org/x/crypto v0.35.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
 golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
 golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
