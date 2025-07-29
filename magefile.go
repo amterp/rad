@@ -28,58 +28,58 @@ func init() {
 }
 
 func All() error {
-	Generate()
-	Format()
-	Build()
-	Test()
-	return Install()
+	for _, step := range []func() error{Generate, Format, Build, Test, Install} {
+		if err := step(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func Generate() error {
-	fmt.Println("⚙️  Running generators...")
-	cmd := exec.Command(goexe, "run", filepath.Join(".", "function-metadata", "extract.go"))
-	mov := exec.Command("mv", filepath.Join(".", "functions.txt"), filepath.Join(".", "lsp-server", "com", "embedded"))
-	cmd.Stdout = os.Stdout
-	mov.Stdout = os.Stdout
-	cmd.Run()
-	return mov.Run()
+	fmt.Println("⚙️ Running generators...")
+	if err := runCmd(goexe, "run", filepath.Join(".", "function-metadata", "extract.go")); err != nil {
+		return err
+	}
+	return runCmd("mv", filepath.Join(".", "functions.txt"), filepath.Join(".", "lsp-server", "com", "embedded"))
 }
 
 func Format() error {
-	fmt.Println("⚙️  Formatting files...")
-	cmd := exec.Command(gofmtexe, "-s", "-w", ".")
-	imp := exec.Command(goimportsexe, "-w", ",")
-	cmd.Stdout = os.Stdout
-	imp.Stdout = os.Stdout
-	cmd.Run()
-	return imp.Run()
+	fmt.Println("⚙️ Formatting files...")
+	if err := runCmd(gofmtexe, "-s", "-w", "."); err != nil {
+		return err
+	}
+	return runCmd(goimportsexe, "-w", ".")
 }
 
 func Build() error {
-	fmt.Println("Building...")
-	mdir := exec.Command("mkdir", "-p", filepath.Join(".", BIN_DIR))
-	cmd := exec.Command(goexe, "build", "-o", filepath.Join(".", BIN_DIR, "radd"))
-	mdir.Stdout = os.Stdout
-	cmd.Stdout = os.Stdout
-	mdir.Run()
-	return cmd.Run()
+	fmt.Println("⚙️ Building...")
+	if err := runCmd("mkdir", "-p", filepath.Join(".", BIN_DIR)); err != nil {
+		return err
+	}
+	return runCmd(goexe, "build", "-o", filepath.Join(".", BIN_DIR, "radd"))
 }
 
 func Test() error {
-	fmt.Println("⚙️  Running tests...")
-	cmd := exec.Command(goexe, "test", filepath.FromSlash("./core/testing"))
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	fmt.Println("⚙️ Running tests...")
+	return runCmd(goexe, "test", filepath.FromSlash("./core/testing"))
 }
 
 func Install() error {
-	fmt.Println("⚙️  Installing...")
-	cmd := exec.Command("cp", filepath.Join(".", BIN_DIR, "radd"), filepath.Join(os.Getenv("GOROOT"), "bin", "rad"))
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	fmt.Println("⚙️ Installing...")
+	radDevBinaryLocation := filepath.Join(".", BIN_DIR, "radd")
+	locationToInstallRadBinary := filepath.Join(os.Getenv("GOBIN"), "rad")
+	return runCmd("cp", radDevBinaryLocation, locationToInstallRadBinary)
 }
 
-func Clean() {
-	fmt.Println("Cleaning...")
-	os.RemoveAll(filepath.Join(".", BIN_DIR))
+func Clean() error {
+	fmt.Println("⚙️ Cleaning...")
+	return os.RemoveAll(filepath.Join(".", BIN_DIR))
+}
+
+func runCmd(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
