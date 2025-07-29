@@ -12,7 +12,6 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
 	github.com/lithammer/fuzzysearch v1.1.8
-	github.com/magefile/mage v1.15.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.47.0
 	github.com/sanity-io/litter v1.5.6
@@ -20,9 +19,10 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.10.0
 	github.com/tree-sitter/go-tree-sitter v0.25.0
-	golang.org/x/crypto v0.35.0
 	golang.org/x/term v0.29.0
 )
+
+require github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 
 require (
 	github.com/amterp/tree-sitter-rad v0.1.6 // indirect
