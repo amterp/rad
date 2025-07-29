@@ -13,7 +13,7 @@ import (
 const BIN_DIR = "bin"
 
 var (
-	Default      = All
+	Default      = Auto
 	goexe        = "go"
 	gofmtexe     = "gofmt"
 	goimportsexe = "goimports"
@@ -27,8 +27,17 @@ func init() {
 	}
 }
 
+func Auto() error {
+	for _, step := range []func() error{Generate, Format, Build, Install} {
+		if err := step(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func All() error {
-	for _, step := range []func() error{Generate, Format, Build, Test, Install} {
+	for _, step := range []func() error{Generate, Format, Build, Test} {
 		if err := step(); err != nil {
 			return err
 		}
