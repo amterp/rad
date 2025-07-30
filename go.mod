@@ -7,7 +7,6 @@ require (
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
-	github.com/amterp/rad/rts v0.0.0	
 	github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
