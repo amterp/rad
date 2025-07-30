@@ -7,7 +7,8 @@ require (
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
-	// github.com/amterp/rad/rts v0.0.0
+	github.com/amterp/rad/rts v0.0.0	
+	github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
@@ -21,8 +22,6 @@ require (
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	golang.org/x/term v0.29.0
 )
-
-require github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 
 require (
 	github.com/amterp/tree-sitter-rad v0.1.6 // indirect
