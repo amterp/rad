@@ -7,14 +7,14 @@ require (
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
-	github.com/amterp/rad/rts v0.0.0
+	github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.47.0
-	github.com/sanity-io/litter v1.5.6
+	github.com/sanity-io/litter v1.5.8
 	github.com/scylladb/go-set v1.0.2
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.10.0
@@ -55,7 +55,6 @@ require (
 
 //replace github.com/amterp/go-tbl => ../go-tbl
 //replace github.com/amterp/flexid => ../flexid
-replace github.com/amterp/rad/rts => ./rts
 
 //replace github.com/amterp/tree-sitter-rad => ../tree-sitter-rad
 //replace github.com/amterp/jsoncolor => ../jsoncolor
