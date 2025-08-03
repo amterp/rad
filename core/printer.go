@@ -3,9 +3,10 @@ package core
 import (
 	"fmt"
 	"io"
-	com "rad/core/common"
 	"runtime/debug"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/color"
 

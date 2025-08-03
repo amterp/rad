@@ -2,8 +2,9 @@ package core
 
 import (
 	"fmt"
-	com "rad/core/common"
 	"strconv"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/samber/lo"
 

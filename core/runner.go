@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	com "rad/core/common"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/samber/lo"
 

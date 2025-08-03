@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"rad/core"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/amterp/rad/core"
 
 	"github.com/stretchr/testify/assert"
 )

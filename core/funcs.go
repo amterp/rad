@@ -11,11 +11,12 @@ import (
 	"math"
 	"os"
 	"path/filepath"
-	com "rad/core/common"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
 

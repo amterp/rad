@@ -2,7 +2,8 @@ package core
 
 import (
 	"path/filepath"
-	com "rad/core/common"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
 

@@ -2,7 +2,9 @@ package main
 
 import (
 	"os"
-	"rad/core"
+
+	"github.com/amterp/rad/core"
+
 	"sort"
 )
 

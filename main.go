@@ -1,6 +1,6 @@
 package main
 
-import "rad/core"
+import "github.com/amterp/rad/core"
 
 func main() {
 	runner := core.NewRadRunner(core.RunnerInput{})

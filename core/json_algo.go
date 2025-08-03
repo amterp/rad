@@ -1,7 +1,7 @@
 package core
 
 import (
-	com "rad/core/common"
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/samber/lo"
 )
@@ -113,7 +113,7 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) 
 	// check if all columns are the same, if so, append rows
 	if len(capture1.captures) == len(capture2.captures) {
 		colsAreTheSame := true
-		for key, _ := range capture1.captures {
+		for key := range capture1.captures {
 			if _, ok := capture2.captures[key]; !ok {
 				colsAreTheSame = false
 				break
@@ -128,7 +128,7 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) 
 	}
 
 	// check if overlapping columns. if so, error
-	for key, _ := range capture1.captures {
+	for key := range capture1.captures {
 		if _, ok := capture2.captures[key]; ok {
 			t.i.errorf(
 				t.radKeywordNode,

@@ -1,8 +1,9 @@
 package testing
 
 import (
-	com "rad/core/common"
 	"testing"
+
+	com "github.com/amterp/rad/core/common"
 )
 
 func Test_Cmd_New_FailsIfExists(t *testing.T) {

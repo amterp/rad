@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	com "rad/core/common"
 	"runtime/debug"
 	"strconv"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts"
 

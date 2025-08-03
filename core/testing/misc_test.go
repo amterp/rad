@@ -1,9 +1,10 @@
 package testing
 
 import (
-	"rad/core"
 	"strings"
 	"testing"
+
+	"github.com/amterp/rad/core"
 )
 
 func Test_Misc_SyntaxError(t *testing.T) {

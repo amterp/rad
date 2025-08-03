@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	com "rad/core/common"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/check"
 

@@ -3,8 +3,9 @@ package core
 import (
 	"fmt"
 	"math"
-	com "rad/core/common"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
 

@@ -1,4 +1,4 @@
-module rad
+module github.com/amterp/rad
 
 go 1.24.2
 

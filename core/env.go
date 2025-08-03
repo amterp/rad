@@ -2,8 +2,9 @@ package core
 
 import (
 	"fmt"
-	com "rad/core/common"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )

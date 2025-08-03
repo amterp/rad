@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"io"
 	"os"
-	com "rad/core/common"
 	"strings"
 	"unicode/utf8"
+
+	com "github.com/amterp/rad/core/common"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 
@@ -78,7 +79,7 @@ func (w *TblWriter) Render() {
 
 	// resolve how many chars each column needs to fully display its contents
 	colWidths := make([]int, w.numColumns)
-	for i, _ := range w.headers {
+	for i := range w.headers {
 		colWidths[i] = len(w.headers[i])
 	}
 	for _, row := range w.rows {
@@ -141,7 +142,7 @@ func (w *TblWriter) Render() {
 
 	// truncate cells to fit within column widths
 	rows := w.rows
-	for i, _ := range w.headers {
+	for i := range w.headers {
 		colWidth := colWidths[i]
 		w.tbl.SetColMinWidth(i, colWidth)
 		for _, row := range rows {
@@ -180,7 +181,7 @@ func (w *TblWriter) Render() {
 
 	w.tbl.SetHeader(w.headers)
 	var colors []tblwriter.Color
-	for _, _ = range w.headers {
+	for range w.headers {
 		colors = append(colors, tblwriter.Yellow)
 	}
 	w.tbl.SetHeaderColors(colors...)

@@ -1,7 +1,7 @@
 package core
 
 import (
-	com "rad/core/common"
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/samber/lo"
 )

@@ -3,8 +3,9 @@ package core
 import (
 	"bytes"
 	"fmt"
-	com "rad/core/common"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 )
 
 func (r *RadRunner) RunUsage(shortHelp, isErr bool) {

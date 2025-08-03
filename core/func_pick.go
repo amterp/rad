@@ -1,8 +1,9 @@
 package core
 
 import (
-	com "rad/core/common"
 	"strings"
+
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/charmbracelet/huh"
 	"github.com/lithammer/fuzzysearch/fuzzy"
