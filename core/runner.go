@@ -136,7 +136,7 @@ func (r *RadRunner) Run() error {
 	}
 
 	if FlagVersion.Value {
-		RP.Printf(fmt.Sprintf("rad version %s\n", Version))
+		RP.Printf(fmt.Sprintf("rad %s\n", Version))
 		RExit(0)
 	}
 

@@ -57,13 +57,13 @@ print("{-12}")
 
 func Test_Misc_Version(t *testing.T) {
 	setupAndRunCode(t, "", "--version")
-	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
+	assertOnlyOutput(t, stdOutBuffer, "rad "+core.Version+"\n")
 	assertNoErrors(t)
 }
 
 func Test_Misc_VersionShort(t *testing.T) {
 	setupAndRunCode(t, "", "-v")
-	assertOnlyOutput(t, stdOutBuffer, "rad version "+core.Version+"\n")
+	assertOnlyOutput(t, stdOutBuffer, "rad "+core.Version+"\n")
 	assertNoErrors(t)
 }
 

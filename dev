@@ -40,11 +40,11 @@ if release:
     minor = sort([parse_int(t[1]) for t in tags if parse_int(t[0]) == major])[-1]
     patch = sort([parse_int(t[2]) for t in tags if parse_int(t[0]) == major and parse_int(t[1]) == minor])[-1]
     if release == 1:
-        version = "{major}.{minor}.{patch + 1}"
+        version = "v{major}.{minor}.{patch + 1}"
     else if release == 2:
-        version = "{major}.{minor + 1}.0"
+        version = "v{major}.{minor + 1}.0"
     else if release == 3:
-        version = "{major + 1}.0.0"
+        version = "v{major + 1}.0.0"
     print("Bumping to version:", green(version))
     ///////////////////////////////
 
