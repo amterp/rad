@@ -2,7 +2,7 @@ name: Update Homebrew Formula
 on:
   push:
     tags:
-        - '*'
+        - 'v*'
 jobs:
   homebrew:
     runs-on: macos-latest
