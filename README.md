@@ -64,7 +64,7 @@ go install github.com/amterp/rad@latest
 Installs directly from source using the Go (v1.17+) toolchain into your Go bin directory. Make sure that it's on your PATH.
 
 **Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
-For automated updates, use one of the below package managers which support it.
+For automated updates, use [gup](https://github.com/nao1215/gup), or one of the below package managers which support it.
 
 ### macOS (Homebrew)
 
@@ -72,9 +72,13 @@ For automated updates, use one of the below package managers which support it.
 brew install amterp/rad/rad
 ```
 
-### From Source
+### From Source - Linux/ macOS / Windows (Mise)
 
-See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source.
+```shell
+mise use -g go:github.com/amterp/rad
+```
+
+See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source for development.
 
 ### Visual Studio Code Extension
 

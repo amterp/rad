@@ -179,3 +179,5 @@ Temporary Items
 ### macOS Patch ###
 # iCloud generated files
 *.icloud
+# Added by goreleaser init:
+dist/

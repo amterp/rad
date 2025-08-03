@@ -1,0 +1,122 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go run ./function-metadata/extract.go
+    - mv ./functions.txt ./lsp-server/com/embedded/
+    - gofmt -s -w .
+    - goimports -w .
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    dir: ./rad-build
+    binary: rad
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - arm
+      - arm64
+      - s390x
+      - ppc64le
+      - riscv64
+    goarm:
+      - "5"
+      - "6"
+      - "7"
+    ignore:
+      - goos: darwin
+        goarch: arm
+      - goos: darwin
+        goarch: ppc64le
+      - goos: darwin
+        goarch: s390x
+      - goos: darwin
+        goarch: riscv64
+      - goos: windows
+        goarch: ppc64le
+      - goos: windows
+        goarch: s390x
+      - goos: windows
+        goarch: riscv64
+      - goos: freebsd
+        goarch: ppc64le
+      - goos: freebsd
+        goarch: s390x
+      - goos: freebsd
+        goarch: riscv64
+      - goos: freebsd
+        goarch: arm
+        goarm: "5"
+
+archives:
+  - id: default
+    format_overrides:
+      - goos: windows
+        formats: zip
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- if eq .Os "darwin" }}mac{{ else }}{{ .Os }}{{ end }}_
+      {{- .Arch }}
+      {{- with .Arm }}v{{ . }}{{ end }}
+      {{- with .Mips }}_{{ . }}{{ end }}
+      {{- if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}
+
+  # package the 'rad-build' directory into a tarball,
+  # allowing users to build the exact same set of files as ours.
+  - id: source
+    meta: true
+    name_template: "{{ .ProjectName }}_{{ .Version }}_buildable-artifact"
+    files:
+      - src: LICENSE
+        dst: ./LICENSE
+      - src: README.md
+        dst: ./README.md
+      - src: ./rad-build
+        dst: ./
+
+source:
+  enabled: true
+  name_template: '{{ .ProjectName }}_{{ .Version }}_src'
+  format: 'tar.gz'
+  files:
+    - vendor
+
+checksum:
+  algorithm: sha512
+
+release:
+  github:
+    owner: amterp
+    name: rad
+  draft: true
+  prerelease: auto
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^chore:'
+    - '^ci:'
+    - '^docs?:'
+    - '^readme:'
+    - '^tests?:'
+    - '^\w+\s+' # a hack to remove commit messages without colons thus don't correspond to a package
+
+release:
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
