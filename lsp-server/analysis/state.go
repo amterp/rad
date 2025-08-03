@@ -1,10 +1,11 @@
 package analysis
 
 import (
-	"rls/com"
-	"rls/log"
-	"rls/lsp"
 	"strings"
+
+	"github.com/amterp/rad/lsp-server/com"
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/lsp"
 
 	"github.com/amterp/rad/rts/check"
 

@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/textproto"
-	"rls/com"
-	"rls/log"
-	"rls/lsp"
 	"strconv"
+
+	"github.com/amterp/rad/lsp-server/com"
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/lsp"
 )
 
 func Decode(r *bufio.Reader) (msg lsp.IncomingMsg, err error) {

@@ -1,7 +1,7 @@
 package lsp
 
 import (
-	"rls/com"
+	"github.com/amterp/rad/lsp-server/com"
 )
 
 type InitializeParams struct {

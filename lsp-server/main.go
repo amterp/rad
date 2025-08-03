@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"rls/log"
-	"rls/server"
+
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/server"
 )
 
 var StdErr io.Writer = os.Stderr

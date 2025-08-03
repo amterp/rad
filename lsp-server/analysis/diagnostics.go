@@ -1,8 +1,8 @@
 package analysis
 
 import (
-	"rls/log"
-	"rls/lsp"
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/lsp"
 
 	"github.com/amterp/rad/rts/check"
 

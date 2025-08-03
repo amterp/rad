@@ -3,9 +3,10 @@ package server
 import (
 	"encoding/json"
 	"io"
-	"rls/analysis"
-	"rls/log"
-	"rls/lsp"
+
+	"github.com/amterp/rad/lsp-server/analysis"
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/lsp"
 )
 
 type Server struct {

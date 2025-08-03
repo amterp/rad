@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"encoding/json"
 	"io"
-	"rls/com"
-	"rls/log"
-	"rls/lsp"
-	"rls/rpc"
 	"sync"
+
+	"github.com/amterp/rad/lsp-server/com"
+	"github.com/amterp/rad/lsp-server/log"
+	"github.com/amterp/rad/lsp-server/lsp"
+	"github.com/amterp/rad/lsp-server/rpc"
 )
 
 type NotificationHandler func(params json.RawMessage) (err error)
