@@ -5,7 +5,7 @@ go 1.24.1
 toolchain go1.24.2
 
 require (
-	github.com/amterp/rad/rts v0.0.0
+	github.com/amterp/rad/rts v0.0.0-20250729113117-3fc7a92d906c
 	github.com/sanity-io/litter v1.5.8
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	go.uber.org/zap v1.27.0
@@ -20,7 +20,5 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 )
-
-replace github.com/amterp/rad/rts => ../rts
 
 //replace github.com/amterp/tree-sitter-rad => ../../tree-sitter-rad
