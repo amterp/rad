@@ -61,7 +61,10 @@ HI, BOB!
 go install github.com/amterp/rad@latest
 ```
 
-Installs directly from source using the Go toolchain into your Go bin directory. Make sure that it's on your PATH.
+Installs directly from source using the Go (v1.17+) toolchain into your Go bin directory. Make sure that it's on your PATH.
+
+**Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
+For automated updates, use one of the below package managers which support it.
 
 ### macOS (Homebrew)
 
