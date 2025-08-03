@@ -8,7 +8,7 @@ While you can do a lot with in-built Rad functionality, sometimes you'll want to
 
 ## Basic Shell Commands
 
-Shell commands can be written via [strings](./basics.md#string). You can then *invoke* shell commands by prefixing a string with a dollar sign `$`.
+Shell commands can be written via [strings](./basics.md#str). You can then *invoke* shell commands by prefixing a string with a dollar sign `$`.
 
 For example:
 

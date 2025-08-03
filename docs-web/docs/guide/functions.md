@@ -143,6 +143,6 @@ There are a lot of built-in functions. If you just want to see what's available 
 
 ## Next
 
-We've already covered the [Basics of strings](./basics.md#string),
+We've already covered the [Basics of strings](./basics.md#str),
 but there are some more advanced string concepts which are worth covering, such as string interpolation, raw strings, etc.
 We'll cover these in the next section: [Strings (Advanced)](./strings-advanced.md)!
