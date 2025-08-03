@@ -23,7 +23,7 @@ brew install amterp/rad/rad
 
 ### From Source
 
-See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source.
+See [here](https://github.com/amterp/rad/blob/main/CONTRIBUTING.md#setup) for instructions on how to build from source.
 
 ### Checking Installation
 
