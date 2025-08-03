@@ -4,13 +4,26 @@ title: Getting Started
 
 ## Installation
 
-### macOS
+### Go (all platforms)
+
+```shell
+go install github.com/amterp/rad@latest
+```
+
+Installs directly from source using the Go (v1.17+) toolchain into your Go bin directory. Make sure that it's on your PATH.
+
+**Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
+For automated updates, use one of the below package managers which support it.
+
+### macOS (Homebrew)
 
 ```shell
 brew install amterp/rad/rad
 ```
 
-Other than building from source, Rad is not available for other platforms/package managers (yet).
+### From Source
+
+See [here](./CONTRIBUTING.md#setup) for instructions on how to build from source.
 
 ### Checking Installation
 

@@ -57,7 +57,7 @@ HI, BOB!
 
 ### Go (all platforms)
 
-```
+```shell
 go install github.com/amterp/rad@latest
 ```
 
