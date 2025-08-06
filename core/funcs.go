@@ -131,6 +131,7 @@ const (
 	namedArgPrompt         = "prompt"
 	namedArgHeaders        = "headers"
 	namedArgBody           = "body"
+	namedArgJson           = "json"
 	namedArgHint           = "hint"
 	namedArgDefault        = "default"
 	namedArgSecret         = "secret"
@@ -1727,9 +1728,25 @@ func createHttpFunctions() []BuiltInFunc {
 
 				var body *string
 				bodyArg := f.GetArg(namedArgBody)
+				jsonArg := f.GetArg(namedArgJson)
+
+				// Check for mutually exclusive parameters
+				if !bodyArg.IsNull() && !jsonArg.IsNull() {
+					return f.ReturnErrf(rl.ErrMutualExclArgs, "Cannot specify both 'body' and 'json' parameters")
+				}
+
 				if !bodyArg.IsNull() {
-					bodyStr := JsonToString(RadToJsonType(bodyArg))
+					// Use body as-is (raw string)
+					bodyStr := ToPrintableQuoteStr(bodyArg.Val, false)
 					body = &bodyStr
+				} else if !jsonArg.IsNull() {
+					// Convert to JSON and set default Content-Type header, if no headers provided
+					bodyStr := JsonToString(RadToJsonType(jsonArg))
+					body = &bodyStr
+
+					if headersArg.IsNull() {
+						headers["Content-Type"] = []string{"application/json"}
+					}
 				}
 
 				reqDef := NewRequestDef(method, url, headers, body)

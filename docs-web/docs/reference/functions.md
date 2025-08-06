@@ -996,14 +996,21 @@ format.
 - `http_head`, `http_options`, `http_trace`, `http_connect`
 
 ```rad
-http_method(url: str, *, body: any?, headers: map?) -> map
+http_method(url: str, *, body: any?, json: any?, headers: map?) -> map
 ```
 
 **Parameters:**
 
-- `url`: The target URL
-- `body`: Request body (JSON object/array, string, etc.) - optional
-- `headers`: Map of HTTP headers - optional. Values can be strings or lists of strings.
+| Parameter | Type   | Description                                                               |
+|-----------|--------|---------------------------------------------------------------------------|
+| `url`     | `str`  | The target URL                                                            |
+| `body`    | `any?` | Request body content (sent as-is)                                         |
+| `json`    | `any?` | Request body content (JSON-serialized)                                    |
+| `headers` | `map?` | Map of HTTP headers - optional. Values can be strings or lists of strings |
+
+- **Body vs JSON**: The `body` parameter sends content as-is using string representation, while `json` automatically
+  JSON-serializes the content and sets `Content-Type: application/json` header only if no `headers` are provided at all.
+- **Mutually exclusive**: Cannot use both `body` and `json` parameters together - you must choose one or the other.
 
 **Response map contains:**
 
@@ -1021,18 +1028,27 @@ response = http_get("https://api.example.com/users")
 if response.success:
     users = response.body
 
-// POST with JSON body
+// POST with JSON body (automatic serialization and Content-Type header)
 data = {"name": "Alice", "email": "alice@example.com"}
-response = http_post("https://api.example.com/users", body=data)
+response = http_post("https://api.example.com/users", json=data)
+
+// POST with raw body content (sent as-is)
+response = http_post("https://api.example.com/webhook", body="raw text data")
 
 // With custom headers
-headers = {"Authorization": "Bearer token123", "Content-Type": "application/json"}
+headers = {"Authorization": "Bearer token123"}
 response = http_get("https://api.example.com/data", headers=headers)
+
+// JSON with custom headers (Content-Type automatically added)
+response = http_post("https://api.example.com/users", json=data, headers={"Authorization": "Bearer token123"})
 
 // Error handling
 response = http_get("https://invalid-url")
 if not response.success:
     print("Request failed:", response.error)
+
+// Cannot use both body and json together - this will error:
+// response = http_post("url", body="data", json={"key": "value"})  // -> Error
 ```
 
 ## Math
