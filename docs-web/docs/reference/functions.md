@@ -809,6 +809,28 @@ clamp(10, 20, 30) -> 20
 clamp(40, 20, 30) -> 30
 ```
 
+### pow
+
+```rad
+pow(base float|int, exponent float|int) -> float
+```
+
+Raises `base` to the power of `exponent`. Returns the result as a float.
+
+This function is useful for:
+- Exponentiation: `pow(2, 3)` = 8
+- Square roots: `pow(4, 0.5)` = 2  
+- Cube roots: `pow(8, 1/3)` ~= 2
+- Negative exponents: `pow(2, -2)` = 0.25
+
+```
+pow(2, 3)     -> 8
+pow(4, 0.5)   -> 2
+pow(2, -2)    -> 0.25
+pow(-2, 3)    -> -8
+pow(9, 0.5)   -> 3
+```
+
 ## Hashing & Encode/Decode
 
 ### hash

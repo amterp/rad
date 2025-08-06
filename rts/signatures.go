@@ -63,6 +63,7 @@ func init() {
 		newFnSignature(`parse_int(_str: str) -> int|error`),
 		newFnSignature(`parse_float(_str: str) -> float|error`),
 		newFnSignature(`abs(_num: float) -> float`),
+		newFnSignature(`pow(_base: float, _exponent: float) -> float`),
 		newFnSignature(`error(_msg: str) -> error`),
 		newFnSignature(`input(prompt: str = "> ", *, hint: str = "", default: str = "", secret: bool = false) -> error|str`),
 		newFnSignature(`get_path(_path: str) -> { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int }`),

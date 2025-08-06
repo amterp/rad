@@ -74,6 +74,7 @@ const (
 	FUNC_HTTP_TRACE         = "http_trace"
 	FUNC_HTTP_CONNECT       = "http_connect"
 	FUNC_ABS                = "abs"
+	FUNC_POW                = "pow"
 	FUNC_ERROR              = "error"
 	FUNC_GET_PATH           = "get_path"
 	FUNC_FIND_PATHS         = "find_paths"
@@ -644,6 +645,15 @@ func init() {
 					bugIncorrectTypes(FUNC_ABS)
 					panic(UNREACHABLE)
 				}
+			},
+		},
+		{
+			Name: FUNC_POW,
+			Execute: func(f FuncInvocation) RadValue {
+				base := f.GetFloat("_base")
+				exponent := f.GetFloat("_exponent")
+				result := math.Pow(base, exponent)
+				return f.Return(result)
 			},
 		},
 		{
