@@ -4,6 +4,7 @@ repo_url: https://github.com/amterp/rad
 
 theme:
   name: material
+  favicon: assets/favicon.svg
   icon:
     repo: fontawesome/brands/github
     annotation: material/arrow-right-circle
