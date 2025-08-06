@@ -93,7 +93,7 @@ func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 	expected := `Error at L1:11
 
   sleep(10, 20)
-            ^^ Value '20' (int) is not compatible with expected type 'str?'
+            ^^ Too many positional args, remaining args are named-only.
 `
 	assertError(t, 1, expected)
 }
@@ -104,7 +104,8 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 	expected := `Error at L1:7
 
   sleep(true)
-        ^^^^ Value 'true' (bool) is not compatible with expected type 'float|str'
+        ^^^^
+        Value 'true' (bool) is not compatible with expected type 'int|float|str'
 `
 	assertError(t, 1, expected)
 }

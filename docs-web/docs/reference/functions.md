@@ -64,104 +64,99 @@ Lastly, you may also see `number` referenced as a type -- this just means `int |
 
 ### print
 
-Prints the given input. Includes a newline after. Stringifies whatever is given to it.
+Prints zero or more items to stdout, separated by a delimiter.
 
 ```rad
-print(items ...any?, sep: string = " ", end: string = "\n")
+print(*_items: any, *, sep: str = " ", end: str = "\n") -> void
 ```
 
-**Parameters**
-
-| Parameter | Type            | Description                                                                    |
-|-----------|-----------------|--------------------------------------------------------------------------------|
-| `items`   | `...any?`       | Zero or more items to print. If several are given, they are separated by `sep. |
-| `sep`     | `string = " "`  | Delimiter between `items`.                                                     |
-| `end`     | `string = "\n"` | Appended to the output after all `items`.                                      |
-
-**Examples**
-
 ```rad
-print("Hello!")
-print()              // prints a newline
-print([1, 20, 300])  // prints "[ 1, 20, 300 ]"
-
-name = "Alice"
-print("Hello", name) // prints "Hello Alice"
+print("Hello!")                    // -> Hello!
+print()                            // -> (just newline)
+print("Hello", "world")            // -> Hello world
+print(1, 2, 3, sep=", ")           // -> 1, 2, 3
+print("No newline", end="")        // -> No newline
 ```
 
 ### print_err
 
-Behaves like [`print`](#print) but always goes to stderr instead of stdout.
+Behaves like [`print`](#print) but outputs to stderr instead of stdout.
 
 ```rad
-print_err(items ...any?, sep: string = " ", end: string = "\n")
+print_err(*_items: any, *, sep: str = " ", end: str = "\n") -> void
 ```
 
 ### pprint
 
-**Description**:
-
-Pretty prints the given input. Mainly useful for maps so they get printed in a json-style.
+Pretty prints data in JSON format with indentation and colors.
 
 ```rad
-pprint(item any?)
+pprint(_item: any?) -> void
 ```
 
-**Parameters**:
-
-- `input: any?`: Zero or one item to pretty print. If zero, just prints a newline.
-
-**Examples**:
-
-```rad title="Example 1"
-item = { "name": "Alice", age: 30 }
+```rad
+item = { "name": "Alice", "age": 30 }
 pprint(item)
-```
-
-```json title="Example 1 Output"
-{
-  "name": "Alice",
-  "age": 30
-}
+// Output:
+// {
+//   "name": "Alice", 
+//   "age": 30
+// }
 ```
 
 ### debug
 
-Behaves like [`print`](#print) but only prints if debug is enabled via the `--DEBUG` flag.
+Behaves like [`print`](#print) but only outputs when debug mode is enabled via `--debug` flag.
 
 ```rad
-debug(items ...any?, sep: string = " ", end: string = "\n")
+debug(*_items: any, *, sep: str = " ", end: str = "\n") -> void
 ```
 
 ## Misc
 
 ### sleep
 
+Pauses execution for the specified duration.
+
 ```rad
-sleep(seconds int)
-sleep(seconds float)
-sleep(duration string)  // e.g. sleep("2h45m")
+sleep(_duration: int|float|str, *, title: str?) -> void
 ```
 
-Allows for a named arg `title=str".
+Integer and float values are treated as seconds. String values support Go duration format like "2h45m", "1.5s", "500ms".
+If `title` is provided, it's printed before sleeping.
 
-See the following table for valid `duration` string formats:
+**Duration string suffixes:**
 
-| Suffix   | Description  |
-|----------|--------------|
-| h        | Hours        |
-| m        | Minutes      |
-| s        | Seconds      |
-| ms       | Milliseconds |
-| us or µs | Microseconds |
-| ns       | Nanoseconds  |
+| Suffix       | Description  |
+|--------------|--------------|
+| `h`          | Hours        |
+| `m`          | Minutes      |
+| `s`          | Seconds      |
+| `ms`         | Milliseconds |
+| `us` or `µs` | Microseconds |
+| `ns`         | Nanoseconds  |
+
+**Examples:**
+
+```rad
+sleep(2.5)              // -> Sleep for 2.5 seconds
+sleep("1h30m")          // -> Sleep for 1 hour 30 minutes  
+sleep("500ms")          // -> Sleep for 500 milliseconds
+sleep(5, title="Waiting...") // -> Prints "Waiting..." then sleeps 5 seconds
+```
 
 ### len
 
+Returns the length of a string, list, or map.
+
 ```rad
-len(input string) -> int
-len(input any[]) -> int
-len(input map) -> int
+len(input: str|list|map) -> int
+```
+
+```rad
+len("hello")        // -> 5
+len([1, 2, 3, 4])   // -> 4
+len({"a": 1, "b": 2}) // -> 2
 ```
 
 ### range
@@ -169,21 +164,33 @@ len(input map) -> int
 Generates a list of numbers in a specified range. Useful in for loops.
 
 ```rad
-range(end number) -> [number]
-range(start number, end number, step: number = 1) -> [number]
+range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> list[float|int]
 ```
 
+Single argument generates 0 to `_arg1` (exclusive). Two arguments generate `_arg1` to `_arg2` (exclusive). Step cannot
+be zero. Returns float list if any argument is float, otherwise int list.
+
+**Examples:**
+
 ```rad
-range(5)         -> [0, 1, 2, 3, 4]
-range(5.5)       -> [0, 1, 2, 3, 4, 5]
-range(0.5, 5)    -> [0.5, 1.5, 2.5, 3.5, 4.5]
-range(10, 5, -2) -> [10, 8, 6]
+range(5)            // -> [0, 1, 2, 3, 4]
+range(2, 5)         // -> [2, 3, 4]
+range(0.5, 3)       // -> [0.5, 1.5, 2.5]
+range(10, 5, -2)    // -> [10, 8, 6]
 ```
 
 ### join
 
+Joins a list into a string with separator, prefix, and suffix.
+
 ```rad
-join(input list, joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -> string
+join(_list: list, *, sep: str = "", prefix: str = "", suffix: str = "") -> str
+```
+
+```rad
+join([1, 2, 3], sep=", ")           // -> "1, 2, 3"
+join(["a", "b"], prefix="[", suffix="]")  // -> "[ab]"
+join(["x", "y", "z"], sep="-", prefix="(", suffix=")")  // -> "(x-y-z)"
 ```
 
 ### zip
@@ -191,817 +198,1323 @@ join(input list, joiner string, prefix string|int|float|bool?, suffix string|int
 Combines multiple lists into a list of lists, pairing elements by index.
 
 ```rad
-zip(lists... list, strict bool?, fill any?)
+zip(*lists: list, *, strict: bool = false, fill: any?) -> list[list]|error
 ```
 
-If lists are of unequal length:
+**Parameters:**
 
-- By default, truncates to the shortest.
-- If `fill` is provided, extends shorter lists to the longest, using the fill value.
-- If `strict=true`, raises an error if lengths differ.
-    - `strict` cannot be true while `fill` is defined.
+| Parameter | Type           | Description                              |
+|-----------|----------------|------------------------------------------|
+| `*lists`  | `list`         | Variable number of lists to zip together |
+| `strict`  | `bool = false` | If true, error on different list lengths |
+| `fill`    | `any?`         | Value to fill shorter lists (optional)   |
 
-Examples:
+- By default, truncates to the shortest list length
+- Cannot use `strict=true` with `fill` parameter (mutually exclusive)
+- Returns error if `strict=true` and lists have different lengths
 
-```
-zip([1, 2, 3], ["a", "b", "c"])          // [[1, "a"], [2, "b"], [3, "c"]]
-zip([1, 2, 3, 4], ["a", "b"])            // [[1, "a"], [2, "b"]]
-zip([1, 2, 3], ["a", "b"], strict=true)  // Error: Lists must have the same length
-zip([1, 2, 3, 4], ["a", "b"], fill="-")  // [[1, "a"], [2, "b"], [3, "-"], [4, "-"]]
+**Examples:**
+
+```rad
+// Basic usage
+zip([1, 2, 3], ["a", "b", "c"])           // -> [[1, "a"], [2, "b"], [3, "c"]]
+zip([1, 2, 3, 4], ["a", "b"])             // -> [[1, "a"], [2, "b"]]
+
+// With fill value for unequal lengths
+zip([1, 2, 3, 4], ["a", "b"], fill="-")   // -> [[1, "a"], [2, "b"], [3, "-"], [4, "-"]]
+
+// Strict mode (errors on length mismatch)  
+zip([1, 2, 3], ["a", "b"], strict=true)   // -> Error: Lists must have the same length
 ```
 
 ### unique
 
+Returns a list with duplicate values removed, preserving first occurrence order.
+
 ```rad
-unique(input any[]) -> any[]
+unique(_list: list[any]) -> list[any]
 ```
 
 ```rad
-unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
+unique([2, 1, 2, 3, 1, 3, 4])  // -> [2, 1, 3, 4]
+unique(["a", "b", "a", "c"])    // -> ["a", "b", "c"]
 ```
 
 ### sort
 
-```rad
-sort(input any[], reverse=bool?)
-```
+Sorts a list or string, optionally with additional lists/strings for stable multi-key sorting.
 
 ```rad
-sort([3, 4, 2, 1])                 // [1, 2, 3, 4]
-sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
-sort([3, 4, "2", 1, true])         // [true, 1, 3, 4, "2"]
+sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -> list|str
+```
+
+Can sort mixed types in lists. Supports multi-key sorting when additional lists are provided.
+
+**Examples:**
+
+```rad
+sort([3, 4, 2, 1])                    // -> [1, 2, 3, 4]
+sort([3, 4, 2, 1], reverse=true)      // -> [4, 3, 2, 1]
+sort([3, 4, "2", 1, true])            // -> [true, 1, 3, 4, "2"]
+sort("hello")                         // -> "ehllo"
 ```
 
 ### type_of
 
-Returns the type of an input variable as a string.
+Returns the type of a value as a string.
 
 ```rad
-type_of(variable any)
+type_of(_var: any) -> str
 ```
 
 ```rad
-type_of("hi")  // string
-type_of([2])   // list
+type_of("hi")    // -> "str"
+type_of([2])     // -> "list" 
+type_of(42)      // -> "int"
+type_of(3.14)    // -> "float"
+type_of({"a": 1}) // -> "map"
 ```
 
 ### str
 
-Converts any input to a string.
+Converts any value to a string representation.
 
+```rad
+str(_var: any) -> str
 ```
-str(input: any) -> string
+
+```rad
+str(42)        // -> "42"
+str(3.14)      // -> "3.14"
+str([1, 2])    // -> "[1, 2]"
+str(true)      // -> "true"
 ```
 
 ### int
 
-Try to convert an input to an int.
+Converts a value to an integer. Does not work on strings - use [`parse_int`](#parse_int) for string parsing.
 
-Does not work on strings. If you want to parse a string to an int, use [`parse_int`](#parse_int).
-
+```rad
+int(_var: any) -> int|error
 ```
-int(input: any) -> int
+
+```rad
+int(3.14)     // -> 3
+int(true)     // -> 1
+int(false)    // -> 0
+int("42")     // -> Error: cannot convert string
 ```
 
 ### float
 
-Try to convert an input to a float.
+Converts a value to a float. Does not work on strings - use [`parse_float`](#parse_float) for string parsing.
 
-Does not work on strings. If you want to parse a string to a float, use [`parse_float`](#parse_float).
-
+```rad
+float(_var: any) -> float|error
 ```
-str(input: any) -> string
+
+```rad
+float(42)      // -> 42.0
+float(true)    // -> 1.0
+float(false)   // -> 0.0  
+float("3.14")  // -> Error: cannot convert string
 ```
 
 ### is_defined
 
-Checks if a variable exists.
+Checks if a variable with the given name exists in the current scope.
 
+```rad
+is_defined(_var: str) -> bool
 ```
-is_defined(var: string) -> bool
+
+```rad
+name = "Alice"
+is_defined("name")     // -> true
+is_defined("age")      // -> false
 ```
 
 ### map
 
-Applies a given lambda to every element of a list or entry of a map.
+Applies a function to every element of a list or entry of a map.
 
+```rad
+map(_coll: list|map, _fn: fn(any) -> any | fn(any, any) -> any) -> list|map
 ```
-map(list, fn(v) -> any) -> list[any]
-map(map, fn(k, v) -> any) -> list[any]
+
+For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
+
+**Examples:**
+
+```rad
+map([1, 2, 3], fn(x) x * 2)              // -> [2, 4, 6]
+map({"a": 1, "b": 2}, fn(k, v) v * 10)   // -> {"a": 10, "b": 20}
 ```
 
 ### filter
 
-Applies a given lambda predicate to every element of a list or entry of a map. Keeps only elements that return true.
+Applies a predicate function to filter elements of a list or map. Keeps only elements where the function returns true.
 
+```rad
+filter(_coll: list|map, _fn: fn(any) -> bool | fn(any, any) -> bool) -> list|map
 ```
-filter(list, fn(v) -> bool) -> list
-filter(map, fn(k, v) -> bool) -> map
+
+For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
+
+**Examples:**
+
+```rad
+filter([1, 2, 3, 4], fn(x) x % 2 == 0)      // -> [2, 4]
+filter({"a": 1, "b": 2}, fn(k, v) v > 1)    // -> {"b": 2}
 ```
 
 ### load
 
-Loads a value into a map. Returns the mapped value.
+Loads a value into a map using lazy evaluation. If key exists, returns cached value; otherwise runs loader function.
 
+```rad
+load(_map: map, _key: any, _loader: fn() -> any) -> any|error
+load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false) -> any|error
+load(_map: map, _key: any, _loader: fn() -> any, *, override: any?) -> any|error
 ```
-load(map, key, loader: fn() -> any, reload: bool?, override: any?) -> any
+
+**Parameters:**
+
+| Parameter  | Type           | Description                              |
+|------------|----------------|------------------------------------------|
+| `_map`     | `map`          | Map to store/retrieve cached values      |
+| `_key`     | `any`          | Key to lookup in the map                 |
+| `_loader`  | `fn() -> any`  | Function to call if key doesn't exist    |
+| `reload`   | `bool = false` | Force reload even if key exists          |
+| `override` | `any?`         | Use this value instead of calling loader |
+
+If key doesn't exist, `_loader` is called and result is cached. Cannot use `reload=true` with `override` (mutually
+exclusive).
+
+**Examples:**
+
+```rad
+cache = {}
+load(cache, "data", fn() expensive_calculation())    // -> Runs loader, caches result
+load(cache, "data", fn() expensive_calculation())    // -> Returns cached value
+
+// Force reload
+load(cache, "data", fn() new_calculation(), reload=true)
+
+// Override with specific value  
+load(cache, "data", fn() ignored(), override="forced")
 ```
-
-- Examples:
-    - `load(m, k, loader)`
-        - If `m` does not contain `k`, `loader` is run to calculate a value. This value is put into the map under `k`
-          and returned.
-        - If `m` contains `k`, `loader` is ignored, and the existing value is returned.
-    - `load(m, k, loader, reload=true)`
-        - Regardless of if `m` already contains `k`, `loader` is invoked and its value is put into the map for `k` and
-          returned.
-    - `load(m, k, loader, override=myvalue)`
-        - Regardless of if `m` already contains `k`, if `myvalue` is a truthy value, then it is put into `m` under `k`
-          and returned and `loader` is ignored.
-
-`reload` cannot be true with `override` is truthy, that will return an error.
-
-[//]: # (TODO Update that 'truthy' doc when we add nulls and its only null that causes that)
 
 ## Input
 
 ### input
 
-Get a line of text input from the user.
+Gets a line of text input from the user with optional prompt, default, hint, and secret mode.
 
 ```rad
-input(prompt string?, default=string?, hint=string?, secret=bool?) -> string
+input(prompt: str = "> ") -> str|error
+input(prompt: str = "> ", *, hint: str = "", default: str = "", secret: bool = false) -> str|error
 ```
 
-**Parameters**
+**Parameters:**
 
-| Parameter | Type     | Description                                                                   |
-|-----------|----------|-------------------------------------------------------------------------------|
-| `prompt`  | `string` | The text prompt to display to the user.                                       |
-| `default` | `string` | Default value if the user doesn't enter anything.                             |
-| `hint`    | `string` | Placeholder text shown in the input field. Has no impact if `secret` enabled. |
-| `secret`  | `bool`   | If true, hides the input (useful for passwords).                              |
+| Parameter | Type           | Description                                  |
+|-----------|----------------|----------------------------------------------|
+| `prompt`  | `str = "> "`   | The text prompt to display to the user       |
+| `hint`    | `str = ""`     | Placeholder text shown in input field        |
+| `default` | `str = ""`     | Default value if user doesn't enter anything |
+| `secret`  | `bool = false` | If true, hides input (useful for passwords)  |
 
-**Return Values**
+If `secret` is true, input is hidden (useful for passwords). The `hint` parameter has no effect when `secret` is
+enabled.
 
-Returns the user's input as a string. If the user doesn't enter anything, returns the default value.
-
-**Examples**
+**Examples:**
 
 ```rad
 // Basic input
-name = input("What's your name? ")
+name = input("What's your name? ")                    // -> Prompts and waits for input
 
 // With default value
-color = input("Favorite color? ", default="blue")
+color = input("Favorite color? ", default="blue")     // -> Returns "blue" if user presses enter
 
-// With hint
-email = input("Email address: ", hint="example@domain.com")
+// With hint text
+email = input("Email: ", hint="user@example.com")     // -> Shows placeholder text
 
-// Password input
-password = input("Enter password: ", secret=true)
+// Hidden input for passwords
+password = input("Password: ", secret=true)           // -> Hides typed characters
 ```
 
 ### confirm
 
-Get a boolean confirmation from the user.
+Gets a boolean confirmation from the user (y/n prompt).
 
 ```rad
-confirm() -> bool
-confirm(prompt string) -> bool
+confirm(prompt: str = "Confirm? [y/n] > ") -> bool|error
 ```
 
-```rad title="Example 1"
-if confirm():
+```rad
+if confirm():                        // -> Uses default "Confirm? [y/n] > " prompt
     print("Confirmed!")
-else:
-    print("Not confirmed!")
-```
 
-```title="Example 1 Output"
-Confirm? [y/n] y
-Confirmed!
-```
-
-```rad title="Example 2"
-if confirm("Are you sure? > "):
-    print("You're sure!")
-else:
-    print("Unsure!")
-```
-
-```title="Example 2 Output"
-Are you sure? > n
-Unsure!
+if confirm("Delete file? [y/n] "):   // -> Custom prompt
+    print("File deleted")
 ```
 
 ## Parsing
 
 ### parse_int
 
+Parses a string to an integer.
+
 ```rad
-parse_int(input str) -> int, err
+parse_int(_str: str) -> int|error
+```
+
+```rad
+parse_int("42")    // -> 42
+parse_int("3.14")  // -> Error: invalid syntax
+parse_int("abc")   // -> Error: invalid syntax
 ```
 
 ### parse_float
 
+Parses a string to a float.
+
 ```rad
-parse_float(input str) -> float, err
+parse_float(_str: str) -> float|error
+```
+
+```rad
+parse_float("3.14")  // -> 3.14
+parse_float("42")    // -> 42.0
+parse_float("abc")   // -> Error: invalid syntax
 ```
 
 ### parse_json
 
+Parses a JSON string into Rad data structures.
+
 ```rad
-parse_json(input string) -> any
+parse_json(_str: str) -> any|error
+```
+
+```rad
+parse_json('{"name": "Alice", "age": 30}')  // -> {"name": "Alice", "age": 30}
+parse_json('[1, 2, 3]')                     // -> [1, 2, 3]
+parse_json('invalid json')                  // -> Error: invalid JSON
 ```
 
 ## Text
 
 ### upper
 
-- Preserves string color attributes.
+Converts a string to uppercase. Preserves color attributes.
 
 ```rad
-upper(input any) -> string
+upper(_val: str) -> str
+```
+
+```rad
+upper("hello")          // -> "HELLO"
+upper("Hello World")    // -> "HELLO WORLD"
 ```
 
 ### lower
 
-- Preserves string color attributes.
+Converts a string to lowercase. Preserves color attributes.
 
 ```rad
-lower(input any) -> string
+lower(_val: str) -> str
+```
+
+```rad
+lower("HELLO")          // -> "hello"
+lower("Hello World")    // -> "hello world"
 ```
 
 ### replace
 
-- Does *not* preserve string color attributes.
-
-**Parameters**:
-
-- `input: string`
-- `old: string`: Regex pattern of what text to replace.
-- `new: string`: Regex pattern of what to replace matches *with*.
+Replaces text using regex patterns. Does not preserve string color attributes.
 
 ```rad
-replace(input string, old string, new string) -> string
+replace(_original: str, _find: str, _replace: str) -> str
 ```
 
-**Examples**:
+The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
 
-```rad title="Example 1"
-input = "Name: Charlie Brown"
-replace(input, "Charlie (.*)", "Alice $1") 
-```
+**Examples:**
 
-```rad title="Example 1 Output"
-"Alice Brown" 
+```rad
+replace("hello world", "world", "Rad")        // -> "hello Rad"
+replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1")  // -> "Name: Alice Brown"
+replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
 ```
 
 ### starts_with
 
+Checks if a string starts with a given substring.
+
 ```rad
-starts_with(input string, substring string) -> bool
+starts_with(_val: str, _start: str) -> bool
+```
+
+```rad
+starts_with("hello world", "hello")  // -> true
+starts_with("hello world", "world")  // -> false
 ```
 
 ### ends_with
 
+Checks if a string ends with a given substring.
+
 ```rad
-ends_with(input string, substring string) -> bool
+ends_with(_val: str, _end: str) -> bool
+```
+
+```rad
+ends_with("hello world", "world")    // -> true
+ends_with("hello world", "hello")    // -> false
 ```
 
 ### truncate
 
+Truncates a string to a maximum length. Returns error if length is negative.
+
 ```rad
-truncate(input string, length int) -> string
+truncate(_str: str, _len: int) -> str|error
+```
+
+```rad
+truncate("hello world", 5)   // -> "hello"
+truncate("short", 10)        // -> "short"
+truncate("test", -1)         // -> Error: Requires a non-negative int
 ```
 
 ### split
 
-- Does *not* preserve string color attributes.
+Splits a string using regex pattern as delimiter. Does not preserve string color attributes.
 
 ```rad
-split(input string, delimiter_regex string) -> string[]
+split(_val: str, _sep: str) -> list[str]
+```
+
+The `_sep` parameter is treated as a regex pattern if valid, otherwise as literal string.
+
+```rad
+split("a,b,c", ",")            // -> ["a", "b", "c"]
+split("word1 word2", "\\s+")   // -> ["word1", "word2"]
+split("abc123def", "\\d+")     // -> ["abc", "def"]
 ```
 
 ### count
 
-```
-count(input string, substring string) -> int
+Counts the number of non-overlapping instances of substring in string.
+
+```rad
+count(_str: str, _substr: str) -> int
 ```
 
-Counts the number of non-overlapping instances of `substring` in `input`.
+```rad
+count("hello world", "l")     // -> 3
+count("banana", "na")         // -> 2
+count("test", "xyz")          // -> 0
+```
 
 ### trim
 
-```
-trim(text string, chars string = " \t\n") -> string
+Trims characters from both the start and end of a string.
+
+```rad
+trim(_subject: str, _to_trim: str = " \t\n") -> str
 ```
 
-Trims the start and end of an input string.
-If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.
+```rad
+trim("  hello  ")            // -> "hello"
+trim("***hello***", "*")     // -> "hello"
+trim("abcHELLOabc", "abc")   // -> "HELLO"
+```
 
 ### trim_prefix
 
-```
-trim_prefix(text string, chars string = " \t\n") -> string
+Trims characters from only the start of a string.
+
+```rad
+trim_prefix(_subject: str, _to_trim: str = " \t\n") -> str
 ```
 
-Trims the start of an input string.
-If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
+```rad
+trim_prefix("  hello  ")         // -> "hello  "
+trim_prefix("***hello***", "*")  // -> "hello***"
+```
 
 ### trim_suffix
 
-```
-trim_suffix(text string, chars string = " \t\n") -> string
+Trims characters from only the end of a string.
+
+```rad
+trim_suffix(_subject: str, _to_trim: str = " \t\n") -> str
 ```
 
-Trims the end of an input string.
-If `chars` is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.
+```rad
+trim_suffix("  hello  ")         // -> "  hello"
+trim_suffix("***hello***", "*")  // -> "***hello"
+```
+
+### reverse
+
+Reverses a string or list.
+
+```rad
+reverse(_val: str|list) -> str|list
+```
+
+```rad
+reverse("hello")           // -> "olleh"
+reverse([1, 2, 3, 4])      // -> [4, 3, 2, 1]
+reverse("racecar")         // -> "racecar"
+```
+
+### hyperlink
+
+Creates a clickable hyperlink in supporting terminals.
+
+```rad
+hyperlink(_val: any, _link: str) -> str
+```
+
+Converts text into a terminal hyperlink that can be clicked in supported terminals.
+
+```rad
+hyperlink("Visit Google", "https://google.com")    // -> Clickable "Visit Google" link
+hyperlink("localhost", "http://localhost:3000")    // -> Clickable "localhost" link
+hyperlink(42, "https://example.com")               // -> Clickable "42" link
+```
 
 ### Colors & Attributes
 
-Rad offers several functions to format text, including colors and modifiers like bold, italics, etc.
-As an example, let's look at the `red` function:
+Rad offers several functions to format text with colors and style attributes. All functions follow the same pattern:
 
+```rad
+color_or_style(_item: any) -> str
 ```
-red(string) -> string  // output string will be red
+
+```rad
+red("Hello")           // -> "Hello" (in red)
+blue(42)               // -> "42" (in blue) 
+bold("Important")      // -> "Important" (in bold)
 ```
 
-Complete list:
+**Available colors:**
 
-- `plain`
-- `black`
-- `red`
-- `green`
-- `yellow`
-- `blue`
-- `magenta`
-- `cyan`
-- `white`
-- `orange`
-- `pink`
-- `bold`
-- `italic`
-- `underline`
+- `plain`, `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `orange`, `pink`
+
+**Available style attributes:**
+
+- `bold`, `italic`, `underline`
 
 ### color_rgb
 
-Apply RGB coloring to some input text. Not all terminals support this.
+Applies RGB coloring to input text. RGB values must be in range [0, 255]. Not all terminals support this.
 
+```rad
+color_rgb(_val: any, *, red: int, green: int, blue: int) -> str|error
 ```
-color_rgb(input: any, red: int, green: int, blue: int) -> string
+
+**Parameters:**
+
+| Parameter | Type  | Description             |
+|-----------|-------|-------------------------|
+| `_val`    | `any` | Value to apply color to |
+| `red`     | `int` | Red component (0-255)   |
+| `green`   | `int` | Green component (0-255) |
+| `blue`    | `int` | Blue component (0-255)  |
+
+RGB values must be in range [0, 255]. Not all terminals support this.
+
+```rad
+color_rgb("Hello", red=255, green=0, blue=0)     // -> "Hello" (in bright red)
+color_rgb(42, red=0, green=255, blue=128)        // -> "42" (in green-cyan)
+color_rgb("test", red=300, green=0, blue=0)      // -> Error: RGB values must be [0, 255]
 ```
 
 ### colorize
 
-Given some universe of possible, enumerable values, and a value from that list of values,
-color the given value with some RGB color assigned to it.
-The same value will always be given the same color, given the same list of possible values.
+Assigns consistent colors to values from a set of possible values. The same value always gets the same color within the
+same set.
 
-Can use to quickly assign best-effort 'unique' colors to values in an enumerable set. Nice for coloring tables, etc.
-
-```
-colorize(value: any, possibleValues: list[any]) -> string
+```rad
+colorize(_val: str, _enum: str[], *, skip_if_single: bool = false) -> str
 ```
 
-Example demonstrating use in a `display` block:
+**Parameters:**
 
-```
+| Parameter        | Type           | Description                                    |
+|------------------|----------------|------------------------------------------------|
+| `_val`           | `str`          | Value to colorize                              |
+| `_enum`          | `str[]`        | Set of possible values for consistent coloring |
+| `skip_if_single` | `bool = false` | Don't colorize if only one value in set        |
+
+Useful for automatically coloring table data or distinguishing values in lists.
+
+**Examples:**
+
+```rad
+names = ["Alice", "Bob", "Charlie"]
+colorize("Alice", names)     // -> "Alice" (in consistent color)
+colorize("Bob", names)       // -> "Bob" (in different consistent color)
+
+// In display blocks
 names = ["Alice", "Bob", "Charlie", "David"]
 display:
     fields names
     names:
-        map fn(n) n.colorize(names)
+        map fn(n) colorize(n, names)
 ```
 
 ## Maps
 
 ### keys
 
-Returns all keys from an input map as a list.
+Returns all keys from a map as a list.
 
 ```rad
-keys(input: map) -> any[]
+keys(_map: map) -> list[any]
+```
+
+```rad
+keys({"a": 1, "b": 2, "c": 3})  // -> ["a", "b", "c"]
+keys({})                        // -> []
 ```
 
 ### values
 
-Returns all values from an input map as a list.
+Returns all values from a map as a list.
 
 ```rad
-values(input: map) -> any[]
+values(_map: map) -> list[any]
+```
+
+```rad
+values({"a": 1, "b": 2, "c": 3})  // -> [1, 2, 3]
+values({})                         // -> []
 ```
 
 ### get_default
 
-Gets the value for the given key in the given map, if the key is in the map. Otherwise, returns the supplied default.
+Gets the value for a key in a map, or returns the default value if the key doesn't exist.
 
 ```rad
-get_default(input: map, key: any, default: any) -> any
+get_default(_map: map, key: any, default: any) -> any
+```
+
+```rad
+data = {"name": "Alice", "age": 30}
+get_default(data, "name", "Unknown")     // -> "Alice"
+get_default(data, "city", "Unknown")     // -> "Unknown"
+get_default(data, "age", 0)              // -> 30
 ```
 
 ## Random
 
 ### rand
 
+Returns a random float between 0.0 (inclusive) and 1.0 (exclusive).
+
 ```rad
 rand() -> float
 ```
 
+```rad
+rand()     // -> 0.7394832
+rand()     // -> 0.2847293
+```
+
 ### rand_int
 
+Returns a random integer in a specified range.
+
 ```rad
-rand_int(max int) -> int
-rand_int(min int, max int) -> int
+rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -> int
+```
+
+With one argument, returns random int from 0 to `_arg1` (exclusive). With two arguments, returns random int from `_arg1`
+to `_arg2` (exclusive). Min must be less than max.
+
+```rad
+rand_int(10)        // -> Random int from 0-9
+rand_int(5, 15)     // -> Random int from 5-14
+rand_int(10, 5)     // -> Error: min (10) must be less than max (5)
 ```
 
 ### seed_random
 
-Seed the random number generator used by [rand](#rand) and [rand_int](#rand_int).
+Seeds the random number generator used by [`rand`](#rand) and [`rand_int`](#rand_int).
 
 ```rad
-seed_random(seed: int)
+seed_random(_seed: int) -> void
+```
+
+```rad
+seed_random(42)
+rand()              // -> Same sequence every time with seed 42
+rand_int(10)        // -> Same sequence every time with seed 42
 ```
 
 ### uuid_v4
 
-Generate a random V4 UUID.
+Generates a random V4 UUID.
 
 ```rad
-uuid_v4() -> string
+uuid_v4() -> str
+```
+
+```rad
+uuid_v4()  // -> "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 ```
 
 ### uuid_v7
 
-Generate a random V7 UUID.
+Generates a random V7 UUID (time-ordered).
 
 ```rad
-uuid_v7() -> string
+uuid_v7() -> str
+```
+
+```rad
+uuid_v7()  // -> "01234567-89ab-7def-8123-456789abcdef"
 ```
 
 ### gen_fid
 
-Generate a random [flex ID](https://github.com/amterp/flexid) (fid).
+Generates a random [flex ID](https://github.com/amterp/flexid) (fid) - a time-ordered, URL-safe identifier.
 
 ```rad
-gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -> string
+gen_fid() -> str|error
+gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str|error
 ```
 
-`alphabet` defaults to base-62 (`[0-9] [A-Z] [a-z]`).
+**Parameters:**
+
+| Parameter          | Type                       | Description                            |
+|--------------------|----------------------------|----------------------------------------|
+| `alphabet`         | `str? = "[0-9][A-Z][a-z]"` | Characters to use (base-62 by default) |
+| `tick_size_ms`     | `int? = 100`               | Time precision in milliseconds         |
+| `num_random_chars` | `int? = 5`                 | Number of random characters to append  |
+
+Defaults: `alphabet` is base-62 (`[0-9][A-Z][a-z]`), `tick_size_ms` is 100ms, `num_random_chars` is 5.
+
+```rad
+gen_fid()                                    // -> "1a2b3c4d5e"
+gen_fid(alphabet="0123456789")               // -> "1234567890"
+gen_fid(num_random_chars=3)                  // -> "1a2b3c"
+```
 
 ## Picking
 
 ### pick
 
+Presents an interactive menu for selecting from a list of options.
+
 ```rad
-pick(options string[], filter string?) -> string
+pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = "Pick an option") -> str
 ```
 
-Named args:
+Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.
 
-- `prompt`
+```rad
+pick(["apple", "banana", "cherry"])           // -> Interactive menu
+pick(["red", "green", "blue"], "r")           // -> Pre-filtered to "red", "green"
+pick(["one", "two", "three"], prompt="Choose:")  // -> Custom prompt
+```
 
 ### pick_kv
 
+Presents an interactive menu showing keys but returns corresponding values.
+
 ```rad
-pick_kv(keys string[], values string[], filter string?) -> string
+pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = "Pick an option") -> any
 ```
 
-Named args:
+Displays keys in the menu but returns the value at the same index when selected.
 
-- `prompt`
+```rad
+names = ["Alice", "Bob", "Charlie"]
+ages = [25, 30, 35]
+pick_kv(names, ages)                    // -> Shows names, returns age
+pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])  // -> Shows colors, returns hex
+```
 
 ### pick_from_resource
 
+Loads options from a resource file and presents an interactive menu.
+
 ```rad
-pick_from_resource(resource_path string, filter string?) -> any...
+pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any
+```
+
+Loads data from a JSON/YAML file and presents it as selectable options. Returns the selected item(s).
+
+```rad
+pick_from_resource("servers.json")                    // -> Menu from file
+pick_from_resource("configs.yaml", "prod")            // -> Pre-filtered options
+pick_from_resource("data.json", prompt="Select:")     // -> Custom prompt
 ```
 
 ## HTTP
 
-Rad offers a function for each of the 9 [HTTP method types](https://en.wikipedia.org/wiki/HTTP#Request_methods).
-Respectively:
+Rad provides functions for all HTTP methods. All functions have identical signatures and return the same response
+format.
 
-- `http_get`
-- `http_post`
-- `http_put`
-- `http_patch`
-- `http_delete`
-- `http_head`
-- `http_options`
-- `http_trace`
-- `http_connect`
+### HTTP Functions
 
-Their inputs and outputs are the same - the only difference between them is the HTTP method in the request.
-We'll use `http_post` as an example.
+**Available methods:**
+
+- `http_get`, `http_post`, `http_put`, `http_patch`, `http_delete`
+- `http_head`, `http_options`, `http_trace`, `http_connect`
 
 ```rad
-http_post(url string) -> map
-http_post(url string, body=string|map, headers=map) -> map
+http_method(url: str, *, body: any?, headers: map?) -> map
 ```
 
-Keys in the `headers` map must be strings, and values may be either strings or lists of strings.
+**Parameters:**
 
-The **output** map contains the following entries (`?` signifies it may not be present, depending on the result):
+- `url`: The target URL
+- `body`: Request body (JSON object/array, string, etc.) - optional
+- `headers`: Map of HTTP headers - optional. Values can be strings or lists of strings.
 
-```
-"success" -> bool
-"duration_seconds" -> float
-"status_code"? -> int
-"body"? -> any
-"error"? -> string
+**Response map contains:**
+
+- `success: bool` - Whether request succeeded
+- `duration_seconds: float` - Request duration
+- `status_code?: int` - HTTP status code (if response received)
+- `body?: any` - Response body parsed as JSON if possible (if present)
+- `error?: str` - Error message (if request failed)
+
+**Examples:**
+
+```rad
+// Simple GET request
+response = http_get("https://api.example.com/users")
+if response.success:
+    users = response.body
+
+// POST with JSON body
+data = {"name": "Alice", "email": "alice@example.com"}
+response = http_post("https://api.example.com/users", body=data)
+
+// With custom headers
+headers = {"Authorization": "Bearer token123", "Content-Type": "application/json"}
+response = http_get("https://api.example.com/data", headers=headers)
+
+// Error handling
+response = http_get("https://invalid-url")
+if not response.success:
+    print("Request failed:", response.error)
 ```
 
 ## Math
 
 ### abs
 
+Returns the absolute value of a number.
+
 ```rad
-abs(int) -> int
-abs(float) -> float
+abs(_num: int|float) -> int|float
+```
+
+```rad
+abs(-5)      // -> 5
+abs(3.14)    // -> 3.14
+abs(-2.7)    // -> 2.7
 ```
 
 ### sum
 
+Sums all numbers in a list.
+
 ```rad
-sum(list[number]) -> float
+sum(_nums: list[float]) -> float|error
 ```
 
-Sums the input list of numbers to a resulting float.
+```rad
+sum([1, 2, 3, 4])        // -> 10.0
+sum([1.5, 2.5, 3.0])     // -> 7.0
+sum([])                  // -> 0.0
+sum([1, "text", 3])      // -> Error: requires list of numbers
+```
 
 ### round
 
+Rounds a number to the specified decimal precision.
+
 ```rad
-round(number float|int, precision int = 0) -> float
+round(_num: float, _decimals: int = 0) -> int|float|error
 ```
 
-Rounds the input number to the specified precision.
-If `precision` is unspecified it defaults to 0 and rounds to the nearest integer.
+**Parameters:**
+
+| Parameter   | Type      | Description                                     |
+|-------------|-----------|-------------------------------------------------|
+| `_num`      | `float`   | Number to round                                 |
+| `_decimals` | `int = 0` | Number of decimal places (must be non-negative) |
+
+With precision 0, returns an integer. With precision > 0, returns a float. Precision must be non-negative.
+
+```rad
+round(3.14159)           // -> 3 (integer)
+round(3.14159, 2)        // -> 3.14 (float)
+round(2.7)               // -> 3 (integer)
+round(3.14, -1)          // -> Error: precision must be non-negative
+```
 
 ### floor
 
+Rounds a number down to the next integer.
+
 ```rad
-floor(num float|int) -> float
+floor(_num: float) -> int
 ```
 
-Rounds the given input down to the next integer.
-
-```
-floor(1.89) -> 1
+```rad
+floor(1.89)    // -> 1
+floor(-1.2)    // -> -2
+floor(5.0)     // -> 5
 ```
 
 ### ceil
 
+Rounds a number up to the next integer.
+
 ```rad
-ceil(num float|int) -> float
+ceil(_num: float) -> int
 ```
 
-Rounds the given input up to the next integer.
-
-```
-ceil(1.21) -> 2
+```rad
+ceil(1.21)     // -> 2
+ceil(-1.8)     // -> -1
+ceil(5.0)      // -> 5
 ```
 
 ### min
 
+Returns the minimum value from a list of numbers.
+
 ```rad
-min(nums list[float|num]) -> float
+min(_nums: list[float]) -> float|error
 ```
 
-Returns the minimum number in the provided list.
-
-```
-min([1, 2, 3, 4]) -> 1
+```rad
+min([1, 2, 3, 4])        // -> 1.0
+min([5.5, 2.1, 8.9])     // -> 2.1
+min([])                  // -> Error: cannot find minimum of empty list
+min([1, "text"])         // -> Error: requires list of numbers
 ```
 
 ### max
 
+Returns the maximum value from a list of numbers.
+
 ```rad
-max(nums list[float|num]) -> float
+max(_nums: list[float]) -> float|error
 ```
 
-Returns the maximum number in the provided list.
-
-```
-max([1, 2, 3, 4]) -> 4
+```rad
+max([1, 2, 3, 4])        // -> 4.0
+max([5.5, 2.1, 8.9])     // -> 8.9
+max([])                  // -> Error: cannot find maximum of empty list
+max([1, "text"])         // -> Error: requires list of numbers
 ```
 
 ### clamp
 
+Constrains a value between minimum and maximum bounds.
+
 ```rad
-clamp(val, min, max float|int) -> float
+clamp(val: float, min: float, max: float) -> float|error
 ```
 
-Clamps the given number `val` between `min` and `max`.
+**Parameters:**
 
-Specifically, `clamp` returns:
+| Parameter | Type    | Description        |
+|-----------|---------|--------------------|
+| `val`     | `float` | Value to constrain |
+| `min`     | `float` | Minimum bound      |
+| `max`     | `float` | Maximum bound      |
 
-- `val` if it is between the provided min and max.
-- `min` if `val` is lower than `min`.
-- `max` if `val` is greater `max`.
+Returns `val` if between min and max, otherwise returns the nearest bound. Min must be ≤ max.
 
-`min` must be <= `max`, else the function will error.
-
-```
-clamp(25, 20, 30) -> 25
-clamp(10, 20, 30) -> 20
-clamp(40, 20, 30) -> 30
+```rad
+clamp(25, 20, 30)    // -> 25.0
+clamp(10, 20, 30)    // -> 20.0
+clamp(40, 20, 30)    // -> 30.0
+clamp(15, 30, 20)    // -> Error: min must be <= max
 ```
 
 ### pow
 
+Raises `base` to the power of `exponent`. Useful for exponentiation, square roots, and cube roots.
+
 ```rad
-pow(base float|int, exponent float|int) -> float
+pow(base: float, exponent: float) -> float
 ```
 
-Raises `base` to the power of `exponent`. Returns the result as a float.
-
-This function is useful for:
-- Exponentiation: `pow(2, 3)` = 8
-- Square roots: `pow(4, 0.5)` = 2  
-- Cube roots: `pow(8, 1/3)` ~= 2
-- Negative exponents: `pow(2, -2)` = 0.25
-
-```
-pow(2, 3)     -> 8
-pow(4, 0.5)   -> 2
-pow(2, -2)    -> 0.25
-pow(-2, 3)    -> -8
-pow(9, 0.5)   -> 3
+```rad
+pow(2, 3)      // -> 8
+pow(4, 0.5)    // -> 2.0 (square root)
+pow(8, 1/3)    // -> 2.0 (cube root)  
+pow(2, -2)     // -> 0.25
+pow(-2, 3)     // -> -8
 ```
 
 ## Hashing & Encode/Decode
 
 ### hash
 
-Hash some input text. Can choose between hashing algorithms.
+Generates a hash of the input text using various algorithms.
 
+```rad
+hash(_val: str) -> str
+hash(_val: str, *, algo: ["sha1", "sha256", "sha512", "md5"] = "sha1") -> str
 ```
-hash(content: string, algo: string = "sha1") -> string
+
+**Parameters:**
+
+| Parameter | Type                                           | Description              |
+|-----------|------------------------------------------------|--------------------------|
+| `_val`    | `str`                                          | Text to hash             |
+| `algo`    | `["sha1", "sha256", "sha512", "md5"] = "sha1"` | Hashing algorithm to use |
+
+The default `sha1` is **not cryptographically secure**. Use `sha256` or `sha512` for security.
+
+```rad
+hash("hello world")                    // -> "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed"
+hash("hello world", algo="sha256")     // -> "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+hash("sensitive data", algo="sha512")  // -> Long SHA-512 hash
 ```
-
-Supported algos: `sha1` (default), `sha256`, `sha512`, `md5`.
-
-**Note**: The default `sha1` is **not cryptographically secure**.
-If you need security, specify a secure algorithm such as `sha512`.
 
 ### encode_base64
 
-Base64 encode some text.
+Encodes text to Base64 format.
 
-```
-encode_base64(content: string, url_safe: bool = false, padding: bool = true) -> string
+```rad
+encode_base64(_content: str) -> str
+encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> str
 ```
 
-- Enable `url_safe` to replaces url-unsafe characters in standard base64 encoding with url-safe ones.
-- Disable `padding` to leave out `=` padding from the base64 encoding.
+**Parameters:**
+
+| Parameter  | Type           | Description                                  |
+|------------|----------------|----------------------------------------------|
+| `_content` | `str`          | Text to encode                               |
+| `url_safe` | `bool = false` | Replace `+/` with `-_` for URL-safe encoding |
+| `padding`  | `bool = true`  | Include `=` padding characters               |
+
+Use `url_safe=true` to replace `+/` with `-_` for URL-safe encoding. Use `padding=false` to omit `=` padding.
+
+```rad
+encode_base64("Hello World")                      // -> "SGVsbG8gV29ybGQ="
+encode_base64("Hello World", url_safe=true)       // -> URL-safe version
+encode_base64("Hello World", padding=false)       // -> "SGVsbG8gV29ybGQ"
+```
 
 ### decode_base64
 
-Base64 decode some text.
+Decodes Base64 text back to original string.
 
-```
-decode_base64(content: string, url_safe: bool = false, padding: bool = true) -> string
+```rad
+decode_base64(_content: str) -> str|error
+decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> str|error
 ```
 
-- `url_safe` and `padding` settings should match what was used when *encoding* to ensure correct decoding.
+**Parameters:**
+
+| Parameter  | Type           | Description                                     |
+|------------|----------------|-------------------------------------------------|
+| `_content` | `str`          | Base64 text to decode                           |
+| `url_safe` | `bool = false` | Expect URL-safe encoding (`-_` instead of `+/`) |
+| `padding`  | `bool = true`  | Expect padding characters (`=`)                 |
+
+Settings must match those used for encoding.
+
+```rad
+encoded = encode_base64("Hello World")
+decoded = decode_base64(encoded)           // -> "Hello World"
+
+// URL-safe decoding
+url_encoded = encode_base64("test", url_safe=true)
+decoded = decode_base64(url_encoded, url_safe=true)
+
+// Error handling
+result = decode_base64("invalid base64!")
+if result.error:
+    print("Decode failed:", result.error)
+```
 
 ### encode_base16
 
-Base16 encode some text. Also known as "hex encoding".
+Encodes text to Base16 (hexadecimal) format.
 
+```rad
+encode_base16(_content: str) -> str
 ```
-encode_base16(content: string) -> string
+
+```rad
+encode_base16("Hello")        // -> "48656c6c6f"
+encode_base16("ABC")          // -> "414243"
 ```
 
 ### decode_base16
 
-Base16 decode some text. Also known as "hex decoding".
+Decodes Base16 (hexadecimal) text back to original string.
 
+```rad
+decode_base16(_content: str) -> str|error
 ```
-decode_base16(content: string) -> string
+
+```rad
+decode_base16("48656c6c6f")   // -> "Hello"
+decode_base16("414243")       // -> "ABC"
+
+// Error handling
+result = decode_base16("invalid hex")
+if result.error:
+    print("Invalid hex string")
 ```
 
 ## System & Files
 
 ### exit
 
-Exits the script with the given exit code
+Exits the script with the given exit code.
 
 ```rad
-exit(code int = 0)
+exit(_code: int|bool = 0) -> void
+```
+
+```rad
+exit()          // -> Exits with code 0
+exit(1)         // -> Exits with code 1
+exit(true)      // -> Exits with code 1 (bool conversion)
+exit(false)     // -> Exits with code 0 (bool conversion)
 ```
 
 ### read_file
 
-Reads the contents of a file with the given path.
+Reads the contents of a file.
 
+```rad
+read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> map|error
 ```
-read_file(path: string) -> map
-read_file(path: string, mode: string = "text") -> map
+
+**Parameters:**
+
+| Parameter | Type                         | Description                     |
+|-----------|------------------------------|---------------------------------|
+| `_path`   | `str`                        | Path to the file to read        |
+| `mode`    | `["text", "bytes"] = "text"` | Read as UTF-8 text or raw bytes |
+
+In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.
+
+**Return map contains:**
+
+- `size_bytes: int` - File size in bytes
+- `content: str|list[int]` - File contents (type depends on mode)
+
+**Examples:**
+
+```rad
+// Read text file
+result = read_file("config.txt")
+if result.success:
+    content = result.content  // -> string
+    
+// Read binary file
+result = read_file("image.png", mode="bytes")
+if result.success:
+    bytes = result.content    // -> list[int]
+    
+// Handle errors
+result = read_file("missing.txt")
+if not result.success:
+    print("Error:", result.error)
 ```
-
-- `mode` is a named arg which is `"text"` by default.
-    - Decodes the contents as UTF-8 and makes it available as string.
-- Other valid value is `"bytes"`.
-    - Reads the bytes and makes them available as a list of ints.
-
-The returned `map` contains two keys:
-
-- `size_bytes -> int`
-- `content -> string | list[int]` (depending on `mode`)
-
-[//]: # (todo should the key be 'contents'? I find myself wanting to write plural frequently...)
 
 ### write_file
 
-Writes a string to the given file path. Creates the file if it does not exist.
+Writes content to a file. Creates the file if it doesn't exist.
 
+```rad
+write_file(_path: str, _content: str, *, append: bool = false) -> map|error
 ```
-write_file(path: string, content: string, append: bool = false) -> map, map?
+
+**Parameters:**
+
+| Parameter  | Type           | Description                                       |
+|------------|----------------|---------------------------------------------------|
+| `_path`    | `str`          | Path where to write the file                      |
+| `_content` | `str`          | Content to write                                  |
+| `append`   | `bool = false` | Append to existing content instead of overwriting |
+
+By default overwrites the file. Use `append=true` to append to existing content.
+
+**Return map contains:**
+
+- `bytes_written: int` - Number of bytes written
+- `path: str` - Full path to the written file
+
+**Examples:**
+
+```rad
+// Write new file
+result = write_file("output.txt", "Hello world")
+print("Wrote", result.bytes_written, "bytes")
+
+// Append to existing file
+write_file("log.txt", "\nNew entry", append=true)
+
+// Error handling
+result, err = write_file("/readonly/file.txt", "data")
+if err:
+    print("Write failed:", err.msg)
 ```
-
-`append` is a named arg controlling whether we should append to the file instead of overriding existing data.
-
-The first returned `map` contains two keys:
-
-- `bytes_written -> int`
-- `path -> string`
-
-The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error
-exit.
 
 ### get_path
 
-Gets information about a file or directory at the specified path.
+Gets information about a file or directory path.
 
+```rad
+get_path(_path: str) -> map
 ```
-get_path(path: string) -> map
+
+**Always returns:**
+
+- `exists: bool` - Whether the path exists
+- `full_path: str` - Absolute path
+
+**When path exists, also returns:**
+
+- `base_name?: str` - File/directory name
+- `permissions?: str` - Permission string (e.g., "rwxr-xr-x")
+- `type?: str` - Either "file" or "dir"
+- `size_bytes?: int` - File size (only for files)
+
+**Examples:**
+
+```rad
+info = get_path("config.txt")
+if info.exists:
+    print("File size:", info.size_bytes, "bytes")
+    print("Type:", info.type)
+else:
+    print("File not found")
 ```
-
-The map will always contain these entries:
-
-- `full_path -> string`
-- `exists -> bool`
-
-Only if the path exists, will it also contain the following entries:
-
-- `base_name -> string`
-- `permissions -> string`
-- `type -> string` (`dir` or `file`)
-- `size_bytes -> int` (Entry only defined if it's a file)
 
 ### find_paths
 
-Returns a list of paths under the given target directory.
+Returns a list of all paths under a directory.
 
-```
-find_paths(target: string, depth: int = -1, relative: string = "target") -> list[string]
+```rad
+find_paths(_path: str) -> list[str]|error
+find_paths(_path: str, *, depth: int = -1, relative: ["target", "cwd", "absolute"] = "target") -> list[str]|error
 ```
 
-- `depth` defaults to `-1`, indicating no depth limit. Set a positive number to limit how deep the included paths should
-  be.
-- `relative` defaults to `"target"` and defines to where the resulting paths should be relative.
-    - `"target"` (*default*): relative to the input target path
-    - `"cwd"`: relative to the user's current working directory
-    - `"absolute"`: return absolute paths
+**Parameters:**
+
+| Parameter  | Type                                       | Description                            |
+|------------|--------------------------------------------|----------------------------------------|
+| `_path`    | `str`                                      | Directory to search                    |
+| `depth`    | `int = -1`                                 | Max depth to search (-1 for unlimited) |
+| `relative` | `["target", "cwd", "absolute"] = "target"` | How to format returned paths           |
+
+- `"target"` - Relative to input path (default)
+- `"cwd"` - Relative to current directory
+- `"absolute"` - Full absolute paths
+
+**Examples:**
+
+```rad
+// Find all files in directory
+paths = find_paths("src/")
+for path in paths:
+    print(path)  // -> "file1.txt", "subdir/file2.txt", etc.
+
+// Limit depth
+paths = find_paths("src/", depth=1)  // -> Only direct children
+
+// Get absolute paths
+paths = find_paths("src/", relative="absolute")
+```
 
 ### get_env
 
 Retrieves the value of an environment variable.
 
+```rad
+get_env(_var: str) -> str
 ```
-get_env(name: string) -> string
-```
 
-**Parameters**
-
-| Parameter | Type     | Description                           |
-|-----------|----------|---------------------------------------|
-| `name`    | `string` | The name of the environment variable. |
-
-**Return Values**
-
-Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty
-string.
-
-**Examples**
+Returns the environment variable value, or empty string if not set.
 
 ```rad
-// Get an environment variable
-home_dir = get_env("HOME")
+home_dir = get_env("HOME")                    // -> "/Users/username"
+api_key = get_env("API_KEY") or "default"     // -> Uses default if not set
+missing = get_env("NONEXISTENT")              // -> ""
+```
 
-// Use with 'or' operator to provide a default value
-api_key = get_env("API_KEY") or "default_key"
+### delete_path
+
+Deletes a file or directory at the specified path.
+
+```rad
+delete_path(_path: str) -> bool
+```
+
+Returns `true` if the path was successfully deleted, `false` if it didn't exist or couldn't be deleted.
+
+```rad
+delete_path("temp.txt")         // -> true (if file existed and was deleted)
+delete_path("missing.txt")      // -> false (file didn't exist)
+delete_path("directory/")       // -> true (if directory existed and was deleted)
 ```
 
 ### get_rad_home
 
-Returns rad's home directory.
+Returns Rad's home directory.
 
+```rad
+get_rad_home() -> str
 ```
-get_rad_home() -> string
+
+```rad
+home = get_rad_home()  // -> "/Users/username/.rad" or $RAD_HOME
+```
+
+### get_args
+
+Returns the raw command-line arguments passed to the script.
+
+```rad
+get_args() -> list[str]
+```
+
+Returns all arguments after the script name. Unlike parsed args, this gives you raw access to all arguments.
+
+```rad
+// If script was called: rad myscript.rad arg1 arg2 --flag
+args = get_args()  // -> ["./myscript.rad", "arg1", "arg2", "--flag"]
+```
+
+### error
+
+Creates an error object with the given message.
+
+```rad
+error(_msg: str) -> error
+```
+
+```rad
+err = error("Something went wrong")
+return err  // -> Script will exit with this error message
 ```
 
 ## Home & Stash
@@ -1050,78 +1563,71 @@ load_state() -> map, bool
 1. `map` containing the saved state. Starts empty, before anything is saved to it.
 2. `bool` representing if the state existed before the load, or if it was just created.
 
-### `save_state`
+### save_state
 
-Saves the given state to the stash's state file.
+Saves the script's state to persistent stash storage.
 
-Requires a stash ID to have been defined.
-
-```
-save_state(state: map)
+```rad
+save_state(_state: map) -> error?
 ```
 
-**Parameters**
-
-| Parameter | Type  | Description               |
-|-----------|-------|---------------------------|
-| `state`   | `map` | The state object to save. |
-
-### `load_stash_file`
-
-Loads the contents of a file under the script's stash.
-If the file doesn't exist, it gets created with the given default contents.
-
-Requires a stash ID to have been defined.
-
-```
-load_stash_file(subpath: string, default_contents: string) -> map, bool
+```rad
+state = {"counter": 42, "last_run": now().date}
+save_state(state)
+print("State saved")
 ```
 
-**Parameters**
+### load_stash_file
 
-| Parameter          | Type     | Description                                       |
-|--------------------|----------|---------------------------------------------------|
-| `subpath`          | `string` | The subpath to the file under the script's stash. |
-| `default_contents` | `string` | Default contents if the file doesn't exist.       |
+Loads a file from the script's stash directory, creating it with default content if it doesn't exist.
 
-**Return Values**
-
-1. `map` containing the following keys:
-    - `path: string` - full path to the script
-    - `content: string` - loaded contents
-2. `bool` indicating if the loaded file already existed or had to be created. `true` if existed.
-
-### `write_stash_file`
-
-Write text to a file under the script's stash.
-
-Requires a stash ID to have been defined.
-
-```
-write_stash_file(subpath: string, contents: string) -> string, error?!
+```rad
+load_stash_file(_path: str, _default: str = "") -> map|error
 ```
 
-**Parameters**
+**Return map contains:**
 
-| Parameter  | Type     | Description                                        |
-|------------|----------|----------------------------------------------------|
-| `subpath`  | `string` | The subpath for the file under the script's stash. |
-| `contents` | `string` | Contents to write.                                 |
+- `full_path: str` - Full path to the file
+- `created: bool` - Whether the file was just created
+- `content?: str` - File contents (if successfully loaded)
 
-**Return Values**
+```rad
+result = load_stash_file("config.txt", "default config")
+if result.success:
+    if result.created:
+        print("Created new config file")
+    content = result.content
+```
 
-1. `string` for the full path to the written file.
-2. `error` map containing errors if the write was unsuccessful; otherwise `null`.
+### write_stash_file
+
+Writes content to a file in the script's stash directory.
+
+```rad
+write_stash_file(_path: str, _content: str) -> error?
+```
+
+```rad
+write_stash_file("log.txt", "Script executed at " + now().time)
+write_stash_file("data/results.json", json_data)
+print("Data saved to stash")
+```
 
 ## Time
 
 ### now
 
-Returns the current time in the machine's local timezone, accessible in various forms.
+Returns the current time with various accessible formats.
 
+```rad
+now(*, tz: str = "local") -> map|error
 ```
-now() -> map
-```
+
+**Parameters:**
+
+| Parameter | Type            | Description                               |
+|-----------|-----------------|-------------------------------------------|
+| `tz`      | `str = "local"` | Timezone (e.g., "UTC", "America/Chicago") |
 
 Map values:
 
@@ -1139,36 +1645,61 @@ Map values:
 | `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
 | `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
 
-### parse_epoch
-
-Given a Unix epoch timestamp, parse it into various other ready-to-use formats in the form of a map.
-
-```
-parse_epoch(epoch: int, unit: string = "auto", tz: string = "default") -> map?, error?!
-```
-
-**Parameters**
-
-| Parameter | Type                 | Description                                                                                                                                                    |
-|-----------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `epoch`   | `int`                | The Unix epoch timestamp to parse.                                                                                                                             |
-| `unit`    | `string = "auto"`    | The unit of the epoch e.g. seconds, milliseconds, microseconds, or nanoseconds.<br/>Default `auto` will try to derive it from the number of digits in `epoch`. |
-| `tz`      | `string = "default"` | The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.                                           |
-
-**Return Values**
-
-1. The returned map contains the same fields as [`now`](#now). It is `null` if there was an error parsing.
-2. A nullable error map.
-
-**Examples**
+**Examples:**
 
 ```rad
-// Parse seconds epoch
-time, err = parse_epoch(1712345678)  // err will be null
+time = now()
+print("Current date:", time.date)          // -> "2024-04-05"
+print("Current time:", time.time)          // -> "14:30:25"
+print("Year:", time.year)                  // -> 2024
 
-// Millis with TZ
-time, err = parse_epoch(1712345678123, tz="America/Chicago")  // err will be null
+// Use epoch for timestamps
+timestamp = now().epoch.seconds
+print("Timestamp:", timestamp)             // -> 1712345678
 
-// Invalid time zone
-time, err = parse_epoch(1712345678, tz="not real time zone")  // time will be null, but err defined
+// Different timezone
+utc_time = now(tz="UTC")
+print("UTC time:", utc_time.time)          // -> Time in UTC
+```
+
+### parse_epoch
+
+Parses a Unix epoch timestamp into various time formats.
+
+```rad
+parse_epoch(_epoch: int) -> map|error
+parse_epoch(_epoch: int, *, tz: str = "local") -> map|error
+parse_epoch(_epoch: int, *, unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
+parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
+```
+
+**Parameters:**
+
+| Parameter | Type                                                                          | Description                               |
+|-----------|-------------------------------------------------------------------------------|-------------------------------------------|
+| `_epoch`  | `int`                                                                         | Unix epoch timestamp                      |
+| `tz`      | `str = "local"`                                                               | Timezone (e.g., "UTC", "America/Chicago") |
+| `unit`    | `["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"` | Timestamp unit (auto-detects by default)  |
+
+Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
+explicitly.
+
+**Examples:**
+
+```rad
+// Parse seconds epoch (auto-detected)
+time = parse_epoch(1712345678)
+print(time.date, time.time)  // -> "2024-04-05 22:01:18"
+
+// Parse milliseconds with timezone
+time = parse_epoch(1712345678123, tz="America/Chicago")
+print(time.hour)  // -> Hour in Chicago timezone
+
+// Explicit unit specification
+time = parse_epoch(1712345678000, unit="milliseconds")
+
+// Error handling
+time, err = parse_epoch(1712345678, tz="Invalid/Timezone")
+if err:
+    print("Invalid timezone:", err.msg)
 ```

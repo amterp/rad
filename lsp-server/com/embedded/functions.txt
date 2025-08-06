@@ -67,6 +67,7 @@ pick_from_resource
 pick_kv
 pink
 plain
+pow
 pprint
 print
 print_err

@@ -4,7 +4,7 @@
     <working_directory value="$PROJECT_DIR$/core/testing" />
     <root_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
-    <package value="rad/core/testing" />
+    <package value="github.com/amterp/rad/core/testing" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/core/testing/no_args_test.go" />
     <framework value="gotest" />

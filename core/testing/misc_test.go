@@ -114,7 +114,8 @@ a = abs("asd")
 	expected := `Error at L2:9
 
   a = abs("asd")
-          ^^^^^ Value '"asd"' (str) is not compatible with expected type 'float'
+          ^^^^^
+          Value '"asd"' (str) is not compatible with expected type 'int|float'
 `
 	assertError(t, 1, expected)
 }
