@@ -1078,14 +1078,14 @@ func init() {
 			Name: FUNC_CEIL,
 			Execute: func(f FuncInvocation) RadValue {
 				num := f.GetFloat("_num")
-				return f.Return(math.Ceil(num))
+				return f.Return(int64(math.Ceil(num)))
 			},
 		},
 		{
 			Name: FUNC_FLOOR,
 			Execute: func(f FuncInvocation) RadValue {
 				num := f.GetFloat("_num")
-				return f.Return(math.Floor(num))
+				return f.Return(int64(math.Floor(num)))
 			},
 		},
 		{
