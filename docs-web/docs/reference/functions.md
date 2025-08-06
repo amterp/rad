@@ -242,21 +242,44 @@ unique(["a", "b", "a", "c"])    // -> ["a", "b", "c"]
 
 ### sort
 
-Sorts a list or string, optionally with additional lists/strings for stable multi-key sorting.
+Sorts a list or string. When multiple lists are provided, performs parallel sorting where additional lists are reordered
+to match the primary list's sort permutation.
 
 ```rad
-sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -> list|str
+sort(_primary: list|str) -> list|str
+sort(_primary: list|str, *_others: list, *, reverse: bool = false) -> list[list]
 ```
 
-Can sort mixed types in lists. Supports multi-key sorting when additional lists are provided.
+**Parameters:**
+
+| Parameter  | Type           | Description                                  |
+|------------|----------------|----------------------------------------------|
+| `_primary` | `list\|str`    | Primary data to sort (determines sort order) |
+| `*_others` | `list`         | Additional lists to reorder in parallel      |
+| `reverse`  | `bool = false` | Sort in descending order                     |
+
+**Parallel Sorting Behavior:**
+
+- The first list (`_primary`) determines the sort order
+- All other lists are reordered to match the same permutation
+- All lists must be the same length
+- Returns a list containing all sorted lists: `[sorted_primary, sorted_other1, sorted_other2, ...]`
 
 **Examples:**
 
 ```rad
+// Basic sorting
 sort([3, 4, 2, 1])                    // -> [1, 2, 3, 4]
 sort([3, 4, 2, 1], reverse=true)      // -> [4, 3, 2, 1]
 sort([3, 4, "2", 1, true])            // -> [true, 1, 3, 4, "2"]
 sort("hello")                         // -> "ehllo"
+
+// Parallel sorting
+numbers = [2, 1, 4, 3]
+letters = ["a", "b", "c", "d"] 
+bools = [true, false, true, false]
+sorted_nums, sorted_letters, sorted_bools = sort(numbers, letters, bools)
+// -> [1, 2, 3, 4], ["b", "a", "d", "c"], [false, true, false, true]
 ```
 
 ### type_of
