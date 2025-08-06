@@ -1208,6 +1208,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reverse" class="md-nav__link">
+    <span class="md-ellipsis">
+      reverse
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyperlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      hyperlink
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#colors-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       Colors &amp; Attributes
@@ -1399,6 +1417,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Functions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1478,6 +1511,15 @@
   <a href="#clamp" class="md-nav__link">
     <span class="md-ellipsis">
       clamp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pow" class="md-nav__link">
+    <span class="md-ellipsis">
+      pow
     </span>
   </a>
   
@@ -1613,9 +1655,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#delete_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_path
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_rad_home" class="md-nav__link">
     <span class="md-ellipsis">
       get_rad_home
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_args
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      error
     </span>
   </a>
   
@@ -2313,6 +2382,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reverse" class="md-nav__link">
+    <span class="md-ellipsis">
+      reverse
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyperlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      hyperlink
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#colors-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       Colors &amp; Attributes
@@ -2504,6 +2591,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Functions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2583,6 +2685,15 @@
   <a href="#clamp" class="md-nav__link">
     <span class="md-ellipsis">
       clamp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pow" class="md-nav__link">
+    <span class="md-ellipsis">
+      pow
     </span>
   </a>
   
@@ -2718,9 +2829,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#delete_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_path
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_rad_home" class="md-nav__link">
     <span class="md-ellipsis">
       get_rad_home
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_args
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      error
     </span>
   </a>
   
@@ -2889,10 +3027,116 @@ with said error.</p>
 <hr />
 <h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h2>
 <h3 id="print">print<a class="headerlink" href="#print" title="Permanent link">&para;</a></h3>
-<p>Prints the given input. Includes a newline after. Stringifies whatever is given to it.</p>
-<div class="highlight"><pre><span></span><code>print(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
+<p>Prints zero or more items to stdout, separated by a delimiter.</p>
+<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
 </code></pre></div>
-<p><strong>Parameters</strong></p>
+<div class="highlight"><pre><span></span><code>print(&quot;Hello!&quot;)                    // -&gt; Hello!
+print()                            // -&gt; (just newline)
+print(&quot;Hello&quot;, &quot;world&quot;)            // -&gt; Hello world
+print(1, 2, 3, sep=&quot;, &quot;)           // -&gt; 1, 2, 3
+print(&quot;No newline&quot;, end=&quot;&quot;)        // -&gt; No newline
+</code></pre></div>
+<h3 id="print_err">print_err<a class="headerlink" href="#print_err" title="Permanent link">&para;</a></h3>
+<p>Behaves like <a href="#print"><code>print</code></a> but outputs to stderr instead of stdout.</p>
+<div class="highlight"><pre><span></span><code>print_err(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+</code></pre></div>
+<h3 id="pprint">pprint<a class="headerlink" href="#pprint" title="Permanent link">&para;</a></h3>
+<p>Pretty prints data in JSON format with indentation and colors.</p>
+<div class="highlight"><pre><span></span><code>pprint(_item: any?) -&gt; void
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>item = { &quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30 }
+pprint(item)
+// Output:
+// {
+//   &quot;name&quot;: &quot;Alice&quot;, 
+//   &quot;age&quot;: 30
+// }
+</code></pre></div>
+<h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
+<p>Behaves like <a href="#print"><code>print</code></a> but only outputs when debug mode is enabled via <code>--debug</code> flag.</p>
+<div class="highlight"><pre><span></span><code>debug(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+</code></pre></div>
+<h2 id="misc">Misc<a class="headerlink" href="#misc" title="Permanent link">&para;</a></h2>
+<h3 id="sleep">sleep<a class="headerlink" href="#sleep" title="Permanent link">&para;</a></h3>
+<p>Pauses execution for the specified duration.</p>
+<div class="highlight"><pre><span></span><code>sleep(_duration: int|float|str, *, title: str?) -&gt; void
+</code></pre></div>
+<p>Integer and float values are treated as seconds. String values support Go duration format like "2h45m", "1.5s", "500ms".
+If <code>title</code> is provided, it's printed before sleeping.</p>
+<p><strong>Duration string suffixes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Suffix</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>h</code></td>
+<td>Hours</td>
+</tr>
+<tr>
+<td><code>m</code></td>
+<td>Minutes</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>Seconds</td>
+</tr>
+<tr>
+<td><code>ms</code></td>
+<td>Milliseconds</td>
+</tr>
+<tr>
+<td><code>us</code> or <code>µs</code></td>
+<td>Microseconds</td>
+</tr>
+<tr>
+<td><code>ns</code></td>
+<td>Nanoseconds</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>sleep(2.5)              // -&gt; Sleep for 2.5 seconds
+sleep(&quot;1h30m&quot;)          // -&gt; Sleep for 1 hour 30 minutes  
+sleep(&quot;500ms&quot;)          // -&gt; Sleep for 500 milliseconds
+sleep(5, title=&quot;Waiting...&quot;) // -&gt; Prints &quot;Waiting...&quot; then sleeps 5 seconds
+</code></pre></div>
+<h3 id="len">len<a class="headerlink" href="#len" title="Permanent link">&para;</a></h3>
+<p>Returns the length of a string, list, or map.</p>
+<div class="highlight"><pre><span></span><code>len(input: str|list|map) -&gt; int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>len(&quot;hello&quot;)        // -&gt; 5
+len([1, 2, 3, 4])   // -&gt; 4
+len({&quot;a&quot;: 1, &quot;b&quot;: 2}) // -&gt; 2
+</code></pre></div>
+<h3 id="range">range<a class="headerlink" href="#range" title="Permanent link">&para;</a></h3>
+<p>Generates a list of numbers in a specified range. Useful in for loops.</p>
+<div class="highlight"><pre><span></span><code>range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -&gt; list[float|int]
+</code></pre></div>
+<p>Single argument generates 0 to <code>_arg1</code> (exclusive). Two arguments generate <code>_arg1</code> to <code>_arg2</code> (exclusive). Step cannot
+be zero. Returns float list if any argument is float, otherwise int list.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>range(5)            // -&gt; [0, 1, 2, 3, 4]
+range(2, 5)         // -&gt; [2, 3, 4]
+range(0.5, 3)       // -&gt; [0.5, 1.5, 2.5]
+range(10, 5, -2)    // -&gt; [10, 8, 6]
+</code></pre></div>
+<h3 id="join">join<a class="headerlink" href="#join" title="Permanent link">&para;</a></h3>
+<p>Joins a list into a string with separator, prefix, and suffix.</p>
+<div class="highlight"><pre><span></span><code>join(_list: list, *, sep: str = &quot;&quot;, prefix: str = &quot;&quot;, suffix: str = &quot;&quot;) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>join([1, 2, 3], sep=&quot;, &quot;)           // -&gt; &quot;1, 2, 3&quot;
+join([&quot;a&quot;, &quot;b&quot;], prefix=&quot;[&quot;, suffix=&quot;]&quot;)  // -&gt; &quot;[ab]&quot;
+join([&quot;x&quot;, &quot;y&quot;, &quot;z&quot;], sep=&quot;-&quot;, prefix=&quot;(&quot;, suffix=&quot;)&quot;)  // -&gt; &quot;(x-y-z)&quot;
+</code></pre></div>
+<h3 id="zip">zip<a class="headerlink" href="#zip" title="Permanent link">&para;</a></h3>
+<p>Combines multiple lists into a list of lists, pairing elements by index.</p>
+<div class="highlight"><pre><span></span><code>zip(*lists: list, *, strict: bool = false, fill: any?) -&gt; list[list]|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2903,214 +3147,182 @@ with said error.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>items</code></td>
-<td><code>...any?</code></td>
-<td>Zero or more items to print. If several are given, they are separated by `sep.</td>
+<td><code>*lists</code></td>
+<td><code>list</code></td>
+<td>Variable number of lists to zip together</td>
 </tr>
 <tr>
-<td><code>sep</code></td>
-<td><code>string = " "</code></td>
-<td>Delimiter between <code>items</code>.</td>
+<td><code>strict</code></td>
+<td><code>bool = false</code></td>
+<td>If true, error on different list lengths</td>
 </tr>
 <tr>
-<td><code>end</code></td>
-<td><code>string = "\n"</code></td>
-<td>Appended to the output after all <code>items</code>.</td>
+<td><code>fill</code></td>
+<td><code>any?</code></td>
+<td>Value to fill shorter lists (optional)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight"><pre><span></span><code>print(&quot;Hello!&quot;)
-print()              // prints a newline
-print([1, 20, 300])  // prints &quot;[ 1, 20, 300 ]&quot;
-
-name = &quot;Alice&quot;
-print(&quot;Hello&quot;, name) // prints &quot;Hello Alice&quot;
-</code></pre></div>
-<h3 id="print_err">print_err<a class="headerlink" href="#print_err" title="Permanent link">&para;</a></h3>
-<p>Behaves like <a href="#print"><code>print</code></a> but always goes to stderr instead of stdout.</p>
-<div class="highlight"><pre><span></span><code>print_err(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
-</code></pre></div>
-<h3 id="pprint">pprint<a class="headerlink" href="#pprint" title="Permanent link">&para;</a></h3>
-<p><strong>Description</strong>:</p>
-<p>Pretty prints the given input. Mainly useful for maps so they get printed in a json-style.</p>
-<div class="highlight"><pre><span></span><code>pprint(item any?)
-</code></pre></div>
-<p><strong>Parameters</strong>:</p>
 <ul>
-<li><code>input: any?</code>: Zero or one item to pretty print. If zero, just prints a newline.</li>
+<li>By default, truncates to the shortest list length</li>
+<li>Cannot use <code>strict=true</code> with <code>fill</code> parameter (mutually exclusive)</li>
+<li>Returns error if <code>strict=true</code> and lists have different lengths</li>
 </ul>
-<p><strong>Examples</strong>:</p>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>item = { &quot;name&quot;: &quot;Alice&quot;, age: 30 }
-pprint(item)
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Basic usage
+zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])           // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;c&quot;]]
+zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;])             // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;]]
+
+// With fill value for unequal lengths
+zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;], fill=&quot;-&quot;)   // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;-&quot;], [4, &quot;-&quot;]]
+
+// Strict mode (errors on length mismatch)  
+zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;], strict=true)   // -&gt; Error: Lists must have the same length
 </code></pre></div>
-<div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span>
-<span class="p">}</span>
+<h3 id="unique">unique<a class="headerlink" href="#unique" title="Permanent link">&para;</a></h3>
+<p>Returns a list with duplicate values removed, preserving first occurrence order.</p>
+<div class="highlight"><pre><span></span><code>unique(_list: list[any]) -&gt; list[any]
 </code></pre></div>
-<h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
-<p>Behaves like <a href="#print"><code>print</code></a> but only prints if debug is enabled via the <code>--DEBUG</code> flag.</p>
-<div class="highlight"><pre><span></span><code>debug(items ...any?, sep: string = &quot; &quot;, end: string = &quot;\n&quot;)
+<div class="highlight"><pre><span></span><code>unique([2, 1, 2, 3, 1, 3, 4])  // -&gt; [2, 1, 3, 4]
+unique([&quot;a&quot;, &quot;b&quot;, &quot;a&quot;, &quot;c&quot;])    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
 </code></pre></div>
-<h2 id="misc">Misc<a class="headerlink" href="#misc" title="Permanent link">&para;</a></h2>
-<h3 id="sleep">sleep<a class="headerlink" href="#sleep" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sleep(seconds int)
-sleep(seconds float)
-sleep(duration string)  // e.g. sleep(&quot;2h45m&quot;)
+<h3 id="sort">sort<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h3>
+<p>Sorts a list or string, optionally with additional lists/strings for stable multi-key sorting.</p>
+<div class="highlight"><pre><span></span><code>sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -&gt; list|str
 </code></pre></div>
-<p>Allows for a named arg `title=str".</p>
-<p>See the following table for valid <code>duration</code> string formats:</p>
+<p>Can sort mixed types in lists. Supports multi-key sorting when additional lists are provided.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>sort([3, 4, 2, 1])                    // -&gt; [1, 2, 3, 4]
+sort([3, 4, 2, 1], reverse=true)      // -&gt; [4, 3, 2, 1]
+sort([3, 4, &quot;2&quot;, 1, true])            // -&gt; [true, 1, 3, 4, &quot;2&quot;]
+sort(&quot;hello&quot;)                         // -&gt; &quot;ehllo&quot;
+</code></pre></div>
+<h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
+<p>Returns the type of a value as a string.</p>
+<div class="highlight"><pre><span></span><code>type_of(_var: any) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>type_of(&quot;hi&quot;)    // -&gt; &quot;str&quot;
+type_of([2])     // -&gt; &quot;list&quot; 
+type_of(42)      // -&gt; &quot;int&quot;
+type_of(3.14)    // -&gt; &quot;float&quot;
+type_of({&quot;a&quot;: 1}) // -&gt; &quot;map&quot;
+</code></pre></div>
+<h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
+<p>Converts any value to a string representation.</p>
+<div class="highlight"><pre><span></span><code>str(_var: any) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>str(42)        // -&gt; &quot;42&quot;
+str(3.14)      // -&gt; &quot;3.14&quot;
+str([1, 2])    // -&gt; &quot;[1, 2]&quot;
+str(true)      // -&gt; &quot;true&quot;
+</code></pre></div>
+<h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
+<p>Converts a value to an integer. Does not work on strings - use <a href="#parse_int"><code>parse_int</code></a> for string parsing.</p>
+<div class="highlight"><pre><span></span><code>int(_var: any) -&gt; int|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>int(3.14)     // -&gt; 3
+int(true)     // -&gt; 1
+int(false)    // -&gt; 0
+int(&quot;42&quot;)     // -&gt; Error: cannot convert string
+</code></pre></div>
+<h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
+<p>Converts a value to a float. Does not work on strings - use <a href="#parse_float"><code>parse_float</code></a> for string parsing.</p>
+<div class="highlight"><pre><span></span><code>float(_var: any) -&gt; float|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>float(42)      // -&gt; 42.0
+float(true)    // -&gt; 1.0
+float(false)   // -&gt; 0.0  
+float(&quot;3.14&quot;)  // -&gt; Error: cannot convert string
+</code></pre></div>
+<h3 id="is_defined">is_defined<a class="headerlink" href="#is_defined" title="Permanent link">&para;</a></h3>
+<p>Checks if a variable with the given name exists in the current scope.</p>
+<div class="highlight"><pre><span></span><code>is_defined(_var: str) -&gt; bool
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+is_defined(&quot;name&quot;)     // -&gt; true
+is_defined(&quot;age&quot;)      // -&gt; false
+</code></pre></div>
+<h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
+<p>Applies a function to every element of a list or entry of a map.</p>
+<div class="highlight"><pre><span></span><code>map(_coll: list|map, _fn: fn(any) -&gt; any | fn(any, any) -&gt; any) -&gt; list|map
+</code></pre></div>
+<p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>map([1, 2, 3], fn(x) x * 2)              // -&gt; [2, 4, 6]
+map({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v * 10)   // -&gt; {&quot;a&quot;: 10, &quot;b&quot;: 20}
+</code></pre></div>
+<h3 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
+<p>Applies a predicate function to filter elements of a list or map. Keeps only elements where the function returns true.</p>
+<div class="highlight"><pre><span></span><code>filter(_coll: list|map, _fn: fn(any) -&gt; bool | fn(any, any) -&gt; bool) -&gt; list|map
+</code></pre></div>
+<p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>filter([1, 2, 3, 4], fn(x) x % 2 == 0)      // -&gt; [2, 4]
+filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&quot;b&quot;: 2}
+</code></pre></div>
+<h3 id="load">load<a class="headerlink" href="#load" title="Permanent link">&para;</a></h3>
+<p>Loads a value into a map using lazy evaluation. If key exists, returns cached value; otherwise runs loader function.</p>
+<div class="highlight"><pre><span></span><code>load(_map: map, _key: any, _loader: fn() -&gt; any) -&gt; any|error
+load(_map: map, _key: any, _loader: fn() -&gt; any, *, reload: bool = false) -&gt; any|error
+load(_map: map, _key: any, _loader: fn() -&gt; any, *, override: any?) -&gt; any|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Suffix</th>
+<th>Parameter</th>
+<th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>h</td>
-<td>Hours</td>
+<td><code>_map</code></td>
+<td><code>map</code></td>
+<td>Map to store/retrieve cached values</td>
 </tr>
 <tr>
-<td>m</td>
-<td>Minutes</td>
+<td><code>_key</code></td>
+<td><code>any</code></td>
+<td>Key to lookup in the map</td>
 </tr>
 <tr>
-<td>s</td>
-<td>Seconds</td>
+<td><code>_loader</code></td>
+<td><code>fn() -&gt; any</code></td>
+<td>Function to call if key doesn't exist</td>
 </tr>
 <tr>
-<td>ms</td>
-<td>Milliseconds</td>
+<td><code>reload</code></td>
+<td><code>bool = false</code></td>
+<td>Force reload even if key exists</td>
 </tr>
 <tr>
-<td>us or µs</td>
-<td>Microseconds</td>
-</tr>
-<tr>
-<td>ns</td>
-<td>Nanoseconds</td>
+<td><code>override</code></td>
+<td><code>any?</code></td>
+<td>Use this value instead of calling loader</td>
 </tr>
 </tbody>
 </table>
-<h3 id="len">len<a class="headerlink" href="#len" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>len(input string) -&gt; int
-len(input any[]) -&gt; int
-len(input map) -&gt; int
+<p>If key doesn't exist, <code>_loader</code> is called and result is cached. Cannot use <code>reload=true</code> with <code>override</code> (mutually
+exclusive).</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>cache = {}
+load(cache, &quot;data&quot;, fn() expensive_calculation())    // -&gt; Runs loader, caches result
+load(cache, &quot;data&quot;, fn() expensive_calculation())    // -&gt; Returns cached value
+
+// Force reload
+load(cache, &quot;data&quot;, fn() new_calculation(), reload=true)
+
+// Override with specific value  
+load(cache, &quot;data&quot;, fn() ignored(), override=&quot;forced&quot;)
 </code></pre></div>
-<h3 id="range">range<a class="headerlink" href="#range" title="Permanent link">&para;</a></h3>
-<p>Generates a list of numbers in a specified range. Useful in for loops.</p>
-<div class="highlight"><pre><span></span><code>range(end number) -&gt; [number]
-range(start number, end number, step: number = 1) -&gt; [number]
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>range(5)         -&gt; [0, 1, 2, 3, 4]
-range(5.5)       -&gt; [0, 1, 2, 3, 4, 5]
-range(0.5, 5)    -&gt; [0.5, 1.5, 2.5, 3.5, 4.5]
-range(10, 5, -2) -&gt; [10, 8, 6]
-</code></pre></div>
-<h3 id="join">join<a class="headerlink" href="#join" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>join(input list, joiner string, prefix string|int|float|bool?, suffix string|int|float|bool?) -&gt; string
-</code></pre></div>
-<h3 id="zip">zip<a class="headerlink" href="#zip" title="Permanent link">&para;</a></h3>
-<p>Combines multiple lists into a list of lists, pairing elements by index.</p>
-<div class="highlight"><pre><span></span><code>zip(lists... list, strict bool?, fill any?)
-</code></pre></div>
-<p>If lists are of unequal length:</p>
-<ul>
-<li>By default, truncates to the shortest.</li>
-<li>If <code>fill</code> is provided, extends shorter lists to the longest, using the fill value.</li>
-<li>If <code>strict=true</code>, raises an error if lengths differ.<ul>
-<li><code>strict</code> cannot be true while <code>fill</code> is defined.</li>
-</ul>
-</li>
-</ul>
-<p>Examples:</p>
-<div class="highlight"><pre><span></span><code>zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])          // [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;c&quot;]]
-zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;])            // [[1, &quot;a&quot;], [2, &quot;b&quot;]]
-zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;], strict=true)  // Error: Lists must have the same length
-zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;], fill=&quot;-&quot;)  // [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;-&quot;], [4, &quot;-&quot;]]
-</code></pre></div>
-<h3 id="unique">unique<a class="headerlink" href="#unique" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>unique(input any[]) -&gt; any[]
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>unique([2, 1, 2, 3, 1, 3, 4])  // [2, 1, 3, 4]
-</code></pre></div>
-<h3 id="sort">sort<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sort(input any[], reverse=bool?)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>sort([3, 4, 2, 1])                 // [1, 2, 3, 4]
-sort([3, 4, 2, 1], reversed=true)  // [4, 3, 2, 1]
-sort([3, 4, &quot;2&quot;, 1, true])         // [true, 1, 3, 4, &quot;2&quot;]
-</code></pre></div>
-<h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
-<p>Returns the type of an input variable as a string.</p>
-<div class="highlight"><pre><span></span><code>type_of(variable any)
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>type_of(&quot;hi&quot;)  // string
-type_of([2])   // list
-</code></pre></div>
-<h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
-<p>Converts any input to a string.</p>
-<div class="highlight"><pre><span></span><code>str(input: any) -&gt; string
-</code></pre></div>
-<h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
-<p>Try to convert an input to an int.</p>
-<p>Does not work on strings. If you want to parse a string to an int, use <a href="#parse_int"><code>parse_int</code></a>.</p>
-<div class="highlight"><pre><span></span><code>int(input: any) -&gt; int
-</code></pre></div>
-<h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
-<p>Try to convert an input to a float.</p>
-<p>Does not work on strings. If you want to parse a string to a float, use <a href="#parse_float"><code>parse_float</code></a>.</p>
-<div class="highlight"><pre><span></span><code>str(input: any) -&gt; string
-</code></pre></div>
-<h3 id="is_defined">is_defined<a class="headerlink" href="#is_defined" title="Permanent link">&para;</a></h3>
-<p>Checks if a variable exists.</p>
-<div class="highlight"><pre><span></span><code>is_defined(var: string) -&gt; bool
-</code></pre></div>
-<h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
-<p>Applies a given lambda to every element of a list or entry of a map.</p>
-<div class="highlight"><pre><span></span><code>map(list, fn(v) -&gt; any) -&gt; list[any]
-map(map, fn(k, v) -&gt; any) -&gt; list[any]
-</code></pre></div>
-<h3 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
-<p>Applies a given lambda predicate to every element of a list or entry of a map. Keeps only elements that return true.</p>
-<div class="highlight"><pre><span></span><code>filter(list, fn(v) -&gt; bool) -&gt; list
-filter(map, fn(k, v) -&gt; bool) -&gt; map
-</code></pre></div>
-<h3 id="load">load<a class="headerlink" href="#load" title="Permanent link">&para;</a></h3>
-<p>Loads a value into a map. Returns the mapped value.</p>
-<div class="highlight"><pre><span></span><code>load(map, key, loader: fn() -&gt; any, reload: bool?, override: any?) -&gt; any
-</code></pre></div>
-<ul>
-<li>Examples:<ul>
-<li><code>load(m, k, loader)</code><ul>
-<li>If <code>m</code> does not contain <code>k</code>, <code>loader</code> is run to calculate a value. This value is put into the map under <code>k</code>
-  and returned.</li>
-<li>If <code>m</code> contains <code>k</code>, <code>loader</code> is ignored, and the existing value is returned.</li>
-</ul>
-</li>
-<li><code>load(m, k, loader, reload=true)</code><ul>
-<li>Regardless of if <code>m</code> already contains <code>k</code>, <code>loader</code> is invoked and its value is put into the map for <code>k</code> and
-  returned.</li>
-</ul>
-</li>
-<li><code>load(m, k, loader, override=myvalue)</code><ul>
-<li>Regardless of if <code>m</code> already contains <code>k</code>, if <code>myvalue</code> is a truthy value, then it is put into <code>m</code> under <code>k</code>
-  and returned and <code>loader</code> is ignored.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><code>reload</code> cannot be true with <code>override</code> is truthy, that will return an error.</p>
 <h2 id="input">Input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h2>
 <h3 id="input_1">input<a class="headerlink" href="#input_1" title="Permanent link">&para;</a></h3>
-<p>Get a line of text input from the user.</p>
-<div class="highlight"><pre><span></span><code>input(prompt string?, default=string?, hint=string?, secret=bool?) -&gt; string
+<p>Gets a line of text input from the user with optional prompt, default, hint, and secret mode.</p>
+<div class="highlight"><pre><span></span><code>input(prompt: str = &quot;&gt; &quot;) -&gt; str|error
+input(prompt: str = &quot;&gt; &quot;, *, hint: str = &quot;&quot;, default: str = &quot;&quot;, secret: bool = false) -&gt; str|error
 </code></pre></div>
-<p><strong>Parameters</strong></p>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
@@ -3122,416 +3334,200 @@ filter(map, fn(k, v) -&gt; bool) -&gt; map
 <tbody>
 <tr>
 <td><code>prompt</code></td>
-<td><code>string</code></td>
-<td>The text prompt to display to the user.</td>
-</tr>
-<tr>
-<td><code>default</code></td>
-<td><code>string</code></td>
-<td>Default value if the user doesn't enter anything.</td>
+<td><code>str = "&gt; "</code></td>
+<td>The text prompt to display to the user</td>
 </tr>
 <tr>
 <td><code>hint</code></td>
-<td><code>string</code></td>
-<td>Placeholder text shown in the input field. Has no impact if <code>secret</code> enabled.</td>
+<td><code>str = ""</code></td>
+<td>Placeholder text shown in input field</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td><code>str = ""</code></td>
+<td>Default value if user doesn't enter anything</td>
 </tr>
 <tr>
 <td><code>secret</code></td>
-<td><code>bool</code></td>
-<td>If true, hides the input (useful for passwords).</td>
+<td><code>bool = false</code></td>
+<td>If true, hides input (useful for passwords)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Return Values</strong></p>
-<p>Returns the user's input as a string. If the user doesn't enter anything, returns the default value.</p>
-<p><strong>Examples</strong></p>
+<p>If <code>secret</code> is true, input is hidden (useful for passwords). The <code>hint</code> parameter has no effect when <code>secret</code> is
+enabled.</p>
+<p><strong>Examples:</strong></p>
 <div class="highlight"><pre><span></span><code>// Basic input
-name = input(&quot;What&#39;s your name? &quot;)
+name = input(&quot;What&#39;s your name? &quot;)                    // -&gt; Prompts and waits for input
 
 // With default value
-color = input(&quot;Favorite color? &quot;, default=&quot;blue&quot;)
+color = input(&quot;Favorite color? &quot;, default=&quot;blue&quot;)     // -&gt; Returns &quot;blue&quot; if user presses enter
 
-// With hint
-email = input(&quot;Email address: &quot;, hint=&quot;example@domain.com&quot;)
+// With hint text
+email = input(&quot;Email: &quot;, hint=&quot;user@example.com&quot;)     // -&gt; Shows placeholder text
 
-// Password input
-password = input(&quot;Enter password: &quot;, secret=true)
+// Hidden input for passwords
+password = input(&quot;Password: &quot;, secret=true)           // -&gt; Hides typed characters
 </code></pre></div>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
-<p>Get a boolean confirmation from the user.</p>
-<div class="highlight"><pre><span></span><code>confirm() -&gt; bool
-confirm(prompt string) -&gt; bool
+<p>Gets a boolean confirmation from the user (y/n prompt).</p>
+<div class="highlight"><pre><span></span><code>confirm(prompt: str = &quot;Confirm? [y/n] &gt; &quot;) -&gt; bool|error
 </code></pre></div>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>if confirm():
+<div class="highlight"><pre><span></span><code>if confirm():                        // -&gt; Uses default &quot;Confirm? [y/n] &gt; &quot; prompt
     print(&quot;Confirmed!&quot;)
-else:
-    print(&quot;Not confirmed!&quot;)
-</code></pre></div>
-<div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code>Confirm? [y/n] y
-Confirmed!
-</code></pre></div>
-<div class="highlight"><span class="filename">Example 2</span><pre><span></span><code>if confirm(&quot;Are you sure? &gt; &quot;):
-    print(&quot;You&#39;re sure!&quot;)
-else:
-    print(&quot;Unsure!&quot;)
-</code></pre></div>
-<div class="highlight"><span class="filename">Example 2 Output</span><pre><span></span><code>Are you sure? &gt; n
-Unsure!
+
+if confirm(&quot;Delete file? [y/n] &quot;):   // -&gt; Custom prompt
+    print(&quot;File deleted&quot;)
 </code></pre></div>
 <h2 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h2>
 <h3 id="parse_int">parse_int<a class="headerlink" href="#parse_int" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_int(input str) -&gt; int, err
+<p>Parses a string to an integer.</p>
+<div class="highlight"><pre><span></span><code>parse_int(_str: str) -&gt; int|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>parse_int(&quot;42&quot;)    // -&gt; 42
+parse_int(&quot;3.14&quot;)  // -&gt; Error: invalid syntax
+parse_int(&quot;abc&quot;)   // -&gt; Error: invalid syntax
 </code></pre></div>
 <h3 id="parse_float">parse_float<a class="headerlink" href="#parse_float" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_float(input str) -&gt; float, err
+<p>Parses a string to a float.</p>
+<div class="highlight"><pre><span></span><code>parse_float(_str: str) -&gt; float|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>parse_float(&quot;3.14&quot;)  // -&gt; 3.14
+parse_float(&quot;42&quot;)    // -&gt; 42.0
+parse_float(&quot;abc&quot;)   // -&gt; Error: invalid syntax
 </code></pre></div>
 <h3 id="parse_json">parse_json<a class="headerlink" href="#parse_json" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>parse_json(input string) -&gt; any
+<p>Parses a JSON string into Rad data structures.</p>
+<div class="highlight"><pre><span></span><code>parse_json(_str: str) -&gt; any|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>parse_json(&#39;{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}&#39;)  // -&gt; {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}
+parse_json(&#39;[1, 2, 3]&#39;)                     // -&gt; [1, 2, 3]
+parse_json(&#39;invalid json&#39;)                  // -&gt; Error: invalid JSON
 </code></pre></div>
 <h2 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h2>
 <h3 id="upper">upper<a class="headerlink" href="#upper" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Preserves string color attributes.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>upper(input any) -&gt; string
+<p>Converts a string to uppercase. Preserves color attributes.</p>
+<div class="highlight"><pre><span></span><code>upper(_val: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>upper(&quot;hello&quot;)          // -&gt; &quot;HELLO&quot;
+upper(&quot;Hello World&quot;)    // -&gt; &quot;HELLO WORLD&quot;
 </code></pre></div>
 <h3 id="lower">lower<a class="headerlink" href="#lower" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Preserves string color attributes.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>lower(input any) -&gt; string
+<p>Converts a string to lowercase. Preserves color attributes.</p>
+<div class="highlight"><pre><span></span><code>lower(_val: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>lower(&quot;HELLO&quot;)          // -&gt; &quot;hello&quot;
+lower(&quot;Hello World&quot;)    // -&gt; &quot;hello world&quot;
 </code></pre></div>
 <h3 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Does <em>not</em> preserve string color attributes.</li>
-</ul>
-<p><strong>Parameters</strong>:</p>
-<ul>
-<li><code>input: string</code></li>
-<li><code>old: string</code>: Regex pattern of what text to replace.</li>
-<li><code>new: string</code>: Regex pattern of what to replace matches <em>with</em>.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>replace(input string, old string, new string) -&gt; string
+<p>Replaces text using regex patterns. Does not preserve string color attributes.</p>
+<div class="highlight"><pre><span></span><code>replace(_original: str, _find: str, _replace: str) -&gt; str
 </code></pre></div>
-<p><strong>Examples</strong>:</p>
-<div class="highlight"><span class="filename">Example 1</span><pre><span></span><code>input = &quot;Name: Charlie Brown&quot;
-replace(input, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;) 
-</code></pre></div>
-<div class="highlight"><span class="filename">Example 1 Output</span><pre><span></span><code>&quot;Alice Brown&quot; 
+<p>The <code>_find</code> parameter is a regex pattern. The <code>_replace</code> parameter can use regex capture groups like <code>$1</code>.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>replace(&quot;hello world&quot;, &quot;world&quot;, &quot;Rad&quot;)        // -&gt; &quot;hello Rad&quot;
+replace(&quot;Name: Charlie Brown&quot;, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;)  // -&gt; &quot;Name: Alice Brown&quot;
+replace(&quot;abc123def&quot;, &quot;\\d+&quot;, &quot;XXX&quot;)           // -&gt; &quot;abcXXXdef&quot;
 </code></pre></div>
 <h3 id="starts_with">starts_with<a class="headerlink" href="#starts_with" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>starts_with(input string, substring string) -&gt; bool
+<p>Checks if a string starts with a given substring.</p>
+<div class="highlight"><pre><span></span><code>starts_with(_val: str, _start: str) -&gt; bool
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>starts_with(&quot;hello world&quot;, &quot;hello&quot;)  // -&gt; true
+starts_with(&quot;hello world&quot;, &quot;world&quot;)  // -&gt; false
 </code></pre></div>
 <h3 id="ends_with">ends_with<a class="headerlink" href="#ends_with" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>ends_with(input string, substring string) -&gt; bool
+<p>Checks if a string ends with a given substring.</p>
+<div class="highlight"><pre><span></span><code>ends_with(_val: str, _end: str) -&gt; bool
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ends_with(&quot;hello world&quot;, &quot;world&quot;)    // -&gt; true
+ends_with(&quot;hello world&quot;, &quot;hello&quot;)    // -&gt; false
 </code></pre></div>
 <h3 id="truncate">truncate<a class="headerlink" href="#truncate" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>truncate(input string, length int) -&gt; string
+<p>Truncates a string to a maximum length. Returns error if length is negative.</p>
+<div class="highlight"><pre><span></span><code>truncate(_str: str, _len: int) -&gt; str|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>truncate(&quot;hello world&quot;, 5)   // -&gt; &quot;hello&quot;
+truncate(&quot;short&quot;, 10)        // -&gt; &quot;short&quot;
+truncate(&quot;test&quot;, -1)         // -&gt; Error: Requires a non-negative int
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Does <em>not</em> preserve string color attributes.</li>
-</ul>
-<div class="highlight"><pre><span></span><code>split(input string, delimiter_regex string) -&gt; string[]
+<p>Splits a string using regex pattern as delimiter. Does not preserve string color attributes.</p>
+<div class="highlight"><pre><span></span><code>split(_val: str, _sep: str) -&gt; list[str]
+</code></pre></div>
+<p>The <code>_sep</code> parameter is treated as a regex pattern if valid, otherwise as literal string.</p>
+<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)            // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+split(&quot;word1 word2&quot;, &quot;\\s+&quot;)   // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
+split(&quot;abc123def&quot;, &quot;\\d+&quot;)     // -&gt; [&quot;abc&quot;, &quot;def&quot;]
 </code></pre></div>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>count(input string, substring string) -&gt; int
+<p>Counts the number of non-overlapping instances of substring in string.</p>
+<div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
 </code></pre></div>
-<p>Counts the number of non-overlapping instances of <code>substring</code> in <code>input</code>.</p>
+<div class="highlight"><pre><span></span><code>count(&quot;hello world&quot;, &quot;l&quot;)     // -&gt; 3
+count(&quot;banana&quot;, &quot;na&quot;)         // -&gt; 2
+count(&quot;test&quot;, &quot;xyz&quot;)          // -&gt; 0
+</code></pre></div>
 <h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>trim(text string, chars string = &quot; \t\n&quot;) -&gt; string
+<p>Trims characters from both the start and end of a string.</p>
+<div class="highlight"><pre><span></span><code>trim(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
-<p>Trims the start and end of an input string.
-If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs, and newlines.</p>
+<div class="highlight"><pre><span></span><code>trim(&quot;  hello  &quot;)            // -&gt; &quot;hello&quot;
+trim(&quot;***hello***&quot;, &quot;*&quot;)     // -&gt; &quot;hello&quot;
+trim(&quot;abcHELLOabc&quot;, &quot;abc&quot;)   // -&gt; &quot;HELLO&quot;
+</code></pre></div>
 <h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>trim_prefix(text string, chars string = &quot; \t\n&quot;) -&gt; string
+<p>Trims characters from only the start of a string.</p>
+<div class="highlight"><pre><span></span><code>trim_prefix(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
-<p>Trims the start of an input string.
-If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.</p>
+<div class="highlight"><pre><span></span><code>trim_prefix(&quot;  hello  &quot;)         // -&gt; &quot;hello  &quot;
+trim_prefix(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;hello***&quot;
+</code></pre></div>
 <h3 id="trim_suffix">trim_suffix<a class="headerlink" href="#trim_suffix" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>trim_suffix(text string, chars string = &quot; \t\n&quot;) -&gt; string
+<p>Trims characters from only the end of a string.</p>
+<div class="highlight"><pre><span></span><code>trim_suffix(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
-<p>Trims the end of an input string.
-If <code>chars</code> is left unspecified, then it will default to whitespace characters i.e. spaces, tabs and newlines.</p>
+<div class="highlight"><pre><span></span><code>trim_suffix(&quot;  hello  &quot;)         // -&gt; &quot;  hello&quot;
+trim_suffix(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;***hello&quot;
+</code></pre></div>
+<h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
+<p>Reverses a string or list.</p>
+<div class="highlight"><pre><span></span><code>reverse(_val: str|list) -&gt; str|list
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>reverse(&quot;hello&quot;)           // -&gt; &quot;olleh&quot;
+reverse([1, 2, 3, 4])      // -&gt; [4, 3, 2, 1]
+reverse(&quot;racecar&quot;)         // -&gt; &quot;racecar&quot;
+</code></pre></div>
+<h3 id="hyperlink">hyperlink<a class="headerlink" href="#hyperlink" title="Permanent link">&para;</a></h3>
+<p>Creates a clickable hyperlink in supporting terminals.</p>
+<div class="highlight"><pre><span></span><code>hyperlink(_val: any, _link: str) -&gt; str
+</code></pre></div>
+<p>Converts text into a terminal hyperlink that can be clicked in supported terminals.</p>
+<div class="highlight"><pre><span></span><code>hyperlink(&quot;Visit Google&quot;, &quot;https://google.com&quot;)    // -&gt; Clickable &quot;Visit Google&quot; link
+hyperlink(&quot;localhost&quot;, &quot;http://localhost:3000&quot;)    // -&gt; Clickable &quot;localhost&quot; link
+hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable &quot;42&quot; link
+</code></pre></div>
 <h3 id="colors-attributes">Colors &amp; Attributes<a class="headerlink" href="#colors-attributes" title="Permanent link">&para;</a></h3>
-<p>Rad offers several functions to format text, including colors and modifiers like bold, italics, etc.
-As an example, let's look at the <code>red</code> function:</p>
-<div class="highlight"><pre><span></span><code>red(string) -&gt; string  // output string will be red
+<p>Rad offers several functions to format text with colors and style attributes. All functions follow the same pattern:</p>
+<div class="highlight"><pre><span></span><code>color_or_style(_item: any) -&gt; str
 </code></pre></div>
-<p>Complete list:</p>
+<div class="highlight"><pre><span></span><code>red(&quot;Hello&quot;)           // -&gt; &quot;Hello&quot; (in red)
+blue(42)               // -&gt; &quot;42&quot; (in blue) 
+bold(&quot;Important&quot;)      // -&gt; &quot;Important&quot; (in bold)
+</code></pre></div>
+<p><strong>Available colors:</strong></p>
 <ul>
-<li><code>plain</code></li>
-<li><code>black</code></li>
-<li><code>red</code></li>
-<li><code>green</code></li>
-<li><code>yellow</code></li>
-<li><code>blue</code></li>
-<li><code>magenta</code></li>
-<li><code>cyan</code></li>
-<li><code>white</code></li>
-<li><code>orange</code></li>
-<li><code>pink</code></li>
-<li><code>bold</code></li>
-<li><code>italic</code></li>
-<li><code>underline</code></li>
+<li><code>plain</code>, <code>black</code>, <code>red</code>, <code>green</code>, <code>yellow</code>, <code>blue</code>, <code>magenta</code>, <code>cyan</code>, <code>white</code>, <code>orange</code>, <code>pink</code></li>
+</ul>
+<p><strong>Available style attributes:</strong></p>
+<ul>
+<li><code>bold</code>, <code>italic</code>, <code>underline</code></li>
 </ul>
 <h3 id="color_rgb">color_rgb<a class="headerlink" href="#color_rgb" title="Permanent link">&para;</a></h3>
-<p>Apply RGB coloring to some input text. Not all terminals support this.</p>
-<div class="highlight"><pre><span></span><code>color_rgb(input: any, red: int, green: int, blue: int) -&gt; string
+<p>Applies RGB coloring to input text. RGB values must be in range [0, 255]. Not all terminals support this.</p>
+<div class="highlight"><pre><span></span><code>color_rgb(_val: any, *, red: int, green: int, blue: int) -&gt; str|error
 </code></pre></div>
-<h3 id="colorize">colorize<a class="headerlink" href="#colorize" title="Permanent link">&para;</a></h3>
-<p>Given some universe of possible, enumerable values, and a value from that list of values,
-color the given value with some RGB color assigned to it.
-The same value will always be given the same color, given the same list of possible values.</p>
-<p>Can use to quickly assign best-effort 'unique' colors to values in an enumerable set. Nice for coloring tables, etc.</p>
-<div class="highlight"><pre><span></span><code>colorize(value: any, possibleValues: list[any]) -&gt; string
-</code></pre></div>
-<p>Example demonstrating use in a <code>display</code> block:</p>
-<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
-display:
-    fields names
-    names:
-        map fn(n) n.colorize(names)
-</code></pre></div>
-<h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
-<h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
-<p>Returns all keys from an input map as a list.</p>
-<div class="highlight"><pre><span></span><code>keys(input: map) -&gt; any[]
-</code></pre></div>
-<h3 id="values">values<a class="headerlink" href="#values" title="Permanent link">&para;</a></h3>
-<p>Returns all values from an input map as a list.</p>
-<div class="highlight"><pre><span></span><code>values(input: map) -&gt; any[]
-</code></pre></div>
-<h3 id="get_default">get_default<a class="headerlink" href="#get_default" title="Permanent link">&para;</a></h3>
-<p>Gets the value for the given key in the given map, if the key is in the map. Otherwise, returns the supplied default.</p>
-<div class="highlight"><pre><span></span><code>get_default(input: map, key: any, default: any) -&gt; any
-</code></pre></div>
-<h2 id="random">Random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h2>
-<h3 id="rand">rand<a class="headerlink" href="#rand" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rand() -&gt; float
-</code></pre></div>
-<h3 id="rand_int">rand_int<a class="headerlink" href="#rand_int" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rand_int(max int) -&gt; int
-rand_int(min int, max int) -&gt; int
-</code></pre></div>
-<h3 id="seed_random">seed_random<a class="headerlink" href="#seed_random" title="Permanent link">&para;</a></h3>
-<p>Seed the random number generator used by <a href="#rand">rand</a> and <a href="#rand_int">rand_int</a>.</p>
-<div class="highlight"><pre><span></span><code>seed_random(seed: int)
-</code></pre></div>
-<h3 id="uuid_v4">uuid_v4<a class="headerlink" href="#uuid_v4" title="Permanent link">&para;</a></h3>
-<p>Generate a random V4 UUID.</p>
-<div class="highlight"><pre><span></span><code>uuid_v4() -&gt; string
-</code></pre></div>
-<h3 id="uuid_v7">uuid_v7<a class="headerlink" href="#uuid_v7" title="Permanent link">&para;</a></h3>
-<p>Generate a random V7 UUID.</p>
-<div class="highlight"><pre><span></span><code>uuid_v7() -&gt; string
-</code></pre></div>
-<h3 id="gen_fid">gen_fid<a class="headerlink" href="#gen_fid" title="Permanent link">&para;</a></h3>
-<p>Generate a random <a href="https://github.com/amterp/flexid">flex ID</a> (fid).</p>
-<div class="highlight"><pre><span></span><code>gen_fid(alphabet: string, tick_size_ms: int = 100, num_random_chars: int = 5) -&gt; string
-</code></pre></div>
-<p><code>alphabet</code> defaults to base-62 (<code>[0-9] [A-Z] [a-z]</code>).</p>
-<h2 id="picking">Picking<a class="headerlink" href="#picking" title="Permanent link">&para;</a></h2>
-<h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick(options string[], filter string?) -&gt; string
-</code></pre></div>
-<p>Named args:</p>
-<ul>
-<li><code>prompt</code></li>
-</ul>
-<h3 id="pick_kv">pick_kv<a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick_kv(keys string[], values string[], filter string?) -&gt; string
-</code></pre></div>
-<p>Named args:</p>
-<ul>
-<li><code>prompt</code></li>
-</ul>
-<h3 id="pick_from_resource">pick_from_resource<a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pick_from_resource(resource_path string, filter string?) -&gt; any...
-</code></pre></div>
-<h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">&para;</a></h2>
-<p>Rad offers a function for each of the 9 <a href="https://en.wikipedia.org/wiki/HTTP#Request_methods">HTTP method types</a>.
-Respectively:</p>
-<ul>
-<li><code>http_get</code></li>
-<li><code>http_post</code></li>
-<li><code>http_put</code></li>
-<li><code>http_patch</code></li>
-<li><code>http_delete</code></li>
-<li><code>http_head</code></li>
-<li><code>http_options</code></li>
-<li><code>http_trace</code></li>
-<li><code>http_connect</code></li>
-</ul>
-<p>Their inputs and outputs are the same - the only difference between them is the HTTP method in the request.
-We'll use <code>http_post</code> as an example.</p>
-<div class="highlight"><pre><span></span><code>http_post(url string) -&gt; map
-http_post(url string, body=string|map, headers=map) -&gt; map
-</code></pre></div>
-<p>Keys in the <code>headers</code> map must be strings, and values may be either strings or lists of strings.</p>
-<p>The <strong>output</strong> map contains the following entries (<code>?</code> signifies it may not be present, depending on the result):</p>
-<div class="highlight"><pre><span></span><code>&quot;success&quot; -&gt; bool
-&quot;duration_seconds&quot; -&gt; float
-&quot;status_code&quot;? -&gt; int
-&quot;body&quot;? -&gt; any
-&quot;error&quot;? -&gt; string
-</code></pre></div>
-<h2 id="math">Math<a class="headerlink" href="#math" title="Permanent link">&para;</a></h2>
-<h3 id="abs">abs<a class="headerlink" href="#abs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>abs(int) -&gt; int
-abs(float) -&gt; float
-</code></pre></div>
-<h3 id="sum">sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sum(list[number]) -&gt; float
-</code></pre></div>
-<p>Sums the input list of numbers to a resulting float.</p>
-<h3 id="round">round<a class="headerlink" href="#round" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>round(number float|int, precision int = 0) -&gt; float
-</code></pre></div>
-<p>Rounds the input number to the specified precision.
-If <code>precision</code> is unspecified it defaults to 0 and rounds to the nearest integer.</p>
-<h3 id="floor">floor<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>floor(num float|int) -&gt; float
-</code></pre></div>
-<p>Rounds the given input down to the next integer.</p>
-<div class="highlight"><pre><span></span><code>floor(1.89) -&gt; 1
-</code></pre></div>
-<h3 id="ceil">ceil<a class="headerlink" href="#ceil" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>ceil(num float|int) -&gt; float
-</code></pre></div>
-<p>Rounds the given input up to the next integer.</p>
-<div class="highlight"><pre><span></span><code>ceil(1.21) -&gt; 2
-</code></pre></div>
-<h3 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>min(nums list[float|num]) -&gt; float
-</code></pre></div>
-<p>Returns the minimum number in the provided list.</p>
-<div class="highlight"><pre><span></span><code>min([1, 2, 3, 4]) -&gt; 1
-</code></pre></div>
-<h3 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>max(nums list[float|num]) -&gt; float
-</code></pre></div>
-<p>Returns the maximum number in the provided list.</p>
-<div class="highlight"><pre><span></span><code>max([1, 2, 3, 4]) -&gt; 4
-</code></pre></div>
-<h3 id="clamp">clamp<a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>clamp(val, min, max float|int) -&gt; float
-</code></pre></div>
-<p>Clamps the given number <code>val</code> between <code>min</code> and <code>max</code>.</p>
-<p>Specifically, <code>clamp</code> returns:</p>
-<ul>
-<li><code>val</code> if it is between the provided min and max.</li>
-<li><code>min</code> if <code>val</code> is lower than <code>min</code>.</li>
-<li><code>max</code> if <code>val</code> is greater <code>max</code>.</li>
-</ul>
-<p><code>min</code> must be &lt;= <code>max</code>, else the function will error.</p>
-<div class="highlight"><pre><span></span><code>clamp(25, 20, 30) -&gt; 25
-clamp(10, 20, 30) -&gt; 20
-clamp(40, 20, 30) -&gt; 30
-</code></pre></div>
-<h2 id="hashing-encodedecode">Hashing &amp; Encode/Decode<a class="headerlink" href="#hashing-encodedecode" title="Permanent link">&para;</a></h2>
-<h3 id="hash">hash<a class="headerlink" href="#hash" title="Permanent link">&para;</a></h3>
-<p>Hash some input text. Can choose between hashing algorithms.</p>
-<div class="highlight"><pre><span></span><code>hash(content: string, algo: string = &quot;sha1&quot;) -&gt; string
-</code></pre></div>
-<p>Supported algos: <code>sha1</code> (default), <code>sha256</code>, <code>sha512</code>, <code>md5</code>.</p>
-<p><strong>Note</strong>: The default <code>sha1</code> is <strong>not cryptographically secure</strong>.
-If you need security, specify a secure algorithm such as <code>sha512</code>.</p>
-<h3 id="encode_base64">encode_base64<a class="headerlink" href="#encode_base64" title="Permanent link">&para;</a></h3>
-<p>Base64 encode some text.</p>
-<div class="highlight"><pre><span></span><code>encode_base64(content: string, url_safe: bool = false, padding: bool = true) -&gt; string
-</code></pre></div>
-<ul>
-<li>Enable <code>url_safe</code> to replaces url-unsafe characters in standard base64 encoding with url-safe ones.</li>
-<li>Disable <code>padding</code> to leave out <code>=</code> padding from the base64 encoding.</li>
-</ul>
-<h3 id="decode_base64">decode_base64<a class="headerlink" href="#decode_base64" title="Permanent link">&para;</a></h3>
-<p>Base64 decode some text.</p>
-<div class="highlight"><pre><span></span><code>decode_base64(content: string, url_safe: bool = false, padding: bool = true) -&gt; string
-</code></pre></div>
-<ul>
-<li><code>url_safe</code> and <code>padding</code> settings should match what was used when <em>encoding</em> to ensure correct decoding.</li>
-</ul>
-<h3 id="encode_base16">encode_base16<a class="headerlink" href="#encode_base16" title="Permanent link">&para;</a></h3>
-<p>Base16 encode some text. Also known as "hex encoding".</p>
-<div class="highlight"><pre><span></span><code>encode_base16(content: string) -&gt; string
-</code></pre></div>
-<h3 id="decode_base16">decode_base16<a class="headerlink" href="#decode_base16" title="Permanent link">&para;</a></h3>
-<p>Base16 decode some text. Also known as "hex decoding".</p>
-<div class="highlight"><pre><span></span><code>decode_base16(content: string) -&gt; string
-</code></pre></div>
-<h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
-<h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
-<p>Exits the script with the given exit code</p>
-<div class="highlight"><pre><span></span><code>exit(code int = 0)
-</code></pre></div>
-<h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
-<p>Reads the contents of a file with the given path.</p>
-<div class="highlight"><pre><span></span><code>read_file(path: string) -&gt; map
-read_file(path: string, mode: string = &quot;text&quot;) -&gt; map
-</code></pre></div>
-<ul>
-<li><code>mode</code> is a named arg which is <code>"text"</code> by default.<ul>
-<li>Decodes the contents as UTF-8 and makes it available as string.</li>
-</ul>
-</li>
-<li>Other valid value is <code>"bytes"</code>.<ul>
-<li>Reads the bytes and makes them available as a list of ints.</li>
-</ul>
-</li>
-</ul>
-<p>The returned <code>map</code> contains two keys:</p>
-<ul>
-<li><code>size_bytes -&gt; int</code></li>
-<li><code>content -&gt; string | list[int]</code> (depending on <code>mode</code>)</li>
-</ul>
-<h3 id="write_file">write_file<a class="headerlink" href="#write_file" title="Permanent link">&para;</a></h3>
-<p>Writes a string to the given file path. Creates the file if it does not exist.</p>
-<div class="highlight"><pre><span></span><code>write_file(path: string, content: string, append: bool = false) -&gt; map, map?
-</code></pre></div>
-<p><code>append</code> is a named arg controlling whether we should append to the file instead of overriding existing data.</p>
-<p>The first returned <code>map</code> contains two keys:</p>
-<ul>
-<li><code>bytes_written -&gt; int</code></li>
-<li><code>path -&gt; string</code></li>
-</ul>
-<p>The second map is an error map which can be assigned. If it's not assigned and the function fails, it will instead error
-exit.</p>
-<h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
-<p>Gets information about a file or directory at the specified path.</p>
-<div class="highlight"><pre><span></span><code>get_path(path: string) -&gt; map
-</code></pre></div>
-<p>The map will always contain these entries:</p>
-<ul>
-<li><code>full_path -&gt; string</code></li>
-<li><code>exists -&gt; bool</code></li>
-</ul>
-<p>Only if the path exists, will it also contain the following entries:</p>
-<ul>
-<li><code>base_name -&gt; string</code></li>
-<li><code>permissions -&gt; string</code></li>
-<li><code>type -&gt; string</code> (<code>dir</code> or <code>file</code>)</li>
-<li><code>size_bytes -&gt; int</code> (Entry only defined if it's a file)</li>
-</ul>
-<h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
-<p>Returns a list of paths under the given target directory.</p>
-<div class="highlight"><pre><span></span><code>find_paths(target: string, depth: int = -1, relative: string = &quot;target&quot;) -&gt; list[string]
-</code></pre></div>
-<ul>
-<li><code>depth</code> defaults to <code>-1</code>, indicating no depth limit. Set a positive number to limit how deep the included paths should
-  be.</li>
-<li><code>relative</code> defaults to <code>"target"</code> and defines to where the resulting paths should be relative.<ul>
-<li><code>"target"</code> (<em>default</em>): relative to the input target path</li>
-<li><code>"cwd"</code>: relative to the user's current working directory</li>
-<li><code>"absolute"</code>: return absolute paths</li>
-</ul>
-</li>
-</ul>
-<h3 id="get_env">get_env<a class="headerlink" href="#get_env" title="Permanent link">&para;</a></h3>
-<p>Retrieves the value of an environment variable.</p>
-<div class="highlight"><pre><span></span><code>get_env(name: string) -&gt; string
-</code></pre></div>
-<p><strong>Parameters</strong></p>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
@@ -3542,25 +3538,733 @@ exit.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>name</code></td>
-<td><code>string</code></td>
-<td>The name of the environment variable.</td>
+<td><code>_val</code></td>
+<td><code>any</code></td>
+<td>Value to apply color to</td>
+</tr>
+<tr>
+<td><code>red</code></td>
+<td><code>int</code></td>
+<td>Red component (0-255)</td>
+</tr>
+<tr>
+<td><code>green</code></td>
+<td><code>int</code></td>
+<td>Green component (0-255)</td>
+</tr>
+<tr>
+<td><code>blue</code></td>
+<td><code>int</code></td>
+<td>Blue component (0-255)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Return Values</strong></p>
-<p>Returns the value of the environment variable as a string. If the environment variable doesn't exist, returns an empty
-string.</p>
-<p><strong>Examples</strong></p>
-<div class="highlight"><pre><span></span><code>// Get an environment variable
-home_dir = get_env(&quot;HOME&quot;)
+<p>RGB values must be in range [0, 255]. Not all terminals support this.</p>
+<div class="highlight"><pre><span></span><code>color_rgb(&quot;Hello&quot;, red=255, green=0, blue=0)     // -&gt; &quot;Hello&quot; (in bright red)
+color_rgb(42, red=0, green=255, blue=128)        // -&gt; &quot;42&quot; (in green-cyan)
+color_rgb(&quot;test&quot;, red=300, green=0, blue=0)      // -&gt; Error: RGB values must be [0, 255]
+</code></pre></div>
+<h3 id="colorize">colorize<a class="headerlink" href="#colorize" title="Permanent link">&para;</a></h3>
+<p>Assigns consistent colors to values from a set of possible values. The same value always gets the same color within the
+same set.</p>
+<div class="highlight"><pre><span></span><code>colorize(_val: str, _enum: str[], *, skip_if_single: bool = false) -&gt; str
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_val</code></td>
+<td><code>str</code></td>
+<td>Value to colorize</td>
+</tr>
+<tr>
+<td><code>_enum</code></td>
+<td><code>str[]</code></td>
+<td>Set of possible values for consistent coloring</td>
+</tr>
+<tr>
+<td><code>skip_if_single</code></td>
+<td><code>bool = false</code></td>
+<td>Don't colorize if only one value in set</td>
+</tr>
+</tbody>
+</table>
+<p>Useful for automatically coloring table data or distinguishing values in lists.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+colorize(&quot;Alice&quot;, names)     // -&gt; &quot;Alice&quot; (in consistent color)
+colorize(&quot;Bob&quot;, names)       // -&gt; &quot;Bob&quot; (in different consistent color)
 
-// Use with &#39;or&#39; operator to provide a default value
-api_key = get_env(&quot;API_KEY&quot;) or &quot;default_key&quot;
+// In display blocks
+names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
+display:
+    fields names
+    names:
+        map fn(n) colorize(n, names)
+</code></pre></div>
+<h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
+<h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
+<p>Returns all keys from a map as a list.</p>
+<div class="highlight"><pre><span></span><code>keys(_map: map) -&gt; list[any]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>keys({&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3})  // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+keys({})                        // -&gt; []
+</code></pre></div>
+<h3 id="values">values<a class="headerlink" href="#values" title="Permanent link">&para;</a></h3>
+<p>Returns all values from a map as a list.</p>
+<div class="highlight"><pre><span></span><code>values(_map: map) -&gt; list[any]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>values({&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3})  // -&gt; [1, 2, 3]
+values({})                         // -&gt; []
+</code></pre></div>
+<h3 id="get_default">get_default<a class="headerlink" href="#get_default" title="Permanent link">&para;</a></h3>
+<p>Gets the value for a key in a map, or returns the default value if the key doesn't exist.</p>
+<div class="highlight"><pre><span></span><code>get_default(_map: map, key: any, default: any) -&gt; any
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>data = {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}
+get_default(data, &quot;name&quot;, &quot;Unknown&quot;)     // -&gt; &quot;Alice&quot;
+get_default(data, &quot;city&quot;, &quot;Unknown&quot;)     // -&gt; &quot;Unknown&quot;
+get_default(data, &quot;age&quot;, 0)              // -&gt; 30
+</code></pre></div>
+<h2 id="random">Random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h2>
+<h3 id="rand">rand<a class="headerlink" href="#rand" title="Permanent link">&para;</a></h3>
+<p>Returns a random float between 0.0 (inclusive) and 1.0 (exclusive).</p>
+<div class="highlight"><pre><span></span><code>rand() -&gt; float
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>rand()     // -&gt; 0.7394832
+rand()     // -&gt; 0.2847293
+</code></pre></div>
+<h3 id="rand_int">rand_int<a class="headerlink" href="#rand_int" title="Permanent link">&para;</a></h3>
+<p>Returns a random integer in a specified range.</p>
+<div class="highlight"><pre><span></span><code>rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -&gt; int
+</code></pre></div>
+<p>With one argument, returns random int from 0 to <code>_arg1</code> (exclusive). With two arguments, returns random int from <code>_arg1</code>
+to <code>_arg2</code> (exclusive). Min must be less than max.</p>
+<div class="highlight"><pre><span></span><code>rand_int(10)        // -&gt; Random int from 0-9
+rand_int(5, 15)     // -&gt; Random int from 5-14
+rand_int(10, 5)     // -&gt; Error: min (10) must be less than max (5)
+</code></pre></div>
+<h3 id="seed_random">seed_random<a class="headerlink" href="#seed_random" title="Permanent link">&para;</a></h3>
+<p>Seeds the random number generator used by <a href="#rand"><code>rand</code></a> and <a href="#rand_int"><code>rand_int</code></a>.</p>
+<div class="highlight"><pre><span></span><code>seed_random(_seed: int) -&gt; void
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>seed_random(42)
+rand()              // -&gt; Same sequence every time with seed 42
+rand_int(10)        // -&gt; Same sequence every time with seed 42
+</code></pre></div>
+<h3 id="uuid_v4">uuid_v4<a class="headerlink" href="#uuid_v4" title="Permanent link">&para;</a></h3>
+<p>Generates a random V4 UUID.</p>
+<div class="highlight"><pre><span></span><code>uuid_v4() -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>uuid_v4()  // -&gt; &quot;f47ac10b-58cc-4372-a567-0e02b2c3d479&quot;
+</code></pre></div>
+<h3 id="uuid_v7">uuid_v7<a class="headerlink" href="#uuid_v7" title="Permanent link">&para;</a></h3>
+<p>Generates a random V7 UUID (time-ordered).</p>
+<div class="highlight"><pre><span></span><code>uuid_v7() -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>uuid_v7()  // -&gt; &quot;01234567-89ab-7def-8123-456789abcdef&quot;
+</code></pre></div>
+<h3 id="gen_fid">gen_fid<a class="headerlink" href="#gen_fid" title="Permanent link">&para;</a></h3>
+<p>Generates a random <a href="https://github.com/amterp/flexid">flex ID</a> (fid) - a time-ordered, URL-safe identifier.</p>
+<div class="highlight"><pre><span></span><code>gen_fid() -&gt; str|error
+gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -&gt; str|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alphabet</code></td>
+<td><code>str? = "[0-9][A-Z][a-z]"</code></td>
+<td>Characters to use (base-62 by default)</td>
+</tr>
+<tr>
+<td><code>tick_size_ms</code></td>
+<td><code>int? = 100</code></td>
+<td>Time precision in milliseconds</td>
+</tr>
+<tr>
+<td><code>num_random_chars</code></td>
+<td><code>int? = 5</code></td>
+<td>Number of random characters to append</td>
+</tr>
+</tbody>
+</table>
+<p>Defaults: <code>alphabet</code> is base-62 (<code>[0-9][A-Z][a-z]</code>), <code>tick_size_ms</code> is 100ms, <code>num_random_chars</code> is 5.</p>
+<div class="highlight"><pre><span></span><code>gen_fid()                                    // -&gt; &quot;1a2b3c4d5e&quot;
+gen_fid(alphabet=&quot;0123456789&quot;)               // -&gt; &quot;1234567890&quot;
+gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
+</code></pre></div>
+<h2 id="picking">Picking<a class="headerlink" href="#picking" title="Permanent link">&para;</a></h2>
+<h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
+<p>Presents an interactive menu for selecting from a list of options.</p>
+<div class="highlight"><pre><span></span><code>pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;) -&gt; str
+</code></pre></div>
+<p>Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.</p>
+<div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])           // -&gt; Interactive menu
+pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)           // -&gt; Pre-filtered to &quot;red&quot;, &quot;green&quot;
+pick([&quot;one&quot;, &quot;two&quot;, &quot;three&quot;], prompt=&quot;Choose:&quot;)  // -&gt; Custom prompt
+</code></pre></div>
+<h3 id="pick_kv">pick_kv<a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h3>
+<p>Presents an interactive menu showing keys but returns corresponding values.</p>
+<div class="highlight"><pre><span></span><code>pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;) -&gt; any
+</code></pre></div>
+<p>Displays keys in the menu but returns the value at the same index when selected.</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+ages = [25, 30, 35]
+pick_kv(names, ages)                    // -&gt; Shows names, returns age
+pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff00&quot;])  // -&gt; Shows colors, returns hex
+</code></pre></div>
+<h3 id="pick_from_resource">pick_from_resource<a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h3>
+<p>Loads options from a resource file and presents an interactive menu.</p>
+<div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;) -&gt; any
+</code></pre></div>
+<p>Loads data from a JSON/YAML file and presents it as selectable options. Returns the selected item(s).</p>
+<div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
+pick_from_resource(&quot;configs.yaml&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered options
+pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
+</code></pre></div>
+<h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">&para;</a></h2>
+<p>Rad provides functions for all HTTP methods. All functions have identical signatures and return the same response
+format.</p>
+<h3 id="http-functions">HTTP Functions<a class="headerlink" href="#http-functions" title="Permanent link">&para;</a></h3>
+<p><strong>Available methods:</strong></p>
+<ul>
+<li><code>http_get</code>, <code>http_post</code>, <code>http_put</code>, <code>http_patch</code>, <code>http_delete</code></li>
+<li><code>http_head</code>, <code>http_options</code>, <code>http_trace</code>, <code>http_connect</code></li>
+</ul>
+<div class="highlight"><pre><span></span><code>http_method(url: str, *, body: any?, headers: map?) -&gt; map
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>url</code>: The target URL</li>
+<li><code>body</code>: Request body (JSON object/array, string, etc.) - optional</li>
+<li><code>headers</code>: Map of HTTP headers - optional. Values can be strings or lists of strings.</li>
+</ul>
+<p><strong>Response map contains:</strong></p>
+<ul>
+<li><code>success: bool</code> - Whether request succeeded</li>
+<li><code>duration_seconds: float</code> - Request duration</li>
+<li><code>status_code?: int</code> - HTTP status code (if response received)</li>
+<li><code>body?: any</code> - Response body parsed as JSON if possible (if present)</li>
+<li><code>error?: str</code> - Error message (if request failed)</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Simple GET request
+response = http_get(&quot;https://api.example.com/users&quot;)
+if response.success:
+    users = response.body
+
+// POST with JSON body
+data = {&quot;name&quot;: &quot;Alice&quot;, &quot;email&quot;: &quot;alice@example.com&quot;}
+response = http_post(&quot;https://api.example.com/users&quot;, body=data)
+
+// With custom headers
+headers = {&quot;Authorization&quot;: &quot;Bearer token123&quot;, &quot;Content-Type&quot;: &quot;application/json&quot;}
+response = http_get(&quot;https://api.example.com/data&quot;, headers=headers)
+
+// Error handling
+response = http_get(&quot;https://invalid-url&quot;)
+if not response.success:
+    print(&quot;Request failed:&quot;, response.error)
+</code></pre></div>
+<h2 id="math">Math<a class="headerlink" href="#math" title="Permanent link">&para;</a></h2>
+<h3 id="abs">abs<a class="headerlink" href="#abs" title="Permanent link">&para;</a></h3>
+<p>Returns the absolute value of a number.</p>
+<div class="highlight"><pre><span></span><code>abs(_num: int|float) -&gt; int|float
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>abs(-5)      // -&gt; 5
+abs(3.14)    // -&gt; 3.14
+abs(-2.7)    // -&gt; 2.7
+</code></pre></div>
+<h3 id="sum">sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h3>
+<p>Sums all numbers in a list.</p>
+<div class="highlight"><pre><span></span><code>sum(_nums: list[float]) -&gt; float|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sum([1, 2, 3, 4])        // -&gt; 10.0
+sum([1.5, 2.5, 3.0])     // -&gt; 7.0
+sum([])                  // -&gt; 0.0
+sum([1, &quot;text&quot;, 3])      // -&gt; Error: requires list of numbers
+</code></pre></div>
+<h3 id="round">round<a class="headerlink" href="#round" title="Permanent link">&para;</a></h3>
+<p>Rounds a number to the specified decimal precision.</p>
+<div class="highlight"><pre><span></span><code>round(_num: float, _decimals: int = 0) -&gt; int|float|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_num</code></td>
+<td><code>float</code></td>
+<td>Number to round</td>
+</tr>
+<tr>
+<td><code>_decimals</code></td>
+<td><code>int = 0</code></td>
+<td>Number of decimal places (must be non-negative)</td>
+</tr>
+</tbody>
+</table>
+<p>With precision 0, returns an integer. With precision &gt; 0, returns a float. Precision must be non-negative.</p>
+<div class="highlight"><pre><span></span><code>round(3.14159)           // -&gt; 3 (integer)
+round(3.14159, 2)        // -&gt; 3.14 (float)
+round(2.7)               // -&gt; 3 (integer)
+round(3.14, -1)          // -&gt; Error: precision must be non-negative
+</code></pre></div>
+<h3 id="floor">floor<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h3>
+<p>Rounds a number down to the next integer.</p>
+<div class="highlight"><pre><span></span><code>floor(_num: float) -&gt; int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>floor(1.89)    // -&gt; 1
+floor(-1.2)    // -&gt; -2
+floor(5.0)     // -&gt; 5
+</code></pre></div>
+<h3 id="ceil">ceil<a class="headerlink" href="#ceil" title="Permanent link">&para;</a></h3>
+<p>Rounds a number up to the next integer.</p>
+<div class="highlight"><pre><span></span><code>ceil(_num: float) -&gt; int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ceil(1.21)     // -&gt; 2
+ceil(-1.8)     // -&gt; -1
+ceil(5.0)      // -&gt; 5
+</code></pre></div>
+<h3 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h3>
+<p>Returns the minimum value from a list of numbers.</p>
+<div class="highlight"><pre><span></span><code>min(_nums: list[float]) -&gt; float|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>min([1, 2, 3, 4])        // -&gt; 1.0
+min([5.5, 2.1, 8.9])     // -&gt; 2.1
+min([])                  // -&gt; Error: cannot find minimum of empty list
+min([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
+</code></pre></div>
+<h3 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h3>
+<p>Returns the maximum value from a list of numbers.</p>
+<div class="highlight"><pre><span></span><code>max(_nums: list[float]) -&gt; float|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>max([1, 2, 3, 4])        // -&gt; 4.0
+max([5.5, 2.1, 8.9])     // -&gt; 8.9
+max([])                  // -&gt; Error: cannot find maximum of empty list
+max([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
+</code></pre></div>
+<h3 id="clamp">clamp<a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h3>
+<p>Constrains a value between minimum and maximum bounds.</p>
+<div class="highlight"><pre><span></span><code>clamp(val: float, min: float, max: float) -&gt; float|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>val</code></td>
+<td><code>float</code></td>
+<td>Value to constrain</td>
+</tr>
+<tr>
+<td><code>min</code></td>
+<td><code>float</code></td>
+<td>Minimum bound</td>
+</tr>
+<tr>
+<td><code>max</code></td>
+<td><code>float</code></td>
+<td>Maximum bound</td>
+</tr>
+</tbody>
+</table>
+<p>Returns <code>val</code> if between min and max, otherwise returns the nearest bound. Min must be ≤ max.</p>
+<div class="highlight"><pre><span></span><code>clamp(25, 20, 30)    // -&gt; 25.0
+clamp(10, 20, 30)    // -&gt; 20.0
+clamp(40, 20, 30)    // -&gt; 30.0
+clamp(15, 30, 20)    // -&gt; Error: min must be &lt;= max
+</code></pre></div>
+<h3 id="pow">pow<a class="headerlink" href="#pow" title="Permanent link">&para;</a></h3>
+<p>Raises <code>base</code> to the power of <code>exponent</code>. Useful for exponentiation, square roots, and cube roots.</p>
+<div class="highlight"><pre><span></span><code>pow(base: float, exponent: float) -&gt; float
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>pow(2, 3)      // -&gt; 8
+pow(4, 0.5)    // -&gt; 2.0 (square root)
+pow(8, 1/3)    // -&gt; 2.0 (cube root)  
+pow(2, -2)     // -&gt; 0.25
+pow(-2, 3)     // -&gt; -8
+</code></pre></div>
+<h2 id="hashing-encodedecode">Hashing &amp; Encode/Decode<a class="headerlink" href="#hashing-encodedecode" title="Permanent link">&para;</a></h2>
+<h3 id="hash">hash<a class="headerlink" href="#hash" title="Permanent link">&para;</a></h3>
+<p>Generates a hash of the input text using various algorithms.</p>
+<div class="highlight"><pre><span></span><code>hash(_val: str) -&gt; str
+hash(_val: str, *, algo: [&quot;sha1&quot;, &quot;sha256&quot;, &quot;sha512&quot;, &quot;md5&quot;] = &quot;sha1&quot;) -&gt; str
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_val</code></td>
+<td><code>str</code></td>
+<td>Text to hash</td>
+</tr>
+<tr>
+<td><code>algo</code></td>
+<td><code>["sha1", "sha256", "sha512", "md5"] = "sha1"</code></td>
+<td>Hashing algorithm to use</td>
+</tr>
+</tbody>
+</table>
+<p>The default <code>sha1</code> is <strong>not cryptographically secure</strong>. Use <code>sha256</code> or <code>sha512</code> for security.</p>
+<div class="highlight"><pre><span></span><code>hash(&quot;hello world&quot;)                    // -&gt; &quot;2aae6c35c94fcfb415dbe95f408b9ce91ee846ed&quot;
+hash(&quot;hello world&quot;, algo=&quot;sha256&quot;)     // -&gt; &quot;b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9&quot;
+hash(&quot;sensitive data&quot;, algo=&quot;sha512&quot;)  // -&gt; Long SHA-512 hash
+</code></pre></div>
+<h3 id="encode_base64">encode_base64<a class="headerlink" href="#encode_base64" title="Permanent link">&para;</a></h3>
+<p>Encodes text to Base64 format.</p>
+<div class="highlight"><pre><span></span><code>encode_base64(_content: str) -&gt; str
+encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -&gt; str
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_content</code></td>
+<td><code>str</code></td>
+<td>Text to encode</td>
+</tr>
+<tr>
+<td><code>url_safe</code></td>
+<td><code>bool = false</code></td>
+<td>Replace <code>+/</code> with <code>-_</code> for URL-safe encoding</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>bool = true</code></td>
+<td>Include <code>=</code> padding characters</td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>url_safe=true</code> to replace <code>+/</code> with <code>-_</code> for URL-safe encoding. Use <code>padding=false</code> to omit <code>=</code> padding.</p>
+<div class="highlight"><pre><span></span><code>encode_base64(&quot;Hello World&quot;)                      // -&gt; &quot;SGVsbG8gV29ybGQ=&quot;
+encode_base64(&quot;Hello World&quot;, url_safe=true)       // -&gt; URL-safe version
+encode_base64(&quot;Hello World&quot;, padding=false)       // -&gt; &quot;SGVsbG8gV29ybGQ&quot;
+</code></pre></div>
+<h3 id="decode_base64">decode_base64<a class="headerlink" href="#decode_base64" title="Permanent link">&para;</a></h3>
+<p>Decodes Base64 text back to original string.</p>
+<div class="highlight"><pre><span></span><code>decode_base64(_content: str) -&gt; str|error
+decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -&gt; str|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_content</code></td>
+<td><code>str</code></td>
+<td>Base64 text to decode</td>
+</tr>
+<tr>
+<td><code>url_safe</code></td>
+<td><code>bool = false</code></td>
+<td>Expect URL-safe encoding (<code>-_</code> instead of <code>+/</code>)</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>bool = true</code></td>
+<td>Expect padding characters (<code>=</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Settings must match those used for encoding.</p>
+<div class="highlight"><pre><span></span><code>encoded = encode_base64(&quot;Hello World&quot;)
+decoded = decode_base64(encoded)           // -&gt; &quot;Hello World&quot;
+
+// URL-safe decoding
+url_encoded = encode_base64(&quot;test&quot;, url_safe=true)
+decoded = decode_base64(url_encoded, url_safe=true)
+
+// Error handling
+result = decode_base64(&quot;invalid base64!&quot;)
+if result.error:
+    print(&quot;Decode failed:&quot;, result.error)
+</code></pre></div>
+<h3 id="encode_base16">encode_base16<a class="headerlink" href="#encode_base16" title="Permanent link">&para;</a></h3>
+<p>Encodes text to Base16 (hexadecimal) format.</p>
+<div class="highlight"><pre><span></span><code>encode_base16(_content: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>encode_base16(&quot;Hello&quot;)        // -&gt; &quot;48656c6c6f&quot;
+encode_base16(&quot;ABC&quot;)          // -&gt; &quot;414243&quot;
+</code></pre></div>
+<h3 id="decode_base16">decode_base16<a class="headerlink" href="#decode_base16" title="Permanent link">&para;</a></h3>
+<p>Decodes Base16 (hexadecimal) text back to original string.</p>
+<div class="highlight"><pre><span></span><code>decode_base16(_content: str) -&gt; str|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>decode_base16(&quot;48656c6c6f&quot;)   // -&gt; &quot;Hello&quot;
+decode_base16(&quot;414243&quot;)       // -&gt; &quot;ABC&quot;
+
+// Error handling
+result = decode_base16(&quot;invalid hex&quot;)
+if result.error:
+    print(&quot;Invalid hex string&quot;)
+</code></pre></div>
+<h2 id="system-files">System &amp; Files<a class="headerlink" href="#system-files" title="Permanent link">&para;</a></h2>
+<h3 id="exit">exit<a class="headerlink" href="#exit" title="Permanent link">&para;</a></h3>
+<p>Exits the script with the given exit code.</p>
+<div class="highlight"><pre><span></span><code>exit(_code: int|bool = 0) -&gt; void
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>exit()          // -&gt; Exits with code 0
+exit(1)         // -&gt; Exits with code 1
+exit(true)      // -&gt; Exits with code 1 (bool conversion)
+exit(false)     // -&gt; Exits with code 0 (bool conversion)
+</code></pre></div>
+<h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
+<p>Reads the contents of a file.</p>
+<div class="highlight"><pre><span></span><code>read_file(_path: str, *, mode: [&quot;text&quot;, &quot;bytes&quot;] = &quot;text&quot;) -&gt; map|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_path</code></td>
+<td><code>str</code></td>
+<td>Path to the file to read</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td><code>["text", "bytes"] = "text"</code></td>
+<td>Read as UTF-8 text or raw bytes</td>
+</tr>
+</tbody>
+</table>
+<p>In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.</p>
+<p><strong>Return map contains:</strong></p>
+<ul>
+<li><code>size_bytes: int</code> - File size in bytes</li>
+<li><code>content: str|list[int]</code> - File contents (type depends on mode)</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Read text file
+result = read_file(&quot;config.txt&quot;)
+if result.success:
+    content = result.content  // -&gt; string
+
+// Read binary file
+result = read_file(&quot;image.png&quot;, mode=&quot;bytes&quot;)
+if result.success:
+    bytes = result.content    // -&gt; list[int]
+
+// Handle errors
+result = read_file(&quot;missing.txt&quot;)
+if not result.success:
+    print(&quot;Error:&quot;, result.error)
+</code></pre></div>
+<h3 id="write_file">write_file<a class="headerlink" href="#write_file" title="Permanent link">&para;</a></h3>
+<p>Writes content to a file. Creates the file if it doesn't exist.</p>
+<div class="highlight"><pre><span></span><code>write_file(_path: str, _content: str, *, append: bool = false) -&gt; map|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_path</code></td>
+<td><code>str</code></td>
+<td>Path where to write the file</td>
+</tr>
+<tr>
+<td><code>_content</code></td>
+<td><code>str</code></td>
+<td>Content to write</td>
+</tr>
+<tr>
+<td><code>append</code></td>
+<td><code>bool = false</code></td>
+<td>Append to existing content instead of overwriting</td>
+</tr>
+</tbody>
+</table>
+<p>By default overwrites the file. Use <code>append=true</code> to append to existing content.</p>
+<p><strong>Return map contains:</strong></p>
+<ul>
+<li><code>bytes_written: int</code> - Number of bytes written</li>
+<li><code>path: str</code> - Full path to the written file</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Write new file
+result = write_file(&quot;output.txt&quot;, &quot;Hello world&quot;)
+print(&quot;Wrote&quot;, result.bytes_written, &quot;bytes&quot;)
+
+// Append to existing file
+write_file(&quot;log.txt&quot;, &quot;\nNew entry&quot;, append=true)
+
+// Error handling
+result, err = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;)
+if err:
+    print(&quot;Write failed:&quot;, err.msg)
+</code></pre></div>
+<h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
+<p>Gets information about a file or directory path.</p>
+<div class="highlight"><pre><span></span><code>get_path(_path: str) -&gt; map
+</code></pre></div>
+<p><strong>Always returns:</strong></p>
+<ul>
+<li><code>exists: bool</code> - Whether the path exists</li>
+<li><code>full_path: str</code> - Absolute path</li>
+</ul>
+<p><strong>When path exists, also returns:</strong></p>
+<ul>
+<li><code>base_name?: str</code> - File/directory name</li>
+<li><code>permissions?: str</code> - Permission string (e.g., "rwxr-xr-x")</li>
+<li><code>type?: str</code> - Either "file" or "dir"</li>
+<li><code>size_bytes?: int</code> - File size (only for files)</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>info = get_path(&quot;config.txt&quot;)
+if info.exists:
+    print(&quot;File size:&quot;, info.size_bytes, &quot;bytes&quot;)
+    print(&quot;Type:&quot;, info.type)
+else:
+    print(&quot;File not found&quot;)
+</code></pre></div>
+<h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
+<p>Returns a list of all paths under a directory.</p>
+<div class="highlight"><pre><span></span><code>find_paths(_path: str) -&gt; list[str]|error
+find_paths(_path: str, *, depth: int = -1, relative: [&quot;target&quot;, &quot;cwd&quot;, &quot;absolute&quot;] = &quot;target&quot;) -&gt; list[str]|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_path</code></td>
+<td><code>str</code></td>
+<td>Directory to search</td>
+</tr>
+<tr>
+<td><code>depth</code></td>
+<td><code>int = -1</code></td>
+<td>Max depth to search (-1 for unlimited)</td>
+</tr>
+<tr>
+<td><code>relative</code></td>
+<td><code>["target", "cwd", "absolute"] = "target"</code></td>
+<td>How to format returned paths</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>"target"</code> - Relative to input path (default)</li>
+<li><code>"cwd"</code> - Relative to current directory</li>
+<li><code>"absolute"</code> - Full absolute paths</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Find all files in directory
+paths = find_paths(&quot;src/&quot;)
+for path in paths:
+    print(path)  // -&gt; &quot;file1.txt&quot;, &quot;subdir/file2.txt&quot;, etc.
+
+// Limit depth
+paths = find_paths(&quot;src/&quot;, depth=1)  // -&gt; Only direct children
+
+// Get absolute paths
+paths = find_paths(&quot;src/&quot;, relative=&quot;absolute&quot;)
+</code></pre></div>
+<h3 id="get_env">get_env<a class="headerlink" href="#get_env" title="Permanent link">&para;</a></h3>
+<p>Retrieves the value of an environment variable.</p>
+<div class="highlight"><pre><span></span><code>get_env(_var: str) -&gt; str
+</code></pre></div>
+<p>Returns the environment variable value, or empty string if not set.</p>
+<div class="highlight"><pre><span></span><code>home_dir = get_env(&quot;HOME&quot;)                    // -&gt; &quot;/Users/username&quot;
+api_key = get_env(&quot;API_KEY&quot;) or &quot;default&quot;     // -&gt; Uses default if not set
+missing = get_env(&quot;NONEXISTENT&quot;)              // -&gt; &quot;&quot;
+</code></pre></div>
+<h3 id="delete_path">delete_path<a class="headerlink" href="#delete_path" title="Permanent link">&para;</a></h3>
+<p>Deletes a file or directory at the specified path.</p>
+<div class="highlight"><pre><span></span><code>delete_path(_path: str) -&gt; bool
+</code></pre></div>
+<p>Returns <code>true</code> if the path was successfully deleted, <code>false</code> if it didn't exist or couldn't be deleted.</p>
+<div class="highlight"><pre><span></span><code>delete_path(&quot;temp.txt&quot;)         // -&gt; true (if file existed and was deleted)
+delete_path(&quot;missing.txt&quot;)      // -&gt; false (file didn&#39;t exist)
+delete_path(&quot;directory/&quot;)       // -&gt; true (if directory existed and was deleted)
 </code></pre></div>
 <h3 id="get_rad_home">get_rad_home<a class="headerlink" href="#get_rad_home" title="Permanent link">&para;</a></h3>
-<p>Returns rad's home directory.</p>
-<div class="highlight"><pre><span></span><code>get_rad_home() -&gt; string
+<p>Returns Rad's home directory.</p>
+<div class="highlight"><pre><span></span><code>get_rad_home() -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>home = get_rad_home()  // -&gt; &quot;/Users/username/.rad&quot; or $RAD_HOME
+</code></pre></div>
+<h3 id="get_args">get_args<a class="headerlink" href="#get_args" title="Permanent link">&para;</a></h3>
+<p>Returns the raw command-line arguments passed to the script.</p>
+<div class="highlight"><pre><span></span><code>get_args() -&gt; list[str]
+</code></pre></div>
+<p>Returns all arguments after the script name. Unlike parsed args, this gives you raw access to all arguments.</p>
+<div class="highlight"><pre><span></span><code>// If script was called: rad myscript.rad arg1 arg2 --flag
+args = get_args()  // -&gt; [&quot;./myscript.rad&quot;, &quot;arg1&quot;, &quot;arg2&quot;, &quot;--flag&quot;]
+</code></pre></div>
+<h3 id="error_1">error<a class="headerlink" href="#error_1" title="Permanent link">&para;</a></h3>
+<p>Creates an error object with the given message.</p>
+<div class="highlight"><pre><span></span><code>error(_msg: str) -&gt; error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>err = error(&quot;Something went wrong&quot;)
+return err  // -&gt; Script will exit with this error message
 </code></pre></div>
 <h2 id="home-stash">Home &amp; Stash<a class="headerlink" href="#home-stash" title="Permanent link">&para;</a></h2>
 <h3 id="get_rad_home_1"><code>get_rad_home</code><a class="headerlink" href="#get_rad_home_1" title="Permanent link">&para;</a></h3>
@@ -3589,102 +4293,60 @@ api_key = get_env(&quot;API_KEY&quot;) or &quot;default_key&quot;
 <li><code>map</code> containing the saved state. Starts empty, before anything is saved to it.</li>
 <li><code>bool</code> representing if the state existed before the load, or if it was just created.</li>
 </ol>
-<h3 id="save_state"><code>save_state</code><a class="headerlink" href="#save_state" title="Permanent link">&para;</a></h3>
-<p>Saves the given state to the stash's state file.</p>
-<p>Requires a stash ID to have been defined.</p>
-<div class="highlight"><pre><span></span><code>save_state(state: map)
+<h3 id="save_state">save_state<a class="headerlink" href="#save_state" title="Permanent link">&para;</a></h3>
+<p>Saves the script's state to persistent stash storage.</p>
+<div class="highlight"><pre><span></span><code>save_state(_state: map) -&gt; error?
 </code></pre></div>
-<p><strong>Parameters</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>state</code></td>
-<td><code>map</code></td>
-<td>The state object to save.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="load_stash_file"><code>load_stash_file</code><a class="headerlink" href="#load_stash_file" title="Permanent link">&para;</a></h3>
-<p>Loads the contents of a file under the script's stash.
-If the file doesn't exist, it gets created with the given default contents.</p>
-<p>Requires a stash ID to have been defined.</p>
-<div class="highlight"><pre><span></span><code>load_stash_file(subpath: string, default_contents: string) -&gt; map, bool
+<div class="highlight"><pre><span></span><code>state = {&quot;counter&quot;: 42, &quot;last_run&quot;: now().date}
+save_state(state)
+print(&quot;State saved&quot;)
 </code></pre></div>
-<p><strong>Parameters</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>subpath</code></td>
-<td><code>string</code></td>
-<td>The subpath to the file under the script's stash.</td>
-</tr>
-<tr>
-<td><code>default_contents</code></td>
-<td><code>string</code></td>
-<td>Default contents if the file doesn't exist.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Return Values</strong></p>
-<ol>
-<li><code>map</code> containing the following keys:<ul>
-<li><code>path: string</code> - full path to the script</li>
-<li><code>content: string</code> - loaded contents</li>
+<h3 id="load_stash_file">load_stash_file<a class="headerlink" href="#load_stash_file" title="Permanent link">&para;</a></h3>
+<p>Loads a file from the script's stash directory, creating it with default content if it doesn't exist.</p>
+<div class="highlight"><pre><span></span><code>load_stash_file(_path: str, _default: str = &quot;&quot;) -&gt; map|error
+</code></pre></div>
+<p><strong>Return map contains:</strong></p>
+<ul>
+<li><code>full_path: str</code> - Full path to the file</li>
+<li><code>created: bool</code> - Whether the file was just created</li>
+<li><code>content?: str</code> - File contents (if successfully loaded)</li>
 </ul>
-</li>
-<li><code>bool</code> indicating if the loaded file already existed or had to be created. <code>true</code> if existed.</li>
-</ol>
-<h3 id="write_stash_file"><code>write_stash_file</code><a class="headerlink" href="#write_stash_file" title="Permanent link">&para;</a></h3>
-<p>Write text to a file under the script's stash.</p>
-<p>Requires a stash ID to have been defined.</p>
-<div class="highlight"><pre><span></span><code>write_stash_file(subpath: string, contents: string) -&gt; string, error?!
+<div class="highlight"><pre><span></span><code>result = load_stash_file(&quot;config.txt&quot;, &quot;default config&quot;)
+if result.success:
+    if result.created:
+        print(&quot;Created new config file&quot;)
+    content = result.content
 </code></pre></div>
-<p><strong>Parameters</strong></p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>subpath</code></td>
-<td><code>string</code></td>
-<td>The subpath for the file under the script's stash.</td>
-</tr>
-<tr>
-<td><code>contents</code></td>
-<td><code>string</code></td>
-<td>Contents to write.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Return Values</strong></p>
-<ol>
-<li><code>string</code> for the full path to the written file.</li>
-<li><code>error</code> map containing errors if the write was unsuccessful; otherwise <code>null</code>.</li>
-</ol>
+<h3 id="write_stash_file">write_stash_file<a class="headerlink" href="#write_stash_file" title="Permanent link">&para;</a></h3>
+<p>Writes content to a file in the script's stash directory.</p>
+<div class="highlight"><pre><span></span><code>write_stash_file(_path: str, _content: str) -&gt; error?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>write_stash_file(&quot;log.txt&quot;, &quot;Script executed at &quot; + now().time)
+write_stash_file(&quot;data/results.json&quot;, json_data)
+print(&quot;Data saved to stash&quot;)
+</code></pre></div>
 <h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
 <h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
-<p>Returns the current time in the machine's local timezone, accessible in various forms.</p>
-<div class="highlight"><pre><span></span><code>now() -&gt; map
+<p>Returns the current time with various accessible formats.</p>
+<div class="highlight"><pre><span></span><code>now(*, tz: str = &quot;local&quot;) -&gt; map|error
 </code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tz</code></td>
+<td><code>str = "local"</code></td>
+<td>Timezone (e.g., "UTC", "America/Chicago")</td>
+</tr>
+</tbody>
+</table>
 <p>Map values:</p>
 <table>
 <thead>
@@ -3764,11 +4426,28 @@ If the file doesn't exist, it gets created with the given default contents.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
-<p>Given a Unix epoch timestamp, parse it into various other ready-to-use formats in the form of a map.</p>
-<div class="highlight"><pre><span></span><code>parse_epoch(epoch: int, unit: string = &quot;auto&quot;, tz: string = &quot;default&quot;) -&gt; map?, error?!
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>time = now()
+print(&quot;Current date:&quot;, time.date)          // -&gt; &quot;2024-04-05&quot;
+print(&quot;Current time:&quot;, time.time)          // -&gt; &quot;14:30:25&quot;
+print(&quot;Year:&quot;, time.year)                  // -&gt; 2024
+
+// Use epoch for timestamps
+timestamp = now().epoch.seconds
+print(&quot;Timestamp:&quot;, timestamp)             // -&gt; 1712345678
+
+// Different timezone
+utc_time = now(tz=&quot;UTC&quot;)
+print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 </code></pre></div>
-<p><strong>Parameters</strong></p>
+<h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
+<p>Parses a Unix epoch timestamp into various time formats.</p>
+<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int) -&gt; map|error
+parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;) -&gt; map|error
+parse_epoch(_epoch: int, *, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
+parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
@@ -3779,36 +4458,40 @@ If the file doesn't exist, it gets created with the given default contents.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>epoch</code></td>
+<td><code>_epoch</code></td>
 <td><code>int</code></td>
-<td>The Unix epoch timestamp to parse.</td>
-</tr>
-<tr>
-<td><code>unit</code></td>
-<td><code>string = "auto"</code></td>
-<td>The unit of the epoch e.g. seconds, milliseconds, microseconds, or nanoseconds.<br/>Default <code>auto</code> will try to derive it from the number of digits in <code>epoch</code>.</td>
+<td>Unix epoch timestamp</td>
 </tr>
 <tr>
 <td><code>tz</code></td>
-<td><code>string = "default"</code></td>
-<td>The time zone to use for local-time-formatted fields e.g. clock time, date, etc.<br/>Defaults to the system default.</td>
+<td><code>str = "local"</code></td>
+<td>Timezone (e.g., "UTC", "America/Chicago")</td>
+</tr>
+<tr>
+<td><code>unit</code></td>
+<td><code>["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"</code></td>
+<td>Timestamp unit (auto-detects by default)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Return Values</strong></p>
-<ol>
-<li>The returned map contains the same fields as <a href="#now"><code>now</code></a>. It is <code>null</code> if there was an error parsing.</li>
-<li>A nullable error map.</li>
-</ol>
-<p><strong>Examples</strong></p>
-<div class="highlight"><pre><span></span><code>// Parse seconds epoch
-time, err = parse_epoch(1712345678)  // err will be null
+<p>Converts an epoch timestamp to the same format as <a href="#now"><code>now()</code></a>. Auto-detects units from digit count, or specify
+explicitly.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Parse seconds epoch (auto-detected)
+time = parse_epoch(1712345678)
+print(time.date, time.time)  // -&gt; &quot;2024-04-05 22:01:18&quot;
 
-// Millis with TZ
-time, err = parse_epoch(1712345678123, tz=&quot;America/Chicago&quot;)  // err will be null
+// Parse milliseconds with timezone
+time = parse_epoch(1712345678123, tz=&quot;America/Chicago&quot;)
+print(time.hour)  // -&gt; Hour in Chicago timezone
 
-// Invalid time zone
-time, err = parse_epoch(1712345678, tz=&quot;not real time zone&quot;)  // time will be null, but err defined
+// Explicit unit specification
+time = parse_epoch(1712345678000, unit=&quot;milliseconds&quot;)
+
+// Error handling
+time, err = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;)
+if err:
+    print(&quot;Invalid timezone:&quot;, err.msg)
 </code></pre></div>
 
 
