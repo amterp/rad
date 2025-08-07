@@ -91,10 +91,10 @@ print("hello, \{var}")
 }
 
 // todo this should fail
-//func TestStringInterpolation_CanEscapeSecond(t *testing.T) {
+// func TestStringInterpolation_CanEscapeSecond(t *testing.T) {
 //	rl := `
-//print("hello, {var\}")
-//`
+// print("hello, {var\}")
+// `
 //	setupAndRunCode(t, rl, "--color=never")
 //	assertOnlyOutput(t, stdOutBuffer, "hello, {var}\n")
 //	assertNoErrors(t)
@@ -240,6 +240,35 @@ print("{blue(n)}")
 	expected := "alice\n"
 	expected += myBlue.Sprintf("alice") + "\n"
 	setupAndRunCode(t, script, "--color=always")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ModuloOperator(t *testing.T) {
+	script := `
+a = 10
+b = 3
+print("10 % 3 = {a % b}")
+print("Direct: {10 % 3}")
+print("Mixed: {a + b} and {a % b}")
+`
+	expected := "10 % 3 = 1\nDirect: 1\nMixed: 13 and 1\n"
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_PercentCharactersInStrings(t *testing.T) {
+	script := `
+value = 42
+print("Percentage: {value}%")
+print("Multiple %% signs")
+print("Format-like: {value} % complete")
+print("URL encoded: hello%20world")
+print("Mixed: {value}% done, {100 - value}% remaining")
+`
+	expected := "Percentage: 42%\nMultiple %% signs\nFormat-like: 42 % complete\nURL encoded: hello%20world\nMixed: 42% done, 58% remaining\n"
+	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }

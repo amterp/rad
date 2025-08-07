@@ -13,7 +13,7 @@ import (
 var FuncPrint = BuiltInFunc{
 	Name: FUNC_PRINT,
 	Execute: func(f FuncInvocation) RadValue {
-		RP.Printf(resolvePrintStr(f))
+		RP.Print(resolvePrintStr(f))
 		return VOID_SENTINEL
 	},
 }

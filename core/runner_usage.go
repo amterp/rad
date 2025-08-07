@@ -50,7 +50,7 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	buf := new(bytes.Buffer)
 
 	if r.scriptData.Description != nil {
-		fmt.Fprintf(buf, *r.scriptData.Description+"\n\n")
+		fmt.Fprint(buf, *r.scriptData.Description+"\n\n")
 	}
 
 	com.GreenBoldF(buf, "Usage:\n ")
@@ -187,5 +187,5 @@ func (r *RadRunner) printHelpFromBuffer(buf *bytes.Buffer, isErr bool) {
 	if FlagShell.Value || isErr {
 		ioWriter = RIo.StdErr
 	}
-	fmt.Fprintf(ioWriter, buf.String())
+	fmt.Fprint(ioWriter, buf.String())
 }

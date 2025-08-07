@@ -250,6 +250,60 @@ rad_test_home
 	assertNoErrors(t)
 }
 
+func Test_Misc_PercentCharactersInFileHeader(t *testing.T) {
+	script := `---
+This script calculates 10% of values.
+It shows 100% accurate results.
+URL encoding like %20 also works fine.
+---
+args:
+    value int    # Input value for % calculation
+
+print("Result: {value}")
+`
+	setupAndRunCode(t, script, "--help", "--color=never")
+	expected := `This script calculates 10% of values.
+It shows 100% accurate results.
+URL encoding like %20 also works fine.
+
+Usage:
+  <value> [OPTIONS]
+
+Script args:
+      --value int   Input value for % calculation
+
+` + scriptGlobalFlagHelp
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Misc_PercentCharactersInArgComments(t *testing.T) {
+	script := `---
+Test script for percent in arg comments
+---
+args:
+    percentage float    # Value as %, e.g. 95.5%
+    url str            # URL with %20 encoding
+    discount int       # Discount rate (5% to 50%)
+
+print("Values: {percentage}, {url}, {discount}")
+`
+	setupAndRunCode(t, script, "--help", "--color=never")
+	expected := `Test script for percent in arg comments
+
+Usage:
+  <percentage> <url> <discount> [OPTIONS]
+
+Script args:
+      --percentage float   Value as %, e.g. 95.5%
+      --url str            URL with %20 encoding
+      --discount int       Discount rate (5% to 50%)
+
+` + scriptGlobalFlagHelp
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 func globalFlagHelpWithout(s string) string {
 	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s
