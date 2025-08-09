@@ -372,21 +372,31 @@ fn early_exit():
 ### Function Definition
 
 ```rad
-// Single-line functions
-double = fn(x) x * 2
-add = fn(a, b) a + b
-greet = fn() print("Hello!")
+// Function definitions use fn name(): syntax
+fn double(x):
+    return x * 2
+
+fn add(a, b):
+    return a + b
+
+fn greet():
+    print("Hello!")
 
 // Block functions
-calculate = fn(x, y):
+fn calculate(x, y):
     result = x * y + 10
     return result
 
 // Function with multiple return values
-coords = fn(point):
+fn coords(point):
     x = point["x"]
     y = point["y"]
     return x, y
+
+// Anonymous functions can be assigned to variables
+double_var = fn(x) x * 2
+add_var = fn(a, b) a + b
+greet_var = fn() print("Hello!")
 ```
 
 ### Function Calls
@@ -399,7 +409,7 @@ sum_val = add(3, 4)     // 7
 "hello".upper()         // "HELLO"
 [1, 2, 3].len()        // 3
 
-// Built-in function assignment
+// Built-in function assignment to variables
 my_upper = upper
 "test".my_upper()      // "TEST"
 ```
@@ -741,7 +751,7 @@ for i in range(3):
 print(i)          // Last value: 2
 print(loop_var)   // "also accessible"
 
-// Function closures
+// Function closures with anonymous functions assigned to variables
 outer_var = 10
 fn_with_closure = fn(x):
     return x + outer_var    // Can access outer_var
@@ -963,13 +973,13 @@ usr_nm = "alice"     // Unclear abbreviation
 
 ```rad
 // Good: Clear, descriptive function names
-calculate_tax = fn(amount, rate):
+fn calculate_tax(amount, rate):
     return amount * rate
 
-validate_email = fn(email):
+fn validate_email(email):
     return "@" in email and "." in email
 
-// Good: Single-line for simple functions
+// Good: Anonymous functions for simple operations
 double = fn(x) x * 2
 is_even = fn(n) n % 2 == 0
 ```
