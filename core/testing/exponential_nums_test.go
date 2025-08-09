@@ -34,10 +34,14 @@ args:
     a range [1e3, 3e3]
 `
 	setupAndRunCode(t, script, "4000", "--color=never")
-	expected := `Error at L3:5
+	expected := `'a' value 4000 is > maximum 3000
 
-      a float = 2e3
-      ^^^^^^^^^^^^^ 'a' value 4000 is > maximum 3000
-`
+Usage:
+  TestCase [a] [OPTIONS]
+
+Script args:
+      --a float   Range: [1000, 3000] (default 2000)
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }

@@ -12,7 +12,7 @@ print("Got: {a}")
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Got: this is an error
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -27,7 +27,7 @@ print("Got: {a}")
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:5
 
   a = foo()
@@ -50,7 +50,7 @@ fn foo(x):
 		out = error("this is an error: {x}")
 	return out
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Foo! 1
 First 1
 Foo! 2
@@ -68,7 +68,7 @@ fn foo(x):
   print_err("Foo!", x)
   return error(out)
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Foo! 1
 Error at L6:16
 
@@ -87,7 +87,7 @@ fn foo(x):
 	print("Running {x}")
 	return error("error: {x}")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Running 1
 Got: error: 1
 `
@@ -107,7 +107,7 @@ fn bar():
 	print_err("bar")
 	return [foo(a) for a in [1, 2]]
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `bar
 Foo 1
 Error at L10:10
@@ -128,7 +128,7 @@ fn foo(x):
 	print("Foo {x}")
 	return error("error: {x}")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Foo 1
 Got: error: 1
 `
@@ -143,7 +143,7 @@ a = [foo()]
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:6
 
   a = [foo()]
@@ -160,7 +160,7 @@ print(a)
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `[ "this is an error" ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -174,7 +174,7 @@ a = {1: foo()}
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:9
 
   a = {1: foo()}
@@ -191,7 +191,7 @@ print(a)
 fn foo():
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `{ 1: "this is an error" }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -209,7 +209,7 @@ fn foo():
 fn bar():
 	return error("bar error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L5:6
 
   	a = bar()
@@ -229,7 +229,7 @@ fn foo():
 fn bar():
 	return error("bar error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L2:1
 
   foo()
@@ -246,7 +246,7 @@ a.map(foo).print()
 fn foo(x):
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `Error at L3:3
 
   a.map(foo).print()
@@ -264,7 +264,7 @@ a.map(foo).print()
 foo = fn(x):
 	return error("this is an error")
 `
-	setupAndRunCode(t, script)
+	setupAndRunCode(t, script, "--color=never")
 	expected := `
 `
 	assertError(t, 1, expected)

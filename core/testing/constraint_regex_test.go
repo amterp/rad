@@ -11,7 +11,7 @@ print("Hi", name)
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   Regex: [A-Z][a-z]*
@@ -31,7 +31,7 @@ print("Hi", name)
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
@@ -76,7 +76,7 @@ args:
 	expected := `Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
 
 Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   Regex: [A-Z][a-z]*
@@ -96,7 +96,7 @@ args:
 	expected := `Invalid 'name' value: Charlie (valid values: Alice, Bob)
 
 Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
@@ -105,6 +105,7 @@ Script args:
 	assertError(t, 1, expected)
 }
 
+// not clear color here should be present or not. comes down to if we eagerly parse flags we can, or not.
 func Test_Constraint_Regex_InvalidRegex(t *testing.T) {
 	script := `
 args:
@@ -112,10 +113,6 @@ args:
 	name regex "+"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:2
-
-  	name regex "+"
-   ^^^^^^^^^^^^^^
-   Invalid regex '+': error parsing regexp: missing argument to repetition operator: ` + "`+`\n"
+	expected := "\x1b[33mError at L4:2\n\n\x1b[0m  \tname regex \"+\"\n   \x1b[31m^^^^^^^^^^^^^^\x1b[0m\n   \x1b[31mInvalid regex '+': error parsing regexp: missing argument to repetition operator: `+`\x1b[0m\n"
 	assertError(t, 1, expected)
 }

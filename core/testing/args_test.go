@@ -24,13 +24,13 @@ print(foo)
 func TestArgs_ApiRenameUsageString(t *testing.T) {
 	setupAndRunCode(t, setupArgScript, "-h", "--color=never")
 	expected := `Usage:
-  <bar> [OPTIONS]
+  TestCase <bar> [OPTIONS]
 
 Script args:
-  -x, --bar str   
+  -x, --bar str
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
+	assertExitCode(t, 0)
 }
 
 func TestArgs_PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg(t *testing.T) {
@@ -39,16 +39,14 @@ args:
 	mandatory str
 	optional int = 10
 `
-	setupAndRunCode(t, script, "--color=never")
-	expected := `Usage:
-  <mandatory> [optional] [OPTIONS]
-
-Script args:
-      --mandatory str   
-      --optional int     (default 10)
+	setupAndRunCode(t, script)
+	expected := "\x1b[32;1mUsage:\x1b[0;22m\n  \x1b[1mTestCase\x1b[22m \x1b[36m<mandatory>\x1b[0m \x1b[36m[optional]\x1b[0m \x1b[36m[OPTIONS]\x1b[0m\n\n\x1b[32;1mScript args:\x1b[0;22m"
+	expected += `
+      --mandatory str
+      --optional int    (default 10)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
+	assertExitCode(t, 0)
 }
 
 func TestArgs_InvokesIfNoArgsPassedButAllArgsAreOptional(t *testing.T) {
@@ -78,12 +76,12 @@ print('hi')
 	expected := `Missing required arguments: [mandatory2]
 
 Usage:
-  <mandatory1> <mandatory2> [optional] [OPTIONS]
+  TestCase <mandatory1> <mandatory2> [optional] [OPTIONS]
 
 Script args:
-      --mandatory1 str   
-      --mandatory2 str   
-      --optional int      (default 10)
+      --mandatory1 str
+      --mandatory2 str
+      --optional int     (default 10)
 
 ` + scriptGlobalFlagHelp
 	assertOutput(t, stdOutBuffer, "")
@@ -110,7 +108,7 @@ print(intArrayArg[0] + 1)
 print(floatArrayArg[0] + 1.1)
 print(boolArrayArg[0] or false)
 `
-	setupAndRunCode(t, script, "alice", "1", "1.1", "bob,charlie", "2,3", "2.1,3.1", "true,false", "--boolArg")
+	setupAndRunCode(t, script, "alice", "1", "1.1", "--stringArrayArg", "bob", "--stringArrayArg", "charlie", "--intArrayArg", "2", "--intArrayArg", "3", "--floatArrayArg", "2.1", "--floatArrayArg", "3.1", "--boolArrayArg", "true", "--boolArrayArg", "false", "--boolArg")
 	expected := `ALICE
 2
 2.2
@@ -288,7 +286,7 @@ args:
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   The name.
@@ -304,7 +302,7 @@ args:
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
       --name str   The name.
@@ -318,7 +316,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  [OPTIONS]
+  TestCase [OPTIONS]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
@@ -329,7 +327,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  [OPTIONS]
+  TestCase [OPTIONS]
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -342,24 +340,24 @@ args:
 	intArg int = 1 # An int.
 	floatArg float = 1.1
 	boolArg bool = true
-	stringArrayArg str[] = ["bob", "charlie"]
-	intArrayArg int[] = [2, 3]
-	floatArrayArg float[] = [2.1, 3.1]
-	boolArrayArg bool[] = [true, false]
+	stringListArg str[] = ["bob", "charlie"]
+	intListArg int[] = [2, 3]
+	floatListArg float[] = [2.1, 3.1]
+	boolListArg bool[] = [true, false]
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  [stringArg] [intArg] [floatArg] [stringArrayArg] [intArrayArg] [floatArrayArg] [boolArrayArg] [OPTIONS]
+  TestCase [stringArg] [intArg] [floatArg] [stringListArg] [intListArg] [floatListArg] [boolListArg] [OPTIONS]
 
 Script args:
-      --stringArg str                   (default alice)
-      --intArg int                     An int. (default 1)
-      --floatArg float                  (default 1.1)
-      --stringArrayArg string,string    (default ["bob", "charlie"])
-      --intArrayArg int,int             (default [2, 3])
-      --floatArrayArg float,float       (default [2.1, 3.1])
-      --boolArrayArg bool,bool          (default [true, false])
-      --boolArg                         (default true)
+      --stringArg str         (default alice)
+      --intArg int            An int. (default 1)
+      --floatArg float        (default 1.1)
+      --stringListArg strs    (default [bob, charlie])
+      --intListArg ints       (default [2, 3])
+      --floatListArg floats   (default [2.1, 3.1])
+      --boolListArg bools     (default [true, false])
+      --boolArg               (default true)
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
@@ -400,11 +398,11 @@ args:
 	expected := `Missing required arguments: [age]
 
 Usage:
-  <name> <age> [OPTIONS]
+  TestCase <name> <age> [OPTIONS]
 
 Script args:
-      --name str   
-      --age int    
+      --name str
+      --age int
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -420,11 +418,11 @@ args:
 	expected := `Too many positional arguments. Unused: [3]
 
 Usage:
-  <name> <age> [OPTIONS]
+  TestCase <name> <age> [OPTIONS]
 
 Script args:
-      --name str   
-      --age int    
+      --name str
+      --age int
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -440,11 +438,11 @@ args:
 	expected := `unknown shorthand flag: 's' in -s
 
 Usage:
-  <name> <age> [OPTIONS]
+  TestCase <name> <age> [OPTIONS]
 
 Script args:
-      --name str   
-      --age int    
+      --name str
+      --age int
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
@@ -470,10 +468,10 @@ print(test_arg)
 `
 	setupAndRunCode(t, script, "-h", "--color=never")
 	expected := `Usage:
-  <test-arg> [OPTIONS]
+  TestCase <test-arg> [OPTIONS]
 
 Script args:
-      --test-arg str   
+      --test-arg str
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }

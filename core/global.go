@@ -6,11 +6,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/spf13/pflag"
+	"github.com/amterp/color"
+	"github.com/amterp/ra"
 )
 
 var (
-	RFlagSet                 *pflag.FlagSet
+	RRootCmd                 *ra.Cmd
 	RP                       Printer
 	RIo                      RadIo
 	RExit                    func(int)
@@ -42,12 +43,14 @@ func SetScriptPath(path string) {
 	} else {
 		ScriptName = filepath.Base(path)
 	}
+
+	if IsTest {
+		ScriptName = "TestCase"
+	}
 }
 
 // primarily for tests
 func ResetGlobals() {
-	RFlagSet = nil
-	FlagsUsedInScript = []string{}
 	RP = nil
 	RIo = RadIo{}
 	RExit = nil
@@ -71,7 +74,9 @@ func ResetGlobals() {
 	FlagConfirmShellCommands = BoolRadArg{}
 	FlagSrc = BoolRadArg{}
 	FlagRadTree = BoolRadArg{}
-	FlagMockResponse = MockResponseRadArg{}
+	FlagMockResponse = StringRadArg{}
+
+	color.NoColor = false
 }
 
 func setGlobals(runnerInput RunnerInput) {
@@ -90,6 +95,10 @@ func setGlobals(runnerInput RunnerInput) {
 	} else {
 		RExit = *runnerInput.RExit
 	}
+
+	ra.SetStderrWriter(RIo.StdErr)
+	ra.SetStdoutWriter(RIo.StdOut)
+	ra.SetExitFunc(RExit)
 
 	if runnerInput.RReq == nil {
 		RReq = NewRequester()

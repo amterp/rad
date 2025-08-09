@@ -14,10 +14,10 @@ args:
 	expected := `This is a one liner!
 
 Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
-      --name str   
+      --name str
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -41,10 +41,10 @@ Here is
 the rest!
 
 Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
-      --name str   
+      --name str
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

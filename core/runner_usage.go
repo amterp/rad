@@ -38,8 +38,10 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	com.GreenBoldF(buf, "Commands:\n")
 	commandUsage(buf, Cmds)
 
-	com.GreenBoldF(buf, "Global options:\n")
-	flagUsage(buf, r.globalFlags)
+	// Use Ra's GenerateLongGlobalOptionsSection for superior flag formatting
+	buf.WriteString("\n")
+	globalOptionsContent := RRootCmd.GenerateLongGlobalOptionsSection()
+	buf.WriteString(globalOptionsContent)
 
 	basicTips(buf)
 
@@ -160,9 +162,9 @@ func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd) {
 		sb.WriteString(cmd.Description + "\n")
 	}
 
-	sb.WriteString("\nTo see help for a specific command, run `rad <command> -h`.\n\n")
+	sb.WriteString("\nTo see help for a specific command, run `rad <command> -h`.")
 
-	fmt.Fprintf(buf, sb.String())
+	buf.WriteString(sb.String())
 }
 
 func basicTips(buf *bytes.Buffer) {
@@ -179,7 +181,7 @@ func basicTips(buf *bytes.Buffer) {
 		"If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n",
 	)
 
-	fmt.Fprintf(buf, sb.String())
+	buf.WriteString(sb.String())
 }
 
 func (r *RadRunner) printHelpFromBuffer(buf *bytes.Buffer, isErr bool) {

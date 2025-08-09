@@ -1,21 +1,26 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
 
+	ra "github.com/amterp/ra"
 	com "github.com/amterp/rad/core/common"
-
-	"github.com/samber/lo"
 
 	"github.com/amterp/rad/rts"
 
 	"github.com/amterp/color"
+)
 
-	"github.com/spf13/pflag"
+type InvocationType int
+
+const (
+	NoScript        InvocationType = iota // help, version, no args
+	ScriptFile                            // existing file
+	StdinScript                           // "rad -"
+	EmbeddedCommand                       // built-in commands
 )
 
 type RadRunner struct {
@@ -29,110 +34,216 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 	return &RadRunner{}
 }
 
+// detectInvocationType analyzes the command line args to determine what type of invocation this is
+func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string, error) {
+	// No args means global-only (will show help)
+	if len(args) == 0 {
+		return NoScript, "", nil
+	}
+
+	firstArg := args[0]
+
+	// Handle stdin script ("rad -")
+	if firstArg == "-" {
+		if !RIo.StdIn.HasContent() {
+			return NoScript, "", fmt.Errorf("Requested reading from stdin ('-'), but found no input")
+		}
+		source, err := io.ReadAll(RIo.StdIn)
+		if err != nil {
+			return NoScript, "", fmt.Errorf("Could not read from stdin: %v", err)
+		}
+		return StdinScript, string(source), nil
+	}
+
+	// Skip flags (anything starting with -)
+	// todo don't think this correctly handles e.g. `rad -- myscript myarg` which should be equivalent to `rad myscript myarg`
+	if strings.HasPrefix(firstArg, "-") {
+		return NoScript, "", nil
+	}
+
+	// Check if it's an existing file
+	if com.FileExists(firstArg) {
+		source, err := readSource(firstArg)
+		if err != nil {
+			return NoScript, "", fmt.Errorf("Could not read script: %v", err)
+		}
+		return ScriptFile, source, nil
+	}
+
+	// Check if it's an embedded command
+	cmdSource := GetEmbeddedCommandSrc(firstArg)
+	if cmdSource != nil {
+		AddInternalFuncs()
+		return EmbeddedCommand, *cmdSource, nil
+	}
+
+	// Unknown file or command
+	return NoScript, "", fmt.Errorf("Unknown file or command: %s", firstArg)
+}
+
 func (r *RadRunner) Run() error {
-	rawArgs := os.Args[1:]
+	// Phase 1: Detection & Setup
+	invocationType, sourceCode, err := r.detectAndSetup(os.Args[1:])
+	if err != nil {
+		// Set up minimal printer for errors
+		RP = NewPrinter(r, false, false, false, false)
+		RP.ErrorExit(err.Error())
+	}
 
-	// before we can parse any flags, we need to read the script ASAP so we can shadow global flags, then
-	// parse flags with pflag, so that we can set up globals like printer, debug logger, etc.
+	// Phase 2: Registration
+	r.setupRootCommand()
 
-	scriptPath := ""
-	sourceCode := ""
-	errMsg := ""
-
-	if len(rawArgs) > 0 {
-		scriptPath = rawArgs[0]
-
-		if scriptPath == "-" {
-			// remove the '-' from the args so that pflag doesn't try to parse it as a flag
-			os.Args = append([]string{os.Args[0]}, rawArgs[1:]...)
-
-			// reading script from stdin has been requested
-			if RIo.StdIn.HasContent() {
-				source, err := io.ReadAll(RIo.StdIn)
-				if err != nil {
-					errMsg = fmt.Sprintf("Could not read from stdin: %v\n", err)
-				} else {
-					sourceCode = string(source)
-					scriptPath = ""
-				}
-			} else {
-				errMsg = "Requested reading from stdin ('-'), but found no input"
-			}
-		} else if com.FileExists(scriptPath) {
-			// there's a file, read its code
-			source, err := readSource(scriptPath)
-			if err != nil {
-				errMsg = fmt.Sprintf("Could not read script: %v\n", err)
-			} else {
-				sourceCode = source
-			}
-		} else if !strings.HasPrefix(scriptPath, "-") {
-			// no file, but also not a flag, maybe a command?
-			cmdSource := GetEmbeddedCommandSrc(scriptPath)
-			if cmdSource != nil {
-				AddInternalFuncs()
-				sourceCode = *cmdSource
-			} else {
-				// was not a file, not a flag, not a command, so error
-				errMsg = fmt.Sprintf("Unknown file or command: %s", scriptPath)
-			}
+	if invocationType != NoScript {
+		err := r.registerScript(sourceCode)
+		if err != nil {
+			RP.ErrorExit(err.Error())
 		}
 	}
 
-	// set up a best-effort printer temporarily. May get recreated with global flags later.
-	RP = NewPrinter(r, false, false, false, false)
+	// Let ra handle help flags properly through hooks - removed manual processing
 
-	if !com.IsBlank(errMsg) {
-		RP.ErrorExit(errMsg)
+	// Phase 3: Parse & Execute
+	return r.parseAndExecute(invocationType)
+}
+
+// detectAndSetup analyzes args and sets up basic state
+func (r *RadRunner) detectAndSetup(args []string) (InvocationType, string, error) {
+	invocationType, sourceCode, err := r.detectInvocationType(args)
+	if err != nil {
+		return NoScript, "", err
 	}
 
-	HasScript = !com.IsBlank(sourceCode)
-	SetScriptPath(scriptPath)
+	scriptPath := ""
+	if invocationType == ScriptFile && len(args) > 0 {
+		scriptPath = args[0]
+	} else if invocationType == EmbeddedCommand && len(args) > 0 {
+		// For embedded commands, use the command name as the script name
+		scriptPath = args[0]
+	} else if invocationType == StdinScript {
+		// Remove the '-' from os.Args so Ra doesn't try to parse it as a flag
+		os.Args = append([]string{os.Args[0]}, args[1:]...)
+	}
 
-	// three outcomes so far:
-	// 1. errMsg is populated with an error (we won't have a script)
-	// 2. sourceCode is populated with a script, no error
-	// 3. both sourceCode and errMsg are empty, meaning no script and no error, so print usage
+	// Set up minimal printer for error handling during metadata extraction
+	RP = NewPrinter(r, false, false, false, false)
+
+	// Set up globals
+	HasScript = invocationType != NoScript
+	SetScriptPath(scriptPath)
 
 	if HasScript {
 		r.scriptData = ExtractMetadata(sourceCode)
 	}
 
+	return invocationType, sourceCode, nil
+}
+
+// setupRootCommand creates the root command and registers global flags
+func (r *RadRunner) setupRootCommand() {
+	// Use script name as the command name if we have a script, otherwise use the binary name
+	cmdName := os.Args[0]
+	if r.scriptData != nil && ScriptName != "" {
+		cmdName = ScriptName
+	}
+
+	// In test mode, use a clean command name to match expected test output
+
+	RRootCmd = ra.NewCmd(cmdName)
+
+	RRootCmd.SetUsageHeaders(ra.UsageHeaders{
+		Usage:         "Usage:",
+		Commands:      "Commands:",
+		Arguments:     "Script args:",
+		GlobalOptions: "Global options:",
+	})
+
+	if r.scriptData == nil || !r.scriptData.DisableGlobalOpts {
+		r.globalFlags = CreateAndRegisterGlobalFlags()
+	}
+
+	if r.scriptData != nil && r.scriptData.Description != nil {
+		RRootCmd.SetDescription(*r.scriptData.Description)
+	}
+
+	RRootCmd.SetHelpEnabled(false) // Disable help initially, enable after script registration
+	RRootCmd.SetAutoHelpOnNoArgs(true)
+
+	// Set up PostParse hook to apply color settings after parsing but before output
+	RRootCmd.SetParseHooks(&ra.ParseHooks{
+		PostParse: func(cmd *ra.Cmd, err error) {
+			// Apply color settings based on the parsed color flag
+			switch FlagColor.Value {
+			case COLOR_NEVER:
+				color.NoColor = true
+			case COLOR_ALWAYS:
+				color.NoColor = false
+				// If FlagColor.Value is empty (e.g., global options disabled), use default behavior
+			}
+		},
+	})
+}
+
+// registerScript registers the script as a subcommand with its flags
+func (r *RadRunner) registerScript(sourceCode string) error {
+	if r.scriptData == nil {
+		return fmt.Errorf("Bug! Script data expected but not found")
+	}
+
+	// Validate args block if present
 	if HasScript {
-		// non-blank source implies no error, let's try parsing it so we can remove shadowed global flags
 		radParser, err := rts.NewRadParser()
 		if err != nil {
-			RP.ErrorExit(fmt.Sprintf("Failed to load Rad parser: %v", err))
+			return fmt.Errorf("Failed to load Rad parser: %v", err)
 		}
 		tree := radParser.Parse(sourceCode)
-		argBlock, ok := tree.FindArgBlock()
-		if ok {
-			if r.scriptData != nil && r.scriptData.DisableArgsBlock {
-				RP.ErrorExit(fmt.Sprintf("Macro '%s' disabled, but args block found.\n", MACRO_ENABLE_ARGS_BLOCK))
-			}
-
-			for _, argDecl := range argBlock.Args {
-				FlagsUsedInScript = append(FlagsUsedInScript, argDecl.ExternalName())
-
-				shorthand := argDecl.ShorthandStr()
-				if shorthand != nil {
-					FlagsUsedInScript = append(FlagsUsedInScript, *shorthand)
-				}
-			}
+		_, hasArgsBlock := tree.FindArgBlock()
+		if hasArgsBlock && r.scriptData.DisableArgsBlock {
+			return fmt.Errorf("Macro '%s' disabled, but args block found.\n", MACRO_ENABLE_ARGS_BLOCK)
 		}
 	}
 
-	r.setUpGlobals()
-	args := RFlagSet.Args()
+	r.scriptArgs = r.createAndRegisterScriptArgs()
 
-	scriptArgs := r.createRadArgsFromScript()
-	r.scriptArgs = scriptArgs
+	// Re-enable help after script registration, unless global options are disabled
+	if !r.scriptData.DisableGlobalOpts {
+		RRootCmd.SetHelpEnabled(true)
+	}
 
-	// determine if we should run help/version or not
+	return nil
+}
 
-	if FlagHelp.Value {
-		shortHelp := !lo.Contains(os.Args[1:], "--help")
-		r.RunUsageExit(shortHelp)
+// parseAndExecute handles the final parsing and execution
+func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
+
+	// Do initial parse to get global flags working
+	var argsToRead []string
+	if invocationType == ScriptFile || invocationType == EmbeddedCommand {
+		// Script invoked via rad like: rad ./test_simple.rad "World"
+		// Skip the script path, parse just the script args: ["World"]
+		if len(os.Args) > 2 {
+			argsToRead = os.Args[2:]
+		} else {
+			argsToRead = []string{}
+		}
+	} else {
+		// Other invocations (including direct script execution with shebang)
+		// Parse everything after the script name: ["World"]
+		argsToRead = os.Args[1:]
+	}
+
+	RRootCmd.ParseOrExit(argsToRead, ra.WithIgnoreUnknown(true))
+
+	// Set up printer with global flags
+	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
+
+	// Handle mock responses
+	mockResponse := FlagMockResponse.Value
+	if !com.IsBlank(mockResponse) {
+		split := strings.Split(mockResponse, ":")
+		pattern := split[0]
+		path := split[1]
+		RReq.AddMockedResponse(pattern, path)
+		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", pattern, path))
 	}
 
 	if FlagVersion.Value {
@@ -140,23 +251,19 @@ func (r *RadRunner) Run() error {
 		RExit(0)
 	}
 
-	if com.IsBlank(sourceCode) {
-		// re-enable erroring on unknown flags, so we can check if any unknown global flags were given.
-		// seems like a limitation of pflag that you cannot just 'get unknown flags' after the earlier parse
-		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
-
-		err := RFlagSet.Parse(os.Args[1:])
-		if err != nil {
-			// unknown global flag
-			RP.UsageErrorExit(err.Error())
+	// Handle global-only invocations
+	if invocationType == NoScript {
+		unknownArgs := RRootCmd.GetUnknownArgs()
+		if len(unknownArgs) > 0 {
+			RP.UsageErrorExit(fmt.Sprintf("Unknown arguments: %v\n", unknownArgs))
 		}
-
-		// no flags, effectively, just print the basic usage
-		r.RunUsageExit(false)
+		// For global-only invocations without args, show help and exit
+		// Ra will handle the help generation properly
+		r.printScriptlessUsage(false)
+		RExit(0)
 	}
 
-	// from now on, assume we have a script name (or command)
-
+	// Handle debug flags for script output
 	shouldExit := false
 	if FlagSrc.Value {
 		shouldExit = true
@@ -164,7 +271,6 @@ func (r *RadRunner) Run() error {
 			RP.Printf("\n")
 		}
 		if !com.IsBlank(ScriptPath) && com.IsTty {
-			// print to stderr, since we wouldn't want to include it in e.g. redirects
 			RP.RadInfo(com.YellowS("%s:\n", ScriptPath))
 		}
 		RP.Printf(r.scriptData.Src + "\n")
@@ -182,95 +288,23 @@ func (r *RadRunner) Run() error {
 		RExit(0)
 	}
 
+	// Validate script
 	r.scriptData.ValidateNoErrors()
 
-	// help not explicitly invoked and script has no errors, so let's try parsing other args and maybe run the script
+	// Final parse with correct ignore settings
+	// Ignore unknown args when args block is disabled (so they can be accessed via get_args())
+	ignoreUnknown := r.scriptData.DisableArgsBlock
 
-	if !r.scriptData.DisableArgsBlock || !r.scriptData.DisableGlobalOpts {
-		// re-enable erroring on unknown flags. note: maybe remove for 'catchall' args?
-		RFlagSet.ParseErrorsWhitelist.UnknownFlags = false
-	}
+	RRootCmd.ParseOrExit(argsToRead, ra.WithIgnoreUnknown(ignoreUnknown))
 
-	// technically re-using the flagset is apparently discouraged, but i've yet to see where it goes wrong
-	err := RFlagSet.Parse(os.Args[1:])
-	if err != nil {
-		RP.UsageErrorExit(err.Error())
-	}
-
-	posArgsIndex := 0
-	if !com.IsBlank(scriptPath) {
-		// We're invoked on an actual string path, which will be the first arg. Cut it out.
-		args = args[1:]
-	}
-
-	atLeastOneFlagConfigured := false
-	var missingArgs []RadArg
-	for _, scriptArg := range scriptArgs {
-		if !scriptArg.Configured() {
-			// flag has not been explicitly set by the user
-			if _, ok := scriptArg.(*BoolRadArg); ok {
-				// all bools are implicitly optional. they either default to false or explicitly to true.
-				// they cannot be filled in positionally. continue.
-				continue
-			} else if posArgsIndex < len(args) {
-				// there's a positional arg to fill it
-				scriptArg.SetValue(args[posArgsIndex])
-				posArgsIndex++
-			} else if scriptArg.IsOptional() {
-				// there's no positional arg to fill it, but that's okay because it's optional.
-				continue // TODO no tests fail if we remove this, but I think it would be incorrect to remove
-			} else {
-				missingArgs = append(missingArgs, scriptArg)
-				continue // don't validate constraints if it's missing
-			}
-		} else {
-			// arg was given via flag (not positional)
-			atLeastOneFlagConfigured = true
-		}
-
-		err := scriptArg.ValidateConstraints()
-		if err != nil {
-			RP.UsageErrorExit(err.Error())
-		}
-	}
-
-	// finished with our custom additional parsing
-
-	if len(missingArgs) > 0 && len(args) == 0 && !atLeastOneFlagConfigured {
-		// if no args were passed but some are required, treat that as the user not really trying to use the script
-		// but instead just asking for help
-		r.RunUsageExit(true)
-	}
-
-	if posArgsIndex < len(args) && !r.scriptData.DisableArgsBlock {
-		// error if not all positional args were used
-		RP.UsageErrorExit(fmt.Sprintf("Too many positional arguments. Unused: %v", args[posArgsIndex:]))
-	}
-
-	constraintCtx := NewConstraintCtx(scriptArgs)
-	for _, scriptArg := range scriptArgs {
-		err := scriptArg.ValidateRelationalConstraints(constraintCtx)
-		if err != nil {
-			RP.UsageErrorExit(fmt.Sprintf("Invalid args: %v", err))
-		}
-	}
-
-	missingArgs = removeMissingIfExcludedByOtherDefinedArg(missingArgs, scriptArgs)
-	if len(missingArgs) > 0 {
-		RP.UsageErrorExit(
-			fmt.Sprintf("Missing required arguments: %s", TransformRadArgs(missingArgs, RadArg.GetExternalName)),
-		)
-	}
-
-	// at this point, we'll assume we've been given a script to run, and we should do that now
-
+	// Execute the script
 	if r.scriptData == nil {
-		RP.RadErrorExit("Bug! Script expected by this point, but found none")
+		return fmt.Errorf("Bug! Script expected by this point, but found none")
 	}
 
 	interpreter := NewInterpreter(r.scriptData)
 	interpreter.InitBuiltIns()
-	interpreter.InitArgs(scriptArgs)
+	interpreter.InitArgs(r.scriptArgs)
 	interpreter.RegisterWithExit()
 	interpreter.Run()
 
@@ -282,66 +316,17 @@ func (r *RadRunner) Run() error {
 	return nil
 }
 
-func (r *RadRunner) setUpGlobals() {
-	// don't fail on unknown flags. they may be intended for the script, which we won't have parsed initially
-	RFlagSet = pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
-	RFlagSet.ParseErrorsWhitelist.UnknownFlags = true
-
-	RFlagSet.Usage = func() {
-		r.RunUsage(false, false)
-	}
-
-	if r.scriptData == nil || !r.scriptData.DisableGlobalOpts {
-		r.globalFlags = CreateAndRegisterGlobalFlags()
-	} else {
-		// If we don't define our own help flag, pflag intercepts and runs its own usage.
-		// If global flags disabled, that includes help, so we define this throwaway flag to
-		// absorb the --help and prevent pflag from doing something undesirable.
-		help := false
-		RFlagSet.BoolVarP(&help, "help", "h", false, "")
-	}
-
-	err := RFlagSet.Parse(os.Args[1:])
-
-	// immediately make use of global flags to control behavior for the rest of the program
-	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
-
-	if err != nil {
-		if errors.Is(err, pflag.ErrHelp) {
-			RExit(0)
-		}
-		RP.UsageErrorExit(err.Error())
-	}
-
-	RP.RadDebugf(fmt.Sprintf("Args passed: %v", RFlagSet.Args()))
-	if FlagRadDebug.Value {
-		RFlagSet.VisitAll(func(flag *pflag.Flag) {
-			RP.RadDebugf(fmt.Sprintf("Flag %s: %v", flag.Name, flag.Value))
-		})
-	}
-
-	switch FlagColor.Value {
-	case COLOR_NEVER:
-		color.NoColor = true
-	case COLOR_ALWAYS:
-		color.NoColor = false
-	}
-
-	for _, mockResponse := range FlagMockResponse.Value {
-		RReq.AddMockedResponse(mockResponse.Pattern, mockResponse.FilePath)
-		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", mockResponse.Pattern, mockResponse.FilePath))
-	}
-}
-
-func (r *RadRunner) createRadArgsFromScript() []RadArg {
+func (r *RadRunner) createAndRegisterScriptArgs() []RadArg {
 	if r.scriptData == nil {
 		return nil
 	}
 
+	// Register script flags directly on the root command (no subcommand)
+	// This makes the script appear as the main command
 	flags := make([]RadArg, 0, len(r.scriptData.Args))
 	for _, arg := range r.scriptData.Args {
 		flag := CreateFlag(arg)
-		flag.Register()
+		flag.Register(RRootCmd, false)
 		flags = append(flags, flag)
 	}
 
@@ -351,26 +336,4 @@ func (r *RadRunner) createRadArgsFromScript() []RadArg {
 func readSource(scriptPath string) (string, error) {
 	source, err := os.ReadFile(scriptPath)
 	return string(source), err
-}
-
-// an argument is only *missing* for error purposes if it is not excluded by another arg, which *is* defined.
-// otherwise, this is just a valid constraint working as expected.
-func removeMissingIfExcludedByOtherDefinedArg(missingArgs []RadArg, args []RadArg) []RadArg {
-	missingIdentifiers := TransformRadArgs(missingArgs, RadArg.GetIdentifier)
-
-	filteredMissingArgs := make([]RadArg, 0)
-	for _, missingArg := range missingArgs {
-		isMissing := true
-		for _, potentialExcluder := range args {
-			if potentialExcluder.Excludes(missingArg) &&
-				!lo.Contains(missingIdentifiers, potentialExcluder.GetIdentifier()) {
-				isMissing = false
-				break
-			}
-		}
-		if isMissing {
-			filteredMissingArgs = append(filteredMissingArgs, missingArg)
-		}
-	}
-	return filteredMissingArgs
 }
