@@ -45,10 +45,15 @@ args:
 print(a, b)
 `
 	setupAndRunCode(t, script, "3000", "--color=never")
-	expected := `Error at L3:3
+	expected := `'a' value 3000 is > maximum 2000
 
-    a int = 1_234
-    ^^^^^^^^^^^^^ 'a' value 3000 is > maximum 2000
-`
+Usage:
+  TestCase [a] [b] [OPTIONS]
+
+Script args:
+      --a int     Range: [1000, 2000] (default 1234)
+      --b float   (default 0.123456)
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }

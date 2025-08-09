@@ -25,10 +25,10 @@ print("Hi", name)
 	expected := `Invalid 'name' value: david (valid values: alice, bob, charlie)
 
 Usage:
-  <name> [OPTIONS]
+  TestCase <name> [OPTIONS]
 
 Script args:
-      --name str   Valid values: [alice, bob, charlie].
+      --name str   Valid values: [alice, bob, charlie]
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)

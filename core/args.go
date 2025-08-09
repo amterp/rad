@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	ra "github.com/amterp/ra"
+
 	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts"
@@ -39,7 +41,7 @@ type RadArg interface {
 	DefaultAsString() string
 	HasNonZeroDefault() bool // todo
 	GetType() RadArgTypeT
-	Register()
+	Register(cmd *ra.Cmd, global bool)
 	Configured() bool // configured by the user in some way
 	IsDefined() bool  // either configured or has a default
 	SetValue(value string)
@@ -48,10 +50,6 @@ type RadArg interface {
 	GetNode() *ts.Node // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
-	// isolated constraints on one arg against its given value
-	ValidateConstraints() error
-	// constraints between arguments
-	ValidateRelationalConstraints(ConstraintCtx) error
 	Excludes(otherArg RadArg) bool
 }
 
@@ -70,6 +68,7 @@ type BaseRadArg struct {
 	manuallySet        bool
 	scriptArg          *ScriptArg
 	hidden             bool
+	bypassValidation   bool // If true, this flag can bypass normal validation requirements
 }
 
 func (f *BaseRadArg) GetExternalName() string {
@@ -101,7 +100,7 @@ func (f *BaseRadArg) HasNonZeroDefault() bool {
 }
 
 func (f *BaseRadArg) Configured() bool {
-	return RFlagSet.Lookup(f.ExternalName).Changed || f.manuallySet
+	return RRootCmd.Configured(f.ExternalName) || f.manuallySet
 }
 
 func (f *BaseRadArg) IsDefined() bool {
@@ -145,62 +144,8 @@ func (f *BaseRadArg) IsHidden() bool {
 	return f.hidden
 }
 
-func (f *BaseRadArg) ValidateConstraints() error {
-	// Base impl does nothing -- each arg type will implement its own constraints
-	return nil
-}
-
-func (f *BaseRadArg) ValidateRelationalConstraints(ctx ConstraintCtx) error {
-	requires := f.requiresConstraint
-
-	if !f.IsDefined() {
-		// relational constraints only apply to defined args
-		return nil
-	}
-
-	thisArg := ctx.ScriptArgs[f.Identifier]
-	if thisBoolArg, ok := thisArg.(*BoolRadArg); ok {
-		if !thisBoolArg.Value {
-			// this bool arg is false, so its constraints are not relevant
-			return nil
-		}
-	}
-
-	for _, required := range requires {
-		reqArg := ctx.ScriptArgs[required]
-		required = reqArg.GetExternalName()
-
-		if boolArg, ok := reqArg.(*BoolRadArg); ok {
-			if !boolArg.Value {
-				// bool arg is false but is required
-				return f.missingRequirement(required)
-			}
-			return nil
-		}
-
-		if !reqArg.IsDefined() {
-			return f.missingRequirement(required)
-		}
-	}
-
-	for _, excluded := range f.excludesConstraint {
-		exclArg := ctx.ScriptArgs[excluded]
-		excluded = exclArg.GetExternalName()
-
-		if boolArg, ok := exclArg.(*BoolRadArg); ok {
-			if boolArg.Value {
-				// bool arg is true but is excluded
-				return f.excludesRequirement(excluded)
-			}
-			return nil
-		}
-
-		if exclArg.IsDefined() {
-			return f.excludesRequirement(excluded)
-		}
-	}
-
-	return nil
+func (f *BaseRadArg) SetBypassValidation(bypass bool) {
+	f.bypassValidation = bypass
 }
 
 func (f *BaseRadArg) Excludes(otherArg RadArg) bool {
@@ -240,12 +185,30 @@ func NewBoolRadArg(name,
 	}
 }
 
-func (f *BoolRadArg) Register() {
+func (f *BoolRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.BoolVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	var opts []ra.RegisterOption
+	opts = append(opts, ra.WithGlobal(global))
+	if f.bypassValidation {
+		opts = append(opts, ra.WithBypassValidation(true))
+	}
+
+	err := ra.NewBool(f.ExternalName).
+		SetShort(f.Short).
+		SetDefault(f.Default).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		RegisterWithPtr(cmd, &f.Value, opts...)
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -300,12 +263,30 @@ func NewBoolListRadArg(name,
 	}
 }
 
-func (f *BoolListRadArg) Register() {
+func (f *BoolListRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.BoolSliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewBoolSlice(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool list arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -373,12 +354,39 @@ func NewStringRadArg(
 	}
 }
 
-func (f *StringRadArg) Register() {
+func (f *StringRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.StringVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewString(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetCustomUsageType(f.ArgUsage).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetRegexConstraint(f.RegexConstraint).
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	if f.EnumConstraint != nil {
+		arg = arg.SetEnumConstraint(*f.EnumConstraint)
+	}
+
+	err := arg.RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -411,39 +419,6 @@ func (f *StringRadArg) GetDescription() string {
 	}
 
 	return sb.String()
-}
-
-//goland:noinspection GoErrorStringFormat
-func (f *StringRadArg) ValidateConstraints() error {
-	err := f.BaseRadArg.ValidateConstraints()
-	if err != nil {
-		return err
-	}
-
-	if f.EnumConstraint != nil {
-		if !lo.Contains(*f.EnumConstraint, f.Value) {
-			return fmt.Errorf(
-				"Invalid '%s' value: %v (valid values: %s)",
-				f.ExternalName,
-				f.Value,
-				strings.Join(*f.EnumConstraint, ", "),
-			)
-		}
-	}
-
-	constraint := f.RegexConstraint
-	if constraint != nil {
-		if !constraint.MatchString(f.Value) {
-			return fmt.Errorf(
-				"Invalid '%s' value: %v (must match regex: %s)",
-				f.ExternalName,
-				f.Value,
-				constraint.String(),
-			)
-		}
-	}
-
-	return nil
 }
 
 func (f *StringRadArg) GetType() RadArgTypeT {
@@ -485,12 +460,34 @@ func NewStringListRadArg(
 	}
 }
 
-func (f *StringListRadArg) Register() {
+func (f *StringListRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.StringArrayVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewStringSlice(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string list arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -548,12 +545,44 @@ func NewIntRadArg(
 	}
 }
 
-func (f *IntRadArg) Register() {
+func (f *IntRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.Int64VarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewInt64(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetCustomUsageType("int").
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	if f.RangeConstraint != nil {
+		if f.RangeConstraint.Min != nil {
+			arg = arg.SetMin(int64(*f.RangeConstraint.Min), (*f.RangeConstraint).MinInclusive)
+		}
+		if f.RangeConstraint.Max != nil {
+			arg = arg.SetMax(int64(*f.RangeConstraint.Max), (*f.RangeConstraint).MaxInclusive)
+		}
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -577,15 +606,6 @@ func (f *IntRadArg) GetDescription() string {
 	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
 
 	return sb.String()
-}
-
-func (f *IntRadArg) ValidateConstraints() error {
-	err := f.BaseRadArg.ValidateConstraints()
-	if err != nil {
-		return err
-	}
-	validateRange(f.scriptArg.Decl, float64(f.Value), f.RangeConstraint)
-	return nil // todo validateRange should return error
 }
 
 func (f *IntRadArg) GetType() RadArgTypeT {
@@ -627,12 +647,35 @@ func NewIntListRadArg(
 	}
 }
 
-func (f *IntListRadArg) Register() {
+func (f *IntListRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.Int64SliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewInt64Slice(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetCustomUsageType("ints").
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int list arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -696,12 +739,43 @@ func NewFloatRadArg(
 	}
 }
 
-func (f *FloatRadArg) Register() {
+func (f *FloatRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.Float64VarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewFloat64(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	if f.RangeConstraint != nil {
+		if f.RangeConstraint.Min != nil {
+			arg = arg.SetMin(*f.RangeConstraint.Min, (*f.RangeConstraint).MinInclusive)
+		}
+		if f.RangeConstraint.Max != nil {
+			arg = arg.SetMax(*f.RangeConstraint.Max, (*f.RangeConstraint).MaxInclusive)
+		}
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -724,15 +798,6 @@ func (f *FloatRadArg) GetDescription() string {
 	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
 
 	return sb.String()
-}
-
-func (f *FloatRadArg) ValidateConstraints() error {
-	err := f.BaseRadArg.ValidateConstraints()
-	if err != nil {
-		return err
-	}
-	validateRange(f.scriptArg.Decl, f.Value, f.RangeConstraint)
-	return nil // todo validateRange should return error
 }
 
 func (f *FloatRadArg) GetType() RadArgTypeT {
@@ -774,12 +839,34 @@ func NewFloatListRadArg(
 	}
 }
 
-func (f *FloatListRadArg) Register() {
+func (f *FloatListRadArg) Register(cmd *ra.Cmd, global bool) {
 	if f.registered {
 		return
 	}
 
-	RFlagSet.Float64SliceVarP(&f.Value, f.ExternalName, f.Short, f.Default, f.Description)
+	arg := ra.NewFloat64Slice(f.ExternalName).
+		SetShort(f.Short).
+		SetUsage(f.Description).
+		SetHiddenInShortHelp(global).
+		SetHidden(f.hidden).
+		SetRequires(f.requiresConstraint).
+		SetExcludes(f.excludesConstraint).
+		SetHiddenInShortHelp(global)
+
+	if f.hasDefault {
+		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	err := arg.
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+
+	if err != nil {
+		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float list arg: %v\n", err)))
+	}
 
 	f.registered = true
 }
@@ -803,46 +890,6 @@ func (f *FloatListRadArg) SetValue(arg string) {
 
 func (f *FloatListRadArg) GetType() RadArgTypeT {
 	return ArgFloatListT
-}
-
-// --- MockResponse
-
-type MockResponseRadArg struct {
-	BaseRadArg
-	Value MockResponseSlice
-}
-
-func NewMockResponseRadArg(name, short, usage string) MockResponseRadArg {
-	return MockResponseRadArg{
-		BaseRadArg: BaseRadArg{
-			ExternalName:      name,
-			Identifier:        name,
-			Short:             short,
-			ArgUsage:          rl.T_STR,
-			Description:       usage,
-			defaultAsString:   "",
-			hasNonZeroDefault: false,
-		},
-	}
-}
-
-func (f *MockResponseRadArg) Register() {
-	if f.registered {
-		return
-	}
-
-	RFlagSet.VarP(&f.Value, f.ExternalName, f.Short, f.Description)
-
-	f.registered = true
-}
-
-func (f *MockResponseRadArg) SetValue(arg string) {
-	RP.RadErrorExit(fmt.Sprintf("This function is expected to only be called for script args."+
-		" MockResponse cannot be a script arg: %v\n", arg))
-}
-
-func (f *MockResponseRadArg) GetType() RadArgTypeT {
-	return ArgStringT // hmm not really
 }
 
 // --- general
@@ -1022,48 +1069,6 @@ func convertToInterfaceArr[T any](i []T) []interface{} {
 		converted[j] = v
 	}
 	return converted
-}
-
-func validateRange(decl rts.ArgDecl, val float64, rangeConstraint *ArgRangeConstraint) {
-	if rangeConstraint == nil {
-		return
-	}
-
-	rMin := rangeConstraint.Min
-	if rMin != nil {
-		if rangeConstraint.MinInclusive {
-			if val < *rMin {
-				RP.CtxErrorExit(
-					NewCtxFromRtsNode(
-						&decl,
-						fmt.Sprintf("'%s' value %v is < minimum %v", decl.ExternalName(), val, *rMin),
-					),
-				)
-			}
-		} else {
-			if val <= *rMin {
-				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is <= minimum (exclusive) %v", decl.ExternalName(), val, *rMin)))
-			}
-		}
-	}
-
-	rMax := rangeConstraint.Max
-	if rMax != nil {
-		if rangeConstraint.MaxInclusive {
-			if val > *rMax {
-				RP.CtxErrorExit(
-					NewCtxFromRtsNode(
-						&decl,
-						fmt.Sprintf("'%s' value %v is > maximum %v", decl.ExternalName(), val, *rMax),
-					),
-				)
-			}
-		} else {
-			if val >= *rMax {
-				RP.CtxErrorExit(NewCtxFromRtsNode(&decl, fmt.Sprintf("'%s' value %v is >= maximum (exclusive) %v", decl.ExternalName(), val, *rMax)))
-			}
-		}
-	}
 }
 
 func addRangeDescriptionIfPresent(sb *strings.Builder, rangeConstraint *ArgRangeConstraint) {

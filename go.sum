@@ -8,6 +8,8 @@ github.com/amterp/go-tbl v0.12.0 h1:on3p/pZmfxMObGiauDaf3pwg/gfKbyW6qXiluH/MOuk=
 github.com/amterp/go-tbl v0.12.0/go.mod h1:o6DcTIAfB1EvEy5iiwoXbOrKer7/Y2bV9743Q3CJCPI=
 github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+uc=
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
+github.com/amterp/ra v0.1.4 h1:d3BWrbuQwsQzn8h6a8dL+Ka39fq9zqGED8T1dIfZK4s=
+github.com/amterp/ra v0.1.4/go.mod h1:qJArkWMZ8kLiC1a4uavxpWlqvuUSopSmY8GZBLhwdP8=
 github.com/amterp/tree-sitter-rad v0.1.6 h1:qc4upliKkwENLsS9sXhuBzjj+vI3jHN7+u09KL/Bw+E=
 github.com/amterp/tree-sitter-rad v0.1.6/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
@@ -75,8 +77,6 @@ github.com/sanity-io/litter v1.5.8 h1:uM/2lKrWdGbRXDrIq08Lh9XtVYoeGtcQxk9rtQ7+rY
 github.com/sanity-io/litter v1.5.8/go.mod h1:9gzJgR2i4ZpjZHsKvUXIRQVk7P+yM3e+jAF7bU2UI5U=
 github.com/scylladb/go-set v1.0.2 h1:SkvlMCKhP0wyyct6j+0IHJkBkSZL+TDzZ4E7f7BCcRE=
 github.com/scylladb/go-set v1.0.2/go.mod h1:DkpGd78rljTxKAnTDPFqXSGxvETQnJyuSOQwsHycqfs=
-github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
-github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/stretchr/testify v0.0.0-20161117074351-18a02ba4a312/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=

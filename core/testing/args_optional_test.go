@@ -50,11 +50,11 @@ print(name, age, sep="|")
 	expected := `Invalid args: 'name' requires 'age', but 'age' was not set
 
 Usage:
-  <name> [age] [OPTIONS]
+  TestCase <name> [age] [OPTIONS]
 
 Script args:
-      --name str   
-      --age int    
+      --name str   Requires: age
+      --age int
 
 ` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)

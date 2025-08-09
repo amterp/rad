@@ -11,6 +11,7 @@ args:
     build b bool      # Enable to build.
     validate v bool   # Enable to build & test.
     dumps bool        # Enable to run the dump tests.
+    test t bool       # Enable to run tests once.
 
 get_branch = fn():
     _, branch  = $!`echo -n $(git branch --show-current)`
@@ -18,6 +19,9 @@ get_branch = fn():
 
 if build:
     $!`make build`
+
+if test:
+    $!`go test ./core/testing`
 
 if release or push or validate:
     $!`go mod tidy`

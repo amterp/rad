@@ -17,7 +17,7 @@ args:
 `
 	setupAndRunCode(t, script, "--help", "--color=never")
 	expected := `Usage:
-  <age1> <age2> <age3> <age4> [OPTIONS]
+  TestCase <age1> <age2> <age3> <age4> [OPTIONS]
 
 Script args:
       --age1 int     The age1. Range: [0, 100]
@@ -80,11 +80,15 @@ args:
 print("Age:", age)
 `
 	setupAndRunCode(t, script, "--color=never", "0")
-	expected := `Error at L3:5
+	expected := `'age' value 0 is <= minimum (exclusive) 0
 
-      age int
-      ^^^^^^^ 'age' value 0 is <= minimum (exclusive) 0
-`
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (0, 100)
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
 
@@ -96,11 +100,15 @@ args:
 print("Age:", age)
 `
 	setupAndRunCode(t, script, "--color=never", "100")
-	expected := `Error at L3:5
+	expected := `'age' value 100 is >= maximum (exclusive) 100
 
-      age int
-      ^^^^^^^ 'age' value 100 is >= maximum (exclusive) 100
-`
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (0, 100)
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
 
@@ -126,11 +134,15 @@ args:
 print("Age:", age)
 `
 	setupAndRunCode(t, script, "--color=never", "0.5")
-	expected := `Error at L3:5
+	expected := `'age' value 0.5 is <= minimum (exclusive) 0.5
 
-      age float
-      ^^^^^^^^^ 'age' value 0.5 is <= minimum (exclusive) 0.5
-`
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age float   Range: (0.5, 100]
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
 
@@ -156,11 +168,15 @@ args:
 print("Age:", age)
 `
 	setupAndRunCode(t, script, "--color=never", "0.1")
-	expected := `Error at L3:5
+	expected := `'age' value 0.1 is <= minimum (exclusive) 0.5
 
-      age float
-      ^^^^^^^^^ 'age' value 0.1 is <= minimum (exclusive) 0.5
-`
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age float   Range: (0.5, )
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
 
@@ -172,11 +188,15 @@ args:
 print("Age:", age)
 `
 	setupAndRunCode(t, script, "--color=never", "250")
-	expected := `Error at L3:5
+	expected := `'age' value 250 is > maximum 200
 
-      age int
-      ^^^^^^^ 'age' value 250 is > maximum 200
-`
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (, 200]
+
+` + scriptGlobalFlagHelp
 	assertError(t, 1, expected)
 }
 

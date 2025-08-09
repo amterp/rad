@@ -7,6 +7,7 @@ require (
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0
 	github.com/amterp/jsoncolor v0.4.0
+	github.com/amterp/ra v0.1.4
 	github.com/amterp/tree-sitter-rad v0.1.6
 	github.com/charmbracelet/huh v0.6.0
 	github.com/dustin/go-humanize v1.0.1
@@ -16,7 +17,6 @@ require (
 	github.com/samber/lo v1.47.0
 	github.com/sanity-io/litter v1.5.8
 	github.com/scylladb/go-set v1.0.2
-	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.10.0
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	go.uber.org/zap v1.27.0

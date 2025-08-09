@@ -6,8 +6,6 @@ import (
 
 	com "github.com/amterp/rad/core/common"
 
-	"github.com/samber/lo"
-
 	"github.com/amterp/rad/rts"
 )
 
@@ -25,6 +23,7 @@ func ExtractMetadata(src string) *ScriptData {
 	radTree, err := rts.NewRadParser()
 	if err != nil {
 		RP.RadErrorExit("Failed to create Rad tree sitter: " + err.Error())
+		panic(UNREACHABLE)
 	}
 
 	tree := radTree.Parse(src)
@@ -83,15 +82,7 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 
 	requires := make(map[string][]string)
 	for _, reqLeft := range argBlock.Requirements {
-		if !lo.Contains(argIdentifiers, reqLeft.Arg.Name) {
-			errUndefinedArg(&reqLeft, reqLeft.Arg.Name)
-		}
-
 		for _, reqRight := range reqLeft.Required {
-			if !lo.Contains(argIdentifiers, reqRight.Name) {
-				errUndefinedArg(&reqRight, reqRight.Name)
-			}
-
 			requires[reqLeft.Arg.Name] = append(requires[reqLeft.Arg.Name], reqRight.Name)
 			if reqLeft.IsMutual {
 				requires[reqRight.Name] = append(requires[reqRight.Name], reqLeft.Arg.Name)
@@ -101,15 +92,7 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 
 	excludes := make(map[string][]string)
 	for _, excludeLeft := range argBlock.Exclusions {
-		if !lo.Contains(argIdentifiers, excludeLeft.Arg.Name) {
-			errUndefinedArg(&excludeLeft, excludeLeft.Arg.Name)
-		}
-
 		for _, excludeRight := range excludeLeft.Excluded {
-			if !lo.Contains(argIdentifiers, excludeRight.Name) {
-				errUndefinedArg(&excludeRight, excludeRight.Name)
-			}
-
 			excludes[excludeLeft.Arg.Name] = append(excludes[excludeLeft.Arg.Name], excludeRight.Name)
 			if excludeLeft.IsMutual {
 				excludes[excludeRight.Name] = append(excludes[excludeRight.Name], excludeLeft.Arg.Name)
@@ -154,8 +137,4 @@ func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
 	}
 
 	return radVal.TruthyFalsy()
-}
-
-func errUndefinedArg(node rts.Node, name string) {
-	RP.CtxErrorExit(NewCtx(node.CompleteSrc(), node.Node(), fmt.Sprintf("Undefined arg '%s'", name), ""))
 }
