@@ -86,6 +86,7 @@ func init() {
 		newFnSignature(`floor(_num: float) -> int`),
 		newFnSignature(`min(_nums: float[]) -> float|error`),
 		newFnSignature(`max(_nums: float[]) -> float|error`),
+		newFnSignature(`matches(_str: str, _pattern: str, *, partial: bool = false) -> bool|error`),
 		newFnSignature(`clamp(val: float, min: float, max: float) -> error|float`),
 		newFnSignature(`reverse(_val: str|list) -> str|list`),
 		newFnSignature(`is_defined(_var: str) -> bool`),

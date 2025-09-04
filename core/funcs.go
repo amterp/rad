@@ -95,6 +95,7 @@ const (
 	FUNC_FLOOR              = "floor"
 	FUNC_MIN                = "min"
 	FUNC_MAX                = "max"
+	FUNC_MATCHES            = "matches"
 	FUNC_CLAMP              = "clamp"
 	FUNC_REVERSE            = "reverse"
 	FUNC_IS_DEFINED         = "is_defined" // todo might be poorly named. should focus on vars. Or maybe just embrace works for anything, name it 'exists'?
@@ -284,6 +285,7 @@ func init() {
 		FuncRand,
 		FuncRandInt,
 		FuncReplace,
+		FuncMatches,
 		FuncPick,
 		FuncPickKv,
 		FuncPickFromResource,
