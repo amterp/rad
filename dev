@@ -12,10 +12,18 @@ args:
     validate v bool   # Enable to build & test.
     dumps bool        # Enable to run the dump tests.
     test t bool       # Enable to run tests once.
+    bump bool         # Enable to bump all dependency versions in go.mod.
 
 get_branch = fn():
     _, branch  = $!`echo -n $(git branch --show-current)`
     return branch
+
+if bump:
+    print("Bumping all dependency versions in go.mod...")
+    $!`go get -u ./...`
+    $!`go mod tidy`
+    print(green("✅ Dependencies updated!"))
+    validate = true
 
 if build:
     $!`make build`
