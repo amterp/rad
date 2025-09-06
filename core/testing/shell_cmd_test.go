@@ -11,7 +11,7 @@ print('hi2')
 	expectedStdout := `hi
 hi2
 `
-	expectedStderr := `⚡️ Running: echo hi
+	expectedStderr := `⚡️ echo hi
 `
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)
@@ -28,7 +28,7 @@ print(code, out, err, sep="|")
 	expectedStdout := `hi2
 0|hi|
 `
-	expectedStderr := `⚡️ Running: echo -n hi
+	expectedStderr := `⚡️ echo -n hi
 `
 	assertOutput(t, stdOutBuffer, expectedStdout)
 	assertOutput(t, stdErrBuffer, expectedStderr)
