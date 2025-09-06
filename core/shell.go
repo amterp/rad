@@ -114,7 +114,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	}
 
 	if !isQuiet {
-		RP.RadInfo(fmt.Sprintf("⚡️ Running: %s\n", cmdStr.String()))
+		RP.RadInfo(fmt.Sprintf("⚡️ %s\n", cmdStr.String()))
 	}
 	if err = cmd.Start(); err != nil {
 		i.errorf(shellCmdNode, "Error starting command: %v", err)
