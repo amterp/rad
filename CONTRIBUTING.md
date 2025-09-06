@@ -60,7 +60,30 @@ If you're using GoLand, the repo includes a few run configurations that may be h
 - Please aim to respect the [code style & conventions](#code-style--conventions).
 - Include tests, preferably comprehensive ones.
 - If your changes impact user documentation, consider updating it.
-  - If you're not comfortable writing user docs, feel free to leave it out. I can follow up on it :) 
+  - If you're not comfortable writing user docs, feel free to leave it out. I can follow up on it :)
+
+### Commit Messages 
+
+- Please write helpful commit messages!
+  - Our `git blame` should be a reliable source of information documenting why the code is the way it is.
+
+#### Commit Message Principles
+
+1. **Imperative**: Write as if completing "This commit will..."
+2. **Be specific**: `Fix modulo printing bug`, not `Fix bug`
+3. **Explain rationale**: Explain **why**. Why is the change needed? What decisions did you make and why?
+4. **Keep it scannable**: Subject lines should be readable in `git log --oneline`
+5. **Use prefixes**: See [prefix conventions below](#commit-message-prefixes).
+
+#### Commit Message Prefixes
+
+To help with automated release notes, consider using [conventional commit](https://www.conventionalcommits.org/) prefixes:
+
+- `feat:` for new features
+- `fix:` for bug fixes
+- `docs:` for documentation changes
+- `refactor:` for code refactoring
+- `test:` for adding tests
 
 ### Code Style & Conventions
 
@@ -73,8 +96,6 @@ That said, here are some specific callouts:
 
 - Aim for self-documenting code. Good variable names, smaller functions with descriptive names, etc.
 - Use comments judiciously - convey intent and "why" of code, if it's not already obvious.
-- Your commit messages are also good sources of information: include breakdowns of decisions you made, motivations, etc.
-  - Ideally, our `git blame` will be a reliable source of information documenting why the code is the way it is.
 - Try to keep commits small. If you can separate conceptually-unrelated changes into commits that each compile & pass tests, that's ideal!
 - Run `make format` before making commits.
 - `core` is unfortunately a big folder and package - untangling it into smaller packages at this point is a little tricky.
