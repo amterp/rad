@@ -29,7 +29,7 @@ if build:
     $!`make build`
 
 if test:
-    $!`go test ./core/testing`
+    $!`make test`
 
 if release or push or validate:
     $!`go mod tidy`

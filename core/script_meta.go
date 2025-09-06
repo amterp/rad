@@ -83,9 +83,12 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 	requires := make(map[string][]string)
 	for _, reqLeft := range argBlock.Requirements {
 		for _, reqRight := range reqLeft.Required {
-			requires[reqLeft.Arg.Name] = append(requires[reqLeft.Arg.Name], reqRight.Name)
+			// Ra will be given external names, so transform constraint names to match
+			leftExternal := rts.ToExternalName(reqLeft.Arg.Name)
+			rightExternal := rts.ToExternalName(reqRight.Name)
+			requires[leftExternal] = append(requires[leftExternal], rightExternal)
 			if reqLeft.IsMutual {
-				requires[reqRight.Name] = append(requires[reqRight.Name], reqLeft.Arg.Name)
+				requires[rightExternal] = append(requires[rightExternal], leftExternal)
 			}
 		}
 	}
@@ -93,9 +96,12 @@ func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
 	excludes := make(map[string][]string)
 	for _, excludeLeft := range argBlock.Exclusions {
 		for _, excludeRight := range excludeLeft.Excluded {
-			excludes[excludeLeft.Arg.Name] = append(excludes[excludeLeft.Arg.Name], excludeRight.Name)
+			// Ra will be given external names, so transform constraint names to match
+			leftExternal := rts.ToExternalName(excludeLeft.Arg.Name)
+			rightExternal := rts.ToExternalName(excludeRight.Name)
+			excludes[leftExternal] = append(excludes[leftExternal], rightExternal)
 			if excludeLeft.IsMutual {
-				excludes[excludeRight.Name] = append(excludes[excludeRight.Name], excludeLeft.Arg.Name)
+				excludes[rightExternal] = append(excludes[rightExternal], leftExternal)
 			}
 		}
 	}

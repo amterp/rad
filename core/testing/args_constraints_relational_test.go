@@ -282,3 +282,20 @@ print(mystring)
 	assertOnlyOutput(t, stdOutBuffer, "blah\n")
 	assertNoErrors(t)
 }
+
+func Test_Args_Constraints_CanReferenceArgWithUnderscore(t *testing.T) {
+	script := `
+args:
+    aa str
+    bb_cc str
+
+    aa requires bb_cc
+
+print(aa, bb_cc)
+`
+	setupAndRunCode(t, script, "--aa=foo", "--bb-cc=bar")
+	expected := `foo bar
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

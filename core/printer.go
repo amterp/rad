@@ -294,7 +294,7 @@ func (p *stdPrinter) printShellExitIfEnabled() {
 
 func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
-		fmt.Fprintf(p.stdErr, "Stacktrace because --RAD-DEBUG is enabled:\n%s", debug.Stack())
+		fmt.Fprintf(p.stdErr, "Stacktrace because --rad-debug is enabled:\n%s", debug.Stack())
 	}
 	RExit(errorCode)
 }
