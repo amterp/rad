@@ -231,7 +231,13 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		argsToRead = os.Args[1:]
 	}
 
-	RRootCmd.ParseOrExit(argsToRead, ra.WithIgnoreUnknown(true))
+	// Prepare parse options
+	parseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(true)}
+	if FlagRadArgsDump.Value {
+		parseOpts = append(parseOpts, ra.WithDump(true))
+	}
+
+	RRootCmd.ParseOrExit(argsToRead, parseOpts...)
 
 	// Set up printer with global flags
 	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
@@ -295,7 +301,13 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	// Ignore unknown args when args block is disabled (so they can be accessed via get_args())
 	ignoreUnknown := r.scriptData.DisableArgsBlock
 
-	RRootCmd.ParseOrExit(argsToRead, ra.WithIgnoreUnknown(ignoreUnknown))
+	// Prepare final parse options
+	finalParseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(ignoreUnknown)}
+	if FlagRadArgsDump.Value {
+		finalParseOpts = append(finalParseOpts, ra.WithDump(true))
+	}
+
+	RRootCmd.ParseOrExit(argsToRead, finalParseOpts...)
 
 	// Execute the script
 	if r.scriptData == nil {

@@ -21,7 +21,7 @@ get_branch = fn():
 
 if bump:
     print("Bumping all dependency versions in go.mod...")
-    $!`go get -u ./... -u=patch`
+    $!`go get -u=patch ./...`
     $!`go mod tidy`
     print(green("✅ Dependencies updated!"))
     validate = true

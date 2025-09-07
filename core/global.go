@@ -74,6 +74,7 @@ func ResetGlobals() {
 	FlagConfirmShellCommands = BoolRadArg{}
 	FlagSrc = BoolRadArg{}
 	FlagRadTree = BoolRadArg{}
+	FlagRadArgsDump = BoolRadArg{}
 	FlagMockResponse = StringRadArg{}
 
 	color.NoColor = false

@@ -19,6 +19,7 @@ const (
 	FLAG_CONFIRM_SHELL = "confirm-shell"
 	FLAG_SRC           = "src"
 	FLAG_SRC_TREE      = "src-tree"
+	FLAG_RAD_ARGS_DUMP = "rad-args-dump"
 	FLAG_MOCK_RESPONSE = "mock-response"
 )
 
@@ -36,6 +37,7 @@ var (
 	FlagConfirmShellCommands BoolRadArg
 	FlagSrc                  BoolRadArg
 	FlagRadTree              BoolRadArg
+	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
 	// ^ when adding more, update ResetGlobals function
 )
@@ -163,6 +165,19 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	FlagRadTree.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagRadTree.hidden)
 	flags = append(flags, &FlagRadTree)
+
+	FlagRadArgsDump = NewBoolRadArg(
+		FLAG_RAD_ARGS_DUMP,
+		"",
+		"Instead of running the target script, print out an args dump for debugging argument parsing.",
+		false,
+		false,
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+	FlagRadArgsDump.SetBypassValidation(true)
+	hideFromUsageIfHaveScript(&FlagRadArgsDump.hidden)
+	flags = append(flags, &FlagRadArgsDump)
 
 	FlagMockResponse = NewStringRadArg(
 		FLAG_MOCK_RESPONSE,
