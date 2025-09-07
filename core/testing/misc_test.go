@@ -267,6 +267,15 @@ func Test_Misc_GlobalSrcTreeFlagBypassesValidation(t *testing.T) {
 	assertNoErrors(t)
 }
 
+func Test_Misc_GlobalRadArgsDumpFlag(t *testing.T) {
+	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--rad-args-dump", "--color=never")
+	output := stdOutBuffer.String()
+	if !strings.Contains(output, "Ra Command Dump") {
+		t.Errorf("Expected Ra dump in output, got: %s", output)
+	}
+	assertNoErrors(t)
+}
+
 func Test_Misc_Func_Get_Rad_Home(t *testing.T) {
 	script := `
 d = get_rad_home()

@@ -34,6 +34,7 @@ const allGlobalFlagHelp = `Global options:
       --confirm-shell       Confirm all shell commands before running them.
       --src                 Instead of running the target script, just print it out.
       --src-tree            Instead of running the target script, print out its syntax tree.
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
 `
 
