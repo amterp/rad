@@ -125,6 +125,75 @@ func (i *Interpreter) Run() {
 	}
 }
 
+// EvaluateStatement evaluates a single statement string and returns the result
+// This is designed for REPL use where individual statements are evaluated
+// against a persistent interpreter environment
+func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
+	// Parse the input statement
+	parser, err := rts.NewRadParser()
+	if err != nil {
+		return RAD_NULL_VAL, fmt.Errorf("failed to create parser: %w", err)
+	}
+	defer parser.Close()
+
+	tree := parser.Parse(input)
+	// Check for parse errors using FindInvalidNodes
+	if invalidNodes := tree.FindInvalidNodes(); len(invalidNodes) > 0 {
+		return RAD_NULL_VAL, fmt.Errorf("parse error in statement: %s", input)
+	}
+
+	// Update the interpreter's ScriptData to point to this new tree and source
+	// This ensures that GetSrcForNode and other methods work correctly
+	originalScriptData := i.sd
+	i.sd = &ScriptData{
+		ScriptName:        "<repl>",
+		Tree:              tree,
+		Src:               input,
+		DisableGlobalOpts: true,
+		DisableArgsBlock:  true,
+	}
+
+	// Restore original ScriptData after evaluation and handle any panics
+	var evalErr error
+	defer func() {
+		i.sd = originalScriptData
+		if r := recover(); r != nil {
+			// Convert panic to error instead of crashing REPL
+			if radPanic, ok := r.(*RadPanic); ok {
+				evalErr = fmt.Errorf("%v", radPanic.Err().Msg().Plain())
+			} else {
+				evalErr = fmt.Errorf("Runtime error: %v", r)
+			}
+		}
+	}()
+
+	node := tree.Root()
+	children := node.Children(node.Walk())
+
+	// REPL: unwrap the source_file container and evaluate the actual statement/expression
+	// This allows both expressions ("2 + 3") and statements ("x = 5") to work correctly
+	if len(children) == 1 {
+		// Evaluate the child directly, bypassing the source_file wrapper
+		result := i.safelyEvaluate(&children[0])
+		if result.Ctrl != CtrlNormal {
+			return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %s", result.Ctrl)
+		}
+		return result.Val, nil
+	}
+
+	// Fallback: evaluate normally (shouldn't happen for single statements)
+	res := i.safelyEvaluate(node)
+	// Check for any evaluation errors from defer
+	if evalErr != nil {
+		return RAD_NULL_VAL, evalErr
+	}
+
+	if res.Ctrl != CtrlNormal {
+		return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %s", res.Ctrl)
+	}
+	return res.Val, nil
+}
+
 func (i *Interpreter) safelyEvaluate(node *ts.Node) EvalResult {
 	defer func() {
 		if r := recover(); r != nil {

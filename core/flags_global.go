@@ -21,6 +21,8 @@ const (
 	FLAG_SRC_TREE      = "src-tree"
 	FLAG_RAD_ARGS_DUMP = "rad-args-dump"
 	FLAG_MOCK_RESPONSE = "mock-response"
+	FLAG_REPL          = "repl"
+	FLAG_R             = "r"
 )
 
 var (
@@ -39,6 +41,7 @@ var (
 	FlagRadTree              BoolRadArg
 	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
+	FlagRepl                 BoolRadArg
 	// ^ when adding more, update ResetGlobals function
 )
 
@@ -56,6 +59,17 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	flags = append(flags, &FlagHelp)
+
+	FlagRepl = NewBoolRadArg(
+		FLAG_REPL,
+		FLAG_R,
+		"Start interactive REPL mode.",
+		false,
+		false,
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+	flags = append(flags, &FlagRepl)
 
 	FlagDebug = NewBoolRadArg(
 		FLAG_DEBUG,

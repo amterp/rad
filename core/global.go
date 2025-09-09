@@ -76,6 +76,7 @@ func ResetGlobals() {
 	FlagRadTree = BoolRadArg{}
 	FlagRadArgsDump = BoolRadArg{}
 	FlagMockResponse = StringRadArg{}
+	FlagRepl = BoolRadArg{}
 
 	color.NoColor = false
 }
