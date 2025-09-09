@@ -154,6 +154,7 @@ args:
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global options:
   -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
   -d                    Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
@@ -179,6 +180,7 @@ args:
 	setupAndRunCode(t, script, "--color=never", "--help")
 	expectedGlobalFlags := `Global options:
   -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
       --quiet           Suppresses some output.

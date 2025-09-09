@@ -21,6 +21,7 @@ const (
 	ScriptFile                            // existing file
 	StdinScript                           // "rad -"
 	EmbeddedCommand                       // built-in commands
+	Repl                                  // interactive REPL mode
 )
 
 type RadRunner struct {
@@ -257,6 +258,11 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		RExit(0)
 	}
 
+	// Handle REPL mode (but not if help is requested)
+	if FlagRepl.Value && !FlagHelp.Value {
+		return r.runRepl()
+	}
+
 	// Handle global-only invocations
 	if invocationType == NoScript {
 		unknownArgs := RRootCmd.GetUnknownArgs()
@@ -348,4 +354,9 @@ func (r *RadRunner) createAndRegisterScriptArgs() []RadArg {
 func readSource(scriptPath string) (string, error) {
 	source, err := os.ReadFile(scriptPath)
 	return string(source), err
+}
+
+// runRepl starts the interactive REPL mode
+func (r *RadRunner) runRepl() error {
+	return RunRepl()
 }
