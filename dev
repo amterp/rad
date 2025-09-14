@@ -68,7 +68,7 @@ if release:
 
     $!`go test ./core/testing -count 10`
 
-    dirty = unsafe $`git status --porcelain | grep -q .`
+    dirty = unsafe $`git status --porcelain`
     if dirty:
         print("Working directory is dirty! Aborting.".red())
         exit(1)
