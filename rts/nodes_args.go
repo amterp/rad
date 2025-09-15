@@ -23,13 +23,14 @@ type ArgBlock struct {
 
 type ArgDecl struct {
 	BaseNode
-	Name      ArgDeclName
-	Type      ArgDeclType
-	Rename    *ArgDeclRename
-	Shorthand *ArgDeclShorthand
-	Optional  *ArgDeclOptional
-	Default   *ArgDeclDefault
-	Comment   *ArgDeclComment
+	Name       ArgDeclName
+	Type       ArgDeclType
+	Rename     *ArgDeclRename
+	Shorthand  *ArgDeclShorthand
+	Optional   *ArgDeclOptional
+	Default    *ArgDeclDefault
+	Comment    *ArgDeclComment
+	IsVariadic bool
 }
 
 func (ad *ArgDecl) ExternalName() string {
@@ -181,6 +182,7 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		optionalNode := decl.ChildByFieldName("optional")
 		defaultNode := decl.ChildByFieldName("default")
 		commentNode := decl.ChildByFieldName("comment")
+		variadicMarkerNode := decl.ChildByFieldName("variadic_marker")
 
 		var argRename *ArgDeclRename
 		if renameNode != nil {
@@ -205,6 +207,24 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		}
 
 		typeStr := src[typeNode.StartByte():typeNode.EndByte()]
+
+		// Handle variadic arguments by converting base type to list type
+		isVariadic := variadicMarkerNode != nil
+		if isVariadic {
+			switch typeStr {
+			case rl.T_STR:
+				typeStr = rl.T_STR_LIST
+			case rl.T_INT:
+				typeStr = rl.T_INT_LIST
+			case rl.T_FLOAT:
+				typeStr = rl.T_FLOAT_LIST
+			case rl.T_BOOL:
+				typeStr = rl.T_BOOL_LIST
+			default:
+				// For other types, keep as-is (shouldn't happen with current grammar)
+			}
+		}
+
 		var argDefault *ArgDeclDefault
 		if defaultNode != nil {
 			defaultStr := src[defaultNode.StartByte():defaultNode.EndByte()]
@@ -277,11 +297,12 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 				BaseNode: newBaseNode(src, typeNode),
 				Type:     typeStr,
 			},
-			Rename:    argRename,
-			Shorthand: argShorthand,
-			Optional:  argOptional,
-			Default:   argDefault,
-			Comment:   argComment,
+			Rename:     argRename,
+			Shorthand:  argShorthand,
+			Optional:   argOptional,
+			Default:    argDefault,
+			Comment:    argComment,
+			IsVariadic: isVariadic,
 		})
 	}
 	return argDecls

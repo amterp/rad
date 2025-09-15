@@ -233,7 +233,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	}
 
 	// Prepare parse options
-	parseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(true)}
+	parseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(true), ra.WithVariadicUnknownFlags(true)}
 	if FlagRadArgsDump.Value {
 		parseOpts = append(parseOpts, ra.WithDump(true))
 	}
@@ -308,7 +308,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	ignoreUnknown := r.scriptData.DisableArgsBlock
 
 	// Prepare final parse options
-	finalParseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(ignoreUnknown)}
+	finalParseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(ignoreUnknown), ra.WithVariadicUnknownFlags(true)}
 	if FlagRadArgsDump.Value {
 		finalParseOpts = append(finalParseOpts, ra.WithDump(true))
 	}

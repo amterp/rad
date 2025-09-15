@@ -1,0 +1,10 @@
+#!/usr/bin/env rad
+---
+Simple script without variadic arguments for performance baseline
+---
+args:
+    input str
+    verbose v bool
+    count c int
+
+print("Done")

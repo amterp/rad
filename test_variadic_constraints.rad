@@ -1,0 +1,12 @@
+#!/usr/bin/env rad
+---
+Test script for variadic arguments with constraints
+---
+args:
+    command str
+    *options str  # Remove constraint for now
+    flag f bool
+
+print("command: {command}")
+print("options: {options}")
+print("flag: {flag}")
