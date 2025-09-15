@@ -1,0 +1,14 @@
+#!/usr/bin/env rad
+---
+Test script for short flag clustering with variadic
+---
+args:
+    *options str
+    verbose v bool
+    debug d bool
+    quiet q bool
+
+print("options: {options}")
+print("verbose: {verbose}")
+print("debug: {debug}")
+print("quiet: {quiet}")

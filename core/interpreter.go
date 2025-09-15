@@ -90,10 +90,48 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 	env := i.env
 
 	for _, arg := range args {
+		// Special handling for variadic arguments with list defaults
+		if arg.IsVariadic() {
+			var hasListDefaults bool
+			var defaultValue interface{}
+
+			if stringListArg, ok := arg.(*StringListRadArg); ok && stringListArg.scriptArg != nil && stringListArg.scriptArg.DefaultStringList != nil {
+				hasListDefaults = true
+				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *stringListArg.scriptArg.DefaultStringList)
+			} else if intListArg, ok := arg.(*IntListRadArg); ok && intListArg.scriptArg != nil && intListArg.scriptArg.DefaultIntList != nil {
+				hasListDefaults = true
+				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *intListArg.scriptArg.DefaultIntList)
+			} else if floatListArg, ok := arg.(*FloatListRadArg); ok && floatListArg.scriptArg != nil && floatListArg.scriptArg.DefaultFloatList != nil {
+				hasListDefaults = true
+				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *floatListArg.scriptArg.DefaultFloatList)
+			} else if boolListArg, ok := arg.(*BoolListRadArg); ok && boolListArg.scriptArg != nil && boolListArg.scriptArg.DefaultBoolList != nil {
+				hasListDefaults = true
+				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *boolListArg.scriptArg.DefaultBoolList)
+			}
+
+			if hasListDefaults {
+				if !arg.Configured() {
+					// Use defaults only if user didn't provide values
+					env.SetVar(arg.GetIdentifier(), newRadValue(i, arg.GetNode(), defaultValue))
+				} else {
+					// User provided values, use them normally
+					goto normalProcessing
+				}
+				continue
+			}
+		}
+
 		if !arg.IsDefined() {
-			env.SetVar(arg.GetIdentifier(), RAD_NULL_VAL)
+			if arg.IsVariadic() {
+				// Variadic args should be empty lists when undefined, not null
+				env.SetVar(arg.GetIdentifier(), newRadValue(i, arg.GetNode(), NewRadList()))
+			} else {
+				env.SetVar(arg.GetIdentifier(), RAD_NULL_VAL)
+			}
 			continue
 		}
+
+	normalProcessing:
 		switch coerced := arg.(type) {
 		case *BoolRadArg:
 			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))

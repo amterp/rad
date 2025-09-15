@@ -1,0 +1,16 @@
+#!/usr/bin/env rad
+---
+Test script for complex state transitions with multiple variadic args
+---
+args:
+    command str
+    *options1 str
+    middle_flag m bool
+    *options2 str
+    final_flag f bool
+
+print("command: {command}")
+print("options1: {options1}")
+print("middle_flag: {middle_flag}")
+print("options2: {options2}")
+print("final_flag: {final_flag}")

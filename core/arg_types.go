@@ -16,6 +16,7 @@ type ScriptArg struct {
 	Description        *string
 	IsNullable         bool // aka is optional. e.g. 'string?' syntax
 	HasDefaultValue    bool
+	IsVariadic         bool // whether this is a variadic argument (*options str)
 	EnumConstraint     *[]string
 	RegexConstraint    *regexp.Regexp
 	RangeConstraint    *ArgRangeConstraint
@@ -60,6 +61,7 @@ func FromArgDecl(
 		Description:        decl.CommentStr(),
 		IsNullable:         decl.Optional != nil,
 		HasDefaultValue:    hasDefaultValue(decl),
+		IsVariadic:         decl.IsVariadic,
 		EnumConstraint:     convertEnumConstraint(enumConstraint),
 		RegexConstraint:    convertRegexConstraint(regexConstraint),
 		RangeConstraint:    convertRangeConstraint(rangeConstraint),

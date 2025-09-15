@@ -51,6 +51,7 @@ type RadArg interface {
 	Hidden(bool)
 	IsHidden() bool
 	Excludes(otherArg RadArg) bool
+	IsVariadic() bool
 }
 
 type BaseRadArg struct {
@@ -150,6 +151,10 @@ func (f *BaseRadArg) SetBypassValidation(bypass bool) {
 
 func (f *BaseRadArg) Excludes(otherArg RadArg) bool {
 	return lo.Contains(f.excludesConstraint, otherArg.GetIdentifier())
+}
+
+func (f *BaseRadArg) IsVariadic() bool {
+	return f.scriptArg != nil && f.scriptArg.IsVariadic
 }
 
 // --- bool
@@ -279,6 +284,14 @@ func (f *BoolListRadArg) Register(cmd *ra.Cmd, global bool) {
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
+	}
+
+	if f.IsNullable() {
+		arg = arg.SetOptional(true)
+	}
+
+	if f.scriptArg != nil && f.scriptArg.IsVariadic {
+		arg = arg.SetVariadic(true)
 	}
 
 	err := arg.
@@ -482,6 +495,10 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, global bool) {
 		arg = arg.SetOptional(true)
 	}
 
+	if f.scriptArg != nil && f.scriptArg.IsVariadic {
+		arg = arg.SetVariadic(true)
+	}
+
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
 
@@ -500,6 +517,27 @@ func (f *StringListRadArg) SetValue(arg string) {
 	for i, v := range split {
 		vals[i] = v
 	}
+
+	// For variadic arguments with list defaults, clear defaults on first user input
+	if f.scriptArg != nil && f.scriptArg.IsVariadic && f.scriptArg.DefaultStringList != nil {
+		// Check if current Value contains only the defaults
+		defaults := *f.scriptArg.DefaultStringList
+		if len(f.Value) == len(defaults) {
+			allMatch := true
+			for i, v := range f.Value {
+				if i >= len(defaults) || v != defaults[i] {
+					allMatch = false
+					break
+				}
+			}
+			if allMatch {
+				// This is the first user input, replace defaults completely
+				f.Value = vals
+				return
+			}
+		}
+	}
+
 	f.Value = vals
 }
 
@@ -668,6 +706,10 @@ func (f *IntListRadArg) Register(cmd *ra.Cmd, global bool) {
 
 	if f.IsNullable() {
 		arg = arg.SetOptional(true)
+	}
+
+	if f.scriptArg != nil && f.scriptArg.IsVariadic {
+		arg = arg.SetVariadic(true)
 	}
 
 	err := arg.
@@ -861,6 +903,10 @@ func (f *FloatListRadArg) Register(cmd *ra.Cmd, global bool) {
 		arg = arg.SetOptional(true)
 	}
 
+	if f.scriptArg != nil && f.scriptArg.IsVariadic {
+		arg = arg.SetVariadic(true)
+	}
+
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
 
@@ -905,6 +951,25 @@ func CreateFlag(arg *ScriptArg) RadArg {
 
 	switch argType {
 	case ArgStringT:
+		// Handle variadic string arguments with list defaults
+		if arg.IsVariadic && arg.DefaultStringList != nil {
+			var defVal []string // Empty defaults - we'll handle at Rad level
+			f := NewStringListRadArg(
+				apiName,
+				shorthand,
+				"string,string",
+				description,
+				false,  // Don't let ra handle defaults for variadic args
+				defVal, // Empty defaults - we'll handle at Rad level
+				arg.RequiresConstraint,
+				arg.ExcludesConstraint,
+			)
+			f.scriptArg = arg
+			f.Identifier = arg.Name
+			return &f
+		}
+
+		// Handle normal string arguments
 		defVal := ""
 		hasDefault := arg.DefaultString != nil
 		if hasDefault {
@@ -945,6 +1010,26 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgIntT:
+		// Handle variadic int arguments with list defaults
+		if arg.IsVariadic && arg.DefaultIntList != nil {
+			var defVal []int64
+			defVal = *arg.DefaultIntList
+			f := NewIntListRadArg(
+				apiName,
+				shorthand,
+				"int,int",
+				description,
+				false,  // Don't let ra handle defaults for variadic args
+				defVal, // Keep defaults for Rad-level handling
+				arg.RequiresConstraint,
+				arg.ExcludesConstraint,
+			)
+			f.scriptArg = arg
+			f.Identifier = arg.Name
+			return &f
+		}
+
+		// Handle normal int arguments
 		defVal := int64(0)
 		hasDefault := arg.DefaultInt != nil
 		if hasDefault {
@@ -984,6 +1069,26 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgFloatT:
+		// Handle variadic float arguments with list defaults
+		if arg.IsVariadic && arg.DefaultFloatList != nil {
+			var defVal []float64
+			defVal = *arg.DefaultFloatList
+			f := NewFloatListRadArg(
+				apiName,
+				shorthand,
+				"float,float",
+				description,
+				false,  // Don't let ra handle defaults for variadic args
+				defVal, // Keep defaults for Rad-level handling
+				arg.RequiresConstraint,
+				arg.ExcludesConstraint,
+			)
+			f.scriptArg = arg
+			f.Identifier = arg.Name
+			return &f
+		}
+
+		// Handle normal float arguments
 		defVal := 0.0
 		hasDefault := arg.DefaultFloat != nil
 		if hasDefault {
@@ -1023,6 +1128,26 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgBoolT:
+		// Handle variadic bool arguments with list defaults
+		if arg.IsVariadic && arg.DefaultBoolList != nil {
+			var defVal []bool
+			defVal = *arg.DefaultBoolList
+			f := NewBoolListRadArg(
+				apiName,
+				shorthand,
+				"bool,bool",
+				description,
+				false,  // Don't let ra handle defaults for variadic args
+				defVal, // Keep defaults for Rad-level handling
+				arg.RequiresConstraint,
+				arg.ExcludesConstraint,
+			)
+			f.scriptArg = arg
+			f.Identifier = arg.Name
+			return &f
+		}
+
+		// Handle normal bool arguments
 		defVal := false
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool
