@@ -285,7 +285,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			i.forWhileLoopLevel--
 		}()
 		stmts := rl.GetChildren(node, rl.F_STMT)
-		i.executeForLoop(node, func() EvalResult { return i.runBlock(stmts) })
+		return i.executeForLoop(node, func() EvalResult { return i.runBlock(stmts) })
 	case rl.K_WHILE_LOOP:
 		i.forWhileLoopLevel++
 		defer func() {
