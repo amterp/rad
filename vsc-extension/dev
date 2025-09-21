@@ -5,7 +5,7 @@ Facilitates development with the Visual Studio Code extension.
 args:
     package bool       # Enable to repackage the vsix for local use.
     reinstall r bool   # Enable to repackage and reinstall the vsix into VSC.
-    version v str = "" # Bump the version. Asks if you'd like to publish after.
+    version v str?     # Bump the version. Asks if you'd like to publish after.
 
     version enum ["patch", "minor", "major"]
 

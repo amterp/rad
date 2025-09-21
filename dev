@@ -49,6 +49,13 @@ if release:
         print("{"ERROR".red()}: You can only release from the {"main".green()} branch; you're on {branch.yellow()}")
         exit(1)
 
+    // check for replace directives in go.mod
+    no_replace_directives = unsafe $`grep "^replace " go.mod`
+    if not no_replace_directives:
+        print("{"ERROR".red()}: go.mod contains replace directives which should not be present in releases:")
+        print("Please remove all replace directives before releasing.".yellow())
+        exit(1)
+
     // resolve version /////////////
     _, tags = $!`git tag -l`
     tags = split(tags[:-1], "\n")

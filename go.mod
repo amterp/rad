@@ -55,7 +55,3 @@ require (
 	golang.org/x/text v0.28.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/amterp/ra => ../ra
-
-replace github.com/amterp/tree-sitter-rad => ../tree-sitter-rad
