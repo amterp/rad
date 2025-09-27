@@ -2,11 +2,29 @@
 
 Only for major & minor version releases. Contains only notable items.
 
-## 0.6 (ongoing)
+## 0.7 (ongoing)
+
+- In progress!
+
+## 0.6 (2025-09-27)
 
 - Relational arg constraints: `requires`, `excludes`
+- Custom functions: `fn name():` definitions and lambda functions
+- Function typing system with runtime type checking
+- Variadic arguments (`*files str` syntax)
+- REPL mode for interactive scripting
+- Macros: `@enable_args_block`, `@enable_global_flags`
+- New functions: `matches` (regex), `pow` (power), `get_env` (environment variables)
+- Enhanced HTTP functions: added `json` named parameter
+- `sort()` function: parallel array sorting capability
+- `colorize` function: `skip_if_single` flag for conditional coloring
+- Automatic underscore-to-hyphen conversion in argument names
+- Fixed shell command race conditions
+- Removed "Running:" prefix from shell commands
+- New commands: `rad check` (diagnostics), `rad new` (script generation), `rad stash` (state management)
+- Infrastructure: replaced pflag with custom Ra argument parsing library
 
-## 0.5
+## 0.5 (2025-02-12)
 
 - Replaced handwritten lexer/parser with tree sitter.
 - `defer` statements
@@ -28,9 +46,9 @@ Only for major & minor version releases. Contains only notable items.
 - Multiline strings
 - Arg constraints - enum, regex
 - Modulo operator `%`
-- ++/-- operators
+- `++`/`--` operators
 
-## 0.4
+## 0.4 (2024-10-28)
 
 - `exit` function
 - Allow output pass-through in `rad` blocks
@@ -47,7 +65,7 @@ Only for major & minor version releases. Contains only notable items.
 - Added inline expressions for string interpolation, including formatting
 - Implemented shell command invocation
 
-## 0.3
+## 0.3 (2024-09-29)
 
 - Improved shell embedding
 - Improved table-to-terminal size adjustment
@@ -62,14 +80,14 @@ Only for major & minor version releases. Contains only notable items.
 - Add list comprehensions
 - `request` and `display` blocks
 
-## 0.2
+## 0.2 (2024-09-09)
 
 - Added Apache License 2.0
 - Arg defaults
 - std functions: date functions, replace, join, upper/lower, etc
 - 'Single quote' strings
 
-## 0.1
+## 0.1 (2024-09-08)
 
 - Initial version
 - Newest notable feature was `--STDIN` and output shell export commands.
