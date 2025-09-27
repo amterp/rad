@@ -27,6 +27,14 @@ jobs:
       - name: Set up Git
         run: |
           git config --global --add safe.directory /github/workspace
+          git config --global --add safe.directory /__w/rad/rad
+
+      - name: Debug Git state
+        run: |
+          pwd
+          ls -la
+          git status
+          git log --oneline -5
 
       - name: Run GoReleaser
         run: goreleaser release --clean
