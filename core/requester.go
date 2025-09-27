@@ -9,7 +9,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"time"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -172,9 +171,9 @@ func (r *Requester) request(req *http.Request) ResponseDef {
 	}
 
 	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
-	start := time.Now()
+	start := RClock.Now()
 	resp, err := http.DefaultClient.Do(req)
-	durationSeconds := time.Since(start).Seconds()
+	durationSeconds := RClock.Now().Sub(start).Seconds()
 
 	if err != nil {
 		msg := fmt.Sprintf("Failed to make HTTP request: %v", err)

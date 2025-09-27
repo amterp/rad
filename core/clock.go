@@ -4,6 +4,7 @@ import "time"
 
 type Clock interface {
 	Now() time.Time
+	Local() *time.Location
 }
 
 type RealClock struct {
@@ -15,6 +16,10 @@ func NewRealClock() Clock {
 
 func (r *RealClock) Now() time.Time {
 	return time.Now()
+}
+
+func (r *RealClock) Local() *time.Location {
+	return time.Local
 }
 
 type FixedClock struct {
@@ -29,4 +34,8 @@ func NewFixedClock(year, month, day, hour, minute, second, nano int64, tz *time.
 
 func (f *FixedClock) Now() time.Time {
 	return f.NowTime
+}
+
+func (f *FixedClock) Local() *time.Location {
+	return f.NowTime.Location()
 }

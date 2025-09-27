@@ -2,16 +2,9 @@ package core
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/amterp/rad/rts/rl"
 )
-
-var RNG *rand.Rand
-
-func init() {
-	RNG = rand.New(rand.NewSource(time.Now().UnixNano()))
-}
 
 var FuncSeedRandom = BuiltInFunc{
 	Name: FUNC_SEED_RANDOM,
