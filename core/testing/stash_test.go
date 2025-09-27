@@ -173,3 +173,66 @@ r.full_path.delete_path()
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Stash_SaveStateReturnsNullOnSuccess(t *testing.T) {
+	script := `
+---
+@stash_id = save_state_test
+---
+result = save_state({ "test": "value" })
+print(result)
+print(type_of(result))
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `null
+null
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Stash_SaveStateReturnsErrorOnFailure(t *testing.T) {
+	script := `
+result = catch save_state({ "test": "value" })
+print(type_of(result))
+print("Error contains 'Script ID':", "Script ID" in result)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `error
+Error contains 'Script ID': true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Stash_WriteStashFileReturnsNullOnSuccess(t *testing.T) {
+	defer os.Remove("rad_test_home/stashes/write_test/files/test_return.txt")
+	script := `
+---
+@stash_id = write_test
+---
+result = write_stash_file("test_return.txt", "test content")
+print(result)
+print(type_of(result))
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `null
+null
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Stash_WriteStashFileReturnsErrorOnFailure(t *testing.T) {
+	script := `
+result = catch write_stash_file("test.txt", "content")
+print(type_of(result))
+print("Error contains 'Script ID':", "Script ID" in result)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `error
+Error contains 'Script ID': true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
