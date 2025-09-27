@@ -68,6 +68,12 @@ args:
 name = "alice"
 path = 'path/to/file'
 
+// Multi-line strings (triple quotes)
+text = """
+Hello world
+How are you?
+"""
+
 // Numbers
 age = 25                   // int
 height = 5.9               // float
@@ -96,6 +102,51 @@ person = {"name": "alice", "age": 25}
 nested = {"user": {"name": "bob", "roles": ["admin", "user"]}}
 empty_map = {}
 ```
+
+### Multi-line Strings (Triple Quotes)
+
+```rad
+// Basic multi-line string
+text = """
+Hello world
+How are you?
+"""
+
+// Indentation control - closing """ position determines whitespace stripping
+indented = """
+  Line 1
+   Line 2
+     Line 4
+ """
+// Result: " Line 1\n  Line 2\n    Line 4\n" (1 space stripped from each line)
+
+// String interpolation works in multi-line strings
+name = "alice"
+message = """
+Hello {name}!
+How are you today?
+"""
+
+// Raw multi-line strings (no interpolation or escape processing)
+raw_text = r"""
+Literal \n and {name}
+No processing here
+"""
+
+// Comments allowed after opening triple quotes
+documented = """ // This is allowed
+Content starts on next line
+Always on next line
+"""
+```
+
+**Multi-line String Rules:**
+- Content must start on a new line after opening `"""`
+- The indentation of the closing `"""` determines how much leading whitespace is stripped from each line
+- Support string interpolation with `{variable}` syntax unless raw (`r"""`)
+- Support escape sequences (like `\n`, `\t`) unless raw
+- Comments can follow the opening `"""` on the same line
+- Cannot have content on the same line as the opening `"""`
 
 ## Variables and Assignment
 
