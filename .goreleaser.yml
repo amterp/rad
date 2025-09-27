@@ -1,0 +1,110 @@
+# GoReleaser configuration for Rad CLI tool
+# Enables cross-platform binary releases with CGO support for tree-sitter
+# Uses goreleaser-cross Docker image for cross-compilation toolchains
+
+version: 2
+
+env:
+  - CGO_ENABLED=1
+
+builds:
+  # Darwin builds (macOS)
+  - id: rad-darwin-amd64
+    binary: rad
+    goarch:
+      - amd64
+    goos:
+      - darwin
+    env:
+      - CC=o64-clang
+      - CXX=o64-clang++
+    flags:
+      - -trimpath
+
+  - id: rad-darwin-arm64
+    binary: rad
+    goarch:
+      - arm64
+    goos:
+      - darwin
+    env:
+      - CC=oa64-clang
+      - CXX=oa64-clang++
+    flags:
+      - -trimpath
+
+  # Linux builds
+  - id: rad-linux-amd64
+    binary: rad
+    goarch:
+      - amd64
+    goos:
+      - linux
+    env:
+      - CC=x86_64-linux-gnu-gcc
+      - CXX=x86_64-linux-gnu-g++
+    flags:
+      - -trimpath
+    ldflags:
+      - -extldflags "-static"
+
+  - id: rad-linux-arm64
+    binary: rad
+    goarch:
+      - arm64
+    goos:
+      - linux
+    env:
+      - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
+    flags:
+      - -trimpath
+    ldflags:
+      - -extldflags "-static"
+
+  # Windows builds
+  - id: rad-windows-amd64
+    binary: rad
+    goarch:
+      - amd64
+    goos:
+      - windows
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    flags:
+      - -trimpath
+
+archives:
+  - name_template: "rad_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE*
+    format_overrides:
+      - goos: windows
+        formats: ['zip']
+      - goos: linux
+        formats: ['tar.gz']
+      - goos: darwin
+        formats: ['tar.gz']
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "Merge pull request"
+      - "Merge branch"
+
+release:
+  github:
+    owner: amterp
+    name: rad
+  draft: false
+  prerelease: auto
+  name_template: "{{ .Tag }}"

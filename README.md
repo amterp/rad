@@ -55,7 +55,13 @@ HI, BOB!
 
 ## Installation
 
-### Go (all platforms)
+### macOS (Homebrew)
+
+```shell
+brew install amterp/rad/rad
+```
+
+### Go (from source, all platforms)
 
 ```shell
 go install github.com/amterp/rad@latest
@@ -66,11 +72,17 @@ Installs directly from source using the Go (v1.17+) toolchain into your Go bin d
 **Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
 For automated updates, use one of the below package managers which support it.
 
-### macOS (Homebrew)
+### Binary Downloads (all platforms)
 
-```shell
-brew install amterp/rad/rad
-```
+Pre-built binaries are available for macOS, Linux, and Windows on the [releases page](https://github.com/amterp/rad/releases).
+
+Download the appropriate binary for your platform:
+
+- **macOS**: `rad_darwin_arm64.tar.gz` (Apple Silicon) or `rad_darwin_amd64.tar.gz` (Intel)
+- **Linux**: `rad_linux_arm64.tar.gz` or `rad_linux_amd64.tar.gz`
+- **Windows**: `rad_windows_amd64.zip`
+
+Extract the binary and add it to your PATH.
 
 ### From Source
 
