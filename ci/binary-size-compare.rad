@@ -1,0 +1,85 @@
+#!/usr/bin/env rad
+---
+Compares binary sizes between base branch and current PR.
+Outputs structured data for GitHub Actions consumption.
+---
+
+// Get base branch from GitHub Actions environment
+base_ref = get_env("GITHUB_BASE_REF")
+if not base_ref:
+    base_ref = "main"
+    print("⚠️ No GITHUB_BASE_REF found, using 'main' as base")
+
+print("📊 Starting binary size comparison...")
+print("Base branch: {base_ref}")
+
+// Build current PR binary
+print("🔨 Building PR binary...")
+$!`make build`
+pr_binary_info = get_path("./bin/radd")
+if not pr_binary_info.exists:
+    print_err("❌ Failed to build PR binary - ./bin/radd not found")
+    exit(1)
+
+pr_size = pr_binary_info.size_bytes
+print("PR binary size: {format_bytes(pr_size)}")
+
+// Use a temporary directory to build base branch to avoid affecting working directory
+print("🔄 Building base branch in temporary directory...")
+temp_dir = "/tmp/rad-base-build"
+$!`rm -rf {temp_dir}`
+
+// Clone from the GitHub remote instead of local directory
+repo_url = "https://github.com/amterp/rad.git"
+$!`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
+
+// Build base branch binary in temp directory
+$!`cd {temp_dir} && make build`
+base_binary_info = get_path("{temp_dir}/bin/radd")
+if not base_binary_info.exists:
+    print_err("❌ Failed to build base binary - {temp_dir}/bin/radd not found")
+    exit(1)
+
+base_size = base_binary_info.size_bytes
+print("Base binary size: {format_bytes(base_size)}")
+
+// Calculate differences
+diff_bytes = pr_size - base_size
+diff_percent = base_size > 0 ? round((diff_bytes / float(base_size)) * 100, 2) : 0
+
+// Create result structure
+result = {
+    "base_size": base_size,
+    "pr_size": pr_size,
+    "diff_bytes": diff_bytes,
+    "diff_percent": diff_percent,
+    "base_size_formatted": format_bytes(base_size),
+    "pr_size_formatted": format_bytes(pr_size),
+    "diff_formatted": format_diff(diff_bytes)
+}
+
+// Write results for GitHub Actions
+result_json = str(result)
+write_result = write_file("/tmp/binary-size.json", result_json)
+if type_of(write_result) == "error":
+    print_err("❌ Failed to write results: {write_result}")
+    exit(1)
+
+// Clean up temporary directory
+$!`rm -rf {temp_dir}`
+
+// Print summary
+print("📈 Binary size comparison completed:")
+print("  Base:   {result.base_size_formatted}")
+print("  PR:     {result.pr_size_formatted}")
+print("  Change: {result.diff_formatted} ({diff_percent}%)")
+
+if abs(diff_percent) >= 5:
+    print(yellow("⚠️  Significant size change detected!"))
+
+fn format_bytes(bytes):
+    return "{round(bytes / 1024.0, 3)} KB"
+
+fn format_diff(diff_bytes):
+    sign = diff_bytes >= 0 ? "+" : ""
+    return "{sign}{format_bytes(abs(diff_bytes))}"

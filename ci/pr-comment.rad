@@ -1,0 +1,89 @@
+#!/usr/bin/env rad
+---
+Generates PR comment summarizing test results and binary size changes.
+Reads data from GitHub Actions environment and temp files.
+---
+
+print("💬 Generating PR comment...")
+
+// Read test results from GitHub Actions environment
+tests_passed = get_env("TESTS_PASSED") == "true"
+tests_job_url = get_env("TESTS_JOB_URL")
+binary_job_url = get_env("BINARY_JOB_URL")
+
+// Get commit hashes for comparison
+pr_commit = get_env("GITHUB_SHA")
+base_commit = get_env("GITHUB_BASE_SHA")
+
+// Truncate commit hashes to 7 characters for display
+pr_commit_short = pr_commit ? pr_commit[:7] : "unknown"
+base_commit_short = base_commit ? base_commit[:7] : "unknown"
+
+// Read binary size data
+binary_file = read_file("/tmp/binary-size.json")
+if type_of(binary_file) == "error":
+    print_err("❌ Could not read binary size data: {binary_file}")
+    exit(1)
+
+binary_data = parse_json(binary_file.content)
+if type_of(binary_data) == "error":
+    print_err("❌ Could not parse binary size data: {binary_data}")
+    exit(1)
+
+// Determine test status icon and message
+test_icon = tests_passed ? "✅" : "❌"
+test_message = tests_passed ? "All tests passed" : "Tests failed"
+test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
+
+// Determine binary size change significance
+size_change_icon = get_size_change_icon(binary_data.diff_percent)
+
+// Generate the comment content
+comment = """
+## 🔍 PR Checks Summary
+
+### {test_icon} Tests
+{test_message}{test_link}
+
+### 📊 Binary Size Impact (linux/amd64)
+| Metric | Commit | Value |
+|--------|--------|-------|
+| Base | {base_commit_short} | {format_kb(binary_data.base_size)} |
+| PR | {pr_commit_short} | {format_kb(binary_data.pr_size)} |
+| Change | | {size_change_icon} {format_diff(binary_data.diff_bytes)} ({format_percent(binary_data.diff_percent)}%) |
+
+{binary_job_url ? "📈 [View size comparison details]({binary_job_url})" : ""}
+"""
+
+// Write comment to file for GitHub Actions
+comment_result = write_file("/tmp/pr-comment.txt", comment)
+if type_of(comment_result) == "error":
+    print_err("❌ Failed to write PR comment: {comment_result}")
+    exit(1)
+
+print("✅ PR comment generated successfully")
+print("---")
+print(comment)
+
+fn get_size_change_icon(percent):
+    abs_percent = abs(percent)
+    if abs_percent >= 10:
+        return percent > 0 ? "🔺" : "🔻"
+    else if abs_percent >= 5:
+        return percent > 0 ? "🔸" : "🔹"
+    else if abs_percent >= 1:
+        return percent > 0 ? "📈" : "📉"
+    else:
+        return "➡️"
+
+fn format_kb(bytes):
+    kb = round(bytes / 1024.0, 3)
+    return "{kb} KB"
+
+fn format_diff(diff_bytes):
+    sign = diff_bytes >= 0 ? "+" : ""
+    kb = round(abs(diff_bytes) / 1024.0, 3)
+    return "{sign}{kb} KB"
+
+fn format_percent(percent):
+    return str(round(percent, 3))

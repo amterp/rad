@@ -1,0 +1,13 @@
+#!/usr/bin/env rad
+---
+Runs tests and dump tests for CI. Exits with proper codes.
+Dedicated CI script - independent from dev script.
+---
+
+print("🧪 Running Go tests...")
+$!`go test ./core/testing ./rts`
+
+print("🔍 Running dump tests...")
+$!`cd ./rts/test/dumps && ./test_dumps.rad`
+
+print(green("✅ All tests passed!"))
