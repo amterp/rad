@@ -98,7 +98,7 @@ func init() {
 		newFnSignature(`load_state() -> error|map`),
 		newFnSignature(`save_state(_state: map) -> error?`),
 		newFnSignature(`load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "created": bool, "content"?: str }`),
-		newFnSignature(`write_stash_file(_path: str, _content: str) -> error`),
+		newFnSignature(`write_stash_file(_path: str, _content: str) -> error?`),
 		newFnSignature(`hash(_val: str, algo: ["sha1", "sha256", "sha512", "md5"] = "sha1") -> str`),
 		newFnSignature(`encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> str`),
 		newFnSignature(`decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -> error|str`),
