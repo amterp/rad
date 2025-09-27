@@ -89,9 +89,12 @@ if release:
             $!`git commit --amend --no-edit`
         else:
             $!`git commit -m "Bump version to {version}"`
+
+        $!`git tag {version}`
+
         pushup()
-        $!`gh release create {version} --generate-notes --title "Release {version}"`
-        $!`git fetch origin --tags`
+
+        print("✅ Tag {version} created and pushed. GitHub Actions will create the release with binaries.")
 
 if push:
     pushup()
