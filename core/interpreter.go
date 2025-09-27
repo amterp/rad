@@ -638,6 +638,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 		}
 	}
 
+	thousandsSeparatorNode := rl.GetChild(formatNode, rl.F_THOUSANDS_SEPARATOR)
 	alignmentNode := rl.GetChild(formatNode, rl.F_ALIGNMENT)
 	paddingNode := rl.GetChild(formatNode, rl.F_PADDING)
 	precisionNode := rl.GetChild(formatNode, rl.F_PRECISION)
@@ -677,6 +678,52 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	}
 
 	formatted := func() string {
+		// If thousands separator is requested, render with fmt first, then group digits.
+		if thousandsSeparatorNode != nil {
+			if resultType != rl.RadIntT && resultType != rl.RadFloatT {
+				i.errorf(interpNode, "Cannot format %s with thousands separator ','", TypeAsString(exprResult))
+			}
+
+			// 1) Render once with the right precision (if any)
+			var s string
+			if precisionNode != nil {
+				p := int(i.eval(precisionNode).Val.RequireInt(i, precisionNode))
+				if p < 0 {
+					i.errorf(interpNode, "Precision cannot be negative: %d", p)
+				}
+				if resultType == rl.RadIntT {
+					s = fmt.Sprintf("%.*f", p, float64(exprResult.Val.(int64)))
+				} else {
+					s = fmt.Sprintf("%.*f", p, exprResult.Val.(float64))
+				}
+			} else {
+				if resultType == rl.RadIntT {
+					s = fmt.Sprintf("%d", exprResult.Val.(int64))
+				} else {
+					s = strconv.FormatFloat(exprResult.Val.(float64), 'f', -1, 64)
+				}
+			}
+
+			// 2) Add commas to the integer part only
+			s = addThousands(s)
+
+			// 3) Optional padding/alignment
+			if paddingNode != nil {
+				pad := int(i.eval(paddingNode).Val.RequireInt(i, paddingNode))
+				align := ""
+				if alignmentNode != nil {
+					align = i.GetSrcForNode(alignmentNode)
+				}
+				if align == "<" {
+					return fmt.Sprintf("%-*s", pad, s)
+				}
+				return fmt.Sprintf("%*s", pad, s)
+			}
+
+			return s
+		}
+
+		// Use existing formatting for non-comma cases
 		switch resultType {
 		case rl.RadIntT:
 			if precisionNode == nil {
@@ -696,6 +743,39 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 	}()
 
 	return newRadValue(i, interpNode, formatted)
+}
+
+func addThousands(num string) string {
+	// Keep sign
+	sign := ""
+	if len(num) > 0 && (num[0] == '-' || num[0] == '+') {
+		sign, num = num[:1], num[1:]
+	}
+
+	// Split on decimal point (keep '.' in frac)
+	dot := strings.IndexByte(num, '.')
+	intPart, frac := num, ""
+	if dot >= 0 {
+		intPart, frac = num[:dot], num[dot:]
+	}
+
+	n := len(intPart)
+	if n <= 3 {
+		return sign + intPart + frac
+	}
+
+	var b strings.Builder
+	// First chunk can be 1–3 digits
+	rem := n % 3
+	if rem == 0 {
+		rem = 3
+	}
+	b.WriteString(intPart[:rem])
+	for i := rem; i < n; i += 3 {
+		b.WriteByte(',')
+		b.WriteString(intPart[i : i+3])
+	}
+	return sign + b.String() + frac
 }
 
 func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
