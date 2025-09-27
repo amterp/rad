@@ -395,7 +395,7 @@ func init() {
 				tz := f.GetStr("tz").Plain()
 				var location *time.Location
 				if tz == "local" {
-					location = time.Local
+					location = RClock.Local()
 				} else {
 					var err error
 					location, err = time.LoadLocation(tz)
@@ -476,7 +476,7 @@ func init() {
 
 				var location *time.Location
 				if tz == "local" {
-					location = time.Local
+					location = RClock.Local()
 				} else {
 					var err error
 					location, err = time.LoadLocation(tz)

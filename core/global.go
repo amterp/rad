@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"time"
@@ -18,6 +19,7 @@ var (
 	RReq                     *Requester
 	RClock                   Clock
 	RSleep                   func(duration time.Duration)
+	RNG                      *rand.Rand
 	HasScript                bool
 	ScriptPath               string
 	ScriptDir                string
@@ -57,6 +59,7 @@ func ResetGlobals() {
 	RReq = nil
 	RClock = nil
 	RSleep = nil
+	RNG = nil
 	HasScript = false
 	ScriptPath = ""
 	ScriptDir = ""
@@ -121,6 +124,9 @@ func setGlobals(runnerInput RunnerInput) {
 		RSleep = *runnerInput.RSleep
 	}
 
+	// Initialize RNG with clock-based seed (respects RClock abstraction)
+	RNG = rand.New(rand.NewSource(RClock.Now().UnixNano()))
+
 	var home string
 	if runnerInput.RadHome == nil {
 		home = os.Getenv(ENV_RAD_HOME)
@@ -153,4 +159,9 @@ func failedToDetermineRadHomeDir() {
 		ENV_RAD_HOME,
 	)
 	RExit(1)
+}
+
+func init() {
+	// just in case RNG is invoked before setGlobals
+	RNG = rand.New(rand.NewSource(time.Now().UnixNano()))
 }

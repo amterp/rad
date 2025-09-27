@@ -20,7 +20,7 @@ print(a.epoch.millis, type_of(a.epoch.millis))
 print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576206916, "millis": 1576206916123, "nanos": 1576206916123123123 } }
+	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
 2019-12-13 str
 2019 int
 12 int
@@ -28,9 +28,9 @@ print(a.epoch.nanos, type_of(a.epoch.nanos))
 14 int
 15 int
 16 int
-1576206916 int
-1576206916123 int
-1576206916123123123 int
+1576246516 int
+1576246516123 int
+1576246516123123123 int
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -54,17 +54,17 @@ print(a.epoch.millis, type_of(a.epoch.millis))
 print(a.epoch.nanos, type_of(a.epoch.nanos))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2019-12-12", "year": 2019, "month": 12, "day": 12, "hour": 21, "minute": 15, "second": 16, "time": "21:15:16", "epoch": { "seconds": 1576206916, "millis": 1576206916123, "nanos": 1576206916123123123 } }
-2019-12-12 str
+	expected := `{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 8, "minute": 15, "second": 16, "time": "08:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+2019-12-13 str
 2019 int
 12 int
-12 int
-21 int
+13 int
+8 int
 15 int
 16 int
-1576206916 int
-1576206916123 int
-1576206916123123123 int
+1576246516 int
+1576246516123 int
+1576246516123123123 int
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -96,7 +96,7 @@ a = parse_epoch(1712345678)
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2024-04-06", "year": 2024, "month": 4, "day": 6, "hour": 6, "minute": 34, "second": 38, "time": "06:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678000, "nanos": 1712345678000000000 } }
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678000, "nanos": 1712345678000000000 } }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -108,7 +108,7 @@ a = parse_epoch(1712345678123)
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2024-04-06", "year": 2024, "month": 4, "day": 6, "hour": 6, "minute": 34, "second": 38, "time": "06:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -120,7 +120,7 @@ a = parse_epoch(1712345678123123)
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2024-04-06", "year": 2024, "month": 4, "day": 6, "hour": 6, "minute": 34, "second": 38, "time": "06:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123000 } }
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123000 } }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -132,7 +132,7 @@ a = parse_epoch(1712345678123123123)
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "2024-04-06", "year": 2024, "month": 4, "day": 6, "hour": 6, "minute": 34, "second": 38, "time": "06:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123123 } }
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123123 } }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -164,7 +164,7 @@ a = parse_epoch(-17123456781, unit = "milliseconds")
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "date": "1969-06-17", "year": 1969, "month": 6, "day": 17, "hour": 5, "minute": 29, "second": 3, "time": "05:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
+	expected := `{ "date": "1969-06-16", "year": 1969, "month": 6, "day": 16, "hour": 19, "minute": 29, "second": 3, "time": "19:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
