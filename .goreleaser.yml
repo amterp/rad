@@ -2,7 +2,7 @@
 # Enables cross-platform binary releases with CGO support for tree-sitter
 # Uses goreleaser-cross Docker image for cross-compilation toolchains
 
-version: 2
+# Note: Using version 1 format for compatibility with goreleaser-cross v1.21.5
 
 env:
   - CGO_ENABLED=1
@@ -80,13 +80,11 @@ archives:
     files:
       - README.md
       - LICENSE*
+    # Default format is tar.gz, override for Windows
+    format: tar.gz
     format_overrides:
       - goos: windows
-        formats: ['zip']
-      - goos: linux
-        formats: ['tar.gz']
-      - goos: darwin
-        formats: ['tar.gz']
+        format: zip
 
 checksum:
   name_template: "checksums.txt"
