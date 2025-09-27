@@ -272,3 +272,170 @@ print("Mixed: {value}% done, {100 - value}% remaining")
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func TestStringInterpolation_ThousandsSeparator_Int(t *testing.T) {
+	script := `
+num = 1234567
+print("_{num:,}_")
+print("_{num:,<15}_")
+print("_{num:,>15}_")
+print("_{num:,15}_")
+`
+	expected := `_1,234,567_
+_1,234,567      _
+_      1,234,567_
+_      1,234,567_
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_Float(t *testing.T) {
+	script := `
+pi = 3141.59265
+print("_{pi:,}_")
+print("_{pi:,.2}_")
+print("_{pi:,.4}_")
+print("_{pi:,<20.2}_")
+print("_{pi:,>20.2}_")
+`
+	expected := `_3,141.59265_
+_3,141.59_
+_3,141.5927_
+_3,141.59            _
+_            3,141.59_
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_LargeNumbers(t *testing.T) {
+	script := `
+million = 1000000
+billion = 1000000000
+trillion = 1000000000000
+print("Million: {million:,}")
+print("Billion: {billion:,}")
+print("Trillion: {trillion:,}")
+`
+	expected := `Million: 1,000,000
+Billion: 1,000,000,000
+Trillion: 1,000,000,000,000
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_NegativeNumbers(t *testing.T) {
+	script := `
+negative_int = -123456
+negative_float = -9876.543
+print("Negative int: {negative_int:,}")
+print("Negative float: {negative_float:,.2}")
+print("Padded negative: {negative_int:,>15}")
+`
+	expected := `Negative int: -123,456
+Negative float: -9,876.54
+Padded negative:        -123,456
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_EdgeCases(t *testing.T) {
+	script := `
+zero = 0
+small = 123
+print("Zero: {zero:,}")
+print("Small number: {small:,}")
+print("Expression: {1000 + 2000:,}")
+`
+	expected := `Zero: 0
+Small number: 123
+Expression: 3,000
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_IntWithPrecision(t *testing.T) {
+	script := `
+num = 12345
+print("Int with precision: {num:,.2}")
+print("Int with larger precision: {num:,.6}")
+`
+	expected := `Int with precision: 12,345.00
+Int with larger precision: 12,345.000000
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_TypeSafety(t *testing.T) {
+	script := `
+name = "John"
+print("Testing type safety: {name:,}")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L3:29
+
+  print("Testing type safety: {name:,}")
+                              ^^^^^^^^
+                              Cannot format str with thousands separator ','
+`
+	assertError(t, 1, expected)
+}
+
+func TestStringInterpolation_ThousandsSeparator_ScientificNotation(t *testing.T) {
+	script := `
+big_number = 1e6
+very_big = 1.23e9
+small_number = 1.23e-3
+print("1e6: {big_number:,}")
+print("1.23e9: {very_big:,}")
+print("1.23e-3: {small_number:,}")
+`
+	expected := `1e6: 1,000,000
+1.23e9: 1,230,000,000
+1.23e-3: 0.00123
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_PreservesPrecision(t *testing.T) {
+	script := `
+tiny_number = 1.23456e-5
+print("With comma: {tiny_number:,}")
+print("Without comma: {tiny_number}")
+`
+	expected := `With comma: 0.0000123456
+Without comma: 0.0000123456
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func TestStringInterpolation_ThousandsSeparator_PrecisionConsistency(t *testing.T) {
+	script := `
+num = 1234.56
+print("Without comma: {num}")
+print("With comma: {num:,}")
+print("Both with precision: {num:.2} vs {num:,.2}")
+`
+	expected := `Without comma: 1234.56
+With comma: 1,234.56
+Both with precision: 1234.56 vs 1,234.56
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
