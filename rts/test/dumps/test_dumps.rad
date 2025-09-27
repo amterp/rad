@@ -16,7 +16,7 @@ results = []
 fails = 0
 for i, d in dumps:
     actual = actuals[i]
-    diffs = quiet unsafe $`delta ./cases/{d} {actual} --paging=never`
+    diffs = compare_files("./cases/{d}", actual)
     result = green("SUCCESS")
     if diffs:
         result = red("FAIL")
@@ -37,6 +37,17 @@ if fails:
         $!`mv ./actual/* ./cases`
 else:
     print(green("ALL PASSED"))
+
+fn compare_files(file1, file2):
+    // Check if delta is available (suppress output)
+    delta_unavailable, _, _ = unsafe quiet $`which delta`
+
+    if delta_unavailable:
+        result = quiet unsafe $`diff {file1} {file2}`
+        return result
+    else:
+        result = quiet unsafe $`delta {file1} {file2} --paging=never`
+        return result
 
 // todo rad:
 // - reading files built in func

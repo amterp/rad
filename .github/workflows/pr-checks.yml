@@ -1,0 +1,141 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    outputs:
+      tests-passed: ${{ steps.tests.outcome == 'success' }}
+      tests-job-url: ${{ steps.job-url.outputs.url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install Rad
+        run: ./ci/install-rad.sh
+
+      - name: Generate job URL
+        id: job-url
+        run: echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Run tests
+        id: tests
+        run: rad ci/test-runner.rad
+
+  binary-size:
+    name: Binary Size Comparison
+    runs-on: ubuntu-latest
+    outputs:
+      binary-job-url: ${{ steps.job-url.outputs.url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install Rad
+        run: ./ci/install-rad.sh
+
+      - name: Generate job URL
+        id: job-url
+        run: echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Compare binary sizes
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: rad ci/binary-size-compare.rad
+
+      - name: Upload binary size data
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-size-data
+          path: /tmp/binary-size.json
+          retention-days: 1
+
+  comment:
+    name: Post PR Comment
+    runs-on: ubuntu-latest
+    needs: [tests, binary-size]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rad
+        run: ./ci/install-rad.sh
+
+      - name: Download binary size data
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-size-data
+          path: /tmp/
+
+      - name: Generate PR comment
+        env:
+          TESTS_PASSED: ${{ needs.tests.outputs.tests-passed }}
+          TESTS_JOB_URL: ${{ needs.tests.outputs.tests-job-url }}
+          BINARY_JOB_URL: ${{ needs.binary-size.outputs.binary-job-url }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: rad ci/pr-comment.rad
+
+      - name: Post PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('/tmp/pr-comment.txt', 'utf8');
+
+            // Check for existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(comment =>
+              comment.body.includes('🔍 PR Checks Summary')
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+              console.log('Updated existing PR comment');
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+              console.log('Created new PR comment');
+            }
