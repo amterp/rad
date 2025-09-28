@@ -1,7 +1,0 @@
-#!/usr/bin/env rad
-args:
-    iterations int = 50_000
-
-sum = 0
-for i in range(iterations):
-    sum += i
