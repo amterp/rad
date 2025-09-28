@@ -1,0 +1,6 @@
+#!/usr/bin/env rad
+---
+Measures startup time with minimal work.
+---
+
+print("hello")
