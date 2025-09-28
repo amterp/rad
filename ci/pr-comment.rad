@@ -10,6 +10,7 @@ print("💬 Generating PR comment...")
 tests_passed = get_env("TESTS_PASSED") == "true"
 tests_job_url = get_env("TESTS_JOB_URL")
 binary_job_url = get_env("BINARY_JOB_URL")
+benchmark_job_url = get_env("BENCHMARK_JOB_URL")
 
 // Get commit hashes for comparison
 pr_commit = get_env("GITHUB_SHA")
@@ -30,6 +31,18 @@ if type_of(binary_data) == "error":
     print_err("❌ Could not parse binary size data: {binary_data}")
     exit(1)
 
+// Read benchmark data (optional - may not exist if benchmark job failed)
+benchmark_data = null
+benchmark_file = catch read_file("/tmp/benchmark-comparison.json")
+if type_of(benchmark_file) == "error":
+    print("⚠️ Benchmark data not available: {benchmark_file}")
+    print("📝 This is normal if the benchmark job failed or was skipped")
+else:
+    benchmark_data = parse_json(benchmark_file.content)
+    if type_of(benchmark_data) == "error":
+        print("⚠️ Could not parse benchmark data: {benchmark_data}")
+        benchmark_data = null
+
 // Determine test status icon and message
 test_icon = tests_passed ? "✅" : "❌"
 test_message = tests_passed ? "All tests passed" : "Tests failed"
@@ -37,6 +50,31 @@ test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
 
 // Determine binary size change significance
 size_change_icon = get_size_change_icon(binary_data.diff_percent)
+
+// Generate benchmark section
+benchmark_section = ""
+if benchmark_data != null:
+    if len(benchmark_data.comparisons) > 0:
+        benchmark_section = """
+### 🏃 Performance Benchmarks
+| Benchmark | Base ({base_commit_short}) | PR ({pr_commit_short}) | Change |
+|-----------|------|----|---------"""
+
+        for comparison in benchmark_data.comparisons:
+            change_icon = get_performance_change_icon(comparison.diff_percent)
+            benchmark_section += "\n| {comparison.name} | {comparison.base_mean_ms}ms | {comparison.pr_mean_ms}ms | {change_icon} {format_perf_diff(comparison.diff_ms)}ms ({format_percent(comparison.diff_percent)}%) |"
+
+        if benchmark_data.has_regressions:
+            benchmark_section += "\n\n⚠️ **Performance regressions detected!** Some benchmarks are >10% slower."
+
+        if benchmark_job_url:
+            benchmark_section += "\n\n🏃 [View benchmark details]({benchmark_job_url})"
+    else:
+        benchmark_section = "\n### 🏃 Performance Benchmarks\n❌ No benchmark data available"
+else:
+    benchmark_section = "\n### 🏃 Performance Benchmarks\n⚠️ Benchmark job failed or was skipped"
+    if benchmark_job_url:
+        benchmark_section += " ([view logs]({benchmark_job_url}))"
 
 // Generate the comment content
 comment = """
@@ -53,6 +91,8 @@ comment = """
 | Change | | {size_change_icon} {format_diff(binary_data.diff_bytes)} ({format_percent(binary_data.diff_percent)}%) |
 
 {binary_job_url ? "📈 [View size comparison details]({binary_job_url})" : ""}
+
+{benchmark_section}
 """
 
 // Write comment to file for GitHub Actions
@@ -87,3 +127,18 @@ fn format_diff(diff_bytes):
 
 fn format_percent(percent):
     return str(round(percent, 3))
+
+fn get_performance_change_icon(percent):
+    abs_percent = abs(percent)
+    if abs_percent >= 10:
+        return percent > 0 ? "🔺" : "🔻"
+    else if abs_percent >= 5:
+        return percent > 0 ? "🔸" : "🔹"
+    else if abs_percent >= 1:
+        return percent > 0 ? "📈" : "📉"
+    else:
+        return "➡️"
+
+fn format_perf_diff(diff_ms):
+    sign = diff_ms >= 0 ? "+" : ""
+    return "{sign}{round(abs(diff_ms), 2)}"
