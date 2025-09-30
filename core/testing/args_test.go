@@ -475,3 +475,107 @@ Script args:
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
+
+func Test_Args_ClusteredShortInts_Basic(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-nn", "--color=never")
+	expected := `num: 2
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_TripleClustered(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-nnn", "--color=never")
+	expected := `num: 3
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_LargeCount(t *testing.T) {
+	script := `
+args:
+	verbosity v int
+print("verbosity: {verbosity}")
+`
+	setupAndRunCode(t, script, "-vvvvv", "--color=never")
+	expected := `verbosity: 5
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_ExplicitValueOverridesCounting(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-nnn=10", "--color=never")
+	expected := `num: 10
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_LaterOverridesEarlier(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-nn", "-n", "7", "--color=never")
+	expected := `num: 7
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_LaterClusterOverridesEarlier(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-n", "-nnn", "--color=never")
+	expected := `num: 3
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_SingleFlagWithValue(t *testing.T) {
+	script := `
+args:
+	num n int
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-n", "42", "--color=never")
+	expected := `num: 42
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Args_ClusteredShortInts_ClusteringOverridesDefault(t *testing.T) {
+	script := `
+args:
+	num n int = 5
+print("num: {num}")
+`
+	setupAndRunCode(t, script, "-nnn", "--color=never")
+	expected := `num: 3
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

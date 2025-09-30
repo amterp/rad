@@ -88,7 +88,7 @@ if release:
         if amend:
             $!`git commit --amend --no-edit`
         else:
-            $!`git commit -m "Bump version to {version}"`
+            $!`git commit -m "chore: bump version to {version}"`
 
         $!`git tag {version}`
 
