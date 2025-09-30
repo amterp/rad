@@ -7,6 +7,7 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/check"
 )
 
 type ScriptData struct {
@@ -27,6 +28,9 @@ func ExtractMetadata(src string) *ScriptData {
 	}
 
 	tree := radTree.Parse(src)
+
+	// Validate syntax before attempting to extract metadata
+	validateSyntax(src, tree, radTree)
 
 	disableGlobalOpts := false
 	disableArgsBlock := false
@@ -64,6 +68,36 @@ func (sd *ScriptData) ValidateNoErrors() {
 		for _, node := range invalidNodes {
 			// TODO print all errors up front instead of exiting here
 			RP.CtxErrorExit(NewCtx(sd.Src, node, "Invalid syntax", ""))
+		}
+	}
+}
+
+// validateSyntax checks for syntax errors and exits immediately if any are found.
+// This runs before argument parsing, so it only respects environment variables (like NO_COLOR),
+// not command-line flags like --color=never.
+func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
+	checker := check.NewCheckerWithTree(tree, parser, src)
+	result, err := checker.CheckDefault()
+	if err != nil {
+		RP.RadErrorExit("Failed to validate syntax: " + err.Error())
+	}
+
+	// Find first Error severity diagnostic
+	for _, diag := range result.Diagnostics {
+		if diag.Severity == check.Error {
+			// Convert diagnostic Range (0-indexed) to ErrorCtx (1-indexed)
+			ctx := ErrorCtx{
+				CodeCtx: CodeCtx{
+					Src:      src,
+					RowStart: diag.Range.Start.Line + 1,
+					ColStart: diag.Range.Start.Character + 1,
+					RowEnd:   diag.Range.End.Line + 1,
+					ColEnd:   diag.Range.End.Character + 1,
+				},
+				OneLiner: diag.Message,
+				Details:  "",
+			}
+			RP.CtxErrorExit(ctx)
 		}
 	}
 }

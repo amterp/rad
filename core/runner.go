@@ -178,7 +178,6 @@ func (r *RadRunner) setupRootCommand() {
 				color.NoColor = true
 			case COLOR_ALWAYS:
 				color.NoColor = false
-				// If FlagColor.Value is empty (e.g., global options disabled), use default behavior
 			}
 		},
 	})
@@ -299,9 +298,6 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	if shouldExit {
 		RExit(0)
 	}
-
-	// Validate script
-	r.scriptData.ValidateNoErrors()
 
 	// Final parse with correct ignore settings
 	// Ignore unknown args when args block is disabled (so they can be accessed via get_args())
