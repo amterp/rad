@@ -144,6 +144,22 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 		stdInBuffer.WriteString(tp.script)
 		args = append([]string{"-"}, tp.args...)
 	}
+
+	// Set NO_COLOR for tests that pass --color=never
+	// Early validation happens before --color flag is parsed, so we need env var
+	hasColorNever := false
+	for _, arg := range args {
+		if arg == "--color=never" || (strings.HasPrefix(arg, "--color") && strings.Contains(arg, "never")) {
+			hasColorNever = true
+			break
+		}
+	}
+	if hasColorNever {
+		os.Setenv("NO_COLOR", "1")
+	} else {
+		os.Unsetenv("NO_COLOR")
+	}
+
 	runner := setupRunner(t, args...)
 	defer func() {
 		if r := recover(); r != nil {

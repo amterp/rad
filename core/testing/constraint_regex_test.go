@@ -105,7 +105,8 @@ Script args:
 	assertError(t, 1, expected)
 }
 
-// not clear color here should be present or not. comes down to if we eagerly parse flags we can, or not.
+// Early validation (syntax and regex) happens before --color flag is parsed,
+// so --color=never is enforced via NO_COLOR env var set by test helper
 func Test_Constraint_Regex_InvalidRegex(t *testing.T) {
 	script := `
 args:
@@ -113,6 +114,6 @@ args:
 	name regex "+"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := "\x1b[33mError at L4:2\n\n\x1b[0m  \tname regex \"+\"\n   \x1b[31m^^^^^^^^^^^^^^\x1b[0m\n   \x1b[31mInvalid regex '+': error parsing regexp: missing argument to repetition operator: `+`\x1b[0m\n"
+	expected := "Error at L4:2\n\n  \tname regex \"+\"\n   ^^^^^^^^^^^^^^\n   Invalid regex '+': error parsing regexp: missing argument to repetition operator: `+`\n"
 	assertError(t, 1, expected)
 }
