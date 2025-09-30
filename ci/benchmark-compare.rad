@@ -37,6 +37,31 @@ benchmark_configs = [
         "new_path": "ci/benchmark-scripts/startup-time.rad",
         "old_path": null,  // This benchmark is new, doesn't exist in old location
         "name": "startup-time"
+    },
+    {
+        "new_path": "ci/benchmark-scripts/shell-commands.rad",
+        "old_path": null,
+        "name": "shell-commands"
+    },
+    {
+        "new_path": "ci/benchmark-scripts/string-operations.rad",
+        "old_path": null,
+        "name": "string-operations"
+    },
+    {
+        "new_path": "ci/benchmark-scripts/json-processing.rad",
+        "old_path": null,
+        "name": "json-processing"
+    },
+    {
+        "new_path": "ci/benchmark-scripts/file-io.rad",
+        "old_path": null,
+        "name": "file-io"
+    },
+    {
+        "new_path": "ci/benchmark-scripts/display-table.rad",
+        "old_path": null,
+        "name": "display-table"
     }
 ]
 
@@ -116,10 +141,33 @@ for config in pr_benchmark_pairs:
             print("✅ Found base benchmark (old path): {config.old_path}")
             continue
 
-    print("⚠️ Benchmark missing in base branch: {config.name}")
+    // If not found in base, copy from PR to enable comparison
+    print("🔧 Benchmark not found in base, copying from PR: {config.new_path}")
+
+    // Verify PR benchmark exists
+    pr_benchmark_path = config.new_path
+    pr_file_info = get_path(pr_benchmark_path)
+    if not pr_file_info.exists:
+        print_err("❌ PR benchmark doesn't exist: {pr_benchmark_path}")
+        continue
+
+    // Create directory structure in temp_dir if needed
+    target_path = "{temp_dir}/{config.new_path}"
+    target_dir = join(split(target_path, "/")[:-1], "/")
+    $!`mkdir -p {target_dir}`
+
+    // Copy the benchmark file from PR to base checkout
+    $!`cp {pr_benchmark_path} {target_path}`
+    print("✅ Copied benchmark to base: {target_path}")
+
+    base_benchmark_pairs = base_benchmark_pairs + [{
+        "pr_path": config.new_path,
+        "base_path": config.new_path,
+        "name": config.name
+    }]
 
 if len(base_benchmark_pairs) == 0:
-    print_err("❌ No common benchmarks found between PR and base branch")
+    print_err("❌ No benchmarks available for comparison")
     exit(1)
 
 base_cmds = ["'./bin/radd {pair.base_path}'" for pair in base_benchmark_pairs]

@@ -1,0 +1,25 @@
+#!/usr/bin/env rad
+---
+Measures JSON parsing and serialization performance.
+---
+args:
+    iterations int = 5000
+
+json_str = r"""
+{
+    "users": [
+        {"name": "alice", "age": 25, "email": "alice@example.com"},
+        {"name": "bob", "age": 30, "email": "bob@example.com"},
+        {"name": "charlie", "age": 35, "email": "charlie@example.com"}
+    ],
+    "metadata": {
+        "version": "1.0",
+        "timestamp": 1234567890
+    }
+}
+"""
+
+for i in range(iterations):
+    data = parse_json(json_str)
+    serialized = str(data)
+    name = data["users"][0]["name"]

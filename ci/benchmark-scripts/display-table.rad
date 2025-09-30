@@ -1,0 +1,31 @@
+#!/usr/bin/env rad
+---
+Measures display block performance with JSON extraction and table formatting.
+---
+args:
+    iterations int = 5000
+
+// Create realistic API-like data structure
+data = [
+    {"name": "alice", "age": 25, "email": "alice@example.com", "role": "admin"},
+    {"name": "bob", "age": 30, "email": "bob@example.com", "role": "user"},
+    {"name": "charlie", "age": 35, "email": "charlie@example.com", "role": "moderator"},
+    {"name": "diana", "age": 28, "email": "diana@example.com", "role": "user"},
+    {"name": "eve", "age": 32, "email": "eve@example.com", "role": "admin"},
+    {"name": "frank", "age": 27, "email": "frank@example.com", "role": "user"},
+    {"name": "grace", "age": 29, "email": "grace@example.com", "role": "moderator"},
+    {"name": "henry", "age": 31, "email": "henry@example.com", "role": "user"},
+    {"name": "iris", "age": 26, "email": "iris@example.com", "role": "admin"},
+    {"name": "jack", "age": 33, "email": "jack@example.com", "role": "user"}
+]
+
+// Define JSON path extractions
+Name = json[].name
+Age = json[].age
+Email = json[].email
+Role = json[].role
+
+for i in range(iterations):
+    display data:
+        fields Name, Age, Email, Role
+        sort Age desc, Name

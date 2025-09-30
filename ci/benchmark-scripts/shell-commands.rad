@@ -1,0 +1,12 @@
+#!/usr/bin/env rad
+---
+Measures shell command execution performance.
+---
+args:
+    iterations int = 150
+
+for i in range(iterations):
+    if i % 2 == 0:
+        quiet $!`echo "test"`
+    else:
+        quiet $!`pwd`
