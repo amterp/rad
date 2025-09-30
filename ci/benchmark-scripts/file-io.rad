@@ -1,0 +1,16 @@
+#!/usr/bin/env rad
+---
+Measures file I/O performance.
+---
+args:
+    iterations int = 1000
+
+test_file = "/tmp/rad_benchmark_test.txt"
+content = "This is test content for the benchmark.\nIt has multiple lines.\nAnd some data to write."
+
+for i in range(iterations):
+    write_file(test_file, "{content}\nIteration: {i}")
+    result = read_file(test_file)
+    text = result.content
+
+quiet $!`rm -f {test_file}`

@@ -1,0 +1,15 @@
+#!/usr/bin/env rad
+---
+Measures string manipulation performance.
+---
+args:
+    iterations int = 20_000
+
+text = "hello world from rad scripting language"
+for i in range(iterations):
+    upper_text = upper(text)
+    lower_text = lower(text)
+    parts = split(text, " ")
+    joined = join(parts, "-")
+    replaced = replace(text, "rad", "RAD")
+    interpolated = "Result {i}: {replaced}"
