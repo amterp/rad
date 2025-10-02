@@ -491,6 +491,15 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		asStr := i.GetSrcForNode(node)
 		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
 		return NormalVal(newRadValues(i, node, asFloat))
+	case rl.K_SCIENTIFIC_NUMBER:
+		asStr := i.GetSrcForNode(node)
+		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
+		// Evaluate as int if it's a whole number, float otherwise
+		// RadChecker validates that int-typed params only use whole numbers
+		if asFloat == float64(int64(asFloat)) {
+			return NormalVal(newRadValues(i, node, int64(asFloat)))
+		}
+		return NormalVal(newRadValues(i, node, asFloat))
 	case rl.K_STRING:
 		str := NewRadString("")
 

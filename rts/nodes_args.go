@@ -178,11 +178,11 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 		nameNode := decl.ChildByFieldName("arg_name")
 		renameNode := decl.ChildByFieldName("rename")
 		shorthandNode := decl.ChildByFieldName("shorthand")
-		typeNode := decl.ChildByFieldName("type")
-		optionalNode := decl.ChildByFieldName("optional")
-		defaultNode := decl.ChildByFieldName("default")
+		typeNode := decl.ChildByFieldName(rl.F_TYPE)
+		optionalNode := decl.ChildByFieldName(rl.F_OPTIONAL)
+		defaultNode := decl.ChildByFieldName(rl.F_DEFAULT)
 		commentNode := decl.ChildByFieldName("comment")
-		variadicMarkerNode := decl.ChildByFieldName("variadic_marker")
+		variadicMarkerNode := decl.ChildByFieldName(rl.F_VARIADIC_MARKER)
 
 		var argRename *ArgDeclRename
 		if renameNode != nil {
@@ -346,7 +346,7 @@ func findArgRegexConstraints(src string, node *ts.Node) map[string]*ArgRegexCons
 
 	for _, constraint := range regexConstraints {
 		nameNode := constraint.ChildByFieldName("arg_name")
-		regexStrNode := constraint.ChildByFieldName("regex")
+		regexStrNode := constraint.ChildByFieldName(rl.F_REGEX)
 
 		name := src[nameNode.StartByte():nameNode.EndByte()]
 
@@ -509,36 +509,44 @@ func findArgExclusions(src string, node *ts.Node) []ArgExclusion {
 
 func extractArgInt(src string, defaultNode *ts.Node) int64 {
 	multiplier := int64(1)
-	ops := defaultNode.ChildrenByFieldName("op", defaultNode.Walk())
+	ops := defaultNode.ChildrenByFieldName(rl.F_OP, defaultNode.Walk())
 	for _, op := range ops {
 		opSrc := src[op.StartByte():op.EndByte()]
-		if opSrc == "-" {
+		if opSrc == rl.K_MINUS {
 			multiplier *= -1
 		}
 	}
-	valueNode := defaultNode.ChildByFieldName("value")
+	valueNode := defaultNode.ChildByFieldName(rl.F_VALUE)
 	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
+
+	// Handle scientific notation by parsing as float then converting to int
+	// RadChecker will validate that the value is actually a whole number
+	if valueNode.Kind() == rl.K_SCIENTIFIC_NUMBER {
+		floatVal, _ := ParseFloat(valueStr)
+		return int64(floatVal) * multiplier
+	}
+
 	value, _ := ParseInt(valueStr)
 	return value * multiplier
 }
 
 func extractArgFloat(src string, defaultNode *ts.Node) float64 {
 	multiplier := 1.0
-	ops := defaultNode.ChildrenByFieldName("op", defaultNode.Walk())
+	ops := defaultNode.ChildrenByFieldName(rl.F_OP, defaultNode.Walk())
 	for _, op := range ops {
 		opSrc := src[op.StartByte():op.EndByte()]
-		if opSrc == "-" {
+		if opSrc == rl.K_MINUS {
 			multiplier *= -1
 		}
 	}
-	valueNode := defaultNode.ChildByFieldName("value")
+	valueNode := defaultNode.ChildByFieldName(rl.F_VALUE)
 	valueStr := src[valueNode.StartByte():valueNode.EndByte()]
 	value, _ := ParseFloat(valueStr)
 	return value * multiplier
 }
 
 func extractStringList(src string, valuesNode *ts.Node) []string {
-	valuesStringNodes := valuesNode.ChildrenByFieldName("list_entry", valuesNode.Walk())
+	valuesStringNodes := valuesNode.ChildrenByFieldName(rl.F_LIST_ENTRY, valuesNode.Walk())
 	var values []string
 	for _, stringNode := range valuesStringNodes {
 		values = append(values, extractString(src, &stringNode))
@@ -547,7 +555,7 @@ func extractStringList(src string, valuesNode *ts.Node) []string {
 }
 
 func extractIntList(src string, intListNode *ts.Node) []int64 {
-	intArgNodes := intListNode.ChildrenByFieldName("list_entry", intListNode.Walk())
+	intArgNodes := intListNode.ChildrenByFieldName(rl.F_LIST_ENTRY, intListNode.Walk())
 	var values []int64
 	for _, intArgNode := range intArgNodes {
 		values = append(values, extractArgInt(src, &intArgNode))
@@ -556,7 +564,7 @@ func extractIntList(src string, intListNode *ts.Node) []int64 {
 }
 
 func extractFloatList(src string, floatListNode *ts.Node) []float64 {
-	floatArgNodes := floatListNode.ChildrenByFieldName("list_entry", floatListNode.Walk())
+	floatArgNodes := floatListNode.ChildrenByFieldName(rl.F_LIST_ENTRY, floatListNode.Walk())
 	var values []float64
 	for _, floatArgNode := range floatArgNodes {
 		values = append(values, extractArgFloat(src, &floatArgNode))
@@ -565,7 +573,7 @@ func extractFloatList(src string, floatListNode *ts.Node) []float64 {
 }
 
 func extractBoolList(src string, boolListNode *ts.Node) []bool {
-	boolArgNodes := boolListNode.ChildrenByFieldName("list_entry", boolListNode.Walk())
+	boolArgNodes := boolListNode.ChildrenByFieldName(rl.F_LIST_ENTRY, boolListNode.Walk())
 	var values []bool
 	for _, boolArgNode := range boolArgNodes {
 		asBool, _ := strconv.ParseBool(src[boolArgNode.StartByte():boolArgNode.EndByte()])
@@ -576,7 +584,7 @@ func extractBoolList(src string, boolListNode *ts.Node) []bool {
 
 // extractString of a string node. Does not perform interpolation.
 func extractString(src string, stringNode *ts.Node) string {
-	contents := stringNode.ChildByFieldName("contents")
+	contents := stringNode.ChildByFieldName(rl.F_CONTENTS)
 	if contents == nil {
 		return ""
 	}

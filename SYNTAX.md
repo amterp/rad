@@ -460,6 +460,10 @@ sum_val = add(3, 4)     // 7
 "hello".upper()         // "HELLO"
 [1, 2, 3].len()        // 3
 
+// You're encouraged to use UFCS, especially to un-nest function calls.
+upper(trim(text))    // BAD
+text.trim().upper()  // GOOD
+
 // Built-in function assignment to variables
 my_upper = upper
 "test".my_upper()      // "TEST"
@@ -1030,7 +1034,7 @@ fn calculate_tax(amount, rate):
 fn validate_email(email):
     return "@" in email and "." in email
 
-// Good: Anonymous functions for simple operations
+// Good: Anonymous functions for simple operations (note lack of colon)
 double = fn(x) x * 2
 is_even = fn(n) n % 2 == 0
 ```

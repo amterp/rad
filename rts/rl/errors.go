@@ -44,6 +44,7 @@ const (
 	// 3xxxx Type Errors?
 
 	// 4xxxx Validation Errors?
+	ErrScientificNotationNotWholeNumber Error = "40001"
 )
 
 func (e Error) String() string {
