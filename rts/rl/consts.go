@@ -17,6 +17,7 @@ const (
 	K_INT                     = "int"
 	K_BOOL                    = "bool"
 	K_FLOAT                   = "float"
+	K_SCIENTIFIC_NUMBER       = "scientific_number"
 	K_LIST                    = "list"
 	K_NULL                    = "null"
 	K_CALL                    = "call"
@@ -158,6 +159,7 @@ const (
 	F_TYPE                = "type"
 	F_RETURN_TYPE         = "return_type"
 	F_VARARG_MARKER       = "vararg_marker"
+	F_VARIADIC_MARKER     = "variadic_marker" // todo merge with above
 	F_OPTIONAL            = "optional"
 	F_LEAF_TYPE           = "leaf_type"
 	F_ANY                 = "any"
