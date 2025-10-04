@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
-	"sync"
 
 	"github.com/amterp/rad/rts/rl"
 
@@ -91,24 +89,15 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	captureStdout := numExpectedOutputs >= 2
 	captureStderr := numExpectedOutputs >= 3
 
-	// set up pipes if we need to capture output
-	var stdoutPipe, stderrPipe io.ReadCloser
-	var err error
-
+	// set up output destinations
 	if captureStdout {
-		stdoutPipe, err = cmd.StdoutPipe()
-		if err != nil {
-			i.errorf(shellCmdNode, "Error creating stdout pipe: %v", err)
-		}
+		cmd.Stdout = &stdoutBuf
 	} else {
 		cmd.Stdout = RIo.StdOut
 	}
 
 	if captureStderr {
-		stderrPipe, err = cmd.StderrPipe()
-		if err != nil {
-			i.errorf(shellCmdNode, "Error creating stderr pipe: %v", err)
-		}
+		cmd.Stderr = &stderrBuf
 	} else {
 		cmd.Stderr = RIo.StdErr
 	}
@@ -116,50 +105,9 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	if !isQuiet {
 		RP.RadInfo(fmt.Sprintf("⚡️ %s\n", cmdStr.String()))
 	}
-	if err = cmd.Start(); err != nil {
-		i.errorf(shellCmdNode, "Error starting command: %v", err)
-	}
 
-	// if capturing, drain both pipes in parallel to avoid race with cmd.Wait()
-	if captureStdout || captureStderr {
-		var waitGroup sync.WaitGroup
-		errCh := make(chan error, 2)
-
-		if captureStdout {
-			waitGroup.Add(1)
-			go func() {
-				defer waitGroup.Done()
-				if _, copyErr := io.Copy(&stdoutBuf, stdoutPipe); copyErr != nil {
-					errCh <- fmt.Errorf("stdout pipe error: %w", copyErr)
-				}
-			}()
-		}
-		if captureStderr {
-			waitGroup.Add(1)
-			go func() {
-				defer waitGroup.Done()
-				if _, copyErr := io.Copy(&stderrBuf, stderrPipe); copyErr != nil {
-					errCh <- fmt.Errorf("stderr pipe error: %w", copyErr)
-				}
-			}()
-		}
-
-		// wait for the process to exit, then for all copies to finish
-		waitErr := cmd.Wait()
-		waitGroup.Wait()
-		close(errCh)
-
-		// if any pipe copy failed, report it
-		for pipeErr := range errCh {
-			if pipeErr != nil {
-				i.errorf(shellCmdNode, "Failed to run command: %v", pipeErr)
-			}
-		}
-		err = waitErr
-	} else {
-		// no capturing: just wait for completion
-		err = cmd.Wait()
-	}
+	// Run the command
+	err := cmd.Run()
 
 	// handle exit codes and errors
 	if err != nil {
