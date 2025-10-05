@@ -465,3 +465,20 @@ config: null
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Args_Variadic_UnknownFlagBeforePositional(t *testing.T) {
+	script := `
+args:
+	*extras str
+	build b bool
+
+print("extras: {extras}")
+print("build: {build}")
+`
+	setupAndRunCode(t, script, "-U", "--color=never")
+	expected := `extras: [ "-U" ]
+build: false
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
