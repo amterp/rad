@@ -357,3 +357,290 @@ args:
 ```
 
 Hmm, but how do we separate the actual impl for `add`? Maybe still pass a handler fn somehow? One that doesn't take args? idk
+
+## 2025-10-05
+
+Revisiting commands with fresh perspective. Core requirements we'd like to satisfy:
+
+1. Run shared code first
+2. Hard to mess up (good scoping, clear semantics)
+3. Nested commands (e.g. `git remote add`)
+4. Standard `args` block functionality per command
+5. **Commands should be optional** - tool can work with or without them
+6. Static inspectability for help generation
+7. Single-file friendly, multi-file capable
+
+### Default Commands
+
+Requirement #5 (optional commands) matters for tools like `hm` (a tldr/um hybrid):
+
+```bash
+hm grep              # Shows tldr page for grep (default behavior)
+hm edit grep         # Edits the page
+hm list              # Lists all pages
+```
+
+Here, `hm <page>` would be equivalent to `hm view <page>` - a default command that makes the common case ergonomic.
+
+**One possible syntax:**
+
+```rad
+args:
+    verbose bool  # Global to all commands
+
+command default:
+    ---
+    Shows the page for a command
+    ---
+    page str
+
+command edit:
+    ---
+    Edit a page
+    ---
+    page str
+
+command list:
+    ---
+    List all pages
+    ---
+
+if default:
+    show_page(page)
+if edit:
+    edit_page(page)
+if list:
+    list_pages()
+```
+
+**Potential semantics:**
+- `command default:` would be optional
+- If defined: `tool <args>` routes to default
+- If not defined: `tool` (no command) → error listing available commands
+- `default` becomes a boolean like other commands
+- Help behavior: `tool -h` shows all commands; when default exists, also shows default args
+
+This could handle the `hm grep` use case cleanly without special-casing.
+
+### Nested vs Flattened Commands
+
+Two possible syntactic styles:
+
+**Style 1: Nested**
+```rad
+command remote:
+    ---
+    Manage git remotes
+    ---
+    timeout int = 30  # Shared by all subcommands
+    command add:
+        ---
+        Add a remote
+        ---
+        name str
+        url str
+    command remove:
+        ---
+        Remove a remote
+        ---
+        name str
+```
+
+Advantage: Could define shared args for the namespace (`timeout` available to both `add` and `remove`).
+
+**Style 2: Flattened**
+```rad
+command remote add:
+    ---
+    Add a remote
+    ---
+    name str
+    url str
+    timeout int = 30
+
+command remote remove:
+    ---
+    Remove a remote
+    ---
+    name str
+    timeout int = 30
+```
+
+Advantage: Less nesting, flatter structure. Could work well when subcommands don't share args.
+
+**Possibly support both.** Nested when shared args in a namespace matter, flattened otherwise.
+
+**Routing approach - separate booleans:** `command remote add:` could define two booleans: `remote` and `add`. Check via `if remote and add:`.
+
+**Problem with separate booleans:** Easy to write logical bugs that are hard to catch:
+```rad
+command aaa bbb:
+    pass
+command ccc ddd:
+    pass
+
+if aaa and ddd:  // Nonsense check - aaa+bbb and ccc+ddd are different commands
+    pass         // This silently never executes
+```
+
+The check `if aaa and ddd:` is logically impossible since commands are mutually exclusive, but it's not a syntax error. LSP can't easily help either.
+
+**Alternative routing approaches to consider:**
+- Single variable per command level: `if remote == "add":` or similar
+- Structured command variable: `if command.remote.add:` or `if command == ["remote", "add"]:`
+- Keep separate booleans but add LSP warnings for nonsensical combinations
+
+**Max nesting depth:** Probably don't enforce a hard limit, though best practices would discourage more than 2-3 levels.
+
+### Multi-File Commands
+
+One initial idea: make command files independent:
+
+```rad
+# tool.rsl
+command add "./commands/add.rsl"
+command remove "./commands/remove.rsl"
+```
+
+Where each external file would be a standalone rad script that receives remaining CLI args.
+
+**Problem with independence:** This likely doesn't match the actual use case. Command files probably aren't standalone programs - they're more likely **part of the same logical tool**. They might need to:
+- Share scope with the root file (variables, functions)
+- Access shared setup code run in the root
+- Be invokable 99.9% of the time via the root script, not standalone
+
+Making them independent could create friction: you'd have to duplicate shared code, can't easily share constants/helpers, etc.
+
+**Complexity if command files share scope with root:**
+- What code runs when? Root setup code would need to run before command code
+- Are variables from root visible in command files?
+- Can command files call functions defined in root?
+- How would LSP reason about cross-file scope?
+- This bleeds into imports/modules, which is a bigger design question
+
+**Possible path:** Defer multi-file commands to v2. Focus on nailing single-file command syntax first.
+
+**Rationale:**
+- Single-file likely covers 90% of use cases
+- Multi-file scope sharing is complex and ties into imports
+- Better to understand real usage patterns before designing the multi-file story
+- Could add multi-file cleanly in v2 without breaking single-file syntax
+
+### Single-File Syntax Example
+
+One possible approach for v1:
+
+```rad
+#!/usr/bin/env rad
+---
+Git helper tool
+---
+
+# Global args - available to ALL commands
+args:
+    verbose v bool
+    config str = "~/.config"
+
+# Default command (optional)
+command default:
+    ---
+    Process a file
+    ---
+    file str
+
+# Simple command
+command edit:
+    ---
+    Edit a file
+    ---
+    file str
+    interactive i bool
+
+# Nested commands with shared args
+command remote:
+    ---
+    Manage git remotes
+    ---
+    timeout int = 30
+    command add:
+        ---
+        Add a remote
+        ---
+        name str
+        url str
+    command remove:
+        ---
+        Remove a remote
+        ---
+        name str
+
+# Flattened alternative (could mix with nested, or enforce single style)
+command deploy staging:
+    ---
+    Deploy to staging
+    ---
+    branch str = "main"
+
+# Shared setup code (runs unconditionally before routing)
+load_config(config)
+if verbose:
+    print("Verbose mode")
+
+# Command routing (assuming separate boolean approach)
+if default:
+    process_file(file)
+
+if edit:
+    if interactive:
+        $!`$EDITOR {file}`
+    else:
+        print(read_file(file))
+
+if remote and add:
+    // timeout, name, url all available
+    add_remote(name, url, timeout)
+
+if remote and remove:
+    remove_remote(name, timeout)
+
+if deploy and staging:
+    deploy_to_staging(branch)
+```
+
+**Indentation observation:** Command implementations would become indented under `if` blocks. For small commands (2-3 lines), this might be fine. For larger ones, extracting to functions defined earlier in the file could keep routing flat and readable.
+
+Example syntax:
+
+```
+command add:
+    file str
+    calls do_add
+
+fn do_add():
+    pass
+```
+
+### Conclusions
+
+**Possible direction for v1:**
+- Single-file command syntax with `command <name>:` blocks
+- Global `args:` block for shared args
+- `command default:` for optional default behavior when no command specified
+- Nested syntax `command remote: command add:` for shared args
+- Flattened syntax `command remote add:` as alternative
+- Possibly allow mixing nested and flattened (or enforce single style)
+- Command routing via some boolean/variable mechanism (still TBD due to concerns below)
+- Shared code runs before routing
+
+**For v2 (design later once v1 is understood):**
+- Multi-file commands with `command add "./path.rsl"` or similar
+- Scope sharing between root and command files
+- Command file dependencies and imports
+- Bundling multi-file commands into single file (see [bundling.md](./bundling.md))
+
+**Open design questions:**
+- **Command routing mechanism:** Separate booleans (`if remote and add:`) are simple but prone to logical bugs. Alternatives like `if command.remote.add:` or `if remote == "add":` might be safer but more verbose. LSP warnings could help with the boolean approach.
+- **Docstring syntax:** Using `---` headers for command descriptions (like file headers) vs introducing new syntax
+- **Function delegation:** Whether to add `command add: calls do_add` syntax, or just rely on manual delegation `if add: do_add()`
+- **Nested/flattened mixing:** Allow both styles in same file, or enforce consistency?
+- **Command file scope model:** How exactly should root and command files share scope when we implement multi-file?
