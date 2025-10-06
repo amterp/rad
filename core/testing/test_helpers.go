@@ -108,9 +108,10 @@ func newRunnerInputInput() core.RunnerInput {
 }
 
 type TestParams struct {
-	script     string
-	stdinInput string // todo not implemented
-	args       []string
+	script        string
+	stdinInput    string
+	stdinInputSet bool
+	args          []string
 }
 
 func NewTestParams(script string, args ...string) *TestParams {
@@ -122,6 +123,7 @@ func NewTestParams(script string, args ...string) *TestParams {
 
 func (tp *TestParams) StdinInput(stdinInput string) *TestParams {
 	tp.stdinInput = stdinInput
+	tp.stdinInputSet = true
 	return tp
 }
 
@@ -140,9 +142,41 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	core.IsTest = true
 
 	args := tp.args
-	if tp.script != "" {
+
+	// Handle different combinations of script and stdinInput
+	if tp.script != "" && tp.stdinInputSet {
+		// Both script and stdin data provided - write script to temp file
+		tmpFile, err := os.CreateTemp("", "rad_test_*.rad")
+		if err != nil {
+			t.Fatalf("Failed to create temp file: %v", err)
+		}
+		defer os.Remove(tmpFile.Name())
+
+		if _, err := tmpFile.WriteString(tp.script); err != nil {
+			t.Fatalf("Failed to write script to temp file: %v", err)
+		}
+		tmpFile.Close()
+
+		// Write stdin data to buffer and mark as piped
+		stdInBuffer.WriteString(tp.stdinInput)
+		if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+			br.SetPiped(true)
+		}
+
+		// Run the temp file
+		args = append([]string{tmpFile.Name()}, tp.args...)
+	} else if tp.script != "" {
+		// Only script provided - use stdin for script (rad -)
+		// Don't set isPiped here - stdin is consumed by reading the script,
+		// not available for the script to read
 		stdInBuffer.WriteString(tp.script)
 		args = append([]string{"-"}, tp.args...)
+	} else if tp.stdinInputSet {
+		// Only stdin data provided - write to buffer and mark as piped
+		stdInBuffer.WriteString(tp.stdinInput)
+		if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+			br.SetPiped(true)
+		}
 	}
 
 	// Set NO_COLOR for tests that pass --color=never
@@ -189,6 +223,12 @@ func resetTestState() {
 	errorOrExit = ErrorOrExit{}
 	millisSlept = make([]int64, 0)
 	core.ResetGlobals()
+	// Reset the isPiped flag for stdin
+	if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+		br.SetPiped(false)
+	}
+	// Reset NO_COLOR environment variable
+	os.Unsetenv("NO_COLOR")
 }
 
 func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {

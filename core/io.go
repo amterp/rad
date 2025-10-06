@@ -44,7 +44,8 @@ func NewFileReader(file *os.File) CheckableReader {
 }
 
 type BufferReader struct {
-	buffer *bytes.Buffer
+	buffer  *bytes.Buffer
+	isPiped bool
 }
 
 func (br *BufferReader) Read(p []byte) (n int, err error) {
@@ -52,13 +53,19 @@ func (br *BufferReader) Read(p []byte) (n int, err error) {
 }
 
 func (br *BufferReader) HasContent() bool {
-	return br.buffer.Len() > 0
+	// Return true if buffer has content OR if explicitly marked as piped
+	// This matches FileReader behavior where empty piped stdin returns true
+	return br.buffer.Len() > 0 || br.isPiped
 }
 
 func (br *BufferReader) Unwrap() io.Reader {
 	return br.buffer
 }
 
+func (br *BufferReader) SetPiped(piped bool) {
+	br.isPiped = piped
+}
+
 func NewBufferReader(buffer *bytes.Buffer) CheckableReader {
-	return &BufferReader{buffer: buffer}
+	return &BufferReader{buffer: buffer, isPiped: false}
 }

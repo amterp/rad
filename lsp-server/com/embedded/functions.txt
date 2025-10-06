@@ -30,6 +30,7 @@ get_path
 get_rad_home
 get_stash_dir
 green
+has_stdin
 hash
 http_connect
 http_delete
@@ -76,6 +77,7 @@ rand
 rand_int
 range
 read_file
+read_stdin
 red
 replace
 reverse

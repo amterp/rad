@@ -1417,6 +1417,37 @@ if err:
     print("Write failed:", err.msg)
 ```
 
+### read_stdin
+
+Reads all data from stdin.
+
+```rad
+read_stdin() -> str?|error
+```
+
+```rad
+read_stdin()                  // -> "piped content" (if piped)
+read_stdin()                  // -> null (if not piped)
+read_stdin()                  // -> Error 20026 if read fails
+content = read_stdin()
+lines = content.split("\n")   // Process stdin line-by-line
+```
+
+### has_stdin
+
+Checks if stdin is piped to the script.
+
+```rad
+has_stdin() -> bool
+```
+
+```rad
+has_stdin()                     // -> true (if piped)
+has_stdin()                     // -> false (if not piped)
+if has_stdin():
+  content = read_stdin()        // Conditional read
+```
+
 ### get_path
 
 Gets information about a file or directory path.
