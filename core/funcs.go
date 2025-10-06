@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"path/filepath"
@@ -90,6 +91,8 @@ const (
 	FUNC_TRIM_SUFFIX        = "trim_suffix"
 	FUNC_READ_FILE          = "read_file"
 	FUNC_WRITE_FILE         = "write_file"
+	FUNC_READ_STDIN         = "read_stdin"
+	FUNC_HAS_STDIN          = "has_stdin"
 	FUNC_ROUND              = "round"
 	FUNC_CEIL               = "ceil"
 	FUNC_FLOOR              = "floor"
@@ -1067,6 +1070,29 @@ func init() {
 				} else {
 					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileWrite))
 				}
+			},
+		},
+		{
+			Name: FUNC_READ_STDIN,
+			Execute: func(f FuncInvocation) RadValue {
+				// Check if stdin has content (is piped)
+				if !RIo.StdIn.HasContent() {
+					return f.Return(RAD_NULL_VAL)
+				}
+
+				// Read all stdin content
+				data, err := io.ReadAll(RIo.StdIn)
+				if err != nil {
+					return f.Return(NewErrorStrf("Failed to read from stdin: %v", err).SetCode(rl.ErrStdinRead))
+				}
+
+				return f.Return(string(data))
+			},
+		},
+		{
+			Name: FUNC_HAS_STDIN,
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(RIo.StdIn.HasContent())
 			},
 		},
 		{

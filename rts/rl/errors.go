@@ -40,6 +40,7 @@ const (
 	ErrSleepStr                   = "20023"
 	ErrInvalidRegex               = "20024"
 	ErrColorizeValNotInEnum       = "20025"
+	ErrStdinRead                  = "20026"
 
 	// 3xxxx Type Errors?
 

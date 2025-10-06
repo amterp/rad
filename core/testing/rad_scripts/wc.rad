@@ -1,0 +1,34 @@
+#!/usr/bin/env rad
+---
+Count lines, words, and characters from stdin
+---
+args:
+    lines l bool
+
+if not has_stdin():
+    print_err("wc: no input")
+    exit(1)
+
+content = read_stdin()
+
+// Count lines
+line_list = content.split("\n")
+line_count = len(line_list)
+
+// If -l flag, only print line count
+if lines:
+    print(line_count)
+    exit(0)
+
+// Count words
+word_count = 0
+for line in line_list:
+    trimmed = line.trim()
+    if trimmed != "":
+        words = trimmed.split(" ")
+        word_count += len(words)
+
+// Character count (includes newlines)
+char_count = len(content)
+
+print("{line_count} {word_count} {char_count}")
