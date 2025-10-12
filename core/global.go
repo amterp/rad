@@ -27,6 +27,8 @@ var (
 	ScriptName               string
 	IsTest                   bool
 	AlreadyExportedShellVars bool
+
+	StartEpochMillis int64
 )
 
 type RunnerInput struct {
@@ -83,6 +85,8 @@ func ResetGlobals() {
 	FlagMockResponse = StringRadArg{}
 	FlagRepl = BoolRadArg{}
 
+	StartEpochMillis = 0
+
 	color.NoColor = false
 }
 
@@ -118,6 +122,7 @@ func setGlobals(runnerInput RunnerInput) {
 	} else {
 		RClock = runnerInput.RClock
 	}
+	StartEpochMillis = RClock.Now().UnixMilli()
 	if runnerInput.RSleep == nil {
 		RSleep = func(duration time.Duration) {
 			time.Sleep(duration)
