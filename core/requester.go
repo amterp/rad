@@ -170,7 +170,7 @@ func (r *Requester) request(req *http.Request) ResponseDef {
 		return NewResponseDef(nil, nil, &mockJson, &msg, 0)
 	}
 
-	RP.RadInfo(fmt.Sprintf("Querying url: %s\n", urlToQuery))
+	RP.RadStderrf("Querying url: %s\n", urlToQuery)
 	start := RClock.Now()
 	resp, err := http.DefaultClient.Do(req)
 	durationSeconds := RClock.Now().Sub(start).Seconds()
@@ -211,7 +211,7 @@ func (r *Requester) resolveMockedResponse(url string) (string, bool) {
 		}
 
 		if re.MatchString(url) {
-			RP.RadInfo(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
+			RP.RadStderrf(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
 			data := r.loadMockedResponse(jsonPath)
 			return data, true
 		} else {

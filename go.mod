@@ -3,6 +3,7 @@ module github.com/amterp/rad
 go 1.24.2
 
 require (
+	github.com/BurntSushi/toml v1.5.0
 	github.com/amterp/color v1.20.0
 	github.com/amterp/flexid v1.3.0
 	github.com/amterp/go-tbl v0.12.0

@@ -22,7 +22,7 @@ for d in diagnostics:
         case "Error":
             error = true
             yield red
-    
+
     start = d.pos.yellow()
     sev = d.severity.color().upper()
     print("{start}: {sev}")

@@ -62,10 +62,10 @@ func NewCtxFromRtsNode(node rts.Node, oneLiner string) ErrorCtx {
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps pflag-handled help/parsing errors.
 type Printer interface {
-	// For Rad writers to debug their scripts. They input their debug logs with debug(). Enabled with --DEBUG.
+	// For Rad writers to debug their scripts. They input their debug logs with debug(). Enabled with --debug.
 	ScriptDebug(msg string)
 
-	// For Rad (tool) developers to debug the Rad tool, not Rad scripts. Enabled with --RAD-DEBUG.
+	// For Rad (tool) developers to debug the Rad tool, not Rad scripts. Enabled with --rad-debug.
 	// Rad writers should generally not need to use this.
 	RadDebugf(format string, args ...interface{})
 
@@ -77,7 +77,7 @@ type Printer interface {
 
 	// For secondary output to the user from Rad, usually to give some feedback, for example querying a URL.
 	// Goes to stderr.
-	RadInfo(msg string)
+	RadStderrf(format string, args ...interface{})
 
 	// Used to print messages from the Rad script to stderr.
 	ScriptStderrf(format string, args ...interface{})
@@ -181,11 +181,11 @@ func (p *stdPrinter) Printf(format string, args ...interface{}) {
 	}
 }
 
-func (p *stdPrinter) RadInfo(msg string) {
+func (p *stdPrinter) RadStderrf(format string, args ...interface{}) {
 	if p.isQuiet {
 		return
 	}
-	fmt.Fprint(p.stdErr, msg)
+	fmt.Fprint(p.stdErr, fmt.Sprintf(format, args...))
 }
 
 func (p *stdPrinter) ScriptStderrf(format string, args ...interface{}) {
@@ -296,7 +296,7 @@ func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
 		fmt.Fprintf(p.stdErr, "Stacktrace because --rad-debug is enabled:\n%s", debug.Stack())
 	}
-	RExit(errorCode)
+	RExit.Exit(errorCode)
 }
 
 type NullWriter struct{}

@@ -10,10 +10,10 @@ import (
 
 func ToAbsolutePath(path string) string {
 	if strings.HasPrefix(path, "~") {
-		home, _ := os.UserHomeDir()          // todo technically should handle
+		home, _ := os.UserHomeDir()          // todo technically should handle err
 		path = filepath.Join(home, path[1:]) // drop the "~"
 	}
-	abs, _ := filepath.Abs(path) // todo handle?
+	abs, _ := filepath.Abs(path) // todo handle err?
 	return abs
 }
 
