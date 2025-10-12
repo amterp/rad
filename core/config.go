@@ -8,10 +8,20 @@ import (
 )
 
 type RadConfig struct {
+	InvocationLogging *InvocationLoggingConfig `toml:"invocation_logging"`
+}
+
+type InvocationLoggingConfig struct {
+	Enabled        bool `toml:"enabled"`
+	IncludeArgs    bool `toml:"include_args"`
+	MaxSizeMB      int  `toml:"max_size_mb"` // make float64?
+	KeepRolledLogs int  `toml:"keep_rolled_logs"`
 }
 
 func DefaultRadConfig() *RadConfig {
-	return &RadConfig{}
+	return &RadConfig{
+		InvocationLogging: defaultInvocationLoggingConfig(),
+	}
 }
 
 // LoadRadConfig loads the invocation logging configuration from ~/.rad/config.toml (configurable)
@@ -36,7 +46,31 @@ func LoadRadConfig() *RadConfig {
 		return config
 	}
 
+	// Validate and fix individual fields
+	invocationLoggingDefaults := defaultInvocationLoggingConfig()
+
+	if config.InvocationLogging.MaxSizeMB <= 0 {
+		warnf(configPath, "Invalid config: max_size_mb must be > 0, got %d. Using default: %d MB\n",
+			config.InvocationLogging.MaxSizeMB, invocationLoggingDefaults.MaxSizeMB)
+		config.InvocationLogging.MaxSizeMB = invocationLoggingDefaults.MaxSizeMB
+	}
+
+	if config.InvocationLogging.KeepRolledLogs < 0 {
+		warnf(configPath, "Invalid config: keep_rolled_logs must be >= 0, got %d. Using default: %d\n",
+			config.InvocationLogging.KeepRolledLogs, invocationLoggingDefaults.KeepRolledLogs)
+		config.InvocationLogging.KeepRolledLogs = invocationLoggingDefaults.KeepRolledLogs
+	}
+
 	return config
+}
+
+func defaultInvocationLoggingConfig() *InvocationLoggingConfig {
+	return &InvocationLoggingConfig{
+		Enabled:        false, // opt-in
+		IncludeArgs:    false, // args may contain sensitive info, make opt-in
+		MaxSizeMB:      10,
+		KeepRolledLogs: 2,
+	}
 }
 
 // TODO as of writing, this might get invoked before global flags e.g. 'Quiet' are set

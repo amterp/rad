@@ -46,6 +46,10 @@ func (r *RadRunner) Run() error {
 		RP.ErrorExit(err.Error())
 	}
 
+	if RConfig.InvocationLogging.Enabled && invocationType == ScriptFile {
+		RegisterInvocationLogging()
+	}
+
 	// Phase 2: Registration
 	r.setupRootCommand()
 
