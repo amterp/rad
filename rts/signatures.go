@@ -142,6 +142,7 @@ func init() {
 		newFnSignature(`_rad_get_stash_id(*_)`),
 		newFnSignature(`_rad_delete_stash(*_)`),
 		newFnSignature(`_rad_run_check(*_)`),
+		newFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool) -> void`),
 	}
 
 	parser, err := NewRadParser()

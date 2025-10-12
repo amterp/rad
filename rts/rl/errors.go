@@ -41,6 +41,7 @@ const (
 	ErrInvalidRegex               = "20024"
 	ErrColorizeValNotInEnum       = "20025"
 	ErrStdinRead                  = "20026"
+	ErrInvalidCheckDuration       = "20027"
 
 	// 3xxxx Type Errors?
 

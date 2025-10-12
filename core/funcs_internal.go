@@ -116,6 +116,7 @@ func AddInternalFuncs() {
 				return newRadValues(f.i, f.callNode, radMap)
 			},
 		},
+		FuncInternalCheckFromLogs,
 	}
 
 	for _, f := range functions {
