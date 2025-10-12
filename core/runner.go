@@ -35,6 +35,31 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 	return &RadRunner{}
 }
 
+func (r *RadRunner) Run() error {
+	// Phase 1: Detection & Setup
+	invocationType, sourceCode, err := r.detectAndSetup(os.Args[1:])
+	if err != nil {
+		// Set up minimal printer for errors
+		RP = NewPrinter(r, false, false, false, false)
+		RP.ErrorExit(err.Error())
+	}
+
+	// Phase 2: Registration
+	r.setupRootCommand()
+
+	if invocationType != NoScript {
+		err := r.registerScript(sourceCode)
+		if err != nil {
+			RP.ErrorExit(err.Error())
+		}
+	}
+
+	// Let ra handle help flags properly through hooks - removed manual processing
+
+	// Phase 3: Parse & Execute
+	return r.parseAndExecute(invocationType)
+}
+
 // detectInvocationType analyzes the command line args to determine what type of invocation this is
 func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string, error) {
 	// No args means global-only (will show help)
@@ -80,31 +105,6 @@ func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string,
 
 	// Unknown file or command
 	return NoScript, "", fmt.Errorf("Unknown file or command: %s", firstArg)
-}
-
-func (r *RadRunner) Run() error {
-	// Phase 1: Detection & Setup
-	invocationType, sourceCode, err := r.detectAndSetup(os.Args[1:])
-	if err != nil {
-		// Set up minimal printer for errors
-		RP = NewPrinter(r, false, false, false, false)
-		RP.ErrorExit(err.Error())
-	}
-
-	// Phase 2: Registration
-	r.setupRootCommand()
-
-	if invocationType != NoScript {
-		err := r.registerScript(sourceCode)
-		if err != nil {
-			RP.ErrorExit(err.Error())
-		}
-	}
-
-	// Let ra handle help flags properly through hooks - removed manual processing
-
-	// Phase 3: Parse & Execute
-	return r.parseAndExecute(invocationType)
 }
 
 // detectAndSetup analyzes args and sets up basic state
