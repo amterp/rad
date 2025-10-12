@@ -26,5 +26,5 @@ func exit(i *Interpreter, errorCode int64) {
 	}
 
 	RP.RadDebugf("Exiting")
-	RExit(int(errorCode))
+	RExit.Exit(int(errorCode))
 }

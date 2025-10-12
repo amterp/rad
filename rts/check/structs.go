@@ -90,6 +90,7 @@ type Range struct {
 	End   Pos `json:"end"`
 }
 
+// todo mostly unused atm
 type Opts struct {
 	Errors bool
 	Warns  bool

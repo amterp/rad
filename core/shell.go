@@ -103,7 +103,7 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	}
 
 	if !isQuiet {
-		RP.RadInfo(fmt.Sprintf("⚡️ %s\n", cmdStr.String()))
+		RP.RadStderrf(fmt.Sprintf("⚡️ %s\n", cmdStr.String()))
 	}
 
 	// Run the command

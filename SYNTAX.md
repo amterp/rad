@@ -524,6 +524,12 @@ args:
     username requires password   // If username provided, password required
 ```
 
+Relational constraints:
+- `a requires b`
+- `a mutually requires b`
+- `a excludes b`
+- `a mutually excludes b`
+
 ## Shell Commands
 
 ### Basic Shell Commands

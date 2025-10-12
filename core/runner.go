@@ -36,6 +36,8 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 }
 
 func (r *RadRunner) Run() error {
+	RConfig = LoadRadConfig()
+
 	// Phase 1: Detection & Setup
 	invocationType, sourceCode, err := r.detectAndSetup(os.Args[1:])
 	if err != nil {
@@ -254,7 +256,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 
 	if FlagVersion.Value {
 		RP.Printf(fmt.Sprintf("rad %s\n", Version))
-		RExit(0)
+		RExit.Exit(0)
 	}
 
 	// Handle REPL mode (but not if help is requested)
@@ -271,7 +273,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		// For global-only invocations without args, show help and exit
 		// Ra will handle the help generation properly
 		r.printScriptlessUsage(false)
-		RExit(0)
+		RExit.Exit(0)
 	}
 
 	// Handle debug flags for script output
@@ -282,7 +284,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 			RP.Printf("\n")
 		}
 		if !com.IsBlank(ScriptPath) && com.IsTty {
-			RP.RadInfo(com.YellowS("%s:\n", ScriptPath))
+			RP.RadStderrf(com.YellowS("%s:\n", ScriptPath))
 		}
 		RP.Printf(r.scriptData.Src + "\n")
 	}
@@ -296,7 +298,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	}
 
 	if shouldExit {
-		RExit(0)
+		RExit.Exit(0)
 	}
 
 	// Final parse with correct ignore settings
@@ -326,7 +328,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		interpreter.env.PrintShellExports()
 	}
 
-	RExit(0) // explicit exit to trigger deferred statements
+	RExit.Exit(0) // explicit exit to trigger exit handlers (e.g. deferred statements)
 	return nil
 }
 

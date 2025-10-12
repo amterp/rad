@@ -18,27 +18,7 @@ func NewDeferBlock(i *Interpreter, deferKeywordNode *ts.Node, stmtNodes []ts.Nod
 }
 
 func (i *Interpreter) RegisterWithExit() {
-	existing := RExit
-	exiting := false
-	codeToExitWith := 0
-	RExit = func(code int) {
-		if exiting {
-			// we're already exiting. if we're here again, it's probably because one of the deferred
-			// statements is calling exit again (perhaps because it failed). we should keep running
-			// all the deferred statements, however, and *then* exit.
-			// therefore, we panic here in order to send the stack back up to where the deferred statement is being
-			// invoked in the interpreter, which should be wrapped in a recover() block to catch, maybe log, and move on.
-			if codeToExitWith == 0 {
-				codeToExitWith = code
-			}
-			return
-		}
-		exiting = true
-		codeToExitWith = code
-		// todo gets executed *after* any error is printed (if error), should delay error print until after (i think?)
-		i.executeDeferBlocks(code)
-		existing(codeToExitWith)
-	}
+	RExit.SetExecuteDeferredStmtsFunc(i.executeDeferBlocks)
 }
 
 func (i *Interpreter) executeDeferBlocks(errCode int) {

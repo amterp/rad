@@ -21,7 +21,7 @@ func (r *RadRunner) RunUsageExit(shortHelp bool) {
 	if FlagShell.Value {
 		RP.PrintForShellEval("exit 0")
 	}
-	RExit(0)
+	RExit.Exit(0)
 }
 
 func (r *RadRunner) printScriptlessUsage(isErr bool) {

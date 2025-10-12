@@ -13,9 +13,10 @@ import (
 
 var (
 	RRootCmd                 *ra.Cmd
+	RConfig                  *RadConfig
 	RP                       Printer
 	RIo                      RadIo
-	RExit                    func(int)
+	RExit                    *RadExitHandler
 	RReq                     *Requester
 	RClock                   Clock
 	RSleep                   func(duration time.Duration)
@@ -53,6 +54,7 @@ func SetScriptPath(path string) {
 
 // primarily for tests
 func ResetGlobals() {
+	RConfig = nil
 	RP = nil
 	RIo = RadIo{}
 	RExit = nil
@@ -96,14 +98,14 @@ func setGlobals(runnerInput RunnerInput) {
 	}
 
 	if runnerInput.RExit == nil {
-		RExit = os.Exit
+		RExit = NewExitHandler(os.Exit)
 	} else {
-		RExit = *runnerInput.RExit
+		RExit = NewExitHandler(*runnerInput.RExit)
 	}
 
 	ra.SetStderrWriter(RIo.StdErr)
 	ra.SetStdoutWriter(RIo.StdOut)
-	ra.SetExitFunc(RExit)
+	ra.SetExitFunc(RExit.Exit)
 
 	if runnerInput.RReq == nil {
 		RReq = NewRequester()
@@ -158,7 +160,7 @@ func failedToDetermineRadHomeDir() {
 		"Unable to determine home directory for rad. Please define a valid path '%s' as an environment variable.\n",
 		ENV_RAD_HOME,
 	)
-	RExit(1)
+	RExit.Exit(1)
 }
 
 func init() {

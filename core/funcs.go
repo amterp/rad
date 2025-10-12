@@ -1142,7 +1142,6 @@ func init() {
 						return f.ReturnErrf(
 							rl.ErrBugTypeCheck,
 							"Requires a list of numbers, got %q at index %d",
-							FUNC_MIN,
 							TypeAsString(item),
 							idx)
 					}
