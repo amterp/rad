@@ -4,7 +4,12 @@ Only for major & minor version releases. Contains only notable items.
 
 ## 0.7 (ongoing)
 
-- In progress!
+- Added support for thousands separators in number formatting e.g. `"{n:,.2f}"` -> `1,234.56`
+- Added support for arg int incrementing via short clusters e.g. `verbose v int` allows `-vvv` -> `verbose == 3`
+- Added functions `read_stdin` and `has_stdin` to allow Unix pipe-compatible Rad scripts
+- Added global config file (default `~/.rad/config.toml`)
+- Added opt-in invocation logging feature (leveraging global config file)
+- Added `rad check --from-logs` flag for checking all Rad files found in invocation logs
 
 ## 0.6 (2025-09-27)
 

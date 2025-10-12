@@ -3,37 +3,47 @@
 Validates & lints Rad scripts.
 ---
 args:
-    script str  # Path of script to check.
+    script str?       # Path of script to check.
+    from_logs str?    # Check scripts from invocation logs (duration like "30d" or "all").
+    verbose v bool    # Print verbose output (e.g., skipped scripts).
 
-result = _rad_run_check(script)
+    script mutually excludes from_logs
 
-diagnostics = result.diagnostics
+if from_logs:
+    _rad_check_from_logs(from_logs, verbose)
+else if script:
+    result = _rad_run_check(script)
 
-if not diagnostics:
-    print("No diagnostics to report.")
-    exit()
+    diagnostics = result.diagnostics
 
-error = false
-for d in diagnostics:
-    color = switch d.severity:
-        case "Hint" -> white
-        case "Info" -> cyan
-        case "Warn" -> orange
-        case "Error":
-            error = true
-            yield red
+    if not diagnostics:
+        print("No diagnostics to report.")
+        exit()
 
-    start = d.pos.yellow()
-    sev = d.severity.color().upper()
-    print("{start}: {sev}")
-    print()
-    padding = 6 * " "
-    print("  {d.start_line + 1:4} | {d.line_src.cyan()}")
-    start_padding = d.start_char * " "
-    print("{padding} |{start_padding} ^ {d.msg.color()}")
-    if "code" in d:
-        print("{padding} |{start_padding} (code: {d.code})")
-    print()
+    error = false
+    for d in diagnostics:
+        color = switch d.severity:
+            case "Hint" -> white
+            case "Info" -> cyan
+            case "Warn" -> orange
+            case "Error":
+                error = true
+                yield red
 
-print("Reported {len(diagnostics)} diagnostics.")
-exit(error)
+        start = d.pos.yellow()
+        sev = d.severity.color().upper()
+        print("{start}: {sev}")
+        print()
+        padding = 6 * " "
+        print("  {d.start_line + 1:4} | {d.line_src.cyan()}")
+        start_padding = d.start_char * " "
+        print("{padding} |{start_padding} ^ {d.msg.color()}")
+        if "code" in d:
+            print("{padding} |{start_padding} (code: {d.code})")
+        print()
+
+    print("Reported {len(diagnostics)} diagnostics.")
+    exit(error)
+else:
+    print_err("Error: Must provide either 'script' or '--from-logs'")
+    exit(1)

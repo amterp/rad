@@ -126,9 +126,10 @@ const (
 	FUNC_COLORIZE           = "colorize"
 	FUNC_GET_ARGS           = "get_args"
 
-	INTERNAL_FUNC_GET_STASH_ID = "_rad_get_stash_id"
-	INTERNAL_FUNC_DELETE_STASH = "_rad_delete_stash"
-	INTERNAL_FUNC_RUN_CHECK    = "_rad_run_check"
+	INTERNAL_FUNC_GET_STASH_ID    = "_rad_get_stash_id"
+	INTERNAL_FUNC_DELETE_STASH    = "_rad_delete_stash"
+	INTERNAL_FUNC_RUN_CHECK       = "_rad_run_check"
+	INTERNAL_FUNC_CHECK_FROM_LOGS = "_rad_check_from_logs"
 
 	namedArgReverse        = "reverse"
 	namedArgTitle          = "title"
