@@ -207,3 +207,7 @@ And we can get rid of the `unsafe` keyword. You could equivalently do
 $`curl '{url}'` catch e:
     pass
 ```
+
+## 2025-10-13
+
+Thought more about the syntax with respect to shell invocations [here](./shell_cmds.md#2025-10-13), which has implications for the error handling syntax more generally.
