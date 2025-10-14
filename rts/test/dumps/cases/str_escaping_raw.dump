@@ -18,14 +18,15 @@ B: [ 4,  8] PS: [0,  4] PE: [0,  8]             delegate: compare_expr
 B: [ 4,  8] PS: [0,  4] PE: [0,  8]               delegate: add_expr
 B: [ 4,  8] PS: [0,  4] PE: [0,  8]                 delegate: mult_expr
 B: [ 4,  8] PS: [0,  4] PE: [0,  8]                   delegate: unary_expr
-B: [ 4,  8] PS: [0,  4] PE: [0,  8]                     delegate: indexed_expr
-B: [ 4,  8] PS: [0,  4] PE: [0,  8]                       root: primary_expr
-B: [ 4,  8] PS: [0,  4] PE: [0,  8]                         literal
-B: [ 4,  8] PS: [0,  4] PE: [0,  8]                           string
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                             start: string_start `"`
-B: [ 5,  7] PS: [0,  5] PE: [0,  7]                             contents: string_contents
-B: [ 5,  7] PS: [0,  5] PE: [0,  7]                               backslash: esc_backslash `\\`
-B: [ 7,  8] PS: [0,  7] PE: [0,  8]                             end: string_end `"`
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]                     delegate: fallback_expr
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]                       delegate: indexed_expr
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]                         root: primary_expr
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]                           literal
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]                             string
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                               start: string_start `"`
+B: [ 5,  7] PS: [0,  5] PE: [0,  7]                               contents: string_contents
+B: [ 5,  7] PS: [0,  5] PE: [0,  7]                                 backslash: esc_backslash `\\`
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]                               end: string_end `"`
 B: [ 9, 17] PS: [1,  0] PE: [1,  8]   assign
 B: [ 9, 10] PS: [1,  0] PE: [1,  1]     left: var_path
 B: [ 9, 10] PS: [1,  0] PE: [1,  1]       root: identifier `b`
@@ -38,14 +39,15 @@ B: [13, 17] PS: [1,  4] PE: [1,  8]             delegate: compare_expr
 B: [13, 17] PS: [1,  4] PE: [1,  8]               delegate: add_expr
 B: [13, 17] PS: [1,  4] PE: [1,  8]                 delegate: mult_expr
 B: [13, 17] PS: [1,  4] PE: [1,  8]                   delegate: unary_expr
-B: [13, 17] PS: [1,  4] PE: [1,  8]                     delegate: indexed_expr
-B: [13, 17] PS: [1,  4] PE: [1,  8]                       root: primary_expr
-B: [13, 17] PS: [1,  4] PE: [1,  8]                         literal
-B: [13, 17] PS: [1,  4] PE: [1,  8]                           string
-B: [13, 14] PS: [1,  4] PE: [1,  5]                             start: string_start `"`
-B: [14, 16] PS: [1,  5] PE: [1,  7]                             contents: string_contents
-B: [14, 16] PS: [1,  5] PE: [1,  7]                               newline: esc_newline `\n`
-B: [16, 17] PS: [1,  7] PE: [1,  8]                             end: string_end `"`
+B: [13, 17] PS: [1,  4] PE: [1,  8]                     delegate: fallback_expr
+B: [13, 17] PS: [1,  4] PE: [1,  8]                       delegate: indexed_expr
+B: [13, 17] PS: [1,  4] PE: [1,  8]                         root: primary_expr
+B: [13, 17] PS: [1,  4] PE: [1,  8]                           literal
+B: [13, 17] PS: [1,  4] PE: [1,  8]                             string
+B: [13, 14] PS: [1,  4] PE: [1,  5]                               start: string_start `"`
+B: [14, 16] PS: [1,  5] PE: [1,  7]                               contents: string_contents
+B: [14, 16] PS: [1,  5] PE: [1,  7]                                 newline: esc_newline `\n`
+B: [16, 17] PS: [1,  7] PE: [1,  8]                               end: string_end `"`
 B: [18, 56] PS: [2,  0] PE: [2, 38]   assign
 B: [18, 19] PS: [2,  0] PE: [2,  1]     left: var_path
 B: [18, 19] PS: [2,  0] PE: [2,  1]       root: identifier `c`
@@ -58,17 +60,18 @@ B: [22, 56] PS: [2,  4] PE: [2, 38]             delegate: compare_expr
 B: [22, 56] PS: [2,  4] PE: [2, 38]               delegate: add_expr
 B: [22, 56] PS: [2,  4] PE: [2, 38]                 delegate: mult_expr
 B: [22, 56] PS: [2,  4] PE: [2, 38]                   delegate: unary_expr
-B: [22, 56] PS: [2,  4] PE: [2, 38]                     delegate: indexed_expr
-B: [22, 56] PS: [2,  4] PE: [2, 38]                       root: primary_expr
-B: [22, 56] PS: [2,  4] PE: [2, 38]                         literal
-B: [22, 56] PS: [2,  4] PE: [2, 38]                           string
-B: [22, 23] PS: [2,  4] PE: [2,  5]                             start: string_start `"`
-B: [23, 55] PS: [2,  5] PE: [2, 37]                             contents: string_contents
-B: [23, 31] PS: [2,  5] PE: [2, 13]                               content: string_content `this is `
-B: [31, 33] PS: [2, 13] PE: [2, 15]                               backslash: esc_backslash `\\`
-B: [33, 40] PS: [2, 15] PE: [2, 22]                               content: string_content ` a str `
-B: [40, 42] PS: [2, 22] PE: [2, 24]                               newline: esc_newline `\n`
-B: [42, 48] PS: [2, 24] PE: [2, 30]                               content: string_content ` blah `
-B: [48, 49] PS: [2, 30] PE: [2, 31]                               backslash: \ `\`
-B: [49, 55] PS: [2, 31] PE: [2, 37]                               content: string_content ` blahh`
-B: [55, 56] PS: [2, 37] PE: [2, 38]                             end: string_end `"`
+B: [22, 56] PS: [2,  4] PE: [2, 38]                     delegate: fallback_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                       delegate: indexed_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                         root: primary_expr
+B: [22, 56] PS: [2,  4] PE: [2, 38]                           literal
+B: [22, 56] PS: [2,  4] PE: [2, 38]                             string
+B: [22, 23] PS: [2,  4] PE: [2,  5]                               start: string_start `"`
+B: [23, 55] PS: [2,  5] PE: [2, 37]                               contents: string_contents
+B: [23, 31] PS: [2,  5] PE: [2, 13]                                 content: string_content `this is `
+B: [31, 33] PS: [2, 13] PE: [2, 15]                                 backslash: esc_backslash `\\`
+B: [33, 40] PS: [2, 15] PE: [2, 22]                                 content: string_content ` a str `
+B: [40, 42] PS: [2, 22] PE: [2, 24]                                 newline: esc_newline `\n`
+B: [42, 48] PS: [2, 24] PE: [2, 30]                                 content: string_content ` blah `
+B: [48, 49] PS: [2, 30] PE: [2, 31]                                 backslash: \ `\`
+B: [49, 55] PS: [2, 31] PE: [2, 37]                                 content: string_content ` blahh`
+B: [55, 56] PS: [2, 37] PE: [2, 38]                               end: string_end `"`

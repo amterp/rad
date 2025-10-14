@@ -19,13 +19,14 @@ B: [ 4, 43] PS: [0, 4] PE: [3, 3]             delegate: compare_expr
 B: [ 4, 43] PS: [0, 4] PE: [3, 3]               delegate: add_expr
 B: [ 4, 43] PS: [0, 4] PE: [3, 3]                 delegate: mult_expr
 B: [ 4, 43] PS: [0, 4] PE: [3, 3]                   delegate: unary_expr
-B: [ 4, 43] PS: [0, 4] PE: [3, 3]                     delegate: indexed_expr
-B: [ 4, 43] PS: [0, 4] PE: [3, 3]                       root: primary_expr
-B: [ 4, 43] PS: [0, 4] PE: [3, 3]                         literal
-B: [ 4, 43] PS: [0, 4] PE: [3, 3]                           string
-B: [ 4, 27] PS: [0, 4] PE: [1, 0]                             start: string_start `""" // this is allowed\n`
-B: [27, 39] PS: [1, 0] PE: [2, 6]                             contents: string_contents
-B: [27, 32] PS: [1, 0] PE: [1, 5]                               content: string_content `hello`
-B: [32, 33] PS: [1, 5] PE: [2, 0]                               content: string_content `\n`
-B: [33, 39] PS: [2, 0] PE: [2, 6]                               content: string_content `friend`
-B: [39, 43] PS: [2, 6] PE: [3, 3]                             end: string_end `\n"""`
+B: [ 4, 43] PS: [0, 4] PE: [3, 3]                     delegate: fallback_expr
+B: [ 4, 43] PS: [0, 4] PE: [3, 3]                       delegate: indexed_expr
+B: [ 4, 43] PS: [0, 4] PE: [3, 3]                         root: primary_expr
+B: [ 4, 43] PS: [0, 4] PE: [3, 3]                           literal
+B: [ 4, 43] PS: [0, 4] PE: [3, 3]                             string
+B: [ 4, 27] PS: [0, 4] PE: [1, 0]                               start: string_start `""" // this is allowed\n`
+B: [27, 39] PS: [1, 0] PE: [2, 6]                               contents: string_contents
+B: [27, 32] PS: [1, 0] PE: [1, 5]                                 content: string_content `hello`
+B: [32, 33] PS: [1, 5] PE: [2, 0]                                 content: string_content `\n`
+B: [33, 39] PS: [2, 0] PE: [2, 6]                                 content: string_content `friend`
+B: [39, 43] PS: [2, 6] PE: [3, 3]                               end: string_end `\n"""`

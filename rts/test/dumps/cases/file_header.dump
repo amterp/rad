@@ -38,7 +38,8 @@ B: [40, 41] PS: [6,  9] PE: [6, 10]                               delegate: comp
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                 delegate: add_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                   delegate: mult_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                     delegate: unary_expr
-B: [40, 41] PS: [6,  9] PE: [6, 10]                                       delegate: indexed_expr
-B: [40, 41] PS: [6,  9] PE: [6, 10]                                         root: primary_expr
-B: [40, 41] PS: [6,  9] PE: [6, 10]                                           literal
-B: [40, 41] PS: [6,  9] PE: [6, 10]                                             int `2`
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                       delegate: fallback_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                         delegate: indexed_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                           root: primary_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                             literal
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                               int `2`

@@ -52,14 +52,15 @@ B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]             delegate: compare_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]               delegate: add_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                 delegate: mult_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                   delegate: unary_expr
-B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                     delegate: indexed_expr
-B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                       root: primary_expr
-B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                         literal
-B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                           string
-B: [ 39,  40] PS: [ 3,  4] PE: [ 3,  5]                             start: string_start `"`
-B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                             contents: string_contents
-B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                               content: string_content `http`
-B: [ 44,  45] PS: [ 3,  9] PE: [ 3, 10]                             end: string_end `"`
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                     delegate: fallback_expr
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                       delegate: indexed_expr
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                         root: primary_expr
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                           literal
+B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]                             string
+B: [ 39,  40] PS: [ 3,  4] PE: [ 3,  5]                               start: string_start `"`
+B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                               contents: string_contents
+B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                                 content: string_content `http`
+B: [ 44,  45] PS: [ 3,  9] PE: [ 3, 10]                               end: string_end `"`
 B: [ 45,  46] PS: [ 3, 10] PE: [ 3, 11]     : `:`
 B: [ 51,  66] PS: [ 4,  4] PE: [ 4, 19]     stmt: rad_field_stmt
 B: [ 51,  57] PS: [ 4,  4] PE: [ 4, 10]       fields `fields`
@@ -99,14 +100,15 @@ B: [157, 162] PS: [11, 14] PE: [11, 19]                 delegate: compare_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]                   delegate: add_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]                     delegate: mult_expr
 B: [157, 162] PS: [11, 14] PE: [11, 19]                       delegate: unary_expr
-B: [157, 162] PS: [11, 14] PE: [11, 19]                         delegate: indexed_expr
-B: [157, 162] PS: [11, 14] PE: [11, 19]                           root: primary_expr
-B: [157, 162] PS: [11, 14] PE: [11, 19]                             literal
-B: [157, 162] PS: [11, 14] PE: [11, 19]                               string
-B: [157, 158] PS: [11, 14] PE: [11, 15]                                 start: string_start `"`
-B: [158, 161] PS: [11, 15] PE: [11, 18]                                 contents: string_contents
-B: [158, 161] PS: [11, 15] PE: [11, 18]                                   content: string_content `red`
-B: [161, 162] PS: [11, 18] PE: [11, 19]                                 end: string_end `"`
+B: [157, 162] PS: [11, 14] PE: [11, 19]                         delegate: fallback_expr
+B: [157, 162] PS: [11, 14] PE: [11, 19]                           delegate: indexed_expr
+B: [157, 162] PS: [11, 14] PE: [11, 19]                             root: primary_expr
+B: [157, 162] PS: [11, 14] PE: [11, 19]                               literal
+B: [157, 162] PS: [11, 14] PE: [11, 19]                                 string
+B: [157, 158] PS: [11, 14] PE: [11, 15]                                   start: string_start `"`
+B: [158, 161] PS: [11, 15] PE: [11, 18]                                   contents: string_contents
+B: [158, 161] PS: [11, 15] PE: [11, 18]                                     content: string_content `red`
+B: [161, 162] PS: [11, 18] PE: [11, 19]                                   end: string_end `"`
 B: [163, 172] PS: [11, 20] PE: [11, 29]         regex: expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]           delegate: ternary_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]             delegate: or_expr
@@ -115,14 +117,15 @@ B: [163, 172] PS: [11, 20] PE: [11, 29]                 delegate: compare_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]                   delegate: add_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]                     delegate: mult_expr
 B: [163, 172] PS: [11, 20] PE: [11, 29]                       delegate: unary_expr
-B: [163, 172] PS: [11, 20] PE: [11, 29]                         delegate: indexed_expr
-B: [163, 172] PS: [11, 20] PE: [11, 29]                           root: primary_expr
-B: [163, 172] PS: [11, 20] PE: [11, 29]                             literal
-B: [163, 172] PS: [11, 20] PE: [11, 29]                               string
-B: [163, 164] PS: [11, 20] PE: [11, 21]                                 start: string_start `"`
-B: [164, 171] PS: [11, 21] PE: [11, 28]                                 contents: string_contents
-B: [164, 171] PS: [11, 21] PE: [11, 28]                                   content: string_content `^Alice$`
-B: [171, 172] PS: [11, 28] PE: [11, 29]                                 end: string_end `"`
+B: [163, 172] PS: [11, 20] PE: [11, 29]                         delegate: fallback_expr
+B: [163, 172] PS: [11, 20] PE: [11, 29]                           delegate: indexed_expr
+B: [163, 172] PS: [11, 20] PE: [11, 29]                             root: primary_expr
+B: [163, 172] PS: [11, 20] PE: [11, 29]                               literal
+B: [163, 172] PS: [11, 20] PE: [11, 29]                                 string
+B: [163, 164] PS: [11, 20] PE: [11, 21]                                   start: string_start `"`
+B: [164, 171] PS: [11, 21] PE: [11, 28]                                   contents: string_contents
+B: [164, 171] PS: [11, 21] PE: [11, 28]                                     content: string_content `^Alice$`
+B: [171, 172] PS: [11, 28] PE: [11, 29]                                   end: string_end `"`
 B: [181, 199] PS: [12,  8] PE: [12, 26]       mod_stmt: rad_field_mod_map
 B: [181, 184] PS: [12,  8] PE: [12, 11]         map `map`
 B: [185, 199] PS: [12, 12] PE: [12, 26]         lambda: fn_lambda
@@ -139,19 +142,21 @@ B: [191, 199] PS: [12, 18] PE: [12, 26]                   delegate: compare_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                     delegate: add_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                       delegate: mult_expr
 B: [191, 199] PS: [12, 18] PE: [12, 26]                         delegate: unary_expr
-B: [191, 199] PS: [12, 18] PE: [12, 26]                           delegate: indexed_expr
-B: [191, 199] PS: [12, 18] PE: [12, 26]                             root: primary_expr
-B: [191, 199] PS: [12, 18] PE: [12, 26]                               call
-B: [191, 196] PS: [12, 18] PE: [12, 23]                                 func: identifier `upper`
-B: [196, 197] PS: [12, 23] PE: [12, 24]                                 ( `(`
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                 arg: expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                   delegate: ternary_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                     delegate: or_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                       delegate: and_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                         delegate: compare_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                           delegate: add_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                             delegate: mult_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                               delegate: unary_expr
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                                 delegate: var_path
-B: [197, 198] PS: [12, 24] PE: [12, 25]                                                   root: identifier `v`
-B: [198, 199] PS: [12, 25] PE: [12, 26]                                 ) `)`
+B: [191, 199] PS: [12, 18] PE: [12, 26]                           delegate: fallback_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                             delegate: indexed_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                               root: primary_expr
+B: [191, 199] PS: [12, 18] PE: [12, 26]                                 call
+B: [191, 196] PS: [12, 18] PE: [12, 23]                                   func: identifier `upper`
+B: [196, 197] PS: [12, 23] PE: [12, 24]                                   ( `(`
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                   arg: expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                     delegate: ternary_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                       delegate: or_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                         delegate: and_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                           delegate: compare_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                             delegate: add_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                               delegate: mult_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                 delegate: unary_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                   delegate: fallback_expr
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                     delegate: var_path
+B: [197, 198] PS: [12, 24] PE: [12, 25]                                                       root: identifier `v`
+B: [198, 199] PS: [12, 25] PE: [12, 26]                                   ) `)`

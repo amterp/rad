@@ -89,10 +89,11 @@ B: [83, 84] PS: [4, 13] PE: [4, 14]                   delegate: compare_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]                     delegate: add_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]                       delegate: mult_expr
 B: [83, 84] PS: [4, 13] PE: [4, 14]                         delegate: unary_expr
-B: [83, 84] PS: [4, 13] PE: [4, 14]                           delegate: indexed_expr
-B: [83, 84] PS: [4, 13] PE: [4, 14]                             root: primary_expr
-B: [83, 84] PS: [4, 13] PE: [4, 14]                               literal
-B: [83, 84] PS: [4, 13] PE: [4, 14]                                 int `0`
+B: [83, 84] PS: [4, 13] PE: [4, 14]                           delegate: fallback_expr
+B: [83, 84] PS: [4, 13] PE: [4, 14]                             delegate: indexed_expr
+B: [83, 84] PS: [4, 13] PE: [4, 14]                               root: primary_expr
+B: [83, 84] PS: [4, 13] PE: [4, 14]                                 literal
+B: [83, 84] PS: [4, 13] PE: [4, 14]                                   int `0`
 B: [84, 85] PS: [4, 14] PE: [4, 15]           ] `]`
 B: [85, 86] PS: [4, 15] PE: [4, 16]       . `.`
 B: [86, 89] PS: [4, 16] PE: [4, 19]       segment: json_segment

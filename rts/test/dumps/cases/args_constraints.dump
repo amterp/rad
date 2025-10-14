@@ -84,7 +84,8 @@ B: [180, 181] PS: [8,  4] PE: [8,  5]             delegate: compare_expr
 B: [180, 181] PS: [8,  4] PE: [8,  5]               delegate: add_expr
 B: [180, 181] PS: [8,  4] PE: [8,  5]                 delegate: mult_expr
 B: [180, 181] PS: [8,  4] PE: [8,  5]                   delegate: unary_expr
-B: [180, 181] PS: [8,  4] PE: [8,  5]                     delegate: indexed_expr
-B: [180, 181] PS: [8,  4] PE: [8,  5]                       root: primary_expr
-B: [180, 181] PS: [8,  4] PE: [8,  5]                         literal
-B: [180, 181] PS: [8,  4] PE: [8,  5]                           int `2`
+B: [180, 181] PS: [8,  4] PE: [8,  5]                     delegate: fallback_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                       delegate: indexed_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                         root: primary_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                           literal
+B: [180, 181] PS: [8,  4] PE: [8,  5]                             int `2`

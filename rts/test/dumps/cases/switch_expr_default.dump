@@ -24,8 +24,9 @@ B: [18, 21] PS: [0, 18] PE: [0, 21]               delegate: compare_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                 delegate: add_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                   delegate: mult_expr
 B: [18, 21] PS: [0, 18] PE: [0, 21]                     delegate: unary_expr
-B: [18, 21] PS: [0, 18] PE: [0, 21]                       delegate: var_path
-B: [18, 21] PS: [0, 18] PE: [0, 21]                         root: identifier `num`
+B: [18, 21] PS: [0, 18] PE: [0, 21]                       delegate: fallback_expr
+B: [18, 21] PS: [0, 18] PE: [0, 21]                         delegate: var_path
+B: [18, 21] PS: [0, 18] PE: [0, 21]                           root: identifier `num`
 B: [21, 22] PS: [0, 21] PE: [0, 22]       : `:`
 B: [27, 46] PS: [1,  4] PE: [1, 23]       case: switch_case
 B: [27, 31] PS: [1,  4] PE: [1,  8]         case `case`
@@ -37,10 +38,11 @@ B: [32, 33] PS: [1,  9] PE: [1, 10]                 delegate: compare_expr
 B: [32, 33] PS: [1,  9] PE: [1, 10]                   delegate: add_expr
 B: [32, 33] PS: [1,  9] PE: [1, 10]                     delegate: mult_expr
 B: [32, 33] PS: [1,  9] PE: [1, 10]                       delegate: unary_expr
-B: [32, 33] PS: [1,  9] PE: [1, 10]                         delegate: indexed_expr
-B: [32, 33] PS: [1,  9] PE: [1, 10]                           root: primary_expr
-B: [32, 33] PS: [1,  9] PE: [1, 10]                             literal
-B: [32, 33] PS: [1,  9] PE: [1, 10]                               int `1`
+B: [32, 33] PS: [1,  9] PE: [1, 10]                         delegate: fallback_expr
+B: [32, 33] PS: [1,  9] PE: [1, 10]                           delegate: indexed_expr
+B: [32, 33] PS: [1,  9] PE: [1, 10]                             root: primary_expr
+B: [32, 33] PS: [1,  9] PE: [1, 10]                               literal
+B: [32, 33] PS: [1,  9] PE: [1, 10]                                 int `1`
 B: [33, 34] PS: [1, 10] PE: [1, 11]         , `,`
 B: [35, 36] PS: [1, 12] PE: [1, 13]         case_key: expr
 B: [35, 36] PS: [1, 12] PE: [1, 13]           delegate: ternary_expr
@@ -50,10 +52,11 @@ B: [35, 36] PS: [1, 12] PE: [1, 13]                 delegate: compare_expr
 B: [35, 36] PS: [1, 12] PE: [1, 13]                   delegate: add_expr
 B: [35, 36] PS: [1, 12] PE: [1, 13]                     delegate: mult_expr
 B: [35, 36] PS: [1, 12] PE: [1, 13]                       delegate: unary_expr
-B: [35, 36] PS: [1, 12] PE: [1, 13]                         delegate: indexed_expr
-B: [35, 36] PS: [1, 12] PE: [1, 13]                           root: primary_expr
-B: [35, 36] PS: [1, 12] PE: [1, 13]                             literal
-B: [35, 36] PS: [1, 12] PE: [1, 13]                               int `2`
+B: [35, 36] PS: [1, 12] PE: [1, 13]                         delegate: fallback_expr
+B: [35, 36] PS: [1, 12] PE: [1, 13]                           delegate: indexed_expr
+B: [35, 36] PS: [1, 12] PE: [1, 13]                             root: primary_expr
+B: [35, 36] PS: [1, 12] PE: [1, 13]                               literal
+B: [35, 36] PS: [1, 12] PE: [1, 13]                                 int `2`
 B: [37, 46] PS: [1, 14] PE: [1, 23]         alt: switch_case_expr
 B: [37, 39] PS: [1, 14] PE: [1, 16]           -> `->`
 B: [40, 42] PS: [1, 17] PE: [1, 19]           right: expr
@@ -64,10 +67,11 @@ B: [40, 42] PS: [1, 17] PE: [1, 19]                   delegate: compare_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]                     delegate: add_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]                       delegate: mult_expr
 B: [40, 42] PS: [1, 17] PE: [1, 19]                         delegate: unary_expr
-B: [40, 42] PS: [1, 17] PE: [1, 19]                           delegate: indexed_expr
-B: [40, 42] PS: [1, 17] PE: [1, 19]                             root: primary_expr
-B: [40, 42] PS: [1, 17] PE: [1, 19]                               literal
-B: [40, 42] PS: [1, 17] PE: [1, 19]                                 int `10`
+B: [40, 42] PS: [1, 17] PE: [1, 19]                           delegate: fallback_expr
+B: [40, 42] PS: [1, 17] PE: [1, 19]                             delegate: indexed_expr
+B: [40, 42] PS: [1, 17] PE: [1, 19]                               root: primary_expr
+B: [40, 42] PS: [1, 17] PE: [1, 19]                                 literal
+B: [40, 42] PS: [1, 17] PE: [1, 19]                                   int `10`
 B: [42, 43] PS: [1, 19] PE: [1, 20]           , `,`
 B: [44, 46] PS: [1, 21] PE: [1, 23]           right: expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]             delegate: ternary_expr
@@ -77,10 +81,11 @@ B: [44, 46] PS: [1, 21] PE: [1, 23]                   delegate: compare_expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]                     delegate: add_expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]                       delegate: mult_expr
 B: [44, 46] PS: [1, 21] PE: [1, 23]                         delegate: unary_expr
-B: [44, 46] PS: [1, 21] PE: [1, 23]                           delegate: indexed_expr
-B: [44, 46] PS: [1, 21] PE: [1, 23]                             root: primary_expr
-B: [44, 46] PS: [1, 21] PE: [1, 23]                               literal
-B: [44, 46] PS: [1, 21] PE: [1, 23]                                 int `20`
+B: [44, 46] PS: [1, 21] PE: [1, 23]                           delegate: fallback_expr
+B: [44, 46] PS: [1, 21] PE: [1, 23]                             delegate: indexed_expr
+B: [44, 46] PS: [1, 21] PE: [1, 23]                               root: primary_expr
+B: [44, 46] PS: [1, 21] PE: [1, 23]                                 literal
+B: [44, 46] PS: [1, 21] PE: [1, 23]                                   int `20`
 B: [51, 67] PS: [2,  4] PE: [2, 20]       case: switch_case
 B: [51, 55] PS: [2,  4] PE: [2,  8]         case `case`
 B: [56, 57] PS: [2,  9] PE: [2, 10]         case_key: expr
@@ -91,10 +96,11 @@ B: [56, 57] PS: [2,  9] PE: [2, 10]                 delegate: compare_expr
 B: [56, 57] PS: [2,  9] PE: [2, 10]                   delegate: add_expr
 B: [56, 57] PS: [2,  9] PE: [2, 10]                     delegate: mult_expr
 B: [56, 57] PS: [2,  9] PE: [2, 10]                       delegate: unary_expr
-B: [56, 57] PS: [2,  9] PE: [2, 10]                         delegate: indexed_expr
-B: [56, 57] PS: [2,  9] PE: [2, 10]                           root: primary_expr
-B: [56, 57] PS: [2,  9] PE: [2, 10]                             literal
-B: [56, 57] PS: [2,  9] PE: [2, 10]                               int `3`
+B: [56, 57] PS: [2,  9] PE: [2, 10]                         delegate: fallback_expr
+B: [56, 57] PS: [2,  9] PE: [2, 10]                           delegate: indexed_expr
+B: [56, 57] PS: [2,  9] PE: [2, 10]                             root: primary_expr
+B: [56, 57] PS: [2,  9] PE: [2, 10]                               literal
+B: [56, 57] PS: [2,  9] PE: [2, 10]                                 int `3`
 B: [58, 67] PS: [2, 11] PE: [2, 20]         alt: switch_case_expr
 B: [58, 60] PS: [2, 11] PE: [2, 13]           -> `->`
 B: [61, 63] PS: [2, 14] PE: [2, 16]           right: expr
@@ -105,10 +111,11 @@ B: [61, 63] PS: [2, 14] PE: [2, 16]                   delegate: compare_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]                     delegate: add_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]                       delegate: mult_expr
 B: [61, 63] PS: [2, 14] PE: [2, 16]                         delegate: unary_expr
-B: [61, 63] PS: [2, 14] PE: [2, 16]                           delegate: indexed_expr
-B: [61, 63] PS: [2, 14] PE: [2, 16]                             root: primary_expr
-B: [61, 63] PS: [2, 14] PE: [2, 16]                               literal
-B: [61, 63] PS: [2, 14] PE: [2, 16]                                 int `30`
+B: [61, 63] PS: [2, 14] PE: [2, 16]                           delegate: fallback_expr
+B: [61, 63] PS: [2, 14] PE: [2, 16]                             delegate: indexed_expr
+B: [61, 63] PS: [2, 14] PE: [2, 16]                               root: primary_expr
+B: [61, 63] PS: [2, 14] PE: [2, 16]                                 literal
+B: [61, 63] PS: [2, 14] PE: [2, 16]                                   int `30`
 B: [63, 64] PS: [2, 16] PE: [2, 17]           , `,`
 B: [65, 67] PS: [2, 18] PE: [2, 20]           right: expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]             delegate: ternary_expr
@@ -118,10 +125,11 @@ B: [65, 67] PS: [2, 18] PE: [2, 20]                   delegate: compare_expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]                     delegate: add_expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]                       delegate: mult_expr
 B: [65, 67] PS: [2, 18] PE: [2, 20]                         delegate: unary_expr
-B: [65, 67] PS: [2, 18] PE: [2, 20]                           delegate: indexed_expr
-B: [65, 67] PS: [2, 18] PE: [2, 20]                             root: primary_expr
-B: [65, 67] PS: [2, 18] PE: [2, 20]                               literal
-B: [65, 67] PS: [2, 18] PE: [2, 20]                                 int `40`
+B: [65, 67] PS: [2, 18] PE: [2, 20]                           delegate: fallback_expr
+B: [65, 67] PS: [2, 18] PE: [2, 20]                             delegate: indexed_expr
+B: [65, 67] PS: [2, 18] PE: [2, 20]                               root: primary_expr
+B: [65, 67] PS: [2, 18] PE: [2, 20]                                 literal
+B: [65, 67] PS: [2, 18] PE: [2, 20]                                   int `40`
 B: [72, 87] PS: [3,  4] PE: [3, 19]       default: switch_default
 B: [72, 79] PS: [3,  4] PE: [3, 11]         default `default`
 B: [80, 87] PS: [3, 12] PE: [3, 19]         alt: switch_case_expr
@@ -134,10 +142,11 @@ B: [83, 84] PS: [3, 15] PE: [3, 16]                   delegate: compare_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]                     delegate: add_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]                       delegate: mult_expr
 B: [83, 84] PS: [3, 15] PE: [3, 16]                         delegate: unary_expr
-B: [83, 84] PS: [3, 15] PE: [3, 16]                           delegate: indexed_expr
-B: [83, 84] PS: [3, 15] PE: [3, 16]                             root: primary_expr
-B: [83, 84] PS: [3, 15] PE: [3, 16]                               literal
-B: [83, 84] PS: [3, 15] PE: [3, 16]                                 int `0`
+B: [83, 84] PS: [3, 15] PE: [3, 16]                           delegate: fallback_expr
+B: [83, 84] PS: [3, 15] PE: [3, 16]                             delegate: indexed_expr
+B: [83, 84] PS: [3, 15] PE: [3, 16]                               root: primary_expr
+B: [83, 84] PS: [3, 15] PE: [3, 16]                                 literal
+B: [83, 84] PS: [3, 15] PE: [3, 16]                                   int `0`
 B: [84, 85] PS: [3, 16] PE: [3, 17]           , `,`
 B: [86, 87] PS: [3, 18] PE: [3, 19]           right: expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]             delegate: ternary_expr
@@ -147,7 +156,8 @@ B: [86, 87] PS: [3, 18] PE: [3, 19]                   delegate: compare_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]                     delegate: add_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]                       delegate: mult_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]                         delegate: unary_expr
-B: [86, 87] PS: [3, 18] PE: [3, 19]                           delegate: indexed_expr
-B: [86, 87] PS: [3, 18] PE: [3, 19]                             root: primary_expr
-B: [86, 87] PS: [3, 18] PE: [3, 19]                               literal
-B: [86, 87] PS: [3, 18] PE: [3, 19]                                 int `0`
+B: [86, 87] PS: [3, 18] PE: [3, 19]                           delegate: fallback_expr
+B: [86, 87] PS: [3, 18] PE: [3, 19]                             delegate: indexed_expr
+B: [86, 87] PS: [3, 18] PE: [3, 19]                               root: primary_expr
+B: [86, 87] PS: [3, 18] PE: [3, 19]                                 literal
+B: [86, 87] PS: [3, 18] PE: [3, 19]                                   int `0`
