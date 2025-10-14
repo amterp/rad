@@ -27,10 +27,11 @@ B: [16, 17] PS: [0, 16] PE: [0, 17]                   delegate: compare_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]                     delegate: add_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]                       delegate: mult_expr
 B: [16, 17] PS: [0, 16] PE: [0, 17]                         delegate: unary_expr
-B: [16, 17] PS: [0, 16] PE: [0, 17]                           delegate: indexed_expr
-B: [16, 17] PS: [0, 16] PE: [0, 17]                             root: primary_expr
-B: [16, 17] PS: [0, 16] PE: [0, 17]                               literal
-B: [16, 17] PS: [0, 16] PE: [0, 17]                                 int `1`
+B: [16, 17] PS: [0, 16] PE: [0, 17]                           delegate: fallback_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                             delegate: indexed_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                               root: primary_expr
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                 literal
+B: [16, 17] PS: [0, 16] PE: [0, 17]                                   int `1`
 B: [17, 18] PS: [0, 17] PE: [0, 18]           ] `]`
 B: [18, 19] PS: [0, 18] PE: [0, 19]       . `.`
 B: [19, 29] PS: [0, 19] PE: [0, 29]       segment: json_segment
@@ -48,10 +49,11 @@ B: [25, 26] PS: [0, 25] PE: [0, 26]                   delegate: compare_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]                     delegate: add_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]                       delegate: mult_expr
 B: [25, 26] PS: [0, 25] PE: [0, 26]                         delegate: unary_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                           delegate: indexed_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                             root: primary_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                               literal
-B: [25, 26] PS: [0, 25] PE: [0, 26]                                 int `1`
+B: [25, 26] PS: [0, 25] PE: [0, 26]                           delegate: fallback_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                             delegate: indexed_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                               root: primary_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                 literal
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                   int `1`
 B: [26, 27] PS: [0, 26] PE: [0, 27]           ] `]`
 B: [27, 29] PS: [0, 27] PE: [0, 29]         index: json_path_indexer
 B: [27, 28] PS: [0, 27] PE: [0, 28]           [ `[`

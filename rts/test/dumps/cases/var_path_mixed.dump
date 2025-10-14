@@ -4,101 +4,109 @@ Var path mixed
 a[0].aaa[5:10]["bbb"][1][b]
 =====
 B: [ 0, 28] PS: [0,  0] PE: [1,  0] source_file
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]   expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]     delegate: ternary_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]       delegate: or_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]         delegate: and_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]           delegate: compare_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]             delegate: add_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]               delegate: mult_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]                 delegate: unary_expr
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]                   delegate: var_path
-B: [ 0,  1] PS: [0,  0] PE: [0,  1]                     root: identifier `a`
-B: [ 1,  2] PS: [0,  1] PE: [0,  2]                     [ `[`
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                     indexing: expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                       delegate: ternary_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                         delegate: or_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                           delegate: and_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                             delegate: compare_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                               delegate: add_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                 delegate: mult_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                   delegate: unary_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                     delegate: indexed_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                       root: primary_expr
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                         literal
-B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                           int `0`
-B: [ 3,  4] PS: [0,  3] PE: [0,  4]                     ] `]`
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     . `.`
-B: [ 5,  8] PS: [0,  5] PE: [0,  8]                     indexing: identifier `aaa`
-B: [ 8,  9] PS: [0,  8] PE: [0,  9]                     [ `[`
-B: [ 9, 13] PS: [0,  9] PE: [0, 13]                     indexing: slice
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                       start: expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                         delegate: ternary_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                           delegate: or_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                             delegate: and_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                               delegate: compare_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                 delegate: add_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                   delegate: mult_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                     delegate: unary_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                       delegate: indexed_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                         root: primary_expr
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                           literal
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                             int `5`
-B: [10, 11] PS: [0, 10] PE: [0, 11]                       : `:`
-B: [11, 13] PS: [0, 11] PE: [0, 13]                       end: expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                         delegate: ternary_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                           delegate: or_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                             delegate: and_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                               delegate: compare_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                 delegate: add_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                   delegate: mult_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                     delegate: unary_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                       delegate: indexed_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                         root: primary_expr
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                           literal
-B: [11, 13] PS: [0, 11] PE: [0, 13]                                             int `10`
-B: [13, 14] PS: [0, 13] PE: [0, 14]                     ] `]`
-B: [14, 15] PS: [0, 14] PE: [0, 15]                     [ `[`
-B: [15, 20] PS: [0, 15] PE: [0, 20]                     indexing: expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                       delegate: ternary_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                         delegate: or_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                           delegate: and_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                             delegate: compare_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                               delegate: add_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                 delegate: mult_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                   delegate: unary_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                     delegate: indexed_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                       root: primary_expr
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                         literal
-B: [15, 20] PS: [0, 15] PE: [0, 20]                                           string
-B: [15, 16] PS: [0, 15] PE: [0, 16]                                             start: string_start `"`
-B: [16, 19] PS: [0, 16] PE: [0, 19]                                             contents: string_contents
-B: [16, 19] PS: [0, 16] PE: [0, 19]                                               content: string_content `bbb`
-B: [19, 20] PS: [0, 19] PE: [0, 20]                                             end: string_end `"`
-B: [20, 21] PS: [0, 20] PE: [0, 21]                     ] `]`
-B: [21, 22] PS: [0, 21] PE: [0, 22]                     [ `[`
-B: [22, 23] PS: [0, 22] PE: [0, 23]                     indexing: expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                       delegate: ternary_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                         delegate: or_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                           delegate: and_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                             delegate: compare_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                               delegate: add_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                 delegate: mult_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                   delegate: unary_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                     delegate: indexed_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                       root: primary_expr
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                         literal
-B: [22, 23] PS: [0, 22] PE: [0, 23]                                           int `1`
-B: [23, 24] PS: [0, 23] PE: [0, 24]                     ] `]`
-B: [24, 25] PS: [0, 24] PE: [0, 25]                     [ `[`
-B: [25, 26] PS: [0, 25] PE: [0, 26]                     indexing: expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                       delegate: ternary_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                         delegate: or_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                           delegate: and_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                             delegate: compare_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                               delegate: add_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                                 delegate: mult_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                                   delegate: unary_expr
-B: [25, 26] PS: [0, 25] PE: [0, 26]                                     delegate: var_path
-B: [25, 26] PS: [0, 25] PE: [0, 26]                                       root: identifier `b`
-B: [26, 27] PS: [0, 26] PE: [0, 27]                     ] `]`
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]   expr_stmt
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]     expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]       delegate: ternary_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]         delegate: or_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]           delegate: and_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]             delegate: compare_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]               delegate: add_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]                 delegate: mult_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]                   delegate: unary_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]                     delegate: fallback_expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]                       delegate: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                         root: identifier `a`
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]                         [ `[`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                         indexing: expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                           delegate: ternary_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                             delegate: or_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                               delegate: and_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                 delegate: compare_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                   delegate: add_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                     delegate: mult_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                       delegate: unary_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                         delegate: fallback_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                           delegate: indexed_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                             root: primary_expr
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                               literal
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]                                                 int `0`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]                         ] `]`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         . `.`
+B: [ 5,  8] PS: [0,  5] PE: [0,  8]                         indexing: identifier `aaa`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]                         [ `[`
+B: [ 9, 13] PS: [0,  9] PE: [0, 13]                         indexing: slice
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                           start: expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                             delegate: ternary_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                               delegate: or_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                 delegate: and_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                   delegate: compare_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                     delegate: add_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                       delegate: mult_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                         delegate: unary_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                           delegate: fallback_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                             delegate: indexed_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                               root: primary_expr
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                                 literal
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                                                   int `5`
+B: [10, 11] PS: [0, 10] PE: [0, 11]                           : `:`
+B: [11, 13] PS: [0, 11] PE: [0, 13]                           end: expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                             delegate: ternary_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                               delegate: or_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                 delegate: and_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                   delegate: compare_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                     delegate: add_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                       delegate: mult_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                         delegate: unary_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                           delegate: fallback_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                             delegate: indexed_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                               root: primary_expr
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                                 literal
+B: [11, 13] PS: [0, 11] PE: [0, 13]                                                   int `10`
+B: [13, 14] PS: [0, 13] PE: [0, 14]                         ] `]`
+B: [14, 15] PS: [0, 14] PE: [0, 15]                         [ `[`
+B: [15, 20] PS: [0, 15] PE: [0, 20]                         indexing: expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                           delegate: ternary_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                             delegate: or_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                               delegate: and_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                 delegate: compare_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                   delegate: add_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                     delegate: mult_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                       delegate: unary_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                         delegate: fallback_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                           delegate: indexed_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                             root: primary_expr
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                               literal
+B: [15, 20] PS: [0, 15] PE: [0, 20]                                                 string
+B: [15, 16] PS: [0, 15] PE: [0, 16]                                                   start: string_start `"`
+B: [16, 19] PS: [0, 16] PE: [0, 19]                                                   contents: string_contents
+B: [16, 19] PS: [0, 16] PE: [0, 19]                                                     content: string_content `bbb`
+B: [19, 20] PS: [0, 19] PE: [0, 20]                                                   end: string_end `"`
+B: [20, 21] PS: [0, 20] PE: [0, 21]                         ] `]`
+B: [21, 22] PS: [0, 21] PE: [0, 22]                         [ `[`
+B: [22, 23] PS: [0, 22] PE: [0, 23]                         indexing: expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                           delegate: ternary_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                             delegate: or_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                               delegate: and_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                 delegate: compare_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                   delegate: add_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                     delegate: mult_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                       delegate: unary_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                         delegate: fallback_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                           delegate: indexed_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                             root: primary_expr
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                               literal
+B: [22, 23] PS: [0, 22] PE: [0, 23]                                                 int `1`
+B: [23, 24] PS: [0, 23] PE: [0, 24]                         ] `]`
+B: [24, 25] PS: [0, 24] PE: [0, 25]                         [ `[`
+B: [25, 26] PS: [0, 25] PE: [0, 26]                         indexing: expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                           delegate: ternary_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                             delegate: or_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                               delegate: and_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                 delegate: compare_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                   delegate: add_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                     delegate: mult_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                       delegate: unary_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                         delegate: fallback_expr
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                           delegate: var_path
+B: [25, 26] PS: [0, 25] PE: [0, 26]                                             root: identifier `b`
+B: [26, 27] PS: [0, 26] PE: [0, 27]                         ] `]`

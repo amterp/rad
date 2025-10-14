@@ -25,10 +25,11 @@ B: [21, 22] PS: [1, 11] PE: [1, 12]               delegate: compare_expr
 B: [21, 22] PS: [1, 11] PE: [1, 12]                 delegate: add_expr
 B: [21, 22] PS: [1, 11] PE: [1, 12]                   delegate: mult_expr
 B: [21, 22] PS: [1, 11] PE: [1, 12]                     delegate: unary_expr
-B: [21, 22] PS: [1, 11] PE: [1, 12]                       delegate: indexed_expr
-B: [21, 22] PS: [1, 11] PE: [1, 12]                         root: primary_expr
-B: [21, 22] PS: [1, 11] PE: [1, 12]                           literal
-B: [21, 22] PS: [1, 11] PE: [1, 12]                             int `1`
+B: [21, 22] PS: [1, 11] PE: [1, 12]                       delegate: fallback_expr
+B: [21, 22] PS: [1, 11] PE: [1, 12]                         delegate: indexed_expr
+B: [21, 22] PS: [1, 11] PE: [1, 12]                           root: primary_expr
+B: [21, 22] PS: [1, 11] PE: [1, 12]                             literal
+B: [21, 22] PS: [1, 11] PE: [1, 12]                               int `1`
 B: [23, 48] PS: [2,  0] PE: [3, 15]   fn_named
 B: [23, 25] PS: [2,  0] PE: [2,  2]     keyword: fn `fn`
 B: [26, 29] PS: [2,  3] PE: [2,  6]     name: identifier `bar`
@@ -45,10 +46,11 @@ B: [44, 45] PS: [3, 11] PE: [3, 12]               delegate: compare_expr
 B: [44, 45] PS: [3, 11] PE: [3, 12]                 delegate: add_expr
 B: [44, 45] PS: [3, 11] PE: [3, 12]                   delegate: mult_expr
 B: [44, 45] PS: [3, 11] PE: [3, 12]                     delegate: unary_expr
-B: [44, 45] PS: [3, 11] PE: [3, 12]                       delegate: indexed_expr
-B: [44, 45] PS: [3, 11] PE: [3, 12]                         root: primary_expr
-B: [44, 45] PS: [3, 11] PE: [3, 12]                           literal
-B: [44, 45] PS: [3, 11] PE: [3, 12]                             int `1`
+B: [44, 45] PS: [3, 11] PE: [3, 12]                       delegate: fallback_expr
+B: [44, 45] PS: [3, 11] PE: [3, 12]                         delegate: indexed_expr
+B: [44, 45] PS: [3, 11] PE: [3, 12]                           root: primary_expr
+B: [44, 45] PS: [3, 11] PE: [3, 12]                             literal
+B: [44, 45] PS: [3, 11] PE: [3, 12]                               int `1`
 B: [45, 46] PS: [3, 12] PE: [3, 13]       , `,`
 B: [47, 48] PS: [3, 14] PE: [3, 15]       right: expr
 B: [47, 48] PS: [3, 14] PE: [3, 15]         delegate: ternary_expr
@@ -58,10 +60,11 @@ B: [47, 48] PS: [3, 14] PE: [3, 15]               delegate: compare_expr
 B: [47, 48] PS: [3, 14] PE: [3, 15]                 delegate: add_expr
 B: [47, 48] PS: [3, 14] PE: [3, 15]                   delegate: mult_expr
 B: [47, 48] PS: [3, 14] PE: [3, 15]                     delegate: unary_expr
-B: [47, 48] PS: [3, 14] PE: [3, 15]                       delegate: indexed_expr
-B: [47, 48] PS: [3, 14] PE: [3, 15]                         root: primary_expr
-B: [47, 48] PS: [3, 14] PE: [3, 15]                           literal
-B: [47, 48] PS: [3, 14] PE: [3, 15]                             int `2`
+B: [47, 48] PS: [3, 14] PE: [3, 15]                       delegate: fallback_expr
+B: [47, 48] PS: [3, 14] PE: [3, 15]                         delegate: indexed_expr
+B: [47, 48] PS: [3, 14] PE: [3, 15]                           root: primary_expr
+B: [47, 48] PS: [3, 14] PE: [3, 15]                             literal
+B: [47, 48] PS: [3, 14] PE: [3, 15]                               int `2`
 B: [49, 76] PS: [4,  0] PE: [5, 17]   fn_named
 B: [49, 51] PS: [4,  0] PE: [4,  2]     keyword: fn `fn`
 B: [52, 55] PS: [4,  3] PE: [4,  6]     name: identifier `quz`
@@ -78,34 +81,37 @@ B: [70, 76] PS: [5, 11] PE: [5, 17]               delegate: compare_expr
 B: [70, 76] PS: [5, 11] PE: [5, 17]                 delegate: add_expr
 B: [70, 76] PS: [5, 11] PE: [5, 17]                   delegate: mult_expr
 B: [70, 76] PS: [5, 11] PE: [5, 17]                     delegate: unary_expr
-B: [70, 76] PS: [5, 11] PE: [5, 17]                       delegate: indexed_expr
-B: [70, 76] PS: [5, 11] PE: [5, 17]                         root: primary_expr
-B: [70, 76] PS: [5, 11] PE: [5, 17]                           literal
-B: [70, 76] PS: [5, 11] PE: [5, 17]                             list
-B: [70, 71] PS: [5, 11] PE: [5, 12]                               [ `[`
-B: [71, 72] PS: [5, 12] PE: [5, 13]                               list_entry: expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                 delegate: ternary_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                   delegate: or_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                     delegate: and_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                       delegate: compare_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                         delegate: add_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                           delegate: mult_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                             delegate: unary_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                               delegate: indexed_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                                 root: primary_expr
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                                   literal
-B: [71, 72] PS: [5, 12] PE: [5, 13]                                                     int `1`
-B: [72, 73] PS: [5, 13] PE: [5, 14]                               , `,`
-B: [74, 75] PS: [5, 15] PE: [5, 16]                               list_entry: expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                 delegate: ternary_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                   delegate: or_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                     delegate: and_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                       delegate: compare_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                         delegate: add_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                           delegate: mult_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                             delegate: unary_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                               delegate: indexed_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                                 root: primary_expr
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                                   literal
-B: [74, 75] PS: [5, 15] PE: [5, 16]                                                     int `2`
-B: [75, 76] PS: [5, 16] PE: [5, 17]                               ] `]`
+B: [70, 76] PS: [5, 11] PE: [5, 17]                       delegate: fallback_expr
+B: [70, 76] PS: [5, 11] PE: [5, 17]                         delegate: indexed_expr
+B: [70, 76] PS: [5, 11] PE: [5, 17]                           root: primary_expr
+B: [70, 76] PS: [5, 11] PE: [5, 17]                             literal
+B: [70, 76] PS: [5, 11] PE: [5, 17]                               list
+B: [70, 71] PS: [5, 11] PE: [5, 12]                                 [ `[`
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                 list_entry: expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                   delegate: ternary_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                     delegate: or_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                       delegate: and_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                         delegate: compare_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                           delegate: add_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                             delegate: mult_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                               delegate: unary_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                                 delegate: fallback_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                                   delegate: indexed_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                                     root: primary_expr
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                                       literal
+B: [71, 72] PS: [5, 12] PE: [5, 13]                                                         int `1`
+B: [72, 73] PS: [5, 13] PE: [5, 14]                                 , `,`
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                 list_entry: expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                   delegate: ternary_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                     delegate: or_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                       delegate: and_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                         delegate: compare_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                           delegate: add_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                             delegate: mult_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                               delegate: unary_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                                 delegate: fallback_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                                   delegate: indexed_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                                     root: primary_expr
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                                       literal
+B: [74, 75] PS: [5, 15] PE: [5, 16]                                                         int `2`
+B: [75, 76] PS: [5, 16] PE: [5, 17]                                 ] `]`
