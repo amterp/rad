@@ -15,7 +15,7 @@ print("Base branch: {base_ref}")
 
 // Build current PR binary
 print("🔨 Building PR binary...")
-$!`make build`
+$`make build`
 pr_binary_info = get_path("./bin/radd")
 if not pr_binary_info.exists:
     print_err("❌ Failed to build PR binary - ./bin/radd not found")
@@ -27,14 +27,14 @@ print("PR binary size: {format_bytes(pr_size)}")
 // Use a temporary directory to build base branch to avoid affecting working directory
 print("🔄 Building base branch in temporary directory...")
 temp_dir = "/tmp/rad-base-build"
-$!`rm -rf {temp_dir}`
+$`rm -rf {temp_dir}`
 
 // Clone from the GitHub remote instead of local directory
 repo_url = "https://github.com/amterp/rad.git"
-$!`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
+$`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
 
 // Build base branch binary in temp directory
-$!`cd {temp_dir} && make build`
+$`cd {temp_dir} && make build`
 base_binary_info = get_path("{temp_dir}/bin/radd")
 if not base_binary_info.exists:
     print_err("❌ Failed to build base binary - {temp_dir}/bin/radd not found")
@@ -66,7 +66,7 @@ if type_of(write_result) == "error":
     exit(1)
 
 // Clean up temporary directory
-$!`rm -rf {temp_dir}`
+$`rm -rf {temp_dir}`
 
 // Print summary
 print("📈 Binary size comparison completed:")
