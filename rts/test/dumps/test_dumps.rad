@@ -3,10 +3,10 @@
 Runs & compares output from dumps.
 ---
 
-$!`go run gen_actual_dumps.go`
+$`go run gen_actual_dumps.go`
 
-_, dumps = $!`find ./cases/*.dump`
-dumps = split(dumps[:-1], "\n")
+stdout = $`find ./cases/*.dump`
+dumps = split(stdout[:-1], "\n")
 
 dumps = [split(d, "/")[-1] for d in dumps] // get basenames
 
@@ -34,19 +34,22 @@ if fails:
         fields Num, Dump, Result
     print(red("{fails} FAILURES"))
     if confirm("Update test cases? [y/n] > "):
-        $!`mv ./actual/* ./cases`
+        $`mv ./actual/* ./cases`
 else:
     print(green("ALL PASSED"))
 
 fn compare_files(file1, file2):
     // Check if delta is available (suppress output)
-    delta_unavailable, _, _ = unsafe quiet $`which delta`
+    delta_unavailable, _, _ = quiet $`which delta` catch:
+        pass
 
     if delta_unavailable:
-        result = quiet unsafe $`diff {file1} {file2}`
+        result = quiet $`diff {file1} {file2}` catch:
+            pass
         return result
     else:
-        result = quiet unsafe $`delta {file1} {file2} --paging=never`
+        result = quiet $`delta {file1} {file2} --paging=never` catch:
+            pass
         return result
 
 // todo rad:

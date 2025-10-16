@@ -16,32 +16,32 @@ args:
     release range [1, 3]
 
 get_branch = fn():
-    _, branch  = $!`echo -n $(git branch --show-current)`
+    _, branch  = $`echo -n $(git branch --show-current)`
     return branch
 
 if bump:
     print("Bumping all dependency versions in go.mod...")
-    $!`go get -u=patch ./...`
-    $!`go mod tidy`
+    $`go get -u=patch ./...`
+    $`go mod tidy`
     print(green("✅ Dependencies updated!"))
     validate = true
 
 if build:
-    $!`make build`
+    $`make build`
 
 if test:
-    $!`make test`
+    $`make test`
 
 if release or push or validate:
-    $!`go mod tidy`
-    $!`make all`
-    //$!`golines -w . -m 120`
+    $`go mod tidy`
+    $`make all`
+    //$`golines -w . -m 120`
 
 if dumps or validate:
-    $!`cd ./rts/test/dumps && ./test_dumps.rad`
+    $`cd ./rts/test/dumps && ./test_dumps.rad`
 
 if docs:
-    $!`mkdocs gh-deploy -f ./docs-web/mkdocs.yml --strict`
+    $`mkdocs gh-deploy -f ./docs-web/mkdocs.yml --strict`
 
 if release:
     branch = get_branch()
@@ -50,14 +50,15 @@ if release:
         exit(1)
 
     // check for replace directives in go.mod
-    no_replace_directives = unsafe $`grep "^replace " go.mod`
+    no_replace_directives = $`grep "^replace " go.mod` catch:
+        pass
     if not no_replace_directives:
         print("{"ERROR".red()}: go.mod contains replace directives which should not be present in releases:")
         print("Please remove all replace directives before releasing.".yellow())
         exit(1)
 
     // resolve version /////////////
-    _, tags = $!`git tag -l`
+    _, tags = $`git tag -l`
     tags = split(tags[:-1], "\n")
     tags = [replace(t, "v", "") for t in tags]
     tags = [split(t, "\.") for t in tags]
@@ -73,24 +74,23 @@ if release:
     print("Bumping to version:", green(version))
     ///////////////////////////////
 
-    $!`go test ./core/testing -count 10`
+    $`go test ./core/testing -count 10`
 
-    dirty = unsafe $`git status --porcelain`
-    if dirty:
+    $`git status --porcelain` catch:
         print("Working directory is dirty! Aborting.".red())
         exit(1)
 
-    $!`sed -i '' "s/Version = \".*\"/Version = \"{version}\"/" ./core/version.go`
+    $`sed -i '' "s/Version = \".*\"/Version = \"{version}\"/" ./core/version.go`
 
-    $!`git add ./core/version.go`
+    $`git add ./core/version.go`
 
     if confirm("Commit, tag & push? ({version}) [y/n] > "):
         if amend:
-            $!`git commit --amend --no-edit`
+            $`git commit --amend --no-edit`
         else:
-            $!`git commit -m "chore: bump version to {version}"`
+            $`git commit -m "chore: bump version to {version}"`
 
-        $!`git tag {version}`
+        $`git tag {version}`
 
         pushup()
 
@@ -101,6 +101,6 @@ if push:
 
 fn pushup():
     branch = get_branch()
-    $!`git push origin {branch} --tags`
+    $`git push origin {branch} --tags`
 
 print(green("✅ Done!"))
