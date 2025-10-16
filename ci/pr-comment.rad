@@ -33,11 +33,10 @@ if type_of(binary_data) == "error":
 
 // Read benchmark data (optional - may not exist if benchmark job failed)
 benchmark_data = null
-benchmark_file = catch read_file("/tmp/benchmark-comparison.json")
-if type_of(benchmark_file) == "error":
+benchmark_file = read_file("/tmp/benchmark-comparison.json") catch:
     print("⚠️ Benchmark data not available: {benchmark_file}")
     print("📝 This is normal if the benchmark job failed or was skipped")
-else:
+if type_of(benchmark_file) != "error":
     benchmark_data = parse_json(benchmark_file.content)
     if type_of(benchmark_data) == "error":
         print("⚠️ Could not parse benchmark data: {benchmark_data}")

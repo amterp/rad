@@ -13,4 +13,4 @@ for i in range(iterations):
     result = read_file(test_file)
     text = result.content
 
-quiet $!`rm -f {test_file}`
+quiet $`rm -f {test_file}`

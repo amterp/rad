@@ -12,16 +12,16 @@ if not base_ref:
 
 print("🏃 Starting benchmark comparison...")
 print("Base branch: {base_ref}")
-_, pwd_output, _ = $!`pwd`
+_, pwd_output, _ = $`pwd`
 print("🔧 Working directory: {pwd_output}")
-_, ls_output, _ = $!`ls -la`
+_, ls_output, _ = $`ls -la`
 print("🔧 Available files: {ls_output}")
 
 // Install hyperfine if not available (CI only - assumes hyperfine available locally)
 ci_env = get_env("CI")
 if ci_env == "true":
     print("🔧 Installing hyperfine in CI environment...")
-    $!`sudo apt-get update -qq && sudo apt-get install -y hyperfine`
+    $`sudo apt-get update -qq && sudo apt-get install -y hyperfine`
     print("✅ hyperfine installed")
 else:
     print("🔧 Using local hyperfine installation")
@@ -67,7 +67,7 @@ benchmark_configs = [
 
 // Run benchmarks on current PR
 print("🔨 Running PR benchmarks...")
-$!`make build`
+$`make build`
 
 // Check which benchmarks exist in current PR
 print("🔧 Checking for PR benchmarks...")
@@ -91,21 +91,21 @@ if len(pr_benchmark_pairs) == 0:
 pr_cmds = ["'./bin/radd {config.new_path}'" for config in pr_benchmark_pairs]
 pr_cmd_str = join(pr_cmds, " ")
 pr_results_file = "/tmp/pr-benchmark-results.json"
-$!`hyperfine {pr_cmd_str} --warmup 3 --runs 10 --export-json {pr_results_file}`
+$`hyperfine {pr_cmd_str} --warmup 3 --runs 10 --export-json {pr_results_file}`
 print("PR benchmark results: {pr_results_file}")
 
 // Use a temporary directory to build base branch
 print("🔄 Building base branch in temporary directory...")
 temp_dir = "/tmp/rad-base-benchmark"
-$!`rm -rf {temp_dir}`
+$`rm -rf {temp_dir}`
 
 // Clone from the GitHub remote instead of local directory
 repo_url = "https://github.com/amterp/rad.git"
-$!`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
+$`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
 
 // Build base branch and run benchmarks
 print("🏃 Running base branch benchmarks...")
-$!`cd {temp_dir} && make build`
+$`cd {temp_dir} && make build`
 
 // Check which benchmarks exist in base branch (try both old and new paths)
 base_benchmark_pairs = []
@@ -154,10 +154,10 @@ for config in pr_benchmark_pairs:
     // Create directory structure in temp_dir if needed
     target_path = "{temp_dir}/{config.new_path}"
     target_dir = join(split(target_path, "/")[:-1], "/")
-    $!`mkdir -p {target_dir}`
+    $`mkdir -p {target_dir}`
 
     // Copy the benchmark file from PR to base checkout
-    $!`cp {pr_benchmark_path} {target_path}`
+    $`cp {pr_benchmark_path} {target_path}`
     print("✅ Copied benchmark to base: {target_path}")
 
     base_benchmark_pairs = base_benchmark_pairs + [{
@@ -173,7 +173,7 @@ if len(base_benchmark_pairs) == 0:
 base_cmds = ["'./bin/radd {pair.base_path}'" for pair in base_benchmark_pairs]
 base_cmd_str = join(base_cmds, " ")
 base_results_file = "/tmp/base-benchmark-results.json"
-$!`cd {temp_dir} && hyperfine {base_cmd_str} --warmup 3 --runs 10 --export-json {base_results_file}`
+$`cd {temp_dir} && hyperfine {base_cmd_str} --warmup 3 --runs 10 --export-json {base_results_file}`
 print("Base benchmark results: {base_results_file}")
 
 // Parse results
@@ -254,7 +254,7 @@ else:
     exit(1)
 
 // Clean up temporary directory
-$!`rm -rf {temp_dir}`
+$`rm -rf {temp_dir}`
 
 // Print summary
 print("📈 Benchmark comparison completed:")

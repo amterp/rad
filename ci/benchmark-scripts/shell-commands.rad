@@ -7,6 +7,6 @@ args:
 
 for i in range(iterations):
     if i % 2 == 0:
-        quiet $!`echo "test"`
+        quiet $`echo "test"`
     else:
-        quiet $!`pwd`
+        quiet $`pwd`
