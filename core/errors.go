@@ -9,7 +9,8 @@ func ErrIndexOutOfBounds(i *Interpreter, node *ts.Node, idx int64, length int64)
 }
 
 type RadPanic struct {
-	ErrV RadValue
+	ErrV        RadValue
+	ShellResult *shellResult // For shell command errors, contains exit code/stdout/stderr
 }
 
 func (i *Interpreter) NewRadPanic(node *ts.Node, err RadValue) *RadPanic {

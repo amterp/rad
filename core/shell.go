@@ -14,7 +14,6 @@ import (
 
 // todo
 //  - implement mocking shell responses, like with json requests
-//  - colors currently get lost (sometimes?)
 //  - tests!
 //  - improve error output, especially when stderr is not captured, because that prints first then, before Rad handles it
 //  - silent keyword to suppress output?
@@ -25,43 +24,103 @@ type shellResult struct {
 	stderr   *string
 }
 
-func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) {
+type shellCaptureMode struct {
+	captureStdout bool
+	captureStderr bool
+}
+
+func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
+	// Get left-hand variables for assignment
 	leftNode := rl.GetChildren(shellStmtNode, rl.F_LEFT)
 	leftNodes := rl.GetChildren(shellStmtNode, rl.F_LEFTS)
-	leftNodes = append(leftNode, leftNodes...) // todo hacky
+	leftNodes = append(leftNode, leftNodes...)
 
-	numExpectedOutputs := len(leftNodes)
-
-	if numExpectedOutputs > 3 {
+	if len(leftNodes) > 3 {
 		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
+	// Determine if using named assignment (all vars are code/stdout/stderr)
+	isNamedAssignment := i.isNamedShellAssignment(leftNodes)
+
+	// Determine capture mode based on assignment type
+	var captureMode shellCaptureMode
+	if isNamedAssignment {
+		captureMode = i.namedCaptureMode(leftNodes)
+	} else {
+		captureMode = i.positionalCaptureMode(len(leftNodes))
+	}
+
+	// Get catch block and shell command nodes
+	catchBlockNode := rl.GetChild(shellStmtNode, rl.F_CATCH)
 	shellCmdNode := rl.GetChild(shellStmtNode, rl.F_SHELL_CMD)
-	result := i.executeShellCmd(shellCmdNode, numExpectedOutputs)
 
-	if numExpectedOutputs >= 1 {
-		i.doVarPathAssign(&leftNodes[0], newRadValue(i, shellCmdNode, result.exitCode), false)
-	}
-	if numExpectedOutputs >= 2 {
-		i.doVarPathAssign(&leftNodes[1], newRadValue(i, shellCmdNode, *result.stdout), false)
-	}
-	if numExpectedOutputs >= 3 {
-		i.doVarPathAssign(&leftNodes[2], newRadValue(i, shellCmdNode, *result.stderr), false)
+	// Helper to assign shell results to variables
+	assignResults := func(result shellResult) {
+		i.assignShellResults(shellCmdNode, leftNodes, result, isNamedAssignment)
 	}
 
-	if result.exitCode != 0 {
-		stmtNodes := rl.GetChildren(shellCmdNode, rl.F_STMT)
-		i.runBlock(stmtNodes)
-		responseNode := rl.GetChild(shellCmdNode, rl.F_RESPONSE)
-		if responseNode != nil {
-			if responseNode.Kind() == rl.K_FAIL {
-				RP.ErrorExitCode("", result.exitCode)
-			}
+	return i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
+		// Error occurred during shell execution (non-zero exit code)
+		// The RadPanic contains the shell result via a special field
+		result := rp.ShellResult
+
+		// Assign variables to actual shell command results
+		assignResults(*result)
+
+		// Run catch block statements
+		stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+		res := i.runBlock(stmtNodes)
+		if res.Ctrl != CtrlNormal {
+			return res // Propagate control flow (return/break/continue)
 		}
+		return VoidNormal
+	}, func() EvalResult {
+		// Normal execution - run shell command
+		result := i.executeShellCmd(shellCmdNode, captureMode)
+
+		// Assign variables to shell command results
+		assignResults(result)
+
+		// If exit code != 0, propagate error
+		if result.exitCode != 0 {
+			// Create a RadPanic with the shell result embedded
+			err := NewErrorStrf("Command exited with code %d", result.exitCode).SetNode(shellCmdNode)
+			rp := &RadPanic{
+				ErrV:        newRadValue(i, shellCmdNode, err),
+				ShellResult: &result,
+			}
+			panic(rp)
+		}
+
+		return VoidNormal
+	})
+}
+
+func (i *Interpreter) positionalCaptureMode(numVars int) shellCaptureMode {
+	// Positional: 0 vars = nothing, 1 var = code only, 2 vars = code+stdout, 3 vars = code+stdout+stderr
+	return shellCaptureMode{
+		captureStdout: numVars >= 2,
+		captureStderr: numVars >= 3,
 	}
 }
 
-func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs int) shellResult {
+func (i *Interpreter) namedCaptureMode(leftNodes []ts.Node) shellCaptureMode {
+	// Named: capture only what's requested
+	mode := shellCaptureMode{}
+	for _, node := range leftNodes {
+		rootNode := rl.GetChild(&node, rl.F_ROOT)
+		varName := i.GetSrcForNode(rootNode)
+		switch varName {
+		case "stdout":
+			mode.captureStdout = true
+		case "stderr":
+			mode.captureStderr = true
+		}
+	}
+	return mode
+}
+
+func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureMode shellCaptureMode) shellResult {
 	isQuiet := rl.GetChild(shellCmdNode, rl.F_QUIET_MOD) != nil
 	isConfirm := rl.GetChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
@@ -79,24 +138,21 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 		}
 		if !ok {
 			empty := bytes.Buffer{}
-			return resolveResult(shellCmdNode, numExpectedOutputs, empty, empty, 1)
+			return resolveResult(captureMode, empty, empty, 1)
 		}
 	}
 
 	cmd := resolveCmd(i, shellCmdNode, cmdStr.Plain())
 	var stdoutBuf, stderrBuf bytes.Buffer
 
-	captureStdout := numExpectedOutputs >= 2
-	captureStderr := numExpectedOutputs >= 3
-
 	// set up output destinations
-	if captureStdout {
+	if captureMode.captureStdout {
 		cmd.Stdout = &stdoutBuf
 	} else {
 		cmd.Stdout = RIo.StdOut
 	}
 
-	if captureStderr {
+	if captureMode.captureStderr {
 		cmd.Stderr = &stderrBuf
 	} else {
 		cmd.Stderr = RIo.StdErr
@@ -113,29 +169,25 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, numExpectedOutputs 
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
-			return resolveResult(shellCmdNode, numExpectedOutputs, stdoutBuf, stderrBuf, exitErr.ExitCode())
+			return resolveResult(captureMode, stdoutBuf, stderrBuf, exitErr.ExitCode())
 		}
 		i.errorf(shellCmdNode, "Failed to run command: %v\nStderr: %s\n", err, stderrBuf.String())
 	}
 
-	return resolveResult(shellCmdNode, numExpectedOutputs, stdoutBuf, stderrBuf, 0)
+	return resolveResult(captureMode, stdoutBuf, stderrBuf, 0)
 }
-func resolveResult(shellNode *ts.Node, numExpectedOutputs int, stdout, stderr bytes.Buffer, exitCode int) shellResult {
-	isCritical := shellNode.Kind() == rl.K_CRITICAL_SHELL_CMD
-	if isCritical && exitCode != 0 {
-		RP.ErrorCodeExitf(exitCode, stderr.String())
-	}
 
+func resolveResult(captureMode shellCaptureMode, stdout, stderr bytes.Buffer, exitCode int) shellResult {
 	result := shellResult{
 		exitCode: exitCode,
 	}
 
-	if numExpectedOutputs > 1 {
+	if captureMode.captureStdout {
 		s := stdout.String()
 		result.stdout = &s
 	}
 
-	if numExpectedOutputs > 2 {
+	if captureMode.captureStderr {
 		s := stderr.String()
 		result.stderr = &s
 	}
@@ -171,4 +223,68 @@ func buildCmd(shellStr string, cmdStr string) *exec.Cmd {
 	// cmd.Stdout = RIo.StdOut
 
 	return cmd
+}
+
+// isNamedShellAssignment checks if ALL variables are named exactly "code", "stdout", or "stderr"
+// If so, assignment is by name (order independent). Otherwise, positional.
+func (i *Interpreter) isNamedShellAssignment(leftNodes []ts.Node) bool {
+	if len(leftNodes) == 0 {
+		return false
+	}
+
+	for _, node := range leftNodes {
+		// Get the root identifier from the var_path
+		rootNode := rl.GetChild(&node, rl.F_ROOT)
+		if rootNode == nil {
+			return false
+		}
+
+		varName := i.GetSrcForNode(rootNode)
+		if varName != "code" && varName != "stdout" && varName != "stderr" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// assignShellResults assigns shell command results to variables
+// Uses named or positional assignment depending on isNamedAssignment flag
+func (i *Interpreter) assignShellResults(
+	shellCmdNode *ts.Node,
+	leftNodes []ts.Node,
+	result shellResult,
+	isNamedAssignment bool,
+) {
+	if isNamedAssignment {
+		// Named assignment: match by variable name regardless of order
+		for _, node := range leftNodes {
+			rootNode := rl.GetChild(&node, rl.F_ROOT)
+			varName := i.GetSrcForNode(rootNode)
+
+			switch varName {
+			case "code":
+				i.doVarPathAssign(&node, newRadValue(i, shellCmdNode, int64(result.exitCode)), false)
+			case "stdout":
+				if result.stdout != nil {
+					i.doVarPathAssign(&node, newRadValue(i, shellCmdNode, *result.stdout), false)
+				}
+			case "stderr":
+				if result.stderr != nil {
+					i.doVarPathAssign(&node, newRadValue(i, shellCmdNode, *result.stderr), false)
+				}
+			}
+		}
+	} else {
+		// Positional assignment: code, stdout, stderr in order
+		if len(leftNodes) >= 1 {
+			i.doVarPathAssign(&leftNodes[0], newRadValue(i, shellCmdNode, int64(result.exitCode)), false)
+		}
+		if len(leftNodes) >= 2 && result.stdout != nil {
+			i.doVarPathAssign(&leftNodes[1], newRadValue(i, shellCmdNode, *result.stdout), false)
+		}
+		if len(leftNodes) >= 3 && result.stderr != nil {
+			i.doVarPathAssign(&leftNodes[2], newRadValue(i, shellCmdNode, *result.stderr), false)
+		}
+	}
 }

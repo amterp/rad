@@ -25,4 +25,4 @@ if header:
     url += "/#{header}"
 
 print("Opening {url}")
-quiet $!`open {url}`
+quiet $`open {url}`
