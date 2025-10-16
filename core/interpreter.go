@@ -440,7 +440,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		stmtNodes := rl.GetChildren(node, rl.F_STMT)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
 	case rl.K_SHELL_STMT:
-		i.executeShellStmt(node)
+		out = i.executeShellStmt(node)
 	case rl.K_DEL_STMT:
 		rightVarPathNodes := rl.GetChildren(node, rl.F_RIGHT)
 		for _, rightVarPathNode := range rightVarPathNodes {
