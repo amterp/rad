@@ -484,7 +484,8 @@ fn foo(x: error):
 
 func Test_Typing_ErrorReturnValid(t *testing.T) {
 	script := `
-(catch foo()).print()
+err = foo() catch:
+	print(err)
 fn foo() -> error:
 	return error("bad!")
 `
