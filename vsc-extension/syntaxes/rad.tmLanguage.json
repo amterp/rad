@@ -220,11 +220,7 @@
       "patterns": [
         {
           "name": "keyword.control.rad",
-          "match": "\\b(args|if|for|while|in|else|pass|catch|json|confirm|unsafe|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|fail|recover|continue|break|del|rad|display|request)\\b"
-        },
-        {
-          "name": "entity.name.tag.rad",
-          "match": "\\$!"
+          "match": "\\b(args|if|for|while|in|else|pass|catch|json|confirm|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|continue|break|del|rad|display|request)\\b"
         },
         {
           "name": "entity.name.tag.rad",
@@ -232,7 +228,7 @@
         },
         {
           "name": "keyword.operator.arithmetic.rad",
-          "match": "\\b(\\+)\\b"
+          "match": "[+\\-*/%]"
         }
       ]
     }
