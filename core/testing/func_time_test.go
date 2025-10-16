@@ -72,8 +72,8 @@ print(a.epoch.nanos, type_of(a.epoch.nanos))
 
 func Test_Func_NowErrorsForInvalidTimeZone(t *testing.T) {
 	script := `
-a = catch now(tz="invalid time zone")
-print(a)
+a = now(tz="invalid time zone") catch:
+	print(a)
 a = now(tz="another bad one")
 `
 
@@ -140,8 +140,8 @@ print(a)
 
 func Test_Func_ParseEpochErrorsIfAmbiguous(t *testing.T) {
 	script := `
-a = catch parse_epoch(17123456781)
-print(a)
+a = parse_epoch(17123456781) catch:
+	print(a)
 a = parse_epoch(17123456781)
 `
 	setupAndRunCode(t, script, "--color=never")

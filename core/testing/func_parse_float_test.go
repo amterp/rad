@@ -39,7 +39,8 @@ print(a + 1.1)
 
 func Test_ParseFloat_CanCatchEvenIfNoError(t *testing.T) {
 	script := `
-a = catch parse_float("2.4")
+a = parse_float("2.4") catch:
+	pass
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
@@ -49,8 +50,8 @@ print(a)
 
 func Test_ParseFloat_CaCatchErrorIfExists(t *testing.T) {
 	script := `
-a = catch parse_float("asd")
-print("Got", a)
+a = parse_float("asd") catch:
+	print("Got", a)
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `Got parse_float() failed to parse "asd"

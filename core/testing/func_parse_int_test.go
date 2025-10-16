@@ -42,7 +42,8 @@ a = parse_int("2.4")
 
 func Test_ParseInt_CanCatchEvenIfNoError(t *testing.T) {
 	script := `
-a = catch parse_int("2")
+a = parse_int("2") catch:
+	print("Should not be here")
 print("Got: {a}")
 `
 	setupAndRunCode(t, script, "--color=never")
@@ -54,7 +55,8 @@ print("Got: {a}")
 
 func Test_ParseInt_CanReadErrorIfExists(t *testing.T) {
 	script := `
-a = catch parse_int("asd")
+a = parse_int("asd") catch:
+	pass
 print("Got: {a}")
 `
 	setupAndRunCode(t, script, "--color=never")

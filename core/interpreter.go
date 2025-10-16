@@ -273,14 +273,36 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
 	case rl.K_ASSIGN:
-		rightNodes := rl.GetChildren(node, rl.F_RIGHT)
-		leftNodes := rl.GetChildren(node, rl.F_LEFT)
-		if len(leftNodes) > 0 {
-			return i.assignRightsToLefts(leftNodes, rightNodes, false)
-		} else {
-			leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
-			return i.assignRightsToLefts(leftsNodes, rightNodes, true)
-		}
+		catchBlockNode := rl.GetChild(node, rl.F_CATCH)
+
+		out = i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
+			// Assign error to first variable, null to rest
+			leftNodes := i.getAssignLeftNodes(node)
+			if len(leftNodes) > 0 {
+				i.doVarPathAssign(&leftNodes[0], rp.ErrV, false)
+				for j := 1; j < len(leftNodes); j++ {
+					i.doVarPathAssign(&leftNodes[j], RAD_NULL_VAL, false)
+				}
+			}
+
+			// Run catch block and propagate control flow
+			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+			res := i.runBlock(stmtNodes)
+			if res.Ctrl != CtrlNormal {
+				return res // Propagate return/break/continue/yield
+			}
+			return VoidNormal
+		}, func() EvalResult {
+			// Normal assignment execution
+			rightNodes := rl.GetChildren(node, rl.F_RIGHT)
+			leftNodes := rl.GetChildren(node, rl.F_LEFT)
+			if len(leftNodes) > 0 {
+				return i.assignRightsToLefts(leftNodes, rightNodes, false)
+			} else {
+				leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
+				return i.assignRightsToLefts(leftsNodes, rightNodes, true)
+			}
+		})
 	case rl.K_COMPOUND_ASSIGN:
 		leftVarPathNode := rl.GetChild(node, rl.F_LEFT)
 		rightNode := rl.GetChild(node, rl.F_RIGHT)
@@ -288,19 +310,22 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
 		i.doVarPathAssign(leftVarPathNode, newValue, true)
 	case rl.K_EXPR:
-		catchNode := rl.GetChild(node, rl.F_CATCH)
-		if catchNode != nil {
-			defer func() {
-				if r := recover(); r != nil {
-					if radPanic, ok := r.(*RadPanic); ok {
-						out = NormalVal(radPanic.ErrV)
-					} else {
-						panic(r)
-					}
-				}
-			}()
-		}
 		out = i.eval(rl.GetChild(node, rl.F_DELEGATE))
+	case rl.K_EXPR_STMT:
+		exprNode := rl.GetChild(node, rl.F_EXPR)
+		catchBlockNode := rl.GetChild(node, rl.F_CATCH)
+
+		out = i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
+			// Run catch block and propagate control flow
+			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+			res := i.runBlock(stmtNodes)
+			if res.Ctrl != CtrlNormal {
+				return res // Propagate return/break/continue/yield
+			}
+			return VoidNormal // Statement with catch returns void, not error value
+		}, func() EvalResult {
+			return i.eval(exprNode)
+		})
 	case rl.K_PASS:
 		// no-op
 	case rl.K_RETURN_STMT:
@@ -451,6 +476,38 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		op := rl.GetChild(node, rl.F_OP)
 		right := rl.GetChild(node, rl.F_RIGHT)
 		return NormalVal(newRadValues(i, node, i.executeBinary(node, left, right, op)))
+	case rl.K_FALLBACK_EXPR:
+		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
+		if delegateNode != nil {
+			return i.eval(delegateNode)
+		}
+
+		leftNode := rl.GetChild(node, rl.F_LEFT)
+		rightNode := rl.GetChild(node, rl.F_RIGHT)
+
+		// Evaluate left with panic catching
+		var leftResult EvalResult
+		panicked := false
+
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					if _, ok := r.(*RadPanic); ok {
+						panicked = true
+					} else {
+						panic(r) // Re-panic non-RadPanic errors
+					}
+				}
+			}()
+			leftResult = i.eval(leftNode)
+		}()
+
+		if panicked {
+			// Left side errored, evaluate and return right side
+			return i.eval(rightNode)
+		}
+
+		return leftResult
 
 	// LEAF NODES
 	case rl.K_IDENTIFIER:
@@ -1105,4 +1162,42 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
 		i.errorf(caseValueAltNode, "Bug! Unsupported switch case value node kind: %s", caseValueAltNode.Kind())
 	}
 	return VoidNormal
+}
+
+// getAssignLeftNodes returns the left-hand side nodes from an assignment,
+// trying F_LEFT first, then F_LEFTS.
+func (i *Interpreter) getAssignLeftNodes(node *ts.Node) []ts.Node {
+	leftNodes := rl.GetChildren(node, rl.F_LEFT)
+	if len(leftNodes) == 0 {
+		leftNodes = rl.GetChildren(node, rl.F_LEFTS)
+	}
+	return leftNodes
+}
+
+// withCatch wraps body execution with panic catching. If catchNode is nil, just executes body.
+// On RadPanic, calls onErr callback to handle the error (assign variables, run catch block, etc.).
+// Propagates control flow (return/break/continue/yield) from the catch block.
+// Re-panics non-RadPanic errors to preserve Go's panic semantics (e.g., runtime errors, bugs).
+func (i *Interpreter) withCatch(
+	catchNode *ts.Node,
+	onErr func(rp *RadPanic) EvalResult,
+	body func() EvalResult,
+) (out EvalResult) {
+	if catchNode == nil {
+		return body()
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			if rp, ok := r.(*RadPanic); ok {
+				// Rad error occurred - run error handler
+				out = onErr(rp)
+			} else {
+				// Non-RadPanic errors (runtime panics, bugs) must propagate unchanged
+				panic(r)
+			}
+		}
+	}()
+
+	return body()
 }

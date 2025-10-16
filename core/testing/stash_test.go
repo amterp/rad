@@ -193,7 +193,8 @@ null
 
 func Test_Stash_SaveStateReturnsErrorOnFailure(t *testing.T) {
 	script := `
-result = catch save_state({ "test": "value" })
+result = save_state({ "test": "value" }) catch:
+	pass
 print(type_of(result))
 print("Error contains 'Script ID':", "Script ID" in result)
 `
@@ -225,7 +226,8 @@ null
 
 func Test_Stash_WriteStashFileReturnsErrorOnFailure(t *testing.T) {
 	script := `
-result = catch write_stash_file("test.txt", "content")
+result = write_stash_file("test.txt", "content") catch:
+	pass
 print(type_of(result))
 print("Error contains 'Script ID':", "Script ID" in result)
 `
