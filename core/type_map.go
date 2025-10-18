@@ -12,7 +12,7 @@ import (
 )
 
 type RadMap struct {
-	// keys are hashes of an RadValue
+	// keys are hashes of a RadValue
 	// cannot be collections, though (no maps, lists)
 	mapping map[string]RadValue
 	keys    []RadValue

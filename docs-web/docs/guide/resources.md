@@ -83,7 +83,7 @@ Let's do a simple example. As mentioned, a resource file is simply a JSON file. 
 
 You may see some similarity here to what we did with [`pick_kv`](#pick_kv). We're defining two options: one which can get matched by either `gl` or `lab`, and one which gets matched by `gh` or `hub`. In the first case, if chosen, `pick_from_resource` will return *two* values: `gitlab.com` and `GitLab`. Similarly it will return `github.com` and `GitHub` for the latter.
 
-Let's create an Rad script to use this resource:
+Let's create a Rad script to use this resource:
 
 ```rad title="example.rad"
 args:
