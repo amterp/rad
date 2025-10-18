@@ -6,7 +6,7 @@ Comparison membership
 =====
 B: [ 0, 18] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]   expr_stmt
-B: [ 0,  6] PS: [0,  0] PE: [0,  6]     expr
+B: [ 0,  6] PS: [0,  0] PE: [0,  6]     expr: expr
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]       delegate: ternary_expr
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]         delegate: or_expr
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]           delegate: and_expr
@@ -28,7 +28,7 @@ B: [ 5,  6] PS: [0,  5] PE: [0,  6]                     delegate: fallback_expr
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                       delegate: var_path
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                         root: identifier `a`
 B: [ 7, 17] PS: [1,  0] PE: [1, 10]   expr_stmt
-B: [ 7, 17] PS: [1,  0] PE: [1, 10]     expr
+B: [ 7, 17] PS: [1,  0] PE: [1, 10]     expr: expr
 B: [ 7, 17] PS: [1,  0] PE: [1, 10]       delegate: ternary_expr
 B: [ 7, 17] PS: [1,  0] PE: [1, 10]         delegate: or_expr
 B: [ 7, 17] PS: [1,  0] PE: [1, 10]           delegate: and_expr

@@ -7,7 +7,7 @@ width.s or height[i]
 =====
 B: [ 0, 65] PS: [0,  0] PE: [3,  0] source_file
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]   expr_stmt
-B: [ 0, 21] PS: [0,  0] PE: [0, 21]     expr
+B: [ 0, 21] PS: [0,  0] PE: [0, 21]     expr: expr
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]       delegate: ternary_expr
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]         delegate: or_expr
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]           left: or_expr
@@ -55,7 +55,7 @@ B: [19, 20] PS: [0, 19] PE: [0, 20]                                           de
 B: [19, 20] PS: [0, 19] PE: [0, 20]                                             root: identifier `i`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                         ] `]`
 B: [22, 43] PS: [1,  0] PE: [1, 21]   expr_stmt
-B: [22, 43] PS: [1,  0] PE: [1, 21]     expr
+B: [22, 43] PS: [1,  0] PE: [1, 21]     expr: expr
 B: [22, 43] PS: [1,  0] PE: [1, 21]       delegate: ternary_expr
 B: [22, 43] PS: [1,  0] PE: [1, 21]         delegate: or_expr
 B: [22, 30] PS: [1,  0] PE: [1,  8]           left: or_expr
@@ -105,7 +105,7 @@ B: [41, 42] PS: [1, 19] PE: [1, 20]                                           de
 B: [41, 42] PS: [1, 19] PE: [1, 20]                                             root: identifier `i`
 B: [42, 43] PS: [1, 20] PE: [1, 21]                         ] `]`
 B: [44, 64] PS: [2,  0] PE: [2, 20]   expr_stmt
-B: [44, 64] PS: [2,  0] PE: [2, 20]     expr
+B: [44, 64] PS: [2,  0] PE: [2, 20]     expr: expr
 B: [44, 64] PS: [2,  0] PE: [2, 20]       delegate: ternary_expr
 B: [44, 64] PS: [2,  0] PE: [2, 20]         delegate: or_expr
 B: [44, 51] PS: [2,  0] PE: [2,  7]           left: or_expr

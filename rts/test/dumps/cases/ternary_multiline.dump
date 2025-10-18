@@ -32,7 +32,7 @@ B: [ 8, 10] PS: [0,  8] PE: [0, 10]                         root: primary_expr
 B: [ 8, 10] PS: [0,  8] PE: [0, 10]                           literal
 B: [ 8, 10] PS: [0,  8] PE: [0, 10]                             int `10`
 B: [10, 43] PS: [0, 10] PE: [2, 15]   expr_stmt
-B: [10, 43] PS: [0, 10] PE: [2, 15]     expr
+B: [10, 43] PS: [0, 10] PE: [2, 15]     expr: expr
 B: [10, 43] PS: [0, 10] PE: [2, 15]       delegate: ternary_expr
 B: [10, 10] PS: [0, 10] PE: [0, 10]         condition: or_expr
 B: [10, 10] PS: [0, 10] PE: [0, 10]           delegate: and_expr

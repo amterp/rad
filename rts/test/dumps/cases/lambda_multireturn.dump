@@ -6,7 +6,7 @@ process(fn() [a, b])
 =====
 B: [ 0, 40] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr_stmt
-B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr: expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]       delegate: ternary_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]         delegate: or_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]           delegate: and_expr
@@ -57,7 +57,7 @@ B: [16, 17] PS: [0, 16] PE: [0, 17]                                             
 B: [16, 17] PS: [0, 16] PE: [0, 17]                                                 root: identifier `b`
 B: [17, 18] PS: [0, 17] PE: [0, 18]                             ) `)`
 B: [19, 39] PS: [1,  0] PE: [1, 20]   expr_stmt
-B: [19, 39] PS: [1,  0] PE: [1, 20]     expr
+B: [19, 39] PS: [1,  0] PE: [1, 20]     expr: expr
 B: [19, 39] PS: [1,  0] PE: [1, 20]       delegate: ternary_expr
 B: [19, 39] PS: [1,  0] PE: [1, 20]         delegate: or_expr
 B: [19, 39] PS: [1,  0] PE: [1, 20]           delegate: and_expr

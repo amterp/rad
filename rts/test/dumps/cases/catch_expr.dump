@@ -15,7 +15,7 @@ result = foo() ?? bar() catch:
 =====
 B: [  0, 146] PS: [ 0,  0] PE: [11,  0] source_file
 B: [  0,  35] PS: [ 0,  0] PE: [ 1, 22]   expr_stmt
-B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]     expr
+B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]     expr: expr
 B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]       delegate: ternary_expr
 B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]         delegate: or_expr
 B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]           delegate: and_expr
@@ -30,11 +30,11 @@ B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]                           call
 B: [  0,   3] PS: [ 0,  0] PE: [ 0,  3]                             func: identifier `foo`
 B: [  3,   4] PS: [ 0,  3] PE: [ 0,  4]                             ( `(`
 B: [  4,   5] PS: [ 0,  4] PE: [ 0,  5]                             ) `)`
-B: [  6,  35] PS: [ 0,  6] PE: [ 1, 22]     catch_block
+B: [  6,  35] PS: [ 0,  6] PE: [ 1, 22]     catch: catch_block
 B: [  6,  11] PS: [ 0,  6] PE: [ 0, 11]       catch `catch`
 B: [ 11,  12] PS: [ 0, 11] PE: [ 0, 12]       : `:`
 B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]       stmt: expr_stmt
-B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]         expr
+B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]         expr: expr
 B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]           delegate: ternary_expr
 B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]             delegate: or_expr
 B: [ 17,  35] PS: [ 1,  4] PE: [ 1, 22]               delegate: and_expr
@@ -85,7 +85,7 @@ B: [ 41,  48] PS: [ 3,  4] PE: [ 3, 11]                           call
 B: [ 41,  46] PS: [ 3,  4] PE: [ 3,  9]                             func: identifier `myfoo`
 B: [ 46,  47] PS: [ 3,  9] PE: [ 3, 10]                             ( `(`
 B: [ 47,  48] PS: [ 3, 10] PE: [ 3, 11]                             ) `)`
-B: [ 49,  64] PS: [ 3, 12] PE: [ 4,  8]     catch_block
+B: [ 49,  64] PS: [ 3, 12] PE: [ 4,  8]     catch: catch_block
 B: [ 49,  54] PS: [ 3, 12] PE: [ 3, 17]       catch `catch`
 B: [ 54,  55] PS: [ 3, 17] PE: [ 3, 18]       : `:`
 B: [ 60,  64] PS: [ 4,  4] PE: [ 4,  8]       stmt: pass_stmt `pass`
@@ -117,7 +117,7 @@ B: [ 80,  81] PS: [ 6, 14] PE: [ 6, 15]                       delegate: indexed_
 B: [ 80,  81] PS: [ 6, 14] PE: [ 6, 15]                         root: primary_expr
 B: [ 80,  81] PS: [ 6, 14] PE: [ 6, 15]                           literal
 B: [ 80,  81] PS: [ 6, 14] PE: [ 6, 15]                             int `2`
-B: [ 82,  97] PS: [ 6, 16] PE: [ 7,  8]     catch_block
+B: [ 82,  97] PS: [ 6, 16] PE: [ 7,  8]     catch: catch_block
 B: [ 82,  87] PS: [ 6, 16] PE: [ 6, 21]       catch `catch`
 B: [ 87,  88] PS: [ 6, 21] PE: [ 6, 22]       : `:`
 B: [ 93,  97] PS: [ 7,  4] PE: [ 7,  8]       stmt: pass_stmt `pass`
@@ -148,7 +148,7 @@ B: [117, 122] PS: [ 9, 18] PE: [ 9, 23]                           call
 B: [117, 120] PS: [ 9, 18] PE: [ 9, 21]                             func: identifier `bar`
 B: [120, 121] PS: [ 9, 21] PE: [ 9, 22]                             ( `(`
 B: [121, 122] PS: [ 9, 22] PE: [ 9, 23]                             ) `)`
-B: [123, 145] PS: [ 9, 24] PE: [10, 15]     catch_block
+B: [123, 145] PS: [ 9, 24] PE: [10, 15]     catch: catch_block
 B: [123, 128] PS: [ 9, 24] PE: [ 9, 29]       catch `catch`
 B: [128, 129] PS: [ 9, 29] PE: [ 9, 30]       : `:`
 B: [134, 145] PS: [10,  4] PE: [10, 15]       stmt: assign

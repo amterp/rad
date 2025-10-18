@@ -7,7 +7,7 @@ a[-1]
 =====
 B: [ 0, 19] PS: [0, 0] PE: [3, 0] source_file
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]   expr_stmt
-B: [ 0,  4] PS: [0, 0] PE: [0, 4]     expr
+B: [ 0,  4] PS: [0, 0] PE: [0, 4]     expr: expr
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]       delegate: ternary_expr
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]         delegate: or_expr
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]           delegate: and_expr
@@ -34,7 +34,7 @@ B: [ 2,  3] PS: [0, 2] PE: [0, 3]                                               
 B: [ 2,  3] PS: [0, 2] PE: [0, 3]                                                 int `0`
 B: [ 3,  4] PS: [0, 3] PE: [0, 4]                         ] `]`
 B: [ 5, 12] PS: [1, 0] PE: [1, 7]   expr_stmt
-B: [ 5, 12] PS: [1, 0] PE: [1, 7]     expr
+B: [ 5, 12] PS: [1, 0] PE: [1, 7]     expr: expr
 B: [ 5, 12] PS: [1, 0] PE: [1, 7]       delegate: ternary_expr
 B: [ 5, 12] PS: [1, 0] PE: [1, 7]         delegate: or_expr
 B: [ 5, 12] PS: [1, 0] PE: [1, 7]           delegate: and_expr
@@ -76,7 +76,7 @@ B: [10, 11] PS: [1, 5] PE: [1, 6]                                               
 B: [10, 11] PS: [1, 5] PE: [1, 6]                                                 int `1`
 B: [11, 12] PS: [1, 6] PE: [1, 7]                         ] `]`
 B: [13, 18] PS: [2, 0] PE: [2, 5]   expr_stmt
-B: [13, 18] PS: [2, 0] PE: [2, 5]     expr
+B: [13, 18] PS: [2, 0] PE: [2, 5]     expr: expr
 B: [13, 18] PS: [2, 0] PE: [2, 5]       delegate: ternary_expr
 B: [13, 18] PS: [2, 0] PE: [2, 5]         delegate: or_expr
 B: [13, 18] PS: [2, 0] PE: [2, 5]           delegate: and_expr
