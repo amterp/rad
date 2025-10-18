@@ -530,43 +530,74 @@ Relational constraints:
 - `a excludes b`
 - `a mutually excludes b`
 
+
 ## Shell Commands
 
-### Basic Shell Commands
+### Invocation (`$`) — critical by default
+
+Shell commands can be invoked with `$` and are *critical by default*: if the exit `code != 0`, an error will propagate unless you handle it.
+If an error propagates up to the root level of the script and doesn't get handled, it exits.
 
 ```rad
-// Execute shell command (critical - exits on failure)
-$!`echo hello`
-
-// Capture output
-code, stdout, stderr = $!`ls -la`
-
-// Command with variables
-filename = "test.txt"
-$!`cat {filename}`
+// Fails script if code != 0
+$`make build`
+code = $`cmd`
+code, stdout = $`cmd`
+code, stdout, stderr = $`cmd`
 ```
 
-### Advanced Shell Commands
+### Capture & assignment
+
+**Capture behavior** depends on how many variables you assign:
 
 ```rad
-// Unsafe shell command (doesn't exit on failure)
-unsafe $`command_that_might_fail`
+$`cmd`                        // No capture, stdout/stderr → terminal
+code = $`cmd`                 // Capture code, stdout/stderr → terminal
+code, stdout = $`cmd`         // Capture code & stdout, stderr → terminal
+code, stdout, stderr = $`cmd` // Capture all
+```
 
-// Shell command with modifiers
-quiet $!`silent_command`           // Suppress command output
-confirm $!`dangerous_command`      // Ask for confirmation
-unsafe quiet $!`risky_command`     // Multiple modifiers
+**Assignment semantics** support both positional and *named* assignment.
 
-// Checked shell command with error handling
-$`potentially_failing_command`
-fail:
-    print("Command failed!")
+- Shell commands conceptually return **(code, stdout, stderr)** in that order.
+- **Positional (default):** when variable names are arbitrary, assignment is by position.
+
+```rad
+c, out = $`cmd`                     // c = code, out = stdout
+exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
+myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+```
+
+- **Named:** if **all** variables are exactly `code`, `stdout`, or `stderr`, assignment is by name (order independent).
+
+```rad
+stdout, code = $`cmd`     // stdout = stdout, code = code
+stderr = $`cmd`           // only capture stderr
+code, stderr = $`cmd`     // capture code and stderr
+```
+
+> **Rule:** If *all* variables use the exact names `code`, `stdout`, or `stderr`, uses named assignment. Otherwise, assignment is positional.
+
+### Handling failures with a `catch` block
+
+Use a suffix `catch:` block to handle non‑zero exit codes. Variables are already assigned to the actual results inside the block; you may log or reassign fallbacks, then execution continues.
+
+```rad
+code, stdout = $`grep hello file` catch:
+    // Runs because code != 0
+    print_err("grep failed with code {code}: {stdout}")
+    stdout = ""  // example fallback
+```
+
+You can also attach `catch:` without capturing any variables:
+
+```rad
+$`make build` catch:
+    pass  // continue on failure (do nothing)
+
+$`make build` catch:
+    print_err("Build failed")
     exit(1)
-
-$`another_command`
-recover:
-    print("Command failed, but continuing")
-    // Script continues after this block
 ```
 
 ## JSON Processing and Display Blocks
@@ -714,41 +745,35 @@ age = person.details.age        // Nested access
 
 ### Error Handling
 
+Errors in Rad are **values**. Functions typically return `value | error`. By default, errors **propagate** and exit if unhandled.
+
+#### Simple fallback: `??`
+
+Use `??` to provide a fallback value when the left side returns an error (right side is evaluated lazily).
+
 ```rad
-// Catch errors from function calls
-result = catch risky_function()  // Returns error message as string if error occurs
-
-// Without catch, errors propagate and exit
-result = risky_function()        // Will exit script if error occurs
-
-// Example function that returns error
-fn risky_function():
-    return error("something went wrong")
-
-// Catching in various contexts
-error_msg = catch foo()                    // Direct catch
-array_with_error = [catch foo()]          // Catch in list
-map_with_error = {"result": catch foo()}  // Catch in map
+result = parse_int(text) ?? 0
+result = parse_int(text) ?? get_default()
+// Multi-return requires an explicit list fallback
+a, b = get_two_values() ?? [0, 0]
 ```
 
-### Deferred Execution
+#### Complex handling: suffix `catch:`
+Attach a `catch:` block to inspect the error (the assigned variable *is* the error string inside the block), log, and/or reassign a fallback. Execution continues after the block, unless it invokes `exit()`.
 
 ```rad
-defer:
-    cleanup_resources()
-
-// Code that might fail
-process_data()
-// cleanup_resources() will run regardless
+value = parse_int(text) catch:
+    print_err("Parse failed: {value}")
+    value = 0
 ```
 
-### Pass Statement
+For multi-return functions with `catch:`:
 
 ```rad
-if condition:
-    pass        // Do nothing, placeholder
-else:
-    do_something()
+a, b = get_two_values() catch:
+    // a = error string, b = null
+    print_err("Failed: {a}")
+    a, b = 0, 0
 ```
 
 ## Operators
@@ -787,6 +812,17 @@ not a       // Logical NOT
 ```rad
 item in collection      // Check if item exists in collection
 item not in collection  // Check if item doesn't exist
+```
+
+
+### Coalescing Operator (`??`)
+
+The `??` operator yields the left value if it is **not an error**; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions.
+
+```rad
+count = to_int(env["COUNT"]) ?? 0
+path = read_config() ?? default_path()
+a, b = fetch_pair() ?? [0, 0]  // multi-return requires list fallback
 ```
 
 ## Scoping and Variables
@@ -997,13 +1033,13 @@ args:
 ### Shell Command Delimiters
 
 ```rad
-// Good: Use backticks to avoid delimiter conflicts
-result = $!`echo "Hello world"`
-output = $!`grep 'pattern' file.txt`
-status = $!`curl -H "Content-Type: application/json" api.example.com`
+// Good: Prefer backticks to avoid delimiter conflicts
+result = $`echo "Hello world"`
+output = $`grep 'pattern' file.txt`
+status = $`curl -H "Content-Type: application/json" api.example.com`
 
 // Avoid: Quotes can conflict with shell command content
-// result = $!"echo "Hello world""  // This breaks
+// result = $"echo "Hello world""  // This breaks
 ```
 
 ### Variable Naming
@@ -1107,16 +1143,19 @@ percentage = "Progress: {progress:.1}%"
 ### Error Handling Style
 
 ```rad
-// Good: Clear error handling
-user_data = catch load_user(user_id)
-if user_data == null:
-    print_err("Failed to load user data")
+// Good: Clear handling with suffix catch:
+user_data = load_user(user_id) catch:
+    print_err("Failed to load user data: {user_id}")
     exit(1)
 
-// Good: Inline error handling for non-critical operations
-backup_data = catch load_backup()
-if type_of(backup_data) == "error":
-    backup_data = {"version": "none", "error": backup_data.str()}
-```
+// Good: Simple fallback with ?? (right side evaluated lazily)
+backup_data = load_backup() ?? {"version": "none"}
 
-This syntax reference covers the core language constructs of Rad. For built-in functions and more advanced features, refer to the main documentation.
+// Good: Multi-return fallback with ?? list
+a, b = risky_pair() ?? [0, 0]
+
+// Good: Shell command handling with catch
+code, stdout = $`potentially_failing_command` catch:
+    print_err("Command failed with code {code}")
+    stdout = ""
+```
