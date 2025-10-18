@@ -136,13 +136,12 @@ brew install amterp/rad/rad
 go install github.com/amterp/rad@latest
 ```
 
+**Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
+For automated updates, use one of the supported package managers that allow it.
+
 ### Binary Downloads
 
 Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github.com/amterp/rad/releases)
-
-- **macOS**: `rad_darwin_arm64.tar.gz` (Apple Silicon) or `rad_darwin_amd64.tar.gz` (Intel)
-- **Linux**: `rad_linux_arm64.tar.gz` or `rad_linux_amd64.tar.gz`
-- **Windows**: `rad_windows_amd64.zip`
 
 ### Visual Studio Code Extension
 
@@ -151,8 +150,8 @@ highlighting and LSP integration (macOS/Linux).
 
 ## Documentation 📚
 
-[**Getting Started Guide
-**](https://amterp.github.io/rad/guide/getting-started/) | [Full Documentation](https://amterp.github.io/rad/)
+[**Getting Started Guide**](https://amterp.github.io/rad/guide/getting-started/)
+| [Full Documentation](https://amterp.github.io/rad/)
 
 ## Project Status 🚧
 
@@ -172,7 +171,7 @@ Give it a try and [let me know what you think](https://github.com/amterp/rad/dis
 
 ## Why *not* Rad? 🤔
 
-Rad is optimized for CLI scripting, so if you find yourself building any of the following, a general-purpose language 
+Rad is optimized for CLI scripting, so if you find yourself building any of the following, a general-purpose language
 (Python, Go, Rust, etc) may be more appropriate:
 
 - Enterprise applications
@@ -194,4 +193,4 @@ purpose-built features for CLI scripting.
 
 **Try Rad for your next script. I think you'll like it.** 🤙
 
-[Installation](#installation) | [Docs](https://amterp.github.io/rad/) | [Contributing](./CONTRIBUTING.md)
+[Installation](#installation-) | [Docs](https://amterp.github.io/rad/) | [Contributing](./CONTRIBUTING.md)

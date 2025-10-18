@@ -2,32 +2,67 @@
 title: Getting Started 
 ---
 
+## What is Rad?
+
+*If you want to jump straight to programming, feel free to skip forwards to [Installation](#installation).*
+
+**Rad is a modern programming language and interpreter designed to make writing CLI scripts delightful.** It has a familiar, Python-like syntax with
+built-in concepts like declarative arguments, JSON handling, first-class shell integration, and user prompts - making common scripting tasks easy and
+fast to implement.
+
+If you've ever written scripts and felt like your tools were fighting you, you're not alone:
+
+**With Bash**, you might find yourself:
+
+- Wrestling with `while getopts` boilerplate just to parse a few arguments
+- Doing `curl | jq | awk` gymnastics to process JSON
+- Skipping the "nice-to-haves" like `--help` or input validation because they're too painful to implement
+- Delivering scripts that work, but are hard to read and harder to maintain
+
+**With Python**, you get better syntax, but:
+
+- You need argparse boilerplate before you even start solving your problem, or reach for additional libraries
+- Sharing scripts means coordinating runtimes and dependencies
+- Simple CLI tasks feel heavier than they should
+
+**With Rad**, the language is purpose-built for CLI scripting:
+
+- **Delightful to write** - familiar syntax without the footguns
+- **Self-documenting** - automatic `--help` generation from your code comments
+- **Declarative arguments** - type checking, validation, and parsing built into the language
+- **Easy to share** - batteries included, no external dependencies needed
+
+If you ever write a CLI script, **Rad is the language to do it in**.
+
+**Project Status:** Rad is in early development but useful today for real scripts. Core features work well, though expect breaking changes between
+versions as the language evolves. Your feedback directly shapes Rad's future!
+
+Let's get into it.
+
 ## Installation
-
-### Go (all platforms)
-
-```shell
-go install github.com/amterp/rad@latest
-```
-
-Installs directly from source using the Go (v1.17+) toolchain into your Go bin directory. Make sure that it's on your PATH.
-
-**Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
-For automated updates, use one of the below package managers which support it.
 
 ### macOS (Homebrew)
 
-```shell
+```bash
 brew install amterp/rad/rad
 ```
 
-### From Source
+### Go (from source, all platforms)
 
-See [here](https://github.com/amterp/rad/blob/main/CONTRIBUTING.md#setup) for instructions on how to build from source.
+```bash
+go install github.com/amterp/rad@latest
+```
+
+**Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
+For automated updates, use one of the supported package managers that allow it.
+
+### Binary Downloads
+
+Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github.com/amterp/rad/releases)
 
 ### Checking Installation
 
-After you've installed Rad, you can check your installation:
+After you've installed Rad and ensured it's on your PATH, you can check your installation:
 
 ```shell
 rad -h
@@ -35,9 +70,17 @@ rad -h
 
 If this prints the help string for Rad, you're set!
 
+## Visual Studio Code Extension
+
+Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation.
+
+Installing it is highly recommended!
+
+![vsc-example.png](../assets/vsc-example.png)
+
 ## Your First Rad Script - Hello World
 
-Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of a Rad twist, demoing a couple of features Rad provides.
+Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of a Rad twist, demoing a few features that Rad provides.
 
 First, create a file, let's call it simply `hello`, and give it the following contents:
 
@@ -58,7 +101,7 @@ print("Hello, World!")
 Then, run the script from your CLI by invoking `rad` on it, and you should see it print out like so:
 
 ```sh
-> rad ./hello
+> rad hello
 ```
 
 <div class="result">
@@ -67,11 +110,11 @@ Hello, World!
 ```
 </div>
 
-Nice! Next, let's spruce it up with a few Rad features.
+Nice! Now, let's spruce it up with a few Rad features.
 
 ## Adding In Some Rad Features
 
-One of the selling points of Rad is that it makes defining arguments to your script super simple, using a declarative style.
+One of Rad's primary features is its simple, declarative style to defining script arguments.
 
 Let's modify the script to greet a name you input from command line.
 
@@ -87,10 +130,10 @@ A couple of things to note here:
 1. We define an "args block". Right now it contains just the one line, but [you can do lots of things in here](./args.md).
 2. The modified `print()` utilizes [string interpolation](strings-advanced.md#string-interpolation). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
 
-Now, let's try invoking the script again, and this time, input your (or someone's) name:
+Now, let's try invoking the script again, and this time, input a name:
 
 ```sh
-> rad ./hello Alex
+> rad hello Alex
 ```
 
 <div class="result">
@@ -102,7 +145,7 @@ Hello, Alex!
 Cool! What happens if we invoke *without* a name?
 
 ```sh
-> rad ./hello
+> rad hello
 ```
 
 <div class="result">
@@ -115,11 +158,11 @@ Script args:
 ```
 </div>
 
-If you run an Rad script without providing *any* args to a script which expects at least one, Rad will print out the script usage, interpreting your invocation similar to if you had passed `--help`.
+If you run a Rad script without providing *any* args to a script which expects at least one, Rad will print out the script usage, interpreting your invocation as if you had passed `--help`.
 
 This shows a little of the automatic script usage that Rad generates for you. Let's explore that a bit more.
 
-## Improving Script Usage String
+## Improving The Script Usage String
 
 Rad facilitates writing well-documented and easy-to-use scripts, in part through unique syntax. Let's use a couple of those now.
 
@@ -140,10 +183,9 @@ print("Hello, {name}!")
     File headers, as the name suggests, go at the top of Rad scripts (with the exception of shebangs, to be covered later). 
     They allow you to write a description for your script in between two `---` lines. The contents will get printed as part of the script's usage string.
 
-    Some ideas on what to cover in your file headers:
+    A couple of ideas on what to cover in your file headers:
 
-    - A brief description of what the script does.
-    - Why you might want to use the script.
+    - A brief description of what the script does and how it works
     - Examples of valid invocations and what they do.
 
 Second, we can add **comments** to args that a script declares. Let's do that too:
@@ -153,7 +195,7 @@ Second, we can add **comments** to args that a script declares. Let's do that to
 Prints a polite greeting using an input name.
 ---
 args:
-  name str # The name of someone to greet.
+  name str  # The name of someone to greet.
   
 print("Hello, {name}!")
 ```
@@ -163,24 +205,18 @@ print("Hello, {name}!")
     Rad uses `#` to denote *arg* comments.
     `#` comments are special and **do get passed** to Rad's parser and can affect script behavior (namely in this case, adding information to the script usage string). 
 
-    Standard code comments in Rad use `//`, similar to Java or C/C++, and don't impact script behavior.
-
-    You can use code comments on your arg comments, if you so choose e.g.
-
-    ```rad
-    name str # A name.  // todo make this more descriptive
-    ```
+    Standard code comments in Rad use `//`, similar to Java or C/C++, and **don't** impact script behavior.
 
 Now, when someone reads the script, it's pretty clear what the script does and what the expected arguments are.
 
 But it gets better! Let's try invoking the script's usage string again (this time let's try using the `-h` flag explicitly, though it's not necessary):
 
 ```sh
-> rad ./hello -h
+> rad hello -h
 ```
 
 <div class="result">
-```hl_lines="1 7"
+```
 Prints a polite greeting using an input name.
 
 Usage:
@@ -195,7 +231,7 @@ Not only is the script now easier to maintain for developers, it's also easier f
 
 ## Shebang
 
-Needing to manually invoke `rad` each time you want to run an Rad script can be a little cumbersome. Thankfully, Unix kernels provide a mechanism known as a "shebang".
+Needing to manually invoke `rad` each time you want to run a Rad script can be a little cumbersome. Thankfully, Unix kernels provide a mechanism known as a "shebang".
 
 Let's add one to our script. It has to go on the very first line.
 
@@ -205,7 +241,7 @@ Let's add one to our script. It has to go on the very first line.
 Prints a polite greeting using an input name.
 ---
 args:
-  name str # The name of someone to greet.
+  name str  # The name of someone to greet.
   
 print("Hello, {name}!")
 ```
@@ -230,19 +266,11 @@ Hello, Bob!
 
 When you invoke an executable script this way, the Kernel scans for a shebang (`#!`) in the first line.
 If it finds a path to an interpreter (in this case, it will find `rad`, if set up correctly in your `PATH`),
-then it will invoke said interpreter on the script (equivalent to `rad ./hello` like we were doing before).
+then it will invoke said interpreter on the script (equivalent to `rad hello` like we were doing before).
 
 !!! tip "rad new"
     Rad has a command `rad new <script>` which saves you repeating these steps.
     It creates a ready-to-edit executable file with a `rad` shebang on the top.
-
-## Visual Studio Code Extension
-
-Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation.
-
-Installing it is highly recommended!
-
-![vsc-example.png](../assets/vsc-example.png)
 
 ## Summary
 

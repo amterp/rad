@@ -161,7 +161,7 @@ func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{
 	return output
 }
 
-// converts an Rad data structure to a JSON-schema-adhering structure.
+// converts a Rad data structure to a JSON-schema-adhering structure.
 func RadToJsonType(arg RadValue) interface{} {
 	switch coerced := arg.Val.(type) {
 	case RadString:
