@@ -59,7 +59,7 @@ B: [  7,   8] PS: [ 0,  7] PE: [ 0,  8]                             literal
 B: [  7,   8] PS: [ 0,  7] PE: [ 0,  8]                               int `1`
 B: [  8,   9] PS: [ 0,  8] PE: [ 0,  9]       : `:`
 B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]       stmt: expr_stmt
-B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]         expr
+B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]         expr: expr
 B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]           delegate: ternary_expr
 B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]             delegate: or_expr
 B: [ 14,  28] PS: [ 1,  4] PE: [ 1, 18]               delegate: and_expr
@@ -95,7 +95,7 @@ B: [ 29,  33] PS: [ 2,  0] PE: [ 2,  4]     else `else`
 B: [ 33,  52] PS: [ 2,  4] PE: [ 3, 17]     alt: else_alt
 B: [ 33,  34] PS: [ 2,  4] PE: [ 2,  5]       : `:`
 B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]       stmt: expr_stmt
-B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]         expr
+B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]         expr: expr
 B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]           delegate: ternary_expr
 B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]             delegate: or_expr
 B: [ 39,  52] PS: [ 3,  4] PE: [ 3, 17]               delegate: and_expr
@@ -155,7 +155,7 @@ B: [ 61,  62] PS: [ 5,  7] PE: [ 5,  8]                             literal
 B: [ 61,  62] PS: [ 5,  7] PE: [ 5,  8]                               int `2`
 B: [ 62,  63] PS: [ 5,  8] PE: [ 5,  9]       : `:`
 B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]       stmt: expr_stmt
-B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]         expr
+B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]         expr: expr
 B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]           delegate: ternary_expr
 B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]             delegate: or_expr
 B: [ 68,  81] PS: [ 6,  4] PE: [ 6, 17]               delegate: and_expr
@@ -191,7 +191,7 @@ B: [ 82,  86] PS: [ 7,  0] PE: [ 7,  4]     else `else`
 B: [ 86, 107] PS: [ 7,  4] PE: [ 8, 19]     alt: else_alt
 B: [ 86,  87] PS: [ 7,  4] PE: [ 7,  5]       : `:`
 B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]       stmt: expr_stmt
-B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]         expr
+B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]         expr: expr
 B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]           delegate: ternary_expr
 B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]             delegate: or_expr
 B: [ 92, 107] PS: [ 8,  4] PE: [ 8, 19]               delegate: and_expr
@@ -241,7 +241,7 @@ B: [112, 113] PS: [10,  3] PE: [10,  4]                             literal
 B: [112, 113] PS: [10,  3] PE: [10,  4]                               int `1`
 B: [113, 114] PS: [10,  4] PE: [10,  5]       : `:`
 B: [119, 135] PS: [11,  4] PE: [11, 20]       stmt: expr_stmt
-B: [119, 135] PS: [11,  4] PE: [11, 20]         expr
+B: [119, 135] PS: [11,  4] PE: [11, 20]         expr: expr
 B: [119, 135] PS: [11,  4] PE: [11, 20]           delegate: ternary_expr
 B: [119, 135] PS: [11,  4] PE: [11, 20]             delegate: or_expr
 B: [119, 135] PS: [11,  4] PE: [11, 20]               delegate: and_expr
@@ -291,7 +291,7 @@ B: [140, 141] PS: [13,  3] PE: [13,  4]                             literal
 B: [140, 141] PS: [13,  3] PE: [13,  4]                               int `0`
 B: [141, 142] PS: [13,  4] PE: [13,  5]       : `:`
 B: [147, 160] PS: [14,  4] PE: [14, 17]       stmt: expr_stmt
-B: [147, 160] PS: [14,  4] PE: [14, 17]         expr
+B: [147, 160] PS: [14,  4] PE: [14, 17]         expr: expr
 B: [147, 160] PS: [14,  4] PE: [14, 17]           delegate: ternary_expr
 B: [147, 160] PS: [14,  4] PE: [14, 17]             delegate: or_expr
 B: [147, 160] PS: [14,  4] PE: [14, 17]               delegate: and_expr
@@ -327,7 +327,7 @@ B: [161, 165] PS: [15,  0] PE: [15,  4]     else `else`
 B: [165, 186] PS: [15,  4] PE: [16, 19]     alt: else_alt
 B: [165, 166] PS: [15,  4] PE: [15,  5]       : `:`
 B: [171, 186] PS: [16,  4] PE: [16, 19]       stmt: expr_stmt
-B: [171, 186] PS: [16,  4] PE: [16, 19]         expr
+B: [171, 186] PS: [16,  4] PE: [16, 19]         expr: expr
 B: [171, 186] PS: [16,  4] PE: [16, 19]           delegate: ternary_expr
 B: [171, 186] PS: [16,  4] PE: [16, 19]             delegate: or_expr
 B: [171, 186] PS: [16,  4] PE: [16, 19]               delegate: and_expr
@@ -412,7 +412,7 @@ B: [209, 210] PS: [20,  8] PE: [20,  9]                             root: primar
 B: [209, 210] PS: [20,  8] PE: [20,  9]                               literal
 B: [209, 210] PS: [20,  8] PE: [20,  9]                                 int `2`
 B: [215, 228] PS: [21,  4] PE: [21, 17]       stmt: expr_stmt
-B: [215, 228] PS: [21,  4] PE: [21, 17]         expr
+B: [215, 228] PS: [21,  4] PE: [21, 17]         expr: expr
 B: [215, 228] PS: [21,  4] PE: [21, 17]           delegate: ternary_expr
 B: [215, 228] PS: [21,  4] PE: [21, 17]             delegate: or_expr
 B: [215, 228] PS: [21,  4] PE: [21, 17]               delegate: and_expr
@@ -479,7 +479,7 @@ B: [252, 253] PS: [23,  8] PE: [23,  9]                             root: primar
 B: [252, 253] PS: [23,  8] PE: [23,  9]                               literal
 B: [252, 253] PS: [23,  8] PE: [23,  9]                                 int `2`
 B: [258, 273] PS: [24,  4] PE: [24, 19]       stmt: expr_stmt
-B: [258, 273] PS: [24,  4] PE: [24, 19]         expr
+B: [258, 273] PS: [24,  4] PE: [24, 19]         expr: expr
 B: [258, 273] PS: [24,  4] PE: [24, 19]           delegate: ternary_expr
 B: [258, 273] PS: [24,  4] PE: [24, 19]             delegate: or_expr
 B: [258, 273] PS: [24,  4] PE: [24, 19]               delegate: and_expr
@@ -532,7 +532,7 @@ B: [288, 289] PS: [26,  8] PE: [26,  9]                             root: primar
 B: [288, 289] PS: [26,  8] PE: [26,  9]                               literal
 B: [288, 289] PS: [26,  8] PE: [26,  9]                                 int `2`
 B: [294, 308] PS: [27,  4] PE: [27, 18]       stmt: expr_stmt
-B: [294, 308] PS: [27,  4] PE: [27, 18]         expr
+B: [294, 308] PS: [27,  4] PE: [27, 18]         expr: expr
 B: [294, 308] PS: [27,  4] PE: [27, 18]           delegate: ternary_expr
 B: [294, 308] PS: [27,  4] PE: [27, 18]             delegate: or_expr
 B: [294, 308] PS: [27,  4] PE: [27, 18]               delegate: and_expr

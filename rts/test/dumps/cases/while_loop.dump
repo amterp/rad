@@ -31,7 +31,7 @@ B: [10, 11] PS: [0, 10] PE: [0, 11]                           literal
 B: [10, 11] PS: [0, 10] PE: [0, 11]                             int `0`
 B: [11, 12] PS: [0, 11] PE: [0, 12]     : `:`
 B: [17, 25] PS: [1,  4] PE: [1, 12]     stmt: expr_stmt
-B: [17, 25] PS: [1,  4] PE: [1, 12]       expr
+B: [17, 25] PS: [1,  4] PE: [1, 12]       expr: expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]         delegate: ternary_expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]           delegate: or_expr
 B: [17, 25] PS: [1,  4] PE: [1, 12]             delegate: and_expr

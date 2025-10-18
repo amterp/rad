@@ -5,7 +5,7 @@ print((1 + 2) * 2)
 =====
 B: [ 0, 19] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr_stmt
-B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr: expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]       delegate: ternary_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]         delegate: or_expr
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]           delegate: and_expr

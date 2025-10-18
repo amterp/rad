@@ -5,7 +5,7 @@ a.b(foo, bar).c().d
 =====
 B: [ 0, 20] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]   expr_stmt
-B: [ 0, 19] PS: [0,  0] PE: [0, 19]     expr
+B: [ 0, 19] PS: [0,  0] PE: [0, 19]     expr: expr
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]       delegate: ternary_expr
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]         delegate: or_expr
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]           delegate: and_expr

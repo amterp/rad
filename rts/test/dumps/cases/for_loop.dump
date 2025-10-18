@@ -120,7 +120,7 @@ B: [ 41,  42] PS: [ 3,  8] PE: [ 3,  9]                           root: primary_
 B: [ 41,  42] PS: [ 3,  8] PE: [ 3,  9]                             literal
 B: [ 41,  42] PS: [ 3,  8] PE: [ 3,  9]                               int `2`
 B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]     stmt: expr_stmt
-B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]       expr
+B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]       expr: expr
 B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]         delegate: ternary_expr
 B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]           delegate: or_expr
 B: [ 47,  58] PS: [ 4,  4] PE: [ 4, 15]             delegate: and_expr
@@ -166,7 +166,7 @@ B: [ 77,  78] PS: [ 6, 17] PE: [ 6, 18]                       delegate: var_path
 B: [ 77,  78] PS: [ 6, 17] PE: [ 6, 18]                         root: identifier `a`
 B: [ 78,  79] PS: [ 6, 18] PE: [ 6, 19]     : `:`
 B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]     stmt: expr_stmt
-B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]       expr
+B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]       expr: expr
 B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]         delegate: ternary_expr
 B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]           delegate: or_expr
 B: [ 84, 100] PS: [ 7,  4] PE: [ 7, 20]             delegate: and_expr
@@ -247,7 +247,7 @@ B: [132, 133] PS: [10, 15] PE: [10, 16]                               literal
 B: [132, 133] PS: [10, 15] PE: [10, 16]                                 int `2`
 B: [133, 134] PS: [10, 16] PE: [10, 17]         : `:`
 B: [143, 163] PS: [11,  8] PE: [11, 28]         stmt: expr_stmt
-B: [143, 163] PS: [11,  8] PE: [11, 28]           expr
+B: [143, 163] PS: [11,  8] PE: [11, 28]           expr: expr
 B: [143, 163] PS: [11,  8] PE: [11, 28]             delegate: ternary_expr
 B: [143, 163] PS: [11,  8] PE: [11, 28]               delegate: or_expr
 B: [143, 163] PS: [11,  8] PE: [11, 28]                 delegate: and_expr
@@ -284,7 +284,7 @@ B: [182, 186] PS: [13,  4] PE: [13,  8]       else `else`
 B: [186, 215] PS: [13,  8] PE: [14, 27]       alt: else_alt
 B: [186, 187] PS: [13,  8] PE: [13,  9]         : `:`
 B: [196, 215] PS: [14,  8] PE: [14, 27]         stmt: expr_stmt
-B: [196, 215] PS: [14,  8] PE: [14, 27]           expr
+B: [196, 215] PS: [14,  8] PE: [14, 27]           expr: expr
 B: [196, 215] PS: [14,  8] PE: [14, 27]             delegate: ternary_expr
 B: [196, 215] PS: [14,  8] PE: [14, 27]               delegate: or_expr
 B: [196, 215] PS: [14,  8] PE: [14, 27]                 delegate: and_expr
@@ -335,7 +335,7 @@ B: [229, 230] PS: [16, 12] PE: [16, 13]                         root: identifier
 B: [230, 231] PS: [16, 13] PE: [16, 14]     : `:`
 B: [236, 244] PS: [17,  4] PE: [17, 12]     stmt: continue_stmt `continue`
 B: [249, 271] PS: [18,  4] PE: [18, 26]     stmt: expr_stmt
-B: [249, 271] PS: [18,  4] PE: [18, 26]       expr
+B: [249, 271] PS: [18,  4] PE: [18, 26]       expr: expr
 B: [249, 271] PS: [18,  4] PE: [18, 26]         delegate: ternary_expr
 B: [249, 271] PS: [18,  4] PE: [18, 26]           delegate: or_expr
 B: [249, 271] PS: [18,  4] PE: [18, 26]             delegate: and_expr
@@ -368,7 +368,7 @@ B: [256, 269] PS: [18, 11] PE: [18, 24]                                         
 B: [269, 270] PS: [18, 24] PE: [18, 25]                                                         end: string_end `"`
 B: [270, 271] PS: [18, 25] PE: [18, 26]                               ) `)`
 B: [273, 286] PS: [20,  0] PE: [20, 13]   expr_stmt
-B: [273, 286] PS: [20,  0] PE: [20, 13]     expr
+B: [273, 286] PS: [20,  0] PE: [20, 13]     expr: expr
 B: [273, 286] PS: [20,  0] PE: [20, 13]       delegate: ternary_expr
 B: [273, 286] PS: [20,  0] PE: [20, 13]         delegate: or_expr
 B: [273, 286] PS: [20,  0] PE: [20, 13]           delegate: and_expr

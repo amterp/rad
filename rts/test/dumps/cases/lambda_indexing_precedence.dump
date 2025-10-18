@@ -5,7 +5,7 @@ fn(n) n.trim().upper()
 =====
 B: [ 0, 23] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr_stmt
-B: [ 0, 22] PS: [0,  0] PE: [0, 22]     expr
+B: [ 0, 22] PS: [0,  0] PE: [0, 22]     expr: expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]       delegate: ternary_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]         delegate: or_expr
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]           delegate: and_expr

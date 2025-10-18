@@ -8,7 +8,7 @@ B: [ 0, 33] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0, 14] PS: [0,  0] PE: [0, 14]   defer_block
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]     keyword: defer `defer`
 B: [ 6, 14] PS: [0,  6] PE: [0, 14]     stmt: expr_stmt
-B: [ 6, 14] PS: [0,  6] PE: [0, 14]       expr
+B: [ 6, 14] PS: [0,  6] PE: [0, 14]       expr: expr
 B: [ 6, 14] PS: [0,  6] PE: [0, 14]         delegate: ternary_expr
 B: [ 6, 14] PS: [0,  6] PE: [0, 14]           delegate: or_expr
 B: [ 6, 14] PS: [0,  6] PE: [0, 14]             delegate: and_expr
@@ -39,7 +39,7 @@ B: [13, 14] PS: [0, 13] PE: [0, 14]                               ) `)`
 B: [15, 32] PS: [1,  0] PE: [1, 17]   defer_block
 B: [15, 23] PS: [1,  0] PE: [1,  8]     keyword: errdefer `errdefer`
 B: [24, 32] PS: [1,  9] PE: [1, 17]     stmt: expr_stmt
-B: [24, 32] PS: [1,  9] PE: [1, 17]       expr
+B: [24, 32] PS: [1,  9] PE: [1, 17]       expr: expr
 B: [24, 32] PS: [1,  9] PE: [1, 17]         delegate: ternary_expr
 B: [24, 32] PS: [1,  9] PE: [1, 17]           delegate: or_expr
 B: [24, 32] PS: [1,  9] PE: [1, 17]             delegate: and_expr

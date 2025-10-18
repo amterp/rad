@@ -37,7 +37,7 @@ B: [  1,   2] PS: [ 0,  1] PE: [ 0,  2]                                 start: s
 B: [  2,  10] PS: [ 0,  2] PE: [ 0, 10]                                 contents: string_contents
 B: [  2,  10] PS: [ 0,  2] PE: [ 0, 10]                                   content: string_content `make all`
 B: [ 10,  11] PS: [ 0, 10] PE: [ 0, 11]                                 end: string_end ```
-B: [ 12,  27] PS: [ 0, 12] PE: [ 1,  8]     catch_block
+B: [ 12,  27] PS: [ 0, 12] PE: [ 1,  8]     catch: catch_block
 B: [ 12,  17] PS: [ 0, 12] PE: [ 0, 17]       catch `catch`
 B: [ 17,  18] PS: [ 0, 17] PE: [ 0, 18]       : `:`
 B: [ 23,  27] PS: [ 1,  4] PE: [ 1,  8]       stmt: pass_stmt `pass`
@@ -64,11 +64,11 @@ B: [ 37,  38] PS: [ 3,  8] PE: [ 3,  9]                                 start: s
 B: [ 38,  46] PS: [ 3,  9] PE: [ 3, 17]                                 contents: string_contents
 B: [ 38,  46] PS: [ 3,  9] PE: [ 3, 17]                                   content: string_content `make all`
 B: [ 46,  47] PS: [ 3, 17] PE: [ 3, 18]                                 end: string_end ```
-B: [ 48,  79] PS: [ 3, 19] PE: [ 5,  8]     catch_block
+B: [ 48,  79] PS: [ 3, 19] PE: [ 5,  8]     catch: catch_block
 B: [ 48,  53] PS: [ 3, 19] PE: [ 3, 24]       catch `catch`
 B: [ 53,  54] PS: [ 3, 24] PE: [ 3, 25]       : `:`
 B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]       stmt: expr_stmt
-B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]         expr
+B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]         expr: expr
 B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]           delegate: ternary_expr
 B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]             delegate: or_expr
 B: [ 59,  70] PS: [ 4,  4] PE: [ 4, 15]               delegate: and_expr
@@ -127,11 +127,11 @@ B: [ 97,  98] PS: [ 7, 16] PE: [ 7, 17]                                 start: s
 B: [ 98, 106] PS: [ 7, 17] PE: [ 7, 25]                                 contents: string_contents
 B: [ 98, 106] PS: [ 7, 17] PE: [ 7, 25]                                   content: string_content `make all`
 B: [106, 107] PS: [ 7, 25] PE: [ 7, 26]                                 end: string_end ```
-B: [108, 139] PS: [ 7, 27] PE: [ 9,  8]     catch_block
+B: [108, 139] PS: [ 7, 27] PE: [ 9,  8]     catch: catch_block
 B: [108, 113] PS: [ 7, 27] PE: [ 7, 32]       catch `catch`
 B: [113, 114] PS: [ 7, 32] PE: [ 7, 33]       : `:`
 B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]       stmt: expr_stmt
-B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]         expr
+B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]         expr: expr
 B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]           delegate: ternary_expr
 B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]             delegate: or_expr
 B: [119, 130] PS: [ 8,  4] PE: [ 8, 15]               delegate: and_expr
@@ -193,11 +193,11 @@ B: [165, 166] PS: [11, 24] PE: [11, 25]                                 start: s
 B: [166, 174] PS: [11, 25] PE: [11, 33]                                 contents: string_contents
 B: [166, 174] PS: [11, 25] PE: [11, 33]                                   content: string_content `make all`
 B: [174, 175] PS: [11, 33] PE: [11, 34]                                 end: string_end ```
-B: [176, 207] PS: [11, 35] PE: [13,  8]     catch_block
+B: [176, 207] PS: [11, 35] PE: [13,  8]     catch: catch_block
 B: [176, 181] PS: [11, 35] PE: [11, 40]       catch `catch`
 B: [181, 182] PS: [11, 40] PE: [11, 41]       : `:`
 B: [187, 198] PS: [12,  4] PE: [12, 15]       stmt: expr_stmt
-B: [187, 198] PS: [12,  4] PE: [12, 15]         expr
+B: [187, 198] PS: [12,  4] PE: [12, 15]         expr: expr
 B: [187, 198] PS: [12,  4] PE: [12, 15]           delegate: ternary_expr
 B: [187, 198] PS: [12,  4] PE: [12, 15]             delegate: or_expr
 B: [187, 198] PS: [12,  4] PE: [12, 15]               delegate: and_expr

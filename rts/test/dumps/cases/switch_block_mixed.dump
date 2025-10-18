@@ -89,7 +89,7 @@ B: [ 45,  46] PS: [2,  9] PE: [2, 10]                                 int `3`
 B: [ 46,  86] PS: [2, 10] PE: [4, 16]         alt: switch_case_block
 B: [ 46,  47] PS: [2, 10] PE: [2, 11]           : `:`
 B: [ 56,  69] PS: [3,  8] PE: [3, 21]           stmt: expr_stmt
-B: [ 56,  69] PS: [3,  8] PE: [3, 21]             expr
+B: [ 56,  69] PS: [3,  8] PE: [3, 21]             expr: expr
 B: [ 56,  69] PS: [3,  8] PE: [3, 21]               delegate: ternary_expr
 B: [ 56,  69] PS: [3,  8] PE: [3, 21]                 delegate: or_expr
 B: [ 56,  69] PS: [3,  8] PE: [3, 21]                   delegate: and_expr

@@ -82,7 +82,7 @@ B: [37, 39] PS: [0, 37] PE: [0, 39]                                             
 B: [39, 40] PS: [0, 39] PE: [0, 40]                             ) `)`
 B: [40, 41] PS: [0, 40] PE: [0, 41]     : `:`
 B: [46, 66] PS: [1,  4] PE: [1, 24]     stmt: expr_stmt
-B: [46, 66] PS: [1,  4] PE: [1, 24]       expr
+B: [46, 66] PS: [1,  4] PE: [1, 24]       expr: expr
 B: [46, 66] PS: [1,  4] PE: [1, 24]         delegate: ternary_expr
 B: [46, 66] PS: [1,  4] PE: [1, 24]           delegate: or_expr
 B: [46, 66] PS: [1,  4] PE: [1, 24]             delegate: and_expr

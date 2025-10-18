@@ -5,7 +5,7 @@ fn() ($`echo hi`, $`echo hello`)
 =====
 B: [ 0, 33] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]   expr_stmt
-B: [ 0, 32] PS: [0,  0] PE: [0, 32]     expr
+B: [ 0, 32] PS: [0,  0] PE: [0, 32]     expr: expr
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]       delegate: ternary_expr
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]         delegate: or_expr
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]           delegate: and_expr

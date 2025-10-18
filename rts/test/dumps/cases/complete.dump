@@ -638,7 +638,7 @@ B: [ 413,  414] PS: [ 31, 25] PE: [ 31, 26]                                     
 B: [ 414,  415] PS: [ 31, 26] PE: [ 31, 27]                                   } `}`
 B: [ 415,  416] PS: [ 31, 27] PE: [ 31, 28]                               end: string_end ```
 B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]   expr_stmt
-B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]     expr
+B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]     expr: expr
 B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]       delegate: ternary_expr
 B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]         delegate: or_expr
 B: [ 417,  425] PS: [ 32,  0] PE: [ 32,  8]           delegate: and_expr
@@ -1136,7 +1136,7 @@ B: [ 881,  882] PS: [ 67, 17] PE: [ 67, 18]                                     
 B: [ 881,  882] PS: [ 67, 17] PE: [ 67, 18]                                                       int `3`
 B: [ 882,  883] PS: [ 67, 18] PE: [ 67, 19]                               ] `]`
 B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]   expr_stmt
-B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]     expr
+B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]     expr: expr
 B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]       delegate: ternary_expr
 B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]         delegate: or_expr
 B: [ 884,  912] PS: [ 68,  0] PE: [ 68, 28]           delegate: and_expr
@@ -1196,7 +1196,7 @@ B: [ 909,  910] PS: [ 68, 25] PE: [ 68, 26]                                     
 B: [ 910,  911] PS: [ 68, 26] PE: [ 68, 27]                                                     ) `)`
 B: [ 911,  912] PS: [ 68, 27] PE: [ 68, 28]                             ) `)`
 B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]   expr_stmt
-B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]     expr
+B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]     expr: expr
 B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]       delegate: ternary_expr
 B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]         delegate: or_expr
 B: [ 913,  962] PS: [ 69,  0] PE: [ 69, 49]           delegate: and_expr
@@ -1274,7 +1274,7 @@ B: [ 959,  960] PS: [ 69, 46] PE: [ 69, 47]                                     
 B: [ 960,  961] PS: [ 69, 47] PE: [ 69, 48]                                                     ) `)`
 B: [ 961,  962] PS: [ 69, 48] PE: [ 69, 49]                             ) `)`
 B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]   expr_stmt
-B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]     expr
+B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]     expr: expr
 B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]       delegate: ternary_expr
 B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]         delegate: or_expr
 B: [ 963, 1017] PS: [ 70,  0] PE: [ 70, 54]           delegate: and_expr
@@ -1650,7 +1650,7 @@ B: [1218, 1219] PS: [ 84, 15] PE: [ 85,  0]                                 cont
 B: [1219, 1245] PS: [ 85,  0] PE: [ 85, 26]                                 content: string_content `that "may contain quotes"!`
 B: [1245, 1249] PS: [ 85, 26] PE: [ 86,  3]                               end: string_end `\n"""`
 B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]   expr_stmt
-B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]     expr
+B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]     expr: expr
 B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]       delegate: ternary_expr
 B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]         delegate: or_expr
 B: [1250, 1261] PS: [ 87,  0] PE: [ 87, 11]           delegate: and_expr
@@ -1791,7 +1791,7 @@ B: [1396, 1403] PS: [ 93, 60] PE: [ 93, 67]                                     
 B: [1396, 1403] PS: [ 93, 60] PE: [ 93, 67]                                                 root: identifier `website`
 B: [1403, 1404] PS: [ 93, 67] PE: [ 93, 68]                             ) `)`
 B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]   expr_stmt
-B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]     expr
+B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]     expr: expr
 B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]       delegate: ternary_expr
 B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]         delegate: or_expr
 B: [1405, 1438] PS: [ 94,  0] PE: [ 94, 33]           delegate: and_expr
@@ -2172,7 +2172,7 @@ B: [1690, 1716] PS: [119,  6] PE: [119, 32]                                   co
 B: [1690, 1716] PS: [119,  6] PE: [119, 32]                                     content: string_content `mv notes-tmp.txt notes.txt`
 B: [1716, 1717] PS: [119, 32] PE: [119, 33]                                   end: string_end ```
 B: [1722, 1742] PS: [120,  4] PE: [120, 24]     stmt: expr_stmt
-B: [1722, 1742] PS: [120,  4] PE: [120, 24]       expr
+B: [1722, 1742] PS: [120,  4] PE: [120, 24]       expr: expr
 B: [1722, 1742] PS: [120,  4] PE: [120, 24]         delegate: ternary_expr
 B: [1722, 1742] PS: [120,  4] PE: [120, 24]           delegate: or_expr
 B: [1722, 1742] PS: [120,  4] PE: [120, 24]             delegate: and_expr
@@ -2257,7 +2257,7 @@ B: [1802, 1870] PS: [123,  0] PE: [125, 29]   defer_block
 B: [1802, 1810] PS: [123,  0] PE: [123,  8]     keyword: errdefer `errdefer`
 B: [1810, 1811] PS: [123,  8] PE: [123,  9]     : `:`
 B: [1816, 1840] PS: [124,  4] PE: [124, 28]     stmt: expr_stmt
-B: [1816, 1840] PS: [124,  4] PE: [124, 28]       expr
+B: [1816, 1840] PS: [124,  4] PE: [124, 28]       expr: expr
 B: [1816, 1840] PS: [124,  4] PE: [124, 28]         delegate: ternary_expr
 B: [1816, 1840] PS: [124,  4] PE: [124, 28]           delegate: or_expr
 B: [1816, 1840] PS: [124,  4] PE: [124, 28]             delegate: and_expr
@@ -2343,7 +2343,7 @@ B: [1875, 1880] PS: [127,  3] PE: [127,  8]                                 fals
 B: [1880, 1881] PS: [127,  8] PE: [127,  9]       : `:`
 B: [1883, 1912] PS: [127, 11] PE: [127, 40]       comment `// failure simulation point 1`
 B: [1917, 1937] PS: [128,  4] PE: [128, 24]       stmt: expr_stmt
-B: [1917, 1937] PS: [128,  4] PE: [128, 24]         expr
+B: [1917, 1937] PS: [128,  4] PE: [128, 24]         expr: expr
 B: [1917, 1937] PS: [128,  4] PE: [128, 24]           delegate: ternary_expr
 B: [1917, 1937] PS: [128,  4] PE: [128, 24]             delegate: or_expr
 B: [1917, 1937] PS: [128,  4] PE: [128, 24]               delegate: and_expr
@@ -2376,7 +2376,7 @@ B: [1924, 1935] PS: [128, 11] PE: [128, 22]                                     
 B: [1935, 1936] PS: [128, 22] PE: [128, 23]                                                           end: string_end `"`
 B: [1936, 1937] PS: [128, 23] PE: [128, 24]                                 ) `)`
 B: [1942, 1949] PS: [129,  4] PE: [129, 11]       stmt: expr_stmt
-B: [1942, 1949] PS: [129,  4] PE: [129, 11]         expr
+B: [1942, 1949] PS: [129,  4] PE: [129, 11]         expr: expr
 B: [1942, 1949] PS: [129,  4] PE: [129, 11]           delegate: ternary_expr
 B: [1942, 1949] PS: [129,  4] PE: [129, 11]             delegate: or_expr
 B: [1942, 1949] PS: [129,  4] PE: [129, 11]               delegate: and_expr
@@ -2442,7 +2442,7 @@ B: [1969, 2042] PS: [132,  0] PE: [134, 30]   defer_block
 B: [1969, 1977] PS: [132,  0] PE: [132,  8]     keyword: errdefer `errdefer`
 B: [1977, 1978] PS: [132,  8] PE: [132,  9]     : `:`
 B: [1983, 2011] PS: [133,  4] PE: [133, 32]     stmt: expr_stmt
-B: [1983, 2011] PS: [133,  4] PE: [133, 32]       expr
+B: [1983, 2011] PS: [133,  4] PE: [133, 32]       expr: expr
 B: [1983, 2011] PS: [133,  4] PE: [133, 32]         delegate: ternary_expr
 B: [1983, 2011] PS: [133,  4] PE: [133, 32]           delegate: or_expr
 B: [1983, 2011] PS: [133,  4] PE: [133, 32]             delegate: and_expr
@@ -2549,7 +2549,7 @@ B: [2047, 2052] PS: [136,  3] PE: [136,  8]                                 fals
 B: [2052, 2053] PS: [136,  8] PE: [136,  9]       : `:`
 B: [2055, 2084] PS: [136, 11] PE: [136, 40]       comment `// failure simulation point 2`
 B: [2089, 2107] PS: [137,  4] PE: [137, 22]       stmt: expr_stmt
-B: [2089, 2107] PS: [137,  4] PE: [137, 22]         expr
+B: [2089, 2107] PS: [137,  4] PE: [137, 22]         expr: expr
 B: [2089, 2107] PS: [137,  4] PE: [137, 22]           delegate: ternary_expr
 B: [2089, 2107] PS: [137,  4] PE: [137, 22]             delegate: or_expr
 B: [2089, 2107] PS: [137,  4] PE: [137, 22]               delegate: and_expr
@@ -2582,7 +2582,7 @@ B: [2096, 2105] PS: [137, 11] PE: [137, 20]                                     
 B: [2105, 2106] PS: [137, 20] PE: [137, 21]                                                           end: string_end `"`
 B: [2106, 2107] PS: [137, 21] PE: [137, 22]                                 ) `)`
 B: [2112, 2119] PS: [138,  4] PE: [138, 11]       stmt: expr_stmt
-B: [2112, 2119] PS: [138,  4] PE: [138, 11]         expr
+B: [2112, 2119] PS: [138,  4] PE: [138, 11]         expr: expr
 B: [2112, 2119] PS: [138,  4] PE: [138, 11]           delegate: ternary_expr
 B: [2112, 2119] PS: [138,  4] PE: [138, 11]             delegate: or_expr
 B: [2112, 2119] PS: [138,  4] PE: [138, 11]               delegate: and_expr

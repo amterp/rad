@@ -6,7 +6,7 @@ quiet()
 =====
 B: [ 0, 18] PS: [0, 0] PE: [2, 0] source_file
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]   expr_stmt
-B: [ 0,  9] PS: [0, 0] PE: [0, 9]     expr
+B: [ 0,  9] PS: [0, 0] PE: [0, 9]     expr: expr
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]       delegate: ternary_expr
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]         delegate: or_expr
 B: [ 0,  9] PS: [0, 0] PE: [0, 9]           delegate: and_expr
@@ -22,7 +22,7 @@ B: [ 0,  7] PS: [0, 0] PE: [0, 7]                             func: identifier `
 B: [ 7,  8] PS: [0, 7] PE: [0, 8]                             ( `(`
 B: [ 8,  9] PS: [0, 8] PE: [0, 9]                             ) `)`
 B: [10, 17] PS: [1, 0] PE: [1, 7]   expr_stmt
-B: [10, 17] PS: [1, 0] PE: [1, 7]     expr
+B: [10, 17] PS: [1, 0] PE: [1, 7]     expr: expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]       delegate: ternary_expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]         delegate: or_expr
 B: [10, 17] PS: [1, 0] PE: [1, 7]           delegate: and_expr

@@ -5,7 +5,7 @@ a[0].aaa[5:10]["bbb"][1][b]
 =====
 B: [ 0, 28] PS: [0,  0] PE: [1,  0] source_file
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]   expr_stmt
-B: [ 0, 27] PS: [0,  0] PE: [0, 27]     expr
+B: [ 0, 27] PS: [0,  0] PE: [0, 27]     expr: expr
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]       delegate: ternary_expr
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]         delegate: or_expr
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]           delegate: and_expr

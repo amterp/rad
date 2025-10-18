@@ -181,7 +181,7 @@ B: [185, 186] PS: [ 8,  7] PE: [ 8,  8]                                 start: s
 B: [186, 194] PS: [ 8,  8] PE: [ 8, 16]                                 contents: string_contents
 B: [186, 194] PS: [ 8,  8] PE: [ 8, 16]                                   content: string_content `make all`
 B: [194, 195] PS: [ 8, 16] PE: [ 8, 17]                                 end: string_end ```
-B: [196, 211] PS: [ 8, 18] PE: [ 9,  8]     catch_block
+B: [196, 211] PS: [ 8, 18] PE: [ 9,  8]     catch: catch_block
 B: [196, 201] PS: [ 8, 18] PE: [ 8, 23]       catch `catch`
 B: [201, 202] PS: [ 8, 23] PE: [ 8, 24]       : `:`
 B: [207, 211] PS: [ 9,  4] PE: [ 9,  8]       stmt: pass_stmt `pass`

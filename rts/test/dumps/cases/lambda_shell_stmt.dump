@@ -6,7 +6,7 @@ fn() ($`echo hi`)
 =====
 B: [ 0, 34] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]   expr_stmt
-B: [ 0, 15] PS: [0,  0] PE: [0, 15]     expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]     expr: expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]       delegate: ternary_expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]         delegate: or_expr
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]           delegate: and_expr
@@ -39,7 +39,7 @@ B: [ 7, 14] PS: [0,  7] PE: [0, 14]                                             
 B: [ 7, 14] PS: [0,  7] PE: [0, 14]                                                       content: string_content `echo hi`
 B: [14, 15] PS: [0, 14] PE: [0, 15]                                                     end: string_end ```
 B: [16, 33] PS: [1,  0] PE: [1, 17]   expr_stmt
-B: [16, 33] PS: [1,  0] PE: [1, 17]     expr
+B: [16, 33] PS: [1,  0] PE: [1, 17]     expr: expr
 B: [16, 33] PS: [1,  0] PE: [1, 17]       delegate: ternary_expr
 B: [16, 33] PS: [1,  0] PE: [1, 17]         delegate: or_expr
 B: [16, 33] PS: [1,  0] PE: [1, 17]           delegate: and_expr
