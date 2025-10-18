@@ -5,8 +5,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/amterp/rad)](https://goreportcard.com/report/github.com/amterp/rad)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
-
 **Bash is powerful but painful. Rad gives you Python-like scripting with CLI superpowers built-in.**
 
 Write maintainable scripts with declarative argument parsing, built-in JSON processing, HTTP requests, and interactive
@@ -43,7 +41,7 @@ HI, BOB!
 HI, BOB!
 ```
 
-## Why Rad?
+## Why Rad? 🚀
 
 - **CLI-first design** → Args, validation, and `--help` are part of the language
 - **Familiar syntax** → Python-like, readable, no Bash footguns
@@ -100,31 +98,31 @@ This example is kept somewhat minimal - there are Rad features we could use to f
 
 Some alternative valid invocations for this example:
 
-- `rad commits amterp/rad`
-- `rad commits --repo amterp/rad --limit 5`
-- `rad commits --limit 5 --repo amterp/rad`
-- `rad commits amterp/rad --limit 5`
+- `> commits amterp/rad`
+- `> commits --repo amterp/rad --limit 5`
+- `> commits --limit 5 --repo amterp/rad`
+- `> commits amterp/rad --limit 5`
 
-## Quick Comparison
+## Quick Comparison 📊
 
-| Feature                | Bash                      | Python                        | Rad                               |
-|------------------------|---------------------------|-------------------------------|-----------------------------------|
-| Syntax familiarity     | Archaic, hard to remember | Familiar                      | Familiar (Python-like)            |
-| Argument parsing       | Verbose, manual           | argparse or libraries         | Built-in; declarative             |
-| Type checking          | None                      | Manual or library             | Built-in                          |
-| --help generation      | Manual                    | Dependencies handle it        | Built in; automatic from comments |
-| Validation/constraints | Manual                    | Manual or library schemas     | Built-in (range, enum, regex)     |
-| JSON processing        | Pipe to jq                | JSON module + manual handling | Built-in path syntax              |
-| String interpolation   | `"${var}"` (pitfalls)     | f-strings                     | `"{var}"`                         |
-| HTTP requests          | curl + pipes              | Import requests               | Built-in; first-class support     |
-| Dependencies           | None, but limited         | Likely need libraries         | None - batteries included         |
-| Lines of code          | Many                      | Moderate                      | Minimal                           |
+| Feature                | Bash                      | Python                        | Rad                           |
+|------------------------|---------------------------|-------------------------------|-------------------------------|
+| Syntax familiarity     | Archaic, hard to remember | Familiar                      | Familiar (Python-like)        |
+| Argument parsing       | Verbose, manual           | argparse or libraries         | Built-in; declarative         |
+| Type checking          | None                      | Manual or library             | Built-in                      |
+| --help generation      | Manual                    | Dependencies handle it        | Built in; auto from comments  |
+| Validation/constraints | Manual                    | Manual or library schemas     | Built-in (range, enum, etc)   |
+| JSON processing        | Pipe to jq                | JSON module + manual handling | Built-in path syntax          |
+| String interpolation   | `"${var}"` (pitfalls)     | f-strings                     | `"{var}"`                     |
+| HTTP requests          | curl + pipes              | Import requests               | Built-in; first-class support |
+| Dependencies           | None, but limited         | Likely need libraries         | None - batteries included     |
+| Lines of code          | Many                      | Moderate                      | Minimal                       |
 
 **Python note:** Libraries like `typer` and `click` make CLI tools easier, but Rad goes further.
 CLI is **designed into the language syntax itself**, allowing us to do things and achieve ergonomics
 that Python libraries simply can't. Plus, no dependency management needed.
 
-## Installation
+## Installation 🛠️
 
 ### macOS (Homebrew)
 
@@ -151,11 +149,12 @@ Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github
 [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) provides syntax
 highlighting and LSP integration (macOS/Linux).
 
-## Documentation
+## Documentation 📚
 
-[**Getting Started Guide**](https://amterp.github.io/rad/guide/getting-started/) | [Full Documentation](https://amterp.github.io/rad/)
+[**Getting Started Guide
+**](https://amterp.github.io/rad/guide/getting-started/) | [Full Documentation](https://amterp.github.io/rad/)
 
-## Project Status
+## Project Status 🚧
 
 **Rad is in early development** but useful today for real scripts.
 
@@ -171,10 +170,10 @@ welcomed - they're invaluable!
 
 Give it a try and [let me know what you think](https://github.com/amterp/rad/discussions)!
 
-## Why *not* Rad?
+## Why *not* Rad? 🤔
 
-Rad is optimized for CLI scripting, so if you find yourself building any of the following, a general-purpose language (
-Python/Go/Rust, etc) may be more appropriate:
+Rad is optimized for CLI scripting, so if you find yourself building any of the following, a general-purpose language 
+(Python, Go, Rust, etc) may be more appropriate:
 
 - Enterprise applications
 - High-performance computations
