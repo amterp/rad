@@ -1716,7 +1716,7 @@ print(true  and true)   // true
 
 print(false or  false)  // false
 print(true  or  false)  // true
-print(false or true)    // true
+print(false or  true)   // true
 print(true  or  true)   // true
 </code></pre></div>
 <p>And it uses <code>not</code> for logical negation.</p>
@@ -1745,6 +1745,7 @@ print(str(a) + text)
 </code></pre></div>
 </div>
 
+<p>Note the above example is just for demonstration; string interpolation would be a better approach.</p>
 <h3 id="compound-operators">Compound Operators<a class="headerlink" href="#compound-operators" title="Permanent link">&para;</a></h3>
 <p>Rad also supports compound operators for modifying variables in-place.</p>
 <div class="highlight"><pre><span></span><code>a = 3
@@ -1801,7 +1802,7 @@ print(b)
 else if units == &quot;imperial&quot;:
     print(&quot;That&#39;s almost 33 feet.&quot;)
 else:
-    print(&quot;I don&#39;t know what measurement system!&quot;)
+    print(&quot;I don&#39;t know that measurement system!&quot;)
 </code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Blocks use whitespace &amp; indentation</p>
@@ -1926,7 +1927,7 @@ switch op:
     case &quot;add&quot;:
         result = a + b
         print(&quot;added: {result}&quot;)
-    case &quot;multiply&quot;:
+    case &quot;times&quot;:
         result = a * b
         print(&quot;multiplied: {result}&quot;)
     default:
@@ -1955,7 +1956,7 @@ switch op:
     case &quot;add&quot;:
         result = a + b
         print(&quot;added: {result}&quot;)
-    case &quot;multiply&quot;:
+    case &quot;times&quot;:
         result = a * b
         print(&quot;multiplied: {result}&quot;)
 <span class="hll">    default -&gt; print(&quot;I don&#39;t know how to do that.&quot;)
@@ -1971,9 +1972,9 @@ Switch <strong>expressions</strong> can be used in assignments.</p>
 <span class="normal">7</span>
 <span class="normal">8</span>
 <span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    item string
+    object string
 
-sound = switch item:
+sound = switch object:
     case &quot;car&quot; -&gt; &quot;vroom&quot;
     case &quot;mouse&quot; -&gt; &quot;squeek&quot;
     default -&gt; &quot;moo&quot;  // default to cow
@@ -1981,7 +1982,8 @@ sound = switch item:
 print(sound)
 </code></pre></div></td></tr></table></div>
 <p>The above example cases are all single-line expressions (<code>case ... -&gt; ...</code>).
-If you want to write a case as a block in a switch expression, you can use the <code>yield</code> keyword to return values (yes plural, switch cases can return multiple values).</p>
+If you want to write a case as a block in a switch expression, you can use the <code>yield</code> keyword to return values.</p>
+<p>Note also that you can assign and return more than 1 value at a time. To demonstrate:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1993,13 +1995,13 @@ If you want to write a case as a block in a switch expression, you can use the <
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    item string
+    object string
 
-<span class="hll">sound, plural = switch item:
+<span class="hll">sound, plural = switch object:
 </span><span class="hll">    case &quot;car&quot; -&gt; &quot;vroom&quot;, &quot;cars&quot;
 </span><span class="hll">    case &quot;mouse&quot; -&gt; &quot;squeek&quot;, &quot;mice&quot;
 </span><span class="hll">    default:
-</span><span class="hll">        print(&quot;Don&#39;t know &#39;{item}&#39;; defaulting to cow.&quot;)
+</span><span class="hll">        print(&quot;Don&#39;t know &#39;{object}&#39;; defaulting to cow.&quot;)
 </span><span class="hll">        yield &quot;moo&quot;, &quot;cows&quot;
 </span><span class="hll">
 </span><span class="hll">print(`{plural} go &quot;{sound}&quot;`)

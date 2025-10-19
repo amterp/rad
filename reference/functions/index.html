@@ -1628,6 +1628,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#read_stdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_stdin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#has_stdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_stdin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_path" class="md-nav__link">
     <span class="md-ellipsis">
       get_path
@@ -2796,6 +2814,24 @@
   <a href="#write_file" class="md-nav__link">
     <span class="md-ellipsis">
       write_file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_stdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_stdin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#has_stdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_stdin
     </span>
   </a>
   
@@ -4236,6 +4272,25 @@ write_file(&quot;log.txt&quot;, &quot;\nNew entry&quot;, append=true)
 result, err = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;)
 if err:
     print(&quot;Write failed:&quot;, err.msg)
+</code></pre></div>
+<h3 id="read_stdin">read_stdin<a class="headerlink" href="#read_stdin" title="Permanent link">&para;</a></h3>
+<p>Reads all data from stdin.</p>
+<div class="highlight"><pre><span></span><code>read_stdin() -&gt; str?|error
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>read_stdin()                  // -&gt; &quot;piped content&quot; (if piped)
+read_stdin()                  // -&gt; null (if not piped)
+read_stdin()                  // -&gt; Error 20026 if read fails
+content = read_stdin()
+lines = content.split(&quot;\n&quot;)   // Process stdin line-by-line
+</code></pre></div>
+<h3 id="has_stdin">has_stdin<a class="headerlink" href="#has_stdin" title="Permanent link">&para;</a></h3>
+<p>Checks if stdin is piped to the script.</p>
+<div class="highlight"><pre><span></span><code>has_stdin() -&gt; bool
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>has_stdin()                     // -&gt; true (if piped)
+has_stdin()                     // -&gt; false (if not piped)
+if has_stdin():
+  content = read_stdin()        // Conditional read
 </code></pre></div>
 <h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
 <p>Gets information about a file or directory path.</p>
