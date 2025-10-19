@@ -22,7 +22,7 @@ If you've ever written scripts and felt like your tools were fighting you, you'r
 **With Python**, you get better syntax, but:
 
 - You need argparse boilerplate before you even start solving your problem, or reach for additional libraries
-- Sharing scripts means coordinating runtimes and dependencies
+- Sharing scripts means coordinating runtimes and dependencies (virtualenvs, lockfiles)
 - Simple CLI tasks feel heavier than they should
 
 **With Rad**, the language is purpose-built for CLI scripting:
@@ -64,7 +64,7 @@ Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github
 
 After you've installed Rad and ensured it's on your PATH, you can check your installation:
 
-```shell
+```sh
 rad -h
 ```
 
@@ -72,7 +72,7 @@ If this prints the help string for Rad, you're set!
 
 ## Visual Studio Code Extension
 
-Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation.
+Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation (including catching syntax errors).
 
 Installing it is highly recommended!
 
@@ -96,7 +96,7 @@ print("Hello, World!")
 
 !!! info "File Extension"
 
-    If you want to give your Rad scripts an extension, you can follow `.rad` as a convention.
+    If you want to give your Rad scripts an extension, you can use `.rad` as a convention.
 
 Then, run the script from your CLI by invoking `rad` on it, and you should see it print out like so:
 
@@ -159,6 +159,10 @@ Script args:
 </div>
 
 If you run a Rad script without providing *any* args to a script which expects at least one, Rad will print out the script usage, interpreting your invocation as if you had passed `--help`.
+
+!!! tip "Positional vs Flag Arguments"
+
+    Arguments can be passed positionally or via flags. For example, both `./hello Alice` and `./hello --name Alice` work identically. The help text shows both forms: `<name>` for positional usage and `--name str` for the flag form.
 
 This shows a little of the automatic script usage that Rad generates for you. Let's explore that a bit more.
 
@@ -264,7 +268,7 @@ Hello, Bob!
 ```
 </div>
 
-When you invoke an executable script this way, the Kernel scans for a shebang (`#!`) in the first line.
+When you invoke an executable script this way, the kernel scans for a shebang (`#!`) in the first line.
 If it finds a path to an interpreter (in this case, it will find `rad`, if set up correctly in your `PATH`),
 then it will invoke said interpreter on the script (equivalent to `rad hello` like we were doing before).
 
@@ -272,12 +276,127 @@ then it will invoke said interpreter on the script (equivalent to `rad hello` li
     Rad has a command `rad new <script>` which saves you repeating these steps.
     It creates a ready-to-edit executable file with a `rad` shebang on the top.
 
+## A Complete Example
+
+Now that you've seen the basics, let's skip ahead a little with our example, to get a better idea of what Rad can really do.
+Don't worry - we'll cover everything in detail in later sections. For now, just observe what Rad gives you for free.
+
+Update your `hello` script to this:
+
+```rad linenums="1" hl_lines="0"
+#!/usr/bin/env rad
+---
+Prints a polite greeting using an input name.
+---
+args:
+  name str                # The name of someone to greet.
+  times t int = 1         # How many times to greet them.
+  style s str = "normal"  # Greeting style.
+
+  times range (0, 10]
+  style enum ["normal", "excited", "formal"]
+
+greeting = switch style:
+  case "excited" -> "HEY"
+  case "formal" -> "Good day"
+  default -> "Hello"
+
+for i in range(times):
+  print("{greeting}, {name}!")
+```
+
+**What we added:**
+
+- Two more arguments with **default values** (`times` and `style`)
+- **Short flag aliases** (`-t` and `-s`) for convenience
+- **Argument constraints**
+    - `times` must be greater than 0, and max 10 (inclusive)
+    - `style` must be one of three values
+- A **switch expression** to map style to greeting text
+- A **for loop** to repeat the greeting
+
+All of this in ~20 lines, with zero validation boilerplate.
+
+### Try it out
+
+Normal usage with short flags:
+
+```sh
+> ./hello Alice -t 3 -s excited
+```
+
+<div class="result">
+```
+HEY, Alice!
+HEY, Alice!
+HEY, Alice!
+```
+</div>
+
+Check the automatically generated help:
+
+```sh
+> ./hello -h
+```
+
+<div class="result">
+```
+Prints a polite greeting using an input name.
+
+Usage:
+  hello <name> [times] [style] [OPTIONS]
+
+Script args:
+      --name str    The name of someone to greet.
+  -t, --times int   How many times to greet them. Range: (0, 10] (default 1)
+  -s, --style str   Greeting style. Valid values: [normal, excited, formal] (default normal)
+```
+</div>
+
+Note how the constraints appear in the help automatically.
+
+### What about invalid input?
+
+Try providing an invalid range:
+
+```sh
+> ./hello Bob -t 15
+```
+
+<div class="result">
+```
+'times' value 15 is > maximum 10
+```
+</div>
+
+Try an invalid enum value:
+
+```sh
+> ./hello Bob -s casual
+```
+
+<div class="result">
+```
+Invalid 'style' value: casual (valid values: normal, excited, formal)
+```
+</div>
+
+**You didn't write any of this validation code.**
+Rad enforced the constraints you declared and generated helpful error messages automatically.
+
 ## Summary
 
-- We learned how to print, and saw an example of **string interpolation**.
-- We were introduced to the **args block**
-- We saw how we can write self-documenting scripts that also help our users by leveraging **file headers** and **arg comments**.
-- We saw how we can leverage **shebangs** to make our scripts more convenient to run.
+In this section, we were introduced to several key features:
+
+- **String interpolation** with `{variable}` syntax for readable output
+- **args blocks** for declarative argument definitions
+- **File headers** and **arg comments** for self-documenting scripts
+- **Shebangs** to make scripts more convenient to run
+- **Argument constraints** (range, enum) with automatic validation - no manual validation needed
+- **Short flag aliases** for better user experience
+- **Automatic `--help` generation** from your code comments
+
+Features you'd normally skip in Bash, or need external dependencies for in other languages, come built-in with Rad's declarative syntax. 🤙
 
 !!! info "Note on Rad script content ordering"
 

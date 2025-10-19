@@ -388,7 +388,7 @@ print(true  and true)   // true
 
 print(false or  false)  // false
 print(true  or  false)  // true
-print(false or true)    // true
+print(false or  true)   // true
 print(true  or  true)   // true
 ```
 
@@ -419,8 +419,6 @@ You can concatenate strings with non-strings, as long as the string is the first
 
 This can be done in several ways, the easiest is probably via the [`str`](../reference/functions.md#str) function.
 
-[//]: # (todo that might change after str func gets added)
-
 ```rad
 a = 1
 text = ". Bullet point one"
@@ -432,6 +430,8 @@ print(str(a) + text)
 1. Bullet point one
 ```
 </div>
+
+Note the above example is just for demonstration; string interpolation would be a better approach.
 
 ### Compound Operators
 
@@ -514,7 +514,7 @@ if units == "metric":
 else if units == "imperial":
     print("That's almost 33 feet.")
 else:
-    print("I don't know what measurement system!")
+    print("I don't know that measurement system!")
 ```
 
 !!! info "Blocks use whitespace & indentation"
@@ -653,7 +653,7 @@ switch op:
     case "add":
         result = a + b
         print("added: {result}")
-    case "multiply":
+    case "times":
         result = a * b
         print("multiplied: {result}")
     default:
@@ -673,7 +673,7 @@ switch op:
     case "add":
         result = a + b
         print("added: {result}")
-    case "multiply":
+    case "times":
         result = a * b
         print("multiplied: {result}")
     default -> print("I don't know how to do that.")
@@ -684,9 +684,9 @@ Switch **expressions** can be used in assignments.
 
 ```rad linenums="1" hl_lines="0"
 args:
-    item string
+    object string
 
-sound = switch item:
+sound = switch object:
     case "car" -> "vroom"
     case "mouse" -> "squeek"
     default -> "moo"  // default to cow
@@ -695,17 +695,19 @@ print(sound)
 ```
 
 The above example cases are all single-line expressions (`case ... -> ...`).
-If you want to write a case as a block in a switch expression, you can use the `yield` keyword to return values (yes plural, switch cases can return multiple values).
+If you want to write a case as a block in a switch expression, you can use the `yield` keyword to return values.
+
+Note also that you can assign and return more than 1 value at a time. To demonstrate:
 
 ```rad linenums="1" hl_lines="4-11"
 args:
-    item string
+    object string
 
-sound, plural = switch item:
+sound, plural = switch object:
     case "car" -> "vroom", "cars"
     case "mouse" -> "squeek", "mice"
     default:
-        print("Don't know '{item}'; defaulting to cow.")
+        print("Don't know '{object}'; defaulting to cow.")
         yield "moo", "cows"
 
 print(`{plural} go "{sound}"`)
