@@ -1161,10 +1161,11 @@
 
   <h1>Args</h1>
 
-<p>This section covers syntax for defining arguments that your script can accept.</p>
+<p>This section covers syntax for declaring arguments that your script can accept.</p>
 <h2 id="arg-declarations">Arg Declarations<a class="headerlink" href="#arg-declarations" title="Permanent link">&para;</a></h2>
 <p>Rad takes a declarative approach to arguments.
-You simply declare what arguments your script accepts, and let Rad take care of the rest, including parsing user input.</p>
+You simply declare what arguments your script accepts, you can define some constraints you want for them,
+and let Rad take care of the rest, including parsing user input and validation.</p>
 <p>Arguments are declared as part of an <strong>args block</strong>.</p>
 <p>Here's an example script we'll call <code>printwords</code> that prints an input word some number of times:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>

@@ -478,6 +478,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#destructuring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Destructuring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operators" class="md-nav__link">
     <span class="md-ellipsis">
       Operators
@@ -509,6 +518,15 @@
   <a href="#logical" class="md-nav__link">
     <span class="md-ellipsis">
       Logical
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#membership" class="md-nav__link">
+    <span class="md-ellipsis">
+      Membership
     </span>
   </a>
   
@@ -556,6 +574,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
@@ -578,6 +605,39 @@
   <a href="#for-loops" class="md-nav__link">
     <span class="md-ellipsis">
       For Loops
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="For Loops">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-out-of-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Out of Loops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skipping-iterations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Skipping Iterations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      While Loops
     </span>
   </a>
   
@@ -1286,6 +1346,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#destructuring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Destructuring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operators" class="md-nav__link">
     <span class="md-ellipsis">
       Operators
@@ -1317,6 +1386,15 @@
   <a href="#logical" class="md-nav__link">
     <span class="md-ellipsis">
       Logical
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#membership" class="md-nav__link">
+    <span class="md-ellipsis">
+      Membership
     </span>
   </a>
   
@@ -1364,6 +1442,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#control-flow" class="md-nav__link">
     <span class="md-ellipsis">
       Control Flow
@@ -1386,6 +1473,39 @@
   <a href="#for-loops" class="md-nav__link">
     <span class="md-ellipsis">
       For Loops
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="For Loops">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-out-of-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Out of Loops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skipping-iterations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Skipping Iterations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      While Loops
     </span>
   </a>
   
@@ -1535,6 +1655,10 @@ print(&quot;Hi, {name}!&quot;)
 <div class="highlight"><pre><span></span><code>team_size = 20
 celsius = -5
 </code></pre></div>
+<p>For large numbers, you can use underscores to improve readability:</p>
+<div class="highlight"><pre><span></span><code>population = 1_234_567
+distance = 93_000_000
+</code></pre></div>
 <p>Note that if you divide two ints, you will get back a <a href="#float">float</a>.</p>
 <div class="highlight"><pre><span></span><code>liters = 10
 people = 4
@@ -1552,6 +1676,10 @@ print(&quot;This is a float:&quot;, liters / people)
 <p>If you want to define a whole number as a float, simply include a decimal place:</p>
 <div class="highlight"><pre><span></span><code>years = 20.0
 </code></pre></div>
+<p>Like ints, floats also support underscores for readability and scientific notation:</p>
+<div class="highlight"><pre><span></span><code>precise_value = 123.456_789  // 123.456789
+small_number = 5e-3          // 0.005
+</code></pre></div>
 <h3 id="bool">bool<a class="headerlink" href="#bool" title="Permanent link">&para;</a></h3>
 <p>Rad uses lowercase <code>true</code> / <code>false</code>:</p>
 <div class="highlight"><pre><span></span><code>is_running = true
@@ -1565,7 +1693,7 @@ is_tired = false
 <div class="highlight"><pre><span></span><code>mixed = [&quot;alice&quot;, true, 50, -2.4]
 </code></pre></div>
 <p>They can also be nested:</p>
-<div class="highlight"><pre><span></span><code>nested = [&quot;alice&quot;, [1, [&quot;very nested&quot;, &quot;ahhh&quot;]]]
+<div class="highlight"><pre><span></span><code>nested = [&quot;alice&quot;, [1, [&quot;very nested&quot;, &quot;bird&quot;]]]
 </code></pre></div>
 <p>Indexing and slicing works very similarly to Python. Using the above 3 variables for an example, you can index with both positive and negative indexes:</p>
 <div class="highlight"><pre><span></span><code>print(names[0])
@@ -1592,6 +1720,16 @@ print(numbers[:-1])
 </code></pre></div>
 </div>
 
+<div class="admonition tip">
+<p class="admonition-title">String Indexing and Slicing</p>
+<p>All the same indexing and slicing rules that apply to lists also work with strings:</p>
+<div class="highlight"><pre><span></span><code>text = &quot;hello&quot;
+print(text[0])      // h
+print(text[-1])     // o
+print(text[1:4])    // ell
+print(text[:3])     // hel
+</code></pre></div>
+</div>
 <h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
 <p>The other collection type is 'map'. These may also be referred to as 'hashmap' or 'dictionary' in other languages.</p>
 <div class="highlight"><pre><span></span><code>scores = { &quot;alice&quot;: 25, &quot;bob&quot;: 17, &quot;charlie&quot;: 36 }
@@ -1656,11 +1794,30 @@ print(mymap)
 </div>
 
 <h3 id="other-types">Other Types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
-<p>Rad has other types that we won't cover here. For example <code>null</code> and <a href="../functions/">function references</a>.  </p>
+<p>Rad has other types that we won't cover here. For example <code>null</code> and <a href="../functions/">function references</a>.</p>
+<h2 id="destructuring">Destructuring<a class="headerlink" href="#destructuring" title="Permanent link">&para;</a></h2>
+<p>You can unpack values from lists into separate variables. Let's start with the traditional way of accessing list elements:</p>
+<div class="highlight"><pre><span></span><code>coords = [10, 20]
+print(coords[0], coords[1])  // 10 20
+</code></pre></div>
+<p>Instead of using indices, you can <strong>destructure</strong> the list by unpacking its values into separate variables:</p>
+<div class="highlight"><pre><span></span><code>[x, y] = [10, 20]
+print(x, y)  // 10 20
+</code></pre></div>
+<p>As syntactic sugar, the square brackets are optional:</p>
+<div class="highlight"><pre><span></span><code>x, y = 10, 20
+print(x, y)  // 10 20
+</code></pre></div>
+<p>Keep in mind that this is still destructuring - Rad is creating a list <code>[10, 20]</code> behind the scenes and unpacking it into <code>x</code> and <code>y</code>.</p>
+<p>Destructuring is particularly useful when functions return multiple values:</p>
+<div class="highlight"><pre><span></span><code>x, y = get_coordinates()
+width, height = get_dimensions()
+</code></pre></div>
+<p>You can also destructure in for loops, which we'll see later in the <a href="#for-loops">Control Flow</a> section.</p>
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
 <p>Rad offers operators similar to many other languages. Below sections very quickly demonstrate.</p>
 <h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
-<p>Rad follows the standard order of operations for operators <code>() , + , - , * , / , %</code>:</p>
+<p>Rad follows the standard order of operations for operators <code>() , * , / , % , + , -</code>:</p>
 <ol>
 <li>Parentheses</li>
 <li>Multiplication, Division, Modulo</li>
@@ -1723,19 +1880,41 @@ print(true  or  true)   // true
 <div class="highlight"><pre><span></span><code>print(not true)   // false
 print(not false)  // true
 </code></pre></div>
+<h3 id="membership">Membership<a class="headerlink" href="#membership" title="Permanent link">&para;</a></h3>
+<p>You can check if an item exists in a collection using the <code>in</code> operator:</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+print(&quot;alice&quot; in names)     // true
+print(&quot;david&quot; in names)     // false
+</code></pre></div>
+<p>The <code>in</code> operator also works with strings to check for substrings:</p>
+<div class="highlight"><pre><span></span><code>text = &quot;hello world&quot;
+print(&quot;world&quot; in text)      // true
+print(&quot;goodbye&quot; in text)    // false
+</code></pre></div>
+<p>For maps, <code>in</code> checks if a key exists:</p>
+<div class="highlight"><pre><span></span><code>scores = { &quot;alice&quot;: 25, &quot;bob&quot;: 17 }
+print(&quot;alice&quot; in scores)    // true
+print(&quot;charlie&quot; in scores)  // false
+</code></pre></div>
+<p>You can use <code>not in</code> to check for the absence of an item:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;david&quot; not in names)  // true
+print(&quot;alice&quot; not in names)  // false
+</code></pre></div>
 <h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
-<p>You can concatenate strings with <code>+</code>. </p>
+<p>You can concatenate strings with <code>+</code>.</p>
 <div class="highlight"><pre><span></span><code>first = &quot;Alice&quot;
 last = &quot;Bobson&quot;
-print(first + last)
+print(first + &quot; &quot; + last)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Alice Bobson
 </code></pre></div>
 </div>
 
-<p>You can concatenate strings with non-strings, as long as the string is the first operand. This means you may need to convert the non-string to a string first.</p>
-<p>This can be done in several ways, the easiest is probably via the <a href="../../reference/functions/#str"><code>str</code></a> function.</p>
+<p>However, string interpolation is generally more readable:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;{first} {last}&quot;)
+</code></pre></div>
+<p>You can concatenate strings with non-strings by converting them to strings first using the <a href="../../reference/functions/#str"><code>str</code></a> function:</p>
 <div class="highlight"><pre><span></span><code>a = 1
 text = &quot;. Bullet point one&quot;
 print(str(a) + text)
@@ -1745,7 +1924,6 @@ print(str(a) + text)
 </code></pre></div>
 </div>
 
-<p>Note the above example is just for demonstration; string interpolation would be a better approach.</p>
 <h3 id="compound-operators">Compound Operators<a class="headerlink" href="#compound-operators" title="Permanent link">&para;</a></h3>
 <p>Rad also supports compound operators for modifying variables in-place.</p>
 <div class="highlight"><pre><span></span><code>a = 3
@@ -1793,6 +1971,24 @@ print(b)
 </code></pre></div>
 </div>
 
+<h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
+<p>Rad provides many built-in functions to help you write scripts. Functions can be invoked using a standard syntax:</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;Bob&quot;, &quot;Charlie&quot;, &quot;Alice&quot;]
+num_people = len(names)
+print(&quot;There are {num_people} people.&quot;)
+
+sorted_names = sort(names)
+print(sorted_names)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>There are 3 people.
+[ &quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot; ]
+</code></pre></div>
+</div>
+
+<p>In this example, we use <code>len()</code> to get the list length, <code>sort()</code> to sort it, and <code>print()</code> to display output.</p>
+<p>You can also define your own custom functions - we'll cover that (and more) in detail in the <a href="../functions/">Functions</a> section.
+For a complete list of all built-in functions, see the <a href="../../reference/functions/">Functions Reference</a>.</p>
 <h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <p>Rad employs very standard if statements.</p>
@@ -1902,6 +2098,58 @@ charlie 25
 <p>Note the use of <code>_</code> in the above for loop. It technically is the index, previously denoted by <code>i</code>, but by convention,
 we use <code>_</code> to indicate that a variable is unused.</p>
 </div>
+<h4 id="breaking-out-of-loops">Breaking Out of Loops<a class="headerlink" href="#breaking-out-of-loops" title="Permanent link">&para;</a></h4>
+<p>You can exit a loop early using the <code>break</code> statement:</p>
+<div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
+for n in numbers:
+    if n == 3:
+        break
+    print(n)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1
+2
+</code></pre></div>
+</div>
+
+<p>The loop stops completely when it reaches <code>3</code>, so numbers after that are never processed.</p>
+<h4 id="skipping-iterations">Skipping Iterations<a class="headerlink" href="#skipping-iterations" title="Permanent link">&para;</a></h4>
+<p>You can skip to the next iteration using the <code>continue</code> statement:</p>
+<div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
+for n in numbers:
+    if n == 3:
+        continue
+    print(n)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1
+2
+4
+5
+</code></pre></div>
+</div>
+
+<p>The number <code>3</code> is skipped, but the loop continues with the remaining numbers.</p>
+<h3 id="while-loops">While Loops<a class="headerlink" href="#while-loops" title="Permanent link">&para;</a></h3>
+<p>While loops repeat a block of code as long as a condition is true:</p>
+<div class="highlight"><pre><span></span><code>count = 0
+while count &lt; 3:
+    print(&quot;Count: {count}&quot;)
+    count++
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Count: 0
+Count: 1
+Count: 2
+</code></pre></div>
+</div>
+
+<p>You can create an infinite loop by omitting the condition:</p>
+<div class="highlight"><pre><span></span><code>while:
+    print(&quot;This runs forever!&quot;)
+    // Use break to exit when needed
+</code></pre></div>
+<p>The <code>break</code> and <code>continue</code> statements work in while loops just like they do in for loops.</p>
 <h3 id="switch-statements">Switch Statements<a class="headerlink" href="#switch-statements" title="Permanent link">&para;</a></h3>
 <p>Rad has switch statements and switch expressions.</p>
 <p>You can <code>switch</code> on a value and write cases to match against, including a <code>default</code>.</p>
@@ -1976,7 +2224,7 @@ Switch <strong>expressions</strong> can be used in assignments.</p>
 
 sound = switch object:
     case &quot;car&quot; -&gt; &quot;vroom&quot;
-    case &quot;mouse&quot; -&gt; &quot;squeek&quot;
+    case &quot;mouse&quot; -&gt; &quot;squeak&quot;
     default -&gt; &quot;moo&quot;  // default to cow
 
 print(sound)
@@ -1999,7 +2247,7 @@ If you want to write a case as a block in a switch expression, you can use the <
 
 <span class="hll">sound, plural = switch object:
 </span><span class="hll">    case &quot;car&quot; -&gt; &quot;vroom&quot;, &quot;cars&quot;
-</span><span class="hll">    case &quot;mouse&quot; -&gt; &quot;squeek&quot;, &quot;mice&quot;
+</span><span class="hll">    case &quot;mouse&quot; -&gt; &quot;squeak&quot;, &quot;mice&quot;
 </span><span class="hll">    default:
 </span><span class="hll">        print(&quot;Don&#39;t know &#39;{object}&#39;; defaulting to cow.&quot;)
 </span><span class="hll">        yield &quot;moo&quot;, &quot;cows&quot;
@@ -2081,11 +2329,16 @@ print(parse_float(&quot;bob&quot;))  // error
 <ul>
 <li>We rapidly covered many basic topics such as assignment, data types, operators, and control flow.</li>
 <li>Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.</li>
-<li>Rad has operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>.</li>
+<li>Strings and lists support indexing and slicing with the same syntax.</li>
+<li><strong>Destructuring</strong> lets you unpack list values into separate variables: <code>x, y = [10, 20]</code> or simply <code>x, y = 10, 20</code>.</li>
+<li>Rad has operators such as <code>+ , - , * , / , %</code>. For bool logic, it uses <code>or</code> and <code>and</code>. For membership, <code>in</code> and <code>not in</code>.</li>
+<li>Rad provides many built-in functions like <code>len()</code>, <code>sort()</code>, <code>upper()</code>, and more. You can also define custom functions.</li>
 <li>Rad uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
 <li>If you want to increment through a number range, use the <code>range</code> function to generate you a list of ints.</li>
+<li>Use <code>break</code> to exit loops early and <code>continue</code> to skip to the next iteration.</li>
 </ul>
 </li>
+<li>Rad also has <code>while</code> loops for repeating code while a condition is true.</li>
 <li>Rad offers truthy/falsy logic for more concise conditional expressions.</li>
 <li>Rad has switch statements and expressions. The latter uses <code>yield</code> as a keyword to return values from cases.</li>
 <li>Rad has functions for casting <code>str</code>, <code>int</code>, <code>float</code> and for parsing <code>parse_int</code>, <code>parse_float</code> values.</li>
