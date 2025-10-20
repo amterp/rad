@@ -113,6 +113,13 @@ team_size = 20
 celsius = -5
 ```
 
+For large numbers, you can use underscores to improve readability:
+
+```rad
+population = 1_234_567
+distance = 93_000_000
+```
+
 Note that if you divide two ints, you will get back a [float](#float).
 
 ```rad
@@ -141,6 +148,13 @@ If you want to define a whole number as a float, simply include a decimal place:
 years = 20.0
 ```
 
+Like ints, floats also support underscores for readability and scientific notation:
+
+```rad
+precise_value = 123.456_789  // 123.456789
+small_number = 5e-3          // 0.005
+```
+
 ### bool
 
 Rad uses lowercase `true` / `false`:
@@ -167,7 +181,7 @@ mixed = ["alice", true, 50, -2.4]
 They can also be nested:
 
 ```rad
-nested = ["alice", [1, ["very nested", "ahhh"]]]
+nested = ["alice", [1, ["very nested", "bird"]]]
 ```
 
 Indexing and slicing works very similarly to Python. Using the above 3 variables for an example, you can index with both positive and negative indexes:
@@ -205,6 +219,18 @@ print(numbers[:-1])
 
 [//]: # (todo cover modifying indices!)
 [//]: # (todo maybe this is assuming too much knowledge)
+
+!!! tip "String Indexing and Slicing"
+
+    All the same indexing and slicing rules that apply to lists also work with strings:
+
+    ```rad
+    text = "hello"
+    print(text[0])      // h
+    print(text[-1])     // o
+    print(text[1:4])    // ell
+    print(text[:3])     // hel
+    ```
 
 ### map
 
@@ -294,7 +320,41 @@ print(mymap)
 
 ### Other Types
 
-Rad has other types that we won't cover here. For example `null` and [function references](functions.md).  
+Rad has other types that we won't cover here. For example `null` and [function references](functions.md).
+
+## Destructuring
+
+You can unpack values from lists into separate variables. Let's start with the traditional way of accessing list elements:
+
+```rad
+coords = [10, 20]
+print(coords[0], coords[1])  // 10 20
+```
+
+Instead of using indices, you can **destructure** the list by unpacking its values into separate variables:
+
+```rad
+[x, y] = [10, 20]
+print(x, y)  // 10 20
+```
+
+As syntactic sugar, the square brackets are optional:
+
+```rad
+x, y = 10, 20
+print(x, y)  // 10 20
+```
+
+Keep in mind that this is still destructuring - Rad is creating a list `[10, 20]` behind the scenes and unpacking it into `x` and `y`.
+
+Destructuring is particularly useful when functions return multiple values:
+
+```rad
+x, y = get_coordinates()
+width, height = get_dimensions()
+```
+
+You can also destructure in for loops, which we'll see later in the [Control Flow](#for-loops) section.
 
 ## Operators
 
@@ -302,7 +362,7 @@ Rad offers operators similar to many other languages. Below sections very quickl
 
 ### Arithmetic
 
-Rad follows the standard order of operations for operators `() , + , - , * , / , %`:
+Rad follows the standard order of operations for operators `() , * , / , % , + , -`:
 
 1. Parentheses
 2. Multiplication, Division, Modulo
@@ -399,14 +459,47 @@ print(not true)   // false
 print(not false)  // true
 ```
 
+### Membership
+
+You can check if an item exists in a collection using the `in` operator:
+
+```rad
+names = ["alice", "bob", "charlie"]
+print("alice" in names)     // true
+print("david" in names)     // false
+```
+
+The `in` operator also works with strings to check for substrings:
+
+```rad
+text = "hello world"
+print("world" in text)      // true
+print("goodbye" in text)    // false
+```
+
+For maps, `in` checks if a key exists:
+
+```rad
+scores = { "alice": 25, "bob": 17 }
+print("alice" in scores)    // true
+print("charlie" in scores)  // false
+```
+
+You can use `not in` to check for the absence of an item:
+
+```rad
+print("david" not in names)  // true
+print("alice" not in names)  // false
+```
+
 ### Concatenation
 
-You can concatenate strings with `+`. 
+You can concatenate strings with `+`.
 
 ```rad
 first = "Alice"
 last = "Bobson"
-print(first + last)
+print(first + " " + last)
 ```
 
 <div class="result">
@@ -415,9 +508,13 @@ Alice Bobson
 ```
 </div>
 
-You can concatenate strings with non-strings, as long as the string is the first operand. This means you may need to convert the non-string to a string first.
+However, string interpolation is generally more readable:
 
-This can be done in several ways, the easiest is probably via the [`str`](../reference/functions.md#str) function.
+```rad
+print("{first} {last}")
+```
+
+You can concatenate strings with non-strings by converting them to strings first using the [`str`](../reference/functions.md#str) function:
 
 ```rad
 a = 1
@@ -430,8 +527,6 @@ print(str(a) + text)
 1. Bullet point one
 ```
 </div>
-
-Note the above example is just for demonstration; string interpolation would be a better approach.
 
 ### Compound Operators
 
@@ -499,6 +594,31 @@ print(b)
 larger than 0
 ```
 </div>
+
+## Functions
+
+Rad provides many built-in functions to help you write scripts. Functions can be invoked using a standard syntax:
+
+```rad
+names = ["Bob", "Charlie", "Alice"]
+num_people = len(names)
+print("There are {num_people} people.")
+
+sorted_names = sort(names)
+print(sorted_names)
+```
+
+<div class="result">
+```
+There are 3 people.
+[ "Alice", "Bob", "Charlie" ]
+```
+</div>
+
+In this example, we use `len()` to get the list length, `sort()` to sort it, and `print()` to display output.
+
+You can also define your own custom functions - we'll cover that (and more) in detail in the [Functions](./functions.md) section.
+For a complete list of all built-in functions, see the [Functions Reference](../reference/functions.md).
 
 ## Control Flow
 
@@ -637,6 +757,79 @@ charlie 25
     Note the use of `_` in the above for loop. It technically is the index, previously denoted by `i`, but by convention,
     we use `_` to indicate that a variable is unused.
 
+#### Breaking Out of Loops
+
+You can exit a loop early using the `break` statement:
+
+```rad
+numbers = [1, 2, 3, 4, 5]
+for n in numbers:
+    if n == 3:
+        break
+    print(n)
+```
+
+<div class="result">
+```
+1
+2
+```
+</div>
+
+The loop stops completely when it reaches `3`, so numbers after that are never processed.
+
+#### Skipping Iterations
+
+You can skip to the next iteration using the `continue` statement:
+
+```rad
+numbers = [1, 2, 3, 4, 5]
+for n in numbers:
+    if n == 3:
+        continue
+    print(n)
+```
+
+<div class="result">
+```
+1
+2
+4
+5
+```
+</div>
+
+The number `3` is skipped, but the loop continues with the remaining numbers.
+
+### While Loops
+
+While loops repeat a block of code as long as a condition is true:
+
+```rad
+count = 0
+while count < 3:
+    print("Count: {count}")
+    count++
+```
+
+<div class="result">
+```
+Count: 0
+Count: 1
+Count: 2
+```
+</div>
+
+You can create an infinite loop by omitting the condition:
+
+```rad
+while:
+    print("This runs forever!")
+    // Use break to exit when needed
+```
+
+The `break` and `continue` statements work in while loops just like they do in for loops.
+
 ### Switch Statements
 
 Rad has switch statements and switch expressions.
@@ -688,7 +881,7 @@ args:
 
 sound = switch object:
     case "car" -> "vroom"
-    case "mouse" -> "squeek"
+    case "mouse" -> "squeak"
     default -> "moo"  // default to cow
 
 print(sound)
@@ -705,7 +898,7 @@ args:
 
 sound, plural = switch object:
     case "car" -> "vroom", "cars"
-    case "mouse" -> "squeek", "mice"
+    case "mouse" -> "squeak", "mice"
     default:
         print("Don't know '{object}'; defaulting to cow.")
         yield "moo", "cows"
@@ -776,9 +969,14 @@ print(parse_float("bob"))  // error
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
 - Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.
-- Rad has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`.
+- Strings and lists support indexing and slicing with the same syntax.
+- **Destructuring** lets you unpack list values into separate variables: `x, y = [10, 20]` or simply `x, y = 10, 20`.
+- Rad has operators such as `+ , - , * , / , %`. For bool logic, it uses `or` and `and`. For membership, `in` and `not in`.
+- Rad provides many built-in functions like `len()`, `sort()`, `upper()`, and more. You can also define custom functions.
 - Rad uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
+    - Use `break` to exit loops early and `continue` to skip to the next iteration.
+- Rad also has `while` loops for repeating code while a condition is true.
 - Rad offers truthy/falsy logic for more concise conditional expressions.
 - Rad has switch statements and expressions. The latter uses `yield` as a keyword to return values from cases.
 - Rad has functions for casting `str`, `int`, `float` and for parsing `parse_int`, `parse_float` values.

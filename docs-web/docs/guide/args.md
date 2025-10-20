@@ -2,12 +2,13 @@
 title: Args
 ---
 
-This section covers syntax for defining arguments that your script can accept.
+This section covers syntax for declaring arguments that your script can accept.
 
 ## Arg Declarations
 
 Rad takes a declarative approach to arguments.
-You simply declare what arguments your script accepts, and let Rad take care of the rest, including parsing user input.
+You simply declare what arguments your script accepts, you can define some constraints you want for them,
+and let Rad take care of the rest, including parsing user input and validation.
 
 Arguments are declared as part of an **args block**.
 

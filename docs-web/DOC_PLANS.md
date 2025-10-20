@@ -13,6 +13,55 @@
 
 ---
 
+## 2025-10-18 Doc Update Push
+
+- [x] getting started
+- [ ] basics
+- [ ] args
+- [ ] functions
+  - [ ] NEW custom functions
+  - [ ] NEW lambdas
+- [ ] strings-advanced
+- [ ] rad blocks
+  - [ ] NEW lambdas for `map` 
+- [ ] NEW function typing
+- [ ] NEW error handling (`catch`, `??`)
+  - [ ] error propagation model
+- [ ] resources
+- [ ] shell commands !!
+  - [ ] shell error handling
+- [ ] global flags
+- [ ] defer/errdefer
+- [ ] NEW misc
+  - [ ] NEW macros
+  - [ ] NEW del
+  - [ ] NEW stdin
+
+- [ ] NEW stashes (unsure if in guide or reference. Advanced Guide?)
+- [ ] examples
+   - [ ] example: hm
+   - [ ] example: dot
+
+## 2025-05-29 Doc Update Push (abandoned)
+
+- [ ] update existing
+    - [x] getting started
+    - [x] basics
+    - [x] args
+    - [ ] rad blocks
+    - [ ] functions
+    - [ ] strings
+    - [ ] resources
+    - [ ] shell commands
+    - [ ] global flags
+    - [ ] defer/errdefer
+- [ ] new
+    - [ ] example: hm
+    - [ ] example: dot
+    - [ ] guide: stashes
+    - [ ] guide: misc - macros
+
+
 ## Doc Todo
 
 ? change all external links to open in new tabs, don't go off rad docs site
@@ -65,24 +114,3 @@
 - if pre-stmt
 - arg range constraint
 - list comprehensions exprs dont need to return 1+ values
-
----
-
-## 2025-05-29 Doc Update Push
-
-- [ ] update existing
-  - [x] getting started
-  - [x] basics
-  - [x] args
-  - [ ] rad blocks
-  - [ ] functions
-  - [ ] strings
-  - [ ] resources
-  - [ ] shell commands
-  - [ ] global flags
-  - [ ] defer/errdefer
-- [ ] new
-  - [ ] example: hm
-  - [ ] example: dot
-  - [ ] guide: stashes
-  - [ ] guide: misc - macros
