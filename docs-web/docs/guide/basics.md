@@ -906,6 +906,111 @@ sound, plural = switch object:
 print(`{plural} go "{sound}"`)
 ```
 
+## List Comprehensions
+
+List comprehensions provide a concise way to create lists by transforming or filtering existing collections. They use familiar for loop syntax but produce a new list as a result.
+
+### Basic Syntax
+
+```rad
+numbers = [1, 2, 3, 4, 5]
+squares = [x * x for x in numbers]
+print(squares)
+```
+
+<div class="result">
+```
+[ 1, 4, 9, 16, 25 ]
+```
+</div>
+
+The general pattern is `[expression for variable in collection]`, which creates a new list by evaluating the expression for each item in the collection.
+
+### Using Functions
+
+You can call functions in list comprehensions:
+
+```rad
+words = ["hello", "world"]
+uppercase = [upper(word) for word in words]
+print(uppercase)
+```
+
+<div class="result">
+```
+[ "HELLO", "WORLD" ]
+```
+</div>
+
+### Iteration Patterns
+
+List comprehensions support the same iteration patterns as for loops:
+
+```rad
+// With index
+items = ["a", "b", "c"]
+indexed = ["{i}: {item}" for i, item in items]
+print(indexed)
+```
+
+<div class="result">
+```
+[ "0: a", "1: b", "2: c" ]
+```
+</div>
+
+### Filtering with `if`
+
+You can add an `if` clause to filter items while creating a list:
+
+```rad
+numbers = [1, 5, 10, 15, 20, 8]
+small_numbers = [x for x in numbers if x < 10]
+print(small_numbers)
+```
+
+<div class="result">
+```
+[ 1, 5, 8 ]
+```
+</div>
+
+The filter condition can use any expression, including function calls:
+
+```rad
+words = ["a", "ab", "abc", "abcd"]
+short_words = [w for w in words if len(w) < 3]
+print(short_words)
+```
+
+<div class="result">
+```
+[ "a", "ab" ]
+```
+</div>
+
+You can combine filtering with transformation:
+
+```rad
+numbers = [1, 2, 3, 4, 5, 6]
+even_squares = [x * x for x in numbers if x % 2 == 0]
+print(even_squares)
+```
+
+<div class="result">
+```
+[ 4, 16, 36 ]
+```
+</div>
+
+!!! note "Side Effects in Comprehensions"
+
+    If the expression in a comprehension produces side effects (like calling `print()`), the comprehension will still execute those side effects but returns an empty list:
+
+    ```rad
+    [print(x) for x in [1, 2, 3]]  // Prints 1, 2, 3 but returns []
+    ```
+
 ## Truthy / Falsy
 
 Rad supports truthy/falsy logic.
@@ -976,6 +1081,8 @@ print(parse_float("bob"))  // error
 - Rad uses a "for-each" variety `for` loop. You always loop through items in a collection (or string).
     - If you want to increment through a number range, use the `range` function to generate you a list of ints.
     - Use `break` to exit loops early and `continue` to skip to the next iteration.
+- **List comprehensions** provide a concise way to create lists: `[x * 2 for x in numbers]`
+    - Support filtering with `if`: `[x for x in numbers if x < 10]`
 - Rad also has `while` loops for repeating code while a condition is true.
 - Rad offers truthy/falsy logic for more concise conditional expressions.
 - Rad has switch statements and expressions. The latter uses `yield` as a keyword to return values from cases.

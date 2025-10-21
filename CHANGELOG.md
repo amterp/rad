@@ -10,6 +10,8 @@ Only for major & minor version releases. Contains only notable items.
 - Added global config file (default `~/.rad/config.toml`)
 - Added opt-in invocation logging feature (leveraging global config file)
 - Added `rad check --from-logs` flag for checking all Rad files found in invocation logs
+- Revamped shell syntax
+- Revamped error handling syntax
 
 ## 0.6 (2025-09-27)
 

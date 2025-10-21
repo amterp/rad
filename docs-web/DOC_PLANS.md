@@ -16,7 +16,7 @@
 ## 2025-10-18 Doc Update Push
 
 - [x] getting started
-- [ ] basics
+- [x] basics
 - [ ] args
 - [ ] functions
   - [ ] NEW custom functions
