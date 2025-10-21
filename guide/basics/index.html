@@ -658,6 +658,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#list-comprehensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      List Comprehensions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="List Comprehensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Syntax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iteration-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iteration Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-with-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering with if
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#truthy-falsy" class="md-nav__link">
     <span class="md-ellipsis">
       Truthy / Falsy
@@ -1526,6 +1577,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#list-comprehensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      List Comprehensions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="List Comprehensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Syntax
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iteration-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iteration Patterns
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-with-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering with if
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#truthy-falsy" class="md-nav__link">
     <span class="md-ellipsis">
       Truthy / Falsy
@@ -2254,6 +2356,79 @@ If you want to write a case as a block in a switch expression, you can use the <
 </span><span class="hll">
 </span><span class="hll">print(`{plural} go &quot;{sound}&quot;`)
 </span></code></pre></div></td></tr></table></div>
+<h2 id="list-comprehensions">List Comprehensions<a class="headerlink" href="#list-comprehensions" title="Permanent link">&para;</a></h2>
+<p>List comprehensions provide a concise way to create lists by transforming or filtering existing collections. They use familiar for loop syntax but produce a new list as a result.</p>
+<h3 id="basic-syntax">Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
+squares = [x * x for x in numbers]
+print(squares)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ 1, 4, 9, 16, 25 ]
+</code></pre></div>
+</div>
+
+<p>The general pattern is <code>[expression for variable in collection]</code>, which creates a new list by evaluating the expression for each item in the collection.</p>
+<h3 id="using-functions">Using Functions<a class="headerlink" href="#using-functions" title="Permanent link">&para;</a></h3>
+<p>You can call functions in list comprehensions:</p>
+<div class="highlight"><pre><span></span><code>words = [&quot;hello&quot;, &quot;world&quot;]
+uppercase = [upper(word) for word in words]
+print(uppercase)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ &quot;HELLO&quot;, &quot;WORLD&quot; ]
+</code></pre></div>
+</div>
+
+<h3 id="iteration-patterns">Iteration Patterns<a class="headerlink" href="#iteration-patterns" title="Permanent link">&para;</a></h3>
+<p>List comprehensions support the same iteration patterns as for loops:</p>
+<div class="highlight"><pre><span></span><code>// With index
+items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+indexed = [&quot;{i}: {item}&quot; for i, item in items]
+print(indexed)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ &quot;0: a&quot;, &quot;1: b&quot;, &quot;2: c&quot; ]
+</code></pre></div>
+</div>
+
+<h3 id="filtering-with-if">Filtering with <code>if</code><a class="headerlink" href="#filtering-with-if" title="Permanent link">&para;</a></h3>
+<p>You can add an <code>if</code> clause to filter items while creating a list:</p>
+<div class="highlight"><pre><span></span><code>numbers = [1, 5, 10, 15, 20, 8]
+small_numbers = [x for x in numbers if x &lt; 10]
+print(small_numbers)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ 1, 5, 8 ]
+</code></pre></div>
+</div>
+
+<p>The filter condition can use any expression, including function calls:</p>
+<div class="highlight"><pre><span></span><code>words = [&quot;a&quot;, &quot;ab&quot;, &quot;abc&quot;, &quot;abcd&quot;]
+short_words = [w for w in words if len(w) &lt; 3]
+print(short_words)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ &quot;a&quot;, &quot;ab&quot; ]
+</code></pre></div>
+</div>
+
+<p>You can combine filtering with transformation:</p>
+<div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5, 6]
+even_squares = [x * x for x in numbers if x % 2 == 0]
+print(even_squares)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ 4, 16, 36 ]
+</code></pre></div>
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">Side Effects in Comprehensions</p>
+<p>If the expression in a comprehension produces side effects (like calling <code>print()</code>), the comprehension will still execute those side effects but returns an empty list:</p>
+<div class="highlight"><pre><span></span><code>[print(x) for x in [1, 2, 3]]  // Prints 1, 2, 3 but returns []
+</code></pre></div>
+</div>
 <h2 id="truthy-falsy">Truthy / Falsy<a class="headerlink" href="#truthy-falsy" title="Permanent link">&para;</a></h2>
 <p>Rad supports truthy/falsy logic.</p>
 <p>This means that, instead of writing the following (as an example):</p>
@@ -2336,6 +2511,10 @@ print(parse_float(&quot;bob&quot;))  // error
 <li>Rad uses a "for-each" variety <code>for</code> loop. You always loop through items in a collection (or string).<ul>
 <li>If you want to increment through a number range, use the <code>range</code> function to generate you a list of ints.</li>
 <li>Use <code>break</code> to exit loops early and <code>continue</code> to skip to the next iteration.</li>
+</ul>
+</li>
+<li><strong>List comprehensions</strong> provide a concise way to create lists: <code>[x * 2 for x in numbers]</code><ul>
+<li>Support filtering with <code>if</code>: <code>[x for x in numbers if x &lt; 10]</code></li>
 </ul>
 </li>
 <li>Rad also has <code>while</code> loops for repeating code while a condition is true.</li>

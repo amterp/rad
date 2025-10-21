@@ -421,6 +421,84 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#argument-types-and-user-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argument Types and User Input
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Types and User Input">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bool-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bool Flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      List Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variadic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-flag-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Short Flag Clustering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int-flag-counting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Int Flag Counting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#constraints" class="md-nav__link">
     <span class="md-ellipsis">
       Constraints
@@ -434,6 +512,15 @@
   <a href="#enums" class="md-nav__link">
     <span class="md-ellipsis">
       Enums
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Range
     </span>
   </a>
   
@@ -1058,6 +1145,84 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#argument-types-and-user-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argument Types and User Input
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Types and User Input">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bool-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bool Flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      List Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variadic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#short-flag-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Short Flag Clustering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int-flag-counting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Int Flag Counting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#constraints" class="md-nav__link">
     <span class="md-ellipsis">
       Constraints
@@ -1071,6 +1236,15 @@
   <a href="#enums" class="md-nav__link">
     <span class="md-ellipsis">
       Enums
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Range
     </span>
   </a>
   
@@ -1212,14 +1386,20 @@ Script args:
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Given some words, joins them together, and optionally capitalizes them.
+---
 args:
     words str[]                            # Words to join together.
     joiner j str = &quot;-&quot;                     # Joiner for the words.
     should_capitalize &quot;capitalize&quot; c bool  # If true, capitalize the words.
 
 if should_capitalize:
-    words = words[upper(w) for w in words]
+    words = [upper(w) for w in words]
 
 print(join(words, joiner))
 </code></pre></div></td></tr></table></div>
@@ -1227,13 +1407,15 @@ print(join(words, joiner))
 <div class="highlight"><pre><span></span><code>./wordjoin<span class="w"> </span>-h
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Usage:
-  wordjoin &lt;words&gt; [joiner] [-c, --capitalize]
+<div class="highlight"><pre><span></span><code>Given some words, joins them together, and optionally capitalizes them.
+
+Usage:
+  wordjoin &lt;words&gt; [joiner] [OPTIONS]
 
 Script args:
-      --words str,str       Words to join together.
-      -j, --joiner str      Joiner for the words. (default -)
-      -c, --capitalize      If true, capitalize the words.
+      --words strs   Words to join together.
+  -j, --joiner str   Joiner for the words. (default -)
+  -c, --capitalize   If true, capitalize the words.
 </code></pre></div>
 </div>
 
@@ -1263,12 +1445,146 @@ Script args:
 </ol>
 <p>Bool args are always false by default.</p>
 <hr />
-<p>To bring it all together, this is the anatomy of an arg declaration (<code>&lt;angle brackets&gt;</code> represent it's required, <code>[square brackets]</code> indicate it's optional):</p>
+<p>To bring it all together, this is the anatomy of an arg declaration (<code>&lt;angle brackets&gt;</code> mean it's required, <code>[square brackets]</code> indicate it's optional):</p>
 <p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
 <p>Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.</p>
+<h2 id="argument-types-and-user-input">Argument Types and User Input<a class="headerlink" href="#argument-types-and-user-input" title="Permanent link">&para;</a></h2>
+<p>This section explains the different argument types you can declare and how users pass values for each type.</p>
+<h3 id="basic-types">Basic Types<a class="headerlink" href="#basic-types" title="Permanent link">&para;</a></h3>
+<p>For basic types (<code>int</code>, <code>float</code>, <code>str</code>), users can pass values either positionally or via flags:</p>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+args:
+    name str
+    age int
+    height float
+
+print(&quot;{name} is {age} years old and {height}m tall&quot;)
+</code></pre></div>
+<p>Both invocations work identically:</p>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>Alice<span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">1</span>.65
+./script<span class="w"> </span>--name<span class="w"> </span>Alice<span class="w"> </span>--age<span class="w"> </span><span class="m">25</span><span class="w"> </span>--height<span class="w"> </span><span class="m">1</span>.65
+./script<span class="w"> </span>Alice<span class="w"> </span><span class="m">25</span><span class="w"> </span>--height<span class="w"> </span><span class="m">1</span>.65
+</code></pre></div>
+<p>Type validation happens automatically. If a user provides <code>--age abc</code> when age is an <code>int</code>, Rad will show an error.</p>
+<h3 id="bool-flags">Bool Flags<a class="headerlink" href="#bool-flags" title="Permanent link">&para;</a></h3>
+<p>Bool arguments are <strong>never positional</strong> - they must be passed via flags. You can set them either by presence or with an explicit value:</p>
+<div class="highlight"><pre><span></span><code>args:
+    verbose v bool
+    debug d bool
+
+print(&quot;verbose: {verbose}, debug: {debug}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--verbose<span class="w">           </span><span class="c1"># verbose=true, debug=false</span>
+./script<span class="w"> </span>-v<span class="w">                  </span><span class="c1"># Same as above (short flag)</span>
+./script<span class="w"> </span>-v<span class="w"> </span>-d<span class="w">               </span><span class="c1"># Both true</span>
+./script<span class="w"> </span>--verbose<span class="o">=</span><span class="nb">true</span><span class="w">      </span><span class="c1"># Explicit value</span>
+./script<span class="w"> </span>--verbose<span class="o">=</span><span class="nb">false</span><span class="w">     </span><span class="c1"># Explicitly set to false</span>
+</code></pre></div>
+<p>Bool args always default to <code>false</code> unless you give them a different default:</p>
+<div class="highlight"><pre><span></span><code>args:
+    verbose bool = true  # Defaults to true
+</code></pre></div>
+<h3 id="list-types">List Types<a class="headerlink" href="#list-types" title="Permanent link">&para;</a></h3>
+<p>For list arguments (<code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code>), users pass values by <strong>repeating the flag</strong>:</p>
+<div class="highlight"><pre><span></span><code>args:
+    files f str[]
+    counts int[]
+
+print(&quot;files: {files}&quot;)
+print(&quot;counts: {counts}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-f<span class="w"> </span>hello.txt<span class="w"> </span>-f<span class="w"> </span>world.txt<span class="w"> </span>--counts<span class="w"> </span><span class="m">1</span><span class="w"> </span>--counts<span class="w"> </span><span class="m">2</span><span class="w"> </span>--counts<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>files: [ &quot;hello.txt&quot;, &quot;world.txt&quot; ]
+counts: [ 1, 2, 3 ]
+</code></pre></div>
+</div>
+
+<p>Both long and short flags can be used interchangeably and repeated as needed.</p>
+<h3 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h3>
+<p>Variadic arguments use a <code>*</code> prefix and collect any number of positional values into a list:</p>
+<div class="highlight"><pre><span></span><code>args:
+    command str
+    *files str
+    verbose v bool
+
+print(&quot;command: {command}&quot;)
+print(&quot;files: {files}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>build<span class="w"> </span>file1.txt<span class="w"> </span>file2.txt<span class="w"> </span>file3.txt<span class="w"> </span>--verbose
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>command: build
+files: [ &quot;file1.txt&quot;, &quot;file2.txt&quot;, &quot;file3.txt&quot; ]
+</code></pre></div>
+</div>
+
+<p>Variadic args can have defaults and work with any type (<code>*numbers int</code>, <code>*values float</code>, etc.):</p>
+<div class="highlight"><pre><span></span><code>args:
+    *items str = [&quot;default.txt&quot;]
+</code></pre></div>
+<p>You can have multiple variadic sections separated by flags - the flags act as delimiters:</p>
+<div class="highlight"><pre><span></span><code>args:
+    *section1 str
+    *section2 int
+    flag f bool
+
+print(&quot;section1: {section1}&quot;)
+print(&quot;section2: {section2}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a<span class="w"> </span>b<span class="w"> </span>c<span class="w"> </span>--flag<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>section1: [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+section2: [ 1, 2, 3 ]
+</code></pre></div>
+</div>
+
+<h3 id="optional-arguments">Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permanent link">&para;</a></h3>
+<p>Mark arguments as optional with <code>?</code> suffix. When not provided, their value is <code>null</code>:</p>
+<div class="highlight"><pre><span></span><code>args:
+    name str
+    role str?
+    year int?
+
+if role == null:
+    print(&quot;{name} has no role assigned&quot;)
+else:
+    print(&quot;{name} is a {role}&quot;)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>Alice
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Alice has no role assigned
+</code></pre></div>
+</div>
+
+<p>You can check for null values with <code>== null</code> or use truthy/falsy logic: <code>if role:</code> will be false when role is null.</p>
+<h3 id="short-flag-clustering">Short Flag Clustering<a class="headerlink" href="#short-flag-clustering" title="Permanent link">&para;</a></h3>
+<p>When you define short flags (single letters), users can cluster multiple bool flags together:</p>
+<div class="highlight"><pre><span></span><code>args:
+    verbose v bool
+    debug d bool
+    quiet q bool
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-vdq<span class="w">    </span><span class="c1"># Same as: -v -d -q</span>
+</code></pre></div>
+<p>All three flags are set to true with this single clustered argument.</p>
+<h3 id="int-flag-counting">Int Flag Counting<a class="headerlink" href="#int-flag-counting" title="Permanent link">&para;</a></h3>
+<p>For <code>int</code> arguments with short flags, repeating the flag increments the count:</p>
+<div class="highlight"><pre><span></span><code>args:
+    verbosity v int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-vvv<span class="w">           </span><span class="c1"># verbosity = 3</span>
+./script<span class="w"> </span>-vvvvv<span class="w">         </span><span class="c1"># verbosity = 5</span>
+</code></pre></div>
+<p>This is useful for verbosity levels. If an explicit value is provided, it overrides the counting:</p>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-vvv<span class="o">=</span><span class="m">10</span><span class="w">        </span><span class="c1"># verbosity = 10 (not 3)</span>
+</code></pre></div>
 <h2 id="constraints">Constraints<a class="headerlink" href="#constraints" title="Permanent link">&para;</a></h2>
 <p>In addition to declaring the arguments themselves, Rad also allows you to declare constraints on those arguments, such as what kinds of values are valid.</p>
-<p>By doing this in the args block, Rad can use this information to validate input for you, and automatically include in the information in your script's usage string.</p>
+<p>By doing this in the args block, Rad can use this information to validate input for you, and automatically include the information in your script's usage string.</p>
 <p>If a user gives an input which doesn't meet one of the listed constraints, Rad will print:</p>
 <ol>
 <li>
@@ -1287,7 +1603,7 @@ Script args:
 <span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 args:
-    color string
+    color str
     color enum [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
 print(&quot;You like {color}!&quot;)
 </code></pre></div></td></tr></table></div>
@@ -1299,7 +1615,7 @@ print(&quot;You like {color}!&quot;)
   colors &lt;color&gt;
 
 Script args:
-      --color string    Valid values: [red, green, blue].
+      --color str    Valid values: [red, green, blue].
 </code></pre></div>
 </div>
 
@@ -1312,7 +1628,7 @@ Usage:
   colors &lt;color&gt;
 
 Script args:
-      --color string    Valid values: [red, green, blue].
+      --color str    Valid values: [red, green, blue].
 </code></pre></div>
 </div>
 
@@ -1324,10 +1640,82 @@ Script args:
 </code></pre></div>
 </div>
 
+<h3 id="range">Range<a class="headerlink" href="#range" title="Permanent link">&para;</a></h3>
+<p>For numeric arguments (<code>int</code> or <code>float</code>), you can enforce minimum and maximum values using a <strong>range constraint</strong>.</p>
+<p>Range constraints use <code>[</code> for inclusive bounds and <code>(</code> for exclusive bounds:</p>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+args:
+    age int
+    temperature float
+
+    age range [0, 120]              // 0 to 120, both inclusive
+    temperature range (-50.0, 50.0) // Between -50 and 50, both exclusive
+</code></pre></div>
+<p>You can also specify only a floor or only a ceiling:</p>
+<div class="highlight"><pre><span></span><code>args:
+    count int
+    score float
+
+    count range [1,]      // Minimum of 1, no maximum
+    score range (,100.0]  // No minimum, maximum of 100 (inclusive)
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Floor/Ceiling Syntax</p>
+<p>When specifying only a floor or ceiling, both <code>[0,]</code> and <code>[0,)</code> are equivalent (both mean "minimum of 0, no maximum"). The closing delimiter doesn't affect the meaning when the value is omitted.</p>
+</div>
+<p>Let's look at a complete example with various range types:</p>
+<div class="highlight"><span class="filename">File: validator</span><pre><span></span><code>#!/usr/bin/env rad
+args:
+    age int              # Person&#39;s age
+    score float          # Test score
+    count int            # Item count
+
+    age range [0, 120]
+    score range (0, 100]
+    count range [1,]
+</code></pre></div>
+<p>The help text automatically shows the constraints:</p>
+<div class="highlight"><pre><span></span><code>./validator<span class="w"> </span>-h
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Usage:
+  validator &lt;age&gt; &lt;score&gt; &lt;count&gt; [OPTIONS]
+
+Script args:
+      --age int      Person&#39;s age. Range: [0, 120]
+      --score float  Test score. Range: (0, 100]
+      --count int    Item count. Range: [1, )
+</code></pre></div>
+</div>
+
+<p>If a user provides an invalid value, they get a clear error:</p>
+<div class="highlight"><pre><span></span><code>./validator<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="m">50</span>.0<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>&#39;age&#39; value 150 is &gt; maximum 120
+
+Usage:
+  validator &lt;age&gt; &lt;score&gt; &lt;count&gt; [OPTIONS]
+
+Script args:
+      --age int      Person&#39;s age. Range: [0, 120]
+      --score float  Test score. Range: (0, 100]
+      --count int    Item count. Range: [1, )
+</code></pre></div>
+</div>
+
+<p>When using exclusive bounds, values exactly at the boundary are rejected:</p>
+<div class="highlight"><pre><span></span><code>./validator<span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">5</span><span class="w">   </span><span class="c1"># score of 0 is invalid (exclusive minimum)</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>&#39;score&#39; value 0 is &lt;= minimum (exclusive) 0
+</code></pre></div>
+</div>
+
 <h3 id="regex">Regex<a class="headerlink" href="#regex" title="Permanent link">&para;</a></h3>
 <p>If you'd like input strings to match a certain pattern, you can do that via a <strong>regex constraint</strong>.</p>
 <div class="highlight"><pre><span></span><code>args:
-    name string
+    name str
     name regex &quot;[A-Z][a-z]*&quot;
 print(&quot;Hi, {name}&quot;)
 </code></pre></div>
@@ -1345,12 +1733,12 @@ No other characters will be accepted, so <code>Alice</code> will be a valid valu
 <p>Use <code>excludes</code> to prevent arguments from being specified together. For example, consider a script that accepts either a file (<code>--file</code>) or a URL (<code>--url</code>), but not both:</p>
 <div class="highlight"><span class="filename">File: fetcher</span><pre><span></span><code>#!/usr/bin/env rad
 args:
-  file string
-  url string
+  file str
+  url str
 
   file mutually excludes url
 
-if is_defined(&quot;file&quot;):
+if file:
     print(&quot;Reading from file:&quot;, file)
 else:
     print(&quot;Fetching from URL:&quot;, url)
@@ -1366,29 +1754,30 @@ Fetching from URL: https://example.com/data.json
 <div class="highlight"><pre><span></span><code>&gt; ./fetcher --file data.json --url https://example.com/data.json
 Invalid arguments: &#39;file&#39; excludes &#39;url&#39;, but &#39;url&#39; was given
 </code></pre></div>
+<p>Note in this example, that if e.g. <code>file</code> is provided, then <code>url</code> will be <code>null</code> (and vice versa).</p>
 <h4 id="requirement">Requirement<a class="headerlink" href="#requirement" title="Permanent link">&para;</a></h4>
 <p>Use the <code>requires</code> keyword to indicate that, when one argument is defined, so must another argument.</p>
 <p>Consider a script that can authenticate either by using a token or by providing a username/password pair. </p>
 <p>If the user provides a username, the password is also required.</p>
 <div class="highlight"><span class="filename">File: auth</span><pre><span></span><code>args:
-  token string
-  username string
-  password string
+  token str
+  username str
+  password str
 
   username mutually requires password
   token mutually excludes username, password
 
-if is_defined(&quot;token&quot;):
-    print(&quot;Authenticating with token:&quot;, token)
+if token:
+    print(&quot;Authenticating with token {token}&quot;)
 else:
-    print(&quot;Authenticating user:&quot;, username)
+    print(&quot;Authenticating user {username} with password length {len(password)}&quot;)
 </code></pre></div>
 <p>Valid usage examples:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./auth --token abc123
-Authenticating with token: abc123
+Authenticating with token abc123
 
 &gt; ./auth --username alice --password secret
-Authenticating user: alice
+Authenticating user alice with password length 6
 </code></pre></div>
 <p>Invalid usage examples:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./auth --username alice
@@ -1406,7 +1795,21 @@ Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;passwor
 <p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
 </li>
 <li>
-<p>You can apply constraints to arguments inside the arg block, such as <code>enum</code>, <code>regex</code>, and relational constraints.</p>
+<p>Rad supports various argument types:</p>
+<ul>
+<li>Basic types: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code></li>
+<li>List types: <code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code> (passed via repeated flags)</li>
+<li>Variadic: <code>*args &lt;type&gt;</code> (collects remaining positional arguments)</li>
+<li>Optional: <code>&lt;type&gt;?</code> (value is <code>null</code> when not provided)</li>
+</ul>
+</li>
+<li>Short flags support clustering (<code>-vdq</code>) and counting for ints (<code>-vvv</code> = 3)</li>
+<li>You can apply constraints to arguments inside the arg block:<ul>
+<li><code>enum</code> for discrete values</li>
+<li><code>range</code> for numeric bounds (using <code>[</code> for inclusive, <code>(</code> for exclusive)</li>
+<li><code>regex</code> for pattern matching</li>
+<li>Relational constraints (<code>requires</code>, <code>excludes</code>)</li>
+</ul>
 </li>
 <li>Details in the arg block are used by Rad to provide a better usage/help string.</li>
 </ul>
