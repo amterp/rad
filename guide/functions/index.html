@@ -11,10 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/functions/">
       
       
-        <link rel="prev" href="../rad-blocks/">
+        <link rel="prev" href="../args/">
       
       
-        <link rel="next" href="../strings-advanced/">
+        <link rel="next" href="../rad-blocks/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -388,27 +388,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -460,27 +439,52 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-arguments" class="md-nav__link">
+    <nav class="md-nav" aria-label="Syntax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ufcs" class="md-nav__link">
     <span class="md-ellipsis">
-      No Arguments
+      UFCS
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fixed Arguments
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
+  <a href="#function-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function Arguments
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Function Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positional-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Positional Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variadic-arguments" class="md-nav__link">
     <span class="md-ellipsis">
       Variadic Arguments
@@ -488,13 +492,93 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#named-arguments" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#mixed-patterns" class="md-nav__link">
     <span class="md-ellipsis">
-      Named Arguments
+      Mixed Patterns
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#named-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Named Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-return-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Return Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Type Annotations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hoisting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hoisting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambdas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lambdas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -529,6 +613,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rad-blocks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1034,27 +1139,52 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-arguments" class="md-nav__link">
+    <nav class="md-nav" aria-label="Syntax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ufcs" class="md-nav__link">
     <span class="md-ellipsis">
-      No Arguments
+      UFCS
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#fixed-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fixed Arguments
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
+  <a href="#function-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function Arguments
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Function Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positional-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Positional Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Arguments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variadic-arguments" class="md-nav__link">
     <span class="md-ellipsis">
       Variadic Arguments
@@ -1062,13 +1192,93 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#named-arguments" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#mixed-patterns" class="md-nav__link">
     <span class="md-ellipsis">
-      Named Arguments
+      Mixed Patterns
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#named-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Named Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-return-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Return Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Type Annotations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hoisting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hoisting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambdas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lambdas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1119,8 +1329,9 @@
 
   <h1>Functions</h1>
 
-<p>Rad offers a range of built-in functions to help you write your scripts. In this section, we'll take a look at the syntax and a few examples.
-For a complete list of available functions, see the <a href="../../reference/functions/">reference</a>.</p>
+<p>Rad offers a range of built-in functions to help you write your scripts, and also allows you to define your own.
+In this section, we'll take a look at the syntax and a few examples.
+For a complete list of built-in functions, see the <a href="../../reference/functions/">reference</a>.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <p>The syntax for invoking functions is pretty standard. Here's a script with some examples:</p>
 <div class="highlight"><pre><span></span><code>names = [&quot;Bob&quot;, &quot;Charlie&quot;, &quot;Alice&quot;]
@@ -1132,100 +1343,262 @@ print(sorted_names)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>There are 3 people.
-[Alice, Bob, Charlie]
+[ &quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot; ]
 </code></pre></div>
 </div>
 
-<p>This example uses a few different functions:</p>
-<ul>
-<li><code>len</code></li>
-<li><code>print</code></li>
-<li><code>sort</code></li>
-</ul>
-<h2 id="no-arguments">No Arguments<a class="headerlink" href="#no-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions take no arguments. For example, <code>rand()</code> returns a random float between 0 and 1:</p>
-<div class="highlight"><pre><span></span><code>random_float = rand()
-print(random_float)
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>0.8436881320514183
-</code></pre></div>
-</div>
+<p>This example uses three different built-in functions <a href="../../reference/functions/#len"><code>len</code></a>, <a href="../../reference/functions/#print"><code>print</code></a>, and <a href="../../reference/functions/#sort"><code>sort</code></a>.</p>
+<h3 id="ufcs">UFCS<a class="headerlink" href="#ufcs" title="Permanent link">&para;</a></h3>
+<p>Rad supports a syntax called Uniform Function Call Syntax (UFCS) that lets you call functions using dot notation. This means you can write:</p>
+<div class="highlight"><pre><span></span><code>upper(&quot;hello&quot;)
 
-<h2 id="fixed-arguments">Fixed Arguments<a class="headerlink" href="#fixed-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions take a fixed number of arguments, such as <code>upper</code> and <code>lower</code> that always take one argument:</p>
-<div class="highlight"><pre><span></span><code>text = &quot;oh WOW!&quot;
-print(upper(text))
-print(lower(text))
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>OH WOW!
-oh wow!
-</code></pre></div>
-</div>
+// ... is the same as ...
 
-<h2 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h2>
-<p>Some functions can take different numbers of arguments! For example <code>join</code>:</p>
+&quot;hello&quot;.upper()
+</code></pre></div>
+<p>Both styles work identically, it's just syntactic sugar, but the dot notation really shines when you're chaining multiple function calls together.</p>
+<p>Compare these two approaches:</p>
+<div class="highlight"><pre><span></span><code>// Traditional nested calls - hard to read
+result = upper(trim(text))
+
+// UFCS chaining - reads left to right
+result = text.trim().upper()
+</code></pre></div>
+<p>The chained version is much more readable - you can follow the data flow naturally from left to right.</p>
+<p>UFCS works with any function where its first parameter matches the type you're calling it on.</p>
+<div class="admonition tip">
+<p class="admonition-title">Encouraged Style</p>
+<p>You're encouraged to use UFCS, especially when it helps you avoid nested function calls.</p>
+</div>
+<h2 id="function-arguments">Function Arguments<a class="headerlink" href="#function-arguments" title="Permanent link">&para;</a></h2>
+<p>Rad functions can accept arguments in several different ways. Let's explore each pattern.</p>
+<h3 id="positional-arguments">Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permanent link">&para;</a></h3>
+<p>Most functions accept arguments by position - you pass values in a specific order. Here are a few examples:</p>
+<div class="highlight"><pre><span></span><code>// Single argument
+num = abs(-5)
+print(num)  // 5
+
+// Multiple arguments
+text = &quot;hello world&quot;.replace(&quot;world&quot;, &quot;Rad&quot;)
+print(text)  // hello Rad
+</code></pre></div>
+<p>Many functions also have <strong>optional parameters with defaults</strong>. For example, <a href="../../reference/functions/#join"><code>join</code></a> combines list items into a string:</p>
 <div class="highlight"><pre><span></span><code>numbers = [1, 2, 3]
-print(join(numbers, &quot;... &quot;))
 
-print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;))
+// Just the list - uses default separator &quot;&quot;
+print(numbers.join())
 
-print(join(numbers, &quot;... &quot;, &quot;Okay I&#39;ll count. &quot;, &quot;!&quot;))
+// Custom separator
+print(numbers.join(&quot;... &quot;))
+
+// Separator and prefix
+print(numbers.join(&quot;... &quot;, &quot;Counting: &quot;))
+
+// Separator, prefix, and suffix
+print(numbers.join(&quot;... &quot;, &quot;Counting: &quot;, &quot;!&quot;))
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>1... 2... 3
-Okay I&#39;ll count. 1... 2... 3
-Okay I&#39;ll count. 1... 2... 3!
+<div class="highlight"><pre><span></span><code>123
+1... 2... 3
+Counting: 1... 2... 3
+Counting: 1... 2... 3!
 </code></pre></div>
 </div>
 
-<p>In this example, <code>join</code> is being invoked with all these valid variations:</p>
-<ul>
-<li><code>join(list, joiner)</code></li>
-<li><code>join(list, joiner, prefix)</code></li>
-<li><code>join(list, joiner, prefix, suffix)</code></li>
-</ul>
+<p>The function signature for <code>join</code> shows these optional parameters: <code>join(list, sep="", prefix="", suffix="")</code>. You can provide as many or as few as you need.</p>
 <div class="admonition tip">
 <p class="admonition-title">Example using join for url query params</p>
-<p>The second variation of <code>join</code> can be handy for generating the query params in a url. For example:</p>
+<p>The <code>prefix</code> parameter is handy for generating URL query params:</p>
 <div class="highlight"><pre><span></span><code>url = &quot;https://api.github.com/repos/amterp/rad/commits&quot;
-query_params = [&quot;per_page=5&quot;, &quot;path=README.md&quot;]
-url += join(query_params, &quot;&amp;&quot;, &quot;?&quot;)
+query_params = [&quot;path=README.md&quot;, &quot;per_page=5&quot;]
+url += query_params.join(&quot;&amp;&quot;, &quot;?&quot;)
 print(url)
 </code></pre></div>
-<p>In this example, the final url will be the following valid URL utilizing those query params:
-<a href="https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5"><code>https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5</code></a></p>
+<p>This produces: <a href="https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5"><code>https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5</code></a></p>
 </div>
-<h2 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h2>
-<p>Finally, some functions may also have named arguments.
-An example of this is <code>http_post</code>. <code>http_post</code> (unsurprisingly) performs an HTTP POST request against an input url, usually with a body of some sort.
-One variation of the function only takes that url:</p>
-<div class="highlight"><pre><span></span><code>response = http_post(url, body)
-</code></pre></div>
-<p>However, if you wish to customize the headers on your HTTP request, you can do so:</p>
-<div class="highlight"><pre><span></span><code>my_headers = {
+<h3 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h3>
+<p>Some functions accept <strong>named arguments</strong> that you pass using <code>name=value</code> syntax. Named arguments always come after positional arguments and are typically optional.</p>
+<p>A good example is <a href="../../reference/functions/#http-functions"><code>http_post</code></a>, which performs HTTP POST requests:</p>
+<div class="highlight"><pre><span></span><code>// Just the URL (simplest form)
+response = url.http_post()
+
+// With custom headers
+my_headers = {
     &quot;Authorization&quot;: &quot;Bearer {token}&quot;,
 }
-response = http_post(url, body, headers=my_headers)
+response = url.http_post(headers=my_headers)
+
+// With both headers and a body
+response = url.http_post(headers=my_headers, body=data)
 </code></pre></div>
-<p>In this example, the named arg <code>headers</code> expects a map. Named args are always optional. Required arguments cannot be specified as required arguments.</p>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<p>There are a lot of built-in functions. If you just want to see what's available and how to use them, it's best to refer to the <a href="../../reference/functions/">reference</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">Rad does not allow defining your own functions</p>
-<p>Rad currently does not allow you to define your own functions, so any function you use is built-in.</p>
+<p>Named arguments make it clear what each value represents, especially when a function has many optional parameters.</p>
+<h3 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h3>
+<p>Some functions accept <strong>unlimited arguments</strong>. For example, <a href="../../reference/functions/#zip"><code>zip</code></a> can combine any number of lists:</p>
+<div class="highlight"><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+ages = [30, 40, 25]
+cities = [&quot;NYC&quot;, &quot;LA&quot;, &quot;Chicago&quot;]
+scores = [100, 90, 85]
+
+// Combine 2 lists
+pairs = zip(names, ages)
+print(pairs)
+
+// Combine 3 lists
+triples = zip(names, ages, cities)
+print(triples)
+
+// Combine 4 lists (or more!)
+quads = zip(names, ages, cities, scores)
+print(quads)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ [ &quot;alice&quot;, 30 ], [ &quot;bob&quot;, 40 ], [ &quot;charlie&quot;, 25 ] ]
+[ [ &quot;alice&quot;, 30, &quot;NYC&quot; ], [ &quot;bob&quot;, 40, &quot;LA&quot; ], [ &quot;charlie&quot;, 25, &quot;Chicago&quot; ] ]
+[ [ &quot;alice&quot;, 30, &quot;NYC&quot;, 100 ], [ &quot;bob&quot;, 40, &quot;LA&quot;, 90 ], [ &quot;charlie&quot;, 25, &quot;Chicago&quot;, 85 ] ]
+</code></pre></div>
 </div>
+
+<p>Variadic functions can also have named arguments. For example, <code>zip</code> accepts <code>strict=true</code> for ensuring that all lists have the same length.</p>
+<h3 id="mixed-patterns">Mixed Patterns<a class="headerlink" href="#mixed-patterns" title="Permanent link">&para;</a></h3>
+<p>Some functions combine multiple argument patterns. For example, <a href="../../reference/functions/#pick"><code>pick</code></a> takes positional arguments and a named argument:</p>
+<div class="highlight"><pre><span></span><code>options = [&quot;vim&quot;, &quot;emacs&quot;, &quot;nano&quot;]
+editor = pick(options, prompt=&quot;Choose your editor&quot;)
+</code></pre></div>
+<p>When in doubt about how to call a function, check the <a href="../../reference/functions/">Functions Reference</a> for complete signature details.</p>
+<h2 id="custom-functions">Custom Functions<a class="headerlink" href="#custom-functions" title="Permanent link">&para;</a></h2>
+<p>Rad lets you define your own functions using the <code>fn</code> keyword.
+You can create either <strong>named functions</strong> that you reference by name, or <strong>lambdas</strong> (anonymous functions) that you assign to variables or pass as arguments.</p>
+<h3 id="named-functions">Named Functions<a class="headerlink" href="#named-functions" title="Permanent link">&para;</a></h3>
+<p>Named functions include the function name as part of the definition, making them easy to call from anywhere in your code.</p>
+<h4 id="basic-definition">Basic Definition<a class="headerlink" href="#basic-definition" title="Permanent link">&para;</a></h4>
+<p>Here's a simple function that adds two numbers:</p>
+<div class="highlight"><pre><span></span><code>fn add(x, y):
+    return x + y
+
+result = add(5, 3)
+print(result)  // 8
+</code></pre></div>
+<p>Functions use the <code>return</code> keyword to send values back. If your function body is a single expression, you can use a more concise syntax:</p>
+<div class="highlight"><pre><span></span><code>fn add(x, y) x + y
+
+result = add(5, 3)
+print(result)  // 8
+</code></pre></div>
+<p>Notice there's no colon (<code>:</code>) after the parameters in the single-line form, and no <code>return</code> keyword is needed.</p>
+<h4 id="multiple-return-values">Multiple Return Values<a class="headerlink" href="#multiple-return-values" title="Permanent link">&para;</a></h4>
+<p>Functions can return multiple values at once using comma separation:</p>
+<div class="highlight"><pre><span></span><code>fn get_coords():
+    x = 10
+    y = 20
+    return x, y  // equivalent to &#39;return [x, y]&#39;
+
+x_pos, y_pos = get_coords()
+print(&quot;Position: ({x_pos}, {y_pos})&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Position: (10, 20)
+</code></pre></div>
+</div>
+
+<p>This uses <strong>destructuring</strong> (covered in <a href="../basics/#destructuring">Basics</a>) to unpack the returned values into separate variables.</p>
+<h4 id="type-annotations">Type Annotations<a class="headerlink" href="#type-annotations" title="Permanent link">&para;</a></h4>
+<p>You can optionally add type annotations to function parameters and return values:</p>
+<div class="highlight"><pre><span></span><code>fn calculate_area(width: int, height: int) -&gt; int:
+    return width * height
+
+area = calculate_area(5, 10)
+print(area)  // 50
+</code></pre></div>
+<p>There are three benefits to using these.</p>
+<ol>
+<li>They serve as documentation (self-documenting code).</li>
+<li>They are validated at runtime i.e. the above function will error early if a string is passed into <code>calculate_area</code>.</li>
+<li>They help Rad's static analysis tools reason about your code, making them more useful.</li>
+</ol>
+<p>They are covered in detail in a later section: <a href="../type-annotations/">Type Annotations</a>.</p>
+<h4 id="hoisting">Hoisting<a class="headerlink" href="#hoisting" title="Permanent link">&para;</a></h4>
+<p>Named functions have some special scoping rules worth knowing:</p>
+<p><strong>At the root level, functions are hoisted</strong> - you can call them before they're defined:</p>
+<div class="highlight"><pre><span></span><code>result = multiply(4, 5)
+print(result)  // 20
+
+fn multiply(a, b):
+    return a * b
+</code></pre></div>
+<p>This works because Rad processes all root-level function definitions before executing the script.</p>
+<p><strong>Inside blocks, functions are NOT hoisted</strong> - you must define them before calling:</p>
+<div class="highlight"><pre><span></span><code>if true:
+    print(helper())  // Error - can&#39;t call before definition
+
+    fn helper():
+        return &quot;I&#39;m a helper!&quot;
+
+    print(helper())  // This is okay!
+</code></pre></div>
+<h3 id="lambdas">Lambdas<a class="headerlink" href="#lambdas" title="Permanent link">&para;</a></h3>
+<p>Sometimes you need a quick function without giving it a name. That's where <strong>lambdas</strong> come in - they're anonymous functions you can assign to variables or pass as arguments.</p>
+<p>Lambdas use the same <code>fn</code> keyword, but without a name:</p>
+<div class="highlight"><pre><span></span><code>// Single-line lambdas
+double = fn(x) x * 2
+add = fn(x, y) x + y
+
+print(double(5))  // 10
+print(add(3, 4))  // 7
+</code></pre></div>
+<p>For multi-line logic, use the block style with a colon:</p>
+<div class="highlight"><pre><span></span><code>calculate = fn(x):
+    result = x * 2 + 10
+    return result
+
+print(calculate(5))  // 20
+</code></pre></div>
+<p>Lambdas are particularly useful for defining once-off operations and passing them as arguments.
+For example, with <a href="../../reference/functions/#map"><code>map</code></a> and <a href="../../reference/functions/#filter"><code>filter</code></a>:</p>
+<div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
+doubled = numbers.map(fn(x) x * 2)
+print(doubled)  // [2, 4, 6, 8, 10]
+
+evens = numbers.filter(fn(x) x % 2 == 0)
+print(evens)  // [2, 4]
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Named Functions vs Lambdas</p>
+<ul>
+<li>Use <strong>named functions</strong> (<code>fn add(x, y):</code>) for reusable logic that you'll call from multiple places</li>
+<li>Use <strong>lambdas</strong> (<code>fn(x) x * 2</code>) for one-off operations or callbacks</li>
+</ul>
+</div>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<p>There are a lot of built-in functions. If you want to see what's available and how to use them, refer to the <a href="../../reference/functions/">reference</a>.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Function invocation syntax is similar to most other C-like languages such as Python, Java, etc.</li>
-<li>Functions may take no arguments, a fixed number of arguments, a varying number of args, and/or named arguments.</li>
-<li>Rad does not allow you to define your own functions - all functions are built-in.</li>
+<li>Function invocation syntax is similar to Python, Java, and other familiar languages</li>
+<li><strong>UFCS</strong> (Uniform Function Call Syntax) lets you chain functions using dot notation: <code>text.trim().upper()</code></li>
+<li>Functions can accept arguments in several ways:<ul>
+<li><strong>Positional</strong>: passed by order, may have defaults (<code>join(list)</code>, <code>join(list, "|")</code>)</li>
+<li><strong>Named</strong>: passed with <code>name=value</code> syntax (<code>http_get(url, headers=my_headers)</code>)</li>
+<li><strong>Variadic</strong>: accept unlimited arguments (<code>zip(list1, list2, list3, ...)</code>)</li>
+<li><strong>Mixed</strong>: combinations of the above patterns</li>
+</ul>
+</li>
+<li>You can define <strong>named functions</strong> with <code>fn name():</code> for reusable logic<ul>
+<li>Supports block style (with <code>:</code>) </li>
+<li>Supports single-line style (without <code>:</code> e.g. <code>fn add(x, y) x + y</code>)</li>
+<li>Can return multiple values using comma separation</li>
+<li>Are <strong>hoisted</strong> at the root of scripts (can be called before definition)</li>
+<li>Can have optional <strong>type annotations</strong></li>
+</ul>
+</li>
+<li><strong>Lambdas</strong> are anonymous functions: <code>double = fn(x) x * 2</code><ul>
+<li>Useful for one-off operations and callbacks - functions like <code>map()</code> and <code>filter()</code></li>
+</ul>
+</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>We've already covered the <a href="../basics/#str">Basics of strings</a>,
-but there are some more advanced string concepts which are worth covering, such as string interpolation, raw strings, etc.
-We'll cover these in the next section: <a href="../strings-advanced/">Strings (Advanced)</a>!</p>
+but there are some more advanced string concepts which are worth covering, such as formatting in string interpolations,
+raw strings, etc.</p>
+<p>We'll cover these in the next section: <a href="../strings-advanced/">Strings (Advanced)</a></p>
 
 
 
@@ -1258,7 +1631,7 @@ We'll cover these in the next section: <a href="../strings-advanced/">Strings (A
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../rad-blocks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rad Blocks">
+          <a href="../args/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Args">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1268,20 +1641,20 @@ We'll cover these in the next section: <a href="../strings-advanced/">Strings (A
                 Previous
               </span>
               <div class="md-ellipsis">
-                Rad Blocks
+                Args
               </div>
             </div>
           </a>
         
         
           
-          <a href="../strings-advanced/" class="md-footer__link md-footer__link--next" aria-label="Next: Strings (Advanced)">
+          <a href="../rad-blocks/" class="md-footer__link md-footer__link--next" aria-label="Next: Rad Blocks">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Strings (Advanced)
+                Rad Blocks
               </div>
             </div>
             <div class="md-footer__button md-icon">

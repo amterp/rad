@@ -8,13 +8,9 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/defer-errdefer/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/type-annotations/">
       
       
-        <link rel="prev" href="../global-flags/">
-      
-      
-        <link rel="next" href="../../examples/brewi/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -22,7 +18,7 @@
     
     
       
-        <title>Defer & Errdefer - Rad Docs</title>
+        <title>Type annotations - Rad Docs</title>
       
     
     
@@ -81,11 +77,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#defer" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -118,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Defer & Errdefer
+              Type annotations
             
           </span>
         </div>
@@ -288,19 +279,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -314,7 +303,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -514,28 +503,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Defer & Errdefer
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../defer-errdefer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -544,60 +515,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Defer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Errdefer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errors-in-defer-blocks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Errors in defer blocks
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -985,50 +902,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#defer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Defer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errdefer" class="md-nav__link">
-    <span class="md-ellipsis">
-      Errdefer
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#errors-in-defer-blocks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Errors in defer blocks
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Summary
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1045,139 +918,15 @@
   
 
 
-  <h1>Defer & Errdefer</h1>
+  <h1>Type annotations</h1>
 
-<p>With defer statements, you can specify blocks of code to be run before the script exits.</p>
-<p>You may wish to use them to clean up or undo operations before exiting.</p>
-<h2 id="defer">Defer<a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
-<p><code>defer</code> blocks always run before the script exits, regardless of if it's due to an error or not.</p>
-<p>Here is an example:</p>
-<div class="highlight"><span class="filename">defer.rad</span><pre><span></span><code>$!`mv notes.txt notes-tmp.txt`
-defer:
-    $!`mv notes-tmp.txt notes.txt`
-    print(&quot;Moved back!&quot;)
-
-$!`echo &quot;hi!&quot; &gt;&gt; notes.txt`
-$!`cat notes.txt`
-</code></pre></div>
-<p>Let's say we already have a file <code>notes.txt</code> containing some text. In this script, we take the following steps, largely by invoking <a href="../shell-commands/">shell commands</a>:</p>
-<ol>
-<li>Rename <code>notes.txt</code> to <code>notes-tmp.txt</code></li>
-<li>Define a <code>defer</code> block which will undo the rename, and then print <code>Moved back!</code>.</li>
-<li>Create a <em>new</em> <code>notes.txt</code> with the contents <code>hi!</code></li>
-<li>Print the contents <code>notes.txt</code> to show what it contains.</li>
-</ol>
-<p>When run:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>defer.rl
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo &quot;hi!&quot; &gt;&gt; notes.txt
-⚡️ Running: cat notes.txt
-hi!
-⚡️ Running: mv notes-tmp.txt notes.txt
-Moved back!
-</code></pre></div>
-</div>
-
-<p>Note that despite the <code>Moved back!</code> print statement appearing <em>earlier</em> in the script, it only gets run at the end due to being in a <code>defer</code> block.</p>
-<h2 id="errdefer">Errdefer<a class="headerlink" href="#errdefer" title="Permanent link">&para;</a></h2>
-<p>Sometimes, you only want certain deferred statements to run in the event of a failure.
-This is useful when your script is working toward a critical step that, once executed, should not be rolled back.
-However, if the script fails before reaching that step, rollback actions may still be necessary.</p>
-<p>Below is an example of a version-bumping script. Using <code>sed</code>, this script replaces the version in a file called <code>VERSION</code>, stages the file with git,
-and commits it. However, if there's a failure in between the <code>sed</code> and <code>commit</code> steps, then we want to undo earlier steps as a cleanup, in order to
-make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing, leaving no intermediary state changes behind. We accomplish this through <code>errdefer</code> blocks. </p>
-<div class="highlight"><span class="filename">bump.rad</span><pre><span></span><code>args:
-    version str
-
-path = &quot;VERSION&quot;
-
-$!`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`
-errdefer:
-    print(&quot;Undoing bump...&quot;)
-    $!`git checkout -- {path}`
-
-if false:  // failure simulation point 1
-    print(&quot;Oh no! ERROR!&quot;)
-    exit(1)
-
-$!`git add {path}`
-errdefer:
-    print(&quot;Resetting {path}...&quot;)
-    _, _ = $!`git reset {path}`
-
-if false:  // failure simulation point 2
-    print(&quot;Bah! ERROR!&quot;)
-    exit(1)
-
-$!`git commit -m &quot;Bump version to {version}&quot;`
-print(&quot;Done!&quot;)
-</code></pre></div>
-<p>We include a couple of "failure points". We can set their condition to <code>true</code> to have them simulate an error, as the exit code of '1' indicates failure.</p>
-<p>Before we do that though, we can see an example of this script working correctly. Let's say we define our <code>VERSION</code> file in the same directory as the script as follows:</p>
-<div class="highlight"><span class="filename">VERSION</span><pre><span></span><code>Version = 1
-</code></pre></div>
-<p>If we execute our script, we get the following output:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">2</span>
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 2/&quot; VERSION
-⚡️ Running: git add VERSION
-⚡️ Running: git commit -m &quot;Bump version to 2&quot;
-[main 6ce2ebb] Bump version to 2
- 1 file changed, 1 insertion(+), 1 deletion(-)
-Done!
-</code></pre></div>
-</div>
-
-<p>We can see the series of commands get run as we expect, including output from git. Notice that none of our <code>errdefer</code> blocks ran, because there were no failures.</p>
-<p><strong>Now let's say that we activate failure point 1</strong> by setting its condition to <code>true</code>. This means that, after performing the <code>sed</code> command, but before we <code>git add</code>, the script exits, and we trigger just the first <code>errdefer</code> block to 'reset' the <code>VERSION</code> file.</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION
-Oh no! ERROR!
-Undoing bump...
-⚡️ Running: git checkout -- VERSION
-</code></pre></div>
-</div>
-
-<p>If you run this locally, you should see with <code>git status</code> that there are no changes to the <code>VERSION</code> file, thanks to our <code>errdefer</code> block rolling back the <code>sed</code> replacement.</p>
-<p>Next let's try deactivating failure point 1 again and enabling failure point 2, and running our script again. This time, we can expect the <code>git add</code> to run, and our failure will occur after, but before the <code>git commit</code>.</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION
-⚡️ Running: git add VERSION
-Bah! ERROR!
-Resetting VERSION...
-⚡️ Running: git reset VERSION
-Undoing bump...
-⚡️ Running: git checkout -- VERSION
-</code></pre></div>
-</div>
-
-<p>Here we see a very important detail about defer blocks that applies both to <code>defer</code> and <code>errdefer</code> - if you have multiple, they run in LIFO (last in, first out) order. In other words, the defer blocks defined <em>later</em> run <em>first</em>.</p>
-<p>This is typically desirable, as this example demonstrates. After we <code>git commit</code>, we need to first <code>git reset</code>, otherwise the <code>git checkout</code> to undo the bump won't work. Thanks to LIFO, our <code>git reset</code> runs first and all is good.</p>
-<h2 id="errors-in-defer-blocks">Errors in defer blocks<a class="headerlink" href="#errors-in-defer-blocks" title="Permanent link">&para;</a></h2>
-<p>If a script exits successfully and has multiple <code>defer</code> blocks, and the first one to run encounters an error, <strong>the remaining defer blocks still run</strong>. This also applies to <code>errdefer</code>. However, the script will exit with a non-0 error code.</p>
-<p><code>errdefer</code> blocks are only triggered if the <em>main script</em> fails. If the main script runs successfully, but a <code>defer</code> block then errors, that does <em>not</em> trigger <code>errdefer</code> blocks to run.</p>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Use <code>defer</code> and <code>errdefer</code> blocks to run operations after your main script ends.</li>
-<li>They can commonly be used for clean up operations and making your scripts atomic.</li>
-<li>Defer blocks run in LIFO order - last in, first out.</li>
-</ul>
+<p>TBC (placeholder)</p>
 
 
 
 
 
 
-
-  
-  
 
 
 
@@ -1196,44 +945,6 @@ Undoing bump...
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../global-flags/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Global Flags">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Global Flags
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../examples/brewi/" class="md-footer__link md-footer__link--next" aria-label="Next: brewi">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                brewi
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
