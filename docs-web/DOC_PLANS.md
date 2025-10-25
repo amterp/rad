@@ -17,10 +17,10 @@
 
 - [x] getting started
 - [x] basics
-- [ ] args
-- [ ] functions
-  - [ ] NEW custom functions
-  - [ ] NEW lambdas
+- [x] args
+- [x] functions
+  - [x] NEW custom functions
+  - [x] NEW lambdas
 - [ ] strings-advanced
 - [ ] rad blocks
   - [ ] NEW lambdas for `map` 

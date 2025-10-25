@@ -2,6 +2,35 @@ site_name: Rad Docs
 site_url: https://amterp.github.io/rad/
 repo_url: https://github.com/amterp/rad
 
+nav:
+  - Home: index.md
+  - Guide:
+      - ./guide/getting-started.md
+      - ./guide/basics.md
+      - ./guide/args.md
+      - ./guide/functions.md
+      - ./guide/rad-blocks.md
+      - ./guide/strings-advanced.md
+      - ./guide/resources.md
+      - ./guide/shell-commands.md
+      - ./guide/global-flags.md
+      - ./guide/defer-errdefer.md
+  - Examples:
+      - ./examples/brewi.md
+      - ./examples/hm.md
+  - Reference:
+      - ./reference/args.md
+      - ./reference/assignment.md
+      - ./reference/defer.md
+      - ./reference/errors.md
+      - ./reference/functions.md
+      - ./reference/global-flags.md
+      - ./reference/logic.md
+      - ./reference/math.md
+      - ./reference/rad-blocks.md
+      - ./reference/shell-commands.md
+      - ./reference/strings.md
+
 theme:
   name: material
   favicon: assets/favicon.svg
@@ -46,32 +75,3 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
-
-nav:
-  - Home: index.md
-  - Guide:
-      - ./guide/getting-started.md
-      - ./guide/basics.md
-      - ./guide/args.md
-      - ./guide/rad-blocks.md
-      - ./guide/functions.md
-      - ./guide/strings-advanced.md
-      - ./guide/resources.md
-      - ./guide/shell-commands.md
-      - ./guide/global-flags.md
-      - ./guide/defer-errdefer.md
-  - Examples:
-    - ./examples/brewi.md
-    - ./examples/hm.md
-  - Reference:
-    - ./reference/args.md
-    - ./reference/assignment.md
-    - ./reference/defer.md
-    - ./reference/errors.md
-    - ./reference/functions.md
-    - ./reference/global-flags.md
-    - ./reference/logic.md
-    - ./reference/math.md
-    - ./reference/rad-blocks.md
-    - ./reference/shell-commands.md
-    - ./reference/strings.md
