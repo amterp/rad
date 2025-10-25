@@ -14,7 +14,7 @@
         <link rel="prev" href="../../guide/defer-errdefer/">
       
       
-        <link rel="next" href="../hm/">
+        <link rel="next" href="../../reference/args/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -672,27 +672,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hm/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    hm
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1078,9 +1057,9 @@ args:
     formula str    # Name of the formula to install.
     cask c bool    # Enable if it&#39;s a cask.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 if confirm():
-    $!`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
+    $`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>&gt; brewi -h
 Facilitates checking a brew formula before installing it.
@@ -1130,7 +1109,7 @@ Facilitates checking a brew formula before installing it.
 <p><code>formula</code> will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.</p>
 <p>Setup done. First thing we'll wanna do is run <code>brew info</code> with the formula. We'll do this via a <a href="../../guide/shell-commands/">shell command</a>.</p>
 <p>Specifically, we'll use a <a href="../../guide/shell-commands/#critical-shell-commands"><em>critical</em></a> shell command, because if the command fails (including if the formula just doesn't exist), we want to just print the error and exit the script.</p>
-<p>This uses the <code>$!</code> syntax.</p>
+<p>This uses the <code>$</code> syntax.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1145,7 +1124,7 @@ Facilitates checking a brew formula before installing it.
 args:
     formula string # Name of the formula to install.
 
-<span class="hll">$!`brew info {formula}`
+<span class="hll">$`brew info {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>We use <a href="../../guide/strings-advanced/#string-interpolation">string interpolation</a> to insert the formula into the command.</p>
 <p>You can try running the command now! Make sure it's executable (<code>chmod +x ./brewi</code>).</p>
@@ -1167,9 +1146,9 @@ Facilitates checking a brew formula before installing it.
 args:
     formula string # Name of the formula to install.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 <span class="hll">if confirm():
-</span><span class="hll">    $!`brew install {formula}`
+</span><span class="hll">    $`brew install {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>Feel free to try it again now!</p>
 <p>One last touch: we should also allow installing casks with this script. We'll aim to offer a simple <code>-c</code> flag users can set which modifies the command. </p>
@@ -1193,9 +1172,9 @@ args:
     formula string # Name of the formula to install.
 <span class="hll">    cask c bool    # Enable if it&#39;s a cask.
 </span>
-$!`brew info {formula}`
+$`brew info {formula}`
 if confirm():
-<span class="hll">    $!`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
+<span class="hll">    $`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>Note the shorthand flag in <code>cask c bool</code>.</p>
 <p>Done! You've now got a great, convenient helper script for installing things with brew :)</p>
@@ -1259,13 +1238,13 @@ Script args:
         
         
           
-          <a href="../hm/" class="md-footer__link md-footer__link--next" aria-label="Next: hm">
+          <a href="../../reference/args/" class="md-footer__link md-footer__link--next" aria-label="Next: Args">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                hm
+                Args
               </div>
             </div>
             <div class="md-footer__button md-icon">

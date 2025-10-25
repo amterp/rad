@@ -666,27 +666,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/hm/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    hm
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1052,13 +1031,13 @@
 <h2 id="defer">Defer<a class="headerlink" href="#defer" title="Permanent link">&para;</a></h2>
 <p><code>defer</code> blocks always run before the script exits, regardless of if it's due to an error or not.</p>
 <p>Here is an example:</p>
-<div class="highlight"><span class="filename">defer.rad</span><pre><span></span><code>$!`mv notes.txt notes-tmp.txt`
+<div class="highlight"><span class="filename">defer.rad</span><pre><span></span><code>$`mv notes.txt notes-tmp.txt`
 defer:
-    $!`mv notes-tmp.txt notes.txt`
+    $`mv notes-tmp.txt notes.txt`
     print(&quot;Moved back!&quot;)
 
-$!`echo &quot;hi!&quot; &gt;&gt; notes.txt`
-$!`cat notes.txt`
+$`echo &quot;hi!&quot; &gt;&gt; notes.txt`
+$`cat notes.txt`
 </code></pre></div>
 <p>Let's say we already have a file <code>notes.txt</code> containing some text. In this script, we take the following steps, largely by invoking <a href="../shell-commands/">shell commands</a>:</p>
 <ol>
@@ -1093,25 +1072,25 @@ make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing
 
 path = &quot;VERSION&quot;
 
-$!`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`
+$`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`
 errdefer:
     print(&quot;Undoing bump...&quot;)
-    $!`git checkout -- {path}`
+    $`git checkout -- {path}`
 
 if false:  // failure simulation point 1
     print(&quot;Oh no! ERROR!&quot;)
     exit(1)
 
-$!`git add {path}`
+$`git add {path}`
 errdefer:
     print(&quot;Resetting {path}...&quot;)
-    _, _ = $!`git reset {path}`
+    _, _ = $`git reset {path}`
 
 if false:  // failure simulation point 2
     print(&quot;Bah! ERROR!&quot;)
     exit(1)
 
-$!`git commit -m &quot;Bump version to {version}&quot;`
+$`git commit -m &quot;Bump version to {version}&quot;`
 print(&quot;Done!&quot;)
 </code></pre></div>
 <p>We include a couple of "failure points". We can set their condition to <code>true</code> to have them simulate an error, as the exit code of '1' indicates failure.</p>
