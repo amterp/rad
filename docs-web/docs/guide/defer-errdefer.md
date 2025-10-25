@@ -13,13 +13,13 @@ You may wish to use them to clean up or undo operations before exiting.
 Here is an example:
 
 ```rad title="defer.rad"
-$!`mv notes.txt notes-tmp.txt`
+$`mv notes.txt notes-tmp.txt`
 defer:
-    $!`mv notes-tmp.txt notes.txt`
+    $`mv notes-tmp.txt notes.txt`
     print("Moved back!")
 
-$!`echo "hi!" >> notes.txt`
-$!`cat notes.txt`
+$`echo "hi!" >> notes.txt`
+$`cat notes.txt`
 ```
 
 Let's say we already have a file `notes.txt` containing some text. In this script, we take the following steps, largely by invoking [shell commands](./shell-commands.md):
@@ -64,25 +64,25 @@ args:
 
 path = "VERSION"
 
-$!`sed -i '' "s/Version = .*/Version = {version}/" {path}`
+$`sed -i '' "s/Version = .*/Version = {version}/" {path}`
 errdefer:
     print("Undoing bump...")
-    $!`git checkout -- {path}`
+    $`git checkout -- {path}`
 
 if false:  // failure simulation point 1
     print("Oh no! ERROR!")
     exit(1)
 
-$!`git add {path}`
+$`git add {path}`
 errdefer:
     print("Resetting {path}...")
-    _, _ = $!`git reset {path}`
+    _, _ = $`git reset {path}`
 
 if false:  // failure simulation point 2
     print("Bah! ERROR!")
     exit(1)
 
-$!`git commit -m "Bump version to {version}"`
+$`git commit -m "Bump version to {version}"`
 print("Done!")
 ```
 

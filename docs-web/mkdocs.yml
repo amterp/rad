@@ -17,7 +17,6 @@ nav:
       - ./guide/defer-errdefer.md
   - Examples:
       - ./examples/brewi.md
-      - ./examples/hm.md
   - Reference:
       - ./reference/args.md
       - ./reference/assignment.md

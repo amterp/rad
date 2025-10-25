@@ -13,9 +13,9 @@ args:
     formula str    # Name of the formula to install.
     cask c bool    # Enable if it's a cask.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 if confirm():
-    $!`brew install{cask ? " --cask" : ""} {formula}`
+    $`brew install{cask ? " --cask" : ""} {formula}`
 ```
 
 ```
@@ -81,7 +81,7 @@ Setup done. First thing we'll wanna do is run `brew info` with the formula. We'l
 
 Specifically, we'll use a [*critical*](../guide/shell-commands.md#critical-shell-commands) shell command, because if the command fails (including if the formula just doesn't exist), we want to just print the error and exit the script.
 
-This uses the `$!` syntax.
+This uses the `$` syntax.
 
 ```rad linenums="1" hl_lines="8"
 #!/usr/bin/env rad
@@ -91,7 +91,7 @@ Facilitates checking a brew formula before installing it.
 args:
     formula string # Name of the formula to install.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 ```
 
 We use [string interpolation](../guide/strings-advanced.md#string-interpolation) to insert the formula into the command.
@@ -109,9 +109,9 @@ Facilitates checking a brew formula before installing it.
 args:
     formula string # Name of the formula to install.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 if confirm():
-    $!`brew install {formula}`
+    $`brew install {formula}`
 ```
 
 Feel free to try it again now!
@@ -130,9 +130,9 @@ args:
     formula string # Name of the formula to install.
     cask c bool    # Enable if it's a cask.
 
-$!`brew info {formula}`
+$`brew info {formula}`
 if confirm():
-    $!`brew install{cask ? " --cask" : ""} {formula}`
+    $`brew install{cask ? " --cask" : ""} {formula}`
 ```
 
 Note the shorthand flag in `cask c bool`.
