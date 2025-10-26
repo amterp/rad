@@ -88,3 +88,14 @@ r"\""
 
 is illegal because the backslash does *not* escape the following `"`, and so that quote actually ends the raw string.
 Then we're left with a third and dangling `"` at the end, causing a syntax error.
+
+!!! info "You cannot escape the raw string's own delimiter"
+
+    Rad raw strings behave more like their equivalent in Go than Python.
+    In Python, you can escape the delimiter used to make the raw string i.e. `r"quote: \"!"`. If printed, this will
+    display as `quote: \"!` i.e. the escape character is also printed. There are lots of discussions online about this
+    somewhat odd behavior, which is why Rad (and Go) opted to instead keep the rules very simple and not allow escaping
+    in raw strings of any kind.
+    
+    Instead, if you try the same thing in Rad, you will get an error because the quote following `\` will close the
+    string, leaving a dangling `!"` at the end, which is invalid syntax.

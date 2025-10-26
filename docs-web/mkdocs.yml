@@ -9,8 +9,8 @@ nav:
       - ./guide/basics.md
       - ./guide/args.md
       - ./guide/functions.md
-      - ./guide/rad-blocks.md
       - ./guide/strings-advanced.md
+      - ./guide/rad-blocks.md
       - ./guide/resources.md
       - ./guide/shell-commands.md
       - ./guide/global-flags.md
