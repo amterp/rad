@@ -277,9 +277,9 @@ func TestStringInterpolation_ThousandsSeparator_Int(t *testing.T) {
 	script := `
 num = 1234567
 print("_{num:,}_")
-print("_{num:,<15}_")
-print("_{num:,>15}_")
-print("_{num:,15}_")
+print("_{num:<15,}_")
+print("_{num:>15,}_")
+print("_{num:15,}_")
 `
 	expected := `_1,234,567_
 _1,234,567      _
@@ -297,8 +297,8 @@ pi = 3141.59265
 print("_{pi:,}_")
 print("_{pi:,.2}_")
 print("_{pi:,.4}_")
-print("_{pi:,<20.2}_")
-print("_{pi:,>20.2}_")
+print("_{pi:<20,.2}_")
+print("_{pi:>20,.2}_")
 `
 	expected := `_3,141.59265_
 _3,141.59_
@@ -335,7 +335,7 @@ negative_int = -123456
 negative_float = -9876.543
 print("Negative int: {negative_int:,}")
 print("Negative float: {negative_float:,.2}")
-print("Padded negative: {negative_int:,>15}")
+print("Padded negative: {negative_int:>15,}")
 `
 	expected := `Negative int: -123,456
 Negative float: -9,876.54
