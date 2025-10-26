@@ -5,8 +5,9 @@ a = "{1 + 1:3}"
 b = "{1 + 1:4.5}"
 c = "{1 + 1:>4.5}"
 d = "{1 + 1:<4.5}"
+e = "{1 + 1:<4,.5}"
 =====
-B: [ 0, 72] PS: [0,  0] PE: [4,  0] source_file
+B: [ 0, 92] PS: [0,  0] PE: [5,  0] source_file
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
@@ -207,3 +208,55 @@ B: [67, 68] PS: [3, 14] PE: [3, 15]                                     . `.`
 B: [68, 69] PS: [3, 15] PE: [3, 16]                                     precision: int `5`
 B: [69, 70] PS: [3, 16] PE: [3, 17]                                   } `}`
 B: [70, 71] PS: [3, 17] PE: [3, 18]                               end: string_end `"`
+B: [72, 91] PS: [4,  0] PE: [4, 19]   assign
+B: [72, 73] PS: [4,  0] PE: [4,  1]     left: var_path
+B: [72, 73] PS: [4,  0] PE: [4,  1]       root: identifier `e`
+B: [74, 75] PS: [4,  2] PE: [4,  3]     = `=`
+B: [76, 91] PS: [4,  4] PE: [4, 19]     right: expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]       delegate: ternary_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]         delegate: or_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]           delegate: and_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]             delegate: compare_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]               delegate: add_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                 delegate: mult_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                   delegate: unary_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                     delegate: fallback_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                       delegate: indexed_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                         root: primary_expr
+B: [76, 91] PS: [4,  4] PE: [4, 19]                           literal
+B: [76, 91] PS: [4,  4] PE: [4, 19]                             string
+B: [76, 77] PS: [4,  4] PE: [4,  5]                               start: string_start `"`
+B: [77, 90] PS: [4,  5] PE: [4, 18]                               contents: string_contents
+B: [77, 90] PS: [4,  5] PE: [4, 18]                                 interpolation: interpolation
+B: [77, 78] PS: [4,  5] PE: [4,  6]                                   { `{`
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                   expr: expr
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                     delegate: ternary_expr
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                       delegate: or_expr
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                         delegate: and_expr
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                           delegate: compare_expr
+B: [78, 83] PS: [4,  6] PE: [4, 11]                                             delegate: add_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                               left: add_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                 delegate: mult_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                   delegate: unary_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                     delegate: fallback_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                       delegate: indexed_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                         root: primary_expr
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                           literal
+B: [78, 79] PS: [4,  6] PE: [4,  7]                                                             int `1`
+B: [80, 81] PS: [4,  8] PE: [4,  9]                                               op: + `+`
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                               right: mult_expr
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                 delegate: unary_expr
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                   delegate: fallback_expr
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                     delegate: indexed_expr
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                       root: primary_expr
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                         literal
+B: [82, 83] PS: [4, 10] PE: [4, 11]                                                           int `1`
+B: [83, 89] PS: [4, 11] PE: [4, 17]                                   format: format_specifier
+B: [83, 84] PS: [4, 11] PE: [4, 12]                                     : `:`
+B: [84, 85] PS: [4, 12] PE: [4, 13]                                     alignment: < `<`
+B: [85, 86] PS: [4, 13] PE: [4, 14]                                     padding: int `4`
+B: [86, 87] PS: [4, 14] PE: [4, 15]                                     thousands_separator: , `,`
+B: [87, 88] PS: [4, 15] PE: [4, 16]                                     . `.`
+B: [88, 89] PS: [4, 16] PE: [4, 17]                                     precision: int `5`
+B: [89, 90] PS: [4, 17] PE: [4, 18]                                   } `}`
+B: [90, 91] PS: [4, 18] PE: [4, 19]                               end: string_end `"`
