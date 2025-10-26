@@ -412,4 +412,4 @@ from the specified `fields`.
 
 ## Next
 
-Rad offers a range of useful built-in functions to help you write your scripts. We'll take a look at those in the next section: [Functions](./functions.md).
+Next, we'll cover another useful concept for writing scripts: [resource files](./resources.md).

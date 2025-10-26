@@ -21,7 +21,8 @@
 - [x] functions
   - [x] NEW custom functions
   - [x] NEW lambdas
-- [ ] strings-advanced
+- [x] strings-advanced
+  - [x] NEW thousands commas
 - [ ] rad blocks
   - [ ] NEW lambdas for `map` 
 - [ ] NEW function typing

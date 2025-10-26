@@ -610,4 +610,4 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 
 ## Next
 
-Nice, let's now look at another Rad feature which makes it uniquely suited to certain types of scripting: [Rad Blocks](./rad-blocks.md).
+Next, we'll look at another important concept in Rad: [Functions](./functions.md).
