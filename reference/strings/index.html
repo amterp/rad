@@ -408,11 +408,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/rad-blocks/" class="md-nav__link">
+      <a href="../../guide/strings-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Rad Blocks
+    Strings (Advanced)
   </span>
   
 
@@ -429,11 +429,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/strings-advanced/" class="md-nav__link">
+      <a href="../../guide/rad-blocks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Strings (Advanced)
+    Rad Blocks
   </span>
   
 
@@ -1132,6 +1132,16 @@ and that <code>{name}</code> is also left as-is i.e. no interpolation was perfor
 </code></pre></div>
 <p>is illegal because the backslash does <em>not</em> escape the following <code>"</code>, and so that quote actually ends the raw string.
 Then we're left with a third and dangling <code>"</code> at the end, causing a syntax error.</p>
+<div class="admonition info">
+<p class="admonition-title">You cannot escape the raw string's own delimiter</p>
+<p>Rad raw strings behave more like their equivalent in Go than Python.
+In Python, you can escape the delimiter used to make the raw string i.e. <code>r"quote: \"!"</code>. If printed, this will
+display as <code>quote: \"!</code> i.e. the escape character is also printed. There are lots of discussions online about this
+somewhat odd behavior, which is why Rad (and Go) opted to instead keep the rules very simple and not allow escaping
+in raw strings of any kind.</p>
+<p>Instead, if you try the same thing in Rad, you will get an error because the quote following <code>\</code> will close the
+string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
+</div>
 
 
 

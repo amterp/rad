@@ -11,10 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/strings-advanced/">
       
       
-        <link rel="prev" href="../rad-blocks/">
+        <link rel="prev" href="../functions/">
       
       
-        <link rel="next" href="../resources/">
+        <link rel="next" href="../rad-blocks/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -409,27 +409,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rad Blocks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -490,6 +469,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Formatting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thousands-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thousands Separator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#number-vs-string-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Number vs String Formatting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -505,6 +508,24 @@
   <a href="#raw-strings" class="md-nav__link">
     <span class="md-ellipsis">
       Raw Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#escape-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escape Sequences
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Attributes
     </span>
   </a>
   
@@ -532,6 +553,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rad-blocks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rad Blocks
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1004,6 +1046,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Formatting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thousands-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thousands Separator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#number-vs-string-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Number vs String Formatting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1019,6 +1085,24 @@
   <a href="#raw-strings" class="md-nav__link">
     <span class="md-ellipsis">
       Raw Strings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#escape-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escape Sequences
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Attributes
     </span>
   </a>
   
@@ -1062,22 +1146,26 @@
 
   <h1>Strings (Advanced)</h1>
 
-<p>In this section, we'll cover some more advanced string concepts:</p>
+<p>Strings are everywhere in scripting - from building messages to formatting output. In the <a href="../basics/#str">Basics</a> section, we covered simple string operations, but Rad offers much more powerful features for working with text.</p>
+<p>In this section, we'll explore:</p>
 <ul>
-<li>string interpolation</li>
-<li>formatting</li>
-<li>multiline strings</li>
-<li>raw strings</li>
+<li><strong>String interpolation</strong> - embed expressions directly in strings</li>
+<li><strong>Formatting</strong> - control how values are displayed (padding, precision, thousands separators)</li>
+<li><strong>Multiline strings</strong> - work with text spanning multiple lines</li>
+<li><strong>Raw strings</strong> - disable interpolation and escaping when you need literal text</li>
+<li><strong>Escape sequences</strong> - include special characters like newlines and tabs</li>
+<li><strong>String attributes</strong> - add color, bold, and other terminal styling</li>
 </ul>
+<p>These features make it easy to generate well-formatted output, build complex strings, and create polished CLI experiences.</p>
 <h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
 <p>Rad allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.</p>
 <p>Some examples:</p>
 <div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
 print(&quot;Hi, {name}!&quot;)
 
-print(&quot;Uppercase: {upper(name)}&quot;)
+print(&quot;Uppercase: {name.upper()}&quot;)
 
-print(&quot;Conditions: {len(name) &gt; 5 ? &#39;long name&#39; : &#39;short name&#39;}!&quot;)
+print(&quot;Conditions: {name.len() &gt; 5 ? &#39;long name&#39; : &#39;short name&#39;}!&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hi, Alice!
@@ -1087,30 +1175,56 @@ Conditions: short name!
 </div>
 
 <p>String interpolation expressions can be as simple as just an identifier, or can involve function calls, math, list comprehensions, etc (though you should consider extracting complex expressions into named variables beforehand for the sake of clarity).</p>
-<p>Note the use of single quote <code>'</code> strings inside the ternary example's expression. Using double quotes would've closed the "outer" string prematurely, but using another delimiter allows us to avoid that without also needing to escape anything.</p>
+<p>Note the use of single quote <code>'</code> strings inside the last line of the above example.
+Using double quotes would've closed the "outer" string prematurely,
+but using another delimiter allows us to avoid that without also needing to escape anything.</p>
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <p>You can format expression results while doing string interpolation.
-To do so, follow your expression with <code>:</code> and then the relevant syntax for the formatting you want to do. We'll demonstrate through some examples:</p>
+To do so, follow your expression with a colon <code>:</code> and then the relevant syntax for the formatting you want to do.
+We'll demonstrate through some examples:</p>
 <div class="highlight"><pre><span></span><code>pi = 3.14159265359
 
-print(&quot;Pi: {pi}&quot;)       // no formatting
-print(&quot;Pi: {pi:20}&quot;)    // left-pad to 20 places
-print(&quot;Pi: {pi:&gt;20}&quot;)   // equivalent to above left-pad, &gt; is redundant
-print(&quot;Pi: {pi:&lt;20}&quot;)   // right-pad to 20 places
-print(&quot;Pi: {pi:.3}&quot;)    // print to 3 decimal places
-print(&quot;Pi: {pi:10.2}&quot;)  // left-pad to 10 places, including 2 decimal places
+print(&quot;Pi: {pi}_&quot;)       // no formatting
+print(&quot;Pi: {pi:20}_&quot;)    // left-pad to 20 places (default)
+print(&quot;Pi: {pi:&lt;20}_&quot;)   // right-pad to 20 places
+print(&quot;Pi: {pi:.3}_&quot;)    // print to 3 decimal places
+print(&quot;Pi: {pi:10.2}_&quot;)  // left-pad to 10 places, including 2 decimal places
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Pi: 3.14159265359
-Pi:             3.141593
-Pi:             3.141593
-Pi: 3.141593            
-Pi: 3.142
-Pi:       3.14
+<div class="highlight"><pre><span></span><code>Pi: 3.14159265359_
+Pi:             3.141593_
+Pi: 3.141593            _
+Pi: 3.142_
+Pi:       3.14_
 </code></pre></div>
 </div>
 
-<p>The decimal place formatting is only relevant to expressions that result in numbers. If it results in a string, then the formatting will error.</p>
+<h3 id="thousands-separator">Thousands Separator<a class="headerlink" href="#thousands-separator" title="Permanent link">&para;</a></h3>
+<p>For large numbers, you can add comma separators using <code>,</code> in your formatting:</p>
+<div class="highlight"><pre><span></span><code>population = 1234567
+price = 1234.56
+
+print(&quot;Population: {population:,}&quot;)
+print(&quot;Price: {price:,.2}&quot;)
+print(&quot;Large: {population:20,.0}&quot;)  // combine padding, comma, and precision
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Population: 1,234,567
+Price: 1,234.56
+Large:            1,234,567
+</code></pre></div>
+</div>
+
+<h3 id="number-vs-string-formatting">Number vs String Formatting<a class="headerlink" href="#number-vs-string-formatting" title="Permanent link">&para;</a></h3>
+<p>Decimal place formatting (<code>.X</code>) and thousands separators (<code>,</code>) only work on numbers. Using them on strings will cause an error:</p>
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+print(&quot;{name:.2}&quot;)   // Error: cannot format string with decimal places
+print(&quot;{name:,}&quot;)    // Error: cannot format string with thousands separator
+</code></pre></div>
+<p>However, padding works on both numbers and strings:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;{name:10}&quot;)   // &quot;     Alice&quot; (left-padded to 10 chars)
+print(&quot;{42:5}&quot;)      // &quot;   42&quot; (left-padded to 5 chars)
+</code></pre></div>
 <h2 id="multiline-strings">Multiline Strings<a class="headerlink" href="#multiline-strings" title="Permanent link">&para;</a></h2>
 <p>Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. <code>"</code> or <code>'</code>.
 For these scenarios, Rad offers <code>"""</code> multiline string syntax. To demonstrate:</p>
@@ -1118,6 +1232,8 @@ For these scenarios, Rad offers <code>"""</code> multiline string syntax. To dem
 This is an
 example of text
 that &quot;may contain quotes&quot;!
+It also supports interpolation:
+One plus one equals {1 + 1}
 &quot;&quot;&quot;
 print(text)
 </code></pre></div>
@@ -1125,10 +1241,11 @@ print(text)
 <div class="highlight"><pre><span></span><code>This is an
 example of text
 that &quot;may contain quotes&quot;!
+One plus one equals 2
 </code></pre></div>
 </div>
 
-<p>Some things to note:</p>
+<p>Multiline strings must follow some rules:</p>
 <ol>
 <li>The opening <code>"""</code> must not be followed by any non-comment tokens on the same line.</li>
 <li>The newline after the opening <code>"""</code> is <em>excluded</em> from the contents of the string. Contents begin on the next line.</li>
@@ -1145,6 +1262,7 @@ that &quot;may contain quotes&quot;!
 .....example of text
 ..that &quot;may contain quotes&quot;!
 ..&quot;&quot;&quot;  // &lt; 2 preceding spaces. will get removed from each line in the contents.
+print(text)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>..This is an
@@ -1155,7 +1273,7 @@ that &quot;may contain quotes&quot;!
 
 <h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
 <p>Rad also supports <strong>raw strings</strong>.
-Raw strings don't have any sort of processing done on them (such as string interpolation) and do not allow any escaping (including the delimiter used to create them).
+Raw strings don't perform string interpolation and do not allow any escaping (including the delimiter used to create them).
 Use them when you want your contents to remain as "raw" and unprocessed as possible.</p>
 <p>To use them, just prefix the delimiter of your choice (single/double quotes or backticks) with <code>r</code>.</p>
 <div class="highlight"><pre><span></span><code>text = r&quot;Hello\n{name}&quot;
@@ -1167,35 +1285,95 @@ print(text)
 </div>
 
 <p>Notice the printed string is exactly as written in code - the newline character and string interpolation are left as-is.</p>
-<p>You could use any of the three delimiters for raw strings:</p>
+<p>You can use any of the string delimiters for raw strings, including multiline <code>"""</code>:</p>
 <div class="highlight"><pre><span></span><code>text = r&quot;Hello\n{name}&quot;
 text = r&#39;Hello\n{name}&#39;
 text = r`Hello\n{name}`
+text = r&quot;&quot;&quot;
+Hello\n{name}
+&quot;&quot;&quot;
 </code></pre></div>
 <div class="admonition tip">
-<p class="admonition-title">Raw strings for file paths</p>
+<p class="admonition-title">Common uses for raw strings</p>
 <p>Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:</p>
 <div class="highlight"><pre><span></span><code>path = r&quot;C:\Users\Documents\notes.txt&quot;
 </code></pre></div>
+<p>They can also be useful for text containing lots of braces <code>{}</code>, in order to disable string interpolation:</p>
+<div class="highlight"><pre><span></span><code>json_str = r&quot;{ &#39;my_key&#39;: { &#39;my_key2&#39; : 3 } }&quot;
+</code></pre></div>
 </div>
+<h2 id="escape-sequences">Escape Sequences<a class="headerlink" href="#escape-sequences" title="Permanent link">&para;</a></h2>
+<p>When you need special characters in your strings, you can use backslash <code>\</code> to escape them:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;Line 1\nLine 2&quot;)      // newline
+print(&quot;Col1\tCol2&quot;)          // tab
+print(&quot;Path: C:\\Users&quot;)     // backslash
+print(&quot;She said \&quot;Hi!\&quot;&quot;)    // quote (though prefer using a different delimiter, or raw strings)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Line 1
+Line 2
+Col1    Col2
+Path: C:\Users
+She said &quot;Hi!&quot;
+</code></pre></div>
+</div>
+
+<p><strong>Available escape sequences:</strong></p>
+<ul>
+<li><code>\n</code> - newline</li>
+<li><code>\t</code> - tab</li>
+<li><code>\\</code> - literal backslash</li>
+<li><code>\"</code> <code>\'</code> <code>\`</code> - the delimiter itself (though prefer using a different delimiter)</li>
+<li><code>\{</code> - literal brace (prevents interpolation, but consider using raw strings)</li>
+</ul>
+<h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
+<p>Strings in Rad can carry attributes like color, bold, italic, and underline. These attributes are preserved through string interpolation and concatenation:</p>
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;.green()
+print(&quot;Hello, {name}!&quot;)  // &quot;Alice&quot; appears green in terminal
+print(&quot;Status: &quot; + &quot;ACTIVE&quot;.bold())  // &quot;ACTIVE&quot; appears bold
+</code></pre></div>
+<p>You can apply multiple attributes by chaining function calls:</p>
+<div class="highlight"><pre><span></span><code>title = &quot;Important&quot;.underline().bold()
+warning = &quot;WARNING&quot;.bold().red()
+print(title)
+print(warning)
+</code></pre></div>
+<p>Rad provides color functions (<code>red</code>, <code>green</code>, <code>blue</code>, <code>yellow</code>, etc.), style functions (<code>bold</code>, <code>italic</code>, <code>underline</code>),
+and the <code>hyperlink</code> function for creating clickable terminal links. See the <a href="../../reference/functions/#colors--attributes">functions reference</a>.</p>
 <div class="admonition info">
-<p class="admonition-title">You cannot escape the raw string's own delimiter</p>
-<p>Rad raw strings behave more like their equivalent in Go than Python.
-In Python, you can escape the delimiter used to make the raw string i.e. <code>r"quote: \"!"</code>. If printed, this will
-display as <code>quote: \"!</code> i.e. the escape character is also printed. There are lots of discussions online about this
-somewhat odd behavior, which is why Rad (and Go) opted to instead keep the rules very simple and not allow escaping
-in raw strings of any kind.</p>
-<p>Instead, if you try the same thing in Rad, you will get an error because the quote following <code>\</code> will close the
-string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.</p>
+<p class="admonition-title">When Attributes Are Preserved</p>
+<ul>
+<li><strong>Preserved</strong>: Interpolation, concatenation, and index lookup maintain attributes</li>
+<li><strong>Not preserved</strong>: Most string functions like <code>replace()</code>, <code>split()</code>, <code>upper()</code>, and <code>lower()</code> return plain strings</li>
+</ul>
+<p>We intend to preserve attributes in more situations in future versions of Rad.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">String Manipulation Functions</p>
+<p>In addition to the syntax features covered here, Rad provides many built-in functions for working with strings.
+Use <a href="../functions/#ufcs">UFCS</a> (dot notation) for cleaner, more readable code:</p>
+<ul>
+<li><code>text.upper()</code>, <code>text.lower()</code> - change case</li>
+<li><code>text.replace(old, new)</code>, <code>text.split(sep)</code>, <code>items.join(sep)</code> - transform and combine strings</li>
+<li><code>text.trim()</code>, <code>text.trim_prefix()</code>, <code>text.trim_suffix()</code> - remove whitespace or characters</li>
+<li><code>text.starts_with(prefix)</code>, <code>text.ends_with(suffix)</code> - check string prefixes/suffixes</li>
+<li><code>text.count(substr)</code> - count substring occurrences</li>
+<li>And many more!</li>
+</ul>
+<p>See the <a href="../../reference/functions/">Functions Reference</a> for the complete list with examples.</p>
 </div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>We learned about <strong>string interpolation</strong>, and how we can put expressions directly into strings for evaluation.</li>
-<li>We saw that we can also <strong>format</strong> the result of said expressions, by using a colon <code>:</code> following the expression itself.</li>
-<li>Finally, we learned about <strong>raw strings</strong> and <strong>multiline strings</strong>.</li>
+<li>We learned about <strong>escape sequences</strong> like <code>\n</code>, <code>\t</code>, and <code>\{</code> for including special characters in strings.</li>
+<li>We covered <strong>string interpolation</strong>, which lets us put expressions directly into strings for evaluation.</li>
+<li>We saw how to <strong>format</strong> interpolated expressions using e.g. padding, precision, etc. Example: <code>{num:&lt;20,.3}</code>.</li>
+<li>We explored <strong>multiline strings</strong> using <code>"""</code> syntax, which support both quotes and interpolation.</li>
+<li>We learned about <strong>raw strings</strong> (prefixed with <code>r</code>) that prevent interpolation and escaping.</li>
+<li>We covered <strong>string attributes</strong> like color and bold that are preserved through interpolation and concatenation.</li>
+<li>Rad also provides many built-in string manipulation functions covered in the <a href="../../reference/functions/">Functions Reference</a>.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Next, we'll cover another useful concept for writing scripts: <a href="../resources/">resource files</a>.</p>
+<p>Next, let's look at another Rad feature which makes it uniquely suited to certain types of scripting: <a href="../rad-blocks/">Rad Blocks</a>.</p>
 
 
 
@@ -1228,7 +1406,7 @@ string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.<
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../rad-blocks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rad Blocks">
+          <a href="../functions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Functions">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1238,20 +1416,20 @@ string, leaving a dangling <code>!"</code> at the end, which is invalid syntax.<
                 Previous
               </span>
               <div class="md-ellipsis">
-                Rad Blocks
+                Functions
               </div>
             </div>
           </a>
         
         
           
-          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
+          <a href="../rad-blocks/" class="md-footer__link md-footer__link--next" aria-label="Next: Rad Blocks">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Resources
+                Rad Blocks
               </div>
             </div>
             <div class="md-footer__button md-icon">
