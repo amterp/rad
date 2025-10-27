@@ -2,8 +2,8 @@ github.com/BurntSushi/toml v1.5.0 h1:W5quZX/G/csjUnuI8SUYlsHs9M38FC7znL0lIO+DvMg
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
-github.com/amterp/color v1.20.0 h1:3qR8miQeGMfd++ExLt5xUdMWWYYwohdix6jLMSyXbWM=
-github.com/amterp/color v1.20.0/go.mod h1:XRJ2OonPd9eRKRg6ddVJc6Yv/rvjzMhn+qdIDHKjE04=
+github.com/amterp/color v1.20.1 h1:YDjwZ0X6IfK0OuZl8P2KLkV0WuH2pvttrEwr+ZbRbYU=
+github.com/amterp/color v1.20.1/go.mod h1:XRJ2OonPd9eRKRg6ddVJc6Yv/rvjzMhn+qdIDHKjE04=
 github.com/amterp/flexid v1.3.0 h1:J3TpTgH3M70JX5bBvsgJ9DHtRcqK6ssQtGreRDd1vgk=
 github.com/amterp/flexid v1.3.0/go.mod h1:hT0latK+160p/DMRO062K4bLc9ruA3w4P5oASSZ1kME=
 github.com/amterp/go-tbl v0.12.0 h1:on3p/pZmfxMObGiauDaf3pwg/gfKbyW6qXiluH/MOuk=
@@ -158,8 +158,8 @@ golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.36.0 h1:KVRy2GtZBrk1cBYA7MKu5bEZFxQk4NIDV6RLVcC8o0k=
-golang.org/x/sys v0.36.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+golang.org/x/sys v0.37.0 h1:fdNQudmxPjkdUTPnLn5mdQv7Zwvbvpaxqs831goi9kQ=
+golang.org/x/sys v0.37.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
 golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
