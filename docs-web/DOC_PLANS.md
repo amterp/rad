@@ -23,15 +23,16 @@
   - [x] NEW lambdas
 - [x] strings-advanced
   - [x] NEW thousands commas
-- [ ] rad blocks
-  - [ ] NEW lambdas for `map` 
+- [x] rad blocks
+  - [x  ] NEW lambdas for `map` 
 - [ ] NEW function typing
 - [ ] NEW error handling (`catch`, `??`)
   - [ ] error propagation model
-- [ ] resources
 - [ ] shell commands !!
   - [ ] shell error handling
+- [ ] resources
 - [ ] global flags
+- [ ] json-paths-advanced
 - [ ] defer/errdefer
 - [ ] NEW misc
   - [ ] NEW macros

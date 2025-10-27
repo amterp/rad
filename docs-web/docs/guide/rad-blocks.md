@@ -2,20 +2,26 @@
 title: Rad Blocks
 ---
 
-This section discusses another unique Rad concept, including **rad blocks**.
-These allow you to easily and concisely define queries to JSON APIs and what data you want to extract from the response, so that it can be displayed as a nice, readable table.
+Working with JSON APIs is a common scripting task. You might need to query GitHub for repository info, check the
+status of your cloud services, or pull data from internal APIs. Typically, this involves making HTTP requests,
+parsing JSON responses, extracting the fields you care about, and formatting everything for display.
+
+Rad makes this entire workflow concise and declarative with **rad blocks** - a special syntax that lets you query
+JSON APIs and display results as formatted tables in just a few lines of code. Instead of writing imperative parsing
+logic, you declare what you want, and Rad handles the rest.
 
 ## Basic Example
 
 This concept will become clearer with an example.
 
-Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about its latest commits.
+Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about
+its latest commits.
 
 ```rad title="File: commits"
 args:
-    repo str       # The repo to query. Format: user/project
-    limit int = 20 # The max commits to return.
-    
+    repo str        # The repo to query. Format: user/project
+    limit int = 20  # The max commits to return.
+
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 
 Time = json[].commit.author.date
@@ -26,7 +32,7 @@ rad url:
     fields Time, Author, SHA
 ```
 
-Here's an example of running it, and the command line output:
+And running it looks something like this:
 
 ```shell
 rad commits amterp/rad 5
@@ -44,7 +50,7 @@ Time                  Author          SHA
 ```
 </div>
 
-This is a simple example, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and hash string).
+This is a simple example, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and SHA).
 
 And that's with just a few lines of code! Let's break it down piece by piece.
 
@@ -52,8 +58,8 @@ And that's with just a few lines of code! Let's break it down piece by piece.
 
 ```rad
 args:
-    repo str       # The repo to query. Format: user/project
-    limit int = 20 # The max commits to return.
+    repo str        # The repo to query. Format: user/project
+    limit int = 20  # The max commits to return.
     
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 ```
@@ -61,7 +67,7 @@ url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 Here we have an [args block](./args.md) where we declare a `repo` string and a `limit` int with a default of 20.
 After the args block, we create a `url` string using [string interpolation](strings-advanced.md#string-interpolation) to fill in the repo name, and the limit for how many commits we want GitHub to give us.
 
-### Json Field Definitions
+### Json Paths
 
 ```rad
 Time = json[].commit.author.date
@@ -71,9 +77,9 @@ SHA = json[].sha
 
 This is where things get more interesting. The above definitions correspond to expected *paths* in the JSON response i.e. a series of keys to look up.
 
-In Rad nomenclature, we refer to these as **json field definitions**.
+In Rad nomenclature, we refer to these as **json path definitions**.
 
-If you query GitHub's API and take a look at the JSON response, you can see how these fields correspond to the data.
+If you query GitHub's API and take a look at the JSON response, you can see how these paths correspond to the data.
 Example URL if you want to see for yourself:
 
 <a href="https://api.github.com/repos/amterp/rad/commits?per_page=2" target="_blank">https://api.github.com/repos/amterp/rad/commits?per_page=2</a>
@@ -105,17 +111,27 @@ Here's a simplified example response with two commits, showing the structure we'
 
 You can see how the path for `Author = json[].commit.author.name` corresponds to a final value of "Alexander Terp".
 
-Json field definitions leverage a special syntax that Rad offers. They always start with `json`.
+Json paths leverage a special syntax that Rad offers. They always start with `json`.
 `json` can be thought of as representing the JSON blob as a whole, or its root, if you want to think of the JSON data as a tree.
 
 The `[]` after `json` tells Rad that you expect the `json` blob to be a list, and to "unwrap" it and dig into individual items in that list for the remainder of the path.
 `commit` then tells it to look up a key of that name (literally `commit`), and to then look up `author` next, and then finally `name`.
 
-The json field definition syntax can do a lot of things that we won't cover here. For details, see its [reference page](../reference/json-field-definition.md).
+### Basic Path Syntax Summary
 
-[//]: # (TODO ^ make the above page)
+The examples above demonstrate the core JSON path patterns you'll use most often:
 
-When the json field assignment is executed, its variable (`Author` for example) is initialized as an empty list.
+- **Dot notation**: `json.field` or `json.commit.author.name` for nested fields
+- **Array unwrapping**: `json[]` tells Rad to iterate through a list
+- **Combined**: `json[].field.nested` extracts nested data from each array item
+
+!!! tip "Advanced JSON Path Features"
+
+    The JSON path syntax supports additional powerful features like wildcards (`json[].*`), indexed access
+    (`json[0]`, `json.items[2]`), and multiple levels of array unwrapping (`json[].items[][].related[]`).
+    We'll cover these in a later section: [JSON Paths (Advanced)](./json-paths-advanced.md).
+
+When a json path declaration is executed, its variable (`Author` for example) is initialized as an empty list.
 It's a "special" list though, as it has a json field definition tied to it, which can be used in a rad block, let's look at that one next.
 
 ### Rad Block
@@ -125,11 +141,18 @@ rad url:
     fields Time, Author, SHA
 ```
 
-`rad` is a keyword. As with the name of the interpreter and CLI tool which runs it, it stands for "Request And Display", to give you an idea for what it does.
+!!! info "Why 'rad'?"
+
+    The project name **Rad** comes from its original core use case: **R**equest **A**nd **D**isplay.
+    This workflow - querying data from APIs and displaying it in readable tables - is exactly
+    what `rad` blocks are designed for. It's not just the project name, it's what the keyword does!
+
+`rad` is a keyword that executes a "Request And Display" workflow.
 
 Following the `rad` keyword, we provide the `url` variable which will get used to execute an `HTTP GET` request.
 Then, inside the rad block itself, using the keyword `fields`, we specify the earlier json fields that we defined.
-Listing them here will tell the rad block to extract data from the resulting JSON blob according to the json field paths that you defined.
+Listing them here will tell the rad block to extract data from the resulting JSON blob according to the json field
+paths that you defined.
 The ordering in which the fields are listed also controls the ordering of columns in the ensuing table that gets printed.
 
 When run, this will print the table we saw earlier; here it is again for reference (with a limit of 3).
@@ -145,7 +168,7 @@ Note that the variable names we choose for the json field definitions become the
 
 ## Additional Rad Block Options
 
-Rad blocks offer additional syntax for controlling what your final table looks like.
+Rad blocks include options to control the resulting table.
 
 ### Sorting
 
@@ -229,12 +252,12 @@ For example, let's say you wanted the 'Population' column in the above example t
 rad url:
     fields City, Country, Population
     Population:
-        map fn(p) "{p/1000000:.1}"
+        map fn(p) "{p/1e6:.1}"
 ```
 
-The syntax here is `map <lambda>`. In this example, the lambda is `fn(p) "{p/1000000:.1}"`.
+The syntax here is `map <lambda>`. In this example, the lambda is `fn(p) "{p/1e6:.1}"`.
 
-[//]: # (TODO when section added on lambdas in guide, hyperlink here)
+You can read about lambdas in an earlier section here: [Functions: Lambdas](./functions.md#lambdas).
 
 If we run this, you'll see the change:
 
@@ -246,27 +269,23 @@ Houston      USA      2.3
 Copenhagen   Denmark  0.6
 ```
 
-This example is actually using string interpolation formatting, which we haven't covered yet, so is a bit of a preview. Let's break down this syntax though. After declaring the fields:
-
-[//]: # (TODO link to string interpolation formatting section when added, above)
+Let's break down this syntax more. After declaring the fields:
 
 ```rad
 Population:
-    map fn(p) "{p/1000000:.1}"
+    map fn(p) "{p/1e6:.1}"
 ```
 
 `Population:` begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as `map` or [`color`](#color).
 
-[//]: # (todo mention can apply to multiple columns at once?)
-
 `map` is considered a keyword in the context of rad blocks. After `map`, a lambda expression is expected, which you can think of as a mini-function.
 
-In this case, we've written `p -> "{p/1000000:.1}"`. Left of the arrow is an identifier `p` (name could be any valid identifier). This will represent an individual value in the `Population` list.
-Right of the arrow is an expression for what that entry in the list should *become*.
+In this case, we've written `fn(p) "{p/1e6:.1}"`. The lambda takes a variable `p` (name could be any valid identifier). This will represent an individual value in the `Population` list.
+The expression that follows is what will get evaluated and decide the final value in each cell.
 It is the *output* of your lambda mini-function. In this example, we turn it into a string, created using string interpolation.
 
-
-Inside the string interpolation expression, we first divide it by one million (`p/1000000`), and then use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (`.1`).
+Inside the string interpolation expression, we first divide it by one million (`p/1e6`, using scientific notation), and then
+use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (`.1`).
 
 [//]: # (todo visual aid perhaps, to demonstrate what the lambda is doing exactly?)
 
@@ -274,7 +293,7 @@ Note that sorting operations are done on the pre-mapping column values.
 
 ### Color
 
-Another column modifier uses the keyword `color`. You can tell rad to color a cell's value depending on its contents by using a [regex](https://en.wikipedia.org/wiki/Regular_expression).
+Another column modifier uses the keyword `color`. You can tell Rad to color a cell's value depending on its contents by using a [regex](https://en.wikipedia.org/wiki/Regular_expression).
 
 For example:
 
@@ -299,6 +318,26 @@ Note that the specific colors that appear varies between terminals and user sett
 
 See the [reference](../reference/rad-blocks.md#colors) for a list of valid colors.
 
+[//]: # (TODO ^ reference is old, not super well supported)
+
+#### Multi-Column Modifiers
+
+You can apply the same modifiers to multiple columns at once by listing them together:
+
+```rad
+rad url:
+    fields Status, Priority, Assignee, DueDate
+    Status, Priority:
+        color "green" "complete|high"
+        color "red" "blocked|low"
+    Status, Priority, Assignee:
+        map fn(s) upper(s)
+```
+
+This example applies color rules to both `Status` and `Priority`, then transforms three columns to uppercase with a single `map` block. This is much more concise than writing separate modifier blocks for each column.
+
+Any column modifier (`map`, `color`) can be applied to multiple columns this way.
+
 ### If Statements
 
 Rad blocks can contain if statements, so if you want slightly different behavior for your rad block based on some condition, you don't need to
@@ -308,7 +347,7 @@ Let's say your script had a flag for sorting by population or not. Here's an exa
 
 ```rad
 args:
-    sort_by_population "sort-by-population" p bool  # Enable to sort by population.
+    sort_by_population p bool  # Enable to sort by population.
 
 // ... some script stuff here
 
@@ -324,43 +363,34 @@ If the flag is enabled, we sort by descending population, otherwise we sort rows
 
 You can put any rad block statements into these if blocks, including `fields`, column modifiers, etc.
 
-## Request Blocks
+## Block Types: rad, request, and display
 
-There are two other types of rad blocks: "request" blocks and "display" blocks. Let's first discuss the former.
+So far we've seen the `rad` block, which performs an HTTP request, extracts data, and displays it as a table.
+Rad also offers two variants that give you more control over this workflow: **request blocks** and **display blocks**.
 
-A request block is similar to a `rad` block, however it does not print out any table after executing its query and
-field extraction steps. You can use them to just query and extract fields from a returned json blob and stop there -
-allowing you to separately process the populated json fields/lists further if need be, or do whatever else you'd like.
+### request: Request Without Display
 
-Generally the syntax is very similar between `request` and `rad` blocks.
+A **request block** is like a `rad` block, but it doesn't print a table. It performs the HTTP request and extracts fields
+into lists, then stops. This is useful when you want to process the data further before displaying it, or use it for something other than display.
 
 ```rad
 request url:
     fields City, Country, Population
-    
-// from here the above fields' lists are populated with extracted values
+    sort Population desc
+
+// From here, the field lists are populated and sorted
+// City[0] is now the city with the largest population
+largest_city = City[0]
+print("The largest city is {largest_city}")
 ```
 
-Naturally, block statements like sorting or coloring have no effect, and may be considered invalid and error.
+Note that sorting works in request blocks since it modifies the underlying data, but display-only modifiers like `color` or `map` have no effect since nothing gets displayed.
 
-[//]: # (todo we should not use 'may' wording, we should decide and be clear RAD-106)
-[//]: # (todo need to update this section when we allow giving json blobs directly to the display or request blocks or rad blocks)
+### display: Display Without Request
 
-!!! note "Wait, so is a request block *different* from a rad block, or is it a *type* of rad block?"
+A **display block** takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.
 
-    We generally consider "display" and "request" blocks to be *types* of rad blocks, just with slightly different
-    syntax and behavior. We may still compare them to *the* rad block (i.e. the one using `rad` as its keyword) when
-    discussing differences however - it depends on the context in which they're discussed.
-
-[//]: # (todo should mention that you can FOREGO the json fields extraction algo - simply save the response. tho tbh, should I just reprecate that and tell people to use http_get? I think so)
-
-## Display Blocks
-
-Display blocks are the opposite side of the coin from request blocks.
-Where the request blocks will perform a request, populate your lists, and *not* print, the display block will simply take
-already-populated lists and display them as a table.
-
-To demonstrate, you can even manually populate your lists (columns) and use them as fields for the table:
+**Display with manual data:**
 
 ```rad
 Nums = [1, 2]
@@ -377,39 +407,84 @@ Nums  Words
 ```
 </div>
 
-Notice `display` does not take any `url` or equivalent thereof, as it doesn't perform any requests, and gets all it needs
-from the specified `fields`.
+**Display with a data source:**
 
-!!! tip "Combining request and display blocks"
+Display blocks can also take a variable containing JSON data (like the response from `http_get`). This is particularly
+useful when you need custom headers or authentication:
 
-    Sometimes you want to display more information in your table than the JSON blob itself provides.
-    For example, you may wish to derive an additional column off two others. To accomplish this, you can write a
-    `request` block, derive whatever additional columns you want, and then write a `display` block to print your final
-    range of columns.
+```rad
+// Fetch data with custom headers
+resp = http_get(url, headers=my_headers)
 
-    For example:
+// Define JSON paths
+Name = json[].name
+Age = json[].age
 
-    ```rad
-    request url:
-        fields width, height
+// Display the data
+display resp.body:
+    fields Name, Age
+    sort Age desc
+```
 
-    area = [width[i] * height[i] for i in range(width)]
+### When to Use Each
 
-    display:
-        fields width, height, area
-    ```
+- **`rad`**: When you want to query and display in one step (most common case)
+- **`request`**: When you need to process data before displaying or use it for non-display purposes
+- **`display`**: When you have data from manual sources, `http_get()` with custom headers, or derived from `request` blocks
 
-[//]: # (todo RAD-107 might change this dynamic)
+## Understanding HTTP Requests
+
+When you write `rad` or `request` blocks, Rad automatically performs an **HTTP GET** request to the URL and expects a JSON response.
+This happens behind the scenes - you don't need to explicitly call any HTTP functions.
+
+### Working with Headers and Authentication
+
+Currently, `rad` and `request` blocks don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the [`http_get`](../reference/functions.md#http-functions) or [`http_post`](../reference/functions.md#http-functions) functions first, then pass the result to a `display` block:
+
+[//]: # (TODO WARN: ^ above might go out of date)
+
+```rad
+args:
+    token str  # API authentication token
+
+headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json"
+}
+
+url = "https://api.github.com/user/repos"
+resp = http_get(url, headers=headers)
+
+// Define JSON paths for the response
+Name = json[].name
+Stars = json[].stargazers_count
+
+// Display the data we fetched
+display resp.body:
+    fields Name, Stars
+    sort Stars desc
+```
+
+This pattern gives you full control over the HTTP request while still leveraging rad blocks for data extraction and display.
 
 ## Summary
 
-- Rad provides first-class support for scripts whose primary purpose is to query a JSON API and present parts of its response in a useful, readable table.
-- This is offered by the `rad` blocks, and its siblings `display` and `request`.
-- Rad has syntax for specifying **json field definitions** or **json field paths**, that rad blocks can then use to extract fields from a JSON blob response.
-    - e.g. `Author = json[].commit.author.name`
-- Rad blocks offer customization options, such as coloring, transforming cell values, and sorting.
-  - You can also use if statements inside them.
+- **Rad blocks** make working with JSON APIs concise and declarative - request, extract, and display data in just a few lines
+- Three block types serve different needs:
+    - **`rad url:`** - Request and display in one step
+    - **`request url:`** - Request and extract data without displaying
+    - **`display:`** - Display already-populated data as a table
+- **JSON field definitions** use special path syntax to extract data from JSON responses
+    - Basic patterns: `json.field`, `json[]`, `json[].nested.path`
+    - Advanced features exist (wildcards, indexing) for complex extraction needs
+- **Table customization** options:
+    - **Sorting**: `sort`, `sort Field`, `sort Field desc`
+    - **Transforming**: Map functions to modify column values
+    - **Styling**: Color cells based on regex patterns
+    - **Multi-column**: Apply same modifier to multiple columns at once
+    - **Conditional**: Use `if` statements for dynamic behavior
+- **HTTP control**: rad blocks perform GET automatically; use `http_get()`/`http_post()` with `display` for more advanced queries (e.g. requiring headers/auth)
 
 ## Next
 
-Next, we'll cover another useful concept for writing scripts: [resource files](./resources.md).
+Next, we'll cover an important concept for keeping your scripts maintainable: [Type Annotations](./type-annotations.md).
