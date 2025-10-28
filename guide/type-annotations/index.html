@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/type-annotations/">
       
       
+        <link rel="prev" href="../rad-blocks/">
+      
+      
+        <link rel="next" href="../resources/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -18,7 +22,7 @@
     
     
       
-        <title>Type annotations - Rad Docs</title>
+        <title>Type Annotations - Rad Docs</title>
       
     
     
@@ -77,6 +81,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#the-basics" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -109,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Type annotations
+              Type Annotations
             
           </span>
         </div>
@@ -279,17 +288,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -303,7 +314,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -431,6 +442,339 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Type Annotations
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Type Annotations
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-use-type-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Use Type Annotations?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-primitive-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Primitive Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-types-void-and-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Types: void and null
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collection Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collection Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typed-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      Typed Lists
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typed-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Typed Maps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generic Collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Collections
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defaults">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaults-optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults &amp; Optionals
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Union Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Union Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Union Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enum-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enum Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#structured-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Structured Maps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured Maps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-fields-in-structs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Fields in Structs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Structures
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variadic-and-named-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic and Named Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Variadic and Named Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variadic-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-only-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named-Only Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining Everything
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -881,6 +1225,290 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Basics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Basics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-use-type-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Use Type Annotations?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-primitive-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Primitive Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-types-void-and-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Types: void and null
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collection Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collection Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typed-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      Typed Lists
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typed-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Typed Maps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generic Collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Collections
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defaults">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaults-optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults &amp; Optionals
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Union Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Union Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Union Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enum-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enum Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#structured-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Structured Maps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured Maps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-fields-in-structs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Fields in Structs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Structures
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variadic-and-named-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic and Named Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Variadic and Named Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variadic-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variadic Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-only-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Named-Only Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining Everything
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -897,15 +1525,509 @@
   
 
 
-  <h1>Type annotations</h1>
+  <h1>Type Annotations</h1>
 
-<p>TBC (placeholder 2025-10-27)</p>
+<p>As your scripts grow beyond quick one-offs, type annotations become increasingly valuable.
+They help catch errors early, make your code self-documenting, and keep scripts maintainable as they evolve or get shared with others.</p>
+<p>In the <a href="../functions/#type-annotations">Functions</a> section, we briefly introduced type annotations for function parameters and return values.
+Now let's explore Rad's complete type system - from basic primitives to advanced types like unions, structs, and function signatures.</p>
+<h2 id="the-basics">The Basics<a class="headerlink" href="#the-basics" title="Permanent link">&para;</a></h2>
+<p>Type annotations let you declare what types of values your function parameters accept and what type of value your
+function returns. The syntax follows a pattern you may recognize from TypeScript or Python's type hints:</p>
+<div class="highlight"><pre><span></span><code>fn calculate_area(width: int, height: int) -&gt; int:
+    return width * height
+
+area = calculate_area(5, 10)
+print(area)  // 50
+</code></pre></div>
+<p>Here, <code>width: int</code> and <code>height: int</code> specify that both parameters must be integers, and <code>-&gt; int</code> declares that the function returns an integer.</p>
+<h3 id="why-use-type-annotations">Why Use Type Annotations?<a class="headerlink" href="#why-use-type-annotations" title="Permanent link">&para;</a></h3>
+<p>Type annotations provide three key benefits:</p>
+<ol>
+<li><strong>Self-documenting code</strong> - The function signature clearly communicates what types it expects and returns</li>
+<li><strong>Runtime validation</strong> - Rad checks types at runtime and produces helpful error messages when types don't match</li>
+<li><strong>Tooling support</strong> - IDEs and linters can provide better autocomplete and catch errors before you run your code</li>
+</ol>
+<p>Let's see runtime validation in action:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>fn greet(name: str) -&gt; str:
+    return &quot;Hello, {name}!&quot;
+
+message = greet(42)  // Error!
+print(message)
+</code></pre></div></td></tr></table></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Error at L4:17
+
+message = greet(42)  // Error!
+                ^^ Value &#39;42&#39; (int) is not compatible with expected type &#39;str&#39;
+</code></pre></div>
+</div>
+
+<p>The error message clearly identifies the problem - we passed an integer when the function expects a string.</p>
+<h3 id="basic-primitive-types">Basic Primitive Types<a class="headerlink" href="#basic-primitive-types" title="Permanent link">&para;</a></h3>
+<p>Rad supports the standard primitive types you'd expect: <code>str</code>, <code>int</code>, <code>float</code>, and <code>bool</code></p>
+<div class="highlight"><pre><span></span><code>fn process_data(
+    name: str,
+    age: int,
+    salary: float,
+    is_active: bool
+) -&gt; str:
+    status = is_active ? &quot;active&quot; : &quot;inactive&quot;
+    return &quot;{name} ({age}) earns ${salary:.2} - {status}&quot;
+
+result = process_data(&quot;Alice&quot;, 30, 75000.50, true)
+print(result)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Alice (30) earns $75000.50 - active
+</code></pre></div>
+</div>
+
+<h3 id="special-types-void-and-null">Special Types: void and null<a class="headerlink" href="#special-types-void-and-null" title="Permanent link">&para;</a></h3>
+<p>Two additional types appear throughout Rad but work differently from the primitives:</p>
+<p><strong><code>void</code></strong>: Indicates a function returns nothing. Functions marked <code>-&gt; void</code> don't return a value, and attempting to return a value is an error:</p>
+<div class="highlight"><pre><span></span><code>fn log_message(msg: str) -&gt; void:
+    print(msg)                 // OK
+
+fn log_message(msg: str) -&gt; void:
+    return msg                 // Error: can&#39;t return values
+</code></pre></div>
+<p><strong><code>null</code></strong>: The single value representing "no value" or "absence." Important: <code>null</code> is only a valid value for optional types marked with <code>?</code>:</p>
+<div class="highlight"><pre><span></span><code>fn get_name() -&gt; str:
+    return null          // Error: can&#39;t return null from str function
+
+fn get_name() -&gt; str?:
+    return null          // OK: str? can return null
+</code></pre></div>
+<p>Think of <code>null</code> as belonging exclusively to optional types - it's the way to represent "this optional value is absent."</p>
+<h2 id="collection-types">Collection Types<a class="headerlink" href="#collection-types" title="Permanent link">&para;</a></h2>
+<p>Rad also lets you specify collection types, with their contents being either typed or untyped.</p>
+<h3 id="typed-lists">Typed Lists<a class="headerlink" href="#typed-lists" title="Permanent link">&para;</a></h3>
+<p>You can specify what type of values a list contains using the <code>&lt;type&gt;[]</code> syntax:</p>
+<div class="highlight"><pre><span></span><code>fn sum_numbers(nums: int[]) -&gt; int:
+    total = 0
+    for num in nums:
+        total += num
+    return total
+
+result = sum_numbers([1, 2, 3, 4, 5])
+print(result)  // 15
+</code></pre></div>
+<p>The <code>int[]</code> annotation means "a list of integers". Like with other type annotations, if you try to pass a list
+containing non-integers, you'll get a runtime error.</p>
+<p>More examples with different types:</p>
+<div class="highlight"><pre><span></span><code>fn join_words(words: str[]) -&gt; str:
+    return words.join(&quot; &quot;)
+
+fn average(numbers: float[]) -&gt; float:
+    return sum(numbers) / len(numbers)
+
+sentence = join_words([&quot;Hello&quot;, &quot;from&quot;, &quot;Rad&quot;])
+print(sentence)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello from Rad
+</code></pre></div>
+</div>
+
+<h3 id="typed-maps">Typed Maps<a class="headerlink" href="#typed-maps" title="Permanent link">&para;</a></h3>
+<p>Maps can also be typed, specifying both key and value types using <code>{ &lt;key type&gt;: &lt;value type&gt; }</code> syntax:</p>
+<div class="highlight"><pre><span></span><code>fn count_words(text: str) -&gt; { str: int }:
+    words = text.split(&quot; &quot;)
+    counts = {}
+    for word in words:
+        if word in counts:
+            counts[word] += 1
+        else:
+            counts[word] = 1
+    return counts
+
+result = count_words(&quot;hello world hello&quot;)
+print(result)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ &quot;hello&quot;: 2, &quot;world&quot;: 1 }
+</code></pre></div>
+</div>
+
+<p>The <code>{ str: int }</code> annotation means "a map with string keys and integer values".</p>
+<h3 id="generic-collections">Generic Collections<a class="headerlink" href="#generic-collections" title="Permanent link">&para;</a></h3>
+<p>When you don't want to specify what's inside a collection, use the generic forms:</p>
+<div class="highlight"><pre><span></span><code>fn print_items(items: list) -&gt; void:
+    for item in items:
+        print(item)
+
+fn lookup(data: map, key: str) -&gt; any:
+    return data[key]
+</code></pre></div>
+<p>Here, <code>list</code> accepts a list with any types of values, and <code>map</code> accepts a map with any keys and values.</p>
+<p>The <code>any</code> type means "any type of value" - it's the most permissive type and accepts strings, numbers, booleans, lists, maps, or any other value.</p>
+<p>Generic collections are useful when your types are mixed or you don't wish to overcomplicate your type annotations unnecessarily.</p>
+<h3 id="nested-collections">Nested Collections<a class="headerlink" href="#nested-collections" title="Permanent link">&para;</a></h3>
+<p>Types can be nested for complex data structures:</p>
+<div class="highlight"><pre><span></span><code>fn organize_by_category(items: str[]) -&gt; { str: str[] }:
+    categories = {}
+    for item in items:
+        category = item[0].upper()  // First letter
+        if category not in categories:
+            categories[category] = []
+        categories[category] += [item]
+    return categories
+
+items = [&quot;apple&quot;, &quot;banana&quot;, &quot;apricot&quot;, &quot;blueberry&quot;]
+result = organize_by_category(items)
+print(result)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ &quot;A&quot;: [ &quot;apple&quot;, &quot;apricot&quot; ], &quot;B&quot;: [ &quot;banana&quot;, &quot;blueberry&quot; ] }
+</code></pre></div>
+</div>
+
+<p>The return type <code>{ str: str[] }</code> describes a map where each key is a string and each value is a list of strings.</p>
+<h2 id="optional-types">Optional Types<a class="headerlink" href="#optional-types" title="Permanent link">&para;</a></h2>
+<p>Sometimes a parameter might not always be needed. Rad's optional type syntax with <code>?</code> makes parameters completely optional - you can pass a value, pass <code>null</code>, or omit the parameter entirely:</p>
+<div class="highlight"><pre><span></span><code>fn greet(name: str, title: str?) -&gt; str:
+    if title == null:
+        return &quot;Hello, {name}!&quot;
+    else:
+        return &quot;Hello, {title} {name}!&quot;
+
+print(greet(&quot;Alice&quot;, &quot;Dr.&quot;))     // Pass a value
+print(greet(&quot;Bob&quot;, null))        // Explicitly pass null
+print(greet(&quot;Charlie&quot;))          // Omit the parameter entirely
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello, Dr. Alice!
+Hello, Bob!
+Hello, Charlie!
+</code></pre></div>
+</div>
+
+<p>The <code>str?</code> annotation means "an optional string parameter". When omitted or explicitly set to <code>null</code>, the parameter will be <code>null</code> inside the function. This makes it clear that the <code>title</code> parameter is optional and the function knows how to handle its absence.</p>
+<p>Optional types work with any type:</p>
+<div class="highlight"><pre><span></span><code>fn find_user(id: int, users: map[]) -&gt; map?:
+    for user in users:
+        if user[&quot;id&quot;] == id:
+            return user
+    return null
+
+users = [{&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;}, {&quot;id&quot;: 2, &quot;name&quot;: &quot;Bob&quot;}]
+user = find_user(1, users)
+print(user)  // {&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;}
+
+missing = find_user(999, users)
+print(missing)  // null
+</code></pre></div>
+<p>The <code>map?</code> return type indicates the function might return a map or might return null if no user is found.</p>
+<h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
+<p>Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with <code>?</code>:</p>
+<div class="highlight"><pre><span></span><code>fn greet(name: str, greeting: str = &quot;Hello&quot;) -&gt; str:
+    return &quot;{greeting}, {name}!&quot;
+
+print(greet(&quot;Alice&quot;))                // Uses default &quot;Hello&quot;
+print(greet(&quot;Bob&quot;, &quot;Hi&quot;))            // Uses provided &quot;Hi&quot;
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello, Alice!
+Hi, Bob!
+</code></pre></div>
+</div>
+
+<p>The <code>greeting</code> parameter has a default value of <code>"Hello"</code>. When you omit it, the default is used. Note that <code>greeting</code> is not marked with <code>?</code> - it always has a string value, never <code>null</code>.</p>
+<h3 id="defaults-optionals">Defaults &amp; Optionals<a class="headerlink" href="#defaults-optionals" title="Permanent link">&para;</a></h3>
+<p>When you combine defaults with optional types (<code>?</code>), you can choose whether the default should be <code>null</code> or something else:</p>
+<div class="highlight"><pre><span></span><code>fn format_price(amount: float, currency: str? = &quot;USD&quot;) -&gt; str:
+    if currency == null:
+        return &quot;${amount:.2}&quot;
+    return &quot;{amount:.2} {currency}&quot;
+
+print(format_price(19.99))           // Uses default &quot;USD&quot;
+print(format_price(19.99, &quot;EUR&quot;))    // Uses provided &quot;EUR&quot;
+print(format_price(19.99, null))     // Explicitly passes null
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>19.99 USD
+19.99 EUR
+$19.99
+</code></pre></div>
+</div>
+
+<p>With <code>str?</code> alone, omitting the parameter means it defaults to <code>null</code>. With <code>str? = "USD"</code>, you can provide a non-null default value, but callers can still explicitly pass <code>null</code> if they want.</p>
+<h2 id="union-types">Union Types<a class="headerlink" href="#union-types" title="Permanent link">&para;</a></h2>
+<p>Sometimes a function can accept or return multiple different types. Union types express this with the <code>|</code> operator:</p>
+<div class="highlight"><pre><span></span><code>fn to_string(val: int|float|str) -&gt; str:
+    return str(val)
+
+print(to_string(42))
+print(to_string(3.14))
+print(to_string(&quot;hello&quot;))
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>42
+3.14
+hello
+</code></pre></div>
+</div>
+
+<p>The <code>int|float|str</code> annotation means "accepts an int, float, or string" - any of these three types is valid.</p>
+<h3 id="error-union-types">Error Union Types<a class="headerlink" href="#error-union-types" title="Permanent link">&para;</a></h3>
+<p>A common union pattern in Rad is combining <code>error</code> with another type to represent operations that might fail:</p>
+<div class="highlight"><pre><span></span><code>fn divide(a: float, b: float) -&gt; float|error:
+    if b == 0:
+        return error(&quot;Cannot divide by zero&quot;)
+    return a / b
+
+result = divide(10, 2)
+print(result)  // 5
+</code></pre></div>
+<p>The <code>float|error</code> return type signals that this function returns either a float (on success) or an error value (on failure).</p>
+<div class="admonition note">
+<p class="admonition-title">Error Handling in Rad</p>
+<p>Rad has a comprehensive error handling model. We'll cover error handling in detail in a later section: <a href="../error-handling/">Error Handling</a>.</p>
+</div>
+<h2 id="advanced-types">Advanced Types<a class="headerlink" href="#advanced-types" title="Permanent link">&para;</a></h2>
+<p>Rad's type system includes several advanced features for expressing complex data structures and constraints.</p>
+<h3 id="enum-types">Enum Types<a class="headerlink" href="#enum-types" title="Permanent link">&para;</a></h3>
+<p>When a value should be restricted to specific strings, use enum types:</p>
+<div class="highlight"><pre><span></span><code>fn set_log_level(level: [&quot;debug&quot;, &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;]) -&gt; str:
+    return &quot;Log level set to: {level}&quot;
+
+print(set_log_level(&quot;info&quot;))
+// set_log_level(&quot;trace&quot;)  // Error: &quot;trace&quot; not in enum
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Log level set to: info
+</code></pre></div>
+</div>
+
+<p>The <code>["debug", "info", "warn", "error"]</code> annotation restricts the parameter to exactly these four string values. Any other string will cause a runtime type error.</p>
+<p>This is particularly useful for configuration options, status values, and other cases where only certain strings are valid:</p>
+<div class="highlight"><pre><span></span><code>fn create_connection(
+    host: str,
+    protocol: [&quot;http&quot;, &quot;https&quot;, &quot;ws&quot;, &quot;wss&quot;] = &quot;https&quot;
+) -&gt; str:
+    return &quot;{protocol}://{host}&quot;
+
+url = create_connection(&quot;api.example.com&quot;)
+print(url)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>https://api.example.com
+</code></pre></div>
+</div>
+
+<h3 id="structured-maps">Structured Maps<a class="headerlink" href="#structured-maps" title="Permanent link">&para;</a></h3>
+<p>For maps with specific named fields, use the struct syntax with quoted keys:</p>
+<div class="highlight"><pre><span></span><code>fn create_user(name: str, age: int, email: str) -&gt;
+        { &quot;name&quot;: str, &quot;age&quot;: int, &quot;email&quot;: str, &quot;id&quot;: int }:
+    return {
+        &quot;name&quot;: name,
+        &quot;age&quot;: age,
+        &quot;email&quot;: email,
+        &quot;id&quot;: rand_int(1000, 9999)
+    }
+
+user = create_user(&quot;Alice&quot;, 30, &quot;alice@example.com&quot;)
+print(user)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ &quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30, &quot;email&quot;: &quot;alice@example.com&quot;, &quot;id&quot;: 7234 }
+</code></pre></div>
+</div>
+
+<p>The <code>{ "name": str, "age": int, "email": str, "id": int }</code> annotation describes a map with exactly these four fields, each with a specific type. Notice the quoted keys - this distinguishes named fields from the typed map syntax we saw earlier.</p>
+<h4 id="optional-fields-in-structs">Optional Fields in Structs<a class="headerlink" href="#optional-fields-in-structs" title="Permanent link">&para;</a></h4>
+<p>Fields can be marked as optional with <code>?</code>:</p>
+<div class="highlight"><pre><span></span><code>fn get_user_profile(id: int) -&gt;
+        { &quot;name&quot;: str, &quot;age&quot;: int, &quot;bio&quot;?: str, &quot;avatar&quot;?: str }:
+    // Fetch user... in this example, we&#39;ll return mock data
+    return {
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;age&quot;: 25,
+        &quot;bio&quot;: &quot;Software engineer&quot;
+        // avatar field is omitted
+    }
+
+profile = get_user_profile(123)
+print(profile)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>{ &quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 25, &quot;bio&quot;: &quot;Software engineer&quot; }
+</code></pre></div>
+</div>
+
+<p>The <code>"bio"?: str</code> and <code>"avatar"?: str</code> fields are optional - the map might or might not contain them.</p>
+<h4 id="nested-structures">Nested Structures<a class="headerlink" href="#nested-structures" title="Permanent link">&para;</a></h4>
+<p>Struct types can be nested for complex data:</p>
+<div class="highlight"><pre><span></span><code>fn fetch_article() -&gt; {
+    &quot;title&quot;: str,
+    &quot;author&quot;: { &quot;name&quot;: str, &quot;id&quot;: int },
+    &quot;metadata&quot;: { &quot;views&quot;: int, &quot;likes&quot;: int },
+}:
+    return {
+        &quot;title&quot;: &quot;Getting Started with Rad&quot;,
+        &quot;author&quot;: {&quot;name&quot;: &quot;Alice&quot;, &quot;id&quot;: 1},
+        &quot;metadata&quot;: {&quot;views&quot;: 1234, &quot;likes&quot;: 56}
+    }
+
+article = fetch_article()
+print(&quot;Article: {article.title} by {article.author.name}&quot;)
+print(&quot;Stats: {article.metadata.views} views, {article.metadata.likes} likes&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Article: Getting Started with Rad by Alice
+Stats: 1234 views, 56 likes
+</code></pre></div>
+</div>
+
+<h3 id="function-types">Function Types<a class="headerlink" href="#function-types" title="Permanent link">&para;</a></h3>
+<p>Functions themselves can be typed, which is especially useful when passing functions as parameters:</p>
+<div class="highlight"><pre><span></span><code>fn apply_to_list(items: str[], transform: fn(str) -&gt; str) -&gt; str[]:
+    result = []
+    for item in items:
+        result += [transform(item)]
+    return result
+
+words = [&quot;hello&quot;, &quot;world&quot;]
+upper_words = apply_to_list(words, upper)
+print(upper_words)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>[ &quot;HELLO&quot;, &quot;WORLD&quot; ]
+</code></pre></div>
+</div>
+
+<p>The <code>fn(str) -&gt; str</code> annotation describes a function that takes a string parameter and returns a string.</p>
+<p>Other examples of valid function type annotations:</p>
+<div class="highlight"><pre><span></span><code>fn() -&gt; int
+fn(str, str) -&gt; str
+fn(str[]) -&gt; void
+</code></pre></div>
+<h2 id="variadic-and-named-parameters">Variadic and Named Parameters<a class="headerlink" href="#variadic-and-named-parameters" title="Permanent link">&para;</a></h2>
+<p>Type annotations work seamlessly with Rad's parameter patterns, as seen earlier in <a href="../functions/#function-arguments">Functions</a>.</p>
+<h3 id="variadic-parameters">Variadic Parameters<a class="headerlink" href="#variadic-parameters" title="Permanent link">&para;</a></h3>
+<p>When a function accepts unlimited arguments, you can type the variadic parameter:</p>
+<div class="highlight"><pre><span></span><code>fn sum_all(*numbers: int) -&gt; int:
+    total = 0
+    for num in numbers:
+        total += num
+    return total
+
+result = sum_all(1, 2, 3, 4, 5)
+print(result)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>15
+</code></pre></div>
+</div>
+
+<p>The <code>*numbers: int</code> annotation means "zero or more integer arguments". All arguments passed to this variadic parameter must be integers.</p>
+<h3 id="named-only-parameters">Named-Only Parameters<a class="headerlink" href="#named-only-parameters" title="Permanent link">&para;</a></h3>
+<p>Named-only parameters (those after <code>*</code>) can also be typed:</p>
+<div class="highlight"><pre><span></span><code>fn format_text(
+    text: str,
+    *,
+    uppercase: bool = false,
+    prefix: str = &quot;&quot;,
+    suffix: str = &quot;&quot;
+) -&gt; str:
+    result = prefix + text + suffix
+    return uppercase ? upper(result) : result
+
+output = format_text(&quot;hello&quot;, uppercase=true, prefix=&quot;&gt;&gt;&gt; &quot;)
+print(output)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; HELLO
+</code></pre></div>
+</div>
+
+<h3 id="combining-everything">Combining Everything<a class="headerlink" href="#combining-everything" title="Permanent link">&para;</a></h3>
+<p>Here's a function that combines positional, variadic, and named-only parameters with types:</p>
+<div class="highlight"><pre><span></span><code>fn create_report(
+    title: str,
+    *data_points: int|float,
+    *,
+    format: [&quot;text&quot;, &quot;html&quot;, &quot;json&quot;] = &quot;text&quot;,
+    include_summary: bool = true
+) -&gt; str:
+    total = sum(data_points)
+    avg = total / len(data_points)
+
+    report = &quot;=== {title} ===\n&quot;
+    report += &quot;Data: {data_points.join(&#39;, &#39;)}\n&quot;
+
+    if include_summary:
+        report += &quot;Total: {total}, Average: {avg:.2}&quot;
+
+    return report
+
+output = create_report(
+    &quot;Q4 Sales&quot;,
+    100, 150, 200, 175,
+    format=&quot;text&quot;,
+    include_summary=true
+)
+print(output)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>=== Q4 Sales ===
+Data: 100, 150, 200, 175
+Total: 625, Average: 156.25
+</code></pre></div>
+</div>
+
+<p>This example demonstrates:</p>
+<ul>
+<li>A required positional parameter (<code>title: str</code>)</li>
+<li>A typed variadic parameter accepting multiple numeric values (<code>*data_points: int|float</code>)</li>
+<li>Named-only parameters with enum and boolean types</li>
+<li>A clear, self-documenting function signature</li>
+</ul>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Type annotations are an optional but powerful tool for keeping your Rad scripts maintainable and self-documenting,
+especially as they grow in complexity or get reused across projects.</p>
+<p><strong>Key takeaways:</strong></p>
+<ul>
+<li><strong>Syntax</strong>: Parameter types use <code>param: &lt;type&gt;</code>, return types use <code>-&gt; &lt;type&gt;</code></li>
+<li><strong>Benefits</strong>: Self-documenting code, runtime validation, better tooling support</li>
+<li><strong>Primitive types</strong>: <code>str</code>, <code>int</code>, <code>float</code>, <code>bool</code> for basic values</li>
+<li><strong>Special types</strong>: <code>void</code> (function returns nothing), <code>null</code> (only valid for optional types marked with <code>?</code>)</li>
+<li><strong>Collection types</strong>:<ul>
+<li><code>T[]</code> for typed lists (e.g., <code>str[]</code>, <code>int[]</code>, <code>float[]</code>)</li>
+<li><code>{ &lt;key type&gt;: &lt;value type&gt; }</code> for typed maps (e.g., <code>{ str: int }</code>)</li>
+<li><code>list</code> and <code>map</code> for generic collections (any contents)</li>
+<li>Nested collections like <code>int[][]</code> and <code>{ str: str[] }</code></li>
+</ul>
+</li>
+<li><strong>Optional types</strong>: <code>T?</code> for nullable values (e.g., <code>str?</code>, <code>int?</code>)</li>
+<li><strong>Union types</strong>: <code>T|U</code> for multiple acceptable types (e.g., <code>int|float</code>, <code>str|list</code>)</li>
+<li><strong>Advanced types</strong>:<ul>
+<li><strong>Enums</strong>: <code>["value1", "value2", "value3"]</code> for restricted string values</li>
+<li><strong>Structs</strong>: <code>{ "field1": type1, "field2"?: type2 }</code> for structured maps with named fields (quoted keys) and optional fields</li>
+<li><strong>Function types</strong>: <code>fn(&lt;param_type&gt;) -&gt; &lt;return_type&gt;</code> for function parameters and variables</li>
+<li><strong>Nested structures</strong>: Complex combinations of the above</li>
+</ul>
+</li>
+<li><strong>Special parameters</strong>: Work with variadic (<code>*param: &lt;type&gt;</code>) and named-only parameters</li>
+</ul>
+<p>Type annotations make your code clearer to both humans and tools, catching errors early and making your intentions explicit.</p>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>We've briefly seen <code>error|T</code> union types in this section - functions that return either a value or an error.</p>
+<p>In the next section, we'll explore Rad's comprehensive error handling model in depth: <a href="../error-handling/">Error Handling</a>.</p>
 
 
 
 
 
 
+
+  
+  
 
 
 
@@ -924,6 +2046,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../rad-blocks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rad Blocks">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Rad Blocks
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Resources
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

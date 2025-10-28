@@ -14,7 +14,7 @@
         <link rel="prev" href="../strings-advanced/">
       
       
-        <link rel="next" href="../resources/">
+        <link rel="next" href="../type-annotations/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -592,28 +592,28 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#block-types-rad-request-and-display" class="md-nav__link">
+  <a href="#block-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Block Types: rad, request, and display
+      Block Types
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Block Types: rad, request, and display">
+    <nav class="md-nav" aria-label="Block Types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#request-request-without-display" class="md-nav__link">
+  <a href="#request-no-display" class="md-nav__link">
     <span class="md-ellipsis">
-      request: Request Without Display
+      request: No Display
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-display-without-request" class="md-nav__link">
+  <a href="#display-no-request" class="md-nav__link">
     <span class="md-ellipsis">
-      display: Display Without Request
+      display: No Request
     </span>
   </a>
   
@@ -644,9 +644,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#working-with-headers-and-authentication" class="md-nav__link">
+  <a href="#headers-and-authentication" class="md-nav__link">
     <span class="md-ellipsis">
-      Working with Headers and Authentication
+      Headers and Authentication
     </span>
   </a>
   
@@ -679,6 +679,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../type-annotations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Type Annotations
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1253,28 +1274,28 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#block-types-rad-request-and-display" class="md-nav__link">
+  <a href="#block-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Block Types: rad, request, and display
+      Block Types
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Block Types: rad, request, and display">
+    <nav class="md-nav" aria-label="Block Types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#request-request-without-display" class="md-nav__link">
+  <a href="#request-no-display" class="md-nav__link">
     <span class="md-ellipsis">
-      request: Request Without Display
+      request: No Display
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-display-without-request" class="md-nav__link">
+  <a href="#display-no-request" class="md-nav__link">
     <span class="md-ellipsis">
-      display: Display Without Request
+      display: No Request
     </span>
   </a>
   
@@ -1305,9 +1326,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#working-with-headers-and-authentication" class="md-nav__link">
+  <a href="#headers-and-authentication" class="md-nav__link">
     <span class="md-ellipsis">
-      Working with Headers and Authentication
+      Headers and Authentication
     </span>
   </a>
   
@@ -1612,10 +1633,10 @@ rad url:
 </code></pre></div>
 <p>If the flag is enabled, we sort by descending population, otherwise we sort rows alphabetically.</p>
 <p>You can put any rad block statements into these if blocks, including <code>fields</code>, column modifiers, etc.</p>
-<h2 id="block-types-rad-request-and-display">Block Types: rad, request, and display<a class="headerlink" href="#block-types-rad-request-and-display" title="Permanent link">&para;</a></h2>
+<h2 id="block-types">Block Types<a class="headerlink" href="#block-types" title="Permanent link">&para;</a></h2>
 <p>So far we've seen the <code>rad</code> block, which performs an HTTP request, extracts data, and displays it as a table.
 Rad also offers two variants that give you more control over this workflow: <strong>request blocks</strong> and <strong>display blocks</strong>.</p>
-<h3 id="request-request-without-display">request: Request Without Display<a class="headerlink" href="#request-request-without-display" title="Permanent link">&para;</a></h3>
+<h3 id="request-no-display">request: No Display<a class="headerlink" href="#request-no-display" title="Permanent link">&para;</a></h3>
 <p>A <strong>request block</strong> is like a <code>rad</code> block, but it doesn't print a table. It performs the HTTP request and extracts fields
 into lists, then stops. This is useful when you want to process the data further before displaying it, or use it for something other than display.</p>
 <div class="highlight"><pre><span></span><code>request url:
@@ -1628,7 +1649,7 @@ largest_city = City[0]
 print(&quot;The largest city is {largest_city}&quot;)
 </code></pre></div>
 <p>Note that sorting works in request blocks since it modifies the underlying data, but display-only modifiers like <code>color</code> or <code>map</code> have no effect since nothing gets displayed.</p>
-<h3 id="display-display-without-request">display: Display Without Request<a class="headerlink" href="#display-display-without-request" title="Permanent link">&para;</a></h3>
+<h3 id="display-no-request">display: No Request<a class="headerlink" href="#display-no-request" title="Permanent link">&para;</a></h3>
 <p>A <strong>display block</strong> takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.</p>
 <p><strong>Display with manual data:</strong></p>
 <div class="highlight"><pre><span></span><code>Nums = [1, 2]
@@ -1667,7 +1688,7 @@ display resp.body:
 <h2 id="understanding-http-requests">Understanding HTTP Requests<a class="headerlink" href="#understanding-http-requests" title="Permanent link">&para;</a></h2>
 <p>When you write <code>rad</code> or <code>request</code> blocks, Rad automatically performs an <strong>HTTP GET</strong> request to the URL and expects a JSON response.
 This happens behind the scenes - you don't need to explicitly call any HTTP functions.</p>
-<h3 id="working-with-headers-and-authentication">Working with Headers and Authentication<a class="headerlink" href="#working-with-headers-and-authentication" title="Permanent link">&para;</a></h3>
+<h3 id="headers-and-authentication">Headers and Authentication<a class="headerlink" href="#headers-and-authentication" title="Permanent link">&para;</a></h3>
 <p>Currently, <code>rad</code> and <code>request</code> blocks don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the <a href="../../reference/functions/#http-functions"><code>http_get</code></a> or <a href="../../reference/functions/#http-functions"><code>http_post</code></a> functions first, then pass the result to a <code>display</code> block:</p>
 <div class="highlight"><pre><span></span><code>args:
     token str  # API authentication token
@@ -1765,13 +1786,13 @@ display resp.body:
         
         
           
-          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
+          <a href="../type-annotations/" class="md-footer__link md-footer__link--next" aria-label="Next: Type Annotations">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Resources
+                Type Annotations
               </div>
             </div>
             <div class="md-footer__button md-icon">
