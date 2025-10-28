@@ -44,7 +44,7 @@ func init() {
 		newFnSignature(`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),
-		newFnSignature(`range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> list[float|int]`),
+		newFnSignature(`range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> float[]|int[]`),
 		newFnSignature(`join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str`),
 		newFnSignature(`split(_val: str, _sep: str) -> str[]`),
 		newFnSignature(`lower(_val: str) -> str`),
@@ -79,7 +79,7 @@ func init() {
 		newFnSignature(`trim(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`trim_prefix(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`trim_suffix(_subject: str, _to_trim: str = " \t\n") -> str`),
-		newFnSignature(`read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_bytes": int, "content": str|[int] }`),
+		newFnSignature(`read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_bytes": int, "content": str|int[] }`),
 		newFnSignature(`write_file(_path: str, _content: str, *, append: bool = false) -> error|{ "bytes_written": int, "path": str }`),
 		newFnSignature(`read_stdin() -> str?|error`),
 		newFnSignature(`has_stdin() -> bool`),
@@ -157,7 +157,11 @@ func init() {
 	for _, sig := range signatures {
 		fn := fmt.Sprintf("fn %s:\n    pass\n", sig.Signature)
 		tree := parser.Parse(fn)
-		// todo check tree for errors
+
+		if invalidNodes := tree.FindInvalidNodes(); len(invalidNodes) > 0 {
+			panic(fmt.Sprintf("Invalid function signature syntax: %s", sig.Signature))
+		}
+
 		typing := rl.NewTypingFnT(tree.Root().Child(0), tree.src)
 
 		if _, ok := FnSignaturesByName[typing.Name]; ok {
