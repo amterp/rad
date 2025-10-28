@@ -11,6 +11,7 @@ nav:
       - ./guide/functions.md
       - ./guide/strings-advanced.md
       - ./guide/rad-blocks.md
+      - ./guide/type-annotations.md
       - ./guide/resources.md
       - ./guide/shell-commands.md
       - ./guide/global-flags.md

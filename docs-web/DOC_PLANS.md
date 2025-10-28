@@ -24,8 +24,8 @@
 - [x] strings-advanced
   - [x] NEW thousands commas
 - [x] rad blocks
-  - [x  ] NEW lambdas for `map` 
-- [ ] NEW function typing
+  - [x] NEW lambdas for `map` 
+- [x] NEW type annotations
 - [ ] NEW error handling (`catch`, `??`)
   - [ ] error propagation model
 - [ ] shell commands !!

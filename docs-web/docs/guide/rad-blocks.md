@@ -363,12 +363,12 @@ If the flag is enabled, we sort by descending population, otherwise we sort rows
 
 You can put any rad block statements into these if blocks, including `fields`, column modifiers, etc.
 
-## Block Types: rad, request, and display
+## Block Types
 
 So far we've seen the `rad` block, which performs an HTTP request, extracts data, and displays it as a table.
 Rad also offers two variants that give you more control over this workflow: **request blocks** and **display blocks**.
 
-### request: Request Without Display
+### request: No Display
 
 A **request block** is like a `rad` block, but it doesn't print a table. It performs the HTTP request and extracts fields
 into lists, then stops. This is useful when you want to process the data further before displaying it, or use it for something other than display.
@@ -386,7 +386,7 @@ print("The largest city is {largest_city}")
 
 Note that sorting works in request blocks since it modifies the underlying data, but display-only modifiers like `color` or `map` have no effect since nothing gets displayed.
 
-### display: Display Without Request
+### display: No Request
 
 A **display block** takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.
 
@@ -437,7 +437,7 @@ display resp.body:
 When you write `rad` or `request` blocks, Rad automatically performs an **HTTP GET** request to the URL and expects a JSON response.
 This happens behind the scenes - you don't need to explicitly call any HTTP functions.
 
-### Working with Headers and Authentication
+### Headers and Authentication
 
 Currently, `rad` and `request` blocks don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the [`http_get`](../reference/functions.md#http-functions) or [`http_post`](../reference/functions.md#http-functions) functions first, then pass the result to a `display` block:
 
