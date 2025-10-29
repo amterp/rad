@@ -26,8 +26,8 @@
 - [x] rad blocks
   - [x] NEW lambdas for `map` 
 - [x] NEW type annotations
-- [ ] NEW error handling (`catch`, `??`)
-  - [ ] error propagation model
+- [x] NEW error handling (`catch`, `??`)
+  - [x] error propagation model
 - [ ] shell commands !!
   - [ ] shell error handling
 - [ ] resources

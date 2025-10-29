@@ -12,8 +12,9 @@ nav:
       - ./guide/strings-advanced.md
       - ./guide/rad-blocks.md
       - ./guide/type-annotations.md
-      - ./guide/resources.md
+      - ./guide/error-handling.md
       - ./guide/shell-commands.md
+      - ./guide/resources.md
       - ./guide/global-flags.md
       - ./guide/defer-errdefer.md
   - Examples:
