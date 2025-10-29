@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://amterp.github.io/rad/guide/error-handling/">
       
       
+        <link rel="prev" href="../type-annotations/">
+      
+      
+        <link rel="next" href="../shell-commands/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -18,7 +22,7 @@
     
     
       
-        <title>Error handling - Rad Docs</title>
+        <title>Error Handling - Rad Docs</title>
       
     
     
@@ -77,6 +81,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#error-propagation" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -109,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Error handling
+              Error Handling
             
           </span>
         </div>
@@ -279,17 +288,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -303,7 +314,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Guide
@@ -461,18 +472,171 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../resources/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Error Handling
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Resources
+    Error Handling
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#error-propagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Propagation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Propagation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Calls
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catch-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Catch Blocks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Catch Blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Error Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exiting-on-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exiting on Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ignoring-errors-with-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ignoring Errors with pass
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      The ?? Operator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The ?? Operator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparing-and-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparing ?? and catch
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-your-own-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Your Own Errors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -490,6 +654,27 @@
   
   <span class="md-ellipsis">
     Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resources
   </span>
   
 
@@ -902,6 +1087,131 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#error-propagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Propagation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Propagation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Calls
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catch-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Catch Blocks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Catch Blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Error Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exiting-on-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exiting on Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ignoring-errors-with-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ignoring Errors with pass
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      The ?? Operator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The ?? Operator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparing-and-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparing ?? and catch
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-your-own-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Your Own Errors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -918,7 +1228,279 @@
   
 
 
-  <h1>Error handling</h1>
+  <h1>Error Handling</h1>
+
+<p>Things go wrong in scripts - users provide invalid input, files don't exist, network requests fail.
+Generally, for smaller CLI scripts, it's okay if we just exit on the spot, and that's also Rad's default behavior.
+However, if you wish to more gracefully handle these errors or attempt recovery, Rad gives you the tools to do so.</p>
+<p>In Rad, <strong>errors are values</strong>. Functions that might fail return either a result or an error,
+and you can decide how to handle them. This makes error handling explicit, predictable, and easy to reason about.</p>
+<p>In this section, we'll explore:</p>
+<ul>
+<li><strong>Error propagation</strong> - how errors bubble up by default (and why scripts exit)</li>
+<li><strong>The <code>catch:</code> block</strong> - handle errors with full control (logging, reassignment, exit)</li>
+<li><strong>The <code>??</code> operator</strong> - shorthand for simple fallback values</li>
+<li><strong>Creating errors</strong> - using <code>error()</code> in your own functions</li>
+<li><strong>Error type unions</strong> - making fallible operations explicit with <code>T|error</code> type annotations</li>
+</ul>
+<h2 id="error-propagation">Error Propagation<a class="headerlink" href="#error-propagation" title="Permanent link">&para;</a></h2>
+<p>Let's start with a simple script that takes a user's age as input:</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">File: age</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    age_str str  # User&#39;s age as a string
+
+age = parse_int(age_str)
+print(&quot;You are {age} years old&quot;)
+</code></pre></div></td></tr></table></div>
+<p>In reality, you'd instead declare the arg as an <code>int</code> and let Rad handle input validation,
+but for the purposes of this guide, we write it as a <code>str</code>.</p>
+<p>If we run this with a valid number, everything works:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="m">25</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>You are 25 years old
+</code></pre></div>
+</div>
+
+<p>But what happens with invalid input?</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">&quot;not-a-number&quot;</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Error at L4:7
+
+age = parse_int(age_str)
+      ^^^^^^^^^^^^^^^^^^ parse_int() failed to parse &quot;not-a-number&quot; (RAD20001)
+</code></pre></div>
+</div>
+
+<p>The script <strong>exits immediately</strong> with an error code of 1 when <code>parse_int</code> encounters invalid input.
+What's happening is that <code>parse_int</code> returned an <code>error</code> value, and since we're not handling it, it immediately gets propagated up.
+Since we're at the root of the script and not nested within any other function call, this triggers a script exit on the spot.</p>
+<h3 id="nested-calls">Nested Calls<a class="headerlink" href="#nested-calls" title="Permanent link">&para;</a></h3>
+<p>Errors don't just propagate from built-in functions - they bubble up through your own function calls too. Here's an example:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>fn calculate_discount(price_str: str) -&gt; float|error:
+    price = parse_float(price_str)  // Error starts here...
+    return price * 0.1
+
+fn process_order(item_price: str) -&gt; str|error:
+    discount = calculate_discount(item_price)  // ...propagates through here...
+    return &quot;Discount: {discount:.2} USD&quot;
+
+result = process_order(&quot;invalid&quot;)  // ...and exits the script here
+print(result)
+</code></pre></div></td></tr></table></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Error at L2:13
+
+      price = parse_float(price_str)  // Error starts here...
+              ^^^^^^^^^^^^^^^^^^^^^^
+              parse_float() failed to parse &quot;invalid&quot; (RAD20002)
+</code></pre></div>
+</div>
+
+<p>The error originates in <code>parse_float</code>, propagates through <code>calculate_discount</code>, then through <code>process_order</code>, and finally exits at the top level. At any point in this chain, we could choose to handle the error instead of letting it propagate.</p>
+<p>This sets up the question: how do we handle errors gracefully instead of crashing?</p>
+<h2 id="catch-blocks">Catch Blocks<a class="headerlink" href="#catch-blocks" title="Permanent link">&para;</a></h2>
+<p>The <code>catch:</code> block gives you full control over error handling. Attach it as a suffix to any expression that might error, and you can inspect the error, log it, provide a fallback value, or decide whether to exit.</p>
+<h3 id="basic-error-handling">Basic Error Handling<a class="headerlink" href="#basic-error-handling" title="Permanent link">&para;</a></h3>
+<p>Here's how to handle our age parsing example gracefully:</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">File: age</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    age_str str
+
+age = parse_int(age_str) catch:
+    print_err(&quot;Invalid age, falling back to 0: {age}&quot;)  // &#39;age&#39; contains the error value
+    age = 0  // Provide fallback
+
+print(&quot;Age: {age}&quot;)
+</code></pre></div></td></tr></table></div>
+<p>Now when we run it with invalid input:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">&quot;not-a-number&quot;</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Invalid age, falling back to 0: parse_int() failed to parse &quot;not-a-number&quot;
+Age: 0
+</code></pre></div>
+</div>
+
+<p>The script <strong>continues running</strong> with our fallback value. Inside the <code>catch:</code> block, the <code>age</code> variable contains the
+error string, as returned by <code>parse_int</code>, which we can log or inspect. We then reassign <code>age</code> to a sensible default value of <code>0</code>.</p>
+<p>To summarize:</p>
+<ul>
+<li><strong>Suffix</strong> form: write <code>... catch:</code> directly after the error-able expression.</li>
+<li><strong>Binding</strong>: the target variable is first bound to the error value; inside the block, interpolating it (e.g. <code>{age}</code>) prints the error’s message.</li>
+<li><strong>Control</strong>: you can log, reassign a fallback, or exit(code).</li>
+<li><strong>Flow</strong>: execution continues after the block unless you exit.</li>
+</ul>
+<h3 id="exiting-on-errors">Exiting on Errors<a class="headerlink" href="#exiting-on-errors" title="Permanent link">&para;</a></h3>
+<p>Sometimes you want to fail fast - handle the error just enough to log a helpful message, then exit:</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">File: readconfig</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+    config_file str
+
+config = read_file(config_file) catch:
+    print_err(&quot;Failed to read config: {config}&quot;)
+    exit(1)
+
+print(&quot;Config loaded successfully&quot;)
+// Continue processing config...
+</code></pre></div></td></tr></table></div>
+<p>Running this with a non-existent file:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>readconfig<span class="w"> </span><span class="s2">&quot;missing.txt&quot;</span>
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Failed to read config: open missing.txt: no such file or directory
+</code></pre></div>
+</div>
+
+<p>This example is not much better than the default error propagation and exit, but you can imagine providing
+more useful guidance to users in a more detailed error message.</p>
+<h3 id="ignoring-errors-with-pass">Ignoring Errors with <code>pass</code><a class="headerlink" href="#ignoring-errors-with-pass" title="Permanent link">&para;</a></h3>
+<p>Sometimes you want to ignore errors entirely - the operation might fail, but that's perfectly fine and requires no action:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>// Custom fn to clean up temp file if it exists
+delete_path(temp_file) catch:
+    pass  // File already doesn&#39;t exist, that&#39;s fine
+
+// Continue with the rest of the script...
+</code></pre></div></td></tr></table></div>
+<p>Here, <code>pass</code> does nothing - it's a way to explicitly say "I know this might error, but I don't care." This is useful for cleanup operations where the failure itself is harmless.</p>
+<h2 id="the-operator">The <code>??</code> Operator<a class="headerlink" href="#the-operator" title="Permanent link">&para;</a></h2>
+<p>For simple cases where you just want a default value without any logging or conditional logic, the <code>??</code> operator provides a concise shorthand:</p>
+<div class="highlight"><pre><span></span><code>age = parse_int(age_str) ?? 0
+timeout = parse_int(get_env(&quot;TIMEOUT&quot;)) ?? 30
+max_retries = parse_int(config[&quot;retries&quot;]) ?? 5
+</code></pre></div>
+<p>The <code>??</code> operator uses <strong>lazy evaluation</strong> - the right side is only evaluated if the left side returns an error. This means you can even call functions on the right:</p>
+<div class="highlight"><pre><span></span><code>config = read_file(config_path) ?? get_default_config()
+</code></pre></div>
+<h3 id="comparing-and-catch">Comparing <code>??</code> and <code>catch</code><a class="headerlink" href="#comparing-and-catch" title="Permanent link">&para;</a></h3>
+<p>These two are roughly equivalent:</p>
+<div class="highlight"><pre><span></span><code>// Using ??
+age = parse_int(age_str) ?? 0
+
+// Using catch:
+age = parse_int(age_str) catch:
+    age = 0
+</code></pre></div>
+<p>But <code>catch:</code> lets you log errors or do conditional handling:</p>
+<div class="highlight"><pre><span></span><code>age = parse_int(age_str) catch:
+    print_err(&quot;Invalid age &#39;{age_str}&#39;: {age}&quot;)
+    age = 0
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">When to use which</p>
+<p>Use <code>??</code> when you just need a default value and don't care about logging or inspecting the error.
+Use <code>catch:</code> when you need to log the error, perform conditional logic, including whether to exit.</p>
+</div>
+<h2 id="creating-your-own-errors">Creating Your Own Errors<a class="headerlink" href="#creating-your-own-errors" title="Permanent link">&para;</a></h2>
+<p>When writing your own functions, you can return errors using the <code>error(str)</code> function.
+If you're using type annotations, then functions that may return errors should reflect that in its return type: <code>T|error</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code>fn validate_port(port: int) -&gt; int|error:
+    if port &lt; 1 or port &gt; 65535:
+        return error(&quot;Port must be between 1-65535, got {port}&quot;)
+    return port
+
+fn start_server(port_str: str) -&gt; void:
+    port = parse_int(port_str) ?? 8080
+
+    validated_port = validate_port(port) catch:
+        print_err(&quot;Invalid port: {validated_port}&quot;)
+        exit(1)
+
+    print(&quot;Starting server on port {validated_port}&quot;)
+
+start_server(&quot;99999&quot;)
+</code></pre></div></td></tr></table></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Invalid port: Port must be between 1-65535, got 99999
+</code></pre></div>
+</div>
+
+<p>Our custom error message provides clear feedback about what went wrong.
+By returning <code>int|error</code>, the type signature tells you three things:</p>
+<ol>
+<li>This function normally returns an <code>int</code></li>
+<li>It might return an <code>error</code> instead</li>
+<li>Callers should consider handling the error case (otherwise let it propagate)</li>
+</ol>
+<p>This pattern is used throughout Rad's built-in functions:</p>
+<ul>
+<li><code>parse_int(str) -&gt; int|error</code></li>
+<li><code>parse_float(str) -&gt; float|error</code></li>
+<li><code>read_file(path) -&gt; error|{ "size_bytes": int, "content": str }</code></li>
+<li><code>round(num, decimals) -&gt; error|int|float</code></li>
+</ul>
+<p>The error union makes your code self-documenting - anyone reading your function signature knows immediately that it can fail.</p>
+<div class="admonition info">
+<p class="admonition-title">More on Union Types</p>
+<p>We covered union types in detail in an earlier section: <a href="../type-annotations/#union-types">Type Annotations</a>.
+Error unions are just one application of Rad's union type system.</p>
+</div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Rad's error handling model gives you the tools to write robust scripts that handle failures gracefully:</p>
+<ul>
+<li><strong>Errors are values</strong> that <strong>propagate</strong> by default, unless handled</li>
+<li><strong>Scripts exit</strong> if errors propagate up to the root of the script</li>
+<li><strong><code>catch:</code> blocks</strong> provide full error handling control:<ul>
+<li>Variable contains the error string inside the block</li>
+<li>You can log errors, provide fallbacks, or call <code>exit()</code></li>
+<li>Execution continues unless you explicitly exit</li>
+</ul>
+</li>
+<li><strong><code>??</code> operator</strong> provides concise fallbacks with lazy evaluation<ul>
+<li>Use for simple cases without logging</li>
+<li>Right side only evaluated if left side errors</li>
+</ul>
+</li>
+<li><strong>Create errors</strong> with <code>error("message")</code> in your own functions</li>
+<li><strong>Type unions</strong> (<code>T|error</code>) make fallible operations explicit in function signatures</li>
+</ul>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<p>CLI scripts and the shell go hand in hand, and Rad offers first-class support for invoking shell commands and handling its output.
+We explore this in the next section: <a href="../shell-commands/">Shell Commands</a>.</p>
 
 
 
@@ -926,7 +1508,8 @@
 
 
 
-
+  
+  
 
 
 
@@ -945,6 +1528,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../type-annotations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Type Annotations">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Type Annotations
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../shell-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Commands">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Shell Commands
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
