@@ -2,197 +2,332 @@
 title: Shell Commands
 ---
 
-The shell offers a wide range of utilities and is a great way to interact with your system e.g. reading/writing files, invoking installed programs, etc.
+The shell offers a wide range of utilities and is essential for CLI scripting - from file operations to invoking
+installed programs like git, make, or docker.
 
-While you can do a lot with in-built Rad functionality, sometimes you'll want to invoke things from your shell, and Rad makes that convenient through  syntax we'll explore in this section.
+Rad has rich built-in functionality (`http_get`, `read_file`, `write_file`, etc.), but sometimes you need to invoke
+system tools or installed programs. Rad makes this safe and ergonomic through first-class shell command support.
 
-## Basic Shell Commands
+## Invoking Commands
 
-Shell commands can be written via [strings](./basics.md#str). You can then *invoke* shell commands by prefixing a string with a dollar sign `$`.
-
-For example:
+Shell commands are invoked by prefixing a string with `$`:
 
 ```rad
-$`ls`
+$`ls -la`
 ```
 
-Here we have the intent to run `ls` from your shell and printing the output to your terminal.
-
-Note that you can write the shell command inline like above, or pre-define a string as an identifier (e.g. `cmd = ...`) and then prefix the identifier with `$` i.e. `$cmd` to invoke that pre-defined command.
-
-**The above example won't run as-is though** -- Rad requires you to define some handling for if the command exits with a non-0 exit code i.e. if it errors.
-To do this, you must define either a `fail` or a `recover` block below your command invocation. If the command fails, the block you define will get run, but if it succeeds, the block will *not* run and will be skipped.
-
-When the `fail` block is run and finishes, the script **will exit**.
-
-When the `recover` block is run and finishes, the script **will continue** with whatever comes after the block.
-
-You can think of each block as saying how you want shell command failure to be handled - either you want the script to **fail** or you want it to **recover**.
-
-Here are a couple of examples to demonstrate what happens *if the command fails*. We create a `cmd` string to `curl` a `url` we defined earlier.
+You can also pre-define the command as a string variable:
 
 ```rad
-cmd = `curl {url}`
+cmd = `ls -la`
 $cmd
-fail:
-    print("Oh no, curl failed!")
-
-print("Hello!")
 ```
 
-<div class="result">
-```
-Oh no, curl failed!
-```
-</div>
-
-The `Hello!` does not get printed because the `fail` block exits after it runs.
-The exit code of running this script will be non-0, indicating failure.
-
-```rad
-cmd = `curl {url}`
-$cmd
-recover:
-    print("Oh no, curl failed!")
-
-print("Hello!")
-```
-
-<div class="result">
-```
-Oh no, curl failed!
-Hello!
-```
-</div>
-
-Here, the `Hello!` gets printed because we used `recover` to indicate that the script should recover from the command failure and keep going.
-
-In each example, if the command runs successfully, we simply print the output to console and then the `Hello!`.
+By default, the stdout/stderr will be printed directly to the user's terminal as if they had invoked it directly themselves.
 
 !!! tip "Prefer backticks for shell command strings"
 
-    Shell commands often make use of 'single' and "double" quotes, so to minimize delimiter collision, \`backticks\` often work best
-    to contain shell commands when writing them into strings. However, there's nothing stopping you from using other delimiters.
-
-## Critical Shell Commands
-
-Rad requires `fail` or `recover` blocks when using `$` syntax for shell commands in order to help developers write safe and well-behaved scripts.
-
-However, a very common expectation is that the command should succeed, and if it doesn't, we should fail the script and exit immediately with a non-0 exit code. Rather than requiring explicit `fail` blocks, which can be a little cumbersome to write every time, you can instead use `$!` syntax to express that a command is *critical* i.e. it *must* succeed, else the script exits.
-
-```rad
-$!`ls`
-```
-
-This line alone is a perfectly valid shell command and Rad script. If the command fails, we propagate the error code and print the error.
-
-## Unsafe Shell Commands
-
-If you want to run a shell command and *don't care* if it succeeds, you can use the `unsafe` keyword:
-
-```rad
-unsafe $`ls`
-```
-
-Regardless of if this invocation succeeds or fails, the script will continue.
-
-Use these judiciously.
-
-[//]: # (todo better terminology? unchecked?)
+    Shell commands often use 'single' and "double" quotes, so backticks minimize delimiter conflicts.
+    However, you can use any string delimiter.
 
 ## Capturing Output
 
-So far, all example shell invocations have not involved capturing their output. **When we don't capture command outputs, they're automatically printed to the terminal.** However, you can capture command output as strings using the below example syntaxes. In each example, `cmd` is a predefined string variable representing a shell command.
+Shell commands return three values: **exit code**, **stdout**, and **stderr**. You can capture anywhere from zero to all three of these values, depending on what you need.
 
-1) Capturing exit codes
+### Capture Modes
 
-You can get the exit code from your invocation by writing it as an assignment to one identifier:
+There are four levels of capture:
 
-```rad
-code = $cmd
-```
+**1. No capture - output goes to terminal**
 
-The code returned by your invocation depends on the command. Commonly, a code of `0` indicates success, and non-0 indicates failure.
-
-2) Capturing stdout
-
-Commands have two channels for outputting text: stdout (standard out) and stderr (standard error). The former is commonly used for normal output from applications, while the latter is often reserved for errors or exceptional circumstances. With Rad, you can capture each independently. To capture stdout, simply define a second identifier in your assignment:
+When you don't assign any variables, all output goes to the terminal:
 
 ```rad
-code, stdout = $cmd
+$`ls -la`
 ```
 
-Note that, when capturing stdout (or stderr), **it does not get printed to the terminal**. It gets redirected to your variable.
+**2. Capture exit code only**
 
-3) Capturing stderr
-
-Lastly, you can capture stderr by adding a third identifier to the assignment:
+Assign to one variable to capture just the exit code:
 
 ```rad
-code, stdout, stderr = $cmd
+code = $`make test`
 ```
 
-Note that if you don't care about certain outputs, you can conventionally use an underscore `_` as the respective identifier to indicate to readers that you don't intend to use those outputs later.
+The exit code is captured as an `int`, but stdout and stderr still go to the terminal.
 
-For example, if you're only interested in stderr:
+**3. Capture exit code + stdout**
+
+Assign to two variables to capture the exit code and stdout:
 
 ```rad
-_, _, stderr = $cmd
+code, stdout = $`git show 0dd21e6`
 ```
 
-!!! tip "Silencing command output"
+The exit code and stdout are captured as an `int` and `str` respectively. Stderr still goes to the terminal.
+**Important:** When you capture stdout, it doesn't print to the terminal - it's redirected to your variable.
 
-    Because capturing stdout and stderr means they don't get printed to the console automatically when the command runs, you can use this fact
-    to hide the output of commmands and run them silently:
+**4. Capture all three**
 
-    ```rad
-    _, _, _ = $cmd
-    ```
+Assign to three variables to capture everything:
 
-    This example will run "silently", in that none of its output will get printed to the terminal.
+```rad
+code, stdout, stderr = $`npm install`
+```
 
-[//]: # (todo factcheck above: can apps print via other channels than those two?)
+All three values are captured. Nothing is printed to the terminal automatically.
 
-## Suppressing Announcements
+### Named Assignment
 
-By default, whenever you invoke a shell command, Rad will print an 'announcement' to indicate to users what command is being run. For example:
+Rad supports a special form of assignment when working with shell commands. When **all** your variables are named
+exactly `code`, `stdout`, or `stderr`, then assignment happens by name rather than by position.
+This means the order doesn't matter:
 
-```rad title="create.rad"
+```rad
+// Named assignment - order independent
+stdout, code = $`echo hi`           // code=0, stdout="hi\n"
+stderr = $`bad-command`             // Just capture stderr
+code, stderr = $`make format`       // code=1, stderr=""
+stderr, stdout, code = $`ls`        // All three, any order
+```
+
+This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
+
+**The rule:** If ALL variables use exactly `code`, `stdout`, or `stderr`, assignment is by name. Otherwise, it's positional:
+
+```rad
+// Positional - 'output' isn't a special name
+code, output = $`echo hi`           // output = stdout (by position)
+exit_code, out, err = $`ls`         // Assigned in order
+```
+
+This lets you write clear code like `stderr = $cmd` instead of `_, _, stderr = $cmd`.
+
+!!! tip "Silencing outputs"
+
+    You can use `_` to ignore specific outputs: `code, _ = $cmd` captures the code and ignores stdout.
+    For silent execution, capture everything: `_, _, _ = $cmd` - nothing will print to the terminal.
+
+## Error Handling
+
+Now that you understand how to capture output, let's talk about error handling.
+
+When a shell command exits with a non-zero exit code, it triggers error propagation - just like functions that return errors.
+This means you can handle potential failures using `catch:` blocks:
+
+```rad
+// Handle errors with catch block
+$`make build` catch:
+    print_err("Build failed!".red())
+    exit(1)
+
+// Or ignore failures
+$`make build` catch:
+    pass  // Continue on failure
+```
+
+You can **combine capturing with error handling**. When the `catch:` block runs, your variables are already
+assigned their actual values, so you can inspect them:
+
+```rad
+// Capture the exit code AND handle errors
+code = $`make test` catch:
+    print_err("Command failed to run. Error code {code}")
+    exit(1)
+
+print("Tests passed!")
+```
+
+This works with any capture pattern:
+
+```rad
+code, stdout = $`git tag --list` catch:
+    print_err("Failed to get tags")
+    exit(1)
+
+version = stdout.trim()
+```
+
+This uses the same error model covered in [Error Handling](./error-handling.md) - errors propagate by default, so you need `catch:` blocks to handle them.
+
+## String Interpolation
+
+You can build commands dynamically using string interpolation:
+
+```rad linenums="1"
 args:
-    filename str
-$!`touch {filename}.txt`
+    version str
+    message str
+
+// Interpolate variables into commands
+$`git tag v{version}` catch:
+    print_err("Failed to create tag")
+    exit(1)
+
+$`git commit -m "{message}"` catch:
+    print_err("Commit failed")
+    exit(1)
 ```
 
-This short script simply creates a file based on its argument. When invoked, it prints the following output:
+This is particularly useful for constructing commands based on script arguments or other runtime values.
 
+## Modifiers
+
+Rad provides two modifiers that can be applied to shell commands.
+
+### The `quiet` Modifier
+
+By default, Rad announces each shell command with a ⚡️ prefix. For example, this command:
+
+```rad
+$`touch hello.txt` catch:
+    print_err("Failed to create file")
+    exit(1)
 ```
-rad create.rad hi
+
+Shows in the terminal:
+
+<div class="result">
+```
+⚡️ touch hello.txt
+```
+</div>
+
+To suppress this announcement, use the `quiet` modifier:
+
+```rad
+quiet $`touch hello.txt` catch:
+    print_err("Failed to create file")
+    exit(1)
 ```
 
 <div class="result">
 ```
-⚡️ Running: touch hi.txt
+(no output - unless there's an error)
 ```
 </div>
 
-If you wish to suppress this output, use the `quiet` keyword: 
+This is useful for scripts that run many commands or when you want minimal output.
+
+### The `confirm` Modifier
+
+The `confirm` modifier prompts the user before running a command:
 
 ```rad
-quiet $!`touch {filename}.txt`
+confirm $`rm -rf node_modules`
+```
+
+This is particularly useful for destructive operations.
+
+## Practical Examples
+
+Let's look at some real-world patterns that combine these features.
+
+### Development Workflow
+
+Here's a script inspired by a typical development workflow:
+
+```rad
+---
+Validates code, checks git status, and optionally pushes changes.
+---
+args:
+    push p bool  # Push changes after validation
+
+// Run validation steps
+steps = ["go mod tidy", "make format", "make build", "make test"]
+
+for step in steps:
+    $step catch:
+        print_err("❌ {step} failed".red())
+        exit(1)
+    print("✅ {step} passed".green())
+
+if push:
+    // Check for uncommitted changes
+    stdout = $`git status --porcelain` catch:
+        print_err("Failed to check git status")
+        exit(1)
+
+    if stdout.trim() != "":
+        print_err("Working directory has uncommitted changes!")
+        print_err("Commit your changes before pushing.")
+        exit(1)
+
+    // Get current branch and push
+    stdout = $`git branch --show-current` catch:
+        print_err("Failed to get current branch")
+        exit(1)
+
+    branch = stdout.trim()
+    print("Pushing to {branch}...".yellow())
+
+    $`git push origin {branch}` catch:
+        print_err("Push failed")
+        exit(1)
+
+    print("✅ Pushed to {branch}".green())
+
+print("✅ Done!".green())
+```
+
+### Conditional Command Construction
+
+Building commands dynamically based on script arguments:
+
+```rad
+args:
+    verbose v bool
+    output o str?
+
+cmd = "docker build ."
+
+if verbose:
+    cmd += " --progress=plain"
+
+if output:
+    cmd += " -t {output}"
+
+$`{cmd}` catch:
+    print_err("Docker build failed")
+    exit(1)
+
+print("Docker image built successfully".green())
+```
+
+### Checking Prerequisites
+
+Verifying that required tools are installed:
+
+```rad
+tools = ["git", "docker", "make"]
+
+for tool in tools:
+    _, _, _ = $`which {tool}` catch:
+        print_err("Required tool not found: {tool}")
+        print_err("Please install {tool} before running this script")
+        exit(1)
+
+print("All prerequisites installed ✅".green())
 ```
 
 ## Summary
 
-- Rad offers first-class support for interacting with your shell and invoking shell commands.
-- Basic invocations (using `$`) require either a `fail` or `recover` command immediately after.
-- If you wish to simply exit when a command fails, you can write it as a **critical command** with `$!`.
-- You can capture command outputs by progressively adding more identifiers to an assignment with the invocation.
-    - Identifier 1 = exit code 
-    - Identifier 2 = stdout 
-    - Identifier 3 = stderr
-- Suppress command announcements with the `quiet` keyword.
-- \`Backticks\` are particularly well-suited to writing shell commands as strings.
+- Shell commands use the `$` prefix and follow the same error model as functions
+- **Error handling:** Non-zero exit codes propagate errors unless handled with `catch:` blocks
+- **Capture modes:**
+    - None: output goes to terminal
+    - Code only: `code = $cmd` (stdout/stderr to terminal)
+    - Code + stdout: `code, stdout = $cmd` (stderr to terminal)
+    - All three: `code, stdout, stderr = $cmd` (nothing to terminal)
+- **Assignment semantics:**
+    - **Named** when ALL variables are `code`, `stdout`, or `stderr` (order-independent)
+    - **Positional** otherwise (order matters)
+- **Output routing:** Captured values don't print to the terminal (they're redirected to variables)
+- String interpolation works in commands for dynamic construction
+- Backticks are preferred for shell command strings to avoid delimiter conflicts
 
 ## Next
 
-Rad offers several global flags that are available to every script. We'll explore some of those in the next section: [Global Flags](./global-flags.md).
+Rad offers several global flags that are available to every script, giving you control over execution behavior.
+We'll explore these in the next section: [Global Flags](./global-flags.md).

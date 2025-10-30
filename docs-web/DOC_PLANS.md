@@ -28,8 +28,8 @@
 - [x] NEW type annotations
 - [x] NEW error handling (`catch`, `??`)
   - [x] error propagation model
-- [ ] shell commands !!
-  - [ ] shell error handling
+- [x] shell commands !!
+  - [x] shell error handling
 - [ ] resources
 - [ ] global flags
 - [ ] json-paths-advanced
