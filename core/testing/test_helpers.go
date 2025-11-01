@@ -75,6 +75,7 @@ var (
 	errorOrExit      = ErrorOrExit{}
 	millisSlept      = make([]int64, 0)
 	shellInvocations = make([]core.ShellInvocation, 0)
+	httpInvocations  = make([]core.HttpRequest, 0)
 	// dont need reset
 	runnerInputInput = newRunnerInputInput()
 )
@@ -99,6 +100,10 @@ func newRunnerInputInput() core.RunnerInput {
 		// Return empty strings and exit code 0 for test mock
 		return "", "", 0
 	}
+	requester := core.NewRequester()
+	requester.SetCaptureCallback(func(inv core.HttpRequest) {
+		httpInvocations = append(httpInvocations, inv)
+	})
 	radTestHome := filepath.Join("./rad_test_home")
 	return core.RunnerInput{
 		RIo: &core.RadIo{
@@ -110,6 +115,7 @@ func newRunnerInputInput() core.RunnerInput {
 		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
 		RSleep:  &sleepFunc,
 		RShell:  &shellExec,
+		RReq:    requester,
 		RadHome: &radTestHome,
 	}
 }
@@ -230,6 +236,7 @@ func resetTestState() {
 	errorOrExit = ErrorOrExit{}
 	millisSlept = make([]int64, 0)
 	shellInvocations = make([]core.ShellInvocation, 0)
+	httpInvocations = make([]core.HttpRequest, 0)
 	core.ResetGlobals()
 	// Reset the isPiped flag for stdin
 	if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
@@ -263,6 +270,7 @@ func assertAllElseEmpty(t *testing.T) {
 	t.Helper()
 	assert.Empty(t, stdOutBuffer.String(), "Expected no output on stdout")
 	assert.Empty(t, stdErrBuffer.String(), "Expected no output on stderr")
+	assertNoHttpInvocations(t)
 }
 
 func assertError(t *testing.T, expectedCode int, expectedMsg string) {
@@ -346,6 +354,27 @@ func assertShellInvoked(t *testing.T, expected ...core.ShellInvocation) {
 		}
 		if actual.IsConfirm != exp.IsConfirm {
 			t.Errorf("Invocation %d: Expected IsConfirm=%v, but got %v", i, exp.IsConfirm, actual.IsConfirm)
+		}
+	}
+}
+
+func assertNoHttpInvocations(t *testing.T) {
+	t.Helper()
+	if len(httpInvocations) != 0 {
+		t.Errorf("Expected no HTTP invocations, but got %d", len(httpInvocations))
+	}
+}
+
+func assertHttpInvocationUrls(t *testing.T, expectedUrls ...string) {
+	t.Helper()
+	if len(httpInvocations) != len(expectedUrls) {
+		t.Errorf("Expected %d HTTP invocations, got %d", len(expectedUrls), len(httpInvocations))
+		return
+	}
+	for i, expected := range expectedUrls {
+		if httpInvocations[i].RequestDef.Url != expected {
+			t.Errorf("HTTP invocation %d: expected URL %s, got %s",
+				i, expected, httpInvocations[i].RequestDef.Url)
 		}
 	}
 }
