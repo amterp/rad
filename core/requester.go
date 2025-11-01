@@ -20,6 +20,7 @@ var (
 
 type Requester struct {
 	jsonPathsByMockedUrlRegex map[string]string
+	captureRequest            func(HttpRequest)
 }
 
 type RequestDef struct {
@@ -77,6 +78,11 @@ func NewResponseDef(
 	}
 }
 
+type HttpRequest struct {
+	RequestDef  RequestDef
+	ResponseDef ResponseDef
+}
+
 func (r ResponseDef) ToRadMap(i *Interpreter, callNode *ts.Node) *RadMap {
 	radMap := NewRadMap()
 
@@ -113,6 +119,10 @@ func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
 
+func (r *Requester) SetCaptureCallback(cb func(HttpRequest)) {
+	r.captureRequest = cb
+}
+
 func (r *Requester) Request(def RequestDef) ResponseDef {
 
 	req, err := http.NewRequest(def.Method, def.Url, def.BodyReader())
@@ -127,7 +137,16 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 		return NewResponseDef(nil, nil, nil, &msg, 0)
 	}
 
-	return r.request(req)
+	response := r.request(req)
+
+	if r.captureRequest != nil {
+		r.captureRequest(HttpRequest{
+			RequestDef:  def,
+			ResponseDef: response,
+		})
+	}
+
+	return response
 }
 
 func (r *Requester) RequestJson(url string) (interface{}, error) {
