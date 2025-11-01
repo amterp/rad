@@ -129,6 +129,7 @@ const (
 	F_START               = "start"
 	F_END                 = "end"
 	F_SHELL_CMD           = "shell_cmd"
+	F_MODIFIER            = "modifier"
 	F_QUIET_MOD           = "quiet_mod"
 	F_CONFIRM_MOD         = "confirm_mod"
 	F_COMMAND             = "command"
