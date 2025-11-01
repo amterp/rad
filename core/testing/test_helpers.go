@@ -69,11 +69,12 @@ const ignorePanicMsg = "TESTING - IGNORE ME"
 
 var (
 	// stateful, reset for each test
-	stdInBuffer  = new(bytes.Buffer)
-	stdOutBuffer = new(bytes.Buffer)
-	stdErrBuffer = new(bytes.Buffer)
-	errorOrExit  = ErrorOrExit{}
-	millisSlept  = make([]int64, 0)
+	stdInBuffer      = new(bytes.Buffer)
+	stdOutBuffer     = new(bytes.Buffer)
+	stdErrBuffer     = new(bytes.Buffer)
+	errorOrExit      = ErrorOrExit{}
+	millisSlept      = make([]int64, 0)
+	shellInvocations = make([]core.ShellInvocation, 0)
 	// dont need reset
 	runnerInputInput = newRunnerInputInput()
 )
@@ -93,6 +94,11 @@ func newRunnerInputInput() core.RunnerInput {
 	sleepFunc := func(duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
 	}
+	shellExec := func(invocation core.ShellInvocation) (string, string, int) {
+		shellInvocations = append(shellInvocations, invocation)
+		// Return empty strings and exit code 0 for test mock
+		return "", "", 0
+	}
 	radTestHome := filepath.Join("./rad_test_home")
 	return core.RunnerInput{
 		RIo: &core.RadIo{
@@ -103,6 +109,7 @@ func newRunnerInputInput() core.RunnerInput {
 		RExit:   &testExitFunc,
 		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
 		RSleep:  &sleepFunc,
+		RShell:  &shellExec,
 		RadHome: &radTestHome,
 	}
 }
@@ -222,6 +229,7 @@ func resetTestState() {
 	stdErrBuffer.Reset()
 	errorOrExit = ErrorOrExit{}
 	millisSlept = make([]int64, 0)
+	shellInvocations = make([]core.ShellInvocation, 0)
 	core.ResetGlobals()
 	// Reset the isPiped flag for stdin
 	if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
@@ -294,6 +302,50 @@ func assertSleptMillis(t *testing.T, millis ...int64) {
 		actual := millisSlept[i]
 		if actual != expected {
 			t.Errorf("Expected to sleep idx %d to be %d millis, but slept %d millis", i, expected, actual)
+		}
+	}
+}
+
+// Shell command assertion helpers
+
+func assertShellNotInvoked(t *testing.T) {
+	t.Helper()
+	if len(shellInvocations) != 0 {
+		t.Errorf("Expected no shell commands, but got %d invocations: %v", len(shellInvocations), shellInvocations)
+	}
+}
+
+func assertShellCount(t *testing.T, count int) {
+	t.Helper()
+	if len(shellInvocations) != count {
+		t.Errorf("Expected %d shell invocations, but got %d: %v", count, len(shellInvocations), shellInvocations)
+	}
+}
+
+func assertShellInvoked(t *testing.T, expected ...core.ShellInvocation) {
+	t.Helper()
+	if len(shellInvocations) != len(expected) {
+		t.Errorf("Expected %d shell invocations, but got %d.\nExpected: %+v\nActual: %+v",
+			len(expected), len(shellInvocations), expected, shellInvocations)
+		return
+	}
+
+	for i, exp := range expected {
+		actual := shellInvocations[i]
+		if actual.Command != exp.Command {
+			t.Errorf("Invocation %d: Expected command %q, but got %q", i, exp.Command, actual.Command)
+		}
+		if actual.CaptureStdout != exp.CaptureStdout {
+			t.Errorf("Invocation %d: Expected CaptureStdout=%v, but got %v", i, exp.CaptureStdout, actual.CaptureStdout)
+		}
+		if actual.CaptureStderr != exp.CaptureStderr {
+			t.Errorf("Invocation %d: Expected CaptureStderr=%v, but got %v", i, exp.CaptureStderr, actual.CaptureStderr)
+		}
+		if actual.IsQuiet != exp.IsQuiet {
+			t.Errorf("Invocation %d: Expected IsQuiet=%v, but got %v", i, exp.IsQuiet, actual.IsQuiet)
+		}
+		if actual.IsConfirm != exp.IsConfirm {
+			t.Errorf("Invocation %d: Expected IsConfirm=%v, but got %v", i, exp.IsConfirm, actual.IsConfirm)
 		}
 	}
 }

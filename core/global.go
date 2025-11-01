@@ -20,6 +20,7 @@ var (
 	RReq                     *Requester
 	RClock                   Clock
 	RSleep                   func(duration time.Duration)
+	RShell                   ShellExecutor
 	RNG                      *rand.Rand
 	HasScript                bool
 	ScriptPath               string
@@ -37,6 +38,7 @@ type RunnerInput struct {
 	RReq    *Requester
 	RClock  Clock
 	RSleep  *func(duration time.Duration)
+	RShell  *func(invocation ShellInvocation) (string, string, int)
 	RadHome *string
 }
 
@@ -63,6 +65,7 @@ func ResetGlobals() {
 	RReq = nil
 	RClock = nil
 	RSleep = nil
+	RShell = nil
 	RNG = nil
 	HasScript = false
 	ScriptPath = ""
@@ -129,6 +132,12 @@ func setGlobals(runnerInput RunnerInput) {
 		}
 	} else {
 		RSleep = *runnerInput.RSleep
+	}
+
+	if runnerInput.RShell == nil {
+		RShell = realShellExecutor
+	} else {
+		RShell = *runnerInput.RShell
 	}
 
 	// Initialize RNG with clock-based seed (respects RClock abstraction)
