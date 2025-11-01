@@ -127,8 +127,19 @@ func (i *Interpreter) namedCaptureMode(leftNodes []ts.Node) (captureStdout bool,
 }
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureStdout, captureStderr bool) shellResult {
-	isQuiet := rl.GetChild(shellCmdNode, rl.F_QUIET_MOD) != nil
-	isConfirm := rl.GetChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
+	// Check for modifiers by inspecting all modifier nodes
+	modifierNodes := rl.GetChildren(shellCmdNode, rl.F_MODIFIER)
+	var isQuiet, isConfirm bool
+	// todo they should be using different field names, really
+	for _, modNode := range modifierNodes {
+		modText := i.GetSrcForNode(&modNode)
+		switch modText {
+		case "quiet":
+			isQuiet = true
+		case "confirm":
+			isConfirm = true
+		}
+	}
 
 	// evaluate the command string
 	cmdNode := rl.GetChild(shellCmdNode, rl.F_COMMAND)
