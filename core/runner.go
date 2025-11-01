@@ -290,7 +290,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		if !com.IsBlank(ScriptPath) && com.IsTty {
 			RP.RadStderrf(com.YellowS("%s:\n", ScriptPath))
 		}
-		RP.Printf(r.scriptData.Src + "\n")
+		RP.Print(r.scriptData.Src + "\n")
 	}
 
 	if FlagRadTree.Value {
