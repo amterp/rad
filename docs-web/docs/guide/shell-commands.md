@@ -271,7 +271,7 @@ if push:
 print("✅ Done!".green())
 ```
 
-### Conditional Command Construction
+### Conditional Construction
 
 Building commands dynamically based on script arguments:
 
