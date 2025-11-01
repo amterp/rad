@@ -24,10 +24,18 @@ type shellResult struct {
 	stderr   *string
 }
 
-type shellCaptureMode struct {
-	captureStdout bool
-	captureStderr bool
+// ShellInvocation captures the details of a shell command invocation
+type ShellInvocation struct {
+	Command       string
+	CaptureStdout bool
+	CaptureStderr bool
+	IsQuiet       bool
+	IsConfirm     bool
 }
+
+// ShellExecutor is the function type for executing shell commands
+// Returns: (stdout, stderr, exitCode) - only returns captured output based on invocation.Capture* fields
+type ShellExecutor func(invocation ShellInvocation) (string, string, int)
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 	// Get left-hand variables for assignment
@@ -43,11 +51,11 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 	isNamedAssignment := i.isNamedShellAssignment(leftNodes)
 
 	// Determine capture mode based on assignment type
-	var captureMode shellCaptureMode
+	var captureStdout, captureStderr bool
 	if isNamedAssignment {
-		captureMode = i.namedCaptureMode(leftNodes)
+		captureStdout, captureStderr = i.namedCaptureMode(leftNodes)
 	} else {
-		captureMode = i.positionalCaptureMode(len(leftNodes))
+		captureStdout, captureStderr = i.positionalCaptureMode(len(leftNodes))
 	}
 
 	// Get catch block and shell command nodes
@@ -76,7 +84,7 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 		return VoidNormal
 	}, func() EvalResult {
 		// Normal execution - run shell command
-		result := i.executeShellCmd(shellCmdNode, captureMode)
+		result := i.executeShellCmd(shellCmdNode, captureStdout, captureStderr)
 
 		// Assign variables to shell command results
 		assignResults(result)
@@ -96,31 +104,29 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 	})
 }
 
-func (i *Interpreter) positionalCaptureMode(numVars int) shellCaptureMode {
+func (i *Interpreter) positionalCaptureMode(numVars int) (captureStdout bool, captureStderr bool) {
 	// Positional: 0 vars = nothing, 1 var = code only, 2 vars = code+stdout, 3 vars = code+stdout+stderr
-	return shellCaptureMode{
-		captureStdout: numVars >= 2,
-		captureStderr: numVars >= 3,
-	}
+	captureStdout = numVars >= 2
+	captureStderr = numVars >= 3
+	return
 }
 
-func (i *Interpreter) namedCaptureMode(leftNodes []ts.Node) shellCaptureMode {
+func (i *Interpreter) namedCaptureMode(leftNodes []ts.Node) (captureStdout bool, captureStderr bool) {
 	// Named: capture only what's requested
-	mode := shellCaptureMode{}
 	for _, node := range leftNodes {
 		rootNode := rl.GetChild(&node, rl.F_ROOT)
 		varName := i.GetSrcForNode(rootNode)
 		switch varName {
 		case "stdout":
-			mode.captureStdout = true
+			captureStdout = true
 		case "stderr":
-			mode.captureStderr = true
+			captureStderr = true
 		}
 	}
-	return mode
+	return
 }
 
-func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureMode shellCaptureMode) shellResult {
+func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureStdout, captureStderr bool) shellResult {
 	isQuiet := rl.GetChild(shellCmdNode, rl.F_QUIET_MOD) != nil
 	isConfirm := rl.GetChild(shellCmdNode, rl.F_CONFIRM_MOD) != nil
 
@@ -130,69 +136,113 @@ func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureMode shellCa
 		RequireType(i, cmdNode, "Shell commands must be strings", rl.RadStrT).
 		RequireStr(i, shellCmdNode)
 
-	// optional confirmation prompt
-	if FlagConfirmShellCommands.Value || isConfirm {
-		ok, err := InputConfirm(cmdStr.Plain(), "Run above command? [y/n] > ")
+	// Create invocation and execute via RShell
+	invocation := ShellInvocation{
+		Command:       cmdStr.Plain(),
+		CaptureStdout: captureStdout,
+		CaptureStderr: captureStderr,
+		IsQuiet:       isQuiet,
+		IsConfirm:     isConfirm,
+	}
+
+	stdout, stderr, exitCode := RShell(invocation)
+
+	// Build result from RShell output
+	result := shellResult{
+		exitCode: exitCode,
+	}
+
+	if captureStdout {
+		result.stdout = &stdout
+	}
+
+	if captureStderr {
+		result.stderr = &stderr
+	}
+
+	return result
+}
+
+// realShellExecutor is the production implementation of shell command execution
+// warning: as of writing, this is *not* covered in tests
+func realShellExecutor(invocation ShellInvocation) (string, string, int) {
+	// Handle confirmation prompt if needed
+	if FlagConfirmShellCommands.Value || invocation.IsConfirm {
+		ok, err := InputConfirm(invocation.Command, "Run above command? [y/n] > ")
 		if err != nil {
-			i.errorf(shellCmdNode, "Error confirming shell command: %v", err)
+			// Can't use i.errorf here, so just panic
+			panic(fmt.Sprintf("Error confirming shell command: %v", err))
 		}
 		if !ok {
-			empty := bytes.Buffer{}
-			return resolveResult(captureMode, empty, empty, 1)
+			return "", "", 1
 		}
 	}
 
-	cmd := resolveCmd(i, shellCmdNode, cmdStr.Plain())
+	// Build the command
+	cmd := resolveCmdSimple(invocation.Command)
 	var stdoutBuf, stderrBuf bytes.Buffer
 
-	// set up output destinations
-	if captureMode.captureStdout {
+	// Set up output destinations based on capture mode
+	if invocation.CaptureStdout {
 		cmd.Stdout = &stdoutBuf
 	} else {
 		cmd.Stdout = RIo.StdOut
 	}
 
-	if captureMode.captureStderr {
+	if invocation.CaptureStderr {
 		cmd.Stderr = &stderrBuf
 	} else {
 		cmd.Stderr = RIo.StdErr
 	}
 
-	if !isQuiet {
-		RP.RadStderrf(fmt.Sprintf("⚡️ %s\n", cmdStr.String()))
+	// Print command if not quiet
+	if !invocation.IsQuiet {
+		RP.RadStderrf(fmt.Sprintf("⚡️ %s\n", invocation.Command))
 	}
 
 	// Run the command
 	err := cmd.Run()
 
-	// handle exit codes and errors
+	// Handle exit codes and errors
+	exitCode := 0
 	if err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
-			return resolveResult(captureMode, stdoutBuf, stderrBuf, exitErr.ExitCode())
+			exitCode = exitErr.ExitCode()
+		} else {
+			// Non-exit error (e.g., command not found)
+			panic(fmt.Sprintf("Failed to run command: %v\nStderr: %s\n", err, stderrBuf.String()))
 		}
-		i.errorf(shellCmdNode, "Failed to run command: %v\nStderr: %s\n", err, stderrBuf.String())
 	}
 
-	return resolveResult(captureMode, stdoutBuf, stderrBuf, 0)
+	// Only return captured output
+	stdout := ""
+	stderr := ""
+	if invocation.CaptureStdout {
+		stdout = stdoutBuf.String()
+	}
+	if invocation.CaptureStderr {
+		stderr = stderrBuf.String()
+	}
+
+	return stdout, stderr, exitCode
 }
 
-func resolveResult(captureMode shellCaptureMode, stdout, stderr bytes.Buffer, exitCode int) shellResult {
-	result := shellResult{
-		exitCode: exitCode,
+// resolveCmdSimple builds a shell command without needing interpreter context
+func resolveCmdSimple(cmdStr string) *exec.Cmd {
+	// check SHELL first - most accurate reflection of the environment
+	if shell := os.Getenv("SHELL"); shell != "" {
+		return buildCmd(shell, cmdStr)
 	}
 
-	if captureMode.captureStdout {
-		s := stdout.String()
-		result.stdout = &s
+	// last resort for Unix-like systems
+	if _, err := exec.LookPath("/bin/sh"); err == nil {
+		return buildCmd("/bin/sh", cmdStr)
 	}
 
-	if captureMode.captureStderr {
-		s := stderr.String()
-		result.stderr = &s
-	}
+	// this is also where we could detect and allow windows commands, if we wanted.
 
-	return result
+	panic("Cannot run shell cmd as no shell found. Please set the SHELL environment variable.")
 }
 
 func resolveCmd(i *Interpreter, shellNode *ts.Node, cmdStr string) *exec.Cmd {
