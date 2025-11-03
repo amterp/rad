@@ -125,23 +125,38 @@ func (r *Requester) SetCaptureCallback(cb func(HttpRequest)) {
 
 func (r *Requester) Request(def RequestDef) ResponseDef {
 
-	req, err := http.NewRequest(def.Method, def.Url, def.BodyReader())
+	sanitizedURL, err := sanitizeUrlString(def.Url)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
+		return NewResponseDef(nil, nil, nil, &msg, 0)
+	}
+
+	// Create request with sanitized URL
+	req, err := http.NewRequest(def.Method, sanitizedURL, def.BodyReader())
+	if err != nil {
+		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
+		return NewResponseDef(nil, nil, nil, &msg, 0)
+	}
+
+	// Apply headers after successful request creation
 	for key, values := range def.Headers {
 		for _, value := range values {
 			req.Header.Add(key, value)
 		}
 	}
 
-	if err != nil {
-		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
-		return NewResponseDef(nil, nil, nil, &msg, 0)
-	}
-
 	response := r.request(req)
 
 	if r.captureRequest != nil {
+		// Capture what was actually sent (with sanitized URL)
+		actualDef := RequestDef{
+			Method:  def.Method,
+			Url:     req.URL.String(), // Use the actual sanitized URL sent
+			Headers: def.Headers,
+			Body:    def.Body,
+		}
 		r.captureRequest(HttpRequest{
-			RequestDef:  def,
+			RequestDef:  actualDef,
 			ResponseDef: response,
 		})
 	}
@@ -183,13 +198,8 @@ func (r *Requester) request(req *http.Request) ResponseDef {
 		return NewResponseDef(&statusOk, &emptyHeaders, &mockJson, nil, 0)
 	}
 
-	urlToQuery, err := encodeUrl(req.URL.String())
-	if err != nil {
-		msg := fmt.Sprintf("Failed to encode url: %v", err)
-		return NewResponseDef(nil, nil, &mockJson, &msg, 0)
-	}
-
-	RP.RadStderrf("Querying url: %s\n", urlToQuery)
+	// Log the actual URL being requested (already sanitized by Request method)
+	RP.RadStderrf("Querying url: %s\n", req.URL.String())
 	start := RClock.Now()
 	resp, err := http.DefaultClient.Do(req)
 	durationSeconds := RClock.Now().Sub(start).Seconds()
@@ -211,15 +221,60 @@ func (r *Requester) request(req *http.Request) ResponseDef {
 	return NewResponseDef(&resp.StatusCode, &headers, &bodyStr, nil, durationSeconds)
 }
 
-// todo test this more, might need additional query param encoding
-func encodeUrl(rawUrl string) (string, error) {
-	rawUrl = strings.ReplaceAll(rawUrl, "%", "%25")
-	parsedUrl, err := url.Parse(rawUrl)
+// safeQueryEscape encodes for query components using %20 for spaces.
+// This eliminates ambiguity: literal '+' becomes %2B, space becomes %20.
+func safeQueryEscape(s string) string {
+	// url.QueryEscape: escapes '+' as %2B and ' ' as '+'
+	// We normalize '+' (spaces) to %20 for clarity and consistency with path encoding.
+	return strings.ReplaceAll(url.QueryEscape(s), "+", "%20")
+}
+
+// sanitizeUrlString normalizes URL encoding while preserving user intent.
+// Path: percent-encodes per RFC 3986 (spaces→%20, unicode→percent-encoded)
+// Query: percent-encodes with %20 for spaces (not +), preserves parameter order
+// Idempotent: handles partially-encoded URLs by decoding then re-encoding.
+func sanitizeUrlString(rawUrl string) (string, error) {
+	u, err := url.Parse(rawUrl)
 	if err != nil {
-		return "", fmt.Errorf("error parsing URL %v: %w", rawUrl, err)
+		return "", fmt.Errorf("invalid URL: %w", err)
 	}
-	parsedUrl.RawQuery = parsedUrl.Query().Encode()
-	return parsedUrl.String(), nil
+
+	if q := u.RawQuery; q != "" {
+		// Parse manually to preserve parameter order (url.ParseQuery returns map, loses order)
+		parts := strings.Split(q, "&")
+		out := make([]string, 0, len(parts))
+
+		for _, p := range parts {
+			if p == "" {
+				// Skip empty segments like trailing '&'
+				continue
+			}
+			kv := strings.SplitN(p, "=", 2)
+
+			// Decode %XX but DO NOT treat '+' as space (use PathUnescape, not QueryUnescape)
+			key, err := url.PathUnescape(kv[0])
+			if err != nil {
+				return "", fmt.Errorf("invalid percent-encoding in query key %q: %w", kv[0], err)
+			}
+
+			if len(kv) == 1 {
+				// Flag-style param with no '=' (e.g., ?debug)
+				out = append(out, safeQueryEscape(key))
+				continue
+			}
+
+			val, err := url.PathUnescape(kv[1])
+			if err != nil {
+				return "", fmt.Errorf("invalid percent-encoding in query value for key %q: %w", key, err)
+			}
+
+			out = append(out, safeQueryEscape(key)+"="+safeQueryEscape(val))
+		}
+		u.RawQuery = strings.Join(out, "&")
+	}
+
+	// u.String() automatically percent-encodes the path per RFC 3986
+	return u.String(), nil
 }
 
 func (r *Requester) resolveMockedResponse(url string) (string, bool) {

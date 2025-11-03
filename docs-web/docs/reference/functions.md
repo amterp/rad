@@ -1012,6 +1012,29 @@ http_method(url: str, *, body: any?, json: any?, headers: map?) -> map
   JSON-serializes the content and sets `Content-Type: application/json` header only if no `headers` are provided at all.
 - **Mutually exclusive**: Cannot use both `body` and `json` parameters together - you must choose one or the other.
 
+**URL Encoding:**
+
+Rad automatically normalizes URLs to ensure proper encoding:
+
+- **Spaces**: Encoded as `%20` everywhere (path and query parameters)
+- **Special characters**: Properly percent-encoded per RFC 3986
+
+This means you can write URLs naturally with spaces and special characters:
+
+```rad
+// URLs with spaces work naturally
+http_get("https://api.example.com/search?query=hello world")
+// Sent as: https://api.example.com/search?query=hello%20world
+
+// Literal plus signs are preserved
+http_get("https://api.example.com?formula=a+b")
+// Sent as: https://api.example.com?formula=a%2Bb
+
+// Parameter order is preserved
+http_get("https://api.example.com?zebra=1&alpha=2")
+// Sent as written (not reordered alphabetically)
+```
+
 **Response map contains:**
 
 - `success: bool` - Whether request succeeded
