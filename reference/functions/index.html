@@ -3885,6 +3885,25 @@ format.</p>
   JSON-serializes the content and sets <code>Content-Type: application/json</code> header only if no <code>headers</code> are provided at all.</li>
 <li><strong>Mutually exclusive</strong>: Cannot use both <code>body</code> and <code>json</code> parameters together - you must choose one or the other.</li>
 </ul>
+<p><strong>URL Encoding:</strong></p>
+<p>Rad automatically normalizes URLs to ensure proper encoding:</p>
+<ul>
+<li><strong>Spaces</strong>: Encoded as <code>%20</code> everywhere (path and query parameters)</li>
+<li><strong>Special characters</strong>: Properly percent-encoded per RFC 3986</li>
+</ul>
+<p>This means you can write URLs naturally with spaces and special characters:</p>
+<div class="highlight"><pre><span></span><code>// URLs with spaces work naturally
+http_get(&quot;https://api.example.com/search?query=hello world&quot;)
+// Sent as: https://api.example.com/search?query=hello%20world
+
+// Literal plus signs are preserved
+http_get(&quot;https://api.example.com?formula=a+b&quot;)
+// Sent as: https://api.example.com?formula=a%2Bb
+
+// Parameter order is preserved
+http_get(&quot;https://api.example.com?zebra=1&amp;alpha=2&quot;)
+// Sent as written (not reordered alphabetically)
+</code></pre></div>
 <p><strong>Response map contains:</strong></p>
 <ul>
 <li><code>success: bool</code> - Whether request succeeded</li>
