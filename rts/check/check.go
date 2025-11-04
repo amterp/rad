@@ -57,6 +57,7 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
+	c.addFunctionNameShadowingErrors(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil
@@ -189,5 +190,37 @@ func (c *RadCheckerImpl) validateScientificNumberAsInt(node *ts.Node, d *[]Diagn
 	if floatVal != float64(int64(floatVal)) {
 		msg := "Scientific notation value does not evaluate to a whole number"
 		*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrScientificNotationNotWholeNumber))
+	}
+}
+
+func (c *RadCheckerImpl) addFunctionNameShadowingErrors(d *[]Diagnostic) {
+	// Get argument names from the args block
+	argBlock, ok := c.tree.FindArgBlock()
+	if !ok {
+		// No args block, so no shadowing is possible
+		return
+	}
+
+	// Collect all argument names into a map for quick lookup
+	argNames := make(map[string]bool)
+	for _, arg := range argBlock.Args {
+		argNames[arg.Name.Name] = true
+	}
+
+	// Only check top-level functions (direct children of source file)
+	// This matches the interpreter's hoisting behavior
+	root := c.tree.Root()
+	for i := uint(0); i < root.ChildCount(); i++ {
+		child := root.Child(i)
+		if child.Kind() == rl.K_FN_NAMED {
+			nameNode := child.ChildByFieldName(rl.F_NAME)
+			if nameNode != nil {
+				fnName := c.src[nameNode.StartByte():nameNode.EndByte()]
+				if argNames[fnName] {
+					msg := "Hoisted function '" + fnName + "' shadows an argument with the same name"
+					*d = append(*d, NewDiagnosticError(nameNode, c.src, msg, rl.ErrHoistedFunctionShadowsArgument))
+				}
+			}
+		}
 	}
 }
