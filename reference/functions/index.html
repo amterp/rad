@@ -3667,7 +3667,7 @@ color_rgb(&quot;test&quot;, red=300, green=0, blue=0)      // -&gt; Error: RGB v
 <h3 id="colorize">colorize<a class="headerlink" href="#colorize" title="Permanent link">&para;</a></h3>
 <p>Assigns consistent colors to values from a set of possible values. The same value always gets the same color within the
 same set.</p>
-<div class="highlight"><pre><span></span><code>colorize(_val: str, _enum: str[], *, skip_if_single: bool = false) -&gt; str
+<div class="highlight"><pre><span></span><code>colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -&gt; str
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -3681,12 +3681,12 @@ same set.</p>
 <tbody>
 <tr>
 <td><code>_val</code></td>
-<td><code>str</code></td>
+<td><code>any</code></td>
 <td>Value to colorize</td>
 </tr>
 <tr>
 <td><code>_enum</code></td>
-<td><code>str[]</code></td>
+<td><code>any[]</code></td>
 <td>Set of possible values for consistent coloring</td>
 </tr>
 <tr>
