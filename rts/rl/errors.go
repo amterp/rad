@@ -47,6 +47,7 @@ const (
 
 	// 4xxxx Validation Errors?
 	ErrScientificNotationNotWholeNumber Error = "40001"
+	ErrHoistedFunctionShadowsArgument   Error = "40002"
 )
 
 func (e Error) String() string {
