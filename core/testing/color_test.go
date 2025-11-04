@@ -303,3 +303,67 @@ display:
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Colorize_CanColorInts(t *testing.T) {
+	script := `
+nums = [1, 2, 3]
+for n in nums:
+	n.colorize(nums).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_CanColorBools(t *testing.T) {
+	script := `
+bools = [true, false]
+for b in bools:
+	b.colorize(bools).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "\x1b[38;2;99;130;233mtrue\x1b[0;22;0;0;0m\n\x1b[38;2;230;38;25mfalse\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_CanColorMixedTypes(t *testing.T) {
+	script := `
+items = [42, "hello", true]
+for item in items:
+	item.colorize(items).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "\x1b[38;2;230;38;25m42\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233mhello\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15mtrue\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_CanColorFloats(t *testing.T) {
+	script := `
+floats = [1.5, 2.7, 3.14]
+for f in floats:
+	f.colorize(floats).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	expected := "\x1b[38;2;230;38;25m1.5\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233m2.7\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15m3.14\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Colorize_ConsistentColors(t *testing.T) {
+	script := `
+values = [1, 2, 3]
+for v in values:
+	v.colorize(values).print()
+for v in values:
+	v.colorize(values).print()
+`
+	setupAndRunCode(t, script, "--color=always")
+	// Colors should repeat - first three lines same as last three lines
+	expected := "\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m\n"
+	expected += "\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m\n\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m\n\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

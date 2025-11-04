@@ -14,7 +14,7 @@ import (
 var FuncColorize = BuiltInFunc{
 	Name: FUNC_COLORIZE,
 	Execute: func(f FuncInvocation) RadValue {
-		strVal := f.GetStr("_val").Plain()
+		strVal := ToPrintableQuoteStr(f.GetArg("_val"), false)
 		enum := lo.Uniq(f.GetList("_enum").AsStringList(false))
 		skipIfSingle := f.GetBool("skip_if_single")
 
