@@ -25,7 +25,7 @@ var FuncPPrint = BuiltInFunc{
 
 		jsonStruct := RadToJsonType(item)
 		output := prettify(f.i, f.callNode, jsonStruct)
-		RP.Printf(output)
+		RP.Print(output)
 		return VOID_SENTINEL
 	},
 }

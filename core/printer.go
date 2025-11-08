@@ -172,6 +172,12 @@ func (p *stdPrinter) Print(msg string) {
 }
 
 func (p *stdPrinter) Printf(format string, args ...interface{}) {
+	if args == nil || len(args) == 0 {
+		// help prevent MISSING printf args mistakes
+		p.Print(format)
+		return
+	}
+
 	if p.isQuiet {
 		return
 	} else if p.isShellMode {
