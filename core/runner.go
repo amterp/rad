@@ -298,7 +298,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		if FlagSrc.Value {
 			RP.Printf("\n")
 		}
-		RP.Printf(r.scriptData.Tree.Dump())
+		RP.Print(r.scriptData.Tree.Dump())
 	}
 
 	if shouldExit {

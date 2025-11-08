@@ -347,6 +347,16 @@ Script args:
 	assertNoErrors(t)
 }
 
+func Test_Misc_DoesNotMisFormatWithMissing(t *testing.T) {
+	script := `pprint("%s")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `"%s"
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
 func globalFlagHelpWithout(s string) string {
 	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s
