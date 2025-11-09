@@ -3,7 +3,6 @@ package analysis
 import (
 	"strings"
 
-	"github.com/amterp/rad/lsp-server/com"
 	"github.com/amterp/rad/lsp-server/log"
 	"github.com/amterp/rad/lsp-server/lsp"
 
@@ -30,8 +29,7 @@ func (d *DocState) GetLine(line int) string {
 }
 
 type State struct {
-	parser       *rts.RadParser
-	radFunctions *com.FunctionSet
+	parser *rts.RadParser
 	// URI -> Text
 	docs map[string]*DocState
 }
@@ -41,13 +39,10 @@ func NewState() *State {
 	if err != nil {
 		log.L.Fatalw("Failed to create Rad tree sitter", "err", err)
 	}
-	radFunctions := com.LoadNewFunctionSet()
-	log.L.Infof("Loaded %d functions", radFunctions.Len())
 
 	return &State{
-		parser:       radParser,
-		radFunctions: radFunctions,
-		docs:         make(map[string]*DocState),
+		parser: radParser,
+		docs:   make(map[string]*DocState),
 	}
 }
 
@@ -58,7 +53,7 @@ func (s *State) NewDocState(uri, text string) *DocState {
 		uri:         uri,
 		text:        text,
 		tree:        tree,
-		diagnostics: s.resolveDiagnostics(tree, checker),
+		diagnostics: s.resolveDiagnostics(checker),
 		checker:     checker,
 	}
 }
@@ -77,7 +72,7 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
 		doc.checker.UpdateSrc(change.Text) // todo CHECKER WILL REPEAT PARSE, BAD
-		doc.diagnostics = s.resolveDiagnostics(doc.tree, doc.checker)
+		doc.diagnostics = s.resolveDiagnostics(doc.checker)
 	}
 }
 

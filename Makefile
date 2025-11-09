@@ -11,7 +11,7 @@ all: generate format build test
 generate:
 	@echo "⚙️ Running generators..."
 	go run "./function-metadata/extract.go"
-	mv "./functions.txt" "./lsp-server/com/embedded/"
+	mv "./functions.txt" "./rts/embedded/"
 
 format:
 	@echo "⚙️ Formatting files..."

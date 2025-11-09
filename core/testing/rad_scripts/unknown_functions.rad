@@ -1,0 +1,8 @@
+foo()
+bar()
+qux()
+print()
+
+fn bar():
+    fn foo():
+        pass

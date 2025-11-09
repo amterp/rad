@@ -85,6 +85,7 @@ func AddInternalFuncs() {
 				}
 
 				checker.UpdateSrc(contents)
+
 				checkR, err := checker.CheckDefault()
 				if err != nil {
 					f.i.errorf(scriptArg.node, "Failed to run checker: %s", err.Error())

@@ -58,6 +58,7 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
 	c.addFunctionNameShadowingErrors(&diagnostics)
+	c.addUnknownFunctionHints(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil
@@ -207,6 +208,32 @@ func (c *RadCheckerImpl) addFunctionNameShadowingErrors(d *[]Diagnostic) {
 		argNames[arg.Name.Name] = true
 	}
 
+	hoistedFunctions := c.getHoistedFunctions()
+	for _, fnName := range hoistedFunctions {
+		if argNames[fnName] {
+			// Find the node for the error reporting
+			root := c.tree.Root()
+			for i := uint(0); i < root.ChildCount(); i++ {
+				child := root.Child(i)
+				if child.Kind() == rl.K_FN_NAMED {
+					nameNode := child.ChildByFieldName(rl.F_NAME)
+					if nameNode != nil {
+						name := c.src[nameNode.StartByte():nameNode.EndByte()]
+						if name == fnName {
+							msg := "Hoisted function '" + fnName + "' shadows an argument with the same name"
+							*d = append(*d, NewDiagnosticError(nameNode, c.src, msg, rl.ErrHoistedFunctionShadowsArgument))
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (c *RadCheckerImpl) getHoistedFunctions() []string {
+	hoistedFunctions := make([]string, 0)
+
 	// Only check top-level functions (direct children of source file)
 	// This matches the interpreter's hoisting behavior
 	root := c.tree.Root()
@@ -216,11 +243,35 @@ func (c *RadCheckerImpl) addFunctionNameShadowingErrors(d *[]Diagnostic) {
 			nameNode := child.ChildByFieldName(rl.F_NAME)
 			if nameNode != nil {
 				fnName := c.src[nameNode.StartByte():nameNode.EndByte()]
-				if argNames[fnName] {
-					msg := "Hoisted function '" + fnName + "' shadows an argument with the same name"
-					*d = append(*d, NewDiagnosticError(nameNode, c.src, msg, rl.ErrHoistedFunctionShadowsArgument))
-				}
+				hoistedFunctions = append(hoistedFunctions, fnName)
 			}
 		}
+	}
+
+	return hoistedFunctions
+}
+
+func (c *RadCheckerImpl) addUnknownFunctionHints(d *[]Diagnostic) {
+	// Get built-in functions from singleton
+	builtInFunctions := rts.GetBuiltInFunctions()
+
+	// Get hoisted functions
+	hoistedFunctions := c.getHoistedFunctions()
+	hoistedFunctionSet := make(map[string]bool)
+	for _, fnName := range hoistedFunctions {
+		hoistedFunctionSet[fnName] = true
+	}
+
+	calls := c.tree.FindCalls()
+	for _, call := range calls {
+		fnName := call.Name
+
+		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
+			continue
+		}
+
+		// Function is not defined - create a hint
+		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
+		*d = append(*d, NewDiagnosticHint(call.NameNode, c.src, msg, rl.ErrUnknownFunction))
 	}
 }
