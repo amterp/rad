@@ -38,7 +38,7 @@ var (
 	FlagVersion              BoolRadArg
 	FlagConfirmShellCommands BoolRadArg
 	FlagSrc                  BoolRadArg
-	FlagRadTree              BoolRadArg
+	FlagSrcTree              BoolRadArg
 	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
 	FlagRepl                 BoolRadArg
@@ -167,7 +167,7 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	FlagSrc.SetBypassValidation(true)
 	flags = append(flags, &FlagSrc)
 
-	FlagRadTree = NewBoolRadArg(
+	FlagSrcTree = NewBoolRadArg(
 		FLAG_SRC_TREE,
 		"",
 		"Instead of running the target script, print out its syntax tree.",
@@ -176,9 +176,9 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	FlagRadTree.SetBypassValidation(true)
-	hideFromUsageIfHaveScript(&FlagRadTree.hidden)
-	flags = append(flags, &FlagRadTree)
+	FlagSrcTree.SetBypassValidation(true)
+	hideFromUsageIfHaveScript(&FlagSrcTree.hidden)
+	flags = append(flags, &FlagSrcTree)
 
 	FlagRadArgsDump = NewBoolRadArg(
 		FLAG_RAD_ARGS_DUMP,

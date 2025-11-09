@@ -357,6 +357,28 @@ func Test_Misc_DoesNotMisFormatWithMissing(t *testing.T) {
 	assertNoErrors(t)
 }
 
+func Test_Misc_InvalidSyntax_WithSrcFlag(t *testing.T) {
+	script := `foo = [11, 12, 13
+`
+	setupAndRunCode(t, script, "--src", "--color=never")
+	expected := `foo = [11, 12, 13
+
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Misc_InvalidSyntax_WithSrcTreeFlag(t *testing.T) {
+	script := `foo = [11, 12, 13
+`
+	setupAndRunCode(t, script, "--src-tree", "--color=never")
+	output := stdOutBuffer.String()
+	if !strings.Contains(output, "source_file") || !strings.Contains(output, "ERROR") {
+		t.Errorf("Expected syntax tree with ERROR node, got: %s", output)
+	}
+	assertNoErrors(t)
+}
+
 func globalFlagHelpWithout(s string) string {
 	original := scriptGlobalFlagHelp
 	removeLineWith := "--" + s
