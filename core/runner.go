@@ -259,7 +259,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	}
 
 	if FlagVersion.Value {
-		RP.Printf(fmt.Sprintf("rad %s\n", Version))
+		printVersion()
 		RExit.Exit(0)
 	}
 
@@ -280,25 +280,16 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		RExit.Exit(0)
 	}
 
-	// Handle debug flags for script output
+	// Handle inspection flags for script output
 	shouldExit := false
 	if FlagSrc.Value {
 		shouldExit = true
-		if FlagVersion.Value {
-			RP.Printf("\n")
-		}
-		if !com.IsBlank(ScriptPath) && com.IsTty {
-			RP.RadStderrf(com.YellowS("%s:\n", ScriptPath))
-		}
-		RP.Print(r.scriptData.Src + "\n")
+		printSource(r.scriptData.Src, FlagVersion.Value)
 	}
 
-	if FlagRadTree.Value {
+	if FlagSrcTree.Value {
 		shouldExit = true
-		if FlagSrc.Value {
-			RP.Printf("\n")
-		}
-		RP.Print(r.scriptData.Tree.Dump())
+		printTree(r.scriptData.Tree, FlagSrc.Value)
 	}
 
 	if shouldExit {
@@ -361,4 +352,64 @@ func readSource(scriptPath string) (string, error) {
 // runRepl starts the interactive REPL mode
 func (r *RadRunner) runRepl() error {
 	return RunRepl()
+}
+
+// Helper functions for inspection flags (--version, --src, --src-tree)
+// These are used both when handling valid scripts and when checking flags before error exit
+
+func printVersion() {
+	RP.Printf(fmt.Sprintf("rad %s\n", Version))
+}
+
+func printSource(src string, prependNewline bool) {
+	if prependNewline {
+		RP.Printf("\n")
+	}
+	if !com.IsBlank(ScriptPath) && com.IsTty {
+		RP.RadStderrf(com.YellowS("%s:\n", ScriptPath))
+	}
+	RP.Print(src + "\n")
+}
+
+func printTree(tree *rts.RadTree, prependNewline bool) {
+	if prependNewline {
+		RP.Printf("\n")
+	}
+	RP.Print(tree.Dump())
+}
+
+// handleGlobalInspectionFlagsOnInvalidSyntax checks os.Args for inspection flags and handles them.
+// This is called from validateSyntax() when the script has errors, before showing the error.
+// Returns true if a flag was handled (and the function exited), false otherwise.
+func handleGlobalInspectionFlagsOnInvalidSyntax(src string, tree *rts.RadTree) {
+	hasVersion := false
+	hasSrc := false
+	hasSrcTree := false
+
+	for _, arg := range os.Args { // todo don't love the hardcoded string lookups
+		if arg == "--version" || arg == "-v" {
+			hasVersion = true
+		}
+		if arg == "--src" {
+			hasSrc = true
+		}
+		if arg == "--src-tree" {
+			hasSrcTree = true
+		}
+	}
+
+	if hasVersion {
+		printVersion()
+		RExit.Exit(0)
+	}
+
+	if hasSrc {
+		printSource(src, hasVersion)
+		RExit.Exit(0)
+	}
+
+	if hasSrcTree {
+		printTree(tree, hasSrc)
+		RExit.Exit(0)
+	}
 }

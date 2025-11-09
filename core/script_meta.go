@@ -80,11 +80,15 @@ func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
 	result, err := checker.CheckDefault()
 	if err != nil {
 		RP.RadErrorExit("Failed to validate syntax: " + err.Error())
+		panic(UNREACHABLE)
 	}
 
 	// Find first Error severity diagnostic
 	for _, diag := range result.Diagnostics {
 		if diag.Severity == check.Error {
+			// Before showing error, check if user requested inspection flags
+			handleGlobalInspectionFlagsOnInvalidSyntax(src, tree)
+
 			// Convert diagnostic Range (0-indexed) to ErrorCtx (1-indexed)
 			ctx := ErrorCtx{
 				CodeCtx: CodeCtx{
