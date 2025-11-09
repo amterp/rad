@@ -31,5 +31,5 @@ if version:
     $`git add .`
     $`git diff HEAD --compact-summary`
     confirm $`git commit -m 'Release VSCode extension {stdout}'`
-    confirm $`vsce publish`
+    confirm $`npx @vscode/vsce publish`
     confirm $`git push`
