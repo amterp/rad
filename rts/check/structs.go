@@ -75,6 +75,10 @@ func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.E
 	return NewDiagnosticFromNode(node, originalSrc, Error, msg, &code)
 }
 
+func NewDiagnosticHint(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
+	return NewDiagnosticFromNode(node, originalSrc, Hint, msg, &code)
+}
+
 type Result struct {
 	// todo Rad versions
 	Diagnostics []Diagnostic

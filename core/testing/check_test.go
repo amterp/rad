@@ -114,3 +114,22 @@ print("Hello {name}!")
 	assertOnlyOutput(t, stdOutBuffer, "inner\nHello Bob!\n")
 	assertNoErrors(t)
 }
+
+func Test_Check_UnknownFunctions(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/unknown_functions.rad", "--color=never")
+	expected := `L1:1: HINT
+
+     1 | foo()
+       | ^ Function 'foo' may not be defined (only built-in and top-level functions are tracked)
+       | (code: RAD40003)
+
+L3:1: HINT
+
+     3 | qux()
+       | ^ Function 'qux' may not be defined (only built-in and top-level functions are tracked)
+       | (code: RAD40003)
+
+Reported 2 diagnostics.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}

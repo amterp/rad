@@ -48,6 +48,7 @@ const (
 	// 4xxxx Validation Errors?
 	ErrScientificNotationNotWholeNumber Error = "40001"
 	ErrHoistedFunctionShadowsArgument   Error = "40002"
+	ErrUnknownFunction                  Error = "40003"
 )
 
 func (e Error) String() string {

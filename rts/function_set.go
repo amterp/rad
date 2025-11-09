@@ -1,18 +1,31 @@
-package com
+package rts
 
 import (
 	"embed"
 	"strings"
+	"sync"
 )
 
-//go:embed embedded/*
+//go:embed embedded/functions.txt
 var embeddedFiles embed.FS
 
 type FunctionSet struct {
 	names map[string]bool
 }
 
-func LoadNewFunctionSet() *FunctionSet {
+var builtInFunctions *FunctionSet
+var loadOnce sync.Once
+
+// GetBuiltInFunctions returns the singleton instance of built-in functions.
+// This is thread-safe and loads the functions only once.
+func GetBuiltInFunctions() *FunctionSet {
+	loadOnce.Do(func() {
+		builtInFunctions = loadNewFunctionSet()
+	})
+	return builtInFunctions
+}
+
+func loadNewFunctionSet() *FunctionSet {
 	src, err := embeddedFiles.ReadFile("embedded/functions.txt")
 	if err != nil {
 		panic(err)
@@ -33,8 +46,4 @@ func LoadNewFunctionSet() *FunctionSet {
 func (fs *FunctionSet) Contains(name string) bool {
 	_, exists := fs.names[name]
 	return exists
-}
-
-func (fs *FunctionSet) Len() int {
-	return len(fs.names)
 }
