@@ -8,8 +8,11 @@ import (
 // CreateReplSession creates a new REPL session with default configuration
 func CreateReplSession() (ReplSession, error) {
 	// Skeleton implementation
-	interpreter := NewInterpreter(&ScriptData{
-		// Empty script data for REPL mode
+	interpreter := NewInterpreter(InterpreterInput{
+		Src:            "",
+		Tree:           nil,
+		ScriptName:     "repl",
+		InvokedCommand: nil,
 	})
 
 	interpreter.InitBuiltIns()

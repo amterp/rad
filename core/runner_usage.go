@@ -16,14 +16,6 @@ func (r *RadRunner) RunUsage(shortHelp, isErr bool) {
 	}
 }
 
-func (r *RadRunner) RunUsageExit(shortHelp bool) {
-	r.RunUsage(shortHelp, false)
-	if FlagShell.Value {
-		RP.PrintForShellEval("exit 0")
-	}
-	RExit.Exit(0)
-}
-
 func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	buf := new(bytes.Buffer)
 
@@ -49,107 +41,12 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 }
 
 func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
+	// Delegate to Ra for consistent help formatting
+	usageText := RRootCmd.GenerateUsage(!shortHelp)
+
 	buf := new(bytes.Buffer)
-
-	if r.scriptData.Description != nil {
-		fmt.Fprint(buf, *r.scriptData.Description+"\n\n")
-	}
-
-	com.GreenBoldF(buf, "Usage:\n ")
-	if !com.IsBlank(r.scriptData.ScriptName) {
-		com.BoldF(buf, fmt.Sprintf(" %s", r.scriptData.ScriptName))
-	}
-
-	// separate out positionals from options, to print positionals first
-	scriptArgs := make([]RadArg, 0)
-	scriptOptions := make([]RadArg, 0)
-
-	for _, arg := range r.scriptArgs {
-		if arg.GetType() == ArgBoolT {
-			// booleans are not positionally available
-			scriptOptions = append(scriptOptions, arg)
-			continue
-		}
-		scriptArgs = append(scriptArgs, arg)
-
-		if arg.IsOptional() {
-			com.CyanF(buf, fmt.Sprintf(" [%s]", arg.GetExternalName()))
-		} else {
-			com.CyanF(buf, fmt.Sprintf(" <%s>", arg.GetExternalName()))
-		}
-	}
-
-	if !(r.scriptData.DisableGlobalOpts && len(scriptOptions) == 0) {
-		fmt.Fprintf(buf, " [OPTIONS]")
-	}
-
-	fmt.Fprintf(buf, "\n")
-
-	if len(r.scriptArgs) > 0 {
-		fmt.Fprintf(buf, "\n")
-		com.GreenBoldF(buf, "Script args:\n")
-		flagUsage(buf, append(scriptArgs, scriptOptions...))
-	}
-
-	if !shortHelp && !r.scriptData.DisableGlobalOpts {
-		fmt.Fprintf(buf, "\n")
-		com.GreenBoldF(buf, "Global options:\n")
-		flagUsage(buf, r.globalFlags)
-	}
-
+	buf.WriteString(usageText)
 	r.printHelpFromBuffer(buf, isErr)
-}
-
-// does not handle gracefully/adjusting for cutting down lines if not enough width in terminal
-func flagUsage(buf *bytes.Buffer, flags []RadArg) {
-	lines := make([]string, 0, len(flags))
-
-	maxlen := 0
-	for _, f := range flags {
-		if f.IsHidden() {
-			continue
-		}
-
-		line := ""
-		if f.GetShort() != "" && f.GetExternalName() != "" {
-			line = fmt.Sprintf("  -%s, --%s", f.GetShort(), f.GetExternalName())
-		} else if f.GetShort() == "" {
-			line = fmt.Sprintf("      --%s", f.GetExternalName())
-		} else if f.GetExternalName() == "" {
-			line = fmt.Sprintf("  -%s", f.GetShort())
-		}
-
-		argUsage := f.GetArgUsage()
-		if argUsage != "" {
-			line += " " + argUsage
-		}
-
-		// This special character will be replaced with spacing once the
-		// correct alignment is calculated
-		line += USAGE_ALIGNMENT_CHAR
-		if com.StrLen(line) > maxlen {
-			maxlen = com.StrLen(line)
-		}
-
-		line += f.GetDescription()
-		if f.HasNonZeroDefault() { // todo should we just always print default if it has one?
-			line += fmt.Sprintf(" (default %s)", f.DefaultAsString())
-		}
-
-		lines = append(lines, line)
-	}
-
-	for _, line := range lines {
-		sidx := strings.Index(line, USAGE_ALIGNMENT_CHAR)
-		spacing := strings.Repeat(" ", maxlen-sidx)
-		// maxlen + 2 comes from + 1 for the \x00 and + 1 for the (deliberate) off-by-one in maxlen-sidx
-		fmt.Fprintln(
-			buf,
-			line[:sidx],
-			spacing,
-			strings.Replace(line[sidx+1:], "\n", "\n"+strings.Repeat(" ", maxlen+2), -1),
-		)
-	}
 }
 
 func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd) {

@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	com "github.com/amterp/rad/core/common"
 
@@ -13,6 +14,7 @@ import (
 type ScriptData struct {
 	ScriptName        string
 	Args              []*ScriptArg
+	Commands          []*ScriptCommand
 	Description       *string
 	Tree              *rts.RadTree
 	Src               string
@@ -36,7 +38,9 @@ func ExtractMetadata(src string) *ScriptData {
 	disableArgsBlock := false
 	var description *string
 	if fileHeader, ok := tree.FindFileHeader(); ok {
-		description = &fileHeader.Contents
+		// Trim trailing newline that tree-sitter includes from source TODO Grammar should exclude it
+		trimmed := strings.TrimSuffix(fileHeader.Contents, "\n")
+		description = &trimmed
 		if stashId, ok := fileHeader.MetadataEntries[MACRO_STASH_ID]; ok {
 			RadHomeInst.SetStashId(stashId)
 		}
@@ -51,9 +55,16 @@ func ExtractMetadata(src string) *ScriptData {
 		args = extractArgs(argBlock)
 	}
 
+	var commands []*ScriptCommand
+	if cmdBlocks, ok := tree.FindCmdBlocks(); ok {
+		RP.RadDebugf(fmt.Sprintf("Found %d command blocks", len(cmdBlocks)))
+		commands = extractCommands(cmdBlocks)
+	}
+
 	return &ScriptData{
 		ScriptName:        ScriptName,
 		Args:              args,
+		Commands:          commands,
 		Description:       description,
 		Tree:              tree,
 		Src:               src,
@@ -181,4 +192,18 @@ func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
 	}
 
 	return radVal.TruthyFalsy()
+}
+
+func extractCommands(cmdBlocks []*rts.CmdBlock) []*ScriptCommand {
+	commands := make([]*ScriptCommand, 0, len(cmdBlocks))
+
+	for _, cmdBlock := range cmdBlocks {
+		cmd, err := FromCmdBlock(cmdBlock)
+		if err != nil {
+			RP.CtxErrorExit(NewCtxFromRtsNode(cmdBlock, fmt.Sprintf("Failed to extract command: %s", err.Error())))
+		}
+		commands = append(commands, cmd)
+	}
+
+	return commands
 }

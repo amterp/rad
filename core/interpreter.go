@@ -59,20 +59,36 @@ var VoidNormal = NewEvalResult(VOID_SENTINEL, CtrlNormal)
 var VoidBreak = NewEvalResult(VOID_SENTINEL, CtrlBreak)
 var VoidContinue = NewEvalResult(VOID_SENTINEL, CtrlContinue)
 
+type InterpreterInput struct {
+	Src            string
+	Tree           *rts.RadTree
+	ScriptName     string
+	InvokedCommand *ScriptCommand
+}
+
 type Interpreter struct {
-	sd          *ScriptData
-	env         *Env
-	deferBlocks []*DeferBlock
-	tmpSrc      *string
+	sd             *ScriptData
+	invokedCommand *ScriptCommand
+	env            *Env
+	deferBlocks    []*DeferBlock
+	tmpSrc         *string
 
 	forWhileLoopLevel int
 	// Used to track current delimiter, currently for correct delimiter escaping handling
 	delimiterStack *com.Stack[Delimiter]
 }
 
-func NewInterpreter(scriptData *ScriptData) *Interpreter {
+func NewInterpreter(input InterpreterInput) *Interpreter {
+	// Construct ScriptData from input
+	scriptData := &ScriptData{
+		ScriptName: input.ScriptName,
+		Tree:       input.Tree,
+		Src:        input.Src,
+	}
+
 	i := &Interpreter{
 		sd:             scriptData,
+		invokedCommand: input.InvokedCommand,
 		delimiterStack: com.NewStack[Delimiter](),
 	}
 	i.env = NewEnv(i)
@@ -156,10 +172,85 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 }
 
 func (i *Interpreter) Run() {
-	node := i.sd.Tree.Root()
-	res := i.safelyEvaluate(node)
+	root := i.sd.Tree.Root()
+
+	// PHASE 1: Execute top-level code (always)
+	res := i.safelyExecuteTopLevel(root)
 	if res.Ctrl != CtrlNormal {
-		i.errorf(node, "Bug? Unexpected control flow: %s", res.Ctrl)
+		i.errorf(root, "Bug? Unexpected control flow: %s", res.Ctrl)
+	}
+
+	// PHASE 2: Execute command callback (if command was invoked)
+	if i.invokedCommand != nil {
+		i.safelyExecuteCommandCallback(i.invokedCommand)
+	}
+}
+
+func (i *Interpreter) safelyExecuteTopLevel(root *ts.Node) EvalResult {
+	defer func() {
+		i.handlePanicRecovery(recover(), root)
+	}()
+
+	children := root.Children(root.Walk())
+
+	// First pass: define custom named functions (function hoisting)
+	for _, child := range children {
+		if child.Kind() == rl.K_FN_NAMED {
+			i.defineCustomNamedFunction(child)
+		}
+	}
+
+	// Second pass: evaluate all children except command blocks
+	var lastResult EvalResult
+	for _, child := range children {
+		kind := child.Kind()
+		// Skip command blocks and other non-executable nodes
+		if kind == rl.K_CMD_BLOCK || kind == rl.K_COMMENT || kind == rl.K_SHEBANG ||
+			kind == rl.K_FILE_HEADER || kind == rl.K_ARG_BLOCK {
+			continue
+		}
+		lastResult = i.eval(&child)
+	}
+
+	return lastResult
+}
+
+func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
+	defer func() {
+		// Use nil node since we don't have a specific node for the command invocation
+		i.handlePanicRecovery(recover(), nil, cmd.Name)
+	}()
+
+	switch cmd.CallbackType {
+	case rts.CallbackIdentifier:
+		// Look up the function by name and call it
+		funcName := *cmd.CallbackName
+		val, exist := i.env.GetVar(funcName)
+		if !exist {
+			// Find the root node for error reporting
+			root := i.sd.Tree.Root()
+			i.errorf(root, "Cannot invoke unknown function '%s' for command '%s'", funcName, cmd.Name)
+		}
+
+		fn, ok := val.TryGetFn()
+		if !ok {
+			root := i.sd.Tree.Root()
+			i.errorf(root, "Cannot invoke '%s' as a function for command '%s': it is a %s",
+				funcName, cmd.Name, val.Type().AsString())
+		}
+
+		// Execute the function with no arguments
+		_ = fn.Execute(NewFnInvocation(i, nil, funcName, []PosArg{}, make(map[string]namedArg), fn.IsBuiltIn()))
+
+	case rts.CallbackLambda:
+		// Create a function from the lambda node
+		fn := NewFn(i, cmd.CallbackLambda)
+
+		// Execute the lambda with no arguments
+		_ = fn.Execute(NewFnInvocation(i, cmd.CallbackLambda, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
+
+	default:
+		panic(fmt.Sprintf("Bug! Unknown callback type %d for command: %s", cmd.CallbackType, cmd.Name))
 	}
 }
 
@@ -234,20 +325,7 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 
 func (i *Interpreter) safelyEvaluate(node *ts.Node) EvalResult {
 	defer func() {
-		if r := recover(); r != nil {
-			radPanic, ok := r.(*RadPanic)
-			if ok {
-				err := radPanic.Err()
-				msg := err.Msg().Plain()
-				if !com.IsBlank(string(err.Code)) {
-					msg += fmt.Sprintf(" (%s)", err.Code)
-				}
-				i.errorf(err.Node, msg)
-			}
-			if !IsTest {
-				i.errorf(node, "Bug! Panic: %v\n%s", r, debug.Stack())
-			}
-		}
+		i.handlePanicRecovery(recover(), node)
 	}()
 	return i.eval(node)
 }
@@ -268,7 +346,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		for _, child := range children {
 			i.eval(&child)
 		}
-	case rl.K_COMMENT, rl.K_SHEBANG, rl.K_FILE_HEADER, rl.K_ARG_BLOCK:
+	case rl.K_COMMENT, rl.K_SHEBANG, rl.K_FILE_HEADER, rl.K_ARG_BLOCK, rl.K_CMD_BLOCK:
 		// no-op
 	case rl.K_ERROR:
 		i.errorf(node, "Bug! Error pre-check should've prevented running into this node")
@@ -1172,6 +1250,38 @@ func (i *Interpreter) getAssignLeftNodes(node *ts.Node) []ts.Node {
 		leftNodes = rl.GetChildren(node, rl.F_LEFTS)
 	}
 	return leftNodes
+}
+
+// handlePanicRecovery handles panic recovery with RadPanic-aware error reporting.
+// Should be called from a deferred function with the result of recover().
+// fallbackNode is used for error reporting when the panic is not a RadPanic.
+// msgArgs are optional context values to include in the error message before the panic value.
+func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, msgArgs ...interface{}) {
+	if r != nil {
+		radPanic, ok := r.(*RadPanic)
+		if ok {
+			err := radPanic.Err()
+			msg := err.Msg().Plain()
+			if !com.IsBlank(string(err.Code)) {
+				msg += fmt.Sprintf(" (%s)", err.Code)
+			}
+			i.errorf(err.Node, msg)
+		}
+		if !IsTest {
+			// Build format string: "Bug! Panic: %v %v ... %v\n%s"
+			// One %v for each msgArg, one for panic value, one %s for stack trace
+			var fmtStr strings.Builder
+			fmtStr.WriteString("Bug! Panic:")
+			for range msgArgs {
+				fmtStr.WriteString(" %v")
+			}
+			fmtStr.WriteString(" %v\n%s") // panic value and stack trace
+
+			// Append panic value and stack trace to the provided args
+			allArgs := append(msgArgs, r, debug.Stack())
+			i.errorf(fallbackNode, fmtStr.String(), allArgs...)
+		}
+	}
 }
 
 // withCatch wraps body execution with panic catching. If catchNode is nil, just executes body.

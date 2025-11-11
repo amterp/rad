@@ -433,12 +433,14 @@ command remote:
     Manage git remotes
     ---
     timeout int = 30  # Shared by all subcommands
+
     command add:
         ---
         Add a remote
         ---
         name str
         url str
+
     command remove:
         ---
         Remove a remote
@@ -497,9 +499,9 @@ The check `if aaa and ddd:` is logically impossible since commands are mutually 
 One initial idea: make command files independent:
 
 ```rad
-# tool.rsl
-command add "./commands/add.rsl"
-command remove "./commands/remove.rsl"
+# tool.rad
+command add "./commands/add.rad"
+command remove "./commands/remove.rad"
 ```
 
 Where each external file would be a standalone rad script that receives remaining CLI args.
@@ -521,7 +523,7 @@ Making them independent could create friction: you'd have to duplicate shared co
 **Possible path:** Defer multi-file commands to v2. Focus on nailing single-file command syntax first.
 
 **Rationale:**
-- Single-file likely covers 90% of use cases
+- Single-file likely covers 80% of use cases
 - Multi-file scope sharing is complex and ties into imports
 - Better to understand real usage patterns before designing the multi-file story
 - Could add multi-file cleanly in v2 without breaking single-file syntax
@@ -562,12 +564,14 @@ command remote:
     Manage git remotes
     ---
     timeout int = 30
+
     command add:
         ---
         Add a remote
         ---
         name str
         url str
+
     command remove:
         ---
         Remove a remote
@@ -607,7 +611,8 @@ if deploy and staging:
     deploy_to_staging(branch)
 ```
 
-**Indentation observation:** Command implementations would become indented under `if` blocks. For small commands (2-3 lines), this might be fine. For larger ones, extracting to functions defined earlier in the file could keep routing flat and readable.
+**Indentation observation:** Command implementations would become indented under `if` blocks. For small commands (2-3 lines),
+this might be fine. For larger ones, extracting to functions defined elsewhere in the file could keep routing flat and readable.
 
 Example syntax:
 
@@ -633,7 +638,7 @@ fn do_add():
 - Shared code runs before routing
 
 **For v2 (design later once v1 is understood):**
-- Multi-file commands with `command add "./path.rsl"` or similar
+- Multi-file commands with `command add "./path.rad"` or similar
 - Scope sharing between root and command files
 - Command file dependencies and imports
 - Bundling multi-file commands into single file (see [bundling.md](./bundling.md))

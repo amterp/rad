@@ -219,6 +219,6 @@ func hideFromUsageIfHaveScript(hidden *bool) {
 
 func registerGlobalFlags(flags []RadArg) {
 	for _, flag := range flags {
-		flag.Register(RRootCmd, true)
+		flag.Register(RRootCmd, AsGlobalFlag)
 	}
 }

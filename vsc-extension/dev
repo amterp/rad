@@ -12,7 +12,7 @@ args:
 compiled_path = "./out/compiled.vsix"
 
 if package or reinstall or version:
-    $`vsce package -o {compiled_path}`
+    $`npx @vscode/vsce package -o {compiled_path}`
 
 if reinstall:
     $`code --install-extension {compiled_path} --force`

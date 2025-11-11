@@ -17,6 +17,33 @@ import (
 	"github.com/samber/lo"
 )
 
+// RegistrationMode defines how an argument should be registered on a Ra command.
+// These modes enforce the correct combination of positional capability and Ra global behavior.
+type RegistrationMode int
+
+const (
+	// AsScriptArg: Script args on root when NO commands exist
+	// - Positional + flag capable (flagOnly=false)
+	// - Not a Ra global (asRaGlobal=false)
+	AsScriptArg RegistrationMode = iota
+
+	// AsCommandArg: Command-specific args on a subcommand
+	// - Positional + flag capable (flagOnly=false)
+	// - Not a Ra global (asRaGlobal=false)
+	AsCommandArg
+
+	// AsScriptFlagOnly: Script args on subcommands when commands exist
+	// - Flag-only (flagOnly=true)
+	// - Not a Ra global (asRaGlobal=false)
+	// - Script args are shared across commands but don't interfere with command positionals
+	AsScriptFlagOnly
+
+	// AsGlobalFlag: Rad's built-in global flags (--help, --version, --color, etc.)
+	// - Flag-only (flagOnly=true)
+	// - Ra global (asRaGlobal=true, inherits to all subcommands)
+	AsGlobalFlag
+)
+
 type ConstraintCtx struct {
 	ScriptArgs map[string]RadArg // Identifier -> RadArg
 }
@@ -41,7 +68,7 @@ type RadArg interface {
 	DefaultAsString() string
 	HasNonZeroDefault() bool // todo
 	GetType() RadArgTypeT
-	Register(cmd *ra.Cmd, global bool)
+	Register(cmd *ra.Cmd, mode RegistrationMode)
 	Configured() bool // configured by the user in some way
 	IsDefined() bool  // either configured or has a default
 	SetValue(value string)
@@ -65,7 +92,7 @@ type BaseRadArg struct {
 	hasDefault         bool     // aka 'is optional'
 	defaultAsString    string
 	hasNonZeroDefault  bool
-	registered         bool
+	registeredOn       map[*ra.Cmd]bool // Track which commands this arg is registered on
 	manuallySet        bool
 	scriptArg          *ScriptArg
 	hidden             bool
@@ -190,13 +217,19 @@ func NewBoolRadArg(name,
 	}
 }
 
-func (f *BoolRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *BoolRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
 
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
+
 	var opts []ra.RegisterOption
-	opts = append(opts, ra.WithGlobal(global))
+	opts = append(opts, ra.WithGlobal(asRaGlobal))
 	if f.bypassValidation {
 		opts = append(opts, ra.WithBypassValidation(true))
 	}
@@ -205,17 +238,18 @@ func (f *BoolRadArg) Register(cmd *ra.Cmd, global bool) {
 		SetShort(f.Short).
 		SetDefault(f.Default).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
+		SetFlagOnly(flagOnly).
 		RegisterWithPtr(cmd, &f.Value, opts...)
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *BoolRadArg) SetValue(arg string) {
@@ -268,19 +302,26 @@ func NewBoolListRadArg(name,
 	}
 }
 
-func (f *BoolListRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *BoolListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewBoolSlice(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -295,13 +336,13 @@ func (f *BoolListRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool list arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *BoolListRadArg) SetValue(arg string) {
@@ -367,21 +408,28 @@ func NewStringRadArg(
 	}
 }
 
-func (f *StringRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *StringRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewString(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetCustomUsageType(f.ArgUsage).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetRegexConstraint(f.RegexConstraint).
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -395,13 +443,13 @@ func (f *StringRadArg) Register(cmd *ra.Cmd, global bool) {
 		arg = arg.SetEnumConstraint(*f.EnumConstraint)
 	}
 
-	err := arg.RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+	err := arg.RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *StringRadArg) SetValue(arg string) {
@@ -473,19 +521,26 @@ func NewStringListRadArg(
 	}
 }
 
-func (f *StringListRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *StringListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewStringSlice(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -500,13 +555,13 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string list arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *StringListRadArg) SetValue(arg string) {
@@ -583,20 +638,27 @@ func NewIntRadArg(
 	}
 }
 
-func (f *IntRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *IntRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewInt64(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetCustomUsageType("int").
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -616,13 +678,13 @@ func (f *IntRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *IntRadArg) SetValue(arg string) {
@@ -685,20 +747,27 @@ func NewIntListRadArg(
 	}
 }
 
-func (f *IntListRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *IntListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewInt64Slice(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetCustomUsageType("ints").
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -713,13 +782,13 @@ func (f *IntListRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int list arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *IntListRadArg) SetValue(arg string) {
@@ -781,19 +850,26 @@ func NewFloatRadArg(
 	}
 }
 
-func (f *FloatRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *FloatRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewFloat64(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -813,13 +889,13 @@ func (f *FloatRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *FloatRadArg) SetValue(arg string) {
@@ -881,19 +957,26 @@ func NewFloatListRadArg(
 	}
 }
 
-func (f *FloatListRadArg) Register(cmd *ra.Cmd, global bool) {
-	if f.registered {
+func (f *FloatListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
+	if f.registeredOn == nil {
+		f.registeredOn = make(map[*ra.Cmd]bool)
+	}
+
+	if f.registeredOn[cmd] {
 		return
 	}
+
+	flagOnly, asRaGlobal := regModeToBoolFlags(mode)
 
 	arg := ra.NewFloat64Slice(f.ExternalName).
 		SetShort(f.Short).
 		SetUsage(f.Description).
-		SetHiddenInShortHelp(global).
+		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
-		SetHiddenInShortHelp(global)
+		SetHiddenInShortHelp(asRaGlobal).
+		SetFlagOnly(flagOnly)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -908,13 +991,13 @@ func (f *FloatListRadArg) Register(cmd *ra.Cmd, global bool) {
 	}
 
 	err := arg.
-		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(global))
+		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
 		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float list arg: %v\n", err)))
 	}
 
-	f.registered = true
+	f.registeredOn[cmd] = true
 }
 
 func (f *FloatListRadArg) SetValue(arg string) {
@@ -1220,4 +1303,22 @@ func (f *BaseRadArg) missingRequirement(required string) error {
 
 func (f *BaseRadArg) excludesRequirement(excluded string) error {
 	return fmt.Errorf("'%s' excludes '%s', but '%s' was set", f.ExternalName, excluded, excluded)
+}
+
+func regModeToBoolFlags(mode RegistrationMode) (bool, bool) {
+	var flagOnly, asRaGlobal bool
+	switch mode {
+	case AsScriptArg, AsCommandArg:
+		flagOnly = false
+		asRaGlobal = false
+	case AsScriptFlagOnly:
+		flagOnly = true
+		asRaGlobal = false
+	case AsGlobalFlag:
+		flagOnly = true
+		asRaGlobal = true
+	default:
+		panic(fmt.Sprintf("Unknown RegistrationMode: %v", mode))
+	}
+	return flagOnly, asRaGlobal
 }

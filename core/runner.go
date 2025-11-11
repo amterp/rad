@@ -6,12 +6,11 @@ import (
 	"os"
 	"strings"
 
-	ra "github.com/amterp/ra"
+	"github.com/amterp/color"
+	"github.com/amterp/ra"
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts"
-
-	"github.com/amterp/color"
 )
 
 type InvocationType int
@@ -25,9 +24,16 @@ const (
 )
 
 type RadRunner struct {
-	scriptData  *ScriptData
-	globalFlags []RadArg
-	scriptArgs  []RadArg
+	scriptData     *ScriptData
+	globalFlags    []RadArg
+	scriptArgs     []RadArg
+	cmdInvocations []cmdInvocation
+}
+
+type cmdInvocation struct {
+	cmd     *ScriptCommand
+	usedPtr *bool
+	args    []RadArg // Command-specific arguments
 }
 
 func NewRadRunner(runnerInput RunnerInput) *RadRunner {
@@ -210,6 +216,14 @@ func (r *RadRunner) registerScript(sourceCode string) error {
 
 	r.scriptArgs = r.createAndRegisterScriptArgs()
 
+	// Register commands if any exist
+	if len(r.scriptData.Commands) > 0 {
+		err := r.registerCommands()
+		if err != nil {
+			return err
+		}
+	}
+
 	// Re-enable help after script registration, unless global options are disabled
 	if !r.scriptData.DisableGlobalOpts {
 		RRootCmd.SetHelpEnabled(true)
@@ -221,23 +235,22 @@ func (r *RadRunner) registerScript(sourceCode string) error {
 // parseAndExecute handles the final parsing and execution
 func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 
-	// Do initial parse to get global flags working
+	// Double-parse pattern: parse once to get global flags for intermediate logic (printer,
+	// version, etc.), reset state, then parse again with correct ignoreUnknown setting.
+	// See commit message for detailed rationale.
+
 	var argsToRead []string
 	if invocationType == ScriptFile || invocationType == EmbeddedCommand {
-		// Script invoked via rad like: rad ./test_simple.rad "World"
-		// Skip the script path, parse just the script args: ["World"]
 		if len(os.Args) > 2 {
 			argsToRead = os.Args[2:]
 		} else {
 			argsToRead = []string{}
 		}
 	} else {
-		// Other invocations (including direct script execution with shebang)
-		// Parse everything after the script name: ["World"]
 		argsToRead = os.Args[1:]
 	}
 
-	// Prepare parse options
+	// First parse: ignoreUnknown=true since script args aren't registered yet
 	parseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(true), ra.WithVariadicUnknownFlags(true)}
 	if FlagRadArgsDump.Value {
 		parseOpts = append(parseOpts, ra.WithDump(true))
@@ -245,7 +258,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 
 	RRootCmd.ParseOrExit(argsToRead, parseOpts...)
 
-	// Set up printer with global flags
+	// Set up printer with global flags from first parse
 	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
 
 	// Handle mock responses
@@ -296,26 +309,60 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		RExit.Exit(0)
 	}
 
-	// Final parse with correct ignore settings
-	// Ignore unknown args when args block is disabled (so they can be accessed via get_args())
-	ignoreUnknown := r.scriptData.DisableArgsBlock
+	// Cache dump flag value before reset (needed for second parse options)
+	dumpFlag := FlagRadArgsDump.Value
 
-	// Prepare final parse options
+	// Reset all parse state (flag values, configured flags, unknown args, etc.)
+	RRootCmd.ResetParseState()
+
+	// Second parse with correct ignoreUnknown setting based on script metadata
+	ignoreUnknown := false
+	if r.scriptData != nil {
+		ignoreUnknown = r.scriptData.DisableArgsBlock
+	}
 	finalParseOpts := []ra.ParseOpt{ra.WithIgnoreUnknown(ignoreUnknown), ra.WithVariadicUnknownFlags(true)}
-	if FlagRadArgsDump.Value {
+	if dumpFlag {
 		finalParseOpts = append(finalParseOpts, ra.WithDump(true))
 	}
 
 	RRootCmd.ParseOrExit(argsToRead, finalParseOpts...)
+
+	// Determine which command was invoked (if any)
+	var invokedCommand *ScriptCommand
+	var commandArgs []RadArg
+	for _, inv := range r.cmdInvocations {
+		if *inv.usedPtr {
+			invokedCommand = inv.cmd
+			commandArgs = inv.args
+			break
+		}
+	}
+
+	// Check if command is required but none was invoked
+	// (Commands exist but none invoked and not help/version/inspection flags)
+	if len(r.cmdInvocations) > 0 && invokedCommand == nil {
+		if !FlagHelp.Value && !FlagVersion.Value && !FlagSrc.Value && !FlagSrcTree.Value {
+			RP.UsageErrorExit("Must specify a command")
+		}
+	}
 
 	// Execute the script
 	if r.scriptData == nil {
 		return fmt.Errorf("Bug! Script expected by this point, but found none")
 	}
 
-	interpreter := NewInterpreter(r.scriptData)
+	interpreter := NewInterpreter(InterpreterInput{
+		Src:            r.scriptData.Src,
+		Tree:           r.scriptData.Tree,
+		ScriptName:     r.scriptData.ScriptName,
+		InvokedCommand: invokedCommand,
+	})
 	interpreter.InitBuiltIns()
 	interpreter.InitArgs(r.scriptArgs)
+	// Initialize command-specific args if a command was invoked
+	if invokedCommand != nil && len(commandArgs) > 0 {
+		interpreter.InitArgs(commandArgs)
+	}
 	interpreter.RegisterWithExit()
 	interpreter.Run()
 
@@ -332,16 +379,74 @@ func (r *RadRunner) createAndRegisterScriptArgs() []RadArg {
 		return nil
 	}
 
-	// Register script flags directly on the root command (no subcommand)
-	// This makes the script appear as the main command
+	hasCommands := len(r.scriptData.Commands) > 0
+
 	flags := make([]RadArg, 0, len(r.scriptData.Args))
 	for _, arg := range r.scriptData.Args {
 		flag := CreateFlag(arg)
-		flag.Register(RRootCmd, false)
 		flags = append(flags, flag)
 	}
 
+	// When NO commands: register script args on root as positional+flag
+	// When commands exist: DON'T register on root - will be registered on each subcommand
+	if !hasCommands {
+		for _, flag := range flags {
+			flag.Register(RRootCmd, AsScriptArg)
+		}
+	}
+
 	return flags
+}
+
+func (r *RadRunner) registerCommands() error {
+	r.cmdInvocations = make([]cmdInvocation, 0, len(r.scriptData.Commands))
+
+	for _, scriptCmd := range r.scriptData.Commands {
+		// Create Ra subcommand
+		raSubCmd := ra.NewCmd(scriptCmd.Name)
+		if scriptCmd.Description != nil {
+			raSubCmd.SetDescription(*scriptCmd.Description)
+		}
+
+		// Configure subcommand usage headers
+		raSubCmd.SetUsageHeaders(ra.UsageHeaders{
+			Usage:         "Usage:",
+			Arguments:     "Command args:",
+			GlobalOptions: "Global options:",
+		})
+
+		// Enable help for the subcommand
+		raSubCmd.SetHelpEnabled(true)
+
+		// Register script args on this subcommand as flag-only
+		// (Script args are shared across all commands but only accept flag syntax)
+		for _, scriptArg := range r.scriptArgs {
+			scriptArg.Register(raSubCmd, AsScriptFlagOnly)
+		}
+
+		// Register command-specific args on the subcommand as positional+flag
+		cmdArgs := make([]RadArg, 0, len(scriptCmd.Args))
+		for _, arg := range scriptCmd.Args {
+			flag := CreateFlag(arg)
+			flag.Register(raSubCmd, AsCommandArg)
+			cmdArgs = append(cmdArgs, flag)
+		}
+
+		// Register the subcommand with the root command
+		usedPtr, err := RRootCmd.RegisterCmd(raSubCmd)
+		if err != nil {
+			return fmt.Errorf("failed to register command '%s': %w", scriptCmd.Name, err)
+		}
+
+		// Store the invocation tracking
+		r.cmdInvocations = append(r.cmdInvocations, cmdInvocation{
+			cmd:     scriptCmd,
+			usedPtr: usedPtr,
+			args:    cmdArgs,
+		})
+	}
+
+	return nil
 }
 
 func readSource(scriptPath string) (string, error) {

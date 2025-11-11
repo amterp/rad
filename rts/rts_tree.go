@@ -25,7 +25,7 @@ func newRadTree(parser *ts.Parser, tree *ts.Tree, src string) *RadTree {
 }
 
 func (rt *RadTree) Update(src string) {
-	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
+	// todo use incrΩemental parsing, maybe can lean on LSP client to give via protocol
 	rt.root = rt.parser.Parse([]byte(src), nil)
 	rt.src = src
 }
@@ -68,6 +68,24 @@ func (rt *RadTree) FindArgBlock() (*ArgBlock, bool) {
 		return nil, false
 	}
 	return argBlocks[0], true // todo bad if multiple
+}
+
+func (rt *RadTree) FindCmdBlocks() ([]*CmdBlock, bool) {
+	// Commands can appear multiple times, so we need to find all of them
+	nodes := rt.FindNodes(rl.K_CMD_BLOCK)
+	if len(nodes) == 0 {
+		return nil, false
+	}
+
+	cmdBlocks := make([]*CmdBlock, 0, len(nodes))
+	for _, node := range nodes {
+		cmdBlock, ok := newCmdBlock(rt.src, node)
+		if ok {
+			cmdBlocks = append(cmdBlocks, cmdBlock)
+		}
+	}
+
+	return cmdBlocks, len(cmdBlocks) > 0
 }
 
 func QueryNodes[T Node](rt *RadTree) ([]T, error) {
@@ -182,6 +200,9 @@ func createNode[T Node](src string, node *ts.Node) (T, bool) {
 	case *ArgBlock:
 		argBlock, _ := newArgBlock(src, node)
 		return any(argBlock).(T), true
+	case *CmdBlock:
+		cmdBlock, _ := newCmdBlock(src, node)
+		return any(cmdBlock).(T), true
 	case *StringNode:
 		stringNode, _ := newStringNode(src, node)
 		return any(stringNode).(T), true
