@@ -983,6 +983,36 @@ pick_from_resource("configs.yaml", "prod")            // -> Pre-filtered options
 pick_from_resource("data.json", prompt="Select:")     // -> Custom prompt
 ```
 
+### multipick
+
+Presents an interactive menu for selecting multiple options from a list.
+
+```rad
+multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> str[]
+```
+
+Shows an interactive multi-select menu where users can select zero or more options. =
+Unlike `pick`, which returns a single selection, `multipick` returns a list of all selected items.
+
+**Parameters:**
+
+| Parameter  | Type      | Description                                                                   |
+|------------|-----------|-------------------------------------------------------------------------------|
+| `_options` | `str[]`   | List of options to display in the menu                                        |
+| `prompt`   | `str?`    | Custom prompt text. If not provided, automatically generated based on min/max |
+| `min`      | `int = 0` | Minimum number of selections required (default 0 allows empty selection)      |
+| `max`      | `int?`    | Maximum number of selections allowed (optional, unlimited if not set)         |
+
+The `prompt` parameter has smart defaults that adjust based on the min/max constraints.
+
+**Example:**
+
+```rad
+fruits = ["apple", "banana", "cherry", "date"]
+selected = multipick(fruits)
+// selected equals e.g. [ "apple", "cherry" ]
+```
+
 ## HTTP
 
 Rad provides functions for all HTTP methods. All functions have identical signatures and return the same response

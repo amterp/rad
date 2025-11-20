@@ -54,6 +54,7 @@ func init() {
 		newFnSignature(`pick(_options: str[], _filter: str?|str[]?, *, prompt: str = "Pick an option") -> str`),
 		newFnSignature(`pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = "Pick an option") -> any`),
 		newFnSignature(`pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any`),
+		newFnSignature(`multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> str[]`),
 		newFnSignature(`keys(_map: map) -> any[]`),
 		newFnSignature(`values(_map: map) -> any[]`),
 		newFnSignature(`truncate(_str: str, _len: int) -> error|str`),
