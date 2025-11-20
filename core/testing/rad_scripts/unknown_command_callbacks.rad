@@ -1,0 +1,14 @@
+#!/usr/bin/env rad
+
+command first:
+    calls missing_one
+
+command second:
+    calls missing_two
+
+command third:
+    calls print
+
+command fourth:
+    calls fn():
+        print("inline")

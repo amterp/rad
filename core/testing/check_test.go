@@ -133,3 +133,22 @@ Reported 2 diagnostics.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
+
+func Test_Check_UnknownCommandCallbacks(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/unknown_command_callbacks.rad", "--color=never")
+	expected := `L4:11: WARN
+
+     4 |     calls missing_one
+       |           ^ Function 'missing_one' may not be defined (only built-in and top-level functions are tracked)
+       |           (code: RAD40003)
+
+L7:11: WARN
+
+     7 |     calls missing_two
+       |           ^ Function 'missing_two' may not be defined (only built-in and top-level functions are tracked)
+       |           (code: RAD40003)
+
+Reported 2 diagnostics.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
