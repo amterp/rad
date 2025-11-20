@@ -72,16 +72,6 @@ multipick(opts, min=5, max=3)
 	assertError(t, 1, expected)
 }
 
-func TestMultipickAllowsMinEqualsMax(t *testing.T) {
-	script := `
-opts = ["Apple", "Banana", "Cherry"]
-print("ok")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "ok\n")
-	assertNoErrors(t)
-}
-
 func TestMultipickErrorsIfMinGreaterThanOptionsLength(t *testing.T) {
 	script := `
 opts = ["Apple", "Banana"]
@@ -94,14 +84,4 @@ multipick(opts, min=3)
   ^^^^^^^^^^^^^^^^^^^^^^ min is 3 but only 2 options available
 `
 	assertError(t, 1, expected)
-}
-
-func TestMultipickAcceptsValidParameters(t *testing.T) {
-	script := `
-opts = ["Apple", "Banana", "Cherry", "Date"]
-print("ok")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "ok\n")
-	assertNoErrors(t)
 }
