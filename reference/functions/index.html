@@ -1426,6 +1426,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multipick" class="md-nav__link">
+    <span class="md-ellipsis">
+      multipick
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2613,6 +2622,15 @@
   <a href="#pick_from_resource" class="md-nav__link">
     <span class="md-ellipsis">
       pick_from_resource
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multipick" class="md-nav__link">
+    <span class="md-ellipsis">
+      multipick
     </span>
   </a>
   
@@ -3836,6 +3854,50 @@ pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff0
 <div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
 pick_from_resource(&quot;configs.yaml&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered options
 pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
+</code></pre></div>
+<h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
+<p>Presents an interactive menu for selecting multiple options from a list.</p>
+<div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; str[]
+</code></pre></div>
+<p>Shows an interactive multi-select menu where users can select zero or more options. =
+Unlike <code>pick</code>, which returns a single selection, <code>multipick</code> returns a list of all selected items.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_options</code></td>
+<td><code>str[]</code></td>
+<td>List of options to display in the menu</td>
+</tr>
+<tr>
+<td><code>prompt</code></td>
+<td><code>str?</code></td>
+<td>Custom prompt text. If not provided, automatically generated based on min/max</td>
+</tr>
+<tr>
+<td><code>min</code></td>
+<td><code>int = 0</code></td>
+<td>Minimum number of selections required (default 0 allows empty selection)</td>
+</tr>
+<tr>
+<td><code>max</code></td>
+<td><code>int?</code></td>
+<td>Maximum number of selections allowed (optional, unlimited if not set)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>prompt</code> parameter has smart defaults that adjust based on the min/max constraints.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code>fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;, &quot;date&quot;]
+selected = multipick(fruits)
+// selected equals e.g. [ &quot;apple&quot;, &quot;cherry&quot; ]
 </code></pre></div>
 <h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">&para;</a></h2>
 <p>Rad provides functions for all HTTP methods. All functions have identical signatures and return the same response
