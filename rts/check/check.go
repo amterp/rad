@@ -59,6 +59,7 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addFnParamScientificNotationErrors(&diagnostics)
 	c.addFunctionNameShadowingErrors(&diagnostics)
 	c.addUnknownFunctionHints(&diagnostics)
+	c.addUnknownCommandCallbackWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil
@@ -273,5 +274,47 @@ func (c *RadCheckerImpl) addUnknownFunctionHints(d *[]Diagnostic) {
 		// Function is not defined - create a hint
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
 		*d = append(*d, NewDiagnosticHint(call.NameNode, c.src, msg, rl.ErrUnknownFunction))
+	}
+}
+
+func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
+	builtInFunctions := rts.GetBuiltInFunctions()
+
+	hoistedFunctions := c.getHoistedFunctions()
+	hoistedFunctionSet := make(map[string]bool)
+	for _, fnName := range hoistedFunctions {
+		hoistedFunctionSet[fnName] = true
+	}
+
+	cmdBlocks, ok := c.tree.FindCmdBlocks()
+	if !ok {
+		return
+	}
+
+	for _, cmdBlock := range cmdBlocks {
+		callback := cmdBlock.Callback
+
+		// Only check identifier callbacks (not inline lambdas)
+		if callback.Type != rts.CallbackIdentifier {
+			continue
+		}
+
+		if callback.IdentifierName == nil {
+			continue
+		}
+
+		fnName := *callback.IdentifierName
+
+		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
+			continue
+		}
+
+		identifierNode := callback.Node().ChildByFieldName(rl.F_CALLBACK_IDENTIFIER)
+		if identifierNode == nil {
+			continue
+		}
+
+		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
+		*d = append(*d, NewDiagnosticWarn(identifierNode, c.src, msg, rl.ErrUnknownFunction))
 	}
 }

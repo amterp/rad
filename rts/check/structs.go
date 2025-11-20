@@ -23,7 +23,7 @@ func (s Severity) String() string {
 	case Info:
 		return "Info"
 	case Warning:
-		return "Warning"
+		return "Warn"
 	case Error:
 		return "Error"
 	default:
@@ -77,6 +77,10 @@ func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.E
 
 func NewDiagnosticHint(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
 	return NewDiagnosticFromNode(node, originalSrc, Hint, msg, &code)
+}
+
+func NewDiagnosticWarn(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
+	return NewDiagnosticFromNode(node, originalSrc, Warning, msg, &code)
 }
 
 type Result struct {
