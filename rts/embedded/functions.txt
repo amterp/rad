@@ -58,6 +58,7 @@ map
 matches
 max
 min
+multipick
 now
 orange
 parse_epoch

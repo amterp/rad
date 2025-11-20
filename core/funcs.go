@@ -54,6 +54,7 @@ const (
 	FUNC_PICK               = "pick"
 	FUNC_PICK_KV            = "pick_kv"
 	FUNC_PICK_FROM_RESOURCE = "pick_from_resource"
+	FUNC_MULTIPICK          = "multipick"
 	FUNC_KEYS               = "keys"
 	FUNC_VALUES             = "values"
 	FUNC_TRUNCATE           = "truncate"
@@ -293,6 +294,7 @@ func init() {
 		FuncPick,
 		FuncPickKv,
 		FuncPickFromResource,
+		FuncMultipick,
 		FuncSplit,
 		FuncRange,
 		FuncColorize,
