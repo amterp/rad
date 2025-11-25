@@ -36,7 +36,7 @@ func newFileHeader(src string, node *ts.Node) (*FileHeader, bool) {
 
 	return &FileHeader{
 		BaseNode:        newBaseNode(src, node),
-		Contents:        fhContents,
+		Contents:        NormalizeIndentedText(fhContents),
 		MetadataEntries: metadataEntries,
 	}, true
 }

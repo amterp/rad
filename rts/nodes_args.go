@@ -281,9 +281,10 @@ func findArgDeclarations(src string, node *ts.Node) []ArgDecl {
 
 		var argComment *ArgDeclComment
 		if commentNode != nil {
+			rawComment := src[commentNode.StartByte():commentNode.EndByte()]
 			argComment = &ArgDeclComment{
 				BaseNode: newBaseNode(src, commentNode),
-				Comment:  src[commentNode.StartByte():commentNode.EndByte()],
+				Comment:  NormalizeIndentedText(rawComment),
 			}
 		}
 

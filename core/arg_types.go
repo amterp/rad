@@ -52,6 +52,7 @@ func FromArgDecl(
 	externalName := decl.ExternalName()
 
 	defaultVal := decl.Default
+
 	scriptArg := &ScriptArg{
 		Name:               name,
 		ApiName:            externalName,

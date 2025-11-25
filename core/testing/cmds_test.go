@@ -126,12 +126,11 @@ command process:
 
 	setupAndRunCode(t, script, "-h", "--color=never")
 	// TODO this should just say 'command', not 'subcommand'
-	// Note: Extra spaces before description are from source indentation captured by tree-sitter
 	expected := `Usage:
   TestCase [subcommand] [OPTIONS]
 
 Commands:
-  process       Process something.
+  process   Process something.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
@@ -141,15 +140,15 @@ Commands:
   TestCase [subcommand] [OPTIONS]
 
 Commands:
-  process       Process something.
+  process   Process something.
 
 ` + scriptGlobalFlagHelp
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 
 	setupAndRunCode(t, script, "process", "-h", "--color=never")
-	expected = `    Process something.
-    Second line!
+	expected = `Process something.
+Second line!
 
 Usage:
   process <input> [count] [OPTIONS]
@@ -163,8 +162,8 @@ Command args:
 	assertNoErrors(t)
 
 	setupAndRunCode(t, script, "process", "--help", "--color=never")
-	expected = `    Process something.
-    Second line!
+	expected = `Process something.
+Second line!
 
 Usage:
   process <input> [count] [OPTIONS]

@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	com "github.com/amterp/rad/core/common"
 
@@ -38,9 +37,7 @@ func ExtractMetadata(src string) *ScriptData {
 	disableArgsBlock := false
 	var description *string
 	if fileHeader, ok := tree.FindFileHeader(); ok {
-		// Trim trailing newline that tree-sitter includes from source TODO Grammar should exclude it
-		trimmed := strings.TrimSuffix(fileHeader.Contents, "\n")
-		description = &trimmed
+		description = &fileHeader.Contents
 		if stashId, ok := fileHeader.MetadataEntries[MACRO_STASH_ID]; ok {
 			RadHomeInst.SetStashId(stashId)
 		}

@@ -1,8 +1,6 @@
 package core
 
 import (
-	"strings"
-
 	"github.com/amterp/rad/rts"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -24,9 +22,7 @@ func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
 	// Extract optional description
 	var description *string
 	if cmdBlock.Description != nil {
-		// Trim trailing newline that tree-sitter includes from source TODO Grammar should exclude it
-		trimmed := strings.TrimSuffix(cmdBlock.Description.Contents, "\n")
-		description = &trimmed
+		description = &cmdBlock.Description.Contents
 	}
 
 	// Convert arguments using the same logic as args: block

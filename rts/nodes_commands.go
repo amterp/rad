@@ -67,7 +67,7 @@ func newCmdBlock(src string, node *ts.Node) (*CmdBlock, bool) {
 			contents := src[contentsNode.StartByte():contentsNode.EndByte()]
 			description = &CmdDescription{
 				BaseNode: newBaseNode(src, contentsNode),
-				Contents: contents,
+				Contents: NormalizeIndentedText(contents),
 			}
 		}
 	}
