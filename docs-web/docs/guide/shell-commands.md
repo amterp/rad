@@ -329,5 +329,7 @@ print("All prerequisites installed ✅".green())
 
 ## Next
 
-Rad offers several global flags that are available to every script, giving you control over execution behavior.
-We'll explore these in the next section: [Global Flags](./global-flags.md).
+Shell commands let you invoke external programs, but what if you want to organize your *script* into multiple
+operations - like `git commit`, `docker build`, or `kubectl apply`?
+
+That's where commands come in. We'll explore them in the next section: [Script Commands](script-commands.md).

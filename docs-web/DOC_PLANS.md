@@ -30,6 +30,7 @@
   - [x] error propagation model
 - [x] shell commands !!
   - [x] shell error handling
+- [x] NEW commands
 - [ ] resources
 - [ ] global flags
 - [ ] json-paths-advanced

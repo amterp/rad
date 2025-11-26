@@ -14,6 +14,7 @@ nav:
       - ./guide/type-annotations.md
       - ./guide/error-handling.md
       - ./guide/shell-commands.md
+      - ./guide/script-commands.md
       - ./guide/resources.md
       - ./guide/global-flags.md
       - ./guide/defer-errdefer.md
