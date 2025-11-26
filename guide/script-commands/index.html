@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/shell-commands/">
+        <link rel="canonical" href="https://amterp.github.io/rad/guide/script-commands/">
       
       
-        <link rel="prev" href="../error-handling/">
+        <link rel="prev" href="../shell-commands/">
       
       
-        <link rel="next" href="../script-commands/">
+        <link rel="next" href="../resources/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Shell Commands - Rad Docs</title>
+        <title>Script Commands - Rad Docs</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#invoking-commands" class="md-skip">
+        <a href="#basic-syntax" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Shell Commands
+              Script Commands
             
           </span>
         </div>
@@ -493,6 +493,27 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -507,7 +528,7 @@
           
   
   <span class="md-ellipsis">
-    Shell Commands
+    Script Commands
   </span>
   
 
@@ -518,7 +539,7 @@
         
   
   <span class="md-ellipsis">
-    Shell Commands
+    Script Commands
   </span>
   
 
@@ -538,130 +559,91 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#invoking-commands" class="md-nav__link">
+  <a href="#basic-syntax" class="md-nav__link">
     <span class="md-ellipsis">
-      Invoking Commands
+      Basic Syntax
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#capturing-output" class="md-nav__link">
+  <a href="#multiple-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Capturing Output
+      Multiple Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Capturing Output">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Descriptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shared-args" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Args
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Callbacks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shared-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Logic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Help
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practical-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Practical Example">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#capture-modes" class="md-nav__link">
+  <a href="#dev-script" class="md-nav__link">
     <span class="md-ellipsis">
-      Capture Modes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#named-assignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Named Assignment
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      Error Handling
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#string-interpolation" class="md-nav__link">
-    <span class="md-ellipsis">
-      String Interpolation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#modifiers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Modifiers
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Modifiers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-quiet-modifier" class="md-nav__link">
-    <span class="md-ellipsis">
-      The quiet Modifier
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-confirm-modifier" class="md-nav__link">
-    <span class="md-ellipsis">
-      The confirm Modifier
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#practical-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      Practical Examples
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Practical Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Development Workflow
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#conditional-construction" class="md-nav__link">
-    <span class="md-ellipsis">
-      Conditional Construction
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#checking-prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      Checking Prerequisites
+      Dev Script
     </span>
   </a>
   
@@ -694,27 +676,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../script-commands/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Script Commands
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -1151,130 +1112,91 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#invoking-commands" class="md-nav__link">
+  <a href="#basic-syntax" class="md-nav__link">
     <span class="md-ellipsis">
-      Invoking Commands
+      Basic Syntax
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#capturing-output" class="md-nav__link">
+  <a href="#multiple-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Capturing Output
+      Multiple Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Capturing Output">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding Descriptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Arguments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shared-args" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Args
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Callbacks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shared-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Logic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Help
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practical-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Practical Example">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#capture-modes" class="md-nav__link">
+  <a href="#dev-script" class="md-nav__link">
     <span class="md-ellipsis">
-      Capture Modes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#named-assignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Named Assignment
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      Error Handling
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#string-interpolation" class="md-nav__link">
-    <span class="md-ellipsis">
-      String Interpolation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#modifiers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Modifiers
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Modifiers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-quiet-modifier" class="md-nav__link">
-    <span class="md-ellipsis">
-      The quiet Modifier
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-confirm-modifier" class="md-nav__link">
-    <span class="md-ellipsis">
-      The confirm Modifier
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#practical-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      Practical Examples
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Practical Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Development Workflow
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#conditional-construction" class="md-nav__link">
-    <span class="md-ellipsis">
-      Conditional Construction
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#checking-prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      Checking Prerequisites
+      Dev Script
     </span>
   </a>
   
@@ -1321,104 +1243,50 @@
   
 
 
-  <h1>Shell Commands</h1>
+  <h1>Script Commands</h1>
 
-<p>The shell offers a wide range of utilities and is essential for CLI scripting - from file operations to invoking
-installed programs like git, make, or docker.</p>
-<p>Rad has rich built-in functionality (<code>http_get</code>, <code>read_file</code>, <code>write_file</code>, etc.), but sometimes you need to invoke
-system tools or installed programs. Rad makes this safe and ergonomic through first-class shell command support.</p>
-<h2 id="invoking-commands">Invoking Commands<a class="headerlink" href="#invoking-commands" title="Permanent link">&para;</a></h2>
-<p>Shell commands are invoked by prefixing a string with <code>$</code>:</p>
-<div class="highlight"><pre><span></span><code>$`ls -la`
+<p>When you think of powerful CLI tools - <code>git</code>, <code>docker</code>, <code>kubectl</code> - they all share a common pattern: they're organized
+around commands. You don't just run <code>git</code> with flags; you run <code>git commit</code>, <code>git push</code>, <code>git branch</code> - each a distinct
+operation with its own arguments.</p>
+<p>Rad lets you build tools like this through first-class command support. You can define multiple commands in a single
+script, each with their own arguments and implementation.</p>
+<h2 id="basic-syntax">Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permanent link">&para;</a></h2>
+<p>Let's start with a very simple example:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command greet:
+    name str
+    calls greet_user
+
+fn greet_user():
+    print(&quot;Hello, {name}!&quot;)
+</code></pre></div></td></tr></table></div>
+<p>This script defines a single command called <code>greet</code> that takes a <code>name</code> argument.</p>
+<p>Invoke it by specifying the command name followed by its arguments:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./script.rad greet Alice
 </code></pre></div>
-<p>You can also pre-define the command as a string variable:</p>
-<div class="highlight"><pre><span></span><code>cmd = `ls -la`
-$cmd
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello, Alice!
 </code></pre></div>
-<p>By default, the stdout/stderr will be printed directly to the user's terminal as if they had invoked it directly themselves.</p>
-<div class="admonition tip">
-<p class="admonition-title">Prefer backticks for shell command strings</p>
-<p>Shell commands often use 'single' and "double" quotes, so backticks minimize delimiter conflicts.
-However, you can use any string delimiter.</p>
 </div>
-<h2 id="capturing-output">Capturing Output<a class="headerlink" href="#capturing-output" title="Permanent link">&para;</a></h2>
-<p>Shell commands return three values: <strong>exit code</strong>, <strong>stdout</strong>, and <strong>stderr</strong>. You can capture anywhere from zero to all three of these values, depending on what you need.</p>
-<h3 id="capture-modes">Capture Modes<a class="headerlink" href="#capture-modes" title="Permanent link">&para;</a></h3>
-<p>There are four levels of capture:</p>
-<p><strong>1. No capture - output goes to terminal</strong></p>
-<p>When you don't assign any variables, all output goes to the terminal:</p>
-<div class="highlight"><pre><span></span><code>$`ls -la`
-</code></pre></div>
-<p><strong>2. Capture exit code only</strong></p>
-<p>Assign to one variable to capture just the exit code:</p>
-<div class="highlight"><pre><span></span><code>code = $`make test`
-</code></pre></div>
-<p>The exit code is captured as an <code>int</code>, but stdout and stderr still go to the terminal.</p>
-<p><strong>3. Capture exit code + stdout</strong></p>
-<p>Assign to two variables to capture the exit code and stdout:</p>
-<div class="highlight"><pre><span></span><code>code, stdout = $`git show 0dd21e6`
-</code></pre></div>
-<p>The exit code and stdout are captured as an <code>int</code> and <code>str</code> respectively. Stderr still goes to the terminal.
-<strong>Important:</strong> When you capture stdout, it doesn't print to the terminal - it's redirected to your variable.</p>
-<p><strong>4. Capture all three</strong></p>
-<p>Assign to three variables to capture everything:</p>
-<div class="highlight"><pre><span></span><code>code, stdout, stderr = $`npm install`
-</code></pre></div>
-<p>All three values are captured. Nothing is printed to the terminal automatically.</p>
-<h3 id="named-assignment">Named Assignment<a class="headerlink" href="#named-assignment" title="Permanent link">&para;</a></h3>
-<p>Rad supports a special form of assignment when working with shell commands. When <strong>all</strong> your variables are named
-exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, then assignment happens by name rather than by position.
-This means the order doesn't matter:</p>
-<div class="highlight"><pre><span></span><code>// Named assignment - order independent
-stdout, code = $`echo hi`           // code=0, stdout=&quot;hi\n&quot;
-stderr = $`bad-command`             // Just capture stderr
-code, stderr = $`make format`       // code=1, stderr=&quot;&quot;
-stderr, stdout, code = $`ls`        // All three, any order
-</code></pre></div>
-<p>This improves readability - you can capture exactly what you need with clear, self-documenting variable names.</p>
-<p><strong>The rule:</strong> If ALL variables use exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, assignment is by name. Otherwise, it's positional:</p>
-<div class="highlight"><pre><span></span><code>// Positional - &#39;output&#39; isn&#39;t a special name
-code, output = $`echo hi`           // output = stdout (by position)
-exit_code, out, err = $`ls`         // Assigned in order
-</code></pre></div>
-<p>This lets you write clear code like <code>stderr = $cmd</code> instead of <code>_, _, stderr = $cmd</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">Silencing outputs</p>
-<p>You can use <code>_</code> to ignore specific outputs: <code>code, _ = $cmd</code> captures the code and ignores stdout.
-For silent execution, capture everything: <code>_, _, _ = $cmd</code> - nothing will print to the terminal.</p>
-</div>
-<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
-<p>Now that you understand how to capture output, let's talk about error handling.</p>
-<p>When a shell command exits with a non-zero exit code, it triggers error propagation - just like functions that return errors.
-This means you can handle potential failures using <code>catch:</code> blocks:</p>
-<div class="highlight"><pre><span></span><code>// Handle errors with catch block
-$`make build` catch:
-    print_err(&quot;Build failed!&quot;.red())
-    exit(1)
 
-// Or ignore failures
-$`make build` catch:
-    pass  // Continue on failure
-</code></pre></div>
-<p>You can <strong>combine capturing with error handling</strong>. When the <code>catch:</code> block runs, your variables are already
-assigned their actual values, so you can inspect them:</p>
-<div class="highlight"><pre><span></span><code>// Capture the exit code AND handle errors
-code = $`make test` catch:
-    print_err(&quot;Command failed to run. Error code {code}&quot;)
-    exit(1)
-
-print(&quot;Tests passed!&quot;)
-</code></pre></div>
-<p>This works with any capture pattern:</p>
-<div class="highlight"><pre><span></span><code>code, stdout = $`git tag --list` catch:
-    print_err(&quot;Failed to get tags&quot;)
-    exit(1)
-
-version = stdout.trim()
-</code></pre></div>
-<p>This uses the same error model covered in <a href="../error-handling/">Error Handling</a> - errors propagate by default, so you need <code>catch:</code> blocks to handle them.</p>
-<h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
-<p>You can build commands dynamically using string interpolation:</p>
+<p>Let's break down the syntax:</p>
+<ol>
+<li><strong><code>command greet:</code></strong> - Defines a command named <code>greet</code></li>
+<li><strong><code>name str</code></strong> - The command takes one required string argument called <code>name</code></li>
+<li><strong><code>calls greet_user</code></strong> - Specifies which function to execute when this command runs</li>
+<li><strong><code>fn greet_user():</code></strong> - Defines the function that implements the command logic (defined after commands)</li>
+</ol>
+<p>Command arguments (like <code>name</code>) become script-wide variables, accessible throughout your script.</p>
+<h2 id="multiple-commands">Multiple Commands<a class="headerlink" href="#multiple-commands" title="Permanent link">&para;</a></h2>
+<p>The power of commands emerges when you define several in one script. Let's create a simple deployment tool:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1430,152 +1298,618 @@ version = stdout.trim()
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    version str
-    message str
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 
-// Interpolate variables into commands
-$`git tag v{version}` catch:
-    print_err(&quot;Failed to create tag&quot;)
-    exit(1)
-
-$`git commit -m &quot;{message}&quot;` catch:
-    print_err(&quot;Commit failed&quot;)
-    exit(1)
+<span class="hll">command deploy:
+</span><span class="hll">    env str
+</span><span class="hll">    calls do_deploy
+</span><span class="hll">
+</span>command status:
+<span class="hll">    env str
+</span><span class="hll">    calls do_status
+</span><span class="hll">
+</span><span class="hll">fn do_deploy():
+</span>    print(&quot;Deploying to {env}...&quot;.yellow())
+<span class="hll">    print(&quot;Deployment complete!&quot;.green())
+</span><span class="hll">
+</span><span class="hll">fn do_status():
+</span><span class="hll">    print(&quot;Checking status of {env}...&quot;.yellow())
+</span>    print(&quot;Environment {env} is healthy&quot;.green())
 </code></pre></div></td></tr></table></div>
-<p>This is particularly useful for constructing commands based on script arguments or other runtime values.</p>
-<h2 id="modifiers">Modifiers<a class="headerlink" href="#modifiers" title="Permanent link">&para;</a></h2>
-<p>Rad provides two modifiers that can be applied to shell commands.</p>
-<h3 id="the-quiet-modifier">The <code>quiet</code> Modifier<a class="headerlink" href="#the-quiet-modifier" title="Permanent link">&para;</a></h3>
-<p>By default, Rad announces each shell command with a ⚡️ prefix. For example, this command:</p>
-<div class="highlight"><pre><span></span><code>$`touch hello.txt` catch:
-    print_err(&quot;Failed to create file&quot;)
-    exit(1)
+<p>Now you can invoke either command:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging
 </code></pre></div>
-<p>Shows in the terminal:</p>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ touch hello.txt
+<div class="highlight"><pre><span></span><code>Deploying to staging...
+Deployment complete!
 </code></pre></div>
 </div>
 
-<p>To suppress this announcement, use the <code>quiet</code> modifier:</p>
-<div class="highlight"><pre><span></span><code>quiet $`touch hello.txt` catch:
-    print_err(&quot;Failed to create file&quot;)
-    exit(1)
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad status production
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>(no output - unless there&#39;s an error)
+<div class="highlight"><pre><span></span><code>Checking status of production...
+Environment production is healthy
 </code></pre></div>
 </div>
 
-<p>This is useful for scripts that run many commands or when you want minimal output.</p>
-<h3 id="the-confirm-modifier">The <code>confirm</code> Modifier<a class="headerlink" href="#the-confirm-modifier" title="Permanent link">&para;</a></h3>
-<p>The <code>confirm</code> modifier prompts the user before running a command:</p>
-<div class="highlight"><pre><span></span><code>confirm $`rm -rf node_modules`
+<p>Each command has its own arguments and implementation, but they live in the same script and can share code.</p>
+<h2 id="adding-descriptions">Adding Descriptions<a class="headerlink" href="#adding-descriptions" title="Permanent link">&para;</a></h2>
+<p>Commands should include descriptions to make your tool self-documenting. Use the familiar <code>--- ... ---</code> header syntax:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command deploy:
+<span class="hll">    ---
+</span><span class="hll">    Deploy the application to an environment
+</span><span class="hll">    ---
+</span>    env str
+    calls do_deploy
+
+command status:
+<span class="hll">    ---
+</span><span class="hll">    Check the health of an environment
+</span><span class="hll">    ---
+</span>    env str
+    calls do_status
+
+fn do_deploy():
+    print(&quot;Deploying to {env}...&quot;.yellow())
+
+fn do_status():
+    print(&quot;Environment {env} is healthy&quot;.green())
+</code></pre></div></td></tr></table></div>
+<p>These descriptions appear in the help output:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad -h
 </code></pre></div>
-<p>This is particularly useful for destructive operations.</p>
-<h2 id="practical-examples">Practical Examples<a class="headerlink" href="#practical-examples" title="Permanent link">&para;</a></h2>
-<p>Let's look at some real-world patterns that combine these features.</p>
-<h3 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h3>
-<p>Here's a script inspired by a typical development workflow:</p>
-<div class="highlight"><pre><span></span><code>---
-Validates code, checks git status, and optionally pushes changes.
+<div class="result">
+<div class="highlight"><pre><span></span><code>Usage:
+  tool.rad [command] [OPTIONS]
+
+Commands:
+  deploy    Deploy the application to an environment
+  status    Check the health of an environment
+</code></pre></div>
+</div>
+
+<p>Notice how Rad automatically generates a usage string listing all available commands.</p>
+<div class="admonition tip">
+<p class="admonition-title">Multi-line descriptions</p>
+<p>Just like script headers, command descriptions can span multiple lines:</p>
+<div class="highlight"><pre><span></span><code>command deploy:
+    ---
+    Deploy the application to an environment.
+    This will build, test, and deploy your application.
+    ---
+</code></pre></div>
+<p><strong>Important:</strong> The first line appears in the script's overall help output, so keep it concise. Additional lines
+only appear when you request help for that specific command (<code>./tool.rad deploy -h</code>).</p>
+</div>
+<h2 id="command-arguments">Command Arguments<a class="headerlink" href="#command-arguments" title="Permanent link">&para;</a></h2>
+<p>Each command can define its own arguments using the same syntax you learned in <a href="../args/">Args</a>. Let's expand our
+deployment tool:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command deploy:
+<span class="hll">    ---
+</span><span class="hll">    Deploy the application to an environment
+</span><span class="hll">    ---
+</span><span class="hll">    env str              # Environment to deploy to
+</span><span class="hll">    branch str = &quot;main&quot;  # Branch to deploy from
+</span><span class="hll">    skip_tests bool      # Skip running tests before deploy
+</span><span class="hll">    calls do_deploy
+</span>
+fn do_deploy():
+    if skip_tests:
+        print(&quot;⚠️  Skipping tests&quot;.yellow())
+    else:
+        print(&quot;Running tests...&quot;.yellow())
+
+    print(&quot;Deploying {branch} to {env}...&quot;.yellow())
+    print(&quot;✅ Deployment complete!&quot;.green())
+</code></pre></div></td></tr></table></div>
+<p>The arguments work exactly as they do in the <code>args:</code> block - you can use defaults, optional types, constraints, and
+comments for help text.</p>
+<p>Invoke with positional arguments:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging feature-branch
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Running tests...
+Deploying feature-branch to staging...
+✅ Deployment complete!
+</code></pre></div>
+</div>
+
+<p>Or use flags (especially for booleans):</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy --env=production --skip-tests
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>⚠️  Skipping tests
+Deploying main to production...
+✅ Deployment complete!
+</code></pre></div>
+</div>
+
+<h2 id="shared-args">Shared Args<a class="headerlink" href="#shared-args" title="Permanent link">&para;</a></h2>
+<p>Often you want arguments that apply to <em>all</em> commands - like a <code>--verbose</code> flag or a <code>--config</code> path. Define these in
+an <code>args:</code> block to share them across commands:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+<span class="hll">args:
+</span><span class="hll">    verbose v bool   # Enable verbose output
+</span><span class="hll">    config str = &quot;~/.config/tool.yaml&quot;
+</span>
+command deploy:
+    ---
+    Deploy the application
+    ---
+    env str
+    calls do_deploy
+
+command status:
+    ---
+    Check environment status
+    ---
+    env str
+    calls do_status
+
+fn do_deploy():
+    if verbose:
+        print(&quot;Config: {config}&quot;.yellow())
+        print(&quot;Deploying to {env}...&quot;.yellow())
+    print(&quot;✅ Deployed!&quot;.green())
+
+fn do_status():
+    if verbose:
+        print(&quot;Config: {config}&quot;.yellow())
+        print(&quot;Checking {env}...&quot;.yellow())
+    print(&quot;Environment healthy&quot;.green())
+</code></pre></div></td></tr></table></div>
+<p>Shared args are available to all commands:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging --verbose
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Config: ~/.config/tool.yaml
+Deploying to staging...
+✅ Deployed!
+</code></pre></div>
+</div>
+
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad status production --verbose
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Config: ~/.config/tool.yaml
+Checking production...
+Environment healthy
+</code></pre></div>
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">Shared args are flag-only</p>
+<p>When commands exist, shared args can only be passed as flags (like <code>--verbose</code>, <code>-v</code>, or <code>--config=value</code>), not
+positionally. This keeps the invocation clear: the first positional argument is always the command name.</p>
+<p>Both long form (<code>--verbose</code>) and short form (<code>-v</code>) work for shared args.</p>
+<p>Command-specific args can be positional or flags, just like regular script args.</p>
+</div>
+<h2 id="command-callbacks">Command Callbacks<a class="headerlink" href="#command-callbacks" title="Permanent link">&para;</a></h2>
+<p>We've been using function references (<code>calls on_deploy</code>), which is the recommended approach for most commands.
+However, for very short implementations, you can also use inline lambdas:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+<span class="hll">command deploy:
+</span><span class="hll">    ---
+</span><span class="hll">    Deploy the application
+</span><span class="hll">    ---
+</span><span class="hll">    env str
+</span><span class="hll">    calls on_deploy
+</span>
+<span class="hll">command rollback:
+</span><span class="hll">    ---
+</span><span class="hll">    Rollback a deployment
+</span><span class="hll">    ---
+</span><span class="hll">    env str
+</span><span class="hll">    calls fn():
+</span><span class="hll">        print(&quot;Rolling back {env}...&quot;.yellow())
+</span><span class="hll">        print(&quot;✅ Rollback complete!&quot;.green())
+</span>
+<span class="hll">fn on_deploy():
+</span><span class="hll">    print(&quot;Deploying to {env}...&quot;.yellow())
+</span><span class="hll">    print(&quot;✅ Done!&quot;.green())
+</span></code></pre></div></td></tr></table></div>
+<h2 id="shared-logic">Shared Logic<a class="headerlink" href="#shared-logic" title="Permanent link">&para;</a></h2>
+<p>You can write code after all command blocks that runs before any callback is invoked. This is useful for setup logic that all commands need:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command deploy:
+    env str
+    calls on_deploy
+
+command rollback:
+    env str
+    calls on_rollback
+
+// This runs before any callback
+print(&quot;Initializing...&quot;.yellow())
+config = read_file(&quot;config.yaml&quot;)
+print(&quot;Config loaded&quot;.green())
+
+fn on_deploy():
+    // config is available here
+    print(&quot;Deploying to {env} using config...&quot;)
+
+fn on_rollback():
+    // config is available here too
+    print(&quot;Rolling back {env}...&quot;)
+</code></pre></div></td></tr></table></div>
+<p>When you run <code>./script.rad deploy staging</code>, the flow is:</p>
+<ol>
+<li>Parse arguments</li>
+<li>Run shared logic (lines 12-14)</li>
+<li>Run the callback (<code>on_deploy</code>)</li>
+</ol>
+<p>This pattern is useful for loading configuration files, setting up connections, or validating preconditions that apply to all commands.</p>
+<h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
+<p>Rad automatically generates help documentation for your commands. There are two levels of help:</p>
+<p><strong>Script-level help</strong> shows all available commands:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad -h
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Usage:
+  tool.rad [command] [OPTIONS]
+
+Commands:
+  deploy      Deploy the application
+  rollback    Rollback a deployment
+  status      Check environment status
+</code></pre></div>
+</div>
+
+<p><strong>Command-level help</strong> shows arguments for a specific command:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy -h
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Deploy the application
+
+Usage:
+  deploy &lt;env&gt; [branch] [OPTIONS]
+
+Command args:
+      --env str       Environment to deploy to
+      --branch str    Branch to deploy from (default &quot;main&quot;)
+      --skip-tests    Skip running tests before deploy
+  -v, --verbose       Enable verbose output
+      --config str    (default &quot;~/.config/tool.yaml&quot;)
+</code></pre></div>
+</div>
+
+<p>Notice how the help includes:</p>
+<ul>
+<li>The command description</li>
+<li>Required and optional arguments</li>
+<li>Default values</li>
+<li>Shared args (like <code>--verbose</code> and <code>--config</code>)</li>
+<li>Help text from <code>#</code> comments</li>
+</ul>
+<h2 id="practical-example">Practical Example<a class="headerlink" href="#practical-example" title="Permanent link">&para;</a></h2>
+<p>Here's a concise, realistic example that demonstrates the "dev script" pattern - a common use case for replacing messy <code>Makefile</code>s or complex <code>package.json</code> script sections with a single, readable CLI entry point.</p>
+<h3 id="dev-script">Dev Script<a class="headerlink" href="#dev-script" title="Permanent link">&para;</a></h3>
+<p>Instead of remembering different commands for building, testing, and running your project, you can wrap them in a
+single <code>dev.rad</code> script. This demonstrates shared arguments, boolean flags, and how to pass arguments down to underlying tools:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 ---
+Facilitates working with this repo&#39;s project.
+---
+
 args:
-    push p bool  # Push changes after validation
+    verbose v bool   # Enable verbose output
 
-// Run validation steps
-steps = [&quot;go mod tidy&quot;, &quot;make format&quot;, &quot;make build&quot;, &quot;make test&quot;]
+command start:
+    ---
+    Start the local development server
+    ---
+    port int = 3000    # Port to listen on
+    detach d bool      # Run in background
+    calls on_start
 
-for step in steps:
-    $step catch:
-        print_err(&quot;❌ {step} failed&quot;.red())
-        exit(1)
-    print(&quot;✅ {step} passed&quot;.green())
+command test:
+    ---
+    Run the test suite
+    ---
+    grep str?      # Filter tests by name
+    watch w bool   # Re-run on file changes
+    calls on_test
 
-if push:
-    // Check for uncommitted changes
-    stdout = $`git status --porcelain` catch:
-        print_err(&quot;Failed to check git status&quot;)
-        exit(1)
+command build:
+    ---
+    Compile for production
+    ---
+    calls on_build
 
-    if stdout.trim() != &quot;&quot;:
-        print_err(&quot;Working directory has uncommitted changes!&quot;)
-        print_err(&quot;Commit your changes before pushing.&quot;)
-        exit(1)
-
-    // Get current branch and push
-    stdout = $`git branch --show-current` catch:
-        print_err(&quot;Failed to get current branch&quot;)
-        exit(1)
-
-    branch = stdout.trim()
-    print(&quot;Pushing to {branch}...&quot;.yellow())
-
-    $`git push origin {branch}` catch:
-        print_err(&quot;Push failed&quot;)
-        exit(1)
-
-    print(&quot;✅ Pushed to {branch}&quot;.green())
-
-print(&quot;✅ Done!&quot;.green())
-</code></pre></div>
-<h3 id="conditional-construction">Conditional Construction<a class="headerlink" href="#conditional-construction" title="Permanent link">&para;</a></h3>
-<p>Building commands dynamically based on script arguments:</p>
-<div class="highlight"><pre><span></span><code>args:
-    verbose v bool
-    output o str?
-
-cmd = &quot;docker build .&quot;
-
+// Shared setup logic runs before any callback
 if verbose:
-    cmd += &quot; --progress=plain&quot;
+    print(&quot;Checking project structure...&quot;.yellow())
 
-if output:
-    cmd += &quot; -t {output}&quot;
-
-$`{cmd}` catch:
-    print_err(&quot;Docker build failed&quot;)
+if not path_exists(&quot;package.json&quot;):
+    print_err(&quot;Error: package.json not found&quot;.red())
+    print_err(&quot;Run this script from the project root&quot;.yellow())
     exit(1)
 
-print(&quot;Docker image built successfully&quot;.green())
-</code></pre></div>
-<h3 id="checking-prerequisites">Checking Prerequisites<a class="headerlink" href="#checking-prerequisites" title="Permanent link">&para;</a></h3>
-<p>Verifying that required tools are installed:</p>
-<div class="highlight"><pre><span></span><code>tools = [&quot;git&quot;, &quot;docker&quot;, &quot;make&quot;]
+fn on_start():
+    print(&quot;🚀 Starting server on http://localhost:{port}...&quot;)
 
-for tool in tools:
-    _, _, _ = $`which {tool}` catch:
-        print_err(&quot;Required tool not found: {tool}&quot;)
-        print_err(&quot;Please install {tool} before running this script&quot;)
+    cmd = &quot;npm start -- --port {port}&quot;
+
+    if detach:
+        $`{cmd} &amp;`
+        print(&quot;Server started in background&quot;.green())
+    else:
+        $`{cmd}`
+
+fn on_test():
+    opts = &quot;&quot;
+    if watch:
+        opts = &quot;{opts} --watch&quot;
+    if grep: 
+        opts = &quot;{opts} -t &#39;{grep}&#39;&quot;
+
+    if verbose:
+        print(&quot;Running: pytest {opts}&quot;.yellow())
+
+    print(&quot;🧪 Running tests...&quot;)
+    $`pytest {opts}` catch:
+        print_err(&quot;Tests failed!&quot;.red())
         exit(1)
 
-print(&quot;All prerequisites installed ✅&quot;.green())
+fn on_build():
+    print(&quot;📦 Building for production...&quot;.yellow())
+
+    $`rm -rf ./dist`
+    $`npm run build` catch:
+        print_err(&quot;Build failed&quot;.red())
+        exit(1)
+
+    print(&quot;✅ Build complete in ./dist&quot;.green())
+</code></pre></div></td></tr></table></div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>&gt; ./dev.rad start
+🚀 Starting server on http://localhost:3000...
+
+&gt; ./dev.rad start --port 8080 --detach
+🚀 Starting server on http://localhost:8080...
+Server started in background
+
+&gt; ./dev.rad test --grep &quot;login_flow&quot; --watch
+🧪 Running tests...
+
+&gt; ./dev.rad build
+📦 Building for production...
+✅ Build complete in ./dist
 </code></pre></div>
+<p>Notice how this example uses:</p>
+<ul>
+<li>Shared args (<code>--verbose</code>) available to all commands</li>
+<li>Command-specific arguments with defaults (<code>port</code>, <code>detach</code>, <code>grep</code>, <code>watch</code>)</li>
+<li>Shared logic that runs before any callback</li>
+<li>Function references for callbacks (<code>calls on_start</code>, etc.)</li>
+<li>Integration with shell commands to wrap existing tools</li>
+<li>Clear, self-documenting help text</li>
+</ul>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Shell commands use the <code>$</code> prefix and follow the same error model as functions</li>
-<li><strong>Error handling:</strong> Non-zero exit codes propagate errors unless handled with <code>catch:</code> blocks</li>
-<li><strong>Capture modes:</strong><ul>
-<li>None: output goes to terminal</li>
-<li>Code only: <code>code = $cmd</code> (stdout/stderr to terminal)</li>
-<li>Code + stdout: <code>code, stdout = $cmd</code> (stderr to terminal)</li>
-<li>All three: <code>code, stdout, stderr = $cmd</code> (nothing to terminal)</li>
+<li><strong>Script commands</strong> partition scripts into operations using <code>command name:</code> blocks</li>
+<li>Each command has:<ul>
+<li>Its own arguments (using standard <code>args</code> syntax)</li>
+<li>A description block (<code>--- ... ---</code>)</li>
+<li>A callback implementation (function reference or inline lambda)</li>
 </ul>
 </li>
-<li><strong>Assignment semantics:</strong><ul>
-<li><strong>Named</strong> when ALL variables are <code>code</code>, <code>stdout</code>, or <code>stderr</code> (order-independent)</li>
-<li><strong>Positional</strong> otherwise (order matters)</li>
+<li><strong>Shared args</strong> (from <code>args:</code> block) are available to all commands<ul>
+<li>Must be passed as flags when commands exist</li>
 </ul>
 </li>
-<li><strong>Output routing:</strong> Captured values don't print to the terminal (they're redirected to variables)</li>
-<li>String interpolation works in commands for dynamic construction</li>
-<li>Backticks are preferred for shell command strings to avoid delimiter conflicts</li>
+<li><strong>Shared logic</strong> runs before any callback. Write code after command blocks for setup that all commands need.</li>
+<li><strong>Help is automatic:</strong><ul>
+<li><code>./script -h</code> lists available commands</li>
+<li><code>./script command -h</code> shows command-specific help</li>
+</ul>
+</li>
+<li><strong>Callbacks:</strong><ul>
+<li>Function references: <code>calls function_name</code> (recommended)</li>
+<li>Inline lambdas: <code>calls fn():</code> (for short implementations)</li>
+</ul>
+</li>
+<li><strong>Use script commands to build CLI tools, not just scripts</strong></li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Shell commands let you invoke external programs, but what if you want to organize your <em>script</em> into multiple
-operations - like <code>git commit</code>, <code>docker build</code>, or <code>kubectl apply</code>?</p>
-<p>That's where commands come in. We'll explore them in the next section: <a href="../script-commands/">Script Commands</a>.</p>
+<p>Rad provides a powerful system for looking up values from predefined resource files, which is particularly useful for
+building interactive tools.</p>
+<p>We'll explore this in the next section: <a href="../resources/">Resources</a>.</p>
 
 
 
@@ -1608,7 +1942,7 @@ operations - like <code>git commit</code>, <code>docker build</code>, or <code>k
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../error-handling/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Error Handling">
+          <a href="../shell-commands/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Shell Commands">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1618,20 +1952,20 @@ operations - like <code>git commit</code>, <code>docker build</code>, or <code>k
                 Previous
               </span>
               <div class="md-ellipsis">
-                Error Handling
+                Shell Commands
               </div>
             </div>
           </a>
         
         
           
-          <a href="../script-commands/" class="md-footer__link md-footer__link--next" aria-label="Next: Script Commands">
+          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Script Commands
+                Resources
               </div>
             </div>
             <div class="md-footer__button md-icon">
