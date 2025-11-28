@@ -289,7 +289,85 @@ use formatting syntax (right of the colon) to specify that we want the resulting
 
 [//]: # (todo visual aid perhaps, to demonstrate what the lambda is doing exactly?)
 
-Note that sorting operations are done on the pre-mapping column values.
+!!! note "Modifier Execution Order"
+
+    Field modifiers execute in a specific order: **filter → sort → map**
+
+    - **Filter** first: Removes unwanted rows before sorting
+    - **Sort** middle: Sorts the filtered data in its original form
+    - **Map** last: Transforms values for display only
+
+    This means sorting and filtering see the original extracted values, not the transformed display values from `map`.
+
+### Filtering
+
+You can also *filter* rows based on conditions. This is useful when you only want to display data that matches certain criteria.
+
+For example, let's say you're querying an API that returns users, but you only want to see active users over 18 years old:
+
+```rad
+rad url:
+    fields Name, Age, Status
+    Age:
+        filter fn(age) age >= 18
+    Status:
+        filter fn(s) s == "active"
+```
+
+The syntax is `filter <function>`. The function receives each value from that column and returns a boolean (or truthy value). If it returns true, that row is kept. If false, the entire row is discarded.
+
+In this example, we're applying two filters:
+
+- `Age`: Keep only rows where age is 18 or greater
+- `Status`: Keep only rows where status equals "active"
+
+When multiple fields have filters, a row must pass **all filters** to be displayed (AND logic). In our example, both the age and status filters must pass.
+
+Let's see this in action with some mock data:
+
+```rad
+Ages = [25, 15, 30, 20, 12]
+Names = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+Status = ["active", "active", "inactive", "active", "active"]
+
+display:
+    fields Names, Ages, Status
+    Ages:
+        filter fn(a) a >= 18
+    Status:
+        filter fn(s) s == "active"
+```
+
+<div class="result">
+```
+Names   Ages  Status
+Alice   25    active
+Diana   20    active
+```
+</div>
+
+Notice that Charlie doesn't appear (age >= 18 but status is inactive), Bob doesn't appear (active but age < 18), and Eve doesn't appear (active but age < 18).
+
+Like with sorting and mapping, the filter predicate can be a lambda expression or a function reference:
+
+```rad
+display:
+    fields Name, Age
+    Age:
+        filter is_adult
+
+fn is_adult(age):
+    return age >= 18
+```
+
+!!! note "Execution Order: filter → sort → map"
+
+    Filtering happens **before** sorting and mapping. This means:
+    - Filters see the original extracted values (not transformed by `map`)
+    - Sorting operates on already-filtered data
+    - Mapping transforms the final filtered+sorted values for display
+
+    This order ensures your filters work on raw data and your sorts only process rows that will actually be displayed.
 
 ### Color
 
@@ -336,7 +414,7 @@ rad url:
 
 This example applies color rules to both `Status` and `Priority`, then transforms three columns to uppercase with a single `map` block. This is much more concise than writing separate modifier blocks for each column.
 
-Any column modifier (`map`, `color`) can be applied to multiple columns this way.
+Any column modifier (`filter`, `map`, `color`) can be applied to multiple columns this way.
 
 ### If Statements
 
@@ -363,7 +441,7 @@ If the flag is enabled, we sort by descending population, otherwise we sort rows
 
 You can put any rad block statements into these if blocks, including `fields`, column modifiers, etc.
 
-## Block Types
+## Other Block Types
 
 So far we've seen the `rad` block, which performs an HTTP request, extracts data, and displays it as a table.
 Rad also offers two variants that give you more control over this workflow: **request blocks** and **display blocks**.
@@ -384,7 +462,7 @@ largest_city = City[0]
 print("The largest city is {largest_city}")
 ```
 
-Note that sorting works in request blocks since it modifies the underlying data, but display-only modifiers like `color` or `map` have no effect since nothing gets displayed.
+Note that `filter`, `sort`, and `map` all work in request blocks since they modify the underlying data. However, `color` is display-only and has no effect since nothing gets displayed.
 
 ### display: No Request
 
@@ -432,6 +510,16 @@ display resp.body:
 - **`request`**: When you need to process data before displaying or use it for non-display purposes
 - **`display`**: When you have data from manual sources, `http_get()` with custom headers, or derived from `request` blocks
 
+!!! info "Modifier Mutation Across Block Types"
+
+    Field modifiers like (`filter`, `sort`, `map`) may or may not mutate underlying data depending on the block type:
+
+    - In **`rad`** and **`request`** blocks: Permanently modify the field arrays
+    - In **`display`** blocks: Applied for rendering, but does *not* change underlying data.
+
+    This means you can use `request` blocks to filter, sort, or transform data for further processing,
+    while `display` blocks let you format data for viewing without altering the original values.
+
 ## Understanding HTTP Requests
 
 When you write `rad` or `request` blocks, Rad automatically performs an **HTTP GET** request to the URL and expects a JSON response.
@@ -478,11 +566,13 @@ This pattern gives you full control over the HTTP request while still leveraging
     - Basic patterns: `json.field`, `json[]`, `json[].nested.path`
     - Advanced features exist (wildcards, indexing) for complex extraction needs
 - **Table customization** options:
+    - **Filtering**: Remove rows based on conditions
     - **Sorting**: `sort`, `sort Field`, `sort Field desc`
     - **Transforming**: Map functions to modify column values
     - **Styling**: Color cells based on regex patterns
-    - **Multi-column**: Apply same modifier to multiple columns at once
+    - **Multi-column**: Apply same modifiers to multiple columns at once
     - **Conditional**: Use `if` statements for dynamic behavior
+    - **Execution order**: filter → sort → map
 - **HTTP control**: rad blocks perform GET automatically; use `http_get()`/`http_post()` with `display` for more advanced queries (e.g. requiring headers/auth)
 
 ## Next

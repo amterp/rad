@@ -34,6 +34,7 @@ type radFieldMods struct {
 	identifierNode *ts.Node
 	colors         []radColorMod
 	lambda         *RadFn
+	filter         *RadFn
 }
 
 func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
@@ -176,27 +177,19 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				}
 			case rl.K_RAD_FIELD_MOD_MAP:
 				lambdaNode := rl.GetChild(&stmtNode, rl.F_LAMBDA)
-
-				var lambda RadFn
-				if lambdaNode.Kind() == rl.K_FN_LAMBDA {
-					lambda = NewFn(r.i, lambdaNode)
-				} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
-					identifier := r.i.GetSrcForNode(lambdaNode)
-					val, ok := r.i.env.GetVar(identifier)
-					if !ok {
-						r.i.errorf(lambdaNode, "Undefined lambda %q", identifier)
-					}
-					lambda, ok = val.TryGetFn()
-					if !ok {
-						r.i.errorf(lambdaNode, "Expected function, got '%s'", TypeAsString(val))
-					}
-				} else {
-					r.i.errorf(lambdaNode, "Bug! Unknown lambda type %q", lambdaNode.Kind())
-				}
+				lambda := r.resolveLambdaForModifier(lambdaNode, "map")
 
 				for _, field := range fields {
 					mods := r.loadFieldMods(field)
 					mods.lambda = &lambda
+				}
+			case rl.K_RAD_FIELD_MOD_FILTER:
+				lambdaNode := rl.GetChild(&stmtNode, rl.F_LAMBDA)
+				lambda := r.resolveLambdaForModifier(lambdaNode, "filter")
+
+				for _, field := range fields {
+					mods := r.loadFieldMods(field)
+					mods.filter = &lambda
 				}
 			}
 		}
@@ -288,7 +281,45 @@ func (r *radInvocation) execute() {
 		return
 	}
 
-	applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
+	// Execution order: filter → sort → map
+	//
+	// Rationale:
+	//   - Filter first: Sort only the rows we'll display (performance)
+	//   - Map last: Display transformation shouldn't affect filtering/sorting logic
+	//   - Sort middle: Sort filtered results in their original form
+	//
+	// For rad/request blocks: permanently affect field arrays for the rad block and beyond
+	// For display blocks: temporarily apply for rendering, then restore original values
+	if r.blockType == RadBlock || r.blockType == RequestBlock {
+		indicesToKeep := r.applyFilters(radFields)
+		r.filterColumns(radFields, indicesToKeep)
+		applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
+		r.applyMaps(radFields)
+	} else {
+		// Display block: save original values, apply filter/sort/map temporarily
+		savedValues := make(map[string]*RadList)
+		for _, field := range radFields {
+			fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
+			column := fieldVals.RequireList(r.i, field.node)
+			// Save a copy of the original values
+			savedValues[field.name] = &RadList{Values: append([]RadValue{}, column.Values...)}
+		}
+
+		// Temporarily mutate: filter → sort → map
+		indicesToKeep := r.applyFilters(radFields)
+		r.filterColumns(radFields, indicesToKeep)
+		applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
+		r.applyMaps(radFields)
+
+		// Restore original values after rendering (deferred)
+		defer func() {
+			for _, field := range radFields {
+				if saved, ok := savedValues[field.name]; ok {
+					r.i.env.SetVar(field.name, newRadValue(r.i, field.node, saved))
+				}
+			}
+		}()
+	}
 
 	if r.blockType == RequestBlock {
 		return
@@ -305,7 +336,7 @@ func (r *radInvocation) execute() {
 		}
 		columnValues := fieldVals.RequireList(r.i, field.node)
 		longestColumnLen = com.IntMax(longestColumnLen, columnValues.LenInt())
-		return columnStrings(r.i, r.colToMods, field.name, columnValues), true
+		return toStringArrayQuoteStr(columnValues.Values, false), true
 	})
 
 	tbl := NewTblWriter()
@@ -327,6 +358,175 @@ func (r *radInvocation) execute() {
 
 	// todo ensure failed requests get nicely printed
 	tbl.Render()
+}
+
+// applyFilters evaluates filter predicates across all fields and returns indices
+// of rows that pass ALL filters (AND logic).
+//
+// Return value semantics:
+//   - nil: No filters present, keep all rows
+//   - []int64{}: Filters present but all rows filtered out
+//   - []int64{...}: Indices of rows that passed all filters
+func (r *radInvocation) applyFilters(radFields []radField) []int64 {
+	// Early exit if no filters
+	hasFilters := false
+	for _, mods := range r.colToMods {
+		if mods.filter != nil {
+			hasFilters = true
+			break
+		}
+	}
+	if !hasFilters {
+		return nil // nil = keep all rows
+	}
+
+	// Get row count from first field
+	if len(radFields) == 0 {
+		return nil
+	}
+	firstFieldVals := r.i.env.GetVarElseBug(r.i, radFields[0].node, radFields[0].name)
+	firstColumn := firstFieldVals.RequireList(r.i, radFields[0].node)
+	rowCount := firstColumn.LenInt()
+
+	if rowCount == 0 {
+		return nil
+	}
+
+	// Track which rows pass (AND logic)
+	keepRow := make([]bool, rowCount)
+	for i := range keepRow {
+		keepRow[i] = true
+	}
+
+	// Evaluate each field's filter
+	for _, field := range radFields {
+		mods, hasMods := r.colToMods[field.name]
+		if !hasMods || mods.filter == nil {
+			continue
+		}
+
+		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
+		column := fieldVals.RequireList(r.i, field.node)
+
+		for rowIdx := 0; rowIdx < column.LenInt(); rowIdx++ {
+			if !keepRow[rowIdx] {
+				continue // Already filtered out
+			}
+
+			val := column.Values[rowIdx]
+			filterResult := mods.filter.Execute(
+				NewFnInvocation(
+					r.i,
+					mods.filter.ReprNode,
+					FUNC_FILTER,
+					NewPosArgs(NewPosArg(mods.filter.ReprNode, val)),
+					NO_NAMED_ARGS_INPUT,
+					mods.filter.IsBuiltIn(),
+				),
+			)
+
+			if !filterResult.TruthyFalsy() {
+				keepRow[rowIdx] = false
+			}
+		}
+	}
+
+	// Build list of kept indices
+	keptIndices := make([]int64, 0) // Initialize as empty slice, not nil
+	for i, keep := range keepRow {
+		if keep {
+			keptIndices = append(keptIndices, int64(i))
+		}
+	}
+
+	return keptIndices
+}
+
+// filterColumns applies row filtering by removing rows from all field columns.
+// Uses indicesToKeep from applyFilters() to determine which rows to keep.
+//
+// Parameters:
+//   - radFields: All fields in the rad block
+//   - indicesToKeep: Indices of rows to keep (nil means keep all)
+//
+// Side effects:
+//   - Mutates column.Values for each field in the environment
+//   - For rad/request blocks: permanent mutation
+//   - For display blocks: caller must save/restore values
+func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int64) {
+	if indicesToKeep == nil {
+		return
+	}
+
+	if len(radFields) > 0 {
+		// ensure all columns are equal length
+		expectedLen := -1
+		for _, field := range radFields {
+			fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
+			column := fieldVals.RequireList(r.i, field.node)
+			actualLen := column.LenInt()
+
+			if expectedLen == -1 {
+				expectedLen = actualLen
+			} else if actualLen != expectedLen {
+				r.i.errorf(field.node,
+					"Bug! Field %q has %d rows but expected %d. All fields must have identical row counts.",
+					field.name, actualLen, expectedLen)
+			}
+		}
+
+		// ensure no indices to keep are out of bounds
+		for _, idx := range indicesToKeep {
+			if idx < 0 || idx >= int64(expectedLen) {
+				r.i.errorf(radFields[0].node,
+					"Bug! Filter index %d is out of bounds for %d rows", idx, expectedLen)
+			}
+		}
+	}
+
+	for _, field := range radFields {
+		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
+		column := fieldVals.RequireList(r.i, field.node)
+
+		newValues := make([]RadValue, len(indicesToKeep))
+		for newIdx, oldIdx := range indicesToKeep {
+			newValues[newIdx] = column.Values[oldIdx]
+		}
+
+		column.Values = newValues
+		r.i.env.SetVar(field.name, newRadValue(r.i, field.node, column))
+	}
+}
+
+// applyMaps applies map transformations to field columns, mutating them permanently
+func (r *radInvocation) applyMaps(radFields []radField) {
+	for _, field := range radFields {
+		mods, hasMods := r.colToMods[field.name]
+		if !hasMods || mods.lambda == nil {
+			continue
+		}
+
+		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
+		column := fieldVals.RequireList(r.i, field.node)
+
+		newValues := make([]RadValue, len(column.Values))
+		for i, val := range column.Values {
+			mapped := mods.lambda.Execute(
+				NewFnInvocation(
+					r.i,
+					mods.lambda.ReprNode,
+					FUNC_MAP,
+					NewPosArgs(NewPosArg(mods.lambda.ReprNode, val)),
+					NO_NAMED_ARGS_INPUT,
+					mods.lambda.IsBuiltIn(),
+				),
+			)
+			newValues[i] = mapped
+		}
+
+		column.Values = newValues
+		r.i.env.SetVar(field.name, newRadValue(r.i, field.node, column))
+	}
 }
 
 func (r *radInvocation) resolveData() (data interface{}, err error) {
@@ -356,6 +556,30 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 	}
 }
 
+func (r *radInvocation) resolveLambdaForModifier(lambdaNode *ts.Node, modifierName string) RadFn {
+	var lambda RadFn
+
+	if lambdaNode.Kind() == rl.K_FN_LAMBDA {
+		lambda = NewFn(r.i, lambdaNode)
+	} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
+		identifier := r.i.GetSrcForNode(lambdaNode)
+		val, ok := r.i.env.GetVar(identifier)
+		if !ok {
+			r.i.errorf(lambdaNode, "Undefined lambda %q", identifier)
+		}
+		lambda, ok = val.TryGetFn()
+		if !ok {
+			r.i.errorf(lambdaNode, "Expected function for %s modifier, got '%s'",
+				modifierName, TypeAsString(val))
+		}
+	} else {
+		r.i.errorf(lambdaNode, "Bug! Unknown lambda type %q for %s modifier",
+			lambdaNode.Kind(), modifierName)
+	}
+
+	return lambda
+}
+
 func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, colWiseSort []ColumnSort) {
 	if generalSort != nil {
 		if len(colWiseSort) > 0 {
@@ -370,31 +594,6 @@ func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, c
 	}
 
 	sortColumns(i, fields, colWiseSort)
-}
-
-func columnStrings(i *Interpreter, colToMods map[string]*radFieldMods, fieldName string, column *RadList) []RadString {
-	mods, ok := colToMods[fieldName]
-	if !ok || mods.lambda == nil {
-		return toStringArrayQuoteStr(column.Values, false)
-	}
-
-	reprNode := mods.lambda.ReprNode
-	var newVals []RadString
-	for _, val := range column.Values {
-		mapped := mods.lambda.Execute(
-			NewFnInvocation(
-				i,
-				reprNode,
-				FUNC_MAP,
-				NewPosArgs(NewPosArg(reprNode, val)),
-				NO_NAMED_ARGS_INPUT,
-				mods.lambda.IsBuiltIn(),
-			),
-		)
-		newVals = append(newVals, toStringQuoteStr(mapped, false))
-	}
-
-	return newVals
 }
 
 func toStringArrayQuoteStr(v []RadValue, quoteStrings bool) []RadString {

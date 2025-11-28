@@ -6,9 +6,10 @@ rad url:
     sort
     ID:
         map fn(n) n * 2
+        filter fn(n) n > 5
 =====
-B: [ 0, 70] PS: [0,  0] PE: [5,  0] source_file
-B: [ 0, 69] PS: [0,  0] PE: [4, 23]   rad_block
+B: [ 0, 97] PS: [0,  0] PE: [6,  0] source_file
+B: [ 0, 96] PS: [0,  0] PE: [5, 26]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword `rad`
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]     source: expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]       delegate: ternary_expr
@@ -29,7 +30,7 @@ B: [22, 23] PS: [1, 13] PE: [1, 14]       , `,`
 B: [24, 28] PS: [1, 15] PE: [1, 19]       identifier: identifier `Name`
 B: [33, 37] PS: [2,  4] PE: [2,  8]     stmt: rad_sort_stmt
 B: [33, 37] PS: [2,  4] PE: [2,  8]       sort `sort`
-B: [42, 69] PS: [3,  4] PE: [4, 23]     stmt: rad_field_modifier_stmt
+B: [42, 96] PS: [3,  4] PE: [5, 26]     stmt: rad_field_modifier_stmt
 B: [42, 44] PS: [3,  4] PE: [3,  6]       identifier: identifier `ID`
 B: [44, 45] PS: [3,  6] PE: [3,  7]       : `:`
 B: [54, 69] PS: [4,  8] PE: [4, 23]       mod_stmt: rad_field_mod_map
@@ -59,3 +60,32 @@ B: [68, 69] PS: [4, 22] PE: [4, 23]                             delegate: indexe
 B: [68, 69] PS: [4, 22] PE: [4, 23]                               root: primary_expr
 B: [68, 69] PS: [4, 22] PE: [4, 23]                                 literal
 B: [68, 69] PS: [4, 22] PE: [4, 23]                                   int `2`
+B: [78, 96] PS: [5,  8] PE: [5, 26]       mod_stmt: rad_field_mod_filter
+B: [78, 84] PS: [5,  8] PE: [5, 14]         filter `filter`
+B: [85, 96] PS: [5, 15] PE: [5, 26]         lambda: fn_lambda
+B: [85, 87] PS: [5, 15] PE: [5, 17]           keyword: fn `fn`
+B: [87, 88] PS: [5, 17] PE: [5, 18]           ( `(`
+B: [88, 89] PS: [5, 18] PE: [5, 19]           normal_param: normal_param
+B: [88, 89] PS: [5, 18] PE: [5, 19]             name: identifier `n`
+B: [89, 90] PS: [5, 19] PE: [5, 20]           ) `)`
+B: [91, 96] PS: [5, 21] PE: [5, 26]           stmt: expr
+B: [91, 96] PS: [5, 21] PE: [5, 26]             delegate: ternary_expr
+B: [91, 96] PS: [5, 21] PE: [5, 26]               delegate: or_expr
+B: [91, 96] PS: [5, 21] PE: [5, 26]                 delegate: and_expr
+B: [91, 96] PS: [5, 21] PE: [5, 26]                   delegate: compare_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                     left: compare_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                       delegate: add_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                         delegate: mult_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                           delegate: unary_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                             delegate: fallback_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                               delegate: var_path
+B: [91, 92] PS: [5, 21] PE: [5, 22]                                 root: identifier `n`
+B: [93, 94] PS: [5, 23] PE: [5, 24]                     op: > `>`
+B: [95, 96] PS: [5, 25] PE: [5, 26]                     right: add_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                       delegate: mult_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                         delegate: unary_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                           delegate: fallback_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                             delegate: indexed_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                               root: primary_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                                 literal
+B: [95, 96] PS: [5, 25] PE: [5, 26]                                   int `5`

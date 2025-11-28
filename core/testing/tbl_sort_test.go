@@ -253,26 +253,6 @@ display:
 	assertNoErrors(t)
 }
 
-func TestRadSort_ColumnsRemainSortAfter(t *testing.T) {
-	script := `
-col = [3, 4, 2, 1]
-display:
-	fields col
-	sort asc
-print(col)
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `col 
-1    
-2    
-3    
-4    
-[ 1, 2, 3, 4 ]
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
 func TestRadSort_DoesNotSortColumnsIfNotAskedTo(t *testing.T) {
 	script := `
 col = [3, 4, 2, 1]
@@ -289,5 +269,45 @@ print(col)
 [ 3, 4, 2, 1 ]
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_DisplayBlock_SortDoesNotMutate(t *testing.T) {
+	script := `
+ages = [30, 10, 20]
+print("Before display:", ages)
+display:
+	fields ages
+	sort ages
+print("After display:", ages)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Before display: [ 30, 10, 20 ]
+ages 
+10    
+20    
+30    
+After display: [ 30, 10, 20 ]
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_RequestBlock_SortDoesMutate(t *testing.T) {
+	script := `
+Ages = json[].age
+print("Before request:", Ages)
+request "http://example.com":
+	fields Ages
+	sort Ages
+print("After request:", Ages)
+`
+	setupAndRunCode(t, script, "--color=never", "--mock-response", "example.com:./resources/mock_ages.json")
+	expected := `Before request: [ ]
+After request: [ 10, 20, 30 ]
+`
+	assertOutput(t, stdOutBuffer, expected)
+	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \"example.com\"): http://example.com\n")
+	assertHttpInvocationUrls(t, "http://example.com")
 	assertNoErrors(t)
 }

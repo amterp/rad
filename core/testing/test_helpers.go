@@ -76,8 +76,7 @@ var (
 	millisSlept      = make([]int64, 0)
 	shellInvocations = make([]core.ShellInvocation, 0)
 	httpInvocations  = make([]core.HttpRequest, 0)
-	// dont need reset
-	runnerInputInput = newRunnerInputInput()
+	runnerInput      = newRunnerInput()
 )
 
 type ErrorOrExit struct {
@@ -86,7 +85,7 @@ type ErrorOrExit struct {
 	panicMsg *string
 }
 
-func newRunnerInputInput() core.RunnerInput {
+func newRunnerInput() core.RunnerInput {
 	testExitFunc := func(code int) {
 		errorOrExit.exitCode = &code
 		// errorOrExit.stderrSnapshot = stdErrBuffer.String()
@@ -172,7 +171,7 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 
 		// Write stdin data to buffer and mark as piped
 		stdInBuffer.WriteString(tp.stdinInput)
-		if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+		if br, ok := runnerInput.RIo.StdIn.(*core.BufferReader); ok {
 			br.SetPiped(true)
 		}
 
@@ -187,7 +186,7 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	} else if tp.stdinInputSet {
 		// Only stdin data provided - write to buffer and mark as piped
 		stdInBuffer.WriteString(tp.stdinInput)
-		if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+		if br, ok := runnerInput.RIo.StdIn.(*core.BufferReader); ok {
 			br.SetPiped(true)
 		}
 	}
@@ -226,7 +225,7 @@ func setupRunner(t *testing.T, args ...string) *core.RadRunner {
 
 	os.Args = append([]string{"rad"}, args...)
 
-	return core.NewRadRunner(runnerInputInput)
+	return core.NewRadRunner(runnerInput)
 }
 
 func resetTestState() {
@@ -238,8 +237,10 @@ func resetTestState() {
 	shellInvocations = make([]core.ShellInvocation, 0)
 	httpInvocations = make([]core.HttpRequest, 0)
 	core.ResetGlobals()
+	// Clear mock patterns to prevent test interference
+	runnerInput.RReq.ClearMockedResponses()
 	// Reset the isPiped flag for stdin
-	if br, ok := runnerInputInput.RIo.StdIn.(*core.BufferReader); ok {
+	if br, ok := runnerInput.RIo.StdIn.(*core.BufferReader); ok {
 		br.SetPiped(false)
 	}
 	// Reset NO_COLOR environment variable

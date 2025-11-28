@@ -119,6 +119,10 @@ func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
 
+func (r *Requester) ClearMockedResponses() {
+	r.jsonPathsByMockedUrlRegex = make(map[string]string)
+}
+
 func (r *Requester) SetCaptureCallback(cb func(HttpRequest)) {
 	r.captureRequest = cb
 }

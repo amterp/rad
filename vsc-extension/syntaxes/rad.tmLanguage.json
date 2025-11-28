@@ -74,7 +74,7 @@
       "patterns": [
         {
           "name": "storage.modifier.rad",
-          "match": "\\b(fields|sort|map|color|asc|desc)\\b"
+          "match": "\\b(fields|sort|map|filter|color|asc|desc)\\b"
         },
         {
           "include": "#global"
