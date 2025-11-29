@@ -554,6 +554,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
       Color
@@ -592,13 +601,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#block-types" class="md-nav__link">
+  <a href="#other-block-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Block Types
+      Other Block Types
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Block Types">
+    <nav class="md-nav" aria-label="Other Block Types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1278,6 +1287,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#color" class="md-nav__link">
     <span class="md-ellipsis">
       Color
@@ -1316,13 +1334,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#block-types" class="md-nav__link">
+  <a href="#other-block-types" class="md-nav__link">
     <span class="md-ellipsis">
-      Block Types
+      Other Block Types
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Block Types">
+    <nav class="md-nav" aria-label="Other Block Types">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1627,7 +1645,70 @@ The expression that follows is what will get evaluated and decide the final valu
 It is the <em>output</em> of your lambda mini-function. In this example, we turn it into a string, created using string interpolation.</p>
 <p>Inside the string interpolation expression, we first divide it by one million (<code>p/1e6</code>, using scientific notation), and then
 use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (<code>.1</code>).</p>
-<p>Note that sorting operations are done on the pre-mapping column values.</p>
+<div class="admonition note">
+<p class="admonition-title">Modifier Execution Order</p>
+<p>Field modifiers execute in a specific order: <strong>filter → sort → map</strong></p>
+<ul>
+<li><strong>Filter</strong> first: Removes unwanted rows before sorting</li>
+<li><strong>Sort</strong> middle: Sorts the filtered data in its original form</li>
+<li><strong>Map</strong> last: Transforms values for display only</li>
+</ul>
+<p>This means sorting and filtering see the original extracted values, not the transformed display values from <code>map</code>.</p>
+</div>
+<h3 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">&para;</a></h3>
+<p>You can also <em>filter</em> rows based on conditions. This is useful when you only want to display data that matches certain criteria.</p>
+<p>For example, let's say you're querying an API that returns users, but you only want to see active users over 18 years old:</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    fields Name, Age, Status
+    Age:
+        filter fn(age) age &gt;= 18
+    Status:
+        filter fn(s) s == &quot;active&quot;
+</code></pre></div>
+<p>The syntax is <code>filter &lt;function&gt;</code>. The function receives each value from that column and returns a boolean (or truthy value). If it returns true, that row is kept. If false, the entire row is discarded.</p>
+<p>In this example, we're applying two filters:</p>
+<ul>
+<li><code>Age</code>: Keep only rows where age is 18 or greater</li>
+<li><code>Status</code>: Keep only rows where status equals "active"</li>
+</ul>
+<p>When multiple fields have filters, a row must pass <strong>all filters</strong> to be displayed (AND logic). In our example, both the age and status filters must pass.</p>
+<p>Let's see this in action with some mock data:</p>
+<div class="highlight"><pre><span></span><code>Ages = [25, 15, 30, 20, 12]
+Names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;Diana&quot;, &quot;Eve&quot;]
+Status = [&quot;active&quot;, &quot;active&quot;, &quot;inactive&quot;, &quot;active&quot;, &quot;active&quot;]
+
+display:
+    fields Names, Ages, Status
+    Ages:
+        filter fn(a) a &gt;= 18
+    Status:
+        filter fn(s) s == &quot;active&quot;
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Names   Ages  Status
+Alice   25    active
+Diana   20    active
+</code></pre></div>
+</div>
+
+<p>Notice that Charlie doesn't appear (age &gt;= 18 but status is inactive), Bob doesn't appear (active but age &lt; 18), and Eve doesn't appear (active but age &lt; 18).</p>
+<p>Like with sorting and mapping, the filter predicate can be a lambda expression or a function reference:</p>
+<div class="highlight"><pre><span></span><code>display:
+    fields Name, Age
+    Age:
+        filter is_adult
+
+fn is_adult(age):
+    return age &gt;= 18
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Execution Order: filter → sort → map</p>
+<p>Filtering happens <strong>before</strong> sorting and mapping. This means:
+- Filters see the original extracted values (not transformed by <code>map</code>)
+- Sorting operates on already-filtered data
+- Mapping transforms the final filtered+sorted values for display</p>
+<p>This order ensures your filters work on raw data and your sorts only process rows that will actually be displayed.</p>
+</div>
 <h3 id="color">Color<a class="headerlink" href="#color" title="Permanent link">&para;</a></h3>
 <p>Another column modifier uses the keyword <code>color</code>. You can tell Rad to color a cell's value depending on its contents by using a <a href="https://en.wikipedia.org/wiki/Regular_expression">regex</a>.</p>
 <p>For example:</p>
@@ -1656,7 +1737,7 @@ Then, we add three more rules: any sequence "Denmark" should be colored red, and
         map fn(s) upper(s)
 </code></pre></div>
 <p>This example applies color rules to both <code>Status</code> and <code>Priority</code>, then transforms three columns to uppercase with a single <code>map</code> block. This is much more concise than writing separate modifier blocks for each column.</p>
-<p>Any column modifier (<code>map</code>, <code>color</code>) can be applied to multiple columns this way.</p>
+<p>Any column modifier (<code>filter</code>, <code>map</code>, <code>color</code>) can be applied to multiple columns this way.</p>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <p>Rad blocks can contain if statements, so if you want slightly different behavior for your rad block based on some condition, you don't need to
 copy and paste the whole block into two separate if blocks.</p>
@@ -1675,7 +1756,7 @@ rad url:
 </code></pre></div>
 <p>If the flag is enabled, we sort by descending population, otherwise we sort rows alphabetically.</p>
 <p>You can put any rad block statements into these if blocks, including <code>fields</code>, column modifiers, etc.</p>
-<h2 id="block-types">Block Types<a class="headerlink" href="#block-types" title="Permanent link">&para;</a></h2>
+<h2 id="other-block-types">Other Block Types<a class="headerlink" href="#other-block-types" title="Permanent link">&para;</a></h2>
 <p>So far we've seen the <code>rad</code> block, which performs an HTTP request, extracts data, and displays it as a table.
 Rad also offers two variants that give you more control over this workflow: <strong>request blocks</strong> and <strong>display blocks</strong>.</p>
 <h3 id="request-no-display">request: No Display<a class="headerlink" href="#request-no-display" title="Permanent link">&para;</a></h3>
@@ -1690,7 +1771,7 @@ into lists, then stops. This is useful when you want to process the data further
 largest_city = City[0]
 print(&quot;The largest city is {largest_city}&quot;)
 </code></pre></div>
-<p>Note that sorting works in request blocks since it modifies the underlying data, but display-only modifiers like <code>color</code> or <code>map</code> have no effect since nothing gets displayed.</p>
+<p>Note that <code>filter</code>, <code>sort</code>, and <code>map</code> all work in request blocks since they modify the underlying data. However, <code>color</code> is display-only and has no effect since nothing gets displayed.</p>
 <h3 id="display-no-request">display: No Request<a class="headerlink" href="#display-no-request" title="Permanent link">&para;</a></h3>
 <p>A <strong>display block</strong> takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.</p>
 <p><strong>Display with manual data:</strong></p>
@@ -1727,6 +1808,16 @@ display resp.body:
 <li><strong><code>request</code></strong>: When you need to process data before displaying or use it for non-display purposes</li>
 <li><strong><code>display</code></strong>: When you have data from manual sources, <code>http_get()</code> with custom headers, or derived from <code>request</code> blocks</li>
 </ul>
+<div class="admonition info">
+<p class="admonition-title">Modifier Mutation Across Block Types</p>
+<p>Field modifiers like (<code>filter</code>, <code>sort</code>, <code>map</code>) may or may not mutate underlying data depending on the block type:</p>
+<ul>
+<li>In <strong><code>rad</code></strong> and <strong><code>request</code></strong> blocks: Permanently modify the field arrays</li>
+<li>In <strong><code>display</code></strong> blocks: Applied for rendering, but does <em>not</em> change underlying data.</li>
+</ul>
+<p>This means you can use <code>request</code> blocks to filter, sort, or transform data for further processing,
+while <code>display</code> blocks let you format data for viewing without altering the original values.</p>
+</div>
 <h2 id="understanding-http-requests">Understanding HTTP Requests<a class="headerlink" href="#understanding-http-requests" title="Permanent link">&para;</a></h2>
 <p>When you write <code>rad</code> or <code>request</code> blocks, Rad automatically performs an <strong>HTTP GET</strong> request to the URL and expects a JSON response.
 This happens behind the scenes - you don't need to explicitly call any HTTP functions.</p>
@@ -1768,11 +1859,13 @@ display resp.body:
 </ul>
 </li>
 <li><strong>Table customization</strong> options:<ul>
+<li><strong>Filtering</strong>: Remove rows based on conditions</li>
 <li><strong>Sorting</strong>: <code>sort</code>, <code>sort Field</code>, <code>sort Field desc</code></li>
 <li><strong>Transforming</strong>: Map functions to modify column values</li>
 <li><strong>Styling</strong>: Color cells based on regex patterns</li>
-<li><strong>Multi-column</strong>: Apply same modifier to multiple columns at once</li>
+<li><strong>Multi-column</strong>: Apply same modifiers to multiple columns at once</li>
 <li><strong>Conditional</strong>: Use <code>if</code> statements for dynamic behavior</li>
+<li><strong>Execution order</strong>: filter → sort → map</li>
 </ul>
 </li>
 <li><strong>HTTP control</strong>: rad blocks perform GET automatically; use <code>http_get()</code>/<code>http_post()</code> with <code>display</code> for more advanced queries (e.g. requiring headers/auth)</li>
