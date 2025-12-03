@@ -7,7 +7,7 @@ jobs:
   homebrew:
     runs-on: macos-latest
     steps:
-      - uses: dawidd6/action-homebrew-bump-formula@v6
+      - uses: dawidd6/action-homebrew-bump-formula@1446dca
         with:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           formula: rad
