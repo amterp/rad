@@ -1133,21 +1133,13 @@ func init() {
 		{
 			Name: FUNC_MIN,
 			Execute: func(f FuncInvocation) RadValue {
-				list := f.GetList("_nums")
-				if list.Len() == 0 {
-					return f.ReturnErrf(rl.ErrEmptyList, "Cannot find minimum of empty list")
+				nums, errVal := extractMinMaxNums(f, FUNC_MIN)
+				if errVal != nil {
+					return *errVal
 				}
 
 				minVal := math.MaxFloat64
-				for idx, item := range list.Values {
-					val, ok := item.TryGetFloatAllowingInt()
-					if !ok {
-						return f.ReturnErrf(
-							rl.ErrBugTypeCheck,
-							"Requires a list of numbers, got %q at index %d",
-							TypeAsString(item),
-							idx)
-					}
+				for _, val := range nums {
 					minVal = math.Min(minVal, val)
 				}
 				return f.Return(minVal)
@@ -1156,22 +1148,13 @@ func init() {
 		{
 			Name: FUNC_MAX,
 			Execute: func(f FuncInvocation) RadValue {
-				list := f.GetList("_nums")
-				if list.Len() == 0 {
-					return f.ReturnErrf(rl.ErrEmptyList, "Cannot find maximum of empty list")
+				nums, errVal := extractMinMaxNums(f, FUNC_MAX)
+				if errVal != nil {
+					return *errVal
 				}
 
 				maxVal := -math.MaxFloat64
-				for idx, item := range list.Values {
-					val, ok := item.TryGetFloatAllowingInt()
-					if !ok {
-						return f.ReturnErrf(
-							rl.ErrBugTypeCheck,
-							"%s() requires a list of numbers, got %q at index %d",
-							FUNC_MAX,
-							TypeAsString(item),
-							idx)
-					}
+				for _, val := range nums {
 					maxVal = math.Max(maxVal, val)
 				}
 
@@ -1822,11 +1805,64 @@ func runTrim(f FuncInvocation, trimFunc func(str RadString, chars string) RadStr
 	return f.Return(subject)
 }
 
-func tryGetArg(idx int, args []PosArg) *PosArg {
-	if idx >= len(args) {
-		return nil
+// extractMinMaxNums extracts float values from min/max variadic arguments.
+// Supports two calling patterns:
+// - Single list argument: min([1, 2, 3]) - iterates over the list's elements
+// - Multiple number arguments: min(1, 2, 3) - uses each argument as a number
+func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, *RadValue) {
+	args := f.GetList("_nums")
+
+	if args.Len() == 0 {
+		errVal := f.ReturnErrf(rl.ErrEmptyList, "Cannot find %s of empty list", funcName)
+		return nil, &errVal
 	}
-	return &args[idx]
+
+	// Check for single-list-argument mode: min([1, 2, 3])
+	if args.LenInt() == 1 {
+		if innerList, ok := args.Values[0].Val.(*RadList); ok {
+			if innerList.Len() == 0 {
+				errVal := f.ReturnErrf(rl.ErrEmptyList, "Cannot find %s of empty list", funcName)
+				return nil, &errVal
+			}
+			nums := make([]float64, 0, innerList.LenInt())
+			for idx, item := range innerList.Values {
+				val, ok := item.TryGetFloatAllowingInt()
+				if !ok {
+					errVal := f.ReturnErrf(
+						rl.ErrBugTypeCheck,
+						"%s() requires a list of numbers, got %q at index %d",
+						funcName, TypeAsString(item), idx)
+					return nil, &errVal
+				}
+				nums = append(nums, val)
+			}
+			return nums, nil
+		}
+	}
+
+	// Multiple arguments mode: min(1, 2, 3)
+	// Each argument must be a number (not a list)
+	nums := make([]float64, 0, args.LenInt())
+	for idx, item := range args.Values {
+		// Check if any argument is a list (error: should use single-list mode)
+		if _, isList := item.Val.(*RadList); isList {
+			errVal := f.ReturnErrf(
+				rl.ErrBugTypeCheck,
+				"%s() with multiple arguments requires numbers, not lists. Use %s([...]) for a single list",
+				funcName, funcName)
+			return nil, &errVal
+		}
+		val, ok := item.TryGetFloatAllowingInt()
+		if !ok {
+			errVal := f.ReturnErrf(
+				rl.ErrBugTypeCheck,
+				"%s() requires numbers, got %q at argument %d",
+				funcName, TypeAsString(item), idx+1)
+			return nil, &errVal
+		}
+		nums = append(nums, val)
+	}
+	return nums, nil
 }
 
 func bugIncorrectTypes(funcName string) {
