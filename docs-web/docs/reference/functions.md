@@ -1189,30 +1189,38 @@ ceil(5.0)      // -> 5
 
 ### min
 
-Returns the minimum value from a list of numbers.
+Returns the minimum value from a list of numbers or from variadic arguments.
 
 ```rad
-min(_nums: list[float]) -> float|error
+min(_nums: float|float[]) -> float|error
 ```
+
+Accepts either a single list of numbers or multiple number arguments.
 
 ```rad
 min([1, 2, 3, 4])        // -> 1.0
-min([5.5, 2.1, 8.9])     // -> 2.1
+min(1, 2, 3, 4)          // -> 1.0
+min(5.5, 2.1, 8.9)       // -> 2.1
+min(5)                   // -> 5.0
 min([])                  // -> Error: cannot find minimum of empty list
 min([1, "text"])         // -> Error: requires list of numbers
 ```
 
 ### max
 
-Returns the maximum value from a list of numbers.
+Returns the maximum value from a list of numbers or from variadic arguments.
 
 ```rad
-max(_nums: list[float]) -> float|error
+max(_nums: float|float[]) -> float|error
 ```
+
+Accepts either a single list of numbers or multiple number arguments.
 
 ```rad
 max([1, 2, 3, 4])        // -> 4.0
-max([5.5, 2.1, 8.9])     // -> 8.9
+max(1, 2, 3, 4)          // -> 4.0
+max(5.5, 2.1, 8.9)       // -> 8.9
+max(5)                   // -> 5.0
 max([])                  // -> Error: cannot find maximum of empty list
 max([1, "text"])         // -> Error: requires list of numbers
 ```
