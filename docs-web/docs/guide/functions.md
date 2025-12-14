@@ -316,7 +316,7 @@ print(calculate(5))  // 20
 [//]: # (TODO closures behave poorly, fix and write here i.e. they should statically capture values!)
 
 Lambdas are particularly useful for defining once-off operations and passing them as arguments.
-For example, with [`map`](../reference/functions.md#map) and [`filter`](../reference/functions.md#filter):
+For example, with [`map`](../reference/functions.md#map), [`filter`](../reference/functions.md#filter), and [`flat_map`](../reference/functions.md#flat_map):
 
 ```rad
 numbers = [1, 2, 3, 4, 5]
@@ -325,6 +325,11 @@ print(doubled)  // [2, 4, 6, 8, 10]
 
 evens = numbers.filter(fn(x) x % 2 == 0)
 print(evens)  // [2, 4]
+
+// flat_map is useful for transformations that produce lists
+words = ["hello world", "foo bar"]
+all_words = words.flat_map(fn(s) s.split(" "))
+print(all_words)  // ["hello", "world", "foo", "bar"]
 ```
 
 !!! tip "Named Functions vs Lambdas"
@@ -352,7 +357,7 @@ There are a lot of built-in functions. If you want to see what's available and h
     - Are **hoisted** at the root of scripts (can be called before definition)
     - Can have optional **type annotations**
 - **Lambdas** are anonymous functions: `double = fn(x) x * 2`
-    - Useful for one-off operations and callbacks - functions like `map()` and `filter()`
+    - Useful for one-off operations and callbacks - functions like `map()`, `filter()`, and `flat_map()`
 
 ## Next
 

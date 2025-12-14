@@ -122,6 +122,7 @@ const (
 	FUNC_DECODE_BASE16      = "decode_base16"
 	FUNC_MAP                = "map"
 	FUNC_FILTER             = "filter"
+	FUNC_FLAT_MAP           = "flat_map"
 	FUNC_LOAD               = "load"
 	FUNC_COLOR_RGB          = "color_rgb"
 	FUNC_COLORIZE           = "colorize"
@@ -1557,6 +1558,94 @@ func init() {
 						return true
 					})
 					return f.Return(outputMap)
+
+				default:
+					panic(fmt.Sprintf("Bug! Expected either list or map %s", coll.Type().AsString()))
+				}
+			},
+		},
+		{
+			Name: FUNC_FLAT_MAP,
+			Execute: func(f FuncInvocation) RadValue {
+				coll := f.GetArg("_coll")
+				fnArg := f.GetArg("_fn")
+
+				outputList := NewRadList()
+
+				switch coerced := coll.Val.(type) {
+				case *RadList:
+					if fnArg.IsNull() {
+						for i, val := range coerced.Values {
+							list, ok := val.TryGetList()
+							if !ok {
+								return f.ReturnErrf(rl.ErrGenericRuntime,
+									"%s requires all elements to be lists, but element at index %d is %s",
+									FUNC_FLAT_MAP, i, val.Type().AsString())
+							}
+							for _, elem := range list.Values {
+								outputList.Append(elem)
+							}
+						}
+					} else {
+						fn := fnArg.RequireFn(f.i, f.callNode)
+						for i, val := range coerced.Values {
+							invocation := NewFnInvocation(
+								f.i,
+								f.callNode,
+								fn.Name(),
+								NewPosArgs(NewPosArg(f.callNode, val)),
+								NO_NAMED_ARGS_INPUT,
+								fn.IsBuiltIn(),
+							)
+							out := fn.Execute(invocation)
+							list, ok := out.TryGetList()
+							if !ok {
+								return f.ReturnErrf(rl.ErrGenericRuntime,
+									"%s function must return a list, but returned %s for element at index %d",
+									FUNC_FLAT_MAP, out.Type().AsString(), i)
+							}
+							for _, elem := range list.Values {
+								outputList.Append(elem)
+							}
+						}
+					}
+					return f.Return(outputList)
+
+				case *RadMap:
+					if fnArg.IsNull() {
+						return f.ReturnErrf(rl.ErrGenericRuntime,
+							"%s on maps requires a function argument", FUNC_FLAT_MAP)
+					}
+					fn := fnArg.RequireFn(f.i, f.callNode)
+					var err RadValue
+					var hasErr bool
+					coerced.Range(func(key, value RadValue) bool {
+						invocation := NewFnInvocation(
+							f.i,
+							f.callNode,
+							fn.Name(),
+							NewPosArgs(NewPosArg(f.callNode, key), NewPosArg(f.callNode, value)),
+							NO_NAMED_ARGS_INPUT,
+							fn.IsBuiltIn(),
+						)
+						out := fn.Execute(invocation)
+						list, ok := out.TryGetList()
+						if !ok {
+							err = f.ReturnErrf(rl.ErrGenericRuntime,
+								"%s function must return a list, but returned %s for key %v",
+								FUNC_FLAT_MAP, out.Type().AsString(), key.Val)
+							hasErr = true
+							return false // stop iteration
+						}
+						for _, elem := range list.Values {
+							outputList.Append(elem)
+						}
+						return true
+					})
+					if hasErr {
+						return err
+					}
+					return f.Return(outputList)
 
 				default:
 					panic(fmt.Sprintf("Bug! Expected either list or map %s", coll.Type().AsString()))
