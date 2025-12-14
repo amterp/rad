@@ -391,6 +391,44 @@ filter([1, 2, 3, 4], fn(x) x % 2 == 0)      // -> [2, 4]
 filter({"a": 1, "b": 2}, fn(k, v) v > 1)    // -> {"b": 2}
 ```
 
+### flat_map
+
+Flattens a list of lists, or applies a mapping function that returns lists and flattens the results.
+
+```rad
+flat_map(_coll: list|map, _fn: any?) -> list
+```
+
+**For lists without function:** All elements must be lists. Flattens one level.
+
+**With function:** The function must return a list. Results are flattened.
+
+For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)` and is required.
+
+**Examples:**
+
+```rad
+// Flatten list of lists (all elements must be lists)
+[[1, 2], [3, 4]].flat_map()              // -> [1, 2, 3, 4]
+[[], [1], []].flat_map()                 // -> [1]
+
+// Only one level
+[[[1]], [[2]]].flat_map()                // -> [[1], [2]]
+
+// Map then flatten (function must return a list)
+["a-b", "c-d"].flat_map(fn(e) e.split("-"))  // -> ["a", "b", "c", "d"]
+[1, 2].flat_map(fn(x) [x, x * 10])           // -> [1, 10, 2, 20]
+[1, 2].flat_map(fn(x) range(x))              // -> [0, 0, 1]
+
+// Map collection - function required, must return list
+{"a": [1, 2], "b": [3, 4]}.flat_map(fn(k, v) v)  // -> [1, 2, 3, 4]
+{"a": 1, "b": 2}.flat_map(fn(k, v) [k, v])       // -> ["a", 1, "b", 2]
+
+// Errors:
+// [1, [2], 3].flat_map()           // Error: element 0 is not a list
+// [1, 2].flat_map(fn(x) x * 2)     // Error: function must return a list
+```
+
 ### load
 
 Loads a value into a map using lazy evaluation. If key exists, returns cached value; otherwise runs loader function.

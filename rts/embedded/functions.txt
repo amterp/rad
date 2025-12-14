@@ -20,6 +20,7 @@ error
 exit
 filter
 find_paths
+flat_map
 float
 floor
 gen_fid
