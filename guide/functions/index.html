@@ -1595,13 +1595,18 @@ print(add(3, 4))  // 7
 print(calculate(5))  // 20
 </code></pre></div>
 <p>Lambdas are particularly useful for defining once-off operations and passing them as arguments.
-For example, with <a href="../../reference/functions/#map"><code>map</code></a> and <a href="../../reference/functions/#filter"><code>filter</code></a>:</p>
+For example, with <a href="../../reference/functions/#map"><code>map</code></a>, <a href="../../reference/functions/#filter"><code>filter</code></a>, and <a href="../../reference/functions/#flat_map"><code>flat_map</code></a>:</p>
 <div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
 doubled = numbers.map(fn(x) x * 2)
 print(doubled)  // [2, 4, 6, 8, 10]
 
 evens = numbers.filter(fn(x) x % 2 == 0)
 print(evens)  // [2, 4]
+
+// flat_map is useful for transformations that produce lists
+words = [&quot;hello world&quot;, &quot;foo bar&quot;]
+all_words = words.flat_map(fn(s) s.split(&quot; &quot;))
+print(all_words)  // [&quot;hello&quot;, &quot;world&quot;, &quot;foo&quot;, &quot;bar&quot;]
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Named Functions vs Lambdas</p>
@@ -1632,7 +1637,7 @@ print(evens)  // [2, 4]
 </ul>
 </li>
 <li><strong>Lambdas</strong> are anonymous functions: <code>double = fn(x) x * 2</code><ul>
-<li>Useful for one-off operations and callbacks - functions like <code>map()</code> and <code>filter()</code></li>
+<li>Useful for one-off operations and callbacks - functions like <code>map()</code>, <code>filter()</code>, and <code>flat_map()</code></li>
 </ul>
 </li>
 </ul>
