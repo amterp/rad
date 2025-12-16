@@ -181,3 +181,51 @@ print(a)
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Func_ParseEpochFloatSeconds(t *testing.T) {
+	script := `
+a = parse_epoch(1712345678.5, tz = "UTC")
+print(a)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678500, "nanos": 1712345678500000000 } }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Func_ParseEpochFloatWithExplicitUnit(t *testing.T) {
+	script := `
+a = parse_epoch(1712345678123.25, unit = "milliseconds", tz = "UTC")
+print(a)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123250000 } }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Func_ParseEpochFloatNegative(t *testing.T) {
+	script := `
+a = parse_epoch(-1712345678.5, unit = "seconds", tz = "UTC")
+print(a)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "date": "1915-09-28", "year": 1915, "month": 9, "day": 28, "hour": 4, "minute": 25, "second": 21, "time": "04:25:21", "epoch": { "seconds": -1712345679, "millis": -1712345678500, "nanos": -1712345678500000000 } }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Func_ParseEpochFloatAutoDetectMillis(t *testing.T) {
+	script := `
+a = parse_epoch(1712345678123.5, tz = "UTC")
+print(a)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123500000 } }
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
