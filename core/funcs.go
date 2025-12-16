@@ -160,36 +160,38 @@ const (
 	namedArgUnit           = "unit"
 	namedArgTz             = "tz"
 
-	constContent      = "content" // todo rename to 'contents'? feels more natural
-	constCreated      = "created"
-	constSizeBytes    = "size_bytes"
-	constBytesWritten = "bytes_written"
-	constText         = "text"
-	constBytes        = "bytes"
-	constCode         = "code"
-	constMsg          = "msg"
-	constTarget       = "target"
-	constCwd          = "cwd"
-	constAbsolute     = "absolute"
-	constPath         = "path"
-	constAlgo         = "algo"
-	constSha1         = "sha1"
-	constSha256       = "sha256"
-	constSha512       = "sha512"
-	constMd5          = "md5"
-	constExists       = "exists"
-	constFullPath     = "full_path"
-	constBaseName     = "base_name"
-	constPermissions  = "permissions"
-	constType         = "type"
-	constDir          = "dir"
-	constFile         = "file"
-	constDefault      = "default"
-	constAuto         = "auto"
-	constSeconds      = "seconds"
-	constMilliseconds = "milliseconds"
-	constMicroseconds = "microseconds"
-	constNanoseconds  = "nanoseconds"
+	constContent        = "content" // todo rename to 'contents'? feels more natural
+	constCreated        = "created"
+	constSizeBytes      = "size_bytes"
+	constBytesWritten   = "bytes_written"
+	constText           = "text"
+	constBytes          = "bytes"
+	constCode           = "code"
+	constMsg            = "msg"
+	constTarget         = "target"
+	constCwd            = "cwd"
+	constAbsolute       = "absolute"
+	constPath           = "path"
+	constAlgo           = "algo"
+	constSha1           = "sha1"
+	constSha256         = "sha256"
+	constSha512         = "sha512"
+	constMd5            = "md5"
+	constExists         = "exists"
+	constFullPath       = "full_path"
+	constBaseName       = "base_name"
+	constPermissions    = "permissions"
+	constType           = "type"
+	constModifiedMillis = "modified_millis"
+	constAccessedMillis = "accessed_millis"
+	constDir            = "dir"
+	constFile           = "file"
+	constDefault        = "default"
+	constAuto           = "auto"
+	constSeconds        = "seconds"
+	constMilliseconds   = "milliseconds"
+	constMicroseconds   = "microseconds"
+	constNanoseconds    = "nanoseconds"
 )
 
 var (
@@ -710,6 +712,10 @@ func init() {
 					radMap.SetPrimitiveStr(constType, fileType)
 					if fileType == constFile {
 						radMap.SetPrimitiveInt64(constSizeBytes, stat.Size())
+					}
+					radMap.SetPrimitiveInt64(constModifiedMillis, stat.ModTime().UnixMilli())
+					if atimeMillis, ok := getAccessTimeMillis(stat); ok {
+						radMap.SetPrimitiveInt64(constAccessedMillis, atimeMillis)
 					}
 					radMap.SetPrimitiveBool(constExists, true)
 				}

@@ -26,20 +26,52 @@ func Test_GetPath_Exists(t *testing.T) {
 	script := `
 p = "data/test_file.txt"
 path = get_path(p)
-print(path.keys())
 print("/{p}" in path.full_path)
 print(path.base_name)
 print(path.permissions)
 print(path.type)
 print(path.size_bytes)
+print("modified_millis" in path.keys())
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `[ "exists", "full_path", "base_name", "permissions", "type", "size_bytes" ]
-true
+	expected := `true
 test_file.txt
 -rw-r--r--
 file
 9
+true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_GetPath_ModifiedMillis(t *testing.T) {
+	script := `
+path = get_path("data/test_file.txt")
+mtime = path.modified_millis
+
+// Should be newer than 2003
+print(mtime > 1065885429278)
+// Should be in the past or present (before year 2100)
+print(mtime < 4102444800000)  // 2100-01-01 in millis
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `true
+true
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_GetPath_ModifiedMillis_Dir(t *testing.T) {
+	script := `
+path = get_path("data")
+print("modified_millis" in path.keys())
+print(path.modified_millis > 1065885429278)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `true
+true
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

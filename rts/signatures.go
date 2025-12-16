@@ -67,7 +67,7 @@ func init() {
 		newFnSignature(`pow(_base: float, _exponent: float) -> float`),
 		newFnSignature(`error(_msg: str) -> error`),
 		newFnSignature(`input(prompt: str = "> ", *, hint: str = "", default: str = "", secret: bool = false) -> error|str`),
-		newFnSignature(`get_path(_path: str) -> { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int }`),
+		newFnSignature(`get_path(_path: str) -> { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int, "modified_millis"?: int, "accessed_millis"?: int }`),
 		newFnSignature(`get_env(_var: str) -> str`),
 		newFnSignature(`find_paths(_path: str, *, depth: int = -1, relative: ["target", "cwd", "absolute"] = "target") -> error|str[]`),
 		newFnSignature(`delete_path(_path: str) -> bool`),
