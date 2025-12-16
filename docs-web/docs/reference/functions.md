@@ -1013,11 +1013,11 @@ Loads options from a resource file and presents an interactive menu.
 pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any
 ```
 
-Loads data from a JSON/YAML file and presents it as selectable options. Returns the selected item(s).
+Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).
 
 ```rad
 pick_from_resource("servers.json")                    // -> Menu from file
-pick_from_resource("configs.yaml", "prod")            // -> Pre-filtered options
+pick_from_resource("configs.json", "prod")            // -> Pre-filtered options
 pick_from_resource("data.json", prompt="Select:")     // -> Custom prompt
 ```
 
