@@ -3917,9 +3917,9 @@ pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff0
 <p>Loads options from a resource file and presents an interactive menu.</p>
 <div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;) -&gt; any
 </code></pre></div>
-<p>Loads data from a JSON/YAML file and presents it as selectable options. Returns the selected item(s).</p>
+<p>Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).</p>
 <div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
-pick_from_resource(&quot;configs.yaml&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered options
+pick_from_resource(&quot;configs.json&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered options
 pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
 </code></pre></div>
 <h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
@@ -4482,6 +4482,8 @@ if has_stdin():
 <li><code>permissions?: str</code> - Permission string (e.g., "rwxr-xr-x")</li>
 <li><code>type?: str</code> - Either "file" or "dir"</li>
 <li><code>size_bytes?: int</code> - File size (only for files)</li>
+<li><code>modified_millis?: int</code> - Modification time as epoch milliseconds</li>
+<li><code>accessed_millis?: int</code> - Access time as epoch milliseconds (Unix/macOS only)</li>
 </ul>
 <p><strong>Examples:</strong></p>
 <div class="highlight"><pre><span></span><code>info = get_path(&quot;config.txt&quot;)
@@ -4490,6 +4492,12 @@ if info.exists:
     print(&quot;Type:&quot;, info.type)
 else:
     print(&quot;File not found&quot;)
+
+// Working with timestamps using parse_epoch()
+info = get_path(&quot;data.json&quot;)
+if info.exists:
+    mtime = info.modified_millis.parse_epoch()
+    print(&quot;Last modified:&quot;, mtime.date, mtime.time)
 </code></pre></div>
 <h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
 <p>Returns a list of all paths under a directory.</p>
@@ -4755,10 +4763,10 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 </code></pre></div>
 <h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
 <p>Parses a Unix epoch timestamp into various time formats.</p>
-<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int) -&gt; map|error
-parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;) -&gt; map|error
-parse_epoch(_epoch: int, *, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
-parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
+<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float) -&gt; map|error
+parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;) -&gt; map|error
+parse_epoch(_epoch: int|float, *, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
+parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4772,8 +4780,8 @@ parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;
 <tbody>
 <tr>
 <td><code>_epoch</code></td>
-<td><code>int</code></td>
-<td>Unix epoch timestamp</td>
+<td><code>int\|float</code></td>
+<td>Unix epoch timestamp (float for sub-unit precision)</td>
 </tr>
 <tr>
 <td><code>tz</code></td>
@@ -4788,7 +4796,8 @@ parse_epoch(_epoch: int, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;
 </tbody>
 </table>
 <p>Converts an epoch timestamp to the same format as <a href="#now"><code>now()</code></a>. Auto-detects units from digit count, or specify
-explicitly.</p>
+explicitly. When using a float, the fractional part provides sub-unit precision (e.g., <code>1712345678.5</code> seconds includes
+500 milliseconds).</p>
 <p><strong>Examples:</strong></p>
 <div class="highlight"><pre><span></span><code>// Parse seconds epoch (auto-detected)
 time = parse_epoch(1712345678)
@@ -4800,6 +4809,14 @@ print(time.hour)  // -&gt; Hour in Chicago timezone
 
 // Explicit unit specification
 time = parse_epoch(1712345678000, unit=&quot;milliseconds&quot;)
+
+// Float epoch with sub-second precision
+time = parse_epoch(1712345678.5)  // 1712345678 seconds + 500ms
+print(time.epoch.millis)  // -&gt; 1712345678500
+
+// Float with explicit unit (sub-millisecond precision)
+time = parse_epoch(1712345678123.25, unit=&quot;milliseconds&quot;)
+print(time.epoch.nanos)  // -&gt; 1712345678123250000
 
 // Error handling
 time, err = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;)
