@@ -208,7 +208,7 @@ func realShellExecutor(invocation ShellInvocation) (string, string, int) {
 
 	// Print command if not quiet
 	if !invocation.IsQuiet {
-		RP.RadStderrf(fmt.Sprintf("⚡️ %s\n", invocation.Command))
+		RP.RadStderrf("⚡️ %s\n", invocation.Command)
 	}
 
 	// Run the command

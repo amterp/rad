@@ -289,7 +289,7 @@ func (r *Requester) resolveMockedResponse(url string) (string, bool) {
 		}
 
 		if re.MatchString(url) {
-			RP.RadStderrf(fmt.Sprintf("Mocking response for url (matched %q): %s\n", urlRegex, url))
+			RP.RadStderrf("Mocking response for url (matched %q): %s\n", urlRegex, url)
 			data := r.loadMockedResponse(jsonPath)
 			return data, true
 		} else {
