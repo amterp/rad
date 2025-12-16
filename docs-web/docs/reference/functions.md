@@ -1566,6 +1566,8 @@ get_path(_path: str) -> map
 - `permissions?: str` - Permission string (e.g., "rwxr-xr-x")
 - `type?: str` - Either "file" or "dir"
 - `size_bytes?: int` - File size (only for files)
+- `modified_millis?: int` - Modification time as epoch milliseconds
+- `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
 
 **Examples:**
 
@@ -1576,6 +1578,12 @@ if info.exists:
     print("Type:", info.type)
 else:
     print("File not found")
+
+// Working with timestamps using parse_epoch()
+info = get_path("data.json")
+if info.exists:
+    mtime = info.modified_millis.parse_epoch()
+    print("Last modified:", mtime.date, mtime.time)
 ```
 
 ### find_paths
