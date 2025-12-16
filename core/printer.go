@@ -191,6 +191,11 @@ func (p *stdPrinter) RadStderrf(format string, args ...interface{}) {
 	if p.isQuiet {
 		return
 	}
+	if args == nil || len(args) == 0 {
+		// help prevent MISSING printf args mistakes
+		fmt.Fprint(p.stdErr, format)
+		return
+	}
 	fmt.Fprint(p.stdErr, fmt.Sprintf(format, args...))
 }
 
