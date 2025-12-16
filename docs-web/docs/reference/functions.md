@@ -1844,22 +1844,23 @@ print("UTC time:", utc_time.time)          // -> Time in UTC
 Parses a Unix epoch timestamp into various time formats.
 
 ```rad
-parse_epoch(_epoch: int) -> map|error
-parse_epoch(_epoch: int, *, tz: str = "local") -> map|error
-parse_epoch(_epoch: int, *, unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
-parse_epoch(_epoch: int, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
+parse_epoch(_epoch: int|float) -> map|error
+parse_epoch(_epoch: int|float, *, tz: str = "local") -> map|error
+parse_epoch(_epoch: int|float, *, unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
+parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
 ```
 
 **Parameters:**
 
-| Parameter | Type                                                                          | Description                               |
-|-----------|-------------------------------------------------------------------------------|-------------------------------------------|
-| `_epoch`  | `int`                                                                         | Unix epoch timestamp                      |
-| `tz`      | `str = "local"`                                                               | Timezone (e.g., "UTC", "America/Chicago") |
-| `unit`    | `["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"` | Timestamp unit (auto-detects by default)  |
+| Parameter | Type                                                                          | Description                                         |
+|-----------|-------------------------------------------------------------------------------|-----------------------------------------------------|
+| `_epoch`  | `int\|float`                                                                  | Unix epoch timestamp (float for sub-unit precision) |
+| `tz`      | `str = "local"`                                                               | Timezone (e.g., "UTC", "America/Chicago")           |
+| `unit`    | `["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"` | Timestamp unit (auto-detects by default)            |
 
 Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
-explicitly.
+explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
+500 milliseconds).
 
 **Examples:**
 
@@ -1874,6 +1875,14 @@ print(time.hour)  // -> Hour in Chicago timezone
 
 // Explicit unit specification
 time = parse_epoch(1712345678000, unit="milliseconds")
+
+// Float epoch with sub-second precision
+time = parse_epoch(1712345678.5)  // 1712345678 seconds + 500ms
+print(time.epoch.millis)  // -> 1712345678500
+
+// Float with explicit unit (sub-millisecond precision)
+time = parse_epoch(1712345678123.25, unit="milliseconds")
+print(time.epoch.nanos)  // -> 1712345678123250000
 
 // Error handling
 time, err = parse_epoch(1712345678, tz="Invalid/Timezone")

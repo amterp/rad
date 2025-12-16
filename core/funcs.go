@@ -421,34 +421,59 @@ func init() {
 		{
 			Name: FUNC_PARSE_EPOCH,
 			Execute: func(f FuncInvocation) RadValue {
-				epoch := f.GetInt("_epoch")
+				epochArg := f.GetArg("_epoch")
 				tz := f.GetStr("tz").Plain()
 				unit := f.GetStr("unit").Plain()
 
-				isNegative := epoch < 0
-				absEpoch := epoch
+				var isFloat bool
+				var epochInt int64
+				var fracPart float64
+				var isNegative bool
+
+				switch epochArg.Type() {
+				case rl.RadIntT:
+					epochInt = epochArg.RequireInt(f.i, f.callNode)
+					isNegative = epochInt < 0
+				case rl.RadFloatT:
+					isFloat = true
+					epochFloat := epochArg.RequireFloatAllowingInt(f.i, f.callNode)
+					isNegative = epochFloat < 0
+					epochInt = int64(epochFloat)
+					fracPart = epochFloat - float64(epochInt)
+				default:
+					bugIncorrectTypes(FUNC_PARSE_EPOCH)
+				}
+
+				absEpoch := epochInt
+				absFracPart := fracPart
 				if isNegative {
 					absEpoch = -absEpoch
+					absFracPart = -absFracPart
 				}
 
 				digitCount := len(strconv.FormatInt(absEpoch, 10))
 				var second int64
 				var nanoSecond int64
+				var fracMultiplier = 1e9 // default for seconds
 
 				if unit == constAuto {
 					switch digitCount {
 					case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10:
 						second = absEpoch
 						nanoSecond = 0
+						fracMultiplier = 1e9
 					case 13:
 						second = absEpoch / 1_000
 						nanoSecond = (absEpoch % 1_000) * 1_000_000
+						fracMultiplier = 1e6
 					case 16:
 						second = absEpoch / 1_000_000
 						nanoSecond = (absEpoch % 1_000_000) * 1_000
+						fracMultiplier = 1e3
 					case 19:
 						second = absEpoch / 1_000_000_000
 						nanoSecond = absEpoch % 1_000_000_000
+						fracMultiplier = 1
 					default:
 						errMsg := fmt.Sprintf(
 							"Ambiguous epoch length (%d digits). Use '%s' to disambiguate.",
@@ -462,20 +487,28 @@ func init() {
 					case constSeconds:
 						second = absEpoch
 						nanoSecond = 0
+						fracMultiplier = 1e9
 					case constMilliseconds:
 						second = absEpoch / 1_000
 						nanoSecond = (absEpoch % 1_000) * 1_000_000
+						fracMultiplier = 1e6
 					case constMicroseconds:
 						second = absEpoch / 1_000_000
 						nanoSecond = (absEpoch % 1_000_000) * 1_000
+						fracMultiplier = 1e3
 					case constNanoseconds:
 						second = absEpoch / 1_000_000_000
 						nanoSecond = absEpoch % 1_000_000_000
+						fracMultiplier = 1
 					default:
 						return f.ReturnErrf(rl.ErrInvalidTimeUnit,
 							"invalid units %q; expected one of %s, %s, %s, %s, %s",
 							unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
 					}
+				}
+
+				if isFloat {
+					nanoSecond += int64(math.Round(absFracPart * fracMultiplier))
 				}
 
 				if isNegative {
