@@ -977,15 +977,18 @@ gen_fid(num_random_chars=3)                  // -> "1a2b3c"
 Presents an interactive menu for selecting from a list of options.
 
 ```rad
-pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = "Pick an option") -> str
+pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> str
 ```
 
 Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.
 
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a filter, it's selected immediately; if multiple match exactly, only those are shown.
+
 ```rad
-pick(["apple", "banana", "cherry"])           // -> Interactive menu
-pick(["red", "green", "blue"], "r")           // -> Pre-filtered to "red", "green"
-pick(["one", "two", "three"], prompt="Choose:")  // -> Custom prompt
+pick(["apple", "banana", "cherry"])                        // -> Interactive menu
+pick(["red", "green", "blue"], "r")                        // -> Fuzzy-filtered to "red", "green"
+pick(["grape", "g"], "g", prefer_exact=true)                 // -> Immediately picks "g" (exact match)
+pick(["one", "two", "three"], prompt="Choose:")            // -> Custom prompt
 ```
 
 ### pick_kv
@@ -993,16 +996,19 @@ pick(["one", "two", "three"], prompt="Choose:")  // -> Custom prompt
 Presents an interactive menu showing keys but returns corresponding values.
 
 ```rad
-pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = "Pick an option") -> any
+pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> any
 ```
 
 Displays keys in the menu but returns the value at the same index when selected.
 
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a filter, its value is returned immediately; if multiple match exactly, only those are shown.
+
 ```rad
 names = ["Alice", "Bob", "Charlie"]
 ages = [25, 30, 35]
-pick_kv(names, ages)                    // -> Shows names, returns age
-pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])  // -> Shows colors, returns hex
+pick_kv(names, ages)                                        // -> Shows names, returns age
+pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])           // -> Shows colors, returns hex
+pick_kv(["grape", "g"], [1, 2], "g", prefer_exact=true)       // -> Returns 2 (exact match)
 ```
 
 ### pick_from_resource
@@ -1010,15 +1016,18 @@ pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])  // -> Shows colors, returns h
 Loads options from a resource file and presents an interactive menu.
 
 ```rad
-pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option") -> any
+pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option", prefer_exact: bool = true) -> any
 ```
 
 Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).
 
+With `prefer_exact=true` (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set `prefer_exact=false` to disable this and use pure fuzzy matching.
+
 ```rad
 pick_from_resource("servers.json")                    // -> Menu from file
-pick_from_resource("configs.json", "prod")            // -> Pre-filtered options
+pick_from_resource("configs.json", "prod")            // -> Pre-filtered, exact match priority
 pick_from_resource("data.json", prompt="Select:")     // -> Custom prompt
+pick_from_resource("data.json", "x", prefer_exact=false) // -> Pure fuzzy matching
 ```
 
 ### multipick
