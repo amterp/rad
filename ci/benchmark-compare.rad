@@ -1,6 +1,7 @@
 #!/usr/bin/env rad
 ---
 Compares benchmark performance between base branch and current PR.
+Uses interleaved hyperfine execution for reliable statistical comparison.
 Outputs structured data for GitHub Actions consumption.
 ---
 
@@ -12,10 +13,11 @@ if not base_ref:
 
 print("🏃 Starting benchmark comparison...")
 print("Base branch: {base_ref}")
+
+// Get absolute path for PR directory
 _, pwd_output, _ = $`pwd`
-print("🔧 Working directory: {pwd_output}")
-_, ls_output, _ = $`ls -la`
-print("🔧 Available files: {ls_output}")
+pr_dir = trim(pwd_output)
+print("🔧 Working directory: {pr_dir}")
 
 // Install hyperfine if not available (CI only - assumes hyperfine available locally)
 ci_env = get_env("CI")
@@ -35,7 +37,7 @@ benchmark_configs = [
     },
     {
         "new_path": "ci/benchmark-scripts/startup-time.rad",
-        "old_path": null,  // This benchmark is new, doesn't exist in old location
+        "old_path": null,
         "name": "startup-time"
     },
     {
@@ -65,153 +67,154 @@ benchmark_configs = [
     }
 ]
 
-// Run benchmarks on current PR
-print("🔨 Running PR benchmarks...")
-$`make build`
+// ============================================================================
+// PHASE 1: Build both binaries before running any benchmarks
+// ============================================================================
 
-// Check which benchmarks exist in current PR
+// Build PR binary
+print("🔨 Building PR binary...")
+$`make build`
+pr_binary = "{pr_dir}/bin/radd"
+
+// Clone and build base branch
+print("🔄 Cloning and building base branch...")
+temp_dir = "/tmp/rad-base-benchmark"
+$`rm -rf {temp_dir}`
+repo_url = "https://github.com/amterp/rad.git"
+$`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
+$`cd {temp_dir} && make build`
+base_binary = "{temp_dir}/bin/radd"
+
+print("✅ Both binaries built")
+print("   PR binary: {pr_binary}")
+print("   Base binary: {base_binary}")
+
+// ============================================================================
+// PHASE 2: Determine which benchmarks to run
+// ============================================================================
+
+// Find benchmarks that exist in PR
 print("🔧 Checking for PR benchmarks...")
-pr_benchmark_pairs = []
+pr_benchmarks = []
 for config in benchmark_configs:
-    print("🔧 Looking for: {config.new_path}")
     info = get_path(config.new_path)
-    print("🔧 File exists: {info.exists}")
     if info.exists:
-        pr_benchmark_pairs = pr_benchmark_pairs + [config]
+        pr_benchmarks = pr_benchmarks + [config]
         print("✅ Found PR benchmark: {config.new_path}")
     else:
         print("⚠️ Skipping missing PR benchmark: {config.new_path}")
-        print("🔧 Checking directory structure: $(ls -la ci/ || echo 'ci/ not found')")
-        print("🔧 Checking benchmark-scripts: $(ls -la ci/benchmark-scripts/ || echo 'ci/benchmark-scripts/ not found')")
 
-if len(pr_benchmark_pairs) == 0:
+if len(pr_benchmarks) == 0:
     print_err("❌ No benchmark scripts found in PR")
     exit(1)
 
-pr_cmds = ["'./bin/radd {config.new_path}'" for config in pr_benchmark_pairs]
-pr_cmd_str = join(pr_cmds, " ")
-pr_results_file = "/tmp/pr-benchmark-results.json"
-$`hyperfine {pr_cmd_str} --warmup 3 --runs 10 --export-json {pr_results_file}`
-print("PR benchmark results: {pr_results_file}")
+// Determine benchmark script paths for base (with fallback logic)
+print("🔧 Resolving base benchmark paths...")
+benchmark_pairs = []
+for config in pr_benchmarks:
+    pr_script = "{pr_dir}/{config.new_path}"
 
-// Use a temporary directory to build base branch
-print("🔄 Building base branch in temporary directory...")
-temp_dir = "/tmp/rad-base-benchmark"
-$`rm -rf {temp_dir}`
-
-// Clone from the GitHub remote instead of local directory
-repo_url = "https://github.com/amterp/rad.git"
-$`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
-
-// Build base branch and run benchmarks
-print("🏃 Running base branch benchmarks...")
-$`cd {temp_dir} && make build`
-
-// Check which benchmarks exist in base branch (try both old and new paths)
-base_benchmark_pairs = []
-for config in pr_benchmark_pairs:
-    print("🔧 Checking base benchmark for: {config.name}")
-
-    // First try new path
-    new_path_check = "{temp_dir}/{config.new_path}"
-    print("🔧 Trying new path: {new_path_check}")
-    new_path_info = get_path(new_path_check)
-    print("🔧 New path exists: {new_path_info.exists}")
-    if new_path_info.exists:
-        base_benchmark_pairs = base_benchmark_pairs + [{
-            "pr_path": config.new_path,
-            "base_path": config.new_path,
-            "name": config.name
+    // Try new path in base
+    new_path = "{temp_dir}/{config.new_path}"
+    if get_path(new_path).exists:
+        benchmark_pairs = benchmark_pairs + [{
+            "name": config.name,
+            "pr_script": pr_script,
+            "base_script": new_path
         }]
-        print("✅ Found base benchmark (new path): {config.new_path}")
+        print("✅ {config.name}: using new path in base")
         continue
 
-    // Then try old path if available
+    // Try old path if available
     if config.old_path != null:
-        old_path_check = "{temp_dir}/{config.old_path}"
-        print("🔧 Trying old path: {old_path_check}")
-        old_path_info = get_path(old_path_check)
-        print("🔧 Old path exists: {old_path_info.exists}")
-        if old_path_info.exists:
-            base_benchmark_pairs = base_benchmark_pairs + [{
-                "pr_path": config.new_path,
-                "base_path": config.old_path,
-                "name": config.name
+        old_path = "{temp_dir}/{config.old_path}"
+        if get_path(old_path).exists:
+            benchmark_pairs = benchmark_pairs + [{
+                "name": config.name,
+                "pr_script": pr_script,
+                "base_script": old_path
             }]
-            print("✅ Found base benchmark (old path): {config.old_path}")
+            print("✅ {config.name}: using old path in base")
             continue
 
-    // If not found in base, copy from PR to enable comparison
-    print("🔧 Benchmark not found in base, copying from PR: {config.new_path}")
-
-    // Verify PR benchmark exists
-    pr_benchmark_path = config.new_path
-    pr_file_info = get_path(pr_benchmark_path)
-    if not pr_file_info.exists:
-        print_err("❌ PR benchmark doesn't exist: {pr_benchmark_path}")
-        continue
-
-    // Create directory structure in temp_dir if needed
+    // Copy from PR if not in base (enables comparison for new benchmarks)
+    print("🔧 {config.name}: not in base, copying from PR")
     target_path = "{temp_dir}/{config.new_path}"
     target_dir = join(split(target_path, "/")[:-1], "/")
     $`mkdir -p {target_dir}`
-
-    // Copy the benchmark file from PR to base checkout
-    $`cp {pr_benchmark_path} {target_path}`
-    print("✅ Copied benchmark to base: {target_path}")
-
-    base_benchmark_pairs = base_benchmark_pairs + [{
-        "pr_path": config.new_path,
-        "base_path": config.new_path,
-        "name": config.name
+    $`cp {config.new_path} {target_path}`
+    benchmark_pairs = benchmark_pairs + [{
+        "name": config.name,
+        "pr_script": pr_script,
+        "base_script": target_path
     }]
 
-if len(base_benchmark_pairs) == 0:
+if len(benchmark_pairs) == 0:
     print_err("❌ No benchmarks available for comparison")
     exit(1)
 
-base_cmds = ["'./bin/radd {pair.base_path}'" for pair in base_benchmark_pairs]
-base_cmd_str = join(base_cmds, " ")
-base_results_file = "/tmp/base-benchmark-results.json"
-$`cd {temp_dir} && hyperfine {base_cmd_str} --warmup 3 --runs 10 --export-json {base_results_file}`
-print("Base benchmark results: {base_results_file}")
+print("📊 Running {len(benchmark_pairs)} benchmarks")
 
-// Parse results
-pr_file_info = get_path(pr_results_file)
-if not pr_file_info.exists:
-    print_err("❌ PR benchmark results file not found: {pr_results_file}")
+// ============================================================================
+// PHASE 3: Run interleaved benchmarks with hyperfine
+// ============================================================================
+
+// Build interleaved hyperfine command with -n labels
+// Interleaving PR and Base runs for each benchmark ensures environmental noise
+// affects both equally, improving statistical reliability
+cmds = []
+for pair in benchmark_pairs:
+    // Use compound labels: "PR:name" and "Base:name"
+    cmds = cmds + ["-n 'PR:{pair.name}' '{pr_binary} {pair.pr_script}'"]
+    cmds = cmds + ["-n 'Base:{pair.name}' '{base_binary} {pair.base_script}'"]
+
+cmd_str = join(cmds, " ")
+results_file = "/tmp/benchmark-results.json"
+
+print("🏃 Running interleaved benchmarks (warmup=2, runs=5)...")
+$`hyperfine {cmd_str} --warmup 2 --runs 5 --export-json {results_file}`
+
+// ============================================================================
+// PHASE 4: Parse results and compare
+// ============================================================================
+
+file_info = get_path(results_file)
+if not file_info.exists:
+    print_err("❌ Benchmark results file not found: {results_file}")
     exit(1)
 
-base_file_info = get_path(base_results_file)
-if not base_file_info.exists:
-    print_err("❌ Base benchmark results file not found: {base_results_file}")
+data = parse_json(read_file(results_file).content)
+if type_of(data) == "error":
+    print_err("❌ Failed to parse benchmark data: {data}")
     exit(1)
 
-pr_data = parse_json(read_file(pr_results_file).content)
-base_data = parse_json(read_file(base_results_file).content)
+// Build maps for PR and Base results using the -n labels
+pr_results = {}
+base_results = {}
+for result in data.results:
+    // result.command contains the label like "PR:for-loop-add"
+    label = result.command
+    parts = split(label, ":")
+    if len(parts) != 2:
+        print("⚠️ Unexpected label format: {label}")
+        continue
 
-if type_of(pr_data) == "error":
-    print_err("❌ Failed to parse PR benchmark data: {pr_data}")
-    exit(1)
+    variant = parts[0]
+    bench_name = parts[1]
 
-if type_of(base_data) == "error":
-    print_err("❌ Failed to parse base benchmark data: {base_data}")
-    exit(1)
+    if variant == "PR":
+        pr_results[bench_name] = result
+    else if variant == "Base":
+        base_results[bench_name] = result
 
-// Compare results - only include benchmarks that exist in both versions
+// Compare results
 comparisons = []
-for pr_result in pr_data.results:
-    // Find corresponding base result
-    benchmark_name = extract_benchmark_name(pr_result.command)
-    base_result = null
-
-    for base_res in base_data.results:
-        if extract_benchmark_name(base_res.command) == benchmark_name:
-            base_result = base_res
-            break
+for bench_name in keys(pr_results):
+    pr_result = pr_results[bench_name]
+    base_result = base_results[bench_name]
 
     if base_result == null:
-        print("⚠️ Skipping benchmark comparison for {benchmark_name} (only exists in PR)")
+        print("⚠️ Skipping {bench_name} (no base result)")
         continue
 
     // Calculate performance change
@@ -220,16 +223,18 @@ for pr_result in pr_data.results:
     diff_ms = pr_mean - base_mean
     diff_percent = base_mean > 0 ? round((diff_ms / base_mean) * 100, 2) : 0
 
-    comparison = {
-        "name": benchmark_name,
+    comparisons = comparisons + [{
+        "name": bench_name,
         "base_mean_ms": round(base_mean, 2),
         "pr_mean_ms": round(pr_mean, 2),
         "diff_ms": round(diff_ms, 2),
         "diff_percent": diff_percent,
         "is_regression": diff_percent > 10  // Flag >10% slower as regression
-    }
+    }]
 
-    comparisons = comparisons + [comparison]
+// ============================================================================
+// PHASE 5: Write results and cleanup
+// ============================================================================
 
 // Create result structure
 result = {
@@ -267,12 +272,6 @@ for comparison in comparisons:
 
 if result.has_regressions:
     print(yellow("⚠️  Performance regressions detected!"))
-
-fn extract_benchmark_name(command):
-    // Extract benchmark name from command like "./bin/radd benchmark/scripts/for-loop-add.rad"
-    parts = split(command, "/")
-    filename = parts[-1]
-    return replace(filename, ".rad", "")
 
 fn format_diff(diff_ms):
     sign = diff_ms >= 0 ? "+" : ""
