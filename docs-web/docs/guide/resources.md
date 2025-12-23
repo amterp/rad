@@ -16,7 +16,10 @@ output = pick(options, "sandwich")
 print("You chose: {output}")
 ```
 
-When you initially run this, the `sandwich` filter should exclude `chicken burger` and ask you to select between two remaining options:
+When you initially run this, the `sandwich` filter should exclude `chicken burger` and ask you to select between two remaining options.
+
+Note: You can enable exact match priority with `prefer_exact=true`. When enabled, if your filter exactly matches one of the options (case-insensitive), that option will be selected immediately without entering interactive mode.
+For example, `pick(["r", "red", "rose"], "r", prefer_exact=true)` would immediately select "r" without prompting.
 
 ```
 ┃ Pick an option
@@ -62,7 +65,7 @@ Notice that the function did not output the *key* `ham sandwich` that was select
 
 ## `pick_from_resource`
 
-Now we'll look at actually using what this section is about - resources. [`pick_from_resource`](../reference/functions.md#pick_from_resource) allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous `pick` functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed.
+Now we'll look at actually using what this section is about - resources. [`pick_from_resource`](../reference/functions.md#pick_from_resource) allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous `pick` functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed. Unlike `pick` and `pick_kv`, `pick_from_resource` has `prefer_exact=true` by default—if your filter exactly matches one of the keys (case-insensitive), that option will be selected immediately.
 
 Let's do a simple example. As mentioned, a resource file is simply a JSON file. We'll create an example where we look up a url based on user input:
 

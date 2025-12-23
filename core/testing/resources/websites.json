@@ -5,7 +5,7 @@
       "values": ["gitlab.com", "GitLab"]
     },
     {
-      "keys": ["gh", "hub"],
+      "keys": ["gh", "hub", "g"],
       "values": ["github.com", "GitHub"]
     }
   ]

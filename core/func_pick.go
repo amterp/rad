@@ -31,7 +31,8 @@ var FuncPick = BuiltInFunc{
 		}
 
 		keyGroups := lo.Map(options, func(key string, _ int) []string { return []string{key} })
-		str, err := pickKv(f, keyGroups, keyGroups, filters)
+		prioExact := f.GetBool(namedArgPreferExact)
+		str, err := pickKv(f, keyGroups, keyGroups, filters, prioExact)
 		if err != nil {
 			return f.Return(err)
 		}
@@ -64,7 +65,8 @@ var FuncPickKv = BuiltInFunc{
 		keyGroups := lo.Map(keys, func(key string, _ int) []string { return []string{key} })
 		valueGroups := lo.Map(values, func(value RadValue, _ int) []RadValue { return []RadValue{value} })
 
-		out, err := pickKv(f, keyGroups, valueGroups, filters)
+		prioExact := f.GetBool(namedArgPreferExact)
+		out, err := pickKv(f, keyGroups, valueGroups, filters, prioExact)
 		if err != nil {
 			return f.Return(err)
 		}
@@ -104,7 +106,8 @@ var FuncPickFromResource = BuiltInFunc{
 			}
 		}
 
-		out, err := pickKv(f, keyGroups, valueGroups, filters)
+		prioExact := f.GetBool(namedArgPreferExact)
+		out, err := pickKv(f, keyGroups, valueGroups, filters, prioExact)
 
 		if err != nil {
 			return f.Return(err)
@@ -123,6 +126,7 @@ func pickKv[T comparable](
 	keyGroups [][]string,
 	valueGroups [][]T,
 	filters []string,
+	prioExact bool,
 ) ([]T, *RadError) {
 	if len(keyGroups) != len(valueGroups) {
 		return []T{}, NewErrorStrf("Number of keys and values must match, but got %s and %s",
@@ -140,6 +144,7 @@ func pickKv[T comparable](
 	// matched values by label, plus an ordered list of labels
 	matchedKeyValues := make(map[string][]T)
 	orderedKeys := make([]string, 0, len(keyGroups))
+	hasExactMatch := make(map[string]bool)
 
 	for i, keyGroup := range keyGroups {
 		values := valueGroups[i]
@@ -147,17 +152,21 @@ func pickKv[T comparable](
 
 		// decide whether this one passes filters
 		keep := len(filters) == 0
+		foundExactMatch := false
+
 		if !keep {
 			keep = true
 			for _, filter := range filters {
-				found := false
+				filterMatched := false
 				for _, key := range keyGroup {
 					if fuzzy.MatchFold(filter, key) {
-						found = true
-						break
+						filterMatched = true
+					}
+					if strings.EqualFold(filter, key) {
+						foundExactMatch = true
 					}
 				}
-				if !found {
+				if !filterMatched {
 					keep = false
 					break
 				}
@@ -167,6 +176,9 @@ func pickKv[T comparable](
 		if keep {
 			matchedKeyValues[label] = values
 			orderedKeys = append(orderedKeys, label)
+			if foundExactMatch {
+				hasExactMatch[label] = true
+			}
 		}
 	}
 
@@ -181,6 +193,22 @@ func pickKv[T comparable](
 	// single match? return immediately
 	if len(orderedKeys) == 1 {
 		return matchedKeyValues[orderedKeys[0]], nil
+	}
+
+	// exact match priority: if enabled and exactly one entry has an exact key match, pick it immediately
+	if prioExact {
+		var exactMatchLabels []string
+		for _, lbl := range orderedKeys {
+			if hasExactMatch[lbl] {
+				exactMatchLabels = append(exactMatchLabels, lbl)
+			}
+		}
+		if len(exactMatchLabels) == 1 {
+			return matchedKeyValues[exactMatchLabels[0]], nil
+		}
+		if len(exactMatchLabels) > 1 {
+			orderedKeys = exactMatchLabels // narrow picker to exact matches only
+		}
 	}
 
 	// build options in original order
