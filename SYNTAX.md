@@ -600,6 +600,22 @@ $`make build` catch:
     exit(1)
 ```
 
+### Shell Command Modifiers
+
+Two modifiers control shell command behavior:
+
+```rad
+// quiet - suppresses the ⚡️ command echo
+quiet $`make build`
+code, stdout = quiet $`grep pattern file` catch:
+    stdout = ""
+
+// confirm - prompts user approval before running (useful for destructive ops)
+confirm $`rm -rf node_modules`
+```
+
+Modifiers go after `=` in assignments: `result = quiet $`cmd``, not `quiet result = $`cmd``.
+
 ## JSON Processing and Display Blocks
 
 ### JSON Path Definitions
@@ -856,6 +872,8 @@ fn_with_closure = fn(x):
 
 ## Built-in Types and Methods
 
+For a complete reference of all built-in functions, see: https://amterp.github.io/rad/reference/functions/
+
 ### String Methods
 
 ```rad
@@ -1014,14 +1032,16 @@ args:
 
 ### Comment Alignment
 
+As a convention, align comments 2 spaces from the longest argument in the aligned group.
+
 ```rad
-// Good: Align comments within reason
+// Good: Align comments within reason (2 spaces from longest)
 args:
-    name str              # User's full name
-    age int               # Age in years  
-    email str?            # Contact email
-    very_long_param str   # Don't align with this one if it's much longer
-    city str              # Align with the shorter ones instead
+    name str        # User's full name
+    age int         # Age in years
+    email str?      # Contact email
+    very_long_param str  # Don't align with this one if it's much longer
+    city str        # Align with the shorter ones instead
 
 // Bad: Inconsistent alignment
 args:
