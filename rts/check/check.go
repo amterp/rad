@@ -68,7 +68,8 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
 	nodes := c.tree.FindInvalidNodes()
 	for _, node := range nodes {
-		*d = append(*d, NewDiagnosticError(node, c.src, "Invalid syntax", rl.ErrInvalidSyntax))
+		msg, code, suggestion := GenerateErrorMessage(node, c.src)
+		*d = append(*d, NewDiagnosticErrorWithSuggestion(node, c.src, msg, code, suggestion))
 	}
 }
 

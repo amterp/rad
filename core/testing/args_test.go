@@ -274,7 +274,7 @@ args:
 	expected := `Error at L3:16
 
   	intArg int = 1.2
-                 ^^ Invalid syntax
+                 ^^ Invalid argument declaration
 `
 	assertError(t, 1, expected)
 }

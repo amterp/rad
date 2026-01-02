@@ -241,7 +241,7 @@ print(r"\"")
 	expected := `Error at L2:7
 
   print(r"\"")
-        ^^^^^ Invalid syntax
+        ^^^^^ Unexpected 'r"\""'
 `
 	assertError(t, 1, expected)
 }
@@ -424,7 +424,7 @@ print(text)
 	expected := `Error at L2:8
 
   text = """abc
-         ^^^ Invalid syntax
+         ^^^ Unexpected '"""'
 `
 	assertError(t, 1, expected)
 }

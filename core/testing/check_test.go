@@ -15,14 +15,14 @@ func Test_Check(t *testing.T) {
 	expected := `L1:9: ERROR
 
      1 | hello = 2 a
-       |         ^ Invalid syntax
-       |         (code: RAD10001)
+       |         ^ Unexpected '2'
+       |         (code: RAD10009)
 
 L3:2: ERROR
 
      3 | 	yes no
-       |  ^ Invalid syntax
-       |  (code: RAD10001)
+       |  ^ Unexpected 'yes'
+       |  (code: RAD10009)
 
 Reported 2 diagnostics.
 `
@@ -132,6 +132,22 @@ L3:1: HINT
 Reported 2 diagnostics.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func Test_Check_ReservedKeyword_Args(t *testing.T) {
+	script := `
+args = 5
+print(args)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:1
+
+  args = 5
+  ^^^^^^ 'args' is reserved (used in args blocks)
+
+  Try: use a different variable name
+`
+	assertError(t, 1, expected)
 }
 
 func Test_Check_UnknownCommandCallbacks(t *testing.T) {

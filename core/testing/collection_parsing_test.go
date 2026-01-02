@@ -78,7 +78,7 @@ print(a)
 	expected := `Error at L2:6
 
   a = {,}
-       ^ Invalid syntax
+       ^ Unexpected ','
 `
 	assertError(t, 1, expected)
 }

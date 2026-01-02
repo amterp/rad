@@ -151,7 +151,7 @@ print(a)
 func Test_Ternary_FailsIfWhitespaceAbused(t *testing.T) {
 	script := `
 if true:
-	a = "blah" 
+	a = "blah"
 ? "not empty" : "empty"
 	print("one")
 
@@ -159,10 +159,6 @@ print("two")
 `
 	setupAndRunCode(t, script, "--color=never")
 	// this specific error is not ideal, we can (and probably should) improve it
-	expected := `Error at L3:12
-
-  	a = "blah" 
-              Invalid syntax
-`
+	expected := "Error at L3:12\n\n  \ta = \"blah\"\n              Expected identifier\n"
 	assertError(t, 1, expected)
 }

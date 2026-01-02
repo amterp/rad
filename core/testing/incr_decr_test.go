@@ -101,7 +101,7 @@ a++++
 	expected := `Error at L3:4
 
   a++++
-     ^^ Invalid syntax
+     ^^ Unexpected '++'
 `
 	assertError(t, 1, expected)
 }
@@ -115,7 +115,7 @@ a----
 	expected := `Error at L3:4
 
   a----
-     ^^ Invalid syntax
+     ^^ Unexpected '--'
 `
 	assertError(t, 1, expected)
 }
@@ -129,7 +129,7 @@ a++--
 	expected := `Error at L3:4
 
   a++--
-     ^^ Invalid syntax
+     ^^ Unexpected '--'
 `
 	assertError(t, 1, expected)
 }
@@ -143,7 +143,7 @@ a--++
 	expected := `Error at L3:4
 
   a--++
-     ^^ Invalid syntax
+     ^^ Unexpected '++'
 `
 	assertError(t, 1, expected)
 }

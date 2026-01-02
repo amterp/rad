@@ -11,7 +11,15 @@ type Error string
 // Note: when adding here, updating the reference!! " docs/reference/errors.md "
 const (
 	// 1xxxx Syntax Errors
-	ErrInvalidSyntax Error = "10001"
+	ErrInvalidSyntax       Error = "10001"
+	ErrMissingColon        Error = "10002"
+	ErrMissingIdentifier   Error = "10003"
+	ErrMissingExpression   Error = "10004"
+	ErrMissingCloseParen   Error = "10005"
+	ErrMissingCloseBracket Error = "10006"
+	ErrMissingCloseBrace   Error = "10007"
+	ErrReservedKeyword     Error = "10008"
+	ErrUnexpectedToken     Error = "10009"
 
 	// 2xxxx Runtime Errors
 	ErrGenericRuntime       Error = "20000"

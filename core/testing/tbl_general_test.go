@@ -55,10 +55,10 @@ request:
     fields Name, Age
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:8
+	expected := `Error at L5:1
 
   request:
-          Invalid syntax
+  ^ Invalid syntax
 `
 	assertError(t, 1, expected)
 }
@@ -128,7 +128,7 @@ rad url
 	expected := `Error at L3:1
 
   rad url
-  ^^^^^^^ Invalid syntax
+  ^^^^^^^ Unexpected 'rad url'
 `
 	assertError(t, 1, expected)
 }
