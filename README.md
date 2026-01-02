@@ -134,7 +134,10 @@ brew install amterp/rad/rad
 
 ```bash
 go install github.com/amterp/rad@latest
+go install github.com/amterp/rad/lsp-server@latest
 ```
+
+The first command installs `rad` (the interpreter). The second installs `radls` (the language server for editor support).
 
 **Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
 For automated updates, use one of the supported package managers that allow it.
@@ -143,10 +146,14 @@ For automated updates, use one of the supported package managers that allow it.
 
 Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github.com/amterp/rad/releases)
 
-### Visual Studio Code Extension
+Each release archive includes both `rad` and `radls`.
+
+### Editor Support
 
 [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) provides syntax
-highlighting and LSP integration (macOS/Linux).
+highlighting and real-time diagnostics via the Rad Language Server (`radls`).
+
+The extension requires `radls` to be on your PATH (installed automatically via Homebrew or `go install`).
 
 ## Documentation 📚
 

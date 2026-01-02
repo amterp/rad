@@ -47,8 +47,13 @@ test_icon = tests_passed ? "✅" : "❌"
 test_message = tests_passed ? "All tests passed" : "Tests failed"
 test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
 
-// Determine binary size change significance
-size_change_icon = get_size_change_icon(binary_data.diff_percent)
+// Determine binary size change significance for rad
+rad_size_change_icon = get_size_change_icon(binary_data.rad.diff_percent)
+
+// Determine binary size change significance for radls
+radls_size_change_icon = "🆕"
+if binary_data.radls.diff_percent != null:
+    radls_size_change_icon = get_size_change_icon(binary_data.radls.diff_percent)
 
 // Generate benchmark section
 benchmark_section = ""
@@ -75,6 +80,10 @@ else:
     if benchmark_job_url:
         benchmark_section += " ([view logs]({benchmark_job_url}))"
 
+// Generate radls change text (handle new binary case)
+radls_base_text = binary_data.radls.base_size != null ? format_kb(binary_data.radls.base_size) : "N/A"
+radls_change_text = binary_data.radls.diff_percent != null ? "{radls_size_change_icon} {format_diff(binary_data.radls.diff_bytes)} ({format_percent(binary_data.radls.diff_percent)}%)" : "🆕 New binary"
+
 // Generate the comment content
 comment = """
 ## 🔍 PR Checks Summary
@@ -83,11 +92,10 @@ comment = """
 {test_message}{test_link}
 
 ### 📊 Binary Size Impact (linux/amd64)
-| Metric | Commit | Value |
-|--------|--------|-------|
-| Base | {base_commit_short} | {format_kb(binary_data.base_size)} |
-| PR | {pr_commit_short} | {format_kb(binary_data.pr_size)} |
-| Change | | {size_change_icon} {format_diff(binary_data.diff_bytes)} ({format_percent(binary_data.diff_percent)}%) |
+| Binary | Base ({base_commit_short}) | PR ({pr_commit_short}) | Change |
+|--------|------|----|---------|
+| rad | {format_kb(binary_data.rad.base_size)} | {format_kb(binary_data.rad.pr_size)} | {rad_size_change_icon} {format_diff(binary_data.rad.diff_bytes)} ({format_percent(binary_data.rad.diff_percent)}%) |
+| radls | {radls_base_text} | {format_kb(binary_data.radls.pr_size)} | {radls_change_text} |
 
 {binary_job_url ? "📈 [View size comparison details]({binary_job_url})" : ""}
 

@@ -15,7 +15,7 @@ var (
 )
 
 func InitLogger(w io.Writer) {
-	logFilePath := filepath.Join(os.TempDir(), "rls.log")
+	logFilePath := filepath.Join(os.TempDir(), "radls.log")
 	fmt.Fprintln(w, "Log file path: ", logFilePath)
 
 	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)

@@ -8,7 +8,7 @@ env:
   - CGO_ENABLED=1
 
 builds:
-  # Darwin builds (macOS)
+  # Darwin builds (macOS) - rad
   - id: rad-darwin-amd64
     binary: rad
     goarch:
@@ -33,7 +33,34 @@ builds:
     flags:
       - -trimpath
 
-  # Linux builds
+  # Darwin builds (macOS) - radls (Language Server)
+  - id: radls-darwin-amd64
+    main: ./lsp-server
+    binary: radls
+    goarch:
+      - amd64
+    goos:
+      - darwin
+    env:
+      - CC=o64-clang
+      - CXX=o64-clang++
+    flags:
+      - -trimpath
+
+  - id: radls-darwin-arm64
+    main: ./lsp-server
+    binary: radls
+    goarch:
+      - arm64
+    goos:
+      - darwin
+    env:
+      - CC=oa64-clang
+      - CXX=oa64-clang++
+    flags:
+      - -trimpath
+
+  # Linux builds - rad
   - id: rad-linux-amd64
     binary: rad
     goarch:
@@ -62,9 +89,54 @@ builds:
     ldflags:
       - -extldflags "-static"
 
-  # Windows builds
+  # Linux builds - radls (Language Server)
+  - id: radls-linux-amd64
+    main: ./lsp-server
+    binary: radls
+    goarch:
+      - amd64
+    goos:
+      - linux
+    env:
+      - CC=x86_64-linux-gnu-gcc
+      - CXX=x86_64-linux-gnu-g++
+    flags:
+      - -trimpath
+    ldflags:
+      - -extldflags "-static"
+
+  - id: radls-linux-arm64
+    main: ./lsp-server
+    binary: radls
+    goarch:
+      - arm64
+    goos:
+      - linux
+    env:
+      - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
+    flags:
+      - -trimpath
+    ldflags:
+      - -extldflags "-static"
+
+  # Windows builds - rad
   - id: rad-windows-amd64
     binary: rad
+    goarch:
+      - amd64
+    goos:
+      - windows
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    flags:
+      - -trimpath
+
+  # Windows builds - radls (Language Server)
+  - id: radls-windows-amd64
+    main: ./lsp-server
+    binary: radls
     goarch:
       - amd64
     goos:
