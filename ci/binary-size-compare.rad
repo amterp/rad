@@ -2,6 +2,7 @@
 ---
 Compares binary sizes between base branch and current PR.
 Outputs structured data for GitHub Actions consumption.
+Compares both rad and radls (language server) binaries.
 ---
 
 // Get base branch from GitHub Actions environment
@@ -13,16 +14,26 @@ if not base_ref:
 print("📊 Starting binary size comparison...")
 print("Base branch: {base_ref}")
 
-// Build current PR binary
-print("🔨 Building PR binary...")
+// Build current PR binaries
+print("🔨 Building PR binaries...")
 $`make build`
-pr_binary_info = get_path("./bin/radd")
-if not pr_binary_info.exists:
-    print_err("❌ Failed to build PR binary - ./bin/radd not found")
+$`cd lsp-server && make build`
+
+pr_rad_info = get_path("./bin/radd")
+pr_radls_info = get_path("./lsp-server/bin/radls")
+
+if not pr_rad_info.exists:
+    print_err("❌ Failed to build PR rad binary - ./bin/radd not found")
     exit(1)
 
-pr_size = pr_binary_info.size_bytes
-print("PR binary size: {format_bytes(pr_size)}")
+if not pr_radls_info.exists:
+    print_err("❌ Failed to build PR radls binary - ./lsp-server/bin/radls not found")
+    exit(1)
+
+pr_rad_size = pr_rad_info.size_bytes
+pr_radls_size = pr_radls_info.size_bytes
+print("PR rad binary size: {format_bytes(pr_rad_size)}")
+print("PR radls binary size: {format_bytes(pr_radls_size)}")
 
 // Use a temporary directory to build base branch to avoid affecting working directory
 print("🔄 Building base branch in temporary directory...")
@@ -33,29 +44,64 @@ $`rm -rf {temp_dir}`
 repo_url = "https://github.com/amterp/rad.git"
 $`git clone --depth=1 --branch={base_ref} {repo_url} {temp_dir}`
 
-// Build base branch binary in temp directory
+// Build base branch binaries in temp directory
 $`cd {temp_dir} && make build`
-base_binary_info = get_path("{temp_dir}/bin/radd")
-if not base_binary_info.exists:
-    print_err("❌ Failed to build base binary - {temp_dir}/bin/radd not found")
+base_rad_info = get_path("{temp_dir}/bin/radd")
+if not base_rad_info.exists:
+    print_err("❌ Failed to build base rad binary - {temp_dir}/bin/radd not found")
     exit(1)
+base_rad_size = base_rad_info.size_bytes
+print("Base rad binary size: {format_bytes(base_rad_size)}")
 
-base_size = base_binary_info.size_bytes
-print("Base binary size: {format_bytes(base_size)}")
+// Build radls for base branch (may not exist in older versions)
+base_radls_size = null
+base_radls_info = get_path("{temp_dir}/lsp-server")
+if base_radls_info.exists:
+    $`cd {temp_dir}/lsp-server && make build`
+    // Try new name first, fall back to old name for older branches
+    // TODO: Remove rls fallback after 2026-01-07 (renamed to radls)
+    base_radls_binary = get_path("{temp_dir}/lsp-server/bin/radls")
+    if not base_radls_binary.exists:
+        base_radls_binary = get_path("{temp_dir}/lsp-server/bin/rls")
+    if base_radls_binary.exists:
+        base_radls_size = base_radls_binary.size_bytes
+        print("Base radls binary size: {format_bytes(base_radls_size)}")
+    else:
+        print("⚠️ Base radls binary not found after build")
+else:
+    print("⚠️ Base branch does not have lsp-server directory (new addition)")
 
-// Calculate differences
-diff_bytes = pr_size - base_size
-diff_percent = base_size > 0 ? round((diff_bytes / float(base_size)) * 100, 2) : 0
+// Calculate differences for rad
+rad_diff_bytes = pr_rad_size - base_rad_size
+rad_diff_percent = base_rad_size > 0 ? round((rad_diff_bytes / float(base_rad_size)) * 100, 2) : 0
+
+// Calculate differences for radls (if base exists)
+radls_diff_bytes = null
+radls_diff_percent = null
+if base_radls_size != null:
+    radls_diff_bytes = pr_radls_size - base_radls_size
+    radls_diff_percent = base_radls_size > 0 ? round((radls_diff_bytes / float(base_radls_size)) * 100, 2) : 0
 
 // Create result structure
 result = {
-    "base_size": base_size,
-    "pr_size": pr_size,
-    "diff_bytes": diff_bytes,
-    "diff_percent": diff_percent,
-    "base_size_formatted": format_bytes(base_size),
-    "pr_size_formatted": format_bytes(pr_size),
-    "diff_formatted": format_diff(diff_bytes)
+    "rad": {
+        "base_size": base_rad_size,
+        "pr_size": pr_rad_size,
+        "diff_bytes": rad_diff_bytes,
+        "diff_percent": rad_diff_percent,
+        "base_size_formatted": format_bytes(base_rad_size),
+        "pr_size_formatted": format_bytes(pr_rad_size),
+        "diff_formatted": format_diff(rad_diff_bytes)
+    },
+    "radls": {
+        "base_size": base_radls_size,
+        "pr_size": pr_radls_size,
+        "diff_bytes": radls_diff_bytes,
+        "diff_percent": radls_diff_percent,
+        "base_size_formatted": base_radls_size != null ? format_bytes(base_radls_size) : "N/A",
+        "pr_size_formatted": format_bytes(pr_radls_size),
+        "diff_formatted": radls_diff_bytes != null ? format_diff(radls_diff_bytes) : "N/A (new)"
+    }
 }
 
 // Write results for GitHub Actions
@@ -70,12 +116,23 @@ $`rm -rf {temp_dir}`
 
 // Print summary
 print("📈 Binary size comparison completed:")
-print("  Base:   {result.base_size_formatted}")
-print("  PR:     {result.pr_size_formatted}")
-print("  Change: {result.diff_formatted} ({diff_percent}%)")
+print("")
+print("rad (interpreter):")
+print("  Base:   {result.rad.base_size_formatted}")
+print("  PR:     {result.rad.pr_size_formatted}")
+print("  Change: {result.rad.diff_formatted} ({rad_diff_percent}%)")
 
-if abs(diff_percent) >= 5:
-    print(yellow("⚠️  Significant size change detected!"))
+print("")
+print("radls (language server):")
+print("  Base:   {result.radls.base_size_formatted}")
+print("  PR:     {result.radls.pr_size_formatted}")
+print("  Change: {result.radls.diff_formatted}" + (radls_diff_percent != null ? " ({radls_diff_percent}%)" : ""))
+
+if abs(rad_diff_percent) >= 5:
+    print(yellow("⚠️  Significant rad size change detected!"))
+
+if radls_diff_percent != null and abs(radls_diff_percent) >= 5:
+    print(yellow("⚠️  Significant radls size change detected!"))
 
 fn format_bytes(bytes):
     return "{round(bytes / 1024.0, 3)} KB"

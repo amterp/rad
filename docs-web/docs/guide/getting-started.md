@@ -51,7 +51,10 @@ brew install amterp/rad/rad
 
 ```bash
 go install github.com/amterp/rad@latest
+go install github.com/amterp/rad/lsp-server@latest
 ```
+
+The first command installs the `rad` interpreter. The second installs `radls`, the language server for editor support.
 
 **Note:** You will need to run `go install` yourself to upgrade Rad as new versions are released.
 For automated updates, use one of the supported package managers that allow it.
@@ -59,6 +62,8 @@ For automated updates, use one of the supported package managers that allow it.
 ### Binary Downloads
 
 Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github.com/amterp/rad/releases)
+
+Each release archive includes both `rad` (the interpreter) and `radls` (the language server).
 
 ### Checking Installation
 
@@ -70,13 +75,34 @@ rad -h
 
 If this prints the help string for Rad, you're set!
 
-## Visual Studio Code Extension
+## Editor Support
 
-Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which offers nice syntax highlighting and script validation (including catching syntax errors).
+### Visual Studio Code
+
+Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which provides:
+
+- **Syntax highlighting** - makes your Rad code easy to read
+- **Real-time validation** - catches syntax errors as you type
+- **Diagnostics** - warnings and hints from the Rad Language Server
 
 Installing it is highly recommended!
 
 ![vsc-example.png](../assets/vsc-example.png)
+
+!!! note "Language Server Requirement"
+    The VS Code extension uses the Rad Language Server (`radls`) for real-time validation and diagnostics.
+    This is installed automatically when you install Rad via Homebrew or `go install`.
+
+    If you see "Rad Language Server not found", make sure `rad` and `radls` are on your PATH.
+
+### Other Editors
+
+The Rad Language Server (`radls`) can be used with any editor that supports the Language Server Protocol (LSP):
+
+- **Neovim**: Configure with `nvim-lspconfig` - point it to the `radls` binary
+- **Sublime Text**: Use the LSP package with the `radls` command
+
+For syntax highlighting without LSP, Rad's TextMate grammar can be used in editors that support it.
 
 ## Your First Rad Script - Hello World
 
