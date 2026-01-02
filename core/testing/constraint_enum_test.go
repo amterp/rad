@@ -45,7 +45,7 @@ print("Hi", name)
 	expected := `Error at L4:25
 
       name enum ["alice", 2]
-                          ^ Invalid syntax
+                          ^ Unexpected '2'
 `
 	assertError(t, 1, expected)
 }

@@ -700,7 +700,8 @@ B: [ 466,  467] PS: [ 35, 24] PE: [ 35, 25]       . `.`
 B: [ 467,  471] PS: [ 35, 25] PE: [ 35, 29]       segment: json_segment
 B: [ 467,  471] PS: [ 35, 25] PE: [ 35, 29]         key: identifier `woop`
 B: [ 473,  635] PS: [ 37,  0] PE: [ 49, 24]   rad_block
-B: [ 473,  476] PS: [ 37,  0] PE: [ 37,  3]     rad_type: rad_keyword `rad`
+B: [ 473,  476] PS: [ 37,  0] PE: [ 37,  3]     rad_type: rad_keyword
+B: [ 473,  476] PS: [ 37,  0] PE: [ 37,  3]       rad `rad`
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]     source: expr
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]       delegate: ternary_expr
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]         delegate: or_expr
@@ -958,7 +959,8 @@ B: [ 744,  748] PS: [ 57, 16] PE: [ 57, 20]                                     
 B: [ 744,  748] PS: [ 57, 16] PE: [ 57, 20]                                         content: string_content `haha`
 B: [ 748,  749] PS: [ 57, 20] PE: [ 57, 21]                                       end: string_end `"`
 B: [ 751,  777] PS: [ 59,  0] PE: [ 60, 13]   rad_block
-B: [ 751,  758] PS: [ 59,  0] PE: [ 59,  7]     rad_type: request_keyword `request`
+B: [ 751,  758] PS: [ 59,  0] PE: [ 59,  7]     rad_type: request_keyword
+B: [ 751,  758] PS: [ 59,  0] PE: [ 59,  7]       request `request`
 B: [ 759,  762] PS: [ 59,  8] PE: [ 59, 11]     source: expr
 B: [ 759,  762] PS: [ 59,  8] PE: [ 59, 11]       delegate: ternary_expr
 B: [ 759,  762] PS: [ 59,  8] PE: [ 59, 11]         delegate: or_expr
@@ -975,7 +977,8 @@ B: [ 768,  777] PS: [ 60,  4] PE: [ 60, 13]     stmt: rad_field_stmt
 B: [ 768,  774] PS: [ 60,  4] PE: [ 60, 10]       fields `fields`
 B: [ 775,  777] PS: [ 60, 11] PE: [ 60, 13]       identifier: identifier `f1`
 B: [ 779,  809] PS: [ 62,  0] PE: [ 63, 21]   rad_block
-B: [ 779,  786] PS: [ 62,  0] PE: [ 62,  7]     rad_type: display_keyword `display`
+B: [ 779,  786] PS: [ 62,  0] PE: [ 62,  7]     rad_type: display_keyword
+B: [ 779,  786] PS: [ 62,  0] PE: [ 62,  7]       display `display`
 B: [ 786,  787] PS: [ 62,  7] PE: [ 62,  8]     : `:`
 B: [ 792,  809] PS: [ 63,  4] PE: [ 63, 21]     stmt: rad_field_stmt
 B: [ 792,  798] PS: [ 63,  4] PE: [ 63, 10]       fields `fields`

@@ -567,7 +567,7 @@ fn foo(x: void) -> str:
 	expected := `Error at L3:8
 
   fn foo(x: void) -> str:
-         ^^ Invalid syntax
+         ^^ Invalid function syntax
 `
 	assertError(t, 1, expected)
 }

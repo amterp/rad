@@ -28,8 +28,9 @@ type CodeCtx struct {
 // TODO perhaps include a map[node]string for multiple explanations for different parts of the code?
 type ErrorCtx struct {
 	CodeCtx
-	OneLiner string
-	Details  string
+	OneLiner   string
+	Details    string
+	Suggestion *string // Optional suggestion for fixing the error (rendered as "Try: ...")
 }
 
 func NewCtx(src string, node *ts.Node, oneLiner string, details string) ErrorCtx {
@@ -257,6 +258,10 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 
 		if !com.IsBlank(ctx.Details) {
 			fmt.Fprintf(p.stdErr, "\n%s\n", ctx.Details)
+		}
+
+		if ctx.Suggestion != nil && !com.IsBlank(*ctx.Suggestion) {
+			fmt.Fprintf(p.stdErr, "\n  Try: %s\n", *ctx.Suggestion)
 		}
 	}
 	p.printShellExitIfEnabled()

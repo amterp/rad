@@ -8,7 +8,8 @@ rad url:
 =====
 B: [ 0, 58] PS: [0,  0] PE: [4,  0] source_file
 B: [ 0, 57] PS: [0,  0] PE: [3, 17]   rad_block
-B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword `rad`
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]     source: expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]       delegate: ternary_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]         delegate: or_expr

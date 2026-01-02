@@ -12,7 +12,7 @@ func Test_Misc_SyntaxError(t *testing.T) {
 	expected := `Error at L1:1
 
   1 = 2
-  ^^^ Invalid syntax
+  ^^^ Unexpected '1 ='
 `
 	assertError(t, 1, expected)
 }

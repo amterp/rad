@@ -26,7 +26,8 @@ B: [ 4,  6] PS: [0,  4] PE: [0,  6]                             map
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                               { `{`
 B: [ 5,  6] PS: [0,  5] PE: [0,  6]                               } `}`
 B: [ 7, 37] PS: [1,  0] PE: [2, 19]   rad_block
-B: [ 7, 14] PS: [1,  0] PE: [1,  7]     rad_type: display_keyword `display`
+B: [ 7, 14] PS: [1,  0] PE: [1,  7]     rad_type: display_keyword
+B: [ 7, 14] PS: [1,  0] PE: [1,  7]       display `display`
 B: [15, 16] PS: [1,  8] PE: [1,  9]     source: expr
 B: [15, 16] PS: [1,  8] PE: [1,  9]       delegate: ternary_expr
 B: [15, 16] PS: [1,  8] PE: [1,  9]         delegate: or_expr

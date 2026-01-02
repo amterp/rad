@@ -43,7 +43,8 @@ B: [ 28,  29] PS: [ 1, 13] PE: [ 1, 14]       . `.`
 B: [ 29,  33] PS: [ 1, 14] PE: [ 1, 18]       segment: json_segment
 B: [ 29,  33] PS: [ 1, 14] PE: [ 1, 18]         key: identifier `name`
 B: [ 35,  75] PS: [ 3,  0] PE: [ 5,  8]   rad_block
-B: [ 35,  38] PS: [ 3,  0] PE: [ 3,  3]     rad_type: rad_keyword `rad`
+B: [ 35,  38] PS: [ 3,  0] PE: [ 3,  3]     rad_type: rad_keyword
+B: [ 35,  38] PS: [ 3,  0] PE: [ 3,  3]       rad `rad`
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]     source: expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]       delegate: ternary_expr
 B: [ 39,  45] PS: [ 3,  4] PE: [ 3, 10]         delegate: or_expr
@@ -70,7 +71,8 @@ B: [ 62,  66] PS: [ 4, 15] PE: [ 4, 19]       identifier: identifier `Name`
 B: [ 71,  75] PS: [ 5,  4] PE: [ 5,  8]     stmt: rad_sort_stmt
 B: [ 71,  75] PS: [ 5,  4] PE: [ 5,  8]       sort `sort`
 B: [ 77, 199] PS: [ 7,  0] PE: [12, 26]   rad_block
-B: [ 77,  84] PS: [ 7,  0] PE: [ 7,  7]     rad_type: display_keyword `display`
+B: [ 77,  84] PS: [ 7,  0] PE: [ 7,  7]     rad_type: display_keyword
+B: [ 77,  84] PS: [ 7,  0] PE: [ 7,  7]       display `display`
 B: [ 84,  85] PS: [ 7,  7] PE: [ 7,  8]     : `:`
 B: [ 90, 105] PS: [ 8,  4] PE: [ 8, 19]     stmt: rad_field_stmt
 B: [ 90,  96] PS: [ 8,  4] PE: [ 8, 10]       fields `fields`

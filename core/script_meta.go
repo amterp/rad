@@ -106,8 +106,9 @@ func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
 					RowEnd:   diag.Range.End.Line + 1,
 					ColEnd:   diag.Range.End.Character + 1,
 				},
-				OneLiner: diag.Message,
-				Details:  "",
+				OneLiner:   diag.Message,
+				Details:    "",
+				Suggestion: diag.Suggestion,
 			}
 			RP.CtxErrorExit(ctx)
 		}

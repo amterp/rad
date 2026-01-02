@@ -39,6 +39,7 @@ type Diagnostic struct {
 	Severity    Severity
 	Message     string
 	Code        *rl.Error
+	Suggestion  *string // Optional suggestion for fixing the error (rendered as "Try: ...")
 }
 
 func NewDiagnosticFromNode(
@@ -73,6 +74,12 @@ func NewDiagnosticFromNode(
 
 func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
 	return NewDiagnosticFromNode(node, originalSrc, Error, msg, &code)
+}
+
+func NewDiagnosticErrorWithSuggestion(node *ts.Node, originalSrc string, msg string, code rl.Error, suggestion *string) Diagnostic {
+	diag := NewDiagnosticFromNode(node, originalSrc, Error, msg, &code)
+	diag.Suggestion = suggestion
+	return diag
 }
 
 func NewDiagnosticHint(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic {
