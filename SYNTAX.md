@@ -46,6 +46,14 @@ Can be multiple paragraphs.
 - `@enable_global_options` - Enable/disable global Rad options (default: true)
 - `@enable_args_block` - Enable/disable argument parsing (default: true)
 
+### Static Analysis
+
+Use `rad check <script>` to statically analyze your scripts for errors before running them. This catches syntax errors, type mismatches, and other issues without executing the script.
+
+```bash
+rad check my_script.rad
+```
+
 ## Comments
 
 ```rad
