@@ -1,0 +1,61 @@
+=====
+Str multiline interpolation with suffix content
+=====
+x = 5
+a = """
+    {x})
+    """
+=====
+B: [ 0, 31] PS: [0, 0] PE: [4, 0] source_file
+B: [ 0,  5] PS: [0, 0] PE: [0, 5]   assign
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]       root: identifier `x`
+B: [ 2,  3] PS: [0, 2] PE: [0, 3]     = `=`
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]     right: expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]       delegate: ternary_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]         delegate: or_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]           delegate: and_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]             delegate: compare_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]               delegate: add_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                 delegate: mult_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                   delegate: unary_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                     delegate: fallback_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                       delegate: indexed_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                         root: primary_expr
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                           literal
+B: [ 4,  5] PS: [0, 4] PE: [0, 5]                             int `5`
+B: [ 6, 30] PS: [1, 0] PE: [3, 7]   assign
+B: [ 6,  7] PS: [1, 0] PE: [1, 1]     left: var_path
+B: [ 6,  7] PS: [1, 0] PE: [1, 1]       root: identifier `a`
+B: [ 8,  9] PS: [1, 2] PE: [1, 3]     = `=`
+B: [10, 30] PS: [1, 4] PE: [3, 7]     right: expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]       delegate: ternary_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]         delegate: or_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]           delegate: and_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]             delegate: compare_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]               delegate: add_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                 delegate: mult_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                   delegate: unary_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                     delegate: fallback_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                       delegate: indexed_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                         root: primary_expr
+B: [10, 30] PS: [1, 4] PE: [3, 7]                           literal
+B: [10, 30] PS: [1, 4] PE: [3, 7]                             string
+B: [10, 14] PS: [1, 4] PE: [2, 0]                               start: string_start `"""\n`
+B: [18, 22] PS: [2, 4] PE: [2, 8]                               contents: string_contents
+B: [18, 21] PS: [2, 4] PE: [2, 7]                                 interpolation: interpolation
+B: [18, 19] PS: [2, 4] PE: [2, 5]                                   { `{`
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                   expr: expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                     delegate: ternary_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                       delegate: or_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                         delegate: and_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                           delegate: compare_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                             delegate: add_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                               delegate: mult_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                                 delegate: unary_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                                   delegate: fallback_expr
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                                     delegate: var_path
+B: [19, 20] PS: [2, 5] PE: [2, 6]                                                       root: identifier `x`
+B: [20, 21] PS: [2, 6] PE: [2, 7]                                   } `}`
+B: [21, 22] PS: [2, 7] PE: [2, 8]                                 content: string_content `)`
+B: [22, 30] PS: [2, 8] PE: [3, 7]                               end: string_end `\n    """`
