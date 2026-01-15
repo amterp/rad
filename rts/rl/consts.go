@@ -183,6 +183,7 @@ const (
 	F_CALLBACK_LAMBDA     = "callback_lambda"
 	F_DESCRIPTION         = "description"
 	F_CALLS               = "calls"
+	F_CONTEXT             = "context"
 
 	// Keywords
 	KEYWORD_ASC     = "asc"

@@ -50,13 +50,13 @@ print(i)
 
 func Test_Scoping_DefiningItemVarInForBlockIsRemembered(t *testing.T) {
 	script := `
-for i, item in ["a", "b", "c"]:
+for item in ["a", "b", "c"] with loop:
 	// do nothing
-print("i", i)
+print("idx", loop.idx)
 print("item", item)
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "i 2\nitem c\n")
+	assertOnlyOutput(t, stdOutBuffer, "idx 2\nitem c\n")
 	assertNoErrors(t)
 }
 

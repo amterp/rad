@@ -34,7 +34,7 @@ print(_)
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop(t *testing.T) {
 	script := `
 a = [1, 2, 3]
-for _, v in a:
+for v in a:
 	print(v)
 `
 	setupAndRunCode(t, script, "--color=never")

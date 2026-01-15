@@ -64,8 +64,8 @@ for n in a:
 
 n = "alice"
 
-for i, l in n:
-    print(i, l)
+for l in n with loop:
+    print(loop.idx, l)
 `
 	setupAndRunCode(t, script, "--color=never")
 	expected := `20

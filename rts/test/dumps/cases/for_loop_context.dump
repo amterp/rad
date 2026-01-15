@@ -1,0 +1,68 @@
+=====
+For loop with context
+=====
+for item in items with ctx:
+    print(ctx.idx, item)
+
+=====
+B: [ 0, 54] PS: [0,  0] PE: [3,  0] source_file
+B: [ 0, 52] PS: [0,  0] PE: [1, 24]   for_loop
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     for `for`
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]     lefts: for_lefts
+B: [ 4,  8] PS: [0,  4] PE: [0,  8]       left: identifier `item`
+B: [ 9, 11] PS: [0,  9] PE: [0, 11]     in `in`
+B: [12, 17] PS: [0, 12] PE: [0, 17]     right: expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]       delegate: ternary_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]         delegate: or_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]           delegate: and_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]             delegate: compare_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]               delegate: add_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]                 delegate: mult_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]                   delegate: unary_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]                     delegate: fallback_expr
+B: [12, 17] PS: [0, 12] PE: [0, 17]                       delegate: var_path
+B: [12, 17] PS: [0, 12] PE: [0, 17]                         root: identifier `items`
+B: [18, 22] PS: [0, 18] PE: [0, 22]     with `with`
+B: [23, 26] PS: [0, 23] PE: [0, 26]     context: identifier `ctx`
+B: [26, 27] PS: [0, 26] PE: [0, 27]     : `:`
+B: [32, 52] PS: [1,  4] PE: [1, 24]     stmt: expr_stmt
+B: [32, 52] PS: [1,  4] PE: [1, 24]       expr: expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]         delegate: ternary_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]           delegate: or_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]             delegate: and_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]               delegate: compare_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                 delegate: add_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                   delegate: mult_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                     delegate: unary_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                       delegate: fallback_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                         delegate: indexed_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                           root: primary_expr
+B: [32, 52] PS: [1,  4] PE: [1, 24]                             call
+B: [32, 37] PS: [1,  4] PE: [1,  9]                               func: identifier `print`
+B: [37, 38] PS: [1,  9] PE: [1, 10]                               ( `(`
+B: [38, 45] PS: [1, 10] PE: [1, 17]                               arg: expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                 delegate: ternary_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                   delegate: or_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                     delegate: and_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                       delegate: compare_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                         delegate: add_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                           delegate: mult_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                             delegate: unary_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                               delegate: fallback_expr
+B: [38, 45] PS: [1, 10] PE: [1, 17]                                                 delegate: var_path
+B: [38, 41] PS: [1, 10] PE: [1, 13]                                                   root: identifier `ctx`
+B: [41, 42] PS: [1, 13] PE: [1, 14]                                                   . `.`
+B: [42, 45] PS: [1, 14] PE: [1, 17]                                                   indexing: identifier `idx`
+B: [45, 46] PS: [1, 17] PE: [1, 18]                               , `,`
+B: [47, 51] PS: [1, 19] PE: [1, 23]                               arg: expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                 delegate: ternary_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                   delegate: or_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                     delegate: and_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                       delegate: compare_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                         delegate: add_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                           delegate: mult_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                             delegate: unary_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                               delegate: fallback_expr
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                                 delegate: var_path
+B: [47, 51] PS: [1, 19] PE: [1, 23]                                                   root: identifier `item`
+B: [51, 52] PS: [1, 23] PE: [1, 24]                               ) `)`

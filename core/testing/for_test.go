@@ -16,8 +16,8 @@ for item in a:
 func Test_For_ILoop(t *testing.T) {
 	script := `
 a = ["a", "b", "c"]
-for idx, item in a:
-	print(idx, item)
+for item in a with loop:
+	print(loop.idx, item)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "0 a\n1 b\n2 c\n")
@@ -28,8 +28,8 @@ func Test_For_ChangesInsideAreRemembered(t *testing.T) {
 	script := `
 num = 0
 a = ["a", "b", "c"]
-for idx, item in a:
-	num += idx
+for item in a with loop:
+	num += loop.idx
 print(num)
 `
 	setupAndRunCode(t, script, "--color=never")
@@ -110,5 +110,38 @@ for i in range(5):
 4
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_For_MapCanBreak(t *testing.T) {
+	script := `
+m = {"a": 1, "b": 2, "c": 3}
+for key in m:
+	print(key)
+	break
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "a\n")
+	assertNoErrors(t)
+}
+
+func Test_For_MapCanBreakFromSwitch(t *testing.T) {
+	// Regression test: break inside switch should exit the for loop, not just the switch.
+	// The original bug was that the switch statement used 'break' internally, so a user's
+	// 'break' would only exit the switch, causing an infinite loop.
+	script := `
+m = {"a": 1, "b": 2, "c": 3}
+for key, val in m:
+	switch val:
+		case 1:
+			print("found one")
+			break
+		case 2:
+			print("found two")
+		default:
+			print("other")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "found one\n")
 	assertNoErrors(t)
 }

@@ -963,18 +963,32 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue,
 	val.ModifyIdx(i, &lastIndex, rightValue)
 }
 
+// setLoopContext creates and sets the loop context variable if the user specified 'with <name>'.
+// The context is a map containing 'idx' (current iteration index) and 'src' (original collection).
+func (i *Interpreter) setLoopContext(contextNode *ts.Node, idx int64, srcValue RadValue) {
+	if contextNode == nil {
+		return
+	}
+	ctxName := i.GetSrcForNode(contextNode)
+	ctx := NewRadMap()
+	ctx.Set(newRadValue(i, contextNode, "idx"), newRadValue(i, contextNode, idx))
+	ctx.Set(newRadValue(i, contextNode, "src"), srcValue)
+	i.env.SetVar(ctxName, newRadValue(i, contextNode, ctx))
+}
+
 func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func() EvalResult) EvalResult {
 	leftsNode := rl.GetChild(node, rl.F_LEFTS)
 	rightNode := rl.GetChild(node, rl.F_RIGHT)
+	contextNode := rl.GetChild(node, rl.F_CONTEXT)
 
 	res := i.eval(rightNode)
 	switch coercedRight := res.Val.Val.(type) {
 	case RadString:
-		return runForLoopList(i, leftsNode, rightNode, coercedRight.ToRuneList(), doOneLoop)
+		return runForLoopList(i, leftsNode, rightNode, contextNode, coercedRight.ToRuneList(), res.Val, doOneLoop)
 	case *RadList:
-		return runForLoopList(i, leftsNode, rightNode, coercedRight, doOneLoop)
+		return runForLoopList(i, leftsNode, rightNode, contextNode, coercedRight, res.Val, doOneLoop)
 	case *RadMap:
-		return runForLoopMap(i, leftsNode, coercedRight, doOneLoop)
+		return runForLoopMap(i, leftsNode, contextNode, coercedRight, res.Val, doOneLoop)
 	default:
 		i.errorf(rightNode, "Cannot iterate through a %s", TypeAsString(res.Val))
 		panic(UNREACHABLE)
@@ -983,52 +997,50 @@ func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func() EvalResult)
 
 func runForLoopList(
 	i *Interpreter,
-	leftsNode, rightNode *ts.Node,
+	leftsNode, rightNode, contextNode *ts.Node,
 	list *RadList,
+	srcValue RadValue,
 	doOneLoop func() EvalResult,
 ) EvalResult {
-	var idxNode *ts.Node
-	itemNodes := make([]*ts.Node, 0)
-
 	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
 
 	if len(leftNodes) == 0 {
 		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
-	} else if len(leftNodes) == 1 {
-		itemNodes = append(itemNodes, &leftNodes[0])
-	} else {
-		idxNode = &leftNodes[0]
-		for idx := 1; idx < len(leftNodes); idx++ {
-			itemNodes = append(itemNodes, &leftNodes[idx])
-		}
 	}
 
 Loop:
 	for idx, val := range list.Values {
-		if idxNode != nil {
-			idxName := i.GetSrcForNode(idxNode)
-			i.env.SetVar(idxName, newRadValue(i, idxNode, int64(idx)))
-		}
+		i.setLoopContext(contextNode, int64(idx), srcValue)
 
-		if len(itemNodes) == 1 {
-			itemNode := itemNodes[0]
+		if len(leftNodes) == 1 {
+			itemNode := &leftNodes[0]
 			itemName := i.GetSrcForNode(itemNode)
 			i.env.SetVar(itemName, val)
-		} else if len(itemNodes) > 1 {
-			// expecting list of lists, unpacking by idx
+		} else {
+			// Multiple variables = unpacking (expecting list of lists)
 			listInList, ok := val.TryGetList()
 			if !ok {
-				i.errorf(rightNode, "Expected list of lists, got element type %q", TypeAsString(val))
+				// Migration hint for old syntax
+				firstName := i.GetSrcForNode(&leftNodes[0])
+				if firstName == "idx" || firstName == "index" || firstName == "i" {
+					i.errorf(rightNode, "Cannot unpack %q into %d values\n\n"+
+						"Note: The for-loop syntax changed. It looks like you may be using the old syntax.\n"+
+						"Old: for idx, item in items:\n"+
+						"New: for item in items with loop:\n"+
+						"         print(loop.idx, item)",
+						TypeAsString(val), len(leftNodes))
+				}
+				i.errorf(rightNode, "Cannot unpack %q into %d values", TypeAsString(val), len(leftNodes))
 			}
 
-			if listInList.LenInt() < len(itemNodes) {
+			if listInList.LenInt() < len(leftNodes) {
 				i.errorf(rightNode, "Expected at least %s in inner list, got %d",
-					com.Pluralize(len(itemNodes), "value"), listInList.LenInt())
+					com.Pluralize(len(leftNodes), "value"), listInList.LenInt())
 			}
 
-			for idx, itemNode := range itemNodes {
-				itemName := i.GetSrcForNode(itemNode)
-				i.env.SetVar(itemName, listInList.Values[idx])
+			for j, itemNode := range leftNodes {
+				itemName := i.GetSrcForNode(&itemNode)
+				i.env.SetVar(itemName, listInList.Values[j])
 			}
 		}
 
@@ -1043,7 +1055,13 @@ Loop:
 	return VoidNormal
 }
 
-func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop func() EvalResult) EvalResult {
+func runForLoopMap(
+	i *Interpreter,
+	leftsNode, contextNode *ts.Node,
+	radMap *RadMap,
+	srcValue RadValue,
+	doOneLoop func() EvalResult,
+) EvalResult {
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
@@ -1059,7 +1077,11 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 		valueNode = &leftNodes[1]
 	}
 
+	idx := int64(0)
+Loop:
 	for _, key := range radMap.Keys() {
+		i.setLoopContext(contextNode, idx, srcValue)
+
 		keyName := i.GetSrcForNode(keyNode)
 		i.env.SetVar(keyName, key)
 
@@ -1072,10 +1094,11 @@ func runForLoopMap(i *Interpreter, leftsNode *ts.Node, radMap *RadMap, doOneLoop
 		res := doOneLoop()
 		switch res.Ctrl {
 		case CtrlBreak:
-			break
+			break Loop
 		case CtrlReturn, CtrlYield:
 			return res
 		}
+		idx++
 	}
 	return VoidNormal
 }

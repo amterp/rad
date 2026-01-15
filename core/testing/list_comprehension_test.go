@@ -56,7 +56,7 @@ print(b)
 func Test_ListComprehension_CanGetIndex(t *testing.T) {
 	script := `
 a = [10, 20, 30]
-print([i * x for i, x in a])
+print([loop.idx * x for x in a with loop])
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "[ 0, 20, 60 ]\n")
