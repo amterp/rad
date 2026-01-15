@@ -539,6 +539,65 @@ Relational constraints:
 - `a mutually excludes b`
 
 
+## Script Commands
+
+Organize CLI tools around subcommands, like `git commit` or `docker build`. The `args:` and `command` blocks must appear before any executable code.
+
+```rad
+#!/usr/bin/env rad
+---
+A deployment tool.
+---
+
+// Shared args available to all commands
+args:
+    verbose v bool
+    config str = "config.yaml"
+
+command deploy:
+    ---
+    Deploy the application.
+    ---
+    env str
+    calls do_deploy
+
+command status:
+    ---
+    Check deployment status.
+    ---
+    env str
+    calls do_status
+
+// Shared setup - runs before any command callback
+validate_config(config)
+
+fn do_deploy():
+    if verbose:
+        print("Config: {config}")
+    print("Deploying to {env}...")
+
+fn do_status():
+    print("Status of {env}...")
+```
+
+Usage: `./tool.rad deploy staging --verbose`
+
+### Inline Callbacks
+
+```rad
+// Short implementations can use inline lambdas
+command greet:
+    name str
+    calls fn():
+        print("Hello, {name}!")
+```
+
+### Automatic Help
+
+- `./tool.rad -h` — lists all commands with descriptions
+- `./tool.rad deploy -h` — shows command-specific arguments
+
+
 ## Shell Commands
 
 ### Invocation (`$`) — critical by default
