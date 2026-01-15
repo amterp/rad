@@ -54,6 +54,21 @@ func (fn RadFn) IsBuiltIn() bool {
 	return fn.BuiltInFunc != nil
 }
 
+// ParamCount returns the number of parameters this function accepts.
+// Returns 0 if typing information is unavailable.
+func (fn RadFn) ParamCount() int {
+	if fn.BuiltInFunc != nil {
+		if fn.BuiltInFunc.Signature != nil && fn.BuiltInFunc.Signature.Typing != nil {
+			return len(fn.BuiltInFunc.Signature.Typing.Params)
+		}
+		return 0
+	}
+	if fn.Typing == nil {
+		return 0
+	}
+	return len(fn.Typing.Params)
+}
+
 func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 	i := f.i
 

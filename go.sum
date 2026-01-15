@@ -12,8 +12,8 @@ github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+u
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
 github.com/amterp/ra v0.4.3 h1:RvJh/Eiqo037E1W7nDaZUaquzZtOCam+l5AnuEim6m4=
 github.com/amterp/ra v0.4.3/go.mod h1:qJArkWMZ8kLiC1a4uavxpWlqvuUSopSmY8GZBLhwdP8=
-github.com/amterp/tree-sitter-rad v0.1.17 h1:gLHaZC6eoimHCUmPxcVuecJzw4mSLQKdk91HZc8XgXI=
-github.com/amterp/tree-sitter-rad v0.1.17/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
+github.com/amterp/tree-sitter-rad v0.1.18 h1:ZPZGyjTBTakXdjLiAfAWQYNJQGrNhPrPVk2Hc/8bkmQ=
+github.com/amterp/tree-sitter-rad v0.1.18/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=

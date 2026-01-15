@@ -1008,9 +1008,19 @@ func runForLoopList(
 		i.errorf(leftsNode, "Expected at least one variable on the left side of for loop")
 	}
 
+	// Copy source for context.src to ensure it's an immutable snapshot
+	var srcCopy RadValue
+	if contextNode != nil {
+		if srcList, ok := srcValue.TryGetList(); ok {
+			srcCopy = newRadValue(i, contextNode, srcList.ShallowCopy())
+		} else {
+			srcCopy = srcValue // Fallback (shouldn't happen for list iteration)
+		}
+	}
+
 Loop:
 	for idx, val := range list.Values {
-		i.setLoopContext(contextNode, int64(idx), srcValue)
+		i.setLoopContext(contextNode, int64(idx), srcCopy)
 
 		if len(leftNodes) == 1 {
 			itemNode := &leftNodes[0]
@@ -1077,10 +1087,16 @@ func runForLoopMap(
 		valueNode = &leftNodes[1]
 	}
 
+	// Copy source for context.src to ensure it's an immutable snapshot
+	var srcCopy RadValue
+	if contextNode != nil {
+		srcCopy = newRadValue(i, contextNode, radMap.ShallowCopy())
+	}
+
 	idx := int64(0)
 Loop:
 	for _, key := range radMap.Keys() {
-		i.setLoopContext(contextNode, idx, srcValue)
+		i.setLoopContext(contextNode, idx, srcCopy)
 
 		keyName := i.GetSrcForNode(keyNode)
 		i.env.SetVar(keyName, key)

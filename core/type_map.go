@@ -25,6 +25,16 @@ func NewRadMap() *RadMap {
 	}
 }
 
+// ShallowCopy creates a shallow copy of the map (keys and values are not deep copied)
+func (m *RadMap) ShallowCopy() *RadMap {
+	newMap := NewRadMap()
+	for _, key := range m.keys {
+		value, _ := m.Get(key)
+		newMap.Set(key, value)
+	}
+	return newMap
+}
+
 func (m *RadMap) Set(key RadValue, value RadValue) {
 	if value == VOID_SENTINEL {
 		m.Delete(key)

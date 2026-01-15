@@ -18,6 +18,13 @@ func NewRadList() *RadList {
 	}
 }
 
+// ShallowCopy creates a shallow copy of the list (values are not deep copied)
+func (l *RadList) ShallowCopy() *RadList {
+	copiedValues := make([]RadValue, len(l.Values))
+	copy(copiedValues, l.Values)
+	return &RadList{Values: copiedValues}
+}
+
 func NewRadListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RadList {
 	radList := NewRadList()
 	for _, elem := range list {

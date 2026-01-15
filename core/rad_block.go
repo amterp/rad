@@ -408,18 +408,38 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
 		column := fieldVals.RequireList(r.i, field.node)
 
+		// Check if filter lambda expects context (2+ parameters)
+		wantsContext := lambdaWantsContext(mods.filter)
+
+		// Copy original values for context.src to ensure it's an immutable snapshot
+		var srcList *RadList
+		if wantsContext {
+			originalValues := make([]RadValue, len(column.Values))
+			copy(originalValues, column.Values)
+			srcList = &RadList{Values: originalValues}
+		}
+
 		for rowIdx := 0; rowIdx < column.LenInt(); rowIdx++ {
 			if !keepRow[rowIdx] {
 				continue // Already filtered out
 			}
 
 			val := column.Values[rowIdx]
+			var args []PosArg
+			args = append(args, NewPosArg(mods.filter.ReprNode, val))
+
+			// If lambda expects 2+ params, pass context object as second arg
+			if wantsContext {
+				ctx := newRadBlockContext(r.i, mods.filter.ReprNode, int64(rowIdx), srcList, field.name)
+				args = append(args, NewPosArg(mods.filter.ReprNode, ctx))
+			}
+
 			filterResult := mods.filter.Execute(
 				NewFnInvocation(
 					r.i,
 					mods.filter.ReprNode,
 					FUNC_FILTER,
-					NewPosArgs(NewPosArg(mods.filter.ReprNode, val)),
+					args,
 					NO_NAMED_ARGS_INPUT,
 					mods.filter.IsBuiltIn(),
 				),
@@ -509,14 +529,35 @@ func (r *radInvocation) applyMaps(radFields []radField) {
 		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
 		column := fieldVals.RequireList(r.i, field.node)
 
+		// Check if lambda expects context (2+ parameters)
+		wantsContext := lambdaWantsContext(mods.lambda)
+
+		// Copy original values for context.src to avoid circular reference
+		// (since we mutate column.Values below, ctx.src would otherwise point to mutated values)
+		var srcList *RadList
+		if wantsContext {
+			originalValues := make([]RadValue, len(column.Values))
+			copy(originalValues, column.Values)
+			srcList = &RadList{Values: originalValues}
+		}
+
 		newValues := make([]RadValue, len(column.Values))
 		for i, val := range column.Values {
+			var args []PosArg
+			args = append(args, NewPosArg(mods.lambda.ReprNode, val))
+
+			// If lambda expects 2+ params, pass context object as second arg
+			if wantsContext {
+				ctx := newRadBlockContext(r.i, mods.lambda.ReprNode, int64(i), srcList, field.name)
+				args = append(args, NewPosArg(mods.lambda.ReprNode, ctx))
+			}
+
 			mapped := mods.lambda.Execute(
 				NewFnInvocation(
 					r.i,
 					mods.lambda.ReprNode,
 					FUNC_MAP,
-					NewPosArgs(NewPosArg(mods.lambda.ReprNode, val)),
+					args,
 					NO_NAMED_ARGS_INPUT,
 					mods.lambda.IsBuiltIn(),
 				),
@@ -527,6 +568,22 @@ func (r *radInvocation) applyMaps(radFields []radField) {
 		column.Values = newValues
 		r.i.env.SetVar(field.name, newRadValue(r.i, field.node, column))
 	}
+}
+
+// lambdaWantsContext returns true if the lambda expects 2+ parameters,
+// indicating it wants the context object as the second argument.
+func lambdaWantsContext(fn *RadFn) bool {
+	return fn != nil && fn.ParamCount() >= 2
+}
+
+// newRadBlockContext creates a context object for rad block lambdas.
+// Contains: idx (int), src (list), field (string)
+func newRadBlockContext(i *Interpreter, node *ts.Node, idx int64, src *RadList, fieldName string) RadValue {
+	ctx := NewRadMap()
+	ctx.Set(newRadValue(i, node, "idx"), newRadValue(i, node, idx))
+	ctx.Set(newRadValue(i, node, "src"), newRadValue(i, node, src))
+	ctx.Set(newRadValue(i, node, "field"), newRadValue(i, node, fieldName))
+	return newRadValue(i, node, ctx)
 }
 
 func (r *radInvocation) resolveData() (data interface{}, err error) {

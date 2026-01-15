@@ -119,3 +119,31 @@ for name, val in pairs with loop:
 	assertOnlyOutput(t, stdOutBuffer, "0 a 1\n1 b 2\n")
 	assertNoErrors(t)
 }
+
+func Test_For_Context_SrcIsImmutableSnapshot(t *testing.T) {
+	// Modifying loop.src should not affect the original list
+	script := `
+items = [10, 20, 30]
+for item in items with loop:
+	loop.src[0] = 999
+print(items)
+`
+	setupAndRunCode(t, script, "--color=never")
+	// Original items should be unchanged
+	assertOnlyOutput(t, stdOutBuffer, "[ 10, 20, 30 ]\n")
+	assertNoErrors(t)
+}
+
+func Test_For_Context_MapSrcIsImmutableSnapshot(t *testing.T) {
+	// Modifying loop.src should not affect the original map
+	script := `
+m = {"a": 1, "b": 2}
+for key in m with loop:
+	loop.src["a"] = 999
+print(m)
+`
+	setupAndRunCode(t, script, "--color=never")
+	// Original map should be unchanged
+	assertOnlyOutput(t, stdOutBuffer, `{ "a": 1, "b": 2 }`+"\n")
+	assertNoErrors(t)
+}
