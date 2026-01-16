@@ -2,16 +2,52 @@
 
 Only for major & minor version releases. Contains only notable items.
 
-## 0.7 (ongoing)
+## 0.8 (ongoing)
 
-- Added support for thousands separators in number formatting e.g. `"{n:,.2f}"` -> `1,234.56`
-- Added support for arg int incrementing via short clusters e.g. `verbose v int` allows `-vvv` -> `verbose == 3`
-- Added functions `read_stdin` and `has_stdin` to allow Unix pipe-compatible Rad scripts
-- Added global config file (default `~/.rad/config.toml`)
-- Added opt-in invocation logging feature (leveraging global config file)
-- Added `rad check --from-logs` flag for checking all Rad files found in invocation logs
-- Revamped shell syntax
-- Revamped error handling syntax
+## 0.7 (2026-01-15)
+
+### Breaking Changes
+- **For-loop syntax redesign**: Replaced implicit index unpacking with explicit context access
+  - Old: `for idx, item in items:` (no longer works)
+  - New: `for item in items with loop:` then use `loop.idx`, `loop.src`
+
+### New Major Features
+- **Script commands**: Define subcommands with their own argument blocks
+  - `command deploy:` with positional args, flags, constraints, and callbacks
+  - Script-level args become shared flags across all commands
+- **Revamped shell syntax**: Named shell output assignment
+  - `stderr = $\`cmd\`` captures just stderr (recognizes `code`, `stdout`, `stderr`)
+- **Revamped error handling**: Unified catch suffix syntax for both shell and non-shell
+  - `result = parse_int(s) catch:` block syntax
+  - `??` fallback operator: `port = parse_int(s) ?? 8080`
+- **Global config file**: `~/.rad/config.toml` for user-wide settings
+- **Invocation logging**: Opt-in feature to log script invocations
+- **`rad check --from-logs`**: Check all Rad files found in invocation logs
+
+### New Functions
+- `flat_map`: Flatten and map collections in one operation
+- `multipick`: Multi-select version of `pick` for choosing multiple items
+- `read_stdin`, `has_stdin`: Unix pipe-compatible stdin reading
+
+### Enhancements
+- Number formatting: Thousands separators via `{n:,.2f}` → `1,234.56`
+- Arg int incrementing: `-vvv` → `verbose == 3` for short cluster flags
+- Rad block `filter` field modifier for filtering displayed rows
+- Rad block context support in map/filter lambdas
+- `pick()`: Added `prefer_exact` named arg for exact match preference
+- `parse_epoch()`: Now accepts floats
+- `get_path()`: Additional fields like `modified_millis`
+- `min()`/`max()`: Accept varargs of numbers
+- `colorize()`: Accepts non-str types
+- HTTP URL encoding: Improved automatic encoding behavior
+- Syntax errors: More specific diagnostic messages
+- Int defaults: Support scientific notation (e.g., `1e6`)
+
+### Tooling
+- VSCode extension: LSP server (radls) now discovered via PATH instead of bundled
+- Checker: Warning for undefined command callback references
+- Checker: Error when hoisted functions shadow args
+- Checker: Recognize hoisted functions in unknown function checks
 
 ## 0.6 (2025-09-27)
 

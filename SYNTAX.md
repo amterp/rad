@@ -205,6 +205,12 @@ price = 123.456
 formatted = "Price: {price:.2}"          // "Price: 123.46" (2 decimal places)
 padded = "Name: {name:<10}"              // "Name: alice     " (left-aligned, padded to 10)
 right_aligned = "Name: {name:>10}"       // "Name:      alice" (right-aligned)
+
+// Thousands separators (numbers only)
+big_num = 1234567
+formatted = "{big_num:,}"                // "1,234,567"
+with_decimals = "{big_num:,.2}"          // "1,234,567.00"
+padded_thousands = "{big_num:>15,}"      // "      1,234,567"
 ```
 
 ## Ternary Operator
@@ -540,12 +546,30 @@ args:
     age int                     # Required integer
     height float               # Required float
     verbose bool               # Required boolean
-    
+
     // Optional arguments
     role str?                  # Optional string (null if not provided)
     count int = 10            # Optional with default
     debug d bool              # Short form flag
 ```
+
+### Int Short Clustering
+
+Int arguments with short forms can be "clustered" to increment the value:
+
+```rad
+args:
+    verbosity v int
+```
+
+```bash
+./script -v        # verbosity = 1
+./script -vv       # verbosity = 2
+./script -vvvvv    # verbosity = 5
+./script -vv -v=10 # verbosity = 10 (explicit value overrides)
+```
+
+This is useful for verbosity levels and similar patterns where users want quick increment syntax.
 
 ### Argument Constraints
 
@@ -769,6 +793,72 @@ display data:
     fields Name, Age
     sort Age desc, Name
 ```
+
+### Field Modifiers
+
+Field modifiers transform or filter data before display. Apply them to specific fields:
+
+```rad
+ages = [15, 25, 30, 12]
+names = ["Alice", "Bob", "Charlie", "David"]
+
+display:
+    fields ages, names
+    ages:
+        filter fn(a) a >= 18       // Keep only adults
+        map fn(a) "{a} years"      // Transform display
+
+// Output:
+// ages       names
+// 25 years   Bob
+// 30 years   Charlie
+```
+
+**Filter** removes rows where the predicate returns false. **Map** transforms values for display. Filter runs before map.
+
+```rad
+// Apply same modifier to multiple fields
+ages, scores:
+    map fn(v) "{v}!"
+
+// Use a named function
+is_adult = fn(age) age >= 18
+ages:
+    filter is_adult
+```
+
+### Field Modifier Context
+
+When a map or filter lambda accepts **two parameters**, the second receives a context object:
+
+```rad
+nums = [10, 20, 30]
+display:
+    fields nums
+    nums:
+        map fn(x, ctx) "{ctx.idx + 1}. {x}"
+        // Output: "1. 10", "2. 20", "3. 30"
+```
+
+**Context fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `idx` | `int` | Current row index (0-based) |
+| `src` | `list` | Immutable snapshot of the full column data |
+| `field` | `str` | Name of the field being processed |
+
+```rad
+// Filter to values below average
+nums:
+    filter fn(x, ctx) x < sum(ctx.src) / ctx.src.len()
+
+// Show position in total
+nums:
+    map fn(x, ctx) "{x} ({ctx.idx + 1}/{ctx.src.len()})"
+```
+
+Single-parameter lambdas continue to work unchanged for simple transformations.
 
 ## Advanced Features
 
