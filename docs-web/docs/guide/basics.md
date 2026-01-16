@@ -679,13 +679,12 @@ for i in range(5):
 
 You can also invoke `range` with a starting value i.e. `range(start, end)` and with a step value i.e. `range(start, end, step)`.
 
-If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
-in an additional variable after the `for`. The first variable will be the index, and the second the item.
+If you want to iterate through a list while also having access to the item's index, you can use the `with` clause to access a context object:
 
 ```rad
 names = ["Alice", "Bob", "Charlie"]
-for i, name in names:
-    print("{name} is at index {i}")
+for name in names with loop:
+    print("{name} is at index {loop.idx}")
 ```
 
 <div class="result">
@@ -695,6 +694,30 @@ Bob is at index 1
 Charlie is at index 2
 ```
 </div>
+
+The context object provides two fields:
+
+- **`loop.idx`** - The current iteration index (0-based)
+- **`loop.src`** - An immutable snapshot of the original collection
+
+You can name the context variable anything you like, but `loop` is the convention for for-loops:
+
+```rad
+for name in names with loop:
+    print("Processing {loop.idx + 1} of {loop.src.len()}: {name}")
+```
+
+<div class="result">
+```
+Processing 1 of 3: Alice
+Processing 2 of 3: Bob
+Processing 3 of 3: Charlie
+```
+</div>
+
+!!! tip "Naming Convention"
+
+    By convention, use `loop` for context in for-loops and list comprehensions, and `ctx` for context in [rad block](./rad-blocks.md#lambda-context-parameter) lambdas.
 
 When iterating through a map, if you have one variable in the loop, then that variable will be the key:
 
@@ -726,6 +749,20 @@ bob green
 ```
 </div>
 
+You can also combine map iteration with the context object:
+
+```rad
+for k, v in colors with loop:
+    print("{loop.idx}: {k} = {v}")
+```
+
+<div class="result">
+```
+0: alice = blue
+1: bob = green
+```
+</div>
+
 A useful function to know when iterating is [`zip`](../reference/functions.md#zip).
 It lets you combine parallel lists into a list of lists. To demonstrate:
 
@@ -736,12 +773,12 @@ zipped = zip(names, ages)
 print(zipped)  // [ [ "alice", 30 ], [ "bob", 40 ], [ "charlie", 25 ] ]
 ```
 
-These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop: 
+These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop:
 
 ```rad linenums="1" hl_lines="3-4"
 names = ["alice", "bob", "charlie"]
 ages = [30, 40, 25]
-for _, name, age in zip(names, ages):
+for name, age in zip(names, ages):
     print(name, age)
 ```
 
@@ -753,9 +790,20 @@ charlie 25
 ```
 </div>
 
-!!! info "Use of `_`"
-    Note the use of `_` in the above for loop. It technically is the index, previously denoted by `i`, but by convention,
-    we use `_` to indicate that a variable is unused.
+You can also access the index when unpacking with `zip`:
+
+```rad
+for name, age in zip(names, ages) with loop:
+    print("{loop.idx + 1}. {name} is {age}")
+```
+
+<div class="result">
+```
+1. alice is 30
+2. bob is 40
+3. charlie is 25
+```
+</div>
 
 #### Breaking Out of Loops
 
@@ -942,14 +990,13 @@ print(uppercase)
 ```
 </div>
 
-### Iteration Patterns
+### Context in List Comprehensions
 
-List comprehensions support the same iteration patterns as for loops:
+List comprehensions support the same `with` syntax as for loops:
 
 ```rad
-// With index
 items = ["a", "b", "c"]
-indexed = ["{i}: {item}" for i, item in items]
+indexed = ["{loop.idx}: {item}" for item in items with loop]
 print(indexed)
 ```
 

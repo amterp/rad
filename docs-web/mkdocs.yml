@@ -32,6 +32,8 @@ nav:
       - ./reference/rad-blocks.md
       - ./reference/shell-commands.md
       - ./reference/strings.md
+  - Migrations:
+      - ./migrations/v0.7.md
 
 theme:
   name: material

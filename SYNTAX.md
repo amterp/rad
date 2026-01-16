@@ -330,31 +330,63 @@ items = ["a", "b", "c"]
 for item in items:
     print(item)
 
-// Iterate with index
-for idx, item in items:
-    print(idx, item)
+// Access loop index and total via context
+for item in items with loop:
+    print("{loop.idx + 1}/{loop.src.len()}: {item}")
 
 // Iterate with unpacking (for lists of lists)
 data = [["alice", 25], ["bob", 30], ["charlie", 35]]
-for idx, name, age in data:
-    print(idx, name, age)
+for name, age in data:
+    print(name, age)
+
+// Unpacking WITH context
+for name, age in data with loop:
+    print(loop.idx, name, age)
 
 // Multiple variable unpacking with zip
 names = ["alice", "bob", "charlie"]
 ages = [25, 30, 35]
 cities = ["NYC", "LA", "Chicago"]
-scores = [100, 90, 85]
-for idx, name, age, city, score in zip(names, ages, cities, scores):
-    print(idx, name, age, city, score)
+for name, age, city in zip(names, ages, cities):
+    print(name, age, city)
+
+// With context
+for name, age, city in zip(names, ages, cities) with loop:
+    print(loop.idx, name, age, city)
 
 // Iterate over map keys
 person = {"name": "alice", "age": 25}
 for key in person:
     print(key, person[key])
 
+// Map iteration with context
+for key in person with loop:
+    print(loop.idx, key, person[key])
+
+// Map with key and value
+for key, value in person:
+    print(key, value)
+
+// Map with key, value, and context
+for key, value in person with loop:
+    print(loop.idx, key, value)
+
 // Range iteration
 for i in range(5):      // 0, 1, 2, 3, 4
     print(i)
+```
+
+**Loop Context Object**
+
+When you use `with <identifier>` in a for-loop, you get access to a context object with these fields:
+
+- `idx` - Current iteration index (0-based)
+- `src` - Immutable snapshot of the original collection
+
+```rad
+items = [10, 20, 30]
+for item in items with loop:
+    print("Index: {loop.idx}, Item: {item}, Total: {loop.src.len()}")
 ```
 
 #### While Loops

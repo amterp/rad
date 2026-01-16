@@ -299,6 +299,53 @@ use formatting syntax (right of the colon) to specify that we want the resulting
 
     This means sorting and filtering see the original extracted values, not the transformed display values from `map`.
 
+#### Lambda Context Parameter
+
+When transforming columns with `map`, your lambda can optionally accept a second parameter to access context information about the transformation:
+
+```rad
+rad url:
+    fields City, Country, Population
+    Population:
+        map fn(p, ctx) "{p / sum(ctx.src) * 100:.1}%"
+```
+
+This shows each city's population as a percentage of the total.
+
+The context object provides three fields:
+
+- **`ctx.idx`** - The current row index (0-based)
+- **`ctx.src`** - An immutable snapshot of the full column data (as a list)
+- **`ctx.field`** - The name of the field being transformed (e.g., "Population")
+
+This is useful for operations that need to know about the overall dataset:
+
+```rad
+// Highlight the largest city
+City:
+    map fn(city, ctx) ctx.idx == 0 ? "{city} ★" : city
+```
+
+The `field` property is especially helpful when applying the same transformation to multiple columns:
+
+```rad
+// Apply to multiple columns, with field-specific logic
+timestamp, strategy, fund:
+    map fn(x, ctx):
+        if ctx.field == "timestamp":
+            return format_time(x)
+        return str(x)
+```
+
+!!! note "Context is Optional"
+
+    Single-parameter lambdas continue to work exactly as before. The context parameter is completely optional:
+
+    ```rad
+    Population:
+        map fn(p) p / 1e6  // No context needed
+    ```
+
 ### Filtering
 
 You can also *filter* rows based on conditions. This is useful when you only want to display data that matches certain criteria.
@@ -358,6 +405,18 @@ display:
 
 fn is_adult(age):
     return age >= 18
+```
+
+Just like `map`, filter lambdas can accept an optional context parameter with `idx`, `src`, and `field`:
+
+```rad
+// Keep only even-indexed rows
+Names:
+    filter fn(n, ctx) ctx.idx % 2 == 0
+
+// Keep values below the column average
+Age:
+    filter fn(age, ctx) age < sum(ctx.src) / ctx.src.len()
 ```
 
 !!! note "Execution Order: filter → sort → map"
