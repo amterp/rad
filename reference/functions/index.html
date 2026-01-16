@@ -2017,6 +2017,69 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide - v0.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -3896,31 +3959,37 @@ gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
 <h2 id="picking">Picking<a class="headerlink" href="#picking" title="Permanent link">&para;</a></h2>
 <h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting from a list of options.</p>
-<div class="highlight"><pre><span></span><code>pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; str
 </code></pre></div>
 <p>Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.</p>
-<div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])           // -&gt; Interactive menu
-pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)           // -&gt; Pre-filtered to &quot;red&quot;, &quot;green&quot;
-pick([&quot;one&quot;, &quot;two&quot;, &quot;three&quot;], prompt=&quot;Choose:&quot;)  // -&gt; Custom prompt
+<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a filter, it's selected immediately; if multiple match exactly, only those are shown.</p>
+<div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])                        // -&gt; Interactive menu
+pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)                        // -&gt; Fuzzy-filtered to &quot;red&quot;, &quot;green&quot;
+pick([&quot;grape&quot;, &quot;g&quot;], &quot;g&quot;, prefer_exact=true)                 // -&gt; Immediately picks &quot;g&quot; (exact match)
+pick([&quot;one&quot;, &quot;two&quot;, &quot;three&quot;], prompt=&quot;Choose:&quot;)            // -&gt; Custom prompt
 </code></pre></div>
 <h3 id="pick_kv">pick_kv<a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu showing keys but returns corresponding values.</p>
-<div class="highlight"><pre><span></span><code>pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;) -&gt; any
+<div class="highlight"><pre><span></span><code>pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; any
 </code></pre></div>
 <p>Displays keys in the menu but returns the value at the same index when selected.</p>
+<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a filter, its value is returned immediately; if multiple match exactly, only those are shown.</p>
 <div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
 ages = [25, 30, 35]
-pick_kv(names, ages)                    // -&gt; Shows names, returns age
-pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff00&quot;])  // -&gt; Shows colors, returns hex
+pick_kv(names, ages)                                        // -&gt; Shows names, returns age
+pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff00&quot;])           // -&gt; Shows colors, returns hex
+pick_kv([&quot;grape&quot;, &quot;g&quot;], [1, 2], &quot;g&quot;, prefer_exact=true)       // -&gt; Returns 2 (exact match)
 </code></pre></div>
 <h3 id="pick_from_resource">pick_from_resource<a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h3>
 <p>Loads options from a resource file and presents an interactive menu.</p>
-<div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;) -&gt; any
+<div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = true) -&gt; any
 </code></pre></div>
 <p>Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).</p>
+<p>With <code>prefer_exact=true</code> (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set <code>prefer_exact=false</code> to disable this and use pure fuzzy matching.</p>
 <div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
-pick_from_resource(&quot;configs.json&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered options
+pick_from_resource(&quot;configs.json&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered, exact match priority
 pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
+pick_from_resource(&quot;data.json&quot;, &quot;x&quot;, prefer_exact=false) // -&gt; Pure fuzzy matching
 </code></pre></div>
 <h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting multiple options from a list.</p>

@@ -430,11 +430,35 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#visual-studio-code-extension" class="md-nav__link">
+  <a href="#editor-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Visual Studio Code Extension
+      Editor Support
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Editor Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#visual-studio-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Visual Studio Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-editors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Editors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1129,6 +1153,69 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide - v0.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1214,11 +1301,35 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#visual-studio-code-extension" class="md-nav__link">
+  <a href="#editor-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Visual Studio Code Extension
+      Editor Support
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Editor Support">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#visual-studio-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Visual Studio Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-editors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Editors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1365,20 +1476,42 @@ versions as the language evolves. Your feedback directly shapes Rad's future!</p
 </code></pre></div>
 <h3 id="go-from-source-all-platforms">Go (from source, all platforms)<a class="headerlink" href="#go-from-source-all-platforms" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad@latest
+go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad/lsp-server@latest
 </code></pre></div>
+<p>The first command installs the <code>rad</code> interpreter. The second installs <code>radls</code>, the language server for editor support.</p>
 <p><strong>Note:</strong> You will need to run <code>go install</code> yourself to upgrade Rad as new versions are released.
 For automated updates, use one of the supported package managers that allow it.</p>
 <h3 id="binary-downloads">Binary Downloads<a class="headerlink" href="#binary-downloads" title="Permanent link">&para;</a></h3>
 <p>Pre-built binaries for macOS, Linux, and Windows: <a href="https://github.com/amterp/rad/releases">releases page</a></p>
+<p>Each release archive includes both <code>rad</code> (the interpreter) and <code>radls</code> (the language server).</p>
 <h3 id="checking-installation">Checking Installation<a class="headerlink" href="#checking-installation" title="Permanent link">&para;</a></h3>
 <p>After you've installed Rad and ensured it's on your PATH, you can check your installation:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>-h
 </code></pre></div>
 <p>If this prints the help string for Rad, you're set!</p>
-<h2 id="visual-studio-code-extension">Visual Studio Code Extension<a class="headerlink" href="#visual-studio-code-extension" title="Permanent link">&para;</a></h2>
-<p>Rad has a VS Code extension <a href="https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension">here</a> which offers nice syntax highlighting and script validation (including catching syntax errors).</p>
+<h2 id="editor-support">Editor Support<a class="headerlink" href="#editor-support" title="Permanent link">&para;</a></h2>
+<h3 id="visual-studio-code">Visual Studio Code<a class="headerlink" href="#visual-studio-code" title="Permanent link">&para;</a></h3>
+<p>Rad has a VS Code extension <a href="https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension">here</a> which provides:</p>
+<ul>
+<li><strong>Syntax highlighting</strong> - makes your Rad code easy to read</li>
+<li><strong>Real-time validation</strong> - catches syntax errors as you type</li>
+<li><strong>Diagnostics</strong> - warnings and hints from the Rad Language Server</li>
+</ul>
 <p>Installing it is highly recommended!</p>
 <p><img alt="vsc-example.png" src="../../assets/vsc-example.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Language Server Requirement</p>
+<p>The VS Code extension uses the Rad Language Server (<code>radls</code>) for real-time validation and diagnostics.
+This is installed automatically when you install Rad via Homebrew or <code>go install</code>.</p>
+<p>If you see "Rad Language Server not found", make sure <code>rad</code> and <code>radls</code> are on your PATH.</p>
+</div>
+<h3 id="other-editors">Other Editors<a class="headerlink" href="#other-editors" title="Permanent link">&para;</a></h3>
+<p>The Rad Language Server (<code>radls</code>) can be used with any editor that supports the Language Server Protocol (LSP):</p>
+<ul>
+<li><strong>Neovim</strong>: Configure with <code>nvim-lspconfig</code> - point it to the <code>radls</code> binary</li>
+<li><strong>Sublime Text</strong>: Use the LSP package with the <code>radls</code> command</li>
+</ul>
+<p>For syntax highlighting without LSP, Rad's TextMate grammar can be used in editors that support it.</p>
 <h2 id="your-first-rad-script-hello-world">Your First Rad Script - Hello World<a class="headerlink" href="#your-first-rad-script-hello-world" title="Permanent link">&para;</a></h2>
 <p>Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of a Rad twist, demoing a few features that Rad provides.</p>
 <p>First, create a file, let's call it simply <code>hello</code>, and give it the following contents:</p>

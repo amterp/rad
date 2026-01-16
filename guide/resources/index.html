@@ -1018,6 +1018,69 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide - v0.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1115,7 +1178,9 @@
 output = pick(options, &quot;sandwich&quot;)
 print(&quot;You chose: {output}&quot;)
 </code></pre></div>
-<p>When you initially run this, the <code>sandwich</code> filter should exclude <code>chicken burger</code> and ask you to select between two remaining options:</p>
+<p>When you initially run this, the <code>sandwich</code> filter should exclude <code>chicken burger</code> and ask you to select between two remaining options.</p>
+<p>Note: You can enable exact match priority with <code>prefer_exact=true</code>. When enabled, if your filter exactly matches one of the options (case-insensitive), that option will be selected immediately without entering interactive mode.
+For example, <code>pick(["r", "red", "rose"], "r", prefer_exact=true)</code> would immediately select "r" without prompting.</p>
 <div class="highlight"><pre><span></span><code>┃ Pick an option
 ┃ &gt; chicken sandwich
 ┃   ham sandwich
@@ -1143,7 +1208,7 @@ print(&quot;We&#39;ll need {output}!&quot;)
 </code></pre></div>
 <p>Notice that the function did not output the <em>key</em> <code>ham sandwich</code> that was selected, but instead the <em>value</em> <code>HAM</code> that it mapped to.</p>
 <h2 id="pick_from_resource"><code>pick_from_resource</code><a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h2>
-<p>Now we'll look at actually using what this section is about - resources. <a href="../../reference/functions/#pick_from_resource"><code>pick_from_resource</code></a> allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous <code>pick</code> functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed.</p>
+<p>Now we'll look at actually using what this section is about - resources. <a href="../../reference/functions/#pick_from_resource"><code>pick_from_resource</code></a> allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous <code>pick</code> functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed. Unlike <code>pick</code> and <code>pick_kv</code>, <code>pick_from_resource</code> has <code>prefer_exact=true</code> by default—if your filter exactly matches one of the keys (case-insensitive), that option will be selected immediately.</p>
 <p>Let's do a simple example. As mentioned, a resource file is simply a JSON file. We'll create an example where we look up a url based on user input:</p>
 <div class="highlight"><span class="filename">websites.json</span><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>

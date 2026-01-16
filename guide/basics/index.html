@@ -686,9 +686,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iteration-patterns" class="md-nav__link">
+  <a href="#context-in-list-comprehensions" class="md-nav__link">
     <span class="md-ellipsis">
-      Iteration Patterns
+      Context in List Comprehensions
     </span>
   </a>
   
@@ -1327,6 +1327,69 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide - v0.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1647,9 +1710,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iteration-patterns" class="md-nav__link">
+  <a href="#context-in-list-comprehensions" class="md-nav__link">
     <span class="md-ellipsis">
-      Iteration Patterns
+      Context in List Comprehensions
     </span>
   </a>
   
@@ -2176,11 +2239,10 @@ Hi Charlie!
 </div>
 
 <p>You can also invoke <code>range</code> with a starting value i.e. <code>range(start, end)</code> and with a step value i.e. <code>range(start, end, step)</code>.</p>
-<p>If you want to iterate through a list while also having a variable for the item's index, you can do that by adding
-in an additional variable after the <code>for</code>. The first variable will be the index, and the second the item.</p>
+<p>If you want to iterate through a list while also having access to the item's index, you can use the <code>with</code> clause to access a context object:</p>
 <div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
-for i, name in names:
-    print(&quot;{name} is at index {i}&quot;)
+for name in names with loop:
+    print(&quot;{name} is at index {loop.idx}&quot;)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Alice is at index 0
@@ -2189,6 +2251,26 @@ Charlie is at index 2
 </code></pre></div>
 </div>
 
+<p>The context object provides two fields:</p>
+<ul>
+<li><strong><code>loop.idx</code></strong> - The current iteration index (0-based)</li>
+<li><strong><code>loop.src</code></strong> - An immutable snapshot of the original collection</li>
+</ul>
+<p>You can name the context variable anything you like, but <code>loop</code> is the convention for for-loops:</p>
+<div class="highlight"><pre><span></span><code>for name in names with loop:
+    print(&quot;Processing {loop.idx + 1} of {loop.src.len()}: {name}&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Processing 1 of 3: Alice
+Processing 2 of 3: Bob
+Processing 3 of 3: Charlie
+</code></pre></div>
+</div>
+
+<div class="admonition tip">
+<p class="admonition-title">Naming Convention</p>
+<p>By convention, use <code>loop</code> for context in for-loops and list comprehensions, and <code>ctx</code> for context in <a href="../rad-blocks/#lambda-context-parameter">rad block</a> lambdas.</p>
+</div>
 <p>When iterating through a map, if you have one variable in the loop, then that variable will be the key:</p>
 <div class="highlight"><pre><span></span><code>colors = { &quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot; }
 for k in colors:
@@ -2211,6 +2293,16 @@ bob green
 </code></pre></div>
 </div>
 
+<p>You can also combine map iteration with the context object:</p>
+<div class="highlight"><pre><span></span><code>for k, v in colors with loop:
+    print(&quot;{loop.idx}: {k} = {v}&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>0: alice = blue
+1: bob = green
+</code></pre></div>
+</div>
+
 <p>A useful function to know when iterating is <a href="../../reference/functions/#zip"><code>zip</code></a>.
 It lets you combine parallel lists into a list of lists. To demonstrate:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -2221,13 +2313,13 @@ ages = [30, 40, 25]
 zipped = zip(names, ages)
 print(zipped)  // [ [ &quot;alice&quot;, 30 ], [ &quot;bob&quot;, 40 ], [ &quot;charlie&quot;, 25 ] ]
 </code></pre></div></td></tr></table></div>
-<p>These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop: </p>
+<p>These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
 ages = [30, 40, 25]
-<span class="hll">for _, name, age in zip(names, ages):
+<span class="hll">for name, age in zip(names, ages):
 </span><span class="hll">    print(name, age)
 </span></code></pre></div></td></tr></table></div>
 <div class="result">
@@ -2237,11 +2329,17 @@ charlie 25
 </code></pre></div>
 </div>
 
-<div class="admonition info">
-<p class="admonition-title">Use of <code>_</code></p>
-<p>Note the use of <code>_</code> in the above for loop. It technically is the index, previously denoted by <code>i</code>, but by convention,
-we use <code>_</code> to indicate that a variable is unused.</p>
+<p>You can also access the index when unpacking with <code>zip</code>:</p>
+<div class="highlight"><pre><span></span><code>for name, age in zip(names, ages) with loop:
+    print(&quot;{loop.idx + 1}. {name} is {age}&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>1. alice is 30
+2. bob is 40
+3. charlie is 25
+</code></pre></div>
 </div>
+
 <h4 id="breaking-out-of-loops">Breaking Out of Loops<a class="headerlink" href="#breaking-out-of-loops" title="Permanent link">&para;</a></h4>
 <p>You can exit a loop early using the <code>break</code> statement:</p>
 <div class="highlight"><pre><span></span><code>numbers = [1, 2, 3, 4, 5]
@@ -2422,11 +2520,10 @@ print(uppercase)
 </code></pre></div>
 </div>
 
-<h3 id="iteration-patterns">Iteration Patterns<a class="headerlink" href="#iteration-patterns" title="Permanent link">&para;</a></h3>
-<p>List comprehensions support the same iteration patterns as for loops:</p>
-<div class="highlight"><pre><span></span><code>// With index
-items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-indexed = [&quot;{i}: {item}&quot; for i, item in items]
+<h3 id="context-in-list-comprehensions">Context in List Comprehensions<a class="headerlink" href="#context-in-list-comprehensions" title="Permanent link">&para;</a></h3>
+<p>List comprehensions support the same <code>with</code> syntax as for loops:</p>
+<div class="highlight"><pre><span></span><code>items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+indexed = [&quot;{loop.idx}: {item}&quot; for item in items with loop]
 print(indexed)
 </code></pre></div>
 <div class="result">

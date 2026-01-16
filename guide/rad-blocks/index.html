@@ -551,6 +551,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lambda-context-parameter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lambda Context Parameter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1183,6 +1198,69 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Migrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide - v0.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1283,6 +1361,21 @@
       Mapping
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lambda-context-parameter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lambda Context Parameter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1655,6 +1748,40 @@ use formatting syntax (right of the colon) to specify that we want the resulting
 </ul>
 <p>This means sorting and filtering see the original extracted values, not the transformed display values from <code>map</code>.</p>
 </div>
+<h4 id="lambda-context-parameter">Lambda Context Parameter<a class="headerlink" href="#lambda-context-parameter" title="Permanent link">&para;</a></h4>
+<p>When transforming columns with <code>map</code>, your lambda can optionally accept a second parameter to access context information about the transformation:</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    fields City, Country, Population
+    Population:
+        map fn(p, ctx) &quot;{p / sum(ctx.src) * 100:.1}%&quot;
+</code></pre></div>
+<p>This shows each city's population as a percentage of the total.</p>
+<p>The context object provides three fields:</p>
+<ul>
+<li><strong><code>ctx.idx</code></strong> - The current row index (0-based)</li>
+<li><strong><code>ctx.src</code></strong> - An immutable snapshot of the full column data (as a list)</li>
+<li><strong><code>ctx.field</code></strong> - The name of the field being transformed (e.g., "Population")</li>
+</ul>
+<p>This is useful for operations that need to know about the overall dataset:</p>
+<div class="highlight"><pre><span></span><code>// Highlight the largest city
+City:
+    map fn(city, ctx) ctx.idx == 0 ? &quot;{city} ★&quot; : city
+</code></pre></div>
+<p>The <code>field</code> property is especially helpful when applying the same transformation to multiple columns:</p>
+<div class="highlight"><pre><span></span><code>// Apply to multiple columns, with field-specific logic
+timestamp, strategy, fund:
+    map fn(x, ctx):
+        if ctx.field == &quot;timestamp&quot;:
+            return format_time(x)
+        return str(x)
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Context is Optional</p>
+<p>Single-parameter lambdas continue to work exactly as before. The context parameter is completely optional:</p>
+<div class="highlight"><pre><span></span><code>Population:
+    map fn(p) p / 1e6  // No context needed
+</code></pre></div>
+</div>
 <h3 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">&para;</a></h3>
 <p>You can also <em>filter</em> rows based on conditions. This is useful when you only want to display data that matches certain criteria.</p>
 <p>For example, let's say you're querying an API that returns users, but you only want to see active users over 18 years old:</p>
@@ -1700,6 +1827,15 @@ Diana   20    active
 
 fn is_adult(age):
     return age &gt;= 18
+</code></pre></div>
+<p>Just like <code>map</code>, filter lambdas can accept an optional context parameter with <code>idx</code>, <code>src</code>, and <code>field</code>:</p>
+<div class="highlight"><pre><span></span><code>// Keep only even-indexed rows
+Names:
+    filter fn(n, ctx) ctx.idx % 2 == 0
+
+// Keep values below the column average
+Age:
+    filter fn(age, ctx) age &lt; sum(ctx.src) / ctx.src.len()
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Execution Order: filter → sort → map</p>
