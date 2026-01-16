@@ -22,49 +22,35 @@
       "end": "(?=^[^\\s])",
       "patterns": [
         {
-          "name": "comment.line.arg.rad",
-          "match": "#.*$"
-        },
+          "include": "#args_block_content"
+        }
+      ]
+    },
+    {
+      "begin": "\\bcommand\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+      "end": "(?=^[^\\s])",
+      "beginCaptures": {
+        "0": { "name": "meta.command.rad" },
+        "1": { "name": "entity.name.function.rad" }
+      },
+      "patterns": [
         {
-          "name": "comment.line.double-slash.rad",
-          "match": "//.*$"
-        },
-        {
-          "include": "#strings"
-        },
-        {
-          "include": "#floats"
-        },
-        {
-          "include": "#ints"
-        },
-        {
-          "include": "#bools"
-        },
-        {
-          "include": "#null"
-        },
-        {
-          "include": "#types"
-        },
-        {
-          "name": "constant.language.nullable.rad",
-          "match": "\\?"
+          "name": "comment.block.documentation.rad",
+          "begin": "^\\s*---$",
+          "end": "^\\s*---$",
+          "patterns": [
+            {
+              "name": "comment.block.documentation.rad",
+              "match": ".+"
+            }
+          ]
         },
         {
           "name": "storage.modifier.rad",
-          "match": "\\b(enum|range|regex|mutually|requires|excludes)\\b"
+          "match": "\\bcalls\\b"
         },
         {
-          "name": "string.quoted.double.rad",
-          "match": "\"[^\"]*\""
-        },
-        {
-          "name": "constant.character.short-flag.rad",
-          "match": "\\b[a-zA-Z]\\b"
-        },
-        {
-          "include": "#params"
+          "include": "#args_block_content"
         }
       ]
     },
@@ -124,6 +110,14 @@
       "begin": "{",
       "end": "}"
     },
+    "escapes": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.rad",
+          "match": "\\\\[nrt\"'`{\\\\]"
+        }
+      ]
+    },
     "types": {
       "patterns": [
         {
@@ -148,6 +142,9 @@
           "end": "\"\"\"",
           "patterns": [
             {
+              "include": "#escapes"
+            },
+            {
               "include": "#string_interpolation"
             }
           ]
@@ -157,6 +154,9 @@
           "begin": "'",
           "end": "'",
           "patterns": [
+            {
+              "include": "#escapes"
+            },
             {
               "include": "#string_interpolation"
             }
@@ -168,6 +168,9 @@
           "end": "\"",
           "patterns": [
             {
+              "include": "#escapes"
+            },
+            {
               "include": "#string_interpolation"
             }
           ]
@@ -177,6 +180,9 @@
           "begin": "`",
           "end": "`",
           "patterns": [
+            {
+              "include": "#escapes"
+            },
             {
               "include": "#string_interpolation"
             }
@@ -220,15 +226,84 @@
       "patterns": [
         {
           "name": "keyword.control.rad",
-          "match": "\\b(args|if|for|while|in|else|pass|catch|json|confirm|return|quiet|or|and|not|fn|switch|case|yield|default|defer|errdefer|continue|break|del|rad|display|request)\\b"
+          "match": "\\b(args|command|if|for|while|in|with|else|pass|catch|json|return|or|and|not|fn|switch|case|yield|default|defer|errdefer|continue|break|del|rad|display|request)\\b"
         },
         {
           "name": "entity.name.tag.rad",
           "match": "\\$"
         },
         {
+          "name": "storage.modifier.rad",
+          "match": "\\b(quiet|confirm)\\b"
+        },
+        {
+          "name": "keyword.operator.comparison.rad",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.coalescing.rad",
+          "match": "\\?\\?"
+        },
+        {
+          "name": "keyword.operator.arrow.rad",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.increment.rad",
+          "match": "\\+\\+|--"
+        },
+        {
           "name": "keyword.operator.arithmetic.rad",
           "match": "[+\\-*/%]"
+        }
+      ]
+    },
+    "args_block_content": {
+      "patterns": [
+        {
+          "name": "comment.line.arg.rad",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.line.double-slash.rad",
+          "match": "//.*$"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#floats"
+        },
+        {
+          "include": "#ints"
+        },
+        {
+          "include": "#bools"
+        },
+        {
+          "include": "#null"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "name": "constant.language.nullable.rad",
+          "match": "\\?"
+        },
+        {
+          "name": "storage.modifier.rad",
+          "match": "\\b(enum|range|regex|mutually|requires|excludes)\\b"
+        },
+        {
+          "name": "string.quoted.double.rad",
+          "match": "\"[^\"]*\""
+        },
+        {
+          "name": "constant.character.short-flag.rad",
+          "match": "\\b[a-zA-Z]\\b"
+        },
+        {
+          "include": "#params"
         }
       ]
     }
