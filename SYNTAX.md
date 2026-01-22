@@ -957,17 +957,17 @@ Errors in Rad are **values**. Functions typically return `value | error`. By def
 Use `??` to provide a fallback value when the left side returns an error (right side is evaluated lazily).
 
 ```rad
-result = parse_int(text) ?? 0
-result = parse_int(text) ?? get_default()
+result = text.parse_int() ?? 0
+result = text.parse_int() ?? compute_fallback()
 // Multi-return requires an explicit list fallback
-a, b = get_two_values() ?? [0, 0]
+a, b = fallible_pair() ?? [0, 0]
 ```
 
 #### Complex handling: suffix `catch:`
 Attach a `catch:` block to inspect the error (the assigned variable *is* the error string inside the block), log, and/or reassign a fallback. Execution continues after the block, unless it invokes `exit()`.
 
 ```rad
-value = parse_int(text) catch:
+value = text.parse_int() catch:
     print_err("Parse failed: {value}")
     value = 0
 ```
@@ -975,7 +975,7 @@ value = parse_int(text) catch:
 For multi-return functions with `catch:`:
 
 ```rad
-a, b = get_two_values() catch:
+a, b = fallible_pair() catch:
     // a = error string, b = null
     print_err("Failed: {a}")
     a, b = 0, 0
@@ -1025,9 +1025,9 @@ item not in collection  // Check if item doesn't exist
 The `??` operator yields the left value if it is **not an error**; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions.
 
 ```rad
-count = to_int(env["COUNT"]) ?? 0
-path = read_config() ?? default_path()
-a, b = fetch_pair() ?? [0, 0]  // multi-return requires list fallback
+count = get_env("COUNT").parse_int() ?? 0
+data = read_file("config.txt") ?? {"content": ""}
+a, b = some_fallible_fn() ?? [0, 0]  // multi-return requires list fallback
 ```
 
 ## Scoping and Variables
