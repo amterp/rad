@@ -242,7 +242,7 @@ func checkScriptWith(scriptPath string, reusable check.RadChecker) bool {
 		}
 	}
 
-	chk.UpdateSrc(result.Content)
+	chk.UpdateSrc(NormalizeLineEndings(result.Content))
 	checkResult, err := chk.CheckDefault()
 	if err != nil {
 		return false

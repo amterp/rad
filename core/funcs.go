@@ -736,7 +736,7 @@ func init() {
 				absPath := com.ToAbsolutePath(path)
 				RP.RadDebugf("Abs path: '%s'", absPath)
 
-				radMap.SetPrimitiveStr(constFullPath, absPath)
+				radMap.SetPrimitiveStr(constFullPath, NormalizePath(absPath))
 
 				stat, err1 := os.Stat(path)
 				if err1 == nil {
@@ -834,7 +834,7 @@ func init() {
 					default:
 						panic(fmt.Sprintf("Bug! Invalid target mode %q, should've been caught earlier.", relativeMode))
 					}
-					list.Append(newRadValueStr(formattedPath))
+					list.Append(newRadValueStr(NormalizePath(formattedPath)))
 					return nil
 				})
 
@@ -1326,7 +1326,7 @@ func init() {
 			Name: FUNC_GET_RAD_HOME,
 			Execute: func(f FuncInvocation) RadValue {
 				radHome := RadHomeInst.HomeDir
-				return f.Return(radHome)
+				return f.Return(NormalizePath(radHome))
 			},
 		},
 		{
@@ -1339,9 +1339,8 @@ func init() {
 
 				subPath := f.GetStr("_sub_path").Plain()
 				path := filepath.Join(*stashPath, subPath)
-				stashPath = &path
 
-				return f.Return(*stashPath)
+				return f.Return(NormalizePath(path))
 			},
 		},
 		{
@@ -1377,7 +1376,7 @@ func init() {
 				}
 
 				output := NewRadMap()
-				output.SetPrimitiveStr(constFullPath, path)
+				output.SetPrimitiveStr(constFullPath, NormalizePath(path))
 
 				if !com.FileExists(path) {
 					err := com.CreateFilePathAndWriteString(path, def)
