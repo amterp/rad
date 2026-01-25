@@ -135,10 +135,6 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 
 [//]: # (todo can be set several times?)
 
-## Additional Commands
-
-There are more global flags - see the [reference](../reference/global-flags.md) for a complete coverage of what's available.
-
 ## Summary
 
 - Rad provides several global flags that can be used across all Rad scripts.

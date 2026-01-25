@@ -1,4 +1,4 @@
-# Rad Language Syntax Reference
+# Rad Language Reference
 
 This document provides a comprehensive overview of Rad's syntax for quick reference in development sessions.
 

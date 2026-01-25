@@ -273,6 +273,23 @@ make test         # Run tests in core/testing
 
 If code changes are made, invoke the Rad Docs Maintainer agent to assess whether doc updates are needed.
 
+#### Documentation Maintenance
+
+Keep documentation in sync with code changes. Key mappings:
+
+| Code Change | Documentation to Update |
+|-------------|------------------------|
+| New/modified built-in function in `core/funcs.go` | `docs-web/docs/reference/functions.md` |
+| New/modified error code in `rts/rl/errors.go` | `docs-web/docs/reference/errors.md` |
+| Language syntax changes | `SYNTAX.md` (symlinked to Language Reference) |
+| New user-facing feature | Consider adding to relevant guide in `docs-web/docs/guide/` |
+
+**Principles:**
+- **Reference docs** should be authoritative and complete — if it exists in code, it should be documented
+- **Guide docs** teach concepts with examples — not every feature needs a guide section
+- Avoid creating reference pages that duplicate guide content; prefer one source of truth
+- When in doubt, check if existing docs already cover the topic before creating new pages
+
 When adding or updating function documentation in `docs-web/docs/reference/functions.md`, follow this **tiered approach
 ** based on function complexity:
 
