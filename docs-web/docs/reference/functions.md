@@ -959,10 +959,10 @@ gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str|er
 | Parameter          | Type                       | Description                            |
 |--------------------|----------------------------|----------------------------------------|
 | `alphabet`         | `str? = "[0-9][A-Z][a-z]"` | Characters to use (base-62 by default) |
-| `tick_size_ms`     | `int? = 100`               | Time precision in milliseconds         |
-| `num_random_chars` | `int? = 5`                 | Number of random characters to append  |
+| `tick_size_ms`     | `int? = 1`                 | Time precision in milliseconds         |
+| `num_random_chars` | `int? = 6`                 | Number of random characters to append  |
 
-Defaults: `alphabet` is base-62 (`[0-9][A-Z][a-z]`), `tick_size_ms` is 100ms, `num_random_chars` is 5.
+Defaults: `alphabet` is base-62 (`[0-9][A-Z][a-z]`), `tick_size_ms` is 1ms, `num_random_chars` is 6.
 
 ```rad
 gen_fid()                                    // -> "1a2b3c4d5e"
