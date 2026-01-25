@@ -57,7 +57,7 @@ jobs:
           cache: true
 
       - name: Build Rad
-        run: go build -o rad .
+        run: go build -o rad${{ runner.os == 'Windows' && '.exe' || '' }} .
 
       - name: Run Go tests
         run: go test -v ./core/testing/... ./rts/...
