@@ -1048,7 +1048,8 @@ func init() {
 
 					switch strings.ToLower(mode) {
 					case constText:
-						resultMap.SetPrimitiveStr(constContent, string(data))
+						// Normalize line endings for consistent cross-platform text handling
+						resultMap.SetPrimitiveStr(constContent, NormalizeLineEndings(string(data)))
 					case constBytes:
 						byteList := NewRadList()
 						for _, b := range data {
@@ -1105,7 +1106,7 @@ func init() {
 				if err == nil {
 					resultMap := NewRadMap()
 					resultMap.SetPrimitiveInt64(constBytesWritten, int64(bytesWritten))
-					resultMap.SetPrimitiveStr(constPath, path)
+					resultMap.SetPrimitiveStr(constPath, NormalizePath(path))
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
 					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoExist))
@@ -1130,7 +1131,8 @@ func init() {
 					return f.Return(NewErrorStrf("Failed to read from stdin: %v", err).SetCode(rl.ErrStdinRead))
 				}
 
-				return f.Return(string(data))
+				// Normalize line endings for consistent cross-platform text handling
+				return f.Return(NormalizeLineEndings(string(data)))
 			},
 		},
 		{
@@ -1396,7 +1398,7 @@ func init() {
 					return f.Return(NewErrorStrf(errMsg))
 				}
 
-				output.SetPrimitiveStr(constContent, loadResult.Content)
+				output.SetPrimitiveStr(constContent, NormalizeLineEndings(loadResult.Content))
 				output.SetPrimitiveBool(constCreated, false)
 				return f.Return(output) // signal existed
 			},

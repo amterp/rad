@@ -134,6 +134,18 @@ That said, here are some specific callouts:
 - `core` is unfortunately a big folder and package - untangling it into smaller packages at this point is a little tricky.
   - If you can, with new code, try to package it appropriately.
 
+### Platform Compatibility
+
+Rad targets Linux, macOS, and Windows. To keep scripts portable across platforms, we follow these conventions:
+
+**Path Normalization**: All paths exposed to user code use forward slashes (`/`), regardless of the host OS. This is handled by `NormalizePath()` in [`core/common/platform.go`](./core/common/platform.go). Any function that returns a path to user code should normalize it before returning.
+
+**Line Ending Normalization**: Text content read from files is normalized to Unix-style line endings (`\n`). This ensures consistent string processing across platforms. Binary reads are not normalized. Use `NormalizeLineEndings()` for text content.
+
+**Platform Helpers**: All platform-specific behavior is centralized in [`core/common/platform.go`](./core/common/platform.go). If you need to add platform-specific logic, add it there rather than scattering `runtime.GOOS` checks throughout the codebase.
+
+**Testing**: Platform-specific tests live in [`core/testing/platform_test.go`](./core/testing/platform_test.go). When a test needs different expected values per platform, use conditional logic rather than normalizing output.
+
 ### Code Pointers
 
 - [`main.go`](./main.go) is our entry point.

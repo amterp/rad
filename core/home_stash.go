@@ -39,7 +39,7 @@ func (r *RadHome) GetStash() *string {
 }
 
 func (r *RadHome) GetStashForId(id string) string {
-	return filepath.Join(r.HomeDir, "stashes", id)
+	return NormalizePath(filepath.Join(r.HomeDir, "stashes", id))
 }
 
 func (r *RadHome) GetStashSub(subPath string, node *ts.Node) (string, *RadError) {
@@ -48,7 +48,7 @@ func (r *RadHome) GetStashSub(subPath string, node *ts.Node) (string, *RadError)
 		return "", errNoStashId(node)
 	}
 
-	return filepath.Join(*stash, "files", subPath), nil
+	return NormalizePath(filepath.Join(*stash, "files", subPath)), nil
 }
 
 func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool, *RadError) {

@@ -67,10 +67,10 @@ func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) (PickR
 
 func resolveFinalPath(pathFromRadScript string) string {
 	if filepath.IsAbs(pathFromRadScript) {
-		return pathFromRadScript
+		return NormalizePath(pathFromRadScript)
 	}
 
 	finalPath := filepath.Clean(filepath.Join(ScriptDir, pathFromRadScript))
 	RP.RadDebugf(fmt.Sprintf("Joined %q and %q to get %q", ScriptDir, pathFromRadScript, finalPath))
-	return finalPath
+	return NormalizePath(finalPath)
 }
