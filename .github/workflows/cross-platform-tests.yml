@@ -1,0 +1,80 @@
+# Manual workflow for quick cross-platform testing during development.
+# Useful when iterating on platform-specific fixes without running the full PR pipeline.
+#
+# Trigger via GitHub UI or CLI:
+#   gh workflow run "Cross-Platform Tests" --ref your-branch
+
+name: Cross-Platform Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to test'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - windows
+          - macos
+          - linux
+
+jobs:
+  determine-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [ "${{ inputs.platforms }}" == "all" ]; then
+            echo 'matrix=["ubuntu-latest", "macos-latest", "windows-latest"]' >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.platforms }}" == "windows" ]; then
+            echo 'matrix=["windows-latest"]' >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.platforms }}" == "macos" ]; then
+            echo 'matrix=["macos-latest"]' >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.platforms }}" == "linux" ]; then
+            echo 'matrix=["ubuntu-latest"]' >> $GITHUB_OUTPUT
+          fi
+
+  test:
+    name: Test (${{ matrix.os }})
+    needs: determine-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.determine-matrix.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Build Rad
+        run: go build -o rad .
+
+      - name: Run Go tests
+        run: go test -v ./core/testing/... ./rts/...
+
+      - name: Test basic Rad execution (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          echo 'print("Hello from Rad!")' | ./rad -
+
+      - name: Test basic Rad execution (Windows PowerShell)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          echo 'print("Hello from Rad!")' | ./rad.exe -
+
+      - name: Test basic Rad execution (Windows cmd)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          echo print("Hello from Rad!") | rad.exe -
