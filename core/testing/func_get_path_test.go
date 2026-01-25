@@ -3,6 +3,8 @@ package testing
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -34,13 +36,18 @@ print(path.size_bytes)
 print("modified_millis" in path.keys())
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `true
+	// Windows doesn't have Unix-style permissions, so permissions differ
+	expectedPerms := "-rw-r--r--"
+	if runtime.GOOS == "windows" {
+		expectedPerms = "-rw-rw-rw-"
+	}
+	expected := fmt.Sprintf(`true
 test_file.txt
--rw-r--r--
+%s
 file
 9
 true
-`
+`, expectedPerms)
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
@@ -85,7 +92,8 @@ print(path.full_path)
 `
 	setupAndRunCode(t, script, "--color=never")
 	home, _ := os.UserHomeDir()
-	expected := fmt.Sprintf("%s/.rad\n", home)
+	// Rad normalizes paths to use forward slashes on all platforms
+	expected := fmt.Sprintf("%s/.rad\n", filepath.ToSlash(home))
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }

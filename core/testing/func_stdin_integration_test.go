@@ -2,6 +2,7 @@ package testing
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -12,8 +13,12 @@ func Test_Stdin_Integration_WC_Basic(t *testing.T) {
 		t.Fatalf("Failed to read test input: %v", err)
 	}
 
+	// Normalize line endings to ensure consistent byte count across platforms
+	// (git may convert line endings on Windows)
+	normalizedInput := strings.ReplaceAll(string(inputData), "\r\n", "\n")
+
 	// Create test params with script file and stdin input
-	tp := NewTestParams("", "./rad_scripts/wc.rad", "--color=never").StdinInput(string(inputData))
+	tp := NewTestParams("", "./rad_scripts/wc.rad", "--color=never").StdinInput(normalizedInput)
 	setupAndRun(t, tp)
 
 	// The wc_input.txt file has:

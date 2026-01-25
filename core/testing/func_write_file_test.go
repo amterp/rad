@@ -38,6 +38,11 @@ print(a)
 }
 
 func Test_Func_WriteFile_NoPermission(t *testing.T) {
+	// Windows permission model is different, skip this test on Windows
+	if os.PathSeparator == '\\' {
+		t.Skip("Permission test not applicable on Windows")
+	}
+
 	filePath := "data/no_permission_write.txt"
 
 	os.WriteFile(filePath, []byte("initial"), 0644)
@@ -64,7 +69,6 @@ a = write_file("data/no_permission_write.txt", "content")
       open data/no_permission_write.txt: permission denied (RAD20004)
 `
 	assertError(t, 1, expected)
-
 }
 
 func Test_Func_WriteFile_ErrorsOnDirectory(t *testing.T) {
@@ -72,12 +76,12 @@ func Test_Func_WriteFile_ErrorsOnDirectory(t *testing.T) {
 a = write_file("data/", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = write_file("data/", "content")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ open data/: is a directory (RAD20006)
-`
-	assertError(t, 1, expected)
+	// Error messages are OS-specific, so check for key parts
+	assertErrorContains(t, 1,
+		"Error at L2:5",
+		"a = write_file(\"data/\", \"content\")",
+		"(RAD20006)",
+	)
 }
 
 func Test_Func_WriteFile_ExitErrorsIfNoErrVar(t *testing.T) {
@@ -85,11 +89,11 @@ func Test_Func_WriteFile_ExitErrorsIfNoErrVar(t *testing.T) {
 a = write_file("does_not_exist_dir/test.txt", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = write_file("does_not_exist_dir/test.txt", "content")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open does_not_exist_dir/test.txt: no such file or directory (RAD20005)
-`
-	assertError(t, 1, expected)
+	// Error messages are OS-specific, so check for key parts
+	assertErrorContains(t, 1,
+		"Error at L2:5",
+		"a = write_file(\"does_not_exist_dir/test.txt\", \"content\")",
+		"open does_not_exist_dir/test.txt:",
+		"(RAD20005)",
+	)
 }
