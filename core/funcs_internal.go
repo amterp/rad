@@ -78,7 +78,7 @@ func AddInternalFuncs() {
 					f.i.errorf(scriptArg.node, "Failed to load script for checking: %s", result.Error.Error())
 				}
 
-				contents := result.Content
+				contents := NormalizeLineEndings(result.Content)
 				checker, err := check.NewChecker()
 				if err != nil {
 					f.i.errorf(scriptArg.node, "Failed to create checker: %s", err.Error())
