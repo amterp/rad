@@ -453,9 +453,7 @@ This screenshot from a terminal demonstrates the colors. England is colored pink
 
 Note that the specific colors that appear varies between terminals and user settings.
 
-See the [reference](../reference/rad-blocks.md#colors) for a list of valid colors.
-
-[//]: # (TODO ^ reference is old, not super well supported)
+Valid colors: `plain`, `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `orange`, `pink`.
 
 #### Multi-Column Modifiers
 

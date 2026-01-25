@@ -8,7 +8,7 @@ type Error string
 
 // note to reader: I am currently very inconsistently applying these errors.
 // still debating if we should them, feel free to ignore if you're implementing something.
-// Note: when adding here, updating the reference!! " docs/reference/errors.md "
+// Note: when adding here, update the reference! docs-web/docs/reference/errors.md
 const (
 	// 1xxxx Syntax Errors
 	ErrInvalidSyntax       Error = "10001"

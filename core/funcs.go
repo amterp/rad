@@ -30,6 +30,7 @@ import (
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
+// Note: when adding functions, update the docs! docs-web/docs/reference/functions.md
 const (
 	FUNC_PRINT              = "print"
 	FUNC_PRINT_ERR          = "print_err"
