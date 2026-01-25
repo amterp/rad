@@ -1,0 +1,99 @@
+# GitHub Actions workflow for updating release notes in documentation
+# Triggers when a new release is published, updates docs, and deploys
+
+name: Update Release Notes
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Get release info
+        id: release
+        run: |
+          echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          echo "date=$(date -d '${{ github.event.release.published_at }}' '+%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Format release body
+        id: format
+        run: |
+          # Get release body and clean up
+          cat << 'RELEASE_EOF' > /tmp/raw_body.txt
+          ${{ github.event.release.body }}
+          RELEASE_EOF
+
+          REPO_URL="https://github.com/${{ github.repository }}"
+
+          # Convert commit hashes to links (e.g., "* 9e4e595 feat:" -> "- feat: ([9e4e595](url))")
+          # Remove headers, carriage returns, and clean up formatting
+          sed 's/\r$//' /tmp/raw_body.txt | \
+            sed -E "s/^\* ([a-f0-9]{7,}) (.+)/- \2 ([\1](${REPO_URL}\/commit\/\1))/g" | \
+            sed '/^## Changelog$/d' | \
+            sed '/^## What'\''s Changed$/d' | \
+            sed 's/^\*\*Full Changelog\*\*.*$//' | \
+            sed '/^$/N;/^\n$/d' > /tmp/release_body.txt
+
+      - name: Update releases.md
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          DATE="${{ steps.release.outputs.date }}"
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${TAG}"
+
+          # Create the new release section
+          cat > /tmp/new_release.md << EOF
+          ## [${TAG}](${RELEASE_URL}) - ${DATE}
+
+          $(cat /tmp/release_body.txt)
+
+          ---
+
+          EOF
+
+          # Insert after the intro section (after first "---" on its own line)
+          awk '
+            /^---$/ && !found {
+              print
+              found = 1
+              print ""
+              while ((getline line < "/tmp/new_release.md") > 0) print line
+              next
+            }
+            { print }
+          ' docs-web/docs/releases.md > /tmp/releases_new.md
+
+          mv /tmp/releases_new.md docs-web/docs/releases.md
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs-web/docs/releases.md
+          # Only commit if there are changes
+          git diff --staged --quiet || git commit -m "docs: add release notes for ${{ github.event.release.tag_name }}"
+
+      - name: Push changes
+        run: |
+          git push origin main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install MkDocs
+        run: pip install mkdocs-material
+
+      - name: Deploy docs
+        run: mkdocs gh-deploy --config-file docs-web/mkdocs.yml --force
