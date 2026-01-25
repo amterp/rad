@@ -7,9 +7,10 @@ Reads data from GitHub Actions environment and temp files.
 print("💬 Generating PR comment...")
 
 // Read test results from GitHub Actions environment
-tests_passed = get_env("TESTS_PASSED") == "true"
+linux_passed = get_env("LINUX_PASSED") == "true"
+macos_passed = get_env("MACOS_PASSED") == "true"
+windows_passed = get_env("WINDOWS_PASSED") == "true"
 tests_job_url = get_env("TESTS_JOB_URL")
-cross_platform_passed = get_env("CROSS_PLATFORM_PASSED") == "true"
 binary_job_url = get_env("BINARY_JOB_URL")
 benchmark_job_url = get_env("BENCHMARK_JOB_URL")
 
@@ -43,14 +44,15 @@ if type_of(benchmark_file) != "error":
         print("⚠️ Could not parse benchmark data: {benchmark_data}")
         benchmark_data = null
 
-// Determine test status icon and message
-test_icon = tests_passed ? "✅" : "❌"
-test_message = tests_passed ? "All tests passed" : "Tests failed"
-test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
+// Determine platform test status icons
+linux_icon = linux_passed ? "✅" : "❌"
+macos_icon = macos_passed ? "✅" : "❌"
+windows_icon = windows_passed ? "✅" : "❌"
 
-// Determine cross-platform test status
-cross_platform_icon = cross_platform_passed ? "✅" : "❌"
-cross_platform_message = cross_platform_passed ? "macOS & Windows tests passed" : "Cross-platform tests failed"
+// Determine overall test status
+all_tests_passed = linux_passed and macos_passed and windows_passed
+tests_header_icon = all_tests_passed ? "✅" : "❌"
+test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
 
 // Determine binary size change significance for rad
 rad_size_change_icon = get_size_change_icon(binary_data.rad.diff_percent)
@@ -93,11 +95,12 @@ radls_change_text = binary_data.radls.diff_percent != null ? "{radls_size_change
 comment = """
 ## 🔍 PR Checks Summary
 
-### {test_icon} Tests (Linux)
-{test_message}{test_link}
-
-### {cross_platform_icon} Cross-Platform Tests
-{cross_platform_message}
+### {tests_header_icon} Platform Tests{test_link}
+| Platform | Status |
+|----------|--------|
+| Linux    | {linux_icon}     |
+| macOS    | {macos_icon}     |
+| Windows  | {windows_icon}     |
 
 ### 📊 Binary Size Impact (linux/amd64)
 | Binary | Base ({base_commit_short}) | PR ({pr_commit_short}) | Change |
