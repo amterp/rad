@@ -451,7 +451,8 @@ func (r *RadRunner) registerCommands() error {
 
 func readSource(scriptPath string) (string, error) {
 	source, err := os.ReadFile(scriptPath)
-	return string(source), err
+	// Normalize line endings for consistent behavior across platforms
+	return NormalizeLineEndings(string(source)), err
 }
 
 // runRepl starts the interactive REPL mode

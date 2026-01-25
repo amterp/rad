@@ -280,6 +280,21 @@ func assertError(t *testing.T, expectedCode int, expectedMsg string) {
 	assertExitCode(t, expectedCode)
 }
 
+// assertErrorContains verifies that an error occurred with the expected code
+// and that the error message contains all the given substrings. This is useful
+// for platform-independent error testing where OS-specific messages may differ.
+func assertErrorContains(t *testing.T, expectedCode int, substrings ...string) {
+	t.Helper()
+	actual := stdErrBuffer.String()
+	for _, substr := range substrings {
+		if !strings.Contains(actual, substr) {
+			t.Errorf("Expected stderr to contain %q, but got:\n%s", substr, actual)
+		}
+	}
+	stdErrBuffer.Reset()
+	assertExitCode(t, expectedCode)
+}
+
 func assertExitCode(t *testing.T, code int) {
 	t.Helper()
 	assert.Equal(t, code, *errorOrExit.exitCode)
