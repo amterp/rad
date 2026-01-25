@@ -65,21 +65,21 @@ Or use the dev script for a more comprehensive validation (includes formatting, 
 ./dev --validate
 ```
 
-#### Cross-Platform Testing
+#### Quick Platform Testing
 
 Rad supports Linux, macOS, and Windows. PR checks automatically run Go tests on all three platforms.
 
-If you're working on a platform-specific fix and want faster feedback than the full PR pipeline, you can manually trigger cross-platform tests on your branch:
+If you're working on a platform-specific fix and want faster feedback than the full PR pipeline, you can manually trigger quick platform tests on your branch:
 
 ```shell
 # Test on all platforms
-gh workflow run "Cross-Platform Tests" --ref your-branch
+gh workflow run "Quick Platform Tests" --ref your-branch
 
 # Test only on Windows
-gh workflow run "Cross-Platform Tests" --ref your-branch -f platforms=windows
+gh workflow run "Quick Platform Tests" --ref your-branch -f platforms=windows
 
 # Test only on macOS
-gh workflow run "Cross-Platform Tests" --ref your-branch -f platforms=macos
+gh workflow run "Quick Platform Tests" --ref your-branch -f platforms=macos
 ```
 
 This is particularly useful when debugging issues that only reproduce on specific platforms.

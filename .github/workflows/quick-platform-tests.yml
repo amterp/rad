@@ -1,10 +1,10 @@
-# Manual workflow for quick cross-platform testing during development.
+# Manual workflow for quick platform testing during development.
 # Useful when iterating on platform-specific fixes without running the full PR pipeline.
 #
 # Trigger via GitHub UI or CLI:
-#   gh workflow run "Cross-Platform Tests" --ref your-branch
+#   gh workflow run "Quick Platform Tests" --ref your-branch
 
-name: Cross-Platform Tests
+name: Quick Platform Tests
 
 on:
   workflow_dispatch:
