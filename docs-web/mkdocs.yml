@@ -21,6 +21,7 @@ nav:
   - Examples:
       - ./examples/index.md
       - ./examples/brewi.md
+      - ./examples/epoch.md
   - Reference:
       - Language Reference: ./reference/syntax.md
       - ./reference/functions.md

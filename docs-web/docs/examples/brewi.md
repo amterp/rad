@@ -41,21 +41,13 @@ Rather than writing out these two commands manually each time, it'd be neat if I
 
 ### Writing the script
 
-We can use `rad` to create the script file for us.
+We can use `rad` to create the script file for us. The `-s` flag gives us a minimal template with just a shebang, and `-o code` opens it in VS Code.
 
 ```sh
-rad new brewi -s
+rad new brewi -s -o code
 ```
 
-This will set us up with an executable script named `brewi`, and the `-s` simplifies the template it's instantiated with to contain *just* a [shebang](../guide/getting-started.md#shebang).
-
-The shebang will allow us to invoke the script as `brewi` from the CLI rather than writing out `rad ./brewi`. Open up `brewi` in your editor, and you should see something like this:
-
-```rad linenums="1" hl_lines="0"
-#!/usr/bin/env rad
-```
-
-Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
+First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
 
 ```rad linenums="1" hl_lines="2-4"
 #!/usr/bin/env rad
@@ -139,14 +131,14 @@ Note the shorthand flag in `cask c bool`.
 
 Done! You've now got a great, convenient helper script for installing things with brew :)
 
-```
-> brewi -h
-Facilitates checking a brew formula before installing it.
+## Concepts demonstrated
 
-Usage:
-  brewi <formula> [cask]
-
-Script args:
-      --formula string   Name of the formula to install.
-  -c, --cask             Enable if it's a cask.
-```
+| Concept | Where |
+|---------|-------|
+| [File header](../guide/getting-started.md#shebang) | Script description for `--help` |
+| [Args block](../guide/args.md) | `formula str`, `cask c bool` |
+| [Short flags](../guide/args.md) | `cask c bool` gives `-c` |
+| [Shell commands](../guide/shell-commands.md) | `$\`brew info {formula}\`` |
+| [String interpolation](../guide/strings-advanced.md#string-interpolation) | `{formula}` in shell command |
+| [`confirm()`](../reference/functions.md#confirm) | Interactive yes/no prompt |
+| [Ternary operator](../guide/basics.md#ternary) | `cask ? " --cask" : ""` |
