@@ -26,7 +26,7 @@ func Test_Tree_Sexp(t *testing.T) {
 
 	tree := radParser.Parse("a = 2\nprint(a)")
 
-	expected := "(source_file (assign left: (var_path) right: (expr (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (indexed_expr root: (primary_expr (literal (int))))))))))))) (expr (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (indexed_expr root: (primary_expr (call arg: (expr (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (var_path)))))))))))))))))))))"
+	expected := "(source_file (assign left: (var_path) right: (expr delegate: (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (fallback_expr delegate: (indexed_expr root: (primary_expr (literal (int)))))))))))))) (expr_stmt expr: (expr delegate: (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (fallback_expr delegate: (indexed_expr root: (primary_expr (call arg: (expr delegate: (ternary_expr delegate: (or_expr delegate: (and_expr delegate: (compare_expr delegate: (add_expr delegate: (mult_expr delegate: (unary_expr delegate: (fallback_expr delegate: (var_path))))))))))))))))))))))))"
 	if tree.Sexp() != expected {
 		t.Fatalf("Sexp failed: %v", tree.Sexp())
 	}

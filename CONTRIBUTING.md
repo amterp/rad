@@ -51,6 +51,39 @@ If you're using GoLand, the repo includes a few run configurations that may be h
 - **Tests**: Runs all the tests.
 - **make all**: Runs make all from the IDE.
 
+### Testing
+
+Run the full test suite locally with:
+
+```shell
+make test
+```
+
+Or use the dev script for a more comprehensive validation (includes formatting, building, and tests):
+
+```shell
+./dev --validate
+```
+
+#### Cross-Platform Testing
+
+Rad supports Linux, macOS, and Windows. PR checks automatically run Go tests on all three platforms.
+
+If you're working on a platform-specific fix and want faster feedback than the full PR pipeline, you can manually trigger cross-platform tests on your branch:
+
+```shell
+# Test on all platforms
+gh workflow run "Cross-Platform Tests" --ref your-branch
+
+# Test only on Windows
+gh workflow run "Cross-Platform Tests" --ref your-branch -f platforms=windows
+
+# Test only on macOS
+gh workflow run "Cross-Platform Tests" --ref your-branch -f platforms=macos
+```
+
+This is particularly useful when debugging issues that only reproduce on specific platforms.
+
 ### Submitting PRs
 
 1. Fork the repo, create a feature branch, and commit your changes.

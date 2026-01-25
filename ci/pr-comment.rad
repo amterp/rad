@@ -9,6 +9,7 @@ print("💬 Generating PR comment...")
 // Read test results from GitHub Actions environment
 tests_passed = get_env("TESTS_PASSED") == "true"
 tests_job_url = get_env("TESTS_JOB_URL")
+cross_platform_passed = get_env("CROSS_PLATFORM_PASSED") == "true"
 binary_job_url = get_env("BINARY_JOB_URL")
 benchmark_job_url = get_env("BENCHMARK_JOB_URL")
 
@@ -46,6 +47,10 @@ if type_of(benchmark_file) != "error":
 test_icon = tests_passed ? "✅" : "❌"
 test_message = tests_passed ? "All tests passed" : "Tests failed"
 test_link = tests_job_url ? " ([view logs]({tests_job_url}))" : ""
+
+// Determine cross-platform test status
+cross_platform_icon = cross_platform_passed ? "✅" : "❌"
+cross_platform_message = cross_platform_passed ? "macOS & Windows tests passed" : "Cross-platform tests failed"
 
 // Determine binary size change significance for rad
 rad_size_change_icon = get_size_change_icon(binary_data.rad.diff_percent)
@@ -88,8 +93,11 @@ radls_change_text = binary_data.radls.diff_percent != null ? "{radls_size_change
 comment = """
 ## 🔍 PR Checks Summary
 
-### {test_icon} Tests
+### {test_icon} Tests (Linux)
 {test_message}{test_link}
+
+### {cross_platform_icon} Cross-Platform Tests
+{cross_platform_message}
 
 ### 📊 Binary Size Impact (linux/amd64)
 | Binary | Base ({base_commit_short}) | PR ({pr_commit_short}) | Change |

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   tests:
-    name: Run Tests
+    name: Tests (ubuntu-latest)
     runs-on: ubuntu-latest
     outputs:
       tests-passed: ${{ steps.tests.outcome == 'success' }}
@@ -38,6 +38,26 @@ jobs:
       - name: Run tests
         id: tests
         run: rad ci/test-runner.rad
+
+  cross-platform-tests:
+    name: Tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Run Go tests
+        run: go test ./core/testing/... ./rts/...
 
   binary-size:
     name: Binary Size Comparison
@@ -118,7 +138,7 @@ jobs:
   comment:
     name: Post PR Comment
     runs-on: ubuntu-latest
-    needs: [tests, binary-size, benchmarks]
+    needs: [tests, cross-platform-tests, binary-size, benchmarks]
     if: always()
     steps:
       - name: Checkout code
@@ -143,6 +163,7 @@ jobs:
         env:
           TESTS_PASSED: ${{ needs.tests.outputs.tests-passed }}
           TESTS_JOB_URL: ${{ needs.tests.outputs.tests-job-url }}
+          CROSS_PLATFORM_PASSED: ${{ needs.cross-platform-tests.result == 'success' }}
           BINARY_JOB_URL: ${{ needs.binary-size.outputs.binary-job-url }}
           BENCHMARK_JOB_URL: ${{ needs.benchmarks.outputs.benchmark-job-url }}
           GITHUB_SHA: ${{ github.event.pull_request.head.sha }}

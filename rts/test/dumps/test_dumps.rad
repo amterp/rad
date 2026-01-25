@@ -14,14 +14,14 @@ actuals = ["actual/{d}" for d in dumps]
 
 results = []
 fails = 0
-for i, d in dumps:
-    actual = actuals[i]
+for d in dumps with loop:
+    actual = actuals[loop.idx]
     diffs = compare_files("./cases/{d}", actual)
     result = green("SUCCESS")
     if diffs:
         result = red("FAIL")
         fails++
-    summary = "{i + 1:3}. {d} - " + result
+    summary = "{loop.idx + 1:3}. {d} - " + result
     print(summary)
     results += [summary]
 

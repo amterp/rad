@@ -81,7 +81,7 @@ func getFileHeaderLine(fileName string) string {
 	if !ok {
 		panic(fmt.Sprintf("Failed to find file header in embedded file %s", fileName))
 	}
-	firstLine := strings.Split(fh.Contents, "\n")[0]
+	firstLine := strings.TrimSpace(strings.Split(fh.Contents, "\n")[0])
 	if !strings.HasSuffix(firstLine, ".") {
 		// Heuristic for the first line being a decent standalone description, for usage in rad help message.
 		panic(
