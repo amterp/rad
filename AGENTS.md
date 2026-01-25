@@ -1,0 +1,384 @@
+- Where the syntax of the Rad language itself becomes relevant, see SYNTAX.md for reference.
+
+- You have the following subagents to request input from:
+  - Code Reviewer (for when you make large changes)
+  - Rad Docs Maintainer (for when you make user-facing changes)
+
+- You have the following useful commands available to you:
+  - `make format` 
+  - `make build`: builds the project into a local test binary `./bin/radd`
+  - `make test`
+  - `./dev --validate`: Runs `go mod tidy`, formats, builds, and runs tests.
+
+- Please do not leave task-specific messages to the user via comments in the code base when making changes.
+
+---
+
+# Rad Language - LLM Quick Reference
+
+**Rad is a modern CLI scripting language designed to replace Bash for most scripting needs.**
+
+## Project Overview
+
+Rad (🤙 Rad) is a lightweight CLI scripting language that makes shell scripting easier, more readable, and more
+maintainable than Bash. It combines familiar Python-like syntax with powerful scripting-specific features.
+
+### Key Features
+
+- **Declarative argument parsing** with automatic help generation
+- **Built-in JSON processing** with path expressions
+- **HTTP request syntax** (`rad url`) for API interactions
+- **Table formatting** and data display
+- **String interpolation** with `{variable}` syntax
+- **Shell command integration** while avoiding Bash pitfalls
+- **Type system** with runtime type checking
+- **Interactive prompts** via `pick()` function
+
+## Project Structure
+
+```
+/Users/amterp/src/rad/
+├── main.go                    # Entry point - creates RadRunner
+├── go.mod                     # Go module definition
+├── Makefile                   # Build system (generate, format, build, test)
+├── README.md                  # User documentation
+├── core/                      # Main interpreter implementation
+│   ├── runner.go              # Main runner logic
+│   ├── interpreter.go         # Core interpreter
+│   ├── funcs.go              # Built-in functions
+│   ├── rad_block.go          # Rad block syntax (HTTP requests)
+│   ├── args.go               # Argument parsing
+│   ├── json_*.go             # JSON processing algorithms
+│   ├── type_*.go             # Type system implementation
+│   └── testing/              # Comprehensive test suite
+├── rts/                      # Rad Tree Sitter
+│   ├── rts.go                # Tree-sitter parser wrapper
+│   ├── nodes.go              # AST node definitions
+│   └── rl/                   # Type resolution logic
+├── lsp-server/               # Language Server Protocol implementation
+├── vsc-extension/            # VS Code extension
+├── docs-web/                 # Documentation website (MkDocs)
+├── benchmark/                # Performance benchmarks
+└── examples/                 # Example Rad scripts
+```
+
+## Architecture Overview
+
+### 1. Entry Point (`main.go`)
+
+- Simple entry: creates `core.RadRunner` and calls `Run()`
+- All logic delegated to core package
+
+### 2. Core Package (`core/`)
+
+The heart of the interpreter, organized by functionality:
+
+#### Key Files:
+
+- **`runner.go`**: Main execution flow, argument parsing, script loading
+- **`interpreter.go`**: AST evaluation engine with `EvalResult` system
+- **`funcs.go`**: 50+ built-in functions (print, len, join, etc.)
+- **`args.go`**: Declarative argument parsing with constraints
+- **`rad_block.go`**: Special `rad url:` syntax for HTTP requests
+- **`json_*.go`**: JSON path expressions and field extraction
+- **`type_*.go`**: Type system (RadValue, lists, maps, strings, etc.)
+
+#### Built-in Functions (`funcs.go`):
+
+Common functions include:
+
+- **I/O**: `print`, `print_err`, `debug`, `pprint`
+- **Data**: `len`, `keys`, `values`, `join`, `sort`, `unique`
+- **Strings**: `upper`, `lower`, `split`, `replace`, `trim`
+- **Math**: `sum`, `max`, `min`, `round`, `floor`, `ceil`
+- **System**: `exit`, `sleep`, `now`, `get_env`
+- **Interactive**: `pick`, `pick_kv` (user selection prompts)
+- **Files**: `read_file`, `write_file`, `find_paths`
+- **HTTP**: `http_get`, `http_post`
+
+### 3. Rad Tree Sitter (`rts/`)
+
+- Uses **Tree-sitter** for parsing (grammar in separate repo)
+- **`rts.go`**: Parser wrapper around tree-sitter-rad
+  - Acts as an API abstraction hiding primitive node/tree walking.
+  - Lets users query and find what they need at a higher level.
+- **`nodes.go`**: AST node types and traversal
+- **`rl/`**: Type resolution and compatibility checking
+
+### 4. Language Server (`lsp-server/`)
+
+- Implements LSP for VS Code integration
+- Provides syntax errors, diagnostics, etc.
+- Currently macOS/Linux only
+
+## Language Syntax Quick Reference
+
+### Script Structure
+
+```rad
+#!/usr/bin/env rad
+---
+Script description goes here
+---
+args:
+    name str              # Required string argument
+    count int = 5         # Optional with default
+    verbose v bool        # Boolean flag (can use short form)
+    
+    count range (0, 100]  // Constraints
+    name enum ["alice", "bob"]
+
+// Script body - comments use //
+for i in range(count):
+    print("Hello {name}!")
+```
+
+### Key Syntax Features
+
+#### Arguments
+
+- Automatic help generation from `#` comments (help text only)
+- Type checking (str, int, float, bool)
+- Constraints (range, enum, regex)
+- Optional vs required args
+- Short form flags
+
+#### Data Types
+
+- **Primitives**: `str`, `int`, `float`, `bool`, `null`
+- **Collections**: `list[T]`, `map[K,V]`
+- **Functions**: First-class functions
+
+#### Control Flow
+
+```rad
+// If statements
+if condition:
+    // do something
+
+// For loops
+for item in items:
+    print(item)
+
+// While loops  
+while condition:
+    // do something
+
+// Switch expressions
+result = switch value:
+    case "a": "Apple"
+    case "b": "Banana" 
+    default: "Unknown"
+```
+
+#### Rad Blocks (HTTP Requests)
+
+```rad
+// Define JSON field mappings
+Name = json[].name
+Email = json[].email
+
+// Execute HTTP request and display as table
+rad "https://api.example.com/users":
+    fields Name, Email
+    sort Name
+```
+
+#### String Interpolation
+
+```rad
+name = "world"
+message = "Hello {name}!"  // Result: "Hello world!"
+```
+
+## Development Workflow
+
+### Build Commands
+
+```bash
+make all          # generate + format + build + test
+make generate     # Extract function metadata for LSP
+make format       # gofmt + goimports  
+make build        # Build to ./bin/radd
+make test         # Run tests in core/testing
+```
+
+### Testing
+
+- Comprehensive test suite in `core/testing/`
+- Tests organized by feature (args, functions, syntax, etc.)
+- Test resources in `core/testing/resources/`
+- Parser tests in `rts/test/`
+
+### Key Dependencies
+
+- **Tree-sitter**: For parsing (`github.com/tree-sitter/go-tree-sitter`)
+- **pflag**: Command-line flag parsing
+- **go-tbl**: Table formatting
+- **samber/lo**: Utility functions
+- **Various amterp/***: Author's utility packages
+
+## Common Development Tasks
+
+### Adding Built-in Functions
+
+**Complete TDD workflow for adding a new built-in function:**
+
+1. **Add function signature** to `rts/signatures.go`:
+    - Add `newFnSignature()` call with proper type signature
+    - Place alphabetically or near related functions
+
+2. **Write comprehensive tests first** in `core/testing/func_[name]_test.go`:
+    - **Test-Driven Development**: Write tests before implementation
+    - Test basic functionality with different input types
+    - Test edge cases (zero, negative numbers, boundary conditions, etc.)
+    - Test error conditions (wrong types, invalid inputs)
+    - Use Rad testing patterns:
+        - `setupAndRunCode(t, script, "--color=never")` to run Rad scripts
+        - `assertOnlyOutput(t, stdOutBuffer, "expected\n")` for success cases
+        - `assertError(t, 1, expected)` for error cases with exact error message
+        - `assertNoErrors(t)` to ensure no stderr output
+    - Follow naming: `Test_Func_[Name]_[Scenario]`
+    - **Run tests to see them fail** before implementing
+
+3. **Add function constant** in `core/funcs.go`:
+    - Add `FUNC_[NAME] = "[name]"` constant with other function constants
+
+4. **Implement function** in `core/funcs.go`:
+    - Add to `GetBuiltInFuncs()` slice with `Name` and `Execute` fields
+    - Use `f.GetArg()`, `f.GetFloat()`, `f.GetStr()` etc. to extract arguments
+    - Return using `f.Return()` or `f.ReturnErrf()` for errors
+    - Place near related functions (e.g., math functions together)
+
+5. **Run tests to verify implementation**:
+   ```bash
+   go test ./core/testing -run Test_Func_[Name]  # Test specific function
+   go test ./core/testing                        # Run all tests
+   ```
+
+6. **Document the function** in `docs-web/docs/reference/functions.md`
+
+7. **Update LSP metadata**: Run `make generate` to extract function metadata for LSP
+
+**Rad Testing Style Guide:**
+
+- Each test function focuses on one specific scenario
+- Use descriptive test names: `Test_Func_[Name]_[Scenario]`
+- Scripts use multi-line strings with proper indentation
+- Always use `--color=never` flag to avoid terminal codes in output
+- For error tests, include the exact expected error message with proper formatting
+- Test both positive and negative cases thoroughly
+
+### Documentation
+
+If code changes are made, invoke the Rad Docs Maintainer agent to assess whether doc updates are needed.
+
+When adding or updating function documentation in `docs-web/docs/reference/functions.md`, follow this **tiered approach
+** based on function complexity:
+
+#### Tier 1 - Simple Functions (most functions)
+
+For straightforward functions with clear purpose and minimal parameters:
+
+```md
+### function_name
+
+Brief one-line description of what it does.
+
+```rad
+function_name(param: type) -> return_type
+```
+
+```rad
+// Examples with inline comments showing results
+function_name(example1)  // -> result1  
+function_name(example2)  // -> result2
+```
+
+#### Tier 2 - Complex Functions
+
+For functions with multiple parameters, complex behavior, or mutually exclusive arguments:
+
+```md
+### function_name
+
+Brief description of what it does and primary use cases.
+
+```rad  
+function_name(param1: type, param2: type, named_param: type = default) -> return_type
+function_name(alternative_signature: type) -> return_type  // if multiple call patterns exist
+```
+
+**Parameter table** - Include when function has 3+ parameters, mutually exclusive parameters, or complex constraints:
+
+**Parameters:**
+
+| Parameter | Type              | Description                             |
+|-----------|-------------------|-----------------------------------------|
+| `param1`  | `type`            | Clear description including constraints |
+| `param2`  | `type? = default` | Optional parameter behavior             |
+
+For `Type`, follow Rad typing syntax. See `signatures.go` for lots of examples of the syntax here.
+
+Important behavior notes for parameter interactions should be written naturally after the table. For example:
+
+- Cannot use `strict=true` with `fill` parameter (mutually exclusive)
+- Returns different types based on input conditions
+- Negative values are handled specially
+
+**Examples:**
+
+```rad
+// Example 1: Basic usage
+function_name(simple_case)  // -> result
+
+// Example 2: With named parameters  
+function_name(complex_case, named_param=value)  // -> result
+```
+
+#### Documentation Guidelines:
+
+1. **Use Rad syntax for types** - Follow `rts/signatures.go` conventions:
+   - `str`, `int`, `float`, `bool`, `list[T]`, `map[K,V]`
+   - `any` for flexible types, `any?` for nullable
+   - `...any` for variadic arguments
+
+2. **Multiple signatures** - List parallel signatures when functions accept different call patterns:
+   ```rad
+   http_post(url: str) -> map
+   http_post(url: str, *, body: any?, headers: map?) -> map
+   ```
+
+3. **Check runtime behavior** - Examine actual implementation in `core/funcs.go` for:
+    - Mutually exclusive parameters
+    - Complex argument interactions
+    - Error conditions not obvious from signatures
+
+4. **Examples format** - Use inline comments for simple results:
+   ```rad
+   pow(2, 3)     // -> 8
+   pow(4, 0.5)   // -> 2
+   ```
+
+5. **Keep it concise** - Reference docs should be scannable. Detailed tutorials belong elsewhere.
+
+The goal is **consistency** while **scaling appropriately** to function complexity - don't overwhelm readers with tables
+for simple functions, but provide sufficient detail for complex ones.
+
+### Debugging Tips
+
+- Use `debug()` function in Rad scripts for debugging
+- Check `core/testing/` for examples of every language feature
+
+## File Extensions and Conventions
+
+- **`.rad`**: Rad script files
+- **`#!/usr/bin/env rad`**: Shebang for executable scripts
+- Scripts typically have no extension when installed as CLI tools
+
+## Status: Early Development
+
+- Major breaking changes expected
+- Core functionality working
+- Missing some planned features
+- Active development on language features and LSP
