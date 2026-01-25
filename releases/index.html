@@ -1,0 +1,2203 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://amterp.github.io/rad/releases/">
+      
+      
+        <link rel="prev" href="../status/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Release Notes - Rad Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M22%2012a10%2010%200%200%201-10%2010A10%2010%200%200%201%202%2012%2010%2010%200%200%201%2012%202a10%2010%200%200%201%2010%2010M6%2013h8l-3.5%203.5%201.42%201.42L17.84%2012l-5.92-5.92L10.5%207.5%2014%2011H6z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#release-notes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Rad Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Release Notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Rad Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/basics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/args/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Args
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/strings-advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strings (Advanced)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/rad-blocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rad Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/type-annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/error-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Error Handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/shell-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shell Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/script-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Script Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/global-flags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global Flags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/defer-errdefer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defer & Errdefer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/brewi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    brewi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/syntax/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Language Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Migrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/v0.7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.7
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releases
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v070-2026-01-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.7.0 - 2026-01-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0627-2026-01-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.27 - 2026-01-11
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0626-2026-01-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.26 - 2026-01-02
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0625-2025-12-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.25 - 2025-12-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0624-2025-12-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.24 - 2025-12-14
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0623-2025-12-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.23 - 2025-12-10
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0621-2025-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.21 - 2025-12-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0620-2025-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.20 - 2025-12-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0619-2025-12-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.19 - 2025-12-02
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0618-2025-11-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.18 - 2025-11-29
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0617-2025-11-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.17 - 2025-11-20
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0616-2025-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.16 - 2025-11-19
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0615-2025-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.15 - 2025-11-09
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0614-2025-11-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.14 - 2025-11-04
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0613-2025-11-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.13 - 2025-11-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0612-2025-10-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.12 - 2025-10-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breaking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking!
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0611-2025-10-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.11 - 2025-10-12
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0610-2025-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.10 - 2025-10-06
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v069-2025-10-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.9 - 2025-10-05
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v068-2025-09-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.8 - 2025-09-30
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v067-2025-09-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.7 - 2025-09-28
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v066-2025-09-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.6 - 2025-09-27
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v065-2025-09-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.5 - 2025-09-27
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v062-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.2 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v061-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.1 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v060-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.0 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0559-2025-09-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.5.59 - 2025-09-14
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v070-2026-01-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.7.0 - 2026-01-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0627-2026-01-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.27 - 2026-01-11
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0626-2026-01-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.26 - 2026-01-02
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0625-2025-12-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.25 - 2025-12-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0624-2025-12-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.24 - 2025-12-14
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0623-2025-12-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.23 - 2025-12-10
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0621-2025-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.21 - 2025-12-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0620-2025-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.20 - 2025-12-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0619-2025-12-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.19 - 2025-12-02
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0618-2025-11-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.18 - 2025-11-29
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0617-2025-11-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.17 - 2025-11-20
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0616-2025-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.16 - 2025-11-19
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0615-2025-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.15 - 2025-11-09
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0614-2025-11-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.14 - 2025-11-04
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0613-2025-11-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.13 - 2025-11-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0612-2025-10-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.12 - 2025-10-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breaking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking!
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0611-2025-10-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.11 - 2025-10-12
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0610-2025-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.10 - 2025-10-06
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v069-2025-10-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.9 - 2025-10-05
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v068-2025-09-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.8 - 2025-09-30
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v067-2025-09-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.7 - 2025-09-28
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v066-2025-09-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.6 - 2025-09-27
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v065-2025-09-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.5 - 2025-09-27
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v062-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.2 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v061-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.1 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v060-2025-09-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.6.0 - 2025-09-21
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0559-2025-09-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.5.59 - 2025-09-14
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h1>
+<p>All Rad releases. Newest first.</p>
+<hr />
+<h2 id="v070-2026-01-16"><a href="https://github.com/amterp/rad/releases/tag/v0.7.0">v0.7.0</a> - 2026-01-16<a class="headerlink" href="#v070-2026-01-16" title="Permanent link">&para;</a></h2>
+<ul>
+<li>docs(SYNTAX.md): add script commands
+ (<a href="https://github.com/amterp/rad/commit/9e4e595">9e4e595</a>)</li>
+<li>feat!: redesign for-loop syntax with explicit context access
+ (<a href="https://github.com/amterp/rad/commit/e98f7fc">e98f7fc</a>)</li>
+<li>See <a href="https://amterp.github.io/rad/migrations/v0.7/">v0.7 migration guide</a> for more information.</li>
+<li>feat: add context support to rad block map/filter lambdas
+ (<a href="https://github.com/amterp/rad/commit/21976ec">21976ec</a>)</li>
+</ul>
+<hr />
+<h2 id="v0627-2026-01-11"><a href="https://github.com/amterp/rad/releases/tag/v0.6.27">v0.6.27</a> - 2026-01-11<a class="headerlink" href="#v0627-2026-01-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.2.0 (<a href="https://github.com/amterp/rad/commit/80c4102">80c4102</a>)</li>
+<li>fix: multiline string interpolation followed by content (<a href="https://github.com/amterp/rad/commit/5365366">5365366</a>)</li>
+</ul>
+<hr />
+<h2 id="v0626-2026-01-02"><a href="https://github.com/amterp/rad/releases/tag/v0.6.26">v0.6.26</a> - 2026-01-02<a class="headerlink" href="#v0626-2026-01-02" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: optimize ci benchmarks by interleaving &amp; reducing runs (<a href="https://github.com/amterp/rad/commit/3a4a7f4">3a4a7f4</a>)</li>
+<li>feat(pick): implement 'prefer_exact' named arg (<a href="https://github.com/amterp/rad/commit/a3092c7">a3092c7</a>)</li>
+<li>feat: improve syntax error messages with specific diagnostics (<a href="https://github.com/amterp/rad/commit/82d9472">82d9472</a>)</li>
+<li>feat: unpackage radls from vs code extension, use PATH instead (<a href="https://github.com/amterp/rad/commit/d79186f">d79186f</a>)</li>
+</ul>
+<hr />
+<h2 id="v0625-2025-12-16"><a href="https://github.com/amterp/rad/releases/tag/v0.6.25">v0.6.25</a> - 2025-12-16<a class="headerlink" href="#v0625-2025-12-16" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.13 (<a href="https://github.com/amterp/rad/commit/c492a49">c492a49</a>)</li>
+<li>docs(thinking): Rewrite imports.md and add some quick counter thoughts (<a href="https://github.com/amterp/rad/commit/f50a960">f50a960</a>)</li>
+<li>feat: add additional get_path fields e.g. modified_millis (<a href="https://github.com/amterp/rad/commit/f536f12">f536f12</a>)</li>
+<li>feat: allow parse_epoch to accept floats (<a href="https://github.com/amterp/rad/commit/c15def5">c15def5</a>)</li>
+<li>fix: avoid Go 'MISSING' formatting malformed print in shell cmds (<a href="https://github.com/amterp/rad/commit/6a69141">6a69141</a>)</li>
+</ul>
+<hr />
+<h2 id="v0624-2025-12-14"><a href="https://github.com/amterp/rad/releases/tag/v0.6.24">v0.6.24</a> - 2025-12-14<a class="headerlink" href="#v0624-2025-12-14" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat: add flat_map function (<a href="https://github.com/amterp/rad/commit/0f72798">0f72798</a>)</li>
+</ul>
+<hr />
+<h2 id="v0623-2025-12-10"><a href="https://github.com/amterp/rad/releases/tag/v0.6.23">v0.6.23</a> - 2025-12-10<a class="headerlink" href="#v0623-2025-12-10" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat: allow min/max to accept var args of numbers
+ (<a href="https://github.com/amterp/rad/commit/fb6582d">fb6582d</a>)</li>
+</ul>
+<hr />
+<h2 id="v0621-2025-12-03"><a href="https://github.com/amterp/rad/releases/tag/v0.6.21">v0.6.21</a> - 2025-12-03<a class="headerlink" href="#v0621-2025-12-03" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: use full brew hash (<a href="https://github.com/amterp/rad/commit/4dfb9ed">4dfb9ed</a>)</li>
+</ul>
+<hr />
+<h2 id="v0620-2025-12-03"><a href="https://github.com/amterp/rad/releases/tag/v0.6.20">v0.6.20</a> - 2025-12-03<a class="headerlink" href="#v0620-2025-12-03" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: attempt brew CI fix by pulling latest commit (<a href="https://github.com/amterp/rad/commit/775afad">775afad</a>)</li>
+</ul>
+<hr />
+<h2 id="v0619-2025-12-02"><a href="https://github.com/amterp/rad/releases/tag/v0.6.19">v0.6.19</a> - 2025-12-02<a class="headerlink" href="#v0619-2025-12-02" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: attempt to fix homebrew release (<a href="https://github.com/amterp/rad/commit/da006f4">da006f4</a>)</li>
+</ul>
+<hr />
+<h2 id="v0618-2025-11-29"><a href="https://github.com/amterp/rad/releases/tag/v0.6.18">v0.6.18</a> - 2025-11-29<a class="headerlink" href="#v0618-2025-11-29" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat: implement 'filter' rad block field modifier syntax (<a href="https://github.com/amterp/rad/commit/022267b">022267b</a>)</li>
+<li>fix: un-indent command descriptions (<a href="https://github.com/amterp/rad/commit/5f1480e">5f1480e</a>)</li>
+</ul>
+<hr />
+<h2 id="v0617-2025-11-20"><a href="https://github.com/amterp/rad/releases/tag/v0.6.17">v0.6.17</a> - 2025-11-20<a class="headerlink" href="#v0617-2025-11-20" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.12 (<a href="https://github.com/amterp/rad/commit/d70dbbe">d70dbbe</a>)</li>
+<li>feat(checker): add warning against undefined cmd callback references (<a href="https://github.com/amterp/rad/commit/868d6f8">868d6f8</a>)</li>
+<li>feat: add function 'multipick' (<a href="https://github.com/amterp/rad/commit/8c96666">8c96666</a>)</li>
+<li>fix: delete pointless multipick tests (<a href="https://github.com/amterp/rad/commit/6a0ebba">6a0ebba</a>)</li>
+</ul>
+<hr />
+<h2 id="v0616-2025-11-19"><a href="https://github.com/amterp/rad/releases/tag/v0.6.16">v0.6.16</a> - 2025-11-19<a class="headerlink" href="#v0616-2025-11-19" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Implement commands in Rad (<a href="https://github.com/amterp/rad/commit/cef9661">cef9661</a>)</li>
+</ul>
+<hr />
+<h2 id="v0615-2025-11-09"><a href="https://github.com/amterp/rad/releases/tag/v0.6.15">v0.6.15</a> - 2025-11-09<a class="headerlink" href="#v0615-2025-11-09" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.11 (<a href="https://github.com/amterp/rad/commit/1c6bb65">1c6bb65</a>)</li>
+<li>feat: recognize hoisted functions for unknown functions check (<a href="https://github.com/amterp/rad/commit/e535795">e535795</a>)</li>
+<li>fix: allow --version --src and --src-tree on invalid scripts (<a href="https://github.com/amterp/rad/commit/4220c18">4220c18</a>)</li>
+<li>fix: avoid passing arg-less prints through printf (<a href="https://github.com/amterp/rad/commit/7e16b1a">7e16b1a</a>)</li>
+<li>fix: fix x/crypto dependency (<a href="https://github.com/amterp/rad/commit/5bb2ea7">5bb2ea7</a>)</li>
+</ul>
+<hr />
+<h2 id="v0614-2025-11-04"><a href="https://github.com/amterp/rad/releases/tag/v0.6.14">v0.6.14</a> - 2025-11-04<a class="headerlink" href="#v0614-2025-11-04" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat(check): add error check against hoisted functions shadowing args (<a href="https://github.com/amterp/rad/commit/ff839e6">ff839e6</a>)</li>
+<li>feat: allow non-str types in colorize function (<a href="https://github.com/amterp/rad/commit/ba71c19">ba71c19</a>)</li>
+</ul>
+<hr />
+<h2 id="v0613-2025-11-03"><a href="https://github.com/amterp/rad/releases/tag/v0.6.13">v0.6.13</a> - 2025-11-03<a class="headerlink" href="#v0613-2025-11-03" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.10 (<a href="https://github.com/amterp/rad/commit/e27b21c">e27b21c</a>)</li>
+<li>ci: fix test-runner.rad syntax (<a href="https://github.com/amterp/rad/commit/18c9bad">18c9bad</a>)</li>
+<li>docs(guide): add complete example to getting started (<a href="https://github.com/amterp/rad/commit/c4df48a">c4df48a</a>)</li>
+<li>docs(guide): add error-handling.md (<a href="https://github.com/amterp/rad/commit/4a7f9f5">4a7f9f5</a>)</li>
+<li>docs(guide): add type-annotations.md (<a href="https://github.com/amterp/rad/commit/20fe398">20fe398</a>)</li>
+<li>docs(guide): shorten shell-commands.md header (<a href="https://github.com/amterp/rad/commit/d704c25">d704c25</a>)</li>
+<li>docs(guide): update args.md (<a href="https://github.com/amterp/rad/commit/ab615c6">ab615c6</a>)</li>
+<li>docs(guide): update basics.md (<a href="https://github.com/amterp/rad/commit/0a38d12">0a38d12</a>)</li>
+<li>docs(guide): update functions.md (<a href="https://github.com/amterp/rad/commit/67b5fdc">67b5fdc</a>)</li>
+<li>docs(guide): update getting started (<a href="https://github.com/amterp/rad/commit/7974f4c">7974f4c</a>)</li>
+<li>docs(guide): update rad-blocks.md (<a href="https://github.com/amterp/rad/commit/5c58d83">5c58d83</a>)</li>
+<li>docs(guide): update shell-commands.md (<a href="https://github.com/amterp/rad/commit/863c3c1">863c3c1</a>)</li>
+<li>docs(guide): update strings-advanced.md (<a href="https://github.com/amterp/rad/commit/2776ef6">2776ef6</a>)</li>
+<li>feat: revamp http url encoding behavior (<a href="https://github.com/amterp/rad/commit/d91350b">d91350b</a>)</li>
+<li>fix(fomatting): accept thousands_separator before alignment/padding (<a href="https://github.com/amterp/rad/commit/c18c971">c18c971</a>)</li>
+<li>fix(shell): fix shell modifier keywords (<a href="https://github.com/amterp/rad/commit/e448f72">e448f72</a>)</li>
+<li>fix: check built-in function signatures for parsing errors (<a href="https://github.com/amterp/rad/commit/17b14fe">17b14fe</a>)</li>
+<li>fix: use Print, not Printf for --src (<a href="https://github.com/amterp/rad/commit/8579dac">8579dac</a>)</li>
+<li>tests: fix broken tests from earlier commit (<a href="https://github.com/amterp/rad/commit/0dba710">0dba710</a>)</li>
+</ul>
+<hr />
+<h2 id="v0612-2025-10-16"><a href="https://github.com/amterp/rad/releases/tag/v0.6.12">v0.6.12</a> - 2025-10-16<a class="headerlink" href="#v0612-2025-10-16" title="Permanent link">&para;</a></h2>
+<h2 id="breaking">Breaking!<a class="headerlink" href="#breaking" title="Permanent link">&para;</a></h2>
+<p>This release changes shell and error handling syntax, expect breaks.</p>
+<div class="highlight"><pre><span></span><code>// OLD: Critical command
+$!`make build`
+
+// NEW: Same behavior (critical by default)
+$`make build`
+
+// OLD: Unsafe command
+unsafe $`command_that_might_fail`
+
+// NEW: Use catch block
+$`command_that_might_fail` catch:
+    pass
+
+// OLD: Recover block
+$`curl {url}`
+recover:
+    print_err(&quot;Failed but continuing&quot;)
+
+// NEW: Use catch block
+$`curl {url}` catch:
+    print_err(&quot;Failed but continuing&quot;)
+
+// OLD: Fail block
+$`curl {url}`
+fail:
+    print_err(&quot;Failed, exiting&quot;)
+    exit(1)
+
+// NEW: Use catch block with exit
+$`curl {url}` catch:
+    print_err(&quot;Failed, exiting&quot;)
+    exit(1)
+</code></pre></div>
+<ul>
+<li>Release VSCode extension v0.1.9
+ (<a href="https://github.com/amterp/rad/commit/46e3eed">46e3eed</a>)</li>
+<li>feat: implement new error handling syntax (catch suffix)
+ (<a href="https://github.com/amterp/rad/commit/5c0253c">5c0253c</a>)</li>
+<li>feat: implement new shell syntax + catch suffix syntax
+ (<a href="https://github.com/amterp/rad/commit/7ef3f46">7ef3f46</a>)</li>
+<li>feat: update syntax dump tests for new shell &amp; error handling syntax
+ (<a href="https://github.com/amterp/rad/commit/78a4857">78a4857</a>)</li>
+<li>feat: update textmate grammar for new shell + error handling syntax
+ (<a href="https://github.com/amterp/rad/commit/981fdfb">981fdfb</a>)</li>
+</ul>
+<hr />
+<h2 id="v0611-2025-10-12"><a href="https://github.com/amterp/rad/releases/tag/v0.6.11">v0.6.11</a> - 2025-10-12<a class="headerlink" href="#v0611-2025-10-12" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat: add --from-logs flag to check cmd (<a href="https://github.com/amterp/rad/commit/468b455">468b455</a>)</li>
+<li>feat: add global config loading (<a href="https://github.com/amterp/rad/commit/a068c49">a068c49</a>)</li>
+<li>feat: add invocation logging &amp; rolling (<a href="https://github.com/amterp/rad/commit/c5ee8e7">c5ee8e7</a>)</li>
+<li>refactor: move Run up in runner.go (<a href="https://github.com/amterp/rad/commit/2257aa7">2257aa7</a>)</li>
+</ul>
+<hr />
+<h2 id="v0610-2025-10-06"><a href="https://github.com/amterp/rad/releases/tag/v0.6.10">v0.6.10</a> - 2025-10-06<a class="headerlink" href="#v0610-2025-10-06" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.8 (<a href="https://github.com/amterp/rad/commit/5b94a4e">5b94a4e</a>)</li>
+<li>feat: add stdin support for Unix-style piping (<a href="https://github.com/amterp/rad/commit/cd880f7">cd880f7</a>)</li>
+</ul>
+<hr />
+<h2 id="v069-2025-10-05"><a href="https://github.com/amterp/rad/releases/tag/v0.6.9">v0.6.9</a> - 2025-10-05<a class="headerlink" href="#v069-2025-10-05" title="Permanent link">&para;</a></h2>
+<ul>
+<li>feat: allow scientific notation for int defaults (<a href="https://github.com/amterp/rad/commit/8fd724a">8fd724a</a>)</li>
+<li>feat: validate script immediately after parsing (<a href="https://github.com/amterp/rad/commit/127f484">127f484</a>)</li>
+<li>fix: correctly allow unknown flags to be absorbed in var args (<a href="https://github.com/amterp/rad/commit/34ee9be">34ee9be</a>)</li>
+<li>fix: resolve shell command pipe race condition (<a href="https://github.com/amterp/rad/commit/319a956">319a956</a>)</li>
+</ul>
+<hr />
+<h2 id="v068-2025-09-30"><a href="https://github.com/amterp/rad/releases/tag/v0.6.8">v0.6.8</a> - 2025-09-30<a class="headerlink" href="#v068-2025-09-30" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Release VSCode extension v0.1.7 (<a href="https://github.com/amterp/rad/commit/4b6613e">4b6613e</a>)</li>
+<li>ci: implement 5 more PR benchmarks (<a href="https://github.com/amterp/rad/commit/f8310f0">f8310f0</a>)</li>
+<li>feat: allow int short count arg input style (<a href="https://github.com/amterp/rad/commit/05b7ee2">05b7ee2</a>)</li>
+</ul>
+<hr />
+<h2 id="v067-2025-09-28"><a href="https://github.com/amterp/rad/releases/tag/v0.6.7">v0.6.7</a> - 2025-09-28<a class="headerlink" href="#v067-2025-09-28" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Bump version to v0.6.7 (<a href="https://github.com/amterp/rad/commit/379d785">379d785</a>)</li>
+<li>ci: add PR benchmarking (<a href="https://github.com/amterp/rad/commit/046a3c2">046a3c2</a>)</li>
+<li>ci: add PR check automation (<a href="https://github.com/amterp/rad/commit/9efd9b4">9efd9b4</a>)</li>
+<li>ci: add benchmark-scripts (<a href="https://github.com/amterp/rad/commit/7f6349c">7f6349c</a>)</li>
+<li>feat: support formatting numbers with commas separating thousands (<a href="https://github.com/amterp/rad/commit/9e2bc45">9e2bc45</a>)</li>
+<li>tests: fix local TZ-dependent time tests (<a href="https://github.com/amterp/rad/commit/8e2dd59">8e2dd59</a>)</li>
+</ul>
+<hr />
+<h2 id="v066-2025-09-27"><a href="https://github.com/amterp/rad/releases/tag/v0.6.6">v0.6.6</a> - 2025-09-27<a class="headerlink" href="#v066-2025-09-27" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: iterate goreleaser (<a href="https://github.com/amterp/rad/commit/f3a331a">f3a331a</a>)</li>
+</ul>
+<hr />
+<h2 id="v065-2025-09-27"><a href="https://github.com/amterp/rad/releases/tag/v0.6.5">v0.6.5</a> - 2025-09-27<a class="headerlink" href="#v065-2025-09-27" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ci: iterate goreleaser (<a href="https://github.com/amterp/rad/commit/284797b">284797b</a>)</li>
+</ul>
+<hr />
+<h2 id="v062-2025-09-21"><a href="https://github.com/amterp/rad/releases/tag/v0.6.2">v0.6.2</a> - 2025-09-21<a class="headerlink" href="#v062-2025-09-21" title="Permanent link">&para;</a></h2>
+<hr />
+<h2 id="v061-2025-09-21"><a href="https://github.com/amterp/rad/releases/tag/v0.6.1">v0.6.1</a> - 2025-09-21<a class="headerlink" href="#v061-2025-09-21" title="Permanent link">&para;</a></h2>
+<hr />
+<h2 id="v060-2025-09-21"><a href="https://github.com/amterp/rad/releases/tag/v0.6.0">v0.6.0</a> - 2025-09-21<a class="headerlink" href="#v060-2025-09-21" title="Permanent link">&para;</a></h2>
+<ul>
+<li>fix: returning from fn in for loop by @amterp in https://github.com/amterp/rad/pull/44</li>
+<li>feat(args): support var args by @amterp in https://github.com/amterp/rad/pull/45</li>
+</ul>
+<hr />
+<h2 id="v0559-2025-09-14"><a href="https://github.com/amterp/rad/releases/tag/v0.5.59">v0.5.59</a> - 2025-09-14<a class="headerlink" href="#v0559-2025-09-14" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Replace pflag with Ra by @amterp in https://github.com/amterp/rad/pull/38</li>
+<li>feat: add function 'matches' for regex matching by @amterp in https://github.com/amterp/rad/pull/39</li>
+<li>fix: convert arg constraint targets to external name format by @amterp in https://github.com/amterp/rad/pull/40</li>
+<li>feat: add global flag '--rad-args-dump' by @amterp in https://github.com/amterp/rad/pull/41</li>
+<li>feat(repl): implement REPL by @amterp in https://github.com/amterp/rad/pull/43</li>
+</ul>
+<hr />
+<h1 id="historical-releases">Historical Releases<a class="headerlink" href="#historical-releases" title="Permanent link">&para;</a></h1>
+<p>Releases before automated GitHub releases. Notable changes only.</p>
+<hr />
+<h2 id="v05-2025-02-12">v0.5 - 2025-02-12<a class="headerlink" href="#v05-2025-02-12" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Replaced handwritten lexer/parser with tree sitter</li>
+<li><code>defer</code> statements</li>
+<li>Further shell command support improvements, critical shell commands</li>
+<li>Emoji support</li>
+<li>Basic syntax highlighter</li>
+<li>Reworked JSON field extraction algo</li>
+<li><code>errdefer</code></li>
+<li>Reworked string character escaping</li>
+<li>Improved rad block sorting operation, added matching <code>sort</code> function</li>
+<li>Added more functions: <code>confirm</code>, <code>range</code>, <code>split</code> etc</li>
+<li>Removed Cobra</li>
+<li>Reworked strings (<code>RslString</code>, attributes, colors)</li>
+<li>http functions</li>
+<li>parsing functions e.g. parse_int, parse_float</li>
+<li><code>.dot.syntax</code> for map key access</li>
+<li>Truthy/falsy logic</li>
+<li>Raw strings</li>
+<li>Multiline strings</li>
+<li>Arg constraints - enum, regex</li>
+<li>Modulo operator <code>%</code></li>
+<li><code>++</code>/<code>--</code> operators</li>
+</ul>
+<hr />
+<h2 id="v04-2024-10-28">v0.4 - 2024-10-28<a class="headerlink" href="#v04-2024-10-28" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>exit</code> function</li>
+<li>Allow output pass-through in <code>rad</code> blocks</li>
+<li><code>rad</code> field modifiers: <code>truncate</code>, <code>color</code></li>
+<li>Reworked arrays: all arrays now allow mixed types</li>
+<li>maps</li>
+<li>collection entry assignment</li>
+<li><code>del</code></li>
+<li><code>in</code> and <code>not in</code></li>
+<li>Json algo: allow capturing json nodes as maps</li>
+<li>Added list/string slicing</li>
+<li>Improved indexing, including negative indexing</li>
+<li>Added ternary expressions</li>
+<li>Added inline expressions for string interpolation, including formatting</li>
+<li>Implemented shell command invocation</li>
+</ul>
+<hr />
+<h2 id="v03-2024-09-29">v0.3 - 2024-09-29<a class="headerlink" href="#v03-2024-09-29" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Improved shell embedding</li>
+<li>Improved table-to-terminal size adjustment</li>
+<li>Good unit testing</li>
+<li>Compound assignments</li>
+<li>Allow mocking responses <code>--MOCK-RESPONSE</code></li>
+<li>Json algo: add <code>*</code> wildcard capture</li>
+<li><code>rad</code> sort statements</li>
+<li>Colorized headers</li>
+<li>Switch from <code>int</code> to <code>int64</code> representation of ints</li>
+<li>Add <code>pick</code> functions, including <code>pick_from_resource</code></li>
+<li>Add list comprehensions</li>
+<li><code>request</code> and <code>display</code> blocks</li>
+</ul>
+<hr />
+<h2 id="v02-2024-09-09">v0.2 - 2024-09-09<a class="headerlink" href="#v02-2024-09-09" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Added Apache License 2.0</li>
+<li>Arg defaults</li>
+<li>std functions: date functions, replace, join, upper/lower, etc</li>
+<li>'Single quote' strings</li>
+</ul>
+<hr />
+<h2 id="v01-2024-09-08">v0.1 - 2024-09-08<a class="headerlink" href="#v01-2024-09-08" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Initial version</li>
+<li>Newest notable feature was <code>--STDIN</code> and output shell export commands.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../status/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Project Status">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Project Status
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.footer"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

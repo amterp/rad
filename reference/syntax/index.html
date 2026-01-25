@@ -1,0 +1,4729 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://amterp.github.io/rad/reference/syntax/">
+      
+      
+        <link rel="prev" href="../../examples/brewi/">
+      
+      
+        <link rel="next" href="../functions/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Language Reference - Rad Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M22%2012a10%2010%200%200%201-10%2010A10%2010%200%200%201%202%2012%2010%2010%200%200%201%2012%202a10%2010%200%200%201%2010%2010M6%2013h8l-3.5%203.5%201.42%201.42L17.84%2012l-5.92-5.92L10.5%207.5%2014%2011H6z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rad-language-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Rad Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Language Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Rad Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/amterp/rad" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/basics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/args/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Args
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/strings-advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strings (Advanced)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/rad-blocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rad Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/type-annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/error-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Error Handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/shell-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shell Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/script-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Script Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/global-flags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global Flags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/defer-errdefer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defer & Errdefer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/brewi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    brewi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Language Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Language Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#script-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-script-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Script Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-header-for-automatic-help-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Header for Automatic Help Generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Header for Automatic Help Generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#special-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special @ Macros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collections
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-line-strings-triple-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-line Strings (Triple Quotes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables-and-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables and Assignment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Variables and Assignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compound-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compound Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incrementdecrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Increment/Decrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Interpolation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ternary-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ternary Operator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-access-and-slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Access and Slicing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collection Access and Slicing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indexing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indexing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slicing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Slicing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If Statements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switch Statements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loops
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loops">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        While Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Control Flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delete-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yield-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Yield Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-comprehensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Comprehensions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argument-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Parsing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Parsing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int-short-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Int Short Clustering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argument-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inline-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Help
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shell Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invocation-critical-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Invocation ($) — critical by default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capture-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capture &amp; assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-failures-with-a-catch-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling failures with a catch block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Command Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-processing-and-display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Processing and Display Blocks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Processing and Display Blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json-path-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Path Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rad-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rad Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-modifier-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Modifier Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-escape-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Escape Sequences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defer-and-error-defer-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defer and Error Defer Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#request-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-function-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Function Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map-dot-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Map Dot Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple fallback: ??
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-handling-suffix-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complex handling: suffix catch:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#membership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Membership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coalescing-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coalescing Operator (??)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoping-and-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoping and Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-types-and-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Types and Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in Types and Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Checking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Type System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Union Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enum-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enum Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-return-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complex Return Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variadic-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variadic Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-examples-from-built-ins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real Examples from Built-ins
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rad-code-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rad Code Style
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rad Code Style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#argument-block-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Block Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comment-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comment Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-delimiters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Command Delimiters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-definition-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Definition Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-flow-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Flow Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection-and-data-structure-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection and Data Structure Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-interpolation-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Interpolation Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Migrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.7
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#script-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-script-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Script Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-header-for-automatic-help-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Header for Automatic Help Generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Header for Automatic Help Generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#special-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special @ Macros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collections
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-line-strings-triple-quotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-line Strings (Triple Quotes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables-and-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables and Assignment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Variables and Assignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compound-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compound Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incrementdecrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Increment/Decrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Interpolation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ternary-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ternary Operator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collection-access-and-slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Access and Slicing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collection Access and Slicing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indexing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indexing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slicing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-slicing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Slicing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#if-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If Statements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switch Statements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loops
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loops">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        While Loops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Control Flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Control Flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delete-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yield-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Yield Statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Calls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-comprehensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Comprehensions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argument-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Parsing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Parsing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int-short-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Int Short Clustering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argument-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inline-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Help
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shell-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shell Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invocation-critical-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Invocation ($) — critical by default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capture-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capture &amp; assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-failures-with-a-catch-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handling failures with a catch block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Command Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-processing-and-display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Processing and Display Blocks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Processing and Display Blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json-path-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Path Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rad-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rad Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-modifiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Modifiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-modifier-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Modifier Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-escape-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Escape Sequences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defer-and-error-defer-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defer and Error Defer Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#request-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-function-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Function Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map-dot-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Map Dot Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple fallback: ??
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-handling-suffix-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complex handling: suffix catch:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#membership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Membership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coalescing-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coalescing Operator (??)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoping-and-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoping and Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-types-and-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Types and Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in Types and Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Checking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Type System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#union-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Union Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enum-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enum Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-return-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complex Return Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variadic-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variadic Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real-examples-from-built-ins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real Examples from Built-ins
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rad-code-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rad Code Style
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rad Code Style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#argument-block-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Argument Block Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comment-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comment Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-delimiters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell Command Delimiters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-definition-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Definition Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-flow-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Flow Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection-and-data-structure-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection and Data Structure Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-interpolation-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String Interpolation Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="rad-language-reference">Rad Language Reference<a class="headerlink" href="#rad-language-reference" title="Permanent link">&para;</a></h1>
+<p>This document provides a comprehensive overview of Rad's syntax for quick reference in development sessions.</p>
+<h2 id="script-structure">Script Structure<a class="headerlink" href="#script-structure" title="Permanent link">&para;</a></h2>
+<h3 id="basic-script-format">Basic Script Format<a class="headerlink" href="#basic-script-format" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+---
+Script description goes here.
+Multi-line descriptions are supported.
+---
+
+// Optional arguments section
+args:
+    name str              # Required string argument
+    count int = 5         # Optional with default value
+    verbose v bool        # Boolean flag (can use short form)
+
+// Script body
+print(&quot;Hello {name}!&quot;)
+</code></pre></div>
+<h3 id="file-header-for-automatic-help-generation">File Header for Automatic Help Generation<a class="headerlink" href="#file-header-for-automatic-help-generation" title="Permanent link">&para;</a></h3>
+<p>The file header automatically generates the help text shown when users run your script with <code>-h</code> or <code>--help</code>. This is a core Rad feature that eliminates the need to manually write help documentation.</p>
+<div class="highlight"><pre><span></span><code>---
+Script description that appears in --help.
+
+Detailed explanation of what the script does.
+Can be multiple paragraphs.
+
+@stash_id = my_script_data
+@enable_global_options = true  
+@enable_args_block = true
+---
+</code></pre></div>
+<h4 id="special-macros">Special @ Macros<a class="headerlink" href="#special-macros" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>@stash_id</code> - Sets the stash identifier for the script</li>
+<li><code>@enable_global_options</code> - Enable/disable global Rad options (default: true)</li>
+<li><code>@enable_args_block</code> - Enable/disable argument parsing (default: true)</li>
+</ul>
+<h3 id="static-analysis">Static Analysis<a class="headerlink" href="#static-analysis" title="Permanent link">&para;</a></h3>
+<p>Use <code>rad check &lt;script&gt;</code> to statically analyze your scripts for errors before running them. This catches syntax errors, type mismatches, and other issues without executing the script.</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>my_script.rad
+</code></pre></div>
+<h2 id="comments">Comments<a class="headerlink" href="#comments" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>// Code comments use double slash
+// Multi-line code comments use multiple // lines
+// like this
+
+// In args blocks, argument descriptions use # for help text generation:
+args:
+    name str    # This comment appears in --help usage
+    count int   # This also appears in --help
+</code></pre></div>
+<h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
+<h3 id="primitives">Primitives<a class="headerlink" href="#primitives" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Strings
+name = &quot;alice&quot;
+path = &#39;path/to/file&#39;
+
+// Multi-line strings (triple quotes)
+text = &quot;&quot;&quot;
+Hello world
+How are you?
+&quot;&quot;&quot;
+
+// Numbers
+age = 25                   // int
+height = 5.9               // float
+scientific = 1.23e4        // exponential notation
+large_num = 1_234_567      // underscore separators for readability
+float_with_sep = 123.456_789
+
+// Booleans
+is_valid = true
+is_empty = false
+
+// Null
+value = null
+</code></pre></div>
+<h3 id="collections">Collections<a class="headerlink" href="#collections" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Lists
+numbers = [1, 2, 3, 4, 5]
+mixed = [1, &quot;hello&quot;, true, [1, 2]]
+empty_list = []
+
+// Maps/Objects
+person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
+nested = {&quot;user&quot;: {&quot;name&quot;: &quot;bob&quot;, &quot;roles&quot;: [&quot;admin&quot;, &quot;user&quot;]}}
+empty_map = {}
+</code></pre></div>
+<h3 id="multi-line-strings-triple-quotes">Multi-line Strings (Triple Quotes)<a class="headerlink" href="#multi-line-strings-triple-quotes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Basic multi-line string
+text = &quot;&quot;&quot;
+Hello world
+How are you?
+&quot;&quot;&quot;
+
+// Indentation control - closing &quot;&quot;&quot; position determines whitespace stripping
+indented = &quot;&quot;&quot;
+  Line 1
+   Line 2
+     Line 4
+ &quot;&quot;&quot;
+// Result: &quot; Line 1\n  Line 2\n    Line 4\n&quot; (1 space stripped from each line)
+
+// String interpolation works in multi-line strings
+name = &quot;alice&quot;
+message = &quot;&quot;&quot;
+Hello {name}!
+How are you today?
+&quot;&quot;&quot;
+
+// Raw multi-line strings (no interpolation or escape processing)
+raw_text = r&quot;&quot;&quot;
+Literal \n and {name}
+No processing here
+&quot;&quot;&quot;
+
+// Comments allowed after opening triple quotes
+documented = &quot;&quot;&quot; // This is allowed
+Content starts on next line
+Always on next line
+&quot;&quot;&quot;
+</code></pre></div>
+<p><strong>Multi-line String Rules:</strong>
+- Content must start on a new line after opening <code>"""</code>
+- The indentation of the closing <code>"""</code> determines how much leading whitespace is stripped from each line
+- Support string interpolation with <code>{variable}</code> syntax unless raw (<code>r"""</code>)
+- Support escape sequences (like <code>\n</code>, <code>\t</code>) unless raw
+- Comments can follow the opening <code>"""</code> on the same line
+- Cannot have content on the same line as the opening <code>"""</code></p>
+<h2 id="variables-and-assignment">Variables and Assignment<a class="headerlink" href="#variables-and-assignment" title="Permanent link">&para;</a></h2>
+<h3 id="basic-assignment">Basic Assignment<a class="headerlink" href="#basic-assignment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+age = 25
+</code></pre></div>
+<h3 id="multiple-assignment">Multiple Assignment<a class="headerlink" href="#multiple-assignment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>a, b = 1, 2
+x, y = some_function_returning_tuple()
+</code></pre></div>
+<h3 id="compound-assignment">Compound Assignment<a class="headerlink" href="#compound-assignment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>count = 5
+count += 1              // count = 6
+count -= 2              // count = 4
+count *= 3              // count = 12
+count /= 4              // count = 3
+</code></pre></div>
+<h3 id="incrementdecrement">Increment/Decrement<a class="headerlink" href="#incrementdecrement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>i = 0
+i++                     // i = 1
+i--                     // i = 0
+</code></pre></div>
+<h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+age = 25
+message = &quot;Hello {name}, you are {age} years old!&quot;
+
+// Works with expressions
+total = &quot;Result: {x + y}&quot;
+
+// Format specifiers
+price = 123.456
+formatted = &quot;Price: {price:.2}&quot;          // &quot;Price: 123.46&quot; (2 decimal places)
+padded = &quot;Name: {name:&lt;10}&quot;              // &quot;Name: alice     &quot; (left-aligned, padded to 10)
+right_aligned = &quot;Name: {name:&gt;10}&quot;       // &quot;Name:      alice&quot; (right-aligned)
+
+// Thousands separators (numbers only)
+big_num = 1234567
+formatted = &quot;{big_num:,}&quot;                // &quot;1,234,567&quot;
+with_decimals = &quot;{big_num:,.2}&quot;          // &quot;1,234,567.00&quot;
+padded_thousands = &quot;{big_num:&gt;15,}&quot;      // &quot;      1,234,567&quot;
+</code></pre></div>
+<h2 id="ternary-operator">Ternary Operator<a class="headerlink" href="#ternary-operator" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>// Basic ternary syntax
+result = condition ? value_if_true : value_if_false
+
+// Examples
+status = age &gt;= 18 ? &quot;adult&quot; : &quot;minor&quot;
+message = count == 1 ? &quot;1 item&quot; : &quot;{count} items&quot;
+max_value = a &gt; b ? a : b
+
+// Can be chained
+category = age &lt; 13 ? &quot;child&quot; : age &lt; 18 ? &quot;teen&quot; : &quot;adult&quot;
+</code></pre></div>
+<h2 id="collection-access-and-slicing">Collection Access and Slicing<a class="headerlink" href="#collection-access-and-slicing" title="Permanent link">&para;</a></h2>
+<h3 id="indexing">Indexing<a class="headerlink" href="#indexing" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>items = [10, 20, 30, 40, 50]
+first = items[0]        // 10
+last = items[-1]        // 50
+
+person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
+name = person[&quot;name&quot;]   // &quot;alice&quot;
+</code></pre></div>
+<h3 id="slicing">Slicing<a class="headerlink" href="#slicing" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>items = [10, 20, 30, 40, 50]
+subset = items[1:3]     // [20, 30]
+from_start = items[:3]  // [10, 20, 30]
+to_end = items[2:]      // [30, 40, 50]
+all_items = items[:]    // [10, 20, 30, 40, 50]
+
+// Negative indices
+end_items = items[-2:]  // [40, 50]
+</code></pre></div>
+<h3 id="string-slicing">String Slicing<a class="headerlink" href="#string-slicing" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>text = &quot;hello&quot;
+substring = text[1:4]   // &quot;ell&quot;
+</code></pre></div>
+<h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
+<h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>if age &gt;= 18:
+    print(&quot;Adult&quot;)
+else if age &gt;= 13:
+    print(&quot;Teen&quot;)
+else:
+    print(&quot;Child&quot;)
+
+// Single condition
+if is_valid:
+    process_data()
+</code></pre></div>
+<h3 id="switch-statements">Switch Statements<a class="headerlink" href="#switch-statements" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Expression switches (single values)
+result = switch value:
+    case &quot;a&quot; -&gt; &quot;Apple&quot;
+    case &quot;b&quot; -&gt; &quot;Banana&quot;
+    default -&gt; &quot;Unknown&quot;
+
+// Multiple cases
+status = switch code:
+    case 200, 201, 204 -&gt; &quot;Success&quot;
+    case 400, 401, 403 -&gt; &quot;Client Error&quot;
+    case 500, 502, 503 -&gt; &quot;Server Error&quot;
+    default -&gt; &quot;Unknown&quot;
+
+// Multi-assignment from switch
+a, b = switch condition:
+    case true -&gt; 10, 20
+    case false -&gt; 30, 40
+
+// Block switches (multiple statements)
+switch value:
+    case &quot;a&quot;:
+        print(&quot;Found A!&quot;)
+        do_something()
+    case &quot;b&quot;, &quot;c&quot;:
+        print(&quot;Found B or C!&quot;)
+        do_something_else()
+    default:
+        print(&quot;Unknown value&quot;)
+
+// Mixed syntax in same switch with yield
+result = switch value:
+    case 1:
+        complex_processing()
+        yield calculated_result    // Return value from case block
+    case 2 -&gt; simple_result
+    default -&gt; fallback_value
+
+// Yield multiple values
+a, b = switch condition:
+    case &quot;pair&quot;:
+        calculate_values()
+        yield first_result, second_result
+    case &quot;single&quot; -&gt; default_value, 0
+</code></pre></div>
+<h3 id="loops">Loops<a class="headerlink" href="#loops" title="Permanent link">&para;</a></h3>
+<h4 id="for-loops">For Loops<a class="headerlink" href="#for-loops" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>// Iterate over list
+items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+for item in items:
+    print(item)
+
+// Access loop index and total via context
+for item in items with loop:
+    print(&quot;{loop.idx + 1}/{loop.src.len()}: {item}&quot;)
+
+// Iterate with unpacking (for lists of lists)
+data = [[&quot;alice&quot;, 25], [&quot;bob&quot;, 30], [&quot;charlie&quot;, 35]]
+for name, age in data:
+    print(name, age)
+
+// Unpacking WITH context
+for name, age in data with loop:
+    print(loop.idx, name, age)
+
+// Multiple variable unpacking with zip
+names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+ages = [25, 30, 35]
+cities = [&quot;NYC&quot;, &quot;LA&quot;, &quot;Chicago&quot;]
+for name, age, city in zip(names, ages, cities):
+    print(name, age, city)
+
+// With context
+for name, age, city in zip(names, ages, cities) with loop:
+    print(loop.idx, name, age, city)
+
+// Iterate over map keys
+person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
+for key in person:
+    print(key, person[key])
+
+// Map iteration with context
+for key in person with loop:
+    print(loop.idx, key, person[key])
+
+// Map with key and value
+for key, value in person:
+    print(key, value)
+
+// Map with key, value, and context
+for key, value in person with loop:
+    print(loop.idx, key, value)
+
+// Range iteration
+for i in range(5):      // 0, 1, 2, 3, 4
+    print(i)
+</code></pre></div>
+<p><strong>Loop Context Object</strong></p>
+<p>When you use <code>with &lt;identifier&gt;</code> in a for-loop, you get access to a context object with these fields:</p>
+<ul>
+<li><code>idx</code> - Current iteration index (0-based)</li>
+<li><code>src</code> - Immutable snapshot of the original collection</li>
+</ul>
+<div class="highlight"><pre><span></span><code>items = [10, 20, 30]
+for item in items with loop:
+    print(&quot;Index: {loop.idx}, Item: {item}, Total: {loop.src.len()}&quot;)
+</code></pre></div>
+<h4 id="while-loops">While Loops<a class="headerlink" href="#while-loops" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>// Basic while loop
+count = 0
+while count &lt; 5:
+    print(count)
+    count++
+
+// Infinite loop with break
+while:
+    if condition:
+        break
+    // do something
+
+// Continue statement
+while condition:
+    if skip_condition:
+        continue
+    process_item()
+</code></pre></div>
+<h2 id="additional-control-flow">Additional Control Flow<a class="headerlink" href="#additional-control-flow" title="Permanent link">&para;</a></h2>
+<h3 id="delete-statement">Delete Statement<a class="headerlink" href="#delete-statement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Delete variables or data structures
+my_var = &quot;test&quot;
+del my_var              // Remove variable from scope
+
+my_list = [1, 2, 3, 4]
+del my_list[0]         // Remove first element
+
+my_map = {&quot;a&quot;: 1, &quot;b&quot;: 2}
+del my_map[&quot;a&quot;]        // Remove key &quot;a&quot;
+</code></pre></div>
+<h3 id="return-statement">Return Statement<a class="headerlink" href="#return-statement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>fn calculate(x, y):
+    if x &lt; 0:
+        return error(&quot;negative values not allowed&quot;)
+    result = x * y
+    return result      // Return single value
+
+fn get_coordinates():
+    x = 10
+    y = 20
+    return x, y        // Return multiple values
+
+fn early_exit():
+    if condition:
+        return         // Early return with no value
+    do_more_work()
+</code></pre></div>
+<h3 id="yield-statement">Yield Statement<a class="headerlink" href="#yield-statement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Yield can only be used in switch case blocks to return values
+// (Examples shown in Switch Statements section above)
+
+// NOT valid - yield cannot be used in regular functions
+// fn generate_values():
+//     yield i        // This would be an error
+</code></pre></div>
+<h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
+<h3 id="function-definition">Function Definition<a class="headerlink" href="#function-definition" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Function definitions use fn name(): syntax
+fn double(x):
+    return x * 2
+
+fn add(a, b):
+    return a + b
+
+fn greet():
+    print(&quot;Hello!&quot;)
+
+// Block functions
+fn calculate(x, y):
+    result = x * y + 10
+    return result
+
+// Function with multiple return values
+fn coords(point):
+    x = point[&quot;x&quot;]
+    y = point[&quot;y&quot;]
+    return x, y
+
+// Anonymous functions can be assigned to variables
+double_var = fn(x) x * 2
+add_var = fn(a, b) a + b
+greet_var = fn() print(&quot;Hello!&quot;)
+</code></pre></div>
+<h3 id="function-calls">Function Calls<a class="headerlink" href="#function-calls" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>result = double(5)      // 10
+sum_val = add(3, 4)     // 7
+
+// UFCS (Uniform Function Call Syntax)
+&quot;hello&quot;.upper()         // &quot;HELLO&quot;
+[1, 2, 3].len()        // 3
+
+// You&#39;re encouraged to use UFCS, especially to un-nest function calls.
+upper(trim(text))    // BAD
+text.trim().upper()  // GOOD
+
+// Built-in function assignment to variables
+my_upper = upper
+&quot;test&quot;.my_upper()      // &quot;TEST&quot;
+</code></pre></div>
+<h3 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>print(&quot;hello&quot;, &quot;world&quot;, sep=&quot;|&quot;)    // hello|world
+</code></pre></div>
+<h2 id="list-comprehensions">List Comprehensions<a class="headerlink" href="#list-comprehensions" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>// Basic comprehension
+numbers = [1, 2, 3, 4, 5]
+squares = [x * x for x in numbers]
+
+// With function calls
+words = [&quot;hello&quot;, &quot;world&quot;]
+uppers = [upper(word) for word in words]
+
+// Side effects (returns empty list)
+[print(x) for x in items]
+</code></pre></div>
+<h2 id="argument-parsing">Argument Parsing<a class="headerlink" href="#argument-parsing" title="Permanent link">&para;</a></h2>
+<h3 id="basic-arguments">Basic Arguments<a class="headerlink" href="#basic-arguments" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>args:
+    name str                    # Required string
+    age int                     # Required integer
+    height float               # Required float
+    verbose bool               # Required boolean
+
+    // Optional arguments
+    role str?                  # Optional string (null if not provided)
+    count int = 10            # Optional with default
+    debug d bool              # Short form flag
+</code></pre></div>
+<h3 id="int-short-clustering">Int Short Clustering<a class="headerlink" href="#int-short-clustering" title="Permanent link">&para;</a></h3>
+<p>Int arguments with short forms can be "clustered" to increment the value:</p>
+<div class="highlight"><pre><span></span><code>args:
+    verbosity v int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-v<span class="w">        </span><span class="c1"># verbosity = 1</span>
+./script<span class="w"> </span>-vv<span class="w">       </span><span class="c1"># verbosity = 2</span>
+./script<span class="w"> </span>-vvvvv<span class="w">    </span><span class="c1"># verbosity = 5</span>
+./script<span class="w"> </span>-vv<span class="w"> </span>-v<span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="c1"># verbosity = 10 (explicit value overrides)</span>
+</code></pre></div>
+<p>This is useful for verbosity levels and similar patterns where users want quick increment syntax.</p>
+<h3 id="argument-constraints">Argument Constraints<a class="headerlink" href="#argument-constraints" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>args:
+    status str
+    age int
+    email str
+    username str?
+    password str?
+
+    status enum [&quot;active&quot;, &quot;inactive&quot;, &quot;pending&quot;]
+    age range [0, 120]        // Inclusive range
+    age range (0, 120]        // Exclusive start, inclusive end
+    email regex &quot;.*@.*\\..*&quot;
+    username requires password   // If username provided, password required
+</code></pre></div>
+<p>Relational constraints:
+- <code>a requires b</code>
+- <code>a mutually requires b</code>
+- <code>a excludes b</code>
+- <code>a mutually excludes b</code></p>
+<h2 id="script-commands">Script Commands<a class="headerlink" href="#script-commands" title="Permanent link">&para;</a></h2>
+<p>Organize CLI tools around subcommands, like <code>git commit</code> or <code>docker build</code>. The <code>args:</code> and <code>command</code> blocks must appear before any executable code.</p>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+---
+A deployment tool.
+---
+
+// Shared args available to all commands
+args:
+    verbose v bool
+    config str = &quot;config.yaml&quot;
+
+command deploy:
+    ---
+    Deploy the application.
+    ---
+    env str
+    calls do_deploy
+
+command status:
+    ---
+    Check deployment status.
+    ---
+    env str
+    calls do_status
+
+// Shared setup - runs before any command callback
+validate_config(config)
+
+fn do_deploy():
+    if verbose:
+        print(&quot;Config: {config}&quot;)
+    print(&quot;Deploying to {env}...&quot;)
+
+fn do_status():
+    print(&quot;Status of {env}...&quot;)
+</code></pre></div>
+<p>Usage: <code>./tool.rad deploy staging --verbose</code></p>
+<h3 id="inline-callbacks">Inline Callbacks<a class="headerlink" href="#inline-callbacks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Short implementations can use inline lambdas
+command greet:
+    name str
+    calls fn():
+        print(&quot;Hello, {name}!&quot;)
+</code></pre></div>
+<h3 id="automatic-help">Automatic Help<a class="headerlink" href="#automatic-help" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>./tool.rad -h</code> — lists all commands with descriptions</li>
+<li><code>./tool.rad deploy -h</code> — shows command-specific arguments</li>
+</ul>
+<h2 id="shell-commands">Shell Commands<a class="headerlink" href="#shell-commands" title="Permanent link">&para;</a></h2>
+<h3 id="invocation-critical-by-default">Invocation (<code>$</code>) — critical by default<a class="headerlink" href="#invocation-critical-by-default" title="Permanent link">&para;</a></h3>
+<p>Shell commands can be invoked with <code>$</code> and are <em>critical by default</em>: if the exit <code>code != 0</code>, an error will propagate unless you handle it.
+If an error propagates up to the root level of the script and doesn't get handled, it exits.</p>
+<div class="highlight"><pre><span></span><code>// Fails script if code != 0
+$`make build`
+code = $`cmd`
+code, stdout = $`cmd`
+code, stdout, stderr = $`cmd`
+</code></pre></div>
+<h3 id="capture-assignment">Capture &amp; assignment<a class="headerlink" href="#capture-assignment" title="Permanent link">&para;</a></h3>
+<p><strong>Capture behavior</strong> depends on how many variables you assign:</p>
+<div class="highlight"><pre><span></span><code>$`cmd`                        // No capture, stdout/stderr → terminal
+code = $`cmd`                 // Capture code, stdout/stderr → terminal
+code, stdout = $`cmd`         // Capture code &amp; stdout, stderr → terminal
+code, stdout, stderr = $`cmd` // Capture all
+</code></pre></div>
+<p><strong>Assignment semantics</strong> support both positional and <em>named</em> assignment.</p>
+<ul>
+<li>Shell commands conceptually return <strong>(code, stdout, stderr)</strong> in that order.</li>
+<li><strong>Positional (default):</strong> when variable names are arbitrary, assignment is by position.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>c, out = $`cmd`                     // c = code, out = stdout
+exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
+myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+</code></pre></div>
+<ul>
+<li><strong>Named:</strong> if <strong>all</strong> variables are exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, assignment is by name (order independent).</li>
+</ul>
+<div class="highlight"><pre><span></span><code>stdout, code = $`cmd`     // stdout = stdout, code = code
+stderr = $`cmd`           // only capture stderr
+code, stderr = $`cmd`     // capture code and stderr
+</code></pre></div>
+<blockquote>
+<p><strong>Rule:</strong> If <em>all</em> variables use the exact names <code>code</code>, <code>stdout</code>, or <code>stderr</code>, uses named assignment. Otherwise, assignment is positional.</p>
+</blockquote>
+<h3 id="handling-failures-with-a-catch-block">Handling failures with a <code>catch</code> block<a class="headerlink" href="#handling-failures-with-a-catch-block" title="Permanent link">&para;</a></h3>
+<p>Use a suffix <code>catch:</code> block to handle non‑zero exit codes. Variables are already assigned to the actual results inside the block; you may log or reassign fallbacks, then execution continues.</p>
+<div class="highlight"><pre><span></span><code>code, stdout = $`grep hello file` catch:
+    // Runs because code != 0
+    print_err(&quot;grep failed with code {code}: {stdout}&quot;)
+    stdout = &quot;&quot;  // example fallback
+</code></pre></div>
+<p>You can also attach <code>catch:</code> without capturing any variables:</p>
+<div class="highlight"><pre><span></span><code>$`make build` catch:
+    pass  // continue on failure (do nothing)
+
+$`make build` catch:
+    print_err(&quot;Build failed&quot;)
+    exit(1)
+</code></pre></div>
+<h3 id="shell-command-modifiers">Shell Command Modifiers<a class="headerlink" href="#shell-command-modifiers" title="Permanent link">&para;</a></h3>
+<p>Two modifiers control shell command behavior:</p>
+<div class="highlight"><pre><span></span><code>// quiet - suppresses the ⚡️ command echo
+quiet $`make build`
+code, stdout = quiet $`grep pattern file` catch:
+    stdout = &quot;&quot;
+
+// confirm - prompts user approval before running (useful for destructive ops)
+confirm $`rm -rf node_modules`
+</code></pre></div>
+<p>Modifiers go after <code>=</code> in assignments: <code>result = quiet $</code>cmd<code>, not `quiet result = $`cmd</code>.</p>
+<h2 id="json-processing-and-display-blocks">JSON Processing and Display Blocks<a class="headerlink" href="#json-processing-and-display-blocks" title="Permanent link">&para;</a></h2>
+<h3 id="json-path-definitions">JSON Path Definitions<a class="headerlink" href="#json-path-definitions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Define JSON field mappings
+Name = json.results[].name
+Email = json.results[].email
+Age = json.results[].age
+
+// JSON path with wildcards
+AllFields = json.results[].*         // All fields in each result
+DeepFields = json.data.*.value       // Wildcard in path
+Indexed = json.items[0].name         // Specific index
+</code></pre></div>
+<h3 id="rad-blocks">Rad Blocks<a class="headerlink" href="#rad-blocks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Rad blocks do HTTP request + JSON extraction + print table (all-in-one)
+url = &quot;https://api.example.com/users&quot;
+Name = json.results[].name
+Email = json.results[].email
+
+rad url:
+    fields Name, Email
+    sort Name
+    // Automatically prints formatted table after extraction
+</code></pre></div>
+<h3 id="display-blocks">Display Blocks<a class="headerlink" href="#display-blocks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Display assumes lists are already populated and prints data as table
+names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+ages = [25, 30, 35]
+
+// Display with pre-populated lists (no data source)
+display:
+    fields names, ages
+    sort ages desc, names
+
+// OR display with data source (runs JSON extraction + prints table)
+data = [
+    {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25},
+    {&quot;name&quot;: &quot;bob&quot;, &quot;age&quot;: 30}
+]
+
+Name = json[].name
+Age = json[].age
+display data:
+    fields Name, Age
+    sort Age desc, Name
+</code></pre></div>
+<h3 id="field-modifiers">Field Modifiers<a class="headerlink" href="#field-modifiers" title="Permanent link">&para;</a></h3>
+<p>Field modifiers transform or filter data before display. Apply them to specific fields:</p>
+<div class="highlight"><pre><span></span><code>ages = [15, 25, 30, 12]
+names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
+
+display:
+    fields ages, names
+    ages:
+        filter fn(a) a &gt;= 18       // Keep only adults
+        map fn(a) &quot;{a} years&quot;      // Transform display
+
+// Output:
+// ages       names
+// 25 years   Bob
+// 30 years   Charlie
+</code></pre></div>
+<p><strong>Filter</strong> removes rows where the predicate returns false. <strong>Map</strong> transforms values for display. Filter runs before map.</p>
+<div class="highlight"><pre><span></span><code>// Apply same modifier to multiple fields
+ages, scores:
+    map fn(v) &quot;{v}!&quot;
+
+// Use a named function
+is_adult = fn(age) age &gt;= 18
+ages:
+    filter is_adult
+</code></pre></div>
+<h3 id="field-modifier-context">Field Modifier Context<a class="headerlink" href="#field-modifier-context" title="Permanent link">&para;</a></h3>
+<p>When a map or filter lambda accepts <strong>two parameters</strong>, the second receives a context object:</p>
+<div class="highlight"><pre><span></span><code>nums = [10, 20, 30]
+display:
+    fields nums
+    nums:
+        map fn(x, ctx) &quot;{ctx.idx + 1}. {x}&quot;
+        // Output: &quot;1. 10&quot;, &quot;2. 20&quot;, &quot;3. 30&quot;
+</code></pre></div>
+<p><strong>Context fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>idx</code></td>
+<td><code>int</code></td>
+<td>Current row index (0-based)</td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td><code>list</code></td>
+<td>Immutable snapshot of the full column data</td>
+</tr>
+<tr>
+<td><code>field</code></td>
+<td><code>str</code></td>
+<td>Name of the field being processed</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>// Filter to values below average
+nums:
+    filter fn(x, ctx) x &lt; sum(ctx.src) / ctx.src.len()
+
+// Show position in total
+nums:
+    map fn(x, ctx) &quot;{x} ({ctx.idx + 1}/{ctx.src.len()})&quot;
+</code></pre></div>
+<p>Single-parameter lambdas continue to work unchanged for simple transformations.</p>
+<h2 id="advanced-features">Advanced Features<a class="headerlink" href="#advanced-features" title="Permanent link">&para;</a></h2>
+<h3 id="string-escape-sequences">String Escape Sequences<a class="headerlink" href="#string-escape-sequences" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Supported escape sequences in strings
+text = &quot;Quote: \&quot;Hello\&quot;&quot;          // Escaped double quote
+single = &#39;It\&#39;s working&#39;           // Escaped single quote  
+backtick = `Backtick: \`command\`` // Escaped backtick
+newline = &quot;Line 1\nLine 2&quot;         // Newline
+tab = &quot;Column1\tColumn2&quot;           // Tab
+backslash = &quot;Path\\to\\file&quot;       // Literal backslash
+brace = &quot;Not interpolated: \{var}&quot; // Escaped brace (literal {)
+</code></pre></div>
+<h3 id="defer-and-error-defer-blocks">Defer and Error Defer Blocks<a class="headerlink" href="#defer-and-error-defer-blocks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Defer block - runs before script ends regardless of success/failure
+defer:
+    print(&quot;This always runs before script exits&quot;)
+    cleanup_resources()
+
+// Error defer block - only runs before script ends if an error occurs
+errdefer:
+    print(&quot;This only runs if script exits with error&quot;)
+    emergency_cleanup()
+
+process_data()
+// More code can run here
+exit(0)  // defer blocks run just before this
+</code></pre></div>
+<h3 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Request blocks run JSON extraction algorithm but don&#39;t print table
+// They populate lists with extracted field data
+url = &quot;https://api.example.com/users&quot;
+Name = json.results[].name
+Email = json.results[].email
+
+request url:
+    fields Name, Email
+    sort Name
+
+// After this block, Name and Email contain the extracted data
+print(Name)  // [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+print(Email) // [&quot;alice@example.com&quot;, &quot;bob@example.com&quot;, &quot;charlie@example.com&quot;]
+</code></pre></div>
+<h3 id="advanced-function-features">Advanced Function Features<a class="headerlink" href="#advanced-function-features" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Vararg parameters
+fn sum_all(*numbers: int):
+    total = 0
+    for num in numbers:
+        total += num
+    return total
+
+result = sum_all(1, 2, 3, 4, 5)
+
+// Named-only parameters (after *)
+fn format_text(text: str, *, uppercase: bool = false, prefix: str = &quot;&quot;):
+    result = prefix + text
+    return uppercase ? upper(result) : result
+
+formatted = format_text(&quot;hello&quot;, uppercase=true, prefix=&quot;&gt;&gt;&gt; &quot;)
+
+// Complex type annotations  
+fn process_data(
+    input: list[str], 
+    callback: fn(str) -&gt; bool,
+    options: {config: str, debug?: bool}
+) -&gt; error|{processed: int, failed: int}:
+    // function implementation
+    return {processed: 10, failed: 0}
+</code></pre></div>
+<h3 id="map-dot-syntax">Map Dot Syntax<a class="headerlink" href="#map-dot-syntax" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>person = {&quot;name&quot;: &quot;alice&quot;, &quot;details&quot;: {&quot;age&quot;: 25}}
+name = person.name              // Same as person[&quot;name&quot;]
+age = person.details.age        // Nested access
+</code></pre></div>
+<h3 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<p>Errors in Rad are <strong>values</strong>. Functions typically return <code>value | error</code>. By default, errors <strong>propagate</strong> and exit if unhandled.</p>
+<h4 id="simple-fallback">Simple fallback: <code>??</code><a class="headerlink" href="#simple-fallback" title="Permanent link">&para;</a></h4>
+<p>Use <code>??</code> to provide a fallback value when the left side returns an error (right side is evaluated lazily).</p>
+<div class="highlight"><pre><span></span><code>result = text.parse_int() ?? 0
+result = text.parse_int() ?? compute_fallback()
+// Multi-return requires an explicit list fallback
+a, b = fallible_pair() ?? [0, 0]
+</code></pre></div>
+<h4 id="complex-handling-suffix-catch">Complex handling: suffix <code>catch:</code><a class="headerlink" href="#complex-handling-suffix-catch" title="Permanent link">&para;</a></h4>
+<p>Attach a <code>catch:</code> block to inspect the error (the assigned variable <em>is</em> the error string inside the block), log, and/or reassign a fallback. Execution continues after the block, unless it invokes <code>exit()</code>.</p>
+<div class="highlight"><pre><span></span><code>value = text.parse_int() catch:
+    print_err(&quot;Parse failed: {value}&quot;)
+    value = 0
+</code></pre></div>
+<p>For multi-return functions with <code>catch:</code>:</p>
+<div class="highlight"><pre><span></span><code>a, b = fallible_pair() catch:
+    // a = error string, b = null
+    print_err(&quot;Failed: {a}&quot;)
+    a, b = 0, 0
+</code></pre></div>
+<h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
+<h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>a + b       // Addition
+a - b       // Subtraction
+a * b       // Multiplication
+a / b       // Division
+a % b       // Modulo
+</code></pre></div>
+<h3 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>a == b      // Equal
+a != b      // Not equal
+a &lt; b       // Less than
+a &lt;= b      // Less than or equal
+a &gt; b       // Greater than
+a &gt;= b      // Greater than or equal
+</code></pre></div>
+<h3 id="logical">Logical<a class="headerlink" href="#logical" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>a and b     // Logical AND
+a or b      // Logical OR
+not a       // Logical NOT
+</code></pre></div>
+<h3 id="membership">Membership<a class="headerlink" href="#membership" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>item in collection      // Check if item exists in collection
+item not in collection  // Check if item doesn&#39;t exist
+</code></pre></div>
+<h3 id="coalescing-operator">Coalescing Operator (<code>??</code>)<a class="headerlink" href="#coalescing-operator" title="Permanent link">&para;</a></h3>
+<p>The <code>??</code> operator yields the left value if it is <strong>not an error</strong>; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions.</p>
+<div class="highlight"><pre><span></span><code>count = get_env(&quot;COUNT&quot;).parse_int() ?? 0
+data = read_file(&quot;config.txt&quot;) ?? {&quot;content&quot;: &quot;&quot;}
+a, b = some_fallible_fn() ?? [0, 0]  // multi-return requires list fallback
+</code></pre></div>
+<h2 id="scoping-and-variables">Scoping and Variables<a class="headerlink" href="#scoping-and-variables" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>// Global scope
+global_var = &quot;global&quot;
+
+if true:
+    // Can access global variables
+    print(global_var)
+
+    // Variables defined in blocks persist after the block
+    block_var = &quot;accessible&quot;
+
+// block_var IS accessible here
+print(block_var)  // Works fine
+
+// Variables defined in for loops also persist
+for i in range(3):
+    loop_var = &quot;also accessible&quot;
+
+print(i)          // Last value: 2
+print(loop_var)   // &quot;also accessible&quot;
+
+// Function closures with anonymous functions assigned to variables
+outer_var = 10
+fn_with_closure = fn(x):
+    return x + outer_var    // Can access outer_var
+</code></pre></div>
+<h2 id="built-in-types-and-methods">Built-in Types and Methods<a class="headerlink" href="#built-in-types-and-methods" title="Permanent link">&para;</a></h2>
+<p>For a complete reference of all built-in functions, see: https://amterp.github.io/rad/reference/functions/</p>
+<h3 id="string-methods">String Methods<a class="headerlink" href="#string-methods" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>text = &quot;hello world&quot;
+text.upper()            // &quot;HELLO WORLD&quot;
+text.lower()            // &quot;hello world&quot; 
+text.split(&quot; &quot;)         // [&quot;hello&quot;, &quot;world&quot;]
+text.replace(&quot;hello&quot;, &quot;hi&quot;)  // &quot;hi world&quot;
+</code></pre></div>
+<h3 id="list-methods">List Methods<a class="headerlink" href="#list-methods" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>items = [3, 1, 4, 1, 5]
+items.len()             // 5
+items.sort()            // Sort in place
+items.reverse()         // Reverse in place
+</code></pre></div>
+<h3 id="type-checking">Type Checking<a class="headerlink" href="#type-checking" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Runtime type checking happens automatically
+// Type errors will be caught during execution
+</code></pre></div>
+<h2 id="type-system">Type System<a class="headerlink" href="#type-system" title="Permanent link">&para;</a></h2>
+<p>Rad has a dynamic type system with runtime type checking. Here are the type annotations used in function signatures and documentation:</p>
+<h3 id="basic-types">Basic Types<a class="headerlink" href="#basic-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>str           // String type
+int           // Integer type  
+float         // Float type
+bool          // Boolean type
+any           // Any type (dynamic)
+void          // No return value
+error         // Error type
+</code></pre></div>
+<h3 id="collection-types">Collection Types<a class="headerlink" href="#collection-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>list          // List of any type
+list[T]       // List of specific type T
+str[]         // List of strings (shorthand for list[str])
+any[]         // List of any type
+map           // Map/object with any keys/values
+map[K,V]      // Map with specific key/value types
+</code></pre></div>
+<h3 id="optional-types">Optional Types<a class="headerlink" href="#optional-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>str?          // Optional string (can be null)
+any?          // Optional any type  
+int?          // Optional integer
+</code></pre></div>
+<h3 id="union-types">Union Types<a class="headerlink" href="#union-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>int|float     // Either int or float
+str|list      // Either string or list
+error|str     // Either error or string (common for fallible operations)
+</code></pre></div>
+<h3 id="enum-types">Enum Types<a class="headerlink" href="#enum-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>[&quot;option1&quot;, &quot;option2&quot;]        // Enum with specific string values
+[&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;] // Enum for time units
+</code></pre></div>
+<h3 id="function-types">Function Types<a class="headerlink" href="#function-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>fn(any) -&gt; any                     // Function taking any, returning any
+fn(any, any) -&gt; bool               // Function taking two any params, returning bool
+fn() -&gt; any                        // Function with no params, returning any
+</code></pre></div>
+<h3 id="complex-return-types">Complex Return Types<a class="headerlink" href="#complex-return-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Map with specific structure
+{ &quot;exists&quot;: bool, &quot;size&quot;?: int }
+
+// Map with optional fields (? suffix)
+{ &quot;content&quot;: str, &quot;created&quot;?: bool }
+
+// Nested structures
+{ &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int } }
+</code></pre></div>
+<h3 id="variadic-parameters">Variadic Parameters<a class="headerlink" href="#variadic-parameters" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>*_items: any          // Variable number of any type
+*_others: list|str    // Variable number of lists or strings
+</code></pre></div>
+<h3 id="named-parameters">Named Parameters<a class="headerlink" href="#named-parameters" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Required named parameter
+func(*, required_param: str)
+
+// Optional named parameter with default
+func(*, optional_param: str = &quot;default&quot;)
+
+// Mixed positional and named
+func(_pos: str, *, named: int = 5)
+</code></pre></div>
+<h3 id="parameter-constraints">Parameter Constraints<a class="headerlink" href="#parameter-constraints" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Parameter with underscore prefix (positional-only)
+_path: str
+
+// Named parameter (after *)
+sep: str = &quot; &quot;
+
+// Optional with default value
+end: str = &quot;\n&quot;
+</code></pre></div>
+<h3 id="real-examples-from-built-ins">Real Examples from Built-ins<a class="headerlink" href="#real-examples-from-built-ins" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -&gt; list[float|int] 
+zip(*_lists: list, *, fill: any?, strict: bool = false) -&gt; error|list[]
+read_file(_path: str, *, mode: [&quot;text&quot;, &quot;bytes&quot;] = &quot;text&quot;) -&gt; error|{ &quot;size_bytes&quot;: int, &quot;content&quot;: str|[int] }
+</code></pre></div>
+<h2 id="rad-code-style">Rad Code Style<a class="headerlink" href="#rad-code-style" title="Permanent link">&para;</a></h2>
+<h3 id="argument-block-formatting">Argument Block Formatting<a class="headerlink" href="#argument-block-formatting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Group args together, then constraints with empty line separation
+args:
+    name str           # Required string argument
+    count int = 5      # Optional with default
+    verbose v bool     # Boolean flag with short form
+    email str?         # Optional argument
+
+    name regex &quot;^[a-zA-Z]+$&quot;
+    count range [1, 100]
+    email requires verbose
+</code></pre></div>
+<h3 id="comment-alignment">Comment Alignment<a class="headerlink" href="#comment-alignment" title="Permanent link">&para;</a></h3>
+<p>As a convention, align comments 2 spaces from the longest argument in the aligned group.</p>
+<div class="highlight"><pre><span></span><code>// Good: Align comments within reason (2 spaces from longest)
+args:
+    name str        # User&#39;s full name
+    age int         # Age in years
+    email str?      # Contact email
+    very_long_param str  # Don&#39;t align with this one if it&#39;s much longer
+    city str        # Align with the shorter ones instead
+
+// Bad: Inconsistent alignment
+args:
+    name str      # User&#39;s full name
+    age int            # Age in years
+    email str?  # Contact email
+</code></pre></div>
+<h3 id="shell-command-delimiters">Shell Command Delimiters<a class="headerlink" href="#shell-command-delimiters" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Prefer backticks to avoid delimiter conflicts
+result = $`echo &quot;Hello world&quot;`
+output = $`grep &#39;pattern&#39; file.txt`
+status = $`curl -H &quot;Content-Type: application/json&quot; api.example.com`
+
+// Avoid: Quotes can conflict with shell command content
+// result = $&quot;echo &quot;Hello world&quot;&quot;  // This breaks
+</code></pre></div>
+<h3 id="variable-naming">Variable Naming<a class="headerlink" href="#variable-naming" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Use snake_case for variables
+user_name = &quot;alice&quot;
+max_retry_count = 3
+is_valid = true
+
+// Good: Common abbreviations are fine for CLI scripting
+msg = &quot;Hello world&quot;
+req = http_get(url)
+cfg = load_config()
+args = get_args()
+
+// Good: Use descriptive names when clarity matters
+user_data = load_user_info()
+processed_items = filter(items, is_active)
+
+// Avoid: Unclear single letters and confusing abbreviations
+x = load_user_info()  // Too generic
+a, b = 1, 2          // Meaningless names
+usr_nm = &quot;alice&quot;     // Unclear abbreviation
+</code></pre></div>
+<h3 id="function-definition-style">Function Definition Style<a class="headerlink" href="#function-definition-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Clear, descriptive function names
+fn calculate_tax(amount, rate):
+    return amount * rate
+
+fn validate_email(email):
+    return &quot;@&quot; in email and &quot;.&quot; in email
+
+// Good: Anonymous functions for simple operations (note lack of colon)
+double = fn(x) x * 2
+is_even = fn(n) n % 2 == 0
+</code></pre></div>
+<h3 id="control-flow-formatting">Control Flow Formatting<a class="headerlink" href="#control-flow-formatting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Consistent indentation and spacing
+if user.is_admin:
+    print(&quot;Admin access granted&quot;)
+    log_admin_action(user.name)
+else if user.is_moderator:
+    print(&quot;Moderator access granted&quot;)
+else:
+    print(&quot;Regular user access&quot;)
+
+// Good: Switch formatting
+result = switch status:
+    case &quot;active&quot; -&gt; &quot;Running&quot;
+    case &quot;paused&quot; -&gt; &quot;Waiting&quot; 
+    case &quot;stopped&quot; -&gt; &quot;Inactive&quot;
+    default -&gt; &quot;Unknown&quot;
+</code></pre></div>
+<h3 id="collection-and-data-structure-style">Collection and Data Structure Style<a class="headerlink" href="#collection-and-data-structure-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Readable list formatting with trailing commas
+users = [
+    {&quot;name&quot;: &quot;alice&quot;, &quot;role&quot;: &quot;admin&quot;},
+    {&quot;name&quot;: &quot;bob&quot;, &quot;role&quot;: &quot;user&quot;},
+    {&quot;name&quot;: &quot;charlie&quot;, &quot;role&quot;: &quot;moderator&quot;},
+]
+
+// Good: Multiline maps with trailing commas
+config = {
+    &quot;host&quot;: &quot;localhost&quot;,
+    &quot;port&quot;: 8080,
+    &quot;debug&quot;: true,
+}
+
+// Good: Simple lists on one line when short
+colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
+numbers = [1, 2, 3, 4, 5]
+
+// Good: Clear JSON path definitions
+UserName = json.users[].name
+UserEmail = json.users[].email  
+UserRole = json.users[].role
+</code></pre></div>
+<h3 id="string-interpolation-style">String Interpolation Style<a class="headerlink" href="#string-interpolation-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Clear variable interpolation
+message = &quot;Hello {user_name}, you have {message_count} messages&quot;
+file_path = &quot;{base_dir}/{filename}.txt&quot;
+
+// Good: Format specifiers for numbers
+price = &quot;Total: ${amount:.2}&quot;
+percentage = &quot;Progress: {progress:.1}%&quot;
+</code></pre></div>
+<h3 id="error-handling-style">Error Handling Style<a class="headerlink" href="#error-handling-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Good: Clear handling with suffix catch:
+user_data = load_user(user_id) catch:
+    print_err(&quot;Failed to load user data: {user_id}&quot;)
+    exit(1)
+
+// Good: Simple fallback with ?? (right side evaluated lazily)
+backup_data = load_backup() ?? {&quot;version&quot;: &quot;none&quot;}
+
+// Good: Multi-return fallback with ?? list
+a, b = risky_pair() ?? [0, 0]
+
+// Good: Shell command handling with catch
+code, stdout = $`potentially_failing_command` catch:
+    print_err(&quot;Command failed with code {code}&quot;)
+    stdout = &quot;&quot;
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../examples/brewi/" class="md-footer__link md-footer__link--prev" aria-label="Previous: brewi">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                brewi
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../functions/" class="md-footer__link md-footer__link--next" aria-label="Next: Functions">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Functions
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
