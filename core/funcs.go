@@ -1269,8 +1269,8 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				// defaults
 				config := fid.NewConfig().
-					WithTickSize(fid.Decisecond). // todo maybe milli, but reduce num random chars to 4?
-					WithNumRandomChars(5).
+					WithTickSize(fid.Millisecond).
+					WithNumRandomChars(6).
 					WithAlphabet(fid.Base62Alphabet)
 
 				alphabet := f.GetArg("alphabet")
