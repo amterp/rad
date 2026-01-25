@@ -19,6 +19,7 @@ nav:
       - ./guide/global-flags.md
       - ./guide/defer-errdefer.md
   - Examples:
+      - ./examples/index.md
       - ./examples/brewi.md
   - Reference:
       - ./reference/args.md

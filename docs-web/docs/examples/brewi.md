@@ -150,6 +150,3 @@ Script args:
       --formula string   Name of the formula to install.
   -c, --cask             Enable if it's a cask.
 ```
-
-
-If you'd like to see a more complex example next, check out [hm](./hm.md).

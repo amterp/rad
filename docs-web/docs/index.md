@@ -2,18 +2,43 @@
 title: Welcome to Rad
 ---
 
-## New?
+**Rad is a scripting language designed to make writing CLI tools delightful.**
 
-Check out the [Getting Started](./guide/getting-started.md) guide!
+Familiar, Python-like syntax with CLI superpowers built-in: declarative argument parsing, JSON processing, shell integration, and interactive prompts.
 
-## Reference
+## A Quick Taste
 
-See 'Reference' in the side panel.
+```rad
+#!/usr/bin/env rad
+args:
+    name str        # Name of the person to greet.
+    times int = 1   # How many times to greet them.
 
-!!! warning "These docs are still a work in progress!"
+for i in range(times):
+    print("Hello, {name}!")
+```
 
-    These docs are actively being worked on, and there are critical sections missing.
+```
+> ./greet --help
+Usage:
+  greet <name> [times]
 
-    Rad is also evolving, and so some docs here may be out of date. If you have any questions at all, don't hesitate to ask on [Discussions](https://github.com/amterp/rad/discussions)!
+Script args:
+      --name str    Name of the person to greet.
+      --times int   How many times to greet them. (default 1)
+```
 
-    The [Guide](./guide/getting-started.md) is pretty substantial and gives you quite a lot to go on, feel free to check it out!
+No argparse. No boilerplate. Just readable code that does what you want.
+
+## Explore
+
+- [**Getting Started**](./guide/getting-started.md) – Installation & your first script
+- [**Args**](./guide/args.md) – Declarative argument parsing
+- [**Rad Blocks**](./guide/rad-blocks.md) – JSON processing & API queries
+- [**Shell Commands**](./guide/shell-commands.md) – Running shell commands
+- [**Examples**](./examples/index.md) – Real-world scripts
+
+**→ [Install Rad](./guide/getting-started.md#installation)**
+
+!!! note "Early Development"
+    Rad is in early development but useful today. Core features work well, though expect breaking changes between versions. [Feedback welcome!](https://github.com/amterp/rad/discussions)
