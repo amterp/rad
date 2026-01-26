@@ -1,11 +1,15 @@
 # GitHub Actions workflow for updating release notes in documentation
-# Triggers when a new release is published, updates docs, and deploys
+# Triggers when the Release workflow completes, updates docs, and deploys
+#
+# Note: Uses workflow_run instead of release trigger because releases created
+# with GITHUB_TOKEN don't trigger other workflows (GitHub security feature).
 
 name: Update Release Notes
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -13,6 +17,8 @@ permissions:
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
+    # Only run if the Release workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,17 +28,23 @@ jobs:
 
       - name: Get release info
         id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
-          echo "date=$(date -d '${{ github.event.release.published_at }}' '+%Y-%m-%d')" >> $GITHUB_OUTPUT
+          # Fetch latest release info via gh CLI since github.event.release
+          # isn't available with workflow_run trigger
+          TAG=$(gh release view --latest --json tagName -q '.tagName')
+          DATE=$(gh release view --latest --json publishedAt -q '.publishedAt' | cut -d'T' -f1)
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
 
       - name: Format release body
         id: format
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          # Get release body and clean up
-          cat << 'RELEASE_EOF' > /tmp/raw_body.txt
-          ${{ github.event.release.body }}
-          RELEASE_EOF
+          # Get release body via gh CLI
+          gh release view --latest --json body -q '.body' > /tmp/raw_body.txt
 
           REPO_URL="https://github.com/${{ github.repository }}"
 
@@ -81,7 +93,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add docs-web/docs/releases.md
           # Only commit if there are changes
-          git diff --staged --quiet || git commit -m "docs: add release notes for ${{ github.event.release.tag_name }}"
+          git diff --staged --quiet || git commit -m "docs: add release notes for ${{ steps.release.outputs.tag }}"
 
       - name: Push changes
         run: |
