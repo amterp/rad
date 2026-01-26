@@ -164,4 +164,8 @@ If a script exits successfully and has multiple `defer` blocks, and the first on
 - They can commonly be used for clean up operations and making your scripts atomic.
 - Defer blocks run in LIFO order - last in, first out.
 
-[//]: # (todo next? or end guide?)
+## Next
+
+Now that you understand `defer`, you're ready to learn about **stashes** - Rad's built-in persistent storage that pairs perfectly with `defer` for saving state reliably.
+
+Continue to [Stashes](./stashes.md).
