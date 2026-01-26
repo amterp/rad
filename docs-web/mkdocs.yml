@@ -36,12 +36,12 @@ nav:
 theme:
   name: material
   favicon: assets/favicon.svg
+  font: false  # Disable default fonts, we load our own via CSS
   icon:
     repo: fontawesome/brands/github
     annotation: material/arrow-right-circle
   features:
     - content.code.copy
-#    - navigation.sections
     - navigation.footer
   palette:
     # Palette toggle for automatic mode
@@ -73,7 +73,8 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - toc:
-      permalink: true # 
+      permalink: true
 
 extra_css:
+  - https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap
   - stylesheets/extra.css
