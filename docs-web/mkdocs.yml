@@ -18,10 +18,12 @@ nav:
       - ./guide/resources.md
       - ./guide/global-flags.md
       - ./guide/defer-errdefer.md
+      - ./guide/stashes.md
   - Examples:
       - ./examples/index.md
       - ./examples/brewi.md
       - ./examples/epoch.md
+      - ./examples/hm.md
   - Reference:
       - Language Reference: ./reference/syntax.md
       - ./reference/functions.md
