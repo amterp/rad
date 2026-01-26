@@ -157,6 +157,8 @@ Note: The for-loop syntax changed. It looks like you may be using the old syntax
 Old: for idx, item in items:
 New: for item in items with loop:
          print(loop.idx, item)
+
+See: https://amterp.github.io/rad/migrations/v0.7/
 `
 	assertError(t, 1, expected)
 }
@@ -178,6 +180,31 @@ Note: The for-loop syntax changed. It looks like you may be using the old syntax
 Old: for idx, item in items:
 New: for item in items with loop:
          print(loop.idx, item)
+
+See: https://amterp.github.io/rad/migrations/v0.7/
+`
+	assertError(t, 1, expected)
+}
+
+func Test_For_Unpack_MigrationErrorHintUnderscore(t *testing.T) {
+	// Migration hint triggers for underscore (common pattern for discarding old auto-index)
+	script := `
+for _, item in [1, 2, 3]:
+	print(item)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L2:16
+
+  for _, item in [1, 2, 3]:
+                 ^^^^^^^^^
+                 Cannot unpack "int" into 2 values
+
+Note: The for-loop syntax changed. It looks like you may be using the old syntax.
+Old: for idx, item in items:
+New: for item in items with loop:
+         print(loop.idx, item)
+
+See: https://amterp.github.io/rad/migrations/v0.7/
 `
 	assertError(t, 1, expected)
 }

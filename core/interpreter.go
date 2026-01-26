@@ -1032,12 +1032,13 @@ Loop:
 			if !ok {
 				// Migration hint for old syntax
 				firstName := i.GetSrcForNode(&leftNodes[0])
-				if firstName == "idx" || firstName == "index" || firstName == "i" {
+				if firstName == "idx" || firstName == "index" || firstName == "i" || firstName == "_" {
 					i.errorf(rightNode, "Cannot unpack %q into %d values\n\n"+
 						"Note: The for-loop syntax changed. It looks like you may be using the old syntax.\n"+
 						"Old: for idx, item in items:\n"+
 						"New: for item in items with loop:\n"+
-						"         print(loop.idx, item)",
+						"         print(loop.idx, item)\n\n"+
+						"See: https://amterp.github.io/rad/migrations/v0.7/",
 						TypeAsString(val), len(leftNodes))
 				}
 				i.errorf(rightNode, "Cannot unpack %q into %d values", TypeAsString(val), len(leftNodes))
