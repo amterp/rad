@@ -8,6 +8,20 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.7.1](https://github.com/amterp/rad/releases/tag/v0.7.1) - 2026-01-26
+
+- Release VSCode extension v0.3.0 ([9443d85](https://github.com/amterp/rad/commit/9443d85))
+- ci: add automated docs deployment and release notes ([883a593](https://github.com/amterp/rad/commit/883a593))
+- ci: add cross-platform testing for macOS and Windows ([e085011](https://github.com/amterp/rad/commit/e085011))
+- ci: fix Windows build output filename in cross-platform tests ([4474ee3](https://github.com/amterp/rad/commit/4474ee3))
+- ci: treat all platforms as equal first-class citizens ([668a509](https://github.com/amterp/rad/commit/668a509))
+- feat: add platform abstraction for Windows compatibility ([5fdf8fd](https://github.com/amterp/rad/commit/5fdf8fd))
+- feat: add underscore to v0.7 for-loop migration hint detection ([cf4af1a](https://github.com/amterp/rad/commit/cf4af1a))
+- feat: complete platform normalization for Windows compatibility ([83c839e](https://github.com/amterp/rad/commit/83c839e))
+- fix: improve gen_fid collision resistance ([0ee37ff](https://github.com/amterp/rad/commit/0ee37ff))
+
+---
+
 ## [v0.7.0](https://github.com/amterp/rad/releases/tag/v0.7.0) - 2026-01-16
 
 - docs(SYNTAX.md): add script commands ([9e4e595](https://github.com/amterp/rad/commit/9e4e595))
