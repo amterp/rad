@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/script-commands/">
+        <link rel="canonical" href="https://amterp.github.io/rad/examples/epoch/">
       
       
-        <link rel="prev" href="../shell-commands/">
+        <link rel="prev" href="../brewi/">
       
       
-        <link rel="next" href="../resources/">
+        <link rel="next" href="../hm/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Script Commands - Rad Docs</title>
+        <title>epoch - Rad Docs</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#basic-syntax" class="md-skip">
+        <a href="#preview" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Script Commands
+              epoch
             
           </span>
         </div>
@@ -300,20 +300,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -334,7 +332,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -352,7 +350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/" class="md-nav__link">
+      <a href="../../guide/getting-started/" class="md-nav__link">
         
   
   
@@ -380,7 +378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/" class="md-nav__link">
+      <a href="../../guide/basics/" class="md-nav__link">
         
   
   
@@ -408,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../args/" class="md-nav__link">
+      <a href="../../guide/args/" class="md-nav__link">
         
   
   
@@ -436,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../functions/" class="md-nav__link">
+      <a href="../../guide/functions/" class="md-nav__link">
         
   
   
@@ -464,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strings-advanced/" class="md-nav__link">
+      <a href="../../guide/strings-advanced/" class="md-nav__link">
         
   
   
@@ -492,7 +490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
+      <a href="../../guide/rad-blocks/" class="md-nav__link">
         
   
   
@@ -520,7 +518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../type-annotations/" class="md-nav__link">
+      <a href="../../guide/type-annotations/" class="md-nav__link">
         
   
   
@@ -548,7 +546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling/" class="md-nav__link">
+      <a href="../../guide/error-handling/" class="md-nav__link">
         
   
   
@@ -576,7 +574,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
+      <a href="../../guide/shell-commands/" class="md-nav__link">
         
   
   
@@ -584,6 +582,258 @@
     
   
     Shell Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/script-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Script Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/global-flags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global Flags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/defer-errdefer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defer & Errdefer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/stashes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stashes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../brewi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    brewi
   
 
     
@@ -618,7 +868,7 @@
   <span class="md-ellipsis">
     
   
-    Script Commands
+    epoch
   
 
     
@@ -636,7 +886,7 @@
   <span class="md-ellipsis">
     
   
-    Script Commands
+    epoch
   
 
     
@@ -660,10 +910,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-syntax" class="md-nav__link">
+  <a href="#preview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Syntax
+        Preview
       
     </span>
   </a>
@@ -671,99 +921,110 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multiple-commands" class="md-nav__link">
+  <a href="#tutorial-building-epoch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multiple Commands
+        Tutorial: Building epoch
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-descriptions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding Descriptions
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#command-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Command Arguments
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shared-args" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared Args
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#command-callbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Command Callbacks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shared-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared Logic
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Help
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#practical-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Practical Example
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Practical Example">
+    <nav class="md-nav" aria-label="Tutorial: Building epoch">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dev-script" class="md-nav__link">
+  <a href="#motivation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dev Script
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-the-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing the script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-an-optional-argument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding an optional argument
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-our-timezone-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting up our timezone data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-the-display-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the display columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iterating-with-unpacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Iterating with unpacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-helper-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The helper function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The display block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try-it-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try it out
       
     </span>
   </a>
@@ -776,21 +1037,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#concepts-demonstrated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next
+        Concepts demonstrated
       
     </span>
   </a>
@@ -813,257 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Resources
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../global-flags/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Global Flags
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../defer-errdefer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Defer & Errdefer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../stashes/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Stashes
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Examples
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/brewi/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    brewi
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/epoch/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    epoch
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/hm/" class="md-nav__link">
+      <a href="../hm/" class="md-nav__link">
         
   
   
@@ -1390,10 +1390,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-syntax" class="md-nav__link">
+  <a href="#preview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Syntax
+        Preview
       
     </span>
   </a>
@@ -1401,99 +1401,110 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multiple-commands" class="md-nav__link">
+  <a href="#tutorial-building-epoch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multiple Commands
+        Tutorial: Building epoch
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#adding-descriptions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding Descriptions
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#command-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Command Arguments
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shared-args" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared Args
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#command-callbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Command Callbacks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shared-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared Logic
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Help
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#practical-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Practical Example
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Practical Example">
+    <nav class="md-nav" aria-label="Tutorial: Building epoch">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dev-script" class="md-nav__link">
+  <a href="#motivation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dev Script
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-the-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing the script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-an-optional-argument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding an optional argument
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-our-timezone-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting up our timezone data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-the-display-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the display columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iterating-with-unpacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Iterating with unpacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-helper-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The helper function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-display-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The display block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try-it-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try it out
       
     </span>
   </a>
@@ -1506,21 +1517,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
+  <a href="#concepts-demonstrated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next
+        Concepts demonstrated
       
     </span>
   </a>
@@ -1547,238 +1547,9 @@
   
 
 
-  <h1>Script Commands</h1>
+  <h1>epoch</h1>
 
-<p>When you think of powerful CLI tools - <code>git</code>, <code>docker</code>, <code>kubectl</code> - they all share a common pattern: they're organized
-around commands. You don't just run <code>git</code> with flags; you run <code>git commit</code>, <code>git push</code>, <code>git branch</code> - each a distinct
-operation with its own arguments.</p>
-<p>Rad lets you build tools like this through first-class command support. You can define multiple commands in a single
-script, each with their own arguments and implementation.</p>
-<h2 id="basic-syntax">Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permanent link">&para;</a></h2>
-<p>Let's start with a very simple example:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
-
-command greet:
-    name str
-    calls greet_user
-
-fn greet_user():
-    print(&quot;Hello, {name}!&quot;)
-</code></pre></div></td></tr></table></div>
-<p>This script defines a single command called <code>greet</code> that takes a <code>name</code> argument.</p>
-<p>Invoke it by specifying the command name followed by its arguments:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./script.rad greet Alice
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Hello, Alice!
-</code></pre></div>
-</div>
-
-<p>Let's break down the syntax:</p>
-<ol>
-<li><strong><code>command greet:</code></strong> - Defines a command named <code>greet</code></li>
-<li><strong><code>name str</code></strong> - The command takes one required string argument called <code>name</code></li>
-<li><strong><code>calls greet_user</code></strong> - Specifies which function to execute when this command runs</li>
-<li><strong><code>fn greet_user():</code></strong> - Defines the function that implements the command logic (defined after commands)</li>
-</ol>
-<p>Command arguments (like <code>name</code>) become script-wide variables, accessible throughout your script.</p>
-<h2 id="multiple-commands">Multiple Commands<a class="headerlink" href="#multiple-commands" title="Permanent link">&para;</a></h2>
-<p>The power of commands emerges when you define several in one script. Let's create a simple deployment tool:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
-
-<span class="hll">command deploy:
-</span><span class="hll">    env str
-</span><span class="hll">    calls do_deploy
-</span><span class="hll">
-</span>command status:
-<span class="hll">    env str
-</span><span class="hll">    calls do_status
-</span><span class="hll">
-</span><span class="hll">fn do_deploy():
-</span>    print(&quot;Deploying to {env}...&quot;.yellow())
-<span class="hll">    print(&quot;Deployment complete!&quot;.green())
-</span><span class="hll">
-</span><span class="hll">fn do_status():
-</span><span class="hll">    print(&quot;Checking status of {env}...&quot;.yellow())
-</span>    print(&quot;Environment {env} is healthy&quot;.green())
-</code></pre></div></td></tr></table></div>
-<p>Now you can invoke either command:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Deploying to staging...
-Deployment complete!
-</code></pre></div>
-</div>
-
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad status production
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Checking status of production...
-Environment production is healthy
-</code></pre></div>
-</div>
-
-<p>Each command has its own arguments and implementation, but they live in the same script and can share code.</p>
-<h2 id="adding-descriptions">Adding Descriptions<a class="headerlink" href="#adding-descriptions" title="Permanent link">&para;</a></h2>
-<p>Commands should include descriptions to make your tool self-documenting. Use the familiar <code>--- ... ---</code> header syntax:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
-
-command deploy:
-<span class="hll">    ---
-</span><span class="hll">    Deploy the application to an environment
-</span><span class="hll">    ---
-</span>    env str
-    calls do_deploy
-
-command status:
-<span class="hll">    ---
-</span><span class="hll">    Check the health of an environment
-</span><span class="hll">    ---
-</span>    env str
-    calls do_status
-
-fn do_deploy():
-    print(&quot;Deploying to {env}...&quot;.yellow())
-
-fn do_status():
-    print(&quot;Environment {env} is healthy&quot;.green())
-</code></pre></div></td></tr></table></div>
-<p>These descriptions appear in the help output:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad -h
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Usage:
-  tool.rad [command] [OPTIONS]
-
-Commands:
-  deploy    Deploy the application to an environment
-  status    Check the health of an environment
-</code></pre></div>
-</div>
-
-<p>Notice how Rad automatically generates a usage string listing all available commands.</p>
-<div class="admonition tip">
-<p class="admonition-title">Multi-line descriptions</p>
-<p>Just like script headers, command descriptions can span multiple lines:</p>
-<div class="highlight"><pre><span></span><code>command deploy:
-    ---
-    Deploy the application to an environment.
-    This will build, test, and deploy your application.
-    ---
-</code></pre></div>
-<p><strong>Important:</strong> The first line appears in the script's overall help output, so keep it concise. Additional lines
-only appear when you request help for that specific command (<code>./tool.rad deploy -h</code>).</p>
-</div>
-<h2 id="command-arguments">Command Arguments<a class="headerlink" href="#command-arguments" title="Permanent link">&para;</a></h2>
-<p>Each command can define its own arguments using the same syntax you learned in <a href="../args/">Args</a>. Let's expand our
-deployment tool:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
-
-command deploy:
-<span class="hll">    ---
-</span><span class="hll">    Deploy the application to an environment
-</span><span class="hll">    ---
-</span><span class="hll">    env str              # Environment to deploy to
-</span><span class="hll">    branch str = &quot;main&quot;  # Branch to deploy from
-</span><span class="hll">    skip_tests bool      # Skip running tests before deploy
-</span><span class="hll">    calls do_deploy
-</span>
-fn do_deploy():
-    if skip_tests:
-        print(&quot;⚠️  Skipping tests&quot;.yellow())
-    else:
-        print(&quot;Running tests...&quot;.yellow())
-
-    print(&quot;Deploying {branch} to {env}...&quot;.yellow())
-    print(&quot;✅ Deployment complete!&quot;.green())
-</code></pre></div></td></tr></table></div>
-<p>The arguments work exactly as they do in the <code>args:</code> block - you can use defaults, optional types, constraints, and
-comments for help text.</p>
-<p>Invoke with positional arguments:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging feature-branch
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Running tests...
-Deploying feature-branch to staging...
-✅ Deployment complete!
-</code></pre></div>
-</div>
-
-<p>Or use flags (especially for booleans):</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy --env=production --skip-tests
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>⚠️  Skipping tests
-Deploying main to production...
-✅ Deployment complete!
-</code></pre></div>
-</div>
-
-<h2 id="shared-args">Shared Args<a class="headerlink" href="#shared-args" title="Permanent link">&para;</a></h2>
-<p>Often you want arguments that apply to <em>all</em> commands - like a <code>--verbose</code> flag or a <code>--config</code> path. Define these in
-an <code>args:</code> block to share them across commands:</p>
+<h2 id="preview">Preview<a class="headerlink" href="#preview" title="Permanent link">&para;</a></h2>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1810,66 +1581,157 @@ an <code>args:</code> block to share them across commands:</p>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
 
-<span class="hll">args:
-</span><span class="hll">    verbose v bool   # Enable verbose output
-</span><span class="hll">    config str = &quot;~/.config/tool.yaml&quot;
-</span>
-command deploy:
-    ---
-    Deploy the application
-    ---
-    env str
-    calls do_deploy
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
 
-command status:
-    ---
-    Check environment status
-    ---
-    env str
-    calls do_status
+tz_to_flag = [
+    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+]
 
-fn do_deploy():
-    if verbose:
-        print(&quot;Config: {config}&quot;.yellow())
-        print(&quot;Deploying to {env}...&quot;.yellow())
-    print(&quot;✅ Deployed!&quot;.green())
+Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
 
-fn do_status():
-    if verbose:
-        print(&quot;Config: {config}&quot;.yellow())
-        print(&quot;Checking {env}...&quot;.yellow())
-    print(&quot;Environment healthy&quot;.green())
+Time = []
+for tz, _ in tz_to_flag:
+    time = parse_time(epoch, tz)
+    Time += [time]
+
+display:
+    fields Timezone, Time
+
+fn parse_time(epoch: int, tz: str) -&gt; str:
+    time = parse_epoch(epoch, tz=tz)
+    return &quot;{time.date} {time.time}&quot;
 </code></pre></div></td></tr></table></div>
-<p>Shared args are available to all commands:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging --verbose
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Config: ~/.config/tool.yaml
-Deploying to staging...
-✅ Deployed!
-</code></pre></div>
-</div>
+<div class="highlight"><pre><span></span><code>&gt; epoch -h
+Convert epoch timestamps to human-readable times across multiple timezones.
 
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad status production --verbose
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Config: ~/.config/tool.yaml
-Checking production...
-Environment healthy
-</code></pre></div>
-</div>
+Usage:
+  epoch [epoch] [OPTIONS]
 
-<div class="admonition note">
-<p class="admonition-title">Shared args are flag-only</p>
-<p>When commands exist, shared args can only be passed as flags (like <code>--verbose</code>, <code>-v</code>, or <code>--config=value</code>), not
-positionally. This keeps the invocation clear: the first positional argument is always the command name.</p>
-<p>Both long form (<code>--verbose</code>) and short form (<code>-v</code>) work for shared args.</p>
-<p>Command-specific args can be positional or flags, just like regular script args.</p>
-</div>
-<h2 id="command-callbacks">Command Callbacks<a class="headerlink" href="#command-callbacks" title="Permanent link">&para;</a></h2>
-<p>We've been using function references (<code>calls on_deploy</code>), which is the recommended approach for most commands.
-However, for very short implementations, you can also use inline lambdas:</p>
+Script args:
+      --epoch int   (optional) Epoch time to convert. Defaults to current time if omitted.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&gt; epoch 1700000000000
+Timezone                Time
+🇬🇧 Europe/London         2023-11-14 22:13:20
+🇺🇸 America/New_York      2023-11-14 17:13:20
+🇯🇵 Asia/Tokyo            2023-11-15 07:13:20
+🇦🇺 Australia/Melbourne   2023-11-15 09:13:20
+
+&gt; epoch
+Epoch millis: 1769378597483
+Timezone                Time
+🇬🇧 Europe/London         2026-01-25 22:03:17
+🇺🇸 America/New_York      2026-01-25 17:03:17
+🇯🇵 Asia/Tokyo            2026-01-26 07:03:17
+🇦🇺 Australia/Melbourne   2026-01-26 09:03:17
+</code></pre></div>
+<h2 id="tutorial-building-epoch">Tutorial: Building <code>epoch</code><a class="headerlink" href="#tutorial-building-epoch" title="Permanent link">&para;</a></h2>
+<h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
+<p>When debugging distributed systems or reading logs, you'll often encounter epoch timestamps - large integers representing milliseconds (or seconds, or nanoseconds) since 1970. Converting these to human-readable times is tedious, and when you're coordinating across timezones, you often want to see the same moment in multiple locations at once.</p>
+<p>Let's build a script that converts an epoch timestamp into a table showing that moment across several timezones.</p>
+<h3 id="writing-the-script">Writing the script<a class="headerlink" href="#writing-the-script" title="Permanent link">&para;</a></h3>
+<p>We can use <code>rad</code> to create the script file for us.</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>new<span class="w"> </span>epoch<span class="w"> </span>-s
+</code></pre></div>
+<p>This will set us up with an executable script named <code>epoch</code>, and the <code>-s</code> simplifies the template it's instantiated with to contain <em>just</em> a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
+<p>The shebang will allow us to invoke the script as <code>epoch</code> from the CLI rather than writing out <code>rad ./epoch</code>. Open up <code>epoch</code> in your editor, and you should see something like this:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+</code></pre></div></td></tr></table></div>
+<p>Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="hll">---
+</span><span class="hll">Convert epoch timestamps to human-readable times across multiple timezones.
+</span><span class="hll">---
+</span></code></pre></div></td></tr></table></div>
+<h3 id="adding-an-optional-argument">Adding an optional argument<a class="headerlink" href="#adding-an-optional-argument" title="Permanent link">&para;</a></h3>
+<p>We want the script to accept an epoch timestamp, but it should also work without one - defaulting to the current time. We declare this with <code>int?</code>, where the <code>?</code> makes it optional (it will be <code>null</code> if not provided).</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+<span class="hll">args:
+</span><span class="hll">    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
+</span></code></pre></div></td></tr></table></div>
+<p>Now we handle the case where no epoch was provided:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
+
+<span class="hll">if not epoch:
+</span><span class="hll">    epoch = now().epoch.millis
+</span><span class="hll">    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+</span></code></pre></div></td></tr></table></div>
+<p>The <a href="../../reference/functions/#now"><code>now()</code></a> function returns a map with various time fields. We access <code>.epoch.millis</code> to get the current epoch in milliseconds, then print it so the user knows what value we're working with.</p>
+<h3 id="setting-up-our-timezone-data">Setting up our timezone data<a class="headerlink" href="#setting-up-our-timezone-data" title="Permanent link">&para;</a></h3>
+<p>We'll store our timezones alongside their flag emoji in a list of pairs. Each inner list contains <code>[timezone_id, flag]</code>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
+
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+
+<span class="hll">tz_to_flag = [
+</span><span class="hll">    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+</span><span class="hll">    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+</span><span class="hll">    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+</span><span class="hll">    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+</span><span class="hll">]
+</span></code></pre></div></td></tr></table></div>
+<h3 id="building-the-display-columns">Building the display columns<a class="headerlink" href="#building-the-display-columns" title="Permanent link">&para;</a></h3>
+<p>For our table output, we need two columns: <code>Timezone</code> (for display) and <code>Time</code> (the converted times).</p>
+<p>First, let's create the <code>Timezone</code> column. We want it to show the flag followed by the timezone name, like "🇬🇧 Europe/London". We'll use <a href="../../reference/functions/#map"><code>.map()</code></a> with a lambda to transform each pair:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1888,32 +1750,35 @@ However, for very short implementations, you can also use inline lambdas:</p>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
 
-<span class="hll">command deploy:
-</span><span class="hll">    ---
-</span><span class="hll">    Deploy the application
-</span><span class="hll">    ---
-</span><span class="hll">    env str
-</span><span class="hll">    calls on_deploy
-</span>
-<span class="hll">command rollback:
-</span><span class="hll">    ---
-</span><span class="hll">    Rollback a deployment
-</span><span class="hll">    ---
-</span><span class="hll">    env str
-</span><span class="hll">    calls fn():
-</span><span class="hll">        print(&quot;Rolling back {env}...&quot;.yellow())
-</span><span class="hll">        print(&quot;✅ Rollback complete!&quot;.green())
-</span>
-<span class="hll">fn on_deploy():
-</span><span class="hll">    print(&quot;Deploying to {env}...&quot;.yellow())
-</span><span class="hll">    print(&quot;✅ Done!&quot;.green())
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+
+tz_to_flag = [
+    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+]
+
+<span class="hll">Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
 </span></code></pre></div></td></tr></table></div>
-<h2 id="shared-logic">Shared Logic<a class="headerlink" href="#shared-logic" title="Permanent link">&para;</a></h2>
-<p>You can write code after all command blocks that runs before any callback is invoked. This is useful for setup logic that all commands need:</p>
+<p>Each <code>x</code> is a <code>[timezone, flag]</code> pair, so <code>x[1]</code> is the flag and <code>x[0]</code> is the timezone name. We interpolate them into a string with the flag first.</p>
+<div class="admonition tip">
+<p class="admonition-title">List comprehension alternative</p>
+<p>You could also write this as a list comprehension, which is a bit more concise in this case:
+<div class="highlight"><pre><span></span><code>Timezone = [&quot;{x[1]} {x[0]}&quot; for x in tz_to_flag]
+</code></pre></div></p>
+</div>
+<h3 id="iterating-with-unpacking">Iterating with unpacking<a class="headerlink" href="#iterating-with-unpacking" title="Permanent link">&para;</a></h3>
+<p>Now we need to build the <code>Time</code> column by converting the epoch for each timezone. When iterating over a list of lists, we can <em>unpack</em> each inner list directly into named variables:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1935,83 +1800,106 @@ However, for very short implementations, you can also use inline lambdas:</p>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
 
-command deploy:
-    env str
-    calls on_deploy
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
 
-command rollback:
-    env str
-    calls on_rollback
+tz_to_flag = [
+    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+]
 
-// This runs before any callback
-print(&quot;Initializing...&quot;.yellow())
-config = read_file(&quot;config.yaml&quot;)
-print(&quot;Config loaded&quot;.green())
+Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
 
-fn on_deploy():
-    // config is available here
-    print(&quot;Deploying to {env} using config...&quot;)
-
-fn on_rollback():
-    // config is available here too
-    print(&quot;Rolling back {env}...&quot;)
-</code></pre></div></td></tr></table></div>
-<p>When you run <code>./script.rad deploy staging</code>, the flow is:</p>
-<ol>
-<li>Parse arguments</li>
-<li>Run shared logic (lines 12-14)</li>
-<li>Run the callback (<code>on_deploy</code>)</li>
-</ol>
-<p>This pattern is useful for loading configuration files, setting up connections, or validating preconditions that apply to all commands.</p>
-<h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
-<p>Rad automatically generates help documentation for your commands. There are two levels of help:</p>
-<p><strong>Script-level help</strong> shows all available commands:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad -h
+<span class="hll">Time = []
+</span><span class="hll">for tz, _ in tz_to_flag:
+</span><span class="hll">    time = parse_time(epoch, tz)
+</span><span class="hll">    Time += [time]
+</span></code></pre></div></td></tr></table></div>
+<p>The <code>for tz, _ in tz_to_flag:</code> line unpacks each <code>[timezone, flag]</code> pair. The first element becomes <code>tz</code>, and we use <code>_</code> for the second element to indicate we don't need the flag here - it's a convention meaning "discard this value."</p>
+<p>This is cleaner than writing:</p>
+<div class="highlight"><pre><span></span><code>for pair in tz_to_flag:
+    tz = pair[0]
+    // ...
 </code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Usage:
-  tool.rad [command] [OPTIONS]
+<p>We're calling a <code>parse_time</code> function we haven't written yet - let's do that next.</p>
+<h3 id="the-helper-function">The helper function<a class="headerlink" href="#the-helper-function" title="Permanent link">&para;</a></h3>
+<p>We'll define a function that takes an epoch and timezone, then returns a formatted string:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+---
+Convert epoch timestamps to human-readable times across multiple timezones.
+---
+args:
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
 
-Commands:
-  deploy      Deploy the application
-  rollback    Rollback a deployment
-  status      Check environment status
-</code></pre></div>
-</div>
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
 
-<p><strong>Command-level help</strong> shows arguments for a specific command:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy -h
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Deploy the application
+tz_to_flag = [
+    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+]
 
-Usage:
-  deploy &lt;env&gt; [branch] [OPTIONS]
+Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
 
-Command args:
-      --env str       Environment to deploy to
-      --branch str    Branch to deploy from (default &quot;main&quot;)
-      --skip-tests    Skip running tests before deploy
-  -v, --verbose       Enable verbose output
-      --config str    (default &quot;~/.config/tool.yaml&quot;)
-</code></pre></div>
-</div>
+Time = []
+for tz, _ in tz_to_flag:
+    time = parse_time(epoch, tz)
+    Time += [time]
 
-<p>Notice how the help includes:</p>
-<ul>
-<li>The command description</li>
-<li>Required and optional arguments</li>
-<li>Default values</li>
-<li>Shared args (like <code>--verbose</code> and <code>--config</code>)</li>
-<li>Help text from <code>#</code> comments</li>
-</ul>
-<h2 id="practical-example">Practical Example<a class="headerlink" href="#practical-example" title="Permanent link">&para;</a></h2>
-<p>Here's a concise, realistic example that demonstrates the "dev script" pattern - a common use case for replacing messy <code>Makefile</code>s or complex <code>package.json</code> script sections with a single, readable CLI entry point.</p>
-<h3 id="dev-script">Dev Script<a class="headerlink" href="#dev-script" title="Permanent link">&para;</a></h3>
-<p>Instead of remembering different commands for building, testing, and running your project, you can wrap them in a
-single <code>dev.rad</code> script. This demonstrates shared arguments, boolean flags, and how to pass arguments down to underlying tools:</p>
+// display block will go here
+
+<span class="hll">fn parse_time(epoch: int, tz: str) -&gt; str:
+</span><span class="hll">    time = parse_epoch(epoch, tz=tz)
+</span><span class="hll">    return &quot;{time.date} {time.time}&quot;
+</span></code></pre></div></td></tr></table></div>
+<p>The <a href="../../reference/functions/#parse_epoch"><code>parse_epoch()</code></a> function converts an epoch timestamp to a time map, accepting a <code>tz</code> parameter for the timezone. We then format the <code>.date</code> and <code>.time</code> fields into a string.</p>
+<p>Note the type annotations <code>epoch: int, tz: str</code> and <code>-&gt; str</code> - these are optional but help document what the function expects and returns.</p>
+<h3 id="the-display-block">The display block<a class="headerlink" href="#the-display-block" title="Permanent link">&para;</a></h3>
+<p>Finally, we use a <a href="../../guide/rad-blocks/#display-no-request"><code>display</code> block</a> to render our two columns as a formatted table:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -2042,178 +1930,103 @@ single <code>dev.rad</code> script. This demonstrates shared arguments, boolean 
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 ---
-Facilitates working with this repo&#39;s project.
+Convert epoch timestamps to human-readable times across multiple timezones.
 ---
-
 args:
-    verbose v bool   # Enable verbose output
+    epoch int?  # Epoch time to convert. Defaults to current time if omitted.
 
-command start:
-    ---
-    Start the local development server
-    ---
-    port int = 3000    # Port to listen on
-    detach d bool      # Run in background
-    calls on_start
+if not epoch:
+    epoch = now().epoch.millis
+    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
 
-command test:
-    ---
-    Run the test suite
-    ---
-    grep str?      # Filter tests by name
-    watch w bool   # Re-run on file changes
-    calls on_test
+tz_to_flag = [
+    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
+    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
+    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
+    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+]
 
-command build:
-    ---
-    Compile for production
-    ---
-    calls on_build
+Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
 
-// Shared setup logic runs before any callback
-if verbose:
-    print(&quot;Checking project structure...&quot;.yellow())
+Time = []
+for tz, _ in tz_to_flag:
+    time = parse_time(epoch, tz)
+    Time += [time]
 
-if not path_exists(&quot;package.json&quot;):
-    print_err(&quot;Error: package.json not found&quot;.red())
-    print_err(&quot;Run this script from the project root&quot;.yellow())
-    exit(1)
-
-fn on_start():
-    print(&quot;🚀 Starting server on http://localhost:{port}...&quot;)
-
-    cmd = &quot;npm start -- --port {port}&quot;
-
-    if detach:
-        $`{cmd} &amp;`
-        print(&quot;Server started in background&quot;.green())
-    else:
-        $`{cmd}`
-
-fn on_test():
-    opts = &quot;&quot;
-    if watch:
-        opts = &quot;{opts} --watch&quot;
-    if grep: 
-        opts = &quot;{opts} -t &#39;{grep}&#39;&quot;
-
-    if verbose:
-        print(&quot;Running: pytest {opts}&quot;.yellow())
-
-    print(&quot;🧪 Running tests...&quot;)
-    $`pytest {opts}` catch:
-        print_err(&quot;Tests failed!&quot;.red())
-        exit(1)
-
-fn on_build():
-    print(&quot;📦 Building for production...&quot;.yellow())
-
-    $`rm -rf ./dist`
-    $`npm run build` catch:
-        print_err(&quot;Build failed&quot;.red())
-        exit(1)
-
-    print(&quot;✅ Build complete in ./dist&quot;.green())
+<span class="hll">display:
+</span><span class="hll">    fields Timezone, Time
+</span>
+fn parse_time(epoch: int, tz: str) -&gt; str:
+    time = parse_epoch(epoch, tz=tz)
+    return &quot;{time.date} {time.time}&quot;
 </code></pre></div></td></tr></table></div>
-<p><strong>Usage:</strong></p>
-<div class="highlight"><pre><span></span><code>&gt; ./dev.rad start
-🚀 Starting server on http://localhost:3000...
-
-&gt; ./dev.rad start --port 8080 --detach
-🚀 Starting server on http://localhost:8080...
-Server started in background
-
-&gt; ./dev.rad test --grep &quot;login_flow&quot; --watch
-🧪 Running tests...
-
-&gt; ./dev.rad build
-📦 Building for production...
-✅ Build complete in ./dist
+<p>The <code>display</code> block takes our pre-populated lists and renders them as aligned columns. The variable names (<code>Timezone</code>, <code>Time</code>) become the column headers.</p>
+<h3 id="try-it-out">Try it out<a class="headerlink" href="#try-it-out" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>&gt; epoch 1700000000000
+Timezone                Time
+🇬🇧 Europe/London         2023-11-14 22:13:20
+🇺🇸 America/New_York      2023-11-14 17:13:20
+🇯🇵 Asia/Tokyo            2023-11-15 07:13:20
+🇦🇺 Australia/Melbourne   2023-11-15 09:13:20
 </code></pre></div>
-<p>Notice how this example uses:</p>
-<ul>
-<li>Shared args (<code>--verbose</code>) available to all commands</li>
-<li>Command-specific arguments with defaults (<code>port</code>, <code>detach</code>, <code>grep</code>, <code>watch</code>)</li>
-<li>Shared logic that runs before any callback</li>
-<li>Function references for callbacks (<code>calls on_start</code>, etc.)</li>
-<li>Integration with shell commands to wrap existing tools</li>
-<li>Clear, self-documenting help text</li>
-</ul>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Script commands</strong> partition scripts into operations using <code>command name:</code> blocks</li>
-<li>Each command has:<ul>
-<li>Its own arguments (using standard <code>args</code> syntax)</li>
-<li>A description block (<code>--- ... ---</code>)</li>
-<li>A callback implementation (function reference or inline lambda)</li>
-</ul>
-</li>
-<li><strong>Shared args</strong> (from <code>args:</code> block) are available to all commands<ul>
-<li>Must be passed as flags when commands exist</li>
-</ul>
-</li>
-<li><strong>Shared logic</strong> runs before any callback. Write code after command blocks for setup that all commands need.</li>
-<li><strong>Help is automatic:</strong><ul>
-<li><code>./script -h</code> lists available commands</li>
-<li><code>./script command -h</code> shows command-specific help</li>
-</ul>
-</li>
-<li><strong>Callbacks:</strong><ul>
-<li>Function references: <code>calls function_name</code> (recommended)</li>
-<li>Inline lambdas: <code>calls fn():</code> (for short implementations)</li>
-</ul>
-</li>
-<li><strong>Use script commands to build CLI tools, not just scripts</strong></li>
-</ul>
-<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Rad provides a powerful system for looking up values from predefined resource files, which is particularly useful for
-building interactive tools.</p>
-<p>We'll explore this in the next section: <a href="../resources/">Resources</a>.</p>
+<p>Or without an argument, to see the current time:</p>
+<div class="highlight"><pre><span></span><code>&gt; epoch
+Epoch millis: 1769378597483
+Timezone                Time
+🇬🇧 Europe/London         2026-01-25 22:03:17
+🇺🇸 America/New_York      2026-01-25 17:03:17
+🇯🇵 Asia/Tokyo            2026-01-26 07:03:17
+🇦🇺 Australia/Melbourne   2026-01-26 09:03:17
+</code></pre></div>
+<h2 id="concepts-demonstrated">Concepts demonstrated<a class="headerlink" href="#concepts-demonstrated" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../guide/args/">Optional arguments</a></td>
+<td><code>epoch int?</code></td>
+</tr>
+<tr>
+<td>Null checking</td>
+<td><code>if not epoch:</code></td>
+</tr>
+<tr>
+<td><a href="../../reference/functions/#now">Built-in <code>now()</code></a></td>
+<td><code>now().epoch.millis</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/basics/#list">List of lists</a></td>
+<td><code>tz_to_flag</code></td>
+</tr>
+<tr>
+<td><a href="../../reference/functions/#map"><code>.map()</code> with lambdas</a></td>
+<td><code>tz_to_flag.map(fn(x) ...)</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/basics/#for-loops">Loop unpacking</a></td>
+<td><code>for tz, _ in tz_to_flag:</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/functions/">Functions with types</a></td>
+<td><code>fn parse_time(epoch: int, tz: str) -&gt; str:</code></td>
+</tr>
+<tr>
+<td><a href="../../reference/functions/#parse_epoch"><code>parse_epoch()</code></a></td>
+<td>Time conversion</td>
+</tr>
+<tr>
+<td><a href="../../guide/rad-blocks/#display-no-request"><code>display</code> blocks</a></td>
+<td>Tabular output</td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -2246,7 +2059,7 @@ building interactive tools.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../shell-commands/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Shell Commands">
+          <a href="../brewi/" class="md-footer__link md-footer__link--prev" aria-label="Previous: brewi">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2256,20 +2069,20 @@ building interactive tools.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Shell Commands
+                brewi
               </div>
             </div>
           </a>
         
         
           
-          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
+          <a href="../hm/" class="md-footer__link md-footer__link--next" aria-label="Next: hm">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Resources
+                hm
               </div>
             </div>
             <div class="md-footer__button md-icon">

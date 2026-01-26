@@ -14,7 +14,7 @@
         <link rel="prev" href="../">
       
       
-        <link rel="next" href="../../reference/syntax/">
+        <link rel="next" href="../epoch/">
       
       
         
@@ -707,6 +707,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/stashes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stashes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -903,10 +931,77 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#concepts-demonstrated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concepts demonstrated
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../epoch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    epoch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    hm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1267,6 +1362,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#concepts-demonstrated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concepts demonstrated
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1328,14 +1434,10 @@ Script args:
 Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 <p>Rather than writing out these two commands manually each time, it'd be neat if I had an alias, which not only saved some characters, but did this workflow <em>for</em> me.</p>
 <h3 id="writing-the-script">Writing the script<a class="headerlink" href="#writing-the-script" title="Permanent link">&para;</a></h3>
-<p>We can use <code>rad</code> to create the script file for us.</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>new<span class="w"> </span>brewi<span class="w"> </span>-s
+<p>We can use <code>rad</code> to create the script file for us. The <code>-s</code> flag gives us a minimal template with just a shebang, and <code>-o code</code> opens it in VS Code.</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>new<span class="w"> </span>brewi<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>code
 </code></pre></div>
-<p>This will set us up with an executable script named <code>brewi</code>, and the <code>-s</code> simplifies the template it's instantiated with to contain <em>just</em> a <a href="../../guide/getting-started/#shebang">shebang</a>.</p>
-<p>The shebang will allow us to invoke the script as <code>brewi</code> from the CLI rather than writing out <code>rad ./brewi</code>. Open up <code>brewi</code> in your editor, and you should see something like this:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
-</code></pre></div></td></tr></table></div>
-<p>Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
+<p>First, we want to quickly describe what the script is aiming to do, so we'll add a file header.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1429,16 +1531,45 @@ if confirm():
 </span></code></pre></div></td></tr></table></div>
 <p>Note the shorthand flag in <code>cask c bool</code>.</p>
 <p>Done! You've now got a great, convenient helper script for installing things with brew :)</p>
-<div class="highlight"><pre><span></span><code>&gt; brewi -h
-Facilitates checking a brew formula before installing it.
-
-Usage:
-  brewi &lt;formula&gt; [cask]
-
-Script args:
-      --formula string   Name of the formula to install.
-  -c, --cask             Enable if it&#39;s a cask.
-</code></pre></div>
+<h2 id="concepts-demonstrated">Concepts demonstrated<a class="headerlink" href="#concepts-demonstrated" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../guide/getting-started/#shebang">File header</a></td>
+<td>Script description for <code>--help</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/args/">Args block</a></td>
+<td><code>formula str</code>, <code>cask c bool</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/args/">Short flags</a></td>
+<td><code>cask c bool</code> gives <code>-c</code></td>
+</tr>
+<tr>
+<td><a href="../../guide/shell-commands/">Shell commands</a></td>
+<td><code>$\</code>brew info {formula}``</td>
+</tr>
+<tr>
+<td><a href="../../guide/strings-advanced/#string-interpolation">String interpolation</a></td>
+<td><code>{formula}</code> in shell command</td>
+</tr>
+<tr>
+<td><a href="../../reference/functions/#confirm"><code>confirm()</code></a></td>
+<td>Interactive yes/no prompt</td>
+</tr>
+<tr>
+<td><a href="../../guide/basics/#ternary">Ternary operator</a></td>
+<td><code>cask ? " --cask" : ""</code></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -1488,13 +1619,13 @@ Script args:
         
         
           
-          <a href="../../reference/syntax/" class="md-footer__link md-footer__link--next" aria-label="Next: Language Reference">
+          <a href="../epoch/" class="md-footer__link md-footer__link--next" aria-label="Next: epoch">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Language Reference
+                epoch
               </div>
             </div>
             <div class="md-footer__button md-icon">
