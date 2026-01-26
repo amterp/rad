@@ -1,4 +1,813 @@
+/* ==========================================================================
+   Rad Documentation — "Sunset Terminal" Theme
+   A warm, distinctive design reflecting Rad's casual & delightful personality.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS Custom Properties (Design Tokens)
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Light Mode Colors */
+  --rad-primary: #E85D4C;
+  --rad-primary-hover: #D64A39;
+  --rad-accent: #2DD4BF;
+  --rad-accent-hover: #14B8A6;
+  --rad-bg: #FBF9F7;
+  --rad-surface: #F5F2EE;
+  --rad-text: #2C2825;
+  --rad-text-muted: #6B6560;
+  --rad-border: #E5E0DA;
+
+  /* Code Syntax — Warm Terminal */
+  --rad-code-keyword: #E85D4C;
+  --rad-code-string: #F4A261;
+  --rad-code-function: #2DD4BF;
+  --rad-code-comment: #635E59;
+  --rad-code-number: #C4B5FD;
+  --rad-code-bg: #F5F2EE;
+  --rad-code-border: #E5E0DA;
+
+  /* Shadows */
+  --rad-shadow-sm: 0 1px 2px rgba(44, 40, 37, 0.05);
+  --rad-shadow-md: 0 4px 6px rgba(44, 40, 37, 0.07);
+  --rad-shadow-lg: 0 10px 25px rgba(44, 40, 37, 0.1);
+
+  /* Spacing & Layout */
+  --rad-radius-sm: 4px;
+  --rad-radius: 8px;
+  --rad-radius-lg: 12px;
+
+  /* Semantic Colors */
+  --rad-warning: #F4A261;
+  --rad-primary-10: rgba(232, 93, 76, 0.1);
+  --rad-accent-10: rgba(45, 212, 191, 0.1);
+  --rad-warning-10: rgba(244, 162, 97, 0.1);
+
+  /* Typography */
+  --rad-font-display: 'Outfit', system-ui, sans-serif;
+  --rad-font-body: 'Source Sans 3', system-ui, sans-serif;
+  --rad-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Dark Mode Colors */
+[data-md-color-scheme="slate"] {
+  --rad-primary: #F4796A;
+  --rad-primary-hover: #F5918A;
+  --rad-accent: #5EEAD4;
+  --rad-accent-hover: #7EEDDB;
+  --rad-bg: #1A1817;
+  --rad-surface: #242220;
+  --rad-text: #F5F2EE;
+  --rad-text-muted: #A8A29E;
+  --rad-border: #3D3835;
+
+  /* Code Syntax — Dark Warm Terminal */
+  --rad-code-keyword: #F4796A;
+  --rad-code-string: #F4A261;
+  --rad-code-function: #5EEAD4;
+  --rad-code-comment: #9A9590;
+  --rad-code-number: #C4B5FD;
+  --rad-code-bg: #242220;
+  --rad-code-border: #3D3835;
+
+  /* Shadows (lighter for dark mode) */
+  --rad-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --rad-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.25);
+  --rad-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+  /* Semantic Colors (dark mode) */
+  --rad-primary-10: rgba(244, 121, 106, 0.1);
+  --rad-accent-10: rgba(94, 234, 212, 0.1);
+  --rad-warning-10: rgba(244, 162, 97, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   MkDocs Material Theme Overrides
+   -------------------------------------------------------------------------- */
+
+/* Primary color overrides */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--rad-primary);
+  --md-primary-fg-color--light: #F4796A;
+  --md-primary-fg-color--dark: #D64A39;
+  --md-accent-fg-color: var(--rad-accent);
+  --md-default-bg-color: var(--rad-bg);
+  --md-default-fg-color: var(--rad-text);
+  --md-default-fg-color--light: var(--rad-text-muted);
+  --md-typeset-color: var(--rad-text);
+  --md-typeset-a-color: var(--rad-primary);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--rad-primary);
+  --md-primary-fg-color--light: #F5918A;
+  --md-primary-fg-color--dark: #F4796A;
+  --md-accent-fg-color: var(--rad-accent);
+  --md-default-bg-color: var(--rad-bg);
+  --md-default-fg-color: var(--rad-text);
+  --md-default-fg-color--light: var(--rad-text-muted);
+  --md-typeset-color: var(--rad-text);
+  --md-typeset-a-color: var(--rad-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Base Typography
+   -------------------------------------------------------------------------- */
+
+body {
+  font-family: var(--rad-font-body);
+  background-color: var(--rad-bg);
+  color: var(--rad-text);
+}
+
+.md-typeset {
+  font-family: var(--rad-font-body);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+/* Headings */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: var(--rad-font-display);
+  font-weight: 600;
+  color: var(--rad-text);
+}
+
+.md-typeset h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.md-typeset h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--rad-border);
+}
+
+.md-typeset h3 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+
 .md-grid {
-    /*max-width: 60%;*/
-    max-width: 68rem;
-}z 
+  max-width: 75rem;
+}
+
+/* Page fade-in animation */
+@keyframes rad-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.md-content {
+  animation: rad-fade-in 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-content {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Links
+   -------------------------------------------------------------------------- */
+
+.md-typeset a {
+  color: var(--rad-primary);
+  text-decoration: none;
+  position: relative;
+}
+
+.md-typeset a:not(.md-button):not(.md-nav__link):not(.md-source):not(.headerlink)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--rad-primary);
+  transition: width 0.2s ease;
+}
+
+.md-typeset a:not(.md-button):not(.md-nav__link):not(.md-source):not(.headerlink):hover::after {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset a::after {
+    transition: none;
+  }
+}
+
+.md-typeset a:hover {
+  color: var(--rad-primary-hover);
+}
+
+.md-typeset a:focus-visible {
+  outline: 2px solid var(--rad-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Navigation
+   -------------------------------------------------------------------------- */
+
+.md-nav {
+  font-family: var(--rad-font-body);
+}
+
+/* Section headers in nav */
+.md-nav__item--nested > .md-nav__link {
+  font-family: var(--rad-font-display);
+  font-weight: 600;
+}
+
+/* Active nav item */
+.md-nav__link--active,
+.md-nav__link:focus,
+.md-nav__link:hover {
+  color: var(--rad-primary);
+}
+
+/* Header */
+.md-header {
+  background-color: var(--rad-surface);
+  box-shadow: var(--rad-shadow-sm);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background-color: var(--rad-surface);
+}
+
+.md-header__title {
+  font-family: var(--rad-font-display);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Code Blocks — Warm Terminal Theme
+   -------------------------------------------------------------------------- */
+
+.md-typeset code,
+.md-typeset pre code,
+.md-typeset kbd {
+  font-family: var(--rad-font-mono);
+  font-size: 0.75rem;
+}
+
+/* Inline code */
+.md-typeset code:not(pre code) {
+  background-color: var(--rad-code-bg);
+  border: 1px solid var(--rad-code-border);
+  border-radius: var(--rad-radius-sm);
+  padding: 0.1em 0.35em;
+  color: var(--rad-primary);
+  font-size: 0.85em;
+}
+
+/* Code blocks */
+.md-typeset pre {
+  background-color: var(--rad-code-bg);
+  border: 1px solid var(--rad-code-border);
+  border-radius: var(--rad-radius);
+  box-shadow: var(--rad-shadow-sm);
+}
+
+/* Syntax highlighting — Warm Terminal */
+.highlight .k,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr,
+.highlight .kt,
+.highlight .kc {
+  color: var(--rad-code-keyword);
+  font-weight: 600;
+}
+
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sx,
+.highlight .sr,
+.highlight .ss {
+  color: var(--rad-code-string);
+}
+
+.highlight .n,
+.highlight .na,
+.highlight .nb,
+.highlight .nc,
+.highlight .nd,
+.highlight .ne,
+.highlight .nf,
+.highlight .ni,
+.highlight .nl,
+.highlight .nn,
+.highlight .no,
+.highlight .nt,
+.highlight .nv,
+.highlight .nx {
+  color: var(--rad-text);
+}
+
+.highlight .nf,
+.highlight .fm {
+  color: var(--rad-code-function);
+}
+
+.highlight .c,
+.highlight .c1,
+.highlight .ch,
+.highlight .cm,
+.highlight .cp,
+.highlight .cpf,
+.highlight .cs {
+  color: var(--rad-code-comment);
+  font-style: italic;
+}
+
+.highlight .m,
+.highlight .mb,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il {
+  color: var(--rad-code-number);
+}
+
+.highlight .o,
+.highlight .ow,
+.highlight .p {
+  color: var(--rad-text-muted);
+}
+
+/*
+ * Line numbers
+ * Note: Heavy use of !important below to override MkDocs Material's internal
+ * code block styling. Tested with mkdocs-material ~9.x. If upgrading the theme
+ * breaks line number alignment, check these selectors first.
+ */
+.md-typeset .highlighttable {
+  background-color: var(--rad-code-bg);
+  border: 1px solid var(--rad-code-border);
+  border-radius: var(--rad-radius);
+  box-shadow: var(--rad-shadow-sm);
+  border-spacing: 0;
+}
+
+.md-typeset .highlighttable code {
+  background: transparent;
+  border: none;
+}
+
+.md-typeset .highlighttable td {
+  border: none;
+  padding: 0;
+}
+
+.md-typeset .linenos {
+  background-color: transparent;
+  color: var(--rad-text-muted);
+  padding-left: 1em !important;
+  padding-right: 1em !important;
+  border: none !important;
+  border-right: 1px solid var(--rad-code-border) !important;
+  user-select: none;
+}
+
+.md-typeset .linenodiv {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+
+.md-typeset .linenodiv pre {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+  margin: 0;
+  padding: 0.75em 0;
+}
+
+/* Ensure line numbers and code have identical line-height */
+.md-typeset .highlighttable .linenos pre,
+.md-typeset .highlighttable .code pre,
+.md-typeset .highlighttable .code pre code,
+.md-typeset .linenodiv pre {
+  font-family: var(--rad-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.md-typeset .highlighttable td.code,
+.md-typeset .highlighttable .code {
+  padding-left: 1em !important;
+  border: none !important;
+}
+
+.md-typeset .highlighttable .code pre {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+/* Copy button */
+.md-clipboard {
+  color: var(--rad-text-muted);
+}
+
+.md-clipboard:hover {
+  color: var(--rad-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+
+.md-typeset .md-button {
+  font-family: var(--rad-font-display);
+  font-weight: 600;
+  border-radius: var(--rad-radius);
+  padding: 0.75em 1.5em;
+  transition: all 0.2s ease;
+}
+
+.md-typeset .md-button--primary {
+  background-color: var(--rad-primary);
+  border-color: var(--rad-primary);
+  color: white;
+  box-shadow: var(--rad-shadow-sm);
+}
+
+.md-typeset .md-button--primary:hover {
+  background-color: var(--rad-primary-hover);
+  border-color: var(--rad-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--rad-shadow-md);
+}
+
+.md-typeset .md-button:not(.md-button--primary) {
+  border: 2px solid var(--rad-primary);
+  color: var(--rad-primary);
+}
+
+.md-typeset .md-button:not(.md-button--primary):hover {
+  background-color: var(--rad-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--rad-shadow-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .md-button:hover {
+    transform: none;
+  }
+}
+
+.md-typeset .md-button:focus-visible {
+  outline: 2px solid var(--rad-accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Admonitions
+   -------------------------------------------------------------------------- */
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--rad-radius);
+  border: none;
+  box-shadow: var(--rad-shadow-sm);
+  font-size: 1em;
+}
+
+.md-typeset .admonition > p,
+.md-typeset .admonition > ul,
+.md-typeset .admonition > ol,
+.md-typeset details > p,
+.md-typeset details > ul,
+.md-typeset details > ol {
+  font-size: inherit;
+}
+
+.md-typeset .admonition-title,
+.md-typeset details summary {
+  font-family: var(--rad-font-display);
+  font-weight: 600;
+  font-size: inherit;
+  border-radius: var(--rad-radius) var(--rad-radius) 0 0;
+}
+
+/* Note — Teal */
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-left: 4px solid var(--rad-accent);
+}
+
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: var(--rad-accent-10);
+}
+
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: var(--rad-accent);
+}
+
+/* Tip — Coral */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-left: 4px solid var(--rad-primary);
+}
+
+.md-typeset .tip > .admonition-title,
+.md-typeset .tip > summary {
+  background-color: var(--rad-primary-10);
+}
+
+.md-typeset .tip > .admonition-title::before,
+.md-typeset .tip > summary::before {
+  background-color: var(--rad-primary);
+}
+
+/* Warning — Amber */
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-left: 4px solid var(--rad-warning);
+}
+
+.md-typeset .warning > .admonition-title,
+.md-typeset .warning > summary {
+  background-color: var(--rad-warning-10);
+}
+
+/* --------------------------------------------------------------------------
+   Tables
+   -------------------------------------------------------------------------- */
+
+.md-typeset table:not([class]) {
+  border-radius: var(--rad-radius);
+  border: 1px solid var(--rad-border);
+  overflow: hidden;
+  box-shadow: var(--rad-shadow-sm);
+  font-size: 1em;
+}
+
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  font-size: inherit;
+  padding: 0.75em 1em;
+}
+
+.md-typeset table:not([class]) th {
+  font-family: var(--rad-font-display);
+  font-weight: 600;
+  background-color: var(--rad-surface);
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background-color: var(--rad-surface);
+}
+
+/* --------------------------------------------------------------------------
+   Search
+   -------------------------------------------------------------------------- */
+
+.md-search__input {
+  border-radius: var(--rad-radius);
+  font-family: var(--rad-font-body);
+}
+
+.md-search__input:focus,
+.md-search__input:hover {
+  background-color: var(--rad-surface);
+}
+
+[data-md-toggle="search"]:checked ~ .md-header .md-search__input {
+  box-shadow: 0 0 0 3px var(--rad-primary-10);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.md-footer {
+  background-color: var(--rad-surface);
+}
+
+.md-footer-meta {
+  background-color: var(--rad-surface);
+}
+
+/* --------------------------------------------------------------------------
+   Homepage Hero Section
+   -------------------------------------------------------------------------- */
+
+.rad-hero {
+  padding: 3rem 0 4rem;
+  margin: -1rem -0.8rem 2rem;
+  background: linear-gradient(135deg, var(--rad-bg) 0%, var(--rad-surface) 100%);
+  border-radius: 0 0 var(--rad-radius-lg) var(--rad-radius-lg);
+}
+
+.rad-hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.rad-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rad-hero-title {
+  font-family: var(--rad-font-display);
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--rad-primary); /* Fallback for browsers without background-clip */
+  background: linear-gradient(135deg, var(--rad-primary) 0%, var(--rad-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.rad-hero-tagline {
+  font-family: var(--rad-font-body);
+  font-size: 1.25rem;
+  color: var(--rad-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.rad-hero-tagline strong {
+  color: var(--rad-text);
+}
+
+.rad-hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.rad-hero-buttons .md-button {
+  font-size: 1rem;
+}
+
+/* Hero code example */
+.rad-hero-code {
+  background-color: var(--rad-code-bg);
+  border: 1px solid var(--rad-code-border);
+  border-radius: var(--rad-radius-lg);
+  box-shadow: var(--rad-shadow-lg);
+  overflow: hidden;
+}
+
+.rad-hero-code-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--rad-surface);
+  border-bottom: 1px solid var(--rad-code-border);
+}
+
+.rad-hero-code-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.rad-hero-code-dot:nth-child(1) { background-color: #FF6057; }
+.rad-hero-code-dot:nth-child(2) { background-color: #FFBD2E; }
+.rad-hero-code-dot:nth-child(3) { background-color: #27CA40; }
+
+.rad-hero-code-title {
+  font-family: var(--rad-font-mono);
+  font-size: 0.8rem;
+  color: var(--rad-text-muted);
+  margin-left: 0.5rem;
+}
+
+.rad-hero-code pre {
+  margin: 0;
+  padding: 1rem;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Mobile hero */
+@media (max-width: 768px) {
+  .rad-hero {
+    padding: 2rem 0 3rem;
+  }
+
+  .rad-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .rad-hero-title {
+    font-size: 2.75rem;
+  }
+
+  .rad-hero-tagline {
+    font-size: 1.1rem;
+  }
+
+  .rad-hero-buttons {
+    flex-direction: column;
+  }
+
+  .rad-hero-buttons .md-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tabs (for code examples)
+   -------------------------------------------------------------------------- */
+
+.md-typeset .tabbed-labels {
+  border-bottom: 2px solid var(--rad-border);
+}
+
+.md-typeset .tabbed-labels > label {
+  font-family: var(--rad-font-display);
+  font-weight: 500;
+  color: var(--rad-text-muted);
+}
+
+.md-typeset .tabbed-labels > label:hover {
+  color: var(--rad-text);
+}
+
+.md-typeset [id^="__tabbed_"]:checked + label {
+  color: var(--rad-primary);
+  border-color: var(--rad-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar (Webkit)
+   -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rad-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rad-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rad-text-muted);
+}
