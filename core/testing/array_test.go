@@ -152,7 +152,7 @@ a[4] = 500
 	expected := `Error at L3:3
 
   a[4] = 500
-    ^ Index out of bounds: 4 (length 4)
+    ^ Index out of bounds: 4 (length 4) (RAD20029)
 `
 	assertError(t, 1, expected)
 }
@@ -200,7 +200,7 @@ print(a[-99])
 	expected := `Error at L3:9
 
   print(a[-99])
-          ^^^ Index out of bounds: -99 (length 4)
+          ^^^ Index out of bounds: -99 (length 4) (RAD20029)
 `
 	assertError(t, 1, expected)
 }
@@ -213,7 +213,7 @@ a[-99] = 5
 	expected := `Error at L3:3
 
   a[-99] = 5
-    ^^^ Index out of bounds: -99 (length 4)
+    ^^^ Index out of bounds: -99 (length 4) (RAD20029)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertError(t, 1, expected)

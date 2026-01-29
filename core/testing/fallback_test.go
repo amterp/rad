@@ -158,3 +158,80 @@ fallback
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
+
+func Test_Fallback_ListIndex(t *testing.T) {
+	script := `
+list = [1, 2, 3]
+print(list[10] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "default\n")
+	assertNoErrors(t)
+}
+
+func Test_Fallback_ListIndexChained(t *testing.T) {
+	script := `
+list = [1, 2, 3]
+print(list[5] ?? list[10] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "default\n")
+	assertNoErrors(t)
+}
+
+func Test_Fallback_ListNegativeIndex(t *testing.T) {
+	script := `
+list = [1, 2, 3]
+print(list[-10] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "default\n")
+	assertNoErrors(t)
+}
+
+func Test_Fallback_ListIndexExists(t *testing.T) {
+	script := `
+list = [1, 2, 3]
+print(list[1] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "2\n")
+	assertNoErrors(t)
+}
+
+func Test_Fallback_ListNullValueVsOutOfBounds(t *testing.T) {
+	script := `
+list = [null, 1, 2]
+print(list[0] ?? "fallback")
+print(list[10] ?? "fallback")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `null
+fallback
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Fallback_ListEmpty(t *testing.T) {
+	script := `
+print([][0] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "default\n")
+	assertNoErrors(t)
+}
+
+func Test_Fallback_StringIndex(t *testing.T) {
+	script := `
+s = "hello"
+print(s[10] ?? "default")
+print(s[1] ?? "default")
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `default
+e
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

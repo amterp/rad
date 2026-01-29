@@ -51,6 +51,7 @@ const (
 	ErrStdinRead                  = "20026"
 	ErrInvalidCheckDuration       = "20027"
 	ErrKeyNotFound                = "20028"
+	ErrIndexOutOfBounds           = "20029"
 
 	// 3xxxx Type Errors?
 
