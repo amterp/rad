@@ -212,3 +212,11 @@ func (l *RadList) ToGoList() []interface{} {
 func (l *RadList) IsEmpty() bool {
 	return l.LenInt() == 0
 }
+
+func (l *RadList) Reverse() *RadList {
+	reversed := NewRadList()
+	for i := l.LenInt() - 1; i >= 0; i-- {
+		reversed.Append(l.Values[i])
+	}
+	return reversed
+}

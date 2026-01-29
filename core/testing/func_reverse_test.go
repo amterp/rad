@@ -46,3 +46,48 @@ print(reverse(a))
 `
 	assertError(t, 1, expected)
 }
+
+func Test_Func_Reverse_List_Basic(t *testing.T) {
+	script := `
+print(reverse([1, 2, 3]))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "[ 3, 2, 1 ]\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Reverse_List_Empty(t *testing.T) {
+	script := `
+print(reverse([]))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "[ ]\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Reverse_List_SingleElement(t *testing.T) {
+	script := `
+print(reverse([42]))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "[ 42 ]\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Reverse_List_MixedTypes(t *testing.T) {
+	script := `
+print(reverse([1, "a", true]))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "[ true, \"a\", 1 ]\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Reverse_List_Strings(t *testing.T) {
+	script := `
+print(reverse(["hello", "world"]))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "[ \"world\", \"hello\" ]\n")
+	assertNoErrors(t)
+}

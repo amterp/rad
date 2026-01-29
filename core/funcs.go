@@ -1221,8 +1221,16 @@ func init() {
 		{
 			Name: FUNC_REVERSE,
 			Execute: func(f FuncInvocation) RadValue {
-				val := f.GetStr("_val")
-				return f.Return(val.Reverse())
+				val := f.GetArg("_val")
+				switch v := val.Val.(type) {
+				case RadString:
+					return f.Return(v.Reverse())
+				case *RadList:
+					return f.Return(v.Reverse())
+				default:
+					bugIncorrectTypes(FUNC_REVERSE)
+					panic(UNREACHABLE)
+				}
 			},
 		},
 		{
