@@ -1532,6 +1532,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#command-name-hyphenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Name Hyphenation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#inline-callbacks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2315,6 +2326,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.7/" class="md-nav__link">
         
   
@@ -2934,6 +2973,17 @@
   
     <nav class="md-nav" aria-label="Script Commands">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-name-hyphenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Name Hyphenation
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#inline-callbacks" class="md-nav__link">
@@ -3804,6 +3854,11 @@ last = items[-1]        // 50
 
 person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
 name = person[&quot;name&quot;]   // &quot;alice&quot;
+
+// Fallback for out-of-bounds or missing keys with ??
+value = items[100] ?? &quot;not found&quot;       // &quot;not found&quot; (index out of bounds)
+role = person[&quot;role&quot;] ?? &quot;guest&quot;        // &quot;guest&quot; (key not found)
+char = &quot;hello&quot;[99] ?? &quot;?&quot;               // &quot;?&quot; (string index out of bounds)
 </code></pre></div>
 <h3 id="slicing">Slicing<a class="headerlink" href="#slicing" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>items = [10, 20, 30, 40, 50]
@@ -4135,6 +4190,13 @@ fn do_status():
     print(&quot;Status of {env}...&quot;)
 </code></pre></div>
 <p>Usage: <code>./tool.rad deploy staging --verbose</code></p>
+<h3 id="command-name-hyphenation">Command Name Hyphenation<a class="headerlink" href="#command-name-hyphenation" title="Permanent link">&para;</a></h3>
+<p>Command names follow the same underscore-to-hyphen convention as arguments. Define with underscores, invoke with hyphens:</p>
+<div class="highlight"><pre><span></span><code>command deploy_staging:
+    calls do_deploy_staging
+
+// Invoked as: ./tool.rad deploy-staging
+</code></pre></div>
 <h3 id="inline-callbacks">Inline Callbacks<a class="headerlink" href="#inline-callbacks" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Short implementations can use inline lambdas
 command greet:

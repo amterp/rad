@@ -1652,17 +1652,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#get_default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_default
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2397,6 +2386,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.7/" class="md-nav__link">
         
   
@@ -3106,17 +3123,6 @@
     <span class="md-ellipsis">
       
         values
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get_default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_default
       
     </span>
   </a>
@@ -4484,15 +4490,6 @@ keys({})                        // -&gt; []
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>values({&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3})  // -&gt; [1, 2, 3]
 values({})                         // -&gt; []
-</code></pre></div>
-<h3 id="get_default">get_default<a class="headerlink" href="#get_default" title="Permanent link">&para;</a></h3>
-<p>Gets the value for a key in a map, or returns the default value if the key doesn't exist.</p>
-<div class="highlight"><pre><span></span><code>get_default(_map: map, key: any, default: any) -&gt; any
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>data = {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}
-get_default(data, &quot;name&quot;, &quot;Unknown&quot;)     // -&gt; &quot;Alice&quot;
-get_default(data, &quot;city&quot;, &quot;Unknown&quot;)     // -&gt; &quot;Unknown&quot;
-get_default(data, &quot;age&quot;, 0)              // -&gt; 30
 </code></pre></div>
 <h2 id="random">Random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h2>
 <h3 id="rand">rand<a class="headerlink" href="#rand" title="Permanent link">&para;</a></h3>

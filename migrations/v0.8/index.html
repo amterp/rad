@@ -8,29 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/">
+        <link rel="canonical" href="https://amterp.github.io/rad/migrations/v0.8/">
       
       
+        <link rel="prev" href="../../reference/errors/">
       
-        <link rel="next" href="guide/getting-started/">
+      
+        <link rel="next" href="../v0.7/">
       
       
         
       
       
-      <link rel="icon" href="assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Welcome to Rad - Rad Docs</title>
+        <title>Migration Guide - v0.8 - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +53,9 @@
     
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rad" class="md-skip">
+        <a href="#migrating-to-rad-v08" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +96,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -114,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Welcome to Rad
+              Migration Guide - v0.8
             
           </span>
         </div>
@@ -231,9 +233,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -242,7 +242,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -269,37 +269,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -315,59 +288,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#why-rad" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Rad?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#explore" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Explore
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -426,7 +346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/getting-started/" class="md-nav__link">
+      <a href="../../guide/getting-started/" class="md-nav__link">
         
   
   
@@ -454,7 +374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/basics/" class="md-nav__link">
+      <a href="../../guide/basics/" class="md-nav__link">
         
   
   
@@ -482,7 +402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/args/" class="md-nav__link">
+      <a href="../../guide/args/" class="md-nav__link">
         
   
   
@@ -510,7 +430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/functions/" class="md-nav__link">
+      <a href="../../guide/functions/" class="md-nav__link">
         
   
   
@@ -538,7 +458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/strings-advanced/" class="md-nav__link">
+      <a href="../../guide/strings-advanced/" class="md-nav__link">
         
   
   
@@ -566,7 +486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/rad-blocks/" class="md-nav__link">
+      <a href="../../guide/rad-blocks/" class="md-nav__link">
         
   
   
@@ -594,7 +514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/type-annotations/" class="md-nav__link">
+      <a href="../../guide/type-annotations/" class="md-nav__link">
         
   
   
@@ -622,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/error-handling/" class="md-nav__link">
+      <a href="../../guide/error-handling/" class="md-nav__link">
         
   
   
@@ -650,7 +570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/shell-commands/" class="md-nav__link">
+      <a href="../../guide/shell-commands/" class="md-nav__link">
         
   
   
@@ -678,7 +598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/script-commands/" class="md-nav__link">
+      <a href="../../guide/script-commands/" class="md-nav__link">
         
   
   
@@ -706,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/resources/" class="md-nav__link">
+      <a href="../../guide/resources/" class="md-nav__link">
         
   
   
@@ -734,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/global-flags/" class="md-nav__link">
+      <a href="../../guide/global-flags/" class="md-nav__link">
         
   
   
@@ -762,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/defer-errdefer/" class="md-nav__link">
+      <a href="../../guide/defer-errdefer/" class="md-nav__link">
         
   
   
@@ -790,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guide/stashes/" class="md-nav__link">
+      <a href="../../guide/stashes/" class="md-nav__link">
         
   
   
@@ -872,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/" class="md-nav__link">
+      <a href="../../examples/" class="md-nav__link">
         
   
   
@@ -900,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/brewi/" class="md-nav__link">
+      <a href="../../examples/brewi/" class="md-nav__link">
         
   
   
@@ -928,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/epoch/" class="md-nav__link">
+      <a href="../../examples/epoch/" class="md-nav__link">
         
   
   
@@ -956,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/hm/" class="md-nav__link">
+      <a href="../../examples/hm/" class="md-nav__link">
         
   
   
@@ -1038,7 +958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/syntax/" class="md-nav__link">
+      <a href="../../reference/syntax/" class="md-nav__link">
         
   
   
@@ -1066,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/functions/" class="md-nav__link">
+      <a href="../../reference/functions/" class="md-nav__link">
         
   
   
@@ -1094,7 +1014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/errors/" class="md-nav__link">
+      <a href="../../reference/errors/" class="md-nav__link">
         
   
   
@@ -1126,18 +1046,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -1158,7 +1080,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1173,10 +1095,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="migrations/v0.8/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.8
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1192,6 +1141,148 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-change-get_default-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: get_default Removed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: get_default Removed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#old-syntax-no-longer-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Old Syntax (No Longer Works)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-ufcs-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: UFCS Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-chained-fallbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Chained Fallbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Change?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1204,7 +1295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="migrations/v0.7/" class="md-nav__link">
+      <a href="../v0.7/" class="md-nav__link">
         
   
   
@@ -1239,7 +1330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="status/" class="md-nav__link">
+      <a href="../../status/" class="md-nav__link">
         
   
   
@@ -1266,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="releases/" class="md-nav__link">
+      <a href="../../releases/" class="md-nav__link">
         
   
   
@@ -1294,9 +1385,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1315,10 +1404,110 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-rad" class="md-nav__link">
+  <a href="#breaking-change-get_default-removed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Rad?
+        Breaking Change: get_default Removed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: get_default Removed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#old-syntax-no-longer-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Old Syntax (No Longer Works)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-ufcs-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: UFCS Style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-chained-fallbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Chained Fallbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Change?
       
     </span>
   </a>
@@ -1326,21 +1515,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#error-messages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#explore" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Explore
+        Error Messages
       
     </span>
   </a>
@@ -1361,73 +1539,80 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
-
 
 
   
   
 
 
-<div class="rad-hero">
-<div class="rad-hero-inner">
-<div class="rad-hero-content">
-<h1 class="rad-hero-title" id="rad">Rad<a class="headerlink" href="#rad" title="Permanent link">&para;</a></h1>
-<p class="rad-hero-tagline">
-A scripting language designed to make writing <strong>CLI tools delightful</strong>. Familiar, Python-like syntax with CLI superpowers built-in.
-</p>
-<div class="rad-hero-buttons">
-<p><a class="md-button md-button--primary" href="guide/getting-started/">Get Started</a>
-<a class="md-button" href="examples/">View Examples</a></p>
-</div>
-</div>
-<div class="rad-hero-code">
-<div class="rad-hero-code-header">
-<span class="rad-hero-code-dot"></span>
-<span class="rad-hero-code-dot"></span>
-<span class="rad-hero-code-dot"></span>
-<span class="rad-hero-code-title">greet.rad</span>
-</div>
-<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
-args:
-    name str        # Name to greet.
-    times int = 1   # How many times.
+<h1 id="migrating-to-rad-v08">Migrating to Rad v0.8<a class="headerlink" href="#migrating-to-rad-v08" title="Permanent link">&para;</a></h1>
+<p>Version 0.8 removes the <code>get_default</code> function. This guide will help you update your scripts.</p>
+<h2 id="breaking-change-get_default-removed">Breaking Change: <code>get_default</code> Removed<a class="headerlink" href="#breaking-change-get_default-removed" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
+<p>The <code>get_default(map, key, default)</code> function has been removed. Use the <code>??</code> fallback operator instead.</p>
+<h3 id="old-syntax-no-longer-works">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// These no longer work:
+value = get_default(config, &quot;timeout&quot;, 30)
+value = config.get_default(&quot;timeout&quot;, 30)
+</code></pre></div>
+<h3 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Use the ?? operator:
+value = config[&quot;timeout&quot;] ?? 30
+value = config.timeout ?? 30
+</code></pre></div>
+<h2 id="migration-steps">Migration Steps<a class="headerlink" href="#migration-steps" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Find all uses of <code>get_default</code></strong> in your scripts</li>
+<li><strong>Replace with <code>??</code> syntax</strong>:</li>
+<li><code>get_default(m, "key", val)</code> becomes <code>m["key"] ?? val</code></li>
+<li><code>m.get_default("key", val)</code> becomes <code>m["key"] ?? val</code> or <code>m.key ?? val</code></li>
+</ol>
+<h3 id="example-1-basic-usage">Example 1: Basic Usage<a class="headerlink" href="#example-1-basic-usage" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Before
+data = {&quot;name&quot;: &quot;Alice&quot;}
+name = get_default(data, &quot;name&quot;, &quot;Unknown&quot;)
+city = get_default(data, &quot;city&quot;, &quot;Unknown&quot;)
 
-for i in range(times):
-    print(&quot;Hello, {name}!&quot;)
+// After
+data = {&quot;name&quot;: &quot;Alice&quot;}
+name = data[&quot;name&quot;] ?? &quot;Unknown&quot;
+city = data[&quot;city&quot;] ?? &quot;Unknown&quot;
 </code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="why-rad">Why Rad?<a class="headerlink" href="#why-rad" title="Permanent link">&para;</a></h2>
-<p><strong>No boilerplate.</strong> Declarative argument parsing, built-in JSON processing, and shell integration—all in a clean, readable syntax.</p>
-<p><strong>Familiar.</strong> If you know Python, you already know most of Rad. The learning curve is gentle; the productivity gains are immediate.</p>
-<p><strong>Delightful.</strong> Rad is designed to be fun to use. Small touches like helpful error messages and intuitive syntax make scripting enjoyable again.</p>
-<h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>&gt; ./greet --help
-Usage:
-  greet &lt;name&gt; [times]
+<h3 id="example-2-ufcs-style">Example 2: UFCS Style<a class="headerlink" href="#example-2-ufcs-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Before
+state = load_state()
+count = state.get_default(&quot;count&quot;, 0)
 
-Script args:
-      --name str    Name to greet.
-      --times int   How many times. (default 1)
+// After
+state = load_state()
+count = state[&quot;count&quot;] ?? 0
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>&gt; ./greet Alice --times 2
-Hello, Alice!
-Hello, Alice!
+<h3 id="example-3-chained-fallbacks">Example 3: Chained Fallbacks<a class="headerlink" href="#example-3-chained-fallbacks" title="Permanent link">&para;</a></h3>
+<p>The <code>??</code> operator also supports chaining, which wasn't possible with <code>get_default</code>:</p>
+<div class="highlight"><pre><span></span><code>// Try multiple keys, fall back to default
+value = config[&quot;new_key&quot;] ?? config[&quot;old_key&quot;] ?? &quot;default&quot;
 </code></pre></div>
-<h2 id="explore">Explore<a class="headerlink" href="#explore" title="Permanent link">&para;</a></h2>
+<h2 id="why-this-change">Why This Change?<a class="headerlink" href="#why-this-change" title="Permanent link">&para;</a></h2>
+<p>The <code>??</code> operator provides the same functionality with several advantages:</p>
 <ul>
-<li><a href="guide/getting-started/"><strong>Getting Started</strong></a> – Installation &amp; your first script</li>
-<li><a href="guide/args/"><strong>Args</strong></a> – Declarative argument parsing</li>
-<li><a href="guide/rad-blocks/"><strong>Rad Blocks</strong></a> – JSON processing &amp; API queries</li>
-<li><a href="guide/shell-commands/"><strong>Shell Commands</strong></a> – Running shell commands</li>
-<li><a href="examples/"><strong>Examples</strong></a> – Real-world scripts</li>
+<li><strong>More concise</strong>: <code>m["k"] ?? d</code> vs <code>get_default(m, "k", d)</code></li>
+<li><strong>Lazy evaluation</strong>: The default value is only evaluated if the key is missing</li>
+<li><strong>Chainable</strong>: Multiple fallbacks can be chained together</li>
+<li><strong>Familiar</strong>: Standard null-coalescing syntax from other languages</li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Early Development</p>
-<p>Rad is in early development but useful today. Core features work well, though expect breaking changes between versions. <a href="https://github.com/amterp/rad/discussions">Feedback welcome!</a></p>
-</div>
+<h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
+<p>If you run a script that still uses <code>get_default</code>, you'll see a helpful error:</p>
+<div class="highlight"><pre><span></span><code>Error at L3:1
+
+  get_default(m, &quot;b&quot;, 0)
+  ^^^^^^^^^^^ Cannot invoke unknown function: get_default
+
+Note: get_default was removed. Use the ?? operator instead:
+  Old: get_default(map, &quot;key&quot;, default)
+  New: map[&quot;key&quot;] ?? default
+
+See: https://amterp.github.io/rad/migrations/v0.8/
+</code></pre></div>
 
 
 
@@ -1440,8 +1625,6 @@ Hello, Alice!
 
 
 
-
-  
 
 
 
@@ -1459,19 +1642,33 @@ Hello, Alice!
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../reference/errors/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Errors">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Errors
+              </div>
+            </div>
+          </a>
         
         
           
-          <a href="guide/getting-started/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started">
+          <a href="../v0.7/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.7">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Getting Started
+                Migration Guide - v0.7
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1508,10 +1705,10 @@ Hello, Alice!
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["content.code.copy", "navigation.footer"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

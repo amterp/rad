@@ -1567,6 +1567,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.7/" class="md-nav__link">
         
   
@@ -2333,6 +2361,22 @@ print(mymap)
 </code></pre></div>
 </div>
 
+<p>Accessing a key that doesn't exist will cause an error. You can check if a key exists using <code>in</code>:</p>
+<div class="highlight"><pre><span></span><code>scores = { &quot;alice&quot;: 25, &quot;bob&quot;: 17 }
+print(&quot;alice&quot; in scores)  // true
+print(&quot;dave&quot; in scores)   // false
+</code></pre></div>
+<p>Alternatively, use the <code>??</code> fallback operator to provide a default value when a key is missing:</p>
+<div class="highlight"><pre><span></span><code>scores = { &quot;alice&quot;: 25, &quot;bob&quot;: 17 }
+print(scores[&quot;alice&quot;] ?? 0)  // 25
+print(scores[&quot;dave&quot;] ?? 0)   // 0
+</code></pre></div>
+<p>This is handy when you're not sure if a key exists and want to avoid errors.</p>
+<p>The <code>??</code> operator also works with lists and strings for out-of-bounds index access:</p>
+<div class="highlight"><pre><span></span><code>items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+print(items[1] ?? &quot;missing&quot;)   // b
+print(items[10] ?? &quot;missing&quot;)  // missing
+</code></pre></div>
 <h3 id="other-types">Other Types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
 <p>Rad has other types that we won't cover here. For example <code>null</code> and <a href="../functions/">function references</a>.</p>
 <h2 id="destructuring">Destructuring<a class="headerlink" href="#destructuring" title="Permanent link">&para;</a></h2>

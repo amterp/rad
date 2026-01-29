@@ -1313,6 +1313,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.7/" class="md-nav__link">
         
   
@@ -1627,7 +1655,7 @@ A simple counter that remembers how many times it&#39;s been run.
 state = load_state()
 defer save_state(state)
 
-count = state.get_default(&quot;count&quot;, 0)
+count = state[&quot;count&quot;] ?? 0
 count++
 state[&quot;count&quot;] = count
 
@@ -1686,7 +1714,7 @@ save_state(state)
 <p>The state is stored as JSON at <code>~/.rad/stashes/&lt;stash_id&gt;/state.json</code>, making it easy to inspect or debug.</p>
 <h3 id="working-with-state">Working with State<a class="headerlink" href="#working-with-state" title="Permanent link">&para;</a></h3>
 <p>Since state is just a map, you can use all of Rad's map operations.
-The <a href="../../reference/functions/#get_default"><code>get_default</code></a> function is particularly useful for initializing values:</p>
+The <a href="../basics/#fallback-operator"><code>??</code> fallback operator</a> is particularly useful for providing default values:</p>
 <div class="highlight"><span class="filename">preferences.rad</span><pre><span></span><code>#!/usr/bin/env rad
 ---
 Remembers user preferences.
@@ -1709,8 +1737,8 @@ if set_theme:
     print(&quot;Theme set to: {set_theme}&quot;)
 
 // Show current preferences
-editor = state.get_default(&quot;editor&quot;, &quot;vim&quot;)
-theme = state.get_default(&quot;theme&quot;, &quot;dark&quot;)
+editor = state[&quot;editor&quot;] ?? &quot;vim&quot;
+theme = state[&quot;theme&quot;] ?? &quot;dark&quot;
 print(&quot;Current preferences: editor={editor}, theme={theme}&quot;)
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>preferences.rad
