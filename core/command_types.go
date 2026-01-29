@@ -7,7 +7,8 @@ import (
 
 // ScriptCommand represents a command defined in a Rad script's command: block
 type ScriptCommand struct {
-	Name           string
+	Name           string // Internal (as written in script)
+	ExternalName   string // External (hyphenated for CLI)
 	Description    *string
 	Args           []*ScriptArg // Command-specific arguments
 	CallbackType   rts.CallbackType
@@ -18,6 +19,7 @@ type ScriptCommand struct {
 func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
 	// Extract command name
 	commandName := cmdBlock.Name.Name
+	externalName := rts.ToExternalName(commandName)
 
 	// Extract optional description
 	var description *string
@@ -55,6 +57,7 @@ func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
 	callback := cmdBlock.Callback
 	return &ScriptCommand{
 		Name:           commandName,
+		ExternalName:   externalName,
 		Description:    description,
 		Args:           args,
 		CallbackType:   callback.Type,

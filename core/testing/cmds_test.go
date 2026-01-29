@@ -213,3 +213,48 @@ func Test_NoScript_ErrorsOnUnknownArguments(t *testing.T) {
 	assertOutput(t, stdOutBuffer, "")
 	assertError(t, 1, expected)
 }
+
+func Test_Cmds_UnderscoresToHyphens(t *testing.T) {
+	script := `
+command deploy_staging:
+    calls fn():
+        print("deployed to staging")
+
+command deploy_prod_server:
+    calls fn():
+        print("deployed to prod")
+`
+
+	setupAndRunCode(t, script, "deploy-staging", "--color=never")
+	expected := `deployed to staging
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+
+	setupAndRunCode(t, script, "deploy-prod-server", "--color=never")
+	expected = `deployed to prod
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Cmds_HelpShowsHyphenatedNames(t *testing.T) {
+	script := `
+command deploy_staging:
+    ---
+    Deploy to staging.
+    ---
+    calls fn():
+        print("deployed")
+`
+
+	setupAndRunCode(t, script, "-h", "--color=never")
+	expected := `Usage:
+  TestCase [subcommand] [OPTIONS]
+
+Commands:
+  deploy-staging   Deploy to staging.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}

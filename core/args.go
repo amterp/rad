@@ -1024,7 +1024,7 @@ func (f *FloatListRadArg) GetType() RadArgTypeT {
 // --- general
 
 func CreateFlag(arg *ScriptArg) RadArg {
-	apiName, argType, shorthand, description := arg.ApiName, arg.Type, "", ""
+	apiName, argType, shorthand, description := arg.ExternalName, arg.Type, "", ""
 	if arg.Short != nil {
 		shorthand = *arg.Short
 	}

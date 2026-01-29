@@ -8,8 +8,8 @@ import (
 )
 
 type ScriptArg struct {
-	Name               string // identifier name in the script
-	ApiName            string // name that the user will see
+	Name               string // Internal (as written in script)
+	ExternalName       string // External (hyphenated for CLI)
 	Decl               rts.ArgDecl
 	Short              *string
 	Type               RadArgTypeT
@@ -55,7 +55,7 @@ func FromArgDecl(
 
 	scriptArg := &ScriptArg{
 		Name:               name,
-		ApiName:            externalName,
+		ExternalName:       externalName,
 		Decl:               decl,
 		Short:              decl.ShorthandStr(),
 		Type:               ToRadArgTypeT(decl.Type.Type),

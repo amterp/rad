@@ -403,7 +403,7 @@ func (r *RadRunner) registerCommands() error {
 
 	for _, scriptCmd := range r.scriptData.Commands {
 		// Create Ra subcommand
-		raSubCmd := ra.NewCmd(scriptCmd.Name)
+		raSubCmd := ra.NewCmd(scriptCmd.ExternalName)
 		if scriptCmd.Description != nil {
 			raSubCmd.SetDescription(*scriptCmd.Description)
 		}
@@ -435,7 +435,7 @@ func (r *RadRunner) registerCommands() error {
 		// Register the subcommand with the root command
 		usedPtr, err := RRootCmd.RegisterCmd(raSubCmd)
 		if err != nil {
-			return fmt.Errorf("failed to register command '%s': %w", scriptCmd.Name, err)
+			return fmt.Errorf("failed to register command '%s': %w", scriptCmd.ExternalName, err)
 		}
 
 		// Store the invocation tracking

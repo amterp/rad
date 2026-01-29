@@ -218,7 +218,7 @@ func (i *Interpreter) safelyExecuteTopLevel(root *ts.Node) EvalResult {
 func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 	defer func() {
 		// Use nil node since we don't have a specific node for the command invocation
-		i.handlePanicRecovery(recover(), nil, cmd.Name)
+		i.handlePanicRecovery(recover(), nil, cmd.ExternalName)
 	}()
 
 	switch cmd.CallbackType {
@@ -229,14 +229,14 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		if !exist {
 			// Find the root node for error reporting
 			root := i.sd.Tree.Root()
-			i.errorf(root, "Cannot invoke unknown function '%s' for command '%s'", funcName, cmd.Name)
+			i.errorf(root, "Cannot invoke unknown function '%s' for command '%s'", funcName, cmd.ExternalName)
 		}
 
 		fn, ok := val.TryGetFn()
 		if !ok {
 			root := i.sd.Tree.Root()
 			i.errorf(root, "Cannot invoke '%s' as a function for command '%s': it is a %s",
-				funcName, cmd.Name, val.Type().AsString())
+				funcName, cmd.ExternalName, val.Type().AsString())
 		}
 
 		// Execute the function with no arguments
@@ -250,7 +250,7 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		_ = fn.Execute(NewFnInvocation(i, cmd.CallbackLambda, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
 
 	default:
-		panic(fmt.Sprintf("Bug! Unknown callback type %d for command: %s", cmd.CallbackType, cmd.Name))
+		panic(fmt.Sprintf("Bug! Unknown callback type %d for command: %s", cmd.CallbackType, cmd.ExternalName))
 	}
 }
 

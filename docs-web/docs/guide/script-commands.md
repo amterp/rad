@@ -47,6 +47,19 @@ Let's break down the syntax:
 
 Command arguments (like `name`) become script-wide variables, accessible throughout your script.
 
+!!! note "Underscores become hyphens"
+
+    Command names with underscores are automatically converted to hyphens for CLI invocation.
+    This matches standard CLI conventions (like `kubectl`, `docker-compose`).
+
+    For example, `command deploy_staging:` is invoked as `deploy-staging`:
+
+    ```
+    > ./script.rad deploy-staging
+    ```
+
+    This is the same convention used for [argument names](./args.md).
+
 ## Multiple Commands
 
 The power of commands emerges when you define several in one script. Let's create a simple deployment tool:
