@@ -118,5 +118,3 @@ false
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
-
-// todo null coalesce operator

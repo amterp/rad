@@ -108,7 +108,6 @@ const (
 	FUNC_UUID_V4            = "uuid_v4"
 	FUNC_UUID_V7            = "uuid_v7"
 	FUNC_GEN_FID            = "gen_fid"
-	FUNC_GET_DEFAULT        = "get_default"
 	FUNC_GET_RAD_HOME       = "get_rad_home"
 	FUNC_GET_STASH_DIR      = "get_stash_dir" // todo 'path' vs. 'dir' inconsistent naming
 	FUNC_LOAD_STATE         = "load_state"
@@ -1316,21 +1315,6 @@ func init() {
 				}
 
 				return f.Return(id)
-			},
-		},
-		{
-			Name: FUNC_GET_DEFAULT,
-			Execute: func(f FuncInvocation) RadValue {
-				radMap := f.GetMap("_map")
-				key := f.GetArg("key")
-				def := f.GetArg("default")
-
-				value, ok := radMap.Get(key)
-				if !ok {
-					value = def
-				}
-
-				return f.Return(value)
 			},
 		},
 		{

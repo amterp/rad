@@ -25,7 +25,6 @@ float
 floor
 gen_fid
 get_args
-get_default
 get_env
 get_path
 get_rad_home

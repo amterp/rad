@@ -860,21 +860,6 @@ values({"a": 1, "b": 2, "c": 3})  // -> [1, 2, 3]
 values({})                         // -> []
 ```
 
-### get_default
-
-Gets the value for a key in a map, or returns the default value if the key doesn't exist.
-
-```rad
-get_default(_map: map, key: any, default: any) -> any
-```
-
-```rad
-data = {"name": "Alice", "age": 30}
-get_default(data, "name", "Unknown")     // -> "Alice"
-get_default(data, "city", "Unknown")     // -> "Unknown"
-get_default(data, "age", 0)              // -> 30
-```
-
 ## Random
 
 ### rand

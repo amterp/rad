@@ -192,9 +192,6 @@ fn uuid_v7() -> str:
 fn get_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str:
     pass
 
-fn get_default(_map: map, key: any, default: any) -> any:
-    pass
-
 fn get_rad_home() -> str:
     pass
 

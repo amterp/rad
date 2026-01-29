@@ -20,7 +20,7 @@ A simple counter that remembers how many times it's been run.
 state = load_state()
 defer save_state(state)
 
-count = state.get_default("count", 0)
+count = state["count"] ?? 0
 count++
 state["count"] = count
 
@@ -111,7 +111,7 @@ The state is stored as JSON at `~/.rad/stashes/<stash_id>/state.json`, making it
 ### Working with State
 
 Since state is just a map, you can use all of Rad's map operations.
-The [`get_default`](../reference/functions.md#get_default) function is particularly useful for initializing values:
+The [`??` fallback operator](./basics.md#fallback-operator) is particularly useful for providing default values:
 
 ```rad title="preferences.rad"
 #!/usr/bin/env rad
@@ -136,8 +136,8 @@ if set_theme:
     print("Theme set to: {set_theme}")
 
 // Show current preferences
-editor = state.get_default("editor", "vim")
-theme = state.get_default("theme", "dark")
+editor = state["editor"] ?? "vim"
+theme = state["theme"] ?? "dark"
 print("Current preferences: editor={editor}, theme={theme}")
 ```
 

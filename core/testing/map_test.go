@@ -75,7 +75,7 @@ print(a)
 	expected := `Error at L3:3
 
   a["eve"] += 20
-    ^^^^^ Key not found: "eve"
+    ^^^^^ Key not found: "eve" (RAD20028)
 `
 	assertError(t, 1, expected)
 }
@@ -134,4 +134,32 @@ print(false not in a)
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "false\ntrue\n")
 	assertNoErrors(t)
+}
+
+func Test_Map_MissingKeyBracketSyntaxErrors(t *testing.T) {
+	script := `
+a = { "alice": 100 }
+print(a["bob"])
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L3:9
+
+  print(a["bob"])
+          ^^^^^ Key not found: "bob" (RAD20028)
+`
+	assertError(t, 1, expected)
+}
+
+func Test_Map_MissingKeyDotSyntaxErrors(t *testing.T) {
+	script := `
+a = { "alice": 100 }
+print(a.bob)
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := `Error at L3:9
+
+  print(a.bob)
+          ^^^ Key not found: "bob" (RAD20028)
+`
+	assertError(t, 1, expected)
 }

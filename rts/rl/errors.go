@@ -50,6 +50,7 @@ const (
 	ErrColorizeValNotInEnum       = "20025"
 	ErrStdinRead                  = "20026"
 	ErrInvalidCheckDuration       = "20027"
+	ErrKeyNotFound                = "20028"
 
 	// 3xxxx Type Errors?
 

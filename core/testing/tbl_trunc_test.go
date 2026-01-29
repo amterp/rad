@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/amterp/rad/core/common"
+	com "github.com/amterp/rad/core/common"
 )
 
 func TestTruncate(t *testing.T) {

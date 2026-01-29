@@ -110,7 +110,6 @@ func init() {
 		newFnSignature(`map(_coll: map|list, _fn: fn(any) -> any | fn(any, any) -> any) -> map|list`),
 		newFnSignature(`filter(_coll: map|list, _fn: fn(any) -> bool | fn(any, any) -> bool) -> map|list`),
 		newFnSignature(`flat_map(_coll: map|list, _fn: any?) -> list`),
-		newFnSignature(`get_default(_map: map, key: any, default: any) -> any`),
 		newFnSignature(`get_rad_home() -> str`),
 		newFnSignature(`load(_map: map, _key: any, _loader: fn() -> any, *, reload: bool = false, override: any?) -> error|any`),
 		newFnSignature(`color_rgb(_val: any, red: int, green: int, blue: int) -> error|str`),

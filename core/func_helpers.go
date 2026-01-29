@@ -76,6 +76,14 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 
 	val, exist := i.env.GetVar(funcName)
 	if !exist {
+		if funcName == "get_default" {
+			i.errorf(funcNameNode, "Cannot invoke unknown function: %s\n\n"+
+				"Note: get_default was removed. Use the ?? operator instead:\n"+
+				"  Old: get_default(map, \"key\", default)\n"+
+				"  New: map[\"key\"] ?? default\n\n"+
+				"See: https://amterp.github.io/rad/migrations/v0.8/",
+				funcName)
+		}
 		i.errorf(funcNameNode, "Cannot invoke unknown function: %s", funcName)
 	}
 

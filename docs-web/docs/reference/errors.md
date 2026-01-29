@@ -50,6 +50,7 @@ Rad errors include a code (e.g. `RAD10001`) to help identify the type of error. 
 | RAD20025 | ColorizeValNotInEnum | Colorize value not in enum                                   |
 | RAD20026 | StdinRead            | Error reading from stdin                                     |
 | RAD20027 | InvalidCheckDuration | Invalid check duration                                       |
+| RAD20028 | KeyNotFound          | Map key does not exist                                       |
 
 ## RAD4xxxx - Validation Errors
 

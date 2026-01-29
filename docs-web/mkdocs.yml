@@ -29,6 +29,7 @@ nav:
       - ./reference/functions.md
       - ./reference/errors.md
   - Migrations:
+      - ./migrations/v0.8.md
       - ./migrations/v0.7.md
   - Project Status: status.md
   - Releases: releases.md
