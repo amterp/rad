@@ -336,6 +336,14 @@ print(scores["dave"] ?? 0)   // 0
 
 This is handy when you're not sure if a key exists and want to avoid errors.
 
+The `??` operator also works with lists and strings for out-of-bounds index access:
+
+```rad
+items = ["a", "b", "c"]
+print(items[1] ?? "missing")   // b
+print(items[10] ?? "missing")  // missing
+```
+
 ### Other Types
 
 Rad has other types that we won't cover here. For example `null` and [function references](functions.md).
