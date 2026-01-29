@@ -239,6 +239,11 @@ last = items[-1]        // 50
 
 person = {"name": "alice", "age": 25}
 name = person["name"]   // "alice"
+
+// Fallback for out-of-bounds or missing keys with ??
+value = items[100] ?? "not found"       // "not found" (index out of bounds)
+role = person["role"] ?? "guest"        // "guest" (key not found)
+char = "hello"[99] ?? "?"               // "?" (string index out of bounds)
 ```
 
 ### Slicing
@@ -637,6 +642,17 @@ fn do_status():
 ```
 
 Usage: `./tool.rad deploy staging --verbose`
+
+### Command Name Hyphenation
+
+Command names follow the same underscore-to-hyphen convention as arguments. Define with underscores, invoke with hyphens:
+
+```rad
+command deploy_staging:
+    calls do_deploy_staging
+
+// Invoked as: ./tool.rad deploy-staging
+```
 
 ### Inline Callbacks
 
