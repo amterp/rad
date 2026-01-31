@@ -1537,6 +1537,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#trim_left" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trim_left
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim_right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trim_right
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#trim_prefix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3014,6 +3036,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#trim_left" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trim_left
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim_right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trim_right
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#trim_prefix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4311,12 +4355,12 @@ starts_with(&quot;hello world&quot;, &quot;world&quot;)  // -&gt; false
 ends_with(&quot;hello world&quot;, &quot;hello&quot;)    // -&gt; false
 </code></pre></div>
 <h3 id="truncate">truncate<a class="headerlink" href="#truncate" title="Permanent link">&para;</a></h3>
-<p>Truncates a string to a maximum length. Returns error if length is negative.</p>
+<p>Truncates a string to a maximum length, adding an ellipsis if truncated. Requires length of at least 1.</p>
 <div class="highlight"><pre><span></span><code>truncate(_str: str, _len: int) -&gt; str|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>truncate(&quot;hello world&quot;, 5)   // -&gt; &quot;hello&quot;
-truncate(&quot;short&quot;, 10)        // -&gt; &quot;short&quot;
-truncate(&quot;test&quot;, -1)         // -&gt; Error: Requires a non-negative int
+<div class="highlight"><pre><span></span><code>truncate(&quot;hello world&quot;, 8)   // -&gt; &quot;hello w…&quot;
+truncate(&quot;short&quot;, 10)        // -&gt; &quot;short&quot; (no truncation needed)
+truncate(&quot;test&quot;, 0)          // -&gt; Error: Requires at least 1
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
 <p>Splits a string using regex pattern as delimiter. Does not preserve string color attributes.</p>
@@ -4336,26 +4380,44 @@ count(&quot;banana&quot;, &quot;na&quot;)         // -&gt; 2
 count(&quot;test&quot;, &quot;xyz&quot;)          // -&gt; 0
 </code></pre></div>
 <h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
-<p>Trims characters from both the start and end of a string.</p>
-<div class="highlight"><pre><span></span><code>trim(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
+<p>Strips all matching characters from both ends of a string.</p>
+<div class="highlight"><pre><span></span><code>trim(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim(&quot;  hello  &quot;)            // -&gt; &quot;hello&quot;
 trim(&quot;***hello***&quot;, &quot;*&quot;)     // -&gt; &quot;hello&quot;
 trim(&quot;abcHELLOabc&quot;, &quot;abc&quot;)   // -&gt; &quot;HELLO&quot;
 </code></pre></div>
-<h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
-<p>Trims characters from only the start of a string.</p>
-<div class="highlight"><pre><span></span><code>trim_prefix(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
+<h3 id="trim_left">trim_left<a class="headerlink" href="#trim_left" title="Permanent link">&para;</a></h3>
+<p>Strips all matching characters from the start of a string.</p>
+<div class="highlight"><pre><span></span><code>trim_left(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;  hello  &quot;)         // -&gt; &quot;hello  &quot;
-trim_prefix(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;hello***&quot;
+<div class="highlight"><pre><span></span><code>trim_left(&quot;  hello  &quot;)          // -&gt; &quot;hello  &quot;
+trim_left(&quot;***hello***&quot;, &quot;*&quot;)   // -&gt; &quot;hello***&quot;
+trim_left(&quot;aaabbb&quot;, &quot;a&quot;)        // -&gt; &quot;bbb&quot;
+</code></pre></div>
+<h3 id="trim_right">trim_right<a class="headerlink" href="#trim_right" title="Permanent link">&para;</a></h3>
+<p>Strips all matching characters from the end of a string.</p>
+<div class="highlight"><pre><span></span><code>trim_right(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>trim_right(&quot;  hello  &quot;)         // -&gt; &quot;  hello&quot;
+trim_right(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;***hello&quot;
+trim_right(&quot;aaabbb&quot;, &quot;b&quot;)       // -&gt; &quot;aaa&quot;
+</code></pre></div>
+<h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
+<p>Removes a literal prefix from the start of a string (once).</p>
+<div class="highlight"><pre><span></span><code>trim_prefix(_subject: str, _prefix: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>trim_prefix(&quot;hello world&quot;, &quot;hello &quot;)  // -&gt; &quot;world&quot;
+trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)            // -&gt; &quot;aabbb&quot; (one &#39;a&#39; removed)
+trim_prefix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
 </code></pre></div>
 <h3 id="trim_suffix">trim_suffix<a class="headerlink" href="#trim_suffix" title="Permanent link">&para;</a></h3>
-<p>Trims characters from only the end of a string.</p>
-<div class="highlight"><pre><span></span><code>trim_suffix(_subject: str, _to_trim: str = &quot; \t\n&quot;) -&gt; str
+<p>Removes a literal suffix from the end of a string (once).</p>
+<div class="highlight"><pre><span></span><code>trim_suffix(_subject: str, _suffix: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_suffix(&quot;  hello  &quot;)         // -&gt; &quot;  hello&quot;
-trim_suffix(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;***hello&quot;
+<div class="highlight"><pre><span></span><code>trim_suffix(&quot;hello world&quot;, &quot; world&quot;)  // -&gt; &quot;hello&quot;
+trim_suffix(&quot;aaabbb&quot;, &quot;b&quot;)            // -&gt; &quot;aaabb&quot; (one &#39;b&#39; removed)
+trim_suffix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
 </code></pre></div>
 <h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
 <p>Reverses a string or list.</p>

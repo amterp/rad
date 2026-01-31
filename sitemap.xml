@@ -2,106 +2,106 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://amterp.github.io/rad/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/releases/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/status/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/examples/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/examples/brewi/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/examples/epoch/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/examples/hm/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/args/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/basics/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/defer-errdefer/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/error-handling/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/functions/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/getting-started/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/global-flags/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/rad-blocks/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/resources/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/script-commands/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/shell-commands/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/stashes/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/strings-advanced/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/guide/type-annotations/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/migrations/v0.7/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/migrations/v0.8/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/errors/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/functions/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
     <url>
          <loc>https://amterp.github.io/rad/reference/syntax/</loc>
-         <lastmod>2026-01-29</lastmod>
+         <lastmod>2026-01-31</lastmod>
     </url>
 </urlset>
