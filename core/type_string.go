@@ -56,11 +56,11 @@ func (s RadString) CopyAttrTo(otherStr string) RadString {
 // does not apply any attributes
 func (s RadString) Plain() string {
 	// todo can lazily compute and cache
-	var result string
+	var builder strings.Builder
 	for _, segment := range s.Segments {
-		result += segment.String
+		builder.WriteString(segment.String)
 	}
-	return result
+	return builder.String()
 }
 
 // applies all the attributes
