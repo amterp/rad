@@ -132,6 +132,17 @@ func AddInternalFuncs() {
 				return newRadValues(f.i, f.callNode, doc)
 			},
 		},
+		{
+			Name: INTERNAL_FUNC_EXPLAIN_LIST,
+			Execute: func(f FuncInvocation) RadValue {
+				codes := ListErrorCodes()
+				list := NewRadList()
+				for _, code := range codes {
+					list.Append(newRadValueStr(code))
+				}
+				return newRadValues(f.i, f.callNode, list)
+			},
+		},
 	}
 
 	for _, f := range functions {

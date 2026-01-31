@@ -147,6 +147,7 @@ func init() {
 		newFnSignature(`_rad_run_check(*_)`),
 		newFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool) -> void`),
 		newFnSignature(`_rad_explain(_code: str) -> str?`),
+		newFnSignature(`_rad_explain_list() -> str[]`),
 	}
 
 	parser, err := NewRadParser()

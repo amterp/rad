@@ -135,6 +135,7 @@ const (
 	INTERNAL_FUNC_RUN_CHECK       = "_rad_run_check"
 	INTERNAL_FUNC_CHECK_FROM_LOGS = "_rad_check_from_logs"
 	INTERNAL_FUNC_EXPLAIN         = "_rad_explain"
+	INTERNAL_FUNC_EXPLAIN_LIST    = "_rad_explain_list"
 
 	namedArgPreferExact    = "prefer_exact"
 	namedArgReverse        = "reverse"
