@@ -74,8 +74,10 @@ func (s RadString) String() string {
 
 func (s *RadString) ToRuneList() *RadList {
 	result := NewRadList()
-	for i := int64(0); i < s.Len(); i++ {
-		result.Append(newRadValueRadStr(s.IndexAt(i)))
+	for _, segment := range s.Segments {
+		for _, r := range segment.String {
+			result.Append(newRadValueRadStr(newRadStringWithAttr(string(r), segment)))
+		}
 	}
 	return result
 }
