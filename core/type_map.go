@@ -98,8 +98,6 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 	idxVal := evalMapKey(i, idxNode)
 	value, ok := m.Get(idxVal)
 	if !ok {
-		// todo RAD-138 add mechanism to 'try' getting a key without erroring
-		// Use panic so fallback operator (??) can catch this error
 		errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", ToPrintable(idxVal)).SetCode(rl.ErrKeyNotFound))
 		i.NewRadPanic(idxNode, errVal).Panic()
 	}

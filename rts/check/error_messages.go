@@ -137,17 +137,17 @@ var parentContextMessages = map[string]string{
 	rl.K_ARG_BLOCK + ":type":               "Expected argument type",
 
 	// Function calls
-	rl.K_CALL + ":(":          "Expected '(' after function name",
-	rl.K_CALL + ":)":          "Expected ')' to close function call",
+	rl.K_CALL + ":(":            "Expected '(' after function name",
+	rl.K_CALL + ":)":            "Expected ')' to close function call",
 	rl.K_CALL + ":" + rl.K_EXPR: "Expected argument expression",
 
 	// Lists
-	rl.K_LIST + ":]":          "Expected ']' to close list",
+	rl.K_LIST + ":]":            "Expected ']' to close list",
 	rl.K_LIST + ":" + rl.K_EXPR: "Expected list element",
 
 	// Maps
-	rl.K_MAP + ":}":          "Expected '}' to close map",
-	rl.K_MAP + ":":           "Expected ':' between key and value",
+	rl.K_MAP + ":}":            "Expected '}' to close map",
+	rl.K_MAP + ":":             "Expected ':' between key and value",
 	rl.K_MAP + ":" + rl.K_EXPR: "Expected map value",
 
 	// Return statement

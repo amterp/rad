@@ -8,10 +8,10 @@ import (
 // Symbol represents a variable definition in the symbol table.
 type Symbol struct {
 	Name       string
-	Span       *Span  // Where the symbol was defined
-	UsageCount int    // How many times it's been read
-	IsArg      bool   // True if this is a script argument
-	IsBuiltIn  bool   // True if this is a built-in (print, len, etc.)
+	Span       *Span // Where the symbol was defined
+	UsageCount int   // How many times it's been read
+	IsArg      bool  // True if this is a script argument
+	IsBuiltIn  bool  // True if this is a built-in (print, len, etc.)
 }
 
 // Scope represents a lexical scope in the program.
