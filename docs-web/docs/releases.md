@@ -8,6 +8,17 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.8.0](https://github.com/amterp/rad/releases/tag/v0.8.0) - 2026-01-29
+
+- feat!: remove get_default function in favor of ?? operator ([7bbad61](https://github.com/amterp/rad/commit/7bbad61))
+- feat(docs): redesign website with "Sunset Terminal" theme ([79b0103](https://github.com/amterp/rad/commit/79b0103))
+- feat: add ?? fallback support for list and string indexing ([7350604](https://github.com/amterp/rad/commit/7350604))
+- feat: add list support to reverse function ([d13e6d7](https://github.com/amterp/rad/commit/d13e6d7))
+- feat: hyphenate command names for CLI invocation ([c8373a2](https://github.com/amterp/rad/commit/c8373a2))
+- fix: use workflow_run trigger for release notes workflow ([7c450bf](https://github.com/amterp/rad/commit/7c450bf))
+
+---
+
 ## [v0.7.1](https://github.com/amterp/rad/releases/tag/v0.7.1) - 2026-01-26
 
 - Release VSCode extension v0.3.0 ([9443d85](https://github.com/amterp/rad/commit/9443d85))
