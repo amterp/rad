@@ -30,6 +30,9 @@ const (
 	ErrMissingNewline      Error = "10017"
 	ErrMissingIndent       Error = "10018"
 	ErrUnexpectedIndent    Error = "10019"
+	ErrUnterminatedString  Error = "10020"
+	ErrMissingOperator     Error = "10021"
+	ErrKeywordMisuse       Error = "10022"
 
 	// 2xxxx Runtime Errors
 	ErrGenericRuntime       Error = "20000"
