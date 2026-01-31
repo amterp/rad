@@ -46,3 +46,22 @@ print(s[-1])
 	assertOnlyOutput(t, stdOutBuffer, "a\n😀\nb\nb\n")
 	assertNoErrors(t)
 }
+
+// Tests indexing across segment boundaries when first segment contains multi-byte chars.
+// The emoji takes 4 bytes but 1 rune.
+func TestString_MultiSegmentMultiByteIndexing(t *testing.T) {
+	script := `
+s = blue("a😀") + "bc"
+print(s[0])
+print(s[1])
+print(s[2])
+print(s[3])
+`
+	setupAndRunCode(t, script, "--color=never")
+	expected := blue("a") + "\n"
+	expected += blue("😀") + "\n"
+	expected += "b\n"
+	expected += "c\n"
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
