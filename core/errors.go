@@ -7,7 +7,9 @@ import (
 )
 
 func ErrIndexOutOfBounds(i *Interpreter, node *ts.Node, idx int64, length int64) {
-	i.emitErrorf(rl.ErrIndexOutOfBounds, node, "Index out of bounds: %d (length %d)", idx, length)
+	// Use panic so fallback operator (??) can catch this error
+	errVal := newRadValue(i, node, NewErrorStrf("Index out of bounds: %d (length %d)", idx, length).SetCode(rl.ErrIndexOutOfBounds))
+	i.NewRadPanic(node, errVal).Panic()
 }
 
 type RadPanic struct {

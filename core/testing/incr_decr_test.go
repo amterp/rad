@@ -98,12 +98,7 @@ a = 1
 a++++
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:4
-
-  a++++
-     ^^ Unexpected '++'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '++'", "TestCase:3:4", "a++++", "^^")
 }
 
 func Test_Decrement_CannotChain(t *testing.T) {
@@ -112,12 +107,7 @@ a = 1
 a----
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:4
-
-  a----
-     ^^ Unexpected '--'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '--'", "TestCase:3:4", "a----", "^^")
 }
 
 func Test_IncrDecr_CannotChain(t *testing.T) {
@@ -126,12 +116,7 @@ a = 1
 a++--
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:4
-
-  a++--
-     ^^ Unexpected '--'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '--'", "TestCase:3:4", "a++--", "^^")
 }
 
 func Test_DecrIncr_CannotChain(t *testing.T) {
@@ -140,12 +125,7 @@ a = 1
 a--++
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:4
-
-  a--++
-     ^^ Unexpected '++'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '++'", "TestCase:3:4", "a--++", "^^")
 }
 
 func Test_Increment_CanIncrementFloat(t *testing.T) {

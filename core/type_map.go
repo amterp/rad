@@ -87,7 +87,9 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 		keyName := i.GetSrcForNode(idxNode)
 		value, ok := m.Get(newRadValueStr(keyName))
 		if !ok {
-			i.emitErrorf(rl.ErrKeyNotFound, idxNode, "Key not found: %s", keyName)
+			// Use panic so fallback operator (??) can catch this error
+			errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", keyName).SetCode(rl.ErrKeyNotFound))
+			i.NewRadPanic(idxNode, errVal).Panic()
 		}
 		return value
 	}
@@ -97,7 +99,9 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 	value, ok := m.Get(idxVal)
 	if !ok {
 		// todo RAD-138 add mechanism to 'try' getting a key without erroring
-		i.emitErrorf(rl.ErrKeyNotFound, idxNode, "Key not found: %s", ToPrintable(idxVal))
+		// Use panic so fallback operator (??) can catch this error
+		errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", ToPrintable(idxVal)).SetCode(rl.ErrKeyNotFound))
+		i.NewRadPanic(idxNode, errVal).Panic()
 	}
 	return value
 }

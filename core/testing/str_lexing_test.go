@@ -238,12 +238,7 @@ func Test_StrLexing_RawStrings_ErrorsIfTryingToEscapeDelimiter(t *testing.T) {
 print(r"\"")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(r"\"")
-        ^^^^^ Unexpected 'r"\""'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected 'r\"\\\"\"'", "TestCase:2:7", "print(r\"\\\"\")", "^^^^^")
 }
 
 func Test_StrLexing_Multiline_Simple(t *testing.T) {
@@ -421,12 +416,8 @@ text = """abc
 print(text)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:8
-
-  text = """abc
-         ^^^ Unexpected '"""'
-`
-	assertError(t, 1, expected)
+	// Multiple cascade errors may occur; check for the key error
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '\"\"\"'", "text = \"\"\"abc")
 }
 
 func Test_StrLexing_Multiline_NoErrorIfCommentFollowsOpener(t *testing.T) {
@@ -470,12 +461,7 @@ text = """
 print(text)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  text = """
-  ^ Invalid syntax
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10001]", "Invalid syntax", "TestCase:2:1", "text = \"\"\"", "^^^^^^^^^^")
 }
 
 // todo
