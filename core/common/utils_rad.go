@@ -1,14 +1,12 @@
 package com
 
 func Truncate(str string, maxLen int64) string {
+	runes := []rune(str)
 	if TerminalIsUtf8 {
-		str = str[:maxLen-1]
-		str += "…"
+		return string(runes[:maxLen-1]) + "…"
 	} else {
-		str = str[:maxLen-3]
-		str += "..."
+		return string(runes[:maxLen-3]) + "..."
 	}
-	return str
 }
 
 func Reverse(str string) string {
