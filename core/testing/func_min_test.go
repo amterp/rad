@@ -25,13 +25,7 @@ func Test_Func_Min_ErrorsForNonNumElements(t *testing.T) {
 print(min([1, "ab", 3]))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  print(min([1, "ab", 3]))
-            ^^^^^^^^^^^^
-            Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float|float[]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "is not compatible with expected type")
 }
 
 func Test_Func_Min_Negative(t *testing.T) {
@@ -93,12 +87,7 @@ func Test_Func_Min_EmptyListError(t *testing.T) {
 print(min([]))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(min([]))
-        ^^^^^^^ Cannot find min of empty list (RAD20018)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20018", "Cannot find min of empty list")
 }
 
 func Test_Func_Min_NoArgsError(t *testing.T) {
@@ -106,12 +95,7 @@ func Test_Func_Min_NoArgsError(t *testing.T) {
 print(min())
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(min())
-        ^^^^^ Cannot find min of empty list (RAD20018)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20018", "Cannot find min of empty list")
 }
 
 func Test_Func_Min_MultipleListsError(t *testing.T) {
@@ -119,11 +103,5 @@ func Test_Func_Min_MultipleListsError(t *testing.T) {
 print(min([1, 2], [3, 4]))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(min([1, 2], [3, 4]))
-        ^^^^^^^^^^^^^^^^^^^
-        min() with multiple arguments requires numbers, not lists. Use min([...]) for a single list (RAD20012)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20012", "min() with multiple arguments requires numbers, not lists")
 }

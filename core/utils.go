@@ -130,7 +130,7 @@ func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RadVal
 		if fVal, err := coerced.Float64(); err == nil {
 			return newRadValue(i, node, fVal)
 		}
-		i.errorf(node, fmt.Sprintf("Invalid number: %v", s))
+		i.emitErrorf(rl.ErrParseFloatFailed, node, "Invalid number: %v", s)
 		panic("UNREACHABLE")
 	case []interface{}:
 		list := NewRadList()
@@ -148,7 +148,7 @@ func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RadVal
 	case nil:
 		return newRadValue(i, node, nil)
 	default:
-		i.errorf(node, fmt.Sprintf("Unhandled type in array: %T", val))
+		i.emitErrorf(rl.ErrInternalBug, node, "Unhandled type in array: %T", val)
 		panic(UNREACHABLE)
 	}
 }

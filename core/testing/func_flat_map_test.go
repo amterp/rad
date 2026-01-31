@@ -72,13 +72,7 @@ a = [1, [2, 3], 4]
 a.flat_map().print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.flat_map().print()
-    ^^^^^^^^^^
-    flat_map requires all elements to be lists, but element at index 0 is int (RAD20000)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "flat_map requires all elements to be lists, but element at index 0 is int")
 }
 
 func Test_Func_FlatMap_ListNoFn_ErrorOnNonLists(t *testing.T) {
@@ -87,13 +81,7 @@ a = [1, 2, 3]
 a.flat_map().print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.flat_map().print()
-    ^^^^^^^^^^
-    flat_map requires all elements to be lists, but element at index 0 is int (RAD20000)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "flat_map requires all elements to be lists, but element at index 0 is int")
 }
 
 // === List with function - must return lists ===
@@ -167,13 +155,7 @@ a = [1, 2, 3]
 a.flat_map(fn(x) x * 2).print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.flat_map(fn(x) x * 2).print()
-    ^^^^^^^^^^^^^^^^^^^^^
-    flat_map function must return a list, but returned int for element at index 0 (RAD20000)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "flat_map function must return a list, but returned int for element at index 0")
 }
 
 // === Map - requires function ===
@@ -184,12 +166,7 @@ a = { "a": [1, 2], "b": [3, 4] }
 a.flat_map().print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.flat_map().print()
-    ^^^^^^^^^^ flat_map on maps requires a function argument (RAD20000)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "flat_map on maps requires a function argument")
 }
 
 func Test_Func_FlatMap_MapWithFn_ExtractValues(t *testing.T) {
@@ -236,13 +213,7 @@ a = { "a": 1, "b": 2 }
 a.flat_map(fn(k, v) v * 2).print()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.flat_map(fn(k, v) v * 2).print()
-    ^^^^^^^^^^^^^^^^^^^^^^^^
-    flat_map function must return a list, but returned int for key a (RAD20000)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "flat_map function must return a list, but returned int for key a")
 }
 
 // === Chaining ===

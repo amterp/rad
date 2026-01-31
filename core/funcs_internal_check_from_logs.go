@@ -135,7 +135,7 @@ func parseInvocationLogs(i *Interpreter, node *ts.Node, durationMillis int64) []
 
 	matches, err := filepath.Glob(filepath.Join(logsDir, "invocations*.jsonl"))
 	if err != nil {
-		i.errorf(node, "Failed to find invocation log files: %s", err.Error())
+		i.emitErrorf(rl.ErrFileRead, node, "Failed to find invocation log files: %s", err.Error())
 	}
 	if len(matches) == 0 {
 		return []scriptInfo{}

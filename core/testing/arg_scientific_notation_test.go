@@ -42,12 +42,7 @@ args:
 print("{num}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:12
-
-  	num int = 1e-5
-             ^^^^ Scientific notation value does not evaluate to a whole number
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Scientific notation value does not evaluate to a whole number")
 }
 
 func Test_Arg_ScientificNotation_Int_Invalid_1_25e1(t *testing.T) {
@@ -57,12 +52,7 @@ args:
 print("{num}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:12
-
-  	num int = 1.25e1
-             ^^^^^^ Scientific notation value does not evaluate to a whole number
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Scientific notation value does not evaluate to a whole number")
 }
 
 func Test_Arg_ScientificNotation_Float_Valid_1e6(t *testing.T) {

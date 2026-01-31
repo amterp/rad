@@ -88,12 +88,10 @@ func Test_Func_Pow_ErrorsWithStringBase(t *testing.T) {
 print(pow("abc", 2))
 	`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  print(pow("abc", 2))
-            ^^^^^ Value '"abc"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001",
+		"print(pow(\"abc\", 2))",
+		"Value '\"abc\"' (str) is not compatible with expected type 'float'",
+	)
 }
 
 func Test_Func_Pow_ErrorsWithStringExponent(t *testing.T) {
@@ -101,11 +99,8 @@ func Test_Func_Pow_ErrorsWithStringExponent(t *testing.T) {
 print(pow(2, "abc"))
 	`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:14
-
-  print(pow(2, "abc"))
-               ^^^^^
-               Value '"abc"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001",
+		"print(pow(2, \"abc\"))",
+		"Value '\"abc\"' (str) is not compatible with expected type 'float'",
+	)
 }

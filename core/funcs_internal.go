@@ -6,8 +6,8 @@ import (
 	"os/exec"
 
 	com "github.com/amterp/rad/core/common"
-
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts"
 )
@@ -62,7 +62,7 @@ func AddInternalFuncs() {
 				RP.Printf("Deleting %s\n", path)
 				err := os.RemoveAll(path)
 				if err != nil {
-					f.i.errorf(idArg.node, "Failed to delete stash: %s", err.Error())
+					f.i.emitErrorf(rl.ErrFileWrite, idArg.node, "Failed to delete stash: %s", err.Error())
 				}
 				return VOID_SENTINEL
 			},
@@ -75,20 +75,20 @@ func AddInternalFuncs() {
 				result := com.LoadFile(scriptPath)
 				if result.Error != nil {
 					// todo don't think we can point at the node -- it's an internal function. Generally true for embedded commands, actually
-					f.i.errorf(scriptArg.node, "Failed to load script for checking: %s", result.Error.Error())
+					f.i.emitErrorf(rl.ErrFileRead, scriptArg.node, "Failed to load script for checking: %s", result.Error.Error())
 				}
 
 				contents := NormalizeLineEndings(result.Content)
 				checker, err := check.NewChecker()
 				if err != nil {
-					f.i.errorf(scriptArg.node, "Failed to create checker: %s", err.Error())
+					f.i.emitErrorf(rl.ErrGenericRuntime, scriptArg.node, "Failed to create checker: %s", err.Error())
 				}
 
 				checker.UpdateSrc(contents)
 
 				checkR, err := checker.CheckDefault()
 				if err != nil {
-					f.i.errorf(scriptArg.node, "Failed to run checker: %s", err.Error())
+					f.i.emitErrorf(rl.ErrGenericRuntime, scriptArg.node, "Failed to run checker: %s", err.Error())
 				}
 
 				radMap := NewRadMap()

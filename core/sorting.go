@@ -67,7 +67,7 @@ func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.No
 			return i, field.node
 		}
 	}
-	interp.errorf(identifierNode, "Undefined column %q. Did you include it in a 'fields' statement?", identifierStr)
+	interp.emitErrorf(rl.ErrUndefinedVariable, identifierNode, "Undefined column %q. Did you include it in a 'fields' statement?", identifierStr)
 	panic(UNREACHABLE)
 }
 
@@ -183,7 +183,7 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
 	case *RadList, *RadMap:
 		return 0 // all arrays and maps are considered equal
 	default:
-		i.errorf(fieldNode, "Bug! Unsupported type for sorting")
+		i.emitError(rl.ErrInternalBug, fieldNode, "Bug: Unsupported type for sorting")
 		panic(UNREACHABLE)
 	}
 }
@@ -205,7 +205,7 @@ func precedence(i *Interpreter, fieldNode *ts.Node, v RadValue) int {
 	case rl.RadFnT:
 		return 6
 	default:
-		i.errorf(fieldNode, "Unsupported type precedence for sorting")
+		i.emitError(rl.ErrInternalBug, fieldNode, "Unsupported type precedence for sorting")
 		panic(UNREACHABLE)
 	}
 }

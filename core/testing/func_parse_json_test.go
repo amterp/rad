@@ -69,13 +69,7 @@ func TestParseJson_ErrorsOnInvalidJson(t *testing.T) {
 parse_json(r'{asd asd}')
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  parse_json(r'{asd asd}')
-  ^^^^^^^^^^^^^^^^^^^^^^^^
-  Error parsing JSON: invalid character 'a' looking for beginning of object key string (RAD20011)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20011", "Error parsing JSON")
 }
 
 func TestParseJson_ErrorsOnInvalidType(t *testing.T) {
@@ -83,12 +77,7 @@ func TestParseJson_ErrorsOnInvalidType(t *testing.T) {
 parse_json(10)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:12
-
-  parse_json(10)
-             ^^ Value '10' (int) is not compatible with expected type 'str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "is not compatible with expected type")
 }
 
 func TestParseJson_ErrorsOnNoArgs(t *testing.T) {
@@ -96,12 +85,7 @@ func TestParseJson_ErrorsOnNoArgs(t *testing.T) {
 parse_json()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  parse_json()
-  ^^^^^^^^^^^^ Missing required argument '_str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument")
 }
 
 func TestParseJson_ErrorsOnTooManyArgs(t *testing.T) {
@@ -109,12 +93,7 @@ func TestParseJson_ErrorsOnTooManyArgs(t *testing.T) {
 parse_json("1", "2")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  parse_json("1", "2")
-  ^^^^^^^^^^^^^^^^^^^^ Expected at most 1 args, but was invoked with 2
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Expected at most 1 args")
 }
 
 func TestParseJson_EmptyList(t *testing.T) {

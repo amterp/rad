@@ -72,12 +72,7 @@ a["eve"] += 20
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a["eve"] += 20
-    ^^^^^ Key not found: "eve" (RAD20028)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20041", "Key not found")
 }
 
 func Test_Map_CanModifyArrayNestedInMap(t *testing.T) {

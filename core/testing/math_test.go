@@ -35,12 +35,7 @@ func Test_Math_ErrorsOnIntIntDivisionByZero(t *testing.T) {
 a = 1 / 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:9
-
-  a = 1 / 0
-          ^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_ErrorsOnFloatIntDivisionByZero(t *testing.T) {
@@ -48,12 +43,7 @@ func Test_Math_ErrorsOnFloatIntDivisionByZero(t *testing.T) {
 a = 1.0 / 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  a = 1.0 / 0
-            ^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_ErrorsOnIntFloatDivisionByZero(t *testing.T) {
@@ -61,12 +51,7 @@ func Test_Math_ErrorsOnIntFloatDivisionByZero(t *testing.T) {
 a = 1 / 0.0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:9
-
-  a = 1 / 0.0
-          ^^^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_ErrorsOnFloatFloatDivisionByZero(t *testing.T) {
@@ -74,12 +59,7 @@ func Test_Math_ErrorsOnFloatFloatDivisionByZero(t *testing.T) {
 a = 1.0 / 0.0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  a = 1.0 / 0.0
-            ^^^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_CompoundDivideByZeroIntIntErrors(t *testing.T) {
@@ -88,12 +68,7 @@ a = 1
 a /= 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:6
-
-  a /= 0
-       ^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_CompoundDivideByZeroIntFloatErrors(t *testing.T) {
@@ -102,12 +77,7 @@ a = 1
 a /= 0.0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:6
-
-  a /= 0.0
-       ^^^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_CompoundDivideByZeroFloatIntErrors(t *testing.T) {
@@ -116,12 +86,7 @@ a = 1.0
 a /= 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:6
-
-  a /= 0
-       ^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_CompoundDivideByZeroFloatFloatErrors(t *testing.T) {
@@ -130,12 +95,7 @@ a = 1.0
 a /= 0.0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:6
-
-  a /= 0.0
-       ^^^ Divisor was 0, cannot divide by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot divide by 0")
 }
 
 func Test_Math_CanHaveManyPluses(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	com "github.com/amterp/rad/core/common"
+	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -56,7 +57,7 @@ func (e *Env) GetVarElseBug(i *Interpreter, node *ts.Node, name string) RadValue
 	if val, exists := e.GetVar(name); exists {
 		return val
 	}
-	i.errorf(node, "Bug! Expected variable but didn't find: "+name)
+	i.emitError(rl.ErrInternalBug, node, "Bug: Expected variable but didn't find: "+name)
 	panic(UNREACHABLE)
 }
 

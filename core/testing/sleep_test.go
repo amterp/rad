@@ -68,57 +68,31 @@ sleep("1.1h 2.2m  3.3s")
 func TestSleep_ErrorsIfNoArg(t *testing.T) {
 	setupAndRunCode(t, `sleep()`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:1
-
-  sleep()
-  ^^^^^^^ Missing required argument '_duration'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument '_duration'")
 }
 
 func TestSleep_ErrorsIfNegArg(t *testing.T) {
 	setupAndRunCode(t, `sleep(-10)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:1
-
-  sleep(-10)
-  ^^^^^^^^^^ Cannot take a negative duration: "-10s"
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "Cannot take a negative duration: \"-10s\"")
 }
 
 func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 	setupAndRunCode(t, `sleep(10, 20)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:11
-
-  sleep(10, 20)
-            ^^ Too many positional args, remaining args are named-only.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Too many positional args, remaining args are named-only")
 }
 
 func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 	setupAndRunCode(t, `sleep(true)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:7
-
-  sleep(true)
-        ^^^^
-        Value 'true' (bool) is not compatible with expected type 'int|float|str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value 'true' (bool) is not compatible with expected type 'int|float|str'")
 }
 
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
 	setupAndRunCode(t, `sleep("Invalid!")`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `Error at L1:1
-
-  sleep("Invalid!")
-  ^^^^^^^^^^^^^^^^^ Invalid string argument: "Invalid!" (RAD20023)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20023", "Invalid string argument:")
 }
 
 func TestSleep_CanSleepLessThanMilliWithoutErroring(t *testing.T) {

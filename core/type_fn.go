@@ -108,7 +108,7 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 					seen[varArg.Name] = true
 					break
 				} else {
-					i.errorf(f.callNode,
+					i.emitErrorf(rl.ErrWrongArgCount, f.callNode,
 						"Expected at most %d args, but was invoked with %d", paramCount, len(f.args))
 				}
 			}
@@ -130,7 +130,7 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 			}
 
 			if param.NamedOnly {
-				i.errorf(arg.node, "Too many positional args, remaining args are named-only.")
+				i.emitError(rl.ErrWrongArgCount, arg.node, "Too many positional args, remaining args are named-only")
 			}
 
 			// normal type check
@@ -156,16 +156,16 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 
 			param, ok := byName[name]
 			if !ok {
-				i.errorf(arg.nameNode, "Unknown named argument '%s'", name)
+				i.emitErrorf(rl.ErrInvalidArgType, arg.nameNode, "Unknown named argument '%s'", name)
 			}
 
 			if param.AnonymousOnly() {
-				i.errorf(arg.nameNode,
-					"Argument '%s' cannot be passed as named arg, only positionally.", name)
+				i.emitErrorf(rl.ErrInvalidArgType, arg.nameNode,
+					"Argument '%s' cannot be passed as named arg, only positionally", name)
 			}
 
 			if seen[name] {
-				i.errorf(arg.nameNode, "Argument '%s' already specified.", name)
+				i.emitErrorf(rl.ErrInvalidArgType, arg.nameNode, "Argument '%s' already specified", name)
 			}
 
 			if param.Type != nil {
@@ -204,7 +204,7 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 			}
 
 			// todo below exposes _vars not meant to be. Perhaps just say # of missing args?
-			i.errorf(f.callNode, "Missing required argument '%s'", param.Name)
+			i.emitErrorf(rl.ErrWrongArgCount, f.callNode, "Missing required argument '%s'", param.Name)
 		}
 
 		// todo this should be more shared between the two branches?
@@ -244,11 +244,11 @@ func typeCheck(i *Interpreter, typing *rl.TypingT, node *ts.Node, val RadValue) 
 	isCompat := (*typing).IsCompatibleWith(val.ToCompatSubject(i))
 	if !isCompat {
 		if val == VOID_SENTINEL {
-			i.errorf(node, "Expected '%s', but got void value.", (*typing).Name())
+			i.emitErrorf(rl.ErrVoidValue, node, "Expected '%s', but got void value", (*typing).Name())
 			return
 		}
 
-		i.errorf(node, "Value '%s' (%s) is not compatible with expected type '%s'",
+		i.emitErrorf(rl.ErrTypeMismatch, node, "Value '%s' (%s) is not compatible with expected type '%s'",
 			ToPrintable(val), val.Type().AsString(), (*typing).Name())
 	}
 }

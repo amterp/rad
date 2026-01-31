@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 
+	"github.com/amterp/rad/rts/rl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
@@ -45,7 +47,7 @@ func (v *RadTypeVisitor) UnhandledTypeError(val RadValue) {
 	if v.i == nil {
 		panic(fmt.Sprintf("Bug! Unhandled type: %T", val.Type()))
 	}
-	v.i.errorf(v.node, "Unsupported type: %s", TypeAsString(val))
+	v.i.emitErrorf(rl.ErrTypeMismatch, v.node, "Unsupported type: %s", TypeAsString(val))
 }
 
 func (v *RadTypeVisitor) ForBool(handler func(RadValue, bool)) *RadTypeVisitor {

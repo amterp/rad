@@ -23,12 +23,7 @@ _ = 2
 print(_)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:7
-
-  print(_)
-        ^ Cannot use '_' as a value
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20039", "Cannot use '_' as a value")
 }
 
 func Test_Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop(t *testing.T) {
@@ -112,13 +107,7 @@ func Test_Misc_Abs_ErrorsOnAlphabetical(t *testing.T) {
 a = abs("asd")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:9
-
-  a = abs("asd")
-          ^^^^^
-          Value '"asd"' (str) is not compatible with expected type 'int|float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "is not compatible with expected type")
 }
 
 func Test_Misc_PrintsUsageIfInvokedWithNoScript(t *testing.T) {

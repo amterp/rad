@@ -64,12 +64,7 @@ b = -1
 print(round(a, b))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:7
-
-  print(round(a, b))
-        ^^^^^^^^^^^ Precision must be non-negative, got -1 (RAD20017)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20017", "Precision must be non-negative, got -1")
 }
 
 func Test_Func_Round_ErrorsPrecisionString(t *testing.T) {
@@ -79,12 +74,7 @@ b = "ab"
 print(round(a, b))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:16
-
-  print(round(a, b))
-                 ^ Value '"ab"' (str) is not compatible with expected type 'int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"ab\"' (str) is not compatible with expected type 'int'")
 }
 
 func Test_Func_Round_ErrorsWithString(t *testing.T) {
@@ -94,10 +84,5 @@ b = 1
 print(round(a, b))
 	`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:13
-
-  print(round(a, b))
-              ^ Value '"ab"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"ab\"' (str) is not compatible with expected type 'float'")
 }

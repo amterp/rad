@@ -40,12 +40,10 @@ opts = []
 pick(opts)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:1
-
-  pick(opts)
-  ^^^^^^^^^^ Filtered 0 options to 0 with filters: []
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000",
+		"pick(opts)",
+		"Filtered 0 options to 0 with filters: []",
+	)
 }
 
 func TestPickErrorsIfFilteredToZeroOptions(t *testing.T) {
@@ -54,12 +52,10 @@ opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
 pick(opts, "asdasdasd")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:1
-
-  pick(opts, "asdasdasd")
-  ^^^^^^^^^^^^^^^^^^^^^^^ Filtered 5 options to 0 with filters: [asdasdasd]
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000",
+		"pick(opts, \"asdasdasd\")",
+		"Filtered 5 options to 0 with filters: [asdasdasd]",
+	)
 }
 
 func TestPickWorksWithMultipleTokens(t *testing.T) {

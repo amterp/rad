@@ -63,7 +63,7 @@ func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool, *Rad
 
 	data, err := com.LoadJson(path)
 	if err != nil {
-		i.errorf(node, "Failed to load state: %s", err)
+		i.emitErrorf(rl.ErrFileRead, node, "Failed to load state: %s", err)
 	}
 
 	return ConvertToNativeTypes(i, node, data), true, nil
@@ -79,7 +79,7 @@ func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RadValue) *RadE
 	json := RadToJsonType(value)
 	err := com.CreateFilePathAndWriteJson(path, json)
 	if err != nil {
-		i.errorf(node, "Failed to save state: %s", err)
+		i.emitErrorf(rl.ErrFileWrite, node, "Failed to save state: %s", err)
 	}
 	return nil
 }

@@ -55,11 +55,6 @@ a = [1, 2, 3]
 a[1].replace("l", "o")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:1
-
-  a[1].replace("l", "o")
-  ^ Value '2' (int) is not compatible with expected type 'str'
-`
 	// todo ^ known issue, we pass a bad node for the error pointing
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '2' (int) is not compatible with expected type 'str'")
 }

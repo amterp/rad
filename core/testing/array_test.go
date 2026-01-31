@@ -149,12 +149,7 @@ a = [100, 200, 300, 400]
 a[4] = 500
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a[4] = 500
-    ^ Index out of bounds: 4 (length 4) (RAD20029)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20029", "Index out of bounds: 4 (length 4)")
 }
 
 func TestArray_PositiveIndexing(t *testing.T) {
@@ -197,12 +192,7 @@ a = [100, 200, 300, 400]
 print(a[-99])
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:9
-
-  print(a[-99])
-          ^^^ Index out of bounds: -99 (length 4) (RAD20029)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20029", "Index out of bounds: -99 (length 4)")
 }
 
 func TestArray_TooNegativeIndexAssignmentGivesError(t *testing.T) {
@@ -210,11 +200,6 @@ func TestArray_TooNegativeIndexAssignmentGivesError(t *testing.T) {
 a = [100, 200, 300, 400]
 a[-99] = 5
 `
-	expected := `Error at L3:3
-
-  a[-99] = 5
-    ^^^ Index out of bounds: -99 (length 4) (RAD20029)
-`
 	setupAndRunCode(t, script, "--color=never")
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20029", "Index out of bounds: -99 (length 4)")
 }

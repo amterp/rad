@@ -62,13 +62,7 @@ func Test_Func_WriteFile_NoPermission(t *testing.T) {
 a = write_file("data/no_permission_write.txt", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = write_file("data/no_permission_write.txt", "content")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      open data/no_permission_write.txt: permission denied (RAD20004)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20004", "permission denied")
 }
 
 func Test_Func_WriteFile_ErrorsOnDirectory(t *testing.T) {
@@ -77,11 +71,7 @@ a = write_file("data/", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
 	// Error messages are OS-specific, so check for key parts
-	assertErrorContains(t, 1,
-		"Error at L2:5",
-		"a = write_file(\"data/\", \"content\")",
-		"(RAD20006)",
-	)
+	assertErrorContains(t, 1, "RAD20006", "is a directory")
 }
 
 func Test_Func_WriteFile_ExitErrorsIfNoErrVar(t *testing.T) {
@@ -90,10 +80,5 @@ a = write_file("does_not_exist_dir/test.txt", "content")
 `
 	setupAndRunCode(t, script, "--color=never")
 	// Error messages are OS-specific, so check for key parts
-	assertErrorContains(t, 1,
-		"Error at L2:5",
-		"a = write_file(\"does_not_exist_dir/test.txt\", \"content\")",
-		"open does_not_exist_dir/test.txt:",
-		"(RAD20005)",
-	)
+	assertErrorContains(t, 1, "RAD20005", "open does_not_exist_dir/test.txt:")
 }

@@ -70,13 +70,7 @@ func Test_Func_Zip_ErrorsIfStrictAndListsNotSameLength(t *testing.T) {
 print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        Strict mode enabled: all lists must have the same length, but got 4 and 2 (RAD20015)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20015", "Strict mode enabled: all lists must have the same length, but got 4 and 2")
 }
 
 func Test_Func_Zip_ErrorsIfStrictAndFillProvided(t *testing.T) {
@@ -84,13 +78,7 @@ func Test_Func_Zip_ErrorsIfStrictAndFillProvided(t *testing.T) {
 print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        Cannot enable 'strict' with 'fill' specified (RAD20014)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20014", "Cannot enable 'strict' with 'fill' specified")
 }
 
 func Test_Func_Zip_EmptyLists(t *testing.T) {

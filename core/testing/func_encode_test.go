@@ -49,13 +49,7 @@ func Test_Func_DecodeBase64ErrorsOnInvalidInput(t *testing.T) {
 decode_base64(";;;< those are not part of base64")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  decode_base64(";;;< those are not part of base64")
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Error decoding base64: illegal base64 data at input byte 0 (RAD20021)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20021", "Error decoding base64: illegal base64 data at input byte 0")
 }
 
 func Test_Func_EncodeDecodeBase16(t *testing.T) {

@@ -87,8 +87,7 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 		keyName := i.GetSrcForNode(idxNode)
 		value, ok := m.Get(newRadValueStr(keyName))
 		if !ok {
-			errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %q", keyName).SetCode(rl.ErrKeyNotFound))
-			i.NewRadPanic(idxNode, errVal).Panic()
+			i.emitErrorf(rl.ErrKeyNotFound, idxNode, "Key not found: %s", keyName)
 		}
 		return value
 	}
@@ -97,8 +96,8 @@ func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
 	idxVal := evalMapKey(i, idxNode)
 	value, ok := m.Get(idxVal)
 	if !ok {
-		errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", ToPrintable(idxVal)).SetCode(rl.ErrKeyNotFound))
-		i.NewRadPanic(idxNode, errVal).Panic()
+		// todo RAD-138 add mechanism to 'try' getting a key without erroring
+		i.emitErrorf(rl.ErrKeyNotFound, idxNode, "Key not found: %s", ToPrintable(idxVal))
 	}
 	return value
 }
@@ -187,7 +186,7 @@ func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
 		return fmt.Sprintf("%s (error %s)", m.mapping[constMsg].Val, m.mapping[constCode].Val)
 	}
 
-	i.errorf(node, "Bug! Map is not an error message, contains keys: %s", lo.Keys(m.mapping))
+	i.emitErrorf(rl.ErrInternalBug, node, "Bug: Map is not an error message, contains keys: %s", lo.Keys(m.mapping))
 	panic(UNREACHABLE)
 }
 

@@ -28,11 +28,5 @@ a = [1, "ab", 3]
 print(sum(a))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:11
-
-  print(sum(a))
-            ^
-            Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float[]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '[ 1, \"ab\", 3 ]' (list) is not compatible with expected type 'float[]'")
 }

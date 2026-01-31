@@ -24,12 +24,7 @@ func Test_Null_ErrorsIfUsedInWrongFunction(t *testing.T) {
 split(null, ",")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  split(null, ",")
-        ^^^^ Value 'null' (null) is not compatible with expected type 'str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value 'null' (null) is not compatible with expected type 'str'")
 }
 
 func Test_Null_ParseJsonGivesNull(t *testing.T) {

@@ -69,7 +69,7 @@ func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node
 		case rl.K_PERCENT_EQUAL:
 			return i.executeOp(parentNode, left, right, opNode, OP_MODULO)
 		default:
-			i.errorf(opNode, "Invalid compound operator")
+			i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid compound operator")
 			panic(UNREACHABLE)
 		}
 	}()
@@ -97,13 +97,13 @@ func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadVa
 		case float64:
 			return newRadValue(i, parentNode, floatOp(coerced))
 		default:
-			i.errorf(parentNode, fmt.Sprintf("Bug! Unhandled type for unary minus: %T", argVal.Val))
+			i.emitErrorf(rl.ErrInternalBug, parentNode, "Bug: Unhandled type for unary minus: %T", argVal.Val)
 			panic(UNREACHABLE)
 		}
 	case rl.K_NOT:
 		return newRadValue(i, parentNode, !i.eval(argNode).Val.TruthyFalsy())
 	default:
-		i.errorf(opNode, "Invalid unary operator")
+		i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
 	}
 }
@@ -119,7 +119,7 @@ func (i *Interpreter) getUnaryOp(opNode *ts.Node) (func(int64) int64, func(float
 	case rl.K_MINUS_MINUS:
 		return func(a int64) int64 { return a - 1 }, func(a float64) float64 { return a - 1 }
 	default:
-		i.errorf(opNode, "Invalid unary operator")
+		i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid unary operator")
 		panic(UNREACHABLE)
 	}
 }
@@ -186,12 +186,12 @@ func (i *Interpreter) executeOp(
 			case OP_DIVIDE:
 				if coercedRight == 0 {
 					// todo idk if this is what we want to do? should we have a nan concept?
-					i.errorf(rightNode, "Divisor was 0, cannot divide by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return float64(coercedLeft) / float64(coercedRight)
 			case OP_MODULO:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Value is 0, cannot modulo by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return coercedLeft % coercedRight
 			case OP_GREATER:
@@ -217,12 +217,12 @@ func (i *Interpreter) executeOp(
 				return float64(coercedLeft) * coercedRight
 			case OP_DIVIDE:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Divisor was 0, cannot divide by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return float64(coercedLeft) / coercedRight
 			case OP_MODULO:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Value is 0, cannot modulo by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(float64(coercedLeft), coercedRight)
 			case OP_GREATER:
@@ -275,12 +275,12 @@ func (i *Interpreter) executeOp(
 				return coercedLeft * float64(coercedRight)
 			case OP_DIVIDE:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Divisor was 0, cannot divide by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return coercedLeft / float64(coercedRight)
 			case OP_MODULO:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Value is 0, cannot modulo by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(coercedLeft, float64(coercedRight))
 			case OP_GREATER:
@@ -306,12 +306,12 @@ func (i *Interpreter) executeOp(
 				return coercedLeft * coercedRight
 			case OP_DIVIDE:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Divisor was 0, cannot divide by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return coercedLeft / coercedRight
 			case OP_MODULO:
 				if coercedRight == 0 {
-					i.errorf(rightNode, "Value is 0, cannot modulo by 0")
+					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(coercedLeft, coercedRight)
 			case OP_GREATER:
@@ -524,7 +524,7 @@ func (i *Interpreter) executeOp(
 
 	opSrc := i.GetSrcForNode(opNode)
 
-	i.errorf(parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
+	i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
 		TypeAsString(leftV), opSrc, TypeAsString(rightV), additionalErrMsg)
 	panic(UNREACHABLE)
 }

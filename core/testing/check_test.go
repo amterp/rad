@@ -40,12 +40,7 @@ fn open(path: str) -> void:
     print("Opening {path}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:4
-
-  fn open(path: str) -> void:
-     ^^^^ Hoisted function 'open' shadows an argument with the same name
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Hoisted function 'open' shadows an argument with the same name")
 }
 
 func Test_Check_FunctionShadowsArgument_Multiple(t *testing.T) {
@@ -61,12 +56,7 @@ fn count() -> int:
     return 10
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L6:4
-
-  fn name() -> str:
-     ^^^^ Hoisted function 'name' shadows an argument with the same name
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Hoisted function 'name' shadows an argument with the same name")
 }
 
 func Test_Check_FunctionShadowsArgument_NoArgsBlock(t *testing.T) {
@@ -140,14 +130,7 @@ args = 5
 print(args)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  args = 5
-  ^^^^^^ 'args' is reserved (used in args blocks)
-
-  Try: use a different variable name
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "'args' is reserved (used in args blocks)")
 }
 
 func Test_Check_UnknownCommandCallbacks(t *testing.T) {

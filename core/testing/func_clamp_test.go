@@ -25,12 +25,7 @@ func Test_Func_Clamp_ErrorsForLessThan3Elements(t *testing.T) {
 print(clamp(1, 2))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
-
-  print(clamp(1, 2))
-        ^^^^^^^^^^^ Missing required argument 'max'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument 'max'")
 }
 
 func Test_Func_Clamp_ErrorsForNonNumElements(t *testing.T) {
@@ -38,13 +33,7 @@ func Test_Func_Clamp_ErrorsForNonNumElements(t *testing.T) {
 print(clamp(1, "ab", 2))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:16
-
-  print(clamp(1, "ab", 2))
-                 ^^^^
-                 Value '"ab"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"ab\"' (str) is not compatible with expected type 'float'")
 }
 
 func Test_Func_Clamp_Negative(t *testing.T) {

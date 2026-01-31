@@ -21,32 +21,17 @@ FOO
 func TestValues_ErrorsIfGivenString(t *testing.T) {
 	script := `values("foo")`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:8
-
-  values("foo")
-         ^^^^^ Value '"foo"' (str) is not compatible with expected type 'map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"foo\"' (str) is not compatible with expected type 'map'")
 }
 
 func TestValues_ErrorsIfGivenNoArgs(t *testing.T) {
 	script := `values()`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  values()
-  ^^^^^^^^ Missing required argument '_map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument '_map'")
 }
 
 func TestValues_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
 	script := `values({}, {})`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  values({}, {})
-  ^^^^^^^^^^^^^^ Expected at most 1 args, but was invoked with 2
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Expected at most 1 args, but was invoked with 2")
 }

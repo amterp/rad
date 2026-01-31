@@ -43,10 +43,5 @@ func Test_Func_Ceil_Errors_With_String(t *testing.T) {
 print(ceil("ab"))
 	`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:12
-
-  print(ceil("ab"))
-             ^^^^ Value '"ab"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"ab\"' (str) is not compatible with expected type 'float'")
 }

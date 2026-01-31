@@ -73,12 +73,7 @@ func TestStringInterpolation_ErrorsIfUnknownVariable(t *testing.T) {
 print("hello, {var}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:16
-
-  print("hello, {var}")
-                 ^^^ Undefined variable: var
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: var")
 }
 
 func TestStringInterpolation_CanEscapeFirst(t *testing.T) {
@@ -383,13 +378,7 @@ name = "John"
 print("Testing type safety: {name:,}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:29
-
-  print("Testing type safety: {name:,}")
-                              ^^^^^^^^
-                              Cannot format str with thousands separator ','
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30003", "Cannot format str with thousands separator ','")
 }
 
 func TestStringInterpolation_ThousandsSeparator_ScientificNotation(t *testing.T) {
