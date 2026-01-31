@@ -33,3 +33,16 @@ print(a[len(a) - 3])
 	assertOnlyOutput(t, stdOutBuffer, "i\n")
 	assertNoErrors(t)
 }
+
+func TestString_MultiByteIndexing(t *testing.T) {
+	script := `
+s = "a😀b"
+print(s[0])
+print(s[1])
+print(s[2])
+print(s[-1])
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "a\n😀\nb\nb\n")
+	assertNoErrors(t)
+}

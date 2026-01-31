@@ -120,14 +120,16 @@ func (s *RadString) Index(i *Interpreter, idxNode *ts.Node) RadString {
 
 // assumes idx is valid for this string
 func (s *RadString) IndexAt(idx int64) RadString {
-	cumLen := 0
+	cumRuneLen := int64(0)
 	for _, segment := range s.Segments {
-		nextSegmentLen := len(segment.String)
-		if cumLen+nextSegmentLen > int(idx) {
-			char := s.Runes()[idx] // todo inefficient, should just look up in segment
+		segmentRunes := []rune(segment.String)
+		segmentRuneLen := int64(len(segmentRunes))
+		if cumRuneLen+segmentRuneLen > idx {
+			offsetInSegment := idx - cumRuneLen
+			char := segmentRunes[offsetInSegment]
 			return newRadStringWithAttr(string(char), segment)
 		}
-		cumLen += +nextSegmentLen
+		cumRuneLen += segmentRuneLen
 	}
 	RP.RadErrorExit("Bug! IndexAt called with invalid index")
 	panic(UNREACHABLE)
