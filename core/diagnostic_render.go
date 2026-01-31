@@ -27,6 +27,7 @@ func NewDiagnosticRenderer(w io.Writer) *DiagnosticRenderer {
 func (r *DiagnosticRenderer) Render(d Diagnostic) {
 	r.renderHeader(d)
 	r.renderLabels(d)
+	r.renderCallStack(d)
 	r.renderHints(d)
 	r.renderInfoLine(d)
 	fmt.Fprintln(r.writer)
@@ -289,6 +290,37 @@ func (r *DiagnosticRenderer) renderInfoLine(d Diagnostic) {
 	if d.Code != "" {
 		info := fmt.Sprintf("= info: rad explain %s", d.Code.String())
 		fmt.Fprintf(r.writer, "   %s\n", r.cyan(info))
+	}
+}
+
+// renderCallStack renders the call stack if present.
+func (r *DiagnosticRenderer) renderCallStack(d Diagnostic) {
+	if len(d.CallStack) == 0 {
+		return
+	}
+
+	fmt.Fprintf(r.writer, "   %s\n", r.cyan("= stack:"))
+	for i, frame := range d.CallStack {
+		indent := "     "
+		prefix := "in"
+		if i == 0 {
+			prefix = "at"
+		}
+
+		// Format location
+		location := ""
+		if frame.CallSite != nil {
+			location = fmt.Sprintf("%s:%d:%d",
+				frame.CallSite.File,
+				frame.CallSite.StartLine(),
+				frame.CallSite.StartColumn())
+		}
+
+		if location != "" {
+			fmt.Fprintf(r.writer, "%s%s %s (%s)\n", indent, prefix, r.blue(frame.FunctionName), location)
+		} else {
+			fmt.Fprintf(r.writer, "%s%s %s\n", indent, prefix, r.blue(frame.FunctionName))
+		}
 	}
 }
 

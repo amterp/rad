@@ -66,6 +66,14 @@ type InterpreterInput struct {
 	InvokedCommand *ScriptCommand
 }
 
+// CallFrame represents a function call in the Rad call stack.
+// Used for providing stack traces in error messages.
+type CallFrame struct {
+	FunctionName string   // Name of the function (or "<anonymous>" for lambdas)
+	CallSite     *Span    // Where the function was called from
+	DefSite      *Span    // Where the function is defined
+}
+
 type Interpreter struct {
 	sd             *ScriptData
 	invokedCommand *ScriptCommand
@@ -76,6 +84,9 @@ type Interpreter struct {
 	forWhileLoopLevel int
 	// Used to track current delimiter, currently for correct delimiter escaping handling
 	delimiterStack *com.Stack[Delimiter]
+
+	// Call stack for Rad function calls (not Go stack)
+	callStack []CallFrame
 }
 
 func NewInterpreter(input InterpreterInput) *Interpreter {
@@ -933,6 +944,10 @@ func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
 // emitDiagnostic renders a diagnostic and exits with error code 1.
 // This is the new error reporting method that replaces errorf/errorDetailsf.
 func (i *Interpreter) emitDiagnostic(d Diagnostic) {
+	// Automatically attach call stack if not already present
+	if len(d.CallStack) == 0 && len(i.callStack) > 0 {
+		d = d.WithCallStack(i.CallStack())
+	}
 	renderer := NewDiagnosticRenderer(RIo.StdErr)
 	renderer.Render(d)
 	RExit.Exit(1)
@@ -968,6 +983,32 @@ func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node
 	}
 	diag := NewDiagnosticWithLabels(SeverityError, code, message, i.GetSrc(), labels)
 	i.emitDiagnostic(diag)
+}
+
+// pushCallFrame pushes a new frame onto the call stack.
+func (i *Interpreter) pushCallFrame(name string, callSite, defSite *Span) {
+	i.callStack = append(i.callStack, CallFrame{
+		FunctionName: name,
+		CallSite:     callSite,
+		DefSite:      defSite,
+	})
+}
+
+// popCallFrame removes the top frame from the call stack.
+func (i *Interpreter) popCallFrame() {
+	if len(i.callStack) > 0 {
+		i.callStack = i.callStack[:len(i.callStack)-1]
+	}
+}
+
+// CallStack returns a copy of the current call stack (most recent first).
+func (i *Interpreter) CallStack() []CallFrame {
+	result := make([]CallFrame, len(i.callStack))
+	// Reverse so most recent is first
+	for idx, frame := range i.callStack {
+		result[len(i.callStack)-1-idx] = frame
+	}
+	return result
 }
 
 // emitUndefinedVariableError emits an error for an undefined variable with
@@ -1296,6 +1337,11 @@ func (i *Interpreter) GetSrc() string {
 	return i.sd.Src
 }
 
+// GetScriptName returns the name/path of the current script.
+func (i *Interpreter) GetScriptName() string {
+	return i.sd.ScriptName
+}
+
 func (i *Interpreter) GetSrcForNode(node *ts.Node) string {
 	return i.GetSrc()[node.StartByte():node.EndByte()]
 }
@@ -1343,33 +1389,54 @@ func (i *Interpreter) getAssignLeftNodes(node *ts.Node) []ts.Node {
 // fallbackNode is used for error reporting when the panic is not a RadPanic.
 // msgArgs are optional context values to include in the error message before the panic value.
 func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, msgArgs ...interface{}) {
-	if r != nil {
-		radPanic, ok := r.(*RadPanic)
-		if ok {
-			err := radPanic.Err()
-			msg := err.Msg().Plain()
-			code := rl.ErrGenericRuntime
-			if !com.IsBlank(string(err.Code)) {
-				code = err.Code
-			}
-			// Use err.Node if available, otherwise fall back to fallbackNode
-			node := err.Node
-			if node == nil {
-				node = fallbackNode
-			}
-			i.emitError(code, node, msg)
-		}
-		if !IsTest {
-			// Build error message with panic details
-			var msgBuilder strings.Builder
-			msgBuilder.WriteString("Bug: Panic:")
-			for _, arg := range msgArgs {
-				msgBuilder.WriteString(fmt.Sprintf(" %v", arg))
-			}
-			msgBuilder.WriteString(fmt.Sprintf(" %v\n%s", r, debug.Stack()))
-			i.emitError(rl.ErrInternalBug, fallbackNode, msgBuilder.String())
-		}
+	if r == nil {
+		return
 	}
+
+	// RadPanic is expected - it's how Rad propagates user-facing errors
+	if radPanic, ok := r.(*RadPanic); ok {
+		err := radPanic.Err()
+		msg := err.Msg().Plain()
+		code := rl.ErrGenericRuntime
+		if !com.IsBlank(string(err.Code)) {
+			code = err.Code
+		}
+		// Use err.Node if available, otherwise fall back to fallbackNode
+		node := err.Node
+		if node == nil {
+			node = fallbackNode
+		}
+		i.emitError(code, node, msg)
+		return
+	}
+
+	// Non-RadPanic means an internal bug - this shouldn't happen
+	// Skip in tests since test framework may use panics for control flow (e.g., exit simulation)
+	if !IsTest {
+		i.emitInternalBug(r, fallbackNode, msgArgs...)
+	}
+}
+
+// emitInternalBug reports an internal Rad bug to the user.
+// This should only be called for unexpected panics that are NOT RadPanic.
+func (i *Interpreter) emitInternalBug(panicValue interface{}, fallbackNode *ts.Node, msgArgs ...interface{}) {
+	var msgBuilder strings.Builder
+	msgBuilder.WriteString("This is a bug in Rad. Please report it at:\n")
+	msgBuilder.WriteString("  https://github.com/amterp/rad/issues\n\n")
+
+	msgBuilder.WriteString("Panic: ")
+	for _, arg := range msgArgs {
+		msgBuilder.WriteString(fmt.Sprintf("%v ", arg))
+	}
+	msgBuilder.WriteString(fmt.Sprintf("%v\n\n", panicValue))
+
+	if !IsTest {
+		// Include Go stack trace for debugging (skip in tests for deterministic output)
+		msgBuilder.WriteString("Go stack trace:\n")
+		msgBuilder.WriteString(string(debug.Stack()))
+	}
+
+	i.emitError(rl.ErrInternalBug, fallbackNode, msgBuilder.String())
 }
 
 // withCatch wraps body execution with panic catching. If catchNode is nil, just executes body.

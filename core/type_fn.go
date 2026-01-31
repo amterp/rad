@@ -209,6 +209,23 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 
 		// todo this should be more shared between the two branches?
 		if fn.BuiltInFunc == nil {
+			// Push call frame for user-defined functions
+			var callSite, defSite *Span
+			if f.callNode != nil {
+				cs := NewSpanFromNode(f.callNode, i.GetScriptName())
+				callSite = &cs
+			}
+			if fn.ReprNode != nil {
+				ds := NewSpanFromNode(fn.ReprNode, i.GetScriptName())
+				defSite = &ds
+			}
+			fnName := fn.Name()
+			if fnName == "" {
+				fnName = "<anonymous>"
+			}
+			i.pushCallFrame(fnName, callSite, defSite)
+			defer i.popCallFrame()
+
 			res := i.runBlock(fn.Stmts)
 			typeCheck(i, typing.ReturnT, f.callNode, res.Val)
 			if fn.IsBlock {
