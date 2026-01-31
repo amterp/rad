@@ -69,9 +69,9 @@ type InterpreterInput struct {
 // CallFrame represents a function call in the Rad call stack.
 // Used for providing stack traces in error messages.
 type CallFrame struct {
-	FunctionName string   // Name of the function (or "<anonymous>" for lambdas)
-	CallSite     *Span    // Where the function was called from
-	DefSite      *Span    // Where the function is defined
+	FunctionName string // Name of the function (or "<anonymous>" for lambdas)
+	CallSite     *Span  // Where the function was called from
+	DefSite      *Span  // Where the function is defined
 }
 
 type Interpreter struct {

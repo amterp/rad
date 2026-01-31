@@ -80,15 +80,15 @@ const (
 	ErrInternalBug                = "20042"
 
 	// 3xxxx Type Errors
-	ErrTypeMismatch       Error = "30001"
-	ErrInvalidTypeForOp   Error = "30002"
-	ErrCannotFormat       Error = "30003"
-	ErrCannotIndex        Error = "30004"
-	ErrCannotAssign       Error = "30005"
-	ErrInvalidArgType     Error = "30006"
-	ErrWrongArgCount      Error = "30007"
-	ErrCannotCompare      Error = "30008"
-	ErrCannotConvert      Error = "30009"
+	ErrTypeMismatch     Error = "30001"
+	ErrInvalidTypeForOp Error = "30002"
+	ErrCannotFormat     Error = "30003"
+	ErrCannotIndex      Error = "30004"
+	ErrCannotAssign     Error = "30005"
+	ErrInvalidArgType   Error = "30006"
+	ErrWrongArgCount    Error = "30007"
+	ErrCannotCompare    Error = "30008"
+	ErrCannotConvert    Error = "30009"
 
 	// 4xxxx Validation Errors
 	ErrScientificNotationNotWholeNumber Error = "40001"
