@@ -1334,7 +1334,12 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, 
 			if !com.IsBlank(string(err.Code)) {
 				code = err.Code
 			}
-			i.emitError(code, err.Node, msg)
+			// Use err.Node if available, otherwise fall back to fallbackNode
+			node := err.Node
+			if node == nil {
+				node = fallbackNode
+			}
+			i.emitError(code, node, msg)
 		}
 		if !IsTest {
 			// Build error message with panic details
