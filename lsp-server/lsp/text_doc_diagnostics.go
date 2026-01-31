@@ -1,6 +1,9 @@
 package lsp
 
-import "github.com/amterp/rad/rts/check"
+import (
+	"github.com/amterp/rad/core"
+	"github.com/amterp/rad/rts/check"
+)
 
 type DiagnosticSeverity int
 
@@ -50,6 +53,34 @@ func NewDiagnosticFromCheck(checkD check.Diagnostic) Diagnostic {
 		Severity: severity,
 		Source:   "Rad Language Server",
 		Message:  checkD.Message,
+	}
+}
+
+// NewDiagnosticFromCore converts a core.Diagnostic to an LSP Diagnostic.
+// This uses the primary span from the core.Diagnostic for the range.
+func NewDiagnosticFromCore(coreD core.Diagnostic) Diagnostic {
+	var rang Range
+	if span := coreD.PrimarySpan(); span != nil {
+		rang = NewRange(span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+	}
+
+	var severity DiagnosticSeverity
+	switch coreD.Severity {
+	case core.SeverityError:
+		severity = Err
+	case core.SeverityWarning:
+		severity = Warn
+	case core.SeverityNote:
+		severity = Hint
+	default:
+		severity = Err
+	}
+
+	return Diagnostic{
+		Range:    rang,
+		Severity: severity,
+		Source:   "Rad Language Server",
+		Message:  coreD.Message,
 	}
 }
 
