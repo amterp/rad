@@ -91,6 +91,8 @@ const (
 	FUNC_TRIM               = "trim"
 	FUNC_TRIM_PREFIX        = "trim_prefix"
 	FUNC_TRIM_SUFFIX        = "trim_suffix"
+	FUNC_TRIM_LEFT          = "trim_left"
+	FUNC_TRIM_RIGHT         = "trim_right"
 	FUNC_READ_FILE          = "read_file"
 	FUNC_WRITE_FILE         = "write_file"
 	FUNC_READ_STDIN         = "read_stdin"
@@ -1036,6 +1038,22 @@ func init() {
 			},
 		},
 		{
+			Name: FUNC_TRIM_LEFT,
+			Execute: func(f FuncInvocation) RadValue {
+				return runTrim(f, func(str RadString, chars string) RadString {
+					return str.TrimLeft(chars)
+				})
+			},
+		},
+		{
+			Name: FUNC_TRIM_RIGHT,
+			Execute: func(f FuncInvocation) RadValue {
+				return runTrim(f, func(str RadString, chars string) RadString {
+					return str.TrimRight(chars)
+				})
+			},
+		},
+		{
 			// todo potential additional named args
 			//   - encoding="utf-8", # Or null for raw bytes
 			//   - start             # Byte offset start
@@ -1928,9 +1946,9 @@ func httpMethodFromFuncName(httpFunc string) string {
 
 func runTrim(f FuncInvocation, trimFunc func(str RadString, chars string) RadString) RadValue {
 	subject := f.GetStr("_subject")
-	toTrim := f.GetStr("_to_trim").Plain()
+	chars := f.GetStr("_chars").Plain()
 
-	subject = trimFunc(subject, toTrim)
+	subject = trimFunc(subject, chars)
 	return f.Return(subject)
 }
 

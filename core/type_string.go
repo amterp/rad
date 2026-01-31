@@ -213,6 +213,16 @@ func (s *RadString) TrimSuffix(suffix string) RadString {
 	return NewRadString(strings.TrimRight(s.Plain(), suffix))
 }
 
+func (s *RadString) TrimLeft(chars string) RadString {
+	// todo should maintain attr info
+	return NewRadString(strings.TrimLeft(s.Plain(), chars))
+}
+
+func (s *RadString) TrimRight(chars string) RadString {
+	// todo should maintain attr info
+	return NewRadString(strings.TrimRight(s.Plain(), chars))
+}
+
 func (s *RadString) Reverse() RadString {
 	// todo should maintain attr info
 	return NewRadString(com.Reverse(s.Plain()))
