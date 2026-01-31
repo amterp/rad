@@ -276,7 +276,8 @@ and the `hyperlink` function for creating clickable terminal links. See the [fun
 
     - `text.upper()`, `text.lower()` - change case
     - `text.replace(old, new)`, `text.split(sep)`, `items.join(sep)` - transform and combine strings
-    - `text.trim()`, `text.trim_prefix()`, `text.trim_suffix()` - remove whitespace or characters
+    - `text.trim()`, `text.trim_left()`, `text.trim_right()` - strip matching characters
+    - `text.trim_prefix(prefix)`, `text.trim_suffix(suffix)` - remove a literal prefix/suffix
     - `text.starts_with(prefix)`, `text.ends_with(suffix)` - check string prefixes/suffixes
     - `text.count(substr)` - count substring occurrences
     - And many more!

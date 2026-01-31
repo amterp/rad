@@ -205,12 +205,12 @@ func (s *RadString) Trim(chars string) RadString {
 
 func (s *RadString) TrimPrefix(prefix string) RadString {
 	// todo should maintain attr info
-	return NewRadString(strings.TrimLeft(s.Plain(), prefix))
+	return NewRadString(strings.TrimPrefix(s.Plain(), prefix))
 }
 
 func (s *RadString) TrimSuffix(suffix string) RadString {
 	// todo should maintain attr info
-	return NewRadString(strings.TrimRight(s.Plain(), suffix))
+	return NewRadString(strings.TrimSuffix(s.Plain(), suffix))
 }
 
 func (s *RadString) TrimLeft(chars string) RadString {

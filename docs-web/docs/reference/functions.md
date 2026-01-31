@@ -639,16 +639,16 @@ ends_with("hello world", "hello")    // -> false
 
 ### truncate
 
-Truncates a string to a maximum length. Returns error if length is negative.
+Truncates a string to a maximum length, adding an ellipsis if truncated. Requires length of at least 1.
 
 ```rad
 truncate(_str: str, _len: int) -> str|error
 ```
 
 ```rad
-truncate("hello world", 5)   // -> "hello"
-truncate("short", 10)        // -> "short"
-truncate("test", -1)         // -> Error: Requires a non-negative int
+truncate("hello world", 8)   // -> "hello w…"
+truncate("short", 10)        // -> "short" (no truncation needed)
+truncate("test", 0)          // -> Error: Requires at least 1
 ```
 
 ### split
@@ -683,10 +683,10 @@ count("test", "xyz")          // -> 0
 
 ### trim
 
-Trims characters from both the start and end of a string.
+Strips all matching characters from both ends of a string.
 
 ```rad
-trim(_subject: str, _to_trim: str = " \t\n") -> str
+trim(_subject: str, _chars: str = " \t\n") -> str
 ```
 
 ```rad
@@ -695,30 +695,60 @@ trim("***hello***", "*")     // -> "hello"
 trim("abcHELLOabc", "abc")   // -> "HELLO"
 ```
 
-### trim_prefix
+### trim_left
 
-Trims characters from only the start of a string.
+Strips all matching characters from the start of a string.
 
 ```rad
-trim_prefix(_subject: str, _to_trim: str = " \t\n") -> str
+trim_left(_subject: str, _chars: str = " \t\n") -> str
 ```
 
 ```rad
-trim_prefix("  hello  ")         // -> "hello  "
-trim_prefix("***hello***", "*")  // -> "hello***"
+trim_left("  hello  ")          // -> "hello  "
+trim_left("***hello***", "*")   // -> "hello***"
+trim_left("aaabbb", "a")        // -> "bbb"
+```
+
+### trim_right
+
+Strips all matching characters from the end of a string.
+
+```rad
+trim_right(_subject: str, _chars: str = " \t\n") -> str
+```
+
+```rad
+trim_right("  hello  ")         // -> "  hello"
+trim_right("***hello***", "*")  // -> "***hello"
+trim_right("aaabbb", "b")       // -> "aaa"
+```
+
+### trim_prefix
+
+Removes a literal prefix from the start of a string (once).
+
+```rad
+trim_prefix(_subject: str, _prefix: str) -> str
+```
+
+```rad
+trim_prefix("hello world", "hello ")  // -> "world"
+trim_prefix("aaabbb", "a")            // -> "aabbb" (one 'a' removed)
+trim_prefix("test", "x")              // -> "test" (no match)
 ```
 
 ### trim_suffix
 
-Trims characters from only the end of a string.
+Removes a literal suffix from the end of a string (once).
 
 ```rad
-trim_suffix(_subject: str, _to_trim: str = " \t\n") -> str
+trim_suffix(_subject: str, _suffix: str) -> str
 ```
 
 ```rad
-trim_suffix("  hello  ")         // -> "  hello"
-trim_suffix("***hello***", "*")  // -> "***hello"
+trim_suffix("hello world", " world")  // -> "hello"
+trim_suffix("aaabbb", "b")            // -> "aaabb" (one 'b' removed)
+trim_suffix("test", "x")              // -> "test" (no match)
 ```
 
 ### reverse
