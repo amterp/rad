@@ -20,6 +20,11 @@ type RadValue struct {
 	// nulls are RadNull
 	// errors are *RadError
 	Val interface{}
+
+	// Span tracks where this value originated in source code.
+	// Used for "assigned here" context in error messages.
+	// nil for intermediate computations (e.g., a + b).
+	Span *Span
 }
 
 func (v RadValue) Type() rl.RadType {
@@ -49,6 +54,22 @@ func (v RadValue) Type() rl.RadType {
 
 func (v RadValue) IsNull() bool {
 	return v.Val == RAD_NULL
+}
+
+// HasSpan returns true if this value has source location information.
+func (v RadValue) HasSpan() bool {
+	return v.Span != nil
+}
+
+// GetSpan returns the source location span, or nil if not available.
+func (v RadValue) GetSpan() *Span {
+	return v.Span
+}
+
+// WithSpan returns a copy of this value with the given span attached.
+func (v RadValue) WithSpan(span *Span) RadValue {
+	v.Span = span
+	return v
 }
 
 func (v RadValue) Index(i *Interpreter, idxNode *ts.Node) RadValue {
@@ -453,48 +474,67 @@ func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
 	return
 }
 
+// spanFromNode creates a Span from a tree-sitter node for value tracking.
+// Returns nil if the node is nil (intermediate computations don't have spans).
+func spanFromNode(i *Interpreter, node *ts.Node) *Span {
+	if node == nil {
+		return nil
+	}
+	file := ""
+	if i != nil {
+		file = i.sd.ScriptName
+	}
+	span := NewSpanFromNode(node, file)
+	return &span
+}
+
 func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
+	span := spanFromNode(i, node)
 	switch coerced := value.(type) {
 	case RadValue:
+		// Preserve existing span if the value already has one
+		if coerced.Span == nil {
+			coerced.Span = span
+		}
 		return coerced
 	case []RadValue: // todo risky to have this? might cover up issues
 		list := NewRadList()
 		list.Values = coerced
 		return newRadValue(i, node, list)
 	case RadString:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case string:
-		return RadValue{Val: NewRadString(coerced)}
+		return RadValue{Val: NewRadString(coerced), Span: span}
 	case int:
-		return RadValue{Val: int64(coerced)}
+		return RadValue{Val: int64(coerced), Span: span}
 	case int64, float64, bool:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case *RadList:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case RadList:
-		return RadValue{Val: &coerced}
+		return RadValue{Val: &coerced, Span: span}
 	case *RadMap:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case RadMap:
-		return RadValue{Val: &coerced}
+		return RadValue{Val: &coerced, Span: span}
 	case RadFn:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case *RadError:
-		return RadValue{Val: coerced}
+		return RadValue{Val: coerced, Span: span}
 	case map[string]interface{}:
 		radMap := NewRadMap()
 		for key, val := range coerced {
 			radMap.Set(newRadValue(i, node, key), newRadValue(i, node, val))
 		}
-		return RadValue{Val: radMap}
+		return RadValue{Val: radMap, Span: span}
 	case []interface{}:
 		list := NewRadListFromGeneric(i, node, coerced)
-		return RadValue{Val: list}
+		return RadValue{Val: list, Span: span}
 	case []string:
 		list := NewRadListFromGeneric(i, node, coerced)
-		return RadValue{Val: list}
+		return RadValue{Val: list, Span: span}
 	case RadNull, nil:
-		return RadValue{Val: RAD_NULL}
+		return RadValue{Val: RAD_NULL, Span: span}
 	default:
 		if i != nil && node != nil {
 			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
