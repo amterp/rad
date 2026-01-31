@@ -80,6 +80,8 @@ func init() {
 		newFnSignature(`trim(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`trim_prefix(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`trim_suffix(_subject: str, _to_trim: str = " \t\n") -> str`),
+		newFnSignature(`trim_left(_subject: str, _to_trim: str = " \t\n") -> str`),
+		newFnSignature(`trim_right(_subject: str, _to_trim: str = " \t\n") -> str`),
 		newFnSignature(`read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_bytes": int, "content": str|int[] }`),
 		newFnSignature(`write_file(_path: str, _content: str, *, append: bool = false) -> error|{ "bytes_written": int, "path": str }`),
 		newFnSignature(`read_stdin() -> str?|error`),

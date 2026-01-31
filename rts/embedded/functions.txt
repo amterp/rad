@@ -92,7 +92,9 @@ starts_with
 str
 sum
 trim
+trim_left
 trim_prefix
+trim_right
 trim_suffix
 truncate
 type_of
