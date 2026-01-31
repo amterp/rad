@@ -129,7 +129,8 @@ func AddInternalFuncs() {
 					return RAD_NULL_VAL
 				}
 
-				return newRadValues(f.i, f.callNode, doc)
+				rendered := RenderMarkdownForTerminal(doc)
+				return newRadValues(f.i, f.callNode, rendered)
 			},
 		},
 		{
