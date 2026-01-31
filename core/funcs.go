@@ -594,8 +594,14 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				str := f.GetStr("_str")
 				maxLen := f.GetInt("_len")
-				if maxLen < 0 {
-					return f.ReturnErrf(rl.ErrNumInvalidRange, "Requires a non-negative int, got %d", maxLen)
+
+				// Minimum length depends on ellipsis: "…" (1 char) vs "..." (3 chars)
+				minLen := int64(1)
+				if !com.TerminalIsUtf8 {
+					minLen = 3
+				}
+				if maxLen < minLen {
+					return f.ReturnErrf(rl.ErrNumInvalidRange, "Requires at least %d, got %d", minLen, maxLen)
 				}
 
 				strLen := str.Len()
