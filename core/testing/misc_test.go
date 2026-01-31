@@ -380,3 +380,35 @@ func globalFlagHelpWithout(s string) string {
 	}
 	return strings.Join(result, "\n")
 }
+
+func Test_Misc_UndefinedVariableSuggestsSimilar(t *testing.T) {
+	script := `
+username = "alice"
+print(usernme)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: usernme", "a variable with a similar name exists: username")
+}
+
+func Test_Misc_UndefinedVariableSuggestsMultipleSimilar(t *testing.T) {
+	script := `
+user_name = "alice"
+username = "bob"
+print(usernme)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: usernme", "variables with similar names exist:")
+}
+
+func Test_Misc_UndefinedVariableNoSuggestionIfTooDistant(t *testing.T) {
+	script := `
+foo = "bar"
+print(completely_different_name)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: completely_different_name")
+	// Should not contain suggestion since no similar variables exist
+	if strings.Contains(stdErrBuffer.String(), "similar name") {
+		t.Errorf("Expected no suggestion for very different variable name")
+	}
+}

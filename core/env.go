@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	com "github.com/amterp/rad/core/common"
@@ -90,6 +91,63 @@ func (e *Env) setVar(name string, v RadValue, updateEnclosing bool) {
 	} else {
 		e.Vars[name] = v
 	}
+}
+
+// AllVarNames returns all variable names visible from this environment.
+func (e *Env) AllVarNames() []string {
+	seen := make(map[string]bool)
+	var names []string
+
+	for env := e; env != nil; env = env.Enclosing {
+		for name := range env.Vars {
+			if !seen[name] {
+				seen[name] = true
+				names = append(names, name)
+			}
+		}
+	}
+
+	return names
+}
+
+// FindSimilarVars finds variable names similar to the given name.
+// Returns at most maxResults names, sorted by similarity.
+func (e *Env) FindSimilarVars(name string, maxResults int) []string {
+	type candidate struct {
+		name     string
+		distance int
+	}
+
+	var candidates []candidate
+	allNames := e.AllVarNames()
+
+	// Only suggest names within a reasonable edit distance
+	maxDistance := len(name)/2 + 1
+	if maxDistance < 2 {
+		maxDistance = 2
+	}
+
+	for _, n := range allNames {
+		dist := Levenshtein(name, n)
+		if dist <= maxDistance && dist > 0 {
+			candidates = append(candidates, candidate{n, dist})
+		}
+	}
+
+	// Sort by distance, then alphabetically
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i].distance != candidates[j].distance {
+			return candidates[i].distance < candidates[j].distance
+		}
+		return candidates[i].name < candidates[j].name
+	})
+
+	// Return top results
+	result := make([]string, 0, maxResults)
+	for i := 0; i < len(candidates) && i < maxResults; i++ {
+		result = append(result, candidates[i].name)
+	}
+	return result
 }
 
 func (e *Env) PrintShellExports() {
