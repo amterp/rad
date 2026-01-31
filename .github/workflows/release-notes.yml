@@ -33,8 +33,8 @@ jobs:
         run: |
           # Fetch latest release info via gh CLI since github.event.release
           # isn't available with workflow_run trigger
-          TAG=$(gh release view --latest --json tagName -q '.tagName')
-          DATE=$(gh release view --latest --json publishedAt -q '.publishedAt' | cut -d'T' -f1)
+          TAG=$(gh release view --json tagName -q '.tagName')
+          DATE=$(gh release view --json publishedAt -q '.publishedAt' | cut -d'T' -f1)
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "date=${DATE}" >> $GITHUB_OUTPUT
 
@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # Get release body via gh CLI
-          gh release view --latest --json body -q '.body' > /tmp/raw_body.txt
+          gh release view --json body -q '.body' > /tmp/raw_body.txt
 
           REPO_URL="https://github.com/${{ github.repository }}"
 
