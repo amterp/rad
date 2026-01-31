@@ -94,6 +94,9 @@ const (
 	ErrScientificNotationNotWholeNumber Error = "40001"
 	ErrHoistedFunctionShadowsArgument   Error = "40002"
 	ErrUnknownFunction                  Error = "40003"
+	ErrReturnOutsideFunction            Error = "40004"
+	ErrYieldOutsideFunction             Error = "40005"
+	ErrInvalidAssignmentTarget          Error = "40006"
 )
 
 func (e Error) String() string {
