@@ -1143,6 +1143,29 @@ print(parse_int("2.2"))    // error
 print(parse_float("bob"))  // error
 ```
 
+## Errors
+
+When something goes wrong, Rad displays errors in a format designed to help you quickly locate and understand the problem:
+
+```
+error[RAD20029]: Index out of bounds: 5 (length 2)
+  --> script.rad:11:13
+   |
+10 | names = ["alice", "bob"]
+11 | print(names[5])
+   |             ^
+   |
+   = info: rad explain RAD20029
+```
+
+Every error includes a code (like `RAD20029`) that identifies the type of error. To learn more about any error, use the `rad explain` command:
+
+```shell
+rad explain RAD20029
+```
+
+This displays detailed documentation about the error, including common causes and how to fix it.
+
 ## Summary
 
 - We rapidly covered many basic topics such as assignment, data types, operators, and control flow.
@@ -1160,6 +1183,7 @@ print(parse_float("bob"))  // error
 - Rad offers truthy/falsy logic for more concise conditional expressions.
 - Rad has switch statements and expressions. The latter uses `yield` as a keyword to return values from cases.
 - Rad has functions for casting `str`, `int`, `float` and for parsing `parse_int`, `parse_float` values.
+- When errors occur, use `rad explain <code>` to get detailed help.
 
 ## Next
 

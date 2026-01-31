@@ -53,7 +53,7 @@ with said error.
 
 `error` may be referenced as a return type for some functions. `error` is really a `map` with the following keys:
 
-- `code: string` - An [error code](./errors.md) indicating the type of error.
+- `code: string` - An error code (e.g. `RAD20003`). Use `rad explain <code>` to learn more.
 - `msg: string` - A description of the error.
 
 Lastly, you may also see `number` referenced as a type -- this just means `int | float`, i.e. any numeric type.

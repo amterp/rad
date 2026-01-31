@@ -27,7 +27,6 @@ nav:
   - Reference:
       - Language Reference: ./reference/syntax.md
       - ./reference/functions.md
-      - ./reference/errors.md
   - Migrations:
       - ./migrations/v0.8.md
       - ./migrations/v0.7.md
