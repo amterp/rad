@@ -12,12 +12,13 @@ import (
 var embeddedFiles embed.FS
 
 const (
-	EmbCmdNew   = "new"
-	EmbCmdDocs  = "docs"
-	EmbCmdHome  = "home"
-	EmbCmdGenId = "gen-id"
-	EmbCmdStash = "stash"
-	EmbCmdCheck = "check"
+	EmbCmdNew     = "new"
+	EmbCmdDocs    = "docs"
+	EmbCmdHome    = "home"
+	EmbCmdGenId   = "gen-id"
+	EmbCmdStash   = "stash"
+	EmbCmdCheck   = "check"
+	EmbCmdExplain = "explain"
 )
 
 type EmbeddedCmd struct {
@@ -45,6 +46,7 @@ func init() {
 		createEmbeddedCmd(EmbCmdHome),
 		createEmbeddedCmd(EmbCmdGenId),
 		createEmbeddedCmd(EmbCmdStash),
+		createEmbeddedCmd(EmbCmdExplain),
 	}
 
 	CmdsByName = make(map[string]EmbeddedCmd)
