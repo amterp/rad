@@ -1,5 +1,7 @@
 package com
 
+import "strings"
+
 func Truncate(str string, maxLen int64) string {
 	runes := []rune(str)
 	if TerminalIsUtf8 {
@@ -10,10 +12,11 @@ func Truncate(str string, maxLen int64) string {
 }
 
 func Reverse(str string) string {
-	runeString := []rune(str)
-	var reverseString string
-	for i := len(runeString) - 1; i >= 0; i-- {
-		reverseString += string(runeString[i])
+	runes := []rune(str)
+	var builder strings.Builder
+	builder.Grow(len(str))
+	for i := len(runes) - 1; i >= 0; i-- {
+		builder.WriteRune(runes[i])
 	}
-	return reverseString
+	return builder.String()
 }
