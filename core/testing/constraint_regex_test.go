@@ -114,6 +114,5 @@ args:
 	name regex "+"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := "Error at L4:2\n\n  \tname regex \"+\"\n   ^^^^^^^^^^^^^^\n   Invalid regex '+': error parsing regexp: missing argument to repetition operator: `+`\n"
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Invalid regex '+': error parsing regexp: missing argument to repetition operator: `+`")
 }

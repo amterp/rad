@@ -80,14 +80,8 @@ a = now(tz="another bad one")
 	setupAndRunCode(t, script, "--color=never")
 	expectedStdout := `Invalid time zone 'invalid time zone'
 `
-	expectedStderr := `Error at L4:5
-
-  a = now(tz="another bad one")
-      ^^^^^^^^^^^^^^^^^^^^^^^^^ Invalid time zone 'another bad one' (RAD20009)
-`
 	assertOutput(t, stdOutBuffer, expectedStdout)
-	assertOutput(t, stdErrBuffer, expectedStderr)
-	assertExitCode(t, 1)
+	assertErrorContains(t, 1, "RAD20009", "Invalid time zone 'another bad one'")
 }
 
 func Test_Func_ParseEpochSeconds(t *testing.T) {
@@ -147,15 +141,8 @@ a = parse_epoch(17123456781)
 	setupAndRunCode(t, script, "--color=never")
 	expectedStdout := `Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
 `
-	expectedStderr := `Error at L4:5
-
-  a = parse_epoch(17123456781)
-      ^^^^^^^^^^^^^^^^^^^^^^^^
-      Ambiguous epoch length (11 digits). Use 'unit' to disambiguate. (RAD20007)
-`
 	assertOutput(t, stdOutBuffer, expectedStdout)
-	assertOutput(t, stdErrBuffer, expectedStderr)
-	assertExitCode(t, 1)
+	assertErrorContains(t, 1, "RAD20007", "Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.")
 }
 
 func Test_Func_ParseEpochTimeZoneNegativeAmbiguousButWithUnits(t *testing.T) {

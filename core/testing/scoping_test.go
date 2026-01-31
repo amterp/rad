@@ -83,10 +83,7 @@ display:
 print("i", i)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `nums 
-20    
-i 0
-`
+	expected := "nums \n20    \ni 0\n"
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
 }
@@ -100,16 +97,8 @@ display:
 		map fn(i) i * 2
 print("i", i)
 `
-	expected := `nums 
-20    
-`
+	expected := "nums \n20    \n"
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, expected)
-	expected = `Error at L7:12
-
-  print("i", i)
-             ^ Undefined variable: i
-`
-	assertOutput(t, stdErrBuffer, expected)
-	assertExitCode(t, 1)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: i")
 }

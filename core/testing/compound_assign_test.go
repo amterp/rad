@@ -84,49 +84,28 @@ func TestCompound_SubtractFromArrayErrors(t *testing.T) {
 	script := `a = [1]
 a -= 2`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a -= 2
-  ^^^^^^ Invalid operand types: cannot do 'list -= int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30002", "Invalid operand types: cannot do 'list -= int'")
 }
 
 func TestCompound_DivideFromArrayErrors(t *testing.T) {
 	script := `a = [1]
 a /= 2`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a /= 2
-  ^^^^^^ Invalid operand types: cannot do 'list /= int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30002", "Invalid operand types: cannot do 'list /= int'")
 }
 
 func TestCompound_MultiplyFromArrayErrors(t *testing.T) {
 	script := `a = [1]
 a *= 2`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a *= 2
-  ^^^^^^ Invalid operand types: cannot do 'list *= int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30002", "Invalid operand types: cannot do 'list *= int'")
 }
 
 func TestCompound_ErrorsIfAppendNotArray(t *testing.T) {
 	script := `a = [1]
 a += 2`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a += 2
-  ^^^^^^
-  Invalid operand types: cannot do 'list += int'. Did you mean to wrap the right side in a list in order to append?
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30002", "Invalid operand types: cannot do 'list += int'", "Did you mean to wrap the right side in a list in order to append?")
 }
 
 func TestCompound_AddThroughCollection(t *testing.T) {

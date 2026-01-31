@@ -50,12 +50,7 @@ func Test_Func_Float_ErrorsOnMap(t *testing.T) {
 float({})
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  float({})
-  ^^^^^^^^^ Cannot cast "map" to float (RAD20016)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20016", "Cannot cast \"map\" to float")
 }
 
 func Test_Func_Float_ErrorsOnStringWithDetails(t *testing.T) {
@@ -63,11 +58,5 @@ func Test_Func_Float_ErrorsOnStringWithDetails(t *testing.T) {
 float("10")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  float("10")
-  ^^^^^^^^^^^
-  Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string? (RAD20016)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20016", "Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string?")
 }

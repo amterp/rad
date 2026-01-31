@@ -55,12 +55,8 @@ request:
     fields Name, Age
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:1
-
-  request:
-  ^ Invalid syntax
-`
-	assertError(t, 1, expected)
+	// This uses the old error format (parser error)
+	assertErrorContains(t, 1, "Invalid syntax")
 }
 
 func TestRad_DisplayBlock(t *testing.T) {
@@ -89,12 +85,7 @@ display url:
     fields Name, Age
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:9
-
-  display url:
-          ^^^ Display block source can only be a list or a map. Got "str"
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Display block source can only be a list or a map", "str")
 }
 
 func TestRad_RequestThenDisplayBlocks(t *testing.T) {
@@ -125,12 +116,8 @@ url = "https://google.com"
 rad url
 `
 	setupAndRunCode(t, script, "--mock-response", ".*:./responses/text.txt", "--color=never")
-	expected := `Error at L3:1
-
-  rad url
-  ^^^^^^^ Unexpected 'rad url'
-`
-	assertError(t, 1, expected)
+	// This uses the old error format (parser error)
+	assertErrorContains(t, 1, "Unexpected", "rad url")
 }
 
 func TestRad_CanConditionallyApplySort(t *testing.T) {

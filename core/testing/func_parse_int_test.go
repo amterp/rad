@@ -19,12 +19,7 @@ func Test_ParseInt_ErrorsOnAlphabetical(t *testing.T) {
 a = parse_int("asd")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = parse_int("asd")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "asd" (RAD20001)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20001", "parse_int() failed to parse")
 }
 
 func Test_ParseInt_ErrorsOnFloat(t *testing.T) {
@@ -32,12 +27,7 @@ func Test_ParseInt_ErrorsOnFloat(t *testing.T) {
 a = parse_int("2.4")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = parse_int("2.4")
-      ^^^^^^^^^^^^^^^^ parse_int() failed to parse "2.4" (RAD20001)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20001", "parse_int() failed to parse")
 }
 
 func Test_ParseInt_CanCatchEvenIfNoError(t *testing.T) {

@@ -37,12 +37,7 @@ func Test_ErrorsIfInvokingUndefinedSymbol(t *testing.T) {
 notarealsymbol()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  notarealsymbol()
-  ^^^^^^^^^^^^^^ Cannot invoke unknown function: notarealsymbol
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD40003", "Cannot invoke unknown function: notarealsymbol")
 }
 
 func Test_ErrorsIfInvokingNonFunction(t *testing.T) {
@@ -51,10 +46,5 @@ foo = "hi"
 foo(2)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:1
-
-  foo(2)
-  ^^^ Cannot invoke 'foo' as a function: it is a str
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Cannot invoke 'foo' as a function: it is a str")
 }

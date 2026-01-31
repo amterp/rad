@@ -81,7 +81,7 @@ func (v RadValue) Index(i *Interpreter, idxNode *ts.Node) RadValue {
 	case *RadMap:
 		return newRadValue(i, idxNode, coerced.GetNode(i, idxNode))
 	default:
-		i.errorf(idxNode, "Indexing not supported for %s", TypeAsString(v))
+		i.emitErrorf(rl.ErrCannotIndex, idxNode, "Indexing not supported for %s", TypeAsString(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -91,7 +91,7 @@ func (v RadValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
 	case int64:
 		return coerced
 	default:
-		i.errorf(node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
+		i.emitErrorf(rl.ErrTypeMismatch, node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -106,7 +106,7 @@ func (v RadValue) RequireIntAllowingBool(i *Interpreter, node *ts.Node) int64 {
 		}
 		return 0
 	default:
-		i.errorf(node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
+		i.emitErrorf(rl.ErrTypeMismatch, node, "Expected int, got %q: %s", TypeAsString(v), ToPrintable(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -115,7 +115,7 @@ func (v RadValue) RequireStr(i *Interpreter, node *ts.Node) RadString {
 	if str, ok := v.TryGetStr(); ok {
 		return str
 	}
-	i.errorf(node, "Expected string, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected string, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -130,7 +130,7 @@ func (v RadValue) RequireList(i *Interpreter, node *ts.Node) *RadList {
 	if list, ok := v.TryGetList(); ok {
 		return list
 	}
-	i.errorf(node, "Expected list, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected list, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -145,7 +145,7 @@ func (v RadValue) RequireBool(i *Interpreter, node *ts.Node) bool {
 	if b, ok := v.TryGetBool(); ok {
 		return b
 	}
-	i.errorf(node, "Expected bool, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected bool, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -160,7 +160,7 @@ func (v RadValue) RequireMap(i *Interpreter, node *ts.Node) *RadMap {
 	if b, ok := v.TryGetMap(); ok {
 		return b
 	}
-	i.errorf(node, "Expected map, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected map, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -175,7 +175,7 @@ func (v RadValue) RequireFn(i *Interpreter, node *ts.Node) RadFn {
 	if fn, ok := v.TryGetFn(); ok {
 		return fn
 	}
-	i.errorf(node, "Expected function, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected function, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -191,7 +191,7 @@ func (v RadValue) RequireError(i *Interpreter, node *ts.Node) *RadError {
 	if err, ok := v.TryGetError(); ok {
 		return err
 	}
-	i.errorf(node, "Expected error, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected error, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -217,7 +217,7 @@ func (v RadValue) RequireFloatAllowingInt(i *Interpreter, node *ts.Node) float64
 	if f, ok := v.TryGetFloatAllowingInt(); ok {
 		return f
 	}
-	i.errorf(node, "Expected float, got %q: %s", TypeAsString(v), ToPrintable(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "Expected float, got %q: %s", TypeAsString(v), ToPrintable(v))
 	panic(UNREACHABLE)
 }
 
@@ -241,7 +241,7 @@ func (v RadValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RadValu
 			coerced.Set(idxVal, rightValue)
 		}
 	default:
-		i.errorf(idxNode, "Cannot modify indices for type '%s'", TypeAsString(v))
+		i.emitErrorf(rl.ErrCannotAssign, idxNode, "Cannot modify indices for type '%s'", TypeAsString(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -298,7 +298,7 @@ func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, a
 		}
 	}
 
-	i.errorf(node, "%s: %s", errPrefix, TypeAsString(v))
+	i.emitErrorf(rl.ErrTypeMismatch, node, "%s: %s", errPrefix, TypeAsString(v))
 	panic(UNREACHABLE)
 }
 
@@ -310,7 +310,7 @@ func (v RadValue) RequireNotType(
 ) RadValue {
 	for _, disallowedType := range disallowedTypes {
 		if v.Type() == disallowedType {
-			i.errorf(node, "%s: %s", errPrefix, TypeAsString(v))
+			i.emitErrorf(rl.ErrTypeMismatch, node, "%s: %s", errPrefix, TypeAsString(v))
 			panic(UNREACHABLE)
 		}
 	}
@@ -537,7 +537,7 @@ func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
 		return RadValue{Val: RAD_NULL, Span: span}
 	default:
 		if i != nil && node != nil {
-			i.errorf(node, "Unsupported value type: %s", TypeAsString(coerced))
+			i.emitErrorf(rl.ErrTypeMismatch, node, "Unsupported value type: %s", TypeAsString(coerced))
 			panic(UNREACHABLE)
 		} else {
 			panic(fmt.Sprintf("Bug! Unsafe call w/ unsupported value type: %T", coerced))
@@ -612,7 +612,7 @@ func typingEvaluator(i *Interpreter) *func(*ts.Node, string) interface{} {
 		i.WithTmpSrc(src, func() {
 			res = i.eval(node)
 			if res.Val == VOID_SENTINEL {
-				i.errorf(node, "Bug?! Expected a string, got void.")
+				i.emitError(rl.ErrVoidValue, node, "Bug: Expected a string, got void")
 			}
 		})
 		return res.Val.ToGoValue()

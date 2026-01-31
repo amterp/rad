@@ -159,6 +159,6 @@ print("two")
 `
 	setupAndRunCode(t, script, "--color=never")
 	// this specific error is not ideal, we can (and probably should) improve it
-	expected := "Error at L3:12\n\n  \ta = \"blah\"\n              Expected identifier\n"
-	assertError(t, 1, expected)
+	// This uses the old error format (parser error)
+	assertErrorContains(t, 1, "Expected identifier")
 }

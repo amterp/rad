@@ -88,11 +88,5 @@ m.load("k", fn() "first")
 m.load("k", fn() exit(1), reload=true, override="overrode!")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:3
-
-  m.load("k", fn() exit(1), reload=true, override="overrode!")
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    Cannot provide values for both "reload" and "override" (RAD20014)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20014", "Cannot provide values for both \"reload\" and \"override\"")
 }

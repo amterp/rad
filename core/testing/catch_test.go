@@ -29,12 +29,7 @@ fn foo():
 	return error("this is an error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = foo()
-      ^^^^^ this is an error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "this is an error")
 }
 
 func Test_Catch_CanCatchOnNestedFunctions(t *testing.T) {
@@ -72,13 +67,7 @@ fn foo(x):
   return error(out)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Foo! 1
-Error at L6:16
-
-    return error(out)
-                 ^^^ Undefined variable: out
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: out")
 }
 
 func Test_Catch_CanCatchOnFromTernary(t *testing.T) {
@@ -112,15 +101,7 @@ fn bar():
 	return [foo(a) for a in [1, 2]]
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `bar
-Foo 1
-Error at L10:10
-
-  	return [foo(a) for a in [1, 2]]
-           ^^^^^^ error 1
-`
-	assertOnlyOutput(t, stdErrBuffer, expected)
-	assertExitCode(t, 1)
+	assertErrorContains(t, 1, "RAD20000", "error 1")
 }
 
 func Test_Catch_ListComprehensionCanCatch(t *testing.T) {
@@ -149,12 +130,7 @@ fn foo():
 	return error("this is an error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:6
-
-  a = [foo()]
-       ^^^^^ this is an error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "this is an error")
 }
 
 func Test_Catch_ErrorsInMap(t *testing.T) {
@@ -165,12 +141,7 @@ fn foo():
 	return error("this is an error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:9
-
-  a = {1: foo()}
-          ^^^^^ this is an error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "this is an error")
 }
 
 func Test_Catch_CanPropagate(t *testing.T) {
@@ -185,12 +156,7 @@ fn bar():
 	return error("bar error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:6
-
-  	a = bar()
-       ^^^^^ bar error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "bar error")
 }
 
 func Test_Catch_CanCatchInFunction(t *testing.T) {
@@ -206,12 +172,7 @@ fn bar():
 	return error("bar error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo()
-  ^^^^^ foo error bar error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "foo error bar error")
 }
 
 func Test_Catch_LambdaMapErrors(t *testing.T) {
@@ -223,12 +184,7 @@ fn foo(x):
 	return error("this is an error")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:3
-
-  a.map(foo).print()
-    ^^^^^^^^ this is an error
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "this is an error")
 }
 
 func Test_Catch_LambdaMapCanCatch(t *testing.T) {

@@ -233,12 +233,7 @@ func Test_Color_ErrorsOnTooLargeRgb(t *testing.T) {
 "Hi".color_rgb(300, 110, 220)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:6
-
-  "Hi".color_rgb(300, 110, 220)
-       ^^^^^^^^^^^^^^^^^^^^^^^^ RGB values must be [0, 255]; got 300 (RAD20017)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20017", "RGB values must be [0, 255]; got 300")
 }
 
 func Test_Color_ErrorsOnNegativeRgb(t *testing.T) {
@@ -246,12 +241,7 @@ func Test_Color_ErrorsOnNegativeRgb(t *testing.T) {
 "Hi".color_rgb(50, 110, -10)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:6
-
-  "Hi".color_rgb(50, 110, -10)
-       ^^^^^^^^^^^^^^^^^^^^^^^ RGB values must be [0, 255]; got -10 (RAD20017)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20017", "RGB values must be [0, 255]; got -10")
 }
 
 func Test_Colorize_CanColorNames(t *testing.T) {

@@ -26,11 +26,5 @@ func Test_Func_HashErrorsForUnknownAlgo(t *testing.T) {
 hash("hello friend!", algo="does not exist")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:28
-
-  hash("hello friend!", algo="does not exist")
-                             ^^^^^^^^^^^^^^^^
-                             Value '"does not exist"' (str) is not compatible with expected type 'str enum'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "not compatible with expected type 'str enum'")
 }

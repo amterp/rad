@@ -37,12 +37,10 @@ values = []
 pick_kv(keys, values)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:1
-
-  pick_kv(keys, values)
-  ^^^^^^^^^^^^^^^^^^^^^ Filtered 0 options to 0 with filters: []
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000",
+		"pick_kv(keys, values)",
+		"Filtered 0 options to 0 with filters: []",
+	)
 }
 
 func TestPickKvErrorsIfKeyValueArraysAreNotEqualLength(t *testing.T) {
@@ -52,13 +50,10 @@ values = ["Hamburger", "Chicken Burger"]
 pick_kv(keys, values)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L4:1
-
-  pick_kv(keys, values)
-  ^^^^^^^^^^^^^^^^^^^^^
-  Number of keys and values must match, but got 1 key and 2 values
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000",
+		"pick_kv(keys, values)",
+		"Number of keys and values must match, but got 1 key and 2 values",
+	)
 }
 
 func TestPickKvWorksWithMultipleTokens(t *testing.T) {

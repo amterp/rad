@@ -86,7 +86,7 @@ func prettify(i *Interpreter, callNode *ts.Node, jsonStruct interface{}) string 
 	err := enc.Encode(jsonStruct)
 
 	if err != nil {
-		i.errorf(callNode, "Error marshalling JSON: %v", err)
+		i.emitErrorf(rl.ErrParseJson, callNode, "Error marshalling JSON: %v", err)
 	}
 
 	return buf.String()

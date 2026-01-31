@@ -66,7 +66,7 @@ func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
 				// do nothing (delete those values)
 			} else {
 				assignNode := idxNode.Parent().Parent()
-				i.errorf(assignNode, "Cannot assign list slice to a non-list type")
+				i.emitError(rl.ErrTypeMismatch, assignNode, "Cannot assign list slice to a non-list type")
 			}
 			newList.Values = append(newList.Values, l.Values[end:]...)
 			l.Values = newList.Values
@@ -167,7 +167,7 @@ func (l *RadList) LenInt() int {
 
 func (l *RadList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {
 	if len(indices) != len(l.Values) {
-		i.errorf(node, "Bug! Indices length does not match list length")
+		i.emitError(rl.ErrInternalBug, node, "Bug: Indices length does not match list length")
 	}
 	sorted := make([]RadValue, l.Len())
 	for newIdx, oldIdx := range indices {

@@ -42,12 +42,7 @@ args:
 print("Hi", name)
 `
 	setupAndRunCode(t, script, "david", "--color=never")
-	expected := `Error at L4:25
-
-      name enum ["alice", 2]
-                          ^ Unexpected '2'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Unexpected '2'")
 }
 
 func Test_Constraint_Enum_CanHaveArgNamedEnum(t *testing.T) {

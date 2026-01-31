@@ -156,12 +156,6 @@ rad url:
         color color "o[a-z]"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L8:15
-
-          color color "o[a-z]"
-                ^^^^^
-                Invalid color value "licorice". Allowed: [black blue bold cyan green italic magenta orange pink plain red underline white yellow]
-`
-	// todo ^^ 'bold', 'italic', 'underline' are not colors and not supported for rad block color stmts
-	assertError(t, 1, expected)
+	// todo 'bold', 'italic', 'underline' are not colors and not supported for rad block color stmts
+	assertErrorContains(t, 1, "RAD20025", "Invalid color value", "licorice")
 }

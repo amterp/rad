@@ -32,7 +32,7 @@ type JsonPathSegmentIdx struct {
 func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
 	indexingNodes := rl.GetChildren(leftNode, rl.F_INDEXING)
 	if len(indexingNodes) != 0 {
-		i.errorf(leftNode, "Json paths must be defined to plain identifiers")
+		i.emitError(rl.ErrInvalidSyntax, leftNode, "Json paths must be defined to plain identifiers")
 	}
 	leftIdentifierNode := rl.GetChild(leftNode, rl.F_ROOT)
 

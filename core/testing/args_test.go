@@ -271,12 +271,7 @@ args:
 	intArg int = 1.2
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:16
-
-  	intArg int = 1.2
-                 ^^ Invalid argument declaration
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Invalid argument declaration")
 }
 
 func TestArgs_FullHelp(t *testing.T) {

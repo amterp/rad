@@ -38,13 +38,7 @@ a = 123
 print(reverse(a))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:15
-
-  print(reverse(a))
-                ^
-                Value '123' (int) is not compatible with expected type 'str|list'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '123' (int) is not compatible with expected type 'str|list'")
 }
 
 func Test_Func_Reverse_List_Basic(t *testing.T) {

@@ -19,12 +19,7 @@ func Test_ParseFloat_ErrorsOnAlphabetical(t *testing.T) {
 a = parse_float("asd")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  a = parse_float("asd")
-      ^^^^^^^^^^^^^^^^^^ parse_float() failed to parse "asd" (RAD20002)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20002", "parse_float() failed to parse")
 }
 
 func Test_ParseFloat_CanParseInt(t *testing.T) {

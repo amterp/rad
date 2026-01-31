@@ -73,12 +73,7 @@ print(rand_int(-10, 10))
 func Test_Random_RandErrorsIfArgs(t *testing.T) {
 	script := `rand(1)`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  rand(1)
-  ^^^^^^^ Expected at most 0 args, but was invoked with 1
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Expected at most 0 args, but was invoked with 1")
 }
 
 func Test_Random_RandIntErrorsIfNoArgs(t *testing.T) {
@@ -94,22 +89,12 @@ rand_int().print()`
 func Test_Random_SeedRandomErrorsIfNoArgs(t *testing.T) {
 	script := `seed_random()`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  seed_random()
-  ^^^^^^^^^^^^^ Missing required argument '_seed'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument '_seed'")
 }
 
 func Test_Random_ErrorsIfMinMaxSame(t *testing.T) {
 	script := `rand_int(2, 2)
 `
-	expected := `Error at L1:1
-
-  rand_int(2, 2)
-  ^^^^^^^^^^^^^^ min (2) must be less than max (2). (RAD20019)
-`
 	setupAndRunCode(t, script, "--color=never")
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20019", "min (2) must be less than max (2)")
 }

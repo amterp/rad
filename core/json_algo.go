@@ -2,6 +2,7 @@ package core
 
 import (
 	com "github.com/amterp/rad/core/common"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
 )
@@ -30,18 +31,18 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *TrieNode) Captu
 					captures = append(captures, t.traverse(nil, elem, child))
 				}
 			default:
-				t.i.errorf(t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
+				t.i.emitErrorf(rl.ErrTypeMismatch, t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		} else if child.idx != nil {
 			// array index lookup
 			switch coerced := data.(type) {
 			case []interface{}:
 				if int(*child.idx) >= len(coerced) {
-					t.i.errorf(t.radKeywordNode, "Index out of bounds at %s: %d", child.fullKey, *child.idx)
+					t.i.emitErrorf(rl.ErrIndexOutOfBounds, t.radKeywordNode, "Index out of bounds at %s: %d", child.fullKey, *child.idx)
 				}
 				captures = append(captures, t.traverse(nil, coerced[*child.idx], child))
 			default:
-				t.i.errorf(t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
+				t.i.emitErrorf(rl.ErrTypeMismatch, t.radKeywordNode, "Expected array at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		} else if child.key == WILDCARD {
 			// wildcard key match
@@ -59,11 +60,11 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *TrieNode) Captu
 				childData, ok := coerced[child.key]
 				if !ok {
 					// todo allow defaulting?
-					t.i.errorf(t.radKeywordNode, "Key not found in JSON: "+child.fullKey)
+					t.i.emitError(rl.ErrKeyNotFound, t.radKeywordNode, "Key not found in JSON: "+child.fullKey)
 				}
 				captures = append(captures, t.traverse(&child.key, childData, child))
 			default:
-				t.i.errorf(t.radKeywordNode, "Expected map at %s, got %s", child.fullKey, TypeAsString(data))
+				t.i.emitErrorf(rl.ErrTypeMismatch, t.radKeywordNode, "Expected map at %s, got %s", child.fullKey, TypeAsString(data))
 			}
 		}
 	}
@@ -76,7 +77,7 @@ func (t *Trie) traverse(dataKey *string, data interface{}, node *TrieNode) Captu
 	for _, field := range node.fields {
 		if node.key == WILDCARD {
 			if dataKey == nil {
-				t.i.errorf(t.radKeywordNode, "Expected data key at %s, got nil", node.fullKey)
+				t.i.emitErrorf(rl.ErrKeyNotFound, t.radKeywordNode, "Expected data key at %s, got nil", node.fullKey)
 			}
 			localCaptures[field.Name] = []interface{}{*dataKey}
 		} else {
@@ -130,8 +131,8 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) 
 	// check if overlapping columns. if so, error
 	for key := range capture1.captures {
 		if _, ok := capture2.captures[key]; ok {
-			t.i.errorf(
-				t.radKeywordNode,
+			t.i.emitErrorf(
+				rl.ErrGenericRuntime, t.radKeywordNode,
 				"Cannot merge captures: %s and %s",
 				capture1.node.fullKey,
 				capture2.node.fullKey,
@@ -171,6 +172,6 @@ func (t *Trie) mergeCapture(capture1 Capture, capture2 Capture, node *TrieNode) 
 	}
 
 	// if neither numRows is 1, error
-	t.i.errorf(t.radKeywordNode, "Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey)
+	t.i.emitErrorf(rl.ErrGenericRuntime, t.radKeywordNode, "Cannot merge captures: %s and %s", capture1.node.fullKey, capture2.node.fullKey)
 	panic(UNREACHABLE)
 }

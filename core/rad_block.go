@@ -58,7 +58,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 	case rl.KEYWORD_DISPLAY:
 		blockType = DisplayBlock
 	default:
-		i.errorf(radTypeNode, "Bug! Unknown rad block type %q", typeStr)
+		i.emitErrorf(rl.ErrInternalBug, radTypeNode, "Bug: Unknown rad block type %q", typeStr)
 	}
 
 	ri := radInvocation{
@@ -84,7 +84,8 @@ func (r *radInvocation) evalRad(node *ts.Node) {
 	if !IsTest {
 		defer func() {
 			if re := recover(); re != nil {
-				r.i.errorDetailsf(node, fmt.Sprintf("%s\n%s", re, debug.Stack()), "Bug! Panic'd here")
+				r.i.emitErrorWithHint(rl.ErrInternalBug, node, "Bug: Panic'd here",
+					fmt.Sprintf("%s\n%s", re, debug.Stack()))
 			}
 		}()
 	}
@@ -101,7 +102,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 		}
 	case rl.K_RAD_SORT_STMT:
 		if r.generalSort != nil || len(r.colWiseSorting) > 0 {
-			r.i.errorf(node, "Only one sort statement allowed per rad block")
+			r.i.emitError(rl.ErrUnsupportedOperation, node, "Only one sort statement allowed per rad block")
 		}
 
 		specifierNodes := rl.GetChildren(node, rl.F_SPECIFIER)
@@ -139,7 +140,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			case rl.K_DESC:
 				dir = Desc
 			default:
-				r.i.errorf(secondNode, "Bug! Unknown direction %q", secondNode.Kind())
+				r.i.emitErrorf(rl.ErrInternalBug, secondNode, "Bug: Unknown direction %q", secondNode.Kind())
 			}
 		}
 
@@ -169,7 +170,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 				regexStr := r.i.eval(regexExprNode).Val.RequireStr(r.i, regexExprNode)
 				regex, err := regexp.Compile(regexStr.Plain())
 				if err != nil {
-					r.i.errorf(regexExprNode, fmt.Sprintf("Invalid regex pattern: %s", err))
+					r.i.emitErrorf(rl.ErrInvalidRegex, regexExprNode, "Invalid regex pattern: %s", err)
 				}
 				for _, field := range fields {
 					mods := r.loadFieldMods(field)
@@ -236,7 +237,7 @@ type radField struct {
 
 func (r *radInvocation) execute() {
 	if len(r.fields) == 0 {
-		r.i.errorf(r.radKeywordNode, "No fields specified in rad block")
+		r.i.emitError(rl.ErrInvalidSyntax, r.radKeywordNode, "No fields specified in rad block")
 	}
 
 	radFields := lo.Map(r.fields, func(fieldIdentifierNode *ts.Node, _ int) radField {
@@ -248,20 +249,20 @@ func (r *radInvocation) execute() {
 	fieldNames := lo.Map(radFields, func(f radField, _ int) string { return f.name })
 	for field, mods := range r.colToMods {
 		if !lo.Contains(fieldNames, field) {
-			r.i.errorf(mods.identifierNode, "Cannot modify undefined field %q", field)
+			r.i.emitErrorf(rl.ErrUndefinedVariable, mods.identifierNode, "Cannot modify undefined field %q", field)
 		}
 	}
 
 	data, err := r.resolveData()
 	if err != nil {
-		r.i.errorf(r.srcExprNode, fmt.Sprintf("Error resolving data: %v", err))
+		r.i.emitErrorf(rl.ErrGenericRuntime, r.srcExprNode, "Error resolving data: %v", err)
 	}
 
 	if data != nil {
 		jsonFields := lo.Map(radFields, func(field radField, _ int) JsonFieldVar {
 			fieldVar, ok := r.i.env.GetJsonFieldVar(field.name)
 			if !ok {
-				r.i.errorf(field.node, "Undefined JSON field %q", field.name)
+				r.i.emitErrorf(rl.ErrUndefinedVariable, field.node, "Undefined JSON field %q", field.name)
 			}
 			return *fieldVar
 		})
@@ -332,7 +333,7 @@ func (r *radInvocation) execute() {
 		}
 		fieldVals, ok := r.i.env.GetVar(field.name)
 		if !ok {
-			r.i.errorf(field.node, "Values for field %q not found in environment", field.name)
+			r.i.emitErrorf(rl.ErrUndefinedVariable, field.node, "Values for field %q not found in environment", field.name)
 		}
 		columnValues := fieldVals.RequireList(r.i, field.node)
 		longestColumnLen = com.IntMax(longestColumnLen, columnValues.LenInt())
@@ -489,8 +490,8 @@ func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int6
 			if expectedLen == -1 {
 				expectedLen = actualLen
 			} else if actualLen != expectedLen {
-				r.i.errorf(field.node,
-					"Bug! Field %q has %d rows but expected %d. All fields must have identical row counts.",
+				r.i.emitErrorf(rl.ErrInternalBug, field.node,
+					"Bug: Field %q has %d rows but expected %d. All fields must have identical row counts.",
 					field.name, actualLen, expectedLen)
 			}
 		}
@@ -498,8 +499,8 @@ func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int6
 		// ensure no indices to keep are out of bounds
 		for _, idx := range indicesToKeep {
 			if idx < 0 || idx >= int64(expectedLen) {
-				r.i.errorf(radFields[0].node,
-					"Bug! Filter index %d is out of bounds for %d rows", idx, expectedLen)
+				r.i.emitErrorf(rl.ErrInternalBug, radFields[0].node,
+					"Bug: Filter index %d is out of bounds for %d rows", idx, expectedLen)
 			}
 		}
 	}
@@ -604,11 +605,11 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 		}).ForMap(func(val RadValue, _ *RadMap) {
 			data = RadToJsonType(val)
 		}).ForDefault(func(val RadValue) {
-			r.i.errorf(r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
+			r.i.emitErrorf(rl.ErrTypeMismatch, r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
 		}).Visit(src)
 		return
 	} else {
-		r.i.errorf(r.srcExprNode, "Bug! Unknown rad block type %q", r.blockType)
+		r.i.emitErrorf(rl.ErrInternalBug, r.srcExprNode, "Bug: Unknown rad block type %q", r.blockType)
 		panic(UNREACHABLE)
 	}
 }
@@ -622,15 +623,15 @@ func (r *radInvocation) resolveLambdaForModifier(lambdaNode *ts.Node, modifierNa
 		identifier := r.i.GetSrcForNode(lambdaNode)
 		val, ok := r.i.env.GetVar(identifier)
 		if !ok {
-			r.i.errorf(lambdaNode, "Undefined lambda %q", identifier)
+			r.i.emitErrorf(rl.ErrUndefinedVariable, lambdaNode, "Undefined lambda %q", identifier)
 		}
 		lambda, ok = val.TryGetFn()
 		if !ok {
-			r.i.errorf(lambdaNode, "Expected function for %s modifier, got '%s'",
+			r.i.emitErrorf(rl.ErrTypeMismatch, lambdaNode, "Expected function for %s modifier, got '%s'",
 				modifierName, TypeAsString(val))
 		}
 	} else {
-		r.i.errorf(lambdaNode, "Bug! Unknown lambda type %q for %s modifier",
+		r.i.emitErrorf(rl.ErrInternalBug, lambdaNode, "Bug: Unknown lambda type %q for %s modifier",
 			lambdaNode.Kind(), modifierName)
 	}
 
@@ -640,7 +641,7 @@ func (r *radInvocation) resolveLambdaForModifier(lambdaNode *ts.Node, modifierNa
 func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, colWiseSort []ColumnSort) {
 	if generalSort != nil {
 		if len(colWiseSort) > 0 {
-			i.errorf(generalSort.Node, "Bug! General and column-wise sort expected to be mutually exclusive")
+			i.emitError(rl.ErrInternalBug, generalSort.Node, "Bug: General and column-wise sort expected to be mutually exclusive")
 		}
 		for _, field := range fields {
 			colWiseSort = append(colWiseSort, ColumnSort{

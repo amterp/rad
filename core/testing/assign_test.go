@@ -41,12 +41,7 @@ a[0] = json.id
 `
 
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  a[0] = json.id
-  ^^^^ Json paths must be defined to plain identifiers
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD10001", "Json paths must be defined to plain identifiers")
 }
 
 func Test_MultiAssign_1(t *testing.T) {

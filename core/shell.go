@@ -44,7 +44,7 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 	leftNodes = append(leftNode, leftNodes...)
 
 	if len(leftNodes) > 3 {
-		i.errorf(shellStmtNode, "At most 3 assignments allowed with shell commands")
+		i.emitError(rl.ErrInvalidSyntax, shellStmtNode, "At most 3 assignments allowed with shell commands")
 	}
 
 	// Determine if using named assignment (all vars are code/stdout/stderr)
@@ -271,7 +271,7 @@ func resolveCmd(i *Interpreter, shellNode *ts.Node, cmdStr string) *exec.Cmd {
 
 	// this is also where we could detect and allow windows commands, if we wanted.
 
-	i.errorf(shellNode, "Cannot run shell cmd as no shell found. Please set the SHELL environment variable.")
+	i.emitError(rl.ErrGenericRuntime, shellNode, "Cannot run shell cmd as no shell found. Please set the SHELL environment variable")
 	panic(UNREACHABLE)
 }
 

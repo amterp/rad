@@ -64,12 +64,7 @@ rad url:
         map fn(x) truncate(x, 5)
 `
 	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	expected := `Error at L6:5
-
-      does_not_exist:
-      ^^^^^^^^^^^^^^ Cannot modify undefined field "does_not_exist"
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Cannot modify undefined field", "does_not_exist")
 }
 
 func TestTruncateTwoFieldsAtOnce(t *testing.T) {

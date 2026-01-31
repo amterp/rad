@@ -75,12 +75,7 @@ a = {,}
 print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:6
-
-  a = {,}
-       ^ Unexpected ','
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Unexpected ','")
 }
 
 func Test_List_Parse(t *testing.T) {

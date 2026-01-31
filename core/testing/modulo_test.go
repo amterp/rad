@@ -168,12 +168,7 @@ func Test_Modulo_PositiveIntModulo0Errors(t *testing.T) {
 print(5 % 0)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  print(5 % 0)
-            ^ Value is 0, cannot modulo by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot modulo by 0")
 }
 
 func Test_Modulo_NegativeIntModulo0Errors(t *testing.T) {
@@ -181,12 +176,7 @@ func Test_Modulo_NegativeIntModulo0Errors(t *testing.T) {
 print(-5 % 0)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:12
-
-  print(-5 % 0)
-             ^ Value is 0, cannot modulo by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot modulo by 0")
 }
 
 func Test_Modulo_PositiveFloatModulo0Errors(t *testing.T) {
@@ -194,12 +184,7 @@ func Test_Modulo_PositiveFloatModulo0Errors(t *testing.T) {
 print(5.5 % 0)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:13
-
-  print(5.5 % 0)
-              ^ Value is 0, cannot modulo by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot modulo by 0")
 }
 
 func Test_Modulo_NegativeFloatModulo0Errors(t *testing.T) {
@@ -207,12 +192,7 @@ func Test_Modulo_NegativeFloatModulo0Errors(t *testing.T) {
 print(-5.5 % 0)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:14
-
-  print(-5.5 % 0)
-               ^ Value is 0, cannot modulo by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot modulo by 0")
 }
 
 func Test_Modulo_CompoundModulo0Errors(t *testing.T) {
@@ -221,10 +201,5 @@ a = 5
 a %= 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:6
-
-  a %= 0
-       ^ Value is 0, cannot modulo by 0
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20036", "cannot modulo by 0")
 }

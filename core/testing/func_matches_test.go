@@ -130,13 +130,7 @@ result = matches("test", "+")
 print("Should not reach this")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:10
-
-  result = matches("test", "+")
-           ^^^^^^^^^^^^^^^^^^^^
-           Error compiling regex pattern: error parsing regexp: missing argument to repetition operator: ` + "`+`" + ` (RAD20024)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20024", "Error compiling regex pattern", "missing argument to repetition operator")
 }
 
 func Test_Matches_InvalidRegex_UnclosedGroup(t *testing.T) {
@@ -145,13 +139,7 @@ result = matches("test", "(abc")
 print("Should not reach this")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:10
-
-  result = matches("test", "(abc")
-           ^^^^^^^^^^^^^^^^^^^^^^^
-           Error compiling regex pattern: error parsing regexp: missing closing ): ` + "`(abc`" + ` (RAD20024)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20024", "Error compiling regex pattern", "missing closing )")
 }
 
 func Test_Matches_ReturnsBool(t *testing.T) {

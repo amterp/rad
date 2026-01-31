@@ -141,13 +141,7 @@ func Test_JoinedLabelNotExactMatch(t *testing.T) {
 	// This filter won't fuzzy-match individual keys,
 	// so it should error with 0 matches
 	setupAndRunCode(t, websitesScript, "--color=never", "gh hub g")
-	expected := `Error at L5:14
-
-  url, title = pick_from_resource("./resources/websites.json", filter)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-               Filtered 2 options to 0 with filters: [gh hub g]
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20000", "Filtered 2 options to 0 with filters: [gh hub g]")
 }
 
 func Test_Pick_PrioExact_OptIn(t *testing.T) {

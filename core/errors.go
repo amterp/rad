@@ -2,12 +2,12 @@ package core
 
 import (
 	"github.com/amterp/rad/rts/rl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 func ErrIndexOutOfBounds(i *Interpreter, node *ts.Node, idx int64, length int64) {
-	errVal := newRadValue(i, node, NewErrorStrf("Index out of bounds: %d (length %d)", idx, length).SetCode(rl.ErrIndexOutOfBounds))
-	i.NewRadPanic(node, errVal).Panic()
+	i.emitErrorf(rl.ErrIndexOutOfBounds, node, "Index out of bounds: %d (length %d)", idx, length)
 }
 
 type RadPanic struct {

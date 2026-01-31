@@ -65,13 +65,7 @@ func Test_Func_gen_fid_ErrorsOnEmptyAlphabet(t *testing.T) {
 gen_fid(alphabet="")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  gen_fid(alphabet="")
-  ^^^^^^^^^^^^^^^^^^^^
-  Error creating FID generator: alphabet must contain at least 2 characters (RAD20020)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20020", "alphabet must contain at least 2 characters")
 }
 
 func Test_Func_gen_fid_ErrorsOnNegNumRandomChars(t *testing.T) {
@@ -79,11 +73,5 @@ func Test_Func_gen_fid_ErrorsOnNegNumRandomChars(t *testing.T) {
 gen_fid(num_random_chars=-1)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  gen_fid(num_random_chars=-1)
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  Number of random chars must be non-negative, got -1 (RAD20017)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20017", "Number of random chars must be non-negative, got -1")
 }

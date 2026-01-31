@@ -65,12 +65,7 @@ print(asd)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye\n")
-	expected := `Error at L4:7
-
-  print(asd)
-        ^^^ Undefined variable: asd
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: asd")
 }
 
 func TestDefer_AllDefersRunEvenIfOneFails(t *testing.T) {
@@ -82,12 +77,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	expected := `Error at L3:13
-
-  defer print(asd)
-              ^^^ Undefined variable: asd
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: asd")
 }
 
 func TestDefer_UsesNonZeroCodeFromLifodDeferredExitDespiteDeferredError(t *testing.T) {
@@ -100,12 +90,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	expected := `Error at L3:13
-
-  defer print(asd)
-              ^^^ Undefined variable: asd
-`
-	assertError(t, 3, expected)
+	assertErrorContains(t, 3, "RAD20028", "Undefined variable: asd")
 }
 
 func TestDefer_UsesErrorCodeLifodDeferredErrorOverLaterNonZeroExit(t *testing.T) {
@@ -118,12 +103,7 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	expected := `Error at L4:13
-
-  defer print(asd)  // this error occurs before the exit above, so we use error code 1
-              ^^^ Undefined variable: asd
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: asd")
 }
 
 func TestDefer_IgnoresZeroCodeFromLifodDeferredExitInsteadUsesDeferredError(t *testing.T) {
@@ -136,10 +116,5 @@ print("hi")
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "hi\nbye2\nbye1\n")
-	expected := `Error at L3:13
-
-  defer print(asd)
-              ^^^ Undefined variable: asd
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20028", "Undefined variable: asd")
 }

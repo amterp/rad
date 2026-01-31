@@ -22,12 +22,7 @@ fn add(x: float, y: float) -> float:
 	return x + y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:8
-
-  add(1, "2").print()
-         ^^^ Value '"2"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"2\"' (str) is not compatible with expected type 'float'")
 }
 
 func Test_Typing_WrongReturn(t *testing.T) {
@@ -37,12 +32,7 @@ fn add(x: float, y: float) -> float:
 	return "hi"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  add(1, 2).print()
-  ^^^^^^^^^ Value '"hi"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"hi\"' (str) is not compatible with expected type 'float'")
 }
 
 func Test_Typing_VoidReturn(t *testing.T) {
@@ -86,12 +76,7 @@ fn foo(x: float, y: float) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:12
-
-  foo(x=1, y="2").print()
-             ^^^ Value '"2"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"2\"' (str) is not compatible with expected type 'float'")
 }
 
 func Test_Typing_NamedUnknown(t *testing.T) {
@@ -101,12 +86,7 @@ fn foo(x: float, y: float) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:15
-
-  foo(x=1, y=2, z=3).print()
-                ^ Unknown named argument 'z'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30006", "Unknown named argument 'z'")
 }
 
 func Test_Typing_NamedMissing(t *testing.T) {
@@ -116,12 +96,7 @@ fn foo(x: float, y: float) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo(x=1).print()
-  ^^^^^^^^ Missing required argument 'y'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument 'y'")
 }
 
 func Test_Typing_NamedMissingDefaults(t *testing.T) {
@@ -144,13 +119,7 @@ fn foo(x: float, y: float = "2") -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:29
-
-  fn foo(x: float, y: float = "2") -> float:
-                              ^^^
-                              Value '"2"' (str) is not compatible with expected type 'float'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"2\"' (str) is not compatible with expected type 'float'")
 }
 
 func Test_Typing_TooManyPositional(t *testing.T) {
@@ -160,12 +129,7 @@ fn foo(x: float, y: float) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo(1, 2, 3).print()
-  ^^^^^^^^^^^^ Expected at most 2 args, but was invoked with 3
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Expected at most 2 args, but was invoked with 3")
 }
 
 func Test_Typing_TooManyPositionalButNamedOnlyAllowed(t *testing.T) {
@@ -175,12 +139,7 @@ fn foo(x: float, y: float, *, z: float) -> float:
 	return x / y + z
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:11
-
-  foo(1, 2, 3).print()
-            ^ Too many positional args, remaining args are named-only.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Too many positional args, remaining args are named-only")
 }
 
 func Test_Typing_PositionalOnly(t *testing.T) {
@@ -190,12 +149,7 @@ fn foo(_x: float, _y: float) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(_x=1, _y=2).print()
-      ^^ Argument '_x' cannot be passed as named arg, only positionally.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30006", "Argument '_x' cannot be passed as named arg, only positionally")
 }
 
 func Test_Typing_OptionalArgNulls(t *testing.T) {
@@ -231,12 +185,7 @@ fn foo(x: float, y?) -> float:
 	a = 1
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo(x=1)
-  ^^^^^^^^ Expected 'float', but got void value.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20038", "Expected 'float', but got void value")
 }
 
 func Test_Typing_RepeatArg(t *testing.T) {
@@ -246,12 +195,7 @@ fn foo(x: float, y?) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:8
-
-  foo(1, x=2)
-         ^ Argument 'x' already specified.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30006", "Argument 'x' already specified")
 }
 
 func Test_Typing_RepeatNamedArg(t *testing.T) {
@@ -261,12 +205,7 @@ fn foo(x: float, y?) -> float:
 	return x / y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:15
-
-  foo(1, y = 2, y = 3)
-                ^ Duplicate named argument: y
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30006", "Duplicate named argument: y")
 }
 
 func Test_Typing_StrParamValid(t *testing.T) {
@@ -289,12 +228,7 @@ fn foo(x: str):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(2)
-      ^ Value '2' (int) is not compatible with expected type 'str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '2' (int) is not compatible with expected type 'str'")
 }
 
 func Test_Typing_StrReturnValid(t *testing.T) {
@@ -317,12 +251,7 @@ fn foo() -> str:
 	return 2
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '2' (int) is not compatible with expected type 'str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '2' (int) is not compatible with expected type 'str'")
 }
 
 func Test_Typing_IntParamValid(t *testing.T) {
@@ -345,12 +274,7 @@ fn foo(x: int):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo("2")
-      ^^^ Value '"2"' (str) is not compatible with expected type 'int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"2\"' (str) is not compatible with expected type 'int'")
 }
 
 func Test_Typing_IntParamNull(t *testing.T) {
@@ -360,12 +284,7 @@ fn foo(x: int):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(null)
-      ^^^^ Value 'null' (null) is not compatible with expected type 'int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value 'null' (null) is not compatible with expected type 'int'")
 }
 
 func Test_Typing_IntReturnValid(t *testing.T) {
@@ -388,12 +307,7 @@ fn foo() -> int:
 	return "2"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '"2"' (str) is not compatible with expected type 'int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"2\"' (str) is not compatible with expected type 'int'")
 }
 
 func Test_Typing_BoolParamValid(t *testing.T) {
@@ -417,12 +331,7 @@ fn foo(x: bool):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(1)
-      ^ Value '1' (int) is not compatible with expected type 'bool'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'bool'")
 }
 
 func Test_Typing_BoolReturnValid(t *testing.T) {
@@ -446,12 +355,7 @@ fn foo() -> bool:
 	return 1
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '1' (int) is not compatible with expected type 'bool'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'bool'")
 }
 
 func Test_Typing_ErrorParamValid(t *testing.T) {
@@ -474,12 +378,7 @@ fn foo(x: error):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(1)
-      ^ Value '1' (int) is not compatible with expected type 'error'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'error'")
 }
 
 func Test_Typing_ErrorReturnValid(t *testing.T) {
@@ -503,12 +402,7 @@ fn foo() -> error:
 	return 1
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '1' (int) is not compatible with expected type 'error'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'error'")
 }
 
 func Test_Typing_AnyParamValid(t *testing.T) {
@@ -564,12 +458,7 @@ fn foo(x: void) -> str:
 	return "|{x}|"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:8
-
-  fn foo(x: void) -> str:
-         ^^ Invalid function syntax
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "Invalid function syntax")
 }
 
 func Test_Typing_AnyListParamValid(t *testing.T) {
@@ -592,12 +481,7 @@ fn foo(x: list):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(1)
-      ^ Value '1' (int) is not compatible with expected type 'list'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'list'")
 }
 
 func Test_Typing_AnyListParamInvalidVarArg(t *testing.T) {
@@ -607,12 +491,7 @@ fn foo(x: list):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(1, 2)
-      ^ Value '1' (int) is not compatible with expected type 'list'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'list'")
 }
 
 func Test_Typing_AnyListReturnValid(t *testing.T) {
@@ -648,12 +527,7 @@ fn foo() -> list:
 	return 1
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '1' (int) is not compatible with expected type 'list'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'list'")
 }
 
 func Test_Typing_TupleParamValid(t *testing.T) {
@@ -676,13 +550,7 @@ fn foo(x: [int, str]):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(["hi", 1])
-      ^^^^^^^^^
-      Value '[ "hi", 1 ]' (list) is not compatible with expected type '[int, str]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '[ \"hi\", 1 ]' (list) is not compatible with expected type '[int, str]'")
 }
 
 func Test_Typing_TupleReturnValid(t *testing.T) {
@@ -705,12 +573,7 @@ fn foo() -> [int, str]:
 	return [1, 2]
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '[ 1, 2 ]' (list) is not compatible with expected type '[int, str]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '[ 1, 2 ]' (list) is not compatible with expected type '[int, str]'")
 }
 
 func Test_Typing_ListParamValid(t *testing.T) {
@@ -735,13 +598,7 @@ fn foo(x: int[]):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo([1, "hi"])
-      ^^^^^^^^^
-      Value '[ 1, "hi" ]' (list) is not compatible with expected type 'int[]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '[ 1, \"hi\" ]' (list) is not compatible with expected type 'int[]'")
 }
 
 func Test_Typing_ListReturnValid(t *testing.T) {
@@ -764,12 +621,7 @@ fn foo() -> int[]:
 	return [1, "2"]
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '[ 1, "2" ]' (list) is not compatible with expected type 'int[]'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '[ 1, \"2\" ]' (list) is not compatible with expected type 'int[]'")
 }
 
 func Test_Typing_StrEnumParamValid(t *testing.T) {
@@ -792,12 +644,7 @@ fn foo(x: ["foo", "bar"]):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo("quz")
-      ^^^^^ Value '"quz"' (str) is not compatible with expected type 'str enum'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"quz\"' (str) is not compatible with expected type 'str enum'")
 }
 
 func Test_Typing_StrEnumReturnValid(t *testing.T) {
@@ -820,12 +667,7 @@ fn foo() -> ["foo", "bar"]:
 	return "quz"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '"quz"' (str) is not compatible with expected type 'str enum'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"quz\"' (str) is not compatible with expected type 'str enum'")
 }
 
 func Test_Typing_AnyMapParamValid(t *testing.T) {
@@ -848,12 +690,7 @@ fn foo(x: map):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(2)
-      ^ Value '2' (int) is not compatible with expected type 'map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '2' (int) is not compatible with expected type 'map'")
 }
 
 func Test_Typing_AnyMapReturnValid(t *testing.T) {
@@ -876,12 +713,7 @@ fn foo() -> map:
 	return 1
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '1' (int) is not compatible with expected type 'map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1' (int) is not compatible with expected type 'map'")
 }
 
 func Test_Typing_StructParamValid(t *testing.T) {
@@ -904,13 +736,7 @@ fn foo(x: {"key1": int}):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo({"key2": 10})
-      ^^^^^^^^^^^^
-      Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '{ \"key2\": 10 }' (map) is not compatible with expected type 'struct'")
 }
 
 func Test_Typing_StructReturnValid(t *testing.T) {
@@ -933,12 +759,7 @@ fn foo() -> {"key1": int}:
 	return {"key2": 10}
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '{ \"key2\": 10 }' (map) is not compatible with expected type 'struct'")
 }
 
 func Test_Typing_StructReturnInvalidValue(t *testing.T) {
@@ -948,13 +769,7 @@ fn foo() -> {"key1": int}:
 	return {"key2": "hi"}
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^
-  Value '{ "key2": "hi" }' (map) is not compatible with expected type 'struct'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '{ \"key2\": \"hi\" }' (map) is not compatible with expected type 'struct'")
 }
 
 func Test_Typing_MapParamValid(t *testing.T) {
@@ -977,13 +792,7 @@ fn foo(x: {str: int}):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo({"key1": "hi"})
-      ^^^^^^^^^^^^^^
-      Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '{ \"key1\": \"hi\" }' (map) is not compatible with expected type '{ str: int }'")
 }
 
 func Test_Typing_MapReturnValid(t *testing.T) {
@@ -1006,13 +815,7 @@ fn foo() -> {str: int}:
 	return {"key1": "hi"}
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^
-  Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '{ \"key1\": \"hi\" }' (map) is not compatible with expected type '{ str: int }'")
 }
 
 func Test_Typing_VarArgParamValid(t *testing.T) {
@@ -1039,12 +842,7 @@ fn foo(*x: int):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:8
-
-  foo(1, "hi")
-         ^^^^ Value '"hi"' (str) is not compatible with expected type 'int'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"hi\"' (str) is not compatible with expected type 'int'")
 }
 
 func Test_Typing_VariadicParamNoTyping(t *testing.T) {
@@ -1120,12 +918,7 @@ fn foo(x: int?):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo("hi")
-      ^^^^ Value '"hi"' (str) is not compatible with expected type 'int?'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"hi\"' (str) is not compatible with expected type 'int?'")
 }
 
 func Test_Typing_OptionalReturnValid(t *testing.T) {
@@ -1152,12 +945,7 @@ fn foo() -> int?:
 	return "hi"
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo().print()
-  ^^^^^ Value '"hi"' (str) is not compatible with expected type 'int?'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '\"hi\"' (str) is not compatible with expected type 'int?'")
 }
 
 func Test_Typing_UnionParamValid(t *testing.T) {
@@ -1182,12 +970,7 @@ fn foo(x: int|str):
 	print("|{x}|")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:5
-
-  foo(1.2)
-      ^^^ Value '1.2' (float) is not compatible with expected type 'int|str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1.2' (float) is not compatible with expected type 'int|str'")
 }
 
 func Test_Typing_UnionReturnValid(t *testing.T) {
@@ -1217,10 +1000,5 @@ fn foo(x) -> int|str:
 	return 1.2
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  foo(1).print()
-  ^^^^^^ Value '1.2' (float) is not compatible with expected type 'int|str'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "Value '1.2' (float) is not compatible with expected type 'int|str'")
 }

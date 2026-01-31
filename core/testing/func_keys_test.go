@@ -21,32 +21,17 @@ ALICE
 func TestKeys_ErrorsIfGivenString(t *testing.T) {
 	script := `keys("foo")`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:6
-
-  keys("foo")
-       ^^^^^ Value '"foo"' (str) is not compatible with expected type 'map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30001", "not compatible with expected type 'map'")
 }
 
 func TestKeys_ErrorsIfGivenNoArgs(t *testing.T) {
 	script := `keys()`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  keys()
-  ^^^^^^ Missing required argument '_map'
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Missing required argument '_map'")
 }
 
 func TestKeys_ErrorsIfGivenMoreThanOneArg(t *testing.T) {
 	script := `keys({}, {})`
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L1:1
-
-  keys({}, {})
-  ^^^^^^^^^^^^ Expected at most 1 args, but was invoked with 2
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD30007", "Expected at most 1 args, but was invoked with 2")
 }

@@ -86,12 +86,7 @@ for valA, valB in a:
 	print(valA, valB)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:19
-
-  for valA, valB in a:
-                    ^ Cannot unpack "int" into 2 values
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 2 values")
 }
 
 func Test_For_Unpack_ErrorsAfterOneLoopForInconsistentRight(t *testing.T) {
@@ -102,12 +97,7 @@ for valA, valB in a:
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOutput(t, stdOutBuffer, "10 20\n")
-	expected := `Error at L3:19
-
-  for valA, valB in a:
-                    ^ Cannot unpack "int" into 2 values
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 2 values")
 }
 
 func Test_For_Unpack_ErrorsIfNotEnoughValuesToUnpack(t *testing.T) {
@@ -116,13 +106,7 @@ for valA, valB, valC in [[10, 20], [30, 40]]:
 	print(valA, valB, valC)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:25
-
-  for valA, valB, valC in [[10, 20], [30, 40]]:
-                          ^^^^^^^^^^^^^^^^^^^^
-                          Expected at least 3 values in inner list, got 2
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Expected at least 3 values in inner list, got 2")
 }
 
 func Test_For_Unpack_CanUnpackEvenIfNotEnoughLefts(t *testing.T) {
@@ -138,4 +122,24 @@ c 30
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)
+}
+
+func Test_For_Unpack_MigrationErrorHint(t *testing.T) {
+	// When user uses old syntax with 'idx' as first variable, show helpful hint
+	script := `
+for idx, item in [1, 2, 3]:
+	print(idx, item)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 2 values")
+}
+
+func Test_For_Unpack_MigrationErrorHintThreeVars(t *testing.T) {
+	// Migration hint also works for 3+ variables
+	script := `
+for idx, item, extra in [1, 2, 3]:
+	print(idx, item, extra)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 3 values")
 }

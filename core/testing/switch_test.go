@@ -67,12 +67,7 @@ switch name:
 	case "charlie" -> print("CHARLIE")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:8
-
-  switch name:
-         ^^^^ No matching case found for switch
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20034", "No matching case found for switch")
 }
 
 func Test_Switch_MultipleMatchesErrors(t *testing.T) {
@@ -84,12 +79,7 @@ switch name:
 	case "charlie", name -> print("CHARLIE")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:8
-
-  switch name:
-         ^^^^ Multiple matching cases found for switch
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20035", "Multiple matching cases found for switch")
 }
 
 func Test_Switch_BasicDefaultAssign(t *testing.T) {

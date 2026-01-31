@@ -21,13 +21,7 @@ func Test_Stash_GetStashDirErrorsIfNoStashId(t *testing.T) {
 get_stash_dir()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:1
-
-  get_stash_dir()
-  ^^^^^^^^^^^^^^^
-  Script ID is not set. Set the 'stash_id' macro in the file header. (RAD20022)
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20022", "Script ID is not set. Set the 'stash_id' macro in the file header.")
 }
 
 func Test_Stash_GetStashDir(t *testing.T) {

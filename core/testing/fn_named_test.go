@@ -46,12 +46,7 @@ if true:
 		return x + y
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:8
-
-  	print(add(4, 5))
-         ^^^ Cannot invoke unknown function: add
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD40003", "Cannot invoke unknown function: add")
 }
 
 func Test_Fn_CanDefineNewFunctionInBlockAndDoesNotFallOut(t *testing.T) {

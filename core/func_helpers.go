@@ -63,7 +63,7 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 
 		_, exist := namedArgs[argName]
 		if exist {
-			i.errorf(namedArgNameNode, "Duplicate named argument: %s", argName)
+			i.emitErrorf(rl.ErrInvalidArgType, namedArgNameNode, "Duplicate named argument: %s", argName)
 		}
 
 		namedArgs[argName] = namedArg{
@@ -77,19 +77,16 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 	val, exist := i.env.GetVar(funcName)
 	if !exist {
 		if funcName == "get_default" {
-			i.errorf(funcNameNode, "Cannot invoke unknown function: %s\n\n"+
-				"Note: get_default was removed. Use the ?? operator instead:\n"+
-				"  Old: get_default(map, \"key\", default)\n"+
-				"  New: map[\"key\"] ?? default\n\n"+
-				"See: https://amterp.github.io/rad/migrations/v0.8/",
-				funcName)
+			i.emitErrorWithHint(rl.ErrUnknownFunction, funcNameNode,
+				"Cannot invoke unknown function: get_default",
+				"get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/")
 		}
-		i.errorf(funcNameNode, "Cannot invoke unknown function: %s", funcName)
+		i.emitErrorf(rl.ErrUnknownFunction, funcNameNode, "Cannot invoke unknown function: %s", funcName)
 	}
 
 	fn, ok := val.TryGetFn()
 	if !ok {
-		i.errorf(funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
+		i.emitErrorf(rl.ErrTypeMismatch, funcNameNode, "Cannot invoke '%s' as a function: it is a %s", funcName, val.Type().AsString())
 	}
 
 	out := fn.Execute(NewFnInvocation(i, callNode, funcName, args, namedArgs, fn.IsBuiltIn()))

@@ -3,6 +3,8 @@ package core
 import (
 	"sort"
 
+	"github.com/amterp/rad/rts/rl"
+
 	ts "github.com/tree-sitter/go-tree-sitter"
 
 	"github.com/amterp/color"
@@ -78,7 +80,7 @@ func TryColorFromString(str string) (RadTextAttr, bool) {
 func AttrFromString(i *Interpreter, node *ts.Node, str string) RadTextAttr {
 	clr, ok := TryColorFromString(str)
 	if !ok {
-		i.errorf(node, "Invalid color value %q. Allowed: %s", str, ATTR_STRINGS)
+		i.emitErrorf(rl.ErrColorizeValNotInEnum, node, "Invalid color value %q. Allowed: %s", str, ATTR_STRINGS)
 	}
 	return clr
 }

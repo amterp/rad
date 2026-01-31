@@ -159,11 +159,5 @@ display:
         filter fn(v) v % 2 == 0
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L5:21
-
-      fields values1, values2
-                      ^^^^^^^
-                      Bug! Field "values2" has 3 rows but expected 4. All fields must have identical row counts.
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20042", "values2", "3 rows but expected 4")
 }

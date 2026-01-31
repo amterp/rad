@@ -46,13 +46,10 @@ fn test(x: int = 1e-5):
 test()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:18
-
-  fn test(x: int = 1e-5):
-                   ^^^^
-                   Scientific notation value does not evaluate to a whole number
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1,
+		"fn test(x: int = 1e-5):",
+		"Scientific notation value does not evaluate to a whole number",
+	)
 }
 
 func Test_FuncParam_ScientificNotation_Int_Invalid_1_25e1(t *testing.T) {
@@ -63,13 +60,10 @@ fn test(x: int = 1.25e1):
 test()
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:18
-
-  fn test(x: int = 1.25e1):
-                   ^^^^^^
-                   Scientific notation value does not evaluate to a whole number
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1,
+		"fn test(x: int = 1.25e1):",
+		"Scientific notation value does not evaluate to a whole number",
+	)
 }
 
 func Test_FuncParam_ScientificNotation_Float_Valid_1e6(t *testing.T) {
@@ -112,11 +106,8 @@ f = fn(x: int = 1e-5) x * 2
 print("{f()}")
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:17
-
-  f = fn(x: int = 1e-5) x * 2
-                  ^^^^
-                  Scientific notation value does not evaluate to a whole number
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1,
+		"f = fn(x: int = 1e-5) x * 2",
+		"Scientific notation value does not evaluate to a whole number",
+	)
 }
