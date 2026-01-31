@@ -1,0 +1,12 @@
+x = [1, 2, 3]
+print(x[10])
+### EXPECTED ###
+error[RAD20029]: Index out of bounds: 10 (length 3)
+  --> <script>:2:9
+  |
+1 | x = [1, 2, 3]
+2 | print(x[10])
+  |         ^^
+  |
+   = info: rad explain RAD20029
+

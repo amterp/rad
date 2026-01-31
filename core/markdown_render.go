@@ -9,9 +9,9 @@ import (
 
 // Color scheme: "Sunset Terminal" — matching the docs website theme
 var (
-	colorCoral = com.NewRgb(232, 93, 76)   // H1 headers — primary brand color
-	colorAmber = com.NewRgb(244, 162, 97)  // H2+ headers — warning/accent
-	colorTeal  = com.NewRgb(45, 212, 191)  // Code — accent color
+	colorCoral = com.NewRgb(232, 93, 76)  // H1 headers — primary brand color
+	colorAmber = com.NewRgb(244, 162, 97) // H2+ headers — warning/accent
+	colorTeal  = com.NewRgb(45, 212, 191) // Code — accent color
 )
 
 // styledSpan represents a segment of text with a particular style
