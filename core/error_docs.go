@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-//go:embed error_docs/*.md
+//go:embed error_docs/[0-9]*.md
 var errorDocFiles embed.FS
 
 // GetErrorDoc returns the documentation for an error code, or empty string if not found.
