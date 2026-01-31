@@ -182,8 +182,9 @@ func (r *DiagnosticRenderer) renderSourceLine(lines []string, lineIdx, lineNum, 
 
 // renderLineLabels renders the underline and message for labels on a line.
 func (r *DiagnosticRenderer) renderLineLabels(labels []Label, line string, gutterWidth int) {
-	// Build the underline string
+	// Build the underline string and track which label owns each position
 	underline := make([]rune, len(line)+10) // Extra space for potential overflow
+	labelOwner := make([]*Label, len(underline))
 	for i := range underline {
 		underline[i] = ' '
 	}
@@ -211,13 +212,14 @@ func (r *DiagnosticRenderer) renderLineLabels(labels []Label, line string, gutte
 			endCol = len(line)
 		}
 
-		// Fill in the underline characters
+		// Fill in the underline characters and track ownership
 		char := '^'
 		if !label.Primary {
 			char = '-'
 		}
 		for col := startCol; col < endCol && col < len(underline); col++ {
 			underline[col] = char
+			labelOwner[col] = label
 		}
 
 		// Track the label with a message to display
@@ -233,12 +235,24 @@ func (r *DiagnosticRenderer) renderLineLabels(labels []Label, line string, gutte
 		return
 	}
 
-	// Colorize the underline
-	var coloredUnderline string
-	if labels[0].Primary {
-		coloredUnderline = r.red(underlineStr)
-	} else {
-		coloredUnderline = r.blue(underlineStr)
+	// Colorize the underline per-segment based on label ownership
+	var coloredUnderline strings.Builder
+	var currentLabel *Label
+	var segment strings.Builder
+
+	for i, ch := range underlineStr {
+		owner := labelOwner[i]
+		if owner != currentLabel && segment.Len() > 0 {
+			// Flush the current segment with its color
+			coloredUnderline.WriteString(r.colorSegment(segment.String(), currentLabel))
+			segment.Reset()
+		}
+		currentLabel = owner
+		segment.WriteRune(ch)
+	}
+	// Flush remaining segment
+	if segment.Len() > 0 {
+		coloredUnderline.WriteString(r.colorSegment(segment.String(), currentLabel))
 	}
 
 	// Build the output line
@@ -246,10 +260,21 @@ func (r *DiagnosticRenderer) renderLineLabels(labels []Label, line string, gutte
 
 	if messageLabel != nil && messageLabel.Message != "" {
 		// Add message after the underline
-		fmt.Fprintf(r.writer, "%s %s %s\n", gutter, coloredUnderline, r.colorForLabel(messageLabel, messageLabel.Message))
+		fmt.Fprintf(r.writer, "%s %s %s\n", gutter, coloredUnderline.String(), r.colorForLabel(messageLabel, messageLabel.Message))
 	} else {
-		fmt.Fprintf(r.writer, "%s %s\n", gutter, coloredUnderline)
+		fmt.Fprintf(r.writer, "%s %s\n", gutter, coloredUnderline.String())
 	}
+}
+
+// colorSegment colors a segment of underline based on its owning label.
+func (r *DiagnosticRenderer) colorSegment(s string, label *Label) string {
+	if label == nil {
+		return s // Spaces between labels, no color
+	}
+	if label.Primary {
+		return r.red(s)
+	}
+	return r.blue(s)
 }
 
 // renderHints renders the help hints.
