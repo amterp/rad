@@ -91,3 +91,12 @@ print(reverse(["hello", "world"]))
 	assertOnlyOutput(t, stdOutBuffer, "[ \"world\", \"hello\" ]\n")
 	assertNoErrors(t)
 }
+
+func Test_Func_Reverse_MultiByte(t *testing.T) {
+	script := `
+print(reverse("a😀b"))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "b😀a\n")
+	assertNoErrors(t)
+}
