@@ -57,10 +57,16 @@ func Test_Truncate_ErrorsForTwo(t *testing.T) {
 print(truncate("hello", 2))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
+	expected := `error[RAD20017]: Requires at least 3, got 2
+  --> TestCase:2:7
+  |
+1 |
+2 | print(truncate("hello", 2))
+  |       ^^^^^^^^^^^^^^^^^^^^
+3 |
+  |
+   = info: rad explain RAD20017
 
-  print(truncate("hello", 2))
-        ^^^^^^^^^^^^^^^^^^^^ Requires at least 3, got 2 (RAD20017)
 `
 	assertError(t, 1, expected)
 }
@@ -70,10 +76,16 @@ func Test_Truncate_ErrorsForZero(t *testing.T) {
 print(truncate("hello", 0))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
+	expected := `error[RAD20017]: Requires at least 3, got 0
+  --> TestCase:2:7
+  |
+1 |
+2 | print(truncate("hello", 0))
+  |       ^^^^^^^^^^^^^^^^^^^^
+3 |
+  |
+   = info: rad explain RAD20017
 
-  print(truncate("hello", 0))
-        ^^^^^^^^^^^^^^^^^^^^ Requires at least 3, got 0 (RAD20017)
 `
 	assertError(t, 1, expected)
 }
@@ -83,10 +95,16 @@ func Test_Truncate_ErrorsForNegative(t *testing.T) {
 print(truncate("hello", -5))
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:7
+	expected := `error[RAD20017]: Requires at least 3, got -5
+  --> TestCase:2:7
+  |
+1 |
+2 | print(truncate("hello", -5))
+  |       ^^^^^^^^^^^^^^^^^^^^^
+3 |
+  |
+   = info: rad explain RAD20017
 
-  print(truncate("hello", -5))
-        ^^^^^^^^^^^^^^^^^^^^^ Requires at least 3, got -5 (RAD20017)
 `
 	assertError(t, 1, expected)
 }

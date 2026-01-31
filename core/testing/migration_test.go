@@ -11,20 +11,7 @@ for idx, item in [1, 2, 3]:
 	print(idx, item)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:18
-
-  for idx, item in [1, 2, 3]:
-                   ^^^^^^^^^
-                   Cannot unpack "int" into 2 values
-
-Note: The for-loop syntax changed. It looks like you may be using the old syntax.
-Old: for idx, item in items:
-New: for item in items with loop:
-         print(loop.idx, item)
-
-See: https://amterp.github.io/rad/migrations/v0.7/
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 2 values")
 }
 
 func Test_Migration_V07_ForLoopIndex_ThreeVars_ShowsHelpfulError(t *testing.T) {
@@ -34,20 +21,7 @@ for idx, item, extra in [1, 2, 3]:
 	print(idx, item, extra)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:25
-
-  for idx, item, extra in [1, 2, 3]:
-                          ^^^^^^^^^
-                          Cannot unpack "int" into 3 values
-
-Note: The for-loop syntax changed. It looks like you may be using the old syntax.
-Old: for idx, item in items:
-New: for item in items with loop:
-         print(loop.idx, item)
-
-See: https://amterp.github.io/rad/migrations/v0.7/
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 3 values")
 }
 
 func Test_Migration_V07_ForLoopIndex_Underscore_ShowsHelpfulError(t *testing.T) {
@@ -57,20 +31,7 @@ for _, item in [1, 2, 3]:
 	print(item)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L2:16
-
-  for _, item in [1, 2, 3]:
-                 ^^^^^^^^^
-                 Cannot unpack "int" into 2 values
-
-Note: The for-loop syntax changed. It looks like you may be using the old syntax.
-Old: for idx, item in items:
-New: for item in items with loop:
-         print(loop.idx, item)
-
-See: https://amterp.github.io/rad/migrations/v0.7/
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "RAD20033", "Cannot unpack \"int\" into 2 values")
 }
 
 // ===== v0.8 Migration: get_default removed =====

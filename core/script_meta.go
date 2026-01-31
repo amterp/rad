@@ -8,6 +8,7 @@ import (
 
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 )
 
 type ScriptData struct {
@@ -73,10 +74,13 @@ func ExtractMetadata(src string) *ScriptData {
 func (sd *ScriptData) ValidateNoErrors() {
 	invalidNodes := sd.Tree.FindInvalidNodes()
 	if len(invalidNodes) > 0 {
+		renderer := NewDiagnosticRenderer(RIo.StdErr)
 		for _, node := range invalidNodes {
-			// TODO print all errors up front instead of exiting here
-			RP.CtxErrorExit(NewCtx(sd.Src, node, "Invalid syntax", ""))
+			span := NewSpanFromNode(node, sd.ScriptName)
+			diag := NewDiagnostic(SeverityError, rl.ErrInvalidSyntax, "Invalid syntax", sd.Src, span)
+			renderer.Render(diag)
 		}
+		RExit.Exit(1)
 	}
 }
 
@@ -91,27 +95,26 @@ func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
 		panic(UNREACHABLE)
 	}
 
-	// Find first Error severity diagnostic
+	// Collect all Error severity diagnostics
+	var errors []Diagnostic
 	for _, diag := range result.Diagnostics {
 		if diag.Severity == check.Error {
-			// Before showing error, check if user requested inspection flags
-			handleGlobalInspectionFlagsOnInvalidSyntax(src, tree)
-
-			// Convert diagnostic Range (0-indexed) to ErrorCtx (1-indexed)
-			ctx := ErrorCtx{
-				CodeCtx: CodeCtx{
-					Src:      src,
-					RowStart: diag.Range.Start.Line + 1,
-					ColStart: diag.Range.Start.Character + 1,
-					RowEnd:   diag.Range.End.Line + 1,
-					ColEnd:   diag.Range.End.Character + 1,
-				},
-				OneLiner:   diag.Message,
-				Details:    "",
-				Suggestion: diag.Suggestion,
-			}
-			RP.CtxErrorExit(ctx)
+			// Convert to core.Diagnostic using the new format
+			coreDiag := NewDiagnosticFromCheck(diag, ScriptName)
+			errors = append(errors, coreDiag)
 		}
+	}
+
+	if len(errors) > 0 {
+		// Before showing errors, check if user requested inspection flags
+		handleGlobalInspectionFlagsOnInvalidSyntax(src, tree)
+
+		// Render all errors using the new Rust-style renderer
+		renderer := NewDiagnosticRenderer(RIo.StdErr)
+		for _, diag := range errors {
+			renderer.Render(diag)
+		}
+		RExit.Exit(1)
 	}
 }
 

@@ -9,12 +9,7 @@ import (
 
 func Test_Misc_SyntaxError(t *testing.T) {
 	setupAndRunCode(t, "1 = 2", "--color=never")
-	expected := `Error at L1:1
-
-  1 = 2
-  ^^^ Unexpected '1 ='
-`
-	assertError(t, 1, expected)
+	assertErrorContains(t, 1, "error[RAD10009]", "Unexpected '1 ='", "TestCase:1:1", "1 = 2", "^^^")
 }
 
 func Test_Misc_ReadingFromUnderscoreVarErrors(t *testing.T) {

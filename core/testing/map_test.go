@@ -137,10 +137,16 @@ a = { "alice": 100 }
 print(a["bob"])
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:9
+	expected := `error[RAD20041]: Key not found: "bob"
+  --> TestCase:3:9
+  |
+2 | a = { "alice": 100 }
+3 | print(a["bob"])
+  |         ^^^^^
+4 | 
+  |
+   = info: rad explain RAD20041
 
-  print(a["bob"])
-          ^^^^^ Key not found: "bob" (RAD20028)
 `
 	assertError(t, 1, expected)
 }
@@ -151,10 +157,16 @@ a = { "alice": 100 }
 print(a.bob)
 `
 	setupAndRunCode(t, script, "--color=never")
-	expected := `Error at L3:9
+	expected := `error[RAD20041]: Key not found: bob
+  --> TestCase:3:9
+  |
+2 | a = { "alice": 100 }
+3 | print(a.bob)
+  |         ^^^
+4 | 
+  |
+   = info: rad explain RAD20041
 
-  print(a.bob)
-          ^^^ Key not found: "bob" (RAD20028)
 `
 	assertError(t, 1, expected)
 }
