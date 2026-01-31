@@ -8,9 +8,20 @@ Shows documentation for error code RAD10001.
 
 > rad explain 10001
 Also works without the RAD prefix.
+
+> rad explain list
+Lists all available error codes.
 ---
 args:
-    code str  # The error code to explain (e.g., RAD10001 or 10001).
+    code str  # The error code to explain (e.g., RAD10001, 10001, or 'list').
+
+// Handle "list" subcommand
+if code == "list":
+    codes = _rad_explain_list()
+    print("Available error codes:")
+    for c in codes:
+        print("  RAD{c}")
+    exit(0)
 
 // Normalize the code - strip RAD prefix if present
 normalized = code
