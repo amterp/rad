@@ -954,9 +954,21 @@ func (i *Interpreter) emitDiagnostic(d Diagnostic) {
 }
 
 // emitError creates and emits an error diagnostic with a single span.
+// If node is nil, the diagnostic will have no source location.
 func (i *Interpreter) emitError(code rl.Error, node *ts.Node, message string) {
-	span := NewSpanFromNode(node, i.sd.ScriptName)
-	diag := NewDiagnostic(SeverityError, code, message, i.GetSrc(), span)
+	var diag Diagnostic
+	if node != nil {
+		span := NewSpanFromNode(node, i.sd.ScriptName)
+		diag = NewDiagnostic(SeverityError, code, message, i.GetSrc(), span)
+	} else {
+		// No node available - create diagnostic without labels
+		diag = Diagnostic{
+			Severity: SeverityError,
+			Code:     code,
+			Message:  message,
+			Source:   i.GetSrc(),
+		}
+	}
 	i.emitDiagnostic(diag)
 }
 
@@ -966,17 +978,31 @@ func (i *Interpreter) emitErrorf(code rl.Error, node *ts.Node, format string, ar
 }
 
 // emitErrorWithHint creates and emits an error diagnostic with a hint.
+// If node is nil, the diagnostic will have no source location.
 func (i *Interpreter) emitErrorWithHint(code rl.Error, node *ts.Node, message string, hint string) {
-	span := NewSpanFromNode(node, i.sd.ScriptName)
-	diag := NewDiagnostic(SeverityError, code, message, i.GetSrc(), span).WithHint(hint)
+	var diag Diagnostic
+	if node != nil {
+		span := NewSpanFromNode(node, i.sd.ScriptName)
+		diag = NewDiagnostic(SeverityError, code, message, i.GetSrc(), span).WithHint(hint)
+	} else {
+		diag = Diagnostic{
+			Severity: SeverityError,
+			Code:     code,
+			Message:  message,
+			Source:   i.GetSrc(),
+			Hints:    []string{hint},
+		}
+	}
 	i.emitDiagnostic(diag)
 }
 
 // emitErrorWithSecondary creates an error diagnostic with a secondary span (e.g., "assigned here").
+// If primaryNode is nil, the diagnostic will only have the secondary span (if provided).
 func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node, message string, secondarySpan *Span, secondaryMsg string) {
-	primarySpan := NewSpanFromNode(primaryNode, i.sd.ScriptName)
-	labels := []Label{
-		NewPrimaryLabel(primarySpan, ""),
+	var labels []Label
+	if primaryNode != nil {
+		primarySpan := NewSpanFromNode(primaryNode, i.sd.ScriptName)
+		labels = append(labels, NewPrimaryLabel(primarySpan, ""))
 	}
 	if secondarySpan != nil {
 		labels = append(labels, NewSecondaryLabel(*secondarySpan, secondaryMsg))
