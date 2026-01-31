@@ -20,6 +20,16 @@ const (
 	ErrMissingCloseBrace   Error = "10007"
 	ErrReservedKeyword     Error = "10008"
 	ErrUnexpectedToken     Error = "10009"
+	ErrMissingOpenParen    Error = "10010"
+	ErrMissingOpenBracket  Error = "10011"
+	ErrMissingOpenBrace    Error = "10012"
+	ErrMissingComma        Error = "10013"
+	ErrMissingEquals       Error = "10014"
+	ErrMissingArrow        Error = "10015"
+	ErrMissingType         Error = "10016"
+	ErrMissingNewline      Error = "10017"
+	ErrMissingIndent       Error = "10018"
+	ErrUnexpectedIndent    Error = "10019"
 
 	// 2xxxx Runtime Errors
 	ErrGenericRuntime       Error = "20000"
