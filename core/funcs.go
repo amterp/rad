@@ -1024,17 +1024,17 @@ func init() {
 		{
 			Name: FUNC_TRIM_PREFIX,
 			Execute: func(f FuncInvocation) RadValue {
-				return runTrim(f, func(str RadString, chars string) RadString {
-					return str.TrimPrefix(chars)
-				})
+				subject := f.GetStr("_subject")
+				prefix := f.GetStr("_prefix").Plain()
+				return f.Return(subject.TrimPrefix(prefix))
 			},
 		},
 		{
 			Name: FUNC_TRIM_SUFFIX,
 			Execute: func(f FuncInvocation) RadValue {
-				return runTrim(f, func(str RadString, chars string) RadString {
-					return str.TrimSuffix(chars)
-				})
+				subject := f.GetStr("_subject")
+				suffix := f.GetStr("_suffix").Plain()
+				return f.Return(subject.TrimSuffix(suffix))
 			},
 		},
 		{
