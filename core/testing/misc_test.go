@@ -412,3 +412,31 @@ print(completely_different_name)
 		t.Errorf("Expected no suggestion for very different variable name")
 	}
 }
+
+func Test_Misc_StackTraceShownInNestedFunctionError(t *testing.T) {
+	script := `
+fn inner():
+    x = undefined_var
+
+fn outer():
+    inner()
+
+outer()
+`
+	setupAndRunCode(t, script, "--color=never")
+	// Get the error output before it gets reset
+	output := stdErrBuffer.String()
+	t.Logf("Full error output:\n%s", output)
+	// Verify basic error
+	if !strings.Contains(output, "RAD20028") {
+		t.Errorf("Expected RAD20028 in output")
+	}
+	if !strings.Contains(output, "undefined_var") {
+		t.Errorf("Expected 'undefined_var' in output")
+	}
+	// Stack trace should show nested function calls
+	if !strings.Contains(output, "= stack:") {
+		t.Errorf("Expected '= stack:' in error output for nested function error")
+	}
+	assertExitCode(t, 1)
+}

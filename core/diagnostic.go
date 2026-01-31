@@ -91,12 +91,13 @@ func NewSecondaryLabel(span Span, message string) Label {
 
 // Diagnostic represents a single diagnostic message with optional multi-span context.
 type Diagnostic struct {
-	Severity Severity
-	Code     rl.Error  // From rts/rl/errors.go
-	Message  string    // One-line summary
-	Labels   []Label   // Primary + secondary spans
-	Hints    []string  // "= help: ..." lines
-	Source   string    // Complete source for rendering
+	Severity  Severity
+	Code      rl.Error    // From rts/rl/errors.go
+	Message   string      // One-line summary
+	Labels    []Label     // Primary + secondary spans
+	Hints     []string    // "= help: ..." lines
+	Source    string      // Complete source for rendering
+	CallStack []CallFrame // Rad call stack at time of error (most recent first)
 }
 
 // NewDiagnostic creates a diagnostic with a single primary label.
@@ -136,6 +137,12 @@ func (d Diagnostic) WithHints(hints ...string) Diagnostic {
 // WithSecondaryLabel adds a secondary label to the diagnostic and returns the modified diagnostic.
 func (d Diagnostic) WithSecondaryLabel(span Span, message string) Diagnostic {
 	d.Labels = append(d.Labels, NewSecondaryLabel(span, message))
+	return d
+}
+
+// WithCallStack attaches a call stack to the diagnostic and returns the modified diagnostic.
+func (d Diagnostic) WithCallStack(stack []CallFrame) Diagnostic {
+	d.CallStack = stack
 	return d
 }
 
