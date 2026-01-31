@@ -236,6 +236,8 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 				out = res.Val
 			}
 		} else {
+			// Built-in functions don't get call frames in the stack trace.
+			// Users care about their own code, not Rad internals.
 			out = fn.BuiltInFunc.Execute(f)
 		}
 	})
