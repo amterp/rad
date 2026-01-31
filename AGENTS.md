@@ -280,9 +280,11 @@ Keep documentation in sync with code changes. Key mappings:
 | Code Change | Documentation to Update |
 |-------------|------------------------|
 | New/modified built-in function in `core/funcs.go` | `docs-web/docs/reference/functions.md` |
-| New/modified error code in `rts/rl/errors.go` | `docs-web/docs/reference/errors.md` |
+| New/modified error code in `rts/rl/errors.go` | `core/error_docs/` (surfaced via `rad explain`) |
 | Language syntax changes | `SYNTAX.md` (symlinked to Language Reference) |
 | New user-facing feature | Consider adding to relevant guide in `docs-web/docs/guide/` |
+| Major user-facing features, project overview | `README.md` |
+| Project structure, dev workflow, new patterns | `AGENTS.md` |
 
 **Principles:**
 - **Reference docs** should be authoritative and complete — if it exists in code, it should be documented
