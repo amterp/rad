@@ -54,6 +54,7 @@ Commands:
   home          Prints out rad's home directory.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   stash         Interacts with script stashes.
+  explain       Explains Rad error codes with detailed documentation.
 
 To see help for a specific command, run ` + "`rad <command> -h`.\n\n" + allGlobalFlagHelp + `
 To execute a Rad script:

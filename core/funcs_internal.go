@@ -118,6 +118,20 @@ func AddInternalFuncs() {
 			},
 		},
 		FuncInternalCheckFromLogs,
+		{
+			Name: INTERNAL_FUNC_EXPLAIN,
+			Execute: func(f FuncInvocation) RadValue {
+				codeArg := f.args[0]
+				code := codeArg.value.RequireStr(f.i, codeArg.node).Plain()
+
+				doc := GetErrorDoc(code)
+				if doc == "" {
+					return RAD_NULL_VAL
+				}
+
+				return newRadValues(f.i, f.callNode, doc)
+			},
+		},
 	}
 
 	for _, f := range functions {

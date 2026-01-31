@@ -1,0 +1,26 @@
+#!/usr/bin/env rad
+---
+Explains Rad error codes with detailed documentation.
+
+Example:
+> rad explain RAD10001
+Shows documentation for error code RAD10001.
+
+> rad explain 10001
+Also works without the RAD prefix.
+---
+args:
+    code str  # The error code to explain (e.g., RAD10001 or 10001).
+
+// Normalize the code - strip RAD prefix if present
+normalized = code
+if code.starts_with("RAD"):
+    normalized = code[3:]
+
+doc = _rad_explain(normalized)
+if doc == null:
+    print_err("Unknown error code: {code}")
+    print_err("Run 'rad explain list' to see all available error codes.")
+    exit(1)
+
+print(doc)
