@@ -98,3 +98,18 @@ print(a[-2:-3])
 	assertOnlyOutput(t, stdOutBuffer, "\n\n")
 	assertNoErrors(t)
 }
+
+func TestSlice_String_MultiByte(t *testing.T) {
+	script := `
+a = "a😀b"
+print(a[0:2])
+print(a[1:3])
+print(a[0:1])
+print(a[1:2])
+print(a[2:3])
+print(a[:])
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "a😀\n😀b\na\n😀\nb\na😀b\n")
+	assertNoErrors(t)
+}

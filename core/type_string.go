@@ -97,11 +97,16 @@ func (s RadString) Len() int64 {
 	return int64(com.StrLen(s.Plain()))
 }
 
+func (s RadString) Runes() []rune {
+	// todo also cachable
+	return []rune(s.Plain())
+}
+
 func (s *RadString) Index(i *Interpreter, idxNode *ts.Node) RadString {
 	if idxNode.Kind() == rl.K_SLICE {
 		// todo should maintain attr info
 		start, end := ResolveSliceStartEnd(i, idxNode, s.Len())
-		return NewRadString(s.Plain()[start:end])
+		return NewRadString(string(s.Runes()[start:end]))
 	}
 
 	rawIdx := i.eval(idxNode).Val.RequireInt(i, idxNode)
@@ -119,8 +124,7 @@ func (s *RadString) IndexAt(idx int64) RadString {
 	for _, segment := range s.Segments {
 		nextSegmentLen := len(segment.String)
 		if cumLen+nextSegmentLen > int(idx) {
-			// rune array conversion required to handle multibyte characters e.g. emojis
-			char := []rune(s.Plain())[idx] // todo inefficient, should just look up in segment
+			char := s.Runes()[idx] // todo inefficient, should just look up in segment
 			return newRadStringWithAttr(string(char), segment)
 		}
 		cumLen += +nextSegmentLen
