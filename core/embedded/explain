@@ -18,9 +18,9 @@ args:
 // Handle "list" subcommand
 if code == "list":
     codes = _rad_explain_list()
-    print("Available error codes:")
+    print("Available error codes:".bold())
     for c in codes:
-        print("  RAD{c}")
+        print("  " + "RAD{c}".red())
     exit(0)
 
 // Normalize the code - strip RAD prefix if present
