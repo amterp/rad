@@ -595,7 +595,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		}
 		val, ok := i.env.GetVar(identifier)
 		if !ok {
-			i.emitErrorf(rl.ErrUndefinedVariable, node, "Undefined variable: %s", identifier)
+			i.emitUndefinedVariableError(node, identifier)
 		}
 		return NormalVal(newRadValues(i, node, val))
 	case rl.K_VAR_PATH:
@@ -970,6 +970,24 @@ func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node
 	i.emitDiagnostic(diag)
 }
 
+// emitUndefinedVariableError emits an error for an undefined variable with
+// "did you mean?" suggestions for similar variable names.
+func (i *Interpreter) emitUndefinedVariableError(node *ts.Node, name string) {
+	similar := i.env.FindSimilarVars(name, 3)
+
+	if len(similar) > 0 {
+		// Include suggestion hint
+		hint := fmt.Sprintf("a variable with a similar name exists: %s", similar[0])
+		if len(similar) > 1 {
+			hint = fmt.Sprintf("variables with similar names exist: %s", strings.Join(similar, ", "))
+		}
+		i.emitErrorWithHint(rl.ErrUndefinedVariable, node,
+			fmt.Sprintf("Undefined variable: %s", name), hint)
+	} else {
+		i.emitErrorf(rl.ErrUndefinedVariable, node, "Undefined variable: %s", name)
+	}
+}
+
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
 	rootIdentifier := rl.GetChild(varPathNode, rl.F_ROOT) // identifier required by grammar
 	rootIdentifierName := i.GetSrcForNode(rootIdentifier)
@@ -985,7 +1003,7 @@ func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue,
 	// modifying collection
 	if !ok {
 		// modifying collection must exist
-		i.emitErrorf(rl.ErrUndefinedVariable, rootIdentifier, "Undefined variable: %s", rootIdentifierName)
+		i.emitUndefinedVariableError(rootIdentifier, rootIdentifierName)
 	}
 	for _, index := range indexings[:len(indexings)-1] {
 		val = val.Index(i, &index)
