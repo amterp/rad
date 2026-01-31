@@ -31,6 +31,10 @@ func (s Severity) String() string {
 	}
 }
 
+// Diagnostic represents a static analysis diagnostic. This is the canonical
+// diagnostic type for the check system; both lsp.Diagnostic and core.Diagnostic
+// are derived from it. Severity levels align with the LSP protocol (4 levels);
+// core collapses Hint/Info into Note for its 3-level Rust-style CLI output.
 type Diagnostic struct {
 	OriginalSrc string // Complete original src
 	Range       Range
