@@ -1,0 +1,47 @@
+### TITLE ###
+Display block with map
+### INPUT ###
+a = {}
+display a:
+    fields ID, Name
+### EXPECTED ###
+B: [ 0, 37] PS: [0,  0] PE: [2, 19] source_file
+B: [ 0,  6] PS: [0,  0] PE: [0,  6]   assign
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]     right: expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]       delegate: ternary_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]         delegate: or_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]           delegate: and_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]             delegate: compare_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]               delegate: add_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                 delegate: mult_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                   delegate: unary_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                     delegate: fallback_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                       delegate: indexed_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                         root: primary_expr
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                           literal
+B: [ 4,  6] PS: [0,  4] PE: [0,  6]                             map
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                               { `{`
+B: [ 5,  6] PS: [0,  5] PE: [0,  6]                               } `}`
+B: [ 7, 37] PS: [1,  0] PE: [2, 19]   rad_block
+B: [ 7, 14] PS: [1,  0] PE: [1,  7]     rad_type: display_keyword
+B: [ 7, 14] PS: [1,  0] PE: [1,  7]       display `display`
+B: [15, 16] PS: [1,  8] PE: [1,  9]     source: expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]       delegate: ternary_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]         delegate: or_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]           delegate: and_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]             delegate: compare_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]               delegate: add_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]                 delegate: mult_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]                   delegate: unary_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]                     delegate: fallback_expr
+B: [15, 16] PS: [1,  8] PE: [1,  9]                       delegate: var_path
+B: [15, 16] PS: [1,  8] PE: [1,  9]                         root: identifier `a`
+B: [16, 17] PS: [1,  9] PE: [1, 10]     : `:`
+B: [22, 37] PS: [2,  4] PE: [2, 19]     stmt: rad_field_stmt
+B: [22, 28] PS: [2,  4] PE: [2, 10]       fields `fields`
+B: [29, 31] PS: [2, 11] PE: [2, 13]       identifier: identifier `ID`
+B: [31, 32] PS: [2, 13] PE: [2, 14]       , `,`
+B: [33, 37] PS: [2, 15] PE: [2, 19]       identifier: identifier `Name`

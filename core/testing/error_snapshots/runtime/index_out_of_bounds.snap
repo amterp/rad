@@ -1,3 +1,6 @@
+### TITLE ###
+Index out of bounds
+### INPUT ###
 x = [1, 2, 3]
 print(x[10])
 ### EXPECTED ###

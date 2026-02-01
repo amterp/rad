@@ -1,0 +1,95 @@
+### TITLE ###
+Numbers can have underscores
+### INPUT ###
+1234
+1_234
+0.000_001
+12_34.5_6
+12__34
+12_34.45_56e24_24
+### EXPECTED ###
+B: [ 0, 55] PS: [0,  0] PE: [5, 17] source_file
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]   expr_stmt
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]     expr: expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]       delegate: ternary_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]         delegate: or_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]           delegate: and_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]             delegate: compare_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]               delegate: add_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                 delegate: mult_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                   delegate: unary_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                     delegate: fallback_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                       delegate: indexed_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                         root: primary_expr
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                           literal
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                             int `1234`
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]   expr_stmt
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]     expr: expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]       delegate: ternary_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]         delegate: or_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]           delegate: and_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]             delegate: compare_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]               delegate: add_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                 delegate: mult_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                   delegate: unary_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                     delegate: fallback_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                       delegate: indexed_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                         root: primary_expr
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                           literal
+B: [ 5, 10] PS: [1,  0] PE: [1,  5]                             int `1_234`
+B: [11, 20] PS: [2,  0] PE: [2,  9]   expr_stmt
+B: [11, 20] PS: [2,  0] PE: [2,  9]     expr: expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]       delegate: ternary_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]         delegate: or_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]           delegate: and_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]             delegate: compare_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]               delegate: add_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                 delegate: mult_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                   delegate: unary_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                     delegate: fallback_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                       delegate: indexed_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                         root: primary_expr
+B: [11, 20] PS: [2,  0] PE: [2,  9]                           literal
+B: [11, 20] PS: [2,  0] PE: [2,  9]                             float `0.000_001`
+B: [21, 30] PS: [3,  0] PE: [3,  9]   expr_stmt
+B: [21, 30] PS: [3,  0] PE: [3,  9]     expr: expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]       delegate: ternary_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]         delegate: or_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]           delegate: and_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]             delegate: compare_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]               delegate: add_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                 delegate: mult_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                   delegate: unary_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                     delegate: fallback_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                       delegate: indexed_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                         root: primary_expr
+B: [21, 30] PS: [3,  0] PE: [3,  9]                           literal
+B: [21, 30] PS: [3,  0] PE: [3,  9]                             float `12_34.5_6`
+B: [31, 37] PS: [4,  0] PE: [4,  6]   expr_stmt
+B: [31, 37] PS: [4,  0] PE: [4,  6]     expr: expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]       delegate: ternary_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]         delegate: or_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]           delegate: and_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]             delegate: compare_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]               delegate: add_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                 delegate: mult_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                   delegate: unary_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                     delegate: fallback_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                       delegate: indexed_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                         root: primary_expr
+B: [31, 37] PS: [4,  0] PE: [4,  6]                           literal
+B: [31, 37] PS: [4,  0] PE: [4,  6]                             int `12__34`
+B: [38, 55] PS: [5,  0] PE: [5, 17]   expr_stmt
+B: [38, 55] PS: [5,  0] PE: [5, 17]     expr: expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]       delegate: ternary_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]         delegate: or_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]           delegate: and_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]             delegate: compare_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]               delegate: add_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                 delegate: mult_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                   delegate: unary_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                     delegate: fallback_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                       delegate: indexed_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                         root: primary_expr
+B: [38, 55] PS: [5,  0] PE: [5, 17]                           literal
+B: [38, 55] PS: [5,  0] PE: [5, 17]                             scientific_number `12_34.45_56e24_24`

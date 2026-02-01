@@ -1,0 +1,48 @@
+### TITLE ###
+Indexing expr
+### INPUT ###
+sort(mylist)[0]
+### EXPECTED ###
+B: [ 0, 15] PS: [0,  0] PE: [0, 15] source_file
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]   expr_stmt
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]     expr: expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]       delegate: ternary_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]         delegate: or_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]           delegate: and_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]             delegate: compare_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]               delegate: add_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]                 delegate: mult_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]                   delegate: unary_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]                     delegate: fallback_expr
+B: [ 0, 15] PS: [0,  0] PE: [0, 15]                       delegate: indexed_expr
+B: [ 0, 12] PS: [0,  0] PE: [0, 12]                         root: primary_expr
+B: [ 0, 12] PS: [0,  0] PE: [0, 12]                           call
+B: [ 0,  4] PS: [0,  0] PE: [0,  4]                             func: identifier `sort`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                             ( `(`
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                             arg: expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                               delegate: ternary_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                 delegate: or_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                   delegate: and_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                     delegate: compare_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                       delegate: add_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                         delegate: mult_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                           delegate: unary_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                             delegate: fallback_expr
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                               delegate: var_path
+B: [ 5, 11] PS: [0,  5] PE: [0, 11]                                                 root: identifier `mylist`
+B: [11, 12] PS: [0, 11] PE: [0, 12]                             ) `)`
+B: [12, 13] PS: [0, 12] PE: [0, 13]                         [ `[`
+B: [13, 14] PS: [0, 13] PE: [0, 14]                         indexing: expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                           delegate: ternary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                             delegate: or_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                               delegate: and_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                 delegate: compare_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                   delegate: add_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                     delegate: mult_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                       delegate: unary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                         delegate: fallback_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                           delegate: indexed_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                             root: primary_expr
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                               literal
+B: [13, 14] PS: [0, 13] PE: [0, 14]                                                 int `0`
+B: [14, 15] PS: [0, 14] PE: [0, 15]                         ] `]`

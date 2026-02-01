@@ -1,3 +1,6 @@
+### TITLE ###
+Invalid type for operation
+### INPUT ###
 x = 5
 print(x + "hello")
 ### EXPECTED ###
