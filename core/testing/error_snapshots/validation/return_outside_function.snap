@@ -1,3 +1,6 @@
+### TITLE ###
+Return outside function
+### INPUT ###
 return 5
 ### EXPECTED ###
 error[RAD40004]: 'return' can only be used inside a function

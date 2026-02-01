@@ -1,3 +1,6 @@
+### TITLE ###
+Division by zero
+### INPUT ###
 x = 1 / 0
 ### EXPECTED ###
 error[RAD20036]: Divisor was 0, cannot divide by 0

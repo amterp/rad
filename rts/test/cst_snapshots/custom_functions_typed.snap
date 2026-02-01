@@ -1,0 +1,242 @@
+### TITLE ###
+Custom functions typed
+### INPUT ###
+fn myfoo() -> void print("Hi")
+fn myfoo(a: str) print("Hi, {a}")
+fn myfoo() -> int 1 + 1
+fn myfoo(a: float) -> float:
+    return 1
+fn myfoo(a: float) -> float|int|error:
+    return 1
+fn myfoo(a: float?) -> error?:
+    return 1
+### EXPECTED ###
+B: [  0, 226] PS: [0,  0] PE: [8, 12] source_file
+B: [  0,  30] PS: [0,  0] PE: [0, 30]   fn_named
+B: [  0,   2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
+B: [  3,   8] PS: [0,  3] PE: [0,  8]     name: identifier `myfoo`
+B: [  8,   9] PS: [0,  8] PE: [0,  9]     ( `(`
+B: [  9,  10] PS: [0,  9] PE: [0, 10]     ) `)`
+B: [ 11,  13] PS: [0, 11] PE: [0, 13]     -> `->`
+B: [ 14,  18] PS: [0, 14] PE: [0, 18]     return_type: void_type `void`
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]     stmt: expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]       delegate: ternary_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]         delegate: or_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]           delegate: and_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]             delegate: compare_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]               delegate: add_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                 delegate: mult_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                   delegate: unary_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                     delegate: fallback_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                       delegate: indexed_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                         root: primary_expr
+B: [ 19,  30] PS: [0, 19] PE: [0, 30]                           call
+B: [ 19,  24] PS: [0, 19] PE: [0, 24]                             func: identifier `print`
+B: [ 24,  25] PS: [0, 24] PE: [0, 25]                             ( `(`
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                             arg: expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                               delegate: ternary_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                 delegate: or_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                   delegate: and_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                     delegate: compare_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                       delegate: add_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                         delegate: mult_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                           delegate: unary_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                             delegate: fallback_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                               delegate: indexed_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                                 root: primary_expr
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                                   literal
+B: [ 25,  29] PS: [0, 25] PE: [0, 29]                                                     string
+B: [ 25,  26] PS: [0, 25] PE: [0, 26]                                                       start: string_start `"`
+B: [ 26,  28] PS: [0, 26] PE: [0, 28]                                                       contents: string_contents
+B: [ 26,  28] PS: [0, 26] PE: [0, 28]                                                         content: string_content `Hi`
+B: [ 28,  29] PS: [0, 28] PE: [0, 29]                                                       end: string_end `"`
+B: [ 29,  30] PS: [0, 29] PE: [0, 30]                             ) `)`
+B: [ 31,  64] PS: [1,  0] PE: [1, 33]   fn_named
+B: [ 31,  33] PS: [1,  0] PE: [1,  2]     keyword: fn `fn`
+B: [ 34,  39] PS: [1,  3] PE: [1,  8]     name: identifier `myfoo`
+B: [ 39,  40] PS: [1,  8] PE: [1,  9]     ( `(`
+B: [ 40,  46] PS: [1,  9] PE: [1, 15]     normal_param: normal_param
+B: [ 40,  41] PS: [1,  9] PE: [1, 10]       name: identifier `a`
+B: [ 41,  42] PS: [1, 10] PE: [1, 11]       : `:`
+B: [ 43,  46] PS: [1, 12] PE: [1, 15]       type: fn_param_or_return_type
+B: [ 43,  46] PS: [1, 12] PE: [1, 15]         leaf_type: fn_leaf_type
+B: [ 43,  46] PS: [1, 12] PE: [1, 15]           type: string_type `str`
+B: [ 46,  47] PS: [1, 15] PE: [1, 16]     ) `)`
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]     stmt: expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]       delegate: ternary_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]         delegate: or_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]           delegate: and_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]             delegate: compare_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]               delegate: add_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                 delegate: mult_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                   delegate: unary_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                     delegate: fallback_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                       delegate: indexed_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                         root: primary_expr
+B: [ 48,  64] PS: [1, 17] PE: [1, 33]                           call
+B: [ 48,  53] PS: [1, 17] PE: [1, 22]                             func: identifier `print`
+B: [ 53,  54] PS: [1, 22] PE: [1, 23]                             ( `(`
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                             arg: expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                               delegate: ternary_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                 delegate: or_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                   delegate: and_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                     delegate: compare_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                       delegate: add_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                         delegate: mult_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                           delegate: unary_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                             delegate: fallback_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                               delegate: indexed_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                                 root: primary_expr
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                                   literal
+B: [ 54,  63] PS: [1, 23] PE: [1, 32]                                                     string
+B: [ 54,  55] PS: [1, 23] PE: [1, 24]                                                       start: string_start `"`
+B: [ 55,  62] PS: [1, 24] PE: [1, 31]                                                       contents: string_contents
+B: [ 55,  59] PS: [1, 24] PE: [1, 28]                                                         content: string_content `Hi, `
+B: [ 59,  62] PS: [1, 28] PE: [1, 31]                                                         interpolation: interpolation
+B: [ 59,  60] PS: [1, 28] PE: [1, 29]                                                           { `{`
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                           expr: expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                             delegate: ternary_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                               delegate: or_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                 delegate: and_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                   delegate: compare_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                     delegate: add_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                       delegate: mult_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                         delegate: unary_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                           delegate: fallback_expr
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                             delegate: var_path
+B: [ 60,  61] PS: [1, 29] PE: [1, 30]                                                                               root: identifier `a`
+B: [ 61,  62] PS: [1, 30] PE: [1, 31]                                                           } `}`
+B: [ 62,  63] PS: [1, 31] PE: [1, 32]                                                       end: string_end `"`
+B: [ 63,  64] PS: [1, 32] PE: [1, 33]                             ) `)`
+B: [ 65,  88] PS: [2,  0] PE: [2, 23]   fn_named
+B: [ 65,  67] PS: [2,  0] PE: [2,  2]     keyword: fn `fn`
+B: [ 68,  73] PS: [2,  3] PE: [2,  8]     name: identifier `myfoo`
+B: [ 73,  74] PS: [2,  8] PE: [2,  9]     ( `(`
+B: [ 74,  75] PS: [2,  9] PE: [2, 10]     ) `)`
+B: [ 76,  78] PS: [2, 11] PE: [2, 13]     -> `->`
+B: [ 79,  82] PS: [2, 14] PE: [2, 17]     return_type: fn_param_or_return_type
+B: [ 79,  82] PS: [2, 14] PE: [2, 17]       leaf_type: fn_leaf_type
+B: [ 79,  82] PS: [2, 14] PE: [2, 17]         type: int_type `int`
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]     stmt: expr
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]       delegate: ternary_expr
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]         delegate: or_expr
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]           delegate: and_expr
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]             delegate: compare_expr
+B: [ 83,  88] PS: [2, 18] PE: [2, 23]               delegate: add_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                 left: add_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                   delegate: mult_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                     delegate: unary_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                       delegate: fallback_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                         delegate: indexed_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                           root: primary_expr
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                             literal
+B: [ 83,  84] PS: [2, 18] PE: [2, 19]                               int `1`
+B: [ 85,  86] PS: [2, 20] PE: [2, 21]                 op: + `+`
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                 right: mult_expr
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                   delegate: unary_expr
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                     delegate: fallback_expr
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                       delegate: indexed_expr
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                         root: primary_expr
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                           literal
+B: [ 87,  88] PS: [2, 22] PE: [2, 23]                             int `1`
+B: [ 89, 130] PS: [3,  0] PE: [4, 12]   fn_named
+B: [ 89,  91] PS: [3,  0] PE: [3,  2]     keyword: fn `fn`
+B: [ 92,  97] PS: [3,  3] PE: [3,  8]     name: identifier `myfoo`
+B: [ 97,  98] PS: [3,  8] PE: [3,  9]     ( `(`
+B: [ 98, 106] PS: [3,  9] PE: [3, 17]     normal_param: normal_param
+B: [ 98,  99] PS: [3,  9] PE: [3, 10]       name: identifier `a`
+B: [ 99, 100] PS: [3, 10] PE: [3, 11]       : `:`
+B: [101, 106] PS: [3, 12] PE: [3, 17]       type: fn_param_or_return_type
+B: [101, 106] PS: [3, 12] PE: [3, 17]         leaf_type: fn_leaf_type
+B: [101, 106] PS: [3, 12] PE: [3, 17]           type: float_type `float`
+B: [106, 107] PS: [3, 17] PE: [3, 18]     ) `)`
+B: [108, 110] PS: [3, 19] PE: [3, 21]     -> `->`
+B: [111, 116] PS: [3, 22] PE: [3, 27]     return_type: fn_param_or_return_type
+B: [111, 116] PS: [3, 22] PE: [3, 27]       leaf_type: fn_leaf_type
+B: [111, 116] PS: [3, 22] PE: [3, 27]         type: float_type `float`
+B: [116, 117] PS: [3, 27] PE: [3, 28]     block_colon: : `:`
+B: [122, 130] PS: [4,  4] PE: [4, 12]     stmt: return_stmt
+B: [122, 128] PS: [4,  4] PE: [4, 10]       return `return`
+B: [129, 130] PS: [4, 11] PE: [4, 12]       right: expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]         delegate: ternary_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]           delegate: or_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]             delegate: and_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]               delegate: compare_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                 delegate: add_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                   delegate: mult_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                     delegate: unary_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                       delegate: fallback_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                         delegate: indexed_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                           root: primary_expr
+B: [129, 130] PS: [4, 11] PE: [4, 12]                             literal
+B: [129, 130] PS: [4, 11] PE: [4, 12]                               int `1`
+B: [131, 182] PS: [5,  0] PE: [6, 12]   fn_named
+B: [131, 133] PS: [5,  0] PE: [5,  2]     keyword: fn `fn`
+B: [134, 139] PS: [5,  3] PE: [5,  8]     name: identifier `myfoo`
+B: [139, 140] PS: [5,  8] PE: [5,  9]     ( `(`
+B: [140, 148] PS: [5,  9] PE: [5, 17]     normal_param: normal_param
+B: [140, 141] PS: [5,  9] PE: [5, 10]       name: identifier `a`
+B: [141, 142] PS: [5, 10] PE: [5, 11]       : `:`
+B: [143, 148] PS: [5, 12] PE: [5, 17]       type: fn_param_or_return_type
+B: [143, 148] PS: [5, 12] PE: [5, 17]         leaf_type: fn_leaf_type
+B: [143, 148] PS: [5, 12] PE: [5, 17]           type: float_type `float`
+B: [148, 149] PS: [5, 17] PE: [5, 18]     ) `)`
+B: [150, 152] PS: [5, 19] PE: [5, 21]     -> `->`
+B: [153, 168] PS: [5, 22] PE: [5, 37]     return_type: fn_param_or_return_type
+B: [153, 158] PS: [5, 22] PE: [5, 27]       leaf_type: fn_leaf_type
+B: [153, 158] PS: [5, 22] PE: [5, 27]         type: float_type `float`
+B: [158, 159] PS: [5, 27] PE: [5, 28]       | `|`
+B: [159, 162] PS: [5, 28] PE: [5, 31]       leaf_type: fn_leaf_type
+B: [159, 162] PS: [5, 28] PE: [5, 31]         type: int_type `int`
+B: [162, 163] PS: [5, 31] PE: [5, 32]       | `|`
+B: [163, 168] PS: [5, 32] PE: [5, 37]       leaf_type: fn_leaf_type
+B: [163, 168] PS: [5, 32] PE: [5, 37]         type: error_type `error`
+B: [168, 169] PS: [5, 37] PE: [5, 38]     block_colon: : `:`
+B: [174, 182] PS: [6,  4] PE: [6, 12]     stmt: return_stmt
+B: [174, 180] PS: [6,  4] PE: [6, 10]       return `return`
+B: [181, 182] PS: [6, 11] PE: [6, 12]       right: expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]         delegate: ternary_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]           delegate: or_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]             delegate: and_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]               delegate: compare_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                 delegate: add_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                   delegate: mult_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                     delegate: unary_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                       delegate: fallback_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                         delegate: indexed_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                           root: primary_expr
+B: [181, 182] PS: [6, 11] PE: [6, 12]                             literal
+B: [181, 182] PS: [6, 11] PE: [6, 12]                               int `1`
+B: [183, 226] PS: [7,  0] PE: [8, 12]   fn_named
+B: [183, 185] PS: [7,  0] PE: [7,  2]     keyword: fn `fn`
+B: [186, 191] PS: [7,  3] PE: [7,  8]     name: identifier `myfoo`
+B: [191, 192] PS: [7,  8] PE: [7,  9]     ( `(`
+B: [192, 201] PS: [7,  9] PE: [7, 18]     normal_param: normal_param
+B: [192, 193] PS: [7,  9] PE: [7, 10]       name: identifier `a`
+B: [193, 194] PS: [7, 10] PE: [7, 11]       : `:`
+B: [195, 201] PS: [7, 12] PE: [7, 18]       type: fn_param_or_return_type
+B: [195, 201] PS: [7, 12] PE: [7, 18]         leaf_type: fn_leaf_type
+B: [195, 200] PS: [7, 12] PE: [7, 17]           type: float_type `float`
+B: [200, 201] PS: [7, 17] PE: [7, 18]           optional: ? `?`
+B: [201, 202] PS: [7, 18] PE: [7, 19]     ) `)`
+B: [203, 205] PS: [7, 20] PE: [7, 22]     -> `->`
+B: [206, 212] PS: [7, 23] PE: [7, 29]     return_type: fn_param_or_return_type
+B: [206, 212] PS: [7, 23] PE: [7, 29]       leaf_type: fn_leaf_type
+B: [206, 211] PS: [7, 23] PE: [7, 28]         type: error_type `error`
+B: [211, 212] PS: [7, 28] PE: [7, 29]         optional: ? `?`
+B: [212, 213] PS: [7, 29] PE: [7, 30]     block_colon: : `:`
+B: [218, 226] PS: [8,  4] PE: [8, 12]     stmt: return_stmt
+B: [218, 224] PS: [8,  4] PE: [8, 10]       return `return`
+B: [225, 226] PS: [8, 11] PE: [8, 12]       right: expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]         delegate: ternary_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]           delegate: or_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]             delegate: and_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]               delegate: compare_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                 delegate: add_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                   delegate: mult_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                     delegate: unary_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                       delegate: fallback_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                         delegate: indexed_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                           root: primary_expr
+B: [225, 226] PS: [8, 11] PE: [8, 12]                             literal
+B: [225, 226] PS: [8, 11] PE: [8, 12]                               int `1`

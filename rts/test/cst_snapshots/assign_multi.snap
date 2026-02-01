@@ -1,0 +1,31 @@
+### TITLE ###
+Assignment multi
+### INPUT ###
+a, b, c = myFunc()
+### EXPECTED ###
+B: [ 0, 18] PS: [0,  0] PE: [0, 18] source_file
+B: [ 0, 18] PS: [0,  0] PE: [0, 18]   assign
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]     lefts: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `a`
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]     , `,`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]     lefts: var_path
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]       root: identifier `b`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]     , `,`
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]     lefts: var_path
+B: [ 6,  7] PS: [0,  6] PE: [0,  7]       root: identifier `c`
+B: [ 8,  9] PS: [0,  8] PE: [0,  9]     = `=`
+B: [10, 18] PS: [0, 10] PE: [0, 18]     right: expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]       delegate: ternary_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]         delegate: or_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]           delegate: and_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]             delegate: compare_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]               delegate: add_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                 delegate: mult_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                   delegate: unary_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                     delegate: fallback_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                       delegate: indexed_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                         root: primary_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                           call
+B: [10, 16] PS: [0, 10] PE: [0, 16]                             func: identifier `myFunc`
+B: [16, 17] PS: [0, 16] PE: [0, 17]                             ( `(`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                             ) `)`

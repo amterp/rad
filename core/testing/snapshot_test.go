@@ -4,13 +4,11 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-const snapshotDelimiter = "### EXPECTED ###"
 
 func TestErrorSnapshots(t *testing.T) {
 	snapshotDir := "error_snapshots"
@@ -39,45 +37,63 @@ func TestErrorSnapshots(t *testing.T) {
 		return
 	}
 
-	for _, snapFile := range snapFiles {
-		// Use relative path for test name
-		testName := strings.TrimPrefix(snapFile, snapshotDir+"/")
-		testName = strings.TrimSuffix(testName, ".snap")
+	// Track which files need updating (thread-safe for consistency with CST tests,
+	// even though these tests don't run in parallel due to shared global state in test_helpers.go)
+	var updateMu sync.Mutex
+	filesToUpdate := make(map[string][]SnapshotCase)
 
-		t.Run(testName, func(t *testing.T) {
-			runSnapshotTest(t, snapFile)
-		})
+	for _, snapFile := range snapFiles {
+		snapFile := snapFile // capture for closure
+
+		cases, err := ParseSnapshotFile(snapFile)
+		require.NoError(t, err, "Failed to parse snapshot file: %s", snapFile)
+
+		for i := range cases {
+			tc := &cases[i]
+			testName := strings.TrimPrefix(snapFile, snapshotDir+"/")
+			testName = strings.TrimSuffix(testName, ".snap")
+			if tc.Title != "" {
+				testName = testName + "/" + tc.Title
+			}
+
+			// Note: We don't use t.Parallel() here because runErrorSnapshotTest
+			// relies on global state (stdInBuffer, stdOutBuffer, stdErrBuffer)
+			// defined in test_helpers.go. Parallelizing would cause data races.
+			t.Run(testName, func(t *testing.T) {
+				runErrorSnapshotTest(t, tc)
+
+				// Get the actual stderr output and normalize it
+				actual := normalizeOutput(stdErrBuffer.String())
+
+				if CompareSnapshot(t, tc, actual) {
+					// Needs update - update tc.Expected under lock
+					updateMu.Lock()
+					tc.Expected = actual
+					filesToUpdate[snapFile] = cases
+					updateMu.Unlock()
+				}
+			})
+		}
+	}
+
+	// Write updates if in update mode
+	if *UpdateSnapshots {
+		for path, cases := range filesToUpdate {
+			err := WriteSnapshotFile(path, cases)
+			if err != nil {
+				t.Errorf("Failed to update snapshot file %s: %v", path, err)
+			} else {
+				t.Logf("Updated snapshot file: %s", path)
+			}
+		}
 	}
 }
 
-func runSnapshotTest(t *testing.T, snapFile string) {
+func runErrorSnapshotTest(t *testing.T, tc *SnapshotCase) {
 	t.Helper()
 
-	// Read the snapshot file
-	content, err := os.ReadFile(snapFile)
-	require.NoError(t, err, "Failed to read snapshot file: %s", snapFile)
-
-	// Split by delimiter
-	parts := strings.SplitN(string(content), snapshotDelimiter, 2)
-	if len(parts) != 2 {
-		t.Fatalf("Snapshot file %s missing delimiter '%s'", snapFile, snapshotDelimiter)
-	}
-
-	script := strings.TrimSpace(parts[0])
-	expected := strings.TrimPrefix(parts[1], "\n") // Remove leading newline after delimiter
-
 	// Use the standard test setup which handles colors via --color=never
-	setupAndRunCode(t, script, "--color=never")
-
-	// Get the actual stderr output and normalize it
-	actual := normalizeOutput(stdErrBuffer.String())
-
-	// Compare
-	if !assert.Equal(t, expected, actual, "Snapshot mismatch in %s", snapFile) {
-		// Print a helpful diff
-		t.Logf("Expected:\n%s", expected)
-		t.Logf("Actual:\n%s", actual)
-	}
+	setupAndRunCode(t, tc.Input, "--color=never")
 }
 
 // normalizeOutput replaces test-specific file names with <script> for
