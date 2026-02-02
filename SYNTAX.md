@@ -1094,8 +1094,8 @@ text.replace("hello", "hi")  // "hi world"
 ```rad
 items = [3, 1, 4, 1, 5]
 items.len()             // 5
-items.sort()            // Sort in place
-items.reverse()         // Reverse in place
+items.sort()            // Returns sorted copy
+items.reverse()         // Returns reversed copy
 ```
 
 ### Type Checking
