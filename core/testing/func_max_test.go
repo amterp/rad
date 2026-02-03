@@ -105,3 +105,50 @@ print(max([1, 2], [3, 4]))
 	setupAndRunCode(t, script, "--color=never")
 	assertErrorContains(t, 1, "RAD20012", "max() with multiple arguments requires numbers, not lists")
 }
+
+func Test_Func_Max_ReturnsInt_WhenAllInts(t *testing.T) {
+	script := `
+print(type_of(max(1, 2, 3)))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "int\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Max_ReturnsFloat_WhenAnyFloat(t *testing.T) {
+	script := `
+print(type_of(max(1, 2.0, 3)))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "float\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Max_ReturnsInt_WhenListAllInts(t *testing.T) {
+	script := `
+print(type_of(max([1, 2, 3])))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "int\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Max_ReturnsFloat_WhenListHasFloat(t *testing.T) {
+	script := `
+print(type_of(max([1, 2.0, 3])))
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "float\n")
+	assertNoErrors(t)
+}
+
+func Test_Func_Max_CanBeUsedForListIndexing(t *testing.T) {
+	script := `
+mylist = [10, 20, 30, 40, 50]
+myidx = 2
+print(mylist[max(myidx, 0)])
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "30\n")
+	assertNoErrors(t)
+}
