@@ -2,7 +2,7 @@
 Parenthesized then indexed
 ### INPUT ###
 a = (b)[0]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 10] PS: [0,  0] PE: [0, 10] source_file
 B: [ 0, 10] PS: [0,  0] PE: [0, 10]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -48,3 +48,4 @@ B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                             
 B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                               literal
 B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                                 int `0`
 B: [ 9, 10] PS: [0,  9] PE: [0, 10]                         ] `]`
+

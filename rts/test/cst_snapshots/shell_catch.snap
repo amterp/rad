@@ -15,7 +15,7 @@ code, stdout = $`make all` catch:
 code, stdout, stderr = $`make all` catch:
     print("aw")
     pass
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 207] PS: [ 0,  0] PE: [13,  8] source_file
 B: [  0,  27] PS: [ 0,  0] PE: [ 1,  8]   shell_stmt
 B: [  0,  11] PS: [ 0,  0] PE: [ 0, 11]     shell_cmd: shell_cmd
@@ -230,3 +230,4 @@ B: [194, 196] PS: [12, 11] PE: [12, 13]                                         
 B: [196, 197] PS: [12, 13] PE: [12, 14]                                                           end: string_end `"`
 B: [197, 198] PS: [12, 14] PE: [12, 15]                                 ) `)`
 B: [203, 207] PS: [13,  4] PE: [13,  8]       stmt: pass_stmt `pass`
+

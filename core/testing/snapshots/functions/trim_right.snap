@@ -1,0 +1,21 @@
+### TITLE ###
+Single char
+### INPUT ###
+print(trim_right("aaabbb", "b"))
+### STDOUT ###
+aaa
+
+### TITLE ###
+Multi char
+### INPUT ###
+print(trim_right(",,!!,hello,!,", "!,"))
+### STDOUT ###
+,,!!,hello
+
+### TITLE ###
+No arg whitespace
+### INPUT ###
+print(trim_right("  hello  "))
+### STDOUT ###
+  hello
+

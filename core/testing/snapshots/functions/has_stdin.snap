@@ -1,0 +1,29 @@
+### TITLE ###
+has_stdin returns false when no stdin
+### INPUT ###
+if has_stdin():
+    print("has stdin")
+else:
+    print("no stdin")
+### STDOUT ###
+no stdin
+
+### TITLE ###
+has_stdin check before read no data
+### INPUT ###
+if has_stdin():
+    content = read_stdin()
+    print("Content: {content}")
+else:
+    print("No stdin to read")
+### STDOUT ###
+No stdin to read
+
+### TITLE ###
+has_stdin assignment no data
+### INPUT ###
+has_data = has_stdin()
+print("Has stdin: {has_data}")
+### STDOUT ###
+Has stdin: false
+

@@ -5,7 +5,7 @@ a = "hello"
 b = "there {1 + 1}"
 if true:
 	c = "world!"
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 54] PS: [0,  0] PE: [3, 13] source_file
 B: [ 0, 11] PS: [0,  0] PE: [0, 11]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -113,3 +113,4 @@ B: [46, 47] PS: [3,  5] PE: [3,  6]                                   start: str
 B: [47, 53] PS: [3,  6] PE: [3, 12]                                   contents: string_contents
 B: [47, 53] PS: [3,  6] PE: [3, 12]                                     content: string_content `world!`
 B: [53, 54] PS: [3, 12] PE: [3, 13]                                   end: string_end `"`
+

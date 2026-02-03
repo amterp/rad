@@ -22,16 +22,16 @@ func TestFuzzyMatchFold(t *testing.T) {
 		{"fzs", "FuzzySearch", true},
 
 		// Non-matches
-		{"abc", "ab", false},      // source longer than target
-		{"abc", "acb", false},     // wrong order
-		{"adc", "abcd", false},    // d comes before c
-		{"xyz", "abc", false},     // no match at all
+		{"abc", "ab", false},   // source longer than target
+		{"abc", "acb", false},  // wrong order
+		{"adc", "abcd", false}, // d comes before c
+		{"xyz", "abc", false},  // no match at all
 
 		// Edge cases
 		{"a", "a", true},
 		{"a", "A", true},
 		{"a", "bab", true},
-		{"aa", "a", false},        // need two a's, only have one
+		{"aa", "a", false}, // need two a's, only have one
 		{"aa", "aXa", true},
 	}
 

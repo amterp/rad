@@ -6,7 +6,7 @@ b = json.aaa[].bbb
 c = json.*.bbb
 d = json.*[].bbb
 e = json.aaa[0].bbb
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 89] PS: [0,  0] PE: [4, 19] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -98,3 +98,4 @@ B: [84, 85] PS: [4, 14] PE: [4, 15]           ] `]`
 B: [85, 86] PS: [4, 15] PE: [4, 16]       . `.`
 B: [86, 89] PS: [4, 16] PE: [4, 19]       segment: json_segment
 B: [86, 89] PS: [4, 16] PE: [4, 19]         key: identifier `bbb`
+

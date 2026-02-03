@@ -1,0 +1,240 @@
+### TITLE ###
+FlatMap list no fn nested lists
+### INPUT ###
+a = [[1, 2], [3, 4]]
+a.flat_map().print()
+### STDOUT ###
+[ 1, 2, 3, 4 ]
+
+### TITLE ###
+FlatMap list no fn one level only
+### INPUT ###
+a = [[[1, 2]], [[3, 4]]]
+a.flat_map().print()
+### STDOUT ###
+[ [ 1, 2 ], [ 3, 4 ] ]
+
+### TITLE ###
+FlatMap list no fn empty list
+### INPUT ###
+a = []
+a.flat_map().print()
+### STDOUT ###
+[ ]
+
+### TITLE ###
+FlatMap list no fn empty nested lists
+### INPUT ###
+a = [[], [1], []]
+a.flat_map().print()
+### STDOUT ###
+[ 1 ]
+
+### TITLE ###
+FlatMap list no fn list of string lists
+### INPUT ###
+a = [["a", "b"], ["c", "d"]]
+a.flat_map().print()
+### STDOUT ###
+[ "a", "b", "c", "d" ]
+
+### TITLE ###
+FlatMap list no fn error on mixed elements
+### INPUT ###
+a = [1, [2, 3], 4]
+a.flat_map().print()
+### STDERR ###
+error[RAD20000]: flat_map requires all elements to be lists, but element at index 0 is int
+  --> <script>:2:3
+  |
+1 | a = [1, [2, 3], 4]
+2 | a.flat_map().print()
+  |   ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+FlatMap list no fn error on non-lists
+### INPUT ###
+a = [1, 2, 3]
+a.flat_map().print()
+### STDERR ###
+error[RAD20000]: flat_map requires all elements to be lists, but element at index 0 is int
+  --> <script>:2:3
+  |
+1 | a = [1, 2, 3]
+2 | a.flat_map().print()
+  |   ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+FlatMap list with fn split
+### INPUT ###
+a = ["a-b", "c-d"]
+a.flat_map(fn(e) e.split("-")).print()
+### STDOUT ###
+[ "a", "b", "c", "d" ]
+
+### TITLE ###
+FlatMap list with fn duplicate
+### INPUT ###
+a = [1, 2]
+a.flat_map(fn(x) [x, x * 10]).print()
+### STDOUT ###
+[ 1, 10, 2, 20 ]
+
+### TITLE ###
+FlatMap list with fn range
+### INPUT ###
+a = [1, 2, 3]
+a.flat_map(fn(x) range(x)).print()
+### STDOUT ###
+[ 0, 0, 1, 0, 1, 2 ]
+
+### TITLE ###
+FlatMap list with fn named function
+### INPUT ###
+a = ["a-b", "c-d"]
+splitter = fn(e) e.split("-")
+a.flat_map(splitter).print()
+### STDOUT ###
+[ "a", "b", "c", "d" ]
+
+### TITLE ###
+FlatMap list with fn empty list results
+### INPUT ###
+a = [1, 2, 3]
+a.flat_map(fn(x) []).print()
+### STDOUT ###
+[ ]
+
+### TITLE ###
+FlatMap list with fn error on non-list result
+### INPUT ###
+a = [1, 2, 3]
+a.flat_map(fn(x) x * 2).print()
+### STDERR ###
+error[RAD20000]: flat_map function must return a list, but returned int for element at index 0
+  --> <script>:2:3
+  |
+1 | a = [1, 2, 3]
+2 | a.flat_map(fn(x) x * 2).print()
+  |   ^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+FlatMap map no fn requires function
+### INPUT ###
+a = { "a": [1, 2], "b": [3, 4] }
+a.flat_map().print()
+### STDERR ###
+error[RAD20000]: flat_map on maps requires a function argument
+  --> <script>:2:3
+  |
+1 | a = { "a": [1, 2], "b": [3, 4] }
+2 | a.flat_map().print()
+  |   ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+FlatMap map with fn extract values
+### INPUT ###
+a = { "a": [1, 2], "b": [3, 4] }
+a.flat_map(fn(k, v) v).print()
+### STDOUT ###
+[ 1, 2, 3, 4 ]
+
+### TITLE ###
+FlatMap map with fn create pairs
+### INPUT ###
+a = { "a": 1, "b": 2 }
+a.flat_map(fn(k, v) [k, v]).print()
+### STDOUT ###
+[ "a", 1, "b", 2 ]
+
+### TITLE ###
+FlatMap map with fn transform then flatten
+### INPUT ###
+a = { "a": "x-y", "b": "z-w" }
+a.flat_map(fn(k, v) v.split("-")).print()
+### STDOUT ###
+[ "x", "y", "z", "w" ]
+
+### TITLE ###
+FlatMap map with fn error on non-list result
+### INPUT ###
+a = { "a": 1, "b": 2 }
+a.flat_map(fn(k, v) v * 2).print()
+### STDERR ###
+error[RAD20000]: flat_map function must return a list, but returned int for key a
+  --> <script>:2:3
+  |
+1 | a = { "a": 1, "b": 2 }
+2 | a.flat_map(fn(k, v) v * 2).print()
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+FlatMap chain with filter
+### INPUT ###
+a = [[1, 2], [3, 4]]
+a.flat_map().filter(fn(x) x > 2).print()
+### STDOUT ###
+[ 3, 4 ]
+
+### TITLE ###
+FlatMap chain with map
+### INPUT ###
+a = [[1, 2], [3, 4]]
+a.flat_map().map(fn(x) x * 2).print()
+### STDOUT ###
+[ 2, 4, 6, 8 ]
+
+### TITLE ###
+FlatMap chain multiple
+### INPUT ###
+a = ["a-b", "c-d"]
+a.flat_map(fn(e) e.split("-")).map(fn(x) x.upper()).print()
+### STDOUT ###
+[ "A", "B", "C", "D" ]
+
+### TITLE ###
+FlatMap method syntax
+### INPUT ###
+[[1], [2]].flat_map().print()
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+FlatMap function syntax
+### INPUT ###
+flat_map([[1], [2]]).print()
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+FlatMap function syntax with fn
+### INPUT ###
+flat_map([1, 2], fn(x) [x, x * 10]).print()
+### STDOUT ###
+[ 1, 10, 2, 20 ]
+

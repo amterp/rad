@@ -1,0 +1,55 @@
+### TITLE ###
+Join string array
+### INPUT ###
+arr = ["Hi", "there"]
+print(join(arr, " "))
+print(join(arr, " ", "Alice: "))
+print(join(arr, " ", "Alice: ", "!"))
+### STDOUT ###
+Hi there
+Alice: Hi there
+Alice: Hi there!
+
+### TITLE ###
+Join int array
+### INPUT ###
+arr = [1, 2, 3]
+print(join(arr, "_"))
+print(join(arr, "_", "Nums: "))
+print(join(arr, "_", "Nums: ", "_4"))
+### STDOUT ###
+1_2_3
+Nums: 1_2_3
+Nums: 1_2_3_4
+
+### TITLE ###
+Join float array
+### INPUT ###
+arr = [1.1, 1.2, 1.3]
+print(join(arr, " yes "))
+print(join(arr, " yes ", "Floats: "))
+print(join(arr, " yes ", "Floats: ", " :D"))
+### STDOUT ###
+1.1 yes 1.2 yes 1.3
+Floats: 1.1 yes 1.2 yes 1.3
+Floats: 1.1 yes 1.2 yes 1.3 :D
+
+### TITLE ###
+Join mixed array
+### INPUT ###
+arr = ["alice", 2]
+print(join(arr, "_"))
+print(join(arr, "_", "("))
+print(join(arr, "_", "(", ")"))
+### STDOUT ###
+alice_2
+(alice_2
+(alice_2)
+
+### TITLE ###
+Join returns string type
+### INPUT ###
+print(type_of(join(["Hi", "!"], "")))
+### STDOUT ###
+str
+

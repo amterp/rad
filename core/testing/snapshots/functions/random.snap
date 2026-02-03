@@ -1,0 +1,114 @@
+### TITLE ###
+Random_Rand
+### INPUT ###
+seed_random(1)
+print(rand())
+print(rand())
+print(rand())
+print(rand())
+### STDOUT ###
+0.6046602879796196
+0.9405090880450124
+0.6645600532184904
+0.4377141871869802
+
+### TITLE ###
+Random_RandInt
+### INPUT ###
+seed_random(1)
+print(rand_int(100))
+print(rand_int(100))
+print(rand_int(100))
+print(rand_int(100))
+### STDOUT ###
+10
+51
+21
+51
+
+### TITLE ###
+Random_RandIntMin
+### INPUT ###
+seed_random(1)
+print(rand_int(96, 100))
+print(rand_int(96, 100))
+print(rand_int(96, 100))
+print(rand_int(96, 100))
+### STDOUT ###
+98
+99
+97
+99
+
+### TITLE ###
+Random_RandIntNegNumbers
+### INPUT ###
+seed_random(1)
+print(rand_int(-10, 10))
+print(rand_int(-10, 10))
+print(rand_int(-10, 10))
+print(rand_int(-10, 10))
+### STDOUT ###
+0
+1
+-9
+1
+
+### TITLE ###
+Random_RandErrorsIfArgs
+### INPUT ###
+rand(1)
+### STDERR ###
+error[RAD30007]: Expected at most 0 args, but was invoked with 1
+  --> <script>:1:1
+  |
+1 | rand(1)
+  | ^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Random_RandIntErrorsIfNoArgs
+### INPUT ###
+seed_random(1)
+rand_int().print()
+### STDOUT ###
+5577006791947779410
+
+### TITLE ###
+Random_SeedRandomErrorsIfNoArgs
+### INPUT ###
+seed_random()
+### STDERR ###
+error[RAD30007]: Missing required argument '_seed'
+  --> <script>:1:1
+  |
+1 | seed_random()
+  | ^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Random_ErrorsIfMinMaxSame
+### INPUT ###
+rand_int(2, 2)
+
+### STDERR ###
+error[RAD20019]: min (2) must be less than max (2).
+  --> <script>:1:1
+  |
+1 | rand_int(2, 2)
+  | ^^^^^^^^^^^^^^
+2 |
+  |
+   = info: rad explain RAD20019
+
+
+### EXIT ###
+1

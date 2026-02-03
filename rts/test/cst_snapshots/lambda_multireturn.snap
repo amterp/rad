@@ -3,7 +3,7 @@ Lambda avoids ambiguous multireturn
 ### INPUT ###
 process(fn() a, b)
 process(fn() [a, b])
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 39] PS: [0,  0] PE: [1, 20] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr_stmt
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr: expr
@@ -122,3 +122,4 @@ B: [36, 37] PS: [1, 17] PE: [1, 18]                                             
 B: [36, 37] PS: [1, 17] PE: [1, 18]                                                                                             root: identifier `b`
 B: [37, 38] PS: [1, 18] PE: [1, 19]                                                                         ] `]`
 B: [38, 39] PS: [1, 19] PE: [1, 20]                             ) `)`
+

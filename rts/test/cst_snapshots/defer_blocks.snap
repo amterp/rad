@@ -13,7 +13,7 @@ defer:
 errdefer:
     print(7)
     print(8)
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 137] PS: [ 0,  0] PE: [11, 12] source_file
 B: [  0,  32] PS: [ 0,  0] PE: [ 2, 12]   defer_block
 B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]     keyword: defer `defer`
@@ -259,3 +259,4 @@ B: [135, 136] PS: [11, 10] PE: [11, 11]                                         
 B: [135, 136] PS: [11, 10] PE: [11, 11]                                                     literal
 B: [135, 136] PS: [11, 10] PE: [11, 11]                                                       int `8`
 B: [136, 137] PS: [11, 11] PE: [11, 12]                               ) `)`
+

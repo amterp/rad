@@ -1,0 +1,66 @@
+### TITLE ###
+Basic loop
+### INPUT ###
+a = 0
+while a < 3:
+	print(a)
+	a++
+### STDOUT ###
+0
+1
+2
+
+### TITLE ###
+No condition can break
+### INPUT ###
+a = 0
+while:
+	print(a)
+	a++
+	if a == 3:
+		break
+### STDOUT ###
+0
+1
+2
+
+### TITLE ###
+Can continue
+### INPUT ###
+a = 0
+while a < 3:
+	a++
+	if a == 2:
+		continue
+	print(a)
+### STDOUT ###
+1
+3
+
+### TITLE ###
+Can nest
+### INPUT ###
+a = 0
+while a < 2:
+	b = 0
+	while b < 2:
+		print(a, b)
+		b++
+	a++
+### STDOUT ###
+0 0
+0 1
+1 0
+1 1
+
+### TITLE ###
+Defined values not scoped
+### INPUT ###
+a = 0
+while a < 2:
+	a++
+	b = a * 20
+print(a, b)
+### STDOUT ###
+2 40
+

@@ -3,7 +3,7 @@ Args declarations
 ### INPUT ###
 args:
    foo "bar" str
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 22] PS: [0,  0] PE: [1, 16] source_file
 B: [ 0, 22] PS: [0,  0] PE: [1, 16]   arg_block
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -16,3 +16,4 @@ B: [14, 17] PS: [1,  8] PE: [1, 11]         contents: string_contents
 B: [14, 17] PS: [1,  8] PE: [1, 11]           content: string_content `bar`
 B: [17, 18] PS: [1, 11] PE: [1, 12]         end: string_end `"`
 B: [19, 22] PS: [1, 13] PE: [1, 16]       type: string_type `str`
+

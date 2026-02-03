@@ -2,7 +2,7 @@
 Ternary simple
 ### INPUT ###
 c = a < 10 ? "smaller!" : "bigger!"
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 35] PS: [0,  0] PE: [0, 35] source_file
 B: [ 0, 35] PS: [0,  0] PE: [0, 35]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -64,3 +64,4 @@ B: [26, 27] PS: [0, 26] PE: [0, 27]                                 start: strin
 B: [27, 34] PS: [0, 27] PE: [0, 34]                                 contents: string_contents
 B: [27, 34] PS: [0, 27] PE: [0, 34]                                   content: string_content `bigger!`
 B: [34, 35] PS: [0, 34] PE: [0, 35]                                 end: string_end `"`
+

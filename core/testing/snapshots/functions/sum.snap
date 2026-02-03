@@ -1,0 +1,48 @@
+### TITLE ###
+Sum ints
+### INPUT ###
+a = [1, 2, 3]
+print(sum(a))
+### STDOUT ###
+6
+
+### TITLE ###
+Sum mix
+### INPUT ###
+a = [1, 2.2, 3]
+print(sum(a))
+### STDOUT ###
+6.2
+
+### TITLE ###
+Sum errors for non-numeric elements
+### INPUT ###
+a = [1, "ab", 3]
+print(sum(a))
+### STDERR ###
+error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float[]'
+  --> <script>:2:11
+  |
+1 | a = [1, "ab", 3]
+2 | print(sum(a))
+  |           ^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Sum returns int when all ints
+### INPUT ###
+print(type_of(sum([1, 2, 3])))
+### STDOUT ###
+int
+
+### TITLE ###
+Sum returns float when any float
+### INPUT ###
+print(type_of(sum([1, 2.0, 3])))
+### STDOUT ###
+float
+

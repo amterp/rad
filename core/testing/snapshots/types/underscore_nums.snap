@@ -1,0 +1,57 @@
+### TITLE ###
+Can write underscored numbers
+### INPUT ###
+print(1_234)
+print(0.123_456)
+print(12_34.56_78)
+### STDOUT ###
+1234
+0.123456
+1234.5678
+
+### TITLE ###
+Can use underscores in args
+### INPUT ###
+args:
+  a int = 1_234
+  b float = 0.123_456
+
+  a range [1_000, 2_000]
+
+print(a, b)
+### STDOUT ###
+1234 0.123456
+
+### TITLE ###
+Can use underscores in args range validation
+### INPUT ###
+args:
+  a int = 1_234
+  b float = 0.123_456
+
+  a range [1_000, 2_000]
+
+print(a, b)
+### ARGS ###
+3000
+### STDERR ###
+'a' value 3000 is > maximum 2000
+
+Usage:
+  TestCase [a] [b] [OPTIONS]
+
+Script args:
+      --a int     Range: [1000, 2000] (default 1234)
+      --b float   (default 0.123456)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1

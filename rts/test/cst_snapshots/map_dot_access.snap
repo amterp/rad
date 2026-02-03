@@ -2,7 +2,7 @@
 Map dot access
 ### INPUT ###
 a.alice + a.bob.charlie
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 23] PS: [0,  0] PE: [0, 23] source_file
 B: [ 0, 23] PS: [0,  0] PE: [0, 23]   expr_stmt
 B: [ 0, 23] PS: [0,  0] PE: [0, 23]     expr: expr
@@ -29,3 +29,4 @@ B: [11, 12] PS: [0, 11] PE: [0, 12]                         . `.`
 B: [12, 15] PS: [0, 12] PE: [0, 15]                         indexing: identifier `bob`
 B: [15, 16] PS: [0, 15] PE: [0, 16]                         . `.`
 B: [16, 23] PS: [0, 16] PE: [0, 23]                         indexing: identifier `charlie`
+

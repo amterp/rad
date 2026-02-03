@@ -29,7 +29,7 @@ else if not a:
 else:
     b = 2
     print("BUG!!")
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 308] PS: [ 0,  0] PE: [27, 18] source_file
 B: [  0,  52] PS: [ 0,  0] PE: [ 3, 17]   if_stmt
 B: [  0,  28] PS: [ 0,  0] PE: [ 1, 18]     alt: if_alt
@@ -564,3 +564,4 @@ B: [301, 306] PS: [27, 11] PE: [27, 16]                                         
 B: [301, 306] PS: [27, 11] PE: [27, 16]                                                             content: string_content `BUG!!`
 B: [306, 307] PS: [27, 16] PE: [27, 17]                                                           end: string_end `"`
 B: [307, 308] PS: [27, 17] PE: [27, 18]                                 ) `)`
+

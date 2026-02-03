@@ -1,0 +1,61 @@
+### TITLE ###
+Can reference built-in funcs
+### INPUT ###
+
+foo = upper
+"test".foo().print()
+
+["Test", "Foo"].map(lower).print()
+### STDOUT ###
+TEST
+[ "test", "foo" ]
+
+### TITLE ###
+Can save built-in func ref and then shadow
+### INPUT ###
+
+foo = upper
+upper = "hi"
+print(upper)
+print(foo(upper))
+### STDOUT ###
+hi
+HI
+
+### TITLE ###
+Errors if invoking undefined symbol
+### INPUT ###
+
+notarealsymbol()
+### STDERR ###
+error[RAD40003]: Cannot invoke unknown function: notarealsymbol
+  --> <script>:2:1
+  |
+1 |
+2 | notarealsymbol()
+  | ^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD40003
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors if invoking non-function
+### INPUT ###
+
+foo = "hi"
+foo(2)
+### STDERR ###
+error[RAD30001]: Cannot invoke 'foo' as a function: it is a str
+  --> <script>:3:1
+  |
+2 | foo = "hi"
+3 | foo(2)
+  | ^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

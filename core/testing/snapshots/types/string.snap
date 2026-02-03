@@ -1,0 +1,58 @@
+### TITLE ###
+Simple indexing
+### INPUT ###
+a = "alice"
+print(a[0])
+print(a[1])
+### STDOUT ###
+a
+l
+
+### TITLE ###
+Negative indexing
+### INPUT ###
+a = "alice"
+print(a[-1])
+print(a[-2])
+### STDOUT ###
+e
+c
+
+### TITLE ###
+Complex indexing with len
+### INPUT ###
+a = "alice"
+print(a[len(a) - 3])
+### STDOUT ###
+i
+
+### TITLE ###
+Multi-byte indexing with emoji
+### INPUT ###
+s = "a😀b"
+print(s[0])
+print(s[1])
+print(s[2])
+print(s[-1])
+### STDOUT ###
+a
+😀
+b
+b
+
+### TITLE ###
+String_MultiSegmentMultiByteIndexing
+### INPUT ###
+s = blue("a😀") + "bc"
+print(s[0])
+print(s[1])
+print(s[2])
+print(s[3])
+### ARGS ###
+--color=always
+### STDOUT ###
+[34ma[0m
+[34m😀[0m
+b
+c
+

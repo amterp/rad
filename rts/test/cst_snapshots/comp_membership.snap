@@ -3,7 +3,7 @@ Comparison membership
 ### INPUT ###
 1 in a
 2 not in a
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 17] PS: [0,  0] PE: [1, 10] source_file
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]   expr_stmt
 B: [ 0,  6] PS: [0,  0] PE: [0,  6]     expr: expr
@@ -51,3 +51,4 @@ B: [16, 17] PS: [1,  9] PE: [1, 10]                   delegate: unary_expr
 B: [16, 17] PS: [1,  9] PE: [1, 10]                     delegate: fallback_expr
 B: [16, 17] PS: [1,  9] PE: [1, 10]                       delegate: var_path
 B: [16, 17] PS: [1,  9] PE: [1, 10]                         root: identifier `a`
+

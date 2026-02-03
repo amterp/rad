@@ -1,0 +1,47 @@
+### TITLE ###
+FindPaths default target
+### INPUT ###
+paths = find_paths("path_example/dir2")
+print(paths)
+### STDOUT ###
+[ "dir21", "dir21/file21.txt", "dir22", "dir22/file22.txt", "file2.txt" ]
+
+### TITLE ###
+FindPaths cwd
+### INPUT ###
+paths = find_paths("path_example/dir2", relative="cwd")
+print(paths)
+### STDOUT ###
+[ "path_example/dir2/dir21", "path_example/dir2/dir21/file21.txt", "path_example/dir2/dir22", "path_example/dir2/dir22/file22.txt", "path_example/dir2/file2.txt" ]
+
+### TITLE ###
+FindPaths abs
+### SKIP ###
+Need to test abstractions in place for this to work regardless of the computer running the test
+### INPUT ###
+paths = find_paths("path_example/dir2", relative="absolute")
+print(paths)
+### TITLE ###
+FindPaths depth
+### INPUT ###
+paths = find_paths("path_example", depth=1)
+print(paths)
+### STDOUT ###
+[ "dir1", "dir2" ]
+
+### TITLE ###
+FindPaths neg 3 depth includes all
+### INPUT ###
+paths = find_paths("path_example", depth=-3)
+print(paths)
+### STDOUT ###
+[ "dir1", "dir1/dir11", "dir1/dir11/file11.txt", "dir2", "dir2/dir21", "dir2/dir21/file21.txt", "dir2/dir22", "dir2/dir22/file22.txt", "dir2/file2.txt" ]
+
+### TITLE ###
+FindPaths depth 0 includes nothing
+### INPUT ###
+paths = find_paths("path_example", depth=0)
+print(paths)
+### STDOUT ###
+[ ]
+

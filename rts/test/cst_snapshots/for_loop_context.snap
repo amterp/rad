@@ -4,7 +4,7 @@ For loop with context
 for item in items with ctx:
     print(ctx.idx, item)
 
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 53] PS: [0,  0] PE: [2,  0] source_file
 B: [ 0, 52] PS: [0,  0] PE: [1, 24]   for_loop
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     for `for`
@@ -66,3 +66,4 @@ B: [47, 51] PS: [1, 19] PE: [1, 23]                                             
 B: [47, 51] PS: [1, 19] PE: [1, 23]                                                 delegate: var_path
 B: [47, 51] PS: [1, 19] PE: [1, 23]                                                   root: identifier `item`
 B: [51, 52] PS: [1, 23] PE: [1, 24]                               ) `)`
+

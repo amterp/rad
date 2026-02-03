@@ -68,31 +68,76 @@ sleep("1.1h 2.2m  3.3s")
 func TestSleep_ErrorsIfNoArg(t *testing.T) {
 	setupAndRunCode(t, `sleep()`, "--color=never")
 	assertDidNotSleep(t)
-	assertErrorContains(t, 1, "RAD30007", "Missing required argument '_duration'")
+	expected := `error[RAD30007]: Missing required argument '_duration'
+  --> TestCase:1:1
+  |
+1 | sleep()
+  | ^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+`
+	assertError(t, 1, expected)
 }
 
 func TestSleep_ErrorsIfNegArg(t *testing.T) {
 	setupAndRunCode(t, `sleep(-10)`, "--color=never")
 	assertDidNotSleep(t)
-	assertErrorContains(t, 1, "RAD20000", "Cannot take a negative duration: \"-10s\"")
+	expected := `error[RAD20000]: Cannot take a negative duration: "-10s"
+  --> TestCase:1:1
+  |
+1 | sleep(-10)
+  | ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+`
+	assertError(t, 1, expected)
 }
 
 func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 	setupAndRunCode(t, `sleep(10, 20)`, "--color=never")
 	assertDidNotSleep(t)
-	assertErrorContains(t, 1, "RAD30007", "Too many positional args, remaining args are named-only")
+	expected := `error[RAD30007]: Too many positional args, remaining args are named-only
+  --> TestCase:1:11
+  |
+1 | sleep(10, 20)
+  |           ^^
+  |
+   = info: rad explain RAD30007
+
+`
+	assertError(t, 1, expected)
 }
 
 func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 	setupAndRunCode(t, `sleep(true)`, "--color=never")
 	assertDidNotSleep(t)
-	assertErrorContains(t, 1, "RAD30001", "Value 'true' (bool) is not compatible with expected type 'int|float|str'")
+	expected := `error[RAD30001]: Value 'true' (bool) is not compatible with expected type 'int|float|str'
+  --> TestCase:1:7
+  |
+1 | sleep(true)
+  |       ^^^^
+  |
+   = info: rad explain RAD30001
+
+`
+	assertError(t, 1, expected)
 }
 
 func TestSleep_ErrorsIfInvalidString(t *testing.T) {
 	setupAndRunCode(t, `sleep("Invalid!")`, "--color=never")
 	assertDidNotSleep(t)
-	assertErrorContains(t, 1, "RAD20023", "Invalid string argument:")
+	expected := `error[RAD20023]: Invalid string argument: "Invalid!"
+  --> TestCase:1:1
+  |
+1 | sleep("Invalid!")
+  | ^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20023
+
+`
+	assertError(t, 1, expected)
 }
 
 func TestSleep_CanSleepLessThanMilliWithoutErroring(t *testing.T) {

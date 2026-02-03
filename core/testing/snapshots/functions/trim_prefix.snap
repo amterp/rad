@@ -1,0 +1,42 @@
+### TITLE ###
+Literal
+### DESCRIPTION ###
+Test that trim_prefix removes literal prefix (not character set)
+### INPUT ###
+a = "aaabbb"
+print(trim_prefix(a, "a"))
+### STDOUT ###
+aabbb
+
+### TITLE ###
+Multi char
+### INPUT ###
+print(trim_prefix("hello world", "hello "))
+### STDOUT ###
+world
+
+### TITLE ###
+No match
+### INPUT ###
+print(trim_prefix("hello", "x"))
+### STDOUT ###
+hello
+
+### TITLE ###
+Multiple occurrences
+### DESCRIPTION ###
+trim_prefix should only remove the prefix once
+### INPUT ###
+print(trim_prefix("aaa", "a"))
+### STDOUT ###
+aa
+
+### TITLE ###
+Empty prefix
+### DESCRIPTION ###
+Empty prefix should not change the string
+### INPUT ###
+print(trim_prefix("hello", ""))
+### STDOUT ###
+hello
+

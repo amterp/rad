@@ -1,0 +1,42 @@
+### TITLE ###
+Filter list with lambda
+### INPUT ###
+a = ["alice", "bob", "charlie"]
+a.filter(fn(n) n.len() > 4).print()
+### STDOUT ###
+[ "alice", "charlie" ]
+
+### TITLE ###
+Filter list with function
+### INPUT ###
+a = ["alice", "bob", "charlie"]
+long = fn(n) n.len() > 4
+a.filter(long).print()
+### STDOUT ###
+[ "alice", "charlie" ]
+
+### TITLE ###
+Filter map with lambda
+### INPUT ###
+a = { "alice": "bobson", "charlie": "davidson" }
+a.filter(fn(k, v) k.len() > 5).print()
+### STDOUT ###
+{ "charlie": "davidson" }
+
+### TITLE ###
+Filter map with function
+### INPUT ###
+a = { "alice": "bobson", "charlie": "davidson" }
+long = fn(k, v) k.len() > 5
+a.filter(long).print()
+### STDOUT ###
+{ "charlie": "davidson" }
+
+### TITLE ###
+Filter can chain with map
+### INPUT ###
+a = { "alice": "bobson", "charlie": "davidson" }
+a.filter(fn(k, v) k.len() > 5).map(fn(k, v) "{k} {v.upper()}").print()
+### STDOUT ###
+[ "charlie DAVIDSON" ]
+

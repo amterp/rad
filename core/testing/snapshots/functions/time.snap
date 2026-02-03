@@ -1,0 +1,184 @@
+### TITLE ###
+Func Now
+### INPUT ###
+a = now()
+print(a)
+
+print(a.date, type_of(a.date))
+print(a.year, type_of(a.year))
+print(a.month, type_of(a.month))
+print(a.day, type_of(a.day))
+print(a.hour, type_of(a.hour))
+print(a.minute, type_of(a.minute))
+print(a.second, type_of(a.second))
+
+print(a.epoch.seconds, type_of(a.epoch.seconds))
+print(a.epoch.millis, type_of(a.epoch.millis))
+print(a.epoch.nanos, type_of(a.epoch.nanos))
+### STDOUT ###
+{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+2019-12-13 str
+2019 int
+12 int
+13 int
+14 int
+15 int
+16 int
+1576246516 int
+1576246516123 int
+1576246516123123123 int
+
+### TITLE ###
+Func NowWithTimeZone
+### INPUT ###
+a = now(tz="America/Chicago")
+print(a)
+
+print(a.date, type_of(a.date))
+print(a.year, type_of(a.year))
+print(a.month, type_of(a.month))
+print(a.day, type_of(a.day))
+print(a.hour, type_of(a.hour))
+print(a.minute, type_of(a.minute))
+print(a.second, type_of(a.second))
+
+print(a.epoch.seconds, type_of(a.epoch.seconds))
+print(a.epoch.millis, type_of(a.epoch.millis))
+print(a.epoch.nanos, type_of(a.epoch.nanos))
+### STDOUT ###
+{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 8, "minute": 15, "second": 16, "time": "08:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+2019-12-13 str
+2019 int
+12 int
+13 int
+8 int
+15 int
+16 int
+1576246516 int
+1576246516123 int
+1576246516123123123 int
+
+### TITLE ###
+Func NowErrorsForInvalidTimeZone
+### INPUT ###
+a = now(tz="invalid time zone") catch:
+	print(a)
+a = now(tz="another bad one")
+### STDOUT ###
+Invalid time zone 'invalid time zone'
+
+### STDERR ###
+error[RAD20009]: Invalid time zone 'another bad one'
+  --> <script>:3:5
+  |
+2 | 	print(a)
+3 | a = now(tz="another bad one")
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20009
+
+
+### EXIT ###
+1
+### TITLE ###
+Func ParseEpochSeconds
+### INPUT ###
+a = parse_epoch(1712345678)
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678000, "nanos": 1712345678000000000 } }
+
+### TITLE ###
+Func ParseEpochMillis
+### INPUT ###
+a = parse_epoch(1712345678123)
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
+
+### TITLE ###
+Func ParseEpochMicros
+### INPUT ###
+a = parse_epoch(1712345678123123)
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123000 } }
+
+### TITLE ###
+Func ParseEpochNanos
+### INPUT ###
+a = parse_epoch(1712345678123123123)
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123123 } }
+
+### TITLE ###
+Func ParseEpochErrorsIfAmbiguous
+### INPUT ###
+a = parse_epoch(17123456781) catch:
+	print(a)
+a = parse_epoch(17123456781)
+### STDOUT ###
+Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
+
+### STDERR ###
+error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
+  --> <script>:3:5
+  |
+2 | 	print(a)
+3 | a = parse_epoch(17123456781)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20007
+
+
+### EXIT ###
+1
+### TITLE ###
+Func ParseEpochTimeZoneNegativeAmbiguousButWithUnits
+### INPUT ###
+a = parse_epoch(-17123456781, unit = "milliseconds")
+print(a)
+### STDOUT ###
+{ "date": "1969-06-16", "year": 1969, "month": 6, "day": 16, "hour": 19, "minute": 29, "second": 3, "time": "19:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
+
+### TITLE ###
+Func ParseEpochTimeZone
+### INPUT ###
+a = parse_epoch(1712345678123, tz = "America/Chicago")
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 14, "minute": 34, "second": 38, "time": "14:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
+
+### TITLE ###
+Func ParseEpochFloatSeconds
+### INPUT ###
+a = parse_epoch(1712345678.5, tz = "UTC")
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678500, "nanos": 1712345678500000000 } }
+
+### TITLE ###
+Func ParseEpochFloatWithExplicitUnit
+### INPUT ###
+a = parse_epoch(1712345678123.25, unit = "milliseconds", tz = "UTC")
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123250000 } }
+
+### TITLE ###
+Func ParseEpochFloatNegative
+### INPUT ###
+a = parse_epoch(-1712345678.5, unit = "seconds", tz = "UTC")
+print(a)
+### STDOUT ###
+{ "date": "1915-09-28", "year": 1915, "month": 9, "day": 28, "hour": 4, "minute": 25, "second": 21, "time": "04:25:21", "epoch": { "seconds": -1712345679, "millis": -1712345678500, "nanos": -1712345678500000000 } }
+
+### TITLE ###
+Func ParseEpochFloatAutoDetectMillis
+### INPUT ###
+a = parse_epoch(1712345678123.5, tz = "UTC")
+print(a)
+### STDOUT ###
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123500000 } }
+

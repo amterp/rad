@@ -5,7 +5,7 @@ rad url:
     fields Name, Age
     Age:
         map fn(n) n * 2
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 62] PS: [0,  0] PE: [3, 23] source_file
 B: [ 0, 62] PS: [0,  0] PE: [3, 23]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -57,3 +57,4 @@ B: [61, 62] PS: [3, 22] PE: [3, 23]                             delegate: indexe
 B: [61, 62] PS: [3, 22] PE: [3, 23]                               root: primary_expr
 B: [61, 62] PS: [3, 22] PE: [3, 23]                                 literal
 B: [61, 62] PS: [3, 22] PE: [3, 23]                                   int `2`
+

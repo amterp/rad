@@ -1,0 +1,219 @@
+### TITLE ###
+SingleValueSameTypesPickFromResourceGh
+### INPUT ###
+args:
+    filter str
+
+url = pick_from_resource("./resources/website.json", filter)
+print(url)
+### ARGS ###
+gh
+### STDOUT ###
+github.com
+
+### TITLE ###
+SingleValueSameTypesPickFromResourceGl
+### INPUT ###
+args:
+    filter str
+
+url = pick_from_resource("./resources/website.json", filter)
+print(url)
+### ARGS ###
+gl
+### STDOUT ###
+gitlab.com
+
+### TITLE ###
+MultiValueSameTypesPickFromResourceGh
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+gh
+### STDOUT ###
+github.com
+GitHub
+
+### TITLE ###
+MultiValueSameTypesPickFromResourceHub
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+hub
+### STDOUT ###
+github.com
+GitHub
+
+### TITLE ###
+MultiValueSameTypesPickFromResourceGl
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+gl
+### STDOUT ###
+gitlab.com
+GitLab
+
+### TITLE ###
+MultiValueSameTypesPickFromResourceLab
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+lab
+### STDOUT ###
+gitlab.com
+GitLab
+
+### TITLE ###
+MultiValueDifferentTypesPickFromResourceAlice
+### INPUT ###
+args:
+    filter str
+
+name, age = pick_from_resource("./resources/people.json", filter)
+print(name)
+print(age * 10)
+### ARGS ###
+alice
+### STDOUT ###
+Alice
+250
+
+### TITLE ###
+MultiValueDifferentTypesPickFromResourceBob
+### INPUT ###
+args:
+    filter str
+
+name, age = pick_from_resource("./resources/people.json", filter)
+print(name)
+print(age * 10)
+### ARGS ###
+bob
+### STDOUT ###
+Bob
+350
+
+### TITLE ###
+MultiValueDifferentTypesPickFromResourceRobert
+### INPUT ###
+args:
+    filter str
+
+name, age = pick_from_resource("./resources/people.json", filter)
+print(name)
+print(age * 10)
+### ARGS ###
+robert
+### STDOUT ###
+Bob
+350
+
+### TITLE ###
+ExactMatchPriority
+### DESCRIPTION ###
+"g" fuzzy-matches BOTH entries: gitlab (gl contains g) and github (has key "g")
+But "g" exact-matches only github's key "g"
+So with exact match priority, it should pick github immediately
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+g
+### STDOUT ###
+github.com
+GitHub
+
+### TITLE ###
+ExactMatchCaseInsensitive
+### DESCRIPTION ###
+"G" should exactly match key "g" (case-insensitive)
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+G
+### STDOUT ###
+github.com
+GitHub
+
+### TITLE ###
+JoinedLabelNotExactMatch
+### DESCRIPTION ###
+"gh hub g" (the joined label) should NOT count as exact match
+since we only check individual keys, not the joined label
+This filter won't fuzzy-match individual keys,
+so it should error with 0 matches
+### INPUT ###
+args:
+    filter str
+
+url, title = pick_from_resource("./resources/websites.json", filter)
+print(url)
+print(title)
+### ARGS ###
+gh hub g
+### STDERR ###
+error[RAD20000]: Filtered 2 options to 0 with filters: [gh hub g]
+  --> <script>:4:14
+  |
+3 |
+4 | url, title = pick_from_resource("./resources/websites.json", filter)
+  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 | print(url)
+6 | print(title)
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+PickPrioExactOptIn
+### DESCRIPTION ###
+pick() with prefer_exact=true should prioritize exact matches
+"g" fuzzy-matches both "grape" and "g", but exact-matches only "g"
+### INPUT ###
+result = pick(["grape", "g"], "g", prefer_exact=true)
+print(result)
+### STDOUT ###
+g
+
+### TITLE ###
+PickKvPrioExactOptIn
+### DESCRIPTION ###
+pick_kv() with prefer_exact=true should prioritize exact matches
+### INPUT ###
+result = pick_kv(["grape", "g"], [1, 2], "g", prefer_exact=true)
+print(result)
+### STDOUT ###
+2
+

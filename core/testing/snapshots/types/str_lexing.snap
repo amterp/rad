@@ -1,0 +1,473 @@
+### TITLE ###
+StrLexing Newline
+### INPUT ###
+print("Hi\nAlice")
+print("Hi\\nAlice")
+### STDOUT ###
+Hi
+Alice
+Hi\nAlice
+
+### TITLE ###
+StrLexing NewlineBacktick
+### INPUT ###
+print(`Hi\nAlice`)
+print(`Hi\\nAlice`)
+### STDOUT ###
+Hi
+Alice
+Hi\nAlice
+
+### TITLE ###
+StrLexing Tab
+### INPUT ###
+print("a\tb")
+### STDOUT ###
+a	b
+
+### TITLE ###
+StrLexing TabBacktick
+### INPUT ###
+print(`a\tb`)
+### STDOUT ###
+a	b
+
+### TITLE ###
+StrLexing EscapeBracket
+### INPUT ###
+print("{upper('alice')}")
+print("\{upper('alice')}")
+### STDOUT ###
+ALICE
+{upper('alice')}
+
+### TITLE ###
+StrLexing EscapeBracketBacktick
+### INPUT ###
+print(`{upper('alice')}`)
+print(`\{upper('alice')}`)
+### STDOUT ###
+ALICE
+{upper('alice')}
+
+### TITLE ###
+StrLexing Quotes
+### INPUT ###
+print('single\'quote')
+print("single'quote")
+print('double"quote')
+print("double\"quote")
+### STDOUT ###
+single'quote
+single'quote
+double"quote
+double"quote
+
+### TITLE ###
+StrLexing Empty
+### INPUT ###
+print("")
+print('')
+### STDOUT ###
+
+
+
+### TITLE ###
+StrLexing EmptyBacktick
+### INPUT ###
+print(``)
+### STDOUT ###
+
+
+### TITLE ###
+StrLexing SeveralBackslashes
+### INPUT ###
+print("\\\\")
+### STDOUT ###
+\\
+
+### TITLE ###
+StrLexing Mixed
+### INPUT ###
+print("\"\n\"")
+### STDOUT ###
+"
+"
+
+### TITLE ###
+StrLexing DoubleInterp
+### INPUT ###
+x = 1
+y = 2
+print("{x}{y}")
+### STDOUT ###
+12
+
+### TITLE ###
+StrLexing DoubleInterpBacktick
+### INPUT ###
+x = 1
+y = 2
+print(`{x}{y}`)
+### STDOUT ###
+12
+
+### TITLE ###
+StrLexing EscapingBrackets
+### INPUT ###
+x = 1
+print("\\{x}")
+print("\\\{x}")
+### STDOUT ###
+\1
+\{x}
+
+### TITLE ###
+StrLexing Mixed2
+### INPUT ###
+x = 1
+print("Hello\n{x}\tWorld!")
+### STDOUT ###
+Hello
+1	World!
+
+### TITLE ###
+StrLexing Mixed2Backticks
+### INPUT ###
+x = 1
+print(`Hello\n{x}\tWorld!`)
+### STDOUT ###
+Hello
+1	World!
+
+### TITLE ###
+StrLexing Misc
+### INPUT ###
+print("\\")
+print("\n\n\n")
+### STDOUT ###
+\
+
+
+
+
+
+### TITLE ###
+StrLexing EscapingIrrelevantCharsPrintsAsIs
+### INPUT ###
+print("\x")
+print("\k")
+### STDOUT ###
+\x
+\k
+
+### TITLE ###
+StrLexing EscapingBacktickInBackticks
+### INPUT ###
+print(`\``)
+### STDOUT ###
+`
+
+### TITLE ###
+StrLexing RawStrings DoubleQuotes
+### INPUT ###
+name = "alice"
+print("hi\n{name}")
+print(r"hi\n{name}")
+### STDOUT ###
+hi
+alice
+hi\n{name}
+
+### TITLE ###
+StrLexing RawStrings SingleQuotes
+### INPUT ###
+name = 'alice'
+print('hi\n{name}')
+print(r'hi\n{name}')
+### STDOUT ###
+hi
+alice
+hi\n{name}
+
+### TITLE ###
+StrLexing RawStrings Backticks
+### INPUT ###
+name = `alice`
+print(`hi\n{name}`)
+print(r`hi\n{name}`)
+### STDOUT ###
+hi
+alice
+hi\n{name}
+
+### TITLE ###
+StrLexing RawStrings DoubleSlashIsTwoSlashes
+### INPUT ###
+print(r"\\")
+### STDOUT ###
+\\
+
+### TITLE ###
+StrLexing RawStrings SingleBackslash
+### INPUT ###
+print(r"\")
+### STDOUT ###
+\
+
+### TITLE ###
+StrLexing RawStrings ErrorsIfTryingToEscapeDelimiter
+### INPUT ###
+print(r"\"")
+### STDERR ###
+error[RAD10009]: Unexpected 'r"\""'
+  --> <script>:1:7
+  |
+1 | print(r"\"")
+  |       ^^^^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+StrLexing Multiline Simple
+### INPUT ###
+text = """
+Hi Alice
+How are you?
+"""
+print(text)
+### STDOUT ###
+Hi Alice
+How are you?
+
+### TITLE ###
+StrLexing Multiline ExtraStartingAndEndingNewline
+### INPUT ###
+text = """
+
+Hi Alice
+How are you?
+
+"""
+print(text)
+### STDOUT ###
+
+Hi Alice
+How are you?
+
+
+### TITLE ###
+StrLexing Multiline Indented
+### INPUT ###
+text = """
+zero
+ one
+   three
+"""
+print(text)
+### STDOUT ###
+zero
+ one
+   three
+
+### TITLE ###
+StrLexing Multiline RemovesPrefixedWhiteSpaceDependingOnEndingDelimiter
+### INPUT ###
+text = """
+  one
+   two
+     four
+ """
+print(text)
+### STDOUT ###
+ one
+  two
+    four
+
+### TITLE ###
+StrLexing Multiline InterpolationAndSpecials
+### INPUT ###
+name = "alice"
+text = """
+  Hi\n
+ there\t{name}
+ """
+print(text)
+### STDOUT ###
+ Hi
+
+there	alice
+
+### TITLE ###
+StrLexing Multiline Raw
+### INPUT ###
+name = "alice"
+text = r"""
+  Hi\n
+ there\t{name}
+ """
+print(text)
+### STDOUT ###
+ Hi\n
+there\t{name}
+
+### TITLE ###
+StrLexing Multiline CanCollapseLinesWithBackSlash
+### SKIP ###
+Not implemented
+### INPUT ###
+name = "alice"
+text = """
+  Hi\
+ {name} \
+ how are you?
+ """
+print(text)
+### STDOUT ###
+ Hialice how are you?
+### TITLE ###
+StrLexing Multiline CanEscapeTripleQuote
+### INPUT ###
+name = "alice"
+text = """
+Text1
+\"""
+Text2
+"""
+print(text)
+### STDOUT ###
+Text1
+"""
+Text2
+
+### TITLE ###
+StrLexing Multiline CanIncreaseDelimiterSize
+### SKIP ###
+Not implemented
+### INPUT ###
+name = "alice"
+text = """"
+Text1
+"""
+Text2
+""""
+print(text)
+### STDOUT ###
+Text1
+"""
+Text2
+### TITLE ###
+StrLexing Multiline ErrorIfAnythingAfterOpener
+### INPUT ###
+text = """abc
+ Hi Alice
+  How are you?
+ """
+print(text)
+### STDERR ###
+error[RAD10009]: Unexpected '"""'
+  --> <script>:1:8
+  |
+1 | text = """abc
+  |        ^^^
+2 |  Hi Alice
+3 |   How are you?
+  |
+   = info: rad explain RAD10009
+
+error[RAD10009]: Unexpected '"'
+  --> <script>:1:8
+  |
+1 | text = """abc
+  |        ^
+2 |  Hi Alice
+3 |   How are you?
+  |
+   = info: rad explain RAD10009
+
+error[RAD10009]: Unexpected 'Hi'
+  --> <script>:2:2
+  |
+1 | text = """abc
+2 |  Hi Alice
+  |  ^^
+3 |   How are you?
+4 |  """
+  |
+   = info: rad explain RAD10009
+
+error[RAD10001]: Invalid syntax
+  --> <script>:3:3
+  |
+2 |  Hi Alice
+3 |   How are you?
+  |   ^^^^^^^^^^^^
+4 |  """
+5 | print(text)
+  |
+   = info: rad explain RAD10001
+
+error[RAD10020]: Unterminated string literal (missing closing double quote)
+  --> <script>:4:2
+  |
+3 |   How are you?
+4 |  """
+  |  ^^^
+5 | print(text)
+  |
+   = help: add closing " at end of string
+   = info: rad explain RAD10020
+
+
+### EXIT ###
+1
+### TITLE ###
+StrLexing Multiline NoErrorIfCommentFollowsOpener
+### INPUT ###
+text = """ // test!
+ Hi Alice
+  How are you?
+ """
+print(text)
+### STDOUT ###
+Hi Alice
+ How are you?
+
+### TITLE ###
+StrLexing Multiline CanConcatOnSameLineAsCloser
+### INPUT ###
+text = """ // test!
+ Hi Alice
+  How are you?
+ """ + " :)"
+print(text)
+### STDOUT ###
+Hi Alice
+ How are you? :)
+
+### TITLE ###
+StrLexing Multiline ErrorIfClosingQuoteIsLessThan3
+### INPUT ###
+text = """
+ Hi Alice
+  How are you?
+ ""
+print(text)
+### STDERR ###
+error[RAD10020]: Unterminated string literal (missing closing double quote)
+  --> <script>:1:8
+  |
+1 | text = """
+  |        ^^^
+2 |  Hi Alice
+3 |   How are you?
+  |
+   = help: add closing " at end of string
+   = info: rad explain RAD10020
+
+
+### EXIT ###
+1

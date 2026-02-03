@@ -1,0 +1,106 @@
+### TITLE ###
+Parser_CanHaveCommentsAtTheStartAndEndOfBlocks
+### INPUT ###
+if true:
+	// comment
+	print("alice")
+	// at the end
+for i in range(2):
+	// comment
+	print("bob")
+	// at the end
+### STDOUT ###
+alice
+bob
+bob
+
+### TITLE ###
+Parser_CanDefineListAcrossLines1
+### INPUT ###
+names = [
+	"alice",
+	"bob",
+]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineListAcrossLines2
+### INPUT ###
+names = ["alice",
+	"bob",
+]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineListAcrossLines3
+### INPUT ###
+names = [
+
+"alice","bob"
+]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineListAcrossLines4
+### INPUT ###
+names = ["alice","bob"
+]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineListAcrossLines5
+### INPUT ###
+names = ["alice","bob"
+	]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineListAcrossLines6
+### INPUT ###
+if true:
+	names = ["alice","bob"
+		]
+print(names)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Parser_CanDefineMapAcrossLines1
+### INPUT ###
+names = {
+	"alice": 1,
+	"bob": 2,
+}
+print(names)
+### STDOUT ###
+{ "alice": 1, "bob": 2 }
+
+### TITLE ###
+Parser_CanDefineMapAcrossLines2
+### INPUT ###
+names = {"alice": 1,
+	"bob"     :2,
+}
+print(names)
+### STDOUT ###
+{ "alice": 1, "bob": 2 }
+
+### TITLE ###
+Parser_CanDefineMapAcrossLines3
+### INPUT ###
+names = {"alice": 1,
+	"bob"     :2, "charlie": 3}
+print(names)
+### STDOUT ###
+{ "alice": 1, "bob": 2, "charlie": 3 }
+

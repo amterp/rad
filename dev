@@ -9,8 +9,8 @@ args:
     push p bool       # Enable to push local commits.
     build b bool      # Enable to build.
     validate v bool   # Enable to build & test.
-    dumps bool        # Enable to run the dump tests.
     test t bool       # Enable to run tests once.
+    update u bool     # Enable to update snapshot tests with current output.
     bump bool         # Enable to bump all dependency versions in go.mod.
 
     release range [1, 3]
@@ -29,16 +29,15 @@ if bump:
 if build:
     $`make build`
 
-if test:
+if update:
+    $`go test ./core/testing/... ./rts/... -args -update`
+else if test:
     $`make test`
 
 if release or push or validate:
     $`go mod tidy`
     $`make all`
     //$`golines -w . -m 120`
-
-if dumps or validate:
-    $`cd ./rts/test/dumps && ./test_dumps.rad`
 
 if docs:
     $`mkdocs gh-deploy -f ./docs-web/mkdocs.yml --strict`

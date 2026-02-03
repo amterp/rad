@@ -1,0 +1,61 @@
+### TITLE ###
+And operator
+### INPUT ###
+print(true and true)
+print(true and false)
+print(false and true)
+print(false and false)
+### STDOUT ###
+true
+false
+false
+false
+
+### TITLE ###
+Or operator
+### INPUT ###
+print(true or true)
+print(true or false)
+print(false or true)
+print(false or false)
+### STDOUT ###
+true
+true
+true
+false
+
+### TITLE ###
+Not operator
+### INPUT ###
+print(true)
+print(not true)
+print(false)
+print(not false)
+### STDOUT ###
+true
+false
+false
+true
+
+### TITLE ###
+Equality operators
+### INPUT ###
+print(true == true)
+print(true == false)
+print(false == true)
+print(false == false)
+
+print(true != true)
+print(true != false)
+print(false != true)
+print(false != false)
+### STDOUT ###
+true
+false
+false
+true
+false
+true
+true
+false
+

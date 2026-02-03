@@ -1,0 +1,88 @@
+### TITLE ###
+Zip no args
+### INPUT ###
+print(zip())
+### STDOUT ###
+[ ]
+
+### TITLE ###
+Zip one list
+### INPUT ###
+print(zip([1, 2, 3]))
+### STDOUT ###
+[ [ 1 ], [ 2 ], [ 3 ] ]
+
+### TITLE ###
+Zip two lists
+### INPUT ###
+print(zip([1, 2, 3], ["a", "b", "c"]))
+### STDOUT ###
+[ [ 1, "a" ], [ 2, "b" ], [ 3, "c" ] ]
+
+### TITLE ###
+Zip four lists
+### INPUT ###
+print(zip([1, 2, 3], ["a", "b", "c"], [4, 5, 6], ["d", "e", "f"]))
+### STDOUT ###
+[ [ 1, "a", 4, "d" ], [ 2, "b", 5, "e" ], [ 3, "c", 6, "f" ] ]
+
+### TITLE ###
+Zip stops on shorter
+### INPUT ###
+print(zip([1, 2, 3, 4], ["a", "b"]))
+### STDOUT ###
+[ [ 1, "a" ], [ 2, "b" ] ]
+
+### TITLE ###
+Zip fills to longer if provided
+### INPUT ###
+print(zip([1, 2, 3, 4], ["a", "b"], fill="-"))
+### STDOUT ###
+[ [ 1, "a" ], [ 2, "b" ], [ 3, "-" ], [ 4, "-" ] ]
+
+### TITLE ###
+Zip does not error if strict and lists same length
+### INPUT ###
+print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true))
+### STDOUT ###
+[ [ 1, "a" ], [ 2, "b" ], [ 3, "c" ], [ 4, "d" ] ]
+
+### TITLE ###
+Zip errors if strict and lists not same length
+### INPUT ###
+print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
+### STDERR ###
+error[RAD20015]: Strict mode enabled: all lists must have the same length, but got 4 and 2
+  --> <script>:1:7
+  |
+1 | print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20015
+
+
+### EXIT ###
+1
+### TITLE ###
+Zip errors if strict and fill provided
+### INPUT ###
+print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
+### STDERR ###
+error[RAD20014]: Cannot enable 'strict' with 'fill' specified
+  --> <script>:1:7
+  |
+1 | print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20014
+
+
+### EXIT ###
+1
+### TITLE ###
+Zip empty lists
+### INPUT ###
+print(zip([], [], []))
+### STDOUT ###
+[ ]
+

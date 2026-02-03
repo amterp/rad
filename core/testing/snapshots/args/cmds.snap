@@ -1,0 +1,451 @@
+### TITLE ###
+CanDefineMultipleCommandsWithOwnArgs_greet_positional
+### INPUT ###
+command greet:
+    name str
+    age int
+    calls fn():
+        print("Hello {name}, age {age}")
+
+command status:
+    code int
+    message str
+    calls fn():
+        print("Status {code}: {message}")
+### ARGS ###
+greet
+Alice
+30
+### STDOUT ###
+Hello Alice, age 30
+
+### TITLE ###
+CanDefineMultipleCommandsWithOwnArgs_status_positional
+### INPUT ###
+command greet:
+    name str
+    age int
+    calls fn():
+        print("Hello {name}, age {age}")
+
+command status:
+    code int
+    message str
+    calls fn():
+        print("Status {code}: {message}")
+### ARGS ###
+status
+200
+OK
+### STDOUT ###
+Status 200: OK
+
+### TITLE ###
+CanDefineMultipleCommandsWithOwnArgs_greet_named
+### INPUT ###
+command greet:
+    name str
+    age int
+    calls fn():
+        print("Hello {name}, age {age}")
+
+command status:
+    code int
+    message str
+    calls fn():
+        print("Status {code}: {message}")
+### ARGS ###
+greet
+--name=Bob
+--age=25
+### STDOUT ###
+Hello Bob, age 25
+
+### TITLE ###
+CanDefineMultipleCommandsWithOwnArgs_status_named
+### INPUT ###
+command greet:
+    name str
+    age int
+    calls fn():
+        print("Hello {name}, age {age}")
+
+command status:
+    code int
+    message str
+    calls fn():
+        print("Status {code}: {message}")
+### ARGS ###
+status
+--code=404
+--message=NotFound
+### STDOUT ###
+Status 404: NotFound
+
+### TITLE ###
+CmdArgCanAppearOnMultipleCommands_greet_verbose
+### INPUT ###
+args:
+    verbose v bool
+
+command greet:
+    name str
+    calls fn():
+        print("greet: {name}, verbose={verbose}")
+
+command farewell:
+    name str
+    calls fn():
+        print("farewell: {name}, verbose={verbose}")
+### ARGS ###
+greet
+Alice
+--verbose
+### STDOUT ###
+greet: Alice, verbose=true
+
+### TITLE ###
+CmdArgCanAppearOnMultipleCommands_farewell_verbose
+### INPUT ###
+args:
+    verbose v bool
+
+command greet:
+    name str
+    calls fn():
+        print("greet: {name}, verbose={verbose}")
+
+command farewell:
+    name str
+    calls fn():
+        print("farewell: {name}, verbose={verbose}")
+### ARGS ###
+farewell
+Bob
+--verbose
+### STDOUT ###
+farewell: Bob, verbose=true
+
+### TITLE ###
+CmdArgCanAppearOnMultipleCommands_greet_no_verbose
+### INPUT ###
+args:
+    verbose v bool
+
+command greet:
+    name str
+    calls fn():
+        print("greet: {name}, verbose={verbose}")
+
+command farewell:
+    name str
+    calls fn():
+        print("farewell: {name}, verbose={verbose}")
+### ARGS ###
+greet
+Charlie
+### STDOUT ###
+greet: Charlie, verbose=false
+
+### TITLE ###
+CanHaveScriptArgsAndCommandArgs_default
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1
+
+command process:
+    input str
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+process
+data.txt
+### STDOUT ###
+Processing data.txt (verbose=false)
+
+### TITLE ###
+CanHaveScriptArgsAndCommandArgs_with_options
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1
+
+command process:
+    input str
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+process
+data.txt
+--verbose
+--count=3
+### STDOUT ###
+Processing data.txt (verbose=true)
+Processing data.txt (verbose=true)
+Processing data.txt (verbose=true)
+
+### TITLE ###
+Help_short
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1  # A count.
+
+command process:
+    ---
+    Process something.
+    Second line!
+    ---
+    input str  # An input.
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase [subcommand] [OPTIONS]
+
+Commands:
+  process   Process something.
+
+### TITLE ###
+Help_long
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1  # A count.
+
+command process:
+    ---
+    Process something.
+    Second line!
+    ---
+    input str  # An input.
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase [subcommand] [OPTIONS]
+
+Commands:
+  process   Process something.
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Help_process_short
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1  # A count.
+
+command process:
+    ---
+    Process something.
+    Second line!
+    ---
+    input str  # An input.
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+process
+-h
+### STDOUT ###
+Process something.
+Second line!
+
+Usage:
+  process <input> [count] [OPTIONS]
+
+Command args:
+      --input str   An input.
+  -v, --verbose
+      --count int   A count. (default 1)
+
+### TITLE ###
+Help_process_long
+### INPUT ###
+args:
+    verbose v bool
+    count int = 1  # A count.
+
+command process:
+    ---
+    Process something.
+    Second line!
+    ---
+    input str  # An input.
+    calls fn():
+        for i in range(count):
+            print("Processing {input} (verbose={verbose})")
+### ARGS ###
+process
+--help
+### STDOUT ###
+Process something.
+Second line!
+
+Usage:
+  process <input> [count] [OPTIONS]
+
+Command args:
+      --input str   An input.
+  -v, --verbose
+      --count int   A count. (default 1)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+ErrorsIfCommandNotSpecified
+### INPUT ###
+command greet:
+    calls fn():
+        print("Hello!")
+
+command farewell:
+    calls fn():
+        print("Goodbye!")
+### STDERR ###
+Must specify a command
+
+Usage:
+  TestCase [subcommand] [OPTIONS]
+
+Commands:
+  farewell
+  greet
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+UnderscoresToHyphens_staging
+### INPUT ###
+command deploy_staging:
+    calls fn():
+        print("deployed to staging")
+
+command deploy_prod_server:
+    calls fn():
+        print("deployed to prod")
+### ARGS ###
+deploy-staging
+### STDOUT ###
+deployed to staging
+
+### TITLE ###
+UnderscoresToHyphens_prod
+### INPUT ###
+command deploy_staging:
+    calls fn():
+        print("deployed to staging")
+
+command deploy_prod_server:
+    calls fn():
+        print("deployed to prod")
+### ARGS ###
+deploy-prod-server
+### STDOUT ###
+deployed to prod
+
+### TITLE ###
+HelpShowsHyphenatedNames
+### INPUT ###
+command deploy_staging:
+    ---
+    Deploy to staging.
+    ---
+    calls fn():
+        print("deployed")
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase [subcommand] [OPTIONS]
+
+Commands:
+  deploy-staging   Deploy to staging.
+
+### TITLE ###
+NoScript_ErrorsOnUnknownArguments
+### INPUT ###
+
+### ARGS ###
+--unknown-flag
+### STDERR ###
+Unknown arguments: [--unknown-flag]
+
+
+rad: A tool for writing user-friendly command line scripts.
+GitHub: https://github.com/amterp/rad
+Documentation: https://amterp.github.io/rad/
+
+Usage:
+  rad [script path | command] [flags]
+
+Commands:
+  new           Sets up a new Rad script.
+  docs          Opens rad's documentation website.
+  check         Validates & lints Rad scripts.
+  home          Prints out rad's home directory.
+  gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
+  stash         Interacts with script stashes.
+  explain       Explains Rad error codes with detailed documentation.
+
+To see help for a specific command, run `rad <command> -h`.
+
+Global options:
+  -h, --help                Print usage string.
+  -r, --repl                Start interactive REPL mode.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --src                 Instead of running the target script, just print it out.
+      --src-tree            Instead of running the target script, print out its syntax tree.
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
+      --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+
+To execute a Rad script:
+  rad path/to/script.rad [args]
+
+To execute a command:
+  rad <command> [args]
+
+If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+
+### EXIT ###
+1

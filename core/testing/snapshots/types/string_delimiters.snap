@@ -1,0 +1,39 @@
+### TITLE ###
+Double quote delimiters
+### INPUT ###
+greeting = "hi"
+print(greeting)
+name = "alice"
+print(greeting + " " + name)
+print("Pi: {1 + 2.14}")
+### STDOUT ###
+hi
+hi alice
+Pi: 3.14
+
+### TITLE ###
+Single quote delimiters
+### INPUT ###
+greeting = 'hi'
+print(greeting)
+name = "alice"
+print(greeting + ' ' + name)
+print('Pi: {1 + 2.14}')
+### STDOUT ###
+hi
+hi alice
+Pi: 3.14
+
+### TITLE ###
+Backtick delimiters
+### INPUT ###
+greeting = `hi`
+print(greeting)
+name = `alice`
+print(greeting + ` ` + name)
+print(`Pi: {1 + 2.14}`)
+### STDOUT ###
+hi
+hi alice
+Pi: 3.14
+

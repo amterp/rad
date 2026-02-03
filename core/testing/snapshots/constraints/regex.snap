@@ -1,0 +1,151 @@
+### TITLE ###
+Help
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+print("Hi", name)
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   Regex: [A-Z][a-z]*
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Help_WithEnum
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+	name enum ["Alice", "Bob"]
+print("Hi", name)
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Valid
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+print("Hi", name)
+### ARGS ###
+Alice
+### STDOUT ###
+Hi Alice
+
+### TITLE ###
+RegexAndEnum_Valid
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+	name enum ["Alice", "Bob"]
+print("Hi", name)
+### ARGS ###
+Alice
+### STDOUT ###
+Hi Alice
+
+### TITLE ###
+InvalidInput
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+### ARGS ###
+alice
+### STDERR ###
+Invalid 'name' value: alice (must match regex: [A-Z][a-z]*)
+
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   Regex: [A-Z][a-z]*
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+RegexAndEnum_InvalidInput
+### INPUT ###
+args:
+	name str
+	name regex "[A-Z][a-z]*"
+	name enum ["Alice", "Bob"]
+### ARGS ###
+Charlie
+### STDERR ###
+Invalid 'name' value: Charlie (valid values: Alice, Bob)
+
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   Valid values: [Alice, Bob]. Regex: [A-Z][a-z]*
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+InvalidRegex
+### DESCRIPTION ###
+Early validation (syntax and regex) happens before --color flag is parsed,
+so --color=never is enforced via NO_COLOR env var set by test helper
+### INPUT ###
+args:
+	name str
+	name regex "+"
+### STDERR ###
+Error at L3:2
+
+  	name regex "+"
+   ^^^^^^^^^^^^^^
+   Invalid regex '+': error parsing regexp: missing argument to repetition operator: `+`
+
+### EXIT ###
+1

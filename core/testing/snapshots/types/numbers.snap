@@ -1,0 +1,34 @@
+### TITLE ###
+Can store big int
+### INPUT ###
+a = 38123123123123123
+print(a)
+### STDOUT ###
+38123123123123123
+
+### TITLE ###
+Big float loses precision
+### DESCRIPTION ###
+Not desired behavior, just documenting it
+### INPUT ###
+a = 38123123123123123.0
+print(a)
+### STDOUT ###
+38123123123123120
+
+### TITLE ###
+Big float in JSON maintains int precision
+### INPUT ###
+a = r'{ "foo": 38123123123123123 }'
+print(parse_json(a))
+### STDOUT ###
+{ "foo": 38123123123123123 }
+
+### TITLE ###
+Big float maintains precision when pretty printed
+### INPUT ###
+a = 46046166185414656
+pprint(a)
+### STDOUT ###
+46046166185414656
+

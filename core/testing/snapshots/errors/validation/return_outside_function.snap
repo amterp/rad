@@ -1,0 +1,16 @@
+### TITLE ###
+Return outside function
+### INPUT ###
+return 5
+### STDERR ###
+error[RAD40004]: 'return' can only be used inside a function
+  --> <script>:1:1
+  |
+1 | return 5
+  | ^^^^^^^^
+  |
+   = info: rad explain RAD40004
+
+
+### EXIT ###
+1

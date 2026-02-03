@@ -1,0 +1,157 @@
+### TITLE ###
+Max of ints
+### INPUT ###
+print(max([1, 2, 3]))
+### STDOUT ###
+3
+
+### TITLE ###
+Max of mixed int and float
+### INPUT ###
+print(max([1, 2.2, 3]))
+### STDOUT ###
+3
+
+### TITLE ###
+Max errors for non-numeric elements
+### INPUT ###
+print(max([1, "ab", 3]))
+### STDERR ###
+error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float|float[]'
+  --> <script>:1:11
+  |
+1 | print(max([1, "ab", 3]))
+  |           ^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Max of negative numbers
+### INPUT ###
+print(max([-1, -2.2, -3]))
+### STDOUT ###
+-1
+
+### TITLE ###
+Max variadic basic
+### INPUT ###
+print(max(1, 3, 2))
+### STDOUT ###
+3
+
+### TITLE ###
+Max variadic mixed int and float
+### INPUT ###
+print(max(1, 3.5, 2))
+### STDOUT ###
+3.5
+
+### TITLE ###
+Max variadic single number
+### INPUT ###
+print(max(5))
+### STDOUT ###
+5
+
+### TITLE ###
+Max variadic with negative
+### INPUT ###
+print(max(-1, -2.5, 3))
+### STDOUT ###
+3
+
+### TITLE ###
+Max single element list
+### INPUT ###
+print(max([5]))
+### STDOUT ###
+5
+
+### TITLE ###
+Max empty list error
+### INPUT ###
+print(max([]))
+### STDERR ###
+error[RAD20018]: Cannot find max of empty list
+  --> <script>:1:7
+  |
+1 | print(max([]))
+  |       ^^^^^^^
+  |
+   = info: rad explain RAD20018
+
+
+### EXIT ###
+1
+### TITLE ###
+Max no args error
+### INPUT ###
+print(max())
+### STDERR ###
+error[RAD20018]: Cannot find max of empty list
+  --> <script>:1:7
+  |
+1 | print(max())
+  |       ^^^^^
+  |
+   = info: rad explain RAD20018
+
+
+### EXIT ###
+1
+### TITLE ###
+Max multiple lists error
+### INPUT ###
+print(max([1, 2], [3, 4]))
+### STDERR ###
+error[RAD20012]: max() with multiple arguments requires numbers, not lists. Use max([...]) for a single list
+  --> <script>:1:7
+  |
+1 | print(max([1, 2], [3, 4]))
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20012
+
+
+### EXIT ###
+1
+### TITLE ###
+Max returns int when all ints
+### INPUT ###
+print(type_of(max(1, 2, 3)))
+### STDOUT ###
+int
+
+### TITLE ###
+Max returns float when any float
+### INPUT ###
+print(type_of(max(1, 2.0, 3)))
+### STDOUT ###
+float
+
+### TITLE ###
+Max returns int when list all ints
+### INPUT ###
+print(type_of(max([1, 2, 3])))
+### STDOUT ###
+int
+
+### TITLE ###
+Max returns float when list has float
+### INPUT ###
+print(type_of(max([1, 2.0, 3])))
+### STDOUT ###
+float
+
+### TITLE ###
+Max can be used for list indexing
+### INPUT ###
+mylist = [10, 20, 30, 40, 50]
+myidx = 2
+print(mylist[max(myidx, 0)])
+### STDOUT ###
+30
+

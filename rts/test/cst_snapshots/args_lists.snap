@@ -6,7 +6,7 @@ args:
    banana int[] = [2, 3]
    citrus float[] = [2.3, 4.5]
    durian bool[] = [true, false]
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 128] PS: [0,  0] PE: [4, 32] source_file
 B: [  0, 128] PS: [0,  0] PE: [4, 32]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -65,3 +65,4 @@ B: [120, 121] PS: [4, 24] PE: [4, 25]         , `,`
 B: [122, 127] PS: [4, 26] PE: [4, 31]         list_entry: bool
 B: [122, 127] PS: [4, 26] PE: [4, 31]           false `false`
 B: [127, 128] PS: [4, 31] PE: [4, 32]         ] `]`
+

@@ -1,0 +1,14 @@
+### TITLE ###
+CanCustomizeEnd
+### INPUT ###
+print("hello", "there", "claire", end="bloop")
+### STDOUT ###
+hello there clairebloop
+### TITLE ###
+CanUseEndToRemoveNewlines
+### INPUT ###
+print("hello", end="")
+print("there", end="")
+print("claire", end="")
+### STDOUT ###
+hellothereclaire

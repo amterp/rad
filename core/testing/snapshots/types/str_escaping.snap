@@ -1,0 +1,27 @@
+### TITLE ###
+Does not escape other delimiters in content - single quote with double quote
+### INPUT ###
+print('"hi"')
+print('\"hi\"')
+### STDOUT ###
+"hi"
+\"hi\"
+
+### TITLE ###
+Does not escape other delimiters in content - double quote with single quote
+### INPUT ###
+print("'hi'")
+print("\'hi\'")
+### STDOUT ###
+'hi'
+\'hi\'
+
+### TITLE ###
+Does not escape other delimiters in content - backtick with single quote
+### INPUT ###
+print('`hi`')
+print('\`hi\`')
+### STDOUT ###
+`hi`
+\`hi\`
+

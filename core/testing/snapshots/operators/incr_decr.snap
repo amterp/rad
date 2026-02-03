@@ -1,0 +1,164 @@
+### TITLE ###
+Increment basic
+### INPUT ###
+a = 1
+a++
+print(a)
+### STDOUT ###
+2
+
+### TITLE ###
+Increment loop
+### INPUT ###
+a = 1
+for i in range(1000):
+	a++
+print(a)
+### STDOUT ###
+1001
+
+### TITLE ###
+Increment in list
+### INPUT ###
+a = [1, [2]]
+a[1][0]++
+print(a)
+### STDOUT ###
+[ 1, [ 3 ] ]
+
+### TITLE ###
+Increment in map
+### INPUT ###
+a = {"a": 1, "b": {"c": 2}}
+a.b.c++
+print(a)
+### STDOUT ###
+{ "a": 1, "b": { "c": 3 } }
+
+### TITLE ###
+Decrement basic
+### INPUT ###
+a = 10
+a--
+print(a)
+### STDOUT ###
+9
+
+### TITLE ###
+Decrement loop
+### INPUT ###
+a = 10
+for i in range(1000):
+	a--
+print(a)
+### STDOUT ###
+-990
+
+### TITLE ###
+Decrement in list
+### INPUT ###
+a = [1, [2]]
+a[1][0]--
+print(a)
+### STDOUT ###
+[ 1, [ 1 ] ]
+
+### TITLE ###
+Decrement in map
+### INPUT ###
+a = {"a": 1, "b": {"c": 2}}
+a.b.c--
+print(a)
+### STDOUT ###
+{ "a": 1, "b": { "c": 1 } }
+
+### TITLE ###
+Increment cannot chain
+### INPUT ###
+a = 1
+a++++
+### STDERR ###
+error[RAD10009]: Unexpected '++'
+  --> <script>:2:4
+  |
+1 | a = 1
+2 | a++++
+  |    ^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Decrement cannot chain
+### INPUT ###
+a = 1
+a----
+### STDERR ###
+error[RAD10009]: Unexpected '--'
+  --> <script>:2:4
+  |
+1 | a = 1
+2 | a----
+  |    ^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Incr decr cannot chain
+### INPUT ###
+a = 1
+a++--
+### STDERR ###
+error[RAD10009]: Unexpected '--'
+  --> <script>:2:4
+  |
+1 | a = 1
+2 | a++--
+  |    ^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Decr incr cannot chain
+### INPUT ###
+a = 1
+a--++
+### STDERR ###
+error[RAD10009]: Unexpected '++'
+  --> <script>:2:4
+  |
+1 | a = 1
+2 | a--++
+  |    ^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Increment can increment float
+### INPUT ###
+a = 1.5
+a++
+print(a)
+### STDOUT ###
+2.5
+
+### TITLE ###
+Decrement can decrement float
+### INPUT ###
+a = 1.5
+a--
+print(a)
+### STDOUT ###
+0.5
+

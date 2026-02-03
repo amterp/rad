@@ -2,7 +2,7 @@
 Lambda shell multi stmt ERRORs
 ### INPUT ###
 fn() ($`echo hi`, $`echo hello`)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 32] PS: [0,  0] PE: [0, 32] source_file
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]   expr_stmt
 B: [ 0, 32] PS: [0,  0] PE: [0, 32]     expr: expr
@@ -60,3 +60,4 @@ B: [20, 30] PS: [0, 20] PE: [0, 30]                                             
 B: [20, 30] PS: [0, 20] PE: [0, 30]                                                       content: string_content `echo hello`
 B: [30, 31] PS: [0, 30] PE: [0, 31]                                                     end: string_end ```
 B: [31, 32] PS: [0, 31] PE: [0, 32]                       ) `)`
+

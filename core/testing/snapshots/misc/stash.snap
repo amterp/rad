@@ -1,0 +1,163 @@
+### TITLE ###
+Rad_home
+### INPUT ###
+
+get_rad_home().split("/")[-3:].print()
+### STDOUT ###
+[ "core", "testing", "rad_test_home" ]
+
+### TITLE ###
+Stash_GetStashDirErrorsIfNoStashId
+### INPUT ###
+
+get_stash_dir()
+### STDERR ###
+error[RAD20022]: Script ID is not set. Set the 'stash_id' macro in the file header.
+  --> <script>:2:1
+  |
+1 |
+2 | get_stash_dir()
+  | ^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20022
+
+
+### EXIT ###
+1
+### TITLE ###
+Stash_GetStashDir
+### INPUT ###
+
+---
+@stash_id = test_id
+---
+get_stash_dir().split("/")[-5:].print()
+### STDOUT ###
+[ "core", "testing", "rad_test_home", "stashes", "test_id" ]
+
+### TITLE ###
+Stash_GetStashDir_SubPath
+### INPUT ###
+
+---
+@stash_id = test_id
+---
+get_stash_dir("some/path.txt").split("/")[-7:].print()
+### STDOUT ###
+[ "core", "testing", "rad_test_home", "stashes", "test_id", "some", "path.txt" ]
+
+### TITLE ###
+Stash_LoadState
+### INPUT ###
+
+---
+@stash_id = with_stash
+---
+state = load_state()
+print(state)
+### STDOUT ###
+{ "somekey": "somevalue" }
+
+### TITLE ###
+Stash_LoadStateNoExisting
+### INPUT ###
+
+---
+@stash_id = with_no_stash
+---
+state = load_state()
+print(state)
+### STDOUT ###
+{ }
+
+### TITLE ###
+Stash_SaveAndLoadState
+### INPUT ###
+
+---
+@stash_id = with_stash
+---
+m = load_state()
+m.print()
+save_state({ "changed": true })
+load_state().print()
+save_state(m)
+load_state().print()
+### STDOUT ###
+{ "somekey": "somevalue" }
+{ "changed": true }
+{ "somekey": "somevalue" }
+
+### TITLE ###
+Stash_LoadStashFileExisting
+### INPUT ###
+
+---
+@stash_id = with_stash
+---
+r = load_stash_file("existing.txt", "didn't find")
+print(r.created, r.content)
+r.full_path.split("/")[-6:].print()
+### STDOUT ###
+false hello there!
+[ "testing", "rad_test_home", "stashes", "with_stash", "files", "existing.txt" ]
+
+### TITLE ###
+Stash_LoadStashFileNotExisting
+### INPUT ###
+
+---
+@stash_id = with_stash
+---
+r = load_stash_file("non_existing.txt", "didn't find")
+print(r.created, r.content)
+r.full_path.split("/")[-6:].print()
+
+p = get_path(r.full_path)
+p.base_name.print()
+
+// clean up
+p.full_path.delete_path()
+### STDOUT ###
+true didn't find
+[ "testing", "rad_test_home", "stashes", "with_stash", "files", "non_existing.txt" ]
+non_existing.txt
+
+### TITLE ###
+Stash_SaveStateReturnsNullOnSuccess
+### INPUT ###
+
+---
+@stash_id = save_state_test
+---
+result = save_state({ "test": "value" })
+print(result)
+print(type_of(result))
+### STDOUT ###
+null
+null
+
+### TITLE ###
+Stash_SaveStateReturnsErrorOnFailure
+### INPUT ###
+
+result = save_state({ "test": "value" }) catch:
+	pass
+print(type_of(result))
+print("Error contains 'Script ID':", "Script ID" in result)
+### STDOUT ###
+error
+Error contains 'Script ID': true
+
+### TITLE ###
+Stash_WriteStashFileReturnsErrorOnFailure
+### INPUT ###
+
+result = write_stash_file("test.txt", "content") catch:
+	pass
+print(type_of(result))
+print("Error contains 'Script ID':", "Script ID" in result)
+### STDOUT ###
+error
+Error contains 'Script ID': true
+

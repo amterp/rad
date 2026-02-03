@@ -1,0 +1,198 @@
+### TITLE ###
+Simple no error
+### INPUT ###
+
+a = parse_int("2") ?? 10
+print(a)
+### STDOUT ###
+2
+
+### TITLE ###
+Simple error
+### INPUT ###
+
+a = parse_int("two") ?? 10
+print(a)
+### STDOUT ###
+10
+
+### TITLE ###
+Can invoke function
+### INPUT ###
+
+a = parse_int("two") ?? foo()
+print(a)
+
+fn foo():
+	print("ran foo")
+	return 10
+### STDOUT ###
+ran foo
+10
+
+### TITLE ###
+Lazy eval
+### INPUT ###
+
+a = parse_int("2") ?? foo()
+print(a)
+
+fn foo():
+	print("ran foo")
+	return 10
+### STDOUT ###
+2
+
+### TITLE ###
+Can mix with catch
+### INPUT ###
+
+a = parse_int("two") ?? foo() catch:
+	print("caught error {a}")
+
+fn foo():
+	return error("bad!")
+### STDOUT ###
+caught error bad!
+
+### TITLE ###
+Map bracket syntax
+### INPUT ###
+
+m = {"a": 1, "b": 2}
+print(m["c"] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Map dot syntax
+### INPUT ###
+
+m = {"a": 1, "b": 2}
+print(m.c ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Map chained
+### INPUT ###
+
+m = {"a": 1}
+print(m["b"] ?? m["c"] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Map nested inner key missing
+### INPUT ###
+
+m = {"a": {"x": 1}}
+print(m["a"]["y"] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Map nested outer key missing
+### INPUT ###
+
+m = {"a": {"x": 1}}
+print(m["b"]["y"] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Map key exists
+### INPUT ###
+
+m = {"a": 1, "b": 2}
+print(m["a"] ?? "default")
+### STDOUT ###
+1
+
+### TITLE ###
+Map fallback also errors
+### INPUT ###
+
+m = {"a": 1}
+n = {"x": 2}
+print(m["b"] ?? n["y"] ?? "final")
+### STDOUT ###
+final
+
+### TITLE ###
+Map null value vs missing key
+### INPUT ###
+
+m = {"exists": null, "other": 1}
+print(m["exists"] ?? "fallback")
+print(m["missing"] ?? "fallback")
+### STDOUT ###
+null
+fallback
+
+### TITLE ###
+List index
+### INPUT ###
+
+list = [1, 2, 3]
+print(list[10] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+List index chained
+### INPUT ###
+
+list = [1, 2, 3]
+print(list[5] ?? list[10] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+List negative index
+### INPUT ###
+
+list = [1, 2, 3]
+print(list[-10] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+List index exists
+### INPUT ###
+
+list = [1, 2, 3]
+print(list[1] ?? "default")
+### STDOUT ###
+2
+
+### TITLE ###
+List null value vs out of bounds
+### INPUT ###
+
+list = [null, 1, 2]
+print(list[0] ?? "fallback")
+print(list[10] ?? "fallback")
+### STDOUT ###
+null
+fallback
+
+### TITLE ###
+List empty
+### INPUT ###
+
+print([][0] ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+String index
+### INPUT ###
+
+s = "hello"
+print(s[10] ?? "default")
+print(s[1] ?? "default")
+### STDOUT ###
+default
+e
+

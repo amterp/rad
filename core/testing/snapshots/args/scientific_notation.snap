@@ -1,0 +1,85 @@
+### TITLE ###
+Int valid 1e6
+### INPUT ###
+args:
+	num int = 1e6
+print("{num}")
+### STDOUT ###
+1000000
+
+### TITLE ###
+Int valid 1000e-2
+### INPUT ###
+args:
+	num int = 1000e-2
+print("{num}")
+### STDOUT ###
+10
+
+### TITLE ###
+Int valid 1.2e10
+### INPUT ###
+args:
+	num int = 1.2e10
+print("{num}")
+### STDOUT ###
+12000000000
+
+### TITLE ###
+Int invalid 1e-5
+### INPUT ###
+args:
+	num int = 1e-5
+print("{num}")
+### STDERR ###
+error[RAD40001]: Scientific notation value does not evaluate to a whole number
+  --> <script>:2:12
+  |
+1 | args:
+2 | 	num int = 1e-5
+  |            ^^^^
+3 | print("{num}")
+  |
+   = info: rad explain RAD40001
+
+
+### EXIT ###
+1
+### TITLE ###
+Int invalid 1.25e1
+### INPUT ###
+args:
+	num int = 1.25e1
+print("{num}")
+### STDERR ###
+error[RAD40001]: Scientific notation value does not evaluate to a whole number
+  --> <script>:2:12
+  |
+1 | args:
+2 | 	num int = 1.25e1
+  |            ^^^^^^
+3 | print("{num}")
+  |
+   = info: rad explain RAD40001
+
+
+### EXIT ###
+1
+### TITLE ###
+Float valid 1e6
+### INPUT ###
+args:
+	num float = 1e6
+print("{num}")
+### STDOUT ###
+1000000
+
+### TITLE ###
+Float valid 1e-5
+### INPUT ###
+args:
+	num float = 1e-5
+print("{num}")
+### STDOUT ###
+0.00001
+

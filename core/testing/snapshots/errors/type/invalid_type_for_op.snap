@@ -1,0 +1,18 @@
+### TITLE ###
+Invalid type for operation
+### INPUT ###
+x = 5
+print(x + "hello")
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'int + str'
+  --> <script>:2:7
+  |
+1 | x = 5
+2 | print(x + "hello")
+  |       ^^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1

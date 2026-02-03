@@ -1,0 +1,63 @@
+### TITLE ###
+int passthrough for int
+### INPUT ###
+a = int(10)
+print(a)
+print(type_of(a))
+### STDOUT ###
+10
+int
+
+### TITLE ###
+int floors float
+### INPUT ###
+a = int(10.7)
+print(a)
+print(type_of(a))
+### STDOUT ###
+10
+int
+
+### TITLE ###
+int converts bool
+### INPUT ###
+a = int(true)
+b = int(false)
+print(a, b)
+print(type_of(a), type_of(b))
+### STDOUT ###
+1 0
+int int
+
+### TITLE ###
+int errors on map
+### INPUT ###
+int({})
+### STDERR ###
+error[RAD20016]: Cannot cast "map" to int
+  --> <script>:1:1
+  |
+1 | int({})
+  | ^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1
+### TITLE ###
+int errors on string with details
+### INPUT ###
+int("10")
+### STDERR ###
+error[RAD20016]: Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string?
+  --> <script>:1:1
+  |
+1 | int("10")
+  | ^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1

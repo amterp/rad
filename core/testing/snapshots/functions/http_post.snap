@@ -1,0 +1,28 @@
+### TITLE ###
+HttpPost_Basic
+### INPUT ###
+url = "http//www.google.com"
+pprint(http_post(url))
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+{
+  "body": [
+    {
+      "id": 1,
+      "name": "Alice"
+    },
+    {
+      "id": 2,
+      "name": "Bob"
+    }
+  ],
+  "duration_seconds": 0,
+  "status_code": 200,
+  "success": true
+}
+
+### STDERR ###
+Mocking response for url (matched ".*"): http//www.google.com
+

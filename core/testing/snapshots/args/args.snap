@@ -1,0 +1,600 @@
+### TITLE ###
+ApiRename
+### INPUT ###
+args:
+   foo "bar" x str
+print(foo)
+### ARGS ###
+hey
+### STDOUT ###
+hey
+
+### TITLE ###
+ApiRenameUsageString
+### INPUT ###
+args:
+   foo "bar" x str
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase <bar> [OPTIONS]
+
+Script args:
+  -x, --bar str
+
+### TITLE ###
+ErrorsIfSomeRequiredArgsMissing
+### INPUT ###
+args:
+	mandatory1 str
+	mandatory2 str
+	optional int = 10
+print('hi')
+### ARGS ###
+one
+### STDERR ###
+Missing required arguments: [mandatory2]
+
+Usage:
+  TestCase <mandatory1> <mandatory2> [optional] [OPTIONS]
+
+Script args:
+      --mandatory1 str
+      --mandatory2 str
+      --optional int     (default 10)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+CanParseAllTypes
+### INPUT ###
+args:
+    stringArg str
+    intArg int
+    floatArg float
+    boolArg bool
+    stringArrayArg str[]
+    intArrayArg int[]
+    floatArrayArg float[]
+    boolArrayArg bool[]
+print(upper(stringArg))
+print(intArg + 1)
+print(floatArg + 1.1)
+print(boolArg or false)
+print(upper(stringArrayArg[0]))
+print(intArrayArg[0] + 1)
+print(floatArrayArg[0] + 1.1)
+print(boolArrayArg[0] or false)
+### ARGS ###
+alice
+1
+1.1
+--stringArrayArg
+bob
+--stringArrayArg
+charlie
+--intArrayArg
+2
+--intArrayArg
+3
+--floatArrayArg
+2.1
+--floatArrayArg
+3.1
+--boolArrayArg
+true
+--boolArrayArg
+false
+--boolArg
+### STDOUT ###
+ALICE
+2
+2.2
+true
+BOB
+3
+3.2
+true
+
+### TITLE ###
+CanParseAllTypeDefaults
+### INPUT ###
+args:
+	stringArg str = "alice"
+	intArg int = 1
+	floatArg float = 1.1
+	boolArg bool = true
+	stringArrayArg str[] = ["bob", "charlie"]
+	intArrayArg int[] = [2, 3]
+	floatArrayArg float[] = [2.1, 3.1]
+	boolArrayArg bool[] = [true, false]
+print(upper(stringArg))
+print(intArg + 1)
+print(floatArg + 1.1)
+print(boolArg or false)
+print(upper(stringArrayArg[0]))
+print(intArrayArg[0] + 1)
+print(floatArrayArg[0] + 1.1)
+print(boolArrayArg[0] or false)
+### STDOUT ###
+ALICE
+2
+2.2
+true
+BOB
+3
+3.2
+true
+
+### TITLE ###
+CanHaveNegativeIntDefault
+### INPUT ###
+args:
+	intArg int = -10
+print(intArg + 1)
+### STDOUT ###
+-9
+
+### TITLE ###
+CanHaveNegativeFloatDefault
+### INPUT ###
+args:
+	floatArg float = -10.2
+print(floatArg + 1)
+### STDOUT ###
+-9.2
+
+### TITLE ###
+CanPassNegativeIntWithFlag
+### INPUT ###
+args:
+	intArg int
+print(intArg)
+### ARGS ###
+--intArg
+-10
+### STDOUT ###
+-10
+
+### TITLE ###
+CanPassNegativeIntWithoutFlag
+### SKIP ###
+TODO: RAD-71
+### INPUT ###
+args:
+	intArg int
+print(intArg)
+### ARGS ###
+-10
+### STDOUT ###
+-10
+### TITLE ###
+CanPassNegativeFloatWithFlag
+### INPUT ###
+args:
+	floatArg float
+print(floatArg)
+### ARGS ###
+--floatArg
+-10.2
+### STDOUT ###
+-10.2
+
+### TITLE ###
+CanPassNegativeFloatWithoutFlag
+### SKIP ###
+TODO: RAD-71
+### INPUT ###
+args:
+	floatArg float
+print(floatArg)
+### ARGS ###
+-10.2
+### STDOUT ###
+-10.2
+### TITLE ###
+CanHaveSeveralMinuses
+### INPUT ###
+args:
+	intArg int = --- 10
+	floatArg float = -------10.2
+print(intArg + 1)
+print(floatArg + 1)
+### STDOUT ###
+-9
+-9.2
+
+### TITLE ###
+CanHaveIntAsDefaultForFloatArg
+### INPUT ###
+args:
+	floatArg float = 2
+print(floatArg + 1.2)
+### STDOUT ###
+3.2
+
+### TITLE ###
+CannotHaveFloatAsDefaultForIntArg
+### INPUT ###
+args:
+	intArg int = 1.2
+### STDERR ###
+error[RAD10001]: Invalid argument declaration
+  --> <script>:2:16
+  |
+1 | args:
+2 | 	intArg int = 1.2
+  |                ^^
+  |
+   = info: rad explain RAD10001
+
+
+### EXIT ###
+1
+### TITLE ###
+FullHelp
+### INPUT ###
+args:
+	name str # The name.
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   The name.
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+ShortHelp
+### INPUT ###
+args:
+	name str # The name.
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   The name.
+
+### TITLE ###
+ShortHelpNoArgs
+### INPUT ###
+print("hi")
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase [OPTIONS]
+
+### TITLE ###
+FullHelpNoArgs
+### INPUT ###
+print("hi")
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase [OPTIONS]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+HelpWorksForAllTypes
+### INPUT ###
+args:
+	stringArg str = "alice"
+	intArg int = 1 # An int.
+	floatArg float = 1.1
+	boolArg bool = true
+	stringListArg str[] = ["bob", "charlie"]
+	intListArg int[] = [2, 3]
+	floatListArg float[] = [2.1, 3.1]
+	boolListArg bool[] = [true, false]
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase [stringArg] [intArg] [floatArg] [stringListArg] [intListArg] [floatListArg] [boolListArg] [OPTIONS]
+
+Script args:
+      --stringArg str         (default alice)
+      --intArg int            An int. (default 1)
+      --floatArg float        (default 1.1)
+      --stringListArg strs    (default [bob, charlie])
+      --intListArg ints       (default [2, 3])
+      --floatListArg floats   (default [2.1, 3.1])
+      --boolListArg bools     (default [true, false])
+      --boolArg               (default true)
+
+### TITLE ###
+UnsetBoolDefaultsToFalse
+### INPUT ###
+args:
+	name str
+	isTall bool
+print(name, isTall)
+### ARGS ###
+alice
+### STDOUT ###
+alice false
+
+### TITLE ###
+CanDefaultBoolToTrue
+### INPUT ###
+args:
+	name str
+	isTall bool = true
+print(name, isTall)
+### ARGS ###
+alice
+### STDOUT ###
+alice true
+
+### TITLE ###
+MissingArgsPrintsUsageAndReturnsError
+### INPUT ###
+args:
+	name str
+	age int
+### ARGS ###
+alice
+### STDERR ###
+Missing required arguments: [age]
+
+Usage:
+  TestCase <name> <age> [OPTIONS]
+
+Script args:
+      --name str
+      --age int
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+TooManyArgsPrintsUsageAndReturnsError
+### INPUT ###
+args:
+	name str
+	age int
+### ARGS ###
+alice
+2
+3
+### STDERR ###
+Too many positional arguments. Unused: [3]
+
+Usage:
+  TestCase <name> <age> [OPTIONS]
+
+Script args:
+      --name str
+      --age int
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+InvalidFlagPrintsUsageAndReturnsError
+### INPUT ###
+args:
+	name str
+	age int
+### ARGS ###
+alice
+2
+-s
+### STDERR ###
+unknown shorthand flag: 's' in -s
+
+Usage:
+  TestCase <name> <age> [OPTIONS]
+
+Script args:
+      --name str
+      --age int
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+AutomaticallyReplacesUnderscoresWithHyphens
+### INPUT ###
+args:
+	test_arg str
+print(test_arg)
+### ARGS ###
+--test-arg
+bob
+### STDOUT ###
+bob
+
+### TITLE ###
+AutomaticallyReplacesUnderscoresWithHyphensUsage
+### INPUT ###
+args:
+	test_arg str
+print(test_arg)
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase <test-arg> [OPTIONS]
+
+Script args:
+      --test-arg str
+
+### TITLE ###
+ClusteredShortInts_Basic
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-nn
+### STDOUT ###
+num: 2
+
+### TITLE ###
+ClusteredShortInts_TripleClustered
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-nnn
+### STDOUT ###
+num: 3
+
+### TITLE ###
+ClusteredShortInts_LargeCount
+### INPUT ###
+args:
+	verbosity v int
+print("verbosity: {verbosity}")
+### ARGS ###
+-vvvvv
+### STDOUT ###
+verbosity: 5
+
+### TITLE ###
+ClusteredShortInts_ExplicitValueOverridesCounting
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-nnn=10
+### STDOUT ###
+num: 10
+
+### TITLE ###
+ClusteredShortInts_LaterOverridesEarlier
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-nn
+-n
+7
+### STDOUT ###
+num: 7
+
+### TITLE ###
+ClusteredShortInts_LaterClusterOverridesEarlier
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-n
+-nnn
+### STDOUT ###
+num: 3
+
+### TITLE ###
+ClusteredShortInts_SingleFlagWithValue
+### INPUT ###
+args:
+	num n int
+print("num: {num}")
+### ARGS ###
+-n
+42
+### STDOUT ###
+num: 42
+
+### TITLE ###
+ClusteredShortInts_ClusteringOverridesDefault
+### INPUT ###
+args:
+	num n int = 5
+print("num: {num}")
+### ARGS ###
+-nnn
+### STDOUT ###
+num: 3
+
+### TITLE ###
+PrintsUsageWithoutErrorIfNoArgsPassedOneRequiredOneOptionalArg
+### DESCRIPTION ###
+Tests that colorized usage is printed when no args passed but one arg is required.
+Uses RAW_ARGS to prevent auto-adding --color=never, which would trigger arg validation.
+### INPUT ###
+args:
+	mandatory str
+	optional int = 10
+### RAW_ARGS ###
+### STDOUT ###
+Usage:
+  TestCase <mandatory> [optional] [OPTIONS]
+
+Script args:
+      --mandatory str
+      --optional int    (default 10)
+
+### TITLE ###
+Invokes if no args passed but all args are optional
+### SKIP ###
+Optional args temporarily not supported -- need to rethink
+### INPUT ###
+args:
+	optionalS str?
+	optionalI int = 10
+print('hi')
+### STDOUT ###
+hi

@@ -2,7 +2,7 @@
 Lambda in load with named arg
 ### INPUT ###
 m.load("k", fn() "two", reload=true)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 36] PS: [0,  0] PE: [0, 36] source_file
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]   expr_stmt
 B: [ 0, 36] PS: [0,  0] PE: [0, 36]     expr: expr
@@ -86,3 +86,4 @@ B: [31, 35] PS: [0, 31] PE: [0, 35]                                             
 B: [31, 35] PS: [0, 31] PE: [0, 35]                                                     bool
 B: [31, 35] PS: [0, 31] PE: [0, 35]                                                       true `true`
 B: [35, 36] PS: [0, 35] PE: [0, 36]                           ) `)`
+

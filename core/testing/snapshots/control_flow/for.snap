@@ -1,0 +1,130 @@
+### TITLE ###
+Basic loop
+### INPUT ###
+a = ["a", "b", "c"]
+for item in a:
+	print(item)
+### STDOUT ###
+a
+b
+c
+
+### TITLE ###
+Loop with index
+### INPUT ###
+a = ["a", "b", "c"]
+for item in a with loop:
+	print(loop.idx, item)
+### STDOUT ###
+0 a
+1 b
+2 c
+
+### TITLE ###
+Changes inside are remembered
+### INPUT ###
+num = 0
+a = ["a", "b", "c"]
+for item in a with loop:
+	num += loop.idx
+print(num)
+### STDOUT ###
+3
+
+### TITLE ###
+Map key loop
+### INPUT ###
+a = { "a": 1, "b": 2, "c": 3 }
+for key in a:
+	print(key)
+### STDOUT ###
+a
+b
+c
+
+### TITLE ###
+Map key value loop
+### INPUT ###
+a = { "a": 1, "b": 2, "c": 3 }
+for key, value in a:
+	print(key)
+	print(value)
+### STDOUT ###
+a
+1
+b
+2
+c
+3
+
+### TITLE ###
+Can loop through string
+### INPUT ###
+a = "hello"
+for char in a:
+	print(char)
+### STDOUT ###
+h
+e
+l
+l
+o
+
+### TITLE ###
+Can continue
+### INPUT ###
+for i in range(5):
+	if i == 2:
+		continue
+	print(i)
+### STDOUT ###
+0
+1
+3
+4
+
+### TITLE ###
+Map can break
+### INPUT ###
+m = {"a": 1, "b": 2, "c": 3}
+for key in m:
+	print(key)
+	break
+### STDOUT ###
+a
+
+### TITLE ###
+Map can break from switch
+### DESCRIPTION ###
+Regression test: break inside switch should exit the for loop, not just the switch.
+The original bug was that the switch statement used 'break' internally, so a user's
+'break' would only exit the switch, causing an infinite loop.
+### INPUT ###
+m = {"a": 1, "b": 2, "c": 3}
+for key, val in m:
+	switch val:
+		case 1:
+			print("found one")
+			break
+		case 2:
+			print("found two")
+		default:
+			print("other")
+### STDOUT ###
+found one
+
+### TITLE ###
+Can loop through colored string
+### INPUT ###
+a = 'h' + blue("el") + 'lo'
+for char in a:
+	print(char)
+### ARGS ###
+--color=always
+### STDOUT ###
+h
+[34me[0m
+[34ml[0m
+l
+o
+

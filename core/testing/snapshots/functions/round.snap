@@ -1,0 +1,102 @@
+### TITLE ###
+Round ints with precision
+### INPUT ###
+a = 1
+b = 2
+print(round(a, b))
+### STDOUT ###
+1
+
+### TITLE ###
+Round floats with precision
+### INPUT ###
+a = 2.234
+b = 1
+print(round(a, b))
+### STDOUT ###
+2.2
+
+### TITLE ###
+Round floats with zero precision
+### INPUT ###
+a = 2.234
+b = 0
+c = round(a, b)
+print(c, type_of(c))
+### STDOUT ###
+2 int
+
+### TITLE ###
+Round ints without precision
+### INPUT ###
+a = 1
+print(round(a))
+### STDOUT ###
+1
+
+### TITLE ###
+Round floats without precision
+### INPUT ###
+a = 2.234
+b = round(a)
+print(b, type_of(b))
+### STDOUT ###
+2 int
+
+### TITLE ###
+Round errors precision less than 0
+### INPUT ###
+a = 1
+b = -1
+print(round(a, b))
+### STDERR ###
+error[RAD20017]: Precision must be non-negative, got -1
+  --> <script>:3:7
+  |
+2 | b = -1
+3 | print(round(a, b))
+  |       ^^^^^^^^^^^
+  |
+   = info: rad explain RAD20017
+
+
+### EXIT ###
+1
+### TITLE ###
+Round errors precision string
+### INPUT ###
+a = 1
+b = "ab"
+print(round(a, b))
+### STDERR ###
+error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'int'
+  --> <script>:3:16
+  |
+2 | b = "ab"
+3 | print(round(a, b))
+  |                ^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Round errors with string
+### INPUT ###
+a = "ab"
+b = 1
+print(round(a, b))
+### STDERR ###
+error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+  --> <script>:3:13
+  |
+2 | b = 1
+3 | print(round(a, b))
+  |             ^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

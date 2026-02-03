@@ -2,7 +2,7 @@
 UFCS
 ### INPUT ###
 a.b(foo, bar).c().d
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 19] PS: [0,  0] PE: [0, 19] source_file
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]   expr_stmt
 B: [ 0, 19] PS: [0,  0] PE: [0, 19]     expr: expr
@@ -51,3 +51,4 @@ B: [15, 16] PS: [0, 15] PE: [0, 16]                           ( `(`
 B: [16, 17] PS: [0, 16] PE: [0, 17]                           ) `)`
 B: [17, 18] PS: [0, 17] PE: [0, 18]                         . `.`
 B: [18, 19] PS: [0, 18] PE: [0, 19]                         indexing: identifier `d`
+

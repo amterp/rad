@@ -1,0 +1,52 @@
+### TITLE ###
+Basic
+### INPUT ###
+a = parse_float("2.4")
+print(a + 1.5)
+a = parse_float("123124.1232")
+print(a + 1.5)
+### STDOUT ###
+3.9
+123125.6232
+
+### TITLE ###
+Errors on alphabetical
+### INPUT ###
+a = parse_float("asd")
+### STDERR ###
+error[RAD20002]: parse_float() failed to parse "asd"
+  --> <script>:1:5
+  |
+1 | a = parse_float("asd")
+  |     ^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20002
+
+
+### EXIT ###
+1
+### TITLE ###
+Can parse int
+### INPUT ###
+a = parse_float("2")
+print(a + 1.1)
+### STDOUT ###
+3.1
+
+### TITLE ###
+Can catch even if no error
+### INPUT ###
+a = parse_float("2.4") catch:
+	pass
+print(a)
+### STDOUT ###
+2.4
+
+### TITLE ###
+Can catch error if exists
+### INPUT ###
+a = parse_float("asd") catch:
+	print("Got", a)
+### STDOUT ###
+Got parse_float() failed to parse "asd"
+

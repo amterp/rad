@@ -1,0 +1,61 @@
+### TITLE ###
+Values function
+### INPUT ###
+a = { "alice": "foo", "bob": "bar" }
+b = values(a)
+print(b)
+print(upper(b[0]))
+print(values({}))
+### STDOUT ###
+[ "foo", "bar" ]
+FOO
+[ ]
+
+### TITLE ###
+Values errors if given string
+### INPUT ###
+values("foo")
+### STDERR ###
+error[RAD30001]: Value '"foo"' (str) is not compatible with expected type 'map'
+  --> <script>:1:8
+  |
+1 | values("foo")
+  |        ^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Values errors if given no args
+### INPUT ###
+values()
+### STDERR ###
+error[RAD30007]: Missing required argument '_map'
+  --> <script>:1:1
+  |
+1 | values()
+  | ^^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Values errors if given more than one arg
+### INPUT ###
+values({}, {})
+### STDERR ###
+error[RAD30007]: Expected at most 1 args, but was invoked with 2
+  --> <script>:1:1
+  |
+1 | values({}, {})
+  | ^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1

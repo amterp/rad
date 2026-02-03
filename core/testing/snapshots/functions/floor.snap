@@ -1,0 +1,44 @@
+### TITLE ###
+Floor ints
+### INPUT ###
+print(floor(1))
+### STDOUT ###
+1
+
+### TITLE ###
+Floor negative ints
+### INPUT ###
+print(floor(-2))
+### STDOUT ###
+-2
+
+### TITLE ###
+Floor floats
+### INPUT ###
+print(floor(2.234))
+### STDOUT ###
+2
+
+### TITLE ###
+Floor negative floats
+### INPUT ###
+print(floor(-2.234))
+### STDOUT ###
+-3
+
+### TITLE ###
+Floor errors with string
+### INPUT ###
+print(floor("ab"))
+### STDERR ###
+error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+  --> <script>:1:13
+  |
+1 | print(floor("ab"))
+  |             ^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

@@ -1,0 +1,85 @@
+### TITLE ###
+Reverse no chars
+### INPUT ###
+a = "hello"
+print(reverse(a))
+### STDOUT ###
+olleh
+
+### TITLE ###
+Reverse empty string
+### INPUT ###
+a = ""
+print(reverse(a))
+### STDOUT ###
+
+
+### TITLE ###
+Reverse string with tab spaces
+### INPUT ###
+a = "\t\thello\t\n"
+print(reverse(a))
+### STDOUT ###
+
+	olleh		
+
+### TITLE ###
+Reverse with nums
+### INPUT ###
+a = 123
+print(reverse(a))
+### STDERR ###
+error[RAD30001]: Value '123' (int) is not compatible with expected type 'str|list'
+  --> <script>:2:15
+  |
+1 | a = 123
+2 | print(reverse(a))
+  |               ^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Reverse list basic
+### INPUT ###
+print(reverse([1, 2, 3]))
+### STDOUT ###
+[ 3, 2, 1 ]
+
+### TITLE ###
+Reverse list empty
+### INPUT ###
+print(reverse([]))
+### STDOUT ###
+[ ]
+
+### TITLE ###
+Reverse list single element
+### INPUT ###
+print(reverse([42]))
+### STDOUT ###
+[ 42 ]
+
+### TITLE ###
+Reverse list mixed types
+### INPUT ###
+print(reverse([1, "a", true]))
+### STDOUT ###
+[ true, "a", 1 ]
+
+### TITLE ###
+Reverse list strings
+### INPUT ###
+print(reverse(["hello", "world"]))
+### STDOUT ###
+[ "world", "hello" ]
+
+### TITLE ###
+Reverse multi byte
+### INPUT ###
+print(reverse("a😀b"))
+### STDOUT ###
+b😀a
+

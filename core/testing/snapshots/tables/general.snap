@@ -1,0 +1,263 @@
+### TITLE ###
+Rad DisplayBlock
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+display:
+    fields Name, Age
+### STDOUT ###
+Name     Age 
+Alice    30   
+Bob      40   
+Charlie  25   
+
+### TITLE ###
+Rad DisplayBlockErrorsIfGivenUrl
+### INPUT ###
+url = "https://google.com"
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+display url:
+    fields Name, Age
+### STDERR ###
+error[RAD30001]: Display block source can only be a list or a map. Got "str"
+  --> <script>:4:9
+  |
+3 | Age = [30, 40, 25]
+4 | display url:
+  |         ^^^
+5 |     fields Name, Age
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Rad RequiresBlockElseError
+### INPUT ###
+url = "https://google.com"
+rad url
+### ARGS ###
+--mock-response
+.*:./responses/text.txt
+### STDERR ###
+error[RAD10009]: Unexpected 'rad url'
+  --> <script>:2:1
+  |
+1 | url = "https://google.com"
+2 | rad url
+  | ^^^^^^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Rad CanConditionallyApplySort
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+should_sort = true
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+### STDOUT ###
+Name     Age 
+Alice    30   
+Bob      40   
+Charlie  25   
+Name     Age 
+Charlie  25   
+Bob      40   
+Alice    30   
+
+### TITLE ###
+Rad CanFallBackToElse
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+	else:
+		sort Age asc
+### STDOUT ###
+Name     Age 
+Charlie  25   
+Alice    30   
+Bob      40   
+
+### TITLE ###
+Rad CanFallBackToElseIf
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+should_sort = false
+display:
+	fields Name, Age
+	if should_sort:
+		sort desc
+	else if true:
+		sort Age asc
+	else:
+		sort Age desc
+### STDOUT ###
+Name     Age 
+Charlie  25   
+Alice    30   
+Bob      40   
+
+### TITLE ###
+Rad_VariousTypeLengths
+### INPUT ###
+url = "https://google.com"
+
+shortint = json[].shortint
+longint = json[].longint
+shortfloat = json[].shortfloat
+longfloat = json[].longfloat
+
+rad url:
+    fields shortint, longint, shortfloat, longfloat
+### ARGS ###
+--mock-response
+.*:./responses/numbers.json
+### STDOUT ###
+shortint  longint              shortfloat  longfloat          
+1         1234567899987654400  1.12        1234.5678999876543  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Rad_RequestBlock
+### INPUT ###
+url = "https://google.com"
+Name = json[].name
+Age = json[].age
+request url:
+    fields Name, Age
+print("Names:", Name)
+print("Ages:", Age)
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+### STDOUT ###
+Names: [ "Charlie", "Bob", "Alice", "Bob" ]
+Ages: [ 30, 40, 30, 25 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Rad_RequestBlockComplainsIfNoUrl
+### INPUT ###
+url = "https://google.com"
+Name = json[].name
+Age = json[].age
+request:
+    fields Name, Age
+### STDERR ###
+error[RAD10001]: Invalid syntax
+  --> <script>:4:1
+  |
+3 | Age = json[].age
+4 | request:
+  | ^^^^^^^^
+5 |     fields Name, Age
+  |
+   = info: rad explain RAD10001
+
+error[RAD10009]: Unexpected ':
+    fields Name,'
+  --> <script>:4:8
+  |
+3 | Age = json[].age
+4 | request:
+  |        ^
+5 |     fields Name, Age
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Rad_RequestThenDisplayBlocks
+### INPUT ###
+url = "https://google.com"
+Name = json[].name
+ids = json[].ids
+request url:
+	fields Name, ids
+NumIds = [len(x) for x in ids]
+display:
+	fields Name, NumIds
+### ARGS ###
+--mock-response
+.*:./responses/arrays.json
+### STDOUT ###
+Name     NumIds 
+Alice    3       
+Bob      5       
+Charlie  2       
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Rad_IfStmtWorksOnRadWithUrl
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+should_sort = true
+rad url:
+	fields name, city
+	if should_sort:
+		sort name asc
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+### STDOUT ###
+name     city        
+Alice    New York     
+Bob      London       
+Bob      Los Angeles  
+Charlie  Paris        
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+MockResponse
+### INPUT ###
+
+url = "https://google.com"
+
+Id = json[].id
+Name = json[].name
+
+rad url:
+    fields Id, Name
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+Id  Name  
+1   Alice  
+2   Bob    
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+

@@ -1,0 +1,159 @@
+### TITLE ###
+Creation no assign
+### INPUT ###
+
+error("test error message")
+### TITLE ###
+Creation
+### INPUT ###
+
+err = error("test error message")
+print(err)
+### STDOUT ###
+test error message
+
+### TITLE ###
+Equality
+### INPUT ###
+
+err1 = error("error1")
+err2 = error("error1")
+err3 = error("error2")
+
+print(err1 == err2)  // true - same message
+print(err1 != err2)  // false - same message
+print(err1 == err3)  // false - different message
+print(err1 != err3)  // true - different message
+### STDOUT ###
+true
+false
+false
+true
+
+### TITLE ###
+String operations
+### INPUT ###
+
+err = error("error message")
+str = "string"
+
+// concatenation
+print(err + str)
+print(str + err)
+
+// equality with string
+print(err == "error message")
+print(err != "error message")
+print(err == "different")
+print(err != "different")
+
+// in/not in operations
+print(err in "This is an error message")
+print(err not in "This is an error message")
+print(err in "No match here")
+print(err not in "No match here")
+### STDOUT ###
+error messagestring
+stringerror message
+true
+false
+false
+true
+true
+false
+false
+true
+
+### TITLE ###
+Numeric operations
+### INPUT ###
+
+err = error("error")
+
+// concatenation with numbers
+print(err + 123)
+print(err + 3.14)
+### STDOUT ###
+error123
+error3.14
+
+### TITLE ###
+Boolean operations
+### INPUT ###
+
+err = error("error")
+
+// concatenation with booleans
+print(err + true)
+print(err + false)
+### STDOUT ###
+errortrue
+errorfalse
+
+### TITLE ###
+Collection operations
+### INPUT ###
+
+err1 = error("item1")
+err2 = error("item2")
+err3 = error("item3")
+err4 = error("item4")
+
+// Create list and map with error objects
+list = [err1, err2, err3]
+map = {err1: 1, err2: 2, err3: 3}
+
+// in/not in operations with list
+print(err1 in list)
+print(err2 in list)
+print(err3 in list)
+print(err4 in list)
+print(err4 not in list)
+
+// in/not in operations with map
+print(err1 in map)
+print(err2 in map)
+print(err3 in map)
+print(err4 in map)
+print(err4 not in map)
+### STDOUT ###
+true
+true
+true
+false
+true
+true
+true
+true
+false
+true
+
+### TITLE ###
+Error operations
+### INPUT ###
+
+err1 = error("error1")
+err2 = error("error2")
+
+print(err1 + err2)
+
+print(err1 == error("error1"))
+print(err1 != error("error1"))
+print(err1 == err2)
+print(err1 != err2)
+### STDOUT ###
+error1error2
+true
+false
+false
+true
+
+### TITLE ###
+Printing
+### INPUT ###
+
+err = error("test error message")
+print(err)
+### STDOUT ###
+test error message
+

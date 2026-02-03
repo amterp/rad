@@ -1,0 +1,50 @@
+### TITLE ###
+Ufcs basic
+### INPUT ###
+print("hi".upper())
+### STDOUT ###
+HI
+
+### TITLE ###
+Ufcs chained
+### INPUT ###
+"hi".upper().print()
+### STDOUT ###
+HI
+
+### TITLE ###
+Ufcs with args
+### INPUT ###
+"hello!".replace("l", "o").print()
+### STDOUT ###
+heooo!
+
+### TITLE ###
+Ufcs chained multiline
+### SKIP ###
+TODO this is not supported yet, but should be
+### INPUT ###
+"hi"
+	.upper()
+	.print()
+### STDOUT ###
+HI
+
+### TITLE ###
+Ufcs errors if incorrect ufcs arg
+### INPUT ###
+a = [1, 2, 3]
+a[1].replace("l", "o")
+### STDERR ###
+error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
+  --> <script>:2:1
+  |
+1 | a = [1, 2, 3]
+2 | a[1].replace("l", "o")
+  | ^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

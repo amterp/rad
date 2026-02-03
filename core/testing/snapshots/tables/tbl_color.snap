@@ -1,0 +1,176 @@
+### TITLE ###
+RadColor_NonOverlappingMatches
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+    fields name, city
+    city:
+       color "red" "Los"
+       color "blue" "Angeles"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+Bob      London       
+Alice    New York     
+Bob      [31mLos[0m [34mAngeles[0m  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColor_OverlappingMatches
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+    fields name, city
+    city:
+       color "red" "New"
+       color "blue" "York"
+       color "yellow" "New York"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+Bob      London       
+Alice    [33mNew York[0m     
+Bob      Los Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColor_PartialOverlapPriority
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+    fields name, city
+    name:
+       color "blue" "Bo"
+       color "red" "ob"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+[34mB[0m[31mob[0m      London       
+Alice    New York     
+[34mB[0m[31mob[0m      Los Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColor_NoMatches
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+    fields name, city
+    city:
+       color "green" "Berlin"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+Bob      London       
+Alice    New York     
+Bob      Los Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColor_Complex
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+	fields name, city
+	name:
+		color "red" "o[a-z]"
+	city:
+		color "blue" "o[a-z]"
+		color "yellow" "ndon"
+		color "red" "ndo"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+B[31mob[0m      L[34mo[0m[31mndo[0m[33mn[0m       
+Alice    New Y[34mor[0mk     
+B[31mob[0m      L[34mos[0m Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColor_Plain
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+city = json[].city
+rad url:
+	fields name, city
+	city:
+		color "red" "London"
+		color "plain" "ndo"
+### ARGS ###
+--mock-response
+.*:./responses/people.json
+--color=always
+### STDOUT ###
+[33mname   [0m  [33mcity       [0m 
+Charlie  Paris        
+Bob      [31mLo[0mndo[31mn[0m       
+Alice    New York     
+Bob      Los Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+RadColorErrorsOnInvalidColor
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+color = "licorice"
+rad url:
+    fields name
+    name:
+        color color "o[a-z]"
+### STDERR ###
+error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan green italic magenta orange pink plain red underline white yellow]
+  --> <script>:7:15
+  |
+6 |     name:
+7 |         color color "o[a-z]"
+  |               ^^^^^
+  |
+   = info: rad explain RAD20025
+
+
+### EXIT ###
+1

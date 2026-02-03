@@ -1,0 +1,78 @@
+### TITLE ###
+List comprehension adding
+### INPUT ###
+a = [1, 2, 3]
+print([x + 1 for x in a])
+### STDOUT ###
+[ 2, 3, 4 ]
+
+### TITLE ###
+List comprehension upping
+### INPUT ###
+a = ["a", "b", "c"]
+print([upper(x) for x in a])
+### STDOUT ###
+[ "A", "B", "C" ]
+
+### TITLE ###
+List comprehension lens
+### INPUT ###
+a = [[1, 2, 3], [4], [5, 6]]
+print([len(x) for x in a])
+### STDOUT ###
+[ 3, 1, 2 ]
+
+### TITLE ###
+List comprehension prints
+### INPUT ###
+a = [1, 2, 3]
+[print(x) for x in a]
+### STDOUT ###
+1
+2
+3
+
+### TITLE ###
+List comprehension prints returns empty array
+### INPUT ###
+a = [1, 2, 3]
+b = [print(x) for x in a]
+print(b)
+### STDOUT ###
+1
+2
+3
+[ ]
+
+### TITLE ###
+List comprehension can get index
+### INPUT ###
+a = [10, 20, 30]
+print([loop.idx * x for x in a with loop])
+### STDOUT ###
+[ 0, 20, 60 ]
+
+### TITLE ###
+List comprehension can filter numbers
+### INPUT ###
+a = [5, 15, 20, 8]
+print([x for x in a if x < 10])
+### STDOUT ###
+[ 5, 8 ]
+
+### TITLE ###
+List comprehension can filter string lengths
+### INPUT ###
+a = ["a", "aa", "aaa", "aaaa"]
+print([x for x in a if len(x) < 3])
+### STDOUT ###
+[ "a", "aa" ]
+
+### TITLE ###
+List comprehension function returning multiple things keeps only first
+### INPUT ###
+a = ["1", "2"]
+print([parse_int(x) for x in a])
+### STDOUT ###
+[ 1, 2 ]
+

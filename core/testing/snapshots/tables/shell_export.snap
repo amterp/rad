@@ -1,0 +1,86 @@
+### TITLE ###
+Shell_ExportsNothingIfNoVars
+### INPUT ###
+2 + 3
+### ARGS ###
+--shell
+### TITLE ###
+Shell_ExportsStrings
+### INPUT ###
+a = "alice"
+b = "bob"
+### ARGS ###
+--shell
+### STDOUT ###
+a="alice"
+b="bob"
+
+### TITLE ###
+Shell_PrintsGoToStderr
+### INPUT ###
+a = "alice"
+print('hi')
+### ARGS ###
+--shell
+### STDOUT ###
+a="alice"
+
+### STDERR ###
+hi
+
+### TITLE ###
+Shell_ErrorExitFuncPrintsShellExitAndDoesNotExportVars
+### SKIP ###
+TOOD RAD-319: if we exit inside a function its params get exported, not good.
+### INPUT ###
+exit(2)
+### ARGS ###
+--shell
+### STDOUT ###
+exit 2
+
+### EXIT ###
+2
+### TITLE ###
+Shell_NonErrorExitFuncStillExportsVars
+### SKIP ###
+TOOD RAD-319: if we exit inside a function its params get exported, not good.
+### INPUT ###
+a = "alice"
+exit()
+b = "bob"
+### ARGS ###
+--shell
+### STDOUT ###
+a="alice"
+
+### TITLE ###
+Shell_DoesNotExportLambdas
+### INPUT ###
+a = 1
+b = fn() 2
+### ARGS ###
+--shell
+### STDOUT ###
+a=1
+
+### TITLE ###
+Shell_DoesNotExportNulls
+### INPUT ###
+a = 1
+b = null
+### ARGS ###
+--shell
+### STDOUT ###
+a=1
+
+### TITLE ###
+Shell_DoesNotExportPath
+### INPUT ###
+a = 1
+PATH = "noo"
+### ARGS ###
+--shell
+### STDOUT ###
+a=1
+

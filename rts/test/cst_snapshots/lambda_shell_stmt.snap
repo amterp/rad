@@ -3,7 +3,7 @@ Lambda shell stmt
 ### INPUT ###
 fn() $`echo hi`
 fn() ($`echo hi`)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 33] PS: [0,  0] PE: [1, 17] source_file
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]   expr_stmt
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]     expr: expr
@@ -73,3 +73,4 @@ B: [24, 31] PS: [1,  8] PE: [1, 15]                                             
 B: [24, 31] PS: [1,  8] PE: [1, 15]                                                       content: string_content `echo hi`
 B: [31, 32] PS: [1, 15] PE: [1, 16]                                                     end: string_end ```
 B: [32, 33] PS: [1, 16] PE: [1, 17]                       ) `)`
+

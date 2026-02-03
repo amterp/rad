@@ -1,0 +1,19 @@
+### TITLE ###
+Display block can give own list
+### INPUT ###
+a = [
+	{
+		"name": "alice"
+	},
+	{
+		"name": "bob"
+	},
+]
+Name = json[].name
+display a:
+	fields Name
+### STDOUT ###
+Name  
+alice  
+bob    
+

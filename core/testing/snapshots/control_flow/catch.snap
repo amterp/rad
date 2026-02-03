@@ -1,0 +1,395 @@
+### TITLE ###
+Can catch
+### INPUT ###
+
+a = foo() catch:
+	pass
+print("Got: {a}")
+
+fn foo():
+	return error("this is an error")
+### STDOUT ###
+Got: this is an error
+
+### TITLE ###
+Errors if no catch
+### INPUT ###
+
+a = foo()
+print("Got: {a}")
+
+fn foo():
+	return error("this is an error")
+### STDERR ###
+error[RAD20000]: this is an error
+  --> <script>:2:5
+  |
+1 |
+2 | a = foo()
+  |     ^^^^^
+3 | print("Got: {a}")
+4 |
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Can catch on nested functions
+### INPUT ###
+
+a = foo(1) catch:
+	pass
+print("First", a)
+a = foo(2).foo() catch:
+	pass
+print("Second", a)
+
+fn foo(x):
+	print("Foo!", x)
+	out = x
+	if x == 2:
+		out = error("this is an error: {x}")
+	return out
+### STDOUT ###
+Foo! 1
+First 1
+Foo! 2
+Second this is an error: 2
+
+### TITLE ###
+Can catch on from ternary
+### INPUT ###
+
+a = (true ? foo(1) : foo(2)) catch:
+	pass
+print("Got: {a}")
+
+fn foo(x):
+	print("Running {x}")
+	return error("error: {x}")
+### STDOUT ###
+Running 1
+Got: error: 1
+
+### TITLE ###
+List comprehension can catch
+### INPUT ###
+
+a = [foo(a) for a in [1, 2]] catch:
+	pass
+print("Got: {a}")
+
+fn foo(x):
+	print("Foo {x}")
+	return error("error: {x}")
+### STDOUT ###
+Foo 1
+Got: error: 1
+
+### TITLE ###
+Errors in list
+### INPUT ###
+
+a = [foo()]
+
+fn foo():
+	return error("this is an error")
+### STDERR ###
+error[RAD20000]: this is an error
+  --> <script>:2:6
+  |
+1 |
+2 | a = [foo()]
+  |      ^^^^^
+3 |
+4 | fn foo():
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors in map
+### INPUT ###
+
+a = {1: foo()}
+
+fn foo():
+	return error("this is an error")
+### STDERR ###
+error[RAD20000]: this is an error
+  --> <script>:2:9
+  |
+1 |
+2 | a = {1: foo()}
+  |         ^^^^^
+3 |
+4 | fn foo():
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Can propagate
+### INPUT ###
+
+foo()
+
+fn foo():
+	a = bar()
+	return error("foo error")
+
+fn bar():
+	return error("bar error")
+### STDERR ###
+error[RAD20000]: bar error
+  --> <script>:5:6
+  |
+4 | fn foo():
+5 | 	a = bar()
+  |      ^^^^^
+6 | 	return error("foo error")
+7 |
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Can catch in function
+### INPUT ###
+
+foo()
+
+fn foo():
+	a = bar() catch:
+		pass
+	return error("foo error {a}")
+
+fn bar():
+	return error("bar error")
+### STDERR ###
+error[RAD20000]: foo error bar error
+  --> <script>:2:1
+  |
+1 |
+2 | foo()
+  | ^^^^^
+3 |
+4 | fn foo():
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Lambda map errors
+### INPUT ###
+
+a = [1, 2]
+a.map(foo).print()
+
+fn foo(x):
+	return error("this is an error")
+### STDERR ###
+error[RAD20000]: this is an error
+  --> <script>:3:3
+  |
+2 | a = [1, 2]
+3 | a.map(foo).print()
+  |   ^^^^^^^^
+4 |
+5 | fn foo(x):
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Lambda map can catch
+### SKIP ###
+TODO: not possible yet. Probably just want a catch=true named arg in map?
+### INPUT ###
+
+a = [1, 2]
+a.map(foo).print()
+
+foo = fn(x):
+	return error("this is an error")
+### EXIT ###
+1
+### TITLE ###
+Return in catch block
+### INPUT ###
+
+result = foo()
+print("Result: {result}")
+
+fn foo():
+	for i in range(10):
+		a = bar(i) catch:
+			return "caught error at {i}"
+	return "completed all iterations"
+
+fn bar(x):
+	if x == 3:
+		return error("error at {x}")
+	return x
+### STDOUT ###
+Result: caught error at 3
+
+### TITLE ###
+Break in catch block
+### INPUT ###
+
+results = []
+for i in range(10):
+	a = foo(i) catch:
+		print("Caught error at {i}, breaking")
+		break
+	results += [a]
+
+print("Results: {results}")
+
+fn foo(x):
+	if x == 5:
+		return error("error at {x}")
+	return x
+### STDOUT ###
+Caught error at 5, breaking
+Results: [ 0, 1, 2, 3, 4 ]
+
+### TITLE ###
+Continue in catch block
+### INPUT ###
+
+results = []
+for i in range(5):
+	a = foo(i) catch:
+		print("Caught error at {i}, continuing")
+		continue
+	results += [a]
+
+print("Results: {results}")
+
+fn foo(x):
+	if x == 2:
+		return error("error at {x}")
+	return x * 10
+### STDOUT ###
+Caught error at 2, continuing
+Results: [ 0, 10, 30, 40 ]
+
+### TITLE ###
+Yield in catch block
+### INPUT ###
+
+result = switch "a":
+	case "a":
+		parse_int("two") catch:
+			yield 5
+print(result)
+### STDOUT ###
+5
+
+### TITLE ###
+Expr stmt returns void not error
+### INPUT ###
+
+// expr_stmt with catch should return void, not the error value
+foo() catch:
+	print("Caught error")
+
+print("Continued execution")
+
+fn foo():
+	return error("test error")
+### STDOUT ###
+Caught error
+Continued execution
+
+### TITLE ###
+Assign with catch control flow
+### INPUT ###
+
+fn test():
+	for i in range(5):
+		err = foo(i) catch:
+			if i == 2:
+				return "early return from catch"
+			print("Caught: {err}")
+	return "completed"
+
+result = test()
+print("Final: {result}")
+
+fn foo(x):
+	if x == 1 or x == 2:
+		return error("error {x}")
+	return "ok {x}"
+### STDOUT ###
+Caught: error 1
+Final: early return from catch
+
+### TITLE ###
+Immediately propagates on nested functions
+### INPUT ###
+
+foo(1).foo()
+
+fn foo(x):
+  print_err("Foo!", x)
+  return error(out)
+### STDERR ###
+Foo! 1
+error[RAD20028]: Undefined variable: out
+  --> <script>:6:16
+  |
+5 |   print_err("Foo!", x)
+6 |   return error(out)
+  |                ^^^
+  |
+   = stack:
+     at foo (TestCase:2:1)
+   = help: variables with similar names exist: count, int, sort
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+List comprehension propagates
+### INPUT ###
+
+a = bar()
+
+fn foo(x):
+	print_err("Foo {x}")
+	return error("error {x}")
+
+fn bar():
+	print_err("bar")
+	return [foo(a) for a in [1, 2]]
+### STDERR ###
+bar
+Foo 1
+error[RAD20000]: error 1
+  --> <script>:10:10
+   |
+ 9 | 	print_err("bar")
+10 | 	return [foo(a) for a in [1, 2]]
+   |          ^^^^^^
+   |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1

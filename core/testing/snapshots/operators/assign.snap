@@ -1,0 +1,219 @@
+### TITLE ###
+Assign inside collection
+### INPUT ###
+a = [1, 2]
+a[0] = 3
+print(a)
+### STDOUT ###
+[ 3, 2 ]
+
+### TITLE ###
+Multi-assign inside collection via switch
+### INPUT ###
+a = [1, [2, 3], 4]
+b = "alice"
+a[1][0], a[2] = switch b:
+	case "alice" -> 20, 30
+	case "bob" -> 40, 50
+print(a)
+### STDOUT ###
+[ 1, [ 20, 3 ], 30 ]
+
+### TITLE ###
+Multi-assign inside collection via func
+### INPUT ###
+a = [1, [2, 3], 4]
+a[1][0], a[2] = pick_from_resource("./resources/people.json", "alice")
+print(a)
+### STDOUT ###
+[ 1, [ "Alice", 3 ], 25 ]
+
+### TITLE ###
+Cannot assign json field to index varpath
+### INPUT ###
+a = [0]
+a[0] = json.id
+### STDERR ###
+error[RAD10001]: Json paths must be defined to plain identifiers
+  --> <script>:2:1
+  |
+1 | a = [0]
+2 | a[0] = json.id
+  | ^^^^
+  |
+   = info: rad explain RAD10001
+
+
+### EXIT ###
+1
+### TITLE ###
+Multi-assign 1
+### INPUT ###
+a = foo()
+print(a)
+fn foo():
+	return 1, 2
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Multi-assign 2
+### INPUT ###
+[a] = foo()
+print(a)
+fn foo():
+	return 1, 2
+### STDOUT ###
+1
+
+### TITLE ###
+Multi-assign 3
+### INPUT ###
+[a, b] = foo()
+print(a, b)
+fn foo():
+	return 1, 2
+### STDOUT ###
+1 2
+
+### TITLE ###
+Multi-assign 4
+### INPUT ###
+[a, b] = foo()
+print(a, b)
+fn foo():
+	return 1
+### STDOUT ###
+1 null
+
+### TITLE ###
+Multi-assign 5
+### INPUT ###
+[a, b] = foo()
+print(a, b)
+fn foo():
+	return [1]
+### STDOUT ###
+1 null
+
+### TITLE ###
+Multi-assign 6
+### INPUT ###
+[a, b] = foo()
+print(a, b)
+fn foo():
+	return [[1]]
+### STDOUT ###
+[ 1 ] null
+
+### TITLE ###
+Multi-assign 7
+### INPUT ###
+[a] = foo()
+print(a)
+fn foo():
+	return [[1]]
+### STDOUT ###
+[ 1 ]
+
+### TITLE ###
+Multi-assign 8
+### INPUT ###
+a = foo()
+print(a)
+fn foo():
+	return [[1]]
+### STDOUT ###
+[ [ 1 ] ]
+
+### TITLE ###
+Multi-assign 9
+### INPUT ###
+[a] = foo()
+print(a)
+fn foo():
+	return [1, 2]
+### STDOUT ###
+1
+
+### TITLE ###
+Multi-assign switch 1
+### INPUT ###
+a = switch "hi":
+	case "hi" -> 1, 2
+print(a)
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Multi-assign switch 2
+### INPUT ###
+a = switch "hi":
+	case "hi" -> 1, 2
+print(a)
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Multi-assign switch 3
+### INPUT ###
+a, b = switch "hi":
+	case "hi" -> 1, 2
+print(a, b)
+### STDOUT ###
+1 2
+
+### TITLE ###
+Multi-assign switch 4
+### INPUT ###
+a, b = switch "hi":
+	case "hi" -> 1
+print(a, b)
+### STDOUT ###
+1 null
+
+### TITLE ###
+Multi-assign switch 5
+### INPUT ###
+a, b = switch "hi":
+	case "hi" -> [1]
+print(a, b)
+### STDOUT ###
+1 null
+
+### TITLE ###
+Multi-assign switch 6
+### INPUT ###
+a, b = switch "hi":
+	case "hi" -> [[1]]
+print(a, b)
+### STDOUT ###
+[ 1 ] null
+
+### TITLE ###
+Multi-assign switch 7
+### INPUT ###
+a = switch "hi":
+	case "hi" -> [[1]]
+print(a)
+### STDOUT ###
+[ [ 1 ] ]
+
+### TITLE ###
+Multi-assign switch 8
+### INPUT ###
+[a] = switch "hi":
+	case "hi" -> [[1]]
+print(a)
+### STDOUT ###
+[ 1 ]
+
+### TITLE ###
+Multi-assign switch 9
+### INPUT ###
+[a] = switch "hi":
+	case "hi" -> [1, 2]
+print(a)
+### STDOUT ###
+1
+

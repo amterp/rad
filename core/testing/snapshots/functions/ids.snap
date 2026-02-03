@@ -1,0 +1,80 @@
+### TITLE ###
+uuid_v4 generates unique IDs
+### INPUT ###
+ids = [uuid_v4() for i in range(1000)]
+uniq = ids.unique().len()
+if ids.len() != uniq:
+	print("IDs are not unique, got {uniq}")
+else:
+	print("IDs are unique")
+### STDOUT ###
+IDs are unique
+
+### TITLE ###
+uuid_v7 generates unique IDs
+### INPUT ###
+ids = [uuid_v7() for i in range(1000)]
+uniq = ids.unique().len()
+if ids.len() != uniq:
+	print("IDs are not unique, got {uniq}")
+else:
+	print("IDs are unique")
+### STDOUT ###
+IDs are unique
+
+### TITLE ###
+gen_fid generates unique IDs
+### INPUT ###
+ids = [gen_fid() for i in range(1000)]
+uniq = ids.unique().len()
+if ids.len() != uniq:
+	print("IDs are not unique, got {uniq}")
+else:
+	print("IDs are unique")
+### STDOUT ###
+IDs are unique
+
+### TITLE ###
+gen_fid with named args
+### INPUT ###
+ids = [gen_fid(alphabet="1234567890abcdef", num_random_chars=8, tick_size_ms=round(1e3*60*60)) for i in range(1000)]
+uniq = ids.unique().len()
+if ids.len() != uniq:
+	print("IDs are not unique, got {uniq}")
+else:
+	print("IDs are unique")
+### STDOUT ###
+IDs are unique
+
+### TITLE ###
+gen_fid errors on empty alphabet
+### INPUT ###
+gen_fid(alphabet="")
+### STDERR ###
+error[RAD20020]: Error creating FID generator: alphabet must contain at least 2 characters
+  --> <script>:1:1
+  |
+1 | gen_fid(alphabet="")
+  | ^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20020
+
+
+### EXIT ###
+1
+### TITLE ###
+gen_fid errors on negative num_random_chars
+### INPUT ###
+gen_fid(num_random_chars=-1)
+### STDERR ###
+error[RAD20017]: Number of random chars must be non-negative, got -1
+  --> <script>:1:1
+  |
+1 | gen_fid(num_random_chars=-1)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20017
+
+
+### EXIT ###
+1

@@ -1,0 +1,1305 @@
+### TITLE ###
+Correct positional args and return
+### INPUT ###
+add(1, 2).print()
+fn add(x: float, y: float) -> float:
+	return x + y
+### STDOUT ###
+3
+
+### TITLE ###
+Wrong positional args
+### INPUT ###
+add(1, "2").print()
+fn add(x: float, y: float) -> float:
+	return x + y
+### STDERR ###
+error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
+  --> <script>:1:8
+  |
+1 | add(1, "2").print()
+  |        ^^^
+2 | fn add(x: float, y: float) -> float:
+3 | 	return x + y
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Wrong return
+### INPUT ###
+add(1, 2).print()
+fn add(x: float, y: float) -> float:
+	return "hi"
+### STDERR ###
+error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'float'
+  --> <script>:1:1
+  |
+1 | add(1, 2).print()
+  | ^^^^^^^^^
+2 | fn add(x: float, y: float) -> float:
+3 | 	return "hi"
+  |
+   = stack:
+     at add (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Void return
+### INPUT ###
+foo(1)
+bar(2)
+fn foo(x: float):
+	print("foo!")
+fn bar(x: float) -> void:
+	print("bar!")
+### STDOUT ###
+foo!
+bar!
+
+### TITLE ###
+Named arg
+### INPUT ###
+foo(1, 2).print()
+foo(x=1, y=2).print()
+foo(y=1, x=2).print()
+fn foo(x: float, y: float) -> float:
+	return x / y
+### STDOUT ###
+0.5
+0.5
+2
+
+### TITLE ###
+Named wrong type
+### INPUT ###
+foo(x=1, y="2").print()
+fn foo(x: float, y: float) -> float:
+	return x / y
+### STDERR ###
+error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
+  --> <script>:1:12
+  |
+1 | foo(x=1, y="2").print()
+  |            ^^^
+2 | fn foo(x: float, y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Named unknown
+### INPUT ###
+foo(x=1, y=2, z=3).print()
+fn foo(x: float, y: float) -> float:
+	return x / y
+### STDERR ###
+error[RAD30006]: Unknown named argument 'z'
+  --> <script>:1:15
+  |
+1 | foo(x=1, y=2, z=3).print()
+  |               ^
+2 | fn foo(x: float, y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30006
+
+
+### EXIT ###
+1
+### TITLE ###
+Named missing
+### INPUT ###
+foo(x=1).print()
+fn foo(x: float, y: float) -> float:
+	return x / y
+### STDERR ###
+error[RAD30007]: Missing required argument 'y'
+  --> <script>:1:1
+  |
+1 | foo(x=1).print()
+  | ^^^^^^^^
+2 | fn foo(x: float, y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Named missing defaults
+### INPUT ###
+foo(x=1).print()
+fn foo(x: float, y: float = 2) -> float:
+	return x / y
+### STDOUT ###
+0.5
+
+### TITLE ###
+Invalid default
+### INPUT ###
+foo(x=1).print()
+fn foo(x: float, y: float = "2") -> float:
+	return x / y
+### STDERR ###
+error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
+  --> <script>:2:29
+  |
+1 | foo(x=1).print()
+2 | fn foo(x: float, y: float = "2") -> float:
+  |                             ^^^
+3 | 	return x / y
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Too many positional
+### INPUT ###
+foo(1, 2, 3).print()
+fn foo(x: float, y: float) -> float:
+	return x / y
+### STDERR ###
+error[RAD30007]: Expected at most 2 args, but was invoked with 3
+  --> <script>:1:1
+  |
+1 | foo(1, 2, 3).print()
+  | ^^^^^^^^^^^^
+2 | fn foo(x: float, y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Too many positional but named only allowed
+### INPUT ###
+foo(1, 2, 3).print()
+fn foo(x: float, y: float, *, z: float) -> float:
+	return x / y + z
+### STDERR ###
+error[RAD30007]: Too many positional args, remaining args are named-only
+  --> <script>:1:11
+  |
+1 | foo(1, 2, 3).print()
+  |           ^
+2 | fn foo(x: float, y: float, *, z: float) -> float:
+3 | 	return x / y + z
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Positional only
+### INPUT ###
+foo(_x=1, _y=2).print()
+fn foo(_x: float, _y: float) -> float:
+	return x / y
+### STDERR ###
+error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally
+  --> <script>:1:5
+  |
+1 | foo(_x=1, _y=2).print()
+  |     ^^
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30006
+
+
+### EXIT ###
+1
+### TITLE ###
+Optional arg nulls
+### INPUT ###
+foo(x=1)
+fn foo(x: float, y?):
+	print(x, y)
+### STDOUT ###
+1 null
+
+### TITLE ###
+Optional named arg nulls
+### INPUT ###
+foo(x=1)
+fn foo(x: float, *, y?):
+	print(x, y)
+### STDOUT ###
+1 null
+
+### TITLE ###
+Non void func errors if nothing returns
+### INPUT ###
+foo(x=1)
+fn foo(x: float, y?) -> float:
+	a = 1
+### STDERR ###
+error[RAD20038]: Expected 'float', but got void value
+  --> <script>:1:1
+  |
+1 | foo(x=1)
+  | ^^^^^^^^
+2 | fn foo(x: float, y?) -> float:
+3 | 	a = 1
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
+### TITLE ###
+Repeat arg
+### INPUT ###
+foo(1, x=2)
+fn foo(x: float, y?) -> float:
+	return x / y
+### STDERR ###
+error[RAD30006]: Argument 'x' already specified
+  --> <script>:1:8
+  |
+1 | foo(1, x=2)
+  |        ^
+2 | fn foo(x: float, y?) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30006
+
+
+### EXIT ###
+1
+### TITLE ###
+Repeat named arg
+### INPUT ###
+foo(1, y = 2, y = 3)
+fn foo(x: float, y?) -> float:
+	return x / y
+### STDERR ###
+error[RAD30006]: Duplicate named argument: y
+  --> <script>:1:15
+  |
+1 | foo(1, y = 2, y = 3)
+  |               ^
+2 | fn foo(x: float, y?) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30006
+
+
+### EXIT ###
+1
+### TITLE ###
+Str param valid
+### INPUT ###
+foo("hi")
+fn foo(x: str):
+	print("|{x}|")
+### STDOUT ###
+|hi|
+
+### TITLE ###
+Str param invalid
+### INPUT ###
+foo(2)
+fn foo(x: str):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
+  --> <script>:1:5
+  |
+1 | foo(2)
+  |     ^
+2 | fn foo(x: str):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Str return valid
+### INPUT ###
+foo().print()
+fn foo() -> str:
+	return "hi"
+### STDOUT ###
+hi
+
+### TITLE ###
+Str return invalid
+### INPUT ###
+foo().print()
+fn foo() -> str:
+	return 2
+### STDERR ###
+error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> str:
+3 | 	return 2
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Int param valid
+### INPUT ###
+foo(2)
+fn foo(x: int):
+	print("|{x}|")
+### STDOUT ###
+|2|
+
+### TITLE ###
+Int param invalid
+### INPUT ###
+foo("2")
+fn foo(x: int):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'int'
+  --> <script>:1:5
+  |
+1 | foo("2")
+  |     ^^^
+2 | fn foo(x: int):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Int param null
+### INPUT ###
+foo(null)
+fn foo(x: int):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value 'null' (null) is not compatible with expected type 'int'
+  --> <script>:1:5
+  |
+1 | foo(null)
+  |     ^^^^
+2 | fn foo(x: int):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Int return valid
+### INPUT ###
+foo().print()
+fn foo() -> int:
+	return 2
+### STDOUT ###
+2
+
+### TITLE ###
+Int return invalid
+### INPUT ###
+foo().print()
+fn foo() -> int:
+	return "2"
+### STDERR ###
+error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'int'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> int:
+3 | 	return "2"
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Bool param valid
+### INPUT ###
+foo(true)
+fn foo(x: bool):
+	print("|{x}|")
+### STDOUT ###
+|true|
+
+### TITLE ###
+Bool param invalid
+### INPUT ###
+foo(1)
+fn foo(x: bool):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'bool'
+  --> <script>:1:5
+  |
+1 | foo(1)
+  |     ^
+2 | fn foo(x: bool):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Bool return valid
+### INPUT ###
+foo().print()
+fn foo() -> bool:
+	return true
+### STDOUT ###
+true
+
+### TITLE ###
+Bool return invalid
+### INPUT ###
+foo().print()
+fn foo() -> bool:
+	return 1
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'bool'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> bool:
+3 | 	return 1
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Error param valid
+### INPUT ###
+foo(error("bad!"))
+fn foo(x: error):
+	print("|{x}|")
+### STDOUT ###
+|bad!|
+
+### TITLE ###
+Error param invalid
+### INPUT ###
+foo(1)
+fn foo(x: error):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'error'
+  --> <script>:1:5
+  |
+1 | foo(1)
+  |     ^
+2 | fn foo(x: error):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Error return valid
+### INPUT ###
+err = foo() catch:
+	print(err)
+fn foo() -> error:
+	return error("bad!")
+### STDOUT ###
+bad!
+
+### TITLE ###
+Error return invalid
+### INPUT ###
+foo().print()
+fn foo() -> error:
+	return 1
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'error'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> error:
+3 | 	return 1
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any param valid
+### INPUT ###
+foo(1)
+foo('hi')
+foo(true)
+foo(null)
+fn foo(x: any):
+	print("|{x}|")
+### STDOUT ###
+|1|
+|hi|
+|true|
+|null|
+
+### TITLE ###
+Any return valid
+### INPUT ###
+foo(1).print()
+foo(2).print()
+foo(3).print()
+foo(4).print()
+fn foo(x) -> any:
+    switch x:
+        case 1:
+			return 1
+        case 2:
+			return "hi"
+        case 3:
+			return true
+        case 4:
+			return null
+### STDOUT ###
+1
+hi
+true
+null
+
+### TITLE ###
+Param cannot be void
+### INPUT ###
+foo(1).print()
+fn foo(x: void) -> str:
+	return "|{x}|"
+### STDERR ###
+error[RAD10001]: Invalid function syntax
+  --> <script>:2:8
+  |
+1 | foo(1).print()
+2 | fn foo(x: void) -> str:
+  |        ^^
+3 | 	return "|{x}|"
+  |
+   = info: rad explain RAD10001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any list param valid
+### INPUT ###
+foo([1, 2])
+fn foo(x: list):
+	print("|{x}|")
+### STDOUT ###
+|[ 1, 2 ]|
+
+### TITLE ###
+Any list param invalid
+### INPUT ###
+foo(1)
+fn foo(x: list):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
+  --> <script>:1:5
+  |
+1 | foo(1)
+  |     ^
+2 | fn foo(x: list):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any list param invalid var arg
+### INPUT ###
+foo(1, 2)
+fn foo(x: list):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
+  --> <script>:1:5
+  |
+1 | foo(1, 2)
+  |     ^
+2 | fn foo(x: list):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any list return valid
+### INPUT ###
+foo().print()
+fn foo() -> list:
+	return [1, 2]
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Any list return var arg return
+### INPUT ###
+foo().print()
+fn foo() -> list:
+	return 1, 2
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Any list return invalid
+### INPUT ###
+foo().print()
+fn foo() -> list:
+	return 1
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> list:
+3 | 	return 1
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Tuple param valid
+### INPUT ###
+foo([1, "hi"])
+fn foo(x: [int, str]):
+	print("|{x}|")
+### STDOUT ###
+|[ 1, "hi" ]|
+
+### TITLE ###
+Tuple param invalid
+### INPUT ###
+foo(["hi", 1])
+fn foo(x: [int, str]):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '[ "hi", 1 ]' (list) is not compatible with expected type '[int, str]'
+  --> <script>:1:5
+  |
+1 | foo(["hi", 1])
+  |     ^^^^^^^^^
+2 | fn foo(x: [int, str]):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Tuple return valid
+### INPUT ###
+foo().print()
+fn foo() -> [int, str]:
+	return [1, "2"]
+### STDOUT ###
+[ 1, "2" ]
+
+### TITLE ###
+Tuple return invalid
+### INPUT ###
+foo().print()
+fn foo() -> [int, str]:
+	return [1, 2]
+### STDERR ###
+error[RAD30001]: Value '[ 1, 2 ]' (list) is not compatible with expected type '[int, str]'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> [int, str]:
+3 | 	return [1, 2]
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+List param valid
+### INPUT ###
+foo([1])
+foo([1, 2])
+fn foo(x: int[]):
+	print("|{x}|")
+### STDOUT ###
+|[ 1 ]|
+|[ 1, 2 ]|
+
+### TITLE ###
+List param invalid
+### INPUT ###
+foo([1, "hi"])
+fn foo(x: int[]):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '[ 1, "hi" ]' (list) is not compatible with expected type 'int[]'
+  --> <script>:1:5
+  |
+1 | foo([1, "hi"])
+  |     ^^^^^^^^^
+2 | fn foo(x: int[]):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+List return valid
+### INPUT ###
+foo().print()
+fn foo() -> int[]:
+	return [1, 2]
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+List return invalid
+### INPUT ###
+foo().print()
+fn foo() -> int[]:
+	return [1, "2"]
+### STDERR ###
+error[RAD30001]: Value '[ 1, "2" ]' (list) is not compatible with expected type 'int[]'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> int[]:
+3 | 	return [1, "2"]
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Str enum param valid
+### INPUT ###
+foo("foo")
+fn foo(x: ["foo", "bar"]):
+	print("|{x}|")
+### STDOUT ###
+|foo|
+
+### TITLE ###
+Str enum param invalid
+### INPUT ###
+foo("quz")
+fn foo(x: ["foo", "bar"]):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '"quz"' (str) is not compatible with expected type 'str enum'
+  --> <script>:1:5
+  |
+1 | foo("quz")
+  |     ^^^^^
+2 | fn foo(x: ["foo", "bar"]):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Str enum return valid
+### INPUT ###
+foo().print()
+fn foo() -> ["foo", "bar"]:
+	return "foo"
+### STDOUT ###
+foo
+
+### TITLE ###
+Str enum return invalid
+### INPUT ###
+foo().print()
+fn foo() -> ["foo", "bar"]:
+	return "quz"
+### STDERR ###
+error[RAD30001]: Value '"quz"' (str) is not compatible with expected type 'str enum'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> ["foo", "bar"]:
+3 | 	return "quz"
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any map param valid
+### INPUT ###
+foo({"a": 1})
+fn foo(x: map):
+	print("|{x}|")
+### STDOUT ###
+|{ "a": 1 }|
+
+### TITLE ###
+Any map param invalid
+### INPUT ###
+foo(2)
+fn foo(x: map):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '2' (int) is not compatible with expected type 'map'
+  --> <script>:1:5
+  |
+1 | foo(2)
+  |     ^
+2 | fn foo(x: map):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Any map return valid
+### INPUT ###
+foo().print()
+fn foo() -> map:
+	return {"a": 1}
+### STDOUT ###
+{ "a": 1 }
+
+### TITLE ###
+Any map return invalid
+### INPUT ###
+foo().print()
+fn foo() -> map:
+	return 1
+### STDERR ###
+error[RAD30001]: Value '1' (int) is not compatible with expected type 'map'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> map:
+3 | 	return 1
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Struct param valid
+### INPUT ###
+foo({"key1": 10})
+fn foo(x: {"key1": int}):
+	print("|{x}|")
+### STDOUT ###
+|{ "key1": 10 }|
+
+### TITLE ###
+Struct param invalid
+### INPUT ###
+foo({"key2": 10})
+fn foo(x: {"key1": int}):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+  --> <script>:1:5
+  |
+1 | foo({"key2": 10})
+  |     ^^^^^^^^^^^^
+2 | fn foo(x: {"key1": int}):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Struct return valid
+### INPUT ###
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key1": 10}
+### STDOUT ###
+{ "key1": 10 }
+
+### TITLE ###
+Struct return invalid keys
+### INPUT ###
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key2": 10}
+### STDERR ###
+error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> {"key1": int}:
+3 | 	return {"key2": 10}
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Struct return invalid value
+### INPUT ###
+foo().print()
+fn foo() -> {"key1": int}:
+	return {"key2": "hi"}
+### STDERR ###
+error[RAD30001]: Value '{ "key2": "hi" }' (map) is not compatible with expected type 'struct'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> {"key1": int}:
+3 | 	return {"key2": "hi"}
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Map param valid
+### INPUT ###
+foo({"key1": 10})
+fn foo(x: {str: int}):
+	print("|{x}|")
+### STDOUT ###
+|{ "key1": 10 }|
+
+### TITLE ###
+Map param invalid
+### INPUT ###
+foo({"key1": "hi"})
+fn foo(x: {str: int}):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+  --> <script>:1:5
+  |
+1 | foo({"key1": "hi"})
+  |     ^^^^^^^^^^^^^^
+2 | fn foo(x: {str: int}):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Map return valid
+### INPUT ###
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": 10}
+### STDOUT ###
+{ "key1": 10 }
+
+### TITLE ###
+Map return invalid keys
+### INPUT ###
+foo().print()
+fn foo() -> {str: int}:
+	return {"key1": "hi"}
+### STDERR ###
+error[RAD30001]: Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> {str: int}:
+3 | 	return {"key1": "hi"}
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Var arg param valid
+### INPUT ###
+foo()
+foo(1)
+foo(1, 2)
+fn foo(*x: int):
+	print("|{x}|")
+### STDOUT ###
+|[ ]|
+|[ 1 ]|
+|[ 1, 2 ]|
+
+### TITLE ###
+Var arg param invalid
+### INPUT ###
+foo(1, "hi")
+fn foo(*x: int):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int'
+  --> <script>:1:8
+  |
+1 | foo(1, "hi")
+  |        ^^^^
+2 | fn foo(*x: int):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Variadic param no typing
+### INPUT ###
+foo()
+foo(1)
+foo(1, 2)
+fn foo(*x):
+	print("|{x}|")
+### STDOUT ###
+|[ ]|
+|[ 1 ]|
+|[ 1, 2 ]|
+
+### TITLE ###
+Positional then variadic
+### INPUT ###
+foo("hi", true)
+foo("hi", true, 1)
+foo("hi", true, 1, 2)
+fn foo(x: str, y: bool, *z: int):
+	print("|{x}|{y}|{z}|")
+### STDOUT ###
+|hi|true|[ ]|
+|hi|true|[ 1 ]|
+|hi|true|[ 1, 2 ]|
+
+### TITLE ###
+Positional then variadic then named only
+### INPUT ###
+foo("hi", true)
+foo("hi", true, 1, 2, a=3)
+fn foo(x: str, y: bool, *z: int, *, a: int = 0):
+	print("|{x}|{y}|{z}|{a}|")
+### STDOUT ###
+|hi|true|[ ]|0|
+|hi|true|[ 1, 2 ]|3|
+
+### TITLE ###
+Optional param valid
+### INPUT ###
+foo()
+foo(null)
+foo(1)
+fn foo(x: int?):
+	print("|{x}|")
+### STDOUT ###
+|null|
+|null|
+|1|
+
+### TITLE ###
+Optional param invalid
+### INPUT ###
+foo("hi")
+fn foo(x: int?):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int?'
+  --> <script>:1:5
+  |
+1 | foo("hi")
+  |     ^^^^
+2 | fn foo(x: int?):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Optional return valid
+### INPUT ###
+foo().print()
+bar().print()
+fn foo() -> int?:
+	return 1
+fn bar() -> int?:
+	return null
+### STDOUT ###
+1
+null
+
+### TITLE ###
+Optional return invalid
+### INPUT ###
+foo().print()
+fn foo() -> int?:
+	return "hi"
+### STDERR ###
+error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int?'
+  --> <script>:1:1
+  |
+1 | foo().print()
+  | ^^^^^
+2 | fn foo() -> int?:
+3 | 	return "hi"
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Union param valid
+### INPUT ###
+foo(1)
+foo("hi")
+fn foo(x: int|str):
+	print("|{x}|")
+### STDOUT ###
+|1|
+|hi|
+
+### TITLE ###
+Union param invalid
+### INPUT ###
+foo(1.2)
+fn foo(x: int|str):
+	print("|{x}|")
+### STDERR ###
+error[RAD30001]: Value '1.2' (float) is not compatible with expected type 'int|str'
+  --> <script>:1:5
+  |
+1 | foo(1.2)
+  |     ^^^
+2 | fn foo(x: int|str):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Union return valid
+### INPUT ###
+foo(1).print()
+foo(2).print()
+fn foo(x) -> int|str:
+	switch x:
+		case 1:
+			return 1
+		case 2:
+			return "hi"
+### STDOUT ###
+1
+hi
+
+### TITLE ###
+Union return invalid
+### INPUT ###
+foo(1).print()
+foo(2).print()
+fn foo(x) -> int|str:
+	return 1.2
+### STDERR ###
+error[RAD30001]: Value '1.2' (float) is not compatible with expected type 'int|str'
+  --> <script>:1:1
+  |
+1 | foo(1).print()
+  | ^^^^^^
+2 | foo(2).print()
+3 | fn foo(x) -> int|str:
+  |
+   = stack:
+     at foo (TestCase:1:1)
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

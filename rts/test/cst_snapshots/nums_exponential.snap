@@ -8,7 +8,7 @@ Exponentials
 12.3e9
 12.3e9_8
 12.3e-9_8
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 47] PS: [0, 0] PE: [6, 9] source_file
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]   expr_stmt
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]     expr: expr
@@ -108,3 +108,4 @@ B: [38, 47] PS: [6, 0] PE: [6, 9]                       delegate: indexed_expr
 B: [38, 47] PS: [6, 0] PE: [6, 9]                         root: primary_expr
 B: [38, 47] PS: [6, 0] PE: [6, 9]                           literal
 B: [38, 47] PS: [6, 0] PE: [6, 9]                             scientific_number `12.3e-9_8`
+

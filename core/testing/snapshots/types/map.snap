@@ -1,0 +1,155 @@
+### TITLE ###
+Map Can Declare
+### INPUT ###
+a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
+print(a)
+### STDOUT ###
+{ "alice": 35, "bob": "bar", "charlie": [ 1, "hi" ] }
+
+### TITLE ###
+Map Can Extract
+### INPUT ###
+a = { "alice": 35, "bob": "bar","charlie": [ 1, "hi" ] }
+print(a["charlie"][0] + 1)
+### STDOUT ###
+2
+
+### TITLE ###
+Map Can Declare With Expressions
+### INPUT ###
+foo = "bar"
+t = true
+f = false
+a = { "alice": 30 + 5, "bob": foo, upper("charlie"): [1, t or f] }
+print(a)
+### STDOUT ###
+{ "alice": 35, "bob": "bar", "CHARLIE": [ 1, true ] }
+
+### TITLE ###
+Map Can Add By Key
+### INPUT ###
+a = { "alice": 35, "bob": "bar"}
+a["charlie"] = 20
+a[upper("dave")] = "hi"
+print(a)
+### STDOUT ###
+{ "alice": 35, "bob": "bar", "charlie": 20, "DAVE": "hi" }
+
+### TITLE ###
+Map Can Compound Assign
+### INPUT ###
+a = { "alice": 100, "bob": 200, "charlie": 300, "dave": 400 }
+a["alice"] += 20
+a["bob"] -= 20
+a["charlie"] *= 2
+a["dave"] /= 2
+print(a)
+### STDOUT ###
+{ "alice": 120, "bob": 180, "charlie": 600, "dave": 200 }
+
+### TITLE ###
+Map Compound Op On Non Existent Key Errors
+### INPUT ###
+a = { "alice": 100, "bob": 200, "charlie": 300, "dave": 400 }
+a["eve"] += 20
+print(a)
+### STDERR ###
+error[RAD20041]: Key not found: "eve"
+  --> <script>:2:3
+  |
+1 | a = { "alice": 100, "bob": 200, "charlie": 300, "dave": 400 }
+2 | a["eve"] += 20
+  |   ^^^^^
+3 | print(a)
+  |
+   = info: rad explain RAD20041
+
+
+### EXIT ###
+1
+### TITLE ###
+Map Can Modify Array Nested In Map
+### INPUT ###
+a = { "alice": 100, "bob": [10, 20, 30] }
+a["bob"][1] = 200
+a["bob"][2] += 5
+print(a)
+### STDOUT ###
+{ "alice": 100, "bob": [ 10, 200, 35 ] }
+
+### TITLE ###
+Map Can In String Keys
+### INPUT ###
+a = { }
+print("one" in a)
+print("one" not in a)
+### STDOUT ###
+false
+true
+
+### TITLE ###
+Map Can In Int Keys
+### INPUT ###
+a = { }
+print(2 in a)
+print(2 not in a)
+### STDOUT ###
+false
+true
+
+### TITLE ###
+Map Can In Float Keys
+### INPUT ###
+a = { }
+print(2.1 in a)
+print(2.1 not in a)
+### STDOUT ###
+false
+true
+
+### TITLE ###
+Map Can In Bool Keys
+### INPUT ###
+a = { }
+print(false in a)
+print(false not in a)
+### STDOUT ###
+false
+true
+
+### TITLE ###
+Map Missing Key Bracket Syntax Errors
+### INPUT ###
+a = { "alice": 100 }
+print(a["bob"])
+### STDERR ###
+error[RAD20041]: Key not found: "bob"
+  --> <script>:2:9
+  |
+1 | a = { "alice": 100 }
+2 | print(a["bob"])
+  |         ^^^^^
+  |
+   = info: rad explain RAD20041
+
+
+### EXIT ###
+1
+### TITLE ###
+Map Missing Key Dot Syntax Errors
+### INPUT ###
+a = { "alice": 100 }
+print(a.bob)
+### STDERR ###
+error[RAD20041]: Key not found: bob
+  --> <script>:2:9
+  |
+1 | a = { "alice": 100 }
+2 | print(a.bob)
+  |         ^^^
+  |
+   = info: rad explain RAD20041
+
+
+### EXIT ###
+1

@@ -37,7 +37,7 @@ fn on_add():
 fn on_remove():
     // verbose, config, file in scope (no force)
     print("Removing {file}")
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 611] PS: [ 0,  0] PE: [35, 28] source_file
 B: [  0,  18] PS: [ 0,  0] PE: [ 0, 18]   shebang `#!/usr/bin/env rad`
 B: [ 19,  47] PS: [ 1,  0] PE: [ 5,  0]   file_header
@@ -285,3 +285,4 @@ B: [604, 608] PS: [35, 21] PE: [35, 25]                                         
 B: [608, 609] PS: [35, 25] PE: [35, 26]                                                             } `}`
 B: [609, 610] PS: [35, 26] PE: [35, 27]                                                         end: string_end `"`
 B: [610, 611] PS: [35, 27] PE: [35, 28]                               ) `)`
+

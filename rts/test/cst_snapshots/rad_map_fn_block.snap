@@ -7,7 +7,7 @@ rad url:
         map fn(n):
             out = n * 2
             return out
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 104] PS: [0,  0] PE: [5, 22] source_file
 B: [  0, 104] PS: [0,  0] PE: [5, 22]   rad_block
 B: [  0,   3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -77,3 +77,4 @@ B: [101, 104] PS: [5, 19] PE: [5, 22]                           delegate: unary_
 B: [101, 104] PS: [5, 19] PE: [5, 22]                             delegate: fallback_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                               delegate: var_path
 B: [101, 104] PS: [5, 19] PE: [5, 22]                                 root: identifier `out`
+

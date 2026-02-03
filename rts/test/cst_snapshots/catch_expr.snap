@@ -12,7 +12,7 @@ b = mybar() + 2 catch:
 
 result = foo() ?? bar() catch:
     result = -1
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 145] PS: [ 0,  0] PE: [10, 15] source_file
 B: [  0,  35] PS: [ 0,  0] PE: [ 1, 22]   expr_stmt
 B: [  0,   5] PS: [ 0,  0] PE: [ 0,  5]     expr: expr
@@ -170,3 +170,4 @@ B: [144, 145] PS: [10, 14] PE: [10, 15]                             delegate: in
 B: [144, 145] PS: [10, 14] PE: [10, 15]                               root: primary_expr
 B: [144, 145] PS: [10, 14] PE: [10, 15]                                 literal
 B: [144, 145] PS: [10, 14] PE: [10, 15]                                   int `1`
+

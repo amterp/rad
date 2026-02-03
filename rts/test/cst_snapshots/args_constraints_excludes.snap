@@ -9,7 +9,7 @@ args:
 
     a excludes b
     b mutually excludes c, d
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 92] PS: [0,  0] PE: [7, 28] source_file
 B: [ 0, 92] PS: [0,  0] PE: [7, 28]   arg_block
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -37,3 +37,4 @@ B: [79, 87] PS: [7, 15] PE: [7, 23]       excludes: excludes `excludes`
 B: [88, 89] PS: [7, 24] PE: [7, 25]       excluded: identifier `c`
 B: [89, 90] PS: [7, 25] PE: [7, 26]       , `,`
 B: [91, 92] PS: [7, 27] PE: [7, 28]       excluded: identifier `d`
+

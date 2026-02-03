@@ -1,0 +1,22 @@
+### TITLE ###
+Requester_InvalidURL
+### INPUT ###
+url = "://invalid"
+resp = http_get(url)
+print(resp["success"])
+print(resp["error"])
+### STDOUT ###
+false
+Failed to create HTTP request: invalid URL: parse "://invalid": missing protocol scheme
+
+### TITLE ###
+Requester_InvalidPercentEncoding
+### INPUT ###
+url = "http://example.com?discount=50%"
+resp = http_get(url)
+print(resp["success"])
+print(resp["error"])
+### STDOUT ###
+false
+Failed to create HTTP request: invalid percent-encoding in query value for key "discount": invalid URL escape "%"
+

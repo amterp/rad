@@ -1,0 +1,61 @@
+### TITLE ###
+Keys function
+### INPUT ###
+a = { "alice": "foo", "bob": "bar" }
+b = keys(a)
+print(b)
+print(upper(b[0]))
+print(keys({}))
+### STDOUT ###
+[ "alice", "bob" ]
+ALICE
+[ ]
+
+### TITLE ###
+Keys errors if given string
+### INPUT ###
+keys("foo")
+### STDERR ###
+error[RAD30001]: Value '"foo"' (str) is not compatible with expected type 'map'
+  --> <script>:1:6
+  |
+1 | keys("foo")
+  |      ^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Keys errors if given no args
+### INPUT ###
+keys()
+### STDERR ###
+error[RAD30007]: Missing required argument '_map'
+  --> <script>:1:1
+  |
+1 | keys()
+  | ^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Keys errors if given more than one arg
+### INPUT ###
+keys({}, {})
+### STDERR ###
+error[RAD30007]: Expected at most 1 args, but was invoked with 2
+  --> <script>:1:1
+  |
+1 | keys({}, {})
+  | ^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1

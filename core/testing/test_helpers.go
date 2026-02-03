@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/amterp/color"
 	"github.com/amterp/rad/core"
 
 	"github.com/stretchr/testify/assert"
@@ -238,6 +239,9 @@ func resetTestState() {
 	shellInvocations = make([]core.ShellInvocation, 0)
 	httpInvocations = make([]core.HttpRequest, 0)
 	core.ResetGlobals()
+	// ResetGlobals sets color.NoColor = false (production default).
+	// Tests should default to no color; individual tests opt in via --color=always.
+	color.NoColor = true
 	// Clear mock patterns to prevent test interference
 	runnerInput.RReq.ClearMockedResponses()
 	// Reset the isPiped flag for stdin

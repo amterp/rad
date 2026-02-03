@@ -154,21 +154,6 @@ pprint(http_get(url))
 	assertHttpInvocationUrls(t, "http://example.com:8080/path%20with%20spaces?q=test%20value")
 }
 
-func Test_Requester_InvalidURL(t *testing.T) {
-	script := `
-url = "://invalid"
-resp = http_get(url)
-print(resp["success"])
-print(resp["error"])
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `false
-Failed to create HTTP request: invalid URL: parse "://invalid": missing protocol scheme
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
 func Test_Requester_NoDoubleEncoding(t *testing.T) {
 	script := `
 url = "http://example.com?q=hello%20world"
@@ -177,21 +162,6 @@ pprint(http_get(url))
 	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
 	assertNoErrors(t)
 	assertHttpInvocationUrls(t, "http://example.com?q=hello%20world")
-}
-
-func Test_Requester_InvalidPercentEncoding(t *testing.T) {
-	script := `
-url = "http://example.com?discount=50%"
-resp = http_get(url)
-print(resp["success"])
-print(resp["error"])
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `false
-Failed to create HTTP request: invalid percent-encoding in query value for key "discount": invalid URL escape "%"
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
 }
 
 func Test_Requester_AmpersandInQueryValue(t *testing.T) {

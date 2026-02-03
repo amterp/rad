@@ -1,0 +1,95 @@
+### TITLE ###
+Pow integers
+### INPUT ###
+print(pow(2, 3))
+### STDOUT ###
+8
+
+### TITLE ###
+Pow float base
+### INPUT ###
+print(pow(2.5, 2))
+### STDOUT ###
+6.25
+
+### TITLE ###
+Pow float exponent
+### INPUT ###
+print(pow(4, 0.5))
+### STDOUT ###
+2
+
+### TITLE ###
+Pow negative base
+### INPUT ###
+print(pow(-2, 3))
+### STDOUT ###
+-8
+
+### TITLE ###
+Pow negative exponent
+### INPUT ###
+print(pow(2, -2))
+### STDOUT ###
+0.25
+
+### TITLE ###
+Pow zero exponent
+### INPUT ###
+print(pow(5, 0))
+### STDOUT ###
+1
+
+### TITLE ###
+Pow zero base
+### INPUT ###
+print(pow(0, 3))
+### STDOUT ###
+0
+
+### TITLE ###
+Pow one base
+### INPUT ###
+print(pow(1, 100))
+### STDOUT ###
+1
+
+### TITLE ###
+Pow fractional exponent
+### INPUT ###
+print(pow(8, 0.333333))
+### STDOUT ###
+1.9999986137061192
+
+### TITLE ###
+Pow errors with string base
+### INPUT ###
+print(pow("abc", 2))
+### STDERR ###
+error[RAD30001]: Value '"abc"' (str) is not compatible with expected type 'float'
+  --> <script>:1:11
+  |
+1 | print(pow("abc", 2))
+  |           ^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Pow errors with string exponent
+### INPUT ###
+print(pow(2, "abc"))
+### STDERR ###
+error[RAD30001]: Value '"abc"' (str) is not compatible with expected type 'float'
+  --> <script>:1:14
+  |
+1 | print(pow(2, "abc"))
+  |              ^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

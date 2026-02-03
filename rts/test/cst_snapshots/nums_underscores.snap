@@ -7,7 +7,7 @@ Numbers can have underscores
 12_34.5_6
 12__34
 12_34.45_56e24_24
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 55] PS: [0,  0] PE: [5, 17] source_file
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]   expr_stmt
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     expr: expr
@@ -93,3 +93,4 @@ B: [38, 55] PS: [5,  0] PE: [5, 17]                       delegate: indexed_expr
 B: [38, 55] PS: [5,  0] PE: [5, 17]                         root: primary_expr
 B: [38, 55] PS: [5,  0] PE: [5, 17]                           literal
 B: [38, 55] PS: [5,  0] PE: [5, 17]                             scientific_number `12_34.45_56e24_24`
+

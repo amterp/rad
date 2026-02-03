@@ -1,0 +1,188 @@
+### TITLE ###
+Matches complete match true
+### INPUT ###
+print(matches("123", r"\d+"))
+print(matches("hello", r"[a-z]+"))
+print(matches("Hello", r"[A-Z][a-z]+"))
+### STDOUT ###
+true
+true
+true
+
+### TITLE ###
+Matches complete match false
+### INPUT ###
+print(matches("hello123", r"\d+"))
+print(matches("Hello", r"[a-z]+"))
+print(matches("123abc", r"\d+"))
+### STDOUT ###
+false
+false
+false
+
+### TITLE ###
+Matches partial match true
+### INPUT ###
+print(matches("hello123", r"\d+", partial=true))
+print(matches("abc123def", r"\d+", partial=true))
+print(matches("Hello world", r"[A-Z]", partial=true))
+### STDOUT ###
+true
+true
+true
+
+### TITLE ###
+Matches partial match false
+### INPUT ###
+print(matches("hello", r"\d+", partial=true))
+print(matches("abc", r"[A-Z]", partial=true))
+print(matches("", r".", partial=true))
+### STDOUT ###
+false
+false
+false
+
+### TITLE ###
+Matches UFCS complete
+### INPUT ###
+print("123".matches(r"\d+"))
+print("hello".matches(r"[a-z]+"))
+print("hello123".matches(r"\d+"))
+### STDOUT ###
+true
+true
+false
+
+### TITLE ###
+Matches UFCS partial
+### INPUT ###
+print("hello123".matches(r"\d+", partial=true))
+print("abc def".matches(r"\s", partial=true))
+### STDOUT ###
+true
+true
+
+### TITLE ###
+Matches complex patterns
+### INPUT ###
+print(matches("user@example.com", r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"))
+print(matches("not-an-email", r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"))
+print(matches("abc123", r"^[a-z]+\d+$"))
+print(matches("ABC123", r"^[a-z]+\d+$"))
+### STDOUT ###
+true
+false
+true
+false
+
+### TITLE ###
+Matches edge cases
+### INPUT ###
+print(matches("", r""))
+print(matches("", r".*"))
+print(matches("a", r""))
+print(matches("test", r"test"))
+### STDOUT ###
+true
+true
+false
+true
+
+### TITLE ###
+Matches invalid regex
+### INPUT ###
+result = matches("test", "+")
+print("Should not reach this")
+### STDERR ###
+error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing argument to repetition operator: `+`
+  --> <script>:1:10
+  |
+1 | result = matches("test", "+")
+  |          ^^^^^^^^^^^^^^^^^^^^
+2 | print("Should not reach this")
+  |
+   = info: rad explain RAD20024
+
+
+### EXIT ###
+1
+### TITLE ###
+Matches invalid regex unclosed group
+### INPUT ###
+result = matches("test", "(abc")
+print("Should not reach this")
+### STDERR ###
+error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing closing ): `(abc`
+  --> <script>:1:10
+  |
+1 | result = matches("test", "(abc")
+  |          ^^^^^^^^^^^^^^^^^^^^^^^
+2 | print("Should not reach this")
+  |
+   = info: rad explain RAD20024
+
+
+### EXIT ###
+1
+### TITLE ###
+Matches returns bool
+### INPUT ###
+result = matches("123", r"\d+")
+print(type_of(result))
+print(result)
+### STDOUT ###
+bool
+true
+
+### TITLE ###
+Matches in conditionals
+### INPUT ###
+text = "hello123"
+if text.matches(r"\d+", partial=true):
+    print("Contains digits")
+else:
+    print("No digits")
+
+if text.matches(r"\d+"):
+    print("All digits")
+else:
+    print("Not all digits")
+### STDOUT ###
+Contains digits
+Not all digits
+
+### TITLE ###
+Matches special characters
+### INPUT ###
+print(matches("a.b", r"a\.b"))
+print(matches("a.b", r"a.b"))
+print(matches("a*b", r"a\*b"))
+print(matches("a+b", r"a\+b"))
+print(matches("a?b", r"a\?b"))
+### STDOUT ###
+true
+true
+true
+true
+true
+
+### TITLE ###
+Matches alternation
+### INPUT ###
+// Complete match: entire string must be one of the alternatives
+print(matches("cat", r"cat|dog"))
+print(matches("catfish", r"cat|dog"))     // should be false - not complete match
+print(matches("aaa", r"a+|b+"))           // alternation with quantifiers
+print(matches("ab", r"a+|b+"))            // should be false - matches neither alternative completely
+
+// Partial match: pattern found anywhere in string
+print(matches("catfish", r"cat|dog", partial=true))   // contains "cat"
+print(matches("elephant", r"cat|dog", partial=true))  // contains neither
+### STDOUT ###
+true
+false
+true
+false
+true
+false
+

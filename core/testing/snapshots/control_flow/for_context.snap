@@ -1,0 +1,135 @@
+### TITLE ###
+Print full context
+### DESCRIPTION ###
+Print the full context object to verify structure
+### INPUT ###
+items = ["a", "b", "c"]
+for item in items with loop:
+	print(loop)
+### STDOUT ###
+{ "idx": 0, "src": [ "a", "b", "c" ] }
+{ "idx": 1, "src": [ "a", "b", "c" ] }
+{ "idx": 2, "src": [ "a", "b", "c" ] }
+
+### TITLE ###
+Idx and item
+### INPUT ###
+items = ["a", "b", "c"]
+for item in items with loop:
+	print(loop.idx, item)
+### STDOUT ###
+0 a
+1 b
+2 c
+
+### TITLE ###
+Access src
+### DESCRIPTION ###
+Use loop.src to access original collection for lookahead
+### INPUT ###
+items = ["a", "b", "c"]
+for item in items with loop:
+	if loop.idx < loop.src.len() - 1:
+		print(loop.src[loop.idx + 1])
+### STDOUT ###
+b
+c
+
+### TITLE ###
+Map context
+### INPUT ###
+m = {"a": 1, "b": 2, "c": 3}
+for key in m with loop:
+	print(loop.idx, key)
+### STDOUT ###
+0 a
+1 b
+2 c
+
+### TITLE ###
+Map key value context
+### INPUT ###
+m = {"a": 1, "b": 2}
+for key, value in m with loop:
+	print(loop.idx, key, value)
+### STDOUT ###
+0 a 1
+1 b 2
+
+### TITLE ###
+List comprehension
+### INPUT ###
+items = ["a", "b", "c"]
+result = ["{loop.idx}:{item}" for item in items with loop]
+print(result)
+### STDOUT ###
+[ "0:a", "1:b", "2:c" ]
+
+### TITLE ###
+String context
+### INPUT ###
+s = "abc"
+for char in s with loop:
+	print(loop.idx, char)
+### STDOUT ###
+0 a
+1 b
+2 c
+
+### TITLE ###
+Custom name
+### DESCRIPTION ###
+User can use any name for context variable
+### INPUT ###
+items = [1, 2, 3]
+for item in items with meta:
+	print(meta.idx)
+### STDOUT ###
+0
+1
+2
+
+### TITLE ###
+Unpacking no auto index
+### INPUT ###
+pairs = [["a", 1], ["b", 2]]
+for name, val in pairs:
+	print(name, val)
+### STDOUT ###
+a 1
+b 2
+
+### TITLE ###
+Unpacking with context
+### INPUT ###
+pairs = [["a", 1], ["b", 2]]
+for name, val in pairs with loop:
+	print(loop.idx, name, val)
+### STDOUT ###
+0 a 1
+1 b 2
+
+### TITLE ###
+Src is immutable snapshot
+### DESCRIPTION ###
+Modifying loop.src should not affect the original list
+### INPUT ###
+items = [10, 20, 30]
+for item in items with loop:
+	loop.src[0] = 999
+print(items)
+### STDOUT ###
+[ 10, 20, 30 ]
+
+### TITLE ###
+Map src is immutable snapshot
+### DESCRIPTION ###
+Modifying loop.src should not affect the original map
+### INPUT ###
+m = {"a": 1, "b": 2}
+for key in m with loop:
+	loop.src["a"] = 999
+print(m)
+### STDOUT ###
+{ "a": 1, "b": 2 }
+

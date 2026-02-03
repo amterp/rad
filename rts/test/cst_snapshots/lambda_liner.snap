@@ -4,7 +4,7 @@ Lambda one-liner
 zero = fn() 5
 one = fn(x) x * 2
 two = fn(x, y) x * y
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 52] PS: [0,  0] PE: [2, 20] source_file
 B: [ 0, 13] PS: [0,  0] PE: [0, 13]   assign
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     left: var_path
@@ -110,3 +110,4 @@ B: [51, 52] PS: [2, 19] PE: [2, 20]                                     right: u
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                       delegate: fallback_expr
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                         delegate: var_path
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                           root: identifier `y`
+

@@ -1,0 +1,146 @@
+### TITLE ###
+Ternary true
+### INPUT ###
+a = "alice"
+print(true ? a : "bob")
+### STDOUT ###
+alice
+
+### TITLE ###
+Ternary false
+### INPUT ###
+a = "alice"
+print(false ? a : "bob")
+### STDOUT ###
+bob
+
+### TITLE ###
+Ternary nested
+### INPUT ###
+print(true ? (false ? "bob" : "charlie") : "alice")
+print(true ? false ? "bob" : "charlie" : "alice")
+### STDOUT ###
+charlie
+charlie
+
+### TITLE ###
+Ternary complex
+### SKIP ###
+TODO RAD-142
+### INPUT ###
+a = 5
+b = "alice"
+c = "charlie"
+print((c[0] == 'c' ? c : b)[(len(b) > 3 ? 1 : 2):5])
+### STDOUT ###
+harl
+### TITLE ###
+Ternary truthy
+### INPUT ###
+a = "not empty"
+print(a ? a : "empty")
+### STDOUT ###
+not empty
+
+### TITLE ###
+Ternary falsy
+### INPUT ###
+a = ""
+print(a ? a : "empty")
+### STDOUT ###
+empty
+
+### TITLE ###
+Can define across lines 1
+### SKIP ###
+TODO RAD-140
+### INPUT ###
+a = "blah"
+	? "not empty"
+	: "empty"
+print(a)
+### STDOUT ###
+not empty
+### TITLE ###
+Can define across lines 2
+### INPUT ###
+a = "blah" ? "not empty"
+	: "empty"
+print(a)
+### STDOUT ###
+not empty
+
+### TITLE ###
+Can define across lines 3
+### SKIP ###
+TODO RAD-140
+### INPUT ###
+a = "blah"
+	? "not empty" : "empty"
+print(a)
+### STDOUT ###
+not empty
+### TITLE ###
+Can define across lines 4
+### SKIP ###
+TODO RAD-140
+### INPUT ###
+a = "blah"
+	?
+	"not empty" : "empty"
+print(a)
+### STDOUT ###
+not empty
+### TITLE ###
+Can define across lines 5
+### SKIP ###
+TODO RAD-140
+### INPUT ###
+a = "blah"
+	?
+	"not empty" :
+	"empty"
+print(a)
+### STDOUT ###
+not empty
+### TITLE ###
+Can define across lines 6 big space
+### SKIP ###
+TODO RAD-140
+### INPUT ###
+a = "blah"
+
+
+	?
+
+
+	"not empty" 			:
+
+
+	"empty"
+print(a)
+### STDOUT ###
+not empty
+### TITLE ###
+Fails if whitespace abused
+### INPUT ###
+if true:
+	a = "blah"
+? "not empty" : "empty"
+	print("one")
+
+print("two")
+### STDERR ###
+error[RAD10003]: Expected identifier
+  --> <script>:2:12
+  |
+1 | if true:
+2 | 	a = "blah"
+3 | ? "not empty" : "empty"
+4 | 	print("one")
+  |
+   = info: rad explain RAD10003
+
+
+### EXIT ###
+1

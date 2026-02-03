@@ -1,0 +1,76 @@
+### TITLE ###
+Clamp ints
+### INPUT ###
+print(clamp(1, 0, 2))
+### STDOUT ###
+1
+
+### TITLE ###
+Clamp mix
+### INPUT ###
+print(clamp(2.2, 1.2, 2))
+### STDOUT ###
+2
+
+### TITLE ###
+Clamp errors for less than 3 elements
+### INPUT ###
+print(clamp(1, 2))
+### STDERR ###
+error[RAD30007]: Missing required argument 'max'
+  --> <script>:1:7
+  |
+1 | print(clamp(1, 2))
+  |       ^^^^^^^^^^^
+  |
+   = info: rad explain RAD30007
+
+
+### EXIT ###
+1
+### TITLE ###
+Clamp errors for non-numeric elements
+### INPUT ###
+print(clamp(1, "ab", 2))
+### STDERR ###
+error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'int|float'
+  --> <script>:1:16
+  |
+1 | print(clamp(1, "ab", 2))
+  |                ^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Clamp negative
+### INPUT ###
+print(clamp(-2.2, -1.2, 2))
+### STDOUT ###
+-1.2
+
+### TITLE ###
+Clamp returns int when all ints
+### INPUT ###
+print(type_of(clamp(5, 1, 10)))
+### STDOUT ###
+int
+
+### TITLE ###
+Clamp returns float when any float
+### INPUT ###
+print(type_of(clamp(5, 1.0, 10)))
+### STDOUT ###
+float
+
+### TITLE ###
+Clamp can be used for list indexing
+### INPUT ###
+mylist = [10, 20, 30, 40, 50]
+myidx = 7
+print(mylist[clamp(myidx, 0, 4)])
+### STDOUT ###
+50
+

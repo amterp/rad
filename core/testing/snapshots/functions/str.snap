@@ -1,0 +1,48 @@
+### TITLE ###
+String
+### INPUT ###
+a = "hello"
+print(str(a))
+### STDOUT ###
+hello
+
+### TITLE ###
+Int
+### INPUT ###
+a = 10
+print(str(a)+"bob")
+### STDOUT ###
+10bob
+
+### TITLE ###
+Float
+### INPUT ###
+a = 10.2
+print(str(a)+"bob")
+### STDOUT ###
+10.2bob
+
+### TITLE ###
+Bool
+### INPUT ###
+a = false
+print(str(a)+"bob")
+### STDOUT ###
+falsebob
+
+### TITLE ###
+List
+### INPUT ###
+a = [10, 20]
+print(str(a)+"bob")
+### STDOUT ###
+[ 10, 20 ]bob
+
+### TITLE ###
+Map
+### INPUT ###
+a = { "a": 10, "b": 20 }
+print(str(a)+"bob")
+### STDOUT ###
+{ "a": 10, "b": 20 }bob
+

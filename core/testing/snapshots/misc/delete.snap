@@ -1,0 +1,97 @@
+### TITLE ###
+Can delete variable
+### INPUT ###
+
+a = "alice"
+b = "bob"
+del a
+### ARGS ###
+--shell
+### STDOUT ###
+b="bob"
+
+### TITLE ###
+Can delete array
+### INPUT ###
+
+a = [1, 2]
+b = [3, 4]
+del a
+### ARGS ###
+--shell
+### STDOUT ###
+b=(3 4)
+
+### TITLE ###
+Can delete array entry
+### INPUT ###
+
+a = [0, 10, 20, 30, 40]
+del a[1]
+print(a)
+### STDOUT ###
+[ 0, 20, 30, 40 ]
+
+### TITLE ###
+Can delete nested array entry
+### INPUT ###
+
+a = [0, [10, [20, 30]], 40]
+del a[1][1][0]
+print(a)
+### STDOUT ###
+[ 0, [ 10, [ 30 ] ], 40 ]
+
+### TITLE ###
+Can delete multiple things at once
+### INPUT ###
+
+a = [0, 10, 20, 30, 40]
+b = [0, -10, -20, -30, -40]
+del a[1], b[2]
+print(a)
+print(b)
+### STDOUT ###
+[ 0, 20, 30, 40 ]
+[ 0, -10, -30, -40 ]
+
+### TITLE ###
+Array multi delete are in order
+### INPUT ###
+
+a = [0, 10, 20, 30, 40]
+del a[1], a[1]
+print(a)
+### STDOUT ###
+[ 0, 30, 40 ]
+
+### TITLE ###
+Array deleting last entry leaves empty array
+### INPUT ###
+
+a = [0]
+del a[0]
+print(a)
+### STDOUT ###
+[ ]
+
+### TITLE ###
+Can delete map entry
+### INPUT ###
+
+a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
+del a["bob"]
+print(a)
+### STDOUT ###
+{ "alice": 35, "charlie": [ 1, "hi" ] }
+
+### TITLE ###
+Can delete from list with slice
+### INPUT ###
+
+a = [0, 10, 20, 30, 40]
+del a[1:3]
+print(a)
+### STDOUT ###
+[ 0, 30, 40 ]
+

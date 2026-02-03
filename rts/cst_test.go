@@ -65,12 +65,13 @@ func TestCSTSnapshots(t *testing.T) {
 				defer parser.Close()
 
 				tree := parser.Parse(tc.Input)
-				actual := tree.Dump()
+				actual := radtesting.SnapshotResult{
+					Stdout: tree.Dump(),
+				}
 
-				if radtesting.CompareSnapshot(t, tc, actual) {
-					// Needs update - update tc.Expected under lock to avoid race
+				if radtesting.CompareSnapshotResult(t, tc, actual) {
 					updateMu.Lock()
-					tc.Expected = actual
+					tc.Stdout = actual.Stdout
 					filesToUpdate[snapFile] = cases
 					updateMu.Unlock()
 				}

@@ -1,0 +1,63 @@
+### TITLE ###
+Optional args with defaults
+### INPUT ###
+args:
+    name str
+    age int
+    role str?
+    year int?
+
+print(name, age, role, year, sep="|")
+### ARGS ###
+hey
+30
+### STDOUT ###
+hey|30|null|null
+
+### TITLE ###
+Relational requires met
+### INPUT ###
+args:
+    name str
+    age int?
+	name requires age
+
+print(name, age, sep="|")
+### ARGS ###
+hey
+30
+### STDOUT ###
+hey|30
+
+### TITLE ###
+Relational requires not met
+### INPUT ###
+args:
+    name str
+    age int?
+	name requires age
+
+print(name, age, sep="|")
+### ARGS ###
+hey
+### STDERR ###
+Invalid args: 'name' requires 'age', but 'age' was not set
+
+Usage:
+  TestCase <name> [age] [OPTIONS]
+
+Script args:
+      --name str   Requires: age
+      --age int
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1

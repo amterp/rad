@@ -1,0 +1,352 @@
+### TITLE ###
+Respects no color flag
+### INPUT ###
+print(red("Alice"))
+### STDOUT ###
+Alice
+
+### TITLE ###
+Can slice colored string
+### DESCRIPTION ###
+TODO: this *should* be red
+### INPUT ###
+a = upper(red("Alice"))
+print(a[2:4])
+### STDOUT ###
+IC
+
+### TITLE ###
+Color equality
+### INPUT ###
+a = "Alice"
+b = red(a)
+c = red(a)
+print(a == b)
+print(b == c)
+### STDOUT ###
+true
+true
+
+### TITLE ###
+Hyperlink equality
+### INPUT ###
+a = "Alice"
+b = red(a).hyperlink("https://example.com")
+c = red(a).hyperlink("https://example.com")
+print(a == b)
+print(b == c)
+### STDOUT ###
+true
+true
+
+### TITLE ###
+Errors on too large RGB
+### INPUT ###
+"Hi".color_rgb(300, 110, 220)
+### STDERR ###
+error[RAD20017]: RGB values must be [0, 255]; got 300
+  --> <script>:1:6
+  |
+1 | "Hi".color_rgb(300, 110, 220)
+  |      ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20017
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors on negative RGB
+### INPUT ###
+"Hi".color_rgb(50, 110, -10)
+### STDERR ###
+error[RAD20017]: RGB values must be [0, 255]; got -10
+  --> <script>:1:6
+  |
+1 | "Hi".color_rgb(50, 110, -10)
+  |      ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20017
+
+
+### EXIT ###
+1
+### TITLE ###
+Can print colored text
+### INPUT ###
+print(red("Alice"))
+print(blue("Bob"))
+print(yellow("Charlie"))
+print(yellow(2))
+print(blue([true, "hi", 10]))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mAlice[0m
+[34mBob[0m
+[33mCharlie[0m
+[33m2[0m
+[34m[ true, "hi", 10 ][0m
+
+### TITLE ###
+Can concat colored strings
+### INPUT ###
+print(red("Alice ") + blue("Bob ") + yellow("Charlie"))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mAlice [0m[34mBob [0m[33mCharlie[0m
+
+### TITLE ###
+Can upper/lower colored strings
+### INPUT ###
+print(upper(red("Alice")))
+print(lower(red("Alice")))
+### ARGS ###
+--color=never
+### STDOUT ###
+ALICE
+alice
+
+### TITLE ###
+Color changes do not affect original string
+### INPUT ###
+a = "Alice"
+print(lower(red(a)))
+print(a)
+### ARGS ###
+--color=never
+### STDOUT ###
+alice
+Alice
+
+### TITLE ###
+Can index colored string
+### INPUT ###
+a = upper(red("Alice"))
+print(a[2])
+### ARGS ###
+--color=never
+### STDOUT ###
+I
+
+### TITLE ###
+Can print emojis in colored string
+### INPUT ###
+print(red("hi 👋"))
+### ARGS ###
+--color=never
+### STDOUT ###
+hi 👋
+
+### TITLE ###
+Can print colored string in array
+### INPUT ###
+a = "Alice"
+b = red(a)
+c = red(a)
+print([a, b, c])
+### ARGS ###
+--color=always
+### STDOUT ###
+[ "Alice", "[31mAlice[0m", "[31mAlice[0m" ]
+
+### TITLE ###
+Unique considers colors
+### DESCRIPTION ###
+todo this should not be the case!! - given the equality test, this should just be a single [Alice]
+### INPUT ###
+a = "Alice"
+b = red(a)
+c = red(a)
+print(unique([a, b, c]))
+### ARGS ###
+--color=always
+### STDOUT ###
+[ "Alice", "[31mAlice[0m" ]
+
+### TITLE ###
+Can bold
+### INPUT ###
+a = "Alice"
+print(a.bold())
+### ARGS ###
+--color=always
+### STDOUT ###
+[1mAlice[22m
+
+### TITLE ###
+Can italic
+### INPUT ###
+a = "Alice"
+print(a.italic())
+### ARGS ###
+--color=always
+### STDOUT ###
+[3mAlice[23m
+
+### TITLE ###
+Can underline
+### INPUT ###
+a = "Alice"
+print(a.underline())
+### ARGS ###
+--color=always
+### STDOUT ###
+[4mAlice[24m
+
+### TITLE ###
+Can color int
+### INPUT ###
+print(2.red())
+### ARGS ###
+--color=always
+### STDOUT ###
+[31m2[0m
+
+### TITLE ###
+Can RGB color
+### INPUT ###
+print("Hi".color_rgb(50, 110, 220))
+print(2.color_rgb(50, 110, 220))
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;50;110;220mHi[0;22;0;0;0m
+[38;2;50;110;220m2[0;22;0;0;0m
+
+### TITLE ###
+Colorize can color names
+### INPUT ###
+names = ["Alice", "Bob", "Charlie", "David"]
+for n in names:
+	n.colorize(names).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25mAlice[0;22;0;0;0m
+[38;2;99;130;233mBob[0;22;0;0;0m
+[38;2;106;189;15mCharlie[0;22;0;0;0m
+[38;2;209;71;184mDavid[0;22;0;0;0m
+
+### TITLE ###
+Colorize skip if single with multiple items
+### INPUT ###
+names = ["Alice", "Bob"]
+for n in names:
+	n.colorize(names, skip_if_single=true).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25mAlice[0;22;0;0;0m
+[38;2;99;130;233mBob[0;22;0;0;0m
+
+### TITLE ###
+Colorize skip if single with one item
+### INPUT ###
+names = ["Alice"]
+for n in names:
+	n.colorize(names, skip_if_single=true).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+Alice
+
+### TITLE ###
+Colorize can color in display block
+### INPUT ###
+names = ["Alice", "Bob", "Charlie", "David"]
+display:
+	fields names
+	names:
+		map fn(n) n.colorize(names)
+### ARGS ###
+--color=always
+### STDOUT ###
+[33mnames  [0m 
+[38;2;230;38;25mAlice[0;22;0;0;0m    
+[38;2;99;130;233mBob[0;22;0;0;0m      
+[38;2;106;189;15mCharlie[0;22;0;0;0m  
+[38;2;209;71;184mDavid[0;22;0;0;0m    
+
+### TITLE ###
+Colorize can color ints
+### INPUT ###
+nums = [1, 2, 3]
+for n in nums:
+	n.colorize(nums).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25m1[0;22;0;0;0m
+[38;2;99;130;233m2[0;22;0;0;0m
+[38;2;106;189;15m3[0;22;0;0;0m
+
+### TITLE ###
+Colorize can color bools
+### INPUT ###
+bools = [true, false]
+for b in bools:
+	b.colorize(bools).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;99;130;233mtrue[0;22;0;0;0m
+[38;2;230;38;25mfalse[0;22;0;0;0m
+
+### TITLE ###
+Colorize can color mixed types
+### INPUT ###
+items = [42, "hello", true]
+for item in items:
+	item.colorize(items).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25m42[0;22;0;0;0m
+[38;2;99;130;233mhello[0;22;0;0;0m
+[38;2;106;189;15mtrue[0;22;0;0;0m
+
+### TITLE ###
+Colorize can color floats
+### INPUT ###
+floats = [1.5, 2.7, 3.14]
+for f in floats:
+	f.colorize(floats).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25m1.5[0;22;0;0;0m
+[38;2;99;130;233m2.7[0;22;0;0;0m
+[38;2;106;189;15m3.14[0;22;0;0;0m
+
+### TITLE ###
+Colorize consistent colors
+### INPUT ###
+values = [1, 2, 3]
+for v in values:
+	v.colorize(values).print()
+for v in values:
+	v.colorize(values).print()
+### ARGS ###
+--color=always
+### STDOUT ###
+[38;2;230;38;25m1[0;22;0;0;0m
+[38;2;99;130;233m2[0;22;0;0;0m
+[38;2;106;189;15m3[0;22;0;0;0m
+[38;2;230;38;25m1[0;22;0;0;0m
+[38;2;99;130;233m2[0;22;0;0;0m
+[38;2;106;189;15m3[0;22;0;0;0m
+
+### TITLE ###
+Can hyperlink
+### INPUT ###
+a = "Alice"
+print(a.hyperlink("https://example.com"))
+print(a.red().hyperlink("https://example.com"))
+### ARGS ###
+--color=always
+### STDOUT ###
+]8;;https://example.com\Alice]8;;\
+]8;;https://example.com\[31mAlice[0m]8;;\
+

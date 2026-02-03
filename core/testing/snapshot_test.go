@@ -10,15 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestErrorSnapshots(t *testing.T) {
-	snapshotDir := "error_snapshots"
+// TestSnapshots runs snapshot tests from the snapshots/ directory.
+// These tests support stdout, stderr, and exit code validation.
+func TestSnapshots(t *testing.T) {
+	snapshotDir := "snapshots"
 
 	// Check if the directory exists
 	if _, err := os.Stat(snapshotDir); os.IsNotExist(err) {
-		t.Skip("error_snapshots directory does not exist yet")
+		t.Skip("snapshots directory does not exist yet")
 		return
 	}
 
+	runSnapshotDirectory(t, snapshotDir)
+}
+
+// runSnapshotDirectory runs all snapshot tests in the given directory.
+func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 	// Find all .snap files
 	var snapFiles []string
 	err := filepath.Walk(snapshotDir, func(path string, info os.FileInfo, err error) error {
@@ -37,8 +44,8 @@ func TestErrorSnapshots(t *testing.T) {
 		return
 	}
 
-	// Track which files need updating (thread-safe for consistency with CST tests,
-	// even though these tests don't run in parallel due to shared global state in test_helpers.go)
+	// Track which files need updating (thread-safe for consistency,
+	// even though tests don't run in parallel due to shared global state)
 	var updateMu sync.Mutex
 	filesToUpdate := make(map[string][]SnapshotCase)
 
@@ -56,19 +63,26 @@ func TestErrorSnapshots(t *testing.T) {
 				testName = testName + "/" + tc.Title
 			}
 
-			// Note: We don't use t.Parallel() here because runErrorSnapshotTest
-			// relies on global state (stdInBuffer, stdOutBuffer, stdErrBuffer)
-			// defined in test_helpers.go. Parallelizing would cause data races.
+			// Note: We don't use t.Parallel() here because we rely on global state
+			// (stdInBuffer, stdOutBuffer, stdErrBuffer) defined in test_helpers.go.
 			t.Run(testName, func(t *testing.T) {
-				runErrorSnapshotTest(t, tc)
+				if tc.SkipReason != "" {
+					t.Skip(tc.SkipReason)
+				}
 
-				// Get the actual stderr output and normalize it
-				actual := normalizeOutput(stdErrBuffer.String())
+				runSnapshotTest(t, tc)
 
-				if CompareSnapshot(t, tc, actual) {
-					// Needs update - update tc.Expected under lock
+				actual := SnapshotResult{
+					Stdout:   normalizeOutput(stdOutBuffer.String()),
+					Stderr:   normalizeOutput(stdErrBuffer.String()),
+					ExitCode: getExitCode(),
+				}
+
+				if CompareSnapshotResult(t, tc, actual) {
 					updateMu.Lock()
-					tc.Expected = actual
+					tc.Stdout = actual.Stdout
+					tc.Stderr = actual.Stderr
+					tc.ExitCode = actual.ExitCode
 					filesToUpdate[snapFile] = cases
 					updateMu.Unlock()
 				}
@@ -89,15 +103,42 @@ func TestErrorSnapshots(t *testing.T) {
 	}
 }
 
-func runErrorSnapshotTest(t *testing.T, tc *SnapshotCase) {
+// runSnapshotTest runs a single snapshot test case.
+func runSnapshotTest(t *testing.T, tc *SnapshotCase) {
 	t.Helper()
 
-	// Use the standard test setup which handles colors via --color=never
-	setupAndRunCode(t, tc.Input, "--color=never")
+	// Build args, only adding --color=never if:
+	// - RawArgs is false (normal mode)
+	// - No --color flag is already specified
+	args := tc.Args
+	if !tc.RawArgs {
+		hasColorFlag := false
+		for _, arg := range args {
+			if strings.HasPrefix(arg, "--color") {
+				hasColorFlag = true
+				break
+			}
+		}
+		if !hasColorFlag {
+			args = append(args, "--color=never")
+		}
+	}
+
+	// Use the standard test setup
+	setupAndRunCode(t, tc.Input, args...)
+}
+
+// getExitCode returns the exit code from the last test run.
+// Returns 0 if no exit occurred.
+func getExitCode() int {
+	if errorOrExit.exitCode != nil {
+		return *errorOrExit.exitCode
+	}
+	return 0
 }
 
 // normalizeOutput replaces test-specific file names with <script> for
-// consistent snapshot comparison across different test environments
+// consistent snapshot comparison across different test environments.
 func normalizeOutput(output string) string {
 	// The test framework uses "TestCase" as the filename
 	// Replace it with <script> for portable snapshots

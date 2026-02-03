@@ -1,0 +1,195 @@
+### TITLE ###
+Single liners
+### INPUT ###
+
+foo = fn() 5
+bar = fn(x) x * 2
+quz = fn(x, y) x * y
+
+foo().print()
+bar(5).print()
+quz(4, 10).print()
+### STDOUT ###
+5
+10
+40
+
+### TITLE ###
+Can copy built-in
+### INPUT ###
+
+foo = upper
+"test".foo().print()
+### STDOUT ###
+TEST
+
+### TITLE ###
+Single line closure
+### INPUT ###
+
+foo = fn(b) a * b
+a = 2
+foo(10).print()
+a = 5
+foo(10).print()
+### STDOUT ###
+20
+50
+
+### TITLE ###
+Block
+### INPUT ###
+
+foo = fn():
+	return 5
+bar = fn(x):
+    out = x * 2
+	return out
+quz = fn(x, y):
+	return x * y
+
+foo().print()
+bar(5).print()
+quz(4, 10).print()
+### STDOUT ###
+5
+10
+40
+
+### TITLE ###
+Block closure
+### INPUT ###
+
+a = 2
+foo = fn(x):
+	return a * x
+
+foo(5).print()
+
+a = 5
+foo(5).print()
+### STDOUT ###
+10
+25
+
+### TITLE ###
+Block closure within fn
+### INPUT ###
+
+a = 2
+foo = fn(x):
+	a = 3
+	return a * x
+
+a = 4
+foo(5).print()
+a.print()
+### STDOUT ###
+15
+4
+
+### TITLE ###
+Can print
+### DESCRIPTION ###
+TODO 2025-06-18: this test regressed, output should provide more signature information
+### INPUT ###
+
+foo = fn() 5
+foo.print()
+bar = fn(x, y) x * y
+bar.print()
+### STDOUT ###
+<fn>
+<fn>
+
+### TITLE ###
+Increment
+### INPUT ###
+
+c = 0
+foo = fn() c++
+for _ in range(10):
+	foo()
+print(c)
+### STDOUT ###
+10
+
+### TITLE ###
+Compound incr
+### INPUT ###
+
+c = 0
+foo = fn() c += 2
+for _ in range(10):
+	foo()
+print(c)
+### STDOUT ###
+20
+
+### TITLE ###
+Rad block lambda
+### INPUT ###
+
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map fn(n) n.upper()
+### STDOUT ###
+name 
+ALEX  
+
+### TITLE ###
+Rad block identifier
+### INPUT ###
+
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map upper
+### STDOUT ###
+name 
+ALEX  
+
+### TITLE ###
+Rad block block
+### INPUT ###
+
+a = { "name": "alex" }
+
+name = json.name
+display a:
+    fields name
+    name:
+        map fn(n):
+            out = n.upper()
+            return out
+### STDOUT ###
+name 
+ALEX  
+
+### TITLE ###
+Block requires return
+### INPUT ###
+
+print(add(4, 5))
+fn add(x, y):
+	x + y
+### STDOUT ###
+
+
+### TITLE ###
+Can return nothing
+### INPUT ###
+
+print(foo(4, 5), 2)
+fn foo(x, y):
+	return
+### STDOUT ###
+2
+

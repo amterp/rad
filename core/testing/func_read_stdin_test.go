@@ -40,16 +40,6 @@ else:
 	assertNoErrors(t)
 }
 
-func Test_Func_ReadStdin_NoStdin(t *testing.T) {
-	script := `
-content = read_stdin()
-print("content: {content}")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "content: null\n")
-	assertNoErrors(t)
-}
-
 func Test_Func_ReadStdin_WithSpecialChars(t *testing.T) {
 	script := `
 content = read_stdin()
@@ -58,19 +48,6 @@ print(content)
 	tp := NewTestParams(script, "--color=never").StdinInput("hello\tworld\n!@#$%^&*()")
 	setupAndRun(t, tp)
 	assertOnlyOutput(t, stdOutBuffer, "hello\tworld\n!@#$%^&*()\n")
-	assertNoErrors(t)
-}
-
-func Test_Func_ReadStdin_CanCheckNull(t *testing.T) {
-	script := `
-content = read_stdin()
-if content == null:
-    print("no stdin")
-else:
-    print("got stdin: {content}")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "no stdin\n")
 	assertNoErrors(t)
 }
 
