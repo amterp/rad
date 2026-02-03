@@ -1,0 +1,139 @@
+### TITLE ###
+IndentNormalization_CommandDescription
+### INPUT ###
+command foo:
+    ---
+    Run the
+    foo command.
+    ---
+    calls fn():
+        print("hi")
+### ARGS ###
+foo
+--help
+### STDOUT ###
+Run the
+foo command.
+
+Usage:
+  foo [OPTIONS]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+IndentNormalization_ScriptDescription
+### INPUT ###
+---
+Script description
+with multiple lines.
+---
+print("hi")
+### ARGS ###
+--help
+### STDOUT ###
+Script description
+with multiple lines.
+
+Usage:
+  TestCase [OPTIONS]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+IndentNormalization_ArgumentComment
+### INPUT ###
+args:
+    name str  # The user's full name.
+print(name)
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   The user's full name.
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+IndentNormalization_MixedIndentation
+### INPUT ###
+command test:
+    ---
+    Line 1
+        Indented line
+    Back to baseline
+    ---
+    calls fn():
+        print("ok")
+### ARGS ###
+test
+--help
+### STDOUT ###
+Line 1
+    Indented line
+Back to baseline
+
+Usage:
+  test [OPTIONS]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+IndentNormalization_WithTabs
+### INPUT ###
+command foo:
+	---
+	Tabbed
+	description.
+	---
+	calls fn():
+		print("hi")
+### ARGS ###
+foo
+--help
+### STDOUT ###
+Tabbed
+description.
+
+Usage:
+  foo [OPTIONS]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+

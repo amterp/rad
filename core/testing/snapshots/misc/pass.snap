@@ -1,0 +1,35 @@
+### TITLE ###
+Pass root
+### INPUT ###
+pass
+print("Made it!")
+### STDOUT ###
+Made it!
+
+### TITLE ###
+Pass if stmt
+### INPUT ###
+if true:
+	pass
+else:
+	pass
+
+if false:
+	pass
+else:
+	pass
+
+print("Made it!")
+### STDOUT ###
+Made it!
+
+### TITLE ###
+Pass for loop
+### INPUT ###
+for i in range(5):
+	pass
+
+print("Made it!")
+### STDOUT ###
+Made it!
+

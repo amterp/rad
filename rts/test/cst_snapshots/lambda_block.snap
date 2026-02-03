@@ -8,7 +8,7 @@ one = fn(x):
     return out
 two = fn(x, y):
     return x * y
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 102] PS: [0,  0] PE: [6, 16] source_file
 B: [  0,  25] PS: [0,  0] PE: [1, 12]   assign
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     left: var_path
@@ -138,3 +138,4 @@ B: [101, 102] PS: [6, 15] PE: [6, 16]                                       righ
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                         delegate: fallback_expr
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                           delegate: var_path
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                             root: identifier `y`
+

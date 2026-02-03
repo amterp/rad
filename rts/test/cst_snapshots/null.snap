@@ -4,7 +4,7 @@ Null
 a = null
 b = { "hi": null }
 c = [1, 2, null, 4]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 47] PS: [0,  0] PE: [2, 19] source_file
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -148,3 +148,4 @@ B: [45, 46] PS: [2, 17] PE: [2, 18]                                             
 B: [45, 46] PS: [2, 17] PE: [2, 18]                                                     literal
 B: [45, 46] PS: [2, 17] PE: [2, 18]                                                       int `4`
 B: [46, 47] PS: [2, 18] PE: [2, 19]                               ] `]`
+

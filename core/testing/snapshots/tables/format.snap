@@ -1,0 +1,65 @@
+### TITLE ###
+Rad FormatFloats
+### INPUT ###
+nums = [0.6342, 0.7, 1.63, 0.0923]
+display:
+	fields nums
+	sort nums
+	nums:
+		map fn(num) "{num * 100:6.2}%"
+### STDOUT ###
+nums    
+  9.23%  
+ 63.42%  
+ 70.00%  
+163.00%  
+
+### TITLE ###
+Rad MultiplyInts
+### INPUT ###
+nums = [63, 20, 163, 9]
+display:
+	fields nums
+	sort nums desc
+	nums:
+		map fn(num) num * 10
+### STDOUT ###
+nums 
+1630  
+630   
+200   
+90    
+
+### TITLE ###
+Rad CanTruncateWithMap
+### INPUT ###
+names = ["Alice", "Bob", "Charlie", "David"]
+display:
+	fields names
+	sort
+	names:
+		map fn(name) name[:3]
+### STDOUT ###
+names 
+Ali    
+Bob    
+Cha    
+Dav    
+
+### TITLE ###
+Rad CanMapTwoFieldsAtOnce
+### INPUT ###
+FirstNames = ["Alice", "Bob", "Charlie", "David"]
+LastNames = ["Smith", "Jones", "Brown", "White"]
+display:
+	fields FirstNames, LastNames
+	sort
+	FirstNames, LastNames:
+		map fn(name) upper(name)
+### STDOUT ###
+FirstNames  LastNames 
+ALICE       SMITH      
+BOB         JONES      
+CHARLIE     BROWN      
+DAVID       WHITE      
+

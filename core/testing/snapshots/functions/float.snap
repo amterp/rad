@@ -1,0 +1,63 @@
+### TITLE ###
+Float passthrough for float
+### INPUT ###
+a = float(10.2)
+print(a)
+print(type_of(a))
+### STDOUT ###
+10.2
+float
+
+### TITLE ###
+Float converts int
+### INPUT ###
+a = float(10)
+print(a)
+print(type_of(a))
+### STDOUT ###
+10
+float
+
+### TITLE ###
+Float bool
+### INPUT ###
+a = float(true)
+b = float(false)
+print(a, b)
+print(type_of(a), type_of(b))
+### STDOUT ###
+1 0
+float float
+
+### TITLE ###
+Float errors on map
+### INPUT ###
+float({})
+### STDERR ###
+error[RAD20016]: Cannot cast "map" to float
+  --> <script>:1:1
+  |
+1 | float({})
+  | ^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1
+### TITLE ###
+Float errors on string with details
+### INPUT ###
+float("10")
+### STDERR ###
+error[RAD20016]: Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string?
+  --> <script>:1:1
+  |
+1 | float("10")
+  | ^^^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1

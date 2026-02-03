@@ -1,0 +1,16 @@
+### TITLE ###
+Division by zero
+### INPUT ###
+x = 1 / 0
+### STDERR ###
+error[RAD20036]: Divisor was 0, cannot divide by 0
+  --> <script>:1:9
+  |
+1 | x = 1 / 0
+  |         ^
+  |
+   = info: rad explain RAD20036
+
+
+### EXIT ###
+1

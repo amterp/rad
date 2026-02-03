@@ -1,0 +1,118 @@
+### TITLE ###
+Int valid 1e6
+### INPUT ###
+fn test(x: int = 1e6):
+    print("{x}")
+
+test()
+### STDOUT ###
+1000000
+
+### TITLE ###
+Int valid 1.2e10
+### INPUT ###
+fn test(x: int = 1.2e10):
+    print("{x}")
+
+test()
+### STDOUT ###
+12000000000
+
+### TITLE ###
+Int valid 1000e-2
+### INPUT ###
+fn test(x: int = 1000e-2):
+    print("{x}")
+
+test()
+### STDOUT ###
+10
+
+### TITLE ###
+Int invalid 1e-5
+### INPUT ###
+fn test(x: int = 1e-5):
+    print("{x}")
+
+test()
+### STDERR ###
+error[RAD40001]: Scientific notation value does not evaluate to a whole number
+  --> <script>:1:18
+  |
+1 | fn test(x: int = 1e-5):
+  |                  ^^^^
+2 |     print("{x}")
+3 |
+  |
+   = info: rad explain RAD40001
+
+
+### EXIT ###
+1
+### TITLE ###
+Int invalid 1.25e1
+### INPUT ###
+fn test(x: int = 1.25e1):
+    print("{x}")
+
+test()
+### STDERR ###
+error[RAD40001]: Scientific notation value does not evaluate to a whole number
+  --> <script>:1:18
+  |
+1 | fn test(x: int = 1.25e1):
+  |                  ^^^^^^
+2 |     print("{x}")
+3 |
+  |
+   = info: rad explain RAD40001
+
+
+### EXIT ###
+1
+### TITLE ###
+Float valid 1e6
+### INPUT ###
+fn test(x: float = 1e6):
+    print("{x}")
+
+test()
+### STDOUT ###
+1000000
+
+### TITLE ###
+Float valid 1e-5
+### INPUT ###
+fn test(x: float = 1e-5):
+    print("{x}")
+
+test()
+### STDOUT ###
+0.00001
+
+### TITLE ###
+Lambda valid
+### INPUT ###
+f = fn(x: int = 1e6) x * 2
+print("{f()}")
+### STDOUT ###
+2000000
+
+### TITLE ###
+Lambda invalid
+### INPUT ###
+f = fn(x: int = 1e-5) x * 2
+print("{f()}")
+### STDERR ###
+error[RAD40001]: Scientific notation value does not evaluate to a whole number
+  --> <script>:1:17
+  |
+1 | f = fn(x: int = 1e-5) x * 2
+  |                 ^^^^
+2 | print("{f()}")
+  |
+   = info: rad explain RAD40001
+
+
+### EXIT ###
+1

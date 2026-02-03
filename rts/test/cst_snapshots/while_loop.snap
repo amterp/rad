@@ -4,7 +4,7 @@ While loop
 while a > 0:
     print(2)
     a--
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 33] PS: [0,  0] PE: [2,  7] source_file
 B: [ 0, 33] PS: [0,  0] PE: [2,  7]   while_loop
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]     while `while`
@@ -63,3 +63,4 @@ B: [30, 33] PS: [2,  4] PE: [2,  7]     stmt: incr_decr
 B: [30, 31] PS: [2,  4] PE: [2,  5]       left: var_path
 B: [30, 31] PS: [2,  4] PE: [2,  5]         root: identifier `a`
 B: [31, 33] PS: [2,  5] PE: [2,  7]       op: -- `--`
+

@@ -5,7 +5,7 @@ x = 5
 a = """
     hello {x} world
     """
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 41] PS: [0,  0] PE: [3,  7] source_file
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -60,3 +60,4 @@ B: [25, 26] PS: [2, 11] PE: [2, 12]                                             
 B: [26, 27] PS: [2, 12] PE: [2, 13]                                   } `}`
 B: [27, 33] PS: [2, 13] PE: [2, 19]                                 content: string_content ` world`
 B: [33, 41] PS: [2, 19] PE: [3,  7]                               end: string_end `\n    """`
+

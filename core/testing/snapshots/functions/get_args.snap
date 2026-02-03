@@ -1,0 +1,7 @@
+### TITLE ###
+Func GetArgs
+### INPUT ###
+print(get_args())
+### STDOUT ###
+[ "--color=never" ]
+

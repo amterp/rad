@@ -4,7 +4,7 @@ Multiline ternary (MISSING as of writing)
 c = a < 10
     ? "smaller!"
     : "bigger!"
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 43] PS: [0,  0] PE: [2, 15] source_file
 B: [ 0, 10] PS: [0,  0] PE: [0, 10]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -78,3 +78,4 @@ B: [34, 35] PS: [2,  6] PE: [2,  7]                                 start: strin
 B: [35, 42] PS: [2,  7] PE: [2, 14]                                 contents: string_contents
 B: [35, 42] PS: [2,  7] PE: [2, 14]                                   content: string_content `bigger!`
 B: [42, 43] PS: [2, 14] PE: [2, 15]                                 end: string_end `"`
+

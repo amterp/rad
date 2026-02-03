@@ -1,0 +1,252 @@
+### TITLE ###
+Help
+### INPUT ###
+args:
+    age1 int # The age1.
+    age2 int
+    age3 float # The age3.
+    age4 float
+
+    age1 range [0, 100]
+    age2 range [-20,)
+    age3 range (, 200.5]
+    age4 range (10, 20)
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <age1> <age2> <age3> <age4> [OPTIONS]
+
+Script args:
+      --age1 int     The age1. Range: [0, 100]
+      --age2 int     Range: [-20, )
+      --age3 float   The age3. Range: (, 200.5]
+      --age4 float   Range: (10, 20)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Basic
+### INPUT ###
+args:
+    age int
+    age range [0, 100]
+print("Age:", age)
+### ARGS ###
+40
+### STDOUT ###
+Age: 40
+
+### TITLE ###
+BasicMin
+### INPUT ###
+args:
+    age int
+    age range [0, 100]
+print("Age:", age)
+### ARGS ###
+0
+### STDOUT ###
+Age: 0
+
+### TITLE ###
+BasicMax
+### INPUT ###
+args:
+    age int
+    age range [0, 100]
+print("Age:", age)
+### ARGS ###
+100
+### STDOUT ###
+Age: 100
+
+### TITLE ###
+ExclusiveMin
+### INPUT ###
+args:
+    age int
+    age range (0, 100)
+print("Age:", age)
+### ARGS ###
+0
+### STDERR ###
+'age' value 0 is <= minimum (exclusive) 0
+
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (0, 100)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+ExclusiveMax
+### INPUT ###
+args:
+    age int
+    age range (0, 100)
+print("Age:", age)
+### ARGS ###
+100
+### STDERR ###
+'age' value 100 is >= maximum (exclusive) 100
+
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (0, 100)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+FloatBasic
+### INPUT ###
+args:
+    age float
+    age range [0.5, 100]
+print("Age:", age)
+### ARGS ###
+0.5
+### STDOUT ###
+Age: 0.5
+
+### TITLE ###
+FloatMinExclusive
+### INPUT ###
+args:
+    age float
+    age range (0.5, 100]
+print("Age:", age)
+### ARGS ###
+0.5
+### STDERR ###
+'age' value 0.5 is <= minimum (exclusive) 0.5
+
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age float   Range: (0.5, 100]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+NoMax
+### INPUT ###
+args:
+    age float
+    age range (0.5,]
+print("Age:", age)
+### ARGS ###
+9999
+### STDOUT ###
+Age: 9999
+
+### TITLE ###
+BelowMinWhenNoMax
+### INPUT ###
+args:
+    age float
+    age range (0.5,]
+print("Age:", age)
+### ARGS ###
+0.1
+### STDERR ###
+'age' value 0.1 is <= minimum (exclusive) 0.5
+
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age float   Range: (0.5, )
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+AboveMaxNoMin
+### INPUT ###
+args:
+    age int
+    age range (, 200]
+print("Age:", age)
+### ARGS ###
+250
+### STDERR ###
+'age' value 250 is > maximum 200
+
+Usage:
+  TestCase <age> [OPTIONS]
+
+Script args:
+      --age int   Range: (, 200]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+NoMin
+### INPUT ###
+args:
+    age int
+    age range (, 200]
+print("Age:", age)
+### ARGS ###
+--age
+-300
+### STDOUT ###
+Age: -300
+

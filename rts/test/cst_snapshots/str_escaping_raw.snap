@@ -4,7 +4,7 @@ Str escaping
 a = "\\"
 b = "\n"
 c = "this is \\ a str \n blah \ blahh"
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 56] PS: [0,  0] PE: [2, 38] source_file
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -75,3 +75,4 @@ B: [42, 48] PS: [2, 24] PE: [2, 30]                                 content: str
 B: [48, 49] PS: [2, 30] PE: [2, 31]                                 backslash: \ `\`
 B: [49, 55] PS: [2, 31] PE: [2, 37]                                 content: string_content ` blahh`
 B: [55, 56] PS: [2, 37] PE: [2, 38]                               end: string_end `"`
+

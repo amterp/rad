@@ -14,7 +14,7 @@ command remove:
     file str
     calls fn():
         $`git rm {file}`
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 200] PS: [ 0,  0] PE: [12, 24] source_file
 B: [  0, 129] PS: [ 0,  0] PE: [ 7, 25]   cmd_block
 B: [  0,   7] PS: [ 0,  0] PE: [ 0,  7]     command `command`
@@ -163,3 +163,4 @@ B: [194, 198] PS: [12, 18] PE: [12, 22]                                         
 B: [194, 198] PS: [12, 18] PE: [12, 22]                                                               root: identifier `file`
 B: [198, 199] PS: [12, 22] PE: [12, 23]                                           } `}`
 B: [199, 200] PS: [12, 23] PE: [12, 24]                                       end: string_end ```
+

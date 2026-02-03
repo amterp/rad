@@ -1,0 +1,24 @@
+### TITLE ###
+No chars
+### INPUT ###
+a = "  hello 	"
+print(trim(a))
+### STDOUT ###
+hello
+
+### TITLE ###
+One char
+### INPUT ###
+a = ",,!!,hello,!,"
+print(trim(a, ","))
+### STDOUT ###
+!!,hello,!
+
+### TITLE ###
+Multiple char
+### INPUT ###
+a = ",,!!,hello,!,"
+print(trim(a, "!,"))
+### STDOUT ###
+hello
+

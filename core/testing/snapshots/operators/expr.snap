@@ -1,0 +1,40 @@
+### TITLE ###
+Not operator
+### INPUT ###
+a = false
+if not a:
+    print("it works!")
+if not not not a:
+    print("it works!!!")
+### STDOUT ###
+it works!
+it works!!!
+
+### TITLE ###
+Expr then indexing
+### INPUT ###
+a = [4, 2, 3, 1]
+print(sort(a)[0])
+print(sort(a)[2:][-1])
+### STDOUT ###
+1
+4
+
+### TITLE ###
+Falsy coalescing
+### INPUT ###
+print(0 or 0.0 or "" or [] or {} or null or false or "hello!")
+### STDOUT ###
+hello!
+
+### TITLE ###
+Can multiply strings
+### INPUT ###
+print("hello!" * 3)
+print("hello!".red() * 3)
+### ARGS ###
+--color=always
+### STDOUT ###
+hello!hello!hello!
+[31mhello![0m[31mhello![0m[31mhello![0m
+

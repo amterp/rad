@@ -1,0 +1,69 @@
+### TITLE ###
+No filter one option
+### INPUT ###
+opts = ["Hamburger"]
+print(pick(opts))
+### STDOUT ###
+Hamburger
+
+### TITLE ###
+Filter with one option
+### INPUT ###
+opts = ["Hamburger"]
+print(pick(opts, "burg"))
+### STDOUT ###
+Hamburger
+
+### TITLE ###
+Filter to one option
+### INPUT ###
+opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+print(pick(opts, "Hamb"))
+### STDOUT ###
+Hamburger
+
+### TITLE ###
+Errors if empty options
+### INPUT ###
+opts = []
+pick(opts)
+### STDERR ###
+error[RAD20000]: Filtered 0 options to 0 with filters: []
+  --> <script>:2:1
+  |
+1 | opts = []
+2 | pick(opts)
+  | ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors if filtered to zero options
+### INPUT ###
+opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+pick(opts, "asdasdasd")
+### STDERR ###
+error[RAD20000]: Filtered 5 options to 0 with filters: [asdasdasd]
+  --> <script>:2:1
+  |
+1 | opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+2 | pick(opts, "asdasdasd")
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Works with multiple tokens
+### INPUT ###
+filter = ["Ham", "ger"]
+opts = ["Hamburger", "Chicken Burger", "Sandwich", "Fish", "Chickwich"]
+print(pick(opts, filter))
+### STDOUT ###
+Hamburger
+

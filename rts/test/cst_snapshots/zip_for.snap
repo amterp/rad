@@ -3,7 +3,7 @@ For loop zip
 ### INPUT ###
 for i, a, b, c, d in zip(al, bl, cl, dl):
     print(i, a, b, c, d)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 66] PS: [0,  0] PE: [1, 24] source_file
 B: [ 0, 66] PS: [0,  0] PE: [1, 24]   for_loop
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     for `for`
@@ -156,3 +156,4 @@ B: [64, 65] PS: [1, 22] PE: [1, 23]                                             
 B: [64, 65] PS: [1, 22] PE: [1, 23]                                                 delegate: var_path
 B: [64, 65] PS: [1, 22] PE: [1, 23]                                                   root: identifier `d`
 B: [65, 66] PS: [1, 23] PE: [1, 24]                               ) `)`
+

@@ -3,7 +3,7 @@ Defer singletons
 ### INPUT ###
 defer print(1)
 errdefer print(2)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 32] PS: [0,  0] PE: [1, 17] source_file
 B: [ 0, 14] PS: [0,  0] PE: [0, 14]   defer_block
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]     keyword: defer `defer`
@@ -67,3 +67,4 @@ B: [30, 31] PS: [1, 15] PE: [1, 16]                                             
 B: [30, 31] PS: [1, 15] PE: [1, 16]                                                     literal
 B: [30, 31] PS: [1, 15] PE: [1, 16]                                                       int `2`
 B: [31, 32] PS: [1, 16] PE: [1, 17]                               ) `)`
+

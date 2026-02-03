@@ -1,0 +1,163 @@
+### TITLE ###
+Int assignments
+### INPUT ###
+a = 1
+a += 3 + 4
+print(a)
+a -= 3 * 2
+print(a)
+a *= 3
+print(a)
+a /= 4
+print(a)
+### STDOUT ###
+8
+2
+6
+1.5
+
+### TITLE ###
+Float assignments
+### INPUT ###
+b = 1.5
+b += 3.3
+print(b)
+b -= 2
+print(b)
+b *= 4
+print(b)
+b /= 2.5
+print(b)
+### STDOUT ###
+4.8
+2.8
+11.2
+4.4799999999999995
+
+### TITLE ###
+String assignments
+### INPUT ###
+c = "hi"
+c += " there"
+print(c)
+### STDOUT ###
+hi there
+
+### TITLE ###
+Add int array
+### INPUT ###
+a = [1]
+a += [2]
+print(a)
+### STDOUT ###
+[ 1, 2 ]
+
+### TITLE ###
+Add float array
+### INPUT ###
+a = [1.1]
+a += [2.2]
+print(a)
+### STDOUT ###
+[ 1.1, 2.2 ]
+
+### TITLE ###
+Add string array
+### INPUT ###
+a = ["alice"]
+a += ["bob"]
+print(a)
+### STDOUT ###
+[ "alice", "bob" ]
+
+### TITLE ###
+Subtract from array errors
+### INPUT ###
+a = [1]
+a -= 2
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'list -= int'
+  --> <script>:2:1
+  |
+1 | a = [1]
+2 | a -= 2
+  | ^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+Divide from array errors
+### INPUT ###
+a = [1]
+a /= 2
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'list /= int'
+  --> <script>:2:1
+  |
+1 | a = [1]
+2 | a /= 2
+  | ^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+Multiply from array errors
+### INPUT ###
+a = [1]
+a *= 2
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'list *= int'
+  --> <script>:2:1
+  |
+1 | a = [1]
+2 | a *= 2
+  | ^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors if append not array
+### INPUT ###
+a = [1]
+a += 2
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'list += int'. Did you mean to wrap the right side in a list in order to append?
+  --> <script>:2:1
+  |
+1 | a = [1]
+2 | a += 2
+  | ^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+Add through collection
+### INPUT ###
+a = [1, 2]
+a[1] += 2
+print(a)
+### STDOUT ###
+[ 1, 4 ]
+
+### TITLE ###
+Add through nested collection
+### INPUT ###
+a = { "alice": [1, 2], "bob": [3, 4] }
+a["alice"][0] += 2
+a.bob[1] += 2
+print(a)
+### STDOUT ###
+{ "alice": [ 3, 2 ], "bob": [ 3, 6 ] }
+

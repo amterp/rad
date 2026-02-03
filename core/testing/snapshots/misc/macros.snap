@@ -1,0 +1,152 @@
+### TITLE ###
+Macros reading stash id
+### INPUT ###
+---
+Docs here.
+Many lines!
+@stash_id = abracadabra
+---
+### ARGS ###
+-h
+### STDOUT ###
+Docs here.
+Many lines!
+
+Usage:
+  TestCase [OPTIONS]
+
+### TITLE ###
+Macros reading stash id with space
+### INPUT ###
+---
+Docs here.
+Many lines!
+@stash_id = abracadabra bloop
+---
+### ARGS ###
+-h
+### STDOUT ###
+Docs here.
+Many lines!
+
+Usage:
+  TestCase [OPTIONS]
+
+### TITLE ###
+Macros becomes part of contents if followed by more doc
+### INPUT ###
+---
+Docs here.
+Many lines!
+@stash_id = abracadabra
+Another line!
+---
+### ARGS ###
+-h
+### STDOUT ###
+Docs here.
+Many lines!
+@stash_id = abracadabra
+Another line!
+
+Usage:
+  TestCase [OPTIONS]
+
+### TITLE ###
+Macros help disabled if global options disabled
+### INPUT ###
+---
+Docs here.
+@enable_global_options = 0
+---
+print("hi")
+### ARGS ###
+--help
+### STDERR ###
+unknown flag: --help
+
+Docs here.
+
+Usage:
+  TestCase [OPTIONS]
+
+### EXIT ###
+1
+### TITLE ###
+Macros disabling global options leads to complaints about them if specified
+### INPUT ###
+---
+Docs here.
+@enable_global_options = 0
+---
+debug("hi1")
+print("hi2")
+### ARGS ###
+--debug
+### STDERR ###
+unknown flag: --debug
+
+Docs here.
+
+Usage:
+  TestCase [OPTIONS]
+
+### EXIT ###
+1
+### TITLE ###
+Macros errors if args block disabled but specified
+### INPUT ###
+---
+Docs here.
+@enable_args_block = 0
+---
+args:
+	name str
+print("hi")
+### STDERR ###
+Macro 'enable_args_block' disabled, but args block found.
+
+### EXIT ###
+1
+### TITLE ###
+Macros does passthrough of help
+### SKIP ###
+TODO come back to this...
+### INPUT ###
+---
+@enable_args_block = 0
+@enable_global_options = 0
+---
+
+my_args = get_args().join(" ")
+quiet $!'./rad_scripts/hello.rad {my_args}'
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  hello.rad <name> [OPTIONS]
+
+Script args:
+      --name str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+### TITLE ###
+Macros does not complain of unused positional args if args block disabled
+### INPUT ###
+---
+Docs here.
+@enable_args_block = 0
+---
+print("hi", get_args())
+### ARGS ###
+bob
+### STDOUT ###
+hi [ "bob", "--color=never" ]
+

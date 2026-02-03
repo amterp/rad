@@ -1,0 +1,131 @@
+### TITLE ###
+Function shadows argument simple
+### INPUT ###
+
+args:
+    open str?
+
+fn open(path: str) -> void:
+    print("Opening {path}")
+### STDERR ###
+error[RAD40002]: Hoisted function 'open' shadows an argument with the same name
+  --> <script>:5:4
+  |
+4 |
+5 | fn open(path: str) -> void:
+  |    ^^^^
+6 |     print("Opening {path}")
+  |
+   = info: rad explain RAD40002
+
+
+### EXIT ###
+1
+### TITLE ###
+Function shadows argument multiple
+### INPUT ###
+
+args:
+    name str
+    count int
+
+fn name() -> str:
+    return "test"
+
+fn count() -> int:
+    return 10
+### STDERR ###
+error[RAD40002]: Hoisted function 'name' shadows an argument with the same name
+  --> <script>:6:4
+  |
+5 |
+6 | fn name() -> str:
+  |    ^^^^
+7 |     return "test"
+8 |
+  |
+   = info: rad explain RAD40002
+
+error[RAD40002]: Hoisted function 'count' shadows an argument with the same name
+  --> <script>:9:4
+  |
+8 |
+9 | fn count() -> int:
+  |    ^^^^^
+10 |     return 10
+  |
+   = info: rad explain RAD40002
+
+
+### EXIT ###
+1
+### TITLE ###
+Function shadows argument no args block
+### INPUT ###
+
+fn open(path: str) -> void:
+    print("Opening {path}")
+
+open("test.txt")
+### STDOUT ###
+Opening test.txt
+
+### TITLE ###
+Function shadows argument different names
+### INPUT ###
+
+args:
+    name str = "World"
+
+fn greet(person: str) -> void:
+    print("Hi {person}!")
+
+greet("Alice")
+print("Hello {name}!")
+### ARGS ###
+Bob
+### STDOUT ###
+Hi Alice!
+Hello Bob!
+
+### TITLE ###
+Function shadows argument nested function allowed
+### INPUT ###
+
+args:
+    name str = "World"
+
+fn outer() -> void:
+    fn name() -> str:
+        return "inner"
+    print(name())
+
+outer()
+print("Hello {name}!")
+### ARGS ###
+Bob
+### STDOUT ###
+inner
+Hello Bob!
+
+### TITLE ###
+Reserved keyword args
+### INPUT ###
+
+args = 5
+print(args)
+### STDERR ###
+error[RAD10008]: 'args' is reserved (used in args blocks)
+  --> <script>:2:1
+  |
+1 |
+2 | args = 5
+  | ^^^^^^
+3 | print(args)
+  |
+   = help: use a different variable name
+   = info: rad explain RAD10008
+
+
+### EXIT ###
+1

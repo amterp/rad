@@ -7,7 +7,7 @@ rad url:
     ID:
         map fn(n) n * 2
         filter fn(n) n > 5
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 96] PS: [0,  0] PE: [5, 26] source_file
 B: [ 0, 96] PS: [0,  0] PE: [5, 26]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -90,3 +90,4 @@ B: [95, 96] PS: [5, 25] PE: [5, 26]                             delegate: indexe
 B: [95, 96] PS: [5, 25] PE: [5, 26]                               root: primary_expr
 B: [95, 96] PS: [5, 25] PE: [5, 26]                                 literal
 B: [95, 96] PS: [5, 25] PE: [5, 26]                                   int `5`
+

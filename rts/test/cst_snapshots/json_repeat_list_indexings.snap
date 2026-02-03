@@ -2,7 +2,7 @@
 Json paths repeat list indexings
 ### INPUT ###
 Nums = json[][][1].foo[][1][].bar
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 33] PS: [0,  0] PE: [0, 33] source_file
 B: [ 0, 33] PS: [0,  0] PE: [0, 33]   assign
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     left: var_path
@@ -61,3 +61,4 @@ B: [28, 29] PS: [0, 28] PE: [0, 29]           ] `]`
 B: [29, 30] PS: [0, 29] PE: [0, 30]       . `.`
 B: [30, 33] PS: [0, 30] PE: [0, 33]       segment: json_segment
 B: [30, 33] PS: [0, 30] PE: [0, 33]         key: identifier `bar`
+

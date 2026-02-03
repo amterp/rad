@@ -178,7 +178,11 @@ func (r *DiagnosticRenderer) renderSourceLine(lines []string, lineIdx, lineNum, 
 	}
 
 	gutter := fmt.Sprintf("%*d", gutterWidth, lineNum)
-	fmt.Fprintf(r.writer, "%s %s\n", r.blue(gutter+" |"), line)
+	if line == "" {
+		fmt.Fprintf(r.writer, "%s\n", r.blue(gutter+" |"))
+	} else {
+		fmt.Fprintf(r.writer, "%s %s\n", r.blue(gutter+" |"), line)
+	}
 }
 
 // renderLineLabels renders the underline and message for labels on a line.

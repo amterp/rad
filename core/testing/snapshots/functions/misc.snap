@@ -1,0 +1,20 @@
+### TITLE ###
+starts_with function
+### INPUT ###
+a = "alice"
+print(starts_with(a, "al"))
+print(starts_with(a, "ce"))
+### STDOUT ###
+true
+false
+
+### TITLE ###
+ends_with function
+### INPUT ###
+a = "alice"
+print(ends_with(a, "al"))
+print(ends_with(a, "ce"))
+### STDOUT ###
+false
+true
+

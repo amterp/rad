@@ -1,0 +1,28 @@
+### TITLE ###
+Tbl FillsMissingValuesWithEmptyStrings
+### INPUT ###
+names = ["Alice", "Bob", "Charlie"]
+ages = [25, 30]
+twice = [50, 60, 70]
+display:
+	fields names, ages, twice
+### STDOUT ###
+names    ages  twice 
+Alice    25    50     
+Bob      30    60     
+Charlie        70     
+
+### TITLE ###
+Tbl FillsMissingValuesWithEmptyStringsShortestFirst
+### INPUT ###
+ages = [25, 30]
+names = ["Alice", "Bob", "Charlie"]
+twice = [50, 60, 70]
+display:
+	fields ages, names, twice
+### STDOUT ###
+ages  names    twice 
+25    Alice    50     
+30    Bob      60     
+      Charlie  70     
+

@@ -10,7 +10,7 @@ args:
    fff float[]? = [2.2, 3.3]
    ggg str[]? = ["hi", "hello"]
    hhh bool[]? = [true, false]
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 195] PS: [0,  0] PE: [8, 30] source_file
 B: [  0, 195] PS: [0,  0] PE: [8, 30]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -100,3 +100,4 @@ B: [183, 187] PS: [8, 18] PE: [8, 22]       true `true`
 B: [187, 188] PS: [8, 22] PE: [8, 23]       , `,`
 B: [189, 194] PS: [8, 24] PE: [8, 29]       false `false`
 B: [194, 195] PS: [8, 29] PE: [8, 30]       ] `]`
+

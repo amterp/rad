@@ -2,7 +2,7 @@
 Indexing expr
 ### INPUT ###
 sort(mylist)[0]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 15] PS: [0,  0] PE: [0, 15] source_file
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]   expr_stmt
 B: [ 0, 15] PS: [0,  0] PE: [0, 15]     expr: expr
@@ -46,3 +46,4 @@ B: [13, 14] PS: [0, 13] PE: [0, 14]                                             
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                               literal
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                                 int `0`
 B: [14, 15] PS: [0, 14] PE: [0, 15]                         ] `]`
+

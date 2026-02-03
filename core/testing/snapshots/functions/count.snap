@@ -1,0 +1,32 @@
+### TITLE ###
+Count basic
+### INPUT ###
+print(count("banana", "n"))
+print(count("abracadabra", "a"))
+### STDOUT ###
+2
+5
+
+### TITLE ###
+Count overlap
+### INPUT ###
+print(count("aaa", "aa"))
+### STDOUT ###
+1
+
+### TITLE ###
+Count empty
+### INPUT ###
+print(count("aaa", ""))
+### STDOUT ###
+4
+
+### TITLE ###
+Count empty string
+### INPUT ###
+print(count("", "a"))
+print(count("", ""))
+### STDOUT ###
+0
+1
+

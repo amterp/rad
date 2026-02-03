@@ -1,0 +1,18 @@
+### TITLE ###
+Delete_CanDeleteNestedMapEntry
+### INPUT ###
+a = { "alice": 35, "bob": { "car": "toyota", "shoes": "brooks" }, "charlie": [1, "hi"] }
+del a["bob"]["shoes"]
+print(a)
+### STDOUT ###
+{ "alice": 35, "bob": { "car": "toyota" }, "charlie": [ 1, "hi" ] }
+
+### TITLE ###
+Delete_CanDeleteArrayEntryNestedInMapEntry
+### INPUT ###
+a = { "alice": 35, "bob": { "car": "toyota", "ids": [10, 20, 30] }, "charlie": [1, "hi"] }
+del a["bob"]["ids"][1]
+print(a)
+### STDOUT ###
+{ "alice": 35, "bob": { "car": "toyota", "ids": [ 10, 30 ] }, "charlie": [ 1, "hi" ] }
+

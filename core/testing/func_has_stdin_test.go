@@ -17,18 +17,6 @@ else:
 	assertNoErrors(t)
 }
 
-func Test_Func_HasStdin_False(t *testing.T) {
-	script := `
-if has_stdin():
-    print("has stdin")
-else:
-    print("no stdin")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "no stdin\n")
-	assertNoErrors(t)
-}
-
 func Test_Func_HasStdin_EmptyStdin(t *testing.T) {
 	script := `
 if has_stdin():
@@ -56,19 +44,6 @@ else:
 	assertNoErrors(t)
 }
 
-func Test_Func_HasStdin_CheckBeforeReadNoData(t *testing.T) {
-	script := `
-if has_stdin():
-    content = read_stdin()
-    print("Content: {content}")
-else:
-    print("No stdin to read")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "No stdin to read\n")
-	assertNoErrors(t)
-}
-
 func Test_Func_HasStdin_Assignment(t *testing.T) {
 	script := `
 has_data = has_stdin()
@@ -77,15 +52,5 @@ print("Has stdin: {has_data}")
 	tp := NewTestParams(script, "--color=never").StdinInput("data")
 	setupAndRun(t, tp)
 	assertOnlyOutput(t, stdOutBuffer, "Has stdin: true\n")
-	assertNoErrors(t)
-}
-
-func Test_Func_HasStdin_AssignmentNoData(t *testing.T) {
-	script := `
-has_data = has_stdin()
-print("Has stdin: {has_data}")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "Has stdin: false\n")
 	assertNoErrors(t)
 }

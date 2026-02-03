@@ -25,46 +25,10 @@ rad url:
 		map fn(x) truncate(x, 10)
 `
 	setupAndRunCode(t, script, "--mock-response", ".*:./responses/long_values.json", "--color=never")
-	expected := `id  words      
-1   Lorem ips…  
-2   Ut placer…  
-`
+	expected := "id  words      \n1   Lorem ips…  \n2   Ut placer…  \n"
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)
-}
-
-func TestTruncateMatchesColWidth(t *testing.T) {
-	script := `
-url = "https://google.com"
-id = json[].id
-name = json[].name
-rad url:
-	fields id, name
-	name:
-		map fn(x) truncate(x, 5)
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	expected := `id  name  
-1   Alice  
-2   Bob    
-`
-	assertOutput(t, stdOutBuffer, expected)
-	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
-	assertNoErrors(t)
-}
-
-func TestTruncateErrorsIfInvalidField(t *testing.T) {
-	script := `
-url = "https://google.com"
-name = json[].name
-rad url:
-    fields name
-    does_not_exist:
-        map fn(x) truncate(x, 5)
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	assertErrorContains(t, 1, "RAD20028", "Cannot modify undefined field", "does_not_exist")
 }
 
 func TestTruncateTwoFieldsAtOnce(t *testing.T) {
@@ -87,12 +51,7 @@ rad url:
 		map fn(x) truncate(x, 5)
 `
 	setupAndRunCode(t, script, "--mock-response", ".*:./responses/people.json", "--color=never")
-	expected := `age  name   city  
-30   Char…  Paris  
-40   Bob    Lond…  
-30   Alice  New …  
-25   Bob    Los …  
-`
+	expected := "age  name   city  \n30   Char…  Paris  \n40   Bob    Lond…  \n30   Alice  New …  \n25   Bob    Los …  \n"
 	assertOutput(t, stdOutBuffer, expected)
 	assertOutput(t, stdErrBuffer, "Mocking response for url (matched \".*\"): https://google.com\n")
 	assertNoErrors(t)

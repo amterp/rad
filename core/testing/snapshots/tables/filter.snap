@@ -1,0 +1,123 @@
+### TITLE ###
+Rad Filter Basic
+### INPUT ###
+ages = [15, 25, 30, 12]
+names = ["Alice", "Bob", "Charlie", "David"]
+display:
+    fields ages, names
+    ages:
+        filter fn(a) a >= 18
+### STDOUT ###
+ages  names   
+25    Bob      
+30    Charlie  
+
+### TITLE ###
+Rad Filter MultipleFields AND
+### INPUT ###
+ages = [15, 25, 30, 12]
+names = ["Alice", "Bob", "Charlie", "Di"]
+display:
+    fields ages, names
+    ages:
+        filter fn(a) a >= 18
+    names:
+        filter fn(n) len(n) > 3
+### STDOUT ###
+ages  names   
+30    Charlie  
+
+### TITLE ###
+Rad Filter WithMap
+### INPUT ###
+ages = [15, 25, 30, 12]
+display:
+    fields ages
+    ages:
+        filter fn(a) a >= 18
+        map fn(a) a * 12
+### STDOUT ###
+ages 
+300   
+360   
+
+### TITLE ###
+Rad Filter EmptyResult
+### INPUT ###
+ages = [15, 12, 10]
+display:
+    fields ages
+    ages:
+        filter fn(a) a >= 18
+### STDOUT ###
+ages 
+
+### TITLE ###
+Rad Filter UsingIdentifier
+### INPUT ###
+is_adult = fn(age) age >= 18
+ages = [15, 25, 30, 12]
+display:
+    fields ages
+    ages:
+        filter is_adult
+### STDOUT ###
+ages 
+25    
+30    
+
+### TITLE ###
+Rad Filter WithSorting
+### INPUT ###
+ages = [15, 25, 10, 30, 12, 22]
+names = ["Alice", "Bob", "Eve", "Charlie", "David", "Frank"]
+display:
+    fields ages, names
+    sort ages desc
+    ages:
+        filter fn(a) a >= 18
+### STDOUT ###
+ages  names   
+30    Charlie  
+25    Bob      
+22    Frank    
+
+### TITLE ###
+Rad Filter FilterBeforeMapVerification
+### INPUT ###
+values = [10, 20, 30, 40]
+display:
+    fields values
+    values:
+        filter fn(v) v < 35
+        map fn(v) v * 2
+### STDOUT ###
+values 
+20      
+40      
+60      
+
+### TITLE ###
+Rad Filter CannotFilterUnevenLengths
+### INPUT ###
+values1 = [1, 2, 3, 4]
+values2 = [11, 12, 13]
+display:
+    fields values1, values2
+    values1, values2:
+        filter fn(v) v % 2 == 0
+### STDERR ###
+error[RAD20042]: Bug: Field "values2" has 3 rows but expected 4. All fields must have identical row counts.
+  --> <script>:4:21
+  |
+3 | display:
+4 |     fields values1, values2
+  |                     ^^^^^^^
+5 |     values1, values2:
+6 |         filter fn(v) v % 2 == 0
+  |
+   = info: rad explain RAD20042
+
+
+### EXIT ###
+1

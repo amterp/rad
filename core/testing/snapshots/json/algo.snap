@@ -1,0 +1,323 @@
+### TITLE ###
+Algo json non root array extraction
+### INPUT ###
+url = "https://google.com"
+
+Id = json.id
+Names = json.names[]
+
+request url:
+    fields Id, Names
+print(Id[0])
+print(Names)
+### ARGS ###
+--mock-response
+.*:./responses/not_root_array.json
+### STDOUT ###
+1
+[ "Alice", "Bob", "Charlie" ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo key extraction
+### INPUT ###
+url = "https://google.com"
+
+Name = json.results.*
+Age = json.results.*.age
+Hometown = json.results.*.hometown
+
+rad url:
+    fields Name, Age, Hometown
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys.json
+### STDOUT ###
+Name   Age  Hometown    
+Alice  30   New York     
+Bob    40   Los Angeles  
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo key array extraction
+### INPUT ###
+url = "https://google.com"
+
+Hometown = json.*
+Name = json.*[].name
+Age = json.*[].age
+
+rad url:
+    fields Name, Age, Hometown
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys_array.json
+### STDOUT ###
+Name       Age  Hometown 
+Alice      30   London    
+Bob        40   London    
+Charlotte  35   Paris     
+David      25   Paris     
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo nested wildcard extraction
+### INPUT ###
+url = "https://google.com"
+
+city = json.*
+country = json.*.*
+name = json.*.*[].name
+age = json.*.*[].age
+
+rad url:
+    fields city, country, name, age
+### ARGS ###
+--mock-response
+.*:./responses/nested_wildcard.json
+### STDOUT ###
+city  country    name       age 
+York  Australia  Charlotte  35   
+York  Australia  David      25   
+York  Australia  Eve        20   
+York  England    Alice      30   
+York  England    Bob        40   
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo wildcard list capture
+### INPUT ###
+url = "https://google.com"
+
+names = json.*
+ids = json.*.ids
+
+request url:
+    fields names, ids
+print(names)
+print(ids)
+### ARGS ###
+--mock-response
+.*:./responses/array_wildcard.json
+### STDOUT ###
+[ "Alice", "Bob", "Charlie" ]
+[ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9, 10 ] ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo wildcard list object capture
+### INPUT ###
+url = "https://google.com"
+
+names = json.*
+ids = json.*.ids[].id
+
+request url:
+    fields names, ids
+print(names)
+print(ids)
+### ARGS ###
+--mock-response
+.*:./responses/array_objects.json
+### STDOUT ###
+[ "Alice", "Alice", "Alice", "Bob", "Charlie", "Charlie" ]
+[ 1, 2, 3, 4, 5, 6 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo list of object capture
+### INPUT ###
+url = "https://google.com"
+Building = json.buildings.*
+issues = json.buildings.*.issues
+request url:
+    fields Building, issues
+print([len(x) for x in issues])
+### ARGS ###
+--mock-response
+.*:./responses/issues.json
+### STDOUT ###
+[ 2, 3 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo capture root array
+### INPUT ###
+url = "https://google.com"
+
+ids = json[]
+
+request url:
+    fields ids
+print(ids)
+### ARGS ###
+--mock-response
+.*:./responses/root_prim_array.json
+### STDOUT ###
+[ 1, 2, 3 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo capture non array and array
+### INPUT ###
+url = "https://google.com"
+
+len = json.len
+ages = json.results[].age
+
+request url:
+    fields len, ages
+print(len[0])
+print(ages)
+### ARGS ###
+--mock-response
+.*:./responses/array_and_non_array.json
+### STDOUT ###
+2
+[ 30, 40 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo capture non array and wildcard
+### INPUT ###
+url = "https://google.com"
+
+len = json.len
+ages = json.results.*.age
+
+request url:
+    fields len, ages
+print(len[0])
+print(ages)
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys.json
+### STDOUT ###
+2
+[ 30, 40 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo capture json node
+### INPUT ###
+url = "https://google.com"
+node = json.results.Alice
+request url:
+    fields node
+print(sort("{node[0]}"))
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys.json
+### STDOUT ###
+      """""",03::NYaeeeghkmnooortww{}
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo can capture whole json
+### INPUT ###
+url = "https://google.com"
+node = json
+request url:
+    fields node
+print(sort("{node[0]}")) // hack to get the test consistent, as the order of keys in a map is not guaranteed
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+             """""""""""",,,12::::AB[]aabcddeeeiiilmmnno{{}}
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo can capture whole complex json
+### INPUT ###
+url = "https://google.com"
+node = json
+request url:
+    fields node
+pprint(node[0])
+### ARGS ###
+--mock-response
+.*:./responses/lots_of_types.json
+### STDOUT ###
+[
+  {
+    "friends": [
+      {
+        "id": 2,
+        "name": "Bob"
+      }
+    ],
+    "height": 1.7,
+    "id": 1,
+    "name": "Alice",
+    "old": true
+  },
+  {
+    "friends": [
+      {
+        "id": 1,
+        "name": "Alice"
+      },
+      {
+        "height": null,
+        "id": 3,
+        "name": "Charlie"
+      },
+      null
+    ],
+    "height": 1.8,
+    "id": 2,
+    "name": "Bob",
+    "old": false
+  },
+  null
+]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo helpful error if rad block mixes array and none array fields
+### INPUT ###
+url = "https://google.com"
+
+Names = json.results[].name
+Len = json.len
+
+rad url:
+    fields Names, Len
+### ARGS ###
+--mock-response
+.*:./responses/array_and_non_array.json
+### STDOUT ###
+Names  Len 
+Alice  2    
+Bob    2    
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+

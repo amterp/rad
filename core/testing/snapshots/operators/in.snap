@@ -1,0 +1,104 @@
+### TITLE ###
+In string
+### INPUT ###
+a = "alice"
+print("li" in a)
+print("hello" in a)
+print(2 in "123")
+print(2 in "456")
+### STDOUT ###
+true
+false
+true
+false
+
+### TITLE ###
+In array
+### INPUT ###
+a = [40, 50, 60]
+print(50 in a)
+print(70 in a)
+print(true in [true, false])
+print(true in [false])
+### STDOUT ###
+true
+false
+true
+false
+
+### TITLE ###
+In string array
+### INPUT ###
+a = ["alice", "bob", "charlie"]
+print("alice" in a)
+print("ALICE" in a)
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Not in array
+### INPUT ###
+a = [40, 50, 60]
+print(50 not in a)
+print(70 not in a)
+### STDOUT ###
+false
+true
+
+### TITLE ###
+In map
+### INPUT ###
+a = { "alice": 40, "bob": "bar", "charlie": [1, "hi"] }
+print("bob" in a)
+print("dave" in a)
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Can be used in if statement
+### INPUT ###
+a = [40, 50, 60]
+
+if 30 + 20 in a:
+	print("50 is in a")
+else:
+	print("50 is not in a")
+
+if 70 in a:
+	print("70 is in a")
+else:
+	print("70 is not in a")
+### STDOUT ###
+50 is in a
+70 is not in a
+
+### TITLE ###
+Can use expressions
+### INPUT ###
+a = [40, 50, 60]
+b = [4, 5, 6]
+print(30 + 20 in a)
+print(b[0] * 10 in a)
+print(b[0] * 100 in a)
+### STDOUT ###
+true
+true
+false
+
+### TITLE ###
+Can nest in
+### INPUT ###
+a = [true]
+b = [false]
+print(true in b in a)
+print(false in b in a)
+print(true in a in b)
+print(false in a in b)
+### STDOUT ###
+false
+true
+false
+true
+

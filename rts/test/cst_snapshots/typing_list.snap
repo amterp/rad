@@ -5,7 +5,7 @@ fn foo(x: int[]):
     pass
 fn bar(x: int|float[]?):
     pass
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 60] PS: [0,  0] PE: [3,  8] source_file
 B: [ 0, 26] PS: [0,  0] PE: [1,  8]   fn_named
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
@@ -39,3 +39,4 @@ B: [48, 49] PS: [2, 21] PE: [2, 22]           optional: ? `?`
 B: [49, 50] PS: [2, 22] PE: [2, 23]     ) `)`
 B: [50, 51] PS: [2, 23] PE: [2, 24]     block_colon: : `:`
 B: [56, 60] PS: [3,  4] PE: [3,  8]     stmt: pass_stmt `pass`
+

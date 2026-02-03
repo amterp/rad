@@ -4,7 +4,7 @@ Var path idx
 a[0]
 a[0][1]
 a[-1]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 18] PS: [0, 0] PE: [2, 5] source_file
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]   expr_stmt
 B: [ 0,  4] PS: [0, 0] PE: [0, 4]     expr: expr
@@ -104,3 +104,4 @@ B: [16, 17] PS: [2, 3] PE: [2, 4]                                               
 B: [16, 17] PS: [2, 3] PE: [2, 4]                                                 literal
 B: [16, 17] PS: [2, 3] PE: [2, 4]                                                   int `1`
 B: [17, 18] PS: [2, 4] PE: [2, 5]                         ] `]`
+

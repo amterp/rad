@@ -1,0 +1,34 @@
+### TITLE ###
+Map list with lambda
+### INPUT ###
+a = ["alice", "bob", "charlie"]
+a.map(fn(n) n.upper()).print()
+### STDOUT ###
+[ "ALICE", "BOB", "CHARLIE" ]
+
+### TITLE ###
+Map list with function
+### INPUT ###
+a = ["alice", "bob", "charlie"]
+to_upper = fn(n) n.upper()
+a.map(to_upper).print()
+### STDOUT ###
+[ "ALICE", "BOB", "CHARLIE" ]
+
+### TITLE ###
+Map map with lambda
+### INPUT ###
+a = { "alice": "bobson", "charlie": "davidson" }
+a.map(fn(k, v) "{k} {v}").print()
+### STDOUT ###
+[ "alice bobson", "charlie davidson" ]
+
+### TITLE ###
+Map map with function
+### INPUT ###
+a = { "alice": "bobson", "charlie": "davidson" }
+joiner = fn(k, v) "{k} {v}"
+a.map(joiner).print()
+### STDOUT ###
+[ "alice bobson", "charlie davidson" ]
+

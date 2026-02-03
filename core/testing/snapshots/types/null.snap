@@ -1,0 +1,102 @@
+### TITLE ###
+Null print
+### INPUT ###
+print(null)
+null.print()
+[1, 2, null, 3].print()
+{"key": null}.print()
+### STDOUT ###
+null
+null
+[ 1, 2, null, 3 ]
+{ "key": null }
+
+### TITLE ###
+Null errors if used in wrong function
+### INPUT ###
+split(null, ",")
+### STDERR ###
+error[RAD30001]: Value 'null' (null) is not compatible with expected type 'str'
+  --> <script>:1:7
+  |
+1 | split(null, ",")
+  |       ^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Null parse json gives null
+### INPUT ###
+j = r'{ "key": null }'
+o = parse_json(j)
+print(o)
+print(o.key)
+print(type_of(o.key))
+### STDOUT ###
+{ "key": null }
+null
+null
+
+### TITLE ###
+Null is falsy
+### INPUT ###
+a = null
+if a:
+	print("a is truthy")
+else:
+	print("a is falsy")
+### STDOUT ###
+a is falsy
+
+### TITLE ###
+Null omitted non default args are null
+### INPUT ###
+args:
+    aaa str
+    bbb str
+
+    aaa mutually excludes bbb
+
+print(type_of(aaa), type_of(bbb))
+
+if not bbb:
+	print("aaa!")
+### ARGS ###
+--aaa=hi
+### STDOUT ###
+str null
+aaa!
+
+### TITLE ###
+Null expressions
+### INPUT ###
+a = null
+b = null
+c = "not null"
+
+print(a == b) // true
+print(a == c) // false
+
+print(a != b) // false
+print(a != c) // true
+
+print(a ? "t" : "f") // f
+
+print(a in [1, 2, 3]) // false
+print(a not in [1, 2, 3]) // true
+print(a in [1, null, 3]) // true
+print(a not in [1, null, 3]) // false
+### STDOUT ###
+true
+false
+false
+true
+f
+false
+true
+true
+false
+

@@ -8,7 +8,7 @@ switch num:
         print(30, 40)
     default:
         print(0)
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 112] PS: [0,  0] PE: [6, 16] source_file
 B: [  0, 112] PS: [0,  0] PE: [6, 16]   switch_stmt
 B: [  0,   6] PS: [0,  0] PE: [0,  6]     switch `switch`
@@ -191,3 +191,4 @@ B: [110, 111] PS: [6, 14] PE: [6, 15]                                           
 B: [110, 111] PS: [6, 14] PE: [6, 15]                                                         literal
 B: [110, 111] PS: [6, 14] PE: [6, 15]                                                           int `0`
 B: [111, 112] PS: [6, 15] PE: [6, 16]                                   ) `)`
+

@@ -7,7 +7,7 @@ a = """
 b = """
 '{age}'
 """
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 40] PS: [0, 0] PE: [5, 3] source_file
 B: [ 0, 20] PS: [0, 0] PE: [2, 3]   assign
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
@@ -81,3 +81,4 @@ B: [31, 34] PS: [4, 2] PE: [4, 5]                                               
 B: [34, 35] PS: [4, 5] PE: [4, 6]                                   } `}`
 B: [35, 36] PS: [4, 6] PE: [4, 7]                                 content: string_content `'`
 B: [36, 40] PS: [4, 7] PE: [5, 3]                               end: string_end `\n"""`
+

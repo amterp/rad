@@ -1,0 +1,537 @@
+### TITLE ###
+Misc_SyntaxError
+### INPUT ###
+1 = 2
+### STDERR ###
+error[RAD10009]: Unexpected '1 ='
+  --> <script>:1:1
+  |
+1 | 1 = 2
+  | ^^^
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_ReadingFromUnderscoreVarErrors
+### INPUT ###
+
+_ = 2
+print(_)
+### STDERR ###
+error[RAD20039]: Cannot use '_' as a value
+  --> <script>:3:7
+  |
+2 | _ = 2
+3 | print(_)
+  |       ^
+  |
+   = info: rad explain RAD20039
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop
+### INPUT ###
+
+a = [1, 2, 3]
+for v in a:
+	print(v)
+### STDOUT ###
+1
+2
+3
+
+### TITLE ###
+Misc_CanHaveNegativeNumbers
+### INPUT ###
+
+a = -10
+print(a)
+b = -20.2
+print(b)
+print("{-12}")
+### STDOUT ###
+-10
+-20.2
+-12
+
+### TITLE ###
+Misc_PrioritizesHelpIfBothHelpAndVersionSpecified
+### SKIP ###
+TODO: currently failing, should fix
+### INPUT ###
+
+### ARGS ###
+-h
+-v
+### STDOUT ###
+rad: A tool for writing user-friendly command line scripts.
+GitHub: https://github.com/amterp/rad
+Documentation: https://amterp.github.io/rad/
+
+Usage:
+  rad [script path | command] [flags]
+
+Commands:
+  new           Sets up a new Rad script.
+  docs          Opens rad's documentation website.
+  check         Validates & lints Rad scripts.
+  home          Prints out rad's home directory.
+  gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
+  stash         Interacts with script stashes.
+  explain       Explains Rad error codes with detailed documentation.
+
+To see help for a specific command, run `rad <command> -h`.
+
+Global options:
+  -h, --help                Print usage string.
+  -r, --repl                Start interactive REPL mode.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --src                 Instead of running the target script, just print it out.
+      --src-tree            Instead of running the target script, print out its syntax tree.
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
+      --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+
+To execute a Rad script:
+  rad path/to/script.rad [args]
+
+To execute a command:
+  rad <command> [args]
+
+If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+
+### TITLE ###
+Misc_PrintsHelpToStderrIfUnknownGlobalFlag
+### INPUT ###
+
+### ARGS ###
+--asd
+### STDERR ###
+Unknown arguments: [--asd]
+
+
+rad: A tool for writing user-friendly command line scripts.
+GitHub: https://github.com/amterp/rad
+Documentation: https://amterp.github.io/rad/
+
+Usage:
+  rad [script path | command] [flags]
+
+Commands:
+  new           Sets up a new Rad script.
+  docs          Opens rad's documentation website.
+  check         Validates & lints Rad scripts.
+  home          Prints out rad's home directory.
+  gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
+  stash         Interacts with script stashes.
+  explain       Explains Rad error codes with detailed documentation.
+
+To see help for a specific command, run `rad <command> -h`.
+
+Global options:
+  -h, --help                Print usage string.
+  -r, --repl                Start interactive REPL mode.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --src                 Instead of running the target script, just print it out.
+      --src-tree            Instead of running the target script, print out its syntax tree.
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
+      --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+
+To execute a Rad script:
+  rad path/to/script.rad [args]
+
+To execute a command:
+  rad <command> [args]
+
+If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+
+### EXIT ###
+1
+### TITLE ###
+Misc_Abs_Int
+### INPUT ###
+
+print(abs(10))
+print(abs(-10))
+### STDOUT ###
+10
+10
+
+### TITLE ###
+Misc_Abs_Float
+### INPUT ###
+
+print(abs(10.2))
+print(abs(-10.2))
+### STDOUT ###
+10.2
+10.2
+
+### TITLE ###
+Misc_Abs_ErrorsOnAlphabetical
+### INPUT ###
+
+a = abs("asd")
+### STDERR ###
+error[RAD30001]: Value '"asd"' (str) is not compatible with expected type 'int|float'
+  --> <script>:2:9
+  |
+1 |
+2 | a = abs("asd")
+  |         ^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_PrintsUsageIfInvokedWithNoScript
+### INPUT ###
+
+### STDOUT ###
+rad: A tool for writing user-friendly command line scripts.
+GitHub: https://github.com/amterp/rad
+Documentation: https://amterp.github.io/rad/
+
+Usage:
+  rad [script path | command] [flags]
+
+Commands:
+  new           Sets up a new Rad script.
+  docs          Opens rad's documentation website.
+  check         Validates & lints Rad scripts.
+  home          Prints out rad's home directory.
+  gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
+  stash         Interacts with script stashes.
+  explain       Explains Rad error codes with detailed documentation.
+
+To see help for a specific command, run `rad <command> -h`.
+
+Global options:
+  -h, --help                Print usage string.
+  -r, --repl                Start interactive REPL mode.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --src                 Instead of running the target script, just print it out.
+      --src-tree            Instead of running the target script, print out its syntax tree.
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
+      --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+
+To execute a Rad script:
+  rad path/to/script.rad [args]
+
+To execute a command:
+  rad <command> [args]
+
+If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+
+### TITLE ###
+Misc_CanShadowGlobalFlag
+### INPUT ###
+
+args:
+	src str
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <src> [OPTIONS]
+
+Script args:
+      --src str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+
+### TITLE ###
+Misc_CanShadowGlobalFlagThatHasShorthand
+### INPUT ###
+
+args:
+	debug str
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <debug> [OPTIONS]
+
+Script args:
+      --debug str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d                    Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Misc_CanShadowGlobalShorthand
+### INPUT ###
+
+args:
+	myquiet q str
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <myquiet> [OPTIONS]
+
+Script args:
+  -q, --myquiet str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+      --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Misc_CanShadowGlobalFlagAndShorthand
+### INPUT ###
+
+args:
+	version v str
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase <version> [OPTIONS]
+
+Script args:
+  -v, --version str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Misc_CanShadowGlobalFlagAndUseIt
+### INPUT ###
+
+args:
+	version v str
+print(version+"!")
+### ARGS ###
+someversion
+### STDOUT ###
+someversion!
+
+### TITLE ###
+Misc_GlobalSrcFlag
+### INPUT ###
+
+### ARGS ###
+./rad_scripts/example_arg.rad
+--src
+### STDOUT ###
+args:
+    name str # The name.
+
+### TITLE ###
+Misc_UserSrcFlagShadowsGlobalSrcFlag
+### INPUT ###
+
+args:
+	src str
+
+print("User src value:", src)
+### ARGS ###
+--src
+user-provided-value
+### STDOUT ###
+User src value: user-provided-value
+
+### TITLE ###
+Misc_PercentCharactersInFileHeader
+### INPUT ###
+---
+This script calculates 10% of values.
+It shows 100% accurate results.
+URL encoding like %20 also works fine.
+---
+args:
+    value int    # Input value for % calculation
+
+print("Result: {value}")
+### ARGS ###
+--help
+### STDOUT ###
+This script calculates 10% of values.
+It shows 100% accurate results.
+URL encoding like %20 also works fine.
+
+Usage:
+  TestCase <value> [OPTIONS]
+
+Script args:
+      --value int   Input value for % calculation
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Misc_PercentCharactersInArgComments
+### INPUT ###
+---
+Test script for percent in arg comments
+---
+args:
+    percentage float    # Value as %, e.g. 95.5%
+    url str            # URL with %20 encoding
+    discount int       # Discount rate (5% to 50%)
+
+print("Values: {percentage}, {url}, {discount}")
+### ARGS ###
+--help
+### STDOUT ###
+Test script for percent in arg comments
+
+Usage:
+  TestCase <percentage> <url> <discount> [OPTIONS]
+
+Script args:
+      --percentage float   Value as %, e.g. 95.5%
+      --url str            URL with %20 encoding
+      --discount int       Discount rate (5% to 50%)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+Misc_DoesNotMisFormatWithMissing
+### INPUT ###
+pprint("%s")
+### STDOUT ###
+"%s"
+
+### TITLE ###
+Misc_InvalidSyntax_WithSrcFlag
+### INPUT ###
+foo = [11, 12, 13
+### ARGS ###
+--src
+### STDOUT ###
+foo = [11, 12, 13
+
+### TITLE ###
+Misc_UndefinedVariableSuggestsSimilar
+### INPUT ###
+
+username = "alice"
+print(usernme)
+### STDERR ###
+error[RAD20028]: Undefined variable: usernme
+  --> <script>:3:7
+  |
+2 | username = "alice"
+3 | print(usernme)
+  |       ^^^^^^^
+  |
+   = help: a variable with a similar name exists: username
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_UndefinedVariableSuggestsMultipleSimilar
+### INPUT ###
+
+user_name = "alice"
+username = "bob"
+print(usernme)
+### STDERR ###
+error[RAD20028]: Undefined variable: usernme
+  --> <script>:4:7
+  |
+3 | username = "bob"
+4 | print(usernme)
+  |       ^^^^^^^
+  |
+   = help: variables with similar names exist: username, user_name
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_UndefinedVariableNoSuggestionIfTooDistant
+### INPUT ###
+
+foo = "bar"
+print(completely_different_name)
+### STDERR ###
+error[RAD20028]: Undefined variable: completely_different_name
+  --> <script>:3:7
+  |
+2 | foo = "bar"
+3 | print(completely_different_name)
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Misc_Func_Get_Rad_Home
+### INPUT ###
+
+d = get_rad_home()
+d = d.split("/")
+print(d.len() > 0)
+d[-1].print()
+### STDOUT ###
+true
+rad_test_home
+

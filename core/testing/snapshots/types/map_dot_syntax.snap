@@ -1,0 +1,36 @@
+### TITLE ###
+Map dot access
+### INPUT ###
+a = {"alice": 1, "bob": { "charlie": 2 }}
+print(a.alice)
+print(a.alice + a.bob.charlie)
+### STDOUT ###
+1
+3
+
+### TITLE ###
+Map dot can mix access
+### INPUT ###
+a = {"alice": { "bob": { "charlie": 1 } } }
+print(a.alice["bob"].charlie)
+### STDOUT ###
+1
+
+### TITLE ###
+Map dot assign
+### INPUT ###
+a = { "alice": 1 }
+a.alice = 2
+print(a)
+### STDOUT ###
+{ "alice": 2 }
+
+### TITLE ###
+Map dot mixed assign
+### INPUT ###
+a = {"alice": { "bob": { "charlie": 1 } } }
+a.alice["bob"].charlie = 3
+print(a)
+### STDOUT ###
+{ "alice": { "bob": { "charlie": 3 } } }
+

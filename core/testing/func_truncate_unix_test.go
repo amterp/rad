@@ -54,10 +54,10 @@ print(truncate("hello", 0))
 	expected := `error[RAD20017]: Requires at least 1, got 0
   --> TestCase:2:7
   |
-1 | 
+1 |
 2 | print(truncate("hello", 0))
   |       ^^^^^^^^^^^^^^^^^^^^
-3 | 
+3 |
   |
    = info: rad explain RAD20017
 
@@ -73,10 +73,10 @@ print(truncate("hello", -5))
 	expected := `error[RAD20017]: Requires at least 1, got -5
   --> TestCase:2:7
   |
-1 | 
+1 |
 2 | print(truncate("hello", -5))
   |       ^^^^^^^^^^^^^^^^^^^^^
-3 | 
+3 |
   |
    = info: rad explain RAD20017
 

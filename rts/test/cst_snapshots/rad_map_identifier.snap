@@ -5,7 +5,7 @@ rad url:
     fields Name, Age
     Name:
         map upper
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 57] PS: [0,  0] PE: [3, 17] source_file
 B: [ 0, 57] PS: [0,  0] PE: [3, 17]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -33,3 +33,4 @@ B: [38, 39] PS: [2,  8] PE: [2,  9]       : `:`
 B: [48, 57] PS: [3,  8] PE: [3, 17]       mod_stmt: rad_field_mod_map
 B: [48, 51] PS: [3,  8] PE: [3, 11]         map `map`
 B: [52, 57] PS: [3, 12] PE: [3, 17]         lambda: identifier `upper`
+

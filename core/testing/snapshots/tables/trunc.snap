@@ -1,0 +1,47 @@
+### TITLE ###
+TruncateMatchesColWidth
+### INPUT ###
+url = "https://google.com"
+id = json[].id
+name = json[].name
+rad url:
+	fields id, name
+	name:
+		map fn(x) truncate(x, 5)
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+id  name  
+1   Alice  
+2   Bob    
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+TruncateErrorsIfInvalidField
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+rad url:
+    fields name
+    does_not_exist:
+        map fn(x) truncate(x, 5)
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDERR ###
+error[RAD20028]: Cannot modify undefined field "does_not_exist"
+  --> <script>:5:5
+  |
+4 |     fields name
+5 |     does_not_exist:
+  |     ^^^^^^^^^^^^^^
+6 |         map fn(x) truncate(x, 5)
+  |
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1

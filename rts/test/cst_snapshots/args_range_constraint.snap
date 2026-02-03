@@ -11,7 +11,7 @@ args:
     age5 range (0,120]
     age6 range [0.1, 120.5]
     age7 range [,] // fails
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 185] PS: [0,  0] PE: [9, 27] source_file
 B: [  0, 185] PS: [0,  0] PE: [9, 27]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -84,3 +84,4 @@ B: [175, 175] PS: [9, 17] PE: [9, 17]       max: int_arg
 B: [175, 175] PS: [9, 17] PE: [9, 17]         value: int (MISSING) ``
 B: [175, 176] PS: [9, 17] PE: [9, 18]       closer: ] `]`
 B: [177, 185] PS: [9, 19] PE: [9, 27]     comment `// fails`
+

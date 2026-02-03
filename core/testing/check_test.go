@@ -31,80 +31,6 @@ Reported 2 diagnostics.
 	assertExitCode(t, 1)
 }
 
-func Test_Check_FunctionShadowsArgument_Simple(t *testing.T) {
-	script := `
-args:
-    open str?
-
-fn open(path: str) -> void:
-    print("Opening {path}")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertErrorContains(t, 1, "Hoisted function 'open' shadows an argument with the same name")
-}
-
-func Test_Check_FunctionShadowsArgument_Multiple(t *testing.T) {
-	script := `
-args:
-    name str
-    count int
-
-fn name() -> str:
-    return "test"
-
-fn count() -> int:
-    return 10
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertErrorContains(t, 1, "Hoisted function 'name' shadows an argument with the same name")
-}
-
-func Test_Check_FunctionShadowsArgument_NoArgsBlock(t *testing.T) {
-	script := `
-fn open(path: str) -> void:
-    print("Opening {path}")
-
-open("test.txt")
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "Opening test.txt\n")
-	assertNoErrors(t)
-}
-
-func Test_Check_FunctionShadowsArgument_DifferentNames(t *testing.T) {
-	script := `
-args:
-    name str = "World"
-
-fn greet(person: str) -> void:
-    print("Hi {person}!")
-
-greet("Alice")
-print("Hello {name}!")
-`
-	setupAndRunCode(t, script, "Bob", "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "Hi Alice!\nHello Bob!\n")
-	assertNoErrors(t)
-}
-
-func Test_Check_FunctionShadowsArgument_NestedFunctionAllowed(t *testing.T) {
-	script := `
-args:
-    name str = "World"
-
-fn outer() -> void:
-    fn name() -> str:
-        return "inner"
-    print(name())
-
-outer()
-print("Hello {name}!")
-`
-	setupAndRunCode(t, script, "Bob", "--color=never")
-	assertOnlyOutput(t, stdOutBuffer, "inner\nHello Bob!\n")
-	assertNoErrors(t)
-}
-
 func Test_Check_UnknownFunctions(t *testing.T) {
 	setupAndRunArgs(t, "check", "./rad_scripts/unknown_functions.rad", "--color=never")
 	expected := `L1:1: HINT
@@ -122,15 +48,6 @@ L3:1: HINT
 Reported 2 diagnostics.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
-}
-
-func Test_Check_ReservedKeyword_Args(t *testing.T) {
-	script := `
-args = 5
-print(args)
-`
-	setupAndRunCode(t, script, "--color=never")
-	assertErrorContains(t, 1, "'args' is reserved (used in args blocks)")
 }
 
 func Test_Check_UnknownCommandCallbacks(t *testing.T) {

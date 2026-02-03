@@ -1,0 +1,50 @@
+### TITLE ###
+CanPassPositiveInts
+### INPUT ###
+args:
+	intArg int
+print(intArg)
+### ARGS ###
+2
+### STDOUT ###
+2
+
+### TITLE ###
+CanPassNegativeInts
+### INPUT ###
+args:
+	intArg int
+print(intArg)
+### ARGS ###
+--intArg
+-2
+### STDOUT ###
+-2
+
+### TITLE ###
+CannotPassNegativeFlagSimplyIfNumberFlagExists
+### SKIP ###
+Not yet implemented actually, grammar doesn't allow number shorts
+### INPUT ###
+args:
+	intArg int
+	one 1 bool
+print(intArg)
+### ARGS ###
+--intArg
+-2
+### STDOUT ###
+-2
+
+### TITLE ###
+Args_CanPassNegativeIntsViaDashDash
+### INPUT ###
+args:
+	intArg int
+print(intArg)
+### RAW_ARGS ###
+--
+-2
+### STDOUT ###
+-2
+

@@ -5,7 +5,7 @@ x = 5
 a = """
     {x})
     """
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 30] PS: [0, 0] PE: [3, 7] source_file
 B: [ 0,  5] PS: [0, 0] PE: [0, 5]   assign
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
@@ -59,3 +59,4 @@ B: [19, 20] PS: [2, 5] PE: [2, 6]                                               
 B: [20, 21] PS: [2, 6] PE: [2, 7]                                   } `}`
 B: [21, 22] PS: [2, 7] PE: [2, 8]                                 content: string_content `)`
 B: [22, 30] PS: [2, 8] PE: [3, 7]                               end: string_end `\n    """`
+

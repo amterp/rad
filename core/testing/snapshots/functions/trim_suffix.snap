@@ -1,0 +1,42 @@
+### TITLE ###
+Literal
+### DESCRIPTION ###
+Test that trim_suffix removes literal suffix (not character set)
+### INPUT ###
+a = "aaabbb"
+print(trim_suffix(a, "b"))
+### STDOUT ###
+aaabb
+
+### TITLE ###
+Multi char
+### INPUT ###
+print(trim_suffix("hello world", " world"))
+### STDOUT ###
+hello
+
+### TITLE ###
+No match
+### INPUT ###
+print(trim_suffix("hello", "x"))
+### STDOUT ###
+hello
+
+### TITLE ###
+Multiple occurrences
+### DESCRIPTION ###
+trim_suffix should only remove the suffix once
+### INPUT ###
+print(trim_suffix("bbb", "b"))
+### STDOUT ###
+bb
+
+### TITLE ###
+Empty suffix
+### DESCRIPTION ###
+Empty suffix should not change the string
+### INPUT ###
+print(trim_suffix("hello", ""))
+### STDOUT ###
+hello
+

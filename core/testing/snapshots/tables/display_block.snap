@@ -1,0 +1,21 @@
+### TITLE ###
+Display block can give own map
+### INPUT ###
+a = {
+	"results": [
+		{
+			"name": "alice"
+		},
+		{
+			"name": "bob"
+		},
+    ]
+}
+Name = json.results[].name
+display a:
+	fields Name
+### STDOUT ###
+Name  
+alice  
+bob    
+

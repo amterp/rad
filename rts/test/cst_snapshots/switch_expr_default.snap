@@ -5,7 +5,7 @@ foo, bar = switch num:
     case 1, 2 -> 10, 20
     case 3 -> 30, 40
     default -> 0, 0
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 87] PS: [0,  0] PE: [3, 19] source_file
 B: [ 0, 87] PS: [0,  0] PE: [3, 19]   assign
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     lefts: var_path
@@ -161,3 +161,4 @@ B: [86, 87] PS: [3, 18] PE: [3, 19]                             delegate: indexe
 B: [86, 87] PS: [3, 18] PE: [3, 19]                               root: primary_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]                                 literal
 B: [86, 87] PS: [3, 18] PE: [3, 19]                                   int `0`
+

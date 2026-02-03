@@ -7,7 +7,7 @@ switch name:
 	case "bob" -> print("BOB")
 	case "charlie" -> print("CHARLIE")
 a = 2
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 147] PS: [0,  0] PE: [5,  5] source_file
 B: [  0,  14] PS: [0,  0] PE: [0, 14]   assign
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     left: var_path
@@ -253,3 +253,4 @@ B: [146, 147] PS: [5,  4] PE: [5,  5]                       delegate: indexed_ex
 B: [146, 147] PS: [5,  4] PE: [5,  5]                         root: primary_expr
 B: [146, 147] PS: [5,  4] PE: [5,  5]                           literal
 B: [146, 147] PS: [5,  4] PE: [5,  5]                             int `2`
+

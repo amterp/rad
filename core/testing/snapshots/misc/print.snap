@@ -1,0 +1,216 @@
+### TITLE ###
+Print basic
+### INPUT ###
+print("hi alice")
+print("hi bob")
+print("hi charlie")
+### STDOUT ###
+hi alice
+hi bob
+hi charlie
+
+### TITLE ###
+Debug no debug flag
+### INPUT ###
+print("one")
+debug("two")
+debug("three")
+### STDOUT ###
+one
+
+### TITLE ###
+Debug with debug flag
+### INPUT ###
+print("one")
+debug("two")
+debug("three")
+### ARGS ###
+--debug
+### STDOUT ###
+one
+DEBUG: two
+DEBUG: three
+
+### TITLE ###
+PrettyPrint dict
+### INPUT ###
+url = "https://google.com"
+node = json.results.Alice
+request url:
+    fields node
+pprint(node[0])
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys.json
+### STDOUT ###
+{
+  "age": 30,
+  "hometown": "New York"
+}
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+PrettyPrint int
+### INPUT ###
+url = "https://google.com"
+node = json.results.Alice.age
+request url:
+    fields node
+pprint(node[0])
+### ARGS ###
+--mock-response
+.*:./responses/unique_keys.json
+### STDOUT ###
+30
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+PrettyPrint array
+### INPUT ###
+url = "https://google.com"
+node = json[].ids
+request url:
+    fields node
+pprint(node)
+### ARGS ###
+--mock-response
+.*:./responses/arrays.json
+### STDOUT ###
+[
+  [
+    1,
+    2,
+    3
+  ],
+  [
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  [
+    9,
+    10
+  ]
+]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+PrettyPrint complex
+### INPUT ###
+url = "https://google.com"
+node = json
+request url:
+    fields node
+pprint(node[0])
+### ARGS ###
+--mock-response
+.*:./responses/lots_of_types.json
+### STDOUT ###
+[
+  {
+    "friends": [
+      {
+        "id": 2,
+        "name": "Bob"
+      }
+    ],
+    "height": 1.7,
+    "id": 1,
+    "name": "Alice",
+    "old": true
+  },
+  {
+    "friends": [
+      {
+        "id": 1,
+        "name": "Alice"
+      },
+      {
+        "height": null,
+        "id": 3,
+        "name": "Charlie"
+      },
+      null
+    ],
+    "height": 1.8,
+    "id": 2,
+    "name": "Bob",
+    "old": false
+  },
+  null
+]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+PrettyPrint basics
+### INPUT ###
+pprint("alice")
+pprint(21)
+pprint(1.2)
+pprint(false)
+### STDOUT ###
+"alice"
+21
+1.2
+false
+
+### TITLE ###
+PrettyPrint map
+### INPUT ###
+a = { "alice": 35, "bob": "bar", "charlie": [1, "hi"] }
+pprint(a)
+### STDOUT ###
+{
+  "alice": 35,
+  "bob": "bar",
+  "charlie": [
+    1,
+    "hi"
+  ]
+}
+
+### TITLE ###
+Print can print emojis
+### INPUT ###
+print("👋")
+### STDOUT ###
+👋
+
+### TITLE ###
+Print can customize sep
+### INPUT ###
+print("hello", "there", "claire", sep="_")
+### STDOUT ###
+hello_there_claire
+
+### TITLE ###
+PrettyPrint empty list
+### INPUT ###
+blop = { "foo": [] }
+blop.pprint()
+### STDOUT ###
+{
+  "foo": []
+}
+
+### TITLE ###
+PrintErr
+### INPUT ###
+print_err("hi alice")
+print_err("hi", "bob", sep="_")
+print_err("hi", end="_charlie\n")
+### STDERR ###
+hi alice
+hi_bob
+hi_charlie
+

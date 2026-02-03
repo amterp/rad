@@ -4,7 +4,7 @@ Args lists
 args:
    banana int[] = [2, ++-+--3]
    citrus float[] = [2.3, ++-+--4.5]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 73] PS: [0,  0] PE: [2, 36] source_file
 B: [ 0, 73] PS: [0,  0] PE: [2, 36]   arg_block
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -45,3 +45,4 @@ B: [67, 68] PS: [2, 30] PE: [2, 31]           op: - `-`
 B: [68, 69] PS: [2, 31] PE: [2, 32]           op: - `-`
 B: [69, 72] PS: [2, 32] PE: [2, 35]           value: float `4.5`
 B: [72, 73] PS: [2, 35] PE: [2, 36]         ] `]`
+

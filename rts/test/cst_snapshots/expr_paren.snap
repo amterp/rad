@@ -2,7 +2,7 @@
 Parenthesized expr
 ### INPUT ###
 print((1 + 2) * 2)
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 18] PS: [0,  0] PE: [0, 18] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr_stmt
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr: expr
@@ -64,3 +64,4 @@ B: [16, 17] PS: [0, 16] PE: [0, 17]                                             
 B: [16, 17] PS: [0, 16] PE: [0, 17]                                                   literal
 B: [16, 17] PS: [0, 16] PE: [0, 17]                                                     int `2`
 B: [17, 18] PS: [0, 17] PE: [0, 18]                             ) `)`
+

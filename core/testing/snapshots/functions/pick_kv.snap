@@ -1,0 +1,65 @@
+### TITLE ###
+Returns only option
+### INPUT ###
+keys = ["Chicken"]
+values = ["Chicken Burger"]
+print(pick_kv(keys, values))
+### STDOUT ###
+Chicken Burger
+
+### TITLE ###
+Filter to one option
+### INPUT ###
+keys = ["Beef", "Chicken", "Fish"]
+values = ["Hamburger", "Chicken Burger", "Fishwich"]
+print(pick_kv(keys, values, "Bee"))
+### STDOUT ###
+Hamburger
+
+### TITLE ###
+Errors if empty keys values
+### INPUT ###
+keys = []
+values = []
+pick_kv(keys, values)
+### STDERR ###
+error[RAD20000]: Filtered 0 options to 0 with filters: []
+  --> <script>:3:1
+  |
+2 | values = []
+3 | pick_kv(keys, values)
+  | ^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Errors if key value arrays are not equal length
+### INPUT ###
+keys = ["Beef"]
+values = ["Hamburger", "Chicken Burger"]
+pick_kv(keys, values)
+### STDERR ###
+error[RAD20000]: Number of keys and values must match, but got 1 key and 2 values
+  --> <script>:3:1
+  |
+2 | values = ["Hamburger", "Chicken Burger"]
+3 | pick_kv(keys, values)
+  | ^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Works with multiple tokens
+### INPUT ###
+keys = ["Beef", "Chicken", "Fish"]
+values = ["Hamburger", "Chicken Burger", "Fishwich"]
+print(pick_kv(keys, values, ["Be", "ef"]))
+### STDOUT ###
+Hamburger
+

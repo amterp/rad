@@ -1,0 +1,203 @@
+### TITLE ###
+Can defer
+### INPUT ###
+
+defer print("bye")
+print("hi")
+### STDOUT ###
+hi
+bye
+
+### TITLE ###
+Executes LIFO
+### INPUT ###
+
+defer print("bye1")
+defer print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye2
+bye1
+
+### TITLE ###
+Block
+### INPUT ###
+
+defer:
+	print("bye1")
+	print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye1
+bye2
+
+### TITLE ###
+Runs despite clean exit
+### INPUT ###
+
+defer print("bye")
+print("hi")
+exit(0)
+### STDOUT ###
+hi
+bye
+
+### TITLE ###
+Runs despite error exit
+### INPUT ###
+
+defer print("bye")
+print("hi")
+exit(1)
+### STDOUT ###
+hi
+bye
+
+### EXIT ###
+1
+### TITLE ###
+Runs despite error
+### INPUT ###
+
+defer print("bye")
+print("hi")
+print(asd)
+### STDOUT ###
+hi
+bye
+
+### STDERR ###
+error[RAD20028]: Undefined variable: asd
+  --> <script>:4:7
+  |
+3 | print("hi")
+4 | print(asd)
+  |       ^^^
+  |
+   = help: variables with similar names exist: abs, hash, rand
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+All defers run even if one fails
+### INPUT ###
+
+defer print("bye1")
+defer print(asd)
+defer print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye2
+bye1
+
+### STDERR ###
+error[RAD20028]: Undefined variable: asd
+  --> <script>:3:13
+  |
+2 | defer print("bye1")
+3 | defer print(asd)
+  |             ^^^
+4 | defer print("bye2")
+5 | print("hi")
+  |
+   = help: variables with similar names exist: abs, hash, rand
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Uses non-zero code from LIFO deferred exit despite deferred error
+### INPUT ###
+
+defer print("bye1")
+defer print(asd)
+defer exit(3)  // this one executed before 'asd' error, so we should use its code
+defer print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye2
+bye1
+
+### STDERR ###
+error[RAD20028]: Undefined variable: asd
+  --> <script>:3:13
+  |
+2 | defer print("bye1")
+3 | defer print(asd)
+  |             ^^^
+4 | defer exit(3)  // this one executed before 'asd' error, so we should use its code
+5 | defer print("bye2")
+  |
+   = help: variables with similar names exist: abs, hash, rand
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+3
+### TITLE ###
+Uses error code LIFO deferred error over later non-zero exit
+### INPUT ###
+
+defer print("bye1")
+defer exit(3)
+defer print(asd)  // this error occurs before the exit above, so we use error code 1
+defer print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye2
+bye1
+
+### STDERR ###
+error[RAD20028]: Undefined variable: asd
+  --> <script>:4:13
+  |
+3 | defer exit(3)
+4 | defer print(asd)  // this error occurs before the exit above, so we use error code 1
+  |             ^^^
+5 | defer print("bye2")
+6 | print("hi")
+  |
+   = help: variables with similar names exist: abs, hash, rand
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Ignores zero code from LIFO deferred exit instead uses deferred error
+### INPUT ###
+
+defer print("bye1")
+defer print(asd)
+defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
+defer print("bye2")
+print("hi")
+### STDOUT ###
+hi
+bye2
+bye1
+
+### STDERR ###
+error[RAD20028]: Undefined variable: asd
+  --> <script>:3:13
+  |
+2 | defer print("bye1")
+3 | defer print(asd)
+  |             ^^^
+4 | defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
+5 | defer print("bye2")
+  |
+   = help: variables with similar names exist: abs, hash, rand
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1

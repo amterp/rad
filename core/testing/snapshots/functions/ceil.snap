@@ -1,0 +1,44 @@
+### TITLE ###
+Ceil ints
+### INPUT ###
+print(ceil(1))
+### STDOUT ###
+1
+
+### TITLE ###
+Ceil negative ints
+### INPUT ###
+print(ceil(-1))
+### STDOUT ###
+-1
+
+### TITLE ###
+Ceil floats
+### INPUT ###
+print(ceil(2.234))
+### STDOUT ###
+3
+
+### TITLE ###
+Ceil negative floats
+### INPUT ###
+print(ceil(-2.234))
+### STDOUT ###
+-2
+
+### TITLE ###
+Ceil errors with string
+### INPUT ###
+print(ceil("ab"))
+### STDERR ###
+error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+  --> <script>:1:12
+  |
+1 | print(ceil("ab"))
+  |            ^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

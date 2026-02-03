@@ -1,0 +1,38 @@
+### TITLE ###
+Algo index can extract index leaf node
+### INPUT ###
+url = "https://google.com"
+Ids = json[].ids[1]
+Names = json[].name
+request url:
+    fields Ids, Names
+print([x * 10 for x in Ids])
+print(Names)
+### ARGS ###
+--mock-response
+.*:./responses/arrays.json
+### STDOUT ###
+[ 20, 50, 100 ]
+[ "Alice", "Bob", "Charlie" ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo index can extract via middle node indexing
+### INPUT ###
+url = "https://google.com"
+Name = json[1].name
+request url:
+    fields Name
+Name = Name[0]
+print(Name, len(Name))
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+Bob 3
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+

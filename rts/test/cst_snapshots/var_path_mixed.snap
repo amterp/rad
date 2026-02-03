@@ -2,7 +2,7 @@
 Var path mixed
 ### INPUT ###
 a[0].aaa[5:10]["bbb"][1][b]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 27] PS: [0,  0] PE: [0, 27] source_file
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]   expr_stmt
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]     expr: expr
@@ -110,3 +110,4 @@ B: [25, 26] PS: [0, 25] PE: [0, 26]                                         dele
 B: [25, 26] PS: [0, 25] PE: [0, 26]                                           delegate: var_path
 B: [25, 26] PS: [0, 25] PE: [0, 26]                                             root: identifier `b`
 B: [26, 27] PS: [0, 26] PE: [0, 27]                         ] `]`
+

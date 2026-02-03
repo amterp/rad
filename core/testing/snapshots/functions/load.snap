@@ -1,0 +1,78 @@
+### TITLE ###
+Load with default
+### INPUT ###
+m = {}
+x = m.load("k", fn() "first")
+x.print()
+m.print()
+### STDOUT ###
+first
+{ "k": "first" }
+
+### TITLE ###
+Load uses cache
+### INPUT ###
+m = {}
+m.load("k", fn() "first")
+x = m.load("k", fn() "second")
+x.print()
+m.print()
+### STDOUT ###
+first
+{ "k": "first" }
+
+### TITLE ###
+Load with reload
+### INPUT ###
+m = {}
+m.load("k", fn() "first")
+m.print()
+x = m.load("k", fn() "second", reload=true)
+x.print()
+m.print()
+### STDOUT ###
+{ "k": "first" }
+second
+{ "k": "second" }
+
+### TITLE ###
+Load with override
+### INPUT ###
+m = {}
+m.load("k", fn() "first")
+x = m.load("k", fn() exit(1), override="overrode!")
+x.print()
+m.print()
+### STDOUT ###
+overrode!
+{ "k": "overrode!" }
+
+### TITLE ###
+Load does not error if false reload but override
+### INPUT ###
+m = {}
+m.load("k", fn() "first")
+x = m.load("k", fn() exit(1), reload=false, override="overrode!")
+x.print()
+### STDOUT ###
+overrode!
+
+### TITLE ###
+Load errors if reload true and override
+### INPUT ###
+m = {}
+m.load("k", fn() "first")
+m.load("k", fn() exit(1), reload=true, override="overrode!")
+### STDERR ###
+error[RAD20014]: Cannot provide values for both "reload" and "override"
+  --> <script>:3:3
+  |
+2 | m.load("k", fn() "first")
+3 | m.load("k", fn() exit(1), reload=true, override="overrode!")
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20014
+
+
+### EXIT ###
+1

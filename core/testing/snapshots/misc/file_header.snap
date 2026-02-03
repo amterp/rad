@@ -1,0 +1,44 @@
+### TITLE ###
+File header prints one liner if only that
+### INPUT ###
+---
+This is a one liner!
+---
+args:
+	name str
+### ARGS ###
+-h
+### STDOUT ###
+This is a one liner!
+
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str
+
+### TITLE ###
+File header prints all
+### INPUT ###
+---
+This is a one liner!
+
+Here is
+the rest!
+---
+args:
+	name str
+### ARGS ###
+-h
+### STDOUT ###
+This is a one liner!
+
+Here is
+the rest!
+
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str
+

@@ -1,0 +1,37 @@
+### TITLE ###
+One char
+### INPUT ###
+print(split("a,b,c", ","))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+Long split
+### INPUT ###
+print(split("Alice      Smith", " "))
+### STDOUT ###
+[ "Alice", "", "", "", "", "", "Smith" ]
+
+### TITLE ###
+Long split regex
+### INPUT ###
+print(split("Alice      Smith", " +"))
+### STDOUT ###
+[ "Alice", "Smith" ]
+
+### TITLE ###
+Can split on no separator
+### INPUT ###
+print(split("Alice", ""))
+### STDOUT ###
+[ "A", "l", "i", "c", "e" ]
+
+### TITLE ###
+Can split tags
+### INPUT ###
+tags = ["0.0.1", "0.2.1", "0.0.3"]
+tags = [split(t, "\.") for t in tags]
+print(tags)
+### STDOUT ###
+[ [ "0", "0", "1" ], [ "0", "2", "1" ], [ "0", "0", "3" ] ]
+

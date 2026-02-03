@@ -1,0 +1,56 @@
+### TITLE ###
+Encode decode base64
+### INPUT ###
+t = encode_base64("hello friend!")
+print(t)
+print(decode_base64(t))
+### STDOUT ###
+aGVsbG8gZnJpZW5kIQ==
+hello friend!
+
+### TITLE ###
+Encode decode base64 no padding
+### INPUT ###
+t = encode_base64("hello friend!", padding=false)
+print(t)
+print(decode_base64(t, padding=false))
+### STDOUT ###
+aGVsbG8gZnJpZW5kIQ
+hello friend!
+
+### TITLE ###
+Encode decode base64 url safe
+### INPUT ###
+t = encode_base64("is this url friendly?!", url_safe=true)
+print(t)
+print(decode_base64(t, url_safe=true))
+### STDOUT ###
+aXMgdGhpcyB1cmwgZnJpZW5kbHk_IQ==
+is this url friendly?!
+
+### TITLE ###
+Decode base64 errors on invalid input
+### INPUT ###
+decode_base64(";;;< those are not part of base64")
+### STDERR ###
+error[RAD20021]: Error decoding base64: illegal base64 data at input byte 0
+  --> <script>:1:1
+  |
+1 | decode_base64(";;;< those are not part of base64")
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20021
+
+
+### EXIT ###
+1
+### TITLE ###
+Encode decode base16
+### INPUT ###
+t = encode_base16("hello friend!")
+print(t)
+print(decode_base16(t))
+### STDOUT ###
+68656c6c6f20667269656e6421
+hello friend!
+

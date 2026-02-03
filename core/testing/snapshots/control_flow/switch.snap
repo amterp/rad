@@ -1,0 +1,227 @@
+### TITLE ###
+Basic assign
+### INPUT ###
+base = "https://example.com"
+endpoint = "cars"
+title, url = switch endpoint:
+    case "cars", "automobiles" -> "Cars", "{base}/automobiles"
+    case "books" -> "Books", "{base}/reading?type=books"
+print(title)
+print(url)
+### STDOUT ###
+Cars
+https://example.com/automobiles
+
+### TITLE ###
+Basic assign 2
+### INPUT ###
+name = "alice"
+result1 = switch name:
+	case "alice" -> "ALICE"
+	case "bob" -> "BOB"
+	case "charlie" -> "CHARLIE"
+print(result1)
+
+name = "bob"
+result2 = switch name:
+	case "alice" -> "ALICE"
+	case "bob" -> "BOB"
+	case "charlie" -> "CHARLIE"
+print(result2)
+
+name = "charlie"
+result3 = switch name:
+	case "alice" -> "ALICE"
+	case "bob" -> "BOB"
+	case "charlie" -> "CHARLIE"
+print(result3)
+### STDOUT ###
+ALICE
+BOB
+CHARLIE
+
+### TITLE ###
+No assign
+### INPUT ###
+name = "alice"
+switch name:
+	case "alice" -> print("ALICE"), print("ANOTHER")
+	case "bob" -> print("BOB")
+	case "charlie" -> print("CHARLIE")
+### STDOUT ###
+ALICE
+ANOTHER
+
+### TITLE ###
+No match errors
+### INPUT ###
+name = "david"
+switch name:
+	case "alice" -> print("ALICE")
+	case "bob" -> print("BOB")
+	case "charlie" -> print("CHARLIE")
+### STDERR ###
+error[RAD20034]: No matching case found for switch
+  --> <script>:2:8
+  |
+1 | name = "david"
+2 | switch name:
+  |        ^^^^
+3 | 	case "alice" -> print("ALICE")
+4 | 	case "bob" -> print("BOB")
+  |
+   = info: rad explain RAD20034
+
+
+### EXIT ###
+1
+### TITLE ###
+Multiple matches errors
+### INPUT ###
+name = "alice"
+switch name:
+	case "alice" -> print("ALICE")
+	case "bob" -> print("BOB")
+	case "charlie", name -> print("CHARLIE")
+### STDERR ###
+error[RAD20035]: Multiple matching cases found for switch
+  --> <script>:2:8
+  |
+1 | name = "alice"
+2 | switch name:
+  |        ^^^^
+3 | 	case "alice" -> print("ALICE")
+4 | 	case "bob" -> print("BOB")
+  |
+   = info: rad explain RAD20035
+
+
+### EXIT ###
+1
+### TITLE ###
+Basic default assign
+### INPUT ###
+a, b = switch 4:
+    case 1, 2 -> 10, 20
+    case 3 -> 30, 40
+    default -> -1, -2
+print(a, b)
+### STDOUT ###
+-1 -2
+
+### TITLE ###
+Basic blocks
+### INPUT ###
+switch 2:
+    case 1, 2:
+        print(10, 20)
+    case 3:
+        print(30, 40)
+    default:
+        print(0)
+
+switch 4:
+    case 1, 2:
+        print(10, 20)
+    case 3:
+        print(30, 40)
+    default:
+        print(0)
+### STDOUT ###
+10 20
+0
+
+### TITLE ###
+Mixed
+### INPUT ###
+a = switch 2:
+    case 1, 2 -> 10
+    case 3:
+        print(30, 40)
+        yield 30
+    default -> 50
+print(a)
+
+a = switch 3:
+    case 1, 2 -> 10
+    case 3:
+        print(30, 40)
+        yield 30
+    default -> 50
+print(a)
+
+a = switch 4:
+    case 1, 2 -> 10
+    case 3:
+        print(30, 40)
+        yield 30
+    default -> 50
+print(a)
+### STDOUT ###
+10
+30 40
+30
+50
+
+### TITLE ###
+Can yield even if no assign
+### INPUT ###
+switch 1:
+    case 1:
+        yield 10, print("hi")
+### STDOUT ###
+hi
+
+### TITLE ###
+Can yield json paths
+### SKIP ###
+TODO: regression means we don't support this anymore. Maybe can be added later? RAD-307
+### INPUT ###
+a, b = switch 1:
+    case 1:
+        yield json.id, json[].name
+print(a, b)
+### STDOUT ###
+[ ] [ ]
+### TITLE ###
+Dont need to yield if break
+### INPUT ###
+for i in range(5):
+    a = switch i:
+		case 0:
+			yield 10
+		case 1:
+			break
+print(a)
+### STDOUT ###
+10
+
+### TITLE ###
+Dont need to yield if continue
+### INPUT ###
+for i in range(5):
+    a = switch i:
+		case 0:
+			yield 10
+		case 1:
+			continue
+		default:
+			yield 20
+print(a)
+### STDOUT ###
+20
+
+### TITLE ###
+Can select case based on used vars
+### SKIP ###
+syntax later became unsupported. here in case I change my mind.
+### INPUT ###
+name = "alice"
+age = 42
+result = switch:
+	case: "foo: {name}"
+	case: "foo: {name}, bar: {age}"
+	case: "foo: {name}, bar: {age}, baz: {notdefined}"
+print(result)
+### STDOUT ###
+foo: alice, bar: 42

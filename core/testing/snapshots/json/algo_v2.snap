@@ -1,0 +1,64 @@
+### TITLE ###
+Algo v2 repeats column values to match num rows
+### INPUT ###
+url = "https://google.com"
+
+country = json.people.country
+name = json.people.names[]
+age = json.people.ages[]
+
+rad url:
+    fields name, age, country
+### ARGS ###
+--mock-response
+.*:./responses/parallel_arrays.json
+### STDOUT ###
+name   age  country 
+Alice  25   US       
+Bob    30   US       
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo v2 can extract from array with index
+### INPUT ###
+url = "https://google.com"
+
+Name = json.*
+FirstId = json.*.ids[0]
+SecondId = json.*.ids[1]
+
+rad url:
+    fields Name, FirstId, SecondId
+### ARGS ###
+--mock-response
+.*:./responses/array_wildcard.json
+### STDOUT ###
+Name     FirstId  SecondId 
+Alice    1        2         
+Bob      4        5         
+Charlie  9        10        
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+
+### TITLE ###
+Algo v2 can chain array lookups
+### INPUT ###
+url = "https://google.com"
+
+Nums = json[][][][1]
+
+request url:
+    fields Nums
+print(Nums)
+### ARGS ###
+--mock-response
+.*:./responses/deeply_nested_arrays.json
+### STDOUT ###
+[ 2, 4, 6, 8 ]
+
+### STDERR ###
+Mocking response for url (matched ".*"): https://google.com
+

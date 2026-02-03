@@ -9,7 +9,7 @@ rad url:
         sort desc
     else:
         sort asc desc
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 116] PS: [0,  0] PE: [7, 21] source_file
 B: [  0, 116] PS: [0,  0] PE: [7, 21]   rad_block
 B: [  0,   3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -75,3 +75,4 @@ B: [103, 107] PS: [7,  8] PE: [7, 12]           sort `sort`
 B: [107, 116] PS: [7, 12] PE: [7, 21]           specifier: rad_sort_specifier
 B: [108, 111] PS: [7, 13] PE: [7, 16]             first: immediate_identifier `asc`
 B: [112, 116] PS: [7, 17] PE: [7, 21]             second: desc `desc`
+

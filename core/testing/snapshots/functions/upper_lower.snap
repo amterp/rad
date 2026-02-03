@@ -1,0 +1,10 @@
+### TITLE ###
+Upper and lower
+### INPUT ###
+a = "aLiCe"
+print(upper(a))
+print(lower(a))
+### STDOUT ###
+ALICE
+alice
+

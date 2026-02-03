@@ -1,0 +1,73 @@
+### TITLE ###
+Return in for loop
+### INPUT ###
+
+fn foo():
+    for i in range(5):
+        return 5
+
+a = foo()
+print(":{a}:")
+### STDOUT ###
+:5:
+
+### TITLE ###
+Return in while loop
+### INPUT ###
+
+fn bar():
+    i = 0
+    while i < 5:
+        return 10
+        i = i + 1
+
+b = bar()
+print(":{b}:")
+### STDOUT ###
+:10:
+
+### TITLE ###
+Return directly should work
+### INPUT ###
+
+fn direct():
+    return 42
+
+c = direct()
+print(":{c}:")
+### STDOUT ###
+:42:
+
+### TITLE ###
+Yield in for loop in switch
+### INPUT ###
+
+result = switch "test":
+    case "test":
+        for i in range(5):
+            if i == 2:
+                yield 42
+    default:
+        yield -1
+
+print(":{result}:")
+### STDOUT ###
+:42:
+
+### TITLE ###
+Yield in nested loops
+### INPUT ###
+
+result = switch "nested":
+    case "nested":
+        for i in range(3):
+            for j in range(3):
+                if i == 1 and j == 1:
+                    yield "success"
+    default:
+        yield "fail"
+
+print(":{result}:")
+### STDOUT ###
+:success:
+

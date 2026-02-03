@@ -4,7 +4,7 @@ Misc exprs
 width[i] or height[i]
 width[0] or height[i]
 width.s or height[i]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 64] PS: [0,  0] PE: [2, 20] source_file
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]   expr_stmt
 B: [ 0, 21] PS: [0,  0] PE: [0, 21]     expr: expr
@@ -141,3 +141,4 @@ B: [62, 63] PS: [2, 18] PE: [2, 19]                                         dele
 B: [62, 63] PS: [2, 18] PE: [2, 19]                                           delegate: var_path
 B: [62, 63] PS: [2, 18] PE: [2, 19]                                             root: identifier `i`
 B: [63, 64] PS: [2, 19] PE: [2, 20]                         ] `]`
+

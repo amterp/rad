@@ -142,7 +142,7 @@ if false:  // failure simulation point 2
     exit(1)
 
 $`git commit -m "Bump version to {version}"`
-### EXPECTED ###
+### STDOUT ###
 B: [   0, 2165] PS: [  0,  0] PE: [140, 44] source_file
 B: [   0,   18] PS: [  0,  0] PE: [  0, 18]   shebang `#!/usr/bin/env rad`
 B: [  19,   62] PS: [  1,  0] PE: [  7,  0]   file_header
@@ -2648,3 +2648,4 @@ B: [2155, 2162] PS: [140, 34] PE: [140, 41]                                     
 B: [2162, 2163] PS: [140, 41] PE: [140, 42]                                     } `}`
 B: [2163, 2164] PS: [140, 42] PE: [140, 43]                                   content: string_content `"`
 B: [2164, 2165] PS: [140, 43] PE: [140, 44]                                 end: string_end ```
+

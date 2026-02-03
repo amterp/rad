@@ -2,7 +2,7 @@
 Lambda indexing precedence
 ### INPUT ###
 fn(n) n.trim().upper()
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 22] PS: [0,  0] PE: [0, 22] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   expr_stmt
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]     expr: expr
@@ -40,3 +40,4 @@ B: [15, 22] PS: [0, 15] PE: [0, 22]                                           in
 B: [15, 20] PS: [0, 15] PE: [0, 20]                                             func: identifier `upper`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                                             ( `(`
 B: [21, 22] PS: [0, 21] PE: [0, 22]                                             ) `)`
+

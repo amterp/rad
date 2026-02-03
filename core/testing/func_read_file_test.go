@@ -5,30 +5,6 @@ import (
 	"testing"
 )
 
-func Test_Func_ReadFile(t *testing.T) {
-	script := `
-a = read_file("data/test_file.txt")
-print(a)
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "size_bytes": 9, "content": "hello bob" }
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
-func Test_Func_ReadFile_OneArg(t *testing.T) {
-	script := `
-a = read_file("data/test_file.txt")
-print(a)
-`
-	setupAndRunCode(t, script, "--color=never")
-	expected := `{ "size_bytes": 9, "content": "hello bob" }
-`
-	assertOnlyOutput(t, stdOutBuffer, expected)
-	assertNoErrors(t)
-}
-
 func Test_Func_ReadFile_NoExist(t *testing.T) {
 	script := `
 a = read_file("does_not_exist.txt")

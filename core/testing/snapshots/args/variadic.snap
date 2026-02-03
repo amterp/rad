@@ -1,0 +1,594 @@
+### TITLE ###
+BasicStringCollection
+### INPUT ###
+args:
+	*files str
+
+print("files: {files}")
+### ARGS ###
+file1.txt
+file2.txt
+file3.txt
+### STDOUT ###
+files: [ "file1.txt", "file2.txt", "file3.txt" ]
+
+### TITLE ###
+BasicIntegerCollection
+### INPUT ###
+args:
+	*numbers int
+
+print("numbers: {numbers}")
+### ARGS ###
+1
+2
+3
+42
+### STDOUT ###
+numbers: [ 1, 2, 3, 42 ]
+
+### TITLE ###
+BasicFloatCollection
+### INPUT ###
+args:
+	*values float
+
+print("values: {values}")
+### ARGS ###
+1.5
+2.7
+3.14
+### STDOUT ###
+values: [ 1.5, 2.7, 3.14 ]
+
+### TITLE ###
+WithRequiredArg
+### INPUT ###
+args:
+	command str
+	*options str
+
+print("command: {command}")
+print("options: {options}")
+### ARGS ###
+build
+opt1
+opt2
+opt3
+### STDOUT ###
+command: build
+options: [ "opt1", "opt2", "opt3" ]
+
+### TITLE ###
+WithFlags
+### INPUT ###
+args:
+	*files str
+	verbose v bool
+
+print("files: {files}")
+print("verbose: {verbose}")
+### ARGS ###
+file1.txt
+file2.txt
+--verbose
+### STDOUT ###
+files: [ "file1.txt", "file2.txt" ]
+verbose: true
+
+### TITLE ###
+FlagsBeforeVariadic
+### INPUT ###
+args:
+	*files str
+	verbose v bool
+
+print("files: {files}")
+print("verbose: {verbose}")
+### ARGS ###
+--verbose
+file1.txt
+file2.txt
+### STDOUT ###
+files: [ "file1.txt", "file2.txt" ]
+verbose: true
+
+### TITLE ###
+MultipleVariadicSections
+### INPUT ###
+args:
+	command str
+	*options1 str
+	flag f bool
+	*options2 str
+
+print("command: {command}")
+print("options1: {options1}")
+print("flag: {flag}")
+print("options2: {options2}")
+### ARGS ###
+cmd
+opt1
+opt2
+--flag
+opt3
+opt4
+### STDOUT ###
+command: cmd
+options1: [ "opt1", "opt2" ]
+flag: true
+options2: [ "opt3", "opt4" ]
+
+### TITLE ###
+MultipleVariadicWithEmptyFirst
+### INPUT ###
+args:
+	command str
+	*options1 str
+	flag f bool
+	*options2 str
+
+print("command: {command}")
+print("options1: {options1}")
+print("flag: {flag}")
+print("options2: {options2}")
+### ARGS ###
+cmd
+--flag
+opt3
+opt4
+### STDOUT ###
+command: cmd
+options1: [ "opt3", "opt4" ]
+flag: true
+options2: [ ]
+
+### TITLE ###
+MultipleVariadicWithEmptySecond
+### INPUT ###
+args:
+	command str
+	*options1 str
+	flag f bool
+	*options2 str
+
+print("command: {command}")
+print("options1: {options1}")
+print("flag: {flag}")
+print("options2: {options2}")
+### ARGS ###
+cmd
+opt1
+opt2
+--flag
+### STDOUT ###
+command: cmd
+options1: [ "opt1", "opt2" ]
+flag: true
+options2: [ ]
+
+### TITLE ###
+ThreeVariadicSections
+### INPUT ###
+args:
+	*section1 str
+	flag1 f bool
+	*section2 int
+	flag2 g bool
+	*section3 str
+
+print("section1: {section1}")
+print("flag1: {flag1}")
+print("section2: {section2}")
+print("flag2: {flag2}")
+print("section3: {section3}")
+### ARGS ###
+a
+b
+--flag1
+1
+2
+--flag2
+x
+y
+### STDOUT ###
+section1: [ "a", "b" ]
+flag1: true
+section2: [ 1, 2 ]
+flag2: true
+section3: [ "x", "y" ]
+
+### TITLE ###
+EmptyCollection
+### INPUT ###
+args:
+	*files str
+	verbose v bool
+
+print("files: {files}")
+print("verbose: {verbose}")
+### ARGS ###
+--verbose
+### STDOUT ###
+files: [ ]
+verbose: true
+
+### TITLE ###
+InvalidIntegerType
+### INPUT ###
+args:
+	*numbers int
+### ARGS ###
+1
+not-a-number
+3
+### STDERR ###
+invalid int64 value for numbers: not-a-number
+
+Usage:
+  TestCase [numbers...] [OPTIONS]
+
+Script args:
+      --numbers ints
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+InvalidFloatType
+### INPUT ###
+args:
+	*values float
+### ARGS ###
+1.5
+invalid-float
+### STDERR ###
+invalid float64 value for values: invalid-float
+
+Usage:
+  TestCase [values...] [OPTIONS]
+
+Script args:
+      --values [floats...]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+FlagClustering
+### INPUT ###
+args:
+	*options str
+	verbose v bool
+	debug d bool
+	quiet q bool
+
+print("options: {options}")
+print("verbose: {verbose}")
+print("debug: {debug}")
+print("quiet: {quiet}")
+### ARGS ###
+opt1
+opt2
+-vdq
+### STDOUT ###
+options: [ "opt1", "opt2" ]
+verbose: true
+debug: true
+quiet: true
+
+### TITLE ###
+HelpGeneration
+### INPUT ###
+args:
+	command str
+	*options str
+	verbose v bool
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase <command> [options...] [OPTIONS]
+
+Script args:
+      --command str
+      --options [strs...]
+  -v, --verbose
+
+### TITLE ###
+HelpGenerationMultipleVariadic
+### INPUT ###
+args:
+	command str
+	*options1 str
+	flag f bool
+	*options2 str
+### ARGS ###
+-h
+### STDOUT ###
+Usage:
+  TestCase <command> [options1...] [OPTIONS]
+
+Script args:
+      --command str
+      --options1 [strs...]
+      --options2 [strs...]
+  -f, --flag
+
+### TITLE ###
+WithDefaultValue
+### INPUT ###
+args:
+	*files str = ["default.txt"]
+
+print("files: {files}")
+### STDOUT ###
+files: [ "default.txt" ]
+
+### TITLE ###
+OverrideDefaultValue
+### INPUT ###
+args:
+	*files str = ["default.txt"]
+
+print("files: {files}")
+### ARGS ###
+custom1.txt
+custom2.txt
+### STDOUT ###
+files: [ "custom1.txt", "custom2.txt" ]
+
+### TITLE ###
+DefaultIntValues
+### INPUT ###
+args:
+	*numbers int = [1, 2, 3]
+
+print("numbers: {numbers}")
+### STDOUT ###
+numbers: [ 1, 2, 3 ]
+
+### TITLE ###
+ComplexIntegration
+### INPUT ###
+args:
+	command str
+	*input_files str
+	output_file o str = "output.txt"
+	*compile_flags str
+	verbose v bool
+	threads t int = 1
+
+print("command: {command}")
+print("input_files: {input_files}")
+print("output_file: {output_file}")
+print("compile_flags: {compile_flags}")
+print("verbose: {verbose}")
+print("threads: {threads}")
+### ARGS ###
+build
+src1.c
+src2.c
+--output-file
+result.bin
+opt1
+opt2
+--verbose
+--threads
+4
+### STDOUT ###
+command: build
+input_files: [ "src1.c", "src2.c" ]
+output_file: result.bin
+compile_flags: [ "opt1", "opt2" ]
+verbose: true
+threads: 4
+
+### TITLE ###
+NestedWithOptionalArgs
+### INPUT ###
+args:
+	command str
+	*files str
+	output o str = "out.txt"
+	*excludes str
+	verbose v bool
+
+print("command: {command}")
+print("files: {files}")
+print("output: {output}")
+print("excludes: {excludes}")
+print("verbose: {verbose}")
+### ARGS ###
+process
+file1.txt
+file2.txt
+--output
+result.txt
+*.tmp
+*.log
+--verbose
+### STDOUT ###
+command: process
+files: [ "file1.txt", "file2.txt" ]
+output: result.txt
+excludes: [ "*.tmp", "*.log" ]
+verbose: true
+
+### TITLE ###
+AllFlagsNoPositional
+### INPUT ###
+args:
+	*files str
+	verbose v bool
+	debug d bool
+
+print("files: {files}")
+print("verbose: {verbose}")
+print("debug: {debug}")
+### ARGS ###
+--verbose
+--debug
+### STDOUT ###
+files: [ ]
+verbose: true
+debug: true
+
+### TITLE ###
+WithNullableOptional
+### INPUT ###
+args:
+	*files str
+	config c str?
+
+print("files: {files}")
+print("config: {config}")
+### ARGS ###
+file1.txt
+file2.txt
+### STDOUT ###
+files: [ "file1.txt", "file2.txt" ]
+config: null
+
+### TITLE ###
+UnknownFlagBeforePositional
+### INPUT ###
+args:
+	*extras str
+	build b bool
+
+print("extras: {extras}")
+print("build: {build}")
+### ARGS ###
+-U
+### STDOUT ###
+extras: [ "-U" ]
+build: false
+
+### TITLE ###
+Args_Variadic_LargeCollection
+### INPUT ###
+args:
+	*items str
+
+print("count: {len(items)}")
+### ARGS ###
+item0
+item1
+item2
+item3
+item4
+item5
+item6
+item7
+item8
+item9
+item10
+item11
+item12
+item13
+item14
+item15
+item16
+item17
+item18
+item19
+item20
+item21
+item22
+item23
+item24
+item25
+item26
+item27
+item28
+item29
+item30
+item31
+item32
+item33
+item34
+item35
+item36
+item37
+item38
+item39
+item40
+item41
+item42
+item43
+item44
+item45
+item46
+item47
+item48
+item49
+item50
+item51
+item52
+item53
+item54
+item55
+item56
+item57
+item58
+item59
+item60
+item61
+item62
+item63
+item64
+item65
+item66
+item67
+item68
+item69
+item70
+item71
+item72
+item73
+item74
+item75
+item76
+item77
+item78
+item79
+item80
+item81
+item82
+item83
+item84
+item85
+item86
+item87
+item88
+item89
+item90
+item91
+item92
+item93
+item94
+item95
+item96
+item97
+item98
+item99
+### STDOUT ###
+count: 100
+

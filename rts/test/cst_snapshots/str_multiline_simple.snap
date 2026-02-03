@@ -5,7 +5,7 @@ a = """
 hello
 friend
 """
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 24] PS: [0, 0] PE: [3, 3] source_file
 B: [ 0, 24] PS: [0, 0] PE: [3, 3]   assign
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
@@ -30,3 +30,4 @@ B: [ 8, 13] PS: [1, 0] PE: [1, 5]                                 content: strin
 B: [13, 14] PS: [1, 5] PE: [2, 0]                                 content: string_content `\n`
 B: [14, 20] PS: [2, 0] PE: [2, 6]                                 content: string_content `friend`
 B: [20, 24] PS: [2, 6] PE: [3, 3]                               end: string_end `\n"""`
+

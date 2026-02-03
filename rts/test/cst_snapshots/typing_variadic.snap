@@ -25,7 +25,7 @@ fn ggg(a, *b?): // error
 
 fn hhh(*, a):
         pass
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 284] PS: [ 0,  0] PE: [23, 12] source_file
 B: [  0,  26] PS: [ 0,  0] PE: [ 1, 12]   fn_named
 B: [  0,   2] PS: [ 0,  0] PE: [ 0,  2]     keyword: fn `fn`
@@ -145,3 +145,4 @@ B: [268, 269] PS: [22, 10] PE: [22, 11]       name: identifier `a`
 B: [269, 270] PS: [22, 11] PE: [22, 12]     ) `)`
 B: [270, 271] PS: [22, 12] PE: [22, 13]     block_colon: : `:`
 B: [280, 284] PS: [23,  8] PE: [23, 12]     stmt: pass_stmt `pass`
+

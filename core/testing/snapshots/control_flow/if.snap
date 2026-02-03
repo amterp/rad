@@ -1,0 +1,90 @@
+### TITLE ###
+If true
+### INPUT ###
+a = ["a", "b", "c"]
+if len(a) > 0:
+	print("not empty")
+else:
+	print("empty")
+### STDOUT ###
+not empty
+
+### TITLE ###
+If false
+### INPUT ###
+a = ["a", "b", "c"]
+if len(a) > 99:
+	print("not empty")
+else:
+	print("empty")
+### STDOUT ###
+empty
+
+### TITLE ###
+Can ref var defined outside
+### INPUT ###
+name = "alice"
+if true:
+	print(upper(name))
+### STDOUT ###
+ALICE
+
+### TITLE ###
+If or
+### INPUT ###
+t = true
+f = false
+if t or f:
+	print("TRUE")
+else:
+	print("FALSE")
+### STDOUT ###
+TRUE
+
+### TITLE ###
+If and
+### INPUT ###
+t = true
+f = false
+if t and f:
+	print("TRUE")
+else:
+	print("FALSE")
+### STDOUT ###
+FALSE
+
+### TITLE ###
+Can return in branch
+### INPUT ###
+print(foo())
+fn foo():
+	print("first")
+	if true:
+		return "foo"
+	else:
+		return "bar"
+	print("second")
+### STDOUT ###
+first
+foo
+
+### TITLE ###
+If_CanRefJsonVarDefinedOutside
+### INPUT ###
+url = "url"
+name = json[].name
+if true:
+	id = json[].id
+	rad url:
+		fields id, name
+### ARGS ###
+--mock-response
+.*:./responses/id_name.json
+### STDOUT ###
+id  name  
+1   Alice  
+2   Bob    
+
+### STDERR ###
+Mocking response for url (matched ".*"): url
+

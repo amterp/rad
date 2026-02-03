@@ -1,0 +1,157 @@
+### TITLE ###
+Min of ints
+### INPUT ###
+print(min([1, 2, 3]))
+### STDOUT ###
+1
+
+### TITLE ###
+Min of mixed int and float
+### INPUT ###
+print(min([1, 2.2, 3]))
+### STDOUT ###
+1
+
+### TITLE ###
+Min errors for non-numeric elements
+### INPUT ###
+print(min([1, "ab", 3]))
+### STDERR ###
+error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float|float[]'
+  --> <script>:1:11
+  |
+1 | print(min([1, "ab", 3]))
+  |           ^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Min of negative numbers
+### INPUT ###
+print(min([-1, -2.2, -3]))
+### STDOUT ###
+-3
+
+### TITLE ###
+Min variadic basic
+### INPUT ###
+print(min(3, 1, 2))
+### STDOUT ###
+1
+
+### TITLE ###
+Min variadic mixed int and float
+### INPUT ###
+print(min(3, 1.5, 2))
+### STDOUT ###
+1.5
+
+### TITLE ###
+Min variadic single number
+### INPUT ###
+print(min(5))
+### STDOUT ###
+5
+
+### TITLE ###
+Min variadic with negative
+### INPUT ###
+print(min(-1, -2.5, 3))
+### STDOUT ###
+-2.5
+
+### TITLE ###
+Min single element list
+### INPUT ###
+print(min([5]))
+### STDOUT ###
+5
+
+### TITLE ###
+Min empty list error
+### INPUT ###
+print(min([]))
+### STDERR ###
+error[RAD20018]: Cannot find min of empty list
+  --> <script>:1:7
+  |
+1 | print(min([]))
+  |       ^^^^^^^
+  |
+   = info: rad explain RAD20018
+
+
+### EXIT ###
+1
+### TITLE ###
+Min no args error
+### INPUT ###
+print(min())
+### STDERR ###
+error[RAD20018]: Cannot find min of empty list
+  --> <script>:1:7
+  |
+1 | print(min())
+  |       ^^^^^
+  |
+   = info: rad explain RAD20018
+
+
+### EXIT ###
+1
+### TITLE ###
+Min multiple lists error
+### INPUT ###
+print(min([1, 2], [3, 4]))
+### STDERR ###
+error[RAD20012]: min() with multiple arguments requires numbers, not lists. Use min([...]) for a single list
+  --> <script>:1:7
+  |
+1 | print(min([1, 2], [3, 4]))
+  |       ^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20012
+
+
+### EXIT ###
+1
+### TITLE ###
+Min returns int when all ints
+### INPUT ###
+print(type_of(min(1, 2, 3)))
+### STDOUT ###
+int
+
+### TITLE ###
+Min returns float when any float
+### INPUT ###
+print(type_of(min(1, 2.0, 3)))
+### STDOUT ###
+float
+
+### TITLE ###
+Min returns int when list all ints
+### INPUT ###
+print(type_of(min([1, 2, 3])))
+### STDOUT ###
+int
+
+### TITLE ###
+Min returns float when list has float
+### INPUT ###
+print(type_of(min([1, 2.0, 3])))
+### STDOUT ###
+float
+
+### TITLE ###
+Min can be used for list indexing
+### INPUT ###
+mylist = [10, 20, 30, 40, 50]
+myidx = 2
+print(mylist[min(myidx, 10)])
+### STDOUT ###
+30
+

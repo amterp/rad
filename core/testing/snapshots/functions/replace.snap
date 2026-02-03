@@ -1,0 +1,35 @@
+### TITLE ###
+Simple
+### INPUT ###
+print(replace("Hi, Alice", "Alice", "Bob"))
+### STDOUT ###
+Hi, Bob
+
+### TITLE ###
+Regex simple
+### INPUT ###
+print(replace("Hi, how are you today?", ",.*", " there!"))
+### STDOUT ###
+Hi there!
+
+### TITLE ###
+Regex capture
+### INPUT ###
+print(replace("Hi, Charlie Brown", "(.*) Brown", "$1 Grey"))
+
+input = "I really like sandwiches and soup and pizza."
+print(replace(input, "I really like (.*) and (.*) and (.*)\.", "I HATE $3, $2, and $1!"))
+
+print(replace("Name: abc", "a(b)c", "$1o$1"))
+### STDOUT ###
+Hi, Charlie Grey
+I HATE pizza, soup, and sandwiches!
+Name: bob
+
+### TITLE ###
+Returns string
+### INPUT ###
+print(replace("Hi", "Hi", "Hello") + "!")
+### STDOUT ###
+Hello!
+

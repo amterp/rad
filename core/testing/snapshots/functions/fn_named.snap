@@ -1,0 +1,88 @@
+### TITLE ###
+Custom first
+### INPUT ###
+
+fn add(x, y):
+	return x + y
+
+print(add(4, 5))
+### STDOUT ###
+9
+
+### TITLE ###
+Top level bottom
+### INPUT ###
+
+print(add(4, 5))
+
+fn add(x, y):
+	return x + y
+### STDOUT ###
+9
+
+### TITLE ###
+Can define new function in block
+### INPUT ###
+
+if true:
+	fn add(x, y):
+		return x + y
+	print(add(4, 5))
+### STDOUT ###
+9
+
+### TITLE ###
+Can define new function in block but ordering matters
+### INPUT ###
+
+if true:
+	print(add(4, 5))
+	fn add(x, y):
+		return x + y
+### STDERR ###
+error[RAD40003]: Cannot invoke unknown function: add
+  --> <script>:3:8
+  |
+2 | if true:
+3 | 	print(add(4, 5))
+  |        ^^^
+4 | 	fn add(x, y):
+5 | 		return x + y
+  |
+   = info: rad explain RAD40003
+
+
+### EXIT ###
+1
+### TITLE ###
+Can define new function in block and does not fall out
+### INPUT ###
+
+if true:
+	fn add(x, y):
+		return x + y
+print(add(4, 5))
+### STDOUT ###
+9
+
+### TITLE ###
+With types
+### INPUT ###
+
+print(add(4, 5))
+
+fn add(x: int, y: int) -> int:
+	return x + y
+### STDOUT ###
+9
+
+### TITLE ###
+One liner
+### INPUT ###
+
+print(add(4, 5))
+
+fn add(x: int, y: int) x + y
+### STDOUT ###
+9
+

@@ -10,7 +10,7 @@ fn myfoo(a: float) -> float|int|error:
     return 1
 fn myfoo(a: float?) -> error?:
     return 1
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 226] PS: [0,  0] PE: [8, 12] source_file
 B: [  0,  30] PS: [0,  0] PE: [0, 30]   fn_named
 B: [  0,   2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
@@ -240,3 +240,4 @@ B: [225, 226] PS: [8, 11] PE: [8, 12]                         delegate: indexed_
 B: [225, 226] PS: [8, 11] PE: [8, 12]                           root: primary_expr
 B: [225, 226] PS: [8, 11] PE: [8, 12]                             literal
 B: [225, 226] PS: [8, 11] PE: [8, 12]                               int `1`
+

@@ -2,7 +2,7 @@
 Ternary nested
 ### INPUT ###
 b = a > 1 ? b > 2 ? 3 : 4 : c > 5 ? 6 : 7
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 41] PS: [0,  0] PE: [0, 41] source_file
 B: [ 0, 41] PS: [0,  0] PE: [0, 41]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -126,3 +126,4 @@ B: [40, 41] PS: [0, 40] PE: [0, 41]                           delegate: indexed_
 B: [40, 41] PS: [0, 40] PE: [0, 41]                             root: primary_expr
 B: [40, 41] PS: [0, 40] PE: [0, 41]                               literal
 B: [40, 41] PS: [0, 40] PE: [0, 41]                                 int `7`
+

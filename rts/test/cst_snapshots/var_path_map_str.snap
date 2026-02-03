@@ -3,7 +3,7 @@ Var path map str
 ### INPUT ###
 a["aaa"]
 a["aaa"]["bbb"]
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 24] PS: [0,  0] PE: [1, 15] source_file
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]   expr_stmt
 B: [ 0,  8] PS: [0,  0] PE: [0,  8]     expr: expr
@@ -86,3 +86,4 @@ B: [19, 22] PS: [1, 10] PE: [1, 13]                                             
 B: [19, 22] PS: [1, 10] PE: [1, 13]                                                     content: string_content `bbb`
 B: [22, 23] PS: [1, 13] PE: [1, 14]                                                   end: string_end `"`
 B: [23, 24] PS: [1, 14] PE: [1, 15]                         ] `]`
+

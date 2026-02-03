@@ -10,7 +10,7 @@ args:
    fff float[]?
    ggg str[]?
    hhh bool[]?
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 115] PS: [0,  0] PE: [8, 14] source_file
 B: [  0, 115] PS: [0,  0] PE: [8, 14]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -47,3 +47,4 @@ B: [104, 115] PS: [8,  3] PE: [8, 14]     declaration: arg_declaration
 B: [104, 107] PS: [8,  3] PE: [8,  6]       arg_name: identifier `hhh`
 B: [108, 114] PS: [8,  7] PE: [8, 13]       type: bool_list_type `bool[]`
 B: [114, 115] PS: [8, 13] PE: [8, 14]       optional: ? `?`
+

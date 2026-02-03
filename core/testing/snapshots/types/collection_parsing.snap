@@ -1,0 +1,126 @@
+### TITLE ###
+Map_Parse_Empty
+### INPUT ###
+a = { }
+print(a)
+### STDOUT ###
+{ }
+
+### TITLE ###
+Map_Parse_EmptyTwoLine
+### INPUT ###
+a = {
+}
+print(a)
+### STDOUT ###
+{ }
+
+### TITLE ###
+Map_Parse_SingleSpaced
+### INPUT ###
+a = { "alice" : 1 }
+print(a)
+### STDOUT ###
+{ "alice": 1 }
+
+### TITLE ###
+Map_Parse_SingleMultiline
+### INPUT ###
+a = {
+	"alice": 1
+}
+print(a)
+### STDOUT ###
+{ "alice": 1 }
+
+### TITLE ###
+Map_Parse_SingleTrailingComma
+### INPUT ###
+a = {"alice": 1,}
+print(a)
+### STDOUT ###
+{ "alice": 1 }
+
+### TITLE ###
+Map_Parse_DoubleWeird
+### INPUT ###
+a = {
+	"a":	1,
+
+	"b":	2,
+}
+print(a)
+### STDOUT ###
+{ "a": 1, "b": 2 }
+
+### TITLE ###
+Map_Parse_ErrorsOnCommaNoElements
+### INPUT ###
+a = {,}
+print(a)
+### STDERR ###
+error[RAD10009]: Unexpected ','
+  --> <script>:1:6
+  |
+1 | a = {,}
+  |      ^
+2 | print(a)
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+List_Parse
+### INPUT ###
+a = [
+	1, 2, 3,
+	4,
+	5, 6, 7,
+		8,
+9,
+	10,
+]
+print(a)
+### STDOUT ###
+[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+
+### TITLE ###
+Mixed_Parse
+### INPUT ###
+a = [
+	"a", "b",
+	"c",
+	[],
+	[1, 2, 3],
+	["nested",
+		["deeply", "nested"],
+	],
+	[
+		"mixed",
+		1,
+		2.5,
+		[
+			"another",
+			"level",
+		],
+		"types",
+	],
+	{},
+	{"key": "value"},
+	{
+		"another": "map",
+		"with": [
+			"nested",
+			"list",
+		],
+	},
+	1,
+	2,
+	3,
+]
+print(a)
+### STDOUT ###
+[ "a", "b", "c", [ ], [ 1, 2, 3 ], [ "nested", [ "deeply", "nested" ] ], [ "mixed", 1, 2.5, [ "another", "level" ], "types" ], { }, { "key": "value" }, { "another": "map", "with": [ "nested", "list" ] }, 1, 2, 3 ]
+

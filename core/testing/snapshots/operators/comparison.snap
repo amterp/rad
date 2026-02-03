@@ -1,0 +1,251 @@
+### TITLE ###
+Equality int
+### INPUT ###
+print(1 == 1)
+print(1 == 2)
+print(2 == 1)
+print(2 == 2)
+### STDOUT ###
+true
+false
+false
+true
+
+### TITLE ###
+Equality string
+### INPUT ###
+print("a" == "a")
+print("a" == "b")
+print("b" == "a")
+print("b" == "b")
+### STDOUT ###
+true
+false
+false
+true
+
+### TITLE ###
+Equality float
+### INPUT ###
+print(1.0 == 1.0)
+print(1.0 == 2.0)
+print(2.0 == 1.0)
+print(2.0 == 2.0)
+### STDOUT ###
+true
+false
+false
+true
+
+### TITLE ###
+Equality list
+### SKIP ###
+TODO RAD-92
+### INPUT ###
+print([1, 2, 3] == [1, 2, 3])
+print([1, 2, 3] == [1, 2, 4])
+print([1, 2, 3] == [1, 2])
+print([1, 2, 3] == [1, 2, 3, [4])
+print([1, 2, 3, [4]] == [1, 2, 3, [4])
+### STDOUT ###
+true
+false
+false
+false
+true
+### TITLE ###
+Equality map
+### SKIP ###
+TODO RAD-92
+### INPUT ###
+print({"a": 1, "b": 2} == {"a": 1, "b": 2})
+print({"a": 1, "b": 2} == {"a": 1, "b": 3})
+print({"a": 1, "b": 2} == {"a": 1})
+print({"a": 1, "b": 2} == {"a": 1, "b": 2, "c": {"d": 3}})
+print({"a": 1, "b": 2, {"d": 3}} == {"a": 1, "b": 2, "c": {"d": 3}})
+### STDOUT ###
+true
+false
+false
+false
+true
+### TITLE ###
+Equality mixed
+### INPUT ###
+print(1 == 1.0)
+print(1.0 == 1)
+print(1 == "1")
+print("1" == 1)
+print(1.0 == "1")
+print("1" == 1.0)
+print(1 == [1])
+print([1] == 1)
+print(1 == {"a": 1})
+print({"a": 1} == 1)
+print(1 == true)
+print(1 == false)
+print(true == 1)
+print(false == 1)
+print(0 == true)
+print(0 == false)
+print(true == 0)
+print(false == 0)
+print(true == 2)
+print(2 == true)
+### STDOUT ###
+true
+true
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+false
+
+### TITLE ###
+Not equality mixed
+### INPUT ###
+print(1 != 1.0)
+print(1.0 != 1)
+print(1 != "1")
+print("1" != 1)
+print(1.0 != "1")
+print("1" != 1.0)
+print(1 != [1])
+print([1] != 1)
+print(1 != {"a": 1})
+print({"a": 1} != 1)
+print(1 != true)
+print(1 != false)
+print(true != 1)
+print(false != 1)
+print(0 != true)
+print(0 != false)
+print(true != 0)
+print(false != 0)
+print(true != 2)
+print(2 != true)
+### STDOUT ###
+false
+false
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+
+### TITLE ###
+Greater than less than int
+### INPUT ###
+print(1 > 1)
+print(1 > 2)
+print(2 > 1)
+print(1 >= 1)
+print(1 >= 2)
+print(2 >= 1)
+
+print(1 < 1)
+print(1 < 2)
+print(2 < 1)
+print(1 <= 1)
+print(1 <= 2)
+print(2 <= 1)
+### STDOUT ###
+false
+false
+true
+true
+false
+true
+false
+true
+false
+true
+true
+false
+
+### TITLE ###
+Greater than less than float
+### INPUT ###
+print(1.1 > 1.1)
+print(1.1 > 2.1)
+print(2.1 > 1.1)
+print(1.1 >= 1.1)
+print(1.1 >= 2.1)
+print(2.1 >= 1.1)
+
+print(1.1 < 1.1)
+print(1.1 < 2.1)
+print(2.1 < 1.1)
+print(1.1 <= 1.1)
+print(1.1 <= 2.1)
+print(2.1 <= 1.1)
+### STDOUT ###
+false
+false
+true
+true
+false
+true
+false
+true
+false
+true
+true
+false
+
+### TITLE ###
+Greater than less than mixed
+### INPUT ###
+print(1.1 > 1)
+print(1.1 > 2)
+print(2.1 > 1)
+print(1.1 >= 1)
+print(1.1 >= 2)
+print(2.1 >= 1)
+
+print(1.1 < 1)
+print(1.1 < 2)
+print(2.1 < 1)
+print(1.1 <= 1)
+print(1.1 <= 2)
+print(2.1 <= 1)
+### STDOUT ###
+true
+false
+true
+true
+false
+true
+false
+true
+false
+false
+true
+false
+

@@ -1,0 +1,19 @@
+### TITLE ###
+Func_ReadStdin_NoStdin
+### INPUT ###
+content = read_stdin()
+print("content: {content}")
+### STDOUT ###
+content: null
+
+### TITLE ###
+Func_ReadStdin_CanCheckNull
+### INPUT ###
+content = read_stdin()
+if content == null:
+    print("no stdin")
+else:
+    print("got stdin: {content}")
+### STDOUT ###
+no stdin
+

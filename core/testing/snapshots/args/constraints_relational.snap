@@ -1,0 +1,364 @@
+### TITLE ###
+Requires_OkayIfBothRequiredProvided
+### INPUT ###
+args:
+    a str
+    b str
+
+    a requires b
+print("ran")
+### ARGS ###
+--a
+alice
+--b
+bob
+### STDOUT ###
+ran
+
+### TITLE ###
+Requires_ErrorsIfNotRequired
+### INPUT ###
+args:
+    a str
+    b str
+
+    a requires b
+print("ran")
+### ARGS ###
+--a
+alex
+### STDERR ###
+Invalid args: 'a' requires 'b', but 'b' was not set
+
+Usage:
+  TestCase <a> <b> [OPTIONS]
+
+Script args:
+      --a str   Requires: b
+      --b str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+Requires_ErrorsIfDefaultRequiresSomethingNotProvided
+### INPUT ###
+args:
+    a str
+    b str = "bob"
+    c str
+
+    b requires c
+print("ran")
+### ARGS ###
+--a
+alex
+### STDERR ###
+Invalid args: 'b' requires 'c', but 'c' was not set
+
+Usage:
+  TestCase <a> [b] <c> [OPTIONS]
+
+Script args:
+      --a str
+      --b str   Requires: c (default bob)
+      --c str
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+Excludes_CanGiveFirst
+### INPUT ###
+args:
+    file str
+    url str
+
+    file mutually excludes url
+
+if is_defined("file"):
+    print("Reading from file:", file)
+else:
+    print("Fetching from URL:", url)
+### ARGS ###
+--file
+file.txt
+### STDOUT ###
+Reading from file: file.txt
+
+### TITLE ###
+Excludes_CanGiveSecond
+### INPUT ###
+args:
+    file str
+    url str
+
+    file mutually excludes url
+
+if is_defined("file"):
+    print("Reading from file:", file)
+else:
+    print("Fetching from URL:", url)
+### ARGS ###
+--url
+someurl
+### STDOUT ###
+Fetching from URL: someurl
+
+### TITLE ###
+Excludes_ErrorsIfBothProvided
+### INPUT ###
+args:
+    file str
+    url str
+
+    file mutually excludes url
+
+if is_defined("file"):
+    print("Reading from file:", file)
+else:
+    print("Fetching from URL:", url)
+### ARGS ###
+--file
+file.txt
+--url
+someurl
+### STDERR ###
+Invalid args: 'file' excludes 'url', but 'url' was set
+
+Usage:
+  TestCase <file> <url> [OPTIONS]
+
+Script args:
+      --file str   Excludes: url
+      --url str    Excludes: file
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+Mixed_CanGiveOne
+### INPUT ###
+args:
+    token str
+    username str
+    password str
+
+    username mutually requires password
+    token mutually excludes username, password
+
+if is_defined("token"):
+    print("Authenticating with token:", token)
+else:
+    print("Authenticating user:", username)
+### ARGS ###
+--token
+sometoken
+### STDOUT ###
+Authenticating with token: sometoken
+
+### TITLE ###
+Mixed_CanGiveBothOther
+### INPUT ###
+args:
+    token str
+    username str
+    password str
+
+    username mutually requires password
+    token mutually excludes username, password
+
+if is_defined("token"):
+    print("Authenticating with token:", token)
+else:
+    print("Authenticating user:", username)
+### ARGS ###
+--username
+alice
+--password
+pass
+### STDOUT ###
+Authenticating user: alice
+
+### TITLE ###
+Mixed_ErrorsIfAllGiven
+### INPUT ###
+args:
+    token str
+    username str
+    password str
+
+    username mutually requires password
+    token mutually excludes username, password
+
+if is_defined("token"):
+    print("Authenticating with token:", token)
+else:
+    print("Authenticating user:", username)
+### ARGS ###
+--token
+sometoken
+--username
+alice
+--password
+pass
+### STDERR ###
+Invalid args: 'token' excludes 'username', but 'username' was set
+
+Usage:
+  TestCase <token> <username> <password> [OPTIONS]
+
+Script args:
+      --token str      Excludes: username, password
+      --username str   Requires: password. Excludes: token
+      --password str   Requires: username. Excludes: token
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+ErrorsIfConstraintOnUndefinedArg
+### INPUT ###
+args:
+    token str
+    token excludes username
+### STDERR ###
+Undefined flag 'username'
+
+### EXIT ###
+1
+### TITLE ###
+Bool_Can_Require
+### INPUT ###
+args:
+    authenticate bool
+	token str
+
+    authenticate mutually requires token
+
+if authenticate:
+    print("Token:", token)
+### ARGS ###
+--authenticate
+--token
+sometoken
+### STDOUT ###
+Token: sometoken
+
+### TITLE ###
+Bool_ErrorsIfBoolFalse
+### INPUT ###
+args:
+    authenticate bool
+	token str
+
+    authenticate mutually requires token
+
+if authenticate:
+    print("Token:", token)
+### ARGS ###
+--token
+sometoken
+### STDERR ###
+Invalid args: 'token' requires 'authenticate', but 'authenticate' was not set
+
+Usage:
+  TestCase <token> [OPTIONS]
+
+Script args:
+      --token str      Requires: authenticate
+      --authenticate   Requires: token
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+Bool_CanDefineRequireeForNonMutualRequirement
+### INPUT ###
+args:
+    authenticate bool
+	token str
+
+    authenticate requires token
+
+if authenticate:
+    print("Auth Token:", token)
+print("Non-auth Token:", token)
+### ARGS ###
+--token
+sometoken
+### STDOUT ###
+Non-auth Token: sometoken
+
+### TITLE ###
+Bool_OnlyRelevantIfTrue
+### INPUT ###
+args:
+	mystring str
+	mybool bool
+
+	mybool excludes mystring
+
+print(mystring)
+### ARGS ###
+--mystring
+blah
+### STDOUT ###
+blah
+
+### TITLE ###
+CanReferenceArgWithUnderscore
+### INPUT ###
+args:
+    aa str
+    bb_cc str
+
+    aa requires bb_cc
+
+print(aa, bb_cc)
+### ARGS ###
+--aa=foo
+--bb-cc=bar
+### STDOUT ###
+foo bar
+

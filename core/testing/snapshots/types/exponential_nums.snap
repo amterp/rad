@@ -1,0 +1,49 @@
+### TITLE ###
+Can write exponential numbers
+### INPUT ###
+print(1.0e9)
+print(1e9)
+print(1E1_8)
+print(1.2e9)
+print(12.3e9)
+print(12.3e1_8)
+print(1.23e-1_8)
+print(12.3e-1_9)
+### STDOUT ###
+1000000000
+1000000000
+1000000000000000000
+1200000000
+12300000000
+12300000000000000000
+0.00000000000000000123
+0.00000000000000000123
+
+### TITLE ###
+Can use exponential numbers in args
+### INPUT ###
+args:
+    a float = 2e3
+    a range [1e3, 3e3]
+### ARGS ###
+4000
+### STDERR ###
+'a' value 4000 is > maximum 3000
+
+Usage:
+  TestCase [a] [OPTIONS]
+
+Script args:
+      --a float   Range: [1000, 3000] (default 2000)
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1

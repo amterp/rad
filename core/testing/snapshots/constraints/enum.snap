@@ -1,0 +1,76 @@
+### TITLE ###
+Valid
+### INPUT ###
+args:
+	name str
+	name enum ["alice", "bob", "charlie"]
+print("Hi", name)
+### ARGS ###
+alice
+### STDOUT ###
+Hi alice
+
+### TITLE ###
+ErrorsOnInvalid
+### INPUT ###
+args:
+	name str
+	name enum ["alice", "bob", "charlie"]
+print("Hi", name)
+### ARGS ###
+david
+### STDERR ###
+Invalid 'name' value: david (valid values: alice, bob, charlie)
+
+Usage:
+  TestCase <name> [OPTIONS]
+
+Script args:
+      --name str   Valid values: [alice, bob, charlie]
+
+Global options:
+  -h, --help            Print usage string.
+  -r, --repl            Start interactive REPL mode.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --src             Instead of running the target script, just print it out.
+
+### EXIT ###
+1
+### TITLE ###
+ErrorsIfNonStringEnum
+### INPUT ###
+args:
+    name str
+    name enum ["alice", 2]
+print("Hi", name)
+### ARGS ###
+david
+### STDERR ###
+error[RAD10009]: Unexpected '2'
+  --> <script>:3:25
+  |
+2 |     name str
+3 |     name enum ["alice", 2]
+  |                         ^
+4 | print("Hi", name)
+  |
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
+### TITLE ###
+CanHaveArgNamedEnum
+### INPUT ###
+args:
+	enum str
+	enum enum ["alice", "bob", "charlie"]
+print("Hi", enum)
+### ARGS ###
+alice
+### STDOUT ###
+Hi alice
+

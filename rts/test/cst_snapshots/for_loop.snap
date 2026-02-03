@@ -23,7 +23,7 @@ for item in a:
 
 print("done")
 
-### EXPECTED ###
+### STDOUT ###
 B: [  0, 287] PS: [ 0,  0] PE: [21,  0] source_file
 B: [  0,  16] PS: [ 0,  0] PE: [ 0, 16]   assign
 B: [  0,   1] PS: [ 0,  0] PE: [ 0,  1]     left: var_path
@@ -400,3 +400,4 @@ B: [280, 284] PS: [20,  7] PE: [20, 11]                                         
 B: [280, 284] PS: [20,  7] PE: [20, 11]                                                         content: string_content `done`
 B: [284, 285] PS: [20, 11] PE: [20, 12]                                                       end: string_end `"`
 B: [285, 286] PS: [20, 12] PE: [20, 13]                             ) `)`
+

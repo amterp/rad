@@ -1,0 +1,108 @@
+### TITLE ###
+Multipick errors if empty options
+### INPUT ###
+opts = []
+multipick(opts)
+### STDERR ###
+error[RAD20000]: Cannot multipick from empty options list
+  --> <script>:2:1
+  |
+1 | opts = []
+2 | multipick(opts)
+  | ^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Multipick errors if min is negative
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+multipick(opts, min=-1)
+### STDERR ###
+error[RAD20000]: min must be non-negative, got -1
+  --> <script>:2:1
+  |
+1 | opts = ["Apple", "Banana", "Cherry"]
+2 | multipick(opts, min=-1)
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Multipick errors if max is negative
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+multipick(opts, max=-1)
+### STDERR ###
+error[RAD20000]: max must be positive, got -1
+  --> <script>:2:1
+  |
+1 | opts = ["Apple", "Banana", "Cherry"]
+2 | multipick(opts, max=-1)
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Multipick errors if max is zero
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+multipick(opts, max=0)
+### STDERR ###
+error[RAD20000]: max must be positive, got 0
+  --> <script>:2:1
+  |
+1 | opts = ["Apple", "Banana", "Cherry"]
+2 | multipick(opts, max=0)
+  | ^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Multipick errors if min greater than max
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+multipick(opts, min=5, max=3)
+### STDERR ###
+error[RAD20000]: min (5) cannot be greater than max (3)
+  --> <script>:2:1
+  |
+1 | opts = ["Apple", "Banana", "Cherry"]
+2 | multipick(opts, min=5, max=3)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+### TITLE ###
+Multipick errors if min greater than options length
+### INPUT ###
+opts = ["Apple", "Banana"]
+multipick(opts, min=3)
+### STDERR ###
+error[RAD20000]: min is 3 but only 2 options available
+  --> <script>:2:1
+  |
+1 | opts = ["Apple", "Banana"]
+2 | multipick(opts, min=3)
+  | ^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1

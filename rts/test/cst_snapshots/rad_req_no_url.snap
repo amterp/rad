@@ -3,7 +3,7 @@ Rad request no url should be MISSING
 ### INPUT ###
 request:
     fields Name, Age
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 29] PS: [0,  0] PE: [1, 20] source_file
 B: [ 0, 29] PS: [0,  0] PE: [1, 20]   ERROR
 B: [ 0,  7] PS: [0,  0] PE: [0,  7]     request_keyword
@@ -18,3 +18,4 @@ B: [20, 24] PS: [1, 11] PE: [1, 15]             delegate: var_path
 B: [20, 24] PS: [1, 11] PE: [1, 15]               root: identifier `Name`
 B: [24, 25] PS: [1, 15] PE: [1, 16]       , `,`
 B: [26, 29] PS: [1, 17] PE: [1, 20]     identifier `Age`
+

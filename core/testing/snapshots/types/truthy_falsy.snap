@@ -1,0 +1,403 @@
+### TITLE ###
+Falsy string
+### INPUT ###
+a = ""
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Truthy string
+### INPUT ###
+a = "hi"
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+String with spaces is truthy
+### INPUT ###
+a = " "
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Falsy int
+### INPUT ###
+a = 0
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Truthy int
+### INPUT ###
+a = 10
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Minus zero int is falsy
+### INPUT ###
+a = -0
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Falsy float
+### INPUT ###
+a = 0.0
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Truthy float
+### INPUT ###
+a = 10.2
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Minus zero float is falsy
+### INPUT ###
+a = -0.0
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Falsy list
+### INPUT ###
+a = []
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Truthy list
+### INPUT ###
+a = [1]
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+List with 0 is truthy
+### INPUT ###
+a = [0]
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Falsy map
+### INPUT ###
+a = {}
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+falsy
+
+### TITLE ###
+Truthy map
+### INPUT ###
+a = { "alice": 1 }
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Map with falsy elements is still truthy
+### INPUT ###
+a = { "": 0 }
+if a:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Ternary operator
+### DESCRIPTION ###
+todo: should be writable like 0 ? print("falsy") : print("truthy"), but we don't properly allow expr stmts here
+### INPUT ###
+a = 0 ? "truthy" : "falsy"
+print(a)
+a = 1 ? "truthy" : "falsy"
+print(a)
+a = "" ? "truthy" : "falsy"
+print(a)
+a = "hi" ? "truthy" : "falsy"
+print(a)
+a = 0.0 ? "truthy" : "falsy"
+print(a)
+a = 10.2 ? "truthy" : "falsy"
+print(a)
+a = [] ? "truthy" : "falsy"
+print(a)
+a = [1] ? "truthy" : "falsy"
+print(a)
+a = [0] ? "truthy" : "falsy"
+print(a)
+a = {} ? "truthy" : "falsy"
+print(a)
+a = { "alice": 1 } ? "truthy" : "falsy"
+print(a)
+a = { "": 0 } ? "truthy" : "falsy"
+print(a)
+### STDOUT ###
+falsy
+truthy
+falsy
+truthy
+falsy
+truthy
+falsy
+truthy
+truthy
+falsy
+truthy
+truthy
+
+### TITLE ###
+List comprehension filter
+### INPUT ###
+a = [0, 1, "", "hi", 0.0, 10.2, [], [1], [0], {}, { "alice": 1 }, { "": 0 }]
+b = [x for x in a if x]
+print(b)
+### STDOUT ###
+[ 1, "hi", 10.2, [ 1 ], [ 0 ], { "alice": 1 }, { "": 0 } ]
+
+### TITLE ###
+Not truthy
+### INPUT ###
+a = []
+if not a:
+	print("first")
+else:
+	print("second")
+### STDOUT ###
+first
+
+### TITLE ###
+Or int
+### INPUT ###
+print(0 or 0)
+print(1 or 0)
+print(0 or 1)
+print(1 or 1)
+### STDOUT ###
+0
+1
+1
+1
+
+### TITLE ###
+Or float
+### INPUT ###
+print(0.0 or 0.0)
+print(1.0 or 0.0)
+print(0.0 or 1.0)
+print(1.0 or 1.0)
+### STDOUT ###
+0
+1
+1
+1
+
+### TITLE ###
+Or string
+### INPUT ###
+print("" or "")
+print("hi" or "")
+print("" or "hi")
+print("hi" or "hi")
+### STDOUT ###
+
+hi
+hi
+hi
+
+### TITLE ###
+Or list
+### INPUT ###
+print([] or [])
+print([0] or [])
+print([] or [0])
+print([0] or [0])
+### STDOUT ###
+[ ]
+[ 0 ]
+[ 0 ]
+[ 0 ]
+
+### TITLE ###
+Or map
+### INPUT ###
+print({} or {})
+print({ "alice" : 1 } or {})
+print({} or { "alice" : 1 })
+print({ "alice" : 1 } or { "alice" : 1 })
+### STDOUT ###
+{ }
+{ "alice": 1 }
+{ "alice": 1 }
+{ "alice": 1 }
+
+### TITLE ###
+And int
+### INPUT ###
+print(0 and 0)
+print(1 and 0)
+print(0 and 1)
+print(1 and 1)
+### STDOUT ###
+false
+false
+false
+true
+
+### TITLE ###
+And float
+### INPUT ###
+print(0.0 and 0.0)
+print(1.0 and 0.0)
+print(0.0 and 1.0)
+print(1.0 and 1.0)
+### STDOUT ###
+false
+false
+false
+true
+
+### TITLE ###
+And string
+### INPUT ###
+print("" and "")
+print("hi" and "")
+print("" and "hi")
+print("hi" and "hi")
+### STDOUT ###
+false
+false
+false
+true
+
+### TITLE ###
+And list
+### INPUT ###
+print([] and [])
+print([0] and [])
+print([] and [0])
+print([0] and [0])
+### STDOUT ###
+false
+false
+false
+true
+
+### TITLE ###
+And map
+### INPUT ###
+print({} and {})
+print({ "alice" : 1 } and {})
+print({} and { "alice" : 1 })
+print({ "alice" : 1 } and { "alice" : 1 })
+### STDOUT ###
+false
+false
+false
+true
+
+### TITLE ###
+Not int
+### INPUT ###
+print(not 0)
+print(not 1)
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Not float
+### INPUT ###
+print(not 0.0)
+print(not 1.0)
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Not string
+### INPUT ###
+print(not "")
+print(not "hi")
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Not list
+### INPUT ###
+print(not [])
+print(not [0])
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Not map
+### INPUT ###
+print(not {})
+print(not { "alice" : 1 })
+### STDOUT ###
+true
+false
+

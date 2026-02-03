@@ -11,7 +11,7 @@ if i == 0:
 else:
     pass
     pass
-### EXPECTED ###
+### STDOUT ###
 B: [ 0, 79] PS: [0,  0] PE: [9,  8] source_file
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]   pass_stmt `pass`
 B: [ 6, 34] PS: [2,  0] PE: [3,  8]   for_loop
@@ -80,3 +80,4 @@ B: [60, 79] PS: [7,  4] PE: [9,  8]     alt: else_alt
 B: [60, 61] PS: [7,  4] PE: [7,  5]       : `:`
 B: [66, 70] PS: [8,  4] PE: [8,  8]       stmt: pass_stmt `pass`
 B: [75, 79] PS: [9,  4] PE: [9,  8]       stmt: pass_stmt `pass`
+
