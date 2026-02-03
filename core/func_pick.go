@@ -6,7 +6,6 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/charmbracelet/huh"
-	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/samber/lo"
 )
 
@@ -159,7 +158,7 @@ func pickKv[T comparable](
 			for _, filter := range filters {
 				filterMatched := false
 				for _, key := range keyGroup {
-					if fuzzy.MatchFold(filter, key) {
+					if FuzzyMatchFold(filter, key) {
 						filterMatched = true
 					}
 					if strings.EqualFold(filter, key) {

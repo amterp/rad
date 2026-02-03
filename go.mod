@@ -13,7 +13,6 @@ require (
 	github.com/charmbracelet/huh v0.7.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
-	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/lo v1.51.0
 	github.com/sanity-io/litter v1.5.8
@@ -21,7 +20,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/term v0.36.0
+	golang.org/x/term v0.37.0
 )
 
 require (
@@ -52,6 +51,6 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/text v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
