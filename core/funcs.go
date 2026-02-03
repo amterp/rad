@@ -1000,7 +1000,11 @@ func init() {
 				list := f.GetList("_nums")
 
 				sum := 0.0
+				allInts := true
 				for idx, item := range list.Values {
+					if _, isInt := item.Val.(int64); !isInt {
+						allInts = false
+					}
 					num, ok := item.TryGetFloatAllowingInt()
 					if !ok {
 						return f.ReturnErrf(
@@ -1012,6 +1016,9 @@ func init() {
 					sum += num
 				}
 
+				if allInts {
+					return f.Return(int64(sum))
+				}
 				return f.Return(sum)
 			},
 		},
@@ -1202,7 +1209,7 @@ func init() {
 		{
 			Name: FUNC_MIN,
 			Execute: func(f FuncInvocation) RadValue {
-				nums, errVal := extractMinMaxNums(f, FUNC_MIN)
+				nums, allInts, errVal := extractMinMaxNums(f, FUNC_MIN)
 				if errVal != nil {
 					return *errVal
 				}
@@ -1211,13 +1218,17 @@ func init() {
 				for _, val := range nums {
 					minVal = math.Min(minVal, val)
 				}
+
+				if allInts {
+					return f.Return(int64(minVal))
+				}
 				return f.Return(minVal)
 			},
 		},
 		{
 			Name: FUNC_MAX,
 			Execute: func(f FuncInvocation) RadValue {
-				nums, errVal := extractMinMaxNums(f, FUNC_MAX)
+				nums, allInts, errVal := extractMinMaxNums(f, FUNC_MAX)
 				if errVal != nil {
 					return *errVal
 				}
@@ -1227,20 +1238,36 @@ func init() {
 					maxVal = math.Max(maxVal, val)
 				}
 
+				if allInts {
+					return f.Return(int64(maxVal))
+				}
 				return f.Return(maxVal)
 			},
 		},
 		{
 			Name: FUNC_CLAMP,
 			Execute: func(f FuncInvocation) RadValue {
-				valNum := f.GetFloat("val")
-				minNum := f.GetFloat("min")
-				maxNum := f.GetFloat("max")
+				valArg := f.GetArg("val")
+				minArg := f.GetArg("min")
+				maxArg := f.GetArg("max")
+
+				valNum := valArg.RequireFloatAllowingInt(f.i, f.callNode)
+				minNum := minArg.RequireFloatAllowingInt(f.i, f.callNode)
+				maxNum := maxArg.RequireFloatAllowingInt(f.i, f.callNode)
 
 				if minNum > maxNum {
 					return f.ReturnErrf(rl.ErrArgsContradict, "min must be <= max, got %f and %f", minNum, maxNum)
 				}
-				return f.Return(math.Min(math.Max(valNum, minNum), maxNum))
+
+				result := math.Min(math.Max(valNum, minNum), maxNum)
+
+				_, valIsInt := valArg.Val.(int64)
+				_, minIsInt := minArg.Val.(int64)
+				_, maxIsInt := maxArg.Val.(int64)
+				if valIsInt && minIsInt && maxIsInt {
+					return f.Return(int64(result))
+				}
+				return f.Return(result)
 			},
 		},
 		{
@@ -1958,12 +1985,13 @@ func runTrim(f FuncInvocation, trimFunc func(str RadString, chars string) RadStr
 // Supports two calling patterns:
 // - Single list argument: min([1, 2, 3]) - iterates over the list's elements
 // - Multiple number arguments: min(1, 2, 3) - uses each argument as a number
-func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, *RadValue) {
+// Returns the float values, whether all values were integers, and any error.
+func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, bool, *RadValue) {
 	args := f.GetList("_nums")
 
 	if args.Len() == 0 {
 		errVal := f.ReturnErrf(rl.ErrEmptyList, "Cannot find %s of empty list", funcName)
-		return nil, &errVal
+		return nil, false, &errVal
 	}
 
 	// Check for single-list-argument mode: min([1, 2, 3])
@@ -1971,27 +1999,32 @@ func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, *RadValue)
 		if innerList, ok := args.Values[0].Val.(*RadList); ok {
 			if innerList.Len() == 0 {
 				errVal := f.ReturnErrf(rl.ErrEmptyList, "Cannot find %s of empty list", funcName)
-				return nil, &errVal
+				return nil, false, &errVal
 			}
 			nums := make([]float64, 0, innerList.LenInt())
+			allInts := true
 			for idx, item := range innerList.Values {
+				if _, isInt := item.Val.(int64); !isInt {
+					allInts = false
+				}
 				val, ok := item.TryGetFloatAllowingInt()
 				if !ok {
 					errVal := f.ReturnErrf(
 						rl.ErrBugTypeCheck,
 						"%s() requires a list of numbers, got %q at index %d",
 						funcName, TypeAsString(item), idx)
-					return nil, &errVal
+					return nil, false, &errVal
 				}
 				nums = append(nums, val)
 			}
-			return nums, nil
+			return nums, allInts, nil
 		}
 	}
 
 	// Multiple arguments mode: min(1, 2, 3)
 	// Each argument must be a number (not a list)
 	nums := make([]float64, 0, args.LenInt())
+	allInts := true
 	for idx, item := range args.Values {
 		// Check if any argument is a list (error: should use single-list mode)
 		if _, isList := item.Val.(*RadList); isList {
@@ -1999,7 +2032,10 @@ func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, *RadValue)
 				rl.ErrBugTypeCheck,
 				"%s() with multiple arguments requires numbers, not lists. Use %s([...]) for a single list",
 				funcName, funcName)
-			return nil, &errVal
+			return nil, false, &errVal
+		}
+		if _, isInt := item.Val.(int64); !isInt {
+			allInts = false
 		}
 		val, ok := item.TryGetFloatAllowingInt()
 		if !ok {
@@ -2007,11 +2043,11 @@ func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, *RadValue)
 				rl.ErrBugTypeCheck,
 				"%s() requires numbers, got %q at argument %d",
 				funcName, TypeAsString(item), idx+1)
-			return nil, &errVal
+			return nil, false, &errVal
 		}
 		nums = append(nums, val)
 	}
-	return nums, nil
+	return nums, allInts, nil
 }
 
 func bugIncorrectTypes(funcName string) {

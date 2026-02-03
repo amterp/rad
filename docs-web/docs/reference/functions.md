@@ -1187,13 +1187,16 @@ abs(-2.7)    // -> 2.7
 Sums all numbers in a list.
 
 ```rad
-sum(_nums: list[float]) -> float|error
+sum(_nums: list[float]) -> int|float|error
 ```
 
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
+
 ```rad
-sum([1, 2, 3, 4])        // -> 10.0
+sum([1, 2, 3, 4])        // -> 10
 sum([1.5, 2.5, 3.0])     // -> 7.0
-sum([])                  // -> 0.0
+sum([1, 2.0, 3])         // -> 6.0 (float because 2.0 is float)
+sum([])                  // -> 0
 sum([1, "text", 3])      // -> Error: requires list of numbers
 ```
 
@@ -1254,16 +1257,18 @@ ceil(5.0)      // -> 5
 Returns the minimum value from a list of numbers or from variadic arguments.
 
 ```rad
-min(_nums: float|float[]) -> float|error
+min(_nums: num|num[]) -> int|float|error
 ```
 
 Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
 
 ```rad
-min([1, 2, 3, 4])        // -> 1.0
-min(1, 2, 3, 4)          // -> 1.0
+min([1, 2, 3, 4])        // -> 1
+min(1, 2, 3, 4)          // -> 1
 min(5.5, 2.1, 8.9)       // -> 2.1
-min(5)                   // -> 5.0
+min(1, 2.0, 3)           // -> 1.0 (float because 2.0 is float)
+min(5)                   // -> 5
 min([])                  // -> Error: cannot find minimum of empty list
 min([1, "text"])         // -> Error: requires list of numbers
 ```
@@ -1273,16 +1278,18 @@ min([1, "text"])         // -> Error: requires list of numbers
 Returns the maximum value from a list of numbers or from variadic arguments.
 
 ```rad
-max(_nums: float|float[]) -> float|error
+max(_nums: num|num[]) -> int|float|error
 ```
 
 Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
 
 ```rad
-max([1, 2, 3, 4])        // -> 4.0
-max(1, 2, 3, 4)          // -> 4.0
+max([1, 2, 3, 4])        // -> 4
+max(1, 2, 3, 4)          // -> 4
 max(5.5, 2.1, 8.9)       // -> 8.9
-max(5)                   // -> 5.0
+max(1, 2.0, 3)           // -> 3.0 (float because 2.0 is float)
+max(5)                   // -> 5
 max([])                  // -> Error: cannot find maximum of empty list
 max([1, "text"])         // -> Error: requires list of numbers
 ```
@@ -1292,23 +1299,25 @@ max([1, "text"])         // -> Error: requires list of numbers
 Constrains a value between minimum and maximum bounds.
 
 ```rad
-clamp(val: float, min: float, max: float) -> float|error
+clamp(val: int|float, min: int|float, max: int|float) -> int|float|error
 ```
 
 **Parameters:**
 
-| Parameter | Type    | Description        |
-|-----------|---------|--------------------|
-| `val`     | `float` | Value to constrain |
-| `min`     | `float` | Minimum bound      |
-| `max`     | `float` | Maximum bound      |
+| Parameter | Type        | Description        |
+|-----------|-------------|--------------------|
+| `val`     | `int|float` | Value to constrain |
+| `min`     | `int|float` | Minimum bound      |
+| `max`     | `int|float` | Maximum bound      |
 
 Returns `val` if between min and max, otherwise returns the nearest bound. Min must be ≤ max.
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
 
 ```rad
-clamp(25, 20, 30)    // -> 25.0
-clamp(10, 20, 30)    // -> 20.0
-clamp(40, 20, 30)    // -> 30.0
+clamp(25, 20, 30)    // -> 25
+clamp(10, 20, 30)    // -> 20
+clamp(40, 20, 30)    // -> 30
+clamp(5, 1.0, 10)    // -> 5.0 (float because 1.0 is float)
 clamp(15, 30, 20)    // -> Error: min must be <= max
 ```
 
