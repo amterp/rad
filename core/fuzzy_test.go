@@ -1,6 +1,10 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestFuzzyMatchFold(t *testing.T) {
 	tests := []struct {
@@ -43,5 +47,27 @@ func TestFuzzyMatchFold(t *testing.T) {
 					tt.source, tt.target, result, tt.expected)
 			}
 		})
+	}
+}
+
+func TestLevenshtein(t *testing.T) {
+	tests := []struct {
+		a, b     string
+		expected int
+	}{
+		{"", "", 0},
+		{"a", "", 1},
+		{"", "a", 1},
+		{"abc", "abc", 0},
+		{"abc", "abd", 1},
+		{"abc", "ab", 1},
+		{"abc", "abcd", 1},
+		{"kitten", "sitting", 3},
+		{"foobar", "foobaz", 1},
+	}
+
+	for _, tc := range tests {
+		result := Levenshtein(tc.a, tc.b)
+		assert.Equal(t, tc.expected, result, "Levenshtein(%q, %q)", tc.a, tc.b)
 	}
 }
