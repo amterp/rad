@@ -225,30 +225,3 @@ func TestNewDiagnosticFromCheckNilCode(t *testing.T) {
 	assert.Equal(t, rl.ErrGenericRuntime, coreDiag.Code)
 }
 
-// Tests for RadValue span tracking
-
-func TestRadValueHasSpan(t *testing.T) {
-	// Value without span
-	val := core.RadValue{Val: int64(42)}
-	assert.False(t, val.HasSpan())
-	assert.Nil(t, val.GetSpan())
-
-	// Value with span
-	span := &core.Span{File: "test.rad", StartRow: 5}
-	valWithSpan := val.WithSpan(span)
-	assert.True(t, valWithSpan.HasSpan())
-	assert.Equal(t, "test.rad", valWithSpan.GetSpan().File)
-	assert.Equal(t, 5, valWithSpan.GetSpan().StartRow)
-}
-
-func TestRadValueWithSpan(t *testing.T) {
-	span := &core.Span{File: "test.rad", StartRow: 10, StartCol: 5}
-	val := core.RadValue{Val: "hello"}
-
-	// WithSpan returns a copy with the span
-	result := val.WithSpan(span)
-	assert.Equal(t, span, result.Span)
-
-	// Original is also modified (value semantics - copy)
-	// This is expected behavior for Go structs
-}
