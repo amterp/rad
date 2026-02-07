@@ -224,4 +224,3 @@ func TestNewDiagnosticFromCheckNilCode(t *testing.T) {
 	coreDiag := core.NewDiagnosticFromCheck(checkDiag, "test.rad")
 	assert.Equal(t, rl.ErrGenericRuntime, coreDiag.Code)
 }
-

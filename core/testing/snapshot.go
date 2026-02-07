@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	gd "github.com/amterp/go-delta"
 )
 
 // UpdateSnapshots is set by the -update flag to regenerate expected outputs
@@ -380,7 +382,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	if actual.Stdout != tc.Stdout {
 		needsUpdate = true
 		if !*UpdateSnapshots {
-			t.Errorf("Stdout mismatch\nExpected:\n%q\nActual:\n%q", tc.Stdout, actual.Stdout)
+			t.Errorf("Stdout mismatch:\n%s", gd.DiffWith(tc.Stdout, actual.Stdout, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
 
@@ -388,7 +390,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	if actual.Stderr != tc.Stderr {
 		needsUpdate = true
 		if !*UpdateSnapshots {
-			t.Errorf("Stderr mismatch\nExpected:\n%q\nActual:\n%q", tc.Stderr, actual.Stderr)
+			t.Errorf("Stderr mismatch:\n%s", gd.DiffWith(tc.Stderr, actual.Stderr, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
 
