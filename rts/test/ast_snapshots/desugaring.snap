@@ -1,0 +1,84 @@
+### TITLE ###
+Compound assign plus
+### INPUT ###
+x += 3
+### STDOUT ###
+SourceFile [0:0-0:6]
+  Assign [0:0-0:6]
+    Identifier "x" [0:0-0:1]
+    OpBinary + [0:0-0:6]
+      Identifier "x" [0:0-0:1]
+      LitInt 3 [0:5-0:6]
+
+### TITLE ###
+Compound assign minus
+### INPUT ###
+x -= 3
+### STDOUT ###
+SourceFile [0:0-0:6]
+  Assign [0:0-0:6]
+    Identifier "x" [0:0-0:1]
+    OpBinary - [0:0-0:6]
+      Identifier "x" [0:0-0:1]
+      LitInt 3 [0:5-0:6]
+
+### TITLE ###
+Compound assign star
+### INPUT ###
+x *= 3
+### STDOUT ###
+SourceFile [0:0-0:6]
+  Assign [0:0-0:6]
+    Identifier "x" [0:0-0:1]
+    OpBinary * [0:0-0:6]
+      Identifier "x" [0:0-0:1]
+      LitInt 3 [0:5-0:6]
+
+### TITLE ###
+Compound assign slash
+### INPUT ###
+x /= 3
+### STDOUT ###
+SourceFile [0:0-0:6]
+  Assign [0:0-0:6]
+    Identifier "x" [0:0-0:1]
+    OpBinary / [0:0-0:6]
+      Identifier "x" [0:0-0:1]
+      LitInt 3 [0:5-0:6]
+
+### TITLE ###
+Compound assign percent
+### INPUT ###
+x %= 3
+### STDOUT ###
+SourceFile [0:0-0:6]
+  Assign [0:0-0:6]
+    Identifier "x" [0:0-0:1]
+    OpBinary % [0:0-0:6]
+      Identifier "x" [0:0-0:1]
+      LitInt 3 [0:5-0:6]
+
+### TITLE ###
+Increment
+### INPUT ###
+x++
+### STDOUT ###
+SourceFile [0:0-0:3]
+  Assign [0:0-0:3]
+    Identifier "x" [0:0-0:1]
+    OpBinary + [0:0-0:3]
+      Identifier "x" [0:0-0:1]
+      LitInt 1 [0:0-0:3]
+
+### TITLE ###
+Decrement
+### INPUT ###
+x--
+### STDOUT ###
+SourceFile [0:0-0:3]
+  Assign [0:0-0:3]
+    Identifier "x" [0:0-0:1]
+    OpBinary - [0:0-0:3]
+      Identifier "x" [0:0-0:1]
+      LitInt 1 [0:0-0:3]
+
