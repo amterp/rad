@@ -1,0 +1,98 @@
+### TITLE ###
+Args declarations
+### INPUT ###
+args:
+    name str
+    age int = 30 # An age.
+
+    name enum ["alice", "bob"]
+    name regex "^[A-Z][a-z]$"
+    version regex "^[0-9]+\.[0-9]+\.[0-9]+$"
+    age range [0, 120]
+a = 2
+### STDOUT ###
+B: [  0, 181] PS: [0,  0] PE: [8,  5] source_file
+B: [  0, 175] PS: [0,  0] PE: [7, 22]   arg_block
+B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
+B: [  4,   5] PS: [0,  4] PE: [0,  5]     : `:`
+B: [ 10,  18] PS: [1,  4] PE: [1, 12]     declaration: arg_declaration
+B: [ 10,  14] PS: [1,  4] PE: [1,  8]       arg_name: identifier `name`
+B: [ 15,  18] PS: [1,  9] PE: [1, 12]       type: string_type `str`
+B: [ 23,  45] PS: [2,  4] PE: [2, 26]     declaration: arg_declaration
+B: [ 23,  26] PS: [2,  4] PE: [2,  7]       arg_name: identifier `age`
+B: [ 27,  30] PS: [2,  8] PE: [2, 11]       type: int_type `int`
+B: [ 31,  32] PS: [2, 12] PE: [2, 13]       = `=`
+B: [ 33,  35] PS: [2, 14] PE: [2, 16]       default: int_arg
+B: [ 33,  35] PS: [2, 14] PE: [2, 16]         value: int `30`
+B: [ 38,  45] PS: [2, 19] PE: [2, 26]       comment: comment_text `An age.`
+B: [ 51,  77] PS: [4,  4] PE: [4, 30]     enum_constraint: arg_enum_constraint
+B: [ 51,  55] PS: [4,  4] PE: [4,  8]       arg_name: identifier `name`
+B: [ 56,  60] PS: [4,  9] PE: [4, 13]       enum `enum`
+B: [ 61,  77] PS: [4, 14] PE: [4, 30]       values: string_list
+B: [ 61,  62] PS: [4, 14] PE: [4, 15]         [ `[`
+B: [ 62,  69] PS: [4, 15] PE: [4, 22]         list_entry: string
+B: [ 62,  63] PS: [4, 15] PE: [4, 16]           start: string_start `"`
+B: [ 63,  68] PS: [4, 16] PE: [4, 21]           contents: string_contents
+B: [ 63,  68] PS: [4, 16] PE: [4, 21]             content: string_content `alice`
+B: [ 68,  69] PS: [4, 21] PE: [4, 22]           end: string_end `"`
+B: [ 69,  70] PS: [4, 22] PE: [4, 23]         , `,`
+B: [ 71,  76] PS: [4, 24] PE: [4, 29]         list_entry: string
+B: [ 71,  72] PS: [4, 24] PE: [4, 25]           start: string_start `"`
+B: [ 72,  75] PS: [4, 25] PE: [4, 28]           contents: string_contents
+B: [ 72,  75] PS: [4, 25] PE: [4, 28]             content: string_content `bob`
+B: [ 75,  76] PS: [4, 28] PE: [4, 29]           end: string_end `"`
+B: [ 76,  77] PS: [4, 29] PE: [4, 30]         ] `]`
+B: [ 82, 107] PS: [5,  4] PE: [5, 29]     regex_constraint: arg_regex_constraint
+B: [ 82,  86] PS: [5,  4] PE: [5,  8]       arg_name: identifier `name`
+B: [ 87,  92] PS: [5,  9] PE: [5, 14]       regex `regex`
+B: [ 93, 107] PS: [5, 15] PE: [5, 29]       regex: string
+B: [ 93,  94] PS: [5, 15] PE: [5, 16]         start: string_start `"`
+B: [ 94, 106] PS: [5, 16] PE: [5, 28]         contents: string_contents
+B: [ 94, 106] PS: [5, 16] PE: [5, 28]           content: string_content `^[A-Z][a-z]$`
+B: [106, 107] PS: [5, 28] PE: [5, 29]         end: string_end `"`
+B: [112, 152] PS: [6,  4] PE: [6, 44]     regex_constraint: arg_regex_constraint
+B: [112, 119] PS: [6,  4] PE: [6, 11]       arg_name: identifier `version`
+B: [120, 125] PS: [6, 12] PE: [6, 17]       regex `regex`
+B: [126, 152] PS: [6, 18] PE: [6, 44]       regex: string
+B: [126, 127] PS: [6, 18] PE: [6, 19]         start: string_start `"`
+B: [127, 151] PS: [6, 19] PE: [6, 43]         contents: string_contents
+B: [127, 134] PS: [6, 19] PE: [6, 26]           content: string_content `^[0-9]+`
+B: [134, 135] PS: [6, 26] PE: [6, 27]           backslash: \ `\`
+B: [135, 142] PS: [6, 27] PE: [6, 34]           content: string_content `.[0-9]+`
+B: [142, 143] PS: [6, 34] PE: [6, 35]           backslash: \ `\`
+B: [143, 151] PS: [6, 35] PE: [6, 43]           content: string_content `.[0-9]+$`
+B: [151, 152] PS: [6, 43] PE: [6, 44]         end: string_end `"`
+B: [157, 175] PS: [7,  4] PE: [7, 22]     range_constraint: arg_range_constraint
+B: [157, 160] PS: [7,  4] PE: [7,  7]       arg_name: identifier `age`
+B: [161, 166] PS: [7,  8] PE: [7, 13]       range `range`
+B: [167, 168] PS: [7, 14] PE: [7, 15]       opener: [ `[`
+B: [168, 169] PS: [7, 15] PE: [7, 16]       min: int_arg
+B: [168, 169] PS: [7, 15] PE: [7, 16]         value: int `0`
+B: [169, 170] PS: [7, 16] PE: [7, 17]       , `,`
+B: [171, 174] PS: [7, 18] PE: [7, 21]       max: int_arg
+B: [171, 174] PS: [7, 18] PE: [7, 21]         value: int `120`
+B: [174, 175] PS: [7, 21] PE: [7, 22]       closer: ] `]`
+B: [176, 181] PS: [8,  0] PE: [8,  5]   assign
+B: [176, 177] PS: [8,  0] PE: [8,  1]     left: var_path
+B: [176, 177] PS: [8,  0] PE: [8,  1]       root: identifier `a`
+B: [178, 179] PS: [8,  2] PE: [8,  3]     = `=`
+B: [180, 181] PS: [8,  4] PE: [8,  5]     right: expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]       delegate: ternary_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]         delegate: or_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]           delegate: and_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]             delegate: compare_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]               delegate: add_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                 delegate: mult_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                   delegate: unary_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                     delegate: fallback_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                       delegate: indexed_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                         root: primary_expr
+B: [180, 181] PS: [8,  4] PE: [8,  5]                           literal
+B: [180, 181] PS: [8,  4] PE: [8,  5]                             int `2`
+
+### STDERR ###
+PS: [0, 0] PE: [8, 5] SourceFile
+PS: [8, 0] PE: [8, 5]   Assign
+PS: [8, 0] PE: [8, 1]     Identifier "a"
+PS: [8, 4] PE: [8, 5]     LitInt 2
+

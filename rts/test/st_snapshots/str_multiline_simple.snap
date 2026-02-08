@@ -1,0 +1,39 @@
+### TITLE ###
+Str multiline simple
+### INPUT ###
+a = """
+hello
+friend
+"""
+### STDOUT ###
+B: [ 0, 24] PS: [0, 0] PE: [3, 3] source_file
+B: [ 0, 24] PS: [0, 0] PE: [3, 3]   assign
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
+B: [ 0,  1] PS: [0, 0] PE: [0, 1]       root: identifier `a`
+B: [ 2,  3] PS: [0, 2] PE: [0, 3]     = `=`
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]     right: expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]       delegate: ternary_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]         delegate: or_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]           delegate: and_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]             delegate: compare_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]               delegate: add_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                 delegate: mult_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                   delegate: unary_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                     delegate: fallback_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                       delegate: indexed_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                         root: primary_expr
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                           literal
+B: [ 4, 24] PS: [0, 4] PE: [3, 3]                             string
+B: [ 4,  8] PS: [0, 4] PE: [1, 0]                               start: string_start `"""\n`
+B: [ 8, 20] PS: [1, 0] PE: [2, 6]                               contents: string_contents
+B: [ 8, 13] PS: [1, 0] PE: [1, 5]                                 content: string_content `hello`
+B: [13, 14] PS: [1, 5] PE: [2, 0]                                 content: string_content `\n`
+B: [14, 20] PS: [2, 0] PE: [2, 6]                                 content: string_content `friend`
+B: [20, 24] PS: [2, 6] PE: [3, 3]                               end: string_end `\n"""`
+
+### STDERR ###
+PS: [0, 0] PE: [3, 3] SourceFile
+PS: [0, 0] PE: [3, 3]   Assign
+PS: [0, 0] PE: [0, 1]     Identifier "a"
+PS: [0, 4] PE: [3, 3]     LitString "hello\nfriend"
+

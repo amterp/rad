@@ -1,0 +1,58 @@
+### TITLE ###
+While loop no condition
+### INPUT ###
+while:
+    print(2)
+    a--
+### STDOUT ###
+B: [ 0, 27] PS: [0,  0] PE: [2,  7] source_file
+B: [ 0, 27] PS: [0,  0] PE: [2,  7]   while_loop
+B: [ 0,  5] PS: [0,  0] PE: [0,  5]     while `while`
+B: [ 5,  6] PS: [0,  5] PE: [0,  6]     : `:`
+B: [11, 19] PS: [1,  4] PE: [1, 12]     stmt: expr_stmt
+B: [11, 19] PS: [1,  4] PE: [1, 12]       expr: expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]         delegate: ternary_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]           delegate: or_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]             delegate: and_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]               delegate: compare_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                 delegate: add_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                   delegate: mult_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                     delegate: unary_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                       delegate: fallback_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                         delegate: indexed_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                           root: primary_expr
+B: [11, 19] PS: [1,  4] PE: [1, 12]                             call
+B: [11, 16] PS: [1,  4] PE: [1,  9]                               func: identifier `print`
+B: [16, 17] PS: [1,  9] PE: [1, 10]                               ( `(`
+B: [17, 18] PS: [1, 10] PE: [1, 11]                               arg: expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                 delegate: ternary_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                   delegate: or_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                     delegate: and_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                       delegate: compare_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                         delegate: add_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                           delegate: mult_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                             delegate: unary_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                               delegate: fallback_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                                 delegate: indexed_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                                   root: primary_expr
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                                     literal
+B: [17, 18] PS: [1, 10] PE: [1, 11]                                                       int `2`
+B: [18, 19] PS: [1, 11] PE: [1, 12]                               ) `)`
+B: [24, 27] PS: [2,  4] PE: [2,  7]     stmt: incr_decr
+B: [24, 25] PS: [2,  4] PE: [2,  5]       left: var_path
+B: [24, 25] PS: [2,  4] PE: [2,  5]         root: identifier `a`
+B: [25, 27] PS: [2,  5] PE: [2,  7]       op: -- `--`
+
+### STDERR ###
+PS: [0, 0] PE: [2, 7] SourceFile
+PS: [0, 0] PE: [2, 7]   WhileLoop
+PS: [1, 4] PE: [1, 12]     ExprStmt
+PS: [1, 4] PE: [1, 12]       Call
+PS: [1, 4] PE: [1, 9]         Identifier "print"
+PS: [1, 10] PE: [1, 11]         LitInt 2
+PS: [2, 4] PE: [2, 7]     Assign
+PS: [2, 4] PE: [2, 5]       Identifier "a"
+PS: [2, 4] PE: [2, 7]       OpBinary -
+PS: [2, 4] PE: [2, 5]         Identifier "a"
+PS: [2, 4] PE: [2, 7]         LitInt 1
+

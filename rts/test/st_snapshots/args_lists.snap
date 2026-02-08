@@ -1,0 +1,71 @@
+### TITLE ###
+Args lists
+### INPUT ###
+args:
+   apple str[] = ["alice", "bob"]
+   banana int[] = [2, 3]
+   citrus float[] = [2.3, 4.5]
+   durian bool[] = [true, false]
+### STDOUT ###
+B: [  0, 128] PS: [0,  0] PE: [4, 32] source_file
+B: [  0, 128] PS: [0,  0] PE: [4, 32]   arg_block
+B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
+B: [  4,   5] PS: [0,  4] PE: [0,  5]     : `:`
+B: [  9,  39] PS: [1,  3] PE: [1, 33]     declaration: arg_declaration
+B: [  9,  14] PS: [1,  3] PE: [1,  8]       arg_name: identifier `apple`
+B: [ 15,  20] PS: [1,  9] PE: [1, 14]       type: string_list_type `str[]`
+B: [ 21,  22] PS: [1, 15] PE: [1, 16]       = `=`
+B: [ 23,  39] PS: [1, 17] PE: [1, 33]       default: string_list
+B: [ 23,  24] PS: [1, 17] PE: [1, 18]         [ `[`
+B: [ 24,  31] PS: [1, 18] PE: [1, 25]         list_entry: string
+B: [ 24,  25] PS: [1, 18] PE: [1, 19]           start: string_start `"`
+B: [ 25,  30] PS: [1, 19] PE: [1, 24]           contents: string_contents
+B: [ 25,  30] PS: [1, 19] PE: [1, 24]             content: string_content `alice`
+B: [ 30,  31] PS: [1, 24] PE: [1, 25]           end: string_end `"`
+B: [ 31,  32] PS: [1, 25] PE: [1, 26]         , `,`
+B: [ 33,  38] PS: [1, 27] PE: [1, 32]         list_entry: string
+B: [ 33,  34] PS: [1, 27] PE: [1, 28]           start: string_start `"`
+B: [ 34,  37] PS: [1, 28] PE: [1, 31]           contents: string_contents
+B: [ 34,  37] PS: [1, 28] PE: [1, 31]             content: string_content `bob`
+B: [ 37,  38] PS: [1, 31] PE: [1, 32]           end: string_end `"`
+B: [ 38,  39] PS: [1, 32] PE: [1, 33]         ] `]`
+B: [ 43,  64] PS: [2,  3] PE: [2, 24]     declaration: arg_declaration
+B: [ 43,  49] PS: [2,  3] PE: [2,  9]       arg_name: identifier `banana`
+B: [ 50,  55] PS: [2, 10] PE: [2, 15]       type: int_list_type `int[]`
+B: [ 56,  57] PS: [2, 16] PE: [2, 17]       = `=`
+B: [ 58,  64] PS: [2, 18] PE: [2, 24]       default: int_list
+B: [ 58,  59] PS: [2, 18] PE: [2, 19]         [ `[`
+B: [ 59,  60] PS: [2, 19] PE: [2, 20]         list_entry: int_arg
+B: [ 59,  60] PS: [2, 19] PE: [2, 20]           value: int `2`
+B: [ 60,  61] PS: [2, 20] PE: [2, 21]         , `,`
+B: [ 62,  63] PS: [2, 22] PE: [2, 23]         list_entry: int_arg
+B: [ 62,  63] PS: [2, 22] PE: [2, 23]           value: int `3`
+B: [ 63,  64] PS: [2, 23] PE: [2, 24]         ] `]`
+B: [ 68,  95] PS: [3,  3] PE: [3, 30]     declaration: arg_declaration
+B: [ 68,  74] PS: [3,  3] PE: [3,  9]       arg_name: identifier `citrus`
+B: [ 75,  82] PS: [3, 10] PE: [3, 17]       type: float_list_type `float[]`
+B: [ 83,  84] PS: [3, 18] PE: [3, 19]       = `=`
+B: [ 85,  95] PS: [3, 20] PE: [3, 30]       default: float_list
+B: [ 85,  86] PS: [3, 20] PE: [3, 21]         [ `[`
+B: [ 86,  89] PS: [3, 21] PE: [3, 24]         list_entry: float_arg
+B: [ 86,  89] PS: [3, 21] PE: [3, 24]           value: float `2.3`
+B: [ 89,  90] PS: [3, 24] PE: [3, 25]         , `,`
+B: [ 91,  94] PS: [3, 26] PE: [3, 29]         list_entry: float_arg
+B: [ 91,  94] PS: [3, 26] PE: [3, 29]           value: float `4.5`
+B: [ 94,  95] PS: [3, 29] PE: [3, 30]         ] `]`
+B: [ 99, 128] PS: [4,  3] PE: [4, 32]     declaration: arg_declaration
+B: [ 99, 105] PS: [4,  3] PE: [4,  9]       arg_name: identifier `durian`
+B: [106, 112] PS: [4, 10] PE: [4, 16]       type: bool_list_type `bool[]`
+B: [113, 114] PS: [4, 17] PE: [4, 18]       = `=`
+B: [115, 128] PS: [4, 19] PE: [4, 32]       default: bool_list
+B: [115, 116] PS: [4, 19] PE: [4, 20]         [ `[`
+B: [116, 120] PS: [4, 20] PE: [4, 24]         list_entry: bool
+B: [116, 120] PS: [4, 20] PE: [4, 24]           true `true`
+B: [120, 121] PS: [4, 24] PE: [4, 25]         , `,`
+B: [122, 127] PS: [4, 26] PE: [4, 31]         list_entry: bool
+B: [122, 127] PS: [4, 26] PE: [4, 31]           false `false`
+B: [127, 128] PS: [4, 31] PE: [4, 32]         ] `]`
+
+### STDERR ###
+PS: [0,  0] PE: [4, 32] SourceFile
+
