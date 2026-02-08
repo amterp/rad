@@ -7,20 +7,39 @@ import (
 
 // AstDump produces a human-readable tree representation of an AST.
 func AstDump(node Node) string {
+	maxRow, maxCol := findASTMaxSpans(node)
+	rowW := len(fmt.Sprintf("%d", maxRow))
+	colW := len(fmt.Sprintf("%d", maxCol))
+	fmtStr := fmt.Sprintf(
+		"PS: [%%%dd, %%%dd] PE: [%%%dd, %%%dd] ",
+		rowW, colW, rowW, colW)
+	spacePad := strings.Repeat(" ", len(fmt.Sprintf(fmtStr, 0, 0, 0, 0)))
 	var sb strings.Builder
-	astDumpNode(&sb, node, 0)
+	astDumpNode(&sb, fmtStr, spacePad, node, 0)
 	return sb.String()
 }
 
-func astDumpNode(sb *strings.Builder, node Node, depth int) {
+// findASTMaxSpans returns the maximum row and column values from the root node's span.
+// Since AST node spans encompass all their children, we only need to check the root.
+func findASTMaxSpans(node Node) (maxRow, maxCol int) {
+	span := node.Span()
+	maxCol = span.EndCol
+	if span.StartCol > maxCol {
+		maxCol = span.StartCol
+	}
+	return span.EndRow, maxCol
+}
+
+func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node, depth int) {
 	indent := strings.Repeat("  ", depth)
 	span := node.Span()
 
 	switch n := node.(type) {
 	case *SourceFile:
-		fmt.Fprintf(sb, "%sSourceFile [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sSourceFile\n", indent)
 		for _, stmt := range n.Stmts {
-			astDumpNode(sb, stmt, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, stmt, depth+1)
 		}
 
 	case *Assign:
@@ -28,63 +47,69 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 		if n.IsUnpacking {
 			unpack = " unpack"
 		}
-		fmt.Fprintf(sb, "%sAssign%s [%d:%d-%d:%d]\n", indent, unpack, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sAssign%s\n", indent, unpack)
 		for _, t := range n.Targets {
-			astDumpNode(sb, t, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, t, depth+1)
 		}
 		for _, v := range n.Values {
-			astDumpNode(sb, v, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, v, depth+1)
 		}
 		if n.Catch != nil {
-			fmt.Fprintf(sb, "%s  Catch\n", indent)
+			fmt.Fprintf(sb, "%s%sCatch\n", spacePad, indent)
 			for _, s := range n.Catch.Stmts {
-				astDumpNode(sb, s, depth+2)
+				astDumpNode(sb, fmtStr, spacePad, s, depth+2)
 			}
 		}
 
 	case *ExprStmt:
-		fmt.Fprintf(sb, "%sExprStmt [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Expr, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sExprStmt\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Expr, depth+1)
 
 	case *If:
-		fmt.Fprintf(sb, "%sIf [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sIf\n", indent)
 		for i, branch := range n.Branches {
 			if branch.Condition != nil {
-				fmt.Fprintf(sb, "%s  Branch %d (cond)\n", indent, i)
-				astDumpNode(sb, branch.Condition, depth+2)
+				fmt.Fprintf(sb, "%s%sBranch %d (cond)\n", spacePad, indent, i)
+				astDumpNode(sb, fmtStr, spacePad, branch.Condition, depth+2)
 			} else {
-				fmt.Fprintf(sb, "%s  Branch %d (else)\n", indent, i)
+				fmt.Fprintf(sb, "%s%sBranch %d (else)\n", spacePad, indent, i)
 			}
 			for _, s := range branch.Body {
-				astDumpNode(sb, s, depth+2)
+				astDumpNode(sb, fmtStr, spacePad, s, depth+2)
 			}
 		}
 
 	case *Switch:
-		fmt.Fprintf(sb, "%sSwitch [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Discriminant, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sSwitch\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Discriminant, depth+1)
 		for _, c := range n.Cases {
-			fmt.Fprintf(sb, "%s  Case\n", indent)
+			fmt.Fprintf(sb, "%s%sCase\n", spacePad, indent)
 			for _, k := range c.Keys {
-				astDumpNode(sb, k, depth+2)
+				astDumpNode(sb, fmtStr, spacePad, k, depth+2)
 			}
-			astDumpNode(sb, c.Alt, depth+2)
+			astDumpNode(sb, fmtStr, spacePad, c.Alt, depth+2)
 		}
 		if n.Default != nil {
-			fmt.Fprintf(sb, "%s  Default\n", indent)
-			astDumpNode(sb, n.Default.Alt, depth+2)
+			fmt.Fprintf(sb, "%s%sDefault\n", spacePad, indent)
+			astDumpNode(sb, fmtStr, spacePad, n.Default.Alt, depth+2)
 		}
 
 	case *SwitchCaseExpr:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%sCaseExpr\n", indent)
 		for _, v := range n.Values {
-			astDumpNode(sb, v, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, v, depth+1)
 		}
 
 	case *SwitchCaseBlock:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%sCaseBlock\n", indent)
 		for _, s := range n.Stmts {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *ForLoop:
@@ -92,29 +117,33 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 		if n.Context != nil {
 			ctx = fmt.Sprintf(" with %s", *n.Context)
 		}
-		fmt.Fprintf(sb, "%sForLoop vars=[%s]%s [%d:%d-%d:%d]\n", indent, strings.Join(n.Vars, ", "), ctx, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Iter, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sForLoop vars=[%s]%s\n", indent, strings.Join(n.Vars, ", "), ctx)
+		astDumpNode(sb, fmtStr, spacePad, n.Iter, depth+1)
 		for _, s := range n.Body {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *WhileLoop:
-		fmt.Fprintf(sb, "%sWhileLoop [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sWhileLoop\n", indent)
 		if n.Condition != nil {
-			astDumpNode(sb, n.Condition, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, n.Condition, depth+1)
 		}
 		for _, s := range n.Body {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *Shell:
-		fmt.Fprintf(sb, "%sShell quiet=%v confirm=%v [%d:%d-%d:%d]\n", indent, n.IsQuiet, n.IsConfirm, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Cmd, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sShell quiet=%v confirm=%v\n", indent, n.IsQuiet, n.IsConfirm)
+		astDumpNode(sb, fmtStr, spacePad, n.Cmd, depth+1)
 
 	case *Del:
-		fmt.Fprintf(sb, "%sDel [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sDel\n", indent)
 		for _, t := range n.Targets {
-			astDumpNode(sb, t, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, t, depth+1)
 		}
 
 	case *Defer:
@@ -122,159 +151,187 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 		if n.IsErrDefer {
 			kind = "errdefer"
 		}
-		fmt.Fprintf(sb, "%sDefer %s [%d:%d-%d:%d]\n", indent, kind, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sDefer %s\n", indent, kind)
 		for _, s := range n.Body {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *Break:
-		fmt.Fprintf(sb, "%sBreak [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sBreak\n", indent)
 	case *Continue:
-		fmt.Fprintf(sb, "%sContinue [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sContinue\n", indent)
 	case *Pass:
-		fmt.Fprintf(sb, "%sPass [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sPass\n", indent)
 
 	case *Return:
-		fmt.Fprintf(sb, "%sReturn [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sReturn\n", indent)
 		for _, v := range n.Values {
-			astDumpNode(sb, v, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, v, depth+1)
 		}
 
 	case *Yield:
-		fmt.Fprintf(sb, "%sYield [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sYield\n", indent)
 		for _, v := range n.Values {
-			astDumpNode(sb, v, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, v, depth+1)
 		}
 
 	case *FnDef:
-		fmt.Fprintf(sb, "%sFnDef %q block=%v [%d:%d-%d:%d]\n", indent, n.Name, n.IsBlock, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sFnDef %q block=%v\n", indent, n.Name, n.IsBlock)
 		for _, s := range n.Body {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *Lambda:
-		fmt.Fprintf(sb, "%sLambda block=%v [%d:%d-%d:%d]\n", indent, n.IsBlock, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLambda block=%v\n", indent, n.IsBlock)
 		for _, s := range n.Body {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *OpBinary:
-		fmt.Fprintf(sb, "%sOpBinary %s [%d:%d-%d:%d]\n", indent, n.Op, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Left, depth+1)
-		astDumpNode(sb, n.Right, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sOpBinary %s\n", indent, n.Op)
+		astDumpNode(sb, fmtStr, spacePad, n.Left, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.Right, depth+1)
 
 	case *OpUnary:
-		fmt.Fprintf(sb, "%sOpUnary %s [%d:%d-%d:%d]\n", indent, n.Op, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Operand, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sOpUnary %s\n", indent, n.Op)
+		astDumpNode(sb, fmtStr, spacePad, n.Operand, depth+1)
 
 	case *Ternary:
-		fmt.Fprintf(sb, "%sTernary [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Condition, depth+1)
-		astDumpNode(sb, n.True, depth+1)
-		astDumpNode(sb, n.False, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sTernary\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Condition, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.True, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.False, depth+1)
 
 	case *Fallback:
-		fmt.Fprintf(sb, "%sFallback [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Left, depth+1)
-		astDumpNode(sb, n.Right, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sFallback\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Left, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.Right, depth+1)
 
 	case *Call:
-		fmt.Fprintf(sb, "%sCall [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Func, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sCall\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Func, depth+1)
 		for _, a := range n.Args {
-			astDumpNode(sb, a, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, a, depth+1)
 		}
 		for _, na := range n.NamedArgs {
-			fmt.Fprintf(sb, "%s  Named %q\n", indent, na.Name)
-			astDumpNode(sb, na.Value, depth+2)
+			fmt.Fprintf(sb, "%s%sNamed %q\n", spacePad, indent, na.Name)
+			astDumpNode(sb, fmtStr, spacePad, na.Value, depth+2)
 		}
 
 	case *VarPath:
-		fmt.Fprintf(sb, "%sVarPath [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Root, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sVarPath\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Root, depth+1)
 		for _, seg := range n.Segments {
 			if seg.Field != nil {
-				fmt.Fprintf(sb, "%s  .%s\n", indent, *seg.Field)
+				fmt.Fprintf(sb, "%s%s.%s\n", spacePad, indent, *seg.Field)
 			} else if seg.IsSlice {
-				fmt.Fprintf(sb, "%s  [slice]\n", indent)
+				fmt.Fprintf(sb, "%s%s[slice]\n", spacePad, indent)
 			} else {
-				fmt.Fprintf(sb, "%s  [index]\n", indent)
-				astDumpNode(sb, seg.Index, depth+2)
+				fmt.Fprintf(sb, "%s%s[index]\n", spacePad, indent)
+				astDumpNode(sb, fmtStr, spacePad, seg.Index, depth+2)
 			}
 		}
 
 	case *Identifier:
-		fmt.Fprintf(sb, "%sIdentifier %q [%d:%d-%d:%d]\n", indent, n.Name, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sIdentifier %q\n", indent, n.Name)
 
 	case *LitInt:
-		fmt.Fprintf(sb, "%sLitInt %d [%d:%d-%d:%d]\n", indent, n.Value, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitInt %d\n", indent, n.Value)
 	case *LitFloat:
-		fmt.Fprintf(sb, "%sLitFloat %g [%d:%d-%d:%d]\n", indent, n.Value, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitFloat %g\n", indent, n.Value)
 	case *LitBool:
-		fmt.Fprintf(sb, "%sLitBool %v [%d:%d-%d:%d]\n", indent, n.Value, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitBool %v\n", indent, n.Value)
 	case *LitNull:
-		fmt.Fprintf(sb, "%sLitNull [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitNull\n", indent)
 
 	case *LitString:
 		if n.Simple {
-			fmt.Fprintf(sb, "%sLitString %q [%d:%d-%d:%d]\n", indent, n.Value, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+			fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+			fmt.Fprintf(sb, "%sLitString %q\n", indent, n.Value)
 		} else {
-			fmt.Fprintf(sb, "%sLitString (interpolated, %d segments) [%d:%d-%d:%d]\n", indent, len(n.Segments), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+			fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+			fmt.Fprintf(sb, "%sLitString (interpolated, %d segments)\n", indent, len(n.Segments))
 			for _, seg := range n.Segments {
 				if seg.IsLiteral {
-					fmt.Fprintf(sb, "%s  Literal %q\n", indent, seg.Text)
+					fmt.Fprintf(sb, "%s%sLiteral %q\n", spacePad, indent, seg.Text)
 				} else {
-					fmt.Fprintf(sb, "%s  Interpolation\n", indent)
-					astDumpNode(sb, seg.Expr, depth+2)
+					fmt.Fprintf(sb, "%s%sInterpolation\n", spacePad, indent)
+					astDumpNode(sb, fmtStr, spacePad, seg.Expr, depth+2)
 				}
 			}
 		}
 
 	case *LitList:
-		fmt.Fprintf(sb, "%sLitList (%d elements) [%d:%d-%d:%d]\n", indent, len(n.Elements), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitList (%d elements)\n", indent, len(n.Elements))
 		for _, e := range n.Elements {
-			astDumpNode(sb, e, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, e, depth+1)
 		}
 
 	case *LitMap:
-		fmt.Fprintf(sb, "%sLitMap (%d entries) [%d:%d-%d:%d]\n", indent, len(n.Entries), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sLitMap (%d entries)\n", indent, len(n.Entries))
 		for _, e := range n.Entries {
-			fmt.Fprintf(sb, "%s  Entry\n", indent)
-			astDumpNode(sb, e.Key, depth+2)
-			astDumpNode(sb, e.Value, depth+2)
+			fmt.Fprintf(sb, "%s%sEntry\n", spacePad, indent)
+			astDumpNode(sb, fmtStr, spacePad, e.Key, depth+2)
+			astDumpNode(sb, fmtStr, spacePad, e.Value, depth+2)
 		}
 
 	case *ListComp:
-		fmt.Fprintf(sb, "%sListComp vars=[%s] [%d:%d-%d:%d]\n", indent, strings.Join(n.Vars, ", "), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		astDumpNode(sb, n.Expr, depth+1)
-		astDumpNode(sb, n.Iter, depth+1)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sListComp vars=[%s]\n", indent, strings.Join(n.Vars, ", "))
+		astDumpNode(sb, fmtStr, spacePad, n.Expr, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.Iter, depth+1)
 		if n.Condition != nil {
-			astDumpNode(sb, n.Condition, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, n.Condition, depth+1)
 		}
 
 	case *RadBlock:
-		fmt.Fprintf(sb, "%sRadBlock %q [%d:%d-%d:%d]\n", indent, n.BlockType, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sRadBlock %q\n", indent, n.BlockType)
 		if n.Source != nil {
-			astDumpNode(sb, n.Source, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, n.Source, depth+1)
 		}
 		for _, s := range n.Stmts {
-			astDumpNode(sb, s, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, s, depth+1)
 		}
 
 	case *RadField:
-		fmt.Fprintf(sb, "%sRadField [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sRadField\n", indent)
 		for _, id := range n.Identifiers {
-			astDumpNode(sb, id, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, id, depth+1)
 		}
 	case *RadSort:
-		fmt.Fprintf(sb, "%sRadSort [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sRadSort\n", indent)
 	case *RadFieldMod:
-		fmt.Fprintf(sb, "%sRadFieldMod %q [%d:%d-%d:%d]\n", indent, n.ModType, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sRadFieldMod %q\n", indent, n.ModType)
 		for _, f := range n.Fields {
-			astDumpNode(sb, f, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, f, depth+1)
 		}
 		for _, a := range n.Args {
-			astDumpNode(sb, a, depth+1)
+			astDumpNode(sb, fmtStr, spacePad, a, depth+1)
 		}
 	case *JsonPath:
 		var parts []string
@@ -289,23 +346,26 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 			}
 			parts = append(parts, s)
 		}
-		fmt.Fprintf(sb, "%sJsonPath %s [%d:%d-%d:%d]\n", indent, strings.Join(parts, "."), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sJsonPath %s\n", indent, strings.Join(parts, "."))
 
 	case *RadIf:
-		fmt.Fprintf(sb, "%sRadIf [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sRadIf\n", indent)
 		for i, branch := range n.Branches {
 			if branch.Condition != nil {
-				fmt.Fprintf(sb, "%s  Branch %d (cond)\n", indent, i)
-				astDumpNode(sb, branch.Condition, depth+2)
+				fmt.Fprintf(sb, "%s%sBranch %d (cond)\n", spacePad, indent, i)
+				astDumpNode(sb, fmtStr, spacePad, branch.Condition, depth+2)
 			} else {
-				fmt.Fprintf(sb, "%s  Branch %d (else)\n", indent, i)
+				fmt.Fprintf(sb, "%s%sBranch %d (else)\n", spacePad, indent, i)
 			}
 			for _, s := range branch.Body {
-				astDumpNode(sb, s, depth+2)
+				astDumpNode(sb, fmtStr, spacePad, s, depth+2)
 			}
 		}
 
 	default:
-		fmt.Fprintf(sb, "%s<%T> [%d:%d-%d:%d]\n", indent, node, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%s<%T>\n", indent, node)
 	}
 }

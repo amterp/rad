@@ -1,0 +1,53 @@
+### TITLE ###
+File header
+### INPUT ###
+---
+This is
+a
+
+file header
+---
+a = fn() 2
+### STDOUT ###
+B: [ 0, 41] PS: [0,  0] PE: [6, 10] source_file
+B: [ 0, 31] PS: [0,  0] PE: [6,  0]   file_header
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     --- `---`
+B: [ 4, 27] PS: [1,  0] PE: [5,  0]     contents: file_header_contents `This is\na\n\nfile header\n`
+B: [27, 30] PS: [5,  0] PE: [5,  3]     --- `---`
+B: [31, 41] PS: [6,  0] PE: [6, 10]   assign
+B: [31, 32] PS: [6,  0] PE: [6,  1]     left: var_path
+B: [31, 32] PS: [6,  0] PE: [6,  1]       root: identifier `a`
+B: [33, 34] PS: [6,  2] PE: [6,  3]     = `=`
+B: [35, 41] PS: [6,  4] PE: [6, 10]     right: expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]       delegate: ternary_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]         delegate: or_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]           delegate: and_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]             delegate: compare_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]               delegate: add_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]                 delegate: mult_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]                   delegate: unary_expr
+B: [35, 41] PS: [6,  4] PE: [6, 10]                     delegate: fn_lambda
+B: [35, 37] PS: [6,  4] PE: [6,  6]                       keyword: fn `fn`
+B: [37, 38] PS: [6,  6] PE: [6,  7]                       ( `(`
+B: [38, 39] PS: [6,  7] PE: [6,  8]                       ) `)`
+B: [40, 41] PS: [6,  9] PE: [6, 10]                       stmt: expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                         delegate: ternary_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                           delegate: or_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                             delegate: and_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                               delegate: compare_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                 delegate: add_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                   delegate: mult_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                     delegate: unary_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                       delegate: fallback_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                         delegate: indexed_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                           root: primary_expr
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                             literal
+B: [40, 41] PS: [6,  9] PE: [6, 10]                                               int `2`
+
+### STDERR ###
+PS: [0,  0] PE: [6, 10] SourceFile
+PS: [6,  0] PE: [6, 10]   Assign
+PS: [6,  0] PE: [6,  1]     Identifier "a"
+PS: [6,  4] PE: [6, 10]     Lambda block=false
+PS: [6,  9] PE: [6, 10]       LitInt 2
+

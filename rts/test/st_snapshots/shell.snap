@@ -1,0 +1,119 @@
+### TITLE ###
+Shell simple
+### INPUT ###
+$`make all`
+code = $`make all`
+code, stdout = $`make all`
+code, stdout, stderr = $`make all`
+### STDOUT ###
+B: [ 0, 92] PS: [0,  0] PE: [3, 34] source_file
+B: [ 0, 11] PS: [0,  0] PE: [0, 11]   shell_stmt
+B: [ 0, 11] PS: [0,  0] PE: [0, 11]     shell_cmd: shell_cmd
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       $ `$`
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]       command: expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]         delegate: ternary_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]           delegate: or_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]             delegate: and_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]               delegate: compare_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                 delegate: add_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                   delegate: mult_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                     delegate: unary_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                       delegate: fallback_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                         delegate: indexed_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                           root: primary_expr
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                             literal
+B: [ 1, 11] PS: [0,  1] PE: [0, 11]                               string
+B: [ 1,  2] PS: [0,  1] PE: [0,  2]                                 start: string_start ```
+B: [ 2, 10] PS: [0,  2] PE: [0, 10]                                 contents: string_contents
+B: [ 2, 10] PS: [0,  2] PE: [0, 10]                                   content: string_content `make all`
+B: [10, 11] PS: [0, 10] PE: [0, 11]                                 end: string_end ```
+B: [12, 30] PS: [1,  0] PE: [1, 18]   shell_stmt
+B: [12, 16] PS: [1,  0] PE: [1,  4]     left: var_path
+B: [12, 16] PS: [1,  0] PE: [1,  4]       root: identifier `code`
+B: [17, 18] PS: [1,  5] PE: [1,  6]     = `=`
+B: [19, 30] PS: [1,  7] PE: [1, 18]     shell_cmd: shell_cmd
+B: [19, 20] PS: [1,  7] PE: [1,  8]       $ `$`
+B: [20, 30] PS: [1,  8] PE: [1, 18]       command: expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]         delegate: ternary_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]           delegate: or_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]             delegate: and_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]               delegate: compare_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                 delegate: add_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                   delegate: mult_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                     delegate: unary_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                       delegate: fallback_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                         delegate: indexed_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                           root: primary_expr
+B: [20, 30] PS: [1,  8] PE: [1, 18]                             literal
+B: [20, 30] PS: [1,  8] PE: [1, 18]                               string
+B: [20, 21] PS: [1,  8] PE: [1,  9]                                 start: string_start ```
+B: [21, 29] PS: [1,  9] PE: [1, 17]                                 contents: string_contents
+B: [21, 29] PS: [1,  9] PE: [1, 17]                                   content: string_content `make all`
+B: [29, 30] PS: [1, 17] PE: [1, 18]                                 end: string_end ```
+B: [31, 57] PS: [2,  0] PE: [2, 26]   shell_stmt
+B: [31, 35] PS: [2,  0] PE: [2,  4]     lefts: var_path
+B: [31, 35] PS: [2,  0] PE: [2,  4]       root: identifier `code`
+B: [35, 36] PS: [2,  4] PE: [2,  5]     , `,`
+B: [37, 43] PS: [2,  6] PE: [2, 12]     lefts: var_path
+B: [37, 43] PS: [2,  6] PE: [2, 12]       root: identifier `stdout`
+B: [44, 45] PS: [2, 13] PE: [2, 14]     = `=`
+B: [46, 57] PS: [2, 15] PE: [2, 26]     shell_cmd: shell_cmd
+B: [46, 47] PS: [2, 15] PE: [2, 16]       $ `$`
+B: [47, 57] PS: [2, 16] PE: [2, 26]       command: expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]         delegate: ternary_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]           delegate: or_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]             delegate: and_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]               delegate: compare_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                 delegate: add_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                   delegate: mult_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                     delegate: unary_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                       delegate: fallback_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                         delegate: indexed_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                           root: primary_expr
+B: [47, 57] PS: [2, 16] PE: [2, 26]                             literal
+B: [47, 57] PS: [2, 16] PE: [2, 26]                               string
+B: [47, 48] PS: [2, 16] PE: [2, 17]                                 start: string_start ```
+B: [48, 56] PS: [2, 17] PE: [2, 25]                                 contents: string_contents
+B: [48, 56] PS: [2, 17] PE: [2, 25]                                   content: string_content `make all`
+B: [56, 57] PS: [2, 25] PE: [2, 26]                                 end: string_end ```
+B: [58, 92] PS: [3,  0] PE: [3, 34]   shell_stmt
+B: [58, 62] PS: [3,  0] PE: [3,  4]     lefts: var_path
+B: [58, 62] PS: [3,  0] PE: [3,  4]       root: identifier `code`
+B: [62, 63] PS: [3,  4] PE: [3,  5]     , `,`
+B: [64, 70] PS: [3,  6] PE: [3, 12]     lefts: var_path
+B: [64, 70] PS: [3,  6] PE: [3, 12]       root: identifier `stdout`
+B: [70, 71] PS: [3, 12] PE: [3, 13]     , `,`
+B: [72, 78] PS: [3, 14] PE: [3, 20]     lefts: var_path
+B: [72, 78] PS: [3, 14] PE: [3, 20]       root: identifier `stderr`
+B: [79, 80] PS: [3, 21] PE: [3, 22]     = `=`
+B: [81, 92] PS: [3, 23] PE: [3, 34]     shell_cmd: shell_cmd
+B: [81, 82] PS: [3, 23] PE: [3, 24]       $ `$`
+B: [82, 92] PS: [3, 24] PE: [3, 34]       command: expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]         delegate: ternary_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]           delegate: or_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]             delegate: and_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]               delegate: compare_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                 delegate: add_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                   delegate: mult_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                     delegate: unary_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                       delegate: fallback_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                         delegate: indexed_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                           root: primary_expr
+B: [82, 92] PS: [3, 24] PE: [3, 34]                             literal
+B: [82, 92] PS: [3, 24] PE: [3, 34]                               string
+B: [82, 83] PS: [3, 24] PE: [3, 25]                                 start: string_start ```
+B: [83, 91] PS: [3, 25] PE: [3, 33]                                 contents: string_contents
+B: [83, 91] PS: [3, 25] PE: [3, 33]                                   content: string_content `make all`
+B: [91, 92] PS: [3, 33] PE: [3, 34]                                 end: string_end ```
+
+### STDERR ###
+PS: [0,  0] PE: [3, 34] SourceFile
+PS: [0,  0] PE: [0, 11]   Shell quiet=false confirm=false
+PS: [0,  1] PE: [0, 11]     LitString "make all"
+PS: [1,  0] PE: [1, 18]   Shell quiet=false confirm=false
+PS: [1,  8] PE: [1, 18]     LitString "make all"
+PS: [2,  0] PE: [2, 26]   Shell quiet=false confirm=false
+PS: [2, 16] PE: [2, 26]     LitString "make all"
+PS: [3,  0] PE: [3, 34]   Shell quiet=false confirm=false
+PS: [3, 24] PE: [3, 34]     LitString "make all"
+

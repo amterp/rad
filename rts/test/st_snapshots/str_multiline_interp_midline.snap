@@ -1,0 +1,76 @@
+### TITLE ###
+Str multiline interpolation mid-line
+### INPUT ###
+x = 5
+a = """
+    hello {x} world
+    """
+### STDOUT ###
+B: [ 0, 41] PS: [0,  0] PE: [3,  7] source_file
+B: [ 0,  5] PS: [0,  0] PE: [0,  5]   assign
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]       root: identifier `x`
+B: [ 2,  3] PS: [0,  2] PE: [0,  3]     = `=`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]     right: expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]       delegate: ternary_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]         delegate: or_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]           delegate: and_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]             delegate: compare_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]               delegate: add_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                 delegate: mult_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                   delegate: unary_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     delegate: fallback_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                       delegate: indexed_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         root: primary_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                           literal
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                             int `5`
+B: [ 6, 41] PS: [1,  0] PE: [3,  7]   assign
+B: [ 6,  7] PS: [1,  0] PE: [1,  1]     left: var_path
+B: [ 6,  7] PS: [1,  0] PE: [1,  1]       root: identifier `a`
+B: [ 8,  9] PS: [1,  2] PE: [1,  3]     = `=`
+B: [10, 41] PS: [1,  4] PE: [3,  7]     right: expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]       delegate: ternary_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]         delegate: or_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]           delegate: and_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]             delegate: compare_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]               delegate: add_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                 delegate: mult_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                   delegate: unary_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                     delegate: fallback_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                       delegate: indexed_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                         root: primary_expr
+B: [10, 41] PS: [1,  4] PE: [3,  7]                           literal
+B: [10, 41] PS: [1,  4] PE: [3,  7]                             string
+B: [10, 14] PS: [1,  4] PE: [2,  0]                               start: string_start `"""\n`
+B: [18, 33] PS: [2,  4] PE: [2, 19]                               contents: string_contents
+B: [18, 24] PS: [2,  4] PE: [2, 10]                                 content: string_content `hello `
+B: [24, 27] PS: [2, 10] PE: [2, 13]                                 interpolation: interpolation
+B: [24, 25] PS: [2, 10] PE: [2, 11]                                   { `{`
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                   expr: expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                     delegate: ternary_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                       delegate: or_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                         delegate: and_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                           delegate: compare_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                             delegate: add_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                               delegate: mult_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                                 delegate: unary_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                                   delegate: fallback_expr
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                                     delegate: var_path
+B: [25, 26] PS: [2, 11] PE: [2, 12]                                                       root: identifier `x`
+B: [26, 27] PS: [2, 12] PE: [2, 13]                                   } `}`
+B: [27, 33] PS: [2, 13] PE: [2, 19]                                 content: string_content ` world`
+B: [33, 41] PS: [2, 19] PE: [3,  7]                               end: string_end `\n    """`
+
+### STDERR ###
+PS: [0, 0] PE: [3, 7] SourceFile
+PS: [0, 0] PE: [0, 5]   Assign
+PS: [0, 0] PE: [0, 1]     Identifier "x"
+PS: [0, 4] PE: [0, 5]     LitInt 5
+PS: [1, 0] PE: [3, 7]   Assign
+PS: [1, 0] PE: [1, 1]     Identifier "a"
+PS: [1, 4] PE: [3, 7]     LitString (interpolated, 3 segments)
+                          Literal "hello "
+                          Interpolation
+PS: [2, 11] PE: [2, 12]         Identifier "x"
+                          Literal " world"
+
