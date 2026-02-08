@@ -891,10 +891,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#getting-the-stash-directory" class="md-nav__link">
+  <a href="#getting-the-stash-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting the Stash Directory
+        Getting the Stash Path
       
     </span>
   </a>
@@ -1224,34 +1224,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/errors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Errors
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1305,6 +1277,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1571,10 +1571,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#getting-the-stash-directory" class="md-nav__link">
+  <a href="#getting-the-stash-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting the Stash Directory
+        Getting the Stash Path
       
     </span>
   </a>
@@ -1811,12 +1811,12 @@ else:
     else:
         print(&quot;No notes yet. Use --add to create one.&quot;)
 </code></pre></div>
-<h3 id="getting-the-stash-directory">Getting the Stash Directory<a class="headerlink" href="#getting-the-stash-directory" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#get_stash_dir"><code>get_stash_dir(subpath?)</code></a> returns the path to your stash directory:</p>
-<div class="highlight"><pre><span></span><code>stash_path = get_stash_dir()
+<h3 id="getting-the-stash-path">Getting the Stash Path<a class="headerlink" href="#getting-the-stash-path" title="Permanent link">&para;</a></h3>
+<p><a href="../../reference/functions/#get_stash_path"><code>get_stash_path(subpath?)</code></a> returns the path to your stash directory:</p>
+<div class="highlight"><pre><span></span><code>stash_path = get_stash_path()
 print(stash_path)  // ~/.rad/stashes/&lt;stash_id&gt;
 
-file_path = get_stash_dir(&quot;data/config.json&quot;)
+file_path = get_stash_path(&quot;data/config.json&quot;)
 print(file_path)  // ~/.rad/stashes/&lt;stash_id&gt;/data/config.json
 </code></pre></div>
 <p>This is useful when you need to work with stash files using other Rad functions like <a href="../../reference/functions/#read_file"><code>read_file</code></a> or <a href="../../reference/functions/#get_path"><code>get_path</code></a>.</p>

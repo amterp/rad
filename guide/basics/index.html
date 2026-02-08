@@ -836,6 +836,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1478,34 +1489,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/errors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Errors
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1559,6 +1542,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2099,6 +2110,17 @@
     <span class="md-ellipsis">
       
         Converting Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
       
     </span>
   </a>
@@ -3016,6 +3038,21 @@ print(parse_float(&quot;2.2&quot;))  // 2.2
 print(parse_int(&quot;2.2&quot;))    // error
 print(parse_float(&quot;bob&quot;))  // error
 </code></pre></div>
+<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h2>
+<p>When something goes wrong, Rad displays errors in a format designed to help you quickly locate and understand the problem:</p>
+<div class="highlight"><pre><span></span><code>error[RAD20029]: Index out of bounds: 5 (length 2)
+  --&gt; script.rad:11:13
+   |
+10 | names = [&quot;alice&quot;, &quot;bob&quot;]
+11 | print(names[5])
+   |             ^
+   |
+   = info: rad explain RAD20029
+</code></pre></div>
+<p>Every error includes a code (like <code>RAD20029</code>) that identifies the type of error. To learn more about any error, use the <code>rad explain</code> command:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>explain<span class="w"> </span>RAD20029
+</code></pre></div>
+<p>This displays detailed documentation about the error, including common causes and how to fix it.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>We rapidly covered many basic topics such as assignment, data types, operators, and control flow.</li>
@@ -3037,6 +3074,7 @@ print(parse_float(&quot;bob&quot;))  // error
 <li>Rad offers truthy/falsy logic for more concise conditional expressions.</li>
 <li>Rad has switch statements and expressions. The latter uses <code>yield</code> as a keyword to return values from cases.</li>
 <li>Rad has functions for casting <code>str</code>, <code>int</code>, <code>float</code> and for parsing <code>parse_int</code>, <code>parse_float</code> values.</li>
+<li>When errors occur, use <code>rad explain &lt;code&gt;</code> to get detailed help.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Good job on getting through the basics of the language! </p>

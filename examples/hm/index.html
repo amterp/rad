@@ -1179,34 +1179,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/errors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Errors
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1260,6 +1232,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1637,7 +1637,7 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_dir(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
     if not file_path.get_path().exists:
         print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
     else:
@@ -1650,7 +1650,7 @@ fn do_edit():
     print(&quot;Entry for &#39;{topic}&#39; saved.&quot;)
 
 fn do_list():
-    entries_dir = get_stash_dir(&quot;files/entries&quot;)
+    entries_dir = get_stash_path(&quot;files/entries&quot;)
     if not entries_dir.get_path().exists:
         print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
         exit()
@@ -1696,13 +1696,17 @@ rsync
 </code></pre></div>
 <h2 id="tutorial-building-hm">Tutorial: Building <code>hm</code><a class="headerlink" href="#tutorial-building-hm" title="Permanent link">&para;</a></h2>
 <h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
-<p>Some commands have notoriously hard-to-remember syntax - <code>tar</code>, <code>find</code>, <code>rsync</code>. You look them up, use them once, and forget again. Tools like <code>tldr</code> help, but sometimes you want your <em>own</em> notes - the specific incantations that work for your use cases.</p>
-<p>Let's build <code>hm</code> - a personal cheatsheet manager that stores your notes in a <a href="../../guide/stashes/">stash</a>, so they persist between sessions.</p>
+<p>Some commands have notoriously hard-to-remember syntax - <code>tar</code>, <code>find</code>, <code>rsync</code>. You look them up, use them once, and
+forget again. Tools like <code>tldr</code> help, but sometimes you want your <em>own</em> notes - the specific incantations that work for
+your use cases.</p>
+<p>Let's build <code>hm</code> - a personal cheatsheet manager that stores your notes in a <a href="../../guide/stashes/">stash</a>, so they
+persist between sessions.</p>
 <h3 id="writing-the-script">Writing the script<a class="headerlink" href="#writing-the-script" title="Permanent link">&para;</a></h3>
 <p>Let's start with a new script:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>new<span class="w"> </span>hm<span class="w"> </span>-s
 </code></pre></div>
-<p>First, we'll add a description and set up a stash ID. The stash ID is what tells Rad where to store our persistent data. You can generate one with <code>rad gen-id</code>:</p>
+<p>First, we'll add a description and set up a stash ID. The stash ID is what tells Rad where to store our persistent data.
+You can generate one with <code>rad gen-id</code>:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1715,9 +1719,11 @@ rsync
 </span><span class="hll">@stash_id = J8xKmN3pQrT
 </span><span class="hll">---
 </span></code></pre></div></td></tr></table></div>
-<p>The <code>@stash_id</code> macro in the file header creates a dedicated storage area at <code>~/.rad/stashes/J8xKmN3pQrT/</code> for this script.</p>
+<p>The <code>@stash_id</code> macro in the file header creates a dedicated storage area at <code>~/.rad/stashes/J8xKmN3pQrT/</code> for this
+script.</p>
 <h3 id="defining-commands">Defining commands<a class="headerlink" href="#defining-commands" title="Permanent link">&para;</a></h3>
-<p>We'll use <a href="../../guide/script-commands/">script commands</a> to organize our CLI into subcommands. Each command gets its own description and arguments:</p>
+<p>We'll use <a href="../../guide/script-commands/">script commands</a> to organize our CLI into subcommands. Each command gets its own
+description and arguments:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1770,9 +1776,11 @@ Store and retrieve help snippets for commands you forget.
 </span><span class="hll">    ---
 </span><span class="hll">    calls do_list
 </span></code></pre></div></td></tr></table></div>
-<p>Each command block declares its own arguments (like <code>topic str</code>) and uses <code>calls</code> to specify which function handles it. The <code>---</code> sections become the command descriptions shown in <code>--help</code>.</p>
+<p>Each command block declares its own arguments (like <code>topic str</code>) and uses <code>calls</code> to specify which function handles it.
+The <code>---</code> sections become the command descriptions shown in <code>--help</code>.</p>
 <h3 id="setting-up-state">Setting up state<a class="headerlink" href="#setting-up-state" title="Permanent link">&para;</a></h3>
-<p>Before implementing our commands, we need to set up state management. We'll use state to remember user preferences (like their preferred editor):</p>
+<p>Before implementing our commands, we need to set up state management. We'll use state to remember user preferences (like
+their preferred editor):</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1900,15 +1908,18 @@ state = load_state()
 defer save_state(state)
 
 <span class="hll">fn do_show():
-</span><span class="hll">    file_path = get_stash_dir(&quot;files/entries/{topic}.txt&quot;)
+</span><span class="hll">    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
 </span><span class="hll">    if not file_path.get_path().exists:
 </span><span class="hll">        print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
 </span><span class="hll">    else:
 </span><span class="hll">        print(file_path.read_file().content)
 </span></code></pre></div></td></tr></table></div>
-<p>We use <code>get_stash_dir()</code> to build the path to where the entry file would live. The <code>"files/"</code> prefix is needed because stash files are stored in a <code>files/</code> subdirectory. Then we chain <code>.get_path().exists</code> to check if it exists - if not, we tell the user how to create it. If it does exist, we read and print it with <code>.read_file().content</code>.</p>
+<p>We use <code>get_stash_path()</code> to build the path to where the entry file would live. The <code>"files/"</code> prefix is needed because
+stash files are stored in a <code>files/</code> subdirectory. Then we chain <code>.get_path().exists</code> to check if it exists - if not, we
+tell the user how to create it. If it does exist, we read and print it with <code>.read_file().content</code>.</p>
 <h3 id="the-edit-command">The edit command<a class="headerlink" href="#the-edit-command" title="Permanent link">&para;</a></h3>
-<p>The edit command opens the entry in the user's editor. Here's where it gets interesting - we use <a href="../../reference/functions/#load"><code>load()</code></a> to handle first-run configuration:</p>
+<p>The edit command opens the entry in the user's editor. Here's where it gets interesting - we use <a href="../../reference/functions/#load">
+<code>load()</code></a> to handle first-run configuration:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1981,7 +1992,7 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_dir(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
     if not file_path.get_path().exists:
         print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
     else:
@@ -1995,7 +2006,8 @@ fn do_show():
 </span></code></pre></div></td></tr></table></div>
 <p>The <code>load()</code> function is the star here. It checks if <code>"editor"</code> exists in <code>state</code>:</p>
 <ul>
-<li><strong>First run</strong>: Key doesn't exist, so it calls the loader function - which prompts the user with <code>input()</code>. The result gets stored in <code>state["editor"]</code>.</li>
+<li><strong>First run</strong>: Key doesn't exist, so it calls the loader function - which prompts the user with <code>input()</code>. The result
+  gets stored in <code>state["editor"]</code>.</li>
 <li><strong>Subsequent runs</strong>: Key exists, so it returns the cached value immediately - no prompt.</li>
 </ul>
 <p>Since we have <code>defer save_state(state)</code>, the editor preference persists between sessions.</p>
@@ -2086,7 +2098,7 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_dir(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
     if not file_path.get_path().exists:
         print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
     else:
@@ -2099,7 +2111,7 @@ fn do_edit():
     print(&quot;Entry for &#39;{topic}&#39; saved.&quot;)
 
 <span class="hll">fn do_list():
-</span><span class="hll">    entries_dir = get_stash_dir(&quot;files/entries&quot;)
+</span><span class="hll">    entries_dir = get_stash_path(&quot;files/entries&quot;)
 </span><span class="hll">    if not entries_dir.get_path().exists:
 </span><span class="hll">        print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
 </span><span class="hll">        exit()
@@ -2111,7 +2123,12 @@ fn do_edit():
 </span><span class="hll">        name = file.get_path().base_name.replace(&quot;.txt&quot;, &quot;&quot;)
 </span><span class="hll">        print(name)
 </span></code></pre></div></td></tr></table></div>
-<p>We use <a href="../../reference/functions/#get_stash_dir"><code>get_stash_dir()</code></a> to get the path to our entries folder - note the <code>"files/"</code> prefix since stash files live in a <code>files/</code> subdirectory. We chain <a href="../../reference/functions/#get_path"><code>.get_path()</code></a> to check if it exists, and <a href="../../reference/functions/#find_paths"><code>.find_paths()</code></a> to list all files. The <code>depth=1</code> parameter limits the search to direct children only, and <code>relative="absolute"</code> gives us full paths so that subsequent <code>get_path()</code> calls resolve correctly. For each file, we extract the topic name with <code>.get_path().base_name</code> and strip the <code>.txt</code> extension.</p>
+<p>We use <a href="../../reference/functions/#get_stash_path"><code>get_stash_path()</code></a> to get the path to our entries folder - note the
+<code>"files/"</code> prefix since stash files live in a <code>files/</code> subdirectory. We chain <a href="../../reference/functions/#get_path">
+<code>.get_path()</code></a> to check if it exists, and <a href="../../reference/functions/#find_paths">
+<code>.find_paths()</code></a> to list all files. The <code>depth=1</code> parameter limits the search to
+direct children only, and <code>relative="absolute"</code> gives us full paths so that subsequent <code>get_path()</code> calls resolve
+correctly. For each file, we extract the topic name with <code>.get_path().base_name</code> and strip the <code>.txt</code> extension.</p>
 <h3 id="try-it-out">Try it out<a class="headerlink" href="#try-it-out" title="Permanent link">&para;</a></h3>
 <p>Create your first entry:</p>
 <div class="highlight"><pre><span></span><code>&gt; hm edit tar
@@ -2137,7 +2154,8 @@ Entry for &#39;rsync&#39; saved.
 tar
 rsync
 </code></pre></div>
-<p>Your notes live at <code>~/.rad/stashes/J8xKmN3pQrT/files/entries/</code> and your preferences are stored in <code>~/.rad/stashes/J8xKmN3pQrT/state.json</code>.</p>
+<p>Your notes live at <code>~/.rad/stashes/J8xKmN3pQrT/files/entries/</code> and your preferences are stored in
+<code>~/.rad/stashes/J8xKmN3pQrT/state.json</code>.</p>
 <h2 id="concepts-demonstrated">Concepts demonstrated<a class="headerlink" href="#concepts-demonstrated" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2176,8 +2194,8 @@ rsync
 <td>Reading entry content in <code>do_show()</code></td>
 </tr>
 <tr>
-<td><a href="../../reference/functions/#get_stash_dir"><code>get_stash_dir()</code></a></td>
-<td>Getting the entries directory path</td>
+<td><a href="../../reference/functions/#get_stash_path"><code>get_stash_path()</code></a></td>
+<td>Getting entries paths</td>
 </tr>
 <tr>
 <td><a href="../../guide/script-commands/">Script commands</a></td>

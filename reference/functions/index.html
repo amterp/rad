@@ -14,7 +14,7 @@
         <link rel="prev" href="../syntax/">
       
       
-        <link rel="next" href="../errors/">
+        <link rel="next" href="../../migrations/v0.9/">
       
       
         
@@ -2212,10 +2212,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get_stash_dir" class="md-nav__link">
+  <a href="#get_stash_path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        get_stash_dir
+        get_stash_path
       
     </span>
   </a>
@@ -2319,34 +2319,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../errors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Errors
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -2400,6 +2372,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3711,10 +3711,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get_stash_dir" class="md-nav__link">
+  <a href="#get_stash_path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        get_stash_dir
+        get_stash_path
       
     </span>
   </a>
@@ -3860,7 +3860,7 @@ with said error.</p>
 <h3 id="error"><code>error</code><a class="headerlink" href="#error" title="Permanent link">&para;</a></h3>
 <p><code>error</code> may be referenced as a return type for some functions. <code>error</code> is really a <code>map</code> with the following keys:</p>
 <ul>
-<li><code>code: string</code> - An <a href="../errors/">error code</a> indicating the type of error.</li>
+<li><code>code: string</code> - An error code (e.g. <code>RAD20003</code>). Use <code>rad explain &lt;code&gt;</code> to learn more.</li>
 <li><code>msg: string</code> - A description of the error.</li>
 </ul>
 <p>Lastly, you may also see <code>number</code> referenced as a type -- this just means <code>int | float</code>, i.e. any numeric type.</p>
@@ -4821,11 +4821,13 @@ abs(-2.7)    // -&gt; 2.7
 </code></pre></div>
 <h3 id="sum">sum<a class="headerlink" href="#sum" title="Permanent link">&para;</a></h3>
 <p>Sums all numbers in a list.</p>
-<div class="highlight"><pre><span></span><code>sum(_nums: list[float]) -&gt; float|error
+<div class="highlight"><pre><span></span><code>sum(_nums: list[float]) -&gt; int|float|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>sum([1, 2, 3, 4])        // -&gt; 10.0
+<p>The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
+<div class="highlight"><pre><span></span><code>sum([1, 2, 3, 4])        // -&gt; 10
 sum([1.5, 2.5, 3.0])     // -&gt; 7.0
-sum([])                  // -&gt; 0.0
+sum([1, 2.0, 3])         // -&gt; 6.0 (float because 2.0 is float)
+sum([])                  // -&gt; 0
 sum([1, &quot;text&quot;, 3])      // -&gt; Error: requires list of numbers
 </code></pre></div>
 <h3 id="round">round<a class="headerlink" href="#round" title="Permanent link">&para;</a></h3>
@@ -4878,31 +4880,35 @@ ceil(5.0)      // -&gt; 5
 </code></pre></div>
 <h3 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h3>
 <p>Returns the minimum value from a list of numbers or from variadic arguments.</p>
-<div class="highlight"><pre><span></span><code>min(_nums: float|float[]) -&gt; float|error
+<div class="highlight"><pre><span></span><code>min(_nums: num|num[]) -&gt; int|float|error
 </code></pre></div>
-<p>Accepts either a single list of numbers or multiple number arguments.</p>
-<div class="highlight"><pre><span></span><code>min([1, 2, 3, 4])        // -&gt; 1.0
-min(1, 2, 3, 4)          // -&gt; 1.0
+<p>Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
+<div class="highlight"><pre><span></span><code>min([1, 2, 3, 4])        // -&gt; 1
+min(1, 2, 3, 4)          // -&gt; 1
 min(5.5, 2.1, 8.9)       // -&gt; 2.1
-min(5)                   // -&gt; 5.0
+min(1, 2.0, 3)           // -&gt; 1.0 (float because 2.0 is float)
+min(5)                   // -&gt; 5
 min([])                  // -&gt; Error: cannot find minimum of empty list
 min([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
 </code></pre></div>
 <h3 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h3>
 <p>Returns the maximum value from a list of numbers or from variadic arguments.</p>
-<div class="highlight"><pre><span></span><code>max(_nums: float|float[]) -&gt; float|error
+<div class="highlight"><pre><span></span><code>max(_nums: num|num[]) -&gt; int|float|error
 </code></pre></div>
-<p>Accepts either a single list of numbers or multiple number arguments.</p>
-<div class="highlight"><pre><span></span><code>max([1, 2, 3, 4])        // -&gt; 4.0
-max(1, 2, 3, 4)          // -&gt; 4.0
+<p>Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
+<div class="highlight"><pre><span></span><code>max([1, 2, 3, 4])        // -&gt; 4
+max(1, 2, 3, 4)          // -&gt; 4
 max(5.5, 2.1, 8.9)       // -&gt; 8.9
-max(5)                   // -&gt; 5.0
+max(1, 2.0, 3)           // -&gt; 3.0 (float because 2.0 is float)
+max(5)                   // -&gt; 5
 max([])                  // -&gt; Error: cannot find maximum of empty list
 max([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
 </code></pre></div>
 <h3 id="clamp">clamp<a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h3>
 <p>Constrains a value between minimum and maximum bounds.</p>
-<div class="highlight"><pre><span></span><code>clamp(val: float, min: float, max: float) -&gt; float|error
+<div class="highlight"><pre><span></span><code>clamp(val: int|float, min: int|float, max: int|float) -&gt; int|float|error
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4916,25 +4922,27 @@ max([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
 <tbody>
 <tr>
 <td><code>val</code></td>
-<td><code>float</code></td>
+<td><code>int|float</code></td>
 <td>Value to constrain</td>
 </tr>
 <tr>
 <td><code>min</code></td>
-<td><code>float</code></td>
+<td><code>int|float</code></td>
 <td>Minimum bound</td>
 </tr>
 <tr>
 <td><code>max</code></td>
-<td><code>float</code></td>
+<td><code>int|float</code></td>
 <td>Maximum bound</td>
 </tr>
 </tbody>
 </table>
-<p>Returns <code>val</code> if between min and max, otherwise returns the nearest bound. Min must be ≤ max.</p>
-<div class="highlight"><pre><span></span><code>clamp(25, 20, 30)    // -&gt; 25.0
-clamp(10, 20, 30)    // -&gt; 20.0
-clamp(40, 20, 30)    // -&gt; 30.0
+<p>Returns <code>val</code> if between min and max, otherwise returns the nearest bound. Min must be ≤ max.
+The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
+<div class="highlight"><pre><span></span><code>clamp(25, 20, 30)    // -&gt; 25
+clamp(10, 20, 30)    // -&gt; 20
+clamp(40, 20, 30)    // -&gt; 30
+clamp(5, 1.0, 10)    // -&gt; 5.0 (float because 1.0 is float)
 clamp(15, 30, 20)    // -&gt; Error: min must be &lt;= max
 </code></pre></div>
 <h3 id="pow">pow<a class="headerlink" href="#pow" title="Permanent link">&para;</a></h3>
@@ -5335,10 +5343,10 @@ return err  // -&gt; Script will exit with this error message
 </code></pre></div>
 <p><strong>Return Values</strong></p>
 <p>Defaults to <code>$HOME/.rad</code>, or <code>$RAD_HOME</code> if it's defined.</p>
-<h3 id="get_stash_dir"><code>get_stash_dir</code><a class="headerlink" href="#get_stash_dir" title="Permanent link">&para;</a></h3>
+<h3 id="get_stash_path"><code>get_stash_path</code><a class="headerlink" href="#get_stash_path" title="Permanent link">&para;</a></h3>
 <p>Returns the full path to the script's stash directory, with the given subpath if specified.</p>
 <p>Requires a stash ID to have been defined.</p>
-<div class="highlight"><pre><span></span><code>get_stash_dir(subpath: string?) -&gt; string
+<div class="highlight"><pre><span></span><code>get_stash_path(subpath: string?) -&gt; string
 </code></pre></div>
 <p><strong>Return Values</strong></p>
 <ul>
@@ -5613,13 +5621,13 @@ if err:
         
         
           
-          <a href="../errors/" class="md-footer__link md-footer__link--next" aria-label="Next: Errors">
+          <a href="../../migrations/v0.9/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.9">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Errors
+                Migration Guide - v0.9
               </div>
             </div>
             <div class="md-footer__button md-icon">
