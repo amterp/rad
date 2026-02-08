@@ -11,6 +11,7 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/rl"
 )
 
 type InvocationType int
@@ -300,9 +301,14 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		printSource(r.scriptData.Src, FlagVersion.Value)
 	}
 
-	if FlagSrcTree.Value {
+	if FlagCstTree.Value {
 		shouldExit = true
-		printTree(r.scriptData.Tree, FlagSrc.Value)
+		printCstTree(r.scriptData.Tree, FlagSrc.Value)
+	}
+
+	if FlagAstTree.Value {
+		shouldExit = true
+		printAstTree(r.scriptData.Tree, r.scriptData.Src, r.scriptData.ScriptName, FlagSrc.Value || FlagCstTree.Value)
 	}
 
 	if shouldExit {
@@ -341,7 +347,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	// Check if command is required but none was invoked
 	// (Commands exist but none invoked and not help/version/inspection flags)
 	if len(r.cmdInvocations) > 0 && invokedCommand == nil {
-		if !FlagHelp.Value && !FlagVersion.Value && !FlagSrc.Value && !FlagSrcTree.Value {
+		if !FlagHelp.Value && !FlagVersion.Value && !FlagSrc.Value && !FlagCstTree.Value && !FlagAstTree.Value {
 			RP.UsageErrorExit("Must specify a command")
 		}
 	}
@@ -460,7 +466,7 @@ func (r *RadRunner) runRepl() error {
 	return RunRepl()
 }
 
-// Helper functions for inspection flags (--version, --src, --src-tree)
+// Helper functions for inspection flags (--version, --src, --cst-tree, --ast-tree)
 // These are used both when handling valid scripts and when checking flags before error exit
 
 func printVersion() {
@@ -477,11 +483,19 @@ func printSource(src string, prependNewline bool) {
 	RP.Print(src + "\n")
 }
 
-func printTree(tree *rts.RadTree, prependNewline bool) {
+func printCstTree(tree *rts.RadTree, prependNewline bool) {
 	if prependNewline {
 		RP.Printf("\n")
 	}
 	RP.Print(tree.Dump())
+}
+
+func printAstTree(tree *rts.RadTree, src string, file string, prependNewline bool) {
+	if prependNewline {
+		RP.Printf("\n")
+	}
+	astRoot := rts.ConvertCST(tree.Root(), src, file)
+	RP.Print(rl.AstDump(astRoot))
 }
 
 // handleGlobalInspectionFlagsOnInvalidSyntax checks os.Args for inspection flags and handles them.
@@ -490,7 +504,7 @@ func printTree(tree *rts.RadTree, prependNewline bool) {
 func handleGlobalInspectionFlagsOnInvalidSyntax(src string, tree *rts.RadTree) {
 	hasVersion := false
 	hasSrc := false
-	hasSrcTree := false
+	hasCstTree := false
 
 	for _, arg := range os.Args { // todo don't love the hardcoded string lookups
 		if arg == "--version" || arg == "-v" {
@@ -499,8 +513,8 @@ func handleGlobalInspectionFlagsOnInvalidSyntax(src string, tree *rts.RadTree) {
 		if arg == "--src" {
 			hasSrc = true
 		}
-		if arg == "--src-tree" {
-			hasSrcTree = true
+		if arg == "--cst-tree" {
+			hasCstTree = true
 		}
 	}
 
@@ -514,8 +528,8 @@ func handleGlobalInspectionFlagsOnInvalidSyntax(src string, tree *rts.RadTree) {
 		RExit.Exit(0)
 	}
 
-	if hasSrcTree {
-		printTree(tree, hasSrc)
+	if hasCstTree {
+		printCstTree(tree, hasSrc)
 		RExit.Exit(0)
 	}
 }

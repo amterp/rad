@@ -26,12 +26,21 @@ func Test_Misc_GlobalVersionFlagBypassesValidation(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func Test_Misc_GlobalSrcTreeFlagBypassesValidation(t *testing.T) {
-	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--src-tree", "--color=never")
+func Test_Misc_GlobalCstTreeFlagBypassesValidation(t *testing.T) {
+	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--cst-tree", "--color=never")
 	// Just check that it starts with the expected tree format and doesn't error
 	output := stdOutBuffer.String()
 	if !strings.Contains(output, "source_file") || !strings.Contains(output, "arg_block") {
-		t.Errorf("Expected syntax tree output, got: %s", output)
+		t.Errorf("Expected CST output, got: %s", output)
+	}
+	assertNoErrors(t)
+}
+
+func Test_Misc_GlobalAstTreeFlagBypassesValidation(t *testing.T) {
+	setupAndRunArgs(t, "./rad_scripts/example_arg.rad", "--ast-tree", "--color=never")
+	output := stdOutBuffer.String()
+	if !strings.Contains(output, "SourceFile") {
+		t.Errorf("Expected AST output containing 'SourceFile', got: %s", output)
 	}
 	assertNoErrors(t)
 }
@@ -45,13 +54,13 @@ func Test_Misc_GlobalRadArgsDumpFlag(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func Test_Misc_InvalidSyntax_WithSrcTreeFlag(t *testing.T) {
+func Test_Misc_InvalidSyntax_WithCstTreeFlag(t *testing.T) {
 	script := `foo = [11, 12, 13
 `
-	setupAndRunCode(t, script, "--src-tree", "--color=never")
+	setupAndRunCode(t, script, "--cst-tree", "--color=never")
 	output := stdOutBuffer.String()
 	if !strings.Contains(output, "source_file") || !strings.Contains(output, "ERROR") {
-		t.Errorf("Expected syntax tree with ERROR node, got: %s", output)
+		t.Errorf("Expected CST with ERROR node, got: %s", output)
 	}
 	assertNoErrors(t)
 }

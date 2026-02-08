@@ -36,7 +36,8 @@ const allGlobalFlagHelp = `Global options:
   -v, --version             Print rad version information.
       --confirm-shell       Confirm all shell commands before running them.
       --src                 Instead of running the target script, just print it out.
-      --src-tree            Instead of running the target script, print out its syntax tree.
+      --cst-tree            Instead of running the target script, print out its CST (concrete syntax tree).
+      --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
 `
