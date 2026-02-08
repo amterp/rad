@@ -60,7 +60,7 @@ func newStringNode(src string, node *ts.Node) (*StringNode, bool) {
 type CallNode struct {
 	BaseNode
 	Name     string
-	NameNode *ts.Node
+	NameSpan rl.Span
 }
 
 func newCallNode(node *ts.Node, completeSrc string) (*CallNode, bool) {
@@ -73,7 +73,14 @@ func newCallNode(node *ts.Node, completeSrc string) (*CallNode, bool) {
 	return &CallNode{
 		BaseNode: newBaseNode(completeSrc, node),
 		Name:     name,
-		NameNode: nameNode,
+		NameSpan: rl.Span{
+			StartByte: int(nameNode.StartByte()),
+			EndByte:   int(nameNode.EndByte()),
+			StartRow:  int(nameNode.StartPosition().Row),
+			StartCol:  int(nameNode.StartPosition().Column),
+			EndRow:    int(nameNode.EndPosition().Row),
+			EndCol:    int(nameNode.EndPosition().Column),
+		},
 	}, true
 }
 

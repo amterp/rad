@@ -117,10 +117,7 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 	env := i.env
 
 	for _, arg := range args {
-		// Note: arg.GetNode() returns *ts.Node (CST) which doesn't implement rl.Node.
-		// We pass nil since arg initialization errors are exceptional and source
-		// locations for arg declarations will be fixed when metadata extraction
-		// migrates to AST.
+		// arg.GetSpan() provides span info from the arg declaration for error reporting.
 
 		// Special handling for variadic arguments with list defaults
 		if arg.IsVariadic() {
@@ -246,8 +243,10 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		_ = fn.Execute(NewFnInvocation(i, nil, funcName, []PosArg{}, make(map[string]namedArg), fn.IsBuiltIn()))
 
 	case rts.CallbackLambda:
-		// Convert the lambda CST node to AST at execution time
-		lambdaAST := rts.ConvertLambda(cmd.CallbackLambda, i.sd.Src, i.sd.ScriptName)
+		lambdaAST := cmd.CallbackLambda
+		if lambdaAST == nil {
+			panic(fmt.Sprintf("Bug! Lambda AST is nil for command: %s", cmd.ExternalName))
+		}
 		fn := NewFnFromAST(i, lambdaAST.Typing, lambdaAST.Body, lambdaAST.IsBlock, &lambdaAST.DefSpan)
 
 		// Execute the lambda with no arguments

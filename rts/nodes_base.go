@@ -14,7 +14,6 @@ func NewPosition(p ts.Point) Position {
 }
 
 type Node interface {
-	Node() *ts.Node
 	CompleteSrc() string
 	Src() string
 	// Indexes in the original source code.
@@ -64,7 +63,7 @@ func newBaseNode(src string, node *ts.Node) BaseNode {
 	}
 }
 
-func (n *BaseNode) Node() *ts.Node {
+func (n *BaseNode) CstNode() *ts.Node {
 	return n.node
 }
 

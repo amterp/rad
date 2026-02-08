@@ -12,8 +12,6 @@ import (
 
 	"github.com/amterp/rad/rts"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
-
 	"github.com/samber/lo"
 )
 
@@ -74,7 +72,7 @@ type RadArg interface {
 	SetValue(value string)
 	IsOptional() bool
 	IsNullable() bool
-	GetNode() *ts.Node // nil if not a script arg
+	GetSpan() *rl.Span // nil if not a script arg
 	Hidden(bool)
 	IsHidden() bool
 	Excludes(otherArg RadArg) bool
@@ -156,12 +154,20 @@ func (f *BaseRadArg) IsNullable() bool {
 	return f.scriptArg.IsNullable
 }
 
-func (f *BaseRadArg) GetNode() *ts.Node {
+func (f *BaseRadArg) GetSpan() *rl.Span {
 	if f.scriptArg == nil {
 		return nil
 	}
 
-	return f.scriptArg.Decl.Node()
+	span := rl.Span{
+		StartByte: f.scriptArg.Decl.StartByte(),
+		EndByte:   f.scriptArg.Decl.EndByte(),
+		StartRow:  f.scriptArg.Decl.StartPos().Row,
+		StartCol:  f.scriptArg.Decl.StartPos().Col,
+		EndRow:    f.scriptArg.Decl.EndPos().Row,
+		EndCol:    f.scriptArg.Decl.EndPos().Col,
+	}
+	return &span
 }
 
 func (f *BaseRadArg) Hidden(hide bool) {

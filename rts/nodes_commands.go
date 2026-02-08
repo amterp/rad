@@ -41,9 +41,10 @@ type CmdDescription struct {
 
 type CmdCallback struct {
 	BaseNode
-	Type           CallbackType
-	IdentifierName *string  // For function reference callbacks (CallbackIdentifier)
-	LambdaNode     *ts.Node // For inline lambda callbacks (CallbackLambda)
+	Type            CallbackType
+	IdentifierName  *string    // For function reference callbacks (CallbackIdentifier)
+	IdentifierSpan  *rl.Span   // Span of the identifier node (for diagnostics)
+	LambdaAST       *rl.Lambda // Eagerly converted AST for lambda callbacks
 }
 
 // newCmdBlock constructs a CmdBlock from a tree-sitter node
@@ -108,22 +109,43 @@ func extractCmdCallback(src string, node *ts.Node) CmdCallback {
 	identifierNode := callsNode.ChildByFieldName(rl.F_CALLBACK_IDENTIFIER)
 	if identifierNode != nil {
 		identifierName := src[identifierNode.StartByte():identifierNode.EndByte()]
+		identifierSpan := rl.Span{
+			StartByte: int(identifierNode.StartByte()),
+			EndByte:   int(identifierNode.EndByte()),
+			StartRow:  int(identifierNode.StartPosition().Row),
+			StartCol:  int(identifierNode.StartPosition().Column),
+			EndRow:    int(identifierNode.EndPosition().Row),
+			EndCol:    int(identifierNode.EndPosition().Column),
+		}
 		return CmdCallback{
 			BaseNode:       newBaseNode(src, callsNode),
 			Type:           CallbackIdentifier,
 			IdentifierName: &identifierName,
+			IdentifierSpan: &identifierSpan,
 		}
 	}
 
 	// Check for lambda callback
 	lambdaNode := callsNode.ChildByFieldName(rl.F_CALLBACK_LAMBDA)
 	if lambdaNode != nil {
+		lambdaAST := safeConvertLambda(lambdaNode, src)
 		return CmdCallback{
-			BaseNode:   newBaseNode(src, callsNode),
-			Type:       CallbackLambda,
-			LambdaNode: lambdaNode,
+			BaseNode:  newBaseNode(src, callsNode),
+			Type:      CallbackLambda,
+			LambdaAST: lambdaAST,
 		}
 	}
 
 	panic(fmt.Sprintf("Bug! Command callback has neither identifier nor lambda at byte %d", callsNode.StartByte()))
+}
+
+// safeConvertLambda converts a lambda CST node to AST, recovering from panics
+// caused by malformed syntax. Returns nil if conversion fails.
+func safeConvertLambda(lambdaNode *ts.Node, src string) (result *rl.Lambda) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+		}
+	}()
+	return ConvertLambda(lambdaNode, src, "")
 }
