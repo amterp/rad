@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-121-allow-functions-like",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149562,
+  "creator": "Alexander Terp",
+  "id": "3d86WCsI",
+  "title": "RAD-121: Allow functions like `pick` to return two args - 'err' object?",
+  "type": "feature",
+  "updated_at_millis": 1767762149562,
+  "description": "I thiiiink I wrote some thoughts on this somewhere \u2013 maybe an err object instead? err.code and err.msg"
+}

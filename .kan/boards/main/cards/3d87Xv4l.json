@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-263-rls-versioning-should",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150200,
+  "creator": "Alexander Terp",
+  "id": "3d87Xv4l",
+  "title": "RAD-263: RLS versioning should follow <rad>.<counter>",
+  "type": "feature",
+  "updated_at_millis": 1767762150200,
+  "description": "Where `counter` resets on each new `rad` version"
+}

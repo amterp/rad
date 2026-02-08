@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "fix-issue-77",
+  "alias_explicit": false,
+  "created_at_millis": 1769891031195,
+  "creator": "Alexander Terp",
+  "id": "a_I2O2Y2ZL",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "fix issue #77",
+  "type": "feature",
+  "updated_at_millis": 1770438195214
+}

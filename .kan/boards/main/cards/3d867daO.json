@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-85-float-epsilon",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149314,
+  "creator": "Alexander Terp",
+  "description": "`==` might not be ideal, need comparison func",
+  "id": "3d867daO",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-85: float epsilon comparison function?",
+  "type": "feature",
+  "updated_at_millis": 1770438112769
+}

@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-306-see-if-we-can-remove",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150452,
+  "creator": "Alexander Terp",
+  "id": "3d87xw1E",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-306: See if we can remove the amount of delegate nesting from CST",
+  "type": "feature",
+  "updated_at_millis": 1770438195309
+}

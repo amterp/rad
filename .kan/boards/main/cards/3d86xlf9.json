@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-182-add-functions-for",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149834,
+  "creator": "Alexander Terp",
+  "id": "3d86xlf9",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-182: add functions for adding days, etc to time",
+  "type": "feature",
+  "updated_at_millis": 1770438049011
+}

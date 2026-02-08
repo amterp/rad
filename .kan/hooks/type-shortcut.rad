@@ -1,0 +1,50 @@
+#!/usr/bin/env rad
+---
+Pattern hook for setting card type from title shortcuts like !bug, !feat, !epic.
+Receives card_id and board_name as arguments from Kan pattern hooks.
+---
+args:
+    card_id str   # The card ID
+    board_name str  # The board name
+
+// Type aliases - shortcuts that map to canonical type values
+// Board types: bug, chore, enhancement, epic, excellence, feature
+type_aliases = {
+    "enh": "enhancement",
+    "exc": "excellence",
+    "feat": "feature",
+}
+
+// Get card data
+stdout = quiet $`kan show {card_id} -b {board_name} --json` catch:
+    exit(1)
+
+card_data = parse_json(stdout)
+title = card_data["card"]["title"]
+
+// Match !keyword pattern (case insensitive) - can appear anywhere in title
+// Pattern: exclamation mark followed by word characters
+if not matches(title, "![a-zA-Z]+", partial=true):
+    // No type shortcut found, nothing to do
+    exit(0)
+
+// Extract the type keyword (without the !)
+// Use regex to find and extract the keyword
+match_result = replace(title, "(?i).*!([a-z]+).*", "$1")
+type_keyword = lower(match_result)
+
+// Map alias to canonical type if needed
+card_type = type_keyword
+if type_keyword in type_aliases:
+    card_type = type_aliases[type_keyword]
+
+// Strip the !keyword from the title and clean up whitespace
+new_title = replace(title, "(?i)\\s*![a-z]+\\s*", " ")
+new_title = trim(new_title)
+// Handle double spaces that might result from removal in the middle
+new_title = replace(new_title, "\\s+", " ")
+
+// Update the card with new title and type
+quiet $`kan edit {card_id} -b {board_name} -t "{new_title}" -f type={card_type}`
+
+print("Set type to '{card_type}'")

@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-262-allow-o-in-cmd-rad-to",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150181,
+  "creator": "Alexander Terp",
+  "id": "3d87VS8N",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-262: Allow -O in cmd 'rad' to open with configured editor",
+  "type": "feature",
+  "updated_at_millis": 1770438112694
+}

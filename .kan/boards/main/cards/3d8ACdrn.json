@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-354-add-iterators-range",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151853,
+  "creator": "Alexander Terp",
+  "id": "3d8ACdrn",
+  "title": "RAD-354: Add iterators - range, streaming stdin, generator fn",
+  "type": "feature",
+  "updated_at_millis": 1767762151853,
+  "description": "`streaming stdin` meaning like something you can iterate through?\n\ngenerator fn referring to those functions that `yield` a value on each call\n\nthought: I wonder if we can avoid introducing a new type entirely, and simply extend RadList and RadMap to support 'lazy eval', and simply hide the generation."
+}

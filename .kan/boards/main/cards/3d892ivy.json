@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-387-regex-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151126,
+  "creator": "Alexander Terp",
+  "description": "regex constraint interpolation exception panic",
+  "id": "3d892ivy",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-387: regex constraint interpolation exception",
+  "type": "bug",
+  "updated_at_millis": 1770438170911
+}

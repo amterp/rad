@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-253-cutting-down-ufcs",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150128,
+  "creator": "Alexander Terp",
+  "id": "3d87QvKy",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-253: Cutting down UFCS function chains on separate lines should work",
+  "type": "feature",
+  "updated_at_millis": 1770438184424
+}

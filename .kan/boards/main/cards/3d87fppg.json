@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-288-if-incomplete-args",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150272,
+  "creator": "Alexander Terp",
+  "id": "3d87fppg",
+  "title": "RAD-288: If incomplete args, allow going into interactive mode",
+  "type": "feature",
+  "updated_at_millis": 1767762150272,
+  "description": "Interactively get input for the remaining parameters.\n\nOpt in via a keyword in args block?"
+}

@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-370-rad-check-from-logs",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151015,
+  "creator": "Alexander Terp",
+  "id": "3d88rqdg",
+  "title": "RAD-370: rad check from-logs: create folder w/ symlinked scripts to fix",
+  "type": "feature",
+  "updated_at_millis": 1767762151015,
+  "description": "To make it easier to navigate to all of them. Maybe an interactive menu for which ones you wanna fix? Should this officially be part of Rad or just my own script?"
+}

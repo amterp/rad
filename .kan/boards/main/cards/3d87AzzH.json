@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-208-ability-to-press-up",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149968,
+  "creator": "Alexander Terp",
+  "id": "3d87AzzH",
+  "title": "RAD-208: Ability to press 'up/down' and scroll through previous input() calls",
+  "type": "feature",
+  "updated_at_millis": 1767762149968
+}

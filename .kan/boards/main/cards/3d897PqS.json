@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-394-cmds-support-nested",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151182,
+  "creator": "Alexander Terp",
+  "id": "3d897PqS",
+  "title": "RAD-394: cmds: support nested command definitions",
+  "type": "feature",
+  "updated_at_millis": 1767762151182,
+  "description": "```\ncommand add:\n  verbose bool\n  command file:  // << This\n    on_call on_add_file\n```"
+}

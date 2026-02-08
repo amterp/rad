@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-351-revamp-radtree-so",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150901,
+  "creator": "Alexander Terp",
+  "id": "3d88fjks",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-351: Revamp RadTree so users e.g. Checker don't manually walk tree",
+  "type": "excellence",
+  "updated_at_millis": 1770438925512
+}

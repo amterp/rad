@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-324-allow-title-header",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150615,
+  "creator": "Alexander Terp",
+  "id": "3d88DNYX",
+  "title": "RAD-324: Allow title/header option in tables",
+  "type": "feature",
+  "updated_at_millis": 1767762150615,
+  "description": "Particularly for `rad`, because if you print it manually first, the 'Querying\u2026' appears in between the header and the table."
+}

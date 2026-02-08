@@ -1,0 +1,16 @@
+{
+  "_v": 1,
+  "alias": "rad-63-pprint-loses-ordering",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149167,
+  "creator": "Alexander Terp",
+  "description": "In the below snippet (which we use as part of `pprint`), focus on the `case RslMap`. We convert the RslMap into a regular go-map which loses ordering. Therefore, when printed, it does not respect the original RslMap's ordering.",
+  "id": "3d85sULU",
+  "labels": [
+    "ai-lo",
+    "ai-think"
+  ],
+  "title": "RAD-63: pprint loses ordering when printing maps",
+  "type": "bug",
+  "updated_at_millis": 1770439001088
+}

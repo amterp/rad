@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-132-on-exit-or-exit-hook",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151387,
+  "creator": "Alexander Terp",
+  "id": "3d89S3Sd",
+  "title": "RAD-132: on_exit or exit_hook block, to run after deferrals",
+  "type": "feature",
+  "updated_at_millis": 1767762151387,
+  "description": "Something to really get a very last line in. Otherwise, the \"Done!\" print comes before deferred commands, which can look a little clunky."
+}

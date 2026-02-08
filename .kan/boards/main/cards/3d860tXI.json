@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-76-pass-csv-or-map-column",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149249,
+  "creator": "Alexander Terp",
+  "id": "3d860tXI",
+  "title": "RAD-76: Pass csv or map<column, values> to display block",
+  "type": "feature",
+  "updated_at_millis": 1767762149249,
+  "description": "If I read a CSV from a file, would be cool to easily display as a table.\n\n```\n_, text = $!`cat data.csv`\ndisplay:\n  csv text\n```\n\nAND/OR be able to create a map of column keys to list values"
+}

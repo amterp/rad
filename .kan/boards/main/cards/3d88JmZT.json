@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-330-sleep-input-should",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150675,
+  "creator": "Alexander Terp",
+  "description": "Some way to convert the string '2h' into a number duration usable for other purposes.",
+  "id": "3d88JmZT",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-330: sleep() input should have a 'translation' function for time",
+  "type": "feature",
+  "updated_at_millis": 1770438123959
+}

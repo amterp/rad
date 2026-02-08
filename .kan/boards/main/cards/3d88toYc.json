@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-374-catch-error",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151034,
+  "creator": "Alexander Terp",
+  "id": "3d88toYc",
+  "title": "RAD-374: 'catch' error integration with http functions?",
+  "type": "feature",
+  "updated_at_millis": 1767762151034,
+  "description": "easiest approach\n\n```\nhttp_get(url, error_if_no_success=true) catch:\n  // blah blah\n```\n\nNot super clean though. Also, we still want the response. Could add another function?\n\n```\nresp = http_get(url)\ncheck_error(resp) catch:\n  // blah blah\n```\n\n^ where that `check_error` will return an `error` if the input is a non-success http response, triggering the attached error block"
+}

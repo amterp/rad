@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-43-foldr-foldl-funcs",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151503,
+  "creator": "Alexander Terp",
+  "id": "3d89ddLR",
+  "title": "RAD-43: foldr, foldl funcs? Instead of something like sum()?",
+  "type": "feature",
+  "updated_at_millis": 1767762151503
+}

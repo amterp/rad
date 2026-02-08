@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-55-assign-raderror-codes",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151483,
+  "creator": "Alexander Terp",
+  "id": "3d89c3Sb",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-55: Assign RadError codes for *everything*",
+  "type": "feature",
+  "updated_at_millis": 1770438206012
+}

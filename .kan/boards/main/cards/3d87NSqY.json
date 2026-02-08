@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-242-new-functions",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150092,
+  "creator": "Alexander Terp",
+  "id": "3d87NSqY",
+  "title": "RAD-242: New functions: clipboard management (copying pasting)",
+  "type": "feature",
+  "updated_at_millis": 1767762150092,
+  "description": "Perhaps clearing, too.\n\nCan use:\n\n* https://github.com/golang-design/clipboard \n* https://github.com/atotto/clipboard"
+}

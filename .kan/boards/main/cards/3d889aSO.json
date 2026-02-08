@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-319-shell-print-can-print",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150579,
+  "creator": "Alexander Terp",
+  "id": "3d889aSO",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-319: Shell print can print function vars if exiting in a function",
+  "type": "bug",
+  "updated_at_millis": 1770438136539
+}

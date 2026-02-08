@@ -1,0 +1,16 @@
+{
+  "_v": 1,
+  "alias": "should-get-stash-dir",
+  "alias_explicit": false,
+  "created_at_millis": 1769380726096,
+  "creator": "Alexander Terp",
+  "description": "more consistent with `get_path`",
+  "id": "a_EaGfmrkG",
+  "labels": [
+    "ai-hi",
+    "breaking"
+  ],
+  "title": "should get_stash_dir be renamed get_stash_path?",
+  "type": "bug",
+  "updated_at_millis": 1770523874629
+}

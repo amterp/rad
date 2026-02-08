@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-231-sess-d-l",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150057,
+  "creator": "Alexander Terp",
+  "id": "3d87JdN3",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-231: 'sess -d -l' misinterpretes '-l' as string for '-d' string arg",
+  "type": "bug",
+  "updated_at_millis": 1770438136522
+}

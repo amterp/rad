@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "fix-release-notes-ci-2",
+  "alias_explicit": false,
+  "created_at_millis": 1769661498369,
+  "creator": "Alexander Terp",
+  "description": "https://github.com/amterp/rad/actions/runs/21465767390/job/61827527675",
+  "id": "a_GU4qImco",
+  "title": "fix release notes CI",
+  "type": "bug",
+  "updated_at_millis": 1769661503243
+}

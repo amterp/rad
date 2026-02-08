@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-315-rad-check-apply",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150524,
+  "creator": "Alexander Terp",
+  "id": "3d884yMj",
+  "title": "RAD-315: rad check - apply static typing checks",
+  "type": "feature",
+  "updated_at_millis": 1767762150524
+}

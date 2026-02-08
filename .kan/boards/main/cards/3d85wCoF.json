@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-70-should-support-cd",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149200,
+  "creator": "Alexander Terp",
+  "id": "3d85wCoF",
+  "title": "RAD-70: should support `cd` navigation",
+  "type": "feature",
+  "updated_at_millis": 1767762149200,
+  "description": "Either (or both) in the the context of running `$` shell commands or adding an explicit `cd()` function. Former would be ideal? But not sure how easy that'd be."
+}

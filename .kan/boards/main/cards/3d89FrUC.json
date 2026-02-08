@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-403-implement-conformance",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151257,
+  "creator": "Alexander Terp",
+  "description": "The idea here is to have language-agnostic tests for how Rad as a language should behave. Unsure how much work this would be. The selling point is that it could make it very easy to implement the language in other mediums/languages e.g. WASM.",
+  "id": "3d89FrUC",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-403: Implement conformance tests",
+  "type": "feature",
+  "updated_at_millis": 1770438936379
+}

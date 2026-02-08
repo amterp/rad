@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-168-bundle-command",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151351,
+  "creator": "Alexander Terp",
+  "id": "3d89OQgp",
+  "title": "RAD-168: bundle command",
+  "type": "feature",
+  "updated_at_millis": 1767762151351,
+  "description": "The ability to invoke `rad bundle <script>` to produce a standalone executable.\n\nOptions:\n\n* Create a new Go executable with `rad` and the script embedded.\n    * Cons: leads to large ~12 MB scripts.\n    * Can perhaps look into minimizers e.g. TinyGo.\n\n* Implement my own compiler."
+}

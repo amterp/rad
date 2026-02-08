@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-184-more-rls-diagnostics",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149851,
+  "creator": "Alexander Terp",
+  "description": "* error if invalid enum string used for e.g. named arg in function that will be unrecognized, etc.\n* arg default doesn't match constraint e.g. regex/index/enum\n* referencing undefined identifiers\n    * undefined variable\n    * unknown function\n* Incorrect ordering e.g. something before file header, args block, etc.",
+  "id": "3d86yjfx",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-184: More RLS Diagnostics",
+  "type": "feature",
+  "updated_at_millis": 1770438925536
+}

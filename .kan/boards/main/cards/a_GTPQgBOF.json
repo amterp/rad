@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "slicing-should-be-rune-not-2",
+  "alias_explicit": false,
+  "created_at_millis": 1769659906453,
+  "creator": "Alexander Terp",
+  "description": "```\n2. P1: String slicing corrupts multi-byte characters\ns = \"a😀b\"\nprint(s[0:2])  // Expected \"a😀\", actual: garbled\n2. Slicing uses byte indices but calculates rune indices — mismatch corrupts Unicode.\n```",
+  "id": "a_GTPQgBOF",
+  "title": "slicing should be rune, not bytes",
+  "type": "bug",
+  "updated_at_millis": 1769659914517
+}

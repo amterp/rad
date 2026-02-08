@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-107-add-rad-block-syntax",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149462,
+  "creator": "Alexander Terp",
+  "id": "3d86Mdk2",
+  "title": "RAD-107: Add rad block syntax for deriving new columns",
+  "type": "feature",
+  "updated_at_millis": 1767762149462,
+  "description": "```\nrad url:\n  fields x, y\n  derive \"Area\" (x, y) -> x * y\n```\n\nFor example\n\nPerhaps the ordering of these derived fields controls column ordering."
+}

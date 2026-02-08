@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-402-rad-blocks-ability-to",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151239,
+  "creator": "Alexander Terp",
+  "id": "3d89Dv35",
+  "title": "RAD-402: rad blocks: ability to sort by 'rest of row'",
+  "type": "feature",
+  "updated_at_millis": 1767762151239,
+  "description": "For equal values of ForeignId, the sorting of rows is arbitrary and unstable. We should do something here. At least allow the user to concisely say sort by rest of row or something."
+}

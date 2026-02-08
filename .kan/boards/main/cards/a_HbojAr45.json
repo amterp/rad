@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "fix-truncate-byte-slicing-bug",
+  "alias_explicit": false,
+  "created_at_millis": 1769827708494,
+  "creator": "Alexander Terp",
+  "description": "Truncate() in common/utils_rad.go uses byte indices instead of rune indices, corrupting multi-byte characters. Need to convert to runes first.",
+  "id": "a_HbojAr45",
+  "title": "Fix Truncate() byte slicing bug",
+  "type": "bug",
+  "updated_at_millis": 1769827708494
+}

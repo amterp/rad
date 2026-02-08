@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-336-concurrent-map-filter",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150806,
+  "creator": "Alexander Terp",
+  "id": "3d88WEsR",
+  "title": "RAD-336: concurrent map/filter ops",
+  "type": "feature",
+  "updated_at_millis": 1767762150806,
+  "description": "Inspired by OK? language - concurrent map function"
+}

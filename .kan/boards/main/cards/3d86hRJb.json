@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-140-multiline-ternary",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149681,
+  "creator": "Alexander Terp",
+  "id": "3d86hRJb",
+  "title": "RAD-140: Multiline ternary expressions",
+  "type": "feature",
+  "updated_at_millis": 1767762149681,
+  "description": "Currently doesn't work with the tree sitter grammar"
+}

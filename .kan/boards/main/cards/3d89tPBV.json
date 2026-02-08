@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-379-assess-jsonpath",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151655,
+  "creator": "Alexander Terp",
+  "id": "3d89tPBV",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-379: Assess JSONPath",
+  "type": "feature",
+  "updated_at_millis": 1770438925521
+}

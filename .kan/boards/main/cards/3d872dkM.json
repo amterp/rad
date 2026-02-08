@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-191-rls-auto-complete",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149884,
+  "creator": "Alexander Terp",
+  "id": "3d872dkM",
+  "title": "RAD-191: RLS: Auto complete mutually requires, excludes",
+  "type": "feature",
+  "updated_at_millis": 1767762149884,
+  "description": "This syntax can be a little verbose, and LSP auto suggestion/completion for it would be handy."
+}

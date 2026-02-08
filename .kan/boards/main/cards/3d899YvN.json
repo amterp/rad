@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-398-http-queries-can-fail",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151201,
+  "creator": "Alexander Terp",
+  "description": "If this happens, the user has no recourse. There's no way to tell Rad that it's okay. Probably add a `verify=false` flag to our http commands?",
+  "id": "3d899YvN",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-398: http queries can fail on e.g. invalid certificate",
+  "type": "feature",
+  "updated_at_millis": 1770438112714
+}

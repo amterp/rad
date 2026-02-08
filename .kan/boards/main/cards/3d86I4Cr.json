@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-102-command-exists-func",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149429,
+  "creator": "Alexander Terp",
+  "description": "So you don't need to run `$!\"command -v \u003ccommand\u003e\"`",
+  "id": "3d86I4Cr",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-102: command_exists() func",
+  "type": "feature",
+  "updated_at_millis": 1770438049004
+}

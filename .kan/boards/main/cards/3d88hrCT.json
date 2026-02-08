@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-352-make-pr-comment",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150920,
+  "creator": "Alexander Terp",
+  "id": "3d88hrCT",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-352: Make PR comment appear earlier, don't block on benchmarks",
+  "type": "excellence",
+  "updated_at_millis": 1770438067747
+}

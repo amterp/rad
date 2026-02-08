@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "fix-indexat-efficiency",
+  "alias_explicit": false,
+  "created_at_millis": 1769827713203,
+  "creator": "Alexander Terp",
+  "description": "IndexAt() converts entire string to runes just to get one character. Should walk segments directly using rune-based length.",
+  "id": "a_HboqlCDs",
+  "title": "Fix IndexAt() efficiency",
+  "type": "bug",
+  "updated_at_millis": 1769827713203
+}

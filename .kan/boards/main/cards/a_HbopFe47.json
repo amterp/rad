@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "fix-torunelist-o-n-complexity",
+  "alias_explicit": false,
+  "created_at_millis": 1769827712265,
+  "creator": "Alexander Terp",
+  "description": "ToRuneList() calls IndexAt() in a loop, each of which calls Runes() converting the entire string. Call Runes() once and iterate.",
+  "id": "a_HbopFe47",
+  "title": "Fix ToRuneList() O(n²) complexity",
+  "type": "bug",
+  "updated_at_millis": 1769827712265
+}

@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-346-some-way-to-manage",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150845,
+  "creator": "Alexander Terp",
+  "id": "3d88aOxC",
+  "title": "RAD-346: Some way to manage rad versions, indicate script compat",
+  "type": "feature",
+  "updated_at_millis": 1767762150845,
+  "description": "* each version installation installs `rad` and e.g. `rad0.6.8` ?\n* Rad knows how to find all these, can list them and manage them\n* Have a way for scripts to indicate what they're compatible with or written with in mind?\n* Maybe teach rad how to download & run target scripts with appropriate versions of rad."
+}

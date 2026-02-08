@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-106-decide-on-rules",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149446,
+  "creator": "Alexander Terp",
+  "description": "right now we don't allow sort statements in request blocks, for example, but we allow coloring or remapping. HMM",
+  "id": "3d86Kdty",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-106: Decide on rules around legal statements in rad/display/request blocks",
+  "type": "feature",
+  "updated_at_millis": 1770438936387
+}

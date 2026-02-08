@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-48-allow-json-paths-with",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149119,
+  "creator": "Alexander Terp",
+  "id": "3d85nJ1T",
+  "title": "RAD-48: Allow JSON paths with spaces in them",
+  "type": "feature",
+  "updated_at_millis": 1767762149119,
+  "description": "Right now, json path elements are technically required to be identifiers, which cannot have spaces in them.\n\nWe need to allow spaces!\n\nSome ideas:\n\n```\na = json.name[\"bob smith\"]\na = json.name.\"bob smith\"\n```"
+}

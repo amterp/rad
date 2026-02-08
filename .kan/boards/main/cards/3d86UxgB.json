@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-120-flag-on-http-funcs-to",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149546,
+  "creator": "Alexander Terp",
+  "description": "To avoid having to implement the check yourself every time.",
+  "id": "3d86UxgB",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-120: Flag on http funcs to fail script if non-OK status code",
+  "type": "feature",
+  "updated_at_millis": 1770438112722
+}

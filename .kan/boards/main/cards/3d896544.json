@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-389-support-comparing",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151163,
+  "creator": "Alexander Terp",
+  "description": "Should follow lexicographical sorting.\n\ne.g. `\"a\" \u003e \"b\"`",
+  "id": "3d896544",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-389: Support comparing strings",
+  "type": "feature",
+  "updated_at_millis": 1770438067719
+}

@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-29-improve-missing-code",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151948,
+  "creator": "Alexander Terp",
+  "description": "We have some gaps, specifically shell cmds, huh usage, terminal introspection, env look ups. Let's allow mocking these and adding tests.",
+  "id": "3d8AMb43",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-29: Improve missing code coverage",
+  "type": "epic",
+  "updated_at_millis": 1770438936431
+}

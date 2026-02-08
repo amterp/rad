@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-353-async-operations",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150939,
+  "creator": "Alexander Terp",
+  "id": "3d88j0yP",
+  "title": "RAD-353: async operations",
+  "type": "feature",
+  "updated_at_millis": 1767762150939,
+  "description": "* http requests\n* computation e.g. loops\n* shell commands\n* file i/o"
+}

@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-77-strings-consistently",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149265,
+  "creator": "Alexander Terp",
+  "id": "3d862dKr",
+  "title": "RAD-77: Strings: Consistently maintain attributes",
+  "type": "feature",
+  "updated_at_millis": 1767762149265,
+  "description": "Perhaps allow a named arg that can be disabled so this doesn't happen? Or perhaps have a function e.g. `strip_attributes()` and replace that in?\n\nBasically, be able to have\n\n`replace(my_plain_string, text, colored_text)`\n\nand have the output correctly be colored in the replaced parts."
+}

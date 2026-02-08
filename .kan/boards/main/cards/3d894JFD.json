@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-388-regex-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151144,
+  "creator": "Alexander Terp",
+  "description": "```\n 16 |     after, before regex r\"[0-9]{2}:[0-9]{2}:[0-9]{2}\"\n    |     ^ Invalid syntax\n```\n\nBut the vscode extension doesn't complain about it?",
+  "id": "3d894JFD",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-388: regex constraint multi args invalid syntax, but not in LSP?",
+  "type": "bug",
+  "updated_at_millis": 1770438170937
+}

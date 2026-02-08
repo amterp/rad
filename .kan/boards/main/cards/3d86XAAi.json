@@ -1,0 +1,16 @@
+{
+  "_v": 1,
+  "alias": "rad-124-confirm-should-maybe",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149579,
+  "creator": "Alexander Terp",
+  "description": "Maybe should be customizable. If someone just presses 'enter' atm then that returns _false_ for `confirm`, which probably isn't right.",
+  "id": "3d86XAAi",
+  "labels": [
+    "ai-lo",
+    "breaking"
+  ],
+  "title": "RAD-124: confirm() should maybe accept 'enter' as well?",
+  "type": "feature",
+  "updated_at_millis": 1770522510223
+}

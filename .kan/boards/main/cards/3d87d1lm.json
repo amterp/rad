@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-283-allow-specifying-rad",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150254,
+  "creator": "Alexander Terp",
+  "id": "3d87d1lm",
+  "title": "RAD-283: Allow specifying rad version in script, and have rad download that version and run with it",
+  "type": "feature",
+  "updated_at_millis": 1767762150254,
+  "description": "Especially useful while rad is under development still, and we risk breaking scripts, and it's unclear which rad version a script is meant to run with.\n\nWhat about LSP?\n\nWhat about `rad` commands e.g. `format` or `validate`?"
+}

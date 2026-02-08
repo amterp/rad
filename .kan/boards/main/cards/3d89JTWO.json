@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-371-rad-block-inline-json",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151295,
+  "creator": "Alexander Terp",
+  "id": "3d89JTWO",
+  "title": "RAD-371: Rad block inline json path syntax",
+  "type": "feature",
+  "updated_at_millis": 1767762151295,
+  "description": "Often, you don't really care to use the variable in json path capture for anything other than the Rad block which ensues. Perhaps we can inline?\n\n```\nrad url:\n    # Pick fields to display from the response\n    fields\n        json[].commit.author.date  as Time,\n        json[].commit.author.name  as Author,\n        json[].sha                 as SHA\n```"
+}

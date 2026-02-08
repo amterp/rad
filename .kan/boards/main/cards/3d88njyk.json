@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-358-revisit-useful-error",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150976,
+  "creator": "Alexander Terp",
+  "description": "Let's rethink how we do show errors to users. We need to make it a standout feature of Rad. Something people praise it for, like Rust or Elm.\n\nhttps://elm-lang.org/news/compiler-errors-for-humans\n\nThis includes our error codes.",
+  "id": "3d88njyk",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-358: Revisit useful error messages",
+  "type": "feature",
+  "updated_at_millis": 1770438925495
+}

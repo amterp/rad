@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-246-symbol-function",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150110,
+  "creator": "Alexander Terp",
+  "id": "3d87OKLo",
+  "title": "RAD-246: Symbol/function module import system",
+  "type": "feature",
+  "updated_at_millis": 1767762150110
+}

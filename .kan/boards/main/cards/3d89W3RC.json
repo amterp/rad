@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-113-ability-to-capture",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151426,
+  "creator": "Alexander Terp",
+  "id": "3d89W3RC",
+  "title": "RAD-113: Ability to capture stdout and stderr together in one var",
+  "type": "feature",
+  "updated_at_millis": 1767762151426
+}

@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-17-shell-cmd-with-pipes",
+  "alias_explicit": false,
+  "created_at_millis": 1767762148977,
+  "creator": "Alexander Terp",
+  "id": "3d85Zqab",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-17: Shell cmd with pipes should propagate errors early in pipeline",
+  "type": "feature",
+  "updated_at_millis": 1770438195232
+}

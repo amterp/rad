@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "undo-r-n-normalization",
+  "alias_explicit": false,
+  "created_at_millis": 1769659263786,
+  "creator": "Alexander Terp",
+  "id": "a_GT8i8577",
+  "labels": [
+    "ai-hi",
+    "breaking"
+  ],
+  "title": "undo \\r\\n normalization",
+  "type": "bug",
+  "updated_at_millis": 1770522510208
+}

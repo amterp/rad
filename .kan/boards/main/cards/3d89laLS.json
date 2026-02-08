@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-15-ability-to-make-table",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151579,
+  "creator": "Alexander Terp",
+  "id": "3d89laLS",
+  "title": "RAD-15: Ability to make table header part of stderr",
+  "type": "feature",
+  "updated_at_millis": 1767762151579,
+  "description": "One use case is so you can pipe the table output to grep and still keep the header above the matched rows."
+}

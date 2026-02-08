@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-58-arg-enum-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149150,
+  "creator": "Alexander Terp",
+  "id": "3d85qF7m",
+  "title": "RAD-58: arg enum constraint - apply pick/filter logic",
+  "type": "feature",
+  "updated_at_millis": 1767762149150,
+  "description": "so if you have a partial match of an enum value, we'll insta-pick the match if there's one, or allow selection if two+."
+}

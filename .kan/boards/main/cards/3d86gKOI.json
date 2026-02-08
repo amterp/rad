@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-139-rls-code-action-flip",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149664,
+  "creator": "Alexander Terp",
+  "id": "3d86gKOI",
+  "title": "RAD-139: RLS: Code action: flip operators",
+  "type": "feature",
+  "updated_at_millis": 1767762149664,
+  "description": "e.g. flipping two args to a `or` operation."
+}

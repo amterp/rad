@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-309-implement-typing-for",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150489,
+  "creator": "Alexander Terp",
+  "id": "3d880E6J",
+  "title": "RAD-309: Implement typing for local variables",
+  "type": "feature",
+  "updated_at_millis": 1767762150489
+}

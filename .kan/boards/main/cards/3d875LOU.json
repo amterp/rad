@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-197-arg-range-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149918,
+  "creator": "Alexander Terp",
+  "id": "3d875LOU",
+  "title": "RAD-197: Arg range constraint: allow referencing other args in range",
+  "type": "feature",
+  "updated_at_millis": 1767762149918,
+  "description": "Unclear if we can use the same syntax, I think we can. Example:\n\n```\nargs:\n  min float\n  max float\n  \n  min range [,max]\n```"
+}

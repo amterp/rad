@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-343-allow-better-tty",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150827,
+  "creator": "Alexander Terp",
+  "description": "e.g. input/confirm currently error if invoked in a noninteractice tty environment.\nPerhaps add some named arg to default to a value if such cases?\nAnd/or, offer in-built function for detecting tty and let users handle.",
+  "id": "3d88Y3HF",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-343: allow better tty handling for interactive functions",
+  "type": "feature",
+  "updated_at_millis": 1770438195294
+}

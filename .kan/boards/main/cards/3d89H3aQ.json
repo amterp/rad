@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-375-should-boolean-flags",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151276,
+  "creator": "Alexander Terp",
+  "id": "3d89H3aQ",
+  "title": "RAD-375: should boolean flags be positional also?",
+  "type": "feature",
+  "updated_at_millis": 1767762151276,
+  "description": "more consistent"
+}

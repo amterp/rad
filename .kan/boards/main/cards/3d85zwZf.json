@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-72-named-defer-blocks",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149233,
+  "creator": "Alexander Terp",
+  "id": "3d85zwZf",
+  "title": "RAD-72: named defer blocks",
+  "type": "feature",
+  "updated_at_millis": 1767762149233,
+  "description": "* reaching a point where you don't want to run a certain block anymore\n* overriding what a defer block should do\n* _predicating_ an defer block on another i.e. if the earlier one fails, _don't_ run this one"
+}

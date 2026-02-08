@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-96-fix-rad-cases-bugs",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149380,
+  "creator": "Alexander Terp",
+  "id": "3d86DKDN",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-96: Fix rad-cases bugs 2025-01-10",
+  "type": "bug",
+  "updated_at_millis": 1770438149826
+}

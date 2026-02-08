@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "preserve-attributes-in-string",
+  "alias_explicit": false,
+  "created_at_millis": 1769827715430,
+  "creator": "Alexander Terp",
+  "description": "Index() for slicing creates plain NewRadString(), losing all text attributes (colors, styles, hyperlinks). Marked as TODO.",
+  "id": "a_HbouMjPG",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "Preserve attributes in string slicing",
+  "type": "feature",
+  "updated_at_millis": 1770438184433
+}

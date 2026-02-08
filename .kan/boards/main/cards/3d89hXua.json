@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-27-better-supported-way",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151541,
+  "creator": "Alexander Terp",
+  "id": "3d89hXua",
+  "title": "RAD-27: Better-supported way to invoke other rad scripts (almost like RSL functions?)",
+  "type": "feature",
+  "updated_at_millis": 1767762151541,
+  "description": "Right now, it can be done through shell commands, but that's not great and involves ensuring access to the script paths, etc.\n\nIf there were a way to 'bundle' together scripts, some of which may exist entirely to act as functions for others (and so aren't gonna be invocable from CLI usually), that could work.\n\nAlthough, maybe we should just support straight-up defining custom RSL functions, importing between scripts, etc. Though I don't love that\u2026 A lot of work, whereas the existing arg functionality is quite powerful, if we could just leverage that."
+}

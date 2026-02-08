@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-155-bool-flags-should-not",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149783,
+  "creator": "Alexander Terp",
+  "id": "3d86sGRb",
+  "title": "RAD-155: Bool flags should not be displayed as positional args",
+  "type": "feature",
+  "updated_at_millis": 1767762149783,
+  "description": "MAYBE! I just think this is kinda weird:\n\n`dev.rsl [package] [reinstall] [version] [release]`\n\nhere, only 'version' is a string arg, the others are bool flags.\n\nIt'd be misleading to remove package/reinstall since the first positional arg is _not_ version.\n\nBut that could be a behavior change \u2013 positional args 'skip' bool args? idk"
+}

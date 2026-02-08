@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-166-in-json-algo-allow",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149817,
+  "creator": "Alexander Terp",
+  "id": "3d86vFax",
+  "title": "RAD-166: In json algo, allow filtering values for capture",
+  "type": "feature",
+  "updated_at_millis": 1767762149817
+}

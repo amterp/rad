@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-376-rad-block-field-map",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151675,
+  "creator": "Alexander Terp",
+  "id": "3d89vNxp",
+  "title": "RAD-376: Rad block field map lambdas should give column as var",
+  "type": "feature",
+  "updated_at_millis": 1767762151675,
+  "description": "The repeated `map` definitions could be done in one grouped field modifier swoop."
+}

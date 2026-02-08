@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "fix-trimprefix-trimsuffix",
+  "alias_explicit": false,
+  "created_at_millis": 1769827709226,
+  "creator": "Alexander Terp",
+  "description": "TrimPrefix uses strings.TrimLeft (strips character set) but name implies literal prefix removal. Either rename to trim_left_chars or change to use strings.TrimPrefix.",
+  "id": "a_HbokMPp8",
+  "labels": [
+    "breaking"
+  ],
+  "title": "Fix TrimPrefix/TrimSuffix semantics",
+  "type": "bug",
+  "updated_at_millis": 1770522510216
+}

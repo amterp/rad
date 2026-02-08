@@ -1,0 +1,9 @@
+kan_schema = "project/1"
+id = "p_BDmlWAgz"
+name = "rad"
+
+[favicon]
+  background = "#ec4899"
+  icon_type = "letter"
+  letter = "R"
+  emoji = ""

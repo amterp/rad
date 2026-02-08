@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-206-code-comment-in-arg",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149951,
+  "creator": "Alexander Terp",
+  "id": "3d87983L",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-206: Code comment in arg comment gets incorrectly included",
+  "type": "bug",
+  "updated_at_millis": 1770438123942
+}

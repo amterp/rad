@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-135-enum-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149646,
+  "creator": "Alexander Terp",
+  "description": "Invoking this script with no args gives\n\n`Invalid 'name' value:  (valid values: alice, bob)`\n\nshould not. just print usage.",
+  "id": "3d86edd6",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-135: Enum constraint complains if no args passed",
+  "type": "bug",
+  "updated_at_millis": 1770438136498
+}

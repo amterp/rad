@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "design-windows-permissions",
+  "alias_explicit": false,
+  "created_at_millis": 1769310263923,
+  "creator": "Alexander Terp",
+  "description": "Decide how get_path().permissions should behave on Windows. Options: 1) Return Windows-compatible representation, 2) Document as Unix-only, 3) Return simplified cross-platform subset. Related to Windows compatibility work.",
+  "id": "a_E6hd8xrW",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "Design Windows permissions representation",
+  "updated_at_millis": 1770438936395
+}

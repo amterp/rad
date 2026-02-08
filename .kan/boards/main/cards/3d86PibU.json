@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-114-invoking-mock",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149496,
+  "creator": "Alexander Terp",
+  "id": "3d86PibU",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-114: Invoking MOCK-RESPONSE with \"asd\" i.e. invalid format gives segfault error",
+  "type": "bug",
+  "updated_at_millis": 1770438049031
+}

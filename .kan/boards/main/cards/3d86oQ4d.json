@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-148-typed-checked-input",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149750,
+  "creator": "Alexander Terp",
+  "description": "input_float for example.\n\nwould also be good to be able to have e.g. 'range' or 'regex' soooorta like arg blocks",
+  "id": "3d86oQ4d",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-148: typed/checked input methods",
+  "type": "feature",
+  "updated_at_millis": 1770438149962
+}

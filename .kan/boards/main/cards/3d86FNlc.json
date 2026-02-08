@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-97-lexer-handle-opening",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149396,
+  "creator": "Alexander Terp",
+  "description": "this fails: `a = \"hi { bro\"`\n\nthink more about this - python also fails, but python is also more opt-in.\n\nI thiiink we should just accept the string as-is",
+  "id": "3d86FNlc",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-97: Lexer: Handle opening brace without a close",
+  "type": "bug",
+  "updated_at_millis": 1770438149834
+}

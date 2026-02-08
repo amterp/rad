@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-304-destructuring-a",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150415,
+  "creator": "Alexander Terp",
+  "id": "3d87tyqy",
+  "labels": [
+    "ai-lo",
+    "breaking"
+  ],
+  "title": "RAD-304: destructuring a caught error should fail. Should destructuring a single value thus always fail?",
+  "type": "feature",
+  "updated_at_millis": 1770522510194
+}

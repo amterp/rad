@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-92-equality-should-work",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149347,
+  "creator": "Alexander Terp",
+  "id": "3d86ADAd",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-92: equality should work on lists and maps",
+  "type": "feature",
+  "updated_at_millis": 1770438067726
+}

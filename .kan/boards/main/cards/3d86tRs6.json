@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-156-shell-confirm-don-t",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149801,
+  "creator": "Alexander Terp",
+  "id": "3d86tRs6",
+  "title": "RAD-156: shell confirm: don't fail if not critical command",
+  "type": "feature",
+  "updated_at_millis": 1767762149801,
+  "description": "confirm $!`ls`\n\nif that confirm is rejected, then the script exits.\n\nWe should allow like this:\n\nconfirm unsafe $`ls`\n\nTo then not _exit_ when rejected.\n\nIf no `unsafe`, then do usual `fail`/ `recover` blocks.\n\nBasically, `confirm` should simply mean: confirm with user prior to running command. If yes, proceed as normal. If not, simulate command failure with code 1 and exit message User rejected shell command."
+}

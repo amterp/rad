@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-367-add-0-padding-for",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151812,
+  "creator": "Alexander Terp",
+  "id": "3d8A8mhQ",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-367: add 0 padding for string number formatting",
+  "type": "feature",
+  "updated_at_millis": 1770438067698
+}

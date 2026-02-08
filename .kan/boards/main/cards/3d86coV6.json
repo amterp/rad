@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-130-rad-fmt",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149629,
+  "creator": "Alexander Terp",
+  "description": "* remove whitespace in empty lines (think gerrit pink)\n* Align arg comments, within some threshold of each other\n* Blank line between arg declarations and constraints\n* remove blank space between keywords and colon e.g. `args  :`\n* Add space in between arg comment '#' and contents\n* Align cases in switch statements (i.e. align case values)\n\nAlso integrate in RLS.\n\nBy default, just spit out what it would do.\n\n`-w` to actually write.\n\nRequires valid script i.e. no ERRORs from `rad check`.\n\n`-r` to recurse to connected scripts (via imports) ?",
+  "id": "3d86coV6",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-130: rad fmt",
+  "type": "feature",
+  "updated_at_millis": 1770438925528
+}

@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-122-list-comprehensions",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151910,
+  "creator": "Alexander Terp",
+  "id": "3d8AIrHV",
+  "title": "RAD-122: List comprehensions for-loop should behave like general forloops",
+  "type": "bug",
+  "updated_at_millis": 1767762151910,
+  "description": "Specifically:\n\n```\nmy_map = { ... }\nkeys = [k for k in my_map]\n```\n\n_FAILS_ but should really be allowed. similarly, should be able to do `for k, v` in the list comprehension."
+}

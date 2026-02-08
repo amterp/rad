@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-335-one-line-help-usage",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150695,
+  "creator": "Alexander Terp",
+  "description": "Some variant of usage (globally) which just prints the synopsis and the top-line description.",
+  "id": "3d88Ldvj",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-335: one-line help/usage print option",
+  "type": "feature",
+  "updated_at_millis": 1770438049044
+}

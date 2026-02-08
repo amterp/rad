@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-198-rls-additional",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149934,
+  "creator": "Alexander Terp",
+  "id": "3d877Jh9",
+  "title": "RAD-198: RLS: Additional highlighting",
+  "type": "feature",
+  "updated_at_millis": 1767762149934,
+  "description": "* Semantic highlighting - give each unique variable its own color (configurable)"
+}

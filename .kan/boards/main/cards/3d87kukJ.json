@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-297-rad-home-directory",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150324,
+  "creator": "Alexander Terp",
+  "id": "3d87kukJ",
+  "title": "RAD-297: rad home directory 'bin' on PATH for scripts. can symlink into it, or create scripts in it with `rad new --home` for example",
+  "type": "feature",
+  "updated_at_millis": 1767762150324
+}

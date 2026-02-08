@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-348-support-xml",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150883,
+  "creator": "Alexander Terp",
+  "id": "3d88egCn",
+  "title": "RAD-348: Support XML",
+  "type": "feature",
+  "updated_at_millis": 1767762150883,
+  "description": "Like RAD-303, but for XML.\n\nWonder what other formats we need to support.\n\nMotivation: i had to reach for Python because I wanted to structurally parse some XML. I would really like to not have to do that!!"
+}

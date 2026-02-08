@@ -1,0 +1,16 @@
+{
+  "_v": 1,
+  "alias": "rad-128-regex-arg-constraint",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149596,
+  "creator": "Alexander Terp",
+  "description": "`\"[0-9]+\\.[0-9]+\\.[0-9]+\"`\n\nallows prefixing with e.g. 'v', which seems undesirable\n\n\"require people to surround with `.*` instead of `^$`\"",
+  "id": "3d86ZXYs",
+  "labels": [
+    "ai-hi",
+    "breaking"
+  ],
+  "title": "RAD-128: regex arg constraint should be a complete match?",
+  "type": "feature",
+  "updated_at_millis": 1770522518710
+}

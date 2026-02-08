@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-401-version-hint-in",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151219,
+  "creator": "Alexander Terp",
+  "id": "3d89BfD3",
+  "title": "RAD-401: Version hint in scripts",
+  "type": "feature",
+  "updated_at_millis": 1767762151219,
+  "description": "Maybe we can add some macro into the file header which hints at what Rad version the script was written for. Then, if the script fails to run (or you run with --debug), we check if you're running with a different version, and we can offer the guidance that maybe the script is not compatible."
+}

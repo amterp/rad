@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-99-some-sort-of",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149412,
+  "creator": "Alexander Terp",
+  "description": "Some flag which I could ask users to run if they're having issues and copy paste to me. Includes:\n\n* script src? (may be invasive)\n* loaded resources? (may be invasive)\n* Syntax tree\n* debug output\n* environment variables? (may be invasive)",
+  "id": "3d86HsKo",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-99: Some sort of 'DIAGNOSTIC REPORT' global flag",
+  "type": "feature",
+  "updated_at_millis": 1770438170779
+}

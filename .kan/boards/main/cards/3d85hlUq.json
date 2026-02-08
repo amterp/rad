@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-35-rad-block-rename",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149054,
+  "creator": "Alexander Terp",
+  "id": "3d85hlUq",
+  "title": "RAD-35: rad block rename columns",
+  "type": "feature",
+  "updated_at_millis": 1767762149054,
+  "description": "```\nrad url:\n  fields problems\n  problems:\n    rename \"# Problems\"\n    map p -> len(p)\n```"
+}

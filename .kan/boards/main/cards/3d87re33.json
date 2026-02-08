@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-303-support-csv",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150397,
+  "creator": "Alexander Terp",
+  "description": "Including reading/parsing csvs, writing csvs.\n\nAlso, consider adding a 'csv format' to rad/display blocks.",
+  "id": "3d87re33",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-303: Support CSV",
+  "type": "feature",
+  "updated_at_millis": 1770438195302
+}

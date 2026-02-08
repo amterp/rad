@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-380-support-trailing",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151071,
+  "creator": "Alexander Terp",
+  "description": "This is not allowed but should be - trailing commas on multiline function signature declaration",
+  "id": "3d88wbMk",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-380: support trailing commas on multiline function signature declaration",
+  "type": "feature",
+  "updated_at_millis": 1770438067740
+}

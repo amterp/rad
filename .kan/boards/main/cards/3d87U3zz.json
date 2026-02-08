@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-261-mut-excl-wrongly",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150163,
+  "creator": "Alexander Terp",
+  "id": "3d87U3zz",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-261: mut excl: wrongly complains if one is default",
+  "type": "bug",
+  "updated_at_millis": 1770438136490
+}

@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-312-switch-case-1-return",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150506,
+  "creator": "Alexander Terp",
+  "description": "returns in switch case expr not allowed",
+  "id": "3d882dnj",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-312: switch case 1 -\u003e return 1 should be allowed",
+  "type": "feature",
+  "updated_at_millis": 1770438123927
+}

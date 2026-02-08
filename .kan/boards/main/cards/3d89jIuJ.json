@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-26-allow-file-header-args",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151560,
+  "creator": "Alexander Terp",
+  "id": "3d89jIuJ",
+  "title": "RAD-26: Allow file header/args block to not be the first thing",
+  "type": "feature",
+  "updated_at_millis": 1767762151560,
+  "description": "Then allow e.g. variable usage/interpolation in file header, arg comments, constraints, etc."
+}

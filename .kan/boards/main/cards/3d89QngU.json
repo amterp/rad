@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-158-should-maybe-be",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151369,
+  "creator": "Alexander Terp",
+  "id": "3d89QngU",
+  "title": "RAD-158: Should (maybe) be possible to index returned values from multi-return functions",
+  "type": "bug",
+  "updated_at_millis": 1767762151369,
+  "description": "```\n  majors = sort([parse_int(t[0])[0] for t in tags])\n                 ^^^^^^^^^^^^^^^^^^ Cannot index into multiple values\n```\n\nthat [0] is intended to index into the _first_ return value of `parse_int`, but it errors instead. Should perhaps be allowed?"
+}

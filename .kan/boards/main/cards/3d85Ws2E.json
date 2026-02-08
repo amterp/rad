@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-14-improve-shell-var",
+  "alias_explicit": false,
+  "created_at_millis": 1767762148946,
+  "creator": "Alexander Terp",
+  "id": "3d85Ws2E",
+  "title": "RAD-14: Improve shell var export",
+  "type": "feature",
+  "updated_at_millis": 1767762148946,
+  "description": "Strings for example\n\n`cmd = 'ffmpeg -i \\\"{target}\\\" -af loudnorm=I={loudness}:LRA=7:TP=-1 \\\"{out}\\\"'`\n\nInts?, lists"
+}

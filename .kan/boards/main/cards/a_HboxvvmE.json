@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "add-split-with-limit-parameter",
+  "alias_explicit": false,
+  "created_at_millis": 1769827717644,
+  "creator": "Alexander Terp",
+  "description": "split() doesn't support limiting number of splits. Python has maxsplit, JS has limit parameter.",
+  "id": "a_HboxvvmE",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "Add split() with limit parameter",
+  "type": "feature",
+  "updated_at_millis": 1770438067712
+}

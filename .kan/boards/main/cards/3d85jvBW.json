@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-38-ability-to-auto",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149070,
+  "creator": "Alexander Terp",
+  "id": "3d85jvBW",
+  "title": "RAD-38: ability to auto-flatten json into table",
+  "type": "feature",
+  "updated_at_millis": 1767762149070,
+  "description": "don't require manual json definitions.\n\njust flatten out whatever is there.\n\nperhaps allow exclusions"
+}

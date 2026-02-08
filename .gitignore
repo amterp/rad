@@ -16,7 +16,6 @@ resource.json
 docs-web/site
 dist
 .idea
-.kan
 **/CLAUDE.md
 
 ### Go ###

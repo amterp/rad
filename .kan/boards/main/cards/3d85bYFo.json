@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-19-dynamic-json-field",
+  "alias_explicit": false,
+  "created_at_millis": 1767762148992,
+  "creator": "Alexander Terp",
+  "id": "3d85bYFo",
+  "title": "RAD-19: Dynamic json field definitions (e.g. off string interpolation)",
+  "type": "feature",
+  "updated_at_millis": 1767762148992,
+  "description": "```\nargs:\n  name string\n\n// alternatives\na = json.{name}\nb = json.\"{name}\"\nc = json[\"{name}\"]\nd = json_path([name])\n```\n\nThoughts:\n\n* A: Seems inconsistent, though arguably consistent with map.dot.syntax. Don't love it.\n* B: Seems a bit better/consistent than A, and might be consistent depending on how we implement RAD-48.\n* C: Maybe. Feels like the vegetable option. But also maybe surprising, don't love it either.\n* D: This might be pretty decent/flexible actually. The big advantage here is that it's _truly_ dynamic."
+}

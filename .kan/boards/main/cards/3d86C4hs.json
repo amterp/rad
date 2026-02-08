@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-95-attributes-like-color",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149363,
+  "creator": "Alexander Terp",
+  "id": "3d86C4hs",
+  "title": "RAD-95: Attributes like color should work through string interpolation",
+  "type": "feature",
+  "updated_at_millis": 1767762149363,
+  "description": "`a = 'h{blue(\"el\")}lo'`"
+}

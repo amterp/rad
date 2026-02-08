@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "use-strings-builder-in-reverse",
+  "alias_explicit": false,
+  "created_at_millis": 1769827711159,
+  "creator": "Alexander Terp",
+  "description": "Reverse() in common/utils_rad.go uses naive string concatenation which is O(n²). Use strings.Builder.",
+  "id": "a_HbonTOg4",
+  "title": "Use strings.Builder in Reverse()",
+  "type": "bug",
+  "updated_at_millis": 1769827711159
+}

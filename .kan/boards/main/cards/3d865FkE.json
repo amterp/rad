@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-82-multiline-strings-end",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149297,
+  "creator": "Alexander Terp",
+  "description": "Be able to end lines with a \\\\ and have that mean \"no newline\" from a contents perspective. So you can _visually_ cut your contents down on several lines, but have them actually end up on the same one.\n\nSwift does this.",
+  "id": "3d865FkE",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-82: Multiline strings - end lines with \\ to join next line onto this one",
+  "type": "feature",
+  "updated_at_millis": 1770438170850
+}

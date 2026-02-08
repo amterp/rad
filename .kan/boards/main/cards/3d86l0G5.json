@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-146-investigate",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149715,
+  "creator": "Alexander Terp",
+  "description": "```\na = 0\nfor i in range(1000000):\n    a += i\n\nprint(a)\n```\n\nBefore the revamp, this would take ~0.2 seconds.\n\nAfter, it's taking between 6 and 7 seconds.\n\nThe issue must not be tree sitter parsing - parsing is a flat cost.\n\nIs our switch stmt approach really costly? Perhaps the switch stmt on Node kind strings?",
+  "id": "3d86l0G5",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-146: Investigate performance after revamp",
+  "type": "feature",
+  "updated_at_millis": 1770438925479
+}

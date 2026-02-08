@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "add-find-index-of-string",
+  "alias_explicit": false,
+  "created_at_millis": 1769827695266,
+  "creator": "Alexander Terp",
+  "description": "Missing common string operation to find position of substring. Python has str.find(), JS has indexOf().",
+  "id": "a_HboNpova",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "Add find()/index_of() string function",
+  "type": "feature",
+  "updated_at_millis": 1770438067705
+}

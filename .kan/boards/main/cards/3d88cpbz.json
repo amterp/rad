@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-347-rad-docs-mcp",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150865,
+  "creator": "Alexander Terp",
+  "description": "Create MCP (or plug into existing open source ones?) whereby we can expose Rad docs, including for all functions, etc",
+  "id": "3d88cpbz",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-347: rad docs mcp",
+  "type": "feature",
+  "updated_at_millis": 1770438936417
+}

@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-71-cannot-parse",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149217,
+  "creator": "Alexander Terp",
+  "id": "3d85xyMD",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-71: cannot parse positional negative numbers from cli without flag in front",
+  "type": "bug",
+  "updated_at_millis": 1770438184393
+}

@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-88-consider-disallowing",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149330,
+  "creator": "Alexander Terp",
+  "description": "Results in some annoying/edgy behavior. Pretty trivial to just go `name + \"${i}\"` for example.",
+  "id": "3d868DUH",
+  "labels": [
+    "breaking"
+  ],
+  "title": "RAD-88: Consider disallowing concatenating non-strings to strings",
+  "type": "bug",
+  "updated_at_millis": 1770522510153
+}

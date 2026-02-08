@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-293-rad-eval-run-commands",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150290,
+  "creator": "Alexander Terp",
+  "description": "* `rad eval 'parse_float(\"2.2\")`\n* `rad eval 2 + 2`\n\nsome overlap with RAD-80",
+  "id": "3d87gsFD",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-293: `rad eval` - run commands/evaluate expressions from CLI",
+  "type": "feature",
+  "updated_at_millis": 1770438171067
+}

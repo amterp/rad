@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-147-replace-type-switches",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149733,
+  "creator": "Alexander Terp",
+  "description": "Right now, adding new types is very fraught because all the switch statements on Rsl types will continue compiling despite not covering the additional type. If we have a type-safe visitor pattern where, when we add the new type to the interface, all those places that switch on type (implemented as impls of the visitor now) will no longer compile, this could be more robust.\n\nNeed to think of some way of nicely handling the switch statements where not supporting some type is the _exception_.",
+  "id": "3d86n7oZ",
+  "labels": [
+    "ai-think"
+  ],
+  "title": "RAD-147: Replace type-switches with visitor pattern",
+  "type": "excellence",
+  "updated_at_millis": 1770438925487
+}

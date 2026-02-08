@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-295-docs-write-rad-code",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150307,
+  "creator": "Alexander Terp",
+  "description": "Automate these things for our docs:\n\n* extract all ```rad blocks and `check`s them (respect rad_nocheck)\n* Validates all script outputs",
+  "id": "3d87ix7p",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-295: Docs: write rad code validation script",
+  "type": "excellence",
+  "updated_at_millis": 1770438184450
+}

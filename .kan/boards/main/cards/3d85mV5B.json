@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-47-be-able-to-capture",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149103,
+  "creator": "Alexander Terp",
+  "id": "3d85mV5B",
+  "title": "RAD-47: Be able to capture *VALUE* of wildcard key",
+  "type": "feature",
+  "updated_at_millis": 1767762149103,
+  "description": "```\n{\n  \"alice\": 2,\n  \"bob\": 3\n}\n```\n\ncan capture names via\n\n`names = json.*`\n\nbut there's literally no way to capture the number values. Need some way to capture either or."
+}

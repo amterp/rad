@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-117-import-functions-from",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151406,
+  "creator": "Alexander Terp",
+  "id": "3d89UwoR",
+  "title": "RAD-117: Import functions from other scripts (SEO: std lib, stdlib)",
+  "type": "feature",
+  "updated_at_millis": 1767762151406,
+  "description": "prerequisite: RAD-116\n\nbe able to import functions defined from other scripts, for example:\n\n```\nimport * from otherscript.rsl\n```\n\n^ perhaps can elide `.rsl`?\n\n```\nimport cut, run from otherscript\n```\n\nAssess syntax, and ordering e.g. write script first then the things you import?\n\nconsider some Go-like Init mechanism? Could allow files to e.g. memoize? Files can almost become a sort of 'class'? Potentially powerful.\n\nHaving custom functions and imports would also allow for some stdlib equivalent and namespacing, i.e. defining official library functions in a stdlib"
+}

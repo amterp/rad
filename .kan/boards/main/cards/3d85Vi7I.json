@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-12-ability-to-exclude",
+  "alias_explicit": false,
+  "created_at_millis": 1767762148930,
+  "creator": "Alexander Terp",
+  "id": "3d85Vi7I",
+  "title": "RAD-12: Ability to exclude fields from table print in rad blocks e.g. no_print, hide",
+  "type": "feature",
+  "updated_at_millis": 1767762148930
+}

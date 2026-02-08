@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-290-consider-if-then-else",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151314,
+  "creator": "Alexander Terp",
+  "id": "3d89La1o",
+  "title": "RAD-290: Consider if-then-else-style ternary expressions",
+  "type": "feature",
+  "updated_at_millis": 1767762151314,
+  "description": "`x ? y : z` ternaries are a little out of fashion and admittedly don't read super naturally.\n\nPython does `y if x else z`. Other languages do `if x { y } else { z }`. The latter is ideal, if your language uses braces, but since Python (and Rad) do not, the former is more realistic. I don't like the flipped ordering of the former though (weird ordering imo).\n\nMaybe a `if x then y else z` syntax would work? Though means introducing a new keyword `then` and pulls the syntax a little further from existing if-else statements."
+}

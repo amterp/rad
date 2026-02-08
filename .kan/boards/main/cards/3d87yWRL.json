@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "rad-307-support-returning",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150471,
+  "creator": "Alexander Terp",
+  "id": "3d87yWRL",
+  "title": "RAD-307: Support returning json paths in switch stmts, as part of assignments",
+  "type": "feature",
+  "updated_at_millis": 1767762150471
+}

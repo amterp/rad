@@ -1,0 +1,14 @@
+{
+  "_v": 1,
+  "alias": "rad-129-shebang-completion",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149612,
+  "creator": "Alexander Terp",
+  "id": "3d86bcRl",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-129: Shebang completion appends to already-written text instead of overwriting",
+  "type": "bug",
+  "updated_at_millis": 1770438170816
+}

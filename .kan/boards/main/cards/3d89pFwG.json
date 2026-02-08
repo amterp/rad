@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-400-rad-blocks-allow",
+  "alias_explicit": false,
+  "created_at_millis": 1767762151618,
+  "creator": "Alexander Terp",
+  "id": "3d89pFwG",
+  "title": "RAD-400: rad blocks: allow graceful query recovery & handling",
+  "type": "feature",
+  "updated_at_millis": 1767762151618,
+  "description": "Right now, if `rad url` fails, we just error and give a fairly ugly error. We dont even show the actual response, which can be useful."
+}

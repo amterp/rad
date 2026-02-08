@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-298-gross-error-if",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150342,
+  "creator": "Alexander Terp",
+  "description": "`unable to redefine 't' shorthand in \"radd\" flagset: it's already used for \"three\" flagpanic`",
+  "id": "3d87md1r",
+  "labels": [
+    "ai-hi"
+  ],
+  "title": "RAD-298: Gross error if duplicate short flags",
+  "type": "bug",
+  "updated_at_millis": 1770438049037
+}

@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-321-int-float-arg-typing",
+  "alias_explicit": false,
+  "created_at_millis": 1767762150597,
+  "creator": "Alexander Terp",
+  "id": "3d88BxLv",
+  "title": "RAD-321: int/float arg typing: range",
+  "type": "feature",
+  "updated_at_millis": 1767762150597,
+  "description": "e.g. `truncate(_str: str, _len: int[0,]) -> str`\n\n^^ don't like that actually, can be confusing with lists. Could be better for a syntax to say an int list with 0 or more elements in that example (tho redundant).\n\nMaybe e.g. `_len: [0,]` ? Similar issue tho\u2026 HMM"
+}

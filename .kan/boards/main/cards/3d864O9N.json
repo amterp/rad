@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "rad-81-multiline-strings",
+  "alias_explicit": false,
+  "created_at_millis": 1767762149281,
+  "creator": "Alexander Terp",
+  "description": "Be able to increase # of quotes in delimiter to e.g. 4 so you don't need to escape triple quotes if you want that in your contents. C# does this too.",
+  "id": "3d864O9N",
+  "labels": [
+    "ai-lo"
+  ],
+  "title": "RAD-81: Multiline strings - Additional # quotes in delimiter to avoid escaping",
+  "type": "feature",
+  "updated_at_millis": 1770438170868
+}
