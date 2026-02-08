@@ -51,6 +51,10 @@ const (
 	// Comprehension
 	NListComp // [expr for vars in iter if cond]
 
+	// Switch case alternatives
+	NSwitchCaseExpr  // single-expression case (case X -> expr)
+	NSwitchCaseBlock // multi-statement case (case X:\n  stmts)
+
 	// Rad block internals
 	NRadBlock    // rad/request/display block
 	NRadField    // field declaration in a rad block
@@ -93,7 +97,9 @@ var nodeKindNames = [...]string{
 	NLitString:  "LitString",
 	NLitList:    "LitList",
 	NLitMap:     "LitMap",
-	NListComp:   "ListComp",
+	NListComp:       "ListComp",
+	NSwitchCaseExpr:  "SwitchCaseExpr",
+	NSwitchCaseBlock: "SwitchCaseBlock",
 	NRadBlock:   "RadBlock",
 	NRadField:   "RadField",
 	NRadSort:    "RadSort",
