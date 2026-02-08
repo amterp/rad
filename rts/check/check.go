@@ -11,6 +11,7 @@ import (
 
 type RadChecker interface {
 	UpdateSrc(src string)
+	Update(tree *rts.RadTree, src string, ast *rl.SourceFile)
 	CheckDefault() (Result, error)
 	Check(Opts) (Result, error)
 }
@@ -19,6 +20,7 @@ type RadCheckerImpl struct {
 	parser *rts.RadParser
 	tree   *rts.RadTree
 	src    string
+	ast    *rl.SourceFile
 }
 
 func NewChecker() (RadChecker, error) {
@@ -27,14 +29,15 @@ func NewChecker() (RadChecker, error) {
 		return nil, err
 	}
 	tree := parser.Parse("")
-	return NewCheckerWithTree(tree, parser, ""), nil
+	return NewCheckerWithTree(tree, parser, "", nil), nil
 }
 
-func NewCheckerWithTree(tree *rts.RadTree, parser *rts.RadParser, src string) RadChecker {
+func NewCheckerWithTree(tree *rts.RadTree, parser *rts.RadParser, src string, ast *rl.SourceFile) RadChecker {
 	return &RadCheckerImpl{
 		parser: parser,
 		tree:   tree,
 		src:    src,
+		ast:    ast,
 	}
 }
 
@@ -45,6 +48,13 @@ func (c *RadCheckerImpl) UpdateSrc(src string) {
 		c.tree.Update(src)
 	}
 	c.src = src
+	c.ast = nil // AST not available via UpdateSrc; use Update() instead
+}
+
+func (c *RadCheckerImpl) Update(tree *rts.RadTree, src string, ast *rl.SourceFile) {
+	c.tree = tree
+	c.src = src
+	c.ast = ast
 }
 
 func (c *RadCheckerImpl) CheckDefault() (Result, error) {
@@ -57,13 +67,22 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
-	c.addFunctionNameShadowingErrors(&diagnostics)
-	c.addUnknownFunctionHints(&diagnostics)
+	// Checks that have been migrated to AST (with CST fallback when AST is nil)
+	if c.ast != nil {
+		c.addFunctionNameShadowingErrorsAST(&diagnostics)
+		c.addUnknownFunctionHintsAST(&diagnostics)
+		c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
+		c.addReturnOutsideFunctionErrorsAST(&diagnostics)
+		c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
+	} else {
+		c.addFunctionNameShadowingErrors(&diagnostics)
+		c.addUnknownFunctionHints(&diagnostics)
+		c.addBreakContinueOutsideLoopErrors(&diagnostics)
+		c.addReturnOutsideFunctionErrors(&diagnostics)
+		c.addInvalidAssignmentLHSErrors(&diagnostics)
+	}
+	// Command callback check uses IdentifierSpan (works regardless of AST)
 	c.addUnknownCommandCallbackWarnings(&diagnostics)
-	// Semantic grammar checks
-	c.addBreakContinueOutsideLoopErrors(&diagnostics)
-	c.addReturnOutsideFunctionErrors(&diagnostics)
-	c.addInvalidAssignmentLHSErrors(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil
@@ -97,7 +116,7 @@ func (c *RadCheckerImpl) addIntScientificNotationErrors(d *[]Diagnostic) {
 		}
 
 		// Check if the default value node contains scientific notation
-		valueNode := arg.Default.Node().ChildByFieldName(rl.F_VALUE)
+		valueNode := arg.Default.CstNode().ChildByFieldName(rl.F_VALUE)
 		if valueNode == nil {
 			continue
 		}
@@ -278,7 +297,7 @@ func (c *RadCheckerImpl) addUnknownFunctionHints(d *[]Diagnostic) {
 
 		// Function is not defined - create a hint
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticHint(call.NameNode, c.src, msg, rl.ErrUnknownFunction))
+		*d = append(*d, NewDiagnosticHintFromSpan(call.NameSpan, c.src, msg, rl.ErrUnknownFunction))
 	}
 }
 
@@ -314,13 +333,12 @@ func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
 			continue
 		}
 
-		identifierNode := callback.Node().ChildByFieldName(rl.F_CALLBACK_IDENTIFIER)
-		if identifierNode == nil {
+		if callback.IdentifierSpan == nil {
 			continue
 		}
 
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticWarn(identifierNode, c.src, msg, rl.ErrUnknownFunction))
+		*d = append(*d, NewDiagnosticWarnFromSpan(*callback.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
 	}
 }
 

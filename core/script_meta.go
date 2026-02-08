@@ -88,7 +88,8 @@ func (sd *ScriptData) ValidateNoErrors() {
 // This runs before argument parsing, so it only respects environment variables (like NO_COLOR),
 // not command-line flags like --color=never.
 func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
-	checker := check.NewCheckerWithTree(tree, parser, src)
+	// AST is nil here: validation runs before AST conversion, so CST checks suffice.
+	checker := check.NewCheckerWithTree(tree, parser, src, nil)
 	result, err := checker.CheckDefault()
 	if err != nil {
 		RP.RadErrorExit("Failed to validate syntax: " + err.Error())
