@@ -54,7 +54,7 @@ func ExtractMetadata(src string) *ScriptData {
 	}
 
 	var commands []*ScriptCommand
-	if cmdBlocks, ok := tree.FindCmdBlocks(); ok {
+	if cmdBlocks, ok := tree.FindCmdBlocks(ScriptName); ok {
 		RP.RadDebugf(fmt.Sprintf("Found %d command blocks", len(cmdBlocks)))
 		commands = extractCommands(cmdBlocks)
 	}

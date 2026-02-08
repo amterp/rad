@@ -47,8 +47,9 @@ type CmdCallback struct {
 	LambdaAST       *rl.Lambda // Eagerly converted AST for lambda callbacks
 }
 
-// newCmdBlock constructs a CmdBlock from a tree-sitter node
-func newCmdBlock(src string, node *ts.Node) (*CmdBlock, bool) {
+// newCmdBlock constructs a CmdBlock from a tree-sitter node.
+// file is threaded to the lambda converter for span metadata.
+func newCmdBlock(src string, node *ts.Node, file string) (*CmdBlock, bool) {
 	// Extract command name
 	nameNode := node.ChildByFieldName(rl.F_NAME)
 	if nameNode == nil {
@@ -82,7 +83,7 @@ func newCmdBlock(src string, node *ts.Node) (*CmdBlock, bool) {
 	exclusions := findArgExclusions(src, node)
 
 	// Extract callback
-	callback := extractCmdCallback(src, node)
+	callback := extractCmdCallback(src, node, file)
 
 	return &CmdBlock{
 		BaseNode:         newBaseNode(src, node),
@@ -98,8 +99,9 @@ func newCmdBlock(src string, node *ts.Node) (*CmdBlock, bool) {
 	}, true
 }
 
-// extractCmdCallback extracts the callback from a cmd_calls node
-func extractCmdCallback(src string, node *ts.Node) CmdCallback {
+// extractCmdCallback extracts the callback from a cmd_calls node.
+// file is used for span metadata in eagerly-converted lambda AST.
+func extractCmdCallback(src string, node *ts.Node, file string) CmdCallback {
 	callsNode := node.ChildByFieldName(rl.F_CALLS)
 	if callsNode == nil {
 		panic(fmt.Sprintf("Bug! Command block missing 'calls' field at byte %d", node.StartByte()))
@@ -128,7 +130,7 @@ func extractCmdCallback(src string, node *ts.Node) CmdCallback {
 	// Check for lambda callback
 	lambdaNode := callsNode.ChildByFieldName(rl.F_CALLBACK_LAMBDA)
 	if lambdaNode != nil {
-		lambdaAST := safeConvertLambda(lambdaNode, src)
+		lambdaAST := safeConvertLambda(lambdaNode, src, file)
 		return CmdCallback{
 			BaseNode:  newBaseNode(src, callsNode),
 			Type:      CallbackLambda,
@@ -141,11 +143,11 @@ func extractCmdCallback(src string, node *ts.Node) CmdCallback {
 
 // safeConvertLambda converts a lambda CST node to AST, recovering from panics
 // caused by malformed syntax. Returns nil if conversion fails.
-func safeConvertLambda(lambdaNode *ts.Node, src string) (result *rl.Lambda) {
+func safeConvertLambda(lambdaNode *ts.Node, src, file string) (result *rl.Lambda) {
 	defer func() {
 		if r := recover(); r != nil {
 			result = nil
 		}
 	}()
-	return ConvertLambda(lambdaNode, src, "")
+	return ConvertLambda(lambdaNode, src, file)
 }

@@ -113,16 +113,34 @@ func NewDiagnosticFromSpan(
 			Character: span.EndCol,
 		},
 	}
-	lineSrc := strings.Split(originalSrc, "\n")[line]
+	lines := strings.Split(originalSrc, "\n")
+	lineSrc := ""
+	if line >= 0 && line < len(lines) {
+		lineSrc = lines[line]
+	}
 	return Diagnostic{
 		OriginalSrc: originalSrc,
 		Range:       rang,
-		RangedSrc:   originalSrc[span.StartByte:span.EndByte],
+		RangedSrc:   safeSlice(originalSrc, span.StartByte, span.EndByte),
 		LineSrc:     lineSrc,
 		Severity:    severity,
 		Message:     msg,
 		Code:        code,
 	}
+}
+
+// safeSlice returns src[start:end] with bounds clamped to [0, len(src)].
+func safeSlice(src string, start, end int) string {
+	if start < 0 {
+		start = 0
+	}
+	if end > len(src) {
+		end = len(src)
+	}
+	if start > end {
+		start = end
+	}
+	return src[start:end]
 }
 
 func NewDiagnosticErrorFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic {

@@ -427,7 +427,7 @@ func (c *RadCheckerImpl) validateAssignmentTargetAST(node rl.Node, d *[]Diagnost
 		// Valid assignment targets
 		return
 	case *rl.LitInt, *rl.LitFloat, *rl.LitString, *rl.LitBool, *rl.LitNull:
-		content := c.src[node.Span().StartByte:node.Span().EndByte]
+		content := safeSlice(c.src, node.Span().StartByte, node.Span().EndByte)
 		msg := "Cannot assign to literal '" + truncate(content, 20) + "'"
 		*d = append(*d, NewDiagnosticErrorFromSpan(node.Span(), c.src, msg, rl.ErrInvalidAssignmentTarget))
 	case *rl.Call:
@@ -437,7 +437,7 @@ func (c *RadCheckerImpl) validateAssignmentTargetAST(node rl.Node, d *[]Diagnost
 		msg := "Cannot assign to expression"
 		*d = append(*d, NewDiagnosticErrorFromSpan(node.Span(), c.src, msg, rl.ErrInvalidAssignmentTarget))
 	default:
-		content := c.src[node.Span().StartByte:node.Span().EndByte]
+		content := safeSlice(c.src, node.Span().StartByte, node.Span().EndByte)
 		msg := "Cannot assign to '" + truncate(content, 20) + "'"
 		*d = append(*d, NewDiagnosticErrorFromSpan(node.Span(), c.src, msg, rl.ErrInvalidAssignmentTarget))
 	}

@@ -310,7 +310,7 @@ func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
 		hoistedFunctionSet[fnName] = true
 	}
 
-	cmdBlocks, ok := c.tree.FindCmdBlocks()
+	cmdBlocks, ok := c.tree.FindCmdBlocks("")
 	if !ok {
 		return
 	}
