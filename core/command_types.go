@@ -2,7 +2,7 @@ package core
 
 import (
 	"github.com/amterp/rad/rts"
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 )
 
 // ScriptCommand represents a command defined in a Rad script's command: block
@@ -13,7 +13,7 @@ type ScriptCommand struct {
 	Args           []*ScriptArg // Command-specific arguments
 	CallbackType   rts.CallbackType
 	CallbackName   *string  // For function reference callbacks (rts.CallbackIdentifier)
-	CallbackLambda *ts.Node // For inline lambda callbacks (rts.CallbackLambda)
+	CallbackLambda *rl.Lambda // Eagerly converted AST lambda
 }
 
 func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
@@ -62,7 +62,7 @@ func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
 		Args:           args,
 		CallbackType:   callback.Type,
 		CallbackName:   callback.IdentifierName,
-		CallbackLambda: callback.LambdaNode,
+		CallbackLambda: callback.LambdaAST,
 	}, nil
 }
 

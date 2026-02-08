@@ -94,6 +94,49 @@ func NewDiagnosticWarn(node *ts.Node, originalSrc string, msg string, code rl.Er
 	return NewDiagnosticFromNode(node, originalSrc, Warning, msg, &code)
 }
 
+// NewDiagnosticFromSpan creates a Diagnostic from an AST span instead of a CST node.
+func NewDiagnosticFromSpan(
+	span rl.Span,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *rl.Error,
+) Diagnostic {
+	line := span.StartRow
+	rang := Range{
+		Start: Pos{
+			Line:      line,
+			Character: span.StartCol,
+		},
+		End: Pos{
+			Line:      span.EndRow,
+			Character: span.EndCol,
+		},
+	}
+	lineSrc := strings.Split(originalSrc, "\n")[line]
+	return Diagnostic{
+		OriginalSrc: originalSrc,
+		Range:       rang,
+		RangedSrc:   originalSrc[span.StartByte:span.EndByte],
+		LineSrc:     lineSrc,
+		Severity:    severity,
+		Message:     msg,
+		Code:        code,
+	}
+}
+
+func NewDiagnosticErrorFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic {
+	return NewDiagnosticFromSpan(span, originalSrc, Error, msg, &code)
+}
+
+func NewDiagnosticHintFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic {
+	return NewDiagnosticFromSpan(span, originalSrc, Hint, msg, &code)
+}
+
+func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic {
+	return NewDiagnosticFromSpan(span, originalSrc, Warning, msg, &code)
+}
+
 type Result struct {
 	// todo Rad versions
 	Diagnostics []Diagnostic
