@@ -87,6 +87,9 @@ type Interpreter struct {
 
 	// Call stack for Rad function calls (not Go stack)
 	callStack []CallFrame
+
+	// Reusable tree cursor, avoids per-eval CGo allocation (major hotspot).
+	cursor *ts.TreeCursor
 }
 
 func NewInterpreter(input InterpreterInput) *Interpreter {
@@ -101,6 +104,14 @@ func NewInterpreter(input InterpreterInput) *Interpreter {
 		sd:             scriptData,
 		invokedCommand: input.InvokedCommand,
 		delimiterStack: com.NewStack[Delimiter](),
+	}
+
+	// Initialize field ID cache and reusable cursor when we have a tree.
+	// The REPL creates an interpreter with no tree initially.
+	if input.Tree != nil {
+		root := input.Tree.Root()
+		rl.InitFieldIds(root)
+		i.cursor = root.Walk()
 	}
 	i.env = NewEnv(i)
 	return i
@@ -202,7 +213,7 @@ func (i *Interpreter) safelyExecuteTopLevel(root *ts.Node) EvalResult {
 		i.handlePanicRecovery(recover(), root)
 	}()
 
-	children := root.Children(root.Walk())
+	children := root.Children(i.cursor)
 
 	// First pass: define custom named functions (function hoisting)
 	for _, child := range children {
@@ -308,7 +319,14 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 	}()
 
 	node := tree.Root()
-	children := node.Children(node.Walk())
+
+	// Lazily initialize cursor and field IDs for REPL (no tree at construction time)
+	if i.cursor == nil {
+		rl.InitFieldIds(node)
+		i.cursor = node.Walk()
+	}
+
+	children := node.Children(i.cursor)
 
 	// REPL: unwrap the source_file container and evaluate the actual statement/expression
 	// This allows both expressions ("2 + 3") and statements ("x = 5") to work correctly
@@ -347,7 +365,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	switch node.Kind() {
 	// no-ops
 	case rl.K_SOURCE_FILE:
-		children := node.Children(node.Walk())
+		children := node.Children(i.cursor)
 		// first define custom named functions
 		for _, child := range children {
 			if child.Kind() == rl.K_FN_NAMED {
@@ -375,7 +393,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			}
 
 			// Run catch block and propagate control flow
-			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT, i.cursor)
 			res := i.runBlock(stmtNodes)
 			if res.Ctrl != CtrlNormal {
 				return res // Propagate return/break/continue/yield
@@ -383,12 +401,12 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			return VoidNormal
 		}, func() EvalResult {
 			// Normal assignment execution
-			rightNodes := rl.GetChildren(node, rl.F_RIGHT)
-			leftNodes := rl.GetChildren(node, rl.F_LEFT)
+			rightNodes := rl.GetChildren(node, rl.F_RIGHT, i.cursor)
+			leftNodes := rl.GetChildren(node, rl.F_LEFT, i.cursor)
 			if len(leftNodes) > 0 {
 				return i.assignRightsToLefts(leftNodes, rightNodes, false)
 			} else {
-				leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
+				leftsNodes := rl.GetChildren(node, rl.F_LEFTS, i.cursor)
 				return i.assignRightsToLefts(leftsNodes, rightNodes, true)
 			}
 		})
@@ -406,7 +424,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 
 		out = i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
 			// Run catch block and propagate control flow
-			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT, i.cursor)
 			res := i.runBlock(stmtNodes)
 			if res.Ctrl != CtrlNormal {
 				return res // Propagate return/break/continue/yield
@@ -436,7 +454,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		defer func() {
 			i.forWhileLoopLevel--
 		}()
-		stmts := rl.GetChildren(node, rl.F_STMT)
+		stmts := rl.GetChildren(node, rl.F_STMT, i.cursor)
 		return i.executeForLoop(node, func() EvalResult { return i.runBlock(stmts) })
 	case rl.K_WHILE_LOOP:
 		i.forWhileLoopLevel++
@@ -444,7 +462,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			i.forWhileLoopLevel--
 		}()
 		condNode := rl.GetChild(node, rl.F_CONDITION)
-		stmtNodes := rl.GetChildren(node, rl.F_STMT)
+		stmtNodes := rl.GetChildren(node, rl.F_STMT, i.cursor)
 		for {
 			condValue := true
 			if condNode != nil {
@@ -463,7 +481,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			}
 		}
 	case rl.K_IF_STMT:
-		altNodes := rl.GetChildren(node, rl.F_ALT)
+		altNodes := rl.GetChildren(node, rl.F_ALT, i.cursor)
 		for _, altNode := range altNodes {
 			condNode := rl.GetChild(&altNode, rl.F_CONDITION)
 
@@ -474,20 +492,20 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 			}
 
 			if shouldExecute {
-				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT)
+				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT, i.cursor)
 				return i.runBlock(stmtNodes)
 			}
 		}
 	case rl.K_SWITCH_STMT:
 		discriminantNode := rl.GetChild(node, rl.F_DISCRIMINANT)
-		caseNodes := rl.GetChildren(node, rl.F_CASE)
+		caseNodes := rl.GetChildren(node, rl.F_CASE, i.cursor)
 		defaultNode := rl.GetChild(node, rl.F_DEFAULT)
 
 		discriminantVal := i.eval(discriminantNode).Val
 
 		matchedCaseNodes := make([]ts.Node, 0)
 		for _, caseNode := range caseNodes {
-			caseKeyNodes := rl.GetChildren(&caseNode, rl.F_CASE_KEY)
+			caseKeyNodes := rl.GetChildren(&caseNode, rl.F_CASE_KEY, i.cursor)
 			for _, caseKeyNode := range caseKeyNodes {
 				caseKey := i.eval(&caseKeyNode).Val
 				if caseKey.Equals(discriminantVal) {
@@ -526,12 +544,12 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		}
 	case rl.K_DEFER_BLOCK:
 		keywordNode := rl.GetChild(node, rl.F_KEYWORD)
-		stmtNodes := rl.GetChildren(node, rl.F_STMT)
+		stmtNodes := rl.GetChildren(node, rl.F_STMT, i.cursor)
 		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
 	case rl.K_SHELL_STMT:
 		out = i.executeShellStmt(node)
 	case rl.K_DEL_STMT:
-		rightVarPathNodes := rl.GetChildren(node, rl.F_RIGHT)
+		rightVarPathNodes := rl.GetChildren(node, rl.F_RIGHT, i.cursor)
 		for _, rightVarPathNode := range rightVarPathNodes {
 			i.doVarPathAssign(&rightVarPathNode, VOID_SENTINEL, true)
 		}
@@ -611,7 +629,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		return NormalVal(newRadValues(i, node, val))
 	case rl.K_VAR_PATH:
 		rootNode := rl.GetChild(node, rl.F_ROOT)
-		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
+		indexingNodes := rl.GetChildren(node, rl.F_INDEXING, i.cursor)
 		val := i.eval(rootNode).Val
 		for _, indexNode := range indexingNodes {
 			val = i.evaluateIndexing(rootNode, indexNode, val)
@@ -619,7 +637,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		return NormalVal(newRadValues(i, node, val))
 	case rl.K_INDEXED_EXPR:
 		rootNode := rl.GetChild(node, rl.F_ROOT)
-		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
+		indexingNodes := rl.GetChildren(node, rl.F_INDEXING, i.cursor)
 		if len(indexingNodes) > 0 {
 			val := i.eval(rootNode).Val
 			for _, index := range indexingNodes {
@@ -659,7 +677,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
 
 		if contentsNode != nil {
-			for _, child := range contentsNode.Children(contentsNode.Walk()) {
+			for _, child := range contentsNode.Children(i.cursor) {
 				str = str.Concat(i.eval(&child).Val.RequireStr(i, &child))
 			}
 		}
@@ -708,7 +726,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 	case rl.K_ESC_BACKSLASH:
 		return NormalVal(newRadValues(i, node, "\\"))
 	case rl.K_LIST:
-		entries := rl.GetChildren(node, rl.F_LIST_ENTRY)
+		entries := rl.GetChildren(node, rl.F_LIST_ENTRY, i.cursor)
 		list := NewRadList()
 		for _, entry := range entries {
 			list.Append(i.eval(&entry).Val)
@@ -716,7 +734,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 		return NormalVal(newRadValues(i, node, list))
 	case rl.K_MAP:
 		radMap := NewRadMap()
-		entryNodes := rl.GetChildren(node, rl.F_MAP_ENTRY)
+		entryNodes := rl.GetChildren(node, rl.F_MAP_ENTRY, i.cursor)
 		for _, entryNode := range entryNodes {
 			keyNode := rl.GetChild(&entryNode, rl.F_KEY)
 			valueNode := rl.GetChild(&entryNode, rl.F_VALUE)
@@ -760,7 +778,7 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 }
 
 func (i *Interpreter) evalRights(node *ts.Node) RadValue {
-	rightNodes := rl.GetChildren(node, rl.F_RIGHT)
+	rightNodes := rl.GetChildren(node, rl.F_RIGHT, i.cursor)
 	if len(rightNodes) == 0 {
 		return VOID_SENTINEL
 	}
@@ -1058,7 +1076,7 @@ func (i *Interpreter) emitUndefinedVariableError(node *ts.Node, name string) {
 func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
 	rootIdentifier := rl.GetChild(varPathNode, rl.F_ROOT) // identifier required by grammar
 	rootIdentifierName := i.GetSrcForNode(rootIdentifier)
-	indexings := rl.GetChildren(varPathNode, rl.F_INDEXING)
+	indexings := rl.GetChildren(varPathNode, rl.F_INDEXING, i.cursor)
 	val, ok := i.env.GetVar(rootIdentifierName)
 
 	if len(indexings) == 0 {
@@ -1119,7 +1137,7 @@ func runForLoopList(
 	srcValue RadValue,
 	doOneLoop func() EvalResult,
 ) EvalResult {
-	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
+	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT, i.cursor)
 
 	if len(leftNodes) == 0 {
 		i.emitError(rl.ErrInvalidSyntax, leftsNode, "Expected at least one variable on the left side of for loop")
@@ -1189,7 +1207,7 @@ func runForLoopMap(
 	var keyNode *ts.Node
 	var valueNode *ts.Node
 
-	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
+	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT, i.cursor)
 	numLefts := len(leftNodes)
 
 	if numLefts == 0 || numLefts > 2 {
@@ -1386,7 +1404,7 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
 	case rl.K_SWITCH_CASE_EXPR:
 		return NormalVal(i.evalRights(caseValueAltNode))
 	case rl.K_SWITCH_CASE_BLOCK:
-		stmtNodes := rl.GetChildren(caseValueAltNode, rl.F_STMT)
+		stmtNodes := rl.GetChildren(caseValueAltNode, rl.F_STMT, i.cursor)
 		res := i.runBlock(stmtNodes)
 		switch res.Ctrl {
 		case CtrlNormal, CtrlBreak, CtrlContinue, CtrlReturn:
@@ -1403,9 +1421,9 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
 // getAssignLeftNodes returns the left-hand side nodes from an assignment,
 // trying F_LEFT first, then F_LEFTS.
 func (i *Interpreter) getAssignLeftNodes(node *ts.Node) []ts.Node {
-	leftNodes := rl.GetChildren(node, rl.F_LEFT)
+	leftNodes := rl.GetChildren(node, rl.F_LEFT, i.cursor)
 	if len(leftNodes) == 0 {
-		leftNodes = rl.GetChildren(node, rl.F_LEFTS)
+		leftNodes = rl.GetChildren(node, rl.F_LEFTS, i.cursor)
 	}
 	return leftNodes
 }

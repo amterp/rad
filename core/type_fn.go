@@ -20,7 +20,7 @@ type RadFn struct {
 
 func NewFn(i *Interpreter, fnNode *ts.Node) RadFn {
 	typing := rl.NewTypingFnT(fnNode, i.GetSrc())
-	stmts := rl.GetChildren(fnNode, rl.F_STMT)
+	stmts := rl.GetChildren(fnNode, rl.F_STMT, i.cursor)
 	reprNode := fnNode
 	isBlock := rl.GetChild(fnNode, rl.F_BLOCK_COLON) != nil
 

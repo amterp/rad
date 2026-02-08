@@ -39,8 +39,8 @@ type ShellExecutor func(invocation ShellInvocation) (string, string, int)
 
 func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 	// Get left-hand variables for assignment
-	leftNode := rl.GetChildren(shellStmtNode, rl.F_LEFT)
-	leftNodes := rl.GetChildren(shellStmtNode, rl.F_LEFTS)
+	leftNode := rl.GetChildren(shellStmtNode, rl.F_LEFT, i.cursor)
+	leftNodes := rl.GetChildren(shellStmtNode, rl.F_LEFTS, i.cursor)
 	leftNodes = append(leftNode, leftNodes...)
 
 	if len(leftNodes) > 3 {
@@ -76,7 +76,7 @@ func (i *Interpreter) executeShellStmt(shellStmtNode *ts.Node) EvalResult {
 		assignResults(*result)
 
 		// Run catch block statements
-		stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
+		stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT, i.cursor)
 		res := i.runBlock(stmtNodes)
 		if res.Ctrl != CtrlNormal {
 			return res // Propagate control flow (return/break/continue)
@@ -128,7 +128,7 @@ func (i *Interpreter) namedCaptureMode(leftNodes []ts.Node) (captureStdout bool,
 
 func (i *Interpreter) executeShellCmd(shellCmdNode *ts.Node, captureStdout, captureStderr bool) shellResult {
 	// Check for modifiers by inspecting all modifier nodes
-	modifierNodes := rl.GetChildren(shellCmdNode, rl.F_MODIFIER)
+	modifierNodes := rl.GetChildren(shellCmdNode, rl.F_MODIFIER, i.cursor)
 	var isQuiet, isConfirm bool
 	// todo they should be using different field names, really
 	for _, modNode := range modifierNodes {

@@ -16,7 +16,8 @@ var escapedReplacer = strings.NewReplacer(
 
 func (rt *RadTree) Dump() string {
 	root := rt.root.RootNode()
-	maxByte, maxPosRow, maxPosCol := findMaxRanges(root, 0, 0, 0)
+	cursor := root.Walk()
+	maxByte, maxPosRow, maxPosCol := findMaxRanges(root, 0, 0, 0, cursor)
 
 	byteLen := len(fmt.Sprintf("%d", maxByte))
 	rowLen := len(fmt.Sprintf("%d", maxPosRow))
@@ -25,12 +26,12 @@ func (rt *RadTree) Dump() string {
 		byteLen, byteLen, rowLen, colLen, rowLen, colLen)
 
 	var sb strings.Builder
-	rt.recurseAppendString(&sb, fmtString, root, "", 0)
+	rt.recurseAppendString(&sb, fmtString, root, "", 0, cursor)
 
 	return sb.String()
 }
 
-func findMaxRanges(node *ts.Node, maxByte uint, maxPosRow uint, maxPosCol uint) (uint, uint, uint) {
+func findMaxRanges(node *ts.Node, maxByte uint, maxPosRow uint, maxPosCol uint, cursor *ts.TreeCursor) (uint, uint, uint) {
 	if node.EndByte() > maxByte {
 		maxByte = node.EndByte()
 	}
@@ -41,9 +42,9 @@ func findMaxRanges(node *ts.Node, maxByte uint, maxPosRow uint, maxPosCol uint) 
 		maxPosCol = node.EndPosition().Column
 	}
 
-	children := node.Children(node.Walk())
+	children := node.Children(cursor)
 	for _, child := range children {
-		maxByte, maxPosRow, maxPosCol = findMaxRanges(&child, maxByte, maxPosRow, maxPosCol)
+		maxByte, maxPosRow, maxPosCol = findMaxRanges(&child, maxByte, maxPosRow, maxPosCol, cursor)
 	}
 	return maxByte, maxPosRow, maxPosCol
 }
@@ -54,6 +55,7 @@ func (rt *RadTree) recurseAppendString(
 	node *ts.Node,
 	nodeFieldName string,
 	treeLevel int,
+	cursor *ts.TreeCursor,
 ) {
 	indent := strings.Repeat("  ", treeLevel)
 	if nodeFieldName != "" {
@@ -81,7 +83,7 @@ func (rt *RadTree) recurseAppendString(
 		sb.WriteString(color.RedString(" (MISSING)"))
 	}
 
-	children := node.Children(node.Walk())
+	children := node.Children(cursor)
 	if len(children) == 0 {
 		src := rt.src[node.StartByte():node.EndByte()]
 		sb.WriteString(fmt.Sprintf(" `%s`\n", color.YellowString(escapedReplacer.Replace(src))))
@@ -92,6 +94,6 @@ func (rt *RadTree) recurseAppendString(
 
 	for i, child := range children {
 		childFieldName := node.FieldNameForChild(uint32(i))
-		rt.recurseAppendString(sb, fmtString, &child, childFieldName, treeLevel+1)
+		rt.recurseAppendString(sb, fmtString, &child, childFieldName, treeLevel+1, cursor)
 	}
 }

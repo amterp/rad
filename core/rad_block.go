@@ -72,7 +72,7 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 		colToMods:        make(map[string]*radFieldMods),
 	}
 
-	radStmtNodes := rl.GetChildren(radBlockNode, rl.F_STMT)
+	radStmtNodes := rl.GetChildren(radBlockNode, rl.F_STMT, i.cursor)
 	for _, radStmtNode := range radStmtNodes {
 		ri.evalRad(&radStmtNode)
 	}
@@ -96,7 +96,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 	switch node.Kind() {
 	case rl.K_RAD_FIELD_STMT:
 		// todo validate no field names conflict with keywords e.g. 'asc'. Would be nice to do in static analysis tho.
-		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER)
+		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER, r.i.cursor)
 		for _, identifierNode := range identifierNodes {
 			r.fields = append(r.fields, &identifierNode)
 		}
@@ -105,7 +105,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			r.i.emitError(rl.ErrUnsupportedOperation, node, "Only one sort statement allowed per rad block")
 		}
 
-		specifierNodes := rl.GetChildren(node, rl.F_SPECIFIER)
+		specifierNodes := rl.GetChildren(node, rl.F_SPECIFIER, r.i.cursor)
 		if len(specifierNodes) == 0 {
 			r.generalSort = &GeneralSort{
 				Node: node,
@@ -149,8 +149,8 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			Dir:           dir,
 		})
 	case rl.K_RAD_FIELD_MODIFIER_STMT:
-		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER)
-		stmtNodes := rl.GetChildren(node, rl.F_MOD_STMT)
+		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER, r.i.cursor)
+		stmtNodes := rl.GetChildren(node, rl.F_MOD_STMT, r.i.cursor)
 		var fields []radField
 		for _, identifierNode := range identifierNodes {
 			identifierStr := r.i.GetSrcForNode(&identifierNode)
@@ -195,7 +195,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			}
 		}
 	case rl.K_RAD_IF_STMT:
-		altNodes := rl.GetChildren(node, rl.F_ALT)
+		altNodes := rl.GetChildren(node, rl.F_ALT, r.i.cursor)
 		for _, altNode := range altNodes {
 			condNode := rl.GetChild(&altNode, rl.F_CONDITION)
 
@@ -206,7 +206,7 @@ func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
 			}
 
 			if shouldExecute {
-				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT)
+				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT, r.i.cursor)
 				for _, stmtNode := range stmtNodes {
 					r.evalRad(&stmtNode)
 				}

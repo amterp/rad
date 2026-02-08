@@ -592,7 +592,8 @@ func extractString(src string, stringNode *ts.Node) string {
 
 	// todo should handle string interpolation somehow
 	var sb strings.Builder
-	contentChildren := contents.Children(contents.Walk())
+	cursor := contents.Walk()
+	contentChildren := contents.Children(cursor)
 	for i, content := range contentChildren {
 		childSrc := src[content.StartByte():content.EndByte()]
 		childFieldName := contents.FieldNameForChild(uint32(i))

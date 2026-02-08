@@ -6,18 +6,19 @@ import (
 
 // K_FN_NAMED expected as node
 func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
+	cursor := fnNode.Walk()
 	nameNode := GetChild(fnNode, F_NAME)
-	normalParamNodes := GetChildren(fnNode, F_NORMAL_PARAM)
+	normalParamNodes := GetChildren(fnNode, F_NORMAL_PARAM, cursor)
 	varargNode := GetChild(fnNode, F_VARARG_PARAM)
-	namedOnlyNodes := GetChildren(fnNode, F_NAMED_ONLY_PARAM)
+	namedOnlyNodes := GetChildren(fnNode, F_NAMED_ONLY_PARAM, cursor)
 	returnTypeNode := GetChild(fnNode, F_RETURN_TYPE)
 
 	params := make([]TypingFnParam, 0)
-	resolveParams(&params, src, normalParamNodes, false, false)
+	resolveParams(&params, src, normalParamNodes, false, false, cursor)
 	if varargNode != nil {
-		resolveParams(&params, src, []ts.Node{*varargNode}, true, false)
+		resolveParams(&params, src, []ts.Node{*varargNode}, true, false, cursor)
 	}
-	resolveParams(&params, src, namedOnlyNodes, false, true)
+	resolveParams(&params, src, namedOnlyNodes, false, true, cursor)
 
 	typingFn := &TypingFnT{
 		Params: params,
@@ -28,13 +29,13 @@ func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
 	}
 
 	if returnTypeNode != nil {
-		returnType := resolveTyping(returnTypeNode, src)
+		returnType := resolveTyping(returnTypeNode, src, cursor)
 		typingFn.ReturnT = &returnType
 	}
 	return typingFn
 }
 
-func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.Node, isVariadic, isNamedOnly bool) {
+func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.Node, isVariadic, isNamedOnly bool, cursor *ts.TreeCursor) {
 	for _, paramNode := range paramNodes {
 		nameNode := GetChild(&paramNode, F_NAME)
 		typeNode := GetChild(&paramNode, F_TYPE)
@@ -49,7 +50,7 @@ func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.
 
 		var typing TypingT
 		if typeNode != nil {
-			typing = resolveTyping(typeNode, src)
+			typing = resolveTyping(typeNode, src, cursor)
 			typingParam.Type = &typing
 		} else if optionalNode != nil {
 			typing = NewOptionalType(NewAnyType())
@@ -67,8 +68,8 @@ func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.
 }
 
 // input node expected to be kind 'fn_param_or_return_type'
-func resolveTyping(node *ts.Node, src string) TypingT {
-	leafNodes := GetChildren(node, F_LEAF_TYPE)
+func resolveTyping(node *ts.Node, src string, cursor *ts.TreeCursor) TypingT {
+	leafNodes := GetChildren(node, F_LEAF_TYPE, cursor)
 
 	if len(leafNodes) == 0 {
 		return NewAnyType()
@@ -96,17 +97,17 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 				typing = NewAnyListType()
 				break
 			}
-			listTypeNodes := GetChildren(typeNode, F_TYPE)
+			listTypeNodes := GetChildren(typeNode, F_TYPE, cursor)
 			if len(listTypeNodes) > 0 {
 				typings := make([]TypingT, 0)
 				for _, listTypeNode := range listTypeNodes {
-					typing = resolveTyping(&listTypeNode, src)
+					typing = resolveTyping(&listTypeNode, src, cursor)
 					typings = append(typings, typing)
 				}
 				typing = NewTupleType(typings...)
 				break
 			}
-			enumStrNodes := GetChildren(typeNode, F_ENUM)
+			enumStrNodes := GetChildren(typeNode, F_ENUM, cursor)
 			strNodes := make([]*RadNode, 0)
 			for _, enumStrNode := range enumStrNodes {
 				strNodes = append(strNodes, NewRadNode(&enumStrNode, src))
@@ -122,14 +123,14 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 				typing = NewAnyMapType()
 				break
 			}
-			entryNodes := GetChildren(typeNode, F_NAMED_ENTRY)
+			entryNodes := GetChildren(typeNode, F_NAMED_ENTRY, cursor)
 			if len(entryNodes) > 0 {
 				keyValues := make(map[MapNamedKey]TypingT)
 				for _, entryNode := range entryNodes {
 					keyNode := GetChild(&entryNode, F_KEY_NAME)
 					keyOptionalNode := GetChild(&entryNode, F_OPTIONAL)
 					valueNode := GetChild(&entryNode, F_VALUE_TYPE)
-					valueTyping := resolveTyping(valueNode, src)
+					valueTyping := resolveTyping(valueNode, src, cursor)
 
 					key := NewMapNamedKey(NewRadNode(keyNode, src), keyOptionalNode != nil)
 					keyValues[key] = valueTyping
@@ -140,8 +141,8 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 
 			keyTypeNode := GetChild(typeNode, F_KEY_TYPE)
 			valueTypeNode := GetChild(typeNode, F_VALUE_TYPE)
-			keyTyping := resolveTyping(keyTypeNode, src)
-			valueTyping := resolveTyping(valueTypeNode, src)
+			keyTyping := resolveTyping(keyTypeNode, src, cursor)
+			valueTyping := resolveTyping(valueTypeNode, src, cursor)
 			typing = NewMapType(keyTyping, valueTyping)
 		case K_ERROR_TYPE:
 			typing = NewErrorType()

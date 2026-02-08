@@ -35,8 +35,8 @@ type namedArg struct {
 
 func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue {
 	funcNameNode := rl.GetChild(callNode, rl.F_FUNC)
-	argNodes := rl.GetChildren(callNode, rl.F_ARG)
-	namedArgNodes := rl.GetChildren(callNode, rl.F_NAMED_ARG)
+	argNodes := rl.GetChildren(callNode, rl.F_ARG, i.cursor)
+	namedArgNodes := rl.GetChildren(callNode, rl.F_NAMED_ARG, i.cursor)
 
 	funcName := i.GetSrcForNode(funcNameNode)
 

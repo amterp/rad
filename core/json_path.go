@@ -30,7 +30,7 @@ type JsonPathSegmentIdx struct {
 }
 
 func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	indexingNodes := rl.GetChildren(leftNode, rl.F_INDEXING)
+	indexingNodes := rl.GetChildren(leftNode, rl.F_INDEXING, i.cursor)
 	if len(indexingNodes) != 0 {
 		i.emitError(rl.ErrInvalidSyntax, leftNode, "Json paths must be defined to plain identifiers")
 	}
@@ -38,11 +38,11 @@ func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonField
 
 	var segments []JsonPathSegment
 
-	segmentNodes := rl.GetChildren(jsonPathNode, rl.F_SEGMENT)
+	segmentNodes := rl.GetChildren(jsonPathNode, rl.F_SEGMENT, i.cursor)
 	for _, segmentNode := range segmentNodes {
 		identifierNode := rl.GetChild(&segmentNode, rl.F_KEY)
 		identifierStr := i.GetSrcForNode(identifierNode)
-		indexNodes := rl.GetChildren(&segmentNode, rl.F_INDEX)
+		indexNodes := rl.GetChildren(&segmentNode, rl.F_INDEX, i.cursor)
 
 		var idxSegments []JsonPathSegmentIdx
 		for _, indexNode := range indexNodes {

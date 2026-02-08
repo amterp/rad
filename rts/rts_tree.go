@@ -118,7 +118,9 @@ func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 
 func (rt *RadTree) FindInvalidNodes() []*ts.Node {
 	var invalidNodes []*ts.Node
-	recurseFindInvalidNodes(rt.Root(), &invalidNodes)
+	root := rt.Root()
+	cursor := root.Walk()
+	recurseFindInvalidNodes(root, &invalidNodes, cursor)
 	return invalidNodes
 }
 
@@ -138,33 +140,37 @@ func (rt *RadTree) FindCalls() []*CallNode {
 // todo should take an ID instead of string for kind
 func (rt *RadTree) FindNodes(nodeKind string) []*ts.Node {
 	var found []*ts.Node
-	recurseFindNodes(rt.Root(), nodeKind, &found)
+	root := rt.Root()
+	cursor := root.Walk()
+	recurseFindNodes(root, nodeKind, &found, cursor)
 	return found
 }
 
-func recurseFindNodes(node *ts.Node, nodeKind string, found *[]*ts.Node) {
+func recurseFindNodes(node *ts.Node, nodeKind string, found *[]*ts.Node, cursor *ts.TreeCursor) {
 	if node.Kind() == nodeKind {
 		*found = append(*found, node)
 	}
-	childrenNodes := node.Children(node.Walk())
+	childrenNodes := node.Children(cursor)
 	for _, child := range childrenNodes {
-		recurseFindNodes(&child, nodeKind, found)
+		recurseFindNodes(&child, nodeKind, found, cursor)
 	}
 }
 
-func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
+func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node, cursor *ts.TreeCursor) {
 	if node.IsError() || node.IsMissing() {
 		*invalidNodes = append(*invalidNodes, node)
 	}
-	childrenNodes := node.Children(node.Walk())
+	childrenNodes := node.Children(cursor)
 	for _, child := range childrenNodes {
-		recurseFindInvalidNodes(&child, invalidNodes)
+		recurseFindInvalidNodes(&child, invalidNodes, cursor)
 	}
 }
 
 func findNodes[T Node](rt *RadTree) []T {
 	nodeName := NodeName[T]()
-	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())
+	rootNode := rt.root.RootNode()
+	cursor := rootNode.Walk()
+	node, ok := rt.findFirstNode(nodeName, rootNode, cursor)
 	if !ok {
 		return []T{}
 	}
@@ -175,13 +181,13 @@ func findNodes[T Node](rt *RadTree) []T {
 	return []T{rtsNode} // todo stub - should search all
 }
 
-func (rt *RadTree) findFirstNode(nodeKind string, node *ts.Node) (*ts.Node, bool) {
+func (rt *RadTree) findFirstNode(nodeKind string, node *ts.Node, cursor *ts.TreeCursor) (*ts.Node, bool) {
 	if node.Kind() == nodeKind {
 		return node, true
 	}
-	children := node.Children(node.Walk())
+	children := node.Children(cursor)
 	for _, child := range children {
-		if n, ok := rt.findFirstNode(nodeKind, &child); ok {
+		if n, ok := rt.findFirstNode(nodeKind, &child, cursor); ok {
 			return n, true
 		}
 	}
