@@ -1,0 +1,130 @@
+### TITLE ###
+If-elif-else
+### INPUT ###
+if x > 0:
+    print("positive")
+else if x == 0:
+    print("zero")
+else:
+    print("negative")
+### STDOUT ###
+SourceFile [0:0-5:21]
+  If [0:0-5:21]
+    Branch 0 (cond)
+      OpBinary > [0:3-0:8]
+        Identifier "x" [0:3-0:4]
+        LitInt 0 [0:7-0:8]
+      ExprStmt [1:4-1:21]
+        Call [1:4-1:21]
+          Identifier "print" [1:4-1:9]
+          LitString "positive" [1:10-1:20]
+    Branch 1 (cond)
+      OpBinary == [2:8-2:14]
+        Identifier "x" [2:8-2:9]
+        LitInt 0 [2:13-2:14]
+      ExprStmt [3:4-3:17]
+        Call [3:4-3:17]
+          Identifier "print" [3:4-3:9]
+          LitString "zero" [3:10-3:16]
+    Branch 2 (else)
+      ExprStmt [5:4-5:21]
+        Call [5:4-5:21]
+          Identifier "print" [5:4-5:9]
+          LitString "negative" [5:10-5:20]
+
+### TITLE ###
+For loop with unpacking
+### INPUT ###
+for k, v in mymap:
+    print(k, v)
+### STDOUT ###
+SourceFile [0:0-1:15]
+  ForLoop vars=[k, v] [0:0-1:15]
+    Identifier "mymap" [0:12-0:17]
+    ExprStmt [1:4-1:15]
+      Call [1:4-1:15]
+        Identifier "print" [1:4-1:9]
+        Identifier "k" [1:10-1:11]
+        Identifier "v" [1:13-1:14]
+
+### TITLE ###
+While loop
+### INPUT ###
+while x > 0:
+    x--
+### STDOUT ###
+SourceFile [0:0-1:7]
+  WhileLoop [0:0-1:7]
+    OpBinary > [0:6-0:11]
+      Identifier "x" [0:6-0:7]
+      LitInt 0 [0:10-0:11]
+    Assign [1:4-1:7]
+      Identifier "x" [1:4-1:5]
+      OpBinary - [1:4-1:7]
+        Identifier "x" [1:4-1:5]
+        LitInt 1 [1:4-1:7]
+
+### TITLE ###
+While infinite
+### INPUT ###
+while:
+    break
+### STDOUT ###
+SourceFile [0:0-1:9]
+  WhileLoop [0:0-1:9]
+    Break [1:4-1:9]
+
+### TITLE ###
+Switch with default
+### INPUT ###
+switch x:
+    case 1 -> "one"
+    case 2, 3 -> "few"
+    default -> "many"
+### STDOUT ###
+SourceFile [0:0-3:21]
+  Switch [0:0-3:21]
+    Identifier "x" [0:7-0:8]
+    Case
+      LitInt 1 [1:9-1:10]
+      CaseExpr
+        LitString "one" [1:14-1:19]
+    Case
+      LitInt 2 [2:9-2:10]
+      LitInt 3 [2:12-2:13]
+      CaseExpr
+        LitString "few" [2:17-2:22]
+    Default
+      CaseExpr
+        LitString "many" [3:15-3:21]
+
+### TITLE ###
+Break and continue
+### INPUT ###
+for i in items:
+    if i == 0:
+        continue
+    if i > 10:
+        break
+    print(i)
+### STDOUT ###
+SourceFile [0:0-5:12]
+  ForLoop vars=[i] [0:0-5:12]
+    Identifier "items" [0:9-0:14]
+    If [1:4-2:16]
+      Branch 0 (cond)
+        OpBinary == [1:7-1:13]
+          Identifier "i" [1:7-1:8]
+          LitInt 0 [1:12-1:13]
+        Continue [2:8-2:16]
+    If [3:4-4:13]
+      Branch 0 (cond)
+        OpBinary > [3:7-3:13]
+          Identifier "i" [3:7-3:8]
+          LitInt 10 [3:11-3:13]
+        Break [4:8-4:13]
+    ExprStmt [5:4-5:12]
+      Call [5:4-5:12]
+        Identifier "print" [5:4-5:9]
+        Identifier "i" [5:10-5:11]
+
