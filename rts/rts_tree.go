@@ -70,7 +70,7 @@ func (rt *RadTree) FindArgBlock() (*ArgBlock, bool) {
 	return argBlocks[0], true // todo bad if multiple
 }
 
-func (rt *RadTree) FindCmdBlocks() ([]*CmdBlock, bool) {
+func (rt *RadTree) FindCmdBlocks(file string) ([]*CmdBlock, bool) {
 	// Commands can appear multiple times, so we need to find all of them
 	nodes := rt.FindNodes(rl.K_CMD_BLOCK)
 	if len(nodes) == 0 {
@@ -79,7 +79,7 @@ func (rt *RadTree) FindCmdBlocks() ([]*CmdBlock, bool) {
 
 	cmdBlocks := make([]*CmdBlock, 0, len(nodes))
 	for _, node := range nodes {
-		cmdBlock, ok := newCmdBlock(rt.src, node)
+		cmdBlock, ok := newCmdBlock(rt.src, node, file)
 		if ok {
 			cmdBlocks = append(cmdBlocks, cmdBlock)
 		}
@@ -201,7 +201,7 @@ func createNode[T Node](src string, node *ts.Node) (T, bool) {
 		argBlock, _ := newArgBlock(src, node)
 		return any(argBlock).(T), true
 	case *CmdBlock:
-		cmdBlock, _ := newCmdBlock(src, node)
+		cmdBlock, _ := newCmdBlock(src, node, "")
 		return any(cmdBlock).(T), true
 	case *StringNode:
 		stringNode, _ := newStringNode(src, node)
