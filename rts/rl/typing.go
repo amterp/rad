@@ -604,7 +604,15 @@ type TypingFnParam struct {
 	IsVariadic bool // vararg
 	NamedOnly  bool // if true, can only be passed as a named arg
 	IsOptional bool
-	Default    *RadNode // if no default, this is nil
+	Default    *RadNode    // CST-based default (nil if no default)
+	DefaultAST *ASTDefault // AST-based default (set by converter)
+}
+
+// ASTDefault holds an AST node and source for a function parameter default value.
+// Allows gradual migration: converter sets DefaultAST, interpreter reads it.
+type ASTDefault struct {
+	Node Node
+	Src  string
 }
 
 func (t TypingFnParam) AnonymousOnly() bool {
