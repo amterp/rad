@@ -117,6 +117,11 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 	env := i.env
 
 	for _, arg := range args {
+		// Note: arg.GetNode() returns *ts.Node (CST) which doesn't implement rl.Node.
+		// We pass nil since arg initialization errors are exceptional and source
+		// locations for arg declarations will be fixed when metadata extraction
+		// migrates to AST.
+
 		// Special handling for variadic arguments with list defaults
 		if arg.IsVariadic() {
 			var hasListDefaults bool
@@ -124,24 +129,22 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 
 			if stringListArg, ok := arg.(*StringListRadArg); ok && stringListArg.scriptArg != nil && stringListArg.scriptArg.DefaultStringList != nil {
 				hasListDefaults = true
-				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *stringListArg.scriptArg.DefaultStringList)
+				defaultValue = NewRadListFromGeneric(i, nil, *stringListArg.scriptArg.DefaultStringList)
 			} else if intListArg, ok := arg.(*IntListRadArg); ok && intListArg.scriptArg != nil && intListArg.scriptArg.DefaultIntList != nil {
 				hasListDefaults = true
-				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *intListArg.scriptArg.DefaultIntList)
+				defaultValue = NewRadListFromGeneric(i, nil, *intListArg.scriptArg.DefaultIntList)
 			} else if floatListArg, ok := arg.(*FloatListRadArg); ok && floatListArg.scriptArg != nil && floatListArg.scriptArg.DefaultFloatList != nil {
 				hasListDefaults = true
-				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *floatListArg.scriptArg.DefaultFloatList)
+				defaultValue = NewRadListFromGeneric(i, nil, *floatListArg.scriptArg.DefaultFloatList)
 			} else if boolListArg, ok := arg.(*BoolListRadArg); ok && boolListArg.scriptArg != nil && boolListArg.scriptArg.DefaultBoolList != nil {
 				hasListDefaults = true
-				defaultValue = NewRadListFromGeneric(i, arg.GetNode(), *boolListArg.scriptArg.DefaultBoolList)
+				defaultValue = NewRadListFromGeneric(i, nil, *boolListArg.scriptArg.DefaultBoolList)
 			}
 
 			if hasListDefaults {
 				if !arg.Configured() {
-					// Use defaults only if user didn't provide values
-					env.SetVar(arg.GetIdentifier(), newRadValue(i, arg.GetNode(), defaultValue))
+					env.SetVar(arg.GetIdentifier(), newRadValue(i, nil, defaultValue))
 				} else {
-					// User provided values, use them normally
 					goto normalProcessing
 				}
 				continue
@@ -150,8 +153,7 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 
 		if !arg.IsDefined() {
 			if arg.IsVariadic() {
-				// Variadic args should be empty lists when undefined, not null
-				env.SetVar(arg.GetIdentifier(), newRadValue(i, arg.GetNode(), NewRadList()))
+				env.SetVar(arg.GetIdentifier(), newRadValue(i, nil, NewRadList()))
 			} else {
 				env.SetVar(arg.GetIdentifier(), RAD_NULL_VAL)
 			}
@@ -161,34 +163,35 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 	normalProcessing:
 		switch coerced := arg.(type) {
 		case *BoolRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, coerced.Value))
 		case *BoolListRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, NewRadListFromGeneric(i, nil, coerced.Value)))
 		case *StringRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, coerced.Value))
 		case *StringListRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, NewRadListFromGeneric(i, nil, coerced.Value)))
 		case *IntRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, coerced.Value))
 		case *IntListRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, NewRadListFromGeneric(i, nil, coerced.Value)))
 		case *FloatRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), coerced.Value))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, coerced.Value))
 		case *FloatListRadArg:
-			env.SetVar(coerced.Identifier, newRadValue(i, arg.GetNode(), NewRadListFromGeneric(i, arg.GetNode(), coerced.Value)))
+			env.SetVar(coerced.Identifier, newRadValue(i, nil, NewRadListFromGeneric(i, nil, coerced.Value)))
 		default:
-			i.emitErrorf(rl.ErrInternalBug, arg.GetNode(), "Unsupported arg type, cannot init: %T", arg)
+			i.emitErrorf(rl.ErrInternalBug, nil, "Unsupported arg type, cannot init: %T", arg)
 		}
 	}
 }
 
 func (i *Interpreter) Run() {
-	root := i.sd.Tree.Root()
+	// Convert CST to AST once, then interpret the AST
+	astRoot := rts.ConvertCST(i.sd.Tree.Root(), i.sd.Src, i.sd.ScriptName)
 
 	// PHASE 1: Execute top-level code (always)
-	res := i.safelyExecuteTopLevel(root)
+	res := i.safelyExecuteTopLevel(astRoot)
 	if res.Ctrl != CtrlNormal {
-		i.emitErrorf(rl.ErrInternalBug, root, "Bug: Unexpected control flow: %v", res.Ctrl)
+		i.emitErrorf(rl.ErrInternalBug, astRoot, "Bug: Unexpected control flow: %v", res.Ctrl)
 	}
 
 	// PHASE 2: Execute command callback (if command was invoked)
@@ -197,30 +200,22 @@ func (i *Interpreter) Run() {
 	}
 }
 
-func (i *Interpreter) safelyExecuteTopLevel(root *ts.Node) EvalResult {
+func (i *Interpreter) safelyExecuteTopLevel(root *rl.SourceFile) EvalResult {
 	defer func() {
 		i.handlePanicRecovery(recover(), root)
 	}()
 
-	children := root.Children(root.Walk())
-
 	// First pass: define custom named functions (function hoisting)
-	for _, child := range children {
-		if child.Kind() == rl.K_FN_NAMED {
-			i.defineCustomNamedFunction(child)
+	for _, stmt := range root.Stmts {
+		if fnDef, ok := stmt.(*rl.FnDef); ok {
+			i.defineCustomNamedFunction(fnDef)
 		}
 	}
 
-	// Second pass: evaluate all children except command blocks
+	// Second pass: evaluate all statements
 	var lastResult EvalResult
-	for _, child := range children {
-		kind := child.Kind()
-		// Skip command blocks and other non-executable nodes
-		if kind == rl.K_CMD_BLOCK || kind == rl.K_COMMENT || kind == rl.K_SHEBANG ||
-			kind == rl.K_FILE_HEADER || kind == rl.K_ARG_BLOCK {
-			continue
-		}
-		lastResult = i.eval(&child)
+	for _, stmt := range root.Stmts {
+		lastResult = i.eval(stmt)
 	}
 
 	return lastResult
@@ -238,15 +233,12 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		funcName := *cmd.CallbackName
 		val, exist := i.env.GetVar(funcName)
 		if !exist {
-			// Find the root node for error reporting
-			root := i.sd.Tree.Root()
-			i.emitErrorf(rl.ErrUnknownFunction, root, "Cannot invoke unknown function '%s' for command '%s'", funcName, cmd.ExternalName)
+			i.emitErrorf(rl.ErrUnknownFunction, nil, "Cannot invoke unknown function '%s' for command '%s'", funcName, cmd.ExternalName)
 		}
 
 		fn, ok := val.TryGetFn()
 		if !ok {
-			root := i.sd.Tree.Root()
-			i.emitErrorf(rl.ErrTypeMismatch, root, "Cannot invoke '%s' as a function for command '%s': it is a %s",
+			i.emitErrorf(rl.ErrTypeMismatch, nil, "Cannot invoke '%s' as a function for command '%s': it is a %s",
 				funcName, cmd.ExternalName, val.Type().AsString())
 		}
 
@@ -254,11 +246,12 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		_ = fn.Execute(NewFnInvocation(i, nil, funcName, []PosArg{}, make(map[string]namedArg), fn.IsBuiltIn()))
 
 	case rts.CallbackLambda:
-		// Create a function from the lambda node
-		fn := NewFn(i, cmd.CallbackLambda)
+		// Convert the lambda CST node to AST at execution time
+		lambdaAST := rts.ConvertLambda(cmd.CallbackLambda, i.sd.Src, i.sd.ScriptName)
+		fn := NewFnFromAST(i, lambdaAST.Typing, lambdaAST.Body, lambdaAST.IsBlock, &lambdaAST.DefSpan)
 
 		// Execute the lambda with no arguments
-		_ = fn.Execute(NewFnInvocation(i, cmd.CallbackLambda, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
+		_ = fn.Execute(NewFnInvocation(i, lambdaAST, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
 
 	default:
 		panic(fmt.Sprintf("Bug! Unknown callback type %d for command: %s", cmd.CallbackType, cmd.ExternalName))
@@ -282,8 +275,11 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 		return RAD_NULL_VAL, fmt.Errorf("parse error in statement: %s", input)
 	}
 
+	// Convert CST to AST
+	astRoot := rts.ConvertCST(tree.Root(), input, "<repl>")
+
 	// Update the interpreter's ScriptData to point to this new tree and source
-	// This ensures that GetSrcForNode and other methods work correctly
+	// This ensures that GetSrc and other methods work correctly
 	originalScriptData := i.sd
 	i.sd = &ScriptData{
 		ScriptName:        "<repl>",
@@ -307,151 +303,122 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 		}
 	}()
 
-	node := tree.Root()
-	children := node.Children(node.Walk())
-
-	// REPL: unwrap the source_file container and evaluate the actual statement/expression
-	// This allows both expressions ("2 + 3") and statements ("x = 5") to work correctly
-	if len(children) == 1 {
-		// Evaluate the child directly, bypassing the source_file wrapper
-		result := i.safelyEvaluate(&children[0])
+	// REPL: evaluate each statement from the AST
+	if len(astRoot.Stmts) == 1 {
+		result := i.safelyEvaluate(astRoot.Stmts[0])
 		if result.Ctrl != CtrlNormal {
 			return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %v", result.Ctrl)
 		}
 		return result.Val, nil
 	}
 
-	// Fallback: evaluate normally (shouldn't happen for single statements)
-	res := i.safelyEvaluate(node)
+	// Multiple statements: evaluate all, return last
+	var lastResult EvalResult
+	for _, stmt := range astRoot.Stmts {
+		lastResult = i.safelyEvaluate(stmt)
+	}
+
 	// Check for any evaluation errors from defer
 	if evalErr != nil {
 		return RAD_NULL_VAL, evalErr
 	}
 
-	if res.Ctrl != CtrlNormal {
-		return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %v", res.Ctrl)
+	if lastResult.Ctrl != CtrlNormal {
+		return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %v", lastResult.Ctrl)
 	}
-	return res.Val, nil
+	return lastResult.Val, nil
 }
 
-func (i *Interpreter) safelyEvaluate(node *ts.Node) EvalResult {
+func (i *Interpreter) safelyEvaluate(node rl.Node) EvalResult {
 	defer func() {
 		i.handlePanicRecovery(recover(), node)
 	}()
 	return i.eval(node)
 }
 
-func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
+func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 	out = VoidNormal
 
-	switch node.Kind() {
-	// no-ops
-	case rl.K_SOURCE_FILE:
-		children := node.Children(node.Walk())
-		// first define custom named functions
-		for _, child := range children {
-			if child.Kind() == rl.K_FN_NAMED {
-				i.defineCustomNamedFunction(child)
+	switch n := node.(type) {
+	// --- Statements ---
+	case *rl.SourceFile:
+		// First pass: function hoisting
+		for _, stmt := range n.Stmts {
+			if fnDef, ok := stmt.(*rl.FnDef); ok {
+				i.defineCustomNamedFunction(fnDef)
 			}
 		}
-		for _, child := range children {
-			i.eval(&child)
+		for _, stmt := range n.Stmts {
+			i.eval(stmt)
 		}
-	case rl.K_COMMENT, rl.K_SHEBANG, rl.K_FILE_HEADER, rl.K_ARG_BLOCK, rl.K_CMD_BLOCK:
-		// no-op
-	case rl.K_ERROR:
-		i.emitError(rl.ErrInternalBug, node, "Bug: Error pre-check should've prevented running into this node")
-	case rl.K_ASSIGN:
-		catchBlockNode := rl.GetChild(node, rl.F_CATCH)
 
-		out = i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
+	case *rl.Assign:
+		out = i.withCatch(n.Catch, func(rp *RadPanic) EvalResult {
 			// Assign error to first variable, null to rest
-			leftNodes := i.getAssignLeftNodes(node)
-			if len(leftNodes) > 0 {
-				i.doVarPathAssign(&leftNodes[0], rp.ErrV, false)
-				for j := 1; j < len(leftNodes); j++ {
-					i.doVarPathAssign(&leftNodes[j], RAD_NULL_VAL, false)
+			if len(n.Targets) > 0 {
+				i.doVarPathAssign(n.Targets[0], rp.ErrV, false)
+				for j := 1; j < len(n.Targets); j++ {
+					i.doVarPathAssign(n.Targets[j], RAD_NULL_VAL, false)
 				}
 			}
 
 			// Run catch block and propagate control flow
-			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
-			res := i.runBlock(stmtNodes)
+			res := i.runBlock(n.Catch.Stmts)
 			if res.Ctrl != CtrlNormal {
-				return res // Propagate return/break/continue/yield
+				return res
 			}
 			return VoidNormal
 		}, func() EvalResult {
-			// Normal assignment execution
-			rightNodes := rl.GetChildren(node, rl.F_RIGHT)
-			leftNodes := rl.GetChildren(node, rl.F_LEFT)
-			if len(leftNodes) > 0 {
-				return i.assignRightsToLefts(leftNodes, rightNodes, false)
-			} else {
-				leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
-				return i.assignRightsToLefts(leftsNodes, rightNodes, true)
-			}
+			return i.evalAssign(n)
 		})
-	case rl.K_COMPOUND_ASSIGN:
-		leftVarPathNode := rl.GetChild(node, rl.F_LEFT)
-		rightNode := rl.GetChild(node, rl.F_RIGHT)
-		opNode := rl.GetChild(node, rl.F_OP)
-		newValue := i.executeCompoundOp(node, leftVarPathNode, rightNode, opNode)
-		i.doVarPathAssign(leftVarPathNode, newValue, true)
-	case rl.K_EXPR:
-		out = i.eval(rl.GetChild(node, rl.F_DELEGATE))
-	case rl.K_EXPR_STMT:
-		exprNode := rl.GetChild(node, rl.F_EXPR)
-		catchBlockNode := rl.GetChild(node, rl.F_CATCH)
 
-		out = i.withCatch(catchBlockNode, func(rp *RadPanic) EvalResult {
-			// Run catch block and propagate control flow
-			stmtNodes := rl.GetChildren(catchBlockNode, rl.F_STMT)
-			res := i.runBlock(stmtNodes)
+	case *rl.ExprStmt:
+		out = i.withCatch(n.Catch, func(rp *RadPanic) EvalResult {
+			res := i.runBlock(n.Catch.Stmts)
 			if res.Ctrl != CtrlNormal {
-				return res // Propagate return/break/continue/yield
+				return res
 			}
-			return VoidNormal // Statement with catch returns void, not error value
+			return VoidNormal
 		}, func() EvalResult {
-			return i.eval(exprNode)
+			return i.eval(n.Expr)
 		})
-	case rl.K_PASS:
+
+	case *rl.Pass:
 		// no-op
-	case rl.K_RETURN_STMT:
-		return ReturnVal(i.evalRights(node))
-	case rl.K_YIELD_STMT:
-		return YieldVal(i.evalRights(node))
-	case rl.K_BREAK_STMT:
+
+	case *rl.Return:
+		return ReturnVal(i.evalValues(n, n.Values))
+
+	case *rl.Yield:
+		return YieldVal(i.evalValues(n, n.Values))
+
+	case *rl.Break:
 		if i.forWhileLoopLevel > 0 {
 			return VoidBreak
 		}
-		i.emitError(rl.ErrBreakOutsideLoop, node, "Cannot 'break' outside of a loop")
-	case rl.K_CONTINUE_STMT:
+		i.emitError(rl.ErrBreakOutsideLoop, n, "Cannot 'break' outside of a loop")
+
+	case *rl.Continue:
 		if i.forWhileLoopLevel > 0 {
 			return VoidContinue
 		}
-		i.emitError(rl.ErrContinueOutsideLoop, node, "Cannot 'continue' outside of a loop")
-	case rl.K_FOR_LOOP:
+		i.emitError(rl.ErrContinueOutsideLoop, n, "Cannot 'continue' outside of a loop")
+
+	case *rl.ForLoop:
 		i.forWhileLoopLevel++
-		defer func() {
-			i.forWhileLoopLevel--
-		}()
-		stmts := rl.GetChildren(node, rl.F_STMT)
-		return i.executeForLoop(node, func() EvalResult { return i.runBlock(stmts) })
-	case rl.K_WHILE_LOOP:
+		defer func() { i.forWhileLoopLevel-- }()
+		return i.executeForLoop(n, func() EvalResult { return i.runBlock(n.Body) })
+
+	case *rl.WhileLoop:
 		i.forWhileLoopLevel++
-		defer func() {
-			i.forWhileLoopLevel--
-		}()
-		condNode := rl.GetChild(node, rl.F_CONDITION)
-		stmtNodes := rl.GetChildren(node, rl.F_STMT)
+		defer func() { i.forWhileLoopLevel-- }()
 		for {
 			condValue := true
-			if condNode != nil {
-				condValue = i.eval(condNode).Val.TruthyFalsy()
+			if n.Condition != nil {
+				condValue = i.eval(n.Condition).Val.TruthyFalsy()
 			}
 			if condValue {
-				res := i.runBlock(stmtNodes)
+				res := i.runBlock(n.Body)
 				switch res.Ctrl {
 				case CtrlBreak:
 					return VoidNormal
@@ -462,389 +429,256 @@ func (i *Interpreter) eval(node *ts.Node) (out EvalResult) {
 				break
 			}
 		}
-	case rl.K_IF_STMT:
-		altNodes := rl.GetChildren(node, rl.F_ALT)
-		for _, altNode := range altNodes {
-			condNode := rl.GetChild(&altNode, rl.F_CONDITION)
 
+	case *rl.If:
+		for _, branch := range n.Branches {
 			shouldExecute := true
-			if condNode != nil {
-				condResult := i.eval(condNode).Val.TruthyFalsy()
-				shouldExecute = condResult
+			if branch.Condition != nil {
+				shouldExecute = i.eval(branch.Condition).Val.TruthyFalsy()
 			}
-
 			if shouldExecute {
-				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT)
-				return i.runBlock(stmtNodes)
+				return i.runBlock(branch.Body)
 			}
 		}
-	case rl.K_SWITCH_STMT:
-		discriminantNode := rl.GetChild(node, rl.F_DISCRIMINANT)
-		caseNodes := rl.GetChildren(node, rl.F_CASE)
-		defaultNode := rl.GetChild(node, rl.F_DEFAULT)
 
-		discriminantVal := i.eval(discriminantNode).Val
+	case *rl.Switch:
+		discriminantVal := i.eval(n.Discriminant).Val
 
-		matchedCaseNodes := make([]ts.Node, 0)
-		for _, caseNode := range caseNodes {
-			caseKeyNodes := rl.GetChildren(&caseNode, rl.F_CASE_KEY)
-			for _, caseKeyNode := range caseKeyNodes {
-				caseKey := i.eval(&caseKeyNode).Val
+		var matchedCases []rl.SwitchCase
+		for _, sc := range n.Cases {
+			for _, key := range sc.Keys {
+				caseKey := i.eval(key).Val
 				if caseKey.Equals(discriminantVal) {
-					matchedCaseNodes = append(matchedCaseNodes, caseNode)
+					matchedCases = append(matchedCases, sc)
 					break
 				}
 			}
 		}
 
-		if len(matchedCaseNodes) == 0 {
-			if defaultNode != nil {
-				caseValueAltNode := rl.GetChild(defaultNode, rl.F_ALT)
-				return i.executeSwitchCase(caseValueAltNode)
+		if len(matchedCases) == 0 {
+			if n.Default != nil {
+				return i.executeSwitchCaseAlt(n.Default.Alt)
 			}
-			i.emitError(rl.ErrSwitchNoMatch, discriminantNode, "No matching case found for switch")
+			i.emitError(rl.ErrSwitchNoMatch, n.Discriminant, "No matching case found for switch")
 		}
 
-		if len(matchedCaseNodes) > 1 {
-			// todo fancier error msg: should point at the cases that matched, example:
-			// 13 | case 1, "one": blah blah
-			//           ^  ^^^^^ MATCHED        << in red
-			// 14 | case 2, "two": blah blah
-			// 15 | case 3, val: blah blah
-			//              ^^^ MATCHED          << in red
-			// 16 | case 4, "four":  blah blah
-			i.emitError(rl.ErrSwitchMultipleMatch, discriminantNode, "Multiple matching cases found for switch")
+		if len(matchedCases) > 1 {
+			i.emitError(rl.ErrSwitchMultipleMatch, n.Discriminant, "Multiple matching cases found for switch")
 		}
 
-		matchedCaseNode := matchedCaseNodes[0]
-		caseValueAltNode := rl.GetChild(&matchedCaseNode, rl.F_ALT)
-		return i.executeSwitchCase(caseValueAltNode)
-	case rl.K_FN_NAMED:
-		// do not redefine top-level functions as they're already defined
-		if node.Parent().Kind() != rl.K_SOURCE_FILE {
-			i.defineCustomNamedFunction(*node)
-		}
-	case rl.K_DEFER_BLOCK:
-		keywordNode := rl.GetChild(node, rl.F_KEYWORD)
-		stmtNodes := rl.GetChildren(node, rl.F_STMT)
-		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(i, keywordNode, stmtNodes))
-	case rl.K_SHELL_STMT:
-		out = i.executeShellStmt(node)
-	case rl.K_DEL_STMT:
-		rightVarPathNodes := rl.GetChildren(node, rl.F_RIGHT)
-		for _, rightVarPathNode := range rightVarPathNodes {
-			i.doVarPathAssign(&rightVarPathNode, VOID_SENTINEL, true)
-		}
-	case rl.K_RAD_BLOCK:
-		i.runRadBlock(node)
-	case rl.K_INCR_DECR:
-		leftVarPathNode := rl.GetChild(node, rl.F_LEFT)
-		opNode := rl.GetChild(node, rl.F_OP)
-		newValue := i.executeUnaryOp(node, leftVarPathNode, opNode)
-		i.doVarPathAssign(leftVarPathNode, newValue, true)
-	case rl.K_PRIMARY_EXPR, rl.K_LITERAL:
-		return i.eval(i.getOnlyChild(node))
-	case rl.K_PARENTHESIZED_EXPR:
-		return i.eval(rl.GetChild(node, rl.F_EXPR))
-	case rl.K_UNARY_EXPR:
-		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
-		if delegateNode != nil {
-			return i.eval(delegateNode)
+		return i.executeSwitchCaseAlt(matchedCases[0].Alt)
+
+	case *rl.FnDef:
+		// Non-top-level function definitions (top-level ones are hoisted in SourceFile)
+		i.defineCustomNamedFunction(n)
+
+	case *rl.Defer:
+		i.deferBlocks = append(i.deferBlocks, NewDeferBlock(n.Span(), n.Body, n.IsErrDefer))
+
+	case *rl.Shell:
+		out = i.executeShellStmt(n)
+
+	case *rl.Del:
+		for _, target := range n.Targets {
+			i.doVarPathAssign(target, VOID_SENTINEL, true)
 		}
 
-		opNode := rl.GetChild(node, rl.F_OP)
-		argNode := rl.GetChild(node, rl.F_ARG)
-		return NormalVal(newRadValues(i, node, i.executeUnaryOp(node, argNode, opNode)))
-	case rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_COMPARE_EXPR, rl.K_ADD_EXPR, rl.K_MULT_EXPR:
-		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
-		if delegateNode != nil {
-			return i.eval(delegateNode)
-		}
+	case *rl.RadBlock:
+		i.runRadBlock(n)
 
-		left := rl.GetChild(node, rl.F_LEFT)
-		op := rl.GetChild(node, rl.F_OP)
-		right := rl.GetChild(node, rl.F_RIGHT)
-		return NormalVal(newRadValues(i, node, i.executeBinary(node, left, right, op)))
-	case rl.K_FALLBACK_EXPR:
-		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
-		if delegateNode != nil {
-			return i.eval(delegateNode)
-		}
+	// --- Expressions ---
 
-		leftNode := rl.GetChild(node, rl.F_LEFT)
-		rightNode := rl.GetChild(node, rl.F_RIGHT)
+	case *rl.OpBinary:
+		return NormalVal(newRadValues(i, n, i.executeOp(n, n.Left, n.Right, n.Op, n.IsCompound)))
 
-		// Evaluate left with panic catching
+	case *rl.OpUnary:
+		return NormalVal(i.executeUnaryOp(n))
+
+	case *rl.Ternary:
+		condition := i.eval(n.Condition).Val.TruthyFalsy()
+		return i.eval(lo.Ternary(condition, n.True, n.False))
+
+	case *rl.Fallback:
 		var leftResult EvalResult
 		panicked := false
-
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
 					if _, ok := r.(*RadPanic); ok {
 						panicked = true
 					} else {
-						panic(r) // Re-panic non-RadPanic errors
+						panic(r)
 					}
 				}
 			}()
-			leftResult = i.eval(leftNode)
+			leftResult = i.eval(n.Left)
 		}()
-
 		if panicked {
-			// Left side errored, evaluate and return right side
-			return i.eval(rightNode)
+			return i.eval(n.Right)
 		}
-
 		return leftResult
 
-	// LEAF NODES
-	case rl.K_IDENTIFIER:
-		identifier := i.GetSrcForNode(node)
-		if identifier == "_" {
-			i.emitError(rl.ErrUnsupportedOperation, node, "Cannot use '_' as a value")
+	case *rl.Call:
+		return NormalVal(i.callFunction(n, nil))
+
+	case *rl.Identifier:
+		if n.Name == "_" {
+			i.emitError(rl.ErrUnsupportedOperation, n, "Cannot use '_' as a value")
 		}
-		val, ok := i.env.GetVar(identifier)
+		val, ok := i.env.GetVar(n.Name)
 		if !ok {
-			i.emitUndefinedVariableError(node, identifier)
+			i.emitUndefinedVariableError(n, n.Name)
 		}
-		return NormalVal(newRadValues(i, node, val))
-	case rl.K_VAR_PATH:
-		rootNode := rl.GetChild(node, rl.F_ROOT)
-		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
-		val := i.eval(rootNode).Val
-		for _, indexNode := range indexingNodes {
-			val = i.evaluateIndexing(rootNode, indexNode, val)
-		}
-		return NormalVal(newRadValues(i, node, val))
-	case rl.K_INDEXED_EXPR:
-		rootNode := rl.GetChild(node, rl.F_ROOT)
-		indexingNodes := rl.GetChildren(node, rl.F_INDEXING)
-		if len(indexingNodes) > 0 {
-			val := i.eval(rootNode).Val
-			for _, index := range indexingNodes {
-				val = i.evaluateIndexing(rootNode, index, val)
-			}
-			return NormalVal(newRadValues(i, node, val))
-		} else {
-			return i.eval(rootNode)
-		}
-	case rl.K_INT:
-		asStr := i.GetSrcForNode(node)
-		asInt, _ := rts.ParseInt(asStr) // todo unhandled err
-		return NormalVal(newRadValues(i, node, asInt))
-	case rl.K_FLOAT:
-		asStr := i.GetSrcForNode(node)
-		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
-		return NormalVal(newRadValues(i, node, asFloat))
-	case rl.K_SCIENTIFIC_NUMBER:
-		asStr := i.GetSrcForNode(node)
-		asFloat, _ := rts.ParseFloat(asStr) // todo unhandled err
-		// Evaluate as int if it's a whole number, float otherwise
-		// RadChecker validates that int-typed params only use whole numbers
-		if asFloat == float64(int64(asFloat)) {
-			return NormalVal(newRadValues(i, node, int64(asFloat)))
-		}
-		return NormalVal(newRadValues(i, node, asFloat))
-	case rl.K_STRING:
-		str := NewRadString("")
+		return NormalVal(newRadValues(i, n, val))
 
-		contentsNode := rl.GetChild(node, rl.F_CONTENTS)
-
-		// With current TS grammar, last character of closing delimiter is always the delimiter
-		// Admittedly bad, very white boxy and brittle
-		endNode := rl.GetChild(node, rl.F_END)
-		endStr := i.GetSrcForNode(endNode)
-		delimiterStr := endStr[len(endStr)-1]
-		i.delimiterStack.Push(Delimiter{Open: string(delimiterStr)})
-
-		if contentsNode != nil {
-			for _, child := range contentsNode.Children(contentsNode.Walk()) {
-				str = str.Concat(i.eval(&child).Val.RequireStr(i, &child))
-			}
+	case *rl.VarPath:
+		val := i.eval(n.Root).Val
+		for _, seg := range n.Segments {
+			val = i.evaluatePathSegment(n.Root, seg, val)
 		}
+		return NormalVal(newRadValues(i, n, val))
 
-		i.delimiterStack.Pop()
+	case *rl.LitInt:
+		return NormalVal(newRadValues(i, n, n.Value))
 
-		return NormalVal(newRadValues(i, node, str))
-	case rl.K_BOOL:
-		asStr := i.GetSrcForNode(node)
-		asBool, _ := strconv.ParseBool(asStr)
-		return NormalVal(newRadValues(i, node, asBool))
-	case rl.K_NULL:
-		return NormalVal(newRadValues(i, node, nil))
-	case rl.K_STRING_CONTENT:
-		src := i.GetSrcForNode(node)
-		return NormalVal(newRadValues(i, node, src))
-	case rl.K_BACKSLASH:
-		return NormalVal(newRadValues(i, node, "\\"))
-	case rl.K_ESC_SINGLE_QUOTE:
-		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "'" {
-			return NormalVal(newRadValues(i, node, "'"))
-		} else {
-			return NormalVal(newRadValues(i, node, `\'`))
-		}
-	case rl.K_ESC_DOUBLE_QUOTE:
-		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == `"` {
-			return NormalVal(newRadValues(i, node, `"`))
-		} else {
-			return NormalVal(newRadValues(i, node, `\"`))
-		}
-	case rl.K_ESC_BACKTICK:
-		if delim, ok := i.delimiterStack.Peek(); ok && delim.Open == "`" {
-			return NormalVal(newRadValues(i, node, "`"))
-		} else {
-			return NormalVal(newRadValues(i, node, "\\`"))
-		}
-	case rl.K_ESC_NEWLINE:
-		return NormalVal(newRadValues(i, node, "\n"))
-	case rl.K_ESC_TAB:
-		return NormalVal(newRadValues(i, node, "\t"))
-	case rl.K_ESC_OPEN_BRACKET:
-		return NormalVal(newRadValues(i, node, "{"))
-	case rl.K_INTERPOLATION:
-		exprResult := evaluateInterpolation(i, node)
-		return NormalVal(newRadValues(i, node, exprResult))
-	case rl.K_ESC_BACKSLASH:
-		return NormalVal(newRadValues(i, node, "\\"))
-	case rl.K_LIST:
-		entries := rl.GetChildren(node, rl.F_LIST_ENTRY)
+	case *rl.LitFloat:
+		return NormalVal(newRadValues(i, n, n.Value))
+
+	case *rl.LitBool:
+		return NormalVal(newRadValues(i, n, n.Value))
+
+	case *rl.LitNull:
+		return NormalVal(newRadValues(i, n, nil))
+
+	case *rl.LitString:
+		return NormalVal(newRadValues(i, n, i.evalString(n)))
+
+	case *rl.LitList:
 		list := NewRadList()
-		for _, entry := range entries {
-			list.Append(i.eval(&entry).Val)
+		for _, elem := range n.Elements {
+			list.Append(i.eval(elem).Val)
 		}
-		return NormalVal(newRadValues(i, node, list))
-	case rl.K_MAP:
-		radMap := NewRadMap()
-		entryNodes := rl.GetChildren(node, rl.F_MAP_ENTRY)
-		for _, entryNode := range entryNodes {
-			keyNode := rl.GetChild(&entryNode, rl.F_KEY)
-			valueNode := rl.GetChild(&entryNode, rl.F_VALUE)
-			key := evalMapKey(i, keyNode)
-			radMap.Set(key, i.eval(valueNode).Val)
-		}
-		return NormalVal(newRadValues(i, node, radMap))
-	case rl.K_CALL:
-		return NormalVal(i.callFunction(node, nil))
-	case rl.K_FN_LAMBDA:
-		return NormalVal(newRadValues(i, node, NewFn(i, node)))
-	case rl.K_LIST_COMPREHENSION:
-		resultExprNode := rl.GetChild(node, rl.F_EXPR)
-		conditionNode := rl.GetChild(node, rl.F_CONDITION)
+		return NormalVal(newRadValues(i, n, list))
 
+	case *rl.LitMap:
+		radMap := NewRadMap()
+		for _, entry := range n.Entries {
+			key := i.eval(entry.Key).Val
+			radMap.Set(key, i.eval(entry.Value).Val)
+		}
+		return NormalVal(newRadValues(i, n, radMap))
+
+	case *rl.Lambda:
+		fn := NewFnFromAST(i, n.Typing, n.Body, n.IsBlock, &n.DefSpan)
+		return NormalVal(newRadValues(i, n, fn))
+
+	case *rl.ListComp:
 		resultList := NewRadList()
 		doOneLoop := func() EvalResult {
-			if conditionNode == nil || i.eval(conditionNode).Val.TruthyFalsy() {
-				resultList.Append(i.eval(resultExprNode).Val)
+			if n.Condition == nil || i.eval(n.Condition).Val.TruthyFalsy() {
+				resultList.Append(i.eval(n.Expr).Val)
 			}
 			return VoidNormal
 		}
-		i.executeForLoop(node, doOneLoop)
+		i.executeForLoop(n, doOneLoop)
+		return NormalVal(newRadValues(i, n, resultList))
 
-		return NormalVal(newRadValues(i, node, resultList))
-	case rl.K_TERNARY_EXPR:
-		delegateNode := rl.GetChild(node, rl.F_DELEGATE)
-		if delegateNode != nil {
-			return i.eval(delegateNode)
-		}
-
-		conditionNode := rl.GetChild(node, rl.F_CONDITION)
-		trueNode := rl.GetChild(node, rl.F_TRUE_BRANCH)
-		falseNode := rl.GetChild(node, rl.F_FALSE_BRANCH)
-		condition := i.eval(conditionNode).Val.TruthyFalsy()
-		return i.eval(lo.Ternary(condition, trueNode, falseNode))
 	default:
-		i.emitErrorf(rl.ErrInternalBug, node, "Unsupported node kind: %s", node.Kind())
+		i.emitErrorf(rl.ErrInternalBug, node, "Unsupported AST node type: %T", node)
 	}
 	return
 }
 
-func (i *Interpreter) evalRights(node *ts.Node) RadValue {
-	rightNodes := rl.GetChildren(node, rl.F_RIGHT)
-	if len(rightNodes) == 0 {
+// evalValues evaluates a list of value nodes. Returns VOID_SENTINEL if empty,
+// the single value if one, or packs into a list if multiple.
+func (i *Interpreter) evalValues(parent rl.Node, values []rl.Node) RadValue {
+	if len(values) == 0 {
 		return VOID_SENTINEL
 	}
-	if len(rightNodes) == 1 {
-		return i.eval(&rightNodes[0]).Val
+	if len(values) == 1 {
+		return i.eval(values[0]).Val
 	}
 	list := NewRadList()
-	for _, rightNode := range rightNodes {
-		list.Append(i.eval(&rightNode).Val)
+	for _, v := range values {
+		list.Append(i.eval(v).Val)
 	}
-	return newRadValue(i, node, list)
+	return newRadValue(i, parent, list)
 }
 
-func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
-	exprNode := rl.GetChild(interpNode, rl.F_EXPR)
-	formatNode := rl.GetChild(interpNode, rl.F_FORMAT)
-
-	exprResult := i.eval(exprNode).Val
-	resultType := exprResult.Type()
-
-	if formatNode == nil {
-		switch resultType {
-		case rl.RadStrT:
-			// to maintain attributes
-			return exprResult
-		case rl.RadErrorT:
-			return newRadValue(i, exprNode, exprResult.RequireError(i, interpNode).Msg())
-		default:
-			return newRadValue(i, exprNode, NewRadString(ToPrintable(exprResult)))
-		}
+// evalString evaluates an AST string node. Simple strings return their
+// pre-resolved value; interpolated strings concatenate segments.
+func (i *Interpreter) evalString(n *rl.LitString) RadString {
+	if n.Simple {
+		return NewRadString(n.Value)
 	}
 
-	thousandsSeparatorNode := rl.GetChild(formatNode, rl.F_THOUSANDS_SEPARATOR)
-	alignmentNode := rl.GetChild(formatNode, rl.F_ALIGNMENT)
-	paddingNode := rl.GetChild(formatNode, rl.F_PADDING)
-	precisionNode := rl.GetChild(formatNode, rl.F_PRECISION)
+	str := NewRadString("")
+	for _, seg := range n.Segments {
+		if seg.IsLiteral {
+			str = str.ConcatStr(seg.Text)
+		} else {
+			exprResult := i.eval(seg.Expr).Val
+			if seg.Format != nil {
+				str = str.Concat(i.formatInterpolation(seg, exprResult))
+			} else {
+				switch exprResult.Type() {
+				case rl.RadStrT:
+					str = str.Concat(exprResult.RequireStr(i, seg.Expr))
+				case rl.RadErrorT:
+					str = str.Concat(exprResult.RequireError(i, seg.Expr).Msg())
+				default:
+					str = str.ConcatStr(ToPrintable(exprResult))
+				}
+			}
+		}
+	}
+	return str
+}
+
+// formatInterpolation applies format specifiers to an interpolation expression result.
+func (i *Interpreter) formatInterpolation(seg rl.StringSegment, exprResult RadValue) RadString {
+	f := seg.Format
+	resultType := exprResult.Type()
+	// Use the interpolation segment's span for error reporting
+	strNode := rl.NewIdentifier(seg.Span_, "")
 
 	var goFmt strings.Builder
 	goFmt.WriteString("%")
 
-	if alignmentNode != nil {
-		alignment := i.GetSrcForNode(alignmentNode)
-		if alignment == "<" {
-			goFmt.WriteString("-")
-		}
+	if f.Alignment == "<" {
+		goFmt.WriteString("-")
 	}
 
-	if paddingNode != nil {
-		padding := i.eval(paddingNode).Val.RequireInt(i, paddingNode)
+	if f.Padding != nil {
+		padding := i.eval(f.Padding).Val.RequireInt(i, f.Padding)
 		if exprStr, ok := exprResult.TryGetStr(); ok {
-			// is string, need to account for color chars (increase padding len if present)
 			plainLen := exprStr.Len()
 			coloredLen := int64(com.StrLen(exprStr.String()))
 			diff := coloredLen - plainLen
 			padding += diff
 		}
-
 		goFmt.WriteString(fmt.Sprint(padding))
 	}
 
-	if precisionNode != nil {
-		precision := i.eval(precisionNode).Val.RequireInt(i, precisionNode)
-
+	if f.Precision != nil {
+		precision := i.eval(f.Precision).Val.RequireInt(i, f.Precision)
 		if resultType != rl.RadIntT && resultType != rl.RadFloatT {
-			precisionStr := "." + i.GetSrcForNode(precisionNode)
-			i.emitErrorf(rl.ErrCannotFormat, interpNode, "Cannot format %s with a precision %q", TypeAsString(exprResult), precisionStr)
+			i.emitErrorf(rl.ErrCannotFormat, strNode, "Cannot format %s with a precision", TypeAsString(exprResult))
 		}
-
 		goFmt.WriteString(fmt.Sprintf(".%d", precision))
 	}
 
 	formatted := func() string {
-		// If thousands separator is requested, render with fmt first, then group digits.
-		if thousandsSeparatorNode != nil {
+		if f.ThousandsSeparator {
 			if resultType != rl.RadIntT && resultType != rl.RadFloatT {
-				i.emitErrorf(rl.ErrCannotFormat, interpNode, "Cannot format %s with thousands separator ','", TypeAsString(exprResult))
+				i.emitErrorf(rl.ErrCannotFormat, strNode, "Cannot format %s with thousands separator ','", TypeAsString(exprResult))
 			}
 
-			// 1) Render once with the right precision (if any)
 			var s string
-			if precisionNode != nil {
-				p := int(i.eval(precisionNode).Val.RequireInt(i, precisionNode))
+			if f.Precision != nil {
+				p := int(i.eval(f.Precision).Val.RequireInt(i, f.Precision))
 				if p < 0 {
-					i.emitErrorf(rl.ErrNumInvalidRange, interpNode, "Precision cannot be negative: %d", p)
+					i.emitErrorf(rl.ErrNumInvalidRange, strNode, "Precision cannot be negative: %d", p)
 				}
 				if resultType == rl.RadIntT {
 					s = fmt.Sprintf("%.*f", p, float64(exprResult.Val.(int64)))
@@ -859,29 +693,21 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 				}
 			}
 
-			// 2) Add commas to the integer part only
 			s = addThousands(s)
 
-			// 3) Optional padding/alignment
-			if paddingNode != nil {
-				pad := int(i.eval(paddingNode).Val.RequireInt(i, paddingNode))
-				align := ""
-				if alignmentNode != nil {
-					align = i.GetSrcForNode(alignmentNode)
-				}
-				if align == "<" {
+			if f.Padding != nil {
+				pad := int(i.eval(f.Padding).Val.RequireInt(i, f.Padding))
+				if f.Alignment == "<" {
 					return fmt.Sprintf("%-*s", pad, s)
 				}
 				return fmt.Sprintf("%*s", pad, s)
 			}
-
 			return s
 		}
 
-		// Use existing formatting for non-comma cases
 		switch resultType {
 		case rl.RadIntT:
-			if precisionNode == nil {
+			if f.Precision == nil {
 				goFmt.WriteString("d")
 				return fmt.Sprintf(goFmt.String(), int(exprResult.Val.(int64)))
 			} else {
@@ -897,7 +723,7 @@ func evaluateInterpolation(i *Interpreter, interpNode *ts.Node) RadValue {
 		}
 	}()
 
-	return newRadValue(i, interpNode, formatted)
+	return NewRadString(formatted)
 }
 
 func addThousands(num string) string {
@@ -933,12 +759,12 @@ func addThousands(num string) string {
 	return sign + b.String() + frac
 }
 
-func (i *Interpreter) getOnlyChild(node *ts.Node) *ts.Node {
-	count := node.ChildCount()
-	if count != 1 {
-		i.emitErrorf(rl.ErrInternalBug, node, "Bug: Expected exactly one child, got %d", count)
+// evalAssign handles normal assignment (no catch) for an Assign node.
+func (i *Interpreter) evalAssign(n *rl.Assign) EvalResult {
+	if n.IsUnpacking {
+		return i.assignRightsToLefts(n.Targets, n.Values, true, n.UpdateEnclosing)
 	}
-	return node.Child(0)
+	return i.assignRightsToLefts(n.Targets, n.Values, false, n.UpdateEnclosing)
 }
 
 // emitDiagnostic renders a diagnostic and exits with error code 1.
@@ -955,13 +781,22 @@ func (i *Interpreter) emitDiagnostic(d Diagnostic) {
 
 // emitError creates and emits an error diagnostic with a single span.
 // If node is nil, the diagnostic will have no source location.
-func (i *Interpreter) emitError(code rl.Error, node *ts.Node, message string) {
-	var diag Diagnostic
+func (i *Interpreter) emitError(code rl.Error, node rl.Node, message string) {
 	if node != nil {
-		span := NewSpanFromNode(node, i.sd.ScriptName)
-		diag = NewDiagnostic(SeverityError, code, message, i.GetSrc(), span)
+		span := node.Span()
+		i.emitErrorSpan(code, &span, message)
 	} else {
-		// No node available - create diagnostic without labels
+		i.emitErrorSpan(code, nil, message)
+	}
+}
+
+// emitErrorSpan creates and emits an error diagnostic from a span pointer.
+// Used when we have a span but no node (e.g. from RadError).
+func (i *Interpreter) emitErrorSpan(code rl.Error, span *rl.Span, message string) {
+	var diag Diagnostic
+	if span != nil {
+		diag = NewDiagnostic(SeverityError, code, message, i.GetSrc(), *span)
+	} else {
 		diag = Diagnostic{
 			Severity: SeverityError,
 			Code:     code,
@@ -973,16 +808,16 @@ func (i *Interpreter) emitError(code rl.Error, node *ts.Node, message string) {
 }
 
 // emitErrorf creates and emits an error diagnostic with formatted message.
-func (i *Interpreter) emitErrorf(code rl.Error, node *ts.Node, format string, args ...interface{}) {
+func (i *Interpreter) emitErrorf(code rl.Error, node rl.Node, format string, args ...interface{}) {
 	i.emitError(code, node, fmt.Sprintf(format, args...))
 }
 
 // emitErrorWithHint creates and emits an error diagnostic with a hint.
 // If node is nil, the diagnostic will have no source location.
-func (i *Interpreter) emitErrorWithHint(code rl.Error, node *ts.Node, message string, hint string) {
+func (i *Interpreter) emitErrorWithHint(code rl.Error, node rl.Node, message string, hint string) {
 	var diag Diagnostic
 	if node != nil {
-		span := NewSpanFromNode(node, i.sd.ScriptName)
+		span := node.Span()
 		diag = NewDiagnostic(SeverityError, code, message, i.GetSrc(), span).WithHint(hint)
 	} else {
 		diag = Diagnostic{
@@ -998,10 +833,10 @@ func (i *Interpreter) emitErrorWithHint(code rl.Error, node *ts.Node, message st
 
 // emitErrorWithSecondary creates an error diagnostic with a secondary span (e.g., "assigned here").
 // If primaryNode is nil, the diagnostic will only have the secondary span (if provided).
-func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node, message string, secondarySpan *rl.Span, secondaryMsg string) {
+func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode rl.Node, message string, secondarySpan *rl.Span, secondaryMsg string) {
 	var labels []Label
 	if primaryNode != nil {
-		primarySpan := NewSpanFromNode(primaryNode, i.sd.ScriptName)
+		primarySpan := primaryNode.Span()
 		labels = append(labels, NewPrimaryLabel(primarySpan, ""))
 	}
 	if secondarySpan != nil {
@@ -1039,7 +874,7 @@ func (i *Interpreter) CallStack() []CallFrame {
 
 // emitUndefinedVariableError emits an error for an undefined variable with
 // "did you mean?" suggestions for similar variable names.
-func (i *Interpreter) emitUndefinedVariableError(node *ts.Node, name string) {
+func (i *Interpreter) emitUndefinedVariableError(node rl.Node, name string) {
 	similar := i.env.FindSimilarVars(name, 3)
 
 	if len(similar) > 0 {
@@ -1055,116 +890,175 @@ func (i *Interpreter) emitUndefinedVariableError(node *ts.Node, name string) {
 	}
 }
 
-func (i *Interpreter) doVarPathAssign(varPathNode *ts.Node, rightValue RadValue, updateEnclosing bool) {
-	rootIdentifier := rl.GetChild(varPathNode, rl.F_ROOT) // identifier required by grammar
-	rootIdentifierName := i.GetSrcForNode(rootIdentifier)
-	indexings := rl.GetChildren(varPathNode, rl.F_INDEXING)
-	val, ok := i.env.GetVar(rootIdentifierName)
+func (i *Interpreter) doVarPathAssign(target rl.Node, rightValue RadValue, updateEnclosing bool) {
+	switch n := target.(type) {
+	case *rl.Identifier:
+		i.env.SetVarUpdatingEnclosing(n.Name, rightValue, updateEnclosing)
+	case *rl.VarPath:
+		rootId, ok := n.Root.(*rl.Identifier)
+		if !ok {
+			i.emitError(rl.ErrInternalBug, target, "Bug: expected identifier as VarPath root in assignment")
+			return
+		}
 
-	if len(indexings) == 0 {
-		// simple assignment, no collection lookups
-		i.env.SetVarUpdatingEnclosing(rootIdentifierName, rightValue, updateEnclosing)
-		return
+		if len(n.Segments) == 0 {
+			i.env.SetVarUpdatingEnclosing(rootId.Name, rightValue, updateEnclosing)
+			return
+		}
+
+		val, exists := i.env.GetVar(rootId.Name)
+		if !exists {
+			i.emitUndefinedVariableError(rootId, rootId.Name)
+		}
+		// Navigate to the penultimate segment
+		for _, seg := range n.Segments[:len(n.Segments)-1] {
+			val = i.evaluatePathSegment(n.Root, seg, val)
+		}
+		// Apply the last segment as a modification
+		lastSeg := n.Segments[len(n.Segments)-1]
+		i.modifyByPathSegment(val, lastSeg, rightValue)
+	default:
+		i.emitErrorf(rl.ErrInternalBug, target, "Bug: unexpected assignment target type: %T", target)
 	}
+}
 
-	// modifying collection
+// modifyByPathSegment modifies a collection value using a path segment.
+func (i *Interpreter) modifyByPathSegment(val RadValue, seg rl.PathSegment, rightValue RadValue) {
+	if seg.Field != nil {
+		key := newRadValueStr(*seg.Field)
+		val.ModifyByKey(i, rl.NewIdentifier(seg.Span(), *seg.Field), key, rightValue)
+	} else if seg.IsSlice {
+		i.modifyBySlice(val, seg, rightValue)
+	} else if seg.Index != nil {
+		key := i.eval(seg.Index).Val
+		val.ModifyByKey(i, seg.Index, key, rightValue)
+	} else {
+		i.emitError(rl.ErrInternalBug, nil, "Bug: path segment has no field, index, or slice")
+	}
+}
+
+// modifyBySlice replaces a slice range in a list with the given value.
+func (i *Interpreter) modifyBySlice(val RadValue, seg rl.PathSegment, rightValue RadValue) {
+	list, ok := val.Val.(*RadList)
 	if !ok {
-		// modifying collection must exist
-		i.emitUndefinedVariableError(rootIdentifier, rootIdentifierName)
-	}
-	for _, index := range indexings[:len(indexings)-1] {
-		val = val.Index(i, &index)
-	}
-	// val is now the collection to modify, using the last index
-	lastIndex := indexings[len(indexings)-1]
-	val.ModifyIdx(i, &lastIndex, rightValue)
-}
-
-// setLoopContext creates and sets the loop context variable if the user specified 'with <name>'.
-// The context is a map containing 'idx' (current iteration index) and 'src' (original collection).
-func (i *Interpreter) setLoopContext(contextNode *ts.Node, idx int64, srcValue RadValue) {
-	if contextNode == nil {
+		contextNode := seg.Start
+		if contextNode == nil {
+			contextNode = seg.End
+		}
+		i.emitErrorf(rl.ErrTypeMismatch, contextNode, "Cannot slice-assign to a %s", TypeAsString(val))
 		return
 	}
-	ctxName := i.GetSrcForNode(contextNode)
-	ctx := NewRadMap()
-	ctx.Set(newRadValue(i, contextNode, "idx"), newRadValue(i, contextNode, idx))
-	ctx.Set(newRadValue(i, contextNode, "src"), srcValue)
-	i.env.SetVar(ctxName, newRadValue(i, contextNode, ctx))
+
+	start, end := i.resolveSliceBounds(nil, seg, list.Len())
+	if start < end {
+		newList := NewRadList()
+		newList.Values = append(newList.Values, list.Values[:start]...)
+		if replacement, ok := rightValue.TryGetList(); ok {
+			newList.Values = append(newList.Values, replacement.Values...)
+		} else if rightValue == VOID_SENTINEL {
+			// delete mode (from del statement)
+		} else {
+			i.emitError(rl.ErrTypeMismatch, seg.Start, "Cannot assign list slice to a non-list type")
+		}
+		newList.Values = append(newList.Values, list.Values[end:]...)
+		list.Values = newList.Values
+	}
 }
 
-func (i *Interpreter) executeForLoop(node *ts.Node, doOneLoop func() EvalResult) EvalResult {
-	leftsNode := rl.GetChild(node, rl.F_LEFTS)
-	rightNode := rl.GetChild(node, rl.F_RIGHT)
-	contextNode := rl.GetChild(node, rl.F_CONTEXT)
+// setLoopContext creates and sets the loop context variable if the for-loop has a context name.
+func (i *Interpreter) setLoopContext(contextName *string, loopNode rl.Node, idx int64, srcValue RadValue) {
+	if contextName == nil {
+		return
+	}
+	ctx := NewRadMap()
+	ctx.Set(newRadValue(i, loopNode, "idx"), newRadValue(i, loopNode, idx))
+	ctx.Set(newRadValue(i, loopNode, "src"), srcValue)
+	i.env.SetVar(*contextName, newRadValue(i, loopNode, ctx))
+}
 
-	res := i.eval(rightNode)
+// executeForLoop dispatches a for-loop to the appropriate list or map iterator.
+// Works for both ForLoop and ListComp AST nodes.
+func (i *Interpreter) executeForLoop(node rl.Node, doOneLoop func() EvalResult) EvalResult {
+	var vars []string
+	var iterNode rl.Node
+	var context *string
+
+	switch n := node.(type) {
+	case *rl.ForLoop:
+		vars = n.Vars
+		iterNode = n.Iter
+		context = n.Context
+	case *rl.ListComp:
+		vars = n.Vars
+		iterNode = n.Iter
+		context = n.Context
+	default:
+		i.emitErrorf(rl.ErrInternalBug, node, "Bug: executeForLoop called with %T", node)
+		panic(UNREACHABLE)
+	}
+
+	res := i.eval(iterNode)
 	switch coercedRight := res.Val.Val.(type) {
 	case RadString:
-		return runForLoopList(i, leftsNode, rightNode, contextNode, coercedRight.ToRuneList(), res.Val, doOneLoop)
+		return runForLoopList(i, node, vars, iterNode, context, coercedRight.ToRuneList(), res.Val, doOneLoop)
 	case *RadList:
-		return runForLoopList(i, leftsNode, rightNode, contextNode, coercedRight, res.Val, doOneLoop)
+		return runForLoopList(i, node, vars, iterNode, context, coercedRight, res.Val, doOneLoop)
 	case *RadMap:
-		return runForLoopMap(i, leftsNode, contextNode, coercedRight, res.Val, doOneLoop)
+		return runForLoopMap(i, node, vars, context, coercedRight, res.Val, doOneLoop)
 	default:
-		i.emitErrorf(rl.ErrNotIterable, rightNode, "Cannot iterate through a %s", TypeAsString(res.Val))
+		i.emitErrorf(rl.ErrNotIterable, iterNode, "Cannot iterate through a %s", TypeAsString(res.Val))
 		panic(UNREACHABLE)
 	}
 }
 
 func runForLoopList(
 	i *Interpreter,
-	leftsNode, rightNode, contextNode *ts.Node,
+	loopNode rl.Node,
+	vars []string,
+	iterNode rl.Node,
+	context *string,
 	list *RadList,
 	srcValue RadValue,
 	doOneLoop func() EvalResult,
 ) EvalResult {
-	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
-
-	if len(leftNodes) == 0 {
-		i.emitError(rl.ErrInvalidSyntax, leftsNode, "Expected at least one variable on the left side of for loop")
+	if len(vars) == 0 {
+		i.emitError(rl.ErrInvalidSyntax, loopNode, "Expected at least one variable on the left side of for loop")
 	}
 
 	// Copy source for context.src to ensure it's an immutable snapshot
 	var srcCopy RadValue
-	if contextNode != nil {
+	if context != nil {
 		if srcList, ok := srcValue.TryGetList(); ok {
-			srcCopy = newRadValue(i, contextNode, srcList.ShallowCopy())
+			srcCopy = newRadValue(i, loopNode, srcList.ShallowCopy())
 		} else {
-			srcCopy = srcValue // Fallback (shouldn't happen for list iteration)
+			srcCopy = srcValue
 		}
 	}
 
 Loop:
 	for idx, val := range list.Values {
-		i.setLoopContext(contextNode, int64(idx), srcCopy)
+		i.setLoopContext(context, loopNode, int64(idx), srcCopy)
 
-		if len(leftNodes) == 1 {
-			itemNode := &leftNodes[0]
-			itemName := i.GetSrcForNode(itemNode)
-			i.env.SetVar(itemName, val)
+		if len(vars) == 1 {
+			i.env.SetVar(vars[0], val)
 		} else {
-			// Multiple variables = unpacking (expecting list of lists)
 			listInList, ok := val.TryGetList()
 			if !ok {
-				// Migration hint for old syntax
-				firstName := i.GetSrcForNode(&leftNodes[0])
-				if firstName == "idx" || firstName == "index" || firstName == "i" || firstName == "_" {
-					i.emitErrorWithHint(rl.ErrUnpackMismatch, rightNode,
-						fmt.Sprintf("Cannot unpack %q into %d values", TypeAsString(val), len(leftNodes)),
+				if vars[0] == "idx" || vars[0] == "index" || vars[0] == "i" || vars[0] == "_" {
+					i.emitErrorWithHint(rl.ErrUnpackMismatch, iterNode,
+						fmt.Sprintf("Cannot unpack %q into %d values", TypeAsString(val), len(vars)),
 						"The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/")
 				}
-				i.emitErrorf(rl.ErrUnpackMismatch, rightNode, "Cannot unpack %q into %d values", TypeAsString(val), len(leftNodes))
+				i.emitErrorf(rl.ErrUnpackMismatch, iterNode, "Cannot unpack %q into %d values", TypeAsString(val), len(vars))
 			}
 
-			if listInList.LenInt() < len(leftNodes) {
-				i.emitErrorf(rl.ErrUnpackMismatch, rightNode, "Expected at least %s in inner list, got %d",
-					com.Pluralize(len(leftNodes), "value"), listInList.LenInt())
+			if listInList.LenInt() < len(vars) {
+				i.emitErrorf(rl.ErrUnpackMismatch, iterNode, "Expected at least %s in inner list, got %d",
+					com.Pluralize(len(vars), "value"), listInList.LenInt())
 			}
 
-			for j, itemNode := range leftNodes {
-				itemName := i.GetSrcForNode(&itemNode)
-				i.env.SetVar(itemName, listInList.Values[j])
+			for j, varName := range vars {
+				i.env.SetVar(varName, listInList.Values[j])
 			}
 		}
 
@@ -1181,44 +1075,32 @@ Loop:
 
 func runForLoopMap(
 	i *Interpreter,
-	leftsNode, contextNode *ts.Node,
+	loopNode rl.Node,
+	vars []string,
+	context *string,
 	radMap *RadMap,
 	srcValue RadValue,
 	doOneLoop func() EvalResult,
 ) EvalResult {
-	var keyNode *ts.Node
-	var valueNode *ts.Node
-
-	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
-	numLefts := len(leftNodes)
-
-	if numLefts == 0 || numLefts > 2 {
-		i.emitError(rl.ErrInvalidSyntax, leftsNode, "Expected 1 or 2 variables on left side of for loop")
+	numVars := len(vars)
+	if numVars == 0 || numVars > 2 {
+		i.emitError(rl.ErrInvalidSyntax, loopNode, "Expected 1 or 2 variables on left side of for loop")
 	}
 
-	keyNode = &leftNodes[0]
-	if numLefts == 2 {
-		valueNode = &leftNodes[1]
-	}
-
-	// Copy source for context.src to ensure it's an immutable snapshot
 	var srcCopy RadValue
-	if contextNode != nil {
-		srcCopy = newRadValue(i, contextNode, radMap.ShallowCopy())
+	if context != nil {
+		srcCopy = newRadValue(i, loopNode, radMap.ShallowCopy())
 	}
 
 	idx := int64(0)
 Loop:
 	for _, key := range radMap.Keys() {
-		i.setLoopContext(contextNode, idx, srcCopy)
+		i.setLoopContext(context, loopNode, idx, srcCopy)
 
-		keyName := i.GetSrcForNode(keyNode)
-		i.env.SetVar(keyName, key)
-
-		if valueNode != nil {
-			valueName := i.GetSrcForNode(valueNode)
+		i.env.SetVar(vars[0], key)
+		if numVars == 2 {
 			value, _ := radMap.Get(key)
-			i.env.SetVar(valueName, value)
+			i.env.SetVar(vars[1], value)
 		}
 
 		res := doOneLoop()
@@ -1233,11 +1115,10 @@ Loop:
 	return VoidNormal
 }
 
-// if stmts, for loops
-func (i *Interpreter) runBlock(stmtNodes []ts.Node) EvalResult {
+func (i *Interpreter) runBlock(stmtNodes []rl.Node) EvalResult {
 	var res EvalResult
 	for _, stmtNode := range stmtNodes {
-		res = i.eval(&stmtNode)
+		res = i.eval(stmtNode)
 		if res.Ctrl != CtrlNormal {
 			break
 		}
@@ -1253,107 +1134,156 @@ func (i *Interpreter) runWithChildEnv(runnable func()) {
 	i.env = originalEnv
 }
 
-func (i *Interpreter) evaluateIndexing(rootNode *ts.Node, index ts.Node, val RadValue) RadValue {
-	if index.Kind() == rl.K_CALL {
-		// ufcs
+// evaluatePathSegment evaluates a single path segment (field, index, or slice) on a value.
+func (i *Interpreter) evaluatePathSegment(rootNode rl.Node, seg rl.PathSegment, val RadValue) RadValue {
+	if seg.Field != nil {
+		// Dot access: a.b
+		fieldNode := rl.NewIdentifier(seg.Span(), *seg.Field)
+		key := newRadValueStr(*seg.Field)
+		if m, ok := val.TryGetMap(); ok {
+			// Use unquoted field name in "Key not found" errors
+			result, exists := m.Get(key)
+			if !exists {
+				errVal := newRadValue(i, fieldNode, NewErrorStrf("Key not found: %s", *seg.Field).SetCode(rl.ErrKeyNotFound))
+				i.NewRadPanic(fieldNode, errVal).Panic()
+			}
+			return result
+		}
+		return val.Index(i, fieldNode, key)
+	}
+
+	if seg.IsSlice {
+		// Slice access: a[start:end]
+		return i.evalSlice(rootNode, seg, val)
+	}
+
+	// Bracket access: a[expr]
+	// Check if it's a UFCS call (e.g. mylist.sort(), not mylist[clamp(1, 0, 4)])
+	if seg.IsUFCS {
+		call := seg.Index.(*rl.Call)
 		ufcsArg := &PosArg{
-			// todo 'rootNode' is not great to use, it misses indexes in between that and this call,
-			//  resulting in bad error pointing. could potentially replace ts.Node with interface
-			//  'Pointable' i.e. a range we can point to in an error, that's ultimately all we need (?)
 			node:  rootNode,
 			value: val,
 		}
-		return i.callFunction(&index, ufcsArg)
-	} else {
-		return val.Index(i, &index)
+		return i.callFunction(call, ufcsArg)
 	}
+
+	key := i.eval(seg.Index).Val
+	return val.Index(i, seg.Index, key)
 }
 
-func (i *Interpreter) assignRightsToLefts(leftNodes []ts.Node, rightNodes []ts.Node, destructure bool) EvalResult {
+func (i *Interpreter) assignRightsToLefts(targets []rl.Node, values []rl.Node, destructure bool, updateEnclosing bool) EvalResult {
 	if destructure {
-		if len(rightNodes) == 1 {
-			rightNode := rightNodes[0]
-			if rightNode.Kind() == rl.K_JSON_PATH {
-				jsonFieldVar := NewJsonFieldVar(i, &leftNodes[0], &rightNode)
-				i.env.SetJsonFieldVar(jsonFieldVar)
+		if len(values) == 1 {
+			if jp, ok := values[0].(*rl.JsonPath); ok {
+				i.registerJsonFieldVar(targets[0], jp)
 			} else {
-				val := i.eval(&rightNode).Val
+				val := i.eval(values[0]).Val
 				list, ok := val.TryGetList()
 				if ok {
-					for idx, leftNode := range leftNodes {
+					for idx, target := range targets {
 						if len(list.Values) > idx {
-							val := list.Values[idx]
-							i.doVarPathAssign(&leftNode, val, false)
+							i.doVarPathAssign(target, list.Values[idx], updateEnclosing)
 						} else {
-							i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+							i.doVarPathAssign(target, RAD_NULL_VAL, updateEnclosing)
 						}
 					}
 					return VoidNormal
 				} else {
-					i.doVarPathAssign(&leftNodes[0], val, false)
+					i.doVarPathAssign(targets[0], val, updateEnclosing)
 				}
 			}
 
-			for _, leftNode := range leftNodes[1:] {
-				i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+			for _, target := range targets[1:] {
+				i.doVarPathAssign(target, RAD_NULL_VAL, updateEnclosing)
 			}
 			return VoidNormal
 		}
 
-		for idx, leftNode := range leftNodes {
-			if len(rightNodes) > idx {
-				rightNode := rightNodes[idx]
-				if rightNode.Kind() == rl.K_JSON_PATH {
-					jsonFieldVar := NewJsonFieldVar(i, &leftNode, &rightNode)
-					i.env.SetJsonFieldVar(jsonFieldVar)
+		for idx, target := range targets {
+			if len(values) > idx {
+				if jp, ok := values[idx].(*rl.JsonPath); ok {
+					i.registerJsonFieldVar(target, jp)
 				} else {
-					val := i.eval(&rightNode).Val
-					i.doVarPathAssign(&leftNode, val, false)
+					val := i.eval(values[idx]).Val
+					i.doVarPathAssign(target, val, updateEnclosing)
 				}
 			} else {
-				i.doVarPathAssign(&leftNode, RAD_NULL_VAL, false)
+				i.doVarPathAssign(target, RAD_NULL_VAL, updateEnclosing)
 			}
 		}
 		return VoidNormal
 	}
 
-	// not destructuring, means exactly 1 left node
+	// not destructuring, means exactly 1 target
 
-	if len(rightNodes) == 1 {
-		rightNode := rightNodes[0]
-		if rightNode.Kind() == rl.K_JSON_PATH {
-			jsonFieldVar := NewJsonFieldVar(i, &leftNodes[0], &rightNode)
-			i.env.SetJsonFieldVar(jsonFieldVar)
-		} else {
-			res := i.eval(&rightNodes[0])
-			if res.Ctrl != CtrlNormal {
-				return res
-			}
-			if res.Val == VOID_SENTINEL {
-				i.emitError(rl.ErrVoidValue, &rightNode, "Cannot assign to a void value")
-			}
-			i.doVarPathAssign(&leftNodes[0], res.Val, false)
+	if len(values) == 1 {
+		if jp, ok := values[0].(*rl.JsonPath); ok {
+			i.registerJsonFieldVar(targets[0], jp)
+			return VoidNormal
 		}
+
+		res := i.eval(values[0])
+		if res.Ctrl != CtrlNormal {
+			return res
+		}
+		if res.Val == VOID_SENTINEL {
+			i.emitError(rl.ErrVoidValue, values[0], "Cannot assign to a void value")
+		}
+		i.doVarPathAssign(targets[0], res.Val, updateEnclosing)
 		return VoidNormal
 	}
 
-	// not destructuring (so 1 left) & not 1 right node;
-	// means at least 2 right nodes -> pack into list and assign to 1 left
+	// not destructuring (so 1 target) & not 1 value;
+	// means at least 2 values -> pack into list and assign to 1 target
 
 	list := NewRadList()
-	for _, rightNode := range rightNodes {
-		val := i.eval(&rightNode).Val
+	for _, value := range values {
+		val := i.eval(value).Val
 		list.Append(val)
 	}
-	i.doVarPathAssign(&leftNodes[0], newRadValueList(list), false)
+	i.doVarPathAssign(targets[0], newRadValueList(list), updateEnclosing)
 	return VoidNormal
 }
 
-func (i *Interpreter) defineCustomNamedFunction(fnNamedNode ts.Node) {
-	nameNode := rl.GetChild(&fnNamedNode, rl.F_NAME)
-	name := i.GetSrcForNode(nameNode)
-	lambda := NewFn(i, &fnNamedNode)
-	i.env.SetVar(name, newRadValueFn(lambda))
+// registerJsonFieldVar creates and registers a JsonFieldVar from a json path expression.
+// The target node provides the variable name; the json path provides the data extraction path.
+func (i *Interpreter) registerJsonFieldVar(target rl.Node, jp *rl.JsonPath) {
+	// Json field vars must be assigned to plain identifiers, not indexed paths.
+	ident, isIdent := target.(*rl.Identifier)
+	if !isIdent {
+		i.emitError(rl.ErrInvalidSyntax, target, "Json paths must be defined to plain identifiers")
+	}
+	name := ident.Name
+
+	segments := make([]JsonPathSegment, 0, len(jp.Segments))
+	for _, seg := range jp.Segments {
+		var idxSegments []JsonPathSegmentIdx
+		for _, idx := range seg.Indexes {
+			if idx.Expr == nil {
+				// wildcard []
+				idxSegments = append(idxSegments, JsonPathSegmentIdx{Span: idx.Span})
+			} else {
+				val := i.eval(idx.Expr).Val
+				val.RequireType(i, idx.Expr, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(val)), rl.RadIntT)
+				idxSegments = append(idxSegments, JsonPathSegmentIdx{Span: idx.Span, Idx: &val})
+			}
+		}
+		segments = append(segments, JsonPathSegment{
+			Identifier:  seg.Key,
+			SegmentSpan: seg.KeySpan,
+			IdxSegments: idxSegments,
+		})
+	}
+
+	span := jp.Span()
+	fieldVar := NewJsonFieldVar(i, name, span, segments)
+	i.env.SetJsonFieldVar(fieldVar)
+}
+
+func (i *Interpreter) defineCustomNamedFunction(fnDef *rl.FnDef) {
+	fn := NewFnFromAST(i, fnDef.Typing, fnDef.Body, fnDef.IsBlock, &fnDef.DefSpan)
+	i.env.SetVar(fnDef.Name, newRadValueFn(fn))
 }
 
 func (i *Interpreter) GetSrc() string {
@@ -1372,6 +1302,50 @@ func (i *Interpreter) GetSrcForNode(node *ts.Node) string {
 	return i.GetSrc()[node.StartByte():node.EndByte()]
 }
 
+func (i *Interpreter) GetSrcForSpan(span rl.Span) string {
+	return i.GetSrc()[span.StartByte:span.EndByte]
+}
+
+// evalSlice evaluates a slice operation (a[start:end]) on a value.
+func (i *Interpreter) evalSlice(contextNode rl.Node, seg rl.PathSegment, val RadValue) RadValue {
+	switch coerced := val.Val.(type) {
+	case RadString:
+		length := coerced.Len()
+		start, end := i.resolveSliceBounds(contextNode, seg, length)
+		return newRadValues(i, contextNode, NewRadString(string(coerced.Runes()[start:end])))
+	case *RadList:
+		length := coerced.Len()
+		start, end := i.resolveSliceBounds(contextNode, seg, length)
+		sliced := NewRadList()
+		sliced.Values = coerced.Values[start:end]
+		return newRadValues(i, contextNode, sliced)
+	default:
+		i.emitErrorf(rl.ErrTypeMismatch, contextNode, "Cannot slice a %s", TypeAsString(val))
+		panic(UNREACHABLE)
+	}
+}
+
+func (i *Interpreter) resolveSliceBounds(contextNode rl.Node, seg rl.PathSegment, length int64) (int64, int64) {
+	start := int64(0)
+	end := length
+
+	if seg.Start != nil {
+		start = i.eval(seg.Start).Val.RequireInt(i, seg.Start)
+		start = CalculateCorrectedIndex(start, length, true)
+	}
+
+	if seg.End != nil {
+		end = i.eval(seg.End).Val.RequireInt(i, seg.End)
+		end = CalculateCorrectedIndex(end, length, true)
+	}
+
+	if start > end {
+		start = end
+	}
+
+	return start, end
+}
+
 // todo this is somewhat hacky, not a fan. only use when you're extremely sure fn won't panic
 func (i *Interpreter) WithTmpSrc(tmpSrc string, fn func()) {
 	i.tmpSrc = &tmpSrc
@@ -1381,13 +1355,13 @@ func (i *Interpreter) WithTmpSrc(tmpSrc string, fn func()) {
 	fn()
 }
 
-func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
-	switch caseValueAltNode.Kind() {
-	case rl.K_SWITCH_CASE_EXPR:
-		return NormalVal(i.evalRights(caseValueAltNode))
-	case rl.K_SWITCH_CASE_BLOCK:
-		stmtNodes := rl.GetChildren(caseValueAltNode, rl.F_STMT)
-		res := i.runBlock(stmtNodes)
+// executeSwitchCaseAlt handles a switch case alternative (expr or block).
+func (i *Interpreter) executeSwitchCaseAlt(alt rl.Node) EvalResult {
+	switch n := alt.(type) {
+	case *rl.SwitchCaseExpr:
+		return NormalVal(i.evalValues(n, n.Values))
+	case *rl.SwitchCaseBlock:
+		res := i.runBlock(n.Stmts)
 		switch res.Ctrl {
 		case CtrlNormal, CtrlBreak, CtrlContinue, CtrlReturn:
 			return res
@@ -1395,26 +1369,16 @@ func (i *Interpreter) executeSwitchCase(caseValueAltNode *ts.Node) EvalResult {
 			return NormalVal(res.Val)
 		}
 	default:
-		i.emitErrorf(rl.ErrInternalBug, caseValueAltNode, "Bug: Unsupported switch case value node kind: %s", caseValueAltNode.Kind())
+		i.emitErrorf(rl.ErrInternalBug, alt, "Bug: Unsupported switch case alt type: %T", alt)
 	}
 	return VoidNormal
-}
-
-// getAssignLeftNodes returns the left-hand side nodes from an assignment,
-// trying F_LEFT first, then F_LEFTS.
-func (i *Interpreter) getAssignLeftNodes(node *ts.Node) []ts.Node {
-	leftNodes := rl.GetChildren(node, rl.F_LEFT)
-	if len(leftNodes) == 0 {
-		leftNodes = rl.GetChildren(node, rl.F_LEFTS)
-	}
-	return leftNodes
 }
 
 // handlePanicRecovery handles panic recovery with RadPanic-aware error reporting.
 // Should be called from a deferred function with the result of recover().
 // fallbackNode is used for error reporting when the panic is not a RadPanic.
 // msgArgs are optional context values to include in the error message before the panic value.
-func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, msgArgs ...interface{}) {
+func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode rl.Node, msgArgs ...interface{}) {
 	if r == nil {
 		return
 	}
@@ -1427,12 +1391,12 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, 
 		if !com.IsBlank(string(err.Code)) {
 			code = err.Code
 		}
-		// Use err.Node if available, otherwise fall back to fallbackNode
-		node := err.Node
-		if node == nil {
-			node = fallbackNode
+		// Use err.Span if available, otherwise fall back to fallbackNode's span
+		if err.Span != nil {
+			i.emitErrorSpan(code, err.Span, msg)
+		} else {
+			i.emitError(code, fallbackNode, msg)
 		}
-		i.emitError(code, node, msg)
 		return
 	}
 
@@ -1445,7 +1409,7 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode *ts.Node, 
 
 // emitInternalBug reports an internal Rad bug to the user.
 // This should only be called for unexpected panics that are NOT RadPanic.
-func (i *Interpreter) emitInternalBug(panicValue interface{}, fallbackNode *ts.Node, msgArgs ...interface{}) {
+func (i *Interpreter) emitInternalBug(panicValue interface{}, fallbackNode rl.Node, msgArgs ...interface{}) {
 	var msgBuilder strings.Builder
 	msgBuilder.WriteString("This is a bug in Rad. Please report it at:\n")
 	msgBuilder.WriteString("  https://github.com/amterp/rad/issues\n\n")
@@ -1465,26 +1429,24 @@ func (i *Interpreter) emitInternalBug(panicValue interface{}, fallbackNode *ts.N
 	i.emitError(rl.ErrInternalBug, fallbackNode, msgBuilder.String())
 }
 
-// withCatch wraps body execution with panic catching. If catchNode is nil, just executes body.
+// withCatch wraps body execution with panic catching. If catch is nil, just executes body.
 // On RadPanic, calls onErr callback to handle the error (assign variables, run catch block, etc.).
 // Propagates control flow (return/break/continue/yield) from the catch block.
 // Re-panics non-RadPanic errors to preserve Go's panic semantics (e.g., runtime errors, bugs).
 func (i *Interpreter) withCatch(
-	catchNode *ts.Node,
+	catch *rl.CatchBlock,
 	onErr func(rp *RadPanic) EvalResult,
 	body func() EvalResult,
 ) (out EvalResult) {
-	if catchNode == nil {
+	if catch == nil {
 		return body()
 	}
 
 	defer func() {
 		if r := recover(); r != nil {
 			if rp, ok := r.(*RadPanic); ok {
-				// Rad error occurred - run error handler
 				out = onErr(rp)
 			} else {
-				// Non-RadPanic errors (runtime panics, bugs) must propagate unchanged
 				panic(r)
 			}
 		}

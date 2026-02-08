@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 
+	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -51,21 +52,31 @@ func (v RadValue) IsNull() bool {
 	return v.Val == RAD_NULL
 }
 
-func (v RadValue) Index(i *Interpreter, idxNode *ts.Node) RadValue {
+func (v RadValue) Index(i *Interpreter, node rl.Node, key RadValue) RadValue {
 	switch coerced := v.Val.(type) {
 	case RadString:
-		return newRadValue(i, idxNode, coerced.Index(i, idxNode))
+		idx := key.RequireInt(i, node)
+		corrected := CalculateCorrectedIndex(idx, coerced.Len(), false)
+		if corrected < 0 || corrected >= coerced.Len() {
+			ErrIndexOutOfBounds(i, node, idx, coerced.Len())
+		}
+		return newRadValue(i, node, coerced.IndexAt(corrected))
 	case *RadList:
-		return newRadValue(i, idxNode, coerced.GetIdx(i, idxNode))
+		idx := key.RequireInt(i, node)
+		corrected := CalculateCorrectedIndex(idx, coerced.Len(), false)
+		if corrected < 0 || corrected >= coerced.Len() {
+			ErrIndexOutOfBounds(i, node, idx, coerced.Len())
+		}
+		return coerced.Values[corrected]
 	case *RadMap:
-		return newRadValue(i, idxNode, coerced.GetNode(i, idxNode))
+		return coerced.GetByKey(i, node, key)
 	default:
-		i.emitErrorf(rl.ErrCannotIndex, idxNode, "Indexing not supported for %s", TypeAsString(v))
+		i.emitErrorf(rl.ErrCannotIndex, node, "Indexing not supported for %s", TypeAsString(v))
 		panic(UNREACHABLE)
 	}
 }
 
-func (v RadValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
+func (v RadValue) RequireInt(i *Interpreter, node rl.Node) int64 {
 	switch coerced := v.Val.(type) {
 	case int64:
 		return coerced
@@ -75,7 +86,7 @@ func (v RadValue) RequireInt(i *Interpreter, node *ts.Node) int64 {
 	}
 }
 
-func (v RadValue) RequireIntAllowingBool(i *Interpreter, node *ts.Node) int64 {
+func (v RadValue) RequireIntAllowingBool(i *Interpreter, node rl.Node) int64 {
 	switch coerced := v.Val.(type) {
 	case int64:
 		return coerced
@@ -90,7 +101,7 @@ func (v RadValue) RequireIntAllowingBool(i *Interpreter, node *ts.Node) int64 {
 	}
 }
 
-func (v RadValue) RequireStr(i *Interpreter, node *ts.Node) RadString {
+func (v RadValue) RequireStr(i *Interpreter, node rl.Node) RadString {
 	if str, ok := v.TryGetStr(); ok {
 		return str
 	}
@@ -105,7 +116,7 @@ func (v RadValue) TryGetStr() (RadString, bool) {
 	return NewRadString(""), false
 }
 
-func (v RadValue) RequireList(i *Interpreter, node *ts.Node) *RadList {
+func (v RadValue) RequireList(i *Interpreter, node rl.Node) *RadList {
 	if list, ok := v.TryGetList(); ok {
 		return list
 	}
@@ -120,7 +131,7 @@ func (v RadValue) TryGetList() (*RadList, bool) {
 	return nil, false
 }
 
-func (v RadValue) RequireBool(i *Interpreter, node *ts.Node) bool {
+func (v RadValue) RequireBool(i *Interpreter, node rl.Node) bool {
 	if b, ok := v.TryGetBool(); ok {
 		return b
 	}
@@ -135,7 +146,7 @@ func (v RadValue) TryGetBool() (bool, bool) {
 	return false, false
 }
 
-func (v RadValue) RequireMap(i *Interpreter, node *ts.Node) *RadMap {
+func (v RadValue) RequireMap(i *Interpreter, node rl.Node) *RadMap {
 	if b, ok := v.TryGetMap(); ok {
 		return b
 	}
@@ -150,7 +161,7 @@ func (v RadValue) TryGetMap() (*RadMap, bool) {
 	return nil, false
 }
 
-func (v RadValue) RequireFn(i *Interpreter, node *ts.Node) RadFn {
+func (v RadValue) RequireFn(i *Interpreter, node rl.Node) RadFn {
 	if fn, ok := v.TryGetFn(); ok {
 		return fn
 	}
@@ -166,7 +177,7 @@ func (v RadValue) TryGetFn() (RadFn, bool) {
 	return zero, false
 }
 
-func (v RadValue) RequireError(i *Interpreter, node *ts.Node) *RadError {
+func (v RadValue) RequireError(i *Interpreter, node rl.Node) *RadError {
 	if err, ok := v.TryGetError(); ok {
 		return err
 	}
@@ -192,7 +203,7 @@ func (v RadValue) TryGetFloatAllowingInt() (float64, bool) {
 	}
 }
 
-func (v RadValue) RequireFloatAllowingInt(i *Interpreter, node *ts.Node) float64 {
+func (v RadValue) RequireFloatAllowingInt(i *Interpreter, node rl.Node) float64 {
 	if f, ok := v.TryGetFloatAllowingInt(); ok {
 		return f
 	}
@@ -205,22 +216,23 @@ func (v RadValue) IsError() bool {
 	return ok
 }
 
-func (v RadValue) ModifyIdx(i *Interpreter, idxNode *ts.Node, rightValue RadValue) {
+func (v RadValue) ModifyByKey(i *Interpreter, node rl.Node, key RadValue, rightValue RadValue) {
 	switch coerced := v.Val.(type) {
 	case *RadList:
-		coerced.ModifyIdx(i, idxNode, rightValue)
-	case *RadMap:
-		if idxNode.Kind() == rl.K_IDENTIFIER {
-			// dot syntax e.g. myMap.myKey
-			keyName := i.GetSrcForNode(idxNode)
-			coerced.Set(newRadValueStr(keyName), rightValue)
-		} else {
-			// 'traditional' syntax e.g. myMap["myKey"]
-			idxVal := evalMapKey(i, idxNode)
-			coerced.Set(idxVal, rightValue)
+		rawIdx := key.RequireInt(i, node)
+		idx := CalculateCorrectedIndex(rawIdx, coerced.Len(), false)
+		if idx < 0 || idx >= int64(len(coerced.Values)) {
+			ErrIndexOutOfBounds(i, node, rawIdx, coerced.Len())
 		}
+		if rightValue == VOID_SENTINEL {
+			coerced.Values = append(coerced.Values[:idx], coerced.Values[idx+1:]...)
+		} else {
+			coerced.Values[idx] = rightValue
+		}
+	case *RadMap:
+		coerced.Set(key, rightValue)
 	default:
-		i.emitErrorf(rl.ErrCannotAssign, idxNode, "Cannot modify indices for type '%s'", TypeAsString(v))
+		i.emitErrorf(rl.ErrCannotAssign, node, "Cannot modify indices for type '%s'", TypeAsString(v))
 		panic(UNREACHABLE)
 	}
 }
@@ -270,7 +282,7 @@ func (left RadValue) Equals(right RadValue) bool {
 	}
 }
 
-func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, allowedTypes ...rl.RadType) RadValue {
+func (v RadValue) RequireType(i *Interpreter, node rl.Node, errPrefix string, allowedTypes ...rl.RadType) RadValue {
 	for _, allowedType := range allowedTypes {
 		if v.Type() == allowedType {
 			return v
@@ -283,7 +295,7 @@ func (v RadValue) RequireType(i *Interpreter, node *ts.Node, errPrefix string, a
 
 func (v RadValue) RequireNotType(
 	i *Interpreter,
-	node *ts.Node,
+	node rl.Node,
 	errPrefix string,
 	disallowedTypes ...rl.RadType,
 ) RadValue {
@@ -453,7 +465,7 @@ func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
 	return
 }
 
-func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
+func newRadValue(i *Interpreter, node rl.Node, value interface{}) RadValue {
 	switch coerced := value.(type) {
 	case RadValue:
 		return coerced
@@ -505,7 +517,7 @@ func newRadValue(i *Interpreter, node *ts.Node, value interface{}) RadValue {
 	}
 }
 
-func newRadValues(i *Interpreter, node *ts.Node, value ...interface{}) RadValue {
+func newRadValues(i *Interpreter, node rl.Node, value ...interface{}) RadValue {
 	if len(value) == 0 {
 		return RAD_NULL_VAL
 	}
@@ -513,8 +525,8 @@ func newRadValues(i *Interpreter, node *ts.Node, value ...interface{}) RadValue 
 	if len(value) == 1 {
 		val := value[0]
 		err, ok := val.(*RadError)
-		if ok && err.Node == nil {
-			err.SetNode(node)
+		if ok && err.Span == nil {
+			err.SetSpan(nodeSpanPtr(node))
 		}
 		return newRadValue(i, node, val)
 	}
@@ -567,14 +579,14 @@ func newRadValueError(val *RadError) RadValue {
 }
 
 func typingEvaluator(i *Interpreter) *func(*ts.Node, string) interface{} {
-	evalF := func(node *ts.Node, src string) interface{} {
-		var res EvalResult
-		i.WithTmpSrc(src, func() {
-			res = i.eval(node)
-			if res.Val == VOID_SENTINEL {
-				i.emitError(rl.ErrVoidValue, node, "Bug: Expected a string, got void")
-			}
-		})
+	evalF := func(cstNode *ts.Node, src string) interface{} {
+		// Bridge: typing system stores CST nodes for defaults/constraints,
+		// but interpreter evaluates AST nodes. Convert on the fly.
+		astNode := rts.ConvertExpr(cstNode, src, i.sd.ScriptName)
+		res := i.eval(astNode)
+		if res.Val == VOID_SENTINEL {
+			panic("Bug: typingEvaluator expected a value, got void")
+		}
 		return res.Val.ToGoValue()
 	}
 	return &evalF

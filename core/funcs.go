@@ -27,7 +27,6 @@ import (
 
 	"github.com/amterp/rad/rts"
 	"github.com/samber/lo"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // Note: when adding functions, update the docs! docs-web/docs/reference/functions.md
@@ -205,7 +204,7 @@ var (
 
 type FuncInvocation struct {
 	i            *Interpreter
-	callNode     *ts.Node
+	callNode     rl.Node
 	args         []PosArg
 	namedArgs    map[string]namedArg
 	panicIfError bool
@@ -213,7 +212,7 @@ type FuncInvocation struct {
 
 func NewFnInvocation(
 	i *Interpreter,
-	callNode *ts.Node,
+	callNode rl.Node,
 	funcName string,
 	args []PosArg,
 	namedArgs map[string]namedArg,
@@ -274,7 +273,7 @@ func (f FuncInvocation) Return(vals ...interface{}) RadValue {
 }
 
 func (f FuncInvocation) ReturnErrf(code rl.Error, msg string, args ...interface{}) RadValue {
-	return f.Return(NewErrorStrf(msg, args...).SetCode(code).SetNode(f.callNode))
+	return f.Return(NewErrorStrf(msg, args...).SetCode(code).SetSpan(nodeSpanPtr(f.callNode)))
 }
 
 // todo add 'usage' to each function? self-documenting errors when incorrectly using
@@ -485,7 +484,7 @@ func init() {
 							digitCount,
 							namedArgUnit,
 						)
-						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetNode(f.callNode))
+						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetSpan(nodeSpanPtr(f.callNode)))
 					}
 				} else {
 					switch unit {

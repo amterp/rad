@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/amterp/rad/rts/rl"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadError struct {
-	Node *ts.Node
+	Span *rl.Span // source location where the error originated (nil if unknown)
 	msg  RadString
 	Code rl.Error
 }
@@ -30,8 +29,8 @@ func (e *RadError) SetCode(code rl.Error) *RadError {
 	return e
 }
 
-func (e *RadError) SetNode(node *ts.Node) *RadError {
-	e.Node = node
+func (e *RadError) SetSpan(span *rl.Span) *RadError {
+	e.Span = span
 	return e
 }
 

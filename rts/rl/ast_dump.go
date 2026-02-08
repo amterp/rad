@@ -276,6 +276,21 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 		for _, a := range n.Args {
 			astDumpNode(sb, a, depth+1)
 		}
+	case *JsonPath:
+		var parts []string
+		for _, seg := range n.Segments {
+			s := seg.Key
+			for _, idx := range seg.Indexes {
+				if idx.Expr != nil {
+					s += "[expr]"
+				} else {
+					s += "[]"
+				}
+			}
+			parts = append(parts, s)
+		}
+		fmt.Fprintf(sb, "%sJsonPath %s [%d:%d-%d:%d]\n", indent, strings.Join(parts, "."), span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+
 	case *RadIf:
 		fmt.Fprintf(sb, "%sRadIf [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		for i, branch := range n.Branches {

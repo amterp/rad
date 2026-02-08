@@ -3,12 +3,12 @@ package core
 import (
 	"fmt"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 )
 
 type Trie struct {
 	i              *Interpreter
-	radKeywordNode *ts.Node
+	radKeywordNode rl.Node
 	root           *TrieNode
 }
 
@@ -27,7 +27,7 @@ type Capture struct {
 	captures map[string][]interface{}
 }
 
-func CreateTrie(i *Interpreter, radKeywordNode *ts.Node, jsonFields []JsonFieldVar) *Trie {
+func CreateTrie(i *Interpreter, radKeywordNode rl.Node, jsonFields []JsonFieldVar) *Trie {
 	trie := &Trie{
 		i:              i,
 		radKeywordNode: radKeywordNode,
@@ -54,10 +54,10 @@ func (t *Trie) Insert(field JsonFieldVar) {
 			isListWildcard := false
 			var index *int64
 			if idxSegment.Idx != nil {
-				idx := idxSegment.Idx.RequireInt(t.i, idxSegment.IdxNode)
+				idx := idxSegment.Idx.RequireInt(t.i, t.radKeywordNode)
 				index = &idx
 				key = fmt.Sprintf("[%d]", idx)
-			} else if idxSegment.IdxNode != nil {
+			} else if idxSegment.Idx == nil {
 				isListWildcard = true
 				key = "[]"
 			}

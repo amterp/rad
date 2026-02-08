@@ -62,6 +62,9 @@ const (
 	NRadFieldMod // field modifier (color, map, filter)
 	NRadIf       // conditional in a rad block
 
+	// JSON
+	NJsonPath // json[].field path expression
+
 	// Structural
 	NSourceFile // root node of a script
 )
@@ -105,6 +108,7 @@ var nodeKindNames = [...]string{
 	NRadSort:    "RadSort",
 	NRadFieldMod: "RadFieldMod",
 	NRadIf:      "RadIf",
+	NJsonPath:   "JsonPath",
 	NSourceFile: "SourceFile",
 }
 
@@ -138,27 +142,33 @@ const (
 	OpAnd
 	OpOr
 
+	// Membership
+	OpIn    // in
+	OpNotIn // not in
+
 	// Unary
 	OpNeg // -x
 	OpNot // not x
 )
 
 var operatorNames = [...]string{
-	OpAdd: "+",
-	OpSub: "-",
-	OpMul: "*",
-	OpDiv: "/",
-	OpMod: "%",
-	OpEq:  "==",
-	OpNeq: "!=",
-	OpLt:  "<",
-	OpLte: "<=",
-	OpGt:  ">",
-	OpGte: ">=",
-	OpAnd: "and",
-	OpOr:  "or",
-	OpNeg: "-",
-	OpNot: "not",
+	OpAdd:   "+",
+	OpSub:   "-",
+	OpMul:   "*",
+	OpDiv:   "/",
+	OpMod:   "%",
+	OpEq:    "==",
+	OpNeq:   "!=",
+	OpLt:    "<",
+	OpLte:   "<=",
+	OpGt:    ">",
+	OpGte:   ">=",
+	OpAnd:   "and",
+	OpOr:    "or",
+	OpIn:    "in",
+	OpNotIn: "not in",
+	OpNeg:   "-",
+	OpNot:   "not",
 }
 
 func (op Operator) String() string {

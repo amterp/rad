@@ -17,11 +17,12 @@ func (n *SourceFile) Span() Span     { return n.span }
 // Assign handles simple assignment, unpacking, and desugared compound
 // assign (+=) and increment/decrement (++).
 type Assign struct {
-	span        Span
-	Targets     []Node      // left-hand sides (var paths)
-	Values      []Node      // right-hand sides
-	IsUnpacking bool        // true if `a, b = ...` syntax
-	Catch       *CatchBlock // optional catch block
+	span             Span
+	Targets          []Node      // left-hand sides (var paths)
+	Values           []Node      // right-hand sides
+	IsUnpacking      bool        // true if `a, b = ...` syntax
+	UpdateEnclosing  bool        // true for compound assign/incr-decr (updates enclosing scope)
+	Catch            *CatchBlock // optional catch block
 }
 
 func NewAssign(span Span, targets, values []Node, isUnpacking bool, catch *CatchBlock) *Assign {
@@ -256,10 +257,11 @@ func (n *FnDef) Span() Span     { return n.span }
 
 // OpBinary represents a binary operation.
 type OpBinary struct {
-	span  Span
-	Op    Operator
-	Left  Node
-	Right Node
+	span       Span
+	Op         Operator
+	Left       Node
+	Right      Node
+	IsCompound bool // true when desugared from compound assign (e.g. +=)
 }
 
 func NewOpBinary(span Span, op Operator, left, right Node) *OpBinary {
@@ -345,24 +347,28 @@ func (n *VarPath) Span() Span     { return n.span }
 
 // PathSegment represents one segment in a var path.
 type PathSegment struct {
-	span    Span
+	Span_   Span    // exported for interpreter access
 	Field   *string // dot access: .name (nil if bracket)
 	Index   Node    // bracket access: [expr] (nil if dot or slice)
 	IsSlice bool    // [start:end] slice syntax
+	IsUFCS  bool    // true when indexing node was directly a K_CALL (UFCS syntax)
 	Start   Node    // slice start (may be nil)
 	End     Node    // slice end (may be nil)
 }
 
+// Span returns the span of this path segment.
+func (p PathSegment) Span() Span { return p.Span_ }
+
 func NewPathSegmentField(span Span, field string) PathSegment {
-	return PathSegment{span: span, Field: &field}
+	return PathSegment{Span_: span, Field: &field}
 }
 
 func NewPathSegmentIndex(span Span, index Node) PathSegment {
-	return PathSegment{span: span, Index: index}
+	return PathSegment{Span_: span, Index: index}
 }
 
 func NewPathSegmentSlice(span Span, start, end Node) PathSegment {
-	return PathSegment{span: span, IsSlice: true, Start: start, End: end}
+	return PathSegment{Span_: span, IsSlice: true, Start: start, End: end}
 }
 
 // Identifier represents a variable reference.
@@ -463,6 +469,7 @@ type StringSegment struct {
 	Text      string               // literal text (resolved escapes)
 	Expr      Node                 // interpolation expression (when !IsLiteral)
 	Format    *InterpolationFormat // optional format specifiers
+	Span_     Span                 // span of the interpolation {expr:fmt} (only for !IsLiteral)
 }
 
 // InterpolationFormat holds pre-extracted format specifiers for
@@ -599,3 +606,28 @@ func NewRadIf(span Span, branches []IfBranch) *RadIf {
 }
 func (n *RadIf) Kind() NodeKind { return NRadIf }
 func (n *RadIf) Span() Span     { return n.span }
+
+// JsonPath represents a json field path expression (e.g. json[].age, json[0].name.first).
+type JsonPath struct {
+	span     Span
+	Segments []JsonPathSeg
+}
+
+// JsonPathSeg is one segment in a json path (e.g. "json[]" or ".age" or ".names[0]").
+type JsonPathSeg struct {
+	Key     string // the identifier part (e.g. "json", "age", "names")
+	KeySpan Span   // span of the key for error reporting
+	Indexes []JsonPathIdx
+}
+
+// JsonPathIdx is an index within a json path segment. Expr is nil for wildcard [].
+type JsonPathIdx struct {
+	Span Span
+	Expr Node // nil = wildcard
+}
+
+func NewJsonPath(span Span, segments []JsonPathSeg) *JsonPath {
+	return &JsonPath{span: span, Segments: segments}
+}
+func (n *JsonPath) Kind() NodeKind { return NJsonPath }
+func (n *JsonPath) Span() Span     { return n.span }
