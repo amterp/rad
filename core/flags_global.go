@@ -18,7 +18,8 @@ const (
 	FLAG_V             = "v"
 	FLAG_CONFIRM_SHELL = "confirm-shell"
 	FLAG_SRC           = "src"
-	FLAG_SRC_TREE      = "src-tree"
+	FLAG_CST_TREE      = "cst-tree"
+	FLAG_AST_TREE      = "ast-tree"
 	FLAG_RAD_ARGS_DUMP = "rad-args-dump"
 	FLAG_MOCK_RESPONSE = "mock-response"
 	FLAG_REPL          = "repl"
@@ -38,7 +39,8 @@ var (
 	FlagVersion              BoolRadArg
 	FlagConfirmShellCommands BoolRadArg
 	FlagSrc                  BoolRadArg
-	FlagSrcTree              BoolRadArg
+	FlagCstTree              BoolRadArg
+	FlagAstTree              BoolRadArg
 	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
 	FlagRepl                 BoolRadArg
@@ -167,18 +169,31 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	FlagSrc.SetBypassValidation(true)
 	flags = append(flags, &FlagSrc)
 
-	FlagSrcTree = NewBoolRadArg(
-		FLAG_SRC_TREE,
+	FlagCstTree = NewBoolRadArg(
+		FLAG_CST_TREE,
 		"",
-		"Instead of running the target script, print out its syntax tree.",
+		"Instead of running the target script, print out its CST (concrete syntax tree).",
 		false,
 		false,
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	FlagSrcTree.SetBypassValidation(true)
-	hideFromUsageIfHaveScript(&FlagSrcTree.hidden)
-	flags = append(flags, &FlagSrcTree)
+	FlagCstTree.SetBypassValidation(true)
+	hideFromUsageIfHaveScript(&FlagCstTree.hidden)
+	flags = append(flags, &FlagCstTree)
+
+	FlagAstTree = NewBoolRadArg(
+		FLAG_AST_TREE,
+		"",
+		"Instead of running the target script, print out its AST (abstract syntax tree).",
+		false,
+		false,
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+	FlagAstTree.SetBypassValidation(true)
+	hideFromUsageIfHaveScript(&FlagAstTree.hidden)
+	flags = append(flags, &FlagAstTree)
 
 	FlagRadArgsDump = NewBoolRadArg(
 		FLAG_RAD_ARGS_DUMP,
