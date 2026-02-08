@@ -7,6 +7,7 @@ import (
 	"github.com/amterp/rad/lsp-server/lsp"
 
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts"
 )
@@ -15,6 +16,7 @@ type DocState struct {
 	uri         string
 	text        string
 	tree        *rts.RadTree
+	ast         *rl.SourceFile
 	diagnostics []lsp.Diagnostic
 	checker     check.RadChecker
 }
@@ -48,11 +50,13 @@ func NewState() *State {
 
 func (s *State) NewDocState(uri, text string) *DocState {
 	tree := s.parser.Parse(text)
-	checker := check.NewCheckerWithTree(tree, s.parser, text)
+	ast := safeConvertCST(tree, text, uri)
+	checker := check.NewCheckerWithTree(tree, s.parser, text, ast)
 	return &DocState{
 		uri:         uri,
 		text:        text,
 		tree:        tree,
+		ast:         ast,
 		diagnostics: s.resolveDiagnostics(checker),
 		checker:     checker,
 	}
@@ -71,11 +75,23 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 		doc.tree.Update(change.Text)
 		log.L.Debugf("Tree after: %s", doc.tree.String())
 		doc.text = change.Text
-		doc.checker.UpdateSrc(change.Text) // todo CHECKER WILL REPEAT PARSE, BAD
+		doc.ast = safeConvertCST(doc.tree, change.Text, doc.uri)
+		doc.checker.Update(doc.tree, change.Text, doc.ast)
 		doc.diagnostics = s.resolveDiagnostics(doc.checker)
 	}
 }
 
 func (s *State) GetDiagnostics(uri string) []lsp.Diagnostic {
 	return s.docs[uri].diagnostics
+}
+
+// safeConvertCST converts a CST to AST, recovering from panics caused by
+// invalid syntax during editing. Returns nil if conversion fails.
+func safeConvertCST(tree *rts.RadTree, src, file string) (ast *rl.SourceFile) {
+	defer func() {
+		if r := recover(); r != nil {
+			ast = nil
+		}
+	}()
+	return rts.ConvertCST(tree.Root(), src, file)
 }
