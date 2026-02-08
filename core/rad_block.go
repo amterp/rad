@@ -12,15 +12,14 @@ import (
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
 	"github.com/scylladb/go-set/strset"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type radInvocation struct {
 	i                *Interpreter
-	radKeywordNode   *ts.Node
-	srcExprNode      *ts.Node
+	radBlockNode     rl.Node
+	srcExprNode      rl.Node
 	blockType        RadBlockType
-	fields           []*ts.Node
+	fields           []radField
 	fieldsToNotPrint *strset.Set
 	// if no specific column specified for sorting
 	generalSort *GeneralSort
@@ -31,26 +30,22 @@ type radInvocation struct {
 }
 
 type radFieldMods struct {
-	identifierNode *ts.Node
+	identifierNode rl.Node
 	colors         []radColorMod
 	lambda         *RadFn
 	filter         *RadFn
 }
 
-func newRadFieldMods(identifierNode *ts.Node) *radFieldMods {
+func newRadFieldMods(identifierNode rl.Node) *radFieldMods {
 	return &radFieldMods{
 		identifierNode: identifierNode,
 		colors:         make([]radColorMod, 0),
 	}
 }
 
-func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
-	srcNode := rl.GetChild(radBlockNode, rl.F_SOURCE)
-	radTypeNode := rl.GetChild(radBlockNode, rl.F_RAD_TYPE)
-	typeStr := i.GetSrcForNode(radTypeNode)
-
+func (i *Interpreter) runRadBlock(n *rl.RadBlock) {
 	var blockType RadBlockType
-	switch typeStr {
+	switch n.BlockType {
 	case rl.KEYWORD_RAD:
 		blockType = RadBlock
 	case rl.KEYWORD_REQUEST:
@@ -58,29 +53,28 @@ func (i *Interpreter) runRadBlock(radBlockNode *ts.Node) {
 	case rl.KEYWORD_DISPLAY:
 		blockType = DisplayBlock
 	default:
-		i.emitErrorf(rl.ErrInternalBug, radTypeNode, "Bug: Unknown rad block type %q", typeStr)
+		i.emitErrorf(rl.ErrInternalBug, n, "Bug: Unknown rad block type %q", n.BlockType)
 	}
 
 	ri := radInvocation{
 		i:                i,
-		radKeywordNode:   radTypeNode,
-		srcExprNode:      srcNode,
+		radBlockNode:     n,
+		srcExprNode:      n.Source,
 		blockType:        blockType,
-		fields:           make([]*ts.Node, 0),
+		fields:           make([]radField, 0),
 		fieldsToNotPrint: strset.New(),
 		colWiseSorting:   make([]ColumnSort, 0),
 		colToMods:        make(map[string]*radFieldMods),
 	}
 
-	radStmtNodes := rl.GetChildren(radBlockNode, rl.F_STMT)
-	for _, radStmtNode := range radStmtNodes {
-		ri.evalRad(&radStmtNode)
+	for _, stmt := range n.Stmts {
+		ri.evalRad(stmt)
 	}
 
 	ri.execute()
 }
 
-func (r *radInvocation) evalRad(node *ts.Node) {
+func (r *radInvocation) evalRad(node rl.Node) {
 	if !IsTest {
 		defer func() {
 			if re := recover(); re != nil {
@@ -92,125 +86,114 @@ func (r *radInvocation) evalRad(node *ts.Node) {
 	r.unsafeEvalRad(node)
 }
 
-func (r *radInvocation) unsafeEvalRad(node *ts.Node) {
-	switch node.Kind() {
-	case rl.K_RAD_FIELD_STMT:
-		// todo validate no field names conflict with keywords e.g. 'asc'. Would be nice to do in static analysis tho.
-		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER)
-		for _, identifierNode := range identifierNodes {
-			r.fields = append(r.fields, &identifierNode)
+func (r *radInvocation) unsafeEvalRad(node rl.Node) {
+	switch n := node.(type) {
+	case *rl.RadField:
+		for _, idNode := range n.Identifiers {
+			if ident, ok := idNode.(*rl.Identifier); ok {
+				r.fields = append(r.fields, radField{
+					node: idNode,
+					name: ident.Name,
+				})
+			}
 		}
-	case rl.K_RAD_SORT_STMT:
+	case *rl.RadSort:
 		if r.generalSort != nil || len(r.colWiseSorting) > 0 {
 			r.i.emitError(rl.ErrUnsupportedOperation, node, "Only one sort statement allowed per rad block")
 		}
 
-		specifierNodes := rl.GetChildren(node, rl.F_SPECIFIER)
-		if len(specifierNodes) == 0 {
+		if len(n.Specifiers) == 0 {
 			r.generalSort = &GeneralSort{
-				Node: node,
+				Span: n.Span(),
 				Dir:  Asc,
 			}
 		} else {
-			for _, specifierNode := range specifierNodes {
-				r.evalRad(&specifierNode)
-			}
-		}
-	case rl.K_RAD_SORT_SPECIFIER:
-		firstNode := rl.GetChild(node, rl.F_FIRST) // we can assume this non-nil, otherwise this node wouldn't exist
-		secondNode := rl.GetChild(node, rl.F_SECOND)
+			for _, spec := range n.Specifiers {
+				dir := lo.Ternary(spec.Ascending, Asc, Desc)
 
-		if secondNode == nil {
-			firstNodeSrc := r.i.GetSrcForNode(firstNode)
-			if firstNodeSrc == rl.KEYWORD_ASC || firstNodeSrc == rl.KEYWORD_DESC {
-				dir := lo.Ternary(firstNodeSrc == rl.KEYWORD_ASC, Asc, Desc)
-				r.generalSort = &GeneralSort{
-					Node: node,
-					Dir:  dir,
-				}
-				return
-			}
-		}
-
-		dir := Asc
-		if secondNode != nil {
-			switch secondNode.Kind() {
-			case rl.K_ASC:
-				dir = Asc
-			case rl.K_DESC:
-				dir = Desc
-			default:
-				r.i.emitErrorf(rl.ErrInternalBug, secondNode, "Bug: Unknown direction %q", secondNode.Kind())
-			}
-		}
-
-		r.colWiseSorting = append(r.colWiseSorting, ColumnSort{
-			ColIdentifier: firstNode,
-			Dir:           dir,
-		})
-	case rl.K_RAD_FIELD_MODIFIER_STMT:
-		identifierNodes := rl.GetChildren(node, rl.F_IDENTIFIER)
-		stmtNodes := rl.GetChildren(node, rl.F_MOD_STMT)
-		var fields []radField
-		for _, identifierNode := range identifierNodes {
-			identifierStr := r.i.GetSrcForNode(&identifierNode)
-			fields = append(fields, radField{
-				node: &identifierNode,
-				name: identifierStr,
-			})
-		}
-		for _, stmtNode := range stmtNodes {
-			switch stmtNode.Kind() {
-			case rl.K_RAD_FIELD_MOD_COLOR:
-				// todo could I replace this syntax with a 'map' lambda operation?
-				clrExprNode := rl.GetChild(&stmtNode, rl.F_COLOR)
-				clrStr := r.i.eval(clrExprNode).Val.RequireStr(r.i, clrExprNode)
-				clr := AttrFromString(r.i, clrExprNode, clrStr.Plain())
-				regexExprNode := rl.GetChild(&stmtNode, rl.F_REGEX)
-				regexStr := r.i.eval(regexExprNode).Val.RequireStr(r.i, regexExprNode)
-				regex, err := regexp.Compile(regexStr.Plain())
-				if err != nil {
-					r.i.emitErrorf(rl.ErrInvalidRegex, regexExprNode, "Invalid regex pattern: %s", err)
-				}
-				for _, field := range fields {
-					mods := r.loadFieldMods(field)
-					mods.colors = append(mods.colors, radColorMod{color: clr.ToTblColor(), regex: regex})
-				}
-			case rl.K_RAD_FIELD_MOD_MAP:
-				lambdaNode := rl.GetChild(&stmtNode, rl.F_LAMBDA)
-				lambda := r.resolveLambdaForModifier(lambdaNode, "map")
-
-				for _, field := range fields {
-					mods := r.loadFieldMods(field)
-					mods.lambda = &lambda
-				}
-			case rl.K_RAD_FIELD_MOD_FILTER:
-				lambdaNode := rl.GetChild(&stmtNode, rl.F_LAMBDA)
-				lambda := r.resolveLambdaForModifier(lambdaNode, "filter")
-
-				for _, field := range fields {
-					mods := r.loadFieldMods(field)
-					mods.filter = &lambda
+				if spec.Field == "" {
+					// General sort (just asc/desc with no field)
+					r.generalSort = &GeneralSort{
+						Span: n.Span(),
+						Dir:  dir,
+					}
+				} else {
+					r.colWiseSorting = append(r.colWiseSorting, ColumnSort{
+						ColName: spec.Field,
+						Span:    n.Span(),
+						Dir:     dir,
+					})
 				}
 			}
 		}
-	case rl.K_RAD_IF_STMT:
-		altNodes := rl.GetChildren(node, rl.F_ALT)
-		for _, altNode := range altNodes {
-			condNode := rl.GetChild(&altNode, rl.F_CONDITION)
-
+	case *rl.RadFieldMod:
+		if n.ModType == "" {
+			// Container level: Fields holds the target identifiers, Args holds the child modifiers
+			var fields []radField
+			for _, idNode := range n.Fields {
+				if ident, ok := idNode.(*rl.Identifier); ok {
+					fields = append(fields, radField{
+						node: idNode,
+						name: ident.Name,
+					})
+				}
+			}
+			for _, modNode := range n.Args {
+				r.applyModifier(fields, modNode)
+			}
+		}
+	case *rl.RadIf:
+		for _, branch := range n.Branches {
 			shouldExecute := true
-			if condNode != nil {
-				condResult := r.i.eval(condNode).Val.TruthyFalsy()
-				shouldExecute = condResult
+			if branch.Condition != nil {
+				shouldExecute = r.i.eval(branch.Condition).Val.TruthyFalsy()
 			}
 
 			if shouldExecute {
-				stmtNodes := rl.GetChildren(&altNode, rl.F_STMT)
-				for _, stmtNode := range stmtNodes {
-					r.evalRad(&stmtNode)
+				for _, stmt := range branch.Body {
+					r.evalRad(stmt)
 				}
 				break
+			}
+		}
+	}
+}
+
+func (r *radInvocation) applyModifier(fields []radField, modNode rl.Node) {
+	mod, ok := modNode.(*rl.RadFieldMod)
+	if !ok {
+		return
+	}
+
+	switch mod.ModType {
+	case "color":
+		if len(mod.Args) >= 2 {
+			clrVal := r.i.eval(mod.Args[0]).Val.RequireStr(r.i, mod.Args[0])
+			clr := AttrFromString(r.i, mod.Args[0], clrVal.Plain())
+			regexVal := r.i.eval(mod.Args[1]).Val.RequireStr(r.i, mod.Args[1])
+			regex, err := regexp.Compile(regexVal.Plain())
+			if err != nil {
+				r.i.emitErrorf(rl.ErrInvalidRegex, mod.Args[1], "Invalid regex pattern: %s", err)
+			}
+			for _, field := range fields {
+				mods := r.loadFieldMods(field)
+				mods.colors = append(mods.colors, radColorMod{color: clr.ToTblColor(), regex: regex})
+			}
+		}
+	case "map":
+		if len(mod.Args) >= 1 {
+			lambda := r.resolveLambdaForModifier(mod.Args[0], "map")
+			for _, field := range fields {
+				mods := r.loadFieldMods(field)
+				mods.lambda = &lambda
+			}
+		}
+	case "filter":
+		if len(mod.Args) >= 1 {
+			lambda := r.resolveLambdaForModifier(mod.Args[0], "filter")
+			for _, field := range fields {
+				mods := r.loadFieldMods(field)
+				mods.filter = &lambda
 			}
 		}
 	}
@@ -231,19 +214,16 @@ type radColorMod struct {
 }
 
 type radField struct {
-	node *ts.Node
+	node rl.Node
 	name string
 }
 
 func (r *radInvocation) execute() {
 	if len(r.fields) == 0 {
-		r.i.emitError(rl.ErrInvalidSyntax, r.radKeywordNode, "No fields specified in rad block")
+		r.i.emitError(rl.ErrInvalidSyntax, r.radBlockNode, "No fields specified in rad block")
 	}
 
-	radFields := lo.Map(r.fields, func(fieldIdentifierNode *ts.Node, _ int) radField {
-		name := r.i.GetSrcForNode(fieldIdentifierNode)
-		return radField{node: fieldIdentifierNode, name: name}
-	})
+	radFields := r.fields
 
 	// check all field mods are for fields that actually exist
 	fieldNames := lo.Map(radFields, func(f radField, _ int) string { return f.name })
@@ -267,7 +247,7 @@ func (r *radInvocation) execute() {
 			return *fieldVar
 		})
 
-		trie := CreateTrie(r.i, r.radKeywordNode, jsonFields)
+		trie := CreateTrie(r.i, r.radBlockNode, jsonFields)
 		trie.TraverseTrie(data)
 	}
 
@@ -282,37 +262,26 @@ func (r *radInvocation) execute() {
 		return
 	}
 
-	// Execution order: filter → sort → map
-	//
-	// Rationale:
-	//   - Filter first: Sort only the rows we'll display (performance)
-	//   - Map last: Display transformation shouldn't affect filtering/sorting logic
-	//   - Sort middle: Sort filtered results in their original form
-	//
-	// For rad/request blocks: permanently affect field arrays for the rad block and beyond
-	// For display blocks: temporarily apply for rendering, then restore original values
+	// Execution order: filter -> sort -> map
 	if r.blockType == RadBlock || r.blockType == RequestBlock {
 		indicesToKeep := r.applyFilters(radFields)
 		r.filterColumns(radFields, indicesToKeep)
 		applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
 		r.applyMaps(radFields)
 	} else {
-		// Display block: save original values, apply filter/sort/map temporarily
+		// Display block: save/restore pattern
 		savedValues := make(map[string]*RadList)
 		for _, field := range radFields {
 			fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
 			column := fieldVals.RequireList(r.i, field.node)
-			// Save a copy of the original values
 			savedValues[field.name] = &RadList{Values: append([]RadValue{}, column.Values...)}
 		}
 
-		// Temporarily mutate: filter → sort → map
 		indicesToKeep := r.applyFilters(radFields)
 		r.filterColumns(radFields, indicesToKeep)
 		applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
 		r.applyMaps(radFields)
 
-		// Restore original values after rendering (deferred)
 		defer func() {
 			for _, field := range radFields {
 				if saved, ok := savedValues[field.name]; ok {
@@ -341,10 +310,8 @@ func (r *radInvocation) execute() {
 	})
 
 	tbl := NewTblWriter()
-
 	tbl.SetHeader(headers)
 
-	// transform columnar data to rows and append to table
 	for i := range longestColumnLen {
 		row := lo.Map(cellsRowThenColumn, func(column []RadString, _ int) RadString {
 			if i >= len(column) {
@@ -356,20 +323,10 @@ func (r *radInvocation) execute() {
 	}
 
 	tbl.SetColumnColoring(r.colToMods)
-
-	// todo ensure failed requests get nicely printed
 	tbl.Render()
 }
 
-// applyFilters evaluates filter predicates across all fields and returns indices
-// of rows that pass ALL filters (AND logic).
-//
-// Return value semantics:
-//   - nil: No filters present, keep all rows
-//   - []int64{}: Filters present but all rows filtered out
-//   - []int64{...}: Indices of rows that passed all filters
 func (r *radInvocation) applyFilters(radFields []radField) []int64 {
-	// Early exit if no filters
 	hasFilters := false
 	for _, mods := range r.colToMods {
 		if mods.filter != nil {
@@ -378,10 +335,9 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 		}
 	}
 	if !hasFilters {
-		return nil // nil = keep all rows
+		return nil
 	}
 
-	// Get row count from first field
 	if len(radFields) == 0 {
 		return nil
 	}
@@ -393,13 +349,11 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 		return nil
 	}
 
-	// Track which rows pass (AND logic)
 	keepRow := make([]bool, rowCount)
 	for i := range keepRow {
 		keepRow[i] = true
 	}
 
-	// Evaluate each field's filter
 	for _, field := range radFields {
 		mods, hasMods := r.colToMods[field.name]
 		if !hasMods || mods.filter == nil {
@@ -409,10 +363,8 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
 		column := fieldVals.RequireList(r.i, field.node)
 
-		// Check if filter lambda expects context (2+ parameters)
 		wantsContext := lambdaWantsContext(mods.filter)
 
-		// Copy original values for context.src to ensure it's an immutable snapshot
 		var srcList *RadList
 		if wantsContext {
 			originalValues := make([]RadValue, len(column.Values))
@@ -422,23 +374,28 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 
 		for rowIdx := 0; rowIdx < column.LenInt(); rowIdx++ {
 			if !keepRow[rowIdx] {
-				continue // Already filtered out
+				continue
 			}
 
 			val := column.Values[rowIdx]
-			var args []PosArg
-			args = append(args, NewPosArg(mods.filter.ReprNode, val))
+			reprSpan := mods.filter.ReprSpan
+			var reprNode rl.Node
+			if reprSpan != nil {
+				reprNode = rl.NewLitNull(*reprSpan) // dummy node for span
+			}
 
-			// If lambda expects 2+ params, pass context object as second arg
+			var args []PosArg
+			args = append(args, NewPosArg(reprNode, val))
+
 			if wantsContext {
-				ctx := newRadBlockContext(r.i, mods.filter.ReprNode, int64(rowIdx), srcList, field.name)
-				args = append(args, NewPosArg(mods.filter.ReprNode, ctx))
+				ctx := newRadBlockContext(r.i, reprNode, int64(rowIdx), srcList, field.name)
+				args = append(args, NewPosArg(reprNode, ctx))
 			}
 
 			filterResult := mods.filter.Execute(
 				NewFnInvocation(
 					r.i,
-					mods.filter.ReprNode,
+					reprNode,
 					FUNC_FILTER,
 					args,
 					NO_NAMED_ARGS_INPUT,
@@ -452,8 +409,7 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 		}
 	}
 
-	// Build list of kept indices
-	keptIndices := make([]int64, 0) // Initialize as empty slice, not nil
+	keptIndices := make([]int64, 0)
 	for i, keep := range keepRow {
 		if keep {
 			keptIndices = append(keptIndices, int64(i))
@@ -463,24 +419,12 @@ func (r *radInvocation) applyFilters(radFields []radField) []int64 {
 	return keptIndices
 }
 
-// filterColumns applies row filtering by removing rows from all field columns.
-// Uses indicesToKeep from applyFilters() to determine which rows to keep.
-//
-// Parameters:
-//   - radFields: All fields in the rad block
-//   - indicesToKeep: Indices of rows to keep (nil means keep all)
-//
-// Side effects:
-//   - Mutates column.Values for each field in the environment
-//   - For rad/request blocks: permanent mutation
-//   - For display blocks: caller must save/restore values
 func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int64) {
 	if indicesToKeep == nil {
 		return
 	}
 
 	if len(radFields) > 0 {
-		// ensure all columns are equal length
 		expectedLen := -1
 		for _, field := range radFields {
 			fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
@@ -496,7 +440,6 @@ func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int6
 			}
 		}
 
-		// ensure no indices to keep are out of bounds
 		for _, idx := range indicesToKeep {
 			if idx < 0 || idx >= int64(expectedLen) {
 				r.i.emitErrorf(rl.ErrInternalBug, radFields[0].node,
@@ -519,7 +462,6 @@ func (r *radInvocation) filterColumns(radFields []radField, indicesToKeep []int6
 	}
 }
 
-// applyMaps applies map transformations to field columns, mutating them permanently
 func (r *radInvocation) applyMaps(radFields []radField) {
 	for _, field := range radFields {
 		mods, hasMods := r.colToMods[field.name]
@@ -530,11 +472,8 @@ func (r *radInvocation) applyMaps(radFields []radField) {
 		fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
 		column := fieldVals.RequireList(r.i, field.node)
 
-		// Check if lambda expects context (2+ parameters)
 		wantsContext := lambdaWantsContext(mods.lambda)
 
-		// Copy original values for context.src to avoid circular reference
-		// (since we mutate column.Values below, ctx.src would otherwise point to mutated values)
 		var srcList *RadList
 		if wantsContext {
 			originalValues := make([]RadValue, len(column.Values))
@@ -542,21 +481,26 @@ func (r *radInvocation) applyMaps(radFields []radField) {
 			srcList = &RadList{Values: originalValues}
 		}
 
+		reprSpan := mods.lambda.ReprSpan
+		var reprNode rl.Node
+		if reprSpan != nil {
+			reprNode = rl.NewLitNull(*reprSpan) // dummy node for span
+		}
+
 		newValues := make([]RadValue, len(column.Values))
 		for i, val := range column.Values {
 			var args []PosArg
-			args = append(args, NewPosArg(mods.lambda.ReprNode, val))
+			args = append(args, NewPosArg(reprNode, val))
 
-			// If lambda expects 2+ params, pass context object as second arg
 			if wantsContext {
-				ctx := newRadBlockContext(r.i, mods.lambda.ReprNode, int64(i), srcList, field.name)
-				args = append(args, NewPosArg(mods.lambda.ReprNode, ctx))
+				ctx := newRadBlockContext(r.i, reprNode, int64(i), srcList, field.name)
+				args = append(args, NewPosArg(reprNode, ctx))
 			}
 
 			mapped := mods.lambda.Execute(
 				NewFnInvocation(
 					r.i,
-					mods.lambda.ReprNode,
+					reprNode,
 					FUNC_MAP,
 					args,
 					NO_NAMED_ARGS_INPUT,
@@ -571,15 +515,11 @@ func (r *radInvocation) applyMaps(radFields []radField) {
 	}
 }
 
-// lambdaWantsContext returns true if the lambda expects 2+ parameters,
-// indicating it wants the context object as the second argument.
 func lambdaWantsContext(fn *RadFn) bool {
 	return fn != nil && fn.ParamCount() >= 2
 }
 
-// newRadBlockContext creates a context object for rad block lambdas.
-// Contains: idx (int), src (list), field (string)
-func newRadBlockContext(i *Interpreter, node *ts.Node, idx int64, src *RadList, fieldName string) RadValue {
+func newRadBlockContext(i *Interpreter, node rl.Node, idx int64, src *RadList, fieldName string) RadValue {
 	ctx := NewRadMap()
 	ctx.Set(newRadValue(i, node, "idx"), newRadValue(i, node, idx))
 	ctx.Set(newRadValue(i, node, "src"), newRadValue(i, node, src))
@@ -614,25 +554,25 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 	}
 }
 
-func (r *radInvocation) resolveLambdaForModifier(lambdaNode *ts.Node, modifierName string) RadFn {
+func (r *radInvocation) resolveLambdaForModifier(lambdaNode rl.Node, modifierName string) RadFn {
 	var lambda RadFn
 
-	if lambdaNode.Kind() == rl.K_FN_LAMBDA {
-		lambda = NewFn(r.i, lambdaNode)
-	} else if lambdaNode.Kind() == rl.K_IDENTIFIER {
-		identifier := r.i.GetSrcForNode(lambdaNode)
-		val, ok := r.i.env.GetVar(identifier)
+	switch n := lambdaNode.(type) {
+	case *rl.Lambda:
+		lambda = NewFnFromAST(r.i, n.Typing, n.Body, n.IsBlock, &n.DefSpan)
+	case *rl.Identifier:
+		val, ok := r.i.env.GetVar(n.Name)
 		if !ok {
-			r.i.emitErrorf(rl.ErrUndefinedVariable, lambdaNode, "Undefined lambda %q", identifier)
+			r.i.emitErrorf(rl.ErrUndefinedVariable, lambdaNode, "Undefined lambda %q", n.Name)
 		}
 		lambda, ok = val.TryGetFn()
 		if !ok {
 			r.i.emitErrorf(rl.ErrTypeMismatch, lambdaNode, "Expected function for %s modifier, got '%s'",
 				modifierName, TypeAsString(val))
 		}
-	} else {
-		r.i.emitErrorf(rl.ErrInternalBug, lambdaNode, "Bug: Unknown lambda type %q for %s modifier",
-			lambdaNode.Kind(), modifierName)
+	default:
+		r.i.emitErrorf(rl.ErrInternalBug, lambdaNode, "Bug: Unknown lambda type %T for %s modifier",
+			lambdaNode, modifierName)
 	}
 
 	return lambda
@@ -641,12 +581,13 @@ func (r *radInvocation) resolveLambdaForModifier(lambdaNode *ts.Node, modifierNa
 func applySorting(i *Interpreter, fields []radField, generalSort *GeneralSort, colWiseSort []ColumnSort) {
 	if generalSort != nil {
 		if len(colWiseSort) > 0 {
-			i.emitError(rl.ErrInternalBug, generalSort.Node, "Bug: General and column-wise sort expected to be mutually exclusive")
+			i.emitErrorf(rl.ErrInternalBug, nil, "Bug: General and column-wise sort expected to be mutually exclusive")
 		}
 		for _, field := range fields {
 			colWiseSort = append(colWiseSort, ColumnSort{
-				ColIdentifier: field.node,
-				Dir:           generalSort.Dir,
+				ColName: field.name,
+				Span:    generalSort.Span,
+				Dir:     generalSort.Dir,
 			})
 		}
 	}

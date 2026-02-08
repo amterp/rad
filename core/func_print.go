@@ -7,7 +7,6 @@ import (
 	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/jsoncolor"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var FuncPrint = BuiltInFunc{
@@ -73,7 +72,7 @@ func resolvePrintStr(f FuncInvocation) string {
 	return sb.String()
 }
 
-func prettify(i *Interpreter, callNode *ts.Node, jsonStruct interface{}) string {
+func prettify(i *Interpreter, callNode rl.Node, jsonStruct interface{}) string {
 	f := jsoncolor.NewFormatter()
 	// todo could add coloring here on formatter
 

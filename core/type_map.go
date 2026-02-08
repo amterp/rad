@@ -8,7 +8,6 @@ import (
 
 	"github.com/samber/lo"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadMap struct {
@@ -80,26 +79,11 @@ func (m *RadMap) Get(key RadValue) (RadValue, bool) {
 	return val, exists
 }
 
-func (m *RadMap) GetNode(i *Interpreter, idxNode *ts.Node) RadValue {
-	// todo grammar: myMap.2 should be okay, treated as "2". but is not valid identifier, so problem!
-	if idxNode.Kind() == rl.K_IDENTIFIER {
-		// dot syntax e.g. myMap.myKey
-		keyName := i.GetSrcForNode(idxNode)
-		value, ok := m.Get(newRadValueStr(keyName))
-		if !ok {
-			// Use panic so fallback operator (??) can catch this error
-			errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", keyName).SetCode(rl.ErrKeyNotFound))
-			i.NewRadPanic(idxNode, errVal).Panic()
-		}
-		return value
-	}
-
-	// 'traditional' syntax e.g. myMap["myKey"]
-	idxVal := evalMapKey(i, idxNode)
-	value, ok := m.Get(idxVal)
+func (m *RadMap) GetByKey(i *Interpreter, node rl.Node, key RadValue) RadValue {
+	value, ok := m.Get(key)
 	if !ok {
-		errVal := newRadValue(i, idxNode, NewErrorStrf("Key not found: %s", ToPrintable(idxVal)).SetCode(rl.ErrKeyNotFound))
-		i.NewRadPanic(idxNode, errVal).Panic()
+		errVal := newRadValue(i, node, NewErrorStrf("Key not found: %s", ToPrintable(key)).SetCode(rl.ErrKeyNotFound))
+		i.NewRadPanic(node, errVal).Panic()
 	}
 	return value
 }
@@ -183,7 +167,7 @@ func (l *RadMap) Equals(right *RadMap) bool {
 	return true
 }
 
-func (m *RadMap) AsErrMsg(i *Interpreter, node *ts.Node) string {
+func (m *RadMap) AsErrMsg(i *Interpreter, node rl.Node) string {
 	if lo.Contains(lo.Keys(m.mapping), constCode) && lo.Contains(lo.Keys(m.mapping), constMsg) {
 		return fmt.Sprintf("%s (error %s)", m.mapping[constMsg].Val, m.mapping[constCode].Val)
 	}
@@ -200,7 +184,7 @@ func (m *RadMap) ToGoMap() map[string]interface{} {
 	return goMap
 }
 
-func evalMapKey(i *Interpreter, idxNode *ts.Node) RadValue {
+func evalMapKey(i *Interpreter, idxNode rl.Node) RadValue {
 	return i.eval(idxNode).Val.
 		RequireNotType(i, idxNode, "Map keys cannot be lists", rl.RadListT).
 		RequireNotType(i, idxNode, "Map keys cannot be maps", rl.RadMapT).

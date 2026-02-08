@@ -21,3 +21,13 @@ func (s Span) StartLine() int {
 func (s Span) StartColumn() int {
 	return s.StartCol + 1
 }
+
+// EndLine returns the 1-indexed end line number for display.
+func (s Span) EndLine() int {
+	return s.EndRow + 1
+}
+
+// EndColumn returns the 1-indexed end column number for display.
+func (s Span) EndColumn() int {
+	return s.EndCol + 1
+}

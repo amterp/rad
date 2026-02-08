@@ -4,8 +4,6 @@ import (
 	"strings"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadList struct {
@@ -25,7 +23,7 @@ func (l *RadList) ShallowCopy() *RadList {
 	return &RadList{Values: copiedValues}
 }
 
-func NewRadListFromGeneric[T any](i *Interpreter, node *ts.Node, list []T) *RadList {
+func NewRadListFromGeneric[T any](i *Interpreter, node rl.Node, list []T) *RadList {
 	radList := NewRadList()
 	for _, elem := range list {
 		radList.Append(newRadValue(i, node, elem))
@@ -40,79 +38,19 @@ func (l *RadList) Append(value RadValue) {
 	l.Values = append(l.Values, value)
 }
 
-func (l *RadList) GetIdx(i *Interpreter, idxNode *ts.Node) RadValue {
-	if idxNode.Kind() == rl.K_SLICE {
-		return newRadValue(i, idxNode, l.Slice(i, idxNode))
-	}
-
-	idxVal := i.eval(idxNode).Val
-	rawIdx := idxVal.RequireInt(i, idxNode)
-	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
-	if idx < 0 || idx >= l.Len() {
-		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
-	}
-	return l.Values[idx]
-}
-
-func (l *RadList) ModifyIdx(i *Interpreter, idxNode *ts.Node, value RadValue) {
-	if idxNode.Kind() == rl.K_SLICE {
-		start, end := ResolveSliceStartEnd(i, idxNode, l.Len())
-		if start < end {
-			newList := NewRadList()
-			newList.Values = append(newList.Values, l.Values[:start]...)
-			if list, ok := value.TryGetList(); ok {
-				newList.Values = append(newList.Values, list.Values...)
-			} else if value == VOID_SENTINEL {
-				// do nothing (delete those values)
-			} else {
-				assignNode := idxNode.Parent().Parent()
-				i.emitError(rl.ErrTypeMismatch, assignNode, "Cannot assign list slice to a non-list type")
-			}
-			newList.Values = append(newList.Values, l.Values[end:]...)
-			l.Values = newList.Values
-		}
-		return
-	}
-
-	// regular single index
-
-	rawIdx := i.eval(idxNode).Val.RequireInt(i, idxNode)
-	idx := CalculateCorrectedIndex(rawIdx, l.Len(), false)
-	if idx < 0 || idx >= int64(len(l.Values)) {
-		ErrIndexOutOfBounds(i, idxNode, rawIdx, l.Len())
-	}
-
-	if value == VOID_SENTINEL {
-		l.Values = append(l.Values[:idx], l.Values[idx+1:]...)
-	} else {
-		l.Values[idx] = value
-	}
-}
-
-func (l *RadList) RemoveIdx(i *Interpreter, node *ts.Node, idx int) {
+func (l *RadList) RemoveIdx(i *Interpreter, node rl.Node, idx int) {
 	if idx < 0 || idx >= len(l.Values) {
 		ErrIndexOutOfBounds(i, node, int64(idx), l.Len())
 	}
 	l.Values = append(l.Values[:idx], l.Values[idx+1:]...)
 }
 
-// more intended for internal use than GetIdx
-func (l *RadList) IndexAt(i *Interpreter, node *ts.Node, idx int64) RadValue {
+// IndexAt is intended for internal use
+func (l *RadList) IndexAt(i *Interpreter, node rl.Node, idx int64) RadValue {
 	if idx < 0 || idx >= l.Len() {
 		ErrIndexOutOfBounds(i, node, idx, l.Len())
 	}
 	return l.Values[idx]
-}
-
-func (l *RadList) Slice(i *Interpreter, sliceNode *ts.Node) *RadList {
-	start, end := ResolveSliceStartEnd(i, sliceNode, l.Len())
-
-	newList := NewRadList()
-	for i := start; i < end; i++ {
-		newList.Append(l.Values[i])
-	}
-
-	return newList
 }
 
 func (l *RadList) Contains(val RadValue) bool {
@@ -165,7 +103,7 @@ func (l *RadList) LenInt() int {
 	return len(l.Values)
 }
 
-func (l *RadList) SortAccordingToIndices(i *Interpreter, node *ts.Node, indices []int64) {
+func (l *RadList) SortAccordingToIndices(i *Interpreter, node rl.Node, indices []int64) {
 	if len(indices) != len(l.Values) {
 		i.emitError(rl.ErrInternalBug, node, "Bug: Indices length does not match list length")
 	}
@@ -185,7 +123,7 @@ func (l *RadList) AsStringList(quoteStrings bool) []string {
 }
 
 // requires contents to actually be strings
-func (l *RadList) AsActualStringList(i *Interpreter, node *ts.Node) []string {
+func (l *RadList) AsActualStringList(i *Interpreter, node rl.Node) []string {
 	out := make([]string, l.Len())
 	for idx, elem := range l.Values {
 		out[idx] = elem.RequireStr(i, node).Plain() // todo keep attributes?

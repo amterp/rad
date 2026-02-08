@@ -4,8 +4,6 @@ import (
 	"sort"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 func sortColumns(
@@ -40,7 +38,7 @@ func sortColumns(
 	sort.Slice(indices, func(i, j int) bool {
 		// apply rules in order, breaking ties if needed
 		for _, rule := range sorting {
-			colIdx, fieldNode := resolveColIdx(interp, fields, rule.ColIdentifier)
+			colIdx, fieldNode := resolveColIdx(interp, fields, rule.ColName)
 			col := orderedCols[colIdx]
 			comp := compare(
 				interp,
@@ -60,18 +58,17 @@ func sortColumns(
 	}
 }
 
-func resolveColIdx(interp *Interpreter, fields []radField, identifierNode *ts.Node) (int, *ts.Node) {
-	identifierStr := interp.GetSrcForNode(identifierNode)
+func resolveColIdx(interp *Interpreter, fields []radField, colName string) (int, rl.Node) {
 	for i, field := range fields {
-		if field.name == identifierStr {
+		if field.name == colName {
 			return i, field.node
 		}
 	}
-	interp.emitErrorf(rl.ErrUndefinedVariable, identifierNode, "Undefined column %q. Did you include it in a 'fields' statement?", identifierStr)
+	interp.emitErrorf(rl.ErrUndefinedVariable, nil, "Undefined column %q. Did you include it in a 'fields' statement?", colName)
 	panic(UNREACHABLE)
 }
 
-func sortList(interp *Interpreter, dataNode *ts.Node, data *RadList, dir SortDir) []RadValue {
+func sortList(interp *Interpreter, dataNode rl.Node, data *RadList, dir SortDir) []RadValue {
 	sorted := make([]RadValue, data.Len())
 	copy(sorted, data.Values)
 	sort.Slice(sorted, func(i, j int) bool {
@@ -86,7 +83,7 @@ func sortList(interp *Interpreter, dataNode *ts.Node, data *RadList, dir SortDir
 
 func sortListParallel(
 	interp *Interpreter,
-	dataNode *ts.Node,
+	dataNode rl.Node,
 	data *RadList,
 	dir SortDir,
 ) (sortedVals []RadValue, idxs []int) {
@@ -116,7 +113,7 @@ func sortListParallel(
 	return
 }
 
-func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
+func compare(i *Interpreter, fieldNode rl.Node, a, b RadValue) int {
 	// first compare by type
 	aTypePrec := precedence(i, fieldNode, a)
 	bTypePrec := precedence(i, fieldNode, b)
@@ -188,7 +185,7 @@ func compare(i *Interpreter, fieldNode *ts.Node, a, b RadValue) int {
 	}
 }
 
-func precedence(i *Interpreter, fieldNode *ts.Node, v RadValue) int {
+func precedence(i *Interpreter, fieldNode rl.Node, v RadValue) int {
 	switch v.Type() {
 	case rl.RadNullT:
 		return 0

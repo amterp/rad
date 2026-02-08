@@ -16,7 +16,6 @@ import (
 	com "github.com/amterp/rad/core/common"
 	"github.com/amterp/rad/rts/check"
 	"github.com/amterp/rad/rts/rl"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 const (
@@ -130,7 +129,7 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 
 // parseInvocationLogs reads all invocation log files and returns unique scripts,
 // filtered by durationMillis (0 => no filter). Ensures files are closed promptly.
-func parseInvocationLogs(i *Interpreter, node *ts.Node, durationMillis int64) []scriptInfo {
+func parseInvocationLogs(i *Interpreter, node rl.Node, durationMillis int64) []scriptInfo {
 	logsDir := GetInvocationLogsDir()
 
 	matches, err := filepath.Glob(filepath.Join(logsDir, "invocations*.jsonl"))

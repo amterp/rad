@@ -4,34 +4,26 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadFn struct {
 	BuiltInFunc *BuiltInFunc // if this represents a built-in function
 	// below for non-built-in functions
-	ReprNode *ts.Node // representative node (can point at this for errors)
+	ReprSpan *rl.Span // representative span (can point at this for errors)
 	Typing   *rl.TypingFnT
-	Stmts    []ts.Node
+	Stmts    []rl.Node
 	IsBlock  bool // if this is a block function or expr. Block functions can only return with a 'return' stmt.
 	Env      *Env // for closures
 }
 
-func NewFn(i *Interpreter, fnNode *ts.Node) RadFn {
-	typing := rl.NewTypingFnT(fnNode, i.GetSrc())
-	stmts := rl.GetChildren(fnNode, rl.F_STMT)
-	reprNode := fnNode
-	isBlock := rl.GetChild(fnNode, rl.F_BLOCK_COLON) != nil
-
-	if isBlock {
-		reprNode = rl.GetChild(fnNode, rl.F_KEYWORD)
-	}
-
+// NewFnFromAST creates a RadFn from AST components (FnDef or Lambda).
+func NewFnFromAST(i *Interpreter, typing *rl.TypingFnT, body []rl.Node, isBlock bool, defSpan *rl.Span) RadFn {
 	return RadFn{
-		ReprNode: reprNode,
+		ReprSpan: defSpan,
 		Typing:   typing,
-		Stmts:    stmts,
+		Stmts:    body,
 		IsBlock:  isBlock,
 		Env:      i.env,
 	}
@@ -184,9 +176,11 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 
 			if param.Default != nil {
 				i.WithTmpSrc(param.Default.Src, func() {
-					defaultVal := i.eval(param.Default.Node).Val
+					// Convert CST default expression to AST on the fly
+					astDefault := rts.ConvertExpr(param.Default.Node, param.Default.Src, i.sd.ScriptName)
+					defaultVal := i.eval(astDefault).Val
 					if param.Type != nil {
-						typeCheck(i, param.Type, param.Default.Node, defaultVal)
+						typeCheck(i, param.Type, astDefault, defaultVal)
 					}
 					i.env.SetVar(param.Name, defaultVal)
 				})
@@ -210,20 +204,16 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 		// todo this should be more shared between the two branches?
 		if fn.BuiltInFunc == nil {
 			// Push call frame for user-defined functions
-			var callSite, defSite *rl.Span
+			var callSite *rl.Span
 			if f.callNode != nil {
-				cs := NewSpanFromNode(f.callNode, i.GetScriptName())
+				cs := f.callNode.Span()
 				callSite = &cs
-			}
-			if fn.ReprNode != nil {
-				ds := NewSpanFromNode(fn.ReprNode, i.GetScriptName())
-				defSite = &ds
 			}
 			fnName := fn.Name()
 			if fnName == "" {
 				fnName = "<anonymous>"
 			}
-			i.pushCallFrame(fnName, callSite, defSite)
+			i.pushCallFrame(fnName, callSite, fn.ReprSpan)
 			defer i.popCallFrame()
 
 			res := i.runBlock(fn.Stmts)
@@ -246,16 +236,16 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 		if f.panicIfError {
 			i.NewRadPanic(f.callNode, out).Panic()
 		} else {
-			// we'll let this error propagate, so let's clear its node for error pointing, if it has one
+			// we'll let this error propagate, so let's clear its span for error pointing, if it has one
 			err := out.RequireError(f.i, f.callNode)
-			err.SetNode(nil)
+			err.SetSpan(nil)
 		}
 	}
 
 	return
 }
 
-func typeCheck(i *Interpreter, typing *rl.TypingT, node *ts.Node, val RadValue) {
+func typeCheck(i *Interpreter, typing *rl.TypingT, node rl.Node, val RadValue) {
 	if typing == nil {
 		return
 	}

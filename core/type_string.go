@@ -5,11 +5,7 @@ import (
 
 	com "github.com/amterp/rad/core/common"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/amterp/color"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 var EMPTY_STR = NewRadString("")
@@ -107,22 +103,6 @@ func (s RadString) Len() int64 {
 func (s RadString) Runes() []rune {
 	// todo also cachable
 	return []rune(s.Plain())
-}
-
-func (s *RadString) Index(i *Interpreter, idxNode *ts.Node) RadString {
-	if idxNode.Kind() == rl.K_SLICE {
-		// todo should maintain attr info
-		start, end := ResolveSliceStartEnd(i, idxNode, s.Len())
-		return NewRadString(string(s.Runes()[start:end]))
-	}
-
-	rawIdx := i.eval(idxNode).Val.RequireInt(i, idxNode)
-	idx := CalculateCorrectedIndex(rawIdx, s.Len(), false)
-	if idx < 0 || idx >= s.Len() {
-		ErrIndexOutOfBounds(i, idxNode, rawIdx, s.Len())
-	}
-
-	return s.IndexAt(idx)
 }
 
 // assumes idx is valid for this string

@@ -10,8 +10,6 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 func ToPrintable(val interface{}) string {
@@ -100,7 +98,7 @@ func TypeAsString(val interface{}) string {
 }
 
 // Convert a json interface{} into native Rad types
-func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr string) (RadValue, error) {
+func TryConvertJsonToNativeTypes(i *Interpreter, node rl.Node, maybeJsonStr string) (RadValue, error) {
 	var m interface{}
 	decoder := json.NewDecoder(strings.NewReader(maybeJsonStr))
 	decoder.UseNumber()
@@ -113,7 +111,7 @@ func TryConvertJsonToNativeTypes(i *Interpreter, node *ts.Node, maybeJsonStr str
 
 // it was originally implemented because we might capture JSON as a list of unhandled types, but
 // now we should be able to capture json and convert it entirely to native Rad types up front
-func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RadValue {
+func ConvertToNativeTypes(i *Interpreter, node rl.Node, val interface{}) RadValue {
 	switch coerced := val.(type) {
 	// strictly speaking, ints are unnecessary as Go unmarshalls them either as float64 or json.Number
 	case RadString, string, int64, float64, bool:
@@ -153,7 +151,7 @@ func ConvertToNativeTypes(i *Interpreter, node *ts.Node, val interface{}) RadVal
 	}
 }
 
-func ConvertValuesToNativeTypes(i *Interpreter, node *ts.Node, vals []interface{}) []RadValue {
+func ConvertValuesToNativeTypes(i *Interpreter, node rl.Node, vals []interface{}) []RadValue {
 	output := make([]RadValue, len(vals))
 	for idx, val := range vals {
 		output[idx] = ConvertToNativeTypes(i, node, val)

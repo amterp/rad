@@ -8,128 +8,46 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
-func getOp(str string) OpType {
-	switch str {
-	case "+":
-		return OP_PLUS
-	case "-":
-		return OP_MINUS
-	case "*":
-		return OP_MULTIPLY
-	case "/":
-		return OP_DIVIDE
-	case "%":
-		return OP_MODULO
-	case ">":
-		return OP_GREATER
-	case ">=":
-		return OP_GREATER_EQUAL
-	case "<":
-		return OP_LESS
-	case "<=":
-		return OP_LESS_EQUAL
-	case "==":
-		return OP_EQUAL
-	case "!=":
-		return OP_NOT_EQUAL
-	case "in":
-		return OP_IN
-	case "not in": // todo needs to work for if extra spaces between 'not in'
-		return OP_NOT_IN
-	case "and":
-		return OP_AND
-	case "or":
-		return OP_OR
-	default:
-		panic("Bug! Unexpected operator: " + str)
-	}
-}
-
-func (i *Interpreter) executeBinary(parentNode, leftNode, rightNode, opNode *ts.Node) RadValue {
-	opStr := i.GetSrcForNode(opNode)
-	op := getOp(opStr)
-	return newRadValue(i, parentNode, i.executeOp(parentNode, leftNode, rightNode, opNode, op))
-}
-
-func (i *Interpreter) executeCompoundOp(parentNode, left, right, opNode *ts.Node) RadValue {
-	result := func() interface{} {
-		switch opNode.Kind() {
-		case rl.K_PLUS_EQUAL:
-			return i.executeOp(parentNode, left, right, opNode, OP_PLUS)
-		case rl.K_MINUS_EQUAL:
-			return i.executeOp(parentNode, left, right, opNode, OP_MINUS)
-		case rl.K_STAR_EQUAL:
-			return i.executeOp(parentNode, left, right, opNode, OP_MULTIPLY)
-		case rl.K_SLASH_EQUAL:
-			return i.executeOp(parentNode, left, right, opNode, OP_DIVIDE)
-		case rl.K_PERCENT_EQUAL:
-			return i.executeOp(parentNode, left, right, opNode, OP_MODULO)
-		default:
-			i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid compound operator")
-			panic(UNREACHABLE)
-		}
-	}()
-	return newRadValue(i, parentNode, result)
-}
-
-func (i *Interpreter) executeUnaryOp(parentNode, argNode, opNode *ts.Node) RadValue {
-	switch opNode.Kind() {
-	case rl.K_PLUS, rl.K_MINUS, rl.K_PLUS_PLUS, rl.K_MINUS_MINUS:
-		opStr := i.GetSrcForNode(opNode)
-		argVal := i.eval(argNode).Val
-		argVal.RequireType(
-			i,
-			argNode,
-			fmt.Sprintf("Invalid operand type '%s' for op '%s'", TypeAsString(argVal), opStr),
-			rl.RadIntT,
-			rl.RadFloatT,
-		)
-
-		intOp, floatOp := i.getUnaryOp(opNode)
-
+// executeUnaryOp handles unary operators (-, +, not).
+func (i *Interpreter) executeUnaryOp(n *rl.OpUnary) RadValue {
+	switch n.Op {
+	case rl.OpNeg:
+		argVal := i.eval(n.Operand).Val
+		argVal.RequireType(i, n.Operand,
+			fmt.Sprintf("Invalid operand type '%s' for op '-'", TypeAsString(argVal)),
+			rl.RadIntT, rl.RadFloatT)
 		switch coerced := argVal.Val.(type) {
 		case int64:
-			return newRadValue(i, parentNode, intOp(coerced))
+			return newRadValue(i, n, -coerced)
 		case float64:
-			return newRadValue(i, parentNode, floatOp(coerced))
+			return newRadValue(i, n, -coerced)
 		default:
-			i.emitErrorf(rl.ErrInternalBug, parentNode, "Bug: Unhandled type for unary minus: %T", argVal.Val)
+			i.emitErrorf(rl.ErrInternalBug, n, "Bug: Unhandled type for unary minus: %T", argVal.Val)
 			panic(UNREACHABLE)
 		}
-	case rl.K_NOT:
-		return newRadValue(i, parentNode, !i.eval(argNode).Val.TruthyFalsy())
+	case rl.OpAdd:
+		// unary + is identity
+		argVal := i.eval(n.Operand).Val
+		argVal.RequireType(i, n.Operand,
+			fmt.Sprintf("Invalid operand type '%s' for op '+'", TypeAsString(argVal)),
+			rl.RadIntT, rl.RadFloatT)
+		return newRadValue(i, n, argVal.Val)
+	case rl.OpNot:
+		return newRadValue(i, n, !i.eval(n.Operand).Val.TruthyFalsy())
 	default:
-		i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid unary operator")
-		panic(UNREACHABLE)
-	}
-}
-
-func (i *Interpreter) getUnaryOp(opNode *ts.Node) (func(int64) int64, func(float64) float64) {
-	switch opNode.Kind() {
-	case rl.K_PLUS:
-		return func(a int64) int64 { return a }, func(a float64) float64 { return a }
-	case rl.K_MINUS:
-		return func(a int64) int64 { return -a }, func(a float64) float64 { return -a }
-	case rl.K_PLUS_PLUS:
-		return func(a int64) int64 { return a + 1 }, func(a float64) float64 { return a + 1 }
-	case rl.K_MINUS_MINUS:
-		return func(a int64) int64 { return a - 1 }, func(a float64) float64 { return a - 1 }
-	default:
-		i.emitError(rl.ErrUnsupportedOperation, opNode, "Invalid unary operator")
+		i.emitErrorf(rl.ErrUnsupportedOperation, n, "Invalid unary operator: %s", n.Op)
 		panic(UNREACHABLE)
 	}
 }
 
 func (i *Interpreter) executeOp(
-	parentNode *ts.Node,
-	leftNode *ts.Node,
-	rightNode *ts.Node,
-	opNode *ts.Node,
-	op OpType,
+	parentNode rl.Node,
+	leftNode rl.Node,
+	rightNode rl.Node,
+	op rl.Operator,
+	isCompound bool,
 ) interface{} {
 	left := com.Memoize(func() RadValue {
 		return i.eval(leftNode).Val
@@ -138,13 +56,13 @@ func (i *Interpreter) executeOp(
 		return i.eval(rightNode).Val
 	})
 
-	if op == OP_AND {
+	if op == rl.OpAnd {
 		leftB := left().TruthyFalsy()
 		if !leftB {
 			return false
 		}
 		return right().TruthyFalsy()
-	} else if op == OP_OR {
+	} else if op == rl.OpOr {
 		leftB := left().TruthyFalsy()
 		if leftB {
 			// return actual value for falsy coalescing
@@ -154,7 +72,7 @@ func (i *Interpreter) executeOp(
 		return right()
 	}
 
-	if op == OP_EQUAL || op == OP_NOT_EQUAL {
+	if op == rl.OpEq || op == rl.OpNeq {
 		leftType := left().Type()
 		rightType := right().Type()
 		// Allow comparison between RadError and RadString
@@ -165,7 +83,7 @@ func (i *Interpreter) executeOp(
 				(leftType == rl.RadStrT && rightType == rl.RadErrorT)) {
 			// different types are not equal
 			// UNLESS they're int/float or error/string, in which case we fall through to below and compare there
-			return op == OP_NOT_EQUAL
+			return op == rl.OpNeq
 		}
 	}
 
@@ -177,89 +95,89 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case int64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft + coercedRight
-			case OP_MINUS:
+			case rl.OpSub:
 				return coercedLeft - coercedRight
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return coercedLeft * coercedRight
-			case OP_DIVIDE:
+			case rl.OpDiv:
 				if coercedRight == 0 {
 					// todo idk if this is what we want to do? should we have a nan concept?
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return float64(coercedLeft) / float64(coercedRight)
-			case OP_MODULO:
+			case rl.OpMod:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return coercedLeft % coercedRight
-			case OP_GREATER:
+			case rl.OpGt:
 				return coercedLeft > coercedRight
-			case OP_GREATER_EQUAL:
+			case rl.OpGte:
 				return coercedLeft >= coercedRight
-			case OP_LESS:
+			case rl.OpLt:
 				return coercedLeft < coercedRight
-			case OP_LESS_EQUAL:
+			case rl.OpLte:
 				return coercedLeft <= coercedRight
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft == coercedRight
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return coercedLeft != coercedRight
 			}
 		case float64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return float64(coercedLeft) + coercedRight
-			case OP_MINUS:
+			case rl.OpSub:
 				return float64(coercedLeft) - coercedRight
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return float64(coercedLeft) * coercedRight
-			case OP_DIVIDE:
+			case rl.OpDiv:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return float64(coercedLeft) / coercedRight
-			case OP_MODULO:
+			case rl.OpMod:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(float64(coercedLeft), coercedRight)
-			case OP_GREATER:
+			case rl.OpGt:
 				return float64(coercedLeft) > coercedRight
-			case OP_GREATER_EQUAL:
+			case rl.OpGte:
 				return float64(coercedLeft) >= coercedRight
-			case OP_LESS:
+			case rl.OpLt:
 				return float64(coercedLeft) < coercedRight
-			case OP_LESS_EQUAL:
+			case rl.OpLte:
 				return float64(coercedLeft) <= coercedRight
-			case OP_EQUAL:
+			case rl.OpEq:
 				return float64(coercedLeft) == coercedRight
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return float64(coercedLeft) != coercedRight
 			}
 		case RadString:
 			switch op {
 			// todo python does not allow this, should we?
-			case OP_IN:
+			case rl.OpIn:
 				return strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !strings.Contains(coercedRight.Plain(), fmt.Sprintf("%v", coercedLeft))
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return coercedRight.Repeat(coercedLeft)
 			}
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		}
@@ -267,78 +185,78 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case int64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft + float64(coercedRight)
-			case OP_MINUS:
+			case rl.OpSub:
 				return coercedLeft - float64(coercedRight)
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return coercedLeft * float64(coercedRight)
-			case OP_DIVIDE:
+			case rl.OpDiv:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return coercedLeft / float64(coercedRight)
-			case OP_MODULO:
+			case rl.OpMod:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(coercedLeft, float64(coercedRight))
-			case OP_GREATER:
+			case rl.OpGt:
 				return coercedLeft > float64(coercedRight)
-			case OP_GREATER_EQUAL:
+			case rl.OpGte:
 				return coercedLeft >= float64(coercedRight)
-			case OP_LESS:
+			case rl.OpLt:
 				return coercedLeft < float64(coercedRight)
-			case OP_LESS_EQUAL:
+			case rl.OpLte:
 				return coercedLeft <= float64(coercedRight)
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft == float64(coercedRight)
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return coercedLeft != float64(coercedRight)
 			}
 		case float64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft + coercedRight
-			case OP_MINUS:
+			case rl.OpSub:
 				return coercedLeft - coercedRight
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return coercedLeft * coercedRight
-			case OP_DIVIDE:
+			case rl.OpDiv:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Divisor was 0, cannot divide by 0")
 				}
 				return coercedLeft / coercedRight
-			case OP_MODULO:
+			case rl.OpMod:
 				if coercedRight == 0 {
 					i.emitError(rl.ErrDivisionByZero, rightNode, "Value is 0, cannot modulo by 0")
 				}
 				return math.Mod(coercedLeft, coercedRight)
-			case OP_GREATER:
+			case rl.OpGt:
 				return coercedLeft > coercedRight
-			case OP_GREATER_EQUAL:
+			case rl.OpGte:
 				return coercedLeft >= coercedRight
-			case OP_LESS:
+			case rl.OpLt:
 				return coercedLeft < coercedRight
-			case OP_LESS_EQUAL:
+			case rl.OpLte:
 				return coercedLeft <= coercedRight
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft == coercedRight
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return coercedLeft != coercedRight
 			}
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		}
@@ -346,59 +264,59 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case RadString:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Concat(coercedRight)
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft.Equals(coercedRight)
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return !coercedLeft.Equals(coercedRight)
-			case OP_IN:
+			case rl.OpIn:
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			}
 		case int64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
-			case OP_MULTIPLY:
+			case rl.OpMul:
 				return coercedLeft.Repeat(coercedRight)
 			}
 		case float64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight)) // todo check formatting
 			}
 		case bool:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		case *RadError:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Concat(coercedRight.Msg())
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft.Equals(coercedRight.Msg())
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return !coercedLeft.Equals(coercedRight.Msg())
-			case OP_IN:
+			case rl.OpIn:
 				return strings.Contains(coercedRight.Msg().Plain(), coercedLeft.Plain())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !strings.Contains(coercedRight.Msg().Plain(), coercedLeft.Plain())
 			}
 		}
@@ -406,23 +324,23 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case bool:
 			switch op {
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft == coercedRight
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return coercedLeft != coercedRight
 			}
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		}
@@ -430,39 +348,39 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case *RadList:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.JoinWith(coercedRight)
-			case OP_IN:
+			case rl.OpIn:
 				return coercedLeft.Contains(right())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedLeft.Contains(right())
 			}
 		}
 		switch op {
-		case OP_PLUS:
+		case rl.OpAdd:
 			additionalErrMsg = ". Did you mean to wrap the right side in a list in order to append?"
 		}
 	case RadNull:
 		switch coercedRight := rightV.(type) {
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		case RadNull:
 			switch op {
-			case OP_EQUAL:
+			case rl.OpEq:
 				return true
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return false
 			}
 		}
@@ -470,61 +388,63 @@ func (i *Interpreter) executeOp(
 		switch coercedRight := rightV.(type) {
 		case RadString:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Msg().Concat(coercedRight)
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft.Msg().Equals(coercedRight)
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return !coercedLeft.Msg().Equals(coercedRight)
-			case OP_IN:
+			case rl.OpIn:
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
 			}
 		case *RadError:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Msg().Concat(coercedRight.Msg())
-			case OP_EQUAL:
+			case rl.OpEq:
 				return coercedLeft.Equals(coercedRight)
-			case OP_NOT_EQUAL:
+			case rl.OpNeq:
 				return !coercedLeft.Equals(coercedRight)
 			}
 		case int64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case float64:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case bool:
 			switch op {
-			case OP_PLUS:
+			case rl.OpAdd:
 				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case *RadList:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.Contains(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.Contains(left())
 			}
 		case *RadMap:
 			switch op {
-			case OP_IN:
+			case rl.OpIn:
 				return coercedRight.ContainsKey(left())
-			case OP_NOT_IN:
+			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
 		}
 	}
 
-	opSrc := i.GetSrcForNode(opNode)
-
+	opStr := op.String()
+	if isCompound {
+		opStr += "="
+	}
 	i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
-		TypeAsString(leftV), opSrc, TypeAsString(rightV), additionalErrMsg)
+		TypeAsString(leftV), opStr, TypeAsString(rightV), additionalErrMsg)
 	panic(UNREACHABLE)
 }

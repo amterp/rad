@@ -10,9 +10,8 @@ import (
 
 	"github.com/amterp/color"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
-
 	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/rl"
 )
 
 type CodeCtx struct {
@@ -33,14 +32,14 @@ type ErrorCtx struct {
 	Suggestion *string // Optional suggestion for fixing the error (rendered as "Try: ...")
 }
 
-func NewCtx(src string, node *ts.Node, oneLiner string, details string) ErrorCtx {
+func NewCtxFromSpan(src string, span rl.Span, oneLiner string, details string) ErrorCtx {
 	return ErrorCtx{
 		CodeCtx: CodeCtx{
 			Src:      src,
-			RowStart: int(node.Range().StartPoint.Row) + 1,
-			RowEnd:   int(node.Range().EndPoint.Row) + 1,
-			ColStart: int(node.Range().StartPoint.Column) + 1,
-			ColEnd:   int(node.Range().EndPoint.Column) + 1,
+			RowStart: span.StartLine(),
+			RowEnd:   span.EndLine(),
+			ColStart: span.StartColumn(),
+			ColEnd:   span.EndColumn(),
 		},
 		OneLiner: oneLiner,
 		Details:  details,

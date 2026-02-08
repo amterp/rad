@@ -1,17 +1,13 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type JsonFieldVar struct {
 	Name string
 	Path JsonPath
-	Node *ts.Node
+	Span *rl.Span // source location for error reporting
 }
 
 type JsonPath struct {
@@ -20,51 +16,35 @@ type JsonPath struct {
 
 type JsonPathSegment struct {
 	Identifier  string
-	SegmentNode *ts.Node
+	SegmentSpan rl.Span
 	IdxSegments []JsonPathSegmentIdx
 }
 
 type JsonPathSegmentIdx struct {
-	IdxNode *ts.Node  // e.g. json.names[]
-	Idx     *RadValue // e.g. json.names[0]
+	Span rl.Span
+	Idx  *RadValue // e.g. json.names[0]; nil = wildcard []
 }
 
-func NewJsonFieldVar(i *Interpreter, leftNode, jsonPathNode *ts.Node) *JsonFieldVar {
-	indexingNodes := rl.GetChildren(leftNode, rl.F_INDEXING)
-	if len(indexingNodes) != 0 {
-		i.emitError(rl.ErrInvalidSyntax, leftNode, "Json paths must be defined to plain identifiers")
-	}
-	leftIdentifierNode := rl.GetChild(leftNode, rl.F_ROOT)
-
-	var segments []JsonPathSegment
-
-	segmentNodes := rl.GetChildren(jsonPathNode, rl.F_SEGMENT)
-	for _, segmentNode := range segmentNodes {
-		identifierNode := rl.GetChild(&segmentNode, rl.F_KEY)
-		identifierStr := i.GetSrcForNode(identifierNode)
-		indexNodes := rl.GetChildren(&segmentNode, rl.F_INDEX)
-
-		var idxSegments []JsonPathSegmentIdx
-		for _, indexNode := range indexNodes {
-			idxExprNode := rl.GetChild(&indexNode, rl.F_EXPR)
-			if idxExprNode == nil {
-				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode})
-			} else {
-				idx := i.eval(idxExprNode).Val
-				idx.RequireType(i, idxExprNode, fmt.Sprintf("Json path indexes must be ints, was %s", TypeAsString(idx)), rl.RadIntT)
-				idxSegments = append(idxSegments, JsonPathSegmentIdx{IdxNode: &indexNode, Idx: &idx})
-			}
-		}
-
-		segments = append(
-			segments,
-			JsonPathSegment{Identifier: identifierStr, SegmentNode: &segmentNode, IdxSegments: idxSegments},
-		)
-	}
-
-	identifierStr := i.GetSrcForNode(leftIdentifierNode)
+// NewJsonFieldVarSimple creates a JsonFieldVar with a simple single-segment path.
+// Used by the AST-based rad block interpreter for plain field names.
+func NewJsonFieldVarSimple(name string, span rl.Span) *JsonFieldVar {
 	return &JsonFieldVar{
-		Name: identifierStr,
+		Name: name,
+		Path: JsonPath{
+			Segments: []JsonPathSegment{
+				{Identifier: name, SegmentSpan: span},
+			},
+		},
+		Span: &span,
+	}
+}
+
+// NewJsonFieldVar creates a JsonFieldVar from explicit path segments.
+func NewJsonFieldVar(i *Interpreter, name string, span rl.Span, segments []JsonPathSegment) *JsonFieldVar {
+	_ = i // reserved for future validation
+	return &JsonFieldVar{
+		Name: name,
 		Path: JsonPath{Segments: segments},
+		Span: &span,
 	}
 }

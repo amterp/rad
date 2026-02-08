@@ -5,8 +5,6 @@ import (
 
 	"github.com/amterp/rad/rts/rl"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
-
 	"github.com/amterp/color"
 	tblwriter "github.com/amterp/go-tbl"
 )
@@ -77,7 +75,7 @@ func TryColorFromString(str string) (RadTextAttr, bool) {
 	return clr, true
 }
 
-func AttrFromString(i *Interpreter, node *ts.Node, str string) RadTextAttr {
+func AttrFromString(i *Interpreter, node rl.Node, str string) RadTextAttr {
 	clr, ok := TryColorFromString(str)
 	if !ok {
 		i.emitErrorf(rl.ErrColorizeValNotInEnum, node, "Invalid color value %q. Allowed: %s", str, ATTR_STRINGS)

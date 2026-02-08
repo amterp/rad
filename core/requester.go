@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 )
 
 var (
@@ -83,7 +83,7 @@ type HttpRequest struct {
 	ResponseDef ResponseDef
 }
 
-func (r ResponseDef) ToRadMap(i *Interpreter, callNode *ts.Node) *RadMap {
+func (r ResponseDef) ToRadMap(i *Interpreter, callNode rl.Node) *RadMap {
 	radMap := NewRadMap()
 
 	radMap.SetPrimitiveBool("success", r.Success)

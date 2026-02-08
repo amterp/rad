@@ -8,8 +8,7 @@ import (
 	"unicode/utf8"
 
 	com "github.com/amterp/rad/core/common"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
@@ -21,12 +20,13 @@ const (
 )
 
 type GeneralSort struct {
-	Node *ts.Node
+	Span rl.Span
 	Dir  SortDir
 }
 type ColumnSort struct {
-	ColIdentifier *ts.Node
-	Dir           SortDir
+	ColName string
+	Span    rl.Span
+	Dir     SortDir
 }
 
 type TblWriter struct {

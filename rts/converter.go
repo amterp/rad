@@ -17,6 +17,15 @@ func ConvertCST(root *ts.Node, src string, file string) *rl.SourceFile {
 	return c.convertSourceFile(root)
 }
 
+// ConvertExpr converts a single CST expression node into an AST expression.
+// Used as a bridge during migration: the typing system still stores CST nodes
+// for function parameter defaults and type constraints, but the interpreter
+// evaluates AST nodes. This converts on the fly.
+func ConvertExpr(node *ts.Node, src string, file string) rl.Node {
+	c := &converter{src: src, file: file}
+	return c.convertExpr(node)
+}
+
 // ConvertLambda converts a single lambda CST node into an AST Lambda.
 // Used for converting command callback lambdas at the runner level.
 func ConvertLambda(lambdaNode *ts.Node, src string, file string) *rl.Lambda {
@@ -146,8 +155,11 @@ func (c *converter) convertCompoundAssign(node *ts.Node) *rl.Assign {
 
 	// Create a synthetic binary op: target op rightVal
 	binOp := rl.NewOpBinary(c.makeSpan(node), op, target, rightVal)
+	binOp.IsCompound = true
 
-	return rl.NewAssign(c.makeSpan(node), []rl.Node{target}, []rl.Node{binOp}, false, nil)
+	assign := rl.NewAssign(c.makeSpan(node), []rl.Node{target}, []rl.Node{binOp}, false, nil)
+	assign.UpdateEnclosing = true
+	return assign
 }
 
 // convertIncrDecr desugars `x++` into `Assign(x, OpBinary(x, +, 1))`.
@@ -170,7 +182,9 @@ func (c *converter) convertIncrDecr(node *ts.Node) *rl.Assign {
 	}
 
 	binOp := rl.NewOpBinary(span, op, target, one)
-	return rl.NewAssign(span, []rl.Node{target}, []rl.Node{binOp}, false, nil)
+	assign := rl.NewAssign(span, []rl.Node{target}, []rl.Node{binOp}, false, nil)
+	assign.UpdateEnclosing = true
+	return assign
 }
 
 func (c *converter) convertExprStmt(node *ts.Node) *rl.ExprStmt {
@@ -470,8 +484,11 @@ func (c *converter) convertExpr(node *ts.Node) rl.Node {
 	case rl.K_LIST_COMPREHENSION:
 		return c.convertListComp(node)
 	case rl.K_JSON_PATH:
-		// JSON paths stay as identifiers - they're resolved at runtime
-		return rl.NewIdentifier(c.makeSpan(node), c.getSrc(node))
+		return c.convertJsonPath(node)
+
+	// Switch can appear in expression position (switch expression with yield)
+	case rl.K_SWITCH_STMT:
+		return c.convertSwitch(node)
 
 	default:
 		panic(fmt.Sprintf("converter: unexpected expression node kind: %s", node.Kind()))
@@ -559,9 +576,10 @@ func (c *converter) convertPathSegment(node *ts.Node) rl.PathSegment {
 
 	// Check if this is a call (UFCS)
 	if node.Kind() == rl.K_CALL {
-		// For UFCS calls, we store the entire call as an index expression
 		call := c.convertCall(node)
-		return rl.NewPathSegmentIndex(span, call)
+		seg := rl.NewPathSegmentIndex(span, call)
+		seg.IsUFCS = true
+		return seg
 	}
 
 	// Check for slice syntax
@@ -763,6 +781,7 @@ func (c *converter) convertInterpolation(node *ts.Node) rl.StringSegment {
 		IsLiteral: false,
 		Expr:      c.convertExpr(exprNode),
 		Format:    format,
+		Span_:     c.makeSpan(node),
 	}
 }
 
@@ -996,6 +1015,10 @@ func (c *converter) resolveBinaryOp(opNode *ts.Node) rl.Operator {
 		return rl.OpGt
 	case ">=":
 		return rl.OpGte
+	case "in":
+		return rl.OpIn
+	case "not in":
+		return rl.OpNotIn
 	case "and":
 		return rl.OpAnd
 	case "or":
@@ -1051,6 +1074,39 @@ func (c *converter) convertStmts(nodes []ts.Node) []rl.Node {
 		result = append(result, c.convertStmt(&node))
 	}
 	return result
+}
+
+func (c *converter) convertJsonPath(node *ts.Node) rl.Node {
+	segmentNodes := rl.GetChildren(node, rl.F_SEGMENT)
+	segments := make([]rl.JsonPathSeg, 0, len(segmentNodes))
+
+	for _, segNode := range segmentNodes {
+		keyNode := rl.GetChild(&segNode, rl.F_KEY)
+		keyStr := c.getSrc(keyNode)
+		keySpan := c.makeSpan(keyNode)
+
+		indexNodes := rl.GetChildren(&segNode, rl.F_INDEX)
+		var indexes []rl.JsonPathIdx
+		for _, idxNode := range indexNodes {
+			exprNode := rl.GetChild(&idxNode, rl.F_EXPR)
+			var expr rl.Node
+			if exprNode != nil {
+				expr = c.convertExpr(exprNode)
+			}
+			indexes = append(indexes, rl.JsonPathIdx{
+				Span: c.makeSpan(&idxNode),
+				Expr: expr,
+			})
+		}
+
+		segments = append(segments, rl.JsonPathSeg{
+			Key:     keyStr,
+			KeySpan: keySpan,
+			Indexes: indexes,
+		})
+	}
+
+	return rl.NewJsonPath(c.makeSpan(node), segments)
 }
 
 func (c *converter) getOnlyChild(node *ts.Node) *ts.Node {

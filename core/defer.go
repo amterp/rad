@@ -1,19 +1,18 @@
 package core
 
-import ts "github.com/tree-sitter/go-tree-sitter"
+import "github.com/amterp/rad/rts/rl"
 
 type DeferBlock struct {
-	DeferNode  *ts.Node
-	StmtNodes  []ts.Node
+	Span       rl.Span
+	Body       []rl.Node
 	IsErrDefer bool
 }
 
-func NewDeferBlock(i *Interpreter, deferKeywordNode *ts.Node, stmtNodes []ts.Node) *DeferBlock {
-	deferKeywordStr := i.GetSrcForNode(deferKeywordNode)
+func NewDeferBlock(span rl.Span, body []rl.Node, isErrDefer bool) *DeferBlock {
 	return &DeferBlock{
-		DeferNode:  deferKeywordNode,
-		StmtNodes:  stmtNodes,
-		IsErrDefer: deferKeywordStr == "errdefer",
+		Span:       span,
+		Body:       body,
+		IsErrDefer: isErrDefer,
 	}
 }
 
@@ -39,7 +38,7 @@ func (i *Interpreter) executeDeferBlocks(errCode int) {
 					RP.RadDebugf("Recovered from panic in deferred statement: %v", r)
 				}
 			}()
-			i.runBlock(deferBlock.StmtNodes)
+			i.runBlock(deferBlock.Body)
 		}()
 	}
 }

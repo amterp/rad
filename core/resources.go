@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 )
 
 // todo In Go you can apparently define custom json serde with e.g. MarshalJSON and UnmarshalJSON,
@@ -30,7 +30,7 @@ type PickResourceOptionSerde struct {
 	Values []interface{} `json:"values"`
 }
 
-func LoadPickResource(i *Interpreter, callNode *ts.Node, jsonPath string) (PickResource, *RadError) {
+func LoadPickResource(i *Interpreter, callNode rl.Node, jsonPath string) (PickResource, *RadError) {
 	finalPath := resolveFinalPath(jsonPath)
 	file, err := os.Open(finalPath)
 	if err != nil {

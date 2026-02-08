@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	ts "github.com/tree-sitter/go-tree-sitter"
+	"github.com/amterp/rad/rts/rl"
 )
 
 var FuncSplit = BuiltInFunc{
@@ -17,7 +17,7 @@ var FuncSplit = BuiltInFunc{
 	},
 }
 
-func regexSplit(i *Interpreter, callNode *ts.Node, input string, sep string) []RadValue {
+func regexSplit(i *Interpreter, callNode rl.Node, input string, sep string) []RadValue {
 	re, err := regexp.Compile(sep)
 
 	var parts []string

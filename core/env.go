@@ -7,8 +7,6 @@ import (
 
 	com "github.com/amterp/rad/core/common"
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type Env struct {
@@ -54,7 +52,7 @@ func (e *Env) GetVar(name string) (RadValue, bool) {
 	return RadValue{}, false
 }
 
-func (e *Env) GetVarElseBug(i *Interpreter, node *ts.Node, name string) RadValue {
+func (e *Env) GetVarElseBug(i *Interpreter, node rl.Node, name string) RadValue {
 	if val, exists := e.GetVar(name); exists {
 		return val
 	}
@@ -65,7 +63,7 @@ func (e *Env) GetVarElseBug(i *Interpreter, node *ts.Node, name string) RadValue
 func (e *Env) SetJsonFieldVar(jsonFieldVar *JsonFieldVar) {
 	e.JsonFieldVars[jsonFieldVar.Name] = jsonFieldVar
 	// define empty list for json field
-	e.SetVar(jsonFieldVar.Name, newRadValue(e.i, jsonFieldVar.Node, NewRadList()))
+	e.SetVar(jsonFieldVar.Name, newRadValue(e.i, nil, NewRadList()))
 }
 
 func (e *Env) GetJsonFieldVar(name string) (*JsonFieldVar, bool) {

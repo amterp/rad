@@ -6,8 +6,6 @@ import (
 	com "github.com/amterp/rad/core/common"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 const ENV_RAD_HOME = "RAD_HOME"
@@ -42,7 +40,7 @@ func (r *RadHome) GetStashForId(id string) string {
 	return NormalizePath(filepath.Join(r.HomeDir, "stashes", id))
 }
 
-func (r *RadHome) GetStashSub(subPath string, node *ts.Node) (string, *RadError) {
+func (r *RadHome) GetStashSub(subPath string, node rl.Node) (string, *RadError) {
 	stash := r.GetStash()
 	if stash == nil {
 		return "", errNoStashId(node)
@@ -51,7 +49,7 @@ func (r *RadHome) GetStashSub(subPath string, node *ts.Node) (string, *RadError)
 	return NormalizePath(filepath.Join(*stash, "files", subPath)), nil
 }
 
-func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool, *RadError) {
+func (r *RadHome) LoadState(i *Interpreter, node rl.Node) (RadValue, bool, *RadError) {
 	if r.StashId == nil {
 		return RadValue{}, false, errNoStashId(node)
 	}
@@ -69,7 +67,7 @@ func (r *RadHome) LoadState(i *Interpreter, node *ts.Node) (RadValue, bool, *Rad
 	return ConvertToNativeTypes(i, node, data), true, nil
 }
 
-func (r *RadHome) SaveState(i *Interpreter, node *ts.Node, value RadValue) *RadError {
+func (r *RadHome) SaveState(i *Interpreter, node rl.Node, value RadValue) *RadError {
 	if r.StashId == nil {
 		return errNoStashId(node)
 	}
@@ -89,8 +87,8 @@ func (r *RadHome) resolveScriptStatePath() string {
 	return filepath.Join(stashHome, "state.json")
 }
 
-func errNoStashId(node *ts.Node) *RadError {
+func errNoStashId(node rl.Node) *RadError {
 	return NewErrorStrf("Script ID is not set. Set the '%s' macro in the file header.", MACRO_STASH_ID).
 		SetCode(rl.ErrNoStashId).
-		SetNode(node)
+		SetSpan(nodeSpanPtr(node))
 }

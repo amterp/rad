@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadTypeVisitorAcceptor interface {
@@ -18,7 +16,7 @@ type RadTypeVisitorAcceptor interface {
 // a new type to Rad.
 type RadTypeVisitor struct {
 	i    *Interpreter
-	node *ts.Node
+	node rl.Node
 
 	visitBool    func(RadValue, bool)
 	visitInt     func(RadValue, int64)
@@ -32,7 +30,7 @@ type RadTypeVisitor struct {
 	defaultVisit func(RadValue)
 }
 
-func NewTypeVisitor(i *Interpreter, node *ts.Node) *RadTypeVisitor {
+func NewTypeVisitor(i *Interpreter, node rl.Node) *RadTypeVisitor {
 	return &RadTypeVisitor{
 		i:    i,
 		node: node,
