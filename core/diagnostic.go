@@ -29,21 +29,9 @@ func (s Severity) String() string {
 	}
 }
 
-// Span represents a location range in source code.
-// All positions are 0-indexed.
-type Span struct {
-	File      string
-	StartByte int
-	EndByte   int
-	StartRow  int
-	StartCol  int
-	EndRow    int
-	EndCol    int
-}
-
 // NewSpanFromNode creates a Span from a tree-sitter node and file path.
-func NewSpanFromNode(node *ts.Node, file string) Span {
-	return Span{
+func NewSpanFromNode(node *ts.Node, file string) rl.Span {
+	return rl.Span{
 		File:      file,
 		StartByte: int(node.StartByte()),
 		EndByte:   int(node.EndByte()),
@@ -54,25 +42,15 @@ func NewSpanFromNode(node *ts.Node, file string) Span {
 	}
 }
 
-// StartLine returns the 1-indexed start line number for display.
-func (s Span) StartLine() int {
-	return s.StartRow + 1
-}
-
-// StartColumn returns the 1-indexed start column number for display.
-func (s Span) StartColumn() int {
-	return s.StartCol + 1
-}
-
 // Label represents a labeled span in a diagnostic.
 type Label struct {
-	Span    Span
+	Span    rl.Span
 	Message string
 	Primary bool // true = ^^^^ (red), false = ---- (blue)
 }
 
 // NewPrimaryLabel creates a primary label (shown with ^^^^ in red).
-func NewPrimaryLabel(span Span, message string) Label {
+func NewPrimaryLabel(span rl.Span, message string) Label {
 	return Label{
 		Span:    span,
 		Message: message,
@@ -81,7 +59,7 @@ func NewPrimaryLabel(span Span, message string) Label {
 }
 
 // NewSecondaryLabel creates a secondary label (shown with ---- in blue).
-func NewSecondaryLabel(span Span, message string) Label {
+func NewSecondaryLabel(span rl.Span, message string) Label {
 	return Label{
 		Span:    span,
 		Message: message,
@@ -101,7 +79,7 @@ type Diagnostic struct {
 }
 
 // NewDiagnostic creates a diagnostic with a single primary label.
-func NewDiagnostic(severity Severity, code rl.Error, message string, source string, primarySpan Span) Diagnostic {
+func NewDiagnostic(severity Severity, code rl.Error, message string, source string, primarySpan rl.Span) Diagnostic {
 	return Diagnostic{
 		Severity: severity,
 		Code:     code,
@@ -135,7 +113,7 @@ func (d Diagnostic) WithHints(hints ...string) Diagnostic {
 }
 
 // WithSecondaryLabel adds a secondary label to the diagnostic and returns the modified diagnostic.
-func (d Diagnostic) WithSecondaryLabel(span Span, message string) Diagnostic {
+func (d Diagnostic) WithSecondaryLabel(span rl.Span, message string) Diagnostic {
 	d.Labels = append(d.Labels, NewSecondaryLabel(span, message))
 	return d
 }
@@ -147,7 +125,7 @@ func (d Diagnostic) WithCallStack(stack []CallFrame) Diagnostic {
 }
 
 // PrimarySpan returns the first primary span, or nil if none exists.
-func (d Diagnostic) PrimarySpan() *Span {
+func (d Diagnostic) PrimarySpan() *rl.Span {
 	for _, label := range d.Labels {
 		if label.Primary {
 			return &label.Span
@@ -260,7 +238,7 @@ func convertCheckSeverity(s check.Severity) Severity {
 // The file parameter is used for the span's file path.
 func NewDiagnosticFromCheck(d check.Diagnostic, file string) Diagnostic {
 	// Create span from check.Range
-	span := Span{
+	span := rl.Span{
 		File:     file,
 		StartRow: d.Range.Start.Line,
 		StartCol: d.Range.Start.Character,
