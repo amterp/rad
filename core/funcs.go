@@ -111,7 +111,7 @@ const (
 	FUNC_UUID_V7            = "uuid_v7"
 	FUNC_GEN_FID            = "gen_fid"
 	FUNC_GET_RAD_HOME       = "get_rad_home"
-	FUNC_GET_STASH_DIR      = "get_stash_dir" // todo 'path' vs. 'dir' inconsistent naming
+	FUNC_GET_STASH_PATH     = "get_stash_path"
 	FUNC_LOAD_STATE         = "load_state"
 	FUNC_SAVE_STATE         = "save_state"
 	FUNC_LOAD_STASH_FILE    = "load_stash_file"
@@ -1378,7 +1378,7 @@ func init() {
 			},
 		},
 		{
-			Name: FUNC_GET_STASH_DIR,
+			Name: FUNC_GET_STASH_PATH,
 			Execute: func(f FuncInvocation) RadValue {
 				stashPath := RadHomeInst.GetStash()
 				if stashPath == nil {

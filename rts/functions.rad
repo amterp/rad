@@ -195,7 +195,7 @@ fn get_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> str
 fn get_rad_home() -> str:
     pass
 
-fn get_stash_dir(_sub_path: str?) -> error|str:
+fn get_stash_path(_sub_path: str?) -> error|str:
     pass
 
 fn load_state() -> map:

@@ -76,10 +76,15 @@ func (i *Interpreter) callFunction(callNode *ts.Node, ufcsArg *PosArg) RadValue 
 
 	val, exist := i.env.GetVar(funcName)
 	if !exist {
-		if funcName == "get_default" {
+		switch funcName {
+		case "get_default":
 			i.emitErrorWithHint(rl.ErrUnknownFunction, funcNameNode,
 				"Cannot invoke unknown function: get_default",
 				"get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/")
+		case "get_stash_dir":
+			i.emitErrorWithHint(rl.ErrUnknownFunction, funcNameNode,
+				"Cannot invoke unknown function: get_stash_dir",
+				"get_stash_dir was renamed to get_stash_path. See: https://amterp.github.io/rad/migrations/v0.9/")
 		}
 		i.emitErrorf(rl.ErrUnknownFunction, funcNameNode, "Cannot invoke unknown function: %s", funcName)
 	}

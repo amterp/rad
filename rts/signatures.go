@@ -99,7 +99,7 @@ func init() {
 		newFnSignature(`uuid_v4() -> str`),
 		newFnSignature(`uuid_v7() -> str`),
 		newFnSignature(`gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> error|str`),
-		newFnSignature(`get_stash_dir(_sub_path: str = "") -> error|str`),
+		newFnSignature(`get_stash_path(_sub_path: str = "") -> error|str`),
 		newFnSignature(`load_state() -> error|map`),
 		newFnSignature(`save_state(_state: map) -> error?`),
 		newFnSignature(`load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "created": bool, "content"?: str }`),

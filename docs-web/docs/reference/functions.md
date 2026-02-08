@@ -1741,7 +1741,7 @@ get_rad_home() -> string
 
 Defaults to `$HOME/.rad`, or `$RAD_HOME` if it's defined.
 
-### `get_stash_dir`
+### `get_stash_path`
 
 Returns the full path to the script's stash directory, with the given subpath if specified.
 
@@ -1750,7 +1750,7 @@ Requires a stash ID to have been defined.
 [//]: # (TODO link to stash id docs, and for below)
 
 ```
-get_stash_dir(subpath: string?) -> string
+get_stash_path(subpath: string?) -> string
 ```
 
 **Return Values**

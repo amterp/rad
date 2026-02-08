@@ -82,6 +82,25 @@ error[RAD40003]: Cannot invoke unknown function: get_default
 ### EXIT ###
 1
 ### TITLE ###
+Migration_V09_GetStashDir_ShowsHelpfulError
+### INPUT ###
+
+get_stash_dir()
+### STDERR ###
+error[RAD40003]: Cannot invoke unknown function: get_stash_dir
+  --> <script>:2:1
+  |
+1 |
+2 | get_stash_dir()
+  | ^^^^^^^^^^^^^
+  |
+   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD40003
+
+
+### EXIT ###
+1
+### TITLE ###
 Migration_V08_GetDefault_Ufcs_ShowsHelpfulError
 ### INPUT ###
 

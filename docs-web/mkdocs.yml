@@ -28,6 +28,7 @@ nav:
       - Language Reference: ./reference/syntax.md
       - ./reference/functions.md
   - Migrations:
+      - ./migrations/v0.9.md
       - ./migrations/v0.8.md
       - ./migrations/v0.7.md
   - Project Status: status.md

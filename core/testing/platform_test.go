@@ -37,36 +37,36 @@ print(home)
 	assertNoErrors(t)
 }
 
-func Test_Platform_GetStashDirReturnsNormalizedPath(t *testing.T) {
+func Test_Platform_GetStashPathReturnsNormalizedPath(t *testing.T) {
 	script := `
 ---
 @stash_id = test_id
 ---
-dir = get_stash_dir()
+dir = get_stash_path()
 print(dir)
 `
 	setupAndRunCode(t, script, "--color=never")
 	output := stdOutBuffer.String()
 	// Path should use forward slashes, not backslashes
 	if strings.Contains(output, "\\") {
-		t.Errorf("get_stash_dir() contains backslashes: %s", output)
+		t.Errorf("get_stash_path() contains backslashes: %s", output)
 	}
 	assertNoErrors(t)
 }
 
-func Test_Platform_GetStashDirSubPathReturnsNormalizedPath(t *testing.T) {
+func Test_Platform_GetStashPathSubPathReturnsNormalizedPath(t *testing.T) {
 	script := `
 ---
 @stash_id = test_id
 ---
-dir = get_stash_dir("some/sub/path.txt")
+dir = get_stash_path("some/sub/path.txt")
 print(dir)
 `
 	setupAndRunCode(t, script, "--color=never")
 	output := stdOutBuffer.String()
 	// Path should use forward slashes, not backslashes
 	if strings.Contains(output, "\\") {
-		t.Errorf("get_stash_dir(subpath) contains backslashes: %s", output)
+		t.Errorf("get_stash_path(subpath) contains backslashes: %s", output)
 	}
 	assertNoErrors(t)
 }

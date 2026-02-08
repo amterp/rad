@@ -7,17 +7,17 @@ get_rad_home().split("/")[-3:].print()
 [ "core", "testing", "rad_test_home" ]
 
 ### TITLE ###
-Stash_GetStashDirErrorsIfNoStashId
+Stash_GetStashPathErrorsIfNoStashId
 ### INPUT ###
 
-get_stash_dir()
+get_stash_path()
 ### STDERR ###
 error[RAD20022]: Script ID is not set. Set the 'stash_id' macro in the file header.
   --> <script>:2:1
   |
 1 |
-2 | get_stash_dir()
-  | ^^^^^^^^^^^^^^^
+2 | get_stash_path()
+  | ^^^^^^^^^^^^^^^^
   |
    = info: rad explain RAD20022
 
@@ -25,24 +25,24 @@ error[RAD20022]: Script ID is not set. Set the 'stash_id' macro in the file head
 ### EXIT ###
 1
 ### TITLE ###
-Stash_GetStashDir
+Stash_GetStashPath
 ### INPUT ###
 
 ---
 @stash_id = test_id
 ---
-get_stash_dir().split("/")[-5:].print()
+get_stash_path().split("/")[-5:].print()
 ### STDOUT ###
 [ "core", "testing", "rad_test_home", "stashes", "test_id" ]
 
 ### TITLE ###
-Stash_GetStashDir_SubPath
+Stash_GetStashPath_SubPath
 ### INPUT ###
 
 ---
 @stash_id = test_id
 ---
-get_stash_dir("some/path.txt").split("/")[-7:].print()
+get_stash_path("some/path.txt").split("/")[-7:].print()
 ### STDOUT ###
 [ "core", "testing", "rad_test_home", "stashes", "test_id", "some", "path.txt" ]
 

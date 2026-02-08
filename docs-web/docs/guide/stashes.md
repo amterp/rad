@@ -234,15 +234,15 @@ else:
         print("No notes yet. Use --add to create one.")
 ```
 
-### Getting the Stash Directory
+### Getting the Stash Path
 
-[`get_stash_dir(subpath?)`](../reference/functions.md#get_stash_dir) returns the path to your stash directory:
+[`get_stash_path(subpath?)`](../reference/functions.md#get_stash_path) returns the path to your stash directory:
 
 ```rad
-stash_path = get_stash_dir()
+stash_path = get_stash_path()
 print(stash_path)  // ~/.rad/stashes/<stash_id>
 
-file_path = get_stash_dir("data/config.json")
+file_path = get_stash_path("data/config.json")
 print(file_path)  // ~/.rad/stashes/<stash_id>/data/config.json
 ```
 

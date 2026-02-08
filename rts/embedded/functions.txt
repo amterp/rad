@@ -28,7 +28,7 @@ get_args
 get_env
 get_path
 get_rad_home
-get_stash_dir
+get_stash_path
 green
 has_stdin
 hash
