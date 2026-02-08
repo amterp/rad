@@ -210,7 +210,7 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 		// todo this should be more shared between the two branches?
 		if fn.BuiltInFunc == nil {
 			// Push call frame for user-defined functions
-			var callSite, defSite *Span
+			var callSite, defSite *rl.Span
 			if f.callNode != nil {
 				cs := NewSpanFromNode(f.callNode, i.GetScriptName())
 				callSite = &cs

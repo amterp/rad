@@ -25,7 +25,7 @@ func TestRenderSingleSpanError(t *testing.T) {
 	source := `args:
     name str = $username`
 
-	span := core.Span{
+	span := rl.Span{
 		File:     "script.rad",
 		StartRow: 1,
 		StartCol: 15,
@@ -64,7 +64,7 @@ func TestRenderWarning(t *testing.T) {
 	defer func() { color.NoColor = oldNoColor }()
 
 	source := `x = 5`
-	span := core.Span{
+	span := rl.Span{
 		File:     "test.rad",
 		StartRow: 0,
 		StartCol: 0,
@@ -98,7 +98,7 @@ func TestRenderMultiSpan(t *testing.T) {
 result = count * factor`
 
 	// Primary span: where the error occurs
-	primarySpan := core.Span{
+	primarySpan := rl.Span{
 		File:     "script.rad",
 		StartRow: 1,
 		StartCol: 9,
@@ -107,7 +107,7 @@ result = count * factor`
 	}
 
 	// Secondary span: where the value was defined
-	secondarySpan := core.Span{
+	secondarySpan := rl.Span{
 		File:     "script.rad",
 		StartRow: 0,
 		StartCol: 8,
@@ -149,7 +149,7 @@ func TestRenderLongLinesTruncated(t *testing.T) {
 		longLine = longLine[:i] + "a" + longLine[i+1:]
 	}
 
-	span := core.Span{
+	span := rl.Span{
 		File:     "test.rad",
 		StartRow: 0,
 		StartCol: 0,
@@ -183,7 +183,7 @@ func TestRenderCollectorWithRemaining(t *testing.T) {
 	defer func() { color.NoColor = oldNoColor }()
 
 	collector := core.NewDiagnosticCollectorWithLimit(2)
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 
 	// Add 5 diagnostics (only 2 will be stored)
 	for i := 0; i < 5; i++ {
@@ -213,7 +213,7 @@ func TestRenderNote(t *testing.T) {
 	defer func() { color.NoColor = oldNoColor }()
 
 	source := `x = 5`
-	span := core.Span{
+	span := rl.Span{
 		File:     "test.rad",
 		StartRow: 0,
 		StartCol: 0,
@@ -242,7 +242,7 @@ func TestRenderEmptySource(t *testing.T) {
 	color.NoColor = true
 	defer func() { color.NoColor = oldNoColor }()
 
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 	diag := core.NewDiagnostic(
 		core.SeverityError,
 		rl.ErrInvalidSyntax,
@@ -268,7 +268,7 @@ func TestRenderStdinFile(t *testing.T) {
 	defer func() { color.NoColor = oldNoColor }()
 
 	source := `x = 5`
-	span := core.Span{
+	span := rl.Span{
 		File:     "", // empty file means stdin
 		StartRow: 0,
 		StartCol: 0,
@@ -301,7 +301,7 @@ func TestRenderFormatMatchesSpec(t *testing.T) {
 	source := `args:
     name str = $username`
 
-	span := core.Span{
+	span := rl.Span{
 		File:     "script.rad",
 		StartRow: 1,
 		StartCol: 15,

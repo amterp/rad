@@ -69,9 +69,9 @@ type InterpreterInput struct {
 // CallFrame represents a function call in the Rad call stack.
 // Used for providing stack traces in error messages.
 type CallFrame struct {
-	FunctionName string // Name of the function (or "<anonymous>" for lambdas)
-	CallSite     *Span  // Where the function was called from
-	DefSite      *Span  // Where the function is defined
+	FunctionName string   // Name of the function (or "<anonymous>" for lambdas)
+	CallSite     *rl.Span // Where the function was called from
+	DefSite      *rl.Span // Where the function is defined
 }
 
 type Interpreter struct {
@@ -998,7 +998,7 @@ func (i *Interpreter) emitErrorWithHint(code rl.Error, node *ts.Node, message st
 
 // emitErrorWithSecondary creates an error diagnostic with a secondary span (e.g., "assigned here").
 // If primaryNode is nil, the diagnostic will only have the secondary span (if provided).
-func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node, message string, secondarySpan *Span, secondaryMsg string) {
+func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node, message string, secondarySpan *rl.Span, secondaryMsg string) {
 	var labels []Label
 	if primaryNode != nil {
 		primarySpan := NewSpanFromNode(primaryNode, i.sd.ScriptName)
@@ -1012,7 +1012,7 @@ func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode *ts.Node
 }
 
 // pushCallFrame pushes a new frame onto the call stack.
-func (i *Interpreter) pushCallFrame(name string, callSite, defSite *Span) {
+func (i *Interpreter) pushCallFrame(name string, callSite, defSite *rl.Span) {
 	i.callStack = append(i.callStack, CallFrame{
 		FunctionName: name,
 		CallSite:     callSite,

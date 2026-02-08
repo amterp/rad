@@ -27,7 +27,7 @@ func TestSeverityString(t *testing.T) {
 }
 
 func TestSpanLineAndColumn(t *testing.T) {
-	span := core.Span{
+	span := rl.Span{
 		File:     "test.rad",
 		StartRow: 0,
 		StartCol: 0,
@@ -41,7 +41,7 @@ func TestSpanLineAndColumn(t *testing.T) {
 }
 
 func TestNewPrimaryLabel(t *testing.T) {
-	span := core.Span{File: "test.rad", StartRow: 5, StartCol: 10}
+	span := rl.Span{File: "test.rad", StartRow: 5, StartCol: 10}
 	label := core.NewPrimaryLabel(span, "error here")
 
 	assert.True(t, label.Primary)
@@ -50,7 +50,7 @@ func TestNewPrimaryLabel(t *testing.T) {
 }
 
 func TestNewSecondaryLabel(t *testing.T) {
-	span := core.Span{File: "test.rad", StartRow: 2, StartCol: 5}
+	span := rl.Span{File: "test.rad", StartRow: 2, StartCol: 5}
 	label := core.NewSecondaryLabel(span, "assigned here")
 
 	assert.False(t, label.Primary)
@@ -58,7 +58,7 @@ func TestNewSecondaryLabel(t *testing.T) {
 }
 
 func TestDiagnosticWithHint(t *testing.T) {
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 	diag := core.NewDiagnostic(core.SeverityError, rl.ErrInvalidSyntax, "test error", "src", span)
 
 	diag = diag.WithHint("try this instead")
@@ -70,10 +70,10 @@ func TestDiagnosticWithHint(t *testing.T) {
 }
 
 func TestDiagnosticWithSecondaryLabel(t *testing.T) {
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 	diag := core.NewDiagnostic(core.SeverityError, rl.ErrInvalidSyntax, "test error", "src", span)
 
-	secondarySpan := core.Span{File: "test.rad", StartRow: 1}
+	secondarySpan := rl.Span{File: "test.rad", StartRow: 1}
 	diag = diag.WithSecondaryLabel(secondarySpan, "defined here")
 
 	assert.Len(t, diag.Labels, 2)
@@ -83,7 +83,7 @@ func TestDiagnosticWithSecondaryLabel(t *testing.T) {
 }
 
 func TestDiagnosticPrimarySpan(t *testing.T) {
-	span := core.Span{File: "primary.rad", StartRow: 10}
+	span := rl.Span{File: "primary.rad", StartRow: 10}
 	diag := core.NewDiagnostic(core.SeverityError, rl.ErrInvalidSyntax, "test", "src", span)
 
 	primary := diag.PrimarySpan()
@@ -95,7 +95,7 @@ func TestDiagnosticPrimarySpan(t *testing.T) {
 func TestDiagnosticCollectorLimit(t *testing.T) {
 	collector := core.NewDiagnosticCollectorWithLimit(3)
 
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 
 	// Add diagnostics up to limit
 	for i := 0; i < 5; i++ {
@@ -114,7 +114,7 @@ func TestDiagnosticCollectorLimit(t *testing.T) {
 
 func TestDiagnosticCollectorAddReturnsFalseAtLimit(t *testing.T) {
 	collector := core.NewDiagnosticCollectorWithLimit(2)
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 	diag := core.NewDiagnostic(core.SeverityError, rl.ErrInvalidSyntax, "error", "src", span)
 
 	assert.True(t, collector.Add(diag))  // 1st - ok
@@ -125,7 +125,7 @@ func TestDiagnosticCollectorAddReturnsFalseAtLimit(t *testing.T) {
 
 func TestDiagnosticCollectorHasErrors(t *testing.T) {
 	collector := core.NewDiagnosticCollector()
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 
 	// Empty collector has no errors
 	assert.False(t, collector.HasErrors())
@@ -145,7 +145,7 @@ func TestDiagnosticCollectorIsEmpty(t *testing.T) {
 	collector := core.NewDiagnosticCollector()
 	assert.True(t, collector.IsEmpty())
 
-	span := core.Span{File: "test.rad"}
+	span := rl.Span{File: "test.rad"}
 	diag := core.NewDiagnostic(core.SeverityError, rl.ErrInvalidSyntax, "error", "src", span)
 	collector.Add(diag)
 	assert.False(t, collector.IsEmpty())
