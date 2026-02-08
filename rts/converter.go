@@ -2,6 +2,7 @@ package rts
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/amterp/rad/rts/rl"
@@ -636,8 +637,10 @@ func (c *converter) convertScientificNumber(node *ts.Node) rl.Node {
 	if err != nil {
 		panic(fmt.Sprintf("converter: failed to parse scientific number %q: %v", src, err))
 	}
-	// Evaluate as int if it's a whole number, float otherwise
-	if val == float64(int64(val)) {
+	// Evaluate as int if it's a whole number that fits in int64, float otherwise.
+	// The int64 range check prevents silent overflow for large values like 9.2e18.
+	if val == float64(int64(val)) && !math.IsInf(val, 0) &&
+		val >= math.MinInt64 && val <= math.MaxInt64 {
 		return rl.NewLitInt(c.makeSpan(node), int64(val))
 	}
 	return rl.NewLitFloat(c.makeSpan(node), val)
@@ -870,7 +873,7 @@ func (c *converter) convertRadStmt(node *ts.Node) rl.Node {
 		for _, idNode := range identifierNodes {
 			ids = append(ids, rl.NewIdentifier(c.makeSpan(&idNode), c.getSrc(&idNode)))
 		}
-		return rl.NewRadField(c.makeSpan(node), "", ids, nil)
+		return rl.NewRadField(c.makeSpan(node), ids)
 
 	case rl.K_RAD_SORT_STMT:
 		specifierNodes := rl.GetChildren(node, rl.F_SPECIFIER)
@@ -892,7 +895,7 @@ func (c *converter) convertRadStmt(node *ts.Node) rl.Node {
 		for _, stmtNode := range stmtNodes {
 			mods = append(mods, c.convertRadModStmt(&stmtNode))
 		}
-		return rl.NewRadFieldMod(c.makeSpan(node), "", mods)
+		return rl.NewRadFieldMod(c.makeSpan(node), ids, "", mods)
 
 	case rl.K_RAD_IF_STMT:
 		altNodes := rl.GetChildren(node, rl.F_ALT)
@@ -910,7 +913,7 @@ func (c *converter) convertRadStmt(node *ts.Node) rl.Node {
 			}
 			branches = append(branches, rl.IfBranch{Condition: condition, Body: body})
 		}
-		return rl.NewRadIf(c.makeSpan(node), nil, nil)
+		return rl.NewRadIf(c.makeSpan(node), branches)
 
 	default:
 		panic(fmt.Sprintf("converter: unexpected rad stmt kind: %s", node.Kind()))
@@ -951,15 +954,15 @@ func (c *converter) convertRadModStmt(node *ts.Node) rl.Node {
 	case rl.K_RAD_FIELD_MOD_COLOR:
 		clrNode := rl.GetChild(node, rl.F_COLOR)
 		regexNode := rl.GetChild(node, rl.F_REGEX)
-		return rl.NewRadFieldMod(c.makeSpan(node), "color",
+		return rl.NewRadFieldMod(c.makeSpan(node), nil, "color",
 			[]rl.Node{c.convertExpr(clrNode), c.convertExpr(regexNode)})
 	case rl.K_RAD_FIELD_MOD_MAP:
 		lambdaNode := rl.GetChild(node, rl.F_LAMBDA)
-		return rl.NewRadFieldMod(c.makeSpan(node), "map",
+		return rl.NewRadFieldMod(c.makeSpan(node), nil, "map",
 			[]rl.Node{c.convertExpr(lambdaNode)})
 	case rl.K_RAD_FIELD_MOD_FILTER:
 		lambdaNode := rl.GetChild(node, rl.F_LAMBDA)
-		return rl.NewRadFieldMod(c.makeSpan(node), "filter",
+		return rl.NewRadFieldMod(c.makeSpan(node), nil, "filter",
 			[]rl.Node{c.convertExpr(lambdaNode)})
 	default:
 		panic(fmt.Sprintf("converter: unexpected rad mod stmt kind: %s", node.Kind()))

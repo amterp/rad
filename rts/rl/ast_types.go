@@ -101,7 +101,7 @@ type SwitchCaseExpr struct {
 func NewSwitchCaseExpr(span Span, values []Node) *SwitchCaseExpr {
 	return &SwitchCaseExpr{span: span, Values: values}
 }
-func (n *SwitchCaseExpr) Kind() NodeKind { return NSwitch }
+func (n *SwitchCaseExpr) Kind() NodeKind { return NSwitchCaseExpr }
 func (n *SwitchCaseExpr) Span() Span     { return n.span }
 
 // SwitchCaseBlock is a multi-statement case body (case X:\n  stmts).
@@ -113,7 +113,7 @@ type SwitchCaseBlock struct {
 func NewSwitchCaseBlock(span Span, stmts []Node) *SwitchCaseBlock {
 	return &SwitchCaseBlock{span: span, Stmts: stmts}
 }
-func (n *SwitchCaseBlock) Kind() NodeKind { return NSwitch }
+func (n *SwitchCaseBlock) Kind() NodeKind { return NSwitchCaseBlock }
 func (n *SwitchCaseBlock) Span() Span     { return n.span }
 
 func NewSwitch(span Span, discriminant Node, cases []SwitchCase, dflt *SwitchDefault) *Switch {
@@ -539,15 +539,14 @@ func (n *RadBlock) Kind() NodeKind { return NRadBlock }
 func (n *RadBlock) Span() Span     { return n.span }
 
 // RadField represents a field declaration in a rad block.
+// A single statement can declare multiple fields (e.g. "name age email").
 type RadField struct {
-	span       Span
-	Identifier string // the field name
-	Segments   []Node // the json path segments
-	Modifiers  []Node // field modifiers (RadFieldMod nodes)
+	span        Span
+	Identifiers []Node // field name Identifier nodes
 }
 
-func NewRadField(span Span, identifier string, segments []Node, modifiers []Node) *RadField {
-	return &RadField{span: span, Identifier: identifier, Segments: segments, Modifiers: modifiers}
+func NewRadField(span Span, identifiers []Node) *RadField {
+	return &RadField{span: span, Identifiers: identifiers}
 }
 func (n *RadField) Kind() NodeKind { return NRadField }
 func (n *RadField) Span() Span     { return n.span }
@@ -570,28 +569,33 @@ func NewRadSort(span Span, specifiers []RadSortSpecifier) *RadSort {
 func (n *RadSort) Kind() NodeKind { return NRadSort }
 func (n *RadSort) Span() Span     { return n.span }
 
-// RadFieldMod represents a field modifier (color, map, filter).
+// RadFieldMod represents a field modifier statement.
+// At the container level (K_RAD_FIELD_MODIFIER_STMT): Fields holds the target
+// field identifiers, ModType is empty, and Args holds the child modifier nodes.
+// At the individual level (color/map/filter): Fields is nil, ModType is set,
+// and Args holds the modifier arguments (expressions/lambdas).
 type RadFieldMod struct {
 	span    Span
-	ModType string // "color", "map", "filter"
-	Args    []Node // modifier arguments
+	Fields  []Node // target field identifiers (nil for individual modifiers)
+	ModType string // "color", "map", "filter" (empty for container)
+	Args    []Node // modifier arguments or child modifier nodes
 }
 
-func NewRadFieldMod(span Span, modType string, args []Node) *RadFieldMod {
-	return &RadFieldMod{span: span, ModType: modType, Args: args}
+func NewRadFieldMod(span Span, fields []Node, modType string, args []Node) *RadFieldMod {
+	return &RadFieldMod{span: span, Fields: fields, ModType: modType, Args: args}
 }
 func (n *RadFieldMod) Kind() NodeKind { return NRadFieldMod }
 func (n *RadFieldMod) Span() Span     { return n.span }
 
-// RadIf represents a conditional in a rad block.
+// RadIf represents a conditional in a rad block (if/elif/else).
+// Mirrors the top-level If node's branch structure.
 type RadIf struct {
-	span      Span
-	Condition Node   // the condition expression
-	Body      []Node // statements to execute if true
+	span     Span
+	Branches []IfBranch // reuses IfBranch from the top-level If node
 }
 
-func NewRadIf(span Span, condition Node, body []Node) *RadIf {
-	return &RadIf{span: span, Condition: condition, Body: body}
+func NewRadIf(span Span, branches []IfBranch) *RadIf {
+	return &RadIf{span: span, Branches: branches}
 }
 func (n *RadIf) Kind() NodeKind { return NRadIf }
 func (n *RadIf) Span() Span     { return n.span }

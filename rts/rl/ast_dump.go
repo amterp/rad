@@ -263,12 +263,32 @@ func astDumpNode(sb *strings.Builder, node Node, depth int) {
 
 	case *RadField:
 		fmt.Fprintf(sb, "%sRadField [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		for _, id := range n.Identifiers {
+			astDumpNode(sb, id, depth+1)
+		}
 	case *RadSort:
 		fmt.Fprintf(sb, "%sRadSort [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 	case *RadFieldMod:
 		fmt.Fprintf(sb, "%sRadFieldMod %q [%d:%d-%d:%d]\n", indent, n.ModType, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		for _, f := range n.Fields {
+			astDumpNode(sb, f, depth+1)
+		}
+		for _, a := range n.Args {
+			astDumpNode(sb, a, depth+1)
+		}
 	case *RadIf:
 		fmt.Fprintf(sb, "%sRadIf [%d:%d-%d:%d]\n", indent, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		for i, branch := range n.Branches {
+			if branch.Condition != nil {
+				fmt.Fprintf(sb, "%s  Branch %d (cond)\n", indent, i)
+				astDumpNode(sb, branch.Condition, depth+2)
+			} else {
+				fmt.Fprintf(sb, "%s  Branch %d (else)\n", indent, i)
+			}
+			for _, s := range branch.Body {
+				astDumpNode(sb, s, depth+2)
+			}
+		}
 
 	default:
 		fmt.Fprintf(sb, "%s<%T> [%d:%d-%d:%d]\n", indent, node, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
