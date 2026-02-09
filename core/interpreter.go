@@ -944,7 +944,7 @@ func (i *Interpreter) modifyBySlice(val RadValue, seg rl.PathSegment, rightValue
 		return
 	}
 
-	start, end := i.resolveSliceBounds(nil, seg, list.Len())
+	start, end := i.resolveSliceBounds(seg, list.Len())
 	if start < end {
 		newList := NewRadList()
 		newList.Values = append(newList.Values, list.Values[:start]...)
@@ -999,7 +999,7 @@ func (i *Interpreter) executeForLoop(node rl.Node, doOneLoop func() EvalResult) 
 	case *RadList:
 		return runForLoopList(i, node, vars, iterNode, context, coercedRight, res.Val, doOneLoop)
 	case *RadMap:
-		return runForLoopMap(i, node, vars, context, coercedRight, res.Val, doOneLoop)
+		return runForLoopMap(i, node, vars, context, coercedRight, doOneLoop)
 	default:
 		i.emitErrorf(rl.ErrNotIterable, iterNode, "Cannot iterate through a %s", TypeAsString(res.Val))
 		panic(UNREACHABLE)
@@ -1074,7 +1074,6 @@ func runForLoopMap(
 	vars []string,
 	context *string,
 	radMap *RadMap,
-	srcValue RadValue,
 	doOneLoop func() EvalResult,
 ) EvalResult {
 	numVars := len(vars)
@@ -1302,11 +1301,11 @@ func (i *Interpreter) evalSlice(contextNode rl.Node, seg rl.PathSegment, val Rad
 	switch coerced := val.Val.(type) {
 	case RadString:
 		length := coerced.Len()
-		start, end := i.resolveSliceBounds(contextNode, seg, length)
+		start, end := i.resolveSliceBounds(seg, length)
 		return newRadValues(i, contextNode, NewRadString(string(coerced.Runes()[start:end])))
 	case *RadList:
 		length := coerced.Len()
-		start, end := i.resolveSliceBounds(contextNode, seg, length)
+		start, end := i.resolveSliceBounds(seg, length)
 		sliced := NewRadList()
 		sliced.Values = coerced.Values[start:end]
 		return newRadValues(i, contextNode, sliced)
@@ -1316,7 +1315,7 @@ func (i *Interpreter) evalSlice(contextNode rl.Node, seg rl.PathSegment, val Rad
 	}
 }
 
-func (i *Interpreter) resolveSliceBounds(contextNode rl.Node, seg rl.PathSegment, length int64) (int64, int64) {
+func (i *Interpreter) resolveSliceBounds(seg rl.PathSegment, length int64) (int64, int64) {
 	start := int64(0)
 	end := length
 

@@ -1,8 +1,6 @@
 package check
 
 import (
-	ts "github.com/tree-sitter/go-tree-sitter"
-
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 )
@@ -78,7 +76,6 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
-	// AST-based checks (nil-guarded - no-op when AST is nil)
 	c.addFunctionNameShadowingErrorsAST(&diagnostics)
 	c.addUnknownFunctionHintsAST(&diagnostics)
 	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
@@ -99,191 +96,103 @@ func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
 }
 
 func (c *RadCheckerImpl) addIntScientificNotationErrors(d *[]Diagnostic) {
-	// Use RadTree API to find arg block
-	argBlock, ok := c.tree.FindArgBlock()
-	if !ok {
+	if c.ast == nil || c.ast.Args == nil {
 		return
 	}
-
-	// Iterate through structured arg declarations
-	for _, arg := range argBlock.Args {
-		// Check if this is an int type argument
-		if arg.Type.Type != rl.T_INT {
+	for _, decl := range c.ast.Args.Decls {
+		if decl.TypeName != rl.T_INT || decl.Default == nil {
 			continue
 		}
-
-		// Check if it has a default value
-		if arg.Default == nil {
-			continue
-		}
-
-		// Check if the default value node contains scientific notation
-		valueNode := arg.Default.CstNode().ChildByFieldName(rl.F_VALUE)
-		if valueNode == nil {
-			continue
-		}
-		if valueNode.Kind() != rl.K_SCIENTIFIC_NUMBER {
-			continue
-		}
-
-		c.validateScientificNumberAsInt(valueNode, d)
+		c.checkExprForNonWholeFloat(decl.Default, d)
 	}
 }
 
 func (c *RadCheckerImpl) addFnParamScientificNotationErrors(d *[]Diagnostic) {
-	// Walk the tree to find all function definitions
-	root := c.tree.Root()
-	c.walkForFunctions(root, d)
-}
-
-func (c *RadCheckerImpl) walkForFunctions(node *ts.Node, d *[]Diagnostic) {
-	if node == nil {
+	if c.ast == nil {
 		return
 	}
-
-	// Check if this node is a function definition
-	if node.Kind() == rl.K_FN_NAMED || node.Kind() == rl.K_FN_LAMBDA {
-		c.checkFunctionParams(node, d)
-	}
-
-	// Recursively walk children
-	for i := uint(0); i < node.ChildCount(); i++ {
-		c.walkForFunctions(node.Child(i), d)
-	}
-}
-
-func (c *RadCheckerImpl) checkFunctionParams(fnNode *ts.Node, d *[]Diagnostic) {
-	// Get all parameter nodes
-	normalParams := fnNode.ChildrenByFieldName(rl.F_NORMAL_PARAM, fnNode.Walk())
-	namedOnlyParams := fnNode.ChildrenByFieldName(rl.F_NAMED_ONLY_PARAM, fnNode.Walk())
-	varargParams := fnNode.ChildrenByFieldName(rl.F_VARARG_PARAM, fnNode.Walk())
-
-	allParams := append(append(normalParams, namedOnlyParams...), varargParams...)
-
-	for _, param := range allParams {
-		// Check if parameter has int type
-		typeNode := param.ChildByFieldName(rl.F_TYPE)
-		if typeNode == nil {
-			continue
+	walkAST(c.ast, func(node rl.Node) {
+		var params []rl.TypingFnParam
+		switch n := node.(type) {
+		case *rl.FnDef:
+			if n.Typing != nil {
+				params = n.Typing.Params
+			}
+		case *rl.Lambda:
+			if n.Typing != nil {
+				params = n.Typing.Params
+			}
+		default:
+			return
 		}
-
-		// Navigate to the actual type node (could be nested in union/optional)
-		leafTypeNode := typeNode.ChildByFieldName(rl.F_LEAF_TYPE)
-		if leafTypeNode != nil {
-			typeNode = leafTypeNode.ChildByFieldName(rl.F_TYPE)
-			if typeNode == nil {
+		for _, param := range params {
+			if !isIntType(param.Type) {
 				continue
 			}
-		}
-
-		if typeNode.Kind() != rl.K_INT_TYPE {
-			continue
-		}
-
-		// Check if parameter has a default value
-		defaultNode := param.ChildByFieldName(rl.F_DEFAULT)
-		if defaultNode == nil {
-			continue
-		}
-
-		// Find scientific_number in the default expression
-		c.checkExprForScientificNumber(defaultNode, d)
-	}
-}
-
-func (c *RadCheckerImpl) checkExprForScientificNumber(exprNode *ts.Node, d *[]Diagnostic) {
-	if exprNode == nil {
-		return
-	}
-
-	// If this is a scientific_number node, validate it
-	if exprNode.Kind() == rl.K_SCIENTIFIC_NUMBER {
-		c.validateScientificNumberAsInt(exprNode, d)
-		return
-	}
-
-	// Recursively check children
-	for i := uint(0); i < exprNode.ChildCount(); i++ {
-		c.checkExprForScientificNumber(exprNode.Child(i), d)
-	}
-}
-
-func (c *RadCheckerImpl) validateScientificNumberAsInt(node *ts.Node, d *[]Diagnostic) {
-	valueStr := c.src[node.StartByte():node.EndByte()]
-	floatVal, err := rts.ParseFloat(valueStr)
-	if err != nil {
-		return // parsing error will be caught elsewhere
-	}
-
-	if floatVal != float64(int64(floatVal)) {
-		msg := "Scientific notation value does not evaluate to a whole number"
-		*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrScientificNotationNotWholeNumber))
-	}
-}
-
-func (c *RadCheckerImpl) getHoistedFunctions() []string {
-	hoistedFunctions := make([]string, 0)
-
-	// Only check top-level functions (direct children of source file)
-	// This matches the interpreter's hoisting behavior
-	root := c.tree.Root()
-	for i := uint(0); i < root.ChildCount(); i++ {
-		child := root.Child(i)
-		if child.Kind() == rl.K_FN_NAMED {
-			nameNode := child.ChildByFieldName(rl.F_NAME)
-			if nameNode != nil {
-				fnName := c.src[nameNode.StartByte():nameNode.EndByte()]
-				hoistedFunctions = append(hoistedFunctions, fnName)
+			if param.DefaultAST == nil || param.DefaultAST.Node == nil {
+				continue
 			}
+			c.checkExprForNonWholeFloat(param.DefaultAST.Node, d)
 		}
-	}
+	})
+}
 
-	return hoistedFunctions
+// checkExprForNonWholeFloat walks an AST expression for LitFloat nodes whose
+// values aren't whole numbers. This catches scientific notation like 1.5e2 used
+// in int-typed defaults - the converter turns whole-number scientific notation
+// into LitInt, so any remaining LitFloat IS the error case.
+func (c *RadCheckerImpl) checkExprForNonWholeFloat(node rl.Node, d *[]Diagnostic) {
+	walkAST(node, func(n rl.Node) {
+		litFloat, ok := n.(*rl.LitFloat)
+		if !ok {
+			return
+		}
+		if litFloat.Value != float64(int64(litFloat.Value)) {
+			msg := "Scientific notation value does not evaluate to a whole number"
+			*d = append(*d, NewDiagnosticErrorFromSpan(litFloat.Span(), c.src, msg, rl.ErrScientificNotationNotWholeNumber))
+		}
+	})
+}
+
+// isIntType reports whether a typing is the simple int type.
+// Returns false for union types, optional types, etc.
+func isIntType(t *rl.TypingT) bool {
+	if t == nil {
+		return false
+	}
+	_, ok := (*t).(*rl.TypingIntT)
+	return ok
 }
 
 func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
-	builtInFunctions := rts.GetBuiltInFunctions()
-
-	hoistedFunctionSet := make(map[string]bool)
-	if astNames := c.getHoistedFunctionsAST(); astNames != nil {
-		for _, fnName := range astNames {
-			hoistedFunctionSet[fnName] = true
-		}
-	} else {
-		for _, fnName := range c.getHoistedFunctions() {
-			hoistedFunctionSet[fnName] = true
-		}
-	}
-
-	cmdBlocks, ok := c.tree.FindCmdBlocks("")
-	if !ok {
+	if c.ast == nil || len(c.ast.Cmds) == 0 {
 		return
 	}
 
-	for _, cmdBlock := range cmdBlocks {
-		callback := cmdBlock.Callback
+	builtInFunctions := rts.GetBuiltInFunctions()
 
-		// Only check identifier callbacks (not inline lambdas)
-		if callback.Type != rts.CallbackIdentifier {
+	hoistedFunctionSet := make(map[string]bool)
+	for _, name := range c.getHoistedFunctionsAST() {
+		hoistedFunctionSet[name] = true
+	}
+
+	for _, cmd := range c.ast.Cmds {
+		cb := cmd.Callback
+		if cb.IsLambda || cb.IdentifierName == nil {
 			continue
 		}
 
-		if callback.IdentifierName == nil {
-			continue
-		}
-
-		fnName := *callback.IdentifierName
-
+		fnName := *cb.IdentifierName
 		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
 			continue
 		}
 
-		if callback.IdentifierSpan == nil {
+		if cb.IdentifierSpan == nil {
 			continue
 		}
 
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticWarnFromSpan(*callback.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
+		*d = append(*d, NewDiagnosticWarnFromSpan(*cb.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
 	}
 }
 

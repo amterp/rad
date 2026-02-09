@@ -187,8 +187,6 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 
 			if param.Default != nil {
 				i.WithTmpSrc(param.Default.Src, func() {
-					// Fallback: convert CST default to AST on the fly.
-					// ConvertExpr may panic on malformed CST nodes.
 					astDefault := tryConvertExpr(param.Default, i.sd.ScriptName)
 					if astDefault == nil {
 						i.emitErrorf(rl.ErrInvalidSyntax, f.callNode,

@@ -18,6 +18,7 @@ type ScriptData struct {
 	Src               string
 	DisableGlobalOpts bool
 	DisableArgsBlock  bool
+	HasArgsBlock      bool
 }
 
 func ExtractMetadata(src string) *ScriptData {
@@ -66,6 +67,7 @@ func ExtractMetadata(src string) *ScriptData {
 		Src:               src,
 		DisableGlobalOpts: disableGlobalOpts,
 		DisableArgsBlock:  disableArgsBlock,
+		HasArgsBlock:      ast != nil && ast.Args != nil,
 	}
 }
 
