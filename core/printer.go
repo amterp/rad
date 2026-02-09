@@ -10,7 +10,6 @@ import (
 
 	"github.com/amterp/color"
 
-	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 )
 
@@ -46,18 +45,6 @@ func NewCtxFromSpan(src string, span rl.Span, oneLiner string, details string) E
 	}
 }
 
-func NewCtxFromRtsNode(node rts.Node, oneLiner string) ErrorCtx {
-	return ErrorCtx{
-		CodeCtx: CodeCtx{
-			Src:      node.CompleteSrc(),
-			RowStart: node.StartPos().Row + 1,
-			RowEnd:   node.EndPos().Row + 1,
-			ColStart: node.StartPos().Col + 1,
-			ColEnd:   node.EndPos().Col + 1,
-		},
-		OneLiner: oneLiner,
-	}
-}
 
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps pflag-handled help/parsing errors.

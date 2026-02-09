@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/rl"
 )
 
 type ScriptArg struct {
 	Name               string // Internal (as written in script)
 	ExternalName       string // External (hyphenated for CLI)
-	Decl               rts.ArgDecl
+	Span               rl.Span
+	Src                string // Full script source, for error context rendering
 	Short              *string
 	Type               RadArgTypeT
 	Description        *string
@@ -41,97 +42,84 @@ type ArgRangeConstraint struct {
 }
 
 func FromArgDecl(
-	decl rts.ArgDecl,
-	enumConstraint *rts.ArgEnumConstraint,
-	regexConstraint *rts.ArgRegexConstraint,
-	rangeConstraint *rts.ArgRangeConstraint,
+	decl rl.ArgDecl,
+	src string,
+	enumConstraint *rl.ArgEnumConstraint,
+	regexConstraint *rl.ArgRegexConstraint,
+	rangeConstraint *rl.ArgRangeConstraint,
 	requiresConstraint []string,
 	excludesConstraint []string,
 ) *ScriptArg {
-	name := decl.Name.Name
+	name := decl.Name
 	externalName := decl.ExternalName()
-
-	defaultVal := decl.Default
 
 	scriptArg := &ScriptArg{
 		Name:               name,
 		ExternalName:       externalName,
-		Decl:               decl,
-		Short:              decl.ShorthandStr(),
-		Type:               ToRadArgTypeT(decl.Type.Type),
-		Description:        decl.CommentStr(),
-		IsNullable:         decl.Optional != nil,
+		Span:               decl.Span(),
+		Src:                src,
+		Short:              decl.Shorthand,
+		Type:               ToRadArgTypeT(decl.TypeName),
+		Description:        decl.Comment,
+		IsNullable:         decl.IsOptional,
 		HasDefaultValue:    hasDefaultValue(decl),
 		IsVariadic:         decl.IsVariadic,
 		EnumConstraint:     convertEnumConstraint(enumConstraint),
-		RegexConstraint:    convertRegexConstraint(regexConstraint),
+		RegexConstraint:    convertRegexConstraint(regexConstraint, src),
 		RangeConstraint:    convertRangeConstraint(rangeConstraint),
 		RequiresConstraint: requiresConstraint,
 		ExcludesConstraint: excludesConstraint,
 	}
 
-	if defaultVal != nil {
-		scriptArg.DefaultString = defaultVal.DefaultString
-		scriptArg.DefaultInt = defaultVal.DefaultInt
-		scriptArg.DefaultFloat = defaultVal.DefaultFloat
-		scriptArg.DefaultBool = defaultVal.DefaultBool
-		scriptArg.DefaultStringList = defaultVal.DefaultStringList
-		scriptArg.DefaultIntList = defaultVal.DefaultIntList
-		scriptArg.DefaultFloatList = defaultVal.DefaultFloatList
-		scriptArg.DefaultBoolList = defaultVal.DefaultBoolList
-	}
+	scriptArg.DefaultString = decl.DefaultString
+	scriptArg.DefaultInt = decl.DefaultInt
+	scriptArg.DefaultFloat = decl.DefaultFloat
+	scriptArg.DefaultBool = decl.DefaultBool
+	scriptArg.DefaultStringList = decl.DefaultStringList
+	scriptArg.DefaultIntList = decl.DefaultIntList
+	scriptArg.DefaultFloatList = decl.DefaultFloatList
+	scriptArg.DefaultBoolList = decl.DefaultBoolList
 
 	return scriptArg
 }
 
-func convertEnumConstraint(constraint *rts.ArgEnumConstraint) *[]string {
+func convertEnumConstraint(constraint *rl.ArgEnumConstraint) *[]string {
 	if constraint == nil {
 		return nil
 	}
-	return &constraint.Values.Values
+	return &constraint.Values
 }
 
-func convertRegexConstraint(constraint *rts.ArgRegexConstraint) *regexp.Regexp {
+func convertRegexConstraint(constraint *rl.ArgRegexConstraint, src string) *regexp.Regexp {
 	if constraint == nil {
 		return nil
 	}
-	regexStr := constraint.Regex.Value
+	regexStr := constraint.Value
 	compiled, err := regexp.Compile(regexStr)
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(constraint, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error())))
+		RP.CtxErrorExit(NewCtxFromSpan(src, constraint.Span_, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()), ""))
 	}
 	return compiled
 }
 
-func convertRangeConstraint(constraint *rts.ArgRangeConstraint) *ArgRangeConstraint {
+func convertRangeConstraint(constraint *rl.ArgRangeConstraint) *ArgRangeConstraint {
 	if constraint == nil {
 		return nil
 	}
 
-	rang := constraint.Range
-	minInclusive := rang.Opener.Src() == "["
-	maxInclusive := rang.Closer.Src() == "]"
-
-	var maxV *float64
-	if rang.Max != nil {
-		maxV = &rang.Max.Value
-	}
-
-	var minV *float64
-	if rang.Min != nil {
-		minV = &rang.Min.Value
-	}
+	minInclusive := constraint.OpenerToken == "["
+	maxInclusive := constraint.CloserToken == "]"
 
 	return &ArgRangeConstraint{
-		Min:          minV,
+		Min:          constraint.Min,
 		MinInclusive: minInclusive,
-		Max:          maxV,
+		Max:          constraint.Max,
 		MaxInclusive: maxInclusive,
 	}
 }
 
-func hasDefaultValue(decl rts.ArgDecl) bool {
-	if decl.Type.Type == "bool" {
+func hasDefaultValue(decl rl.ArgDecl) bool {
+	if decl.TypeName == "bool" {
 		return true
 	}
 	return decl.Default != nil

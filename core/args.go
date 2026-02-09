@@ -8,9 +8,8 @@ import (
 
 	ra "github.com/amterp/ra"
 
-	"github.com/amterp/rad/rts/rl"
-
 	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
 )
@@ -158,16 +157,16 @@ func (f *BaseRadArg) GetSpan() *rl.Span {
 	if f.scriptArg == nil {
 		return nil
 	}
-
-	span := rl.Span{
-		StartByte: f.scriptArg.Decl.StartByte(),
-		EndByte:   f.scriptArg.Decl.EndByte(),
-		StartRow:  f.scriptArg.Decl.StartPos().Row,
-		StartCol:  f.scriptArg.Decl.StartPos().Col,
-		EndRow:    f.scriptArg.Decl.EndPos().Row,
-		EndCol:    f.scriptArg.Decl.EndPos().Col,
-	}
+	span := f.scriptArg.Span
 	return &span
+}
+
+// argErrorCtx creates an ErrorCtx from the arg declaration's span for error reporting.
+func (f *BaseRadArg) argErrorCtx(msg string) ErrorCtx {
+	if f.scriptArg == nil {
+		return ErrorCtx{OneLiner: msg}
+	}
+	return NewCtxFromSpan(f.scriptArg.Src, f.scriptArg.Span, msg, "")
 }
 
 func (f *BaseRadArg) Hidden(hide bool) {
@@ -252,7 +251,7 @@ func (f *BoolRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, opts...)
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register bool arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -266,7 +265,7 @@ func (f *BoolRadArg) SetValue(arg string) {
 	} else if arg == "false" || arg == "0" {
 		f.Value = false
 	} else {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 	}
 }
 
@@ -345,7 +344,7 @@ func (f *BoolListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register bool list arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register bool list arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -363,7 +362,7 @@ func (f *BoolListRadArg) SetValue(arg string) {
 		} else if v == "false" || v == "0" {
 			bools[i] = false
 		} else {
-			RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
+			RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Expected bool, but could not parse: %v\n", arg)))
 		}
 	}
 	f.Value = bools
@@ -452,7 +451,7 @@ func (f *StringRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 	err := arg.RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register string arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -564,7 +563,7 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register string list arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register string list arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -687,7 +686,7 @@ func (f *IntRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register int arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -698,7 +697,7 @@ func (f *IntRadArg) SetValue(arg string) {
 	parsed, err := strconv.Atoi(arg)
 	if err != nil {
 		RP.CtxErrorExit(
-			NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
+			f.argErrorCtx(fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
 		)
 	}
 	val := int64(parsed)
@@ -791,7 +790,7 @@ func (f *IntListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register int list arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register int list arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -806,7 +805,7 @@ func (f *IntListRadArg) SetValue(arg string) {
 		parsed, err := rts.ParseInt(v)
 		if err != nil {
 			RP.CtxErrorExit(
-				NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
+				f.argErrorCtx(fmt.Sprintf("Expected int, but could not parse: %v\n", arg)),
 			)
 		}
 		ints[i] = parsed
@@ -898,7 +897,7 @@ func (f *FloatRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register float arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -909,7 +908,7 @@ func (f *FloatRadArg) SetValue(arg string) {
 	parsed, err := rts.ParseFloat(arg)
 	if err != nil {
 		RP.CtxErrorExit(
-			NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
+			f.argErrorCtx(fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
 		)
 	}
 	f.Value = parsed
@@ -1000,7 +999,7 @@ func (f *FloatListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
 	if err != nil {
-		RP.CtxErrorExit(NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Failed to register float list arg: %v\n", err)))
+		RP.CtxErrorExit(f.argErrorCtx(fmt.Sprintf("Failed to register float list arg: %v\n", err)))
 	}
 
 	f.registeredOn[cmd] = true
@@ -1015,7 +1014,7 @@ func (f *FloatListRadArg) SetValue(arg string) {
 		parsed, err := rts.ParseFloat(v)
 		if err != nil {
 			RP.CtxErrorExit(
-				NewCtxFromRtsNode(&f.scriptArg.Decl, fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
+				f.argErrorCtx(fmt.Sprintf("Expected float, but could not parse: %v\n", arg)),
 			)
 		}
 		floats[i] = parsed

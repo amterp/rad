@@ -222,9 +222,20 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 		i.handlePanicRecovery(recover(), nil, cmd.ExternalName)
 	}()
 
-	switch cmd.CallbackType {
-	case rts.CallbackIdentifier:
+	if cmd.IsLambdaCallback {
+		lambdaAST := cmd.CallbackLambda
+		if lambdaAST == nil {
+			panic(fmt.Sprintf("Bug! Lambda AST is nil for command: %s", cmd.ExternalName))
+		}
+		fn := NewFnFromAST(i, lambdaAST.Typing, lambdaAST.Body, lambdaAST.IsBlock, &lambdaAST.DefSpan)
+
+		// Execute the lambda with no arguments
+		_ = fn.Execute(NewFnInvocation(i, lambdaAST, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
+	} else {
 		// Look up the function by name and call it
+		if cmd.CallbackName == nil {
+			panic(fmt.Sprintf("Bug! Command '%s' has no callback", cmd.ExternalName))
+		}
 		funcName := *cmd.CallbackName
 		val, exist := i.env.GetVar(funcName)
 		if !exist {
@@ -239,19 +250,6 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 
 		// Execute the function with no arguments
 		_ = fn.Execute(NewFnInvocation(i, nil, funcName, []PosArg{}, make(map[string]namedArg), fn.IsBuiltIn()))
-
-	case rts.CallbackLambda:
-		lambdaAST := cmd.CallbackLambda
-		if lambdaAST == nil {
-			panic(fmt.Sprintf("Bug! Lambda AST is nil for command: %s", cmd.ExternalName))
-		}
-		fn := NewFnFromAST(i, lambdaAST.Typing, lambdaAST.Body, lambdaAST.IsBlock, &lambdaAST.DefSpan)
-
-		// Execute the lambda with no arguments
-		_ = fn.Execute(NewFnInvocation(i, lambdaAST, "<lambda>", []PosArg{}, make(map[string]namedArg), false))
-
-	default:
-		panic(fmt.Sprintf("Bug! Unknown callback type %d for command: %s", cmd.CallbackType, cmd.ExternalName))
 	}
 }
 
