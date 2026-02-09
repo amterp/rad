@@ -62,7 +62,6 @@ func (rt *RadTree) FindFileHeader() (*FileHeader, bool) {
 	return fileHeaders[0], true // todo bad if multiple
 }
 
-
 func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 	nodeName := NodeName[T]()
 	query, err := ts.NewQuery(rt.parser.Language(), fmt.Sprintf("(%s) @%s", nodeName, nodeName))

@@ -572,4 +572,3 @@ func newRadValueFn(val RadFn) RadValue {
 func newRadValueError(val *RadError) RadValue {
 	return newRadValue(nil, nil, val)
 }
-

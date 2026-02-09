@@ -45,7 +45,6 @@ func NewCtxFromSpan(src string, span rl.Span, oneLiner string, details string) E
 	}
 }
 
-
 // todo make global instance, rather than passing into everything
 // For all output to the user, except perhaps pflag-handled help/parsing errors.
 type Printer interface {

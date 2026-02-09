@@ -7,7 +7,6 @@ import (
 	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
-
 )
 
 type RadMap struct {

@@ -56,4 +56,3 @@ const (
 	RequestBlock RadBlockType = "request"
 	DisplayBlock RadBlockType = "display"
 )
-

@@ -20,12 +20,12 @@ func (n *SourceFile) Span() Span     { return n.span }
 // Assign handles simple assignment, unpacking, and desugared compound
 // assign (+=) and increment/decrement (++).
 type Assign struct {
-	span             Span
-	Targets          []Node      // left-hand sides (var paths)
-	Values           []Node      // right-hand sides
-	IsUnpacking      bool        // true if `a, b = ...` syntax
-	UpdateEnclosing  bool        // true for compound assign/incr-decr (updates enclosing scope)
-	Catch            *CatchBlock // optional catch block
+	span            Span
+	Targets         []Node      // left-hand sides (var paths)
+	Values          []Node      // right-hand sides
+	IsUnpacking     bool        // true if `a, b = ...` syntax
+	UpdateEnclosing bool        // true for compound assign/incr-decr (updates enclosing scope)
+	Catch           *CatchBlock // optional catch block
 }
 
 func NewAssign(span Span, targets, values []Node, isUnpacking bool, catch *CatchBlock) *Assign {
@@ -198,9 +198,9 @@ func (n *Defer) Span() Span     { return n.span }
 // Break represents a break statement.
 type Break struct{ span Span }
 
-func NewBreak(span Span) *Break   { return &Break{span: span} }
-func (n *Break) Kind() NodeKind   { return NBreak }
-func (n *Break) Span() Span       { return n.span }
+func NewBreak(span Span) *Break { return &Break{span: span} }
+func (n *Break) Kind() NodeKind { return NBreak }
+func (n *Break) Span() Span     { return n.span }
 
 // Continue represents a continue statement.
 type Continue struct{ span Span }
@@ -236,9 +236,9 @@ func (n *Yield) Span() Span     { return n.span }
 // Pass is a no-op statement.
 type Pass struct{ span Span }
 
-func NewPass(span Span) *Pass   { return &Pass{span: span} }
-func (n *Pass) Kind() NodeKind  { return NPass }
-func (n *Pass) Span() Span      { return n.span }
+func NewPass(span Span) *Pass  { return &Pass{span: span} }
+func (n *Pass) Kind() NodeKind { return NPass }
+func (n *Pass) Span() Span     { return n.span }
 
 // FnDef represents a named function definition.
 type FnDef struct {
@@ -246,8 +246,8 @@ type FnDef struct {
 	Name    string
 	Typing  *TypingFnT // parameter types and return type
 	Body    []Node
-	IsBlock bool     // block function (uses return stmt) vs expression function
-	DefSpan Span     // span of the keyword or name for error reporting
+	IsBlock bool // block function (uses return stmt) vs expression function
+	DefSpan Span // span of the keyword or name for error reporting
 }
 
 func NewFnDef(span Span, name string, typing *TypingFnT, body []Node, isBlock bool, defSpan Span) *FnDef {
@@ -660,13 +660,13 @@ func (n *FileHeader) Span() Span     { return n.span }
 
 // ArgBlock represents the top-level args: block.
 type ArgBlock struct {
-	span         Span
-	Decls        []ArgDecl
+	span             Span
+	Decls            []ArgDecl
 	EnumConstraints  map[string]*ArgEnumConstraint
 	RegexConstraints map[string]*ArgRegexConstraint
 	RangeConstraints map[string]*ArgRangeConstraint
-	Requirements []ArgRelation
-	Exclusions   []ArgRelation
+	Requirements     []ArgRelation
+	Exclusions       []ArgRelation
 }
 
 func NewArgBlock(span Span, decls []ArgDecl) *ArgBlock {
@@ -684,7 +684,7 @@ type ArgDecl struct {
 	IsVariadic bool
 	Rename     *string
 	Shorthand  *string
-	Default    Node    // expression node or nil
+	Default    Node // expression node or nil
 	Comment    *string
 	// Pre-parsed typed default values for metadata consumers
 	DefaultString     *string
@@ -738,11 +738,11 @@ type ArgRegexConstraint struct {
 
 // ArgRangeConstraint restricts an arg to a numeric range.
 type ArgRangeConstraint struct {
-	Span_        Span
-	OpenerToken  string // "[" or "("
-	CloserToken  string // "]" or ")"
-	Min          *float64
-	Max          *float64
+	Span_       Span
+	OpenerToken string // "[" or "("
+	CloserToken string // "]" or ")"
+	Min         *float64
+	Max         *float64
 }
 
 // ArgRelation represents a requires or excludes relation between args.
