@@ -65,6 +65,12 @@ const (
 	// JSON
 	NJsonPath // json[].field path expression
 
+	// Script metadata
+	NFileHeader // --- block with description + metadata
+	NArgBlock   // args: block
+	NArgDecl    // single arg declaration
+	NCmdBlock   // command definition
+
 	// Structural
 	NSourceFile // root node of a script
 )
@@ -108,7 +114,11 @@ var nodeKindNames = [...]string{
 	NRadSort:    "RadSort",
 	NRadFieldMod: "RadFieldMod",
 	NRadIf:      "RadIf",
-	NJsonPath:   "JsonPath",
+	NJsonPath:    "JsonPath",
+	NFileHeader: "FileHeader",
+	NArgBlock:   "ArgBlock",
+	NArgDecl:    "ArgDecl",
+	NCmdBlock:   "CmdBlock",
 	NSourceFile: "SourceFile",
 }
 

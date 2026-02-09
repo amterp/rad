@@ -321,7 +321,23 @@ func NewStructType(named map[MapNamedKey]TypingT) *TypingStructT {
 }
 
 func (t *TypingStructT) Name() string {
-	return "struct" // todo improve this, need evaluator
+	var sb strings.Builder
+	sb.WriteString("{ ")
+	i := 0
+	for mapKey, typ := range t.named {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		sb.WriteString(fmt.Sprintf("%q", mapKey.Name))
+		if mapKey.IsOptional {
+			sb.WriteString("?")
+		}
+		sb.WriteString(": ")
+		sb.WriteString(typ.Name())
+		i++
+	}
+	sb.WriteString(" }")
+	return sb.String()
 }
 
 func (t *TypingStructT) IsCompatibleWith(val TypingCompatVal) bool {
@@ -329,34 +345,19 @@ func (t *TypingStructT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		actualMap, ok := (val.Val).(map[string]interface{})
 		if !ok {
-			// Not a map.
 			return false
 		}
 
-		if val.Evaluator == nil {
-			// Can't validate keys, take loose approach
-			return true
-		}
-
 		// Validate each declared field
-		seen := make(map[string]bool)
 		for mapKey, typ := range t.named {
-			expectedKeyName := (*val.Evaluator)(mapKey.Name.Node, mapKey.Name.Src)
-			keyName, ok := expectedKeyName.(string)
-			if !ok {
-				// Key was not a string, unexpected.
+			actualVal, exists := actualMap[mapKey.Name]
+			if !exists {
+				if mapKey.IsOptional {
+					continue
+				}
 				return false
 			}
 
-			actualVal, exists := actualMap[keyName]
-			if !exists {
-				if mapKey.IsOptional {
-					continue // missing optional key is fine
-				}
-				return false // required key absent
-			}
-
-			seen[keyName] = true
 			if !typ.IsCompatibleWith(NewSubject(actualVal)) {
 				return false
 			}
@@ -486,30 +487,26 @@ type TypingFnT struct { // var: fn(int, int) -> int
 }
 
 type TypingStrEnumT struct { // var: ["foo", "bar"] = "bar"
-	strNodes []*RadNode
+	values []string
 }
 
-func NewStrEnumType(stringNodes ...*RadNode) *TypingStrEnumT {
+func NewStrEnumType(values ...string) *TypingStrEnumT {
 	return &TypingStrEnumT{
-		strNodes: stringNodes,
+		values: values,
 	}
 }
 
 func (t *TypingStrEnumT) Name() string {
-	return "str enum"
-
-	// TODO should do something like the below, but we only have nodes.
-	//  probably should make the IsCompatibleWith method return error, with the msg.
-	// var sb strings.Builder
-	// sb.WriteString("[")
-	// for i, v := range t.strNodes {
-	// 	if i > 0 {
-	// 		sb.WriteString(", ")
-	// 	}
-	// 	sb.WriteString(fmt.Sprintf("%q", v))
-	// }
-	// sb.WriteString("]")
-	// return sb.String()
+	var sb strings.Builder
+	sb.WriteString("[")
+	for i, v := range t.values {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		sb.WriteString(fmt.Sprintf("%q", v))
+	}
+	sb.WriteString("]")
+	return sb.String()
 }
 
 func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
@@ -519,15 +516,12 @@ func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 			return false
 		}
 
-		if val.Evaluator != nil {
-			for _, strNode := range t.strNodes {
-				out := (*val.Evaluator)(strNode.Node, strNode.Src)
-				if out == strVal {
-					return true
-				}
+		for _, enumVal := range t.values {
+			if enumVal == strVal {
+				return true
 			}
-			return false
 		}
+		return false
 	}
 
 	if val.Type != nil {
@@ -587,11 +581,11 @@ func (t *TypingUnionT) IsCompatibleWith(val TypingCompatVal) bool {
 }
 
 type MapNamedKey struct {
-	Name       *RadNode
+	Name       string
 	IsOptional bool
 }
 
-func NewMapNamedKey(name *RadNode, isOptional bool) MapNamedKey {
+func NewMapNamedKey(name string, isOptional bool) MapNamedKey {
 	return MapNamedKey{
 		Name:       name,
 		IsOptional: isOptional,

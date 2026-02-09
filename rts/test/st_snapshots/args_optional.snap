@@ -50,4 +50,13 @@ B: [114, 115] PS: [8, 13] PE: [8, 14]       optional: ? `?`
 
 ### STDERR ###
 PS: [0,  0] PE: [8, 14] SourceFile
+PS: [0,  0] PE: [8, 14]   ArgBlock
+PS: [1,  3] PE: [1, 11]     ArgDecl "aaa" type=int optional
+PS: [2,  3] PE: [2, 13]     ArgDecl "bbb" type=float optional
+PS: [3,  3] PE: [3, 11]     ArgDecl "ccc" type=str optional
+PS: [4,  3] PE: [4, 12]     ArgDecl "ddd" type=bool optional
+PS: [5,  3] PE: [5, 13]     ArgDecl "eee" type=int[] optional
+PS: [6,  3] PE: [6, 15]     ArgDecl "fff" type=float[] optional
+PS: [7,  3] PE: [7, 13]     ArgDecl "ggg" type=str[] optional
+PS: [8,  3] PE: [8, 14]     ArgDecl "hhh" type=bool[] optional
 

@@ -1,0 +1,21 @@
+### TITLE ###
+Continue in lambda in loop
+### INPUT ###
+for i in range(5):
+    f = fn():
+        continue
+    f()
+### STDERR ###
+error[RAD20031]: 'continue' can only be used inside a loop
+  --> <script>:3:9
+  |
+2 |     f = fn():
+3 |         continue
+  |         ^^^^^^^^
+4 |     f()
+  |
+   = info: rad explain RAD20031
+
+
+### EXIT ###
+1

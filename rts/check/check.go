@@ -48,7 +48,18 @@ func (c *RadCheckerImpl) UpdateSrc(src string) {
 		c.tree.Update(src)
 	}
 	c.src = src
-	c.ast = nil // AST not available via UpdateSrc; use Update() instead
+	// Attempt AST conversion for AST-based checks.
+	// Falls back to nil on invalid syntax (converter may panic on ERROR nodes).
+	c.ast = c.tryConvertAST(src)
+}
+
+func (c *RadCheckerImpl) tryConvertAST(src string) (ast *rl.SourceFile) {
+	defer func() {
+		if r := recover(); r != nil {
+			ast = nil
+		}
+	}()
+	return rts.ConvertCST(c.tree.Root(), src, "<check>")
 }
 
 func (c *RadCheckerImpl) Update(tree *rts.RadTree, src string, ast *rl.SourceFile) {
@@ -67,21 +78,12 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
-	// Checks that have been migrated to AST (with CST fallback when AST is nil)
-	if c.ast != nil {
-		c.addFunctionNameShadowingErrorsAST(&diagnostics)
-		c.addUnknownFunctionHintsAST(&diagnostics)
-		c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
-		c.addReturnOutsideFunctionErrorsAST(&diagnostics)
-		c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
-	} else {
-		c.addFunctionNameShadowingErrors(&diagnostics)
-		c.addUnknownFunctionHints(&diagnostics)
-		c.addBreakContinueOutsideLoopErrors(&diagnostics)
-		c.addReturnOutsideFunctionErrors(&diagnostics)
-		c.addInvalidAssignmentLHSErrors(&diagnostics)
-	}
-	// Command callback check uses IdentifierSpan (works regardless of AST)
+	// AST-based checks (nil-guarded - no-op when AST is nil)
+	c.addFunctionNameShadowingErrorsAST(&diagnostics)
+	c.addUnknownFunctionHintsAST(&diagnostics)
+	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
+	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
+	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
 	c.addUnknownCommandCallbackWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
@@ -219,43 +221,6 @@ func (c *RadCheckerImpl) validateScientificNumberAsInt(node *ts.Node, d *[]Diagn
 	}
 }
 
-func (c *RadCheckerImpl) addFunctionNameShadowingErrors(d *[]Diagnostic) {
-	// Get argument names from the args block
-	argBlock, ok := c.tree.FindArgBlock()
-	if !ok {
-		// No args block, so no shadowing is possible
-		return
-	}
-
-	// Collect all argument names into a map for quick lookup
-	argNames := make(map[string]bool)
-	for _, arg := range argBlock.Args {
-		argNames[arg.Name.Name] = true
-	}
-
-	hoistedFunctions := c.getHoistedFunctions()
-	for _, fnName := range hoistedFunctions {
-		if argNames[fnName] {
-			// Find the node for the error reporting
-			root := c.tree.Root()
-			for i := uint(0); i < root.ChildCount(); i++ {
-				child := root.Child(i)
-				if child.Kind() == rl.K_FN_NAMED {
-					nameNode := child.ChildByFieldName(rl.F_NAME)
-					if nameNode != nil {
-						name := c.src[nameNode.StartByte():nameNode.EndByte()]
-						if name == fnName {
-							msg := "Hoisted function '" + fnName + "' shadows an argument with the same name"
-							*d = append(*d, NewDiagnosticError(nameNode, c.src, msg, rl.ErrHoistedFunctionShadowsArgument))
-							break
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
 func (c *RadCheckerImpl) getHoistedFunctions() []string {
 	hoistedFunctions := make([]string, 0)
 
@@ -276,38 +241,18 @@ func (c *RadCheckerImpl) getHoistedFunctions() []string {
 	return hoistedFunctions
 }
 
-func (c *RadCheckerImpl) addUnknownFunctionHints(d *[]Diagnostic) {
-	// Get built-in functions from singleton
-	builtInFunctions := rts.GetBuiltInFunctions()
-
-	// Get hoisted functions
-	hoistedFunctions := c.getHoistedFunctions()
-	hoistedFunctionSet := make(map[string]bool)
-	for _, fnName := range hoistedFunctions {
-		hoistedFunctionSet[fnName] = true
-	}
-
-	calls := c.tree.FindCalls()
-	for _, call := range calls {
-		fnName := call.Name
-
-		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
-			continue
-		}
-
-		// Function is not defined - create a hint
-		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticHintFromSpan(call.NameSpan, c.src, msg, rl.ErrUnknownFunction))
-	}
-}
-
 func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
 	builtInFunctions := rts.GetBuiltInFunctions()
 
-	hoistedFunctions := c.getHoistedFunctions()
 	hoistedFunctionSet := make(map[string]bool)
-	for _, fnName := range hoistedFunctions {
-		hoistedFunctionSet[fnName] = true
+	if astNames := c.getHoistedFunctionsAST(); astNames != nil {
+		for _, fnName := range astNames {
+			hoistedFunctionSet[fnName] = true
+		}
+	} else {
+		for _, fnName := range c.getHoistedFunctions() {
+			hoistedFunctionSet[fnName] = true
+		}
 	}
 
 	cmdBlocks, ok := c.tree.FindCmdBlocks("")
@@ -339,188 +284,6 @@ func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
 
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
 		*d = append(*d, NewDiagnosticWarnFromSpan(*callback.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
-	}
-}
-
-// addBreakContinueOutsideLoopErrors checks for break/continue statements outside of loops.
-func (c *RadCheckerImpl) addBreakContinueOutsideLoopErrors(d *[]Diagnostic) {
-	root := c.tree.Root()
-	c.walkForBreakContinue(root, d, 0)
-}
-
-func (c *RadCheckerImpl) walkForBreakContinue(node *ts.Node, d *[]Diagnostic, loopDepth int) {
-	if node == nil {
-		return
-	}
-
-	kind := node.Kind()
-
-	// Track loop entry
-	newLoopDepth := loopDepth
-	if kind == rl.K_FOR_LOOP || kind == rl.K_WHILE_LOOP {
-		newLoopDepth++
-	}
-
-	// Check for break/continue outside loop
-	if kind == rl.K_BREAK_STMT {
-		if loopDepth == 0 {
-			msg := "'break' can only be used inside a loop"
-			*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrBreakOutsideLoop))
-		}
-	} else if kind == rl.K_CONTINUE_STMT {
-		if loopDepth == 0 {
-			msg := "'continue' can only be used inside a loop"
-			*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrContinueOutsideLoop))
-		}
-	}
-
-	// Recursively walk children
-	for i := uint(0); i < node.ChildCount(); i++ {
-		c.walkForBreakContinue(node.Child(i), d, newLoopDepth)
-	}
-}
-
-// addReturnOutsideFunctionErrors checks for return statements outside of functions.
-func (c *RadCheckerImpl) addReturnOutsideFunctionErrors(d *[]Diagnostic) {
-	root := c.tree.Root()
-	c.walkForReturn(root, d, false, false)
-}
-
-// walkForReturn tracks both function context and switch/yield context.
-// yieldContext is true when inside a switch expression (where yield is valid).
-func (c *RadCheckerImpl) walkForReturn(node *ts.Node, d *[]Diagnostic, inFunction, inYieldContext bool) {
-	if node == nil {
-		return
-	}
-
-	kind := node.Kind()
-
-	// Track context changes
-	newInFunction := inFunction
-	newInYieldContext := inYieldContext
-
-	if kind == rl.K_FN_NAMED || kind == rl.K_FN_LAMBDA {
-		newInFunction = true
-	}
-
-	// Switch expressions create a yield context (yield produces the switch result)
-	if kind == rl.K_SWITCH_STMT {
-		newInYieldContext = true
-	}
-
-	// Check for return outside function
-	if kind == rl.K_RETURN_STMT {
-		if !inFunction {
-			msg := "'return' can only be used inside a function"
-			*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrReturnOutsideFunction))
-		}
-	}
-
-	// Check yield - valid inside functions OR switch expressions
-	if kind == rl.K_YIELD_STMT {
-		if !inFunction && !inYieldContext {
-			msg := "'yield' can only be used inside a function or switch expression"
-			*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrYieldOutsideFunction))
-		}
-	}
-
-	// Recursively walk children
-	for i := uint(0); i < node.ChildCount(); i++ {
-		c.walkForReturn(node.Child(i), d, newInFunction, newInYieldContext)
-	}
-}
-
-// addInvalidAssignmentLHSErrors checks for invalid assignment targets.
-func (c *RadCheckerImpl) addInvalidAssignmentLHSErrors(d *[]Diagnostic) {
-	root := c.tree.Root()
-	c.walkForAssignments(root, d)
-}
-
-func (c *RadCheckerImpl) walkForAssignments(node *ts.Node, d *[]Diagnostic) {
-	if node == nil {
-		return
-	}
-
-	if node.Kind() == rl.K_ASSIGN {
-		c.checkAssignmentLHS(node, d)
-	}
-
-	// Recursively walk children
-	for i := uint(0); i < node.ChildCount(); i++ {
-		c.walkForAssignments(node.Child(i), d)
-	}
-}
-
-func (c *RadCheckerImpl) checkAssignmentLHS(assignNode *ts.Node, d *[]Diagnostic) {
-	// Get the left-hand side(s) of the assignment
-	lefts := assignNode.ChildrenByFieldName(rl.F_LEFTS, assignNode.Walk())
-	if len(lefts) == 0 {
-		// Single left
-		left := assignNode.ChildByFieldName(rl.F_LEFT)
-		if left != nil {
-			c.validateAssignmentTarget(left, d)
-		}
-		return
-	}
-
-	// Multiple lefts (unpacking)
-	for i := range lefts {
-		c.validateAssignmentTarget(&lefts[i], d)
-	}
-}
-
-func (c *RadCheckerImpl) validateAssignmentTarget(node *ts.Node, d *[]Diagnostic) {
-	if node == nil {
-		return
-	}
-
-	kind := node.Kind()
-
-	// Valid assignment targets:
-	// - identifier (x = 1)
-	// - var_path (x.y = 1 or x[0] = 1)
-	// - indexed_expr (x[0] = 1)
-
-	switch kind {
-	case rl.K_IDENTIFIER, rl.K_VAR_PATH, rl.K_INDEXED_EXPR:
-		// These are valid assignment targets
-		return
-	case rl.K_INT, rl.K_FLOAT, rl.K_STRING, rl.K_BOOL, rl.K_NULL:
-		// Literals cannot be assigned to
-		content := c.src[node.StartByte():node.EndByte()]
-		msg := "Cannot assign to literal '" + truncate(content, 20) + "'"
-		*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrInvalidAssignmentTarget))
-	case rl.K_CALL:
-		// Function calls cannot be assigned to
-		msg := "Cannot assign to function call result"
-		*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrInvalidAssignmentTarget))
-	case rl.K_ADD_EXPR, rl.K_MULT_EXPR, rl.K_COMPARE_EXPR, rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_TERNARY_EXPR:
-		// Expressions cannot be assigned to
-		msg := "Cannot assign to expression"
-		*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrInvalidAssignmentTarget))
-	case rl.K_PARENTHESIZED_EXPR:
-		// Check inside parentheses
-		inner := node.ChildByFieldName(rl.F_EXPR)
-		if inner != nil {
-			c.validateAssignmentTarget(inner, d)
-		}
-	default:
-		// For any other unexpected node type
-		if !isValidAssignmentTarget(kind) {
-			content := c.src[node.StartByte():node.EndByte()]
-			msg := "Cannot assign to '" + truncate(content, 20) + "'"
-			*d = append(*d, NewDiagnosticError(node, c.src, msg, rl.ErrInvalidAssignmentTarget))
-		}
-	}
-}
-
-// isValidAssignmentTarget returns true if the node kind is a valid LHS for assignment.
-func isValidAssignmentTarget(kind string) bool {
-	switch kind {
-	case rl.K_IDENTIFIER, rl.K_VAR_PATH, rl.K_INDEXED_EXPR:
-		return true
-	default:
-		return false
 	}
 }
 

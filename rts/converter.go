@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -59,17 +60,28 @@ func (c *converter) getSrc(node *ts.Node) string {
 
 func (c *converter) convertSourceFile(node *ts.Node) *rl.SourceFile {
 	children := node.Children(node.Walk())
+	sf := rl.NewSourceFile(c.makeSpan(node), nil)
 	stmts := make([]rl.Node, 0, len(children))
 	for _, child := range children {
 		kind := child.Kind()
-		// Skip non-executable top-level nodes
-		if kind == rl.K_COMMENT || kind == rl.K_SHEBANG ||
-			kind == rl.K_FILE_HEADER || kind == rl.K_ARG_BLOCK || kind == rl.K_CMD_BLOCK {
+		switch kind {
+		case rl.K_COMMENT, rl.K_SHEBANG:
 			continue
+		case rl.K_FILE_HEADER:
+			sf.Header = c.convertFileHeader(&child)
+		case rl.K_ARG_BLOCK:
+			sf.Args = c.convertArgBlock(&child)
+		case rl.K_CMD_BLOCK:
+			cmd := c.convertCmdBlock(&child)
+			if cmd != nil {
+				sf.Cmds = append(sf.Cmds, cmd)
+			}
+		default:
+			stmts = append(stmts, c.convertStmt(&child))
 		}
-		stmts = append(stmts, c.convertStmt(&child))
 	}
-	return rl.NewSourceFile(c.makeSpan(node), stmts)
+	sf.Stmts = stmts
+	return sf
 }
 
 // --- Statements ---
@@ -422,6 +434,499 @@ func (c *converter) convertParamDefaults(typing *rl.TypingFnT, fnNode *ts.Node) 
 			}
 		}
 	}
+}
+
+// --- Metadata blocks ---
+
+func (c *converter) convertFileHeader(node *ts.Node) *rl.FileHeader {
+	contentsNode := node.ChildByFieldName(rl.F_CONTENTS)
+	if contentsNode == nil {
+		return rl.NewFileHeader(c.makeSpan(node), "", nil)
+	}
+	rawContents := c.src[contentsNode.StartByte():contentsNode.EndByte()]
+	contents, metadata := extractContentsAndMetadata(rawContents)
+	return rl.NewFileHeader(c.makeSpan(node), NormalizeIndentedText(contents), metadata)
+}
+
+func (c *converter) convertArgBlock(node *ts.Node) *rl.ArgBlock {
+	declNodes := node.ChildrenByFieldName("declaration", node.Walk())
+	decls := make([]rl.ArgDecl, 0, len(declNodes))
+	for _, declNode := range declNodes {
+		decls = append(decls, c.convertArgDecl(&declNode))
+	}
+
+	ab := rl.NewArgBlock(c.makeSpan(node), decls)
+	ab.EnumConstraints = c.convertArgEnumConstraints(node)
+	ab.RegexConstraints = c.convertArgRegexConstraints(node)
+	ab.RangeConstraints = c.convertArgRangeConstraints(node)
+	ab.Requirements = c.convertArgRelations(node, "requires_constraint", "required")
+	ab.Exclusions = c.convertArgRelations(node, "excludes_constraint", "excluded")
+	return ab
+}
+
+func (c *converter) convertArgDecl(node *ts.Node) rl.ArgDecl {
+	nameNode := node.ChildByFieldName("arg_name")
+	typeNode := node.ChildByFieldName(rl.F_TYPE)
+	optionalNode := node.ChildByFieldName(rl.F_OPTIONAL)
+	defaultNode := node.ChildByFieldName(rl.F_DEFAULT)
+	renameNode := node.ChildByFieldName("rename")
+	shorthandNode := node.ChildByFieldName("shorthand")
+	commentNode := node.ChildByFieldName("comment")
+	variadicMarkerNode := node.ChildByFieldName(rl.F_VARIADIC_MARKER)
+
+	name := c.getSrc(nameNode)
+	typeStr := c.getSrc(typeNode)
+	isVariadic := variadicMarkerNode != nil
+
+	// For variadic args, promote base type to list type
+	if isVariadic {
+		switch typeStr {
+		case rl.T_STR:
+			typeStr = rl.T_STR_LIST
+		case rl.T_INT:
+			typeStr = rl.T_INT_LIST
+		case rl.T_FLOAT:
+			typeStr = rl.T_FLOAT_LIST
+		case rl.T_BOOL:
+			typeStr = rl.T_BOOL_LIST
+		}
+	}
+
+	decl := rl.NewArgDecl(c.makeSpan(node), name, typeStr)
+	decl.IsOptional = optionalNode != nil
+	decl.IsVariadic = isVariadic
+
+	if renameNode != nil {
+		r := c.extractArgString(renameNode)
+		decl.Rename = &r
+	}
+	if shorthandNode != nil {
+		s := c.getSrc(shorthandNode)
+		decl.Shorthand = &s
+	}
+	if commentNode != nil {
+		raw := c.src[commentNode.StartByte():commentNode.EndByte()]
+		normalized := NormalizeIndentedText(raw)
+		decl.Comment = &normalized
+	}
+
+	if defaultNode != nil {
+		// Store AST expression node for dump
+		decl.Default = c.convertArgDefault(defaultNode)
+		// Store pre-parsed typed default values for metadata consumers
+		c.extractTypedArgDefault(decl, defaultNode, typeStr)
+	}
+
+	return *decl
+}
+
+// convertArgDefault converts an arg default CST node to an AST expression.
+// Arg defaults use grammar-specific wrapper nodes (int_arg, float_arg, etc.)
+// that aren't in the normal expression hierarchy, so we unwrap them here.
+func (c *converter) convertArgDefault(node *ts.Node) rl.Node {
+	kind := node.Kind()
+	span := c.makeSpan(node)
+	switch kind {
+	case "int_arg":
+		// int_arg has op* (sign) + value (int or scientific_number)
+		return c.convertArgNumericDefault(node, span, true)
+	case "float_arg":
+		// float_arg has op* (sign) + value (int/float/scientific_number)
+		return c.convertArgNumericDefault(node, span, false)
+	case rl.K_STRING:
+		// String defaults are already proper expression nodes
+		return c.convertString(node)
+	case rl.K_BOOL:
+		return c.convertBool(node)
+	case "string_list":
+		return c.convertArgListDefault(node, span, rl.K_STRING)
+	case "int_list":
+		return c.convertArgListDefault(node, span, "int_arg")
+	case "float_list":
+		return c.convertArgListDefault(node, span, "float_arg")
+	case "bool_list":
+		return c.convertArgListDefault(node, span, rl.K_BOOL)
+	default:
+		// Fall back to general expression conversion
+		return c.safeConvertExpr(node)
+	}
+}
+
+func (c *converter) convertArgNumericDefault(node *ts.Node, span rl.Span, isInt bool) rl.Node {
+	ops := node.ChildrenByFieldName(rl.F_OP, node.Walk())
+	valueNode := node.ChildByFieldName(rl.F_VALUE)
+	if valueNode == nil {
+		return nil
+	}
+
+	var inner rl.Node
+	valueKind := valueNode.Kind()
+	switch valueKind {
+	case rl.K_INT:
+		inner = c.convertInt(valueNode)
+	case rl.K_FLOAT:
+		inner = c.convertFloat(valueNode)
+	case rl.K_SCIENTIFIC_NUMBER:
+		inner = c.convertScientificNumber(valueNode)
+	default:
+		return nil
+	}
+
+	// Apply sign operators (- -)
+	negCount := 0
+	for _, op := range ops {
+		if c.getSrc(&op) == "-" {
+			negCount++
+		}
+	}
+	if negCount%2 == 1 {
+		inner = rl.NewOpUnary(span, rl.OpNeg, inner)
+	}
+	return inner
+}
+
+func (c *converter) convertArgListDefault(node *ts.Node, span rl.Span, entryKind string) rl.Node {
+	entryNodes := node.ChildrenByFieldName(rl.F_LIST_ENTRY, node.Walk())
+	elements := make([]rl.Node, 0, len(entryNodes))
+	for _, entry := range entryNodes {
+		var elem rl.Node
+		switch entryKind {
+		case "int_arg", "float_arg":
+			elem = c.convertArgNumericDefault(&entry, c.makeSpan(&entry), entryKind == "int_arg")
+		case rl.K_STRING:
+			elem = c.convertString(&entry)
+		case rl.K_BOOL:
+			elem = c.convertBool(&entry)
+		}
+		if elem != nil {
+			elements = append(elements, elem)
+		}
+	}
+	return rl.NewLitList(span, elements)
+}
+
+// extractTypedArgDefault parses default values into typed fields for metadata consumers.
+func (c *converter) extractTypedArgDefault(decl *rl.ArgDecl, defaultNode *ts.Node, typeStr string) {
+	defaultStr := c.src[defaultNode.StartByte():defaultNode.EndByte()]
+	switch typeStr {
+	case rl.T_STR:
+		v := c.extractArgString(defaultNode)
+		decl.DefaultString = &v
+	case rl.T_INT:
+		v := c.extractArgInt(defaultNode)
+		decl.DefaultInt = &v
+	case rl.T_FLOAT:
+		v := c.extractArgFloat(defaultNode)
+		decl.DefaultFloat = &v
+	case rl.T_BOOL:
+		v, _ := strconv.ParseBool(defaultStr)
+		decl.DefaultBool = &v
+	case rl.T_STR_LIST:
+		v := c.extractStringList(defaultNode)
+		decl.DefaultStringList = &v
+	case rl.T_INT_LIST:
+		v := c.extractIntList(defaultNode)
+		decl.DefaultIntList = &v
+	case rl.T_FLOAT_LIST:
+		v := c.extractFloatList(defaultNode)
+		decl.DefaultFloatList = &v
+	case rl.T_BOOL_LIST:
+		v := c.extractBoolList(defaultNode)
+		decl.DefaultBoolList = &v
+	}
+}
+
+func (c *converter) extractArgString(stringNode *ts.Node) string {
+	contents := stringNode.ChildByFieldName(rl.F_CONTENTS)
+	if contents == nil {
+		return ""
+	}
+	var sb strings.Builder
+	contentChildren := contents.Children(contents.Walk())
+	for i, content := range contentChildren {
+		childSrc := c.src[content.StartByte():content.EndByte()]
+		childFieldName := contents.FieldNameForChild(uint32(i))
+		switch childFieldName {
+		case "content":
+			sb.WriteString(childSrc)
+		case "single_quote":
+			sb.WriteString("'")
+		case "double_quote":
+			sb.WriteString(`"`)
+		case "backtick":
+			sb.WriteString("`")
+		case "newline":
+			sb.WriteString("\n")
+		case "tab":
+			sb.WriteString("\t")
+		case "backslash":
+			sb.WriteString("\\")
+		default:
+			// Skip unknown fields rather than panicking during conversion
+		}
+	}
+	return sb.String()
+}
+
+func (c *converter) extractArgInt(defaultNode *ts.Node) int64 {
+	multiplier := int64(1)
+	ops := defaultNode.ChildrenByFieldName(rl.F_OP, defaultNode.Walk())
+	for _, op := range ops {
+		opSrc := c.src[op.StartByte():op.EndByte()]
+		if opSrc == rl.K_MINUS {
+			multiplier *= -1
+		}
+	}
+	valueNode := defaultNode.ChildByFieldName(rl.F_VALUE)
+	valueStr := c.src[valueNode.StartByte():valueNode.EndByte()]
+
+	if valueNode.Kind() == rl.K_SCIENTIFIC_NUMBER {
+		floatVal, _ := ParseFloat(valueStr)
+		return int64(floatVal) * multiplier
+	}
+
+	value, _ := ParseInt(valueStr)
+	return value * multiplier
+}
+
+func (c *converter) extractArgFloat(defaultNode *ts.Node) float64 {
+	multiplier := 1.0
+	ops := defaultNode.ChildrenByFieldName(rl.F_OP, defaultNode.Walk())
+	for _, op := range ops {
+		opSrc := c.src[op.StartByte():op.EndByte()]
+		if opSrc == rl.K_MINUS {
+			multiplier *= -1
+		}
+	}
+	valueNode := defaultNode.ChildByFieldName(rl.F_VALUE)
+	valueStr := c.src[valueNode.StartByte():valueNode.EndByte()]
+	value, _ := ParseFloat(valueStr)
+	return value * multiplier
+}
+
+func (c *converter) extractStringList(valuesNode *ts.Node) []string {
+	entryNodes := valuesNode.ChildrenByFieldName(rl.F_LIST_ENTRY, valuesNode.Walk())
+	var values []string
+	for _, entry := range entryNodes {
+		values = append(values, c.extractArgString(&entry))
+	}
+	return values
+}
+
+func (c *converter) extractIntList(listNode *ts.Node) []int64 {
+	entryNodes := listNode.ChildrenByFieldName(rl.F_LIST_ENTRY, listNode.Walk())
+	var values []int64
+	for _, entry := range entryNodes {
+		values = append(values, c.extractArgInt(&entry))
+	}
+	return values
+}
+
+func (c *converter) extractFloatList(listNode *ts.Node) []float64 {
+	entryNodes := listNode.ChildrenByFieldName(rl.F_LIST_ENTRY, listNode.Walk())
+	var values []float64
+	for _, entry := range entryNodes {
+		values = append(values, c.extractArgFloat(&entry))
+	}
+	return values
+}
+
+func (c *converter) extractBoolList(listNode *ts.Node) []bool {
+	entryNodes := listNode.ChildrenByFieldName(rl.F_LIST_ENTRY, listNode.Walk())
+	var values []bool
+	for _, entry := range entryNodes {
+		v, _ := strconv.ParseBool(c.src[entry.StartByte():entry.EndByte()])
+		values = append(values, v)
+	}
+	return values
+}
+
+func (c *converter) convertArgEnumConstraints(node *ts.Node) map[string]*rl.ArgEnumConstraint {
+	constraints := make(map[string]*rl.ArgEnumConstraint)
+	enumNodes := node.ChildrenByFieldName("enum_constraint", node.Walk())
+	for _, ec := range enumNodes {
+		nameNode := ec.ChildByFieldName("arg_name")
+		valuesNode := ec.ChildByFieldName("values")
+		name := c.src[nameNode.StartByte():nameNode.EndByte()]
+		values := c.extractStringList(valuesNode)
+		constraints[name] = &rl.ArgEnumConstraint{
+			Span_:  c.makeSpan(&ec),
+			Values: values,
+		}
+	}
+	return constraints
+}
+
+func (c *converter) convertArgRegexConstraints(node *ts.Node) map[string]*rl.ArgRegexConstraint {
+	constraints := make(map[string]*rl.ArgRegexConstraint)
+	regexNodes := node.ChildrenByFieldName("regex_constraint", node.Walk())
+	for _, rc := range regexNodes {
+		nameNode := rc.ChildByFieldName("arg_name")
+		regexStrNode := rc.ChildByFieldName(rl.F_REGEX)
+		name := c.src[nameNode.StartByte():nameNode.EndByte()]
+		regexStr := c.extractArgString(regexStrNode)
+		constraints[name] = &rl.ArgRegexConstraint{
+			Span_: c.makeSpan(&rc),
+			Value: regexStr,
+		}
+	}
+	return constraints
+}
+
+func (c *converter) convertArgRangeConstraints(node *ts.Node) map[string]*rl.ArgRangeConstraint {
+	constraints := make(map[string]*rl.ArgRangeConstraint)
+	rangeNodes := node.ChildrenByFieldName("range_constraint", node.Walk())
+	for _, rc := range rangeNodes {
+		nameNode := rc.ChildByFieldName("arg_name")
+		name := c.src[nameNode.StartByte():nameNode.EndByte()]
+
+		openerNode := rc.ChildByFieldName("opener")
+		closerNode := rc.ChildByFieldName("closer")
+		minNode := rc.ChildByFieldName("min")
+		maxNode := rc.ChildByFieldName("max")
+
+		opener := c.src[openerNode.StartByte():openerNode.EndByte()]
+		closer := c.src[closerNode.StartByte():closerNode.EndByte()]
+
+		var minV *float64
+		if minNode != nil {
+			str := c.src[minNode.StartByte():minNode.EndByte()]
+			v, _ := ParseFloat(str)
+			minV = &v
+		}
+		var maxV *float64
+		if maxNode != nil {
+			str := c.src[maxNode.StartByte():maxNode.EndByte()]
+			v, _ := ParseFloat(str)
+			maxV = &v
+		}
+
+		constraints[name] = &rl.ArgRangeConstraint{
+			Span_:       c.makeSpan(&rc),
+			OpenerToken: opener,
+			CloserToken: closer,
+			Min:         minV,
+			Max:         maxV,
+		}
+	}
+	return constraints
+}
+
+func (c *converter) convertArgRelations(node *ts.Node, constraintField, relatedField string) []rl.ArgRelation {
+	constraintNodes := node.ChildrenByFieldName(constraintField, node.Walk())
+	if len(constraintNodes) == 0 {
+		return nil
+	}
+	var relations []rl.ArgRelation
+	for _, cn := range constraintNodes {
+		nameNode := cn.ChildByFieldName("arg_name")
+		name := c.src[nameNode.StartByte():nameNode.EndByte()]
+		mutuallyNode := cn.ChildByFieldName("mutually")
+		relatedNodes := cn.ChildrenByFieldName(relatedField, cn.Walk())
+
+		var related []string
+		for _, rn := range relatedNodes {
+			related = append(related, c.src[rn.StartByte():rn.EndByte()])
+		}
+
+		relations = append(relations, rl.ArgRelation{
+			Span_:    c.makeSpan(&cn),
+			Arg:      name,
+			IsMutual: mutuallyNode != nil,
+			Related:  related,
+		})
+	}
+	return relations
+}
+
+func (c *converter) convertCmdBlock(node *ts.Node) *rl.CmdBlock {
+	nameNode := node.ChildByFieldName(rl.F_NAME)
+	if nameNode == nil {
+		return nil
+	}
+	name := c.src[nameNode.StartByte():nameNode.EndByte()]
+	cmd := rl.NewCmdBlock(c.makeSpan(node), name)
+
+	// Description
+	descNode := node.ChildByFieldName(rl.F_DESCRIPTION)
+	if descNode != nil {
+		contentsNode := descNode.ChildByFieldName(rl.F_CONTENTS)
+		if contentsNode != nil {
+			contents := c.src[contentsNode.StartByte():contentsNode.EndByte()]
+			normalized := NormalizeIndentedText(contents)
+			cmd.Description = &normalized
+		}
+	}
+
+	// Args + constraints (reuse arg block logic)
+	declNodes := node.ChildrenByFieldName("declaration", node.Walk())
+	decls := make([]rl.ArgDecl, 0, len(declNodes))
+	for _, declNode := range declNodes {
+		decls = append(decls, c.convertArgDecl(&declNode))
+	}
+	cmd.Decls = decls
+	cmd.EnumConstraints = c.convertArgEnumConstraints(node)
+	cmd.RegexConstraints = c.convertArgRegexConstraints(node)
+	cmd.RangeConstraints = c.convertArgRangeConstraints(node)
+	cmd.Requirements = c.convertArgRelations(node, "requires_constraint", "required")
+	cmd.Exclusions = c.convertArgRelations(node, "excludes_constraint", "excluded")
+
+	// Callback
+	cmd.Callback = c.convertCmdCallback(node)
+
+	return cmd
+}
+
+func (c *converter) convertCmdCallback(node *ts.Node) rl.CmdCallback {
+	callsNode := node.ChildByFieldName(rl.F_CALLS)
+	if callsNode == nil {
+		return rl.CmdCallback{}
+	}
+
+	// Identifier callback
+	identifierNode := callsNode.ChildByFieldName(rl.F_CALLBACK_IDENTIFIER)
+	if identifierNode != nil {
+		name := c.src[identifierNode.StartByte():identifierNode.EndByte()]
+		span := c.makeSpan(identifierNode)
+		return rl.CmdCallback{
+			Span_:          c.makeSpan(callsNode),
+			IdentifierName: &name,
+			IdentifierSpan: &span,
+		}
+	}
+
+	// Lambda callback
+	lambdaNode := callsNode.ChildByFieldName(rl.F_CALLBACK_LAMBDA)
+	if lambdaNode != nil {
+		lambda := c.safeConvertLambda(lambdaNode)
+		return rl.CmdCallback{
+			Span_:    c.makeSpan(callsNode),
+			IsLambda: true,
+			Lambda:   lambda,
+		}
+	}
+
+	return rl.CmdCallback{Span_: c.makeSpan(callsNode)}
+}
+
+// safeConvertExpr converts a CST expression to AST, recovering from panics.
+func (c *converter) safeConvertExpr(node *ts.Node) (result rl.Node) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+		}
+	}()
+	return c.convertExpr(node)
+}
+
+// safeConvertLambda converts a lambda CST node to AST, recovering from panics.
+func (c *converter) safeConvertLambda(node *ts.Node) (result *rl.Lambda) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+		}
+	}()
+	return c.convertFnLambda(node)
 }
 
 // --- Expressions ---
@@ -777,12 +1282,7 @@ func (c *converter) convertInterpolation(node *ts.Node) rl.StringSegment {
 		format = c.convertInterpolationFormat(formatNode)
 	}
 
-	return rl.StringSegment{
-		IsLiteral: false,
-		Expr:      c.convertExpr(exprNode),
-		Format:    format,
-		Span_:     c.makeSpan(node),
-	}
+	return rl.NewStringSegmentInterp(c.convertExpr(exprNode), format, c.makeSpan(node))
 }
 
 func (c *converter) convertInterpolationFormat(node *ts.Node) *rl.InterpolationFormat {

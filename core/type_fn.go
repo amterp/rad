@@ -174,10 +174,27 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 				continue
 			}
 
+			if param.DefaultAST != nil {
+				i.WithTmpSrc(param.DefaultAST.Src, func() {
+					defaultVal := i.eval(param.DefaultAST.Node).Val
+					if param.Type != nil {
+						typeCheck(i, param.Type, param.DefaultAST.Node, defaultVal)
+					}
+					i.env.SetVar(param.Name, defaultVal)
+				})
+				continue
+			}
+
 			if param.Default != nil {
 				i.WithTmpSrc(param.Default.Src, func() {
-					// Convert CST default expression to AST on the fly
-					astDefault := rts.ConvertExpr(param.Default.Node, param.Default.Src, i.sd.ScriptName)
+					// Fallback: convert CST default to AST on the fly.
+					// ConvertExpr may panic on malformed CST nodes.
+					astDefault := tryConvertExpr(param.Default, i.sd.ScriptName)
+					if astDefault == nil {
+						i.emitErrorf(rl.ErrInvalidSyntax, f.callNode,
+							"Failed to evaluate default for parameter '%s'", param.Name)
+						return
+					}
 					defaultVal := i.eval(astDefault).Val
 					if param.Type != nil {
 						typeCheck(i, param.Type, astDefault, defaultVal)
@@ -216,6 +233,11 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 			i.pushCallFrame(fnName, callSite, fn.ReprSpan)
 			defer i.popCallFrame()
 
+			// break/continue don't cross function boundaries
+			savedLoopLevel := i.forWhileLoopLevel
+			i.forWhileLoopLevel = 0
+			defer func() { i.forWhileLoopLevel = savedLoopLevel }()
+
 			res := i.runBlock(fn.Stmts)
 			typeCheck(i, typing.ReturnT, f.callNode, res.Val)
 			if fn.IsBlock {
@@ -250,7 +272,7 @@ func typeCheck(i *Interpreter, typing *rl.TypingT, node rl.Node, val RadValue) {
 		return
 	}
 
-	isCompat := (*typing).IsCompatibleWith(val.ToCompatSubject(i))
+	isCompat := (*typing).IsCompatibleWith(val.ToCompatSubject())
 	if !isCompat {
 		if val == VOID_SENTINEL {
 			i.emitErrorf(rl.ErrVoidValue, node, "Expected '%s', but got void value", (*typing).Name())
@@ -260,6 +282,17 @@ func typeCheck(i *Interpreter, typing *rl.TypingT, node rl.Node, val RadValue) {
 		i.emitErrorf(rl.ErrTypeMismatch, node, "Value '%s' (%s) is not compatible with expected type '%s'",
 			ToPrintable(val), val.Type().AsString(), (*typing).Name())
 	}
+}
+
+// tryConvertExpr wraps rts.ConvertExpr with panic recovery.
+// Returns nil if the CST node is malformed and conversion panics.
+func tryConvertExpr(radNode *rl.RadNode, file string) (result rl.Node) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+		}
+	}()
+	return rts.ConvertExpr(radNode.Node, radNode.Src, file)
 }
 
 func (fn RadFn) ToString() string {

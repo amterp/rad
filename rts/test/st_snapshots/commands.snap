@@ -288,6 +288,21 @@ B: [610, 611] PS: [35, 27] PE: [35, 28]                               ) `)`
 
 ### STDERR ###
 PS: [ 0,  0] PE: [35, 28] SourceFile
+PS: [ 1,  0] PE: [ 5,  0]   FileHeader "Script description"
+PS: [ 5,  0] PE: [ 7, 28]   ArgBlock
+PS: [ 6,  4] PE: [ 6, 18]     ArgDecl "verbose" type=bool
+PS: [ 7,  4] PE: [ 7, 28]     ArgDecl "config" type=str
+                              Default:
+PS: [ 7, 17] PE: [ 7, 28]         LitString "~/.config"
+PS: [ 9,  0] PE: [16, 16]   CmdBlock "add"
+                            Description: "Add a file to the repository"
+PS: [13,  4] PE: [13, 39]     ArgDecl "file" type=str
+PS: [14,  4] PE: [14, 33]     ArgDecl "force" type=bool
+                            Callback: on_add
+PS: [18,  0] PE: [23, 19]   CmdBlock "remove"
+                            Description: "Remove a file"
+PS: [22,  4] PE: [22, 12]     ArgDecl "file" type=str
+                            Callback: on_remove
 PS: [25,  0] PE: [25, 19]   ExprStmt
 PS: [25,  0] PE: [25, 19]     Call
 PS: [25,  0] PE: [25, 11]       Identifier "load_config"

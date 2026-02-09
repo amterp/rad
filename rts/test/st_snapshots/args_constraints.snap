@@ -92,6 +92,11 @@ B: [180, 181] PS: [8,  4] PE: [8,  5]                             int `2`
 
 ### STDERR ###
 PS: [0, 0] PE: [8, 5] SourceFile
+PS: [0, 0] PE: [7, 22]   ArgBlock
+PS: [1, 4] PE: [1, 12]     ArgDecl "name" type=str
+PS: [2, 4] PE: [2, 26]     ArgDecl "age" type=int
+                          Default:
+PS: [2, 14] PE: [2, 16]         LitInt 30
 PS: [8, 0] PE: [8, 5]   Assign
 PS: [8, 0] PE: [8, 1]     Identifier "a"
 PS: [8, 4] PE: [8, 5]     LitInt 2

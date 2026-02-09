@@ -26,6 +26,27 @@ func walkASTChildren(node rl.Node, visit func(rl.Node)) {
 		for _, s := range n.Stmts {
 			visit(s)
 		}
+	case *rl.FileHeader:
+		// leaf - no child AST nodes
+	case *rl.ArgBlock:
+		for i := range n.Decls {
+			if n.Decls[i].Default != nil {
+				visit(n.Decls[i].Default)
+			}
+		}
+	case *rl.ArgDecl:
+		if n.Default != nil {
+			visit(n.Default)
+		}
+	case *rl.CmdBlock:
+		for i := range n.Decls {
+			if n.Decls[i].Default != nil {
+				visit(n.Decls[i].Default)
+			}
+		}
+		if n.Callback.Lambda != nil {
+			visit(n.Callback.Lambda)
+		}
 	case *rl.Assign:
 		for _, t := range n.Targets {
 			visit(t)
@@ -257,14 +278,13 @@ func (c *RadCheckerImpl) addFunctionNameShadowingErrorsAST(d *[]Diagnostic) {
 		return
 	}
 
-	argBlock, ok := c.tree.FindArgBlock()
-	if !ok {
+	if c.ast.Args == nil {
 		return
 	}
 
 	argNames := make(map[string]bool)
-	for _, arg := range argBlock.Args {
-		argNames[arg.Name.Name] = true
+	for _, decl := range c.ast.Args.Decls {
+		argNames[decl.Name] = true
 	}
 
 	for _, stmt := range c.ast.Stmts {
@@ -354,6 +374,9 @@ func (c *RadCheckerImpl) walkASTForBreakContinue(node rl.Node, d *[]Diagnostic, 
 		loopDepth++
 	case *rl.WhileLoop:
 		loopDepth++
+	case *rl.FnDef, *rl.Lambda:
+		// break/continue don't cross function boundaries
+		loopDepth = 0
 	}
 
 	walkASTChildren(node, func(child rl.Node) {

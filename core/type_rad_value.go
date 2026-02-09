@@ -3,10 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // used to internally delete things e.g. vars from env, but also empty returns. too much? subtle bugs?
@@ -425,7 +422,7 @@ func (v RadValue) ToGoValue() (out interface{}) {
 	return
 }
 
-func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
+func (v RadValue) ToCompatSubject() (out rl.TypingCompatVal) {
 	if v == VOID_SENTINEL {
 		return rl.NewVoidSubject()
 	}
@@ -442,7 +439,6 @@ func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
 		}).
 		ForString(func(val RadValue, actual RadString) {
 			out = rl.NewStrSubject(actual.Plain())
-			out.Evaluator = typingEvaluator(i)
 		}).
 		ForList(func(val RadValue, actual *RadList) {
 			out = rl.NewListSubject()
@@ -451,7 +447,6 @@ func (v RadValue) ToCompatSubject(i *Interpreter) (out rl.TypingCompatVal) {
 		ForMap(func(val RadValue, actual *RadMap) {
 			out = rl.NewMapSubject()
 			out.Val = actual.ToGoMap()
-			out.Evaluator = typingEvaluator(i)
 		}).
 		ForNull(func(val RadValue, actual RadNull) {
 			out = rl.NewNullSubject()
@@ -578,16 +573,3 @@ func newRadValueError(val *RadError) RadValue {
 	return newRadValue(nil, nil, val)
 }
 
-func typingEvaluator(i *Interpreter) *func(*ts.Node, string) interface{} {
-	evalF := func(cstNode *ts.Node, src string) interface{} {
-		// Bridge: typing system stores CST nodes for defaults/constraints,
-		// but interpreter evaluates AST nodes. Convert on the fly.
-		astNode := rts.ConvertExpr(cstNode, src, i.sd.ScriptName)
-		res := i.eval(astNode)
-		if res.Val == VOID_SENTINEL {
-			panic("Bug: typingEvaluator expected a value, got void")
-		}
-		return res.Val.ToGoValue()
-	}
-	return &evalF
-}

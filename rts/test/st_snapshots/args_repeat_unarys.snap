@@ -23,4 +23,9 @@ B: [26, 28] PS: [1, 20] PE: [1, 22]         value: int `30`
 
 ### STDERR ###
 PS: [0,  0] PE: [1, 22] SourceFile
+PS: [0,  0] PE: [1, 22]   ArgBlock
+PS: [1,  4] PE: [1, 22]     ArgDecl "age" type=int
+                            Default:
+PS: [1, 14] PE: [1, 22]         OpUnary -
+PS: [1, 20] PE: [1, 22]           LitInt 30
 

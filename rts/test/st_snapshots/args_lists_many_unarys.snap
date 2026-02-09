@@ -48,4 +48,17 @@ B: [72, 73] PS: [2, 35] PE: [2, 36]         ] `]`
 
 ### STDERR ###
 PS: [0,  0] PE: [2, 36] SourceFile
+PS: [0,  0] PE: [2, 36]   ArgBlock
+PS: [1,  3] PE: [1, 30]     ArgDecl "banana" type=int[]
+                            Default:
+PS: [1, 18] PE: [1, 30]         LitList (2 elements)
+PS: [1, 19] PE: [1, 20]           LitInt 2
+PS: [1, 22] PE: [1, 29]           OpUnary -
+PS: [1, 28] PE: [1, 29]             LitInt 3
+PS: [2,  3] PE: [2, 36]     ArgDecl "citrus" type=float[]
+                            Default:
+PS: [2, 20] PE: [2, 36]         LitList (2 elements)
+PS: [2, 21] PE: [2, 24]           LitFloat 2.3
+PS: [2, 26] PE: [2, 35]           OpUnary -
+PS: [2, 32] PE: [2, 35]             LitFloat 4.5
 

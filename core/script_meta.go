@@ -84,12 +84,23 @@ func (sd *ScriptData) ValidateNoErrors() {
 	}
 }
 
+// tryConvertAST attempts CST-to-AST conversion, returning nil if the source
+// has syntax errors that cause the converter to panic.
+func tryConvertAST(tree *rts.RadTree, src string, file string) (ast *rl.SourceFile) {
+	defer func() {
+		if r := recover(); r != nil {
+			ast = nil
+		}
+	}()
+	return rts.ConvertCST(tree.Root(), src, file)
+}
+
 // validateSyntax checks for syntax errors and exits immediately if any are found.
 // This runs before argument parsing, so it only respects environment variables (like NO_COLOR),
 // not command-line flags like --color=never.
 func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
-	// AST is nil here: validation runs before AST conversion, so CST checks suffice.
-	checker := check.NewCheckerWithTree(tree, parser, src, nil)
+	ast := tryConvertAST(tree, src, ScriptName)
+	checker := check.NewCheckerWithTree(tree, parser, src, ast)
 	result, err := checker.CheckDefault()
 	if err != nil {
 		RP.RadErrorExit("Failed to validate syntax: " + err.Error())
