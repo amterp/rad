@@ -73,4 +73,3 @@ print(name)
 		t.Fatalf("File header contents didn't match: <%v>", fileHeader.Contents)
 	}
 }
-
