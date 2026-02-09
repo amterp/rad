@@ -46,7 +46,7 @@ func (r *RadRunner) Run() error {
 	RConfig = LoadRadConfig()
 
 	// Phase 1: Detection & Setup
-	invocationType, sourceCode, err := r.detectAndSetup(os.Args[1:])
+	invocationType, err := r.detectAndSetup(os.Args[1:])
 	if err != nil {
 		// Set up minimal printer for errors
 		RP = NewPrinter(r, false, false, false, false)
@@ -61,7 +61,7 @@ func (r *RadRunner) Run() error {
 	r.setupRootCommand()
 
 	if invocationType != NoScript {
-		err := r.registerScript(sourceCode)
+		err := r.registerScript()
 		if err != nil {
 			RP.ErrorExit(err.Error())
 		}
@@ -121,10 +121,10 @@ func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string,
 }
 
 // detectAndSetup analyzes args and sets up basic state
-func (r *RadRunner) detectAndSetup(args []string) (InvocationType, string, error) {
+func (r *RadRunner) detectAndSetup(args []string) (InvocationType, error) {
 	invocationType, sourceCode, err := r.detectInvocationType(args)
 	if err != nil {
-		return NoScript, "", err
+		return NoScript, err
 	}
 
 	scriptPath := ""
@@ -149,7 +149,7 @@ func (r *RadRunner) detectAndSetup(args []string) (InvocationType, string, error
 		r.scriptData = ExtractMetadata(sourceCode)
 	}
 
-	return invocationType, sourceCode, nil
+	return invocationType, nil
 }
 
 // setupRootCommand creates the root command and registers global flags
@@ -197,22 +197,13 @@ func (r *RadRunner) setupRootCommand() {
 }
 
 // registerScript registers the script as a subcommand with its flags
-func (r *RadRunner) registerScript(sourceCode string) error {
+func (r *RadRunner) registerScript() error {
 	if r.scriptData == nil {
 		return fmt.Errorf("Bug! Script data expected but not found")
 	}
 
-	// Validate args block if present
-	if HasScript {
-		radParser, err := rts.NewRadParser()
-		if err != nil {
-			return fmt.Errorf("Failed to load Rad parser: %v", err)
-		}
-		tree := radParser.Parse(sourceCode)
-		_, hasArgsBlock := tree.FindArgBlock()
-		if hasArgsBlock && r.scriptData.DisableArgsBlock {
-			return fmt.Errorf("Macro '%s' disabled, but args block found.\n", MACRO_ENABLE_ARGS_BLOCK)
-		}
+	if r.scriptData.HasArgsBlock && r.scriptData.DisableArgsBlock {
+		return fmt.Errorf("Macro '%s' disabled, but args block found.\n", MACRO_ENABLE_ARGS_BLOCK)
 	}
 
 	r.scriptArgs = r.createAndRegisterScriptArgs()

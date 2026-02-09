@@ -74,22 +74,3 @@ print(name)
 	}
 }
 
-func Test_Tree_CanGetArgBlock(t *testing.T) {
-	radParser, _ := rts.NewRadParser()
-	defer radParser.Close()
-
-	script := `
-args:
-    name string
-    age int = 30 # An age.
-
-    name enum ["alice", "bob"]
-    name regex "^[A-Z][a-z]$"
-`
-	tree := radParser.Parse(script)
-	argBlock, ok := tree.FindArgBlock()
-	if !ok {
-		t.Fatalf("failed to find arg block")
-	}
-	_ = argBlock
-}

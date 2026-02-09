@@ -32,10 +32,6 @@ func NodeName[T Node]() string {
 		return "shebang"
 	case *FileHeader:
 		return "file_header"
-	case *ArgBlock:
-		return "arg_block"
-	case *CmdBlock:
-		return "cmd_block"
 	case *StringNode:
 		return "string"
 	default:

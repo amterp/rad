@@ -62,31 +62,6 @@ func (rt *RadTree) FindFileHeader() (*FileHeader, bool) {
 	return fileHeaders[0], true // todo bad if multiple
 }
 
-func (rt *RadTree) FindArgBlock() (*ArgBlock, bool) {
-	argBlocks := findNodes[*ArgBlock](rt)
-	if len(argBlocks) == 0 {
-		return nil, false
-	}
-	return argBlocks[0], true // todo bad if multiple
-}
-
-func (rt *RadTree) FindCmdBlocks(file string) ([]*CmdBlock, bool) {
-	// Commands can appear multiple times, so we need to find all of them
-	nodes := rt.FindNodes(rl.K_CMD_BLOCK)
-	if len(nodes) == 0 {
-		return nil, false
-	}
-
-	cmdBlocks := make([]*CmdBlock, 0, len(nodes))
-	for _, node := range nodes {
-		cmdBlock, ok := newCmdBlock(rt.src, node, file)
-		if ok {
-			cmdBlocks = append(cmdBlocks, cmdBlock)
-		}
-	}
-
-	return cmdBlocks, len(cmdBlocks) > 0
-}
 
 func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 	nodeName := NodeName[T]()
@@ -197,12 +172,6 @@ func createNode[T Node](src string, node *ts.Node) (T, bool) {
 	case *FileHeader:
 		fileHeader, _ := newFileHeader(src, node)
 		return any(fileHeader).(T), true
-	case *ArgBlock:
-		argBlock, _ := newArgBlock(src, node)
-		return any(argBlock).(T), true
-	case *CmdBlock:
-		cmdBlock, _ := newCmdBlock(src, node, "")
-		return any(cmdBlock).(T), true
 	case *StringNode:
 		stringNode, _ := newStringNode(src, node)
 		return any(stringNode).(T), true

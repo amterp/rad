@@ -19,20 +19,12 @@ func ConvertCST(root *ts.Node, src string, file string) *rl.SourceFile {
 }
 
 // ConvertExpr converts a single CST expression node into an AST expression.
-// Used as a bridge during migration: the typing system still stores CST nodes
-// for function parameter defaults and type constraints, but the interpreter
-// evaluates AST nodes. This converts on the fly.
+// Used as a runtime bridge when TypingFnParam.Default (CST) exists but
+// DefaultAST is nil - e.g. built-in function typing constructed in Go
+// without going through the converter. See type_fn.go tryConvertExpr.
 func ConvertExpr(node *ts.Node, src string, file string) rl.Node {
 	c := &converter{src: src, file: file}
 	return c.convertExpr(node)
-}
-
-// ConvertLambda converts a single lambda CST node into an AST Lambda.
-// Used for converting command callback lambdas at the runner level.
-func ConvertLambda(lambdaNode *ts.Node, src string, file string) *rl.Lambda {
-	c := &converter{src: src, file: file}
-	node := c.convertFnLambda(lambdaNode)
-	return node
 }
 
 type converter struct {
