@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 )
 
@@ -185,23 +184,6 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 				continue
 			}
 
-			if param.Default != nil {
-				i.WithTmpSrc(param.Default.Src, func() {
-					astDefault := tryConvertExpr(param.Default, i.sd.ScriptName)
-					if astDefault == nil {
-						i.emitErrorf(rl.ErrInvalidSyntax, f.callNode,
-							"Failed to evaluate default for parameter '%s'", param.Name)
-						return
-					}
-					defaultVal := i.eval(astDefault).Val
-					if param.Type != nil {
-						typeCheck(i, param.Type, astDefault, defaultVal)
-					}
-					i.env.SetVar(param.Name, defaultVal)
-				})
-				continue
-			}
-
 			if param.IsVariadic {
 				i.env.SetVar(param.Name, newRadValueList(NewRadList()))
 				continue
@@ -280,17 +262,6 @@ func typeCheck(i *Interpreter, typing *rl.TypingT, node rl.Node, val RadValue) {
 		i.emitErrorf(rl.ErrTypeMismatch, node, "Value '%s' (%s) is not compatible with expected type '%s'",
 			ToPrintable(val), val.Type().AsString(), (*typing).Name())
 	}
-}
-
-// tryConvertExpr wraps rts.ConvertExpr with panic recovery.
-// Returns nil if the CST node is malformed and conversion panics.
-func tryConvertExpr(radNode *rl.RadNode, file string) (result rl.Node) {
-	defer func() {
-		if r := recover(); r != nil {
-			result = nil
-		}
-	}()
-	return rts.ConvertExpr(radNode.Node, radNode.Src, file)
 }
 
 func (fn RadFn) ToString() string {

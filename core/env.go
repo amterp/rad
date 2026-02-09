@@ -168,7 +168,6 @@ func (e *Env) PrintShellExports() {
 		}
 
 		val := e.Vars[varName]
-		// type visitor takes a *ts.Node which isn't super applicable here...
 		switch coerced := val.Val.(type) {
 		case RadString, int64, float64, bool:
 			printFunc(varName, ToPrintable(val))

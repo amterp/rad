@@ -6,6 +6,7 @@ import "fmt"
 type Node interface {
 	Kind() NodeKind
 	Span() Span
+	Children() []Node
 }
 
 // NodeKind identifies the type of an AST node.

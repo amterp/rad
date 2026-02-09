@@ -177,4 +177,21 @@ func init() {
 		sig.Name = typing.Name
 		FnSignaturesByName[sig.Name] = sig
 	}
+
+	// Pre-convert CST defaults to AST so the interpreter never has to
+	// do on-the-fly CST->AST conversion at call time.
+	for name, sig := range FnSignaturesByName {
+		for i := range sig.Typing.Params {
+			param := &sig.Typing.Params[i]
+			if param.Default != nil && param.DefaultAST == nil {
+				param.DefaultAST = &rl.ASTDefault{
+					Node: ConvertExpr(param.Default.Node, param.Default.Src, "<builtin>"),
+					Src:  param.Default.Src,
+				}
+			}
+		}
+		// Must reassign: range copies the struct value, so mutations
+		// through param pointers don't update the map entry.
+		FnSignaturesByName[name] = sig
+	}
 }

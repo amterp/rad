@@ -72,11 +72,10 @@ func ExtractMetadata(src string) *ScriptData {
 }
 
 func (sd *ScriptData) ValidateNoErrors() {
-	invalidNodes := sd.Tree.FindInvalidNodes()
-	if len(invalidNodes) > 0 {
+	spans := sd.Tree.FindInvalidNodeSpans(sd.ScriptName)
+	if len(spans) > 0 {
 		renderer := NewDiagnosticRenderer(RIo.StdErr)
-		for _, node := range invalidNodes {
-			span := NewSpanFromNode(node, sd.ScriptName)
+		for _, span := range spans {
 			diag := NewDiagnostic(SeverityError, rl.ErrInvalidSyntax, "Invalid syntax", sd.Src, span)
 			renderer.Render(diag)
 		}

@@ -136,6 +136,34 @@ func recurseFindInvalidNodes(node *ts.Node, invalidNodes *[]*ts.Node) {
 	}
 }
 
+// SpanFromNode creates an rl.Span from a tree-sitter node and file path.
+func SpanFromNode(node *ts.Node, file string) rl.Span {
+	return rl.Span{
+		File:      file,
+		StartByte: int(node.StartByte()),
+		EndByte:   int(node.EndByte()),
+		StartRow:  int(node.StartPosition().Row),
+		StartCol:  int(node.StartPosition().Column),
+		EndRow:    int(node.EndPosition().Row),
+		EndCol:    int(node.EndPosition().Column),
+	}
+}
+
+// FindInvalidNodeSpans returns spans for all invalid/missing nodes.
+func (rt *RadTree) FindInvalidNodeSpans(file string) []rl.Span {
+	nodes := rt.FindInvalidNodes()
+	spans := make([]rl.Span, len(nodes))
+	for i, n := range nodes {
+		spans[i] = SpanFromNode(n, file)
+	}
+	return spans
+}
+
+// HasInvalidNodes returns true if the tree contains any error/missing nodes.
+func (rt *RadTree) HasInvalidNodes() bool {
+	return len(rt.FindInvalidNodes()) > 0
+}
+
 func findNodes[T Node](rt *RadTree) []T {
 	nodeName := NodeName[T]()
 	node, ok := rt.findFirstNode(nodeName, rt.root.RootNode())
