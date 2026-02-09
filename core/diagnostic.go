@@ -1,8 +1,6 @@
 package core
 
 import (
-	ts "github.com/tree-sitter/go-tree-sitter"
-
 	"github.com/amterp/rad/rts/check"
 	"github.com/amterp/rad/rts/rl"
 )
@@ -26,19 +24,6 @@ func (s Severity) String() string {
 		return "note"
 	default:
 		return "unknown"
-	}
-}
-
-// NewSpanFromNode creates a Span from a tree-sitter node and file path.
-func NewSpanFromNode(node *ts.Node, file string) rl.Span {
-	return rl.Span{
-		File:      file,
-		StartByte: int(node.StartByte()),
-		EndByte:   int(node.EndByte()),
-		StartRow:  int(node.StartPosition().Row),
-		StartCol:  int(node.StartPosition().Column),
-		EndRow:    int(node.EndPosition().Row),
-		EndCol:    int(node.EndPosition().Column),
 	}
 }
 

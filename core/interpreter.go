@@ -266,7 +266,7 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 
 	tree := parser.Parse(input)
 	// Check for parse errors using FindInvalidNodes
-	if invalidNodes := tree.FindInvalidNodes(); len(invalidNodes) > 0 {
+	if tree.HasInvalidNodes() {
 		return RAD_NULL_VAL, fmt.Errorf("parse error in statement: %s", input)
 	}
 

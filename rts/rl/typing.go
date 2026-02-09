@@ -598,16 +598,14 @@ type TypingFnParam struct {
 	IsVariadic bool // vararg
 	NamedOnly  bool // if true, can only be passed as a named arg
 	IsOptional bool
-	// Default is the CST-based default. Still needed at runtime because
-	// typing resolution sets this from CST, and the interpreter falls back
-	// to converting it on-the-fly when DefaultAST is nil (which happens
-	// for built-in function typing constructed directly in Go).
+	// Default is the CST-based default. Still needed because typing
+	// resolution sets it from CST, and the converter reads it to produce
+	// DefaultAST. Built-in defaults are pre-converted in rts/signatures.go init().
 	Default    *RadNode
-	DefaultAST *ASTDefault // AST-based default (set by converter for user code)
+	DefaultAST *ASTDefault // AST-based default (used by interpreter at call time)
 }
 
 // ASTDefault holds an AST node and source for a function parameter default value.
-// Allows gradual migration: converter sets DefaultAST, interpreter reads it.
 type ASTDefault struct {
 	Node Node
 	Src  string

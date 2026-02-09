@@ -19,9 +19,8 @@ func ConvertCST(root *ts.Node, src string, file string) *rl.SourceFile {
 }
 
 // ConvertExpr converts a single CST expression node into an AST expression.
-// Used as a runtime bridge when TypingFnParam.Default (CST) exists but
-// DefaultAST is nil - e.g. built-in function typing constructed in Go
-// without going through the converter. See type_fn.go tryConvertExpr.
+// Used to pre-convert built-in function defaults in signatures.go init()
+// and by the converter for user-defined function parameter defaults.
 func ConvertExpr(node *ts.Node, src string, file string) rl.Node {
 	c := &converter{src: src, file: file}
 	return c.convertExpr(node)
