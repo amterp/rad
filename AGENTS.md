@@ -37,24 +37,26 @@ maintainable than Bash. It combines familiar Python-like syntax with powerful sc
 ## Project Structure
 
 ```
-/Users/amterp/src/rad/
 ├── main.go                    # Entry point - creates RadRunner
 ├── go.mod                     # Go module definition
 ├── Makefile                   # Build system (generate, format, build, test)
 ├── README.md                  # User documentation
-├── core/                      # Main interpreter implementation
+├── core/                      # Interpreter (evaluates AST, no tree-sitter)
 │   ├── runner.go              # Main runner logic
-│   ├── interpreter.go         # Core interpreter
+│   ├── interpreter.go         # AST evaluation via Go type switch
 │   ├── funcs.go              # Built-in functions
 │   ├── rad_block.go          # Rad block syntax (HTTP requests)
 │   ├── args.go               # Argument parsing
 │   ├── json_*.go             # JSON processing algorithms
 │   ├── type_*.go             # Type system implementation
 │   └── testing/              # Comprehensive test suite
-├── rts/                      # Rad Tree Sitter
-│   ├── rts.go                # Tree-sitter parser wrapper
-│   ├── nodes.go              # AST node definitions
-│   └── rl/                   # Type resolution logic
+├── rts/                      # Parsing, conversion, and static analysis
+│   ├── parse.go              # Tree-sitter parser wrapper
+│   ├── converter.go          # CST-to-AST single-pass converter
+│   ├── nodes.go              # CST node types and traversal
+│   ├── signatures.go         # Built-in function signatures
+│   ├── check/                # Static checker (AST-based, CST fallback)
+│   └── rl/                   # AST node types, spans, typing, node kinds
 ├── lsp-server/               # Language Server Protocol implementation
 ├── vsc-extension/            # VS Code extension
 ├── docs-web/                 # Documentation website (MkDocs)
@@ -71,12 +73,13 @@ maintainable than Bash. It combines familiar Python-like syntax with powerful sc
 
 ### 2. Core Package (`core/`)
 
-The heart of the interpreter, organized by functionality:
+The heart of the interpreter, organized by functionality. `core/` has **no tree-sitter dependency** - it works
+entirely with Go-native AST nodes from `rts/rl/`.
 
 #### Key Files:
 
 - **`runner.go`**: Main execution flow, argument parsing, script loading
-- **`interpreter.go`**: AST evaluation engine with `EvalResult` system
+- **`interpreter.go`**: AST evaluation via Go type switch with `EvalResult` system
 - **`funcs.go`**: 50+ built-in functions (print, len, join, etc.)
 - **`args.go`**: Declarative argument parsing with constraints
 - **`rad_block.go`**: Special `rad url:` syntax for HTTP requests
@@ -96,14 +99,25 @@ Common functions include:
 - **Files**: `read_file`, `write_file`, `find_paths`
 - **HTTP**: `http_get`, `http_post`
 
-### 3. Rad Tree Sitter (`rts/`)
+### 3. Parsing & AST (`rts/`)
 
-- Uses **Tree-sitter** for parsing (grammar in separate repo)
-- **`rts.go`**: Parser wrapper around tree-sitter-rad
-  - Acts as an API abstraction hiding primitive node/tree walking.
-  - Lets users query and find what they need at a higher level.
-- **`nodes.go`**: AST node types and traversal
-- **`rl/`**: Type resolution and compatibility checking
+Tree-sitter is the **only place CGo runs**. The rest of the system works with Go-native AST nodes.
+
+**Pipeline**: Source code -> tree-sitter CST -> `converter.go` -> Go-native AST -> `core/` evaluates AST
+
+- **`parse.go`**: Parser wrapper around tree-sitter-rad grammar
+- **`converter.go`**: Single-pass CST-to-AST transformation. Key work: delegate chain collapsing, leaf value
+  pre-parsing, operator resolution to enum, compound assign/incr-decr desugaring, string escape resolution,
+  eager function body conversion.
+- **`nodes.go`**: CST node types and traversal (reduced post-migration)
+- **`signatures.go`**: Built-in function type signatures. Defaults are pre-converted to AST at init time.
+- **`check/`**: Static checker. Walks AST for structural validation (scope checks, shadowing, assignment LHS).
+  Falls back to CST for tree-sitter-specific checks (invalid nodes, scientific notation).
+- **`rl/`**: The leaf package imported by everything. Contains:
+  - AST node types (~36 node kinds) with `Node` interface (`Kind()`, `Span()`, `Children()`)
+  - `Span` type for source location tracking
+  - Typing system (type definitions, resolution, compatibility)
+  - Constants, error types, utilities
 
 ### 4. Language Server (`lsp-server/`)
 
@@ -208,11 +222,12 @@ make test         # Run tests in core/testing
 - Comprehensive test suite in `core/testing/`
 - Tests organized by feature (args, functions, syntax, etc.)
 - Test resources in `core/testing/resources/`
-- Parser tests in `rts/test/`
+- Syntax tree snapshot tests in `rts/test/` - each case captures both CST and AST dumps side-by-side
+- Converter unit tests in `rts/converter_test.go`
 
 ### Key Dependencies
 
-- **Tree-sitter**: For parsing (`github.com/tree-sitter/go-tree-sitter`)
+- **Tree-sitter**: For parsing only (`github.com/tree-sitter/go-tree-sitter`) - confined to `rts/`
 - **pflag**: Command-line flag parsing
 - **go-tbl**: Table formatting
 - **samber/lo**: Utility functions
@@ -387,6 +402,9 @@ for simple functions, but provide sufficient detail for complex ones.
 ### Debugging Tips
 
 - Use `debug()` function in Rad scripts for debugging
+- `--cst-tree`: Dump the tree-sitter CST for a script
+- `--ast-tree`: Dump the Go-native AST for a script (runs converter)
+- Both flags bypass arg validation, so they work on scripts with missing required args
 - Check `core/testing/` for examples of every language feature
 
 ## File Extensions and Conventions
