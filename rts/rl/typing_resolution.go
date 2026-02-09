@@ -107,11 +107,16 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 				break
 			}
 			enumStrNodes := GetChildren(typeNode, F_ENUM)
-			strNodes := make([]*RadNode, 0)
+			values := make([]string, 0, len(enumStrNodes))
 			for _, enumStrNode := range enumStrNodes {
-				strNodes = append(strNodes, NewRadNode(&enumStrNode, src))
+				// Extract string value by stripping quotes
+				raw := GetSrc(&enumStrNode, src)
+				if len(raw) >= 2 {
+					raw = raw[1 : len(raw)-1]
+				}
+				values = append(values, raw)
 			}
-			typing = NewStrEnumType(strNodes...)
+			typing = NewStrEnumType(values...)
 		case K_ANY_TYPE:
 			typing = NewAnyType()
 		case K_FN_TYPE:
@@ -131,7 +136,12 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 					valueNode := GetChild(&entryNode, F_VALUE_TYPE)
 					valueTyping := resolveTyping(valueNode, src)
 
-					key := NewMapNamedKey(NewRadNode(keyNode, src), keyOptionalNode != nil)
+					// Extract the key name string by stripping quotes
+					rawKey := GetSrc(keyNode, src)
+					if len(rawKey) >= 2 {
+						rawKey = rawKey[1 : len(rawKey)-1]
+					}
+					key := NewMapNamedKey(rawKey, keyOptionalNode != nil)
 					keyValues[key] = valueTyping
 				}
 				typing = NewStructType(keyValues)

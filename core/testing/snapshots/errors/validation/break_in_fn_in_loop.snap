@@ -1,0 +1,21 @@
+### TITLE ###
+Break in named fn in loop
+### INPUT ###
+for i in range(5):
+    fn f():
+        break
+    f()
+### STDERR ###
+error[RAD20030]: 'break' can only be used inside a loop
+  --> <script>:3:9
+  |
+2 |     fn f():
+3 |         break
+  |         ^^^^^
+4 |     f()
+  |
+   = info: rad explain RAD20030
+
+
+### EXIT ###
+1

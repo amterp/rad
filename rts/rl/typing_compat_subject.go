@@ -1,16 +1,11 @@
 package rl
 
-import (
-	"fmt"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
-)
+import "fmt"
 
 // first check Val, then Type
 type TypingCompatVal struct {
-	Val       interface{} // Specific int64, float64, string, bool, []interface{}, map[string]interface{}
-	Type      *RadType
-	Evaluator *func(*ts.Node, string) interface{}
+	Val  interface{} // Specific int64, float64, string, bool, []interface{}, map[string]interface{}
+	Type *RadType
 }
 
 func NewSubject(val interface{}) TypingCompatVal {

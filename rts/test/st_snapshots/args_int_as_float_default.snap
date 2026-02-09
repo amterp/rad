@@ -17,4 +17,8 @@ B: [27, 28] PS: [1, 21] PE: [1, 22]         value: int `2`
 
 ### STDERR ###
 PS: [0,  0] PE: [1, 22] SourceFile
+PS: [0,  0] PE: [1, 22]   ArgBlock
+PS: [1,  4] PE: [1, 22]     ArgDecl "floatArg" type=float
+                            Default:
+PS: [1, 21] PE: [1, 22]         LitInt 2
 

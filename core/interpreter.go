@@ -13,8 +13,6 @@ import (
 	"github.com/amterp/rad/rts/rl"
 
 	"github.com/samber/lo"
-
-	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type Delimiter struct {
@@ -639,7 +637,7 @@ func (i *Interpreter) formatInterpolation(seg rl.StringSegment, exprResult RadVa
 	f := seg.Format
 	resultType := exprResult.Type()
 	// Use the interpolation segment's span for error reporting
-	strNode := rl.NewIdentifier(seg.Span_, "")
+	strNode := rl.NewIdentifier(seg.Span(), "")
 
 	var goFmt strings.Builder
 	goFmt.WriteString("%")
@@ -1295,10 +1293,6 @@ func (i *Interpreter) GetSrc() string {
 // GetScriptName returns the name/path of the current script.
 func (i *Interpreter) GetScriptName() string {
 	return i.sd.ScriptName
-}
-
-func (i *Interpreter) GetSrcForNode(node *ts.Node) string {
-	return i.GetSrc()[node.StartByte():node.EndByte()]
 }
 
 func (i *Interpreter) GetSrcForSpan(span rl.Span) string {

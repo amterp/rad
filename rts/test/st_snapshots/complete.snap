@@ -2651,6 +2651,23 @@ B: [2164, 2165] PS: [140, 43] PE: [140, 44]                                 end:
 
 ### STDERR ###
 PS: [  0,  0] PE: [140, 44] SourceFile
+PS: [  1,  0] PE: [  7,  0]   FileHeader "this is a file\nheader\n\nwhoa! hello"
+PS: [  7,  0] PE: [ 15, 28]   ArgBlock
+PS: [  8,  4] PE: [  8, 12]     ArgDecl "name" type=str
+PS: [  9,  4] PE: [  9, 26]     ArgDecl "age" type=int
+                                Default:
+PS: [  9, 14] PE: [  9, 16]         LitInt 30
+PS: [ 10,  4] PE: [ 10, 17]     ArgDecl "employed" type=bool
+PS: [ 11,  4] PE: [ 11, 33]     ArgDecl "foo" type=str[]
+                                Default:
+PS: [ 11, 16] PE: [ 11, 33]         LitList (2 elements)
+PS: [ 11, 17] PE: [ 11, 23]           LitString "blah"
+PS: [ 11, 25] PE: [ 11, 32]           LitString "bloop"
+PS: [ 12,  4] PE: [ 12, 30]     ArgDecl "bar" type=int[]
+                                Default:
+PS: [ 12, 24] PE: [ 12, 30]         LitList (2 elements)
+PS: [ 12, 25] PE: [ 12, 26]           LitInt 4
+PS: [ 12, 28] PE: [ 12, 29]           LitInt 5
 PS: [ 17,  0] PE: [ 17,  5]   Assign
 PS: [ 17,  0] PE: [ 17,  1]     Identifier "a"
 PS: [ 17,  4] PE: [ 17,  5]     LitInt 2

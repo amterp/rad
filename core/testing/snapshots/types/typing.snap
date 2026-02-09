@@ -850,7 +850,7 @@ foo("quz")
 fn foo(x: ["foo", "bar"]):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '"quz"' (str) is not compatible with expected type 'str enum'
+error[RAD30001]: Value '"quz"' (str) is not compatible with expected type '["foo", "bar"]'
   --> <script>:1:5
   |
 1 | foo("quz")
@@ -879,7 +879,7 @@ foo().print()
 fn foo() -> ["foo", "bar"]:
 	return "quz"
 ### STDERR ###
-error[RAD30001]: Value '"quz"' (str) is not compatible with expected type 'str enum'
+error[RAD30001]: Value '"quz"' (str) is not compatible with expected type '["foo", "bar"]'
   --> <script>:1:1
   |
 1 | foo().print()
@@ -970,7 +970,7 @@ foo({"key2": 10})
 fn foo(x: {"key1": int}):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type '{ "key1": int }'
   --> <script>:1:5
   |
 1 | foo({"key2": 10})
@@ -999,7 +999,7 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": 10}
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type 'struct'
+error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type '{ "key1": int }'
   --> <script>:1:1
   |
 1 | foo().print()
@@ -1021,7 +1021,7 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": "hi"}
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": "hi" }' (map) is not compatible with expected type 'struct'
+error[RAD30001]: Value '{ "key2": "hi" }' (map) is not compatible with expected type '{ "key1": int }'
   --> <script>:1:1
   |
 1 | foo().print()

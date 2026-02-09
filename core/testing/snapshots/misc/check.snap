@@ -9,11 +9,11 @@ fn open(path: str) -> void:
     print("Opening {path}")
 ### STDERR ###
 error[RAD40002]: Hoisted function 'open' shadows an argument with the same name
-  --> <script>:5:4
+  --> <script>:5:1
   |
 4 |
 5 | fn open(path: str) -> void:
-  |    ^^^^
+  | ^^
 6 |     print("Opening {path}")
   |
    = info: rad explain RAD40002
@@ -36,22 +36,22 @@ fn count() -> int:
     return 10
 ### STDERR ###
 error[RAD40002]: Hoisted function 'name' shadows an argument with the same name
-  --> <script>:6:4
+  --> <script>:6:1
   |
 5 |
 6 | fn name() -> str:
-  |    ^^^^
+  | ^^
 7 |     return "test"
 8 |
   |
    = info: rad explain RAD40002
 
 error[RAD40002]: Hoisted function 'count' shadows an argument with the same name
-  --> <script>:9:4
+  --> <script>:9:1
   |
 8 |
 9 | fn count() -> int:
-  |    ^^^^^
+  | ^^
 10 |     return 10
   |
    = info: rad explain RAD40002

@@ -2,8 +2,11 @@ package rl
 
 // SourceFile is the root AST node for a script.
 type SourceFile struct {
-	span  Span
-	Stmts []Node
+	span   Span
+	Header *FileHeader
+	Args   *ArgBlock
+	Cmds   []*CmdBlock
+	Stmts  []Node
 }
 
 func NewSourceFile(span Span, stmts []Node) *SourceFile {
@@ -347,7 +350,7 @@ func (n *VarPath) Span() Span     { return n.span }
 
 // PathSegment represents one segment in a var path.
 type PathSegment struct {
-	Span_   Span    // exported for interpreter access
+	span    Span
 	Field   *string // dot access: .name (nil if bracket)
 	Index   Node    // bracket access: [expr] (nil if dot or slice)
 	IsSlice bool    // [start:end] slice syntax
@@ -357,18 +360,18 @@ type PathSegment struct {
 }
 
 // Span returns the span of this path segment.
-func (p PathSegment) Span() Span { return p.Span_ }
+func (p PathSegment) Span() Span { return p.span }
 
 func NewPathSegmentField(span Span, field string) PathSegment {
-	return PathSegment{Span_: span, Field: &field}
+	return PathSegment{span: span, Field: &field}
 }
 
 func NewPathSegmentIndex(span Span, index Node) PathSegment {
-	return PathSegment{Span_: span, Index: index}
+	return PathSegment{span: span, Index: index}
 }
 
 func NewPathSegmentSlice(span Span, start, end Node) PathSegment {
-	return PathSegment{Span_: span, IsSlice: true, Start: start, End: end}
+	return PathSegment{span: span, IsSlice: true, Start: start, End: end}
 }
 
 // Identifier represents a variable reference.
@@ -469,8 +472,16 @@ type StringSegment struct {
 	Text      string               // literal text (resolved escapes)
 	Expr      Node                 // interpolation expression (when !IsLiteral)
 	Format    *InterpolationFormat // optional format specifiers
-	Span_     Span                 // span of the interpolation {expr:fmt} (only for !IsLiteral)
+	span      Span                 // span of the interpolation {expr:fmt} (only for !IsLiteral)
 }
+
+// NewStringSegmentInterp creates an interpolation string segment.
+func NewStringSegmentInterp(expr Node, format *InterpolationFormat, span Span) StringSegment {
+	return StringSegment{IsLiteral: false, Expr: expr, Format: format, span: span}
+}
+
+// Span returns the span of this string segment.
+func (s StringSegment) Span() Span { return s.span }
 
 // InterpolationFormat holds pre-extracted format specifiers for
 // string interpolation (alignment, padding, precision, etc.).
@@ -631,3 +642,142 @@ func NewJsonPath(span Span, segments []JsonPathSeg) *JsonPath {
 }
 func (n *JsonPath) Kind() NodeKind { return NJsonPath }
 func (n *JsonPath) Span() Span     { return n.span }
+
+// --- Script metadata blocks ---
+
+// FileHeader represents the --- block with description and metadata entries.
+type FileHeader struct {
+	span            Span
+	Contents        string
+	MetadataEntries map[string]string
+}
+
+func NewFileHeader(span Span, contents string, metadata map[string]string) *FileHeader {
+	return &FileHeader{span: span, Contents: contents, MetadataEntries: metadata}
+}
+func (n *FileHeader) Kind() NodeKind { return NFileHeader }
+func (n *FileHeader) Span() Span     { return n.span }
+
+// ArgBlock represents the top-level args: block.
+type ArgBlock struct {
+	span         Span
+	Decls        []ArgDecl
+	EnumConstraints  map[string]*ArgEnumConstraint
+	RegexConstraints map[string]*ArgRegexConstraint
+	RangeConstraints map[string]*ArgRangeConstraint
+	Requirements []ArgRelation
+	Exclusions   []ArgRelation
+}
+
+func NewArgBlock(span Span, decls []ArgDecl) *ArgBlock {
+	return &ArgBlock{span: span, Decls: decls}
+}
+func (n *ArgBlock) Kind() NodeKind { return NArgBlock }
+func (n *ArgBlock) Span() Span     { return n.span }
+
+// ArgDecl represents a single arg declaration (e.g. "name str? = "default").
+type ArgDecl struct {
+	span       Span
+	Name       string
+	TypeName   string // "int", "str", "int[]", etc.
+	IsOptional bool
+	IsVariadic bool
+	Rename     *string
+	Shorthand  *string
+	Default    Node    // expression node or nil
+	Comment    *string
+	// Pre-parsed typed default values for metadata consumers
+	DefaultString     *string
+	DefaultInt        *int64
+	DefaultFloat      *float64
+	DefaultBool       *bool
+	DefaultStringList *[]string
+	DefaultIntList    *[]int64
+	DefaultFloatList  *[]float64
+	DefaultBoolList   *[]bool
+}
+
+func NewArgDecl(span Span, name, typeName string) *ArgDecl {
+	return &ArgDecl{span: span, Name: name, TypeName: typeName}
+}
+func (n *ArgDecl) Kind() NodeKind { return NArgDecl }
+func (n *ArgDecl) Span() Span     { return n.span }
+
+// ExternalName returns the CLI-visible name (hyphenated form), or the rename if set.
+func (n *ArgDecl) ExternalName() string {
+	if n.Rename != nil {
+		return *n.Rename
+	}
+	return toExternalArgName(n.Name)
+}
+
+// toExternalArgName converts snake_case to kebab-case for CLI flag names.
+func toExternalArgName(name string) string {
+	result := make([]byte, len(name))
+	for i := 0; i < len(name); i++ {
+		if name[i] == '_' {
+			result[i] = '-'
+		} else {
+			result[i] = name[i]
+		}
+	}
+	return string(result)
+}
+
+// ArgEnumConstraint restricts an arg to a set of string values.
+type ArgEnumConstraint struct {
+	Span_  Span
+	Values []string
+}
+
+// ArgRegexConstraint restricts an arg value to match a regex.
+type ArgRegexConstraint struct {
+	Span_ Span
+	Value string
+}
+
+// ArgRangeConstraint restricts an arg to a numeric range.
+type ArgRangeConstraint struct {
+	Span_        Span
+	OpenerToken  string // "[" or "("
+	CloserToken  string // "]" or ")"
+	Min          *float64
+	Max          *float64
+}
+
+// ArgRelation represents a requires or excludes relation between args.
+type ArgRelation struct {
+	Span_    Span
+	Arg      string
+	IsMutual bool
+	Related  []string // required or excluded arg names
+}
+
+// CmdBlock represents a command definition block.
+type CmdBlock struct {
+	span             Span
+	Name             string
+	Description      *string
+	Decls            []ArgDecl
+	EnumConstraints  map[string]*ArgEnumConstraint
+	RegexConstraints map[string]*ArgRegexConstraint
+	RangeConstraints map[string]*ArgRangeConstraint
+	Requirements     []ArgRelation
+	Exclusions       []ArgRelation
+	Callback         CmdCallback
+}
+
+func NewCmdBlock(span Span, name string) *CmdBlock {
+	return &CmdBlock{span: span, Name: name}
+}
+func (n *CmdBlock) Kind() NodeKind { return NCmdBlock }
+func (n *CmdBlock) Span() Span     { return n.span }
+
+// CmdCallback represents a command's callback - either a function name or inline lambda.
+type CmdCallback struct {
+	Span_          Span
+	IsLambda       bool
+	IdentifierName *string
+	IdentifierSpan *Span
+	Lambda         *Lambda
+}

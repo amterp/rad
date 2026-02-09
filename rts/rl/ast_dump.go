@@ -38,8 +38,67 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 	case *SourceFile:
 		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%sSourceFile\n", indent)
+		if n.Header != nil {
+			astDumpNode(sb, fmtStr, spacePad, n.Header, depth+1)
+		}
+		if n.Args != nil {
+			astDumpNode(sb, fmtStr, spacePad, n.Args, depth+1)
+		}
+		for _, cmd := range n.Cmds {
+			astDumpNode(sb, fmtStr, spacePad, cmd, depth+1)
+		}
 		for _, stmt := range n.Stmts {
 			astDumpNode(sb, fmtStr, spacePad, stmt, depth+1)
+		}
+
+	case *FileHeader:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		desc := n.Contents
+		if len(desc) > 40 {
+			desc = desc[:37] + "..."
+		}
+		fmt.Fprintf(sb, "%sFileHeader %q\n", indent, desc)
+		for k, v := range n.MetadataEntries {
+			fmt.Fprintf(sb, "%s%s@%s = %s\n", spacePad, indent, k, v)
+		}
+
+	case *ArgBlock:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sArgBlock\n", indent)
+		for i := range n.Decls {
+			astDumpNode(sb, fmtStr, spacePad, &n.Decls[i], depth+1)
+		}
+
+	case *ArgDecl:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		flags := ""
+		if n.IsOptional {
+			flags += " optional"
+		}
+		if n.IsVariadic {
+			flags += " variadic"
+		}
+		fmt.Fprintf(sb, "%sArgDecl %q type=%s%s\n", indent, n.Name, n.TypeName, flags)
+		if n.Default != nil {
+			fmt.Fprintf(sb, "%s%sDefault:\n", spacePad, indent)
+			astDumpNode(sb, fmtStr, spacePad, n.Default, depth+2)
+		}
+
+	case *CmdBlock:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sCmdBlock %q\n", indent, n.Name)
+		if n.Description != nil {
+			fmt.Fprintf(sb, "%s%sDescription: %q\n", spacePad, indent, *n.Description)
+		}
+		for i := range n.Decls {
+			astDumpNode(sb, fmtStr, spacePad, &n.Decls[i], depth+1)
+		}
+		cb := n.Callback
+		if cb.IdentifierName != nil {
+			fmt.Fprintf(sb, "%s%sCallback: %s\n", spacePad, indent, *cb.IdentifierName)
+		} else if cb.Lambda != nil {
+			fmt.Fprintf(sb, "%s%sCallback: lambda\n", spacePad, indent)
+			astDumpNode(sb, fmtStr, spacePad, cb.Lambda, depth+2)
 		}
 
 	case *Assign:
