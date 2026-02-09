@@ -68,14 +68,14 @@ B: [47, 51] PS: [1, 19] PE: [1, 23]                                             
 B: [51, 52] PS: [1, 23] PE: [1, 24]                               ) `)`
 
 ### STDERR ###
-PS: [0, 0] PE: [2, 0] SourceFile
-PS: [0, 0] PE: [1, 24]   ForLoop vars=[item] with ctx
+PS: [0,  0] PE: [2,  0] SourceFile
+PS: [0,  0] PE: [1, 24]   ForLoop vars=[item] with ctx
 PS: [0, 12] PE: [0, 17]     Identifier "items"
-PS: [1, 4] PE: [1, 24]     ExprStmt
-PS: [1, 4] PE: [1, 24]       Call
-PS: [1, 4] PE: [1, 9]         Identifier "print"
+PS: [1,  4] PE: [1, 24]     ExprStmt
+PS: [1,  4] PE: [1, 24]       Call
+PS: [1,  4] PE: [1,  9]         Identifier "print"
 PS: [1, 10] PE: [1, 17]         VarPath
 PS: [1, 10] PE: [1, 13]           Identifier "ctx"
-                              .idx
+                                .idx
 PS: [1, 19] PE: [1, 23]         Identifier "item"
 

@@ -187,19 +187,19 @@ B: [201, 202] PS: [8, 23] PE: [8, 24]       : `:`
 B: [207, 211] PS: [9,  4] PE: [9,  8]       stmt: pass_stmt `pass`
 
 ### STDERR ###
-PS: [0, 0] PE: [9, 8] SourceFile
-PS: [0, 0] PE: [0, 17]   Shell quiet=true confirm=false
-PS: [0, 7] PE: [0, 17]     LitString "make all"
-PS: [1, 0] PE: [1, 24]   Shell quiet=true confirm=false
+PS: [0,  0] PE: [9,  8] SourceFile
+PS: [0,  0] PE: [0, 17]   Shell quiet=true confirm=false
+PS: [0,  7] PE: [0, 17]     LitString "make all"
+PS: [1,  0] PE: [1, 24]   Shell quiet=true confirm=false
 PS: [1, 14] PE: [1, 24]     LitString "make all"
-PS: [2, 0] PE: [2, 32]   Shell quiet=true confirm=false
+PS: [2,  0] PE: [2, 32]   Shell quiet=true confirm=false
 PS: [2, 22] PE: [2, 32]     LitString "make all"
-PS: [4, 0] PE: [4, 25]   Shell quiet=true confirm=true
+PS: [4,  0] PE: [4, 25]   Shell quiet=true confirm=true
 PS: [4, 15] PE: [4, 25]     LitString "make all"
-PS: [5, 0] PE: [5, 32]   Shell quiet=true confirm=true
+PS: [5,  0] PE: [5, 32]   Shell quiet=true confirm=true
 PS: [5, 22] PE: [5, 32]     LitString "make all"
-PS: [6, 0] PE: [6, 40]   Shell quiet=true confirm=true
+PS: [6,  0] PE: [6, 40]   Shell quiet=true confirm=true
 PS: [6, 30] PE: [6, 40]     LitString "make all"
-PS: [8, 0] PE: [9, 8]   Shell quiet=true confirm=false
-PS: [8, 7] PE: [8, 17]     LitString "make all"
+PS: [8,  0] PE: [9,  8]   Shell quiet=true confirm=false
+PS: [8,  7] PE: [8, 17]     LitString "make all"
 

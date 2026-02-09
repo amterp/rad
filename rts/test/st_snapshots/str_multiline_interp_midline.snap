@@ -62,15 +62,15 @@ B: [27, 33] PS: [2, 13] PE: [2, 19]                                 content: str
 B: [33, 41] PS: [2, 19] PE: [3,  7]                               end: string_end `\n    """`
 
 ### STDERR ###
-PS: [0, 0] PE: [3, 7] SourceFile
-PS: [0, 0] PE: [0, 5]   Assign
-PS: [0, 0] PE: [0, 1]     Identifier "x"
-PS: [0, 4] PE: [0, 5]     LitInt 5
-PS: [1, 0] PE: [3, 7]   Assign
-PS: [1, 0] PE: [1, 1]     Identifier "a"
-PS: [1, 4] PE: [3, 7]     LitString (interpolated, 3 segments)
-                          Literal "hello "
-                          Interpolation
+PS: [0,  0] PE: [3,  7] SourceFile
+PS: [0,  0] PE: [0,  5]   Assign
+PS: [0,  0] PE: [0,  1]     Identifier "x"
+PS: [0,  4] PE: [0,  5]     LitInt 5
+PS: [1,  0] PE: [3,  7]   Assign
+PS: [1,  0] PE: [1,  1]     Identifier "a"
+PS: [1,  4] PE: [3,  7]     LitString (interpolated, 3 segments)
+                            Literal "hello "
+                            Interpolation
 PS: [2, 11] PE: [2, 12]         Identifier "x"
-                          Literal " world"
+                            Literal " world"
 

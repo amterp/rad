@@ -205,30 +205,30 @@ B: [154, 155] PS: [3,  4] PE: [3,  5]                           literal
 B: [154, 155] PS: [3,  4] PE: [3,  5]                             int `2`
 
 ### STDERR ###
-PS: [0, 0] PE: [3, 5] SourceFile
-PS: [0, 0] PE: [2, 56]   Assign unpack
-PS: [0, 0] PE: [0, 5]     Identifier "title"
-PS: [0, 7] PE: [0, 10]     Identifier "url"
+PS: [0,  0] PE: [3,  5] SourceFile
+PS: [0,  0] PE: [2, 56]   Assign unpack
+PS: [0,  0] PE: [0,  5]     Identifier "title"
+PS: [0,  7] PE: [0, 10]     Identifier "url"
 PS: [0, 13] PE: [2, 56]     Switch
 PS: [0, 20] PE: [0, 28]       Identifier "endpoint"
-                          Case
-PS: [1, 9] PE: [1, 15]         LitString "cars"
+                            Case
+PS: [1,  9] PE: [1, 15]         LitString "cars"
 PS: [1, 17] PE: [1, 30]         LitString "automobiles"
 PS: [1, 31] PE: [1, 62]         CaseExpr
 PS: [1, 34] PE: [1, 40]           LitString "Cars"
 PS: [1, 42] PE: [1, 62]           LitString (interpolated, 2 segments)
-                                Interpolation
+                                  Interpolation
 PS: [1, 44] PE: [1, 48]               Identifier "base"
-                                Literal "/automobiles"
-                          Case
-PS: [2, 9] PE: [2, 16]         LitString "books"
+                                  Literal "/automobiles"
+                            Case
+PS: [2,  9] PE: [2, 16]         LitString "books"
 PS: [2, 17] PE: [2, 56]         CaseExpr
 PS: [2, 20] PE: [2, 27]           LitString "Books"
 PS: [2, 29] PE: [2, 56]           LitString (interpolated, 2 segments)
-                                Interpolation
+                                  Interpolation
 PS: [2, 31] PE: [2, 35]               Identifier "base"
-                                Literal "/reading?type=books"
-PS: [3, 0] PE: [3, 5]   Assign
-PS: [3, 0] PE: [3, 1]     Identifier "a"
-PS: [3, 4] PE: [3, 5]     LitInt 2
+                                  Literal "/reading?type=books"
+PS: [3,  0] PE: [3,  5]   Assign
+PS: [3,  0] PE: [3,  1]     Identifier "a"
+PS: [3,  4] PE: [3,  5]     LitInt 2
 

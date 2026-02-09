@@ -65,18 +65,18 @@ B: [30, 31] PS: [2,  4] PE: [2,  5]         root: identifier `a`
 B: [31, 33] PS: [2,  5] PE: [2,  7]       op: -- `--`
 
 ### STDERR ###
-PS: [0, 0] PE: [2, 7] SourceFile
-PS: [0, 0] PE: [2, 7]   WhileLoop
-PS: [0, 6] PE: [0, 11]     OpBinary >
-PS: [0, 6] PE: [0, 7]       Identifier "a"
+PS: [0,  0] PE: [2,  7] SourceFile
+PS: [0,  0] PE: [2,  7]   WhileLoop
+PS: [0,  6] PE: [0, 11]     OpBinary >
+PS: [0,  6] PE: [0,  7]       Identifier "a"
 PS: [0, 10] PE: [0, 11]       LitInt 0
-PS: [1, 4] PE: [1, 12]     ExprStmt
-PS: [1, 4] PE: [1, 12]       Call
-PS: [1, 4] PE: [1, 9]         Identifier "print"
+PS: [1,  4] PE: [1, 12]     ExprStmt
+PS: [1,  4] PE: [1, 12]       Call
+PS: [1,  4] PE: [1,  9]         Identifier "print"
 PS: [1, 10] PE: [1, 11]         LitInt 2
-PS: [2, 4] PE: [2, 7]     Assign
-PS: [2, 4] PE: [2, 5]       Identifier "a"
-PS: [2, 4] PE: [2, 7]       OpBinary -
-PS: [2, 4] PE: [2, 5]         Identifier "a"
-PS: [2, 4] PE: [2, 7]         LitInt 1
+PS: [2,  4] PE: [2,  7]     Assign
+PS: [2,  4] PE: [2,  5]       Identifier "a"
+PS: [2,  4] PE: [2,  7]       OpBinary -
+PS: [2,  4] PE: [2,  5]         Identifier "a"
+PS: [2,  4] PE: [2,  7]         LitInt 1
 
