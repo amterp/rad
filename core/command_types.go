@@ -7,43 +7,32 @@ import (
 
 // ScriptCommand represents a command defined in a Rad script's command: block
 type ScriptCommand struct {
-	Name           string // Internal (as written in script)
-	ExternalName   string // External (hyphenated for CLI)
-	Description    *string
-	Args           []*ScriptArg // Command-specific arguments
-	CallbackType   rts.CallbackType
-	CallbackName   *string  // For function reference callbacks (rts.CallbackIdentifier)
-	CallbackLambda *rl.Lambda // Eagerly converted AST lambda
+	Name             string // Internal (as written in script)
+	ExternalName     string // External (hyphenated for CLI)
+	Description      *string
+	Args             []*ScriptArg // Command-specific arguments
+	IsLambdaCallback bool
+	CallbackName     *string    // For function reference callbacks
+	CallbackLambda   *rl.Lambda // Eagerly converted AST lambda
 }
 
-func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
-	// Extract command name
-	commandName := cmdBlock.Name.Name
+func FromCmdBlock(cmdBlock *rl.CmdBlock, src string) (*ScriptCommand, error) {
+	commandName := cmdBlock.Name
 	externalName := rts.ToExternalName(commandName)
 
-	// Extract optional description
-	var description *string
-	if cmdBlock.Description != nil {
-		description = &cmdBlock.Description.Contents
-	}
+	args := make([]*ScriptArg, 0, len(cmdBlock.Decls))
+	for _, decl := range cmdBlock.Decls {
+		argName := decl.Name
 
-	// Convert arguments using the same logic as args: block
-	args := make([]*ScriptArg, 0, len(cmdBlock.Args))
-	for _, argDecl := range cmdBlock.Args {
-		argName := argDecl.Name.Name
-
-		// Look up constraints for this arg
 		enumConstraint := cmdBlock.EnumConstraints[argName]
 		regexConstraint := cmdBlock.RegexConstraints[argName]
 		rangeConstraint := cmdBlock.RangeConstraints[argName]
+		requiresConstraint := extractRelationsForArg(argName, cmdBlock.Requirements)
+		excludesConstraint := extractRelationsForArg(argName, cmdBlock.Exclusions)
 
-		// Convert Requirements and Exclusions
-		requiresConstraint := extractRequiresForArg(argName, cmdBlock.Requirements)
-		excludesConstraint := extractExcludesForArg(argName, cmdBlock.Exclusions)
-
-		// Convert to ScriptArg
 		scriptArg := FromArgDecl(
-			argDecl,
+			decl,
+			src,
 			enumConstraint,
 			regexConstraint,
 			rangeConstraint,
@@ -53,40 +42,26 @@ func FromCmdBlock(cmdBlock *rts.CmdBlock) (*ScriptCommand, error) {
 		args = append(args, scriptArg)
 	}
 
-	// Extract callback information
 	callback := cmdBlock.Callback
 	return &ScriptCommand{
-		Name:           commandName,
-		ExternalName:   externalName,
-		Description:    description,
-		Args:           args,
-		CallbackType:   callback.Type,
-		CallbackName:   callback.IdentifierName,
-		CallbackLambda: callback.LambdaAST,
+		Name:             commandName,
+		ExternalName:     externalName,
+		Description:      cmdBlock.Description,
+		Args:             args,
+		IsLambdaCallback: callback.IsLambda,
+		CallbackName:     callback.IdentifierName,
+		CallbackLambda:   callback.Lambda,
 	}, nil
 }
 
-// extractRequiresForArg finds all "requires" constraints for a given arg name
-func extractRequiresForArg(argName string, requirements []rts.ArgRequirement) []string {
-	for _, req := range requirements {
-		if req.Arg.Name == argName {
-			result := make([]string, len(req.Required))
-			for i, required := range req.Required {
-				result[i] = required.Name
-			}
-			return result
-		}
-	}
-	return nil
-}
-
-// extractExcludesForArg finds all "excludes" constraints for a given arg name
-func extractExcludesForArg(argName string, exclusions []rts.ArgExclusion) []string {
-	for _, excl := range exclusions {
-		if excl.Arg.Name == argName {
-			result := make([]string, len(excl.Excluded))
-			for i, excluded := range excl.Excluded {
-				result[i] = excluded.Name
+// extractRelationsForArg finds all related arg names for a given arg in a relation list.
+// Returns external (CLI-visible) names since that's what Ra uses for constraint checking.
+func extractRelationsForArg(argName string, relations []rl.ArgRelation) []string {
+	for _, rel := range relations {
+		if rel.Arg == argName {
+			result := make([]string, len(rel.Related))
+			for i, name := range rel.Related {
+				result[i] = rts.ToExternalName(name)
 			}
 			return result
 		}

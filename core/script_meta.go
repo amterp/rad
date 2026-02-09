@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	com "github.com/amterp/rad/core/common"
-
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
 	"github.com/amterp/rad/rts/rl"
@@ -31,32 +29,32 @@ func ExtractMetadata(src string) *ScriptData {
 
 	tree := radTree.Parse(src)
 
-	// Validate syntax before attempting to extract metadata
-	validateSyntax(src, tree, radTree)
+	// Validate syntax and get the AST
+	ast := validateSyntax(src, tree, radTree)
 
 	disableGlobalOpts := false
 	disableArgsBlock := false
 	var description *string
-	if fileHeader, ok := tree.FindFileHeader(); ok {
-		description = &fileHeader.Contents
-		if stashId, ok := fileHeader.MetadataEntries[MACRO_STASH_ID]; ok {
+	if ast != nil && ast.Header != nil {
+		description = &ast.Header.Contents
+		if stashId, ok := ast.Header.MetadataEntries[MACRO_STASH_ID]; ok {
 			RadHomeInst.SetStashId(stashId)
 		}
 
-		disableGlobalOpts = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_GLOBAL_OPTIONS)
-		disableArgsBlock = !defaultTruthyMacroToggle(fileHeader.MetadataEntries, MACRO_ENABLE_ARGS_BLOCK)
+		disableGlobalOpts = !defaultTruthyMacroToggle(ast.Header.MetadataEntries, MACRO_ENABLE_GLOBAL_OPTIONS)
+		disableArgsBlock = !defaultTruthyMacroToggle(ast.Header.MetadataEntries, MACRO_ENABLE_ARGS_BLOCK)
 	}
 
 	var args []*ScriptArg
-	if argBlock, ok := tree.FindArgBlock(); ok {
-		RP.RadDebugf(fmt.Sprintf("Found arg block: %v", com.Dump(argBlock)))
-		args = extractArgs(argBlock)
+	if ast != nil && ast.Args != nil {
+		RP.RadDebugf(fmt.Sprintf("Found arg block with %d declarations", len(ast.Args.Decls)))
+		args = extractArgsFromAST(ast.Args, src)
 	}
 
 	var commands []*ScriptCommand
-	if cmdBlocks, ok := tree.FindCmdBlocks(ScriptName); ok {
-		RP.RadDebugf(fmt.Sprintf("Found %d command blocks", len(cmdBlocks)))
-		commands = extractCommands(cmdBlocks)
+	if ast != nil && len(ast.Cmds) > 0 {
+		RP.RadDebugf(fmt.Sprintf("Found %d command blocks", len(ast.Cmds)))
+		commands = extractCommandsFromAST(ast.Cmds, src)
 	}
 
 	return &ScriptData{
@@ -96,9 +94,10 @@ func tryConvertAST(tree *rts.RadTree, src string, file string) (ast *rl.SourceFi
 }
 
 // validateSyntax checks for syntax errors and exits immediately if any are found.
+// Returns the AST produced during validation so callers can extract metadata from it.
 // This runs before argument parsing, so it only respects environment variables (like NO_COLOR),
 // not command-line flags like --color=never.
-func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
+func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) *rl.SourceFile {
 	ast := tryConvertAST(tree, src, ScriptName)
 	checker := check.NewCheckerWithTree(tree, parser, src, ast)
 	result, err := checker.CheckDefault()
@@ -128,63 +127,50 @@ func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) {
 		}
 		RExit.Exit(1)
 	}
+
+	return ast
 }
 
-func extractArgs(argBlock *rts.ArgBlock) []*ScriptArg {
-	var args []*ScriptArg
-
+func extractArgsFromAST(argBlock *rl.ArgBlock, src string) []*ScriptArg {
 	if argBlock == nil {
 		return nil
 	}
 
-	argIdentifiers := make([]string, 0)
-	for _, argDecl := range argBlock.Args {
-		argIdentifiers = append(argIdentifiers, argDecl.Name.Name)
-	}
+	requires := buildRelationMap(argBlock.Requirements)
+	excludes := buildRelationMap(argBlock.Exclusions)
 
-	requires := make(map[string][]string)
-	for _, reqLeft := range argBlock.Requirements {
-		for _, reqRight := range reqLeft.Required {
-			// Ra will be given external names, so transform constraint names to match
-			leftExternal := rts.ToExternalName(reqLeft.Arg.Name)
-			rightExternal := rts.ToExternalName(reqRight.Name)
-			requires[leftExternal] = append(requires[leftExternal], rightExternal)
-			if reqLeft.IsMutual {
-				requires[rightExternal] = append(requires[rightExternal], leftExternal)
-			}
-		}
-	}
-
-	excludes := make(map[string][]string)
-	for _, excludeLeft := range argBlock.Exclusions {
-		for _, excludeRight := range excludeLeft.Excluded {
-			// Ra will be given external names, so transform constraint names to match
-			leftExternal := rts.ToExternalName(excludeLeft.Arg.Name)
-			rightExternal := rts.ToExternalName(excludeRight.Name)
-			excludes[leftExternal] = append(excludes[leftExternal], rightExternal)
-			if excludeLeft.IsMutual {
-				excludes[rightExternal] = append(excludes[rightExternal], leftExternal)
-			}
-		}
-	}
-
-	for _, argDecl := range argBlock.Args {
-		enumConstraint := argBlock.EnumConstraints[argDecl.Name.Name]
-		regexConstraint := argBlock.RegexConstraints[argDecl.Name.Name]
-		rangeConstraint := argBlock.RangeConstraints[argDecl.Name.Name]
-		requiresConstraint := requires[argDecl.Name.Name]
-		excludesConstraint := excludes[argDecl.Name.Name]
+	var args []*ScriptArg
+	for _, decl := range argBlock.Decls {
 		args = append(args, FromArgDecl(
-			argDecl,
-			enumConstraint,
-			regexConstraint,
-			rangeConstraint,
-			requiresConstraint,
-			excludesConstraint,
+			decl,
+			src,
+			argBlock.EnumConstraints[decl.Name],
+			argBlock.RegexConstraints[decl.Name],
+			argBlock.RangeConstraints[decl.Name],
+			requires[decl.Name],
+			excludes[decl.Name],
 		))
 	}
-
 	return args
+}
+
+// buildRelationMap builds a map from internal arg name to related external
+// (CLI-visible) arg names, expanding mutual relations in both directions.
+// Keys are internal names (matching decl.Name for lookup), values are external
+// names (matching how Ra registers constraints).
+func buildRelationMap(relations []rl.ArgRelation) map[string][]string {
+	result := make(map[string][]string)
+	for _, rel := range relations {
+		for _, related := range rel.Related {
+			rightExternal := rts.ToExternalName(related)
+			result[rel.Arg] = append(result[rel.Arg], rightExternal)
+			if rel.IsMutual {
+				leftExternal := rts.ToExternalName(rel.Arg)
+				result[related] = append(result[related], leftExternal)
+			}
+		}
+	}
+	return result
 }
 
 func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
@@ -207,13 +193,14 @@ func defaultTruthyMacroToggle(macroMap map[string]string, macro string) bool {
 	return radVal.TruthyFalsy()
 }
 
-func extractCommands(cmdBlocks []*rts.CmdBlock) []*ScriptCommand {
+func extractCommandsFromAST(cmdBlocks []*rl.CmdBlock, src string) []*ScriptCommand {
 	commands := make([]*ScriptCommand, 0, len(cmdBlocks))
 
 	for _, cmdBlock := range cmdBlocks {
-		cmd, err := FromCmdBlock(cmdBlock)
+		cmd, err := FromCmdBlock(cmdBlock, src)
 		if err != nil {
-			RP.CtxErrorExit(NewCtxFromRtsNode(cmdBlock, fmt.Sprintf("Failed to extract command: %s", err.Error())))
+			span := cmdBlock.Span()
+			RP.CtxErrorExit(NewCtxFromSpan(src, span, fmt.Sprintf("Failed to extract command: %s", err.Error()), ""))
 		}
 		commands = append(commands, cmd)
 	}
