@@ -73,21 +73,21 @@ B: [125, 126] PS: [5,  4] PE: [5,  5]                           literal
 B: [125, 126] PS: [5,  4] PE: [5,  5]                             int `2`
 
 ### STDERR ###
-PS: [0, 0] PE: [5, 5] SourceFile
-PS: [0, 0] PE: [4, 34]   ArgBlock
-PS: [1, 4] PE: [1, 26]     ArgDecl "name" type=str
-                          Default:
+PS: [0,  0] PE: [5,  5] SourceFile
+PS: [0,  0] PE: [4, 34]   ArgBlock
+PS: [1,  4] PE: [1, 26]     ArgDecl "name" type=str
+                            Default:
 PS: [1, 15] PE: [1, 26]         LitString "ali\\c\ne"
-PS: [2, 4] PE: [2, 20]     ArgDecl "midName" type=str
-                          Default:
+PS: [2,  4] PE: [2, 20]     ArgDecl "midName" type=str
+                            Default:
 PS: [2, 18] PE: [2, 20]         LitString ""
-PS: [3, 4] PE: [3, 31]     ArgDecl "lastName" type=str
-                          Default:
+PS: [3,  4] PE: [3, 31]     ArgDecl "lastName" type=str
+                            Default:
 PS: [3, 19] PE: [3, 31]         LitString "ali\\\\c\\ne"
-PS: [4, 4] PE: [4, 34]     ArgDecl "age" type=int
-                          Default:
+PS: [4,  4] PE: [4, 34]     ArgDecl "age" type=int
+                            Default:
 PS: [4, 22] PE: [4, 24]         LitInt 30
-PS: [5, 0] PE: [5, 5]   Assign
-PS: [5, 0] PE: [5, 1]     Identifier "a"
-PS: [5, 4] PE: [5, 5]     LitInt 2
+PS: [5,  0] PE: [5,  5]   Assign
+PS: [5,  0] PE: [5,  1]     Identifier "a"
+PS: [5,  4] PE: [5,  5]     LitInt 2
 

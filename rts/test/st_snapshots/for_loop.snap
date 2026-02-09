@@ -402,55 +402,55 @@ B: [284, 285] PS: [20, 11] PE: [20, 12]                                         
 B: [285, 286] PS: [20, 12] PE: [20, 13]                             ) `)`
 
 ### STDERR ###
-PS: [ 0, 0] PE: [21, 0] SourceFile
-PS: [ 0, 0] PE: [ 0, 16]   Assign
-PS: [ 0, 0] PE: [ 0, 1]     Identifier "a"
-PS: [ 0, 4] PE: [ 0, 16]     LitList (3 elements)
-PS: [ 0, 5] PE: [ 0, 7]       LitInt 20
-PS: [ 0, 9] PE: [ 0, 11]       LitInt 30
+PS: [ 0,  0] PE: [21,  0] SourceFile
+PS: [ 0,  0] PE: [ 0, 16]   Assign
+PS: [ 0,  0] PE: [ 0,  1]     Identifier "a"
+PS: [ 0,  4] PE: [ 0, 16]     LitList (3 elements)
+PS: [ 0,  5] PE: [ 0,  7]       LitInt 20
+PS: [ 0,  9] PE: [ 0, 11]       LitInt 30
 PS: [ 0, 13] PE: [ 0, 15]       LitInt 40
-PS: [ 2, 0] PE: [ 4, 15]   ForLoop vars=[item]
+PS: [ 2,  0] PE: [ 4, 15]   ForLoop vars=[item]
 PS: [ 2, 12] PE: [ 2, 13]     Identifier "a"
-PS: [ 3, 4] PE: [ 3, 9]     Assign
-PS: [ 3, 4] PE: [ 3, 5]       Identifier "b"
-PS: [ 3, 8] PE: [ 3, 9]       LitInt 2
-PS: [ 4, 4] PE: [ 4, 15]     ExprStmt
-PS: [ 4, 4] PE: [ 4, 15]       Call
-PS: [ 4, 4] PE: [ 4, 9]         Identifier "print"
+PS: [ 3,  4] PE: [ 3,  9]     Assign
+PS: [ 3,  4] PE: [ 3,  5]       Identifier "b"
+PS: [ 3,  8] PE: [ 3,  9]       LitInt 2
+PS: [ 4,  4] PE: [ 4, 15]     ExprStmt
+PS: [ 4,  4] PE: [ 4, 15]       Call
+PS: [ 4,  4] PE: [ 4,  9]         Identifier "print"
 PS: [ 4, 10] PE: [ 4, 14]         Identifier "item"
-PS: [ 6, 0] PE: [ 7, 20]   ForLoop vars=[idx, item]
+PS: [ 6,  0] PE: [ 7, 20]   ForLoop vars=[idx, item]
 PS: [ 6, 17] PE: [ 6, 18]     Identifier "a"
-PS: [ 7, 4] PE: [ 7, 20]     ExprStmt
-PS: [ 7, 4] PE: [ 7, 20]       Call
-PS: [ 7, 4] PE: [ 7, 9]         Identifier "print"
+PS: [ 7,  4] PE: [ 7, 20]     ExprStmt
+PS: [ 7,  4] PE: [ 7, 20]       Call
+PS: [ 7,  4] PE: [ 7,  9]         Identifier "print"
 PS: [ 7, 10] PE: [ 7, 13]         Identifier "idx"
 PS: [ 7, 15] PE: [ 7, 19]         Identifier "item"
-PS: [ 9, 0] PE: [14, 27]   ForLoop vars=[item]
+PS: [ 9,  0] PE: [14, 27]   ForLoop vars=[item]
 PS: [ 9, 12] PE: [ 9, 13]     Identifier "a"
-PS: [10, 4] PE: [14, 27]     If
-                            Branch 0 (cond)
-PS: [10, 7] PE: [10, 16]         OpBinary >=
-PS: [10, 7] PE: [10, 11]           Identifier "item"
+PS: [10,  4] PE: [14, 27]     If
+                              Branch 0 (cond)
+PS: [10,  7] PE: [10, 16]         OpBinary >=
+PS: [10,  7] PE: [10, 11]           Identifier "item"
 PS: [10, 15] PE: [10, 16]           LitInt 2
-PS: [11, 8] PE: [11, 28]         ExprStmt
-PS: [11, 8] PE: [11, 28]           Call
-PS: [11, 8] PE: [11, 13]             Identifier "print"
+PS: [11,  8] PE: [11, 28]         ExprStmt
+PS: [11,  8] PE: [11, 28]           Call
+PS: [11,  8] PE: [11, 13]             Identifier "print"
 PS: [11, 14] PE: [11, 27]             LitString "big enough!"
-PS: [12, 8] PE: [12, 13]         Break
-                            Branch 1 (else)
-PS: [14, 8] PE: [14, 27]         ExprStmt
-PS: [14, 8] PE: [14, 27]           Call
-PS: [14, 8] PE: [14, 13]             Identifier "print"
+PS: [12,  8] PE: [12, 13]         Break
+                              Branch 1 (else)
+PS: [14,  8] PE: [14, 27]         ExprStmt
+PS: [14,  8] PE: [14, 27]           Call
+PS: [14,  8] PE: [14, 13]             Identifier "print"
 PS: [14, 14] PE: [14, 26]             LitString "too small!"
-PS: [16, 0] PE: [18, 26]   ForLoop vars=[item]
+PS: [16,  0] PE: [18, 26]   ForLoop vars=[item]
 PS: [16, 12] PE: [16, 13]     Identifier "a"
-PS: [17, 4] PE: [17, 12]     Continue
-PS: [18, 4] PE: [18, 26]     ExprStmt
-PS: [18, 4] PE: [18, 26]       Call
-PS: [18, 4] PE: [18, 9]         Identifier "print"
+PS: [17,  4] PE: [17, 12]     Continue
+PS: [18,  4] PE: [18, 26]     ExprStmt
+PS: [18,  4] PE: [18, 26]       Call
+PS: [18,  4] PE: [18,  9]         Identifier "print"
 PS: [18, 10] PE: [18, 25]         LitString "never printed"
-PS: [20, 0] PE: [20, 13]   ExprStmt
-PS: [20, 0] PE: [20, 13]     Call
-PS: [20, 0] PE: [20, 5]       Identifier "print"
-PS: [20, 6] PE: [20, 12]       LitString "done"
+PS: [20,  0] PE: [20, 13]   ExprStmt
+PS: [20,  0] PE: [20, 13]     Call
+PS: [20,  0] PE: [20,  5]       Identifier "print"
+PS: [20,  6] PE: [20, 12]       LitString "done"
 

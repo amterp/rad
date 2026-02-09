@@ -232,13 +232,13 @@ B: [197, 198] PS: [12, 14] PE: [12, 15]                                 ) `)`
 B: [203, 207] PS: [13,  4] PE: [13,  8]       stmt: pass_stmt `pass`
 
 ### STDERR ###
-PS: [ 0, 0] PE: [13, 8] SourceFile
-PS: [ 0, 0] PE: [ 1, 8]   Shell quiet=false confirm=false
-PS: [ 0, 1] PE: [ 0, 11]     LitString "make all"
-PS: [ 3, 0] PE: [ 5, 8]   Shell quiet=false confirm=false
-PS: [ 3, 8] PE: [ 3, 18]     LitString "make all"
-PS: [ 7, 0] PE: [ 9, 8]   Shell quiet=false confirm=false
+PS: [ 0,  0] PE: [13,  8] SourceFile
+PS: [ 0,  0] PE: [ 1,  8]   Shell quiet=false confirm=false
+PS: [ 0,  1] PE: [ 0, 11]     LitString "make all"
+PS: [ 3,  0] PE: [ 5,  8]   Shell quiet=false confirm=false
+PS: [ 3,  8] PE: [ 3, 18]     LitString "make all"
+PS: [ 7,  0] PE: [ 9,  8]   Shell quiet=false confirm=false
 PS: [ 7, 16] PE: [ 7, 26]     LitString "make all"
-PS: [11, 0] PE: [13, 8]   Shell quiet=false confirm=false
+PS: [11,  0] PE: [13,  8]   Shell quiet=false confirm=false
 PS: [11, 24] PE: [11, 34]     LitString "make all"
 

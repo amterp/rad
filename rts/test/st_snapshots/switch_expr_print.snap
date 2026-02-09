@@ -255,14 +255,14 @@ B: [146, 147] PS: [5,  4] PE: [5,  5]                           literal
 B: [146, 147] PS: [5,  4] PE: [5,  5]                             int `2`
 
 ### STDERR ###
-PS: [0, 0] PE: [5, 5] SourceFile
-PS: [0, 0] PE: [0, 14]   Assign
-PS: [0, 0] PE: [0, 4]     Identifier "name"
-PS: [0, 7] PE: [0, 14]     LitString "alice"
-PS: [1, 0] PE: [4, 35]   Switch
-PS: [1, 7] PE: [1, 11]     Identifier "name"
-                        Case
-PS: [2, 6] PE: [2, 13]       LitString "alice"
+PS: [0,  0] PE: [5,  5] SourceFile
+PS: [0,  0] PE: [0, 14]   Assign
+PS: [0,  0] PE: [0,  4]     Identifier "name"
+PS: [0,  7] PE: [0, 14]     LitString "alice"
+PS: [1,  0] PE: [4, 35]   Switch
+PS: [1,  7] PE: [1, 11]     Identifier "name"
+                          Case
+PS: [2,  6] PE: [2, 13]       LitString "alice"
 PS: [2, 14] PE: [2, 49]       CaseExpr
 PS: [2, 17] PE: [2, 31]         Call
 PS: [2, 17] PE: [2, 22]           Identifier "print"
@@ -270,19 +270,19 @@ PS: [2, 23] PE: [2, 30]           LitString "ALICE"
 PS: [2, 33] PE: [2, 49]         Call
 PS: [2, 33] PE: [2, 38]           Identifier "print"
 PS: [2, 39] PE: [2, 48]           LitString "ANOTHER"
-                        Case
-PS: [3, 6] PE: [3, 11]       LitString "bob"
+                          Case
+PS: [3,  6] PE: [3, 11]       LitString "bob"
 PS: [3, 12] PE: [3, 27]       CaseExpr
 PS: [3, 15] PE: [3, 27]         Call
 PS: [3, 15] PE: [3, 20]           Identifier "print"
 PS: [3, 21] PE: [3, 26]           LitString "BOB"
-                        Case
-PS: [4, 6] PE: [4, 15]       LitString "charlie"
+                          Case
+PS: [4,  6] PE: [4, 15]       LitString "charlie"
 PS: [4, 16] PE: [4, 35]       CaseExpr
 PS: [4, 19] PE: [4, 35]         Call
 PS: [4, 19] PE: [4, 24]           Identifier "print"
 PS: [4, 25] PE: [4, 34]           LitString "CHARLIE"
-PS: [5, 0] PE: [5, 5]   Assign
-PS: [5, 0] PE: [5, 1]     Identifier "a"
-PS: [5, 4] PE: [5, 5]     LitInt 2
+PS: [5,  0] PE: [5,  5]   Assign
+PS: [5,  0] PE: [5,  1]     Identifier "a"
+PS: [5,  4] PE: [5,  5]     LitInt 2
 

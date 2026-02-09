@@ -19,15 +19,212 @@ func AstDump(node Node) string {
 	return sb.String()
 }
 
-// findASTMaxSpans returns the maximum row and column values from the root node's span.
-// Since AST node spans encompass all their children, we only need to check the root.
+// findASTMaxSpans recursively walks the entire AST to find the true
+// maximum row and column values. The root span's EndRow is always the
+// overall max row, but max column can occur on any deeply nested node.
 func findASTMaxSpans(node Node) (maxRow, maxCol int) {
 	span := node.Span()
-	maxCol = span.EndCol
-	if span.StartCol > maxCol {
-		maxCol = span.StartCol
+	maxRow = span.EndRow
+	maxCol = max(span.StartCol, span.EndCol)
+
+	var children []Node
+
+	switch n := node.(type) {
+	case *SourceFile:
+		if n.Header != nil {
+			children = append(children, n.Header)
+		}
+		if n.Args != nil {
+			children = append(children, n.Args)
+		}
+		for _, cmd := range n.Cmds {
+			children = append(children, cmd)
+		}
+		children = append(children, n.Stmts...)
+
+	case *Assign:
+		children = append(children, n.Targets...)
+		children = append(children, n.Values...)
+		if n.Catch != nil {
+			children = append(children, n.Catch.Stmts...)
+		}
+
+	case *ExprStmt:
+		children = append(children, n.Expr)
+		if n.Catch != nil {
+			children = append(children, n.Catch.Stmts...)
+		}
+
+	case *If:
+		children = appendIfBranches(children, n.Branches)
+
+	case *Switch:
+		children = append(children, n.Discriminant)
+		for _, c := range n.Cases {
+			children = append(children, c.Keys...)
+			children = append(children, c.Alt)
+		}
+		if n.Default != nil {
+			children = append(children, n.Default.Alt)
+		}
+
+	case *SwitchCaseExpr:
+		children = append(children, n.Values...)
+	case *SwitchCaseBlock:
+		children = append(children, n.Stmts...)
+
+	case *ForLoop:
+		children = append(children, n.Iter)
+		children = append(children, n.Body...)
+	case *WhileLoop:
+		if n.Condition != nil {
+			children = append(children, n.Condition)
+		}
+		children = append(children, n.Body...)
+
+	case *Shell:
+		children = append(children, n.Targets...)
+		children = append(children, n.Cmd)
+		if n.Catch != nil {
+			children = append(children, n.Catch.Stmts...)
+		}
+
+	case *Del:
+		children = append(children, n.Targets...)
+	case *Defer:
+		children = append(children, n.Body...)
+	case *Return:
+		children = append(children, n.Values...)
+	case *Yield:
+		children = append(children, n.Values...)
+
+	case *FnDef:
+		children = append(children, n.Body...)
+	case *Lambda:
+		children = append(children, n.Body...)
+
+	case *OpBinary:
+		children = append(children, n.Left, n.Right)
+	case *OpUnary:
+		children = append(children, n.Operand)
+	case *Ternary:
+		children = append(children, n.Condition, n.True, n.False)
+	case *Fallback:
+		children = append(children, n.Left, n.Right)
+
+	case *Call:
+		children = append(children, n.Func)
+		children = append(children, n.Args...)
+		for _, na := range n.NamedArgs {
+			children = append(children, na.Value)
+		}
+
+	case *VarPath:
+		children = append(children, n.Root)
+		for _, seg := range n.Segments {
+			if seg.Index != nil {
+				children = append(children, seg.Index)
+			}
+			if seg.Start != nil {
+				children = append(children, seg.Start)
+			}
+			if seg.End != nil {
+				children = append(children, seg.End)
+			}
+		}
+
+	case *LitString:
+		if !n.Simple {
+			for _, seg := range n.Segments {
+				if !seg.IsLiteral && seg.Expr != nil {
+					children = append(children, seg.Expr)
+				}
+				if seg.Format != nil {
+					if seg.Format.Padding != nil {
+						children = append(children, seg.Format.Padding)
+					}
+					if seg.Format.Precision != nil {
+						children = append(children, seg.Format.Precision)
+					}
+				}
+			}
+		}
+
+	case *LitList:
+		children = append(children, n.Elements...)
+	case *LitMap:
+		for _, e := range n.Entries {
+			children = append(children, e.Key, e.Value)
+		}
+
+	case *ListComp:
+		children = append(children, n.Expr, n.Iter)
+		if n.Condition != nil {
+			children = append(children, n.Condition)
+		}
+
+	case *RadBlock:
+		if n.Source != nil {
+			children = append(children, n.Source)
+		}
+		children = append(children, n.Stmts...)
+	case *RadField:
+		children = append(children, n.Identifiers...)
+	case *RadFieldMod:
+		children = append(children, n.Fields...)
+		children = append(children, n.Args...)
+	case *RadIf:
+		children = appendIfBranches(children, n.Branches)
+
+	case *JsonPath:
+		for _, seg := range n.Segments {
+			for _, idx := range seg.Indexes {
+				if idx.Expr != nil {
+					children = append(children, idx.Expr)
+				}
+			}
+		}
+
+	case *ArgBlock:
+		for i := range n.Decls {
+			children = append(children, &n.Decls[i])
+		}
+	case *ArgDecl:
+		if n.Default != nil {
+			children = append(children, n.Default)
+		}
+	case *CmdBlock:
+		for i := range n.Decls {
+			children = append(children, &n.Decls[i])
+		}
+		if n.Callback.Lambda != nil {
+			children = append(children, n.Callback.Lambda)
+		}
+
+	// Leaf nodes: Break, Continue, Pass, Identifier, LitInt, LitFloat,
+	// LitBool, LitNull, FileHeader, RadSort, simple LitString
+	default:
+		// no children to recurse into
 	}
-	return span.EndRow, maxCol
+
+	for _, child := range children {
+		childRow, childCol := findASTMaxSpans(child)
+		maxRow = max(maxRow, childRow)
+		maxCol = max(maxCol, childCol)
+	}
+	return
+}
+
+// appendIfBranches collects all child nodes from IfBranch slices,
+// shared by both If and RadIf.
+func appendIfBranches(children []Node, branches []IfBranch) []Node {
+	for _, b := range branches {
+		if b.Condition != nil {
+			children = append(children, b.Condition)
+		}
+		children = append(children, b.Body...)
+	}
+	return children
 }
 
 func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node, depth int) {
