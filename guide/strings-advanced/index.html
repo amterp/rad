@@ -1726,10 +1726,9 @@ and the <code>hyperlink</code> function for creating clickable terminal links. S
 <div class="admonition info">
 <p class="admonition-title">When Attributes Are Preserved</p>
 <ul>
-<li><strong>Preserved</strong>: Interpolation, concatenation, and index lookup maintain attributes</li>
-<li><strong>Not preserved</strong>: Most string functions like <code>replace()</code>, <code>split()</code>, <code>upper()</code>, and <code>lower()</code> return plain strings</li>
+<li><strong>Preserved</strong>: Interpolation, concatenation, index lookup, slicing, <code>upper()</code>, <code>lower()</code>, <code>trim()</code>, <code>trim_prefix()</code>, <code>trim_suffix()</code>, <code>trim_left()</code>, <code>trim_right()</code>, and <code>reverse()</code></li>
+<li><strong>Not preserved</strong>: <code>replace()</code>, <code>split()</code></li>
 </ul>
-<p>We intend to preserve attributes in more situations in future versions of Rad.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">String Manipulation Functions</p>

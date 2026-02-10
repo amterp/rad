@@ -4380,7 +4380,7 @@ count(&quot;banana&quot;, &quot;na&quot;)         // -&gt; 2
 count(&quot;test&quot;, &quot;xyz&quot;)          // -&gt; 0
 </code></pre></div>
 <h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
-<p>Strips all matching characters from both ends of a string.</p>
+<p>Strips all matching characters from both ends of a string. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim(&quot;  hello  &quot;)            // -&gt; &quot;hello&quot;
@@ -4388,7 +4388,7 @@ trim(&quot;***hello***&quot;, &quot;*&quot;)     // -&gt; &quot;hello&quot;
 trim(&quot;abcHELLOabc&quot;, &quot;abc&quot;)   // -&gt; &quot;HELLO&quot;
 </code></pre></div>
 <h3 id="trim_left">trim_left<a class="headerlink" href="#trim_left" title="Permanent link">&para;</a></h3>
-<p>Strips all matching characters from the start of a string.</p>
+<p>Strips all matching characters from the start of a string. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_left(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim_left(&quot;  hello  &quot;)          // -&gt; &quot;hello  &quot;
@@ -4396,7 +4396,7 @@ trim_left(&quot;***hello***&quot;, &quot;*&quot;)   // -&gt; &quot;hello***&quot
 trim_left(&quot;aaabbb&quot;, &quot;a&quot;)        // -&gt; &quot;bbb&quot;
 </code></pre></div>
 <h3 id="trim_right">trim_right<a class="headerlink" href="#trim_right" title="Permanent link">&para;</a></h3>
-<p>Strips all matching characters from the end of a string.</p>
+<p>Strips all matching characters from the end of a string. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_right(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim_right(&quot;  hello  &quot;)         // -&gt; &quot;  hello&quot;
@@ -4404,7 +4404,7 @@ trim_right(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;***hello&quot
 trim_right(&quot;aaabbb&quot;, &quot;b&quot;)       // -&gt; &quot;aaa&quot;
 </code></pre></div>
 <h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
-<p>Removes a literal prefix from the start of a string (once).</p>
+<p>Removes a literal prefix from the start of a string (once). Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_prefix(_subject: str, _prefix: str) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim_prefix(&quot;hello world&quot;, &quot;hello &quot;)  // -&gt; &quot;world&quot;
@@ -4412,7 +4412,7 @@ trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)            // -&gt; &quot;aabbb&q
 trim_prefix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
 </code></pre></div>
 <h3 id="trim_suffix">trim_suffix<a class="headerlink" href="#trim_suffix" title="Permanent link">&para;</a></h3>
-<p>Removes a literal suffix from the end of a string (once).</p>
+<p>Removes a literal suffix from the end of a string (once). Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_suffix(_subject: str, _suffix: str) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>trim_suffix(&quot;hello world&quot;, &quot; world&quot;)  // -&gt; &quot;hello&quot;
@@ -4420,7 +4420,7 @@ trim_suffix(&quot;aaabbb&quot;, &quot;b&quot;)            // -&gt; &quot;aaabb&q
 trim_suffix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
 </code></pre></div>
 <h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
-<p>Reverses a string or list.</p>
+<p>Reverses a string or list. Preserves color attributes for strings.</p>
 <div class="highlight"><pre><span></span><code>reverse(_val: str|list) -&gt; str|list
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>reverse(&quot;hello&quot;)           // -&gt; &quot;olleh&quot;
