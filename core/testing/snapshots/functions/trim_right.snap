@@ -19,3 +19,13 @@ print(trim_right("  hello  "))
 ### STDOUT ###
   hello
 
+### TITLE ###
+Preserves color attributes
+### INPUT ###
+a = "  " + red("hello") + "  "
+print(trim_right(a))
+### ARGS ###
+--color=always
+### STDOUT ###
+  [31mhello[0m
+

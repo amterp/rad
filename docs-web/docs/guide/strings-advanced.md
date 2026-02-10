@@ -264,10 +264,8 @@ and the `hyperlink` function for creating clickable terminal links. See the [fun
 
 !!! info "When Attributes Are Preserved"
 
-    - **Preserved**: Interpolation, concatenation, and index lookup maintain attributes
-    - **Not preserved**: Most string functions like `replace()`, `split()`, `upper()`, and `lower()` return plain strings
-
-    We intend to preserve attributes in more situations in future versions of Rad.
+    - **Preserved**: Interpolation, concatenation, index lookup, slicing, `upper()`, `lower()`, `trim()`, `trim_prefix()`, `trim_suffix()`, `trim_left()`, `trim_right()`, and `reverse()`
+    - **Not preserved**: `replace()`, `split()`
 
 !!! tip "String Manipulation Functions"
 

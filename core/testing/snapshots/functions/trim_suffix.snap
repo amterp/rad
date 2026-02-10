@@ -40,3 +40,23 @@ print(trim_suffix("hello", ""))
 ### STDOUT ###
 hello
 
+### TITLE ###
+Preserves color attributes
+### INPUT ###
+a = red("hello") + "xx"
+print(trim_suffix(a, "xx"))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mhello[0m
+
+### TITLE ###
+Preserves color across segment boundary
+### INPUT ###
+a = red("hello") + blue("xx")
+print(trim_suffix(a, "xx"))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mhello[0m
+

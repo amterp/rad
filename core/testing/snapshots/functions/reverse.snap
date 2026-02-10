@@ -83,3 +83,21 @@ print(reverse("a😀b"))
 ### STDOUT ###
 b😀a
 
+### TITLE ###
+Preserves color attributes
+### INPUT ###
+print(reverse(red("hello")))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31molleh[0m
+
+### TITLE ###
+Preserves color across segments
+### INPUT ###
+print(reverse(red("he") + blue("llo")))
+### ARGS ###
+--color=always
+### STDOUT ###
+[34moll[0m[31meh[0m
+
