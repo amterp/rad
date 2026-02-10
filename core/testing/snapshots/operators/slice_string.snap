@@ -114,3 +114,23 @@ a
 b
 a😀b
 
+### TITLE ###
+Slice string preserves color
+### INPUT ###
+a = red("hello")
+print(a[1:4])
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mell[0m
+
+### TITLE ###
+Slice string preserves color across segments
+### INPUT ###
+a = red("he") + blue("llo")
+print(a[1:4])
+### ARGS ###
+--color=always
+### STDOUT ###
+[31me[0m[34mll[0m
+

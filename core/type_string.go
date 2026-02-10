@@ -23,6 +23,19 @@ type radStringSegment struct {
 	Rgb        *com.Rgb
 }
 
+func (seg radStringSegment) deepCopy() radStringSegment {
+	cpy := seg
+	if len(seg.Attributes) > 0 {
+		cpy.Attributes = make([]RadTextAttr, len(seg.Attributes))
+		copy(cpy.Attributes, seg.Attributes)
+	}
+	if seg.Rgb != nil {
+		rgbCopy := *seg.Rgb
+		cpy.Rgb = &rgbCopy
+	}
+	return cpy
+}
+
 // todo should these methods be returning *RadString?
 func NewRadString(str string) RadString {
 	if str == "" {
@@ -137,7 +150,9 @@ func (s *RadString) Compare(other RadString) int {
 func (s *RadString) DeepCopy() RadString {
 	cpy := *s
 	cpy.Segments = make([]radStringSegment, len(s.Segments))
-	copy(cpy.Segments, s.Segments)
+	for i, seg := range s.Segments {
+		cpy.Segments[i] = seg.deepCopy()
+	}
 	return cpy
 }
 
@@ -188,33 +203,103 @@ func (s *RadString) SetSegmentsHyperlink(link RadString) {
 }
 
 func (s *RadString) Trim(chars string) RadString {
-	// todo should maintain attr info
-	return NewRadString(strings.Trim(s.Plain(), chars))
+	plain := s.Plain()
+	leftTrimmed := strings.TrimLeft(plain, chars)
+	leftCount := int64(com.StrLen(plain) - com.StrLen(leftTrimmed))
+	trimmed := strings.TrimRight(leftTrimmed, chars)
+	keepLen := int64(com.StrLen(trimmed))
+	return s.SubSlice(leftCount, leftCount+keepLen)
 }
 
 func (s *RadString) TrimPrefix(prefix string) RadString {
-	// todo should maintain attr info
-	return NewRadString(strings.TrimPrefix(s.Plain(), prefix))
+	plain := s.Plain()
+	if !strings.HasPrefix(plain, prefix) {
+		return *s
+	}
+	prefixLen := int64(com.StrLen(prefix))
+	totalLen := int64(com.StrLen(plain))
+	return s.SubSlice(prefixLen, totalLen)
 }
 
 func (s *RadString) TrimSuffix(suffix string) RadString {
-	// todo should maintain attr info
-	return NewRadString(strings.TrimSuffix(s.Plain(), suffix))
+	plain := s.Plain()
+	if !strings.HasSuffix(plain, suffix) {
+		return *s
+	}
+	suffixLen := int64(com.StrLen(suffix))
+	totalLen := int64(com.StrLen(plain))
+	return s.SubSlice(0, totalLen-suffixLen)
 }
 
 func (s *RadString) TrimLeft(chars string) RadString {
-	// todo should maintain attr info
-	return NewRadString(strings.TrimLeft(s.Plain(), chars))
+	plain := s.Plain()
+	trimmed := strings.TrimLeft(plain, chars)
+	plainLen := com.StrLen(plain)
+	leftCount := int64(plainLen - com.StrLen(trimmed))
+	return s.SubSlice(leftCount, int64(plainLen))
 }
 
 func (s *RadString) TrimRight(chars string) RadString {
-	// todo should maintain attr info
-	return NewRadString(strings.TrimRight(s.Plain(), chars))
+	plain := s.Plain()
+	trimmed := strings.TrimRight(plain, chars)
+	keepLen := int64(com.StrLen(trimmed))
+	return s.SubSlice(0, keepLen)
 }
 
 func (s *RadString) Reverse() RadString {
-	// todo should maintain attr info
-	return NewRadString(com.Reverse(s.Plain()))
+	n := len(s.Segments)
+	if n == 0 {
+		return NewRadString("")
+	}
+	result := make([]radStringSegment, n)
+	for i, seg := range s.Segments {
+		runes := []rune(seg.String)
+		for l, r := 0, len(runes)-1; l < r; l, r = l+1, r-1 {
+			runes[l], runes[r] = runes[r], runes[l]
+		}
+		newSeg := seg.deepCopy()
+		newSeg.String = string(runes)
+		result[n-1-i] = newSeg
+	}
+	return RadString{Segments: result}
+}
+
+// SubSlice returns a substring from startRune (inclusive) to endRune (exclusive),
+// preserving per-segment attributes. Callers must ensure 0 <= startRune <= endRune.
+func (s *RadString) SubSlice(startRune, endRune int64) RadString {
+	if startRune >= endRune {
+		return NewRadString("")
+	}
+	var result []radStringSegment
+	cumRune := int64(0)
+	for _, seg := range s.Segments {
+		segRunes := []rune(seg.String)
+		segLen := int64(len(segRunes))
+		segEnd := cumRune + segLen
+		if segEnd <= startRune {
+			cumRune += segLen
+			continue
+		}
+		if cumRune >= endRune {
+			break
+		}
+		sliceStart := int64(0)
+		if startRune > cumRune {
+			sliceStart = startRune - cumRune
+		}
+		sliceEnd := segLen
+		if endRune < segEnd {
+			sliceEnd = endRune - cumRune
+		}
+		newSeg := seg.deepCopy()
+		newSeg.String = string(segRunes[sliceStart:sliceEnd])
+		result = append(result, newSeg)
+		cumRune += segLen
+	}
+	if len(result) == 0 {
+		return NewRadString("")
+	}
+	return RadString{Segments: result}
 }
 
 func (s RadString) SetRgb(red int, green int, blue int) {

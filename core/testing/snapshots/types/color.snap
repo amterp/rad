@@ -7,13 +7,13 @@ Alice
 
 ### TITLE ###
 Can slice colored string
-### DESCRIPTION ###
-TODO: this *should* be red
 ### INPUT ###
 a = upper(red("Alice"))
 print(a[2:4])
+### ARGS ###
+--color=always
 ### STDOUT ###
-IC
+[31mIC[0m
 
 ### TITLE ###
 Color equality

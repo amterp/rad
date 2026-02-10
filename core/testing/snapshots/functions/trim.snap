@@ -22,3 +22,23 @@ print(trim(a, "!,"))
 ### STDOUT ###
 hello
 
+### TITLE ###
+Preserves color attributes
+### INPUT ###
+a = "  " + red("hello") + "  "
+print(trim(a))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mhello[0m
+
+### TITLE ###
+Preserves color across segment boundary
+### INPUT ###
+a = ", " + red("he") + blue("llo") + " ,"
+print(trim(a, " ,"))
+### ARGS ###
+--color=always
+### STDOUT ###
+[31mhe[0m[34mllo[0m
+

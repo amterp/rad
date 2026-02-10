@@ -683,7 +683,7 @@ count("test", "xyz")          // -> 0
 
 ### trim
 
-Strips all matching characters from both ends of a string.
+Strips all matching characters from both ends of a string. Preserves color attributes.
 
 ```rad
 trim(_subject: str, _chars: str = " \t\n") -> str
@@ -697,7 +697,7 @@ trim("abcHELLOabc", "abc")   // -> "HELLO"
 
 ### trim_left
 
-Strips all matching characters from the start of a string.
+Strips all matching characters from the start of a string. Preserves color attributes.
 
 ```rad
 trim_left(_subject: str, _chars: str = " \t\n") -> str
@@ -711,7 +711,7 @@ trim_left("aaabbb", "a")        // -> "bbb"
 
 ### trim_right
 
-Strips all matching characters from the end of a string.
+Strips all matching characters from the end of a string. Preserves color attributes.
 
 ```rad
 trim_right(_subject: str, _chars: str = " \t\n") -> str
@@ -725,7 +725,7 @@ trim_right("aaabbb", "b")       // -> "aaa"
 
 ### trim_prefix
 
-Removes a literal prefix from the start of a string (once).
+Removes a literal prefix from the start of a string (once). Preserves color attributes.
 
 ```rad
 trim_prefix(_subject: str, _prefix: str) -> str
@@ -739,7 +739,7 @@ trim_prefix("test", "x")              // -> "test" (no match)
 
 ### trim_suffix
 
-Removes a literal suffix from the end of a string (once).
+Removes a literal suffix from the end of a string (once). Preserves color attributes.
 
 ```rad
 trim_suffix(_subject: str, _suffix: str) -> str
@@ -753,7 +753,7 @@ trim_suffix("test", "x")              // -> "test" (no match)
 
 ### reverse
 
-Reverses a string or list.
+Reverses a string or list. Preserves color attributes for strings.
 
 ```rad
 reverse(_val: str|list) -> str|list

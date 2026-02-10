@@ -1302,7 +1302,7 @@ func (i *Interpreter) evalSlice(contextNode rl.Node, seg rl.PathSegment, val Rad
 	case RadString:
 		length := coerced.Len()
 		start, end := i.resolveSliceBounds(seg, length)
-		return newRadValues(i, contextNode, NewRadString(string(coerced.Runes()[start:end])))
+		return newRadValues(i, contextNode, coerced.SubSlice(start, end))
 	case *RadList:
 		length := coerced.Len()
 		start, end := i.resolveSliceBounds(seg, length)
