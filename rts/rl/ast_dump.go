@@ -111,6 +111,8 @@ func findASTMaxSpans(node Node) (maxRow, maxCol int) {
 		children = append(children, n.Condition, n.True, n.False)
 	case *Fallback:
 		children = append(children, n.Left, n.Right)
+	case *CatchExpr:
+		children = append(children, n.Left, n.Right)
 
 	case *Call:
 		children = append(children, n.Func)
@@ -472,6 +474,12 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 	case *Fallback:
 		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%sFallback\n", indent)
+		astDumpNode(sb, fmtStr, spacePad, n.Left, depth+1)
+		astDumpNode(sb, fmtStr, spacePad, n.Right, depth+1)
+
+	case *CatchExpr:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		fmt.Fprintf(sb, "%sCatchExpr\n", indent)
 		astDumpNode(sb, fmtStr, spacePad, n.Left, depth+1)
 		astDumpNode(sb, fmtStr, spacePad, n.Right, depth+1)
 

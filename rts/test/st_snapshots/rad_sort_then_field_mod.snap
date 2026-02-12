@@ -21,8 +21,9 @@ B: [ 4,  7] PS: [0,  4] PE: [0,  7]               delegate: add_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                 delegate: mult_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                   delegate: unary_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                     delegate: fallback_expr
-B: [ 4,  7] PS: [0,  4] PE: [0,  7]                       delegate: var_path
-B: [ 4,  7] PS: [0,  4] PE: [0,  7]                         root: identifier `url`
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                       delegate: catch_expr
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                         delegate: var_path
+B: [ 4,  7] PS: [0,  4] PE: [0,  7]                           root: identifier `url`
 B: [ 7,  8] PS: [0,  7] PE: [0,  8]     : `:`
 B: [13, 28] PS: [1,  4] PE: [1, 19]     stmt: rad_field_stmt
 B: [13, 19] PS: [1,  4] PE: [1, 10]       fields `fields`
@@ -52,15 +53,17 @@ B: [64, 69] PS: [4, 18] PE: [4, 23]                       delegate: mult_expr
 B: [64, 65] PS: [4, 18] PE: [4, 19]                         left: mult_expr
 B: [64, 65] PS: [4, 18] PE: [4, 19]                           delegate: unary_expr
 B: [64, 65] PS: [4, 18] PE: [4, 19]                             delegate: fallback_expr
-B: [64, 65] PS: [4, 18] PE: [4, 19]                               delegate: var_path
-B: [64, 65] PS: [4, 18] PE: [4, 19]                                 root: identifier `n`
+B: [64, 65] PS: [4, 18] PE: [4, 19]                               delegate: catch_expr
+B: [64, 65] PS: [4, 18] PE: [4, 19]                                 delegate: var_path
+B: [64, 65] PS: [4, 18] PE: [4, 19]                                   root: identifier `n`
 B: [66, 67] PS: [4, 20] PE: [4, 21]                         op: * `*`
 B: [68, 69] PS: [4, 22] PE: [4, 23]                         right: unary_expr
 B: [68, 69] PS: [4, 22] PE: [4, 23]                           delegate: fallback_expr
-B: [68, 69] PS: [4, 22] PE: [4, 23]                             delegate: indexed_expr
-B: [68, 69] PS: [4, 22] PE: [4, 23]                               root: primary_expr
-B: [68, 69] PS: [4, 22] PE: [4, 23]                                 literal
-B: [68, 69] PS: [4, 22] PE: [4, 23]                                   int `2`
+B: [68, 69] PS: [4, 22] PE: [4, 23]                             delegate: catch_expr
+B: [68, 69] PS: [4, 22] PE: [4, 23]                               delegate: indexed_expr
+B: [68, 69] PS: [4, 22] PE: [4, 23]                                 root: primary_expr
+B: [68, 69] PS: [4, 22] PE: [4, 23]                                   literal
+B: [68, 69] PS: [4, 22] PE: [4, 23]                                     int `2`
 B: [78, 96] PS: [5,  8] PE: [5, 26]       mod_stmt: rad_field_mod_filter
 B: [78, 84] PS: [5,  8] PE: [5, 14]         filter `filter`
 B: [85, 96] PS: [5, 15] PE: [5, 26]         lambda: fn_lambda
@@ -79,17 +82,19 @@ B: [91, 92] PS: [5, 21] PE: [5, 22]                       delegate: add_expr
 B: [91, 92] PS: [5, 21] PE: [5, 22]                         delegate: mult_expr
 B: [91, 92] PS: [5, 21] PE: [5, 22]                           delegate: unary_expr
 B: [91, 92] PS: [5, 21] PE: [5, 22]                             delegate: fallback_expr
-B: [91, 92] PS: [5, 21] PE: [5, 22]                               delegate: var_path
-B: [91, 92] PS: [5, 21] PE: [5, 22]                                 root: identifier `n`
+B: [91, 92] PS: [5, 21] PE: [5, 22]                               delegate: catch_expr
+B: [91, 92] PS: [5, 21] PE: [5, 22]                                 delegate: var_path
+B: [91, 92] PS: [5, 21] PE: [5, 22]                                   root: identifier `n`
 B: [93, 94] PS: [5, 23] PE: [5, 24]                     op: > `>`
 B: [95, 96] PS: [5, 25] PE: [5, 26]                     right: add_expr
 B: [95, 96] PS: [5, 25] PE: [5, 26]                       delegate: mult_expr
 B: [95, 96] PS: [5, 25] PE: [5, 26]                         delegate: unary_expr
 B: [95, 96] PS: [5, 25] PE: [5, 26]                           delegate: fallback_expr
-B: [95, 96] PS: [5, 25] PE: [5, 26]                             delegate: indexed_expr
-B: [95, 96] PS: [5, 25] PE: [5, 26]                               root: primary_expr
-B: [95, 96] PS: [5, 25] PE: [5, 26]                                 literal
-B: [95, 96] PS: [5, 25] PE: [5, 26]                                   int `5`
+B: [95, 96] PS: [5, 25] PE: [5, 26]                             delegate: catch_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                               delegate: indexed_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                                 root: primary_expr
+B: [95, 96] PS: [5, 25] PE: [5, 26]                                   literal
+B: [95, 96] PS: [5, 25] PE: [5, 26]                                     int `5`
 
 ### STDERR ###
 PS: [0,  0] PE: [5, 26] SourceFile

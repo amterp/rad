@@ -1,0 +1,62 @@
+### TITLE ###
+Error caught
+### INPUT ###
+print(parse_int("two") catch 0)
+### STDOUT ###
+0
+
+### TITLE ###
+No error
+### INPUT ###
+print(parse_int("2") catch 0)
+### STDOUT ###
+2
+
+### TITLE ###
+Null passes through
+### INPUT ###
+print(null catch "default")
+### STDOUT ###
+null
+
+### TITLE ###
+Map null value passes through
+### INPUT ###
+m = {"k": null}
+print(m["k"] catch "default")
+### STDOUT ###
+null
+
+### TITLE ###
+Map missing key caught
+### INPUT ###
+m = {}
+print(m["k"] catch "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Lazy eval
+### INPUT ###
+print(parse_int("2") catch foo())
+
+fn foo():
+    print("ran foo")
+    return 10
+### STDOUT ###
+2
+
+### TITLE ###
+Chaining
+### INPUT ###
+print(parse_int("bad") catch parse_int("worse") catch 99)
+### STDOUT ###
+99
+
+### TITLE ###
+Mixed with fallback
+### INPUT ###
+print(parse_int("bad") catch null ?? "default")
+### STDOUT ###
+null
+

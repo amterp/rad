@@ -30,8 +30,9 @@ B: [ 14,  17] PS: [0, 14] PE: [0, 17]                 delegate: add_expr
 B: [ 14,  17] PS: [0, 14] PE: [0, 17]                   delegate: mult_expr
 B: [ 14,  17] PS: [0, 14] PE: [0, 17]                     delegate: unary_expr
 B: [ 14,  17] PS: [0, 14] PE: [0, 17]                       delegate: fallback_expr
-B: [ 14,  17] PS: [0, 14] PE: [0, 17]                         delegate: var_path
-B: [ 14,  17] PS: [0, 14] PE: [0, 17]                           root: identifier `num`
+B: [ 14,  17] PS: [0, 14] PE: [0, 17]                         delegate: catch_expr
+B: [ 14,  17] PS: [0, 14] PE: [0, 17]                           delegate: var_path
+B: [ 14,  17] PS: [0, 14] PE: [0, 17]                             root: identifier `num`
 B: [ 17,  18] PS: [0, 17] PE: [0, 18]       : `:`
 B: [ 23,  77] PS: [1,  4] PE: [3, 20]       case: switch_case
 B: [ 23,  27] PS: [1,  4] PE: [1,  8]         case `case`
@@ -44,10 +45,11 @@ B: [ 28,  29] PS: [1,  9] PE: [1, 10]                   delegate: add_expr
 B: [ 28,  29] PS: [1,  9] PE: [1, 10]                     delegate: mult_expr
 B: [ 28,  29] PS: [1,  9] PE: [1, 10]                       delegate: unary_expr
 B: [ 28,  29] PS: [1,  9] PE: [1, 10]                         delegate: fallback_expr
-B: [ 28,  29] PS: [1,  9] PE: [1, 10]                           delegate: indexed_expr
-B: [ 28,  29] PS: [1,  9] PE: [1, 10]                             root: primary_expr
-B: [ 28,  29] PS: [1,  9] PE: [1, 10]                               literal
-B: [ 28,  29] PS: [1,  9] PE: [1, 10]                                 int `1`
+B: [ 28,  29] PS: [1,  9] PE: [1, 10]                           delegate: catch_expr
+B: [ 28,  29] PS: [1,  9] PE: [1, 10]                             delegate: indexed_expr
+B: [ 28,  29] PS: [1,  9] PE: [1, 10]                               root: primary_expr
+B: [ 28,  29] PS: [1,  9] PE: [1, 10]                                 literal
+B: [ 28,  29] PS: [1,  9] PE: [1, 10]                                   int `1`
 B: [ 29,  30] PS: [1, 10] PE: [1, 11]         , `,`
 B: [ 31,  32] PS: [1, 12] PE: [1, 13]         case_key: expr
 B: [ 31,  32] PS: [1, 12] PE: [1, 13]           delegate: ternary_expr
@@ -58,10 +60,11 @@ B: [ 31,  32] PS: [1, 12] PE: [1, 13]                   delegate: add_expr
 B: [ 31,  32] PS: [1, 12] PE: [1, 13]                     delegate: mult_expr
 B: [ 31,  32] PS: [1, 12] PE: [1, 13]                       delegate: unary_expr
 B: [ 31,  32] PS: [1, 12] PE: [1, 13]                         delegate: fallback_expr
-B: [ 31,  32] PS: [1, 12] PE: [1, 13]                           delegate: indexed_expr
-B: [ 31,  32] PS: [1, 12] PE: [1, 13]                             root: primary_expr
-B: [ 31,  32] PS: [1, 12] PE: [1, 13]                               literal
-B: [ 31,  32] PS: [1, 12] PE: [1, 13]                                 int `2`
+B: [ 31,  32] PS: [1, 12] PE: [1, 13]                           delegate: catch_expr
+B: [ 31,  32] PS: [1, 12] PE: [1, 13]                             delegate: indexed_expr
+B: [ 31,  32] PS: [1, 12] PE: [1, 13]                               root: primary_expr
+B: [ 31,  32] PS: [1, 12] PE: [1, 13]                                 literal
+B: [ 31,  32] PS: [1, 12] PE: [1, 13]                                   int `2`
 B: [ 32,  77] PS: [1, 13] PE: [3, 20]         alt: switch_case_block
 B: [ 32,  33] PS: [1, 13] PE: [1, 14]           : `:`
 B: [ 42,  56] PS: [2,  8] PE: [2, 22]           stmt: expr_stmt
@@ -74,29 +77,31 @@ B: [ 42,  56] PS: [2,  8] PE: [2, 22]                       delegate: add_expr
 B: [ 42,  56] PS: [2,  8] PE: [2, 22]                         delegate: mult_expr
 B: [ 42,  56] PS: [2,  8] PE: [2, 22]                           delegate: unary_expr
 B: [ 42,  56] PS: [2,  8] PE: [2, 22]                             delegate: fallback_expr
-B: [ 42,  56] PS: [2,  8] PE: [2, 22]                               delegate: indexed_expr
-B: [ 42,  56] PS: [2,  8] PE: [2, 22]                                 root: primary_expr
-B: [ 42,  56] PS: [2,  8] PE: [2, 22]                                   call
-B: [ 42,  47] PS: [2,  8] PE: [2, 13]                                     func: identifier `print`
-B: [ 47,  48] PS: [2, 13] PE: [2, 14]                                     ( `(`
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                     arg: expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                       delegate: ternary_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                         delegate: or_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                           delegate: and_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                             delegate: compare_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                               delegate: add_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                 delegate: mult_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                   delegate: unary_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                     delegate: fallback_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                       delegate: indexed_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                         root: primary_expr
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                           literal
-B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                             string
-B: [ 48,  49] PS: [2, 14] PE: [2, 15]                                                               start: string_start `'`
-B: [ 49,  54] PS: [2, 15] PE: [2, 20]                                                               contents: string_contents
-B: [ 49,  54] PS: [2, 15] PE: [2, 20]                                                                 content: string_content `first`
-B: [ 54,  55] PS: [2, 20] PE: [2, 21]                                                               end: string_end `'`
-B: [ 55,  56] PS: [2, 21] PE: [2, 22]                                     ) `)`
+B: [ 42,  56] PS: [2,  8] PE: [2, 22]                               delegate: catch_expr
+B: [ 42,  56] PS: [2,  8] PE: [2, 22]                                 delegate: indexed_expr
+B: [ 42,  56] PS: [2,  8] PE: [2, 22]                                   root: primary_expr
+B: [ 42,  56] PS: [2,  8] PE: [2, 22]                                     call
+B: [ 42,  47] PS: [2,  8] PE: [2, 13]                                       func: identifier `print`
+B: [ 47,  48] PS: [2, 13] PE: [2, 14]                                       ( `(`
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                       arg: expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                         delegate: ternary_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                           delegate: or_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                             delegate: and_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                               delegate: compare_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                 delegate: add_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                   delegate: mult_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                     delegate: unary_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                       delegate: fallback_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                         delegate: catch_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                           delegate: indexed_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                             root: primary_expr
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                               literal
+B: [ 48,  55] PS: [2, 14] PE: [2, 21]                                                                 string
+B: [ 48,  49] PS: [2, 14] PE: [2, 15]                                                                   start: string_start `'`
+B: [ 49,  54] PS: [2, 15] PE: [2, 20]                                                                   contents: string_contents
+B: [ 49,  54] PS: [2, 15] PE: [2, 20]                                                                     content: string_content `first`
+B: [ 54,  55] PS: [2, 20] PE: [2, 21]                                                                   end: string_end `'`
+B: [ 55,  56] PS: [2, 21] PE: [2, 22]                                       ) `)`
 B: [ 65,  77] PS: [3,  8] PE: [3, 20]           stmt: yield_stmt
 B: [ 65,  70] PS: [3,  8] PE: [3, 13]             yield `yield`
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]             right: expr
@@ -108,10 +113,11 @@ B: [ 71,  73] PS: [3, 14] PE: [3, 16]                       delegate: add_expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                         delegate: mult_expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                           delegate: unary_expr
 B: [ 71,  73] PS: [3, 14] PE: [3, 16]                             delegate: fallback_expr
-B: [ 71,  73] PS: [3, 14] PE: [3, 16]                               delegate: indexed_expr
-B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                 root: primary_expr
-B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                   literal
-B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                     int `10`
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]                               delegate: catch_expr
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                 delegate: indexed_expr
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                   root: primary_expr
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                     literal
+B: [ 71,  73] PS: [3, 14] PE: [3, 16]                                       int `10`
 B: [ 73,  74] PS: [3, 16] PE: [3, 17]             , `,`
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]             right: expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]               delegate: ternary_expr
@@ -122,10 +128,11 @@ B: [ 75,  77] PS: [3, 18] PE: [3, 20]                       delegate: add_expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]                         delegate: mult_expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]                           delegate: unary_expr
 B: [ 75,  77] PS: [3, 18] PE: [3, 20]                             delegate: fallback_expr
-B: [ 75,  77] PS: [3, 18] PE: [3, 20]                               delegate: indexed_expr
-B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                 root: primary_expr
-B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                   literal
-B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                     int `20`
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]                               delegate: catch_expr
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                 delegate: indexed_expr
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                   root: primary_expr
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                     literal
+B: [ 75,  77] PS: [3, 18] PE: [3, 20]                                       int `20`
 B: [ 82, 110] PS: [4,  4] PE: [5, 20]       case: switch_case
 B: [ 82,  86] PS: [4,  4] PE: [4,  8]         case `case`
 B: [ 87,  88] PS: [4,  9] PE: [4, 10]         case_key: expr
@@ -137,10 +144,11 @@ B: [ 87,  88] PS: [4,  9] PE: [4, 10]                   delegate: add_expr
 B: [ 87,  88] PS: [4,  9] PE: [4, 10]                     delegate: mult_expr
 B: [ 87,  88] PS: [4,  9] PE: [4, 10]                       delegate: unary_expr
 B: [ 87,  88] PS: [4,  9] PE: [4, 10]                         delegate: fallback_expr
-B: [ 87,  88] PS: [4,  9] PE: [4, 10]                           delegate: indexed_expr
-B: [ 87,  88] PS: [4,  9] PE: [4, 10]                             root: primary_expr
-B: [ 87,  88] PS: [4,  9] PE: [4, 10]                               literal
-B: [ 87,  88] PS: [4,  9] PE: [4, 10]                                 int `3`
+B: [ 87,  88] PS: [4,  9] PE: [4, 10]                           delegate: catch_expr
+B: [ 87,  88] PS: [4,  9] PE: [4, 10]                             delegate: indexed_expr
+B: [ 87,  88] PS: [4,  9] PE: [4, 10]                               root: primary_expr
+B: [ 87,  88] PS: [4,  9] PE: [4, 10]                                 literal
+B: [ 87,  88] PS: [4,  9] PE: [4, 10]                                   int `3`
 B: [ 88, 110] PS: [4, 10] PE: [5, 20]         alt: switch_case_block
 B: [ 88,  89] PS: [4, 10] PE: [4, 11]           : `:`
 B: [ 98, 110] PS: [5,  8] PE: [5, 20]           stmt: yield_stmt
@@ -154,10 +162,11 @@ B: [104, 106] PS: [5, 14] PE: [5, 16]                       delegate: add_expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]                         delegate: mult_expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]                           delegate: unary_expr
 B: [104, 106] PS: [5, 14] PE: [5, 16]                             delegate: fallback_expr
-B: [104, 106] PS: [5, 14] PE: [5, 16]                               delegate: indexed_expr
-B: [104, 106] PS: [5, 14] PE: [5, 16]                                 root: primary_expr
-B: [104, 106] PS: [5, 14] PE: [5, 16]                                   literal
-B: [104, 106] PS: [5, 14] PE: [5, 16]                                     int `30`
+B: [104, 106] PS: [5, 14] PE: [5, 16]                               delegate: catch_expr
+B: [104, 106] PS: [5, 14] PE: [5, 16]                                 delegate: indexed_expr
+B: [104, 106] PS: [5, 14] PE: [5, 16]                                   root: primary_expr
+B: [104, 106] PS: [5, 14] PE: [5, 16]                                     literal
+B: [104, 106] PS: [5, 14] PE: [5, 16]                                       int `30`
 B: [106, 107] PS: [5, 16] PE: [5, 17]             , `,`
 B: [108, 110] PS: [5, 18] PE: [5, 20]             right: expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]               delegate: ternary_expr
@@ -168,10 +177,11 @@ B: [108, 110] PS: [5, 18] PE: [5, 20]                       delegate: add_expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]                         delegate: mult_expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]                           delegate: unary_expr
 B: [108, 110] PS: [5, 18] PE: [5, 20]                             delegate: fallback_expr
-B: [108, 110] PS: [5, 18] PE: [5, 20]                               delegate: indexed_expr
-B: [108, 110] PS: [5, 18] PE: [5, 20]                                 root: primary_expr
-B: [108, 110] PS: [5, 18] PE: [5, 20]                                   literal
-B: [108, 110] PS: [5, 18] PE: [5, 20]                                     int `40`
+B: [108, 110] PS: [5, 18] PE: [5, 20]                               delegate: catch_expr
+B: [108, 110] PS: [5, 18] PE: [5, 20]                                 delegate: indexed_expr
+B: [108, 110] PS: [5, 18] PE: [5, 20]                                   root: primary_expr
+B: [108, 110] PS: [5, 18] PE: [5, 20]                                     literal
+B: [108, 110] PS: [5, 18] PE: [5, 20]                                       int `40`
 B: [115, 174] PS: [6,  4] PE: [8, 18]       default: switch_default
 B: [115, 122] PS: [6,  4] PE: [6, 11]         default `default`
 B: [122, 174] PS: [6, 11] PE: [8, 18]         alt: switch_case_block
@@ -186,29 +196,31 @@ B: [132, 155] PS: [7,  8] PE: [7, 31]                       delegate: add_expr
 B: [132, 155] PS: [7,  8] PE: [7, 31]                         delegate: mult_expr
 B: [132, 155] PS: [7,  8] PE: [7, 31]                           delegate: unary_expr
 B: [132, 155] PS: [7,  8] PE: [7, 31]                             delegate: fallback_expr
-B: [132, 155] PS: [7,  8] PE: [7, 31]                               delegate: indexed_expr
-B: [132, 155] PS: [7,  8] PE: [7, 31]                                 root: primary_expr
-B: [132, 155] PS: [7,  8] PE: [7, 31]                                   call
-B: [132, 137] PS: [7,  8] PE: [7, 13]                                     func: identifier `print`
-B: [137, 138] PS: [7, 13] PE: [7, 14]                                     ( `(`
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                     arg: expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                       delegate: ternary_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                         delegate: or_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                           delegate: and_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                             delegate: compare_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                               delegate: add_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                 delegate: mult_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                   delegate: unary_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                     delegate: fallback_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                       delegate: indexed_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                         root: primary_expr
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                           literal
-B: [138, 154] PS: [7, 14] PE: [7, 30]                                                             string
-B: [138, 139] PS: [7, 14] PE: [7, 15]                                                               start: string_start `'`
-B: [139, 153] PS: [7, 15] PE: [7, 29]                                                               contents: string_contents
-B: [139, 153] PS: [7, 15] PE: [7, 29]                                                                 content: string_content `default, third`
-B: [153, 154] PS: [7, 29] PE: [7, 30]                                                               end: string_end `'`
-B: [154, 155] PS: [7, 30] PE: [7, 31]                                     ) `)`
+B: [132, 155] PS: [7,  8] PE: [7, 31]                               delegate: catch_expr
+B: [132, 155] PS: [7,  8] PE: [7, 31]                                 delegate: indexed_expr
+B: [132, 155] PS: [7,  8] PE: [7, 31]                                   root: primary_expr
+B: [132, 155] PS: [7,  8] PE: [7, 31]                                     call
+B: [132, 137] PS: [7,  8] PE: [7, 13]                                       func: identifier `print`
+B: [137, 138] PS: [7, 13] PE: [7, 14]                                       ( `(`
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                       arg: expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                         delegate: ternary_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                           delegate: or_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                             delegate: and_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                               delegate: compare_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                 delegate: add_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                   delegate: mult_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                     delegate: unary_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                       delegate: fallback_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                         delegate: catch_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                           delegate: indexed_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                             root: primary_expr
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                               literal
+B: [138, 154] PS: [7, 14] PE: [7, 30]                                                                 string
+B: [138, 139] PS: [7, 14] PE: [7, 15]                                                                   start: string_start `'`
+B: [139, 153] PS: [7, 15] PE: [7, 29]                                                                   contents: string_contents
+B: [139, 153] PS: [7, 15] PE: [7, 29]                                                                     content: string_content `default, third`
+B: [153, 154] PS: [7, 29] PE: [7, 30]                                                                   end: string_end `'`
+B: [154, 155] PS: [7, 30] PE: [7, 31]                                       ) `)`
 B: [164, 174] PS: [8,  8] PE: [8, 18]           stmt: yield_stmt
 B: [164, 169] PS: [8,  8] PE: [8, 13]             yield `yield`
 B: [170, 171] PS: [8, 14] PE: [8, 15]             right: expr
@@ -220,10 +232,11 @@ B: [170, 171] PS: [8, 14] PE: [8, 15]                       delegate: add_expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]                         delegate: mult_expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]                           delegate: unary_expr
 B: [170, 171] PS: [8, 14] PE: [8, 15]                             delegate: fallback_expr
-B: [170, 171] PS: [8, 14] PE: [8, 15]                               delegate: indexed_expr
-B: [170, 171] PS: [8, 14] PE: [8, 15]                                 root: primary_expr
-B: [170, 171] PS: [8, 14] PE: [8, 15]                                   literal
-B: [170, 171] PS: [8, 14] PE: [8, 15]                                     int `0`
+B: [170, 171] PS: [8, 14] PE: [8, 15]                               delegate: catch_expr
+B: [170, 171] PS: [8, 14] PE: [8, 15]                                 delegate: indexed_expr
+B: [170, 171] PS: [8, 14] PE: [8, 15]                                   root: primary_expr
+B: [170, 171] PS: [8, 14] PE: [8, 15]                                     literal
+B: [170, 171] PS: [8, 14] PE: [8, 15]                                       int `0`
 B: [171, 172] PS: [8, 15] PE: [8, 16]             , `,`
 B: [173, 174] PS: [8, 17] PE: [8, 18]             right: expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]               delegate: ternary_expr
@@ -234,10 +247,11 @@ B: [173, 174] PS: [8, 17] PE: [8, 18]                       delegate: add_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                         delegate: mult_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                           delegate: unary_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                             delegate: fallback_expr
-B: [173, 174] PS: [8, 17] PE: [8, 18]                               delegate: indexed_expr
-B: [173, 174] PS: [8, 17] PE: [8, 18]                                 root: primary_expr
-B: [173, 174] PS: [8, 17] PE: [8, 18]                                   literal
-B: [173, 174] PS: [8, 17] PE: [8, 18]                                     int `0`
+B: [173, 174] PS: [8, 17] PE: [8, 18]                               delegate: catch_expr
+B: [173, 174] PS: [8, 17] PE: [8, 18]                                 delegate: indexed_expr
+B: [173, 174] PS: [8, 17] PE: [8, 18]                                   root: primary_expr
+B: [173, 174] PS: [8, 17] PE: [8, 18]                                     literal
+B: [173, 174] PS: [8, 17] PE: [8, 18]                                       int `0`
 
 ### STDERR ###
 PS: [0,  0] PE: [8, 18] SourceFile

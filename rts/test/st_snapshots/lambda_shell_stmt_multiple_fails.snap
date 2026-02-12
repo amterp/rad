@@ -30,14 +30,15 @@ B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                     delegate
 B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                       delegate: mult_expr
 B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                         delegate: unary_expr
 B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                           delegate: fallback_expr
-B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                             delegate: indexed_expr
-B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                               root: primary_expr
-B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                                 literal
-B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                                   string
-B: [ 7,  8] PS: [0,  7] PE: [0,  8]                                                     start: string_start ```
-B: [ 8, 15] PS: [0,  8] PE: [0, 15]                                                     contents: string_contents
-B: [ 8, 15] PS: [0,  8] PE: [0, 15]                                                       content: string_content `echo hi`
-B: [15, 16] PS: [0, 15] PE: [0, 16]                                                     end: string_end ```
+B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                             delegate: catch_expr
+B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                               delegate: indexed_expr
+B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                                 root: primary_expr
+B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                                   literal
+B: [ 7, 16] PS: [0,  7] PE: [0, 16]                                                     string
+B: [ 7,  8] PS: [0,  7] PE: [0,  8]                                                       start: string_start ```
+B: [ 8, 15] PS: [0,  8] PE: [0, 15]                                                       contents: string_contents
+B: [ 8, 15] PS: [0,  8] PE: [0, 15]                                                         content: string_content `echo hi`
+B: [15, 16] PS: [0, 15] PE: [0, 16]                                                       end: string_end ```
 B: [16, 17] PS: [0, 16] PE: [0, 17]                         , `,`
 B: [18, 31] PS: [0, 18] PE: [0, 31]                       stmt: shell_stmt
 B: [18, 31] PS: [0, 18] PE: [0, 31]                         shell_cmd: shell_cmd
@@ -51,13 +52,14 @@ B: [19, 31] PS: [0, 19] PE: [0, 31]                                     delegate
 B: [19, 31] PS: [0, 19] PE: [0, 31]                                       delegate: mult_expr
 B: [19, 31] PS: [0, 19] PE: [0, 31]                                         delegate: unary_expr
 B: [19, 31] PS: [0, 19] PE: [0, 31]                                           delegate: fallback_expr
-B: [19, 31] PS: [0, 19] PE: [0, 31]                                             delegate: indexed_expr
-B: [19, 31] PS: [0, 19] PE: [0, 31]                                               root: primary_expr
-B: [19, 31] PS: [0, 19] PE: [0, 31]                                                 literal
-B: [19, 31] PS: [0, 19] PE: [0, 31]                                                   string
-B: [19, 20] PS: [0, 19] PE: [0, 20]                                                     start: string_start ```
-B: [20, 30] PS: [0, 20] PE: [0, 30]                                                     contents: string_contents
-B: [20, 30] PS: [0, 20] PE: [0, 30]                                                       content: string_content `echo hello`
-B: [30, 31] PS: [0, 30] PE: [0, 31]                                                     end: string_end ```
+B: [19, 31] PS: [0, 19] PE: [0, 31]                                             delegate: catch_expr
+B: [19, 31] PS: [0, 19] PE: [0, 31]                                               delegate: indexed_expr
+B: [19, 31] PS: [0, 19] PE: [0, 31]                                                 root: primary_expr
+B: [19, 31] PS: [0, 19] PE: [0, 31]                                                   literal
+B: [19, 31] PS: [0, 19] PE: [0, 31]                                                     string
+B: [19, 20] PS: [0, 19] PE: [0, 20]                                                       start: string_start ```
+B: [20, 30] PS: [0, 20] PE: [0, 30]                                                       contents: string_contents
+B: [20, 30] PS: [0, 20] PE: [0, 30]                                                         content: string_content `echo hello`
+B: [30, 31] PS: [0, 30] PE: [0, 31]                                                       end: string_end ```
 B: [31, 32] PS: [0, 31] PE: [0, 32]                       ) `)`
 

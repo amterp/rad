@@ -1046,6 +1046,18 @@ data = read_file("config.txt") ?? {"content": ""}
 a, b = some_fallible_fn() ?? [0, 0]  // multi-return requires list fallback
 ```
 
+### Error Catching Operator (`catch`)
+
+The `catch` operator catches errors from the left side and returns the right side instead. Unlike `??`, it only catches errors - `null` values pass through.
+
+```rad
+count = parse_int(input_str) catch 0
+data = parse_json(raw) catch {}
+result = risky_call() catch fallback_call() catch "final"
+```
+
+`catch` is distinct from the `catch:` block syntax. The operator form is an inline expression, while `catch:` is a block attached to statements.
+
 ## Scoping and Variables
 
 ```rad

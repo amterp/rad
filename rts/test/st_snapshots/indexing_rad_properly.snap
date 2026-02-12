@@ -16,17 +16,19 @@ B: [ 0,  1] PS: [0,  0] PE: [0,  1]                   delegate: add_expr
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]                     delegate: mult_expr
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]                       delegate: unary_expr
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]                         delegate: fallback_expr
-B: [ 0,  1] PS: [0,  0] PE: [0,  1]                           delegate: var_path
-B: [ 0,  1] PS: [0,  0] PE: [0,  1]                             root: identifier `a`
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                           delegate: catch_expr
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                             delegate: var_path
+B: [ 0,  1] PS: [0,  0] PE: [0,  1]                               root: identifier `a`
 B: [ 2,  3] PS: [0,  2] PE: [0,  3]                 op: > `>`
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                 right: add_expr
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                   delegate: mult_expr
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                     delegate: unary_expr
 B: [ 4,  5] PS: [0,  4] PE: [0,  5]                       delegate: fallback_expr
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         delegate: indexed_expr
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                           root: primary_expr
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                             literal
-B: [ 4,  5] PS: [0,  4] PE: [0,  5]                               int `1`
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                         delegate: catch_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                           delegate: indexed_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                             root: primary_expr
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                               literal
+B: [ 4,  5] PS: [0,  4] PE: [0,  5]                                 int `1`
 B: [ 6,  8] PS: [0,  6] PE: [0,  8]           op: or `or`
 B: [ 9, 18] PS: [0,  9] PE: [0, 18]           right: and_expr
 B: [ 9, 18] PS: [0,  9] PE: [0, 18]             delegate: compare_expr
@@ -35,30 +37,33 @@ B: [ 9, 13] PS: [0,  9] PE: [0, 13]                 delegate: add_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]                   delegate: mult_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]                     delegate: unary_expr
 B: [ 9, 13] PS: [0,  9] PE: [0, 13]                       delegate: fallback_expr
-B: [ 9, 13] PS: [0,  9] PE: [0, 13]                         delegate: var_path
-B: [ 9, 10] PS: [0,  9] PE: [0, 10]                           root: identifier `b`
-B: [10, 11] PS: [0, 10] PE: [0, 11]                           [ `[`
-B: [11, 12] PS: [0, 11] PE: [0, 12]                           indexing: expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                             delegate: ternary_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                               delegate: or_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                 delegate: and_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                   delegate: compare_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                     delegate: add_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                       delegate: mult_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                         delegate: unary_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                           delegate: fallback_expr
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                             delegate: var_path
-B: [11, 12] PS: [0, 11] PE: [0, 12]                                               root: identifier `a`
-B: [12, 13] PS: [0, 12] PE: [0, 13]                           ] `]`
+B: [ 9, 13] PS: [0,  9] PE: [0, 13]                         delegate: catch_expr
+B: [ 9, 13] PS: [0,  9] PE: [0, 13]                           delegate: var_path
+B: [ 9, 10] PS: [0,  9] PE: [0, 10]                             root: identifier `b`
+B: [10, 11] PS: [0, 10] PE: [0, 11]                             [ `[`
+B: [11, 12] PS: [0, 11] PE: [0, 12]                             indexing: expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                               delegate: ternary_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                 delegate: or_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                   delegate: and_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                     delegate: compare_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                       delegate: add_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                         delegate: mult_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                           delegate: unary_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                             delegate: fallback_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                               delegate: catch_expr
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                                 delegate: var_path
+B: [11, 12] PS: [0, 11] PE: [0, 12]                                                   root: identifier `a`
+B: [12, 13] PS: [0, 12] PE: [0, 13]                             ] `]`
 B: [14, 16] PS: [0, 14] PE: [0, 16]               op: == `==`
 B: [17, 18] PS: [0, 17] PE: [0, 18]               right: add_expr
 B: [17, 18] PS: [0, 17] PE: [0, 18]                 delegate: mult_expr
 B: [17, 18] PS: [0, 17] PE: [0, 18]                   delegate: unary_expr
 B: [17, 18] PS: [0, 17] PE: [0, 18]                     delegate: fallback_expr
-B: [17, 18] PS: [0, 17] PE: [0, 18]                       delegate: indexed_expr
-B: [17, 18] PS: [0, 17] PE: [0, 18]                         root: primary_expr
-B: [17, 18] PS: [0, 17] PE: [0, 18]                           literal
-B: [17, 18] PS: [0, 17] PE: [0, 18]                             int `1`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                       delegate: catch_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                         delegate: indexed_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                           root: primary_expr
+B: [17, 18] PS: [0, 17] PE: [0, 18]                             literal
+B: [17, 18] PS: [0, 17] PE: [0, 18]                               int `1`
 
 ### STDERR ###
 PS: [0,  0] PE: [0, 18] SourceFile

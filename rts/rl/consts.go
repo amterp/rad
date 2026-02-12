@@ -34,6 +34,7 @@ const (
 	K_MULT_EXPR                = "mult_expr"
 	K_UNARY_EXPR               = "unary_expr"
 	K_FALLBACK_EXPR            = "fallback_expr"
+	K_CATCH_EXPR               = "catch_expr"
 	K_INDEXED_EXPR             = "indexed_expr"
 	K_STRING                   = "string"
 	K_STRING_CONTENT           = "string_content"

@@ -106,10 +106,11 @@ func (n *FnDef) Children() []Node {
 	return c
 }
 
-func (n *OpBinary) Children() []Node { return []Node{n.Left, n.Right} }
-func (n *OpUnary) Children() []Node  { return []Node{n.Operand} }
-func (n *Ternary) Children() []Node  { return []Node{n.Condition, n.True, n.False} }
-func (n *Fallback) Children() []Node { return []Node{n.Left, n.Right} }
+func (n *OpBinary) Children() []Node  { return []Node{n.Left, n.Right} }
+func (n *OpUnary) Children() []Node   { return []Node{n.Operand} }
+func (n *Ternary) Children() []Node   { return []Node{n.Condition, n.True, n.False} }
+func (n *Fallback) Children() []Node  { return []Node{n.Left, n.Right} }
+func (n *CatchExpr) Children() []Node { return []Node{n.Left, n.Right} }
 
 func (n *Call) Children() []Node {
 	c := []Node{n.Func}

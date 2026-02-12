@@ -67,10 +67,11 @@ B: [125, 126] PS: [5,  4] PE: [5,  5]               delegate: add_expr
 B: [125, 126] PS: [5,  4] PE: [5,  5]                 delegate: mult_expr
 B: [125, 126] PS: [5,  4] PE: [5,  5]                   delegate: unary_expr
 B: [125, 126] PS: [5,  4] PE: [5,  5]                     delegate: fallback_expr
-B: [125, 126] PS: [5,  4] PE: [5,  5]                       delegate: indexed_expr
-B: [125, 126] PS: [5,  4] PE: [5,  5]                         root: primary_expr
-B: [125, 126] PS: [5,  4] PE: [5,  5]                           literal
-B: [125, 126] PS: [5,  4] PE: [5,  5]                             int `2`
+B: [125, 126] PS: [5,  4] PE: [5,  5]                       delegate: catch_expr
+B: [125, 126] PS: [5,  4] PE: [5,  5]                         delegate: indexed_expr
+B: [125, 126] PS: [5,  4] PE: [5,  5]                           root: primary_expr
+B: [125, 126] PS: [5,  4] PE: [5,  5]                             literal
+B: [125, 126] PS: [5,  4] PE: [5,  5]                               int `2`
 
 ### STDERR ###
 PS: [0,  0] PE: [5,  5] SourceFile
