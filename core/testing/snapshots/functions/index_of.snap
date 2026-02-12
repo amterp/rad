@@ -1,0 +1,130 @@
+### TITLE ###
+String basic
+### INPUT ###
+print("hello world hello".index_of("hello"))
+### STDOUT ###
+0
+
+### TITLE ###
+String second occurrence
+### INPUT ###
+print("hello world hello".index_of("hello", n=1))
+### STDOUT ###
+12
+
+### TITLE ###
+String last occurrence
+### INPUT ###
+print("hello world hello".index_of("hello", n=-1))
+### STDOUT ###
+12
+
+### TITLE ###
+String not found
+### INPUT ###
+print("hello".index_of("xyz"))
+### STDOUT ###
+null
+
+### TITLE ###
+String with start
+### INPUT ###
+print("hello world hello".index_of("hello", start=1))
+### STDOUT ###
+12
+
+### TITLE ###
+List basic
+### INPUT ###
+print(["a", "b", "c", "b", "a"].index_of("b"))
+### STDOUT ###
+1
+
+### TITLE ###
+List last
+### INPUT ###
+print(["a", "b", "c", "b", "a"].index_of("b", n=-1))
+### STDOUT ###
+3
+
+### TITLE ###
+List not found
+### INPUT ###
+print([1, 2, 3].index_of(99))
+### STDOUT ###
+null
+
+### TITLE ###
+List null element
+### INPUT ###
+print([1, null, 3].index_of(null))
+### STDOUT ###
+1
+
+### TITLE ###
+With fallback
+### INPUT ###
+print("hello".index_of("xyz") ?? "not found")
+### STDOUT ###
+not found
+
+### TITLE ###
+Empty target string
+### INPUT ###
+print("hello".index_of(""))
+### STDOUT ###
+null
+
+### TITLE ###
+Empty target on empty string
+### INPUT ###
+print("".index_of(""))
+### STDOUT ###
+null
+
+### TITLE ###
+Non-overlapping matches
+### INPUT ###
+print("aaaa".index_of("aa"))
+print("aaaa".index_of("aa", n=1))
+print("aaaa".index_of("aa", n=2))
+### STDOUT ###
+0
+2
+null
+
+### TITLE ###
+UFCS string
+### INPUT ###
+print("hello world".index_of("world"))
+### STDOUT ###
+6
+
+### TITLE ###
+UFCS list
+### INPUT ###
+print([1, 2, 3].index_of(2))
+### STDOUT ###
+1
+
+### TITLE ###
+Unicode basic
+### INPUT ###
+print("hello 世界".index_of("世"))
+### STDOUT ###
+6
+
+### TITLE ###
+Unicode multi-byte target
+### INPUT ###
+print("こんにちは世界".index_of("世界"))
+### STDOUT ###
+5
+
+### TITLE ###
+Unicode with start
+### INPUT ###
+print("hello 世界 world".index_of("world", start=9))
+### STDOUT ###
+9
+

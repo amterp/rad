@@ -59,6 +59,7 @@ func init() {
 		newFnSignature(`values(_map: map) -> any[]`),
 		newFnSignature(`truncate(_str: str, _len: int) -> error|str`),
 		newFnSignature(`unique(_list: any[]) -> any[]`),
+		newFnSignature(`index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int?`),
 		newFnSignature(`confirm(prompt: str = "Confirm? [y/n] > ") -> error|bool`),
 		newFnSignature(`parse_json(_str: str) -> any|error`),
 		newFnSignature(`parse_int(_str: str) -> int|error`),

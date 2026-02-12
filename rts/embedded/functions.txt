@@ -42,6 +42,7 @@ http_post
 http_put
 http_trace
 hyperlink
+index_of
 input
 int
 is_defined
