@@ -313,6 +313,20 @@ func NewFallback(span Span, left, right Node) *Fallback {
 func (n *Fallback) Kind() NodeKind { return NFallback }
 func (n *Fallback) Span() Span     { return n.span }
 
+// CatchExpr represents the error-catching operator (left catch right).
+// Unlike Fallback (??), CatchExpr only catches errors, not null values.
+type CatchExpr struct {
+	span  Span
+	Left  Node
+	Right Node
+}
+
+func NewCatchExpr(span Span, left, right Node) *CatchExpr {
+	return &CatchExpr{span: span, Left: left, Right: right}
+}
+func (n *CatchExpr) Kind() NodeKind { return NCatchExpr }
+func (n *CatchExpr) Span() Span     { return n.span }
+
 // Call represents a function call.
 type Call struct {
 	span      Span

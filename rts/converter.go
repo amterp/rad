@@ -943,6 +943,8 @@ func (c *converter) convertExpr(node *ts.Node) rl.Node {
 		return c.convertUnaryExpr(node)
 	case rl.K_FALLBACK_EXPR:
 		return c.convertFallback(node)
+	case rl.K_CATCH_EXPR:
+		return c.convertCatchExpr(node)
 	case rl.K_INDEXED_EXPR:
 		return c.convertIndexedExpr(node)
 
@@ -1025,6 +1027,14 @@ func (c *converter) convertFallback(node *ts.Node) rl.Node {
 	leftNode := rl.GetChild(node, rl.F_LEFT)
 	rightNode := rl.GetChild(node, rl.F_RIGHT)
 	return rl.NewFallback(c.makeSpan(node),
+		c.convertExpr(leftNode),
+		c.convertExpr(rightNode))
+}
+
+func (c *converter) convertCatchExpr(node *ts.Node) rl.Node {
+	leftNode := rl.GetChild(node, rl.F_LEFT)
+	rightNode := rl.GetChild(node, rl.F_RIGHT)
+	return rl.NewCatchExpr(c.makeSpan(node),
 		c.convertExpr(leftNode),
 		c.convertExpr(rightNode))
 }

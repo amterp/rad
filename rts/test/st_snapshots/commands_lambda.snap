@@ -44,43 +44,46 @@ B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                     delegate: add_expr
 B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                       delegate: mult_expr
 B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                         delegate: unary_expr
 B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                           delegate: fallback_expr
-B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                             delegate: indexed_expr
-B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                               root: primary_expr
-B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                                 call
-B: [ 81,  86] PS: [ 6,  8] PE: [ 6, 13]                                   func: identifier `print`
-B: [ 86,  87] PS: [ 6, 13] PE: [ 6, 14]                                   ( `(`
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                   arg: expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                     delegate: ternary_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                       delegate: or_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                         delegate: and_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                           delegate: compare_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                             delegate: add_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                               delegate: mult_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                 delegate: unary_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                   delegate: fallback_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                     delegate: indexed_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                       root: primary_expr
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                         literal
-B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                           string
-B: [ 87,  88] PS: [ 6, 14] PE: [ 6, 15]                                                             start: string_start `"`
-B: [ 88, 101] PS: [ 6, 15] PE: [ 6, 28]                                                             contents: string_contents
-B: [ 88,  95] PS: [ 6, 15] PE: [ 6, 22]                                                               content: string_content `Adding `
-B: [ 95, 101] PS: [ 6, 22] PE: [ 6, 28]                                                               interpolation: interpolation
-B: [ 95,  96] PS: [ 6, 22] PE: [ 6, 23]                                                                 { `{`
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                 expr: expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                   delegate: ternary_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                     delegate: or_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                       delegate: and_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                         delegate: compare_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                           delegate: add_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                             delegate: mult_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                               delegate: unary_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                 delegate: fallback_expr
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                   delegate: var_path
-B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                     root: identifier `file`
-B: [100, 101] PS: [ 6, 27] PE: [ 6, 28]                                                                 } `}`
-B: [101, 102] PS: [ 6, 28] PE: [ 6, 29]                                                             end: string_end `"`
-B: [102, 103] PS: [ 6, 29] PE: [ 6, 30]                                   ) `)`
+B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                             delegate: catch_expr
+B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                               delegate: indexed_expr
+B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                                 root: primary_expr
+B: [ 81, 103] PS: [ 6,  8] PE: [ 6, 30]                                   call
+B: [ 81,  86] PS: [ 6,  8] PE: [ 6, 13]                                     func: identifier `print`
+B: [ 86,  87] PS: [ 6, 13] PE: [ 6, 14]                                     ( `(`
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                     arg: expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                       delegate: ternary_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                         delegate: or_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                           delegate: and_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                             delegate: compare_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                               delegate: add_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                 delegate: mult_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                   delegate: unary_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                     delegate: fallback_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                       delegate: catch_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                         delegate: indexed_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                           root: primary_expr
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                             literal
+B: [ 87, 102] PS: [ 6, 14] PE: [ 6, 29]                                                               string
+B: [ 87,  88] PS: [ 6, 14] PE: [ 6, 15]                                                                 start: string_start `"`
+B: [ 88, 101] PS: [ 6, 15] PE: [ 6, 28]                                                                 contents: string_contents
+B: [ 88,  95] PS: [ 6, 15] PE: [ 6, 22]                                                                   content: string_content `Adding `
+B: [ 95, 101] PS: [ 6, 22] PE: [ 6, 28]                                                                   interpolation: interpolation
+B: [ 95,  96] PS: [ 6, 22] PE: [ 6, 23]                                                                     { `{`
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                     expr: expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                       delegate: ternary_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                         delegate: or_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                           delegate: and_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                             delegate: compare_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                               delegate: add_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                 delegate: mult_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                   delegate: unary_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                     delegate: fallback_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                       delegate: catch_expr
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                         delegate: var_path
+B: [ 96, 100] PS: [ 6, 23] PE: [ 6, 27]                                                                                           root: identifier `file`
+B: [100, 101] PS: [ 6, 27] PE: [ 6, 28]                                                                     } `}`
+B: [101, 102] PS: [ 6, 28] PE: [ 6, 29]                                                                 end: string_end `"`
+B: [102, 103] PS: [ 6, 29] PE: [ 6, 30]                                     ) `)`
 B: [112, 129] PS: [ 7,  8] PE: [ 7, 25]         stmt: shell_stmt
 B: [112, 129] PS: [ 7,  8] PE: [ 7, 25]           shell_cmd: shell_cmd
 B: [112, 113] PS: [ 7,  8] PE: [ 7,  9]             $ `$`
@@ -93,28 +96,30 @@ B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                       delegate: add_expr
 B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                         delegate: mult_expr
 B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                           delegate: unary_expr
 B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                             delegate: fallback_expr
-B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                               delegate: indexed_expr
-B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                 root: primary_expr
-B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                   literal
-B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                     string
-B: [113, 114] PS: [ 7,  9] PE: [ 7, 10]                                       start: string_start ```
-B: [114, 128] PS: [ 7, 10] PE: [ 7, 24]                                       contents: string_contents
-B: [114, 122] PS: [ 7, 10] PE: [ 7, 18]                                         content: string_content `git add `
-B: [122, 128] PS: [ 7, 18] PE: [ 7, 24]                                         interpolation: interpolation
-B: [122, 123] PS: [ 7, 18] PE: [ 7, 19]                                           { `{`
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                           expr: expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                             delegate: ternary_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                               delegate: or_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                 delegate: and_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                   delegate: compare_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                     delegate: add_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                       delegate: mult_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                         delegate: unary_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                           delegate: fallback_expr
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                             delegate: var_path
-B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                               root: identifier `file`
-B: [127, 128] PS: [ 7, 23] PE: [ 7, 24]                                           } `}`
-B: [128, 129] PS: [ 7, 24] PE: [ 7, 25]                                       end: string_end ```
+B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                               delegate: catch_expr
+B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                 delegate: indexed_expr
+B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                   root: primary_expr
+B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                     literal
+B: [113, 129] PS: [ 7,  9] PE: [ 7, 25]                                       string
+B: [113, 114] PS: [ 7,  9] PE: [ 7, 10]                                         start: string_start ```
+B: [114, 128] PS: [ 7, 10] PE: [ 7, 24]                                         contents: string_contents
+B: [114, 122] PS: [ 7, 10] PE: [ 7, 18]                                           content: string_content `git add `
+B: [122, 128] PS: [ 7, 18] PE: [ 7, 24]                                           interpolation: interpolation
+B: [122, 123] PS: [ 7, 18] PE: [ 7, 19]                                             { `{`
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                             expr: expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                               delegate: ternary_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                 delegate: or_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                   delegate: and_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                     delegate: compare_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                       delegate: add_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                         delegate: mult_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                           delegate: unary_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                             delegate: fallback_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                               delegate: catch_expr
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                                 delegate: var_path
+B: [123, 127] PS: [ 7, 19] PE: [ 7, 23]                                                                   root: identifier `file`
+B: [127, 128] PS: [ 7, 23] PE: [ 7, 24]                                             } `}`
+B: [128, 129] PS: [ 7, 24] PE: [ 7, 25]                                         end: string_end ```
 B: [131, 200] PS: [ 9,  0] PE: [12, 24]   cmd_block
 B: [131, 138] PS: [ 9,  0] PE: [ 9,  7]     command `command`
 B: [139, 145] PS: [ 9,  8] PE: [ 9, 14]     name: identifier `remove`
@@ -141,28 +146,30 @@ B: [185, 200] PS: [12,  9] PE: [12, 24]                       delegate: add_expr
 B: [185, 200] PS: [12,  9] PE: [12, 24]                         delegate: mult_expr
 B: [185, 200] PS: [12,  9] PE: [12, 24]                           delegate: unary_expr
 B: [185, 200] PS: [12,  9] PE: [12, 24]                             delegate: fallback_expr
-B: [185, 200] PS: [12,  9] PE: [12, 24]                               delegate: indexed_expr
-B: [185, 200] PS: [12,  9] PE: [12, 24]                                 root: primary_expr
-B: [185, 200] PS: [12,  9] PE: [12, 24]                                   literal
-B: [185, 200] PS: [12,  9] PE: [12, 24]                                     string
-B: [185, 186] PS: [12,  9] PE: [12, 10]                                       start: string_start ```
-B: [186, 199] PS: [12, 10] PE: [12, 23]                                       contents: string_contents
-B: [186, 193] PS: [12, 10] PE: [12, 17]                                         content: string_content `git rm `
-B: [193, 199] PS: [12, 17] PE: [12, 23]                                         interpolation: interpolation
-B: [193, 194] PS: [12, 17] PE: [12, 18]                                           { `{`
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                           expr: expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                             delegate: ternary_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                               delegate: or_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                 delegate: and_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                   delegate: compare_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                     delegate: add_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                       delegate: mult_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                         delegate: unary_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                           delegate: fallback_expr
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                             delegate: var_path
-B: [194, 198] PS: [12, 18] PE: [12, 22]                                                               root: identifier `file`
-B: [198, 199] PS: [12, 22] PE: [12, 23]                                           } `}`
-B: [199, 200] PS: [12, 23] PE: [12, 24]                                       end: string_end ```
+B: [185, 200] PS: [12,  9] PE: [12, 24]                               delegate: catch_expr
+B: [185, 200] PS: [12,  9] PE: [12, 24]                                 delegate: indexed_expr
+B: [185, 200] PS: [12,  9] PE: [12, 24]                                   root: primary_expr
+B: [185, 200] PS: [12,  9] PE: [12, 24]                                     literal
+B: [185, 200] PS: [12,  9] PE: [12, 24]                                       string
+B: [185, 186] PS: [12,  9] PE: [12, 10]                                         start: string_start ```
+B: [186, 199] PS: [12, 10] PE: [12, 23]                                         contents: string_contents
+B: [186, 193] PS: [12, 10] PE: [12, 17]                                           content: string_content `git rm `
+B: [193, 199] PS: [12, 17] PE: [12, 23]                                           interpolation: interpolation
+B: [193, 194] PS: [12, 17] PE: [12, 18]                                             { `{`
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                             expr: expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                               delegate: ternary_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                 delegate: or_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                   delegate: and_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                     delegate: compare_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                       delegate: add_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                         delegate: mult_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                           delegate: unary_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                             delegate: fallback_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                               delegate: catch_expr
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                                 delegate: var_path
+B: [194, 198] PS: [12, 18] PE: [12, 22]                                                                   root: identifier `file`
+B: [198, 199] PS: [12, 22] PE: [12, 23]                                             } `}`
+B: [199, 200] PS: [12, 23] PE: [12, 24]                                         end: string_end ```
 
 ### STDERR ###
 PS: [ 0,  0] PE: [12, 24] SourceFile

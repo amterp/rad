@@ -35,6 +35,7 @@ const (
 	NOpUnary    // unary operation (-x, not x)
 	NTernary    // condition ? true : false
 	NFallback   // left ?? right
+	NCatchExpr  // left catch right
 	NCall       // function call
 	NVarPath    // a.b[c].d - flat segment chain
 	NIdentifier // variable name
@@ -96,6 +97,7 @@ var nodeKindNames = [...]string{
 	NOpUnary:         "OpUnary",
 	NTernary:         "Ternary",
 	NFallback:        "Fallback",
+	NCatchExpr:       "CatchExpr",
 	NCall:            "Call",
 	NVarPath:         "VarPath",
 	NIdentifier:      "Identifier",

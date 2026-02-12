@@ -31,10 +31,11 @@ B: [12, 13] PS: [0, 12] PE: [0, 13]                                 delegate: ad
 B: [12, 13] PS: [0, 12] PE: [0, 13]                                   delegate: mult_expr
 B: [12, 13] PS: [0, 12] PE: [0, 13]                                     delegate: unary_expr
 B: [12, 13] PS: [0, 12] PE: [0, 13]                                       delegate: fallback_expr
-B: [12, 13] PS: [0, 12] PE: [0, 13]                                         delegate: indexed_expr
-B: [12, 13] PS: [0, 12] PE: [0, 13]                                           root: primary_expr
-B: [12, 13] PS: [0, 12] PE: [0, 13]                                             literal
-B: [12, 13] PS: [0, 12] PE: [0, 13]                                               int `5`
+B: [12, 13] PS: [0, 12] PE: [0, 13]                                         delegate: catch_expr
+B: [12, 13] PS: [0, 12] PE: [0, 13]                                           delegate: indexed_expr
+B: [12, 13] PS: [0, 12] PE: [0, 13]                                             root: primary_expr
+B: [12, 13] PS: [0, 12] PE: [0, 13]                                               literal
+B: [12, 13] PS: [0, 12] PE: [0, 13]                                                 int `5`
 B: [14, 31] PS: [1,  0] PE: [1, 17]   assign
 B: [14, 17] PS: [1,  0] PE: [1,  3]     left: var_path
 B: [14, 17] PS: [1,  0] PE: [1,  3]       root: identifier `one`
@@ -63,15 +64,17 @@ B: [26, 31] PS: [1, 12] PE: [1, 17]                                   delegate: 
 B: [26, 27] PS: [1, 12] PE: [1, 13]                                     left: mult_expr
 B: [26, 27] PS: [1, 12] PE: [1, 13]                                       delegate: unary_expr
 B: [26, 27] PS: [1, 12] PE: [1, 13]                                         delegate: fallback_expr
-B: [26, 27] PS: [1, 12] PE: [1, 13]                                           delegate: var_path
-B: [26, 27] PS: [1, 12] PE: [1, 13]                                             root: identifier `x`
+B: [26, 27] PS: [1, 12] PE: [1, 13]                                           delegate: catch_expr
+B: [26, 27] PS: [1, 12] PE: [1, 13]                                             delegate: var_path
+B: [26, 27] PS: [1, 12] PE: [1, 13]                                               root: identifier `x`
 B: [28, 29] PS: [1, 14] PE: [1, 15]                                     op: * `*`
 B: [30, 31] PS: [1, 16] PE: [1, 17]                                     right: unary_expr
 B: [30, 31] PS: [1, 16] PE: [1, 17]                                       delegate: fallback_expr
-B: [30, 31] PS: [1, 16] PE: [1, 17]                                         delegate: indexed_expr
-B: [30, 31] PS: [1, 16] PE: [1, 17]                                           root: primary_expr
-B: [30, 31] PS: [1, 16] PE: [1, 17]                                             literal
-B: [30, 31] PS: [1, 16] PE: [1, 17]                                               int `2`
+B: [30, 31] PS: [1, 16] PE: [1, 17]                                         delegate: catch_expr
+B: [30, 31] PS: [1, 16] PE: [1, 17]                                           delegate: indexed_expr
+B: [30, 31] PS: [1, 16] PE: [1, 17]                                             root: primary_expr
+B: [30, 31] PS: [1, 16] PE: [1, 17]                                               literal
+B: [30, 31] PS: [1, 16] PE: [1, 17]                                                 int `2`
 B: [32, 52] PS: [2,  0] PE: [2, 20]   assign
 B: [32, 35] PS: [2,  0] PE: [2,  3]     left: var_path
 B: [32, 35] PS: [2,  0] PE: [2,  3]       root: identifier `two`
@@ -103,13 +106,15 @@ B: [47, 52] PS: [2, 15] PE: [2, 20]                                   delegate: 
 B: [47, 48] PS: [2, 15] PE: [2, 16]                                     left: mult_expr
 B: [47, 48] PS: [2, 15] PE: [2, 16]                                       delegate: unary_expr
 B: [47, 48] PS: [2, 15] PE: [2, 16]                                         delegate: fallback_expr
-B: [47, 48] PS: [2, 15] PE: [2, 16]                                           delegate: var_path
-B: [47, 48] PS: [2, 15] PE: [2, 16]                                             root: identifier `x`
+B: [47, 48] PS: [2, 15] PE: [2, 16]                                           delegate: catch_expr
+B: [47, 48] PS: [2, 15] PE: [2, 16]                                             delegate: var_path
+B: [47, 48] PS: [2, 15] PE: [2, 16]                                               root: identifier `x`
 B: [49, 50] PS: [2, 17] PE: [2, 18]                                     op: * `*`
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                     right: unary_expr
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                       delegate: fallback_expr
-B: [51, 52] PS: [2, 19] PE: [2, 20]                                         delegate: var_path
-B: [51, 52] PS: [2, 19] PE: [2, 20]                                           root: identifier `y`
+B: [51, 52] PS: [2, 19] PE: [2, 20]                                         delegate: catch_expr
+B: [51, 52] PS: [2, 19] PE: [2, 20]                                           delegate: var_path
+B: [51, 52] PS: [2, 19] PE: [2, 20]                                             root: identifier `y`
 
 ### STDERR ###
 PS: [0,  0] PE: [2, 20] SourceFile

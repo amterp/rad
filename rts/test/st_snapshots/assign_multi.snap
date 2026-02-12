@@ -23,12 +23,13 @@ B: [10, 18] PS: [0, 10] PE: [0, 18]               delegate: add_expr
 B: [10, 18] PS: [0, 10] PE: [0, 18]                 delegate: mult_expr
 B: [10, 18] PS: [0, 10] PE: [0, 18]                   delegate: unary_expr
 B: [10, 18] PS: [0, 10] PE: [0, 18]                     delegate: fallback_expr
-B: [10, 18] PS: [0, 10] PE: [0, 18]                       delegate: indexed_expr
-B: [10, 18] PS: [0, 10] PE: [0, 18]                         root: primary_expr
-B: [10, 18] PS: [0, 10] PE: [0, 18]                           call
-B: [10, 16] PS: [0, 10] PE: [0, 16]                             func: identifier `myFunc`
-B: [16, 17] PS: [0, 16] PE: [0, 17]                             ( `(`
-B: [17, 18] PS: [0, 17] PE: [0, 18]                             ) `)`
+B: [10, 18] PS: [0, 10] PE: [0, 18]                       delegate: catch_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                         delegate: indexed_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                           root: primary_expr
+B: [10, 18] PS: [0, 10] PE: [0, 18]                             call
+B: [10, 16] PS: [0, 10] PE: [0, 16]                               func: identifier `myFunc`
+B: [16, 17] PS: [0, 16] PE: [0, 17]                               ( `(`
+B: [17, 18] PS: [0, 17] PE: [0, 18]                               ) `)`
 
 ### STDERR ###
 PS: [0,  0] PE: [0, 18] SourceFile

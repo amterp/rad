@@ -495,19 +495,19 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 
 	case *rl.Fallback:
 		var leftResult EvalResult
-		panicked := false
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					if _, ok := r.(*RadPanic); ok {
-						panicked = true
-					} else {
-						panic(r)
-					}
-				}
-			}()
+		panicked := i.evalCatchingPanic(func() {
 			leftResult = i.eval(n.Left)
-		}()
+		})
+		if panicked {
+			return i.eval(n.Right)
+		}
+		return leftResult
+
+	case *rl.CatchExpr:
+		var leftResult EvalResult
+		panicked := i.evalCatchingPanic(func() {
+			leftResult = i.eval(n.Left)
+		})
 		if panicked {
 			return i.eval(n.Right)
 		}
@@ -760,6 +760,24 @@ func (i *Interpreter) evalAssign(n *rl.Assign) EvalResult {
 		return i.assignRightsToLefts(n.Targets, n.Values, true, n.UpdateEnclosing)
 	}
 	return i.assignRightsToLefts(n.Targets, n.Values, false, n.UpdateEnclosing)
+}
+
+// evalCatchingPanic runs fn, catching any RadPanic. Returns true if a panic was caught.
+// Non-RadPanic panics are re-raised. Used by ?? and catch to handle errors gracefully.
+func (i *Interpreter) evalCatchingPanic(fn func()) (panicked bool) {
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				if _, ok := r.(*RadPanic); ok {
+					panicked = true
+				} else {
+					panic(r)
+				}
+			}
+		}()
+		fn()
+	}()
+	return
 }
 
 // emitDiagnostic renders a diagnostic and exits with error code 1.

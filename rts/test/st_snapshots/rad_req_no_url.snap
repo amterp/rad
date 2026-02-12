@@ -14,8 +14,9 @@ B: [13, 19] PS: [1,  4] PE: [1, 10]       fields `fields`
 B: [20, 24] PS: [1, 11] PE: [1, 15]       mult_expr
 B: [20, 24] PS: [1, 11] PE: [1, 15]         delegate: unary_expr
 B: [20, 24] PS: [1, 11] PE: [1, 15]           delegate: fallback_expr
-B: [20, 24] PS: [1, 11] PE: [1, 15]             delegate: var_path
-B: [20, 24] PS: [1, 11] PE: [1, 15]               root: identifier `Name`
+B: [20, 24] PS: [1, 11] PE: [1, 15]             delegate: catch_expr
+B: [20, 24] PS: [1, 11] PE: [1, 15]               delegate: var_path
+B: [20, 24] PS: [1, 11] PE: [1, 15]                 root: identifier `Name`
 B: [24, 25] PS: [1, 15] PE: [1, 16]       , `,`
 B: [26, 29] PS: [1, 17] PE: [1, 20]     identifier `Age`
 
