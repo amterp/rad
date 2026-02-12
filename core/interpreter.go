@@ -498,7 +498,7 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 		panicked := i.evalCatchingPanic(func() {
 			leftResult = i.eval(n.Left)
 		})
-		if panicked {
+		if panicked || leftResult.Val.IsNull() {
 			return i.eval(n.Right)
 		}
 		return leftResult

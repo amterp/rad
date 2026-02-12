@@ -58,5 +58,5 @@ Mixed with fallback
 ### INPUT ###
 print(parse_int("bad") catch null ?? "default")
 ### STDOUT ###
-null
+default
 

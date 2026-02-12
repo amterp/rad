@@ -1038,7 +1038,7 @@ item not in collection  // Check if item doesn't exist
 
 ### Coalescing Operator (`??`)
 
-The `??` operator yields the left value if it is **not an error**; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions.
+The `??` operator yields the left value if it is **not null or an error**; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions or handling nullable values.
 
 ```rad
 count = get_env("COUNT").parse_int() ?? 0
