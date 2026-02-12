@@ -765,18 +765,16 @@ func (i *Interpreter) evalAssign(n *rl.Assign) EvalResult {
 // evalCatchingPanic runs fn, catching any RadPanic. Returns true if a panic was caught.
 // Non-RadPanic panics are re-raised. Used by ?? and catch to handle errors gracefully.
 func (i *Interpreter) evalCatchingPanic(fn func()) (panicked bool) {
-	func() {
-		defer func() {
-			if r := recover(); r != nil {
-				if _, ok := r.(*RadPanic); ok {
-					panicked = true
-				} else {
-					panic(r)
-				}
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(*RadPanic); ok {
+				panicked = true
+			} else {
+				panic(r)
 			}
-		}()
-		fn()
+		}
 	}()
+	fn()
 	return
 }
 
