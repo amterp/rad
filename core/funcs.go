@@ -61,6 +61,7 @@ const (
 	FUNC_SPLIT              = "split"
 	FUNC_RANGE              = "range"
 	FUNC_UNIQUE             = "unique"
+	FUNC_INDEX_OF           = "index_of"
 	FUNC_CONFIRM            = "confirm"
 	FUNC_INPUT              = "input"
 	FUNC_PARSE_JSON         = "parse_json"
@@ -634,6 +635,26 @@ func init() {
 				}
 
 				return f.Return(output)
+			},
+		},
+		{
+			Name: FUNC_INDEX_OF,
+			Execute: func(f FuncInvocation) RadValue {
+				subject := f.GetArg("_subject")
+				target := f.GetArg("_target")
+				n := f.GetInt("n")
+				start := f.GetInt("start")
+
+				switch v := subject.Val.(type) {
+				case RadString:
+					targetStr := target.RequireStr(f.i, f.callNode)
+					return f.Return(findStringOccurrence(v.Plain(), targetStr.Plain(), int(n), int(start)))
+				case *RadList:
+					return f.Return(findListOccurrence(v, target, int(n), int(start)))
+				default:
+					bugIncorrectTypes(FUNC_INDEX_OF)
+					panic(UNREACHABLE)
+				}
 			},
 		},
 		{
@@ -2051,4 +2072,79 @@ func extractMinMaxNums(f FuncInvocation, funcName string) ([]float64, bool, *Rad
 
 func bugIncorrectTypes(funcName string) {
 	panic(fmt.Sprintf("Bug! Switch cases should line up with %q definition", funcName))
+}
+
+// findStringOccurrence finds the n-th occurrence of target in s starting from start.
+// All positions are rune-based (not byte-based) for consistency with Rad's string model.
+// Non-overlapping matches. Returns nil if not found or target is empty.
+func findStringOccurrence(s, target string, n, start int) any {
+	if target == "" {
+		return nil
+	}
+
+	sRunes := []rune(s)
+	tRunes := []rune(target)
+
+	if start < 0 {
+		start = 0
+	}
+	if start > len(sRunes) {
+		return nil
+	}
+
+	var positions []int
+	for i := start; i <= len(sRunes)-len(tRunes); i++ {
+		match := true
+		for j := range tRunes {
+			if sRunes[i+j] != tRunes[j] {
+				match = false
+				break
+			}
+		}
+		if match {
+			positions = append(positions, i)
+			i += len(tRunes) - 1 // non-overlapping: skip past match
+		}
+	}
+
+	return nthFromPositions(positions, n)
+}
+
+// findListOccurrence finds the n-th occurrence of target in list starting from start.
+func findListOccurrence(list *RadList, target RadValue, n, start int) any {
+	if start < 0 {
+		start = 0
+	}
+	if start >= list.LenInt() {
+		return nil
+	}
+
+	var positions []int
+	for idx := start; idx < list.LenInt(); idx++ {
+		if list.Values[idx].Equals(target) {
+			positions = append(positions, idx)
+		}
+	}
+
+	return nthFromPositions(positions, n)
+}
+
+// nthFromPositions returns the n-th element from a positions slice.
+// n >= 0: forward (0=first), n < 0: backward (-1=last).
+// Returns nil if out of range.
+func nthFromPositions(positions []int, n int) any {
+	if len(positions) == 0 {
+		return nil
+	}
+	if n >= 0 {
+		if n < len(positions) {
+			return int64(positions[n])
+		}
+		return nil
+	}
+	idx := len(positions) + n
+	if idx < 0 {
+		return nil
+	}
+	return int64(positions[idx])
 }
