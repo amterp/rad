@@ -67,6 +67,11 @@ func (v RadValue) Index(i *Interpreter, node rl.Node, key RadValue) RadValue {
 		return coerced.Values[corrected]
 	case *RadMap:
 		return coerced.GetByKey(i, node, key)
+	case RadNull:
+		errVal := newRadValue(i, node,
+			NewErrorStrf("Cannot index into null").SetCode(rl.ErrCannotIndex))
+		i.NewRadPanic(node, errVal).Panic()
+		panic(UNREACHABLE)
 	default:
 		i.emitErrorf(rl.ErrCannotIndex, node, "Indexing not supported for %s", TypeAsString(v))
 		panic(UNREACHABLE)

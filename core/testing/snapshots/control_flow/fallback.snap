@@ -127,7 +127,7 @@ m = {"exists": null, "other": 1}
 print(m["exists"] ?? "fallback")
 print(m["missing"] ?? "fallback")
 ### STDOUT ###
-null
+fallback
 fallback
 
 ### TITLE ###
@@ -174,7 +174,7 @@ list = [null, 1, 2]
 print(list[0] ?? "fallback")
 print(list[10] ?? "fallback")
 ### STDOUT ###
-null
+fallback
 fallback
 
 ### TITLE ###
@@ -195,4 +195,33 @@ print(s[1] ?? "default")
 ### STDOUT ###
 default
 e
+
+### TITLE ###
+Null literal
+### INPUT ###
+print(null ?? "default")
+### STDOUT ###
+default
+
+### TITLE ###
+Null variable
+### INPUT ###
+x = null
+print(x ?? 5)
+### STDOUT ###
+5
+
+### TITLE ###
+Null chained
+### INPUT ###
+print(null ?? null ?? "final")
+### STDOUT ###
+final
+
+### TITLE ###
+Non-null passes through
+### INPUT ###
+print("hello" ?? "default")
+### STDOUT ###
+hello
 
