@@ -13,7 +13,8 @@ In this section, we'll explore:
 
 - **Error propagation** - how errors bubble up by default (and why scripts exit)
 - **The `catch:` block** - handle errors with full control (logging, reassignment, exit)
-- **The `??` operator** - shorthand for simple fallback values
+- **The `??` operator** - shorthand for fallback values on null or error
+- **The `catch` operator** - like `??`, but only catches errors (null passes through)
 - **Creating errors** - using `error()` in your own functions
 - **Error type unions** - making fallible operations explicit with `T|error` type annotations
 
@@ -191,28 +192,60 @@ timeout = parse_int(get_env("TIMEOUT")) ?? 30
 max_retries = parse_int(config["retries"]) ?? 5
 ```
 
-The `??` operator uses **lazy evaluation** - the right side is only evaluated if the left side returns an error. This means you can even call functions on the right:
+`??` fires when the left side is **null or an error**, making it a null-coalescing operator:
 
 ```rad
+name = user["name"] ?? "anonymous"   // handles both missing keys and null values
 config = read_file(config_path) ?? get_default_config()
 ```
 
-### Comparing `??` and `catch`
+The right side uses **lazy evaluation** - it's only evaluated if the left side is null or an error. This means you can safely call functions on the right without worrying about unnecessary work.
 
-These two are roughly equivalent:
+This makes `??` useful for safely drilling into nested data. If any key along the way is missing or null, the whole expression falls back:
 
 ```rad
-// Using ??
-age = parse_int(age_str) ?? 0
-
-// Using catch:
-age = parse_int(age_str) catch:
-    age = 0
+name = response.user.profile.display_name ?? "anonymous"
 ```
 
-But `catch:` lets you log errors or do conditional handling:
+## The `catch` Operator
+
+The `catch` operator is similar to `??`, but **only catches errors** - null values pass through unchanged:
 
 ```rad
+age = parse_int(age_str) catch 0      // error -> 0, but null stays null
+data = parse_json(raw_input) catch {}  // parse failure -> empty map
+```
+
+This is useful when you want to handle errors but need to preserve null as a meaningful value:
+
+```rad
+m = {"key": null}
+m["key"] ?? "fallback"     // -> "fallback" (?? treats null as missing)
+m["key"] catch "fallback"  // -> null       (catch lets null through)
+```
+
+Like `??`, `catch` supports lazy evaluation and chaining:
+
+```rad
+result = risky_call() catch fallback_call() catch "final default"
+```
+
+!!! note "Not to be confused with `catch:` blocks"
+
+    The `catch` operator is an inline expression. The `catch:` block (with a colon) is a statement-level construct covered [above](#catch-blocks) that gives you full control, including logging and conditional exit.
+
+### Comparing `??`, `catch`, and `catch:`
+
+These three give you different levels of control:
+
+```rad
+// ?? - fallback on null or error
+age = parse_int(age_str) ?? 0
+
+// catch - fallback on error only (null passes through)
+age = parse_int(age_str) catch 0
+
+// catch: block - full control (logging, conditional handling)
 age = parse_int(age_str) catch:
     print_err("Invalid age '{age_str}': {age}")
     age = 0
@@ -220,8 +253,9 @@ age = parse_int(age_str) catch:
 
 !!! tip "When to use which"
 
-    Use `??` when you just need a default value and don't care about logging or inspecting the error.
-    Use `catch:` when you need to log the error, perform conditional logic, including whether to exit.
+    Use `??` when you want a default for both null and error cases.
+    Use `catch` when you only want to handle errors and null is a valid value.
+    Use `catch:` when you need to log, inspect, or conditionally handle the error.
 
 ## Creating Your Own Errors
 
@@ -283,9 +317,12 @@ Rad's error handling model gives you the tools to write robust scripts that hand
     - Variable contains the error string inside the block
     - You can log errors, provide fallbacks, or call `exit()`
     - Execution continues unless you explicitly exit
-- **`??` operator** provides concise fallbacks with lazy evaluation
+- **`??` operator** provides concise fallbacks on null or error
     - Use for simple cases without logging
-    - Right side only evaluated if left side errors
+    - Right side only evaluated if left side is null or errors
+- **`catch` operator** provides fallbacks on error only
+    - Null values pass through unchanged
+    - Useful when null is a meaningful value you want to preserve
 - **Create errors** with `error("message")` in your own functions
 - **Type unions** (`T|error`) make fallible operations explicit in function signatures
 
