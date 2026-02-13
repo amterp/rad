@@ -1880,6 +1880,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#error-catching-operator-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Catching Operator (catch)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3323,6 +3334,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#error-catching-operator-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Catching Operator (catch)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4506,11 +4528,18 @@ not a       // Logical NOT
 item not in collection  // Check if item doesn&#39;t exist
 </code></pre></div>
 <h3 id="coalescing-operator">Coalescing Operator (<code>??</code>)<a class="headerlink" href="#coalescing-operator" title="Permanent link">&para;</a></h3>
-<p>The <code>??</code> operator yields the left value if it is <strong>not an error</strong>; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions.</p>
+<p>The <code>??</code> operator yields the left value if it is <strong>not null or an error</strong>; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions or handling nullable values.</p>
 <div class="highlight"><pre><span></span><code>count = get_env(&quot;COUNT&quot;).parse_int() ?? 0
 data = read_file(&quot;config.txt&quot;) ?? {&quot;content&quot;: &quot;&quot;}
 a, b = some_fallible_fn() ?? [0, 0]  // multi-return requires list fallback
 </code></pre></div>
+<h3 id="error-catching-operator-catch">Error Catching Operator (<code>catch</code>)<a class="headerlink" href="#error-catching-operator-catch" title="Permanent link">&para;</a></h3>
+<p>The <code>catch</code> operator catches errors from the left side and returns the right side instead. Unlike <code>??</code>, it only catches errors - <code>null</code> values pass through.</p>
+<div class="highlight"><pre><span></span><code>count = parse_int(input_str) catch 0
+data = parse_json(raw) catch {}
+result = risky_call() catch fallback_call() catch &quot;final&quot;
+</code></pre></div>
+<p><code>catch</code> is distinct from the <code>catch:</code> block syntax. The operator form is an inline expression, while <code>catch:</code> is a block attached to statements.</p>
 <h2 id="scoping-and-variables">Scoping and Variables<a class="headerlink" href="#scoping-and-variables" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>// Global scope
 global_var = &quot;global&quot;

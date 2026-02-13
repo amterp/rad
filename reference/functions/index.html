@@ -1526,6 +1526,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#index_of" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        index_of
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#trim" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3025,6 +3036,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#index_of" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        index_of
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#trim" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4378,6 +4400,56 @@ split(&quot;abc123def&quot;, &quot;\\d+&quot;)     // -&gt; [&quot;abc&quot;, &q
 <div class="highlight"><pre><span></span><code>count(&quot;hello world&quot;, &quot;l&quot;)     // -&gt; 3
 count(&quot;banana&quot;, &quot;na&quot;)         // -&gt; 2
 count(&quot;test&quot;, &quot;xyz&quot;)          // -&gt; 0
+</code></pre></div>
+<h3 id="index_of">index_of<a class="headerlink" href="#index_of" title="Permanent link">&para;</a></h3>
+<p>Finds the index of a target value within a string or list. Returns <code>null</code> if not found.</p>
+<div class="highlight"><pre><span></span><code>index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -&gt; int?
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_subject</code></td>
+<td><code>str\|list</code></td>
+<td>The string or list to search within</td>
+</tr>
+<tr>
+<td><code>_target</code></td>
+<td><code>any</code></td>
+<td>The value to search for</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td><code>int = 0</code></td>
+<td>Which occurrence to find (0=first, 1=second, -1=last)</td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td><code>int = 0</code></td>
+<td>Position to start searching from</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// String search
+&quot;hello world hello&quot;.index_of(&quot;hello&quot;)           // -&gt; 0
+&quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=1)      // -&gt; 12
+&quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=-1)     // -&gt; 12
+&quot;hello&quot;.index_of(&quot;xyz&quot;)                         // -&gt; null
+&quot;hello&quot;.index_of(&quot;xyz&quot;) ?? -1                   // -&gt; -1
+&quot;hello&quot;.index_of(&quot;&quot;)                             // -&gt; null (empty target)
+
+// List search
+[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b&quot;, &quot;a&quot;].index_of(&quot;b&quot;)        // -&gt; 1
+[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b&quot;, &quot;a&quot;].index_of(&quot;b&quot;, n=-1)  // -&gt; 3
+[1, 2, 3].index_of(99)                          // -&gt; null
 </code></pre></div>
 <h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
 <p>Strips all matching characters from both ends of a string. Preserves color attributes.</p>

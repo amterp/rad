@@ -1191,6 +1191,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-now-fires-on-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: ?? Now Fires on Null
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: ?? Now Fires on Null">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-catch-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New: catch Operator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1415,6 +1498,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-now-fires-on-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: ?? Now Fires on Null
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: ?? Now Fires on Null">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-catch-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New: catch Operator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1446,7 +1612,7 @@
 
 
 <h1 id="migrating-to-rad-v09">Migrating to Rad v0.9<a class="headerlink" href="#migrating-to-rad-v09" title="Permanent link">&para;</a></h1>
-<p>Version 0.9 renames <code>get_stash_dir</code> to <code>get_stash_path</code>. This guide will help you update your scripts.</p>
+<p>Version 0.9 introduces changes to error handling operators and renames a built-in function. This guide covers what changed and how to update your scripts.</p>
 <h2 id="breaking-change-get_stash_dir-renamed">Breaking Change: <code>get_stash_dir</code> Renamed<a class="headerlink" href="#breaking-change-get_stash_dir-renamed" title="Permanent link">&para;</a></h2>
 <h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
 <p><code>get_stash_dir</code> was renamed to <code>get_stash_path</code> to better reflect its behavior - it returns a <em>path</em> (often to a file), not necessarily a directory.</p>
@@ -1463,6 +1629,32 @@ path = get_stash_path(&quot;data/config.json&quot;)
 <li><strong>Find all uses of <code>get_stash_dir</code></strong> in your scripts</li>
 <li><strong>Replace with <code>get_stash_path</code></strong> - the signature and behavior are identical</li>
 </ol>
+<h2 id="breaking-change-now-fires-on-null">Breaking Change: <code>??</code> Now Fires on Null<a class="headerlink" href="#breaking-change-now-fires-on-null" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_1">What Changed<a class="headerlink" href="#what-changed_1" title="Permanent link">&para;</a></h3>
+<p><code>??</code> is now a true null-coalescing operator. It fires when the left side is <strong>null or an error</strong>, where previously it only fired on errors.</p>
+<h3 id="before-v08">Before (v0.8)<a class="headerlink" href="#before-v08" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
+print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // printed: null
+print(null ?? &quot;default&quot;)         // printed: null
+</code></pre></div>
+<h3 id="after-v09">After (v0.9)<a class="headerlink" href="#after-v09" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
+print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // prints: fallback
+print(null ?? &quot;default&quot;)         // prints: default
+</code></pre></div>
+<h3 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h3>
+<p>This aligns <code>??</code> with developer expectations from JS/Kotlin/Swift where <code>??</code> is a null-coalescing operator. The old error-only behavior is now available via the new <code>catch</code> operator (see below).</p>
+<h3 id="migration">Migration<a class="headerlink" href="#migration" title="Permanent link">&para;</a></h3>
+<p>If you relied on null passing through <code>??</code>, use <code>catch</code> instead:</p>
+<div class="highlight"><pre><span></span><code>// If you want error-only catching (old behavior), use catch:
+result = maybe_error_value catch &quot;default&quot;
+</code></pre></div>
+<h2 id="new-catch-operator">New: <code>catch</code> Operator<a class="headerlink" href="#new-catch-operator" title="Permanent link">&para;</a></h2>
+<p>The <code>catch</code> operator provides the old <code>??</code> error-only behavior as an inline expression. It catches errors but lets null values pass through.</p>
+<div class="highlight"><pre><span></span><code>count = parse_int(input_str) catch 0
+data = parse_json(raw) catch {}
+</code></pre></div>
+<p>This is distinct from the <code>catch:</code> block syntax. The operator form is an inline expression; <code>catch:</code> is a block attached to statements.</p>
 <h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
 <p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
 <div class="highlight"><pre><span></span><code>error: Cannot invoke unknown function: get_stash_dir

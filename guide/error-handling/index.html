@@ -686,14 +686,25 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The ?? Operator">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-catch-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The catch Operator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The catch Operator">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#comparing-and-catch" class="md-nav__link">
+  <a href="#comparing-catch-and-catch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparing ?? and catch
+        Comparing ??, catch, and catch:
       
     </span>
   </a>
@@ -1501,14 +1512,25 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The ?? Operator">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-catch-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The catch Operator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The catch Operator">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#comparing-and-catch" class="md-nav__link">
+  <a href="#comparing-catch-and-catch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparing ?? and catch
+        Comparing ??, catch, and catch:
       
     </span>
   </a>
@@ -1584,7 +1606,8 @@ and you can decide how to handle them. This makes error handling explicit, predi
 <ul>
 <li><strong>Error propagation</strong> - how errors bubble up by default (and why scripts exit)</li>
 <li><strong>The <code>catch:</code> block</strong> - handle errors with full control (logging, reassignment, exit)</li>
-<li><strong>The <code>??</code> operator</strong> - shorthand for simple fallback values</li>
+<li><strong>The <code>??</code> operator</strong> - shorthand for fallback values on null or error</li>
+<li><strong>The <code>catch</code> operator</strong> - like <code>??</code>, but only catches errors (null passes through)</li>
 <li><strong>Creating errors</strong> - using <code>error()</code> in your own functions</li>
 <li><strong>Error type unions</strong> - making fallible operations explicit with <code>T|error</code> type annotations</li>
 </ul>
@@ -1744,27 +1767,49 @@ delete_path(temp_file) catch:
 timeout = parse_int(get_env(&quot;TIMEOUT&quot;)) ?? 30
 max_retries = parse_int(config[&quot;retries&quot;]) ?? 5
 </code></pre></div>
-<p>The <code>??</code> operator uses <strong>lazy evaluation</strong> - the right side is only evaluated if the left side returns an error. This means you can even call functions on the right:</p>
-<div class="highlight"><pre><span></span><code>config = read_file(config_path) ?? get_default_config()
+<p><code>??</code> fires when the left side is <strong>null or an error</strong>, making it a null-coalescing operator:</p>
+<div class="highlight"><pre><span></span><code>name = user[&quot;name&quot;] ?? &quot;anonymous&quot;   // handles both missing keys and null values
+config = read_file(config_path) ?? get_default_config()
 </code></pre></div>
-<h3 id="comparing-and-catch">Comparing <code>??</code> and <code>catch</code><a class="headerlink" href="#comparing-and-catch" title="Permanent link">&para;</a></h3>
-<p>These two are roughly equivalent:</p>
-<div class="highlight"><pre><span></span><code>// Using ??
+<p>The right side uses <strong>lazy evaluation</strong> - it's only evaluated if the left side is null or an error. This means you can safely call functions on the right without worrying about unnecessary work.</p>
+<p>This makes <code>??</code> useful for safely drilling into nested data. If any key along the way is missing or null, the whole expression falls back:</p>
+<div class="highlight"><pre><span></span><code>name = response.user.profile.display_name ?? &quot;anonymous&quot;
+</code></pre></div>
+<h2 id="the-catch-operator">The <code>catch</code> Operator<a class="headerlink" href="#the-catch-operator" title="Permanent link">&para;</a></h2>
+<p>The <code>catch</code> operator is similar to <code>??</code>, but <strong>only catches errors</strong> - null values pass through unchanged:</p>
+<div class="highlight"><pre><span></span><code>age = parse_int(age_str) catch 0      // error -&gt; 0, but null stays null
+data = parse_json(raw_input) catch {}  // parse failure -&gt; empty map
+</code></pre></div>
+<p>This is useful when you want to handle errors but need to preserve null as a meaningful value:</p>
+<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
+m[&quot;key&quot;] ?? &quot;fallback&quot;     // -&gt; &quot;fallback&quot; (?? treats null as missing)
+m[&quot;key&quot;] catch &quot;fallback&quot;  // -&gt; null       (catch lets null through)
+</code></pre></div>
+<p>Like <code>??</code>, <code>catch</code> supports lazy evaluation and chaining:</p>
+<div class="highlight"><pre><span></span><code>result = risky_call() catch fallback_call() catch &quot;final default&quot;
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Not to be confused with <code>catch:</code> blocks</p>
+<p>The <code>catch</code> operator is an inline expression. The <code>catch:</code> block (with a colon) is a statement-level construct covered <a href="#catch-blocks">above</a> that gives you full control, including logging and conditional exit.</p>
+</div>
+<h3 id="comparing-catch-and-catch">Comparing <code>??</code>, <code>catch</code>, and <code>catch:</code><a class="headerlink" href="#comparing-catch-and-catch" title="Permanent link">&para;</a></h3>
+<p>These three give you different levels of control:</p>
+<div class="highlight"><pre><span></span><code>// ?? - fallback on null or error
 age = parse_int(age_str) ?? 0
 
-// Using catch:
+// catch - fallback on error only (null passes through)
+age = parse_int(age_str) catch 0
+
+// catch: block - full control (logging, conditional handling)
 age = parse_int(age_str) catch:
-    age = 0
-</code></pre></div>
-<p>But <code>catch:</code> lets you log errors or do conditional handling:</p>
-<div class="highlight"><pre><span></span><code>age = parse_int(age_str) catch:
     print_err(&quot;Invalid age &#39;{age_str}&#39;: {age}&quot;)
     age = 0
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">When to use which</p>
-<p>Use <code>??</code> when you just need a default value and don't care about logging or inspecting the error.
-Use <code>catch:</code> when you need to log the error, perform conditional logic, including whether to exit.</p>
+<p>Use <code>??</code> when you want a default for both null and error cases.
+Use <code>catch</code> when you only want to handle errors and null is a valid value.
+Use <code>catch:</code> when you need to log, inspect, or conditionally handle the error.</p>
 </div>
 <h2 id="creating-your-own-errors">Creating Your Own Errors<a class="headerlink" href="#creating-your-own-errors" title="Permanent link">&para;</a></h2>
 <p>When writing your own functions, you can return errors using the <code>error(str)</code> function.
@@ -1835,9 +1880,14 @@ Error unions are just one application of Rad's union type system.</p>
 <li>Execution continues unless you explicitly exit</li>
 </ul>
 </li>
-<li><strong><code>??</code> operator</strong> provides concise fallbacks with lazy evaluation<ul>
+<li><strong><code>??</code> operator</strong> provides concise fallbacks on null or error<ul>
 <li>Use for simple cases without logging</li>
-<li>Right side only evaluated if left side errors</li>
+<li>Right side only evaluated if left side is null or errors</li>
+</ul>
+</li>
+<li><strong><code>catch</code> operator</strong> provides fallbacks on error only<ul>
+<li>Null values pass through unchanged</li>
+<li>Useful when null is a meaningful value you want to preserve</li>
 </ul>
 </li>
 <li><strong>Create errors</strong> with <code>error("message")</code> in your own functions</li>
