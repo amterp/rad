@@ -29,21 +29,20 @@ default_column = "uncommitted"
   color = "#3b82f6"
   description = "Ready to be picked up next"
   limit = 10
-  card_ids = ["a_HboNpova", "a_GT8i8577", "a_HboPA8Un", "3d8ASr9Z", "3d8AUEYG", "a_EWsD8PlZ", "a_EZTGHdMN", "a_HbosXnXC", "a_HbovaesL", "a_HbouMjPG"]
+  card_ids = ["a_Eh1BMRDB", "a_GT8i8577", "a_HboPA8Un", "3d8ASr9Z", "3d8AUEYG", "a_EWsD8PlZ", "a_EZTGHdMN", "a_HbosXnXC", "a_PEsAsXMW"]
 
 [[columns]]
   name = "in-progress"
   color = "#ec4899"
   description = "Currently being worked on"
   limit = 5
-  card_ids = ["a_Eh1BMRDB"]
 
 [[columns]]
   name = "done"
   color = "#9333ea"
   description = "Completed work"
   limit = 0
-  card_ids = ["3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs"]
+  card_ids = ["a_O2fs6W0y", "a_O54MpsBn", "a_HboNpova", "a_O29nuorv", "a_HbouMjPG", "a_HbovaesL", "3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs"]
 
 [custom_fields]
   [custom_fields.labels]

@@ -1,15 +1,15 @@
 {
   "_v": 1,
-  "alias": "add-find-index-of-string",
+  "alias": "add-index-of-built",
   "alias_explicit": false,
   "created_at_millis": 1769827695266,
   "creator": "Alexander Terp",
-  "description": "Missing common string operation to find position of substring. Python has str.find(), JS has indexOf().",
+  "description": "Add an index_of() built-in function for finding the position of a substring in a string, or an element in a list.\n\n  Signature:\n\n    index_of(_subject: str|list, _target: str|any, *, n: int = 0, start: int = 0) -\u003e int?\n\n  Behavior:\n  - For strings: returns the position of _target substring within _subject.\n  - For lists: returns the index of _target element within _subject.\n  - Returns null when not found.\n  - Errors on invalid input (e.g. _target is not a string when _subject is a string).\n\n  Parameters:\n  - n (default 0): which occurrence to find, using standard 0-based indexing with negative support.\n    - n=0: first occurrence (default)\n    - n=1: second occurrence\n    - n=-1: last occurrence\n    - n=-2: second-to-last occurrence\n    Think of it as indexing into the virtual list of all occurrences.\n    Returns null if there aren't enough occurrences for the given n.\n  - start (default 0): position in _subject to start searching from. Useful for scanning forward through matches.\n\n  Return value:\n  - int position on match, null on not-found.\n  - Null return chosen over -1 because -1 is a valid negative index in Rad. If a user forgets to check the result and uses it as an index, null will error immediately (safe), whereas -1 would silently access the last element (dangerous).\n  - Null return integrates cleanly with the planned ?? broadening (firing on null + error), so users can write: pos = text.index_of(\"x\") ?? -1\n\n  Usage examples:\n\n    text = \"hello world hello\"\n\n    text.index_of(\"hello\")           // 0\n    text.index_of(\"hello\", n=1)      // 12\n    text.index_of(\"hello\", n=-1)     // 12\n    text.index_of(\"xyz\")             // null\n    text.index_of(\"hello\") ?? -1     // 0 (with planned ?? broadening)\n    text.index_of(\"xyz\") ?? -1       // -1\n\n    items = [\"a\", \"b\", \"c\", \"b\", \"a\"]\n    items.index_of(\"b\")              // 1\n    items.index_of(\"b\", n=-1)        // 3\n    items.index_of(\"z\")              // null\n\n  Design rationale:\n  - Named index_of over find because it's more explicit about returning a position, consistent with Rad's descriptive naming (starts_with, ends_with, trim_prefix).\n  - Single function with n parameter replaces need for separate index_of/last_index_of pair, and generalizes to nth occurrence.\n  - n uses 0-based indexing with negative support to match Rad's existing indexing conventions everywhere else.\n  - Works on both str and list, consistent with len(), reverse(), sort() working across types.\n\n  Depends on:\n  - Ideally lands after ?? broadening (null + error) for best ergonomics, but can ship independently since the function works fine with if pos != null: checks.",
   "id": "a_HboNpova",
   "labels": [
     "ai-hi"
   ],
-  "title": "Add find()/index_of() string function",
+  "title": "Add index_of() built-in function",
   "type": "feature",
-  "updated_at_millis": 1770438067705
+  "updated_at_millis": 1770779078643
 }
