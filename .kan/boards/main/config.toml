@@ -15,7 +15,7 @@ default_column = "uncommitted"
   color = "#94a3b8"
   description = "Low priority planned work"
   limit = 0
-  card_ids = ["3d85QGFR", "3d85RHxy", "3d85TpNT", "3d85Vi7I", "3d85Ws2E", "3d85YCoR", "3d85Zqab", "3d85bYFo", "a_Heej1CTH", "3d85ckSt", "3d85enYO", "3d85fMBW", "3d85hlUq", "3d85jvBW", "3d85kzHi", "a_HboxvvmE", "3d85mV5B", "3d8AGJft", "3d8AO5Z9", "3d8AKFEv", "3d8AMb43", "3d85nJ1T", "3d85pkAG", "3d85qF7m", "3d85sULU", "3d85uQRo", "3d85wCoF", "3d85xyMD", "3d85zwZf", "3d860tXI", "3d862dKr", "3d864O9N", "3d865FkE", "3d867daO", "3d868DUH", "3d86ADAd", "3d86C4hs", "3d86DKDN", "3d86FNlc", "3d86HsKo", "3d86I4Cr", "3d86Kdty", "3d86Mdk2", "3d86NRgk", "3d86PibU", "3d86RZda", "3d86Sd1U", "3d86UxgB", "3d86WCsI", "3d86XAAi", "3d86ZXYs", "3d86bcRl", "3d86coV6", "3d86edd6", "3d86gKOI", "3d86hRJb", "3d86jcsm", "3d86l0G5", "3d86n7oZ", "3d86oQ4d", "3d86qFCh", "3d86sGRb", "3d86tRs6", "3d86vFax", "3d86xlf9", "3d86yjfx", "3d870RKK", "3d872dkM", "3d874Otu", "3d875LOU", "3d877Jh9", "3d87983L", "3d87AzzH", "3d87CTcJ", "3d87Ee6W", "3d87Fqau", "3d87HJpe", "3d87JdN3", "3d87LSdR", "3d87NSqY", "3d87OKLo", "3d87QvKy", "3d87S7Ln", "3d87U3zz", "3d87VS8N", "3d87Xv4l", "3d87Z9Xw", "3d87bJ2r", "3d87d1lm", "3d87fppg", "3d87gsFD", "3d87ix7p", "3d87kukJ", "3d87md1r", "3d87nkXL", "3d87pqXK", "3d87re33", "3d87tyqy", "3d87vqbF", "3d87xw1E", "3d87yWRL", "3d880E6J", "3d882dnj", "3d884yMj", "3d886ZF5", "3d887dJl", "3d889aSO", "3d88BxLv", "3d88DNYX", "3d88FCaM", "3d88GExh", "3d88JmZT", "3d88Ldvj", "3d88WEsR", "3d88Y3HF", "3d88aOxC", "3d88cpbz", "3d88egCn", "3d88fjks", "3d88hrCT", "3d88j0yP", "3d88lcVf", "3d88plSz", "3d88toYc", "3d88vhGU", "3d88wbMk", "3d88ySZP", "3d890wzo", "3d892ivy", "3d894JFD", "3d896544", "3d897PqS", "3d899YvN", "3d89BfD3", "3d89Dv35", "a_E6hd8xrW"]
+  card_ids = ["3d85QGFR", "3d85RHxy", "3d85TpNT", "3d85Vi7I", "3d85Ws2E", "3d85YCoR", "3d85Zqab", "3d85bYFo", "a_Heej1CTH", "3d85ckSt", "3d85enYO", "3d85fMBW", "3d85hlUq", "3d85jvBW", "3d85kzHi", "a_HboxvvmE", "3d85mV5B", "3d8AGJft", "3d8AO5Z9", "3d8AKFEv", "3d8AMb43", "3d85nJ1T", "3d85pkAG", "3d85qF7m", "3d85sULU", "3d85uQRo", "3d85wCoF", "3d85xyMD", "3d85zwZf", "3d860tXI", "3d862dKr", "3d864O9N", "3d865FkE", "3d867daO", "3d868DUH", "3d86C4hs", "3d86DKDN", "3d86FNlc", "3d86HsKo", "3d86I4Cr", "3d86Kdty", "3d86Mdk2", "3d86NRgk", "3d86PibU", "3d86RZda", "3d86Sd1U", "3d86UxgB", "3d86WCsI", "3d86XAAi", "3d86ZXYs", "3d86bcRl", "3d86coV6", "3d86edd6", "3d86gKOI", "3d86hRJb", "3d86jcsm", "3d86l0G5", "3d86n7oZ", "3d86oQ4d", "3d86qFCh", "3d86sGRb", "3d86tRs6", "3d86vFax", "3d86xlf9", "3d86yjfx", "3d870RKK", "3d872dkM", "3d874Otu", "3d875LOU", "3d877Jh9", "3d87983L", "3d87AzzH", "3d87CTcJ", "3d87Ee6W", "3d87Fqau", "3d87HJpe", "3d87JdN3", "3d87LSdR", "3d87NSqY", "3d87OKLo", "3d87QvKy", "3d87S7Ln", "3d87U3zz", "3d87VS8N", "3d87Xv4l", "3d87Z9Xw", "3d87bJ2r", "3d87d1lm", "3d87fppg", "3d87gsFD", "3d87ix7p", "3d87kukJ", "3d87md1r", "3d87nkXL", "3d87pqXK", "3d87re33", "3d87tyqy", "3d87vqbF", "3d87xw1E", "3d87yWRL", "3d880E6J", "3d882dnj", "3d884yMj", "3d886ZF5", "3d887dJl", "3d889aSO", "3d88BxLv", "3d88DNYX", "3d88FCaM", "3d88GExh", "3d88JmZT", "3d88Ldvj", "3d88WEsR", "3d88Y3HF", "3d88aOxC", "3d88cpbz", "3d88egCn", "3d88fjks", "3d88hrCT", "3d88j0yP", "3d88lcVf", "3d88plSz", "3d88toYc", "3d88vhGU", "3d88wbMk", "3d88ySZP", "3d890wzo", "3d892ivy", "3d894JFD", "3d896544", "3d897PqS", "3d899YvN", "3d89BfD3", "3d89Dv35", "a_E6hd8xrW"]
 
 [[columns]]
   name = "high"
@@ -29,7 +29,7 @@ default_column = "uncommitted"
   color = "#3b82f6"
   description = "Ready to be picked up next"
   limit = 10
-  card_ids = ["a_Eh1BMRDB", "a_GT8i8577", "a_HboPA8Un", "3d8ASr9Z", "3d8AUEYG", "a_EWsD8PlZ", "a_EZTGHdMN", "a_HbosXnXC", "a_PEsAsXMW"]
+  card_ids = ["a_Eh1BMRDB", "a_GT8i8577", "a_HboPA8Un", "3d8ASr9Z", "3d8AUEYG", "a_EWsD8PlZ", "a_EZTGHdMN", "a_HbosXnXC"]
 
 [[columns]]
   name = "in-progress"
@@ -42,7 +42,7 @@ default_column = "uncommitted"
   color = "#9333ea"
   description = "Completed work"
   limit = 0
-  card_ids = ["a_O2fs6W0y", "a_O54MpsBn", "a_HboNpova", "a_O29nuorv", "a_HbouMjPG", "a_HbovaesL", "3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs"]
+  card_ids = ["a_PEsAsXMW", "a_O2fs6W0y", "a_O54MpsBn", "a_HboNpova", "a_O29nuorv", "a_HbouMjPG", "a_HbovaesL", "3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs", "3d86ADAd"]
 
 [custom_fields]
   [custom_fields.labels]

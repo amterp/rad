@@ -1,12 +1,12 @@
 {
   "_v": 1,
-  "alias": "rad-369-catch-else-syntax",
+  "alias": "rad-369-catch-else",
   "alias_explicit": false,
   "created_at_millis": 1767762151695,
   "creator": "Alexander Terp",
+  "description": "Problem:\n\n  When a sequence of fallible operations should be treated as a unit - where failure at any step means the same thing - the current catch:\n  suffix forces awkward patterns:\n\n  benchmark_data = null\n  benchmark_file = read_file(\"/tmp/benchmark-comparison.json\") catch:\n      print(\"⚠️ Benchmark data not available: {benchmark_file}\")\n      benchmark_file = null\n  if benchmark_file != null:\n      benchmark_data = parse_json(benchmark_file.content) catch:\n          print(\"⚠️ Could not parse benchmark data: {benchmark_data}\")\n          benchmark_data = null\n\n  The intent is simple - \"try to load and parse benchmark data; if anything goes wrong, move on\" - but expressing it requires\n  pre-initialization, null reassignment inside catch, and a disconnected if guard for the success path. Two blocks expressing one logical\n  idea.\n\n  Proposal:\n\n  A block-level try:/catch: construct that guards multiple statements as a unit:\n\n  benchmark_data = null\n  try:\n      benchmark_file = read_file(\"/tmp/benchmark-comparison.json\")\n      benchmark_data = parse_json(benchmark_file.content)\n  catch:\n      print(\"⚠️ Benchmark data not available\")\n\n  If any statement in the try: block errors, execution jumps to catch:. If all succeed, catch: is skipped and execution continues after the\n  block. Variables assigned in try: are visible in the surrounding scope.\n\n  This complements the existing statement-level catch: suffix rather than replacing it. Statement-level catch: remains better for single\n  operations with specific fallbacks (e.g. x = parse_int(s) catch: x = 0). try: is for guarding a sequence.\n\n  Open design question:\n\n  What does the catch: block receive? With statement-level catch:, the target variable holds the error string. In a try: block, the error\n  could come from any statement. Options:\n\n  - A dedicated error variable (e.g. implicitly bound err)\n  - The variable that was being assigned when the error occurred (but which one is it?)\n  - No automatic binding - use a different mechanism to inspect the error\n\n  Considered alternative: catch:/ok: blocks\n\n  An ok: success arm on the existing statement-level catch: was also considered. It solves the two-statement case cleanly but nests for chains\n   of three or more fallible operations, causing rightward drift. try: stays flat regardless of chain length, and the common case is guarding\n  a sequence uniformly rather than needing per-step error differentiation.",
   "id": "3d89xbij",
   "title": "RAD-369: catch-else syntax",
   "type": "feature",
-  "updated_at_millis": 1767762151695,
-  "description": "maybe we need a try block, to allow guarding a whole block?"
+  "updated_at_millis": 1771040535022
 }
