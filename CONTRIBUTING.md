@@ -140,7 +140,7 @@ Rad targets Linux, macOS, and Windows. To keep scripts portable across platforms
 
 **Path Normalization**: All paths exposed to user code use forward slashes (`/`), regardless of the host OS. This is handled by `NormalizePath()` in [`core/common/platform.go`](./core/common/platform.go). Any function that returns a path to user code should normalize it before returning.
 
-**Line Ending Normalization**: Text content read from files is normalized to Unix-style line endings (`\n`). This ensures consistent string processing across platforms. Binary reads are not normalized. Use `NormalizeLineEndings()` for text content.
+**Line Ending Normalization**: `NormalizeLineEndings()` is used only for Rad script source code, not user data. Functions that return user content (e.g. `read_file()`) preserve it as-is to avoid corrupting round-trips.
 
 **Platform Helpers**: All platform-specific behavior is centralized in [`core/common/platform.go`](./core/common/platform.go). If you need to add platform-specific logic, add it there rather than scattering `runtime.GOOS` checks throughout the codebase.
 

@@ -91,7 +91,7 @@ func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string,
 		if err != nil {
 			return NoScript, "", fmt.Errorf("Could not read from stdin: %v", err)
 		}
-		return StdinScript, string(source), nil
+		return StdinScript, NormalizeLineEndings(string(source)), nil
 	}
 
 	// Skip flags (anything starting with -)

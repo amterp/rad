@@ -118,8 +118,8 @@ delete_path("data/test_write_platform.txt")
 	assertNoErrors(t)
 }
 
-// Test that read_file normalizes line endings in text mode
-func Test_Platform_ReadFileNormalizesLineEndings(t *testing.T) {
+// Test that read_file preserves line endings (no normalization of user data)
+func Test_Platform_ReadFilePreservesLineEndings(t *testing.T) {
 	// Create a test file with actual Windows line endings (CRLF) using Go
 	testFile := "data/crlf_test.txt"
 	crlfContent := []byte("line1\r\nline2\r\nline3")
@@ -128,19 +128,18 @@ func Test_Platform_ReadFileNormalizesLineEndings(t *testing.T) {
 	}
 	defer os.Remove(testFile)
 
-	// Read it back via Rad - should have normalized line endings
+	// Read it back via Rad - CRLF should be preserved, split_lines handles them
 	script := `
 result = read_file("data/crlf_test.txt")
-// Original: "line1\r\nline2\r\nline3" = 5+2+5+2+5 = 19 chars
-// After normalization: "line1\nline2\nline3" = 5+1+5+1+5 = 17 chars
-lines = result.content.split("\n")
-print(len(lines))
+// "line1\r\nline2\r\nline3" = 5+2+5+2+5 = 19 chars (preserved)
+lines = result.content.split_lines()
 print(len(result.content))
+print(len(lines))
 `
 	setupAndRunCode(t, script, "--color=never")
-	// 3 lines, 17 characters after normalization (19 - 2 CRs removed)
-	expected := `3
-17
+	// 19 characters preserved (CRLFs not stripped), split_lines gives 3 lines
+	expected := `19
+3
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 	assertNoErrors(t)

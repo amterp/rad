@@ -59,6 +59,7 @@ const (
 	FUNC_VALUES             = "values"
 	FUNC_TRUNCATE           = "truncate"
 	FUNC_SPLIT              = "split"
+	FUNC_SPLIT_LINES        = "split_lines"
 	FUNC_RANGE              = "range"
 	FUNC_UNIQUE             = "unique"
 	FUNC_INDEX_OF           = "index_of"
@@ -304,6 +305,7 @@ func init() {
 		FuncPickFromResource,
 		FuncMultipick,
 		FuncSplit,
+		FuncSplitLines,
 		FuncRange,
 		FuncColorize,
 		{
@@ -1101,8 +1103,7 @@ func init() {
 
 					switch strings.ToLower(mode) {
 					case constText:
-						// Normalize line endings for consistent cross-platform text handling
-						resultMap.SetPrimitiveStr(constContent, NormalizeLineEndings(string(data)))
+						resultMap.SetPrimitiveStr(constContent, string(data))
 					case constBytes:
 						byteList := NewRadList()
 						for _, b := range data {
@@ -1184,8 +1185,7 @@ func init() {
 					return f.Return(NewErrorStrf("Failed to read from stdin: %v", err).SetCode(rl.ErrStdinRead))
 				}
 
-				// Normalize line endings for consistent cross-platform text handling
-				return f.Return(NormalizeLineEndings(string(data)))
+				return f.Return(string(data))
 			},
 		},
 		{
@@ -1464,7 +1464,7 @@ func init() {
 					return f.Return(NewErrorStrf(errMsg))
 				}
 
-				output.SetPrimitiveStr(constContent, NormalizeLineEndings(loadResult.Content))
+				output.SetPrimitiveStr(constContent, loadResult.Content)
 				output.SetPrimitiveBool(constCreated, false)
 				return f.Return(output) // signal existed
 			},
