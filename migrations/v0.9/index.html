@@ -1274,6 +1274,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-strict-concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: Strict + Concatenation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: Strict + Concatenation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1581,6 +1653,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-strict-concatenation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: Strict + Concatenation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: Strict + Concatenation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1655,6 +1799,38 @@ result = maybe_error_value catch &quot;default&quot;
 data = parse_json(raw) catch {}
 </code></pre></div>
 <p>This is distinct from the <code>catch:</code> block syntax. The operator form is an inline expression; <code>catch:</code> is a block attached to statements.</p>
+<h2 id="breaking-change-strict-concatenation">Breaking Change: Strict <code>+</code> Concatenation<a class="headerlink" href="#breaking-change-strict-concatenation" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_2">What Changed<a class="headerlink" href="#what-changed_2" title="Permanent link">&para;</a></h3>
+<p>The <code>+</code> operator no longer implicitly converts <code>int</code>, <code>float</code>, or <code>bool</code> to strings. Both operands must be the same type (with the exception that errors behave like strings for concatenation).</p>
+<h3 id="before-v08_1">Before (v0.8)<a class="headerlink" href="#before-v08_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // printed: count: 5
+print(&quot;pi: &quot; + 3.14)       // printed: pi: 3.14
+print(&quot;flag: &quot; + true)     // printed: flag: true
+
+err = error(&quot;oops&quot;)
+print(err + 123)            // printed: oops123
+</code></pre></div>
+<h3 id="after-v09_1">After (v0.9)<a class="headerlink" href="#after-v09_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // error: RAD30002
+print(&quot;pi: &quot; + 3.14)       // error: RAD30002
+print(&quot;flag: &quot; + true)     // error: RAD30002
+
+err = error(&quot;oops&quot;)
+print(err + 123)            // error: RAD30002
+</code></pre></div>
+<h3 id="why_1">Why<a class="headerlink" href="#why_1" title="Permanent link">&para;</a></h3>
+<p>Implicit coercion was asymmetric (<code>"hi" + 5</code> worked, but <code>5 + "hi"</code> errored) and used a different conversion path from string interpolation. Making <code>+</code> strict catches type bugs at the point of error rather than silently producing unexpected strings.</p>
+<h3 id="migration_1">Migration<a class="headerlink" href="#migration_1" title="Permanent link">&para;</a></h3>
+<p>Use interpolation (preferred) or <code>str()</code> for explicit conversion:</p>
+<div class="highlight"><pre><span></span><code>// Interpolation - handles any type, recommended
+print(&quot;count: {5}&quot;)
+print(&quot;pi: {3.14}&quot;)
+
+// Explicit conversion with str()
+print(&quot;count: &quot; + str(5))
+print(&quot;pi: &quot; + str(3.14))
+</code></pre></div>
+<p>Note: errors still behave like strings for concatenation (<code>"s" + error("e")</code>, <code>error("e") + "s"</code>, and <code>error("a") + error("b")</code> all work).</p>
 <h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
 <p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
 <div class="highlight"><pre><span></span><code>error: Cannot invoke unknown function: get_stash_dir

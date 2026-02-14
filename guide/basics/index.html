@@ -2507,7 +2507,17 @@ print(&quot;charlie&quot; in scores)  // false
 print(&quot;alice&quot; not in names)  // false
 </code></pre></div>
 <h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
-<p>You can concatenate strings with <code>+</code>.</p>
+<p>To combine strings with other types, use <strong>string interpolation</strong> - it handles any type automatically:</p>
+<div class="highlight"><pre><span></span><code>count = 5
+pi = 3.14
+print(&quot;count: {count}, pi: {pi}&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>count: 5, pi: 3.14
+</code></pre></div>
+</div>
+
+<p>For joining strings together, you can also use the <code>+</code> operator:</p>
 <div class="highlight"><pre><span></span><code>first = &quot;Alice&quot;
 last = &quot;Bobson&quot;
 print(first + &quot; &quot; + last)
@@ -2517,10 +2527,7 @@ print(first + &quot; &quot; + last)
 </code></pre></div>
 </div>
 
-<p>However, string interpolation is generally more readable:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;{first} {last}&quot;)
-</code></pre></div>
-<p>You can concatenate strings with non-strings by converting them to strings first using the <a href="../../reference/functions/#str"><code>str</code></a> function:</p>
+<p>The <code>+</code> operator requires both sides to be strings (errors also work, since they behave like strings for concatenation). To concatenate non-string values with <code>+</code>, convert them explicitly using <a href="../../reference/functions/#str"><code>str</code></a>:</p>
 <div class="highlight"><pre><span></span><code>a = 1
 text = &quot;. Bullet point one&quot;
 print(str(a) + text)

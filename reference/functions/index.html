@@ -4113,7 +4113,7 @@ type_of(3.14)    // -&gt; &quot;float&quot;
 type_of({&quot;a&quot;: 1}) // -&gt; &quot;map&quot;
 </code></pre></div>
 <h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
-<p>Converts any value to a string representation.</p>
+<p>Converts any value to a string representation. Useful when you need to concatenate non-string values with <code>+</code>, though interpolation (<code>"value: {x}"</code>) is generally preferred.</p>
 <div class="highlight"><pre><span></span><code>str(_var: any) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>str(42)        // -&gt; &quot;42&quot;
