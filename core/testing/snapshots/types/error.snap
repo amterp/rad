@@ -65,31 +65,62 @@ false
 true
 
 ### TITLE ###
-Numeric operations
+Numeric concat errors
 ### INPUT ###
 
 err = error("error")
-
-// concatenation with numbers
 print(err + 123)
-print(err + 3.14)
-### STDOUT ###
-error123
-error3.14
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'error + int'
+  --> <script>:3:7
+  |
+2 | err = error("error")
+3 | print(err + 123)
+  |       ^^^^^^^^^
+  |
+   = info: rad explain RAD30002
 
+
+### EXIT ###
+1
 ### TITLE ###
-Boolean operations
+Float concat errors
 ### INPUT ###
 
 err = error("error")
+print(err + 3.14)
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'error + float'
+  --> <script>:3:7
+  |
+2 | err = error("error")
+3 | print(err + 3.14)
+  |       ^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
 
-// concatenation with booleans
+
+### EXIT ###
+1
+### TITLE ###
+Boolean concat errors
+### INPUT ###
+
+err = error("error")
 print(err + true)
-print(err + false)
-### STDOUT ###
-errortrue
-errorfalse
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'error + bool'
+  --> <script>:3:7
+  |
+2 | err = error("error")
+3 | print(err + true)
+  |       ^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
 
+
+### EXIT ###
+1
 ### TITLE ###
 Collection operations
 ### INPUT ###

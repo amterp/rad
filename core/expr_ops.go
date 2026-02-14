@@ -277,20 +277,8 @@ func (i *Interpreter) executeOp(
 			}
 		case int64:
 			switch op {
-			case rl.OpAdd:
-				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			case rl.OpMul:
 				return coercedLeft.Repeat(coercedRight)
-			}
-		case float64:
-			switch op {
-			case rl.OpAdd:
-				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight)) // todo check formatting
-			}
-		case bool:
-			switch op {
-			case rl.OpAdd:
-				return coercedLeft.ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case *RadList:
 			switch op {
@@ -407,21 +395,6 @@ func (i *Interpreter) executeOp(
 				return coercedLeft.Equals(coercedRight)
 			case rl.OpNeq:
 				return !coercedLeft.Equals(coercedRight)
-			}
-		case int64:
-			switch op {
-			case rl.OpAdd:
-				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
-			}
-		case float64:
-			switch op {
-			case rl.OpAdd:
-				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
-			}
-		case bool:
-			switch op {
-			case rl.OpAdd:
-				return coercedLeft.Msg().ConcatStr(fmt.Sprintf("%v", coercedRight))
 			}
 		case *RadList:
 			switch op {

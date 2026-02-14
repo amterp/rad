@@ -520,7 +520,21 @@ print("alice" not in names)  // false
 
 ### Concatenation
 
-You can concatenate strings with `+`.
+To combine strings with other types, use **string interpolation** - it handles any type automatically:
+
+```rad
+count = 5
+pi = 3.14
+print("count: {count}, pi: {pi}")
+```
+
+<div class="result">
+```
+count: 5, pi: 3.14
+```
+</div>
+
+For joining strings together, you can also use the `+` operator:
 
 ```rad
 first = "Alice"
@@ -534,13 +548,7 @@ Alice Bobson
 ```
 </div>
 
-However, string interpolation is generally more readable:
-
-```rad
-print("{first} {last}")
-```
-
-You can concatenate strings with non-strings by converting them to strings first using the [`str`](../reference/functions.md#str) function:
+The `+` operator requires both sides to be strings (errors also work, since they behave like strings for concatenation). To concatenate non-string values with `+`, convert them explicitly using [`str`](../reference/functions.md#str):
 
 ```rad
 a = 1

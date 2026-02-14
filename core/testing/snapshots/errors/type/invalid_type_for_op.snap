@@ -16,3 +16,51 @@ error[RAD30002]: Invalid operand types: cannot do 'int + str'
 
 ### EXIT ###
 1
+### TITLE ###
+String plus int
+### INPUT ###
+print("count: " + 5)
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + int'
+  --> <script>:1:7
+  |
+1 | print("count: " + 5)
+  |       ^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+String plus float
+### INPUT ###
+print("pi: " + 3.14)
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + float'
+  --> <script>:1:7
+  |
+1 | print("pi: " + 3.14)
+  |       ^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1
+### TITLE ###
+String plus bool
+### INPUT ###
+print("flag: " + true)
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + bool'
+  --> <script>:1:7
+  |
+1 | print("flag: " + true)
+  |       ^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD30002
+
+
+### EXIT ###
+1

@@ -300,7 +300,7 @@ type_of({"a": 1}) // -> "map"
 
 ### str
 
-Converts any value to a string representation.
+Converts any value to a string representation. Useful when you need to concatenate non-string values with `+`, though interpolation (`"value: {x}"`) is generally preferred.
 
 ```rad
 str(_var: any) -> str
