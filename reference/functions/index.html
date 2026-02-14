@@ -1515,6 +1515,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#split_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        split_lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#count" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3025,6 +3036,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#split_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        split_lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#count" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4393,6 +4415,21 @@ truncate(&quot;test&quot;, 0)          // -&gt; Error: Requires at least 1
 split(&quot;word1 word2&quot;, &quot;\\s+&quot;)   // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
 split(&quot;abc123def&quot;, &quot;\\d+&quot;)     // -&gt; [&quot;abc&quot;, &quot;def&quot;]
 </code></pre></div>
+<h3 id="split_lines">split_lines<a class="headerlink" href="#split_lines" title="Permanent link">&para;</a></h3>
+<p>Splits a string by line endings. Handles all common styles: <code>\n</code> (Unix), <code>\r\n</code> (Windows), and <code>\r</code> (legacy Mac).</p>
+<div class="highlight"><pre><span></span><code>split_lines(_val: str) -&gt; list[str]
+</code></pre></div>
+<p>Use this instead of <code>split("\n")</code> when processing text that may come from different platforms.</p>
+<div class="highlight"><pre><span></span><code>&quot;a\nb\nc&quot;.split_lines()          // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+content = read_file(&quot;data.txt&quot;).content
+for line in content.split_lines():
+    print(line)
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A trailing line ending produces an empty string as the last element (same as <code>split()</code>).
+Trim first if unwanted: <code>content.trim().split_lines()</code>.</p>
+</div>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
 <p>Counts the number of non-overlapping instances of substring in string.</p>
 <div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
@@ -5277,7 +5314,7 @@ if err:
 read_stdin()                  // -&gt; null (if not piped)
 read_stdin()                  // -&gt; Error 20026 if read fails
 content = read_stdin()
-lines = content.split(&quot;\n&quot;)   // Process stdin line-by-line
+lines = content.split_lines() // Process stdin line-by-line
 </code></pre></div>
 <h3 id="has_stdin">has_stdin<a class="headerlink" href="#has_stdin" title="Permanent link">&para;</a></h3>
 <p>Checks if stdin is piped to the script.</p>
