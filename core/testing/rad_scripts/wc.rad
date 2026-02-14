@@ -12,7 +12,7 @@ if not has_stdin():
 content = read_stdin()
 
 // Count lines
-line_list = content.split("\n")
+line_list = content.split_lines()
 line_count = len(line_list)
 
 // If -l flag, only print line count

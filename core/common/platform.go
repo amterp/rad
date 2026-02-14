@@ -16,10 +16,11 @@ import (
 // path to user code should call NormalizePath() before returning.
 //
 // LINE ENDING STRATEGY:
-// Rad normalizes line endings to Unix-style (\n) when reading text files.
-// This ensures consistent string processing across platforms. Binary file
-// reads are NOT normalized. Any function that reads text content should
-// call NormalizeLineEndings() on the result.
+// Rad normalizes line endings to Unix-style (\n) only for script source code
+// (reading .rad files and stdin scripts). User data read via read_file(),
+// read_stdin(), and load_stash_file() is NOT normalized - this preserves
+// data fidelity so that a read-then-write round-trip doesn't corrupt files.
+// Users who want line splitting that handles all endings can use split_lines().
 
 // NormalizePath converts OS-specific path separators to forward slashes.
 // This ensures Rad scripts are portable across platforms - forward slashes
@@ -31,9 +32,8 @@ func NormalizePath(path string) string {
 }
 
 // NormalizeLineEndings converts Windows-style line endings (\r\n) to Unix-style (\n).
-// This ensures consistent text handling across platforms.
 //
-// Call this on text content read from files before returning to user code.
+// Used for script source code only - not for user data.
 func NormalizeLineEndings(s string) string {
 	return strings.ReplaceAll(s, "\r\n", "\n")
 }
