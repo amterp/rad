@@ -88,6 +88,17 @@ true
 false
 
 ### TITLE ###
+In array int float cross type
+### INPUT ###
+print(2.0 in [1, 2, 3])
+print(2 in [1.0, 2.0, 3.0])
+print(2.5 in [1, 2, 3])
+### STDOUT ###
+true
+true
+false
+
+### TITLE ###
 Can nest in
 ### INPUT ###
 a = [true]

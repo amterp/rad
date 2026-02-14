@@ -128,3 +128,12 @@ print("hello 世界 world".index_of("world", start=9))
 ### STDOUT ###
 9
 
+### TITLE ###
+List int float cross type
+### INPUT ###
+print([1, 2, 3].index_of(2.0))
+print([1.0, 2.0, 3.0].index_of(2))
+### STDOUT ###
+1
+1
+

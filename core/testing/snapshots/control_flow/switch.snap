@@ -212,6 +212,19 @@ print(a)
 20
 
 ### TITLE ###
+Int float cross type matching
+### INPUT ###
+a = switch 2.0:
+	case 2 -> "two"
+print(a)
+b = switch 2:
+	case 2.0 -> "two"
+print(b)
+### STDOUT ###
+two
+two
+
+### TITLE ###
 Can select case based on used vars
 ### SKIP ###
 syntax later became unsupported. here in case I change my mind.

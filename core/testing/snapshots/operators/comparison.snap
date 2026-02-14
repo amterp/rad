@@ -39,36 +39,34 @@ true
 
 ### TITLE ###
 Equality list
-### SKIP ###
-TODO RAD-92
 ### INPUT ###
 print([1, 2, 3] == [1, 2, 3])
 print([1, 2, 3] == [1, 2, 4])
 print([1, 2, 3] == [1, 2])
-print([1, 2, 3] == [1, 2, 3, [4])
-print([1, 2, 3, [4]] == [1, 2, 3, [4])
+print([1, 2, 3] == [1, 2, 3, [4]])
+print([1, 2, 3, [4]] == [1, 2, 3, [4]])
 ### STDOUT ###
 true
 false
 false
 false
 true
+
 ### TITLE ###
 Equality map
-### SKIP ###
-TODO RAD-92
 ### INPUT ###
 print({"a": 1, "b": 2} == {"a": 1, "b": 2})
 print({"a": 1, "b": 2} == {"a": 1, "b": 3})
 print({"a": 1, "b": 2} == {"a": 1})
 print({"a": 1, "b": 2} == {"a": 1, "b": 2, "c": {"d": 3}})
-print({"a": 1, "b": 2, {"d": 3}} == {"a": 1, "b": 2, "c": {"d": 3}})
+print({"a": 1, "b": 2, "c": {"d": 3}} == {"a": 1, "b": 2, "c": {"d": 3}})
 ### STDOUT ###
 true
 false
 false
 false
 true
+
 ### TITLE ###
 Equality mixed
 ### INPUT ###
@@ -248,4 +246,22 @@ false
 false
 true
 false
+
+### TITLE ###
+Not equality list
+### INPUT ###
+print([1, 2, 3] != [1, 2, 3])
+print([1, 2, 3] != [1, 2, 4])
+### STDOUT ###
+false
+true
+
+### TITLE ###
+Not equality map
+### INPUT ###
+print({"a": 1} != {"a": 1})
+print({"a": 1} != {"a": 2})
+### STDOUT ###
+false
+true
 

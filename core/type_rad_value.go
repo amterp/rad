@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"math"
+	"strconv"
 
 	"github.com/amterp/rad/rts/rl"
 )
@@ -243,7 +245,19 @@ func (v RadValue) Hash() string {
 	switch val := v.Val.(type) {
 	case RadString:
 		return val.Plain() // attributes don't impact hash
-	case int64, float64, bool:
+	case int64:
+		return fmt.Sprintf("%d", val)
+	case float64:
+		// Whole-number floats hash as int so e.g. 2.0 and 2 share a hash.
+		// Round-trip check ensures no precision loss near int64 boundaries.
+		if val == math.Trunc(val) && !math.IsInf(val, 0) && !math.IsNaN(val) {
+			asInt := int64(val)
+			if float64(asInt) == val {
+				return fmt.Sprintf("%d", asInt)
+			}
+		}
+		return strconv.FormatFloat(val, 'g', -1, 64)
+	case bool:
 		return fmt.Sprintf("%v", val)
 	case *RadError:
 		return val.Hash()
@@ -257,7 +271,22 @@ func (left RadValue) Equals(right RadValue) bool {
 	rightT := right.Type()
 
 	if leftT != rightT {
-		// todo should do bespoke float/int comparison
+		// int/float: compare as float64, with round-trip check for precision
+		if leftT == rl.RadIntT && rightT == rl.RadFloatT {
+			asFloat := float64(left.Val.(int64))
+			return asFloat == right.Val.(float64) && int64(asFloat) == left.Val.(int64)
+		}
+		if leftT == rl.RadFloatT && rightT == rl.RadIntT {
+			asFloat := float64(right.Val.(int64))
+			return left.Val.(float64) == asFloat && int64(asFloat) == right.Val.(int64)
+		}
+		// error/string: compare by plain text
+		if leftT == rl.RadErrorT && rightT == rl.RadStrT {
+			return left.Val.(*RadError).Msg().Plain() == right.Val.(RadString).Plain()
+		}
+		if leftT == rl.RadStrT && rightT == rl.RadErrorT {
+			return left.Val.(RadString).Plain() == right.Val.(*RadError).Msg().Plain()
+		}
 		return false
 	}
 

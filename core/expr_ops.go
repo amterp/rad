@@ -72,19 +72,11 @@ func (i *Interpreter) executeOp(
 		return right()
 	}
 
+	// Equality is centralized in RadValue.Equals() so that ==, in, switch,
+	// index_of, and deep collection comparison all agree on semantics.
 	if op == rl.OpEq || op == rl.OpNeq {
-		leftType := left().Type()
-		rightType := right().Type()
-		// Allow comparison between RadError and RadString
-		if leftType != rightType &&
-			!(leftType == rl.RadFloatT && rightType == rl.RadIntT) &&
-			!(leftType == rl.RadIntT && rightType == rl.RadFloatT) &&
-			!((leftType == rl.RadErrorT && rightType == rl.RadStrT) ||
-				(leftType == rl.RadStrT && rightType == rl.RadErrorT)) {
-			// different types are not equal
-			// UNLESS they're int/float or error/string, in which case we fall through to below and compare there
-			return op == rl.OpNeq
-		}
+		eq := left().Equals(right())
+		return (op == rl.OpEq) == eq
 	}
 
 	additionalErrMsg := ""
@@ -120,10 +112,6 @@ func (i *Interpreter) executeOp(
 				return coercedLeft < coercedRight
 			case rl.OpLte:
 				return coercedLeft <= coercedRight
-			case rl.OpEq:
-				return coercedLeft == coercedRight
-			case rl.OpNeq:
-				return coercedLeft != coercedRight
 			}
 		case float64:
 			switch op {
@@ -151,10 +139,6 @@ func (i *Interpreter) executeOp(
 				return float64(coercedLeft) < coercedRight
 			case rl.OpLte:
 				return float64(coercedLeft) <= coercedRight
-			case rl.OpEq:
-				return float64(coercedLeft) == coercedRight
-			case rl.OpNeq:
-				return float64(coercedLeft) != coercedRight
 			}
 		case RadString:
 			switch op {
@@ -209,10 +193,6 @@ func (i *Interpreter) executeOp(
 				return coercedLeft < float64(coercedRight)
 			case rl.OpLte:
 				return coercedLeft <= float64(coercedRight)
-			case rl.OpEq:
-				return coercedLeft == float64(coercedRight)
-			case rl.OpNeq:
-				return coercedLeft != float64(coercedRight)
 			}
 		case float64:
 			switch op {
@@ -240,10 +220,6 @@ func (i *Interpreter) executeOp(
 				return coercedLeft < coercedRight
 			case rl.OpLte:
 				return coercedLeft <= coercedRight
-			case rl.OpEq:
-				return coercedLeft == coercedRight
-			case rl.OpNeq:
-				return coercedLeft != coercedRight
 			}
 		case *RadList:
 			switch op {
@@ -266,10 +242,6 @@ func (i *Interpreter) executeOp(
 			switch op {
 			case rl.OpAdd:
 				return coercedLeft.Concat(coercedRight)
-			case rl.OpEq:
-				return coercedLeft.Equals(coercedRight)
-			case rl.OpNeq:
-				return !coercedLeft.Equals(coercedRight)
 			case rl.OpIn:
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			case rl.OpNotIn:
@@ -298,10 +270,6 @@ func (i *Interpreter) executeOp(
 			switch op {
 			case rl.OpAdd:
 				return coercedLeft.Concat(coercedRight.Msg())
-			case rl.OpEq:
-				return coercedLeft.Equals(coercedRight.Msg())
-			case rl.OpNeq:
-				return !coercedLeft.Equals(coercedRight.Msg())
 			case rl.OpIn:
 				return strings.Contains(coercedRight.Msg().Plain(), coercedLeft.Plain())
 			case rl.OpNotIn:
@@ -310,13 +278,6 @@ func (i *Interpreter) executeOp(
 		}
 	case bool:
 		switch coercedRight := rightV.(type) {
-		case bool:
-			switch op {
-			case rl.OpEq:
-				return coercedLeft == coercedRight
-			case rl.OpNeq:
-				return coercedLeft != coercedRight
-			}
 		case *RadList:
 			switch op {
 			case rl.OpIn:
@@ -364,13 +325,6 @@ func (i *Interpreter) executeOp(
 			case rl.OpNotIn:
 				return !coercedRight.ContainsKey(left())
 			}
-		case RadNull:
-			switch op {
-			case rl.OpEq:
-				return true
-			case rl.OpNeq:
-				return false
-			}
 		}
 	case *RadError:
 		switch coercedRight := rightV.(type) {
@@ -378,10 +332,6 @@ func (i *Interpreter) executeOp(
 			switch op {
 			case rl.OpAdd:
 				return coercedLeft.Msg().Concat(coercedRight)
-			case rl.OpEq:
-				return coercedLeft.Msg().Equals(coercedRight)
-			case rl.OpNeq:
-				return !coercedLeft.Msg().Equals(coercedRight)
 			case rl.OpIn:
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Msg().Plain())
 			case rl.OpNotIn:
@@ -391,10 +341,6 @@ func (i *Interpreter) executeOp(
 			switch op {
 			case rl.OpAdd:
 				return coercedLeft.Msg().Concat(coercedRight.Msg())
-			case rl.OpEq:
-				return coercedLeft.Equals(coercedRight)
-			case rl.OpNeq:
-				return !coercedLeft.Equals(coercedRight)
 			}
 		case *RadList:
 			switch op {
