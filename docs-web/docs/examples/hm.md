@@ -68,7 +68,7 @@ A personal cheatsheet manager.
 Store and retrieve help snippets for commands you forget.
 
 Usage:
-  hm [subcommand] [OPTIONS]
+  hm [command] [OPTIONS]
 
 Commands:
   edit   Edit or create a help entry for a topic.
@@ -134,7 +134,7 @@ script.
 
 ### Defining commands
 
-We'll use [script commands](../guide/script-commands.md) to organize our CLI into subcommands. Each command gets its own
+We'll use [script commands](../guide/script-commands.md) to organize our CLI into commands. Each command gets its own
 description and arguments:
 
 ```rad linenums="1" hl_lines="8-26"

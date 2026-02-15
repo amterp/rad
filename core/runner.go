@@ -165,10 +165,11 @@ func (r *RadRunner) setupRootCommand() {
 	RRootCmd = ra.NewCmd(cmdName)
 
 	RRootCmd.SetUsageHeaders(ra.UsageHeaders{
-		Usage:         "Usage:",
-		Commands:      "Commands:",
-		Arguments:     "Script args:",
-		GlobalOptions: "Global options:",
+		Usage:                 "Usage:",
+		Commands:              "Commands:",
+		Arguments:             "Script args:",
+		GlobalOptions:         "Global options:",
+		SubcommandPlaceholder: "command",
 	})
 
 	if r.scriptData == nil || !r.scriptData.DisableGlobalOpts {

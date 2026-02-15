@@ -89,6 +89,7 @@ seed_random
 sleep
 sort
 split
+split_lines
 starts_with
 str
 sum
