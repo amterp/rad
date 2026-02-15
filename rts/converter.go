@@ -1288,6 +1288,7 @@ func (c *converter) convertInterpolation(node *ts.Node) rl.StringSegment {
 
 func (c *converter) convertInterpolationFormat(node *ts.Node) *rl.InterpolationFormat {
 	thousandsSepNode := rl.GetChild(node, rl.F_THOUSANDS_SEPARATOR)
+	fillAlignNode := rl.GetChild(node, rl.F_FILL_ALIGNMENT)
 	alignmentNode := rl.GetChild(node, rl.F_ALIGNMENT)
 	paddingNode := rl.GetChild(node, rl.F_PADDING)
 	precisionNode := rl.GetChild(node, rl.F_PRECISION)
@@ -1296,12 +1297,24 @@ func (c *converter) convertInterpolationFormat(node *ts.Node) *rl.InterpolationF
 		ThousandsSeparator: thousandsSepNode != nil,
 	}
 
-	if alignmentNode != nil {
+	if fillAlignNode != nil {
+		src := c.getSrc(fillAlignNode)
+		runes := []rune(src)
+		format.FillChar = string(runes[0])
+		format.Alignment = string(runes[len(runes)-1])
+	} else if alignmentNode != nil {
 		format.Alignment = c.getSrc(alignmentNode)
 	}
 
 	if paddingNode != nil {
 		format.Padding = c.convertExpr(paddingNode)
+		// Zero-pad shorthand: leading 0 on width, no explicit fill char
+		if fillAlignNode == nil {
+			src := c.getSrc(paddingNode)
+			if len(src) > 1 && src[0] == '0' {
+				format.ZeroPad = true
+			}
+		}
 	}
 
 	if precisionNode != nil {
