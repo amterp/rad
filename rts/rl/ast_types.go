@@ -502,6 +502,8 @@ func (s StringSegment) Span() Span { return s.span }
 type InterpolationFormat struct {
 	ThousandsSeparator bool
 	Alignment          string // "<" for left, "" for right (default)
+	FillChar           string // explicit fill char from fill_alignment (e.g. "*" from :*>), "" if not specified
+	ZeroPad            bool   // :05 shorthand (any type; sign-aware for numbers) vs :0>5 (explicit fill)
 	Padding            Node   // padding width expression
 	Precision          Node   // precision expression
 }

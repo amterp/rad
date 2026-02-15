@@ -634,91 +634,155 @@ func (i *Interpreter) evalString(n *rl.LitString) RadString {
 func (i *Interpreter) formatInterpolation(seg rl.StringSegment, exprResult RadValue) RadString {
 	f := seg.Format
 	resultType := exprResult.Type()
-	// Use the interpolation segment's span for error reporting
 	strNode := rl.NewIdentifier(seg.Span(), "")
+	isNumeric := resultType == rl.RadIntT || resultType == rl.RadFloatT
 
-	var goFmt strings.Builder
-	goFmt.WriteString("%")
-
-	if f.Alignment == "<" {
-		goFmt.WriteString("-")
+	// Resolve effective fill character
+	fillChar := " "
+	if f.FillChar != "" {
+		fillChar = f.FillChar
+	} else if f.ZeroPad {
+		fillChar = "0"
 	}
 
-	if f.Padding != nil {
-		padding := i.eval(f.Padding).Val.RequireInt(i, f.Padding)
+	// Evaluate padding width
+	var padding int
+	hasPadding := f.Padding != nil
+	if hasPadding {
+		padding = int(i.eval(f.Padding).Val.RequireInt(i, f.Padding))
+	}
+
+	// ANSI-aware: invisible escape sequences shouldn't count toward visual width.
+	// Inflate the target so that fill characters compensate for the invisible bytes.
+	if hasPadding {
 		if exprStr, ok := exprResult.TryGetStr(); ok {
-			plainLen := exprStr.Len()
-			coloredLen := int64(com.StrLen(exprStr.String()))
-			diff := coloredLen - plainLen
-			padding += diff
+			padding += int(int64(com.StrLen(exprStr.String())) - exprStr.Len())
 		}
-		goFmt.WriteString(fmt.Sprint(padding))
 	}
 
-	if f.Precision != nil {
-		precision := i.eval(f.Precision).Val.RequireInt(i, f.Precision)
-		if resultType != rl.RadIntT && resultType != rl.RadFloatT {
+	// Evaluate precision
+	var precision int64
+	hasPrecision := f.Precision != nil
+	if hasPrecision {
+		precision = i.eval(f.Precision).Val.RequireInt(i, f.Precision)
+		if !isNumeric {
 			i.emitErrorf(rl.ErrCannotFormat, strNode, "Cannot format %s with a precision", TypeAsString(exprResult))
 		}
-		goFmt.WriteString(fmt.Sprintf(".%d", precision))
+		if precision < 0 {
+			i.emitErrorf(rl.ErrNumInvalidRange, strNode, "Precision cannot be negative: %d", precision)
+		}
 	}
 
-	formatted := func() string {
-		if f.ThousandsSeparator {
-			if resultType != rl.RadIntT && resultType != rl.RadFloatT {
-				i.emitErrorf(rl.ErrCannotFormat, strNode, "Cannot format %s with thousands separator ','", TypeAsString(exprResult))
-			}
+	if f.ThousandsSeparator && !isNumeric {
+		i.emitErrorf(rl.ErrCannotFormat, strNode, "Cannot format %s with thousands separator ','", TypeAsString(exprResult))
+	}
 
-			var s string
-			if f.Precision != nil {
-				p := int(i.eval(f.Precision).Val.RequireInt(i, f.Precision))
-				if p < 0 {
-					i.emitErrorf(rl.ErrNumInvalidRange, strNode, "Precision cannot be negative: %d", p)
-				}
-				if resultType == rl.RadIntT {
-					s = fmt.Sprintf("%.*f", p, float64(exprResult.Val.(int64)))
-				} else {
-					s = fmt.Sprintf("%.*f", p, exprResult.Val.(float64))
-				}
-			} else {
-				if resultType == rl.RadIntT {
-					s = fmt.Sprintf("%d", exprResult.Val.(int64))
-				} else {
-					s = strconv.FormatFloat(exprResult.Val.(float64), 'f', -1, 64)
-				}
-			}
-
-			s = addThousands(s)
-
-			if f.Padding != nil {
-				pad := int(i.eval(f.Padding).Val.RequireInt(i, f.Padding))
-				if f.Alignment == "<" {
-					return fmt.Sprintf("%-*s", pad, s)
-				}
-				return fmt.Sprintf("%*s", pad, s)
-			}
-			return s
+	// --- Step 1: Format value to plain string (no width, no thousands) ---
+	var plain string
+	switch resultType {
+	case rl.RadIntT:
+		if hasPrecision {
+			plain = fmt.Sprintf("%.*f", precision, float64(exprResult.Val.(int64)))
+		} else {
+			plain = fmt.Sprintf("%d", exprResult.Val.(int64))
 		}
-
-		switch resultType {
-		case rl.RadIntT:
-			if f.Precision == nil {
-				goFmt.WriteString("d")
-				return fmt.Sprintf(goFmt.String(), int(exprResult.Val.(int64)))
-			} else {
-				goFmt.WriteString("f")
-				return fmt.Sprintf(goFmt.String(), float64(exprResult.Val.(int64)))
-			}
-		case rl.RadFloatT:
-			goFmt.WriteString("f")
-			return fmt.Sprintf(goFmt.String(), exprResult.Val)
-		default:
-			goFmt.WriteString("s")
-			return fmt.Sprintf(goFmt.String(), ToPrintableQuoteStr(exprResult, false))
+	case rl.RadFloatT:
+		if hasPrecision {
+			plain = fmt.Sprintf("%.*f", precision, exprResult.Val.(float64))
+		} else if f.ThousandsSeparator {
+			// Thousands path: preserve original float precision
+			plain = strconv.FormatFloat(exprResult.Val.(float64), 'f', -1, 64)
+		} else {
+			plain = fmt.Sprintf("%f", exprResult.Val)
 		}
-	}()
+	default:
+		plain = ToPrintableQuoteStr(exprResult, false)
+	}
 
-	return NewRadString(formatted)
+	// --- Step 2: Apply thousands separator ---
+	if f.ThousandsSeparator {
+		if fillChar == "0" && hasPadding {
+			// Zero-pad + thousands: pad digits first, then insert commas
+			plain = zeroPadThousands(plain, padding)
+		} else {
+			plain = addThousands(plain)
+		}
+	}
+
+	// --- Step 3: Apply fill padding ---
+	// (zero-pad + thousands already handled width in step 2)
+	if hasPadding && !(f.ThousandsSeparator && fillChar == "0") {
+		leftAlign := f.Alignment == "<"
+		// Zero-pad shorthand is sign-aware: {-7:06} → "-00007"
+		// Explicit fill is not: {-7:0>6} → "0000-7"
+		signAware := f.ZeroPad && isNumeric && !leftAlign
+		plain = padWithFill(plain, padding, fillChar, leftAlign, signAware)
+	}
+
+	return NewRadString(plain)
+}
+
+// padWithFill pads a string to targetWidth using the given fill character.
+// When signAware is true, fill is inserted after the sign: "-" + fill + digits.
+func padWithFill(s string, targetWidth int, fill string, leftAlign bool, signAware bool) string {
+	currentLen := len([]rune(s))
+	if currentLen >= targetWidth {
+		return s
+	}
+	needed := targetWidth - currentLen
+	pad := strings.Repeat(fill, needed)
+	if leftAlign {
+		return s + pad
+	}
+	if signAware && len(s) > 0 && (s[0] == '-' || s[0] == '+') {
+		return string(s[0]) + pad + s[1:]
+	}
+	return pad + s
+}
+
+// zeroPadThousands handles the {x:010,} case: zero-pad digits, then insert commas.
+func zeroPadThousands(s string, targetWidth int) string {
+	sign := ""
+	num := s
+	if len(num) > 0 && (num[0] == '-' || num[0] == '+') {
+		sign, num = num[:1], num[1:]
+	}
+
+	// Split on decimal point
+	dot := strings.IndexByte(num, '.')
+	intPart, frac := num, ""
+	if dot >= 0 {
+		intPart, frac = num[:dot], num[dot:]
+	}
+
+	// Account for sign, frac, and commas in the target width.
+	// We need to find N digits such that: len(sign) + N + floor((N-1)/3) + len(frac) >= targetWidth
+	availWidth := targetWidth - len(sign) - len(frac)
+	if availWidth < len(intPart) {
+		// Already wider than target, just format normally
+		return sign + addThousands(num)
+	}
+
+	// Find N: number of integer digits needed so that N + floor((N-1)/3) >= availWidth
+	n := len(intPart)
+	for n+commaCount(n) < availWidth {
+		n++
+	}
+
+	// Zero-pad the integer part to N digits
+	if n > len(intPart) {
+		intPart = strings.Repeat("0", n-len(intPart)) + intPart
+	}
+
+	return sign + addThousands(intPart+frac)
+}
+
+// commaCount returns the number of commas that would be inserted into a digit string of length n.
+func commaCount(n int) int {
+	if n <= 1 {
+		return 0
+	}
+	return (n - 1) / 3
 }
 
 func addThousands(num string) string {

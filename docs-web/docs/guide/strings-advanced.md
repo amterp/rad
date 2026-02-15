@@ -7,7 +7,7 @@ Strings are everywhere in scripting - from building messages to formatting outpu
 In this section, we'll explore:
 
 - **String interpolation** - embed expressions directly in strings
-- **Formatting** - control how values are displayed (padding, precision, thousands separators)
+- **Formatting** - control how values are displayed (padding, fill characters, zero-padding, precision, thousands separators)
 - **Multiline strings** - work with text spanning multiple lines
 - **Raw strings** - disable interpolation and escaping when you need literal text
 - **Escape sequences** - include special characters like newlines and tabs
@@ -70,6 +70,68 @@ Pi:       3.14_
 ```
 </div>
 
+### Fill Characters
+
+By default, padding uses spaces. You can specify a different fill character by placing it before the alignment indicator (`>` or `<`):
+
+```rad
+name = "Alice"
+num = 42
+
+print("_{name:*>10}_")   // fill with *, right-align
+print("_{name:.<10}_")   // fill with ., left-align
+print("_{num:->8}_")     // fill with -, right-align
+```
+
+<div class="result">
+```
+_*****Alice_
+_Alice....._
+_------42_
+```
+</div>
+
+The fill character can be any single character. The `>` and `<` after it control the alignment, just like without a fill character.
+
+### Zero-Padding
+
+You can use the zero-pad shorthand by placing `0` before the width. This works on any type:
+
+```rad
+name = "alice"
+num = 42
+neg = -7
+
+print("_{name:08}_")     // pad string with zeros to width 8
+print("_{num:05}_")      // pad number with zeros to width 5
+print("_{neg:06}_")      // sign-aware for numbers: sign before zeros
+print("_{num:08.2}_")    // combine with precision
+```
+
+<div class="result">
+```
+_000alice_
+_00042_
+_-00007_
+_00042.00_
+```
+</div>
+
+You can also combine zero-padding with thousands separators:
+
+```rad
+num = 7000
+print("_{num:010,}_")
+```
+
+<div class="result">
+```
+_00,007,000_
+```
+</div>
+
+For numbers, zero-pad is sign-aware (signs placed before zeros). For non-numbers, it simply prepends zeros (same as explicit zero fill `{x:0>5}`).
+
 ### Thousands Separator
 
 For large numbers, you can add comma separators using `,` in your formatting:
@@ -101,14 +163,13 @@ print("{name:.2}")   // Error: cannot format string with decimal places
 print("{name:,}")    // Error: cannot format string with thousands separator
 ```
 
-However, padding works on both numbers and strings:
+However, padding, fill characters, and zero-padding work on all types:
 
 ```rad
-print("{name:10}")   // "     Alice" (left-padded to 10 chars)
-print("{42:5}")      // "   42" (left-padded to 5 chars)
+print("{name:10}")     // "     Alice" (padded to 10 chars)
+print("{name:*>10}")   // "*****Alice" (fill with *, any type)
+print("{name:08}")     // "000Alice"   (zero-pad shorthand, any type)
 ```
-
-[//]: # (todo update here if we add 0 padding)
 
 ## Multiline Strings
 
@@ -286,7 +347,7 @@ and the `hyperlink` function for creating clickable terminal links. See the [fun
 
 - We learned about **escape sequences** like `\n`, `\t`, and `\{` for including special characters in strings.
 - We covered **string interpolation**, which lets us put expressions directly into strings for evaluation.
-- We saw how to **format** interpolated expressions using e.g. padding, precision, etc. Example: `{num:<20,.3}`.
+- We saw how to **format** interpolated expressions using padding, fill characters, zero-padding, precision, and more. Example: `{num:0>10,.3}`.
 - We explored **multiline strings** using `"""` syntax, which support both quotes and interpolation.
 - We learned about **raw strings** (prefixed with `r`) that prevent interpolation and escaping.
 - We covered **string attributes** like color and bold that are preserved through interpolation and concatenation.

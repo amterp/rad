@@ -376,3 +376,93 @@ print("{blue(n)}")
 alice
 [34malice[0m
 
+### TITLE ###
+StringInterpolation_FillAlignment_ExplicitFill
+### INPUT ###
+name = "alice"
+num = 7
+print("_{name:*>10}_")
+print("_{name:.<10}_")
+print("_{num:0>5}_")
+print("_{num:0<5}_")
+print("_{name:->10}_")
+### STDOUT ###
+_*****alice_
+_alice....._
+_00007_
+_70000_
+_-----alice_
+
+### TITLE ###
+StringInterpolation_FillAlignment_ZeroPadShorthand
+### INPUT ###
+num = 7
+pi = 3.14159
+neg = -7
+big = 12345
+print("_{num:05}_")
+print("_{num:<05}_")
+print("_{pi:08.2}_")
+print("_{neg:06}_")
+print("_{big:03}_")
+### STDOUT ###
+_00007_
+_70000_
+_00003.14_
+_-00007_
+_12345_
+
+### TITLE ###
+StringInterpolation_FillAlignment_ZeroPadWithThousands
+### INPUT ###
+num = 7000
+print("_{num:010,}_")
+### STDOUT ###
+_00,007,000_
+
+### TITLE ###
+StringInterpolation_FillAlignment_NonSpaceFillWithThousands
+### INPUT ###
+num = 7000
+print("_{num:*>10,}_")
+print("_{num:.<10,}_")
+### STDOUT ###
+_*****7,000_
+_7,000....._
+
+### TITLE ###
+StringInterpolation_FillAlignment_ZeroPadShorthandOnString
+### INPUT ###
+name = "alice"
+print("_{name:08}_")
+print("_{name:<08}_")
+### STDOUT ###
+_000alice_
+_alice000_
+
+### TITLE ###
+StringInterpolation_FillAlignment_ExplicitFillOnBool
+### INPUT ###
+val = true
+print("_{val:*>10}_")
+print("_{val:.<10}_")
+### STDOUT ###
+_******true_
+_true......_
+
+### TITLE ###
+StringInterpolation_FillAlignment_ColorAwarePadding
+### INPUT ###
+n = "alice"
+print("{n:*>20}")
+print("{blue(n):*>20}")
+print("{n:*<20}")
+print("{blue(n):*<20}")
+### ARGS ###
+--color=always
+### STDOUT ###
+***************alice
+***************[34malice[0m
+alice***************
+[34malice[0m***************
+
