@@ -539,6 +539,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#fill-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fill Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-padding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-Padding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#thousands-separator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1415,6 +1437,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#fill-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fill Characters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-padding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-Padding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#thousands-separator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1533,7 +1577,7 @@
 <p>In this section, we'll explore:</p>
 <ul>
 <li><strong>String interpolation</strong> - embed expressions directly in strings</li>
-<li><strong>Formatting</strong> - control how values are displayed (padding, precision, thousands separators)</li>
+<li><strong>Formatting</strong> - control how values are displayed (padding, fill characters, zero-padding, precision, thousands separators)</li>
 <li><strong>Multiline strings</strong> - work with text spanning multiple lines</li>
 <li><strong>Raw strings</strong> - disable interpolation and escaping when you need literal text</li>
 <li><strong>Escape sequences</strong> - include special characters like newlines and tabs</li>
@@ -1582,6 +1626,52 @@ Pi:       3.14_
 </code></pre></div>
 </div>
 
+<h3 id="fill-characters">Fill Characters<a class="headerlink" href="#fill-characters" title="Permanent link">&para;</a></h3>
+<p>By default, padding uses spaces. You can specify a different fill character by placing it before the alignment indicator (<code>&gt;</code> or <code>&lt;</code>):</p>
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+num = 42
+
+print(&quot;_{name:*&gt;10}_&quot;)   // fill with *, right-align
+print(&quot;_{name:.&lt;10}_&quot;)   // fill with ., left-align
+print(&quot;_{num:-&gt;8}_&quot;)     // fill with -, right-align
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>_*****Alice_
+_Alice....._
+_------42_
+</code></pre></div>
+</div>
+
+<p>The fill character can be any single character. The <code>&gt;</code> and <code>&lt;</code> after it control the alignment, just like without a fill character.</p>
+<h3 id="zero-padding">Zero-Padding<a class="headerlink" href="#zero-padding" title="Permanent link">&para;</a></h3>
+<p>You can use the zero-pad shorthand by placing <code>0</code> before the width. This works on any type:</p>
+<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+num = 42
+neg = -7
+
+print(&quot;_{name:08}_&quot;)     // pad string with zeros to width 8
+print(&quot;_{num:05}_&quot;)      // pad number with zeros to width 5
+print(&quot;_{neg:06}_&quot;)      // sign-aware for numbers: sign before zeros
+print(&quot;_{num:08.2}_&quot;)    // combine with precision
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>_000alice_
+_00042_
+_-00007_
+_00042.00_
+</code></pre></div>
+</div>
+
+<p>You can also combine zero-padding with thousands separators:</p>
+<div class="highlight"><pre><span></span><code>num = 7000
+print(&quot;_{num:010,}_&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>_00,007,000_
+</code></pre></div>
+</div>
+
+<p>For numbers, zero-pad is sign-aware (signs placed before zeros). For non-numbers, it simply prepends zeros (same as explicit zero fill <code>{x:0&gt;5}</code>).</p>
 <h3 id="thousands-separator">Thousands Separator<a class="headerlink" href="#thousands-separator" title="Permanent link">&para;</a></h3>
 <p>For large numbers, you can add comma separators using <code>,</code> in your formatting:</p>
 <div class="highlight"><pre><span></span><code>population = 1234567
@@ -1604,9 +1694,10 @@ Large:            1,234,567
 print(&quot;{name:.2}&quot;)   // Error: cannot format string with decimal places
 print(&quot;{name:,}&quot;)    // Error: cannot format string with thousands separator
 </code></pre></div>
-<p>However, padding works on both numbers and strings:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;{name:10}&quot;)   // &quot;     Alice&quot; (left-padded to 10 chars)
-print(&quot;{42:5}&quot;)      // &quot;   42&quot; (left-padded to 5 chars)
+<p>However, padding, fill characters, and zero-padding work on all types:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;{name:10}&quot;)     // &quot;     Alice&quot; (padded to 10 chars)
+print(&quot;{name:*&gt;10}&quot;)   // &quot;*****Alice&quot; (fill with *, any type)
+print(&quot;{name:08}&quot;)     // &quot;000Alice&quot;   (zero-pad shorthand, any type)
 </code></pre></div>
 <h2 id="multiline-strings">Multiline Strings<a class="headerlink" href="#multiline-strings" title="Permanent link">&para;</a></h2>
 <p>Sometimes you want to write strings that contain several lines. These strings may themselves also contain string delimiters e.g. <code>"</code> or <code>'</code>.
@@ -1749,7 +1840,7 @@ Use <a href="../functions/#ufcs">UFCS</a> (dot notation) for cleaner, more reada
 <ul>
 <li>We learned about <strong>escape sequences</strong> like <code>\n</code>, <code>\t</code>, and <code>\{</code> for including special characters in strings.</li>
 <li>We covered <strong>string interpolation</strong>, which lets us put expressions directly into strings for evaluation.</li>
-<li>We saw how to <strong>format</strong> interpolated expressions using e.g. padding, precision, etc. Example: <code>{num:&lt;20,.3}</code>.</li>
+<li>We saw how to <strong>format</strong> interpolated expressions using padding, fill characters, zero-padding, precision, and more. Example: <code>{num:0&gt;10,.3}</code>.</li>
 <li>We explored <strong>multiline strings</strong> using <code>"""</code> syntax, which support both quotes and interpolation.</li>
 <li>We learned about <strong>raw strings</strong> (prefixed with <code>r</code>) that prevent interpolation and escaping.</li>
 <li>We covered <strong>string attributes</strong> like color and bold that are preserved through interpolation and concatenation.</li>
