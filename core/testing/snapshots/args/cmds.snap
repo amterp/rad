@@ -207,7 +207,7 @@ command process:
 -h
 ### STDOUT ###
 Usage:
-  TestCase [subcommand] [OPTIONS]
+  TestCase [command] [OPTIONS]
 
 Commands:
   process   Process something.
@@ -232,7 +232,7 @@ command process:
 --help
 ### STDOUT ###
 Usage:
-  TestCase [subcommand] [OPTIONS]
+  TestCase [command] [OPTIONS]
 
 Commands:
   process   Process something.
@@ -331,7 +331,7 @@ command farewell:
 Must specify a command
 
 Usage:
-  TestCase [subcommand] [OPTIONS]
+  TestCase [command] [OPTIONS]
 
 Commands:
   farewell
@@ -391,7 +391,7 @@ command deploy_staging:
 -h
 ### STDOUT ###
 Usage:
-  TestCase [subcommand] [OPTIONS]
+  TestCase [command] [OPTIONS]
 
 Commands:
   deploy-staging   Deploy to staging.
