@@ -64,7 +64,12 @@ func (s RadString) CopyAttrTo(otherStr string) RadString {
 
 // does not apply any attributes
 func (s RadString) Plain() string {
-	// todo can lazily compute and cache
+	switch len(s.Segments) {
+	case 0:
+		return ""
+	case 1:
+		return s.Segments[0].String
+	}
 	totalLen := 0
 	for _, segment := range s.Segments {
 		totalLen += len(segment.String)
@@ -109,12 +114,12 @@ func (s RadString) Equals(other RadString) bool {
 }
 
 func (s RadString) Len() int64 {
-	// todo also cachable
+	// worth caching?
 	return int64(com.StrLen(s.Plain()))
 }
 
 func (s RadString) Runes() []rune {
-	// todo also cachable
+	// worth caching?
 	return []rune(s.Plain())
 }
 
