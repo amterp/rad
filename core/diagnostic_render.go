@@ -90,15 +90,6 @@ func (r *DiagnosticRenderer) renderLabels(d Diagnostic) {
 		return sortedLabels[i].Span.StartRow < sortedLabels[j].Span.StartRow
 	})
 
-	// Determine line number width for gutter
-	maxLine := 0
-	for _, label := range sortedLabels {
-		if label.Span.EndRow > maxLine {
-			maxLine = label.Span.EndRow
-		}
-	}
-	gutterWidth := len(fmt.Sprintf("%d", maxLine+1)) // +1 for 1-indexing
-
 	// Group labels by their start line
 	labelsByLine := make(map[int][]Label)
 	for _, label := range sortedLabels {
@@ -107,6 +98,14 @@ func (r *DiagnosticRenderer) renderLabels(d Diagnostic) {
 
 	// Determine which lines to show
 	linesToShow := r.getLinesToShow(sortedLabels, len(lines))
+
+	// Determine gutter width from the actual displayed lines (context lines
+	// can have higher numbers than any labeled line).
+	maxDisplayLine := 0
+	if len(linesToShow) > 0 {
+		maxDisplayLine = linesToShow[len(linesToShow)-1]
+	}
+	gutterWidth := len(fmt.Sprintf("%d", maxDisplayLine+1)) // +1 for 1-indexing
 
 	// Opening gutter
 	fmt.Fprintf(r.writer, "%s\n", r.blue(strings.Repeat(" ", gutterWidth+1)+"|"))

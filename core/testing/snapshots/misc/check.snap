@@ -48,12 +48,12 @@ error[RAD40002]: Hoisted function 'name' shadows an argument with the same name
 
 error[RAD40002]: Hoisted function 'count' shadows an argument with the same name
   --> <script>:9:1
-  |
-8 |
-9 | fn count() -> int:
-  | ^^
+   |
+ 8 |
+ 9 | fn count() -> int:
+   | ^^
 10 |     return 10
-  |
+   |
    = info: rad explain RAD40002
 
 
