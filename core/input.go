@@ -21,7 +21,7 @@ func InputConfirm(title string, prompt string) (bool, error) {
 		input.Title(title)
 	}
 	err := input.Run()
-	return strings.HasPrefix(strings.ToLower(response), "y"), err
+	return response == "" || strings.HasPrefix(strings.ToLower(response), "y"), err
 }
 
 func InputText(prompt, hint, default_ string, secret bool) (RadString, error) {

@@ -507,17 +507,18 @@ password = input("Password: ", secret=true)           // -> Hides typed characte
 
 ### confirm
 
-Gets a boolean confirmation from the user (y/n prompt).
+Gets a boolean confirmation from the user (y/n prompt). Accepts "y", "yes", or Enter (empty input) as
+confirmation.
 
 ```rad
-confirm(prompt: str = "Confirm? [y/n] > ") -> bool|error
+confirm(prompt: str = "Confirm? [Y/n] > ") -> bool|error
 ```
 
 ```rad
-if confirm():                        // -> Uses default "Confirm? [y/n] > " prompt
+if confirm():                        // -> Uses default "Confirm? [Y/n] > " prompt
     print("Confirmed!")
 
-if confirm("Delete file? [y/n] "):   // -> Custom prompt
+if confirm("Delete file? [Y/n] "):   // -> Custom prompt
     print("File deleted")
 ```
 

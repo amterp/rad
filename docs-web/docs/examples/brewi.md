@@ -91,7 +91,7 @@ We use [string interpolation](../guide/strings-advanced.md#string-interpolation)
 You can try running the command now! Make sure it's executable (`chmod +x ./brewi`).
 
 Next, we want to ask the user if they'd like to proceed with installing the formula. For that, Rad offers the [`confirm`](../reference/functions.md#confirm) function.
-The default prompt is `Confirm? [y/n] > `, which works fine for us here, so we'll do a simple 0-arg `confirm()` call. The function returns a bool for yes/no, so we'll put it in an if statement.
+The default prompt is `Confirm? [Y/n] > `, which works fine for us here, so we'll do a simple 0-arg `confirm()` call. The function returns a bool for yes/no, so we'll put it in an if statement.
 
 ```rad linenums="1" hl_lines="9-10"
 #!/usr/bin/env rad
