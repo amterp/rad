@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
@@ -4325,13 +4325,14 @@ email = input(&quot;Email: &quot;, hint=&quot;user@example.com&quot;)     // -&g
 password = input(&quot;Password: &quot;, secret=true)           // -&gt; Hides typed characters
 </code></pre></div>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
-<p>Gets a boolean confirmation from the user (y/n prompt).</p>
-<div class="highlight"><pre><span></span><code>confirm(prompt: str = &quot;Confirm? [y/n] &gt; &quot;) -&gt; bool|error
+<p>Gets a boolean confirmation from the user (y/n prompt). Accepts "y", "yes", or Enter (empty input) as
+confirmation.</p>
+<div class="highlight"><pre><span></span><code>confirm(prompt: str = &quot;Confirm? [Y/n] &gt; &quot;) -&gt; bool|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>if confirm():                        // -&gt; Uses default &quot;Confirm? [y/n] &gt; &quot; prompt
+<div class="highlight"><pre><span></span><code>if confirm():                        // -&gt; Uses default &quot;Confirm? [Y/n] &gt; &quot; prompt
     print(&quot;Confirmed!&quot;)
 
-if confirm(&quot;Delete file? [y/n] &quot;):   // -&gt; Custom prompt
+if confirm(&quot;Delete file? [Y/n] &quot;):   // -&gt; Custom prompt
     print(&quot;File deleted&quot;)
 </code></pre></div>
 <h2 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h2>
