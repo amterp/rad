@@ -136,7 +136,7 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 // warning: as of writing, this is *not* covered in tests
 func realShellExecutor(invocation ShellInvocation) (string, string, int) {
 	if FlagConfirmShellCommands.Value || invocation.IsConfirm {
-		ok, err := InputConfirm(invocation.Command, "Run above command? [y/n] > ")
+		ok, err := InputConfirm(invocation.Command, "Run above command? [Y/n] > ")
 		if err != nil {
 			panic(fmt.Sprintf("Error confirming shell command: %v", err))
 		}
