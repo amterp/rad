@@ -32,6 +32,22 @@ type scriptInfo struct {
 	LastOccurrence int64 // epoch millis
 }
 
+// diagCounts holds per-severity diagnostic counts for a single script.
+type diagCounts struct {
+	Errors   int
+	Warnings int
+	Infos    int
+	Hints    int
+}
+
+// scriptResult collects the check outcome for a single script.
+type scriptResult struct {
+	Path    string
+	Counts  diagCounts
+	Ok      bool // false = couldn't load/parse the file
+	Skipped bool // file not found
+}
+
 // FuncInternalCheckFromLogs implements _rad_check_from_logs, which checks rad scripts
 // from invocation logs for syntax/semantic errors. This is an internal function used
 // by the rad CLI for bulk checking recently-used scripts.
@@ -73,47 +89,173 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 			RP.RadStderrf("Warning! Failed to init checker once, will init per file: %v\n", err)
 		}
 
-		totalChecked, passed, failed, skipped := 0, 0, 0, 0
-
+		// First pass: collect results and determine max path width for alignment
+		results := make([]scriptResult, 0, len(scripts))
+		maxPathLen := 0
 		for _, script := range scripts {
 			if !com.FileExists(script.Path) {
+				results = append(results, scriptResult{Path: script.Path, Skipped: true})
+				continue
+			}
+			counts, ok := checkScriptWith(script.Path, chk)
+			r := scriptResult{Path: script.Path, Counts: counts, Ok: ok}
+			results = append(results, r)
+			if len(script.Path) > maxPathLen {
+				maxPathLen = len(script.Path)
+			}
+		}
+
+		// Column headers and their widths
+		type col struct {
+			Header string
+			Width  int
+		}
+		cols := []col{
+			{"Errors", 6},
+			{"Warns", 5},
+			{"Info", 5},
+			{"Hints", 5},
+		}
+
+		faint := color.New(color.Faint)
+		green := color.New(color.FgGreen)
+		red := color.New(color.FgRed)
+		yellow := color.New(color.FgYellow)
+		cyan := color.New(color.FgCyan)
+		blue := color.New(color.FgBlue)
+
+		// Table width: "  X " (4 chars) + path + per-column (2-space gap + width)
+		colsWidth := 0
+		for _, c := range cols {
+			colsWidth += 2 + c.Width
+		}
+		tableWidth := 4 + maxPathLen + colsWidth
+
+		// Only show table header when there are non-skipped results.
+		// Skipped rows don't have count columns, so the header would be orphaned.
+		hasDataRows := false
+		for _, r := range results {
+			if !r.Skipped {
+				hasDataRows = true
+				break
+			}
+		}
+		if hasDataRows {
+			headerLine := fmt.Sprintf("    %-*s", maxPathLen, "")
+			for _, c := range cols {
+				headerLine += fmt.Sprintf("  %*s", c.Width, c.Header)
+			}
+			RP.Printf("%s\n", faint.Sprint(headerLine))
+		}
+
+		totalChecked, passed, failed, skipped, loadErrors := 0, 0, 0, 0, 0
+		var totalCounts diagCounts
+
+		for _, r := range results {
+			if r.Skipped {
 				skipped++
 				if verbose {
-					dimmed := color.New(color.Faint)
-					RP.Printf("  %s\n", dimmed.Sprintf("- %s (file not found)", script.Path))
+					RP.Printf("  %s\n", faint.Sprintf("- %s (file not found)", r.Path))
 				}
 				continue
 			}
 
-			ok := checkScriptWith(script.Path, chk)
 			totalChecked++
-			if ok {
-				green := color.New(color.FgGreen)
-				RP.Printf("  %s %s\n", green.Sprint("✓"), script.Path)
-				passed++
-			} else {
-				red := color.New(color.FgRed)
-				RP.Printf("  %s %s\n", red.Sprint("✗"), script.Path)
+			totalCounts.Errors += r.Counts.Errors
+			totalCounts.Warnings += r.Counts.Warnings
+			totalCounts.Infos += r.Counts.Infos
+			totalCounts.Hints += r.Counts.Hints
+
+			isFail := !r.Ok || r.Counts.Errors > 0
+			if isFail {
 				failed++
+			} else {
+				passed++
 			}
+			if !r.Ok {
+				loadErrors++
+			}
+
+			// Status icon
+			var icon string
+			if isFail {
+				icon = red.Sprint("✗")
+			} else {
+				icon = green.Sprint("✓")
+			}
+
+			// Path, left-aligned
+			line := fmt.Sprintf("  %s %-*s", icon, maxPathLen, r.Path)
+
+			if r.Ok {
+				line += formatCount(r.Counts.Errors, cols[0].Width, red, faint)
+				line += formatCount(r.Counts.Warnings, cols[1].Width, yellow, faint)
+				line += formatCount(r.Counts.Infos, cols[2].Width, cyan, faint)
+				line += formatCount(r.Counts.Hints, cols[3].Width, blue, faint)
+			} else {
+				line += "  " + faint.Sprint("(load error)")
+			}
+
+			RP.Printf("%s\n", line)
 		}
 
-		// Print separator
-		RP.Printf("\n────────────────────────────────────────\n")
+		// Dynamic-width separator
+		sepWidth := tableWidth
+		if sepWidth < 40 {
+			sepWidth = 40
+		}
+		RP.Printf("\n%s\n", strings.Repeat("─", sepWidth))
 
 		// Build summary with colored numbers
 		bold := color.New(color.Bold)
-		green := color.New(color.FgGreen)
-		red := color.New(color.FgRed)
-		faint := color.New(color.Faint)
 
 		summary := fmt.Sprintf("Checked %d scripts: %s passed, %s failed",
 			totalChecked,
 			green.Sprintf("%d", passed),
 			red.Sprintf("%d", failed))
 
+		// Append non-zero diagnostic/status details in a single parenthetical
+		var detailParts []string
+		if totalCounts.Errors > 0 {
+			noun := "errors"
+			if totalCounts.Errors == 1 {
+				noun = "error"
+			}
+			detailParts = append(detailParts, red.Sprintf("%d %s", totalCounts.Errors, noun))
+		}
+		if loadErrors > 0 {
+			noun := "load errors"
+			if loadErrors == 1 {
+				noun = "load error"
+			}
+			detailParts = append(detailParts, faint.Sprintf("%d %s", loadErrors, noun))
+		}
+		if totalCounts.Warnings > 0 {
+			noun := "warnings"
+			if totalCounts.Warnings == 1 {
+				noun = "warning"
+			}
+			detailParts = append(detailParts, yellow.Sprintf("%d %s", totalCounts.Warnings, noun))
+		}
+		if totalCounts.Infos > 0 {
+			noun := "info diagnostics"
+			if totalCounts.Infos == 1 {
+				noun = "info diagnostic"
+			}
+			detailParts = append(detailParts, cyan.Sprintf("%d %s", totalCounts.Infos, noun))
+		}
+		if totalCounts.Hints > 0 {
+			noun := "hints"
+			if totalCounts.Hints == 1 {
+				noun = "hint"
+			}
+			detailParts = append(detailParts, blue.Sprintf("%d %s", totalCounts.Hints, noun))
+		}
 		if skipped > 0 {
-			summary += fmt.Sprintf(" (%s skipped)", faint.Sprintf("%d", skipped))
+			detailParts = append(detailParts, faint.Sprintf("%d skipped", skipped))
+		}
+		if len(detailParts) > 0 {
+			summary += " (" + strings.Join(detailParts, ", ") + ")"
 		}
 
 		RP.Printf("%s.\n", bold.Sprint(summary))
@@ -225,11 +367,12 @@ func sortScriptsByLastOccurrence(scripts []scriptInfo) {
 	})
 }
 
-// checkScriptWith runs rad checks; reuses a checker if provided.
-func checkScriptWith(scriptPath string, reusable check.RadChecker) bool {
+// checkScriptWith runs rad checks and returns per-severity counts.
+// The bool is false when the file can't be loaded or parsed at all.
+func checkScriptWith(scriptPath string, reusable check.RadChecker) (diagCounts, bool) {
 	result := com.LoadFile(scriptPath)
 	if result.Error != nil {
-		return false
+		return diagCounts{}, false
 	}
 
 	chk := reusable
@@ -237,22 +380,40 @@ func checkScriptWith(scriptPath string, reusable check.RadChecker) bool {
 		var err error
 		chk, err = check.NewChecker()
 		if err != nil {
-			return false
+			return diagCounts{}, false
 		}
 	}
 
 	chk.UpdateSrc(NormalizeLineEndings(result.Content))
 	checkResult, err := chk.CheckDefault()
 	if err != nil {
-		return false
+		return diagCounts{}, false
 	}
 
+	var counts diagCounts
 	for _, diag := range checkResult.Diagnostics {
-		if diag.Severity == check.Error {
-			return false
+		switch diag.Severity {
+		case check.Error:
+			counts.Errors++
+		case check.Warning:
+			counts.Warnings++
+		case check.Info:
+			counts.Infos++
+		case check.Hint:
+			counts.Hints++
 		}
 	}
-	return true
+	return counts, true
+}
+
+// formatCount returns a right-aligned, colored count cell for the table.
+// Non-zero values use the given highlight color; zeros are dimmed.
+func formatCount(n, width int, highlight, dim *color.Color) string {
+	s := fmt.Sprintf("%*d", width, n)
+	if n > 0 {
+		return "  " + highlight.Sprint(s)
+	}
+	return "  " + dim.Sprint(s)
 }
 
 // ParseDuration parses a human-readable duration string into time.Duration
