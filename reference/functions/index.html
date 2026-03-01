@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -4409,12 +4409,16 @@ truncate(&quot;test&quot;, 0)          // -&gt; Error: Requires at least 1
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
 <p>Splits a string using regex pattern as delimiter. Does not preserve string color attributes.</p>
-<div class="highlight"><pre><span></span><code>split(_val: str, _sep: str) -&gt; list[str]
+<div class="highlight"><pre><span></span><code>split(_val: str, _sep: str, *, limit: int?) -&gt; str[]
 </code></pre></div>
 <p>The <code>_sep</code> parameter is treated as a regex pattern if valid, otherwise as literal string.</p>
-<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)            // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-split(&quot;word1 word2&quot;, &quot;\\s+&quot;)   // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
-split(&quot;abc123def&quot;, &quot;\\d+&quot;)     // -&gt; [&quot;abc&quot;, &quot;def&quot;]
+<p>When <code>limit</code> is provided, it caps the number of splits performed. The final element contains
+the unsplit remainder. <code>limit</code> must be &gt;= 1.</p>
+<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)               // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+split(&quot;word1 word2&quot;, &quot;\\s+&quot;)      // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
+split(&quot;abc123def&quot;, &quot;\\d+&quot;)        // -&gt; [&quot;abc&quot;, &quot;def&quot;]
+split(&quot;key=val=ue&quot;, &quot;=&quot;, limit=1) // -&gt; [&quot;key&quot;, &quot;val=ue&quot;]
+split(&quot;a,b,c,d&quot;, &quot;,&quot;, limit=2)    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c,d&quot;]
 </code></pre></div>
 <h3 id="split_lines">split_lines<a class="headerlink" href="#split_lines" title="Permanent link">&para;</a></h3>
 <p>Splits a string by line endings. Handles all common styles: <code>\n</code> (Unix), <code>\r\n</code> (Windows), and <code>\r</code> (legacy Mac).</p>
