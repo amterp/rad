@@ -46,7 +46,7 @@ func init() {
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),
 		newFnSignature(`range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> float[]|int[]`),
 		newFnSignature(`join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str`),
-		newFnSignature(`split(_val: str, _sep: str) -> str[]`),
+		newFnSignature(`split(_val: str, _sep: str, *, limit: int?) -> str[]`),
 		newFnSignature(`split_lines(_val: str) -> str[]`),
 		newFnSignature(`lower(_val: str) -> str`),
 		newFnSignature(`upper(_val: str) -> str`),
