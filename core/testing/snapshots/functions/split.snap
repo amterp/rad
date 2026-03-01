@@ -35,3 +35,71 @@ print(tags)
 ### STDOUT ###
 [ [ "0", "0", "1" ], [ "0", "2", "1" ], [ "0", "0", "3" ] ]
 
+### TITLE ###
+Limit of 1 splits once
+### INPUT ###
+print(split("a,b,c", ",", limit=1))
+### STDOUT ###
+[ "a", "b,c" ]
+
+### TITLE ###
+Limit of 2 splits twice
+### INPUT ###
+print(split("a,b,c", ",", limit=2))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+Limit exceeding separators returns all
+### INPUT ###
+print(split("a,b,c", ",", limit=10))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+Regex with limit
+### INPUT ###
+print(split("a b c d", " +", limit=1))
+### STDOUT ###
+[ "a", "b c d" ]
+
+### TITLE ###
+Literal fallback with limit
+### INPUT ###
+print(split("a[b[c", "[", limit=1))
+### STDOUT ###
+[ "a", "b[c" ]
+
+### TITLE ###
+Limit of zero errors
+### INPUT ###
+split("a,b,c", ",", limit=0)
+### STDERR ###
+error[RAD20000]: limit must be at least 1, got 0
+  --> <script>:1:1
+  |
+1 | split("a,b,c", ",", limit=0)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1
+
+### TITLE ###
+Negative limit errors
+### INPUT ###
+split("a,b,c", ",", limit=-1)
+### STDERR ###
+error[RAD20000]: limit must be at least 1, got -1
+  --> <script>:1:1
+  |
+1 | split("a,b,c", ",", limit=-1)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### EXIT ###
+1

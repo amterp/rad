@@ -13,18 +13,33 @@ var FuncSplit = BuiltInFunc{
 		toSplit := f.GetStr("_val").Plain()
 		splitter := f.GetStr("_sep").Plain()
 
-		return f.Return(regexSplit(f.i, f.callNode, toSplit, splitter))
+		limitArg := f.GetArg("limit")
+		limit := -1
+		if !limitArg.IsNull() {
+			limitVal := limitArg.RequireInt(f.i, f.callNode)
+			if limitVal < 1 {
+				return f.Return(NewErrorStrf("limit must be at least 1, got %d", limitVal))
+			}
+			// limit counts splits, but Go's SplitN counts parts, so +1
+			limit = int(limitVal) + 1
+		}
+
+		return f.Return(regexSplit(f.i, f.callNode, toSplit, splitter, limit))
 	},
 }
 
-func regexSplit(i *Interpreter, callNode rl.Node, input string, sep string) []RadValue {
+func regexSplit(i *Interpreter, callNode rl.Node, input string, sep string, limit int) []RadValue {
 	re, err := regexp.Compile(sep)
 
 	var parts []string
 	if err == nil {
-		parts = re.Split(input, -1)
+		parts = re.Split(input, limit)
 	} else {
-		parts = strings.Split(input, sep)
+		if limit < 0 {
+			parts = strings.Split(input, sep)
+		} else {
+			parts = strings.SplitN(input, sep, limit)
+		}
 	}
 
 	result := make([]RadValue, 0, len(parts))
