@@ -61,6 +61,8 @@ builds:
       - -trimpath
 
   # Linux builds - rad
+  # netgo/osusergo: use pure Go DNS and user lookups to avoid glibc's
+  # getaddrinfo/NSS dlopen, which segfaults when statically linked.
   - id: rad-linux-amd64
     binary: rad
     goarch:
@@ -72,6 +74,9 @@ builds:
       - CXX=x86_64-linux-gnu-g++
     flags:
       - -trimpath
+    tags:
+      - netgo
+      - osusergo
     ldflags:
       - -extldflags "-static"
 
@@ -86,6 +91,9 @@ builds:
       - CXX=aarch64-linux-gnu-g++
     flags:
       - -trimpath
+    tags:
+      - netgo
+      - osusergo
     ldflags:
       - -extldflags "-static"
 
@@ -102,6 +110,9 @@ builds:
       - CXX=x86_64-linux-gnu-g++
     flags:
       - -trimpath
+    tags:
+      - netgo
+      - osusergo
     ldflags:
       - -extldflags "-static"
 
@@ -117,6 +128,9 @@ builds:
       - CXX=aarch64-linux-gnu-g++
     flags:
       - -trimpath
+    tags:
+      - netgo
+      - osusergo
     ldflags:
       - -extldflags "-static"
 
