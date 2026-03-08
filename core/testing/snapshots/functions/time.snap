@@ -137,7 +137,7 @@ error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
 ### TITLE ###
 Func ParseEpochTimeZoneNegativeAmbiguousButWithUnits
 ### INPUT ###
-a = parse_epoch(-17123456781, unit = "milliseconds")
+a = parse_epoch(-17123456781, unit = "millis")
 print(a)
 ### STDOUT ###
 { "date": "1969-06-16", "year": 1969, "month": 6, "day": 16, "hour": 19, "minute": 29, "second": 3, "time": "19:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
@@ -161,7 +161,7 @@ print(a)
 ### TITLE ###
 Func ParseEpochFloatWithExplicitUnit
 ### INPUT ###
-a = parse_epoch(1712345678123.25, unit = "milliseconds", tz = "UTC")
+a = parse_epoch(1712345678123.25, unit = "millis", tz = "UTC")
 print(a)
 ### STDOUT ###
 { "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123250000 } }
@@ -182,3 +182,20 @@ print(a)
 ### STDOUT ###
 { "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123500000 } }
 
+### TITLE ###
+Func ParseEpochOldUnitNameMigrationError
+### INPUT ###
+a = parse_epoch(1712345678000, unit = "milliseconds")
+### STDERR ###
+error[RAD20008]: parse_epoch unit "milliseconds" is no longer valid
+  --> <script>:1:5
+  |
+1 | a = parse_epoch(1712345678000, unit = "milliseconds")
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = help: Unit names were shortened in v0.9. Use "millis" instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD20008
+
+
+### EXIT ###
+1

@@ -303,7 +303,8 @@ type_of({"a": 1}) // -> "map"
 
 ### str
 
-Converts any value to a string representation. Useful when you need to concatenate non-string values with `+`, though interpolation (`"value: {x}"`) is generally preferred.
+Converts any value to a string representation. Useful when you need to concatenate non-string values with `+`, though
+interpolation (`"value: {x}"`) is generally preferred.
 
 ```rad
 str(_var: any) -> str
@@ -571,7 +572,8 @@ parse_json('invalid json')                  // -> Error: invalid JSON
 
 ### parse_duration
 
-Parses a human-readable duration string into a map of time units. Supports all standard suffixes (`ns`, `us`/`µs`, `ms`, `s`, `m`, `h`) plus `d` for days (1d = 24h). Spaces are stripped, and a leading `-` negates the whole duration.
+Parses a human-readable duration string into a map of time units. Supports all standard suffixes (`ns`, `us`/`µs`, `ms`,
+`s`, `m`, `h`) plus `d` for days (1d = 24h). Spaces are stripped, and a leading `-` negates the whole duration.
 
 ```rad
 parse_duration(_duration: str) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
@@ -587,7 +589,8 @@ parse_duration("5m 30s")        // -> same as "5m30s"
 
 ### convert_duration
 
-Converts a numeric value in the specified unit. Supports `nanos`, `micros`, `millis`, `seconds`, `minutes`, `hours`, and `days`.
+Converts a numeric value in the specified unit. Supports `nanos`, `micros`, `millis`, `seconds`, `minutes`, `hours`, and
+`days`.
 
 ```rad
 convert_duration(_value: int|float, _unit: ["nanos", "micros", "millis", "seconds", "minutes", "hours", "days"]) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
@@ -725,8 +728,8 @@ for line in content.split_lines():
 ```
 
 !!! note
-    A trailing line ending produces an empty string as the last element (same as `split()`).
-    Trim first if unwanted: `content.trim().split_lines()`.
+A trailing line ending produces an empty string as the last element (same as `split()`).
+Trim first if unwanted: `content.trim().split_lines()`.
 
 ### count
 
@@ -1092,7 +1095,8 @@ pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = "Pick an op
 
 Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.
 
-When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a filter, it's selected immediately; if multiple match exactly, only those are shown.
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a
+filter, it's selected immediately; if multiple match exactly, only those are shown.
 
 ```rad
 pick(["apple", "banana", "cherry"])                        // -> Interactive menu
@@ -1111,7 +1115,8 @@ pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt:
 
 Displays keys in the menu but returns the value at the same index when selected.
 
-When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a filter, its value is returned immediately; if multiple match exactly, only those are shown.
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a
+filter, its value is returned immediately; if multiple match exactly, only those are shown.
 
 ```rad
 names = ["Alice", "Bob", "Charlie"]
@@ -1131,7 +1136,9 @@ pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option", 
 
 Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).
 
-With `prefer_exact=true` (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set `prefer_exact=false` to disable this and use pure fuzzy matching.
+With `prefer_exact=true` (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a
+key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set
+`prefer_exact=false` to disable this and use pure fuzzy matching.
 
 ```rad
 pick_from_resource("servers.json")                    // -> Menu from file
@@ -1399,11 +1406,11 @@ clamp(val: int|float, min: int|float, max: int|float) -> int|float|error
 
 **Parameters:**
 
-| Parameter | Type        | Description        |
-|-----------|-------------|--------------------|
-| `val`     | `int|float` | Value to constrain |
-| `min`     | `int|float` | Minimum bound      |
-| `max`     | `int|float` | Maximum bound      |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `val`     | `int | float`      | Value to constrain |
+| `min`     | `int | float`      | Minimum bound      |
+| `max`     | `int | float`      | Maximum bound      |
 
 Returns `val` if between min and max, otherwise returns the nearest bound. Min must be ≤ max.
 The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
@@ -1974,17 +1981,17 @@ Parses a Unix epoch timestamp into various time formats.
 ```rad
 parse_epoch(_epoch: int|float) -> map|error
 parse_epoch(_epoch: int|float, *, tz: str = "local") -> map|error
-parse_epoch(_epoch: int|float, *, unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
-parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> map|error
+parse_epoch(_epoch: int|float, *, unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -> map|error
+parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -> map|error
 ```
 
 **Parameters:**
 
-| Parameter | Type                                                                          | Description                                         |
-|-----------|-------------------------------------------------------------------------------|-----------------------------------------------------|
-| `_epoch`  | `int\|float`                                                                  | Unix epoch timestamp (float for sub-unit precision) |
-| `tz`      | `str = "local"`                                                               | Timezone (e.g., "UTC", "America/Chicago")           |
-| `unit`    | `["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"` | Timestamp unit (auto-detects by default)            |
+| Parameter | Type                                                        | Description                                         |
+|-----------|-------------------------------------------------------------|-----------------------------------------------------|
+| `_epoch`  | `int\|float`                                                | Unix epoch timestamp (float for sub-unit precision) |
+| `tz`      | `str = "local"`                                             | Timezone (e.g., "UTC", "America/Chicago")           |
+| `unit`    | `["auto", "seconds", "millis", "micros", "nanos"] = "auto"` | Timestamp unit (auto-detects by default)            |
 
 Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
@@ -2002,14 +2009,14 @@ time = parse_epoch(1712345678123, tz="America/Chicago")
 print(time.hour)  // -> Hour in Chicago timezone
 
 // Explicit unit specification
-time = parse_epoch(1712345678000, unit="milliseconds")
+time = parse_epoch(1712345678000, unit="millis")
 
 // Float epoch with sub-second precision
 time = parse_epoch(1712345678.5)  // 1712345678 seconds + 500ms
 print(time.epoch.millis)  // -> 1712345678500
 
 // Float with explicit unit (sub-millisecond precision)
-time = parse_epoch(1712345678123.25, unit="milliseconds")
+time = parse_epoch(1712345678123.25, unit="millis")
 print(time.epoch.nanos)  // -> 1712345678123250000
 
 // Error handling
