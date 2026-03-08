@@ -35,6 +35,8 @@ func init() {
 		newFnSignature(`debug(*_items: any, *, sep: str = " ", end: str = "\n") -> void`),
 		newFnSignature(`exit(_code: int|bool = 0) -> void`),
 		newFnSignature(`sleep(_duration: int|float|str, *, title: str?) -> void`),
+		newFnSignature(`parse_duration(_duration: str) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }`),
+		newFnSignature(`convert_duration(_value: int|float, _unit: ["nanos", "micros", "millis", "seconds", "minutes", "hours", "days"]) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }`),
 		newFnSignature(`seed_random(_seed: int) -> void`),
 		newFnSignature(`rand() -> float`),
 		newFnSignature(`rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -> int`),

@@ -122,13 +122,15 @@ Pauses execution for the specified duration.
 sleep(_duration: int|float|str, *, title: str?) -> void
 ```
 
-Integer and float values are treated as seconds. String values support Go duration format like "2h45m", "1.5s", "500ms".
+Integer and float values are treated as seconds. String values support duration format like "2h45m", "1.5s", "500ms".
+Spaces are allowed in duration strings (e.g. `"5m 30s"`).
 If `title` is provided, it's printed before sleeping.
 
 **Duration string suffixes:**
 
 | Suffix       | Description  |
 |--------------|--------------|
+| `d`          | Days         |
 | `h`          | Hours        |
 | `m`          | Minutes      |
 | `s`          | Seconds      |
@@ -140,8 +142,9 @@ If `title` is provided, it's printed before sleeping.
 
 ```rad
 sleep(2.5)              // -> Sleep for 2.5 seconds
-sleep("1h30m")          // -> Sleep for 1 hour 30 minutes  
+sleep("1h30m")          // -> Sleep for 1 hour 30 minutes
 sleep("500ms")          // -> Sleep for 500 milliseconds
+sleep("1d12h")          // -> Sleep for 1 day 12 hours
 sleep(5, title="Waiting...") // -> Prints "Waiting..." then sleeps 5 seconds
 ```
 
@@ -564,6 +567,37 @@ parse_json(_str: str) -> any|error
 parse_json('{"name": "Alice", "age": 30}')  // -> {"name": "Alice", "age": 30}
 parse_json('[1, 2, 3]')                     // -> [1, 2, 3]
 parse_json('invalid json')                  // -> Error: invalid JSON
+```
+
+### parse_duration
+
+Parses a human-readable duration string into a map of time units. Supports all standard suffixes (`ns`, `us`/`µs`, `ms`, `s`, `m`, `h`) plus `d` for days (1d = 24h). Spaces are stripped, and a leading `-` negates the whole duration.
+
+```rad
+parse_duration(_duration: str) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
+```
+
+```rad
+parse_duration("5m23s")         // -> { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
+parse_duration("1d12h").hours   // -> 36.0
+parse_duration("300ms").millis  // -> 300.0
+parse_duration("-5m").minutes   // -> -5.0
+parse_duration("5m 30s")        // -> same as "5m30s"
+```
+
+### convert_duration
+
+Converts a numeric value in the specified unit. Supports `nanos`, `micros`, `millis`, `seconds`, `minutes`, `hours`, and `days`.
+
+```rad
+convert_duration(_value: int|float, _unit: ["nanos", "micros", "millis", "seconds", "minutes", "hours", "days"]) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
+```
+
+```rad
+convert_duration(90, "seconds").minutes   // -> 1.5
+convert_duration(1, "days").hours         // -> 24.0
+convert_duration(1.5, "hours").minutes    // -> 90.0
+convert_duration(1500, "millis").seconds  // -> 1.5
 ```
 
 ## Text

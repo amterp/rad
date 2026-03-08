@@ -78,6 +78,7 @@ const (
 	ErrAssertionFailed            = "20040"
 	ErrKeyNotFound                = "20041"
 	ErrInternalBug                = "20042"
+	ErrParseDuration              = "20043"
 
 	// 3xxxx Type Errors
 	ErrTypeMismatch     Error = "30001"

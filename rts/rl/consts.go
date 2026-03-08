@@ -190,10 +190,10 @@ const (
 	F_CONTEXT             = "context"
 
 	// Keywords
-	KEYWORD_ASC     = "asc"
-	KEYWORD_DESC    = "desc"
-	KEYWORD_RAD     = "rad"
-	KEYWORD_REQUEST = "request"
+	KEYWORD_ASC      = "asc"
+	KEYWORD_DESC     = "desc"
+	KEYWORD_RAD      = "rad"
+	KEYWORD_REQUEST  = "request"
 	KEYWORD_DISPLAY  = "display"
 	KEYWORD_INSECURE = "insecure"
 
