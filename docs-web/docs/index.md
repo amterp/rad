@@ -13,7 +13,7 @@ hide:
 <h1 class="rad-hero-title">Rad</h1>
 
 <p class="rad-hero-tagline">
-A scripting language designed to make writing <strong>CLI tools delightful</strong>. Familiar, Python-like syntax with CLI superpowers built-in.
+A scripting language designed to make writing <strong>CLI tools delightful</strong>. Familiar, Python-like syntax with CLI essentials built-in.
 </p>
 
 <div class="rad-hero-buttons" markdown>

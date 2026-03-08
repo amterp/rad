@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/amterp/rad)](https://goreportcard.com/report/github.com/amterp/rad)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bash is powerful but painful. Rad gives you Python-like scripting with CLI superpowers built-in.**
+**Bash is powerful but painful. Rad gives you Python-like scripting with CLI essentials built-in.**
 
 Write maintainable scripts with declarative argument parsing, built-in JSON processing, HTTP requests, and interactive
 user prompts - all in a familiar, readable syntax.
