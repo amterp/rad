@@ -731,6 +731,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1356,6 +1384,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#behavior-change-invocation-logging-enabled-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Behavior Change: Invocation Logging Enabled by Default
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Behavior Change: Invocation Logging Enabled by Default">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-opt-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Opt Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1735,6 +1813,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#behavior-change-invocation-logging-enabled-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Behavior Change: Invocation Logging Enabled by Default
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Behavior Change: Invocation Logging Enabled by Default">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-opt-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Opt Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1756,7 +1884,7 @@
 
 
 <h1 id="migrating-to-rad-v09">Migrating to Rad v0.9<a class="headerlink" href="#migrating-to-rad-v09" title="Permanent link">&para;</a></h1>
-<p>Version 0.9 introduces changes to error handling operators and renames a built-in function. This guide covers what changed and how to update your scripts.</p>
+<p>Version 0.9 introduces changes to error handling operators, renames a built-in function, and enables invocation logging by default. This guide covers what changed and how to update your scripts.</p>
 <h2 id="breaking-change-get_stash_dir-renamed">Breaking Change: <code>get_stash_dir</code> Renamed<a class="headerlink" href="#breaking-change-get_stash_dir-renamed" title="Permanent link">&para;</a></h2>
 <h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
 <p><code>get_stash_dir</code> was renamed to <code>get_stash_path</code> to better reflect its behavior - it returns a <em>path</em> (often to a file), not necessarily a directory.</p>
@@ -1838,6 +1966,18 @@ print(&quot;pi: &quot; + str(3.14))
   hint: get_stash_dir was renamed to get_stash_path.
   See: https://amterp.github.io/rad/migrations/v0.9/
 </code></pre></div>
+<h2 id="behavior-change-invocation-logging-enabled-by-default">Behavior Change: Invocation Logging Enabled by Default<a class="headerlink" href="#behavior-change-invocation-logging-enabled-by-default" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_3">What Changed<a class="headerlink" href="#what-changed_3" title="Permanent link">&para;</a></h3>
+<p>Invocation logging is now <strong>enabled by default</strong>. Each time you run a Rad script, Rad logs basic metadata (script path, timestamp, version, duration) to <code>~/.rad/logs/invocations.jsonl</code>. Previously, this was opt-in.</p>
+<p>Arguments are <strong>not</strong> logged by default - only the metadata listed above.</p>
+<h3 id="why_2">Why<a class="headerlink" href="#why_2" title="Permanent link">&para;</a></h3>
+<p>Invocation logs are most useful when they're already there - for example, <code>rad check --from-logs</code> can bulk-check your recently-used scripts after an upgrade. Enabling logging by default means these tools work out of the box.</p>
+<h3 id="how-to-opt-out">How to Opt Out<a class="headerlink" href="#how-to-opt-out" title="Permanent link">&para;</a></h3>
+<p>If you prefer to disable logging, set <code>enabled = false</code> in <code>~/.rad/config.toml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[invocation_logging]</span>
+<span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+</code></pre></div>
+<p>For more details on all available settings, see the <a href="../../guide/config/">Configuration guide</a>.</p>
 
 
 
