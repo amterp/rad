@@ -146,3 +146,24 @@ func TestSleep_CanSleepLessThanMilliWithoutErroring(t *testing.T) {
 	assertAllElseEmpty(t)
 	assertNoErrors(t)
 }
+
+func TestSleep_DayString(t *testing.T) {
+	setupAndRunCode(t, `sleep("1d")`)
+	assertSleptMillis(t, 86_400_000)
+	assertAllElseEmpty(t)
+	assertNoErrors(t)
+}
+
+func TestSleep_DayAndHoursString(t *testing.T) {
+	setupAndRunCode(t, `sleep("1d12h")`)
+	assertSleptMillis(t, 129_600_000)
+	assertAllElseEmpty(t)
+	assertNoErrors(t)
+}
+
+func TestSleep_FractionalDayString(t *testing.T) {
+	setupAndRunCode(t, `sleep("0.5d")`)
+	assertSleptMillis(t, 43_200_000)
+	assertAllElseEmpty(t)
+	assertNoErrors(t)
+}

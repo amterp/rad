@@ -1,7 +1,6 @@
 package core
 
 import (
-	"strings"
 	"time"
 
 	"github.com/amterp/rad/rts/rl"
@@ -27,8 +26,9 @@ var FuncSleep = BuiltInFunc{
 			}
 			return VOID_SENTINEL
 		case RadString:
-			durStr := strings.Replace(coerced.Plain(), " ", "", -1)
+			durStr := coerced.Plain()
 
+			// Bare numeric string -> interpret as seconds
 			floatVal, err := rts.ParseFloat(durStr)
 			if err == nil {
 				err := sleep(time.Duration(floatVal*1000)*time.Millisecond, f.namedArgs)
@@ -38,9 +38,10 @@ var FuncSleep = BuiltInFunc{
 				return VOID_SENTINEL
 			}
 
-			dur, err := time.ParseDuration(durStr)
+			// Human-readable duration string
+			nanos, err := ParseDurationString(durStr)
 			if err == nil {
-				err := sleep(dur, f.namedArgs)
+				err := sleep(time.Duration(nanos), f.namedArgs)
 				if err != nil {
 					return f.Return(err)
 				}
