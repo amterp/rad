@@ -193,9 +193,11 @@ const (
 	KEYWORD_ASC      = "asc"
 	KEYWORD_DESC     = "desc"
 	KEYWORD_RAD      = "rad"
-	KEYWORD_REQUEST  = "request"
-	KEYWORD_DISPLAY  = "display"
+	KEYWORD_REQUEST  = "request" // deprecated, kept for migration diagnostics
+	KEYWORD_DISPLAY  = "display" // deprecated, kept for migration diagnostics
 	KEYWORD_INSECURE = "insecure"
+	KEYWORD_QUIET    = "quiet"
+	KEYWORD_NOPRINT  = "noprint"
 
 	// Types
 	T_STR        = "str"

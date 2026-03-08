@@ -42,7 +42,8 @@ else if script:
             print("{padding} |{start_padding} (code: {d.code})")
         print()
 
-    print("Reported {len(diagnostics)} diagnostics.")
+    noun = len(diagnostics) == 1 ? "diagnostic" : "diagnostics"
+    print("Reported {len(diagnostics)} {noun}.")
     exit(error)
 else:
     print_err("Error: Must provide either 'script' or '--from-logs'")

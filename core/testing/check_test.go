@@ -50,6 +50,59 @@ Reported 2 diagnostics.
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
 
+func Test_Check_RadOptionNoEffect(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/rad_option_no_effect.rad", "--color=never")
+	expected := `L3:5: WARN
+
+     3 |     insecure
+       |     ^ 'insecure' has no effect without a URL source
+       |     (code: RAD40007)
+
+L4:5: WARN
+
+     4 |     quiet
+       |     ^ 'quiet' has no effect without a URL source
+       |     (code: RAD40007)
+
+L5:5: WARN
+
+     5 |     noprint
+       |     ^ 'noprint' has no effect without a source (mutations are not preserved)
+       |     (code: RAD40007)
+
+Reported 3 diagnostics.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
+func Test_Check_DeprecatedRequest(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/deprecated_request.rad", "--color=never")
+	expected := `L1:1: ERROR
+
+     1 | request "http://example.com":
+       | ^ 'request' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/
+       | (code: RAD40008)
+
+Reported 1 diagnostic.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExitCode(t, 1)
+}
+
+func Test_Check_DeprecatedDisplay(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/deprecated_display.rad", "--color=never")
+	expected := `L2:1: ERROR
+
+     2 | display data:
+       | ^ 'display' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/
+       | (code: RAD40008)
+
+Reported 1 diagnostic.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExitCode(t, 1)
+}
+
 func Test_Check_UnknownCommandCallbacks(t *testing.T) {
 	setupAndRunArgs(t, "check", "./rad_scripts/unknown_command_callbacks.rad", "--color=never")
 	expected := `L4:11: WARN

@@ -6,7 +6,8 @@ url = "https://google.com"
 Id = json.id
 Names = json.names[]
 
-request url:
+rad url:
+    noprint
     fields Id, Names
 print(Id[0])
 print(Names)
@@ -100,7 +101,8 @@ url = "https://google.com"
 names = json.*
 ids = json.*.ids
 
-request url:
+rad url:
+    noprint
     fields names, ids
 print(names)
 print(ids)
@@ -122,7 +124,8 @@ url = "https://google.com"
 names = json.*
 ids = json.*.ids[].id
 
-request url:
+rad url:
+    noprint
     fields names, ids
 print(names)
 print(ids)
@@ -142,7 +145,8 @@ Algo list of object capture
 url = "https://google.com"
 Building = json.buildings.*
 issues = json.buildings.*.issues
-request url:
+rad url:
+    noprint
     fields Building, issues
 print([len(x) for x in issues])
 ### ARGS ###
@@ -161,7 +165,8 @@ url = "https://google.com"
 
 ids = json[]
 
-request url:
+rad url:
+    noprint
     fields ids
 print(ids)
 ### ARGS ###
@@ -181,7 +186,8 @@ url = "https://google.com"
 len = json.len
 ages = json.results[].age
 
-request url:
+rad url:
+    noprint
     fields len, ages
 print(len[0])
 print(ages)
@@ -203,7 +209,8 @@ url = "https://google.com"
 len = json.len
 ages = json.results.*.age
 
-request url:
+rad url:
+    noprint
     fields len, ages
 print(len[0])
 print(ages)
@@ -222,7 +229,8 @@ Algo capture json node
 ### INPUT ###
 url = "https://google.com"
 node = json.results.Alice
-request url:
+rad url:
+    noprint
     fields node
 print(sort("{node[0]}"))
 ### ARGS ###
@@ -239,7 +247,8 @@ Algo can capture whole json
 ### INPUT ###
 url = "https://google.com"
 node = json
-request url:
+rad url:
+    noprint
     fields node
 print(sort("{node[0]}")) // hack to get the test consistent, as the order of keys in a map is not guaranteed
 ### ARGS ###
@@ -256,7 +265,8 @@ Algo can capture whole complex json
 ### INPUT ###
 url = "https://google.com"
 node = json
-request url:
+rad url:
+    noprint
     fields node
 pprint(node[0])
 ### ARGS ###

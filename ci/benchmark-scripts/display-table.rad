@@ -26,6 +26,6 @@ Email = json[].email
 Role = json[].role
 
 for i in range(iterations):
-    display data:
+    rad data:
         fields Name, Age, Email, Role
         sort Age desc, Name

@@ -952,9 +952,9 @@ names = ["Alice", "Bob", "Charlie"]
 colorize("Alice", names)     // -> "Alice" (in consistent color)
 colorize("Bob", names)       // -> "Bob" (in different consistent color)
 
-// In display blocks
+// In rad blocks
 names = ["Alice", "Bob", "Charlie", "David"]
-display:
+rad:
     fields names
     names:
         map fn(n) colorize(n, names)

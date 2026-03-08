@@ -36,7 +36,8 @@ PrettyPrint dict
 ### INPUT ###
 url = "https://google.com"
 node = json.results.Alice
-request url:
+rad url:
+    noprint
     fields node
 pprint(node[0])
 ### ARGS ###
@@ -56,7 +57,8 @@ PrettyPrint int
 ### INPUT ###
 url = "https://google.com"
 node = json.results.Alice.age
-request url:
+rad url:
+    noprint
     fields node
 pprint(node[0])
 ### ARGS ###
@@ -73,7 +75,8 @@ PrettyPrint array
 ### INPUT ###
 url = "https://google.com"
 node = json[].ids
-request url:
+rad url:
+    noprint
     fields node
 pprint(node)
 ### ARGS ###
@@ -107,7 +110,8 @@ PrettyPrint complex
 ### INPUT ###
 url = "https://google.com"
 node = json
-request url:
+rad url:
+    noprint
     fields node
 pprint(node[0])
 ### ARGS ###

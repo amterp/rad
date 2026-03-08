@@ -60,58 +60,7 @@ pprint(http_get(url))
 	assertRequesterInsecure(t, true)
 }
 
-// --- request block with insecure keyword ---
-
-func Test_RequestBlock_Insecure(t *testing.T) {
-	script := `
-id = json[].id
-request "http://example.com":
-    insecure
-    fields id
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	assertNoErrors(t)
-	assertHttpInsecure(t, true)
-}
-
-func Test_RequestBlock_InsecureTrue(t *testing.T) {
-	script := `
-id = json[].id
-request "http://example.com":
-    insecure true
-    fields id
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	assertNoErrors(t)
-	assertHttpInsecure(t, true)
-}
-
-func Test_RequestBlock_InsecureFalse(t *testing.T) {
-	script := `
-id = json[].id
-request "http://example.com":
-    insecure false
-    fields id
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	assertNoErrors(t)
-	assertHttpInsecure(t, false)
-}
-
-func Test_RequestBlock_InsecureExpression(t *testing.T) {
-	script := `
-id = json[].id
-flag = true
-request "http://example.com":
-    insecure flag
-    fields id
-`
-	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
-	assertNoErrors(t)
-	assertHttpInsecure(t, true)
-}
-
-// --- rad block with insecure ---
+// --- rad block with insecure keyword ---
 
 func Test_RadBlock_Insecure(t *testing.T) {
 	script := `
@@ -125,16 +74,55 @@ rad "http://example.com":
 	assertHttpInsecure(t, true)
 }
 
-// --- display block with insecure should error ---
+func Test_RadBlock_InsecureTrue(t *testing.T) {
+	script := `
+id = json[].id
+rad "http://example.com":
+    insecure true
+    fields id
+`
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	assertNoErrors(t)
+	assertHttpInsecure(t, true)
+}
 
-func Test_DisplayBlock_InsecureError(t *testing.T) {
+func Test_RadBlock_InsecureFalse(t *testing.T) {
+	script := `
+id = json[].id
+rad "http://example.com":
+    insecure false
+    fields id
+`
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	assertNoErrors(t)
+	assertHttpInsecure(t, false)
+}
+
+func Test_RadBlock_InsecureExpression(t *testing.T) {
+	script := `
+id = json[].id
+flag = true
+rad "http://example.com":
+    insecure flag
+    fields id
+`
+	setupAndRunCode(t, script, "--mock-response", ".*:./responses/id_name.json", "--color=never")
+	assertNoErrors(t)
+	assertHttpInsecure(t, true)
+}
+
+// --- insecure with non-URL source is silently accepted ---
+// The source expression could legitimately resolve to a URL on one code path
+// and a list/map on another, so we don't error at runtime.
+
+func Test_RadBlock_InsecureIgnoredOnNonUrlSource(t *testing.T) {
 	script := `
 data = [{"id": 1}]
 id = json[].id
-display data:
+rad data:
     insecure
     fields id
 `
 	setupAndRunCode(t, script, "--color=never")
-	assertErrorContains(t, 1, "'insecure' is not valid in display blocks")
+	assertNoErrors(t)
 }

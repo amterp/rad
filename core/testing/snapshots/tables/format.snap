@@ -2,7 +2,7 @@
 Rad FormatFloats
 ### INPUT ###
 nums = [0.6342, 0.7, 1.63, 0.0923]
-display:
+rad:
 	fields nums
 	sort nums
 	nums:
@@ -18,7 +18,7 @@ nums
 Rad MultiplyInts
 ### INPUT ###
 nums = [63, 20, 163, 9]
-display:
+rad:
 	fields nums
 	sort nums desc
 	nums:
@@ -34,7 +34,7 @@ nums
 Rad CanTruncateWithMap
 ### INPUT ###
 names = ["Alice", "Bob", "Charlie", "David"]
-display:
+rad:
 	fields names
 	sort
 	names:
@@ -51,7 +51,7 @@ Rad CanMapTwoFieldsAtOnce
 ### INPUT ###
 FirstNames = ["Alice", "Bob", "Charlie", "David"]
 LastNames = ["Smith", "Jones", "Brown", "White"]
-display:
+rad:
 	fields FirstNames, LastNames
 	sort
 	FirstNames, LastNames:

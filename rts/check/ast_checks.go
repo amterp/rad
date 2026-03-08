@@ -194,6 +194,65 @@ func (c *RadCheckerImpl) addInvalidAssignmentLHSErrorsAST(d *[]Diagnostic) {
 	})
 }
 
+// Check 10: Deprecated block keywords ('request', 'display')
+func (c *RadCheckerImpl) addDeprecatedBlockKeywordErrors(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	walkAST(c.ast, func(node rl.Node) {
+		radBlock, ok := node.(*rl.RadBlock)
+		if !ok {
+			return
+		}
+		if radBlock.Keyword == rl.KEYWORD_REQUEST || radBlock.Keyword == rl.KEYWORD_DISPLAY {
+			msg := "'" + radBlock.Keyword + "' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/"
+			*d = append(*d, NewDiagnosticErrorFromSpan(radBlock.KeywordSpan, c.src, msg, rl.ErrDeprecatedBlockKeyword))
+		}
+	})
+}
+
+// Check 11: Rad block options that have no effect in certain contexts.
+//   - 'insecure' and 'quiet' only apply to URL sources (string); they have no
+//     effect on list/map or no-source rad blocks.
+//   - 'noprint' on a no-source rad block is a no-op because the save/restore
+//     pattern undoes all mutations when the block returns.
+//
+// We can only statically detect the no-source case (Source == nil).
+// When a source expression exists, we can't know at compile time whether
+// it resolves to a URL or list/map, and both code paths are legitimate,
+// so we don't warn in that case.
+func (c *RadCheckerImpl) addRadOptionNoEffectWarnings(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	walkAST(c.ast, func(node rl.Node) {
+		radBlock, ok := node.(*rl.RadBlock)
+		if !ok || radBlock.Source != nil {
+			return
+		}
+
+		for _, stmt := range radBlock.Stmts {
+			opt, ok := stmt.(*rl.RadOption)
+			if !ok {
+				continue
+			}
+			switch opt.Keyword {
+			case rl.KEYWORD_INSECURE:
+				msg := "'insecure' has no effect without a URL source"
+				*d = append(*d, NewDiagnosticWarnFromSpan(opt.Span(), c.src, msg, rl.ErrRadOptionNoEffect))
+			case rl.KEYWORD_QUIET:
+				msg := "'quiet' has no effect without a URL source"
+				*d = append(*d, NewDiagnosticWarnFromSpan(opt.Span(), c.src, msg, rl.ErrRadOptionNoEffect))
+			case rl.KEYWORD_NOPRINT:
+				msg := "'noprint' has no effect without a source (mutations are not preserved)"
+				*d = append(*d, NewDiagnosticWarnFromSpan(opt.Span(), c.src, msg, rl.ErrRadOptionNoEffect))
+			}
+		}
+	})
+}
+
 func (c *RadCheckerImpl) validateAssignmentTargetAST(node rl.Node, d *[]Diagnostic) {
 	if node == nil {
 		return

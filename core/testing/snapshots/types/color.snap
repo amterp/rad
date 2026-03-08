@@ -253,10 +253,10 @@ for n in names:
 Alice
 
 ### TITLE ###
-Colorize can color in display block
+Colorize can color in rad block
 ### INPUT ###
 names = ["Alice", "Bob", "Charlie", "David"]
-display:
+rad:
 	fields names
 	names:
 		map fn(n) n.colorize(names)

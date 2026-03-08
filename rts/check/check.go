@@ -82,6 +82,8 @@ func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
 	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
 	c.addUnknownCommandCallbackWarnings(&diagnostics)
+	c.addDeprecatedBlockKeywordErrors(&diagnostics)
+	c.addRadOptionNoEffectWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil

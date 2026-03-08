@@ -133,7 +133,7 @@ Rad block lambda
 a = { "name": "alex" }
 
 name = json.name
-display a:
+rad a:
     fields name
     name:
         map fn(n) n.upper()
@@ -148,7 +148,7 @@ Rad block identifier
 a = { "name": "alex" }
 
 name = json.name
-display a:
+rad a:
     fields name
     name:
         map upper
@@ -163,7 +163,7 @@ Rad block block
 a = { "name": "alex" }
 
 name = json.name
-display a:
+rad a:
     fields name
     name:
         map fn(n):

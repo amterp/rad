@@ -91,8 +91,8 @@ Explaining the above script:
 2. It uses string interpolation to build the url we will query, based on the supplied args.
 3. It defines the fields to extract from the JSON response.
 4. It executes the query, extracting the specified fields from the response, and displays the resulting data as a table.
-    - Note the `rad url` syntax: "rad" actually stands for "request and display", which is what this built-in syntax
-      does.
+    - The `rad url:` syntax fetches JSON from the URL, extracts data into the defined fields, and displays the
+      result as a table.
 
 This example is kept somewhat minimal - there are Rad features we could use to further improve this.
 

@@ -571,7 +571,7 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 
 	case *RadBlock:
 		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
-		fmt.Fprintf(sb, "%sRadBlock %q\n", indent, n.BlockType)
+		fmt.Fprintf(sb, "%sRadBlock %q\n", indent, n.Keyword)
 		if n.Source != nil {
 			astDumpNode(sb, fmtStr, spacePad, n.Source, depth+1)
 		}

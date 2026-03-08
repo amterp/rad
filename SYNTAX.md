@@ -785,19 +785,18 @@ rad url:
     // Automatically prints formatted table after extraction
 ```
 
-### Display Blocks
+### Rad Blocks Without URL Source
 
 ```rad
-// Display assumes lists are already populated and prints data as table
+// Rad block with no source: assumes lists are already populated, prints as table
 names = ["alice", "bob", "charlie"]
 ages = [25, 30, 35]
 
-// Display with pre-populated lists (no data source)
-display:
+rad:
     fields names, ages
     sort ages desc, names
 
-// OR display with data source (runs JSON extraction + prints table)
+// Rad block with list/map source: runs JSON extraction + prints table
 data = [
     {"name": "alice", "age": 25},
     {"name": "bob", "age": 30}
@@ -805,7 +804,7 @@ data = [
 
 Name = json[].name
 Age = json[].age
-display data:
+rad data:
     fields Name, Age
     sort Age desc, Name
 ```
@@ -818,7 +817,7 @@ Field modifiers transform or filter data before display. Apply them to specific 
 ages = [15, 25, 30, 12]
 names = ["Alice", "Bob", "Charlie", "David"]
 
-display:
+rad:
     fields ages, names
     ages:
         filter fn(a) a >= 18       // Keep only adults
@@ -849,7 +848,7 @@ When a map or filter lambda accepts **two parameters**, the second receives a co
 
 ```rad
 nums = [10, 20, 30]
-display:
+rad:
     fields nums
     nums:
         map fn(x, ctx) "{ctx.idx + 1}. {x}"
@@ -909,22 +908,27 @@ process_data()
 exit(0)  // defer blocks run just before this
 ```
 
-### Request Blocks
+### Rad Block Options
 
 ```rad
-// Request blocks run JSON extraction algorithm but don't print table
-// They populate lists with extracted field data
+// noprint: run JSON extraction but don't print table
 url = "https://api.example.com/users"
 Name = json.results[].name
 Email = json.results[].email
 
-request url:
+rad url:
+    noprint
     fields Name, Email
     sort Name
 
 // After this block, Name and Email contain the extracted data
 print(Name)  // ["alice", "bob", "charlie"]
 print(Email) // ["alice@example.com", "bob@example.com", "charlie@example.com"]
+
+// quiet: suppress "Querying url: ..." stderr log
+rad url:
+    quiet
+    fields Name, Email
 ```
 
 ### Advanced Function Features
