@@ -1448,6 +1448,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#parse_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse_duration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convert_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        convert_duration
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2969,6 +2991,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#parse_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse_duration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convert_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        convert_duration
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3973,7 +4017,8 @@ pprint(item)
 <p>Pauses execution for the specified duration.</p>
 <div class="highlight"><pre><span></span><code>sleep(_duration: int|float|str, *, title: str?) -&gt; void
 </code></pre></div>
-<p>Integer and float values are treated as seconds. String values support Go duration format like "2h45m", "1.5s", "500ms".
+<p>Integer and float values are treated as seconds. String values support duration format like "2h45m", "1.5s", "500ms".
+Spaces are allowed in duration strings (e.g. <code>"5m 30s"</code>).
 If <code>title</code> is provided, it's printed before sleeping.</p>
 <p><strong>Duration string suffixes:</strong></p>
 <table>
@@ -3984,6 +4029,10 @@ If <code>title</code> is provided, it's printed before sleeping.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>d</code></td>
+<td>Days</td>
+</tr>
 <tr>
 <td><code>h</code></td>
 <td>Hours</td>
@@ -4012,8 +4061,9 @@ If <code>title</code> is provided, it's printed before sleeping.</p>
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight"><pre><span></span><code>sleep(2.5)              // -&gt; Sleep for 2.5 seconds
-sleep(&quot;1h30m&quot;)          // -&gt; Sleep for 1 hour 30 minutes  
+sleep(&quot;1h30m&quot;)          // -&gt; Sleep for 1 hour 30 minutes
 sleep(&quot;500ms&quot;)          // -&gt; Sleep for 500 milliseconds
+sleep(&quot;1d12h&quot;)          // -&gt; Sleep for 1 day 12 hours
 sleep(5, title=&quot;Waiting...&quot;) // -&gt; Prints &quot;Waiting...&quot; then sleeps 5 seconds
 </code></pre></div>
 <h3 id="len">len<a class="headerlink" href="#len" title="Permanent link">&para;</a></h3>
@@ -4163,7 +4213,8 @@ type_of(3.14)    // -&gt; &quot;float&quot;
 type_of({&quot;a&quot;: 1}) // -&gt; &quot;map&quot;
 </code></pre></div>
 <h3 id="str">str<a class="headerlink" href="#str" title="Permanent link">&para;</a></h3>
-<p>Converts any value to a string representation. Useful when you need to concatenate non-string values with <code>+</code>, though interpolation (<code>"value: {x}"</code>) is generally preferred.</p>
+<p>Converts any value to a string representation. Useful when you need to concatenate non-string values with <code>+</code>, though
+interpolation (<code>"value: {x}"</code>) is generally preferred.</p>
 <div class="highlight"><pre><span></span><code>str(_var: any) -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>str(42)        // -&gt; &quot;42&quot;
@@ -4388,6 +4439,27 @@ parse_float(&quot;abc&quot;)   // -&gt; Error: invalid syntax
 parse_json(&#39;[1, 2, 3]&#39;)                     // -&gt; [1, 2, 3]
 parse_json(&#39;invalid json&#39;)                  // -&gt; Error: invalid JSON
 </code></pre></div>
+<h3 id="parse_duration">parse_duration<a class="headerlink" href="#parse_duration" title="Permanent link">&para;</a></h3>
+<p>Parses a human-readable duration string into a map of time units. Supports all standard suffixes (<code>ns</code>, <code>us</code>/<code>µs</code>, <code>ms</code>,
+<code>s</code>, <code>m</code>, <code>h</code>) plus <code>d</code> for days (1d = 24h). Spaces are stripped, and a leading <code>-</code> negates the whole duration.</p>
+<div class="highlight"><pre><span></span><code>parse_duration(_duration: str) -&gt; error|{ &quot;nanos&quot;: int, &quot;micros&quot;: float, &quot;millis&quot;: float, &quot;seconds&quot;: float, &quot;minutes&quot;: float, &quot;hours&quot;: float, &quot;days&quot;: float }
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>parse_duration(&quot;5m23s&quot;)         // -&gt; { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
+parse_duration(&quot;1d12h&quot;).hours   // -&gt; 36.0
+parse_duration(&quot;300ms&quot;).millis  // -&gt; 300.0
+parse_duration(&quot;-5m&quot;).minutes   // -&gt; -5.0
+parse_duration(&quot;5m 30s&quot;)        // -&gt; same as &quot;5m30s&quot;
+</code></pre></div>
+<h3 id="convert_duration">convert_duration<a class="headerlink" href="#convert_duration" title="Permanent link">&para;</a></h3>
+<p>Converts a numeric value in the specified unit. Supports <code>nanos</code>, <code>micros</code>, <code>millis</code>, <code>seconds</code>, <code>minutes</code>, <code>hours</code>, and
+<code>days</code>.</p>
+<div class="highlight"><pre><span></span><code>convert_duration(_value: int|float, _unit: [&quot;nanos&quot;, &quot;micros&quot;, &quot;millis&quot;, &quot;seconds&quot;, &quot;minutes&quot;, &quot;hours&quot;, &quot;days&quot;]) -&gt; error|{ &quot;nanos&quot;: int, &quot;micros&quot;: float, &quot;millis&quot;: float, &quot;seconds&quot;: float, &quot;minutes&quot;: float, &quot;hours&quot;: float, &quot;days&quot;: float }
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>convert_duration(90, &quot;seconds&quot;).minutes   // -&gt; 1.5
+convert_duration(1, &quot;days&quot;).hours         // -&gt; 24.0
+convert_duration(1.5, &quot;hours&quot;).minutes    // -&gt; 90.0
+convert_duration(1500, &quot;millis&quot;).seconds  // -&gt; 1.5
+</code></pre></div>
 <h2 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h2>
 <h3 id="upper">upper<a class="headerlink" href="#upper" title="Permanent link">&para;</a></h3>
 <p>Converts a string to uppercase. Preserves color attributes.</p>
@@ -4460,9 +4532,9 @@ for line in content.split_lines():
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+</div>
 <p>A trailing line ending produces an empty string as the last element (same as <code>split()</code>).
 Trim first if unwanted: <code>content.trim().split_lines()</code>.</p>
-</div>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
 <p>Counts the number of non-overlapping instances of substring in string.</p>
 <div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
@@ -4673,9 +4745,9 @@ same set.</p>
 colorize(&quot;Alice&quot;, names)     // -&gt; &quot;Alice&quot; (in consistent color)
 colorize(&quot;Bob&quot;, names)       // -&gt; &quot;Bob&quot; (in different consistent color)
 
-// In display blocks
+// In rad blocks
 names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
-display:
+rad:
     fields names
     names:
         map fn(n) colorize(n, names)
@@ -4776,7 +4848,8 @@ gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
 <div class="highlight"><pre><span></span><code>pick(_options: list[str], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; str
 </code></pre></div>
 <p>Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.</p>
-<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a filter, it's selected immediately; if multiple match exactly, only those are shown.</p>
+<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a
+filter, it's selected immediately; if multiple match exactly, only those are shown.</p>
 <div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])                        // -&gt; Interactive menu
 pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)                        // -&gt; Fuzzy-filtered to &quot;red&quot;, &quot;green&quot;
 pick([&quot;grape&quot;, &quot;g&quot;], &quot;g&quot;, prefer_exact=true)                 // -&gt; Immediately picks &quot;g&quot; (exact match)
@@ -4787,7 +4860,8 @@ pick([&quot;one&quot;, &quot;two&quot;, &quot;three&quot;], prompt=&quot;Choose:
 <div class="highlight"><pre><span></span><code>pick_kv(keys: list[str], values: list[any], _filter: str?|list[str]?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; any
 </code></pre></div>
 <p>Displays keys in the menu but returns the value at the same index when selected.</p>
-<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a filter, its value is returned immediately; if multiple match exactly, only those are shown.</p>
+<p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a
+filter, its value is returned immediately; if multiple match exactly, only those are shown.</p>
 <div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
 ages = [25, 30, 35]
 pick_kv(names, ages)                                        // -&gt; Shows names, returns age
@@ -4799,7 +4873,9 @@ pick_kv([&quot;grape&quot;, &quot;g&quot;], [1, 2], &quot;g&quot;, prefer_exact=
 <div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = true) -&gt; any
 </code></pre></div>
 <p>Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).</p>
-<p>With <code>prefer_exact=true</code> (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set <code>prefer_exact=false</code> to disable this and use pure fuzzy matching.</p>
+<p>With <code>prefer_exact=true</code> (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a
+key that exactly matches the filter, it's selected immediately; if multiple match exactly, only those are shown. Set
+<code>prefer_exact=false</code> to disable this and use pure fuzzy matching.</p>
 <div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
 pick_from_resource(&quot;configs.json&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered, exact match priority
 pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
@@ -5064,17 +5140,17 @@ max([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
 <tbody>
 <tr>
 <td><code>val</code></td>
-<td><code>int|float</code></td>
+<td><code>int | float</code></td>
 <td>Value to constrain</td>
 </tr>
 <tr>
 <td><code>min</code></td>
-<td><code>int|float</code></td>
+<td><code>int | float</code></td>
 <td>Minimum bound</td>
 </tr>
 <tr>
 <td><code>max</code></td>
-<td><code>int|float</code></td>
+<td><code>int | float</code></td>
 <td>Maximum bound</td>
 </tr>
 </tbody>
@@ -5656,8 +5732,8 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 <p>Parses a Unix epoch timestamp into various time formats.</p>
 <div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float) -&gt; map|error
 parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;) -&gt; map|error
-parse_epoch(_epoch: int|float, *, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
-parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; map|error
+parse_epoch(_epoch: int|float, *, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;] = &quot;auto&quot;) -&gt; map|error
+parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;] = &quot;auto&quot;) -&gt; map|error
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5681,7 +5757,7 @@ parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto
 </tr>
 <tr>
 <td><code>unit</code></td>
-<td><code>["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto"</code></td>
+<td><code>["auto", "seconds", "millis", "micros", "nanos"] = "auto"</code></td>
 <td>Timestamp unit (auto-detects by default)</td>
 </tr>
 </tbody>
@@ -5699,14 +5775,14 @@ time = parse_epoch(1712345678123, tz=&quot;America/Chicago&quot;)
 print(time.hour)  // -&gt; Hour in Chicago timezone
 
 // Explicit unit specification
-time = parse_epoch(1712345678000, unit=&quot;milliseconds&quot;)
+time = parse_epoch(1712345678000, unit=&quot;millis&quot;)
 
 // Float epoch with sub-second precision
 time = parse_epoch(1712345678.5)  // 1712345678 seconds + 500ms
 print(time.epoch.millis)  // -&gt; 1712345678500
 
 // Float with explicit unit (sub-millisecond precision)
-time = parse_epoch(1712345678123.25, unit=&quot;milliseconds&quot;)
+time = parse_epoch(1712345678123.25, unit=&quot;millis&quot;)
 print(time.epoch.nanos)  // -&gt; 1712345678123250000
 
 // Error handling

@@ -1693,10 +1693,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-blocks" class="md-nav__link">
+  <a href="#rad-blocks-without-url-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Display Blocks
+        Rad Blocks Without URL Source
       
     </span>
   </a>
@@ -1765,10 +1765,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#request-blocks" class="md-nav__link">
+  <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Request Blocks
+        Rad Block Options
       
     </span>
   </a>
@@ -3147,10 +3147,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-blocks" class="md-nav__link">
+  <a href="#rad-blocks-without-url-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Display Blocks
+        Rad Blocks Without URL Source
       
     </span>
   </a>
@@ -3219,10 +3219,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#request-blocks" class="md-nav__link">
+  <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Request Blocks
+        Rad Block Options
       
     </span>
   </a>
@@ -4344,17 +4344,16 @@ rad url:
     sort Name
     // Automatically prints formatted table after extraction
 </code></pre></div>
-<h3 id="display-blocks">Display Blocks<a class="headerlink" href="#display-blocks" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>// Display assumes lists are already populated and prints data as table
+<h3 id="rad-blocks-without-url-source">Rad Blocks Without URL Source<a class="headerlink" href="#rad-blocks-without-url-source" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Rad block with no source: assumes lists are already populated, prints as table
 names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
 ages = [25, 30, 35]
 
-// Display with pre-populated lists (no data source)
-display:
+rad:
     fields names, ages
     sort ages desc, names
 
-// OR display with data source (runs JSON extraction + prints table)
+// Rad block with list/map source: runs JSON extraction + prints table
 data = [
     {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25},
     {&quot;name&quot;: &quot;bob&quot;, &quot;age&quot;: 30}
@@ -4362,7 +4361,7 @@ data = [
 
 Name = json[].name
 Age = json[].age
-display data:
+rad data:
     fields Name, Age
     sort Age desc, Name
 </code></pre></div>
@@ -4371,7 +4370,7 @@ display data:
 <div class="highlight"><pre><span></span><code>ages = [15, 25, 30, 12]
 names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
 
-display:
+rad:
     fields ages, names
     ages:
         filter fn(a) a &gt;= 18       // Keep only adults
@@ -4395,7 +4394,7 @@ ages:
 <h3 id="field-modifier-context">Field Modifier Context<a class="headerlink" href="#field-modifier-context" title="Permanent link">&para;</a></h3>
 <p>When a map or filter lambda accepts <strong>two parameters</strong>, the second receives a context object:</p>
 <div class="highlight"><pre><span></span><code>nums = [10, 20, 30]
-display:
+rad:
     fields nums
     nums:
         map fn(x, ctx) &quot;{ctx.idx + 1}. {x}&quot;
@@ -4463,20 +4462,25 @@ process_data()
 // More code can run here
 exit(0)  // defer blocks run just before this
 </code></pre></div>
-<h3 id="request-blocks">Request Blocks<a class="headerlink" href="#request-blocks" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>// Request blocks run JSON extraction algorithm but don&#39;t print table
-// They populate lists with extracted field data
+<h3 id="rad-block-options">Rad Block Options<a class="headerlink" href="#rad-block-options" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// noprint: run JSON extraction but don&#39;t print table
 url = &quot;https://api.example.com/users&quot;
 Name = json.results[].name
 Email = json.results[].email
 
-request url:
+rad url:
+    noprint
     fields Name, Email
     sort Name
 
 // After this block, Name and Email contain the extracted data
 print(Name)  // [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
 print(Email) // [&quot;alice@example.com&quot;, &quot;bob@example.com&quot;, &quot;charlie@example.com&quot;]
+
+// quiet: suppress &quot;Querying url: ...&quot; stderr log
+rad url:
+    quiet
+    fields Name, Email
 </code></pre></div>
 <h3 id="advanced-function-features">Advanced Function Features<a class="headerlink" href="#advanced-function-features" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Vararg parameters

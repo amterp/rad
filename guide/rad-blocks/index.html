@@ -711,22 +711,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-block-types" class="md-nav__link">
+  <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Other Block Types
+        Rad Block Options
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Other Block Types">
+    <nav class="md-nav" aria-label="Rad Block Options">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#request-no-display" class="md-nav__link">
+  <a href="#noprint-suppress-table-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        request: No Display
+        noprint: Suppress Table Output
       
     </span>
   </a>
@@ -734,10 +734,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-no-request" class="md-nav__link">
+  <a href="#quiet-suppress-http-log" class="md-nav__link">
     <span class="md-ellipsis">
       
-        display: No Request
+        quiet: Suppress HTTP Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#url-string-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL String Source
       
     </span>
   </a>
@@ -745,10 +773,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#when-to-use-each" class="md-nav__link">
+  <a href="#listmap-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to Use Each
+        List/Map Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Source
       
     </span>
   </a>
@@ -1738,22 +1777,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-block-types" class="md-nav__link">
+  <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Other Block Types
+        Rad Block Options
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Other Block Types">
+    <nav class="md-nav" aria-label="Rad Block Options">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#request-no-display" class="md-nav__link">
+  <a href="#noprint-suppress-table-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        request: No Display
+        noprint: Suppress Table Output
       
     </span>
   </a>
@@ -1761,10 +1800,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#display-no-request" class="md-nav__link">
+  <a href="#quiet-suppress-http-log" class="md-nav__link">
     <span class="md-ellipsis">
       
-        display: No Request
+        quiet: Suppress HTTP Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#url-string-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL String Source
       
     </span>
   </a>
@@ -1772,10 +1839,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#when-to-use-each" class="md-nav__link">
+  <a href="#listmap-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to Use Each
+        List/Map Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No Source
       
     </span>
   </a>
@@ -2133,7 +2211,7 @@ timestamp, strategy, fund:
 Names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;Diana&quot;, &quot;Eve&quot;]
 Status = [&quot;active&quot;, &quot;active&quot;, &quot;inactive&quot;, &quot;active&quot;, &quot;active&quot;]
 
-display:
+rad:
     fields Names, Ages, Status
     Ages:
         filter fn(a) a &gt;= 18
@@ -2149,7 +2227,7 @@ Diana   20    active
 
 <p>Notice that Charlie doesn't appear (age &gt;= 18 but status is inactive), Bob doesn't appear (active but age &lt; 18), and Eve doesn't appear (active but age &lt; 18).</p>
 <p>Like with sorting and mapping, the filter predicate can be a lambda expression or a function reference:</p>
-<div class="highlight"><pre><span></span><code>display:
+<div class="highlight"><pre><span></span><code>rad:
     fields Name, Age
     Age:
         filter is_adult
@@ -2221,13 +2299,12 @@ rad url:
 </code></pre></div>
 <p>If the flag is enabled, we sort by descending population, otherwise we sort rows alphabetically.</p>
 <p>You can put any rad block statements into these if blocks, including <code>fields</code>, column modifiers, etc.</p>
-<h2 id="other-block-types">Other Block Types<a class="headerlink" href="#other-block-types" title="Permanent link">&para;</a></h2>
-<p>So far we've seen the <code>rad</code> block, which performs an HTTP request, extracts data, and displays it as a table.
-Rad also offers two variants that give you more control over this workflow: <strong>request blocks</strong> and <strong>display blocks</strong>.</p>
-<h3 id="request-no-display">request: No Display<a class="headerlink" href="#request-no-display" title="Permanent link">&para;</a></h3>
-<p>A <strong>request block</strong> is like a <code>rad</code> block, but it doesn't print a table. It performs the HTTP request and extracts fields
-into lists, then stops. This is useful when you want to process the data further before displaying it, or use it for something other than display.</p>
-<div class="highlight"><pre><span></span><code>request url:
+<h2 id="rad-block-options">Rad Block Options<a class="headerlink" href="#rad-block-options" title="Permanent link">&para;</a></h2>
+<h3 id="noprint-suppress-table-output">noprint: Suppress Table Output<a class="headerlink" href="#noprint-suppress-table-output" title="Permanent link">&para;</a></h3>
+<p>By default, a <code>rad</code> block prints its results as a table. Add <code>noprint</code> to suppress this, which is useful when you want
+to process the extracted data further without displaying it.</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    noprint
     fields City, Country, Population
     sort Population desc
 
@@ -2236,13 +2313,41 @@ into lists, then stops. This is useful when you want to process the data further
 largest_city = City[0]
 print(&quot;The largest city is {largest_city}&quot;)
 </code></pre></div>
-<p>Note that <code>filter</code>, <code>sort</code>, and <code>map</code> all work in request blocks since they modify the underlying data. However, <code>color</code> is display-only and has no effect since nothing gets displayed.</p>
-<h3 id="display-no-request">display: No Request<a class="headerlink" href="#display-no-request" title="Permanent link">&para;</a></h3>
-<p>A <strong>display block</strong> takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.</p>
-<p><strong>Display with manual data:</strong></p>
+<p>Note that <code>filter</code>, <code>sort</code>, and <code>map</code> all work with <code>noprint</code> since they modify the underlying data. However, <code>color</code> has no effect since nothing gets displayed.</p>
+<h3 id="quiet-suppress-http-log">quiet: Suppress HTTP Log<a class="headerlink" href="#quiet-suppress-http-log" title="Permanent link">&para;</a></h3>
+<p>When fetching from a URL, Rad logs "Querying url: ..." to stderr. Add <code>quiet</code> to suppress this log:</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    quiet
+    fields Name, Age
+</code></pre></div>
+<p>Both <code>noprint</code> and <code>quiet</code> support explicit boolean values: <code>noprint true</code>, <code>noprint false</code>, <code>noprint some_variable</code>.</p>
+<h2 id="source-types">Source Types<a class="headerlink" href="#source-types" title="Permanent link">&para;</a></h2>
+<p>The behavior of a <code>rad</code> block depends on what source you give it:</p>
+<h3 id="url-string-source">URL String Source<a class="headerlink" href="#url-string-source" title="Permanent link">&para;</a></h3>
+<p>When the source evaluates to a string, Rad treats it as a URL and performs an HTTP GET request:</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    fields Name, Age
+</code></pre></div>
+<h3 id="listmap-source">List/Map Source<a class="headerlink" href="#listmap-source" title="Permanent link">&para;</a></h3>
+<p>When the source is a list or map (e.g. from <code>http_get</code>), Rad extracts data from it without making an HTTP request.
+This is useful when you need custom headers or authentication:</p>
+<div class="highlight"><pre><span></span><code>// Fetch data with custom headers
+resp = http_get(url, headers=my_headers)
+
+// Define JSON paths
+Name = json[].name
+Age = json[].age
+
+// Extract and display
+rad resp.body:
+    fields Name, Age
+    sort Age desc
+</code></pre></div>
+<h3 id="no-source">No Source<a class="headerlink" href="#no-source" title="Permanent link">&para;</a></h3>
+<p>When no source is given, Rad displays already-populated data as a table:</p>
 <div class="highlight"><pre><span></span><code>Nums = [1, 2]
 Words = [&quot;hi&quot;, &quot;hello&quot;]
-display:
+rad:
     fields Nums, Words
 </code></pre></div>
 <div class="result">
@@ -2252,42 +2357,19 @@ display:
 </code></pre></div>
 </div>
 
-<p><strong>Display with a data source:</strong></p>
-<p>Display blocks can also take a variable containing JSON data (like the response from <code>http_get</code>). This is particularly
-useful when you need custom headers or authentication:</p>
-<div class="highlight"><pre><span></span><code>// Fetch data with custom headers
-resp = http_get(url, headers=my_headers)
-
-// Define JSON paths
-Name = json[].name
-Age = json[].age
-
-// Display the data
-display resp.body:
-    fields Name, Age
-    sort Age desc
-</code></pre></div>
-<h3 id="when-to-use-each">When to Use Each<a class="headerlink" href="#when-to-use-each" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong><code>rad</code></strong>: When you want to query and display in one step (most common case)</li>
-<li><strong><code>request</code></strong>: When you need to process data before displaying or use it for non-display purposes</li>
-<li><strong><code>display</code></strong>: When you have data from manual sources, <code>http_get()</code> with custom headers, or derived from <code>request</code> blocks</li>
-</ul>
 <div class="admonition info">
-<p class="admonition-title">Modifier Mutation Across Block Types</p>
-<p>Field modifiers like (<code>filter</code>, <code>sort</code>, <code>map</code>) may or may not mutate underlying data depending on the block type:</p>
-<ul>
-<li>In <strong><code>rad</code></strong> and <strong><code>request</code></strong> blocks: Permanently modify the field arrays</li>
-<li>In <strong><code>display</code></strong> blocks: Applied for rendering, but does <em>not</em> change underlying data.</li>
-</ul>
-<p>This means you can use <code>request</code> blocks to filter, sort, or transform data for further processing,
-while <code>display</code> blocks let you format data for viewing without altering the original values.</p>
+<p class="admonition-title">Modifiers and Data Mutation</p>
+<p>When a rad block has a source, it's performing data extraction - pulling values from JSON into your field
+variables. Since it's <em>populating</em> those variables, it naturally owns them, and modifiers (<code>filter</code>, <code>sort</code>,
+<code>map</code>) operate directly on the extracted data.</p>
+<p>When there's no source, the rad block is simply <em>presenting</em> data that already exists. Your variables were
+populated elsewhere, so modifiers are applied only for rendering - the original data is left untouched.</p>
 </div>
 <h2 id="understanding-http-requests">Understanding HTTP Requests<a class="headerlink" href="#understanding-http-requests" title="Permanent link">&para;</a></h2>
-<p>When you write <code>rad</code> or <code>request</code> blocks, Rad automatically performs an <strong>HTTP GET</strong> request to the URL and expects a JSON response.
+<p>When you write a <code>rad</code> block with a URL string source, Rad automatically performs an <strong>HTTP GET</strong> request to the URL and expects a JSON response.
 This happens behind the scenes - you don't need to explicitly call any HTTP functions.</p>
 <h3 id="headers-and-authentication">Headers and Authentication<a class="headerlink" href="#headers-and-authentication" title="Permanent link">&para;</a></h3>
-<p>Currently, <code>rad</code> and <code>request</code> blocks don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the <a href="../../reference/functions/#http-functions"><code>http_get</code></a> or <a href="../../reference/functions/#http-functions"><code>http_post</code></a> functions first, then pass the result to a <code>display</code> block:</p>
+<p>Currently, <code>rad</code> blocks with URL sources don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the <a href="../../reference/functions/#http-functions"><code>http_get</code></a> or <a href="../../reference/functions/#http-functions"><code>http_post</code></a> functions first, then pass the response body as the source:</p>
 <div class="highlight"><pre><span></span><code>args:
     token str  # API authentication token
 
@@ -2303,8 +2385,8 @@ resp = http_get(url, headers=headers)
 Name = json[].name
 Stars = json[].stargazers_count
 
-// Display the data we fetched
-display resp.body:
+// Extract and display the data we fetched
+rad resp.body:
     fields Name, Stars
     sort Stars desc
 </code></pre></div>
@@ -2312,10 +2394,15 @@ display resp.body:
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Rad blocks</strong> make working with JSON APIs concise and declarative - request, extract, and display data in just a few lines</li>
-<li>Three block types serve different needs:<ul>
-<li><strong><code>rad url:</code></strong> - Request and display in one step</li>
-<li><strong><code>request url:</code></strong> - Request and extract data without displaying</li>
-<li><strong><code>display:</code></strong> - Display already-populated data as a table</li>
+<li>Source type determines behavior:<ul>
+<li><strong><code>rad url:</code></strong> (string source) - Fetch JSON from URL, extract, and display</li>
+<li><strong><code>rad data:</code></strong> (list/map source) - Extract from in-memory data and display</li>
+<li><strong><code>rad:</code></strong> (no source) - Display already-populated data as a table</li>
+</ul>
+</li>
+<li><strong>Options</strong> control output:<ul>
+<li><strong><code>noprint</code></strong> - Suppress table output (extract data only)</li>
+<li><strong><code>quiet</code></strong> - Suppress the "Querying url: ..." stderr log</li>
 </ul>
 </li>
 <li><strong>JSON field definitions</strong> use special path syntax to extract data from JSON responses<ul>
@@ -2333,7 +2420,7 @@ display resp.body:
 <li><strong>Execution order</strong>: filter → sort → map</li>
 </ul>
 </li>
-<li><strong>HTTP control</strong>: rad blocks perform GET automatically; use <code>http_get()</code>/<code>http_post()</code> with <code>display</code> for more advanced queries (e.g. requiring headers/auth)</li>
+<li><strong>HTTP control</strong>: rad blocks perform GET automatically; use <code>http_get()</code>/<code>http_post()</code> and pass the response body as a rad block source for more advanced queries (e.g. requiring headers/auth)</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Next, we'll cover an important concept for keeping your scripts maintainable: <a href="../type-annotations/">Type Annotations</a>.</p>

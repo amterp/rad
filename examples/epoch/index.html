@@ -1034,10 +1034,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-display-block" class="md-nav__link">
+  <a href="#the-rad-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The display block
+        The rad block
       
     </span>
   </a>
@@ -1542,10 +1542,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-display-block" class="md-nav__link">
+  <a href="#the-rad-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The display block
+        The rad block
       
     </span>
   </a>
@@ -1657,7 +1657,7 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-display:
+rad:
     fields Timezone, Time
 
 fn parse_time(epoch: int, tz: str) -&gt; str:
@@ -1942,7 +1942,7 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-// display block will go here
+// rad block will go here
 
 <span class="hll">fn parse_time(epoch: int, tz: str) -&gt; str:
 </span><span class="hll">    time = parse_epoch(epoch, tz=tz)
@@ -1950,8 +1950,8 @@ for tz, _ in tz_to_flag:
 </span></code></pre></div></td></tr></table></div>
 <p>The <a href="../../reference/functions/#parse_epoch"><code>parse_epoch()</code></a> function converts an epoch timestamp to a time map, accepting a <code>tz</code> parameter for the timezone. We then format the <code>.date</code> and <code>.time</code> fields into a string.</p>
 <p>Note the type annotations <code>epoch: int, tz: str</code> and <code>-&gt; str</code> - these are optional but help document what the function expects and returns.</p>
-<h3 id="the-display-block">The display block<a class="headerlink" href="#the-display-block" title="Permanent link">&para;</a></h3>
-<p>Finally, we use a <a href="../../guide/rad-blocks/#display-no-request"><code>display</code> block</a> to render our two columns as a formatted table:</p>
+<h3 id="the-rad-block">The rad block<a class="headerlink" href="#the-rad-block" title="Permanent link">&para;</a></h3>
+<p>Finally, we use a <a href="../../guide/rad-blocks/"><code>rad</code> block</a> (with no source) to render our two columns as a formatted table:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -2007,14 +2007,14 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-<span class="hll">display:
+<span class="hll">rad:
 </span><span class="hll">    fields Timezone, Time
 </span>
 fn parse_time(epoch: int, tz: str) -&gt; str:
     time = parse_epoch(epoch, tz=tz)
     return &quot;{time.date} {time.time}&quot;
 </code></pre></div></td></tr></table></div>
-<p>The <code>display</code> block takes our pre-populated lists and renders them as aligned columns. The variable names (<code>Timezone</code>, <code>Time</code>) become the column headers.</p>
+<p>The <code>rad</code> block (with no source) takes our pre-populated lists and renders them as aligned columns. The variable names (<code>Timezone</code>, <code>Time</code>) become the column headers.</p>
 <h3 id="try-it-out">Try it out<a class="headerlink" href="#try-it-out" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>&gt; epoch 1700000000000
 Timezone                Time
@@ -2074,7 +2074,7 @@ Timezone                Time
 <td>Time conversion</td>
 </tr>
 <tr>
-<td><a href="../../guide/rad-blocks/#display-no-request"><code>display</code> blocks</a></td>
+<td><a href="../../guide/rad-blocks/"><code>rad</code> blocks</a></td>
 <td>Tabular output</td>
 </tr>
 </tbody>
