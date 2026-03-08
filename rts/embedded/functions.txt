@@ -7,6 +7,7 @@ clamp
 color_rgb
 colorize
 confirm
+convert_duration
 count
 cyan
 debug
@@ -62,6 +63,7 @@ min
 multipick
 now
 orange
+parse_duration
 parse_epoch
 parse_float
 parse_int

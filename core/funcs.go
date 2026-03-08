@@ -129,6 +129,8 @@ const (
 	FUNC_LOAD               = "load"
 	FUNC_COLOR_RGB          = "color_rgb"
 	FUNC_COLORIZE           = "colorize"
+	FUNC_PARSE_DURATION     = "parse_duration"
+	FUNC_CONVERT_DURATION   = "convert_duration"
 	FUNC_GET_ARGS           = "get_args"
 
 	INTERNAL_FUNC_GET_STASH_ID    = "_rad_get_stash_id"
@@ -296,6 +298,8 @@ func init() {
 		FuncPrintErr,
 		FuncExit,
 		FuncSleep,
+		FuncParseDuration,
+		FuncConvertDuration,
 		FuncSeedRandom,
 		FuncRand,
 		FuncRandInt,
