@@ -244,6 +244,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -315,6 +316,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -344,6 +346,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### EXIT ###
@@ -434,6 +437,7 @@ Global options:
       --shell               Outputs shell/bash exports of variables, so they can be eval'd
   -v, --version             Print rad version information.
       --confirm-shell       Confirm all shell commands before running them.
+      --tls-insecure        Skip TLS certificate verification for all HTTP requests.
       --src                 Instead of running the target script, just print it out.
       --cst-tree            Instead of running the target script, print out its CST (concrete syntax tree).
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).

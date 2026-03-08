@@ -1,6 +1,7 @@
 package core
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,15 +20,18 @@ var (
 )
 
 type Requester struct {
+	insecure                  bool
+	insecureClient            *http.Client // cached; created lazily to reuse http.Transport connection pool
 	jsonPathsByMockedUrlRegex map[string]string
 	captureRequest            func(HttpRequest)
 }
 
 type RequestDef struct {
-	Method  string
-	Url     string
-	Headers map[string][]string
-	Body    *string
+	Method   string
+	Url      string
+	Headers  map[string][]string
+	Body     *string
+	Insecure bool
 }
 
 func NewRequestDef(method, url string, headers map[string][]string, body *string) RequestDef {
@@ -115,6 +119,28 @@ func NewRequester() *Requester {
 	}
 }
 
+func (r *Requester) SetInsecure(insecure bool) {
+	r.insecure = insecure
+}
+
+func (r *Requester) IsInsecure() bool {
+	return r.insecure
+}
+
+func (r *Requester) getClient(insecureOverride bool) *http.Client {
+	if r.insecure || insecureOverride {
+		if r.insecureClient == nil {
+			r.insecureClient = &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // #nosec G402 - intentional user-requested TLS bypass
+				},
+			}
+		}
+		return r.insecureClient
+	}
+	return http.DefaultClient
+}
+
 func (r *Requester) AddMockedResponse(urlRegex string, jsonPath string) {
 	r.jsonPathsByMockedUrlRegex[urlRegex] = jsonPath
 }
@@ -149,15 +175,16 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 		}
 	}
 
-	response := r.request(req)
+	response := r.request(req, def.Insecure)
 
 	if r.captureRequest != nil {
 		// Capture what was actually sent (with sanitized URL)
 		actualDef := RequestDef{
-			Method:  def.Method,
-			Url:     req.URL.String(), // Use the actual sanitized URL sent
-			Headers: def.Headers,
-			Body:    def.Body,
+			Method:   def.Method,
+			Url:      req.URL.String(), // Use the actual sanitized URL sent
+			Headers:  def.Headers,
+			Body:     def.Body,
+			Insecure: def.Insecure,
 		}
 		r.captureRequest(HttpRequest{
 			RequestDef:  actualDef,
@@ -168,8 +195,9 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 	return response
 }
 
-func (r *Requester) RequestJson(url string) (interface{}, error) {
+func (r *Requester) RequestJson(url string, insecure bool) (interface{}, error) {
 	reqDef := NewRequestDef("GET", url, emptyHeaders, nil)
+	reqDef.Insecure = insecure
 	response := r.Request(reqDef)
 
 	if !response.Success {
@@ -196,7 +224,7 @@ func (r *Requester) RequestJson(url string) (interface{}, error) {
 	return data, nil
 }
 
-func (r *Requester) request(req *http.Request) ResponseDef {
+func (r *Requester) request(req *http.Request, insecureOverride bool) ResponseDef {
 	mockJson, ok := r.resolveMockedResponse(req.URL.String())
 	if ok {
 		return NewResponseDef(&statusOk, &emptyHeaders, &mockJson, nil, 0)
@@ -205,7 +233,8 @@ func (r *Requester) request(req *http.Request) ResponseDef {
 	// Log the actual URL being requested (already sanitized by Request method)
 	RP.RadStderrf("Querying url: %s\n", req.URL.String())
 	start := RClock.Now()
-	resp, err := http.DefaultClient.Do(req)
+	client := r.getClient(insecureOverride)
+	resp, err := client.Do(req)
 	durationSeconds := RClock.Now().Sub(start).Seconds()
 
 	if err != nil {

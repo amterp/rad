@@ -268,3 +268,10 @@ func (n *LitBool) Children() []Node    { return nil }
 func (n *LitNull) Children() []Node    { return nil }
 func (n *RadSort) Children() []Node    { return nil }
 func (n *FileHeader) Children() []Node { return nil }
+
+func (n *RadOption) Children() []Node {
+	if n.Value != nil {
+		return []Node{n.Value}
+	}
+	return nil
+}

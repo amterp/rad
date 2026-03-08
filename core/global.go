@@ -88,6 +88,7 @@ func ResetGlobals() {
 	FlagRadArgsDump = BoolRadArg{}
 	FlagMockResponse = StringRadArg{}
 	FlagRepl = BoolRadArg{}
+	FlagTlsInsecure = BoolRadArg{}
 
 	StartEpochMillis = 0
 

@@ -63,6 +63,7 @@ const (
 	NRadSort     // sort specifier in a rad block
 	NRadFieldMod // field modifier (color, map, filter)
 	NRadIf       // conditional in a rad block
+	NRadOption   // block-level option (e.g. insecure)
 
 	// JSON
 	NJsonPath // json[].field path expression
@@ -117,6 +118,7 @@ var nodeKindNames = [...]string{
 	NRadSort:         "RadSort",
 	NRadFieldMod:     "RadFieldMod",
 	NRadIf:           "RadIf",
+	NRadOption:       "RadOption",
 	NJsonPath:        "JsonPath",
 	NFileHeader:      "FileHeader",
 	NArgBlock:        "ArgBlock",
