@@ -19,6 +19,7 @@ pprint(http_post(url))
     }
   ],
   "duration_seconds": 0,
+  "headers": {},
   "status_code": 200,
   "success": true
 }
