@@ -22,6 +22,7 @@ const scriptGlobalFlagHelp = `Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 `
 
@@ -35,6 +36,7 @@ const allGlobalFlagHelp = `Global options:
       --shell               Outputs shell/bash exports of variables, so they can be eval'd
   -v, --version             Print rad version information.
       --confirm-shell       Confirm all shell commands before running them.
+      --tls-insecure        Skip TLS certificate verification for all HTTP requests.
       --src                 Instead of running the target script, just print it out.
       --cst-tree            Instead of running the target script, print out its CST (concrete syntax tree).
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
@@ -243,8 +245,9 @@ func resetTestState() {
 	// ResetGlobals sets color.NoColor = false (production default).
 	// Tests should default to no color; individual tests opt in via --color=always.
 	color.NoColor = true
-	// Clear mock patterns to prevent test interference
+	// Clear mock patterns and insecure state to prevent test interference
 	runnerInput.RReq.ClearMockedResponses()
+	runnerInput.RReq.SetInsecure(false)
 	// Reset the isPiped flag for stdin
 	if br, ok := runnerInput.RIo.StdIn.(*core.BufferReader); ok {
 		br.SetPiped(false)
@@ -397,6 +400,28 @@ func assertHttpInvocationUrls(t *testing.T, expectedUrls ...string) {
 		if httpInvocations[i].RequestDef.Url != expected {
 			t.Errorf("HTTP invocation %d: expected URL %s, got %s",
 				i, expected, httpInvocations[i].RequestDef.Url)
+		}
+	}
+}
+
+func assertRequesterInsecure(t *testing.T, expected bool) {
+	t.Helper()
+	actual := runnerInput.RReq.IsInsecure()
+	if actual != expected {
+		t.Errorf("Expected Requester.insecure=%v, got %v", expected, actual)
+	}
+}
+
+func assertHttpInsecure(t *testing.T, expectedInsecure ...bool) {
+	t.Helper()
+	if len(httpInvocations) != len(expectedInsecure) {
+		t.Errorf("Expected %d HTTP invocations, got %d", len(expectedInsecure), len(httpInvocations))
+		return
+	}
+	for i, expected := range expectedInsecure {
+		if httpInvocations[i].RequestDef.Insecure != expected {
+			t.Errorf("HTTP invocation %d: expected Insecure=%v, got %v",
+				i, expected, httpInvocations[i].RequestDef.Insecure)
 		}
 	}
 }

@@ -81,6 +81,7 @@ const (
 	K_RAD_FIELD_MOD_MAP        = "rad_field_mod_map"
 	K_RAD_FIELD_MOD_FILTER     = "rad_field_mod_filter"
 	K_RAD_IF_STMT              = "rad_if_stmt"
+	K_RAD_OPTION_STMT          = "rad_option_stmt"
 	K_LIST_COMPREHENSION       = "list_comprehension"
 	K_ERROR                    = "ERROR"
 	K_INCR_DECR                = "incr_decr"
@@ -193,7 +194,8 @@ const (
 	KEYWORD_DESC    = "desc"
 	KEYWORD_RAD     = "rad"
 	KEYWORD_REQUEST = "request"
-	KEYWORD_DISPLAY = "display"
+	KEYWORD_DISPLAY  = "display"
+	KEYWORD_INSECURE = "insecure"
 
 	// Types
 	T_STR        = "str"

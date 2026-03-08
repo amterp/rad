@@ -19,6 +19,7 @@ type radInvocation struct {
 	radBlockNode     rl.Node
 	srcExprNode      rl.Node
 	blockType        RadBlockType
+	insecure         bool
 	fields           []radField
 	fieldsToNotPrint *strset.Set
 	// if no specific column specified for sorting
@@ -141,6 +142,20 @@ func (r *radInvocation) unsafeEvalRad(node rl.Node) {
 			for _, modNode := range n.Args {
 				r.applyModifier(fields, modNode)
 			}
+		}
+	case *rl.RadOption:
+		switch n.Keyword {
+		case rl.KEYWORD_INSECURE:
+			if r.blockType == DisplayBlock {
+				r.i.emitError(rl.ErrUnsupportedOperation, n, "'insecure' is not valid in display blocks (no HTTP requests)")
+			}
+			if n.Value == nil {
+				r.insecure = true
+			} else {
+				r.insecure = r.i.eval(n.Value).Val.RequireBool(r.i, n)
+			}
+		default:
+			r.i.emitErrorf(rl.ErrUnsupportedOperation, n, "Unknown rad block option: %q", n.Keyword)
 		}
 	case *rl.RadIf:
 		for _, branch := range n.Branches {
@@ -536,7 +551,7 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 
 	if r.blockType == RadBlock || r.blockType == RequestBlock {
 		str := src.RequireStr(r.i, r.srcExprNode)
-		return RReq.RequestJson(str.Plain())
+		return RReq.RequestJson(str.Plain(), r.insecure)
 	}
 
 	if r.blockType == DisplayBlock {

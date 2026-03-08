@@ -25,6 +25,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -51,6 +52,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -75,6 +77,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -106,6 +109,7 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 
 ### TITLE ###
@@ -135,5 +139,6 @@ Global options:
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
       --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
 

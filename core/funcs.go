@@ -159,6 +159,7 @@ const (
 	namedArgTickSizeMs     = "tick_size_ms"
 	namedArgNumRandomChars = "num_random_chars"
 	namedArgAlphabet       = "alphabet"
+	namedArgInsecure       = "insecure"
 	namedArgUrlSafe        = "url_safe"
 	namedArgPadding        = "padding"
 	namedArgReload         = "reload"
@@ -1958,7 +1959,10 @@ func createHttpFunctions() []BuiltInFunc {
 					}
 				}
 
+				insecure := f.GetBool(namedArgInsecure)
+
 				reqDef := NewRequestDef(method, url, headers, body)
+				reqDef.Insecure = insecure
 				response := RReq.Request(reqDef)
 				radMap := response.ToRadMap(f.i, f.callNode)
 				return f.Return(radMap)

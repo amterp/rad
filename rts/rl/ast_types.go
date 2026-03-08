@@ -621,6 +621,19 @@ func NewRadFieldMod(span Span, fields []Node, modType string, args []Node) *RadF
 func (n *RadFieldMod) Kind() NodeKind { return NRadFieldMod }
 func (n *RadFieldMod) Span() Span     { return n.span }
 
+// RadOption represents a block-level option like `insecure` or `insecure true`.
+type RadOption struct {
+	span    Span
+	Keyword string
+	Value   Node // optional expression; nil means implied true
+}
+
+func NewRadOption(span Span, keyword string, value Node) *RadOption {
+	return &RadOption{span: span, Keyword: keyword, Value: value}
+}
+func (n *RadOption) Kind() NodeKind { return NRadOption }
+func (n *RadOption) Span() Span     { return n.span }
+
 // RadIf represents a conditional in a rad block (if/elif/else).
 // Mirrors the top-level If node's branch structure.
 type RadIf struct {

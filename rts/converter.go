@@ -1448,6 +1448,19 @@ func (c *converter) convertRadStmt(node *ts.Node) rl.Node {
 		}
 		return rl.NewRadIf(c.makeSpan(node), branches)
 
+	case rl.K_RAD_OPTION_STMT:
+		keywordNode := rl.GetChild(node, rl.F_KEYWORD)
+		if keywordNode == nil {
+			panic("converter: rad_option_stmt missing required keyword field")
+		}
+		keyword := c.getSrc(keywordNode)
+		var value rl.Node
+		valueNode := rl.GetChild(node, rl.F_VALUE)
+		if valueNode != nil {
+			value = c.convertExpr(valueNode)
+		}
+		return rl.NewRadOption(c.makeSpan(node), keyword, value)
+
 	default:
 		panic(fmt.Sprintf("converter: unexpected rad stmt kind: %s", node.Kind()))
 	}

@@ -24,6 +24,7 @@ const (
 	FLAG_MOCK_RESPONSE = "mock-response"
 	FLAG_REPL          = "repl"
 	FLAG_R             = "r"
+	FLAG_TLS_INSECURE  = "tls-insecure"
 )
 
 var (
@@ -44,6 +45,7 @@ var (
 	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
 	FlagRepl                 BoolRadArg
+	FlagTlsInsecure          BoolRadArg
 	// ^ when adding more, update ResetGlobals function
 )
 
@@ -156,6 +158,17 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	flags = append(flags, &FlagConfirmShellCommands)
+
+	FlagTlsInsecure = NewBoolRadArg(
+		FLAG_TLS_INSECURE,
+		"",
+		"Skip TLS certificate verification for all HTTP requests.",
+		false,
+		false,
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+	flags = append(flags, &FlagTlsInsecure)
 
 	FlagSrc = NewBoolRadArg(
 		FLAG_SRC,

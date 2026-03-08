@@ -264,6 +264,10 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		RP.RadDebugf(fmt.Sprintf("Mock response added: %q -> %q", pattern, path))
 	}
 
+	if FlagTlsInsecure.Value {
+		RReq.SetInsecure(true)
+	}
+
 	if FlagVersion.Value {
 		printVersion()
 		RExit.Exit(0)
