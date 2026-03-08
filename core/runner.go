@@ -100,8 +100,8 @@ func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string,
 		return NoScript, "", nil
 	}
 
-	// Check if it's an existing file
-	if com.FileExists(firstArg) {
+	// Check if it's an existing regular file (not a device, pipe, socket, etc.)
+	if com.IsRegularFile(firstArg) {
 		source, err := readSource(firstArg)
 		if err != nil {
 			return NoScript, "", fmt.Errorf("Could not read script: %v", err)

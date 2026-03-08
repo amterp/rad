@@ -72,6 +72,9 @@ func AddInternalFuncs() {
 			Execute: func(f FuncInvocation) RadValue {
 				scriptArg := f.args[0]
 				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
+				if !com.IsRegularFile(scriptPath) {
+					f.i.emitErrorf(rl.ErrFileRead, scriptArg.node, "Cannot check '%s': not a regular file", scriptPath)
+				}
 				result := com.LoadFile(scriptPath)
 				if result.Error != nil {
 					// todo don't think we can point at the node -- it's an internal function. Generally true for embedded commands, actually

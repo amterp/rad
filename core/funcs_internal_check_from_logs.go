@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -45,7 +46,7 @@ type scriptResult struct {
 	Path    string
 	Counts  diagCounts
 	Ok      bool // false = couldn't load/parse the file
-	Skipped bool // file not found
+	Skipped bool // not a regular file, or not found
 }
 
 // FuncInternalCheckFromLogs implements _rad_check_from_logs, which checks rad scripts
@@ -92,12 +93,16 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 		// First pass: collect results and determine max path width for alignment
 		results := make([]scriptResult, 0, len(scripts))
 		maxPathLen := 0
-		for _, script := range scripts {
-			if !com.FileExists(script.Path) {
+		for i, script := range scripts {
+			RP.RadDebugf("Checking script %d/%d: %s", i+1, len(scripts), script.Path)
+			if !com.IsRegularFile(script.Path) {
+				RP.RadDebugf("  skipped (not a regular file)")
 				results = append(results, scriptResult{Path: script.Path, Skipped: true})
 				continue
 			}
+			checkStart := time.Now()
 			counts, ok := checkScriptWith(script.Path, chk)
+			RP.RadDebugf("  checked in %s (ok=%t, errors=%d)", time.Since(checkStart), ok, counts.Errors)
 			r := scriptResult{Path: script.Path, Counts: counts, Ok: ok}
 			results = append(results, r)
 			if len(script.Path) > maxPathLen {
@@ -155,7 +160,7 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 			if r.Skipped {
 				skipped++
 				if verbose {
-					RP.Printf("  %s\n", faint.Sprintf("- %s (file not found)", r.Path))
+					RP.Printf("  %s\n", faint.Sprintf("- %s (not found or not a regular file)", r.Path))
 				}
 				continue
 			}
@@ -456,27 +461,33 @@ func ParseDuration(s string) (time.Duration, error) {
 			return 0, fmt.Errorf("invalid number in duration: %q", valueStr)
 		}
 
-		var duration time.Duration
+		// Nanoseconds per unit - used for overflow check before multiplication.
+		var nanosPerUnit int64
 		switch unit {
 		case "y":
-			// Year = 365 days (ignore leap years per spec)
-			duration = time.Duration(value) * 365 * 24 * time.Hour
+			nanosPerUnit = int64(365 * 24 * time.Hour)
 		case "w":
-			// Week = 7 days
-			duration = time.Duration(value) * 7 * 24 * time.Hour
+			nanosPerUnit = int64(7 * 24 * time.Hour)
 		case "d":
-			// Day = 24 hours
-			duration = time.Duration(value) * 24 * time.Hour
+			nanosPerUnit = int64(24 * time.Hour)
 		case "h":
-			duration = time.Duration(value) * time.Hour
+			nanosPerUnit = int64(time.Hour)
 		case "m":
-			duration = time.Duration(value) * time.Minute
+			nanosPerUnit = int64(time.Minute)
 		case "s":
-			duration = time.Duration(value) * time.Second
+			nanosPerUnit = int64(time.Second)
 		default:
 			return 0, fmt.Errorf("unknown unit: %q", unit)
 		}
 
+		if value > math.MaxInt64/nanosPerUnit {
+			return 0, fmt.Errorf("duration too large: %s%s", valueStr, unit)
+		}
+		duration := time.Duration(value * nanosPerUnit)
+
+		if int64(total) > math.MaxInt64-int64(duration) {
+			return 0, fmt.Errorf("total duration too large")
+		}
 		total += duration
 	}
 

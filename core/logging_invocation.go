@@ -13,6 +13,12 @@ func RegisterInvocationLogging() {
 		return
 	}
 	handler := func() {
+		// Skip non-regular files (e.g. /dev/stdin) to avoid polluting
+		// logs with entries that can't be meaningfully re-checked later.
+		if !com.IsRegularFile(ScriptPath) {
+			return
+		}
+
 		endEpochMillis := RClock.Now().UnixMilli()
 		durationMillis := endEpochMillis - StartEpochMillis
 

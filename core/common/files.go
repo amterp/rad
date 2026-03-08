@@ -22,6 +22,16 @@ func FileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
+// IsRegularFile returns true if the path exists and is a regular file
+// (not a directory, device, pipe, socket, etc.).
+func IsRegularFile(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.Mode().IsRegular()
+}
+
 func LoadJson(path string) (interface{}, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
