@@ -94,13 +94,13 @@ func (r ResponseDef) ToRadMap(i *Interpreter, callNode rl.Node) *RadMap {
 	if r.StatusCode != nil {
 		radMap.SetPrimitiveInt("status_code", *r.StatusCode)
 	}
+	headers := NewRadMap()
 	if r.Headers != nil {
-		// todo should this *always* be present, but potentially empty?
-		headers := NewRadMap()
 		for key, values := range *r.Headers {
 			headers.Set(newRadValue(i, callNode, key), newRadValue(i, callNode, values))
 		}
 	}
+	radMap.Set(newRadValue(i, callNode, "headers"), newRadValue(i, callNode, headers))
 	if r.Body != nil {
 		out, _ := TryConvertJsonToNativeTypes(i, callNode, *r.Body)
 		radMap.Set(newRadValue(i, callNode, "body"), out)
