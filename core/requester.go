@@ -214,7 +214,11 @@ func (r *Requester) RequestJson(url string, insecure bool) (interface{}, error) 
 	bodyBytes := []byte(body)
 	isValidJson := json.Valid(bodyBytes)
 	if !isValidJson {
-		return nil, fmt.Errorf("received invalid JSON in response (truncated max 50 chars): [%s]", body[:50])
+		preview := body
+		if len(preview) > 50 {
+			preview = preview[:50]
+		}
+		return nil, fmt.Errorf("received invalid JSON in response (truncated max 50 chars): [%s]", preview)
 	}
 
 	var data interface{}
