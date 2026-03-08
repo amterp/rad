@@ -12,6 +12,47 @@
 
 - Please do not leave task-specific messages to the user via comments in the code base when making changes.
 
+- Never commit `replace` directives in `go.mod`. These are used locally during development to point at local
+  copies of dependencies, but must be removed before committing.
+
+---
+
+## Pre-Commit Checklist
+
+A Claude Code hook will remind you of this checklist when you commit. Review every item; skip categories that
+don't apply to your change.
+
+### Always
+- Run `./dev --validate` (formats, builds, tests). All tests pass.
+- Commit messages follow conventional prefixes (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`).
+- Commit messages explain **why**, not just what. See `CONTRIBUTING.md` for full conventions.
+
+### When Adding or Modifying a Built-in Function
+- Function signature added/updated in `rts/signatures.go`.
+- Snapshot tests added/updated in `core/testing/snapshots/functions/<name>.snap`.
+- Function documented in `docs-web/docs/reference/functions.md` (follow tiered approach below).
+- Run `make generate` to update `rts/embedded/functions.txt` (required for new functions).
+
+### When Changing Language Syntax or Semantics
+- `SYNTAX.md` updated to reflect the change.
+- Snapshot tests added in the appropriate `core/testing/snapshots/` subdirectory.
+- If AST nodes were added/changed, parser snapshot tests in `rts/test/st_snapshots/` updated.
+- Guide docs updated if the feature has a section in `docs-web/docs/guide/`.
+
+### When Introducing a Breaking Change
+- Commit message uses `feat!:` or `fix!:` prefix.
+- Migration guide entry added to the current version's `docs-web/docs/migrations/` file.
+- Migration diagnostic added (see [Breaking Changes & Migration Diagnostics](#breaking-changes--migration-diagnostics)).
+
+### When Adding or Modifying Error Codes
+- Error doc file created/updated in `core/error_docs/<code>.md`.
+- Error code defined in `rts/rl/errors.go` if new.
+
+### When Touching Platform-Specific Behavior
+- Logic centralized in `core/common/platform.go`, not scattered via `runtime.GOOS` checks.
+- Paths returned to user code are normalized via `NormalizePath()`.
+- Platform-specific tests in `core/testing/platform_test.go` if applicable.
+
 ---
 
 # Rad Language - LLM Quick Reference
@@ -398,6 +439,69 @@ function_name(complex_case, named_param=value)  // -> result
 
 The goal is **consistency** while **scaling appropriately** to function complexity - don't overwhelm readers with tables
 for simple functions, but provide sufficient detail for complex ones.
+
+### Breaking Changes & Migration Diagnostics
+
+Rad is young and we advertise that breaking changes happen in minor versions. But we still want migrations to be
+as easy as possible for our users. When introducing a breaking change, provide **migration diagnostics** that detect
+old usage patterns and guide users to the fix.
+
+The goal is a three-layer help system: a concise inline hint at point-of-error, a deeper `rad explain` doc, and
+a comprehensive migration guide page.
+
+#### What to do when making a breaking change
+
+1. **Add a migration diagnostic** that detects the old pattern and emits a helpful error (or warning, depending on
+   context - usually error). The diagnostic should:
+   - Clearly state what changed
+   - Suggest the fix concisely
+   - Link to the migration doc: `https://amterp.github.io/rad/migrations/v0.X/`
+
+2. **Add/update an error doc** in `core/error_docs/<code>.md` with a before/after example and fix steps.
+
+3. **Add a migration guide entry** in `docs-web/docs/migrations/v0.X.md` with full context and rationale.
+
+#### Diagnostic patterns by change type
+
+**Renamed function** - detect the old name at runtime and emit a hint:
+```go
+// In the function dispatch (e.g. core/func_helpers.go or similar)
+case "old_name":
+    i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
+        "Cannot invoke unknown function: old_name",
+        "old_name was renamed to new_name. See: https://amterp.github.io/rad/migrations/v0.X/")
+```
+
+**Removed function** - same pattern, different hint:
+```go
+case "get_default":
+    i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
+        "Cannot invoke unknown function: get_default",
+        "get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/")
+```
+
+**Changed operator/syntax behavior** - the type checker or interpreter naturally catches the new error; ensure the
+error message is clear and add a hint pointing to the migration docs. If the old usage now triggers an existing error
+code, update that error doc with a migration note.
+
+**Static detection** - for patterns detectable before execution, add checks in `rts/check/` using
+`NewDiagnosticError()` or `NewDiagnosticErrorWithSuggestion()`. This also benefits the LSP (editor diagnostics).
+
+#### What users see
+
+The diagnostic renderer produces Rust-style output:
+```
+error[RAD40003]: Cannot invoke unknown function: get_stash_dir
+  --> script.rad:5:1
+    |
+  5 | get_stash_dir()
+    | ^^^^^^^^^^^^^^^ Cannot invoke unknown function: get_stash_dir
+    |
+   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD40003
+```
+
+Users can then run `rad explain RAD40003` for the full error doc, or visit the migration page for broader context.
 
 ### Debugging Tips
 
