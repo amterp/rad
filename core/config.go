@@ -66,7 +66,7 @@ func LoadRadConfig() *RadConfig {
 
 func defaultInvocationLoggingConfig() *InvocationLoggingConfig {
 	return &InvocationLoggingConfig{
-		Enabled:        false, // opt-in
+		Enabled:        true, // on by default; powers 'rad check --from-logs'
 		IncludeArgs:    false, // args may contain sensitive info, make opt-in
 		MaxSizeMB:      10,
 		KeepRolledLogs: 2,

@@ -288,3 +288,9 @@ rad stash myscript --delete  # Delete the stash
 - **File storage**: Use `load_stash_file()` and `write_stash_file()` for arbitrary files.
 - The recommended pattern is `state = load_state()` followed by `defer save_state(state)`.
 - Stashes live at `~/.rad/stashes/<stash_id>/`.
+
+## Next
+
+Now that you know how scripts can persist their own data, learn how to configure Rad itself - including invocation logging, which tracks your script usage for diagnostics.
+
+Continue to [Configuration](./config.md).
