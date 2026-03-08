@@ -1,4 +1,11 @@
 ---
+
+## [v0.8.1](https://github.com/amterp/rad/releases/tag/v0.8.1) - 2026-03-08
+
+
+
+---
+
 title: Release Notes
 ---
 
