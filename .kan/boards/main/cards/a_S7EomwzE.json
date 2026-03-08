@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "error-line",
+  "alias_explicit": false,
+  "created_at_millis": 1771380226699,
+  "creator": "Alexander Terp",
+  "description": "```\nerror[RAD20000]: Command exited with code 1\n  --\u003e jc:9:1\n  |\n8 |\n9 | $`jx runtime -c '{component}' {deployment.join(\" \")}`\n  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n10 |\n  |\n```",
+  "id": "a_S7EomwzE",
+  "title": "error line # formatting doesn't transition digits right",
+  "type": "bug",
+  "updated_at_millis": 1771380235609
+}

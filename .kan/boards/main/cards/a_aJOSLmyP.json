@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "add-post-build-smoke",
+  "alias_explicit": false,
+  "created_at_millis": 1772591303432,
+  "creator": "Alexander Terp",
+  "description": "After goreleaser builds Linux binaries, run them in containers (Debian, Ubuntu, Fedora) to verify basic functionality like --version and a simple HTTP request. Would catch issues like the glibc static linking segfault (#105). Could also add an ldd/file check to verify linkage.",
+  "id": "a_aJOSLmyP",
+  "title": "Add post-build smoke tests for release binaries",
+  "type": "excellence",
+  "updated_at_millis": 1772591303432
+}

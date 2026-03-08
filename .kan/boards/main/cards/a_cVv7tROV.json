@@ -1,0 +1,11 @@
+{
+  "_v": 1,
+  "alias": "somehow-allow-str-to",
+  "alias_explicit": false,
+  "created_at_millis": 1772916685361,
+  "creator": "Alexander Terp",
+  "id": "a_cVv7tROV",
+  "title": "somehow allow str? To allow -s but not complain about missing value. Should we just allow the flag and make the value null?",
+  "type": "feature",
+  "updated_at_millis": 1772916685445
+}

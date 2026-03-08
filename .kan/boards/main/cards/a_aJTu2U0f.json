@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "support-patch",
+  "alias_explicit": false,
+  "created_at_millis": 1772591512803,
+  "creator": "Alexander Terp",
+  "description": "Set up release infrastructure to enable hotfix/patch releases on older minor versions (e.g. v0.7.1, v0.8.1). Currently we can only release from the latest. Motivated by #105 where users on older versions hit a segfault but can't get a fix without upgrading to the latest minor. Likely involves maintaining release branches (e.g. release/v0.7, release/v0.8) and updating CI/goreleaser to support building from them.",
+  "id": "a_aJTu2U0f",
+  "title": "Support patch releases on previous minor versions",
+  "type": "excellence",
+  "updated_at_millis": 1772591512803
+}
