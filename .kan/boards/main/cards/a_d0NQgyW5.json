@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "monorepo-tree-sitter",
+  "alias_explicit": false,
+  "created_at_millis": 1772989271717,
+  "creator": "Alexander Terp",
+  "description": "Move the tree-sitter-rad grammar into a grammar/ directory inside the rad repo so that grammar changes and Rad code changes can be made in a single commit.\n\nKey changes:\n- Add grammar/ dir containing the full tree-sitter-rad repo contents (grammar.js, src/, bindings/, package.json, etc.)\n- Change rts/rts.go import from github.com/amterp/tree-sitter-rad/bindings/go to github.com/amterp/rad/grammar/bindings/go\n- Drop github.com/amterp/tree-sitter-rad from go.mod, add gotreesitter as direct dep\n- Add CI workflow that mirrors grammar/ to the standalone tree-sitter-rad repo on push to main (paths: grammar/**), auto-bumping minor version and tagging\n- tree-sitter-rad repo becomes a read-only mirror for the TreeSitter/NeoVim ecosystem\n- Mirror CI needs to maintain its own go.mod (module github.com/amterp/tree-sitter-rad) separately since the files are part of github.com/amterp/rad locally\n- Update tree-sitter-rad README to note it is auto-published from amterp/rad",
+  "id": "a_d0NQgyW5",
+  "title": "Monorepo tree-sitter grammar: move grammar into rad repo",
+  "type": "feature",
+  "updated_at_millis": 1772989724310
+}
