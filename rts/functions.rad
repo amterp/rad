@@ -41,7 +41,7 @@ fn now(tz: str = "local") ->
     pass
 
 fn parse_epoch(_epoch: int, *, tz: str = "local",
-        unit: ["auto", "seconds", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> 
+        unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") ->
         { "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int,
           "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }:
     pass

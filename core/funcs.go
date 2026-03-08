@@ -198,9 +198,12 @@ const (
 	constDefault        = "default"
 	constAuto           = "auto"
 	constSeconds        = "seconds"
-	constMilliseconds   = "milliseconds"
-	constMicroseconds   = "microseconds"
-	constNanoseconds    = "nanoseconds"
+	constMillis         = "millis"
+	constMicros         = "micros"
+	constNanos          = "nanos"
+	constMilliseconds   = "milliseconds" // deprecated, kept for migration errors
+	constMicroseconds   = "microseconds" // deprecated, kept for migration errors
+	constNanoseconds    = "nanoseconds"  // deprecated, kept for migration errors
 )
 
 var (
@@ -500,22 +503,32 @@ func init() {
 						second = absEpoch
 						nanoSecond = 0
 						fracMultiplier = 1e9
-					case constMilliseconds:
+					case constMillis:
 						second = absEpoch / 1_000
 						nanoSecond = (absEpoch % 1_000) * 1_000_000
 						fracMultiplier = 1e6
-					case constMicroseconds:
+					case constMicros:
 						second = absEpoch / 1_000_000
 						nanoSecond = (absEpoch % 1_000_000) * 1_000
 						fracMultiplier = 1e3
-					case constNanoseconds:
+					case constNanos:
 						second = absEpoch / 1_000_000_000
 						nanoSecond = absEpoch % 1_000_000_000
 						fracMultiplier = 1
+					case constMilliseconds, constMicroseconds, constNanoseconds:
+						replacements := map[string]string{
+							constMilliseconds: constMillis,
+							constMicroseconds: constMicros,
+							constNanoseconds:  constNanos,
+						}
+						f.i.emitErrorWithHint(rl.ErrInvalidTimeUnit, f.callNode,
+							fmt.Sprintf("parse_epoch unit %q is no longer valid", unit),
+							fmt.Sprintf("Unit names were shortened in v0.9. Use %q instead. See: https://amterp.github.io/rad/migrations/v0.9/", replacements[unit]))
+						panic(UNREACHABLE)
 					default:
 						return f.ReturnErrf(rl.ErrInvalidTimeUnit,
 							"invalid units %q; expected one of %s, %s, %s, %s, %s",
-							unit, constAuto, constSeconds, constMilliseconds, constMicroseconds, constNanoseconds)
+							unit, constAuto, constSeconds, constMillis, constMicros, constNanos)
 					}
 				}
 
