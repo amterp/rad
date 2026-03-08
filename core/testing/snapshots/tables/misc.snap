@@ -4,7 +4,7 @@ Tbl FillsMissingValuesWithEmptyStrings
 names = ["Alice", "Bob", "Charlie"]
 ages = [25, 30]
 twice = [50, 60, 70]
-display:
+rad:
 	fields names, ages, twice
 ### STDOUT ###
 names    ages  twice 
@@ -18,7 +18,7 @@ Tbl FillsMissingValuesWithEmptyStringsShortestFirst
 ages = [25, 30]
 names = ["Alice", "Bob", "Charlie"]
 twice = [50, 60, 70]
-display:
+rad:
 	fields ages, names, twice
 ### STDOUT ###
 ages  names    twice 

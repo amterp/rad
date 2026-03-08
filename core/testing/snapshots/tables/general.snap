@@ -1,9 +1,9 @@
 ### TITLE ###
-Rad DisplayBlock
+Rad block
 ### INPUT ###
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
-display:
+rad:
     fields Name, Age
 ### STDOUT ###
 Name     Age 
@@ -11,28 +11,6 @@ Alice    30
 Bob      40   
 Charlie  25   
 
-### TITLE ###
-Rad DisplayBlockErrorsIfGivenUrl
-### INPUT ###
-url = "https://google.com"
-Name = ["Alice", "Bob", "Charlie"]
-Age = [30, 40, 25]
-display url:
-    fields Name, Age
-### STDERR ###
-error[RAD30001]: Display block source can only be a list or a map. Got "str"
-  --> <script>:4:9
-  |
-3 | Age = [30, 40, 25]
-4 | display url:
-  |         ^^^
-5 |     fields Name, Age
-  |
-   = info: rad explain RAD30001
-
-
-### EXIT ###
-1
 ### TITLE ###
 Rad RequiresBlockElseError
 ### INPUT ###
@@ -60,12 +38,12 @@ Rad CanConditionallyApplySort
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
-display:
+rad:
 	fields Name, Age
 	if should_sort:
 		sort desc
 should_sort = true
-display:
+rad:
 	fields Name, Age
 	if should_sort:
 		sort desc
@@ -85,7 +63,7 @@ Rad CanFallBackToElse
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
-display:
+rad:
 	fields Name, Age
 	if should_sort:
 		sort desc
@@ -103,7 +81,7 @@ Rad CanFallBackToElseIf
 Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 should_sort = false
-display:
+rad:
 	fields Name, Age
 	if should_sort:
 		sort desc
@@ -140,12 +118,13 @@ shortint  longint              shortfloat  longfloat
 Mocking response for url (matched ".*"): https://google.com
 
 ### TITLE ###
-Rad_RequestBlock
+Rad_NoprintBlock
 ### INPUT ###
 url = "https://google.com"
 Name = json[].name
 Age = json[].age
-request url:
+rad url:
+    noprint
     fields Name, Age
 print("Names:", Name)
 print("Ages:", Age)
@@ -160,48 +139,16 @@ Ages: [ 30, 40, 30, 25 ]
 Mocking response for url (matched ".*"): https://google.com
 
 ### TITLE ###
-Rad_RequestBlockComplainsIfNoUrl
-### INPUT ###
-url = "https://google.com"
-Name = json[].name
-Age = json[].age
-request:
-    fields Name, Age
-### STDERR ###
-error[RAD10001]: Invalid syntax
-  --> <script>:4:1
-  |
-3 | Age = json[].age
-4 | request:
-  | ^^^^^^^^
-5 |     fields Name, Age
-  |
-   = info: rad explain RAD10001
-
-error[RAD10009]: Unexpected ':
-    fields Name,'
-  --> <script>:4:8
-  |
-3 | Age = json[].age
-4 | request:
-  |        ^
-5 |     fields Name, Age
-  |
-   = info: rad explain RAD10009
-
-
-### EXIT ###
-1
-### TITLE ###
-Rad_RequestThenDisplayBlocks
+Rad_NoprintThenRadBlocks
 ### INPUT ###
 url = "https://google.com"
 Name = json[].name
 ids = json[].ids
-request url:
+rad url:
+	noprint
 	fields Name, ids
 NumIds = [len(x) for x in ids]
-display:
+rad:
 	fields Name, NumIds
 ### ARGS ###
 --mock-response

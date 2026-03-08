@@ -32,6 +32,7 @@ type RequestDef struct {
 	Headers  map[string][]string
 	Body     *string
 	Insecure bool
+	Quiet    bool
 }
 
 func NewRequestDef(method, url string, headers map[string][]string, body *string) RequestDef {
@@ -175,7 +176,7 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 		}
 	}
 
-	response := r.request(req, def.Insecure)
+	response := r.request(req, def.Insecure, def.Quiet)
 
 	if r.captureRequest != nil {
 		// Capture what was actually sent (with sanitized URL)
@@ -195,9 +196,10 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 	return response
 }
 
-func (r *Requester) RequestJson(url string, insecure bool) (interface{}, error) {
+func (r *Requester) RequestJson(url string, insecure bool, quiet bool) (interface{}, error) {
 	reqDef := NewRequestDef("GET", url, emptyHeaders, nil)
 	reqDef.Insecure = insecure
+	reqDef.Quiet = quiet
 	response := r.Request(reqDef)
 
 	if !response.Success {
@@ -228,14 +230,15 @@ func (r *Requester) RequestJson(url string, insecure bool) (interface{}, error) 
 	return data, nil
 }
 
-func (r *Requester) request(req *http.Request, insecureOverride bool) ResponseDef {
+func (r *Requester) request(req *http.Request, insecureOverride bool, quiet bool) ResponseDef {
 	mockJson, ok := r.resolveMockedResponse(req.URL.String())
 	if ok {
 		return NewResponseDef(&statusOk, &emptyHeaders, &mockJson, nil, 0)
 	}
 
-	// Log the actual URL being requested (already sanitized by Request method)
-	RP.RadStderrf("Querying url: %s\n", req.URL.String())
+	if !quiet {
+		RP.RadStderrf("Querying url: %s\n", req.URL.String())
+	}
 	start := RClock.Now()
 	client := r.getClient(insecureOverride)
 	resp, err := client.Do(req)

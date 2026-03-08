@@ -3,7 +3,7 @@ RadSort CanSortMixedTypes
 ### INPUT ###
 col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
 col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-display:
+rad:
 	fields col1, col2
 	sort
 ### STDOUT ###
@@ -26,7 +26,7 @@ RadSort CanSortMixedTypesDesc
 ### INPUT ###
 col1 = [1, "a", 2, "b", true, false, { "alice": 1 }, 2, "a", [3, 1, 2], 1.5, -1.2]
 col2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-display:
+rad:
 	fields col1, col2
 	sort desc
 ### STDOUT ###
@@ -48,7 +48,7 @@ false           5
 RadSort SortingIsPriorToMapping
 ### INPUT ###
 col = [0, 1, 2, 3, 4]
-display:
+rad:
 	fields col
 	sort asc
 	col:
@@ -65,7 +65,7 @@ col
 RadSort DoesNotSortColumnsIfNotAskedTo
 ### INPUT ###
 col = [3, 4, 2, 1]
-display:
+rad:
 	fields col
 print(col)
 ### STDOUT ###
@@ -77,21 +77,21 @@ col
 [ 3, 4, 2, 1 ]
 
 ### TITLE ###
-DisplayBlock SortDoesNotMutate
+NoSource SortDoesNotMutate
 ### INPUT ###
 ages = [30, 10, 20]
-print("Before display:", ages)
-display:
+print("Before rad:", ages)
+rad:
 	fields ages
 	sort ages
-print("After display:", ages)
+print("After rad:", ages)
 ### STDOUT ###
-Before display: [ 30, 10, 20 ]
+Before rad: [ 30, 10, 20 ]
 ages 
 10    
 20    
 30    
-After display: [ 30, 10, 20 ]
+After rad: [ 30, 10, 20 ]
 
 ### TITLE ###
 RadSort_NoSorting

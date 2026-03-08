@@ -48,11 +48,3 @@ const (
 	Asc SortDir = iota
 	Desc
 )
-
-type RadBlockType string
-
-const (
-	RadBlock     RadBlockType = "rad"
-	RequestBlock RadBlockType = "request"
-	DisplayBlock RadBlockType = "display"
-)

@@ -2,7 +2,7 @@
 RadBlock_MapContext_PrintFullContext
 ### INPUT ###
 nums = [10, 20, 30]
-display:
+rad:
 	fields nums
 	nums:
 		map fn(x, ctx) ctx
@@ -16,7 +16,7 @@ nums
 RadBlock_MapContext_Src
 ### INPUT ###
 nums = [10, 20, 30]
-display:
+rad:
 	fields nums
 	nums:
 		map fn(x, ctx) "{x} of {ctx.src.len()}"
@@ -30,7 +30,7 @@ nums
 RadBlock_MapContext_SingleParamStillWorks
 ### INPUT ###
 nums = [10, 20, 30]
-display:
+rad:
 	fields nums
 	nums:
 		map fn(x) x * 2
@@ -44,7 +44,7 @@ nums
 RadBlock_FilterContext_Idx
 ### INPUT ###
 nums = [10, 20, 30, 40, 50]
-display:
+rad:
 	fields nums
 	nums:
 		filter fn(x, ctx) ctx.idx % 2 == 0
@@ -58,7 +58,7 @@ nums
 RadBlock_FilterContext_Src
 ### INPUT ###
 nums = [10, 20, 30, 40, 50]
-display:
+rad:
 	fields nums
 	nums:
 		filter fn(x, ctx) x < sum(ctx.src) / ctx.src.len()
@@ -72,7 +72,7 @@ RadBlock_MapContext_MultipleFields
 ### INPUT ###
 col1 = [1, 2]
 col2 = [10, 20]
-display:
+rad:
 	fields col1, col2
 	col1, col2:
 		map fn(x, ctx) "{ctx.field}={x}"
@@ -85,7 +85,7 @@ col1=2  col2=20
 RadBlock_MapContext_WithFilter
 ### INPUT ###
 nums = [10, 20, 30, 40]
-display:
+rad:
 	fields nums
 	nums:
 		filter fn(x) x > 15
@@ -104,7 +104,7 @@ fn mutate_and_return(x, ctx):
 	return x
 
 nums = [10, 20, 30]
-display:
+rad:
 	fields nums
 	nums:
 		map mutate_and_return
@@ -124,7 +124,7 @@ fn mutate_and_keep(x, ctx):
 	return true
 
 nums = [10, 20, 30]
-display:
+rad:
 	fields nums
 	nums:
 		filter mutate_and_keep

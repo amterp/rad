@@ -1,0 +1,6 @@
+Names = ["alice", "bob"]
+rad:
+    insecure
+    quiet
+    noprint
+    fields Names

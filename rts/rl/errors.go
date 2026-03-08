@@ -98,6 +98,8 @@ const (
 	ErrReturnOutsideFunction            Error = "40004"
 	ErrYieldOutsideFunction             Error = "40005"
 	ErrInvalidAssignmentTarget          Error = "40006"
+	ErrRadOptionNoEffect                Error = "40007"
+	ErrDeprecatedBlockKeyword           Error = "40008"
 )
 
 func (e Error) String() string {

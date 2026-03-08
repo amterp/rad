@@ -1,0 +1,2 @@
+request "http://example.com":
+    fields Name

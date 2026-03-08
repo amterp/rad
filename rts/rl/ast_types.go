@@ -558,16 +558,17 @@ func (n *ListComp) Span() Span     { return n.span }
 
 // --- Rad block internals ---
 
-// RadBlock represents a rad/request/display block.
+// RadBlock represents a rad block with an optional source expression.
 type RadBlock struct {
-	span      Span
-	BlockType string // "rad", "request", "display"
-	Source    Node   // the source expression
-	Stmts     []Node // block statements (RadField, RadSort, etc.)
+	span        Span
+	Keyword     string // the keyword used: "rad", "request", or "display"
+	KeywordSpan Span   // span of just the keyword token
+	Source      Node   // the source expression (URL string, list, map, or nil)
+	Stmts       []Node // block statements (RadField, RadSort, etc.)
 }
 
-func NewRadBlock(span Span, blockType string, source Node, stmts []Node) *RadBlock {
-	return &RadBlock{span: span, BlockType: blockType, Source: source, Stmts: stmts}
+func NewRadBlock(span Span, keyword string, keywordSpan Span, source Node, stmts []Node) *RadBlock {
+	return &RadBlock{span: span, Keyword: keyword, KeywordSpan: keywordSpan, Source: source, Stmts: stmts}
 }
 func (n *RadBlock) Kind() NodeKind { return NRadBlock }
 func (n *RadBlock) Span() Span     { return n.span }

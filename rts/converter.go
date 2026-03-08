@@ -1380,9 +1380,11 @@ func (c *converter) convertListComp(node *ts.Node) rl.Node {
 // --- Rad block ---
 
 func (c *converter) convertRadBlock(node *ts.Node) rl.Node {
-	srcNode := rl.GetChild(node, rl.F_SOURCE)
 	radTypeNode := rl.GetChild(node, rl.F_RAD_TYPE)
-	typeStr := c.getSrc(radTypeNode)
+	keyword := c.getSrc(radTypeNode)
+	keywordSpan := c.makeSpan(radTypeNode)
+
+	srcNode := rl.GetChild(node, rl.F_SOURCE)
 
 	var source rl.Node
 	if srcNode != nil {
@@ -1395,7 +1397,7 @@ func (c *converter) convertRadBlock(node *ts.Node) rl.Node {
 		stmts = append(stmts, c.convertRadStmt(&stmtNode))
 	}
 
-	return rl.NewRadBlock(c.makeSpan(node), typeStr, source, stmts)
+	return rl.NewRadBlock(c.makeSpan(node), keyword, keywordSpan, source, stmts)
 }
 
 func (c *converter) convertRadStmt(node *ts.Node) rl.Node {

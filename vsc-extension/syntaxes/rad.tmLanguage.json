@@ -55,12 +55,12 @@
       ]
     },
     {
-      "begin": "\\b(rad|request|display)\\b",
+      "begin": "\\b(rad)\\b",
       "end": "(?=^[^\\s])",
       "patterns": [
         {
           "name": "storage.modifier.rad",
-          "match": "\\b(fields|sort|map|filter|color|asc|desc)\\b"
+          "match": "\\b(fields|sort|map|filter|color|asc|desc|insecure|quiet|noprint)\\b"
         },
         {
           "include": "#global"
@@ -226,7 +226,7 @@
       "patterns": [
         {
           "name": "keyword.control.rad",
-          "match": "\\b(args|command|if|for|while|in|with|else|pass|catch|json|return|or|and|not|fn|switch|case|yield|default|defer|errdefer|continue|break|del|rad|display|request)\\b"
+          "match": "\\b(args|command|if|for|while|in|with|else|pass|catch|json|return|or|and|not|fn|switch|case|yield|default|defer|errdefer|continue|break|del|rad)\\b"
         },
         {
           "name": "entity.name.tag.rad",
@@ -234,7 +234,7 @@
         },
         {
           "name": "storage.modifier.rad",
-          "match": "\\b(quiet|confirm)\\b"
+          "match": "\\b(confirm)\\b"
         },
         {
           "name": "keyword.operator.comparison.rad",

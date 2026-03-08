@@ -58,7 +58,7 @@ const (
 	NSwitchCaseBlock // multi-statement case (case X:\n  stmts)
 
 	// Rad block internals
-	NRadBlock    // rad/request/display block
+	NRadBlock    // rad block
 	NRadField    // field declaration in a rad block
 	NRadSort     // sort specifier in a rad block
 	NRadFieldMod // field modifier (color, map, filter)

@@ -190,7 +190,10 @@ func (n *ListComp) Children() []Node {
 }
 
 func (n *RadBlock) Children() []Node {
-	c := []Node{n.Source}
+	var c []Node
+	if n.Source != nil {
+		c = append(c, n.Source)
+	}
 	c = append(c, n.Stmts...)
 	return c
 }

@@ -377,7 +377,7 @@ Ages = [25, 15, 30, 20, 12]
 Names = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
 Status = ["active", "active", "inactive", "active", "active"]
 
-display:
+rad:
     fields Names, Ages, Status
     Ages:
         filter fn(a) a >= 18
@@ -398,7 +398,7 @@ Notice that Charlie doesn't appear (age >= 18 but status is inactive), Bob doesn
 Like with sorting and mapping, the filter predicate can be a lambda expression or a function reference:
 
 ```rad
-display:
+rad:
     fields Name, Age
     Age:
         filter is_adult
@@ -498,18 +498,16 @@ If the flag is enabled, we sort by descending population, otherwise we sort rows
 
 You can put any rad block statements into these if blocks, including `fields`, column modifiers, etc.
 
-## Other Block Types
+## Rad Block Options
 
-So far we've seen the `rad` block, which performs an HTTP request, extracts data, and displays it as a table.
-Rad also offers two variants that give you more control over this workflow: **request blocks** and **display blocks**.
+### noprint: Suppress Table Output
 
-### request: No Display
-
-A **request block** is like a `rad` block, but it doesn't print a table. It performs the HTTP request and extracts fields
-into lists, then stops. This is useful when you want to process the data further before displaying it, or use it for something other than display.
+By default, a `rad` block prints its results as a table. Add `noprint` to suppress this, which is useful when you want
+to process the extracted data further without displaying it.
 
 ```rad
-request url:
+rad url:
+    noprint
     fields City, Country, Population
     sort Population desc
 
@@ -519,18 +517,60 @@ largest_city = City[0]
 print("The largest city is {largest_city}")
 ```
 
-Note that `filter`, `sort`, and `map` all work in request blocks since they modify the underlying data. However, `color` is display-only and has no effect since nothing gets displayed.
+Note that `filter`, `sort`, and `map` all work with `noprint` since they modify the underlying data. However, `color` has no effect since nothing gets displayed.
 
-### display: No Request
+### quiet: Suppress HTTP Log
 
-A **display block** takes already-populated data and formats it as a table. It's the opposite of request blocks - no HTTP request is made, just formatting and display.
+When fetching from a URL, Rad logs "Querying url: ..." to stderr. Add `quiet` to suppress this log:
 
-**Display with manual data:**
+```rad
+rad url:
+    quiet
+    fields Name, Age
+```
+
+Both `noprint` and `quiet` support explicit boolean values: `noprint true`, `noprint false`, `noprint some_variable`.
+
+## Source Types
+
+The behavior of a `rad` block depends on what source you give it:
+
+### URL String Source
+
+When the source evaluates to a string, Rad treats it as a URL and performs an HTTP GET request:
+
+```rad
+rad url:
+    fields Name, Age
+```
+
+### List/Map Source
+
+When the source is a list or map (e.g. from `http_get`), Rad extracts data from it without making an HTTP request.
+This is useful when you need custom headers or authentication:
+
+```rad
+// Fetch data with custom headers
+resp = http_get(url, headers=my_headers)
+
+// Define JSON paths
+Name = json[].name
+Age = json[].age
+
+// Extract and display
+rad resp.body:
+    fields Name, Age
+    sort Age desc
+```
+
+### No Source
+
+When no source is given, Rad displays already-populated data as a table:
 
 ```rad
 Nums = [1, 2]
 Words = ["hi", "hello"]
-display:
+rad:
     fields Nums, Words
 ```
 
@@ -542,49 +582,23 @@ Nums  Words
 ```
 </div>
 
-**Display with a data source:**
+!!! info "Modifiers and Data Mutation"
 
-Display blocks can also take a variable containing JSON data (like the response from `http_get`). This is particularly
-useful when you need custom headers or authentication:
+    When a rad block has a source, it's performing data extraction - pulling values from JSON into your field
+    variables. Since it's *populating* those variables, it naturally owns them, and modifiers (`filter`, `sort`,
+    `map`) operate directly on the extracted data.
 
-```rad
-// Fetch data with custom headers
-resp = http_get(url, headers=my_headers)
-
-// Define JSON paths
-Name = json[].name
-Age = json[].age
-
-// Display the data
-display resp.body:
-    fields Name, Age
-    sort Age desc
-```
-
-### When to Use Each
-
-- **`rad`**: When you want to query and display in one step (most common case)
-- **`request`**: When you need to process data before displaying or use it for non-display purposes
-- **`display`**: When you have data from manual sources, `http_get()` with custom headers, or derived from `request` blocks
-
-!!! info "Modifier Mutation Across Block Types"
-
-    Field modifiers like (`filter`, `sort`, `map`) may or may not mutate underlying data depending on the block type:
-
-    - In **`rad`** and **`request`** blocks: Permanently modify the field arrays
-    - In **`display`** blocks: Applied for rendering, but does *not* change underlying data.
-
-    This means you can use `request` blocks to filter, sort, or transform data for further processing,
-    while `display` blocks let you format data for viewing without altering the original values.
+    When there's no source, the rad block is simply *presenting* data that already exists. Your variables were
+    populated elsewhere, so modifiers are applied only for rendering - the original data is left untouched.
 
 ## Understanding HTTP Requests
 
-When you write `rad` or `request` blocks, Rad automatically performs an **HTTP GET** request to the URL and expects a JSON response.
+When you write a `rad` block with a URL string source, Rad automatically performs an **HTTP GET** request to the URL and expects a JSON response.
 This happens behind the scenes - you don't need to explicitly call any HTTP functions.
 
 ### Headers and Authentication
 
-Currently, `rad` and `request` blocks don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the [`http_get`](../reference/functions.md#http-functions) or [`http_post`](../reference/functions.md#http-functions) functions first, then pass the result to a `display` block:
+Currently, `rad` blocks with URL sources don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the [`http_get`](../reference/functions.md#http-functions) or [`http_post`](../reference/functions.md#http-functions) functions first, then pass the response body as the source:
 
 [//]: # (TODO WARN: ^ above might go out of date)
 
@@ -604,8 +618,8 @@ resp = http_get(url, headers=headers)
 Name = json[].name
 Stars = json[].stargazers_count
 
-// Display the data we fetched
-display resp.body:
+// Extract and display the data we fetched
+rad resp.body:
     fields Name, Stars
     sort Stars desc
 ```
@@ -615,10 +629,13 @@ This pattern gives you full control over the HTTP request while still leveraging
 ## Summary
 
 - **Rad blocks** make working with JSON APIs concise and declarative - request, extract, and display data in just a few lines
-- Three block types serve different needs:
-    - **`rad url:`** - Request and display in one step
-    - **`request url:`** - Request and extract data without displaying
-    - **`display:`** - Display already-populated data as a table
+- Source type determines behavior:
+    - **`rad url:`** (string source) - Fetch JSON from URL, extract, and display
+    - **`rad data:`** (list/map source) - Extract from in-memory data and display
+    - **`rad:`** (no source) - Display already-populated data as a table
+- **Options** control output:
+    - **`noprint`** - Suppress table output (extract data only)
+    - **`quiet`** - Suppress the "Querying url: ..." stderr log
 - **JSON field definitions** use special path syntax to extract data from JSON responses
     - Basic patterns: `json.field`, `json[]`, `json[].nested.path`
     - Advanced features exist (wildcards, indexing) for complex extraction needs
@@ -630,7 +647,7 @@ This pattern gives you full control over the HTTP request while still leveraging
     - **Multi-column**: Apply same modifiers to multiple columns at once
     - **Conditional**: Use `if` statements for dynamic behavior
     - **Execution order**: filter → sort → map
-- **HTTP control**: rad blocks perform GET automatically; use `http_get()`/`http_post()` with `display` for more advanced queries (e.g. requiring headers/auth)
+- **HTTP control**: rad blocks perform GET automatically; use `http_get()`/`http_post()` and pass the response body as a rad block source for more advanced queries (e.g. requiring headers/auth)
 
 ## Next
 

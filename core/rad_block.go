@@ -18,8 +18,9 @@ type radInvocation struct {
 	i                *Interpreter
 	radBlockNode     rl.Node
 	srcExprNode      rl.Node
-	blockType        RadBlockType
 	insecure         bool
+	quiet            bool
+	noprint          bool
 	fields           []radField
 	fieldsToNotPrint *strset.Set
 	// if no specific column specified for sorting
@@ -45,23 +46,21 @@ func newRadFieldMods(identifierNode rl.Node) *radFieldMods {
 }
 
 func (i *Interpreter) runRadBlock(n *rl.RadBlock) {
-	var blockType RadBlockType
-	switch n.BlockType {
-	case rl.KEYWORD_RAD:
-		blockType = RadBlock
-	case rl.KEYWORD_REQUEST:
-		blockType = RequestBlock
-	case rl.KEYWORD_DISPLAY:
-		blockType = DisplayBlock
-	default:
-		i.emitErrorf(rl.ErrInternalBug, n, "Bug: Unknown rad block type %q", n.BlockType)
+	if n.Keyword == rl.KEYWORD_REQUEST || n.Keyword == rl.KEYWORD_DISPLAY {
+		span := n.KeywordSpan
+		diag := NewDiagnostic(
+			SeverityError, rl.ErrDeprecatedBlockKeyword,
+			"'"+n.Keyword+"' blocks have been removed. Use 'rad' instead.",
+			i.GetSrc(), span,
+		).WithHint("See migration guide: https://amterp.github.io/rad/migrations/v0.9/")
+		i.emitDiagnostic(diag)
+		return
 	}
 
 	ri := radInvocation{
 		i:                i,
 		radBlockNode:     n,
 		srcExprNode:      n.Source,
-		blockType:        blockType,
 		fields:           make([]radField, 0),
 		fieldsToNotPrint: strset.New(),
 		colWiseSorting:   make([]ColumnSort, 0),
@@ -146,13 +145,22 @@ func (r *radInvocation) unsafeEvalRad(node rl.Node) {
 	case *rl.RadOption:
 		switch n.Keyword {
 		case rl.KEYWORD_INSECURE:
-			if r.blockType == DisplayBlock {
-				r.i.emitError(rl.ErrUnsupportedOperation, n, "'insecure' is not valid in display blocks (no HTTP requests)")
-			}
 			if n.Value == nil {
 				r.insecure = true
 			} else {
 				r.insecure = r.i.eval(n.Value).Val.RequireBool(r.i, n)
+			}
+		case rl.KEYWORD_QUIET:
+			if n.Value == nil {
+				r.quiet = true
+			} else {
+				r.quiet = r.i.eval(n.Value).Val.RequireBool(r.i, n)
+			}
+		case rl.KEYWORD_NOPRINT:
+			if n.Value == nil {
+				r.noprint = true
+			} else {
+				r.noprint = r.i.eval(n.Value).Val.RequireBool(r.i, n)
 			}
 		default:
 			r.i.emitErrorf(rl.ErrUnsupportedOperation, n, "Unknown rad block option: %q", n.Keyword)
@@ -278,13 +286,14 @@ func (r *radInvocation) execute() {
 	}
 
 	// Execution order: filter -> sort -> map
-	if r.blockType == RadBlock || r.blockType == RequestBlock {
+	if r.srcExprNode != nil {
+		// Source provided: mutations are permanent
 		indicesToKeep := r.applyFilters(radFields)
 		r.filterColumns(radFields, indicesToKeep)
 		applySorting(r.i, radFields, r.generalSort, r.colWiseSorting)
 		r.applyMaps(radFields)
 	} else {
-		// Display block: save/restore pattern
+		// No source: display only, save/restore pattern
 		savedValues := make(map[string]*RadList)
 		for _, field := range radFields {
 			fieldVals := r.i.env.GetVarElseBug(r.i, field.node, field.name)
@@ -306,7 +315,7 @@ func (r *radInvocation) execute() {
 		}()
 	}
 
-	if r.blockType == RequestBlock {
+	if r.noprint {
 		return
 	}
 
@@ -549,24 +558,23 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 
 	src := r.i.eval(r.srcExprNode).Val
 
-	if r.blockType == RadBlock || r.blockType == RequestBlock {
-		str := src.RequireStr(r.i, r.srcExprNode)
-		return RReq.RequestJson(str.Plain(), r.insecure)
+	// Try string first (URL fetch)
+	if str, ok := src.TryGetStr(); ok {
+		return RReq.RequestJson(str.Plain(), r.insecure, r.quiet)
 	}
 
-	if r.blockType == DisplayBlock {
-		NewTypeVisitor(r.i, r.srcExprNode).ForList(func(val RadValue, _ *RadList) {
-			data = RadToJsonType(val)
-		}).ForMap(func(val RadValue, _ *RadMap) {
-			data = RadToJsonType(val)
-		}).ForDefault(func(val RadValue) {
-			r.i.emitErrorf(rl.ErrTypeMismatch, r.srcExprNode, "Display block source can only be a list or a map. Got %q", TypeAsString(val))
-		}).Visit(src)
-		return
-	} else {
-		r.i.emitErrorf(rl.ErrInternalBug, r.srcExprNode, "Bug: Unknown rad block type %q", r.blockType)
-		panic(UNREACHABLE)
-	}
+	// Otherwise, must be list or map (in-memory extraction).
+	// Note: we don't validate insecure/quiet here because the source expression
+	// could legitimately resolve to a URL on one code path and a list/map on another.
+
+	NewTypeVisitor(r.i, r.srcExprNode).ForList(func(val RadValue, _ *RadList) {
+		data = RadToJsonType(val)
+	}).ForMap(func(val RadValue, _ *RadMap) {
+		data = RadToJsonType(val)
+	}).ForDefault(func(val RadValue) {
+		r.i.emitErrorf(rl.ErrTypeMismatch, r.srcExprNode, "Rad block source must be a string (URL), list, or map. Got %q", TypeAsString(val))
+	}).Visit(src)
+	return
 }
 
 func (r *radInvocation) resolveLambdaForModifier(lambdaNode rl.Node, modifierName string) RadFn {

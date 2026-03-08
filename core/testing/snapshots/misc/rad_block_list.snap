@@ -1,5 +1,5 @@
 ### TITLE ###
-Display block can give own list
+Rad block can give own list
 ### INPUT ###
 a = [
 	{
@@ -10,7 +10,7 @@ a = [
 	},
 ]
 Name = json[].name
-display a:
+rad a:
 	fields Name
 ### STDOUT ###
 Name  

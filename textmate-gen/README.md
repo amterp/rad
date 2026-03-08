@@ -16,7 +16,7 @@ Not yet implemented.
   - Bools: true, false
   - Lambda syntax e.g. a -> a * 2
   - Brackets: {}, [], ()
-  - Keywords: args, if, for, in, else, json, unsafe, quiet, defer, errdefer, fail, recover, continue, break, case, del, rad, request, display
+  - Keywords: args, if, for, in, else, json, unsafe, quiet, defer, errdefer, fail, recover, continue, break, case, del, rad
   - Comparison: ==, !=, <, <=, >, >=, not, in, not in
   - Logic: and, or
   - Math: +, -, *, /, %
@@ -25,5 +25,5 @@ Not yet implemented.
   - Shell command: anything prefixed with $ or $!. *Can* be a string, or an identifier.
   - `args` scope:
     - Keywords: regex, enum
-  - `rad`, `request`, `display` scope:
+  - `rad` scope:
     - Keywords: fields, sort, map, color

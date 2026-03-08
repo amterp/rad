@@ -30,7 +30,7 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-display:
+rad:
     fields Timezone, Time
 
 fn parse_time(epoch: int, tz: str) -> str:
@@ -262,7 +262,7 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-// display block will go here
+// rad block will go here
 
 fn parse_time(epoch: int, tz: str) -> str:
     time = parse_epoch(epoch, tz=tz)
@@ -273,9 +273,9 @@ The [`parse_epoch()`](../reference/functions.md#parse_epoch) function converts a
 
 Note the type annotations `epoch: int, tz: str` and `-> str` - these are optional but help document what the function expects and returns.
 
-### The display block
+### The rad block
 
-Finally, we use a [`display` block](../guide/rad-blocks.md#display-no-request) to render our two columns as a formatted table:
+Finally, we use a [`rad` block](../guide/rad-blocks.md) (with no source) to render our two columns as a formatted table:
 
 ```rad linenums="1" hl_lines="26-27"
 #!/usr/bin/env rad
@@ -303,7 +303,7 @@ for tz, _ in tz_to_flag:
     time = parse_time(epoch, tz)
     Time += [time]
 
-display:
+rad:
     fields Timezone, Time
 
 fn parse_time(epoch: int, tz: str) -> str:
@@ -311,7 +311,7 @@ fn parse_time(epoch: int, tz: str) -> str:
     return "{time.date} {time.time}"
 ```
 
-The `display` block takes our pre-populated lists and renders them as aligned columns. The variable names (`Timezone`, `Time`) become the column headers.
+The `rad` block (with no source) takes our pre-populated lists and renders them as aligned columns. The variable names (`Timezone`, `Time`) become the column headers.
 
 ### Try it out
 
@@ -348,4 +348,4 @@ Timezone                Time
 | [Loop unpacking](../guide/basics.md#for-loops) | `for tz, _ in tz_to_flag:` |
 | [Functions with types](../guide/functions.md) | `fn parse_time(epoch: int, tz: str) -> str:` |
 | [`parse_epoch()`](../reference/functions.md#parse_epoch) | Time conversion |
-| [`display` blocks](../guide/rad-blocks.md#display-no-request) | Tabular output |
+| [`rad` blocks](../guide/rad-blocks.md) | Tabular output |

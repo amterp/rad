@@ -347,7 +347,7 @@ func isKeyword(token string) bool {
 		"fn": true, "return": true, "break": true, "continue": true,
 		"switch": true, "case": true, "default": true, "defer": true,
 		"catch": true, "pass": true, "del": true, "args": true,
-		"rad": true, "request": true, "display": true,
+		"rad": true,
 		"not": true, "and": true, "or": true,
 	}
 	return keywords[token]

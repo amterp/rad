@@ -1,5 +1,5 @@
 ### TITLE ###
-Display block can give own map
+Rad block can give own map
 ### INPUT ###
 a = {
 	"results": [
@@ -12,7 +12,7 @@ a = {
     ]
 }
 Name = json.results[].name
-display a:
+rad a:
 	fields Name
 ### STDOUT ###
 Name  
