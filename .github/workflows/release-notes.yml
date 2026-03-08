@@ -57,6 +57,24 @@ jobs:
             sed 's/^\*\*Full Changelog\*\*.*$//' | \
             sed '/^$/N;/^\n$/d' > /tmp/release_body.txt
 
+      - name: Generate fallback body if empty
+        run: |
+          # If the release body is empty (only whitespace), generate
+          # a commit list from git log between the previous and current tag.
+          if ! grep -qP '\S' /tmp/release_body.txt; then
+            TAG="${{ steps.release.outputs.tag }}"
+            REPO_URL="https://github.com/${{ github.repository }}"
+
+            # Find the tag immediately before this one
+            PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "^${TAG}$" | tail -1)
+
+            if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$TAG" ]; then
+              git log --oneline --no-merges "${PREV_TAG}..${TAG}" | \
+                sed -E "s/^([a-f0-9]+) (.+)/- \2 ([\1](${REPO_URL}\/commit\/\1))/" \
+                > /tmp/release_body.txt
+            fi
+          fi
+
       - name: Update releases.md
         run: |
           TAG="${{ steps.release.outputs.tag }}"
@@ -64,22 +82,30 @@ jobs:
           RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${TAG}"
 
           # Create the new release section
-          cat > /tmp/new_release.md << EOF
+          cat > /tmp/new_release.md <<EOF
           ## [${TAG}](${RELEASE_URL}) - ${DATE}
 
           $(cat /tmp/release_body.txt)
 
           ---
-
           EOF
 
-          # Insert after the intro section (after first "---" on its own line)
+          # Insert after the 3rd "---" line. The file structure is:
+          #   ---              (1st: front matter open)
+          #   title: ...
+          #   ---              (2nd: front matter close)
+          #   # Release Notes
+          #   ...intro text...
+          #   ---              (3rd: content separator)
+          #   ## [vX.Y.Z]...   (first release entry)
           awk '
-            /^---$/ && !found {
+            /^---$/ {
+              count++
               print
-              found = 1
-              print ""
-              while ((getline line < "/tmp/new_release.md") > 0) print line
+              if (count == 3) {
+                print ""
+                while ((getline line < "/tmp/new_release.md") > 0) print line
+              }
               next
             }
             { print }

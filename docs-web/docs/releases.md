@@ -1,17 +1,16 @@
 ---
-
-## [v0.8.1](https://github.com/amterp/rad/releases/tag/v0.8.1) - 2026-03-08
-
-
-
----
-
 title: Release Notes
 ---
 
 # Release Notes
 
 All Rad releases. Newest first.
+
+---
+
+## [v0.8.1](https://github.com/amterp/rad/releases/tag/v0.8.1) - 2026-03-08
+
+- fix: use pure Go DNS resolver for Linux static builds ([622026ca](https://github.com/amterp/rad/commit/622026ca))
 
 ---
 
