@@ -1,0 +1,15 @@
+### TITLE ###
+Shell catch with expression panic
+### DESCRIPTION ###
+When the shell command expression itself causes a RadPanic (e.g., a function
+call returns an error), ShellResult is nil. The catch handler should not crash
+and should assign the error to target variables.
+### INPUT ###
+fn fail():
+	return error("cmd expression failed")
+
+code = `{fail()}` catch:
+	print("caught: {code}")
+### STDOUT ###
+caught: cmd expression failed
+

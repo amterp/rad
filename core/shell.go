@@ -51,8 +51,17 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	}
 
 	return i.withCatch(shell.Catch, func(rp *RadPanic) EvalResult {
-		result := rp.ShellResult
-		assignResults(*result)
+		if rp.ShellResult != nil {
+			assignResults(*rp.ShellResult)
+		} else if len(targets) > 0 {
+			// The panic came from the command expression itself (not a shell exit code),
+			// so there's no shell result. Assign the error to the first target and null to the rest,
+			// matching how assignment catch handlers work.
+			i.doVarPathAssign(targets[0], rp.ErrV, false)
+			for j := 1; j < len(targets); j++ {
+				i.doVarPathAssign(targets[j], RAD_NULL_VAL, false)
+			}
+		}
 
 		res := i.runBlock(shell.Catch.Stmts)
 		if res.Ctrl != CtrlNormal {
