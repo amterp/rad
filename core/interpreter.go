@@ -284,21 +284,14 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 		DisableArgsBlock:  true,
 	}
 
-	// Restore original ScriptData after evaluation and handle any panics
-	var evalErr error
+	// Restore original ScriptData after evaluation
 	defer func() {
 		i.sd = originalScriptData
-		if r := recover(); r != nil {
-			// Convert panic to error instead of crashing REPL
-			if radPanic, ok := r.(*RadPanic); ok {
-				evalErr = fmt.Errorf("%v", radPanic.Err().Msg().Plain())
-			} else {
-				evalErr = fmt.Errorf("Runtime error: %v", r)
-			}
-		}
 	}()
 
-	// REPL: evaluate each statement from the AST
+	// REPL: evaluate each statement from the AST.
+	// safelyEvaluate catches all panics via handlePanicRecovery,
+	// so no additional panic recovery is needed here.
 	if len(astRoot.Stmts) == 1 {
 		result := i.safelyEvaluate(astRoot.Stmts[0])
 		if result.Ctrl != CtrlNormal {
@@ -311,11 +304,6 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 	var lastResult EvalResult
 	for _, stmt := range astRoot.Stmts {
 		lastResult = i.safelyEvaluate(stmt)
-	}
-
-	// Check for any evaluation errors from defer
-	if evalErr != nil {
-		return RAD_NULL_VAL, evalErr
 	}
 
 	if lastResult.Ctrl != CtrlNormal {
@@ -336,16 +324,7 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 
 	switch n := node.(type) {
 	// --- Statements ---
-	case *rl.SourceFile:
-		// First pass: function hoisting
-		for _, stmt := range n.Stmts {
-			if fnDef, ok := stmt.(*rl.FnDef); ok {
-				i.defineCustomNamedFunction(fnDef)
-			}
-		}
-		for _, stmt := range n.Stmts {
-			i.eval(stmt)
-		}
+	// Note: *rl.SourceFile is handled by safelyExecuteTopLevel, not eval.
 
 	case *rl.Assign:
 		out = i.withCatch(n.Catch, func(rp *RadPanic) EvalResult {
