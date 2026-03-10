@@ -1,0 +1,158 @@
+### TITLE ###
+Basic seconds
+### INPUT ###
+print(parse_duration("5s").seconds)
+### STDOUT ###
+5
+
+### TITLE ###
+Minutes and seconds to millis
+### INPUT ###
+print(parse_duration("5m23s").millis)
+### STDOUT ###
+323000
+
+### TITLE ###
+Milliseconds
+### INPUT ###
+print(parse_duration("300ms").millis)
+### STDOUT ###
+300
+
+### TITLE ###
+Fractional hours to minutes
+### INPUT ###
+print(parse_duration("1.5h").minutes)
+### STDOUT ###
+90
+
+### TITLE ###
+Days and hours
+### INPUT ###
+print(parse_duration("3d5h").hours)
+### STDOUT ###
+77
+
+### TITLE ###
+One day only
+### INPUT ###
+print(parse_duration("1d").hours)
+### STDOUT ###
+24
+
+### TITLE ###
+Fractional days
+### INPUT ###
+print(parse_duration("0.5d").hours)
+### STDOUT ###
+12
+
+### TITLE ###
+Nanos precision
+### INPUT ###
+print(parse_duration("5m30ns").nanos)
+### STDOUT ###
+300000000030
+
+### TITLE ###
+Negative duration
+### INPUT ###
+d = parse_duration("-5m")
+print(d.minutes)
+print(d.nanos)
+### STDOUT ###
+-5
+-300000000000
+
+### TITLE ###
+Spaces in duration
+### INPUT ###
+print(parse_duration("5m 23s").millis)
+### STDOUT ###
+323000
+
+### TITLE ###
+Invalid duration errors
+### INPUT ###
+parse_duration("invalid!")
+### STDERR ###
+error[RAD20043]: Failed to parse duration "invalid!": invalid duration: time: invalid duration "invalid!"
+  --> <script>:1:1
+  |
+1 | parse_duration("invalid!")
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20043
+
+
+### EXIT ###
+1
+### TITLE ###
+Day hour minute combined
+### INPUT ###
+print(parse_duration("1d12h30m").millis)
+### STDOUT ###
+131400000
+
+### TITLE ###
+Nanos field from seconds
+### INPUT ###
+print(parse_duration("1s").nanos)
+### STDOUT ###
+1000000000
+
+### TITLE ###
+Error on bare minus
+### INPUT ###
+parse_duration("-")
+### STDERR ###
+error[RAD20043]: Failed to parse duration "-": empty duration string
+  --> <script>:1:1
+  |
+1 | parse_duration("-")
+  | ^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20043
+
+
+### EXIT ###
+1
+### TITLE ###
+Error on duplicate days
+### INPUT ###
+parse_duration("1d2d")
+### STDERR ###
+error[RAD20043]: Failed to parse duration "1d2d": multiple day components in duration string
+  --> <script>:1:1
+  |
+1 | parse_duration("1d2d")
+  | ^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20043
+
+
+### EXIT ###
+1
+### TITLE ###
+Error on overflow
+### INPUT ###
+parse_duration("106751d24h")
+### STDERR ###
+error[RAD20043]: Failed to parse duration "106751d24h": duration overflow: total exceeds ~292 years
+  --> <script>:1:1
+  |
+1 | parse_duration("106751d24h")
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20043
+
+
+### EXIT ###
+1
+### TITLE ###
+Dot-five days
+### INPUT ###
+print(parse_duration(".5d").hours)
+### STDOUT ###
+12
+
