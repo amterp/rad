@@ -1,0 +1,65 @@
+### TITLE ###
+String plus int shows migration hint
+### INPUT ###
+x = "count: " + 5
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + int'
+  --> <script>:1:5
+  |
+1 | x = "count: " + 5
+  | ^^^^^^^^^^^^^^^^^^
+  |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD30002
+
+### EXIT ###
+1
+### TITLE ###
+String plus float shows migration hint
+### INPUT ###
+x = "pi: " + 3.14
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + float'
+  --> <script>:1:5
+  |
+1 | x = "pi: " + 3.14
+  | ^^^^^^^^^^^^^^^^^^
+  |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD30002
+
+### EXIT ###
+1
+### TITLE ###
+String plus bool shows migration hint
+### INPUT ###
+x = "flag: " + true
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'str + bool'
+  --> <script>:1:5
+  |
+1 | x = "flag: " + true
+  | ^^^^^^^^^^^^^^^^^^^^
+  |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD30002
+
+### EXIT ###
+1
+### TITLE ###
+Int plus string shows migration hint
+### INPUT ###
+x = 5 + "hello"
+### STDERR ###
+error[RAD30002]: Invalid operand types: cannot do 'int + str'
+  --> <script>:1:5
+  |
+1 | x = 5 + "hello"
+  | ^^^^^^^^^^^^^^^^
+  |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD30002
+
+### EXIT ###
+1
+
