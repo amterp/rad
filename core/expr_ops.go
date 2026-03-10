@@ -363,7 +363,33 @@ func (i *Interpreter) executeOp(
 	if isCompound {
 		opStr += "="
 	}
-	i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "Invalid operand types: cannot do '%s %s %s'%s",
+
+	msg := fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'%s",
 		TypeAsString(leftV), opStr, TypeAsString(rightV), additionalErrMsg)
+
+	// Emit a migration hint when str + non-str is attempted with +
+	if op == rl.OpAdd && isStrPlusNonStr(leftV, rightV) {
+		i.emitErrorWithHint(rl.ErrInvalidTypeForOp, parentNode, msg,
+			"In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/")
+	} else {
+		i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "%s", msg)
+	}
 	panic(UNREACHABLE)
+}
+
+// isStrPlusNonStr returns true if one operand is a string and the other is
+// int, float, or bool - the type combinations that used to be coerced by +.
+func isStrPlusNonStr(left, right interface{}) bool {
+	isStr := func(v interface{}) bool {
+		_, ok := v.(RadString)
+		return ok
+	}
+	isCoercible := func(v interface{}) bool {
+		switch v.(type) {
+		case int64, float64, bool:
+			return true
+		}
+		return false
+	}
+	return (isStr(left) && isCoercible(right)) || (isCoercible(left) && isStr(right))
 }
