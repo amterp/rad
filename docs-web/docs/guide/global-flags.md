@@ -22,7 +22,9 @@ Global flags:
       --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the 'script name'.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
-      --src-tree               Instead of running the target script, print out its syntax tree.
+      --cst-tree               Instead of running the target script, print out its concrete syntax tree.
+      --ast-tree               Instead of running the target script, print out its abstract syntax tree.
+      --tls-insecure           Skip TLS certificate verification for HTTPS requests.
       --mock-response string   Add mock response for json requests (pattern:filePath)
 ```
 
@@ -85,6 +87,50 @@ By default (`auto`), Rad checks your terminal to detect if it's appropriate to e
 
 However, you can override the automatic detection by explicitly setting `--color=always` or `--color=never` to force having colors, or force *not* having colors, respectively. 
 
+## `src`
+
+Use `--src` to print the source code of a script instead of running it. This is handy when you want to quickly inspect a script without opening it in an editor - for example, checking what a script does before running it.
+
+```
+rad my-script.rad --src
+```
+
+## `cst-tree`
+
+Use `--cst-tree` to print the concrete syntax tree (CST) of a script instead of running it. The CST is the raw parse tree that directly mirrors the grammar - every token, whitespace, and syntactic element is represented.
+
+This flag bypasses argument validation, so you can inspect the tree even if the script expects arguments you haven't provided.
+
+```
+rad my-script.rad --cst-tree
+```
+
+This is primarily useful for debugging the parser or understanding how Rad tokenizes your script.
+
+## `ast-tree`
+
+Use `--ast-tree` to print the abstract syntax tree (AST) instead of running the script. The AST is the simplified, semantic tree that Rad actually interprets - syntactic sugar has been desugared, and irrelevant tokens are stripped away.
+
+Like `--cst-tree`, this bypasses argument validation.
+
+```
+rad my-script.rad --ast-tree
+```
+
+Comparing `--cst-tree` and `--ast-tree` output can help you understand how Rad transforms your code before execution - for instance, how compound assignments like `x += 1` get desugared.
+
+## `tls-insecure`
+
+Use `--tls-insecure` to skip TLS certificate verification for all HTTPS requests made by the script. This is useful when developing against servers with self-signed certificates.
+
+```
+rad my-api-script.rad --tls-insecure
+```
+
+!!! warning "Development only"
+
+    Don't use this flag in production. It disables certificate verification for *all* requests in the script, making them vulnerable to man-in-the-middle attacks.
+
 ## `mock-response`
 
 You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a [`rad` block](./rad-blocks.md).
@@ -138,7 +184,9 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 ## Summary
 
 - Rad provides several global flags that can be used across all Rad scripts.
-- Use `mock-response` to test your scripts.
+- Use `--src`, `--cst-tree`, and `--ast-tree` to inspect scripts without running them.
+- Use `--tls-insecure` for development against self-signed certs.
+- Use `--mock-response` to test your scripts against canned API responses.
 
 !!! info "Script args can shadow global flags"
 
