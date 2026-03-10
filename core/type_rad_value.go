@@ -361,6 +361,8 @@ func (v RadValue) TruthyFalsy() bool {
 		out = m.Len() != 0
 	}).ForNull(func(v RadValue, n RadNull) {
 		out = false
+	}).ForError(func(v RadValue, e *RadError) {
+		out = true
 	}).Visit(v)
 	return out
 }

@@ -1,0 +1,46 @@
+### TITLE ###
+Error value is truthy in if
+### INPUT ###
+result = parse_int("bad") catch:
+	pass
+if result:
+	print("truthy")
+else:
+	print("falsy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Error value is truthy in not
+### INPUT ###
+result = parse_int("bad") catch:
+	pass
+if not result:
+	print("falsy")
+else:
+	print("truthy")
+### STDOUT ###
+truthy
+
+### TITLE ###
+Error value is truthy in while
+### INPUT ###
+result = parse_int("bad") catch:
+	pass
+count = 0
+while result:
+	print("truthy")
+	break
+### STDOUT ###
+truthy
+
+### TITLE ###
+Error value is truthy in or
+### INPUT ###
+result = parse_int("bad") catch:
+	pass
+x = false or result
+print(type(x))
+### STDOUT ###
+error
+
