@@ -171,9 +171,10 @@ func (r *DiagnosticRenderer) renderSourceLine(lines []string, lineIdx, lineNum, 
 	}
 
 	line := lines[lineIdx]
-	// Truncate long lines
-	if len(line) > 120 {
-		line = line[:117] + "..."
+	// Truncate long lines (use runes to avoid splitting multi-byte UTF-8 characters)
+	runes := []rune(line)
+	if len(runes) > 120 {
+		line = string(runes[:117]) + "..."
 	}
 
 	gutter := fmt.Sprintf("%*d", gutterWidth, lineNum)
