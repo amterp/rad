@@ -8,28 +8,31 @@ import (
 // Levenshtein calculates the Levenshtein distance between two strings.
 // Used for "did you mean?" suggestions.
 func Levenshtein(a, b string) int {
-	if len(a) == 0 {
-		return len(b)
+	ra := []rune(a)
+	rb := []rune(b)
+
+	if len(ra) == 0 {
+		return len(rb)
 	}
-	if len(b) == 0 {
-		return len(a)
+	if len(rb) == 0 {
+		return len(ra)
 	}
 
 	// Create matrix
-	matrix := make([][]int, len(a)+1)
+	matrix := make([][]int, len(ra)+1)
 	for i := range matrix {
-		matrix[i] = make([]int, len(b)+1)
+		matrix[i] = make([]int, len(rb)+1)
 		matrix[i][0] = i
 	}
-	for j := 0; j <= len(b); j++ {
+	for j := 0; j <= len(rb); j++ {
 		matrix[0][j] = j
 	}
 
 	// Fill matrix
-	for i := 1; i <= len(a); i++ {
-		for j := 1; j <= len(b); j++ {
+	for i := 1; i <= len(ra); i++ {
+		for j := 1; j <= len(rb); j++ {
 			cost := 0
-			if a[i-1] != b[j-1] {
+			if ra[i-1] != rb[j-1] {
 				cost = 1
 			}
 			matrix[i][j] = min(
@@ -40,7 +43,7 @@ func Levenshtein(a, b string) int {
 		}
 	}
 
-	return matrix[len(a)][len(b)]
+	return matrix[len(ra)][len(rb)]
 }
 
 // FuzzyMatchFold returns true if each character in source can be found in
