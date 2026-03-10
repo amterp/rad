@@ -1,0 +1,61 @@
+### TITLE ###
+Seconds to minutes
+### INPUT ###
+print(convert_duration(90, "seconds").minutes)
+### STDOUT ###
+1.5
+
+### TITLE ###
+Millis to seconds
+### INPUT ###
+print(convert_duration(1500, "millis").seconds)
+### STDOUT ###
+1.5
+
+### TITLE ###
+Days to hours
+### INPUT ###
+print(convert_duration(1, "days").hours)
+### STDOUT ###
+24
+
+### TITLE ###
+Fractional hours to minutes
+### INPUT ###
+print(convert_duration(1.5, "hours").minutes)
+### STDOUT ###
+90
+
+### TITLE ###
+Zero value
+### INPUT ###
+d = convert_duration(0, "seconds")
+print(d.nanos)
+print(d.millis)
+print(d.hours)
+### STDOUT ###
+0
+0
+0
+
+### TITLE ###
+Negative value
+### INPUT ###
+print(convert_duration(-60, "seconds").minutes)
+### STDOUT ###
+-1
+
+### TITLE ###
+Nanos to micros
+### INPUT ###
+print(convert_duration(5000, "nanos").micros)
+### STDOUT ###
+5
+
+### TITLE ###
+Micros to millis
+### INPUT ###
+print(convert_duration(2500, "micros").millis)
+### STDOUT ###
+2.5
+
