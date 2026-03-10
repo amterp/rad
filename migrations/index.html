@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/stashes/">
+        <link rel="canonical" href="https://amterp.github.io/rad/migrations/">
       
       
-        <link rel="prev" href="../defer-errdefer/">
+        <link rel="prev" href="../reference/functions/">
       
       
-        <link rel="next" href="../config/">
+        <link rel="next" href="v0.9/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
-        <title>Stashes - Rad Docs</title>
+        <title>How to Migrate - Rad Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,9 +53,9 @@
     
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-basics" class="md-skip">
+        <a href="#how-to-migrate" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +96,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href=".." title="Rad Docs" class="md-header__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Stashes
+              How to Migrate
             
           </span>
         </div>
@@ -242,7 +242,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
+    <a href=".." title="Rad Docs" class="md-nav__button md-logo" aria-label="Rad Docs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -272,7 +272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -296,20 +296,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -330,7 +328,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -348,7 +346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/" class="md-nav__link">
+      <a href="../guide/getting-started/" class="md-nav__link">
         
   
   
@@ -376,7 +374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/" class="md-nav__link">
+      <a href="../guide/basics/" class="md-nav__link">
         
   
   
@@ -404,7 +402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../args/" class="md-nav__link">
+      <a href="../guide/args/" class="md-nav__link">
         
   
   
@@ -432,7 +430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../functions/" class="md-nav__link">
+      <a href="../guide/functions/" class="md-nav__link">
         
   
   
@@ -460,7 +458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strings-advanced/" class="md-nav__link">
+      <a href="../guide/strings-advanced/" class="md-nav__link">
         
   
   
@@ -488,7 +486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rad-blocks/" class="md-nav__link">
+      <a href="../guide/rad-blocks/" class="md-nav__link">
         
   
   
@@ -516,7 +514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../type-annotations/" class="md-nav__link">
+      <a href="../guide/type-annotations/" class="md-nav__link">
         
   
   
@@ -544,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling/" class="md-nav__link">
+      <a href="../guide/error-handling/" class="md-nav__link">
         
   
   
@@ -572,7 +570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../shell-commands/" class="md-nav__link">
+      <a href="../guide/shell-commands/" class="md-nav__link">
         
   
   
@@ -600,7 +598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../script-commands/" class="md-nav__link">
+      <a href="../guide/script-commands/" class="md-nav__link">
         
   
   
@@ -628,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/" class="md-nav__link">
+      <a href="../guide/resources/" class="md-nav__link">
         
   
   
@@ -656,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-flags/" class="md-nav__link">
+      <a href="../guide/global-flags/" class="md-nav__link">
         
   
   
@@ -684,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../defer-errdefer/" class="md-nav__link">
+      <a href="../guide/defer-errdefer/" class="md-nav__link">
         
   
   
@@ -709,35 +707,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Stashes
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../guide/stashes/" class="md-nav__link">
         
   
   
@@ -753,207 +726,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-basics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Basics
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The Basics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#generating-a-stash-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Generating a Stash ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-defer-save-state-pattern" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Defer Save State Pattern
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#state-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        State Storage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="State Storage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#loading-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading State
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#saving-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Saving State
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#working-with-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Working with State
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#file-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        File Storage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="File Storage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#writing-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Writing Files
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading Files
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-stash-path" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting the Stash Path
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stash-structure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stash Structure
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#managing-stashes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Managing Stashes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -966,7 +738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config/" class="md-nav__link">
+      <a href="../guide/config/" class="md-nav__link">
         
   
   
@@ -1048,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         
   
   
@@ -1076,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/brewi/" class="md-nav__link">
+      <a href="../examples/brewi/" class="md-nav__link">
         
   
   
@@ -1104,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/epoch/" class="md-nav__link">
+      <a href="../examples/epoch/" class="md-nav__link">
         
   
   
@@ -1132,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/hm/" class="md-nav__link">
+      <a href="../examples/hm/" class="md-nav__link">
         
   
   
@@ -1214,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/syntax/" class="md-nav__link">
+      <a href="../reference/syntax/" class="md-nav__link">
         
   
   
@@ -1242,7 +1014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/functions/" class="md-nav__link">
+      <a href="../reference/functions/" class="md-nav__link">
         
   
   
@@ -1274,18 +1046,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -1306,7 +1080,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1321,10 +1095,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../migrations/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1340,6 +1141,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrade Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-check-your-current-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Check your current version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-read-the-migration-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Read the migration guide
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-upgrade-rad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Upgrade Rad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-check-your-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Check your scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-fix-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Fix issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1352,7 +1256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../migrations/v0.9/" class="md-nav__link">
+      <a href="v0.9/" class="md-nav__link">
         
   
   
@@ -1380,7 +1284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../migrations/v0.8/" class="md-nav__link">
+      <a href="v0.8/" class="md-nav__link">
         
   
   
@@ -1408,7 +1312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../migrations/v0.7/" class="md-nav__link">
+      <a href="v0.7/" class="md-nav__link">
         
   
   
@@ -1443,7 +1347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../status/" class="md-nav__link">
+      <a href="../status/" class="md-nav__link">
         
   
   
@@ -1470,7 +1374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../releases/" class="md-nav__link">
+      <a href="../releases/" class="md-nav__link">
         
   
   
@@ -1507,6 +1411,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1515,22 +1421,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-basics" class="md-nav__link">
+  <a href="#upgrade-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Basics
+        Upgrade Workflow
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The Basics">
+    <nav class="md-nav" aria-label="Upgrade Workflow">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generating-a-stash-id" class="md-nav__link">
+  <a href="#1-check-your-current-version" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generating a Stash ID
+        1. Check your current version
       
     </span>
   </a>
@@ -1538,10 +1444,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-defer-save-state-pattern" class="md-nav__link">
+  <a href="#2-read-the-migration-guide" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Defer Save State Pattern
+        2. Read the migration guide
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-upgrade-rad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Upgrade Rad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-check-your-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Check your scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-fix-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Fix issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Test
       
     </span>
   </a>
@@ -1550,150 +1500,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#state-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        State Storage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="State Storage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#loading-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading State
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#saving-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Saving State
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#working-with-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Working with State
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#file-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        File Storage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="File Storage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#writing-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Writing Files
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading Files
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-stash-path" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting the Stash Path
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stash-structure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stash Structure
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#managing-stashes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Managing Stashes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1717,222 +1523,80 @@
   
 
 
-  <h1>Stashes</h1>
-
-<p>Sometimes your script needs to remember things between runs - user preferences, counters, cached data, or configuration.
-Stashes are Rad's built-in mechanism for persistent, per-script storage.</p>
-<h2 id="the-basics">The Basics<a class="headerlink" href="#the-basics" title="Permanent link">&para;</a></h2>
-<p>Every script can have its own <strong>stash</strong> - a dedicated storage area that persists between runs.
-To use a stash, you need to declare a <strong>stash ID</strong> in your script's file header using the <code>@stash_id</code> macro:</p>
-<div class="highlight"><span class="filename">counter.rad</span><pre><span></span><code>#!/usr/bin/env rad
----
-A simple counter that remembers how many times it&#39;s been run.
-@stash_id = JJRNBOSKHpa
----
-
-state = load_state()
-defer save_state(state)
-
-count = state[&quot;count&quot;] ?? 0
-count++
-state[&quot;count&quot;] = count
-
-print(&quot;This script has been run {count} time(s)!&quot;)
+<h1 id="how-to-migrate">How to Migrate<a class="headerlink" href="#how-to-migrate" title="Permanent link">&para;</a></h1>
+<p>Rad is pre-1.0, so breaking changes can occur between minor versions. When they do, the version gets its own migration guide (listed below this page in the sidebar) detailing exactly what changed and how to update your scripts.</p>
+<p>This page covers the general process for upgrading smoothly.</p>
+<h2 id="upgrade-workflow">Upgrade Workflow<a class="headerlink" href="#upgrade-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="1-check-your-current-version">1. Check your current version<a class="headerlink" href="#1-check-your-current-version" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>--version
 </code></pre></div>
-<p>Let's run it a few times:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>counter.rad
+<h3 id="2-read-the-migration-guide">2. Read the migration guide<a class="headerlink" href="#2-read-the-migration-guide" title="Permanent link">&para;</a></h3>
+<p>Before upgrading, skim the migration guide for your target version. You'll find them in the sidebar under <strong>Migrations</strong>. Each guide lists every breaking change with before/after examples and migration steps.</p>
+<p>If you're jumping multiple versions, read each guide in order - changes can build on each other.</p>
+<h3 id="3-upgrade-rad">3. Upgrade Rad<a class="headerlink" href="#3-upgrade-rad" title="Permanent link">&para;</a></h3>
+<p>Upgrade using whichever method you originally installed with - your package manager, <code>go install</code>, or by downloading the latest binary from the <a href="https://github.com/amterp/rad/releases">releases page</a>. See <a href="../guide/getting-started/#installation">Installation</a> for details.</p>
+<h3 id="4-check-your-scripts">4. Check your scripts<a class="headerlink" href="#4-check-your-scripts" title="Permanent link">&para;</a></h3>
+<p>Run <code>rad check --from-logs</code> to bulk-check scripts you've recently used:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>This script has been run 1 time(s)!
+<p>This reads Rad's invocation log to find scripts you've actually run, then checks each one for compatibility issues. Here's what the output looks like:</p>
+<div class="highlight"><pre><span></span><code>                                                        Errors  Warns   Info  Hints
+  ✓ /Users/alice/scripts/deploy                              0      0      0      0
+  ✗ /Users/alice/scripts/brewu                               1      0      0      0
+  ✓ /Users/alice/scripts/epoch                               0      1      0      0
+  ✓ /Users/alice/src/myproject/dev                           0      0      0      1
+  ...
+
+───────────────────────────────────────────────────────────────────────────────────────
+Checked 38 scripts: 37 passed, 1 failed (1 warn, 1 hint, 5 skipped).
 </code></pre></div>
+<p>It's the fastest way to find what needs updating.</p>
+<p>The <code>--from-logs</code> flag takes a duration value that controls how far back to look. Use <code>all</code> to check everything, or narrow it down if the full log catches too many old or irrelevant scripts:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>30d
+</code></pre></div>
+<p>Duration values support units like <code>d</code> (days), <code>w</code> (weeks), <code>h</code> (hours), and combinations like <code>2w3d</code>.</p>
+<p>You can also check individual scripts directly:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>./my-script.rad
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Keep invocation logging enabled</p>
+<p><code>rad check --from-logs</code> relies on Rad's invocation logging, which is enabled by default since v0.9. If you've disabled it, consider re-enabling it so it's ready when you need it. See the <a href="../guide/config/">Configuration guide</a> for details.</p>
 </div>
+<h3 id="5-fix-issues">5. Fix issues<a class="headerlink" href="#5-fix-issues" title="Permanent link">&para;</a></h3>
+<p>When you hit a breaking change - either through <code>rad check</code> or by running a script - Rad tells you what changed and how to fix it. For example, running a script that uses a removed keyword produces:</p>
+<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed. Use &#39;rad&#39; instead.
+  --&gt; script.rad:1:1
+   |
+ 1 | request &quot;https://api.example.com/users&quot;:
+   | ^^
+   |
+   = help: See migration guide: https://amterp.github.io/rad/migrations/v0.9/
+   = info: rad explain RAD40008
+</code></pre></div>
+<p>The inline error gives you the gist, but if you want more detail, run <code>rad explain</code> with the error code:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>explain<span class="w"> </span>RAD40008
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>RAD40008: Deprecated Block Keyword
 
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>counter.rad
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>This script has been run 2 time(s)!
-</code></pre></div>
-</div>
+The request and display block keywords have been removed in v0.9.
+All rad block variants now use the unified rad keyword.
 
-<p>The count persists because it's saved to the stash.</p>
-<h3 id="generating-a-stash-id">Generating a Stash ID<a class="headerlink" href="#generating-a-stash-id" title="Permanent link">&para;</a></h3>
-<p>You might wonder what that <code>JJRNBOSKHpa</code> string is. It's a unique identifier for your script's stash.
-You can use any string you like, but Rad provides a built-in command to generate collision-resistant IDs:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>gen-id
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>K7mPqR2xNfL
-</code></pre></div>
-</div>
+Migration
 
-<p>Using <code>rad gen-id</code> is recommended, especially if you plan to share your scripts.
-It ensures your stash ID won't accidentally collide with another script's stash on someone else's machine.</p>
-<h3 id="the-defer-save-state-pattern">The Defer Save State Pattern<a class="headerlink" href="#the-defer-save-state-pattern" title="Permanent link">&para;</a></h3>
-<p>The example above demonstrates the recommended pattern for working with stashes:</p>
-<div class="highlight"><pre><span></span><code>state = load_state()
-defer save_state(state)
+Replace request and display with rad:
 
-// ... use and modify state ...
-</code></pre></div>
-<p>The <a href="../defer-errdefer/"><code>defer</code></a> ensures your state is saved even if the script exits early or encounters an error.
-This pattern is so common that you'll want to use it almost every time you work with stashes.</p>
-<h2 id="state-storage">State Storage<a class="headerlink" href="#state-storage" title="Permanent link">&para;</a></h2>
-<p>The primary way to use stashes is through <strong>state</strong> - a map that gets persisted as JSON.</p>
-<h3 id="loading-state">Loading State<a class="headerlink" href="#loading-state" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#load_state"><code>load_state()</code></a> returns your script's saved state as a map.
-If no state exists yet (first run), it returns an empty map <code>{}</code>:</p>
-<div class="highlight"><pre><span></span><code>state = load_state()
-print(state)  // {} on first run, or previously saved data
-</code></pre></div>
-<h3 id="saving-state">Saving State<a class="headerlink" href="#saving-state" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#save_state"><code>save_state(map)</code></a> persists the map to disk:</p>
-<div class="highlight"><pre><span></span><code>state = {&quot;username&quot;: &quot;alice&quot;, &quot;theme&quot;: &quot;dark&quot;}
-save_state(state)
-</code></pre></div>
-<p>The state is stored as JSON at <code>~/.rad/stashes/&lt;stash_id&gt;/state.json</code>, making it easy to inspect or debug.</p>
-<h3 id="working-with-state">Working with State<a class="headerlink" href="#working-with-state" title="Permanent link">&para;</a></h3>
-<p>Since state is just a map, you can use all of Rad's map operations.
-The <a href="../basics/#fallback-operator"><code>??</code> fallback operator</a> is particularly useful for providing default values:</p>
-<div class="highlight"><span class="filename">preferences.rad</span><pre><span></span><code>#!/usr/bin/env rad
----
-Remembers user preferences.
-@stash_id = K7mPqR2xNfL
----
-args:
-    set_editor str?  # Set preferred editor
-    set_theme str?   # Set color theme
+    # Before (no longer works)
+    request &quot;https://api.example.com/data&quot;:
+        fields Name, Age
 
-state = load_state()
-defer save_state(state)
-
-// Update preferences if provided
-if set_editor:
-    state[&quot;editor&quot;] = set_editor
-    print(&quot;Editor set to: {set_editor}&quot;)
-
-if set_theme:
-    state[&quot;theme&quot;] = set_theme
-    print(&quot;Theme set to: {set_theme}&quot;)
-
-// Show current preferences
-editor = state[&quot;editor&quot;] ?? &quot;vim&quot;
-theme = state[&quot;theme&quot;] ?? &quot;dark&quot;
-print(&quot;Current preferences: editor={editor}, theme={theme}&quot;)
+    # After
+    rad &quot;https://api.example.com/data&quot;:
+        noprint
+        fields Name, Age
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>preferences.rad
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Current preferences: editor=vim, theme=dark
-</code></pre></div>
-</div>
-
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>preferences.rad<span class="w"> </span>--set-editor<span class="w"> </span>nano<span class="w"> </span>--set-theme<span class="w"> </span>light
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Editor set to: nano
-Theme set to: light
-Current preferences: editor=nano, theme=light
-</code></pre></div>
-</div>
-
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>preferences.rad
-</code></pre></div>
-<div class="result">
-<div class="highlight"><pre><span></span><code>Current preferences: editor=nano, theme=light
-</code></pre></div>
-</div>
-
-<h2 id="file-storage">File Storage<a class="headerlink" href="#file-storage" title="Permanent link">&para;</a></h2>
-<p>Beyond state, stashes can also store arbitrary files. This is useful for caching larger data, storing user-created content, or managing configuration files.</p>
-<h3 id="writing-files">Writing Files<a class="headerlink" href="#writing-files" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#write_stash_file"><code>write_stash_file(path, content)</code></a> writes a file to your stash:</p>
-<div class="highlight"><pre><span></span><code>write_stash_file(&quot;cache.json&quot;, &#39;{&quot;data&quot;: [1, 2, 3]}&#39;)
-write_stash_file(&quot;logs/run.log&quot;, &quot;Script executed at {now().time}&quot;)
-</code></pre></div>
-<p>Nested paths work automatically - Rad creates any necessary directories.</p>
-<h3 id="loading-files">Loading Files<a class="headerlink" href="#loading-files" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#load_stash_file"><code>load_stash_file(path, default)</code></a> loads a file from your stash, creating it with the default content if it doesn't exist:</p>
-<div class="highlight"><pre><span></span><code>result = load_stash_file(&quot;config.txt&quot;, &quot;# Default config\nkey=value&quot;)
-print(&quot;Path: {result.full_path}&quot;)
-print(&quot;Was just created: {result.created}&quot;)
-print(&quot;Content: {result.content}&quot;)
-</code></pre></div>
-<p>The return value is a map containing:</p>
-<ul>
-<li><code>full_path</code> - the absolute path to the file</li>
-<li><code>created</code> - <code>true</code> if the file was just created, <code>false</code> if it already existed</li>
-<li><code>content</code> - the file's contents</li>
-</ul>
-<p>The <code>created</code> field is particularly useful for first-time setup:</p>
-<div class="highlight"><span class="filename">notes.rad</span><pre><span></span><code>#!/usr/bin/env rad
----
-A simple notes manager.
-@stash_id = N4xPmK8wQrT
----
-args:
-    add str?  # Add a new note
-
-result = load_stash_file(&quot;notes.txt&quot;, &quot;&quot;)
-
-if result.created:
-    print(&quot;Created new notes file!&quot;)
-
-if add:
-    // Append the new note
-    new_content = result.content + add + &quot;\n&quot;
-    write_stash_file(&quot;notes.txt&quot;, new_content)
-    print(&quot;Note added!&quot;)
-else:
-    if result.content:
-        print(&quot;Your notes:&quot;)
-        print(result.content)
-    else:
-        print(&quot;No notes yet. Use --add to create one.&quot;)
-</code></pre></div>
-<h3 id="getting-the-stash-path">Getting the Stash Path<a class="headerlink" href="#getting-the-stash-path" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/functions/#get_stash_path"><code>get_stash_path(subpath?)</code></a> returns the path to your stash directory:</p>
-<div class="highlight"><pre><span></span><code>stash_path = get_stash_path()
-print(stash_path)  // ~/.rad/stashes/&lt;stash_id&gt;
-
-file_path = get_stash_path(&quot;data/config.json&quot;)
-print(file_path)  // ~/.rad/stashes/&lt;stash_id&gt;/data/config.json
-</code></pre></div>
-<p>This is useful when you need to work with stash files using other Rad functions like <a href="../../reference/functions/#read_file"><code>read_file</code></a> or <a href="../../reference/functions/#get_path"><code>get_path</code></a>.</p>
-<h2 id="stash-structure">Stash Structure<a class="headerlink" href="#stash-structure" title="Permanent link">&para;</a></h2>
-<p>Your stash lives at <code>~/.rad/stashes/&lt;stash_id&gt;/</code> with this structure:</p>
-<div class="highlight"><pre><span></span><code>~/.rad/stashes/&lt;stash_id&gt;/
-├── state.json          # Your state map (from save_state)
-└── files/              # Your stash files
-    ├── config.txt
-    ├── cache.json
-    └── logs/
-        └── run.log
-</code></pre></div>
-<p>State and files are kept separate - <code>state.json</code> is managed by <code>load_state</code>/<code>save_state</code>, while the <code>files/</code> subdirectory is managed by <code>load_stash_file</code>/<code>write_stash_file</code>.</p>
-<h2 id="managing-stashes">Managing Stashes<a class="headerlink" href="#managing-stashes" title="Permanent link">&para;</a></h2>
-<p>Rad provides a built-in command to inspect and manage stashes for scripts on your PATH:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--state<span class="w">   </span><span class="c1"># View the script&#39;s state</span>
-rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--id<span class="w">      </span><span class="c1"># Show the stash ID</span>
-rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--delete<span class="w">  </span><span class="c1"># Delete the stash</span>
-</code></pre></div>
-<div class="admonition info">
-<p class="admonition-title">Scripts Must Be on PATH</p>
-<p>The <code>rad stash</code> command looks up scripts on your PATH.
-For scripts not on your PATH, you can inspect the stash directly at <code>~/.rad/stashes/&lt;stash_id&gt;/</code>.</p>
-</div>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Stashes provide persistent, per-script storage that survives between runs.</li>
-<li>Declare a stash ID in the file header with <code>@stash_id = &lt;id&gt;</code>.</li>
-<li>Use <code>rad gen-id</code> to generate collision-resistant IDs.</li>
-<li><strong>State storage</strong>: Use <code>load_state()</code> and <code>save_state(map)</code> for map-based data.</li>
-<li><strong>File storage</strong>: Use <code>load_stash_file()</code> and <code>write_stash_file()</code> for arbitrary files.</li>
-<li>The recommended pattern is <code>state = load_state()</code> followed by <code>defer save_state(state)</code>.</li>
-<li>Stashes live at <code>~/.rad/stashes/&lt;stash_id&gt;/</code>.</li>
-</ul>
-<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Now that you know how scripts can persist their own data, learn how to configure Rad itself - including invocation logging, which tracks your script usage for diagnostics.</p>
-<p>Continue to <a href="../config/">Configuration</a>.</p>
+<p>Between the inline hint and <code>rad explain</code>, you should have enough context to update your script and move on to the next one.</p>
+<h3 id="6-test">6. Test<a class="headerlink" href="#6-test" title="Permanent link">&para;</a></h3>
+<p>Run your scripts and verify they behave as expected. Static checks (<code>rad check</code>) catch syntax and naming issues, but some changes are behavioral - like an operator producing a different result for the same input. The migration guides call these out, so you'll know what to watch for.</p>
 
 
 
@@ -1965,7 +1629,7 @@ For scripts not on your PATH, you can inspect the stash directly at <code>~/.rad
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../defer-errdefer/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Defer &amp; Errdefer">
+          <a href="../reference/functions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Functions">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1975,20 +1639,20 @@ For scripts not on your PATH, you can inspect the stash directly at <code>~/.rad
                 Previous
               </span>
               <div class="md-ellipsis">
-                Defer & Errdefer
+                Functions
               </div>
             </div>
           </a>
         
         
           
-          <a href="../config/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration">
+          <a href="v0.9/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.9">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Configuration
+                Migration Guide - v0.9
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2025,10 +1689,10 @@ For scripts not on your PATH, you can inspect the stash directly at <code>~/.rad
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.footer"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

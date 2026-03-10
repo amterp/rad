@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://amterp.github.io/rad/migrations/v0.9/">
       
       
-        <link rel="prev" href="../../reference/functions/">
+        <link rel="prev" href="../">
       
       
         <link rel="next" href="../v0.8/">
@@ -1095,6 +1095,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -1556,6 +1584,67 @@
     <span class="md-ellipsis">
       
         How to Opt Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: trim_prefix / trim_suffix Behavior Changed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: trim_prefix / trim_suffix Behavior Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08-character-set-stripping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8) - Character-Set Stripping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09-literal-prefixsuffix-removal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9) - Literal Prefix/Suffix Removal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
       
     </span>
   </a>
@@ -2129,6 +2218,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: trim_prefix / trim_suffix Behavior Changed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: trim_prefix / trim_suffix Behavior Changed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-v08-character-set-stripping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (v0.8) - Character-Set Stripping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-v09-literal-prefixsuffix-removal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (v0.9) - Literal Prefix/Suffix Removal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2307,6 +2457,29 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
 <span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
 </code></pre></div>
 <p>For more details on all available settings, see the <a href="../../guide/config/">Configuration guide</a>.</p>
+<h2 id="breaking-change-trim_prefix-trim_suffix-behavior-changed">Breaking Change: <code>trim_prefix</code> / <code>trim_suffix</code> Behavior Changed<a class="headerlink" href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_6">What Changed<a class="headerlink" href="#what-changed_6" title="Permanent link">&para;</a></h3>
+<p><code>trim_prefix</code> and <code>trim_suffix</code> now remove a <strong>literal prefix/suffix string</strong>, rather than stripping a character set. The old character-set stripping behavior is available via <code>trim_left</code> and <code>trim_right</code>.</p>
+<h3 id="before-v08-character-set-stripping">Before (v0.8) - Character-Set Stripping<a class="headerlink" href="#before-v08-character-set-stripping" title="Permanent link">&para;</a></h3>
+<p>In v0.8, <code>trim_prefix</code> removed all leading characters that appeared in the given string, similar to Go's <code>strings.TrimLeft</code>. It treated the argument as a <em>set of characters</em>, not a literal string:</p>
+<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;bbb&quot;  (stripped all leading &#39;a&#39; chars)
+trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbb&quot;  (stripped all trailing &#39;c&#39; chars)
+trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (stripped all leading &#39;a&#39;, &#39;b&#39;, or &#39;c&#39; chars)
+trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (same result - order didn&#39;t matter, it was a char set)
+</code></pre></div>
+<h3 id="after-v09-literal-prefixsuffix-removal">After (v0.9) - Literal Prefix/Suffix Removal<a class="headerlink" href="#after-v09-literal-prefixsuffix-removal" title="Permanent link">&para;</a></h3>
+<p>Now, <code>trim_prefix</code> removes the argument as a <em>literal prefix</em>. If the string doesn't start with that exact prefix, it's returned unchanged:</p>
+<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;aabbb&quot;  (removed one literal &quot;a&quot; prefix)
+trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbbcc&quot;  (removed one literal &quot;c&quot; suffix)
+trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;    (removed literal &quot;abc&quot; prefix)
+trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;cabfoo&quot; (no match - &quot;cabfoo&quot; doesn&#39;t start with &quot;abc&quot;)
+</code></pre></div>
+<p>The old character-set behavior is now available as <code>trim_left</code> and <code>trim_right</code>:</p>
+<div class="highlight"><pre><span></span><code>trim_left(&quot;aaabbb&quot;, &quot;a&quot;)      // -&gt; &quot;bbb&quot;  (old trim_prefix behavior)
+trim_right(&quot;bbbccc&quot;, &quot;c&quot;)     // -&gt; &quot;bbb&quot;  (old trim_suffix behavior)
+</code></pre></div>
+<h3 id="migration_3">Migration<a class="headerlink" href="#migration_3" title="Permanent link">&para;</a></h3>
+<p>If you were using <code>trim_prefix</code> or <code>trim_suffix</code> to strip characters from a set, switch to <code>trim_left</code> / <code>trim_right</code> respectively.</p>
 
 
 
@@ -2339,7 +2512,7 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../reference/functions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Functions">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: How to Migrate">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2349,7 +2522,7 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
                 Previous
               </span>
               <div class="md-ellipsis">
-                Functions
+                How to Migrate
               </div>
             </div>
           </a>

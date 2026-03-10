@@ -14,7 +14,7 @@
         <link rel="prev" href="../syntax/">
       
       
-        <link rel="next" href="../../migrations/v0.9/">
+        <link rel="next" href="../../migrations/">
       
       
         
@@ -2452,6 +2452,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -4530,11 +4558,7 @@ content = read_file(&quot;data.txt&quot;).content
 for line in content.split_lines():
     print(line)
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-</div>
-<p>A trailing line ending produces an empty string as the last element (same as <code>split()</code>).
-Trim first if unwanted: <code>content.trim().split_lines()</code>.</p>
+<p>Trailing line endings are stripped - <code>"a\nb\n".split_lines()</code> returns <code>["a", "b"]</code>, not <code>["a", "b", ""]</code>.</p>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
 <p>Counts the number of non-overlapping instances of substring in string.</p>
 <div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
@@ -5839,13 +5863,13 @@ if err:
         
         
           
-          <a href="../../migrations/v0.9/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.9">
+          <a href="../../migrations/" class="md-footer__link md-footer__link--next" aria-label="Next: How to Migrate">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Migration Guide - v0.9
+                How to Migrate
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -1202,6 +1202,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1462,7 +1490,7 @@
 <p>Arguments are <strong>not</strong> logged by default. The log file lives at <code>~/.rad/logs/invocations.jsonl</code>.</p>
 <h3 id="using-rad-check-from-logs">Using <code>rad check --from-logs</code><a class="headerlink" href="#using-rad-check-from-logs" title="Permanent link">&para;</a></h3>
 <p>After upgrading Rad, you can check whether your scripts still parse correctly:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Checked 47 scripts: 47 passed, 0 failed (3 hints, 120 skipped).
@@ -1470,8 +1498,8 @@
 </div>
 
 <p>This reads the invocation log to find scripts you've actually used, then checks each one. It's a quick way to catch compatibility issues before they surprise you.</p>
-<p>You can also filter by how recently scripts were used:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>--days<span class="w"> </span><span class="m">7</span>
+<p>The <code>--from-logs</code> flag takes a duration value that controls how far back to look. Use <code>all</code> to check everything, or a duration like <code>7d</code> to check only recently-used scripts:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>7d
 </code></pre></div>
 <h3 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">&para;</a></h3>
 <p>All settings live under <code>[invocation_logging]</code>:</p>

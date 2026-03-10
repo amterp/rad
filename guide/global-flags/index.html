@@ -756,6 +756,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cst-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cst-tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ast-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ast-tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tls-insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tls-insecure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mock-response" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1218,6 +1262,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1425,6 +1497,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cst-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cst-tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ast-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ast-tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tls-insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tls-insecure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mock-response" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1494,7 +1610,9 @@
       --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the &#39;script name&#39;.
       --confirm-shell          Confirm all shell commands before running them.
       --src                    Instead of running the target script, just print it out.
-      --src-tree               Instead of running the target script, print out its syntax tree.
+      --cst-tree               Instead of running the target script, print out its concrete syntax tree.
+      --ast-tree               Instead of running the target script, print out its abstract syntax tree.
+      --tls-insecure           Skip TLS certificate verification for HTTPS requests.
       --mock-response string   Add mock response for json requests (pattern:filePath)
 </code></pre></div>
 <p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
@@ -1534,6 +1652,30 @@ DEBUG: 2
 <p>A lot of Rad's outputs have colors e.g. <a href="../../reference/functions/#pick"><code>pick</code></a> interaction or <a href="../../reference/functions/#pprint"><code>pprint</code></a> JSON formatted output.
 By default (<code>auto</code>), Rad checks your terminal to detect if it's appropriate to enable colors or not. Things like piping or redirecting output will disable coloring.</p>
 <p>However, you can override the automatic detection by explicitly setting <code>--color=always</code> or <code>--color=never</code> to force having colors, or force <em>not</em> having colors, respectively. </p>
+<h2 id="src"><code>src</code><a class="headerlink" href="#src" title="Permanent link">&para;</a></h2>
+<p>Use <code>--src</code> to print the source code of a script instead of running it. This is handy when you want to quickly inspect a script without opening it in an editor - for example, checking what a script does before running it.</p>
+<div class="highlight"><pre><span></span><code>rad my-script.rad --src
+</code></pre></div>
+<h2 id="cst-tree"><code>cst-tree</code><a class="headerlink" href="#cst-tree" title="Permanent link">&para;</a></h2>
+<p>Use <code>--cst-tree</code> to print the concrete syntax tree (CST) of a script instead of running it. The CST is the raw parse tree that directly mirrors the grammar - every token, whitespace, and syntactic element is represented.</p>
+<p>This flag bypasses argument validation, so you can inspect the tree even if the script expects arguments you haven't provided.</p>
+<div class="highlight"><pre><span></span><code>rad my-script.rad --cst-tree
+</code></pre></div>
+<p>This is primarily useful for debugging the parser or understanding how Rad tokenizes your script.</p>
+<h2 id="ast-tree"><code>ast-tree</code><a class="headerlink" href="#ast-tree" title="Permanent link">&para;</a></h2>
+<p>Use <code>--ast-tree</code> to print the abstract syntax tree (AST) instead of running the script. The AST is the simplified, semantic tree that Rad actually interprets - syntactic sugar has been desugared, and irrelevant tokens are stripped away.</p>
+<p>Like <code>--cst-tree</code>, this bypasses argument validation.</p>
+<div class="highlight"><pre><span></span><code>rad my-script.rad --ast-tree
+</code></pre></div>
+<p>Comparing <code>--cst-tree</code> and <code>--ast-tree</code> output can help you understand how Rad transforms your code before execution - for instance, how compound assignments like <code>x += 1</code> get desugared.</p>
+<h2 id="tls-insecure"><code>tls-insecure</code><a class="headerlink" href="#tls-insecure" title="Permanent link">&para;</a></h2>
+<p>Use <code>--tls-insecure</code> to skip TLS certificate verification for all HTTPS requests made by the script. This is useful when developing against servers with self-signed certificates.</p>
+<div class="highlight"><pre><span></span><code>rad my-api-script.rad --tls-insecure
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Development only</p>
+<p>Don't use this flag in production. It disables certificate verification for <em>all</em> requests in the script, making them vulnerable to man-in-the-middle attacks.</p>
+</div>
 <h2 id="mock-response"><code>mock-response</code><a class="headerlink" href="#mock-response" title="Permanent link">&para;</a></h2>
 <p>You might be writing a script which hits a JSON API and uses its output e.g. formatting it into a table using a <a href="../rad-blocks/"><code>rad</code> block</a>.</p>
 <p>In writing said script, you may wish to test it against certain responses that the live API isn't giving you at the moment, perhaps because the server is down. To accomplish this, you can use the <code>mock-response</code> flag.</p>
@@ -1574,7 +1716,9 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Rad provides several global flags that can be used across all Rad scripts.</li>
-<li>Use <code>mock-response</code> to test your scripts.</li>
+<li>Use <code>--src</code>, <code>--cst-tree</code>, and <code>--ast-tree</code> to inspect scripts without running them.</li>
+<li>Use <code>--tls-insecure</code> for development against self-signed certs.</li>
+<li>Use <code>--mock-response</code> to test your scripts against canned API responses.</li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">Script args can shadow global flags</p>
