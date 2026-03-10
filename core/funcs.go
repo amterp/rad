@@ -1468,7 +1468,7 @@ func init() {
 					err := com.CreateFilePathAndWriteString(path, def)
 					if err != nil {
 						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
-						return f.Return(NewErrorStrf(errMsg))
+						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileWrite))
 					}
 
 					output.SetPrimitiveStr(constContent, def)
@@ -1479,7 +1479,7 @@ func init() {
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
 					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
-					return f.Return(NewErrorStrf(errMsg))
+					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileRead))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
@@ -1530,7 +1530,7 @@ func init() {
 				default:
 					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
-					return f.Return(NewErrorStrf(errMsg))
+					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrInvalidArgType))
 				}
 				return f.Return(newRadValueStr(digest))
 			},

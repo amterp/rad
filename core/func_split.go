@@ -18,7 +18,7 @@ var FuncSplit = BuiltInFunc{
 		if !limitArg.IsNull() {
 			limitVal := limitArg.RequireInt(f.i, f.callNode)
 			if limitVal < 1 {
-				return f.Return(NewErrorStrf("limit must be at least 1, got %d", limitVal))
+				return f.Return(NewErrorStrf("limit must be at least 1, got %d", limitVal).SetCode(rl.ErrNumInvalidRange))
 			}
 			// limit counts splits, but Go's SplitN counts parts, so +1
 			limit = int(limitVal) + 1
