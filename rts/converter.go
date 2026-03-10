@@ -156,8 +156,12 @@ func (c *converter) convertCompoundAssign(node *ts.Node) *rl.Assign {
 	target := c.convertExpr(leftNode)
 	rightVal := c.convertExpr(rightNode)
 
+	// Re-convert target to produce an independent AST node for the binary op's left side,
+	// avoiding shared pointers that would cause AST walkers to visit the same node twice.
+	binLeft := c.convertExpr(leftNode)
+
 	// Create a synthetic binary op: target op rightVal
-	binOp := rl.NewOpBinary(c.makeSpan(node), op, target, rightVal)
+	binOp := rl.NewOpBinary(c.makeSpan(node), op, binLeft, rightVal)
 	binOp.IsCompound = true
 
 	assign := rl.NewAssign(c.makeSpan(node), []rl.Node{target}, []rl.Node{binOp}, false, nil)
@@ -184,7 +188,10 @@ func (c *converter) convertIncrDecr(node *ts.Node) *rl.Assign {
 		panic(fmt.Sprintf("converter: unexpected incr/decr op: %s", opNode.Kind()))
 	}
 
-	binOp := rl.NewOpBinary(span, op, target, one)
+	// Re-convert target to produce an independent AST node for the binary op's left side.
+	binLeft := c.convertExpr(leftNode)
+
+	binOp := rl.NewOpBinary(span, op, binLeft, one)
 	assign := rl.NewAssign(span, []rl.Node{target}, []rl.Node{binOp}, false, nil)
 	assign.UpdateEnclosing = true
 	return assign
