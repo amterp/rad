@@ -1,0 +1,70 @@
+### TITLE ###
+Basic split
+### INPUT ###
+print(split_lines("a\nb\nc"))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+Trailing newline stripped
+### INPUT ###
+print(split_lines("a\nb\nc\n"))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+CRLF line endings
+### INPUT ###
+print(split_lines("a\r\nb\r\nc\r\n"))
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+Empty string
+### INPUT ###
+print(split_lines(""))
+### STDOUT ###
+[ ]
+
+### TITLE ###
+No trailing newline
+### INPUT ###
+print(split_lines("a\nb"))
+### STDOUT ###
+[ "a", "b" ]
+
+### TITLE ###
+Single line no newline
+### INPUT ###
+print(split_lines("hello"))
+### STDOUT ###
+[ "hello" ]
+
+### TITLE ###
+Single line with newline
+### INPUT ###
+print(split_lines("hello\n"))
+### STDOUT ###
+[ "hello" ]
+
+### TITLE ###
+Multiple trailing newlines only strips last
+### INPUT ###
+print(split_lines("a\n\n"))
+### STDOUT ###
+[ "a", "" ]
+
+### TITLE ###
+Mixed line endings
+### INPUT ###
+print(split_lines("a\nb\r\nc\rd"))
+### STDOUT ###
+[ "a", "b", "c", "d" ]
+
+### TITLE ###
+UFCS style
+### INPUT ###
+"one\ntwo\nthree".split_lines().print()
+### STDOUT ###
+[ "one", "two", "three" ]
+
