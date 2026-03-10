@@ -26,7 +26,7 @@ Arguments are **not** logged by default. The log file lives at `~/.rad/logs/invo
 After upgrading Rad, you can check whether your scripts still parse correctly:
 
 ```shell
-rad check --from-logs
+rad check --from-logs all
 ```
 
 <div class="result">
@@ -37,10 +37,10 @@ Checked 47 scripts: 47 passed, 0 failed (3 hints, 120 skipped).
 
 This reads the invocation log to find scripts you've actually used, then checks each one. It's a quick way to catch compatibility issues before they surprise you.
 
-You can also filter by how recently scripts were used:
+The `--from-logs` flag takes a duration value that controls how far back to look. Use `all` to check everything, or a duration like `7d` to check only recently-used scripts:
 
 ```shell
-rad check --from-logs --days 7
+rad check --from-logs 7d
 ```
 
 ### Settings
