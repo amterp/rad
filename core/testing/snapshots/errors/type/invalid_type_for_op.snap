@@ -11,6 +11,7 @@ error[RAD30002]: Invalid operand types: cannot do 'int + str'
 2 | print(x + "hello")
   |       ^^^^^^^^^^^
   |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -27,6 +28,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + int'
 1 | print("count: " + 5)
   |       ^^^^^^^^^^^^^
   |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -43,6 +45,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + float'
 1 | print("pi: " + 3.14)
   |       ^^^^^^^^^^^^^
   |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -59,6 +62,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + bool'
 1 | print("flag: " + true)
   |       ^^^^^^^^^^^^^^^
   |
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 

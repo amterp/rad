@@ -40,7 +40,10 @@ Error value is truthy in or
 result = parse_int("bad") catch:
 	pass
 x = false or result
-print(type(x))
+if x:
+	print("truthy")
+else:
+	print("falsy")
 ### STDOUT ###
-error
+truthy
 

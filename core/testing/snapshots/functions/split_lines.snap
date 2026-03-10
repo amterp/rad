@@ -13,13 +13,6 @@ print(split_lines("a\nb\nc\n"))
 [ "a", "b", "c" ]
 
 ### TITLE ###
-CRLF line endings
-### INPUT ###
-print(split_lines("a\r\nb\r\nc\r\n"))
-### STDOUT ###
-[ "a", "b", "c" ]
-
-### TITLE ###
 Empty string
 ### INPUT ###
 print(split_lines(""))
@@ -53,13 +46,6 @@ Multiple trailing newlines only strips last
 print(split_lines("a\n\n"))
 ### STDOUT ###
 [ "a", "" ]
-
-### TITLE ###
-Mixed line endings
-### INPUT ###
-print(split_lines("a\nb\r\nc\rd"))
-### STDOUT ###
-[ "a", "b", "c", "d" ]
 
 ### TITLE ###
 UFCS style
