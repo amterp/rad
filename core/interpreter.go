@@ -290,8 +290,7 @@ func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
 	}()
 
 	// REPL: evaluate each statement from the AST.
-	// safelyEvaluate catches all panics via handlePanicRecovery,
-	// so no additional panic recovery is needed here.
+	// safelyEvaluate catches all panics via handlePanicRecovery
 	if len(astRoot.Stmts) == 1 {
 		result := i.safelyEvaluate(astRoot.Stmts[0])
 		if result.Ctrl != CtrlNormal {
