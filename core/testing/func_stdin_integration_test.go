@@ -73,7 +73,7 @@ func Test_Stdin_Integration_WC_EmptyStdin(t *testing.T) {
 	tp := NewTestParams("", "./rad_scripts/wc.rad", "--color=never").StdinInput("")
 	setupAndRun(t, tp)
 
-	// Empty input should give 1 empty line, 0 words, 0 chars
-	assertOnlyOutput(t, stdOutBuffer, "1 0 0\n")
+	// Empty input should give 0 lines, 0 words, 0 chars
+	assertOnlyOutput(t, stdOutBuffer, "0 0 0\n")
 	assertNoErrors(t)
 }

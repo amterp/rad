@@ -727,9 +727,8 @@ for line in content.split_lines():
     print(line)
 ```
 
-!!! note
-A trailing line ending produces an empty string as the last element (same as `split()`).
-Trim first if unwanted: `content.trim().split_lines()`.
+Trailing line endings are stripped - `"a\nb\n".split_lines()` returns `["a", "b"]`, not `["a", "b", ""]`.
+This matches the behavior of Python's `splitlines()` and Rust's `lines()`.
 
 ### count
 
