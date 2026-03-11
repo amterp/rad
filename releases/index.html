@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -1300,6 +1300,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v090-2026-03-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.9.0 - 2026-03-11
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v081-2026-03-08" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1675,6 +1686,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v090-2026-03-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.9.0 - 2026-03-11
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v081-2026-03-08" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2037,6 +2059,105 @@
 
 <h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h1>
 <p>All Rad releases. Newest first.</p>
+<hr />
+<h2 id="v090-2026-03-11"><a href="https://github.com/amterp/rad/releases/tag/v0.9.0">v0.9.0</a> - 2026-03-11<a class="headerlink" href="#v090-2026-03-11" title="Permanent link">&para;</a></h2>
+<p>v0.9 is here!</p>
+<p>Please note this version contains a higher number of breaking changes than usual.</p>
+<p>I am trying to get them out of the way sooner rather than later, to minimize the overall pain.</p>
+<p>I've done my best to make migrating really clear, including having error detection and clear messages that try and detect when you're doing something "the old ways".</p>
+<p>See https://amterp.github.io/rad/migrations/v0.9/ for details about the breaking changes.</p>
+<ul>
+<li>feat!: broaden ?? to null-coalesce, catchable null indexing (<a href="https://github.com/amterp/rad/commit/4fa150c">4fa150c</a>)</li>
+<li>feat!: make + operator strict about type matching (<a href="https://github.com/amterp/rad/commit/1ec9e5c">1ec9e5c</a>)</li>
+<li>feat!: shorten parse_epoch unit parameter names (<a href="https://github.com/amterp/rad/commit/2a09c43">2a09c43</a>)</li>
+<li>feat!: stop normalizing user data, add split_lines() (<a href="https://github.com/amterp/rad/commit/14a4b2c">14a4b2c</a>)</li>
+<li>feat!: unify request/display into single rad keyword (<a href="https://github.com/amterp/rad/commit/3d09b27">3d09b27</a>)</li>
+<li>feat(funcs): make numeric functions type-preserving (<a href="https://github.com/amterp/rad/commit/18209b7">18209b7</a>)</li>
+<li>feat: accept Enter as confirmation in confirm() (<a href="https://github.com/amterp/rad/commit/52655ab">52655ab</a>)</li>
+<li>feat: add "did you mean?" suggestions for undefined vars (<a href="https://github.com/amterp/rad/commit/2a09807">2a09807</a>)</li>
+<li>feat: add 'rad explain list' to show available error codes (<a href="https://github.com/amterp/rad/commit/4b6b4c4">4b6b4c4</a>)</li>
+<li>feat: add --ast-tree and --cst-tree debug flags (<a href="https://github.com/amterp/rad/commit/f3c3ba8">f3c3ba8</a>)</li>
+<li>feat: add CST-to-AST converter (<a href="https://github.com/amterp/rad/commit/ec3185e">ec3185e</a>)</li>
+<li>feat: add Rust-style diagnostic renderer (<a href="https://github.com/amterp/rad/commit/e2e06d4">e2e06d4</a>)</li>
+<li>feat: add TLS certificate verification bypass (<a href="https://github.com/amterp/rad/commit/322e9a2">322e9a2</a>)</li>
+<li>feat: add call stack tracking and stack traces (<a href="https://github.com/amterp/rad/commit/338ffe3">338ffe3</a>)</li>
+<li>feat: add catch inline operator for error-only catching (<a href="https://github.com/amterp/rad/commit/a7878a4">a7878a4</a>)</li>
+<li>feat: add error testing framework and documentation (<a href="https://github.com/amterp/rad/commit/5f4ee17">5f4ee17</a>)</li>
+<li>feat: add fill character and zero-pad to format specs (<a href="https://github.com/amterp/rad/commit/5d5a851">5d5a851</a>)</li>
+<li>feat: add heuristics for ERROR node detection (<a href="https://github.com/amterp/rad/commit/9b4d2e8">9b4d2e8</a>)</li>
+<li>feat: add index_of() built-in for strings and lists (<a href="https://github.com/amterp/rad/commit/b33748f">b33748f</a>)</li>
+<li>feat: add inline migration hint for + operator type error (<a href="https://github.com/amterp/rad/commit/7372764">7372764</a>)</li>
+<li>feat: add limit param to split() (<a href="https://github.com/amterp/rad/commit/539e566">539e566</a>)</li>
+<li>feat: add parse_duration and convert_duration functions (<a href="https://github.com/amterp/rad/commit/cef9648">cef9648</a>)</li>
+<li>feat: add rad explain command for error documentation (<a href="https://github.com/amterp/rad/commit/2f599d6">2f599d6</a>)</li>
+<li>feat: add semantic grammar checks for control flow (<a href="https://github.com/amterp/rad/commit/790c615">790c615</a>)</li>
+<li>feat: add source span tracking to RadValue (<a href="https://github.com/amterp/rad/commit/f71e0dd">f71e0dd</a>)</li>
+<li>feat: add symbol table for tracking variable definitions (<a href="https://github.com/amterp/rad/commit/95ce0ff">95ce0ff</a>)</li>
+<li>feat: add trim_left and trim_right functions (<a href="https://github.com/amterp/rad/commit/a7225df">a7225df</a>)</li>
+<li>feat: add unified diagnostic type system (<a href="https://github.com/amterp/rad/commit/7458ca7">7458ca7</a>)</li>
+<li>feat: define AST node types, interfaces, and enums (<a href="https://github.com/amterp/rad/commit/c518d3e">c518d3e</a>)</li>
+<li>feat: enable invocation logging by default (<a href="https://github.com/amterp/rad/commit/b7b95e2">b7b95e2</a>)</li>
+<li>feat: expand MISSING node messages with parent context (<a href="https://github.com/amterp/rad/commit/930212f">930212f</a>)</li>
+<li>feat: extract shared duration parser with day support (<a href="https://github.com/amterp/rad/commit/76983e2">76983e2</a>)</li>
+<li>feat: render markdown error docs with terminal styling (<a href="https://github.com/amterp/rad/commit/15e4995">15e4995</a>)</li>
+<li>feat: show [command] instead of [subcommand] in help (<a href="https://github.com/amterp/rad/commit/8861a11">8861a11</a>)</li>
+<li>feat: show per-severity diagnostic counts in check --from-logs (<a href="https://github.com/amterp/rad/commit/c412221">c412221</a>)</li>
+<li>fix!: align trim_prefix/trim_suffix semantics with their names (<a href="https://github.com/amterp/rad/commit/0f02eb1">0f02eb1</a>)</li>
+<li>fix(deps): resolve Dependabot security alerts (<a href="https://github.com/amterp/rad/commit/4c19a81">4c19a81</a>)</li>
+<li>fix: AST dump span padding now walks full tree (<a href="https://github.com/amterp/rad/commit/3f514c9">3f514c9</a>)</li>
+<li>fix: Levenshtein distance operates on bytes instead of runes (<a href="https://github.com/amterp/rad/commit/e6ac0a1">e6ac0a1</a>)</li>
+<li>fix: TruthyFalsy crashes on RadError values (<a href="https://github.com/amterp/rad/commit/6837175">6837175</a>)</li>
+<li>fix: add missing error codes to validation errors (<a href="https://github.com/amterp/rad/commit/bb9637d">bb9637d</a>)</li>
+<li>fix: bugs found in code review of AST foundation (<a href="https://github.com/amterp/rad/commit/3c4e5ad">3c4e5ad</a>)</li>
+<li>fix: bump ra to v0.5.1 (<a href="https://github.com/amterp/rad/commit/1a97b79">1a97b79</a>)</li>
+<li>fix: clone target node in compound assign/incr-decr desugaring (<a href="https://github.com/amterp/rad/commit/12c49b6">12c49b6</a>)</li>
+<li>fix: derive gutter width from displayed lines, not labels (<a href="https://github.com/amterp/rad/commit/21c218a">21c218a</a>)</li>
+<li>fix: diagnostic panics and lambda file name (<a href="https://github.com/amterp/rad/commit/b245ca0">b245ca0</a>)</li>
+<li>fix: diagnostic renderer byte-slices UTF-8 in truncation (<a href="https://github.com/amterp/rad/commit/ea38df9">ea38df9</a>)</li>
+<li>fix: flaky truncate tests due to shared TerminalIsUtf8 state (<a href="https://github.com/amterp/rad/commit/d7e964a">d7e964a</a>)</li>
+<li>fix: include response headers in http_* return value (<a href="https://github.com/amterp/rad/commit/902e00f">902e00f</a>)</li>
+<li>fix: minor comment adjustments (<a href="https://github.com/amterp/rad/commit/3870211">3870211</a>)</li>
+<li>fix: nil node panic in error emission functions (<a href="https://github.com/amterp/rad/commit/d81c49a">d81c49a</a>)</li>
+<li>fix: nil node safety and same-line label coloring (<a href="https://github.com/amterp/rad/commit/8f2dac0">8f2dac0</a>)</li>
+<li>fix: panic on short non-JSON response body in RequestJson (<a href="https://github.com/amterp/rad/commit/f3d2a4c">f3d2a4c</a>)</li>
+<li>fix: preserve text attributes in trim, reverse, slice (<a href="https://github.com/amterp/rad/commit/39bed25">39bed25</a>)</li>
+<li>fix: prevent hang on non-regular files like /dev/stdin (<a href="https://github.com/amterp/rad/commit/66dcf7b">66dcf7b</a>)</li>
+<li>fix: release notes workflow inserting into front matter (<a href="https://github.com/amterp/rad/commit/6093f5f">6093f5f</a>)</li>
+<li>fix: remove invalid --latest flag from gh release view (<a href="https://github.com/amterp/rad/commit/84382dc">84382dc</a>)</li>
+<li>fix: shell catch nil pointer dereference (<a href="https://github.com/amterp/rad/commit/abce025">abce025</a>)</li>
+<li>fix: split_lines strips trailing empty element (<a href="https://github.com/amterp/rad/commit/9f3dbb2">9f3dbb2</a>)</li>
+<li>fix: string slicing now correctly handles multi-byte characters (<a href="https://github.com/amterp/rad/commit/a0af29c">a0af29c</a>)</li>
+<li>fix: truncate() now handles multi-byte characters correctly (<a href="https://github.com/amterp/rad/commit/f62848d">f62848d</a>)</li>
+<li>fix: unify equality semantics across == and Equals() (<a href="https://github.com/amterp/rad/commit/27dc974">27dc974</a>)</li>
+<li>fix: update go mod, add more details to AGENTS.md re: migrations (<a href="https://github.com/amterp/rad/commit/da5efea">da5efea</a>)</li>
+<li>fix: use pure Go DNS resolver for Linux static builds (<a href="https://github.com/amterp/rad/commit/622026c">622026c</a>)</li>
+<li>perf: fix IndexAt() to extract runes from segment directly (<a href="https://github.com/amterp/rad/commit/d082015">d082015</a>)</li>
+<li>perf: fix ToRuneList() O(n^2) complexity (<a href="https://github.com/amterp/rad/commit/5fbaed2">5fbaed2</a>)</li>
+<li>perf: short-circuit Plain() for single-segment strings (<a href="https://github.com/amterp/rad/commit/ea6c560">ea6c560</a>)</li>
+<li>perf: use strings.Builder in Plain() and Reverse() (<a href="https://github.com/amterp/rad/commit/273beb2">273beb2</a>)</li>
+<li>refactor: clarify diagnostic type hierarchy (<a href="https://github.com/amterp/rad/commit/3136be7">3136be7</a>)</li>
+<li>refactor: complete AST migration phases 5-8 (<a href="https://github.com/amterp/rad/commit/a258ce7">a258ce7</a>)</li>
+<li>refactor: migrate all errorf calls to new diagnostic system (<a href="https://github.com/amterp/rad/commit/a0a26f3">a0a26f3</a>)</li>
+<li>refactor: migrate checker from CST to AST (<a href="https://github.com/amterp/rad/commit/14c797d">14c797d</a>)</li>
+<li>refactor: migrate checker to AST, remove dead code (<a href="https://github.com/amterp/rad/commit/9fcb675">9fcb675</a>)</li>
+<li>refactor: migrate interpreter from CST to AST (<a href="https://github.com/amterp/rad/commit/31eb894">31eb894</a>)</li>
+<li>refactor: migrate metadata extraction to AST (<a href="https://github.com/amterp/rad/commit/531a112">531a112</a>)</li>
+<li>refactor: move Span type from core/ to rts/rl/ (<a href="https://github.com/amterp/rad/commit/47acb87">47acb87</a>)</li>
+<li>refactor: remove dead code from interpreter (<a href="https://github.com/amterp/rad/commit/7f93506">7f93506</a>)</li>
+<li>refactor: remove unused SymbolTable, keep Levenshtein (<a href="https://github.com/amterp/rad/commit/de5cdc7">de5cdc7</a>)</li>
+<li>refactor: seal CST from core/, add Children() to AST (<a href="https://github.com/amterp/rad/commit/2d3b92d">2d3b92d</a>)</li>
+<li>refactor: seal CST leaks from public interfaces (<a href="https://github.com/amterp/rad/commit/0dc6c61">0dc6c61</a>)</li>
+<li>refactor: simplify evalCatchingPanic, document error contract (<a href="https://github.com/amterp/rad/commit/9ddc1bb">9ddc1bb</a>)</li>
+<li>refactor: unify dump tests into Go-based CST snapshot system (<a href="https://github.com/amterp/rad/commit/7658ed3">7658ed3</a>)</li>
+<li>refactor: unify error output to Rust-style format (<a href="https://github.com/amterp/rad/commit/ccb3bec">ccb3bec</a>)</li>
+<li>refactor: wire LSP to use AST-aware checker (<a href="https://github.com/amterp/rad/commit/b820903">b820903</a>)</li>
+<li>rename get_stash_dir to get_stash_path (<a href="https://github.com/amterp/rad/commit/b8ed277">b8ed277</a>)</li>
+<li>revert: remove RadValue span tracking (perf fix) (<a href="https://github.com/amterp/rad/commit/162eb5a">162eb5a</a>)</li>
+<li>style: minor adjustments (<a href="https://github.com/amterp/rad/commit/83a7ac9">83a7ac9</a>)</li>
+<li>style: reformat (<a href="https://github.com/amterp/rad/commit/5328143">5328143</a>)</li>
+<li>tests: improve snapshot failure diff output (<a href="https://github.com/amterp/rad/commit/9f0e414">9f0e414</a>)</li>
+<li>tests: migrate common input-&gt;output assert tests to snapshot tests (<a href="https://github.com/amterp/rad/commit/9d57d24">9d57d24</a>)</li>
+</ul>
 <hr />
 <h2 id="v081-2026-03-08"><a href="https://github.com/amterp/rad/releases/tag/v0.8.1">v0.8.1</a> - 2026-03-08<a class="headerlink" href="#v081-2026-03-08" title="Permanent link">&para;</a></h2>
 <ul>
