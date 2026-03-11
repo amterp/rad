@@ -51,7 +51,7 @@ jobs:
           # Convert commit hashes to links (e.g., "* 9e4e595 feat:" -> "- feat: ([9e4e595](url))")
           # Remove headers, carriage returns, and clean up formatting
           sed 's/\r$//' /tmp/raw_body.txt | \
-            sed -E "s/^\* ([a-f0-9]{7,}) (.+)/- \2 ([\1](${REPO_URL}\/commit\/\1))/g" | \
+            sed -E "s|^\* ([a-f0-9]{7,}) (.+)|- \2 ([\1](${REPO_URL}/commit/\1))|g" | \
             sed '/^## Changelog$/d' | \
             sed '/^## What'\''s Changed$/d' | \
             sed 's/^\*\*Full Changelog\*\*.*$//' | \
@@ -70,7 +70,7 @@ jobs:
 
             if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$TAG" ]; then
               git log --oneline --no-merges "${PREV_TAG}..${TAG}" | \
-                sed -E "s/^([a-f0-9]+) (.+)/- \2 ([\1](${REPO_URL}\/commit\/\1))/" \
+                sed -E "s|^([a-f0-9]+) (.+)|- \2 ([\1](${REPO_URL}/commit/\1))|" \
                 > /tmp/release_body.txt
             fi
           fi
