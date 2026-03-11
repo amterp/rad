@@ -1,20 +1,11 @@
 package testing
 
 import (
-	"os"
 	"testing"
-
-	com "github.com/amterp/rad/core/common"
 )
 
 func TestTruncate(t *testing.T) {
-	// Ensure UTF-8 mode for consistent ellipsis character across platforms
-	os.Setenv("LANG", "en_US.UTF-8")
-	com.TerminalIsUtf8 = true
-	defer func() {
-		os.Unsetenv("LANG")
-		com.TerminalIsUtf8 = false
-	}()
+	setTerminalUtf8(t, true)
 	script := `
 url = "https://google.com"
 id = json[].id
@@ -32,14 +23,7 @@ rad url:
 }
 
 func TestTruncateTwoFieldsAtOnce(t *testing.T) {
-	// Ensure UTF-8 mode for consistent ellipsis character across platforms
-	os.Setenv("LANG", "en_US.UTF-8")
-	com.TerminalIsUtf8 = true
-	defer func() {
-		os.Unsetenv("LANG")
-		com.TerminalIsUtf8 = false
-	}()
-
+	setTerminalUtf8(t, true)
 	script := `
 url = "https://google.com"
 age = json[].age

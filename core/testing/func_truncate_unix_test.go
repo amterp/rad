@@ -5,6 +5,7 @@ package testing
 import "testing"
 
 func Test_Truncate_MultiByte(t *testing.T) {
+	setTerminalUtf8(t, true)
 	script := `
 s = "hello😀world"
 print(truncate(s, 7))
@@ -16,6 +17,7 @@ print(truncate(s, 7))
 }
 
 func Test_Truncate_MultiByte_ExactBoundary(t *testing.T) {
+	setTerminalUtf8(t, true)
 	script := `
 s = "a😀b"
 print(truncate(s, 2))
@@ -26,6 +28,7 @@ print(truncate(s, 2))
 }
 
 func Test_Truncate_AllEmoji(t *testing.T) {
+	setTerminalUtf8(t, true)
 	script := `
 s = "😀😀😀😀😀"
 print(truncate(s, 3))
@@ -37,6 +40,7 @@ print(truncate(s, 3))
 }
 
 func Test_Truncate_MinLength(t *testing.T) {
+	setTerminalUtf8(t, true)
 	// Minimum length is 1 (for UTF-8 ellipsis "…")
 	script := `
 print(truncate("hello", 1))
@@ -47,6 +51,7 @@ print(truncate("hello", 1))
 }
 
 func Test_Truncate_ErrorsForZero(t *testing.T) {
+	setTerminalUtf8(t, true)
 	script := `
 print(truncate("hello", 0))
 `
@@ -66,6 +71,7 @@ print(truncate("hello", 0))
 }
 
 func Test_Truncate_ErrorsForNegative(t *testing.T) {
+	setTerminalUtf8(t, true)
 	script := `
 print(truncate("hello", -5))
 `

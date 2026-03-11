@@ -11,6 +11,7 @@ import (
 
 	"github.com/amterp/color"
 	"github.com/amterp/rad/core"
+	com "github.com/amterp/rad/core/common"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -254,6 +255,13 @@ func resetTestState() {
 	}
 	// Reset NO_COLOR environment variable
 	os.Unsetenv("NO_COLOR")
+}
+
+func setTerminalUtf8(t *testing.T, utf8 bool) {
+	t.Helper()
+	orig := com.TerminalIsUtf8
+	com.TerminalIsUtf8 = utf8
+	t.Cleanup(func() { com.TerminalIsUtf8 = orig })
 }
 
 func assertOnlyOutput(t *testing.T, buffer *bytes.Buffer, expected string) {
