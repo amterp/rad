@@ -1,0 +1,45 @@
+# Rad
+
+> A scripting language designed to make writing CLI tools delightful. Familiar, Python-like syntax with CLI essentials built-in.
+
+## Guide
+
+- [Getting Started](https://amterp.github.io/rad/guide/getting-started.md): What is Rad?, Installation, Editor Support, Your First Rad Script - Hello World, Adding In Some Rad Features, Improving The Script Usage String, Shebang, A Complete Example, Summary, Next
+- [Basics](https://amterp.github.io/rad/guide/basics.md): Variables & Assignment, Data Types, Destructuring, Operators, Functions, Control Flow, List Comprehensions, Truthy / Falsy, Converting Types, Errors, Summary, Next
+- [Args](https://amterp.github.io/rad/guide/args.md): Arg Declarations, Argument Types and User Input, Constraints, Summary, Next
+- [Functions](https://amterp.github.io/rad/guide/functions.md): Syntax, Function Arguments, Custom Functions, Reference, Summary, Next
+- [Strings (Advanced)](https://amterp.github.io/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes, Summary, Next
+- [Rad Blocks](https://amterp.github.io/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests, Summary, Next
+- [Type Annotations](https://amterp.github.io/rad/guide/type-annotations.md): The Basics, Collection Types, Optional Types, Defaults, Union Types, Advanced Types, Variadic and Named Parameters, Summary, Next
+- [Error Handling](https://amterp.github.io/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors, Summary, Next
+- [Shell Commands](https://amterp.github.io/rad/guide/shell-commands.md): Invoking Commands, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples, Summary, Next
+- [Script Commands](https://amterp.github.io/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example, Summary, Next
+- [Resources](https://amterp.github.io/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`, Summary, Next
+- [Global Flags](https://amterp.github.io/rad/guide/global-flags.md): `help`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`, Summary, Next
+- [Defer & Errdefer](https://amterp.github.io/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks, Summary, Next
+- [Stashes](https://amterp.github.io/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes, Summary, Next
+- [Configuration](https://amterp.github.io/rad/guide/config.md): Invocation Logging, Summary
+
+## Examples
+
+- [Examples](https://amterp.github.io/rad/examples/index.md)
+- [brewi](https://amterp.github.io/rad/examples/brewi.md): Preview, Tutorial: Building `brewi`, Concepts demonstrated
+- [epoch](https://amterp.github.io/rad/examples/epoch.md): Preview, Tutorial: Building `epoch`, Concepts demonstrated
+- [hm](https://amterp.github.io/rad/examples/hm.md): Preview, Tutorial: Building `hm`, Concepts demonstrated
+
+## Reference
+
+- [Language Reference](https://amterp.github.io/rad/reference/syntax.md): Script Structure, Comments, Data Types, Variables and Assignment, String Interpolation, Ternary Operator, Collection Access and Slicing, Control Flow, Additional Control Flow, Functions, List Comprehensions, Argument Parsing, Script Commands, Shell Commands, JSON Processing and Display Blocks, Advanced Features, Operators, Scoping and Variables, Built-in Types and Methods, Type System, Rad Code Style
+- [Functions](https://amterp.github.io/rad/reference/functions.md): How to Read This Document, Output, Misc, Input, Parsing, Text, Maps, Random, Picking, HTTP, Math, Hashing & Encode/Decode, System & Files, Home & Stash, Time
+
+## Migrations
+
+- [How to Migrate](https://amterp.github.io/rad/migrations/index.md): Upgrade Workflow
+- [Migration Guide - v0.9](https://amterp.github.io/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
+- [Migration Guide - v0.8](https://amterp.github.io/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
+- [Migration Guide - v0.7](https://amterp.github.io/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
+
+## Other
+
+- [Project Status](https://amterp.github.io/rad/status.md): Platform Support, Near-term Focus, Long-term Vision, Get Involved
+- [Releases](https://amterp.github.io/rad/releases.md): [v0.9.0](https://github.com/amterp/rad/releases/tag/v0.9.0) - 2026-03-11, [v0.8.1](https://github.com/amterp/rad/releases/tag/v0.8.1) - 2026-03-08, [v0.8.0](https://github.com/amterp/rad/releases/tag/v0.8.0) - 2026-01-29, [v0.7.1](https://github.com/amterp/rad/releases/tag/v0.7.1) - 2026-01-26, [v0.7.0](https://github.com/amterp/rad/releases/tag/v0.7.0) - 2026-01-16, [v0.6.27](https://github.com/amterp/rad/releases/tag/v0.6.27) - 2026-01-11, [v0.6.26](https://github.com/amterp/rad/releases/tag/v0.6.26) - 2026-01-02, [v0.6.25](https://github.com/amterp/rad/releases/tag/v0.6.25) - 2025-12-16, [v0.6.24](https://github.com/amterp/rad/releases/tag/v0.6.24) - 2025-12-14, [v0.6.23](https://github.com/amterp/rad/releases/tag/v0.6.23) - 2025-12-10, [v0.6.21](https://github.com/amterp/rad/releases/tag/v0.6.21) - 2025-12-03, [v0.6.20](https://github.com/amterp/rad/releases/tag/v0.6.20) - 2025-12-03, [v0.6.19](https://github.com/amterp/rad/releases/tag/v0.6.19) - 2025-12-02, [v0.6.18](https://github.com/amterp/rad/releases/tag/v0.6.18) - 2025-11-29, [v0.6.17](https://github.com/amterp/rad/releases/tag/v0.6.17) - 2025-11-20, [v0.6.16](https://github.com/amterp/rad/releases/tag/v0.6.16) - 2025-11-19, [v0.6.15](https://github.com/amterp/rad/releases/tag/v0.6.15) - 2025-11-09, [v0.6.14](https://github.com/amterp/rad/releases/tag/v0.6.14) - 2025-11-04, [v0.6.13](https://github.com/amterp/rad/releases/tag/v0.6.13) - 2025-11-03, [v0.6.12](https://github.com/amterp/rad/releases/tag/v0.6.12) - 2025-10-16, Breaking!, [v0.6.11](https://github.com/amterp/rad/releases/tag/v0.6.11) - 2025-10-12, [v0.6.10](https://github.com/amterp/rad/releases/tag/v0.6.10) - 2025-10-06, [v0.6.9](https://github.com/amterp/rad/releases/tag/v0.6.9) - 2025-10-05, [v0.6.8](https://github.com/amterp/rad/releases/tag/v0.6.8) - 2025-09-30, [v0.6.7](https://github.com/amterp/rad/releases/tag/v0.6.7) - 2025-09-28, [v0.6.6](https://github.com/amterp/rad/releases/tag/v0.6.6) - 2025-09-27, [v0.6.5](https://github.com/amterp/rad/releases/tag/v0.6.5) - 2025-09-27, [v0.6.2](https://github.com/amterp/rad/releases/tag/v0.6.2) - 2025-09-21, [v0.6.1](https://github.com/amterp/rad/releases/tag/v0.6.1) - 2025-09-21, [v0.6.0](https://github.com/amterp/rad/releases/tag/v0.6.0) - 2025-09-21, [v0.5.59](https://github.com/amterp/rad/releases/tag/v0.5.59) - 2025-09-14, v0.5 - 2025-02-12, v0.4 - 2024-10-28, v0.3 - 2024-09-29, v0.2 - 2024-09-09, v0.1 - 2024-09-08
