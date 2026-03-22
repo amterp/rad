@@ -45,11 +45,9 @@ This script defines two mandatory arguments: `word` that is expected to be a str
 
 Some important things to note:
 
-[//]: # (todo point 1 should clarify *FOR USERS*)
-
-- All arguments can be defined positionally or via a flag.
-- The positional ordering of args follows the order of declaration in the block.
-- Flags are automatically generated and can be used by users to pass values for that argument, instead of doing it positionally.
+- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. See [How Argument Parsing Works](#how-argument-parsing-works) below for the full details.
+- The positional ordering of args follows the order of declaration in the args block.
+- Flags (like `--word` and `--repeats`) are generated for you based on each argument's name.
 
 Let's look at a more complex example to demonstrate some more features. Let's call it `wordjoin`.
 
@@ -113,7 +111,113 @@ To bring it all together, this is the anatomy of an arg declaration (`<angle bra
 
 Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.
 
+!!! tip "Underscores become hyphens"
+
+    If you name an argument with underscores (e.g., `my_arg`), Rad automatically converts it to hyphens for the CLI
+    flag: `--my-arg`. Inside your script, you still reference the variable as `my_arg`.
+
 [//]: # (todo TIP on when to use rename)
+
+## How Argument Parsing Works
+
+Most CLI frameworks force you to choose: either an argument is positional, or it's a named flag.
+Rad doesn't make you choose - every argument you declare automatically works as *both*.
+
+This section explains that model and a few related parsing behaviors that are useful to know.
+
+### The Dual-Nature Model
+
+When you declare an argument, Rad generates both a positional slot and a named flag for it.
+Your users can then invoke your script whichever way is most convenient - or mix both styles in the same call.
+
+Consider this script:
+
+```rad
+args:
+    src str       # Source file
+    dest str      # Destination path
+    verbose v bool
+```
+
+All of these invocations are equivalent:
+
+```shell
+# Pure positional
+./script myfile.txt /backup/
+
+# Pure flags
+./script --src myfile.txt --dest /backup/
+
+# Mixed - positional for src, flag for dest
+./script myfile.txt --dest /backup/
+```
+
+This means script authors get a great CLI experience for free. Users who know the positional order can be terse;
+users who want clarity can use flags; and anyone can mix and match as needed.
+
+### Parsing Order
+
+Rad processes arguments left-to-right. The rules are simple:
+
+1. If an argument starts with `--` or `-`, it's matched as a flag by name (or short name).
+2. If an argument is a bare value (no `-` prefix), it's assigned to the next unfilled positional slot, in the order you declared your args.
+3. Flags can appear anywhere - before, after, or interspersed with positional values.
+
+The key insight: when a flag "fills" an argument, that positional slot is skipped. For example:
+
+```rad
+args:
+    first str
+    second str
+    third str
+```
+
+```shell
+# --second fills the second slot via flag, so the two bare values
+# fill "first" and "third" (the remaining unfilled slots, in order).
+./script alpha --second beta gamma
+```
+
+Here, `first` = `"alpha"`, `second` = `"beta"`, `third` = `"gamma"`.
+
+### The `--` Separator
+
+Rad supports the standard Unix `--` convention: everything after a bare `--` is treated as a positional argument, even if it starts with `-`.
+
+This is useful when you need to pass values that look like flags:
+
+```shell
+./script -- --not-a-flag
+```
+
+Here, `--not-a-flag` is treated as a positional string value, not as a flag.
+
+### Negative Numbers
+
+Passing negative numbers can look like flags since they start with `-`. There are a few ways to handle this:
+
+```rad
+args:
+    count int
+```
+
+```shell
+# Use flag + value
+./script --count -5
+
+# Use equals syntax
+./script --count=-5
+
+# Use -- to force positional
+./script -- -5
+```
+
+### Equals Syntax
+
+Both `--name=value` and `--name value` work for all flag types. For bool flags specifically,
+`--flag` sets the value to `true` by presence, while `--flag=false` explicitly sets it to `false`.
+
+Equals syntax is especially useful when you need to be unambiguous - for example, when passing negative numbers or values that start with `-`.
 
 ## Argument Types and User Input
 
@@ -145,7 +249,7 @@ Type validation happens automatically. If a user provides `--age abc` when age i
 
 ### Bool Flags
 
-Bool arguments are **never positional** - they must be passed via flags. You can set them either by presence or with an explicit value:
+Bool arguments are **never positional** - they must always be passed via flags. You can set bool flags either by presence or with an explicit value:
 
 ```rad
 args:
@@ -251,6 +355,10 @@ section2: [ 1, 2, 3 ]
 ```
 </div>
 
+!!! note "List types vs variadic"
+
+    List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by **repeating the flag** (`--files a.txt --files b.txt`), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (`*args`) instead - that's exactly what they're for.
+
 ### Optional Arguments
 
 Mark arguments as optional with `?` suffix. When not provided, their value is `null`:
@@ -278,6 +386,16 @@ Alice has no role assigned
 </div>
 
 You can check for null values with `== null` or use truthy/falsy logic: `if role:` will be false when role is null.
+
+!!! info "Defaults vs Optional"
+
+    There are three states an argument can be in:
+
+    - **Required** (e.g., `name str`): The user must provide a value. No default, not nullable.
+    - **Has a default** (e.g., `joiner str = "-"`): Optional from the user's perspective - they can omit it and the default is used. The value is never `null`.
+    - **Nullable** (e.g., `role str?`): If the user doesn't provide it, the value is `null`.
+
+    Use a default when you have a sensible fallback value. Use `?` when the *absence* of a value is meaningful and you want to handle it explicitly in your script.
 
 ### Short Flag Clustering
 
@@ -590,17 +708,22 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 ## Summary
 
 - Rad takes a *declarative* approach to args, and handles parsing user input.
-- All args can be specified positionally or via a flag from the user.
+- **Every argument works both positionally and as a named flag** - users can mix and match freely.
+- Parsing is left-to-right: flags fill slots by name, bare values fill the next unfilled positional slot in declaration order.
 - Anatomy of an arg declaration:
 
     `<name> [rename] [shorthand flag] <type> [= default] [# arg comment]`
 
+- Argument names with underscores become hyphenated flags (e.g., `my_arg` becomes `--my-arg`).
 - Rad supports various argument types:
     - Basic types: `int`, `float`, `str`, `bool`
     - List types: `str[]`, `int[]`, `float[]`, `bool[]` (passed via repeated flags)
     - Variadic: `*args <type>` (collects remaining positional arguments)
     - Optional: `<type>?` (value is `null` when not provided)
-- Short flags support clustering (`-vdq`) and counting for ints (`-vvv` = 3)
+- Bool flags are never positional. All other types are both positional and flag-based.
+- Short flags support clustering (`-vdq`) and counting for ints (`-vvv` = 3).
+- Use `--` to force everything after it to be treated as positional (useful for values starting with `-`).
+- Both `--flag=value` and `--flag value` work. Equals syntax is useful for negative numbers (`--count=-5`).
 - You can apply constraints to arguments inside the arg block:
     - `enum` for discrete values
     - `range` for numeric bounds (using `[` for inclusive, `(` for exclusive)
