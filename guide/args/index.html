@@ -471,6 +471,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-argument-parsing-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Argument Parsing Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Argument Parsing Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-dual-nature-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Dual-Nature Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parsing-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parsing Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The -- Separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative Numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#equals-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equals Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#argument-types-and-user-input" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1559,6 +1631,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-argument-parsing-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Argument Parsing Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Argument Parsing Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-dual-nature-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Dual-Nature Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parsing-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parsing Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The -- Separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative Numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#equals-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equals Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#argument-types-and-user-input" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1822,9 +1966,9 @@ Script args:
 <p>This script defines two mandatory arguments: <code>word</code> that is expected to be a string, and <code>repeats</code> which is expected to be an integer.</p>
 <p>Some important things to note:</p>
 <ul>
-<li>All arguments can be defined positionally or via a flag.</li>
-<li>The positional ordering of args follows the order of declaration in the block.</li>
-<li>Flags are automatically generated and can be used by users to pass values for that argument, instead of doing it positionally.</li>
+<li><strong>Every argument you declare works both as a positional parameter and as a named flag - automatically.</strong> You don't have to choose between them, and your users can mix and match. See <a href="#how-argument-parsing-works">How Argument Parsing Works</a> below for the full details.</li>
+<li>The positional ordering of args follows the order of declaration in the args block.</li>
+<li>Flags (like <code>--word</code> and <code>--repeats</code>) are generated for you based on each argument's name.</li>
 </ul>
 <p>Let's look at a more complex example to demonstrate some more features. Let's call it <code>wordjoin</code>.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1898,6 +2042,78 @@ Script args:
 <p>To bring it all together, this is the anatomy of an arg declaration (<code>&lt;angle brackets&gt;</code> mean it's required, <code>[square brackets]</code> indicate it's optional):</p>
 <p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
 <p>Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.</p>
+<div class="admonition tip">
+<p class="admonition-title">Underscores become hyphens</p>
+<p>If you name an argument with underscores (e.g., <code>my_arg</code>), Rad automatically converts it to hyphens for the CLI
+flag: <code>--my-arg</code>. Inside your script, you still reference the variable as <code>my_arg</code>.</p>
+</div>
+<h2 id="how-argument-parsing-works">How Argument Parsing Works<a class="headerlink" href="#how-argument-parsing-works" title="Permanent link">&para;</a></h2>
+<p>Most CLI frameworks force you to choose: either an argument is positional, or it's a named flag.
+Rad doesn't make you choose - every argument you declare automatically works as <em>both</em>.</p>
+<p>This section explains that model and a few related parsing behaviors that are useful to know.</p>
+<h3 id="the-dual-nature-model">The Dual-Nature Model<a class="headerlink" href="#the-dual-nature-model" title="Permanent link">&para;</a></h3>
+<p>When you declare an argument, Rad generates both a positional slot and a named flag for it.
+Your users can then invoke your script whichever way is most convenient - or mix both styles in the same call.</p>
+<p>Consider this script:</p>
+<div class="highlight"><pre><span></span><code>args:
+    src str       # Source file
+    dest str      # Destination path
+    verbose v bool
+</code></pre></div>
+<p>All of these invocations are equivalent:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Pure positional</span>
+./script<span class="w"> </span>myfile.txt<span class="w"> </span>/backup/
+
+<span class="c1"># Pure flags</span>
+./script<span class="w"> </span>--src<span class="w"> </span>myfile.txt<span class="w"> </span>--dest<span class="w"> </span>/backup/
+
+<span class="c1"># Mixed - positional for src, flag for dest</span>
+./script<span class="w"> </span>myfile.txt<span class="w"> </span>--dest<span class="w"> </span>/backup/
+</code></pre></div>
+<p>This means script authors get a great CLI experience for free. Users who know the positional order can be terse;
+users who want clarity can use flags; and anyone can mix and match as needed.</p>
+<h3 id="parsing-order">Parsing Order<a class="headerlink" href="#parsing-order" title="Permanent link">&para;</a></h3>
+<p>Rad processes arguments left-to-right. The rules are simple:</p>
+<ol>
+<li>If an argument starts with <code>--</code> or <code>-</code>, it's matched as a flag by name (or short name).</li>
+<li>If an argument is a bare value (no <code>-</code> prefix), it's assigned to the next unfilled positional slot, in the order you declared your args.</li>
+<li>Flags can appear anywhere - before, after, or interspersed with positional values.</li>
+</ol>
+<p>The key insight: when a flag "fills" an argument, that positional slot is skipped. For example:</p>
+<div class="highlight"><pre><span></span><code>args:
+    first str
+    second str
+    third str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># --second fills the second slot via flag, so the two bare values</span>
+<span class="c1"># fill &quot;first&quot; and &quot;third&quot; (the remaining unfilled slots, in order).</span>
+./script<span class="w"> </span>alpha<span class="w"> </span>--second<span class="w"> </span>beta<span class="w"> </span>gamma
+</code></pre></div>
+<p>Here, <code>first</code> = <code>"alpha"</code>, <code>second</code> = <code>"beta"</code>, <code>third</code> = <code>"gamma"</code>.</p>
+<h3 id="the-separator">The <code>--</code> Separator<a class="headerlink" href="#the-separator" title="Permanent link">&para;</a></h3>
+<p>Rad supports the standard Unix <code>--</code> convention: everything after a bare <code>--</code> is treated as a positional argument, even if it starts with <code>-</code>.</p>
+<p>This is useful when you need to pass values that look like flags:</p>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--<span class="w"> </span>--not-a-flag
+</code></pre></div>
+<p>Here, <code>--not-a-flag</code> is treated as a positional string value, not as a flag.</p>
+<h3 id="negative-numbers">Negative Numbers<a class="headerlink" href="#negative-numbers" title="Permanent link">&para;</a></h3>
+<p>Passing negative numbers can look like flags since they start with <code>-</code>. There are a few ways to handle this:</p>
+<div class="highlight"><pre><span></span><code>args:
+    count int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use flag + value</span>
+./script<span class="w"> </span>--count<span class="w"> </span>-5
+
+<span class="c1"># Use equals syntax</span>
+./script<span class="w"> </span>--count<span class="o">=</span>-5
+
+<span class="c1"># Use -- to force positional</span>
+./script<span class="w"> </span>--<span class="w"> </span>-5
+</code></pre></div>
+<h3 id="equals-syntax">Equals Syntax<a class="headerlink" href="#equals-syntax" title="Permanent link">&para;</a></h3>
+<p>Both <code>--name=value</code> and <code>--name value</code> work for all flag types. For bool flags specifically,
+<code>--flag</code> sets the value to <code>true</code> by presence, while <code>--flag=false</code> explicitly sets it to <code>false</code>.</p>
+<p>Equals syntax is especially useful when you need to be unambiguous - for example, when passing negative numbers or values that start with <code>-</code>.</p>
 <h2 id="argument-types-and-user-input">Argument Types and User Input<a class="headerlink" href="#argument-types-and-user-input" title="Permanent link">&para;</a></h2>
 <p>This section explains the different argument types you can declare and how users pass values for each type.</p>
 <h3 id="basic-types">Basic Types<a class="headerlink" href="#basic-types" title="Permanent link">&para;</a></h3>
@@ -1917,7 +2133,7 @@ print(&quot;{name} is {age} years old and {height}m tall&quot;)
 </code></pre></div>
 <p>Type validation happens automatically. If a user provides <code>--age abc</code> when age is an <code>int</code>, Rad will show an error.</p>
 <h3 id="bool-flags">Bool Flags<a class="headerlink" href="#bool-flags" title="Permanent link">&para;</a></h3>
-<p>Bool arguments are <strong>never positional</strong> - they must be passed via flags. You can set them either by presence or with an explicit value:</p>
+<p>Bool arguments are <strong>never positional</strong> - they must always be passed via flags. You can set bool flags either by presence or with an explicit value:</p>
 <div class="highlight"><pre><span></span><code>args:
     verbose v bool
     debug d bool
@@ -1991,6 +2207,10 @@ section2: [ 1, 2, 3 ]
 </code></pre></div>
 </div>
 
+<div class="admonition note">
+<p class="admonition-title">List types vs variadic</p>
+<p>List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by <strong>repeating the flag</strong> (<code>--files a.txt --files b.txt</code>), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (<code>*args</code>) instead - that's exactly what they're for.</p>
+</div>
 <h3 id="optional-arguments">Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permanent link">&para;</a></h3>
 <p>Mark arguments as optional with <code>?</code> suffix. When not provided, their value is <code>null</code>:</p>
 <div class="highlight"><pre><span></span><code>args:
@@ -2011,6 +2231,16 @@ else:
 </div>
 
 <p>You can check for null values with <code>== null</code> or use truthy/falsy logic: <code>if role:</code> will be false when role is null.</p>
+<div class="admonition info">
+<p class="admonition-title">Defaults vs Optional</p>
+<p>There are three states an argument can be in:</p>
+<ul>
+<li><strong>Required</strong> (e.g., <code>name str</code>): The user must provide a value. No default, not nullable.</li>
+<li><strong>Has a default</strong> (e.g., <code>joiner str = "-"</code>): Optional from the user's perspective - they can omit it and the default is used. The value is never <code>null</code>.</li>
+<li><strong>Nullable</strong> (e.g., <code>role str?</code>): If the user doesn't provide it, the value is <code>null</code>.</li>
+</ul>
+<p>Use a default when you have a sensible fallback value. Use <code>?</code> when the <em>absence</em> of a value is meaningful and you want to handle it explicitly in your script.</p>
+</div>
 <h3 id="short-flag-clustering">Short Flag Clustering<a class="headerlink" href="#short-flag-clustering" title="Permanent link">&para;</a></h3>
 <p>When you define short flags (single letters), users can cluster multiple bool flags together:</p>
 <div class="highlight"><pre><span></span><code>args:
@@ -2239,21 +2469,26 @@ Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;passwor
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Rad takes a <em>declarative</em> approach to args, and handles parsing user input.</li>
-<li>All args can be specified positionally or via a flag from the user.</li>
+<li><strong>Every argument works both positionally and as a named flag</strong> - users can mix and match freely.</li>
+<li>Parsing is left-to-right: flags fill slots by name, bare values fill the next unfilled positional slot in declaration order.</li>
 <li>
 <p>Anatomy of an arg declaration:</p>
 <p><code>&lt;name&gt; [rename] [shorthand flag] &lt;type&gt; [= default] [# arg comment]</code></p>
 </li>
 <li>
-<p>Rad supports various argument types:</p>
-<ul>
+<p>Argument names with underscores become hyphenated flags (e.g., <code>my_arg</code> becomes <code>--my-arg</code>).</p>
+</li>
+<li>Rad supports various argument types:<ul>
 <li>Basic types: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code></li>
 <li>List types: <code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code> (passed via repeated flags)</li>
 <li>Variadic: <code>*args &lt;type&gt;</code> (collects remaining positional arguments)</li>
 <li>Optional: <code>&lt;type&gt;?</code> (value is <code>null</code> when not provided)</li>
 </ul>
 </li>
-<li>Short flags support clustering (<code>-vdq</code>) and counting for ints (<code>-vvv</code> = 3)</li>
+<li>Bool flags are never positional. All other types are both positional and flag-based.</li>
+<li>Short flags support clustering (<code>-vdq</code>) and counting for ints (<code>-vvv</code> = 3).</li>
+<li>Use <code>--</code> to force everything after it to be treated as positional (useful for values starting with <code>-</code>).</li>
+<li>Both <code>--flag=value</code> and <code>--flag value</code> work. Equals syntax is useful for negative numbers (<code>--count=-5</code>).</li>
 <li>You can apply constraints to arguments inside the arg block:<ul>
 <li><code>enum</code> for discrete values</li>
 <li><code>range</code> for numeric bounds (using <code>[</code> for inclusive, <code>(</code> for exclusive)</li>

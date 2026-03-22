@@ -6,7 +6,7 @@
 
 - [Getting Started](https://amterp.github.io/rad/guide/getting-started.md): What is Rad?, Installation, Editor Support, Your First Rad Script - Hello World, Adding In Some Rad Features, Improving The Script Usage String, Shebang, A Complete Example, Summary, Next
 - [Basics](https://amterp.github.io/rad/guide/basics.md): Variables & Assignment, Data Types, Destructuring, Operators, Functions, Control Flow, List Comprehensions, Truthy / Falsy, Converting Types, Errors, Summary, Next
-- [Args](https://amterp.github.io/rad/guide/args.md): Arg Declarations, Argument Types and User Input, Constraints, Summary, Next
+- [Args](https://amterp.github.io/rad/guide/args.md): Arg Declarations, How Argument Parsing Works, Argument Types and User Input, Constraints, Summary, Next
 - [Functions](https://amterp.github.io/rad/guide/functions.md): Syntax, Function Arguments, Custom Functions, Reference, Summary, Next
 - [Strings (Advanced)](https://amterp.github.io/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes, Summary, Next
 - [Rad Blocks](https://amterp.github.io/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests, Summary, Next
