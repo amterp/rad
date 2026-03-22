@@ -78,6 +78,9 @@ markdown_extensions:
   - toc:
       permalink: true
 
+hooks:
+  - hooks/generate_llms_txt.py
+
 extra_css:
   - https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap
   - stylesheets/extra.css

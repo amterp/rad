@@ -5,6 +5,7 @@ rad
 rls
 
 # Misc
+__pycache__/
 amterp
 sandbox
 bin
