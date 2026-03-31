@@ -45,6 +45,7 @@ const (
 	FUNC_SORT               = "sort"
 	FUNC_NOW                = "now"
 	FUNC_PARSE_EPOCH        = "parse_epoch"
+	FUNC_PARSE_DATE         = "parse_date"
 	FUNC_TYPE_OF            = "type_of"
 	FUNC_JOIN               = "join"
 	FUNC_UPPER              = "upper"
@@ -303,6 +304,7 @@ func init() {
 		FuncSleep,
 		FuncParseDuration,
 		FuncConvertDuration,
+		FuncParseDate,
 		FuncSeedRandom,
 		FuncRand,
 		FuncRandInt,

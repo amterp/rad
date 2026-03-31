@@ -6,6 +6,7 @@ In e.g. 1748858179
 
 1. now(tz: string = <local>) -> map
 2. parse_epoch(epoch: int, tz: string = <local>) -> map
+3. parse_date(date: string, format: string? = null, tz: string = <local>) -> map
 
 map looks like:
 
