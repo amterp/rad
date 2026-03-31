@@ -63,6 +63,7 @@ min
 multipick
 now
 orange
+parse_date
 parse_duration
 parse_epoch
 parse_float

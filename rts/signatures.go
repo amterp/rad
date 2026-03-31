@@ -45,6 +45,7 @@ func init() {
 		newFnSignature(`sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -> list|str`),
 		newFnSignature(`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
+		newFnSignature(`parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`),
 		newFnSignature(`type_of(_var: any) -> ["int", "str", "list", "map", "float"]`),
 		newFnSignature(`range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -> float[]|int[]`),
 		newFnSignature(`join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str`),

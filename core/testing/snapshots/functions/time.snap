@@ -199,3 +199,183 @@ error[RAD20008]: parse_epoch unit "milliseconds" is no longer valid
 
 ### EXIT ###
 1
+### TITLE ###
+Func ParseDateIsoDate
+### INPUT ###
+a = parse_date("2026-03-22")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
+
+### TITLE ###
+Func ParseDateIsoDatetime
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+
+### TITLE ###
+Func ParseDateIsoDatetimeZ
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00Z")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+
+### TITLE ###
+Func ParseDateIsoDatetimeOffset
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00+05:00")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
+
+### TITLE ###
+Func ParseDateSpaceDatetime
+### INPUT ###
+a = parse_date("2026-03-22 14:30:00")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+
+### TITLE ###
+Func ParseDateFractionalSeconds
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00.123Z")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800123, "nanos": 1774189800123000000 } }
+
+### TITLE ###
+Func ParseDateWithFormat
+### INPUT ###
+a = parse_date("22/03/2026", format="DD/MM/YYYY")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
+
+### TITLE ###
+Func ParseDateWithFormatDatetime
+### INPUT ###
+a = parse_date("22.03.2026 14:30", format="DD.MM.YYYY HH:mm")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+
+### TITLE ###
+Func ParseDateWithTimezone
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00Z", tz="America/Chicago")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+
+### TITLE ###
+Func ParseDateErrorInvalidString
+### INPUT ###
+a = parse_date("not-a-date") catch:
+	print(a)
+a = parse_date("not-a-date")
+### STDOUT ###
+Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
+
+### STDERR ###
+error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
+  --> <script>:3:5
+  |
+2 | 	print(a)
+3 | a = parse_date("not-a-date")
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20044
+
+
+### EXIT ###
+1
+### TITLE ###
+Func ParseDateSpaceDatetimeWithTzOffset
+### INPUT ###
+a = parse_date("2026-03-22 14:30:00+05:00")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
+
+### TITLE ###
+Func ParseDateSpaceDatetimeFractionalSeconds
+### INPUT ###
+a = parse_date("2026-03-22 14:30:00.456")
+print(a)
+### STDOUT ###
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800456, "nanos": 1774189800456000000 } }
+
+### TITLE ###
+Func ParseDateNoTzStringWithExplicitTz
+### INPUT ###
+a = parse_date("2026-03-22T14:30:00", tz="UTC")
+print(a.epoch.seconds)
+### STDOUT ###
+1774189800
+
+### TITLE ###
+Func ParseDateCustomFormatWithTimezone
+### INPUT ###
+a = parse_date("22/03/2026 14:30", format="DD/MM/YYYY HH:mm", tz="UTC")
+print(a.epoch.seconds)
+### STDOUT ###
+1774189800
+
+### TITLE ###
+Func ParseDateErrorInvalidFormat
+### INPUT ###
+a = parse_date("2026-03-22", format="DD/MM/YYYY") catch:
+	print(a)
+### STDOUT ###
+Failed to parse date "2026-03-22" with format "DD/MM/YYYY"
+
+### TITLE ###
+Func ParseDateErrorFormatGarbageInput
+### INPUT ###
+a = parse_date("not-a-date", format="DD/MM/YYYY") catch:
+	print(a)
+### STDOUT ###
+Failed to parse date "not-a-date" with format "DD/MM/YYYY"
+
+### TITLE ###
+Func ParseDateErrorEmptyString
+### INPUT ###
+a = parse_date("") catch:
+	print(a)
+### STDOUT ###
+Cannot parse an empty date string
+
+### TITLE ###
+Func ParseDateErrorEmptyFormat
+### INPUT ###
+a = parse_date("2026-03-22", format="") catch:
+	print(a)
+### STDOUT ###
+Cannot parse date with an empty format string
+
+### TITLE ###
+Func ParseDateErrorInvalidTimezone
+### INPUT ###
+a = parse_date("2026-03-22", tz="bad") catch:
+	print(a)
+a = parse_date("2026-03-22", tz="another bad one")
+### STDOUT ###
+Invalid time zone 'bad'
+
+### STDERR ###
+error[RAD20009]: Invalid time zone 'another bad one'
+  --> <script>:3:5
+  |
+2 | 	print(a)
+3 | a = parse_date("2026-03-22", tz="another bad one")
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20009
+
+
+### EXIT ###
+1
