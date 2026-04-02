@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/amterp/rad/lsp-server/log"
-	"github.com/amterp/rad/lsp-server/server"
+	"github.com/amterp/rad/radls/log"
+	"github.com/amterp/rad/radls/server"
 )
 
 var StdErr io.Writer = os.Stderr

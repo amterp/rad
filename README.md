@@ -1,9 +1,9 @@
 # 🤙 Rad
 
 [![Latest Release](https://img.shields.io/github/v/release/amterp/rad?color=blue)](https://github.com/amterp/rad/releases)
-[![Docs](https://img.shields.io/badge/-Docs-grey)](https://amterp.github.io/rad/)
+[![Docs](https://img.shields.io/badge/-Docs-grey)](https://amterp.dev/rad/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/amterp/rad)](https://goreportcard.com/report/github.com/amterp/rad)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **Bash is powerful but painful. Rad gives you Python-like scripting with CLI essentials built-in.**
 
@@ -134,7 +134,7 @@ brew install amterp/rad/rad
 
 ```bash
 go install github.com/amterp/rad@latest
-go install github.com/amterp/rad/lsp-server@latest
+go install github.com/amterp/rad/radls@latest
 ```
 
 The first command installs `rad` (the interpreter). The second installs `radls` (the language server for editor support).
@@ -157,8 +157,8 @@ The extension requires `radls` to be on your PATH (installed automatically via H
 
 ## Documentation 📚
 
-[**Getting Started Guide**](https://amterp.github.io/rad/guide/getting-started/)
-| [Full Documentation](https://amterp.github.io/rad/)
+[**Getting Started Guide**](https://amterp.dev/rad/guide/getting-started/)
+| [Full Documentation](https://amterp.dev/rad/)
 
 ## Project Status 🚧
 
@@ -200,4 +200,4 @@ purpose-built features for CLI scripting.
 
 **Try Rad for your next script. I think you'll like it.** 🤙
 
-[Installation](#installation-) | [Docs](https://amterp.github.io/rad/) | [Contributing](./CONTRIBUTING.md)
+[Installation](#installation-) | [Docs](https://amterp.dev/rad/) | [Contributing](./CONTRIBUTING.md)

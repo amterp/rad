@@ -50,7 +50,7 @@ func Generate() error {
 	if err := runCmd(goexe, "run", filepath.Join(".", "function-metadata", "extract.go")); err != nil {
 		return err
 	}
-	return runCmd("mv", filepath.Join(".", "functions.txt"), filepath.Join(".", "lsp-server", "com", "embedded"))
+	return runCmd("mv", filepath.Join(".", "functions.txt"), filepath.Join(".", "radls", "com", "embedded"))
 }
 
 func Format() error {

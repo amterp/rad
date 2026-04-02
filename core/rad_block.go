@@ -52,7 +52,7 @@ func (i *Interpreter) runRadBlock(n *rl.RadBlock) {
 			SeverityError, rl.ErrDeprecatedBlockKeyword,
 			"'"+n.Keyword+"' blocks have been removed. Use 'rad' instead.",
 			i.GetSrc(), span,
-		).WithHint("See migration guide: https://amterp.github.io/rad/migrations/v0.9/")
+		).WithHint("See migration guide: https://amterp.dev/rad/migrations/v0.9/")
 		i.emitDiagnostic(diag)
 		return
 	}

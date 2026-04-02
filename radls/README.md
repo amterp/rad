@@ -1,6 +1,6 @@
-# RSL LSP
+# radls
 
-- **RLS**: **R**SL **L**anguage **S**erver
+- **radls**: **Rad** **L**anguage **S**erver
 
 ## Helpful Links
 

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient/node";
 import { execSync } from "child_process";
 
-const INSTALL_URL = "https://amterp.github.io/rad/guide/getting-started/#installation";
+const INSTALL_URL = "https://amterp.dev/rad/guide/getting-started/#installation";
 const INSTALL_HINT = "Install Rad to enable language features: brew install amterp/rad/rad";
 
 function findRadls(): string | null {

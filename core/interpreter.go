@@ -1100,7 +1100,7 @@ Loop:
 				if vars[0] == "idx" || vars[0] == "index" || vars[0] == "i" || vars[0] == "_" {
 					i.emitErrorWithHint(rl.ErrUnpackMismatch, iterNode,
 						fmt.Sprintf("Cannot unpack %q into %d values", TypeAsString(val), len(vars)),
-						"The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/")
+						"The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/")
 				}
 				i.emitErrorf(rl.ErrUnpackMismatch, iterNode, "Cannot unpack %q into %d values", TypeAsString(val), len(vars))
 			}

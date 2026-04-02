@@ -1,7 +1,7 @@
 package lsp
 
 import (
-	"github.com/amterp/rad/lsp-server/com"
+	"github.com/amterp/rad/radls/com"
 )
 
 type InitializeParams struct {
@@ -44,8 +44,8 @@ func NewInitializeResult() InitializeResult {
 			},
 		},
 		ServerInfo: ServerInfo{
-			Name:    "RLS",
-			Version: com.RlsVersion,
+			Name:    "radls",
+			Version: com.RadlsVersion,
 		},
 	}
 }

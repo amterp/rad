@@ -206,7 +206,7 @@ func (c *RadCheckerImpl) addDeprecatedBlockKeywordErrors(d *[]Diagnostic) {
 			return
 		}
 		if radBlock.Keyword == rl.KEYWORD_REQUEST || radBlock.Keyword == rl.KEYWORD_DISPLAY {
-			msg := "'" + radBlock.Keyword + "' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/"
+			msg := "'" + radBlock.Keyword + "' blocks have been removed. Use 'rad' instead. See https://amterp.dev/rad/migrations/v0.9/"
 			*d = append(*d, NewDiagnosticErrorFromSpan(radBlock.KeywordSpan, c.src, msg, rl.ErrDeprecatedBlockKeyword))
 		}
 	})

@@ -35,7 +35,7 @@ builds:
 
   # Darwin builds (macOS) - radls (Language Server)
   - id: radls-darwin-amd64
-    main: ./lsp-server
+    main: ./radls
     binary: radls
     goarch:
       - amd64
@@ -48,7 +48,7 @@ builds:
       - -trimpath
 
   - id: radls-darwin-arm64
-    main: ./lsp-server
+    main: ./radls
     binary: radls
     goarch:
       - arm64
@@ -99,7 +99,7 @@ builds:
 
   # Linux builds - radls (Language Server)
   - id: radls-linux-amd64
-    main: ./lsp-server
+    main: ./radls
     binary: radls
     goarch:
       - amd64
@@ -117,7 +117,7 @@ builds:
       - -extldflags "-static"
 
   - id: radls-linux-arm64
-    main: ./lsp-server
+    main: ./radls
     binary: radls
     goarch:
       - arm64
@@ -149,7 +149,7 @@ builds:
 
   # Windows builds - radls (Language Server)
   - id: radls-windows-amd64
-    main: ./lsp-server
+    main: ./radls
     binary: radls
     goarch:
       - amd64

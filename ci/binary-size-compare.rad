@@ -17,17 +17,17 @@ print("Base branch: {base_ref}")
 // Build current PR binaries
 print("🔨 Building PR binaries...")
 $`make build`
-$`cd lsp-server && make build`
+$`cd radls && make build`
 
 pr_rad_info = get_path("./bin/radd")
-pr_radls_info = get_path("./lsp-server/bin/radls")
+pr_radls_info = get_path("./radls/bin/radls")
 
 if not pr_rad_info.exists:
     print_err("❌ Failed to build PR rad binary - ./bin/radd not found")
     exit(1)
 
 if not pr_radls_info.exists:
-    print_err("❌ Failed to build PR radls binary - ./lsp-server/bin/radls not found")
+    print_err("❌ Failed to build PR radls binary - ./radls/bin/radls not found")
     exit(1)
 
 pr_rad_size = pr_rad_info.size_bytes
@@ -54,22 +54,24 @@ base_rad_size = base_rad_info.size_bytes
 print("Base rad binary size: {format_bytes(base_rad_size)}")
 
 // Build radls for base branch (may not exist in older versions)
+// Try new directory name first (radls/), fall back to old name (lsp-server/)
 base_radls_size = null
-base_radls_info = get_path("{temp_dir}/lsp-server")
-if base_radls_info.exists:
-    $`cd {temp_dir}/lsp-server && make build`
-    // Try new name first, fall back to old name for older branches
-    // TODO: Remove rls fallback after 2026-01-07 (renamed to radls)
-    base_radls_binary = get_path("{temp_dir}/lsp-server/bin/radls")
+base_radls_dir = get_path("{temp_dir}/radls")
+if not base_radls_dir.exists:
+    base_radls_dir = get_path("{temp_dir}/lsp-server")
+if base_radls_dir.exists:
+    base_radls_path = base_radls_dir.full_path
+    $`cd {base_radls_path} && make build`
+    base_radls_binary = get_path("{base_radls_path}/bin/radls")
     if not base_radls_binary.exists:
-        base_radls_binary = get_path("{temp_dir}/lsp-server/bin/rls")
+        base_radls_binary = get_path("{base_radls_path}/bin/rls")
     if base_radls_binary.exists:
         base_radls_size = base_radls_binary.size_bytes
         print("Base radls binary size: {format_bytes(base_radls_size)}")
     else:
         print("⚠️ Base radls binary not found after build")
 else:
-    print("⚠️ Base branch does not have lsp-server directory (new addition)")
+    print("⚠️ Base branch does not have radls directory (new addition)")
 
 // Calculate differences for rad
 rad_diff_bytes = pr_rad_size - base_rad_size
