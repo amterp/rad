@@ -8,6 +8,16 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.9.1](https://github.com/amterp/rad/releases/tag/v0.9.1) - 2026-04-02
+
+- Add llms.txt and llms-full.txt generation to docs site ([212e690](https://github.com/amterp/rad/commit/212e690))
+- Expand args docs with parsing model and edge cases ([5d82de7](https://github.com/amterp/rad/commit/5d82de7))
+- Release VSCode extension v0.4.0 ([7205d79](https://github.com/amterp/rad/commit/7205d79))
+- Release VSCode extension v0.5.0 ([682c36c](https://github.com/amterp/rad/commit/682c36c))
+- fix: use pipe delimiter in sed to avoid clash with URL slashes ([9e1794e](https://github.com/amterp/rad/commit/9e1794e))
+
+---
+
 ## [v0.9.0](https://github.com/amterp/rad/releases/tag/v0.9.0) - 2026-03-11
 
 v0.9 is here!
