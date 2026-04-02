@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/guide/getting-started/">
+        <link rel="canonical" href="https://amterp.dev/rad/guide/getting-started/">
       
       
         <link rel="prev" href="../..">
@@ -1819,9 +1819,15 @@ versions as the language evolves. Your feedback directly shapes Rad's future!</p
 <h3 id="macos-homebrew">macOS (Homebrew)<a class="headerlink" href="#macos-homebrew" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>amterp/rad/rad
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Use the Rad tap</p>
+<p>There is a separate <code>rad</code> formula in Homebrew Core (<code>brew install rad</code>), but it currently only installs the <code>rad</code>
+interpreter - <strong>not</strong> the <code>radls</code> language server needed for editor support. We're working on getting the Homebrew Core
+formula updated, but in the meantime, if you want language server support, use the custom tap above.</p>
+</div>
 <h3 id="go-from-source-all-platforms">Go (from source, all platforms)<a class="headerlink" href="#go-from-source-all-platforms" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad@latest
-go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad/lsp-server@latest
+go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad/radls@latest
 </code></pre></div>
 <p>The first command installs the <code>rad</code> interpreter. The second installs <code>radls</code>, the language server for editor support.</p>
 <p><strong>Note:</strong> You will need to run <code>go install</code> yourself to upgrade Rad as new versions are released.

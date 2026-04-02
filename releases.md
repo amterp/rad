@@ -18,7 +18,7 @@ I am trying to get them out of the way sooner rather than later, to minimize the
 
 I've done my best to make migrating really clear, including having error detection and clear messages that try and detect when you're doing something "the old ways".
 
-See https://amterp.github.io/rad/migrations/v0.9/ for details about the breaking changes.
+See https://amterp.dev/rad/migrations/v0.9/ for details about the breaking changes.
 
 - feat!: broaden ?? to null-coalesce, catchable null indexing ([4fa150c](https://github.com/amterp/rad/commit/4fa150c))
 - feat!: make + operator strict about type matching ([1ec9e5c](https://github.com/amterp/rad/commit/1ec9e5c))
@@ -148,7 +148,7 @@ See https://amterp.github.io/rad/migrations/v0.9/ for details about the breaking
 
 - docs(SYNTAX.md): add script commands ([9e4e595](https://github.com/amterp/rad/commit/9e4e595))
 - feat!: redesign for-loop syntax with explicit context access ([e98f7fc](https://github.com/amterp/rad/commit/e98f7fc))
-  * See [v0.7 migration guide](https://amterp.github.io/rad/migrations/v0.7/) for more information.
+  * See [v0.7 migration guide](https://amterp.dev/rad/migrations/v0.7/) for more information.
 - feat: add context support to rad block map/filter lambdas ([21976ec](https://github.com/amterp/rad/commit/21976ec))
 
 

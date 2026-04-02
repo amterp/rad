@@ -78,7 +78,7 @@ error[RAD40008]: 'request' blocks have been removed. Use 'rad' instead.
  1 | request "https://api.example.com/users":
    | ^^
    |
-   = help: See migration guide: https://amterp.github.io/rad/migrations/v0.9/
+   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD40008
 ```
 

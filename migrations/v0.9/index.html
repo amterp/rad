@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://amterp.github.io/rad/migrations/v0.9/">
+        <link rel="canonical" href="https://amterp.dev/rad/migrations/v0.9/">
       
       
         <link rel="prev" href="../">
@@ -2430,20 +2430,20 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
  1 | request &quot;https://api.example.com/users&quot;:
    | ^^
    |
-   = help: See migration guide: https://amterp.github.io/rad/migrations/v0.9/
+   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD40008
 </code></pre></div>
 <p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
 <div class="highlight"><pre><span></span><code>error: Cannot invoke unknown function: get_stash_dir
 
   hint: get_stash_dir was renamed to get_stash_path.
-  See: https://amterp.github.io/rad/migrations/v0.9/
+  See: https://amterp.dev/rad/migrations/v0.9/
 </code></pre></div>
 <p>If you use the old long-form unit names with <code>parse_epoch</code>, you'll see:</p>
 <div class="highlight"><pre><span></span><code>error: parse_epoch unit &quot;milliseconds&quot; is no longer valid
 
   help: Unit names were shortened in v0.9. Use &quot;millis&quot; instead.
-  See: https://amterp.github.io/rad/migrations/v0.9/
+  See: https://amterp.dev/rad/migrations/v0.9/
 </code></pre></div>
 <h2 id="behavior-change-invocation-logging-enabled-by-default">Behavior Change: Invocation Logging Enabled by Default<a class="headerlink" href="#behavior-change-invocation-logging-enabled-by-default" title="Permanent link">&para;</a></h2>
 <h3 id="what-changed_5">What Changed<a class="headerlink" href="#what-changed_5" title="Permanent link">&para;</a></h3>
