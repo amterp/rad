@@ -10,7 +10,7 @@ Contains the `rad` CLI tool & Rad language interpreter + some others.
 |-----------------|------------------------------------------------------------------------------------------------|
 | `core`          | Core code for rad.                                                                             |
 | `docs-web`      | MkDocs documentation website.                                                                  |
-| `lsp-server`    | LSP Language Server for Rad, aka RLS.                                                          |
+| `radls`         | LSP Language Server for Rad.                                                                   |
 | `rts`           | A Go lib which wraps [Rad's tree sitter](#amterptree-sitter-rad) implementation & Go bindings. |
 | `textmate-gen`  | Generator for Textmate bundles. Not yet implemented.                                           |
 | `vsc-extension` | Implementation for Visual Studio Code extension for Rad.                                       |

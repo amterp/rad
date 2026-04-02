@@ -370,7 +370,7 @@ func (i *Interpreter) executeOp(
 	// Emit a migration hint when str + non-str is attempted with +
 	if op == rl.OpAdd && isStrPlusNonStr(leftV, rightV) {
 		i.emitErrorWithHint(rl.ErrInvalidTypeForOp, parentNode, msg,
-			"In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/")
+			"In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/")
 	} else {
 		i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "%s", msg)
 	}

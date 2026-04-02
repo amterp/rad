@@ -1093,7 +1093,7 @@ fn_with_closure = fn(x):
 
 ## Built-in Types and Methods
 
-For a complete reference of all built-in functions, see: https://amterp.github.io/rad/reference/functions/
+For a complete reference of all built-in functions, see: https://amterp.dev/rad/reference/functions/
 
 ### String Methods
 

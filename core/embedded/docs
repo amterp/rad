@@ -12,7 +12,7 @@ args:
 
     page enum ["home", "functions"]
 
-url = `https://amterp.github.io/rad`
+url = `https://amterp.dev/rad`
 
 // todo rad: convert to switch stmt
 if page == "home":

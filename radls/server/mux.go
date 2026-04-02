@@ -6,10 +6,10 @@ import (
 	"io"
 	"sync"
 
-	"github.com/amterp/rad/lsp-server/com"
-	"github.com/amterp/rad/lsp-server/log"
-	"github.com/amterp/rad/lsp-server/lsp"
-	"github.com/amterp/rad/lsp-server/rpc"
+	"github.com/amterp/rad/radls/com"
+	"github.com/amterp/rad/radls/log"
+	"github.com/amterp/rad/radls/lsp"
+	"github.com/amterp/rad/radls/rpc"
 )
 
 type NotificationHandler func(params json.RawMessage) (err error)

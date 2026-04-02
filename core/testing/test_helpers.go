@@ -47,7 +47,7 @@ const allGlobalFlagHelp = `Global options:
 
 const radHelp = `rad: A tool for writing user-friendly command line scripts.
 GitHub: https://github.com/amterp/rad
-Documentation: https://amterp.github.io/rad/
+Documentation: https://amterp.dev/rad/
 
 Usage:
   rad [script path | command] [flags]
@@ -68,7 +68,7 @@ To execute a Rad script:
 To execute a command:
   rad <command> [args]
 
-If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/
+If you're new, check out the Getting Started guide: https://amterp.dev/rad/guide/getting-started/
 `
 
 const ignorePanicMsg = "TESTING - IGNORE ME"

@@ -523,7 +523,7 @@ func init() {
 						}
 						f.i.emitErrorWithHint(rl.ErrInvalidTimeUnit, f.callNode,
 							fmt.Sprintf("parse_epoch unit %q is no longer valid", unit),
-							fmt.Sprintf("Unit names were shortened in v0.9. Use %q instead. See: https://amterp.github.io/rad/migrations/v0.9/", replacements[unit]))
+							fmt.Sprintf("Unit names were shortened in v0.9. Use %q instead. See: https://amterp.dev/rad/migrations/v0.9/", replacements[unit]))
 						panic(UNREACHABLE)
 					default:
 						return f.ReturnErrf(rl.ErrInvalidTimeUnit,

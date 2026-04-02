@@ -98,7 +98,7 @@ maintainable than Bash. It combines familiar Python-like syntax with powerful sc
 │   ├── signatures.go         # Built-in function signatures
 │   ├── check/                # Static checker (AST-based, CST fallback)
 │   └── rl/                   # AST node types, spans, typing, node kinds
-├── lsp-server/               # Language Server Protocol implementation
+├── radls/                    # Language Server Protocol implementation
 ├── vsc-extension/            # VS Code extension
 ├── docs-web/                 # Documentation website (MkDocs)
 ├── benchmark/                # Performance benchmarks
@@ -160,7 +160,7 @@ Tree-sitter is the **only place CGo runs**. The rest of the system works with Go
   - Typing system (type definitions, resolution, compatibility)
   - Constants, error types, utilities
 
-### 4. Language Server (`lsp-server/`)
+### 4. Language Server (`radls/`)
 
 - Implements LSP for VS Code integration
 - Provides syntax errors, diagnostics, etc.
@@ -455,7 +455,7 @@ a comprehensive migration guide page.
    context - usually error). The diagnostic should:
    - Clearly state what changed
    - Suggest the fix concisely
-   - Link to the migration doc: `https://amterp.github.io/rad/migrations/v0.X/`
+   - Link to the migration doc: `https://amterp.dev/rad/migrations/v0.X/`
 
 2. **Add/update an error doc** in `core/error_docs/<code>.md` with a before/after example and fix steps.
 
@@ -469,7 +469,7 @@ a comprehensive migration guide page.
 case "old_name":
     i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
         "Cannot invoke unknown function: old_name",
-        "old_name was renamed to new_name. See: https://amterp.github.io/rad/migrations/v0.X/")
+        "old_name was renamed to new_name. See: https://amterp.dev/rad/migrations/v0.X/")
 ```
 
 **Removed function** - same pattern, different hint:
@@ -477,7 +477,7 @@ case "old_name":
 case "get_default":
     i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
         "Cannot invoke unknown function: get_default",
-        "get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/")
+        "get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/")
 ```
 
 **Changed operator/syntax behavior** - the type checker or interpreter naturally catches the new error; ensure the
@@ -497,7 +497,7 @@ error[RAD40003]: Cannot invoke unknown function: get_stash_dir
   5 | get_stash_dir()
     | ^^^^^^^^^^^^^^^ Cannot invoke unknown function: get_stash_dir
     |
-   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD40003
 ```
 

@@ -80,7 +80,7 @@ func Test_Check_DeprecatedRequest(t *testing.T) {
 	expected := `L1:1: ERROR
 
      1 | request "http://example.com":
-       | ^ 'request' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/
+       | ^ 'request' blocks have been removed. Use 'rad' instead. See https://amterp.dev/rad/migrations/v0.9/
        | (code: RAD40008)
 
 Reported 1 diagnostic.
@@ -94,7 +94,7 @@ func Test_Check_DeprecatedDisplay(t *testing.T) {
 	expected := `L2:1: ERROR
 
      2 | display data:
-       | ^ 'display' blocks have been removed. Use 'rad' instead. See https://amterp.github.io/rad/migrations/v0.9/
+       | ^ 'display' blocks have been removed. Use 'rad' instead. See https://amterp.dev/rad/migrations/v0.9/
        | (code: RAD40008)
 
 Reported 1 diagnostic.

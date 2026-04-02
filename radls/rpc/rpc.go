@@ -8,9 +8,9 @@ import (
 	"net/textproto"
 	"strconv"
 
-	"github.com/amterp/rad/lsp-server/com"
-	"github.com/amterp/rad/lsp-server/log"
-	"github.com/amterp/rad/lsp-server/lsp"
+	"github.com/amterp/rad/radls/com"
+	"github.com/amterp/rad/radls/log"
+	"github.com/amterp/rad/radls/lsp"
 )
 
 func Decode(r *bufio.Reader) (msg lsp.IncomingMsg, err error) {

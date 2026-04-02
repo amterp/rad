@@ -144,7 +144,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |                  ^^^^^^^^^
 2 | 	print(idx, item)
   |
-   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/
+   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad explain RAD20033
 
 
@@ -165,7 +165,7 @@ error[RAD20033]: Cannot unpack "int" into 3 values
   |                         ^^^^^^^^^
 2 | 	print(idx, item, extra)
   |
-   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/
+   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad explain RAD20033
 
 

@@ -47,11 +47,16 @@ Let's get into it.
 brew install amterp/rad/rad
 ```
 
+!!! warning "Use the Rad tap"
+    There is a separate `rad` formula in Homebrew Core (`brew install rad`), but it currently only installs the `rad`
+    interpreter - **not** the `radls` language server needed for editor support. We're working on getting the Homebrew Core
+    formula updated, but in the meantime, if you want language server support, use the custom tap above.
+
 ### Go (from source, all platforms)
 
 ```bash
 go install github.com/amterp/rad@latest
-go install github.com/amterp/rad/lsp-server@latest
+go install github.com/amterp/rad/radls@latest
 ```
 
 The first command installs the `rad` interpreter. The second installs `radls`, the language server for editor support.

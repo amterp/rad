@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/amterp/rad/lsp-server/analysis"
-	"github.com/amterp/rad/lsp-server/log"
-	"github.com/amterp/rad/lsp-server/lsp"
+	"github.com/amterp/rad/radls/analysis"
+	"github.com/amterp/rad/radls/log"
+	"github.com/amterp/rad/radls/lsp"
 )
 
 type Server struct {

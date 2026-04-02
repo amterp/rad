@@ -9,7 +9,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + int'
 1 | x = "count: " + 5
   |     ^^^^^^^^^^^^^
   |
-   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -26,7 +26,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + float'
 1 | x = "pi: " + 3.14
   |     ^^^^^^^^^^^^^
   |
-   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -43,7 +43,7 @@ error[RAD30002]: Invalid operand types: cannot do 'str + bool'
 1 | x = "flag: " + true
   |     ^^^^^^^^^^^^^^^
   |
-   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 
@@ -60,7 +60,7 @@ error[RAD30002]: Invalid operand types: cannot do 'int + str'
 1 | x = 5 + "hello"
   |     ^^^^^^^^^^^
   |
-   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD30002
 
 

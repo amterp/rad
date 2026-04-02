@@ -21,7 +21,7 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 
 	fmt.Fprintf(buf, "rad: A tool for writing user-friendly command line scripts.\n")
 	fmt.Fprintf(buf, "GitHub: https://github.com/amterp/rad\n")
-	fmt.Fprintf(buf, "Documentation: https://amterp.github.io/rad/\n\n")
+	fmt.Fprintf(buf, "Documentation: https://amterp.dev/rad/\n\n")
 
 	com.GreenBoldF(buf, "Usage:\n")
 	com.BoldF(buf, "  rad")
@@ -75,7 +75,7 @@ func basicTips(buf *bytes.Buffer) {
 	sb.WriteString("  rad <command> [args]\n")
 	sb.WriteString("\n")
 	sb.WriteString(
-		"If you're new, check out the Getting Started guide: https://amterp.github.io/rad/guide/getting-started/\n",
+		"If you're new, check out the Getting Started guide: https://amterp.dev/rad/guide/getting-started/\n",
 	)
 
 	buf.WriteString(sb.String())

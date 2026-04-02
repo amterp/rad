@@ -13,7 +13,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |                  ^^^^^^^^^
 3 | 	print(idx, item)
   |
-   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/
+   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad explain RAD20033
 
 
@@ -34,7 +34,7 @@ error[RAD20033]: Cannot unpack "int" into 3 values
   |                         ^^^^^^^^^
 3 | 	print(idx, item, extra)
   |
-   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/
+   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad explain RAD20033
 
 
@@ -55,7 +55,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |                ^^^^^^^^^
 3 | 	print(item)
   |
-   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.github.io/rad/migrations/v0.7/
+   = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad explain RAD20033
 
 
@@ -75,7 +75,7 @@ error[RAD40003]: Cannot invoke unknown function: get_default
 3 | get_default(m, "b", 0)
   | ^^^^^^^^^^^
   |
-   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/
+   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
    = info: rad explain RAD40003
 
 
@@ -94,7 +94,7 @@ error[RAD40003]: Cannot invoke unknown function: get_stash_dir
 2 | get_stash_dir()
   | ^^^^^^^^^^^^^
   |
-   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.github.io/rad/migrations/v0.9/
+   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad explain RAD40003
 
 
@@ -114,7 +114,7 @@ error[RAD40003]: Cannot invoke unknown function: get_default
 3 | m.get_default("b", 0)
   |   ^^^^^^^^^^^
   |
-   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.github.io/rad/migrations/v0.8/
+   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
    = info: rad explain RAD40003
 
 
