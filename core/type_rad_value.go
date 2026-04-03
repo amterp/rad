@@ -11,6 +11,14 @@ import (
 // used to internally delete things e.g. vars from env, but also empty returns. too much? subtle bugs?
 var VOID_SENTINEL = RadValue{Val: 0x0}
 
+// RequireNonVoid emits ErrVoidValue if v is VOID_SENTINEL.
+func (v RadValue) RequireNonVoid(i *Interpreter, node rl.Node) RadValue {
+	if v == VOID_SENTINEL {
+		i.emitError(rl.ErrVoidValue, node, "Cannot use void value in expression")
+	}
+	return v
+}
+
 type RadValue struct {
 	// int64, float64, RadString, bool stored as values
 	// collections (lists, maps) stored as pointers

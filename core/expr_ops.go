@@ -15,6 +15,7 @@ func (i *Interpreter) executeUnaryOp(n *rl.OpUnary) RadValue {
 	switch n.Op {
 	case rl.OpNeg:
 		argVal := i.eval(n.Operand).Val
+		argVal.RequireNonVoid(i, n.Operand)
 		argVal.RequireType(i, n.Operand,
 			fmt.Sprintf("Invalid operand type '%s' for op '-'", TypeAsString(argVal)),
 			rl.RadIntT, rl.RadFloatT)
@@ -30,6 +31,7 @@ func (i *Interpreter) executeUnaryOp(n *rl.OpUnary) RadValue {
 	case rl.OpAdd:
 		// unary + is identity
 		argVal := i.eval(n.Operand).Val
+		argVal.RequireNonVoid(i, n.Operand)
 		argVal.RequireType(i, n.Operand,
 			fmt.Sprintf("Invalid operand type '%s' for op '+'", TypeAsString(argVal)),
 			rl.RadIntT, rl.RadFloatT)
@@ -71,6 +73,9 @@ func (i *Interpreter) executeOp(
 		// return actual value for falsy coalescing
 		return right()
 	}
+
+	left().RequireNonVoid(i, leftNode)
+	right().RequireNonVoid(i, rightNode)
 
 	// Equality is centralized in RadValue.Equals() so that ==, in, switch,
 	// index_of, and deep collection comparison all agree on semantics.
