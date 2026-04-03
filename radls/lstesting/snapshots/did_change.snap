@@ -1,0 +1,218 @@
+### TITLE ###
+FixSyntaxError
+### DOCUMENT ###
+x =
+### CHANGE ###
+x = 1
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'x ='",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+IntroduceSyntaxError
+### DOCUMENT ###
+x = 1
+### CHANGE ###
+x =
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'x ='",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+MultipleChanges
+### DOCUMENT ###
+x = 1
+### CHANGE ###
+y =
+### CHANGE ###
+y = 2
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'y ='",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ChangeToEmpty
+### DOCUMENT ###
+x = 1
+### CHANGE ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ChangeFromEmpty
+### DOCUMENT ###
+### CHANGE ###
+x = 1
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ChangePreservesComplexDiagnostics
+### DOCUMENT ###
+x = 1
+### CHANGE ###
+x =
+foo()
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Function 'foo' may not be defined (only built-in and top-level functions are tracked)",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 1
+          },
+          "start": {
+            "character": 0,
+            "line": 1
+          }
+        },
+        "severity": 4,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}

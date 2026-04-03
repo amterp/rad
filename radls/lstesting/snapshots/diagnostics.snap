@@ -1,0 +1,374 @@
+### TITLE ###
+EmptyDocument
+### DOCUMENT ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ValidCode
+### DOCUMENT ###
+x = 1
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+SyntaxError
+### DOCUMENT ###
+x =
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'x ='",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ValidMultiLine
+### DOCUMENT ###
+x = 1
+y = "hello"
+print(x, y)
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+MultipleSyntaxErrors
+### DOCUMENT ###
+x =
+y =
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'x =\ny ='",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 1
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+UnknownFunctionHint
+### DOCUMENT ###
+foo()
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Function 'foo' may not be defined (only built-in and top-level functions are tracked)",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 4,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+UnknownFunctionKnownBuiltin
+### DOCUMENT ###
+print("hello")
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+UnknownFunctionWithTopLevelDef
+### DOCUMENT ###
+bar()
+fn bar():
+    pass
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+BreakOutsideLoop
+### DOCUMENT ###
+break
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'break' can only be used inside a loop",
+        "range": {
+          "end": {
+            "character": 5,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ContinueOutsideLoop
+### DOCUMENT ###
+continue
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'continue' can only be used inside a loop",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ReturnOutsideFunction
+### DOCUMENT ###
+return 1
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'return' can only be used inside a function",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+InvalidAssignmentToLiteral
+### DOCUMENT ###
+1 = x
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected '1 = x'",
+        "range": {
+          "end": {
+            "character": 5,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ShebangOnly
+### DOCUMENT ###
+#!/usr/bin/env rad
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+CommentOnly
+### DOCUMENT ###
+// this is a comment
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+MixedSeverities
+### DOCUMENT ###
+x =
+foo()
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Function 'foo' may not be defined (only built-in and top-level functions are tracked)",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 1
+          },
+          "start": {
+            "character": 0,
+            "line": 1
+          }
+        },
+        "severity": 4,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ValidForLoop
+### DOCUMENT ###
+for x in [1, 2, 3]:
+    print(x)
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ValidIfElse
+### DOCUMENT ###
+x = 1
+if x == 1:
+    print("one")
+else:
+    print("other")
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+ValidFunctionDef
+### DOCUMENT ###
+fn greet(name):
+    print("Hello, {name}!")
+greet("world")
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
