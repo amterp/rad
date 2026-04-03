@@ -31,11 +31,11 @@ var autoDetectFormats = []struct {
 	layout string
 	hasTz  bool
 }{
-	{time.RFC3339Nano, true},                          // 2006-01-02T15:04:05[.nnn]Z or +HH:MM
-	{"2006-01-02 15:04:05.999999999Z07:00", true},     // space separator with tz offset
-	{"2006-01-02T15:04:05.999999999", false},           // T separator, no tz
-	{"2006-01-02 15:04:05.999999999", false},           // space separator, no tz
-	{"2006-01-02", false},                              // date only
+	{time.RFC3339Nano, true},                      // 2006-01-02T15:04:05[.nnn]Z or +HH:MM
+	{"2006-01-02 15:04:05.999999999Z07:00", true}, // space separator with tz offset
+	{"2006-01-02T15:04:05.999999999", false},      // T separator, no tz
+	{"2006-01-02 15:04:05.999999999", false},      // space separator, no tz
+	{"2006-01-02", false},                         // date only
 }
 
 func convertFormatToGoLayout(format string) string {

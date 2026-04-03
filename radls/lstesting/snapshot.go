@@ -17,7 +17,7 @@ const (
 	TitleDelimiter      = "### TITLE ###"
 	DocumentDelimiter   = "### DOCUMENT ###"
 	ChangeDelimiter     = "### CHANGE ###"
-	CompletionDelimiter = "### COMPLETION" // e.g. "### COMPLETION 0:0 ###"
+	CompletionDelimiter = "### COMPLETION"  // e.g. "### COMPLETION 0:0 ###"
 	CodeActionDelimiter = "### CODE_ACTION" // e.g. "### CODE_ACTION 0:0 0:0 ###"
 	StdoutDelimiter     = "### STDOUT ###"
 )
@@ -74,16 +74,16 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 	)
 
 	var (
-		cases          []SnapshotCase
-		scanner        = bufio.NewScanner(file)
-		state          = stateInit
-		lineNum        = 0
-		title          string
-		docBuilder     strings.Builder
-		changeBuilder  strings.Builder
-		stdoutBuilder  strings.Builder
-		actions        []Action
-		inChange       bool // tracks whether we've entered a CHANGE section
+		cases         []SnapshotCase
+		scanner       = bufio.NewScanner(file)
+		state         = stateInit
+		lineNum       = 0
+		title         string
+		docBuilder    strings.Builder
+		changeBuilder strings.Builder
+		stdoutBuilder strings.Builder
+		actions       []Action
+		inChange      bool // tracks whether we've entered a CHANGE section
 	)
 
 	finishCase := func() {
