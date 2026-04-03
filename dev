@@ -30,7 +30,7 @@ if build:
     $`make build`
 
 if update:
-    $`go test ./core/testing/... ./rts/... -args -update`
+    $`go test ./core/testing/... ./rts/... ./radls/lstesting/... -args -update`
 else if test:
     $`make test`
 

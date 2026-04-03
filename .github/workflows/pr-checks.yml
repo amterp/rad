@@ -51,7 +51,7 @@ jobs:
 
       - name: Run Go tests
         id: tests
-        run: go test ./core/testing/... ./rts/...
+        run: go test ./core/testing/... ./rts/... ./radls/lstesting/...
 
   tests-windows:
     name: Tests (Windows)
@@ -70,7 +70,7 @@ jobs:
 
       - name: Run Go tests
         id: tests
-        run: go test ./core/testing/... ./rts/...
+        run: go test ./core/testing/... ./rts/... ./radls/lstesting/...
 
   binary-size:
     name: Binary Size Comparison

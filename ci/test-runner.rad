@@ -5,6 +5,6 @@ Dedicated CI script - independent from dev script.
 ---
 
 print("🧪 Running Go tests...")
-$`go test ./core/testing/... ./rts/...`
+$`go test ./core/testing/... ./rts/... ./radls/lstesting/...`
 
 print(green("✅ All tests passed!"))

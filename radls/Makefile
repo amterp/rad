@@ -7,9 +7,9 @@ BIN_DIR := ./bin
 GOFMT := gofmt -w
 GO := go
 
-.PHONY: all format build
+.PHONY: all format build test
 
-all: format build
+all: format build test
 
 format:
 	@echo "⚙️ Formatting code...."
@@ -19,3 +19,7 @@ build:
 	@echo "⚙️ Building the project..."
 	mkdir -p $(BIN_DIR)
 	$(GO) build -o $(BIN_DIR)/radls
+
+test:
+	@echo "⚙️ Running tests..."
+	$(GO) test ./lstesting/...

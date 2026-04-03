@@ -1,0 +1,205 @@
+### TITLE ###
+ShebangInsertionNoShebang
+### DOCUMENT ###
+x = 1
+### CODE_ACTION 0:0 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    }
+  ]
+}
+### TITLE ###
+NoShebangInsertionWithShebang
+### DOCUMENT ###
+#!/usr/bin/env rad
+x = 1
+### CODE_ACTION 0:0 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+ShebangInsertionEmptyDoc
+### DOCUMENT ###
+### CODE_ACTION 0:0 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    }
+  ]
+}
+### TITLE ###
+ShebangInsertionOnLaterRange
+### DOCUMENT ###
+x = 1
+y = 2
+### CODE_ACTION 1:0 1:5 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    }
+  ]
+}
+### TITLE ###
+CodeActionAfterChange
+### DOCUMENT ###
+#!/usr/bin/env rad
+x = 1
+### CHANGE ###
+x = 1
+### CODE_ACTION 0:0 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    }
+  ]
+}

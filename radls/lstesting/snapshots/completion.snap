@@ -1,0 +1,151 @@
+### TITLE ###
+ShebangCompletionLineZero
+### DOCUMENT ###
+### COMPLETION 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "detail": "Shebang for rad",
+      "label": "#!/usr/bin/env rad"
+    }
+  ]
+}
+### TITLE ###
+NoShebangCompletionLineOne
+### DOCUMENT ###
+x = 1
+### COMPLETION 1:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+ShebangCompletionEmptyDocMiddleOfLine
+### DOCUMENT ###
+### COMPLETION 0:5 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "detail": "Shebang for rad",
+      "label": "#!/usr/bin/env rad"
+    }
+  ]
+}
+### TITLE ###
+ShebangCompletionWithExistingCode
+### DOCUMENT ###
+x = 1
+y = 2
+### COMPLETION 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "detail": "Shebang for rad",
+      "label": "#!/usr/bin/env rad"
+    }
+  ]
+}
+### TITLE ###
+NoCompletionOnLineTwo
+### DOCUMENT ###
+x = 1
+y = 2
+z = 3
+### COMPLETION 2:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+CompletionAfterChange
+### DOCUMENT ###
+x = 1
+### CHANGE ###
+### COMPLETION 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "detail": "Shebang for rad",
+      "label": "#!/usr/bin/env rad"
+    }
+  ]
+}
