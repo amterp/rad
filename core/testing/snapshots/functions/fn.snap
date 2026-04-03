@@ -193,3 +193,93 @@ fn foo(x, y):
 ### STDOUT ###
 2
 
+### TITLE ###
+Escaping closure captures param
+### INPUT ###
+
+fn make_adder(n):
+	return fn(x) x + n
+
+add5 = make_adder(5)
+add5(3).print()
+add5(10).print()
+### STDOUT ###
+8
+15
+
+### TITLE ###
+Escaping closure captures local
+### INPUT ###
+
+fn make_greeter(name):
+	greeting = "Hello, " + name
+	return fn() greeting
+
+greet = make_greeter("world")
+greet().print()
+### STDOUT ###
+Hello, world
+
+### TITLE ###
+Named inner closure returned
+### INPUT ###
+
+fn make_greeter_fn(prefix):
+	fn greet(name):
+		return prefix + " " + name
+	return greet
+
+hi = make_greeter_fn("Hi")
+hi("Alice").print()
+hi("Bob").print()
+### STDOUT ###
+Hi Alice
+Hi Bob
+
+### TITLE ###
+Closure passed as callback
+### INPUT ###
+
+fn apply(f, x):
+	return f(x)
+
+fn make_multiplier(n):
+	return fn(x) x * n
+
+double = make_multiplier(2)
+apply(double, 7).print()
+### STDOUT ###
+14
+
+### TITLE ###
+Compound capture from nested scopes
+### INPUT ###
+
+fn outer(a):
+	b = a * 10
+	fn inner(c):
+		return fn() a + b + c
+	return inner
+
+f = outer(3)
+g = f(7)
+g().print()
+### STDOUT ###
+40
+
+### TITLE ###
+Escaping closure in list
+### INPUT ###
+
+fn make_pair(x, y):
+	return [fn() x, fn() y]
+
+pair = make_pair("hello", "world")
+first = pair[0]
+second = pair[1]
+first().print()
+second().print()
+### STDOUT ###
+hello
+world
+
