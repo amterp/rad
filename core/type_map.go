@@ -167,18 +167,23 @@ func (l *RadMap) Equals(right *RadMap) bool {
 }
 
 func (m *RadMap) AsErrMsg(i *Interpreter, node rl.Node) string {
-	if lo.Contains(lo.Keys(m.mapping), constCode) && lo.Contains(lo.Keys(m.mapping), constMsg) {
-		return fmt.Sprintf("%s (error %s)", m.mapping[constMsg].Val, m.mapping[constCode].Val)
+	codeKey := newRadValueStr(constCode)
+	msgKey := newRadValueStr(constMsg)
+	if m.ContainsKey(codeKey) && m.ContainsKey(msgKey) {
+		code, _ := m.Get(codeKey)
+		msg, _ := m.Get(msgKey)
+		return fmt.Sprintf("%s (error %s)", msg.Val, code.Val)
 	}
 
-	i.emitErrorf(rl.ErrInternalBug, node, "Bug: Map is not an error message, contains keys: %s", lo.Keys(m.mapping))
+	keyStrs := lo.Map(m.Keys(), func(k RadValue, _ int) string { return ToPrintableQuoteStr(k.Val, false) })
+	i.emitErrorf(rl.ErrInternalBug, node, "Bug: Map is not an error message, contains keys: %s", keyStrs)
 	panic(UNREACHABLE)
 }
 
 func (m *RadMap) ToGoMap() map[string]interface{} {
 	goMap := make(map[string]interface{}, len(m.mapping))
-	for k, v := range m.mapping {
-		goMap[k] = v.ToGoValue()
+	for _, key := range m.keys {
+		goMap[key.GoMapKey()] = m.mapping[key.Hash()].ToGoValue()
 	}
 	return goMap
 }
