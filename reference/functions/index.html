@@ -2377,6 +2377,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#parse_date" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse_date
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3942,6 +3953,17 @@
     <span class="md-ellipsis">
       
         parse_epoch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse_date" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse_date
       
     </span>
   </a>
@@ -5813,6 +5835,122 @@ print(time.epoch.nanos)  // -&gt; 1712345678123250000
 time, err = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;)
 if err:
     print(&quot;Invalid timezone:&quot;, err.msg)
+</code></pre></div>
+<h3 id="parse_date">parse_date<a class="headerlink" href="#parse_date" title="Permanent link">&para;</a></h3>
+<p>Parses a date string into the same time map format as <a href="#now"><code>now()</code></a> and <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
+<div class="highlight"><pre><span></span><code>parse_date(_date: str) -&gt; map|error
+parse_date(_date: str, *, format: str?) -&gt; map|error
+parse_date(_date: str, *, tz: str = &quot;local&quot;) -&gt; map|error
+parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; map|error
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_date</code></td>
+<td><code>str</code></td>
+<td>The date string to parse</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td><code>str?</code></td>
+<td>Format string using tokens (see below). Auto-detects if omitted</td>
+</tr>
+<tr>
+<td><code>tz</code></td>
+<td><code>str = "local"</code></td>
+<td>Timezone (e.g., "UTC", "America/Chicago")</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Auto-detected formats</strong> (when <code>format</code> is omitted):</p>
+<ul>
+<li><code>YYYY-MM-DD</code> (e.g., <code>2026-03-22</code>)</li>
+<li><code>YYYY-MM-DDTHH:mm:ss</code> (e.g., <code>2026-03-22T14:30:00</code>)</li>
+<li><code>YYYY-MM-DDTHH:mm:ssZ</code> or with offset (e.g., <code>2026-03-22T14:30:00+05:00</code>)</li>
+<li><code>YYYY-MM-DD HH:mm:ss</code> (space-separated)</li>
+<li>All of the above with optional fractional seconds (e.g., <code>.123456</code>)</li>
+</ul>
+<p><strong>Format tokens</strong> (for the <code>format</code> parameter):</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YYYY</code></td>
+<td>4-digit year</td>
+<td><code>2026</code></td>
+</tr>
+<tr>
+<td><code>MM</code></td>
+<td>2-digit month (01-12)</td>
+<td><code>03</code></td>
+</tr>
+<tr>
+<td><code>DD</code></td>
+<td>2-digit day (01-31)</td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td><code>HH</code></td>
+<td>2-digit hour, 24h</td>
+<td><code>14</code></td>
+</tr>
+<tr>
+<td><code>mm</code></td>
+<td>2-digit minute</td>
+<td><code>30</code></td>
+</tr>
+<tr>
+<td><code>ss</code></td>
+<td>2-digit second</td>
+<td><code>00</code></td>
+</tr>
+</tbody>
+</table>
+<p>All other characters in the format string are treated as literal separators. Format strings should
+contain only tokens and separators - avoid embedding prose text, as tokens like <code>mm</code> and <code>ss</code> will be
+matched inside words (e.g., "co<strong>mm</strong>it" or "acce<strong>ss</strong>").</p>
+<p>Note: <code>MM</code> (uppercase) is <strong>month</strong>, <code>mm</code> (lowercase) is <strong>minute</strong>. Mixing these up will produce
+wrong results or parse errors.</p>
+<p>For strings without timezone information, the time is interpreted in the <code>tz</code> timezone (local by
+default). For strings with timezone info (e.g., <code>Z</code>, <code>+05:00</code>), the time is parsed in that timezone
+and then converted to the output <code>tz</code>.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code>// Auto-detect common formats
+time = parse_date(&quot;2026-03-22&quot;)
+print(time.date)              // -&gt; &quot;2026-03-22&quot;
+print(time.epoch.seconds)     // -&gt; epoch at midnight local time
+
+time = parse_date(&quot;2026-03-22T14:30:00Z&quot;)
+print(time.hour)              // -&gt; 14 (or local equivalent)
+
+// Custom format for non-standard date strings
+time = parse_date(&quot;22/03/2026&quot;, format=&quot;DD/MM/YYYY&quot;)
+print(time.date)              // -&gt; &quot;2026-03-22&quot;
+
+time = parse_date(&quot;22.03.2026 14:30&quot;, format=&quot;DD.MM.YYYY HH:mm&quot;)
+print(time.hour, time.minute) // -&gt; 14 30
+
+// Timezone conversion
+time = parse_date(&quot;2026-03-22T14:30:00Z&quot;, tz=&quot;America/Chicago&quot;)
+print(time.hour)              // -&gt; 9 (CDT = UTC-5)
+
+// Error handling
+time = parse_date(&quot;bad input&quot;) catch:
+    print(time)  // error message with format hints
 </code></pre></div>
 
 
