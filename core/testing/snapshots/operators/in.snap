@@ -99,6 +99,28 @@ true
 false
 
 ### TITLE ###
+In list of lists
+### INPUT ###
+items = [[1, 2], [3, 4]]
+print([1, 2] in items)
+print([3, 4] in items)
+print([5, 6] in items)
+### STDOUT ###
+true
+true
+false
+
+### TITLE ###
+Not in list of lists
+### INPUT ###
+items = [[1, 2], [3, 4]]
+print([1, 2] not in items)
+print([5, 6] not in items)
+### STDOUT ###
+false
+true
+
+### TITLE ###
 Can nest in
 ### INPUT ###
 a = [true]
