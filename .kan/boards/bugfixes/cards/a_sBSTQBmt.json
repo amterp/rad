@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "null-as-map-key",
+  "alias_explicit": false,
+  "created_at_millis": 1775232132081,
+  "creator": "Alexander Terp",
+  "description": "Using null as a map key triggers an internal panic with \"Cannot key on a null\" and a Go stack trace. Rad itself marks this as \"This is a bug in Rad.\" Should produce a clean user-facing error.\n\n**Repro:**\n```\nm = {}\nm[null] = \"value\"   // Panic: Cannot key on a null\n\nm2 = {null: \"value\"}  // Same panic\n```\n\n**Test files:** `bugs/operators/103_map_key_null_string.rad`, `bugs/collections/19_map_dynamic_keys.rad`, `72_null_key_map_literal.rad`",
+  "id": "a_sBSTQBmt",
+  "severity": "medium",
+  "title": "Null as map key causes Go panic instead of clean error",
+  "updated_at_millis": 1775232132081
+}

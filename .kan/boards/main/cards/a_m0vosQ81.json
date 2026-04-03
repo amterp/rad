@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "date-parsing",
+  "alias_explicit": false,
+  "created_at_millis": 1774320463910,
+  "creator": "Alexander Terp",
+  "description": "No built-in date parsing\n\n  Had to shell out to date -j -f \"%Y-%m-%d\" ... to convert a date string to an epoch timestamp. This is macOS-specific and would break on Linux. Given that Rad already has now() and parse_epoch(), a\n  parse_date(\"2026-03-22\", \"YYYY-MM-DD\") returning the same map structure would round out the time story nicely.",
+  "id": "a_m0vosQ81",
+  "title": "date parsing functionality",
+  "type": "feature",
+  "updated_at_millis": 1774320472108
+}

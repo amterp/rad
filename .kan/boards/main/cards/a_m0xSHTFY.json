@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "function-for-sorting",
+  "alias_explicit": false,
+  "created_at_millis": 1774320526785,
+  "creator": "Alexander Terp",
+  "description": "Sorting by a key function\n\n  To sort stories by points, I had to build a list of lists with points as the first element so sort() would use it as the sort key. A sort(items, key=fn(x) x[\"points\"]) or sort_by would be much more ergonomic.\n  This is a common enough pattern that the workaround felt clunky.",
+  "id": "a_m0xSHTFY",
+  "title": "function for sorting by keys",
+  "type": "feature",
+  "updated_at_millis": 1774320547377
+}

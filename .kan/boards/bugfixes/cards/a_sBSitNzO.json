@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "int-silently",
+  "alias_explicit": false,
+  "created_at_millis": 1775232141678,
+  "creator": "Alexander Terp",
+  "description": "Converting special float values to int produces garbage results instead of errors.\n\n**Repro:**\n```\nprint(int(1.0/0))   // 9223372036854775807 (should error)\nprint(int(-1.0/0))  // -9223372036854775808 (should error)\nprint(int(0.0/0))   // 0 (NaN -\u003e 0, should error)\n```\n\n**Test files:** `bugs/operators/113_int_special_floats.rad`, `113b_int_nan.rad`",
+  "id": "a_sBSitNzO",
+  "severity": "low",
+  "title": "int() silently converts Inf/NaN to garbage integer values",
+  "updated_at_millis": 1775232141678
+}

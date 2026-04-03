@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "escaping-interpolation",
+  "alias_explicit": false,
+  "created_at_millis": 1774320410205,
+  "creator": "Alexander Terp",
+  "description": "The biggest issue: no way to escape { in strings\n\n  The regex constraint \"\\\\d{4}-\\\\d{2}-\\\\d{2}\" silently interpreted {4}, {2}, {2} as string interpolation, producing the regex \\d-\\d-\\d. I had to write \"\\\\d\\\\d\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d\" instead. This would also bite\n  anyone trying to build a JSON string manually, write a format pattern, or any string containing literal braces. Most languages with interpolation use {{ for a literal { - that would solve it cleanly.",
+  "id": "a_m0uQC1ua",
+  "title": "escaping interpolation apparently unclear",
+  "type": "enhancement",
+  "updated_at_millis": 1774320418731
+}

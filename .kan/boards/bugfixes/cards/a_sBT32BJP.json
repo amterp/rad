@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "void-values-silently",
+  "alias_explicit": false,
+  "created_at_millis": 1775232154162,
+  "creator": "Alexander Terp",
+  "description": "When a void function result is placed in a list or map literal, the entry is silently removed rather than producing an error.\n\n**Repro:**\n```\nfn do_nothing():\n    pass\n\nitems = [do_nothing(), 1, 2]\nprint(items)  // [1, 2] (void element silently dropped)\n\nm = {\"a\": do_nothing(), \"b\": 2}\nprint(m)  // {\"b\": 2} (void entry silently dropped)\n\nresult = [do_nothing() for x in [1, 2, 3]]\nprint(result)  // [] (all void results dropped)\n```\n\nThis can cause confusing bugs when a function was supposed to return a value but doesn't.\n\n**Test files:** `bugs/functions/t69_fn_void_in_list.rad`, `t98_fn_comprehension_void.rad`, `t101_fn_void_in_map.rad`",
+  "id": "a_sBT32BJP",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
+  "title": "Void values silently dropped from collections",
+  "updated_at_millis": 1775233427199
+}

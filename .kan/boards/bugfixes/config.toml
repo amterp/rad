@@ -1,0 +1,72 @@
+kan_schema = "board/9"
+id = "b_sBGk8Gtk"
+name = "bugfixes"
+default_column = "todo-lo"
+
+[[columns]]
+  name = "todo-lo"
+  color = "#6b7280"
+  description = "Low priority bugs to fix eventually"
+  limit = 0
+  card_ids = ["a_sBPpKYdk", "a_sBPEpP4j", "a_sBSETejS", "a_sBSMJTGV", "a_sBSZN4IY", "a_sBSpTja4", "a_sBSvE2vJ", "a_sBT32BJP", "a_sBTDjj0k", "a_sBTJUILR", "a_sBTYIo6x", "a_sBTjzlaD", "a_sBTqWVMa", "a_sBTwEeRL", "a_sBUAtQm4"]
+
+[[columns]]
+  name = "todo-hi"
+  color = "#ef4444"
+  description = "High priority bugs to fix soon"
+  limit = 0
+  card_ids = ["a_sBQtDAsa", "a_sBR0JLWj", "a_sBRwF6pf", "a_sBQgqO7u", "a_sBRDpFgU", "a_sBRVjVvW", "a_sBPzQCcM", "a_sBQ8LS6p"]
+
+[[columns]]
+  name = "in-progress"
+  color = "#f59e0b"
+  description = "Bugs currently being worked on"
+  limit = 0
+
+[[columns]]
+  name = "done"
+  color = "#10b981"
+  description = "Fixed and verified"
+  limit = 0
+  card_ids = ["a_sBSTQBmt", "a_sBRN8yql", "a_sBSitNzO", "a_sBTPFKcv", "a_sBRcZaJD", "a_sBU0oMeL", "a_sBQXZzay", "a_sBQHHQhh", "a_sBPdGu1O", "a_sBPOYI5L"]
+
+[custom_fields]
+  [custom_fields.grammar]
+    type = "boolean"
+    description = "Whether this bug requires grammar/parser changes to fix"
+  [custom_fields.severity]
+    type = "enum"
+    wanted = true
+    description = "How severe the bug is"
+
+    [[custom_fields.severity.options]]
+      value = "critical"
+      color = "#dc2626"
+      description = "Blocks core functionality or causes data loss"
+
+    [[custom_fields.severity.options]]
+      value = "high"
+      color = "#f97316"
+      description = "Significant impact but has workarounds"
+
+    [[custom_fields.severity.options]]
+      value = "medium"
+      color = "#eab308"
+      description = "Noticeable issue with limited impact"
+
+    [[custom_fields.severity.options]]
+      value = "low"
+      color = "#6b7280"
+      description = "Minor issue, cosmetic or edge case"
+  [custom_fields.tags]
+    type = "enum-set"
+    description = "Card tags"
+
+    [[custom_fields.tags.options]]
+      value = "design"
+      color = "#8b5cf6"
+      description = "Requires language design thinking"
+
+[card_display]
+  type_indicator = "severity"
+  badges = ["tags", "grammar"]

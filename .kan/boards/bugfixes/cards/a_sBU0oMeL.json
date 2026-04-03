@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "large-floats-printed",
+  "alias_explicit": false,
+  "created_at_millis": 1775232191221,
+  "creator": "Alexander Terp",
+  "description": "1e308 prints as a 309-character string of zeros instead of using scientific notation.\n\n**Repro:**\n```\nprint(1e308)\n// 100000000000000000000000000000000000...000 (309 chars)\n// Should print: 1e+308 or 1.0e308\n```\n\n**Test files:** `bugs/operators/69_large_float_print.rad`",
+  "id": "a_sBU0oMeL",
+  "severity": "low",
+  "title": "Large floats printed in full decimal notation instead of scientific",
+  "updated_at_millis": 1775232191221
+}

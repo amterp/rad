@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "and-returns-bool",
+  "alias_explicit": false,
+  "created_at_millis": 1775232160794,
+  "creator": "Alexander Terp",
+  "description": "`and` always returns a boolean, but `or` returns the actual operand value (short-circuit semantics). These should be consistent.\n\n**Repro:**\n```\nprint(1 and 2)   // true (boolean)\nprint(1 or 2)    // 1 (the operand value)\nprint(0 or 2)    // 2 (the operand value)\n```\n\nUsers coming from Python/JS expect both to return operand values (short-circuit), or both to return booleans.\n\n**Test files:** `bugs/operators/72_and_or_return_value.rad`, `78_and_return_inconsistency.rad`, `114_and_or_value_detail.rad`",
+  "id": "a_sBTDjj0k",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
+  "title": "and returns bool while or returns operand value - inconsistent",
+  "updated_at_millis": 1775233426117
+}

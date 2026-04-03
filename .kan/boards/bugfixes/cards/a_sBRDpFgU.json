@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "caught-errors-re",
+  "alias_explicit": false,
+  "created_at_millis": 1775232083974,
+  "creator": "Alexander Terp",
+  "description": "VERIFIED: The re-propagation behavior may be intentional, but there is a concrete sub-bug: the error attribution points to the ORIGINAL call site, not the re-propagation site.\n\n**The problem:**\n```\nfn fail():\n    return error(\"boom\")\n\nstored = fail() catch:\n    pass\n// stored is error-typed but \"defused\"\n\nfn relay(x):\n    return x\n\nresult = relay(stored)  // CRASHES - error re-propagates\n// Error points to line with fail(), NOT relay()\n```\n\n**Two issues:**\n1. **Design concern:** A user who wrote `catch: pass` reasonably expects they handled the error. Passing it through a transparent relay function re-fires it.\n2. **Confirmed sub-bug:** The error message points to the original fail() call site, not the relay() call. This makes debugging very difficult.\n\nNote: `relay(stored) ?? \"fallback\"` DOES catch the re-propagation, so it is recoverable.\n\n**Test files:** `bugs/errors/82_error_return_from_user_fn.rad`, `83_catch_repropagation.rad`",
+  "id": "a_sBRDpFgU",
+  "severity": "high",
+  "tags": [
+    "design"
+  ],
+  "title": "Caught errors re-propagate when returned from user-defined functions",
+  "updated_at_millis": 1775233464341
+}

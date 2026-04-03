@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "infinite-recursion",
+  "alias_explicit": false,
+  "created_at_millis": 1775232188385,
+  "creator": "Alexander Terp",
+  "description": "A function that calls itself infinitely runs forever with no stack overflow detection or recursion depth limit.\n\n**Repro:**\n```\nfn infinite():\n    return infinite()\n\ninfinite()  // Hangs forever, must kill process\n```\n\nMost languages impose a recursion limit (e.g. Python's default 1000). Without one, accidental infinite recursion requires the user to manually kill the process.\n\n**Test files:** `bugs/functions/t124_fn_recursive_depth_limit.rad`",
+  "id": "a_sBTwEeRL",
+  "severity": "low",
+  "title": "Infinite recursion has no depth limit - must be killed externally",
+  "updated_at_millis": 1775232188385
+}

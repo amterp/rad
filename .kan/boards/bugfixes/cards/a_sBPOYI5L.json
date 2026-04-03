@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "escaping-closures",
+  "alias_explicit": false,
+  "created_at_millis": 1775232013740,
+  "creator": "Alexander Terp",
+  "description": "Functions returned from other functions cannot access variables from the enclosing scope. The error is \"Undefined variable: \u003cname\u003e\". This breaks factory functions, make_adder patterns, make_counter, and passing closures as callbacks.\n\nClosures called *within* the enclosing scope work fine. Only closures that escape (are returned and called later) fail.\n\n**Repro:**\n```\nfn make_adder(n):\n    return fn(x) x + n\n\nadd5 = make_adder(5)\nprint(add5(3))\n// Expected: 8\n// Actual: error \"Undefined variable: n\"\n```\n\n**Test files:** `bugs/functions/t17c_closure_param.rad`, `t17e_closure_local.rad`, `t87_return_inner_named_closure.rad`, `t88_closure_escape_anon.rad`, `t90_syntax_md_closure_example.rad`, `t111_fn_recursive_closure.rad`, `t125_fn_closure_callback.rad`, `t126_fn_closure_escape_compound.rad`",
+  "id": "a_sBPOYI5L",
+  "severity": "critical",
+  "title": "Escaping closures are broken - returned functions lose enclosing scope",
+  "updated_at_millis": 1775232013740
+}

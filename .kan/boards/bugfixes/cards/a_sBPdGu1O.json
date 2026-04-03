@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "void-value-in",
+  "alias_explicit": false,
+  "created_at_millis": 1775232022869,
+  "creator": "Alexander Terp",
+  "description": "Using the return value of a void function (no return statement) in any expression context causes a Go panic with \"Bug! Unhandled Rad type in Type: 'int'\". Affected contexts: arithmetic, comparisons, string interpolation, switch expressions.\n\n**Repro:**\n```\nfn do_nothing():\n    pass\n\ndo_nothing() + 1           // Go panic\ndo_nothing() == null        // Go panic\n\"result: {do_nothing()}\"   // Go panic\nswitch do_nothing():        // Go panic\n```\n\nShould produce a clean error like \"Cannot use void value in expression\".\n\n**Test files:** `bugs/functions/t20d_void_in_expression.rad`, `t78_fn_void_compare.rad`, `t91_fn_void_interpolation.rad`, `t118_fn_void_in_switch.rad`",
+  "id": "a_sBPdGu1O",
+  "severity": "critical",
+  "title": "Void value in expressions causes Go panic",
+  "updated_at_millis": 1775232022869
+}

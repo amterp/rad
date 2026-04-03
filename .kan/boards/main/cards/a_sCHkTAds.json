@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "add-thorough-radls",
+  "alias_explicit": false,
+  "created_at_millis": 1775234103107,
+  "creator": "Alexander Terp",
+  "description": "Add comprehensive test coverage for the radls language server binary.\n\nThis includes:\n- Basic startup/shutdown tests\n- A test mirroring the homebrew-core formula test (assert 'Spinning up Rad LSP server' on stderr, exit 1). Keep this in sync with Formula/r/rad.rb in homebrew-core.\n- LSP protocol tests (initialize, textDocument/didOpen, etc.)\n- Error handling and edge cases\n\nSee also: the Homebrew_FormulaTestScript snapshot test in core/testing/snapshots/misc/homebrew.snap which covers the rad script side of the homebrew formula.",
+  "id": "a_sCHkTAds",
+  "title": "Add thorough radls (LSP) test coverage",
+  "type": "excellence",
+  "updated_at_millis": 1775234150788
+}

@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "strings-are-sortable",
+  "alias_explicit": false,
+  "created_at_millis": 1775232167937,
+  "creator": "Alexander Terp",
+  "description": "sort() works on string lists but the \u003c operator rejects string comparisons. This is inconsistent - sort must internally compare strings, but users cannot.\n\n**Repro:**\n```\nprint([\"banana\", \"apple\"].sort())  // [\"apple\", \"banana\"] (works)\nprint(\"apple\" \u003c \"banana\")          // Error: cannot do 'str \u003c str'\n```\n\n**Test files:** `bugs/operators/21_comparison_types.rad`, `108_string_order_in_sort.rad`",
+  "id": "a_sBTPFKcv",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
+  "title": "Strings are sortable but \u003c comparison errors",
+  "updated_at_millis": 1775233429071
+}

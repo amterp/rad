@@ -1,4 +1,4 @@
-kan_schema = "board/8"
+kan_schema = "board/9"
 id = "3d0a0ABE"
 name = "main"
 default_column = "uncommitted"
@@ -42,7 +42,7 @@ default_column = "uncommitted"
   color = "#9333ea"
   description = "Completed work"
   limit = 0
-  card_ids = ["3d89rXGY", "3d899YvN", "a_I2NTCfY6", "a_ceKcy7GF", "a_HboxvvmE", "a_S7ER5PHd", "a_S7EomwzE", "a_HbosXnXC", "3d8ASr9Z", "3d8A8mhQ", "a_GT8i8577", "a_PEsAsXMW", "a_O2fs6W0y", "a_O54MpsBn", "a_HboNpova", "a_O29nuorv", "a_HbouMjPG", "a_HbovaesL", "3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs", "3d86ADAd"]
+  card_ids = ["a_sCHkTAds", "3d89rXGY", "3d899YvN", "a_I2NTCfY6", "a_ceKcy7GF", "a_HboxvvmE", "a_S7ER5PHd", "a_S7EomwzE", "a_HbosXnXC", "3d8ASr9Z", "3d8A8mhQ", "a_GT8i8577", "a_PEsAsXMW", "a_O2fs6W0y", "a_O54MpsBn", "a_HboNpova", "a_O29nuorv", "a_HbouMjPG", "a_HbovaesL", "3d88njyk", "3d8AE4eW", "a_EaGfmrkG", "a_GU1ACjwn", "a_He4anbZC", "a_JLX7zWqH", "a_HbiCHmY9", "a_GTPQgBOF", "a_GS341loN", "a_GU4qImco", "a_GRJEdNHl", "a_GQvhwhRT", "a_EWrbVFnG", "a_EYVxBkYv", "3d8AWt0l", "a_E73xUWYt", "a_E73VBkfV", "3d89vNxp", "3d8AB8fO", "3d8AQHZ0", "3d8AIrHV", "a_HbojAr45", "a_HbokMPp8", "a_HboliVrU", "a_HbonTOg4", "a_HbopFe47", "a_HboqlCDs", "3d86ADAd"]
 
 [custom_fields]
   [custom_fields.labels]

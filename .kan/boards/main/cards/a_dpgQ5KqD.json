@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "rad-explain-list",
+  "alias_explicit": false,
+  "created_at_millis": 1773111548989,
+  "creator": "Alexander Terp",
+  "description": "Extract the # heading from each core/error_docs/XXXXX.md file and display it in a two-column table alongside the error code when running rad explain list.",
+  "id": "a_dpgQ5KqD",
+  "title": "rad explain list should show summaries alongside codes",
+  "type": "enhancement",
+  "updated_at_millis": 1773111548989
+}

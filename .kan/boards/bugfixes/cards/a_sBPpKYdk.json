@@ -1,0 +1,15 @@
+{
+  "_v": 1,
+  "alias": "division-always",
+  "alias_explicit": false,
+  "created_at_millis": 1775232030347,
+  "creator": "Alexander Terp",
+  "description": "VERIFIED: This is documented intended behavior - the basics guide explicitly states \"if you divide two ints, you will get back a float.\" However, the UX is poor.\n\n**The problem:**\n```\nitems = [\"a\", \"b\", \"c\", \"d\"]\nmid = 4 / 2     // 2.0 (float)\nitems[mid]       // Error: Expected int, got \"float\": 2\n```\n\nThe display hides the float nature (shows `2` not `2.0`), making the subsequent error confusing. There is no integer division operator (`//` is a comment in Rad).\n\n**Workaround:** `int(a / b)`\n\n**Design options:**\n1. Add `//` integer division operator (would need different comment syntax)\n2. Return int when division is exact (6/3 -\u003e 2, 7/3 -\u003e 2.333)\n3. Add `div()` or `idiv()` builtin function\n\n**Test files:** `bugs/operators/67_division_result_type.rad`, `76_int_int_division_result.rad`",
+  "id": "a_sBPpKYdk",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
+  "title": "Division always returns float, unusable as list index",
+  "updated_at_millis": 1775233450471
+}

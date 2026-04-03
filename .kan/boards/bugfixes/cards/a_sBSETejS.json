@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "int-literal-overflow",
+  "alias_explicit": false,
+  "created_at_millis": 1775232122822,
+  "creator": "Alexander Terp",
+  "description": "Writing an integer literal that exceeds int64 range causes an unrecoverable Go panic instead of a user-friendly error.\n\n**Repro:**\n```\nx = 9223372036854775808   // max int64 + 1\n// Go panic: converter: failed to parse int\n```\n\nAlso cannot express the minimum int64 value as a literal: -9223372036854775808 panics.\n\n**Source:** `rts/converter.go:1151`\n**Test files:** `bugs/operators/01_int_overflow.rad`, `59_min_int_literal.rad`",
+  "id": "a_sBSETejS",
+  "severity": "medium",
+  "title": "Int literal overflow causes Go panic",
+  "updated_at_millis": 1775232122822
+}

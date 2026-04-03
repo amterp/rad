@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "switch-evaluates-all",
+  "alias_explicit": false,
+  "created_at_millis": 1775232180791,
+  "creator": "Alexander Terp",
+  "description": "All case expressions in a switch are evaluated before matching, including those after the matching case. Functions with side effects in case expressions will execute for every case.\n\n**Repro:**\n```\nfn log(x):\n    print(\"evaluating: {x}\")\n    return x\n\nswitch 1:\n    case log(1):\n        print(\"matched 1\")\n    case log(2):\n        print(\"matched 2\")\n// Output includes \"evaluating: 1\" AND \"evaluating: 2\"\n// plus if multiple cases match, error RAD20035\n```\n\nMost switch implementations use lazy evaluation (stop after first match).\n\n**Test files:** `bugs/control_flow/54_switch_case_side_effects.rad`",
+  "id": "a_sBTjzlaD",
+  "severity": "medium",
+  "title": "Switch evaluates ALL case expressions eagerly, even after match found",
+  "updated_at_millis": 1775232180791
+}

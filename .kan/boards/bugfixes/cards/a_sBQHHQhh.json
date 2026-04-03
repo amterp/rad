@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "in-operator-broken",
+  "alias_explicit": false,
+  "created_at_millis": 1775232047675,
+  "creator": "Alexander Terp",
+  "description": "The `in` operator returns false when checking if a list exists within a list of lists, even though equality comparison works correctly.\n\n**Repro:**\n```\nitems = [[1, 2], [3, 4]]\nprint([1, 2] in items)    // false (WRONG - should be true)\nprint([1, 2] == items[0]) // true  (equality works fine)\n```\n\n**Root cause:** In `core/expr_ops.go` lines 302-305, the OpIn case for RadList vs RadList calls `coercedLeft.Contains(right())` instead of `coercedRight.Contains(left())`. The operands are swapped compared to every other `in` implementation.\n\n**Test files:** `bugs/operators/110_list_in_list.rad`, `110b_list_in_check.rad`, `bugs/collections/57_list_in_comparison.rad`, `71_list_in_list.rad`, `123_list_in_list_deep.rad`",
+  "id": "a_sBQHHQhh",
+  "severity": "high",
+  "title": "in operator broken for list-in-list checks (operands swapped)",
+  "updated_at_millis": 1775232047675
+}

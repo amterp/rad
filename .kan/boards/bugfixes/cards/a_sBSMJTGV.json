@@ -1,0 +1,12 @@
+{
+  "_v": 1,
+  "alias": "circular-data",
+  "alias_explicit": false,
+  "created_at_millis": 1775232127674,
+  "creator": "Alexander Terp",
+  "description": "Creating a circular reference (e.g. map containing itself) and then printing or comparing it causes a Go runtime stack overflow - a hard crash, not a recoverable error.\n\n**Repro:**\n```\nm = {}\nm[\"self\"] = m\nprint(m)   // fatal error: stack overflow\n\na = [1]\na[0] = a\nprint(a)   // fatal error: stack overflow\n```\n\nNo cycle detection exists in print or equality. Unlikely in normal usage but a hard crash is always bad.\n\n**Test files:** `bugs/operators/64_self_referential.rad`, `65c_circular_list.rad`, `bugs/collections/87_list_contains_self.rad`, `91_list_self_ref_crash.rad`",
+  "id": "a_sBSMJTGV",
+  "severity": "medium",
+  "title": "Circular data structures cause stack overflow crash",
+  "updated_at_millis": 1775232127674
+}
