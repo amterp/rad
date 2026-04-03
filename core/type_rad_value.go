@@ -250,27 +250,57 @@ func (v RadValue) ModifyByKey(i *Interpreter, node rl.Node, key RadValue, rightV
 }
 
 func (v RadValue) Hash() string {
+	// Type prefixes prevent cross-type collisions (e.g. int 1 vs string "1").
+	// Numbers share "n:" so int/float equivalence (1 == 1.0) is preserved.
+	// Errors share "s:" with strings, matching Equals semantics.
 	switch val := v.Val.(type) {
 	case RadString:
-		return val.Plain() // attributes don't impact hash
+		return "s:" + val.Plain()
 	case int64:
-		return fmt.Sprintf("%d", val)
+		return "n:" + fmt.Sprintf("%d", val)
 	case float64:
 		// Whole-number floats hash as int so e.g. 2.0 and 2 share a hash.
 		// Round-trip check ensures no precision loss near int64 boundaries.
 		if val == math.Trunc(val) && !math.IsInf(val, 0) && !math.IsNaN(val) {
 			asInt := int64(val)
 			if float64(asInt) == val {
-				return fmt.Sprintf("%d", asInt)
+				return "n:" + fmt.Sprintf("%d", asInt)
 			}
 		}
+		return "n:" + strconv.FormatFloat(val, 'g', -1, 64)
+	case bool:
+		if val {
+			return "b:true"
+		}
+		return "b:false"
+	case *RadError:
+		return "s:" + val.Hash()
+	default:
+		panic(fmt.Sprintf("Cannot key on a %s", TypeAsString(v)))
+	}
+}
+
+// GoMapKey returns a plain string representation suitable for Go map keys
+// (e.g. JSON serialization). Unlike Hash(), it has no type prefix.
+// Note: since Go maps / JSON require string keys, maps with distinct Rad keys
+// that share a string representation (e.g. int 1 and string "1") will collide
+// in the Go map. This is an inherent limitation of the target format.
+func (v RadValue) GoMapKey() string {
+	switch val := v.Val.(type) {
+	case RadString:
+		return val.Plain()
+	case int64:
+		return fmt.Sprintf("%d", val)
+	case float64:
+		// 'g' format drops trailing ".0" for whole numbers, so float 1.0
+		// produces "1" - matching the int representation. Don't change to 'f'.
 		return strconv.FormatFloat(val, 'g', -1, 64)
 	case bool:
 		return fmt.Sprintf("%v", val)
 	case *RadError:
 		return val.Hash()
 	default:
-		panic(fmt.Sprintf("Cannot key on a %s", TypeAsString(v)))
+		panic(fmt.Sprintf("Cannot convert %s to Go map key", TypeAsString(v)))
 	}
 }
 
