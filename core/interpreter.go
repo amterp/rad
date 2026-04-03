@@ -1178,9 +1178,9 @@ func (i *Interpreter) runBlock(stmtNodes []rl.Node) EvalResult {
 	return res
 }
 
-func (i *Interpreter) runWithChildEnv(runnable func()) {
+func (i *Interpreter) runWithChildEnv(parent *Env, runnable func()) {
 	originalEnv := i.env
-	env := originalEnv.NewChildEnv()
+	env := parent.NewChildEnv()
 	i.env = &env
 	runnable()
 	i.env = originalEnv

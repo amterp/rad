@@ -74,7 +74,11 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 	}
 
 	out = VOID_SENTINEL
-	i.runWithChildEnv(func() {
+	parent := i.env
+	if fn.Env != nil {
+		parent = fn.Env
+	}
+	i.runWithChildEnv(parent, func() {
 		// todo the following checking logic should be in IsCompatibleWith for TypingFnT
 
 		seen := make(map[string]bool)
