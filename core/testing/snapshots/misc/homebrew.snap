@@ -1,0 +1,18 @@
+### TITLE ###
+Homebrew_FormulaTestScript
+### DESCRIPTION ###
+Mirrors the test script in the homebrew-core formula (Formula/r/rad.rb).
+If this test breaks, the homebrew formula test will also break.
+Update both together.
+### INPUT ###
+args:
+    times int = 1
+
+for _ in range(times):
+    print("Hello, Homebrew!")
+### ARGS ###
+2
+### STDOUT ###
+Hello, Homebrew!
+Hello, Homebrew!
+
