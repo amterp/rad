@@ -416,6 +416,7 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 
 	case *rl.Switch:
 		discriminantVal := i.eval(n.Discriminant).Val
+		discriminantVal.RequireNonVoid(i, n.Discriminant)
 
 		var matchedCases []rl.SwitchCase
 		for _, sc := range n.Cases {
@@ -591,6 +592,7 @@ func (i *Interpreter) evalString(n *rl.LitString) RadString {
 			str = str.ConcatStr(seg.Text)
 		} else {
 			exprResult := i.eval(seg.Expr).Val
+			exprResult.RequireNonVoid(i, seg.Expr)
 			if seg.Format != nil {
 				str = str.Concat(i.formatInterpolation(seg, exprResult))
 			} else {

@@ -283,3 +283,100 @@ second().print()
 hello
 world
 
+### TITLE ###
+Void in arithmetic
+### INPUT ###
+fn f():
+	pass
+f() + 1
+### STDERR ###
+error[RAD20038]: Cannot use void value in expression
+  --> <script>:3:1
+  |
+2 | 	pass
+3 | f() + 1
+  | ^^^
+  |
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
+### TITLE ###
+Void in comparison
+### INPUT ###
+fn f():
+	pass
+f() == null
+### STDERR ###
+error[RAD20038]: Cannot use void value in expression
+  --> <script>:3:1
+  |
+2 | 	pass
+3 | f() == null
+  | ^^^
+  |
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
+### TITLE ###
+Void in string interpolation
+### INPUT ###
+fn f():
+	pass
+print("{f()}")
+### STDERR ###
+error[RAD20038]: Cannot use void value in expression
+  --> <script>:3:9
+  |
+2 | 	pass
+3 | print("{f()}")
+  |         ^^^
+  |
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
+### TITLE ###
+Void in switch
+### INPUT ###
+fn f():
+	pass
+switch f():
+	case 1 -> print("one")
+### STDERR ###
+error[RAD20038]: Cannot use void value in expression
+  --> <script>:3:8
+  |
+2 | 	pass
+3 | switch f():
+  |        ^^^
+4 | 	case 1 -> print("one")
+  |
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
+### TITLE ###
+Void in unary negation
+### INPUT ###
+fn f():
+	pass
+-f()
+### STDERR ###
+error[RAD20038]: Cannot use void value in expression
+  --> <script>:3:2
+  |
+2 | 	pass
+3 | -f()
+  |  ^^^
+  |
+   = info: rad explain RAD20038
+
+
+### EXIT ###
+1
