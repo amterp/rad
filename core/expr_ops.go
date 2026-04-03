@@ -305,9 +305,9 @@ func (i *Interpreter) executeOp(
 			case rl.OpAdd:
 				return coercedLeft.JoinWith(coercedRight)
 			case rl.OpIn:
-				return coercedLeft.Contains(right())
+				return coercedRight.Contains(left())
 			case rl.OpNotIn:
-				return !coercedLeft.Contains(right())
+				return !coercedRight.Contains(left())
 			}
 		}
 		switch op {
