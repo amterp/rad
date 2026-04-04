@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strings"
 
 	com "github.com/amterp/rad/core/common"
@@ -28,7 +29,7 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 	com.CyanF(buf, " [script path | command] [flags]\n\n")
 
 	com.GreenBoldF(buf, "Commands:\n")
-	commandUsage(buf, Cmds)
+	commandUsage(buf, Cmds, completionDescription)
 
 	// Use Ra's GenerateLongGlobalOptionsSection for superior flag formatting
 	buf.WriteString("\n")
@@ -49,14 +50,28 @@ func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	r.printHelpFromBuffer(buf, isErr)
 }
 
-func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd) {
-	var sb strings.Builder
+func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd, completionDesc string) {
+	type cmdEntry struct {
+		name string
+		desc string
+	}
 
+	// Collect all commands (embedded + Go-implemented) and sort alphabetically
+	entries := make([]cmdEntry, 0, len(cmds)+1)
 	for _, cmd := range cmds {
+		entries = append(entries, cmdEntry{cmd.Name, cmd.Description})
+	}
+	entries = append(entries, cmdEntry{"completion", completionDesc})
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].name < entries[j].name
+	})
+
+	var sb strings.Builder
+	for _, e := range entries {
 		sb.WriteString("  ")
-		sb.WriteString(fmt.Sprintf("%-12s", cmd.Name))
+		sb.WriteString(fmt.Sprintf("%-12s", e.name))
 		sb.WriteString("  ")
-		sb.WriteString(cmd.Description + "\n")
+		sb.WriteString(e.desc + "\n")
 	}
 
 	sb.WriteString("\nTo see help for a specific command, run `rad <command> -h`.")
