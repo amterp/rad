@@ -993,6 +993,12 @@ func init() {
 				case int64:
 					return f.Return(coerced)
 				case float64:
+					if math.IsInf(coerced, 0) {
+						return f.ReturnErrf(rl.ErrCast, "Cannot cast %v to int", coerced)
+					}
+					if math.IsNaN(coerced) {
+						return f.ReturnErrf(rl.ErrCast, "Cannot cast NaN to int")
+					}
 					return f.Return(int64(coerced))
 				case bool:
 					if coerced {
