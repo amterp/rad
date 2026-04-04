@@ -314,6 +314,16 @@ func (i *Interpreter) executeOp(
 		case rl.OpAdd:
 			additionalErrMsg = ". Did you mean to wrap the right side in a list in order to append?"
 		}
+	case *RadMap:
+		switch coercedRight := rightV.(type) {
+		case *RadList:
+			switch op {
+			case rl.OpIn:
+				return coercedRight.Contains(left())
+			case rl.OpNotIn:
+				return !coercedRight.Contains(left())
+			}
+		}
 	case RadNull:
 		switch coercedRight := rightV.(type) {
 		case *RadList:
