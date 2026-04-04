@@ -45,6 +45,14 @@ func NewRadRunner(runnerInput RunnerInput) *RadRunner {
 func (r *RadRunner) Run() error {
 	RConfig = LoadRadConfig()
 
+	// Handle `rad completion <shell> [scripts...]` early, before normal detection.
+	// A Rad script named "completion" in CWD takes precedence (consistent with
+	// embedded command behavior), but a non-Rad file named "completion" should not
+	// block the completion command.
+	if len(os.Args) > 1 && os.Args[1] == "completion" && !(com.IsRegularFile("completion") && isRadScript("completion")) {
+		return r.handleCompletionCommand(os.Args[2:])
+	}
+
 	// Phase 1: Detection & Setup
 	invocationType, err := r.detectAndSetup(os.Args[1:])
 	if err != nil {
@@ -65,9 +73,12 @@ func (r *RadRunner) Run() error {
 		if err != nil {
 			RP.ErrorExit(err.Error())
 		}
+	} else if isCompletionRequest() {
+		// Only parse and register embedded commands when actually serving a
+		// completion request. This avoids the tree-sitter overhead on normal
+		// invocations like `rad --help` or `rad --version`.
+		r.registerEmbeddedCommandsForCompletion()
 	}
-
-	// Let ra handle help flags properly through hooks - removed manual processing
 
 	// Phase 3: Parse & Execute
 	return r.parseAndExecute(invocationType)
@@ -116,8 +127,24 @@ func (r *RadRunner) detectInvocationType(args []string) (InvocationType, string,
 		return EmbeddedCommand, *cmdSource, nil
 	}
 
+	// Shell completion request for the rad CLI itself (e.g., "rad __complete docs ...").
+	// Script completion (e.g., "rad script.rad __complete ...") is handled above as
+	// ScriptFile - the __complete appears in argsToRead and is caught in parseAndExecute.
+	if firstArg == "__complete" {
+		return NoScript, "", nil
+	}
+
 	// Unknown file or command
 	return NoScript, "", fmt.Errorf("Unknown file or command: %s", firstArg)
+}
+
+// isCompletionRequest returns true if the current invocation is a shell completion
+// request. Checks both positions where __complete can appear:
+//   - "rad __complete ..."         (CLI completion, __complete at position 1)
+//   - "rad script.rad __complete ..." (script completion, __complete at position 2)
+func isCompletionRequest() bool {
+	return (len(os.Args) > 1 && os.Args[1] == "__complete") ||
+		(len(os.Args) > 2 && os.Args[2] == "__complete")
 }
 
 // detectAndSetup analyzes args and sets up basic state
@@ -241,6 +268,16 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		}
 	} else {
 		argsToRead = os.Args[1:]
+	}
+
+	// Shell completion: bypass the double-parse entirely.
+	// When the shell calls us for completion, we just need the registered args/commands
+	// (already set up in Phase 2) and Ra's completion logic. No printer setup, no
+	// version checks, no script execution needed.
+	if len(argsToRead) > 0 && argsToRead[0] == "__complete" {
+		RRootCmd.EnableCompletion()
+		RRootCmd.ParseOrExit(argsToRead)
+		return nil // ParseOrExit calls exit(0) on completion; we never reach here
 	}
 
 	// First parse: ignoreUnknown=true since script args aren't registered yet
@@ -498,6 +535,13 @@ func printAstTree(tree *rts.RadTree, src string, file string, prependNewline boo
 // This is called from validateSyntax() when the script has errors, before showing the error.
 // Returns true if a flag was handled (and the function exited), false otherwise.
 func handleGlobalInspectionFlagsOnInvalidSyntax(src string, tree *rts.RadTree) {
+	// During shell completion, flags like "--src" or "--version" in the args are
+	// completion context, not actual flag invocations. Skip inspection handling
+	// to avoid corrupting completion output on stdout.
+	if isCompletionRequest() {
+		return
+	}
+
 	hasVersion := false
 	hasSrc := false
 	hasCstTree := false
