@@ -1,6 +1,9 @@
 package testing
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func Test_MapKeys_IntAndStringAreDistinct(t *testing.T) {
 	script := `
@@ -104,5 +107,52 @@ print(m["1"])
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, "1\nstr\n")
+	assertNoErrors(t)
+}
+
+func Test_MapKeys_NullKeyAssignError(t *testing.T) {
+	script := `
+m = {}
+m[null] = "value"
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertExitCode(t, 1)
+	output := stdErrBuffer.String()
+	if !strings.Contains(output, "null") {
+		t.Errorf("Expected error mentioning null, got: %s", output)
+	}
+}
+
+func Test_MapKeys_NullKeyLiteralError(t *testing.T) {
+	script := `m = {null: "value"}`
+	setupAndRunCode(t, script, "--color=never")
+	assertExitCode(t, 1)
+	output := stdErrBuffer.String()
+	if !strings.Contains(output, "null") {
+		t.Errorf("Expected error mentioning null, got: %s", output)
+	}
+}
+
+func Test_MapKeys_NullKeyReadError(t *testing.T) {
+	script := `
+m = {"a": 1}
+x = m[null]
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertExitCode(t, 1)
+	output := stdErrBuffer.String()
+	if !strings.Contains(output, "null") {
+		t.Errorf("Expected error mentioning null, got: %s", output)
+	}
+}
+
+func Test_MapKeys_NullInMapReturnsFalse(t *testing.T) {
+	script := `
+m = {"a": 1}
+print(null in m)
+print(null not in m)
+`
+	setupAndRunCode(t, script, "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, "false\ntrue\n")
 	assertNoErrors(t)
 }

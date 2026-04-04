@@ -344,9 +344,9 @@ func (i *Interpreter) executeOp(
 		case *RadMap:
 			switch op {
 			case rl.OpIn:
-				return coercedRight.ContainsKey(left())
+				return false
 			case rl.OpNotIn:
-				return !coercedRight.ContainsKey(left())
+				return true
 			}
 		}
 	case *RadError:

@@ -187,10 +187,3 @@ func (m *RadMap) ToGoMap() map[string]interface{} {
 	}
 	return goMap
 }
-
-func evalMapKey(i *Interpreter, idxNode rl.Node) RadValue {
-	return i.eval(idxNode).Val.
-		RequireNotType(i, idxNode, "Map keys cannot be lists", rl.RadListT).
-		RequireNotType(i, idxNode, "Map keys cannot be maps", rl.RadMapT).
-		RequireNotType(i, idxNode, "Map keys cannot be functions", rl.RadFnT)
-}

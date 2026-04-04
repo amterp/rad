@@ -76,6 +76,7 @@ func (v RadValue) Index(i *Interpreter, node rl.Node, key RadValue) RadValue {
 		}
 		return coerced.Values[corrected]
 	case *RadMap:
+		key.RequireNotType(i, node, "Map keys cannot be null", rl.RadNullT)
 		return coerced.GetByKey(i, node, key)
 	case RadNull:
 		errVal := newRadValue(i, node,
@@ -242,6 +243,7 @@ func (v RadValue) ModifyByKey(i *Interpreter, node rl.Node, key RadValue, rightV
 			coerced.Values[idx] = rightValue
 		}
 	case *RadMap:
+		key.RequireNotType(i, node, "Map keys cannot be null", rl.RadNullT)
 		coerced.Set(key, rightValue)
 	default:
 		i.emitErrorf(rl.ErrCannotAssign, node, "Cannot modify indices for type '%s'", TypeAsString(v))
