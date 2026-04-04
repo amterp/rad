@@ -251,6 +251,14 @@ func (i *Interpreter) executeOp(
 				return strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
 			case rl.OpNotIn:
 				return !strings.Contains(coercedRight.Plain(), coercedLeft.Plain())
+			case rl.OpLt:
+				return coercedLeft.Plain() < coercedRight.Plain()
+			case rl.OpGt:
+				return coercedLeft.Plain() > coercedRight.Plain()
+			case rl.OpLte:
+				return coercedLeft.Plain() <= coercedRight.Plain()
+			case rl.OpGte:
+				return coercedLeft.Plain() >= coercedRight.Plain()
 			}
 		case int64:
 			switch op {
