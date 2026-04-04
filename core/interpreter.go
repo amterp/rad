@@ -537,7 +537,11 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 	case *rl.LitMap:
 		radMap := NewRadMap()
 		for _, entry := range n.Entries {
-			key := i.eval(entry.Key).Val
+			key := i.eval(entry.Key).Val.
+				RequireNotType(i, entry.Key, "Map keys cannot be null", rl.RadNullT).
+				RequireNotType(i, entry.Key, "Map keys cannot be lists", rl.RadListT).
+				RequireNotType(i, entry.Key, "Map keys cannot be maps", rl.RadMapT).
+				RequireNotType(i, entry.Key, "Map keys cannot be functions", rl.RadFnT)
 			radMap.Set(key, i.eval(entry.Value).Val)
 		}
 		return NormalVal(newRadValues(i, n, radMap))
