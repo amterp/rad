@@ -46,6 +46,54 @@ error[RAD20016]: Cannot cast "map" to int
 ### EXIT ###
 1
 ### TITLE ###
+int errors on positive Inf
+### INPUT ###
+int(parse_float("Inf"))
+### STDERR ###
+error[RAD20016]: Cannot cast +Inf to int
+  --> <script>:1:1
+  |
+1 | int(parse_float("Inf"))
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1
+### TITLE ###
+int errors on negative Inf
+### INPUT ###
+int(parse_float("-Inf"))
+### STDERR ###
+error[RAD20016]: Cannot cast -Inf to int
+  --> <script>:1:1
+  |
+1 | int(parse_float("-Inf"))
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1
+### TITLE ###
+int errors on NaN
+### INPUT ###
+int(parse_float("NaN"))
+### STDERR ###
+error[RAD20016]: Cannot cast NaN to int
+  --> <script>:1:1
+  |
+1 | int(parse_float("NaN"))
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20016
+
+
+### EXIT ###
+1
+### TITLE ###
 int errors on string with details
 ### INPUT ###
 int("10")
