@@ -135,3 +135,23 @@ true
 false
 true
 
+### TITLE ###
+Map in list
+### INPUT ###
+items = [{"a": 1}, {"b": 2}]
+print({"a": 1} in items)
+print({"c": 3} in items)
+### STDOUT ###
+true
+false
+
+### TITLE ###
+Map not in list
+### INPUT ###
+items = [{"a": 1}, {"b": 2}]
+print({"a": 1} not in items)
+print({"c": 3} not in items)
+### STDOUT ###
+false
+true
+
