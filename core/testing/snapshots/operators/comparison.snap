@@ -265,3 +265,34 @@ print({"a": 1} != {"a": 2})
 false
 true
 
+### TITLE ###
+String comparison operators
+### INPUT ###
+print("apple" < "banana")
+print("banana" < "apple")
+print("apple" <= "apple")
+print("apple" >= "apple")
+print("banana" > "apple")
+print("apple" > "banana")
+print("abc" < "abd")
+### STDOUT ###
+true
+false
+true
+true
+true
+false
+true
+
+### TITLE ###
+String sort consistent with comparison
+### INPUT ###
+items = ["cherry", "apple", "banana"]
+print(items.sort())
+print("apple" < "banana")
+print("banana" < "cherry")
+### STDOUT ###
+[ "apple", "banana", "cherry" ]
+true
+true
+
