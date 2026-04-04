@@ -673,7 +673,7 @@ func (i *Interpreter) formatInterpolation(seg rl.StringSegment, exprResult RadVa
 			// Thousands path: preserve original float precision
 			plain = strconv.FormatFloat(exprResult.Val.(float64), 'f', -1, 64)
 		} else {
-			plain = fmt.Sprintf("%f", exprResult.Val)
+			plain = strconv.FormatFloat(exprResult.Val.(float64), 'g', -1, 64)
 		}
 	default:
 		plain = ToPrintableQuoteStr(exprResult, false)

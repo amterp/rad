@@ -1,0 +1,22 @@
+### TITLE ###
+Float alignment preserves actual precision
+### INPUT ###
+print("{3.14:>10}")
+print("{42.0:<10}")
+print("{1.5:>8}")
+print("{100.123:<12}")
+### STDOUT ###
+      3.14
+42        
+     1.5
+100.123     
+
+### TITLE ###
+Float alignment with explicit precision
+### INPUT ###
+print("{3.14:>10.2}")
+print("{3.14:>10.4}")
+### STDOUT ###
+      3.14
+    3.1400
+
