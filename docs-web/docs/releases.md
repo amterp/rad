@@ -8,6 +8,23 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.9.2](https://github.com/amterp/rad/releases/tag/v0.9.2) - 2026-04-04
+
+- feat: add end-to-end snapshot testing for radls ([52791c9](https://github.com/amterp/rad/commit/52791c9))
+- feat: add parse_date() built-in function ([3aaff8f](https://github.com/amterp/rad/commit/3aaff8f))
+- fix: correctly capture defining scope in escaping closures ([5840c0f](https://github.com/amterp/rad/commit/5840c0f))
+- fix: emit clean error when void value used in expression ([a191108](https://github.com/amterp/rad/commit/a191108))
+- fix: preserve float precision in alignment formatting ([b7b910c](https://github.com/amterp/rad/commit/b7b910c))
+- fix: prevent cross-type map key collisions ([c209834](https://github.com/amterp/rad/commit/c209834))
+- fix: produce clean error for null used as map key ([8dd2a14](https://github.com/amterp/rad/commit/8dd2a14))
+- fix: return error when int() is called with Inf or NaN ([f633747](https://github.com/amterp/rad/commit/f633747))
+- fix: support map in list for the in operator ([8c59128](https://github.com/amterp/rad/commit/8c59128))
+- fix: support string comparison operators (< > <= >=) ([9a05633](https://github.com/amterp/rad/commit/9a05633))
+- fix: swap operands for list-in-list 'in' operator ([3d80d0f](https://github.com/amterp/rad/commit/3d80d0f))
+- style: reformat code ([47c1afe](https://github.com/amterp/rad/commit/47c1afe))
+
+---
+
 ## [v0.9.1](https://github.com/amterp/rad/releases/tag/v0.9.1) - 2026-04-02
 
 - Add llms.txt and llms-full.txt generation to docs site ([212e690](https://github.com/amterp/rad/commit/212e690))
