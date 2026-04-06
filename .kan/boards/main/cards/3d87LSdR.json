@@ -1,12 +1,14 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-236-group-by-functionality",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762150075,
   "creator": "Alexander Terp",
+  "description": "probably both for rad blocks and as a map operation",
   "id": "3d87LSdR",
+  "position": "Wm",
   "title": "RAD-236: group by functionality",
   "type": "feature",
-  "updated_at_millis": 1767762150075,
-  "description": "probably both for rad blocks and as a map operation"
+  "updated_at_millis": 1767762150075
 }

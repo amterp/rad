@@ -1,12 +1,14 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "and-catch-cannot",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232036608,
   "creator": "Alexander Terp",
   "description": "Writing a negative number literal as the fallback value for ?? or catch causes a parse error.\n\n**Repro:**\n```\nr = parse_int(\"x\") ?? -1\n// Error: Unexpected '-'\n\nr = risky() catch -1\n// Error: Unexpected '-'\n```\n\n**Workarounds:**\n- Use parentheses: `?? (-1)`\n- Use a variable: `fallback = -1; r = parse_int(\"x\") ?? fallback`\n- Use arithmetic: `?? (0 - 1)`\n\nThe parser does not recognize unary minus in this position. This is a natural thing to write - any user using ?? with negative defaults will hit it.\n\n**Test files:** `bugs/errors/17_neg_literal_fallback.rad`, `17b_neg_literal_catch.rad`, `bugs/functions/t76b_coalesce_negative.rad`, `t110_fn_catch_negative.rad`",
   "grammar": true,
   "id": "a_sBPzQCcM",
+  "position": "m!",
   "severity": "high",
   "title": "?? and catch cannot parse negative literal on right side",
   "updated_at_millis": 1775241425884

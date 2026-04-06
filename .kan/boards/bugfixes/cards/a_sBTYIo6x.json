@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "zip-fill-null",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232173549,
   "creator": "Alexander Terp",
   "description": "When calling zip() with fill=null, the result is truncated to the shortest list - same as calling zip() with no fill. But fill=0, fill=false, fill=\"\" all correctly pad to the longest.\n\n**Repro:**\n```\na = [1, 2, 3]\nb = [4, 5]\nprint(zip(a, b, fill=null))\n// Truncated: [[1, 4], [2, 5]] (same as no fill)\n// Expected: [[1, 4], [2, 5], [3, null]]\n```\n\n**Root cause:** `core/funcs.go` line 950: fill param default is null, and code checks IsNull() to decide truncate vs pad. Explicit fill=null is indistinguishable from \"not provided.\"\n\n**Test files:** `bugs/control_flow/92_zip_fill_null_detailed.rad`",
   "id": "a_sBTYIo6x",
+  "position": "gI",
   "severity": "low",
   "title": "zip(fill=null) behaves same as no fill argument",
   "updated_at_millis": 1775232173549

@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "closing-brace-escape",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232164365,
   "creator": "Alexander Terp",
   "description": "`\\{` correctly produces a literal `{` to prevent interpolation, but `\\}` does NOT produce a literal `}` - it produces the literal two characters `\\}`.\n\n**Repro:**\n```\nprint(\"\\{ and \\}\")\n// Expected: { and }\n// Actual:   { and \\}\n```\n\nMinor inconsistency but surprising when users discover it.\n\n**Test files:** `bugs/strings/str_escape_brace_closing.rad`",
   "id": "a_sBTJUILR",
+  "position": "cM",
   "severity": "low",
   "title": "Closing brace escape \\} does not work (asymmetry with \\{)",
   "updated_at_millis": 1775232164365

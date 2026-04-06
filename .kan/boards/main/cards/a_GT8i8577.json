@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "undo-r-n-normalization",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769659263786,
   "creator": "Alexander Terp",
   "id": "a_GT8i8577",
@@ -9,6 +10,7 @@
     "ai-hi",
     "breaking"
   ],
+  "position": "Ec",
   "title": "undo \\r\\n normalization",
   "type": "bug",
   "updated_at_millis": 1770522510208

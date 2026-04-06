@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "preserve-attributes-in-trim",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769827716195,
   "creator": "Alexander Terp",
   "description": "Trim(), TrimPrefix(), TrimSuffix(), and Reverse() all discard text attributes. Marked as TODO in code.",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-lo"
   ],
+  "position": "Nj",
   "title": "Preserve attributes in Trim/Reverse",
   "type": "feature",
   "updated_at_millis": 1770438184441

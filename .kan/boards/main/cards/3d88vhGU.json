@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-377-json-algo-bug-deep",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762151053,
   "creator": "Alexander Terp",
   "description": "v0.6.12 - deep nested list json algo bug",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-lo"
   ],
+  "position": "rD",
   "title": "RAD-377: json algo bug - deep nested lists",
   "type": "bug",
   "updated_at_millis": 1770438170893

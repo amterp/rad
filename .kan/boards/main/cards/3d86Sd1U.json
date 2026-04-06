@@ -1,12 +1,14 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-119-invoking-multiline",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762149529,
   "creator": "Alexander Terp",
+  "description": "Dunno if it'd currently work, prooobably not?",
   "id": "3d86Sd1U",
+  "position": "IY",
   "title": "RAD-119: Invoking multiline bash scripts",
   "type": "feature",
-  "updated_at_millis": 1767762149529,
-  "description": "Dunno if it'd currently work, prooobably not?"
+  "updated_at_millis": 1767762149529
 }

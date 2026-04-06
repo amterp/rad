@@ -1,10 +1,12 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "fix-106",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1772936731863,
   "creator": "Alexander Terp",
   "id": "a_ceKcy7GF",
+  "position": "5V",
   "title": "fix #106",
   "type": "bug",
   "updated_at_millis": 1772936734897

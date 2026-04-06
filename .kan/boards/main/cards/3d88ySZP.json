@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-381-extend-type",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762151089,
   "creator": "Alexander Terp",
   "description": "Changing the return type doesn't actually seem to break it - type annotation validation gap",
@@ -10,6 +11,7 @@
     "ai-lo",
     "breaking"
   ],
+  "position": "s6",
   "title": "RAD-381: extend type annotations validation in more cases",
   "type": "feature",
   "updated_at_millis": 1770522510256

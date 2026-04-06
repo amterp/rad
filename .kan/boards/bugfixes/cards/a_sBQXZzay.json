@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "map-key-type",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1775232057774,
   "creator": "Alexander Terp",
   "description": "Map keys are internally hashed as strings. This means int 1, float 1.0, and string \"1\" all map to the same key. Bool true and string \"true\" collide too. Creating a map with colliding keys silently loses data.\n\n**Repro:**\n```\nm = {1: \"int\", \"1\": \"string\"}\nprint(m)        // {1: \"string\"} - only one entry, \"int\" value lost\nprint(len(m))   // 1\n\nm[1] = \"int val\"\nm[\"1\"] = \"str val\"\nprint(m[1])     // \"str val\" - int key overwritten by string key\n```\n\n**Root cause:** `core/type_rad_value.go` line 244-266: Hash() converts int64 via fmt.Sprintf(\"%d\", val) producing \"1\", same hash as plain string \"1\". The int/float collision (1 and 1.0) may be intentional, but int/string collision is almost certainly not.\n\n**Test files:** `bugs/operators/91b_map_key_coercion.rad`, `97_map_key_coercion2.rad`, `bugs/collections/108_map_int_str_key_collision.rad`, `109_key_type_collision.rad`, `122_map_key_collision_detail.rad`",
   "id": "a_sBQXZzay",
+  "position": "d!",
   "severity": "high",
   "title": "Map key type coercion causes silent data loss",
   "updated_at_millis": 1775232057774

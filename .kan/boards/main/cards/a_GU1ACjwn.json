@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "did-you-mean-hints",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769661356948,
   "creator": "Alexander Terp",
   "id": "a_GU1ACjwn",
   "labels": [
     "ai-lo"
   ],
+  "position": "Sw",
   "title": "\"Did you mean?\" hints",
   "type": "feature",
   "updated_at_millis": 1770438170984

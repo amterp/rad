@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-395-cmds-do-not-display",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1767762152009,
   "creator": "Alexander Terp",
   "description": "Ra prints 'subcommand' when, from a Rad perspective, it's just a command.",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-hi"
   ],
+  "position": "C0",
   "title": "RAD-395: cmds: do not display \"subcommand\" in help",
   "type": "bug",
   "updated_at_millis": 1770438049018

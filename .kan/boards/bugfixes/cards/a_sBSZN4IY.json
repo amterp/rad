@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "silent-integer",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232135771,
   "creator": "Alexander Terp",
   "description": "All integer arithmetic silently wraps on overflow. No error, no warning - just wrong results.\n\n**Repro:**\n```\nmax_int = 9223372036854775807\nprint(max_int + 1)    // -9223372036854775808 (wrapped)\nprint(max_int * 2)    // -2\nprint(-(-9223372036854775808) == -9223372036854775808)  // true\n```\n\nLow priority because most users will not work with numbers near int64 bounds, but when they do, the failure is silent.\n\n**Test files:** `bugs/operators/02_int_overflow_multiply.rad`, `77_int_overflow_addition.rad`, `89_int_overflow_unary.rad`, `109_int_overflow_subtraction.rad`",
   "id": "a_sBSZN4IY",
+  "position": "Ig",
   "severity": "medium",
   "title": "Silent integer overflow wraparound with no error or warning",
   "updated_at_millis": 1775232135771

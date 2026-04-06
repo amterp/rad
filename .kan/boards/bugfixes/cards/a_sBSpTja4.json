@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "nan-poisons-list",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232145760,
   "creator": "Alexander Terp",
   "description": "Sorting a list containing NaN values produces nonsensical results because NaN violates comparison transitivity.\n\n**Repro:**\n```\nitems = [5, 4, 0.0/0, 3, 0.0/0, 2, 1]\nprint(items.sort())\n// [4, 5, NaN, 3, NaN, 1, 2] (broken)\n```\n\nShould either error on NaN in sort or handle it explicitly (e.g. sort NaN to end).\n\n**Test files:** `bugs/operators/68_comparison_with_nan.rad`, `87_nan_sort_deeper.rad`",
   "id": "a_sBSpTja4",
+  "position": "Mc",
   "severity": "low",
   "title": "NaN poisons list sorting - produces completely broken order",
   "updated_at_millis": 1775232145760

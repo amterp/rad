@@ -1,0 +1,13 @@
+{
+  "_v": 2,
+  "alias": "shell-autocompletion",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1775435855360,
+  "creator": "Alexander Terp",
+  "id": "a_tYwFKf4I",
+  "position": "!U",
+  "title": "shell autocompletion generation",
+  "type": "feature",
+  "updated_at_millis": 1775435858726
+}

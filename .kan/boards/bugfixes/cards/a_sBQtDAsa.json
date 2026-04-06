@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "mutating-collections",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232071191,
   "creator": "Alexander Terp",
   "description": "Deleting elements from a list or map during a for loop causes elements to be skipped, others to be visited twice, and in extreme cases, stale/phantom data to be read.\n\n**Repro (list):**\n```\nitems = [1, 2, 3, 4, 5]\nfor item in items:\n    if item == 2:\n        del items[1]\n    print(item)\n// Elements are skipped and duplicated; after deleting ALL\n// elements the loop still iterates and reads phantom values\n```\n\n**Repro (map):**\n```\nm = {\"a\": 1, \"b\": 2, \"c\": 3}\nfor k, v in m:\n    if k == \"b\":\n        del m[\"b\"]\n    print(k, v)\n// Keys skipped and others processed twice\n```\n\nThe iterator does not snapshot the collection, so structural mutations during iteration corrupt the traversal.\n\n**Test files:** `bugs/collections/09_list_del_during_iter.rad`, `46_iter_mutation_map_del.rad`, `83_del_during_for_with_context.rad`, `124_for_index_beyond_shrunk.rad`, `125_for_shrink_all.rad`, `bugs/control_flow/98_for_loop_with_del_list.rad`, `101_for_del_list_iteration.rad`",
   "id": "a_sBQtDAsa",
+  "position": "6!",
   "severity": "high",
   "title": "Mutating collections during iteration causes skipped/duplicated elements",
   "updated_at_millis": 1775232071191

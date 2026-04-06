@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "2026-07-delete",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1773005853805,
   "creator": "Alexander Terp",
   "id": "a_d7KnxTC9",
@@ -9,6 +10,7 @@
     "ai-hi",
     "breaking"
   ],
+  "position": "xR",
   "title": "2026-07: delete dispaly/request blocks",
   "type": "enhancement",
   "updated_at_millis": 1773005871569

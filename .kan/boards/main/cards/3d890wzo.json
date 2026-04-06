@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-382-function-type",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762151108,
   "creator": "Alexander Terp",
   "description": "```\ntimeout = parse_int(2) ?? 30\nprint(timeout)\n```\n\nshouldn't error, that should fall back to 30",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-lo"
   ],
+  "position": "sY",
   "title": "RAD-382: function type annotation invalidation should propagate error",
   "type": "feature",
   "updated_at_millis": 1770438184416

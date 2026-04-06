@@ -1,10 +1,12 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "d-flag-not-allowed",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1771380212030,
   "creator": "Alexander Terp",
   "id": "a_S7ER5PHd",
+  "position": "86",
   "title": "-d flag not allowed in commands with var arg",
   "type": "bug",
   "updated_at_millis": 1771380212354

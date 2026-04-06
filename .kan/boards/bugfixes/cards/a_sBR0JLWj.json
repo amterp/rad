@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "nested-loops-with",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232075591,
   "creator": "Alexander Terp",
   "description": "When a nested for loop uses the same iteration variable name as the outer for loop, the inner loop overwrites the outer variable. After the inner loop completes, the outer variable has the last value from the inner loop.\n\n**Repro:**\n```\nfor i in range(3):\n    for i in range(2):\n        pass\n    print(i)\n// Expected: 0, 1, 2\n// Actual: 1, 1, 1 (inner loop's final value)\n```\n\nThe outer loop still iterates the correct number of times (internal index is separate), but any code referencing the variable after the inner loop sees the wrong value. This is a realistic scenario, especially with common variable names like i, x, item.\n\n**Test files:** `bugs/control_flow/121_nested_same_var_detailed.rad`",
   "id": "a_sBR0JLWj",
+  "position": "D!",
   "severity": "high",
   "title": "Nested loops with same variable name clobber outer loop variable",
   "updated_at_millis": 1775232075591

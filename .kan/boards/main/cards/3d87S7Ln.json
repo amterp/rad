@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-258-allow-passing-empty",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762150145,
   "creator": "Alexander Terp",
   "id": "3d87S7Ln",
   "labels": [
     "ai-hi"
   ],
+  "position": "YY",
   "title": "RAD-258: Allow passing empty string arg with flag?",
   "type": "feature",
   "updated_at_millis": 1770438123975

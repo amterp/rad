@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "re-assess-absolute-find-paths",
   "alias_explicit": false,
+  "column": "next",
   "created_at_millis": 1769396813590,
   "creator": "Alexander Terp",
   "id": "a_Eh1BMRDB",
   "labels": [
     "ai-hi"
   ],
+  "position": "6!",
   "title": "re-assess 'absolute' find_paths arg, is that necessary?",
   "type": "bug",
   "updated_at_millis": 1770438136514

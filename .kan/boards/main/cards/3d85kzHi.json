@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-39-usage-func",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762149087,
   "creator": "Alexander Terp",
   "id": "3d85kzHi",
   "labels": [
     "ai-hi"
   ],
+  "position": "5f",
   "title": "RAD-39: usage() func",
   "type": "feature",
   "updated_at_millis": 1770438123949

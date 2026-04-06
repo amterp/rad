@@ -1,12 +1,14 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-371-rad-block-inline-json",
   "alias_explicit": false,
+  "column": "uncommitted",
   "created_at_millis": 1767762151295,
   "creator": "Alexander Terp",
+  "description": "Often, you don't really care to use the variable in json path capture for anything other than the Rad block which ensues. Perhaps we can inline?\n\n```\nrad url:\n    # Pick fields to display from the response\n    fields\n        json[].commit.author.date  as Time,\n        json[].commit.author.name  as Author,\n        json[].sha                 as SHA\n```",
   "id": "3d89JTWO",
+  "position": "8Q",
   "title": "RAD-371: Rad block inline json path syntax",
   "type": "feature",
-  "updated_at_millis": 1767762151295,
-  "description": "Often, you don't really care to use the variable in json path capture for anything other than the Rad block which ensues. Perhaps we can inline?\n\n```\nrad url:\n    # Pick fields to display from the response\n    fields\n        json[].commit.author.date  as Time,\n        json[].commit.author.name  as Author,\n        json[].sha                 as SHA\n```"
+  "updated_at_millis": 1767762151295
 }
