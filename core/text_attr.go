@@ -11,7 +11,9 @@ import (
 
 type RadTextAttr int
 
-// when adding attrs, add 1) here, 2) attrEnumToStrings, 3) ToTblColor, and 4) ToFatihAttr
+// when adding color attrs, update: enum, attrEnumToStrings, ToTblColor, AddAttrTo.
+// when adding style attrs (bold, dim, etc.), update: enum, attrEnumToStrings, AddAttrTo.
+// Style attrs are not supported in rad block color modifiers (no ToTblColor mapping).
 const (
 	PLAIN RadTextAttr = iota
 	BLACK
@@ -32,6 +34,7 @@ const (
 )
 
 var ATTR_STRINGS = make([]string, 0)
+var COLOR_STRINGS = make([]string, 0)
 
 // this collection should have matching in-built functions
 var attrEnumToStrings = map[RadTextAttr]string{
@@ -58,8 +61,12 @@ func init() {
 	for attr, str := range attrEnumToStrings {
 		stringsToAttrEnum[str] = attr
 		ATTR_STRINGS = append(ATTR_STRINGS, str)
-		sort.Strings(ATTR_STRINGS)
+		if attr.IsColor() {
+			COLOR_STRINGS = append(COLOR_STRINGS, str)
+		}
 	}
+	sort.Strings(ATTR_STRINGS)
+	sort.Strings(COLOR_STRINGS)
 }
 
 func (a RadTextAttr) String() string {
@@ -67,6 +74,17 @@ func (a RadTextAttr) String() string {
 		return s
 	}
 	return "unknown"
+}
+
+var styleAttrs = map[RadTextAttr]bool{
+	BOLD:      true,
+	DIM:       true,
+	ITALIC:    true,
+	UNDERLINE: true,
+}
+
+func (a RadTextAttr) IsColor() bool {
+	return !styleAttrs[a]
 }
 
 func TryColorFromString(str string) (RadTextAttr, bool) {

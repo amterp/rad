@@ -193,6 +193,10 @@ func (r *radInvocation) applyModifier(fields []radField, modNode rl.Node) {
 		if len(mod.Args) >= 2 {
 			clrVal := r.i.eval(mod.Args[0]).Val.RequireStr(r.i, mod.Args[0])
 			clr := AttrFromString(r.i, mod.Args[0], clrVal.Plain())
+			if !clr.IsColor() {
+				r.i.emitErrorf(rl.ErrColorizeValNotInEnum, mod.Args[0],
+					"%q is a style attribute, not a color. The color modifier only accepts colors: %s", clrVal.Plain(), COLOR_STRINGS)
+			}
 			regexVal := r.i.eval(mod.Args[1]).Val.RequireStr(r.i, mod.Args[1])
 			regex, err := regexp.Compile(regexVal.Plain())
 			if err != nil {
