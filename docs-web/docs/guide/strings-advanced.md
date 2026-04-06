@@ -320,7 +320,7 @@ print(title)
 print(warning)
 ```
 
-Rad provides color functions (`red`, `green`, `blue`, `yellow`, etc.), style functions (`bold`, `italic`, `underline`),
+Rad provides color functions (`red`, `green`, `blue`, `yellow`, etc.), style functions (`bold`, `dim`, `italic`, `underline`),
 and the `hyperlink` function for creating clickable terminal links. See the [functions reference](../reference/functions.md#colors--attributes).
 
 !!! info "When Attributes Are Preserved"

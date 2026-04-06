@@ -176,6 +176,16 @@ print(a.bold())
 [1mAlice[22m
 
 ### TITLE ###
+Can dim
+### INPUT ###
+a = "Alice"
+print(a.dim())
+### ARGS ###
+--color=always
+### STDOUT ###
+[2mAlice[22m
+
+### TITLE ###
 Can italic
 ### INPUT ###
 a = "Alice"

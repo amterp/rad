@@ -94,7 +94,7 @@ error[RAD20028]: Undefined variable: i
 6 | print("i", i)
   |            ^
   |
-   = help: variables with similar names exist: int, min, zip
+   = help: variables with similar names exist: dim, int, min
    = info: rad explain RAD20028
 
 

@@ -162,7 +162,7 @@ rad url:
     name:
         color color "o[a-z]"
 ### STDERR ###
-error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan green italic magenta orange pink plain red underline white yellow]
+error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan dim green italic magenta orange pink plain red underline white yellow]
   --> <script>:7:15
   |
 6 |     name:
