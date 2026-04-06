@@ -20,6 +20,7 @@ nav:
       - ./guide/defer-errdefer.md
       - ./guide/stashes.md
       - ./guide/config.md
+      - ./guide/shell-completion.md
   - Examples:
       - ./examples/index.md
       - ./examples/brewi.md
