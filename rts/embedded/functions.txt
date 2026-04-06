@@ -11,6 +11,7 @@ convert_duration
 count
 cyan
 debug
+dim
 decode_base16
 decode_base64
 delete_path

@@ -143,6 +143,7 @@ func init() {
 		newFnSignature(`orange(_item: any) -> str`),
 		newFnSignature(`pink(_item: any) -> str`),
 		newFnSignature(`bold(_item: any) -> str`),
+		newFnSignature(`dim(_item: any) -> str`),
 		newFnSignature(`italic(_item: any) -> str`),
 		newFnSignature(`underline(_item: any) -> str`),
 

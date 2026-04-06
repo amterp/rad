@@ -26,6 +26,7 @@ const (
 	PINK
 
 	BOLD
+	DIM
 	ITALIC
 	UNDERLINE
 )
@@ -46,6 +47,7 @@ var attrEnumToStrings = map[RadTextAttr]string{
 	ORANGE:    "orange",
 	PINK:      "pink",
 	BOLD:      "bold",
+	DIM:       "dim",
 	ITALIC:    "italic",
 	UNDERLINE: "underline",
 }
@@ -139,6 +141,8 @@ func (a RadTextAttr) AddAttrTo(clr *color.Color) {
 		clr.AddRGB(255, 172, 187)
 	case BOLD:
 		clr.Add(color.Bold)
+	case DIM:
+		clr.Add(color.Faint)
 	case ITALIC:
 		clr.Add(color.Italic)
 	case UNDERLINE:
