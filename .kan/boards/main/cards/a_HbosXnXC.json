@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "consider-caching-plain-len-2",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769827714304,
   "creator": "Alexander Terp",
   "description": "These methods recalculate on every call. Could cache results if RadString is immutable. Marked as TODO in code.",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-hi"
   ],
+  "position": "Ai",
   "title": "Consider caching Plain()/Len()/Runes()",
   "type": "feature",
   "updated_at_millis": 1770438123967

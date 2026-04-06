@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-52-find-and-or-find-all",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762149134,
   "creator": "Alexander Terp",
   "id": "3d85pkAG",
   "labels": [
     "ai-lo"
   ],
+  "position": "8m",
   "title": "RAD-52: find and/or find_all for regex-finding/extracting text",
   "type": "feature",
   "updated_at_millis": 1770438149885

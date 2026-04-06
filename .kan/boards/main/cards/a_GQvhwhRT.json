@@ -1,10 +1,12 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "fix-reverse",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769653997381,
   "creator": "Alexander Terp",
   "id": "a_GQvhwhRT",
+  "position": "dL",
   "title": "fix reverse",
   "type": "bug",
   "updated_at_millis": 1769654003436

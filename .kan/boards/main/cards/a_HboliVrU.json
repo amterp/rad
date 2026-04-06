@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "use-strings-builder-in-plain",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1769827710072,
   "creator": "Alexander Terp",
   "description": "Plain() in type_string.go uses naive string concatenation in a loop which is O(n²). Use strings.Builder like String() already does.",
   "id": "a_HboliVrU",
+  "position": "sy",
   "title": "Use strings.Builder in Plain()",
   "type": "bug",
   "updated_at_millis": 1769827710072

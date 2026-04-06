@@ -1,10 +1,12 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-278-inspiration-from",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762150218,
   "creator": "Alexander Terp",
   "id": "3d87Z9Xw",
+  "position": "aK",
   "title": "RAD-278: Inspiration from cliclack (rust lib)",
   "type": "feature",
   "updated_at_millis": 1767762150218

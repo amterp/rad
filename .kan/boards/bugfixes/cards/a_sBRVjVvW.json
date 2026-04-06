@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "loop-context",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232095072,
   "creator": "Alexander Terp",
   "description": "The loop context variable specified with `with \u003cname\u003e` persists after the loop ends, retaining its final context object value. If a variable with the same name existed before the loop, it is permanently overwritten.\n\n**Repro:**\n```\nctx = \"important\"\nfor i in range(3) with ctx:\n    pass\nprint(ctx)  // {\"idx\": 2, \"src\": [0, 1, 2]} (NOT \"important\")\n```\n\n**Root cause:** `core/interpreter.go` line 1029: setLoopContext uses i.env.SetVar() which unconditionally sets the variable in the current scope. There is no save/restore of the previous value and no cleanup after the loop.\n\n**Test files:** `bugs/control_flow/112_context_var_leak.rad`",
   "id": "a_sBRVjVvW",
+  "position": "f!",
   "severity": "medium",
   "tags": [
     "design"

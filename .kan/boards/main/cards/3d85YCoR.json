@@ -1,13 +1,15 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-16-gracefully-exit-when",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762148961,
   "creator": "Alexander Terp",
   "id": "3d85YCoR",
   "labels": [
     "ai-lo"
   ],
+  "position": "1f",
   "title": "RAD-16: Gracefully exit when confirm ctrl c (should not error)",
   "type": "bug",
   "updated_at_millis": 1770438149928

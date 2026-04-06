@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "large-int-vs-float",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232149323,
   "creator": "Alexander Terp",
   "description": "Comparing large integers to their float representation gives incorrect results because the int is converted to float, losing precision.\n\n**Repro:**\n```\nx = 9223372036854775807\nprint(x == 9223372036854775807.0)  // true (WRONG)\n// The float is actually 9223372036854776000 (rounded up)\n```\n\nEdge case only relevant at int64 bounds.\n\n**Test files:** `bugs/operators/86_max_int_comparison_bug.rad`, `70_int_float_mixed_compare.rad`",
   "id": "a_sBSvE2vJ",
+  "position": "QY",
   "severity": "low",
   "title": "Large int vs float comparison gives wrong result due to precision loss",
   "updated_at_millis": 1775232149323

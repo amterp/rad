@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "map-in-list-not",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1775232099319,
   "creator": "Alexander Terp",
   "description": "The `in` operator has no handler for checking if a map exists as an element of a list. This errors instead of working.\n\n**Repro:**\n```\nitems = [{\"a\": 1}, {\"b\": 2}]\nprint({\"a\": 1} in items)\n// Error: \"Invalid operand types: cannot do 'map in list'\"\n```\n\n**Root cause:** In `core/expr_ops.go`, the operand type switch has no top-level `case *RadMap:` handler, so there is no code path for map-in-list checks.\n\n**Test files:** `bugs/collections/58_map_in_list_comparison.rad`, `bugs/operators/110d_in_supported_types.rad`",
   "id": "a_sBRcZaJD",
+  "position": "RZ",
   "severity": "medium",
   "title": "map in list not supported by in operator",
   "updated_at_millis": 1775232099319

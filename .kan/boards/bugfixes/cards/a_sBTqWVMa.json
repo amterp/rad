@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "multiple-assignment",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232184848,
   "creator": "Alexander Terp",
   "description": "When the left and right sides of a multiple assignment have different counts, no error is raised. Extra values are silently dropped, missing values become null.\n\n**Repro:**\n```\na, b = 1, 2, 3\nprint(a, b)    // 1, 2 (3 silently dropped)\n\nc, d, e = 1, 2\nprint(c, d, e) // 1, 2, null (e silently set to null)\n```\n\nBoth should produce errors to catch typos and logic mistakes.\n\n**Test files:** `bugs/operators/31_multiple_assignment.rad`, `32_multi_assign_too_many.rad`",
   "id": "a_sBTqWVMa",
+  "position": "oA",
   "severity": "medium",
   "tags": [
     "design"

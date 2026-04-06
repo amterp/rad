@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "multi-line-string",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232111520,
   "creator": "Alexander Terp",
   "description": "VERIFIED: The indentation rule is documented and intentional - content cannot have less indentation than the closing \"\"\". However, the error message is terrible and gives no indication of the actual problem.\n\n**The problem:**\n```\ns = \"\"\"\nhi\n    \"\"\"\n// error[RAD10009]: Unexpected 'hi'\n```\n\nThe error `RAD10009: Unexpected Token` with generic \"look for extra symbols\" explanation gives zero indication this is about multi-line string indentation. The user has no way to understand what went wrong without already knowing the indentation rule.\n\n**Expected:** A specific error message like \"Content line has less indentation than closing triple-quote\" pointing at the relevant lines.\n\n**Test files:** `bugs/strings/str_multiline_closing_more_indent.rad`, `str_multiline_indent_bug2.rad`",
   "id": "a_sBRwF6pf",
+  "position": "K!",
   "severity": "medium",
   "title": "Multi-line string indentation error has unhelpful error message",
   "updated_at_millis": 1775233500610

@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-300-watch-file-function",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762150379,
   "creator": "Alexander Terp",
   "description": "Like `fswatch` but in Rad.\n\n```\nwatch_file(path: string, handler: fn) -\u003e void\n```\n\nJust blocks on the call and invokes the handler each time the file in the path changes.",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-lo"
   ],
+  "position": "eK",
   "title": "RAD-300: 'watch_file' function",
   "type": "feature",
   "updated_at_millis": 1770438195286

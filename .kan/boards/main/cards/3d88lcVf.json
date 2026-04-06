@@ -1,7 +1,8 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "rad-355-zed-rad-extension",
   "alias_explicit": false,
+  "column": "low",
   "created_at_millis": 1767762150958,
   "creator": "Alexander Terp",
   "description": "Potentially good example for syntax highlighting at least, but lacking LSP\n\nhttps://github.com/gabeidx/zed-mermaid",
@@ -9,6 +10,7 @@
   "labels": [
     "ai-think"
   ],
+  "position": "pt",
   "title": "RAD-355: Zed Rad Extension",
   "type": "feature",
   "updated_at_millis": 1770438936410

@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "replace-and-split",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232007714,
   "creator": "Alexander Terp",
   "description": "VERIFIED: This is documented behavior - the docs explicitly say _find is a regex pattern. However, there is no literal-string alternative for replace(), which is a real gap for the most common use case.\n\n**The problem:**\n- `\"a.b.c\".replace(\".\", \"-\")` produces `\"-----\"` because `.` is regex \"any char\"\n- `\"a.b.c\".split(\".\")` produces `[\"\", \"\", \"\", \"\", \"\", \"\"]` for same reason\n- Passing regex metacharacters like `(`, `+`, `*` crashes with \"Error compiling regex pattern\"\n- The replacement arg also uses regex semantics ($0, capture groups)\n\n**Why this matters despite being documented:**\nMost users expect literal string operations by default. The docs show `text.replace(\"hello\", \"hi\")` which looks like literal replacement. There is no `replace_literal()` or equivalent. Users must manually regex-escape their search strings.\n\n**Possible solutions:**\n1. Add `replace_literal()` / `split_literal()` functions\n2. Change replace/split to literal by default, add `replace_regex()` / `split_regex()`\n3. Add an `escape_regex()` utility function\n\n**Test files:** `bugs/strings/str_replace_regex_bug.rad`, `str_split_regex_check.rad`",
   "id": "a_sBPEpP4j",
+  "position": "6s",
   "severity": "medium",
   "tags": [
     "design"

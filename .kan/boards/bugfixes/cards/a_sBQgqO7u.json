@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "error-inline-not",
   "alias_explicit": false,
+  "column": "todo-hi",
   "created_at_millis": 1775232063525,
   "creator": "Alexander Terp",
   "description": "VERIFIED: This is by design but counterintuitive. error() is a value constructor (not a panic thrower), so ?? and catch (which work by catching panics) do not intercept it.\n\n**The problem:**\n```\nr = error(\"test\") ?? \"fallback\"\nprint(r)  // \"test\" (NOT \"fallback\")\n\nfn fail():\n    return error(\"test\")\nr = fail() ?? \"fallback\"\nprint(r)  // \"fallback\" (this works because returning an error from a function triggers a panic)\n```\n\nThe distinction between `error(\"test\") ?? \"fallback\"` and `(fn() error(\"test\"))() ?? \"fallback\"` is deeply confusing.\n\n**Root cause:** Fallback checks `panicked || leftResult.Val.IsNull()` but not `leftResult.Val.IsError()`.\n\n**Design question:** Should ?? also check IsError()? Or should error() itself panic? Or should this asymmetry be explicitly documented?\n\n**Test files:** `bugs/errors/08_inline_error_coalesce.rad`, `73_error_inline_catch_block.rad`, `84_error_fn_coalesce.rad`",
   "id": "a_sBQgqO7u",
+  "position": "R!",
   "severity": "high",
   "tags": [
     "design"

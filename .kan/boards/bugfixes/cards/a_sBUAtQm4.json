@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "int-in-str-coerces",
   "alias_explicit": false,
+  "column": "todo-lo",
   "created_at_millis": 1775232197480,
   "creator": "Alexander Terp",
   "description": "The `in` operator inconsistently coerces types when checking string containment. int is silently coerced to string, but float and bool are not.\n\n**Repro:**\n```\nprint(1 in \"hello123\")     // true (int coerced to \"1\")\nprint(3.14 in \"3.14159\")   // Error (float not coerced)\nprint(true in \"truefalse\")  // Error (bool not coerced)\n```\n\nEither all should coerce or none should.\n\n**Test files:** `bugs/operators/49_int_in_string.rad`, `51_in_coercion.rad`, `51b_in_coercion2.rad`",
   "id": "a_sBUAtQm4",
+  "position": "w2",
   "severity": "low",
   "title": "int in str coerces but float in str and bool in str do not",
   "updated_at_millis": 1775232197480

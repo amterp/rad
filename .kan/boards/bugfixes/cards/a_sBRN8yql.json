@@ -1,11 +1,13 @@
 {
-  "_v": 1,
+  "_v": 2,
   "alias": "float-alignment",
   "alias_explicit": false,
+  "column": "done",
   "created_at_millis": 1775232089743,
   "creator": "Alexander Terp",
   "description": "When formatting a float with alignment but no explicit precision or thousands separator, the output gets 6 trailing decimal places (Go default %f behavior).\n\n**Repro:**\n```\nprint(\"{3.14:\u003e10}\")    // \"  3.140000\" (expected \"      3.14\")\nprint(\"{42.0:\u003c10}\")    // \"42.000000 \" (expected \"42        \")\n```\n\n**Workarounds that work correctly:**\n```\nprint(\"{3.14:\u003e10.2}\")  // \"      3.14\" (explicit precision)\nprint(\"{3.14:\u003e10,}\")   // \"      3.14\" (thousands separator)\n```\n\nThe bug triggers ONLY with alignment (\u003c or \u003e) AND no thousands separator AND no explicit precision. Root cause is likely falling through to Go's default %f formatting in the alignment-only code path.\n\n**Test files:** `bugs/strings/str_format_float_precision_bug.rad`, `str_format_float_bug_precise.rad`",
   "id": "a_sBRN8yql",
+  "position": "AQ",
   "severity": "medium",
   "title": "Float alignment without precision defaults to 6 decimal places",
   "updated_at_millis": 1775232089743
