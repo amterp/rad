@@ -307,6 +307,10 @@ then it will invoke said interpreter on the script (equivalent to `rad hello` li
     Rad has a command `rad new <script>` which saves you repeating these steps.
     It creates a ready-to-edit executable file with a `rad` shebang on the top.
 
+!!! tip "Tab completion"
+    Once you have scripts on your PATH, you can enable tab completion for them.
+    See [Shell Completion](./shell-completion.md) for setup instructions.
+
 ## A Complete Example
 
 Now that you've seen the basics, let's skip ahead a little with our example, to get a better idea of what Rad can really do.
