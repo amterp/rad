@@ -174,3 +174,26 @@ error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan 
 
 ### EXIT ###
 1
+
+### TITLE ###
+RadColorRejectsStyleAttrInColorModifier
+### INPUT ###
+url = "https://google.com"
+name = json[].name
+rad url:
+    fields name
+    name:
+        color "dim" "o[a-z]"
+### STDERR ###
+error[RAD20025]: "dim" is a style attribute, not a color. The color modifier only accepts colors: [black blue cyan green magenta orange pink plain red white yellow]
+  --> <script>:6:15
+  |
+5 |     name:
+6 |         color "dim" "o[a-z]"
+  |               ^^^^^
+  |
+   = info: rad explain RAD20025
+
+
+### EXIT ###
+1
