@@ -18,7 +18,8 @@
 - [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`, Summary, Next
 - [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks, Summary, Next
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes, Summary, Next
-- [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging, Summary
+- [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging, Summary, Next
+- [Shell Completion](https://amterp.dev/rad/guide/shell-completion.md): Quick Setup, What Gets Completed, Script Completions, Multiple Scripts & Globs, Full Example, Summary
 
 ## Examples
 

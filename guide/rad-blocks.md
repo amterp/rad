@@ -129,7 +129,7 @@ The examples above demonstrate the core JSON path patterns you'll use most often
 
     The JSON path syntax supports additional powerful features like wildcards (`json[].*`), indexed access
     (`json[0]`, `json.items[2]`), and multiple levels of array unwrapping (`json[].items[][].related[]`).
-    We'll cover these in a later section: [JSON Paths (Advanced)](./json-paths-advanced.md).
+    These will be covered in a later section.
 
 When a json path declaration is executed, its variable (`Author` for example) is initialized as an empty list.
 It's a "special" list though, as it has a json field definition tied to it, which can be used in a rad block, let's look at that one next.

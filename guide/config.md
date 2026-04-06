@@ -64,3 +64,9 @@ keep_rolled_logs = 2    # Rotated log files to keep (default: 2)
 - Invocation logging is enabled by default, powering `rad check --from-logs`.
 - Only script path, timestamp, version, and duration are logged - no arguments by default.
 - Log rotation is automatic, controlled by `max_size_mb` and `keep_rolled_logs`.
+
+## Next
+
+Now that you've configured Rad, there's one more setup step that can make your workflow smoother: shell tab completion for rad commands, script flags, and even enum values.
+
+Continue to [Shell Completion](./shell-completion.md).
