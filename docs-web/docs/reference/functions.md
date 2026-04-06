@@ -897,7 +897,7 @@ bold("Important")      // -> "Important" (in bold)
 
 **Available style attributes:**
 
-- `bold`, `dim`, `italic`, `underline`
+- `bold`, `dim`, `italic`, `strikethrough`, `underline`
 
 ### color_rgb
 

@@ -196,6 +196,16 @@ print(a.italic())
 [3mAlice[23m
 
 ### TITLE ###
+Can strikethrough
+### INPUT ###
+a = "Alice"
+print(a.strikethrough())
+### ARGS ###
+--color=always
+### STDOUT ###
+[9mAlice[29m
+
+### TITLE ###
 Can underline
 ### INPUT ###
 a = "Alice"

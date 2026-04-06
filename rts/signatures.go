@@ -145,6 +145,7 @@ func init() {
 		newFnSignature(`bold(_item: any) -> str`),
 		newFnSignature(`dim(_item: any) -> str`),
 		newFnSignature(`italic(_item: any) -> str`),
+		newFnSignature(`strikethrough(_item: any) -> str`),
 		newFnSignature(`underline(_item: any) -> str`),
 
 		// Internal signatures
