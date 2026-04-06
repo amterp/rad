@@ -96,6 +96,7 @@ split
 split_lines
 starts_with
 str
+strikethrough
 sum
 trim
 trim_left

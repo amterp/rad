@@ -30,6 +30,7 @@ const (
 	BOLD
 	DIM
 	ITALIC
+	STRIKETHROUGH
 	UNDERLINE
 )
 
@@ -49,10 +50,11 @@ var attrEnumToStrings = map[RadTextAttr]string{
 	WHITE:     "white",
 	ORANGE:    "orange",
 	PINK:      "pink",
-	BOLD:      "bold",
-	DIM:       "dim",
-	ITALIC:    "italic",
-	UNDERLINE: "underline",
+	BOLD:          "bold",
+	DIM:           "dim",
+	ITALIC:        "italic",
+	STRIKETHROUGH: "strikethrough",
+	UNDERLINE:     "underline",
 }
 
 var stringsToAttrEnum = make(map[string]RadTextAttr)
@@ -77,10 +79,11 @@ func (a RadTextAttr) String() string {
 }
 
 var styleAttrs = map[RadTextAttr]bool{
-	BOLD:      true,
-	DIM:       true,
-	ITALIC:    true,
-	UNDERLINE: true,
+	BOLD:          true,
+	DIM:           true,
+	ITALIC:        true,
+	STRIKETHROUGH: true,
+	UNDERLINE:     true,
 }
 
 func (a RadTextAttr) IsColor() bool {
@@ -163,6 +166,8 @@ func (a RadTextAttr) AddAttrTo(clr *color.Color) {
 		clr.Add(color.Faint)
 	case ITALIC:
 		clr.Add(color.Italic)
+	case STRIKETHROUGH:
+		clr.Add(color.CrossedOut)
 	case UNDERLINE:
 		clr.Add(color.Underline)
 	default:
