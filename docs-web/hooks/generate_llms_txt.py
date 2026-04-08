@@ -25,6 +25,12 @@ FULL_CONTENT_SECTIONS = {"Reference"}
 # Pages to skip entirely (not useful for LLM consumption).
 SKIP_PAGES = {"index.md"}
 
+# H2 headings to exclude from the TOC (navigational noise in guide pages).
+SKIP_H2S = {"Summary", "Next"}
+
+# Pages whose H2s are too noisy for the TOC.
+SKIP_H2S_PAGES = {"releases.md"}
+
 
 def on_post_build(config):
     site_dir = Path(config["site_dir"])
@@ -43,7 +49,7 @@ def on_post_build(config):
             continue
         raw = source.read_text(encoding="utf-8")
         title = _resolve_title(raw, explicit_title, filepath)
-        h2s = _extract_h2s(raw)
+        h2s = _extract_h2s(raw) if filepath not in SKIP_H2S_PAGES else []
         content = _strip_front_matter(raw)
         url = site_url + filepath
         page_data.append({
@@ -134,8 +140,9 @@ def _resolve_title(raw_content, explicit_title, filepath):
 
 
 def _extract_h2s(raw_content):
-    """Extract all H2 heading texts."""
-    return re.findall(r"^## (.+)$", raw_content, re.MULTILINE)
+    """Extract all H2 heading texts, excluding navigational headings."""
+    return [h for h in re.findall(r"^## (.+)$", raw_content, re.MULTILINE)
+            if h not in SKIP_H2S]
 
 
 def _extract_front_matter(raw_content):
