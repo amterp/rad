@@ -4,22 +4,22 @@
 
 ## Guide
 
-- [Getting Started](https://amterp.dev/rad/guide/getting-started.md): What is Rad?, Installation, Editor Support, Your First Rad Script - Hello World, Adding In Some Rad Features, Improving The Script Usage String, Shebang, A Complete Example, Summary, Next
-- [Basics](https://amterp.dev/rad/guide/basics.md): Variables & Assignment, Data Types, Destructuring, Operators, Functions, Control Flow, List Comprehensions, Truthy / Falsy, Converting Types, Errors, Summary, Next
-- [Args](https://amterp.dev/rad/guide/args.md): Arg Declarations, How Argument Parsing Works, Argument Types and User Input, Constraints, Summary, Next
-- [Functions](https://amterp.dev/rad/guide/functions.md): Syntax, Function Arguments, Custom Functions, Reference, Summary, Next
-- [Strings (Advanced)](https://amterp.dev/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes, Summary, Next
-- [Rad Blocks](https://amterp.dev/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests, Summary, Next
-- [Type Annotations](https://amterp.dev/rad/guide/type-annotations.md): The Basics, Collection Types, Optional Types, Defaults, Union Types, Advanced Types, Variadic and Named Parameters, Summary, Next
-- [Error Handling](https://amterp.dev/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors, Summary, Next
-- [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples, Summary, Next
-- [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example, Summary, Next
-- [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`, Summary, Next
-- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`, Summary, Next
-- [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks, Summary, Next
-- [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes, Summary, Next
-- [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging, Summary, Next
-- [Shell Completion](https://amterp.dev/rad/guide/shell-completion.md): Quick Setup, What Gets Completed, Script Completions, Multiple Scripts & Globs, Full Example, Summary
+- [Getting Started](https://amterp.dev/rad/guide/getting-started.md): What is Rad?, Installation, Editor Support, Your First Rad Script - Hello World, Adding In Some Rad Features, Improving The Script Usage String, Shebang, A Complete Example
+- [Basics](https://amterp.dev/rad/guide/basics.md): Variables & Assignment, Data Types, Destructuring, Operators, Functions, Control Flow, List Comprehensions, Truthy / Falsy, Converting Types, Errors
+- [Args](https://amterp.dev/rad/guide/args.md): Arg Declarations, How Argument Parsing Works, Argument Types and User Input, Constraints
+- [Functions](https://amterp.dev/rad/guide/functions.md): Syntax, Function Arguments, Custom Functions, Reference
+- [Strings (Advanced)](https://amterp.dev/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes
+- [Rad Blocks](https://amterp.dev/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests
+- [Type Annotations](https://amterp.dev/rad/guide/type-annotations.md): The Basics, Collection Types, Optional Types, Defaults, Union Types, Advanced Types, Variadic and Named Parameters
+- [Error Handling](https://amterp.dev/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors
+- [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples
+- [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example
+- [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`
+- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
+- [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks
+- [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
+- [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging
+- [Shell Completion](https://amterp.dev/rad/guide/shell-completion.md): Quick Setup, What Gets Completed, Script Completions, Multiple Scripts & Globs, Full Example
 
 ## Examples
 
@@ -43,7 +43,7 @@
 ## Other
 
 - [Project Status](https://amterp.dev/rad/status.md): Platform Support, Near-term Focus, Long-term Vision, Get Involved
-- [Releases](https://amterp.dev/rad/releases.md): [v0.9.2](https://github.com/amterp/rad/releases/tag/v0.9.2) - 2026-04-04, [v0.9.1](https://github.com/amterp/rad/releases/tag/v0.9.1) - 2026-04-02, [v0.9.0](https://github.com/amterp/rad/releases/tag/v0.9.0) - 2026-03-11, [v0.8.1](https://github.com/amterp/rad/releases/tag/v0.8.1) - 2026-03-08, [v0.8.0](https://github.com/amterp/rad/releases/tag/v0.8.0) - 2026-01-29, [v0.7.1](https://github.com/amterp/rad/releases/tag/v0.7.1) - 2026-01-26, [v0.7.0](https://github.com/amterp/rad/releases/tag/v0.7.0) - 2026-01-16, [v0.6.27](https://github.com/amterp/rad/releases/tag/v0.6.27) - 2026-01-11, [v0.6.26](https://github.com/amterp/rad/releases/tag/v0.6.26) - 2026-01-02, [v0.6.25](https://github.com/amterp/rad/releases/tag/v0.6.25) - 2025-12-16, [v0.6.24](https://github.com/amterp/rad/releases/tag/v0.6.24) - 2025-12-14, [v0.6.23](https://github.com/amterp/rad/releases/tag/v0.6.23) - 2025-12-10, [v0.6.21](https://github.com/amterp/rad/releases/tag/v0.6.21) - 2025-12-03, [v0.6.20](https://github.com/amterp/rad/releases/tag/v0.6.20) - 2025-12-03, [v0.6.19](https://github.com/amterp/rad/releases/tag/v0.6.19) - 2025-12-02, [v0.6.18](https://github.com/amterp/rad/releases/tag/v0.6.18) - 2025-11-29, [v0.6.17](https://github.com/amterp/rad/releases/tag/v0.6.17) - 2025-11-20, [v0.6.16](https://github.com/amterp/rad/releases/tag/v0.6.16) - 2025-11-19, [v0.6.15](https://github.com/amterp/rad/releases/tag/v0.6.15) - 2025-11-09, [v0.6.14](https://github.com/amterp/rad/releases/tag/v0.6.14) - 2025-11-04, [v0.6.13](https://github.com/amterp/rad/releases/tag/v0.6.13) - 2025-11-03, [v0.6.12](https://github.com/amterp/rad/releases/tag/v0.6.12) - 2025-10-16, Breaking!, [v0.6.11](https://github.com/amterp/rad/releases/tag/v0.6.11) - 2025-10-12, [v0.6.10](https://github.com/amterp/rad/releases/tag/v0.6.10) - 2025-10-06, [v0.6.9](https://github.com/amterp/rad/releases/tag/v0.6.9) - 2025-10-05, [v0.6.8](https://github.com/amterp/rad/releases/tag/v0.6.8) - 2025-09-30, [v0.6.7](https://github.com/amterp/rad/releases/tag/v0.6.7) - 2025-09-28, [v0.6.6](https://github.com/amterp/rad/releases/tag/v0.6.6) - 2025-09-27, [v0.6.5](https://github.com/amterp/rad/releases/tag/v0.6.5) - 2025-09-27, [v0.6.2](https://github.com/amterp/rad/releases/tag/v0.6.2) - 2025-09-21, [v0.6.1](https://github.com/amterp/rad/releases/tag/v0.6.1) - 2025-09-21, [v0.6.0](https://github.com/amterp/rad/releases/tag/v0.6.0) - 2025-09-21, [v0.5.59](https://github.com/amterp/rad/releases/tag/v0.5.59) - 2025-09-14, v0.5 - 2025-02-12, v0.4 - 2024-10-28, v0.3 - 2024-09-29, v0.2 - 2024-09-09, v0.1 - 2024-09-08
+- [Releases](https://amterp.dev/rad/releases.md)
 
 ---
 
