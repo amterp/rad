@@ -117,10 +117,7 @@ func (w *TblWriter) Render() {
 		w.tbl.ToggleColor(true)
 	}
 
-	// Column color modifiers are incompatible with transpose: go-tbl's
-	// applyTranspose() clears columnModsByIdx, so colors would be silently
-	// dropped. Skip setting them and let the caller handle the warning.
-	if len(w.colToColors) > 0 && !w.transpose {
+	if len(w.colToColors) > 0 {
 		columnModByIdx := make(map[int]tblwriter.ColumnMod)
 		for i, header := range w.headers {
 			if colColors, ok := w.colToColors[header]; ok {

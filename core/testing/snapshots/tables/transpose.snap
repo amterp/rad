@@ -100,7 +100,7 @@ Name  Alice  Bob  Charlie
 Age   30     40            
 
 ### TITLE ###
-Transpose with color warns
+Transpose with color
 ### INPUT ###
 Name = ["Alice", "Bob"]
 Age = [30, 40]
@@ -112,9 +112,6 @@ rad:
 ### STDOUT ###
 Name  Alice  Bob  
 Age   30     40   
-
-### STDERR ###
-warning: color modifiers have no effect when transpose is active
 
 ### TITLE ###
 Transpose with noprint
@@ -130,7 +127,57 @@ print("Names:", Name)
 Names: [ "Alice", "Bob" ]
 
 ### TITLE ###
-Transpose false does not warn for color
+Transpose with color enabled
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+    Name:
+        color "red" ".*"
+### ARGS ###
+--color=always
+### STDOUT ###
+[33mName[0m  [31mAlice[0m  [31mBob[0m  
+[33mAge[0m   30     40   
+
+### TITLE ###
+Transpose with color on multiple columns
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+    Name:
+        color "red" "Alice"
+    Age:
+        color "green" "40"
+### ARGS ###
+--color=always
+### STDOUT ###
+[33mName[0m  [31mAlice[0m  Bob  
+[33mAge[0m   30     [32m40[0m   
+
+### TITLE ###
+Transpose with color regex partial match
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+    Name:
+        color "blue" "li"
+### ARGS ###
+--color=always
+### STDOUT ###
+[33mName[0m  A[34mli[0mce  Bob  
+[33mAge[0m   30     40   
+
+### TITLE ###
+Transpose false with color
 ### INPUT ###
 Name = ["Alice", "Bob"]
 Age = [30, 40]
