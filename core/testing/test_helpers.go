@@ -130,6 +130,7 @@ type TestParams struct {
 	stdinInput    string
 	stdinInputSet bool
 	args          []string
+	termWidth     int // 0 means not set
 }
 
 func NewTestParams(script string, args ...string) *TestParams {
@@ -142,6 +143,11 @@ func NewTestParams(script string, args ...string) *TestParams {
 func (tp *TestParams) StdinInput(stdinInput string) *TestParams {
 	tp.stdinInput = stdinInput
 	tp.stdinInputSet = true
+	return tp
+}
+
+func (tp *TestParams) TermWidth(width int) *TestParams {
+	tp.termWidth = width
 	return tp
 }
 
@@ -158,6 +164,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	t.Helper()
 	resetTestState()
 	core.IsTest = true
+
+	if tp.termWidth > 0 {
+		runnerInput.RTermWidth = &tp.termWidth
+	}
 
 	args := tp.args
 
@@ -255,6 +265,8 @@ func resetTestState() {
 	}
 	// Reset NO_COLOR environment variable
 	os.Unsetenv("NO_COLOR")
+	// Reset terminal width override
+	runnerInput.RTermWidth = nil
 }
 
 func setTerminalUtf8(t *testing.T, utf8 bool) {

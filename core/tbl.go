@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -12,7 +11,6 @@ import (
 
 	tblwriter "github.com/amterp/go-tbl"
 	"github.com/samber/lo"
-	"golang.org/x/term"
 )
 
 const (
@@ -78,12 +76,7 @@ func (w *TblWriter) SetColumnColoring(colToMods map[string]*radFieldMods) {
 }
 
 func (w *TblWriter) Render() {
-	// todo this should almost definitely be mocked out for tests
-	termWidth, _, err := term.GetSize(int(os.Stdout.Fd()))
-	if err != nil {
-		RP.RadDebugf(fmt.Sprintf("Error getting terminal width, setting to 9999: %v\n", err))
-		termWidth = 9999
-	}
+	termWidth := GetTermWidth()
 
 	if w.transpose {
 		w.measureAndTruncateTransposed(termWidth)

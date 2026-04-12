@@ -22,6 +22,7 @@ const (
 	InputDelimiter       = "### INPUT ###"
 	ArgsDelimiter        = "### ARGS ###"
 	RawArgsDelimiter     = "### RAW_ARGS ###"
+	TermWidthDelimiter   = "### TERM_WIDTH ###"
 	StdoutDelimiter      = "### STDOUT ###"
 	StderrDelimiter      = "### STDERR ###"
 	ExitDelimiter        = "### EXIT ###"
@@ -41,7 +42,11 @@ type SnapshotCase struct {
 	// Use ### RAW_ARGS ### instead of ### ARGS ### to enable this.
 	RawArgs bool
 
-	Stdout   string
+	// TermWidth overrides terminal width for the test, enabling truncation testing.
+	// 0 means not set (default behavior: no width override).
+	TermWidth int
+
+	Stdout string
 	Stderr   string
 	ExitCode int
 }
@@ -82,6 +87,7 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		stateSkip               // Reading skip reason
 		stateInput              // Reading input lines
 		stateArgs               // Reading args lines
+		stateTermWidth          // Reading terminal width
 		stateStdout             // Reading stdout lines
 		stateStderr             // Reading stderr lines
 		stateExit               // Reading exit code
@@ -100,6 +106,8 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		rawArgs            bool
 		stdoutBuilder      strings.Builder
 		stderrBuilder      strings.Builder
+		termWidth          int
+		termWidthSet       bool
 		exitCode           int
 		exitCodeSet        bool
 	)
@@ -116,9 +124,10 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 				// Trim one trailing newline - it's the format separator, not content.
 				// If output truly ends with newline(s), they appear as blank lines
 				// before the next section header.
-				Stdout:   strings.TrimSuffix(stdoutBuilder.String(), "\n"),
-				Stderr:   strings.TrimSuffix(stderrBuilder.String(), "\n"),
-				ExitCode: exitCode,
+				TermWidth: termWidth,
+				Stdout:    strings.TrimSuffix(stdoutBuilder.String(), "\n"),
+				Stderr:    strings.TrimSuffix(stderrBuilder.String(), "\n"),
+				ExitCode:  exitCode,
 			}
 
 			cases = append(cases, tc)
@@ -133,6 +142,8 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		rawArgs = false
 		stdoutBuilder.Reset()
 		stderrBuilder.Reset()
+		termWidth = 0
+		termWidthSet = false
 		exitCode = 0
 		exitCodeSet = false
 	}
@@ -200,6 +211,8 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 			case RawArgsDelimiter:
 				rawArgs = true
 				state = stateArgs
+			case TermWidthDelimiter:
+				state = stateTermWidth
 			case StdoutDelimiter:
 				state = stateStdout
 			case StderrDelimiter:
@@ -217,6 +230,8 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 
 		case stateArgs:
 			switch trimmed {
+			case TermWidthDelimiter:
+				state = stateTermWidth
 			case StdoutDelimiter:
 				state = stateStdout
 			case StderrDelimiter:
@@ -230,6 +245,29 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 				// Each non-empty line is an argument
 				if trimmed != "" {
 					args = append(args, line)
+				}
+			}
+
+		case stateTermWidth:
+			switch trimmed {
+			case StdoutDelimiter:
+				state = stateStdout
+			case StderrDelimiter:
+				state = stateStderr
+			case ExitDelimiter:
+				state = stateExit
+			case TitleDelimiter:
+				finishCase()
+				state = stateTitle
+			default:
+				if trimmed != "" && !termWidthSet {
+					width, err := strconv.Atoi(trimmed)
+					if err != nil {
+						return nil, fmt.Errorf("%s:%d: invalid term width '%s': %w",
+							path, lineNum, trimmed, err)
+					}
+					termWidth = width
+					termWidthSet = true
 				}
 			}
 
@@ -339,6 +377,12 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 				builder.WriteString(arg)
 				builder.WriteString("\n")
 			}
+		}
+		if tc.TermWidth > 0 {
+			builder.WriteString(TermWidthDelimiter)
+			builder.WriteString("\n")
+			builder.WriteString(strconv.Itoa(tc.TermWidth))
+			builder.WriteString("\n")
 		}
 		if tc.Stdout != "" {
 			builder.WriteString(StdoutDelimiter)

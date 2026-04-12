@@ -1,0 +1,143 @@
+### TITLE ###
+No truncation when table fits
+### DESCRIPTION ###
+Table easily fits in terminal width - no truncation should occur.
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    fields Name, Age
+### TERM_WIDTH ###
+80
+### STDOUT ###
+Name   Age 
+Alice  30   
+Bob    40   
+
+### TITLE ###
+One wide column truncated
+### DESCRIPTION ###
+One column is much wider than others, should be proportionally reduced.
+### INPUT ###
+Id = [1, 2]
+Description = ["A very long description that exceeds terminal", "Another lengthy description for testing here"]
+rad:
+    fields Id, Description
+### TERM_WIDTH ###
+35
+### STDOUT ###
+Id  Description                  
+1   A very long description tha…  
+2   Another lengthy description…  
+
+### TITLE ###
+All columns wide - proportional reduction
+### DESCRIPTION ###
+All three columns exceed their entitlement (termWidth/numCols = 10) by
+different amounts (1, 2, 3), so the reduction is distributed proportionally.
+Exercises the primary overspill branch with multiple participating columns.
+### INPUT ###
+First = ["Alessandria", "Constantine"]
+Second = ["Philadelphia", "Pennsylvania"]
+Third = ["Massachusetts", "Revolutionary"]
+rad:
+    fields First, Second, Third
+### TERM_WIDTH ###
+30
+### STDOUT ###
+First      Second    Third   
+Alessand…  Philade…  Massac…  
+Constant…  Pennsyl…  Revolu…  
+
+### TITLE ###
+Narrow terminal - reduction below minimum leaves column untruncated
+### DESCRIPTION ###
+Edge case: when proportional reduction would drive a column's width to 1 or
+lower, truncateString leaves the content unchanged (since there's not enough
+room even for an ellipsis). The table then overflows the terminal width.
+Documents current behavior; if we ever add a minimum floor to reduceColWidths
+this test should be updated.
+
+With termWidth=15 and cols [Name=5, Age=3, City=8], entitlement=5, City
+exceeds by 3 and absorbs all 8 chars of reduction, leaving City at width 0.
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+City = ["New York", "LA"]
+rad:
+    fields Name, Age, City
+### TERM_WIDTH ###
+15
+### STDOUT ###
+Name   Age  City     
+Alice  30   New York  
+Bob    40   LA        
+
+### TITLE ###
+Wide column with narrow columns
+### DESCRIPTION ###
+Narrow columns should be minimally affected; wide column absorbs most reduction.
+### INPUT ###
+Id = [1, 2]
+X = ["a", "b"]
+Description = ["This is a really long description field value", "Another verbose description text right here ok"]
+rad:
+    fields Id, X, Description
+### TERM_WIDTH ###
+40
+### STDOUT ###
+Id  X  Description                    
+1   a  This is a really long descrip…  
+2   b  Another verbose description t…  
+
+### TITLE ###
+Even distribution no column exceeds entitlement
+### DESCRIPTION ###
+All columns are within entitlement but padding overhead causes overflow.
+Exercises the else branch in reduceColWidths.
+### INPUT ###
+AA = ["abcd", "efgh"]
+BB = ["ijkl", "mnop"]
+CC = ["qrst", "uvwx"]
+DD = ["yzab", "cdef"]
+rad:
+    fields AA, BB, CC, DD
+### TERM_WIDTH ###
+22
+### STDOUT ###
+AA   BB   CC   DD   
+ab…  ij…  qr…  yzab  
+ef…  mn…  uv…  cdef  
+
+### TITLE ###
+Transposed table no truncation
+### DESCRIPTION ###
+Transposed table fits in terminal width.
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+### TERM_WIDTH ###
+80
+### STDOUT ###
+Name  Alice  Bob  
+Age   30     40   
+
+### TITLE ###
+Transposed table truncated
+### DESCRIPTION ###
+Transposed table truncation of values and potentially header names.
+### INPUT ###
+Name = ["Alexander Hamilton", "Elizabeth Montgomery"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+### TERM_WIDTH ###
+30
+### STDOUT ###
+Name  Alexander…  Elizabeth…  
+Age   30          40          
+

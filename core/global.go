@@ -9,7 +9,29 @@ import (
 
 	"github.com/amterp/color"
 	"github.com/amterp/ra"
+	"golang.org/x/term"
 )
+
+// defaultTermWidth is returned when the terminal width cannot be determined
+// (e.g. when stdout is not a TTY, such as in piped contexts). Effectively "very
+// wide" so that no truncation occurs.
+const defaultTermWidth = 9999
+
+// GetTermWidth returns the terminal width to use for rendering. This is the
+// canonical way to obtain terminal width in production code - callers do not
+// need to concern themselves with testing overrides. Tests can inject a fixed
+// width via RunnerInput.RTermWidth.
+func GetTermWidth() int {
+	if RTermWidth != nil {
+		return *RTermWidth
+	}
+	width, _, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil {
+		RP.RadDebugf(fmt.Sprintf("Error getting terminal width, defaulting to %d: %v\n", defaultTermWidth, err))
+		return defaultTermWidth
+	}
+	return width
+}
 
 var (
 	RRootCmd                 *ra.Cmd
@@ -28,6 +50,7 @@ var (
 	ScriptName               string
 	IsTest                   bool
 	AlreadyExportedShellVars bool
+	RTermWidth               *int // nil = use real terminal width; non-nil overrides for tests
 
 	StartEpochMillis int64
 )
@@ -38,8 +61,9 @@ type RunnerInput struct {
 	RReq    *Requester
 	RClock  Clock
 	RSleep  *func(duration time.Duration)
-	RShell  *func(invocation ShellInvocation) (string, string, int)
-	RadHome *string
+	RShell     *func(invocation ShellInvocation) (string, string, int)
+	RadHome    *string
+	RTermWidth *int
 }
 
 func SetScriptPath(path string) {
@@ -73,6 +97,7 @@ func ResetGlobals() {
 	ScriptName = ""
 	IsTest = false
 	AlreadyExportedShellVars = false
+	RTermWidth = nil
 
 	FlagHelp = BoolRadArg{}
 	FlagDebug = BoolRadArg{}
@@ -141,6 +166,8 @@ func setGlobals(runnerInput RunnerInput) {
 	} else {
 		RShell = *runnerInput.RShell
 	}
+
+	RTermWidth = runnerInput.RTermWidth
 
 	// Initialize RNG with clock-based seed (respects RClock abstraction)
 	RNG = rand.New(rand.NewSource(RClock.Now().UnixNano()))
