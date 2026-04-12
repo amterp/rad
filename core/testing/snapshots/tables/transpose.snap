@@ -1,0 +1,146 @@
+### TITLE ###
+Transpose basic
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+### STDOUT ###
+Name  Alice  Bob  
+Age   30     40   
+
+### TITLE ###
+Transpose with explicit true
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+rad:
+    transpose true
+    fields Name, Age
+### STDOUT ###
+Name  Alice  Bob  Charlie  
+Age   30     40   25       
+
+### TITLE ###
+Transpose with explicit false
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose false
+    fields Name, Age
+### STDOUT ###
+Name   Age 
+Alice  30   
+Bob    40   
+
+### TITLE ###
+Transpose with expression
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+should_transpose = true
+rad:
+    transpose should_transpose
+    fields Name, Age
+### STDOUT ###
+Name  Alice  Bob  
+Age   30     40   
+
+### TITLE ###
+Transpose inside if block
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+do_transpose = true
+rad:
+    fields Name, Age
+    if do_transpose:
+        transpose
+### STDOUT ###
+Name  Alice  Bob  
+Age   30     40   
+
+### TITLE ###
+Transpose with sort
+### INPUT ###
+Name = ["Charlie", "Alice", "Bob"]
+Age = [25, 30, 40]
+rad:
+    transpose
+    sort Name asc
+    fields Name, Age
+### STDOUT ###
+Name  Alice  Bob  Charlie  
+Age   30     40   25       
+
+### TITLE ###
+Transpose single row
+### INPUT ###
+Name = ["Alice"]
+Age = [30]
+rad:
+    transpose
+    fields Name, Age
+### STDOUT ###
+Name  Alice  
+Age   30     
+
+### TITLE ###
+Transpose with missing values
+### INPUT ###
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+### STDOUT ###
+Name  Alice  Bob  Charlie  
+Age   30     40            
+
+### TITLE ###
+Transpose with color warns
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    fields Name, Age
+    Name:
+        color "red" ".*"
+### STDOUT ###
+Name  Alice  Bob  
+Age   30     40   
+
+### STDERR ###
+warning: color modifiers have no effect when transpose is active
+
+### TITLE ###
+Transpose with noprint
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose
+    noprint
+    fields Name, Age
+print("Names:", Name)
+### STDOUT ###
+Names: [ "Alice", "Bob" ]
+
+### TITLE ###
+Transpose false does not warn for color
+### INPUT ###
+Name = ["Alice", "Bob"]
+Age = [30, 40]
+rad:
+    transpose false
+    fields Name, Age
+    Name:
+        color "red" ".*"
+### STDOUT ###
+Name   Age 
+Alice  30   
+Bob    40   
+

@@ -21,6 +21,7 @@ type radInvocation struct {
 	insecure         bool
 	quiet            bool
 	noprint          bool
+	transpose        bool
 	fields           []radField
 	fieldsToNotPrint *strset.Set
 	// if no specific column specified for sorting
@@ -161,6 +162,12 @@ func (r *radInvocation) unsafeEvalRad(node rl.Node) {
 				r.noprint = true
 			} else {
 				r.noprint = r.i.eval(n.Value).Val.RequireBool(r.i, n)
+			}
+		case rl.KEYWORD_TRANSPOSE:
+			if n.Value == nil {
+				r.transpose = true
+			} else {
+				r.transpose = r.i.eval(n.Value).Val.RequireBool(r.i, n)
 			}
 		default:
 			r.i.emitErrorf(rl.ErrUnsupportedOperation, n, "Unknown rad block option: %q", n.Keyword)
@@ -350,8 +357,23 @@ func (r *radInvocation) execute() {
 		tbl.Append(row)
 	}
 
+	tbl.SetTranspose(r.transpose)
 	tbl.SetColumnColoring(r.colToMods)
+
+	if r.transpose && r.hasColorMods() {
+		RP.RadStderrf("warning: color modifiers have no effect when transpose is active\n")
+	}
+
 	tbl.Render()
+}
+
+func (r *radInvocation) hasColorMods() bool {
+	for _, mods := range r.colToMods {
+		if len(mods.colors) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func (r *radInvocation) applyFilters(radFields []radField) []int64 {
