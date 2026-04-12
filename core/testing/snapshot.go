@@ -46,7 +46,7 @@ type SnapshotCase struct {
 	// 0 means not set (default behavior: no width override).
 	TermWidth int
 
-	Stdout string
+	Stdout   string
 	Stderr   string
 	ExitCode int
 }

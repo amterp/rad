@@ -56,11 +56,11 @@ var (
 )
 
 type RunnerInput struct {
-	RIo     *RadIo
-	RExit   *func(int)
-	RReq    *Requester
-	RClock  Clock
-	RSleep  *func(duration time.Duration)
+	RIo        *RadIo
+	RExit      *func(int)
+	RReq       *Requester
+	RClock     Clock
+	RSleep     *func(duration time.Duration)
 	RShell     *func(invocation ShellInvocation) (string, string, int)
 	RadHome    *string
 	RTermWidth *int
