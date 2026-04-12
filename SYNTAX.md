@@ -929,6 +929,20 @@ print(Email) // ["alice@example.com", "bob@example.com", "charlie@example.com"]
 rad url:
     quiet
     fields Name, Email
+
+// transpose: swap rows and columns - fields become rows, records become columns
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+rad:
+    fields Name, Age
+    transpose
+// Output:
+//   Name  Alice  Bob  Charlie
+//   Age   30     40   25
+
+// All three options accept an explicit boolean expression:
+//   noprint true / quiet false / transpose some_variable
+// And can appear inside `if` blocks for conditional behavior.
 ```
 
 ### Advanced Function Features
