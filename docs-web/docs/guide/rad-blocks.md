@@ -531,6 +531,38 @@ rad url:
 
 Both `noprint` and `quiet` support explicit boolean values: `noprint true`, `noprint false`, `noprint some_variable`.
 
+### transpose: Swap Rows and Columns
+
+By default, fields become column headers and each record is a row. Add `transpose` to flip the table on its side - the original headers become the first column, and each record becomes a subsequent column:
+
+```rad
+Name = ["Alice", "Bob", "Charlie"]
+Age = [30, 40, 25]
+rad:
+    fields Name, Age
+    transpose
+```
+
+<div class="result">
+```
+Name  Alice  Bob  Charlie
+Age   30     40   25
+```
+</div>
+
+This is handy when you have only a few records but many fields - the normal layout would scroll off-screen horizontally, while the transposed layout keeps each field visible on its own line.
+
+Like `noprint` and `quiet`, `transpose` accepts an explicit boolean: `transpose true`, `transpose false`, or `transpose some_variable`. It also works inside `if` blocks, so you can conditionally flip the layout based on a flag or row count:
+
+```rad
+rad url:
+    fields Name, Age, City, Country
+    if len(Name) <= 3:
+        transpose
+```
+
+`transpose` composes with the other rad block features - `sort`, `filter`, `map`, and `color` all apply to the underlying data first, and the transpose happens at render time. So `sort Name asc` still sorts records by name, even though those records will end up as columns rather than rows.
+
 ## Source Types
 
 The behavior of a `rad` block depends on what source you give it:
@@ -636,6 +668,7 @@ This pattern gives you full control over the HTTP request while still leveraging
 - **Options** control output:
     - **`noprint`** - Suppress table output (extract data only)
     - **`quiet`** - Suppress the "Querying url: ..." stderr log
+    - **`transpose`** - Swap rows and columns so fields stack vertically
 - **JSON field definitions** use special path syntax to extract data from JSON responses
     - Basic patterns: `json.field`, `json[]`, `json[].nested.path`
     - Advanced features exist (wildcards, indexing) for complex extraction needs
