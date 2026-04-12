@@ -11,10 +11,10 @@ convert_duration
 count
 cyan
 debug
-dim
 decode_base16
 decode_base64
 delete_path
+dim
 encode_base16
 encode_base64
 ends_with
