@@ -124,8 +124,13 @@ func runSnapshotTest(t *testing.T, tc *SnapshotCase) {
 		}
 	}
 
-	// Use the standard test setup
-	setupAndRunCode(t, tc.Input, args...)
+	tp := NewTestParams(tc.Input, args...)
+	if tc.TermWidth > 0 {
+		tp.TermWidth(tc.TermWidth)
+		// Force UTF-8 mode for deterministic ellipsis output in truncation tests
+		setTerminalUtf8(t, true)
+	}
+	setupAndRun(t, tp)
 }
 
 // getExitCode returns the exit code from the last test run.
