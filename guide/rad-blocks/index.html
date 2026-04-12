@@ -744,6 +744,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#transpose-swap-rows-and-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transpose: Swap Rows and Columns
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1866,6 +1877,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#transpose-swap-rows-and-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transpose: Swap Rows and Columns
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2377,6 +2399,28 @@ print(&quot;The largest city is {largest_city}&quot;)
     fields Name, Age
 </code></pre></div>
 <p>Both <code>noprint</code> and <code>quiet</code> support explicit boolean values: <code>noprint true</code>, <code>noprint false</code>, <code>noprint some_variable</code>.</p>
+<h3 id="transpose-swap-rows-and-columns">transpose: Swap Rows and Columns<a class="headerlink" href="#transpose-swap-rows-and-columns" title="Permanent link">&para;</a></h3>
+<p>By default, fields become column headers and each record is a row. Add <code>transpose</code> to flip the table on its side - the original headers become the first column, and each record becomes a subsequent column:</p>
+<div class="highlight"><pre><span></span><code>Name = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+Age = [30, 40, 25]
+rad:
+    fields Name, Age
+    transpose
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Name  Alice  Bob  Charlie
+Age   30     40   25
+</code></pre></div>
+</div>
+
+<p>This is handy when you have only a few records but many fields - the normal layout would scroll off-screen horizontally, while the transposed layout keeps each field visible on its own line.</p>
+<p>Like <code>noprint</code> and <code>quiet</code>, <code>transpose</code> accepts an explicit boolean: <code>transpose true</code>, <code>transpose false</code>, or <code>transpose some_variable</code>. It also works inside <code>if</code> blocks, so you can conditionally flip the layout based on a flag or row count:</p>
+<div class="highlight"><pre><span></span><code>rad url:
+    fields Name, Age, City, Country
+    if len(Name) &lt;= 3:
+        transpose
+</code></pre></div>
+<p><code>transpose</code> composes with the other rad block features - <code>sort</code>, <code>filter</code>, <code>map</code>, and <code>color</code> all apply to the underlying data first, and the transpose happens at render time. So <code>sort Name asc</code> still sorts records by name, even though those records will end up as columns rather than rows.</p>
 <h2 id="source-types">Source Types<a class="headerlink" href="#source-types" title="Permanent link">&para;</a></h2>
 <p>The behavior of a <code>rad</code> block depends on what source you give it:</p>
 <h3 id="url-string-source">URL String Source<a class="headerlink" href="#url-string-source" title="Permanent link">&para;</a></h3>
@@ -2459,6 +2503,7 @@ rad resp.body:
 <li><strong>Options</strong> control output:<ul>
 <li><strong><code>noprint</code></strong> - Suppress table output (extract data only)</li>
 <li><strong><code>quiet</code></strong> - Suppress the "Querying url: ..." stderr log</li>
+<li><strong><code>transpose</code></strong> - Swap rows and columns so fields stack vertically</li>
 </ul>
 </li>
 <li><strong>JSON field definitions</strong> use special path syntax to extract data from JSON responses<ul>
