@@ -84,6 +84,73 @@ PS: [4,  4] PE: [4, 15]     RadField
 PS: [4, 11] PE: [4, 15]       Identifier "Name"
 
 ### TITLE ###
+Rad block with transpose option
+### INPUT ###
+rad:
+    transpose
+    fields Name
+### STDOUT ###
+B: [ 0, 34] PS: [0,  0] PE: [2, 15] source_file
+B: [ 0, 34] PS: [0,  0] PE: [2, 15]   rad_block
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]     : `:`
+B: [ 9, 18] PS: [1,  4] PE: [1, 13]     stmt: rad_option_stmt
+B: [ 9, 18] PS: [1,  4] PE: [1, 13]       keyword: rad_option_keyword
+B: [ 9, 18] PS: [1,  4] PE: [1, 13]         transpose `transpose`
+B: [23, 34] PS: [2,  4] PE: [2, 15]     stmt: rad_field_stmt
+B: [23, 29] PS: [2,  4] PE: [2, 10]       fields `fields`
+B: [30, 34] PS: [2, 11] PE: [2, 15]       identifier: identifier `Name`
+
+### STDERR ###
+PS: [0,  0] PE: [2, 15] SourceFile
+PS: [0,  0] PE: [2, 15]   RadBlock "rad"
+PS: [1,  4] PE: [1, 13]     <*rl.RadOption>
+PS: [2,  4] PE: [2, 15]     RadField
+PS: [2, 11] PE: [2, 15]       Identifier "Name"
+
+### TITLE ###
+Rad block with transpose option explicit bool
+### INPUT ###
+rad:
+    transpose false
+    fields Name
+### STDOUT ###
+B: [ 0, 40] PS: [0,  0] PE: [2, 15] source_file
+B: [ 0, 40] PS: [0,  0] PE: [2, 15]   rad_block
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
+B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
+B: [ 3,  4] PS: [0,  3] PE: [0,  4]     : `:`
+B: [ 9, 24] PS: [1,  4] PE: [1, 19]     stmt: rad_option_stmt
+B: [ 9, 18] PS: [1,  4] PE: [1, 13]       keyword: rad_option_keyword
+B: [ 9, 18] PS: [1,  4] PE: [1, 13]         transpose `transpose`
+B: [19, 24] PS: [1, 14] PE: [1, 19]       value: expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]         delegate: ternary_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]           delegate: or_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]             delegate: and_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]               delegate: compare_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                 delegate: add_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                   delegate: mult_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                     delegate: unary_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                       delegate: fallback_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                         delegate: catch_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                           delegate: indexed_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                             root: primary_expr
+B: [19, 24] PS: [1, 14] PE: [1, 19]                               literal
+B: [19, 24] PS: [1, 14] PE: [1, 19]                                 bool
+B: [19, 24] PS: [1, 14] PE: [1, 19]                                   false `false`
+B: [29, 40] PS: [2,  4] PE: [2, 15]     stmt: rad_field_stmt
+B: [29, 35] PS: [2,  4] PE: [2, 10]       fields `fields`
+B: [36, 40] PS: [2, 11] PE: [2, 15]       identifier: identifier `Name`
+
+### STDERR ###
+PS: [0,  0] PE: [2, 15] SourceFile
+PS: [0,  0] PE: [2, 15]   RadBlock "rad"
+PS: [1,  4] PE: [1, 19]     <*rl.RadOption>
+PS: [2,  4] PE: [2, 15]     RadField
+PS: [2, 11] PE: [2, 15]       Identifier "Name"
+
+### TITLE ###
 Rad block with option explicit bool
 ### INPUT ###
 rad url:
