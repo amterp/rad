@@ -8,6 +8,19 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.10.0](https://github.com/amterp/rad/releases/tag/v0.10.0) - 2026-04-19
+
+- ci: replace Dependabot with govulncheck for vulnerability scanning ([5caffe8a](https://github.com/amterp/rad/commit/5caffe8a))
+- feat: add 'transpose [expr]' directive to rad blocks ([e454be5b](https://github.com/amterp/rad/commit/e454be5b))
+- feat: add dim() text styling function ([fb6669b2](https://github.com/amterp/rad/commit/fb6669b2))
+- feat: add shell autocompletion for rad CLI and scripts ([ff29f1a4](https://github.com/amterp/rad/commit/ff29f1a4))
+- feat: add strikethrough() text styling function ([d8d6c03d](https://github.com/amterp/rad/commit/d8d6c03d))
+- feat: improve transpose behavior, support color modifies ([b745339b](https://github.com/amterp/rad/commit/b745339b))
+- fix: reject style attrs in rad block color modifiers ([e7c7a307](https://github.com/amterp/rad/commit/e7c7a307))
+- style: fix up formatting ([48da2ca2](https://github.com/amterp/rad/commit/48da2ca2))
+
+---
+
 ## [v0.9.2](https://github.com/amterp/rad/releases/tag/v0.9.2) - 2026-04-04
 
 - feat: add end-to-end snapshot testing for radls ([52791c9](https://github.com/amterp/rad/commit/52791c9))
