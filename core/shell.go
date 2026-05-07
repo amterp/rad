@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/amterp/rad/rts/rl"
 )
@@ -197,33 +198,84 @@ func realShellExecutor(invocation ShellInvocation) (string, string, int) {
 	return stdout, stderr, exitCode
 }
 
+// resolveCmdSimple resolves the shell to use for the given command string and
+// returns a prepared *exec.Cmd. Panics with a user-facing message if no shell
+// can be found.
 func resolveCmdSimple(cmdStr string) *exec.Cmd {
-	if shell := os.Getenv("SHELL"); shell != "" {
-		return buildCmd(shell, cmdStr)
+	path, flag, err := resolveShell(os.Getenv, exec.LookPath, IsWindows())
+	if err != nil {
+		panic(err.Error())
 	}
-
-	if _, err := exec.LookPath("/bin/sh"); err == nil {
-		return buildCmd("/bin/sh", cmdStr)
-	}
-
-	panic("Cannot run shell cmd as no shell found. Please set the SHELL environment variable.")
+	return buildCmd(path, flag, cmdStr)
 }
 
-func resolveCmd(i *Interpreter, shellNode rl.Node, cmdStr string) *exec.Cmd {
-	if shell := os.Getenv("SHELL"); shell != "" {
-		return buildCmd(shell, cmdStr)
+// resolveShell picks a shell to use for executing a command string. It is a
+// pure function: all platform/env dependencies are passed in so it is testable
+// without mutating global state.
+//
+// Resolution order:
+//  1. SHELL env var if set, but on Windows only if it actually resolves to an
+//     executable. Git Bash / MSYS2 / Cygwin set SHELL to a Unix-style path
+//     (e.g. /usr/bin/bash) that native Win32 exec can't find, so on Windows
+//     we fall through to the candidate chain in that case rather than crash.
+//  2. Windows: pwsh.exe -> powershell.exe -> cmd.exe
+//  3. Other:   /bin/sh
+//
+// Returns the resolved shell path and the flag to use for command-string
+// invocation (e.g. "-c" for POSIX shells and PowerShell, "/c" for cmd.exe).
+func resolveShell(
+	getEnv func(string) string,
+	lookPath func(string) (string, error),
+	isWindows bool,
+) (path, flag string, err error) {
+	if shell := strings.TrimSpace(getEnv("SHELL")); shell != "" {
+		if !isWindows {
+			return shell, shellExecFlag(shell), nil
+		}
+		// On Windows, only honor SHELL if it actually resolves - otherwise
+		// fall through. This rescues the common Git Bash case where SHELL is
+		// set to /usr/bin/bash but the native Win32 binary can't see it.
+		if resolved, lookErr := lookPath(shell); lookErr == nil {
+			return resolved, shellExecFlag(resolved), nil
+		}
 	}
 
-	if _, err := exec.LookPath("/bin/sh"); err == nil {
-		return buildCmd("/bin/sh", cmdStr)
+	var candidates []string
+	if isWindows {
+		candidates = []string{"pwsh.exe", "powershell.exe", "cmd.exe"}
+	} else {
+		candidates = []string{"/bin/sh"}
 	}
 
-	i.emitError(rl.ErrGenericRuntime, shellNode, "Cannot run shell cmd as no shell found. Please set the SHELL environment variable")
-	panic(UNREACHABLE)
+	for _, c := range candidates {
+		if resolved, lookErr := lookPath(c); lookErr == nil {
+			return resolved, shellExecFlag(resolved), nil
+		}
+	}
+
+	return "", "", errors.New("Cannot run shell cmd as no shell found. Please set the SHELL environment variable")
 }
 
-func buildCmd(shellStr string, cmdStr string) *exec.Cmd {
-	cmd := exec.Command(shellStr, "-c", cmdStr)
+// shellExecFlag returns the flag a given shell expects for invoking a command
+// string. Defaults to "-c" (POSIX shells, bash/zsh, and PowerShell which
+// accepts "-c" as a short form of "-Command"). Only cmd.exe needs "/c".
+//
+// We don't use filepath.Base because its separator handling is GOOS-specific
+// (only "/" on Unix), which would mis-handle Windows-style paths that may
+// arrive via env vars or mixed environments.
+func shellExecFlag(shellPath string) string {
+	if i := strings.LastIndexAny(shellPath, `/\`); i >= 0 {
+		shellPath = shellPath[i+1:]
+	}
+	base := strings.TrimSuffix(strings.ToLower(shellPath), ".exe")
+	if base == "cmd" {
+		return "/c"
+	}
+	return "-c"
+}
+
+func buildCmd(shellStr string, flag string, cmdStr string) *exec.Cmd {
+	cmd := exec.Command(shellStr, flag, cmdStr)
 	cmd.Stdin = RIo.StdIn.Unwrap()
 	return cmd
 }

@@ -1,0 +1,14 @@
+{
+  "_v": 2,
+  "alias": "fix-vet-warnings-in",
+  "alias_explicit": false,
+  "column": "next",
+  "created_at_millis": 1778119513772,
+  "creator": "Alexander Terp",
+  "description": "Found while working on #123 fix: 'make test' currently only runs ./core/testing/... not ./core/..., so unit tests in core/ (fuzzy_test.go, shell_test.go) don't run in ./dev --validate. Switching to ./core/... exposes pre-existing vet warnings - 'non-constant format string in call to NewErrorStrf' in core/funcs.go and core/func_parse_date.go (16 instances). Fix these (likely just s/NewErrorStrf/NewErrorStr/ where the arg is already-formatted) then expand the Makefile test target to ./core/... so unit tests are actually exercised by validate.",
+  "id": "a_1BiySevmD",
+  "position": "t!U",
+  "title": "Fix vet warnings in core, expand make test to ./core/...",
+  "type": "excellence",
+  "updated_at_millis": 1778119773514
+}

@@ -30,6 +30,14 @@ By default, the stdout/stderr will be printed directly to the user's terminal as
     Shell commands often use 'single' and "double" quotes, so backticks minimize delimiter conflicts.
     However, you can use any string delimiter.
 
+## Which Shell Runs My Command?
+
+Rad picks a shell to run your command in this order:
+
+1. **`SHELL` env var** if it's set - this is the user's explicit choice and always wins.
+2. **On Windows** (when `SHELL` is unset): `pwsh.exe` (PowerShell 7+), then `powershell.exe` (Windows PowerShell, ships with every Win10+), then `cmd.exe` as a last resort.
+3. **On Linux/macOS** (when `SHELL` is unset): `/bin/sh`.
+
 ## Capturing Output
 
 Shell commands return three values: **exit code**, **stdout**, and **stderr**. You can capture anywhere from zero to all three of these values, depending on what you need.
