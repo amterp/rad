@@ -639,6 +639,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#which-shell-runs-my-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Shell Runs My Command?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#capturing-output" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1554,6 +1565,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#which-shell-runs-my-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Shell Runs My Command?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#capturing-output" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1765,6 +1787,13 @@ $cmd
 <p>Shell commands often use 'single' and "double" quotes, so backticks minimize delimiter conflicts.
 However, you can use any string delimiter.</p>
 </div>
+<h2 id="which-shell-runs-my-command">Which Shell Runs My Command?<a class="headerlink" href="#which-shell-runs-my-command" title="Permanent link">&para;</a></h2>
+<p>Rad picks a shell to run your command in this order:</p>
+<ol>
+<li><strong><code>SHELL</code> env var</strong> if it's set - this is the user's explicit choice and always wins.</li>
+<li><strong>On Windows</strong> (when <code>SHELL</code> is unset): <code>pwsh.exe</code> (PowerShell 7+), then <code>powershell.exe</code> (Windows PowerShell, ships with every Win10+), then <code>cmd.exe</code> as a last resort.</li>
+<li><strong>On Linux/macOS</strong> (when <code>SHELL</code> is unset): <code>/bin/sh</code>.</li>
+</ol>
 <h2 id="capturing-output">Capturing Output<a class="headerlink" href="#capturing-output" title="Permanent link">&para;</a></h2>
 <p>Shell commands return three values: <strong>exit code</strong>, <strong>stdout</strong>, and <strong>stderr</strong>. You can capture anywhere from zero to all three of these values, depending on what you need.</p>
 <h3 id="capture-modes">Capture Modes<a class="headerlink" href="#capture-modes" title="Permanent link">&para;</a></h3>
