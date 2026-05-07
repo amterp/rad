@@ -1,0 +1,14 @@
+{
+  "_v": 2,
+  "alias": "surface-shell",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1778121587222,
+  "creator": "Alexander Terp",
+  "description": "Found in code review of #123 fix: when shell resolution panics (e.g. 'Cannot run shell cmd as no shell found' at core/shell.go:208, or 'Failed to run command' at :186) it propagates as a string panic, not *RadPanic. handlePanicRecovery treats string panics as internal bugs and tells the user 'This is a bug in Rad. Please report it at: https://github.com/amterp/rad/issues. Panic: \u003cmessage\u003e'. The user-actionable text gets buried inside a 'this is our fault' template. This predates the Windows fix but became more visible now that Windows users can hit shell errors. Convert these to proper RadErrors / *RadPanics so they surface as clean user-facing errors instead.",
+  "id": "a_1BjqOvRU8",
+  "position": "xRUU",
+  "title": "Surface shell-resolution panics as user errors, not 'bug in Rad'",
+  "type": "bug",
+  "updated_at_millis": 1778121587222
+}

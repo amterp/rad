@@ -1,0 +1,14 @@
+{
+  "_v": 2,
+  "alias": "windows-shell-macro",
+  "alias_explicit": false,
+  "column": "uncommitted",
+  "created_at_millis": 1778118725524,
+  "creator": "Alexander Terp",
+  "description": "From #123 thread: auto-detect on Windows ships now (PowerShell first, cmd.exe fallback) but creates portability variance across machines. Add a script-header macro/pragma like '@shell bash' or 'requires_shell = bash' that lets a script declare its required shell and fail-fast if unavailable. Complements (does not replace) auto-detect: macro is for 'this script needs bash', auto-detect is for 'I just want shell commands to work'. Prior art: shebangs, Go's //go:build, Python's # -*- coding -*-. Could live alongside the existing args/header block.",
+  "id": "a_1BidxHsvp",
+  "position": "wiU",
+  "title": "Windows: @shell macro for pinning shell target",
+  "type": "feature",
+  "updated_at_millis": 1778118725524
+}
