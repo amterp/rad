@@ -8,6 +8,12 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.10.1](https://github.com/amterp/rad/releases/tag/v0.10.1) - 2026-05-07
+
+- feat(shell): auto-detect shell on Windows ([cd04129e](https://github.com/amterp/rad/commit/cd04129e))
+
+---
+
 ## [v0.10.0](https://github.com/amterp/rad/releases/tag/v0.10.0) - 2026-04-19
 
 - ci: replace Dependabot with govulncheck for vulnerability scanning ([5caffe8a](https://github.com/amterp/rad/commit/5caffe8a))
