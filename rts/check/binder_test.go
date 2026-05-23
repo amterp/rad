@@ -96,6 +96,126 @@ func TestResolve_IdentifierUseLinksToDeclaration(t *testing.T) {
 	assert.Same(t, declSym, useSym)
 }
 
+func TestResolve_FnDefParamsBindInFunctionScope(t *testing.T) {
+	src := "fn greet(name):\n    print(name)\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	// Locate the function body's print(name) call's name argument.
+	fn := file.Stmts[0].(*rl.FnDef)
+	exprStmt := fn.Body[0].(*rl.ExprStmt)
+	call := exprStmt.Expr.(*rl.Call)
+	require.Len(t, call.Args, 1)
+	nameUse := call.Args[0].(*rl.Identifier)
+
+	sym, ok := r.Uses[nameUse]
+	require.True(t, ok, "param use should resolve")
+	assert.Equal(t, check.SymParam, sym.Kind)
+	assert.Equal(t, "name", sym.Name)
+	// The param scope should be a function scope owned by the FnDef.
+	require.NotNil(t, sym.Scope)
+	assert.Equal(t, check.ScopeFunction, sym.Scope.Kind)
+	assert.Same(t, fn, sym.Scope.Owner)
+}
+
+func TestResolve_FnLocalShadowsFileScopeBinding(t *testing.T) {
+	// `x = 2` inside the function introduces a function-scope local;
+	// the inner use of x must resolve to that local, not to the
+	// file-scope `x`. This matches Python and Rad runtime behavior.
+	src := "x = 1\nfn f():\n    x = 2\n    print(x)\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fileSym := r.File.Lookup("x")
+	require.NotNil(t, fileSym)
+	assert.Equal(t, r.File, fileSym.Scope)
+
+	fn := file.Stmts[1].(*rl.FnDef)
+	innerAssign := fn.Body[0].(*rl.Assign)
+	innerTarget := innerAssign.Targets[0].(*rl.Identifier)
+	innerSym, ok := r.Uses[innerTarget]
+	require.True(t, ok)
+	assert.NotSame(t, fileSym, innerSym, "inner x must be a new symbol, not the file-scope one")
+	assert.Equal(t, check.ScopeFunction, innerSym.Scope.Kind)
+
+	// The print(x) use should also resolve to the inner symbol.
+	printCall := fn.Body[1].(*rl.ExprStmt).Expr.(*rl.Call)
+	xUse := printCall.Args[0].(*rl.Identifier)
+	assert.Same(t, innerSym, r.Uses[xUse])
+}
+
+func TestResolve_CompoundAssignRebindEnclosing(t *testing.T) {
+	// `+=` and friends set UpdateEnclosing: they must NOT introduce a
+	// new local. The compound-op needs an existing binding to operate
+	// on, and creating a fresh local at the function scope would lose
+	// every previous value.
+	src := "x = 0\nfn f():\n    x += 1\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fileSym := r.File.Lookup("x")
+	require.NotNil(t, fileSym)
+
+	fn := file.Stmts[1].(*rl.FnDef)
+	compoundAssign := fn.Body[0].(*rl.Assign)
+	require.True(t, compoundAssign.UpdateEnclosing, "compound assigns set UpdateEnclosing")
+	target := compoundAssign.Targets[0].(*rl.Identifier)
+	useSym, ok := r.Uses[target]
+	require.True(t, ok, "compound-assign target should resolve to existing binding")
+	assert.Same(t, fileSym, useSym)
+}
+
+func TestResolve_LambdaParamVisibleInBody(t *testing.T) {
+	// A lambda used as a callback should have its params visible
+	// inside the body. We use a simple list-map pattern.
+	src := "f = fn(x) x + 1\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	assign := file.Stmts[0].(*rl.Assign)
+	lambda := assign.Values[0].(*rl.Lambda)
+	require.Len(t, lambda.Body, 1)
+	// Expression-form lambda has the expression directly in Body[0],
+	// not wrapped in an ExprStmt.
+	add := lambda.Body[0].(*rl.OpBinary)
+	xUse := add.Left.(*rl.Identifier)
+
+	sym, ok := r.Uses[xUse]
+	require.True(t, ok, "lambda body should see the param")
+	assert.Equal(t, check.SymParam, sym.Kind)
+	assert.Equal(t, check.ScopeLambda, sym.Scope.Kind)
+}
+
+func TestResolve_ParamDefaultEvaluatesInEnclosingScope(t *testing.T) {
+	// `fn f(n = greeting)` - the default `greeting` reference must
+	// resolve in the enclosing (file) scope, not against any param.
+	// This matches Python's behavior and avoids surprise from
+	// "later params shadow earlier defaults" rules.
+	src := "greeting = \"hi\"\nfn f(n = greeting):\n    print(n)\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fileSym := r.File.Lookup("greeting")
+	require.NotNil(t, fileSym)
+
+	fn := file.Stmts[1].(*rl.FnDef)
+	require.NotNil(t, fn.Typing)
+	require.Len(t, fn.Typing.Params, 1)
+	dflt := fn.Typing.Params[0].DefaultAST
+	require.NotNil(t, dflt)
+	defaultIdent, ok := dflt.Node.(*rl.Identifier)
+	require.True(t, ok)
+
+	useSym, ok := r.Uses[defaultIdent]
+	require.True(t, ok)
+	assert.Same(t, fileSym, useSym, "default must resolve to enclosing scope binding")
+}
+
 func TestResolve_RebindingDoesNotCreateNewSymbol(t *testing.T) {
 	// A second assignment to the same name re-binds, it doesn't shadow.
 	// Both assignments share one Symbol so the LSP can find every

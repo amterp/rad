@@ -178,9 +178,14 @@ func (b *binder) visit(n rl.Node) {
 		b.resolveIdentifier(v)
 	case *rl.Assign:
 		b.visitAssign(v)
+	case *rl.FnDef:
+		b.visitFnDef(v)
+	case *rl.Lambda:
+		b.visitLambda(v)
 	default:
-		// Generic descent. Phase 1b will replace many of these with
-		// scope-aware cases (FnDef, Lambda, ForLoop, Switch, Defer).
+		// Generic descent for unhandled node kinds. Subsequent commits
+		// in this phase replace more of these with scope-aware cases
+		// (ForLoop, Switch, Defer, CmdBlock, RadBlock, ListComp).
 		for _, child := range n.Children() {
 			b.visit(child)
 		}
@@ -200,35 +205,47 @@ func (b *binder) visitAssign(a *rl.Assign) {
 		b.visit(val)
 	}
 	for _, target := range a.Targets {
-		b.declareTarget(target, a)
+		b.declareTarget(target, a.UpdateEnclosing)
 	}
 	if a.Catch != nil {
 		b.visitCatch(a.Catch)
 	}
 }
 
-// declareTarget introduces a binding for an assignment target. Plain
-// identifiers create a SymLocal in the current scope on first sight.
-// VarPath targets (a.b, xs[i]) don't introduce a new binding - they
-// mutate an existing one - so we just visit them as expressions.
+// declareTarget introduces a binding for an assignment target.
+//
+//   - Plain '=' on an identifier introduces a fresh local in the current
+//     scope. If a same-named binding exists in an enclosing scope, the
+//     new local shadows it - this matches Python and is the Rad runtime
+//     behavior.
+//   - Compound assigns ('+=', '++', etc.) and unpacking-with-rebind set
+//     UpdateEnclosing on the AST node. In that mode we resolve up the
+//     scope chain and treat the target as a *use* of the existing
+//     binding, not a new declaration. Without an existing binding the
+//     compound op would have nothing to operate on.
+//   - VarPath targets (a.b, xs[i]) mutate an existing path's contents
+//     and don't introduce a new binding. We just visit them as
+//     expressions so the root identifier resolves.
 //
 // Invalid LHS shapes (assigning to a literal, call, etc.) are caught
 // by addInvalidAssignmentLHSErrorsAST and don't need to be re-diagnosed
 // here.
-func (b *binder) declareTarget(target rl.Node, _ *rl.Assign) {
+func (b *binder) declareTarget(target rl.Node, updateEnclosing bool) {
 	switch t := target.(type) {
 	case *rl.Identifier:
-		if sym := b.current.Lookup(t.Name); sym != nil {
-			// Existing binding - this is a rebinding, not a new
-			// declaration. Record the use so goto-def points at the
-			// original decl.
-			b.resolved.Uses[t] = sym
+		if updateEnclosing {
+			if sym := b.current.Lookup(t.Name); sym != nil {
+				b.resolved.Uses[t] = sym
+				return
+			}
+			// Compound-assign on undefined name - Phase 1c will diagnose.
 			return
 		}
-		b.declare(t.Name, SymLocal, t.Span(), t)
-		// Also record this declaring identifier as its own use so the
-		// LSP hover at the decl site finds the symbol.
-		b.resolved.Uses[t] = b.current.Symbols[t.Name]
+		// Plain '=' shadows any enclosing-scope binding with the same name.
+		sym := b.declare(t.Name, SymLocal, t.Span(), t)
+		// Record this declaring identifier as its own use so an LSP
+		// hover at the decl site finds the symbol.
+		b.resolved.Uses[t] = sym
 	case *rl.VarPath:
 		// Mutation of an existing path. Visit it as an expression so
 		// the root identifier (if any) resolves to its binding.
@@ -236,6 +253,66 @@ func (b *binder) declareTarget(target rl.Node, _ *rl.Assign) {
 	default:
 		// Invalid LHS - leave the diagnostic to
 		// addInvalidAssignmentLHSErrorsAST.
+	}
+}
+
+// visitFnDef binds a named function definition. The function name was
+// already declared at file scope by the hoisting pass (or, for nested
+// functions, by the enclosing visit before this point), so the body
+// can reference itself for recursion via normal lookup.
+//
+// Parameter default expressions evaluate in the *enclosing* scope, not
+// the function scope. This matches what callers intuitively expect
+// (defaults reference state visible at definition time) and avoids the
+// surprise of one parameter's default seeing a later parameter's name.
+func (b *binder) visitFnDef(fn *rl.FnDef) {
+	// Nested function definitions are not hoisted; declare them at
+	// the current scope at point of visit. Top-level FnDefs are
+	// already in the file scope from bindFile's pre-pass and
+	// declare() returns the existing symbol unchanged in that case.
+	if fn.Name != "" {
+		b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
+	}
+	b.bindFnLike(fn.Typing, fn.Body, ScopeFunction, fn)
+}
+
+// visitLambda binds an anonymous function. Same shape as FnDef minus
+// the name-introduction step.
+func (b *binder) visitLambda(l *rl.Lambda) {
+	b.bindFnLike(l.Typing, l.Body, ScopeLambda, l)
+}
+
+// bindFnLike opens a function-like scope, declares parameters in it,
+// and walks the body. Param defaults are visited *before* the scope
+// opens so they bind to names in the enclosing scope.
+func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind, owner rl.Node) {
+	// Step 1: visit param defaults in the enclosing scope.
+	if typing != nil {
+		for i := range typing.Params {
+			p := &typing.Params[i]
+			if p.DefaultAST != nil && p.DefaultAST.Node != nil {
+				b.visit(p.DefaultAST.Node)
+			}
+		}
+	}
+
+	// Step 2: open the function scope and declare params.
+	b.pushScope(kind, owner)
+	defer b.popScope()
+
+	if typing != nil {
+		for i := range typing.Params {
+			p := &typing.Params[i]
+			if p.Name == "" {
+				continue
+			}
+			b.declare(p.Name, SymParam, owner.Span(), nil)
+		}
+	}
+
+	// Step 3: walk the body in the new scope.
+	for _, stmt := range body {
+		b.visit(stmt)
 	}
 }
 
