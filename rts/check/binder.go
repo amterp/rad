@@ -158,11 +158,14 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 		}
 	}
 
-	// Walk statements. Per-construct scoping for function bodies,
-	// loops, etc. lands in Phase 1b; for now visit() falls through to
-	// children so identifier uses at file scope still resolve.
+	// Walk statements and cmd blocks. Cmds live alongside Stmts on
+	// SourceFile but in a separate slice; both run at file scope and
+	// share access to hoisted functions and args-block names.
 	for _, stmt := range file.Stmts {
 		b.visit(stmt)
+	}
+	for _, cmd := range file.Cmds {
+		b.visit(cmd)
 	}
 }
 
@@ -188,6 +191,12 @@ func (b *binder) visit(n rl.Node) {
 		b.visitWhileLoop(v)
 	case *rl.ListComp:
 		b.visitListComp(v)
+	case *rl.Switch:
+		b.visitSwitch(v)
+	case *rl.Defer:
+		b.visitDefer(v)
+	case *rl.CmdBlock:
+		b.visitCmdBlock(v)
 	default:
 		// Generic descent for unhandled node kinds. Subsequent commits
 		// in this phase replace more of these with scope-aware cases
@@ -395,6 +404,97 @@ func (b *binder) visitListComp(c *rl.ListComp) {
 		b.visit(c.Condition)
 	}
 	b.visit(c.Expr)
+}
+
+// visitSwitch binds a switch statement. The discriminant and each
+// case's match keys are expressions in the enclosing scope - they're
+// values to compare, not bindings. Case bodies that contain
+// statements (SwitchCaseBlock) get their own ScopeBlock so that a
+// local declared in one case doesn't bleed into the next case or
+// outlive the switch.
+func (b *binder) visitSwitch(s *rl.Switch) {
+	b.visit(s.Discriminant)
+	for _, c := range s.Cases {
+		for _, k := range c.Keys {
+			b.visit(k)
+		}
+		b.visitSwitchAlt(c.Alt)
+	}
+	if s.Default != nil {
+		b.visitSwitchAlt(s.Default.Alt)
+	}
+}
+
+// visitSwitchAlt visits one case's right-hand side. A single-expression
+// alt is just visited; a block alt is visited inside its own scope.
+func (b *binder) visitSwitchAlt(alt rl.Node) {
+	switch a := alt.(type) {
+	case *rl.SwitchCaseBlock:
+		b.pushScope(ScopeBlock, a)
+		defer b.popScope()
+		for _, stmt := range a.Stmts {
+			b.visit(stmt)
+		}
+	case *rl.SwitchCaseExpr:
+		for _, v := range a.Values {
+			b.visit(v)
+		}
+	default:
+		b.visit(alt)
+	}
+}
+
+// visitDefer binds a `defer:` / `errdefer:` block. Its body is a
+// separate scope so anything declared inside doesn't escape into the
+// enclosing function or file. The body still resolves references up
+// the scope chain, which is how the deferred code can reach variables
+// from where the defer was registered.
+func (b *binder) visitDefer(d *rl.Defer) {
+	b.pushScope(ScopeBlock, d)
+	defer b.popScope()
+	for _, stmt := range d.Body {
+		b.visit(stmt)
+	}
+}
+
+// visitCmdBlock binds a top-level cmd_block. The command's arg
+// declarations live in their own scope so they don't collide with
+// other commands' args or the script-level args block.
+//
+// An inline-lambda callback gets visited inside the cmd scope, which
+// means the lambda's body can see the cmd's args. A name-referenced
+// callback resolves against the file scope - the runtime threads cmd
+// args to the named function through a separate mechanism, so making
+// the function's lexical scope see them here would be misleading.
+func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
+	b.pushScope(ScopeCmdBlock, c)
+	defer b.popScope()
+
+	for i := range c.Decls {
+		decl := &c.Decls[i]
+		b.declare(decl.Name, SymCmdArg, decl.Span(), decl)
+	}
+	// Visit default expressions in the cmd scope; they can refer to
+	// other cmd args declared on the line(s) above.
+	for i := range c.Decls {
+		if c.Decls[i].Default != nil {
+			b.visit(c.Decls[i].Default)
+		}
+	}
+
+	cb := c.Callback
+	switch {
+	case cb.IsLambda && cb.Lambda != nil:
+		b.visitLambda(cb.Lambda)
+	case cb.IdentifierName != nil:
+		// Build a synthetic Identifier so the use is recorded in the
+		// resolution map keyed on the AST node. Future LSP goto-def
+		// for a cmd callback can use this entry.
+		if cb.IdentifierSpan != nil {
+			ident := rl.NewIdentifier(*cb.IdentifierSpan, *cb.IdentifierName)
+			b.resolveIdentifier(ident)
+		}
+	}
 }
 
 // visitCatch walks the body of an error-catch block. The block does not

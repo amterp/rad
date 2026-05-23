@@ -314,6 +314,99 @@ func TestResolve_ListCompVarsScoped(t *testing.T) {
 	assert.Nil(t, r.File.Lookup("x"), "comp var must not leak")
 }
 
+func TestResolve_SwitchCaseBodyIsItsOwnScope(t *testing.T) {
+	// A local declared in one case body should not be visible to a
+	// later case or to code after the switch.
+	src := "x = 1\nswitch x:\n    case 1:\n        tmp = \"a\"\n    case 2:\n        tmp = \"b\"\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	assert.Nil(t, r.File.Lookup("tmp"), "case-body locals must not leak")
+
+	sw := file.Stmts[1].(*rl.Switch)
+	require.GreaterOrEqual(t, len(sw.Cases), 2)
+	caseA := sw.Cases[0].Alt.(*rl.SwitchCaseBlock)
+	caseB := sw.Cases[1].Alt.(*rl.SwitchCaseBlock)
+	tmpA := caseA.Stmts[0].(*rl.Assign).Targets[0].(*rl.Identifier)
+	tmpB := caseB.Stmts[0].(*rl.Assign).Targets[0].(*rl.Identifier)
+	// Each case introduces its OWN tmp - the symbols must differ.
+	symA := r.Uses[tmpA]
+	symB := r.Uses[tmpB]
+	require.NotNil(t, symA)
+	require.NotNil(t, symB)
+	assert.NotSame(t, symA, symB, "two case bodies must produce distinct tmp symbols")
+}
+
+func TestResolve_SwitchDiscriminantInEnclosingScope(t *testing.T) {
+	src := "x = 1\nswitch x:\n    case 1:\n        pass\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fileX := r.File.Lookup("x")
+	require.NotNil(t, fileX)
+	sw := file.Stmts[1].(*rl.Switch)
+	discIdent := sw.Discriminant.(*rl.Identifier)
+	assert.Same(t, fileX, r.Uses[discIdent])
+}
+
+func TestResolve_DeferBodyIsItsOwnScope(t *testing.T) {
+	src := "fn f():\n    defer:\n        tmp = 1\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fn := file.Stmts[0].(*rl.FnDef)
+	defer_ := fn.Body[0].(*rl.Defer)
+	tmpDecl := defer_.Body[0].(*rl.Assign).Targets[0].(*rl.Identifier)
+	tmpSym := r.Uses[tmpDecl]
+	require.NotNil(t, tmpSym)
+	assert.Equal(t, check.ScopeBlock, tmpSym.Scope.Kind)
+	assert.Same(t, defer_, tmpSym.Scope.Owner)
+}
+
+func TestResolve_CmdBlockArgsVisibleToInlineLambda(t *testing.T) {
+	src := "command greet:\n    name str\n    calls fn():\n        print(name)\n"
+	file := parseFile(t, src)
+	require.NotNil(t, file)
+	require.Len(t, file.Cmds, 1, "expected one cmd_block")
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	cmd := file.Cmds[0]
+	require.True(t, cmd.Callback.IsLambda, "expected inline-lambda callback")
+	require.NotNil(t, cmd.Callback.Lambda)
+
+	// `name` arg is declared in the cmd scope.
+	cb := cmd.Callback.Lambda
+	require.GreaterOrEqual(t, len(cb.Body), 1)
+	call := cb.Body[0].(*rl.ExprStmt).Expr.(*rl.Call)
+	nameUse := call.Args[0].(*rl.Identifier)
+
+	sym, ok := r.Uses[nameUse]
+	require.True(t, ok, "callback body should see cmd arg")
+	assert.Equal(t, check.SymCmdArg, sym.Kind)
+	assert.Equal(t, check.ScopeCmdBlock, sym.Scope.Kind)
+	// And it must NOT leak to file scope.
+	assert.Nil(t, r.File.Lookup("name"), "cmd arg must not leak")
+}
+
+func TestResolve_CmdBlockCallbackIdentifierRecorded(t *testing.T) {
+	// Identifier-style callback resolves against file scope (or
+	// builtin). Goto-def from the callback name should find the
+	// hoisted function.
+	src := "command run:\n    calls handler\n\nfn handler():\n    pass\n"
+	file := parseFile(t, src)
+	require.NotNil(t, file)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	handlerSym := r.File.Lookup("handler")
+	require.NotNil(t, handlerSym)
+	assert.Equal(t, check.SymHoistedFn, handlerSym.Kind)
+}
+
 func TestResolve_RebindingDoesNotCreateNewSymbol(t *testing.T) {
 	// A second assignment to the same name re-binds, it doesn't shadow.
 	// Both assignments share one Symbol so the LSP can find every
