@@ -90,6 +90,8 @@ reverse
 round
 save_state
 seed_random
+signal_ignore
+signal_trap
 sleep
 sort
 split

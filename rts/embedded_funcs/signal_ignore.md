@@ -1,0 +1,31 @@
+# signal_ignore
+
+Installs OS-level `SIG_IGN` for one or more signals, so the process is not woken
+when they fire. The disposition is inherited by subprocesses. Distinct from a
+no-op `signal_trap` handler, which still wakes the process on every delivery.
+
+## Signature
+
+`signal_ignore(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][]) -> void`
+
+## Examples
+
+```rad
+// Don't crash when a downstream pipe consumer (e.g. `head`) closes early
+signal_ignore("sigpipe")
+
+for i in range(0, 1000000):
+    print(i)  // safe to pipe into `head` now
+```
+
+## Category
+
+system
+
+## Notes
+
+The primary use case is `sigpipe`: a script that pipes its output (e.g.
+`rad script.rad | head`) would otherwise terminate when the consumer closes the
+pipe. Ignoring it at the OS level keeps the script alive.
+
+On Windows, only `sigint` and `sigterm` are supported.

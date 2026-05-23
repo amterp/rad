@@ -133,8 +133,12 @@ func newRunnerInput() core.RunnerInput {
 		RSleep:   &sleepFunc,
 		RShell:   &shellExec,
 		RConfirm: &confirmExec,
-		RReq:     requester,
-		RadHome:  &radTestHome,
+		// Default to a fake signal source so tests do not mutate the real
+		// process's signal handlers (signal.Notify / signal.Ignore are
+		// process-global and would leak across tests).
+		RSignal: core.NewFakeSignalSource(),
+		RReq:    requester,
+		RadHome: &radTestHome,
 	}
 }
 

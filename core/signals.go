@@ -84,6 +84,14 @@ type SignalManager struct {
 
 	// started gates the background dispatch goroutine so we start it at most once.
 	started bool
+
+	// dispatching is set while a Checkpoint is actively draining the queue
+	// and invoking handlers. A nested Checkpoint (e.g. one inside runBlock
+	// of the handler's body) bails out instead of recursively popping the
+	// queue - the outer Checkpoint will continue draining after the current
+	// handler returns. This keeps handler invocations in queue order
+	// rather than depth-first.
+	dispatching atomic.Bool
 }
 
 // NewSignalManager constructs an inactive SignalManager. The dispatch goroutine
@@ -359,10 +367,10 @@ func IsTerminatingSignal(name string) bool {
 // Checkpoint is called by the interpreter between statements. If a signal is
 // pending it dispatches according to the current policy:
 //
-//   - If a Rad handler is registered for the signal, invoke it. After it
-//     returns, always continue (Bash/Python/Ruby/Node semantics): the user
-//     explicitly calls exit() to stop. (Note: handler dispatch is added in a
-//     follow-up phase; right now no handlers can be registered.)
+//   - If a Rad handler is registered for the signal, invoke it with a single
+//     map argument: { signal, exit_code }. After it returns, always continue
+//     execution (Bash/Python/Ruby/Node semantics). The handler must call
+//     exit() explicitly if it wants to terminate.
 //
 //   - If no handler is registered and the signal is terminating, route
 //     through RExit.Exit(128+sig) so defer blocks run and the exit code
@@ -371,25 +379,63 @@ func IsTerminatingSignal(name string) bool {
 //   - If no handler and the signal is non-terminating (SIGWINCH), drop it.
 //
 // Checkpoint runs on the main interpreter goroutine, so it can safely touch
-// the interpreter env / call deferred blocks.
+// the interpreter env / call deferred blocks / invoke Rad handlers.
+//
+// Drains the entire pending queue in FIFO order before returning. The
+// dispatching guard ensures nested checkpoints (e.g. those inside runBlock
+// while a handler body is executing) become no-ops, so handler invocations
+// stay in queue order rather than interleaving depth-first.
 func (i *Interpreter) Checkpoint() {
-	if i.signals == nil {
+	if !i.signals.dispatching.CompareAndSwap(false, true) {
 		return
 	}
-	name, ok := i.signals.DrainPending()
-	if !ok {
-		return
+	defer i.signals.dispatching.Store(false)
+
+	for {
+		name, ok := i.signals.DrainPending()
+		if !ok {
+			return
+		}
+		i.dispatchSignal(name)
 	}
+}
 
-	// Refresh the context so any blocking ops started after this point are
-	// not stuck in the previously-canceled state.
-	defer i.signals.RefreshCtx()
+// dispatchSignal handles one drained signal: invokes the Rad handler if one
+// is registered, otherwise routes terminating signals through RExit.Exit so
+// defers run. Always-continue semantics: even if a handler is registered,
+// control returns to the caller after it completes.
+func (i *Interpreter) dispatchSignal(name string) {
+	// Refresh the context BEFORE dispatching so the handler's own blocking
+	// ops (sleep, shell, HTTP) see a non-canceled context. If a new signal
+	// arrives during the handler, the dispatch goroutine will cancel this
+	// fresh context and the queue drain in the outer Checkpoint loop picks
+	// it up on the next iteration.
+	i.signals.RefreshCtx()
 
-	// Handler dispatch is added in Phase 2b; for now no handlers can be
-	// registered, so Handler() always returns ok=false. Keeping the lookup
-	// here means Phase 2b only needs to fill in the body of the if-block.
-	if _, hasHandler := i.signals.Handler(name); hasHandler {
-		// TODO(signals/phase2b): dispatch handler with ctx object.
+	if handler, hasHandler := i.signals.Handler(name); hasHandler {
+		// Mark in-handler so a second SIGINT during a SIGINT handler triggers
+		// the double-Ctrl+C force-exit path in dispatchLoop. The mark is
+		// signal-scoped: a SIGTERM arriving during a SIGINT handler is
+		// queued normally; it would only collide with itself.
+		i.signals.MarkInHandler(name)
+		defer i.signals.ClearInHandler()
+
+		ctxMap := NewRadMap()
+		ctxMap.SetPrimitiveStr("signal", name)
+		ctxMap.SetPrimitiveInt("exit_code", ExitCodeFor(name))
+		ctxVal := newRadValue(i, nil, ctxMap)
+
+		invocation := NewFnInvocation(
+			i,
+			nil, // signal handlers have no syntactic call site
+			handler.Name(),
+			NewPosArgs(NewPosArg(nil, ctxVal)),
+			NO_NAMED_ARGS_INPUT,
+			handler.IsBuiltIn(),
+		)
+		_ = handler.Execute(invocation)
+		// Always continue after the handler returns. If the handler wanted
+		// to exit, it called exit() itself, which doesn't return.
 		return
 	}
 
