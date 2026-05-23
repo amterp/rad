@@ -481,6 +481,28 @@ func TestResolve_ShadowingNotADuplicate(t *testing.T) {
 	}
 }
 
+func TestCheck_CmdCallbackBuiltinAlone_NoFalseWarning(t *testing.T) {
+	// Regression: previously addUnknownCommandCallbackWarnings only
+	// consulted the resolved view. Builtins are synthesized lazily on
+	// first reference, so a script whose ONLY mention of `print` was a
+	// `calls print` callback (no other call to print, nothing to
+	// trigger synthesis) would emit a false-positive "may not be
+	// defined" warning. Guard against the regression.
+	src := "command run:\n    calls print\n"
+	parser, err := rts.NewRadParser()
+	require.NoError(t, err)
+	defer parser.Close()
+	tree := parser.Parse(src)
+	chk := check.NewCheckerWithTree(tree, parser, src, rts.ConvertCST(tree.Root(), src, "test.rad"))
+	res, err := chk.Check()
+	require.NoError(t, err)
+	for _, d := range res.Diagnostics {
+		if d.Code != nil && *d.Code == rl.ErrUnknownFunction {
+			t.Fatalf("unexpected unknown-function diagnostic: %s", d.Message)
+		}
+	}
+}
+
 func TestResolve_RebindingDoesNotCreateNewSymbol(t *testing.T) {
 	// A second assignment to the same name re-binds, it doesn't shadow.
 	// Both assignments share one Symbol so the LSP can find every

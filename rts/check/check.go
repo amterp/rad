@@ -209,22 +209,26 @@ func isIntType(t *rl.TypingT) bool {
 }
 
 // addUnknownCommandCallbackWarnings flags `calls <name>` callbacks
-// whose target isn't visible at file scope. Goes through the resolved
-// view so it agrees byte-for-byte with the rest of the checker on
-// what's defined where; the ad-hoc set construction the previous
-// implementation used could drift from the binder's notion of "in
-// scope" as the language adds new declaration sites.
+// whose target isn't visible at file scope or as an ambient builtin.
+//
+// The file-scope check goes through the resolved view so it stays
+// consistent with the rest of the checker on what's bound where. The
+// builtin check goes through the runtime function set directly:
+// Builtin Symbols are synthesized lazily on first reference, so a
+// script that uses `print` ONLY as a cmd callback never triggers the
+// synthesis and a Resolved-only check would emit a false positive.
 func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(resolved *Resolved, d *[]Diagnostic) {
 	if c.ast == nil || len(c.ast.Cmds) == 0 || resolved == nil {
 		return
 	}
+	builtins := rts.GetBuiltInFunctions()
 	for _, cmd := range c.ast.Cmds {
 		cb := cmd.Callback
 		if cb.IsLambda || cb.IdentifierName == nil || cb.IdentifierSpan == nil {
 			continue
 		}
 		fnName := *cb.IdentifierName
-		if resolved.File.Lookup(fnName) != nil {
+		if resolved.File.Lookup(fnName) != nil || builtins.Contains(fnName) {
 			continue
 		}
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
