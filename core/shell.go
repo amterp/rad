@@ -2,6 +2,7 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -35,9 +36,11 @@ type ShellInvocation struct {
 	IsConfirm bool
 }
 
-// ShellExecutor is the function type for executing shell commands
-// Returns: (stdout, stderr, exitCode) - only returns captured output based on invocation.Capture* fields
-type ShellExecutor func(invocation ShellInvocation) (string, string, int)
+// ShellExecutor is the function type for executing shell commands.
+// Returns: (stdout, stderr, exitCode) - only returns captured output based on invocation.Capture* fields.
+// The ctx is the interpreter's signal-cancellation context; the executor should wake up promptly when
+// it's canceled (the subprocess shares Rad's process group, so it will have received the signal too).
+type ShellExecutor func(ctx context.Context, invocation ShellInvocation) (string, string, int)
 
 func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	targets := shell.Targets
@@ -146,7 +149,7 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 		}
 	}
 
-	stdout, stderr, exitCode := RShell(invocation)
+	stdout, stderr, exitCode := RShell(i.signals.Ctx(), invocation)
 	return newShellResult(exitCode, stdout, stderr, captureStdout, captureStderr)
 }
 
@@ -165,7 +168,7 @@ func newShellResult(exitCode int, stdout, stderr string, captureStdout, captureS
 
 // realShellExecutor is the production implementation of shell command execution
 // warning: as of writing, this is *not* covered in tests
-func realShellExecutor(invocation ShellInvocation) (string, string, int) {
+func realShellExecutor(ctx context.Context, invocation ShellInvocation) (string, string, int) {
 	cmd := resolveCmdSimple(invocation.Command)
 	var stdoutBuf, stderrBuf bytes.Buffer
 
@@ -185,7 +188,31 @@ func realShellExecutor(invocation ShellInvocation) (string, string, int) {
 		RP.RadStderrf("⚡️ %s\n", invocation.Command)
 	}
 
-	err := cmd.Run()
+	// Start+Wait with a select on ctx, so a signal arriving during the
+	// subprocess wakes us promptly. Because we use a shared process group
+	// (today's default), the subprocess will have received the same signal
+	// and is expected to terminate on its own. We still wait for its actual
+	// exit code so we can report it accurately.
+	if err := cmd.Start(); err != nil {
+		panic(fmt.Sprintf("Failed to start command: %v\n", err))
+	}
+
+	waitErr := make(chan error, 1)
+	go func() {
+		waitErr <- cmd.Wait()
+	}()
+
+	var err error
+	select {
+	case err = <-waitErr:
+		// Subprocess finished normally (or with an error). Continue below.
+	case <-ctx.Done():
+		// A signal fired. The subprocess shares our process group and will
+		// have received the signal too. Wait for it to exit so we get the
+		// real exit code rather than guessing - if it ignores the signal
+		// (rare), a second Ctrl+C force-exits Rad via the SignalManager.
+		err = <-waitErr
+	}
 
 	exitCode := 0
 	if err != nil {

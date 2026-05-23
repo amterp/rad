@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -154,7 +155,10 @@ func (r *Requester) SetCaptureCallback(cb func(HttpRequest)) {
 	r.captureRequest = cb
 }
 
-func (r *Requester) Request(def RequestDef) ResponseDef {
+// Request executes an HTTP request. ctx is the signal-cancellation context;
+// if it fires (e.g. SIGINT), the in-flight request is aborted. Tests can pass
+// context.Background() if signal handling is not relevant.
+func (r *Requester) Request(ctx context.Context, def RequestDef) ResponseDef {
 
 	sanitizedURL, err := sanitizeUrlString(def.Url)
 	if err != nil {
@@ -162,8 +166,9 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 		return NewResponseDef(nil, nil, nil, &msg, 0)
 	}
 
-	// Create request with sanitized URL
-	req, err := http.NewRequest(def.Method, sanitizedURL, def.BodyReader())
+	// Create request with sanitized URL. Using ctx so a signal interrupts the
+	// blocking I/O of client.Do() below.
+	req, err := http.NewRequestWithContext(ctx, def.Method, sanitizedURL, def.BodyReader())
 	if err != nil {
 		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
 		return NewResponseDef(nil, nil, nil, &msg, 0)
@@ -196,11 +201,11 @@ func (r *Requester) Request(def RequestDef) ResponseDef {
 	return response
 }
 
-func (r *Requester) RequestJson(url string, insecure bool, quiet bool) (interface{}, error) {
+func (r *Requester) RequestJson(ctx context.Context, url string, insecure bool, quiet bool) (interface{}, error) {
 	reqDef := NewRequestDef("GET", url, emptyHeaders, nil)
 	reqDef.Insecure = insecure
 	reqDef.Quiet = quiet
-	response := r.Request(reqDef)
+	response := r.Request(ctx, reqDef)
 
 	if !response.Success {
 		if response.Error != nil {

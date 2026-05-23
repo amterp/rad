@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"os"
@@ -41,9 +42,10 @@ var (
 	RExit                    *RadExitHandler
 	RReq                     *Requester
 	RClock                   Clock
-	RSleep                   func(duration time.Duration)
+	RSleep                   func(ctx context.Context, duration time.Duration)
 	RShell                   ShellExecutor
 	RConfirm                 func(title string, prompt string) (bool, error)
+	RSignal                  SignalSource
 	RNG                      *rand.Rand
 	HasScript                bool
 	ScriptPath               string
@@ -61,9 +63,10 @@ type RunnerInput struct {
 	RExit      *func(int)
 	RReq       *Requester
 	RClock     Clock
-	RSleep     *func(duration time.Duration)
-	RShell     *func(invocation ShellInvocation) (string, string, int)
+	RSleep     *func(ctx context.Context, duration time.Duration)
+	RShell     *func(ctx context.Context, invocation ShellInvocation) (string, string, int)
 	RConfirm   *func(title string, prompt string) (bool, error)
+	RSignal    SignalSource
 	RadHome    *string
 	RTermWidth *int
 }
@@ -93,6 +96,7 @@ func ResetGlobals() {
 	RSleep = nil
 	RShell = nil
 	RConfirm = nil
+	RSignal = nil
 	RNG = nil
 	HasScript = false
 	ScriptPath = ""
@@ -157,8 +161,15 @@ func setGlobals(runnerInput RunnerInput) {
 	}
 	StartEpochMillis = RClock.Now().UnixMilli()
 	if runnerInput.RSleep == nil {
-		RSleep = func(duration time.Duration) {
-			time.Sleep(duration)
+		RSleep = func(ctx context.Context, duration time.Duration) {
+			// select so a signal handler can interrupt sleep promptly.
+			// If ctx is already canceled when we enter, we return immediately
+			// without sleeping - which is what callers should expect after a
+			// signal has fired.
+			select {
+			case <-time.After(duration):
+			case <-ctx.Done():
+			}
 		}
 	} else {
 		RSleep = *runnerInput.RSleep
@@ -174,6 +185,12 @@ func setGlobals(runnerInput RunnerInput) {
 		RConfirm = InputConfirm
 	} else {
 		RConfirm = *runnerInput.RConfirm
+	}
+
+	if runnerInput.RSignal == nil {
+		RSignal = realSignalSource{}
+	} else {
+		RSignal = runnerInput.RSignal
 	}
 
 	RTermWidth = runnerInput.RTermWidth

@@ -2,6 +2,7 @@ package testing
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -101,10 +102,10 @@ func newRunnerInput() core.RunnerInput {
 		// errorOrExit.stderrSnapshot = stdErrBuffer.String()
 		panic(ignorePanicMsg)
 	}
-	sleepFunc := func(duration time.Duration) {
+	sleepFunc := func(ctx context.Context, duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
 	}
-	shellExec := func(invocation core.ShellInvocation) (string, string, int) {
+	shellExec := func(ctx context.Context, invocation core.ShellInvocation) (string, string, int) {
 		shellInvocations = append(shellInvocations, invocation)
 		// Return empty strings and exit code 0 for test mock
 		return "", "", 0
