@@ -216,6 +216,104 @@ func TestResolve_ParamDefaultEvaluatesInEnclosingScope(t *testing.T) {
 	assert.Same(t, fileSym, useSym, "default must resolve to enclosing scope binding")
 }
 
+func TestResolve_ForLoopVarVisibleInBodyOnly(t *testing.T) {
+	src := "items = [1,2,3]\nfor x in items:\n    print(x)\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	// The loop var is visible inside the body.
+	forLoop := file.Stmts[1].(*rl.ForLoop)
+	call := forLoop.Body[0].(*rl.ExprStmt).Expr.(*rl.Call)
+	xUse := call.Args[0].(*rl.Identifier)
+	sym, ok := r.Uses[xUse]
+	require.True(t, ok)
+	assert.Equal(t, check.SymLoopVar, sym.Kind)
+	assert.Equal(t, check.ScopeLoop, sym.Scope.Kind)
+
+	// And NOT visible at file scope after the loop ends.
+	assert.Nil(t, r.File.Lookup("x"), "loop var must not leak to file scope")
+}
+
+func TestResolve_ForLoopIterEvaluatedInEnclosingScope(t *testing.T) {
+	// `items` is a file-level binding; the iter source must resolve
+	// against the file scope, not against the (not-yet-existing)
+	// loop scope.
+	src := "items = [1,2,3]\nfor x in items:\n    pass\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	fileItems := r.File.Lookup("items")
+	require.NotNil(t, fileItems)
+
+	forLoop := file.Stmts[1].(*rl.ForLoop)
+	iterIdent := forLoop.Iter.(*rl.Identifier)
+	assert.Same(t, fileItems, r.Uses[iterIdent])
+}
+
+func TestResolve_ForLoopMultiVarsAllDeclared(t *testing.T) {
+	// `for i, v in enumerate(xs):` binds both i and v in the body.
+	src := "xs = [1,2,3]\nfor i, v in xs:\n    print(i)\n    print(v)\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	forLoop := file.Stmts[1].(*rl.ForLoop)
+	require.Equal(t, []string{"i", "v"}, forLoop.Vars)
+
+	iUse := forLoop.Body[0].(*rl.ExprStmt).Expr.(*rl.Call).Args[0].(*rl.Identifier)
+	vUse := forLoop.Body[1].(*rl.ExprStmt).Expr.(*rl.Call).Args[0].(*rl.Identifier)
+	require.NotNil(t, r.Uses[iUse])
+	require.NotNil(t, r.Uses[vUse])
+	assert.Equal(t, "i", r.Uses[iUse].Name)
+	assert.Equal(t, "v", r.Uses[vUse].Name)
+}
+
+func TestResolve_WhileLoopBodyScoped(t *testing.T) {
+	// A while loop opens a scope so any locals defined inside don't
+	// outlive the loop. Without this, `while True: x = 1` would
+	// pollute the enclosing scope - probably what the user wants for
+	// idiomatic 'compute then use' patterns, but inconsistent with
+	// ForLoop, and a footgun if the loop doesn't actually run.
+	src := "i = 0\nwhile i < 3:\n    tmp = i\n    i += 1\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	whileLoop := file.Stmts[1].(*rl.WhileLoop)
+	tmpAssign := whileLoop.Body[0].(*rl.Assign)
+	tmpDecl := tmpAssign.Targets[0].(*rl.Identifier)
+	tmpSym := r.Uses[tmpDecl]
+	require.NotNil(t, tmpSym)
+	assert.Equal(t, check.ScopeLoop, tmpSym.Scope.Kind)
+	assert.Nil(t, r.File.Lookup("tmp"), "loop-local should not escape")
+
+	// But `i += 1` (compound assign) must rebind the file-scope i.
+	iAssign := whileLoop.Body[1].(*rl.Assign)
+	require.True(t, iAssign.UpdateEnclosing)
+	iTarget := iAssign.Targets[0].(*rl.Identifier)
+	assert.Same(t, r.File.Lookup("i"), r.Uses[iTarget])
+}
+
+func TestResolve_ListCompVarsScoped(t *testing.T) {
+	// `[x * 2 for x in xs]` - x is a comprehension-local, gone after.
+	src := "xs = [1,2,3]\nresult = [x * 2 for x in xs]\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	// Find the comprehension - it's the RHS of `result = ...`.
+	resultAssign := file.Stmts[1].(*rl.Assign)
+	comp := resultAssign.Values[0].(*rl.ListComp)
+	mult := comp.Expr.(*rl.OpBinary)
+	xUse := mult.Left.(*rl.Identifier)
+	sym := r.Uses[xUse]
+	require.NotNil(t, sym)
+	assert.Equal(t, check.ScopeListComp, sym.Scope.Kind)
+	assert.Nil(t, r.File.Lookup("x"), "comp var must not leak")
+}
+
 func TestResolve_RebindingDoesNotCreateNewSymbol(t *testing.T) {
 	// A second assignment to the same name re-binds, it doesn't shadow.
 	// Both assignments share one Symbol so the LSP can find every

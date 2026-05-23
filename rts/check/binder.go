@@ -182,6 +182,12 @@ func (b *binder) visit(n rl.Node) {
 		b.visitFnDef(v)
 	case *rl.Lambda:
 		b.visitLambda(v)
+	case *rl.ForLoop:
+		b.visitForLoop(v)
+	case *rl.WhileLoop:
+		b.visitWhileLoop(v)
+	case *rl.ListComp:
+		b.visitListComp(v)
 	default:
 		// Generic descent for unhandled node kinds. Subsequent commits
 		// in this phase replace more of these with scope-aware cases
@@ -314,6 +320,81 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 	for _, stmt := range body {
 		b.visit(stmt)
 	}
+}
+
+// visitForLoop binds a `for vars in iter [with ctx]:` loop.
+//
+// The iterable expression evaluates in the enclosing scope - that's
+// the value being iterated, not something defined by the loop. The
+// loop scope opens just before the body so that the loop variables
+// (and optional 'with' context binding) are only visible to the body.
+//
+// A loop variable that shadows an enclosing-scope name shadows for
+// the duration of the body and is gone after; this matches Python
+// and is what Rad's runtime does today.
+func (b *binder) visitForLoop(f *rl.ForLoop) {
+	b.visit(f.Iter)
+
+	b.pushScope(ScopeLoop, f)
+	defer b.popScope()
+
+	for _, name := range f.Vars {
+		if name == "" {
+			continue
+		}
+		b.declare(name, SymLoopVar, f.Span(), f)
+	}
+	if f.Context != nil && *f.Context != "" {
+		b.declare(*f.Context, SymWith, f.Span(), f)
+	}
+	for _, stmt := range f.Body {
+		b.visit(stmt)
+	}
+}
+
+// visitWhileLoop binds a `while [cond]:` loop. No new names come from
+// the loop header, but the body still belongs to its own scope so
+// that any assignments inside aren't visible after the loop ends -
+// matching ForLoop's behavior and keeping our notion of "loop scope"
+// uniform for later narrowing rules.
+func (b *binder) visitWhileLoop(w *rl.WhileLoop) {
+	b.pushScope(ScopeLoop, w)
+	defer b.popScope()
+
+	if w.Condition != nil {
+		b.visit(w.Condition)
+	}
+	for _, stmt := range w.Body {
+		b.visit(stmt)
+	}
+}
+
+// visitListComp binds a `[expr for vars in iter if cond]` comprehension.
+//
+// The iterable evaluates in the enclosing scope (Python's rule -
+// otherwise `[x for x in x]` would be paradoxical). Everything else
+// - the loop vars, the optional 'with' context, the filter, and the
+// element expression - lives in its own scope, gone the moment the
+// comprehension finishes producing its list.
+func (b *binder) visitListComp(c *rl.ListComp) {
+	b.visit(c.Iter)
+
+	b.pushScope(ScopeListComp, c)
+	defer b.popScope()
+
+	for _, name := range c.Vars {
+		if name == "" {
+			continue
+		}
+		b.declare(name, SymLoopVar, c.Span(), c)
+	}
+	if c.Context != nil && *c.Context != "" {
+		b.declare(*c.Context, SymWith, c.Span(), c)
+	}
+	if c.Condition != nil {
+		b.visit(c.Condition)
+	}
+	b.visit(c.Expr)
 }
 
 // visitCatch walks the body of an error-catch block. The block does not
