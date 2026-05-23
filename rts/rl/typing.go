@@ -45,19 +45,30 @@ func (r RadType) AsString() string {
 	}
 }
 
-// TypingT is the runtime representation of a Rad type annotation. Each
-// implementation pairs:
+// TypingT is the representation of a Rad type annotation. Each implementation
+// provides three things:
 //
 //	Name()             - the user-visible spelling used in error messages
-//	IsCompatibleWith() - whether a given value matches this type
+//	IsCompatibleWith() - whether a runtime value matches this type
+//	IsAssignableFrom() - whether a value of another declared type can flow here
 //
-// The Rad interpreter calls IsCompatibleWith at function param/return
-// boundaries (see core/type_fn.go). It is *not* called on local variable
-// assignment or collection mutation today - see docs/type_system.md for why and
-// what we'd need to change to extend coverage.
+// IsCompatibleWith is the runtime check; the interpreter calls it at function
+// param/return boundaries (see core/type_fn.go). It compares a *value* against
+// this type.
+//
+// IsAssignableFrom is the static check; the type checker calls it when
+// matching one declared type against another (assignment RHS vs LHS, argument
+// vs parameter, return value vs declared return). It compares two *types*. The
+// rules implement gradual typing: `any` and `dynamic` are universally
+// compatible in both directions (you can store anything in them, and they can
+// flow anywhere); collections are invariant (allowing `int[]` into `(int|str)[]`
+// would let the callee write a string into a list the caller still believes is
+// int-typed); function parameters are contravariant and returns are covariant;
+// `int` widens implicitly to `float` to mirror the runtime rule.
 type TypingT interface {
 	Name() string
 	IsCompatibleWith(val TypingCompatVal) bool
+	IsAssignableFrom(other TypingT) bool
 }
 
 // Compile-time guards: every concrete typing must satisfy TypingT.
