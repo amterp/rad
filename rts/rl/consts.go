@@ -211,6 +211,7 @@ const (
 	T_BOOL_LIST  = "bool[]"
 	T_ERROR      = "error"
 	T_ANY        = "any"
+	T_DYNAMIC    = "dynamic"
 	T_VOID       = "void"
 	T_LIST       = "list"
 	T_MAP        = "map"

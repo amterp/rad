@@ -62,6 +62,37 @@ func TestAssign_AnyIsUniversallyConsistent(t *testing.T) {
 	assert.True(t, strList.IsAssignableFrom(anyT))
 }
 
+func TestAssign_DynamicIsUniversallyConsistent(t *testing.T) {
+	dynT := rl.NewDynamicType()
+	intT := rl.NewIntType()
+	strList := rl.NewListType(rl.NewStrType())
+
+	// Same shape as any: dynamic accepts everything and is accepted by
+	// everything. The distinction from any is provenance (implicit vs
+	// user-written) and only matters when a future strict mode wants to
+	// flag implicit-dynamic flow.
+	assert.True(t, dynT.IsAssignableFrom(intT))
+	assert.True(t, dynT.IsAssignableFrom(strList))
+	assert.True(t, dynT.IsAssignableFrom(rl.NewVoidType()))
+
+	assert.True(t, intT.IsAssignableFrom(dynT))
+	assert.True(t, strList.IsAssignableFrom(dynT))
+}
+
+func TestAssign_DynamicAndAnyAreDistinct(t *testing.T) {
+	// They behave identically for IsAssignableFrom today, but they're not the
+	// same type. The static checker must be able to tell them apart - that's
+	// the whole point of having two.
+	dynT := rl.TypingT(rl.NewDynamicType())
+	anyT := rl.TypingT(rl.NewAnyType())
+
+	_, isAny := dynT.(*rl.TypingAnyT)
+	assert.False(t, isAny, "dynamic must not satisfy *TypingAnyT")
+	_, isDyn := anyT.(*rl.TypingDynamicT)
+	assert.False(t, isDyn, "any must not satisfy *TypingDynamicT")
+	assert.NotEqual(t, dynT.Name(), anyT.Name(), "names must differ so error messages distinguish them")
+}
+
 func TestAssign_VoidIsExclusive(t *testing.T) {
 	voidT := rl.NewVoidType()
 	// Only void itself flows into void. Catches `x = print(...)`.

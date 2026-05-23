@@ -79,6 +79,7 @@ var (
 	_ TypingT = (*TypingBoolT)(nil)
 	_ TypingT = (*TypingErrorT)(nil)
 	_ TypingT = (*TypingAnyT)(nil)
+	_ TypingT = (*TypingDynamicT)(nil)
 	_ TypingT = (*TypingVoidT)(nil)
 	_ TypingT = (*TypingAnyListT)(nil)
 	_ TypingT = (*TypingListT)(nil)
@@ -208,6 +209,26 @@ func (t *TypingAnyT) Name() string {
 }
 
 func (t *TypingAnyT) IsCompatibleWith(TypingCompatVal) bool {
+	return true
+}
+
+// TypingDynamicT is the implicit-any type assigned by the static checker when
+// inference can't pin a type. It is behaviorally identical to TypingAnyT
+// (universally compatible in both directions), but tracked separately so that
+// a future strict-mode flag can warn on implicit-dynamic flow into typed code
+// without nagging users who wrote `any` deliberately. Users never write
+// `dynamic` themselves - it appears only in inferred types.
+type TypingDynamicT struct{}
+
+func NewDynamicType() *TypingDynamicT {
+	return &TypingDynamicT{}
+}
+
+func (t *TypingDynamicT) Name() string {
+	return T_DYNAMIC
+}
+
+func (t *TypingDynamicT) IsCompatibleWith(TypingCompatVal) bool {
 	return true
 }
 

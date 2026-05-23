@@ -8,14 +8,18 @@ package rl
 // compatibility logic together; the runtime IsCompatibleWith methods remain
 // alongside their types.
 
-// isAnyLike reports whether other is the universally-consistent `any` type.
-// Every concrete IsAssignableFrom checks this first so a value of `any` can
-// flow into any target without false negatives. The set of any-like types
-// grows as the static checker adds `dynamic` (implicit any) and `error_type`
+// isAnyLike reports whether other is one of the universally-consistent types:
+// `any` (user-written escape hatch) or `dynamic` (the implicit form assigned
+// when static inference can't pin a type). Every concrete IsAssignableFrom
+// checks this first so values of these types can flow into any target without
+// false negatives. The set grows again when the checker adds `error_type`
 // (poisoned, for cascade prevention).
 func isAnyLike(other TypingT) bool {
-	_, ok := other.(*TypingAnyT)
-	return ok
+	switch other.(type) {
+	case *TypingAnyT, *TypingDynamicT:
+		return true
+	}
+	return false
 }
 
 // typesEqual reports strict structural equality between two static types. Used
@@ -46,6 +50,9 @@ func typesEqual(a, b TypingT) bool {
 		return ok
 	case *TypingAnyT:
 		_, ok := b.(*TypingAnyT)
+		return ok
+	case *TypingDynamicT:
+		_, ok := b.(*TypingDynamicT)
 		return ok
 	case *TypingVoidT:
 		_, ok := b.(*TypingVoidT)
@@ -218,6 +225,14 @@ func (t *TypingErrorT) IsAssignableFrom(other TypingT) bool {
 // consistency). Distinct from Dynamic (which carries the same semantics but
 // signals "implicit, not user-opted-in" so a future strict mode can flag it).
 func (t *TypingAnyT) IsAssignableFrom(TypingT) bool {
+	return true
+}
+
+// Dynamic is the implicit-any type the static checker assigns when inference
+// can't pin a value down. Behaviorally identical to Any in assignability so
+// no spurious errors fire today; the distinction exists for the future
+// strict-mode flag.
+func (t *TypingDynamicT) IsAssignableFrom(TypingT) bool {
 	return true
 }
 
