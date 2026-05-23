@@ -420,10 +420,12 @@ func TestResolve_CmdBlockArgsVisibleToNamedCallback(t *testing.T) {
 	assert.Same(t, nameSym, r.Uses[nameUse], "handler resolves cmd arg via file scope")
 }
 
-func TestResolve_CmdBlockCallbackIdentifierRecorded(t *testing.T) {
-	// Identifier-style callback resolves against file scope (or
-	// builtin). Goto-def from the callback name should find the
-	// hoisted function.
+func TestResolve_NamedCallbackTargetIsResolvable(t *testing.T) {
+	// `calls handler` is stored on CmdCallback as a plain string with
+	// no Identifier AST node, so the binder doesn't put it in
+	// Resolved.Uses. What we DO require is that the callback's target
+	// is findable in file scope so other checks (and a future LSP
+	// goto-def for the callback) can resolve it on demand.
 	src := "command run:\n    calls handler\n\nfn handler():\n    pass\n"
 	file := parseFile(t, src)
 	require.NotNil(t, file)
@@ -431,7 +433,7 @@ func TestResolve_CmdBlockCallbackIdentifierRecorded(t *testing.T) {
 	require.NotNil(t, r)
 
 	handlerSym := r.File.Lookup("handler")
-	require.NotNil(t, handlerSym)
+	require.NotNil(t, handlerSym, "callback target must be visible at file scope")
 	assert.Equal(t, check.SymHoistedFn, handlerSym.Kind)
 }
 

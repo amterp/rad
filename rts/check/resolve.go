@@ -6,11 +6,10 @@ import "github.com/amterp/rad/rts/rl"
 type SymbolKind int
 
 const (
-	SymUnknown SymbolKind = iota
 	// SymBuiltin is an ambient name supplied by the runtime (e.g. `print`).
 	// These symbols are synthesized on first reference; they have no decl
 	// span in the user's source.
-	SymBuiltin
+	SymBuiltin SymbolKind = iota + 1
 	// SymHoistedFn is a top-level named function. Visible across the file
 	// regardless of textual order; this is how callers reference a function
 	// defined further down.
@@ -58,22 +57,17 @@ const (
 // The Symbol is shared across all uses so later passes (type checker,
 // goto-def, find-refs) can route through one identity per binding.
 //
-// Declared and Inferred type slots are populated by the type checker
-// (Phase 2). They are nil for now.
+// Note: parameter and loop-variable spans currently fall back to the
+// owner's span (the FnDef/Lambda or ForLoop) because TypingFnParam
+// and ForLoop.Vars don't carry per-name spans on the AST. LSP
+// goto-def on a param will point at the function keyword until the
+// AST gains per-name span info.
 type Symbol struct {
 	Name     string
 	Kind     SymbolKind
 	DeclSpan rl.Span // location of the declaration in source; zero for builtins
 	DefNode  rl.Node // the AST node that declared the symbol; nil for builtins
-	Scope    *Scope  // scope this symbol lives in; nil for builtins
-
-	// Declared is the static type from an explicit annotation, if any.
-	// Stays nil for unannotated locals; the checker treats nil as
-	// "annotation-free, infer from RHS / fall back to Dynamic".
-	Declared rl.TypingT
-	// Inferred is the type the checker computed (from RHS, narrowing,
-	// etc.). Phase 2 will populate this; for now it stays nil.
-	Inferred rl.TypingT
+	Scope    *Scope  // scope this symbol lives in; the builtin scope for SymBuiltin
 }
 
 // Scope is a lexical name -> Symbol table chained to its parent. Lookup
@@ -120,13 +114,24 @@ type Resolved struct {
 	Issues []BindIssue
 }
 
+// IssueSeverity is the binder's severity classification. Kept here
+// rather than on Diagnostic so resolve.go stays src-free.
+type IssueSeverity int
+
+const (
+	IssueError IssueSeverity = iota
+	IssueWarning
+	IssueHint
+)
+
 // BindIssue is a problem detected during name resolution. It carries
-// just the bare information - span, message, error code - so that the
-// binder doesn't depend on the source text or the wider Diagnostic
-// type. Callers turn each issue into their preferred diagnostic shape
-// (e.g. check.Diagnostic with src-derived range info).
+// just the bare information - span, severity, message, error code - so
+// that the binder doesn't depend on the source text or the wider
+// Diagnostic type. Callers turn each issue into their preferred
+// diagnostic shape (e.g. check.Diagnostic with src-derived range info).
 type BindIssue struct {
-	Span    rl.Span
-	Code    rl.Error
-	Message string
+	Span     rl.Span
+	Severity IssueSeverity
+	Code     rl.Error
+	Message  string
 }

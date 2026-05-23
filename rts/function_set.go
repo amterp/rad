@@ -9,6 +9,12 @@ import (
 //go:embed embedded/functions.txt
 var embeddedFiles embed.FS
 
+// FunctionSet is the set of *user-facing* built-in function names.
+// It's deliberately narrower than FnSignaturesByName, which also holds
+// internal `_rad_*` entries (six of them today) used by core/runtime
+// machinery that should not be exposed as calls users can write. Keep
+// the two sources in sync only when adding user-callable builtins;
+// internal-only signatures belong in signatures.go alone.
 type FunctionSet struct {
 	names map[string]bool
 }

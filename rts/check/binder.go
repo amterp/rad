@@ -138,12 +138,14 @@ func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 }
 
 // addIssue appends a structural binder finding to the resolved view.
-// The checker layer converts these to user-facing Diagnostics.
-func (b *binder) addIssue(span rl.Span, code rl.Error, msg string) {
+// The checker layer converts these to user-facing Diagnostics, using
+// the recorded severity rather than imposing one of its own.
+func (b *binder) addIssue(span rl.Span, severity IssueSeverity, code rl.Error, msg string) {
 	b.resolved.Issues = append(b.resolved.Issues, BindIssue{
-		Span:    span,
-		Code:    code,
-		Message: msg,
+		Span:     span,
+		Severity: severity,
+		Code:     code,
+		Message:  msg,
 	})
 }
 
@@ -184,7 +186,7 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 			// a focused issue pointing at the fn's def span (matches
 			// the long-standing diagnostic message and location).
 			if fnSpan, clash := hoisted[decl.Name]; clash {
-				b.addIssue(fnSpan, rl.ErrHoistedFunctionShadowsArgument,
+				b.addIssue(fnSpan, IssueError, rl.ErrHoistedFunctionShadowsArgument,
 					"Hoisted function '"+decl.Name+"' shadows an argument with the same name")
 			}
 			b.declare(decl.Name, SymArg, decl.Span(), decl)
@@ -377,7 +379,7 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 			// legitimate, common pattern. Only flag when two params
 			// in the *same* parameter list share a name.
 			if _, dup := b.current.Symbols[p.Name]; dup {
-				b.addIssue(owner.Span(), rl.ErrDuplicateParameter,
+				b.addIssue(owner.Span(), IssueError, rl.ErrDuplicateParameter,
 					"Duplicate parameter '"+p.Name+"'")
 				continue
 			}

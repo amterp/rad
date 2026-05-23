@@ -118,17 +118,33 @@ func (c *RadCheckerImpl) addUnknownFunctionHints(resolved *Resolved, d *[]Diagno
 }
 
 // addBindIssues surfaces structural findings the binder collected
-// (duplicate params and similar) as Diagnostics. Each issue carries
-// its own severity decision via the error code; for now everything
-// the binder records is an error.
+// (duplicate params, fn/arg shadowing) as Diagnostics. Each issue
+// carries its own severity so the binder, not the checker, decides
+// how loudly to flag a problem.
 func (c *RadCheckerImpl) addBindIssues(resolved *Resolved, d *[]Diagnostic) {
 	if resolved == nil {
 		return
 	}
 	for _, issue := range resolved.Issues {
-		*d = append(*d, NewDiagnosticErrorFromSpan(issue.Span, c.src, issue.Message, issue.Code))
+		*d = append(*d, NewDiagnosticFromSpan(issue.Span, c.src, issueSeverityToCheck(issue.Severity), issue.Message, codePtr(issue.Code)))
 	}
 }
+
+// issueSeverityToCheck maps the binder's local IssueSeverity onto the
+// checker's wider Severity scale. Kept in check.go (not resolve.go) so
+// the binder doesn't drag the wider Severity enum into its imports.
+func issueSeverityToCheck(s IssueSeverity) Severity {
+	switch s {
+	case IssueWarning:
+		return Warning
+	case IssueHint:
+		return Hint
+	default:
+		return Error
+	}
+}
+
+func codePtr(c rl.Error) *rl.Error { return &c }
 
 func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
 	nodes := c.tree.FindInvalidNodes()
