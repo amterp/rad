@@ -1989,7 +1989,7 @@ func createHttpFunctions() []BuiltInFunc {
 
 				reqDef := NewRequestDef(method, url, headers, body)
 				reqDef.Insecure = insecure
-				response := RReq.Request(reqDef)
+				response := RReq.Request(f.i.signals.Ctx(), reqDef)
 				radMap := response.ToRadMap(f.i, f.callNode)
 				return f.Return(radMap)
 			},

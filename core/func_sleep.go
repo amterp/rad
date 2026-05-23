@@ -14,13 +14,13 @@ var FuncSleep = BuiltInFunc{
 		duration := f.GetArg("_duration")
 		switch coerced := duration.Val.(type) {
 		case int64:
-			err := sleep(time.Duration(coerced)*time.Second, f.namedArgs)
+			err := sleep(f.i, time.Duration(coerced)*time.Second, f.namedArgs)
 			if err != nil {
 				return f.Return(err)
 			}
 			return VOID_SENTINEL
 		case float64:
-			err := sleep(time.Duration(coerced*1000)*time.Millisecond, f.namedArgs)
+			err := sleep(f.i, time.Duration(coerced*1000)*time.Millisecond, f.namedArgs)
 			if err != nil {
 				return f.Return(err)
 			}
@@ -31,7 +31,7 @@ var FuncSleep = BuiltInFunc{
 			// Bare numeric string -> interpret as seconds
 			floatVal, err := rts.ParseFloat(durStr)
 			if err == nil {
-				err := sleep(time.Duration(floatVal*1000)*time.Millisecond, f.namedArgs)
+				err := sleep(f.i, time.Duration(floatVal*1000)*time.Millisecond, f.namedArgs)
 				if err != nil {
 					return f.Return(err)
 				}
@@ -41,7 +41,7 @@ var FuncSleep = BuiltInFunc{
 			// Human-readable duration string
 			nanos, err := ParseDurationString(durStr)
 			if err == nil {
-				err := sleep(time.Duration(nanos), f.namedArgs)
+				err := sleep(f.i, time.Duration(nanos), f.namedArgs)
 				if err != nil {
 					return f.Return(err)
 				}
@@ -56,7 +56,7 @@ var FuncSleep = BuiltInFunc{
 	},
 }
 
-func sleep(dur time.Duration, namedArgs map[string]namedArg) *RadError {
+func sleep(i *Interpreter, dur time.Duration, namedArgs map[string]namedArg) *RadError {
 	if dur < 0 {
 		return NewErrorStrf("Cannot take a negative duration: %q", dur.String())
 	}
@@ -65,6 +65,9 @@ func sleep(dur time.Duration, namedArgs map[string]namedArg) *RadError {
 		RP.Printf(ToPrintableQuoteStr(title.value, false) + "\n")
 	}
 
-	RSleep(dur)
+	// Use the interpreter's signal context so a signal handler can wake us
+	// up early. If the sleep returns due to ctx cancellation, the signal
+	// will be dispatched at the next checkpoint after this builtin returns.
+	RSleep(i.signals.Ctx(), dur)
 	return nil
 }

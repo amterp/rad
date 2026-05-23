@@ -573,7 +573,7 @@ func (r *radInvocation) resolveData() (data interface{}, err error) {
 
 	// Try string first (URL fetch)
 	if str, ok := src.TryGetStr(); ok {
-		return RReq.RequestJson(str.Plain(), r.insecure, r.quiet)
+		return RReq.RequestJson(r.i.signals.Ctx(), str.Plain(), r.insecure, r.quiet)
 	}
 
 	// Otherwise, must be list or map (in-memory extraction).

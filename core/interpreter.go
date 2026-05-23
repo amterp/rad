@@ -85,6 +85,11 @@ type Interpreter struct {
 
 	// Call stack for Rad function calls (not Go stack)
 	callStack []CallFrame
+
+	// signals owns signal-handling state. Constructed inactive; the dispatch
+	// goroutine is started by Run so REPL-style usage that never calls Run
+	// does not leak a goroutine.
+	signals *SignalManager
 }
 
 func NewInterpreter(input InterpreterInput) *Interpreter {
@@ -99,9 +104,17 @@ func NewInterpreter(input InterpreterInput) *Interpreter {
 		sd:             scriptData,
 		invokedCommand: input.InvokedCommand,
 		delimiterStack: com.NewStack[Delimiter](),
+		signals:        NewSignalManager(),
 	}
 	i.env = NewEnv(i)
 	return i
+}
+
+// Signals exposes the interpreter's SignalManager. Used by builtins
+// (signal_trap, signal_ignore) and by blocking-op call sites that need the
+// signal-cancellation context.
+func (i *Interpreter) Signals() *SignalManager {
+	return i.signals
 }
 
 func (i *Interpreter) InitBuiltIns() {
@@ -180,6 +193,16 @@ func (i *Interpreter) InitArgs(args []RadArg) {
 }
 
 func (i *Interpreter) Run() {
+	// Activate signal handling before evaluating any script code so a SIGINT
+	// arriving during script execution is intercepted by Rad rather than
+	// killing the process outright. Defers will then run via RExit.Exit.
+	// Stop on the way out so the dispatch goroutine exits cleanly; benign
+	// for one-shot CLI runs (RExit.Exit -> os.Exit short-circuits), but
+	// avoids leaks when multiple Interpreters live in one process (tests,
+	// embedding).
+	i.signals.Start()
+	defer i.signals.Stop()
+
 	// Convert CST to AST once, then interpret the AST
 	astRoot := rts.ConvertCST(i.sd.Tree.Root(), i.sd.Src, i.sd.ScriptName)
 
@@ -210,8 +233,14 @@ func (i *Interpreter) safelyExecuteTopLevel(root *rl.SourceFile) EvalResult {
 	// Second pass: evaluate all statements
 	var lastResult EvalResult
 	for _, stmt := range root.Stmts {
+		i.Checkpoint()
 		lastResult = i.eval(stmt)
 	}
+	// Drain one more time so a signal that arrived during the final
+	// statement (typical for short scripts like `sleep(30)` interrupted by
+	// Ctrl+C) still routes through RExit.Exit(128+sig) rather than falling
+	// through to normal exit-zero where errdefer wouldn't run.
+	i.Checkpoint()
 
 	return lastResult
 }
@@ -1176,11 +1205,18 @@ Loop:
 func (i *Interpreter) runBlock(stmtNodes []rl.Node) EvalResult {
 	var res EvalResult
 	for _, stmtNode := range stmtNodes {
+		i.Checkpoint()
 		res = i.eval(stmtNode)
 		if res.Ctrl != CtrlNormal {
 			break
 		}
 	}
+	// Trailing checkpoint so a signal arriving during the last statement of
+	// a block still gets dispatched before control returns to the caller.
+	// Important for blocks whose last statement is a blocking op (e.g. an
+	// if-branch ending in sleep, or a function body returning right after a
+	// shell call). Without this, the outer loop might not run again.
+	i.Checkpoint()
 	return res
 }
 
