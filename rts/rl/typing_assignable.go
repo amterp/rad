@@ -8,15 +8,16 @@ package rl
 // compatibility logic together; the runtime IsCompatibleWith methods remain
 // alongside their types.
 
-// isAnyLike reports whether other is one of the universally-consistent types:
-// `any` (user-written escape hatch) or `dynamic` (the implicit form assigned
-// when static inference can't pin a type). Every concrete IsAssignableFrom
-// checks this first so values of these types can flow into any target without
-// false negatives. The set grows again when the checker adds `error_type`
-// (poisoned, for cascade prevention).
+// isAnyLike reports whether other is a "flows-into-anything" type: `any`
+// (user-written escape hatch), `dynamic` (the implicit form assigned when
+// inference can't pin a type), or `never` (the bottom type, vacuously a
+// subtype of everything because no value inhabits it). Every concrete
+// IsAssignableFrom checks this first so values of these types can flow into
+// any target without false negatives. The set grows again when the checker
+// adds `error_type` (poisoned, for cascade prevention).
 func isAnyLike(other TypingT) bool {
 	switch other.(type) {
-	case *TypingAnyT, *TypingDynamicT:
+	case *TypingAnyT, *TypingDynamicT, *TypingNeverT:
 		return true
 	}
 	return false
@@ -53,6 +54,9 @@ func typesEqual(a, b TypingT) bool {
 		return ok
 	case *TypingDynamicT:
 		_, ok := b.(*TypingDynamicT)
+		return ok
+	case *TypingNeverT:
+		_, ok := b.(*TypingNeverT)
 		return ok
 	case *TypingVoidT:
 		_, ok := b.(*TypingVoidT)
@@ -236,11 +240,24 @@ func (t *TypingDynamicT) IsAssignableFrom(TypingT) bool {
 	return true
 }
 
-// Void is the type of expressions that produce no value (e.g. print()). Only
-// itself is assignable to it; this catches `x = print(...)` at the type
-// checker rather than at runtime.
+// Void is the type of expressions that produce no value (e.g. print()).
+// Only Void itself and Never are assignable to it. Notably `any` and
+// `dynamic` are NOT - that's how `x = print(...)` gets caught instead of
+// being silently swallowed under gradual consistency.
 func (t *TypingVoidT) IsAssignableFrom(other TypingT) bool {
+	if _, ok := other.(*TypingNeverT); ok {
+		return true
+	}
 	_, ok := other.(*TypingVoidT)
+	return ok
+}
+
+// Never is the bottom type: only Never itself can flow into a Never slot.
+// (Other types DO accept Never as a source because Never is a vacuous
+// subtype of everything - that's handled by the isAnyLike short-circuit at
+// the top of every other IsAssignableFrom.)
+func (t *TypingNeverT) IsAssignableFrom(other TypingT) bool {
+	_, ok := other.(*TypingNeverT)
 	return ok
 }
 

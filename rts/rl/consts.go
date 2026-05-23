@@ -212,6 +212,7 @@ const (
 	T_ERROR      = "error"
 	T_ANY        = "any"
 	T_DYNAMIC    = "dynamic"
+	T_NEVER      = "never"
 	T_VOID       = "void"
 	T_LIST       = "list"
 	T_MAP        = "map"

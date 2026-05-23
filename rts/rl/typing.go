@@ -80,6 +80,7 @@ var (
 	_ TypingT = (*TypingErrorT)(nil)
 	_ TypingT = (*TypingAnyT)(nil)
 	_ TypingT = (*TypingDynamicT)(nil)
+	_ TypingT = (*TypingNeverT)(nil)
 	_ TypingT = (*TypingVoidT)(nil)
 	_ TypingT = (*TypingAnyListT)(nil)
 	_ TypingT = (*TypingListT)(nil)
@@ -230,6 +231,35 @@ func (t *TypingDynamicT) Name() string {
 
 func (t *TypingDynamicT) IsCompatibleWith(TypingCompatVal) bool {
 	return true
+}
+
+// TypingNeverT is the bottom type. No value inhabits it at runtime; the
+// static checker synthesizes it when narrowing has eliminated every variant
+// of a type (e.g. a switch over a string-enum that handles every literal
+// leaves `Never` as the residual). Users never write `never` themselves.
+//
+// As a subtype of everything, Never is assignable into any slot - that's
+// what makes the "you exhausted the switch" property compose naturally with
+// the rest of the type checker. But nothing except Never is assignable TO
+// Never; assigning a real value into a Never-typed slot signals a soundness
+// issue (the checker thought a branch was unreachable, but the user reached
+// it anyway).
+type TypingNeverT struct{}
+
+func NewNeverType() *TypingNeverT {
+	return &TypingNeverT{}
+}
+
+func (t *TypingNeverT) Name() string {
+	return T_NEVER
+}
+
+// IsCompatibleWith returns false: no value has type Never at runtime. This
+// matters when the static type happens to flow into a function call boundary
+// check - any actual value will fail the compatibility test, which is the
+// correct outcome since reaching such a call would mean narrowing was wrong.
+func (t *TypingNeverT) IsCompatibleWith(TypingCompatVal) bool {
+	return false
 }
 
 type TypingVoidT struct{} // -> void

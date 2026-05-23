@@ -79,6 +79,39 @@ func TestAssign_DynamicIsUniversallyConsistent(t *testing.T) {
 	assert.True(t, strList.IsAssignableFrom(dynT))
 }
 
+func TestAssign_NeverIsBottom(t *testing.T) {
+	neverT := rl.NewNeverType()
+	intT := rl.NewIntType()
+	strList := rl.NewListType(rl.NewStrType())
+
+	// Never accepts only Never.
+	assert.True(t, neverT.IsAssignableFrom(rl.NewNeverType()))
+	assert.False(t, neverT.IsAssignableFrom(intT))
+	assert.False(t, neverT.IsAssignableFrom(strList))
+	assert.False(t, neverT.IsAssignableFrom(rl.NewVoidType()))
+
+	// Every other type accepts Never as a source - it's vacuously a subtype
+	// of everything because no value inhabits it. This is what makes
+	// "switch exhausted all cases, residual is Never, post-switch code is
+	// reachable as anything" work cleanly.
+	assert.True(t, intT.IsAssignableFrom(neverT))
+	assert.True(t, strList.IsAssignableFrom(neverT))
+	assert.True(t, rl.NewAnyType().IsAssignableFrom(neverT))
+
+	// Even void accepts Never (vacuously).
+	assert.True(t, rl.NewVoidType().IsAssignableFrom(neverT))
+}
+
+func TestAssign_NeverHasNoValues(t *testing.T) {
+	// No runtime value should ever be considered compatible with Never. The
+	// runtime never sees Never directly today, but the contract matters if
+	// it ever flows through a call-boundary check.
+	neverT := rl.NewNeverType()
+	assert.False(t, neverT.IsCompatibleWith(rl.NewIntSubject(0)))
+	assert.False(t, neverT.IsCompatibleWith(rl.NewStrSubject("")))
+	assert.False(t, neverT.IsCompatibleWith(rl.NewNullSubject()))
+}
+
 func TestAssign_DynamicAndAnyAreDistinct(t *testing.T) {
 	// They behave identically for IsAssignableFrom today, but they're not the
 	// same type. The static checker must be able to tell them apart - that's
