@@ -25,33 +25,6 @@ func walkASTChildren(node rl.Node, visit func(rl.Node)) {
 	}
 }
 
-// Check 4: Function name shadowing (AST version)
-func (c *RadCheckerImpl) addFunctionNameShadowingErrorsAST(d *[]Diagnostic) {
-	if c.ast == nil {
-		return
-	}
-
-	if c.ast.Args == nil {
-		return
-	}
-
-	argNames := make(map[string]bool)
-	for _, decl := range c.ast.Args.Decls {
-		argNames[decl.Name] = true
-	}
-
-	for _, stmt := range c.ast.Stmts {
-		fnDef, ok := stmt.(*rl.FnDef)
-		if !ok {
-			continue
-		}
-		if argNames[fnDef.Name] {
-			msg := "Hoisted function '" + fnDef.Name + "' shadows an argument with the same name"
-			*d = append(*d, NewDiagnosticErrorFromSpan(fnDef.DefSpan, c.src, msg, rl.ErrHoistedFunctionShadowsArgument))
-		}
-	}
-}
-
 // Check 7: Break/continue outside loop (AST version)
 func (c *RadCheckerImpl) addBreakContinueOutsideLoopErrorsAST(d *[]Diagnostic) {
 	if c.ast == nil {

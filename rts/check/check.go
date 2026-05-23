@@ -68,7 +68,6 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
-	c.addFunctionNameShadowingErrorsAST(&diagnostics)
 
 	// Resolve once and share across checks that need the symbol table.
 	// Subsequent commits will rebuild more checks on this view.

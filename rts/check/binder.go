@@ -168,14 +168,25 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 	//     runs, so a named-function callback can reference them.
 	//     Multiple cmds with the same arg name share one symbol -
 	//     they're mutually exclusive at runtime.
+	hoisted := make(map[string]rl.Span)
 	for _, stmt := range file.Stmts {
 		if fn, ok := stmt.(*rl.FnDef); ok {
 			b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
+			hoisted[fn.Name] = fn.DefSpan
 		}
 	}
 	if file.Args != nil {
 		for i := range file.Args.Decls {
 			decl := &file.Args.Decls[i]
+			// A hoisted function and an args-block decl claiming the
+			// same name is a contradiction: the function definition
+			// wins the symbol slot, but the user intended both. Emit
+			// a focused issue pointing at the fn's def span (matches
+			// the long-standing diagnostic message and location).
+			if fnSpan, clash := hoisted[decl.Name]; clash {
+				b.addIssue(fnSpan, rl.ErrHoistedFunctionShadowsArgument,
+					"Hoisted function '"+decl.Name+"' shadows an argument with the same name")
+			}
 			b.declare(decl.Name, SymArg, decl.Span(), decl)
 		}
 	}
