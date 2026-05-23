@@ -427,7 +427,7 @@ func init() {
 					location, err = time.LoadLocation(tz)
 					if err != nil {
 						errMsg := fmt.Sprintf("Invalid time zone '%s'", tz)
-						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrInvalidTimeZone))
+						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrInvalidTimeZone))
 					}
 				}
 
@@ -497,7 +497,7 @@ func init() {
 							digitCount,
 							namedArgUnit,
 						)
-						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetSpan(nodeSpanPtr(f.callNode)))
+						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetSpan(nodeSpanPtr(f.callNode)))
 					}
 				} else {
 					switch unit {
@@ -713,7 +713,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_INT, str)
-					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseIntFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseIntFailed))
 				}
 			},
 		},
@@ -727,7 +727,7 @@ func init() {
 					return f.Return(parsed)
 				} else {
 					errMsg := fmt.Sprintf("%s() failed to parse %q", FUNC_PARSE_FLOAT, str)
-					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseFloatFailed))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseFloatFailed))
 				}
 			},
 		},
@@ -1147,11 +1147,11 @@ func init() {
 					}
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileRead))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileRead))
 				}
 			},
 		},
@@ -1189,11 +1189,11 @@ func init() {
 					resultMap.SetPrimitiveStr(constPath, NormalizePath(path))
 					return f.Return(resultMap)
 				} else if os.IsNotExist(err) {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoExist))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoExist))
 				} else if os.IsPermission(err) {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileNoPermission))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileNoPermission))
 				} else {
-					return f.Return(NewErrorStrf(err.Error()).SetCode(rl.ErrFileWrite))
+					return f.Return(NewErrorStr(err.Error()).SetCode(rl.ErrFileWrite))
 				}
 			},
 		},
@@ -1476,7 +1476,7 @@ func init() {
 					err := com.CreateFilePathAndWriteString(path, def)
 					if err != nil {
 						errMsg := fmt.Sprintf("Failed to create file %q: %v", path, err)
-						return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileWrite))
+						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrFileWrite))
 					}
 
 					output.SetPrimitiveStr(constContent, def)
@@ -1487,7 +1487,7 @@ func init() {
 				loadResult := com.LoadFile(path)
 				if loadResult.Error != nil {
 					errMsg := fmt.Sprintf("Error loading file %q: %v", path, loadResult.Error)
-					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileRead))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrFileRead))
 				}
 
 				output.SetPrimitiveStr(constContent, loadResult.Content)
@@ -1509,7 +1509,7 @@ func init() {
 				err := com.CreateFilePathAndWriteString(path, content)
 				if err != nil {
 					errMsg := fmt.Sprintf("Error writing stash file %q: %v", path, err)
-					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrFileWrite))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrFileWrite))
 				}
 
 				return f.Return()
@@ -1538,7 +1538,7 @@ func init() {
 				default:
 					errMsg := fmt.Sprintf("Unsupported hash algorithm %q; supported: %s, %s, %s, %s",
 						algo, constSha1, constSha256, constSha512, constMd5)
-					return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrInvalidArgType))
+					return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrInvalidArgType))
 				}
 				return f.Return(newRadValueStr(digest))
 			},

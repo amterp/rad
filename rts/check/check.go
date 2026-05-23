@@ -5,13 +5,10 @@ import (
 	"github.com/amterp/rad/rts/rl"
 )
 
-// todo be able to check scripts with different versions of Rad?
-
 type RadChecker interface {
 	UpdateSrc(src string)
 	Update(tree *rts.RadTree, src string, ast *rl.SourceFile)
-	CheckDefault() (Result, error)
-	Check(Opts) (Result, error)
+	Check() (Result, error)
 }
 
 type RadCheckerImpl struct {
@@ -66,12 +63,7 @@ func (c *RadCheckerImpl) Update(tree *rts.RadTree, src string, ast *rl.SourceFil
 	c.ast = ast
 }
 
-func (c *RadCheckerImpl) CheckDefault() (Result, error) {
-	return c.Check(NewOpts())
-}
-
-// todo use opts
-func (c *RadCheckerImpl) Check(opts Opts) (Result, error) {
+func (c *RadCheckerImpl) Check() (Result, error) {
 	diagnostics := make([]Diagnostic, 0)
 	c.addInvalidNodes(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)

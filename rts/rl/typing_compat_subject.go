@@ -10,6 +10,9 @@ type TypingCompatVal struct {
 
 func NewSubject(val interface{}) TypingCompatVal {
 	switch coerced := val.(type) {
+	case nil:
+		// RadNull values flatten to nil via core's ToGoValue.
+		return NewNullSubject()
 	case int64:
 		return NewIntSubject(coerced)
 	case float64:
@@ -19,13 +22,27 @@ func NewSubject(val interface{}) TypingCompatVal {
 	case bool:
 		return NewBoolSubject(coerced)
 	case []interface{}:
-		return NewListSubject() // todo should we give value, recurse?
+		s := NewListSubject()
+		s.Val = coerced
+		return s
 	case map[string]interface{}:
-		return NewMapSubject() // todo should we give value, recurse?
+		s := NewMapSubject()
+		s.Val = coerced
+		return s
+	case FnGoValue:
+		// Function values inside collections come through as this sentinel so
+		// the rl package doesn't have to import core.RadFn.
+		return NewFnSubject()
 	default:
-		panic(fmt.Sprintf("Unhandled type for TypingCompatVal: %v", coerced))
+		panic(fmt.Sprintf("Unhandled type for TypingCompatVal: %T", coerced))
 	}
 }
+
+// FnGoValue is a sentinel used by core's ToGoValue when flattening a function
+// value into a generic []interface{} / map[string]interface{}. NewSubject maps
+// it back to NewFnSubject(). It lives here (not in core) because the rl
+// package cannot import core where RadFn is defined.
+type FnGoValue struct{}
 
 func NewIntSubject(val int64) TypingCompatVal {
 	t := RadIntT

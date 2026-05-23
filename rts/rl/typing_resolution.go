@@ -24,7 +24,7 @@ func NewTypingFnT(fnNode *ts.Node, src string) *TypingFnT {
 	}
 
 	if nameNode != nil {
-		typingFn.Name = GetSrc(nameNode, src)
+		typingFn.FnName = GetSrc(nameNode, src)
 	}
 
 	if returnTypeNode != nil {
@@ -77,7 +77,7 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 	leafTypes := make([]TypingT, 0)
 	for _, leafNode := range leafNodes {
 		typeNode := GetChild(&leafNode, F_TYPE)
-		listNode := GetChild(&leafNode, F_LIST)
+		listNodes := GetChildren(&leafNode, F_LIST)
 		optionalNode := GetChild(&leafNode, F_OPTIONAL)
 
 		var typing TypingT
@@ -120,7 +120,7 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 		case K_ANY_TYPE:
 			typing = NewAnyType()
 		case K_FN_TYPE:
-			typing = NewAnyType() // TODO
+			typing = newTypingFnTFromType(typeNode, src)
 		case K_MAP_TYPE:
 			anyNode := GetChild(typeNode, F_ANY)
 			if anyNode != nil {
@@ -160,7 +160,8 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 		default:
 			panic("unknown type node kind: " + typeNode.Kind())
 		}
-		if listNode != nil {
+		// Wrap once per "[]" suffix so `int[][]` becomes NewListType(NewListType(IntT)).
+		for range listNodes {
 			typing = NewListType(typing)
 		}
 		if optionalNode != nil {
@@ -175,4 +176,26 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 	}
 
 	return NewUnionType(leafTypes...)
+}
+
+// newTypingFnTFromType builds a TypingFnT from a K_FN_TYPE node (the type
+// annotation `fn(int, str) -> bool`). The shape differs from K_FN_NAMED:
+// no function name, no default values, no named-only params - just typed
+// positional params and an optional return type.
+func newTypingFnTFromType(fnTypeNode *ts.Node, src string) *TypingFnT {
+	paramNodes := GetChildren(fnTypeNode, F_PARAM)
+	returnTypeNode := GetChild(fnTypeNode, F_RETURN_TYPE)
+
+	params := make([]TypingFnParam, 0, len(paramNodes))
+	for _, paramNode := range paramNodes {
+		typing := resolveTyping(&paramNode, src)
+		params = append(params, TypingFnParam{Type: &typing})
+	}
+
+	typingFn := &TypingFnT{Params: params}
+	if returnTypeNode != nil {
+		returnType := resolveTyping(returnTypeNode, src)
+		typingFn.ReturnT = &returnType
+	}
+	return typingFn
 }

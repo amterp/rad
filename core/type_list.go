@@ -6,6 +6,9 @@ import (
 	"github.com/amterp/rad/rts/rl"
 )
 
+// RadList does not carry a declared element type. Type enforcement happens
+// only at function call boundaries via TypingT.IsCompatibleWith - mutations
+// like Append are unchecked. See docs/type_system.md.
 type RadList struct {
 	Values []RadValue
 }

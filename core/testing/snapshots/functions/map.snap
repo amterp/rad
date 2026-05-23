@@ -32,3 +32,25 @@ a.map(joiner).print()
 ### STDOUT ###
 [ "alice bobson", "charlie davidson" ]
 
+### TITLE ###
+Map rejects non-function second arg
+### DESCRIPTION ###
+Pre-Bug-3 fix the `_fn` parameter typing resolved to `any`, so map silently
+accepted non-function values. After flipping K_FN_TYPE in typing_resolution,
+the signature `fn(any) -> any | fn(any, any) -> any` enforces fn-only.
+### INPUT ###
+a = ["alice", "bob"]
+a.map("not a fn")
+### STDERR ###
+error[RAD30001]: Value '"not a fn"' (str) is not compatible with expected type 'fn(any) -> any|fn(any, any) -> any'
+  --> <script>:2:7
+  |
+1 | a = ["alice", "bob"]
+2 | a.map("not a fn")
+  |       ^^^^^^^^^^
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1

@@ -9,6 +9,9 @@ import (
 	"github.com/samber/lo"
 )
 
+// RadMap does not carry declared key/value types. Type enforcement happens
+// only at function call boundaries via TypingT.IsCompatibleWith - mutations
+// like Set are unchecked. See docs/type_system.md.
 type RadMap struct {
 	// keys are hashes of a RadValue
 	// cannot be collections, though (no maps, lists)

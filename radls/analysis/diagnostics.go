@@ -10,7 +10,7 @@ import (
 func (s *State) resolveDiagnostics(checker check.RadChecker) []lsp.Diagnostic {
 	diagnostics := make([]lsp.Diagnostic, 0)
 
-	result, err := checker.CheckDefault()
+	result, err := checker.Check()
 	if err == nil {
 		s.addCheckerDiagnotics(&diagnostics, result)
 	} else {

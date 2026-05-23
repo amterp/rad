@@ -89,7 +89,7 @@ func AddInternalFuncs() {
 
 				checker.UpdateSrc(contents)
 
-				checkR, err := checker.CheckDefault()
+				checkR, err := checker.Check()
 				if err != nil {
 					f.i.emitErrorf(rl.ErrGenericRuntime, scriptArg.node, "Failed to run checker: %s", err.Error())
 				}

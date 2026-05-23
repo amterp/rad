@@ -156,7 +156,6 @@ func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, cod
 }
 
 type Result struct {
-	// todo Rad versions
 	Diagnostics []Diagnostic
 }
 
@@ -168,19 +167,4 @@ type Pos struct {
 type Range struct {
 	Start Pos `json:"start"`
 	End   Pos `json:"end"`
-}
-
-// todo mostly unused atm
-type Opts struct {
-	Errors bool
-	Warns  bool
-	Lints  bool
-}
-
-func NewOpts() Opts {
-	return Opts{
-		Errors: true,
-		Warns:  true,
-		Lints:  true,
-	}
 }

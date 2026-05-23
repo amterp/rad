@@ -490,7 +490,9 @@ func (v RadValue) ToGoValue() (out interface{}) {
 			out = nil
 		}).
 		ForFn(func(val RadValue, actual RadFn) {
-			out = actual
+			// Use the rl sentinel so a function nested in a collection can be
+			// type-checked without rl needing to know about core.RadFn.
+			out = rl.FnGoValue{}
 		}).
 		ForError(func(val RadValue, actual *RadError) {
 			out = actual.Msg().String()

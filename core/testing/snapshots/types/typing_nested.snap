@@ -1,0 +1,176 @@
+### TITLE ###
+Nested list element rejected
+### DESCRIPTION ###
+Regression test for NewSubject value propagation in TypingCompatVal. Pre-fix
+the inner list element type was silently ignored at the outer list-element
+check, because NewSubject for []interface{} returned a Val-less subject.
+### INPUT ###
+foo([[1, 2], [3, "bad"]])
+fn foo(x: int[][]):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '[ [ 1, 2 ], [ 3, "bad" ] ]' (list) is not compatible with expected type 'int[][]'
+  --> <script>:1:5
+  |
+1 | foo([[1, 2], [3, "bad"]])
+  |     ^^^^^^^^^^^^^^^^^^^^
+2 | fn foo(x: int[][]):
+3 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Nested list element accepted
+### INPUT ###
+foo([[1, 2], [3, 4]])
+fn foo(x: int[][]):
+	print(x)
+### STDOUT ###
+[ [ 1, 2 ], [ 3, 4 ] ]
+
+### TITLE ###
+Tuple with nested list rejects bad inner
+### INPUT ###
+foo([1, [2, "bad"]])
+fn foo(x: [int, int[]]):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '[ 1, [ 2, "bad" ] ]' (list) is not compatible with expected type '[int, int[]]'
+  --> <script>:1:5
+  |
+1 | foo([1, [2, "bad"]])
+  |     ^^^^^^^^^^^^^^^
+2 | fn foo(x: [int, int[]]):
+3 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Tuple with nested list accepts good inner
+### INPUT ###
+foo([1, [2, 3]])
+fn foo(x: [int, int[]]):
+	print(x)
+### STDOUT ###
+[ 1, [ 2, 3 ] ]
+
+### TITLE ###
+Map with nested list value rejects bad inner
+### INPUT ###
+foo({ "a": [1, "bad"] })
+fn foo(x: { str: int[] }):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '{ "a": [ 1, "bad" ] }' (map) is not compatible with expected type '{ str: int[] }'
+  --> <script>:1:5
+  |
+1 | foo({ "a": [1, "bad"] })
+  |     ^^^^^^^^^^^^^^^^^^^
+2 | fn foo(x: { str: int[] }):
+3 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Struct with nested struct rejects bad field
+### INPUT ###
+foo({ "outer": { "inner": "no" } })
+fn foo(x: { "outer": { "inner": int } }):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '{ "outer": { "inner": "no" } }' (map) is not compatible with expected type '{ "outer": { "inner": int } }'
+  --> <script>:1:5
+  |
+1 | foo({ "outer": { "inner": "no" } })
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | fn foo(x: { "outer": { "inner": int } }):
+3 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Struct with nested struct accepts good field
+### INPUT ###
+foo({ "outer": { "inner": 42 } })
+fn foo(x: { "outer": { "inner": int } }):
+	print(x)
+### STDOUT ###
+{ "outer": { "inner": 42 } }
+
+### TITLE ###
+Null element in typed list rejected (regression test)
+### DESCRIPTION ###
+Regression test: ensure null elements in typed collections are reported as
+type errors and never panic (NewSubject must handle nil).
+### INPUT ###
+foo([1, null, 2])
+fn foo(x: int[]):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '[ 1, null, 2 ]' (list) is not compatible with expected type 'int[]'
+  --> <script>:1:5
+  |
+1 | foo([1, null, 2])
+  |     ^^^^^^^^^^^^
+2 | fn foo(x: int[]):
+3 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Fn element in typed list rejected (regression test)
+### DESCRIPTION ###
+Regression test: ensure function values in typed collections are reported as
+type errors and never panic (FnGoValue sentinel must round-trip through
+NewSubject).
+### INPUT ###
+fn helper():
+	print("hi")
+foo([1, helper, 2])
+fn foo(x: int[]):
+	print(x)
+### STDERR ###
+error[RAD30001]: Value '[ 1, <fn>, 2 ]' (list) is not compatible with expected type 'int[]'
+  --> <script>:3:5
+  |
+2 | 	print("hi")
+3 | foo([1, helper, 2])
+  |     ^^^^^^^^^^^^^^
+4 | fn foo(x: int[]):
+5 | 	print(x)
+  |
+   = info: rad explain RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+Fn element in fn-typed list accepted
+### DESCRIPTION ###
+Counterpart: a function value inside a `fn() -> void[]` list passes.
+### INPUT ###
+fn helper():
+	print("hi")
+foo([helper, helper])
+fn foo(fns: fn() -> void[]):
+	for f in fns:
+		f()
+### STDOUT ###
+hi
+hi
+

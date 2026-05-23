@@ -390,7 +390,7 @@ func checkScriptWith(scriptPath string, reusable check.RadChecker) (diagCounts, 
 	}
 
 	chk.UpdateSrc(NormalizeLineEndings(result.Content))
-	checkResult, err := chk.CheckDefault()
+	checkResult, err := chk.Check()
 	if err != nil {
 		return diagCounts{}, false
 	}

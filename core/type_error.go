@@ -18,6 +18,16 @@ func NewError(msg RadString) *RadError {
 	}
 }
 
+// NewErrorStr wraps a plain string (no format processing). Use this when the
+// message is built upstream or comes from another error - it avoids the
+// fmt.Sprintf pitfall where stray '%' characters in the message get treated as
+// format directives. Use NewErrorStrf when you actually have format args.
+func NewErrorStr(msg string) *RadError {
+	return &RadError{
+		msg: NewRadString(msg),
+	}
+}
+
 func NewErrorStrf(msg string, args ...interface{}) *RadError { // todo make a constructor forcing a Rad error code
 	return &RadError{
 		msg: NewRadString(fmt.Sprintf(msg, args...)),

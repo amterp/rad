@@ -66,7 +66,7 @@ var FuncParseDate = BuiltInFunc{
 		}
 
 		if dateStr == "" {
-			return f.Return(NewErrorStrf("Cannot parse an empty date string").SetCode(rl.ErrParseDate))
+			return f.Return(NewErrorStr("Cannot parse an empty date string").SetCode(rl.ErrParseDate))
 		}
 
 		var parsedTime time.Time
@@ -75,14 +75,14 @@ var FuncParseDate = BuiltInFunc{
 			// Explicit format: convert tokens to Go layout, parse in target tz
 			format := formatArg.RequireStr(f.i, f.callNode).Plain()
 			if format == "" {
-				return f.Return(NewErrorStrf("Cannot parse date with an empty format string").SetCode(rl.ErrParseDate))
+				return f.Return(NewErrorStr("Cannot parse date with an empty format string").SetCode(rl.ErrParseDate))
 			}
 			goLayout := convertFormatToGoLayout(format)
 
 			t, err := time.ParseInLocation(goLayout, dateStr, location)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to parse date %q with format %q", dateStr, format)
-				return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseDate))
+				return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseDate))
 			}
 			parsedTime = t
 		} else {
@@ -113,7 +113,7 @@ var FuncParseDate = BuiltInFunc{
 						"Use 'format' to specify a custom format, e.g. parse_date(%q, format=\"DD/MM/YYYY\").",
 					dateStr, dateStr,
 				)
-				return f.Return(NewErrorStrf(errMsg).SetCode(rl.ErrParseDate))
+				return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrParseDate))
 			}
 		}
 

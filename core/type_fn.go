@@ -38,7 +38,7 @@ func (fn RadFn) Name() string {
 	if fn.BuiltInFunc != nil {
 		return fn.BuiltInFunc.Name
 	}
-	return fn.Typing.Name
+	return fn.Typing.FnName
 }
 
 func (fn RadFn) IsBuiltIn() bool {
@@ -79,7 +79,9 @@ func (fn RadFn) Execute(f FuncInvocation) (out RadValue) {
 		parent = fn.Env
 	}
 	i.runWithChildEnv(parent, func() {
-		// todo the following checking logic should be in IsCompatibleWith for TypingFnT
+		// Argument binding lives here (not in TypingFnT.IsCompatibleWith) because
+		// it needs *Interpreter and Env to bind params into a call frame.
+		// The pure "is this value a function" check is in TypingFnT.IsCompatibleWith.
 
 		seen := make(map[string]bool)
 

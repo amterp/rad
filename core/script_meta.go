@@ -101,7 +101,7 @@ func tryConvertAST(tree *rts.RadTree, src string, file string) (ast *rl.SourceFi
 func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) *rl.SourceFile {
 	ast := tryConvertAST(tree, src, ScriptName)
 	checker := check.NewCheckerWithTree(tree, parser, src, ast)
-	result, err := checker.CheckDefault()
+	result, err := checker.Check()
 	if err != nil {
 		RP.RadErrorExit("Failed to validate syntax: " + err.Error())
 		panic(UNREACHABLE)

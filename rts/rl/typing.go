@@ -45,10 +45,42 @@ func (r RadType) AsString() string {
 	}
 }
 
+// TypingT is the runtime representation of a Rad type annotation. Each
+// implementation pairs:
+//
+//	Name()             - the user-visible spelling used in error messages
+//	IsCompatibleWith() - whether a given value matches this type
+//
+// The Rad interpreter calls IsCompatibleWith at function param/return
+// boundaries (see core/type_fn.go). It is *not* called on local variable
+// assignment or collection mutation today - see docs/type_system.md for why and
+// what we'd need to change to extend coverage.
 type TypingT interface {
 	Name() string
 	IsCompatibleWith(val TypingCompatVal) bool
 }
+
+// Compile-time guards: every concrete typing must satisfy TypingT.
+var (
+	_ TypingT = (*TypingStrT)(nil)
+	_ TypingT = (*TypingIntT)(nil)
+	_ TypingT = (*TypingFloatT)(nil)
+	_ TypingT = (*TypingBoolT)(nil)
+	_ TypingT = (*TypingErrorT)(nil)
+	_ TypingT = (*TypingAnyT)(nil)
+	_ TypingT = (*TypingVoidT)(nil)
+	_ TypingT = (*TypingAnyListT)(nil)
+	_ TypingT = (*TypingListT)(nil)
+	_ TypingT = (*TypingTupleT)(nil)
+	_ TypingT = (*TypingAnyMapT)(nil)
+	_ TypingT = (*TypingStructT)(nil)
+	_ TypingT = (*TypingMapT)(nil)
+	_ TypingT = (*TypingVarArgT)(nil)
+	_ TypingT = (*TypingOptionalT)(nil)
+	_ TypingT = (*TypingFnT)(nil)
+	_ TypingT = (*TypingStrEnumT)(nil)
+	_ TypingT = (*TypingUnionT)(nil)
+)
 
 // Primitives / Union Primitives
 type TypingStrT struct{} // var: str
@@ -480,10 +512,49 @@ func (t *TypingOptionalT) IsCompatibleWith(val TypingCompatVal) bool {
 
 // Complex / Unions / Misc
 type TypingFnT struct { // var: fn(int, int) -> int
-	Name    string // empty if anonymous
+	FnName  string // declared name of the function (empty if anonymous/lambda)
 	Params  []TypingFnParam
 	ReturnT *TypingT
 	// nils mean no typing
+}
+
+func (t *TypingFnT) Name() string {
+	var sb strings.Builder
+	sb.WriteString("fn(")
+	for i, p := range t.Params {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		if p.IsVariadic {
+			sb.WriteString("*")
+		}
+		if p.Type != nil {
+			sb.WriteString((*p.Type).Name())
+		} else {
+			sb.WriteString(T_ANY)
+		}
+	}
+	sb.WriteString(")")
+	if t.ReturnT != nil {
+		sb.WriteString(" -> ")
+		sb.WriteString((*t.ReturnT).Name())
+	}
+	return sb.String()
+}
+
+// IsCompatibleWith checks if a value is a function. We do NOT structurally
+// compare param/return shapes today because TypingCompatVal.Val cannot carry
+// function arity information (RadFn lives in core, not rl). That deferral is
+// documented in docs/type_system.md.
+func (t *TypingFnT) IsCompatibleWith(val TypingCompatVal) bool {
+	if val.Val != nil {
+		// Value-level structural check deferred (see docs/type_system.md). Fall through
+		// to the type-level signal which is the same thing for fns today.
+	}
+	if val.Type != nil {
+		return *val.Type == RadFnT
+	}
+	return false
 }
 
 type TypingStrEnumT struct { // var: ["foo", "bar"] = "bar"

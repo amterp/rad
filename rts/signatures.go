@@ -176,12 +176,12 @@ func init() {
 
 		typing := rl.NewTypingFnT(tree.Root().Child(0), tree.src)
 
-		if _, ok := FnSignaturesByName[typing.Name]; ok {
-			panic(fmt.Sprintf("Duplicate function signature found: %s", typing.Name))
+		if _, ok := FnSignaturesByName[typing.FnName]; ok {
+			panic(fmt.Sprintf("Duplicate function signature found: %s", typing.FnName))
 		}
 
 		sig.Typing = typing
-		sig.Name = typing.Name
+		sig.Name = typing.FnName
 		FnSignaturesByName[sig.Name] = sig
 	}
 
