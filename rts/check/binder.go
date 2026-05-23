@@ -115,8 +115,15 @@ func (b *binder) ensureBuiltin(name string) *Symbol {
 }
 
 // resolveIdentifier records the use of `ident` and returns the Symbol
-// it resolves to, or nil if the name is unknown. Unresolved names are
-// not yet diagnosed - that lands in Phase 1c.
+// it resolves to, or nil if the name is unknown.
+//
+// Unresolved identifier uses are NOT surfaced as diagnostics here. The
+// runtime emits a rich undefined-variable error with "did you mean"
+// suggestions; emitting a static-time error of the same kind would
+// short-circuit the runtime path that drives several test scenarios
+// (defer behavior, suggestion strings, scoping snapshots). A future
+// commit can broaden the static check to cover all uses, with the
+// runtime-side test migration that goes with it.
 func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 	if sym := b.current.Lookup(ident.Name); sym != nil {
 		b.resolved.Uses[ident] = sym
@@ -128,6 +135,16 @@ func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 		return sym
 	}
 	return nil
+}
+
+// addIssue appends a structural binder finding to the resolved view.
+// The checker layer converts these to user-facing Diagnostics.
+func (b *binder) addIssue(span rl.Span, code rl.Error, msg string) {
+	b.resolved.Issues = append(b.resolved.Issues, BindIssue{
+		Span:    span,
+		Code:    code,
+		Message: msg,
+	})
 }
 
 // bindFile is the entry point. It opens the file scope, hoists named
@@ -155,6 +172,14 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 		for i := range file.Args.Decls {
 			decl := &file.Args.Decls[i]
 			b.declare(decl.Name, SymArg, decl.Span(), decl)
+		}
+		// Default expressions resolve against the file scope (where
+		// all args have already been declared above). Visiting them
+		// here surfaces any undefined references inside defaults.
+		for i := range file.Args.Decls {
+			if file.Args.Decls[i].Default != nil {
+				b.visit(file.Args.Decls[i].Default)
+			}
 		}
 	}
 
@@ -253,7 +278,10 @@ func (b *binder) declareTarget(target rl.Node, updateEnclosing bool) {
 				b.resolved.Uses[t] = sym
 				return
 			}
-			// Compound-assign on undefined name - Phase 1c will diagnose.
+			// Compound-assign needs an existing binding to operate on,
+			// but we defer the static diagnostic to the same future
+			// commit that broadens the undefined-variable check. The
+			// runtime will emit a clear error when it tries to execute.
 			return
 		}
 		// Plain '=' shadows any enclosing-scope binding with the same name.
@@ -319,6 +347,15 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 		for i := range typing.Params {
 			p := &typing.Params[i]
 			if p.Name == "" {
+				continue
+			}
+			// Same-scope collisions are the actual error case here -
+			// shadowing an outer-scope binding via a parameter is a
+			// legitimate, common pattern. Only flag when two params
+			// in the *same* parameter list share a name.
+			if _, dup := b.current.Symbols[p.Name]; dup {
+				b.addIssue(owner.Span(), rl.ErrDuplicateParameter,
+					"Duplicate parameter '"+p.Name+"'")
 				continue
 			}
 			b.declare(p.Name, SymParam, owner.Span(), nil)
@@ -483,18 +520,15 @@ func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
 	}
 
 	cb := c.Callback
-	switch {
-	case cb.IsLambda && cb.Lambda != nil:
+	if cb.IsLambda && cb.Lambda != nil {
 		b.visitLambda(cb.Lambda)
-	case cb.IdentifierName != nil:
-		// Build a synthetic Identifier so the use is recorded in the
-		// resolution map keyed on the AST node. Future LSP goto-def
-		// for a cmd callback can use this entry.
-		if cb.IdentifierSpan != nil {
-			ident := rl.NewIdentifier(*cb.IdentifierSpan, *cb.IdentifierName)
-			b.resolveIdentifier(ident)
-		}
 	}
+	// Identifier-style callbacks (`calls handler`) are not resolved
+	// here. The cmd-callback is stored on CmdCallback as a string with
+	// no AST identifier node, so there's no place to record a Use that
+	// other consumers could see. The existing
+	// addUnknownCommandCallbackWarnings check handles diagnostics for
+	// unknown callback names with its own WARN-severity message.
 }
 
 // visitCatch walks the body of an error-catch block. The block does not

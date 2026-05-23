@@ -112,4 +112,20 @@ type Resolved struct {
 	// Decls maps a declaring node to the Symbol it introduced. Useful for
 	// goto-def (jump to decl span) and for hover (show declared type).
 	Decls map[rl.Node]*Symbol
+	// Issues are problems the binder detected during resolution
+	// (undefined references, duplicate parameters, etc.). Callers
+	// convert these to whatever diagnostic shape they need; the binder
+	// stays src-free.
+	Issues []BindIssue
+}
+
+// BindIssue is a problem detected during name resolution. It carries
+// just the bare information - span, message, error code - so that the
+// binder doesn't depend on the source text or the wider Diagnostic
+// type. Callers turn each issue into their preferred diagnostic shape
+// (e.g. check.Diagnostic with src-derived range info).
+type BindIssue struct {
+	Span    rl.Span
+	Code    rl.Error
+	Message string
 }

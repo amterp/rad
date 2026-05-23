@@ -1,7 +1,6 @@
 package check
 
 import (
-	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 )
 
@@ -65,37 +64,6 @@ func (c *RadCheckerImpl) getHoistedFunctionsAST() []string {
 		}
 	}
 	return names
-}
-
-// Check 5: Unknown function hints (AST version)
-func (c *RadCheckerImpl) addUnknownFunctionHintsAST(d *[]Diagnostic) {
-	if c.ast == nil {
-		return
-	}
-
-	builtInFunctions := rts.GetBuiltInFunctions()
-
-	hoistedFunctionSet := make(map[string]bool)
-	for _, name := range c.getHoistedFunctionsAST() {
-		hoistedFunctionSet[name] = true
-	}
-
-	walkAST(c.ast, func(node rl.Node) {
-		call, ok := node.(*rl.Call)
-		if !ok {
-			return
-		}
-		ident, ok := call.Func.(*rl.Identifier)
-		if !ok {
-			return
-		}
-		fnName := ident.Name
-		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
-			return
-		}
-		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticHintFromSpan(ident.Span(), c.src, msg, rl.ErrUnknownFunction))
-	})
 }
 
 // Check 7: Break/continue outside loop (AST version)

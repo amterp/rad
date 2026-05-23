@@ -407,6 +407,52 @@ func TestResolve_CmdBlockCallbackIdentifierRecorded(t *testing.T) {
 	assert.Equal(t, check.SymHoistedFn, handlerSym.Kind)
 }
 
+func TestResolve_DuplicateFnParamEmitsIssue(t *testing.T) {
+	src := "fn add(x, x):\n    return x\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	// Exactly one duplicate-parameter issue should fire.
+	dupes := 0
+	for _, issue := range r.Issues {
+		if issue.Code == rl.ErrDuplicateParameter {
+			dupes++
+		}
+	}
+	assert.Equal(t, 1, dupes, "expected one duplicate-param issue")
+}
+
+func TestResolve_DuplicateLambdaParamEmitsIssue(t *testing.T) {
+	src := "f = fn(a, a) a\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	dupes := 0
+	for _, issue := range r.Issues {
+		if issue.Code == rl.ErrDuplicateParameter {
+			dupes++
+		}
+	}
+	assert.Equal(t, 1, dupes)
+}
+
+func TestResolve_ShadowingNotADuplicate(t *testing.T) {
+	// `fn f(x)` where x exists at file scope is *shadowing*, not a
+	// duplicate param. The check must only fire for two params in the
+	// same parameter list.
+	src := "x = 1\nfn f(x):\n    return x\n"
+	file := parseFile(t, src)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	for _, issue := range r.Issues {
+		assert.NotEqual(t, rl.ErrDuplicateParameter, issue.Code,
+			"shadowing must not produce a duplicate-param error")
+	}
+}
+
 func TestResolve_RebindingDoesNotCreateNewSymbol(t *testing.T) {
 	// A second assignment to the same name re-binds, it doesn't shadow.
 	// Both assignments share one Symbol so the LSP can find every

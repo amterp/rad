@@ -101,6 +101,7 @@ const (
 	ErrInvalidAssignmentTarget          Error = "40006"
 	ErrRadOptionNoEffect                Error = "40007"
 	ErrDeprecatedBlockKeyword           Error = "40008"
+	ErrDuplicateParameter               Error = "40009"
 )
 
 func (e Error) String() string {

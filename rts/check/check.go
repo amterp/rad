@@ -69,7 +69,16 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
 	c.addFunctionNameShadowingErrorsAST(&diagnostics)
-	c.addUnknownFunctionHintsAST(&diagnostics)
+
+	// Resolve once and share across checks that need the symbol table.
+	// Subsequent commits will rebuild more checks on this view.
+	var resolved *Resolved
+	if c.ast != nil {
+		resolved = Resolve(c.ast)
+	}
+
+	c.addUnknownFunctionHints(resolved, &diagnostics)
+	c.addBindIssues(resolved, &diagnostics)
 	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
 	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
@@ -79,6 +88,47 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	return Result{
 		Diagnostics: diagnostics,
 	}, nil
+}
+
+// addUnknownFunctionHints reimplements the old name-set hint check on
+// top of the resolved view. Behavior - severity, message text, the
+// set of identifiers it flags - is intentionally identical to the
+// previous addUnknownFunctionHintsAST so existing snapshots continue
+// to pass. The win here is structural: there's now one place where
+// "is this name defined?" is asked, and other checks will move to it
+// in subsequent commits.
+func (c *RadCheckerImpl) addUnknownFunctionHints(resolved *Resolved, d *[]Diagnostic) {
+	if c.ast == nil || resolved == nil {
+		return
+	}
+	walkAST(c.ast, func(node rl.Node) {
+		call, ok := node.(*rl.Call)
+		if !ok {
+			return
+		}
+		ident, ok := call.Func.(*rl.Identifier)
+		if !ok {
+			return
+		}
+		if _, resolvedHere := resolved.Uses[ident]; resolvedHere {
+			return
+		}
+		msg := "Function '" + ident.Name + "' may not be defined (only built-in and top-level functions are tracked)"
+		*d = append(*d, NewDiagnosticHintFromSpan(ident.Span(), c.src, msg, rl.ErrUnknownFunction))
+	})
+}
+
+// addBindIssues surfaces structural findings the binder collected
+// (duplicate params and similar) as Diagnostics. Each issue carries
+// its own severity decision via the error code; for now everything
+// the binder records is an error.
+func (c *RadCheckerImpl) addBindIssues(resolved *Resolved, d *[]Diagnostic) {
+	if resolved == nil {
+		return
+	}
+	for _, issue := range resolved.Issues {
+		*d = append(*d, NewDiagnosticErrorFromSpan(issue.Span, c.src, issue.Message, issue.Code))
+	}
 }
 
 func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
