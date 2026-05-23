@@ -222,17 +222,18 @@ func TestResolve_ForLoopVarVisibleInBodyOnly(t *testing.T) {
 	r := check.Resolve(file)
 	require.NotNil(t, r)
 
-	// The loop var is visible inside the body.
+	// The loop var is visible inside the body and remains visible
+	// after - Rad's runtime writes loop vars into the enclosing env,
+	// so `for i in range(3): pass; print(i)` is valid Rad. The binder
+	// matches that semantics.
 	forLoop := file.Stmts[1].(*rl.ForLoop)
 	call := forLoop.Body[0].(*rl.ExprStmt).Expr.(*rl.Call)
 	xUse := call.Args[0].(*rl.Identifier)
 	sym, ok := r.Uses[xUse]
 	require.True(t, ok)
 	assert.Equal(t, check.SymLoopVar, sym.Kind)
-	assert.Equal(t, check.ScopeLoop, sym.Scope.Kind)
-
-	// And NOT visible at file scope after the loop ends.
-	assert.Nil(t, r.File.Lookup("x"), "loop var must not leak to file scope")
+	assert.Equal(t, check.ScopeFile, sym.Scope.Kind)
+	assert.Same(t, sym, r.File.Lookup("x"))
 }
 
 func TestResolve_ForLoopIterEvaluatedInEnclosingScope(t *testing.T) {
@@ -270,12 +271,11 @@ func TestResolve_ForLoopMultiVarsAllDeclared(t *testing.T) {
 	assert.Equal(t, "v", r.Uses[vUse].Name)
 }
 
-func TestResolve_WhileLoopBodyScoped(t *testing.T) {
-	// A while loop opens a scope so any locals defined inside don't
-	// outlive the loop. Without this, `while True: x = 1` would
-	// pollute the enclosing scope - probably what the user wants for
-	// idiomatic 'compute then use' patterns, but inconsistent with
-	// ForLoop, and a footgun if the loop doesn't actually run.
+func TestResolve_WhileLoopBodyShareEnclosingScope(t *testing.T) {
+	// Rad has no per-block scope: variables introduced inside a while
+	// body remain visible after the loop. The binder must reflect that
+	// so a future undefined-variable check doesn't falsely flag
+	// `print(tmp)` after the loop.
 	src := "i = 0\nwhile i < 3:\n    tmp = i\n    i += 1\n"
 	file := parseFile(t, src)
 	r := check.Resolve(file)
@@ -286,43 +286,48 @@ func TestResolve_WhileLoopBodyScoped(t *testing.T) {
 	tmpDecl := tmpAssign.Targets[0].(*rl.Identifier)
 	tmpSym := r.Uses[tmpDecl]
 	require.NotNil(t, tmpSym)
-	assert.Equal(t, check.ScopeLoop, tmpSym.Scope.Kind)
-	assert.Nil(t, r.File.Lookup("tmp"), "loop-local should not escape")
+	assert.Equal(t, check.ScopeFile, tmpSym.Scope.Kind)
+	assert.Same(t, tmpSym, r.File.Lookup("tmp"))
 
-	// But `i += 1` (compound assign) must rebind the file-scope i.
+	// `i += 1` (compound assign) rebinds the file-scope i as before.
 	iAssign := whileLoop.Body[1].(*rl.Assign)
 	require.True(t, iAssign.UpdateEnclosing)
 	iTarget := iAssign.Targets[0].(*rl.Identifier)
 	assert.Same(t, r.File.Lookup("i"), r.Uses[iTarget])
 }
 
-func TestResolve_ListCompVarsScoped(t *testing.T) {
-	// `[x * 2 for x in xs]` - x is a comprehension-local, gone after.
+func TestResolve_ListCompVarsShareEnclosingScope(t *testing.T) {
+	// `[x * 2 for x in xs]` - the comprehension's loop var lives in the
+	// enclosing scope at runtime (executeForLoop SetVars into the
+	// current env), so the binder declares it there too. Side effect:
+	// post-comp references to x resolve, matching what the user sees.
 	src := "xs = [1,2,3]\nresult = [x * 2 for x in xs]\n"
 	file := parseFile(t, src)
 	r := check.Resolve(file)
 	require.NotNil(t, r)
 
-	// Find the comprehension - it's the RHS of `result = ...`.
 	resultAssign := file.Stmts[1].(*rl.Assign)
 	comp := resultAssign.Values[0].(*rl.ListComp)
 	mult := comp.Expr.(*rl.OpBinary)
 	xUse := mult.Left.(*rl.Identifier)
 	sym := r.Uses[xUse]
 	require.NotNil(t, sym)
-	assert.Equal(t, check.ScopeListComp, sym.Scope.Kind)
-	assert.Nil(t, r.File.Lookup("x"), "comp var must not leak")
+	assert.Equal(t, check.ScopeFile, sym.Scope.Kind)
+	assert.Same(t, sym, r.File.Lookup("x"))
 }
 
-func TestResolve_SwitchCaseBodyIsItsOwnScope(t *testing.T) {
-	// A local declared in one case body should not be visible to a
-	// later case or to code after the switch.
+func TestResolve_SwitchCaseBodySharesEnclosingScope(t *testing.T) {
+	// Switch case bodies run in the enclosing env. A local declared in
+	// one case body's first assignment binds in that enclosing scope;
+	// a same-named assignment in a sibling case rebinds the same
+	// symbol (control flow ensures only one runs per dispatch).
 	src := "x = 1\nswitch x:\n    case 1:\n        tmp = \"a\"\n    case 2:\n        tmp = \"b\"\n"
 	file := parseFile(t, src)
 	r := check.Resolve(file)
 	require.NotNil(t, r)
 
-	assert.Nil(t, r.File.Lookup("tmp"), "case-body locals must not leak")
+	tmpSym := r.File.Lookup("tmp")
+	require.NotNil(t, tmpSym, "case-body assignment binds in the enclosing scope")
 
 	sw := file.Stmts[1].(*rl.Switch)
 	require.GreaterOrEqual(t, len(sw.Cases), 2)
@@ -330,12 +335,10 @@ func TestResolve_SwitchCaseBodyIsItsOwnScope(t *testing.T) {
 	caseB := sw.Cases[1].Alt.(*rl.SwitchCaseBlock)
 	tmpA := caseA.Stmts[0].(*rl.Assign).Targets[0].(*rl.Identifier)
 	tmpB := caseB.Stmts[0].(*rl.Assign).Targets[0].(*rl.Identifier)
-	// Each case introduces its OWN tmp - the symbols must differ.
-	symA := r.Uses[tmpA]
-	symB := r.Uses[tmpB]
-	require.NotNil(t, symA)
-	require.NotNil(t, symB)
-	assert.NotSame(t, symA, symB, "two case bodies must produce distinct tmp symbols")
+	// Both cases bind the SAME symbol (one logical variable, one
+	// runtime slot, even if the case bodies are mutually exclusive).
+	assert.Same(t, tmpSym, r.Uses[tmpA])
+	assert.Same(t, tmpSym, r.Uses[tmpB])
 }
 
 func TestResolve_SwitchDiscriminantInEnclosingScope(t *testing.T) {
@@ -351,7 +354,11 @@ func TestResolve_SwitchDiscriminantInEnclosingScope(t *testing.T) {
 	assert.Same(t, fileX, r.Uses[discIdent])
 }
 
-func TestResolve_DeferBodyIsItsOwnScope(t *testing.T) {
+func TestResolve_DeferBodySharesEnclosingScope(t *testing.T) {
+	// A defer body runs later in the enclosing function's env (the
+	// interpreter uses runBlock, not a child env), so any local it
+	// declares becomes visible to the rest of the function from the
+	// point of declaration onward.
 	src := "fn f():\n    defer:\n        tmp = 1\n"
 	file := parseFile(t, src)
 	r := check.Resolve(file)
@@ -362,11 +369,16 @@ func TestResolve_DeferBodyIsItsOwnScope(t *testing.T) {
 	tmpDecl := defer_.Body[0].(*rl.Assign).Targets[0].(*rl.Identifier)
 	tmpSym := r.Uses[tmpDecl]
 	require.NotNil(t, tmpSym)
-	assert.Equal(t, check.ScopeBlock, tmpSym.Scope.Kind)
-	assert.Same(t, defer_, tmpSym.Scope.Owner)
+	// The enclosing scope is the function body, not a per-defer scope.
+	assert.Equal(t, check.ScopeFunction, tmpSym.Scope.Kind)
+	assert.Same(t, fn, tmpSym.Scope.Owner)
 }
 
-func TestResolve_CmdBlockArgsVisibleToInlineLambda(t *testing.T) {
+func TestResolve_CmdBlockArgsVisibleAtFileScope(t *testing.T) {
+	// Cmd args are populated by the runtime into the file env before
+	// the callback runs. The binder mirrors that: args become bindings
+	// at file scope (with kind SymCmdArg so LSP can still point users
+	// at the cmd_block's decl).
 	src := "command greet:\n    name str\n    calls fn():\n        print(name)\n"
 	file := parseFile(t, src)
 	require.NotNil(t, file)
@@ -374,22 +386,38 @@ func TestResolve_CmdBlockArgsVisibleToInlineLambda(t *testing.T) {
 	r := check.Resolve(file)
 	require.NotNil(t, r)
 
+	nameSym := r.File.Lookup("name")
+	require.NotNil(t, nameSym, "cmd args live at file scope")
+	assert.Equal(t, check.SymCmdArg, nameSym.Kind)
+
 	cmd := file.Cmds[0]
 	require.True(t, cmd.Callback.IsLambda, "expected inline-lambda callback")
 	require.NotNil(t, cmd.Callback.Lambda)
-
-	// `name` arg is declared in the cmd scope.
 	cb := cmd.Callback.Lambda
 	require.GreaterOrEqual(t, len(cb.Body), 1)
 	call := cb.Body[0].(*rl.ExprStmt).Expr.(*rl.Call)
 	nameUse := call.Args[0].(*rl.Identifier)
+	assert.Same(t, nameSym, r.Uses[nameUse], "lambda body sees cmd arg via file scope")
+}
 
-	sym, ok := r.Uses[nameUse]
-	require.True(t, ok, "callback body should see cmd arg")
-	assert.Equal(t, check.SymCmdArg, sym.Kind)
-	assert.Equal(t, check.ScopeCmdBlock, sym.Scope.Kind)
-	// And it must NOT leak to file scope.
-	assert.Nil(t, r.File.Lookup("name"), "cmd arg must not leak")
+func TestResolve_CmdBlockArgsVisibleToNamedCallback(t *testing.T) {
+	// A `calls handler` callback is just a hoisted function. The
+	// runtime populates cmd args into the file env before invoking
+	// handler, so handler's body resolves `name` against file scope.
+	// The binder must mirror this: cmd args at file scope.
+	src := "command greet:\n    name str\n    calls handler\n\nfn handler():\n    print(name)\n"
+	file := parseFile(t, src)
+	require.Len(t, file.Cmds, 1)
+	r := check.Resolve(file)
+	require.NotNil(t, r)
+
+	nameSym := r.File.Lookup("name")
+	require.NotNil(t, nameSym)
+
+	handler := file.Stmts[0].(*rl.FnDef)
+	call := handler.Body[0].(*rl.ExprStmt).Expr.(*rl.Call)
+	nameUse := call.Args[0].(*rl.Identifier)
+	assert.Same(t, nameSym, r.Uses[nameUse], "handler resolves cmd arg via file scope")
 }
 
 func TestResolve_CmdBlockCallbackIdentifierRecorded(t *testing.T) {

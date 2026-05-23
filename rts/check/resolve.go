@@ -19,8 +19,11 @@ const (
 	// ambient locals in the file scope: the runtime populates them from
 	// CLI flags before the body executes.
 	SymArg
-	// SymCmdArg is declared inside a `cmd_block` args section. Visible only
-	// inside that command's callback scope.
+	// SymCmdArg is declared inside a `cmd_block` args section. The
+	// binding lives in the enclosing (file) scope because the runtime
+	// populates it as a global before the command's callback runs;
+	// the kind distinguishes it from SymLocal so LSP hover and
+	// goto-def can point users at the cmd block's decl.
 	SymCmdArg
 	// SymParam is a function/lambda parameter.
 	SymParam
@@ -30,13 +33,16 @@ const (
 	SymLoopVar
 	// SymWith is the `with` context binding on a `for` loop.
 	SymWith
-	// SymRadField is a field name introduced inside a rad block.
-	SymRadField
 )
 
-// ScopeKind tracks why a scope exists. Useful for diagnostics ("break
-// outside loop") and later for narrowing rules that key off scope shape
-// (e.g. loop-entry widening, lambda capture preservation).
+// ScopeKind tracks why a scope exists.
+//
+// Rad opens new scopes only at function-like boundaries - named
+// functions, lambdas, and the implicit top-level file scope. Loops,
+// switch cases, defer bodies, list comprehensions, and cmd blocks do
+// NOT open a scope; they share the enclosing env (matching the
+// runtime's runBlock behavior, where loop variables and body-locals
+// persist after the construct ends).
 type ScopeKind int
 
 const (
@@ -44,11 +50,6 @@ const (
 	ScopeFile                      // script body
 	ScopeFunction                  // named function body
 	ScopeLambda                    // anonymous function body
-	ScopeLoop                      // for/while body
-	ScopeBlock                     // switch case body, defer body, etc.
-	ScopeListComp                  // list comprehension
-	ScopeRadBlock                  // rad block body
-	ScopeCmdBlock                  // cmd block body
 )
 
 // Symbol is the declaration record for a name in some scope.

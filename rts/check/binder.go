@@ -155,27 +155,41 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 	b.resolved.File = fileScope
 	defer b.popScope()
 
-	// Hoist top-level functions so calls earlier in the file can refer
-	// to definitions later in the file. Existing checks already rely on
-	// this order (see addUnknownFunctionHintsAST); we replicate it here
-	// as the source of truth for name resolution.
+	// Pre-pass: declare everything that's visible from anywhere in the
+	// file, so later visits (function bodies, cmd callbacks) resolve
+	// against the complete set.
+	//
+	//   - Hoist top-level functions so calls earlier in the file can
+	//     refer to definitions later.
+	//   - Args-block declarations become ambient: the runtime populates
+	//     them from CLI flags before the body runs.
+	//   - Cmd-block args become ambient too: the runtime populates the
+	//     invoked command's args into the file env before its callback
+	//     runs, so a named-function callback can reference them.
+	//     Multiple cmds with the same arg name share one symbol -
+	//     they're mutually exclusive at runtime.
 	for _, stmt := range file.Stmts {
 		if fn, ok := stmt.(*rl.FnDef); ok {
 			b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
 		}
 	}
-
-	// Arg-block declarations become ambient locals at file scope. The
-	// runtime populates them from CLI flags before any user statement
-	// runs, so by the time control reaches the body they exist.
 	if file.Args != nil {
 		for i := range file.Args.Decls {
 			decl := &file.Args.Decls[i]
 			b.declare(decl.Name, SymArg, decl.Span(), decl)
 		}
-		// Default expressions resolve against the file scope (where
-		// all args have already been declared above). Visiting them
-		// here surfaces any undefined references inside defaults.
+	}
+	for _, cmd := range file.Cmds {
+		for i := range cmd.Decls {
+			decl := &cmd.Decls[i]
+			b.declare(decl.Name, SymCmdArg, decl.Span(), decl)
+		}
+	}
+
+	// Visit arg-block default expressions now that every ambient name
+	// is declared - this surfaces any undefined references inside
+	// defaults without false positives from forward references.
+	if file.Args != nil {
 		for i := range file.Args.Decls {
 			if file.Args.Decls[i].Default != nil {
 				b.visit(file.Args.Decls[i].Default)
@@ -183,9 +197,7 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 		}
 	}
 
-	// Walk statements and cmd blocks. Cmds live alongside Stmts on
-	// SourceFile but in a separate slice; both run at file scope and
-	// share access to hoisted functions and args-block names.
+	// Walk statements and cmd blocks.
 	for _, stmt := range file.Stmts {
 		b.visit(stmt)
 	}
@@ -370,20 +382,17 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 
 // visitForLoop binds a `for vars in iter [with ctx]:` loop.
 //
-// The iterable expression evaluates in the enclosing scope - that's
-// the value being iterated, not something defined by the loop. The
-// loop scope opens just before the body so that the loop variables
-// (and optional 'with' context binding) are only visible to the body.
+// In Rad, loop bodies do NOT open a new environment - the interpreter
+// writes loop variables and any body-locals via SetVar on the
+// enclosing env. As a consequence, `for i in range(3): pass; print(i)`
+// is valid Rad: i is 2 after the loop. The binder mirrors that by
+// declaring loop vars (and the optional 'with' context) in the
+// current scope, not a synthetic loop scope.
 //
-// A loop variable that shadows an enclosing-scope name shadows for
-// the duration of the body and is gone after; this matches Python
-// and is what Rad's runtime does today.
+// The iterable expression is visited first - it computes the value to
+// iterate, which by definition cannot reference the loop var.
 func (b *binder) visitForLoop(f *rl.ForLoop) {
 	b.visit(f.Iter)
-
-	b.pushScope(ScopeLoop, f)
-	defer b.popScope()
-
 	for _, name := range f.Vars {
 		if name == "" {
 			continue
@@ -398,15 +407,11 @@ func (b *binder) visitForLoop(f *rl.ForLoop) {
 	}
 }
 
-// visitWhileLoop binds a `while [cond]:` loop. No new names come from
-// the loop header, but the body still belongs to its own scope so
-// that any assignments inside aren't visible after the loop ends -
-// matching ForLoop's behavior and keeping our notion of "loop scope"
-// uniform for later narrowing rules.
+// visitWhileLoop binds a `while [cond]:` loop. The header declares no
+// names; the body shares the enclosing env (matches the interpreter's
+// runBlock behavior). The condition is visited as a normal expression
+// in that same scope.
 func (b *binder) visitWhileLoop(w *rl.WhileLoop) {
-	b.pushScope(ScopeLoop, w)
-	defer b.popScope()
-
 	if w.Condition != nil {
 		b.visit(w.Condition)
 	}
@@ -417,17 +422,12 @@ func (b *binder) visitWhileLoop(w *rl.WhileLoop) {
 
 // visitListComp binds a `[expr for vars in iter if cond]` comprehension.
 //
-// The iterable evaluates in the enclosing scope (Python's rule -
-// otherwise `[x for x in x]` would be paradoxical). Everything else
-// - the loop vars, the optional 'with' context, the filter, and the
-// element expression - lives in its own scope, gone the moment the
-// comprehension finishes producing its list.
+// Same scoping story as ForLoop - the runtime evaluates a list-comp
+// via executeForLoop, which writes the iteration variable into the
+// enclosing env. The vars and 'with' context become locals in the
+// current scope; the iterable is visited first.
 func (b *binder) visitListComp(c *rl.ListComp) {
 	b.visit(c.Iter)
-
-	b.pushScope(ScopeListComp, c)
-	defer b.popScope()
-
 	for _, name := range c.Vars {
 		if name == "" {
 			continue
@@ -443,12 +443,10 @@ func (b *binder) visitListComp(c *rl.ListComp) {
 	b.visit(c.Expr)
 }
 
-// visitSwitch binds a switch statement. The discriminant and each
-// case's match keys are expressions in the enclosing scope - they're
-// values to compare, not bindings. Case bodies that contain
-// statements (SwitchCaseBlock) get their own ScopeBlock so that a
-// local declared in one case doesn't bleed into the next case or
-// outlive the switch.
+// visitSwitch binds a switch statement. Discriminant, match keys, and
+// case bodies all evaluate in the same scope - Rad has no per-case
+// environment, so a local declared in one case body is visible after
+// the switch and to subsequent cases (control flow permitting).
 func (b *binder) visitSwitch(s *rl.Switch) {
 	b.visit(s.Discriminant)
 	for _, c := range s.Cases {
@@ -462,13 +460,11 @@ func (b *binder) visitSwitch(s *rl.Switch) {
 	}
 }
 
-// visitSwitchAlt visits one case's right-hand side. A single-expression
-// alt is just visited; a block alt is visited inside its own scope.
+// visitSwitchAlt visits one case's right-hand side. The case-block
+// form just walks its statements in the enclosing scope.
 func (b *binder) visitSwitchAlt(alt rl.Node) {
 	switch a := alt.(type) {
 	case *rl.SwitchCaseBlock:
-		b.pushScope(ScopeBlock, a)
-		defer b.popScope()
 		for _, stmt := range a.Stmts {
 			b.visit(stmt)
 		}
@@ -481,54 +477,38 @@ func (b *binder) visitSwitchAlt(alt rl.Node) {
 	}
 }
 
-// visitDefer binds a `defer:` / `errdefer:` block. Its body is a
-// separate scope so anything declared inside doesn't escape into the
-// enclosing function or file. The body still resolves references up
-// the scope chain, which is how the deferred code can reach variables
-// from where the defer was registered.
+// visitDefer walks a `defer:` / `errdefer:` block's body. The deferred
+// code runs later in the enclosing function's env (the interpreter
+// uses runBlock, not a child env), so anything declared inside is
+// visible to the rest of the function after the defer is registered -
+// matching how the runtime sees it.
 func (b *binder) visitDefer(d *rl.Defer) {
-	b.pushScope(ScopeBlock, d)
-	defer b.popScope()
 	for _, stmt := range d.Body {
 		b.visit(stmt)
 	}
 }
 
-// visitCmdBlock binds a top-level cmd_block. The command's arg
-// declarations live in their own scope so they don't collide with
-// other commands' args or the script-level args block.
+// visitCmdBlock walks a cmd_block's defaults and inline-lambda
+// callback. The cmd's args were already declared at file scope by
+// bindFile's pre-pass (the runtime populates them as globals before
+// the callback runs), so this routine doesn't declare them again -
+// it just visits the default expressions (which may reference other
+// arg-block / cmd-arg names) and the lambda callback.
 //
-// An inline-lambda callback gets visited inside the cmd scope, which
-// means the lambda's body can see the cmd's args. A name-referenced
-// callback resolves against the file scope - the runtime threads cmd
-// args to the named function through a separate mechanism, so making
-// the function's lexical scope see them here would be misleading.
+// Identifier-style callbacks (`calls handler`) are not resolved here
+// because CmdCallback stores the name as a plain string with no AST
+// identifier node. addUnknownCommandCallbackWarnings handles the
+// "is the target visible at file scope?" question.
 func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
-	b.pushScope(ScopeCmdBlock, c)
-	defer b.popScope()
-
-	for i := range c.Decls {
-		decl := &c.Decls[i]
-		b.declare(decl.Name, SymCmdArg, decl.Span(), decl)
-	}
-	// Visit default expressions in the cmd scope; they can refer to
-	// other cmd args declared on the line(s) above.
 	for i := range c.Decls {
 		if c.Decls[i].Default != nil {
 			b.visit(c.Decls[i].Default)
 		}
 	}
-
 	cb := c.Callback
 	if cb.IsLambda && cb.Lambda != nil {
 		b.visitLambda(cb.Lambda)
 	}
-	// Identifier-style callbacks (`calls handler`) are not resolved
-	// here. The cmd-callback is stored on CmdCallback as a string with
-	// no AST identifier node, so there's no place to record a Use that
-	// other consumers could see. The existing
-	// addUnknownCommandCallbackWarnings check handles diagnostics for
-	// unknown callback names with its own WARN-severity message.
 }
 
 // visitCatch walks the body of an error-catch block. The block does not

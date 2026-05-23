@@ -38,23 +38,30 @@ mutation - so the LSP can hold one per snapshot and read it lock-free.
 
 ### Scopes
 
-Each scope chains to its parent. Lookup walks the chain. The kinds:
+Rad opens a new scope only at function-like boundaries. The
+interpreter creates a fresh `Env` exclusively when a function or
+lambda is invoked (via `runWithChildEnv`); loops, switch cases,
+defer bodies, list comprehensions, and cmd blocks all run via
+`runBlock` against the enclosing env. The binder mirrors that.
+
+The kinds:
 
 - `ScopeBuiltin` - ambient runtime names (`print`, `len`, ...). Sits
   above file scope; symbols are synthesized lazily on first reference
   so cold builtins don't cost.
-- `ScopeFile` - script body. Holds hoisted functions and args-block
-  declarations.
+- `ScopeFile` - script body. Holds hoisted functions, args-block
+  declarations, AND cmd-block args (the runtime populates the invoked
+  command's args into the file env before its callback runs, so
+  same-file callbacks can reference them).
 - `ScopeFunction` / `ScopeLambda` - function and lambda bodies. Hold
   their parameter bindings.
-- `ScopeLoop` - `for` and `while` bodies. Holds loop variables and the
-  optional `with` context binding.
-- `ScopeListComp` - list comprehension scope. Same shape as a loop
-  scope but for the comprehension.
-- `ScopeBlock` - switch case body, defer body. Locals declared inside
-  don't leak.
-- `ScopeCmdBlock` - cmd_block body. Holds the command's arg
-  declarations.
+
+What does NOT open a scope: `for`/`while` loops, list comprehensions,
+switch case bodies, defer/errdefer bodies, cmd_blocks themselves.
+Anything they declare lands in the enclosing scope and remains
+visible after the construct ends. This is why
+`for i in range(3): pass; print(i)` is valid Rad - `i` is 2 after
+the loop.
 
 ### Symbol kinds
 
@@ -65,8 +72,11 @@ Each scope chains to its parent. Lookup walks the chain. The kinds:
 - `SymArg` - declared in the script-level `args:` block. Acts as a
   file-scope ambient local; the runtime populates it from CLI flags
   before the body executes.
-- `SymCmdArg` - declared in a `cmd_block`'s args. Lives in that
-  command's scope.
+- `SymCmdArg` - declared in a `cmd_block`'s args. Lives at file
+  scope (the runtime sets the invoked command's args as globals
+  before the callback runs). The kind distinguishes it from
+  `SymArg` and `SymLocal` so LSP hover/goto-def can route users
+  to the cmd_block decl.
 - `SymParam` - function or lambda parameter.
 - `SymLocal` - any other name introduced by assignment.
 - `SymLoopVar` - the binding from `for x in ...`.
@@ -116,37 +126,39 @@ identifier as a normal expression use.
 
 ### Loops and comprehensions
 
-For-loops, while-loops, and list comprehensions each open their own
-scope. The iterable expression of a for-loop or comprehension is
-visited in the *enclosing* scope so `[x for x in x]` self-reference
-makes sense (the outer `x` flows into the new binding via the iter).
-While-loop conditions visit inside the loop scope, but the loop header
-introduces no bindings.
+For-loops, while-loops, and list comprehensions do NOT open scopes.
+The interpreter writes loop variables and body-locals into the
+enclosing env via `SetVar`, so they survive the loop. The binder
+mirrors that: loop vars (and the optional `with` context) bind in
+the current scope.
 
-Loop locals don't outlive the loop body. Compound assigns inside loops
-still rebind enclosing-scope bindings - so a `i += 1` inside a `while`
-updates the file-scope counter rather than introducing a loop-local
-shadow that no caller can see.
+The iterable expression of a for-loop or comprehension is visited
+in the enclosing scope before the loop var is introduced - that's
+the value being iterated, and it can't reference the loop var.
 
 ### Switch and defer
 
-Each switch case body that contains statements opens a `ScopeBlock`;
-locals declared in case A aren't visible to case B or to code after
-the switch. The discriminant and case-match keys stay in the enclosing
-scope - they're expressions, not bindings.
-
-Defer and errdefer bodies are also `ScopeBlock`. The deferred code can
-still reference everything from the surrounding function through
-normal lookup; only what *it* declares stays inside.
+Switch case bodies and defer/errdefer bodies share the enclosing
+scope. A local declared in one case body or defer body remains
+visible to the rest of the enclosing function. The discriminant
+and case-match keys are expressions, not bindings; they evaluate
+in the same scope as everything else.
 
 ### Cmd blocks
 
-Each top-level `command` block has its own scope owning the command's
-args. An inline-lambda callback runs inside that scope, so the lambda
-body can see the args. A name-referenced callback (`calls handler`)
-resolves against file scope only - the runtime threads the args to a
-named function through a separate mechanism, and pretending the
-function's lexical scope sees them would mislead hover/goto-def.
+Top-level `command` blocks don't open a scope. The interpreter
+populates the invoked command's args into the file env before the
+callback runs, so cmd args become file-scope bindings with kind
+`SymCmdArg`. This means:
+
+- An inline-lambda callback resolves cmd args via the file-scope
+  chain (the lambda's own `ScopeLambda` chains up to file).
+- A name-referenced callback (`calls handler`) also sees cmd args -
+  it's just a hoisted function body chaining to file scope.
+
+Multiple commands declaring same-named args share a single symbol;
+this is harmless because only one command's args are populated per
+invocation.
 
 ### Binder-emitted diagnostics
 
