@@ -127,7 +127,7 @@ that Python libraries simply can't. Plus, no dependency management needed.
 ### macOS (Homebrew)
 
 ```bash
-brew install amterp/rad/rad
+brew install rad
 ```
 
 ### Go (from source, all platforms)
