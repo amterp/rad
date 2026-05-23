@@ -24,6 +24,144 @@ Rad's type system has three layers:
 The static checker (`rts/check/`) and LSP layer share the parser and
 AST but currently do no type analysis. See "Deferred" below.
 
+## Scoping & name resolution
+
+Static analysis runs a single binder pass over the AST that produces a
+`Resolved` value: the scope tree, identifier-use -> symbol map, and a
+list of binder-detected issues (`BindIssue`). All downstream checks
+that need to ask "what does this name mean here?" go through the
+resolved view rather than re-deriving their own. Code lives in
+`rts/check/resolve.go` and `rts/check/binder.go`.
+
+Resolved is a pure value over the AST - no source-text dependency, no
+mutation - so the LSP can hold one per snapshot and read it lock-free.
+
+### Scopes
+
+Each scope chains to its parent. Lookup walks the chain. The kinds:
+
+- `ScopeBuiltin` - ambient runtime names (`print`, `len`, ...). Sits
+  above file scope; symbols are synthesized lazily on first reference
+  so cold builtins don't cost.
+- `ScopeFile` - script body. Holds hoisted functions and args-block
+  declarations.
+- `ScopeFunction` / `ScopeLambda` - function and lambda bodies. Hold
+  their parameter bindings.
+- `ScopeLoop` - `for` and `while` bodies. Holds loop variables and the
+  optional `with` context binding.
+- `ScopeListComp` - list comprehension scope. Same shape as a loop
+  scope but for the comprehension.
+- `ScopeBlock` - switch case body, defer body. Locals declared inside
+  don't leak.
+- `ScopeCmdBlock` - cmd_block body. Holds the command's arg
+  declarations.
+
+### Symbol kinds
+
+- `SymBuiltin` - ambient name from the runtime.
+- `SymHoistedFn` - top-level `fn` definition. Visible across the
+  whole file regardless of source order. Nested `fn` defs aren't
+  hoisted; they bind at point of declaration in their enclosing scope.
+- `SymArg` - declared in the script-level `args:` block. Acts as a
+  file-scope ambient local; the runtime populates it from CLI flags
+  before the body executes.
+- `SymCmdArg` - declared in a `cmd_block`'s args. Lives in that
+  command's scope.
+- `SymParam` - function or lambda parameter.
+- `SymLocal` - any other name introduced by assignment.
+- `SymLoopVar` - the binding from `for x in ...`.
+- `SymWith` - the `with` context binding on a `for` loop or
+  comprehension.
+
+### Hoisting
+
+Top-level `fn` definitions are hoisted into the file scope before any
+statement is visited, so calls earlier in the file can refer to
+definitions later in the file. The hoist pass also makes function
+self-reference work for recursion: the body's scope chains up through
+the file scope where the function's own name lives.
+
+### Args block defaults
+
+Default expressions for args-block declarations are visited *after*
+every arg has been declared in file scope. Forward references across
+args (`a int = b, b int = 5`) resolve at the binder level; the runtime
+may still impose ordering constraints.
+
+### Param defaults
+
+Function and lambda parameter default expressions are visited in the
+*enclosing* scope, not inside the function's own scope. A default
+like `fn f(n = greeting)` looks up `greeting` where the function was
+defined; it does not see sibling parameters. This matches Python and
+avoids the surprise of one parameter's default referencing a later
+parameter's name.
+
+### Assignment: plain vs compound
+
+The `Assign` AST node carries an `UpdateEnclosing` flag:
+
+- **Plain `=`** (`UpdateEnclosing = false`): the LHS identifier is
+  declared as a fresh local in the *current* scope. If a same-named
+  binding exists in an enclosing scope, the new local shadows it.
+- **Compound (`+=`, `++`, `--`, unpack-with-rebind)** (`UpdateEnclosing
+  = true`): the LHS must resolve to an existing binding somewhere up
+  the scope chain. Without one the operation has nothing to operate
+  on. The binder records the target as a *use* of the existing
+  binding rather than introducing a new local.
+
+`VarPath` targets (`a.b`, `xs[i]`) mutate an existing path's contents
+and never introduce new bindings; the binder visits the root
+identifier as a normal expression use.
+
+### Loops and comprehensions
+
+For-loops, while-loops, and list comprehensions each open their own
+scope. The iterable expression of a for-loop or comprehension is
+visited in the *enclosing* scope so `[x for x in x]` self-reference
+makes sense (the outer `x` flows into the new binding via the iter).
+While-loop conditions visit inside the loop scope, but the loop header
+introduces no bindings.
+
+Loop locals don't outlive the loop body. Compound assigns inside loops
+still rebind enclosing-scope bindings - so a `i += 1` inside a `while`
+updates the file-scope counter rather than introducing a loop-local
+shadow that no caller can see.
+
+### Switch and defer
+
+Each switch case body that contains statements opens a `ScopeBlock`;
+locals declared in case A aren't visible to case B or to code after
+the switch. The discriminant and case-match keys stay in the enclosing
+scope - they're expressions, not bindings.
+
+Defer and errdefer bodies are also `ScopeBlock`. The deferred code can
+still reference everything from the surrounding function through
+normal lookup; only what *it* declares stays inside.
+
+### Cmd blocks
+
+Each top-level `command` block has its own scope owning the command's
+args. An inline-lambda callback runs inside that scope, so the lambda
+body can see the args. A name-referenced callback (`calls handler`)
+resolves against file scope only - the runtime threads the args to a
+named function through a separate mechanism, and pretending the
+function's lexical scope sees them would mislead hover/goto-def.
+
+### Binder-emitted diagnostics
+
+The binder records structural problems as `BindIssue` records on
+`Resolved.Issues`. Today there's one: `ErrDuplicateParameter` for two
+parameters in the same parameter list sharing a name. The checker
+converts each issue to a `Diagnostic` using its source text.
+
+Undefined-variable diagnostics are not yet emitted from the binder.
+The existing `addUnknownFunctionHints` produces a Hint for unknown
+function-call callees, via the resolved view; broader uses are
+caught at runtime today with rich "did you mean" suggestions.
+Promoting to a static error will require migrating the test corpus
+that exercises the runtime path.
+
 ## What is enforced today
 
 Type annotations are checked at function call boundaries. That means:
@@ -100,7 +238,9 @@ surfaces:
 
 - Syntax/parse errors (delegated to tree-sitter)
 - Function shadowing
-- Unknown function hints
+- Unknown function hints (Hint severity, routed through the resolved
+  view; see Scoping section)
+- Duplicate function/lambda parameters
 - Break/continue/return scope errors
 - Invalid assignment LHS
 - Deprecated block keywords / no-effect Rad options
@@ -110,7 +250,8 @@ It does **not** do:
 
 - Type mismatch detection
 - Wrong argument count
-- Undefined variable detection
+- Undefined variable detection for non-call references (caught at
+  runtime today)
 - Unused variable lint
 - Unreachable code
 
