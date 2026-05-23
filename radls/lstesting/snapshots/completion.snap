@@ -573,6 +573,18 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -1308,6 +1320,18 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -2037,6 +2061,18 @@ ShebangCompletionEmptyDocMiddleOfLine
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {
@@ -2771,6 +2807,18 @@ y = 2
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {
@@ -3517,6 +3565,18 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -4257,6 +4317,18 @@ x = 1
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {
@@ -5001,6 +5073,18 @@ args:
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {
@@ -5753,6 +5837,18 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -6488,6 +6584,18 @@ later = 2
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {

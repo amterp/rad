@@ -1,0 +1,33 @@
+### TITLE ###
+Register handler for single signal
+### INPUT ###
+signal_trap("sigint", fn(ctx):
+    print("got {ctx.signal}")
+)
+print("registered")
+### STDOUT ###
+registered
+
+### TITLE ###
+Register handler for multiple signals via list
+### INPUT ###
+signal_trap(["sigint", "sigterm"], fn(ctx):
+    print("got {ctx.signal}")
+)
+print("registered")
+### STDOUT ###
+registered
+
+### TITLE ###
+Re-registering replaces previous handler
+### INPUT ###
+signal_trap("sigint", fn(ctx):
+    print("first")
+)
+signal_trap("sigint", fn(ctx):
+    print("second")
+)
+print("done")
+### STDOUT ###
+done
+

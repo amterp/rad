@@ -1,0 +1,16 @@
+### TITLE ###
+Ignore single signal by name
+### INPUT ###
+signal_ignore("sigpipe")
+print("ok")
+### STDOUT ###
+ok
+
+### TITLE ###
+Ignore multiple signals via list
+### INPUT ###
+signal_ignore(["sigpipe", "sigusr2"])
+print("ok")
+### STDOUT ###
+ok
+

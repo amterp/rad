@@ -673,6 +673,18 @@ print(gp.exists)
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -1470,6 +1482,18 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
+      "sortText": "2"
+    },
+    {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
       "label": "sleep",
@@ -2259,6 +2283,18 @@ fn f():
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
       "label": "seed_random",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_ignore(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][]) -\u003e void",
+      "kind": 3,
+      "label": "signal_ignore",
+      "sortText": "2"
+    },
+    {
+      "detail": "signal_trap(_signal: [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"] | [\"sigint\", \"sigterm\", \"sighup\", \"sigusr1\", \"sigusr2\", \"sigpipe\", \"sigwinch\"][], _handler: fn(any) -\u003e any) -\u003e void",
+      "kind": 3,
+      "label": "signal_trap",
       "sortText": "2"
     },
     {

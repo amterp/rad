@@ -133,6 +133,8 @@ const (
 	FUNC_PARSE_DURATION     = "parse_duration"
 	FUNC_CONVERT_DURATION   = "convert_duration"
 	FUNC_GET_ARGS           = "get_args"
+	FUNC_SIGNAL_IGNORE      = "signal_ignore"
+	FUNC_SIGNAL_TRAP        = "signal_trap"
 
 	INTERNAL_FUNC_GET_STASH_ID    = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH    = "_rad_delete_stash"
@@ -303,6 +305,8 @@ func init() {
 		FuncPrintErr,
 		FuncExit,
 		FuncSleep,
+		FuncSignalIgnore,
+		FuncSignalTrap,
 		FuncParseDuration,
 		FuncConvertDuration,
 		FuncParseDate,

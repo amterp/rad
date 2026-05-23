@@ -102,6 +102,8 @@ var publicSignatures = []string{
 	`round(_num: float, _decimals: int = 0) -> error|int|float`,
 	`save_state(_state: map) -> error?`,
 	`seed_random(_seed: int) -> void`,
+	`signal_ignore(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][]) -> void`,
+	`signal_trap(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][], _handler: fn(any) -> any) -> void`,
 	`sleep(_duration: int|float|str, *, title: str?) -> void`,
 	`sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -> list|str`,
 	`split(_val: str, _sep: str, *, limit: int?) -> str[]`,
