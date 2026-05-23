@@ -52,20 +52,6 @@ func (c *RadCheckerImpl) addFunctionNameShadowingErrorsAST(d *[]Diagnostic) {
 	}
 }
 
-// getHoistedFunctionsAST returns names of top-level function definitions from the AST.
-func (c *RadCheckerImpl) getHoistedFunctionsAST() []string {
-	if c.ast == nil {
-		return nil
-	}
-	var names []string
-	for _, stmt := range c.ast.Stmts {
-		if fnDef, ok := stmt.(*rl.FnDef); ok {
-			names = append(names, fnDef.Name)
-		}
-	}
-	return names
-}
-
 // Check 7: Break/continue outside loop (AST version)
 func (c *RadCheckerImpl) addBreakContinueOutsideLoopErrorsAST(d *[]Diagnostic) {
 	if c.ast == nil {

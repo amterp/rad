@@ -82,7 +82,7 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
 	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
-	c.addUnknownCommandCallbackWarnings(&diagnostics)
+	c.addUnknownCommandCallbackWarnings(resolved, &diagnostics)
 	c.addDeprecatedBlockKeywordErrors(&diagnostics)
 	c.addRadOptionNoEffectWarnings(&diagnostics)
 	return Result{
@@ -208,33 +208,25 @@ func isIntType(t *rl.TypingT) bool {
 	return ok
 }
 
-func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(d *[]Diagnostic) {
-	if c.ast == nil || len(c.ast.Cmds) == 0 {
+// addUnknownCommandCallbackWarnings flags `calls <name>` callbacks
+// whose target isn't visible at file scope. Goes through the resolved
+// view so it agrees byte-for-byte with the rest of the checker on
+// what's defined where; the ad-hoc set construction the previous
+// implementation used could drift from the binder's notion of "in
+// scope" as the language adds new declaration sites.
+func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(resolved *Resolved, d *[]Diagnostic) {
+	if c.ast == nil || len(c.ast.Cmds) == 0 || resolved == nil {
 		return
 	}
-
-	builtInFunctions := rts.GetBuiltInFunctions()
-
-	hoistedFunctionSet := make(map[string]bool)
-	for _, name := range c.getHoistedFunctionsAST() {
-		hoistedFunctionSet[name] = true
-	}
-
 	for _, cmd := range c.ast.Cmds {
 		cb := cmd.Callback
-		if cb.IsLambda || cb.IdentifierName == nil {
+		if cb.IsLambda || cb.IdentifierName == nil || cb.IdentifierSpan == nil {
 			continue
 		}
-
 		fnName := *cb.IdentifierName
-		if builtInFunctions.Contains(fnName) || hoistedFunctionSet[fnName] {
+		if resolved.File.Lookup(fnName) != nil {
 			continue
 		}
-
-		if cb.IdentifierSpan == nil {
-			continue
-		}
-
 		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
 		*d = append(*d, NewDiagnosticWarnFromSpan(*cb.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
 	}
