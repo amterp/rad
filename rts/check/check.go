@@ -72,12 +72,15 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	// Resolve once and share across checks that need the symbol table.
 	// Subsequent commits will rebuild more checks on this view.
 	var resolved *Resolved
+	var typeInfo *TypeInfo
 	if c.ast != nil {
 		resolved = Resolve(c.ast)
+		typeInfo = TypeCheck(c.ast, resolved)
 	}
 
 	c.addUnknownFunctionHints(resolved, &diagnostics)
 	c.addBindIssues(resolved, &diagnostics)
+	c.addTypeIssues(typeInfo, &diagnostics)
 	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
 	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
@@ -115,6 +118,19 @@ func (c *RadCheckerImpl) addUnknownFunctionHints(resolved *Resolved, d *[]Diagno
 		msg := "Function '" + ident.Name + "' may not be defined (only built-in and top-level functions are tracked)"
 		*d = append(*d, NewDiagnosticHintFromSpan(ident.Span(), c.src, msg, rl.ErrUnknownFunction))
 	})
+}
+
+// addTypeIssues surfaces type-checker findings (type mismatches, arg
+// count errors, etc.) as Diagnostics. Empty in Phase 2a since the
+// type checker hasn't started emitting yet; wiring it up now means
+// later sub-commits don't need to touch the orchestration code.
+func (c *RadCheckerImpl) addTypeIssues(info *TypeInfo, d *[]Diagnostic) {
+	if info == nil {
+		return
+	}
+	for _, issue := range info.Issues {
+		*d = append(*d, NewDiagnosticFromSpan(issue.Span, c.src, issueSeverityToCheck(issue.Severity), issue.Message, codePtr(issue.Code)))
+	}
 }
 
 // addBindIssues surfaces structural findings the binder collected
