@@ -80,6 +80,7 @@ var (
 	_ TypingT = (*TypingErrorT)(nil)
 	_ TypingT = (*TypingAnyT)(nil)
 	_ TypingT = (*TypingDynamicT)(nil)
+	_ TypingT = (*TypingErrorTypeT)(nil)
 	_ TypingT = (*TypingNeverT)(nil)
 	_ TypingT = (*TypingVoidT)(nil)
 	_ TypingT = (*TypingAnyListT)(nil)
@@ -230,6 +231,35 @@ func (t *TypingDynamicT) Name() string {
 }
 
 func (t *TypingDynamicT) IsCompatibleWith(TypingCompatVal) bool {
+	return true
+}
+
+// TypingErrorTypeT is the static-checker's "poison" type, distinct from the
+// runtime TypingErrorT (the user-facing `error` type returned by builtins
+// like parse_json). When an expression fails to type-check, the checker
+// assigns it ErrorType instead of returning Go-nil. ErrorType is universally
+// compatible in both directions, so subsequent expressions that consume the
+// failed expression don't fire their own (cascading) diagnostics. The user
+// sees one error - the original - instead of ten.
+//
+// Users never write or see this type in normal flow; if it ever surfaces in
+// an error message (rendered as "<error>"), that itself indicates a checker
+// bug.
+type TypingErrorTypeT struct{}
+
+func NewErrorTypeType() *TypingErrorTypeT {
+	return &TypingErrorTypeT{}
+}
+
+func (t *TypingErrorTypeT) Name() string {
+	return T_ERROR_TYPE
+}
+
+// IsCompatibleWith returns true: a poisoned expression's value, if it
+// somehow flows to runtime, shouldn't cause additional confusion. Real
+// callers should never see this - the failed check that produced the
+// ErrorType already aborted the path.
+func (t *TypingErrorTypeT) IsCompatibleWith(TypingCompatVal) bool {
 	return true
 }
 

@@ -112,6 +112,46 @@ func TestAssign_NeverHasNoValues(t *testing.T) {
 	assert.False(t, neverT.IsCompatibleWith(rl.NewNullSubject()))
 }
 
+func TestAssign_ErrorTypeSuppressesCascade(t *testing.T) {
+	errT := rl.NewErrorTypeType()
+	intT := rl.NewIntType()
+	listInt := rl.NewListType(rl.NewIntType())
+
+	// ErrorType accepts anything as a source - a failed expression's
+	// poisoned type doesn't need to be "compatible" with anything that
+	// happens to be assigned to it.
+	assert.True(t, errT.IsAssignableFrom(intT))
+	assert.True(t, errT.IsAssignableFrom(listInt))
+	assert.True(t, errT.IsAssignableFrom(rl.NewVoidType()))
+
+	// And it's accepted by anything as a target - this is the
+	// cascade-suppression direction. A subsequent expression that consumes
+	// a poisoned result doesn't fire its own type-mismatch diagnostic.
+	assert.True(t, intT.IsAssignableFrom(errT))
+	assert.True(t, listInt.IsAssignableFrom(errT))
+
+	// Including by void - poison flows through "no return value" positions
+	// too, so a poisoned call result doesn't double-error when discarded.
+	assert.True(t, rl.NewVoidType().IsAssignableFrom(errT))
+}
+
+func TestAssign_ErrorTypeDistinctFromRuntimeError(t *testing.T) {
+	// The static-checker poison type and the runtime `error` type are
+	// completely separate. error is what parse_json returns when JSON is
+	// malformed - a real value users handle. ErrorType is a placeholder
+	// for "this expression failed to type-check" and never appears in user
+	// code.
+	staticErr := rl.TypingT(rl.NewErrorTypeType())
+	runtimeErr := rl.TypingT(rl.NewErrorType())
+
+	_, isRuntime := staticErr.(*rl.TypingErrorT)
+	assert.False(t, isRuntime, "static ErrorType must not satisfy *TypingErrorT")
+	_, isStatic := runtimeErr.(*rl.TypingErrorTypeT)
+	assert.False(t, isStatic, "runtime error must not satisfy *TypingErrorTypeT")
+	assert.NotEqual(t, staticErr.Name(), runtimeErr.Name(),
+		"names must differ so users never see the static poison form")
+}
+
 func TestAssign_DynamicAndAnyAreDistinct(t *testing.T) {
 	// They behave identically for IsAssignableFrom today, but they're not the
 	// same type. The static checker must be able to tell them apart - that's

@@ -9,15 +9,15 @@ package rl
 // alongside their types.
 
 // isAnyLike reports whether other is a "flows-into-anything" type: `any`
-// (user-written escape hatch), `dynamic` (the implicit form assigned when
-// inference can't pin a type), or `never` (the bottom type, vacuously a
-// subtype of everything because no value inhabits it). Every concrete
+// (user-written escape hatch), `dynamic` (the implicit form when inference
+// can't pin a type), `never` (the bottom type, vacuously a subtype of
+// everything because no value inhabits it), or `<error>` (the static
+// checker's poison marker for already-failed expressions). Every concrete
 // IsAssignableFrom checks this first so values of these types can flow into
-// any target without false negatives. The set grows again when the checker
-// adds `error_type` (poisoned, for cascade prevention).
+// any target without false negatives.
 func isAnyLike(other TypingT) bool {
 	switch other.(type) {
-	case *TypingAnyT, *TypingDynamicT, *TypingNeverT:
+	case *TypingAnyT, *TypingDynamicT, *TypingNeverT, *TypingErrorTypeT:
 		return true
 	}
 	return false
@@ -54,6 +54,9 @@ func typesEqual(a, b TypingT) bool {
 		return ok
 	case *TypingDynamicT:
 		_, ok := b.(*TypingDynamicT)
+		return ok
+	case *TypingErrorTypeT:
+		_, ok := b.(*TypingErrorTypeT)
 		return ok
 	case *TypingNeverT:
 		_, ok := b.(*TypingNeverT)
@@ -241,11 +244,13 @@ func (t *TypingDynamicT) IsAssignableFrom(TypingT) bool {
 }
 
 // Void is the type of expressions that produce no value (e.g. print()).
-// Only Void itself and Never are assignable to it. Notably `any` and
-// `dynamic` are NOT - that's how `x = print(...)` gets caught instead of
-// being silently swallowed under gradual consistency.
+// Only Void itself, Never (vacuous), and ErrorType (cascade suppression)
+// are assignable to it. Notably `any` and `dynamic` are NOT - that's how
+// `x = print(...)` gets caught instead of being silently swallowed under
+// gradual consistency.
 func (t *TypingVoidT) IsAssignableFrom(other TypingT) bool {
-	if _, ok := other.(*TypingNeverT); ok {
+	switch other.(type) {
+	case *TypingNeverT, *TypingErrorTypeT:
 		return true
 	}
 	_, ok := other.(*TypingVoidT)
@@ -259,6 +264,16 @@ func (t *TypingVoidT) IsAssignableFrom(other TypingT) bool {
 func (t *TypingNeverT) IsAssignableFrom(other TypingT) bool {
 	_, ok := other.(*TypingNeverT)
 	return ok
+}
+
+// ErrorType is the static-checker's poison marker. It accepts anything as a
+// source, and (via the isAnyLike short-circuit on every other type) is
+// accepted by anything as a target. That bidirectional permissiveness is
+// what suppresses cascading diagnostics: one expression's failure produces
+// one error, not a flood of derivative errors as the failure flows through
+// subsequent expressions.
+func (t *TypingErrorTypeT) IsAssignableFrom(TypingT) bool {
+	return true
 }
 
 // --- Collections (invariant) ---
