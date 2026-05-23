@@ -1,6 +1,11 @@
 package check
 
-import "github.com/amterp/rad/rts/rl"
+import (
+	"fmt"
+
+	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/rts/rl"
+)
 
 // TypeInfo is the output of bidirectional type checking. It carries
 // the type each symbol settled on, the type each expression node
@@ -165,11 +170,217 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 		return tc.record(v, rl.NewDynamicType())
 	case *rl.Identifier:
 		return tc.synthIdentifier(v)
+	case *rl.Call:
+		return tc.synthCall(v, 0)
+	case *rl.VarPath:
+		return tc.synthVarPath(v)
 	}
 	for _, child := range n.Children() {
 		_ = tc.synth(child)
 	}
 	return tc.record(n, rl.NewDynamicType())
+}
+
+// synthCall handles a function-call expression. For now this only
+// works for calls whose callee is a direct Identifier resolving to a
+// builtin - the binder marks those as SymBuiltin, and the runtime
+// keeps a parsed TypingFnT for every builtin in FnSignaturesByName.
+// User-defined function call-checking lands in Phase 2e once the
+// Tarjan SCC pass populates signatures for hoisted fns.
+//
+// Phase 2b emits arity diagnostics only: too few, too many, missing
+// required, unknown named arg, duplicated named arg. Per-arg type
+// checking lands in the next sub-commit so this one stays focused on
+// the arity-matching algorithm.
+//
+// implicitReceiverCount is non-zero for UFCS-style calls
+// (`expr.method(args)`), where the receiver of the chain is the
+// implicit first positional argument. The arity check then expects
+// `len(args) + implicitReceiverCount` to match the formal signature.
+func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.TypingT {
+	// Always synth the args themselves so identifier-uses get recorded.
+	for _, a := range call.Args {
+		_ = tc.synth(a)
+	}
+	for _, na := range call.NamedArgs {
+		_ = tc.synth(na.Value)
+	}
+	// Also synth the callee. For UFCS calls the callee is just the
+	// method-name Identifier (no enclosing Call.Func chain), but the
+	// shape is the same either way.
+	calleeT := tc.synth(call.Func)
+
+	typing := tc.builtinSignatureFor(call.Func)
+	if typing == nil {
+		return tc.record(call, rl.NewDynamicType())
+	}
+	tc.checkCallArity(call, typing, implicitReceiverCount)
+
+	if typing.ReturnT != nil {
+		return tc.record(call, *typing.ReturnT)
+	}
+	_ = calleeT
+	return tc.record(call, rl.NewDynamicType())
+}
+
+// synthVarPath walks a chained path expression (e.g. `a.b[c].d`,
+// `xs.sort()`). Non-UFCS segments are visited for hover/symbol
+// purposes only - their actual semantics (field access, indexing,
+// slicing) get static types in a later sub-commit.
+//
+// UFCS segments are calls whose first positional argument is the
+// path's chain so far. We pull the Call out of the segment and
+// type-check it with an implicit-receiver count of 1, so arity
+// checks count the chain-receiver as the first arg.
+func (tc *typeChecker) synthVarPath(v *rl.VarPath) rl.TypingT {
+	_ = tc.synth(v.Root)
+	for _, seg := range v.Segments {
+		switch {
+		case seg.IsUFCS:
+			if call, ok := seg.Index.(*rl.Call); ok {
+				_ = tc.synthCall(call, 1)
+			}
+		case seg.Index != nil:
+			_ = tc.synth(seg.Index)
+		case seg.IsSlice:
+			if seg.Start != nil {
+				_ = tc.synth(seg.Start)
+			}
+			if seg.End != nil {
+				_ = tc.synth(seg.End)
+			}
+		}
+	}
+	return tc.record(v, rl.NewDynamicType())
+}
+
+// builtinSignatureFor returns the parsed builtin signature for a
+// call's callee, or nil when the callee isn't a directly-named
+// builtin we have type information for. The function leaves all
+// other resolution paths (user-defined functions, function-valued
+// expressions) to later phases.
+func (tc *typeChecker) builtinSignatureFor(callee rl.Node) *rl.TypingFnT {
+	ident, ok := callee.(*rl.Identifier)
+	if !ok {
+		return nil
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok || sym.Kind != SymBuiltin {
+		return nil
+	}
+	sig, ok := rts.FnSignaturesByName[sym.Name]
+	if !ok || sig.Typing == nil {
+		return nil
+	}
+	return sig.Typing
+}
+
+// checkCallArity runs the call-matching algorithm and emits arity
+// diagnostics for mismatches. Mirrors the runtime logic in
+// core/type_fn.go but operates on AST positions rather than evaluated
+// values.
+//
+//   - Positional args fill positional params left-to-right until a
+//     NamedOnly param is reached. If the last positional param is
+//     variadic, it absorbs every remaining positional arg.
+//   - Named args must match a non-anonymous param by name and may not
+//     duplicate something already filled positionally.
+//   - After matching, every required param (no default, not variadic,
+//     not optional) must have been seen.
+func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, implicitReceiverCount int) {
+	params := typing.Params
+	seen := make(map[string]bool, len(params))
+	hasVariadic := len(params) > 0 && params[len(params)-1].IsVariadic
+
+	// Account for any implicit first arg (UFCS receiver). The
+	// receiver always fills params[0..implicitReceiverCount-1].
+	for i := 0; i < implicitReceiverCount && i < len(params); i++ {
+		param := params[i]
+		if param.IsVariadic {
+			// The first param is variadic - it absorbs the receiver
+			// and any explicit positional args.
+			seen[param.Name] = true
+			implicitReceiverCount = 0 // consumed via variadic path
+			break
+		}
+		seen[param.Name] = true
+	}
+
+	// idxBase shifts param matching by the receiver count.
+	idxBase := implicitReceiverCount
+	totalArgs := implicitReceiverCount + len(call.Args)
+
+	for argIdx, arg := range call.Args {
+		paramIdx := idxBase + argIdx
+		if paramIdx >= len(params) {
+			if hasVariadic {
+				// The variadic param was already marked seen above
+				// or below; nothing more to absorb.
+				break
+			}
+			tc.addCallIssue(call.Span(), rl.ErrWrongArgCount,
+				fmt.Sprintf("Expected at most %d args, but was invoked with %d", len(params), totalArgs))
+			break
+		}
+		param := params[paramIdx]
+		if param.IsVariadic {
+			seen[param.Name] = true
+			break
+		}
+		if param.NamedOnly {
+			tc.addCallIssue(arg.Span(), rl.ErrWrongArgCount,
+				"Too many positional args, remaining args are named-only")
+			break
+		}
+		seen[param.Name] = true
+	}
+
+	byName := typing.ByName()
+	for _, na := range call.NamedArgs {
+		param, ok := byName[na.Name]
+		if !ok {
+			tc.addCallIssue(na.NameSpan, rl.ErrInvalidArgType,
+				fmt.Sprintf("Unknown named argument '%s'", na.Name))
+			continue
+		}
+		if param.AnonymousOnly() {
+			tc.addCallIssue(na.NameSpan, rl.ErrInvalidArgType,
+				fmt.Sprintf("Argument '%s' cannot be passed as named arg, only positionally", na.Name))
+			continue
+		}
+		if seen[na.Name] {
+			tc.addCallIssue(na.NameSpan, rl.ErrInvalidArgType,
+				fmt.Sprintf("Argument '%s' already specified", na.Name))
+			continue
+		}
+		seen[na.Name] = true
+	}
+
+	for _, param := range params {
+		if seen[param.Name] {
+			continue
+		}
+		if param.IsVariadic || param.IsOptional || param.DefaultAST != nil {
+			continue
+		}
+		// A parameter typed as `T?` or `T|null` accepts null implicitly;
+		// the runtime fills it with null when omitted. Don't flag those
+		// as missing - matches the runtime's treatment.
+		if param.Type != nil && (*param.Type).IsCompatibleWith(rl.NewNullSubject()) {
+			continue
+		}
+		tc.addCallIssue(call.Span(), rl.ErrWrongArgCount,
+			fmt.Sprintf("Missing required argument '%s'", param.Name))
+	}
+}
+
+func (tc *typeChecker) addCallIssue(span rl.Span, code rl.Error, msg string) {
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     span,
+		Severity: IssueError,
+		Code:     code,
+		Message:  msg,
+	})
 }
 
 // synthIdentifier looks up the symbol an identifier refers to and

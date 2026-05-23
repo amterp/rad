@@ -99,10 +99,84 @@ func TestTypeCheck_ForwardReferenceFallsBackToDynamic(t *testing.T) {
 	assert.Equal(t, rl.T_DYNAMIC, got.Name())
 }
 
-func TestTypeCheck_NoIssuesEmittedYet(t *testing.T) {
-	// Sanity check: Phase 2a doesn't emit any type diagnostics. A
-	// type-mismatched assignment like `x: int = "hi"` would be
-	// caught by Phase 2b/c, not this commit.
+// hasIssue is a tiny helper for the arity tests below: did the
+// type-check info include at least one diagnostic with the given
+// error code?
+func hasIssue(info *check.TypeInfo, code rl.Error) bool {
+	for _, i := range info.Issues {
+		if i.Code == code {
+			return true
+		}
+	}
+	return false
+}
+
+func TestTypeCheck_BuiltinCallReturnTypeRecorded(t *testing.T) {
+	// `len(...)` returns int; the Call expression should synth to int
+	// even when nested inside a larger expression.
+	file, info, _ := typeInfoFromSrc(t, "x = len(\"hi\")\n")
+	assign := file.Stmts[0].(*rl.Assign)
+	call := assign.Values[0].(*rl.Call)
+	got := info.ExprTypes[call]
+	require.NotNil(t, got)
+	assert.Equal(t, rl.T_INT, got.Name())
+}
+
+func TestTypeCheck_BuiltinTooFewArgsFiresWrongArgCount(t *testing.T) {
+	// `replace(_original, _find, _replace)` requires 3 positional args.
+	_, info, _ := typeInfoFromSrc(t, "x = replace(\"a\", \"b\")\n")
+	assert.True(t, hasIssue(info, rl.ErrWrongArgCount),
+		"expected ErrWrongArgCount for too few args")
+}
+
+func TestTypeCheck_BuiltinTooManyArgsFiresWrongArgCount(t *testing.T) {
+	// `len` accepts exactly one positional arg.
+	_, info, _ := typeInfoFromSrc(t, "x = len(\"a\", \"b\")\n")
+	assert.True(t, hasIssue(info, rl.ErrWrongArgCount),
+		"expected ErrWrongArgCount for too many args")
+}
+
+func TestTypeCheck_BuiltinVariadicAcceptsAnyCount(t *testing.T) {
+	// `print(*_items, ...)` is variadic; calls with 0, 1, or N args
+	// must all be accepted without firing the arity check.
+	for _, src := range []string{
+		"print()\n",
+		"print(\"hi\")\n",
+		"print(\"a\", \"b\", \"c\")\n",
+	} {
+		_, info, _ := typeInfoFromSrc(t, src)
+		assert.False(t, hasIssue(info, rl.ErrWrongArgCount),
+			"variadic call should not flag arity: %q", src)
+	}
+}
+
+func TestTypeCheck_BuiltinUnknownNamedArg(t *testing.T) {
+	// `print` accepts `sep` and `end` as named-only args; anything
+	// else is an unknown-named-arg error.
+	_, info, _ := typeInfoFromSrc(t, "print(\"hi\", bogus=1)\n")
+	assert.True(t, hasIssue(info, rl.ErrInvalidArgType),
+		"expected ErrInvalidArgType for unknown named arg")
+}
+
+func TestTypeCheck_BuiltinKnownNamedArgOK(t *testing.T) {
+	_, info, _ := typeInfoFromSrc(t, "print(\"hi\", end=\"\")\n")
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_UFCSCallReceiverCountsAsFirstArg(t *testing.T) {
+	// `"hi".upper()` desugars to `upper("hi")`. Without UFCS-awareness
+	// the arity check would say "missing required arg". With it, the
+	// receiver counts as the first positional arg and no diagnostic
+	// fires.
+	_, info, _ := typeInfoFromSrc(t, "x = \"hi\".upper()\n")
+	assert.False(t, hasIssue(info, rl.ErrWrongArgCount),
+		"UFCS receiver must count as the implicit first arg")
+}
+
+func TestTypeCheck_NoFalsePositivesOnSimpleAssignments(t *testing.T) {
+	// Sanity check: type-correct trivial assignments should not
+	// trigger any type-checker issues. Useful as a baseline before
+	// more complex tests.
 	_, info, _ := typeInfoFromSrc(t, "x = 5\ny = \"hi\"\n")
 	assert.Empty(t, info.Issues)
 }
