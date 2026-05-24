@@ -169,7 +169,7 @@ func addEnclosingFnCompletions(items *[]lsp.CompletionItem, snap *DocumentVersio
 func enclosingCallable(root rl.Node, pos lsp.Pos) (rl.Node, []rl.Node) {
 	var owner rl.Node
 	var body []rl.Node
-	walkAST(root, func(n rl.Node) {
+	rl.Walk(root, func(n rl.Node) {
 		switch nn := n.(type) {
 		case *rl.FnDef:
 			if spanContains(nn.Span(), pos) {

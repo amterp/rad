@@ -9,6 +9,26 @@ type Node interface {
 	Children() []Node
 }
 
+// Walk does a pre-order traversal of the AST rooted at `node`,
+// invoking `visit` on each node it touches (root first, then
+// children left to right, recursively). A nil root is a no-op so
+// callers don't have to guard before recursing into optional
+// subtrees.
+//
+// Lives here in `rl` because both the check pass and the LSP
+// analysis layer need the same walk and we don't want two copies
+// drifting (e.g., if Children() ever changes to skip a node type,
+// only one walker should need updating).
+func Walk(node Node, visit func(Node)) {
+	if node == nil {
+		return
+	}
+	visit(node)
+	for _, child := range node.Children() {
+		Walk(child, visit)
+	}
+}
+
 // NodeKind identifies the type of an AST node.
 type NodeKind uint16
 

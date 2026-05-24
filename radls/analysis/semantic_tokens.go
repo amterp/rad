@@ -87,7 +87,7 @@ func (s *State) SemanticTokens(snap *DocumentVersion) (*lsp.SemanticTokens, erro
 // typos as if they were real bindings.
 func collectSemanticTokens(snap *DocumentVersion) []rawToken {
 	tokens := make([]rawToken, 0)
-	walkAST(snap.ast, func(n rl.Node) {
+	rl.Walk(snap.ast, func(n rl.Node) {
 		ident, ok := n.(*rl.Identifier)
 		if !ok {
 			return

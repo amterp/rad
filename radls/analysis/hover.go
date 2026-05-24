@@ -48,82 +48,6 @@ func (s *State) Hover(snap *DocumentVersion, pos lsp.Pos) (*lsp.Hover, error) {
 	}, nil
 }
 
-// identifierAt walks the AST for the smallest Identifier whose span
-// contains the given (line, byte-column) position. Cursor at the
-// exact end column is treated as "on the identifier" - the cursor in
-// `print|()` sits after the last char of `print` and users expect
-// hover on `print` there.
-//
-// We do a full traversal rather than a span-pruning descent because
-// the per-node Span isn't guaranteed to enclose every child's span
-// (the converter sets each node's span independently and there are
-// edge cases). It's O(n) over the AST; for sub-2k-LOC scripts that's
-// well below interactive-latency cost.
-func identifierAt(root rl.Node, pos lsp.Pos) *rl.Identifier {
-	var best *rl.Identifier
-	walkAST(root, func(n rl.Node) {
-		ident, ok := n.(*rl.Identifier)
-		if !ok {
-			return
-		}
-		if !spanContains(ident.Span(), pos) {
-			return
-		}
-		if best == nil || spanSize(ident.Span()) < spanSize(best.Span()) {
-			best = ident
-		}
-	})
-	return best
-}
-
-// walkAST is a local copy of the check-package helper - we don't want
-// to pull check's internals here just for a tree walk. Hover lives in
-// the analysis package, which already imports check for the indexes
-// it consumes, but the visitor is plain AST traversal.
-func walkAST(node rl.Node, visit func(rl.Node)) {
-	if node == nil {
-		return
-	}
-	visit(node)
-	for _, child := range node.Children() {
-		walkAST(child, visit)
-	}
-}
-
-// spanContains reports whether (line, byteCol) sits inside span. The
-// span is half-open at the start row but treats the end column as
-// inclusive: a cursor sitting just after the last char of an
-// identifier should still hover it (matches LSP-client expectation).
-func spanContains(s rl.Span, pos lsp.Pos) bool {
-	if pos.Line < s.StartRow || pos.Line > s.EndRow {
-		return false
-	}
-	if pos.Line == s.StartRow && pos.Character < s.StartCol {
-		return false
-	}
-	if pos.Line == s.EndRow && pos.Character > s.EndCol {
-		return false
-	}
-	return true
-}
-
-// spanSize measures a span for "smallest containing" comparisons. We
-// use byte length (EndByte - StartByte), which is unambiguous; row/
-// column arithmetic would mis-rank multi-line spans.
-func spanSize(s rl.Span) int {
-	return s.EndByte - s.StartByte
-}
-
-// spanToRange converts an AST span (utf-8 byte columns) into an LSP
-// Range still in byte coordinates. The caller is expected to push it
-// through fromByteRange to land in the negotiated encoding.
-func spanToRange(s rl.Span) lsp.Range {
-	return lsp.Range{
-		Start: lsp.Pos{Line: s.StartRow, Character: s.StartCol},
-		End:   lsp.Pos{Line: s.EndRow, Character: s.EndCol},
-	}
-}
-
 // formatIdentHover renders the markdown body for a hover on an
 // identifier. Returns "" when there's nothing useful to say (e.g.
 // the identifier didn't resolve to a known symbol). The empty-
@@ -157,20 +81,6 @@ func formatIdentHover(ident *rl.Identifier, resolved *check.Resolved, info *chec
 	kindLabel := symbolKindLabel(sym.Kind)
 	typeStr := symbolTypeString(sym, info)
 	return fmt.Sprintf("```rad\n(%s) %s: %s\n```", kindLabel, sym.Name, typeStr)
-}
-
-// lookupSymbolForIdent finds the Symbol bound to an identifier,
-// preferring the use-site index. Declarations (e.g. an `x` on the
-// LHS of `x = 1`) are sometimes recorded in Decls but not Uses; we
-// fall back to Decls so hover works on the declaration itself.
-func lookupSymbolForIdent(ident *rl.Identifier, resolved *check.Resolved) *check.Symbol {
-	if sym, ok := resolved.Uses[ident]; ok && sym != nil {
-		return sym
-	}
-	if sym, ok := resolved.Decls[ident]; ok && sym != nil {
-		return sym
-	}
-	return nil
 }
 
 // symbolKindLabel maps a SymbolKind to a short tag for the hover

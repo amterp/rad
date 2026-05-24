@@ -7,15 +7,12 @@ import (
 // --- AST-based checks ---
 // These checks walk the Go-native AST and skip when ast is nil (invalid syntax).
 
-// walkAST recursively visits all nodes in the AST, calling visit for each.
+// walkAST is a thin alias for rl.Walk. Kept as a package-local
+// name so existing check-package callers read naturally. The
+// shared walker lives in rl so the LSP analysis layer gets the
+// same traversal semantics.
 func walkAST(node rl.Node, visit func(rl.Node)) {
-	if node == nil {
-		return
-	}
-	visit(node)
-	walkASTChildren(node, func(child rl.Node) {
-		walkAST(child, visit)
-	})
+	rl.Walk(node, visit)
 }
 
 // walkASTChildren calls visit for each direct child of node.
