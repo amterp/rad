@@ -1,0 +1,76 @@
+### TITLE ###
+NotNullNarrowsTruthyBranch
+### DESCRIPTION ###
+`if x != null:` should narrow x to non-null inside the then-body.
+Outside the if (no else, no early exit), x falls back to int? via join.
+### INPUT ###
+fn f(x: int?):
+    if x != null:
+        y = x
+    z = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  z @ 4:5 -> <no-type>
+  x @ 4:9 -> int|int?
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+  z (local): int|int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+NullEqualReturnsNarrowsFallthrough
+### DESCRIPTION ###
+Guard pattern: `if x == null: return` leaves x as non-null in the
+fall-through path.
+### INPUT ###
+fn f(x: int?):
+    if x == null:
+        return
+    y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 4:5 -> <no-type>
+  x @ 4:9 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+NoNullableBaseTypeNoNarrowing
+### DESCRIPTION ###
+x is int (no nullable component); the predicate has nothing to refine.
+The if/else still produces a clean join.
+### INPUT ###
+fn f(x: int):
+    if x != null:
+        y = x
+    else:
+        z = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int
+  y @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  z @ 5:9 -> <no-type>
+  x @ 5:13 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int
+  y (local): int
+  z (local): int
+
+# Diagnostics
+  (none)
