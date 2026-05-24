@@ -921,6 +921,85 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Union subsumption in joinFrames ---------------------------------
+
+func TestUnionJoin_CollapsesIntAndOptionalInt(t *testing.T) {
+	// int | int? should collapse to int?.
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewIntType(),
+		rl.NewOptionalType(rl.NewIntType()),
+	})
+	require.NotNil(t, got)
+	assert.Equal(t, "int?", got.Name())
+}
+
+func TestUnionJoin_CollapsesStrEnums(t *testing.T) {
+	// Three single-value enums merge into one with all values.
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewStrEnumType("a"),
+		rl.NewStrEnumType("b"),
+		rl.NewStrEnumType("c"),
+	})
+	require.NotNil(t, got)
+	assert.Equal(t, `["a", "b", "c"]`, got.Name())
+}
+
+func TestUnionJoin_DropsNeverAndErrorType(t *testing.T) {
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewNeverType(),
+		rl.NewIntType(),
+		rl.NewErrorTypeType(),
+	})
+	require.NotNil(t, got)
+	assert.Equal(t, rl.T_INT, got.Name())
+}
+
+func TestUnionJoin_AllNeverGivesNever(t *testing.T) {
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewNeverType(),
+		rl.NewNeverType(),
+	})
+	require.NotNil(t, got)
+	assert.Equal(t, rl.T_NEVER, got.Name())
+}
+
+func TestUnionJoin_AnyDoesNotSwallowConcrete(t *testing.T) {
+	// `int | any` keeps both arms - gradual any shouldn'\''t silently
+	// erase the concrete int.
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewIntType(),
+		rl.NewAnyType(),
+	})
+	require.NotNil(t, got)
+	name := got.Name()
+	assert.Contains(t, name, "int", "concrete arm must survive")
+	assert.Contains(t, name, "any", "gradual arm must survive")
+}
+
+func TestUnionJoin_FlattensNestedUnions(t *testing.T) {
+	inner := rl.NewUnionType(rl.NewIntType(), rl.NewStrType())
+	got := check.UnionJoinForTest([]rl.TypingT{
+		inner,
+		rl.NewBoolType(),
+	})
+	require.NotNil(t, got)
+	u, ok := got.(*rl.TypingUnionT)
+	require.True(t, ok)
+	assert.Len(t, u.Types(), 3, "nested union should flatten to 3 arms")
+}
+
+func TestUnionJoin_PreservesIncompatibleArms(t *testing.T) {
+	// int | str: neither subsumes the other, keep both.
+	got := check.UnionJoinForTest([]rl.TypingT{
+		rl.NewIntType(),
+		rl.NewStrType(),
+	})
+	require.NotNil(t, got)
+	u, ok := got.(*rl.TypingUnionT)
+	require.True(t, ok)
+	assert.Len(t, u.Types(), 2)
+}
+
 // --- Phase 4j: closure capture rule ----------------------------------
 
 func TestTypeCheck_LambdaCapturesEnclosingNarrowing(t *testing.T) {

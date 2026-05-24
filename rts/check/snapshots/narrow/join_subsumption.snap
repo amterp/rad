@@ -1,0 +1,97 @@
+### TITLE ###
+IfBranchesCollapseStrEnumArms
+### DESCRIPTION ###
+If/else over a string-enum discriminant should join back into the
+original enum at the bottom, not a union-of-single-value-enums.
+This is the Phase 4 regression for "StrEnum fragmentation."
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    if x == "a":
+        log = "AAA"
+    else:
+        if x == "b":
+            log = "BBB"
+        else:
+            log = "CCC"
+    after = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> ["a", "b", "c"]
+  log @ 3:9 -> <no-type>
+  x @ 5:12 -> ["b", "c"]
+  log @ 6:13 -> <no-type>
+  log @ 8:13 -> <no-type>
+  after @ 9:5 -> <no-type>
+  x @ 9:13 -> ["a", "b", "c"]
+
+# Symbol types
+  after (local): ["a", "b", "c"]
+  f (fn): <no-type>
+  log (local): str
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+IfElseUnionCollapsesIntAndOptionalInt
+### DESCRIPTION ###
+The most common narrowing pattern: `if x != null: ... else: ...`
+where x has declared type int?. Branches contribute int (truthy)
+and int? (else falls through to base). The union collapse should
+land at int? (since int <: int?).
+### INPUT ###
+fn f(x: int?):
+    if x != null:
+        log = "ok"
+    else:
+        log = "fail"
+    after = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  log @ 3:9 -> <no-type>
+  log @ 5:9 -> <no-type>
+  after @ 6:5 -> <no-type>
+  x @ 6:13 -> int?
+
+# Symbol types
+  after (local): int?
+  f (fn): <no-type>
+  log (local): str
+  x (param): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchPeelsAndJoinsBackToEnum
+### DESCRIPTION ###
+Switch exhausts a closed enum; post-switch the discriminant joins
+back to the original enum (each case narrowed to a single value,
+the join collapses them).
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    switch x:
+        case "a":
+            log = 1
+        case "b":
+            log = 2
+        case "c":
+            log = 3
+    after = x
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> ["a", "b", "c"]
+  log @ 4:13 -> <no-type>
+  log @ 6:13 -> <no-type>
+  log @ 8:13 -> <no-type>
+  after @ 9:5 -> <no-type>
+  x @ 9:13 -> ["a", "b", "c"]
+
+# Symbol types
+  after (local): ["a", "b", "c"]
+  f (fn): <no-type>
+  log (local): int
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)

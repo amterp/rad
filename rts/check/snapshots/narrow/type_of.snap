@@ -1,0 +1,80 @@
+### TITLE ###
+TypeOfNarrowsUnion
+### DESCRIPTION ###
+`type_of(x) == "int"` partitions a union: truthy keeps the int arm,
+falsy keeps the rest.
+### INPUT ###
+fn f(x: int|str):
+    if type_of(x) == "int":
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  type_of @ 2:8 -> dynamic
+  x @ 2:16 -> int|str
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> str
+
+# Symbol types
+  a (local): int
+  b (local): str
+  f (fn): <no-type>
+  x (param): int|str
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypeOfNarrowsUnionContainingOptional
+### DESCRIPTION ###
+Regression for the "null arm dropped from falsy" bug. `int?|str`
+narrowed by type_of=="int": truthy = int, falsy = something
+nullable (the null half of int? must survive).
+### INPUT ###
+fn f(x: int?|str):
+    if type_of(x) == "int":
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  type_of @ 2:8 -> dynamic
+  x @ 2:16 -> int?|str
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> int?|str
+
+# Symbol types
+  a (local): int
+  b (local): int?|str
+  f (fn): <no-type>
+  x (param): int?|str
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypeOfMissingArmGivesNever
+### DESCRIPTION ###
+type_of against an invalid target string narrows truthy to Never
+(the equality is statically false).
+### INPUT ###
+fn f(x: int):
+    if type_of(x) == "frobnicate":
+        a = x
+### STDOUT ###
+# Identifier types
+  type_of @ 2:8 -> dynamic
+  x @ 2:16 -> int
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> never
+
+# Symbol types
+  a (local): never
+  f (fn): <no-type>
+  x (param): int
+
+# Diagnostics
+  (none)
