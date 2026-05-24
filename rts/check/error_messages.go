@@ -211,6 +211,14 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 		return msg, code, suggestion
 	}
 
+	// Heuristic: `null` in a type union. Other-language users often
+	// reach for `int|null` (TypeScript / Pyright spelling); Rad has a
+	// single canonical form `int?`. Point them at it before they
+	// hunt for a `null_type` declaration that doesn't exist.
+	if msg, code, suggestion := checkNullInUnion(node, trimmedContent); msg != "" {
+		return msg, code, suggestion
+	}
+
 	// Heuristic 2: Check for missing operator between values
 	if msg, code, suggestion := checkMissingOperator(node, src, trimmedContent); msg != "" {
 		return msg, code, suggestion
@@ -242,6 +250,52 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 
 // checkUnterminatedString detects unterminated string literals.
 // Pattern: string starts with quote but contains newline or doesn't end with matching quote.
+// checkNullInUnion detects the `T | null` pattern, common in
+// TypeScript / Pyright but invalid in Rad - the grammar doesn't list
+// `null` as a leaf type. Rad has a single canonical spelling for
+// nullable types: `T?`. Without this heuristic, users get
+// "Unexpected '|null'" and have to figure out the right form on
+// their own; the suggestion turns that into "use 'T?' instead."
+//
+// Triggered when:
+//   - the ERROR node lives under a fn_param_or_return_type (the
+//     only place leaf types are stacked into a union), AND
+//   - the ERROR content contains the bare word `null`.
+//
+// We keep the parent-kind check strict so a stray `null` token
+// elsewhere in source doesn't get this suggestion.
+func checkNullInUnion(node *ts.Node, trimmed string) (string, rl.Error, *string) {
+	parent := node.Parent()
+	if parent == nil {
+		return "", "", nil
+	}
+	pkind := parent.Kind()
+	// fn_param_or_return_type: the union site.
+	// typed_assign: the parent above when ERROR is at the tail of
+	// a typed-local declaration (e.g. `x: int|null = ...`).
+	if pkind != "fn_param_or_return_type" && pkind != rl.K_TYPED_ASSIGN {
+		return "", "", nil
+	}
+	// Strip leading/trailing | and whitespace to look at the bare
+	// tokens. ERROR content is usually one of: "|null", "|null|",
+	// "null|" (and possibly more).
+	stripped := strings.Trim(trimmed, "| \t")
+	hasNull := false
+	for _, tok := range strings.Split(stripped, "|") {
+		if strings.TrimSpace(tok) == "null" {
+			hasNull = true
+			break
+		}
+	}
+	if !hasNull {
+		return "", "", nil
+	}
+	suggestion := "Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')"
+	return "'null' is not a valid type in a union",
+		rl.ErrUnexpectedToken,
+		&suggestion
+}
+
 func checkUnterminatedString(raw, trimmed string) (string, rl.Error, *string) {
 	if len(trimmed) == 0 {
 		return "", "", nil

@@ -372,3 +372,32 @@ greet("world")
     "uri": "file:///test.rad"
   }
 }
+### TITLE ###
+NullInTypeUnion
+### DOCUMENT ###
+x: int|null = 5
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'null' is not a valid type in a union",
+        "range": {
+          "end": {
+            "character": 11,
+            "line": 0
+          },
+          "start": {
+            "character": 6,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
