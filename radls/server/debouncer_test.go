@@ -91,6 +91,72 @@ func TestDebouncerConcurrentTriggers(t *testing.T) {
 	}
 }
 
+// TestDebouncerSupersededCallbackDoesNotDeleteSuccessor regression
+// tests the race the bug-hunter identified:
+//
+//  1. Timer T1 fires for key K. Its callback is in fn(); it has not
+//     yet taken d.mu to delete itself from the map.
+//  2. A new Trigger arrives for K. Stop() returns false (T1 already
+//     fired). Trigger installs T2 in d.timers[K].
+//  3. T1's callback finally takes d.mu and does delete(d.timers, K).
+//     Without the generation check, this deletes T2's entry.
+//  4. A third Trigger for K sees no existing entry and installs T3.
+//     T2 and T3 both fire - duplicate publish, contract violated.
+//
+// We engineer the race by holding a slow callback (so it's clearly
+// still in fn() when the next Trigger lands) and verify that after
+// a burst of Trigger calls, exactly one further fn fires.
+func TestDebouncerSupersededCallbackDoesNotDeleteSuccessor(t *testing.T) {
+	d := NewDebouncer(10 * time.Millisecond)
+	defer d.Stop()
+
+	// Calls counts how many fns from the "next" burst actually fire.
+	var nextBurstCalls atomic.Int32
+
+	// Block the first callback in flight so we have a deterministic
+	// "fired-but-running" window when the next Trigger arrives.
+	firstFiring := make(chan struct{})
+	releaseFirst := make(chan struct{})
+	d.Trigger("k", func() {
+		close(firstFiring)
+		<-releaseFirst
+	})
+
+	// Wait for the first callback to enter fn(). At this point its
+	// timer has fired and Stop() would return false.
+	<-firstFiring
+
+	// Now schedule a new Trigger. With the bug, when the first
+	// callback eventually finishes, it would delete this new
+	// timer's map entry.
+	d.Trigger("k", func() {
+		nextBurstCalls.Add(1)
+	})
+
+	// Release the first callback. With the fix, its delete is gated
+	// on its generation still matching - it won't.
+	close(releaseFirst)
+
+	// Wait long enough for the second timer to fire normally.
+	time.Sleep(200 * time.Millisecond)
+
+	// And now schedule one more. If the second timer's map entry was
+	// erroneously deleted by the first callback, this third Trigger
+	// would install a fresh timer rather than coalescing into the
+	// already-fired-or-pending second - resulting in 2 fires of
+	// "nextBurst" fns total.
+	d.Trigger("k", func() {
+		nextBurstCalls.Add(1)
+	})
+
+	// Wait for the third timer to fire.
+	time.Sleep(200 * time.Millisecond)
+
+	if got := nextBurstCalls.Load(); got != 2 {
+		t.Errorf("expected 2 next-burst fires (one for each Trigger after the slow first); got %d", got)
+	}
+}
+
 func TestDebouncerZeroDelaySynchronous(t *testing.T) {
 	d := NewDebouncer(0)
 	defer d.Stop()
