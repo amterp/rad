@@ -1,0 +1,52 @@
+### TITLE ###
+FallbackStripsNullFromLeft
+### DESCRIPTION ###
+`x ?? 0` where x: int? strips null from the left, result is int.
+### INPUT ###
+fn f(x: int?):
+    y = x ?? 0
+### STDOUT ###
+# Identifier types
+  y @ 2:5 -> <no-type>
+  x @ 2:9 -> int?
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+FallbackOnNonNullableLeftKeepsBothArms
+### DESCRIPTION ###
+When left has no nullable component, fallback can't fire - but we
+keep both arms as the conservative answer.
+### INPUT ###
+y = 5 ?? "fallback"
+### STDOUT ###
+# Identifier types
+  y @ 1:1 -> <no-type>
+
+# Symbol types
+  y (local): int|str
+
+# Diagnostics
+  (none)
+### TITLE ###
+CatchExprStripsErrorFromLeft
+### DESCRIPTION ###
+`parse_int(...) catch 0` strips error from the int|error left,
+result is int.
+### INPUT ###
+y = parse_int("5") catch 0
+### STDOUT ###
+# Identifier types
+  y @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+
+# Symbol types
+  y (local): int
+
+# Diagnostics
+  (none)

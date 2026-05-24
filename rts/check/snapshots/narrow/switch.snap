@@ -1,0 +1,145 @@
+### TITLE ###
+SwitchNarrowsDiscriminantInCase
+### DESCRIPTION ###
+Each case body sees the discriminant narrowed to the case keys.
+### INPUT ###
+fn f(name: ["alice", "bob", "charlie"]):
+    switch name:
+        case "alice":
+            a = name
+        case "bob":
+            b = name
+        case "charlie":
+            c = name
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["alice", "bob", "charlie"]
+  a @ 4:13 -> <no-type>
+  name @ 4:17 -> ["alice"]
+  b @ 6:13 -> <no-type>
+  name @ 6:17 -> ["bob"]
+  c @ 8:13 -> <no-type>
+  name @ 8:17 -> ["charlie"]
+
+# Symbol types
+  a (local): ["alice"]
+  b (local): ["bob"]
+  c (local): ["charlie"]
+  f (fn): <no-type>
+  name (param): ["alice", "bob", "charlie"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchMultipleKeysPerCaseUnions
+### DESCRIPTION ###
+case "a", "b": ... narrows the discriminant to the multi-value
+sub-enum ["a", "b"] inside the case body.
+### INPUT ###
+fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a", "b":
+            ab = name
+        case "c":
+            c = name
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b", "c"]
+  ab @ 4:13 -> <no-type>
+  name @ 4:18 -> ["a", "b"]
+  c @ 6:13 -> <no-type>
+  name @ 6:17 -> ["c"]
+
+# Symbol types
+  ab (local): ["a", "b"]
+  c (local): ["c"]
+  f (fn): <no-type>
+  name (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchExhaustiveNoDiagnostic
+### INPUT ###
+fn f(name: ["a", "b"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b"]
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  name (param): ["a", "b"]
+  x (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchNonExhaustiveFiresDiagnostic
+### INPUT ###
+fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b", "c"]
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  name (param): ["a", "b", "c"]
+  x (local): int
+
+# Diagnostics
+  [warn] RAD40010 @ 2:5 - Switch is not exhaustive; missing case for ["c"]
+### TITLE ###
+SwitchDefaultSuppressesDiagnostic
+### INPUT ###
+fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a":
+            x = 1
+        default:
+            x = 99
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b", "c"]
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  name (param): ["a", "b", "c"]
+  x (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchOnOpenTypeSkipsExhaustiveness
+### INPUT ###
+fn f(name: str):
+    switch name:
+        case "a":
+            x = 1
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> str
+  x @ 4:13 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  name (param): str
+  x (local): int
+
+# Diagnostics
+  (none)

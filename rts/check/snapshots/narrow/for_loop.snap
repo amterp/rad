@@ -1,0 +1,85 @@
+### TITLE ###
+ForOverListBindsElement
+### INPUT ###
+for i in [1, 2, 3]:
+    a = i
+### STDOUT ###
+# Identifier types
+  a @ 2:5 -> <no-type>
+  i @ 2:9 -> int
+
+# Symbol types
+  a (local): int
+  i (loop): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+ForOverStringBindsChar
+### INPUT ###
+for c in "hello":
+    a = c
+### STDOUT ###
+# Identifier types
+  a @ 2:5 -> <no-type>
+  c @ 2:9 -> str
+
+# Symbol types
+  a (local): str
+  c (loop): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+ForOverMapBindsKey
+### INPUT ###
+for k in {"a": 1, "b": 2}:
+    a = k
+### STDOUT ###
+# Identifier types
+  a @ 2:5 -> <no-type>
+  k @ 2:9 -> str
+
+# Symbol types
+  a (local): str
+  k (loop): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+ForOverTypedListVarIsElement
+### INPUT ###
+fn f(xs: int[]):
+    for i in xs:
+        a = i
+### STDOUT ###
+# Identifier types
+  xs @ 2:14 -> int[]
+  a @ 3:9 -> <no-type>
+  i @ 3:13 -> int
+
+# Symbol types
+  a (local): int
+  f (fn): <no-type>
+  i (loop): int
+  xs (param): int[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ForOverUnknownIterFallsBackDynamic
+### INPUT ###
+for v in unknown_thing():
+    a = v
+### STDOUT ###
+# Identifier types
+  unknown_thing @ 1:10 -> dynamic
+  a @ 2:5 -> <no-type>
+  v @ 2:9 -> dynamic
+
+# Symbol types
+  a (local): dynamic
+  v (loop): dynamic
+
+# Diagnostics
+  (none)

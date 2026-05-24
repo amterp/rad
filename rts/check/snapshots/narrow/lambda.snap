@@ -1,0 +1,56 @@
+### TITLE ###
+LambdaInheritsEnclosingNarrowing
+### DESCRIPTION ###
+A lambda defined under a narrowed enclosing scope inherits the
+narrowed type for captured variables. (Closure-rule caveat noted
+in synthLambda doc - future Pyright-style reassignment-after-
+definition tracking will tighten this.)
+### INPUT ###
+fn f(x: int?):
+    if x != null:
+        cb = fn():
+            y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  cb @ 3:9 -> <no-type>
+  y @ 4:13 -> <no-type>
+  x @ 4:17 -> int
+
+# Symbol types
+  cb (local): dynamic
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaBodyNarrowingDoesNotLeakOut
+### DESCRIPTION ###
+Narrowings inside the lambda body shouldn't leak back to the
+enclosing scope (tc.frame is restored after the lambda walk).
+### INPUT ###
+fn f(x: int?):
+    cb = fn():
+        if x != null:
+            a = x
+    z = x
+### STDOUT ###
+# Identifier types
+  cb @ 2:5 -> <no-type>
+  x @ 3:12 -> int?
+  a @ 4:13 -> <no-type>
+  x @ 4:17 -> int
+  z @ 5:5 -> <no-type>
+  x @ 5:9 -> int?
+
+# Symbol types
+  a (local): int
+  cb (local): dynamic
+  f (fn): <no-type>
+  x (param): int?
+  z (local): int?
+
+# Diagnostics
+  (none)

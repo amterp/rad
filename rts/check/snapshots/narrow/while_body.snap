@@ -1,0 +1,78 @@
+### TITLE ###
+WhileBodyMutationsCarryForward
+### DESCRIPTION ###
+Regression for "post-loop frame discards body mutations." The body
+reassigns x; post-loop y should see x's possible types from BOTH
+"body never ran" (= int from base) and "body ran" (= str from
+assignment). Joins to int|str.
+### INPUT ###
+x = 5
+while true:
+    x = "hello"
+    break
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  x @ 3:5 -> <no-type>
+  y @ 5:1 -> <no-type>
+  x @ 5:5 -> str|int
+
+# Symbol types
+  x (local): str
+  y (local): str|int
+
+# Diagnostics
+  (none)
+### TITLE ###
+WhileDivergentBodyTakesFallThrough
+### DESCRIPTION ###
+If the body always diverges (e.g., always returns), the post-loop
+frame only reflects "body never ran." No spurious union from a body
+that can't actually exit.
+### INPUT ###
+fn f(x: int|str):
+    while type_of(x) == "int":
+        return
+    y = x
+### STDOUT ###
+# Identifier types
+  type_of @ 2:11 -> dynamic
+  x @ 2:19 -> int|str
+  y @ 4:5 -> <no-type>
+  x @ 4:9 -> int|str
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int|str
+  y (local): int|str
+
+# Diagnostics
+  (none)
+### TITLE ###
+WhileNarrowsBodyApplyWhenFalseOutside
+### DESCRIPTION ###
+Standard while + null guard: inside the body x is non-null; after
+the loop x is null (whether body ran or not, condition is now
+falsy).
+### INPUT ###
+fn f(x: int?):
+    while x != null:
+        a = x
+    b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:11 -> int?
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 4:5 -> <no-type>
+  x @ 4:9 -> int?
+
+# Symbol types
+  a (local): int
+  b (local): int?
+  f (fn): <no-type>
+  x (param): int?
+
+# Diagnostics
+  (none)

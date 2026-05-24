@@ -1,0 +1,131 @@
+### TITLE ###
+EqStrLiteralNarrowsEnum
+### DESCRIPTION ###
+`x == "b"` against a string-enum narrows truthy to ["b"], falsy
+to the remaining values.
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    if x == "b":
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> ["a", "b", "c"]
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> ["b"]
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> ["a", "c"]
+
+# Symbol types
+  a (local): ["b"]
+  b (local): ["a", "c"]
+  f (fn): <no-type>
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+NeqStrLiteralInverts
+### DESCRIPTION ###
+`x != "b"` swaps the partition.
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    if x != "b":
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> ["a", "b", "c"]
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> ["a", "c"]
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> ["b"]
+
+# Symbol types
+  a (local): ["a", "c"]
+  b (local): ["b"]
+  f (fn): <no-type>
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+InStringListNarrows
+### DESCRIPTION ###
+`x in ["a", "c"]` narrows truthy to ["a", "c"], falsy to the
+complement ["b"].
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    if x in ["a", "c"]:
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> ["a", "b", "c"]
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> ["a", "c"]
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> ["b"]
+
+# Symbol types
+  a (local): ["a", "c"]
+  b (local): ["b"]
+  f (fn): <no-type>
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+NotInStringListInverts
+### INPUT ###
+fn f(x: ["a", "b", "c"]):
+    if x not in ["a"]:
+        rest = x
+    else:
+        only_a = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> ["a", "b", "c"]
+  rest @ 3:9 -> <no-type>
+  x @ 3:16 -> ["b", "c"]
+  only_a @ 5:9 -> <no-type>
+  x @ 5:18 -> ["a"]
+
+# Symbol types
+  f (fn): <no-type>
+  only_a (local): ["a"]
+  rest (local): ["b", "c"]
+  x (param): ["a", "b", "c"]
+
+# Diagnostics
+  (none)
+### TITLE ###
+PlainStrNotNarrowedByEquality
+### DESCRIPTION ###
+Plain str (not an enum) deliberately stays unchanged after `x ==
+"foo"` - we don't have singleton string types.
+### INPUT ###
+fn f(x: str):
+    if x == "foo":
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> str
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> str
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> str
+
+# Symbol types
+  a (local): str
+  b (local): str
+  f (fn): <no-type>
+  x (param): str
+
+# Diagnostics
+  (none)

@@ -1,0 +1,70 @@
+### TITLE ###
+TypedLocalAssignmentNarrowsToRHS
+### DESCRIPTION ###
+`x: int? = 5` narrows x from declared int? to int via the assignment
+(value type). Subsequent if-null-narrowing has nothing to strip.
+### INPUT ###
+x: int? = 5
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  y @ 2:1 -> <no-type>
+  x @ 2:5 -> int
+
+# Symbol types
+  x (local): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedLocalReassignWidensBackToDeclared
+### DESCRIPTION ###
+After `x: int? = 5; if cond: x = something_optional()`, the second
+assignment widens x back toward the declared type (int? again,
+since RHS is int?).
+### INPUT ###
+fn maybe_int() -> int?:
+    return null
+
+x: int? = 5
+if true:
+    x = maybe_int()
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 4:1 -> <no-type>
+  x @ 6:5 -> <no-type>
+  maybe_int @ 6:9 -> dynamic
+  y @ 7:1 -> <no-type>
+  x @ 7:5 -> int?
+
+# Symbol types
+  maybe_int (fn): <no-type>
+  x (local): int?
+  y (local): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedLocalRHSMismatchDoesNotNarrow
+### DESCRIPTION ###
+RHS that isn't assignable to the declared type fires a Hint
+diagnostic; the frame stays at Declared (so downstream reads
+don't cascade).
+### INPUT ###
+x: int = "wrong"
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  y @ 2:1 -> <no-type>
+  x @ 2:5 -> int
+
+# Symbol types
+  x (local): int
+  y (local): int
+
+# Diagnostics
+  [hint] RAD30001 @ 1:10 - Value of type 'str' is not assignable to declared type 'int'
