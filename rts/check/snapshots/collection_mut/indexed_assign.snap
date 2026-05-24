@@ -83,7 +83,7 @@ fn f(xs: int[]):
   xs @ 2:5 -> int[]
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(int[])
   xs (param): int[]
 
 # Diagnostics
@@ -158,7 +158,7 @@ fn f(m: { "a": int[] }):
   m @ 2:5 -> { "a": int[] }
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn({ "a": int[] })
   m (param): { "a": int[] }
 
 # Diagnostics
@@ -176,7 +176,7 @@ fn f(obj: { "x": int }):
   obj @ 2:5 -> { "x": int }
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn({ "x": int })
   obj (param): { "x": int }
 
 # Diagnostics
@@ -195,7 +195,7 @@ fn f(xs):
   xs @ 2:5 -> dynamic
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(any)
   xs (param): <no-type>
 
 # Diagnostics
@@ -236,7 +236,7 @@ fn f(xs: int[]?):
   xs @ 3:9 -> int[]
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(int[]?)
   xs (param): int[]?
 
 # Diagnostics

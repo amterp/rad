@@ -19,7 +19,7 @@ fn f(x: int?):
   x @ 5:9 -> int
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(int?)
   x (param): int?
   y (local): int
 
@@ -46,7 +46,7 @@ fn f(x: int?):
   x @ 7:9 -> int
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(int?)
   x (param): int?
   y (local): int
 
@@ -71,7 +71,7 @@ fn f(x: int?):
   x @ 4:9 -> int
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(int?)
   x (param): int?
   y (local): int
 
@@ -97,7 +97,7 @@ fn f(x: ["a", "b"]):
   y @ 7:5 -> <no-type>
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(["a", "b"])
   x (param): ["a", "b"]
   y (local): str
 
@@ -119,7 +119,7 @@ fn f():
   y @ 5:5 -> <no-type>
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn()
   y (local): str
 
 # Diagnostics

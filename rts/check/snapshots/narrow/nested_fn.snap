@@ -15,11 +15,11 @@ fn outer(x: int?):
   x @ 2:8 -> int?
   y @ 4:13 -> <no-type>
   x @ 4:17 -> int?
-  inner @ 5:9 -> dynamic
+  inner @ 5:9 -> fn()
 
 # Symbol types
-  inner (fn): <no-type>
-  outer (fn): <no-type>
+  inner (fn): fn()
+  outer (fn): fn(int?)
   x (param): int?
   y (local): int?
 
@@ -48,8 +48,8 @@ fn f(x: int?):
 
 # Symbol types
   after_inner (local): int
-  f (fn): <no-type>
-  g (fn): <no-type>
+  f (fn): fn(int?)
+  g (fn): fn()
   x (local): dynamic
   x (param): int?
   y (local): dynamic

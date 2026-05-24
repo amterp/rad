@@ -350,7 +350,18 @@ func (b *binder) visitFnDef(fn *rl.FnDef) {
 	// already in the file scope from bindFile's pre-pass and
 	// declare() returns the existing symbol unchanged in that case.
 	if fn.Name != "" {
-		b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
+		sym := b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
+		// Plant the function's structural signature on the symbol so
+		// references-by-name (`process(my_callback)`) synth to a
+		// TypingFnT instead of Dynamic. With Declared set, the type
+		// checker's seed pass copies it into SymbolTypes, and
+		// IsAssignableFrom on the receiving param drives a real
+		// contravariant-params + covariant-return shape comparison.
+		// Without this plant, the structural check would never bite
+		// because synthIdentifier would just see Dynamic.
+		if sym != nil && fn.Typing != nil {
+			sym.Declared = fn.Typing
+		}
 	}
 	b.bindFnLike(fn.Typing, fn.Body, ScopeFunction, fn)
 }

@@ -1,0 +1,197 @@
+### TITLE ###
+FnValueExactSignatureOk
+### DESCRIPTION ###
+A hoisted fn passed by name to a param of the same signature
+matches structurally - no diagnostic. This is the headline case
+Phase 7 makes possible: before, synth(identifier) returned Dynamic
+and the check was silently lost.
+### INPUT ###
+fn cb(x: int) -> bool:
+    return x > 0
+
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> <no-type>
+  callback @ 5:5 -> fn(int) -> bool
+  process @ 7:1 -> fn(fn(int) -> bool)
+  cb @ 7:9 -> fn(int) -> bool
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  cb (fn): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+FnValueReturnTypeMismatchFires
+### DESCRIPTION ###
+Return type covariance: the supplied fn must return something
+assignable to the expected return. `fn(int) -> str` can't satisfy
+`fn(int) -> bool` because str is not assignable to bool.
+### INPUT ###
+fn cb(x: int) -> str:
+    return "hi"
+
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  callback @ 5:5 -> fn(int) -> bool
+  process @ 7:1 -> fn(fn(int) -> bool)
+  cb @ 7:9 -> fn(int) -> str
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  cb (fn): fn(int) -> str
+  process (fn): fn(fn(int) -> bool)
+
+# Diagnostics
+  [hint] RAD30001 @ 7:9 - Argument type 'fn(int) -> str' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+FnValueParamTypeMismatchFires
+### DESCRIPTION ###
+Param contravariance: the supplied fn's param must accept anything
+the caller would pass. The caller will pass int, but the supplied
+fn only accepts str - rejected.
+### INPUT ###
+fn cb(x: str) -> bool:
+    return x != ""
+
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> <no-type>
+  callback @ 5:5 -> fn(int) -> bool
+  process @ 7:1 -> fn(fn(int) -> bool)
+  cb @ 7:9 -> fn(str) -> bool
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  cb (fn): fn(str) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): str
+
+# Diagnostics
+  [hint] RAD30001 @ 7:9 - Argument type 'fn(str) -> bool' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+FnValueWiderParamOkContravariance
+### DESCRIPTION ###
+Contravariance allows wider params: a `fn(any) -> bool` can stand
+in where `fn(int) -> bool` is expected. The supplied fn's any
+param accepts the int the caller will supply.
+### INPUT ###
+fn cb(x: any) -> bool:
+    return true
+
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  callback @ 5:5 -> fn(int) -> bool
+  process @ 7:1 -> fn(fn(int) -> bool)
+  cb @ 7:9 -> fn(any) -> bool
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  cb (fn): fn(any) -> bool
+  process (fn): fn(fn(int) -> bool)
+
+# Diagnostics
+  (none)
+### TITLE ###
+FnValueArityMismatchFires
+### DESCRIPTION ###
+Different number of params - rejected. The receiver expects one
+arg, the supplied fn takes two; no way to call the supplied fn
+with a single int.
+### INPUT ###
+fn cb(x: int, y: int) -> bool:
+    return x > y
+
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> <no-type>
+  y @ 2:16 -> <no-type>
+  callback @ 5:5 -> fn(int) -> bool
+  process @ 7:1 -> fn(fn(int) -> bool)
+  cb @ 7:9 -> fn(int, int) -> bool
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  cb (fn): fn(int, int) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): int
+  y (param): int
+
+# Diagnostics
+  [hint] RAD30001 @ 7:9 - Argument type 'fn(int, int) -> bool' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+FnValueUntypedParamAcceptsAnything
+### DESCRIPTION ###
+When the receiver param is unannotated, anything goes - the param
+is effectively `any`, no structural check fires. Gradual typing
+escape hatch.
+### INPUT ###
+fn cb(x: str) -> str:
+    return x
+
+fn process(callback):
+    callback("hi")
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> <no-type>
+  callback @ 5:5 -> dynamic
+  process @ 7:1 -> fn(any)
+  cb @ 7:9 -> fn(str) -> str
+
+# Symbol types
+  callback (param): <no-type>
+  cb (fn): fn(str) -> str
+  process (fn): fn(any)
+  x (param): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaPassedSynthsDynamic
+### DESCRIPTION ###
+Lambdas still synth to Dynamic today (deriving a TypingFnT from
+the body is deferred). IsAssignableFrom treats Dynamic as gradually
+compatible with any fn type, so the call passes silently. Known
+caveat: a lambda with the wrong shape won't be caught at the
+static layer yet.
+### INPUT ###
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(fn(x) "hi")
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool)
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+
+# Diagnostics
+  (none)

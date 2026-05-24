@@ -20,7 +20,7 @@ fn f(x: ["a", "b", "c"]):
 # Symbol types
   a (local): ["b"]
   b (local): ["a", "c"]
-  f (fn): <no-type>
+  f (fn): fn(["a", "b", "c"])
   x (param): ["a", "b", "c"]
 
 # Diagnostics
@@ -46,7 +46,7 @@ fn f(x: ["a", "b", "c"]):
 # Symbol types
   a (local): ["a", "c"]
   b (local): ["b"]
-  f (fn): <no-type>
+  f (fn): fn(["a", "b", "c"])
   x (param): ["a", "b", "c"]
 
 # Diagnostics
@@ -73,7 +73,7 @@ fn f(x: ["a", "b", "c"]):
 # Symbol types
   a (local): ["a", "c"]
   b (local): ["b"]
-  f (fn): <no-type>
+  f (fn): fn(["a", "b", "c"])
   x (param): ["a", "b", "c"]
 
 # Diagnostics
@@ -95,7 +95,7 @@ fn f(x: ["a", "b", "c"]):
   x @ 5:18 -> ["a"]
 
 # Symbol types
-  f (fn): <no-type>
+  f (fn): fn(["a", "b", "c"])
   only_a (local): ["a"]
   rest (local): ["b", "c"]
   x (param): ["a", "b", "c"]
@@ -124,7 +124,7 @@ fn f(x: str):
 # Symbol types
   a (local): str
   b (local): str
-  f (fn): <no-type>
+  f (fn): fn(str)
   x (param): str
 
 # Diagnostics

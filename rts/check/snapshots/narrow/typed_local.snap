@@ -36,12 +36,12 @@ y = x
 # Identifier types
   x @ 4:1 -> <no-type>
   x @ 6:5 -> <no-type>
-  maybe_int @ 6:9 -> dynamic
+  maybe_int @ 6:9 -> fn() -> int?
   y @ 7:1 -> <no-type>
   x @ 7:5 -> int?
 
 # Symbol types
-  maybe_int (fn): <no-type>
+  maybe_int (fn): fn() -> int?
   x (local): int?
   y (local): int?
 
