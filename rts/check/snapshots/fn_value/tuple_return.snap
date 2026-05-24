@@ -1,0 +1,102 @@
+### TITLE ###
+LambdaMultiValueReturnIsTuple
+### DESCRIPTION ###
+`return a, b` builds a TypingTupleT from the value types. The
+lambda's inferred return reflects the tuple shape: a fn returning
+(int, str) is observable as `fn(any) -> [int, str]`.
+### INPUT ###
+fn process(callback: fn(int) -> [int, str]):
+    callback(5)
+
+process(fn(x):
+    return 1, "x"
+)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> [int, str]
+  process @ 4:1 -> fn(fn(int) -> [int, str])
+
+# Symbol types
+  callback (param): fn(int) -> [int, str]
+  process (fn): fn(fn(int) -> [int, str])
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaTupleReturnMismatchFires
+### DESCRIPTION ###
+Element-type mismatch in a tuple return fires. The lambda returns
+(int, int), but the receiver expects (int, str) - the second
+element disagrees.
+### INPUT ###
+fn process(callback: fn(int) -> [int, str]):
+    callback(5)
+
+process(fn(x):
+    return 1, 2
+)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> [int, str]
+  process @ 4:1 -> fn(fn(int) -> [int, str])
+
+# Symbol types
+  callback (param): fn(int) -> [int, str]
+  process (fn): fn(fn(int) -> [int, str])
+
+# Diagnostics
+  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, int]' is not assignable to expected type 'fn(int) -> [int, str]'
+### TITLE ###
+LambdaTupleArityMismatchFires
+### DESCRIPTION ###
+Different number of return values - the lambda returns (int, str,
+bool) but the receiver expects (int, str). Tuple lengths must
+match exactly.
+### INPUT ###
+fn process(callback: fn(int) -> [int, str]):
+    callback(5)
+
+process(fn(x):
+    return 1, "x", true
+)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> [int, str]
+  process @ 4:1 -> fn(fn(int) -> [int, str])
+
+# Symbol types
+  callback (param): fn(int) -> [int, str]
+  process (fn): fn(fn(int) -> [int, str])
+
+# Diagnostics
+  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, str, bool]' is not assignable to expected type 'fn(int) -> [int, str]'
+### TITLE ###
+HoistedFnTupleReturnAnnotationHonored
+### DESCRIPTION ###
+A hoisted fn with explicit tuple return annotation matches a
+tuple-returning param slot. (Hoisted-fn return *inference* is
+the next commit - this case verifies the annotation path works
+end to end against tuples regardless.)
+### INPUT ###
+fn cb(x: int) -> [int, str]:
+    return x, "label"
+
+fn process(callback: fn(int) -> [int, str]):
+    callback(5)
+
+process(cb)
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> int
+  callback @ 5:5 -> fn(int) -> [int, str]
+  process @ 7:1 -> fn(fn(int) -> [int, str])
+  cb @ 7:9 -> fn(int) -> [int, str]
+
+# Symbol types
+  callback (param): fn(int) -> [int, str]
+  cb (fn): fn(int) -> [int, str]
+  process (fn): fn(fn(int) -> [int, str])
+  x (param): int
+
+# Diagnostics
+  (none)

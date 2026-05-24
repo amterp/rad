@@ -165,17 +165,23 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 	case *rl.FnDef:
 		tc.walkFnDef(v)
 	case *rl.Return:
-		// Synth the return value's type and feed it into the
-		// innermost fn scope's return collector. Only the first
-		// value is observed today (multi-value return is unpacked
-		// at the call site; structural matching of the unpacked
-		// shape is deferred). A bare `return` records void so
-		// "no value" paths still join cleanly.
+		// Synth the return value(s) and feed them into the innermost
+		// fn scope's return collector. Bare `return` is void; a
+		// single value contributes its own type; multi-value
+		// `return a, b` builds a tuple so the static return type
+		// matches what the unpack-side `x, y = f()` would expect.
 		var t rl.TypingT
-		if len(v.Values) > 0 {
-			t = tc.synth(v.Values[0])
-		} else {
+		switch len(v.Values) {
+		case 0:
 			t = rl.NewVoidType()
+		case 1:
+			t = tc.synth(v.Values[0])
+		default:
+			elems := make([]rl.TypingT, len(v.Values))
+			for i, val := range v.Values {
+				elems[i] = tc.synth(val)
+			}
+			t = rl.NewTupleType(elems...)
 		}
 		tc.recordReturn(t)
 	default:
