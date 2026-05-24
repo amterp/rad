@@ -784,6 +784,8 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 		return tc.synthLitList(v)
 	case *rl.LitMap:
 		return tc.synthLitMap(v)
+	case *rl.Lambda:
+		return tc.synthLambda(v)
 	}
 	for _, child := range n.Children() {
 		_ = tc.synth(child)
@@ -1480,6 +1482,35 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 // gradual-typing choice. A future "look-around" pass can refine
 // `xs = []` followed by `xs.append(1)` to `List<int>`, but the safe
 // over-approximation lets every existing program type-check today.
+
+// synthLambda walks the lambda'\''s body so identifier-uses inside it
+// get types recorded. The body executes in a child frame of the
+// enclosing one: captured variables retain whatever narrowing the
+// enclosing frame had at the lambda'\''s definition.
+//
+// Pyright'\''s closure rule says we should only preserve narrowing on
+// captured paths that aren'\''t reassigned later in the enclosing
+// scope (otherwise the lambda might run after the reassignment
+// invalidates the narrowing). We don'\''t implement that lookahead
+// yet: the conservative-but-permissive answer is to forward the
+// enclosing frame. False positives (lambda thinks x is narrowed but
+// x got reassigned before the lambda ran) are possible but rare in
+// practice - users usually invoke lambdas at their definition site
+// or shortly after. When this bites, the right shape is a
+// reassignment-after-definition scan keyed on captured paths.
+//
+// The lambda itself synths to Dynamic for now. A proper TypingFnT
+// would require running the body in synth-mode to derive a return
+// type from `return` statements - deferred to the return-type-
+// inference follow-on.
+func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
+	enclosing := tc.frame
+	for _, stmt := range n.Body {
+		tc.walkStmt(stmt)
+	}
+	tc.frame = enclosing
+	return tc.record(n, rl.NewDynamicType())
+}
 
 func (tc *typeChecker) synthLitList(n *rl.LitList) rl.TypingT {
 	if len(n.Elements) == 0 {

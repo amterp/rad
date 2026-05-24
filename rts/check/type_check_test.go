@@ -921,6 +921,31 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Phase 4j: closure capture rule ----------------------------------
+
+func TestTypeCheck_LambdaCapturesEnclosingNarrowing(t *testing.T) {
+	// Inside a block-lambda defined under an `if x != null` narrowing,
+	// captured x is non-null in the body.
+	src := `fn f(x: int?):
+    if x != null:
+        cb = fn():
+            y = x
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	ifS := fn.Body[0].(*rl.If)
+	cbAssign := ifS.Branches[0].Body[0].(*rl.Assign)
+	lambda := cbAssign.Values[0].(*rl.Lambda)
+	require.NotEmpty(t, lambda.Body, "lambda body should have at least one stmt")
+
+	yAssign := lambda.Body[0].(*rl.Assign)
+	xUse := yAssign.Values[0].(*rl.Identifier)
+	gotXUse := info.ExprTypes[xUse]
+	require.NotNil(t, gotXUse)
+	assert.Equal(t, rl.T_INT, gotXUse.Name(),
+		"captured x inside lambda defined under `if x != null` should be int")
+}
+
 // --- Phase 4i: reassignment widening ---------------------------------
 
 func TestTypeCheck_ReassignmentWidens(t *testing.T) {
