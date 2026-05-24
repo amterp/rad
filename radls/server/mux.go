@@ -79,9 +79,12 @@ func (m *Mux) AddRequestHandler(method string, handler RequestHandler) {
 }
 
 func (m *Mux) Notify(method string, params any) (err error) {
-	var msg *json.RawMessage
+	// Param-less notification: emit no "params" field at all (per
+	// JSON-RPC). The earlier "msg = nil" branch was dead - msg got
+	// unconditionally overwritten below, so nil-params still went
+	// through json.Marshal and produced "params":null on the wire.
 	if params == nil {
-		msg = nil
+		return m.write(lsp.NewNotification(method, nil))
 	}
 
 	b, err := json.Marshal(params)
@@ -90,9 +93,7 @@ func (m *Mux) Notify(method string, params any) (err error) {
 	}
 
 	raw := json.RawMessage(b)
-	msg = &raw
-
-	return m.write(lsp.NewNotification(method, msg))
+	return m.write(lsp.NewNotification(method, &raw))
 }
 
 func (m *Mux) Init() (err error) {

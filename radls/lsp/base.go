@@ -45,10 +45,15 @@ func (m IncomingMsg) AsNotification() (Notification, bool) {
 }
 
 // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#notificationMessage
+//
+// Params is omitempty so a Notify(method, nil) call serializes to
+// a notification with no "params" field, matching the JSON-RPC
+// spec for param-less notifications. A non-nil pointer to "null"
+// still serializes as "params": null.
 type Notification struct {
 	Msg
 	Method string           `json:"method"`
-	Params *json.RawMessage `json:"params"`
+	Params *json.RawMessage `json:"params,omitempty"`
 }
 
 func NewNotification(method string, params *json.RawMessage) Notification {
