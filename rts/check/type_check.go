@@ -179,7 +179,7 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 			hasElse = true
 			tc.frame = acc
 			tc.walkStmts(branch.Body)
-			if !branchExitsEarly(branch.Body) {
+			if !tc.branchExits(branch.Body) {
 				branchFrames = append(branchFrames, tc.frame)
 			}
 			continue
@@ -192,7 +192,7 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		ref := tc.interpretCondition(branch.Condition, tc.frame)
 		tc.frame = tc.frame.WithMany(ref.WhenTrue)
 		tc.walkStmts(branch.Body)
-		if !branchExitsEarly(branch.Body) {
+		if !tc.branchExits(branch.Body) {
 			branchFrames = append(branchFrames, tc.frame)
 		}
 		acc = acc.WithMany(ref.WhenFalse)
@@ -303,9 +303,32 @@ func (tc *typeChecker) walkWhileLoop(n *rl.WhileLoop) {
 	ref := tc.interpretCondition(n.Condition, widened)
 	tc.frame = widened.WithMany(ref.WhenTrue)
 	tc.walkStmts(n.Body)
-	// Post-loop: condition is false (or body never ran). Body-
-	// assigned vars are already widened; apply WhenFalse on top.
-	tc.frame = widened.WithMany(ref.WhenFalse)
+	bodyExit := tc.frame
+
+	// Post-loop has two possible paths:
+	//   1. "Body never ran" - condition was false on entry.
+	//   2. "Body ran one or more times, then exited" - either
+	//      condition became falsy at the top OR a break inside
+	//      the body jumped out.
+	// Joining the two captures whatever the body mutated in its
+	// frame: `while cond: x = "hello"` leaves x as the union of
+	// its pre-body type (body never ran) and "hello" (body ran).
+	//
+	// We don'\''t special-case a "body always diverges" early exit
+	// here. Distinguishing diverges-via-return (post-loop is dead)
+	// from diverges-via-break (post-loop gets bodyExit at break
+	// time) would need finer-grained reachability tracking than
+	// branchExits provides. Joining both unconditionally is
+	// safe - in the diverges-via-return case the post-loop is
+	// unreachable anyway, and any spurious union arms there don'\''t
+	// affect a real program path.
+	//
+	// WhenFalse is applied only on the fall-through path, since
+	// that'\''s the only one where the loop exited "naturally" via
+	// a falsy condition. The body-ran path may have exited via
+	// break, where the condition'\''s truthy state still held.
+	fallThrough := widened.WithMany(ref.WhenFalse)
+	tc.frame = tc.joinFrames(initial, []*Frame{bodyExit, fallThrough})
 }
 
 // collectAssignedSyms scans a body of statements for top-level
@@ -479,7 +502,7 @@ func (tc *typeChecker) walkSwitchAlt(alt rl.Node) bool {
 	switch a := alt.(type) {
 	case *rl.SwitchCaseBlock:
 		tc.walkStmts(a.Stmts)
-		return branchExitsEarly(a.Stmts)
+		return tc.branchExits(a.Stmts)
 	case *rl.SwitchCaseExpr:
 		for _, v := range a.Values {
 			_ = tc.synth(v)
@@ -565,22 +588,229 @@ func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT
 	})
 }
 
-// branchExitsEarly reports whether the body unconditionally diverts
-// control past the surrounding construct. For Phase 4e we only look
-// at the last statement; a return / break / continue in the middle
-// of the body with dead code after is a separate concern (unreachable-
-// code diagnostic).
+// branchExitsEarly is a deep "does this body always diverge?" check
+// suitable for if/switch branch joins. Phase 4e'\''s "last statement
+// is a return/break/continue" version was too shallow: a common
+// guard pattern like
 //
-// exit() is not yet recognized; it'\''s a builtin function call and
-// requires call-site inspection. Worth adding in a follow-up once
-// the common case is solid.
-func branchExitsEarly(body []rl.Node) bool {
-	if len(body) == 0 {
+//	if err:
+//	    log_it()
+//	    return
+//
+// has return as the second-to-last statement of the if body, but
+// branchExitsEarly only inspected the LAST statement (log_it()), so
+// the surrounding flow didn'\''t pick up the divergence and the
+// "after-the-if" narrowing was wrong.
+//
+// The new predicate walks the body, recursing through if (every
+// branch including an explicit else must diverge), switch (every
+// case + default OR exhaustive over a closed enum), and while-true
+// (no top-level break in the body). It also recognizes calls to
+// no-return builtins like exit().
+//
+// Reachability via type-system: a body whose entry frame has any
+// symbol typed Never is unreachable, hence divergent. The frame
+// argument is optional - pass nil to skip that check. For the
+// branch-join use today we pass nil since the frame is already
+// authoritative at the call site.
+//
+// insideLoop controls whether break/continue count as divergence:
+// only inside an actual loop do they transfer control past the
+// enclosing construct. The current call sites (walkIf, walkSwitch)
+// don'\''t themselves carry a loop indicator yet, so they default to
+// true to preserve the prior behavior - break/continue have always
+// been treated as "exits this branch" in practice because
+// branchExitsEarly accepted them unconditionally.
+// branchExits is the typeChecker method form. The receiver lets the
+// divergence walk consult sym info (noReturn builtins, closed-enum
+// switch exhaustiveness) that the standalone helper can'\''t reach.
+// Callers from walkIf / walkSwitch use this method form.
+func (tc *typeChecker) branchExits(body []rl.Node) bool {
+	return bodyDiverges(body, divergeCtx{insideLoop: true}, tc)
+}
+
+// divergeCtx threads context through the recursive divergence walk.
+// Today it only tracks the loop scope; future fields (e.g. function-
+// return-type) can fit alongside without rewiring the call sites.
+type divergeCtx struct {
+	insideLoop bool
+}
+
+// bodyDiverges is the entry point: ANY divergent statement in the
+// body means the whole body diverges, because everything after it
+// is unreachable.
+func bodyDiverges(stmts []rl.Node, ctx divergeCtx, tc *typeChecker) bool {
+	for _, s := range stmts {
+		if stmtDiverges(s, ctx, tc) {
+			return true
+		}
+	}
+	return false
+}
+
+// stmtDiverges is the syntactic recursion on a single statement.
+// Mirrors the structure laid out in mypy / Pyright / TypeScript:
+// terminal control-flow nodes diverge directly; composite nodes
+// diverge only when every alternative does.
+func stmtDiverges(n rl.Node, ctx divergeCtx, tc *typeChecker) bool {
+	if n == nil {
 		return false
 	}
-	last := body[len(body)-1]
-	switch last.(type) {
-	case *rl.Return, *rl.Break, *rl.Continue:
+	switch s := n.(type) {
+	case *rl.Return, *rl.Yield:
+		return true
+	case *rl.Break, *rl.Continue:
+		return ctx.insideLoop
+	case *rl.ExprStmt:
+		if call, ok := s.Expr.(*rl.Call); ok {
+			return callIsNoReturn(call, tc)
+		}
+		return false
+	case *rl.If:
+		return ifDiverges(s, ctx, tc)
+	case *rl.Switch:
+		return switchDiverges(s, ctx, tc)
+	case *rl.WhileLoop:
+		return whileDiverges(s, tc)
+	case *rl.ForLoop:
+		// For loops may iterate zero times; the body might never
+		// run. Even if the body diverges, the whole loop doesn'\''t.
+		return false
+	case *rl.Assign:
+		// Bare assignment never diverges. An assignment with a
+		// catch block is also non-divergent: catch is an alternate
+		// continuation, and the success path always falls through.
+		return false
+	}
+	return false
+}
+
+// ifDiverges: every branch must diverge AND there must be an explicit
+// else. Without an else, the "no branch matched" path is an implicit
+// fall-through, so the if as a whole doesn'\''t diverge.
+func ifDiverges(n *rl.If, ctx divergeCtx, tc *typeChecker) bool {
+	hasElse := false
+	for _, branch := range n.Branches {
+		if branch.Condition == nil {
+			hasElse = true
+		}
+		if !bodyDiverges(branch.Body, ctx, tc) {
+			return false
+		}
+	}
+	return hasElse
+}
+
+// switchDiverges: every explicit case must diverge, AND either a
+// default arm is present and also diverges, OR the discriminant'\''s
+// residual after peeling all cases is Never (i.e., exhaustive on a
+// closed type).
+func switchDiverges(n *rl.Switch, ctx divergeCtx, tc *typeChecker) bool {
+	for _, c := range n.Cases {
+		if !altDiverges(c.Alt, ctx, tc) {
+			return false
+		}
+	}
+	if n.Default != nil {
+		return altDiverges(n.Default.Alt, ctx, tc)
+	}
+	// No default - require exhaustiveness on a closed discriminant.
+	if tc == nil {
+		return false
+	}
+	discType := tc.synth(n.Discriminant)
+	residual := discType
+	for _, c := range n.Cases {
+		caseType := tc.matchTypeForCaseKeys(c.Keys)
+		residual = subtractEnumType(residual, caseType)
+	}
+	return isNeverType(residual)
+}
+
+// altDiverges: case bodies are statement lists, case expressions
+// always fall through (they produce a value).
+func altDiverges(alt rl.Node, ctx divergeCtx, tc *typeChecker) bool {
+	switch a := alt.(type) {
+	case *rl.SwitchCaseBlock:
+		return bodyDiverges(a.Stmts, ctx, tc)
+	case *rl.SwitchCaseExpr:
+		return false
+	}
+	return false
+}
+
+// whileDiverges: an infinite `while:` (no condition) diverges iff
+// the body has no top-level break that targets this loop. A
+// conditional `while cond:` may execute zero times - non-divergent.
+// (Detecting constant-true conditions would require literal folding;
+// we don'\''t do it today.)
+func whileDiverges(n *rl.WhileLoop, tc *typeChecker) bool {
+	if n.Condition != nil {
+		return false
+	}
+	return !bodyHasTopLevelBreak(n.Body)
+}
+
+// bodyHasTopLevelBreak scans a body for `break` statements whose
+// target is the enclosing loop. Recurses into if/switch (their
+// breaks still target the enclosing loop) but NOT into nested
+// ForLoop / WhileLoop (their breaks target themselves).
+func bodyHasTopLevelBreak(stmts []rl.Node) bool {
+	for _, s := range stmts {
+		if stmtHasTopLevelBreak(s) {
+			return true
+		}
+	}
+	return false
+}
+
+func stmtHasTopLevelBreak(n rl.Node) bool {
+	switch s := n.(type) {
+	case *rl.Break:
+		return true
+	case *rl.If:
+		for _, b := range s.Branches {
+			if bodyHasTopLevelBreak(b.Body) {
+				return true
+			}
+		}
+	case *rl.Switch:
+		for _, c := range s.Cases {
+			if altHasTopLevelBreak(c.Alt) {
+				return true
+			}
+		}
+		if s.Default != nil && altHasTopLevelBreak(s.Default.Alt) {
+			return true
+		}
+	}
+	return false
+}
+
+func altHasTopLevelBreak(alt rl.Node) bool {
+	if a, ok := alt.(*rl.SwitchCaseBlock); ok {
+		return bodyHasTopLevelBreak(a.Stmts)
+	}
+	return false
+}
+
+// callIsNoReturn reports whether call is to a builtin function
+// whose runtime semantics never return - exit(), today. Future
+// shape: check the builtin signature'\''s return type against Never.
+func callIsNoReturn(call *rl.Call, tc *typeChecker) bool {
+	if tc == nil {
+		return false
+	}
+	ident, ok := call.Func.(*rl.Identifier)
+	if !ok {
+		return false
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok || sym == nil || sym.Kind != SymBuiltin {
+		return false
+	}
+	switch sym.Name {
+	case "exit":
 		return true
 	}
 	return false
@@ -632,36 +862,225 @@ func (tc *typeChecker) joinFrames(initial *Frame, branches []*Frame) *Frame {
 	return initial.WithMany(joined)
 }
 
-// unionTypesForJoin collapses a slice of branch types into one. It
-// dedupes by Name() and drops Never (which represents an unreachable
-// arm - unioning Never with X yields X). When every branch is Never,
-// the result is Never; a future commit lights an "unreachable code"
-// diagnostic on that case.
+// unionTypesForJoin collapses a slice of branch types into a single
+// type, applying the type-lattice join semantics so that semantically
+// equivalent unions collapse to their tightest representation.
+//
+// Pipeline (in order):
+//
+//  1. Flatten: hoist nested Union arms so the result is a single-
+//     level union.
+//  2. Drop Never (unreachable arm) and ErrorType (poison marker).
+//     Both contribute nothing to a join; unioning them with X gives X.
+//  3. Structural merge: collapse multiple StrEnum arms into one with
+//     the unioned value set. (Future: do the same for Optional arms
+//     with compatible inners.) Preserves the first occurrence'\''s
+//     position in the result for diagnostic order.
+//  4. Pairwise subsumption: if some arm B is assignable-from another
+//     arm A (B is a super-type of A), drop A. This is what makes
+//     int|int? collapse to int? - TypingOptionalT.IsAssignableFrom
+//     already accepts non-optional T, so the general subsumption
+//     handles it without a special case. Skip gradual arms (any /
+//     dynamic / error_type) on the subsumer side to prevent them
+//     from swallowing concrete information.
+//  5. Dedupe by Name as a final guard.
+//
+// When everything collapses to nothing, return Never (the empty
+// join). Single result returned bare. Multiple distinct arms wrapped
+// in a Union.
 func unionTypesForJoin(types []rl.TypingT) rl.TypingT {
-	seen := map[string]bool{}
-	unique := make([]rl.TypingT, 0, len(types))
+	flat := flattenUnion(types)
+	flat = dropNeverAndErrorType(flat)
+	flat = mergeStructuralByKind(flat)
+	flat = applySubsumption(flat)
+	flat = dedupeByName(flat)
+
+	switch len(flat) {
+	case 0:
+		return rl.NewNeverType()
+	case 1:
+		return flat[0]
+	default:
+		return rl.NewUnionType(flat...)
+	}
+}
+
+// UnionJoinForTest exposes unionTypesForJoin for testing. Tests in
+// the check_test package can'\''t reach the unexported helper; this
+// thin wrapper keeps the test interface explicit (not "everything in
+// the package is exported"). Not for production use.
+func UnionJoinForTest(types []rl.TypingT) rl.TypingT {
+	return unionTypesForJoin(types)
+}
+
+// flattenUnion produces a single-level slice from the input: each
+// TypingUnionT arm is replaced by its constituent arms, nils are
+// dropped. Single-level invariant simplifies the downstream passes.
+func flattenUnion(types []rl.TypingT) []rl.TypingT {
+	out := make([]rl.TypingT, 0, len(types))
 	for _, t := range types {
 		if t == nil {
 			continue
 		}
-		if _, ok := t.(*rl.TypingNeverT); ok {
+		if u, ok := t.(*rl.TypingUnionT); ok {
+			out = append(out, u.Types()...)
 			continue
 		}
-		name := t.Name()
-		if seen[name] {
+		out = append(out, t)
+	}
+	return out
+}
+
+// dropNeverAndErrorType filters out the two "empty contribution"
+// markers. Never means "this arm was proven unreachable"; ErrorType
+// is the checker'\''s poison sentinel - both should disappear in a
+// join (unioning Never or ErrorType with X yields X).
+func dropNeverAndErrorType(types []rl.TypingT) []rl.TypingT {
+	out := make([]rl.TypingT, 0, len(types))
+	for _, t := range types {
+		switch t.(type) {
+		case *rl.TypingNeverT, *rl.TypingErrorTypeT:
 			continue
 		}
-		seen[name] = true
-		unique = append(unique, t)
+		out = append(out, t)
 	}
-	switch len(unique) {
-	case 0:
-		return rl.NewNeverType()
-	case 1:
-		return unique[0]
-	default:
-		return rl.NewUnionType(unique...)
+	return out
+}
+
+// mergeStructuralByKind collapses arms of the same "merge kind" into
+// a single arm. Today we merge string-enums: multiple StrEnum arms
+// fold into one with the unioned value set, so a if/elif/else over
+// closed-enum cases produces `StrEnum<"a","b","c">` instead of
+// `StrEnum<"a">|StrEnum<"b">|StrEnum<"c">`.
+//
+// The first StrEnum'\''s position in the input is preserved as the
+// position of the merged result. This keeps diagnostic ordering
+// stable when other arms are interleaved.
+func mergeStructuralByKind(types []rl.TypingT) []rl.TypingT {
+	// Collect string-enum values in input order; dedupe.
+	seenVals := map[string]bool{}
+	var mergedVals []string
+	firstEnumPos := -1
+	for i, t := range types {
+		e, ok := t.(*rl.TypingStrEnumT)
+		if !ok {
+			continue
+		}
+		if firstEnumPos == -1 {
+			firstEnumPos = i
+		}
+		for _, v := range e.Values() {
+			if seenVals[v] {
+				continue
+			}
+			seenVals[v] = true
+			mergedVals = append(mergedVals, v)
+		}
 	}
+	if firstEnumPos == -1 {
+		return types
+	}
+	out := make([]rl.TypingT, 0, len(types))
+	emitted := false
+	for _, t := range types {
+		if _, ok := t.(*rl.TypingStrEnumT); ok {
+			if !emitted {
+				out = append(out, rl.NewStrEnumType(mergedVals...))
+				emitted = true
+			}
+			continue
+		}
+		out = append(out, t)
+	}
+	return out
+}
+
+// applySubsumption drops arms that are subsumed by another arm via
+// IsAssignableFrom. The algorithm is the "kept-set with bidirectional
+// pruning" pattern from Pyright: walk candidates left-to-right, for
+// each one (a) drop it if anything already kept subsumes it; (b)
+// otherwise, drop any kept arms it subsumes, then add it.
+//
+// Gradual types (Any, Dynamic, ErrorType) don'\''t subsume on the
+// subsumer side: we don'\''t want `int | any` to collapse to `any`,
+// because the concrete int arm carries real static info that a
+// downstream narrowing might exploit. Matching Pyright'\''s rule
+// keeps concrete arms alive alongside gradual ones.
+//
+// O(n^2) but n is tiny (typically 2-5 arms); correctness over speed.
+func applySubsumption(types []rl.TypingT) []rl.TypingT {
+	var kept []rl.TypingT
+	for _, candidate := range types {
+		// Gradual candidates can'\''t be subsumed - we always want to
+		// preserve an explicit `any` in the join. The asymmetry
+		// matters because gradual consistency makes IsAssignableFrom
+		// return true in both directions for any-vs-T, which would
+		// otherwise let concrete arms "subsume" gradual ones and
+		// silently erase them.
+		subsumed := false
+		if !isGradualLike(candidate) {
+			for _, k := range kept {
+				if isGradualLike(k) {
+					continue
+				}
+				if k.IsAssignableFrom(candidate) {
+					subsumed = true
+					break
+				}
+			}
+		}
+		if subsumed {
+			continue
+		}
+		// Candidate keeps; drop any kept arms it subsumes - again
+		// skip when the candidate is gradual so concretes survive.
+		if !isGradualLike(candidate) {
+			pruned := kept[:0]
+			for _, k := range kept {
+				if isGradualLike(k) {
+					pruned = append(pruned, k)
+					continue
+				}
+				if candidate.IsAssignableFrom(k) {
+					continue
+				}
+				pruned = append(pruned, k)
+			}
+			kept = pruned
+		}
+		kept = append(kept, candidate)
+	}
+	return kept
+}
+
+// dedupeByName guards against duplicate Name() outputs slipping
+// through (e.g. two distinct instances of TypingIntT). Subsumption
+// catches most of these, but a final Name-based pass is cheap
+// insurance.
+func dedupeByName(types []rl.TypingT) []rl.TypingT {
+	seen := map[string]bool{}
+	out := make([]rl.TypingT, 0, len(types))
+	for _, t := range types {
+		n := t.Name()
+		if seen[n] {
+			continue
+		}
+		seen[n] = true
+		out = append(out, t)
+	}
+	return out
+}
+
+// isGradualLike identifies types the static checker uses to signal
+// "we couldn'\''t pin a type" (Any, Dynamic) or "an error is
+// suppressing cascades" (ErrorType). They should not subsume
+// concrete arms in a union join.
+func isGradualLike(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingAnyT, *rl.TypingDynamicT, *rl.TypingErrorTypeT:
+		return true
+	}
+	return false
 }
 
 func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
