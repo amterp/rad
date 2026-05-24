@@ -149,9 +149,19 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 // even before its outer-shape handler is implemented; later
 // sub-commits replace these generic descents with kind-specific
 // synthesis (call return types, operator results, etc.).
+//
+// ExprTypes doubles as a memoization cache. Several call paths visit
+// the same arg node more than once (synthCall walks args, then
+// checkArgType re-synths each to compare against the formal type);
+// without memoization, any diagnostic emitted during synth would fire
+// once per visit. Caching here makes synth idempotent so each AST
+// node produces at most one diagnostic regardless of visit count.
 func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 	if n == nil {
 		return rl.NewDynamicType()
+	}
+	if t, ok := tc.info.ExprTypes[n]; ok {
+		return t
 	}
 	switch v := n.(type) {
 	case *rl.LitInt:
@@ -565,10 +575,19 @@ func (tc *typeChecker) synthOpUnary(n *rl.OpUnary) rl.TypingT {
 // synthTernary handles `cond ? whenTrue : whenFalse`. The condition
 // can be any truthy-able value; the result type is the union of the
 // two branch types (or just one of them if they're identical).
+//
+// A poisoned condition propagates: if cond synths to ErrorType, we
+// can't tell which branch fires, and pretending the result is
+// `whenTrue | whenFalse` would silently absorb the bad condition's
+// failure into a plausible-looking type that downstream code uses
+// without realizing the upstream is broken.
 func (tc *typeChecker) synthTernary(n *rl.Ternary) rl.TypingT {
-	_ = tc.synth(n.Condition)
+	cond := tc.synth(n.Condition)
 	whenTrue := tc.synth(n.True)
 	whenFalse := tc.synth(n.False)
+	if isErrorType(cond) {
+		return tc.record(n, rl.NewErrorTypeType())
+	}
 	return tc.record(n, unionOf(whenTrue, whenFalse))
 }
 
@@ -771,6 +790,14 @@ func anyIsDynamicLike(types ...rl.TypingT) bool {
 // unionOf produces a static union of two types, collapsing duplicates
 // by Name(). Used by `or`, `??`, `catch`, and `?:` to express "result
 // is one of the two operand types".
+//
+// ErrorType in either operand collapses the whole union to ErrorType.
+// Returning `int | <error>` would leak the poison into downstream
+// operator and assignment checks - the invariant collection /
+// assignability rules can't reason about a union containing a
+// poisoned arm, so each downstream use would re-fire a fresh
+// diagnostic. Aggressive cascade prevention is the contract every
+// other handler already follows; unionOf needs to honor it too.
 func unionOf(a, b rl.TypingT) rl.TypingT {
 	if a == nil && b == nil {
 		return rl.NewDynamicType()
@@ -780,6 +807,9 @@ func unionOf(a, b rl.TypingT) rl.TypingT {
 	}
 	if b == nil {
 		return a
+	}
+	if isErrorType(a) || isErrorType(b) {
+		return rl.NewErrorTypeType()
 	}
 	if a.Name() == b.Name() {
 		return a

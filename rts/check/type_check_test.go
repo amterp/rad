@@ -552,3 +552,75 @@ func TestTypeCheck_MutualRecursionDoesNotInfiniteLoop(t *testing.T) {
 	assert.False(t, hasIssue(info, rl.ErrWrongArgCount))
 	assert.False(t, hasIssue(info, rl.ErrTypeMismatch))
 }
+
+// --- ErrorType cascade tests -----------------------------------------
+//
+// These verify that a single poisoned sub-expression produces exactly
+// one diagnostic, not a flood of derivative ones from each layer of
+// the enclosing AST. Each test checks "the outer expression's synth
+// type collapses to <error>" (cascade-suppression handshake) AND
+// "the count of issues stays tight."
+
+// countCode returns how many issues with the given code are present.
+// Useful for asserting that a poisoned expression produces ONE
+// diagnostic, not several as the poison flows up the AST.
+func countCode(info *check.TypeInfo, code rl.Error) int {
+	n := 0
+	for _, i := range info.Issues {
+		if i.Code == code {
+			n++
+		}
+	}
+	return n
+}
+
+func TestTypeCheck_NestedBinaryOpPoisonsToErrorType(t *testing.T) {
+	// (1 + "hi") + 5 - the inner produces ErrorType + a diagnostic.
+	// The outer must NOT emit a second "ErrorType + int is invalid"
+	// hint; anyIsErrorType short-circuits the lookup.
+	file, info, _ := typeInfoFromSrc(t, "x = (1 + \"hi\") + 5\n")
+	got := exprTypeOf(t, file, info).Name()
+	assert.Equal(t, "<error>", got)
+	// Exactly one invalid-op diagnostic - from the inner expr only.
+	assert.Equal(t, 1, countCode(info, rl.ErrInvalidTypeForOp))
+}
+
+func TestTypeCheck_TernaryBranchErrorCollapsesToErrorType(t *testing.T) {
+	// cond ? bad : 5 - bad is ErrorType. Before this commit unionOf
+	// would have returned `<error>|int`, and the next operator usage
+	// would have fired a fresh diagnostic. Now the ternary collapses
+	// to ErrorType so downstream operators short-circuit cleanly.
+	file, info, _ := typeInfoFromSrc(t, "x = true ? (1 + \"hi\") : 5\n")
+	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
+	assert.Equal(t, 1, countCode(info, rl.ErrInvalidTypeForOp))
+}
+
+func TestTypeCheck_TernaryConditionErrorCollapsesToErrorType(t *testing.T) {
+	// A bad condition propagates - we don't know which branch fires,
+	// so we can't trust either branch's type to characterize the
+	// result. Better to mark the whole ternary as poisoned.
+	file, info, _ := typeInfoFromSrc(t, "x = (1 + \"hi\") ? 1 : 2\n")
+	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_FallbackWithErrorOperandCollapses(t *testing.T) {
+	// x ?? y where x is poisoned. Whole expression is uncertain.
+	file, info, _ := typeInfoFromSrc(t, "x = (1 + \"hi\") ?? 5\n")
+	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_CatchWithErrorOperandCollapses(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = (1 + \"hi\") catch 5\n")
+	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_PoisonedArgDoesNotEmitArgTypeMismatch(t *testing.T) {
+	// `len(1 + "hi")` - the arg is poisoned. checkArgType sees
+	// ErrorType, which IsAssignableFrom anything (poisoned arm of
+	// gradual consistency), so no spurious arg-mismatch hint fires.
+	// The inner op error is the only diagnostic the user sees.
+	_, info, _ := typeInfoFromSrc(t, "x = len(1 + \"hi\")\n")
+	assert.Equal(t, 1, countCode(info, rl.ErrInvalidTypeForOp))
+	assert.Equal(t, 0, countCode(info, rl.ErrTypeMismatch),
+		"poisoned arg should not produce an additional type-mismatch hint")
+}
