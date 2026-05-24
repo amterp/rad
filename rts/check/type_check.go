@@ -1116,6 +1116,17 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		if i >= len(a.Targets) {
 			continue
 		}
+		// Indexed assignment (`xs[i] = v`, `m[k] = v`): the target is
+		// a VarPath whose last segment is a bracket-index. The
+		// Identifier branch below doesn't fire, so we handle it here
+		// and continue. We deliberately don't update SymbolTypes or
+		// frame for these: indexed assign mutates the container's
+		// contents, not the binding, so the symbol's type is unchanged.
+		if vp, ok := a.Targets[i].(*rl.VarPath); ok {
+			_ = tc.synth(vp) // walk children for hover/use tracking
+			tc.checkIndexedAssignTarget(vp, val, valType)
+			continue
+		}
 		ident, ok := a.Targets[i].(*rl.Identifier)
 		if !ok {
 			continue
@@ -1212,6 +1223,101 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
 			valType.Name(), declared.Name()),
 	})
+}
+
+// checkIndexedAssignTarget fires the ErrCollectionElementMismatch
+// diagnostic when an indexed assignment like `xs[i] = v` or
+// `m[k] = v` would put a value of the wrong type into a statically
+// typed collection.
+//
+// The check is opt-in via annotation. We require the root symbol to
+// carry an explicit Declared type (`xs: int[]`, `m: { str: int }`,
+// or a typed param), and we skip when the user wrote the open
+// `list` / `map` annotations - those are the gradual-typing escape
+// hatch. Untyped locals (`xs = [1, 2]`) also skip: the literal does
+// pin an inferred element type, but firing on indexed-assign through
+// it would be intrusive for scripts that intentionally build a
+// list with mixed elements over time.
+//
+// The element type itself comes from the frame (so narrowing through
+// `if xs != null: xs[0] = ...` on a `xs: int[]?` declaration still
+// catches mismatches), but only after the declared-type gate above
+// has admitted us. Concretely: we want the most precise statically
+// known element type, gated by the user having opted in.
+//
+// Severity is Hint, matching checkAssignAgainstDeclared: the runtime
+// still enforces declared element types when the script runs, and
+// this is the static "heads up" version. Other forms of mutation
+// (struct field assignment, slice assignment) aren't checked here.
+func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.Node, valType rl.TypingT) {
+	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
+		return
+	}
+	segs := target.Segments
+	if len(segs) == 0 {
+		return
+	}
+	last := segs[len(segs)-1]
+	if last.Index == nil || last.IsSlice || last.IsUFCS || last.Field != nil {
+		return
+	}
+	// Today we only check the simple `<identifier>[i] = v` shape.
+	// Chained targets (`m["a"][0] = v`, `obj.field[i] = v`) need a
+	// chain-prefix type walker that we haven't built yet. Skipping
+	// chains keeps Phase 6 sound: we just don't catch some mismatches
+	// we could've caught.
+	if len(segs) != 1 {
+		return
+	}
+	rootIdent, ok := target.Root.(*rl.Identifier)
+	if !ok {
+		return
+	}
+	sym, ok := tc.resolved.Uses[rootIdent]
+	if !ok || sym == nil || sym.Declared == nil {
+		// Untyped or unresolved: opt-in only.
+		return
+	}
+	// Open `list` / `map` annotations are the explicit "any element
+	// goes" form. Respect them even when the frame happens to hold a
+	// tighter type from a literal RHS.
+	switch sym.Declared.(type) {
+	case *rl.TypingAnyListT, *rl.TypingAnyMapT:
+		return
+	}
+	rootType := tc.synthIdentifier(rootIdent)
+	expected, ok := containerElementType(rootType)
+	if !ok {
+		return
+	}
+	if isErrorType(expected) || isDynamicLike(expected) {
+		return
+	}
+	if expected.IsAssignableFrom(valType) {
+		return
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     valNode.Span(),
+		Severity: IssueHint,
+		Code:     rl.ErrCollectionElementMismatch,
+		Message: fmt.Sprintf("Value of type '%s' is not assignable to element type '%s'",
+			valType.Name(), expected.Name()),
+	})
+}
+
+// containerElementType returns the assignable-into element type of a
+// statically typed collection. Returns (nil, false) for any container
+// that doesn't have a checkable element type - untyped collections
+// (AnyList/AnyMap), structs (we don't check field-assign here), and
+// anything else (Dynamic, unions, etc.).
+func containerElementType(c rl.TypingT) (rl.TypingT, bool) {
+	switch v := c.(type) {
+	case *rl.TypingListT:
+		return v.Elem(), true
+	case *rl.TypingMapT:
+		return v.ValT(), true
+	}
+	return nil, false
 }
 
 // synth returns the static type of an expression node and records it

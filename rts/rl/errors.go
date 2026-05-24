@@ -91,6 +91,7 @@ const (
 	ErrWrongArgCount    Error = "30007"
 	ErrCannotCompare    Error = "30008"
 	ErrCannotConvert    Error = "30009"
+	ErrCollectionElementMismatch Error = "30010"
 
 	// 4xxxx Validation Errors
 	ErrScientificNotationNotWholeNumber Error = "40001"

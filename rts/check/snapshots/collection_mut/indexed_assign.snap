@@ -1,0 +1,243 @@
+### TITLE ###
+TypedListIndexedAssignOk
+### DESCRIPTION ###
+`xs: int[]; xs[0] = 99` - assigning an int into an int[] passes
+with no diagnostic. The element type matches.
+### INPUT ###
+xs: int[] = [1, 2, 3]
+xs[0] = 99
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedListIndexedAssignMismatch
+### DESCRIPTION ###
+`xs: int[]; xs[0] = "wrong"` fires
+ErrCollectionElementMismatch - str is not assignable to the
+declared int element type.
+### INPUT ###
+xs: int[] = [1, 2, 3]
+xs[0] = "wrong"
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  [hint] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'
+### TITLE ###
+TypedMapIndexedAssignOk
+### DESCRIPTION ###
+`m: { str: int }; m["k"] = 5` passes - int into int-valued map.
+### INPUT ###
+m: { str: int } = { "a": 1 }
+m["b"] = 5
+### STDOUT ###
+# Identifier types
+  m @ 1:1 -> <no-type>
+  m @ 2:1 -> { str: int }
+
+# Symbol types
+  m (local): { str: int }
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedMapIndexedAssignMismatch
+### DESCRIPTION ###
+`m: { str: int }; m["k"] = "wrong"` fires - str is not assignable
+to the map's int value type.
+### INPUT ###
+m: { str: int } = { "a": 1 }
+m["b"] = "wrong"
+### STDOUT ###
+# Identifier types
+  m @ 1:1 -> <no-type>
+  m @ 2:1 -> { str: int }
+
+# Symbol types
+  m (local): { str: int }
+
+# Diagnostics
+  [hint] RAD30010 @ 2:10 - Value of type 'str' is not assignable to element type 'int'
+### TITLE ###
+ParamIndexedAssignMismatch
+### DESCRIPTION ###
+Param-typed list also gets checked - fn param int[] flows through
+to the assignment.
+### INPUT ###
+fn f(xs: int[]):
+    xs[0] = "wrong"
+### STDOUT ###
+# Identifier types
+  xs @ 2:5 -> int[]
+
+# Symbol types
+  f (fn): <no-type>
+  xs (param): int[]
+
+# Diagnostics
+  [hint] RAD30010 @ 2:13 - Value of type 'str' is not assignable to element type 'int'
+### TITLE ###
+UntypedListSkipsCheck
+### DESCRIPTION ###
+`xs = [1, 2, 3]` has no annotation; the inferred type is `int[]`
+but we deliberately don't fire on indexed assign here. The check
+is opt-in via annotation - firing on inferred types would be
+intrusive for scripts that build mixed lists gradually.
+### INPUT ###
+xs = [1, 2, 3]
+xs[0] = "anything"
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+OpenListAnnotationSkipsCheck
+### DESCRIPTION ###
+`xs: list = ...` is the explicit "any element goes" form (AnyList),
+distinct from `xs: int[]`. Indexed assign skips the check.
+### INPUT ###
+xs: list = [1, 2, 3]
+xs[0] = "anything"
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+
+# Symbol types
+  xs (local): list
+
+# Diagnostics
+  (none)
+### TITLE ###
+OpenMapAnnotationSkipsCheck
+### DESCRIPTION ###
+`m: map = ...` is the open map form. No element check.
+### INPUT ###
+m: map = { "a": 1 }
+m["b"] = "anything"
+### STDOUT ###
+# Identifier types
+  m @ 1:1 -> <no-type>
+  m @ 2:1 -> { str: int }
+
+# Symbol types
+  m (local): map
+
+# Diagnostics
+  (none)
+### TITLE ###
+ChainedIndexedAssignSkipsCheck
+### DESCRIPTION ###
+Today we only check `<identifier>[i] = v` shape. Chained targets
+like `m["a"][0] = v` skip silently - sound (we just don't catch a
+mismatch we could've caught), and avoids depending on a full chain-
+prefix type walker that's deferred.
+### INPUT ###
+fn f(m: { "a": int[] }):
+    m["a"][0] = "wrong"
+### STDOUT ###
+# Identifier types
+  m @ 2:5 -> { "a": int[] }
+
+# Symbol types
+  f (fn): <no-type>
+  m (param): { "a": int[] }
+
+# Diagnostics
+  (none)
+### TITLE ###
+FieldAssignSkipsCheck
+### DESCRIPTION ###
+Struct-field assignment (`obj.field = v`) is a different mutation
+surface and isn't part of Phase 6. No diagnostic.
+### INPUT ###
+fn f(obj: { "x": int }):
+    obj.x = "wrong"
+### STDOUT ###
+# Identifier types
+  obj @ 2:5 -> { "x": int }
+
+# Symbol types
+  f (fn): <no-type>
+  obj (param): { "x": int }
+
+# Diagnostics
+  (none)
+### TITLE ###
+DynamicReceiverSkipsCheck
+### DESCRIPTION ###
+When the receiver synth's to Dynamic (forward reference,
+unannotated param, etc.), we can't reason about the element type
+and skip the check.
+### INPUT ###
+fn f(xs):
+    xs[0] = "anything"
+### STDOUT ###
+# Identifier types
+  xs @ 2:5 -> dynamic
+
+# Symbol types
+  f (fn): <no-type>
+  xs (param): <no-type>
+
+# Diagnostics
+  (none)
+### TITLE ###
+ErrorTypeRhsSuppresses
+### DESCRIPTION ###
+If the RHS already failed to check (ErrorType-poisoned), we don't
+pile on a second diagnostic about the element type. One mistake,
+one diagnostic.
+### INPUT ###
+xs: int[] = [1, 2, 3]
+xs[0] = 1 + "not a number"
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int + str'
+    help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
+### TITLE ###
+NarrowedOptionalListChecks
+### DESCRIPTION ###
+`fn f(xs: int[]?)` declares an optional list. After `if xs != null:`
+the frame narrows to `int[]`. The check uses the frame (more
+precise than declared) so the mismatch still fires inside the guard.
+### INPUT ###
+fn f(xs: int[]?):
+    if xs != null:
+        xs[0] = "wrong"
+### STDOUT ###
+# Identifier types
+  xs @ 2:8 -> int[]?
+  xs @ 3:9 -> int[]
+
+# Symbol types
+  f (fn): <no-type>
+  xs (param): int[]?
+
+# Diagnostics
+  [hint] RAD30010 @ 3:17 - Value of type 'str' is not assignable to element type 'int'
