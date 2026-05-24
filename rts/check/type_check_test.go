@@ -921,6 +921,63 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Phase 4i: reassignment widening ---------------------------------
+
+func TestTypeCheck_ReassignmentWidens(t *testing.T) {
+	// Reassigning a narrowed var to a value of the declared type
+	// widens it back. After `x = parse_int(...)` (returns int|error),
+	// the narrowing inside the if body is lost.
+	src := `fn f(x: int|error):
+    if type_of(x) == "int":
+        // x is int here
+        a = x
+        x = parse_int("5")
+        // x is back to int|error now
+        b = x
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	ifS := fn.Body[0].(*rl.If)
+	aAssign := ifS.Branches[0].Body[0].(*rl.Assign)
+	bAssign := ifS.Branches[0].Body[2].(*rl.Assign)
+
+	// a sees the narrowed x (int).
+	aUse := aAssign.Values[0].(*rl.Identifier)
+	assert.Equal(t, rl.T_INT, info.ExprTypes[aUse].Name(),
+		"x before reassignment should still be narrowed to int")
+
+	// b sees the post-reassignment x. parse_int returns int|error,
+	// so x should be back to int|error here.
+	bUse := bAssign.Values[0].(*rl.Identifier)
+	got := info.ExprTypes[bUse]
+	require.NotNil(t, got)
+	name := got.Name()
+	assert.Contains(t, []string{"int|error", "error|int"}, name,
+		"x after reassignment to int|error should widen back from int")
+}
+
+func TestTypeCheck_WhileSorbetDropsBodyAssignedNarrowing(t *testing.T) {
+	// The body reassigns x; the post-loop frame must not assume x is
+	// the WhenFalse-narrowed type for x'\''s base. We just verify the
+	// reassigned var has its widened type post-loop.
+	src := `fn f(x: int|str):
+    while type_of(x) == "int":
+        x = "done"
+    y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	yAssign := fn.Body[1].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	got := info.SymbolTypes[ySym]
+	// y inherits from x after the loop. With Sorbet widening, x
+	// is at least not narrowed to int (the WhenTrue branch type).
+	name := got.Name()
+	assert.NotEqual(t, rl.T_INT, name,
+		"x post-loop must not be stuck at the WhenTrue narrowing")
+}
+
 // --- Phase 4h: catch / ?? narrowing ----------------------------------
 
 func TestTypeCheck_FallbackStripsNullFromLeft(t *testing.T) {

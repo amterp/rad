@@ -235,33 +235,93 @@ func (tc *typeChecker) walkForLoop(n *rl.ForLoop) {
 }
 
 // walkWhileLoop handles `while [cond]:`. Inside the body the
-// condition'\''s WhenTrue applies (we entered because cond was true);
-// after the loop the WhenFalse applies (we exited because cond
-// finally turned false).
+// condition'\''s WhenTrue applies (we entered because cond was
+// truthy); after the loop the WhenFalse applies (we exited because
+// cond finally turned falsy).
 //
-// Body-assigned vars need their narrowings dropped on exit because
-// the body may run any number of times; the value at loop exit can
-// differ from each iteration. That'\''s the Sorbet rule and lives in
-// Phase 4i with the rest of reassignment widening. For now: apply
-// the WhenFalse refinement to the initial frame, which is sound for
-// vars not touched by the body and approximately right for the
-// common case.
+// Sorbet rule for body-assigned vars: before applying the condition
+// narrowing, drop narrowings for any symbol the body reassigns. The
+// body may run any number of times, so a "narrowed before entering
+// the body" type isn'\''t sound for an iteration where the body
+// already changed the var. Resetting to the base SymbolTypes /
+// Declared is the conservative answer that lets the body'\''s own
+// assignments re-narrow on each iteration as needed.
+//
+// We collect the assigned-symbol set from the body statements with
+// a shallow walk (top-level Assigns only). Nested constructs
+// (if/switch/loops) that reassign a var are missed by this pass; a
+// deeper walk would catch them but pulls in more complexity than
+// the common case needs. Worth revisiting if a real script hits the
+// missed pattern.
 func (tc *typeChecker) walkWhileLoop(n *rl.WhileLoop) {
 	initial := tc.frame
 	if n.Condition == nil {
-		// `while:` (infinite loop) - no narrowing to apply.
 		tc.walkStmts(n.Body)
 		return
 	}
-	tc.frame = initial
+	assigned := tc.collectAssignedSyms(n.Body)
+	widened := tc.dropNarrowings(initial, assigned)
+
+	tc.frame = widened
 	_ = tc.synth(n.Condition)
-	ref := tc.interpretCondition(n.Condition, initial)
-	tc.frame = initial.WithMany(ref.WhenTrue)
+	ref := tc.interpretCondition(n.Condition, widened)
+	tc.frame = widened.WithMany(ref.WhenTrue)
 	tc.walkStmts(n.Body)
-	// Post-loop: condition is false (or body never ran). The body'\''s
-	// in-frame narrowings get discarded; the WhenFalse refinement
-	// applies on the initial frame.
-	tc.frame = initial.WithMany(ref.WhenFalse)
+	// Post-loop: condition is false (or body never ran). Body-
+	// assigned vars are already widened; apply WhenFalse on top.
+	tc.frame = widened.WithMany(ref.WhenFalse)
+}
+
+// collectAssignedSyms scans a body of statements for top-level
+// assignment targets. Returns the set of Symbols that get
+// reassigned. Used by the while-loop Sorbet rule to widen narrowings
+// before re-applying the condition'\''s refinement.
+//
+// Shallow: only inspects the body'\''s direct statements. Nested
+// blocks (if-branches, inner loops) are not recursed - they'\''re
+// reasonable cases but more complex; the common pattern (reassign
+// the loop variable in the body) is covered here.
+func (tc *typeChecker) collectAssignedSyms(stmts []rl.Node) map[*Symbol]bool {
+	out := map[*Symbol]bool{}
+	for _, s := range stmts {
+		a, ok := s.(*rl.Assign)
+		if !ok {
+			continue
+		}
+		for _, target := range a.Targets {
+			ident, ok := target.(*rl.Identifier)
+			if !ok {
+				continue
+			}
+			if sym, ok := tc.resolved.Uses[ident]; ok && sym != nil {
+				out[sym] = true
+			}
+		}
+	}
+	return out
+}
+
+// dropNarrowings returns a frame where each symbol in syms has its
+// narrowing reset back to the base type (SymbolTypes or Declared).
+// Implemented as a child frame that re-pins those symbols to base -
+// the parent chain is unchanged so other narrowings keep flowing.
+func (tc *typeChecker) dropNarrowings(frame *Frame, syms map[*Symbol]bool) *Frame {
+	if len(syms) == 0 {
+		return frame
+	}
+	overrides := make(map[*Symbol]rl.TypingT, len(syms))
+	for sym := range syms {
+		if t, ok := tc.info.SymbolTypes[sym]; ok {
+			overrides[sym] = t
+			continue
+		}
+		if sym.Declared != nil {
+			overrides[sym] = sym.Declared
+		}
+		// No known base type: leave it - frame.Lookup will fall
+		// through and the synth path defaults to Dynamic anyway.
+	}
+	return frame.WithMany(overrides)
 }
 
 // loopElementType returns the element type for a single-var loop over
