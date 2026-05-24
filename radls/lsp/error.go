@@ -16,7 +16,7 @@ func NewResponseError(id *json.RawMessage, err error) (resp Response) {
 }
 
 func newError(err error) *Error {
-	if err != nil {
+	if err == nil {
 		return nil
 	}
 	return &Error{
