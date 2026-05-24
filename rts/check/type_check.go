@@ -2344,6 +2344,14 @@ func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 	if expected.IsAssignableFrom(argType) {
 		return
 	}
+	// Literal-aware exception: a plain string literal synths to
+	// TypingStrT, which IsAssignableFrom rejects for a StrEnum
+	// param even when the literal's value is in the enum. Until the
+	// synth layer carries literal types, peek at the AST here so
+	// f("read") against ["read","write"] doesn't false-flag.
+	if litMatchesStrEnum(argNode, expected) {
+		return
+	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     argNode.Span(),
 		Severity: IssueHint,
@@ -2351,6 +2359,27 @@ func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 		Message: fmt.Sprintf("Argument type '%s' is not assignable to expected type '%s'",
 			argType.Name(), expected.Name()),
 	})
+}
+
+// litMatchesStrEnum returns true when argNode is a plain (non-
+// interpolated) string literal whose value is a member of the
+// expected StrEnum. Used to bridge the gap between today's plain-
+// TypingStrT synth and the literal-aware check the enum needs.
+func litMatchesStrEnum(argNode rl.Node, expected rl.TypingT) bool {
+	enum, ok := expected.(*rl.TypingStrEnumT)
+	if !ok {
+		return false
+	}
+	lit, ok := argNode.(*rl.LitString)
+	if !ok || !lit.Simple {
+		return false
+	}
+	for _, v := range enum.Values() {
+		if v == lit.Value {
+			return true
+		}
+	}
+	return false
 }
 
 func (tc *typeChecker) addCallIssue(span rl.Span, code rl.Error, msg string) {

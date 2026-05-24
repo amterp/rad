@@ -129,3 +129,32 @@ fn f(x: str):
 
 # Diagnostics
   (none)
+### TITLE ###
+StrLiteralArgAcceptedByEnumParam
+### DESCRIPTION ###
+A plain string literal "read" synths to str, which a StrEnum
+param like ["read","write"] would normally reject. Special-case
+the check so a literal whose value is in the enum's set is
+accepted - no false-positive Hint. The corresponding negative
+case (literal not in the enum) still fires below.
+### INPUT ###
+fn open(mode: ["read", "write"]):
+    print(mode)
+
+open("read")
+open("write")
+open("append")
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  mode @ 2:11 -> ["read", "write"]
+  open @ 4:1 -> fn(["read", "write"]) -> void
+  open @ 5:1 -> fn(["read", "write"]) -> void
+  open @ 6:1 -> fn(["read", "write"]) -> void
+
+# Symbol types
+  mode (param): ["read", "write"]
+  open (fn): fn(["read", "write"]) -> void
+
+# Diagnostics
+  [hint] RAD30001 @ 6:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
