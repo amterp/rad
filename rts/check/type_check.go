@@ -626,6 +626,17 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		tc.info.SymbolTypes[sym] = valType
 		tc.frame = tc.frame.With(sym, valType)
 	}
+	// Walk the catch block (if any) so hover and sub-expression type
+	// info inside the catch are recorded. The catch executes when the
+	// RHS errors, so identifier reads inside it could in principle
+	// see the assignment target as type `error`; we don'\''t narrow
+	// that yet because the AST doesn'\''t carry an explicit binding for
+	// the caught error (the user references the assignment target
+	// directly), and the runtime semantics aren'\''t covered by a
+	// single-Symbol narrowing.
+	if a.Catch != nil {
+		tc.walkStmts(a.Catch.Stmts)
+	}
 }
 
 // checkAssignAgainstDeclared emits a type-mismatch when the assigned
@@ -1109,22 +1120,36 @@ func (tc *typeChecker) synthTernary(n *rl.Ternary) rl.TypingT {
 	return tc.record(n, unionOf(whenTrue, whenFalse))
 }
 
-// synthFallback handles `left ?? right`. Today we approximate the
-// result as `union(left, right)` - once narrowing lands we can refine
-// this to `(left - null) | right`, but the union is a safe
-// over-approximation that doesn't lose any valid programs.
+// synthFallback handles `left ?? right`. The fallback fires when
+// left is null, so the result is `(left - null) | right` - the
+// non-null portion of left, unioned with the fallback expression.
+//
+// When left has no null component, the fallback can never fire, but
+// we still union the two arms: the user wrote the fallback for a
+// reason and excluding right entirely would surprise them if our
+// nullability inference is wrong (and gradual typing means it
+// sometimes is).
 func (tc *typeChecker) synthFallback(n *rl.Fallback) rl.TypingT {
 	left := tc.synth(n.Left)
 	right := tc.synth(n.Right)
+	if nonNull := stripNullFrom(left); nonNull != nil {
+		return tc.record(n, unionOf(nonNull, right))
+	}
 	return tc.record(n, unionOf(left, right))
 }
 
-// synthCatchExpr handles `expr catch fallback`. Same shape as Fallback
-// but catches errors rather than null. Result is union(left, right);
-// narrowing will later subtract `error` from the left branch.
+// synthCatchExpr handles `expr catch fallback`. Catch fires when
+// left evaluates to an error, so the result is
+// `(left - error) | right`.
+//
+// Same conservative tilt as synthFallback: when left has no error
+// component, we still union the two arms rather than dropping right.
 func (tc *typeChecker) synthCatchExpr(n *rl.CatchExpr) rl.TypingT {
 	left := tc.synth(n.Left)
 	right := tc.synth(n.Right)
+	if nonErr := stripErrorFrom(left); nonErr != nil {
+		return tc.record(n, unionOf(nonErr, right))
+	}
 	return tc.record(n, unionOf(left, right))
 }
 

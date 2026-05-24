@@ -921,6 +921,47 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Phase 4h: catch / ?? narrowing ----------------------------------
+
+func TestTypeCheck_FallbackStripsNullFromLeft(t *testing.T) {
+	// `x: int?` fallback to int literal -> int.
+	src := `fn f(x: int?):
+    y = x ?? 0
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	yAssign := fn.Body[0].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[ySym].Name(),
+		"int? ?? int should yield int, not int?|int")
+}
+
+func TestTypeCheck_CatchExprStripsErrorFromLeft(t *testing.T) {
+	// parse_int returns int|error. `... catch 0` strips error -> int.
+	src := `y = parse_int("5") catch 0
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	yAssign := file.Stmts[0].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[ySym].Name(),
+		"(int|error) catch int should yield int")
+}
+
+func TestTypeCheck_FallbackPreservesNonNullableLeft(t *testing.T) {
+	// Left has no nullable component: keep union(left, right) for
+	// safety - the user wrote the fallback for some reason.
+	src := `y = 5 ?? "fallback"
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	yAssign := file.Stmts[0].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	name := info.SymbolTypes[ySym].Name()
+	assert.Contains(t, []string{"int|str", "str|int"}, name)
+}
+
 // --- Phase 4g: while/for loop rules ----------------------------------
 
 func TestTypeCheck_ForLoopVarFromListElement(t *testing.T) {

@@ -612,6 +612,47 @@ func joinNarrowArms(arms []rl.TypingT) rl.TypingT {
 	}
 }
 
+// stripErrorFrom returns t with any error component removed. For a
+// bare TypingErrorT, returns Never (nothing left). For a union, drops
+// the error arms and returns the rest. Returns nil if t has no error
+// component to subtract.
+//
+// Used by `expr catch fallback`: the result type is (left - error) |
+// right - the catch only fires on error, and the non-error portion of
+// left is what flows through when no catch is needed.
+func stripErrorFrom(t rl.TypingT) rl.TypingT {
+	if t == nil {
+		return nil
+	}
+	if _, ok := t.(*rl.TypingErrorT); ok {
+		return rl.NewNeverType()
+	}
+	if u, ok := t.(*rl.TypingUnionT); ok {
+		arms := u.Types()
+		out := make([]rl.TypingT, 0, len(arms))
+		changed := false
+		for _, arm := range arms {
+			if _, isErr := arm.(*rl.TypingErrorT); isErr {
+				changed = true
+				continue
+			}
+			out = append(out, arm)
+		}
+		if !changed {
+			return nil
+		}
+		switch len(out) {
+		case 0:
+			return rl.NewNeverType()
+		case 1:
+			return out[0]
+		default:
+			return rl.NewUnionType(out...)
+		}
+	}
+	return nil
+}
+
 // stripNullFrom returns t with any null component removed. For
 // Optional<T> it returns T. For a union whose arms are individually
 // optional, each arm is stripped. Returns nil if t has no nullable
