@@ -6,6 +6,7 @@ import (
 	"github.com/amterp/rad/radls/lsp"
 
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 )
 
 // addDiagnosticQuickFixes emits a code action per snapshot
@@ -51,27 +52,35 @@ func addDiagnosticQuickFixes(actions *[]lsp.CodeAction, snap *DocumentVersion, r
 
 // structuredFixFor returns a machine-applicable quick fix for a
 // diagnostic when we recognize the pattern, or (zero, false)
-// when we don't. Recognition uses the diagnostic's RangedSrc
-// (the text the diagnostic covers) so we don't have to re-walk
-// the source.
+// when we don't.
 //
-// The null-union case is the seed: any diagnostic carrying a
-// `T?` suggestion whose ranged source includes `|null` (or
-// `null|`) is converted to a `T?`. The replacement is computed
-// by stripping the null component and appending `?`. Whitespace
-// and ordering variants are normalized so `int | null`,
-// `int|null`, and `null | int` all map cleanly to `int?`.
+// Dispatch is keyed on the diagnostic's Code (a stable
+// identifier the binder/checker owns) rather than on suggestion
+// text. The earlier shape - strings.Contains(*d.Suggestion,
+// "T?") - silently coupled fix recognition to human-readable
+// prose; editing the suggestion to say "T? syntax" or similar
+// would have broken the fix with no compiler help. Each fix
+// pattern we recognize now has its own case here, paired with
+// a builder that knows how to construct the replacement from
+// the diagnostic's RangedSrc.
 func structuredFixFor(snap *DocumentVersion, d check.Diagnostic) (lsp.CodeAction, bool) {
-	if d.Suggestion == nil || !strings.Contains(*d.Suggestion, "T?") {
+	if d.Code == nil {
 		return lsp.CodeAction{}, false
 	}
-	replacement, ok := buildNullUnionFix(d.RangedSrc)
-	if !ok {
-		return lsp.CodeAction{}, false
+	switch *d.Code {
+	case rl.ErrUnexpectedToken:
+		// The null-in-union heuristic surfaces this code with a
+		// RangedSrc like "|null". buildNullUnionFix returns false
+		// for anything else under this code, so other
+		// ErrUnexpectedToken sites pass through harmlessly.
+		replacement, ok := buildNullUnionFix(d.RangedSrc)
+		if !ok {
+			return lsp.CodeAction{}, false
+		}
+		target := fromByteRange(checkRangeToLSP(d.Range), snap)
+		return lsp.NewQuickFix("Replace '|null' with '?'", snap.uri, target, replacement), true
 	}
-	target := fromByteRange(checkRangeToLSP(d.Range), snap)
-	title := "Replace '|null' with '?'"
-	return lsp.NewQuickFix(title, snap.uri, target, replacement), true
+	return lsp.CodeAction{}, false
 }
 
 // buildNullUnionFix turns the tree-sitter ERROR span that covers
