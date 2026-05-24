@@ -10,6 +10,7 @@ const (
 	TD_COMPLETION          = "textDocument/completion"
 	TD_CODE_ACTION         = "textDocument/codeAction"
 	TD_HOVER               = "textDocument/hover"
+	TD_DEFINITION          = "textDocument/definition"
 	TD_PUBLISH_DIAGNOSTICS = "textDocument/publishDiagnostics"
 )
 

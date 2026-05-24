@@ -125,6 +125,14 @@ type HoverParams struct {
 	TextDocumentPositionParams
 }
 
+// DefinitionParams is the textDocument/definition request payload.
+// The response can be a single Location, an array of Locations, or
+// null - we return either nil (encoded as null) or a single
+// Location since Rad has exactly one decl site per symbol today.
+type DefinitionParams struct {
+	TextDocumentPositionParams
+}
+
 // MarkupKind matches the LSP 3.17 MarkupKind enum. We always reply
 // in markdown today; plaintext is a future option if a client
 // declines markdown.

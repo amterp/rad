@@ -57,6 +57,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	m.AddRequestHandler(lsp.TD_COMPLETION, server.handleCompletion)
 	m.AddRequestHandler(lsp.TD_CODE_ACTION, server.handleCodeAction)
 	m.AddRequestHandler(lsp.TD_HOVER, server.handleHover)
+	m.AddRequestHandler(lsp.TD_DEFINITION, server.handleDefinition)
 
 	return &server
 }
@@ -169,6 +170,22 @@ func (s *Server) handleHover(_ context.Context, params json.RawMessage) (result 
 	// want when the cursor isn't on a known identifier. State.Hover
 	// returns (nil, nil) for that case so we pass it through.
 	result, err = s.s.Hover(snap, hoverParams.Position)
+	return
+}
+
+func (s *Server) handleDefinition(_ context.Context, params json.RawMessage) (result any, err error) {
+	var defParams lsp.DefinitionParams
+	if err = json.Unmarshal(params, &defParams); err != nil {
+		return
+	}
+	snap := s.s.Snapshot(defParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
+	// Same nil-passthrough story as hover - a nil *lsp.Location
+	// marshals as null, which is the spec-defined "no definition
+	// found" reply.
+	result, err = s.s.Definition(snap, defParams.Position)
 	return
 }
 
