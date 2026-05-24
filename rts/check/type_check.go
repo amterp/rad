@@ -1355,10 +1355,19 @@ func switchDiverges(n *rl.Switch, ctx divergeCtx, tc *typeChecker) bool {
 		return altDiverges(n.Default.Alt, ctx, tc)
 	}
 	// No default - require exhaustiveness on a closed discriminant.
+	// Divergence is a *query* on already-checked code; calling synth
+	// here would emit diagnostics and pin a type in the wrong frame
+	// (synth is frame-sensitive). Look up the previously recorded
+	// type from walkSwitch instead. If absent (e.g. a nested switch
+	// reached via branchExits before its enclosing walkSwitch ran),
+	// fall back to "not exhaustive" rather than re-entering synth.
 	if tc == nil {
 		return false
 	}
-	discType := tc.synth(n.Discriminant)
+	discType, ok := tc.info.ExprTypes[n.Discriminant]
+	if !ok {
+		return false
+	}
 	residual := discType
 	for _, c := range n.Cases {
 		caseType := tc.matchTypeForCaseKeys(c.Keys)
