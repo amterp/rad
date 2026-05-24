@@ -45,8 +45,24 @@ func (s *Server) handleInitialize(params json.RawMessage) (result any, err error
 	if err = json.Unmarshal(params, &initParams); err != nil {
 		return
 	}
-	log.L.Infof("Received initialize from %s %s", initParams.ClientInfo.Name, initParams.ClientInfo.Version)
-	result = lsp.NewInitializeResult()
+	clientName, clientVersion := "(unknown)", "(unknown)"
+	if initParams.ClientInfo != nil {
+		clientName = initParams.ClientInfo.Name
+		clientVersion = initParams.ClientInfo.Version
+	}
+	log.L.Infof("Received initialize from %s %s", clientName, clientVersion)
+
+	var offered []analysis.PositionEncoding
+	if initParams.Capabilities.General != nil {
+		for _, e := range initParams.Capabilities.General.PositionEncodings {
+			offered = append(offered, analysis.PositionEncoding(e))
+		}
+	}
+	enc := analysis.NegotiatePositionEncoding(offered)
+	s.s.SetEncoding(enc)
+	log.L.Infof("Negotiated position encoding: %s (client offered %v)", enc, offered)
+
+	result = lsp.NewInitializeResult(string(enc))
 	return
 }
 

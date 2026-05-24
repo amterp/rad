@@ -1,10 +1,5 @@
 package lsp
 
-import (
-	"github.com/amterp/rad/rts/check"
-	ts "github.com/tree-sitter/go-tree-sitter"
-)
-
 type TextDocumentItem struct {
 	/**
 	 * The text document's URI.
@@ -99,24 +94,6 @@ func NewRange(startLine, starChar, endLine, endChar int) Range {
 		Start: NewPos(startLine, starChar),
 		End:   NewPos(endLine, endChar),
 	}
-}
-
-func NewRangeFromTsNode(node *ts.Node) Range {
-	return NewRange(
-		int(node.StartPosition().Row),
-		int(node.StartPosition().Column),
-		int(node.EndPosition().Row),
-		int(node.EndPosition().Column),
-	)
-}
-
-func NewRangeFromCheckNode(rang check.Range) Range {
-	return NewRange(
-		rang.Start.Line,
-		rang.Start.Character,
-		rang.End.Line,
-		rang.End.Character,
-	)
 }
 
 func NewLineRange(line, start, end int) Range {

@@ -34,8 +34,12 @@ func NewDiagnostic(rang Range, severity DiagnosticSeverity, source, msg string) 
 	}
 }
 
-func NewDiagnosticFromCheck(checkD check.Diagnostic) Diagnostic {
-	rang := NewRangeFromCheckNode(checkD.Range)
+// NewDiagnosticFromCheckWithRange builds an LSP diagnostic from a check
+// diagnostic using an already-converted Range. The conversion lives in
+// the analysis layer because that's where the per-document LineIndex
+// and the negotiated position encoding both live; this constructor just
+// glues the rest together.
+func NewDiagnosticFromCheckWithRange(checkD check.Diagnostic, rang Range) Diagnostic {
 	var severity DiagnosticSeverity
 	switch checkD.Severity {
 	case check.Error:
