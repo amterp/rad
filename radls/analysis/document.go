@@ -25,6 +25,7 @@ import (
 // rather than racing against the next keystroke.
 type DocumentVersion struct {
 	uri         string
+	fileID      FileID
 	version     int64
 	text        string
 	tree        *rts.RadTree
@@ -34,6 +35,7 @@ type DocumentVersion struct {
 }
 
 func (v *DocumentVersion) URI() string                  { return v.uri }
+func (v *DocumentVersion) FileID() FileID               { return v.fileID }
 func (v *DocumentVersion) Version() int64               { return v.version }
 func (v *DocumentVersion) Text() string                 { return v.text }
 func (v *DocumentVersion) Tree() *rts.RadTree           { return v.tree }
@@ -56,10 +58,17 @@ func (v *DocumentVersion) GetLine(line int) string {
 // pointer is read lock-free; writers serialize through `mu` to ensure
 // a coherent prev->next chain (tree-sitter parsing today is wholesale,
 // but a future incremental-parse path would still want this invariant).
+//
+// The FileID is fixed at construction; it stays stable across every
+// version of the document so internal code can hold a FileID and
+// always reach the latest snapshot via the State's lookup tables.
 type Document struct {
+	fileID   FileID
 	snapshot atomic.Pointer[DocumentVersion]
 	mu       sync.Mutex
 }
+
+func (d *Document) FileID() FileID { return d.fileID }
 
 // Snapshot returns the current immutable version of this document.
 // Lock-free; safe to call from any goroutine.
@@ -87,6 +96,7 @@ func buildVersion(
 	parser *rts.RadParser,
 	encoding PositionEncoding,
 	uri string,
+	fileID FileID,
 	version int64,
 	text string,
 ) *DocumentVersion {
@@ -99,6 +109,7 @@ func buildVersion(
 
 	return &DocumentVersion{
 		uri:         uri,
+		fileID:      fileID,
 		version:     version,
 		text:        text,
 		tree:        tree,

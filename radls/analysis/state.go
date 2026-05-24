@@ -17,12 +17,20 @@ import (
 // (open/close); per-document write coordination lives on Document
 // itself, and reads of any document's content are lock-free via its
 // snapshot pointer.
+//
+// Documents are identified two ways: by URI (the LSP wire concern)
+// and by FileID (the internal handle). The URI is stable from the
+// client's perspective, but our internal code prefers FileID since
+// it's cheaper to compare and clearly distinguishes "an opened
+// document" from "an arbitrary string."
 type State struct {
 	parser   *rts.RadParser
 	encoding PositionEncoding
+	idAlloc  fileIDAllocator
 
-	mu   sync.RWMutex
-	docs map[string]*Document
+	mu        sync.RWMutex
+	docs      map[string]*Document
+	idToDoc   map[FileID]*Document
 
 	// parserMu serializes calls into the tree-sitter parser. Tree-sitter
 	// parsers are NOT safe to share across goroutines; until/unless we
@@ -40,7 +48,33 @@ func NewState() *State {
 		parser:   radParser,
 		encoding: EncodingUTF16,
 		docs:     make(map[string]*Document),
+		idToDoc:  make(map[FileID]*Document),
 	}
+}
+
+// FileIDFor returns the FileID assigned to the named URI, or
+// InvalidFileID if the document isn't open. Internal callers that
+// already have a *Document should just call doc.FileID() directly.
+func (s *State) FileIDFor(uri string) FileID {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if doc, ok := s.docs[uri]; ok {
+		return doc.FileID()
+	}
+	return InvalidFileID
+}
+
+// SnapshotByID returns the current snapshot for a FileID, or nil if
+// the id isn't known. Lets internal code that holds a FileID grab the
+// latest version without converting back to URI first.
+func (s *State) SnapshotByID(id FileID) *DocumentVersion {
+	s.mu.RLock()
+	doc, ok := s.idToDoc[id]
+	s.mu.RUnlock()
+	if !ok {
+		return nil
+	}
+	return doc.Snapshot()
 }
 
 // Encoding returns the LSP position encoding currently in use.
@@ -80,15 +114,19 @@ func (s *State) document(uri string) *Document {
 // AddDoc opens a document for the first time and produces its initial
 // version. If the URI is already open the existing entry is replaced -
 // LSP shouldn't send didOpen twice for the same URI, but be defensive.
+// A fresh FileID is allocated per AddDoc; reopening a closed URI gets
+// a new id (we don't reuse ids within a session).
 func (s *State) AddDoc(uri, text string) {
 	log.L.Infof("Adding doc %s", uri)
-	doc := &Document{}
+	id := s.idAlloc.Next()
+	doc := &Document{fileID: id}
 	doc.Update(func(_ *DocumentVersion) *DocumentVersion {
-		return s.buildVersionLocked(uri, 1, text)
+		return s.buildVersionLocked(uri, id, 1, text)
 	})
 
 	s.mu.Lock()
 	s.docs[uri] = doc
+	s.idToDoc[id] = doc
 	s.mu.Unlock()
 }
 
@@ -110,17 +148,17 @@ func (s *State) UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEve
 			if prev != nil {
 				nextVer = prev.version + 1
 			}
-			return s.buildVersionLocked(uri, nextVer, change.Text)
+			return s.buildVersionLocked(uri, doc.FileID(), nextVer, change.Text)
 		})
 	}
 }
 
 // buildVersionLocked builds a new DocumentVersion while holding
 // parserMu, since tree-sitter parsers are not goroutine-safe.
-func (s *State) buildVersionLocked(uri string, version int64, text string) *DocumentVersion {
+func (s *State) buildVersionLocked(uri string, fileID FileID, version int64, text string) *DocumentVersion {
 	s.parserMu.Lock()
 	defer s.parserMu.Unlock()
-	return buildVersion(s.parser, s.encoding, uri, version, text)
+	return buildVersion(s.parser, s.encoding, uri, fileID, version, text)
 }
 
 // safeConvertCST converts a CST to AST, recovering from panics caused by
