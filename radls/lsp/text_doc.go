@@ -133,6 +133,40 @@ type DefinitionParams struct {
 	TextDocumentPositionParams
 }
 
+// DocumentSymbolParams is the textDocument/documentSymbol request
+// payload. The whole document is implied; no position or range is
+// passed because the response is "outline of the file."
+type DocumentSymbolParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+// SymbolKind matches the LSP 3.17 SymbolKind enum. We only use a
+// small slice today; the full list is in the spec but adding
+// constants we don't emit just clutters the file.
+type SymbolKind int
+
+const (
+	SymbolKindModule    SymbolKind = 2
+	SymbolKindFunction  SymbolKind = 12
+	SymbolKindVariable  SymbolKind = 13
+	SymbolKindNamespace SymbolKind = 3
+)
+
+// DocumentSymbol is the hierarchical outline shape (preferred over
+// the legacy flat SymbolInformation list). `Range` is the symbol's
+// whole-extent span; `SelectionRange` is the name token specifically
+// (what the editor highlights). The two often differ - a function
+// `Range` covers the whole body, while `SelectionRange` covers just
+// the name - so we always set both even when they're equal.
+type DocumentSymbol struct {
+	Name           string           `json:"name"`
+	Detail         string           `json:"detail,omitempty"`
+	Kind           SymbolKind       `json:"kind"`
+	Range          Range            `json:"range"`
+	SelectionRange Range            `json:"selectionRange"`
+	Children       []DocumentSymbol `json:"children,omitempty"`
+}
+
 // MarkupKind matches the LSP 3.17 MarkupKind enum. We always reply
 // in markdown today; plaintext is a future option if a client
 // declines markdown.

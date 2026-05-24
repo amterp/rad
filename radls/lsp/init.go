@@ -39,12 +39,13 @@ type InitializeResult struct {
 // list; clients use it for every subsequent request/response that
 // contains line/character positions.
 type ServerCapabilities struct {
-	TextDocumentSync   int32          `json:"textDocumentSync"`
-	HoverProvider      bool           `json:"hoverProvider"`
-	DefinitionProvider bool           `json:"definitionProvider"`
-	CodeActionProvider bool           `json:"codeActionProvider"`
-	CompletionProvider map[string]any `json:"completionProvider"`
-	PositionEncoding   string         `json:"positionEncoding,omitempty"`
+	TextDocumentSync       int32          `json:"textDocumentSync"`
+	HoverProvider          bool           `json:"hoverProvider"`
+	DefinitionProvider     bool           `json:"definitionProvider"`
+	DocumentSymbolProvider bool           `json:"documentSymbolProvider"`
+	CodeActionProvider     bool           `json:"codeActionProvider"`
+	CompletionProvider     map[string]any `json:"completionProvider"`
+	PositionEncoding       string         `json:"positionEncoding,omitempty"`
 }
 
 type ServerInfo struct {
@@ -55,10 +56,11 @@ type ServerInfo struct {
 func NewInitializeResult(positionEncoding string) InitializeResult {
 	return InitializeResult{
 		Capabilities: ServerCapabilities{
-			TextDocumentSync:   1,
-			HoverProvider:      true,
-			DefinitionProvider: true,
-			CodeActionProvider: true,
+			TextDocumentSync:       1,
+			HoverProvider:          true,
+			DefinitionProvider:     true,
+			DocumentSymbolProvider: true,
+			CodeActionProvider:     true,
 			CompletionProvider: map[string]any{
 				"triggerCharacters": []string{".", "#", "$", "!", "/"},
 			},
