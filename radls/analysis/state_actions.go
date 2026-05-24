@@ -19,7 +19,7 @@ func (s *State) Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.Compl
 	// utf-8 byte column so the rest of the analyzer can stay in
 	// tree-sitter's native coordinate system. Today addShebangCompletion
 	// only looks at the line number, but completion will grow.
-	bytePos := s.toBytePos(pos, snap)
+	bytePos := toBytePos(pos, snap)
 
 	var items []lsp.CompletionItem
 	addShebangCompletion(&items, snap, bytePos)
@@ -37,10 +37,10 @@ func (s *State) CodeAction(snap *DocumentVersion, r lsp.Range) (result []lsp.Cod
 	// We don't yet need the range for picking code actions (the only
 	// action is shebang insertion, which is whole-document), but we
 	// translate to byte coords for future code actions that will care.
-	_ = s.toByteRange(r, snap)
+	_ = toByteRange(r, snap)
 
 	var actions []lsp.CodeAction
-	addShebangInsertion(&actions, snap, s)
+	addShebangInsertion(&actions, snap)
 
 	return actions, nil
 }
@@ -48,41 +48,48 @@ func (s *State) CodeAction(snap *DocumentVersion, r lsp.Range) (result []lsp.Cod
 // toBytePos converts an incoming LSP position from the client's encoding
 // into a utf-8 byte column on the given snapshot. The line number passes
 // through unchanged - LSP lines and our internal lines both count \n.
-func (s *State) toBytePos(pos lsp.Pos, snap *DocumentVersion) lsp.Pos {
+//
+// The encoding comes from the snapshot, not the State, so the conversion
+// stays consistent with whichever encoding was in effect when this
+// version was built. If a session somehow renegotiates encoding (LSP
+// 3.17 doesn't allow this but be defensive), older snapshots remain
+// internally consistent.
+func toBytePos(pos lsp.Pos, snap *DocumentVersion) lsp.Pos {
 	return lsp.Pos{
 		Line:      pos.Line,
-		Character: snap.lineIndex.ColumnToByte(pos.Line, pos.Character, s.encoding),
+		Character: snap.lineIndex.ColumnToByte(pos.Line, pos.Character, snap.encoding),
 	}
 }
 
 // toByteRange is the Range-shaped counterpart of toBytePos.
-func (s *State) toByteRange(r lsp.Range, snap *DocumentVersion) lsp.Range {
+func toByteRange(r lsp.Range, snap *DocumentVersion) lsp.Range {
 	return lsp.Range{
-		Start: s.toBytePos(r.Start, snap),
-		End:   s.toBytePos(r.End, snap),
+		Start: toBytePos(r.Start, snap),
+		End:   toBytePos(r.End, snap),
 	}
 }
 
 // fromByteRange converts a Range expressed in utf-8 byte columns into
-// the client's negotiated encoding. Used when we construct a WorkspaceEdit
+// the snapshot's encoding. Used when we construct a WorkspaceEdit
 // from internal positions (e.g. tree-sitter node spans).
-func (s *State) fromByteRange(r lsp.Range, snap *DocumentVersion) lsp.Range {
+func fromByteRange(r lsp.Range, snap *DocumentVersion) lsp.Range {
 	idx := snap.lineIndex
+	enc := snap.encoding
 	return lsp.Range{
 		Start: lsp.Pos{
 			Line:      r.Start.Line,
-			Character: idx.ByteColumnTo(r.Start.Line, r.Start.Character, s.encoding),
+			Character: idx.ByteColumnTo(r.Start.Line, r.Start.Character, enc),
 		},
 		End: lsp.Pos{
 			Line:      r.End.Line,
-			Character: idx.ByteColumnTo(r.End.Line, r.End.Character, s.encoding),
+			Character: idx.ByteColumnTo(r.End.Line, r.End.Character, enc),
 		},
 	}
 }
 
-func addShebangInsertion(i *[]lsp.CodeAction, snap *DocumentVersion, s *State) {
-	shebang, err := snap.tree.FindShebang()
-	log.L.Infow("Searched for shebang", "err", err, "shebang", shebang)
+func addShebangInsertion(i *[]lsp.CodeAction, snap *DocumentVersion) {
+	shebang, found := snap.tree.FindShebang()
+	log.L.Infow("Searched for shebang", "found", found, "shebang", shebang)
 	if shebang == nil || shebang.StartPos().Row != 0 {
 		firstLine := snap.GetLine(0)
 		log.L.Infow("First line does not have #!, adding insertion action", "line", firstLine)
@@ -90,7 +97,7 @@ func addShebangInsertion(i *[]lsp.CodeAction, snap *DocumentVersion, s *State) {
 		// The insertion site is (0,0,0,0) - identical in every encoding -
 		// but we route it through fromByteRange anyway so future code
 		// actions inherit the right conversion habit.
-		insertRange := s.fromByteRange(lsp.NewLineRange(0, 0, 0), snap)
+		insertRange := fromByteRange(lsp.NewLineRange(0, 0, 0), snap)
 		edit.AddEdit(snap.uri, insertRange, RadShebang+"\n")
 		action := lsp.NewCodeActionEdit("Add shebang", edit)
 		*i = append(*i, action)

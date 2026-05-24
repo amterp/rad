@@ -43,6 +43,7 @@ type DocumentVersion struct {
 	tree        *rts.RadTree
 	ast         *rl.SourceFile
 	lineIndex   *LineIndex
+	encoding    PositionEncoding
 	diagnostics []lsp.Diagnostic
 
 	// refs starts at 1 - the Document that owns this version holds
@@ -59,6 +60,7 @@ func (v *DocumentVersion) Text() string                  { return v.text }
 func (v *DocumentVersion) Tree() *rts.RadTree            { return v.tree }
 func (v *DocumentVersion) AST() *rl.SourceFile           { return v.ast }
 func (v *DocumentVersion) LineIndex() *LineIndex         { return v.lineIndex }
+func (v *DocumentVersion) Encoding() PositionEncoding    { return v.encoding }
 func (v *DocumentVersion) Diagnostics() []lsp.Diagnostic { return v.diagnostics }
 
 // acquire bumps the refcount if the snapshot is still live. Returns
@@ -175,6 +177,7 @@ func buildVersion(
 		tree:        tree,
 		ast:         ast,
 		lineIndex:   lineIndex,
+		encoding:    encoding,
 		diagnostics: diags,
 	}
 	// Owner's reference. Released by Document.Update when this
