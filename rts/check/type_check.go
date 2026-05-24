@@ -126,6 +126,10 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		tc.walkIf(v)
 	case *rl.Switch:
 		tc.walkSwitch(v)
+	case *rl.ForLoop:
+		tc.walkForLoop(v)
+	case *rl.WhileLoop:
+		tc.walkWhileLoop(v)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -197,6 +201,91 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		branchFrames = append(branchFrames, acc)
 	}
 	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// walkForLoop handles `for vars in iter [with ctx]:`. The loop var
+// is typed from the iterable'\''s element shape so reads inside the
+// body see a real type (not Dynamic). After the loop the binding
+// keeps that type - Rad'\''s runtime leaves loop variables in scope
+// past the construct, and the static answer matches.
+//
+// Multi-var loops bind only the first var to the element type today.
+// The binder records the LAST declared loop-var in resolved.Decls
+// (overwriting earlier ones since they all key on the ForLoop node),
+// which makes generalized multi-var typing fragile. When Rad adds a
+// proper ForLoopVars map on Resolved we'\''ll cover unpacking shape
+// (k, v) over maps and (i, v) over enumerated lists.
+//
+// Loop-body narrowings can persist past the construct because the
+// runtime doesn'\''t open a new scope for loops. The frame after the
+// body becomes the post-loop frame; a future "drop narrowings for
+// vars assigned in body" (Sorbet rule, Phase 4i) lands separately.
+func (tc *typeChecker) walkForLoop(n *rl.ForLoop) {
+	iterType := tc.synth(n.Iter)
+
+	if len(n.Vars) == 1 {
+		if sym, ok := tc.resolved.Decls[n]; ok && sym != nil && sym.Kind == SymLoopVar {
+			elem := loopElementType(iterType)
+			tc.info.SymbolTypes[sym] = elem
+			tc.frame = tc.frame.With(sym, elem)
+		}
+	}
+
+	tc.walkStmts(n.Body)
+}
+
+// walkWhileLoop handles `while [cond]:`. Inside the body the
+// condition'\''s WhenTrue applies (we entered because cond was true);
+// after the loop the WhenFalse applies (we exited because cond
+// finally turned false).
+//
+// Body-assigned vars need their narrowings dropped on exit because
+// the body may run any number of times; the value at loop exit can
+// differ from each iteration. That'\''s the Sorbet rule and lives in
+// Phase 4i with the rest of reassignment widening. For now: apply
+// the WhenFalse refinement to the initial frame, which is sound for
+// vars not touched by the body and approximately right for the
+// common case.
+func (tc *typeChecker) walkWhileLoop(n *rl.WhileLoop) {
+	initial := tc.frame
+	if n.Condition == nil {
+		// `while:` (infinite loop) - no narrowing to apply.
+		tc.walkStmts(n.Body)
+		return
+	}
+	tc.frame = initial
+	_ = tc.synth(n.Condition)
+	ref := tc.interpretCondition(n.Condition, initial)
+	tc.frame = initial.WithMany(ref.WhenTrue)
+	tc.walkStmts(n.Body)
+	// Post-loop: condition is false (or body never ran). The body'\''s
+	// in-frame narrowings get discarded; the WhenFalse refinement
+	// applies on the initial frame.
+	tc.frame = initial.WithMany(ref.WhenFalse)
+}
+
+// loopElementType returns the element type for a single-var loop over
+// the given iterable. Lists yield their element type; maps yield the
+// key type (matches the Rad runtime, which iterates map keys); strings
+// yield str (each iteration produces a one-char string). Anything else
+// falls back to Dynamic.
+func loopElementType(iter rl.TypingT) rl.TypingT {
+	if iter == nil {
+		return rl.NewDynamicType()
+	}
+	switch v := iter.(type) {
+	case *rl.TypingListT:
+		return v.Elem()
+	case *rl.TypingAnyListT:
+		return rl.NewAnyType()
+	case *rl.TypingStrT:
+		return rl.NewStrType()
+	case *rl.TypingMapT:
+		return v.KeyT()
+	case *rl.TypingAnyMapT:
+		return rl.NewAnyType()
+	}
+	return rl.NewDynamicType()
 }
 
 // walkSwitch handles `switch <disc>:` with per-case narrowing of the

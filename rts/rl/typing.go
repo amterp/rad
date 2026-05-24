@@ -340,6 +340,12 @@ func (t *TypingListT) Name() string {
 	return t.elem.Name() + "[]"
 }
 
+// Elem returns the list'\''s element type. Exposed for narrowing -
+// the for-loop walker uses it to type the loop variable.
+func (t *TypingListT) Elem() TypingT {
+	return t.elem
+}
+
 func (t *TypingListT) IsCompatibleWith(val TypingCompatVal) bool {
 	// 1. Value‐level check
 	if val.Val != nil {
@@ -514,6 +520,12 @@ func NewMapType(key, val TypingT) *TypingMapT {
 func (t *TypingMapT) Name() string {
 	return fmt.Sprintf("{ %s: %s }", t.keyT.Name(), t.valT.Name())
 }
+
+// KeyT and ValT expose the map'\''s key and value types. Used by the
+// for-loop walker: a single-var iteration over a map binds the var
+// to the key type; a two-var iteration binds (key, value).
+func (t *TypingMapT) KeyT() TypingT { return t.keyT }
+func (t *TypingMapT) ValT() TypingT { return t.valT }
 
 func (t *TypingMapT) IsCompatibleWith(val TypingCompatVal) bool {
 	// 1. We have a *value*

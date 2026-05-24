@@ -921,6 +921,58 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Phase 4g: while/for loop rules ----------------------------------
+
+func TestTypeCheck_ForLoopVarFromListElement(t *testing.T) {
+	src := `for i in [1, 2, 3]:
+    print(i)
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	loop := file.Stmts[0].(*rl.ForLoop)
+	iSym := resolved.Decls[loop]
+	require.NotNil(t, iSym, "binder should record the loop var symbol")
+	got, ok := info.SymbolTypes[iSym]
+	require.True(t, ok, "loop var should get a symbol type")
+	assert.Equal(t, rl.T_INT, got.Name(), "loop var over int[] should be int")
+}
+
+func TestTypeCheck_ForLoopVarFromStringIsStr(t *testing.T) {
+	src := `for c in "hello":
+    print(c)
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	loop := file.Stmts[0].(*rl.ForLoop)
+	cSym := resolved.Decls[loop]
+	require.NotNil(t, cSym)
+	assert.Equal(t, rl.T_STR, info.SymbolTypes[cSym].Name())
+}
+
+func TestTypeCheck_ForLoopVarDynamicForUnknownIter(t *testing.T) {
+	// A function call we can'\''t resolve yields Dynamic.
+	src := `for v in unknown_fn():
+    print(v)
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	loop := file.Stmts[0].(*rl.ForLoop)
+	vSym := resolved.Decls[loop]
+	require.NotNil(t, vSym)
+	assert.Equal(t, rl.T_DYNAMIC, info.SymbolTypes[vSym].Name())
+}
+
+func TestTypeCheck_WhileNarrowsBody(t *testing.T) {
+	src := `fn f(x: int?):
+    while x != null:
+        y = x
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	whileL := fn.Body[0].(*rl.WhileLoop)
+	yAssign := whileL.Body[0].(*rl.Assign)
+	xUse := yAssign.Values[0].(*rl.Identifier)
+	assert.Equal(t, rl.T_INT, info.ExprTypes[xUse].Name(),
+		"x inside while body should narrow to non-null")
+}
+
 // --- Phase 4f: switch + exhaustiveness -------------------------------
 
 func TestTypeCheck_SwitchNarrowsDiscriminantPerCase(t *testing.T) {
