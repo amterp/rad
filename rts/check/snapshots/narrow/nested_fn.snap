@@ -1,0 +1,58 @@
+### TITLE ###
+NestedFnDoesNotInheritOuterNarrowing
+### DESCRIPTION ###
+A nested function definition opens its own frame. Narrowings from
+the surrounding scope don't leak in - the nested function can be
+called from anywhere, so its body must reason from base types only.
+### INPUT ###
+fn outer(x: int?):
+    if x != null:
+        fn inner():
+            y = x
+        inner()
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 4:13 -> <no-type>
+  x @ 4:17 -> int?
+  inner @ 5:9 -> dynamic
+
+# Symbol types
+  inner (fn): <no-type>
+  outer (fn): <no-type>
+  x (param): int?
+  y (local): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+NestedFnDoesNotLeakBodyMutationsOut
+### DESCRIPTION ###
+Inside the nested fn body, reassignments update the local frame;
+on return to the surrounding scope the outer frame must be intact.
+### INPUT ###
+fn f(x: int?):
+    if x != null:
+        fn g():
+            x = null
+            y = x
+        after_inner = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  x @ 4:13 -> <no-type>
+  y @ 5:13 -> <no-type>
+  x @ 5:17 -> dynamic
+  after_inner @ 6:9 -> <no-type>
+  x @ 6:23 -> int
+
+# Symbol types
+  after_inner (local): int
+  f (fn): <no-type>
+  g (fn): <no-type>
+  x (local): dynamic
+  x (param): int?
+  y (local): dynamic
+
+# Diagnostics
+  (none)

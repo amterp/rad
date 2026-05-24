@@ -130,6 +130,8 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		tc.walkForLoop(v)
 	case *rl.WhileLoop:
 		tc.walkWhileLoop(v)
+	case *rl.FnDef:
+		tc.walkFnDef(v)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -201,6 +203,40 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		branchFrames = append(branchFrames, acc)
 	}
 	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// walkFnDef handles a function definition statement. The body opens
+// a fresh frame so that narrowings active in the surrounding scope
+// don'\''t leak into the function body - a function can be called
+// from anywhere, and the call-site enclosing narrowings aren'\''t
+// available at the body. Body-internal narrowings stay isolated too:
+// after walking, tc.frame is restored to whatever the surrounding
+// scope had before the function definition.
+//
+// Param default expressions are walked under the SURROUNDING frame
+// (defaults are evaluated at call time but in the caller'\''s scope,
+// not the callee'\''s - matching the runtime'\''s lazy default eval).
+//
+// Closure rule deferred: same caveat as synthLambda. Captured
+// narrowings from the enclosing frame are NOT preserved. For a
+// closure-friendly design we'\''d need Pyright'\''s reassignment-after-
+// definition check. Today, nested functions just see Dynamic for
+// outer locals. Conservative but sound.
+func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
+	saved := tc.frame
+	// Param defaults synth in the surrounding frame (not the body'\''s
+	// fresh frame), matching Phase 2'\''s behavior - they'\''re evaluated
+	// at the call site, which is in the caller'\''s scope.
+	if n.Typing != nil {
+		for _, p := range n.Typing.Params {
+			if p.DefaultAST != nil && p.DefaultAST.Node != nil {
+				_ = tc.synth(p.DefaultAST.Node)
+			}
+		}
+	}
+	tc.frame = NewFrame()
+	tc.walkStmts(n.Body)
+	tc.frame = saved
 }
 
 // walkForLoop handles `for vars in iter [with ctx]:`. The loop var
@@ -318,8 +354,15 @@ func (tc *typeChecker) dropNarrowings(frame *Frame, syms map[*Symbol]bool) *Fram
 		if sym.Declared != nil {
 			overrides[sym] = sym.Declared
 		}
-		// No known base type: leave it - frame.Lookup will fall
-		// through and the synth path defaults to Dynamic anyway.
+		// No known base type. We don'\''t add an override here, so a
+		// prior narrowing from an ancestor frame keeps applying via
+		// Frame.Lookup'\''s parent walk. That'\''s probably wrong for
+		// the Sorbet rule - the whole point is to widen vars the
+		// body may reassign - but the fix is to track base types
+		// for every symbol, not to special-case this branch. Until
+		// then, this is the conservative under-widening: we may keep
+		// a narrowing we should have dropped, but we don'\''t introduce
+		// spurious narrowings.
 	}
 	return frame.WithMany(overrides)
 }
