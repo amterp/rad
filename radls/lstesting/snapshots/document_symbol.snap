@@ -1,0 +1,408 @@
+### TITLE ###
+EmptyDocument
+### DOCUMENT ###
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": []
+}
+### TITLE ###
+TopLevelAssignments
+### DOCUMENT ###
+x = 1
+y = 2
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "kind": 13,
+      "name": "x",
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 1,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "kind": 13,
+      "name": "y",
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 1
+        },
+        "start": {
+          "character": 0,
+          "line": 1
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 1,
+          "line": 1
+        },
+        "start": {
+          "character": 0,
+          "line": 1
+        }
+      }
+    }
+  ]
+}
+### TITLE ###
+ReassignmentDoesntDuplicate
+### DOCUMENT ###
+x = 1
+x = 2
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "kind": 13,
+      "name": "x",
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 1,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      }
+    }
+  ]
+}
+### TITLE ###
+FunctionDef
+### DOCUMENT ###
+fn greet():
+    print("hi")
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "detail": "fn()",
+      "kind": 12,
+      "name": "greet",
+      "range": {
+        "end": {
+          "character": 15,
+          "line": 1
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 2,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      }
+    }
+  ]
+}
+### TITLE ###
+ArgsBlock
+### DOCUMENT ###
+args:
+    name str
+    age int = 30
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "children": [
+        {
+          "detail": "str",
+          "kind": 13,
+          "name": "name",
+          "range": {
+            "end": {
+              "character": 12,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          },
+          "selectionRange": {
+            "end": {
+              "character": 12,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          }
+        },
+        {
+          "detail": "int",
+          "kind": 13,
+          "name": "age",
+          "range": {
+            "end": {
+              "character": 16,
+              "line": 2
+            },
+            "start": {
+              "character": 4,
+              "line": 2
+            }
+          },
+          "selectionRange": {
+            "end": {
+              "character": 16,
+              "line": 2
+            },
+            "start": {
+              "character": 4,
+              "line": 2
+            }
+          }
+        }
+      ],
+      "kind": 3,
+      "name": "args",
+      "range": {
+        "end": {
+          "character": 16,
+          "line": 2
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 16,
+          "line": 2
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      }
+    }
+  ]
+}
+### TITLE ###
+MixedSourceOrder
+### DOCUMENT ###
+args:
+    name str
+
+x = 1
+
+fn helper():
+    print(1)
+### DOCUMENT_SYMBOL ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "children": [
+        {
+          "detail": "str",
+          "kind": 13,
+          "name": "name",
+          "range": {
+            "end": {
+              "character": 12,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          },
+          "selectionRange": {
+            "end": {
+              "character": 12,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          }
+        }
+      ],
+      "kind": 3,
+      "name": "args",
+      "range": {
+        "end": {
+          "character": 12,
+          "line": 1
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 12,
+          "line": 1
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "kind": 13,
+      "name": "x",
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 3
+        },
+        "start": {
+          "character": 0,
+          "line": 3
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 1,
+          "line": 3
+        },
+        "start": {
+          "character": 0,
+          "line": 3
+        }
+      }
+    },
+    {
+      "detail": "fn()",
+      "kind": 12,
+      "name": "helper",
+      "range": {
+        "end": {
+          "character": 12,
+          "line": 6
+        },
+        "start": {
+          "character": 0,
+          "line": 5
+        }
+      },
+      "selectionRange": {
+        "end": {
+          "character": 2,
+          "line": 5
+        },
+        "start": {
+          "character": 0,
+          "line": 5
+        }
+      }
+    }
+  ]
+}
