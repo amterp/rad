@@ -10,20 +10,19 @@ import (
 )
 
 // addDiagnosticQuickFixes emits a code action per snapshot
-// diagnostic whose Range overlaps the request range. Two
-// flavours of action come out of this:
+// diagnostic whose Range overlaps the request range, for the
+// subset of diagnostics that have a machine-applicable fix.
 //
-//  1. Structured quick fixes - we know how to construct a real
-//     edit that resolves the diagnostic. Today only the
-//     `T | null` -> `T?` pattern qualifies; we can grow this
-//     list as more diagnostics gain machine-applicable fixes.
-//
-//  2. Informational refactor actions - the diagnostic carries a
-//     Suggestion string but no machine-applicable plan. We
-//     surface it as a refactor-kind action with no edit, so
-//     users see the suggestion in the lightbulb menu and can
-//     apply it themselves. This is the right backstop until
-//     each emitter gets structured fixes.
+// We only emit STRUCTURED quick fixes - actions that come with
+// a real WorkspaceEdit the client can apply. An earlier
+// iteration also surfaced "info-only" actions (the diagnostic's
+// Suggestion string with no edit), but a user clicking those
+// gets a no-op: the LSP client invokes apply, there's nothing
+// to apply, and the menu closes silently. That trains users to
+// distrust the lightbulb. Suggestion text already renders as
+// part of the diagnostic itself ("help: ..." line under the
+// error message); the lightbulb's job is to perform fixes, not
+// repeat help text.
 //
 // Ranges arrive in utf-8 byte coords (from check.Diagnostic);
 // we translate through fromByteRange before emitting so the
@@ -39,13 +38,6 @@ func addDiagnosticQuickFixes(actions *[]lsp.CodeAction, snap *DocumentVersion, r
 		}
 		if action, ok := structuredFixFor(snap, d); ok {
 			*actions = append(*actions, action)
-			continue
-		}
-		if d.Suggestion != nil && *d.Suggestion != "" {
-			*actions = append(*actions, lsp.CodeAction{
-				Title: *d.Suggestion,
-				Kind:  lsp.CodeActionRefactor,
-			})
 		}
 	}
 }
