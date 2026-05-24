@@ -53,7 +53,7 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 		addBuiltinCompletions(items)
 	} else {
 		addBuiltinCompletions(items)
-		addFileScopeCompletions(items, snap)
+		addFileScopeCompletions(items, snap, bytePos)
 		addEnclosingFnCompletions(items, snap, bytePos)
 	}
 	dedupCompletionsInPlace(items)
@@ -88,7 +88,16 @@ func addBuiltinCompletions(items *[]lsp.CompletionItem) {
 // We work directly off the AST rather than walking the resolved
 // scope tree because the scope tree doesn't expose its children -
 // the AST shape is the source of truth for "what's at top level."
-func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion) {
+//
+// Position discipline: top-level Assigns aren't hoisted (the
+// binder declares them at point of visit), so suggesting a var
+// declared after the cursor would lead users to write code that
+// runtime-errors with undefined-variable. We filter by
+// spanBefore, matching the discipline in
+// addEnclosingFnCompletions. FnDefs DO get hoisted by the
+// binder so they're always in scope and we offer them
+// regardless of position.
+func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, pos lsp.Pos) {
 	file := snap.ast
 	if file.Args != nil {
 		for i := range file.Args.Decls {
@@ -126,6 +135,12 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion)
 				SortText: sortTierFile,
 			})
 		case *rl.Assign:
+			// Top-level vars aren't hoisted; suggesting one
+			// declared after the cursor would offer a name the
+			// runtime hasn't bound yet.
+			if !spanBefore(n.Span(), pos) {
+				continue
+			}
 			for _, target := range n.Targets {
 				if ident, ok := target.(*rl.Identifier); ok {
 					*items = append(*items, lsp.CompletionItem{

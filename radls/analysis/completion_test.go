@@ -99,6 +99,25 @@ func TestCompletionIncludesEnclosingFnParams(t *testing.T) {
 	}
 }
 
+// TestCompletionExcludesFileVarsDeclaredAfterCursor verifies the
+// position filter applies at file scope too. Without it, a
+// top-level var declared on line N+5 would be suggested at line
+// N - users following the suggestion get a runtime undefined-
+// variable error because top-level vars aren't hoisted by the
+// binder.
+func TestCompletionExcludesFileVarsDeclaredAfterCursor(t *testing.T) {
+	// `later` is declared after the cursor.
+	src := "alpha = 1\n\n\nlater = 2\n"
+	// Cursor at line 1 col 0 - between alpha and later.
+	items := completionFixture(t, src, lsp.NewPos(1, 0))
+	if hasLabel(items, "later") {
+		t.Errorf("'later' is declared after cursor, shouldn't be in completions")
+	}
+	if !hasLabel(items, "alpha") {
+		t.Errorf("'alpha' is declared before cursor, should be in completions")
+	}
+}
+
 // TestCompletionExcludesLocalsDeclaredAfterCursor verifies a local
 // declared LATER in the body isn't suggested - the user can't
 // reference it yet at this cursor position.
