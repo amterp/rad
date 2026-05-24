@@ -266,10 +266,37 @@ func (b *binder) visit(n rl.Node) {
 // exists, so this distinction doesn't matter, but doing it uniformly
 // keeps the logic simple.
 func (b *binder) visitAssign(a *rl.Assign) {
-	for _, val := range a.Values {
+	// Lambda-aware ordering: when value[i] is a Lambda, declare
+	// target[i] FIRST so the lambda body can reference the new
+	// binding (let-rec semantics for `f = fn(...) ... f(...)`).
+	// For non-lambda RHSes we keep the old order - visit RHS
+	// first so `x = x + 1` resolves the read-of-x to the
+	// pre-assign binding, matching Python and Rad's runtime.
+	//
+	// The ordering is per pair, not all-or-nothing. In an unpack
+	// like `f, g = fn() ..., fn() ...` (rare) each lambda gets
+	// its target declared early; in `x, f = 5, fn() ... x ...`
+	// only f's target moves up.
+	for i, val := range a.Values {
+		if _, isLambda := val.(*rl.Lambda); !isLambda {
+			b.visit(val)
+			continue
+		}
+		if i < len(a.Targets) {
+			b.declareTarget(a.Targets[i], a.UpdateEnclosing)
+		}
 		b.visit(val)
 	}
-	for _, target := range a.Targets {
+	for i, target := range a.Targets {
+		// Skip targets already declared above (their value was a
+		// Lambda and we did the early declaration). For unpack
+		// shapes where len(Targets) > len(Values), every extra
+		// target goes through the normal declare path.
+		if i < len(a.Values) {
+			if _, isLambda := a.Values[i].(*rl.Lambda); isLambda {
+				continue
+			}
+		}
 		b.declareTarget(target, a.UpdateEnclosing)
 	}
 	// Typed local: `x: int = 5`. The converter only attaches

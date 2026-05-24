@@ -442,6 +442,25 @@ func (tc *typeChecker) processFnSCC(scc []*rl.FnDef, fnSym map[*rl.FnDef]*Symbol
 	}
 }
 
+// prePlantLambdaSignature writes a placeholder TypingFnT (Never
+// return) onto SymbolTypes for a target that's about to receive a
+// lambda value. The body walk that follows can then resolve
+// recursive references through callSignatureFor / synthIdentifier
+// to that placeholder, instead of falling back to Dynamic. After
+// synth completes, walkAssign overwrites SymbolTypes with the
+// lambda's real inferred TypingFnT.
+func (tc *typeChecker) prePlantLambdaSignature(sym *Symbol, lam *rl.Lambda) {
+	params := []rl.TypingFnParam(nil)
+	if lam.Typing != nil {
+		params = lam.Typing.Params
+	}
+	var ret rl.TypingT = rl.NewNeverType()
+	tc.info.SymbolTypes[sym] = &rl.TypingFnT{
+		Params:  params,
+		ReturnT: &ret,
+	}
+}
+
 // walkFnDefForInference is walkFnDef but exposes the collected
 // return-statement types so the SCC orchestrator can build the
 // inferred return. Semantics are identical to walkFnDef otherwise.
@@ -1539,6 +1558,27 @@ func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
 // later read of the binding.
 func (tc *typeChecker) walkAssign(a *rl.Assign) {
 	for i, val := range a.Values {
+		// Recursive-lambda support: when a lambda RHS is assigned
+		// to an identifier whose symbol has no declared type, the
+		// recursive reference inside the lambda body would otherwise
+		// see Dynamic (SymbolTypes hasn't been populated yet). Plant
+		// a tentative TypingFnT with a Never return placeholder so
+		// the recursive callsite synths to Never (which propagates
+		// trivially and drops in unionTypesForJoin, leaving non-
+		// recursive paths to determine the inferred return). This
+		// mirrors the hoisted-fn SCC pre-pass strategy for the
+		// local-binding case. After synth completes, the lambda's
+		// real TypingFnT overwrites the placeholder via the normal
+		// SymbolTypes update below.
+		if i < len(a.Targets) {
+			if lam, ok := val.(*rl.Lambda); ok {
+				if ident, ok := a.Targets[i].(*rl.Identifier); ok {
+					if sym, ok := tc.resolved.Uses[ident]; ok && sym.Declared == nil {
+						tc.prePlantLambdaSignature(sym, lam)
+					}
+				}
+			}
+		}
 		valType := tc.synth(val)
 		if i >= len(a.Targets) {
 			continue
@@ -1938,6 +1978,27 @@ func (tc *typeChecker) callSignatureFor(callee rl.Node) *rl.TypingFnT {
 			return nil
 		}
 		return fn.Typing
+	}
+	// Fall-through for non-builtin / non-hoisted symbols: locals
+	// bound to lambdas, function-typed params, etc. When their
+	// SymbolTypes entry carries a TypingFnT (planted by typed-
+	// local declarations, param annotations, or the recursive-
+	// lambda pre-plant in walkAssign), return it so the call site
+	// gets real shape-check + return-type resolution. Without
+	// this branch, every fn-value call through a local fell back
+	// to Dynamic.
+	if t, ok := tc.info.SymbolTypes[sym]; ok {
+		if fnT, ok := t.(*rl.TypingFnT); ok {
+			return fnT
+		}
+	}
+	// Frame may carry a tighter narrowed type for this symbol;
+	// prefer it when it's a TypingFnT (e.g. a future narrowing
+	// rule that proves the value is callable).
+	if t, ok := tc.frame.Lookup(sym); ok {
+		if fnT, ok := t.(*rl.TypingFnT); ok {
+			return fnT
+		}
 	}
 	return nil
 }
@@ -2608,7 +2669,9 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	collected := tc.popReturnFrame()
 	tc.frame = enclosing
 
-	// Honor an explicit return annotation; otherwise infer.
+	// Honor an explicit return annotation; otherwise infer. Same
+	// shape as hoisted-fn inference: empty returns → void, all-
+	// dropped (purely recursive) → Dynamic, else the union.
 	var returnT rl.TypingT
 	if n.Typing != nil && n.Typing.ReturnT != nil {
 		returnT = *n.Typing.ReturnT
@@ -2616,6 +2679,9 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 		returnT = rl.NewVoidType()
 	} else {
 		returnT = unionTypesForJoin(collected)
+		if _, isNever := returnT.(*rl.TypingNeverT); isNever {
+			returnT = rl.NewDynamicType()
+		}
 	}
 
 	// Construct a fresh TypingFnT so we don'\''t mutate the parsed

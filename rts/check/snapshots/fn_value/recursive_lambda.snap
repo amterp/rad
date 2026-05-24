@@ -1,0 +1,130 @@
+### TITLE ###
+RecursiveLambdaSelfCallResolves
+### DESCRIPTION ###
+A lambda bound to a local that calls itself recursively. The
+pre-plant places a Never-return placeholder on the symbol BEFORE
+synth'ing the body, so the recursive call inside resolves to a
+TypingFnT (with Never return) instead of Dynamic. The recursive
+return contributes Never, drops in union, and the base case
+determines the inferred return.
+### INPUT ###
+fact = fn(n: int):
+    if n <= 1:
+        return 1
+    return fact(n - 1) * n
+### STDOUT ###
+# Identifier types
+  fact @ 1:1 -> <no-type>
+  n @ 2:8 -> int
+  fact @ 4:12 -> fn(int) -> never
+  n @ 4:17 -> int
+  n @ 4:26 -> int
+
+# Symbol types
+  fact (local): fn(int) -> int
+  n (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+RecursiveLambdaPureLoopDynamic
+### DESCRIPTION ###
+All return paths recursive - no concrete return type to pin.
+Inferred as Dynamic, same fallback used for purely recursive
+hoisted fns.
+### INPUT ###
+loop = fn(x: int):
+    return loop(x + 1)
+### STDOUT ###
+# Identifier types
+  loop @ 1:1 -> <no-type>
+  loop @ 2:12 -> fn(int) -> never
+  x @ 2:17 -> int
+
+# Symbol types
+  loop (local): fn(int) -> dynamic
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+RecursiveLambdaMultiPathUnioned
+### DESCRIPTION ###
+Two non-recursive base paths return int and str; the recursive
+arm drops as Never. Inferred return is int|str.
+### INPUT ###
+pick = fn(x: int):
+    if x < 0:
+        return "neg"
+    if x == 0:
+        return 0
+    return pick(x - 1)
+### STDOUT ###
+# Identifier types
+  pick @ 1:1 -> <no-type>
+  x @ 2:8 -> int
+  x @ 4:8 -> int
+  pick @ 6:12 -> fn(int) -> never
+  x @ 6:17 -> int
+
+# Symbol types
+  pick (local): fn(int) -> str|int
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+RecursiveLambdaCallFromOutsideUsesInferredReturn
+### DESCRIPTION ###
+Outside the lambda, the recursive lambda's symbol now carries
+the finalized TypingFnT (real return), so a call from main scope
+gets the inferred return, not Dynamic.
+### INPUT ###
+fact = fn(n: int):
+    if n <= 1:
+        return 1
+    return fact(n - 1) * n
+
+result = fact(5)
+### STDOUT ###
+# Identifier types
+  fact @ 1:1 -> <no-type>
+  n @ 2:8 -> int
+  fact @ 4:12 -> fn(int) -> never
+  n @ 4:17 -> int
+  n @ 4:26 -> int
+  result @ 6:1 -> <no-type>
+  fact @ 6:10 -> fn(int) -> int
+
+# Symbol types
+  fact (local): fn(int) -> int
+  n (param): int
+  result (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedLambdaRecursiveCallUsesDeclared
+### DESCRIPTION ###
+When the user declares the type at the binding site, the
+declared TypingFnT was already on the symbol via sym.Declared.
+The recursive call sees that directly - no placeholder needed.
+### INPUT ###
+fact: fn(int) -> int = fn(n: int):
+    if n <= 1:
+        return 1
+    return fact(n - 1) * n
+### STDOUT ###
+# Identifier types
+  fact @ 1:1 -> <no-type>
+  n @ 2:8 -> int
+  fact @ 4:12 -> fn(int) -> int
+  n @ 4:17 -> int
+  n @ 4:26 -> int
+
+# Symbol types
+  fact (local): fn(int) -> int
+  n (param): int
+
+# Diagnostics
+  (none)
