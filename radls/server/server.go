@@ -56,6 +56,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	m.AddNotificationHandler(lsp.TD_DID_CHANGE, server.handleDidChange)
 	m.AddRequestHandler(lsp.TD_COMPLETION, server.handleCompletion)
 	m.AddRequestHandler(lsp.TD_CODE_ACTION, server.handleCodeAction)
+	m.AddRequestHandler(lsp.TD_HOVER, server.handleHover)
 
 	return &server
 }
@@ -151,6 +152,23 @@ func (s *Server) handleCodeAction(_ context.Context, params json.RawMessage) (re
 		defer snap.Release()
 	}
 	result, err = s.s.CodeAction(snap, codeActionParams.Range)
+	return
+}
+
+func (s *Server) handleHover(_ context.Context, params json.RawMessage) (result any, err error) {
+	var hoverParams lsp.HoverParams
+	if err = json.Unmarshal(params, &hoverParams); err != nil {
+		return
+	}
+	snap := s.s.Snapshot(hoverParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
+	// Returning nil for the result field encodes the LSP-spec "null"
+	// reply that clients treat as "no hover here," which is what we
+	// want when the cursor isn't on a known identifier. State.Hover
+	// returns (nil, nil) for that case so we pass it through.
+	result, err = s.s.Hover(snap, hoverParams.Position)
 	return
 }
 

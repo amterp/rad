@@ -40,7 +40,7 @@ type InitializeResult struct {
 // contains line/character positions.
 type ServerCapabilities struct {
 	TextDocumentSync int32 `json:"textDocumentSync"`
-	//HoverProvider      bool           `json:"hoverProvider"`
+	HoverProvider    bool  `json:"hoverProvider"`
 	//DefinitionProvider bool           `json:"definitionProvider"`
 	CodeActionProvider bool           `json:"codeActionProvider"`
 	CompletionProvider map[string]any `json:"completionProvider"`
@@ -56,7 +56,7 @@ func NewInitializeResult(positionEncoding string) InitializeResult {
 	return InitializeResult{
 		Capabilities: ServerCapabilities{
 			TextDocumentSync: 1,
-			//HoverProvider:      true,
+			HoverProvider:    true,
 			//DefinitionProvider: true,
 			CodeActionProvider: true,
 			CompletionProvider: map[string]any{

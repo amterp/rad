@@ -161,7 +161,7 @@ func sameDiagnostics(a, b []lsp.Diagnostic) bool {
 		var sb strings.Builder
 		sb.WriteString(d.Message)
 		sb.WriteByte('|')
-		fmt(&sb, d.Range)
+		writeRange(&sb, d.Range)
 		return sb.String()
 	}
 	as := make([]string, len(a))
@@ -196,9 +196,11 @@ func astShape(v *DocumentVersion) string {
 	return v.Tree().Sexp()
 }
 
-// fmt is a tiny range-stringifier kept local so the test file
-// doesn't pull strconv/fmt for one print site.
-func fmt(sb *strings.Builder, r lsp.Range) {
+// writeRange is a tiny range-stringifier kept local so the test
+// file doesn't pull strconv/fmt for one print site. (The helper
+// used to be named `fmt`, but that shadowed the stdlib package
+// name and broke once any other file in analysis/ imported "fmt".)
+func writeRange(sb *strings.Builder, r lsp.Range) {
 	itoaInto(sb, r.Start.Line)
 	sb.WriteByte(':')
 	itoaInto(sb, r.Start.Character)

@@ -9,6 +9,7 @@ const (
 	TD_DID_CHANGE          = "textDocument/didChange"
 	TD_COMPLETION          = "textDocument/completion"
 	TD_CODE_ACTION         = "textDocument/codeAction"
+	TD_HOVER               = "textDocument/hover"
 	TD_PUBLISH_DIAGNOSTICS = "textDocument/publishDiagnostics"
 )
 

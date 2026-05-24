@@ -38,7 +38,7 @@ func TestRunCheckerConvertsUTF16(t *testing.T) {
 			ck := &stubChecker{result: check.Result{Diagnostics: []check.Diagnostic{
 				{Range: tc.in, Severity: check.Error, Message: "x"},
 			}}}
-			diags := runChecker(ck, idx, tc.enc)
+			diags, _, _ := runChecker(ck, idx, tc.enc)
 			if len(diags) != 1 {
 				t.Fatalf("expected 1 diagnostic, got %d", len(diags))
 			}
@@ -57,7 +57,7 @@ func TestRunCheckerConvertsUTF16(t *testing.T) {
 // explicit [] for "no diagnostics."
 func TestRunCheckerEmpty(t *testing.T) {
 	ck := &stubChecker{result: check.Result{Diagnostics: nil}}
-	got := runChecker(ck, NewLineIndex(""), EncodingUTF16)
+	got, _, _ := runChecker(ck, NewLineIndex(""), EncodingUTF16)
 	if got == nil {
 		t.Errorf("expected non-nil empty slice, got nil")
 	}

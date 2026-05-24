@@ -89,6 +89,8 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addRadOptionNoEffectWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
+		Resolved:    resolved,
+		Types:       typeInfo,
 	}, nil
 }
 

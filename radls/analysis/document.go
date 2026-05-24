@@ -45,6 +45,14 @@ type DocumentVersion struct {
 	lineIndex   *LineIndex
 	encoding    PositionEncoding
 	diagnostics []lsp.Diagnostic
+	// resolved and types are the analysis indexes the LSP feature
+	// handlers (hover, goto-def, find-refs, completion) consult to
+	// answer requests. They share a (frozen) AST with this snapshot,
+	// so they're safe to read concurrently for the lifetime of the
+	// version. Either may be nil if the source failed to convert
+	// (e.g. mid-edit syntax error) - callers must handle that.
+	resolved *check.Resolved
+	types    *check.TypeInfo
 
 	// refs starts at 1 - the Document that owns this version holds
 	// the initial reference. Each State.Snapshot caller bumps to one
@@ -62,6 +70,8 @@ func (v *DocumentVersion) AST() *rl.SourceFile           { return v.ast }
 func (v *DocumentVersion) LineIndex() *LineIndex         { return v.lineIndex }
 func (v *DocumentVersion) Encoding() PositionEncoding    { return v.encoding }
 func (v *DocumentVersion) Diagnostics() []lsp.Diagnostic { return v.diagnostics }
+func (v *DocumentVersion) Resolved() *check.Resolved     { return v.resolved }
+func (v *DocumentVersion) Types() *check.TypeInfo        { return v.types }
 
 // acquire bumps the refcount if the snapshot is still live. Returns
 // false if the snapshot has already been released (refs == 0), in
@@ -167,7 +177,7 @@ func buildVersion(
 	lineIndex := NewLineIndex(text)
 
 	checker := check.NewCheckerWithTree(tree, parser, text, ast)
-	diags := runChecker(checker, lineIndex, encoding)
+	diags, resolved, typeInfo := runChecker(checker, lineIndex, encoding)
 
 	v := &DocumentVersion{
 		uri:         uri,
@@ -179,6 +189,8 @@ func buildVersion(
 		lineIndex:   lineIndex,
 		encoding:    encoding,
 		diagnostics: diags,
+		resolved:    resolved,
+		types:       typeInfo,
 	}
 	// Owner's reference. Released by Document.Update when this
 	// version is replaced by a successor.
@@ -190,11 +202,16 @@ func buildVersion(
 // columns) and lsp.Diagnostic (negotiated encoding). Lives here so the
 // snapshot construction path owns the translation, rather than scatter
 // it across the analysis package.
-func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) []lsp.Diagnostic {
+//
+// Returns the LSP-shaped diagnostics plus the analysis indexes from
+// the same check pass. The indexes (resolved, typeInfo) are nil when
+// AST conversion failed; they're load-bearing for LSP features beyond
+// diagnostics (hover, goto-def, etc.).
+func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) ([]lsp.Diagnostic, *check.Resolved, *check.TypeInfo) {
 	out := make([]lsp.Diagnostic, 0)
 	result, err := checker.Check()
 	if err != nil {
-		return out
+		return out, nil, nil
 	}
 	for _, cd := range result.Diagnostics {
 		rang := lsp.Range{
@@ -209,5 +226,5 @@ func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) 
 		}
 		out = append(out, lsp.NewDiagnosticFromCheckWithRange(cd, rang))
 	}
-	return out
+	return out, result.Resolved, result.Types
 }

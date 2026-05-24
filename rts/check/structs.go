@@ -155,8 +155,16 @@ func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, cod
 	return NewDiagnosticFromSpan(span, originalSrc, Warning, msg, &code)
 }
 
+// Result is the output of a check pass. Diagnostics is the
+// user-visible product; Resolved and Types are the supporting
+// indexes the LSP layer leans on for hover, goto-def, find-refs,
+// etc. They're nil when the source failed to convert to an AST
+// (so the checker only ran the CST-based passes). Callers that
+// only want diagnostics can ignore them.
 type Result struct {
 	Diagnostics []Diagnostic
+	Resolved    *Resolved
+	Types       *TypeInfo
 }
 
 type Pos struct {

@@ -118,6 +118,39 @@ type CompletionParams struct {
 	TextDocumentPositionParams
 }
 
+// HoverParams is the textDocument/hover request payload. Same shape
+// as completion - just a position - but we keep distinct types so
+// any spec-level divergence (work-done tokens, etc.) lands cleanly.
+type HoverParams struct {
+	TextDocumentPositionParams
+}
+
+// MarkupKind matches the LSP 3.17 MarkupKind enum. We always reply
+// in markdown today; plaintext is a future option if a client
+// declines markdown.
+type MarkupKind string
+
+const (
+	MarkupPlainText MarkupKind = "plaintext"
+	MarkupMarkdown  MarkupKind = "markdown"
+)
+
+// MarkupContent is the rich-text payload format for hover and a few
+// other LSP responses. We emit markdown so we can render fenced code
+// blocks (`rad` language identifier) which clients style as syntax.
+type MarkupContent struct {
+	Kind  MarkupKind `json:"kind"`
+	Value string     `json:"value"`
+}
+
+// Hover is the response to textDocument/hover. Range is optional but
+// providing it lets the editor highlight the token the hover applies
+// to, which feels much better than a bare popup.
+type Hover struct {
+	Contents MarkupContent `json:"contents"`
+	Range    *Range        `json:"range,omitempty"`
+}
+
 type TextEdit struct {
 	Range   Range  `json:"range"`
 	NewText string `json:"newText"`
