@@ -3,74 +3,66 @@ package analysis
 import (
 	"testing"
 
+	"github.com/amterp/rad/radls/lsp"
+	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 )
 
-// TestToLspRangeUTF16 verifies the byte->utf-16 boundary conversion.
-// Documents the contract: check.Range carries utf-8 byte columns (the
-// tree-sitter native); resolveDiagnostics translates to the client's
-// negotiated encoding before publishing.
-func TestToLspRangeUTF16(t *testing.T) {
+// TestRunCheckerConvertsUTF16 verifies the byte->utf-16 boundary
+// conversion that runChecker applies when translating check
+// diagnostics into the wire format. Documents the contract:
+// check.Range carries utf-8 byte columns (tree-sitter native);
+// buildVersion translates to the client's negotiated encoding.
+func TestRunCheckerConvertsUTF16(t *testing.T) {
 	// Line 0: `x = "中"`  (9 bytes; 中 = 3 bytes, 1 utf-16 unit)
 	// Line 1: `y = "🎉"` (10 bytes; 🎉 = 4 bytes, 2 utf-16 units)
 	text := "x = \"中\"\ny = \"🎉\""
-
-	s := NewState()
-	s.SetEncoding(EncodingUTF16)
-	doc := &DocState{lineIndex: NewLineIndex(text)}
+	idx := NewLineIndex(text)
 
 	cases := []struct {
-		name     string
-		in       check.Range
-		wantSL   int
-		wantSC   int
-		wantEL   int
-		wantEC   int
+		name   string
+		in     check.Range
+		enc    PositionEncoding
+		wantSC int
+		wantEC int
 	}{
-		{
-			name:   "ascii range untouched",
-			in:     mkRange(0, 0, 0, 3),
-			wantSL: 0, wantSC: 0, wantEL: 0, wantEC: 3,
-		},
-		{
-			name:   "byte col after CJK char compresses to utf-16",
-			in:     mkRange(0, 4, 0, 9), // covers `"中"` (5 bytes -> 3 utf-16 units)
-			wantSL: 0, wantSC: 4, wantEL: 0, wantEC: 7,
-		},
-		{
-			name:   "byte col after astral char compresses",
-			in:     mkRange(1, 4, 1, 10), // covers `"🎉"` (6 bytes -> 4 utf-16 units)
-			wantSL: 1, wantSC: 4, wantEL: 1, wantEC: 8,
-		},
+		{"ascii range untouched utf-16", mkRange(0, 0, 0, 3), EncodingUTF16, 0, 3},
+		{"byte col after CJK -> utf-16", mkRange(0, 4, 0, 9), EncodingUTF16, 4, 7},
+		{"byte col after astral -> utf-16", mkRange(1, 4, 1, 10), EncodingUTF16, 4, 8},
+		{"utf-8 passthrough", mkRange(0, 4, 0, 9), EncodingUTF8, 4, 9},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := s.toLspRange(tc.in, doc)
-			if got.Start.Line != tc.wantSL || got.Start.Character != tc.wantSC ||
-				got.End.Line != tc.wantEL || got.End.Character != tc.wantEC {
-				t.Errorf("got %d:%d-%d:%d, want %d:%d-%d:%d",
-					got.Start.Line, got.Start.Character, got.End.Line, got.End.Character,
-					tc.wantSL, tc.wantSC, tc.wantEL, tc.wantEC)
+			ck := &stubChecker{result: check.Result{Diagnostics: []check.Diagnostic{
+				{Range: tc.in, Severity: check.Error, Message: "x"},
+			}}}
+			diags := runChecker(ck, idx, tc.enc)
+			if len(diags) != 1 {
+				t.Fatalf("expected 1 diagnostic, got %d", len(diags))
+			}
+			got := diags[0].Range
+			if got.Start.Character != tc.wantSC || got.End.Character != tc.wantEC {
+				t.Errorf("got %d-%d, want %d-%d",
+					got.Start.Character, got.End.Character,
+					tc.wantSC, tc.wantEC)
 			}
 		})
 	}
 }
 
-// TestToLspRangeUTF8 verifies utf-8 is a passthrough (with clamping).
-// A client that negotiates utf-8 should get byte columns unchanged.
-func TestToLspRangeUTF8(t *testing.T) {
-	text := "x = \"中\""
-
-	s := NewState()
-	s.SetEncoding(EncodingUTF8)
-	doc := &DocState{lineIndex: NewLineIndex(text)}
-
-	in := mkRange(0, 4, 0, 9)
-	got := s.toLspRange(in, doc)
-	if got.Start.Character != 4 || got.End.Character != 9 {
-		t.Errorf("utf-8 passthrough: got %d-%d, want 4-9",
-			got.Start.Character, got.End.Character)
+// TestRunCheckerEmpty verifies the no-diagnostics path still returns
+// a non-nil (zero-length) slice, since the LSP wire format wants an
+// explicit [] for "no diagnostics."
+func TestRunCheckerEmpty(t *testing.T) {
+	ck := &stubChecker{result: check.Result{Diagnostics: nil}}
+	got := runChecker(ck, NewLineIndex(""), EncodingUTF16)
+	if got == nil {
+		t.Errorf("expected non-nil empty slice, got nil")
+	}
+	if len(got) != 0 {
+		t.Errorf("expected zero diagnostics, got %d", len(got))
 	}
 }
 
@@ -80,3 +72,18 @@ func mkRange(sl, sc, el, ec int) check.Range {
 		End:   check.Pos{Line: el, Character: ec},
 	}
 }
+
+// stubChecker is a minimal RadChecker for testing the conversion path
+// without needing a real parser/tree.
+type stubChecker struct {
+	result check.Result
+}
+
+func (s *stubChecker) UpdateSrc(string)                             {}
+func (s *stubChecker) Update(*rts.RadTree, string, *rl.SourceFile)  {}
+func (s *stubChecker) Check() (check.Result, error)                 { return s.result, nil }
+
+// Compile-time interface check. lsp import keeps the file honest if
+// the test ever drops its only lsp reference.
+var _ check.RadChecker = (*stubChecker)(nil)
+var _ = lsp.Diagnostic{}
