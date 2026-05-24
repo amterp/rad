@@ -107,6 +107,15 @@ type typeChecker struct {
 	// nil means "no declared return, only inference applies."
 	// Pushed on lambda/fn entry, popped on exit.
 	returnStack []returnFrame
+	// reassignedInScope is the position map of all reassignments
+	// in the IMMEDIATELY enclosing fn / lambda body. Used by the
+	// closure rule in synthLambda: a captured path that gets
+	// reassigned AFTER the lambda's definition can't carry its
+	// current narrowing into the lambda body (the lambda might
+	// run after the reassignment invalidates it). Set on
+	// fn / lambda entry (save & swap), restored on exit. Empty
+	// map = no reassignments to worry about.
+	reassignedInScope map[*Symbol][]rl.Span
 }
 
 type returnFrame struct {
@@ -169,6 +178,12 @@ func (tc *typeChecker) walkFile(file *rl.SourceFile) {
 	// across nested fns is a rare enough corner case to defer
 	// until it bites.
 	tc.inferHoistedFnReturns(file)
+	// Track reassignments in the file scope so lambdas defined at
+	// top level get the closure-rule treatment for top-level
+	// locals that get reassigned later.
+	prevReassigned := tc.reassignedInScope
+	tc.reassignedInScope = tc.scanReassignments(file.Stmts)
+	defer func() { tc.reassignedInScope = prevReassigned }()
 	for _, stmt := range file.Stmts {
 		// Skip top-level FnDefs; the inference pre-pass already
 		// walked their bodies and would otherwise double-emit
@@ -442,6 +457,115 @@ func (tc *typeChecker) processFnSCC(scc []*rl.FnDef, fnSym map[*rl.FnDef]*Symbol
 	}
 }
 
+// scanReassignments collects per-symbol assignment spans for every
+// Identifier-target Assign inside `body`, stopping at nested fn /
+// lambda boundaries (those have their own scope). The result is
+// used by synthLambda to decide which captured narrowings to drop
+// when entering a lambda body - Pyright's closure rule: a path
+// reassigned after a lambda's definition can't safely carry its
+// current narrowing inside the lambda body, since the lambda may
+// run after that reassignment.
+//
+// Both fresh declarations (`x = 5`) and compound assigns
+// (`x += 1`, `x++`) count. A param has 0 entries here (the binding
+// is the parameter slot, not an Assign), so unmodified params
+// stay narrowed inside captured lambdas, which is the intuitive
+// behavior.
+func (tc *typeChecker) scanReassignments(body []rl.Node) map[*Symbol][]rl.Span {
+	out := make(map[*Symbol][]rl.Span)
+	var visit func(rl.Node)
+	visit = func(n rl.Node) {
+		if n == nil {
+			return
+		}
+		switch v := n.(type) {
+		case *rl.FnDef, *rl.Lambda:
+			// Don't recurse - inner fn / lambda bodies own their
+			// own reassignment scope. Their own walks will populate
+			// reassignedInScope when they fire.
+			_ = v
+			return
+		case *rl.Assign:
+			for _, t := range v.Targets {
+				ident, ok := t.(*rl.Identifier)
+				if !ok {
+					continue
+				}
+				sym, ok := tc.resolved.Uses[ident]
+				if !ok || sym == nil {
+					continue
+				}
+				out[sym] = append(out[sym], ident.Span())
+			}
+			// Values still walked - they may contain nested
+			// statements we care about (e.g. a fallback expression
+			// with a side-effect, though Rad doesn't really have
+			// embedded statements in exprs).
+			for _, c := range n.Children() {
+				visit(c)
+			}
+			return
+		}
+		for _, c := range n.Children() {
+			visit(c)
+		}
+	}
+	for _, s := range body {
+		visit(s)
+	}
+	return out
+}
+
+// closureOverridesForLambda computes the SymbolTypes overrides a
+// lambda body should layer on top of its captured frame, per
+// Pyright's closure rule. For each symbol that:
+//
+//   - is narrowed in the enclosing frame at the lambda's position,
+//   - is assigned anywhere AFTER the lambda's position in the
+//     enclosing scope,
+//
+// we override it to its base type (info.SymbolTypes / sym.Declared
+// fallback), effectively dropping the narrowing inside the lambda
+// body. Symbols not reassigned (or reassigned only before the
+// lambda) keep their narrowing.
+func (tc *typeChecker) closureOverridesForLambda(lam *rl.Lambda) map[*Symbol]rl.TypingT {
+	if len(tc.reassignedInScope) == 0 {
+		return nil
+	}
+	lambdaStart := lam.Span().StartByte
+	overrides := make(map[*Symbol]rl.TypingT)
+	for sym, spans := range tc.reassignedInScope {
+		reassignedAfter := false
+		for _, s := range spans {
+			if s.StartByte > lambdaStart {
+				reassignedAfter = true
+				break
+			}
+		}
+		if !reassignedAfter {
+			continue
+		}
+		// Only matters if the enclosing frame currently narrows
+		// this symbol - otherwise there's nothing to drop.
+		if _, narrowed := tc.frame.Lookup(sym); !narrowed {
+			continue
+		}
+		var base rl.TypingT
+		if t, ok := tc.info.SymbolTypes[sym]; ok {
+			base = t
+		} else if sym.Declared != nil {
+			base = sym.Declared
+		} else {
+			base = rl.NewDynamicType()
+		}
+		overrides[sym] = base
+	}
+	if len(overrides) == 0 {
+		return nil
+	}
+	return overrides
+}
+
 // prePlantLambdaSignature writes a placeholder TypingFnT (Never
 // return) onto SymbolTypes for a target that's about to receive a
 // lambda value. The body walk that follows can then resolve
@@ -479,7 +603,10 @@ func (tc *typeChecker) walkFnDefForInference(n *rl.FnDef) []rl.TypingT {
 		declaredReturn = *n.Typing.ReturnT
 	}
 	tc.pushReturnFrame(declaredReturn)
+	prevReassigned := tc.reassignedInScope
+	tc.reassignedInScope = tc.scanReassignments(n.Body)
 	tc.walkStmts(n.Body)
+	tc.reassignedInScope = prevReassigned
 	collected := tc.popReturnFrame()
 	tc.frame = saved
 	return collected
@@ -640,7 +767,12 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 		declaredReturn = *n.Typing.ReturnT
 	}
 	tc.pushReturnFrame(declaredReturn)
+	// Swap reassignedInScope to this fn body's scan, so lambdas
+	// defined inside see the right enclosing-reassignments set.
+	prevReassigned := tc.reassignedInScope
+	tc.reassignedInScope = tc.scanReassignments(n.Body)
 	tc.walkStmts(n.Body)
+	tc.reassignedInScope = prevReassigned
 	collected := tc.popReturnFrame()
 	tc.frame = saved
 
@@ -2630,12 +2762,18 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 // already describes for hoisted fns.
 func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	enclosing := tc.frame
-	// Unlike walkFnDef (which resets to a fresh frame because a fn
-	// can be called from anywhere), lambdas inherit the enclosing
-	// frame'\''s narrowings - that'\''s closure semantics. The
-	// reassignment-after-definition lookahead that would invalidate
-	// stale narrowings is still deferred (see docstring).
-	//
+	// Lambdas inherit the enclosing frame'\''s narrowings - that'\''s
+	// closure semantics. Pyright'\''s closure rule: drop narrowings
+	// on any captured path that gets reassigned AFTER the lambda'\''s
+	// definition in the enclosing scope. The lambda may run after
+	// such a reassignment, at which point the captured narrowing
+	// no longer holds. The overrides layer on top of the enclosing
+	// frame, restoring captured-but-reassigned paths to their base
+	// type for the body walk.
+	if overrides := tc.closureOverridesForLambda(n); overrides != nil {
+		tc.frame = tc.frame.WithMany(overrides)
+	}
+
 	// Feed the declared return (if any) into the return frame so
 	// each `return E` in the body gets checked against the
 	// declaration at its own span. Lambdas without a declared
@@ -2646,6 +2784,11 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 		declaredReturn = *n.Typing.ReturnT
 	}
 	tc.pushReturnFrame(declaredReturn)
+
+	// Swap reassignedInScope so any lambda nested inside this one
+	// sees this body'\''s reassignments as its enclosing scope.
+	prevReassigned := tc.reassignedInScope
+	tc.reassignedInScope = tc.scanReassignments(n.Body)
 
 	// Expression-form lambdas (`fn(x) x + 1`) put the expression
 	// node directly in Body (verified against the converter output -
@@ -2666,6 +2809,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 		tc.walkStmts(n.Body)
 	}
 
+	tc.reassignedInScope = prevReassigned
 	collected := tc.popReturnFrame()
 	tc.frame = enclosing
 

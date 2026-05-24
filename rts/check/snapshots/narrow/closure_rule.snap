@@ -1,0 +1,144 @@
+### TITLE ###
+LambdaSeesNarrowingWhenNotReassigned
+### DESCRIPTION ###
+A lambda defined under `if x != null:` captures x as `int` when
+x is never reassigned in the enclosing scope. The narrowing
+holds inside the lambda body.
+### INPUT ###
+fn outer(x: int?):
+    if x != null:
+        cb = fn() x + 1
+        result = cb()
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  cb @ 3:9 -> <no-type>
+  x @ 3:19 -> int
+  result @ 4:9 -> <no-type>
+  cb @ 4:18 -> fn() -> int
+
+# Symbol types
+  cb (local): fn() -> int
+  outer (fn): fn(int?) -> void
+  result (local): int
+  x (param): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaDropsNarrowingWhenReassignedLater
+### DESCRIPTION ###
+A lambda defined under `if x != null:` should NOT see x as `int`
+if x gets reassigned to null (or any other value) later in the
+enclosing scope - the lambda may run after the reassignment.
+Pyright's closure rule drops the narrowing; x inside the lambda
+reads as `int?` (the base type).
+### INPUT ###
+fn outer():
+    x: int? = 5
+    if x != null:
+        cb = fn() x
+        x = null
+        result = cb()
+### STDOUT ###
+# Identifier types
+  x @ 2:5 -> <no-type>
+  x @ 3:8 -> int
+  cb @ 4:9 -> <no-type>
+  x @ 4:19 -> int?
+  x @ 5:9 -> <no-type>
+  result @ 6:9 -> <no-type>
+  cb @ 6:18 -> fn() -> int?
+
+# Symbol types
+  cb (local): fn() -> int?
+  outer (fn): fn() -> void
+  result (local): int?
+  x (local): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaKeepsNarrowingWhenReassignedBefore
+### DESCRIPTION ###
+A reassignment BEFORE the lambda's definition doesn't invalidate
+the narrowing: by the time the lambda is defined, the new value
+is the one being captured. The closure rule only drops narrowings
+on paths reassigned AFTER the lambda.
+### INPUT ###
+fn outer():
+    x: int? = 5
+    x = 7
+    if x != null:
+        cb = fn() x
+        result = cb()
+### STDOUT ###
+# Identifier types
+  x @ 2:5 -> <no-type>
+  x @ 3:5 -> <no-type>
+  x @ 4:8 -> int
+  cb @ 5:9 -> <no-type>
+  x @ 5:19 -> int
+  result @ 6:9 -> <no-type>
+  cb @ 6:18 -> fn() -> int
+
+# Symbol types
+  cb (local): fn() -> int
+  outer (fn): fn() -> void
+  result (local): int
+  x (local): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+CompoundAssignAlsoTriggersRule
+### DESCRIPTION ###
+Compound assign (`x += 1`) counts as a reassignment for the
+closure rule, just like plain `x = ...`. A captured narrowing
+gets dropped when a later compound assign rebinds the path.
+### INPUT ###
+fn outer():
+    x: int? = 5
+    if x != null:
+        cb = fn() x
+        x += 1
+### STDOUT ###
+# Identifier types
+  x @ 2:5 -> <no-type>
+  x @ 3:8 -> int
+  cb @ 4:9 -> <no-type>
+  x @ 4:19 -> int?
+  x @ 5:9 -> <no-type>
+  x @ 5:9 -> int
+
+# Symbol types
+  cb (local): fn() -> int?
+  outer (fn): fn() -> void
+  x (local): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+ParamUnmodifiedKeepsNarrowingInLambda
+### DESCRIPTION ###
+Params have no Assign entries in the body (the binding is the
+param slot itself, not an Assign), so a param that's never
+reassigned in the body keeps its narrowing inside captured
+lambdas. Common case - lambdas as map / filter callbacks.
+### INPUT ###
+fn outer(x: int?):
+    if x != null:
+        cb = fn() x + 1
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  cb @ 3:9 -> <no-type>
+  x @ 3:19 -> int
+
+# Symbol types
+  cb (local): fn() -> int
+  outer (fn): fn(int?) -> void
+  x (param): int?
+
+# Diagnostics
+  (none)
