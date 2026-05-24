@@ -81,6 +81,21 @@ func Run(tc *SnapshotCase) (string, error) {
 		case ActionCodeAction:
 			err = sendCodeAction(bw, requestId, *action.Range)
 			requestId++
+		case ActionHover:
+			err = sendHover(bw, requestId, *action.Position)
+			requestId++
+		case ActionDefinition:
+			err = sendDefinition(bw, requestId, *action.Position)
+			requestId++
+		case ActionDocumentSymbol:
+			err = sendDocumentSymbol(bw, requestId)
+			requestId++
+		case ActionReferences:
+			err = sendReferences(bw, requestId, *action.Position, action.IncludeDeclaration)
+			requestId++
+		case ActionSemanticTokens:
+			err = sendSemanticTokens(bw, requestId)
+			requestId++
 		}
 		if err != nil {
 			clientWriter.Close()
@@ -235,6 +250,51 @@ func sendCodeAction(bw *bufio.Writer, id int, r lsp.Range) error {
 		Range:        r,
 	}
 	return sendRequest(bw, id, lsp.TD_CODE_ACTION, params)
+}
+
+func sendHover(bw *bufio.Writer, id int, pos lsp.Pos) error {
+	params := lsp.HoverParams{
+		TextDocumentPositionParams: lsp.TextDocumentPositionParams{
+			TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+			Position:     pos,
+		},
+	}
+	return sendRequest(bw, id, lsp.TD_HOVER, params)
+}
+
+func sendDefinition(bw *bufio.Writer, id int, pos lsp.Pos) error {
+	params := lsp.DefinitionParams{
+		TextDocumentPositionParams: lsp.TextDocumentPositionParams{
+			TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+			Position:     pos,
+		},
+	}
+	return sendRequest(bw, id, lsp.TD_DEFINITION, params)
+}
+
+func sendDocumentSymbol(bw *bufio.Writer, id int) error {
+	params := lsp.DocumentSymbolParams{
+		TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+	}
+	return sendRequest(bw, id, lsp.TD_DOCUMENT_SYMBOL, params)
+}
+
+func sendReferences(bw *bufio.Writer, id int, pos lsp.Pos, includeDecl bool) error {
+	params := lsp.ReferenceParams{
+		TextDocumentPositionParams: lsp.TextDocumentPositionParams{
+			TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+			Position:     pos,
+		},
+		Context: lsp.ReferenceContext{IncludeDeclaration: includeDecl},
+	}
+	return sendRequest(bw, id, lsp.TD_REFERENCES, params)
+}
+
+func sendSemanticTokens(bw *bufio.Writer, id int) error {
+	params := lsp.SemanticTokensParams{
+		TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+	}
+	return sendRequest(bw, id, lsp.TD_SEMANTIC_TOKENS, params)
 }
 
 // marshalRaw marshals a value into a json.RawMessage.

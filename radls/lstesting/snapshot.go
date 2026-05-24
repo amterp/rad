@@ -13,13 +13,24 @@ import (
 
 var UpdateSnapshots = flag.Bool("update", false, "update snapshot expected outputs")
 
+// Action delimiters. Each request-shaped action has its own header
+// because the LSP wire methods take different parameter shapes -
+// trying to overload one delimiter would make the snap files
+// harder to read than the small constant table here. Headers that
+// carry no position/range trail with just "###"; positioned ones
+// embed "line:char [line:char]" before the closing "###".
 const (
-	TitleDelimiter      = "### TITLE ###"
-	DocumentDelimiter   = "### DOCUMENT ###"
-	ChangeDelimiter     = "### CHANGE ###"
-	CompletionDelimiter = "### COMPLETION"  // e.g. "### COMPLETION 0:0 ###"
-	CodeActionDelimiter = "### CODE_ACTION" // e.g. "### CODE_ACTION 0:0 0:0 ###"
-	StdoutDelimiter     = "### STDOUT ###"
+	TitleDelimiter          = "### TITLE ###"
+	DocumentDelimiter       = "### DOCUMENT ###"
+	ChangeDelimiter         = "### CHANGE ###"
+	CompletionDelimiter     = "### COMPLETION"      // "### COMPLETION 0:0 ###"
+	CodeActionDelimiter     = "### CODE_ACTION"     // "### CODE_ACTION 0:0 0:0 ###"
+	HoverDelimiter          = "### HOVER"           // "### HOVER 0:0 ###"
+	DefinitionDelimiter     = "### DEFINITION"      // "### DEFINITION 0:0 ###"
+	DocumentSymbolDelimiter = "### DOCUMENT_SYMBOL" // "### DOCUMENT_SYMBOL ###"
+	ReferencesDelimiter     = "### REFERENCES"      // "### REFERENCES 0:0 [decl] ###"
+	SemanticTokensDelimiter = "### SEMANTIC_TOKENS" // "### SEMANTIC_TOKENS ###"
+	StdoutDelimiter         = "### STDOUT ###"
 )
 
 type ActionType int
@@ -28,13 +39,23 @@ const (
 	ActionChange ActionType = iota
 	ActionCompletion
 	ActionCodeAction
+	ActionHover
+	ActionDefinition
+	ActionDocumentSymbol
+	ActionReferences
+	ActionSemanticTokens
 )
 
+// Action carries one snapshot action's parameters. Different
+// ActionTypes use different sub-fields; the omitted fields are
+// just left zero. We don't bother with a discriminated-union
+// because each Action is short-lived and the fields are small.
 type Action struct {
-	Type     ActionType
-	Content  string     // For CHANGE: new document text
-	Position *lsp.Pos   // For COMPLETION: cursor position
-	Range    *lsp.Range // For CODE_ACTION: selected range
+	Type               ActionType
+	Content            string     // For CHANGE: new document text
+	Position           *lsp.Pos   // For COMPLETION / HOVER / DEFINITION / REFERENCES
+	Range              *lsp.Range // For CODE_ACTION: selected range
+	IncludeDeclaration bool       // For REFERENCES: matches LSP context flag
 }
 
 type SnapshotCase struct {
@@ -210,31 +231,102 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 	return cases, nil
 }
 
-// isActionHeader returns true if the line is a header-only action delimiter
-// (COMPLETION or CODE_ACTION). CHANGE is not included because it has body content.
+// isActionHeader returns true if the line is a header-only
+// action delimiter (any of the request-shaped delimiters). CHANGE
+// is excluded because it has body content and gets its own
+// stateChangeBody handling.
+//
+// Order matters here: more-specific prefixes must be tested
+// before less-specific ones. DOCUMENT_SYMBOL contains DOCUMENT
+// as a substring, so a naive prefix check would route the former
+// to the latter. We avoid that by testing the longer name first.
 func isActionHeader(line string) bool {
-	return strings.HasPrefix(line, CompletionDelimiter) || strings.HasPrefix(line, CodeActionDelimiter)
+	return strings.HasPrefix(line, DocumentSymbolDelimiter) ||
+		strings.HasPrefix(line, SemanticTokensDelimiter) ||
+		strings.HasPrefix(line, CompletionDelimiter) ||
+		strings.HasPrefix(line, CodeActionDelimiter) ||
+		strings.HasPrefix(line, DefinitionDelimiter) ||
+		strings.HasPrefix(line, ReferencesDelimiter) ||
+		strings.HasPrefix(line, HoverDelimiter)
 }
 
 // parseActionHeader parses an action header line into an Action.
+// Same order-of-tests caveat as isActionHeader: longer prefixes
+// first.
 func parseActionHeader(line, path string, lineNum int) (Action, error) {
-	if strings.HasPrefix(line, CompletionDelimiter) {
+	switch {
+	case strings.HasPrefix(line, DocumentSymbolDelimiter):
+		return Action{Type: ActionDocumentSymbol}, nil
+	case strings.HasPrefix(line, SemanticTokensDelimiter):
+		return Action{Type: ActionSemanticTokens}, nil
+	case strings.HasPrefix(line, CompletionDelimiter):
 		pos, err := parsePosFromHeader(line, CompletionDelimiter, path, lineNum)
 		if err != nil {
 			return Action{}, err
 		}
 		return Action{Type: ActionCompletion, Position: &pos}, nil
-	}
-
-	if strings.HasPrefix(line, CodeActionDelimiter) {
+	case strings.HasPrefix(line, CodeActionDelimiter):
 		r, err := parseRangeFromHeader(line, CodeActionDelimiter, path, lineNum)
 		if err != nil {
 			return Action{}, err
 		}
 		return Action{Type: ActionCodeAction, Range: &r}, nil
+	case strings.HasPrefix(line, DefinitionDelimiter):
+		pos, err := parsePosFromHeader(line, DefinitionDelimiter, path, lineNum)
+		if err != nil {
+			return Action{}, err
+		}
+		return Action{Type: ActionDefinition, Position: &pos}, nil
+	case strings.HasPrefix(line, ReferencesDelimiter):
+		// REFERENCES headers carry a position and an optional
+		// "decl" suffix that maps to includeDeclaration=true.
+		// "### REFERENCES 1:6 ###"      -> uses-only
+		// "### REFERENCES 1:6 decl ###" -> include declaration
+		inner := strings.TrimPrefix(line, ReferencesDelimiter)
+		inner = strings.TrimSuffix(inner, "###")
+		inner = strings.TrimSpace(inner)
+		parts := strings.Fields(inner)
+		if len(parts) == 0 {
+			return Action{}, fmt.Errorf("%s:%d: REFERENCES header missing position", path, lineNum)
+		}
+		pos, err := parsePosToken(parts[0], path, lineNum)
+		if err != nil {
+			return Action{}, err
+		}
+		includeDecl := false
+		for _, p := range parts[1:] {
+			if p == "decl" {
+				includeDecl = true
+			}
+		}
+		return Action{Type: ActionReferences, Position: &pos, IncludeDeclaration: includeDecl}, nil
+	case strings.HasPrefix(line, HoverDelimiter):
+		pos, err := parsePosFromHeader(line, HoverDelimiter, path, lineNum)
+		if err != nil {
+			return Action{}, err
+		}
+		return Action{Type: ActionHover, Position: &pos}, nil
 	}
-
 	return Action{}, fmt.Errorf("%s:%d: unrecognized action header: %s", path, lineNum, line)
+}
+
+// parsePosToken parses a "line:char" token like "0:5" into an
+// lsp.Pos. Pulled out so REFERENCES (which has additional
+// suffix tokens) can share the parser without duplicating it.
+func parsePosToken(token, path string, lineNum int) (lsp.Pos, error) {
+	parts := strings.SplitN(token, ":", 2)
+	if len(parts) != 2 {
+		return lsp.Pos{}, fmt.Errorf("%s:%d: expected position as line:char, got '%s'", path, lineNum, token)
+	}
+	line, err := strconv.Atoi(strings.TrimSpace(parts[0]))
+	if err != nil {
+		return lsp.Pos{}, fmt.Errorf("%s:%d: invalid line number '%s': %w", path, lineNum, parts[0], err)
+	}
+	char, err := strconv.Atoi(strings.TrimSpace(parts[1]))
+	if err != nil {
+		return lsp.Pos{}, fmt.Errorf("%s:%d: invalid character number '%s': %w", path, lineNum, parts[1], err)
+	}
+	return lsp.NewPos(line, char), nil
 }
 
 // parsePosFromHeader extracts a position (line:char) from a header like "### COMPLETION 0:0 ###".
@@ -340,6 +432,20 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 				fmt.Fprintf(&builder, "%s %d:%d %d:%d ###\n", CodeActionDelimiter,
 					action.Range.Start.Line, action.Range.Start.Character,
 					action.Range.End.Line, action.Range.End.Character)
+			case ActionHover:
+				fmt.Fprintf(&builder, "%s %d:%d ###\n", HoverDelimiter, action.Position.Line, action.Position.Character)
+			case ActionDefinition:
+				fmt.Fprintf(&builder, "%s %d:%d ###\n", DefinitionDelimiter, action.Position.Line, action.Position.Character)
+			case ActionDocumentSymbol:
+				fmt.Fprintf(&builder, "%s ###\n", DocumentSymbolDelimiter)
+			case ActionReferences:
+				if action.IncludeDeclaration {
+					fmt.Fprintf(&builder, "%s %d:%d decl ###\n", ReferencesDelimiter, action.Position.Line, action.Position.Character)
+				} else {
+					fmt.Fprintf(&builder, "%s %d:%d ###\n", ReferencesDelimiter, action.Position.Line, action.Position.Character)
+				}
+			case ActionSemanticTokens:
+				fmt.Fprintf(&builder, "%s ###\n", SemanticTokensDelimiter)
 			}
 		}
 
