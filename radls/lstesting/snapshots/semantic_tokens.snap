@@ -1,0 +1,161 @@
+### TITLE ###
+EmptyDocument
+### DOCUMENT ###
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": []
+  }
+}
+### TITLE ###
+LocalAndBuiltinCall
+### DOCUMENT ###
+x = 1
+print(x)
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      0,
+      1,
+      2,
+      0,
+      1,
+      0,
+      5,
+      0,
+      0,
+      0,
+      6,
+      1,
+      2,
+      0
+    ]
+  }
+}
+### TITLE ###
+FnNameAtDefinitionSite
+### DOCUMENT ###
+fn greet():
+    print("hi")
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      3,
+      5,
+      0,
+      0,
+      1,
+      4,
+      5,
+      0,
+      0
+    ]
+  }
+}
+### TITLE ###
+ParamReferencesTagged
+### DOCUMENT ###
+fn greet(who: str):
+    print(who)
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      3,
+      5,
+      0,
+      0,
+      1,
+      4,
+      5,
+      0,
+      0,
+      0,
+      6,
+      3,
+      1,
+      0
+    ]
+  }
+}
+### TITLE ###
+UnresolvedIdentsSkipped
+### DOCUMENT ###
+print(undefined_name)
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      0,
+      5,
+      0,
+      0
+    ]
+  }
+}
