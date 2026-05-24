@@ -124,6 +124,8 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		_ = tc.synth(v.Expr)
 	case *rl.If:
 		tc.walkIf(v)
+	case *rl.Switch:
+		tc.walkSwitch(v)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -195,6 +197,180 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		branchFrames = append(branchFrames, acc)
 	}
 	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// walkSwitch handles `switch <disc>:` with per-case narrowing of the
+// discriminant. For each case the body walks with the discriminant
+// symbol narrowed to the case'\''s match type; the discriminant'\''s
+// residual (= base minus all peeled cases) flows into the default
+// branch.
+//
+// String-enum exhaustiveness: when the discriminant is a closed type
+// (string-enum) and no default arm catches the rest, the residual
+// after peeling all explicit cases should be Never. If it'\''s
+// non-Never, the switch is missing variants - emit an
+// ErrNonExhaustiveSwitch diagnostic naming the unmatched values.
+//
+// Non-enum discriminants get the normal walk (case bodies don'\''t
+// narrow) and no exhaustiveness check. The mechanism is in place;
+// extending it to int / int-enum / sealed unions is straightforward
+// when those types arrive.
+func (tc *typeChecker) walkSwitch(n *rl.Switch) {
+	discType := tc.synth(n.Discriminant)
+	var discSym *Symbol
+	if id, ok := n.Discriminant.(*rl.Identifier); ok {
+		if sym, ok := tc.resolved.Uses[id]; ok {
+			discSym = sym
+		}
+	}
+
+	initial := tc.frame
+	residual := discType
+	var branchFrames []*Frame
+
+	for _, c := range n.Cases {
+		caseType := tc.matchTypeForCaseKeys(c.Keys)
+		var branchFrame *Frame
+		if discSym != nil && caseType != nil && !isErrorType(caseType) {
+			branchFrame = initial.With(discSym, caseType)
+		} else {
+			branchFrame = initial
+		}
+		tc.frame = branchFrame
+		exitsEarly := tc.walkSwitchAlt(c.Alt)
+		if !exitsEarly {
+			branchFrames = append(branchFrames, tc.frame)
+		}
+		residual = subtractEnumType(residual, caseType)
+	}
+
+	if n.Default != nil {
+		var defFrame *Frame
+		if discSym != nil && residual != nil {
+			defFrame = initial.With(discSym, residual)
+		} else {
+			defFrame = initial
+		}
+		tc.frame = defFrame
+		if !tc.walkSwitchAlt(n.Default.Alt) {
+			branchFrames = append(branchFrames, tc.frame)
+		}
+	} else {
+		// No default - the unmatched values fall through past the
+		// switch unchanged. If the residual is non-Never on a closed
+		// (string-enum) discriminant type, emit a non-exhaustive
+		// diagnostic; the runtime would error at the unmatched
+		// value, and surfacing it statically is the whole point.
+		if !isNeverType(residual) && isClosedDiscriminant(discType) {
+			tc.emitNonExhaustiveSwitch(n, residual)
+		}
+		var fallFrame *Frame
+		if discSym != nil && residual != nil {
+			fallFrame = initial.With(discSym, residual)
+		} else {
+			fallFrame = initial
+		}
+		branchFrames = append(branchFrames, fallFrame)
+	}
+
+	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// walkSwitchAlt walks the body of a switch case (block form) or
+// synths the expressions (expression form), returning whether the
+// case unconditionally diverts (return/break/continue at the end of
+// the block form).
+//
+// Expression-form alts never exit early: they evaluate to a value
+// and fall through to the post-switch flow.
+func (tc *typeChecker) walkSwitchAlt(alt rl.Node) bool {
+	switch a := alt.(type) {
+	case *rl.SwitchCaseBlock:
+		tc.walkStmts(a.Stmts)
+		return branchExitsEarly(a.Stmts)
+	case *rl.SwitchCaseExpr:
+		for _, v := range a.Values {
+			_ = tc.synth(v)
+		}
+		return false
+	}
+	return false
+}
+
+// matchTypeForCaseKeys turns a list of case keys into the type that
+// the discriminant takes inside that case'\''s body. For string
+// literals we build a string-enum naming the matched values; for
+// anything else we currently return nil (no narrowing applied).
+//
+// Mixed string + non-string keys disqualify the partition; nil is
+// safer than guessing. Future work: int-enum once Rad gains them.
+func (tc *typeChecker) matchTypeForCaseKeys(keys []rl.Node) rl.TypingT {
+	if len(keys) == 0 {
+		return nil
+	}
+	values := make([]string, 0, len(keys))
+	for _, k := range keys {
+		s, ok := simpleStringValue(k)
+		if !ok {
+			return nil
+		}
+		values = append(values, s)
+	}
+	return rl.NewStrEnumType(values...)
+}
+
+// subtractEnumType removes the values of caseType from base. Returns
+// base unchanged if either side isn'\''t a string-enum. For exhausted
+// enums (all values peeled), returns Never.
+func subtractEnumType(base, caseType rl.TypingT) rl.TypingT {
+	if base == nil {
+		return nil
+	}
+	bEnum, bOK := base.(*rl.TypingStrEnumT)
+	cEnum, cOK := caseType.(*rl.TypingStrEnumT)
+	if !bOK || !cOK {
+		return base
+	}
+	caseSet := make(map[string]bool, len(cEnum.Values()))
+	for _, v := range cEnum.Values() {
+		caseSet[v] = true
+	}
+	remaining := make([]string, 0, len(bEnum.Values()))
+	for _, v := range bEnum.Values() {
+		if !caseSet[v] {
+			remaining = append(remaining, v)
+		}
+	}
+	if len(remaining) == 0 {
+		return rl.NewNeverType()
+	}
+	return rl.NewStrEnumType(remaining...)
+}
+
+// isClosedDiscriminant reports whether a discriminant'\''s static type
+// is a closed set the checker can exhaustively analyze. Today: just
+// string-enums. Bool would be a near-term extension (true / false
+// being the closed set), if we add an exhaustive-bool predicate.
+func isClosedDiscriminant(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingStrEnumT)
+	return ok
+}
+
+// emitNonExhaustiveSwitch records a diagnostic naming the unmatched
+// values of a closed discriminant. The message lists the values so
+// the user can read the fix off the diagnostic without inspecting
+// the discriminant'\''s declared type.
+func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT) {
+	msg := "Switch is not exhaustive"
+	if enum, ok := residual.(*rl.TypingStrEnumT); ok {
+		msg = fmt.Sprintf("Switch is not exhaustive; missing case for %s", enum.Name())
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     n.Span(),
+		Severity: IssueWarning,
+		Code:     rl.ErrNonExhaustiveSwitch,
+		Message:  msg,
+	})
 }
 
 // branchExitsEarly reports whether the body unconditionally diverts

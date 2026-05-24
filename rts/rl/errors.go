@@ -102,6 +102,7 @@ const (
 	ErrRadOptionNoEffect                Error = "40007"
 	ErrDeprecatedBlockKeyword           Error = "40008"
 	ErrDuplicateParameter               Error = "40009"
+	ErrNonExhaustiveSwitch              Error = "40010"
 )
 
 func (e Error) String() string {

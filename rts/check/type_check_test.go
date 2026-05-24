@@ -921,6 +921,95 @@ func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
 		"x in deepest else should be bool (only remaining arm)")
 }
 
+// --- Phase 4f: switch + exhaustiveness -------------------------------
+
+func TestTypeCheck_SwitchNarrowsDiscriminantPerCase(t *testing.T) {
+	src := `fn f(name: ["alice", "bob", "charlie"]):
+    switch name:
+        case "alice":
+            a = name
+        case "bob":
+            b = name
+        case "charlie":
+            c = name
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	sw := fn.Body[0].(*rl.Switch)
+
+	aUse := sw.Cases[0].Alt.(*rl.SwitchCaseBlock).Stmts[0].(*rl.Assign).Values[0].(*rl.Identifier)
+	bUse := sw.Cases[1].Alt.(*rl.SwitchCaseBlock).Stmts[0].(*rl.Assign).Values[0].(*rl.Identifier)
+	cUse := sw.Cases[2].Alt.(*rl.SwitchCaseBlock).Stmts[0].(*rl.Assign).Values[0].(*rl.Identifier)
+
+	assert.Equal(t, `["alice"]`, info.ExprTypes[aUse].Name())
+	assert.Equal(t, `["bob"]`, info.ExprTypes[bUse].Name())
+	assert.Equal(t, `["charlie"]`, info.ExprTypes[cUse].Name())
+}
+
+func TestTypeCheck_SwitchExhaustiveOverEnumNoDiagnostic(t *testing.T) {
+	src := `fn f(name: ["a", "b"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+`
+	_, info, _ := typeInfoFromSrc(t, src)
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrNonExhaustiveSwitch, i.Code,
+			"exhaustive switch should produce no non-exhaustive diagnostic")
+	}
+}
+
+func TestTypeCheck_SwitchNonExhaustiveOverEnumFires(t *testing.T) {
+	src := `fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+`
+	_, info, _ := typeInfoFromSrc(t, src)
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrNonExhaustiveSwitch {
+			found = true
+			assert.Contains(t, i.Message, "c",
+				"diagnostic should name the missing case value")
+		}
+	}
+	assert.True(t, found, "non-exhaustive switch over closed enum should fire")
+}
+
+func TestTypeCheck_SwitchWithDefaultSuppressesDiagnostic(t *testing.T) {
+	src := `fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a":
+            x = 1
+        default:
+            x = 99
+`
+	_, info, _ := typeInfoFromSrc(t, src)
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrNonExhaustiveSwitch, i.Code,
+			"default branch should suppress non-exhaustive diagnostic")
+	}
+}
+
+func TestTypeCheck_SwitchNonEnumDiscriminantSkipsExhaustiveness(t *testing.T) {
+	// Plain str (open type) - no exhaustiveness check applies.
+	src := `fn f(name: str):
+    switch name:
+        case "a":
+            x = 1
+`
+	_, info, _ := typeInfoFromSrc(t, src)
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrNonExhaustiveSwitch, i.Code,
+			"open-typed discriminant should never trigger exhaustiveness")
+	}
+}
+
 func TestTypeCheck_IfDoesNotLeakNarrowingAfter(t *testing.T) {
 	// After a non-exiting if, the narrowing should not persist into
 	// subsequent statements at the same scope. Use a fn param so the
