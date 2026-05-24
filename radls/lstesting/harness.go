@@ -24,7 +24,10 @@ func Run(tc *SnapshotCase) (string, error) {
 	serverReader, clientWriter := io.Pipe()
 	clientReader, serverWriter := io.Pipe()
 
-	s := server.NewServer(serverReader, serverWriter)
+	// Zero debounce so didChange publishes diagnostics synchronously.
+	// Production uses a 200ms idle window, but here we want the test
+	// to be deterministic and not race a goroutine scheduler.
+	s := server.NewServerWithDebounce(serverReader, serverWriter, 0)
 
 	// Server goroutine: runs the full Mux lifecycle, closes its writer on exit
 	// so the collector sees EOF. Recovers panics so they surface as test errors

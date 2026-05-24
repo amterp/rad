@@ -3,15 +3,22 @@ package server
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/amterp/rad/radls/analysis"
 	"github.com/amterp/rad/radls/log"
 	"github.com/amterp/rad/radls/lsp"
 )
 
+// diagnosticsDebounceDelay is the idle window after a didChange before
+// we publish diagnostics. Long enough that burst typing doesn't flicker
+// errors, short enough that the user sees them when they pause.
+const diagnosticsDebounceDelay = 200 * time.Millisecond
+
 type Server struct {
-	m *Mux
-	s *analysis.State
+	m       *Mux
+	s       *analysis.State
+	diagDeb *Debouncer
 }
 
 func (s *Server) Run() (err error) {
@@ -24,11 +31,23 @@ func (s *Server) Run() (err error) {
 	return
 }
 
+// NewServer creates a server using the default diagnostics debounce
+// delay. Tests that need synchronous publish should use
+// NewServerWithDebounce(r, w, 0) instead.
 func NewServer(r io.Reader, w io.Writer) *Server {
+	return NewServerWithDebounce(r, w, diagnosticsDebounceDelay)
+}
+
+// NewServerWithDebounce lets tests override the publish-diagnostics
+// debounce delay. A zero delay makes Trigger synchronous, which keeps
+// the snapshot-test harness deterministic without forcing it to sleep
+// for arbitrary windows.
+func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Server {
 	m := NewMux(r, w)
 	server := Server{
-		m: m,
-		s: analysis.NewState(),
+		m:       m,
+		s:       analysis.NewState(),
+		diagDeb: NewDebouncer(delay),
 	}
 
 	m.AddRequestHandler(lsp.INITIALIZE, server.handleInitialize)
@@ -88,10 +107,18 @@ func (s *Server) handleDidChange(params json.RawMessage) (err error) {
 		return
 	}
 	uri := didChangeParams.TextDocument.Uri
+	// Analysis runs synchronously here so hover/goto-def sees fresh
+	// state. Only the wire publish is debounced - the goal is to
+	// suppress per-keystroke flicker, not to delay the analyzer.
 	s.s.UpdateDoc(uri, didChangeParams.ContentChanges)
-	if snap := s.s.Snapshot(uri); snap != nil {
-		s.notifyDiagnostics(uri, snap.Diagnostics())
-	}
+	s.diagDeb.Trigger(uri, func() {
+		// Re-grab the snapshot at fire time, not trigger time:
+		// further keystrokes between trigger and fire will have
+		// produced newer versions, and we want the latest.
+		if snap := s.s.Snapshot(uri); snap != nil {
+			s.notifyDiagnostics(uri, snap.Diagnostics())
+		}
+	})
 	return
 }
 
