@@ -1,0 +1,251 @@
+### TITLE ###
+UntypedLocalShowsInferredType
+### DOCUMENT ###
+x = 1
+### HOVER 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\n(local) x: int\n```"
+    },
+    "range": {
+      "end": {
+        "character": 1,
+        "line": 0
+      },
+      "start": {
+        "character": 0,
+        "line": 0
+      }
+    }
+  }
+}
+### TITLE ###
+BuiltinShowsBareSignature
+### DOCUMENT ###
+print(1)
+### HOVER 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\nprint: print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void\n```"
+    },
+    "range": {
+      "end": {
+        "character": 5,
+        "line": 0
+      },
+      "start": {
+        "character": 0,
+        "line": 0
+      }
+    }
+  }
+}
+### TITLE ###
+UnresolvedIdentifierReturnsNull
+### DOCUMENT ###
+print(undefined_thing)
+### HOVER 0:10 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+OffIdentifierReturnsNull
+### DOCUMENT ###
+x = 1
+### HOVER 0:7 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+RangeCoversIdentifierExactly
+### DOCUMENT ###
+   alpha = 1
+### HOVER 0:4 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\n(local) alpha: int\n```"
+    },
+    "range": {
+      "end": {
+        "character": 8,
+        "line": 0
+      },
+      "start": {
+        "character": 3,
+        "line": 0
+      }
+    }
+  }
+}
+### TITLE ###
+CursorAtIdentifierEnd
+### DOCUMENT ###
+x = 1
+### HOVER 0:1 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\n(local) x: int\n```"
+    },
+    "range": {
+      "end": {
+        "character": 1,
+        "line": 0
+      },
+      "start": {
+        "character": 0,
+        "line": 0
+      }
+    }
+  }
+}
+### TITLE ###
+TypedLocalShowsAnnotatedType
+### DOCUMENT ###
+x: int = 5
+### HOVER 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\n(local) x: int\n```"
+    },
+    "range": {
+      "end": {
+        "character": 1,
+        "line": 0
+      },
+      "start": {
+        "character": 0,
+        "line": 0
+      }
+    }
+  }
+}
+### TITLE ###
+BrokenSyntaxReturnsNullSafely
+### DOCUMENT ###
+x = (
+### HOVER 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "Unexpected 'x = ('",
+        "range": {
+          "end": {
+            "character": 5,
+            "line": 0
+          },
+          "start": {
+            "character": 0,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
