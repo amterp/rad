@@ -1,0 +1,99 @@
+### TITLE ###
+HoistedFnDeclaredReturnMismatchFires
+### DESCRIPTION ###
+A hoisted fn with a declared return type gets each `return E`
+checked against it. Mismatch fires at the return statement.
+### INPUT ###
+fn cb(x: int) -> bool:
+    return "hi"
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  cb (fn): fn(int) -> bool
+
+# Diagnostics
+  [hint] RAD30001 @ 2:5 - Return value of type 'str' is not assignable to declared return type 'bool'
+### TITLE ###
+HoistedFnMultipleReturnsEachChecked
+### DESCRIPTION ###
+Every return statement is checked independently. Both the int
+and the str disagree with the declared bool; both fire.
+### INPUT ###
+fn cb(x: int) -> bool:
+    if x > 0:
+        return 1
+    return "hi"
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int
+
+# Symbol types
+  cb (fn): fn(int) -> bool
+  x (param): int
+
+# Diagnostics
+  [hint] RAD30001 @ 3:9 - Return value of type 'int' is not assignable to declared return type 'bool'
+  [hint] RAD30001 @ 4:5 - Return value of type 'str' is not assignable to declared return type 'bool'
+### TITLE ###
+HoistedFnReturnMatchesDeclared
+### DESCRIPTION ###
+When the return value matches the declaration, no diagnostic.
+This is the happy path.
+### INPUT ###
+fn cb(x: int) -> bool:
+    return x > 0
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> int
+
+# Symbol types
+  cb (fn): fn(int) -> bool
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnDynamicReturnSuppresses
+### DESCRIPTION ###
+A return value that synth'd to Dynamic doesn't fire - we can't
+prove a mismatch from a "we don't know" type. Gradual-typing
+escape hatch.
+### INPUT ###
+fn dyn() -> any:
+    return 1
+
+fn cb(x: int) -> bool:
+    return dyn()
+### STDOUT ###
+# Identifier types
+  dyn @ 5:12 -> fn() -> any
+
+# Symbol types
+  cb (fn): fn(int) -> bool
+  dyn (fn): fn() -> any
+
+# Diagnostics
+  (none)
+### TITLE ###
+NestedFnReturnIsolated
+### DESCRIPTION ###
+A return inside a nested fn belongs to the nested fn, not the
+enclosing one. Here the outer fn declares `-> bool` but never
+returns; only the inner fn returns - it returns int, matching
+the inner declaration, so no diagnostic.
+### INPUT ###
+fn outer() -> bool:
+    fn inner() -> int:
+        return 5
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  inner (fn): fn() -> int
+  outer (fn): fn() -> bool
+
+# Diagnostics
+  (none)

@@ -274,15 +274,13 @@ process(fn(x):
 # Diagnostics
   [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> void' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
-LambdaWithDeclaredReturnHonored
+LambdaDeclaredReturnMismatchFiresAtReturn
 ### DESCRIPTION ###
-When the user writes a return annotation (`-> bool`) we use it
-verbatim instead of inferring. Here the body returns "hi" (str),
-which doesn't match the declared bool - that's the right place
-for the diagnostic to fire (typed-local-style mismatch on the
-return, not at the call site). Today we don't yet enforce the
-body-vs-declared-return check, so the call still passes - this
-snapshot pins the current behavior and marks the gap.
+When the user writes a return annotation (`-> bool`) we honor it
+AND check each `return E` against it at the return statement's
+span (not at the call site). Here the body returns "hi" (str)
+where bool was promised - the diagnostic lands on the return,
+which is the right place to point the user.
 ### INPUT ###
 fn process(callback: fn(int) -> bool):
     callback(5)
@@ -298,4 +296,4 @@ process(fn(x) -> bool: return "hi")
   process (fn): fn(fn(int) -> bool)
 
 # Diagnostics
-  (none)
+  [hint] RAD30001 @ 4:31 - Return value of type 'str' is not assignable to declared return type 'bool'

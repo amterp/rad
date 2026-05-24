@@ -99,38 +99,59 @@ type typeChecker struct {
 	resolved *Resolved
 	info     *TypeInfo
 	frame    *Frame
-	// returnStack collects return-statement value types per
-	// enclosing function/lambda scope. Each entry is the running
-	// list of types observed inside one fn body. Lambdas use it to
-	// synth a proper TypingFnT return type instead of falling back
-	// to Dynamic. Pushed on lambda/fn entry, popped on exit. Stack
-	// depth N means we're inside N nested fn bodies; a return at
-	// depth N belongs to the innermost (top) frame, never the
-	// outer ones - matching the runtime where returns target the
-	// nearest enclosing fn.
-	returnStack [][]rl.TypingT
+	// returnStack carries one frame per enclosing function/lambda
+	// scope. `collected` accumulates return-value types for return
+	// inference (used by synthLambda; reserved for hoisted-fn
+	// inference). `expected` is the declared return type, used to
+	// check each `return E` at the return-statement's own span;
+	// nil means "no declared return, only inference applies."
+	// Pushed on lambda/fn entry, popped on exit.
+	returnStack []returnFrame
 }
 
-func (tc *typeChecker) pushReturnFrame() {
-	tc.returnStack = append(tc.returnStack, nil)
+type returnFrame struct {
+	collected []rl.TypingT
+	expected  rl.TypingT
+}
+
+func (tc *typeChecker) pushReturnFrame(expected rl.TypingT) {
+	tc.returnStack = append(tc.returnStack, returnFrame{expected: expected})
 }
 
 func (tc *typeChecker) popReturnFrame() []rl.TypingT {
 	n := len(tc.returnStack)
-	out := tc.returnStack[n-1]
+	out := tc.returnStack[n-1].collected
 	tc.returnStack = tc.returnStack[:n-1]
 	return out
 }
 
 // recordReturn appends a return-value type to the innermost fn
-// scope's accumulator. A return outside any fn (which is itself a
-// validation error caught elsewhere) is a no-op here.
-func (tc *typeChecker) recordReturn(t rl.TypingT) {
+// scope's accumulator and, if that scope has a declared return
+// type, checks the value against it at the return's own span. A
+// return outside any fn (validation-error elsewhere) is a no-op.
+func (tc *typeChecker) recordReturn(t rl.TypingT, retNode rl.Node) {
 	n := len(tc.returnStack)
 	if n == 0 {
 		return
 	}
-	tc.returnStack[n-1] = append(tc.returnStack[n-1], t)
+	tc.returnStack[n-1].collected = append(tc.returnStack[n-1].collected, t)
+	expected := tc.returnStack[n-1].expected
+	if expected == nil || retNode == nil || t == nil {
+		return
+	}
+	if isErrorType(t) || isDynamicLike(t) {
+		return
+	}
+	if expected.IsAssignableFrom(t) {
+		return
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     retNode.Span(),
+		Severity: IssueHint,
+		Code:     rl.ErrTypeMismatch,
+		Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
+			t.Name(), expected.Name()),
+	})
 }
 
 func (tc *typeChecker) walkFile(file *rl.SourceFile) {
@@ -183,7 +204,7 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 			}
 			t = rl.NewTupleType(elems...)
 		}
-		tc.recordReturn(t)
+		tc.recordReturn(t, v)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -293,8 +314,14 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 	// collected types here yet - hoisted-fn return inference is a
 	// separate commit gated on SCC handling for mutual recursion.
 	// Pushing now is the cheap half: it keeps lambdas correct when
-	// a named fn is declared inside them.
-	tc.pushReturnFrame()
+	// a named fn is declared inside them. We feed the declared
+	// return (if any) so body returns get checked against it at
+	// their own span, same as lambdas.
+	var declaredReturn rl.TypingT
+	if n.Typing != nil && n.Typing.ReturnT != nil {
+		declaredReturn = *n.Typing.ReturnT
+	}
+	tc.pushReturnFrame(declaredReturn)
 	tc.walkStmts(n.Body)
 	_ = tc.popReturnFrame()
 	tc.frame = saved
@@ -2172,20 +2199,32 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	// frame'\''s narrowings - that'\''s closure semantics. The
 	// reassignment-after-definition lookahead that would invalidate
 	// stale narrowings is still deferred (see docstring).
-	tc.pushReturnFrame()
+	//
+	// Feed the declared return (if any) into the return frame so
+	// each `return E` in the body gets checked against the
+	// declaration at its own span. Lambdas without a declared
+	// return have nothing to check against; the inferred return
+	// flows out via popReturnFrame.
+	var declaredReturn rl.TypingT
+	if n.Typing != nil && n.Typing.ReturnT != nil {
+		declaredReturn = *n.Typing.ReturnT
+	}
+	tc.pushReturnFrame(declaredReturn)
 
 	// Expression-form lambdas (`fn(x) x + 1`) put the expression
 	// node directly in Body (verified against the converter output -
 	// it does not wrap in ExprStmt). Each body entry is the value to
-	// return; synth it to feed the inferred return type. Block-form
-	// lambdas walk via walkStmts and rely on the `*rl.Return` case
-	// in walkStmt to populate returnStack.
+	// return; synth it to feed the inferred return type. We pass
+	// the body node itself as the diagnostic span - it'\''s the
+	// implicit return for these. Block-form lambdas walk via
+	// walkStmts and rely on the `*rl.Return` case to populate
+	// returnStack.
 	if !n.IsBlock {
 		for _, stmt := range n.Body {
 			if stmt == nil {
 				continue
 			}
-			tc.recordReturn(tc.synth(stmt))
+			tc.recordReturn(tc.synth(stmt), stmt)
 		}
 	} else {
 		tc.walkStmts(n.Body)
