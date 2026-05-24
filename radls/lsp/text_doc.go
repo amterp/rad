@@ -140,6 +140,18 @@ type DocumentSymbolParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+// ReferenceParams is the textDocument/references payload. The
+// `context.includeDeclaration` flag controls whether the declaring
+// site is included alongside the use sites; we honour it.
+type ReferenceParams struct {
+	TextDocumentPositionParams
+	Context ReferenceContext `json:"context"`
+}
+
+type ReferenceContext struct {
+	IncludeDeclaration bool `json:"includeDeclaration"`
+}
+
 // SymbolKind matches the LSP 3.17 SymbolKind enum. We only use a
 // small slice today; the full list is in the spec but adding
 // constants we don't emit just clutters the file.

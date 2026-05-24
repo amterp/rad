@@ -59,6 +59,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	m.AddRequestHandler(lsp.TD_HOVER, server.handleHover)
 	m.AddRequestHandler(lsp.TD_DEFINITION, server.handleDefinition)
 	m.AddRequestHandler(lsp.TD_DOCUMENT_SYMBOL, server.handleDocumentSymbol)
+	m.AddRequestHandler(lsp.TD_REFERENCES, server.handleReferences)
 
 	return &server
 }
@@ -203,6 +204,19 @@ func (s *Server) handleDocumentSymbol(_ context.Context, params json.RawMessage)
 	// expects a JSON array; nil would marshal as null and trip some
 	// clients that gracefully degrade only for non-arrays.
 	result, err = s.s.DocumentSymbols(snap)
+	return
+}
+
+func (s *Server) handleReferences(_ context.Context, params json.RawMessage) (result any, err error) {
+	var refParams lsp.ReferenceParams
+	if err = json.Unmarshal(params, &refParams); err != nil {
+		return
+	}
+	snap := s.s.Snapshot(refParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
+	result, err = s.s.References(snap, refParams.Position, refParams.Context.IncludeDeclaration)
 	return
 }
 

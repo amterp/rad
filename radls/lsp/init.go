@@ -43,6 +43,7 @@ type ServerCapabilities struct {
 	HoverProvider          bool           `json:"hoverProvider"`
 	DefinitionProvider     bool           `json:"definitionProvider"`
 	DocumentSymbolProvider bool           `json:"documentSymbolProvider"`
+	ReferencesProvider     bool           `json:"referencesProvider"`
 	CodeActionProvider     bool           `json:"codeActionProvider"`
 	CompletionProvider     map[string]any `json:"completionProvider"`
 	PositionEncoding       string         `json:"positionEncoding,omitempty"`
@@ -60,6 +61,7 @@ func NewInitializeResult(positionEncoding string) InitializeResult {
 			HoverProvider:          true,
 			DefinitionProvider:     true,
 			DocumentSymbolProvider: true,
+			ReferencesProvider:     true,
 			CodeActionProvider:     true,
 			CompletionProvider: map[string]any{
 				"triggerCharacters": []string{".", "#", "$", "!", "/"},
