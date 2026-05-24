@@ -123,17 +123,6 @@ func (s *State) buildVersionLocked(uri string, version int64, text string) *Docu
 	return buildVersion(s.parser, s.encoding, uri, version, text)
 }
 
-// GetDiagnostics returns the diagnostics for the current version of
-// the named document, or an empty slice if not open. Backwards
-// compatibility shim - new code should grab a Snapshot directly.
-func (s *State) GetDiagnostics(uri string) []lsp.Diagnostic {
-	snap := s.Snapshot(uri)
-	if snap == nil {
-		return nil
-	}
-	return snap.Diagnostics()
-}
-
 // safeConvertCST converts a CST to AST, recovering from panics caused by
 // invalid syntax during editing. Returns nil if conversion fails.
 func safeConvertCST(tree *rts.RadTree, src, file string) (ast *rl.SourceFile) {

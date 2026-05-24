@@ -5,10 +5,14 @@ import (
 	"github.com/amterp/rad/radls/lsp"
 )
 
-func (s *State) Complete(uri string, pos lsp.Pos) (result []lsp.CompletionItem, err error) {
-	snap := s.Snapshot(uri)
+// Complete runs the completion logic against a fixed document
+// snapshot. Callers (server handlers) grab the snapshot themselves
+// and pass it explicitly: the snapshot pin-points which version of
+// the document this completion is meant for, even if the user types
+// more characters before the response is sent.
+func (s *State) Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.CompletionItem, err error) {
 	if snap == nil {
-		return nil, nil // todo return error?
+		return nil, nil
 	}
 
 	// Translate the incoming position from the client's encoding into a
@@ -22,10 +26,12 @@ func (s *State) Complete(uri string, pos lsp.Pos) (result []lsp.CompletionItem, 
 	return items, nil
 }
 
-func (s *State) CodeAction(uri string, r lsp.Range) (result []lsp.CodeAction, err error) {
-	snap := s.Snapshot(uri)
+// CodeAction returns the available code actions for the given range
+// against a fixed document snapshot. Same snapshot discipline as
+// Complete: the caller's responsibility to grab a fresh one.
+func (s *State) CodeAction(snap *DocumentVersion, r lsp.Range) (result []lsp.CodeAction, err error) {
 	if snap == nil {
-		return nil, nil // todo return error?
+		return nil, nil
 	}
 
 	// We don't yet need the range for picking code actions (the only

@@ -71,9 +71,14 @@ func (s *Server) handleDidOpen(params json.RawMessage) (err error) {
 	if err = json.Unmarshal(params, &didOpenParams); err != nil {
 		return
 	}
-	s.s.AddDoc(didOpenParams.TextDocument.Uri, didOpenParams.TextDocument.Text)
-	diagnostics := s.s.GetDiagnostics(didOpenParams.TextDocument.Uri)
-	s.notifyDiagnostics(didOpenParams.TextDocument.Uri, diagnostics)
+	uri := didOpenParams.TextDocument.Uri
+	s.s.AddDoc(uri, didOpenParams.TextDocument.Text)
+	// Grab the freshly-built snapshot to publish diagnostics from. If
+	// somehow the snapshot is gone we skip - notifyDiagnostics with an
+	// empty slice would clear any prior diagnostics, which is wrong.
+	if snap := s.s.Snapshot(uri); snap != nil {
+		s.notifyDiagnostics(uri, snap.Diagnostics())
+	}
 	return
 }
 
@@ -82,9 +87,11 @@ func (s *Server) handleDidChange(params json.RawMessage) (err error) {
 	if err = json.Unmarshal(params, &didChangeParams); err != nil {
 		return
 	}
-	s.s.UpdateDoc(didChangeParams.TextDocument.Uri, didChangeParams.ContentChanges)
-	diagnostics := s.s.GetDiagnostics(didChangeParams.TextDocument.Uri)
-	s.notifyDiagnostics(didChangeParams.TextDocument.Uri, diagnostics)
+	uri := didChangeParams.TextDocument.Uri
+	s.s.UpdateDoc(uri, didChangeParams.ContentChanges)
+	if snap := s.s.Snapshot(uri); snap != nil {
+		s.notifyDiagnostics(uri, snap.Diagnostics())
+	}
 	return
 }
 
@@ -93,7 +100,11 @@ func (s *Server) handleCompletion(params json.RawMessage) (result any, err error
 	if err = json.Unmarshal(params, &completionParams); err != nil {
 		return
 	}
-	result, err = s.s.Complete(completionParams.TextDocument.Uri, completionParams.Position)
+	// Snapshot once at the request boundary, then pass it through.
+	// Any subsequent didChange produces a new snapshot but this
+	// handler operates on the one it grabbed - frozen, race-free.
+	snap := s.s.Snapshot(completionParams.TextDocument.Uri)
+	result, err = s.s.Complete(snap, completionParams.Position)
 	return
 }
 
@@ -102,7 +113,8 @@ func (s *Server) handleCodeAction(params json.RawMessage) (result any, err error
 	if err = json.Unmarshal(params, &codeActionParams); err != nil {
 		return
 	}
-	result, err = s.s.CodeAction(codeActionParams.TextDocument.Uri, codeActionParams.Range)
+	snap := s.s.Snapshot(codeActionParams.TextDocument.Uri)
+	result, err = s.s.CodeAction(snap, codeActionParams.Range)
 	return
 }
 
