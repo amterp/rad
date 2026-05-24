@@ -158,21 +158,48 @@ func TestNarrowByTypeOf_LeafNoMatch(t *testing.T) {
 }
 
 func TestNarrowByTypeOf_OptionalInnerMatches(t *testing.T) {
-	// Optional<int>, target="int" => truthy: int, falsy: nil (null branch).
+	// Optional<int>, target="int" => truthy: int, falsy: int? (the
+	// conservative "value is still nullable" approximation since we
+	// have no TypingNullT to represent "definitely null").
 	base := rl.NewOptionalType(rl.NewIntType())
 	truthy, falsy := narrowByTypeOf(base, "int")
 	require.NotNil(t, truthy)
 	assert.Equal(t, rl.T_INT, truthy.Name())
-	assert.Nil(t, falsy, "null branch is unrepresentable today")
+	require.NotNil(t, falsy, "null half stays as Optional, not nil")
+	assert.Equal(t, "int?", falsy.Name(),
+		"falsy keeps the optional - the only remaining possibility is null")
 }
 
 func TestNarrowByTypeOf_OptionalNullTarget(t *testing.T) {
-	// Optional<int>, target="null" => truthy: nil (unrepresentable), falsy: int.
+	// Optional<int>, target="null" => truthy: int? (no TypingNullT,
+	// keep the optional), falsy: int.
 	base := rl.NewOptionalType(rl.NewIntType())
 	truthy, falsy := narrowByTypeOf(base, "null")
-	assert.Nil(t, truthy)
+	require.NotNil(t, truthy, "truthy keeps the optional - null half")
+	assert.Equal(t, "int?", truthy.Name())
 	require.NotNil(t, falsy)
 	assert.Equal(t, rl.T_INT, falsy.Name())
+}
+
+func TestNarrowByTypeOf_UnionWithOptionalPreservesNullArm(t *testing.T) {
+	// int?|str narrowed by type_of=="int".
+	// Truthy: int (the optional'\''s inner matched).
+	// Falsy: int? (the optional'\''s null half stays) and str (untouched).
+	// This is the Phase 4h regression test for "union+optional drops null."
+	base := rl.NewUnionType(
+		rl.NewOptionalType(rl.NewIntType()),
+		rl.NewStrType(),
+	)
+	truthy, falsy := narrowByTypeOf(base, "int")
+	require.NotNil(t, truthy)
+	assert.Equal(t, rl.T_INT, truthy.Name())
+	require.NotNil(t, falsy)
+	// Falsy should contain int? (null arm preserved) and str. Exact
+	// representation depends on the join; what matters is the null
+	// component isn'\''t silently dropped.
+	name := falsy.Name()
+	assert.Contains(t, name, "?",
+		"falsy must retain the nullable arm; got %q", name)
 }
 
 func TestNarrowByTypeOf_AnyShortCircuits(t *testing.T) {

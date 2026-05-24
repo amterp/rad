@@ -123,8 +123,23 @@ func (tc *typeChecker) interpretCondition(cond rl.Node, frame *Frame) Refinement
 	switch c := cond.(type) {
 	case *rl.OpBinary:
 		return tc.interpretBinaryCondition(c, frame)
+	case *rl.OpUnary:
+		return tc.interpretUnaryCondition(c, frame)
 	}
 	return EmptyRefinement()
+}
+
+// interpretUnaryCondition handles `not <expr>`. Other unary ops
+// (-, +) aren'\''t boolean and don'\''t produce refinements.
+//
+// Logical negation flips the refinement: what was the truthy
+// narrowing becomes the falsy narrowing and vice versa. Refinement.
+// Negate is exactly the swap.
+func (tc *typeChecker) interpretUnaryCondition(c *rl.OpUnary, frame *Frame) Refinement {
+	if c.Op != rl.OpNot {
+		return EmptyRefinement()
+	}
+	return tc.interpretCondition(c.Operand, frame).Negate()
 }
 
 // interpretBinaryCondition handles `<expr> <op> <expr>` predicates.
@@ -148,8 +163,70 @@ func (tc *typeChecker) interpretBinaryCondition(c *rl.OpBinary, frame *Frame) Re
 		if ident, values, ok := identInStringList(c); ok {
 			return tc.narrowStrEnumIn(c.Op, ident, values, frame)
 		}
+	case rl.OpAnd:
+		return tc.interpretAnd(c, frame)
+	case rl.OpOr:
+		return tc.interpretOr(c, frame)
 	}
 	return EmptyRefinement()
+}
+
+// interpretAnd handles `a and b`. Short-circuit evaluation drives
+// the narrowing semantics:
+//
+//   - WhenTrue: both a and b evaluated truthy. The truthy narrowing
+//     is a'\''s WhenTrue applied first, then b'\''s WhenTrue computed
+//     against the a-truthy frame and merged on top. Latter wins on
+//     conflicts since it'\''s computed in the tighter frame.
+//
+//   - WhenFalse: at least one of a, b is falsy. This is a disjunction
+//     - either "a falsy" or "a truthy, b falsy" - and we don'\''t have
+//     a way to express "OR of two refinements" without losing info.
+//     Conservative: empty WhenFalse. Pyright takes the same shortcut.
+//
+// The right-hand side is interpreted with a'\''s truthy narrowing
+// active: in `x != null and x > 5`, the `x > 5` is evaluated knowing
+// x is non-null. That'\''s why we walk the right under
+// frame.WithMany(leftRef.WhenTrue) before interpreting.
+func (tc *typeChecker) interpretAnd(c *rl.OpBinary, frame *Frame) Refinement {
+	leftRef := tc.interpretCondition(c.Left, frame)
+	rightFrame := frame.WithMany(leftRef.WhenTrue)
+	rightRef := tc.interpretCondition(c.Right, rightFrame)
+	return Refinement{
+		WhenTrue:  mergeRefinementMaps(leftRef.WhenTrue, rightRef.WhenTrue),
+		WhenFalse: map[*Symbol]rl.TypingT{},
+	}
+}
+
+// interpretOr handles `a or b`. Mirror image of and:
+//
+//   - WhenFalse: both falsy. Sequential apply: a'\''s WhenFalse first,
+//     b'\''s WhenFalse computed against the a-falsy frame, then
+//     merged.
+//
+//   - WhenTrue: at least one truthy. Disjunction, conservatively empty.
+func (tc *typeChecker) interpretOr(c *rl.OpBinary, frame *Frame) Refinement {
+	leftRef := tc.interpretCondition(c.Left, frame)
+	rightFrame := frame.WithMany(leftRef.WhenFalse)
+	rightRef := tc.interpretCondition(c.Right, rightFrame)
+	return Refinement{
+		WhenTrue:  map[*Symbol]rl.TypingT{},
+		WhenFalse: mergeRefinementMaps(leftRef.WhenFalse, rightRef.WhenFalse),
+	}
+}
+
+// mergeRefinementMaps overlays b on top of a. When both refine the
+// same symbol, b'\''s narrowing wins because b was computed in the
+// tighter frame (after a'\''s refinement was applied).
+func mergeRefinementMaps(a, b map[*Symbol]rl.TypingT) map[*Symbol]rl.TypingT {
+	out := make(map[*Symbol]rl.TypingT, len(a)+len(b))
+	for k, v := range a {
+		out[k] = v
+	}
+	for k, v := range b {
+		out[k] = v
+	}
+	return out
 }
 
 // narrowNullEquality is invoked after the dispatcher confirms the
@@ -527,24 +604,47 @@ func matchesTypeOf(t rl.TypingT, target string) bool {
 }
 
 // narrowByTypeOf splits base into the portion(s) matching the
-// type_of-target string and the portion(s) that don't. Either return
-// may be nil meaning "no information on that side", or a TypingNeverT
-// meaning "this side is empty - this branch is unreachable."
+// type_of-target string and the portion(s) that don't. Returns
+// (truthy, falsy) where either may be a TypingNeverT meaning "this
+// side is empty - this branch is unreachable". A nil result on
+// either side means "we have no static handle on this side"; the
+// caller treats it as "no narrowing applied" rather than "Never".
 //
-// Decision table for clarity:
-//   - Union: partition arms by matchesTypeOf(arm, target).
+// Decision table:
+//   - Any / Dynamic / ErrorType base: (nil, nil) - we can'\''t prove
+//     either side against a fully-open or poisoned type.
+//   - Union: partition arms by recursive call. Drop Never on each
+//     side (those arms contribute nothing). Preserve nil arms by
+//     passing the arm through unchanged - "no static handle" on
+//     this arm means we keep the whole arm as a fallback.
 //   - Optional<T>:
-//       target == "null": truthy is the null half (unrepresentable -
-//         nil = no narrowing); falsy is T.
-//       inner matches:   truthy is T; falsy is the null half (nil).
-//       inner doesn'\''t: neither side gains useful info (return nil/nil).
-//   - Leaf:
-//       target == "null": truthy is Never (can'\''t be null); falsy is base.
-//       leaf matches:    truthy is base; falsy is Never.
-//       leaf doesn'\''t:   truthy is Never; falsy is base.
+//       target == "null":
+//         truthy: x is null. We have no TypingNullT, so we return
+//                 the original Optional<T> as the conservative
+//                 over-approximation - the value is still typed as
+//                 nullable, and the union-walk caller can rely on
+//                 the arm not being silently dropped.
+//         falsy:  x is non-null - return T.
+//       inner matches target:
+//         truthy: T (the non-null component).
+//         falsy:  x is null - return Optional<T> conservatively
+//                 (no TypingNullT). This preserves the null arm
+//                 when the optional sits inside a union and the
+//                 other arms don'\''t fold it back in.
+//       inner doesn'\''t match target:
+//         truthy: Never (inner doesn'\''t match, null doesn'\''t
+//                 match any non-null target).
+//         falsy:  the original Optional<T> stays.
+//   - Leaf (non-Optional):
+//       target == "null": truthy=Never, falsy=base.
+//       matches:           truthy=base,  falsy=Never.
+//       doesn'\''t match:    truthy=Never, falsy=base.
 //
-// Anything dynamic/any short-circuits to nil/nil: we can'\''t prove the
-// predicate either way against a fully-open type.
+// The shift from the previous behavior: Optional cases now return
+// the original Optional<T> rather than nil on the side that has
+// "the null half is still possible." This stops union arm walks
+// from silently dropping the null arm when a non-null target
+// matched a different union arm.
 func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 	if base == nil {
 		return nil, nil
@@ -557,15 +657,18 @@ func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 		var truthyArms, falsyArms []rl.TypingT
 		for _, arm := range u.Types() {
 			tA, fA := narrowByTypeOf(arm, target)
-			// A Never on either side means "this arm contributes
-			// nothing to that branch" - skip it. Without this, a
-			// union like `int|str` against target="int" would yield
-			// `int|never` on truthy because the str arm'\''s recursive
-			// call returns (Never, str).
-			if tA != nil && !isNeverType(tA) {
+			// Drop Never contributions; preserve actual types.
+			// nil from a recursive call means "this arm has no
+			// static handle for either side." Pass the arm through
+			// unchanged so the union join doesn'\''t lose it.
+			if tA == nil {
+				truthyArms = append(truthyArms, arm)
+			} else if !isNeverType(tA) {
 				truthyArms = append(truthyArms, tA)
 			}
-			if fA != nil && !isNeverType(fA) {
+			if fA == nil {
+				falsyArms = append(falsyArms, arm)
+			} else if !isNeverType(fA) {
 				falsyArms = append(falsyArms, fA)
 			}
 		}
@@ -574,12 +677,21 @@ func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 	if o, ok := base.(*rl.TypingOptionalT); ok {
 		inner := o.Inner()
 		if target == "null" {
-			return nil, inner
+			// Truthy: x IS null. No TypingNullT, so keep the optional
+			// as the conservative "value is still nullable" answer.
+			// Falsy: x is non-null = the inner type.
+			return base, inner
 		}
 		if matchesTypeOf(inner, target) {
-			return inner, nil
+			// Truthy: non-null inner matched. Falsy: only possibility
+			// left is null - keep Optional<T> as the conservative
+			// "still nullable" answer; this preserves the null arm
+			// when used inside a union walk.
+			return inner, base
 		}
-		return nil, nil
+		// Inner doesn'\''t match target and null doesn'\''t match any
+		// non-null target. Truthy is empty; falsy is the original.
+		return rl.NewNeverType(), base
 	}
 	if target == "null" {
 		return rl.NewNeverType(), base
@@ -648,6 +760,29 @@ func stripErrorFrom(t rl.TypingT) rl.TypingT {
 			return out[0]
 		default:
 			return rl.NewUnionType(out...)
+		}
+	}
+	return nil
+}
+
+// extractErrorFrom returns the error component of t - the dual of
+// stripErrorFrom. For a bare TypingErrorT, returns it. For a union,
+// returns the first ErrorT arm. Returns nil if t has no error
+// component; callers narrowing INTO an error branch should fall back
+// to a fresh TypingErrorT (the runtime guarantees the RHS errored
+// to land in the catch).
+func extractErrorFrom(t rl.TypingT) rl.TypingT {
+	if t == nil {
+		return nil
+	}
+	if _, ok := t.(*rl.TypingErrorT); ok {
+		return t
+	}
+	if u, ok := t.(*rl.TypingUnionT); ok {
+		for _, arm := range u.Types() {
+			if _, ok := arm.(*rl.TypingErrorT); ok {
+				return arm
+			}
 		}
 	}
 	return nil
