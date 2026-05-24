@@ -121,6 +121,13 @@ func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
 // type of the LHS symbol. Multi-value RHS aligns 1:1 with multi-
 // target LHS at this stage; unpacking (where one RHS expression
 // produces multiple values) is deferred.
+//
+// For typed locals (`x: int = 5`, with sym.Declared set) the RHS
+// must be assignable to the declared type, and the recorded symbol
+// type stays Declared rather than the RHS-derived value. Subsequent
+// `x = something` reassignments are checked against the same
+// Declared, so the annotation acts as a stable contract for every
+// later read of the binding.
 func (tc *typeChecker) walkAssign(a *rl.Assign) {
 	for i, val := range a.Values {
 		valType := tc.synth(val)
@@ -135,8 +142,39 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		if !ok {
 			continue
 		}
+		if sym.Declared != nil {
+			tc.checkAssignAgainstDeclared(val, valType, sym.Declared)
+			tc.info.SymbolTypes[sym] = sym.Declared
+			continue
+		}
 		tc.info.SymbolTypes[sym] = valType
 	}
+}
+
+// checkAssignAgainstDeclared emits a type-mismatch when the assigned
+// value can't flow into the declared slot. Severity matches Phase 2's
+// per-arg precedent: Hint, not Error - the runtime still produces a
+// richer value-aware message when the script runs, and we only
+// promote once literal types fill the missing fidelity (a one-pass
+// severity migration covers all assignability checks at once).
+//
+// ErrorType / Dynamic short-circuit: a poisoned RHS already produced
+// a diagnostic and any-likes are universally assignable, so no extra
+// diagnostic fires.
+func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, declared rl.TypingT) {
+	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
+		return
+	}
+	if declared.IsAssignableFrom(valType) {
+		return
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     valNode.Span(),
+		Severity: IssueHint,
+		Code:     rl.ErrTypeMismatch,
+		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
+			valType.Name(), declared.Name()),
+	})
 }
 
 // synth returns the static type of an expression node and records it

@@ -744,7 +744,6 @@ B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]                     delegate: fallba
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]                       delegate: catch_expr
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]                         delegate: var_path
 B: [ 477,  480] PS: [ 37,  4] PE: [ 37,  7]                           root: identifier `url`
-B: [ 480,  481] PS: [ 37,  7] PE: [ 37,  8]     : `:`
 B: [ 486,  499] PS: [ 38,  4] PE: [ 38, 17]     stmt: rad_field_stmt
 B: [ 486,  492] PS: [ 38,  4] PE: [ 38, 10]       fields `fields`
 B: [ 493,  495] PS: [ 38, 11] PE: [ 38, 13]       identifier: identifier `f1`
@@ -1019,7 +1018,6 @@ B: [ 755,  758] PS: [ 59,  4] PE: [ 59,  7]                     delegate: fallba
 B: [ 755,  758] PS: [ 59,  4] PE: [ 59,  7]                       delegate: catch_expr
 B: [ 755,  758] PS: [ 59,  4] PE: [ 59,  7]                         delegate: var_path
 B: [ 755,  758] PS: [ 59,  4] PE: [ 59,  7]                           root: identifier `url`
-B: [ 758,  759] PS: [ 59,  7] PE: [ 59,  8]     : `:`
 B: [ 764,  771] PS: [ 60,  4] PE: [ 60, 11]     stmt: rad_option_stmt
 B: [ 764,  771] PS: [ 60,  4] PE: [ 60, 11]       keyword: rad_option_keyword
 B: [ 764,  771] PS: [ 60,  4] PE: [ 60, 11]         noprint `noprint`
@@ -1029,7 +1027,6 @@ B: [ 783,  785] PS: [ 61, 11] PE: [ 61, 13]       identifier: identifier `f1`
 B: [ 787,  813] PS: [ 63,  0] PE: [ 64, 21]   rad_block
 B: [ 787,  790] PS: [ 63,  0] PE: [ 63,  3]     rad_type: rad_keyword
 B: [ 787,  790] PS: [ 63,  0] PE: [ 63,  3]       rad `rad`
-B: [ 790,  791] PS: [ 63,  3] PE: [ 63,  4]     : `:`
 B: [ 796,  813] PS: [ 64,  4] PE: [ 64, 21]     stmt: rad_field_stmt
 B: [ 796,  802] PS: [ 64,  4] PE: [ 64, 10]       fields `fields`
 B: [ 803,  805] PS: [ 64, 11] PE: [ 64, 13]       identifier: identifier `f2`

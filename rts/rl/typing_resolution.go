@@ -66,6 +66,14 @@ func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.
 	}
 }
 
+// ResolveTyping is the public entry point to resolveTyping for callers
+// outside the rl package (e.g. the converter wiring typed locals).
+// Accepts a CST node of kind fn_param_or_return_type and returns the
+// corresponding static TypingT.
+func ResolveTyping(node *ts.Node, src string) TypingT {
+	return resolveTyping(node, src)
+}
+
 // input node expected to be kind 'fn_param_or_return_type'
 func resolveTyping(node *ts.Node, src string) TypingT {
 	leafNodes := GetChildren(node, F_LEAF_TYPE)

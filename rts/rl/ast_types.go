@@ -26,6 +26,13 @@ type Assign struct {
 	IsUnpacking     bool        // true if `a, b = ...` syntax
 	UpdateEnclosing bool        // true for compound assign/incr-decr (updates enclosing scope)
 	Catch           *CatchBlock // optional catch block
+	// DeclaredType is the optional `: type` annotation on the LHS of
+	// typed local declarations (`x: int = 5`). Today only the
+	// single-target form carries one; nil for every other shape and
+	// for plain untyped assigns. The binder reads this onto the
+	// declared Symbol so the type checker can enforce the RHS
+	// against it.
+	DeclaredType *TypingT
 }
 
 func NewAssign(span Span, targets, values []Node, isUnpacking bool, catch *CatchBlock) *Assign {

@@ -63,7 +63,6 @@ B: [ 39,  40] PS: [ 3,  4] PE: [ 3,  5]                                 start: s
 B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                                 contents: string_contents
 B: [ 40,  44] PS: [ 3,  5] PE: [ 3,  9]                                   content: string_content `http`
 B: [ 44,  45] PS: [ 3,  9] PE: [ 3, 10]                                 end: string_end `"`
-B: [ 45,  46] PS: [ 3, 10] PE: [ 3, 11]     : `:`
 B: [ 51,  66] PS: [ 4,  4] PE: [ 4, 19]     stmt: rad_field_stmt
 B: [ 51,  57] PS: [ 4,  4] PE: [ 4, 10]       fields `fields`
 B: [ 58,  60] PS: [ 4, 11] PE: [ 4, 13]       identifier: identifier `ID`
@@ -74,7 +73,6 @@ B: [ 71,  75] PS: [ 5,  4] PE: [ 5,  8]       sort `sort`
 B: [ 77, 195] PS: [ 7,  0] PE: [12, 26]   rad_block
 B: [ 77,  80] PS: [ 7,  0] PE: [ 7,  3]     rad_type: rad_keyword
 B: [ 77,  80] PS: [ 7,  0] PE: [ 7,  3]       rad `rad`
-B: [ 80,  81] PS: [ 7,  3] PE: [ 7,  4]     : `:`
 B: [ 86, 101] PS: [ 8,  4] PE: [ 8, 19]     stmt: rad_field_stmt
 B: [ 86,  92] PS: [ 8,  4] PE: [ 8, 10]       fields `fields`
 B: [ 93,  95] PS: [ 8, 11] PE: [ 8, 13]       identifier: identifier `ID`

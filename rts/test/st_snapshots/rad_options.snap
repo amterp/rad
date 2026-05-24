@@ -11,7 +11,6 @@ B: [ 0, 55] PS: [0,  0] PE: [4, 15] source_file
 B: [ 0, 55] PS: [0,  0] PE: [4, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
-B: [ 3,  4] PS: [0,  3] PE: [0,  4]     : `:`
 B: [ 9, 17] PS: [1,  4] PE: [1, 12]     stmt: rad_option_stmt
 B: [ 9, 17] PS: [1,  4] PE: [1, 12]       keyword: rad_option_keyword
 B: [ 9, 17] PS: [1,  4] PE: [1, 12]         insecure `insecure`
@@ -59,7 +58,6 @@ B: [ 4,  7] PS: [0,  4] PE: [0,  7]                     delegate: fallback_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                       delegate: catch_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                         delegate: var_path
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                           root: identifier `url`
-B: [ 7,  8] PS: [0,  7] PE: [0,  8]     : `:`
 B: [13, 21] PS: [1,  4] PE: [1, 12]     stmt: rad_option_stmt
 B: [13, 21] PS: [1,  4] PE: [1, 12]       keyword: rad_option_keyword
 B: [13, 21] PS: [1,  4] PE: [1, 12]         insecure `insecure`
@@ -94,7 +92,6 @@ B: [ 0, 34] PS: [0,  0] PE: [2, 15] source_file
 B: [ 0, 34] PS: [0,  0] PE: [2, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
-B: [ 3,  4] PS: [0,  3] PE: [0,  4]     : `:`
 B: [ 9, 18] PS: [1,  4] PE: [1, 13]     stmt: rad_option_stmt
 B: [ 9, 18] PS: [1,  4] PE: [1, 13]       keyword: rad_option_keyword
 B: [ 9, 18] PS: [1,  4] PE: [1, 13]         transpose `transpose`
@@ -120,7 +117,6 @@ B: [ 0, 40] PS: [0,  0] PE: [2, 15] source_file
 B: [ 0, 40] PS: [0,  0] PE: [2, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]       rad `rad`
-B: [ 3,  4] PS: [0,  3] PE: [0,  4]     : `:`
 B: [ 9, 24] PS: [1,  4] PE: [1, 19]     stmt: rad_option_stmt
 B: [ 9, 18] PS: [1,  4] PE: [1, 13]       keyword: rad_option_keyword
 B: [ 9, 18] PS: [1,  4] PE: [1, 13]         transpose `transpose`
@@ -174,7 +170,6 @@ B: [ 4,  7] PS: [0,  4] PE: [0,  7]                     delegate: fallback_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                       delegate: catch_expr
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                         delegate: var_path
 B: [ 4,  7] PS: [0,  4] PE: [0,  7]                           root: identifier `url`
-B: [ 7,  8] PS: [0,  7] PE: [0,  8]     : `:`
 B: [13, 24] PS: [1,  4] PE: [1, 15]     stmt: rad_option_stmt
 B: [13, 18] PS: [1,  4] PE: [1,  9]       keyword: rad_option_keyword
 B: [13, 18] PS: [1,  4] PE: [1,  9]         quiet `quiet`

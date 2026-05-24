@@ -668,3 +668,112 @@ func TestTypeCheck_IntPlusListDoesNotAttachStrMigrationHint(t *testing.T) {
 		}
 	}
 }
+
+// --- Typed local declaration tests (Phase 3) -------------------------
+
+func TestTypeCheck_TypedLocalRecordsDeclaredType(t *testing.T) {
+	// `x: int = 5` - the symbol's recorded type should be the
+	// declared `int`, not the RHS's synth result (which happens to
+	// also be int here, but the point is the binder set Declared and
+	// the checker used it).
+	file, info, resolved := typeInfoFromSrc(t, "x: int = 5\n")
+	target := file.Stmts[0].(*rl.Assign).Targets[0].(*rl.Identifier)
+	sym := resolved.Uses[target]
+	require.NotNil(t, sym)
+	require.NotNil(t, sym.Declared, "binder should populate Declared")
+	assert.Equal(t, rl.T_INT, sym.Declared.Name())
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[sym].Name())
+}
+
+func TestTypeCheck_TypedLocalAcceptsAssignableRHS(t *testing.T) {
+	// int literal flows into `: int` slot without diagnostic.
+	_, info, _ := typeInfoFromSrc(t, "x: int = 5\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code,
+			"valid typed local should not produce a type-mismatch")
+	}
+}
+
+func TestTypeCheck_TypedLocalRejectsIncompatibleRHS(t *testing.T) {
+	// str literal can't flow into `: int`. Hint severity matches the
+	// rest of Phase 2's assignability precedent.
+	_, info, _ := typeInfoFromSrc(t, "x: int = \"hi\"\n")
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found,
+		"expected a Hint-severity type-mismatch when RHS isn't assignable to declared")
+}
+
+func TestTypeCheck_TypedLocalDeclaredFloatAcceptsInt(t *testing.T) {
+	// The single implicit widening: int flows into float. So
+	// `x: float = 5` is fine, no diagnostic.
+	_, info, _ := typeInfoFromSrc(t, "x: float = 5\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code)
+	}
+}
+
+func TestTypeCheck_TypedLocalReassignChecksAgainstDeclared(t *testing.T) {
+	// After `x: int = 5`, a later `x = "hi"` should still be flagged
+	// against the original declared type. The annotation is sticky
+	// for the binding's lifetime.
+	_, info, _ := typeInfoFromSrc(t, "x: int = 5\nx = \"hi\"\n")
+	count := 0
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch {
+			count++
+		}
+	}
+	assert.Equal(t, 1, count,
+		"reassignment with incompatible type should fire one type-mismatch")
+}
+
+func TestTypeCheck_TypedLocalDeclaredAnyAcceptsAnything(t *testing.T) {
+	// `: any` is the user-opt-in escape hatch - every type flows in.
+	_, info, _ := typeInfoFromSrc(t, "x: any = 5\nx = \"hi\"\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code,
+			"any-typed local should accept any RHS")
+	}
+}
+
+func TestTypeCheck_UntypedLocalUnchanged(t *testing.T) {
+	// Sanity check that the introduction of typed locals doesn't
+	// disturb the existing untyped path. `x = 5; x = "hi"` should
+	// still rebind freely (no declared annotation means no
+	// reassignment constraint).
+	_, info, _ := typeInfoFromSrc(t, "x = 5\nx = \"hi\"\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code,
+			"untyped local should accept any reassignment")
+	}
+}
+
+func TestTypeCheck_TypedLocalWithRadBlockKeywordName(t *testing.T) {
+	// Variables named `rad` / `request` / `display` (the rad_block
+	// keywords) can ALSO be typed-locals. The external scanner's
+	// BLOCK_COLON peek distinguishes a typed-assign's ':' from a
+	// rad_block's block-colon by what follows it, so `rad: int = 5`
+	// is unambiguously a typed-local declaration regardless of the
+	// keyword overlap. This test pins that down.
+	file, info, resolved := typeInfoFromSrc(t, "rad: int = 5\n")
+	require.NotEmpty(t, file.Stmts, "should produce one stmt")
+	assign, ok := file.Stmts[0].(*rl.Assign)
+	require.True(t, ok, "expected Assign, got %T", file.Stmts[0])
+	require.NotNil(t, assign.DeclaredType,
+		"typed_assign with `rad` LHS should carry DeclaredType")
+	ident := assign.Targets[0].(*rl.Identifier)
+	assert.Equal(t, "rad", ident.Name)
+	sym := resolved.Uses[ident]
+	require.NotNil(t, sym)
+	assert.Equal(t, rl.T_INT, sym.Declared.Name())
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code,
+			"int RHS into `rad: int` should not produce a mismatch")
+	}
+}

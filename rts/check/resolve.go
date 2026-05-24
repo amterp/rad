@@ -68,6 +68,12 @@ type Symbol struct {
 	DeclSpan rl.Span // location of the declaration in source; zero for builtins
 	DefNode  rl.Node // the AST node that declared the symbol; nil for builtins
 	Scope    *Scope  // scope this symbol lives in; the builtin scope for SymBuiltin
+	// Declared is the user-written type annotation pinned to this
+	// binding (e.g. the `int` in `x: int = 5`). Once set it never
+	// changes; subsequent reassignments must remain assignable to it.
+	// nil for unannotated locals - those carry only an Inferred type
+	// that the type checker derives from the RHS.
+	Declared rl.TypingT
 }
 
 // Scope is a lexical name -> Symbol table chained to its parent. Lookup

@@ -272,6 +272,17 @@ func (b *binder) visitAssign(a *rl.Assign) {
 	for _, target := range a.Targets {
 		b.declareTarget(target, a.UpdateEnclosing)
 	}
+	// Typed local: `x: int = 5`. The converter only attaches
+	// DeclaredType on single-target assigns today, so we plant the
+	// annotation on the first target's symbol if it's a fresh local
+	// the binder just declared.
+	if a.DeclaredType != nil && len(a.Targets) > 0 {
+		if ident, ok := a.Targets[0].(*rl.Identifier); ok {
+			if sym, ok := b.resolved.Uses[ident]; ok && sym != nil {
+				sym.Declared = *a.DeclaredType
+			}
+		}
+	}
 	if a.Catch != nil {
 		b.visitCatch(a.Catch)
 	}

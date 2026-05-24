@@ -41,7 +41,6 @@ B: [11, 12] PS: [1,  4] PE: [1,  5]                     delegate: fallback_expr
 B: [11, 12] PS: [1,  4] PE: [1,  5]                       delegate: catch_expr
 B: [11, 12] PS: [1,  4] PE: [1,  5]                         delegate: var_path
 B: [11, 12] PS: [1,  4] PE: [1,  5]                           root: identifier `a`
-B: [12, 13] PS: [1,  5] PE: [1,  6]     : `:`
 B: [18, 33] PS: [2,  4] PE: [2, 19]     stmt: rad_field_stmt
 B: [18, 24] PS: [2,  4] PE: [2, 10]       fields `fields`
 B: [25, 27] PS: [2, 11] PE: [2, 13]       identifier: identifier `ID`

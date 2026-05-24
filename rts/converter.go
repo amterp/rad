@@ -81,6 +81,8 @@ func (c *converter) convertStmt(node *ts.Node) rl.Node {
 	switch node.Kind() {
 	case rl.K_ASSIGN:
 		return c.convertAssign(node)
+	case rl.K_TYPED_ASSIGN:
+		return c.convertTypedAssign(node)
 	case rl.K_COMPOUND_ASSIGN:
 		return c.convertCompoundAssign(node)
 	case rl.K_INCR_DECR:
@@ -144,6 +146,32 @@ func (c *converter) convertAssign(node *ts.Node) *rl.Assign {
 	leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
 	targets := c.convertExprs(leftsNodes)
 	return rl.NewAssign(c.makeSpan(node), targets, values, true, catch)
+}
+
+// convertTypedAssign desugars `x: int = 5` into the same Assign AST
+// node the rest of the pipeline already understands, with the
+// declared type attached. Keeping the shape uniform means every
+// downstream pass (walkers, binder, checker, interpreter) sees one
+// Assign kind whether the user wrote a type or not.
+func (c *converter) convertTypedAssign(node *ts.Node) *rl.Assign {
+	catchNode := rl.GetChild(node, rl.F_CATCH)
+	var catch *rl.CatchBlock
+	if catchNode != nil {
+		catch = c.convertCatchBlock(catchNode)
+	}
+
+	leftNode := rl.GetChild(node, rl.F_LEFT)
+	rightNode := rl.GetChild(node, rl.F_RIGHT)
+	target := c.convertExpr(leftNode)
+	value := c.convertExpr(rightNode)
+
+	assign := rl.NewAssign(c.makeSpan(node), []rl.Node{target}, []rl.Node{value}, false, catch)
+
+	if typeNode := rl.GetChild(node, rl.F_DECLARED_TYPE); typeNode != nil {
+		declaredType := rl.ResolveTyping(typeNode, c.src)
+		assign.DeclaredType = &declaredType
+	}
+	return assign
 }
 
 // convertCompoundAssign desugars `x += 3` into `Assign(x, OpBinary(x, +, 3))`.

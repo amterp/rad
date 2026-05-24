@@ -51,6 +51,7 @@ const (
 	K_MAP                      = "map"
 	K_IDENTIFIER               = "identifier"
 	K_COMPOUND_ASSIGN          = "compound_assign"
+	K_TYPED_ASSIGN             = "typed_assign"
 	K_PLUS_EQUAL               = "+="
 	K_MINUS_EQUAL              = "-="
 	K_STAR_EQUAL               = "*="
@@ -169,6 +170,7 @@ const (
 	F_CATCH               = "catch"
 	F_TYPE                = "type"
 	F_RETURN_TYPE         = "return_type"
+	F_DECLARED_TYPE       = "declared_type"
 	F_VARARG_MARKER       = "vararg_marker"
 	F_VARIADIC_MARKER     = "variadic_marker" // todo merge with above
 	F_OPTIONAL            = "optional"
