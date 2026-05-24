@@ -97,6 +97,7 @@ func (s *Server) handleDidOpen(_ context.Context, params json.RawMessage) (err e
 	// somehow the snapshot is gone we skip - notifyDiagnostics with an
 	// empty slice would clear any prior diagnostics, which is wrong.
 	if snap := s.s.Snapshot(uri); snap != nil {
+		defer snap.Release()
 		s.notifyDiagnostics(uri, snap.Diagnostics())
 	}
 	return
@@ -117,6 +118,7 @@ func (s *Server) handleDidChange(_ context.Context, params json.RawMessage) (err
 		// further keystrokes between trigger and fire will have
 		// produced newer versions, and we want the latest.
 		if snap := s.s.Snapshot(uri); snap != nil {
+			defer snap.Release()
 			s.notifyDiagnostics(uri, snap.Diagnostics())
 		}
 	})
@@ -132,6 +134,9 @@ func (s *Server) handleCompletion(_ context.Context, params json.RawMessage) (re
 	// Any subsequent didChange produces a new snapshot but this
 	// handler operates on the one it grabbed - frozen, race-free.
 	snap := s.s.Snapshot(completionParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
 	result, err = s.s.Complete(snap, completionParams.Position)
 	return
 }
@@ -142,6 +147,9 @@ func (s *Server) handleCodeAction(_ context.Context, params json.RawMessage) (re
 		return
 	}
 	snap := s.s.Snapshot(codeActionParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
 	result, err = s.s.CodeAction(snap, codeActionParams.Range)
 	return
 }

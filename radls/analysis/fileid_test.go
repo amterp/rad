@@ -42,6 +42,7 @@ func TestFileIDAssignment(t *testing.T) {
 	if snapA == nil {
 		t.Fatal("SnapshotByID(idA) returned nil")
 	}
+	defer snapA.Release()
 	if snapA.URI() != uriA {
 		t.Errorf("SnapshotByID resolved to wrong doc: got URI %q, want %q",
 			snapA.URI(), uriA)
@@ -76,8 +77,13 @@ func TestFileIDStableAcrossUpdates(t *testing.T) {
 	}
 
 	snap := s.SnapshotByID(id1)
-	if snap == nil || snap.Text() != "v2" {
-		t.Errorf("SnapshotByID after update: expected text v2, got %+v", snap)
+	if snap == nil {
+		t.Errorf("SnapshotByID after update: nil")
+	} else {
+		defer snap.Release()
+		if snap.Text() != "v2" {
+			t.Errorf("SnapshotByID after update: expected text v2, got %q", snap.Text())
+		}
 	}
 }
 

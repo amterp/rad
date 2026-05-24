@@ -3,17 +3,39 @@ package rts
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/amterp/rad/rts/rl"
 
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
+// RadTree wraps a tree-sitter *ts.Tree, which owns C-heap memory via
+// cgo. The C memory must be released by calling ts.Tree.Close(); the
+// Go garbage collector alone won't free it.
+//
+// We do NOT register a finalizer on RadTree. The upstream
+// go-tree-sitter README warns against it, and we hit the documented
+// hazard during development: tree-sitter Nodes hold references into
+// the C tree but the Go-side relationship between Node and Tree isn't
+// visible to the GC. A finalizer-driven Close could free the C tree
+// while another goroutine is walking nodes that still point into it
+// (the converter does exactly this).
+//
+// Cleanup is the caller's responsibility: call Close when no further
+// readers will touch the tree. Higher layers (e.g. radls's snapshot
+// model) coordinate that lifetime via reference counting.
+//
+// closeOnce makes Close idempotent so callers can defer-Close without
+// worrying about double-free; upstream ts.Tree.Close is NOT
+// idempotent (it always calls ts_tree_delete), so we guard.
 type RadTree struct {
 	root *ts.Tree
 	// Updatable:
 	parser *ts.Parser
 	src    string
+
+	closeOnce sync.Once
 }
 
 func newRadTree(parser *ts.Parser, tree *ts.Tree, src string) *RadTree {
@@ -24,14 +46,32 @@ func newRadTree(parser *ts.Parser, tree *ts.Tree, src string) *RadTree {
 	}
 }
 
+// Update reparses the tree in place with new source. Used by callers
+// that hold a long-lived RadTree (e.g. the check package's standalone
+// driver). The snapshot model in radls doesn't use this - each
+// version gets a fresh tree - so this path is reserved for non-
+// snapshot consumers. Closes the previous tree to avoid leaking C
+// memory.
 func (rt *RadTree) Update(src string) {
-	// todo use incrΩemental parsing, maybe can lean on LSP client to give via protocol
+	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
+	old := rt.root
 	rt.root = rt.parser.Parse([]byte(src), nil)
 	rt.src = src
+	if old != nil {
+		old.Close()
+	}
 }
 
+// Close releases the underlying tree-sitter C memory. Idempotent;
+// the underlying ts.Tree.Close is not, so we guard with sync.Once.
+// Safe to call from multiple goroutines.
 func (rt *RadTree) Close() {
-	rt.root.Close()
+	rt.closeOnce.Do(func() {
+		if rt.root != nil {
+			rt.root.Close()
+			rt.root = nil
+		}
+	})
 }
 
 func (rt *RadTree) Root() *ts.Node {

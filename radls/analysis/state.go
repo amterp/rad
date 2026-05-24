@@ -65,8 +65,8 @@ func (s *State) FileIDFor(uri string) FileID {
 }
 
 // SnapshotByID returns the current snapshot for a FileID, or nil if
-// the id isn't known. Lets internal code that holds a FileID grab the
-// latest version without converting back to URI first.
+// the id isn't known. Same Acquire/Release contract as Snapshot:
+// caller MUST Release() what they get back.
 func (s *State) SnapshotByID(id FileID) *DocumentVersion {
 	s.mu.RLock()
 	doc, ok := s.idToDoc[id]
@@ -74,7 +74,15 @@ func (s *State) SnapshotByID(id FileID) *DocumentVersion {
 	if !ok {
 		return nil
 	}
-	return doc.Snapshot()
+	for {
+		snap := doc.Snapshot()
+		if snap == nil {
+			return nil
+		}
+		if snap.acquire() {
+			return snap
+		}
+	}
 }
 
 // Encoding returns the LSP position encoding currently in use.
@@ -90,9 +98,16 @@ func (s *State) SetEncoding(enc PositionEncoding) {
 	s.encoding = enc
 }
 
-// Snapshot returns the current version of the named document, or nil
-// if the document isn't open. Lock-free on the version side; the docs
-// map lookup takes the RWMutex read lock briefly.
+// Snapshot returns the current version of the named document with
+// its refcount incremented. The caller MUST call Release() when
+// done (typically `defer snap.Release()` right after the nil-check).
+// Returns nil if the document isn't open.
+//
+// The acquire-after-load loop handles a small race window: between
+// loading the atomic pointer and bumping the refcount, the writer
+// could have Released the version we observed. In that case acquire
+// returns false and we retry; the Document.snapshot pointer has
+// already been updated to a newer version by the time we get here.
 func (s *State) Snapshot(uri string) *DocumentVersion {
 	s.mu.RLock()
 	doc, ok := s.docs[uri]
@@ -100,7 +115,17 @@ func (s *State) Snapshot(uri string) *DocumentVersion {
 	if !ok {
 		return nil
 	}
-	return doc.Snapshot()
+	for {
+		snap := doc.Snapshot()
+		if snap == nil {
+			return nil
+		}
+		if snap.acquire() {
+			return snap
+		}
+		// snap was released between Load and acquire; the writer
+		// must have stored a newer version. Retry.
+	}
 }
 
 // document returns the *Document handle, creating any missing entry is

@@ -16,13 +16,25 @@ import (
 // concurrently without coordination: the data inside is guaranteed
 // not to mutate. The next didChange produces a NEW DocumentVersion
 // (built off the old) and atomically swaps the owning Document's
-// current pointer; old versions remain valid for any reader still
-// holding them, and are GC'd once unreferenced.
+// current pointer.
 //
 // This is the load-bearing piece of Phase 8: it lets LSP request
 // handlers (hover, goto-def, completion, etc.) grab a snapshot once
 // and reason about a frozen world for the duration of the request,
 // rather than racing against the next keystroke.
+//
+// Lifetime: the underlying tree-sitter tree owns C-heap memory that
+// the Go GC can't reclaim. We refcount accordingly: the Document
+// holds one reference; each call to State.Snapshot bumps the count
+// and returns the snapshot to the caller, who MUST call Release()
+// when done. When the count reaches zero, the tree is Close()d.
+//
+// Why refcounting and not a finalizer: tree-sitter Nodes carry
+// references into the C tree that the Go GC doesn't see. A
+// finalizer can fire on a tree while another goroutine is walking
+// nodes that point into it - the documented cgo hazard. Explicit
+// release gives us deterministic free at the moment we know no
+// reader is touching the tree.
 type DocumentVersion struct {
 	uri         string
 	fileID      FileID
@@ -32,16 +44,58 @@ type DocumentVersion struct {
 	ast         *rl.SourceFile
 	lineIndex   *LineIndex
 	diagnostics []lsp.Diagnostic
+
+	// refs starts at 1 - the Document that owns this version holds
+	// the initial reference. Each State.Snapshot caller bumps to one
+	// more; their matching Release drops it. When this hits zero the
+	// underlying tree is freed and any later acquire() returns false.
+	refs atomic.Int32
 }
 
-func (v *DocumentVersion) URI() string                  { return v.uri }
-func (v *DocumentVersion) FileID() FileID               { return v.fileID }
-func (v *DocumentVersion) Version() int64               { return v.version }
-func (v *DocumentVersion) Text() string                 { return v.text }
-func (v *DocumentVersion) Tree() *rts.RadTree           { return v.tree }
-func (v *DocumentVersion) AST() *rl.SourceFile          { return v.ast }
-func (v *DocumentVersion) LineIndex() *LineIndex        { return v.lineIndex }
+func (v *DocumentVersion) URI() string                   { return v.uri }
+func (v *DocumentVersion) FileID() FileID                { return v.fileID }
+func (v *DocumentVersion) Version() int64                { return v.version }
+func (v *DocumentVersion) Text() string                  { return v.text }
+func (v *DocumentVersion) Tree() *rts.RadTree            { return v.tree }
+func (v *DocumentVersion) AST() *rl.SourceFile           { return v.ast }
+func (v *DocumentVersion) LineIndex() *LineIndex         { return v.lineIndex }
 func (v *DocumentVersion) Diagnostics() []lsp.Diagnostic { return v.diagnostics }
+
+// acquire bumps the refcount if the snapshot is still live. Returns
+// false if the snapshot has already been released (refs == 0), in
+// which case the caller should retry the Document.Snapshot load -
+// the State has a newer version.
+//
+// Uses CAS rather than a plain Add so we never resurrect a snapshot
+// whose tree has already been Close()d. This is the standard
+// "weak-to-strong reference upgrade" pattern.
+func (v *DocumentVersion) acquire() bool {
+	for {
+		n := v.refs.Load()
+		if n == 0 {
+			return false
+		}
+		if v.refs.CompareAndSwap(n, n+1) {
+			return true
+		}
+	}
+}
+
+// Release drops one reference. When the count reaches zero the
+// underlying tree-sitter tree is freed. Each call to State.Snapshot
+// pairs with exactly one Release - callers typically `defer
+// snap.Release()` right after the nil-check.
+func (v *DocumentVersion) Release() {
+	if v == nil {
+		return
+	}
+	if v.refs.Add(-1) == 0 {
+		if v.tree != nil {
+			v.tree.Close()
+			v.tree = nil
+		}
+	}
+}
 
 // GetLine returns the source of the line at the given index, or "" if
 // out of range. Kept on DocumentVersion (not LineIndex) because callers
@@ -78,13 +132,19 @@ func (d *Document) Snapshot() *DocumentVersion {
 
 // Update runs `produce` under the writer lock to compute the next
 // version from the previous (nil on first open), then atomically swaps
-// it into place. Returns the new version.
+// it into place. The new version arrives with refs=1 (held by us);
+// after the store we Release the previous version, dropping
+// Document's reference to it. Any reader that had already Acquired
+// the old version keeps it alive via the refcount.
 func (d *Document) Update(produce func(prev *DocumentVersion) *DocumentVersion) *DocumentVersion {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	prev := d.snapshot.Load()
 	next := produce(prev)
 	d.snapshot.Store(next)
+	if prev != nil {
+		prev.Release()
+	}
 	return next
 }
 
@@ -107,7 +167,7 @@ func buildVersion(
 	checker := check.NewCheckerWithTree(tree, parser, text, ast)
 	diags := runChecker(checker, lineIndex, encoding)
 
-	return &DocumentVersion{
+	v := &DocumentVersion{
 		uri:         uri,
 		fileID:      fileID,
 		version:     version,
@@ -117,6 +177,10 @@ func buildVersion(
 		lineIndex:   lineIndex,
 		diagnostics: diags,
 	}
+	// Owner's reference. Released by Document.Update when this
+	// version is replaced by a successor.
+	v.refs.Store(1)
+	return v
 }
 
 // runChecker is the boundary between check.Diagnostic (utf-8 byte

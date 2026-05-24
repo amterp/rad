@@ -70,10 +70,12 @@ func TestDifferentialFinalStateMatchesFromScratch(t *testing.T) {
 				})
 			}
 			incSnap := incremental.Snapshot(uri)
+			defer incSnap.Release()
 
 			scratch := freshState()
 			scratch.AddDoc(uri, final)
 			scrSnap := scratch.Snapshot(uri)
+			defer scrSnap.Release()
 
 			assertEquivalent(t, incSnap, scrSnap)
 		})
@@ -106,8 +108,16 @@ func TestDifferentialEditCommutativityForIndependentDocs(t *testing.T) {
 	s2.UpdateDoc(uriB, []lsp.TextDocumentContentChangeEvent{{Text: textB}})
 	s2.UpdateDoc(uriA, []lsp.TextDocumentContentChangeEvent{{Text: textA}})
 
-	assertEquivalent(t, s1.Snapshot(uriA), s2.Snapshot(uriA))
-	assertEquivalent(t, s1.Snapshot(uriB), s2.Snapshot(uriB))
+	s1A := s1.Snapshot(uriA)
+	s2A := s2.Snapshot(uriA)
+	s1B := s1.Snapshot(uriB)
+	s2B := s2.Snapshot(uriB)
+	defer s1A.Release()
+	defer s2A.Release()
+	defer s1B.Release()
+	defer s2B.Release()
+	assertEquivalent(t, s1A, s2A)
+	assertEquivalent(t, s1B, s2B)
 }
 
 func freshState() *State {

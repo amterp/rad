@@ -10,7 +10,8 @@ import (
 // TestSnapshotStability exercises the central guarantee of Phase 8:
 // once a reader has a *DocumentVersion, subsequent writes don't change
 // what that pointer observes. The reader sees the world as it was
-// when it grabbed its snapshot.
+// when it grabbed its snapshot. The reader's Acquire keeps the
+// underlying tree alive across writer-driven version swaps.
 func TestSnapshotStability(t *testing.T) {
 	s := NewState()
 	s.SetEncoding(EncodingUTF16)
@@ -22,6 +23,7 @@ func TestSnapshotStability(t *testing.T) {
 	if first == nil {
 		t.Fatal("expected snapshot after AddDoc")
 	}
+	defer first.Release()
 	if got := first.Text(); got != "x = 1" {
 		t.Errorf("v1 text: got %q, want %q", got, "x = 1")
 	}
@@ -43,6 +45,7 @@ func TestSnapshotStability(t *testing.T) {
 	}
 
 	latest := s.Snapshot(uri)
+	defer latest.Release()
 	if latest == first {
 		t.Errorf("Snapshot() returned the same pointer after updates")
 	}
@@ -51,6 +54,52 @@ func TestSnapshotStability(t *testing.T) {
 	}
 	if latest.Version() <= v1Version {
 		t.Errorf("expected version > %d, got %d", v1Version, latest.Version())
+	}
+}
+
+// TestSnapshotReleaseFreesTreeWhenLastRefDropped verifies the tree
+// is closed once the refcount reaches zero. Direct test of the
+// memory-leak fix: each Snapshot bumps refs, each Release drops one,
+// and when no more references exist the tree's C memory is freed.
+func TestSnapshotReleaseFreesTreeWhenLastRefDropped(t *testing.T) {
+	s := NewState()
+	s.SetEncoding(EncodingUTF16)
+	const uri = "file:///release.rad"
+	s.AddDoc(uri, "x = 1")
+
+	first := s.Snapshot(uri)
+	if first == nil {
+		t.Fatal("expected snapshot")
+	}
+	// At this point: refs = 2 (Document + caller).
+	if got := first.refs.Load(); got != 2 {
+		t.Errorf("after Snapshot: refs=%d, want 2", got)
+	}
+
+	// Update once. Document drops its reference to `first`, leaving
+	// just the caller's reference.
+	s.UpdateDoc(uri, []lsp.TextDocumentContentChangeEvent{{Text: "x = 2"}})
+	if got := first.refs.Load(); got != 1 {
+		t.Errorf("after Update: refs=%d, want 1", got)
+	}
+	if first.tree == nil {
+		t.Error("tree should still be alive while caller holds a ref")
+	}
+
+	// Caller releases. Refcount hits zero, tree is closed and set
+	// to nil.
+	first.Release()
+	if got := first.refs.Load(); got != 0 {
+		t.Errorf("after Release: refs=%d, want 0", got)
+	}
+	if first.tree != nil {
+		t.Error("tree should be nil after last Release")
+	}
+
+	// A late Acquire on a freed snapshot must fail. Without this the
+	// refcount could go negative and we'd never detect the bug.
+	if first.acquire() {
+		t.Error("acquire on released snapshot should fail")
 	}
 }
 
@@ -102,6 +151,7 @@ func TestSnapshotConcurrentReaders(t *testing.T) {
 				txt := snap.Text()
 				_ = snap.Version()
 				_ = snap.LineIndex().LineCount()
+				snap.Release()
 				if len(txt) == 0 {
 					t.Errorf("empty text in snapshot")
 					return
@@ -112,7 +162,10 @@ func TestSnapshotConcurrentReaders(t *testing.T) {
 
 	// Let it run a bit, then stop.
 	for i := 0; i < 200; i++ {
-		_ = s.Snapshot(uri)
+		snap := s.Snapshot(uri)
+		if snap != nil {
+			snap.Release()
+		}
 	}
 	close(stop)
 	wg.Wait()
