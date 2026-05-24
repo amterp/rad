@@ -214,7 +214,7 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 	if typing == nil {
 		return tc.record(call, rl.NewDynamicType())
 	}
-	tc.checkCallArity(call, typing, implicitReceiverCount)
+	tc.checkCall(call, typing, implicitReceiverCount)
 
 	if typing.ReturnT != nil {
 		return tc.record(call, *typing.ReturnT)
@@ -275,10 +275,11 @@ func (tc *typeChecker) builtinSignatureFor(callee rl.Node) *rl.TypingFnT {
 	return sig.Typing
 }
 
-// checkCallArity runs the call-matching algorithm and emits arity
-// diagnostics for mismatches. Mirrors the runtime logic in
-// core/type_fn.go but operates on AST positions rather than evaluated
-// values.
+// checkCall runs the call-matching algorithm: it pairs each explicit
+// argument with a formal parameter, type-checks the match, and emits
+// diagnostics for arity and assignability failures. Mirrors the
+// runtime logic in core/type_fn.go but operates on AST positions and
+// synthesized types rather than evaluated values.
 //
 //   - Positional args fill positional params left-to-right until a
 //     NamedOnly param is reached. If the last positional param is
@@ -287,26 +288,35 @@ func (tc *typeChecker) builtinSignatureFor(callee rl.Node) *rl.TypingFnT {
 //     duplicate something already filled positionally.
 //   - After matching, every required param (no default, not variadic,
 //     not optional) must have been seen.
-func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, implicitReceiverCount int) {
+//   - Each matched arg's synthesized type is checked against the
+//     param's declared type via IsAssignableFrom; failures fire
+//     ErrTypeMismatch.
+//
+// Two type-checks are intentionally deferred to a follow-on commit:
+// the UFCS receiver's type against params[0], and variadic element
+// types against the variadic's declared element type. Both need a
+// bit more plumbing (receiver-type threading from synthVarPath,
+// element-shape extraction from TypingListT) that doesn't belong on
+// the arity path.
+func (tc *typeChecker) checkCall(call *rl.Call, typing *rl.TypingFnT, implicitReceiverCount int) {
 	params := typing.Params
 	seen := make(map[string]bool, len(params))
 	hasVariadic := len(params) > 0 && params[len(params)-1].IsVariadic
 
 	// Account for any implicit first arg (UFCS receiver). The
-	// receiver always fills params[0..implicitReceiverCount-1].
+	// receiver always fills params[0..implicitReceiverCount-1]. Type
+	// of the receiver is not checked here yet; that lands in a
+	// follow-on commit that threads chain types through synthVarPath.
 	for i := 0; i < implicitReceiverCount && i < len(params); i++ {
 		param := params[i]
 		if param.IsVariadic {
-			// The first param is variadic - it absorbs the receiver
-			// and any explicit positional args.
 			seen[param.Name] = true
-			implicitReceiverCount = 0 // consumed via variadic path
+			implicitReceiverCount = 0
 			break
 		}
 		seen[param.Name] = true
 	}
 
-	// idxBase shifts param matching by the receiver count.
 	idxBase := implicitReceiverCount
 	totalArgs := implicitReceiverCount + len(call.Args)
 
@@ -314,8 +324,6 @@ func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, impli
 		paramIdx := idxBase + argIdx
 		if paramIdx >= len(params) {
 			if hasVariadic {
-				// The variadic param was already marked seen above
-				// or below; nothing more to absorb.
 				break
 			}
 			tc.addCallIssue(call.Span(), rl.ErrWrongArgCount,
@@ -324,6 +332,9 @@ func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, impli
 		}
 		param := params[paramIdx]
 		if param.IsVariadic {
+			// Variadic absorbs this and every later positional arg.
+			// Per-element type-check deferred to a follow-on commit;
+			// for now just record the param as filled.
 			seen[param.Name] = true
 			break
 		}
@@ -332,6 +343,7 @@ func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, impli
 				"Too many positional args, remaining args are named-only")
 			break
 		}
+		tc.checkArgType(arg, param)
 		seen[param.Name] = true
 	}
 
@@ -353,6 +365,7 @@ func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, impli
 				fmt.Sprintf("Argument '%s' already specified", na.Name))
 			continue
 		}
+		tc.checkArgType(na.Value, param)
 		seen[na.Name] = true
 	}
 
@@ -372,6 +385,41 @@ func (tc *typeChecker) checkCallArity(call *rl.Call, typing *rl.TypingFnT, impli
 		tc.addCallIssue(call.Span(), rl.ErrWrongArgCount,
 			fmt.Sprintf("Missing required argument '%s'", param.Name))
 	}
+}
+
+// checkArgType verifies an argument expression's type is assignable to
+// the matched parameter's declared type. No-ops when the param is
+// unannotated (nil declared type) - that's the "any" parameter case
+// and we let the runtime catch any mismatch.
+//
+// Severity is intentionally Hint, not Error, while the static side
+// lacks two pieces of fidelity it eventually needs: literal types
+// (so a string-literal "seconds" can be checked against a string
+// enum), and structural matching for function values. Until both
+// exist, promoting to Error would short-circuit the runtime check
+// path - which today produces richer "Value 'X' (Y) is not
+// compatible..." errors that mention the actual value. Keeping
+// this at Hint surfaces the issue in LSP and `rad check` while
+// preserving runtime behavior for the value-aware cases.
+func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
+	if param.Type == nil {
+		return
+	}
+	expected := *param.Type
+	argType := tc.synth(argNode)
+	if argType == nil {
+		return
+	}
+	if expected.IsAssignableFrom(argType) {
+		return
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     argNode.Span(),
+		Severity: IssueHint,
+		Code:     rl.ErrTypeMismatch,
+		Message: fmt.Sprintf("Argument type '%s' is not assignable to expected type '%s'",
+			argType.Name(), expected.Name()),
+	})
 }
 
 func (tc *typeChecker) addCallIssue(span rl.Span, code rl.Error, msg string) {

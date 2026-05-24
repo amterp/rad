@@ -163,6 +163,45 @@ func TestTypeCheck_BuiltinKnownNamedArgOK(t *testing.T) {
 	assert.Empty(t, info.Issues)
 }
 
+func TestTypeCheck_ArgTypeMismatchEmitsHint(t *testing.T) {
+	// `len` expects str/list/map. Passing an int should surface a
+	// type-mismatch hint - not an error, so the runtime still gets
+	// to fire its richer value-aware message.
+	_, info, _ := typeInfoFromSrc(t, "x = len(5)\n")
+	require.NotEmpty(t, info.Issues)
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "expected a Hint-severity ErrTypeMismatch issue")
+}
+
+func TestTypeCheck_ArgTypeCorrectIsSilent(t *testing.T) {
+	// `len("hi")` - str is a valid arg type for len. No diagnostics.
+	_, info, _ := typeInfoFromSrc(t, "x = len(\"hi\")\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrTypeMismatch, i.Code,
+			"unexpected type-mismatch on a valid call: %s", i.Message)
+	}
+}
+
+func TestTypeCheck_NamedArgTypeMismatchEmitsHint(t *testing.T) {
+	// `print(... sep: str = ...)` - sep expects str. Passing an int
+	// at the named-arg site should surface a type-mismatch hint.
+	_, info, _ := typeInfoFromSrc(t, "print(\"hi\", sep=5)\n")
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "expected type-mismatch hint on named arg")
+}
+
 func TestTypeCheck_UFCSCallReceiverCountsAsFirstArg(t *testing.T) {
 	// `"hi".upper()` desugars to `upper("hi")`. Without UFCS-awareness
 	// the arity check would say "missing required arg". With it, the
