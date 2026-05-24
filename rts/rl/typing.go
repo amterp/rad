@@ -679,6 +679,13 @@ func (t *TypingStrEnumT) Name() string {
 	return sb.String()
 }
 
+// Values returns the closed set of strings this enum permits. Exposed
+// for narrowing so the static checker can partition the set against a
+// predicate like `x == "foo"` or `x in ["a", "b"]`.
+func (t *TypingStrEnumT) Values() []string {
+	return t.values
+}
+
 func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		strVal, ok := (val.Val).(string)
