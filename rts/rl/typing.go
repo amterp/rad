@@ -592,6 +592,13 @@ func (t *TypingOptionalT) Name() string {
 	return fmt.Sprintf("%s?", t.t.Name())
 }
 
+// Inner returns the non-null component of an optional. Exposed for
+// flow-sensitive narrowing: after `if x != null:` we want the
+// underlying T from Optional<T>.
+func (t *TypingOptionalT) Inner() TypingT {
+	return t.t
+}
+
 func (t *TypingOptionalT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		return t.t.IsCompatibleWith(val)
@@ -721,6 +728,13 @@ func (t *TypingUnionT) Name() string {
 		sb.WriteString(typ.Name())
 	}
 	return sb.String()
+}
+
+// Types returns the union's component types. Exposed for narrowing -
+// the static checker walks arms to subtract null, peel off enum
+// variants, etc.
+func (t *TypingUnionT) Types() []TypingT {
+	return t.types
 }
 
 func (t *TypingUnionT) IsCompatibleWith(val TypingCompatVal) bool {
