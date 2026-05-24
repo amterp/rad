@@ -18,7 +18,7 @@ fn f(x: int?):
   x @ 4:17 -> int
 
 # Symbol types
-  cb (local): dynamic
+  cb (local): fn() -> void
   f (fn): fn(int?)
   x (param): int?
   y (local): int
@@ -47,7 +47,7 @@ fn f(x: int?):
 
 # Symbol types
   a (local): int
-  cb (local): dynamic
+  cb (local): fn() -> void
   f (fn): fn(int?)
   x (param): int?
   z (local): int?

@@ -15,7 +15,7 @@ fn process(callback: fn(int) -> bool):
 process(cb)
 ### STDOUT ###
 # Identifier types
-  x @ 2:12 -> <no-type>
+  x @ 2:12 -> int
   callback @ 5:5 -> fn(int) -> bool
   process @ 7:1 -> fn(fn(int) -> bool)
   cb @ 7:9 -> fn(int) -> bool
@@ -71,7 +71,7 @@ fn process(callback: fn(int) -> bool):
 process(cb)
 ### STDOUT ###
 # Identifier types
-  x @ 2:12 -> <no-type>
+  x @ 2:12 -> str
   callback @ 5:5 -> fn(int) -> bool
   process @ 7:1 -> fn(fn(int) -> bool)
   cb @ 7:9 -> fn(str) -> bool
@@ -127,8 +127,8 @@ fn process(callback: fn(int) -> bool):
 process(cb)
 ### STDOUT ###
 # Identifier types
-  x @ 2:12 -> <no-type>
-  y @ 2:16 -> <no-type>
+  x @ 2:12 -> int
+  y @ 2:16 -> int
   callback @ 5:5 -> fn(int) -> bool
   process @ 7:1 -> fn(fn(int) -> bool)
   cb @ 7:9 -> fn(int, int) -> bool
@@ -158,7 +158,7 @@ fn process(callback):
 process(cb)
 ### STDOUT ###
 # Identifier types
-  x @ 2:12 -> <no-type>
+  x @ 2:12 -> str
   callback @ 5:5 -> dynamic
   process @ 7:1 -> fn(any)
   cb @ 7:9 -> fn(str) -> str
@@ -172,18 +172,122 @@ process(cb)
 # Diagnostics
   (none)
 ### TITLE ###
-LambdaPassedSynthsDynamic
+LambdaExprWrongReturnTypeFires
 ### DESCRIPTION ###
-Lambdas still synth to Dynamic today (deriving a TypingFnT from
-the body is deferred). IsAssignableFrom treats Dynamic as gradually
-compatible with any fn type, so the call passes silently. Known
-caveat: a lambda with the wrong shape won't be caught at the
-static layer yet.
+Expression-form lambda `fn(x) "hi"` infers `fn(any) -> str`. The
+expression body IS the return value, so we synth it directly. The
+mismatch with `fn(int) -> bool` fires - this is the first case the
+old "lambda synths to Dynamic" caveat blocked.
 ### INPUT ###
 fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(fn(x) "hi")
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool)
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+
+# Diagnostics
+  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> str' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+LambdaExprRightShapeOk
+### DESCRIPTION ###
+Lambda whose inferred return matches the expected signature -
+no diagnostic. `fn(x) x > 0` infers `fn(any) -> bool` and slots
+into `fn(int) -> bool` cleanly (contravariant param: any accepts
+int; covariant return: bool matches bool).
+### INPUT ###
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(fn(x) x > 0)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool)
+  x @ 4:15 -> dynamic
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): <no-type>
+
+# Diagnostics
+  (none)
+### TITLE ###
+LambdaBlockMultiPathReturnUnioned
+### DESCRIPTION ###
+A block-form lambda with two return paths gets a union return
+type. With no annotation, inference unions the return arms into
+`int|str`, neither of which is bool - the call fires.
+### INPUT ###
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(fn(x):
+    if x > 0:
+        return 1
+    return "hi"
+)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool)
+  x @ 5:8 -> dynamic
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): <no-type>
+
+# Diagnostics
+  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> int|str' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+LambdaBlockNoReturnIsVoid
+### DESCRIPTION ###
+A lambda with no `return` statement infers `void` as the return.
+That doesn't match `fn(int) -> bool`, so the slot fires.
+### INPUT ###
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(fn(x):
+    print(x)
+)
+### STDOUT ###
+# Identifier types
+  callback @ 2:5 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool)
+  print @ 5:5 -> dynamic
+  x @ 5:11 -> dynamic
+
+# Symbol types
+  callback (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool)
+  x (param): <no-type>
+
+# Diagnostics
+  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> void' is not assignable to expected type 'fn(int) -> bool'
+### TITLE ###
+LambdaWithDeclaredReturnHonored
+### DESCRIPTION ###
+When the user writes a return annotation (`-> bool`) we use it
+verbatim instead of inferring. Here the body returns "hi" (str),
+which doesn't match the declared bool - that's the right place
+for the diagnostic to fire (typed-local-style mismatch on the
+return, not at the call site). Today we don't yet enforce the
+body-vs-declared-return check, so the call still passes - this
+snapshot pins the current behavior and marks the gap.
+### INPUT ###
+fn process(callback: fn(int) -> bool):
+    callback(5)
+
+process(fn(x) -> bool: return "hi")
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool

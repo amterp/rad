@@ -99,6 +99,38 @@ type typeChecker struct {
 	resolved *Resolved
 	info     *TypeInfo
 	frame    *Frame
+	// returnStack collects return-statement value types per
+	// enclosing function/lambda scope. Each entry is the running
+	// list of types observed inside one fn body. Lambdas use it to
+	// synth a proper TypingFnT return type instead of falling back
+	// to Dynamic. Pushed on lambda/fn entry, popped on exit. Stack
+	// depth N means we're inside N nested fn bodies; a return at
+	// depth N belongs to the innermost (top) frame, never the
+	// outer ones - matching the runtime where returns target the
+	// nearest enclosing fn.
+	returnStack [][]rl.TypingT
+}
+
+func (tc *typeChecker) pushReturnFrame() {
+	tc.returnStack = append(tc.returnStack, nil)
+}
+
+func (tc *typeChecker) popReturnFrame() []rl.TypingT {
+	n := len(tc.returnStack)
+	out := tc.returnStack[n-1]
+	tc.returnStack = tc.returnStack[:n-1]
+	return out
+}
+
+// recordReturn appends a return-value type to the innermost fn
+// scope's accumulator. A return outside any fn (which is itself a
+// validation error caught elsewhere) is a no-op here.
+func (tc *typeChecker) recordReturn(t rl.TypingT) {
+	n := len(tc.returnStack)
+	if n == 0 {
+		return
+	}
+	tc.returnStack[n-1] = append(tc.returnStack[n-1], t)
 }
 
 func (tc *typeChecker) walkFile(file *rl.SourceFile) {
@@ -132,6 +164,20 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		tc.walkWhileLoop(v)
 	case *rl.FnDef:
 		tc.walkFnDef(v)
+	case *rl.Return:
+		// Synth the return value's type and feed it into the
+		// innermost fn scope's return collector. Only the first
+		// value is observed today (multi-value return is unpacked
+		// at the call site; structural matching of the unpacked
+		// shape is deferred). A bare `return` records void so
+		// "no value" paths still join cleanly.
+		var t rl.TypingT
+		if len(v.Values) > 0 {
+			t = tc.synth(v.Values[0])
+		} else {
+			t = rl.NewVoidType()
+		}
+		tc.recordReturn(t)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -235,7 +281,16 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 		}
 	}
 	tc.frame = NewFrame()
+	// Push a return-collector frame so any `return E` inside the
+	// body lands in this fn'\''s slot, not whatever lambda we may
+	// be nested under at the call site. We don'\''t consume the
+	// collected types here yet - hoisted-fn return inference is a
+	// separate commit gated on SCC handling for mutual recursion.
+	// Pushing now is the cheap half: it keeps lambdas correct when
+	// a named fn is declared inside them.
+	tc.pushReturnFrame()
 	tc.walkStmts(n.Body)
+	_ = tc.popReturnFrame()
 	tc.frame = saved
 }
 
@@ -2078,33 +2133,85 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 // `xs = []` followed by `xs.append(1)` to `List<int>`, but the safe
 // over-approximation lets every existing program type-check today.
 
-// synthLambda walks the lambda'\''s body so identifier-uses inside it
-// get types recorded. The body executes in a child frame of the
-// enclosing one: captured variables retain whatever narrowing the
-// enclosing frame had at the lambda'\''s definition.
+// synthLambda walks the lambda'\''s body and synthesizes a structural
+// TypingFnT. Params come from the grammar annotation (l.Typing.Params,
+// possibly with nil per-param Type for unannotated args - that maps
+// to `any`). The return type is the headline work here:
 //
-// Pyright'\''s closure rule says we should only preserve narrowing on
-// captured paths that aren'\''t reassigned later in the enclosing
-// scope (otherwise the lambda might run after the reassignment
-// invalidates the narrowing). We don'\''t implement that lookahead
-// yet: the conservative-but-permissive answer is to forward the
-// enclosing frame. False positives (lambda thinks x is narrowed but
-// x got reassigned before the lambda ran) are possible but rare in
-// practice - users usually invoke lambdas at their definition site
-// or shortly after. When this bites, the right shape is a
-// reassignment-after-definition scan keyed on captured paths.
+//   - Declared annotation (`fn(x) -> int: ...`): use it verbatim.
+//   - Block-form lambda: union the types of every `return E` we
+//     encountered while walking the body. Bare `return` contributes
+//     void. Empty (no returns at all) is void.
+//   - Expression-form lambda: the body is a single ExprStmt and the
+//     expression IS the return value, so we synth it directly and
+//     skip the walk-and-collect dance.
 //
-// The lambda itself synths to Dynamic for now. A proper TypingFnT
-// would require running the body in synth-mode to derive a return
-// type from `return` statements - deferred to the return-type-
-// inference follow-on.
+// Closure rule deferred: same caveat as walkFnDef. Captured-path
+// narrowings from the enclosing frame are NOT preserved. For a
+// closure-friendly design we'\''d need Pyright'\''s reassignment-
+// after-definition check. Today, the body opens a fresh frame so
+// outer locals appear unnarrowed (read as their base type).
+//
+// Recursion: anonymous lambdas can'\''t self-reference. A named
+// recursive lambda bound to a local (`f = fn(x) f(x-1)`) would synth
+// the recursive `f` to Dynamic because SymbolTypes[f] isn'\''t set
+// during the walk. Sound but lossy - the inferred return would
+// collapse to Dynamic via any-like subsumption rules. Fixing this
+// needs the Tarjan SCC + placeholder return type machinery the plan
+// already describes for hoisted fns.
 func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	enclosing := tc.frame
-	for _, stmt := range n.Body {
-		tc.walkStmt(stmt)
+	// Unlike walkFnDef (which resets to a fresh frame because a fn
+	// can be called from anywhere), lambdas inherit the enclosing
+	// frame'\''s narrowings - that'\''s closure semantics. The
+	// reassignment-after-definition lookahead that would invalidate
+	// stale narrowings is still deferred (see docstring).
+	tc.pushReturnFrame()
+
+	// Expression-form lambdas (`fn(x) x + 1`) put the expression
+	// node directly in Body (verified against the converter output -
+	// it does not wrap in ExprStmt). Each body entry is the value to
+	// return; synth it to feed the inferred return type. Block-form
+	// lambdas walk via walkStmts and rely on the `*rl.Return` case
+	// in walkStmt to populate returnStack.
+	if !n.IsBlock {
+		for _, stmt := range n.Body {
+			if stmt == nil {
+				continue
+			}
+			tc.recordReturn(tc.synth(stmt))
+		}
+	} else {
+		tc.walkStmts(n.Body)
 	}
+
+	collected := tc.popReturnFrame()
 	tc.frame = enclosing
-	return tc.record(n, rl.NewDynamicType())
+
+	// Honor an explicit return annotation; otherwise infer.
+	var returnT rl.TypingT
+	if n.Typing != nil && n.Typing.ReturnT != nil {
+		returnT = *n.Typing.ReturnT
+	} else if len(collected) == 0 {
+		returnT = rl.NewVoidType()
+	} else {
+		returnT = unionTypesForJoin(collected)
+	}
+
+	// Construct a fresh TypingFnT so we don'\''t mutate the parsed
+	// l.Typing (other readers - signature display, hover - rely on
+	// the AST being immutable). Params are shared by value; the
+	// caller never writes through ReturnT, so a fresh pointer is
+	// safe.
+	params := []rl.TypingFnParam(nil)
+	if n.Typing != nil {
+		params = n.Typing.Params
+	}
+	fn := &rl.TypingFnT{
+		Params:  params,
+		ReturnT: &returnT,
+	}
+	return tc.record(n, fn)
 }
 
 func (tc *typeChecker) synthLitList(n *rl.LitList) rl.TypingT {
