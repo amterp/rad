@@ -277,6 +277,13 @@ type CompletionItem struct {
 	Detail   string             `json:"detail"`
 	Doc      string             `json:"documentation,omitempty"`
 	TextEdit *TextEdit          `json:"textEdit,omitempty"`
+	// SortText is the per-item sort key the client uses to order
+	// the filtered popup. When omitted the client falls back to
+	// Label, which makes locals and builtins interleave; setting
+	// a leading-digit prefix here ("0" before "1" before "2")
+	// gives us scope-proximity ordering on top of alphabetical
+	// within each tier.
+	SortText string `json:"sortText,omitempty"`
 	// insertText might be useful for inserting imports at the top, as needed
 }
 

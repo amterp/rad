@@ -23,622 +23,746 @@ ShebangCompletionLineZero
     {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }
@@ -662,629 +786,754 @@ x = 1
   "jsonrpc": "2.0",
   "result": [
     {
+      "detail": "int",
+      "kind": 6,
+      "label": "x",
+      "sortText": "1"
+    },
+    {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "x"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }
@@ -1313,622 +1562,746 @@ ShebangCompletionEmptyDocMiddleOfLine
     {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }
@@ -1957,634 +2330,760 @@ y = 2
       "label": "#!/usr/bin/env rad"
     },
     {
+      "detail": "int",
+      "kind": 6,
+      "label": "x",
+      "sortText": "1"
+    },
+    {
+      "detail": "int",
+      "kind": 6,
+      "label": "y",
+      "sortText": "1"
+    },
+    {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "x"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "y"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }
@@ -2610,639 +3109,766 @@ z = 3
   "jsonrpc": "2.0",
   "result": [
     {
+      "detail": "int",
+      "kind": 6,
+      "label": "x",
+      "sortText": "1"
+    },
+    {
+      "detail": "int",
+      "kind": 6,
+      "label": "y",
+      "sortText": "1"
+    },
+    {
+      "detail": "int",
+      "kind": 6,
+      "label": "z",
+      "sortText": "1"
+    },
+    {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "x"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "y"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "z"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }
@@ -3282,622 +3908,746 @@ x = 1
     {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
-      "label": "_rad_check_from_logs"
+      "label": "_rad_check_from_logs",
+      "sortText": "2"
     },
     {
       "detail": "_rad_delete_stash(*_)",
       "kind": 3,
-      "label": "_rad_delete_stash"
+      "label": "_rad_delete_stash",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain(_code: str) -\u003e str?",
       "kind": 3,
-      "label": "_rad_explain"
+      "label": "_rad_explain",
+      "sortText": "2"
     },
     {
       "detail": "_rad_explain_list() -\u003e str[]",
       "kind": 3,
-      "label": "_rad_explain_list"
+      "label": "_rad_explain_list",
+      "sortText": "2"
     },
     {
       "detail": "_rad_get_stash_id(*_)",
       "kind": 3,
-      "label": "_rad_get_stash_id"
+      "label": "_rad_get_stash_id",
+      "sortText": "2"
     },
     {
       "detail": "_rad_run_check(*_)",
       "kind": 3,
-      "label": "_rad_run_check"
+      "label": "_rad_run_check",
+      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
-      "label": "abs"
+      "label": "abs",
+      "sortText": "2"
     },
     {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
-      "label": "black"
+      "label": "black",
+      "sortText": "2"
     },
     {
       "detail": "blue(_item: any) -\u003e str",
       "kind": 3,
-      "label": "blue"
+      "label": "blue",
+      "sortText": "2"
     },
     {
       "detail": "bold(_item: any) -\u003e str",
       "kind": 3,
-      "label": "bold"
+      "label": "bold",
+      "sortText": "2"
     },
     {
       "detail": "ceil(_num: float) -\u003e int",
       "kind": 3,
-      "label": "ceil"
+      "label": "ceil",
+      "sortText": "2"
     },
     {
       "detail": "clamp(val: int|float, min: int|float, max: int|float) -\u003e error|int|float",
       "kind": 3,
-      "label": "clamp"
+      "label": "clamp",
+      "sortText": "2"
     },
     {
       "detail": "color_rgb(_val: any, red: int, green: int, blue: int) -\u003e error|str",
       "kind": 3,
-      "label": "color_rgb"
+      "label": "color_rgb",
+      "sortText": "2"
     },
     {
       "detail": "colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -\u003e str",
       "kind": 3,
-      "label": "colorize"
+      "label": "colorize",
+      "sortText": "2"
     },
     {
       "detail": "confirm(prompt: str = \"Confirm? [Y/n] \u003e \") -\u003e error|bool",
       "kind": 3,
-      "label": "confirm"
+      "label": "confirm",
+      "sortText": "2"
     },
     {
       "detail": "convert_duration(_value: int|float, _unit: [\"nanos\", \"micros\", \"millis\", \"seconds\", \"minutes\", \"hours\", \"days\"]) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "convert_duration"
+      "label": "convert_duration",
+      "sortText": "2"
     },
     {
       "detail": "count(_str: str, _substr: str) -\u003e int",
       "kind": 3,
-      "label": "count"
+      "label": "count",
+      "sortText": "2"
     },
     {
       "detail": "cyan(_item: any) -\u003e str",
       "kind": 3,
-      "label": "cyan"
+      "label": "cyan",
+      "sortText": "2"
     },
     {
       "detail": "debug(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "debug"
+      "label": "debug",
+      "sortText": "2"
     },
     {
       "detail": "decode_base16(_content: str) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base16"
+      "label": "decode_base16",
+      "sortText": "2"
     },
     {
       "detail": "decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e error|str",
       "kind": 3,
-      "label": "decode_base64"
+      "label": "decode_base64",
+      "sortText": "2"
     },
     {
       "detail": "delete_path(_path: str) -\u003e bool",
       "kind": 3,
-      "label": "delete_path"
+      "label": "delete_path",
+      "sortText": "2"
     },
     {
       "detail": "dim(_item: any) -\u003e str",
       "kind": 3,
-      "label": "dim"
+      "label": "dim",
+      "sortText": "2"
     },
     {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
-      "label": "encode_base16"
+      "label": "encode_base16",
+      "sortText": "2"
     },
     {
       "detail": "encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -\u003e str",
       "kind": 3,
-      "label": "encode_base64"
+      "label": "encode_base64",
+      "sortText": "2"
     },
     {
       "detail": "ends_with(_val: str, _end: str) -\u003e bool",
       "kind": 3,
-      "label": "ends_with"
+      "label": "ends_with",
+      "sortText": "2"
     },
     {
       "detail": "error(_msg: str) -\u003e error",
       "kind": 3,
-      "label": "error"
+      "label": "error",
+      "sortText": "2"
     },
     {
       "detail": "exit(_code: int|bool = 0) -\u003e void",
       "kind": 3,
-      "label": "exit"
+      "label": "exit",
+      "sortText": "2"
     },
     {
       "detail": "filter(_coll: map|list, _fn: fn(any) -\u003e bool | fn(any, any) -\u003e bool) -\u003e map|list",
       "kind": 3,
-      "label": "filter"
+      "label": "filter",
+      "sortText": "2"
     },
     {
       "detail": "find_paths(_path: str, *, depth: int = -1, relative: [\"target\", \"cwd\", \"absolute\"] = \"target\") -\u003e error|str[]",
       "kind": 3,
-      "label": "find_paths"
+      "label": "find_paths",
+      "sortText": "2"
     },
     {
       "detail": "flat_map(_coll: map|list, _fn: any?) -\u003e list",
       "kind": 3,
-      "label": "flat_map"
+      "label": "flat_map",
+      "sortText": "2"
     },
     {
       "detail": "float(_var: any) -\u003e float|error",
       "kind": 3,
-      "label": "float"
+      "label": "float",
+      "sortText": "2"
     },
     {
       "detail": "floor(_num: float) -\u003e int",
       "kind": 3,
-      "label": "floor"
+      "label": "floor",
+      "sortText": "2"
     },
     {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
-      "label": "gen_fid"
+      "label": "gen_fid",
+      "sortText": "2"
     },
     {
       "detail": "get_args() -\u003e str[]",
       "kind": 3,
-      "label": "get_args"
+      "label": "get_args",
+      "sortText": "2"
     },
     {
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
-      "label": "get_env"
+      "label": "get_env",
+      "sortText": "2"
     },
     {
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
-      "label": "get_path"
+      "label": "get_path",
+      "sortText": "2"
     },
     {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
-      "label": "get_rad_home"
+      "label": "get_rad_home",
+      "sortText": "2"
     },
     {
       "detail": "get_stash_path(_sub_path: str = \"\") -\u003e error|str",
       "kind": 3,
-      "label": "get_stash_path"
+      "label": "get_stash_path",
+      "sortText": "2"
     },
     {
       "detail": "green(_item: any) -\u003e str",
       "kind": 3,
-      "label": "green"
+      "label": "green",
+      "sortText": "2"
     },
     {
       "detail": "has_stdin() -\u003e bool",
       "kind": 3,
-      "label": "has_stdin"
+      "label": "has_stdin",
+      "sortText": "2"
     },
     {
       "detail": "hash(_val: str, algo: [\"sha1\", \"sha256\", \"sha512\", \"md5\"] = \"sha1\") -\u003e str",
       "kind": 3,
-      "label": "hash"
+      "label": "hash",
+      "sortText": "2"
     },
     {
       "detail": "http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_connect"
+      "label": "http_connect",
+      "sortText": "2"
     },
     {
       "detail": "http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_delete"
+      "label": "http_delete",
+      "sortText": "2"
     },
     {
       "detail": "http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_get"
+      "label": "http_get",
+      "sortText": "2"
     },
     {
       "detail": "http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_head"
+      "label": "http_head",
+      "sortText": "2"
     },
     {
       "detail": "http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_options"
+      "label": "http_options",
+      "sortText": "2"
     },
     {
       "detail": "http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_patch"
+      "label": "http_patch",
+      "sortText": "2"
     },
     {
       "detail": "http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_post"
+      "label": "http_post",
+      "sortText": "2"
     },
     {
       "detail": "http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_put"
+      "label": "http_put",
+      "sortText": "2"
     },
     {
       "detail": "http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -\u003e { \"success\": bool, \"status_code\"?: int, \"headers\": map, \"body\"?: any, \"error\"?: str, \"duration_seconds\": float }",
       "kind": 3,
-      "label": "http_trace"
+      "label": "http_trace",
+      "sortText": "2"
     },
     {
       "detail": "hyperlink(_val: any, _link: str) -\u003e str",
       "kind": 3,
-      "label": "hyperlink"
+      "label": "hyperlink",
+      "sortText": "2"
     },
     {
       "detail": "index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -\u003e int?",
       "kind": 3,
-      "label": "index_of"
+      "label": "index_of",
+      "sortText": "2"
     },
     {
       "detail": "input(prompt: str = \"\u003e \", *, hint: str = \"\", default: str = \"\", secret: bool = false) -\u003e error|str",
       "kind": 3,
-      "label": "input"
+      "label": "input",
+      "sortText": "2"
     },
     {
       "detail": "int(_var: any) -\u003e int|error",
       "kind": 3,
-      "label": "int"
+      "label": "int",
+      "sortText": "2"
     },
     {
       "detail": "is_defined(_var: str) -\u003e bool",
       "kind": 3,
-      "label": "is_defined"
+      "label": "is_defined",
+      "sortText": "2"
     },
     {
       "detail": "italic(_item: any) -\u003e str",
       "kind": 3,
-      "label": "italic"
+      "label": "italic",
+      "sortText": "2"
     },
     {
       "detail": "join(_list: list, sep: str = \"\", prefix: str = \"\", suffix: str = \"\") -\u003e str",
       "kind": 3,
-      "label": "join"
+      "label": "join",
+      "sortText": "2"
     },
     {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "keys"
+      "label": "keys",
+      "sortText": "2"
     },
     {
       "detail": "len(_val: str|list|map) -\u003e int",
       "kind": 3,
-      "label": "len"
+      "label": "len",
+      "sortText": "2"
     },
     {
       "detail": "load(_map: map, _key: any, _loader: fn() -\u003e any, *, reload: bool = false, override: any?) -\u003e error|any",
       "kind": 3,
-      "label": "load"
+      "label": "load",
+      "sortText": "2"
     },
     {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
-      "label": "load_stash_file"
+      "label": "load_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "load_state() -\u003e error|map",
       "kind": 3,
-      "label": "load_state"
+      "label": "load_state",
+      "sortText": "2"
     },
     {
       "detail": "lower(_val: str) -\u003e str",
       "kind": 3,
-      "label": "lower"
+      "label": "lower",
+      "sortText": "2"
     },
     {
       "detail": "magenta(_item: any) -\u003e str",
       "kind": 3,
-      "label": "magenta"
+      "label": "magenta",
+      "sortText": "2"
     },
     {
       "detail": "map(_coll: map|list, _fn: fn(any) -\u003e any | fn(any, any) -\u003e any) -\u003e map|list",
       "kind": 3,
-      "label": "map"
+      "label": "map",
+      "sortText": "2"
     },
     {
       "detail": "matches(_str: str, _pattern: str, *, partial: bool = false) -\u003e bool|error",
       "kind": 3,
-      "label": "matches"
+      "label": "matches",
+      "sortText": "2"
     },
     {
       "detail": "max(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "max"
+      "label": "max",
+      "sortText": "2"
     },
     {
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
-      "label": "min"
+      "label": "min",
+      "sortText": "2"
     },
     {
       "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
       "kind": 3,
-      "label": "multipick"
+      "label": "multipick",
+      "sortText": "2"
     },
     {
       "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "now"
+      "label": "now",
+      "sortText": "2"
     },
     {
       "detail": "orange(_item: any) -\u003e str",
       "kind": 3,
-      "label": "orange"
+      "label": "orange",
+      "sortText": "2"
     },
     {
       "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_date"
+      "label": "parse_date",
+      "sortText": "2"
     },
     {
       "detail": "parse_duration(_duration: str) -\u003e error|{ \"nanos\": int, \"micros\": float, \"millis\": float, \"seconds\": float, \"minutes\": float, \"hours\": float, \"days\": float }",
       "kind": 3,
-      "label": "parse_duration"
+      "label": "parse_duration",
+      "sortText": "2"
     },
     {
       "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
-      "label": "parse_epoch"
+      "label": "parse_epoch",
+      "sortText": "2"
     },
     {
       "detail": "parse_float(_str: str) -\u003e float|error",
       "kind": 3,
-      "label": "parse_float"
+      "label": "parse_float",
+      "sortText": "2"
     },
     {
       "detail": "parse_int(_str: str) -\u003e int|error",
       "kind": 3,
-      "label": "parse_int"
+      "label": "parse_int",
+      "sortText": "2"
     },
     {
       "detail": "parse_json(_str: str) -\u003e any|error",
       "kind": 3,
-      "label": "parse_json"
+      "label": "parse_json",
+      "sortText": "2"
     },
     {
       "detail": "pick(_options: str[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
       "kind": 3,
-      "label": "pick"
+      "label": "pick",
+      "sortText": "2"
     },
     {
       "detail": "pick_from_resource(path: str, _filter: str?, *, prompt: str = \"Pick an option\", prefer_exact: bool = true) -\u003e any",
       "kind": 3,
-      "label": "pick_from_resource"
+      "label": "pick_from_resource",
+      "sortText": "2"
     },
     {
       "detail": "pick_kv(keys: str[], values: any[], _filter: str?|str[]?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e any",
       "kind": 3,
-      "label": "pick_kv"
+      "label": "pick_kv",
+      "sortText": "2"
     },
     {
       "detail": "pink(_item: any) -\u003e str",
       "kind": 3,
-      "label": "pink"
+      "label": "pink",
+      "sortText": "2"
     },
     {
       "detail": "plain(_item: any) -\u003e str",
       "kind": 3,
-      "label": "plain"
+      "label": "plain",
+      "sortText": "2"
     },
     {
       "detail": "pow(_base: float, _exponent: float) -\u003e float",
       "kind": 3,
-      "label": "pow"
+      "label": "pow",
+      "sortText": "2"
     },
     {
       "detail": "pprint(_item: any?) -\u003e void",
       "kind": 3,
-      "label": "pprint"
+      "label": "pprint",
+      "sortText": "2"
     },
     {
       "detail": "print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print"
+      "label": "print",
+      "sortText": "2"
     },
     {
       "detail": "print_err(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void",
       "kind": 3,
-      "label": "print_err"
+      "label": "print_err",
+      "sortText": "2"
     },
     {
       "detail": "rand() -\u003e float",
       "kind": 3,
-      "label": "rand"
+      "label": "rand",
+      "sortText": "2"
     },
     {
       "detail": "rand_int(_arg1: int = 9223372036854775807, _arg2: int?) -\u003e int",
       "kind": 3,
-      "label": "rand_int"
+      "label": "rand_int",
+      "sortText": "2"
     },
     {
       "detail": "range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -\u003e float[]|int[]",
       "kind": 3,
-      "label": "range"
+      "label": "range",
+      "sortText": "2"
     },
     {
       "detail": "read_file(_path: str, *, mode: [\"text\", \"bytes\"] = \"text\") -\u003e error|{ \"size_bytes\": int, \"content\": str|int[] }",
       "kind": 3,
-      "label": "read_file"
+      "label": "read_file",
+      "sortText": "2"
     },
     {
       "detail": "read_stdin() -\u003e str?|error",
       "kind": 3,
-      "label": "read_stdin"
+      "label": "read_stdin",
+      "sortText": "2"
     },
     {
       "detail": "red(_item: any) -\u003e str",
       "kind": 3,
-      "label": "red"
+      "label": "red",
+      "sortText": "2"
     },
     {
       "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
       "kind": 3,
-      "label": "replace"
+      "label": "replace",
+      "sortText": "2"
     },
     {
       "detail": "reverse(_val: str|list) -\u003e str|list",
       "kind": 3,
-      "label": "reverse"
+      "label": "reverse",
+      "sortText": "2"
     },
     {
       "detail": "round(_num: float, _decimals: int = 0) -\u003e error|int|float",
       "kind": 3,
-      "label": "round"
+      "label": "round",
+      "sortText": "2"
     },
     {
       "detail": "save_state(_state: map) -\u003e error?",
       "kind": 3,
-      "label": "save_state"
+      "label": "save_state",
+      "sortText": "2"
     },
     {
       "detail": "seed_random(_seed: int) -\u003e void",
       "kind": 3,
-      "label": "seed_random"
+      "label": "seed_random",
+      "sortText": "2"
     },
     {
       "detail": "sleep(_duration: int|float|str, *, title: str?) -\u003e void",
       "kind": 3,
-      "label": "sleep"
+      "label": "sleep",
+      "sortText": "2"
     },
     {
       "detail": "sort(_primary: list|str, *_others: list|str, *, reverse: bool = false) -\u003e list|str",
       "kind": 3,
-      "label": "sort"
+      "label": "sort",
+      "sortText": "2"
     },
     {
       "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
       "kind": 3,
-      "label": "split"
+      "label": "split",
+      "sortText": "2"
     },
     {
       "detail": "split_lines(_val: str) -\u003e str[]",
       "kind": 3,
-      "label": "split_lines"
+      "label": "split_lines",
+      "sortText": "2"
     },
     {
       "detail": "starts_with(_val: str, _start: str) -\u003e bool",
       "kind": 3,
-      "label": "starts_with"
+      "label": "starts_with",
+      "sortText": "2"
     },
     {
       "detail": "str(_var: any) -\u003e str",
       "kind": 3,
-      "label": "str"
+      "label": "str",
+      "sortText": "2"
     },
     {
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
-      "label": "strikethrough"
+      "label": "strikethrough",
+      "sortText": "2"
     },
     {
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
-      "label": "sum"
+      "label": "sum",
+      "sortText": "2"
     },
     {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim"
+      "label": "trim",
+      "sortText": "2"
     },
     {
       "detail": "trim_left(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_left"
+      "label": "trim_left",
+      "sortText": "2"
     },
     {
       "detail": "trim_prefix(_subject: str, _prefix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_prefix"
+      "label": "trim_prefix",
+      "sortText": "2"
     },
     {
       "detail": "trim_right(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
-      "label": "trim_right"
+      "label": "trim_right",
+      "sortText": "2"
     },
     {
       "detail": "trim_suffix(_subject: str, _suffix: str) -\u003e str",
       "kind": 3,
-      "label": "trim_suffix"
+      "label": "trim_suffix",
+      "sortText": "2"
     },
     {
       "detail": "truncate(_str: str, _len: int) -\u003e error|str",
       "kind": 3,
-      "label": "truncate"
+      "label": "truncate",
+      "sortText": "2"
     },
     {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
-      "label": "type_of"
+      "label": "type_of",
+      "sortText": "2"
     },
     {
       "detail": "underline(_item: any) -\u003e str",
       "kind": 3,
-      "label": "underline"
+      "label": "underline",
+      "sortText": "2"
     },
     {
       "detail": "unique(_list: any[]) -\u003e any[]",
       "kind": 3,
-      "label": "unique"
+      "label": "unique",
+      "sortText": "2"
     },
     {
       "detail": "upper(_val: str) -\u003e str",
       "kind": 3,
-      "label": "upper"
+      "label": "upper",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v4() -\u003e str",
       "kind": 3,
-      "label": "uuid_v4"
+      "label": "uuid_v4",
+      "sortText": "2"
     },
     {
       "detail": "uuid_v7() -\u003e str",
       "kind": 3,
-      "label": "uuid_v7"
+      "label": "uuid_v7",
+      "sortText": "2"
     },
     {
       "detail": "values(_map: map) -\u003e any[]",
       "kind": 3,
-      "label": "values"
+      "label": "values",
+      "sortText": "2"
     },
     {
       "detail": "white(_item: any) -\u003e str",
       "kind": 3,
-      "label": "white"
+      "label": "white",
+      "sortText": "2"
     },
     {
       "detail": "write_file(_path: str, _content: str, *, append: bool = false) -\u003e error|{ \"bytes_written\": int, \"path\": str }",
       "kind": 3,
-      "label": "write_file"
+      "label": "write_file",
+      "sortText": "2"
     },
     {
       "detail": "write_stash_file(_path: str, _content: str) -\u003e error?",
       "kind": 3,
-      "label": "write_stash_file"
+      "label": "write_stash_file",
+      "sortText": "2"
     },
     {
       "detail": "yellow(_item: any) -\u003e str",
       "kind": 3,
-      "label": "yellow"
+      "label": "yellow",
+      "sortText": "2"
     },
     {
       "detail": "zip(*_lists: list, *, fill: any?, strict: bool = false) -\u003e error|list[]",
       "kind": 3,
-      "label": "zip"
+      "label": "zip",
+      "sortText": "2"
     }
   ]
 }

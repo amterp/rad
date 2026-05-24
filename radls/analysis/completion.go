@@ -10,38 +10,62 @@ import (
 	"github.com/amterp/rad/rts/rl"
 )
 
+// Completion scope tiers. SortText values are leading-digit
+// strings so the client's lexicographic sort on SortText puts
+// "0" before "1" before "2", giving closer-scope items the top
+// of the popup. Within each tier the Label tiebreaker keeps the
+// list alphabetical, so the visual experience stays stable.
+const (
+	sortTierLocal    = "0"
+	sortTierFile     = "1"
+	sortTierBuiltin  = "2"
+)
+
 // buildCompletions populates `items` with every name reachable at
 // the cursor: builtins, top-level fns and vars, args/cmd-args, and
 // (when the cursor is inside a function or lambda body) that
 // function's params plus any locals declared earlier in the body.
 //
-// Single dedupe pass at the end: a name might be in scope from
-// several angles (e.g. an `args:` arg `name` and a builtin called
-// `name`), and we want one entry per unique label so the editor
-// list doesn't show duplicates. Deeper/closer bindings win the
-// detail slot since that's the binding the cursor would actually
-// resolve to.
+// Order discipline (the LSP client honours SortText before Label):
 //
-// Sorting: alphabetical by label so the popup is stable across
-// requests. Some clients re-sort by their own scoring (recency,
-// fuzzy-rank) but starting alphabetical is friendlier than the
-// random order that map iteration would produce.
+//   1. enclosing-fn params + earlier locals (tier "0")
+//   2. file-scope: args, cmd-args, top-level fns + vars (tier "1")
+//   3. builtins (tier "2")
+//
+// The popup the user sees has their local names at the top,
+// file-scope next, builtins last - which matches what people
+// actually want to type. Without SortText, alphabetical sort
+// alone would bury a local `x` under whatever builtin starts
+// with the same prefix.
+//
+// Dedupe with last-add-wins. The add order goes builtins ->
+// file-scope -> enclosing-fn, so a name that exists in multiple
+// scopes keeps the closest binding's metadata (Detail, SortText,
+// Kind). This is also why the final sort must happen AFTER
+// dedupe: the dedupe collapses entries by label but doesn't
+// preserve insertion order across the map, so a separate sort
+// is what guarantees stable ordering on the wire.
 func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePos lsp.Pos) {
 	if snap.ast == nil {
 		// Even without an AST we can still offer builtins - they're
 		// useful when the user has started a fresh file with a typo
 		// and the parse failed.
 		addBuiltinCompletions(items)
-		dedupCompletionsInPlace(items)
-		return
+	} else {
+		addBuiltinCompletions(items)
+		addFileScopeCompletions(items, snap)
+		addEnclosingFnCompletions(items, snap, bytePos)
 	}
-
-	addBuiltinCompletions(items)
-	addFileScopeCompletions(items, snap)
-	addEnclosingFnCompletions(items, snap, bytePos)
 	dedupCompletionsInPlace(items)
+	// Sort runs unconditionally - including on the nil-AST path,
+	// where without it the popup order would be whatever
+	// FnSignaturesByName's map iteration produced this request.
 	sort.SliceStable(*items, func(i, j int) bool {
-		return (*items)[i].Label < (*items)[j].Label
+		a, b := (*items)[i], (*items)[j]
+		if a.SortText != b.SortText {
+			return a.SortText < b.SortText
+		}
+		return a.Label < b.Label
 	})
 }
 
@@ -51,9 +75,10 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 func addBuiltinCompletions(items *[]lsp.CompletionItem) {
 	for name, sig := range rts.FnSignaturesByName {
 		*items = append(*items, lsp.CompletionItem{
-			Label:  name,
-			Kind:   lsp.CompletionKindFunction,
-			Detail: sig.Signature,
+			Label:    name,
+			Kind:     lsp.CompletionKindFunction,
+			Detail:   sig.Signature,
+			SortText: sortTierBuiltin,
 		})
 	}
 }
@@ -69,9 +94,10 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion)
 		for i := range file.Args.Decls {
 			decl := &file.Args.Decls[i]
 			*items = append(*items, lsp.CompletionItem{
-				Label:  decl.Name,
-				Kind:   lsp.CompletionKindVariable,
-				Detail: decl.TypeName,
+				Label:    decl.Name,
+				Kind:     lsp.CompletionKindVariable,
+				Detail:   decl.TypeName,
+				SortText: sortTierFile,
 			})
 		}
 	}
@@ -79,9 +105,10 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion)
 		for i := range cmd.Decls {
 			decl := &cmd.Decls[i]
 			*items = append(*items, lsp.CompletionItem{
-				Label:  decl.Name,
-				Kind:   lsp.CompletionKindVariable,
-				Detail: decl.TypeName,
+				Label:    decl.Name,
+				Kind:     lsp.CompletionKindVariable,
+				Detail:   decl.TypeName,
+				SortText: sortTierFile,
 			})
 		}
 	}
@@ -93,9 +120,10 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion)
 				detail = n.Typing.Name()
 			}
 			*items = append(*items, lsp.CompletionItem{
-				Label:  n.Name,
-				Kind:   lsp.CompletionKindFunction,
-				Detail: detail,
+				Label:    n.Name,
+				Kind:     lsp.CompletionKindFunction,
+				Detail:   detail,
+				SortText: sortTierFile,
 			})
 		case *rl.Assign:
 			for _, target := range n.Targets {
@@ -106,6 +134,7 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion)
 						Detail: localTypeString(
 							ident, snap.resolved, snap.types,
 						),
+						SortText: sortTierFile,
 					})
 				}
 			}
@@ -133,9 +162,10 @@ func addEnclosingFnCompletions(items *[]lsp.CompletionItem, snap *DocumentVersio
 			typeStr = (*p.Type).Name()
 		}
 		*items = append(*items, lsp.CompletionItem{
-			Label:  p.Name,
-			Kind:   lsp.CompletionKindVariable,
-			Detail: typeStr,
+			Label:    p.Name,
+			Kind:     lsp.CompletionKindVariable,
+			Detail:   typeStr,
+			SortText: sortTierLocal,
 		})
 	}
 	for _, stmt := range body {
@@ -157,6 +187,7 @@ func addEnclosingFnCompletions(items *[]lsp.CompletionItem, snap *DocumentVersio
 					Detail: localTypeString(
 						ident, snap.resolved, snap.types,
 					),
+					SortText: sortTierLocal,
 				})
 			}
 		}

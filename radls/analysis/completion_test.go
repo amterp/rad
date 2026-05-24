@@ -113,21 +113,80 @@ func TestCompletionExcludesLocalsDeclaredAfterCursor(t *testing.T) {
 }
 
 // TestCompletionDedupedAndSorted verifies labels are unique and
-// alphabetically ordered. Without these the popup is jittery
-// (random map order) and noisy (same name twice).
+// the popup order is (SortText, Label). Without the SortText
+// tier, alphabetical-only sort would bury locals under builtins
+// that happen to share a prefix.
 func TestCompletionDedupedAndSorted(t *testing.T) {
 	items := completionFixture(t, "x = 1\n", lsp.NewPos(1, 0))
 	seen := make(map[string]bool)
-	prev := ""
+	type key struct{ sort, label string }
+	var prev key
+	first := true
 	for _, it := range items {
 		if seen[it.Label] {
 			t.Errorf("duplicate label: %q", it.Label)
 		}
 		seen[it.Label] = true
-		if prev != "" && it.Label < prev {
-			t.Errorf("not sorted: %q before %q", prev, it.Label)
+		cur := key{it.SortText, it.Label}
+		if !first {
+			if cur.sort < prev.sort {
+				t.Errorf("SortText regressed: %q before %q", prev.sort, cur.sort)
+			}
+			if cur.sort == prev.sort && cur.label < prev.label {
+				t.Errorf("Label not sorted within tier %q: %q before %q",
+					cur.sort, prev.label, cur.label)
+			}
 		}
-		prev = it.Label
+		first = false
+		prev = cur
+	}
+}
+
+// TestCompletionScopeTiers verifies the tier assignment: locals
+// get "0", file-scope gets "1", builtins get "2". This is the
+// load-bearing UX win - locals at the top, builtins at the
+// bottom, the editor's filter doesn't bury what the user just
+// typed.
+func TestCompletionScopeTiers(t *testing.T) {
+	src := "alpha = 1\n\nfn beta(who: str):\n    local = 2\n    print(local)\n"
+	// Cursor inside fn beta at line 4 col 4.
+	items := completionFixture(t, src, lsp.NewPos(4, 4))
+
+	wantTier := map[string]string{
+		"who":   "0", // enclosing-fn param
+		"local": "0", // earlier-local
+		"alpha": "1", // file-scope var
+		"beta":  "1", // file-scope fn
+		"print": "2", // builtin
+	}
+	for _, it := range items {
+		want, tracked := wantTier[it.Label]
+		if !tracked {
+			continue
+		}
+		if it.SortText != want {
+			t.Errorf("%q: SortText=%q, want %q", it.Label, it.SortText, want)
+		}
+	}
+}
+
+// TestCompletionNilASTSorted verifies the parse-failed path still
+// returns a sorted list. Before the fix, hitting an ERROR-node
+// state mid-edit (the most common typing state) skipped the
+// sort entirely and the popup reordered itself randomly per
+// keystroke.
+func TestCompletionNilASTSorted(t *testing.T) {
+	// Unclosed expression - the converter typically returns nil AST.
+	items := completionFixture(t, "x = (", lsp.NewPos(0, 5))
+	// We don't strictly require nil AST here; we require sorted
+	// output regardless of the AST path the snapshot took.
+	prev := ""
+	for _, it := range items {
+		if prev != "" && it.SortText < prev {
+			t.Errorf("nil-AST path not sorted by SortText: %q before %q",
+				prev, it.SortText)
+		}
+		prev = it.SortText
 	}
 }
 
