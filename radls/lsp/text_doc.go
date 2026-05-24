@@ -152,6 +152,39 @@ type ReferenceContext struct {
 	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
+// SemanticTokensParams is the textDocument/semanticTokens/full
+// payload. Whole-document; no range provided. Range-mode is a
+// future opt-in for very large files where we want to scope work.
+type SemanticTokensParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+// SemanticTokens is the response shape: a delta-encoded uint
+// array per the LSP 3.17 spec. Five integers per token:
+// deltaLine, deltaStartChar, length, tokenType, tokenModifiers.
+// ResultID is for incremental requests; we don't support those
+// yet but the field is reserved.
+type SemanticTokens struct {
+	ResultID string `json:"resultId,omitempty"`
+	Data     []uint `json:"data"`
+}
+
+// SemanticTokensLegend declares the index-to-name mappings the
+// server uses in its emitted data. The client uses it to decode
+// the delta-encoded uints into theme-styleable token names.
+type SemanticTokensLegend struct {
+	TokenTypes     []string `json:"tokenTypes"`
+	TokenModifiers []string `json:"tokenModifiers"`
+}
+
+// SemanticTokensProvider is the capability advertised at
+// initialize. The full-mode flag enables whole-document requests;
+// no Range/Delta support yet (those are optional refinements).
+type SemanticTokensProvider struct {
+	Legend SemanticTokensLegend `json:"legend"`
+	Full   bool                 `json:"full"`
+}
+
 // SymbolKind matches the LSP 3.17 SymbolKind enum. We only use a
 // small slice today; the full list is in the spec but adding
 // constants we don't emit just clutters the file.

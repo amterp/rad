@@ -60,6 +60,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	m.AddRequestHandler(lsp.TD_DEFINITION, server.handleDefinition)
 	m.AddRequestHandler(lsp.TD_DOCUMENT_SYMBOL, server.handleDocumentSymbol)
 	m.AddRequestHandler(lsp.TD_REFERENCES, server.handleReferences)
+	m.AddRequestHandler(lsp.TD_SEMANTIC_TOKENS, server.handleSemanticTokens)
 
 	return &server
 }
@@ -86,7 +87,7 @@ func (s *Server) handleInitialize(_ context.Context, params json.RawMessage) (re
 	s.s.SetEncoding(enc)
 	log.L.Infof("Negotiated position encoding: %s (client offered %v)", enc, offered)
 
-	result = lsp.NewInitializeResult(string(enc))
+	result = lsp.NewInitializeResult(string(enc), analysis.SemanticTokensLegend())
 	return
 }
 
@@ -217,6 +218,19 @@ func (s *Server) handleReferences(_ context.Context, params json.RawMessage) (re
 		defer snap.Release()
 	}
 	result, err = s.s.References(snap, refParams.Position, refParams.Context.IncludeDeclaration)
+	return
+}
+
+func (s *Server) handleSemanticTokens(_ context.Context, params json.RawMessage) (result any, err error) {
+	var stParams lsp.SemanticTokensParams
+	if err = json.Unmarshal(params, &stParams); err != nil {
+		return
+	}
+	snap := s.s.Snapshot(stParams.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
+	result, err = s.s.SemanticTokens(snap)
 	return
 }
 

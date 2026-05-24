@@ -13,6 +13,7 @@ const (
 	TD_DEFINITION          = "textDocument/definition"
 	TD_DOCUMENT_SYMBOL     = "textDocument/documentSymbol"
 	TD_REFERENCES          = "textDocument/references"
+	TD_SEMANTIC_TOKENS     = "textDocument/semanticTokens/full"
 	TD_PUBLISH_DIAGNOSTICS = "textDocument/publishDiagnostics"
 )
 

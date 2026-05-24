@@ -39,14 +39,15 @@ type InitializeResult struct {
 // list; clients use it for every subsequent request/response that
 // contains line/character positions.
 type ServerCapabilities struct {
-	TextDocumentSync       int32          `json:"textDocumentSync"`
-	HoverProvider          bool           `json:"hoverProvider"`
-	DefinitionProvider     bool           `json:"definitionProvider"`
-	DocumentSymbolProvider bool           `json:"documentSymbolProvider"`
-	ReferencesProvider     bool           `json:"referencesProvider"`
-	CodeActionProvider     bool           `json:"codeActionProvider"`
-	CompletionProvider     map[string]any `json:"completionProvider"`
-	PositionEncoding       string         `json:"positionEncoding,omitempty"`
+	TextDocumentSync       int32                   `json:"textDocumentSync"`
+	HoverProvider          bool                    `json:"hoverProvider"`
+	DefinitionProvider     bool                    `json:"definitionProvider"`
+	DocumentSymbolProvider bool                    `json:"documentSymbolProvider"`
+	ReferencesProvider     bool                    `json:"referencesProvider"`
+	CodeActionProvider     bool                    `json:"codeActionProvider"`
+	CompletionProvider     map[string]any          `json:"completionProvider"`
+	SemanticTokensProvider *SemanticTokensProvider `json:"semanticTokensProvider,omitempty"`
+	PositionEncoding       string                  `json:"positionEncoding,omitempty"`
 }
 
 type ServerInfo struct {
@@ -54,7 +55,12 @@ type ServerInfo struct {
 	Version string `json:"version"`
 }
 
-func NewInitializeResult(positionEncoding string) InitializeResult {
+// NewInitializeResult builds the server's response to `initialize`.
+// The legend is passed in (rather than fixed here) because the
+// token-type vocabulary belongs to the analysis layer - keeping
+// the lsp package free of analysis-internal knowledge avoids an
+// import cycle and keeps the wire-types file scope-blind.
+func NewInitializeResult(positionEncoding string, semLegend SemanticTokensLegend) InitializeResult {
 	return InitializeResult{
 		Capabilities: ServerCapabilities{
 			TextDocumentSync:       1,
@@ -65,6 +71,10 @@ func NewInitializeResult(positionEncoding string) InitializeResult {
 			CodeActionProvider:     true,
 			CompletionProvider: map[string]any{
 				"triggerCharacters": []string{".", "#", "$", "!", "/"},
+			},
+			SemanticTokensProvider: &SemanticTokensProvider{
+				Legend: semLegend,
+				Full:   true,
 			},
 			PositionEncoding: positionEncoding,
 		},
