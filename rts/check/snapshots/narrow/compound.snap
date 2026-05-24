@@ -1,0 +1,139 @@
+### TITLE ###
+NotInvertsRefinement
+### DESCRIPTION ###
+`if not (x == null):` should be equivalent to `if x != null:` -
+truthy branch narrows x to non-null.
+### INPUT ###
+fn f(x: int?):
+    if not (x == null):
+        y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:13 -> int?
+  y @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+AndChainsRefinements
+### DESCRIPTION ###
+`if x != null and y != null:` should narrow both x and y to non-null
+in the body. The right operand is evaluated with the left's truthy
+refinement active.
+### INPUT ###
+fn f(x: int?, y: str?):
+    if x != null and y != null:
+        a = x
+        b = y
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 2:22 -> str?
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 4:9 -> <no-type>
+  y @ 4:13 -> str
+
+# Symbol types
+  a (local): int
+  b (local): str
+  f (fn): <no-type>
+  x (param): int?
+  y (param): str?
+
+# Diagnostics
+  (none)
+### TITLE ###
+AndShortCircuitRightSeesLeftNarrowed
+### DESCRIPTION ###
+In `x != null and type_of(x) == "int"`, the right hand sees x as
+non-null (left's truthy refinement). With base type int?, the
+right operand's narrowing to int is still useful (type_of can
+further refine within the non-null component).
+### INPUT ###
+fn f(x: int?):
+    if x != null and type_of(x) == "int":
+        y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  type_of @ 2:22 -> dynamic
+  x @ 2:30 -> int?
+  y @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+OrFalsyBothFalse
+### DESCRIPTION ###
+`if x == null or y == null:` truthy = at least one is null (no
+refinement we can express). Falsy = both non-null - narrows both
+in the else.
+### INPUT ###
+fn f(x: int?, y: str?):
+    if x == null or y == null:
+        a = 0
+    else:
+        b = x
+        c = y
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 2:21 -> str?
+  a @ 3:9 -> <no-type>
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> int
+  c @ 6:9 -> <no-type>
+  y @ 6:13 -> str
+
+# Symbol types
+  a (local): int
+  b (local): int
+  c (local): str
+  f (fn): <no-type>
+  x (param): int?
+  y (param): str?
+
+# Diagnostics
+  (none)
+### TITLE ###
+NotAndDeMorgan
+### DESCRIPTION ###
+`not (x == null or y == null)` should give us "both non-null"
+via the Negate path - flipping or's WhenFalse into the outer
+WhenTrue.
+### INPUT ###
+fn f(x: int?, y: str?):
+    if not (x == null or y == null):
+        a = x
+        b = y
+### STDOUT ###
+# Identifier types
+  x @ 2:13 -> int?
+  y @ 2:26 -> str?
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 4:9 -> <no-type>
+  y @ 4:13 -> str
+
+# Symbol types
+  a (local): int
+  b (local): str
+  f (fn): <no-type>
+  x (param): int?
+  y (param): str?
+
+# Diagnostics
+  (none)
