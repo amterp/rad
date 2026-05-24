@@ -1,0 +1,213 @@
+### TITLE ###
+UseSitesOnly
+### DOCUMENT ###
+x = 1
+print(x)
+print(x + x)
+### REFERENCES 0:0 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 7,
+          "line": 1
+        },
+        "start": {
+          "character": 6,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 7,
+          "line": 2
+        },
+        "start": {
+          "character": 6,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 11,
+          "line": 2
+        },
+        "start": {
+          "character": 10,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+IncludesDecl
+### DOCUMENT ###
+x = 1
+print(x)
+### REFERENCES 0:0 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 1,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 7,
+          "line": 1
+        },
+        "start": {
+          "character": 6,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+FromUseSite
+### DOCUMENT ###
+x = 1
+print(x)
+print(x)
+### REFERENCES 1:6 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 7,
+          "line": 1
+        },
+        "start": {
+          "character": 6,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 7,
+          "line": 2
+        },
+        "start": {
+          "character": 6,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+OffIdentifierReturnsEmpty
+### DOCUMENT ###
+x = 1
+### REFERENCES 0:4 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": []
+}
+### TITLE ###
+NoReferencesForUnusedLocal
+### DOCUMENT ###
+x = 1
+### REFERENCES 0:0 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 1,
+          "line": 0
+        },
+        "start": {
+          "character": 0,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
