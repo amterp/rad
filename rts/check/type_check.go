@@ -184,6 +184,10 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 		return tc.synthFallback(v)
 	case *rl.CatchExpr:
 		return tc.synthCatchExpr(v)
+	case *rl.LitList:
+		return tc.synthLitList(v)
+	case *rl.LitMap:
+		return tc.synthLitMap(v)
 	}
 	for _, child := range n.Children() {
 		_ = tc.synth(child)
@@ -786,4 +790,104 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 		Message: fmt.Sprintf("Invalid operand type '%s' for unary '%s'",
 			operand.Name(), op.String()),
 	})
+}
+
+// --- Collection literals ---------------------------------------------
+//
+// List and map literals synthesize to a parameterized collection type
+// derived from their elements. Empty literals fall back to the
+// unparameterized AnyList/AnyMap rather than erroring: that's the
+// gradual-typing choice. A future "look-around" pass can refine
+// `xs = []` followed by `xs.append(1)` to `List<int>`, but the safe
+// over-approximation lets every existing program type-check today.
+
+func (tc *typeChecker) synthLitList(n *rl.LitList) rl.TypingT {
+	if len(n.Elements) == 0 {
+		return tc.record(n, rl.NewAnyListType())
+	}
+	elemTypes := make([]rl.TypingT, 0, len(n.Elements))
+	for _, e := range n.Elements {
+		elemTypes = append(elemTypes, tc.synth(e))
+	}
+	widened := widenElementTypes(elemTypes)
+	// Bare-ErrorType element poisons the whole literal. Wrapping it in
+	// List<ErrorType> would cascade: invariant collection assignability
+	// rejects List<X>.IsAssignableFrom(List<ErrorType>) for every X.
+	if isErrorType(widened) {
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	return tc.record(n, rl.NewListType(widened))
+}
+
+func (tc *typeChecker) synthLitMap(n *rl.LitMap) rl.TypingT {
+	if len(n.Entries) == 0 {
+		return tc.record(n, rl.NewAnyMapType())
+	}
+	keyTypes := make([]rl.TypingT, 0, len(n.Entries))
+	valTypes := make([]rl.TypingT, 0, len(n.Entries))
+	for _, e := range n.Entries {
+		keyTypes = append(keyTypes, tc.synth(e.Key))
+		valTypes = append(valTypes, tc.synth(e.Value))
+	}
+	keyT := widenElementTypes(keyTypes)
+	valT := widenElementTypes(valTypes)
+	if isErrorType(keyT) || isErrorType(valT) {
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	return tc.record(n, rl.NewMapType(keyT, valT))
+}
+
+// widenElementTypes computes the static element type for a collection
+// from its individual element types. The rules:
+//
+//   - If any element is ErrorType, return ErrorType so cascading
+//     diagnostics stay suppressed.
+//   - If any element is any/dynamic, return Dynamic - we can't pin a
+//     useful element type and AnyList/AnyMap is a more honest answer.
+//   - Apply the lone implicit numeric widening: a mix of int and float
+//     collapses to float (matching IsAssignableFrom), not int|float.
+//     Otherwise unique types form a union; identical types collapse.
+//
+// Returns Dynamic for an empty slice as a defensive fallback; callers
+// handle the truly-empty case (LitList{}, LitMap{}) before getting
+// here.
+func widenElementTypes(types []rl.TypingT) rl.TypingT {
+	if len(types) == 0 {
+		return rl.NewDynamicType()
+	}
+	allNumeric := true
+	hasFloat := false
+	for _, t := range types {
+		if isErrorType(t) {
+			return rl.NewErrorTypeType()
+		}
+		if isDynamicLike(t) {
+			return rl.NewDynamicType()
+		}
+		if !isNumeric(t) {
+			allNumeric = false
+		}
+		if isFloat(t) {
+			hasFloat = true
+		}
+	}
+	if allNumeric && hasFloat {
+		return rl.NewFloatType()
+	}
+	// Deduplicate by Name(). Order-preserving so a list literal of all
+	// `str` stays `List<str>` rather than getting reordered.
+	seen := map[string]bool{}
+	unique := make([]rl.TypingT, 0, len(types))
+	for _, t := range types {
+		name := t.Name()
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
+		unique = append(unique, t)
+	}
+	if len(unique) == 1 {
+		return unique[0]
+	}
+	return rl.NewUnionType(unique...)
 }

@@ -406,3 +406,68 @@ func TestTypeCheck_DynamicOperandDoesNotFireDiagnostic(t *testing.T) {
 	assert.False(t, hasOpIssue(info),
 		"dynamic operand should suppress the type-mismatch hint")
 }
+
+// --- Collection literal tests ----------------------------------------
+
+func TestTypeCheck_ListLiteralAllInt(t *testing.T) {
+	// Homogeneous int list synthesizes to int[].
+	file, info, _ := typeInfoFromSrc(t, "x = [1, 2, 3]\n")
+	assert.Equal(t, "int[]", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_ListLiteralIntAndFloatWidensToFloat(t *testing.T) {
+	// The plan's one and only implicit numeric widening: a mix of int
+	// and float collapses to List<float> rather than List<int|float>.
+	// Matches IsAssignableFrom (int flows into float at scalar slots).
+	file, info, _ := typeInfoFromSrc(t, "x = [1, 2.5, 3]\n")
+	assert.Equal(t, "float[]", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_ListLiteralMixedNonNumericProducesUnion(t *testing.T) {
+	// Non-numeric mixes don't widen - the element type is a union.
+	file, info, _ := typeInfoFromSrc(t, "x = [1, \"hi\"]\n")
+	assert.Equal(t, "int|str[]", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_ListLiteralEmptyIsAnyList(t *testing.T) {
+	// Empty literals fall back to the unparameterized form. No
+	// "annotation required" nagging - a future look-around pass can
+	// refine `xs = []` from later assignments / mutations.
+	file, info, _ := typeInfoFromSrc(t, "x = []\n")
+	assert.Equal(t, "list", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_MapLiteralStrIntEntries(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = {\"a\": 1, \"b\": 2}\n")
+	assert.Equal(t, "{ str: int }", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_MapLiteralMixedValueTypesProducesUnion(t *testing.T) {
+	// Non-widening mix on the value side: keys stay str, values
+	// become int|str.
+	file, info, _ := typeInfoFromSrc(t, "x = {\"a\": 1, \"b\": \"two\"}\n")
+	got := exprTypeOf(t, file, info).Name()
+	assert.Equal(t, "{ str: int|str }", got)
+}
+
+func TestTypeCheck_MapLiteralEmptyIsAnyMap(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = {}\n")
+	assert.Equal(t, "map", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_NestedListPreservesInnerType(t *testing.T) {
+	// `[[1, 2], [3]]` -> outer is List<List<int>>. Confirms that
+	// element type propagates through recursive synth.
+	file, info, _ := typeInfoFromSrc(t, "x = [[1, 2], [3]]\n")
+	assert.Equal(t, "int[][]", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_ListLiteralWithErrorElementPoisons(t *testing.T) {
+	// If any element is ErrorType (typically because its sub-expr
+	// already failed), the whole literal becomes ErrorType so we
+	// don't cascade diagnostics across the bad element's siblings.
+	// Construction: `-"hi"` produces ErrorType, putting it in a list
+	// poisons the list's element type.
+	file, info, _ := typeInfoFromSrc(t, "x = [1, -\"hi\", 3]\n")
+	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
+}
