@@ -76,3 +76,36 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+### TITLE ###
+WhileSorbetWidensNestedReassignment
+### DESCRIPTION ###
+Sorbet-style widening must recurse into nested blocks. The body
+reassigns x only inside a nested if; `a = x` reads x at the top of
+the body, where the prior iteration's nested `x = null` might
+already have fired. So `a` must include null. A shallow scan of
+body statements would miss the nested reassignment, leave the
+outer narrowing in place, and incorrectly type a as int.
+### INPUT ###
+fn f(x: int?, cond: bool):
+    if x != null:
+        while cond:
+            a = x
+            if cond:
+                x = null
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  cond @ 3:15 -> bool
+  a @ 4:13 -> <no-type>
+  x @ 4:17 -> int?
+  cond @ 5:16 -> bool
+  x @ 6:17 -> <no-type>
+
+# Symbol types
+  a (local): int?
+  cond (param): bool
+  f (fn): fn(int?, bool) -> void
+  x (param): int?
+
+# Diagnostics
+  (none)

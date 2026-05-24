@@ -909,23 +909,33 @@ func (tc *typeChecker) walkWhileLoop(n *rl.WhileLoop) {
 	tc.frame = tc.joinFrames(initial, []*Frame{bodyExit, fallThrough})
 }
 
-// collectAssignedSyms scans a body of statements for top-level
-// assignment targets. Returns the set of Symbols that get
-// reassigned. Used by the while-loop Sorbet rule to widen narrowings
-// before re-applying the condition'\''s refinement.
+// collectAssignedSyms scans a body of statements for assignment
+// targets and returns the set of Symbols that get reassigned. Used
+// by the while-loop Sorbet rule to widen narrowings before
+// re-applying the condition's refinement.
 //
-// Shallow: only inspects the body'\''s direct statements. Nested
-// blocks (if-branches, inner loops) are not recursed - they'\''re
-// reasonable cases but more complex; the common pattern (reassign
-// the loop variable in the body) is covered here.
+// Recurses into nested control-flow blocks (if/elif/else,
+// switch/case/default, inner for/while bodies, catch blocks),
+// since a reassignment buried inside any of those can still fire
+// on some iteration. Stops at FnDef and Lambda boundaries: nested
+// function bodies have their own narrowing context, and any
+// reassignment inside one is scoped to that inner frame, not the
+// enclosing loop's variables.
 func (tc *typeChecker) collectAssignedSyms(stmts []rl.Node) map[*Symbol]bool {
 	out := map[*Symbol]bool{}
 	for _, s := range stmts {
-		a, ok := s.(*rl.Assign)
-		if !ok {
-			continue
-		}
-		for _, target := range a.Targets {
+		tc.collectAssignedSymsIn(s, out)
+	}
+	return out
+}
+
+func (tc *typeChecker) collectAssignedSymsIn(n rl.Node, out map[*Symbol]bool) {
+	if n == nil {
+		return
+	}
+	switch v := n.(type) {
+	case *rl.Assign:
+		for _, target := range v.Targets {
 			ident, ok := target.(*rl.Identifier)
 			if !ok {
 				continue
@@ -934,8 +944,60 @@ func (tc *typeChecker) collectAssignedSyms(stmts []rl.Node) map[*Symbol]bool {
 				out[sym] = true
 			}
 		}
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.collectAssignedSymsIn(s, out)
+			}
+		}
+	case *rl.If:
+		for _, b := range v.Branches {
+			for _, s := range b.Body {
+				tc.collectAssignedSymsIn(s, out)
+			}
+		}
+	case *rl.Switch:
+		for _, c := range v.Cases {
+			tc.collectAssignedSymsIn(c.Alt, out)
+		}
+		if v.Default != nil {
+			tc.collectAssignedSymsIn(v.Default.Alt, out)
+		}
+	case *rl.SwitchCaseBlock:
+		for _, s := range v.Stmts {
+			tc.collectAssignedSymsIn(s, out)
+		}
+	case *rl.ForLoop:
+		for _, s := range v.Body {
+			tc.collectAssignedSymsIn(s, out)
+		}
+	case *rl.WhileLoop:
+		for _, s := range v.Body {
+			tc.collectAssignedSymsIn(s, out)
+		}
+	case *rl.ExprStmt:
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.collectAssignedSymsIn(s, out)
+			}
+		}
+	case *rl.Shell:
+		for _, target := range v.Targets {
+			ident, ok := target.(*rl.Identifier)
+			if !ok {
+				continue
+			}
+			if sym, ok := tc.resolved.Uses[ident]; ok && sym != nil {
+				out[sym] = true
+			}
+		}
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.collectAssignedSymsIn(s, out)
+			}
+		}
+		// FnDef, Lambda: intentionally not recursed - inner function
+		// bodies have their own narrowing context.
 	}
-	return out
 }
 
 // dropNarrowings returns a frame where each symbol in syms has its
