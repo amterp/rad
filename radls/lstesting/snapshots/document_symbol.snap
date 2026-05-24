@@ -169,11 +169,11 @@ fn greet():
       },
       "selectionRange": {
         "end": {
-          "character": 2,
+          "character": 8,
           "line": 0
         },
         "start": {
-          "character": 0,
+          "character": 3,
           "line": 0
         }
       }
@@ -395,11 +395,11 @@ fn helper():
       },
       "selectionRange": {
         "end": {
-          "character": 2,
+          "character": 9,
           "line": 5
         },
         "start": {
-          "character": 0,
+          "character": 3,
           "line": 5
         }
       }

@@ -144,12 +144,14 @@ func argDeclSymbol(snap *DocumentVersion, decl *rl.ArgDecl) lsp.DocumentSymbol {
 	}
 }
 
-// fnDefSymbol renders a top-level function. SelectionRange is the
-// name span (DefSpan), Range is the whole FnDef including the body.
-// Detail carries a compact signature when annotations are present.
+// fnDefSymbol renders a top-level function. SelectionRange covers
+// just the function name (so the editor highlights the identifier
+// when the user clicks the outline entry), Range covers the whole
+// FnDef including the body. Detail carries a compact signature
+// when annotations are present.
 func fnDefSymbol(snap *DocumentVersion, fn *rl.FnDef) lsp.DocumentSymbol {
 	whole := fromByteRange(spanToRange(fn.Span()), snap)
-	sel := fromByteRange(spanToRange(fn.DefSpan), snap)
+	sel := fromByteRange(spanToRange(fn.NameSpan), snap)
 	detail := ""
 	if fn.Typing != nil {
 		detail = fn.Typing.Name()

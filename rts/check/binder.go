@@ -173,8 +173,8 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 	hoisted := make(map[string]rl.Span)
 	for _, stmt := range file.Stmts {
 		if fn, ok := stmt.(*rl.FnDef); ok {
-			b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
-			hoisted[fn.Name] = fn.DefSpan
+			b.declare(fn.Name, SymHoistedFn, fn.NameSpan, fn)
+			hoisted[fn.Name] = fn.NameSpan
 		}
 	}
 	if file.Args != nil {
@@ -377,7 +377,7 @@ func (b *binder) visitFnDef(fn *rl.FnDef) {
 	// already in the file scope from bindFile's pre-pass and
 	// declare() returns the existing symbol unchanged in that case.
 	if fn.Name != "" {
-		sym := b.declare(fn.Name, SymHoistedFn, fn.DefSpan, fn)
+		sym := b.declare(fn.Name, SymHoistedFn, fn.NameSpan, fn)
 		// Plant the function's structural signature on the symbol so
 		// references-by-name (`process(my_callback)`) synth to a
 		// TypingFnT instead of Dynamic. With Declared set, the type

@@ -95,11 +95,11 @@ greet()
   "result": {
     "range": {
       "end": {
-        "character": 2,
+        "character": 8,
         "line": 0
       },
       "start": {
-        "character": 0,
+        "character": 3,
         "line": 0
       }
     },
