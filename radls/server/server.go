@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"time"
@@ -59,7 +60,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	return &server
 }
 
-func (s *Server) handleInitialize(params json.RawMessage) (result any, err error) {
+func (s *Server) handleInitialize(_ context.Context, params json.RawMessage) (result any, err error) {
 	var initParams lsp.InitializeParams
 	if err = json.Unmarshal(params, &initParams); err != nil {
 		return
@@ -85,7 +86,7 @@ func (s *Server) handleInitialize(params json.RawMessage) (result any, err error
 	return
 }
 
-func (s *Server) handleDidOpen(params json.RawMessage) (err error) {
+func (s *Server) handleDidOpen(_ context.Context, params json.RawMessage) (err error) {
 	var didOpenParams lsp.DidOpenTextDocumentParams
 	if err = json.Unmarshal(params, &didOpenParams); err != nil {
 		return
@@ -101,7 +102,7 @@ func (s *Server) handleDidOpen(params json.RawMessage) (err error) {
 	return
 }
 
-func (s *Server) handleDidChange(params json.RawMessage) (err error) {
+func (s *Server) handleDidChange(_ context.Context, params json.RawMessage) (err error) {
 	var didChangeParams lsp.DidChangeTextDocumentParams
 	if err = json.Unmarshal(params, &didChangeParams); err != nil {
 		return
@@ -122,7 +123,7 @@ func (s *Server) handleDidChange(params json.RawMessage) (err error) {
 	return
 }
 
-func (s *Server) handleCompletion(params json.RawMessage) (result any, err error) {
+func (s *Server) handleCompletion(_ context.Context, params json.RawMessage) (result any, err error) {
 	var completionParams lsp.CompletionParams
 	if err = json.Unmarshal(params, &completionParams); err != nil {
 		return
@@ -135,7 +136,7 @@ func (s *Server) handleCompletion(params json.RawMessage) (result any, err error
 	return
 }
 
-func (s *Server) handleCodeAction(params json.RawMessage) (result any, err error) {
+func (s *Server) handleCodeAction(_ context.Context, params json.RawMessage) (result any, err error) {
 	var codeActionParams lsp.CodeActionParams
 	if err = json.Unmarshal(params, &codeActionParams); err != nil {
 		return
