@@ -2330,18 +2330,6 @@ y = 2
       "label": "#!/usr/bin/env rad"
     },
     {
-      "detail": "int",
-      "kind": 6,
-      "label": "x",
-      "sortText": "1"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "y",
-      "sortText": "1"
-    },
-    {
       "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
       "kind": 3,
       "label": "_rad_check_from_logs",
@@ -3118,12 +3106,6 @@ z = 3
       "detail": "int",
       "kind": 6,
       "label": "y",
-      "sortText": "1"
-    },
-    {
-      "detail": "int",
-      "kind": 6,
-      "label": "z",
       "sortText": "1"
     },
     {

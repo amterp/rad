@@ -59,27 +59,39 @@ func (s *State) Hover(snap *DocumentVersion, pos lsp.Pos) (*lsp.Hover, error) {
 //	(kind) name: type
 //	```
 //
-// where `kind` tags the binding's origin (local, fn, builtin, etc.)
+// where `kind` tags the binding's origin (local, fn, arg, etc.)
 // so users can tell at a glance whether a name is theirs or
-// ambient. Type comes from the strongest source available:
+// ambient. Builtins are an exception: their signature already
+// makes "this is a function" obvious, so the kind tag would
+// just add noise; we render builtins as `name: signature` with
+// no prefix.
+//
+// Type comes from the strongest source available:
 //  1. resolved.Decls / Uses -> Symbol
 //  2. typeInfo.SymbolTypes[sym] if set (covers narrowed locals)
 //  3. sym.Declared if pinned (typed-local, annotated param)
 //  4. for SymBuiltin: FnSignaturesByName[name].Signature
 //
-// Falls back to "?" when we have a symbol but no recoverable type;
-// "(unresolved)" when we don't even have a symbol.
+// Returns "" when the identifier didn't resolve to a known
+// symbol. The diagnostic squiggle already conveys that signal;
+// adding an "(unresolved)" hover popup that echoes the typo
+// back at the user is noise without information.
 func formatIdentHover(ident *rl.Identifier, resolved *check.Resolved, info *check.TypeInfo) string {
 	if resolved == nil {
 		return ""
 	}
 	sym := lookupSymbolForIdent(ident, resolved)
 	if sym == nil {
-		return fmt.Sprintf("```rad\n(unresolved) %s\n```", ident.Name)
+		return ""
 	}
 
-	kindLabel := symbolKindLabel(sym.Kind)
 	typeStr := symbolTypeString(sym, info)
+	if sym.Kind == check.SymBuiltin {
+		// Signature is self-describing; the kind tag would
+		// just repeat what `name(args) -> ret` already says.
+		return fmt.Sprintf("```rad\n%s: %s\n```", sym.Name, typeStr)
+	}
+	kindLabel := symbolKindLabel(sym.Kind)
 	return fmt.Sprintf("```rad\n(%s) %s: %s\n```", kindLabel, sym.Name, typeStr)
 }
 

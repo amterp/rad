@@ -54,20 +54,37 @@ func TestHoverOnUntypedLocal(t *testing.T) {
 // TestHoverOnBuiltin verifies hover on a builtin returns its
 // pre-parsed signature from FnSignaturesByName. The signature is
 // what users actually want to see (param names + types + return
-// type), not just the bare type-checker view.
+// type), not just the bare type-checker view. We do NOT prefix
+// with a "(builtin)" tag - the signature itself makes the kind
+// obvious.
 func TestHoverOnBuiltin(t *testing.T) {
 	// `print()` - cursor on the `p` of print.
 	h := hoverFixture(t, "print(1)\n", lsp.NewPos(0, 0))
 	if h == nil {
 		t.Fatal("expected hover, got nil")
 	}
-	if !strings.Contains(h.Contents.Value, "(builtin)") {
-		t.Errorf("missing builtin tag: %q", h.Contents.Value)
+	// No kind-tag noise.
+	if strings.Contains(h.Contents.Value, "(builtin)") {
+		t.Errorf("builtin tag should be suppressed: %q", h.Contents.Value)
 	}
-	// We don't need the full signature - just that the signature
-	// path is used (recognizable by the `->` return-type arrow).
+	// The signature path is used (recognizable by the `->` arrow).
 	if !strings.Contains(h.Contents.Value, "->") {
 		t.Errorf("expected signature with return arrow: %q", h.Contents.Value)
+	}
+	if !strings.Contains(h.Contents.Value, "print") {
+		t.Errorf("expected name in hover: %q", h.Contents.Value)
+	}
+}
+
+// TestHoverOnUnresolvedReturnsNil verifies typos / undefined
+// names produce no hover. The diagnostic squiggle already shows
+// the user something's wrong; a popup that just echoes their
+// typo with an "(unresolved)" badge is noise.
+func TestHoverOnUnresolvedReturnsNil(t *testing.T) {
+	// `undefined_thing` isn't declared.
+	h := hoverFixture(t, "print(undefined_thing)\n", lsp.NewPos(0, 10))
+	if h != nil {
+		t.Errorf("expected nil hover on unresolved identifier, got %+v", h)
 	}
 }
 
