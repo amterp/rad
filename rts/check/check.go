@@ -40,7 +40,7 @@ func (c *RadCheckerImpl) UpdateSrc(src string) {
 	if c.tree == nil {
 		c.tree = c.parser.Parse(src)
 	} else {
-		c.tree.Update(src)
+		c.tree.Update(c.parser, src)
 	}
 	c.src = src
 	// Attempt AST conversion for AST-based checks.

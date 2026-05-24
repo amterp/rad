@@ -33,7 +33,7 @@ func TestRadTreeUpdateSwapsRoot(t *testing.T) {
 	rt := parser.Parse("x = 1")
 	defer rt.Close()
 	originalRoot := rt.root
-	rt.Update("y = 2")
+	rt.Update(parser, "y = 2")
 	if rt.root == originalRoot {
 		t.Error("Update should replace the underlying tree")
 	}

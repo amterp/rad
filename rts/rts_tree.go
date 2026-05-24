@@ -29,33 +29,42 @@ import (
 // closeOnce makes Close idempotent so callers can defer-Close without
 // worrying about double-free; upstream ts.Tree.Close is NOT
 // idempotent (it always calls ts_tree_delete), so we guard.
+//
+// We hold only the language (immutable, safe to share across
+// goroutines), not the parser. Any reparse path threads the parser
+// in as a method argument so the same parser can be locked-and-
+// driven by the owning State without RadTree carrying a hazardous
+// back-pointer.
 type RadTree struct {
-	root *ts.Tree
-	// Updatable:
-	parser *ts.Parser
-	src    string
+	root     *ts.Tree
+	language *ts.Language
+	src      string
 
 	closeOnce sync.Once
 }
 
-func newRadTree(parser *ts.Parser, tree *ts.Tree, src string) *RadTree {
+func newRadTree(language *ts.Language, tree *ts.Tree, src string) *RadTree {
 	return &RadTree{
-		root:   tree,
-		parser: parser,
-		src:    src,
+		root:     tree,
+		language: language,
+		src:      src,
 	}
 }
 
-// Update reparses the tree in place with new source. Used by callers
-// that hold a long-lived RadTree (e.g. the check package's standalone
-// driver). The snapshot model in radls doesn't use this - each
-// version gets a fresh tree - so this path is reserved for non-
-// snapshot consumers. Closes the previous tree to avoid leaking C
-// memory.
-func (rt *RadTree) Update(src string) {
+// Update reparses the tree in place with new source, using the
+// supplied parser. Used by callers that hold a long-lived RadTree
+// (e.g. the check package's standalone driver). The snapshot model
+// in radls doesn't use this - each version gets a fresh tree - so
+// this path is reserved for non-snapshot consumers. Closes the
+// previous tree to avoid leaking C memory.
+//
+// Taking the parser as an argument (rather than a struct field) means
+// the caller controls parser lifetime and concurrency - a RadTree
+// can't accidentally race a shared parser through its own back-pointer.
+func (rt *RadTree) Update(parser *RadParser, src string) {
 	// todo use incremental parsing, maybe can lean on LSP client to give via protocol
 	old := rt.root
-	rt.root = rt.parser.Parse([]byte(src), nil)
+	rt.root = parser.parser.Parse([]byte(src), nil)
 	rt.src = src
 	if old != nil {
 		old.Close()
@@ -104,7 +113,7 @@ func (rt *RadTree) FindFileHeader() (*FileHeader, bool) {
 
 func QueryNodes[T Node](rt *RadTree) ([]T, error) {
 	nodeName := NodeName[T]()
-	query, err := ts.NewQuery(rt.parser.Language(), fmt.Sprintf("(%s) @%s", nodeName, nodeName))
+	query, err := ts.NewQuery(rt.language, fmt.Sprintf("(%s) @%s", nodeName, nodeName))
 
 	if err != nil {
 		return nil, err

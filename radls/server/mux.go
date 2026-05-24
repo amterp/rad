@@ -33,7 +33,7 @@ type Mux struct {
 	writer               *bufio.Writer
 	notificationHandlers map[string]NotificationHandler
 	requestHandlers      map[string]RequestHandler
-	writeLock            *sync.Mutex // chan struct{} ?
+	writeLock            *sync.Mutex
 
 	// baseCtx is the session context; per-request contexts are derived
 	// from it. When Run() exits we cancel baseCtx, which propagates
