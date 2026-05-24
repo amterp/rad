@@ -203,3 +203,149 @@ x = 1
     }
   ]
 }
+### TITLE ###
+NullUnionStructuredQuickFix
+### DOCUMENT ###
+x: int|null = 5
+### CODE_ACTION 0:0 0:15 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'null' is not a valid type in a union",
+        "range": {
+          "end": {
+            "character": 11,
+            "line": 0
+          },
+          "start": {
+            "character": 6,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    },
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "?",
+              "range": {
+                "end": {
+                  "character": 11,
+                  "line": 0
+                },
+                "start": {
+                  "character": 6,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kind": "quickfix",
+      "title": "Replace '|null' with '?'"
+    }
+  ]
+}
+### TITLE ###
+DiagnosticOutsideRangeNotOffered
+### DOCUMENT ###
+x: int|null = 5
+
+
+
+
+y = 1
+### CODE_ACTION 5:0 5:5 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "'null' is not a valid type in a union",
+        "range": {
+          "end": {
+            "character": 11,
+            "line": 0
+          },
+          "start": {
+            "character": 6,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    }
+  ]
+}
