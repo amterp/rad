@@ -219,3 +219,190 @@ func TestTypeCheck_NoFalsePositivesOnSimpleAssignments(t *testing.T) {
 	_, info, _ := typeInfoFromSrc(t, "x = 5\ny = \"hi\"\n")
 	assert.Empty(t, info.Issues)
 }
+
+// --- Operator tests ---------------------------------------------------
+//
+// These exercise the binary, unary, ternary, fallback, and catch
+// handlers added in Phase 2c. The diagnostic-emitting cases all check
+// for Hint severity (matching the precedent set by the per-arg check).
+
+// hasOpIssue reports whether info recorded an ErrInvalidTypeForOp
+// diagnostic at the expected severity. Used by the negative tests
+// below to assert "the type checker flagged this op."
+func hasOpIssue(info *check.TypeInfo) bool {
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrInvalidTypeForOp && i.Severity == check.IssueHint {
+			return true
+		}
+	}
+	return false
+}
+
+// exprTypeOf returns the synthesized type for a top-level Assign's RHS.
+// Most operator tests want to assert "the result type of `a + b` was X";
+// having this in one place keeps each test to a couple of lines.
+func exprTypeOf(t *testing.T, file *rl.SourceFile, info *check.TypeInfo) rl.TypingT {
+	t.Helper()
+	assign, ok := file.Stmts[0].(*rl.Assign)
+	require.True(t, ok, "expected top-level Assign")
+	require.NotEmpty(t, assign.Values)
+	got, ok := info.ExprTypes[assign.Values[0]]
+	require.True(t, ok, "ExprTypes should record the RHS type")
+	return got
+}
+
+func TestTypeCheck_IntPlusIntSynthesizesInt(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = 1 + 2\n")
+	assert.Equal(t, rl.T_INT, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_IntPlusFloatSynthesizesFloat(t *testing.T) {
+	// Mixed int/float arithmetic widens to float via the lone implicit
+	// numeric widening rule.
+	file, info, _ := typeInfoFromSrc(t, "x = 1 + 2.5\n")
+	assert.Equal(t, rl.T_FLOAT, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_IntDivIntSynthesizesFloat(t *testing.T) {
+	// Rad's `/` is true division, like Python 3 - int/int returns float,
+	// not int. This is non-obvious and a likely source of bugs, so it's
+	// worth a dedicated test.
+	file, info, _ := typeInfoFromSrc(t, "x = 5 / 2\n")
+	assert.Equal(t, rl.T_FLOAT, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_IntModIntSynthesizesInt(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = 5 % 2\n")
+	assert.Equal(t, rl.T_INT, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_StrPlusStrSynthesizesStr(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = \"a\" + \"b\"\n")
+	assert.Equal(t, rl.T_STR, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_StrTimesIntSynthesizesStr(t *testing.T) {
+	// String repetition; both `"a" * 3` and `3 * "a"` are valid.
+	file, info, _ := typeInfoFromSrc(t, "x = \"a\" * 3\n")
+	assert.Equal(t, rl.T_STR, exprTypeOf(t, file, info).Name())
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_IntPlusStrFlagsHint(t *testing.T) {
+	// This is the migration case from v0.9 - `+` no longer coerces.
+	// The runtime would emit ErrInvalidTypeForOp; we want the static
+	// checker to surface it as a hint pre-execution.
+	_, info, _ := typeInfoFromSrc(t, "x = 1 + \"hi\"\n")
+	assert.True(t, hasOpIssue(info),
+		"expected Hint-severity ErrInvalidTypeForOp for int + str")
+}
+
+func TestTypeCheck_LessThanReturnsBool(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = 1 < 2\n")
+	assert.Equal(t, rl.T_BOOL, exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_LessThanRejectsMixedTypes(t *testing.T) {
+	// `<`/`<=`/`>`/`>=` require numeric-vs-numeric or str-vs-str. int
+	// vs str isn't well-defined and the runtime rejects it.
+	_, info, _ := typeInfoFromSrc(t, "x = 1 < \"hi\"\n")
+	assert.True(t, hasOpIssue(info),
+		"expected hint for incompatible comparison")
+}
+
+func TestTypeCheck_EqualityAcceptsAnyOperands(t *testing.T) {
+	// `==`/`!=` are total - the runtime can compare any two values,
+	// even across types (the result is just "false"). No diagnostic
+	// should fire on a type-mismatched equality.
+	file, info, _ := typeInfoFromSrc(t, "x = 1 == \"hi\"\n")
+	assert.Equal(t, rl.T_BOOL, exprTypeOf(t, file, info).Name())
+	assert.False(t, hasOpIssue(info))
+}
+
+func TestTypeCheck_AndReturnsBool(t *testing.T) {
+	// `and` ultimately boolifies the right operand (or returns false),
+	// so the static result is always bool regardless of operand types.
+	file, info, _ := typeInfoFromSrc(t, "x = true and 5\n")
+	assert.Equal(t, rl.T_BOOL, exprTypeOf(t, file, info).Name())
+	assert.False(t, hasOpIssue(info))
+}
+
+func TestTypeCheck_OrReturnsUnionOfOperands(t *testing.T) {
+	// `or` returns the actual value of whichever operand wins, so the
+	// result type is `int | str` here. Once narrowing lands we can
+	// refine this to `(left - falsy) | right`.
+	file, info, _ := typeInfoFromSrc(t, "x = 1 or \"fallback\"\n")
+	got := exprTypeOf(t, file, info)
+	assert.Equal(t, "int|str", got.Name())
+	assert.False(t, hasOpIssue(info))
+}
+
+func TestTypeCheck_InRequiresContainerOnRight(t *testing.T) {
+	// `in str` / `in list` / `in map` are the legal shapes; `in int`
+	// is not. The static check shouldn't fire on the str-on-right
+	// case but should on a numeric right.
+	_, info, _ := typeInfoFromSrc(t, "x = \"a\" in \"abc\"\n")
+	assert.False(t, hasOpIssue(info))
+
+	_, info2, _ := typeInfoFromSrc(t, "x = 1 in 5\n")
+	assert.True(t, hasOpIssue(info2))
+}
+
+func TestTypeCheck_InReturnsBool(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = \"a\" in \"abc\"\n")
+	assert.Equal(t, rl.T_BOOL, exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_UnaryNotReturnsBool(t *testing.T) {
+	// `not` accepts any truthy-able value (the runtime calls
+	// TruthyFalsy) and always returns bool.
+	file, info, _ := typeInfoFromSrc(t, "x = not 5\n")
+	assert.Equal(t, rl.T_BOOL, exprTypeOf(t, file, info).Name())
+	assert.False(t, hasOpIssue(info))
+}
+
+func TestTypeCheck_UnaryNegOnIntReturnsInt(t *testing.T) {
+	file, info, _ := typeInfoFromSrc(t, "x = -5\n")
+	assert.Equal(t, rl.T_INT, exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_UnaryNegOnStrFlagsHint(t *testing.T) {
+	// `-"hi"` is a runtime error; the static side flags it as a hint.
+	_, info, _ := typeInfoFromSrc(t, "x = -\"hi\"\n")
+	assert.True(t, hasOpIssue(info))
+}
+
+func TestTypeCheck_TernaryReturnsUnion(t *testing.T) {
+	// `cond ? a : b` synthesizes the union of the branch types.
+	file, info, _ := typeInfoFromSrc(t, "x = true ? 1 : \"hi\"\n")
+	assert.Equal(t, "int|str", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_TernaryCollapsesIdenticalBranches(t *testing.T) {
+	// When both branches have the same type, unionOf returns the
+	// type itself rather than `int|int`. Keeps hover messages tidy.
+	file, info, _ := typeInfoFromSrc(t, "x = true ? 1 : 2\n")
+	assert.Equal(t, rl.T_INT, exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_FallbackReturnsUnion(t *testing.T) {
+	// `?? ` is `(left - null) | right` once narrowing exists; for now
+	// the safe over-approximation is `left | right`.
+	file, info, _ := typeInfoFromSrc(t, "x = 1 ?? \"fallback\"\n")
+	assert.Equal(t, "int|str", exprTypeOf(t, file, info).Name())
+}
+
+func TestTypeCheck_DynamicOperandDoesNotFireDiagnostic(t *testing.T) {
+	// An identifier whose type is unknown (forward reference) synth
+	// to Dynamic. `dynamic + int` should NOT fire the static check -
+	// emitting on dynamic operands would nag users who deliberately
+	// wrote `any` or have a value the checker just can't pin down.
+	_, info, _ := typeInfoFromSrc(t, "y = unknown + 1\n")
+	assert.False(t, hasOpIssue(info),
+		"dynamic operand should suppress the type-mismatch hint")
+}

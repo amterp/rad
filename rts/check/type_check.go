@@ -174,6 +174,16 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 		return tc.synthCall(v, 0)
 	case *rl.VarPath:
 		return tc.synthVarPath(v)
+	case *rl.OpBinary:
+		return tc.synthOpBinary(v)
+	case *rl.OpUnary:
+		return tc.synthOpUnary(v)
+	case *rl.Ternary:
+		return tc.synthTernary(v)
+	case *rl.Fallback:
+		return tc.synthFallback(v)
+	case *rl.CatchExpr:
+		return tc.synthCatchExpr(v)
 	}
 	for _, child := range n.Children() {
 		_ = tc.synth(child)
@@ -452,4 +462,328 @@ func (tc *typeChecker) synthIdentifier(ident *rl.Identifier) rl.TypingT {
 func (tc *typeChecker) record(n rl.Node, t rl.TypingT) rl.TypingT {
 	tc.info.ExprTypes[n] = t
 	return t
+}
+
+// --- Operators ---------------------------------------------------------
+//
+// The operator handlers below mirror the runtime dispatch in
+// core/expr_ops.go. Each one synthesizes the operand types, decides the
+// result type from a fixed overload table, and emits a Hint-severity
+// type-mismatch diagnostic when an operand pair isn't in the table.
+//
+// Severity choice: the runtime panics on a bad operator combination
+// (ErrInvalidTypeForOp), so static promotion to Error would arguably be
+// safe here. We keep this at Hint for now to match the precedent set
+// in Phase 2b' (per-arg type-check) - the static side still lacks
+// literal types and we want a single severity-migration pass to flip
+// everything together once snapshots are updated.
+//
+// Operand types of `any`, `dynamic`, `<error>`, or `never` short-circuit
+// the lookup: any/dynamic mean "we couldn't pin a type" and emitting
+// here would nag users who deliberately wrote `any`; `<error>` is the
+// poison marker that suppresses cascades.
+
+func (tc *typeChecker) synthOpBinary(n *rl.OpBinary) rl.TypingT {
+	left := tc.synth(n.Left)
+	right := tc.synth(n.Right)
+
+	if anyIsErrorType(left, right) {
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	if anyIsDynamicLike(left, right) {
+		// Equality and the boolean ops still have a known result type
+		// even when one operand is dynamic; everything else falls back
+		// to dynamic so we don't speculate.
+		switch n.Op {
+		case rl.OpEq, rl.OpNeq, rl.OpAnd, rl.OpLt, rl.OpLte, rl.OpGt, rl.OpGte,
+			rl.OpIn, rl.OpNotIn:
+			return tc.record(n, rl.NewBoolType())
+		}
+		return tc.record(n, rl.NewDynamicType())
+	}
+
+	result, ok := binaryOpResult(n.Op, left, right)
+	if !ok {
+		tc.addOpIssue(n.Span(), n.Op, left, right, n.IsCompound)
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	return tc.record(n, result)
+}
+
+func (tc *typeChecker) synthOpUnary(n *rl.OpUnary) rl.TypingT {
+	operand := tc.synth(n.Operand)
+	if isErrorType(operand) {
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	switch n.Op {
+	case rl.OpNot:
+		// `not <anything>` is always bool - the runtime calls TruthyFalsy
+		// regardless of operand type, so any operand is acceptable.
+		return tc.record(n, rl.NewBoolType())
+	case rl.OpNeg, rl.OpAdd:
+		// Unary - and unary + require a numeric operand.
+		if isDynamicLike(operand) {
+			return tc.record(n, rl.NewDynamicType())
+		}
+		if isInt(operand) {
+			return tc.record(n, rl.NewIntType())
+		}
+		if isFloat(operand) {
+			return tc.record(n, rl.NewFloatType())
+		}
+		tc.addUnaryOpIssue(n.Span(), n.Op, operand)
+		return tc.record(n, rl.NewErrorTypeType())
+	}
+	return tc.record(n, rl.NewDynamicType())
+}
+
+// synthTernary handles `cond ? whenTrue : whenFalse`. The condition
+// can be any truthy-able value; the result type is the union of the
+// two branch types (or just one of them if they're identical).
+func (tc *typeChecker) synthTernary(n *rl.Ternary) rl.TypingT {
+	_ = tc.synth(n.Condition)
+	whenTrue := tc.synth(n.True)
+	whenFalse := tc.synth(n.False)
+	return tc.record(n, unionOf(whenTrue, whenFalse))
+}
+
+// synthFallback handles `left ?? right`. Today we approximate the
+// result as `union(left, right)` - once narrowing lands we can refine
+// this to `(left - null) | right`, but the union is a safe
+// over-approximation that doesn't lose any valid programs.
+func (tc *typeChecker) synthFallback(n *rl.Fallback) rl.TypingT {
+	left := tc.synth(n.Left)
+	right := tc.synth(n.Right)
+	return tc.record(n, unionOf(left, right))
+}
+
+// synthCatchExpr handles `expr catch fallback`. Same shape as Fallback
+// but catches errors rather than null. Result is union(left, right);
+// narrowing will later subtract `error` from the left branch.
+func (tc *typeChecker) synthCatchExpr(n *rl.CatchExpr) rl.TypingT {
+	left := tc.synth(n.Left)
+	right := tc.synth(n.Right)
+	return tc.record(n, unionOf(left, right))
+}
+
+// binaryOpResult is the static overload table. Returns (result, true)
+// for supported operand combinations and (_, false) for combinations
+// the runtime would reject. Mirrors core/expr_ops.go.
+func binaryOpResult(op rl.Operator, l, r rl.TypingT) (rl.TypingT, bool) {
+	switch op {
+	case rl.OpEq, rl.OpNeq:
+		// Equality is total - any type can be compared to any other.
+		// The runtime's RadValue.Equals handles every combination.
+		return rl.NewBoolType(), true
+	case rl.OpAnd:
+		// `and` returns false on a falsy left and the bool-coercion of
+		// the right otherwise. Always bool.
+		return rl.NewBoolType(), true
+	case rl.OpOr:
+		// `or` returns the actual value of whichever operand wins, so
+		// the static result is the union of the two branches. Once
+		// narrowing lands this can become `(left - falsy) | right`.
+		return unionOf(l, r), true
+	case rl.OpIn, rl.OpNotIn:
+		// Result is always bool; the right side must be a container
+		// (str / list / map). Left can be anything.
+		if isStr(r) || isList(r) || isMap(r) {
+			return rl.NewBoolType(), true
+		}
+		return nil, false
+	case rl.OpLt, rl.OpLte, rl.OpGt, rl.OpGte:
+		// Numeric or string-on-string comparison.
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewBoolType(), true
+		}
+		if isStr(l) && isStr(r) {
+			return rl.NewBoolType(), true
+		}
+		return nil, false
+	case rl.OpAdd:
+		// int+int -> int, with int->float widening.
+		if isInt(l) && isInt(r) {
+			return rl.NewIntType(), true
+		}
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewFloatType(), true
+		}
+		// str+str (concat). Error operands also flow through as str.
+		if (isStr(l) || isError(l)) && (isStr(r) || isError(r)) {
+			return rl.NewStrType(), true
+		}
+		// list+list -> any-list. Element typing for list+list is left
+		// to a later sub-commit (it needs union-of-element-types and
+		// invariance-aware widening; AnyList is safe for now).
+		if isList(l) && isList(r) {
+			return rl.NewAnyListType(), true
+		}
+		return nil, false
+	case rl.OpSub:
+		if isInt(l) && isInt(r) {
+			return rl.NewIntType(), true
+		}
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewFloatType(), true
+		}
+		return nil, false
+	case rl.OpMul:
+		// int*int -> int, mixed numeric -> float.
+		if isInt(l) && isInt(r) {
+			return rl.NewIntType(), true
+		}
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewFloatType(), true
+		}
+		// String repetition: str*int and int*str both yield str.
+		if (isStr(l) && isInt(r)) || (isInt(l) && isStr(r)) {
+			return rl.NewStrType(), true
+		}
+		return nil, false
+	case rl.OpDiv:
+		// Rad's `/` is true division: int/int yields float, not int.
+		// The runtime intentionally returns float64 from int/int.
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewFloatType(), true
+		}
+		return nil, false
+	case rl.OpMod:
+		// int%int -> int; any other numeric mix widens to float
+		// (mirroring math.Mod behavior in core/expr_ops.go).
+		if isInt(l) && isInt(r) {
+			return rl.NewIntType(), true
+		}
+		if isNumeric(l) && isNumeric(r) {
+			return rl.NewFloatType(), true
+		}
+		return nil, false
+	}
+	return nil, false
+}
+
+// --- Type predicates --------------------------------------------------
+//
+// Small helpers that keep the overload table readable. They unwrap
+// Optional<T> on the way in (`int?` should behave like `int` for these
+// classifications); operating on null is a runtime concern handled by
+// narrowing, not by the static op tables.
+
+func isInt(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingIntT)
+	return ok
+}
+
+func isFloat(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingFloatT)
+	return ok
+}
+
+func isNumeric(t rl.TypingT) bool { return isInt(t) || isFloat(t) }
+
+func isStr(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingStrT, *rl.TypingStrEnumT:
+		return true
+	}
+	return false
+}
+
+func isError(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingErrorT)
+	return ok
+}
+
+func isList(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingAnyListT, *rl.TypingListT, *rl.TypingTupleT:
+		return true
+	}
+	return false
+}
+
+func isMap(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingAnyMapT, *rl.TypingMapT, *rl.TypingStructT:
+		return true
+	}
+	return false
+}
+
+func isErrorType(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingErrorTypeT)
+	return ok
+}
+
+// isDynamicLike covers any/dynamic - the "we don't know" types - but
+// not never or <error>, which have their own handling. Used to short-
+// circuit operator dispatch with "result is dynamic, no diagnostic".
+func isDynamicLike(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingAnyT, *rl.TypingDynamicT:
+		return true
+	}
+	return false
+}
+
+func anyIsErrorType(types ...rl.TypingT) bool {
+	for _, t := range types {
+		if isErrorType(t) {
+			return true
+		}
+	}
+	return false
+}
+
+func anyIsDynamicLike(types ...rl.TypingT) bool {
+	for _, t := range types {
+		if isDynamicLike(t) {
+			return true
+		}
+	}
+	return false
+}
+
+// unionOf produces a static union of two types, collapsing duplicates
+// by Name(). Used by `or`, `??`, `catch`, and `?:` to express "result
+// is one of the two operand types".
+func unionOf(a, b rl.TypingT) rl.TypingT {
+	if a == nil && b == nil {
+		return rl.NewDynamicType()
+	}
+	if a == nil {
+		return b
+	}
+	if b == nil {
+		return a
+	}
+	if a.Name() == b.Name() {
+		return a
+	}
+	return rl.NewUnionType(a, b)
+}
+
+// --- Operator diagnostics --------------------------------------------
+
+func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.TypingT, isCompound bool) {
+	opStr := op.String()
+	if isCompound {
+		opStr += "="
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     span,
+		Severity: IssueHint,
+		Code:     rl.ErrInvalidTypeForOp,
+		Message: fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'",
+			left.Name(), opStr, right.Name()),
+	})
+}
+
+func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.TypingT) {
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     span,
+		Severity: IssueHint,
+		Code:     rl.ErrInvalidTypeForOp,
+		Message: fmt.Sprintf("Invalid operand type '%s' for unary '%s'",
+			operand.Name(), op.String()),
+	})
 }
