@@ -217,6 +217,18 @@ func NewTextEdit(rang Range, newText string) *TextEdit {
 	}
 }
 
+// CompletionItemKind matches the LSP 3.17 CompletionItemKind enum.
+// We use just a few; the rest are useful as we add more sources.
+type CompletionItemKind int
+
+const (
+	CompletionKindText     CompletionItemKind = 1
+	CompletionKindFunction CompletionItemKind = 3
+	CompletionKindVariable CompletionItemKind = 6
+	CompletionKindKeyword  CompletionItemKind = 14
+	CompletionKindSnippet  CompletionItemKind = 15
+)
+
 type CompletionItem struct {
 	/**
 	 * The label of this completion item.
@@ -227,12 +239,12 @@ type CompletionItem struct {
 	 * If label details are provided the label itself should
 	 * be an unqualified name of the completion item.
 	 */
-	Label    string    `json:"label"`
-	Detail   string    `json:"detail"`
-	Doc      string    `json:"documentation,omitempty"`
-	TextEdit *TextEdit `json:"textEdit,omitempty"`
+	Label    string             `json:"label"`
+	Kind     CompletionItemKind `json:"kind,omitempty"`
+	Detail   string             `json:"detail"`
+	Doc      string             `json:"documentation,omitempty"`
+	TextEdit *TextEdit          `json:"textEdit,omitempty"`
 	// insertText might be useful for inserting imports at the top, as needed
-	//Kind todo for icon
 }
 
 func NewCompletionItem(label, detail, doc string) CompletionItem {

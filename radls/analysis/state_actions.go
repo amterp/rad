@@ -10,6 +10,12 @@ import (
 // and pass it explicitly: the snapshot pin-points which version of
 // the document this completion is meant for, even if the user types
 // more characters before the response is sent.
+//
+// The result is the union of the shebang stub (only meaningful on
+// line 0) and a scope-aware identifier list built from the AST
+// and the resolved/type indexes. The shebang stays first so users
+// who started a new file still get the "Add #!" suggestion at the
+// top of the list.
 func (s *State) Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.CompletionItem, err error) {
 	if snap == nil {
 		return nil, nil
@@ -17,12 +23,12 @@ func (s *State) Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.Compl
 
 	// Translate the incoming position from the client's encoding into a
 	// utf-8 byte column so the rest of the analyzer can stay in
-	// tree-sitter's native coordinate system. Today addShebangCompletion
-	// only looks at the line number, but completion will grow.
+	// tree-sitter's native coordinate system.
 	bytePos := toBytePos(pos, snap)
 
-	var items []lsp.CompletionItem
+	items := make([]lsp.CompletionItem, 0)
 	addShebangCompletion(&items, snap, bytePos)
+	buildCompletions(&items, snap, bytePos)
 	return items, nil
 }
 
