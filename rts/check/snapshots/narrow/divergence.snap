@@ -1,0 +1,126 @@
+### TITLE ###
+GuardWithReturnNotLastStmt
+### DESCRIPTION ###
+Regression: `if err: log(); return` should be detected as
+diverging, even though `return` isn't the last statement (it's
+second-to-last; the body sees log() as the last statement).
+Phase 4e's shallow check missed this; the deep scan catches it.
+### INPUT ###
+fn f(x: int?):
+    if x == null:
+        print("missing")
+        return
+    y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  print @ 3:9 -> dynamic
+  y @ 5:5 -> <no-type>
+  x @ 5:9 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+NestedIfReturnPropagatesDivergence
+### DESCRIPTION ###
+A diverging if at any depth in the body makes the body divergent.
+After the inner if returns on null, the outer body's fall-through
+sees x as int.
+### INPUT ###
+fn f(x: int?):
+    if x == null:
+        if true:
+            return
+        else:
+            return
+    y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  y @ 7:5 -> <no-type>
+  x @ 7:9 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+ExitCallDivergesBranch
+### DESCRIPTION ###
+`exit()` is a builtin that never returns. A branch ending in
+exit() should be treated as divergent, propagating the opposite
+refinement to the fall-through.
+### INPUT ###
+fn f(x: int?):
+    if x == null:
+        exit(1)
+    y = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  exit @ 3:9 -> dynamic
+  y @ 4:5 -> <no-type>
+  x @ 4:9 -> int
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): int?
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+ExhaustiveSwitchAllCasesDivergeNoDefault
+### DESCRIPTION ###
+A switch over a closed enum that covers every case and where each
+case diverges should be treated as a divergent statement - even
+without an explicit default arm.
+### INPUT ###
+fn f(x: ["a", "b"]):
+    switch x:
+        case "a":
+            return
+        case "b":
+            return
+    y = "unreachable"
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> ["a", "b"]
+  y @ 7:5 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  x (param): ["a", "b"]
+  y (local): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+WhileTrueWithBreakDoesNotDiverge
+### DESCRIPTION ###
+A `while:` with a top-level break inside is NOT divergent - the
+break exits the loop and the fall-through runs.
+### INPUT ###
+fn f():
+    while:
+        if true:
+            break
+    y = "ran"
+### STDOUT ###
+# Identifier types
+  y @ 5:5 -> <no-type>
+
+# Symbol types
+  f (fn): <no-type>
+  y (local): str
+
+# Diagnostics
+  (none)
