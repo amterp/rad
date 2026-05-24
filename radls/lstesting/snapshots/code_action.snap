@@ -60,7 +60,7 @@ x = 1
 {
   "id": 1,
   "jsonrpc": "2.0",
-  "result": null
+  "result": []
 }
 ### TITLE ###
 ShebangInsertionEmptyDoc

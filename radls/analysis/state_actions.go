@@ -35,18 +35,24 @@ func (s *State) Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.Compl
 // CodeAction returns the available code actions for the given range
 // against a fixed document snapshot. Same snapshot discipline as
 // Complete: the caller's responsibility to grab a fresh one.
+//
+// Two sources of actions today:
+//
+//  1. The always-available shebang insertion, when the file is
+//     missing one - this is whole-document, not range-scoped.
+//  2. Diagnostic quick fixes - per-diagnostic actions for issues
+//     whose range overlaps the request range. Structured fixes
+//     (machine-applicable edits) come out as quickfix-kinded
+//     CodeActions; suggestion-only diagnostics produce refactor-
+//     kinded info actions with no edit.
 func (s *State) CodeAction(snap *DocumentVersion, r lsp.Range) (result []lsp.CodeAction, err error) {
 	if snap == nil {
 		return nil, nil
 	}
 
-	// We don't yet need the range for picking code actions (the only
-	// action is shebang insertion, which is whole-document), but we
-	// translate to byte coords for future code actions that will care.
-	_ = toByteRange(r, snap)
-
-	var actions []lsp.CodeAction
+	actions := make([]lsp.CodeAction, 0)
 	addShebangInsertion(&actions, snap)
+	addDiagnosticQuickFixes(&actions, snap, toByteRange(r, snap))
 
 	return actions, nil
 }

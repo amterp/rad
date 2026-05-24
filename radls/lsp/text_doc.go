@@ -295,8 +295,20 @@ type CodeActionParams struct {
 	Range Range `json:"range"`
 }
 
+// CodeActionKind matches the LSP 3.17 CodeActionKind hierarchy. We
+// emit just the two we use; the spec defines many more (refactor
+// subtypes, source-organize-imports, etc.) but adding constants we
+// don't produce just clutters the file.
+type CodeActionKind string
+
+const (
+	CodeActionQuickFix CodeActionKind = "quickfix"
+	CodeActionRefactor CodeActionKind = "refactor"
+)
+
 type CodeAction struct {
 	Title   string         `json:"title"`
+	Kind    CodeActionKind `json:"kind,omitempty"`
 	Edit    *WorkspaceEdit `json:"edit,omitempty"`
 	Command *Command       `json:"command,omitempty"`
 }
@@ -304,6 +316,19 @@ type CodeAction struct {
 func NewCodeActionEdit(title string, edit WorkspaceEdit) CodeAction {
 	return CodeAction{
 		Title: title,
+		Edit:  &edit,
+	}
+}
+
+// NewQuickFix bundles the common shape: a quickfix-kinded code
+// action with a single-document edit. The title is what the
+// editor shows in its lightbulb menu.
+func NewQuickFix(title, uri string, rang Range, newText string) CodeAction {
+	edit := NewWorkspaceEdit()
+	edit.AddEdit(uri, rang, newText)
+	return CodeAction{
+		Title: title,
+		Kind:  CodeActionQuickFix,
 		Edit:  &edit,
 	}
 }

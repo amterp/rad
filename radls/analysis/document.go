@@ -45,6 +45,13 @@ type DocumentVersion struct {
 	lineIndex   *LineIndex
 	encoding    PositionEncoding
 	diagnostics []lsp.Diagnostic
+	// rawDiagnostics is the same data as `diagnostics` but in the
+	// check.Diagnostic shape - utf-8 byte columns, full suggestion
+	// strings, error codes. Code actions consume these to derive
+	// quick-fix edits; the LSP-shape diagnostics have already lost
+	// the suggestion and code fields by the time they reach the
+	// wire, so re-deriving from the raw form is the right path.
+	rawDiagnostics []check.Diagnostic
 	// resolved and types are the analysis indexes the LSP feature
 	// handlers (hover, goto-def, find-refs, completion) consult to
 	// answer requests. They share a (frozen) AST with this snapshot,
@@ -177,20 +184,21 @@ func buildVersion(
 	lineIndex := NewLineIndex(text)
 
 	checker := check.NewCheckerWithTree(tree, parser, text, ast)
-	diags, resolved, typeInfo := runChecker(checker, lineIndex, encoding)
+	diags, rawDiags, resolved, typeInfo := runChecker(checker, lineIndex, encoding)
 
 	v := &DocumentVersion{
-		uri:         uri,
-		fileID:      fileID,
-		version:     version,
-		text:        text,
-		tree:        tree,
-		ast:         ast,
-		lineIndex:   lineIndex,
-		encoding:    encoding,
-		diagnostics: diags,
-		resolved:    resolved,
-		types:       typeInfo,
+		uri:            uri,
+		fileID:         fileID,
+		version:        version,
+		text:           text,
+		tree:           tree,
+		ast:            ast,
+		lineIndex:      lineIndex,
+		encoding:       encoding,
+		diagnostics:    diags,
+		rawDiagnostics: rawDiags,
+		resolved:       resolved,
+		types:          typeInfo,
 	}
 	// Owner's reference. Released by Document.Update when this
 	// version is replaced by a successor.
@@ -207,11 +215,11 @@ func buildVersion(
 // the same check pass. The indexes (resolved, typeInfo) are nil when
 // AST conversion failed; they're load-bearing for LSP features beyond
 // diagnostics (hover, goto-def, etc.).
-func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) ([]lsp.Diagnostic, *check.Resolved, *check.TypeInfo) {
+func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) ([]lsp.Diagnostic, []check.Diagnostic, *check.Resolved, *check.TypeInfo) {
 	out := make([]lsp.Diagnostic, 0)
 	result, err := checker.Check()
 	if err != nil {
-		return out, nil, nil
+		return out, nil, nil, nil
 	}
 	for _, cd := range result.Diagnostics {
 		rang := lsp.Range{
@@ -226,5 +234,5 @@ func runChecker(checker check.RadChecker, idx *LineIndex, enc PositionEncoding) 
 		}
 		out = append(out, lsp.NewDiagnosticFromCheckWithRange(cd, rang))
 	}
-	return out, result.Resolved, result.Types
+	return out, result.Diagnostics, result.Resolved, result.Types
 }
