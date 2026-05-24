@@ -1,6 +1,8 @@
 package analysis
 
 import (
+	"sort"
+
 	"github.com/amterp/rad/radls/lsp"
 
 	"github.com/amterp/rad/rts/rl"
@@ -65,6 +67,20 @@ func (s *State) DocumentSymbols(snap *DocumentVersion) ([]lsp.DocumentSymbol, er
 			}
 		}
 	}
+
+	// Render in source order, regardless of which top-level
+	// construct appeared first in the AST traversal above.
+	// Without this, args:/cmd: blocks always appear before any
+	// fn/var even when the user wrote the fns first - the outline
+	// would not match the file. Editors render symbols in the
+	// order we return them.
+	sort.SliceStable(syms, func(i, j int) bool {
+		a, b := syms[i].Range.Start, syms[j].Range.Start
+		if a.Line != b.Line {
+			return a.Line < b.Line
+		}
+		return a.Character < b.Character
+	})
 
 	return syms, nil
 }

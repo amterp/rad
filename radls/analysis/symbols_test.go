@@ -120,6 +120,45 @@ func TestDocumentSymbolsArgsBlock(t *testing.T) {
 	}
 }
 
+// TestDocumentSymbolsInSourceOrder verifies the outline matches
+// the file's actual order. Before the sort fix, args:/cmd:
+// always appeared first regardless of where they sat in source,
+// surprising users scanning the panel for an entry near a
+// specific line.
+func TestDocumentSymbolsInSourceOrder(t *testing.T) {
+	// args block, then variable, then function - all in that
+	// order textually. Without the sort fix, traversal order
+	// happened to match by coincidence; with the sort it's
+	// guaranteed.
+	src := `args:
+    name str
+
+x = 1
+
+fn helper():
+    print(1)
+`
+	syms := documentSymbolsFixture(t, src)
+	if len(syms) != 3 {
+		t.Fatalf("expected 3 symbols, got %d (%v)", len(syms), syms)
+	}
+	names := []string{syms[0].Name, syms[1].Name, syms[2].Name}
+	want := []string{"args", "x", "helper"}
+	for i, n := range names {
+		if n != want[i] {
+			t.Errorf("symbol[%d]: got %q, want %q (source order)",
+				i, n, want[i])
+		}
+	}
+	// And the lines should be ascending.
+	for i := 1; i < len(syms); i++ {
+		if syms[i].Range.Start.Line < syms[i-1].Range.Start.Line {
+			t.Errorf("symbols not in line order: %d before %d",
+				syms[i-1].Range.Start.Line, syms[i].Range.Start.Line)
+		}
+	}
+}
+
 // TestDocumentSymbolsNoSnapshotReturnsEmpty verifies the nil path.
 func TestDocumentSymbolsNoSnapshotReturnsEmpty(t *testing.T) {
 	s := NewState()
