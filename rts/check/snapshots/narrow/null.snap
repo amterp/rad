@@ -17,7 +17,7 @@ fn f(x: int?):
   x @ 4:9 -> int?
 
 # Symbol types
-  f (fn): fn(int?)
+  f (fn): fn(int?) -> void
   x (param): int?
   y (local): int
   z (local): int?
@@ -41,7 +41,7 @@ fn f(x: int?):
   x @ 4:9 -> int
 
 # Symbol types
-  f (fn): fn(int?)
+  f (fn): fn(int?) -> void
   x (param): int?
   y (local): int
 
@@ -67,7 +67,7 @@ fn f(x: int):
   x @ 5:13 -> int
 
 # Symbol types
-  f (fn): fn(int)
+  f (fn): fn(int) -> void
   x (param): int
   y (local): int
   z (local): int

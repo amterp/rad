@@ -26,7 +26,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Symbol types
   after (local): ["a", "b", "c"]
-  f (fn): fn(["a", "b", "c"])
+  f (fn): fn(["a", "b", "c"]) -> void
   log (local): str
   x (param): ["a", "b", "c"]
 
@@ -56,7 +56,7 @@ fn f(x: int?):
 
 # Symbol types
   after (local): int?
-  f (fn): fn(int?)
+  f (fn): fn(int?) -> void
   log (local): str
   x (param): int?
 
@@ -89,7 +89,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Symbol types
   after (local): ["a", "b", "c"]
-  f (fn): fn(["a", "b", "c"])
+  f (fn): fn(["a", "b", "c"]) -> void
   log (local): int
   x (param): ["a", "b", "c"]
 

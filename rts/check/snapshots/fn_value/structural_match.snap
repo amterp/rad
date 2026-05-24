@@ -17,13 +17,13 @@ process(cb)
 # Identifier types
   x @ 2:12 -> int
   callback @ 5:5 -> fn(int) -> bool
-  process @ 7:1 -> fn(fn(int) -> bool)
+  process @ 7:1 -> fn(fn(int) -> bool) -> void
   cb @ 7:9 -> fn(int) -> bool
 
 # Symbol types
   callback (param): fn(int) -> bool
   cb (fn): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): int
 
 # Diagnostics
@@ -45,13 +45,13 @@ process(cb)
 ### STDOUT ###
 # Identifier types
   callback @ 5:5 -> fn(int) -> bool
-  process @ 7:1 -> fn(fn(int) -> bool)
+  process @ 7:1 -> fn(fn(int) -> bool) -> void
   cb @ 7:9 -> fn(int) -> str
 
 # Symbol types
   callback (param): fn(int) -> bool
   cb (fn): fn(int) -> str
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
   [hint] RAD30001 @ 7:9 - Argument type 'fn(int) -> str' is not assignable to expected type 'fn(int) -> bool'
@@ -73,13 +73,13 @@ process(cb)
 # Identifier types
   x @ 2:12 -> str
   callback @ 5:5 -> fn(int) -> bool
-  process @ 7:1 -> fn(fn(int) -> bool)
+  process @ 7:1 -> fn(fn(int) -> bool) -> void
   cb @ 7:9 -> fn(str) -> bool
 
 # Symbol types
   callback (param): fn(int) -> bool
   cb (fn): fn(str) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): str
 
 # Diagnostics
@@ -101,13 +101,13 @@ process(cb)
 ### STDOUT ###
 # Identifier types
   callback @ 5:5 -> fn(int) -> bool
-  process @ 7:1 -> fn(fn(int) -> bool)
+  process @ 7:1 -> fn(fn(int) -> bool) -> void
   cb @ 7:9 -> fn(any) -> bool
 
 # Symbol types
   callback (param): fn(int) -> bool
   cb (fn): fn(any) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
   (none)
@@ -130,13 +130,13 @@ process(cb)
   x @ 2:12 -> int
   y @ 2:16 -> int
   callback @ 5:5 -> fn(int) -> bool
-  process @ 7:1 -> fn(fn(int) -> bool)
+  process @ 7:1 -> fn(fn(int) -> bool) -> void
   cb @ 7:9 -> fn(int, int) -> bool
 
 # Symbol types
   callback (param): fn(int) -> bool
   cb (fn): fn(int, int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): int
   y (param): int
 
@@ -160,13 +160,13 @@ process(cb)
 # Identifier types
   x @ 2:12 -> str
   callback @ 5:5 -> dynamic
-  process @ 7:1 -> fn(any)
+  process @ 7:1 -> fn(any) -> void
   cb @ 7:9 -> fn(str) -> str
 
 # Symbol types
   callback (param): <no-type>
   cb (fn): fn(str) -> str
-  process (fn): fn(any)
+  process (fn): fn(any) -> void
   x (param): str
 
 # Diagnostics
@@ -186,11 +186,11 @@ process(fn(x) "hi")
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
-  process @ 4:1 -> fn(fn(int) -> bool)
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
 
 # Symbol types
   callback (param): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
   [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> str' is not assignable to expected type 'fn(int) -> bool'
@@ -209,12 +209,12 @@ process(fn(x) x > 0)
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
-  process @ 4:1 -> fn(fn(int) -> bool)
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
   x @ 4:15 -> dynamic
 
 # Symbol types
   callback (param): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): <no-type>
 
 # Diagnostics
@@ -237,12 +237,12 @@ process(fn(x):
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
-  process @ 4:1 -> fn(fn(int) -> bool)
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
   x @ 5:8 -> dynamic
 
 # Symbol types
   callback (param): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): <no-type>
 
 # Diagnostics
@@ -262,13 +262,13 @@ process(fn(x):
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
-  process @ 4:1 -> fn(fn(int) -> bool)
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
   print @ 5:5 -> dynamic
   x @ 5:11 -> dynamic
 
 # Symbol types
   callback (param): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
   x (param): <no-type>
 
 # Diagnostics
@@ -289,11 +289,11 @@ process(fn(x) -> bool: return "hi")
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
-  process @ 4:1 -> fn(fn(int) -> bool)
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
 
 # Symbol types
   callback (param): fn(int) -> bool
-  process (fn): fn(fn(int) -> bool)
+  process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
   [hint] RAD30001 @ 4:31 - Return value of type 'str' is not assignable to declared return type 'bool'

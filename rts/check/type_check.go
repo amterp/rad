@@ -155,12 +155,315 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, retNode rl.Node) {
 }
 
 func (tc *typeChecker) walkFile(file *rl.SourceFile) {
+	// Pre-pass: walk top-level hoisted fn bodies in reverse-topo
+	// SCC order so each fn body sees its callees' fully-inferred
+	// return types. Mutually recursive fns within an SCC share a
+	// placeholder return during the walk, which we resolve to the
+	// union of all return statements across the SCC at the end.
+	//
+	// This is the Phase 2 plan's two-pass shape. Hoisted top-level
+	// fns are processed here; their bodies are NOT re-walked in
+	// the main pass below. Nested FnDef inference still happens
+	// inline in the body walk via the same walkFnDef path and
+	// uses the simple source-order strategy - mutual recursion
+	// across nested fns is a rare enough corner case to defer
+	// until it bites.
+	tc.inferHoistedFnReturns(file)
 	for _, stmt := range file.Stmts {
+		// Skip top-level FnDefs; the inference pre-pass already
+		// walked their bodies and would otherwise double-emit
+		// diagnostics.
+		if _, isFn := stmt.(*rl.FnDef); isFn {
+			continue
+		}
 		tc.walkStmt(stmt)
 	}
 	for _, cmd := range file.Cmds {
 		tc.walkCmd(cmd)
 	}
+}
+
+// inferHoistedFnReturns runs the SCC-ordered return-type inference
+// pre-pass over top-level hoisted FnDefs. After this returns, every
+// such fn's SymbolTypes entry carries its inferred (or declared)
+// return type, so references-by-name see the right shape.
+func (tc *typeChecker) inferHoistedFnReturns(file *rl.SourceFile) {
+	fns := make([]*rl.FnDef, 0)
+	for _, stmt := range file.Stmts {
+		if fn, ok := stmt.(*rl.FnDef); ok && fn.Name != "" {
+			fns = append(fns, fn)
+		}
+	}
+	if len(fns) == 0 {
+		return
+	}
+
+	// Build the dependency edges: fn -> set of fns it references in
+	// its body (excluding nested FnDef bodies, which have their own
+	// inference). The "references" are uses whose resolved Symbol
+	// matches another top-level fn's symbol.
+	fnSym := make(map[*rl.FnDef]*Symbol, len(fns))
+	symToFn := make(map[*Symbol]*rl.FnDef, len(fns))
+	for _, fn := range fns {
+		sym := tc.resolved.Decls[fn]
+		if sym == nil {
+			continue
+		}
+		fnSym[fn] = sym
+		symToFn[sym] = fn
+	}
+
+	deps := make(map[*rl.FnDef]map[*rl.FnDef]struct{}, len(fns))
+	for _, fn := range fns {
+		set := make(map[*rl.FnDef]struct{})
+		tc.collectFnRefs(fn.Body, symToFn, set, fn)
+		deps[fn] = set
+	}
+
+	// Compute SCCs in reverse-topological order (leaves first).
+	sccs := tarjanSCC(fns, deps)
+
+	for _, scc := range sccs {
+		tc.processFnSCC(scc, fnSym)
+	}
+}
+
+// collectFnRefs walks `nodes` looking for Identifier uses whose
+// resolved Symbol is one of the hoisted fns in symToFn. Found refs
+// (other than self) become edges in the dependency graph. Nested
+// FnDef bodies are NOT descended into: those fns own their own
+// inference; their references contribute to their own dependency
+// edges, not the outer's.
+func (tc *typeChecker) collectFnRefs(nodes []rl.Node, symToFn map[*Symbol]*rl.FnDef, set map[*rl.FnDef]struct{}, owner *rl.FnDef) {
+	for _, n := range nodes {
+		tc.collectFnRefsNode(n, symToFn, set, owner)
+	}
+}
+
+func (tc *typeChecker) collectFnRefsNode(n rl.Node, symToFn map[*Symbol]*rl.FnDef, set map[*rl.FnDef]struct{}, owner *rl.FnDef) {
+	if n == nil {
+		return
+	}
+	switch v := n.(type) {
+	case *rl.FnDef:
+		// Don't recurse into nested FnDef bodies - they have their
+		// own inference. (But do still capture the FnDef's name
+		// as a binding; the surrounding stmt list is what we walk.)
+		return
+	case *rl.Identifier:
+		if sym, ok := tc.resolved.Uses[v]; ok {
+			if dep, ok := symToFn[sym]; ok && dep != owner {
+				set[dep] = struct{}{}
+			}
+		}
+		return
+	case *rl.Lambda:
+		// Lambdas DO contribute to dependency edges - their bodies
+		// can reference outer fns, and synth'ing the lambda inside
+		// the parent fn's walk reads those fns' planted types.
+		tc.collectFnRefs(v.Body, symToFn, set, owner)
+		return
+	}
+	for _, c := range n.Children() {
+		tc.collectFnRefsNode(c, symToFn, set, owner)
+	}
+}
+
+// tarjanSCC returns the SCCs of the dependency graph in reverse
+// topological order. Each inner slice is one SCC; the slice of
+// slices is ordered so that an SCC's dependencies all appear
+// earlier in the result. Standard Tarjan's algorithm.
+func tarjanSCC(nodes []*rl.FnDef, deps map[*rl.FnDef]map[*rl.FnDef]struct{}) [][]*rl.FnDef {
+	type state struct {
+		index, lowlink int
+		onStack        bool
+		visited        bool
+	}
+	st := make(map[*rl.FnDef]*state, len(nodes))
+	for _, n := range nodes {
+		st[n] = &state{}
+	}
+	var stack []*rl.FnDef
+	var sccs [][]*rl.FnDef
+	idx := 0
+
+	var strongconnect func(*rl.FnDef)
+	strongconnect = func(v *rl.FnDef) {
+		s := st[v]
+		s.index = idx
+		s.lowlink = idx
+		s.visited = true
+		idx++
+		stack = append(stack, v)
+		s.onStack = true
+
+		for w := range deps[v] {
+			ws, ok := st[w]
+			if !ok {
+				continue
+			}
+			if !ws.visited {
+				strongconnect(w)
+				if ws.lowlink < s.lowlink {
+					s.lowlink = ws.lowlink
+				}
+			} else if ws.onStack {
+				if ws.index < s.lowlink {
+					s.lowlink = ws.index
+				}
+			}
+		}
+
+		if s.lowlink == s.index {
+			var scc []*rl.FnDef
+			for {
+				n := len(stack) - 1
+				w := stack[n]
+				stack = stack[:n]
+				st[w].onStack = false
+				scc = append(scc, w)
+				if w == v {
+					break
+				}
+			}
+			sccs = append(sccs, scc)
+		}
+	}
+
+	for _, n := range nodes {
+		if !st[n].visited {
+			strongconnect(n)
+		}
+	}
+	// Tarjan emits SCCs in reverse-topo order naturally.
+	return sccs
+}
+
+// processFnSCC walks every fn in the SCC, then resolves the
+// shared inferred return type by unioning all collected returns
+// across all members of the SCC.
+//
+// For a singleton SCC (no self-cycle, no mutual recursion), this
+// reduces to: plant a placeholder if unannotated, walk the body,
+// union the collected types, finalize. Placeholder is
+// TypingNeverT - unionTypesForJoin drops Never on the way through,
+// so any path that returns through the recursive call contributes
+// nothing concrete and the non-recursive paths determine the
+// final return type. If the SCC has no non-recursive return paths
+// at all, the union collapses to Never and we fall back to
+// Dynamic ("we couldn't infer") rather than surface Never to
+// users.
+func (tc *typeChecker) processFnSCC(scc []*rl.FnDef, fnSym map[*rl.FnDef]*Symbol) {
+	// Step 1: plant placeholder return for every fn in the SCC
+	// that doesn't already have a declared return. Fns with
+	// declared returns keep their declaration; the body walk
+	// uses it as `expected` and emits return-mismatch diagnostics.
+	placeholder := rl.NewNeverType()
+	needsInference := make(map[*rl.FnDef]bool, len(scc))
+	for _, fn := range scc {
+		sym := fnSym[fn]
+		if sym == nil {
+			continue
+		}
+		if fn.Typing == nil || fn.Typing.ReturnT == nil {
+			needsInference[fn] = true
+			// Replace SymbolTypes with a TypingFnT carrying the
+			// placeholder return so recursive refs see something
+			// concrete-looking during the body walk.
+			params := []rl.TypingFnParam(nil)
+			if fn.Typing != nil {
+				params = fn.Typing.Params
+			}
+			var ret rl.TypingT = placeholder
+			tc.info.SymbolTypes[sym] = &rl.TypingFnT{
+				FnName:  fn.Name,
+				Params:  params,
+				ReturnT: &ret,
+			}
+		}
+	}
+
+	// Step 2: walk every body, collecting returns per fn.
+	collected := make(map[*rl.FnDef][]rl.TypingT, len(scc))
+	for _, fn := range scc {
+		collected[fn] = tc.walkFnDefForInference(fn)
+	}
+
+	// Step 3: union ALL collected types across the SCC (the plan's
+	// "unified with union of return statement types in the SCC").
+	// Placeholder Never drops in unionTypesForJoin; recursive paths
+	// thus contribute nothing concrete. We distinguish three cases
+	// after the union:
+	//
+	//   - Empty (no returns at all in any SCC member): void. The
+	//     fn legitimately has no return value.
+	//   - Never (returns existed but all dropped as Never): all
+	//     paths went recursive, no concrete exit. Fall back to
+	//     Dynamic - we can't pin a type, but it's not "void"
+	//     either since the call would in principle return
+	//     something.
+	//   - Anything else: that's the union of concrete returns.
+	var all []rl.TypingT
+	for _, fn := range scc {
+		all = append(all, collected[fn]...)
+	}
+	var scope rl.TypingT
+	if len(all) == 0 {
+		scope = rl.NewVoidType()
+	} else {
+		scope = unionTypesForJoin(all)
+		if _, isNever := scope.(*rl.TypingNeverT); isNever {
+			scope = rl.NewDynamicType()
+		}
+	}
+
+	// Step 4: write the resolved return type back into SymbolTypes
+	// for every fn in the SCC that needed inference. Singletons get
+	// the same answer they'd compute alone; multi-fn SCCs share the
+	// SCC-wide union.
+	for _, fn := range scc {
+		if !needsInference[fn] {
+			continue
+		}
+		sym := fnSym[fn]
+		if sym == nil {
+			continue
+		}
+		params := []rl.TypingFnParam(nil)
+		if fn.Typing != nil {
+			params = fn.Typing.Params
+		}
+		ret := scope
+		tc.info.SymbolTypes[sym] = &rl.TypingFnT{
+			FnName:  fn.Name,
+			Params:  params,
+			ReturnT: &ret,
+		}
+	}
+}
+
+// walkFnDefForInference is walkFnDef but exposes the collected
+// return-statement types so the SCC orchestrator can build the
+// inferred return. Semantics are identical to walkFnDef otherwise.
+func (tc *typeChecker) walkFnDefForInference(n *rl.FnDef) []rl.TypingT {
+	saved := tc.frame
+	if n.Typing != nil {
+		for _, p := range n.Typing.Params {
+			if p.DefaultAST != nil && p.DefaultAST.Node != nil {
+				_ = tc.synth(p.DefaultAST.Node)
+			}
+		}
+	}
+	tc.frame = NewFrame()
+	var declaredReturn rl.TypingT
+	if n.Typing != nil && n.Typing.ReturnT != nil {
+		declaredReturn = *n.Typing.ReturnT
+	}
+	tc.pushReturnFrame(declaredReturn)
+	tc.walkStmts(n.Body)
+	collected := tc.popReturnFrame()
+	tc.frame = saved
+	return collected
 }
 
 // walkStmt dispatches on statement kind. Phase 2a recognizes only the
@@ -310,11 +613,7 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 	tc.frame = NewFrame()
 	// Push a return-collector frame so any `return E` inside the
 	// body lands in this fn'\''s slot, not whatever lambda we may
-	// be nested under at the call site. We don'\''t consume the
-	// collected types here yet - hoisted-fn return inference is a
-	// separate commit gated on SCC handling for mutual recursion.
-	// Pushing now is the cheap half: it keeps lambdas correct when
-	// a named fn is declared inside them. We feed the declared
+	// be nested under at the call site. We feed the declared
 	// return (if any) so body returns get checked against it at
 	// their own span, same as lambdas.
 	var declaredReturn rl.TypingT
@@ -323,8 +622,48 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 	}
 	tc.pushReturnFrame(declaredReturn)
 	tc.walkStmts(n.Body)
-	_ = tc.popReturnFrame()
+	collected := tc.popReturnFrame()
 	tc.frame = saved
+
+	// Inference for nested fns. Top-level fns are handled in the
+	// SCC pre-pass (inferHoistedFnReturns) which gets to walk
+	// bodies in dependency order; nested fns just get walked here
+	// in source order, with no SCC support. That means a nested
+	// fn that mutually recurses with a sibling sees Any for
+	// forward refs. Single-fn recursion is fine: the binder
+	// planted fn.Typing on the symbol, but with nil ReturnT;
+	// callSignatureFor now prefers SymbolTypes, so we plant a
+	// Never placeholder before the walk and resolve after.
+	//
+	// We skip this work entirely when there's a declared return -
+	// the symbol already carries the declared shape and the body
+	// returns were checked against it via the pushReturnFrame
+	// expected slot.
+	if n.Name == "" || declaredReturn != nil {
+		return
+	}
+	sym, ok := tc.resolved.Decls[n]
+	if !ok || sym == nil {
+		return
+	}
+	var ret rl.TypingT
+	if len(collected) == 0 {
+		ret = rl.NewVoidType()
+	} else {
+		ret = unionTypesForJoin(collected)
+		if _, isNever := ret.(*rl.TypingNeverT); isNever {
+			ret = rl.NewDynamicType()
+		}
+	}
+	params := []rl.TypingFnParam(nil)
+	if n.Typing != nil {
+		params = n.Typing.Params
+	}
+	tc.info.SymbolTypes[sym] = &rl.TypingFnT{
+		FnName:  n.Name,
+		Params:  params,
+		ReturnT: &ret,
+	}
 }
 
 // walkForLoop handles `for vars in iter [with ctx]:`. The loop var
@@ -1582,6 +1921,18 @@ func (tc *typeChecker) callSignatureFor(callee rl.Node) *rl.TypingFnT {
 		}
 		return sig.Typing
 	case SymHoistedFn:
+		// Prefer the SymbolTypes-stored TypingFnT when available -
+		// inferHoistedFnReturns writes the inferred return type
+		// there during SCC processing, and during the SCC walk the
+		// stored type carries the Never placeholder we want
+		// recursive call sites to see. The raw fn.Typing on the
+		// AST has nil ReturnT for unannotated fns, which would
+		// collapse to Dynamic and defeat the placeholder strategy.
+		if t, ok := tc.info.SymbolTypes[sym]; ok {
+			if fnT, ok := t.(*rl.TypingFnT); ok {
+				return fnT
+			}
+		}
 		fn, ok := sym.DefNode.(*rl.FnDef)
 		if !ok || fn.Typing == nil {
 			return nil
@@ -1798,6 +2149,16 @@ func (tc *typeChecker) synthOpBinary(n *rl.OpBinary) rl.TypingT {
 
 	if anyIsErrorType(left, right) {
 		return tc.record(n, rl.NewErrorTypeType())
+	}
+	// Never operands suppress operand-type diagnostics and propagate
+	// Never. This matters during the hoisted-fn SCC inference walk:
+	// recursive calls inside an SCC return the Never placeholder, and
+	// expressions like `factorial(n-1) * n` would otherwise emit
+	// "Invalid operand: never * int" before the placeholder gets
+	// resolved. Semantically Never is the bottom type - a value of
+	// type Never can't exist, so any operation on it is vacuous.
+	if anyIsNever(left, right) {
+		return tc.record(n, rl.NewNeverType())
 	}
 	if anyIsDynamicLike(left, right) {
 		// Equality and the boolean ops still have a known result type
@@ -2060,6 +2421,20 @@ func isDynamicLike(t rl.TypingT) bool {
 func anyIsErrorType(types ...rl.TypingT) bool {
 	for _, t := range types {
 		if isErrorType(t) {
+			return true
+		}
+	}
+	return false
+}
+
+func isNever(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingNeverT)
+	return ok
+}
+
+func anyIsNever(types ...rl.TypingT) bool {
+	for _, t := range types {
+		if isNever(t) {
 			return true
 		}
 	}

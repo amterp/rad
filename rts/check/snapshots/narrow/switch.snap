@@ -25,7 +25,7 @@ fn f(name: ["alice", "bob", "charlie"]):
   a (local): ["alice"]
   b (local): ["bob"]
   c (local): ["charlie"]
-  f (fn): fn(["alice", "bob", "charlie"])
+  f (fn): fn(["alice", "bob", "charlie"]) -> void
   name (param): ["alice", "bob", "charlie"]
 
 # Diagnostics
@@ -53,7 +53,7 @@ fn f(name: ["a", "b", "c"]):
 # Symbol types
   ab (local): ["a", "b"]
   c (local): ["c"]
-  f (fn): fn(["a", "b", "c"])
+  f (fn): fn(["a", "b", "c"]) -> void
   name (param): ["a", "b", "c"]
 
 # Diagnostics
@@ -74,7 +74,7 @@ fn f(name: ["a", "b"]):
   x @ 6:13 -> <no-type>
 
 # Symbol types
-  f (fn): fn(["a", "b"])
+  f (fn): fn(["a", "b"]) -> void
   name (param): ["a", "b"]
   x (local): int
 
@@ -96,7 +96,7 @@ fn f(name: ["a", "b", "c"]):
   x @ 6:13 -> <no-type>
 
 # Symbol types
-  f (fn): fn(["a", "b", "c"])
+  f (fn): fn(["a", "b", "c"]) -> void
   name (param): ["a", "b", "c"]
   x (local): int
 
@@ -118,7 +118,7 @@ fn f(name: ["a", "b", "c"]):
   x @ 6:13 -> <no-type>
 
 # Symbol types
-  f (fn): fn(["a", "b", "c"])
+  f (fn): fn(["a", "b", "c"]) -> void
   name (param): ["a", "b", "c"]
   x (local): int
 
@@ -137,7 +137,7 @@ fn f(name: str):
   x @ 4:13 -> <no-type>
 
 # Symbol types
-  f (fn): fn(str)
+  f (fn): fn(str) -> void
   name (param): str
   x (local): int
 

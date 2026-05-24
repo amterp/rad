@@ -14,11 +14,11 @@ process(fn(x):
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
-  process @ 4:1 -> fn(fn(int) -> [int, str])
+  process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
 
 # Symbol types
   callback (param): fn(int) -> [int, str]
-  process (fn): fn(fn(int) -> [int, str])
+  process (fn): fn(fn(int) -> [int, str]) -> void
 
 # Diagnostics
   (none)
@@ -38,11 +38,11 @@ process(fn(x):
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
-  process @ 4:1 -> fn(fn(int) -> [int, str])
+  process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
 
 # Symbol types
   callback (param): fn(int) -> [int, str]
-  process (fn): fn(fn(int) -> [int, str])
+  process (fn): fn(fn(int) -> [int, str]) -> void
 
 # Diagnostics
   [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, int]' is not assignable to expected type 'fn(int) -> [int, str]'
@@ -62,11 +62,11 @@ process(fn(x):
 ### STDOUT ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
-  process @ 4:1 -> fn(fn(int) -> [int, str])
+  process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
 
 # Symbol types
   callback (param): fn(int) -> [int, str]
-  process (fn): fn(fn(int) -> [int, str])
+  process (fn): fn(fn(int) -> [int, str]) -> void
 
 # Diagnostics
   [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, str, bool]' is not assignable to expected type 'fn(int) -> [int, str]'
@@ -89,13 +89,13 @@ process(cb)
 # Identifier types
   x @ 2:12 -> int
   callback @ 5:5 -> fn(int) -> [int, str]
-  process @ 7:1 -> fn(fn(int) -> [int, str])
+  process @ 7:1 -> fn(fn(int) -> [int, str]) -> void
   cb @ 7:9 -> fn(int) -> [int, str]
 
 # Symbol types
   callback (param): fn(int) -> [int, str]
   cb (fn): fn(int) -> [int, str]
-  process (fn): fn(fn(int) -> [int, str])
+  process (fn): fn(fn(int) -> [int, str]) -> void
   x (param): int
 
 # Diagnostics

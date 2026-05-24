@@ -21,7 +21,7 @@ fn f(x: int|str):
 # Symbol types
   a (local): int
   b (local): str
-  f (fn): fn(int|str)
+  f (fn): fn(int|str) -> void
   x (param): int|str
 
 # Diagnostics
@@ -50,7 +50,7 @@ fn f(x: int?|str):
 # Symbol types
   a (local): int
   b (local): int?|str
-  f (fn): fn(int?|str)
+  f (fn): fn(int?|str) -> void
   x (param): int?|str
 
 # Diagnostics
@@ -73,7 +73,7 @@ fn f(x: int):
 
 # Symbol types
   a (local): never
-  f (fn): fn(int)
+  f (fn): fn(int) -> void
   x (param): int
 
 # Diagnostics

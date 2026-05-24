@@ -60,7 +60,7 @@ fn f(xs: int[]):
 
 # Symbol types
   a (local): int
-  f (fn): fn(int[])
+  f (fn): fn(int[]) -> void
   i (loop): int
   xs (param): int[]
 

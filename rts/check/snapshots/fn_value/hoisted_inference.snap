@@ -1,0 +1,156 @@
+### TITLE ###
+HoistedFnReturnInferredFromBody
+### DESCRIPTION ###
+A hoisted fn with no return annotation has its return type
+inferred from the body's return statements.
+### INPUT ###
+fn add_one(x: int):
+    return x + 1
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> int
+
+# Symbol types
+  add_one (fn): fn(int) -> int
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnNoReturnIsVoid
+### DESCRIPTION ###
+A hoisted fn with no return statements at all infers void as
+the return type.
+### INPUT ###
+fn say_hi(name: str):
+    print("hi " + name)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  name @ 2:19 -> str
+
+# Symbol types
+  name (param): str
+  say_hi (fn): fn(str) -> void
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnMultiplePathsUnioned
+### DESCRIPTION ###
+Two return paths get unioned: int|str.
+### INPUT ###
+fn pick(flag: bool):
+    if flag:
+        return 1
+    return "fallback"
+### STDOUT ###
+# Identifier types
+  flag @ 2:8 -> bool
+
+# Symbol types
+  flag (param): bool
+  pick (fn): fn(bool) -> int|str
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnForwardReferenceResolves
+### DESCRIPTION ###
+`a` is defined before `b` but calls `b`. Topo order ensures `b`
+is inferred first; `a` sees `b`'s inferred return when its body
+is walked. End result: both have correct concrete returns.
+### INPUT ###
+fn a():
+    return b()
+
+fn b():
+    return 42
+### STDOUT ###
+# Identifier types
+  b @ 2:12 -> fn() -> int
+
+# Symbol types
+  a (fn): fn() -> int
+  b (fn): fn() -> int
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnSelfRecursionDynamic
+### DESCRIPTION ###
+A directly self-recursive fn with no concrete return path - all
+returns go through the recursive call. The SCC's placeholder
+drops via Never; we fall back to Dynamic since we couldn't pin
+a concrete type.
+### INPUT ###
+fn loop_forever(x: int):
+    return loop_forever(x + 1)
+### STDOUT ###
+# Identifier types
+  loop_forever @ 2:12 -> fn(int) -> never
+  x @ 2:25 -> int
+
+# Symbol types
+  loop_forever (fn): fn(int) -> dynamic
+  x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnSelfRecursionWithBaseCase
+### DESCRIPTION ###
+Recursion with a base case: the recursive arm contributes Never
+(drops in union), the base arm contributes int. Inferred return
+is int.
+### INPUT ###
+fn factorial(n: int):
+    if n <= 1:
+        return 1
+    return factorial(n - 1) * n
+### STDOUT ###
+# Identifier types
+  n @ 2:8 -> int
+  factorial @ 4:12 -> fn(int) -> never
+  n @ 4:22 -> int
+  n @ 4:31 -> int
+
+# Symbol types
+  factorial (fn): fn(int) -> int
+  n (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+HoistedFnMutualRecursionUnioned
+### DESCRIPTION ###
+`a` and `b` form an SCC. Each has a non-recursive base path
+returning a different type. The SCC's union is int|str; both
+fns end up with that inferred return.
+### INPUT ###
+fn a(x: int):
+    if x == 0:
+        return 1
+    return b(x - 1)
+
+fn b(x: int):
+    if x == 0:
+        return "done"
+    return a(x - 1)
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int
+  b @ 4:12 -> fn(int) -> never
+  x @ 4:14 -> int
+  x @ 7:8 -> int
+  a @ 9:12 -> fn(int) -> never
+  x @ 9:14 -> int
+
+# Symbol types
+  a (fn): fn(int) -> str|int
+  b (fn): fn(int) -> str|int
+  x (param): int
+  x (param): int
+
+# Diagnostics
+  (none)

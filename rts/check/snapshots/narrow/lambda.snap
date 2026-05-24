@@ -19,7 +19,7 @@ fn f(x: int?):
 
 # Symbol types
   cb (local): fn() -> void
-  f (fn): fn(int?)
+  f (fn): fn(int?) -> void
   x (param): int?
   y (local): int
 
@@ -48,7 +48,7 @@ fn f(x: int?):
 # Symbol types
   a (local): int
   cb (local): fn() -> void
-  f (fn): fn(int?)
+  f (fn): fn(int?) -> void
   x (param): int?
   z (local): int?
 
