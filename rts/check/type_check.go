@@ -729,16 +729,43 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		tc.info.SymbolTypes[sym] = valType
 		tc.frame = tc.frame.With(sym, valType)
 	}
-	// Walk the catch block (if any) so hover and sub-expression type
-	// info inside the catch are recorded. The catch executes when the
-	// RHS errors, so identifier reads inside it could in principle
-	// see the assignment target as type `error`; we don'\''t narrow
-	// that yet because the AST doesn'\''t carry an explicit binding for
-	// the caught error (the user references the assignment target
-	// directly), and the runtime semantics aren'\''t covered by a
-	// single-Symbol narrowing.
+	// Walk the catch block (if any) with assignment targets narrowed
+	// to their error component. The catch runs when the RHS errored,
+	// so each target currently holds an error value - inside the
+	// catch body, reads of the target should see `error`, not the
+	// non-error narrowing walkAssign just installed in the frame.
+	//
+	// For a typed local `x: int|error = parse_int(...)` the override
+	// is the error arm of the declared type. For an unannotated
+	// local where the RHS synthed to int|error, we pick out the
+	// error arm. Falls back to a bare TypingErrorT when we can'\''t
+	// extract one (the runtime guarantee is "RHS errored," so error
+	// is always sound).
 	if a.Catch != nil {
+		savedFrame := tc.frame
+		overrides := make(map[*Symbol]rl.TypingT, len(a.Targets))
+		for i, target := range a.Targets {
+			ident, ok := target.(*rl.Identifier)
+			if !ok {
+				continue
+			}
+			sym, ok := tc.resolved.Uses[ident]
+			if !ok || sym == nil {
+				continue
+			}
+			var rhsType rl.TypingT
+			if i < len(a.Values) {
+				rhsType = tc.synth(a.Values[i])
+			}
+			errArm := extractErrorFrom(rhsType)
+			if errArm == nil {
+				errArm = rl.NewErrorType()
+			}
+			overrides[sym] = errArm
+		}
+		tc.frame = tc.frame.WithMany(overrides)
 		tc.walkStmts(a.Catch.Stmts)
+		tc.frame = savedFrame
 	}
 }
 

@@ -1,0 +1,48 @@
+### TITLE ###
+CatchBlockNarrowsTargetToError
+### DESCRIPTION ###
+Inside an assignment's catch block, the target carries the error
+value the catch fired on. Reads of x within the catch body see
+type `error`; reads after the catch see the (potentially still
+error-typed) RHS result.
+### INPUT ###
+x = parse_int("foo") catch:
+    print(x)
+    yield 0
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:5 -> dynamic
+  x @ 2:11 -> error
+  y @ 4:1 -> <no-type>
+  x @ 4:5 -> int|error
+
+# Symbol types
+  x (local): int|error
+  y (local): int|error
+
+# Diagnostics
+  (none)
+### TITLE ###
+CatchBlockOnTypedLocalUsesDeclaredErrorArm
+### DESCRIPTION ###
+Typed local `x: int|error`. Inside the catch the override is the
+error arm specifically.
+### INPUT ###
+x: int|error = parse_int("hi") catch:
+    print(x)
+    yield 0
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  parse_int @ 1:16 -> dynamic
+  print @ 2:5 -> dynamic
+  x @ 2:11 -> error
+
+# Symbol types
+  x (local): int|error
+
+# Diagnostics
+  (none)
