@@ -146,6 +146,32 @@ func TestInflightRegistrationCleanup(t *testing.T) {
 	}
 }
 
+// TestRegisterInflightCancelsClobberedEntry verifies that if a
+// duplicate request id is registered while the prior one is still
+// in-flight (a misbehaving client scenario), the old cancel func
+// is fired so the prior goroutine isn't stuck waiting on a context
+// that nobody ever cancels.
+func TestRegisterInflightCancelsClobberedEntry(t *testing.T) {
+	m := NewMux(nil, nil)
+	defer m.baseCancel()
+
+	// First registration: install a cancel that signals when fired.
+	fired := make(chan struct{})
+	m.registerInflight("dup", func() { close(fired) })
+
+	// Second registration with the same key: should cancel the first.
+	m.registerInflight("dup", func() {})
+
+	select {
+	case <-fired:
+	case <-time.After(time.Second):
+		t.Fatal("clobbered cancel func was never called")
+	}
+
+	// Cleanup.
+	m.unregisterInflight("dup")
+}
+
 // TestRequestIDKeyDistinguishesNumberAndString documents that the JSON
 // id `1` (number) and `"1"` (string) are different keys, matching JSON-RPC.
 func TestRequestIDKeyDistinguishesNumberAndString(t *testing.T) {

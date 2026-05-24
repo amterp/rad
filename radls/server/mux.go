@@ -186,7 +186,13 @@ func (m *Mux) handleRequestResponse(request lsp.Request) (err error) {
 
 	// Register the request as in-flight before dispatch. If
 	// $/cancelRequest arrives for this id, we'll cancel its context.
+	// The defer cancel() pairs with WithCancel - per Go contract,
+	// every context.WithCancel must have its cancel func called to
+	// release the child node from its parent's tree (otherwise the
+	// parent leaks the node until it's itself cancelled, here
+	// baseCtx at session shutdown).
 	ctx, cancel := context.WithCancel(m.baseCtx)
+	defer cancel()
 	idKey := requestIDKey(request.Id)
 	m.registerInflight(idKey, cancel)
 	defer m.unregisterInflight(idKey)
@@ -249,6 +255,13 @@ func (m *Mux) handleCancelRequest(_ context.Context, params json.RawMessage) err
 
 func (m *Mux) registerInflight(idKey string, cancel context.CancelFunc) {
 	m.inflightMu.Lock()
+	// A misbehaving client could reuse an id while the prior request
+	// is still in flight. Cancel the older one before stomping its
+	// entry so its goroutine releases its context budget rather than
+	// leaking until session shutdown.
+	if old, ok := m.inflight[idKey]; ok {
+		old()
+	}
 	m.inflight[idKey] = cancel
 	m.inflightMu.Unlock()
 }
