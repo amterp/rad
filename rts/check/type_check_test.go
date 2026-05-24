@@ -624,3 +624,47 @@ func TestTypeCheck_PoisonedArgDoesNotEmitArgTypeMismatch(t *testing.T) {
 	assert.Equal(t, 0, countCode(info, rl.ErrTypeMismatch),
 		"poisoned arg should not produce an additional type-mismatch hint")
 }
+
+// --- Suggestion / help-line tests ------------------------------------
+
+func TestTypeCheck_StrPlusIntAttachesV09MigrationHint(t *testing.T) {
+	// `+` no longer coerces types in v0.9. The runtime attaches a
+	// help line pointing at the migration doc when it fires this
+	// error; the static check needs to surface the same hint so LSP
+	// and `rad check` users get the same actionable follow-up.
+	_, info, _ := typeInfoFromSrc(t, "x = \"hi\" + 5\n")
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrInvalidTypeForOp && i.Suggestion != "" {
+			found = true
+			assert.Contains(t, i.Suggestion, "string interpolation",
+				"hint should point users at string interpolation")
+			break
+		}
+	}
+	assert.True(t, found, "expected a Suggestion on the str+int hint")
+}
+
+func TestTypeCheck_StrPlusStrDoesNotAttachMigrationHint(t *testing.T) {
+	// str+str is valid (concat) - no hint, no Suggestion. Sanity
+	// check that we only attach the migration tip in the case where
+	// pre-v0.9 code would have coerced.
+	_, info, _ := typeInfoFromSrc(t, "x = \"a\" + \"b\"\n")
+	for _, i := range info.Issues {
+		assert.Empty(t, i.Suggestion,
+			"valid str+str should not attach any Suggestion: %s", i.Message)
+	}
+}
+
+func TestTypeCheck_IntPlusListDoesNotAttachStrMigrationHint(t *testing.T) {
+	// The migration hint is specific to str+coercible operand
+	// combinations - it's the wrong follow-up for, say, int+list,
+	// which has its own gotcha.
+	_, info, _ := typeInfoFromSrc(t, "x = 1 + [1, 2]\n")
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrInvalidTypeForOp {
+			assert.Empty(t, i.Suggestion,
+				"int+list should not attach the str migration hint")
+		}
+	}
+}

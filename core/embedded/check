@@ -40,6 +40,8 @@ else if script:
         print("{padding} |{start_padding} ^ {d.msg.color()}")
         if "code" in d:
             print("{padding} |{start_padding} (code: {d.code})")
+        if "suggestion" in d:
+            print("{padding} = help: {d.suggestion}")
         print()
 
     noun = len(diagnostics) == 1 ? "diagnostic" : "diagnostics"

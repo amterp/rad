@@ -113,6 +113,9 @@ func AddInternalFuncs() {
 					if diag.Code != nil {
 						diagMap.SetPrimitiveStr("code", diag.Code.String())
 					}
+					if diag.Suggestion != nil && *diag.Suggestion != "" {
+						diagMap.SetPrimitiveStr("suggestion", *diag.Suggestion)
+					}
 					diagnostics.Append(newRadValueMap(diagMap))
 				}
 				radMap.SetPrimitiveList("diagnostics", diagnostics)

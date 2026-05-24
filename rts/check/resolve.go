@@ -129,9 +129,17 @@ const (
 // that the binder doesn't depend on the source text or the wider
 // Diagnostic type. Callers turn each issue into their preferred
 // diagnostic shape (e.g. check.Diagnostic with src-derived range info).
+//
+// Suggestion is an optional "= help: ..." line. When non-empty, the
+// rendered diagnostic shows it after the source-context block, the
+// same way the runtime renders its `emitErrorWithHint` calls. Used
+// to give the static check parity with runtime diagnostics that
+// already provide actionable follow-up (the v0.9 `+` migration hint
+// is the canonical example).
 type BindIssue struct {
-	Span     rl.Span
-	Severity IssueSeverity
-	Code     rl.Error
-	Message  string
+	Span       rl.Span
+	Severity   IssueSeverity
+	Code       rl.Error
+	Message    string
+	Suggestion string
 }

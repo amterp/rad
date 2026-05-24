@@ -129,7 +129,7 @@ func (c *RadCheckerImpl) addTypeIssues(info *TypeInfo, d *[]Diagnostic) {
 		return
 	}
 	for _, issue := range info.Issues {
-		*d = append(*d, NewDiagnosticFromSpan(issue.Span, c.src, issueSeverityToCheck(issue.Severity), issue.Message, codePtr(issue.Code)))
+		*d = append(*d, diagnosticFromBindIssue(issue, c.src))
 	}
 }
 
@@ -142,8 +142,21 @@ func (c *RadCheckerImpl) addBindIssues(resolved *Resolved, d *[]Diagnostic) {
 		return
 	}
 	for _, issue := range resolved.Issues {
-		*d = append(*d, NewDiagnosticFromSpan(issue.Span, c.src, issueSeverityToCheck(issue.Severity), issue.Message, codePtr(issue.Code)))
+		*d = append(*d, diagnosticFromBindIssue(issue, c.src))
 	}
+}
+
+// diagnosticFromBindIssue is the single conversion point from the
+// binder/type-checker's BindIssue value-type into a Diagnostic that
+// the checker layer can hand to the renderer. Centralized so the
+// Suggestion plumbing only lives in one place.
+func diagnosticFromBindIssue(issue BindIssue, src string) Diagnostic {
+	diag := NewDiagnosticFromSpan(issue.Span, src, issueSeverityToCheck(issue.Severity), issue.Message, codePtr(issue.Code))
+	if issue.Suggestion != "" {
+		s := issue.Suggestion
+		diag.Suggestion = &s
+	}
+	return diag
 }
 
 // issueSeverityToCheck maps the binder's local IssueSeverity onto the

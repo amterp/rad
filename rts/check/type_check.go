@@ -819,18 +819,44 @@ func unionOf(a, b rl.TypingT) rl.TypingT {
 
 // --- Operator diagnostics --------------------------------------------
 
+// strPlusMigrationHint is the help-line the runtime attaches when a
+// str+non-str / non-str+str operation hits ErrInvalidTypeForOp.
+// Surface the same text statically so LSP and `rad check` users see
+// the same actionable follow-up as `rad <script>` users do.
+const strPlusMigrationHint = "In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/"
+
 func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.TypingT, isCompound bool) {
 	opStr := op.String()
 	if isCompound {
 		opStr += "="
 	}
-	tc.info.Issues = append(tc.info.Issues, BindIssue{
+	issue := BindIssue{
 		Span:     span,
 		Severity: IssueHint,
 		Code:     rl.ErrInvalidTypeForOp,
 		Message: fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'",
 			left.Name(), opStr, right.Name()),
-	})
+	}
+	if op == rl.OpAdd && isStrPlusCoercible(left, right) {
+		issue.Suggestion = strPlusMigrationHint
+	}
+	tc.info.Issues = append(tc.info.Issues, issue)
+}
+
+// isStrPlusCoercible mirrors core/expr_ops.go's isStrPlusNonStr: do we
+// have a str on one side and an int/float/bool on the other? Those
+// are the combinations users likely intended pre-v0.9 - the migration
+// hint helps far more on those than on, say, list + int.
+func isStrPlusCoercible(left, right rl.TypingT) bool {
+	coercible := func(t rl.TypingT) bool {
+		return isInt(t) || isFloat(t) || isBool(t)
+	}
+	return (isStr(left) && coercible(right)) || (coercible(left) && isStr(right))
+}
+
+func isBool(t rl.TypingT) bool {
+	_, ok := t.(*rl.TypingBoolT)
+	return ok
 }
 
 func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.TypingT) {
