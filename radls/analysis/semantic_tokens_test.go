@@ -66,6 +66,27 @@ func TestSemanticTokensSingleLine(t *testing.T) {
 	}
 }
 
+// TestSemanticTokensFnNameAtDefSite verifies the fn name in
+// `fn greet():` is tagged Function. The binder declares hoisted
+// fns at the FnDef node (not at an Identifier), so the name
+// token has no Uses entry; we synthesize it from FnDef.NameSpan
+// directly. Before this fix, only call sites of user fns were
+// coloured - the decl site rendered as plain text.
+func TestSemanticTokensFnNameAtDefSite(t *testing.T) {
+	src := "fn greet():\n    print(1)\n"
+	data := semanticTokensFixture(t, src)
+	if len(data) == 0 {
+		t.Fatal("expected tokens")
+	}
+	// First token should be `greet` on line 0 starting at col 3
+	// (after `fn `). Function-kind, length 5.
+	if data[0] != 0 || data[1] != 3 || data[2] != 5 ||
+		data[3] != uint(TokenTypeFunction) || data[4] != 0 {
+		t.Errorf("first token (greet at fn def): got %v, want (0,3,5,Function,0)",
+			data[0:5])
+	}
+}
+
 // TestSemanticTokensParamTagged verifies parameters of an enclosing
 // function are tagged Parameter, not just Variable. This is the
 // usability win - editors render params distinctly.

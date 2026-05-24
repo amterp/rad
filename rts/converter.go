@@ -423,7 +423,18 @@ func (c *converter) convertFnDef(node *ts.Node) *rl.FnDef {
 		}
 	}
 
-	return rl.NewFnDef(c.makeSpan(node), name, typing, body, isBlock, defSpan)
+	fn := rl.NewFnDef(c.makeSpan(node), name, typing, body, isBlock, defSpan)
+	// NameSpan covers just the name identifier - the LSP semantic-
+	// token pass needs this to color the name at its decl site, since
+	// DefSpan covers the `fn` keyword. Falls back to the whole node
+	// when there's no name child (defensive; shouldn't happen for
+	// named FnDef in practice).
+	if nameNode != nil {
+		fn.NameSpan = c.makeSpan(nameNode)
+	} else {
+		fn.NameSpan = fn.Span()
+	}
+	return fn
 }
 
 func (c *converter) convertFnLambda(node *ts.Node) *rl.Lambda {

@@ -249,12 +249,13 @@ func (n *Pass) Span() Span     { return n.span }
 
 // FnDef represents a named function definition.
 type FnDef struct {
-	span    Span
-	Name    string
-	Typing  *TypingFnT // parameter types and return type
-	Body    []Node
-	IsBlock bool // block function (uses return stmt) vs expression function
-	DefSpan Span // span of the keyword or name for error reporting
+	span     Span
+	Name     string
+	Typing   *TypingFnT // parameter types and return type
+	Body     []Node
+	IsBlock  bool // block function (uses return stmt) vs expression function
+	DefSpan  Span // span of the keyword or name for error reporting
+	NameSpan Span // span of just the name identifier; for LSP semantic tokens and precise navigation
 }
 
 func NewFnDef(span Span, name string, typing *TypingFnT, body []Node, isBlock bool, defSpan Span) *FnDef {

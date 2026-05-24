@@ -80,35 +80,63 @@ func (s *State) SemanticTokens(snap *DocumentVersion) (*lsp.SemanticTokens, erro
 	return out, nil
 }
 
-// collectSemanticTokens walks every identifier and looks it up
-// in resolved.Uses. Unresolved identifiers are skipped - the
-// editor's tree-sitter highlighting handles them well enough
-// as plain text, and emitting "variable" here would mis-color
-// typos as if they were real bindings.
+// collectSemanticTokens walks the AST for identifiers and emits
+// a token for each. Two sources:
+//
+//  1. Identifier nodes that resolve through resolved.Uses. This
+//     catches call sites, var reads, and the dual-registered
+//     decl identifier on `x = 1`.
+//  2. FnDef name positions. The binder declares hoisted fns at
+//     the AST node (not at an Identifier), so the name token
+//     at `fn greet():` has no Uses entry; without this branch
+//     it would not be coloured at the decl site even though
+//     every call to `greet()` is.
+//
+// Param-name positions at the decl site are still uncoloured.
+// The AST's TypingFnParam carries no per-name span; emitting
+// would need a converter+AST extension. Param references inside
+// the body do get tokens via path 1.
+//
+// Unresolved identifiers are skipped - the editor's tree-sitter
+// highlighting handles them well enough as plain text, and
+// emitting "variable" here would mis-color typos as if they
+// were real bindings.
 func collectSemanticTokens(snap *DocumentVersion) []rawToken {
 	tokens := make([]rawToken, 0)
 	rl.Walk(snap.ast, func(n rl.Node) {
-		ident, ok := n.(*rl.Identifier)
-		if !ok {
-			return
+		switch nn := n.(type) {
+		case *rl.Identifier:
+			sym, ok := snap.resolved.Uses[nn]
+			if !ok || sym == nil {
+				return
+			}
+			ttype, has := tokenTypeForSymbol(sym)
+			if !has {
+				return
+			}
+			tokens = append(tokens, tokenFromSpan(nn.Span(), ttype))
+		case *rl.FnDef:
+			// Skip anonymous or zero-name forms; NameSpan would be
+			// the whole node and emitting that would over-paint.
+			if nn.Name == "" {
+				return
+			}
+			tokens = append(tokens, tokenFromSpan(nn.NameSpan, TokenTypeFunction))
 		}
-		sym, ok := snap.resolved.Uses[ident]
-		if !ok || sym == nil {
-			return
-		}
-		ttype, has := tokenTypeForSymbol(sym)
-		if !has {
-			return
-		}
-		s := ident.Span()
-		tokens = append(tokens, rawToken{
-			line:   s.StartRow,
-			col:    s.StartCol,
-			length: s.EndByte - s.StartByte,
-			ttype:  ttype,
-		})
 	})
 	return tokens
+}
+
+// tokenFromSpan packages a span into the rawToken shape. Length
+// is byte-distance; the encoder translates to the negotiated
+// character encoding later.
+func tokenFromSpan(s rl.Span, ttype SemanticTokenType) rawToken {
+	return rawToken{
+		line:   s.StartRow,
+		col:    s.StartCol,
+		length: s.EndByte - s.StartByte,
+		ttype:  ttype,
+	}
 }
 
 // tokenTypeForSymbol maps a SymbolKind to its semantic-token
