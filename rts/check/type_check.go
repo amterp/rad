@@ -222,9 +222,9 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 	// Also synth the callee. For UFCS calls the callee is just the
 	// method-name Identifier (no enclosing Call.Func chain), but the
 	// shape is the same either way.
-	calleeT := tc.synth(call.Func)
+	_ = tc.synth(call.Func)
 
-	typing := tc.builtinSignatureFor(call.Func)
+	typing := tc.callSignatureFor(call.Func)
 	if typing == nil {
 		return tc.record(call, rl.NewDynamicType())
 	}
@@ -233,7 +233,6 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 	if typing.ReturnT != nil {
 		return tc.record(call, *typing.ReturnT)
 	}
-	_ = calleeT
 	return tc.record(call, rl.NewDynamicType())
 }
 
@@ -268,25 +267,47 @@ func (tc *typeChecker) synthVarPath(v *rl.VarPath) rl.TypingT {
 	return tc.record(v, rl.NewDynamicType())
 }
 
-// builtinSignatureFor returns the parsed builtin signature for a
-// call's callee, or nil when the callee isn't a directly-named
-// builtin we have type information for. The function leaves all
-// other resolution paths (user-defined functions, function-valued
-// expressions) to later phases.
-func (tc *typeChecker) builtinSignatureFor(callee rl.Node) *rl.TypingFnT {
+// callSignatureFor returns the static signature of a call's callee,
+// or nil when we can't determine one. Three resolution paths:
+//
+//  1. Builtin: ambient symbol; signature lives in FnSignaturesByName.
+//     Fetched lazily here (the binder doesn't pre-populate every one).
+//  2. Hoisted top-level user function: the FnDef's declared Typing.
+//     This is what makes `add(1, 2)` type-check against the
+//     `fn add(a: int, b: int) -> int:` declaration. Unannotated params
+//     show up with a nil Type on TypingFnParam, which checkCall
+//     already treats as "no constraint" (matching `any`).
+//  3. Anything else (local-with-lambda, function-typed parameter,
+//     getter expression) - returns nil today. Will be filled in once
+//     SymbolTypes carries TypingFnT for these symbols.
+//
+// Returning nil makes the caller fall back to a Dynamic result with
+// no arity / type-mismatch diagnostics, which is the right behavior
+// for "we can't reason about this callee."
+func (tc *typeChecker) callSignatureFor(callee rl.Node) *rl.TypingFnT {
 	ident, ok := callee.(*rl.Identifier)
 	if !ok {
 		return nil
 	}
 	sym, ok := tc.resolved.Uses[ident]
-	if !ok || sym.Kind != SymBuiltin {
+	if !ok {
 		return nil
 	}
-	sig, ok := rts.FnSignaturesByName[sym.Name]
-	if !ok || sig.Typing == nil {
-		return nil
+	switch sym.Kind {
+	case SymBuiltin:
+		sig, ok := rts.FnSignaturesByName[sym.Name]
+		if !ok || sig.Typing == nil {
+			return nil
+		}
+		return sig.Typing
+	case SymHoistedFn:
+		fn, ok := sym.DefNode.(*rl.FnDef)
+		if !ok || fn.Typing == nil {
+			return nil
+		}
+		return fn.Typing
 	}
-	return sig.Typing
+	return nil
 }
 
 // checkCall runs the call-matching algorithm: it pairs each explicit

@@ -201,6 +201,16 @@ error[RAD30007]: Too many positional args, remaining args are named-only
   |
    = info: rad explain RAD30007
 
+error[RAD30007]: Missing required argument 'z'
+  --> <script>:1:1
+  |
+1 | foo(1, 2, 3).print()
+  | ^^^^^^^^^^^^
+2 | fn foo(x: float, y: float, *, z: float) -> float:
+3 | 	return x / y + z
+  |
+   = info: rad explain RAD30007
+
 
 ### EXIT ###
 1
@@ -220,6 +230,36 @@ error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally
 3 | 	return x / y
   |
    = info: rad explain RAD30006
+
+error[RAD30006]: Argument '_y' cannot be passed as named arg, only positionally
+  --> <script>:1:11
+  |
+1 | foo(_x=1, _y=2).print()
+  |           ^^
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30006
+
+error[RAD30007]: Missing required argument '_x'
+  --> <script>:1:1
+  |
+1 | foo(_x=1, _y=2).print()
+  | ^^^^^^^^^^^^^^^
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30007
+
+error[RAD30007]: Missing required argument '_y'
+  --> <script>:1:1
+  |
+1 | foo(_x=1, _y=2).print()
+  | ^^^^^^^^^^^^^^^
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |
+   = info: rad explain RAD30007
 
 
 ### EXIT ###
@@ -291,7 +331,7 @@ foo(1, y = 2, y = 3)
 fn foo(x: float, y?) -> float:
 	return x / y
 ### STDERR ###
-error[RAD30006]: Duplicate named argument: y
+error[RAD30006]: Argument 'y' already specified
   --> <script>:1:15
   |
 1 | foo(1, y = 2, y = 3)
@@ -659,15 +699,15 @@ foo(1, 2)
 fn foo(x: list):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
-  --> <script>:1:5
+error[RAD30007]: Expected at most 1 args, but was invoked with 2
+  --> <script>:1:1
   |
 1 | foo(1, 2)
-  |     ^
+  | ^^^^^^^^^
 2 | fn foo(x: list):
 3 | 	print("|{x}|")
   |
-   = info: rad explain RAD30001
+   = info: rad explain RAD30007
 
 
 ### EXIT ###

@@ -471,3 +471,84 @@ func TestTypeCheck_ListLiteralWithErrorElementPoisons(t *testing.T) {
 	file, info, _ := typeInfoFromSrc(t, "x = [1, -\"hi\", 3]\n")
 	assert.Equal(t, "<error>", exprTypeOf(t, file, info).Name())
 }
+
+// --- User-defined function call tests --------------------------------
+
+func TestTypeCheck_TypedUserFnCallSynthesizesDeclaredReturnType(t *testing.T) {
+	// `fn add(x: int, y: int) -> int` declared with full annotations.
+	// Calling it should synth to int, the declared return type. This is
+	// the headline win of Phase 2e: user fns now feed type info into
+	// downstream synthesis the same way builtins always have.
+	src := "fn add(x: int, y: int) -> int:\n    return x + y\nz = add(1, 2)\n"
+	file, info, _ := typeInfoFromSrc(t, src)
+	// `z`'s symbol-type should reflect the call's synthesized return.
+	assign := file.Stmts[1].(*rl.Assign)
+	call := assign.Values[0].(*rl.Call)
+	got, ok := info.ExprTypes[call]
+	require.True(t, ok)
+	assert.Equal(t, rl.T_INT, got.Name())
+}
+
+func TestTypeCheck_UserFnCallWithTooFewArgsFlagsArity(t *testing.T) {
+	// User-defined fns get the same arity check as builtins, since
+	// callSignatureFor now returns the FnDef's Typing.
+	src := "fn add(x: int, y: int) -> int: x + y\nz = add(1)\n"
+	_, info, _ := typeInfoFromSrc(t, src)
+	assert.True(t, hasIssue(info, rl.ErrWrongArgCount),
+		"expected ErrWrongArgCount when user fn called with too few args")
+}
+
+func TestTypeCheck_UserFnCallWithWrongArgTypeFlagsHint(t *testing.T) {
+	// Type mismatch on a user fn arg surfaces as a Hint, matching the
+	// behavior on builtin calls. Hint severity keeps runtime's richer
+	// value-aware error path in play.
+	src := "fn add(x: int, y: int) -> int: x + y\nz = add(\"a\", 2)\n"
+	_, info, _ := typeInfoFromSrc(t, src)
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "expected Hint-severity type-mismatch on user fn arg")
+}
+
+func TestTypeCheck_UnannotatedUserFnFallsBackToDynamic(t *testing.T) {
+	// `fn add(x, y):` (no types, no return annotation). The signature
+	// has nil ReturnT, so the call's synth result is Dynamic - the
+	// same fallback used for builtins lacking signatures. Return-type
+	// inference from `return` statements is a follow-on.
+	src := "fn add(x, y):\n    return x + y\nz = add(1, 2)\n"
+	file, info, _ := typeInfoFromSrc(t, src)
+	assign := file.Stmts[1].(*rl.Assign)
+	call := assign.Values[0].(*rl.Call)
+	got, ok := info.ExprTypes[call]
+	require.True(t, ok)
+	assert.Equal(t, rl.T_DYNAMIC, got.Name())
+}
+
+func TestTypeCheck_UserFnCalledBeforeDefinitionWorks(t *testing.T) {
+	// Hoisting: a fn can be called before it's defined in the source
+	// (the binder pre-pass declares all top-level fns before stmt
+	// walking). The call should still resolve to the declared return.
+	src := "z = add(1, 2)\nfn add(x: int, y: int) -> int: x + y\n"
+	file, info, _ := typeInfoFromSrc(t, src)
+	call := file.Stmts[0].(*rl.Assign).Values[0].(*rl.Call)
+	got, ok := info.ExprTypes[call]
+	require.True(t, ok)
+	assert.Equal(t, rl.T_INT, got.Name())
+}
+
+func TestTypeCheck_MutualRecursionDoesNotInfiniteLoop(t *testing.T) {
+	// `fn f(): g()` and `fn g(): f()` mutually reference each other.
+	// The Phase 2e wiring is signature-only (not body-driven return
+	// inference), so this can't loop - both fns expose their declared
+	// (or nil) return types statically. Sanity check that TypeCheck
+	// completes and produces no spurious errors.
+	src := "fn f():\n    g()\nfn g():\n    f()\nf()\n"
+	_, info, _ := typeInfoFromSrc(t, src)
+	// No arity / type-mismatch issues on these calls.
+	assert.False(t, hasIssue(info, rl.ErrWrongArgCount))
+	assert.False(t, hasIssue(info, rl.ErrTypeMismatch))
+}
