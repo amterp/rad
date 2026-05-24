@@ -394,7 +394,14 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 					"Duplicate parameter '"+p.Name+"'")
 				continue
 			}
-			b.declare(p.Name, SymParam, owner.Span(), nil)
+			sym := b.declare(p.Name, SymParam, owner.Span(), nil)
+			// Param type annotation acts like a typed local'\''s
+			// declared type: it'\''s an immutable contract subsequent
+			// reads / assigns must respect. Unannotated params stay
+			// at Declared == nil (effectively Dynamic).
+			if p.Type != nil {
+				sym.Declared = *p.Type
+			}
 		}
 	}
 

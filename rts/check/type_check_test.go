@@ -777,3 +777,173 @@ func TestTypeCheck_TypedLocalWithRadBlockKeywordName(t *testing.T) {
 			"int RHS into `rad: int` should not produce a mismatch")
 	}
 }
+
+// --- Phase 4e: if/elif/else flow + join logic ------------------------
+
+func TestTypeCheck_IfNotNull_NarrowsTruthyToNonNull(t *testing.T) {
+	// Inside the then-branch, x is int (not int?).
+	src := `x: int? = 5
+if x != null:
+    y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	ifStmt := file.Stmts[1].(*rl.If)
+	yAssign := ifStmt.Branches[0].Body[0].(*rl.Assign)
+	xUse := yAssign.Values[0].(*rl.Identifier)
+	gotXUse := info.ExprTypes[xUse]
+	require.NotNil(t, gotXUse)
+	assert.Equal(t, rl.T_INT, gotXUse.Name(),
+		"x inside `if x != null:` body should narrow to int")
+
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[ySym].Name(),
+		"y inferred from narrowed x should be int")
+}
+
+func TestTypeCheck_IfReturnNarrowsFallthrough(t *testing.T) {
+	// Early-exit pattern: `if x == null: return` leaves x narrowed to
+	// non-null on the path past the if.
+	src := `fn f(x: int?):
+    if x == null:
+        return
+    y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	// fn.Body: [If, Assign(y=x)]
+	yAssign := fn.Body[1].(*rl.Assign)
+	xUse := yAssign.Values[0].(*rl.Identifier)
+	gotXUse := info.ExprTypes[xUse]
+	require.NotNil(t, gotXUse)
+	assert.Equal(t, rl.T_INT, gotXUse.Name(),
+		"x after `if x == null: return` should narrow to int")
+
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[ySym].Name())
+}
+
+func TestTypeCheck_IfElseUnionsBranches(t *testing.T) {
+	// Different branches assign different types to the same untyped
+	// local; the join produces a union.
+	src := `if true:
+    x = 5
+else:
+    x = "hi"
+y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	yAssign := file.Stmts[1].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	got := info.SymbolTypes[ySym]
+	require.NotNil(t, got)
+	// Union dedupes by Name; order isn'\''t guaranteed because the
+	// joined symbol map iterates Go maps. Accept either ordering.
+	name := got.Name()
+	assert.Contains(t, []string{"int|str", "str|int"}, name,
+		"y after if/else with int/str assignments should be int|str")
+}
+
+func TestTypeCheck_IfNoElseLeavesBaseOnFallthrough(t *testing.T) {
+	// `if cond: x = "hi"` (no else) leaves x as int|str after - the
+	// fall-through path keeps x at int from before the if.
+	src := `x = 5
+if true:
+    x = "hi"
+y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	yAssign := file.Stmts[2].(*rl.Assign)
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	got := info.SymbolTypes[ySym]
+	require.NotNil(t, got)
+	name := got.Name()
+	assert.Contains(t, []string{"int|str", "str|int"}, name)
+}
+
+func TestTypeCheck_NestedIfNarrowingThreads(t *testing.T) {
+	// type_of narrows a union; the nested if can rely on the outer
+	// narrowing being still in scope.
+	src := `fn f(x: int|str):
+    if type_of(x) == "int":
+        if x > 0:
+            y = x
+`
+	file, info, resolved := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	outerIf := fn.Body[0].(*rl.If)
+	innerIf := outerIf.Branches[0].Body[0].(*rl.If)
+	yAssign := innerIf.Branches[0].Body[0].(*rl.Assign)
+	xUse := yAssign.Values[0].(*rl.Identifier)
+	gotXUse := info.ExprTypes[xUse]
+	require.NotNil(t, gotXUse)
+	assert.Equal(t, rl.T_INT, gotXUse.Name(),
+		"x in nested narrowed scope should still be int")
+	ySym := resolved.Uses[yAssign.Targets[0].(*rl.Identifier)]
+	require.NotNil(t, ySym)
+	assert.Equal(t, rl.T_INT, info.SymbolTypes[ySym].Name())
+}
+
+func TestTypeCheck_IfElseAccumulatesFalsy(t *testing.T) {
+	// The else branch should see falsy refinement from the matching
+	// if condition. Without `elif` in Rad, we nest a second if in
+	// the else to exercise the same logic.
+	src := `fn f(x: int|str|bool):
+    if type_of(x) == "int":
+        a = x
+    else:
+        if type_of(x) == "str":
+            b = x
+        else:
+            c = x
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	outer := fn.Body[0].(*rl.If)
+
+	// Branch 0 body: a = x -> x narrows to int
+	aUse := outer.Branches[0].Body[0].(*rl.Assign).Values[0].(*rl.Identifier)
+	assert.Equal(t, rl.T_INT, info.ExprTypes[aUse].Name(),
+		"x in then-branch should be int")
+
+	inner := outer.Branches[1].Body[0].(*rl.If)
+	// Inner then: b = x -> x is str (int excluded by outer falsy).
+	bUse := inner.Branches[0].Body[0].(*rl.Assign).Values[0].(*rl.Identifier)
+	assert.Equal(t, rl.T_STR, info.ExprTypes[bUse].Name(),
+		"x in nested-elif (str) should be str (int excluded)")
+
+	// Inner else: c = x -> x is bool (int and str both excluded).
+	cUse := inner.Branches[1].Body[0].(*rl.Assign).Values[0].(*rl.Identifier)
+	assert.Equal(t, rl.T_BOOL, info.ExprTypes[cUse].Name(),
+		"x in deepest else should be bool (only remaining arm)")
+}
+
+func TestTypeCheck_IfDoesNotLeakNarrowingAfter(t *testing.T) {
+	// After a non-exiting if, the narrowing should not persist into
+	// subsequent statements at the same scope. Use a fn param so the
+	// base type stays int? - a top-level `x: int? = 5` would narrow
+	// x to int on assignment, and the if'\''s null-predicate would have
+	// nothing to strip.
+	src := `fn f(x: int?):
+    if x != null:
+        y = x
+    z = x
+`
+	file, info, _ := typeInfoFromSrc(t, src)
+	fn := file.Stmts[0].(*rl.FnDef)
+	zAssign := fn.Body[1].(*rl.Assign)
+	xUse := zAssign.Values[0].(*rl.Identifier)
+	gotXUse := info.ExprTypes[xUse]
+	require.NotNil(t, gotXUse)
+	// Branches contribute int (truthy exit) and int? (acc = base).
+	// The dedupe-by-Name union keeps them as int|int?; semantically
+	// equivalent to int? (since int <: int?), but a tighter
+	// representation would need union-arm subsumption that we don'\''t
+	// have today.
+	name := gotXUse.Name()
+	assert.Contains(t, []string{"int?", "int|int?", "int?|int"}, name,
+		"x after if (no else) should not stay narrowed to int")
+}

@@ -58,7 +58,7 @@ func makeChecker(baseType rl.TypingT) (*typeChecker, *rl.Identifier, *Symbol) {
 		SymbolTypes: map[*Symbol]rl.TypingT{sym: baseType},
 		ExprTypes:   map[rl.Node]rl.TypingT{},
 	}
-	tc := &typeChecker{resolved: resolved, info: info}
+	tc := &typeChecker{resolved: resolved, info: info, frame: NewFrame()}
 	return tc, ident, sym
 }
 

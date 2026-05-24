@@ -58,6 +58,28 @@ func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo {
 			SymbolTypes: map[*Symbol]rl.TypingT{},
 			ExprTypes:   map[rl.Node]rl.TypingT{},
 		},
+		frame: NewFrame(),
+	}
+	// Seed SymbolTypes from any pre-pinned declared annotations the
+	// binder recorded (function parameters with type annotations,
+	// typed-local declarations). Reads in the body fall through
+	// frame -> SymbolTypes and find the base type without a separate
+	// "enter function scope" hook.
+	//
+	// We walk both resolved.Decls (covers typed-local declarations)
+	// and the unique symbol set from resolved.Uses (covers params,
+	// which the binder declares with a nil DefNode and so never
+	// registers in Decls). The two sets overlap; the de-dup happens
+	// implicitly because both write into the same map.
+	for _, sym := range resolved.Decls {
+		if sym.Declared != nil {
+			tc.info.SymbolTypes[sym] = sym.Declared
+		}
+	}
+	for _, sym := range resolved.Uses {
+		if sym != nil && sym.Declared != nil {
+			tc.info.SymbolTypes[sym] = sym.Declared
+		}
 	}
 	tc.walkFile(file)
 	return tc.info
@@ -66,9 +88,17 @@ func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo {
 // typeChecker carries state during a single TypeCheck invocation.
 // Like the binder, it isn't safe for concurrent use; the public
 // TypeCheck function constructs a fresh one per call.
+//
+// frame holds the flow-sensitive narrowings in effect at the current
+// program point. It evolves through the walk: branches push/pop
+// narrowings, assignments record the latest inferred / re-assigned
+// type, and the if-join unions branches at the bottom. Reads of a
+// symbol consult frame first, then info.SymbolTypes (the base
+// declared / first-inferred type) as a fallback.
 type typeChecker struct {
 	resolved *Resolved
 	info     *TypeInfo
+	frame    *Frame
 }
 
 func (tc *typeChecker) walkFile(file *rl.SourceFile) {
@@ -92,12 +122,177 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		tc.walkAssign(v)
 	case *rl.ExprStmt:
 		_ = tc.synth(v.Expr)
+	case *rl.If:
+		tc.walkIf(v)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
 		for _, child := range n.Children() {
 			tc.walkStmt(child)
 		}
+	}
+}
+
+// walkStmts walks a body of statements in order. Each statement may
+// update tc.frame (assignments record new types, nested ifs join at
+// the bottom of their sub-flow); subsequent statements see the
+// post-update frame.
+func (tc *typeChecker) walkStmts(stmts []rl.Node) {
+	for _, s := range stmts {
+		tc.walkStmt(s)
+	}
+}
+
+// walkIf threads narrowings through an if/elif/else chain and joins
+// the frames at the bottom.
+//
+// For each branch with a condition:
+//   - The condition is interpreted against the accumulated falsy
+//     frame (everything previous branches couldn'\''t match).
+//   - The branch body walks with WhenTrue layered on the accumulated
+//     frame; subsequent branches accumulate WhenFalse.
+//   - If the branch falls off the end (doesn'\''t return/break/continue),
+//     its exit frame contributes to the join.
+//
+// The else branch (no condition) walks with the final accumulated
+// falsy frame. When there is no else, the "implicit else" - the path
+// where no branch matched - is the accumulated falsy frame itself.
+//
+// Early-exit handling is the practical win: `if x == null: return`
+// leaves the post-if frame as "x is non-null" because the null branch
+// returned and the fall-through carries the falsy refinement forward.
+func (tc *typeChecker) walkIf(n *rl.If) {
+	initial := tc.frame
+	acc := initial
+	var branchFrames []*Frame
+	hasElse := false
+	for _, branch := range n.Branches {
+		if branch.Condition == nil {
+			hasElse = true
+			tc.frame = acc
+			tc.walkStmts(branch.Body)
+			if !branchExitsEarly(branch.Body) {
+				branchFrames = append(branchFrames, tc.frame)
+			}
+			continue
+		}
+		// Synth the condition under the accumulated frame so hover
+		// over a sub-expression in (e.g.) `elif x.foo:` sees the
+		// previously-narrowed type of x.
+		tc.frame = acc
+		_ = tc.synth(branch.Condition)
+		ref := tc.interpretCondition(branch.Condition, tc.frame)
+		tc.frame = tc.frame.WithMany(ref.WhenTrue)
+		tc.walkStmts(branch.Body)
+		if !branchExitsEarly(branch.Body) {
+			branchFrames = append(branchFrames, tc.frame)
+		}
+		acc = acc.WithMany(ref.WhenFalse)
+	}
+	if !hasElse {
+		// The fall-through path: no branch fired. Carries every
+		// accumulated WhenFalse refinement.
+		branchFrames = append(branchFrames, acc)
+	}
+	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// branchExitsEarly reports whether the body unconditionally diverts
+// control past the surrounding construct. For Phase 4e we only look
+// at the last statement; a return / break / continue in the middle
+// of the body with dead code after is a separate concern (unreachable-
+// code diagnostic).
+//
+// exit() is not yet recognized; it'\''s a builtin function call and
+// requires call-site inspection. Worth adding in a follow-up once
+// the common case is solid.
+func branchExitsEarly(body []rl.Node) bool {
+	if len(body) == 0 {
+		return false
+	}
+	last := body[len(body)-1]
+	switch last.(type) {
+	case *rl.Return, *rl.Break, *rl.Continue:
+		return true
+	}
+	return false
+}
+
+// joinFrames computes the post-branch frame from a set of branch-exit
+// frames. For each symbol narrowed by any branch (relative to
+// initial), the joined type is the union of each branch'\''s effective
+// type for that symbol. Branches that didn'\''t narrow the symbol
+// contribute the base type from info.SymbolTypes - or the initial
+// frame'\''s narrowing if present, via Frame.Lookup'\''s parent walk.
+//
+// Returns initial unchanged when no branch narrowed anything (or
+// when only one branch survived early-exit filtering).
+func (tc *typeChecker) joinFrames(initial *Frame, branches []*Frame) *Frame {
+	if len(branches) == 0 {
+		return initial
+	}
+	if len(branches) == 1 {
+		return branches[0]
+	}
+	narrowed := map[*Symbol]bool{}
+	for _, branch := range branches {
+		for cur := branch; cur != nil && cur != initial; cur = cur.parent {
+			for s := range cur.bindings {
+				narrowed[s] = true
+			}
+		}
+	}
+	if len(narrowed) == 0 {
+		return initial
+	}
+	joined := make(map[*Symbol]rl.TypingT, len(narrowed))
+	for sym := range narrowed {
+		types := make([]rl.TypingT, 0, len(branches))
+		for _, branch := range branches {
+			if t, ok := branch.Lookup(sym); ok {
+				types = append(types, t)
+				continue
+			}
+			if t, ok := tc.info.SymbolTypes[sym]; ok {
+				types = append(types, t)
+			}
+		}
+		if len(types) > 0 {
+			joined[sym] = unionTypesForJoin(types)
+		}
+	}
+	return initial.WithMany(joined)
+}
+
+// unionTypesForJoin collapses a slice of branch types into one. It
+// dedupes by Name() and drops Never (which represents an unreachable
+// arm - unioning Never with X yields X). When every branch is Never,
+// the result is Never; a future commit lights an "unreachable code"
+// diagnostic on that case.
+func unionTypesForJoin(types []rl.TypingT) rl.TypingT {
+	seen := map[string]bool{}
+	unique := make([]rl.TypingT, 0, len(types))
+	for _, t := range types {
+		if t == nil {
+			continue
+		}
+		if _, ok := t.(*rl.TypingNeverT); ok {
+			continue
+		}
+		name := t.Name()
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
+		unique = append(unique, t)
+	}
+	switch len(unique) {
+	case 0:
+		return rl.NewNeverType()
+	case 1:
+		return unique[0]
+	default:
+		return rl.NewUnionType(unique...)
 	}
 }
 
@@ -145,9 +340,26 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		if sym.Declared != nil {
 			tc.checkAssignAgainstDeclared(val, valType, sym.Declared)
 			tc.info.SymbolTypes[sym] = sym.Declared
+			// The frame tracks the RHS-derived type within the
+			// current flow: a typed local can have a stricter
+			// type than Declared at a given point (after `x =
+			// 5` inside a branch, x is int even though declared
+			// int|str). On a mismatch the runtime would error;
+			// the frame stays at Declared so downstream reads
+			// don'\''t cascade.
+			actual := sym.Declared
+			if sym.Declared.IsAssignableFrom(valType) {
+				actual = valType
+			}
+			tc.frame = tc.frame.With(sym, actual)
 			continue
 		}
+		// Unannotated: SymbolTypes records the base/initial inferred
+		// type for hover and for join'\''s "branch didn'\''t narrow this"
+		// fallback. The frame holds the flow-sensitive override,
+		// which gets unioned at branch joins.
 		tc.info.SymbolTypes[sym] = valType
+		tc.frame = tc.frame.With(sym, valType)
 	}
 }
 
@@ -515,13 +727,16 @@ func (tc *typeChecker) addCallIssue(span rl.Span, code rl.Error, msg string) {
 }
 
 // synthIdentifier looks up the symbol an identifier refers to and
-// returns whatever type the checker has decided it holds. If the
-// symbol has no recorded type yet (forward reference, builtin
-// without a synthesized signature, etc.), return Dynamic.
+// returns the type that holds at this program point: the frame
+// narrowing if any, the base SymbolTypes entry otherwise. Forward
+// references and unknown symbols fall back to Dynamic.
 func (tc *typeChecker) synthIdentifier(ident *rl.Identifier) rl.TypingT {
 	sym, ok := tc.resolved.Uses[ident]
 	if !ok {
 		return tc.record(ident, rl.NewDynamicType())
+	}
+	if t, known := tc.frame.Lookup(sym); known {
+		return tc.record(ident, t)
 	}
 	if t, known := tc.info.SymbolTypes[sym]; known {
 		return tc.record(ident, t)
