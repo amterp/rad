@@ -175,6 +175,7 @@ const (
 	F_VARIADIC_MARKER     = "variadic_marker" // todo merge with above
 	F_OPTIONAL            = "optional"
 	F_LEAF_TYPE           = "leaf_type"
+	F_GROUP               = "group"
 	F_ANY                 = "any"
 	F_ENUM                = "enum"
 	F_NAMED_ENTRY         = "named_entry"

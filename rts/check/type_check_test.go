@@ -427,8 +427,10 @@ func TestTypeCheck_ListLiteralIntAndFloatWidensToFloat(t *testing.T) {
 
 func TestTypeCheck_ListLiteralMixedNonNumericProducesUnion(t *testing.T) {
 	// Non-numeric mixes don't widen - the element type is a union.
+	// Rendered with parens so the surface reading is unambiguous:
+	// list of (int|str), not (int) | (str[]).
 	file, info, _ := typeInfoFromSrc(t, "x = [1, \"hi\"]\n")
-	assert.Equal(t, "int|str[]", exprTypeOf(t, file, info).Name())
+	assert.Equal(t, "(int|str)[]", exprTypeOf(t, file, info).Name())
 }
 
 func TestTypeCheck_ListLiteralEmptyIsAnyList(t *testing.T) {

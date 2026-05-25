@@ -964,9 +964,9 @@ fn format_text(text: str, *, uppercase: bool = false, prefix: str = ""):
 
 formatted = format_text("hello", uppercase=true, prefix=">>> ")
 
-// Complex type annotations  
+// Complex type annotations
 fn process_data(
-    input: list[str], 
+    input: str[],
     callback: fn(str) -> bool,
     options: {config: str, debug?: bool}
 ) -> error|{processed: int, failed: int}:
@@ -1155,18 +1155,21 @@ error         // Error type
 
 ```rad
 list          // List of any type
-list[T]       // List of specific type T
-str[]         // List of strings (shorthand for list[str])
+str[]         // List of strings
+int[]         // List of integers
 any[]         // List of any type
 map           // Map/object with any keys/values
-map[K,V]      // Map with specific key/value types
+{str: int}    // Map with specific key/value types
 ```
+
+The `T[]` suffix is the only way to write a typed list. There's no
+`list[T]` form; one canonical spelling keeps things simple.
 
 ### Optional Types
 
 ```rad
 str?          // Optional string (can be null)
-any?          // Optional any type  
+any?          // Optional any type
 int?          // Optional integer
 ```
 
@@ -1177,6 +1180,20 @@ int|float     // Either int or float
 str|list      // Either string or list
 error|str     // Either error or string (common for fallible operations)
 ```
+
+### Parenthesized Type Groups
+
+Parentheses group a union so list / optional modifiers stack on
+top of the whole group rather than just the rightmost arm:
+
+```rad
+(int|str)[]      // List whose elements are int or str
+(int|str)?       // Optional value that's int or str
+((int|str)|bool)[]?  // Combinations compose freely
+```
+
+Without the parens, `int|str[]` parses as `int | (str[])` - an int
+or a list of strings, not a list of (int|str).
 
 ### Enum Types
 

@@ -296,5 +296,5 @@ process(fn(x) -> bool: return "hi")
   process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
-  [error] RAD10001 @ 4:22 - Invalid function syntax
+  [error] RAD10001 @ 4:24 - Invalid function syntax
   [hint] RAD30001 @ 4:31 - Return value of type 'str' is not assignable to declared return type 'bool'

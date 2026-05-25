@@ -369,7 +369,19 @@ func NewListType(elem TypingT) *TypingListT {
 }
 
 func (t *TypingListT) Name() string {
-	return t.elem.Name() + "[]"
+	return parenWrapIfUnion(t.elem) + "[]"
+}
+
+// parenWrapIfUnion returns t's name wrapped in parentheses when t is
+// a union, otherwise the bare name. Used by surface-syntax printers
+// (TypingListT.Name, TypingOptionalT.Name) where omitting parens
+// changes how a human re-reads the type: `int|str[]` parses as
+// `int | str[]`, not as a list of int-or-str.
+func parenWrapIfUnion(t TypingT) string {
+	if _, ok := t.(*TypingUnionT); ok {
+		return "(" + t.Name() + ")"
+	}
+	return t.Name()
 }
 
 // Elem returns the list'\''s element type. Exposed for narrowing -
@@ -640,7 +652,7 @@ func NewOptionalType(t TypingT) *TypingOptionalT {
 }
 
 func (t *TypingOptionalT) Name() string {
-	return fmt.Sprintf("%s?", t.t.Name())
+	return parenWrapIfUnion(t.t) + "?"
 }
 
 // Inner returns the non-null component of an optional. Exposed for

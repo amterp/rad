@@ -84,11 +84,30 @@ func resolveTyping(node *ts.Node, src string) TypingT {
 
 	leafTypes := make([]TypingT, 0)
 	for _, leafNode := range leafNodes {
-		typeNode := GetChild(&leafNode, F_TYPE)
 		listNodes := GetChildren(&leafNode, F_LIST)
 		optionalNode := GetChild(&leafNode, F_OPTIONAL)
 
+		// Parenthesized group form: `(int|str)[]?`. Recurse to resolve
+		// the inner union, then apply the outer list / optional
+		// modifiers below. The group field replaces the type field for
+		// this shape; checked first so the type-kind switch can assume
+		// a non-nil typeNode.
 		var typing TypingT
+		groupNode := GetChild(&leafNode, F_GROUP)
+		if groupNode != nil {
+			typing = resolveTyping(groupNode, src)
+			for range listNodes {
+				typing = NewListType(typing)
+			}
+			if optionalNode != nil {
+				typing = NewOptionalType(typing)
+			}
+			leafTypes = append(leafTypes, typing)
+			continue
+		}
+
+		typeNode := GetChild(&leafNode, F_TYPE)
+
 		switch typeNode.Kind() {
 		case K_STRING_TYPE:
 			typing = NewStrType()

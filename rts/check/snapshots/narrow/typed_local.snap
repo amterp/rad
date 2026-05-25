@@ -130,3 +130,70 @@ bb: int = 6
 
 # Diagnostics
   [error] RAD40011 @ 2:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': int' to reassign
+### TITLE ###
+ParenTypeGroupListWraps
+### DESCRIPTION ###
+`(int|str)[]` parses as a list whose elements are int|str.
+Without parens, `int|str[]` parses as `int | (str[])` - a
+different shape. Locks the new parens behavior.
+### INPUT ###
+xs: (int|str)[] = [1, "two", 3]
+y = xs[0]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  y @ 2:1 -> <no-type>
+  xs @ 2:5 -> (int|str)[]
+
+# Symbol types
+  xs (local): (int|str)[]
+  y (local): dynamic
+
+# Diagnostics
+  (none)
+### TITLE ###
+ParenTypeGroupOptionalWraps
+### DESCRIPTION ###
+`(int|str)?` parses as an optional union - the value is either
+int, str, or null. Confirms `?` attaches to the whole group.
+### INPUT ###
+x: (int|str)? = null
+y = x
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  y @ 2:1 -> <no-type>
+  x @ 2:5 -> null
+
+# Symbol types
+  x (local): (int|str)?
+  y (local): null
+
+# Diagnostics
+  (none)
+### TITLE ###
+InlineLambdaWithAnnotationsParses
+### DESCRIPTION ###
+The colon-then-expression body form lets users annotate
+params and return types on inline lambdas. Previously this
+shape was rejected because the parser had no place for a
+colon between the return type and an inline body.
+### INPUT ###
+fn process(cb: fn(int) -> bool):
+    print(cb(5))
+
+process(fn(x: int) -> bool: x > 0)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  cb @ 2:11 -> fn(int) -> bool
+  process @ 4:1 -> fn(fn(int) -> bool) -> void
+  x @ 4:29 -> int
+
+# Symbol types
+  cb (param): fn(int) -> bool
+  process (fn): fn(fn(int) -> bool) -> void
+  x (param): int
+
+# Diagnostics
+  (none)
