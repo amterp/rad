@@ -131,7 +131,7 @@ if true:
 
 print("two")
 ### STDERR ###
-error[RAD10003]: Expected identifier
+error[RAD10001]: Expected identifier
   --> <script>:2:12
   |
 1 | if true:
@@ -139,7 +139,7 @@ error[RAD10003]: Expected identifier
 3 | ? "not empty" : "empty"
 4 | 	print("one")
   |
-   = info: rad explain RAD10003
+   = info: rad explain RAD10001
 
 
 ### EXIT ###

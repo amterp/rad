@@ -78,25 +78,18 @@ var missingNodeMessages = map[string]string{
 	"del":      "Expected 'del'",
 }
 
-// missingKindToErrorCode maps MISSING node kinds to specific error codes.
+// missingKindToErrorCode maps MISSING node kinds to specific error
+// codes. Only the codes that empirically fire are mapped here -
+// tree-sitter's error recovery emits ERROR nodes for most of the
+// shapes that the retired 10003-10007/10010-10017/10019 codes
+// were designed to catch, so those map entries would never be
+// consulted. The active mappings stay because tree-sitter does
+// produce MISSING nodes for them (`:` after an `if` header is the
+// canonical case).
 var missingKindToErrorCode = map[string]rl.Error{
-	":":             rl.ErrMissingColon,
-	rl.K_IDENTIFIER: rl.ErrMissingIdentifier,
-	rl.K_EXPR:       rl.ErrMissingExpression,
-	rl.K_VAR_PATH:   rl.ErrMissingExpression,
-	")":             rl.ErrMissingCloseParen,
-	"(":             rl.ErrMissingOpenParen,
-	"]":             rl.ErrMissingCloseBracket,
-	"[":             rl.ErrMissingOpenBracket,
-	"}":             rl.ErrMissingCloseBrace,
-	"{":             rl.ErrMissingOpenBrace,
-	",":             rl.ErrMissingComma,
-	"=":             rl.ErrMissingEquals,
-	"->":            rl.ErrMissingArrow,
-	"type":          rl.ErrMissingType,
-	"newline":       rl.ErrMissingNewline,
-	"indent":        rl.ErrMissingIndent,
-	"dedent":        rl.ErrUnexpectedIndent,
+	":":       rl.ErrMissingColon,
+	"indent":  rl.ErrMissingIndent,
+	"newline": rl.ErrInvalidSyntax,
 }
 
 // parentContextMessages provides more specific messages based on the parent node kind.
@@ -206,8 +199,32 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 	errorContent := src[startByte:endByte]
 	trimmedContent := strings.TrimSpace(errorContent)
 
+	// Heuristic: missing colon after a block-opening keyword. Fires
+	// before the generic "unexpected token" so users see RAD10002
+	// instead of RAD10009 for the very common shape.
+	if msg, code, suggestion := checkMissingColon(errorContent); msg != "" {
+		return msg, code, suggestion
+	}
+
+	// Heuristic: a block-opening header (`if x:`) followed by an
+	// unindented next line. Tree-sitter doesn't emit a MISSING
+	// "indent" for this shape, so we recognise it from the ERROR
+	// content directly and surface RAD10018.
+	if msg, code, suggestion := checkMissingIndent(errorContent); msg != "" {
+		return msg, code, suggestion
+	}
+
 	// Heuristic 1: Check for unterminated string
 	if msg, code, suggestion := checkUnterminatedString(errorContent, trimmedContent); msg != "" {
+		return msg, code, suggestion
+	}
+
+	// Heuristic: bare quote ERROR token whose source position has no
+	// matching close on the same line. checkUnterminatedString only
+	// catches multi-byte quote tokens; this catches the case where
+	// tree-sitter splits the open quote into a one-char ERROR and
+	// the rest of the line into another ERROR.
+	if msg, code, suggestion := checkUnterminatedQuoteToken(node, src, trimmedContent); msg != "" {
 		return msg, code, suggestion
 	}
 
@@ -373,6 +390,152 @@ func isTypeTokenBoundary(b byte) bool {
 		return false
 	}
 	return true
+}
+
+// blockOpeningKeywords is the set of tokens that introduce a block
+// terminated by a colon. Used by checkMissingColon /
+// checkMissingIndent to recognise the shape of a half-formed
+// header (`if x` without the trailing `:`).
+var blockOpeningKeywords = map[string]bool{
+	"if":     true,
+	"elif":   true,
+	"else":   true,
+	"for":    true,
+	"while":  true,
+	"fn":     true,
+	"switch": true,
+	"case":   true,
+	"defer":  true,
+}
+
+// checkMissingColon detects the `<block-keyword> <expr>` shape with
+// no trailing `:`. Tree-sitter recovers from the missing colon by
+// consuming following statements into a large ERROR rather than
+// emitting MISSING ':' - so we look at the ERROR content directly.
+// The user sees RAD10002 ("Missing colon...") instead of the
+// generic RAD10009.
+//
+// Conservative: only fires when the ERROR content's first token is
+// one of blockOpeningKeywords AND the first line (before any
+// newline) contains no colon. False positives are rare in this
+// narrow shape.
+func checkMissingColon(raw string) (string, rl.Error, *string) {
+	if raw == "" {
+		return "", "", nil
+	}
+	firstLine := raw
+	if i := strings.IndexByte(raw, '\n'); i >= 0 {
+		firstLine = raw[:i]
+	}
+	trimmedLine := strings.TrimSpace(firstLine)
+	if trimmedLine == "" {
+		return "", "", nil
+	}
+	tokens := strings.Fields(trimmedLine)
+	if len(tokens) == 0 || !blockOpeningKeywords[tokens[0]] {
+		return "", "", nil
+	}
+	if strings.ContainsRune(trimmedLine, ':') {
+		return "", "", nil
+	}
+	suggestion := "add ':' at the end of the line"
+	msg := fmt.Sprintf("Missing ':' after '%s' header", tokens[0])
+	return msg, rl.ErrMissingColon, &suggestion
+}
+
+// checkMissingIndent detects `<block-keyword> ... :\n<unindented>` -
+// a header that opens a block but isn't followed by an indented
+// body. Tree-sitter recovers by collapsing the header and the
+// following stmt into one ERROR, so we recognise the shape from
+// the content.
+func checkMissingIndent(raw string) (string, rl.Error, *string) {
+	nl := strings.IndexByte(raw, '\n')
+	if nl < 0 {
+		return "", "", nil
+	}
+	firstLine := strings.TrimRight(raw[:nl], " \t")
+	if !strings.HasSuffix(firstLine, ":") {
+		return "", "", nil
+	}
+	tokens := strings.Fields(strings.TrimSpace(firstLine))
+	if len(tokens) == 0 || !blockOpeningKeywords[tokens[0]] {
+		return "", "", nil
+	}
+	// The next non-empty line must NOT be more indented than the
+	// header line. Find the header's indent first.
+	rest := raw[nl+1:]
+	for len(rest) > 0 {
+		line := rest
+		if i := strings.IndexByte(rest, '\n'); i >= 0 {
+			line = rest[:i]
+			rest = rest[i+1:]
+		} else {
+			rest = ""
+		}
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		// Header indent: count leading spaces/tabs of the original
+		// first line (before TrimRight).
+		headerIndent := leadingWhitespace(raw[:nl])
+		bodyIndent := leadingWhitespace(line)
+		if len(bodyIndent) <= len(headerIndent) {
+			suggestion := "indent the body of the block"
+			msg := fmt.Sprintf("Missing indent after '%s:' block header", tokens[0])
+			return msg, rl.ErrMissingIndent, &suggestion
+		}
+		return "", "", nil
+	}
+	return "", "", nil
+}
+
+// leadingWhitespace returns the leading space/tab prefix of s.
+func leadingWhitespace(s string) string {
+	for i := 0; i < len(s); i++ {
+		if s[i] != ' ' && s[i] != '\t' {
+			return s[:i]
+		}
+	}
+	return s
+}
+
+// checkUnterminatedQuoteToken handles the case where tree-sitter
+// records the opening quote of an unterminated string as a one-char
+// ERROR token (separate from the rest of the line). The existing
+// checkUnterminatedString already covers multi-char string ERRORs;
+// this is the missing piece for the one-char shape.
+//
+// We look past the ERROR's end byte in `src`: if no matching close
+// quote appears before the next newline, the string is unterminated.
+func checkUnterminatedQuoteToken(node *ts.Node, src, trimmed string) (string, rl.Error, *string) {
+	if len(trimmed) != 1 {
+		return "", "", nil
+	}
+	quote := trimmed[0]
+	if quote != '"' && quote != '\'' && quote != '`' {
+		return "", "", nil
+	}
+	end := int(node.EndByte())
+	for i := end; i < len(src); i++ {
+		if src[i] == '\n' {
+			break
+		}
+		if src[i] == quote {
+			// found a matching close on the same line; not
+			// unterminated.
+			return "", "", nil
+		}
+	}
+	quoteName := "double"
+	switch quote {
+	case '\'':
+		quoteName = "single"
+	case '`':
+		quoteName = "backtick"
+	}
+	msg := fmt.Sprintf("Unterminated string literal (missing closing %s quote)", quoteName)
+	suggestion := fmt.Sprintf("add closing %c before end of line", quote)
+	return msg, rl.ErrUnterminatedString, &suggestion
 }
 
 func checkUnterminatedString(raw, trimmed string) (string, rl.Error, *string) {

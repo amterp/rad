@@ -1,0 +1,82 @@
+### TITLE ###
+MissingColonAfterIfFiresRAD10002
+### DESCRIPTION ###
+A block-opening keyword without its trailing colon fires
+RAD10002 (Missing Colon) with a specific message and an
+actionable suggestion. Previously this shape produced the
+generic RAD10009 "Unexpected token".
+### INPUT ###
+if x
+    y = 5
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10002 @ 1:1 - Missing ':' after 'if' header
+    help: add ':' at the end of the line
+### TITLE ###
+MissingColonAfterForFiresRAD10002
+### DESCRIPTION ###
+The detector recognises the same shape across every block-
+opening keyword (if/elif/else/for/while/fn/switch/case/defer).
+### INPUT ###
+for i in [1, 2, 3]
+    print(i)
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10002 @ 1:1 - Missing ':' after 'for' header
+    help: add ':' at the end of the line
+  [error] RAD10009 @ 1:10 - Unexpected '[1, 2, 3]'
+### TITLE ###
+MissingIndentAfterIfFiresRAD10018
+### DESCRIPTION ###
+A header with a colon but no indented body fires RAD10018
+(Missing Indent). Tree-sitter doesn't emit a MISSING "indent"
+node for this shape, so we recognise it from the ERROR
+content directly.
+### INPUT ###
+if true:
+y = 5
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10018 @ 1:1 - Missing indent after 'if:' block header
+    help: indent the body of the block
+### TITLE ###
+UnterminatedStringFiresRAD10020
+### DESCRIPTION ###
+An opening quote with no matching close on the same line
+fires RAD10020 (Unterminated String). The detector handles
+the case where tree-sitter records the open quote as a
+one-char ERROR token by scanning forward in the source.
+### INPUT ###
+a = "hello
+b = 5
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  hello @ 1:6 -> dynamic
+  b @ 2:1 -> <no-type>
+
+# Symbol types
+  a (local): dynamic
+  b (local): int
+
+# Diagnostics
+  [error] RAD10020 @ 1:5 - Unterminated string literal (missing closing double quote)
+    help: add closing " before end of line
