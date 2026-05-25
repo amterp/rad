@@ -7,6 +7,7 @@ import (
 
 	"github.com/amterp/rad/rts/check"
 	"github.com/amterp/rad/rts/rl"
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 // SemanticTokenType indexes into the legend below; the LSP wire
@@ -19,6 +20,7 @@ const (
 	TokenTypeFunction SemanticTokenType = iota
 	TokenTypeParameter
 	TokenTypeVariable
+	TokenTypeType
 )
 
 // SemanticTokensLegend is the shared client/server vocabulary.
@@ -36,6 +38,7 @@ func SemanticTokensLegend() lsp.SemanticTokensLegend {
 			"function",
 			"parameter",
 			"variable",
+			"type",
 		},
 		TokenModifiers: []string{},
 	}
@@ -134,7 +137,100 @@ func collectSemanticTokens(snap *DocumentVersion) []rawToken {
 			tokens = append(tokens, tokenFromSpan(nn.NameSpan, TokenTypeParameter))
 		}
 	})
+	if snap.tree != nil {
+		collectTypeTokens(snap.tree.Root(), &tokens)
+	}
 	return tokens
+}
+
+// typeKeywordLengths maps a CST node kind to the byte length of the
+// leading keyword that should carry the `type` semantic token. For
+// nodes whose entire span IS the keyword (string_type = "str") the
+// length is the whole node. For composite forms (`int[]`) we only
+// want the leading word, not the brackets.
+var typeKeywordLengths = map[string]int{
+	"string_type":      -1, // whole span ("str")
+	"int_type":         -1, // ("int")
+	"float_type":       -1, // ("float")
+	"bool_type":        -1, // ("bool")
+	"error_type":       -1, // ("error")
+	"any_type":         -1, // ("any")
+	"void_type":        -1, // ("void")
+	"string_list_type": 3,  // "str" prefix of "str[]"
+	"int_list_type":    3,  // "int" prefix of "int[]"
+	"float_list_type":  5,  // "float" prefix
+	"bool_list_type":   4,  // "bool" prefix
+}
+
+// collectTypeTokens walks the CST and emits a `type` semantic token
+// for every type-annotation keyword. The CST is the right level for
+// this: the AST's TypingT shapes carry no source positions, but the
+// CST has byte-exact spans on each `string_type` / `int_type` /
+// etc. node. We deliberately limit emission to the keyword bytes
+// (not the whole composite) so the surrounding punctuation - `[]`,
+// `?`, `|`, `->` - stays uncoloured.
+//
+// For the bare `list` and `fn` keywords (inside the parameterised
+// list_type / fn_type rules), we recognise the first child token's
+// literal text and emit on that. Tuple / enum forms inside
+// list_type ("[T1, T2]", "[\"a\", \"b\"]") have no keyword and
+// we skip those.
+func collectTypeTokens(root *ts.Node, out *[]rawToken) {
+	if root == nil {
+		return
+	}
+	walkCSTNodes(root, func(n *ts.Node) {
+		kind := n.Kind()
+		if length, ok := typeKeywordLengths[kind]; ok {
+			emitTypeToken(n, length, out)
+			return
+		}
+		switch kind {
+		case "list_type":
+			// list_type covers `list` (the open-list keyword) and
+			// the bracketed tuple / enum forms. Only the bare-
+			// `list` shape has a keyword to paint - detect via
+			// the literal first 4 bytes.
+			if n.EndByte()-n.StartByte() >= 4 {
+				emitTypeToken(n, 4, out)
+			}
+		case "fn_type":
+			// fn_type starts with the literal `fn` token. Emit
+			// just the first 2 bytes.
+			if n.EndByte()-n.StartByte() >= 2 {
+				emitTypeToken(n, 2, out)
+			}
+		}
+	})
+}
+
+func emitTypeToken(n *ts.Node, length int, out *[]rawToken) {
+	start := n.StartPosition()
+	span := int(n.EndByte() - n.StartByte())
+	if length < 0 || length > span {
+		length = span
+	}
+	if length == 0 {
+		return
+	}
+	*out = append(*out, rawToken{
+		line:   int(start.Row),
+		col:    int(start.Column),
+		length: length,
+		ttype:  TokenTypeType,
+	})
+}
+
+func walkCSTNodes(n *ts.Node, visit func(*ts.Node)) {
+	if n == nil {
+		return
+	}
+	visit(n)
+	count := n.ChildCount()
+	for i := uint(0); i < count; i++ {
+		child := n.Child(i)
+		walkCSTNodes(child, visit)
+	}
 }
 
 // tokenFromSpan packages a span into the rawToken shape. Length

@@ -118,6 +118,11 @@ fn greet(who: str):
       5,
       0,
       0,
+      0,
+      11,
+      3,
+      3,
+      0,
       1,
       4,
       5,
@@ -127,6 +132,150 @@ fn greet(who: str):
       6,
       3,
       1,
+      0
+    ]
+  }
+}
+### TITLE ###
+TypeAnnotationsTaggedAsType
+### DOCUMENT ###
+x: int = 5
+y: str? = "hi"
+zs: float[] = [1.0]
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      3,
+      3,
+      3,
+      0,
+      1,
+      0,
+      1,
+      2,
+      0,
+      0,
+      3,
+      3,
+      3,
+      0,
+      1,
+      0,
+      2,
+      2,
+      0,
+      0,
+      4,
+      5,
+      3,
+      0
+    ]
+  }
+}
+### TITLE ###
+FnSignatureTypesTaggedAsType
+### DOCUMENT ###
+fn greet(who: str, count: int) -> bool:
+    return true
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      0,
+      3,
+      5,
+      0,
+      0,
+      0,
+      11,
+      3,
+      3,
+      0,
+      0,
+      12,
+      3,
+      3,
+      0,
+      0,
+      8,
+      4,
+      3,
+      0
+    ]
+  }
+}
+### TITLE ###
+ArgsBlockTypesTaggedAsType
+### DOCUMENT ###
+args:
+    name str
+    count int?
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      1,
+      4,
+      4,
+      1,
+      0,
+      0,
+      5,
+      3,
+      3,
+      0,
+      1,
+      4,
+      5,
+      1,
+      0,
+      0,
+      6,
+      3,
+      3,
       0
     ]
   }
@@ -157,6 +306,11 @@ print(name)
       4,
       4,
       1,
+      0,
+      0,
+      5,
+      3,
+      3,
       0,
       1,
       0,
