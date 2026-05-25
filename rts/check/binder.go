@@ -1,6 +1,8 @@
 package check
 
 import (
+	"strconv"
+
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 )
@@ -303,10 +305,25 @@ func (b *binder) visitAssign(a *rl.Assign) {
 	// DeclaredType on single-target assigns today, so we plant the
 	// annotation on the first target's symbol if it's a fresh local
 	// the binder just declared.
+	//
+	// Re-declaring an already-typed binding (`x: int = 5; x: str = ...`)
+	// is rejected: the declared type is part of the binding's contract
+	// and must not be retroactively rewritten - doing so would poison
+	// every preceding assignment. Same-type redeclarations are also
+	// flagged so the diagnostic catches "I forgot I declared this" bugs
+	// uniformly, not just type-changing ones. The runtime currently
+	// allows free reassignment; we may revisit redecl semantics if we
+	// adopt full Python-style rebinding.
 	if a.DeclaredType != nil && len(a.Targets) > 0 {
 		if ident, ok := a.Targets[0].(*rl.Identifier); ok {
 			if sym, ok := b.resolved.Uses[ident]; ok && sym != nil {
-				sym.Declared = *a.DeclaredType
+				if sym.Declared != nil {
+					b.addIssue(ident.Span(), IssueError, rl.ErrDuplicateTypedDeclaration,
+						"Cannot re-declare '"+ident.Name+"' with a type annotation (originally declared on line "+
+							strconv.Itoa(sym.DeclSpan.StartLine())+"); drop ': "+(*a.DeclaredType).Name()+"' to reassign")
+				} else {
+					sym.Declared = *a.DeclaredType
+				}
 			}
 		}
 	}

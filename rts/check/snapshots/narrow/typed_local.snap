@@ -68,3 +68,65 @@ y = x
 
 # Diagnostics
   [hint] RAD30001 @ 1:10 - Value of type 'str' is not assignable to declared type 'int'
+### TITLE ###
+TypedLocalUntypedReassignIsClean
+### DESCRIPTION ###
+Regression lock: an untyped reassignment after a typed declaration
+is fine. Previously the declared type was preserved for line 1, but
+we want to confirm line 2 produces no diagnostic - and that the
+symbol's declared type doesn't drift.
+### INPUT ###
+bb: int = 5
+bb = 6
+### STDOUT ###
+# Identifier types
+  bb @ 1:1 -> <no-type>
+  bb @ 2:1 -> <no-type>
+
+# Symbol types
+  bb (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedLocalRedeclarationWithDifferentTypeIsRejected
+### DESCRIPTION ###
+A second typed declaration of the same name is an error - the
+declared type is part of the binding's contract and can't be
+retroactively rewritten. The intermediate untyped reassignment on
+line 2 stays clean; only line 3 is flagged.
+### INPUT ###
+bb: int = 5
+bb = 6
+bb: str = "hi"
+### STDOUT ###
+# Identifier types
+  bb @ 1:1 -> <no-type>
+  bb @ 2:1 -> <no-type>
+  bb @ 3:1 -> <no-type>
+
+# Symbol types
+  bb (local): int
+
+# Diagnostics
+  [error] RAD40011 @ 3:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': str' to reassign
+  [hint] RAD30001 @ 3:11 - Value of type 'str' is not assignable to declared type 'int'
+### TITLE ###
+TypedLocalRedeclarationSameTypeIsRejected
+### DESCRIPTION ###
+Same-type re-declaration is also flagged - it's almost always
+leftover scaffolding from an edit, and treating both shapes the
+same keeps the rule simple to teach.
+### INPUT ###
+bb: int = 5
+bb: int = 6
+### STDOUT ###
+# Identifier types
+  bb @ 1:1 -> <no-type>
+  bb @ 2:1 -> <no-type>
+
+# Symbol types
+  bb (local): int
+
+# Diagnostics
+  [error] RAD40011 @ 2:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': int' to reassign

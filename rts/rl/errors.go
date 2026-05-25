@@ -104,6 +104,7 @@ const (
 	ErrDeprecatedBlockKeyword           Error = "40008"
 	ErrDuplicateParameter               Error = "40009"
 	ErrNonExhaustiveSwitch              Error = "40010"
+	ErrDuplicateTypedDeclaration        Error = "40011"
 )
 
 func (e Error) String() string {
