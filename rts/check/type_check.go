@@ -1146,7 +1146,26 @@ func (tc *typeChecker) walkSwitch(n *rl.Switch) {
 	residual := discType
 	var branchFrames []*Frame
 
+	// Track seen-key -> earlier occurrence span so a later arm that
+	// repeats a literal can name the first occurrence in the
+	// diagnostic. Strings, ints, floats, and bools are key-comparable
+	// statically; anything else (call, ident, expression) skips the
+	// check - it might collide at runtime but the analyzer can't be
+	// confident enough to flag it.
+	seenKeys := map[string]rl.Span{}
+
 	for _, c := range n.Cases {
+		for _, k := range c.Keys {
+			key, ok := caseLiteralKey(k)
+			if !ok {
+				continue
+			}
+			if prevSpan, dup := seenKeys[key]; dup {
+				tc.emitUnreachableCase(k, prevSpan)
+				continue
+			}
+			seenKeys[key] = k.Span()
+		}
 		caseType := tc.matchTypeForCaseKeys(c.Keys)
 		var branchFrame *Frame
 		if discSym != nil && caseType != nil && !isErrorType(caseType) {
@@ -1272,6 +1291,45 @@ func subtractEnumType(base, caseType rl.TypingT) rl.TypingT {
 func isClosedDiscriminant(t rl.TypingT) bool {
 	_, ok := t.(*rl.TypingStrEnumT)
 	return ok
+}
+
+// caseLiteralKey returns a stable, type-tagged string key for a
+// switch-case node when it's a comparable literal. The tag prevents
+// `5` (int) and `"5"` (string) from colliding. Returns ("", false)
+// for nodes the static analyzer can't reason about (calls,
+// identifiers, complex expressions).
+func caseLiteralKey(n rl.Node) (string, bool) {
+	switch v := n.(type) {
+	case *rl.LitString:
+		if !v.Simple {
+			return "", false
+		}
+		return "s:" + v.Value, true
+	case *rl.LitInt:
+		return fmt.Sprintf("i:%d", v.Value), true
+	case *rl.LitFloat:
+		return fmt.Sprintf("f:%g", v.Value), true
+	case *rl.LitBool:
+		if v.Value {
+			return "b:true", true
+		}
+		return "b:false", true
+	}
+	return "", false
+}
+
+// emitUnreachableCase records a diagnostic on a case key that was
+// already matched by an earlier arm. `prev` is the first occurrence's
+// span so the message can point at the original.
+func (tc *typeChecker) emitUnreachableCase(key rl.Node, prev rl.Span) {
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     key.Span(),
+		Severity: IssueError,
+		Code:     rl.ErrUnreachableCase,
+		Message: fmt.Sprintf(
+			"Case is unreachable; the value is already matched by an earlier arm on line %d",
+			prev.StartLine()),
+	})
 }
 
 // emitNonExhaustiveSwitch records a diagnostic naming the unmatched

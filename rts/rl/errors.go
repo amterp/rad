@@ -105,6 +105,7 @@ const (
 	ErrDuplicateParameter               Error = "40009"
 	ErrNonExhaustiveSwitch              Error = "40010"
 	ErrDuplicateTypedDeclaration        Error = "40011"
+	ErrUnreachableCase                  Error = "40012"
 )
 
 func (e Error) String() string {

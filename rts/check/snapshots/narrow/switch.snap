@@ -143,3 +143,127 @@ fn f(name: str):
 
 # Diagnostics
   (none)
+### TITLE ###
+SwitchExactDuplicateCaseFlagged
+### DESCRIPTION ###
+Two `case "a":` arms in the same switch - the second is
+unreachable. Diagnostic points at the redundant key with the
+earlier occurrence's line.
+### INPUT ###
+fn classify(s: str):
+    switch s:
+        case "a":
+            x = 1
+        case "a":
+            x = 2
+        default:
+            x = 99
+### STDOUT ###
+# Identifier types
+  s @ 2:12 -> str
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+  x @ 8:13 -> <no-type>
+
+# Symbol types
+  classify (fn): fn(str) -> void
+  s (param): str
+  x (local): int
+
+# Diagnostics
+  [error] RAD40012 @ 5:14 - Case is unreachable; the value is already matched by an earlier arm on line 3
+### TITLE ###
+SwitchMultiKeyOverlapFlagsRedundantKey
+### DESCRIPTION ###
+When a later arm shares one key with an earlier arm, only the
+redundant key is flagged - not the whole case. Lets the user
+fix exactly what's broken.
+### INPUT ###
+fn classify(s: str):
+    switch s:
+        case "a", "b":
+            x = 1
+        case "b", "c":
+            x = 2
+        default:
+            x = 99
+### STDOUT ###
+# Identifier types
+  s @ 2:12 -> str
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+  x @ 8:13 -> <no-type>
+
+# Symbol types
+  classify (fn): fn(str) -> void
+  s (param): str
+  x (local): int
+
+# Diagnostics
+  [error] RAD40012 @ 5:14 - Case is unreachable; the value is already matched by an earlier arm on line 3
+### TITLE ###
+SwitchIntDuplicateFlagged
+### DESCRIPTION ###
+Duplicate detection works for int keys too - the literal-key
+tracker is type-tagged so `5` (int) and `"5"` (string) never
+collide.
+### INPUT ###
+fn classify(n: int):
+    switch n:
+        case 1, 2:
+            x = 1
+        case 2:
+            x = 2
+        default:
+            x = 99
+### STDOUT ###
+# Identifier types
+  n @ 2:12 -> int
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+  x @ 8:13 -> <no-type>
+
+# Symbol types
+  classify (fn): fn(int) -> void
+  n (param): int
+  x (local): int
+
+# Diagnostics
+  [error] RAD40012 @ 5:14 - Case is unreachable; the value is already matched by an earlier arm on line 3
+### TITLE ###
+SwitchVariableKeysSkipDuplicateCheck
+### DESCRIPTION ###
+Cases keyed by identifiers can't be statically compared, so
+even when they happen to refer to the same value at runtime we
+don't flag. Conservative skip preferred over false positives.
+### INPUT ###
+foo = "a"
+bar = "a"
+fn classify(s: str):
+    switch s:
+        case foo:
+            x = 1
+        case bar:
+            x = 2
+        default:
+            x = 99
+### STDOUT ###
+# Identifier types
+  foo @ 1:1 -> <no-type>
+  bar @ 2:1 -> <no-type>
+  s @ 4:12 -> str
+  foo @ 5:14 -> <no-type>
+  x @ 6:13 -> <no-type>
+  bar @ 7:14 -> <no-type>
+  x @ 8:13 -> <no-type>
+  x @ 10:13 -> <no-type>
+
+# Symbol types
+  bar (local): str
+  classify (fn): fn(str) -> void
+  foo (local): str
+  s (param): str
+  x (local): int
+
+# Diagnostics
+  (none)
