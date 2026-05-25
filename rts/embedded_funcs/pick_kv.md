@@ -1,0 +1,28 @@
+# pick_kv
+
+Presents an interactive menu showing keys but returns corresponding values.
+
+## Signature
+
+`pick_kv(keys: str[], values: any[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> any`
+
+## Examples
+
+```rad
+names = ["Alice", "Bob", "Charlie"]
+ages = [25, 30, 35]
+pick_kv(names, ages)                                        // -> Shows names, returns age
+pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])           // -> Shows colors, returns hex
+pick_kv(["grape", "g"], [1, 2], "g", prefer_exact=true)       // -> Returns 2 (exact match)
+```
+
+## Category
+
+io
+
+## Notes
+
+Displays keys in the menu but returns the value at the same index when selected.
+
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a
+filter, its value is returned immediately; if multiple match exactly, only those are shown.

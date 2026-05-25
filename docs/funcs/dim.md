@@ -1,0 +1,22 @@
+# dim
+
+Wraps its argument in the ANSI escape codes for dimmed text - the reverse of bold, useful for de-emphasising less important output.
+
+## Signature
+
+`dim(_item: any) -> str`
+
+## Examples
+
+```rad
+dim("Hello")        // -> "Hello" wrapped in the dim escape
+dim(42)             // -> "42" wrapped in the dim escape
+```
+
+## Category
+
+formatting
+
+## See also
+
+`bold`, `italic`

@@ -964,14 +964,21 @@ fn format_text(text: str, *, uppercase: bool = false, prefix: str = ""):
 
 formatted = format_text("hello", uppercase=true, prefix=">>> ")
 
-// Complex type annotations
+// Function-typed parameters and union returns
 fn process_data(
     input: str[],
-    callback: fn(str) -> bool,
-    options: {config: str, debug?: bool}
-) -> error|{processed: int, failed: int}:
-    // function implementation
-    return {processed: 10, failed: 0}
+    callback: fn(str) -> bool
+) -> int|error:
+    matched = 0
+    for s in input:
+        if callback(s):
+            matched += 1
+    return matched
+
+fn is_long(s: str) -> bool:
+    return s.len() > 5
+
+count = process_data(["a", "bb", "ccccc", "dddddd"], is_long)
 ```
 
 ### Map Dot Syntax

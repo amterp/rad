@@ -4,9 +4,12 @@ These markdown files are the canonical documentation for Rad's
 built-in functions. Each file describes exactly one function. Two
 downstream consumers read this directory at build time:
 
-1. `tools/gen-funcs-go/main.go` generates `rts/funcs_gen.go`, the
-   in-memory map the LSP hover layer reads from to show a function's
-   description alongside its signature.
+1. `tools/gen-funcs-go/main.go` mirrors `docs/funcs/*.md` into
+   `rts/embedded_funcs/`. The runtime's `//go:embed
+   embedded_funcs/*.md` directive picks them up, and the LSP hover
+   layer reads them via `rts.GetFuncDoc` to show a function's
+   description alongside its signature. Run via
+   `go generate ./rts` (or `go run ./tools/gen-funcs-go`).
 2. `tools/gen-funcs-page/main.go` regenerates
    `docs-web/docs/reference/functions.md`, the public-facing
    functions reference. The aggregate page stays a derived artifact -
@@ -97,12 +100,17 @@ functions ("io", "strings", "lists", "math", "time", "random",
 
 ## Tests
 
-`core/testing/funcs_codegen_test.go` validates the doc set on every
-test run:
+`core/testing/funcdocs_test.go` validates the doc set on every test run:
 
 - Every `.md` parses cleanly into the structured shape above.
-- Every signature line parses through `signatures.go`'s parser.
-- Re-running both generators into tempdirs and diffing against the
-  committed outputs fails if either generator's output drifts.
-- (Eventual goal) Every registered builtin has a `.md`. While the
-  migration is in progress this is opt-in.
+- Every signature line parses through the runtime's signature parser.
+- The `docs/funcs/` and `rts/embedded_funcs/` trees are byte-for-byte
+  identical (drift gate against editing only one side - the codegen
+  in `tools/gen-funcs-go` keeps them in sync).
+- Every registered builtin has a `.md`. New builtins without a doc
+  file fail the build.
+
+`make verify-generated` is the additional gate at the CI layer: it
+snapshots every generated artifact, reruns `make generate`, and
+fails if anything changed. That catches stale `signatures_gen.go`,
+embedded docs, or the public reference page.

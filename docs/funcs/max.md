@@ -1,0 +1,28 @@
+# max
+
+Returns the maximum value from a list of numbers or from variadic arguments.
+
+## Signature
+
+`max(*_nums: float|float[]) -> int|float|error`
+
+## Examples
+
+```rad
+max([1, 2, 3, 4])        // -> 4
+max(1, 2, 3, 4)          // -> 4
+max(5.5, 2.1, 8.9)       // -> 8.9
+max(1, 2.0, 3)           // -> 3.0 (float because 2.0 is float)
+max(5)                   // -> 5
+max([])                  // -> Error: cannot find maximum of empty list
+max([1, "text"])         // -> Error: requires list of numbers
+```
+
+## Category
+
+math
+
+## Notes
+
+Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.

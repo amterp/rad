@@ -514,6 +514,7 @@ print("charlie" in scores)  // false
 You can use `not in` to check for the absence of an item:
 
 ```rad
+names = ["alice", "bob", "charlie"]
 print("david" not in names)  // true
 print("alice" not in names)  // false
 ```
@@ -663,6 +664,7 @@ Rad employs very standard if statements.
 You are **not** required to wrap conditions in parentheses `()`.
 
 ```rad
+units = "metric"
 if units == "metric":
     print("That's 10 meters.")
 else if units == "imperial":
@@ -737,6 +739,7 @@ The context object provides two fields:
 You can name the context variable anything you like, but `loop` is the convention for for-loops:
 
 ```rad
+names = ["Alice", "Bob", "Charlie"]
 for name in names with loop:
     print("Processing {loop.idx + 1} of {loop.src.len()}: {name}")
 ```
@@ -786,6 +789,7 @@ bob green
 You can also combine map iteration with the context object:
 
 ```rad
+colors = { "alice": "blue", "bob": "green" }
 for k, v in colors with loop:
     print("{loop.idx}: {k} = {v}")
 ```
@@ -921,7 +925,7 @@ You can `switch` on a value and write cases to match against, including a `defau
 ```rad linenums="1" hl_lines="0"
 args:
     a float
-    op string
+    op str
     b float
 
 switch op:
@@ -941,7 +945,7 @@ For example, the above `default` could be made into a single line:
 ```rad linenums="1" hl_lines="13"
 args:
     a float
-    op string
+    op str
     b float
 
 switch op:
@@ -959,7 +963,7 @@ Switch **expressions** can be used in assignments.
 
 ```rad linenums="1" hl_lines="0"
 args:
-    object string
+    object str
 
 sound = switch object:
     case "car" -> "vroom"
@@ -976,7 +980,7 @@ Note also that you can assign and return more than 1 value at a time. To demonst
 
 ```rad linenums="1" hl_lines="4-11"
 args:
-    object string
+    object str
 
 sound, plural = switch object:
     case "car" -> "vroom", "cars"

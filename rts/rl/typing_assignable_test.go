@@ -12,7 +12,8 @@ import (
 // value-vs-type check). The rules baked in here:
 //   - `any` is universally consistent (both directions).
 //   - Primitives are identity, with int->float as the single implicit widening.
-//   - Collections (list, tuple, map, struct) are invariant.
+//   - Lists are covariant in element type; tuples, maps, and structs are
+//     invariant.
 //   - Function params are contravariant, returns covariant.
 //   - Optional<T> accepts T directly; T does not accept Optional<T>.
 //   - StrEnum is subset-based.
@@ -198,7 +199,7 @@ func TestAssign_StrEnumSubsetRelation(t *testing.T) {
 	assert.False(t, enumAB.IsAssignableFrom(enumABC))
 }
 
-func TestAssign_ListsInvariant(t *testing.T) {
+func TestAssign_ListsCovariant(t *testing.T) {
 	listInt := rl.NewListType(rl.NewIntType())
 	listFloat := rl.NewListType(rl.NewFloatType())
 	listAny := rl.NewListType(rl.NewAnyType())
@@ -206,14 +207,38 @@ func TestAssign_ListsInvariant(t *testing.T) {
 	// Identity holds.
 	assert.True(t, listInt.IsAssignableFrom(rl.NewListType(rl.NewIntType())))
 
-	// Invariance: List<int> does NOT accept List<float>, even though int
-	// widens to float at the scalar level. If it did, a callee could write a
-	// float into a list the caller still believes is int-typed.
-	assert.False(t, listFloat.IsAssignableFrom(listInt))
-	assert.False(t, listInt.IsAssignableFrom(listFloat))
+	// Covariance: List<int> flows into List<float> because int widens to
+	// float at the scalar level. Likewise List<int> flows into List<any>.
+	// Unsound under mutation+aliasing but accepted for ergonomics - see the
+	// commentary on TypingListT.IsAssignableFrom.
+	assert.True(t, listFloat.IsAssignableFrom(listInt))
+	assert.True(t, listAny.IsAssignableFrom(listInt))
 
-	// List<any> does not accept List<int> either - same reason.
-	assert.False(t, listAny.IsAssignableFrom(listInt))
+	// Narrowing direction stays refused.
+	assert.False(t, listInt.IsAssignableFrom(listFloat))
+}
+
+func TestAssign_ListsCovariantOverUnions(t *testing.T) {
+	// Regression locks for the round-2 LSP verification bugs (cards
+	// list-covariance-t and nested-paren-union).
+	intT := rl.NewIntType()
+	strT := rl.NewStrType()
+	boolT := rl.NewBoolType()
+	intOrStr := rl.NewUnionType(intT, strT)
+	intStrBoolFlat := rl.NewUnionType(intT, strT, boolT)
+	intStrBoolNestedLeft := rl.NewUnionType(intOrStr, boolT)                   // ((int|str)|bool)
+	intStrBoolNestedRight := rl.NewUnionType(intT, rl.NewUnionType(strT, boolT)) // (int|(str|bool))
+
+	// `xs: (int|str)[] = [1, 2, 3]` — the common int[] -> (int|str)[] widening.
+	assert.True(t, rl.NewListType(intOrStr).IsAssignableFrom(rl.NewListType(intT)))
+	// `xs: (int|str)[] = ["a", "b"]` — same shape, str[] source.
+	assert.True(t, rl.NewListType(intOrStr).IsAssignableFrom(rl.NewListType(strT)))
+	// Nested-paren unions in the list element accept the flat union and vice versa.
+	assert.True(t, rl.NewListType(intStrBoolNestedLeft).IsAssignableFrom(rl.NewListType(intStrBoolFlat)))
+	assert.True(t, rl.NewListType(intStrBoolNestedRight).IsAssignableFrom(rl.NewListType(intStrBoolFlat)))
+	assert.True(t, rl.NewListType(intStrBoolFlat).IsAssignableFrom(rl.NewListType(intStrBoolNestedLeft)))
+	// Genuine mismatch still fires (int[] can't accept str[]).
+	assert.False(t, rl.NewListType(intT).IsAssignableFrom(rl.NewListType(strT)))
 }
 
 func TestAssign_AnyListAcceptsAnyConcrete(t *testing.T) {

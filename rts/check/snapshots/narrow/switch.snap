@@ -267,3 +267,91 @@ fn classify(s: str):
 
 # Diagnostics
   (none)
+### TITLE ###
+SwitchCaseKeyNotInEnumDiscriminantFlagged
+### DESCRIPTION ###
+Closed string-enum discriminant: a case key whose value is
+outside the enum's value set is unreachable - the
+discriminant's static type forbids it. Distinct from RAD40012
+(duplicate key); this is "no value of this type ever equals
+the key". Stale-arm refactor bug, e.g. an enum variant was
+renamed and the old name lingers.
+### INPUT ###
+fn f(name: ["a", "b", "c"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+        case "c":
+            x = 3
+        case "wat":
+            x = 4
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b", "c"]
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+  x @ 8:13 -> <no-type>
+  x @ 10:13 -> <no-type>
+
+# Symbol types
+  f (fn): fn(["a", "b", "c"]) -> void
+  name (param): ["a", "b", "c"]
+  x (local): int
+
+# Diagnostics
+  [error] RAD40013 @ 9:14 - Case 'wat' is unreachable; 'name' is of type ["a", "b", "c"] and can never equal 'wat'
+### TITLE ###
+SwitchAllValidKeysOnEnumCleanNoDomainDiagnostic
+### DESCRIPTION ###
+Regression lock: when every case key lies inside the enum's
+domain, no out-of-domain diagnostic fires. The check fires
+only on stale/typo'd keys.
+### INPUT ###
+fn f(name: ["a", "b"]):
+    switch name:
+        case "a":
+            x = 1
+        case "b":
+            x = 2
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> ["a", "b"]
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+
+# Symbol types
+  f (fn): fn(["a", "b"]) -> void
+  name (param): ["a", "b"]
+  x (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+SwitchNonClosedDiscriminantSkipsDomainCheck
+### DESCRIPTION ###
+Regression lock: an open `str` discriminant has no closed
+value set, so we can't say "x" can never equal "wat" - those
+checks only fire on closed enums. Falls through to existing
+behavior (no diagnostic).
+### INPUT ###
+fn f(name: str):
+    switch name:
+        case "a":
+            x = 1
+        case "wat":
+            x = 2
+### STDOUT ###
+# Identifier types
+  name @ 2:12 -> str
+  x @ 4:13 -> <no-type>
+  x @ 6:13 -> <no-type>
+
+# Symbol types
+  f (fn): fn(str) -> void
+  name (param): str
+  x (local): int
+
+# Diagnostics
+  (none)

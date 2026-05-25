@@ -1,0 +1,22 @@
+# italic
+
+Wraps its argument in the ANSI escape codes for italic text. Not every terminal renders italics; some show inverse or coloured text instead.
+
+## Signature
+
+`italic(_item: any) -> str`
+
+## Examples
+
+```rad
+italic("Hello")        // -> "Hello" wrapped in the italic escape
+italic(42)             // -> "42" wrapped in the italic escape
+```
+
+## Category
+
+formatting
+
+## See also
+
+`bold`, `underline`

@@ -1,0 +1,25 @@
+# replace
+
+Replaces text using regex patterns. Does not preserve string color attributes.
+
+## Signature
+
+`replace(_original: str, _find: str, _replace: str) -> str`
+
+## Examples
+
+```rad
+replace("hello world", "world", "Rad")        // -> "hello Rad"
+replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1")  // -> "Name: Alice Brown"
+replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
+```
+
+## Category
+
+strings
+
+## Notes
+
+The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
+
+**Examples:**

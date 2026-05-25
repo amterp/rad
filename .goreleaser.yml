@@ -7,6 +7,18 @@
 env:
   - CGO_ENABLED=1
 
+# Run code generators before any build so the released binaries
+# always carry codegen output that matches the source-of-truth
+# (docs/funcs/*.md, function-metadata/, etc.). PR checks also gate
+# stale codegen via `make verify-generated`, but this is the
+# defence-in-depth: even a force-push to main that bypassed PR
+# review can't release a binary with stale generated files.
+before:
+  hooks:
+    - go run ./function-metadata/extract.go
+    - sh -c "mv ./functions.txt ./rts/embedded/"
+    - go generate ./rts
+
 builds:
   # Darwin builds (macOS) - rad
   - id: rad-darwin-amd64

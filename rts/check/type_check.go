@@ -1154,10 +1154,21 @@ func (tc *typeChecker) walkSwitch(n *rl.Switch) {
 	// confident enough to flag it.
 	seenKeys := map[string]rl.Span{}
 
+	// When the discriminant is a closed enum, we can also flag case
+	// keys whose value lies outside the enum's domain - those arms
+	// can never fire regardless of what other arms exist.
+	domainCheck := domainCheckerFor(discType, n.Discriminant)
+
 	for _, c := range n.Cases {
 		for _, k := range c.Keys {
 			key, ok := caseLiteralKey(k)
 			if !ok {
+				continue
+			}
+			if domainCheck != nil && domainCheck(tc, k) {
+				// Out-of-domain key: skip the dup check; the
+				// "unreachable" reason is already named more
+				// precisely than a dup would be.
 				continue
 			}
 			if prevSpan, dup := seenKeys[key]; dup {
@@ -1316,6 +1327,92 @@ func caseLiteralKey(n rl.Node) (string, bool) {
 		return "b:false", true
 	}
 	return "", false
+}
+
+// domainCheckerFor returns a per-key predicate that fires
+// ErrCaseKeyNotInDiscriminantType when the case key's value is
+// outside the discriminant type's closed value set. Returns nil
+// when the discriminant isn't a closed domain we can reason about
+// (today: string-enum only - the same gate isClosedDiscriminant
+// uses for exhaustiveness).
+//
+// The predicate returns true if it fired so the caller can short-
+// circuit other checks on the same key (no point flagging a key as
+// a duplicate when it can't fire in the first place).
+//
+// `discNode` is the original discriminant AST node, used only to
+// name the variable in the diagnostic message ("'name' is of type
+// ['a', 'b', 'c']..."). For non-identifier discriminants we omit
+// the name and just describe the type.
+func domainCheckerFor(discType rl.TypingT, discNode rl.Node) func(*typeChecker, rl.Node) bool {
+	enum, ok := discType.(*rl.TypingStrEnumT)
+	if !ok {
+		return nil
+	}
+	allowed := make(map[string]struct{}, len(enum.Values()))
+	for _, v := range enum.Values() {
+		allowed[v] = struct{}{}
+	}
+	discName := ""
+	if id, ok := discNode.(*rl.Identifier); ok {
+		discName = id.Name
+	}
+	enumName := enum.Name()
+	return func(tc *typeChecker, k rl.Node) bool {
+		lit, ok := k.(*rl.LitString)
+		if !ok || !lit.Simple {
+			// Non-string-literal key against a string-enum is
+			// the genuine-mismatch case; the existing
+			// caseLiteralKey filter already gates everything
+			// non-literal. Bool / int / float literals as keys
+			// for a string-enum discriminant likewise aren't
+			// in-domain - flag them too.
+			switch other := k.(type) {
+			case *rl.LitInt, *rl.LitFloat, *rl.LitBool:
+				_ = other
+				display := caseKeyDisplayText(k)
+				tc.emitCaseKeyNotInDomain(k, display, discName, enumName)
+				return true
+			}
+			return false
+		}
+		if _, in := allowed[lit.Value]; in {
+			return false
+		}
+		display := fmt.Sprintf("'%s'", lit.Value)
+		tc.emitCaseKeyNotInDomain(k, display, discName, enumName)
+		return true
+	}
+}
+
+// emitCaseKeyNotInDomain records the out-of-domain diagnostic for
+// a switch case key whose value can never equal the discriminant.
+func (tc *typeChecker) emitCaseKeyNotInDomain(key rl.Node, valueText, discName, discTypeName string) {
+	var msg string
+	switch {
+	case valueText != "" && discName != "":
+		msg = fmt.Sprintf(
+			"Case %s is unreachable; '%s' is of type %s and can never equal %s",
+			valueText, discName, discTypeName, valueText)
+	case valueText != "":
+		msg = fmt.Sprintf(
+			"Case %s is unreachable; the discriminant is of type %s and can never equal %s",
+			valueText, discTypeName, valueText)
+	case discName != "":
+		msg = fmt.Sprintf(
+			"Case is unreachable; '%s' is of type %s and can never match this value",
+			discName, discTypeName)
+	default:
+		msg = fmt.Sprintf(
+			"Case is unreachable; the discriminant is of type %s and can never match this value",
+			discTypeName)
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     key.Span(),
+		Severity: IssueError,
+		Code:     rl.ErrCaseKeyNotInDiscriminantType,
+		Message:  msg,
+	})
 }
 
 // emitUnreachableCase records a diagnostic on a case key that was

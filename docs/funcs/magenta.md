@@ -1,0 +1,22 @@
+# magenta
+
+Wraps its argument in the ANSI escape codes for magenta text.
+
+## Signature
+
+`magenta(_item: any) -> str`
+
+## Examples
+
+```rad
+magenta("Hello")        // -> "Hello" wrapped in the magenta escape
+magenta(42)             // -> "42" wrapped in the magenta escape
+```
+
+## Category
+
+formatting
+
+## See also
+
+`red`, `blue`, `color_rgb`

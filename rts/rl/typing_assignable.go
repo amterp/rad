@@ -308,9 +308,17 @@ func (t *TypingAnyListT) IsAssignableFrom(other TypingT) bool {
 	return false
 }
 
-// List<T> is invariant in T. List<int> does NOT accept List<float>: the
-// callee could write a float into the list, and the caller still believes
-// the list is int-typed.
+// List<T> is covariant in T: List<U> is assignable to List<T> when U is
+// assignable to T element-wise. This widens the common case `xs: (int|str)[] =
+// [1, 2, 3]` (right side is int[]; every int is also an int|str), and dispatches
+// the union-vs-union machinery for nested-paren-union list element types like
+// `((int|str)|bool)[] = [1, "hi", true]`.
+//
+// This is unsound under mutation+aliasing: through the widened alias a writer
+// can store a str into a list whose other holder still believes it's int[].
+// Rad doesn't enforce read-only list semantics, so we accept that footgun in
+// exchange for the ergonomic win. If we ever introduce read-only collection
+// views, this is the place to re-tighten variance.
 func (t *TypingListT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
 		return true
@@ -319,10 +327,15 @@ func (t *TypingListT) IsAssignableFrom(other TypingT) bool {
 	if !ok {
 		return false
 	}
-	return typesEqual(t.elem, o.elem)
+	return t.elem.IsAssignableFrom(o.elem)
 }
 
 // Tuples must match position-for-position with exact element types.
+// This stays invariant (unlike TypingListT above) because tuples are
+// fixed-shape and indexed-mutated; the same aliased-write footgun
+// would land on a typed slot that the script's author explicitly
+// nailed down. If tuple-element widening becomes a felt ergonomic
+// gap, revisit alongside the list-covariance comment above.
 func (t *TypingTupleT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
 		return true

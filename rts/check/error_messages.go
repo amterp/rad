@@ -236,6 +236,24 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 		return msg, code, suggestion
 	}
 
+	// Heuristic: bare `null` type annotation (`x: null`,
+	// `fn f(x: null):`). The sibling case to checkNullInUnion above.
+	// We need to handle it explicitly because `null` is not a leaf
+	// type in the grammar - without this, users see a bare
+	// "Unexpected '...'" with no guidance toward `T?`.
+	if msg, code, suggestion := checkBareNullTypeAnnotation(node, trimmedContent); msg != "" {
+		return msg, code, suggestion
+	}
+
+	// Heuristic: `default:` arm appearing before any `case:` arm in a
+	// switch. The grammar requires `default` last; when it appears
+	// first the parser bails with a generic RAD10001 pointing at
+	// surrounding scope (often the enclosing function header). This
+	// catches the shape and emits a targeted suggestion.
+	if msg, code, suggestion := checkDefaultBeforeCase(node, src, trimmedContent); msg != "" {
+		return msg, code, suggestion
+	}
+
 	// Heuristic 2: Check for missing operator between values
 	if msg, code, suggestion := checkMissingOperator(node, src, trimmedContent); msg != "" {
 		return msg, code, suggestion
@@ -336,6 +354,160 @@ func checkNullInUnion(node *ts.Node, trimmed string) (string, rl.Error, *string)
 	return "'null' is not a valid type in a union",
 		rl.ErrUnexpectedToken,
 		&suggestion
+}
+
+// checkBareNullTypeAnnotation detects the standalone `null` type
+// annotation (`x: null`, `fn f(x: null):`, etc.) - the sibling case
+// to checkNullInUnion. The grammar has no leaf rule for `null`, so
+// the parser produces an ERROR node whose content is just `null`
+// under a typed-assign / fn-param-annotation context. Without this
+// heuristic, users get a bare "Unexpected '...'" message that
+// doesn't explain *why* `null` is rejected.
+//
+// We accept the same set of parent contexts as checkNullInUnion so
+// the suggestion only fires where a type was expected.
+func checkBareNullTypeAnnotation(node *ts.Node, trimmed string) (string, rl.Error, *string) {
+	// The bare-null token must follow a colon - that's the
+	// signal that we're in a type-annotation position. `null = 5`
+	// (the value literal) doesn't have a leading colon and so
+	// won't trigger this.
+	if !strings.HasPrefix(trimmed, ":") {
+		return "", "", nil
+	}
+	if !isBareNullTypeToken(trimmed) {
+		return "", "", nil
+	}
+	parent := node.Parent()
+	for parent != nil && parent.IsError() {
+		parent = parent.Parent()
+	}
+	if parent == nil {
+		return "", "", nil
+	}
+	switch parent.Kind() {
+	case rl.K_ASSIGN,
+		rl.K_TYPED_ASSIGN,
+		"fn_param_or_return_type":
+		// Accepted contexts. K_ASSIGN covers the common
+		// `a: null = 5` shape where the parser failed to form
+		// a typed_assign and fell back to untyped assign, leaving
+		// `: null` as a child ERROR.
+	default:
+		return "", "", nil
+	}
+	suggestion := "Declare the slot as 'T?' (e.g. 'int?') if the value may be null"
+	return "'null' is not a declarable type",
+		rl.ErrUnexpectedToken,
+		&suggestion
+}
+
+// isBareNullTypeToken reports whether `s` contains `null` as a type
+// token AND has no `|` adjacent to it - distinguishing the bare-null
+// case from the in-union case handled by checkNullInUnion. Surrounding
+// whitespace, a leading `:`, or a trailing `=` are all fine; an
+// adjacent `|` rules the token out (that's union territory).
+func isBareNullTypeToken(s string) bool {
+	for i := 0; i+4 <= len(s); i++ {
+		if s[i:i+4] != "null" {
+			continue
+		}
+		left := byte(0)
+		if i > 0 {
+			left = s[i-1]
+		}
+		right := byte(0)
+		if i+4 < len(s) {
+			right = s[i+4]
+		}
+		if !isTypeTokenBoundary(left) || !isTypeTokenBoundary(right) {
+			continue
+		}
+		if left == '|' || right == '|' {
+			continue
+		}
+		return true
+	}
+	return false
+}
+
+// checkDefaultBeforeCase detects the misordered switch shape where
+// a `default:` arm comes before any `case:` arms. Today the grammar
+// requires `default` last, and the parser bails on the bad order
+// with a series of RAD10001s pointing at the enclosing scope. This
+// heuristic recognises the shape from the ERROR + adjacent source
+// and emits a targeted "reorder default last" suggestion.
+//
+// Triggers when:
+//   - the ERROR sits under a `switch_stmt` (or under chained ERRORs
+//     that eventually root under one), AND
+//   - the keyword `default` appears in the switch's body BEFORE the
+//     first `case` keyword.
+//
+// Conservatively scoped: we only fire on the first ERROR we see
+// inside the bad switch so we don't pile multiple suggestions on
+// the same root cause.
+func checkDefaultBeforeCase(node *ts.Node, src string, trimmed string) (string, rl.Error, *string) {
+	// Only consider the outermost wrapping ERROR. When the parser
+	// can't recover a switch with a misordered default, it spits out
+	// a chain of ERROR nodes covering progressively-narrower spans;
+	// the outermost is a direct child of source_file. Firing on just
+	// that one keeps the diagnostic count to a single helpful line
+	// instead of three near-identical hints.
+	parent := node.Parent()
+	if parent == nil || parent.Kind() != "source_file" {
+		return "", "", nil
+	}
+	if !containsMisorderedSwitch(trimmed) {
+		return "", "", nil
+	}
+	suggestion := "Move the 'default' arm so it appears after all 'case' arms"
+	return "'default' arm must appear last in a switch",
+		rl.ErrInvalidSyntax,
+		&suggestion
+}
+
+// containsMisorderedSwitch reports whether `body` has a `switch`
+// keyword followed (positionally) by a `default` keyword that
+// precedes the first `case` keyword. Coarse keyword-position scan
+// because the parser doesn't produce reliable AST nodes for the
+// misordered shape.
+func containsMisorderedSwitch(body string) bool {
+	switchIdx := indexOfKeyword(body, "switch")
+	if switchIdx < 0 {
+		return false
+	}
+	tail := body[switchIdx:]
+	defaultIdx := indexOfKeyword(tail, "default")
+	caseIdx := indexOfKeyword(tail, "case")
+	if defaultIdx < 0 || caseIdx < 0 {
+		return false
+	}
+	return defaultIdx < caseIdx
+}
+
+// indexOfKeyword finds the byte offset of the first occurrence of
+// `kw` as a standalone keyword (flanked by non-identifier chars on
+// both sides). Returns -1 if not found.
+func indexOfKeyword(s, kw string) int {
+	klen := len(kw)
+	for i := 0; i+klen <= len(s); i++ {
+		if s[i:i+klen] != kw {
+			continue
+		}
+		left := byte(0)
+		if i > 0 {
+			left = s[i-1]
+		}
+		right := byte(0)
+		if i+klen < len(s) {
+			right = s[i+klen]
+		}
+		if !isTypeTokenBoundary(left) || !isTypeTokenBoundary(right) {
+			continue
+		}
+		return i
+	}
+	return -1
 }
 
 // containsNullTypeToken reports whether `s` contains `null` used as

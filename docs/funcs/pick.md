@@ -1,0 +1,27 @@
+# pick
+
+Presents an interactive menu for selecting from a list of options.
+
+## Signature
+
+`pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> str`
+
+## Examples
+
+```rad
+pick(["apple", "banana", "cherry"])                        // -> Interactive menu
+pick(["red", "green", "blue"], "r")                        // -> Fuzzy-filtered to "red", "green"
+pick(["grape", "g"], "g", prefer_exact=true)                 // -> Immediately picks "g" (exact match)
+pick(["one", "two", "three"], prompt="Choose:")            // -> Custom prompt
+```
+
+## Category
+
+io
+
+## Notes
+
+Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.
+
+When `prefer_exact=true`, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a
+filter, it's selected immediately; if multiple match exactly, only those are shown.

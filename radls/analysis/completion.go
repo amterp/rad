@@ -140,18 +140,13 @@ func firstParamAccepts(sig rts.FnSignature, receiverType rl.TypingT) bool {
 // (`a.b.c.<cursor>`) and complex expressions fall through to the
 // flat builtin order without a type.
 func receiverTypeAtCursor(snap *DocumentVersion, pos lsp.Pos) rl.TypingT {
-	if snap == nil || snap.text == "" ||
-		snap.resolved == nil || snap.types == nil ||
-		snap.resolved.File == nil {
-		// When the document is mid-edit (e.g. just `xs.` with no
-		// trailing call) the converter typically bails and we get
-		// nil indexes. UFCS ranking degrades gracefully: builtins
-		// stay in the alphabetical tier rather than receiving the
-		// relevance boost. The completion list is still useful;
-		// just not ranked by receiver type.
+	if snap == nil || snap.text == "" {
 		return nil
 	}
-	// Locate the byte offset of the cursor in snap.text.
+	// Locate the byte offset of the cursor in snap.text. Done before
+	// we pick which version supplies the type indexes - the cursor
+	// always belongs to the live snapshot text, not the last-good
+	// fallback's text (which may be one revision behind).
 	bytePos, ok := byteOffsetFor(snap, pos)
 	if !ok {
 		return nil
@@ -177,17 +172,48 @@ func receiverTypeAtCursor(snap *DocumentVersion, pos lsp.Pos) rl.TypingT {
 		return nil
 	}
 	name := src[receiverStart:receiverEnd]
-	sym := snap.resolved.File.Lookup(name)
+	// Pick the snapshot that has usable type indexes. Live snapshot
+	// first; fall back to the last-good if the live one is mid-edit
+	// (the common case: completion triggered immediately after `xs.`
+	// where the converter has bailed on the trailing dot). The
+	// fallback may be one or two keystrokes stale, which is fine for
+	// receiver-type lookup - the receiver identifier itself rarely
+	// changes within a single typing burst.
+	indexes := pickResolvedSnapshot(snap)
+	if indexes == nil {
+		return nil
+	}
+	sym := indexes.resolved.File.Lookup(name)
 	if sym == nil {
 		return nil
 	}
-	if t, ok := snap.types.SymbolTypes[sym]; ok && t != nil {
+	if t, ok := indexes.types.SymbolTypes[sym]; ok && t != nil {
 		return t
 	}
 	if sym.Declared != nil {
 		return sym.Declared
 	}
 	return nil
+}
+
+// pickResolvedSnapshot returns whichever of (snap, snap.lastGood)
+// has non-nil resolved/types/resolved.File - preferring the live
+// snapshot. Returns nil if neither has the indexes we need.
+func pickResolvedSnapshot(snap *DocumentVersion) *DocumentVersion {
+	if hasUsableResolved(snap) {
+		return snap
+	}
+	if lg := snap.LastGood(); lg != nil && lg != snap && hasUsableResolved(lg) {
+		return lg
+	}
+	return nil
+}
+
+func hasUsableResolved(v *DocumentVersion) bool {
+	return v != nil &&
+		v.resolved != nil &&
+		v.types != nil &&
+		v.resolved.File != nil
 }
 
 func isIdentByte(b byte) bool {

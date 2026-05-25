@@ -124,6 +124,7 @@ const (
 	ErrNonExhaustiveSwitch              Error = "40010"
 	ErrDuplicateTypedDeclaration        Error = "40011"
 	ErrUnreachableCase                  Error = "40012"
+	ErrCaseKeyNotInDiscriminantType     Error = "40013"
 )
 
 func (e Error) String() string {

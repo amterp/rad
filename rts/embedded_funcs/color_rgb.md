@@ -1,0 +1,32 @@
+# color_rgb
+
+Applies RGB coloring to input text. RGB values must be in range [0, 255]. Not all terminals support this.
+
+## Signature
+
+`color_rgb(_val: any, red: int, green: int, blue: int) -> error|str`
+
+## Examples
+
+```rad
+color_rgb("Hello", red=255, green=0, blue=0)     // -> "Hello" (in bright red)
+color_rgb(42, red=0, green=255, blue=128)        // -> "42" (in green-cyan)
+color_rgb("test", red=300, green=0, blue=0)      // -> Error: RGB values must be [0, 255]
+```
+
+## Category
+
+strings
+
+## Notes
+
+**Parameters:**
+
+| Parameter | Type  | Description             |
+|-----------|-------|-------------------------|
+| `_val`    | `any` | Value to apply color to |
+| `red`     | `int` | Red component (0-255)   |
+| `green`   | `int` | Green component (0-255) |
+| `blue`    | `int` | Blue component (0-255)  |
+
+RGB values must be in range [0, 255]. Not all terminals support this.

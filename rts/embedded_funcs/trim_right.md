@@ -1,0 +1,19 @@
+# trim_right
+
+Strips all matching characters from the end of a string. Preserves color attributes.
+
+## Signature
+
+`trim_right(_subject: str, _chars: str = " \t\n") -> str`
+
+## Examples
+
+```rad
+trim_right("  hello  ")         // -> "  hello"
+trim_right("***hello***", "*")  // -> "***hello"
+trim_right("aaabbb", "b")       // -> "aaa"
+```
+
+## Category
+
+strings

@@ -166,6 +166,7 @@ print("{name:,}")    // Error: cannot format string with thousands separator
 However, padding, fill characters, and zero-padding work on all types:
 
 ```rad
+name = "Alice"
 print("{name:10}")     // "     Alice" (padded to 10 chars)
 print("{name:*>10}")   // "*****Alice" (fill with *, any type)
 print("{name:08}")     // "000Alice"   (zero-pad shorthand, any type)

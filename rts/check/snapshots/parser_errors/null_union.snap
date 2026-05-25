@@ -103,3 +103,69 @@ fn f() -> int|null:
   [error] RAD10001 @ 1:1 - Invalid syntax
   [error] RAD10009 @ 1:14 - 'null' is not a valid type in a union
     help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
+### TITLE ###
+BareNullTypedAssignmentSuggestsTQuestion
+### DESCRIPTION ###
+`a: null = ...` - the bare-null type annotation. Sibling of
+the in-union case above. Previously fired a generic
+"Unexpected ': null'" with no hint toward T?; now points
+users at the canonical nullable spelling.
+### INPUT ###
+a: null = 5
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  [error] RAD10009 @ 1:2 - 'null' is not a declarable type
+    help: Declare the slot as 'T?' (e.g. 'int?') if the value may be null
+### TITLE ###
+BareNullInsideFunctionSuggestsTQuestion
+### DESCRIPTION ###
+The exact repro from kan card null-type-annotation:
+`c: null = x` inside an else-branch where `x` is narrowed
+to null. The typed-assign with bare-null gets the helpful
+suggestion instead of the bare "Unexpected ': null'".
+### INPUT ###
+fn f(x: int?):
+    if x != null:
+        a = x
+    else:
+        c: null = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  c @ 5:9 -> <no-type>
+  x @ 5:19 -> null
+
+# Symbol types
+  a (local): int
+  c (local): null
+  f (fn): fn(int?) -> void
+  x (param): int?
+
+# Diagnostics
+  [error] RAD10009 @ 5:10 - 'null' is not a declarable type
+    help: Declare the slot as 'T?' (e.g. 'int?') if the value may be null
+### TITLE ###
+NullValueAssignmentDoesNotTrigger
+### DESCRIPTION ###
+Regression lock: `x = null` (value-position null, no type
+annotation) is fine and must not trigger the bare-null
+suggestion. The check is gated on type-annotation parents.
+### INPUT ###
+x = null
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+
+# Symbol types
+  x (local): null
+
+# Diagnostics
+  (none)

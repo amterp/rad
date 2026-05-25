@@ -46,6 +46,12 @@ type FuncDocParam struct {
 func ParseFuncDoc(name, src string) (*FuncDoc, error) {
 	doc := &FuncDoc{Name: name}
 
+	// go:embed bakes in file bytes verbatim, and Windows git checks
+	// these .md files out with CRLF. Normalize so parsed doc content
+	// (and the hover output built from it) is byte-identical on every
+	// platform rather than depending on the checkout's line endings.
+	src = strings.ReplaceAll(src, "\r\n", "\n")
+
 	lines := strings.Split(src, "\n")
 	if len(lines) == 0 {
 		return nil, fmt.Errorf("empty doc for %s", name)

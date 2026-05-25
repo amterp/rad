@@ -1,0 +1,41 @@
+# zip
+
+Combines multiple lists into a list of lists, pairing elements by index.
+
+## Signature
+
+`zip(*_lists: list, *, fill: any?, strict: bool = false) -> error|list[]`
+
+## Examples
+
+```rad
+// Basic usage
+zip([1, 2, 3], ["a", "b", "c"])           // -> [[1, "a"], [2, "b"], [3, "c"]]
+zip([1, 2, 3, 4], ["a", "b"])             // -> [[1, "a"], [2, "b"]]
+
+// With fill value for unequal lengths
+zip([1, 2, 3, 4], ["a", "b"], fill="-")   // -> [[1, "a"], [2, "b"], [3, "-"], [4, "-"]]
+
+// Strict mode (errors on length mismatch)  
+zip([1, 2, 3], ["a", "b"], strict=true)   // -> Error: Lists must have the same length
+```
+
+## Category
+
+lists
+
+## Notes
+
+**Parameters:**
+
+| Parameter | Type           | Description                              |
+|-----------|----------------|------------------------------------------|
+| `*lists`  | `list`         | Variable number of lists to zip together |
+| `strict`  | `bool = false` | If true, error on different list lengths |
+| `fill`    | `any?`         | Value to fill shorter lists (optional)   |
+
+- By default, truncates to the shortest list length
+- Cannot use `strict=true` with `fill` parameter (mutually exclusive)
+- Returns error if `strict=true` and lists have different lengths
+
+**Examples:**

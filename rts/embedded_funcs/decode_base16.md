@@ -1,0 +1,23 @@
+# decode_base16
+
+Decodes Base16 (hexadecimal) text back to original string.
+
+## Signature
+
+`decode_base16(_content: str) -> error|str`
+
+## Examples
+
+```rad
+decode_base16("48656c6c6f")   // -> "Hello"
+decode_base16("414243")       // -> "ABC"
+
+// Error handling
+result = decode_base16("invalid hex")
+if result.error:
+    print("Invalid hex string")
+```
+
+## Category
+
+crypto

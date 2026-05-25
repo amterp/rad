@@ -61,6 +61,17 @@ type DocumentVersion struct {
 	resolved *check.Resolved
 	types    *check.TypeInfo
 
+	// lastGood points to the most recent version whose resolved /
+	// types are non-nil. May be `v` itself (this version converted
+	// cleanly), or a prior version (this one is mid-edit; we want
+	// readers like UFCS completion to fall back to the last good
+	// indexes rather than degrade gracefully to bare alphabetical).
+	// When lastGood != v, the prior version's refcount is held by
+	// this version - it's Release()d when this version is freed.
+	// Nil only when no version of this document has ever converted
+	// cleanly (first-load syntax error).
+	lastGood *DocumentVersion
+
 	// refs starts at 1 - the Document that owns this version holds
 	// the initial reference. Each State.Snapshot caller bumps to one
 	// more; their matching Release drops it. When this hits zero the
@@ -113,7 +124,32 @@ func (v *DocumentVersion) Release() {
 			v.tree.Close()
 			v.tree = nil
 		}
+		// Release the inherited last-good reference, if any. Self-
+		// reference is a sentinel meaning "this version is the last
+		// good one" - no extra refcount to drop in that case.
+		if v.lastGood != nil && v.lastGood != v {
+			v.lastGood.Release()
+			v.lastGood = nil
+		}
 	}
+}
+
+// LastGood returns the most recent version of this document whose
+// resolved/types are non-nil, or nil if no version has ever
+// converted cleanly. Callers that want to fall back to last-good
+// indexes (e.g. UFCS completion ranking mid-edit) should read from
+// this when their primary snapshot's resolved/types are nil. The
+// returned version shares this version's lifetime - do NOT Release
+// it independently.
+func (v *DocumentVersion) LastGood() *DocumentVersion {
+	if v == nil {
+		return nil
+	}
+	// Borrowed reference: refcount is held by v, not by the caller.
+	// Calling Release() on the result would double-decrement and
+	// free the prior version while v still expects to release it
+	// in v.Release(). New callers: read, do not Release.
+	return v.lastGood
 }
 
 // GetLine returns the source of the line at the given index, or "" if
@@ -160,11 +196,41 @@ func (d *Document) Update(produce func(prev *DocumentVersion) *DocumentVersion) 
 	defer d.mu.Unlock()
 	prev := d.snapshot.Load()
 	next := produce(prev)
+	wireLastGood(next, prev)
 	d.snapshot.Store(next)
 	if prev != nil {
 		prev.Release()
 	}
 	return next
+}
+
+// wireLastGood chains the last-good pointer so mid-edit versions
+// can fall back to a prior version's resolved/types indexes. Called
+// inside Update under the writer lock so the inherited acquire
+// can't race with the prev being released.
+//
+// Behaviour:
+//   - If next converted cleanly, it IS the last good - we set a
+//     self-reference (no extra refcount to manage).
+//   - Else if prev had a usable last-good (which may be prev itself
+//     or one of prev's ancestors), inherit it and acquire a ref so
+//     it survives past the prev.Release that follows.
+//   - Else there's no last-good to point at (first-load failure).
+func wireLastGood(next, prev *DocumentVersion) {
+	if next == nil {
+		return
+	}
+	if next.resolved != nil && next.types != nil {
+		next.lastGood = next
+		return
+	}
+	if prev == nil || prev.lastGood == nil {
+		return
+	}
+	candidate := prev.lastGood
+	if candidate.acquire() {
+		next.lastGood = candidate
+	}
 }
 
 // buildVersion is the canonical way to construct a DocumentVersion: it

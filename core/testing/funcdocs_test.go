@@ -45,28 +45,82 @@ func TestFuncDocsValid(t *testing.T) {
 	}
 }
 
+// TestParseFuncDocNormalizesCRLF guards the cross-platform bug where
+// Windows git checks the embedded .md files out with CRLF, go:embed
+// bakes the \r in, and the carriage returns leak into LSP hover output
+// - mismatching snapshots generated on LF platforms.
+func TestParseFuncDocNormalizesCRLF(t *testing.T) {
+	src := strings.Join([]string{
+		"# foo",
+		"",
+		"First line of the description.",
+		"Second line.",
+		"",
+		"## Signature",
+		"",
+		"`foo() -> void`",
+		"",
+		"## Examples",
+		"",
+		"```rad",
+		"foo()",
+		"```",
+		"",
+		"## Category",
+		"",
+		"Test",
+	}, "\n")
+	crlf := strings.ReplaceAll(src, "\n", "\r\n")
+
+	doc, err := rts.ParseFuncDoc("foo", crlf)
+	if err != nil {
+		t.Fatalf("CRLF doc failed to parse: %v", err)
+	}
+
+	fields := append([]string{doc.Description, doc.Signature, doc.Category, doc.Notes}, doc.Examples...)
+	for _, f := range fields {
+		if strings.Contains(f, "\r") {
+			t.Errorf("carriage return survived parsing in field %q", f)
+		}
+	}
+}
+
 // TestFuncDocsMatchRegisteredBuiltins verifies that every embedded
 // doc names a function the runtime actually registers. Catches the
 // reverse-drift case: a doc author renames the file to `say.md`
 // while the runtime still exposes `print`.
 //
-// Note: the opposite assertion - every registered builtin has a
-// doc - is intentionally NOT in this test yet. The doc migration
-// is incremental; gating CI on 100% coverage would block landing
-// any incremental work. The completeness assertion will land once
-// the migration finishes.
+// We also assert the inverse: every public registered builtin has
+// a docs/funcs/<name>.md. The migration that landed this gate
+// covered all 113 then-existing builtins; new builtins added since
+// must come with a doc. Internal _rad_* signatures are excluded -
+// they live in docs/funcs/internal/ if at all.
 func TestFuncDocsMatchRegisteredBuiltins(t *testing.T) {
+	docs := make(map[string]struct{}, 0)
 	for _, name := range rts.FuncDocNames() {
+		docs[name] = struct{}{}
 		if _, ok := rts.FnSignaturesByName[name]; !ok {
 			t.Errorf("doc exists for %q but no such builtin is registered", name)
+		}
+	}
+	for name, sig := range rts.FnSignaturesByName {
+		if sig.IsInternal {
+			continue
+		}
+		if _, ok := docs[name]; !ok {
+			t.Errorf("registered builtin %q has no doc in docs/funcs/%s.md", name, name)
 		}
 	}
 }
 
 // TestFuncDocsSignatureMatchesRegistered verifies the signature
 // line in each doc matches the registered builtin's signature
-// byte-for-byte. Catches the case where a doc author updates the
-// signature in source without updating the doc (or vice versa).
+// byte-for-byte. Under the post-codegen pipeline,
+// rts/signatures_gen.go is generated from docs/funcs/*.md - so a
+// mismatch here means someone edited a .md without running
+// `go generate ./rts` (or vice versa: edited signatures_gen.go
+// directly, which they shouldn't). The test is the drift gate
+// that catches stale codegen.
 func TestFuncDocsSignatureMatchesRegistered(t *testing.T) {
 	for _, name := range rts.FuncDocNames() {
 		doc := rts.GetFuncDoc(name)
@@ -87,11 +141,9 @@ func TestFuncDocsSignatureMatchesRegistered(t *testing.T) {
 // runtime actually reads; the docs/funcs/ tree is the canonical
 // editable source.
 //
-// TODO(codegen): replace the manual mirror with a build step that
-// reads docs/funcs/ and writes rts/embedded_funcs/. Until then,
-// this test is the drift gate - if you edit one tree, edit the
-// other or the test fails. Grep "TODO(codegen)" to find related
-// sites.
+// The mirror is produced by `tools/gen-funcs-go` (run via
+// `go generate ./rts`). This test is the drift gate that fires
+// when someone edits one tree without regenerating the other.
 func TestFuncDocsSourceMatchesEmbedded(t *testing.T) {
 	sourceDir := "../../docs/funcs"
 	embeddedDir := "../../rts/embedded_funcs"

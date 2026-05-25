@@ -14,14 +14,12 @@ var embeddedFuncDocs embed.FS
 // FuncDoc. Populated on first access from the embedded
 // `embedded_funcs/` directory.
 //
-// TODO(codegen): today the embedded_funcs/ directory is a manual
-// byte-for-byte mirror of docs/funcs/. The intended pipeline is
-// `tools/gen-funcs/...` reading docs/funcs/*.md and writing
-// embedded_funcs/ as a build step. Until that lands,
-// TestFuncDocsSourceMatchesEmbedded gates drift between the two
-// trees so contributors can't accidentally edit only one side.
-// Grep for "TODO(codegen)" to find every site that bakes in this
-// assumption.
+// The embedded_funcs/ tree is the byte-for-byte mirror of
+// docs/funcs/ that the runtime embeds at compile time.
+// `tools/gen-funcs-go` keeps the two trees in sync; run
+// `go generate ./rts` after editing under docs/funcs/.
+// TestFuncDocsSourceMatchesEmbedded is the drift gate that catches
+// contributors editing only one side.
 var (
 	funcDocs     map[string]*FuncDoc
 	funcDocsOnce sync.Once
@@ -64,7 +62,7 @@ func loadFuncDocs() {
 			continue
 		}
 		stem := strings.TrimSuffix(name, ".md")
-		if !isValidFuncDocStem(stem) {
+		if !IsValidFuncDocStem(stem) {
 			continue
 		}
 		src, err := fs.ReadFile(embeddedFuncDocs, "embedded_funcs/"+name)
@@ -82,10 +80,14 @@ func loadFuncDocs() {
 	}
 }
 
-// isValidFuncDocStem mirrors the README's rule: file stems must be
-// valid Rad identifiers ([a-z_][a-z0-9_]*). Filters out the README
-// and any contributor notes that happen to land in this directory.
-func isValidFuncDocStem(s string) bool {
+// IsValidFuncDocStem matches the README's rule: file stems must be
+// valid Rad identifiers ([a-z_][a-z0-9_]*). Filters out README.md
+// and contributor notes that happen to land in this directory.
+// Exported so the three codegen tools under tools/gen-funcs-* share
+// the same rule without re-implementing it - if the rule ever
+// changes (e.g. allowing uppercase), there's exactly one place to
+// update.
+func IsValidFuncDocStem(s string) bool {
 	if s == "" {
 		return false
 	}

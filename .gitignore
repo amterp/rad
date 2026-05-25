@@ -3,6 +3,9 @@ docs-docusaurus
 # Binaries
 rad
 rls
+gen-funcs-go
+gen-funcs-page
+gen-funcs-sigs
 
 # Misc
 __pycache__/

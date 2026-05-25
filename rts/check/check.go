@@ -3,6 +3,7 @@ package check
 import (
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
+	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
 type RadChecker interface {
@@ -160,10 +161,76 @@ func codePtr(c rl.Error) *rl.Error { return &c }
 
 func (c *RadCheckerImpl) addInvalidNodes(d *[]Diagnostic) {
 	nodes := c.tree.FindInvalidNodes()
+	// When the parser bails on a misordered-default switch it emits a
+	// cascade of ERROR nodes for the same misshape. We collapse the
+	// cascade to just the outermost one so users see a single helpful
+	// hint instead of three near-identical RAD10001s. The outermost
+	// is identified by its byte range strictly containing the inner
+	// ones.
+	suppressed := computeMisorderedSwitchSuppressionRanges(nodes, c.src)
 	for _, node := range nodes {
+		if isSuppressedByMisorderedSwitch(node, suppressed) {
+			continue
+		}
 		msg, code, suggestion := GenerateErrorMessage(node, c.src)
 		*d = append(*d, NewDiagnosticErrorWithSuggestion(node, c.src, msg, code, suggestion))
 	}
+}
+
+// computeMisorderedSwitchSuppressionRanges returns the byte ranges
+// of misordered-switch errors that should swallow nested cascade
+// diagnostics. Only the outermost qualifying ERROR contributes a
+// range; any narrower ERRORs nested inside fall under it.
+func computeMisorderedSwitchSuppressionRanges(nodes []*ts.Node, src string) []byteRange {
+	var ranges []byteRange
+	for _, n := range nodes {
+		if !n.IsError() {
+			continue
+		}
+		if !errorIsTopLevel(n) {
+			continue
+		}
+		body := nodeSrc(n, src)
+		if !containsMisorderedSwitch(body) {
+			continue
+		}
+		ranges = append(ranges, byteRange{n.StartByte(), n.EndByte()})
+	}
+	return ranges
+}
+
+// isSuppressedByMisorderedSwitch reports whether `node` lies
+// strictly inside any of the misordered-switch suppression ranges -
+// meaning its diagnostic would be cascade noise.
+func isSuppressedByMisorderedSwitch(node *ts.Node, ranges []byteRange) bool {
+	start, end := node.StartByte(), node.EndByte()
+	for _, r := range ranges {
+		if start == r.start && end == r.end {
+			continue // the outermost itself - keep, that's the canonical diagnostic
+		}
+		if start >= r.start && end <= r.end {
+			return true
+		}
+	}
+	return false
+}
+
+type byteRange struct {
+	start, end uint
+}
+
+func errorIsTopLevel(n *ts.Node) bool {
+	p := n.Parent()
+	return p != nil && p.Kind() == "source_file"
+}
+
+func nodeSrc(n *ts.Node, src string) string {
+	start := int(n.StartByte())
+	end := int(n.EndByte())
+	if start < 0 || end > len(src) || start > end {
+		return ""
+	}
+	return src[start:end]
 }
 
 func (c *RadCheckerImpl) addIntScientificNotationErrors(d *[]Diagnostic) {

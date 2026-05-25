@@ -162,6 +162,89 @@ func TestCompletionUFCSRanksRelevantBuiltinsAbove(t *testing.T) {
 	}
 }
 
+// TestCompletionUFCSRanksRelevantBuiltinsAboveMidEdit verifies the
+// last-good fallback for UFCS ranking. The natural typing flow is:
+// user has a clean script, then types `xs.` and IMMEDIATELY hits
+// completion - the converter bails on the trailing dot, current
+// snapshot's resolved/types are nil. Without the fallback, builtin
+// ranking degraded to plain alphabetical at the very moment ranking
+// would be most useful. With the fallback, we look up `xs`'s type
+// against the last-good snapshot's indexes and the int-list-shaped
+// builtins still float to the relevant tier.
+func TestCompletionUFCSRanksRelevantBuiltinsAboveMidEdit(t *testing.T) {
+	s := NewState()
+	s.SetEncoding(EncodingUTF16)
+	const uri = "file:///comp_midedit_test.rad"
+	// Open a clean script so we have a last-good version with
+	// resolved/types populated.
+	s.AddDoc(uri, "xs: int[] = [1, 2, 3]\n")
+	// Simulate the user typing `xs.` - mid-edit, the trailing dot
+	// makes the CST->AST converter bail and the new snapshot's
+	// resolved/types are nil.
+	s.UpdateDoc(uri, []lsp.TextDocumentContentChangeEvent{
+		{Text: "xs: int[] = [1, 2, 3]\nxs.\n"},
+	})
+	snap := s.Snapshot(uri)
+	if snap == nil {
+		t.Fatal("expected snapshot")
+	}
+	defer snap.Release()
+	// Sanity check: this version really is mid-edit (no resolved).
+	// If this ever flips to non-nil, the test is no longer
+	// exercising the fallback path - rewrite the fixture.
+	if snap.resolved != nil && snap.types != nil {
+		t.Skip("snapshot converted cleanly - mid-edit fallback path " +
+			"not exercised by this fixture; rewrite if grammar recovers " +
+			"trailing-dot now")
+	}
+	// And the last-good is the prior version with usable indexes.
+	if !hasUsableResolved(snap.LastGood()) {
+		t.Fatal("expected last-good to carry resolved/types after a " +
+			"prior good version was registered")
+	}
+
+	items, err := s.Complete(snap, lsp.NewPos(1, 3))
+	if err != nil {
+		t.Fatalf("Complete: %v", err)
+	}
+
+	want := map[string]bool{"len": true, "sort": true}
+	for _, it := range items {
+		if !want[it.Label] {
+			continue
+		}
+		if it.SortText != sortTierBuiltinRelevant {
+			t.Errorf("%q mid-edit: SortText=%q, want relevant tier %q",
+				it.Label, it.SortText, sortTierBuiltinRelevant)
+		}
+		delete(want, it.Label)
+	}
+	for label := range want {
+		t.Errorf("%q missing from completion list", label)
+	}
+}
+
+// TestCompletionUFCSMidEditNoPriorGoodDegradesGracefully verifies
+// that opening a document that's broken on the first version (no
+// prior version was ever good) does NOT crash and just skips UFCS
+// ranking - the fallback is opportunistic, not required.
+func TestCompletionUFCSMidEditNoPriorGoodDegradesGracefully(t *testing.T) {
+	// Open directly into a mid-edit state with no prior good version.
+	items := completionFixture(t, "xs: int[] = [1, 2, 3]\nxs.\n", lsp.NewPos(1, 3))
+	// Builtins should still appear; we just don't assert promotion
+	// to the relevant tier (no last-good to consult).
+	gotLen := false
+	for _, it := range items {
+		if it.Label == "len" {
+			gotLen = true
+			break
+		}
+	}
+	if !gotLen {
+		t.Fatal("expected 'len' to appear in completion list")
+	}
+}
+
 // TestCompletionEmptySnapshotReturnsNil verifies nil-snapshot
 // path. Unreachable through the wire harness; defensive.
 func TestCompletionEmptySnapshotReturnsNil(t *testing.T) {

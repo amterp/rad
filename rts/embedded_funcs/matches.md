@@ -1,0 +1,25 @@
+# matches
+
+Tests whether `_str` matches the regular-expression `_pattern`. By default the pattern must match the whole string; pass `partial=true` to match any substring. Returns an `error` when the pattern is malformed.
+
+## Signature
+
+`matches(_str: str, _pattern: str, *, partial: bool = false) -> bool|error`
+
+## Examples
+
+```rad
+matches("hello", "h.+o")               // -> true
+matches("hello world", "world")        // -> false (default is full-string match)
+matches("hello world", "world", partial=true)  // -> true
+matches("abc", "(")                    // -> error: invalid regex
+
+```
+
+## Category
+
+strings
+
+## See also
+
+`replace`, `split`

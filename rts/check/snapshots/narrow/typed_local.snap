@@ -152,6 +152,90 @@ y = xs[0]
 # Diagnostics
   (none)
 ### TITLE ###
+ListCovarianceWidensIntElementToUnion
+### DESCRIPTION ###
+`xs: (int|str)[] = [1, 2, 3]` is clean - the int[] literal flows
+into the (int|str)[] slot via list covariance. Previously this
+fired a spurious RAD30001 because TypingListT used invariant
+element-type equality.
+### INPUT ###
+xs: (int|str)[] = [1, 2, 3]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): (int|str)[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ListCovarianceWidensStrElementToUnion
+### DESCRIPTION ###
+Same as the int case, with a str[] source literal.
+### INPUT ###
+xs: (int|str)[] = ["a", "b"]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): (int|str)[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ListCovarianceNestedParenUnionLeftAssoc
+### DESCRIPTION ###
+`((int|str)|bool)[] = [1, "hi", true]` is clean. Previously
+fired RAD30001 with the type printer showing the same type on
+both sides because the internal tree shape differed (nested
+union vs flat) and IsAssignableFrom used invariant element
+equality. Locks the nested-paren-union bug fix.
+### INPUT ###
+xs: ((int|str)|bool)[] = [1, "hi", true]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): (int|str|bool)[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ListCovarianceNestedParenUnionRightAssoc
+### DESCRIPTION ###
+Mirror of the left-associative nested-paren-union case.
+### INPUT ###
+xs: (int|(str|bool))[] = [1, "hi", true]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): (int|str|bool)[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ListCovarianceGenuineMismatchStillFires
+### DESCRIPTION ###
+Regression lock: list covariance only flows when the source
+elements are assignable to the target elements. `str[]` into
+`int[]` must still fire RAD30001.
+### INPUT ###
+xs: int[] = ["a"]
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  [hint] RAD30001 @ 1:13 - Value of type 'str[]' is not assignable to declared type 'int[]'
+### TITLE ###
 ParenTypeGroupOptionalWraps
 ### DESCRIPTION ###
 `(int|str)?` parses as an optional union - the value is either

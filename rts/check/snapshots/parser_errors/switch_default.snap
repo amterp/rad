@@ -1,0 +1,52 @@
+### TITLE ###
+DefaultBeforeCaseSuggestsReorder
+### DESCRIPTION ###
+`default:` appearing before any `case:` arm in a switch.
+The grammar requires `default` last; today the parser bails
+with a misleading "Invalid function syntax" error on the
+enclosing function header. The new heuristic recognises the
+misordered shape and emits a single targeted suggestion at
+the file-level ERROR, suppressing the cascade RAD10001s
+from the inner ERRORs.
+### INPUT ###
+fn f(x: str):
+    switch x:
+        default:
+            print("d")
+        case "a":
+            print("a")
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10001 @ 1:1 - 'default' arm must appear last in a switch
+    help: Move the 'default' arm so it appears after all 'case' arms
+### TITLE ###
+DefaultAfterCaseStillValid
+### DESCRIPTION ###
+Regression lock: the canonical default-after-case shape
+must still parse cleanly. The new heuristic only fires on
+the misordered form.
+### INPUT ###
+fn f(x: str):
+    switch x:
+        case "a":
+            print("a")
+        default:
+            print("d")
+### STDOUT ###
+# Identifier types
+  x @ 2:12 -> str
+  print @ 4:13 -> dynamic
+  print @ 6:13 -> dynamic
+
+# Symbol types
+  f (fn): fn(str) -> void
+  x (param): str
+
+# Diagnostics
+  (none)
