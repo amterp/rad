@@ -48,9 +48,10 @@ func newBinder() *binder {
 	builtinScope := &Scope{Kind: ScopeBuiltin, Symbols: map[string]*Symbol{}}
 	return &binder{
 		resolved: &Resolved{
-			Builtin: builtinScope,
-			Uses:    map[rl.Node]*Symbol{},
-			Decls:   map[rl.Node]*Symbol{},
+			Builtin:     builtinScope,
+			Uses:        map[rl.Node]*Symbol{},
+			Decls:       map[rl.Node]*Symbol{},
+			ForLoopVars: map[*rl.ForLoop][]*Symbol{},
 		},
 		current:  builtinScope,
 		builtins: rts.GetBuiltInFunctions(),
@@ -490,11 +491,19 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 // iterate, which by definition cannot reference the loop var.
 func (b *binder) visitForLoop(f *rl.ForLoop) {
 	b.visit(f.Iter)
+	// Record the per-var symbol list. We can't use Decls for this -
+	// every var keys on the same ForLoop node, so the map would only
+	// retain one. Type checking the `for k, v in xs:` shape needs
+	// both symbols, so we keep them in source order here.
+	vars := make([]*Symbol, 0, len(f.Vars))
 	for _, name := range f.Vars {
 		if name == "" {
 			continue
 		}
-		b.declare(name, SymLoopVar, f.Span(), f)
+		vars = append(vars, b.declare(name, SymLoopVar, f.Span(), f))
+	}
+	if len(vars) > 0 {
+		b.resolved.ForLoopVars[f] = vars
 	}
 	if f.Context != nil && *f.Context != "" {
 		b.declare(*f.Context, SymWith, f.Span(), f)

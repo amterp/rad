@@ -83,3 +83,115 @@ for v in unknown_thing():
 
 # Diagnostics
   [hint] RAD40003 @ 1:10 - Function 'unknown_thing' may not be defined (only built-in and top-level functions are tracked)
+### TITLE ###
+ForOverUnionOfListsBindsUnionElement
+### DESCRIPTION ###
+Iterating a `int[]|str[]` should bind the loop var to `int|str`,
+not Dynamic. Each arm contributes its element type and we union.
+### INPUT ###
+fn iter(xs: int[]|str[]):
+    for v in xs:
+        a = v
+### STDOUT ###
+# Identifier types
+  xs @ 2:14 -> int[]|str[]
+  a @ 3:9 -> <no-type>
+  v @ 3:13 -> int|str
+
+# Symbol types
+  a (local): int|str
+  iter (fn): fn(int[]|str[]) -> void
+  v (loop): int|str
+  xs (param): int[]|str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ForOverUnionOfListsMismatchFires
+### DESCRIPTION ###
+Confirms the new union-of-lists binding flows into argument-type
+checking: passing the loop var into a slot that admits only one
+arm fires RAD30001.
+### INPUT ###
+fn iter(xs: int[]|str[]):
+    for v in xs:
+        consume(v)
+
+fn consume(x: int):
+    print(x)
+### STDOUT ###
+# Identifier types
+  xs @ 2:14 -> int[]|str[]
+  consume @ 3:9 -> fn(int) -> void
+  v @ 3:17 -> int|str
+  print @ 6:5 -> dynamic
+  x @ 6:11 -> int
+
+# Symbol types
+  consume (fn): fn(int) -> void
+  iter (fn): fn(int[]|str[]) -> void
+  v (loop): int|str
+  x (param): int
+  xs (param): int[]|str[]
+
+# Diagnostics
+  [hint] RAD30001 @ 3:17 - Argument type 'int|str' is not assignable to expected type 'int'
+### TITLE ###
+ForTwoVarOverMapBindsKeyAndValue
+### DESCRIPTION ###
+The two-var shape `for k, v in m` binds k to the map's key type
+and v to its value type, matching the runtime's k/v iteration.
+Mismatched downstream use fires on the value, not the key.
+### INPUT ###
+fn process(d: {str: int}):
+    for k, v in d:
+        consume_str(v)
+
+fn consume_str(s: str):
+    print(s)
+### STDOUT ###
+# Identifier types
+  d @ 2:17 -> { str: int }
+  consume_str @ 3:9 -> fn(str) -> void
+  v @ 3:21 -> int
+  print @ 6:5 -> dynamic
+  s @ 6:11 -> str
+
+# Symbol types
+  consume_str (fn): fn(str) -> void
+  d (param): { str: int }
+  process (fn): fn({ str: int }) -> void
+  s (param): str
+  v (loop): int
+
+# Diagnostics
+  [hint] RAD30001 @ 3:21 - Argument type 'int' is not assignable to expected type 'str'
+### TITLE ###
+ForTwoVarOverMapValueIsTyped
+### DESCRIPTION ###
+Confirms v is bound to the map's value type, not Dynamic. Locks
+the type so a regression to the prior "second var unbound" shape
+would surface.
+### INPUT ###
+fn process(d: {str: int}):
+    for k, v in d:
+        a = k
+        b = v
+### STDOUT ###
+# Identifier types
+  d @ 2:17 -> { str: int }
+  a @ 3:9 -> <no-type>
+  k @ 3:13 -> str
+  b @ 4:9 -> <no-type>
+  v @ 4:13 -> int
+
+# Symbol types
+  a (local): str
+  b (local): int
+  d (param): { str: int }
+  k (loop): str
+  process (fn): fn({ str: int }) -> void
+  v (loop): int
+
+# Diagnostics
+  (none)

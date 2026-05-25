@@ -824,34 +824,74 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 }
 
 // walkForLoop handles `for vars in iter [with ctx]:`. The loop var
-// is typed from the iterable'\''s element shape so reads inside the
+// is typed from the iterable's element shape so reads inside the
 // body see a real type (not Dynamic). After the loop the binding
-// keeps that type - Rad'\''s runtime leaves loop variables in scope
+// keeps that type - Rad's runtime leaves loop variables in scope
 // past the construct, and the static answer matches.
 //
-// Multi-var loops bind only the first var to the element type today.
-// The binder records the LAST declared loop-var in resolved.Decls
-// (overwriting earlier ones since they all key on the ForLoop node),
-// which makes generalized multi-var typing fragile. When Rad adds a
-// proper ForLoopVars map on Resolved we'\''ll cover unpacking shape
-// (k, v) over maps and (i, v) over enumerated lists.
+// Multi-var shapes:
+//
+//   - `for k, v in m` over a map binds k to KeyT and v to ValT,
+//     matching the runtime's k/v pair iteration.
+//   - `for v in xs` is the default single-var shape; `for v in m`
+//     binds v to the map's KeyT.
+//
+// We read the per-var symbol list from Resolved.ForLoopVars because
+// Decls can only key one symbol per ForLoop node (all vars share
+// the same f.Span() / DefNode).
 //
 // Loop-body narrowings can persist past the construct because the
-// runtime doesn'\''t open a new scope for loops. The frame after the
+// runtime doesn't open a new scope for loops. The frame after the
 // body becomes the post-loop frame; a future "drop narrowings for
 // vars assigned in body" (Sorbet rule, Phase 4i) lands separately.
 func (tc *typeChecker) walkForLoop(n *rl.ForLoop) {
 	iterType := tc.synth(n.Iter)
 
-	if len(n.Vars) == 1 {
-		if sym, ok := tc.resolved.Decls[n]; ok && sym != nil && sym.Kind == SymLoopVar {
-			elem := loopElementType(iterType)
-			tc.info.SymbolTypes[sym] = elem
-			tc.frame = tc.frame.With(sym, elem)
+	vars := tc.resolved.ForLoopVars[n]
+	switch {
+	case len(vars) == 2:
+		// Two-var shape only makes sense over a map (k, v). For any
+		// other iterable, fall back to typing the first var as the
+		// element type and leaving the second at Dynamic - the
+		// runtime would reject the loop anyway, but we shouldn't
+		// silently mistype.
+		keyT, valT := mapKeyValTypes(iterType)
+		if keyT == nil || valT == nil {
+			keyT = loopElementType(iterType)
+			valT = rl.NewDynamicType()
 		}
+		tc.bindLoopVar(vars[0], keyT)
+		tc.bindLoopVar(vars[1], valT)
+	case len(vars) == 1:
+		tc.bindLoopVar(vars[0], loopElementType(iterType))
 	}
 
 	tc.walkStmts(n.Body)
+}
+
+// bindLoopVar plants `t` on the loop-var symbol's frame so reads
+// inside (and after) the body see it.
+func (tc *typeChecker) bindLoopVar(sym *Symbol, t rl.TypingT) {
+	if sym == nil || sym.Kind != SymLoopVar {
+		return
+	}
+	tc.info.SymbolTypes[sym] = t
+	tc.frame = tc.frame.With(sym, t)
+}
+
+// mapKeyValTypes returns the key and value types when `iter` iterates
+// as map entries; otherwise (nil, nil). Plain map yields its declared
+// key/value types; the open `map` type (any map) yields (any, any).
+// Anything else - lists, strings, unions of non-maps - is not a map
+// iteration and falls back to the caller's single-var handling.
+func mapKeyValTypes(iter rl.TypingT) (rl.TypingT, rl.TypingT) {
+	switch v := iter.(type) {
+	case *rl.TypingMapT:
+		return v.KeyT(), v.ValT()
+	case *rl.TypingAnyMapT:
+		return rl.NewAnyType(), rl.NewAnyType()
+	}
+	return nil, nil
 }
 
 // walkWhileLoop handles `while [cond]:`. Inside the body the
@@ -1039,8 +1079,12 @@ func (tc *typeChecker) dropNarrowings(frame *Frame, syms map[*Symbol]bool) *Fram
 // loopElementType returns the element type for a single-var loop over
 // the given iterable. Lists yield their element type; maps yield the
 // key type (matches the Rad runtime, which iterates map keys); strings
-// yield str (each iteration produces a one-char string). Anything else
-// falls back to Dynamic.
+// yield str (each iteration produces a one-char string).
+//
+// Unions of iterables fold per-arm: `int[]|str[]` yields `int|str` so
+// the loop var has a real type instead of falling back to Dynamic. An
+// arm that isn't iterable contributes Dynamic - we don't want a
+// well-typed arm to be silently dropped on its account.
 func loopElementType(iter rl.TypingT) rl.TypingT {
 	if iter == nil {
 		return rl.NewDynamicType()
@@ -1056,6 +1100,19 @@ func loopElementType(iter rl.TypingT) rl.TypingT {
 		return v.KeyT()
 	case *rl.TypingAnyMapT:
 		return rl.NewAnyType()
+	case *rl.TypingUnionT:
+		arms := v.Types()
+		if len(arms) == 0 {
+			return rl.NewDynamicType()
+		}
+		elems := make([]rl.TypingT, 0, len(arms))
+		for _, arm := range arms {
+			elems = append(elems, loopElementType(arm))
+		}
+		if len(elems) == 1 {
+			return elems[0]
+		}
+		return rl.NewUnionType(elems...)
 	}
 	return rl.NewDynamicType()
 }

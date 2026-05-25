@@ -113,6 +113,13 @@ type Resolved struct {
 	// Decls maps a declaring node to the Symbol it introduced. Useful for
 	// goto-def (jump to decl span) and for hover (show declared type).
 	Decls map[rl.Node]*Symbol
+	// ForLoopVars holds the per-variable Symbol list for each `for` loop,
+	// in source order. The header `for k, v in xs:` produces two symbols
+	// for the same ForLoop AST node; Decls can only key one of them, so
+	// callers that want both (the type checker, for map iteration k/v
+	// binding) read from here. ListComp uses the same Vars[]string shape
+	// but is single-var in practice today, so we don't track it.
+	ForLoopVars map[*rl.ForLoop][]*Symbol
 	// Issues are problems the binder detected during resolution
 	// (undefined references, duplicate parameters, etc.). Callers
 	// convert these to whatever diagnostic shape they need; the binder
